@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Sep  9 15:49:46 CEST 2004 - mvidner@suse.cz
+
+- Added a client to test the network and hardware proposals (#44677).
+- 2.10.16
+
+-------------------------------------------------------------------
 Wed Sep  8 15:47:16 CEST 2004 - visnov@suse.cz
 
 - implemented reordering of proposal items
