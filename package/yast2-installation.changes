@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Aug 22 14:43:26 CEST 2002 - arvin@suse.de
+
+- don't run the modules s390silo, s390netadopt and suseconfig
+  during installation on s390
+
+-------------------------------------------------------------------
 Thu Aug 22 12:31:17 CEST 2002 - kkaempf@suse.de
 
 - drop "ht" flag probing, done in libhd now (#13532).
