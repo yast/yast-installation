@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Aug 20 12:00:23 CEST 2002 - arvin@suse.de
+
+- don't probe for mouse, floppy and usb devices on iseries
+
+-------------------------------------------------------------------
 Mon Aug 19 17:58:45 CEST 2002 - olh@suse.de
 
 - implemented starting of ssh in installed system (needed for
