@@ -16,6 +16,7 @@
     import "Mode";
     import "Initrd";
     import "Wizard";
+    import "Label";
 
     string vendor_name = "";
     string device_name = "";
@@ -137,9 +138,9 @@
 									  ),
 								`HSquash(
 									 `HBox(
-									       `HWeight( 1, `PushButton(`id(`ok_msg), `opt(`default),  Wizard::OKButtonLabel())),
+									       `HWeight( 1, `PushButton(`id(`ok_msg), `opt(`default), Label::OKButton())),
 									       `HSpacing(2),
-									       `HWeight( 1, `PushButton(`id(`cancel_msg),  Wizard::CancelButtonLabel()))
+									       `HWeight( 1, `PushButton(`id(`cancel_msg), Label::CancelButton()))
 									       )
 									 ),
 								`VSpacing(0.2)
