@@ -394,17 +394,7 @@ Please wait while the base system is being installed.
 
     ModulesConf::Save (true);
 
-    if ( !Mode::update )
-    {
-	// Set default runlevel to 5 if X11 packages are installed
-	if ( !Mode::test && Mode::x11_setup_needed && x11_installed && AutoInstall::default_rl == "5")
-	{
-	    y2milestone ("setting default runlevel to 5");
-	    SCR::Write (.etc.inittab.id, "5:initdefault:");
-	    SCR::Write (.etc.inittab, nil);
-	}
-    }
-    else	// Update
+	if ( Mode::update )
     {
 	// Set default runlevel cause inittab will be overwritten by
 	// installing aaa_base

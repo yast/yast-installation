@@ -1,4 +1,19 @@
 -------------------------------------------------------------------
+Fri Oct 17 11:37:46 CEST 2003 - ms@suse.de
+
+- inst_finish: (#32366)
+  removed runlevel setup code which is handled within the X11
+  module now (XProposal.ycp). The update code for initdefault
+  is still present because during update the X11 configuration
+  is not started
+
+- inst_x11: (#32366)
+  removed dead code which sets the default runlevel to 3 if there
+  is no XF86Config file present. This task is done if the X11
+  configuration is finished and if there is no X11 configuration
+  the default initdefault with aaa_base is set to 3 already  
+
+-------------------------------------------------------------------
 Wed Sep 24 12:25:08 CEST 2003 - snwint@suse.de
 
 - look for x11 drivers in lib64 dir on x86_64 (#31649)
