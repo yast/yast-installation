@@ -137,6 +137,10 @@ Please wait while the base system is being installed.
 	|| (Display::xserver_is_unknown
 	    && !Display::has_fbdev))
     {
+	y2debug (".etc.install_inf.Reboot: %1", SCR::Read (.etc.install_inf.Reboot));
+	y2debug ("xserver_is_unknown: %1", Display::xserver_is_unknown);
+	y2debug ("has_fbdev: %1", Display::has_fbdev);
+
 	linuxrc["Root"] = "reboot";
 	linuxrc["RebootMsg"] = "1";
 	Mode::hardBoot = true;
