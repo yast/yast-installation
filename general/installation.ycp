@@ -111,7 +111,7 @@
     // ==================================================================================
 
 
-    // properly setup initial language
+    // properly set up initial language
 
     if (Mode::initial)
     {
@@ -350,20 +350,27 @@
 	    map tmp2 = tmp1["messages"]:$[];
 	    integer timeout_seconds = tmp2["timeout"]:0;
 
-	    UI::OpenDialog (`HBox (`VSpacing (20),
-				   `VBox (`HSpacing (60),
-					  `VSpacing (0.2),
-					  `RichText (`opt(`plainText), infotext),
-					  `ReplacePoint (`id(`rp1), `Empty ()),
-					  `HBox (`PushButton (`id(`accept), `opt(`default),
-							      AcceptButtonLabel()),
-						 `PushButton (`id(`donotaccept),
-							      DoNotAcceptButtonLabel()),
-						 `ReplacePoint (`id(`rp2), `Empty ())
-						 )
-					  )
-				   )
-			    );
+	    UI::OpenDialog(
+			   `HBox(
+				 `VSpacing(20),
+				 `VBox(
+				       `HSpacing(60),
+				       `VSpacing(0.2),
+				       `RichText(`opt(`plainText), infotext ),
+				       `ReplacePoint (`id(`rp1), `Empty () ),
+				       `HBox(
+					     `HStretch(),
+					     // Button to accept a license agreement
+					     `HWeight(1, `PushButton(`id(`accept), `opt(`default), _("I &Agree") ) ),
+					     `HStretch(),
+					     // Button to reject a license agreement
+					     `HWeight(1, `PushButton(`id(`donotaccept), _("I Do &Not Agree" ) ) ),
+					     `HStretch(),
+					     `ReplacePoint(`id(`rp2), `Empty ())
+					     )
+				       )
+				 )
+			   );
 
 	    UI::SetFocus (`id(`accept));
 
@@ -496,7 +503,7 @@ will look different than in the manual.");
  //---------------------------------------------------------------------------------------------------------------------------------------------------
  [ `initial,  `inst_proposal	    (true,  true, `ini), true,			true							, false],
  //---------------------------------------------------------------------------------------------------------------------------------------------------
- [ `initial,  `inst_do_resize	    (false, false),      Arch::i386||Arch::x86_64||Arch::ia64,		! live_eval &&		! autoinst			, false],
+ [ `initial,  `inst_do_resize	    (false, false),      Arch::i386||Arch::x86_64||Arch::ia64,	! live_eval &&	! autoinst		, false],
  //---------------------------------------------------------------------------------------------------------------------------------------------------
  [ `initial,  `inst_prepdisk	    (false, false),      true,			! live_eval						, false],
  [ `initial,  `inst_rpmcopy	    (false, false),      true,			! live_eval		  ||	  screen_shot_mode	, false],
