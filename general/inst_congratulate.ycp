@@ -36,7 +36,7 @@
 					   _("&Start YaST Control Center"), false);
 
     // caption for dialog "Congratulation Dialog"
-    string caption = _("Installation Complete");
+    string caption = _("Installation Completed");
 
     // congratulation text 1/4
     string text = _("<p><b>Congratulations!</b></p>") +
@@ -75,7 +75,7 @@ to the login screen.</p>
 ") +
 
     // help 3/4 for dialog "Congratulation Dialog"
-	_("<p>If you chose the default graphical desktop KDE, you can
+	_("<p>If you choose the default graphical desktop KDE, you can
 adjust some KDE settings to your hardware. Also notice
 our SuSE Welcome Dialog.</p>
 ") +
