@@ -103,6 +103,7 @@
     //				      USB
     // --------------------------------------------------------------
 
+    // give user feedback what's happening
     showFeedback( _("Probing USB devices") );
     Hotplug::StartUSB ();
 
@@ -110,6 +111,7 @@
     //				     Mouse
     // --------------------------------------------------------------
 
+    // give user feedback what's happening
     showFeedback( _("Probing mouse devices") );
     if (!Mouse::Found())
     {
@@ -125,6 +127,7 @@
     //				    Floppy
     // --------------------------------------------------------------
 
+    // give user feedback what's happening
     showFeedback( _("Probing floppy disk devices") );
     StorageDevices::FloppyReady ();
 
@@ -134,6 +137,7 @@
     // 2. Initialize (module loading)
     // --------------------------------------------------------------
 
+    // give user feedback what's happening
     showFeedback( _("Probing hard disk controllers") );
     if (StorageControllers::Probe() <= 0)
     {
@@ -146,7 +150,7 @@ Please check your hardware!
 	return `cancel;
     }
 
-
+    // give user feedback what's happening
     showFeedback( _("Loading kernel modules for hard disk controllers") );
     StorageControllers::Initialize();
 
@@ -156,6 +160,7 @@ Please check your hardware!
     //				  Hard disks
     // --------------------------------------------------------------
 
+    // give user feedback what's happening
     showFeedback( _("Probing hard disks") );
     map targetMap = StorageDevices::Probe (true);
     if (size (targetMap) == 0)

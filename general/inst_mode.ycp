@@ -78,17 +78,20 @@ to boot the installed system or to update it.
 It appears that your machine has a Linux system installed.
 </p>");
 
+    // help text for installation method
     help_text = help_text + _("\
 <p>
 To verify this, existing partitions must be mounted. This can be a
 time-consuming process for large partitions.
 </p>");
 
+    // help text for installation method
     help_text = help_text + _("\
 <p>
 Please choose what to do:
 </p>");
 
+    // help text for installation method
     help_text = help_text + _("\
 <p>
 Select <b>new installation</b> if there is no existing SuSE Linux
@@ -96,6 +99,7 @@ system on your machine or if you want to replace an existing SuSE
 Linux system completely, abandoning all its configuration data.
 </p>");
 
+    // help text for installation method
     help_text = help_text + _("\
 <p>
 Select <b>update an existing system</b> to upgrade a SuSE Linux system
@@ -103,6 +107,7 @@ already installed on your machine. This option will preserve
 configuration settings from your existing system whenever possible.
 </p>");
 
+    // help text for installation method
     help_text = help_text + _("<p>
 Select <b>boot installed system</b> if you have a SuSE Linux system on your
 hard disk that will not boot. With this option, try to
@@ -237,6 +242,7 @@ fix problems manually.
 
 	    if (newmode == nil)
 	    {
+		// this is a label of a message box
 		UI::MessagePopup(_("Choose one of the\noptions to continue."));
 		continue;
 	    }

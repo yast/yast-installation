@@ -104,10 +104,14 @@ You will need to reinstall.");
 				 `VSpacing(0.2),
 				 `Heading(text),
 				 `HBox(
-				       `PushButton(`id(`back),	  _("&Back")),
-				       `PushButton(`id(`again),	  _("&Retry")),
-				       `PushButton(`id(`cancel),  _("&Quit")),
-				       `PushButton(`id(`next),	  _("&Next"))
+				       // this is a button label
+				       `PushButton(`id(`back),	 _("&Back")),
+				       // this is a button label
+				       `PushButton(`id(`again),	 _("&Retry")),
+				       // this is a button label
+				       `PushButton(`id(`cancel), _("&Quit")),
+				       // this is a button label
+				       `PushButton(`id(`next),	 _("&Next"))
 				       ),
 				 `VSpacing(0.2)
 				 ),

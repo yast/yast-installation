@@ -154,6 +154,7 @@ Please wait while the base system is being installed.
 	{
 	    linuxrc["RebootMsg"] = "0";
 	}
+
 	if ( Mode::update )
 	{
 	    linuxrc["Root"] = Update::selectedRootPartition;
