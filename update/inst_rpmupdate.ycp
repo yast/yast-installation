@@ -1,0 +1,630 @@
+/**
+ * Module: 		inst_rpmupdate.ycp
+ *
+ * Authors:		Stefan Schubert (schubi@suse.de)
+ *
+ * Purpose:
+ * Install, Update and remove all the RPM packages the user has selected.
+ * Show installation dialogue. Show progress bars.
+ * Request CD change from user.
+ *
+ * $Id$
+ */
+
+{
+    textdomain "update";
+    
+    import "Arch";
+    import "Report";
+    import "Mode";
+    import "Installation";
+    import "Language";
+    
+    import "Update";
+
+    import "PackageInstallation";
+    import "SpaceCalculation";
+    import "InstMedia";
+    import "MediaUI";
+    import "Packages";
+
+    import "SlideShow";  
+
+    include "showlog_defines.ycp";
+    include "ui/common_popups.ycp";
+
+    
+    string rebuild_message = _("Checking package database. This process can take some time.");
+    string rebuild_message_error = _("Checking package database has returned an error.
+Check the log file /var/log/y2log
+");
+
+    integer maxnumbercds = 8;
+
+    //
+    //	Workaround for package installation while update.
+    //  The packages are installed one after the other because there are
+    //  several things to do before/after the installation of the package.
+    //
+    //  TODO for 8.1: this actions should be done inside the "packager" and
+    //  the complete package list should be handed to the "packager".
+    //
+    global define symbol UpdateInstallPackages ( list package_list,
+						 string backup_path,
+						 boolean base_system ) ``{
+
+	symbol ret = `ok;
+	
+	if ( size ( package_list ) <= 0 )
+	{
+	    return nil;
+	}
+	
+	string instPath = InstMedia::GetInstPath();
+
+	foreach ( `package, package_list,		 ``{
+
+	    y2debug("package: %1", package);
+	    string packageName = package[0]:"";
+	    integer pos = findfirstof ( packageName, "/" );
+	    packageName = substring ( packageName,
+				      pos+1, size(packageName) -pos -5 );
+
+	    if ( !Mode::test )
+	    {
+		// creating backup of the package
+		if ( size ( backup_path ) > 0 )
+		{
+		    SCR::Write (.targetpkg.backupPath,
+				Installation::destdir
+				+ "/" + backup_path);
+		    SCR::Execute (.targetpkg.backup,
+				  SCR::Read( .package.shortName, packageName ) );
+		}
+		// remove links
+		SCR::Execute(.targetpkg.removePackageLinks,
+			     SCR::Read( .package.shortName, packageName ));
+	    }
+
+	    list packageList = [];
+	    packageList = add ( packageList, package );
+
+	    // install a single package
+	    ret = PackageInstallation::InstallPackages( packageList,
+							instPath,
+							base_system,
+							Update::packagesInstalled );
+	
+	    if (ret == `cancel || ret == `diskfull )
+	    {
+		// stop the installation - RETURN 
+		y2milestone("Cancel installation" );
+		return `cancel;
+	    }
+
+	    Update::packagesInstalled = Update::packagesInstalled + 1;
+
+	    if ( !Mode::test )
+	    {
+		if ( packageName == "rpm" )
+		{
+		    // checking rpm-db for new version
+		    any retpkg = nil;
+
+		    retpkg = SCR::Execute(.targetpkg.updateDb, "" );
+		    if ( !retpkg )
+			ret = `error;
+
+		    // 8.1: the argument `rpmpath(dbpath) for the "packager"
+		    // is not used any longer, the "packager" must check itself whether
+		    // the path has changed.
+		    
+                    // evaluate new db-path
+		    // dbpath = SCR::Read(.targetpkg.dbPath);
+
+		    y2milestone("updateRpmDb for package rpm: %1", ret);
+		}
+		
+		// checking rpm-DB
+		list infoList = [];
+
+		infoList = SCR::Execute( .package.checkPackage,
+					 SCR::Read( .package.shortName, packageName ));
+		y2debug("Checking package %1 returns: %2", packageName, infoList);			
+
+		if ( size ( infoList ) > 0 )
+		{
+//			    string message = sformat(
+//				_("It has not been installed the correct Version of package %1 \nInstalled : %2 \nshould installed:\n %3 "),
+//				packageName,
+//				select ( infoList, 0 ),
+//				select ( infoList, 1 ));
+//			    UI::MessagePopup(message);
+		    ret = `error;
+		}
+		    
+		if ( ret != `ok )
+		{
+		    Update::notInsertedPackages = add ( Update::notInsertedPackages,
+							SCR::Read( .package.shortName, packageName ) );
+		}
+		else
+		{
+		    // touch directories
+		    SCR::Execute(.targetpkg.touchDirectories,
+				 SCR::Read( .package.shortName, packageName ));
+		}
+	    } // if ( !Mode::test )
+
+	}); // foreach
+
+	return ret;
+    };
+	    
+    //
+    // Popup to start rpm --rebuild
+    //
+
+    define rpmrebuild( ) ``{
+
+	boolean success = true;
+
+	UI::OpenDialog(`opt(`decorated),
+			`VBox( `Heading( _("RPM DB rebuild")) ,
+			     `VBox( `Label(rebuild_message),
+				    `HSpacing(60),
+				    `HBox(
+					  `HSpacing(2),
+					  `ProgressBar(`id(`progress),
+							 _("Status"), 100),
+					  `HSpacing(2)
+					  ),
+				    `VSpacing(1)
+				    )
+			     )
+			);
+
+
+	UI::ChangeWidget(`id(`progress), `Value, 0 );
+	
+	// rebuilding DB
+	if ( !SCR::Execute (.targetpkg.rebuildDb, "") )
+	{
+	    y2error("SCR::Execute (.targetpkg.rebuildDb) not OK ");
+	    success = false;
+	}
+	else
+	{
+	    y2milestone("SCR::Execute (.targetpkg.rebuildDb) OK ");	    
+
+	    integer progress = 0;
+	    integer nullCounter = 0;
+	    integer changed = 0;
+	    integer saveProgress = 0;
+
+	    while ( progress < 100
+		   && progress != -1
+		   && nullCounter < 20
+		   && changed < 20 )
+	    {
+		sleep ( 2000 );
+		if ( progress > 0 )
+		{
+		    saveProgress = progress;
+		}
+		progress = SCR::Read (.targetpkg.rebuildDbProgress );
+		if ( progress == 0 )
+		{
+		    nullCounter = nullCounter +1;
+		}
+		else
+		{
+		    nullCounter = 0;
+		}
+
+		if ( saveProgress > 0 )
+		{
+		    if( progress == saveProgress )
+		    {
+			changed = changed +1;
+		    }
+		    else
+		    {
+			changed = 0;
+		    }
+		}
+
+		if ( progress >= 0 && progress <= 100 )
+		{
+		    UI::ChangeWidget(`id(`progress),`Value, progress );
+		}
+	    }
+	    if (nullCounter >= 20
+		|| progress == -1
+		|| changed >= 20 )
+	    {
+		success = false;
+	    }
+	}
+
+	// save
+	sleep ( 3000 );
+
+	UI::CloseDialog();
+
+	return (success);
+    };
+
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    //  MAIN
+    ////////////////////////////////////////////////////////////////////////////
+
+    list base_packages = [];
+
+    string tmpdir	= SCR::Read(.target.tmpdir);
+    string language	= Language::language;
+
+    SlideShow::SetLanguage( language );
+    SlideShow::OpenSlideShowDialog();
+
+    
+    if ( Mode::cont )
+    {
+	y2milestone("Starting second part of package update");
+	
+	// Initalize package agent
+	Update::Restore();
+    }
+
+    // List of all packages to update
+    list update_list = SCR::Read (.package.updateSet);
+
+    // List of all packages to delete
+    list delete_list = SCR::Read (.package.deleteSet);
+    
+
+    // 8.1: the argument `rpmpath(dbpath) for the "packager"
+    // is not used any longer, the "packager" must check itself whether
+    // the path has changed.	
+
+    // string dbpath = "/var/lib/rpm";
+    // dbpath = SCR::Read(.targetpkg.dbPath);
+    
+    y2debug("update_packages: %1", update_list);
+    y2debug("delete_packages: %1", delete_list);
+
+    if (Mode::cont
+	&& size ( update_list ) == 0
+	&& size ( delete_list ) == 0 )
+    {
+   	y2milestone("nothing to to --> goto next");
+	return `next;
+    }
+
+    if ( Mode::initial )
+    {
+	// /etc/inittab will be overridden by package aaa_base. So we will
+	// have to save the run-level
+
+	// The runlevel-values have been changed since version 7.0; So we
+	// have to handle older version in a special case.
+
+	map versionMap = SCR::Execute(.package.compareSuSEVersions, "7.0.0");
+	boolean installedGreater = lookup ( versionMap,	"installedGreater", false);
+
+	string idfile = SCR::Read(.target.tmpdir) + "/idline";
+
+	if ( SCR::Execute (.target.bash, "/bin/grep ^id: " + Installation::destdir + "/etc/inittab >" + idfile) == 0 )
+	{
+	    // idline = "id:X:initdefault:"
+
+	    string idline = SCR::Read(.target.string, idfile);
+
+	    // idsplit = "id", "X", "initdefault", ""
+	    list idsplit = splitstring (idline, ":");
+
+	    integer initdefault = -1;
+	    if (size (idsplit) > 2)
+	    {
+		initdefault = tointeger (idsplit[1]:"3");
+	    }
+
+	    y2milestone("run-level %1 found", initdefault);
+
+	    map runlevel_conversion = $[ 1 : 0, 2 : 3, 3 : 5, 5 : 4 ];
+
+	    if ( !installedGreater )
+	    {
+		initdefault = lookup (runlevel_conversion, initdefault, initdefault);
+	    }
+	    Update::last_runlevel = initdefault;
+	}
+    }
+
+    SlideShow::InitPkgData();
+     
+    // saving update status at first
+
+    list remove_list = [];
+    list install_list = SCR::Read (.package.updatePackageNames);
+
+    foreach ( `package, delete_list,
+    ``{
+	string packageName = package[0]:"";
+	remove_list = add ( remove_list, packageName );
+    });
+    
+    y2milestone("install_list: %1", install_list);
+
+    if ( !Mode::cont )
+    {
+	SCR::Execute( .package.saveUpdateStatus,
+		      $["Todelete":remove_list,
+		       "Toinstall":install_list,
+		       "RMode":"RECOVER"] );
+    }
+
+    if ( !Mode::cont )
+    {
+	// rebuilding RPM-Database only while first run of installation
+	boolean ret = rpmrebuild();
+    }
+
+    any ret = `ok;
+
+    if ( !Mode::cont )
+    {
+	// remove packages
+	ret = PackageInstallation::DeletePackages( delete_list );
+	y2milestone( "DeletePackages(): %1", ret );
+
+	if ( ret == `error )
+	{
+	    Update::notDeletedPackages = PackageInstallation::error_packages;
+	    y2milestone( "These packages are NOT deleted: %1",  Update::notDeletedPackages );
+	}
+	
+	if (ret == `cancel || ret == `diskfull ) return `cancel;
+    }
+
+
+    // Now that we know how many packages to install, we can show the dialog
+
+    y2milestone("%1 packages have been installed", Update::packagesInstalled);
+
+    string backup_path = SCR::Read( .targetpkg.backupPath );
+
+    if ( Mode::initial)
+    {
+	// First install the base system. This has to be done with the %pre
+	// and %post scripts handled separately and not by rpm, because
+	// without a minimal system being installed no scripts can be executed
+	// chroot in the new system.  We filter the pacdesc list and extract
+	// only the base packages, and only those that are contained in our
+	// package selection. This filtered list we convert into a list
+	// containing only the package filename and the label in the current
+	// language.
+
+	// Base packages must be on CD1
+
+	// Make sure, CD 1 is inserted	
+	PackageInstallation::ChangeMediumWrapper( 1,		// CD 1
+						  true );	// show popups
+
+	base_packages = filter(`v, update_list, ``(v[3]:false && (v[2]:0 == 1)));
+
+	y2debug("Base packages ( on CD1 ): %1", base_packages);
+
+	if ( size ( base_packages ) > 0 )
+	{
+	    ret = UpdateInstallPackages( base_packages,
+					 backup_path,
+					 true );		// install the base system
+
+	    if ( ret == `cancel ) 	return `cancel;		// stop the installation
+
+    	    // saving release info to /var/lib/YaST/update.if
+	    SCR::Execute(.package.closeUpdate, true );	
+	}
+
+	// Filter out the packages for the first round of install
+	update_list = filter(`v, update_list,
+			     ``(!(v[3]:false
+				&& (!InstMedia::splitted
+				    || (v[2]:0 == 1)))));
+    }
+
+    // Install the software from CD1 to CDmax
+
+    integer cdnum = 1;
+    ret = `ok;
+
+    if ( Mode::cont )
+    {
+	cdnum = 2;
+    }
+
+    while (cdnum <= maxnumbercds
+	   && ret != `diskfull
+	   && ret != `cancel )
+    {
+	boolean go_on = true;
+	list this_cd_packages =
+	    filter(`v, update_list, ``(v[2]:0 == cdnum));
+
+	y2milestone("this_cd_packages: %1", this_cd_packages);
+
+	if (this_cd_packages != [])
+	{
+	    string instPath = InstMedia::GetInstPath();
+
+	    if (InstMedia::splitted)
+	    {
+		go_on = PackageInstallation::ChangeMediumWrapper( cdnum,
+								  true ); // show popups
+
+		if ( !go_on )
+		{
+		    // logging not installed packages
+		    foreach ( `package, this_cd_packages,
+		    ``{
+			string packageName = package[0]:"";
+			integer pos = findfirstof ( packageName, "/" );
+			packageName = substring ( packageName, pos+1, size(packageName) -pos -5 );
+
+			SCR::Execute (.target.bash, "/bin/echo NOT installing "+packageName+" >>"+
+					Installation::destdir+"/var/log/y2logRPMShort");
+		    });
+
+		    cdnum = cdnum + 1;
+		    continue;
+		}
+	    }
+
+	    ret = UpdateInstallPackages( this_cd_packages,
+					 backup_path,
+					 false );		// not the base system
+
+	    if ( ret == `cancel ) 	return `cancel;		// stop the installation
+	}
+
+	update_list = filter(`v, update_list, ``(v[2]:0 != cdnum));
+
+	// break on first round with CDs
+	if (Mode::initial
+	    && InstMedia::splitted)
+	    break;
+
+	cdnum = cdnum + 1;
+    }
+
+    if (ret == `cancel || ret == `diskfull) return `cancel;
+
+
+    if ( !Mode::initial )
+    {
+	// second round of installation 
+
+	// output error
+	if (size ( Update::notInsertedPackages ) > 0
+	    || size ( Update::notDeletedPackages ) > 0 )
+	{
+	    if ( size ( Update::notInsertedPackages ) > 0 )
+	    {
+		integer counter = 0;
+		integer lines = 0;
+		string message =  _("Following packages have been installed with errors:\n");
+		foreach( `package, Update::notInsertedPackages,
+		``{
+		    if ( lines <= 10 )
+		    {
+			message = message + package + " ";
+			counter = counter + 1;
+			if ( counter >= 4 )
+			{
+			    message = message + "\n";
+			    counter = 0;
+			    lines = lines + 1;
+			    if ( lines >= 10 )
+			    {
+				message = message + "...\n";
+			    }
+			}
+		    }
+		} );
+
+		message = message + "\n" +
+		    _("Check the log when the update is completed.");
+		UI::MessagePopup(message);
+		y2error("%1", message);
+	    }
+	    else
+	    {
+		string message = _("Every package has been updated.");
+		UI::MessagePopup(message);
+	    }
+
+	    if ( size ( Update::notDeletedPackages ) > 0 )
+	    {
+		string message =  _("The following packages have not been deleted:\n");
+		foreach( `package, Update::notDeletedPackages,
+			 ``{
+		    message = message + package + "\n";
+		} );
+
+		UI::MessagePopup(message);
+		y2error("%1", message);	    
+	    }
+
+	    UI::OpenDialog(`opt(`decorated ),
+			   `Label(_("Closing update; one moment please...")));
+
+	    if ( !Mode::test )
+	    {
+		SCR::Execute( .package.saveUpdateStatus,
+			      $["Todelete":Update::notDeletedPackages,
+			       "Toinstall":Update::notInsertedPackages,
+			       "RMode":"UPDATE"] );
+		if ( Update::updateBasePackages )
+		{
+		    SCR::Execute(.package.closeUpdate, true );
+		}
+		else
+		{
+		    SCR::Execute(.package.closeUpdate, false );		    
+		}
+	    }
+	    UI::CloseDialog();
+	}
+	else
+	{
+	    string message = _("All packages were updated successfully.");
+	    UI::MessagePopup(message);
+
+	    UI::OpenDialog(`opt(`decorated ),
+			 `Label(_("Closing update; One moment please...")));
+
+	    if ( !Mode::test )
+	    {
+		y2milestone("Calling backupUpdateStatus()");
+
+		// everything OK
+		SCR::Execute( .package.backupUpdateStatus, nil ); // move install.lst to install.lst.bak
+
+		y2milestone("Calling closeUpdate()");
+
+		if ( Update::updateBasePackages )
+		{
+		    SCR::Execute(.package.closeUpdate, true );		    
+		}
+		else
+		{
+		    SCR::Execute(.package.closeUpdate, false );		    		    
+		}
+	    }
+	    UI::CloseDialog();
+	}
+    }
+
+    // release the common.pkd
+    SCR::Execute( .package.closeMedium );
+    
+    if (!Mode::initial
+	&& InstMedia::splitted)
+    {
+	SCR::Execute (.target.umount, Installation::sourcedir);
+    }
+
+    if (Mode::cont)
+    {
+	SCR::Execute(.target.remove, "/var/lib/YaST2/runme_at_boot");
+    }
+
+    // close "Slide" dialog (inst_rpmupdate doesn't use the "Wizard" dialog)
+    UI::CloseDialog();
+    
+    return `next;
+}
+

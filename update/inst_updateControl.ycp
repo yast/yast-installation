@@ -1,0 +1,113 @@
+/*
+ *
+ * Module:             inst_updateControl.ycp
+ *
+ * Author:             Stefan Schubert ( schubi@suse.de )
+ *
+ * Submodules:
+ *
+ *            inst_rootpart.ycp : define the root-partition
+ *            inst_sw_backup.ycp: define backup for update
+ *            inst_sw_update.ycp: show a general update-frame
+ *            inst_rpmupdate.ycp: update selected packages
+ *  	      inst_finish       : reboot
+ *
+ *
+ * $Id$
+ */
+
+{
+    textdomain "update";
+
+    import "Arch";
+    import "Installation";
+    import "InstMedia";
+    import "MediaUI";
+    import "Wizard";
+    import "Update";
+    import "Mode";    
+
+
+    /*
+     * Main dialog cycle
+     *
+     */
+
+    list dialog = [
+                ``(CallFunction (`inst_rootpart(true,true) )),
+                ``(CallFunction (`inst_sw_backup(true,true) )),
+                ``(CallFunction (`inst_upgrade(true,true) )),		
+		``(CallFunction (`inst_sw_update(true,true) )),
+		``(CallFunction (`inst_kernel(true,true) )),		
+		``(CallFunction (`inst_rpmupdate(false,false) )),
+		``(CallFunction (`inst_finish(false,false) ))	
+    ];
+
+    integer id = 0;
+    any result = `next;
+    any lastResult = `next;
+    
+    Wizard::OpenNextBackDialog();
+    
+    while ((id >= 0) && (id < size (dialog)))
+    {
+	if ( id == 1 )
+	{
+	    // mount CD 1 BEFORE initializing package agent
+	    // (needed to get commom.pkd)
+
+	    boolean go_on = MediaUI::ChangeMedium (1, true);
+
+	    if ( !go_on )
+	    {
+		// quit dialog
+		UI::CloseDialog();
+		return `cancel;
+	    }
+	}
+
+	lastResult = result;
+
+	if ( id < 6
+	     || SCR::Read(.package.isCDBooted ) )
+	{
+	    // calling inst_finish only if CD has been booted
+	    result = eval(select(dialog, id, ""));
+	}
+
+	if ( result == `auto )
+	{
+	    result = lastResult;
+	}
+
+	if (result == `cancel)
+	    break;
+	if (result == `abort)
+	    break;
+	else if (result == `next)
+	    id = id + 1;
+	else if (result == `back)
+	    id = id - 1;
+	else if ( result == `finish )
+	    break;
+
+    }
+
+    if ( result == `next )
+    {
+	result = `finish;
+    }
+
+    if ( result == `back )
+    {
+	// resetting to new installation
+	Mode::installation = true;
+	Mode::update = false;
+    }
+    
+    Wizard::CloseDialog();
+
+    y2milestone ( "inst_updateControl returns %1", result );
+    
+    return result;
+}

@@ -1,0 +1,649 @@
+/**
+ * Module: 		inst_sw_update.ycp
+ *
+ * Authors:		Stefan Schubert <schubi@suse.de>
+ *
+ * Purpose:
+ * Displays software selection screen of update.
+ *
+ *
+ * $Id$
+ */
+
+{
+    textdomain "update";
+
+    import "Arch";
+    import "Mode";
+    import "Installation";
+    import "InstMedia";
+    import "MediaUI";
+    import "Wizard";
+    import "Packages";
+    import "Update";
+
+    //
+    // Popup display for informing the user, that version of the installation-
+    // medium is to old.
+    //
+
+    UI( ``{
+	global define AskVersion( string installedVersion,
+			   string updateVersion,
+			   boolean remountable ) ``{
+	    string message =
+		_("The version of the installation medium is too old:\n");
+	    message = message +
+		_("    installed version :");
+	    message = message + installedVersion + "\n";
+	    message = message +
+		_("    update version :");
+	    message = message + updateVersion + "\n\n";
+
+	    if ( remountable )
+	    {
+		message = message +
+		    _("Please change CD or cancel update.");
+		OpenDialog(`opt(`decorated),
+			   `VBox (
+				  `Heading( _("Old Version") ),
+				  `VBox( `Label(message),
+					 `HBox(
+					       `PushButton( `id(`retry),
+							    `opt(`default),
+							    RetryButtonLabel() ),
+					       `PushButton( `id(`cancel),
+							    CancelButtonLabel() )
+					       )
+					 )
+				  )
+			   );
+	    }
+	    else
+	    {
+		message = message +
+		    _("Cancel the update and choose another installation medium.");
+		OpenDialog(`opt(`decorated),
+			   `VBox (
+				  `Heading( _("Old Version") ),
+				  `VBox( `Label(message)),
+				  `PushButton( `id(`cancel),
+					       `opt(`default),
+					       CancelButtonLabel() )
+				  )
+			   );
+	    }
+	    any r = UserInput();
+	    CloseDialog();
+
+	    return (r);
+      };
+    });
+
+    boolean retval = false;
+
+    // checking Versions between installed Version and update Version on
+    // the installation medium.
+
+    map versionMap = SCR::Execute(.package.compareSuSEVersions,"");
+    any retAsk = `cancel;
+
+    boolean installedGreater = lookup ( versionMap, "installedGreater" , false);
+
+    while ( installedGreater )
+    {
+	y2milestone("wrong installation medium: %1", versionMap );
+
+	if ( InstMedia::splitted )
+	{
+	    SCR::Execute(.target.umount, Installation::sourcedir);
+	}
+
+	retAsk = UI::AskVersion( lookup ( versionMap, "installedVersion","" ),
+				 lookup ( versionMap, "updateVersion",""),
+				 InstMedia::splitted );
+	if ( retAsk == `retry )
+	{
+	    boolean success = MediaUI::ChangeMedium ( 1, true );
+
+	    if ( !success )
+	    {
+		return `cancel;
+	    }
+	    else
+	    {
+		// next try
+		Packages::Init( true );
+		Update::updateEvaluated = false; // evaluate updatelist new
+		versionMap = SCR::Execute(.package.compareSuSEVersions, "");
+
+		installedGreater = lookup (versionMap,	"installedGreater", false);
+	    }
+	}
+	else
+	{
+	    return ( retAsk );
+	}
+    }
+
+
+    list updateList = [];
+    list deleteList = [];
+    boolean yast2Found = false;
+
+    if ( !Update::updateEvaluated )
+    {
+	map brokenPackages = $[];
+	map updatePackages = $[];
+	map updateListPackages = $[];
+
+	Update::updateEvaluated = true;
+
+	UI::OpenDialog(`opt(`decorated ),`Label(_("Evaluating update packages. One moment please...")));
+
+	brokenPackages = SCR::Execute( .package.checkBrokenUpdate, nil );
+
+	if (size ( brokenPackages ) > 0
+	    && UI::YesNoPopup(_("It appears that a previous update had failed.
+Do you want to try this update again?
+")))
+	{
+	    updatePackages = brokenPackages;
+	    y2milestone("continue broken update: %1", updatePackages );
+	    
+	    // initialize server
+
+	    foreach(`package, `modus, updatePackages,
+		    ``{
+		if ( modus == "u" )
+		{
+		    updateList = add ( updateList, package );
+		}
+		if ( modus == "d" )
+		{
+		    deleteList = add ( deleteList, package );
+		}
+	    });
+
+	    SCR::Execute(.package.setUpdateSelection, updateList );
+	    foreach(`package, deleteList,
+		    ``{
+		SCR::Execute(.package.selectDelete, package );
+	    });
+	}
+	else
+	{
+	    y2debug("reading update list from server");
+
+	    // reading info from server
+	    map dummyMap = SCR::Read( .package.updateList );
+            updateListPackages = lookup ( dummyMap, "packages", $[] );
+
+	    y2debug("Evaluated updatelist: %1", dummyMap );
+
+	    list forceUpdate = WFM::Read (.local.yast2, "forceUpdate.ycp");
+
+	    foreach(`package, `modus, lookup ( dummyMap, "packages", $[] ),
+	    ``{
+		if ( modus != "u"
+		     && modus != "d" )
+		{
+		    boolean force = false;
+
+		    // evaluate if the package is in the force update list
+		    foreach(`packagelist, forceUpdate,
+			``{
+			if ( package == packagelist[0]:"" )
+			{
+			    string fitVersion = packagelist[1]:"";
+			    list versions = SCR::Read(.package.packageVersion, package );
+
+			    if ( select( versions, 0, "" ) != select( versions, 2, "" ) )
+			    {
+				if ( fitVersion == "" )
+				{
+				    modus = "u";
+				    y2milestone("force update: %1 ( without version check )", package );
+				}
+				else
+				{
+				    // Checking Version
+				    y2milestone("comparing %1 version %2 with %3", package, versions, fitVersion );
+
+				    if (size ( versions ) >= 2 )
+				    {
+					string short_version = select( versions, 0, "" );
+					// find trailing build no.
+					integer build_no_pos = findlastof (select( versions, 0, "" ), "-" );
+					if ( build_no_pos > 0 )
+					{
+					    // cut off trailing build no.
+					    short_version = substring( select( versions, 0, "" ), 0, build_no_pos );
+					    y2milestone("short version: %1", short_version);
+					}
+					if ( short_version == fitVersion
+					     || select( versions, 0, "" ) ==  fitVersion )
+					{
+					    modus = "u";
+					    y2milestone("force update: %1", package );
+					}
+				    }
+				}
+			    }
+			}
+		    });
+		}
+
+		if ( modus == "u" )
+		{
+		    updatePackages = add ( updatePackages, package, modus );
+		}
+		if ( modus == "d" )
+		{
+		    // only add the packages with status "d" to updatePackages if the
+		    // user has decided to delete old packages in dialog inst_upgrade.ycp
+		    if ( Update::deleteOldPackages )
+		    {
+			boolean delete = true;
+			if ( package == "aps" )
+			{
+			    // do not delete "aps" if it is in use
+			    integer ret = SCR::Execute(.target.bash, sformat("grep -q apsfilter %1/etc/printcap", Installation::destdir) );
+			    if ( ret == 0 )
+				delete = false;
+    			    y2milestone ( "Checking whether package \"aps\" is needed - delete \"aps\":  %1)", delete );
+			}
+			if ( delete )
+			{
+			    updatePackages = add ( updatePackages, package, modus );
+			}
+		    }
+		    // store all those packages to provide the list for inst_sw_single.ycp
+		    Update::unmaintained_list = add( Update::unmaintained_list, package );
+		}
+		
+		// Evaluate manuall update list
+		if ( modus == "m" )
+		{
+		    Update::manuall_update_list = add ( Update::manuall_update_list, package );
+		}
+	    });
+
+
+	    Update::installedVersion = lookup (dummyMap, "installedVersion", "" );
+	    Update::updateVersion = lookup (dummyMap, "updateVersion", "" );
+	    Update::updateBasePackages = lookup (dummyMap, "updateBase", false );
+
+	    // Adding UPGRADE packages
+
+	    if ( !Update::onlyUpdateSelected )
+	    {
+		// Get a list of all packages that should be installed while
+		// upgrate
+
+		list pacs_to_install = SCR::Read(.package.selPackages );
+		map addPackageMap = updatePackages;
+
+		foreach (`package, pacs_to_install,
+			 ``{
+		    // evaluate installation mode of all packages
+                    // ma: to detect wheter the package is not installed, it's not
+                    // sufficient to lookup updatePackages, as it does not contain
+                    // the uptodate packages installed. Otherwise we'd select all
+                    // uptodate packages too.
+		    string mode = lookup ( updateListPackages, package, "" );
+		    if ( size ( mode )  == 0 )
+		    {
+			// package is not installed--> select to install
+			addPackageMap = add ( addPackageMap, package, "u" );
+		    }
+		});
+
+		updatePackages = addPackageMap;
+	    }
+
+	    // adding vnc package if in vnc update mode
+	    if ( Mode::vnc
+		 && lookup( updatePackages, "vnc" , "" ) != "u" )
+	    {
+		updatePackages = add( updatePackages, "vnc", "u");
+	    }
+	    
+	    // initialize server
+
+	    foreach(`package, `modus, updatePackages,
+		    ``{
+		if ( modus == "u" )
+		{
+		    updateList = add ( updateList, package );
+		}
+		if ( modus == "d" )
+		{
+		    deleteList = add ( deleteList, package );
+		}
+	    });
+
+	    SCR::Execute(.package.setUpdateSelection, updateList );
+	    foreach(`package, deleteList,
+		    ``{
+		SCR::Execute(.package.selectDelete, package );
+	    });
+
+	    if ( !Update::onlyUpdateSelected )
+	    {
+		// Do not install conflicting packages while upgrade
+
+		map deps = SCR::Read(.package.dependencies);
+		y2milestone( ".package.dependencies: %1", deps );
+
+		list conflicts = lookup( deps, "CONFLICT", [] );
+		if ( conflicts != [] )
+		{
+		    // there are conflicting packages
+		    map pruposedPackages = lookup ( dummyMap, "packages", $[] );
+		    list pacs_to_install = SCR::Read(.package.selPackages);
+
+		    foreach (`conflict, conflicts,
+			     ``{
+			string name = lookup ( conflict, "name", "" );
+			list packages = lookup ( conflict, "packages", [] );
+
+			string mode = lookup ( pruposedPackages, name, "" );
+			if ( size ( mode )  == 0 &&
+			     contains ( pacs_to_install, name )  )
+			{
+			    // package conflicts with others and is not on the
+			    // currents system --> deselect
+			    y2milestone( "Upgrade package: %1 conflicts --> It will be not installed", name );
+			    updatePackages = add ( updatePackages, name, "" );
+			    SCR::Execute(.package.deselectInstall, name );
+			    // removing all ADD dependencies
+			    SCR::Execute(.package.deleteAdditionalDependencies, name );
+			}
+			foreach (`package, packages,
+				 ``{
+			    string mode = lookup ( pruposedPackages, package, "" );
+			    if ( size ( mode )  == 0 &&
+				 contains ( pacs_to_install, package )  )
+			    {
+				// package conflicts with others and is not on the
+				// currents system --> deselect
+				y2milestone( "Upgrade package: %1 conflicts --> It will be not installed", package );
+				updatePackages = add ( updatePackages, package, "" );
+				SCR::Execute(.package.deselectInstall, package );
+				// removing all ADD dependencies
+				SCR::Execute(.package.deleteAdditionalDependencies,
+					     package );
+			    }
+			});
+		    });
+		}
+	    }
+	} // not backup, evaluate updatelist
+
+	y2debug("automatic updatelist: %1", SCR::Read (.package.updatePackageNames) );
+	y2debug("manuall updatelist: %1",  Update::manuall_update_list);
+
+	UI::CloseDialog();
+
+    } // evaluate updatelist
+
+    if ( Mode::test )
+    {
+	// we have no root-permissions for /var/lib/YaST
+	Update::installedVersion = "SuSE-Linux-full-i386-6.4.0#0";
+    }
+
+    integer automatikUpdate = size ( SCR::Read (.package.updatePackageNames) );
+    integer manuellUpdate = size ( Update::manuall_update_list );
+
+    // screen title for software selection
+    string title = _("Software Update");
+
+    string labelInstalledVersion = sformat ("%1",Update::installedVersion );
+    string labelUpdateVersion = sformat    ("%1", Update::updateVersion );
+    string labelUpdateBasePackages = "";
+
+    if ( Update::updateBasePackages )
+    {
+	labelUpdateBasePackages = _("yes");
+    }
+    else
+    {
+	labelUpdateBasePackages = _("no");
+    }
+
+    string labelAutomaticUpdate = sformat  ("%1", automatikUpdate );
+    string labelManuellUpdate =   sformat  ("%1", manuellUpdate );
+
+    // Build and show dialog
+
+    term contents = `HVSquash(
+			      `VBox(`VBox(
+					  `Left(`Label( `id(`InstalledVersion), _("Installed version:") )),
+					  `HWeight( 80,
+						    `Left(`Label( `id(`labelInstalledVersion),
+								  `opt(`outputField,`hstretch ),
+								  labelInstalledVersion ))
+						    ),
+					  `Left(`Label( `id(`UpdateVersion),_("Update version:") )),
+					  `HWeight( 80,
+						    `Left(`Label( `id(`labelUpdateVersion),
+							`opt(`outputField,`hstretch),
+								  labelUpdateVersion ))
+						    ),
+					  `Left(`Label( `id(`UpdateBasePackages),_("Update base packages:") )),
+					  `HWeight( 80,
+						    `Left(`Label( `id(`labelUpdateBasePackages),
+								  `opt(`outputField,`hstretch),
+								  labelUpdateBasePackages ))
+						    ),
+					  `Left(`Label( `id(`AutomaticUpdate),_("Packages to update:") )),
+					  `HWeight( 80,
+						    `Left(`Label( `id(`labelAutomaticUpdate),
+								  `opt(`outputField,`hstretch),
+								  labelAutomaticUpdate ))
+						    ),
+					  `Left(`Label( `id(`ManuellUpdate),_("Packages to check manually:") )),
+					  `HWeight( 80,
+						    `Left(`Label( `id(`labelManuellUpdate),
+								  `opt(`outputField,`hstretch ),
+								  labelManuellUpdate ))
+						    )
+					  ),
+				    `VSpacing(),
+				    // Push button that will pop up the detailed
+				    // software selection
+				    `PushButton( `id(`details),  _("&Detailed selection...")
+						 )
+				    )
+			     );
+
+
+    // explain choosable system configurations
+    // but beware: some of the text in <b>'s, e.g. Default comes from the index file,
+    // translations must be consistent with po/index/index.??.po
+    // help part 1
+
+    string helptext = _("<p>
+The update process recognizes packages that must be updated.
+For some packages, the user must decide (with the button \"Detailed selection\")
+if the package should be updated.
+</p>
+");
+
+    
+    // Checking depencenies
+    map deps = SCR::Read(.package.dependencies);
+    y2milestone( "package.dependencies: %1", deps );
+
+    if (lookup( deps, "REQUIRE", []) != []
+	|| lookup( deps, "CONFLICT", [] ) != [])
+    {
+	// There are unresolved package-dependencies while upgrade
+	any ret = CallFunction( `inst_sw_single( `update, `not_only_checked ) );
+	return `again;
+    }
+
+    // Checking disk-space
+    SpaceCalculation::ShowPartitionWarning();
+    
+    Wizard::SetContents(title, contents, helptext, Args(0),Args(1));
+  
+    any ret = nil;
+    boolean error_found = false;
+
+    while (true)
+    {
+	ret = UI::UserInput();
+
+	if (ret == `cancel || ret == `back ) break;
+
+	if ( ret == `abort && CallFunction(`inst_confirm_abort(`painless) ) )
+	    return `abort;
+
+	if ( ret == `details )
+	{
+	    ret = CallFunction( `inst_sw_single( `update, `not_only_checked ) );
+
+	    if ( ret == `ok || ret == `cancel_single )
+		ret = `again;
+	    break;
+
+	}
+
+	if ( ret == `next )
+	{
+	    if ( size ( SCR::Read (.package.updatePackageNames)) <= 0 )
+	    {
+		UI::MessagePopup(_("There is nothing to update."));
+		ret = `again;
+		break;
+	    }
+
+	    if ( size ( Update::manuall_update_list ) > 0 )
+	    {
+		string message =
+			_("There are packages that need a manual decision
+whether to perform the update.
+We recommend updating these packages as well,
+but you should have a look at it.
+
+Would you like to browse though these packages?
+");
+
+		if ( UI::YesNoPopup(message) )
+		{
+		    ret = CallFunction( `inst_sw_single( `update,
+							 `not_only_checked ) );
+
+		    if ( ret == `ok || ret == `cancel_single )
+			ret = `again;
+		    break;
+		}
+	    }
+	    if ( Update::updateBasePackages
+		&& !SCR::Read(.package.isCDBooted )
+		&& !Mode::test )
+	    {
+		UI::MessagePopup( _("Base packages can only be updated
+if the system has been booted from CD.
+Boot from CD.
+") );
+		ret = `again;
+	    }
+	    else
+	    {
+		break;
+	    }
+	}
+    }
+
+    if ( ret == `next || ret == `back )
+    {
+	// evaluate splitted packages
+	list splittedPackages = SCR::Read(.package.installSplittedPackages);
+	list splittList = [];
+	list updateList = SCR::Read (.package.updatePackageNames);
+
+	foreach(`packageList, splittedPackages,
+	``{
+	    y2milestone("splitted package: %1 - %2", select (packageList, 0, ""), select (packageList, 1, ""));
+	    list currstatus = SCR::Read(.package.packageVersion,
+					select (packageList, 0, ""));
+	    if ( select ( currstatus, 0, "" ) != "not known" )
+	    {
+		// package is on the installed system
+		y2milestone("splitted package: %1 have to be installed, cause %2 is on the installed system.",
+			    select ( packageList,1, "" ),
+			    select ( packageList,0, "" ));
+
+		list versions = SCR::Read(.package.packageVersion, select ( packageList,1, "" ) );
+
+		if ( select( versions, 0, "" ) != select( versions, 2, "" ) )
+		{
+		    splittList = add ( splittList, select ( packageList, 1, "" ) );
+		}
+		else
+		{
+		    y2milestone("Uuups, has is been already installed on the system with the correct version.->not install");
+		}
+	    }
+	    else
+	    {
+		// It could be a new package
+		foreach(`package, updateList, ``{
+		    // package to update ?
+		    if ( package == select ( packageList, 0, "" ) )
+		    {
+			y2milestone("splitted package: %1 have to be installed, cause %2 is a new package",
+				    select ( packageList, 1, "" ),
+				    select ( packageList, 0, "" ));
+			list versions = SCR::Read(.package.packageVersion, select ( packageList,1, "" ) );
+
+			if ( select( versions, 0, "" ) != select( versions, 2, "" ) )
+			{
+			    splittList = add ( splittList, select ( packageList, 1, "" ) );
+			}
+			else
+			{
+			    y2milestone("Uuups, has is been already installed on the system with the correct version.->not install");
+			}
+		    }
+		});
+	    }
+	});
+
+	SCR::Execute(.package.selectInstallList, splittList, true );
+
+	list changedList = [];
+
+	// evaluate packages, which name have been changed
+	list renamedPackages = SCR::Read(.package.changedPackageName);
+
+	foreach(`packageName, renamedPackages,
+	``{
+	    boolean found = false;
+
+	    foreach(`package, updateList,
+	    ``{
+		// new package is selected for update ?
+		if ( package == packageName )
+		{
+		    found = true;
+		}
+	    });
+	    if ( !found )
+	    {
+		y2milestone("changed package-name: %1 have to be installed", packageName );
+		changedList = add ( changedList, packageName );
+	    }
+	});
+
+	SCR::Execute(.package.selectInstallList, changedList, true);
+    }
+
+    y2debug( "inst_sw_update return: %1", ret );
+
+    return ret;
+}

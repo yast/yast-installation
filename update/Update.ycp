@@ -1,0 +1,198 @@
+/**
+ * Module: 		Update.ycp
+ *
+ * Authors:		Anas Nashif (nashif@suse.de)
+ *
+ * Purpose: 		Update module
+ *
+ *				
+ * $Id$
+ */
+{
+    module "Update";
+
+    import "Packages";
+
+    
+    global string newKernel = "";
+    // update kernelname if there has not been found a old kernel
+    // in the db.
+
+    global list manuall_update_list = [];
+    // List of packages which have to decide the user
+
+    global list unmaintained_list = [];
+    // List of packages which are not maintained
+
+    global boolean deleteOldPackages = false;
+    // Flag is set true if the user decides to delete unmaintained packages
+    
+    global integer last_runlevel = -1;
+
+    global  list notDeletedPackages = [];
+    
+    global list notInsertedPackages = [];
+
+    global string selectedRootPartition = "";
+    // selected rootpartition for the update
+
+    global map validRootPartitions = $[];
+    // available rootpartitions (key) and SuSE versions (value)
+
+    global boolean onlyUpdateSelected = false;
+    // Only an update, NOT an upgrade
+
+    global boolean updateEvaluated = false;
+    // Flag if the updatelist has already evaluated
+
+    global string installedVersion = "";
+    // Version of the targetsystem
+
+    global string updateVersion = "";
+    // Version of the source medium
+
+    global boolean updateBasePackages = false;
+    // Flag, if the basesystem have to be installed
+
+    global integer packagesInstalled = 0;
+    // counter for installed packages
+
+
+    /*-----------------------------------------------------------------------
+     * GLOBAL FUNCTIONS
+     *-----------------------------------------------------------------------*/
+
+
+    /**
+     * Restore()
+     * Restore saved package list
+     * @return void
+     *
+     */
+
+    global define void Restore()
+    ``{
+	Packages::Init( true );
+
+	if (!Mode::test)
+	{
+	    notDeletedPackages = SCR::Read (.target.ycp,
+					    [Installation::yast2dir + "/notDeletedPackages.ycp",
+					     []]);
+	}
+	else
+	{
+	    notDeletedPackages = SCR::Read (.target.ycp,
+					    ["/tmp/notDeletedPackages.ycp",
+					     []]);
+	}
+
+	if (!Mode::test)
+	{
+	    notInsertedPackages = SCR::Read (.target.ycp,
+					     [Installation::yast2dir + "/notInsertedPackages.ycp",
+					      []]);
+	}
+	else
+	{
+	    notInsertedPackages = SCR::Read (.target.ycp,
+					     ["/tmp/notInsertedPackages.ycp",
+					      []]);
+	}
+
+	list update_list = [];
+	
+	if (!Mode::test)
+	{
+	    update_list = SCR::Read (.target.ycp,
+				     [Installation::yast2dir + "/pacs_to_update.ycp",
+				      []]);
+	}
+	else
+	{
+	    update_list = SCR::Read (.target.ycp,
+				     ["/tmp/pacs_to_update.ycp",
+				      []]);
+	}
+	
+	SCR::Execute (.package.setUpdateSelection, update_list );
+
+	packagesInstalled = SCR::Read (.target.ycp,
+			       [Installation::yast2dir+"/package_counter.ycp",
+			       0] );
+	
+	y2milestone("Restored updatelist list");
+	return;
+    }
+
+    /**
+     * Save()
+     * Used in inst_finish.ycp
+     *
+     */
+
+    global define void Save()
+    ``{
+	if (!Mode::test)
+	{
+	    SCR::Write (.target.ycp,
+			Installation::destdir + 		    
+			Installation::yast2dir+
+			"/notDeletedPackages.ycp",
+			notDeletedPackages );
+	}
+	else
+	{
+	    SCR::Write (.target.ycp,
+			"/tmp"+
+			"/notDeletedPackages.ycp",
+			notDeletedPackages );
+	}
+
+	if (!Mode::test)
+	{
+	    SCR::Write (.target.ycp,
+			Installation::destdir + 		    
+			Installation::yast2dir+
+			"/notInsertedPackages.ycp",
+			notInsertedPackages );
+	}
+	else
+	{
+	    SCR::Write (.target.ycp,
+			"/tmp"+
+			"/notInsertedPackages.ycp",
+			notInsertedPackages );
+	}
+
+	
+	list update_list = SCR::Read (.package.updatePackageNames);
+
+	if (!Mode::test)
+	{
+	    SCR::Write (.target.ycp,
+			Installation::destdir + 		    
+			Installation::yast2dir+
+			"/pacs_to_update.ycp",
+			update_list );
+	}
+	else
+	{
+	    SCR::Write (.target.ycp,
+			"/tmp"+
+			"/pacs_to_update.ycp",
+			update_list );
+	}
+
+	SCR::Write (.target.ycp,
+		    Installation::destdir + 		    
+		    Installation::yast2dir+"/package_counter.ycp",
+		    packagesInstalled );
+	
+	return;
+    }
+
+    
+}
+
+
