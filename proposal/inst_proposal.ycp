@@ -441,6 +441,7 @@
 		submodules = load_submodules_list( "hw-config-proposals-sparc.ycp",
 						   [
 						    // Fallback list
+						    "x11_proposal",
 						    "printer_proposal",
 						    "sound_proposal"
 						   ]
@@ -448,13 +449,14 @@
 	    }
 	    else if ( Arch::ppc64 )
 	    {
-		
+
 		y2milestone ("Continue PPC64 proposal");
 		// ppc64
 
 		submodules = load_submodules_list( "hw-config-proposals-ppc64.ycp",
 						   [
 						    // Fallback list
+						    "x11_proposal",
 						    "printer_proposal"
 						    ]
 						   );
@@ -504,7 +506,7 @@
     define boolean have_network_card() ``{
 
 	// Maybe obsolete
-	
+
 	if ( Mode::test )
 	    return true;
 
