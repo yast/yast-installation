@@ -15,7 +15,6 @@ textdomain="control"
         <fam_local_only>gnome</fam_local_only>
 	<enable_firewall config:type="boolean">true</enable_firewall>
 	<firewall_enable_ssh config:type="boolean">false</firewall_enable_ssh>
-        <io_scheduler>cfq</io_scheduler>
     </globals>
     <software>
         <delete_old_packages config:type="boolean">true</delete_old_packages>

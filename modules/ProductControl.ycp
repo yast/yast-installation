@@ -123,6 +123,7 @@ global define boolean ReadControlFile( string controlfile)
         return false;
     
     workflows = productControl["workflows"]:[];
+
     proposals = productControl["proposals"]:[];
 
     if (haskey(productControl, "partitioning"))
@@ -130,7 +131,9 @@ global define boolean ReadControlFile( string controlfile)
         if (size( productControl["partitioning", "partitions"]:[] ) > 0)
         {
             partitioning = productControl["partitioning"]:$[];
+            
             ProductFeatures::flexible_partitioning = true;
+            
             ProductFeatures::FlexiblePartitioning = partitioning;
         }
         if (productControl["partitioning", "evms_config"]:false)
@@ -150,6 +153,7 @@ global define boolean ReadControlFile( string controlfile)
         }
         // Default is true
         ProductFeatures::delete_old_packages = software["delete_old_packages"]:true;
+
         ProductFeatures::onlyUpdateInstalled =
             software["only_update_installed"]:false;
 
@@ -189,20 +193,31 @@ global define boolean ReadControlFile( string controlfile)
         globals = productControl["globals"]:$[];
 
         ProductFeatures::enable_autologin = globals["enable_autologin"]:true;
+        
         ProductFeatures::language = globals["language"]:"";
+        
         ProductFeatures::skip_language_dialog = globals["skip_language_dialog"]:false;
+        
         ProductFeatures::keyboard = globals["keyboard"]:"";
+        
         ProductFeatures::runlevel = globals["runlevel"]:"";
+        
         ProductFeatures::timezone = globals["timezone"]:"";
+        
         ProductFeatures::ui_mode = globals["ui_mode"]:"expert";
+        
         ProductFeatures::use_desktop_scheduler =
             globals["use_desktop_scheduler"]:true;
+        
         ProductFeatures::io_scheduler =
             globals["io_scheduler"]:"as";
+        
 	ProductFeatures::fam_local_only =
 	    globals["fam_local_only"]:"never";
+        
 	ProductFeatures::enable_firewall =
 	    globals["enable_firewall"]:true;
+
 	ProductFeatures::firewall_enable_ssh =
 	    globals["firewall_enable_ssh"]:false;
 
