@@ -19,7 +19,6 @@
     module "Kernel";
 
     import "Arch";
-    import "Initrd";
 
     import "Mode";
 
