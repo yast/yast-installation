@@ -55,7 +55,7 @@
 	    y2milestone ("First source product %1", product);
 	    if (product == nil) product = $[];
 	    Update::updateVersion = product["product"]:"?";
-	    Update::updateBasePackages = Pkg::IsSelected (product["requires"]"");
+	    Update::updateBasePackages = Pkg::IsSelected (product["requires"]:"");
 	}
 
 	// do not delete "aps" if it is in use
@@ -100,8 +100,8 @@
 	labelUpdateBasePackages = _("no");
     }
 
-    string labelAutomaticUpdate = automatikUpdate;
-    string labelManuellUpdate =   manuellUpdate;
+    string labelAutomaticUpdate = sformat ("%1", automatikUpdate);	// integer -> string
+    string labelManuellUpdate =   sformat ("%1", manuellUpdate);	// integer -> string
 
     // Build and show dialog
 
