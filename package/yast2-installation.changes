@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Sep  6 09:50:37 CEST 2004 - jsrain@suse.cz
+
+- avoid asking to confirm one license multiple times (#44145)
+
+-------------------------------------------------------------------
 Fri Sep 03 14:33:07 CEST 2004 - arvin@suse.de
 
 - call Bootloader::Update instead of Bootloader::Write during
