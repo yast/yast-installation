@@ -342,7 +342,7 @@ if [ ! "$update" -a "$Keyboard" = "0" -a ! "$Braille" -a "$NOTISERIES" != 0 -a "
     fi
 fi
 
-if [ "$Textmode" = 1 ] ; then
+if [ "$Textmode" = 1 -o "$UseSSH" = 1 ] ; then
   log "text mode requested"
   (
     y2base "$modulename" $moduleargs ncurses

@@ -63,7 +63,7 @@ for i in \
   YaST2update YaST2serial Textmode Keyboard Framebuffer\
   Netdevice IP Netmask Gateway Nameserver Server Serverdir X11i\
   LANG TIMEZONE MEDIA XServer XVersion XBusID XkbRules XkbModel XkbLayout\
-  USB HasPCMCIA VNC VNCpassword
+  USB HasPCMCIA VNC VNCpassword UseSSH
 do
   if [ "${!i}" ] ; then
     export $i
