@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Sep  3 22:34:44 CEST 2002 - kkaempf@suse.de
+
+- adapt update workflow to package manager
+- 2.6.41
+
+-------------------------------------------------------------------
 Mon Sep 02 14:14:15 CEST 2002 - arvin@suse.de
 
 - set default runlevel back to 3 if X11 is not configured

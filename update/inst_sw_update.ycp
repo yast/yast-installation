@@ -55,8 +55,15 @@
 	    y2milestone ("First source product %1", product);
 	    if (product == nil) product = $[];
 	    Update::updateVersion = product["product"]:"?";
-	    bool requires_selected = Pkg::IsSelected (product["requires"]:"");
-	    if (requires_selected == nil) requires_selected = true;
+	    string product_package = product["requires"]:"";
+	    bool requires_selected = Pkg::IsSelected (product_package);
+	    if (requires_selected == nil) requires_selected = false;
+	    if (!requires_selected
+		&& !Pkg::IsProvided (product_package))
+	    {
+		Pkg::DoProvide (product_package);
+		requires_selected = true;
+	    }
 	    Update::updateBasePackages = requires_selected;
 	}
 
