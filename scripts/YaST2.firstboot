@@ -223,9 +223,19 @@ if test -d /proc/iSeries; then
     # thus, we unset them to force ncurses to detect the terminal size itself
     unset LINES COLUMNS
 else
-    # if not running on iSeries:
-    # start a root shell on second virtual console
-    SPID=`/usr/lib/YaST2/bin/startshell /dev/tty2`
+#
+#	if we a running on a s390 or s390x
+#
+	HOSTTYPE=$(uname -m)
+	if [ "$HOSTTYPE" = "s390" -o "$HOSTTYPE" = "s390x" ]
+	then
+		Display_IP=`grep Display_IP: /etc/install.inf | sed -e 's/Display_IP: \\(.*\\)/\\1/'`
+		[ ! -z "$Display_IP" ] && export DISPLAY="$Display_IP:0.0"
+	else
+#		if not running on iSeries:
+#		start a root shell on second virtual console
+		SPID=`/usr/lib/YaST2/bin/startshell /dev/tty2`
+	fi
 fi
 
 # start VNC server

@@ -142,6 +142,11 @@ log env
 log echo "Y2DEBUG ($Y2DEBUG)"
 logmeminfo "1"
 
+#
+#	if we a running on a s390 or s390x
+#
+HOSTTYPE=$(uname -m)
+log "HOSTTYPE=$HOSTTYPE"
 # its 0 for iSeries and != 0 otherwise
 NOTISERIES=$(grep -qi iseries /proc/cpuinfo ; echo $?)
 log "iSeries=$NOTISERIES"
@@ -159,6 +164,9 @@ log "X11i=$X11i"
 # get total memory
 eval $(grep 'MemTotal' /proc/meminfo | sed -e 's/: */=/' -e 's/ *kB//')
 log "MemTotal=$MemTotal"
+#
+# 1 TB of memory is enough and bash cannot use nums >2^31 (singed int)
+[ ${#MemTotal} -gt 9 ] && MemTotal=1000000000
 
 # check for a frame buffer device
 fbdev_ok=
@@ -318,7 +326,7 @@ fi
 # iSeries and p690 dont have a keyboard but a special console, no need to
 # run via serial console.
 
-if [ ! "$update" -a "$Keyboard" = "0" -a ! "$Braille" -a "$NOTISERIES" != 0 -a "$NOTHVCCONSOLE" != 0 ] ; then
+if [ ! "$update" -a "$Keyboard" = "0" -a ! "$Braille" -a "$NOTISERIES" != 0 -a "$NOTHVCCONSOLE" != 0 -a "$HOSTTYPE" != "s390" -a "$HOSTTYPE" != "s390x" ] ; then
     log "no keyboard?"
     echo "No keyboard detected. Trying to connect via serial interface /dev/ttyS0."
     echo "On your terminal computer start the user interface with"
@@ -446,6 +454,6 @@ else
 fi
 
 rm -f /etc/X11/XF86Config_31.5k
-test -d /proc/iSeries || chvt 1
+[ ! -d /proc/iSeries -a "$HOSTTYPE" != "s390" -a "$HOSTTYPE" != "s390x" ] && chvt 1
 log "y2exitcode=$y2exitcode"
 exit $y2exitcode
