@@ -169,7 +169,7 @@ if [ -x /etc/init.d/hotplug -a -f "$FSTAB_TMP" -a "$USB" = yes ] ; then
     esac
   done < $FSTAB_TMP > $FSTAB
   if [ "$WRITE" = yes ] ; then
-    echo -e "usbdevfs\t/proc/bus/usb\tusbdevfs\tnoauto 0 0"
+    echo -e "usbfs\t/proc/bus/usb\tusbfs\tnoauto 0 0"
     # log this action somewhere?
   fi >> $FSTAB
 fi
@@ -201,9 +201,13 @@ if [    \( -x /etc/init.d/pcmcia -o -x /etc/init.d/hotplug \) \
   cp $IFCFG_PCMCIA $IFCFG_USB
 fi
 
-# Now start hotplug
+#  enable hotplug agents in /etc/hotplug/
 if [ -x /sbin/rchotplug ] ; then
     rchotplug start
+fi
+#  load all drivers via /etc/hotplug/*.rc
+if [ -x /sbin/rccoldplug ] ; then
+    rccoldplug start
 fi
 
 # Start cardmanager for laptops
@@ -374,11 +378,8 @@ else
 fi
 
 #
-# stop hotplug, it unmounts usbdevfs and avoids error messages
+# do NOT stop hotplug, it may unload drivers and this is NOT desired!
 #
-if [ -x /sbin/rchotplug ] ; then
-    /sbin/rchotplug stop
-fi
 
 if echo $LANG | grep -q '\.UTF-8$'; then
     unicode_stop
