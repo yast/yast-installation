@@ -87,9 +87,11 @@ after <b>Finish</b>. Note: The Control Center does not have a back button to
 return to this installation sequence.</p>
 ");
 
-    Wizard::SetContents (caption, contents, help, true, true);
+    Wizard::SetContents (caption, contents, help, WFM::Args (0), WFM::Args (1));
 
-    Wizard::ReplaceNextButton( `PushButton(`id(`next), `opt(`default), FinishButtonLabel () ) );
+    Wizard::DisableAbortButton ();
+    Wizard::ReplaceNextButton (`PushButton (`id(`next), `opt(`default),
+					    FinishButtonLabel ()));
 
     // FIXME: richtext eats return key
     // UI::SetFocus (`id (`text));
@@ -102,11 +104,8 @@ return to this installation sequence.</p>
 
 	if (ret == `abort)
 	{
-	    if (UI::ReallyAbortPopup (false))
-	    {
-		Wizard::RestoreNextButton();
+	    if (CallFunction (`inst_confirm_abort (`incomplete)))
 		break;
-	    }
 	}
 	else if ( ret == `help )
 	{
@@ -115,6 +114,7 @@ return to this installation sequence.</p>
 
     } until ( ret == `next || ret == `back );
 
+    Wizard::EnableAbortButton ();
     Wizard::RestoreNextButton ();
 
     if (ret == `next && UI::QueryWidget (`id(`start_y2cc), `Value))

@@ -852,7 +852,7 @@ To use the settings as displayed, press <b>Next</b>.
 	    }
 	    else
 	    {
-		if ( UI::ReallyAbortPopup( false ) )
+		if ( WFM::CallFunction(`inst_confirm_abort(`incomplete) ) )
 		    return `abort;
 	    }
 	}

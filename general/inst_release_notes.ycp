@@ -62,8 +62,7 @@
 Linux system. They provide a brief summary of new features and changes.
 ");
 
-    Wizard::SetContentsButtons (caption, contents, help,
-				BackButtonLabel(), NextButtonLabel());
+    Wizard::SetContents (caption, contents, help, true, true);
 
     // FIXME: richtext eats return key
     // UI::SetFocus (`id (`text));
@@ -76,11 +75,8 @@ Linux system. They provide a brief summary of new features and changes.
 
 	if (ret == `abort)
 	{
-	    if (UI::ReallyAbortPopup (false))
-	    {
-		Wizard::RestoreNextButton();
+	    if (CallFunction (`inst_confirm_abort (`incomplete)))
 		break;
-	    }
 	}
 	else if (ret == `help)
 	{

@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb 21 15:21:41 CET 2003 - arvin@suse.de
+
+- better text for "abort installation" popup (bug #24019)
+
+-------------------------------------------------------------------
 Fri Feb 21 12:40:55 CET 2003 - arvin@suse.de
 
 - fixed button labels and help texts (bug #23912)
