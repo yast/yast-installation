@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Sep 11 11:12:36 CEST 2003 - arvin@suse.de
+
+- check for /proc/splash (bug #30472)
+
+-------------------------------------------------------------------
 Wed Sep 10 11:34:10 CEST 2003 - sh@suse.de
 
 - Fixed max log file size calculation:

@@ -3,7 +3,7 @@
 
 function turn_off_silent_splash()
 {
-    echo "verbose" > /proc/splash
+    [ -f /proc/splash ] && echo "verbose" > /proc/splash
 }
 
 
