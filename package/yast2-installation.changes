@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Feb 19 16:42:22 CET 2003 - arvin@suse.de
+
+- disable all sources if user aborts installation (bug #23776)
+
+-------------------------------------------------------------------
 Wed Feb 19 16:07:29 CET 2003 - fehr@suse.de
 
 - fix wrong variable of keyboard module in inst_finish.ycp (#23782)
