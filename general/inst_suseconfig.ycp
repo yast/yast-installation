@@ -107,7 +107,7 @@ this process can take some time.</p>
 			  `ProgressBar(`id(`progress), _("Progress"), max_steps, 0 )
 			  );
 
-
+    UI::SetProductName (Product::name); // really ugly, bot works
     Wizard::SetContents(
 			  // Dialog title for SuSEconfig dialog
 			  _("Writing the system configuration"),
