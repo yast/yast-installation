@@ -1,7 +1,8 @@
 -------------------------------------------------------------------
 Wed Feb 19 08:35:05 CET 2003 - arvin@suse.de
 
-- run SuSEconfig fonts for anti aliased fonts (bug #23768)
+- run SuSEconfig fonts during inst_finish for anti aliased fonts
+  (bug #23768)
 
 -------------------------------------------------------------------
 Tue Feb 18 20:47:55 CET 2003 - arvin@suse.de
