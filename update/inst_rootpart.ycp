@@ -367,8 +367,6 @@ Check the log file /var/log/y2log.
 	UI::OpenDialog(`opt(`decorated ),
 		     `Label(_("Evaluating root partition. One moment please...")));
 
-	// FIXME, probe partitions !
-
 	SCR::Execute (.target.modprobe, "reiserfs", "");
 	SCR::Execute (.target.modprobe, "jfs", "");
 	SCR::Execute (.target.modprobe, "xfs", "");
@@ -387,17 +385,16 @@ Check the log file /var/log/y2log.
 
 		if ( (p_fsid == 131)		// native partition
 		   || (p_type == `lvm)
-		   || (p_fsid == 0) && (p_type == `pdisk))
+		   || (p_type == `sw_raid))
 		{
-		    string partition =
-			get_device_name( device, partition["nr"]:0 );
+		    string pdev = partition["device"]:"";
 		    boolean ret_bool = true;
 
 		    // Test if partition is root
 		    if ( !Mode::test )
 		    {
 			//Mount partition to Installation::destdir
-			ret_bool = SCR::Execute (.target.mount, [partition, Installation::destdir, Installation::mountlog ]);
+			ret_bool = SCR::Execute (.target.mount, [pdev, Installation::destdir, Installation::mountlog ]);
 
 			if ( ret_bool )
 			{
@@ -408,7 +405,7 @@ Check the log file /var/log/y2log.
 				y2milestone("found fstab on :%1", partition);
 				string suse_release = SCR::Read (.target.string, [ Installation::destdir + "/etc/SuSE-release", "?"]);
 				list release_lines = splitstring (suse_release, "\n");
-				partitionMap[partition] = release_lines[0]:"?";
+				partitionMap[pdev] = release_lines[0]:"?";
 			    }
 			    // unmount partition
 			    SCR::Execute (.target.umount, Installation::destdir);
@@ -416,7 +413,7 @@ Check the log file /var/log/y2log.
 		    }
 		    else
 		    {
-			partitionMap[partition] = "Test";
+			partitionMap[pdev] = "Test";
 		    }
 		}
 	    });
