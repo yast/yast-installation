@@ -34,18 +34,19 @@
       if ( size ( backupPath ) <= 1 ||
 	   substring(backupPath,0,1) != "/" )
       {
+	  // error popup, user did not enter a valid directory specification
 	  UI::MessagePopup( _("Input is not a path.") );
 	  return ( false );
       }
 
       foreach( `part, part_info,
 	    ``{
-	         string part_name = lookup( part, "name", "" );
+	         string part_name = part["name"]:"";
 
 
 		 if ( part_name == "/" && !found )
 		 {
-		     free_space   = lookup( part, "free", 0 );
+		     free_space   = part["free"]:0;
 		     y2milestone("Partition :%1", part_name);
 		     y2milestone("free:%1", free_space );
 		 }
@@ -55,7 +56,7 @@
 		     string compare_string = substring ( backupPath, 0 , size ( part_name ) );
 		     if ( compare_string == part_name && !found )
 		     {
-			 free_space   = lookup( part, "free", 0 );
+			 free_space   = part["free"]:0;
 			 y2milestone("Partition :%1", part_name );
 			 y2milestone("free:%1", free_space );
 			 found = true;
@@ -85,13 +86,16 @@
     // ------------------------------------------------------------------------
 
     y2milestone("Setting targetroot of package DB: %1", Installation::destdir);    
-    SCR::Write( .targetpkg.dbTargetPath, Installation::destdir);
-    
+    Pkg::TargetInit (Installation::destdir, false);
+    Pkg::TargetLogfile (Installation::destdir+"/var/log/YaST2/y2logRPM");
 
-    backupPath = SCR::Read( .targetpkg.backupPath );
+    backupPath = Pkg::GetBackupPath();
     y2milestone("Current backuppath is %1.", backupPath );
+
     UI::OpenDialog(`opt(`decorated ),
+		   // intermediate popup while initializing internal packagemanagement
 		   `Label(_("Reading package information; One moment please...")));
+
     Mode::update = true;
     Packages::Init( true );
     Update::updateEvaluated = false; // evaluate updatelist new    
@@ -110,8 +114,10 @@
 
     term contents = `HVSquash(
 			      `VBox(
+				    // checkbox label if user wants to backup config files before update
 				    `Left(`CheckBox(`id(`backup),`opt(`notify), _("Create b&ackup"))),
 				    `VSpacing(),
+				    // label for text entry or backup path
 				    `TextEntry(`id(`backupPath), _("Backup &path:"))
 				    )
 			     );
@@ -199,7 +205,7 @@ configuration files will be saved.
 	    y2debug( "set backupPath to: %1", backupPath );
 	}
 
-	SCR::Write( .targetpkg.backupPath, backupPath );
+	Pkg::SetBackupPath (backupPath);
     }
     y2debug( "inst_sw_backup return: %1", ret );
 
