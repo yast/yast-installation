@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb 21 12:00:14 CET 2003 - sh@suse.de
+
+- Fixed bug #24027: Root exploit in inst_suseconfig 
+
+-------------------------------------------------------------------
 Fri Feb 21 11:30:37 CET 2003 - arvin@suse.de
 
 - always do hard reboot (bug #23903)

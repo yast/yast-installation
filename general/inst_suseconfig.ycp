@@ -22,6 +22,7 @@
     import "Arch";
     import "Mode";
     import "Installation";
+    import "Misc";
 
     import "Wizard";
 
@@ -69,8 +70,8 @@
      */
     define runStep( string step ) ``{
 
-	string command = sformat( "HOME=/tmp %1 %2 2>&1", step, log_destination );
-	// Setting $HOME to '/tmp' to avoid cluttering '/' with spurious files - bug #13204
+	string command = sformat( "HOME=%1 %2 %3 2>&1", Misc::tmpdir, step, log_destination );
+	// Setting $HOME to Misc::/tmpdir to avoid cluttering '/' with spurious files - bug #13204
 
 	if ( Mode::test )
 	{
