@@ -153,7 +153,7 @@ Please wait while the base system is being installed.
     {
 	// progress stage title
         Progress::Title (_("Executing postinstall (chroot) scripts"));
-        AutoInstall::Finish();        
+        AutoInstall::Finish();
     }
 
     // copy hardware status to installed system
@@ -166,9 +166,9 @@ Please wait while the base system is being installed.
     }
 
     // Check if X11 package is installed.
-    boolean x11_installed = Pkg::IsProvided("xf86");
+    boolean x11_installed = Pkg::IsProvided("XFree86");
     if (!x11_installed)
-	x11_installed = Pkg::IsSelected ("xf86");
+	x11_installed = Pkg::IsSelected ("XFree86");
 
     y2milestone ("x11_installed: <%1>", x11_installed );
 
