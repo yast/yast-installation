@@ -154,7 +154,7 @@ textdomain="control"
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
-            <mode>installation,update</mode>
+            <mode>normal,update</mode>
             <modules  config:type="list">
                 <module>
                     <name>info</name>
@@ -357,9 +357,9 @@ textdomain="control"
             </modules>
         </workflow>
         <workflow>
-            <stage>continue</stage>
+            <stage>normal</stage>
             <label>Configuration</label>
-            <mode>installation</mode>
+            <mode>normal</mode>
             <defaults>
                 <enable_back>yes</enable_back>
                 <enable_next>yes</enable_next>
