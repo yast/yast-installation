@@ -33,6 +33,65 @@
     textdomain "installation";
 
 
+    define symbol handle_boot () ``{
+
+	y2milestone( "User wishes to boot installed system" );
+
+	if (!Update::didSearchForRootPartitions)
+	{
+	    UI::OpenDialog (`opt(`decorated ),
+			    `Label(_("Evaluating root partition. One moment please...")));
+	    Update::FindRootPartitions (false);
+	    UI::CloseDialog ();
+	}
+
+	if (size (Update::validRootPartitions) == 0)
+	{
+	    // a popup
+	    UI::MessagePopup(_("No Linux root partition found."));
+	    return `cancel;
+	}
+
+	Update::selectedRootPartitionForBooting = "";
+
+	if (size (Update::validRootPartitions) == 1)
+	{
+	    foreach (`p, `r, Update::validRootPartitions, ``{
+		if (Update::selectedRootPartitionForBooting == "")
+		    Update::selectedRootPartitionForBooting = p;
+	    });
+	}
+	else
+	{
+	    if (WFM::CallFunction (`inst_rootpart (true, true, `boot_popup)) != `next)
+		return `cancel;
+	}
+
+	string root_part = Update::selectedRootPartitionForBooting;
+
+	y2milestone( "Preparing boot from partition %1", root_part );
+	Update::UnmountPartitions();
+
+	UI::OpenDialog( `opt(`decorated),
+			// Information popup: Inform user what partition
+			// will be booted from after user selected
+			// "Boot installed system"
+			`Label( sformat(_("Booting from %1"), root_part ) ) );
+
+	sleep (1000);
+
+	if ( ! Mode::test )
+	{
+	    import "Misc";
+	    Misc::WriteYaSTInf ($["Root" : root_part]);
+	}
+
+	UI::CloseDialog ();
+
+	return `finish;
+    }
+
+
     boolean called_from_ask_user = false;
 
     if ( size( WFM::Args() ) > 0
@@ -206,30 +265,12 @@ fix problems manually.
 
     // Event handling
 
+    UI::OpenDialog( ask_mode_dialog );
+
     any ret = nil;
 
     while ( true )
     {
-	if ( ! UI::WidgetExists(`id(`ask_mode_dialog ) ) )
-	{
-	    // If there is no inst_mode dialog any more or yet, open one.
-	    //
-	    // Background: People complained inst_mode should become a popup
-	    // dialog rather than a wizard dialog lest it breaks the
-	    // three-step-installation feeling. Subsequent dialogs, however (update or
-	    // boot installed system) are wizard dialogs again which would be
-	    // arranged _below_ this inst_mode popup dialog, thus that popup
-	    // dialog needs to be closed whenever a wizard dialog appears. When
-	    // we get back here, however, we need it again - so simply open a
-	    // new one if the old one is closed.
-	    //
-	    // What a mess.
-	    //
-	    // sh@suse.de 2002-03-06
-
-	    UI::OpenDialog( ask_mode_dialog );
-	}
-
 	if (!Mode::autoinst)
 	{
 	    ret = UI::UserInput();
@@ -261,108 +302,46 @@ fix problems manually.
 		continue;
 	    }
 
-	    if ( newmode == `abort ) // the abort check box (not button!)
+	    if (newmode == `abort) // the abort check box (not button!)
 	    {
 		if ( WFM::CallFunction(`inst_confirm_abort(`painless) ) )
 		{
 		    ret = `abort;
 		    break;
 		}
-		else
-		{
-		    // User doesn't want to abort after all - select some radio
-		    // button other than "abort". Since this "abort" radio
-		    // button can only be present if this is called initially
-		    // and there must be a Linux partition, "update" is the
-		    // safest selection.
 
-		    UI::ChangeWidget(Mode::update ? `id(`update ) : `id(`install), `Value, true );
-		    continue;
-		}
+		continue;
 	    }
+
 	    if (newmode == `install)
 	    {
 		Mode::installation = true;
 		Mode::update = false;
+		break;
 	    }
-	    else if (newmode == `update)
+
+	    if (newmode == `update)
 	    {
 		Mode::update = true;
 		Mode::installation = false;
+		break;
 	    }
-	    else if (newmode == `boot)
+
+	    if (newmode == `boot)
 	    {
 		Mode::update = false;
 		Mode::installation = false;
 
-	        y2milestone( "User wishes to boot installed system" );
-		Update::FindRootPartitions ();
-
-		UI::CloseDialog(); // close the inst_mode dialog
-		Wizard::OpenNextBackDialog();
-		ret = WFM::CallFunction( `inst_rootpart( true, true, true ) );
-		Wizard::CloseDialog();
-
-		if ( ret == `abort && WFM::CallFunction(`inst_confirm_abort(`painless) ) )
+		if (handle_boot () == `finish)
 		{
-		    break;
-		}
-
-		if ( ret == `back )
-		    continue;
-
-		if ( ret == `next )
-		{
-		    string root_part = Update::selectedRootPartition;
-		    Update::UnmountPartitions();
-		    y2milestone( "Preparing boot from partition %1", root_part );
-
-		    UI::OpenDialog( `opt(`decorated),
-				// Information popup: Inform user what partition
-				// will be booted from after user selected
-				// "Boot installed system"
-				    `Label( sformat(_("Booting from %1"), root_part ) ) );
-
-		    if ( ! Mode::test )
-		    {
-			import "Misc";
-
-			Misc::WriteYaSTInf($["Root" : root_part]);
-			UI::CloseDialog();
-			ret = `finish;
-			break;
-		    }
-		    else
-		    {
-			sleep( 5 * 1000 );
-			UI::CloseDialog();
-			ret = `again;
-			break;
-		    }
-
-		    ret = `abort;
-		    break;
-		}
-		else
-		{
-		    ret = `again;
+		    ret = `finish;
 		    break;
 		}
 	    }
-	    // Handle your option here
-	    break;
 	}
     }
 
-    if ( UI::WidgetExists(`id(`ask_mode_dialog) ) )	// dialog still open?
-    {
-	UI::CloseDialog();				// close it
-    }
-
-
-    if ( ret == nil )	// This should never happen, but who knows?
-	ret = `cancel;
-
+    UI::CloseDialog();
 
     return ret;
 }
