@@ -736,7 +736,7 @@ To use the settings as displayed, press <b>Next</b>.
     make_proposal( false, false );
 
     // Set keyboard focus to the [Accept] or [Next] button
-    UI::SetFocus(UI::WidgetExists(`id(`accept)) ? `id(`accept) : `id(`next));
+    Wizard::SetFocusToNextButton();
 
     //
     // Input loop
