@@ -411,10 +411,13 @@
      */
     global define void CopyConfig ()
     ``{
-	SCR::Execute (.target.mkdir, "/usr/src/linux/include/linux");
-	SCR::Execute (.target.bash, "/bin/cp /boot/vmlinuz.autoconf.h /usr/src/linux/include/linux/autoconf.h");
-	SCR::Execute (.target.bash, "/bin/cp /boot/vmlinuz.version.h /usr/src/linux/include/linux/version.h");
-	SCR::Execute (.target.bash, "/bin/cp /boot/vmlinuz.config /usr/src/linux/.config");
+	// only if kernel sources are present
+	if (SCR::Execute (.target.bash, "/usr/bin/test -d /usr/src/linux/include/linux") == 0)
+	{
+	   SCR::Execute (.target.bash, "/bin/cp /boot/vmlinuz.autoconf.h /usr/src/linux/include/linux/autoconf.h");
+	   SCR::Execute (.target.bash, "/bin/cp /boot/vmlinuz.version.h /usr/src/linux/include/linux/version.h");
+	   SCR::Execute (.target.bash, "/bin/cp /boot/vmlinuz.config /usr/src/linux/.config");
+	}
     }
 
     /**
