@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Mar  3 11:06:28 CET 2003 - fehr@suse.de
+
+- call win resize module not only on i386 but also on x86_64 and ia64
+
+-------------------------------------------------------------------
 Thu Feb 27 12:36:16 CET 2003 - arvin@suse.de
 
 - kill (with SIGKILL) shell on tty2 after installation (bug #24404)
