@@ -7,6 +7,9 @@
 #
 # yyyyyyyyyyyyyyyyyyyyy
 
+# set splash progress bar to 70%
+[ -f /proc/splash ] && echo "show $((70*65534/100))" >/proc/splash
+
 # depending on the architecture, Add braille & x11 info to
 # /etc/install.inf, and clear the screen before
 HOSTTYPE="$(uname -m)"
@@ -17,17 +20,12 @@ case "$HOSTTYPE" in
 	/usr/sbin/hwinfo --special=x11
 	;;
     *)
-	echo -e \\033c
 	/usr/sbin/hwinfo --special=braille
 	/usr/sbin/hwinfo --special=x11
 esac
 
-
-# driver update
-
-if [ -x /update/install/update.pre ] ; then
-  /update/install/update.pre
-fi
+# set splash progress bar to 80%
+[ -f /proc/splash ] &&  echo "show $((80*65534/100))" >/proc/splash
 
 # source install.inf, setting a variable $Moo=... for each line Moo: ...
 eval $(grep ': ' /etc/install.inf | sed -e 's/"/"\\""/g' -e 's/:  */="/' -e 's/$/"/')
