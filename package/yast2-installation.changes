@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jan 12 11:39:31 CET 2005 - ms@suse.de
+
+- fixed yast startup in continue mode. The evaluation of the
+  variables USE_SSH and VNC was wrong in S08-start and
+  S09-cleanup
+
+-------------------------------------------------------------------
 Tue Jan 11 16:16:38 CET 2005 - jsrain@suse.cz
 
 - prevent disabling the Next button in the proposal (#46708)
