@@ -4,10 +4,6 @@
  *
  * Author:             Klaus Kaempf (kkaempf@suse.de)
  *
- *
- * Submodules:
- *
- *
  * Purpose:	load vendor driver CD
  *
  * Modify:
@@ -28,12 +24,11 @@
     import "Wizard";
 
     import "Popup";
-    include "ui/common_functions.ycp";
     import "Label";
 
     // display message if the CD seems to be wrong
 
-    define wrong_cd (string reason, boolean must_umount) ``{
+    define symbol wrong_cd (string reason, boolean must_umount) ``{
 	Popup::Message (reason);
 	if (must_umount)
 	{
@@ -47,9 +42,7 @@
     // run <name>.inst file
     // return 0 on success
 
-    define run_inst (string fpath, string fname)
-    ``{
-	integer result = 0;
+    define integer run_inst (string fpath, string fname) ``{
 
 	y2milestone ("run_inst %1/%2", fpath, fname);
 
@@ -59,7 +52,7 @@
 	// force it to be readable and executable
 	SCR::Execute (.target.bash, "/bin/chmod 774 " + tmpdir + "/" + fname);
 
-	result = SCR::Execute (.target.bash, "(cd " + tmpdir + "; ./" + fname + " " + fpath + ")");
+	integer result = SCR::Execute (.target.bash, "(cd " + tmpdir + "; ./" + fname + " " + fpath + ")");
 	SCR::Execute (.target.remove, tmpdir + "/" + fname);
 
 	return result;
@@ -158,7 +151,7 @@ Aborting now."), is_mounted);
 	dirlist = SCR::Read(.target.dir, cdpath);
 	if ((size (dirlist) <= 0)
 	    || (!(contains (dirlist, "suse")
-		|| contains (dirlist, "unitedlinux"))))
+		  || contains (dirlist, "unitedlinux"))))
 	{
 	    // VENDOR: vendor cd contains wrong data
 	    return wrong_cd(_("Could not find driver data on the CD-ROM.
@@ -195,7 +188,7 @@ Aborting now.
 
     list instlist = [];
     foreach (`fname, dirlist,
-    ``{
+	     ``{
 	list splitted = splitstring (fname, ".");
 	if ((size (splitted) == 2)
 	    && (substring (splitted[1]:"", 0, 3) == "ins"))
@@ -223,8 +216,7 @@ Aborting now."), is_mounted);
     // then with 2 char language code
     // show data from matching files
 
-    foreach (`fname, instlist,
-    ``{
+    foreach (`fname, instlist, ``{
 
 	// try full ISO language code first
 	string description = SCR::Read(.target.string, cdpath + "/" + fname + "-" + language + ".desc");
