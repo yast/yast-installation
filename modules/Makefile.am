@@ -6,6 +6,7 @@ module_DATA =			\
 	Hooks.ycp		\
 	Installation.ycp	\
 	ProductControl.ycp		\
+	ProductFeatures.ycp		\
 	Product.ycp		\
 	Vendor.ycp
 
