@@ -1,54 +1,52 @@
 /**
- * * $Id$
- *
- * Module:	inst_finish.ycp
- *
+ * File:	clients/inst_finish.ycp
+ * Package:	installation
+ * Summary:	Finish installation
  * Author:	Klaus Kämpf <kkaempf@suse.de>
  *
- * Purpose:	This module finishes the installation, writes
- *		some files (rc_config fstab ... and so on).
- *
+ * $Id$
  *
  * Writes:
  * [target] /var/lib/YaST2/runme_at_boot	run yast2 after initial boot
  * SCR::Write (.etc.shadow.root,
  */
+
 {
 
+    textdomain "installation";
+
     import "Arch";
-    import "Initrd";
-    import "Mode";
-    import "Installation";
-    import "X11Version";
     import "AutoInstall";
-    import "Misc";
-    import "Language";
-    import "Mouse";
-    import "Timezone";
+    import "Bootloader";
     import "Console";
+    import "Directory";
     import "Display";
-    import "Keyboard";
-    import "Storage";
-    import "Packages";
-    import "Kernel";
+    import "FileSystems";
     import "Hotplug";
+    import "HwStatus";
+    import "Initrd";
+    import "Installation";
+    import "Kernel";
+    import "Keyboard";
+    import "Language";
+    import "Misc";
+    import "Mode";
+    import "ModulesConf";
+    import "Mouse";
+    import "PackageSelectionIO";
+    import "Packages";
     import "Product";
     import "Progress";
     import "Report";
-    import "StorageDevices";
+    import "Storage";
     import "StorageControllers";
-    import "ModulesConf";
-    import "Bootloader";
-    import "PackageSelectionIO";
+    import "StorageDevices";
+    import "Timezone";
     import "Update";
     import "Vendor";
-    import "HwStatus";
-    import "Directory";
-
-    import "FileSystems";
+    import "X11Version";
 
     include "partitioning/partition_defines.ycp";
-    textdomain "installation";
 
     // Help text for last dialog of base installation
     string help_text = _("<p>
@@ -202,8 +200,8 @@ Please wait while the base system is being installed.
     }
 
     // re-init tmpdir from new SCR !
-    Misc::tmpdir = (string) SCR::Read (.target.tmpdir);
-    string tmpdir = Misc::tmpdir;
+    Directory::ResetTmpDir();
+    string tmpdir = Directory::tmpdir;
 
     define void InjectFile (string filename)
     ``{
@@ -431,7 +429,7 @@ Please wait while the base system is being installed.
     // --------------------------------------------------------------
     // Copy /etc/XF86Config into built system so that the
     // second phase of the installation can find it.
-	X11Version::GetX11Link();
+    X11Version::GetX11Link();
 
     if (x11_installed)
     {
@@ -463,8 +461,8 @@ Please wait while the base system is being installed.
 	    //========================================
 	    // Installation mode...
 	    //----------------------------------------
-		y2milestone ("Include X11 config [instsys] to installed system");
-		string filename = "/etc/X11/XF86Config";
+	    y2milestone ("Include X11 config [instsys] to installed system");
+	    string filename = "/etc/X11/XF86Config";
 	    InjectFile (filename);
 	}
 	// ... /
