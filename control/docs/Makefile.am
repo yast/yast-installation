@@ -25,7 +25,7 @@ control-doc.pdf: control-doc.fo
 	fop -q $< $@
 
 
-html/yast2docs.css:
+html/yast2docs.css: html/index.html
 	cp @STYLESHEET_CSS@ html
 	cp -a $(ydatadir)/docbook/images html
 
