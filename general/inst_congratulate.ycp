@@ -31,28 +31,62 @@
     // Translators: About 40 characters max,
     // use newlines for longer translations.
     term check_box_start_y2cc = `CheckBox (`id(`start_y2cc),
-					   _("&Start control center"), false);
-
+					   _("&Start YaST Control Center"), false);
 
     /* caption for dialog "Congratulation Dialog" */
-    string caption = _("Installation complete");
+    string caption = _("Installation Complete");
 
-    // I guess this must be read from a file soon.
-    string text = _("Congratulations FIXME");
+    /* congratulation text 1/4 */
+    string text = _("<p><b>Congratulations!</b></p>") +
+
+    /* congratulation text 2/4 */
+	_("<p>The installation of SuSE Linux on your machine is complete.
+After <b>Finish</b> you can login to the system at once.
+Visit us at http://www.suse.de or ...suse.com!</p>") +
+
+    /* congratulation text 3/4 */
+	_("<p>Have a lot of fun!</p>") +
+
+    /* congratulation text 4/4 */
+	_("<p>Your SuSE Development Team</p>");
+
+    integer space = 1;
+    map display = UI::GetDisplayInfo();
+    if (display["DefaultWidth"]:0 >= 640 && display["DefaultHeight"]:0 >= 480)
+	space = 3;
 
     term contents = `VBox (
-			   `VSpacing(1),
-			   `RichText(`opt(`richText), text),
-			   `VSpacing(1),
+			   `VSpacing (space),
+			   `HBox (
+				  `HSpacing (2*space),
+				  `RichText (`opt(`richText), text),
+				  `HSpacing (2*space)
+				  ),
+			   `VSpacing (space),
 			   check_box_start_y2cc,
-			   `VSpacing(1)
+			   `VSpacing (2)
 			   );
 
-    /* help for dialog "Congratulation Dialog" */
-    string help = _("FIXME");
+    /* help 1/4 for dialog "Congratulation Dialog" */
+    string help = _("<p>Your system is ready to run!</p>") +
 
-    Wizard::SetContentsButtons (caption, contents, help,
-				BackButtonLabel(), FinishButtonLabel());
+    /* help 2/4 for dialog "Congratulation Dialog" */
+	_("<p><b>Finish</b> will close the YaST installation and will lead you
+to the first login.</p>") +
+
+    /* help 3/4 for dialog "Congratulation Dialog" */
+	_("<p>If you choosed the default graphical desktop KDE, you are
+allowed to adjust some KDE-settings accordingly to your hardware. Please
+notice our SuSE Welcome Dialogue as well.</p>") +
+
+    /* help 4/4 for dialog "Congratulation Dialog" */
+	_("<p>On demand experts can use the full range of SuSE's configuration
+modules to this time. Check <b>Start YaST Control Center</b> and it will start
+after <b>Finish</b>. Note: The Control Center doesn't have a back button to
+this installation sequence.</p>");
+
+    Wizard::SetContentsButtons (caption, contents, help, BackButtonLabel(),
+				FinishButtonLabel());
 
     any ret = nil;
 
