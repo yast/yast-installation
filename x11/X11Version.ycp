@@ -23,7 +23,6 @@ module "X11Version";
 // System Global Variables
 //---------------------------------------
 global string  version  = "";
-global boolean have_x11 = true;  // set via: inst_sw_details.ycp
 
 //=======================================
 // Global Functions
@@ -73,4 +72,23 @@ global define void GetVersion() ``{
 	y2milestone( "xfree_version: <%1>", version );
 	return( version );
 }
+
+global define boolean have_x11 ()
+    ``{
+
+    boolean ret = true;
+
+    list pacs = ["xf86", "yast2-x11"];
+    foreach (`pac, pacs, ``{
+	if (!Pkg::IsProvided (pac))
+	{
+	    y2debug ("%1 is missing", pac);
+	    ret = false;
+	}
+    });
+
+    y2milestone ("have_x11 = %1", ret);
+    return ret;
+}
+
 }
