@@ -27,6 +27,15 @@
     import "HTML";
     import "Popup";
 
+    include "installation/dialogs.ycp";
+
+    define void retranslate_proposal_dialog();
+    define list load_matching_submodules_list();
+    define boolean get_submod_descriptions_and_build_menu();
+    define void make_proposal( boolean force_reset, boolean language_changed );
+    define string format_sub_proposal( map prop );
+    define void build_dialog ();
+    define string help_text();
 
     // values used in defined functions
 
@@ -65,7 +74,7 @@
     define map submod_make_proposal( string submodule, boolean force_reset,
 				     boolean language_changed )
     ``{
-	map proposal = WFM::CallFunction ( submodule, [ "MakeProposal",
+	map proposal = (map) WFM::CallFunction ( submodule, [ "MakeProposal",
 							$[ "force_reset" : force_reset,
 							   "language_changed" : language_changed ] ] );
 	y2debug( "%1 MakeProposal() returns %2", submodule, proposal );
@@ -86,7 +95,7 @@
     ``{
 	// Call the AskUser() function
 
-	map     ask_user_result   = WFM::CallFunction( submod, [ "AskUser", $[ "has_next": false] ] );
+	map     ask_user_result   = (map) WFM::CallFunction( submodule, [ "AskUser", $[ "has_next": false] ] );
 	symbol  workflow_sequence = ask_user_result["workflow_sequence"]:`next;
 	boolean language_changed  = ask_user_result["language_changed"]:false;
 	boolean mode_changed      = ask_user_result["mode_changed"]:false;
@@ -134,7 +143,7 @@
 
     define map submod_description (string submodule)
     ``{
-	map description = WFM::CallFunction( submodule, [ "Description", $[] ] );
+	map description = (map) WFM::CallFunction( submodule, [ "Description", $[] ] );
 
 	return description;
     };
@@ -158,11 +167,11 @@
 
 	UI::BusyCursor();
 
-	foreach ( `submod, submodules,
+	foreach ( string submod, submodules,
 	``{
 	    if ( ! skip_the_rest )
 	    {
-		prop = prop + HTML::Heading( HTML::Link( select( titles, no, "ERROR: missing title" ),
+		prop = prop + HTML::Heading( HTML::Link( titles[no]:"ERROR: missing title" ,
 							 submod2id[submod]:"" ) );
 		prop_map = submod_make_proposal( submod, force_reset, language_changed );
 	    }
@@ -245,7 +254,7 @@
      **/
     define boolean submod_write_settings( string submodule )
     ``{
-	map result = WFM::CallFunction( submodule, [ "Write", $[] ] );
+	map result = (map) WFM::CallFunction( submodule, [ "Write", $[] ] );
 	if ( result == nil )
 	    result = $[];
 
@@ -261,7 +270,7 @@
 
 	boolean success = true;
 
-	foreach ( `submod, submodules, ``{
+	foreach (string submod, submodules, ``{
 	    boolean submod_success = submod_write_settings( submod );
 	    if (submod_success == nil)
 		submod_success = true;
@@ -294,7 +303,11 @@
      * @param widget_id  ID  of the widget, e.g. `id(`proposal)
      **/
     define void richtext_busy_cursor( any widget_id ) ``{
-	UI::ChangeWidget( widget_id, `Enabled, false );
+        if (is(widget_id, symbol)) {
+            UI::ChangeWidget( (symbol) widget_id, `Enabled, false );
+        } else {
+            UI::ChangeWidget( (term) widget_id, `Enabled, false );
+        }
     };
 
 
@@ -304,7 +317,11 @@
      * @param widget_id  ID  of the widget, e.g. `id(`proposal)
      **/
     define void richtext_normal_cursor( any widget_id ) ``{
-	UI::ChangeWidget( widget_id, `Enabled, true );
+        if (is(widget_id, symbol)) {
+	    UI::ChangeWidget( (symbol) widget_id, `Enabled, true );
+        } else {
+	    UI::ChangeWidget( (term) widget_id, `Enabled, true );
+        }
     };
 
 
@@ -318,7 +335,7 @@
 	build_dialog();
 	Wizard::ReplaceButtonBox( Wizard::HasAcceptButton() ?
 				  Wizard::AbortAcceptButtonBox() :
-				  Wizard::NextBackButtonBox() );
+				  Wizard::BackNextButtonBox() );
 	get_submod_descriptions_and_build_menu();
     };
 
@@ -334,11 +351,11 @@
      **/
     define list load_submodules_list( string file_name, list fallback_list ) ``{
 
-	list submodules = SCR::Read(.target.ycp, [ file_name, [] ] );
+	list submodules = (list) SCR::Read(.target.ycp, [ file_name, [] ] );
 
 	if ( submodules == [] )
 	{
-	    submodules = SCR::Read(.target.yast2, [ file_name, [] ] );
+	    submodules = (list) SCR::Read(.target.yast2, [ file_name, [] ] );
 	}
 
 	if ( submodules == [] )
@@ -566,7 +583,7 @@
 	if ( Mode::test )
 	    return true;
 
-	return size( SCR::Read(.probe.netcard) ) > 0;
+	return size( (list<map>) SCR::Read(.probe.netcard) ) > 0;
     };
 
 
@@ -649,7 +666,7 @@
 	Wizard::SetContents(headline,
 			    vbox,
 			    UI::WidgetExists(`id(`HelpText) ) ? help_text() : "",
-			    WFM::Args(0),	// have_back_button
+			    (boolean) WFM::Args(0),	// have_back_button
 			    false	// have_next_button
 			    );
     };
@@ -669,7 +686,7 @@
 	integer	no		= 1;
 	titles = [];
 
-	foreach(`submod, submodules, ``{
+	foreach(string submod, submodules, ``{
 	    map description   = submod_description( submod );
 
 	    if ( description == nil )
@@ -712,7 +729,7 @@
      **/
     define string help_text() ``{
 
-	string help_text = "";
+	string help_text_string = "";
 
 	    // General part of the help text for all types of proposals
 	string how_to_change = _("<p>
@@ -725,13 +742,13 @@ or by using the <b>Change...</b> menu.
 	{
 	    // Help text for installation proposal
 	    // General part ("You can change values...") is added as the next paragraph.
-	    help_text = _("<p>
+	    help_text_string = _("<p>
 Use <b>Accept</b> to perform a new installation with the values displayed.
 </p>
 ") + how_to_change;
 
 	    // Help text for installation proposal, continued
-	    help_text = help_text + _("<p>
+	    help_text_string = help_text_string + _("<p>
 To update an existing &product; system instead of doing a new install,
 click the <b>Mode</b> headline or select <b>Mode</b> in the
 <b>Change...</b> menu.
@@ -745,7 +762,7 @@ click the <b>Mode</b> headline or select <b>Mode</b> in the
 	     **/
 
 	    // Help text for installation proposal, continued
-	    help_text = help_text + _("<p>
+	    help_text_string = help_text_string + _("<p>
 Your hard disk has not been modified in any way, so you can still safely abort.
 </p>
 ");
@@ -754,7 +771,7 @@ Your hard disk has not been modified in any way, so you can still safely abort.
 	{
 	    // Help text for update proposal
 	    // General part ("You can change values...") is added as the next paragraph.
-	    help_text = _("<p>
+	    help_text_string = _("<p>
 Use <b>Accept</b> to perform an update with the values displayed.
 </p>
 ") + how_to_change;
@@ -767,7 +784,7 @@ Use <b>Accept</b> to perform an update with the values displayed.
 	     **/
 
 	    // Help text for installation proposal, continued
-	    help_text = help_text + _("<p>
+	    help_text_string = help_text_string + _("<p>
 Your hard disk has not been modified in any way, so you can still safely abort.
 </p>
 ");
@@ -776,7 +793,7 @@ Your hard disk has not been modified in any way, so you can still safely abort.
 	{
 	    // Help text for network configuration proposal
 	    // General part ("You can change values...") is added as the next paragraph.
-	    help_text = _("<p>
+	    help_text_string = _("<p>
 Put the network settings into effect by pressing <b>Next</b>.
 </p>
 ") + how_to_change;
@@ -785,7 +802,7 @@ Put the network settings into effect by pressing <b>Next</b>.
 	{
 	    // Help text for hardware configuration proposal
 	    // General part ("You can change values...") is added as the next paragraph.
-	    help_text = _("<p>
+	    help_text_string = _("<p>
 Put the hardware settings into effect by pressing <b>Next</b>.
 </p>
 ") + how_to_change;
@@ -795,13 +812,13 @@ Put the hardware settings into effect by pressing <b>Next</b>.
 	    // Generic help text for other proposals (not basic installation or
 	    // hardhware configuration.
 	    // General part ("You can change values...") is added as the next paragraph.
-	    help_text = _("<p>
+	    help_text_string = _("<p>
 To use the settings as displayed, press <b>Next</b>.
 </p>
 ") + how_to_change;
 	}
 
-	return help_text;
+	return help_text_string;
     };
 
 
@@ -824,7 +841,7 @@ To use the settings as displayed, press <b>Next</b>.
     //
 
     y2milestone( "Installation step #2" );
-    proposal_mode = WFM::Args(2);
+    proposal_mode = (symbol) WFM::Args(2);
     build_dialog();
 
     UI::ChangeWidget(`id(`menu_dummy), `Enabled, false );
@@ -842,7 +859,7 @@ To use the settings as displayed, press <b>Next</b>.
 	// In autoinst mode, this has been called already.
 
 	if (!Mode::autoinst)
-	    WFM::CallFunction(`inst_startup() );
+	    WFM::CallFunction("inst_startup", []);
 
 	// Let user decide between
 	//
@@ -854,10 +871,10 @@ To use the settings as displayed, press <b>Next</b>.
         {
 	    while (true)
 	    {
-	        any ret = WFM::CallFunction (`inst_mode());
+	        any ret = WFM::CallFunction ("inst_mode", []);
 
 	        if (ret == `abort || ret == `finish)
-		    return ret;
+		    return (symbol) ret;
 
 		if (ret != `again)
 		    break;
@@ -944,7 +961,7 @@ To use the settings as displayed, press <b>Next</b>.
 	}
 	else if ( input == `skip || input == `dontskip )
 	{
-	    if (UI::QueryWidget (`id(`skip), `Value))
+	    if ((boolean) UI::QueryWidget (`id(`skip), `Value))
 	    {
 		// User doesn't want to use any of the settings
 		UI::ChangeWidget( `id(`proposal), `Value,
@@ -974,14 +991,14 @@ resolved before continuing.
 
 	    if ( Mode::initial && !Mode::live_eval )
 	    {
-		input = WFM::CallFunction(`inst_doit( true,		// have_back
+		input = WFM::CallFunction("inst_doit", [true,		// have_back
 						      true,		// have_next
-						      false ) );	// going_backwards
+						      false] ); 	// going_backwards
 	    }
 
 	    if ( input == `next )
 	    {
-		boolean skip = UI::WidgetExists(`id(`skip) ) ? UI::QueryWidget(`id(`skip), `Value ) : true;
+		boolean skip = UI::WidgetExists(`id(`skip) ) ? (boolean) UI::QueryWidget(`id(`skip), `Value ) : true;
 
 		if ( ! skip )
 		{
@@ -993,11 +1010,11 @@ resolved before continuing.
 		{
 		    if ( Product::openteam_server )
 		    {
-			return WFM::CallFunction( `openteam() );
+			return (symbol) WFM::CallFunction( "openteam" );
 		    }
 		    else if ( Product::fwadmin_host )
 		    {
-			return WFM::CallFunction( `fwcdadmin() );
+			return (symbol) WFM::CallFunction( "fwcdadmin" );
 		    }
 		}
 		else
