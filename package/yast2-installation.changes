@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Jan  5 10:14:13 CET 2005 - jsrain@suse.cz
+
+- removed unneeded imports and variables from installation.ycp
+
+-------------------------------------------------------------------
 Tue Jan  4 09:45:17 CET 2005 - jsrain@suse.cz
 
 - on SGI Altix add fetchop and mmtimer to MODULES_LOADED_ON_BOOT

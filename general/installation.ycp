@@ -30,15 +30,12 @@
     import "ProductControl";
     import "ProductFeatures";
     import "Language";
-    import "Storage";
     Installation::scr_handle = scr_handle;
 
-    import "AutoInstall";
     import "Mouse";
     import "Console";
     import "StorageDevices";
     import "Keyboard";
-    import "Packages";
 
     import "Wizard";
     import "Label";
@@ -46,7 +43,6 @@
     import "Report";
     import "Hooks";
 
-    import "FileSystems";
     import "Linuxrc";
 
     // ======================================================================
@@ -325,15 +321,6 @@ differ from those in the manual.
 
 
     //--------------------------------------------------------------------
-
-    // Some abbreviations to keep the table below less wide
-    boolean autoinst	= Mode::autoinst ();
-    boolean autoconf	= AutoInstall::autoconf;
-    boolean test_mode	= Mode::test ();
-    boolean update_mode	= Mode::update ();		// FIXME: work's only after reboot
-    boolean repair	= Mode::repair ();
-    boolean screen_shot_mode = Mode::screen_shot ();
-
 
     //////////////////////////////////////////////////////////////////
     // All settings the user does are saved into a map. The submodules
