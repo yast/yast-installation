@@ -132,25 +132,24 @@
     // they are loaded by StorageControllers::Initialize(). Well, there
     // also was another reason for skipping StorageControllers::Probe ()
     // but nobody seems to remembers.
+
+    boolean found_controllers = true;
+
     if ( !Mode::live_eval )
     {
 	// give user feedback what's happening
 	showFeedback( _("Probing hard disk controllers") );
-	if (StorageControllers::Probe() <= 0)
-	{
-	    Report::Warning(_("No hard disk controllers were found for the
-installation. Check your hardware.
-"));
+	found_controllers = StorageControllers::Probe () > 0;
 
-	    // Don't abort if no storage controllers can be found. Disks
-	    // might be detected even without proper knowledge about the
-	    // controller.
-	}
+	// Don't abort or even warn if no storage controllers can be
+	// found.  Disks might be detected even without proper knowledge
+	// about the controller.  There's a warning below if no disks were
+	// found.
     }
 
     // give user feedback what's happening
     showFeedback( _("Loading kernel modules for hard disk controllers") );
-    StorageControllers::Initialize();
+    StorageControllers::Initialize ();
 
     ModuleLoading::Load ("dm-mod", "", "Linux", "DM", Mode::manual, true);
     SCR::Execute (.target.bash, "/sbin/devmap_mkmod.sh");
@@ -165,9 +164,19 @@ installation. Check your hardware.
     map targetMap = StorageDevices::Probe (true);
     if (size (targetMap) == 0)
     {
-	Report::Error(_("No hard disks were found for the installation.
+	if (found_controllers)
+	{
+	    Report::Error(_("No hard disks were found for the installation.
 Please check your hardware!
 "));
+	}
+	else
+	{
+	    Report::Error(_("No hard disks and no hard disk controllers were
+found for the installation.
+Please check your hardware!"));
+	}
+
 	clearFeedback();
 	return `cancel;
     }

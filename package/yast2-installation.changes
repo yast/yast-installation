@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Mar 10 14:40:11 CET 2004 - arvin@suse.de
+
+- don't warn if only no disk controller can be found (bug #35546)
+
+-------------------------------------------------------------------
 Wed Mar 10 09:51:29 CET 2004 - arvin@suse.de
 
 - extended uml installation work flow
