@@ -3,7 +3,7 @@ FILE          : inst_x11.ycp
 ***************
 PROJECT       : YaST2
               :
-AUTHOR        : Marcus Sch‰fer <ms@suse.de>
+AUTHOR        : Marcus Sch√§fer <ms@suse.de>
               :
 BELONGS TO    : YaST2
               : (X11 integration part using SaX2/ISaX)
