@@ -2,7 +2,7 @@
 # Makefile.am for installation/general
 #
 
-SUBDIRS = include testsuite
+SUBDIRS = testsuite
 
 client_DATA =					\
 	inst_hw_config.ycp			\

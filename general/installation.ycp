@@ -44,7 +44,6 @@
     import "Report";
     import "Hooks";
 
-    include "installation_ui.ycp";
     include "partitioning/partition_defines.ycp";
 
     // ==================================================================================

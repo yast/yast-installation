@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Aug 21 14:42:12 CEST 2003 - arvin@suse.de
+
+- removed obsolete installation_ui.ycp
+
+-------------------------------------------------------------------
 Thu Aug 21 10:04:25 CEST 2003 - kkaempf@suse.de
 
 - copy badlist (if existing) to installed system (#29092)
