@@ -26,7 +26,6 @@
     import "Display";
     import "Keyboard";
     import "Storage";
-    import "InstMedia";
     import "Packages";
     import "Kernel";
     import "Hotplug";
@@ -200,9 +199,6 @@ Please wait while the base system is being installed.
     Installation::scrHandle = WFM::SCROpen ("chroot="+Installation::destdir+":scr", false);
     WFM::SCRSetDefault (Installation::scrHandle);
 
-    // it's not mounted on the target !!
-    InstMedia::is_mounted = false;
-
     // re-init tmpdir from new SCR !
     Misc::tmpdir = SCR::Read (.target.tmpdir);
     string tmpdir = Misc::tmpdir;
@@ -219,6 +215,7 @@ Please wait while the base system is being installed.
     // second phase of the installation can find it.
 
     InjectFile ("/etc/install.inf");
+
     // just for debug so we can see the original install.inf later
     SCR::Execute(.target.bash, "/bin/cp /etc/install.inf /var/lib/YaST2");
 
@@ -296,7 +293,6 @@ Please wait while the base system is being installed.
 
     // --------------------------------------------------------------
     // mount the installation image on the target.
-    // Inform YaST1 about the installation image.
 
     // create mountpoint on target
     Progress::NextStep ();
@@ -312,6 +308,7 @@ Please wait while the base system is being installed.
 
     // --------------------------------------------------------------
     // copy /etc/raidtab to target if it was created
+
     if ( !Mode::update )
     {
 
@@ -323,6 +320,7 @@ Please wait while the base system is being installed.
 
     // --------------------------------------------------------------
     // Save the state of the hardware modules.
+
     Progress::NextStep ();
     // progress stage title
     Progress::Title (_("Saving configuration data on target system."));
@@ -344,7 +342,9 @@ Please wait while the base system is being installed.
 
     // --------------------------------------------------------------
     // check for Kde vs. Gnome, see inst_xf86config
+
     Progress::NextStep ();
+
     // progress stage title
 
     if ( !Mode::update )
@@ -363,10 +363,12 @@ Please wait while the base system is being installed.
 
     // --------------------------------------------------------------
     // console and /etc/initab (if serial console)
+
     Console::Save();
 
     // --------------------------------------------------------------
     // Write fstab
+
     Progress::NextStep ();
 
     if ( Mode::update )
@@ -399,8 +401,11 @@ Please wait while the base system is being installed.
     }
 
     // Run depmod to update modules.dep
+
     Progress::NextStep ();
+
     // progress stage title
+
     Progress::Title(_("Updating kernel module dependencies"));
 
     ModulesConf::Save();
@@ -415,7 +420,7 @@ Please wait while the base system is being installed.
 	    SCR::Execute(.target.remove, tmpdir+"/inittab");
 	}
     }
-    else
+    else	// normal install
     {
 	// Set default runlevel cause inittab will be overwritten by
 	// installing aaa_base
@@ -440,6 +445,7 @@ Please wait while the base system is being installed.
     }
 
     Progress::NextStage();
+
     // progress stage title
     Progress::Title(_("Copying configuration files to installed system"));
 
@@ -497,17 +503,23 @@ Please wait while the base system is being installed.
     }
 
     // --------------------------------------------------------------
+    // installation source cache
+
+    Pkg::SourceCacheCopyTo (Installation::destdir);
+
+    // --------------------------------------------------------------
     // boot manager configuration
 
     Progress::NextStage();
+
     // progress stage title
     Progress::Title (_("Installing boot manager..."));
 
     SCR::Execute (.target.bash, "/sbin/SuSEconfig --module bootsplash");
-    if( Storage::CheckForLvmRootFs() )
-	{
+    if (Storage::CheckForLvmRootFs() )
+    {
 	SCR::Execute (.target.bash, "/sbin/vgscan");
-	}
+    }
     Boot::Save ();		// save /etc/sysconfig parameters
 
     // --------------------------------------------------------------
@@ -551,6 +563,7 @@ with the load address of your root DASD.
 	}
     }
 
+    //-------------------------------------------------------------
     // write boot information for linuxrc
 
     linuxrc["Language"] = Language::language;
@@ -568,6 +581,7 @@ with the load address of your root DASD.
 
     // --------------------------------------------------------------
     // write network settings to installed system
+
     if (Arch::s390 || Mode::vnc || Mode::usessh)
     {
 	WFM::Execute (.local.bash, "/sbin/create_interface " + Installation::destdir);
@@ -576,6 +590,7 @@ with the load address of your root DASD.
     // --------------------------------------------------------------
     // copy the root password for root user from inst-sys to the installed system
     // copy the ssh files to the fresh installed system
+
     if (!Mode::update && Mode::usessh)
     {
 	WFM::Execute (.local.bash, "umask 077 ; awk  -F : ' /^root:/ { print $1\":\"$2 }' < /etc/shadow > "
@@ -653,9 +668,6 @@ with the load address of your root DASD.
     Progress::NextStep();
     // progress stage title
     Progress::Title(_("Unmounting all mounted devices"));
-
-    // cdrom in target system
-    InstMedia::UnmountMedium ();
 
     // loop over all filesystems
 
