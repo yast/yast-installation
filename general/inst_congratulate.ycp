@@ -33,22 +33,23 @@
     term check_box_start_y2cc = `CheckBox (`id(`start_y2cc),
 					   _("&Start YaST Control Center"), false);
 
-    /* caption for dialog "Congratulation Dialog" */
+    // caption for dialog "Congratulation Dialog"
     string caption = _("Installation Complete");
 
-    /* congratulation text 1/4 */
+    // congratulation text 1/4
     string text = _("<p><b>Congratulations!</b></p>") +
 
-    /* congratulation text 2/4 */
+    // congratulation text 2/4
 	_("<p>The installation of SuSE Linux on your machine is complete.
-After <b>Finish</b> you can login to the system at once.
-Visit us at http://www.suse.de or ...suse.com!</p>") +
+After <b>Finish</b> you can login to the system at once.</p>") +
 
-    /* congratulation text 3/4 */
-	_("<p>Have a lot of fun!</p>") +
+    // congratulation text 3/4
+    // Translators: If there exists a SuSE web-page for your language
+    // change the address accordingly. If in doubt leave the original.
+	_("<p>Visit us at www.suse.com!</p>") +
 
-    /* congratulation text 4/4 */
-	_("<p>Your SuSE Development Team</p>");
+    // congratulation text 4/4
+	_("<p>Have a lot of fun!<br>Your SuSE Development Team</p>");
 
     integer space = 1;
     map display = UI::GetDisplayInfo();
@@ -67,19 +68,19 @@ Visit us at http://www.suse.de or ...suse.com!</p>") +
 			   `VSpacing (2)
 			   );
 
-    /* help 1/4 for dialog "Congratulation Dialog" */
+    // help 1/4 for dialog "Congratulation Dialog"
     string help = _("<p>Your system is ready to run!</p>") +
 
-    /* help 2/4 for dialog "Congratulation Dialog" */
+    // help 2/4 for dialog "Congratulation Dialog"
 	_("<p><b>Finish</b> will close the YaST installation and will lead you
 to the first login.</p>") +
 
-    /* help 3/4 for dialog "Congratulation Dialog" */
+    // help 3/4 for dialog "Congratulation Dialog"
 	_("<p>If you choosed the default graphical desktop KDE, you are
 allowed to adjust some KDE-settings accordingly to your hardware. Please
 notice our SuSE Welcome Dialogue as well.</p>") +
 
-    /* help 4/4 for dialog "Congratulation Dialog" */
+    // help 4/4 for dialog "Congratulation Dialog"
 	_("<p>On demand experts can use the full range of SuSE's configuration
 modules to this time. Check <b>Start YaST Control Center</b> and it will start
 after <b>Finish</b>. Note: The Control Center doesn't have a back button to
