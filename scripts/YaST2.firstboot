@@ -17,6 +17,13 @@
 #
 # ----------------------------------------------------------------------
 
+
+function turn_off_silent_splash()
+{
+    echo "verbose" > /proc/splash
+}
+
+
 touch /etc/modules.conf
 /sbin/depmod -a -F /boot/System.map-`uname -r` `uname -r` >/dev/null 2>&1
 
@@ -284,6 +291,7 @@ if test -z "$USE_SSH" ; then
     #
     if [ ! -z "$VNC" ] ; then
     # Print this message if we do a X-Install
+    turn_off_silent_splash
     cat <<-EOF
 
 	***
@@ -295,6 +303,7 @@ EOF
     /usr/lib/YaST2/bin/YaST2 installation continue
 else
 #
+    turn_off_silent_splash
     cat <<EOF
 
 		***  sshd has been started  ***
