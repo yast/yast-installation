@@ -604,7 +604,7 @@
 	integer	no			= 1;
 	titles = [];
 
-	foreach(string submod, submodules, ``{
+	foreach(string submod, submodules_presentation, ``{
 	    map description   = submod_description( submod );
 
 	    if ( description == nil )
