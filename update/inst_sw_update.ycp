@@ -16,45 +16,9 @@
     import "Arch";
     import "Mode";
     import "Installation";
-    import "InstMedia";
     import "Wizard";
+    import "Packages";
     import "Update";
-
-    //
-    // Popup display for informing the user, that version of the installation-
-    // medium is to old.
-    //
-
-    UI( ``{
-	global define AskVersion( string installedVersion,
-			   string updateVersion)
-	``{
-	    string message =
-		_("The version of the installation medium is too old:\n");
-	    message = message +
-		_("    installed version :");
-	    message = message + installedVersion + "\n";
-	    message = message +
-		_("    update version :");
-	    message = message + updateVersion + "\n\n";
-
-	    message = message +
-		    _("Cancel the update and choose another installation medium.");
-	    OpenDialog(`opt(`decorated),
-		   `VBox (
-			  `Heading( _("Old Version") ),
-			  `VBox( `Label(message)),
-			  `PushButton( `id(`cancel),
-				       `opt(`default),
-				       CancelButtonLabel() )
-			  )
-		   );
-	    any r = UserInput();
-	    CloseDialog();
-
-	    return (r);
-        };
-    });
 
     boolean retval = false;
 
@@ -73,27 +37,31 @@
 	Update::affected_count = brokenPackages[0]:0;
 	Update::manuall_update_list = brokenPackages[1]:[];
 	Update::unmaintained_list = brokenPackages[2]:[];
-	Update::installedVersion = "installedVersion";
-	Update::updateVersion = "updateVersion";
-	Update::updateBasePackages = "updateBase";
 
-	// FIXME: still needed ?
-	if (false)
+	map update_inf = Pkg::TargetUpdateInf (Installation::destdir + "/var/lib/YaST/update.inf");
+
+	Update::installedVersion = update_inf["distname"]:"?" + " " + update_inf["distversion"]:"";
+
+	integer number_of_sources = size (Packages::theSources);
+	if (number_of_sources <= 0)
 	{
-	    // popup with "yes" and "no" buttons
-	    UI::YesNoPopup(_("It appears that a previous update had failed.
-Do you want to try this update again?
-"));
+	    y2error ("No source");
+	    Update::updateVersion = "?";
+	    Update::updateBasePackages = false;
+	}
+	else
+	{
+	    map product = Pkg::SourceProduct (Packages::theSources[number_of_sources-1]:0);
+	    y2milestone ("First source product %1", product);
+	    if (product == nil) product = $[];
+	    Update::updateVersion = product["product"]:"?";
+	    Update::updateBasePackages = Pkg::IsSelected (product["requires"]"");
 	}
 
-	// FIXME
-	if (false)
+	// do not delete "aps" if it is in use
+	if (SCR::Execute(.target.bash, sformat("grep -q apsfilter %1/etc/printcap", Installation::destdir)) == 0)
 	{
-		if ( package == "aps" )
-		{
-		    // do not delete "aps" if it is in use
-		    integer ret = SCR::Execute(.target.bash, sformat("grep -q apsfilter %1/etc/printcap", Installation::destdir) );
-		}
+	    Pkg::DoProvide ("aps");
 	}
 		
 	// adding vnc package if in vnc update mode
@@ -105,6 +73,7 @@ Do you want to try this update again?
 	UI::CloseDialog();
 
     } // evaluate updatelist
+
 
     if ( Mode::test )
     {
@@ -118,8 +87,8 @@ Do you want to try this update again?
     // screen title for software selection
     string title = _("Software Update");
 
-    string labelInstalledVersion = sformat ("%1",Update::installedVersion );
-    string labelUpdateVersion = sformat    ("%1", Update::updateVersion );
+    string labelInstalledVersion   = Update::installedVersion;
+    string labelUpdateVersion      = Update::updateVersion;
     string labelUpdateBasePackages = "";
 
     if ( Update::updateBasePackages )
@@ -131,8 +100,8 @@ Do you want to try this update again?
 	labelUpdateBasePackages = _("no");
     }
 
-    string labelAutomaticUpdate = sformat  ("%1", automatikUpdate );
-    string labelManuellUpdate =   sformat  ("%1", manuellUpdate );
+    string labelAutomaticUpdate = automatikUpdate;
+    string labelManuellUpdate =   manuellUpdate;
 
     // Build and show dialog
 
@@ -201,10 +170,10 @@ if the package should be updated.
     boolean ok = Pkg::PkgSolve();
 
     // FIXME
-    if (false)
+    if (!ok)
     {
 	// There are unresolved package-dependencies while upgrade
-	any ret = CallFunction( `inst_sw_single( `update, `not_only_checked ) );
+	any ret = CallFunction( `inst_packages() );
 	return `again;
     }
 
@@ -227,7 +196,7 @@ if the package should be updated.
 
 	if ( ret == `details )
 	{
-	    ret = CallFunction( `inst_sw_single( `update, `not_only_checked ) );
+	    ret = CallFunction( `inst_packages ( ) );
 
 	    if ( ret == `ok || ret == `cancel_single )
 		ret = `again;
@@ -257,8 +226,7 @@ Would you like to browse though these packages?
 
 		if ( UI::YesNoPopup(message) )
 		{
-		    ret = CallFunction( `inst_sw_single( `update,
-							 `not_only_checked ) );
+		    ret = CallFunction( `inst_packages () );
 
 		    if ( ret == `ok || ret == `cancel_single )
 			ret = `again;

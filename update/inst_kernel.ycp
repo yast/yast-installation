@@ -32,8 +32,8 @@
 
   define prepareUpdate() ``{
       any ret = nil;
-      if ( size ( SCR::Read(.package.updateSet) ) <= 0
-	  && size ( SCR::Read(.package.deleteSet) ) <= 0
+      if ( Pkg::PkgAnyToDelete()
+	  && Pkg::PkgAnyToInstall()
 	  && size ( newKernel ) <= 0 )
       {
 	  UI::MessagePopup(_("There is nothing to update."));
@@ -95,7 +95,7 @@ to the previous dialog.
       // selecting manuall selected kernel for update
       if ( size ( newKernel ) > 0 )
       {
-	  SCR::Execute( .package.selectUpdate, newKernel );
+	  Pkg::DoProvide ( newKernel );
       }
 
       return ret;
@@ -110,18 +110,10 @@ to the previous dialog.
     list filterKernel = filter(string k, Pkg::GetPackages(`installed, true), ``(substring(k, 0, 2) == "k_" ));
     string oldKernel = filterKernel[0]:"";
 
-    // reset old selection
-
-    if ( size ( newKernel ) > 0 )
-    {
-	SCR::Execute(.package.deselectUpdate,  newKernel );
-	SCR::Execute(.package.deselectInstall, newKernel );
-    }
-    
-    
+    y2milestone ("newKernel %1, filterKernel %2, oldKernel %3", newKernel, filterKernel, oldKernel);
     if ( size ( oldKernel ) > 0 )
     {
-	// There have been found a kernel-rpm which can be updated.
+	// Found a kernel-rpm which can be updated.
 	// --> doit without asking the user.
 
 	if ( prepareUpdate() == `again )
@@ -138,7 +130,6 @@ to the previous dialog.
     map kernelMap = listmap(string k, kernels, ``([k, Pkg::GetSummary(k)]));
 
     y2milestone ( "Available kernel: %1", kernelMap );
-
 
     // Build the contents of the dialog.
 
