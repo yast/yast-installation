@@ -79,7 +79,7 @@
     global boolean unitedlinux	= false;
 
     /**
-     *
+     * list of flags from content file
      */
     global list flags		= [];
 
