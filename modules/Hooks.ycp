@@ -50,20 +50,20 @@
      * @param string script name
      * @param string type
      */
-    void ExecuteScript (string script, string type )
+    void ExecuteScript (string script, string type)
     {
             // string message =  sformat(_("Executing user supplied script: %1"), scriptName);
             string executionString = "";
-            string scriptPath = sformat("%1/%2", tmp_dir , script);
+            string scriptPath = sformat("%1/%2", tmp_dir, script);
             if (type == "shell")
             {
-                executionString = sformat("/bin/sh -x %1  2&> %2/%3.log",
+                executionString = sformat("/bin/sh -x %1 2&> %2/%3.log",
                         scriptPath, log_dir, script);
                 SCR::Execute (.target.bash, executionString);
             }
             else if (type == "perl")
             {
-                executionString = sformat("/usr/bin/perl %1  2&> %2/%3.log",
+                executionString = sformat("/usr/bin/perl %1 2&> %2/%3.log",
                         scriptPath, log_dir, script);
                 SCR::Execute (.target.bash,executionString);
             }
@@ -88,7 +88,7 @@
             }
             else if (WFM::Read (.local.size, sformat("%1/%2_pre.pl", tmp_dir, filename)) > 0)
             {
-                ExecuteScript(sformat("%1_pre.pl",  filename), "shell");
+                ExecuteScript(sformat("%1_pre.pl", filename), "perl");
             }
         } else {
 	    if (WFM::Read (.local.size, sformat("%1/%2_post.sh", tmp_dir, filename)) > 0)
@@ -97,7 +97,7 @@
             }
             else if (WFM::Read (.local.size, sformat("%1/%2_post.pl", tmp_dir, filename)) > 0)
             {
-                ExecuteScript(sformat("%1_post.pl", filename), "shell");
+                ExecuteScript(sformat("%1_post.pl", filename), "perl");
             }
         }
     }
