@@ -388,7 +388,18 @@
 						   ]
 						   );
 	    }
-	    else // no SPARC
+	    else if ( Arch::ppc64 )
+	    {
+		// ppc64
+
+		submodules = load_submodules_list( "hw-config-proposals-ppc64.ycp",
+						   [
+						    // Fallback list
+						    "lan_proposal"
+						    ]
+						   );
+	    }
+	    else
 	    {
 		if ( have_network_card() )
 		{
@@ -412,7 +423,7 @@
 
 		    submodules = load_submodules_list( "hw-config-proposals-home-pc.ycp",
 						       [
-							// Fallback list							"lan_proposal",
+							// Fallback list
 							"printer_proposal",
 							"sound_proposal",
 							"tv_proposal",
