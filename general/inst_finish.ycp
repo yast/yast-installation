@@ -506,6 +506,10 @@ Please wait while the base system is being installed.
     Progress::Title (_("Installing boot manager..."));
 
     SCR::Execute (.target.bash, "/sbin/SuSEconfig --module bootsplash");
+    if( Storage::CheckForLvmRootFs() )
+	{
+	SCR::Execute (.target.bash, "/sbin/vgscan");
+	}
     Boot::Save ();		// save /etc/sysconfig parameters
 
     Installation::Save();
