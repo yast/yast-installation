@@ -21,6 +21,8 @@
     import "Arch";
     import "Initrd";
 
+    import "Mode";
+
     textdomain "installation";
 
     /**
@@ -66,6 +68,26 @@
     // local defines
 
     /**
+     * AddCmdLine ()
+     * @param	string	name of parameter
+     * @param	string	args of parameter
+     *
+     * add "name=args" to kernel boot parameters
+     * add just "name" if args = ""
+     * @see: cmdLine
+     */
+    global define void AddCmdLine (string name, string arg)
+    ``{
+	cmdLine = cmdLine + " " + name;
+	if (arg != "")
+	{
+	    cmdLine = cmdLine + "=" + arg;
+	}
+	y2milestone ("cmdLine '%1'", cmdLine);
+	return;
+    }
+
+    /**
      * @param	cmdline	string
      *
      * @return	void
@@ -82,7 +104,7 @@
 	list discardlist = [
 	];
 
-	list(string) cmdlist = [];
+	list<string> cmdlist = [];
 
 	integer parse_index = 0;
 	boolean in_quotes = false;
@@ -125,11 +147,11 @@
 	    suse_update = true;
 	}
 
-	foreach (`parameter, cmdlist,
+	foreach (string parameter, cmdlist,
 	``{
 	    // split "key=value" to ["key", "value"]
 
-	    list param_value_list = splitstring (parameter, "=");
+	    list<string> param_value_list = splitstring (parameter, "=");
 
 	    // now only collect keys not in discardlist
 	    if (size (param_value_list) > 0)
@@ -170,11 +192,11 @@
 	{
 	    // get flags from WFM /proc/cpuinfo (for pae and tsc tests below)
 
-	    string cpuinfo_flags = SCR::Read(.proc.cpuinfo.value.0."flags");	// check only first processor
+	    string cpuinfo_flags = (string) SCR::Read(.proc.cpuinfo.value."0"."flags");	// check only first processor
 	    list cpuflags = (size(cpuinfo_flags) > 0) ? splitstring(cpuinfo_flags, " ") : [];
 
 	    // check for > 4GB memory
-	    list memories = SCR::Read(.probe.memory);
+	    list memories = (list) SCR::Read(.probe.memory);
 	    integer memsize = memories[0,"resource","phys_mem",0,"range"]:0;
 	    integer fourGB = 0x100000000;
 	    y2milestone ("Physical memory %1", memsize);
@@ -201,7 +223,7 @@
 		// non-smp
 
 		// read cpu specific information (for first cpu only)
-		map cpu = select (SCR::Read (.probe.cpu), 0, $[]);
+		map cpu = (map) select ((list) SCR::Read (.probe.cpu), 0, $[]);
 		integer cpu_family = cpu["family"]:0;
 
 		if ((cpu["vendor"]:"" == "AuthenticAMD")
@@ -216,17 +238,18 @@
 	else if (Arch::alpha
 		 && !Arch::has_smp)
 	{
-	    if (serial_console)
+	    if (Mode::serial_console)
 	    {
 		kernel_packages = ["k_serial"];
 		switched = true;
 	    }
 
-	    if (tga_controller_found)
+// I comment this condition cause this is unique occurence of this variable over all sources
+/*	    if (tga_controller_found)
 	    {
 		kernel_packages = ["k_tga"];
 		switched = true;
-	    }
+	    }*/
 	}
 	else if (Arch::ppc)
 	{
@@ -248,10 +271,10 @@
 	    {
 		// XXX fixme
 		string chrp_cpu = "";
-		list cpuProbe = SCR::Read(.probe.cpu);
-		foreach (`cpuProbe, cpuProbe,
+		list<map> cpuProbe = (list<map>) SCR::Read(.probe.cpu);
+		foreach (map cpuProbe_map, cpuProbe,
 		``{
-		    chrp_cpu = cpuProbe["model"]:"";
+		    chrp_cpu = cpuProbe_map["model"]:"";
 		    chrp_cpu = tolower (chrp_cpu);
 		});
 
@@ -296,7 +319,7 @@
 	}
 	else if (Arch::ia64)
 	{
-	    list cpuProbe = SCR::Read (.probe.cpu);
+	    list<map> cpuProbe = (list<map>) SCR::Read (.probe.cpu);
 	    string model = cpuProbe[0,"model"]:"Itanium";
 	    if (issubstring(model, "Itanium 2"))
 	    {
@@ -320,10 +343,20 @@
     }  // ProbeKernel ()
 
     /**
-     * IDERecorders ()
-     * @param	list(string)	list of ide cdrecorders (i.e. ["hdc", "hdd"])
+     * AddModuleToLoad ()
+     * @param string module name
+     * add the module name to sysconfig variable
      */
-    global define void IDERecorders (list idecdrws)
+    global define void AddModuleToLoad (string name)
+    ``{
+	kernelModules = kernelModules + " " + name;
+    }
+
+    /**
+     * IDERecorders ()
+     * @param	list<string>	list of ide cdrecorders (i.e. ["hdc", "hdd"])
+     */
+    global define void IDERecorders (list<string> idecdrws)
     ``{
 	y2milestone ("IDERecorders(%1)", idecdrws);
 	if (size (idecdrws) > 0)
@@ -334,7 +367,7 @@
 	    AddModuleToLoad ("ide-cd");
 	    AddModuleToLoad ("ide-scsi");
 	    y2milestone ("old boot_parameters '%1'", cmdLine);
-	    foreach (`dev, idecdrws,
+	    foreach (string dev, idecdrws,
 	    ``{
 		AddCmdLine (dev, "ide-scsi");
 		AddCmdLine (dev + "lun", "0");
@@ -358,36 +391,6 @@
     }
 
     /**
-     * AddCmdLine ()
-     * @param	string	name of parameter
-     * @param	string	args of parameter
-     *
-     * add "name=args" to kernel boot parameters
-     * add just "name" if args = ""
-     * @see: cmdLine
-     */
-    global define void AddCmdLine (string name, string arg)
-    ``{
-	cmdLine = cmdLine + " " + name;
-	if (arg != "")
-	{
-	    cmdLine = cmdLine + "=" + arg;
-	}
-	y2milestone ("cmdLine '%1'", cmdLine);
-	return;
-    }
-
-    /**
-     * AddModuleToLoad ()
-     * @param string module name
-     * add the module name to sysconfig variable
-     */
-    global define void AddModuleToLoad (string name)
-    ``{
-	kernelModules = kernelModules + " " + name;
-    }
-
-    /**
      * SaveModuleToLoad ()
      * save the sysconfig variable to the file
      */
@@ -406,7 +409,7 @@
     global define void Kernel ()
     ``{
 	if (Mode::initial || Mode::cont) {
-	string tmp = SCR::Read (.etc.install_inf.Cmdline);
+	string tmp = (string) SCR::Read (.etc.install_inf.Cmdline);
 	y2milestone ("cmdline from install.inf is: %1", tmp);
 	if (tmp != nil) {
 	    // extract extra boot parameters given in installation

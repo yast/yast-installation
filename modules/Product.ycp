@@ -96,22 +96,22 @@
 
 	if (Mode::initial)
 	{
-	    name		= SCR::Read(.content.PRODUCT);
-	    version		= SCR::Read(.content.VERSION);
-	    vendor		= SCR::Read(.content.VENDOR);
+	    name		= (string) SCR::Read(.content.PRODUCT);
+	    version		= (string) SCR::Read(.content.VERSION);
+	    vendor		= (string) SCR::Read(.content.VENDOR);
 
-	    distproduct		= SCR::Read(.content.DISTPRODUCT);
-	    distversion		= SCR::Read(.content.DISTVERSION);
+	    distproduct		= (string) SCR::Read(.content.DISTPRODUCT);
+	    distversion		= (string) SCR::Read(.content.DISTVERSION);
 
-	    baseproduct		= SCR::Read(.content.BASEPRODUCT);
+	    baseproduct		= (string) SCR::Read(.content.BASEPRODUCT);
 	    if (baseproduct == "") baseproduct = name;
-	    baseversion		= SCR::Read(.content.BASEVERSION);
+	    baseversion		= (string) SCR::Read(.content.BASEVERSION);
 
-	    relnotesurl		= SCR::Read(.content.RELNOTESURL);
+	    relnotesurl		= (string) SCR::Read(.content.RELNOTESURL);
 
 	    any tmp1 = SCR::Read (.content.FLAGS);
 	    if (tmp1 != nil)
-		flags		= splitstring (tmp1, " ");
+		flags		= splitstring ((string) tmp1, " ");
 	}
 	else if (!Mode::config)
 	{
