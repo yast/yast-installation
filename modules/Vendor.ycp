@@ -29,15 +29,15 @@
 
     global define void DriverUpdate ()
     ``{
-	list updatefiles = WFM::Read (.local.dir, ["/update/install", []]);
+	list<string> updatefiles = (list<string>) WFM::Read (.local.dir, ["/update/install", []]);
 	if (size (updatefiles) <= 0)
 	    return;
 
 	SCR::Execute(.target.mkdir, "/tmp/install");
 	byteblock updatebuffer = #[];
-	foreach (`updatefile, updatefiles,
+	foreach (string updatefile, updatefiles,
 	``{
-	    updatebuffer = WFM::Read (.local.byte, "/update/install/"+updatefile);
+	    updatebuffer = (byteblock) WFM::Read (.local.byte, "/update/install/"+updatefile);
 	    SCR::Write (.target.byte, "/tmp/install/"+updatefile, updatebuffer);
 	});
 

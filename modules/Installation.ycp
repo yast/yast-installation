@@ -54,7 +54,7 @@
     //---------------------------------------------------------------
     // constructor
 
-    global define Installation ()
+    global define void Installation ()
     ``{
 
 	// get setup data from linuxrc

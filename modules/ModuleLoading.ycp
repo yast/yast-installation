@@ -90,7 +90,7 @@
 	    && !Mode::test)
 	{
 	    // always look whether the module is already loaded
-	    map loaded_modules = SCR::Read(.proc.modules);
+	    map loaded_modules = (map) SCR::Read(.proc.modules);
 	    if (size (loaded_modules[modulename]:$[]) > 0)
 	    {
 		// already loaded
@@ -151,10 +151,10 @@
 				      )
 			       );
 		  UI::SetFocus (`id(`ok_msg));
-		  symbol ret = UI::UserInput();
+		  symbol ret = (symbol) UI::UserInput();
 		  if (ret == `ok_msg)
 		  {
-		      string module_data = UI::QueryWidget(`id(`mod_name), `Value);
+		      string module_data = (string) UI::QueryWidget(`id(`mod_name), `Value);
 		      if (size (module_data) > 0)
 		      {
 			  // skip leading spaces
@@ -192,11 +192,11 @@
 	boolean load_success = false;
 	if (with_modprobe)
 	{
-	    load_success = SCR::Execute(.target.modprobe, modulename, moduleargs);
+	    load_success = (boolean) SCR::Execute(.target.modprobe, modulename, moduleargs);
 	}
 	else
 	{
-	    load_success = SCR::Execute(.target.insmod, modulename, moduleargs);
+	    load_success = (boolean) SCR::Execute(.target.insmod, modulename, moduleargs);
 	}
 	if (load_success == nil)
 	    load_success = false;

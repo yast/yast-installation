@@ -25,6 +25,8 @@ import "Installation";
 import "Require";
 import "Mode";
 
+import "Mode";
+
 //=======================================
 // System Global Variables
 //---------------------------------------
@@ -53,7 +55,7 @@ global define string GetVersion() ``{
 	// if there is only one entry pointing to XFree86 version 3
 	// XFree86 3 has to be used for this card
 	// ---
-	integer ver = (integer)SCR::Execute( .target.bash,
+	integer ver = (integer) SCR::Execute( .target.bash,
 		Directory::bindir + "/version"
 	);
 	if (ver == 4) {
@@ -81,7 +83,7 @@ global define string GetX11Link() ``{
 	// ...
 	// Read the endpoint of the X11 link
 	// ---
-	integer ver = (integer)SCR::Execute( .target.bash,
+	integer ver = (integer) SCR::Execute( .target.bash,
 		Directory::bindir + "/version -link " + Installation::destdir
 	);
 	if (ver == 4) {

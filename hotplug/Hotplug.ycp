@@ -22,6 +22,9 @@
     import "ModuleLoading";
     import "HwStatus";
 
+    import "Mode";
+    import "StorageDevices";
+
     /**
      * if a usb controller was found and initialized
      */
@@ -49,7 +52,7 @@
 	// loop through all drivers checking if one is already active
 
 	boolean already_active = false;
-	foreach (`modulemap, module_drivers,
+	foreach (map modulemap, module_drivers,
 	``{
 	    if (modulemap["active"]:true)
 	    {
@@ -73,7 +76,7 @@
 	// break after first successful load
 	//   no need to check "active", already done before !
 
-	foreach (`modulemap, module_drivers,
+	foreach (map modulemap, module_drivers,
 	``{
 	    y2milestone ("modulemap: %1", modulemap);
 	    boolean module_modprobe = modulemap["modprobe"]:false;
@@ -82,7 +85,7 @@
 
 	    if (!stop_loading)
 	    {
-		foreach (`module_entry, modulemap["modules"]:[],
+		foreach (list module_entry, modulemap["modules"]:[],
 		``{
 		    string module_name = module_entry[0]:"";
 		    string module_args = module_entry[1]:"";
@@ -152,9 +155,9 @@
 	if (Arch::sparc)	// why this and why here ???
 	    return;
 
-	list usb_controllers = SCR::Read(.probe.usbctrl);
+	list<map> usb_controllers = (list<map>) SCR::Read(.probe.usbctrl);
 
-	foreach (`controller, usb_controllers,
+	foreach (map controller, usb_controllers,
 	``{
 	    boolean start_result = startController (controller);
 	    if (start_result)
@@ -166,10 +169,10 @@
 	if (haveUSB)
 	{
 	    // prevent multiple mounts for /proc/bus/usb
-	    list mtab = SCR::Read(.etc.mtab);
+	    list<map> mtab = (list<map>) SCR::Read(.etc.mtab);
 	    if (mtab == nil) mtab = [];
 	    boolean usb_mounted = false;
-	    foreach (`mpoint, mtab,
+	    foreach (map mpoint, mtab,
 	    ``{
 		if (mpoint["file"]:"" == "/proc/bus/usb")
 		    usb_mounted = true;
@@ -192,9 +195,9 @@
 	if (Arch::sparc)	// why this and why here ???
 	    return;
 
-	list firewire_controllers = SCR::Read (.probe.ieee1394ctrl);
+	list<map> firewire_controllers = (list<map>) SCR::Read (.probe.ieee1394ctrl);
 
-	foreach (`controller, firewire_controllers,
+	foreach (map controller, firewire_controllers,
 	``{
 	    boolean start_result = startController (controller);
 	    if (start_result)
