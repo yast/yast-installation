@@ -2,6 +2,7 @@
 Wed Jan 12 12:44:29 CET 2005 - ms@suse.de
 
 - removed xmset calls to disable/enable the mouse pointer.
+- prevent patching X11 configuration in continue mode
 
 -------------------------------------------------------------------
 Wed Jan 12 11:39:31 CET 2005 - ms@suse.de

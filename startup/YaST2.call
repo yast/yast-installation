@@ -96,8 +96,9 @@ function prepare_for_qt () {
 	set_splash 100
 
 	#=============================================
-	# patch X11 configuration if not update mode
+	# patch X11 conf. if not update/continue mode
 	#---------------------------------------------
+	if [ ! -f /var/lib/YaST2/runme_at_boot ];then
 	if [ $INST_MODE = "normal" ];then
 		# Activate correct device/screen section...
 		sed -e "s#Screen.*Screen\[.*\]#Screen   "\""Screen[$X11_CONFIG_ID]#" \
@@ -125,6 +126,7 @@ function prepare_for_qt () {
 			> /etc/X11/XF86Config.new
 			mv /etc/X11/XF86Config.new /etc/X11/XF86Config
 		fi
+	fi
 	fi
 	#=============================================
 	# start X-Server and wait until ready
