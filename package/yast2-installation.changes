@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Aug  8 16:23:00 CEST 2002 - kkaempf@suse.de
+
+- honor "/etc/install.inf:NoShell" to suppress extra shell on tty2.
+
+-------------------------------------------------------------------
 Wed Aug  7 12:16:33 CEST 2002 - kkaempf@suse.de
 
 - allow for multiple foreign primary partitions (#17458)

@@ -234,7 +234,9 @@ else
 	else
 #		if not running on iSeries:
 #		start a root shell on second virtual console
-		SPID=`/usr/lib/YaST2/bin/startshell /dev/tty2`
+		if [ ! grep -qs '^NoShell:.*1' /etc/install.inf ] ; then
+			SPID=`/usr/lib/YaST2/bin/startshell /dev/tty2`
+		fi
 	fi
 fi
 
