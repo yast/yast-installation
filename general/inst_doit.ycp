@@ -115,6 +115,10 @@ their licenses, click <b>I Disagree to All</b>.</p>");
 		    }
 		    Pkg::PkgTaboo (package);
 		}
+		else
+		{
+		    Pkg::PkgMarkLicenseConfirmed (package);
+		}
 	    }
 	});
     }
