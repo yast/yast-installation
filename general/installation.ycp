@@ -130,9 +130,13 @@
 		// Mouse probing may fail otherwise...
 		//
 		SCR::Execute(.target.bash, "/bin/sleep 4");
-		SCR::Execute (.target.bash, "/usr/X11R6/bin/xmset --disable");
+		if ( Mode::x11_setup_needed ) {
+			SCR::Execute (.target.bash, "/usr/X11R6/bin/xmset --disable");
+		}
 		Mouse::Set (Mouse::Probe ());
-		SCR::Execute (.target.bash, "/usr/X11R6/bin/xmset --enable");
+		if ( Mode::x11_setup_needed ) {
+			SCR::Execute (.target.bash, "/usr/X11R6/bin/xmset --enable");
+		}
 	}
 	}
 
