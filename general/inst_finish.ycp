@@ -17,7 +17,7 @@
     import "Arch";
     import "Mode";
     import "Installation";
-	import "X11Version";
+    import "X11Version";
     import "AutoInstall";
     import "Misc";
     import "Language";
@@ -703,7 +703,6 @@ with the load address of your root DASD.
 	// first, umount everthing mounted *in* the target.
 	// /proc/bus/usb
 	// /proc
-	// /boot
 
 	if (Hotplug::haveUSB)
 	{
@@ -713,7 +712,7 @@ with the load address of your root DASD.
 
 	map targetMap = Storage::GetTargetMap();
 
-	// first umount all file based crypto fs since they potetially
+	// first umount all file based crypto fs since they potentially
 	// could mess up umounting of normale filesystems if the crypt
 	// file is not on the root fs
 	y2milestone( "umount list %1", umountList );
