@@ -21,8 +21,6 @@
 
     import "Arch";
     import "Installation";
-    import "InstMedia";
-    import "MediaUI";
     import "Wizard";
     import "Update";
     import "Mode";
@@ -51,28 +49,13 @@
 
     while ((id >= 0) && (id < size (dialog)))
     {
-	if ( id == 1 )
-	{
-	    // mount CD 1 BEFORE initializing package agent
-	    // (needed to get commom.pkd)
-
-	    boolean go_on = MediaUI::ChangeMedium (1, true);
-
-	    if ( !go_on )
-	    {
-		// quit dialog
-		UI::CloseDialog();
-		return `cancel;
-	    }
-	}
-
 	lastResult = result;
 
 	if ( id < 6
 	     || SCR::Read(.package.isCDBooted ) )
 	{
 	    // calling inst_finish only if CD has been booted
-	    result = eval(select(dialog, id, ""));
+	    result = eval(dialog[id]:"");
 	}
 
 	if ( result == `auto )
