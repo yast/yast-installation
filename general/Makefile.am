@@ -6,7 +6,7 @@ SUBDIRS = include testsuite
 
 ynclude_DATA = showlog_defines.ycp
 
-module_DATA = \
+client_DATA =					\
 	inst_ask_config.ycp			\
 	inst_hw_config.ycp			\
 	inst_confirm_abort.ycp			\
