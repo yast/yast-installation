@@ -534,7 +534,7 @@
 
 	/* radiobuttons */
 	term skip_buttons =
-	    `RadioButtonGroup (`id(`rb),
+	    `RadioButtonGroup (
 			       `VBox (
 				      `VSpacing(1),
 				      `Left(`RadioButton(`id(`skip), `opt(`notify),
@@ -856,25 +856,21 @@ To use the settings as displayed, press <b>Accept</b>.
 	{
 	    make_proposal( true, false );	// force_reset
 	}
-	else if ( input == `skip || input == `dontskip )
+	else if ( input == `skip )
 	{
-	    if ( UI::QueryWidget(`id(`skip), `Value ) )
-	    {
-		// User doesn't want to use any of the settings
-
-		UI::ChangeWidget( `id(`proposal), `Value,
-				  HTML::Newlines( 3 ) +
-				  // message show when user has disabled the configuration
-				  HTML::Para( _( "Skipping configuration upon user request" ) )
-				  );
-		UI::ChangeWidget(`id(`menu), `Enabled, false );
-	    }
-	    else
-	    {
-		// User changed his mind and wants the settings back - recreate them
-		make_proposal( false, false );
-		UI::ChangeWidget(`id(`menu), `Enabled, true );
-	    }
+	    // User doesn't want to use any of the settings
+	    UI::ChangeWidget( `id(`proposal), `Value,
+			      HTML::Newlines( 3 ) +
+			      // message show when user has disabled the configuration
+			      HTML::Para( _( "Skipping configuration upon user request" ) )
+			      );
+	    UI::ChangeWidget(`id(`menu), `Enabled, false );
+	}
+	else if ( input == `dontskip )
+	{
+	    // User changed his mind and wants the settings back - recreate them
+	    make_proposal( false, false );
+	    UI::ChangeWidget(`id(`menu), `Enabled, true );
 	}
 	else if ( input == `next )
 	{
