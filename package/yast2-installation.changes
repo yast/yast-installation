@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Mar 14 11:14:01 CET 2003 - fehr@suse.de
+
+- remove handling of IDE recorders from inst_finish.ycp
+  this is now done much sooner in StorageDevices.ycp (bug #25293)
+
+-------------------------------------------------------------------
 Wed Mar 12 15:12:54 CET 2003 - arvin@suse.de
 
 - fixed focus in last installation dialog (bug #25171)

@@ -228,11 +228,6 @@ Please wait while the base system is being installed.
     // progress stage title
     Progress::Title (_("Configuring CD-ROM devices"));
 
-    // setup ide-scsi
-    // !! must be called _after_ Storage::GetRootInitrdModules
-    list ide_recorders = StorageDevices::ProbeIDERecorders ();
-    Kernel::IDERecorders (ide_recorders);
-
     // Override linuxrc settings in autoinst mode
     if ( Mode::autoinst )
     {
