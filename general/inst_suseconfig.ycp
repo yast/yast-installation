@@ -142,11 +142,8 @@ this process can take some time.</p>
     // prior to calling any SuSEconfig module.
     //
 
-    if ( !Mode::live_eval )
-    {
-	logStep( _("Setting up linker cache") );
-	runStep( "/sbin/ldconfig" );
-    }
+    logStep( _("Setting up linker cache") );
+    runStep( "/sbin/ldconfig" );
 
     // This is the same as:
     //    runStep( "/sbin/SuSEconfig --verbose --module aaa_at_first" );

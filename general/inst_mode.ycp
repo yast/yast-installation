@@ -118,7 +118,6 @@
 
     if ( ! Storage::HaveLinuxPartitions()
 	 || Mode::autoinst
-	 || Mode::live_eval
 	 || !offer_update)
     {
 	// Force new installation, no update possible
