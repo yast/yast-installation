@@ -101,13 +101,12 @@
 	    {
 		// we have options, pass them to modules.conf
 
-		map current_options = SCR::Read (.modules.options, mname);
+		map current_options = SCR::Read (add (.modules.options, mname));
 
 		map new_options = Misc::MergeOptions (options, current_options);
 
+		SCR::Write (add (.modules.options, mname), new_options);
 		modules_conf_changed = true;
-
-		SCR::Write (.modules.options, new_options, mname);
 	    }
 	});
 
@@ -122,8 +121,8 @@
 		list install_alias_split = splitstring (install_alias, " ");
 		if (size (install_alias_split) == 2)
 		{
-		    SCR::Write (.modules.alias, install_alias_split[1]:"",
-				install_alias_split[0]:"");
+		    SCR::Write (add (.modules.alias, install_alias_split[0]:""),
+				install_alias_split[1]:"");
 		    modules_conf_changed = true;
 		}
 	    }

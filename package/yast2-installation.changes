@@ -1,8 +1,13 @@
 -------------------------------------------------------------------
+Wed Jan 22 17:11:20 CET 2003 - arvin@suse.de
+
+- use newer interface to modules agent (bug #22995)
+
+-------------------------------------------------------------------
 Wed Jan 22 11:36:10 CET 2003 - jsrain@suse.de
 
-- returned accidentally removed call of Bootloaer::Write () function
-  (#23018)
+- returned accidentally removed call of Bootloader::Write ()
+  function (bug #23018)
 - 2.7.3
 
 -------------------------------------------------------------------
