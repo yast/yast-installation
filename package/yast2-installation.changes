@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Sep 14 10:53:02 CEST 2004 - jsrain@suse.cz
+
+- added enable_firewall and firewall_ssh_enable to control file
+  for PROF
+- added related handlinng to ProductControl
+
+-------------------------------------------------------------------
 Mon Sep 13 12:57:41 CEST 2004 - jsrain@suse.cz
 
 - set FAM_ONLY_LOCAL and start fam according to default windowmanager

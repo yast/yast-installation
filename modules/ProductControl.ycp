@@ -164,6 +164,10 @@ global define boolean Read( string controlfile) ``{
             globals["io_scheduler"]:"as";
 	ProductFeatures::fam_local_only =
 	    globals["fam_local_only"]:"never";
+	ProductFeatures::enable_firewall =
+	    globals["enable_firewall"]:true;
+	ProductFeatures::firewall_enable_ssh =
+	    globals["firewall_enable_ssh"]:false;
     }
 
     return true;
