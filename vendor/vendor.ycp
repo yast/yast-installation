@@ -213,6 +213,7 @@ Aborting now.
 	{
 	    if (UI::YesNoPopup( description ) )
 	    {
+		// VENDOR: dialog heading
 		Wizard::SetContents (title, `HVCenter(`Label(_("Installing driver..."))), "", true, true);
 		integer inst_result = run_inst (cdpath, fname + ".inst");
 		if (inst_result == 0)
@@ -233,11 +234,12 @@ Contact the address on the CD-ROM.\n"));
     string result_message = "";
     if (inst_count > 0)
     {
+	// VENDOR: message box with number of drivers installed
 	result_message = sformat (_("Installed %1 drivers from CD"), inst_count);
     }
     else
     {
-	// VENDOR: vendor cd contains wrong data
+	// VENDOR: message box with error text
 	result_message = _("No driver data found on the CD-ROM.\nAborting now.");
     }
 
