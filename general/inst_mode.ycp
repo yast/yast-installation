@@ -45,10 +45,7 @@
     if ( ! Storage::HaveLinuxPartitions()
 	 || Mode::autoinst
 	 || Mode::live_eval
-	 || Product::certify_cd
-	 || Product::imap_server
-	 || Product::openteam_server
-	 || Product::fwadmin_host )
+	 || !contains (Product::flags, "update"))
     {
 	// Force new installation, no update possible
 
