@@ -401,7 +401,7 @@ will look different than in the manual.");
 // Caution: A Step is only executed if Architecture AND Mode is true!!
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  -Step-	 -Module-	    -Back- -Next- -spec-  -Architecture(s)-		      -Mode(s)-                           -immediate_prepdisk-
+//  0-Step-	1-Module-	    -Back- -Next- -spec-  2-Architecture(s)-		      3-Mode(s)-                           4-immediate_prepdisk-
 
 [
  [ `initial,  `inst_language	    (false, true, true), true,						! autoinst			, false],
