@@ -109,8 +109,8 @@ global define boolean Read( string controlfile) ``{
         }
         // Default is true
         ProductFeatures::delete_old_packages = software["delete_old_packages"]:true;
-        ProductFeatures::onlyUpdateSelected =
-            software["only_update_selected"]:false;
+        ProductFeatures::onlyUpdateInstalled =
+            software["only_update_installed"]:false;
 
         // What is the software proposal based on?
         // Possible values: selection|desktop
