@@ -248,18 +248,16 @@
 		    chrp_cpu = tolower (chrp_cpu);
 		});
 
-		if (issubstring (chrp_cpu, "power3"))
+		if (issubstring (chrp_cpu, "power3")	
+		    && Arch::ppc32)
 		{
-		    kernel_packages = ["kernel-ppc64"];
-		    binary = "zImage.ppc64";
-		    // "k_chrp64"
+		    kernel_packages = ["kernel-power3"];
+		    binary = "vmlinux-power3";
 		}
-		else if (issubstring(chrp_cpu, "rs64-iii")
-			 || issubstring(chrp_cpu, "rs64-iv")
-			 || issubstring(chrp_cpu, "power4"))
+		else if (Arch::ppc64)
 		{
 		    kernel_packages = ["kernel-ppc64"];
-		    binary = "zImage.ppc64";
+		    binary = "vmlinuz";
 		}
 		else
 		{
@@ -268,7 +266,8 @@
 	    }
 	    else if (Arch::board_iseries)
 	    {
-		kernel_packages = ["k_iseries"];
+		kernel_packages = ["kernel-iseries64"];
+		binary = "vmlinux64";
 	    }
 	    else if (Arch::board_prep)
 	    {
