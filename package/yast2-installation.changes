@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Sat Mar 19 10:15:14 CET 2005 - ms@suse.de
+
+- fixed second stage locale setup for textbased installation (#73631)
+
+-------------------------------------------------------------------
 Tue Mar 15 16:59:19 CET 2005 - ms@suse.de
 
 - IMPORTANT: fixed locale setup (#72145)
