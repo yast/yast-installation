@@ -364,7 +364,7 @@
 					     `HWeight(1, `PushButton(`id(`accept), `opt(`default), _("I &Agree") ) ),
 					     `HStretch(),
 					     // Button to reject a license agreement
-					     `HWeight(1, `PushButton(`id(`donotaccept), _("I Do &Not Agree" ) ) ),
+					     `HWeight(1, `PushButton(`id(`donotaccept), _("I Do &Not Agree") ) ),
 					     `HStretch(),
 					     `ReplacePoint(`id(`rp2), `Empty ())
 					     )
@@ -431,26 +431,31 @@
 	{
 	    // somehow the graphical frontend failed and we're running in
 	    // text mode. Inform the user about this fact.
-	    x11_msg = sformat(_("Your computer doesn't fulfill all requirements to allow
+	    x11_msg = sformat(_("Your computer does not fulfill all requirements for
 a graphical installation. Either you have less than %1 MB
-memory or the X server could not be started.\n
-As a fallback the text frontend of YaST2 will guide you
-through the installation. This frontend will offer the
+memory or the X server could not be started.
+
+As a fallback, the text front-end of YaST2 will guide you
+through the installation. This front-end offers the
 same functionality as the graphical one, but the screens
-will look different than in the manual."), "64");
+appear different than those in the manual.
+"), "64");
 
 	}
 	else if (Mode::no_x11)
 	{
 	    // somehow the graphical frontend failed and we're running in
 	    // text mode. Inform the user about this fact.
-	    x11_msg = _("The graphical interface could not be started.\n
-Either the required packages weren't installed (minimal installation) or
-the graphics card isn't properly supported.\n
-As a fallback the text frontend of YaST2 will guide you
-through the installation. This frontend will offer the
+	    x11_msg = _("The graphical interface could not be started.
+
+Either the required packages were not installed (minimal installation) or
+the graphics card is not properly supported.
+
+As a fallback, the text front-end of YaST2 will guide you
+through the installation. This front-end offers the
 same functionality as the graphical one, but the screens
-will look different than in the manual.");
+appear different than those in the manual.
+");
 	}
 
 	Report::Message(x11_msg);

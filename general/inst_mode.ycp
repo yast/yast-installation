@@ -126,22 +126,21 @@
 		// Translators notice: About 60 Characters wide maximum -
 		// use more line breaks if neccessary.
 		// Plain text, no HTML!
-		Popup::Notify( _( "
+		Popup::Notify( _("
 There is no Linux on any of your hard disks.
 It is only possible to perform a new installation at the moment.
 
 After Linux is installed, you can use this selection
 to boot the installed system or to update it.
-" ) );
+") );
 	    }
 	    else
 	    {
 		// Translators notice: About 60 Characters wide maximum -
 		// use more line breaks if neccessary.
 		// Plain text, no HTML!
-		Popup::Notify( _( "
-This product does only offer a new installation.
-" ) );
+		Popup::Notify( _("\nThis product only offers a new installation.
+") );
 	    }
 	}
 
@@ -171,29 +170,30 @@ Please choose what to do:
 </p>");
 
     // help text for installation method
-    help_text = help_text + _("\
-<p>
-Select <b>new installation</b> if there is no existing Linux system on your
+    help_text = help_text + _("<p>
+Select <b>New Installation</b> if there is no existing Linux system on your
 machine or if you want to replace an existing Linux system completely,
 abandoning all its configuration data.
-</p>");
+</p>
+");
 
     if (offer_update)
     {
 	// help text for installation method
-	help_text = help_text + _("\
-<p>
-Select <b>update an existing system</b> to update a Linux system already
-installed on your machine. This option will preserve configuration settings
+	help_text = help_text + _("<p>
+Select <b>Update an Existing System</b> to update a Linux system already
+installed on your machine. This option preserves configuration settings
 from your existing system whenever possible.
-</p>");
+</p>
+");
     }
 
     // help text for installation method
     help_text = help_text + _("<p>
-Select <b>boot installed system</b> if you have a Linux system on your hard
+Select <b>Boot Installed System</b> if you have a Linux system on your hard
 disk that will not boot. With this option, try to fix problems manually.
-</p>");
+</p>
+");
 
     term radio_buttons =
 	      `VBox(
