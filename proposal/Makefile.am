@@ -1,6 +1,4 @@
-#
 # Makefile.am for installation/proposal
-#
 
 ydata_DATA =					\
 	installation-proposals.ycp		\
@@ -24,3 +22,5 @@ client_DATA =					\
 doc_DATA = proposal-API.txt
 
 EXTRA_DIST = $(client_DATA) $(ydata_DATA) $(doc_DATA)
+
+include $(top_srcdir)/Makefile.am.common
