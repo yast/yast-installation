@@ -229,7 +229,7 @@ to activate the new kernel.
 			"/usr/bin/tail -n 1 /etc/X11/XF86Config | grep -q '#3x'"
 		);
 		if (flag == 0) {
-			SCR::Execute (.target.bash, Directory::ybindir + "/xmigrate");
+			SCR::Execute (.target.bash, Directory::ybindir + "/xmigrate.pl");
 		}
 	}
 

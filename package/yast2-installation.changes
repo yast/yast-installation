@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Aug 28 16:55:51 CEST 2003 - ms@suse.de
+
+- fixed xmigrate call (#29535)
+
+-------------------------------------------------------------------
 Thu Aug 28 16:04:41 CEST 2003 - kkaempf@suse.de
 
 - Install default kernel on SMP systems without 'PAE'
