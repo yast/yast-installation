@@ -8,7 +8,7 @@ module_DATA = \
 client_DATA = \
 	inst_x11.ycp
 
-fvwmdir = /usr/X11R6/share/fvwm/
+fvwmdir = $(prefix)/X11R6/share/fvwm/
 fvwm_DATA = \
 	fvwmrc.yast2
 

@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Aug 27 16:59:56 CEST 2004 - mvidner@suse.cz
+
+- When showing the address for a VNC installation, don't rely on
+  install.inf, print the current IP (#43974).
+- 2.10.11
+
+-------------------------------------------------------------------
 Fri Aug 27 15:09:13 CEST 2004 - arvin@suse.de
 
 - merged proof read messages

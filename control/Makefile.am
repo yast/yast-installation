@@ -21,6 +21,6 @@ product_DATA = ProductFeatures
 EXTRA_DIST =  $(control_DATA) $(product_DATA)
 
 install-data-local:
-	install -d -m 755 $(DESTDIR)/var/lib/YaST2/control
+	-install -d -m 755 $(DESTDIR)$(productdir)/control
 
 include $(top_srcdir)/Makefile.am.common
