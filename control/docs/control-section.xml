@@ -916,7 +916,7 @@ default
 
                 <example>
                     <title>Flexible Partitioning</title>
-                    <para>    If in the example below the machine has three disks then each of the
+                    <para>If in the example below the machine has three disks then each of the
                         partition groups gets on a separate disk. So one disk will hold
                         <filename>/var</filename>, another disk will hold
                         /home<filename/> 
@@ -932,18 +932,14 @@ default
                         If there is only one disk in the system of course all partitions 
                         will be on that disk.
                     </para>
-                    <programlisting>
-
-                    <xi:include href="examples/partitions.xml" parse="text"
-                        xmlns:xi="http://www.w3.org/2001/xinclude"/>
+                    <programlisting><xi:include href="examples/partitions.xml" parse="text"
+                        xmlns:xi="http://www.w3.org/2001/XInclude"/>
                     </programlisting>
 
                 </example>
 
                 <para>A more complete example with other options is hown below:</para>
-                <programlisting>
-
-                <xi:include href="examples/partitions2.xml" parse="text"
+                <programlisting><xi:include href="examples/partitions2.xml" parse="text"
                     xmlns:xi="http://www.w3.org/2001/XInclude"/>
                 </programlisting>
 
