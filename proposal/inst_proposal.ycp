@@ -233,6 +233,7 @@
      * i.e. the settings effective.
      **/
     define void write_settings() ``{
+
 	boolean success = true;
 
 	foreach ( `submod, submodules, ``{
@@ -254,11 +255,11 @@
 	    // text for a message box
 	    UI::TimedMessagePopup( _( "Configuration saved.\nThere were errors." ), 3 );
 	}
-	else
-	{
-	    // text for a message box
-	    UI::TimedMessagePopup( _( "Configuration saved successfully." ), 3 );
-	}
+	// else
+	// {
+	//     // text for a message box
+	//     UI::TimedMessagePopup( _( "Configuration saved successfully." ), 3 );
+	// }
     };
 
 
