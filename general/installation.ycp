@@ -268,7 +268,7 @@
 		// Default in autoinst mode is showing messages and warnings with timeout of 10 sec.
 		// Errors are shown without timeout.
 
-		Report::DisplayErrors(true, 10);
+		Report::DisplayErrors(true, 0);
 		Report::DisplayMessages(true, 10);
 		Report::DisplayWarnings(true, 10);
 	    }
@@ -357,41 +357,41 @@ differ from those in the manual.
 [
  [ `initial,  `inst_info            (false, true),       true,                  !Mode::screen_shot && !Mode::live_eval,                   false],
  [ `initial,  `inst_language	    (false, true, true), true,						! autoinst	&&    !	repair  , false],
- [ `initial,  `inst_repair	    (false, true),	 true,									repair	, false],
+ [ `initial,  `inst_repair	        (false, true),	     true,									repair			, false],
  [ `initial,  `autoinst_init	    (false, false),      true,			! test_mode &&		  autoinst			, false],
  [ `initial,  `autoinst_setup	    (false, false),      true,			! test_mode &&		  autoinst			, false],
  //---------------------------------------------------------------------------------------------------------------------------------------------------
- [ `initial,  `inst_proposal	    (true,  true, `ini), true,			true							, false],
+ [ `initial,  `inst_proposal	    (true,  true, `ini), true,			true									, false],
  //---------------------------------------------------------------------------------------------------------------------------------------------------
  [ `initial,  `inst_do_resize	    (false, false),      Arch::i386||Arch::x86_64||Arch::ia64,	! live_eval &&	! autoinst && !Mode::update , false],
  //---------------------------------------------------------------------------------------------------------------------------------------------------
- [ `initial,  `inst_prepdisk	    (false, false),      true,			true,				                          false],
- [ `initial,  `inst_kickoff	    (false, false),      true,			( ! live_eval	  ||	  screen_shot_mode),              false],
- [ `initial,  `inst_rpmcopy	    (false, false),      true,			( ! live_eval	  ||	  screen_shot_mode),              false],
+ [ `initial,  `inst_prepdisk	    (false, false),      true,			true				                     , false],
+ [ `initial,  `inst_kickoff		    (false, false),      true,			( ! live_eval	  ||  screen_shot_mode)  , false],
+ [ `initial,  `inst_rpmcopy	        (false, false),      true,			( ! live_eval	  ||  screen_shot_mode)  , false],
  //---------------------------------------------------------------------------------------------------------------------------------------------------
- [ `initial,  `inst_finish	    (false, false),      true,			! test_mode						, false],
+ [ `initial,  `inst_finish	        (false, false),      true,			! test_mode						         , false],
 
  //===================================================================================================================================================
 
  [ `continue, `inst_netsetup        (false, false, `up), true,          true,                                                             false],
- [ `continue, `inst_netprobe	    (false, false),      true,		! update_mode							, false],
+ [ `continue, `inst_netprobe	    (false, false),      true,		! update_mode							     , false],
  [ `continue, `autoinst_post        (false, false),      true,		autoinst				, false],
- [ `continue, `inst_rpmcopy	    (false, false),      true,		!autoconf && ! live_eval && ! test_mode				, false],
+ [ `continue, `inst_rpmcopy	        (false, false),      true,		!autoconf && ! live_eval && ! test_mode	     , false],
  [ `continue, `inst_netsetup        (false, false, `dn), true,          update_mode,                                                      false],
- [ `continue, `inst_language        (false, true),       true,					  screen_shot_mode &&    ! update_mode  , false],
- [ `continue, `inst_root	    (false, true),       true,						! autoinst &&    ! update_mode	, true ],
+ [ `continue, `inst_language        (false, true),       true,		screen_shot_mode &&    ! update_mode         , false],
+ [ `continue, `inst_root	        (false, true),       true,		! autoinst &&    ! update_mode	             , true ],
  [ `continue, `inst_x11             (true,  true),       Arch::x11_setup_needed, Mode::x11_setup_needed &&    autoinst &&    ! update_mode  , false],
- [ `continue, `autoinst_configure   (false, false),      true,						  autoinst &&    ! update_mode	, false],
- [ `continue, `inst_proposal	    (true,  true, `net), true,						! autoinst &&    ! update_mode	, false],
- [ `continue, `inst_ask_net_test    (true,  true),       true,				! live_eval &&	! autoinst       	        , true ],
- [ `continue, `inst_do_net_test	    (true,  true),       true,				! live_eval &&	! autoinst                      , true ],
- [ `continue, `inst_you		    (true,  true),       true,				! live_eval &&	! autoinst               	, true ],
+ [ `continue, `autoinst_configure   (false, false),      true,					  autoinst &&    ! update_mode	 , false],
+ [ `continue, `inst_proposal	    (true,  true, `net), true,				! autoinst &&   ! update_mode	     , false],
+ [ `continue, `inst_ask_net_test    (true,  true),       true,				! live_eval &&	! autoinst	         , true ],
+ [ `continue, `inst_do_net_test	    (true,  true),       true,				! live_eval &&	! autoinst           , true ],
+ [ `continue, `inst_you		    (true,  true),       true,				! live_eval &&	! autoinst	             , true ],
  [ `continue, `inst_auth	    (true,  true),       true,				! live_eval &&	! autoinst &&    ! update_mode	, true ],
  [ `continue, `inst_user	    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
  [ `continue, `inst_suseconfig	    (false, false),      true,			! test_mode						, false],
- [ `continue, `inst_release_notes   (true,  true),	 true,				! live_eval &&	! autoinst               	, false],
+ [ `continue, `inst_release_notes   (true,  true),	 true,				! live_eval &&	! autoinst	, false],
  [ `continue, `inst_proposal	    (true,  true, `hw),  true,						! autoinst &&    ! update_mode	, false],
- [ `continue, `inst_congratulate    (true,  true),	 true,				! live_eval &&	! autoinst               	, false]
+ [ `continue, `inst_congratulate    (true,  true),	 true,				! live_eval &&	! autoinst	, false]
 ];
 
 
