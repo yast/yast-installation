@@ -19,6 +19,13 @@ fi
 
 turn_off_silent_splash
 
+# The IP set in install.inf may not be valid if the DHCP server
+# gave us a different lease in the meantime (#43974).
+# sed: don't print; if it's localhost, skip; try locating IPv4;
+#      skip if not found; otherwise print and exit
+IP=`ip addr list | 
+  sed -n -e '/127.0.0.1/b;s/^[[:space:]]*inet[[:space:]]\([^/]*\).*/\1/;T;p;q'`
+
 echo
 echo starting VNC server...
 echo a log can be found in /tmp/vncserver.log ...
