@@ -47,11 +47,18 @@
         return args;
     }
 
-    global map makeProposalArgs (boolean back, boolean next, string proposal_name) {
-        map proposal_args = $[];
-        proposal_args["enable_back"] = back;
-        proposal_args["enable_next"] = next;
-        proposal_args["proposal"] = proposal_name;
-        return proposal_args;
+    global map ButtonsProposal (boolean back, boolean next, string proposal_name) {
+        map _args = $[];
+        _args["enable_back"] = back;
+        _args["enable_next"] = next;
+        _args["proposal"] = proposal_name;
+        return _args;
+    }
+
+    global map Buttons (boolean back, boolean next) {
+        map _args = $[];
+        _args["enable_back"] = back;
+        _args["enable_next"] = next;
+        return _args;
     }
 }
