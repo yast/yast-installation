@@ -7,7 +7,6 @@ ybin_SCRIPTS = \
 	YaST2.firstboot		\
 	check.boot		\
 	ask_for_TERM_variable	\
-	inst_setup_vnc		\
-	yast2-funcs
+	inst_setup_vnc
 
 EXTRA_DIST = $(ybin_SCRIPTS)
