@@ -407,6 +407,7 @@ Please wait while the base system is being installed.
     }
     else	// install mode
     {
+	Storage::FinishInstall();
     }
 
     // Run depmod to update modules.dep
