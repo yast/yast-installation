@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Aug 21 10:04:25 CEST 2003 - kkaempf@suse.de
+
+- copy badlist (if existing) to installed system (#29092)
+
+-------------------------------------------------------------------
 Tue Aug 19 08:13:17 CEST 2003 - arvin@suse.de
 
 - better way for mouse probing in text mode (bug #29005)

@@ -654,6 +654,8 @@ with the load address of your root DASD.
 
     // copy y2start.log
     SCR::Write (.target.string, "/var/log/YaST2/y2start.log-initial", WFM::Read (.local.string, ["/var/log/YaST2/y2start.log", ""]));
+    // copy badlist
+    SCR::Write (.target.string, "/var/log/YaST2/badlist-initial", WFM::Read (.local.string, ["/var/log/YaST2/badlist", ""]));
 
 
     // --------------------------------------------------------------
