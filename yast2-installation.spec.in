@@ -10,6 +10,8 @@ Provides:	yast2-trans-inst-proposal y2t_inst
 Obsoletes:	yast2-trans-inst-proposal y2t_inst
 Provides:	yast2-trans-inst-general y2t_inst-general
 Obsoletes:	yast2-trans-inst-general y2t_inst-general
+Provides:	yast2-instsys
+Obsoletes:	yast2-instsys
 
 Summary:	Installation workflow
 
