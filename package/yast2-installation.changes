@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Nov 11 17:47:45 CET 2004 - sh@suse.de
+
+- Record macros during installation:
+  /var/log/YaST2/macro_inst_initial.ycp for initial stage,
+  /var/log/YaST2/macro_inst_cont.ycp  for "continue" mode 
+
+-------------------------------------------------------------------
 Tue Nov 02 08:45:57 CET 2004 - arvin@suse.de
 
 - allow to select repair/boot in installation mode selection even
