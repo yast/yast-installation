@@ -423,7 +423,10 @@ Please wait while the base system is being installed.
 	// see bug #32366 why we need this here
 	// and 30028
 	// now it is set in the initial proposal
-	set_runlevel (tointeger (RunlevelEd::default));
+	// Fall back to 3 if we accidentally don't set it there
+	// otherwise it would be 0 (#35662)
+	set_runlevel (RunlevelEd::default == ""?
+		      3 : tointeger (RunlevelEd::default));
     }
     else if ( Mode::update )
     {
