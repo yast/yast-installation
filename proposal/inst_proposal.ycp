@@ -704,7 +704,10 @@ To use the settings as displayed, press <b>Next</b>.
 	// In autoinst mode, this has been called already.
 
 	if (!Mode::autoinst)
+        {
 	    WFM::CallFunction("inst_startup", []);
+	    WFM::CallFunction("inst_features", []);
+        }
 
 	// Let user decide between
 	//
