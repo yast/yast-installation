@@ -200,7 +200,9 @@
     {
 	if (SCR::Read(.target.size, Installation::destdir + "/var/lib/YaST2/update_mode") > 0)
 	{
+	    y2milestone ("setting Mode::update = true");
 	    Mode::update = true;
+	    Mode::installation = false;
 	}
 
 	Installation::encoding = Console::Restore();
