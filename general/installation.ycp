@@ -377,6 +377,7 @@ will look different than in the manual.");
 
     // Some abbreviations to keep the table below less wide
     boolean autoinst	= Mode::autoinst;
+    boolean autoconf	= AutoInstall::autoconf;
     boolean live_eval	= Mode::live_eval;
     boolean test_mode	= Mode::test;
     boolean update_mode	= Mode::update;
@@ -419,7 +420,7 @@ will look different than in the manual.");
 
  //===================================================================================================================================================
 
- [ `continue, `inst_rpmcopy	    (false, false),      true,			! live_eval && ! test_mode &&		 ! update_mode	, false],
+ [ `continue, `inst_rpmcopy	    (false, false),      true,		!autoconf && ! live_eval && ! test_mode &&	 ! update_mode	, false],
  [ `continue, `inst_rpmupdate	    (false, false),      true,								   update_mode	, false],
  [ `continue, `inst_language	    (false, true),       true,					  screen_shot_mode &&    ! update_mode  , false],
  [ `continue, `inst_root	    (false, true),       true,						! autoinst &&    ! update_mode	, true ],
