@@ -3,6 +3,7 @@
  * Module:	Installation
  * Summary:	Create and display proposal
  * Authors:	Stefan Hundhammer <sh@suse.de>
+ *		Arvin Schnell <arvin@suse.de>
  *
  * $Id$
  *
@@ -338,7 +339,6 @@
     };
 
 
-
     /**
      * Load a list of submodules matching the current internal states
      * @param mode `ini, `net, or `hw to indicate which list to use
@@ -351,13 +351,10 @@
 
 	if ( proposal_mode == `ini && Mode::installation)
 	{
-	    // Module list for new installation proposal
+	    // Module list for installation proposal
 
 	    if (Arch::s390)
 	    {
-		y2milestone ("Initial S390 proposal");
-		// S390 lack some hardware (e.g. keyboard and mouse)
-
 		submodules = load_submodules_list( "installation-proposals-s390.ycp",
 						   [
 						    // Fallback list
@@ -371,17 +368,14 @@
 	    }
 	    else
 	    {
-		y2milestone ("Initial proposal");
-
 		if (Mode::live_eval)
 		{
-		    submodules =
-			[
-			 "proposal_keyboard",
-			 "proposal_mouse",
-			 "proposal_timezone",
-			 "proposal_language"
-			 ];
+		    submodules = [
+				  "proposal_keyboard",
+				  "proposal_mouse",
+				  "proposal_timezone",
+				  "proposal_language"
+		    ];
 		}
 		else
 		{
@@ -403,17 +397,37 @@
 	}
 	else if ( proposal_mode == `ini && Mode::update)
 	{
-	    submodules = load_submodules_list( "update-proposal.ycp",
-					       [
-						// Fallback list
-						"proposal_mode",
-						"proposal_rootpart",
-						"proposal_update",
-						"proposal_packages",
-						"proposal_backup",
-						"proposal_language"
-						]
-					       );
+	    // Module list for update proposal
+
+	    if (Arch::s390)
+	    {
+		submodules = load_submodules_list( "update-proposals-s390.ycp",
+						   [
+						    // Fallback list
+						    "proposal_mode",
+						    "proposal_rootpart",
+						    "proposal_update",
+						    "proposal_packages",
+						    "proposal_backup",
+						    "proposal_language"
+						    ]
+						   );
+	    }
+	    else
+	    {
+		submodules = load_submodules_list( "update-proposals.ycp",
+						   [
+						    // Fallback list
+						    "proposal_mode",
+						    "proposal_rootpart",
+						    "proposal_update",
+						    "proposal_packages",
+						    "proposal_backup",
+						    "proposal_language",
+						    "proposal_keyboard"
+						    ]
+						   );
+	    }
 	}
 	else if ( proposal_mode == `net )
 	{
@@ -421,9 +435,6 @@
 
 	    if ( Arch::sparc )
 	    {
-		y2milestone ("Continue SPARC proposal");
-		// SPARC machines usually have some kinds of hardware built-in
-
 		submodules = load_submodules_list( "net-config-proposals-sparc.ycp",
 						   [
 						    // Fallback list
@@ -435,9 +446,6 @@
 	    }
 	    else if ( Arch::ppc64 )
 	    {
-		y2milestone ("Continue PPC64 proposal");
-		// ppc64
-
 		submodules = load_submodules_list( "net-config-proposals-ppc64.ycp",
 						   [
 						    // Fallback list
@@ -448,9 +456,6 @@
 	    }
 	    else if ( Arch::s390 )
 	    {
-		y2milestone ("Continue S390 proposal");
-		// s390
-
 		submodules = load_submodules_list( "net-config-proposals-s390.ycp",
 						   [
 						    // Fallback list
@@ -461,8 +466,6 @@
 	    }
 	    else
 	    {
-		y2milestone ("Continue network proposal");
-
 		submodules = load_submodules_list( "net-config-proposals.ycp",
 						   [
 						    // Fallback list
@@ -481,24 +484,17 @@
 
 	    if ( Arch::sparc )
 	    {
-		y2milestone ("Continue SPARC proposal");
-		// SPARC machines usually have some kinds of hardware built-in
-
 		submodules = load_submodules_list( "hw-config-proposals-sparc.ycp",
 						   [
 						    // Fallback list
 						    "x11_proposal",
 						    "printer_proposal",
 						    "sound_proposal"
-						   ]
+						    ]
 						   );
 	    }
 	    else if ( Arch::ppc64 )
 	    {
-
-		y2milestone ("Continue PPC64 proposal");
-		// ppc64
-
 		submodules = load_submodules_list( "hw-config-proposals-ppc64.ycp",
 						   [
 						    // Fallback list
@@ -509,9 +505,6 @@
 	    }
 	    else if ( Arch::s390 )
 	    {
-		y2milestone ("Continue S390 proposal");
-		// s390
-
 		submodules = load_submodules_list( "hw-config-proposals-s390.ycp",
 						   [
 						    // Fallback list
@@ -521,8 +514,6 @@
 	    }
 	    else
 	    {
-		y2milestone ("Continue proposal");
-
 		submodules = load_submodules_list( "hw-config-proposals.ycp",
 						   [
 						    // Fallback list
@@ -541,7 +532,6 @@
 
 	return submodules;
     };
-
 
 
     /**

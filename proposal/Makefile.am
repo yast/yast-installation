@@ -5,6 +5,8 @@
 ydata_DATA =					\
 	installation-proposals.ycp		\
 	installation-proposals-s390.ycp		\
+	update-proposals.ycp			\
+	update-proposals-s390.ycp		\
 	hw-config-proposals-ppc64.ycp		\
 	hw-config-proposals-s390.ycp		\
 	hw-config-proposals-sparc.ycp		\
