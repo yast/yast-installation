@@ -38,6 +38,7 @@
     import "Product";
     import "Progress";
     import "Report";
+    import "RunlevelEd";
     import "Storage";
     import "StorageControllers";
     import "StorageDevices";
@@ -406,7 +407,9 @@ Please wait while the base system is being installed.
     if ( !Mode::update )
     {
 	// see bug #32366 why we need this here
-	set_runlevel (x11_installed ? 5 : 3);
+	// and 30028
+	// now it is set in the initial proposal
+	set_runlevel (tointeger (RunlevelEd::default));
     }
     else if ( Mode::update )
     {
