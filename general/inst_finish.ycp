@@ -100,27 +100,15 @@ Please wait while the base system is being installed.
     // --------------------------------------------------------------
     // do things needed in inst-sys
 
-    // window manager setting
-    // default_wm will be used below !
-    // display manager setting
-    // default_dm will be used below !
+    // default_wm and default_dm setting was moved to an extra client called
+    // below
+    // don't understand why it was separated to two locations in the client
+    // like doc_server still is
 
-    string default_wm = "kde";
-    string default_dm = "kdm";
     string doc_server = "";
 
     if ( !Mode::update )
     {
-	if ((!(Pkg::IsProvided ("kdebase3-kdm")		// if kdm isn't installed yet
-	       || Pkg::IsSelected ("kdebase3-kdm")))	//   or earmarked for installation
-	   &&						// and
-	      (Pkg::IsProvided ("gdm2")			//  gdm2 is installed
-		|| Pkg::IsSelected ("gdm2")))		//    or earmarked for installation
-	{
-	    default_wm = "gnome";			// then we switch to gdm/gnome
-	    default_dm = "gdm";
-	}
-
 	// check who provides suse_help_viewer
 	// if kdebase3-SuSE isn't installed by apache or apache2, set /etc/sysconfig/apache:DOC_SERVER
 
@@ -343,10 +331,9 @@ Please wait while the base system is being installed.
 	// progress stage title
 	Progress::Title (_("Initializing default window manager"));
 
-	SCR::Write (.sysconfig.windowmanager.DEFAULT_WM, default_wm);
-	SCR::Write (.sysconfig.windowmanager, nil);
-	SCR::Write (.sysconfig.displaymanager.DISPLAYMANAGER, default_dm);
-	SCR::Write (.sysconfig.displaymanager, nil);
+	// this detects WM and DM according to the base slection or
+	// installed packages
+	WFM::CallFunction ("inst_default_desktop");
 
 	if (doc_server == "yes")
 	{

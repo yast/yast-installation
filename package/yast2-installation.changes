@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Oct 11 10:43:25 CEST 2004 - jsrain@suse.cz
+
+- moved default logon/window manager setting to extra client,
+  setting it according to the base package selection (#46619)
+
+-------------------------------------------------------------------
 Mon Oct 11 15:04:26 CEST 2004 - jsrain@suse.cz
 
 - adapted to functional interface of Arch.ycp

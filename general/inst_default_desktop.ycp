@@ -1,0 +1,131 @@
+/**
+ * File:	clients/inst_default_desktop.ycp
+ * Package:	installation
+ * Summary:	Configure FAM according to control file and defauls WM
+ * Authors:	Jiri Srain <jsrain@suse.cz>
+ *
+ * $Id$
+ *
+ */
+
+{
+    textdomain "installation";
+
+    import "Mode";
+
+    if ( !Mode::update )
+    {
+	map<string,list<string> > selections = $[];
+	list<string> queue = Pkg::GetSelections( `installed, "base" );
+	y2milestone ("Base selection: %1", queue);
+	while (size (queue) > 0)
+	{
+	    string sel = queue[0]:"";
+	    queue = remove (queue, 0);
+	    if (! haskey (selections, sel))
+	    {
+		// add all required, suggested and recommend selections
+		// to the queue
+		map sel_data = Pkg::SelectionData (sel);
+		list rec = sel_data["recommends"]:[];
+		list sug = sel_data["suggests"]:[];
+		list req = sel_data["requires"]:[];
+		queue = (list<string>)
+		    toset (flatten ([queue, rec, sug, req]));
+		queue = filter (string s, queue, {
+		    return ! haskey (selections, s);
+		});
+
+		// add the selection to the information about selections
+		y2milestone ("Default selection contains selection %1", sel);
+		list<string> packages = (list<string>)
+		    Pkg::SelectionContent (sel, false, "");
+		selections[sel] = packages;
+	    }
+	}
+	list<string> packages = flatten (
+	    maplist (string s, list<string> p, selections, {
+		return p;
+	    })
+	);
+
+	y2debug ("All packages in the selection: %1", packages);
+
+	list<string> desktop_order = ["kde", "gnome"];
+	map<string,map<string,string> > desktop_data = $[
+	    "kde" : $[
+		"package" : "kdebase3-kdm",
+		"wm" : "kde",
+		"dm" : "kdm",
+	    ],
+	    "gnome" : $[
+		"package" : "gdm",
+		"wm" : "gnome",
+		"dm" : "gdm",
+	    ],
+	    "twm" : $[
+		"package" : "xorg-x11",
+		"wm" : "twm",
+		"dm" : "xdm",
+	    ],
+	];
+
+	string default_wm = "kde";
+	string default_dm = "kdm";
+
+	boolean desktop_found = false;
+	string selection_desktop = "kde";
+
+	// check what packages are in the default selection
+	// and adjust logon and window manager according to it
+	find (string d, desktop_order, {
+	    if (contains (packages, desktop_data[d, "package"]:""))
+	    {
+		if (! desktop_found)
+		{
+		    desktop_found = true;
+		    selection_desktop = d;
+		    y2milestone ("Setting desktop according to base selection to %1", selection_desktop);
+		}
+	    }
+	    return desktop_found;
+	});
+
+	// if no desktop was found according to default selection, try
+	// installed packages
+	// first the logon manager
+	desktop_order = add (desktop_order, "twm");
+	desktop_order = prepend (desktop_order, selection_desktop);
+	desktop_found = false;
+	find (string d, desktop_order, {
+		if (Pkg::IsProvided (desktop_data[d, "package"]:"")
+		    || Pkg::IsSelected (desktop_data[d, "package"]:""))
+		{
+		    if (! desktop_found)
+		    {
+			desktop_found = true;
+			default_dm = desktop_data[d, "dm"]:"";
+			y2milestone (
+			    "Setting logon manager %1 - package selecteed",
+			    default_dm);
+			default_wm = desktop_data[d, "wm"]:"";
+			y2milestone (
+			    "Setting window manager %1 - package selecteed",
+			    default_wm);
+		    }
+		}
+		return desktop_found;
+	});
+
+	y2milestone ("Default desktop: %1", default_wm);
+	y2milestone ("Default logon manager: %1", default_dm);
+
+	SCR::Write (.sysconfig.windowmanager.DEFAULT_WM, default_wm);
+	SCR::Write (.sysconfig.windowmanager, nil);
+	SCR::Write (.sysconfig.displaymanager.DISPLAYMANAGER, default_dm);
+	SCR::Write (.sysconfig.displaymanager, nil);
+    }
+
+
+    return `auto;
+}
