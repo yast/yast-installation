@@ -31,8 +31,6 @@
     if ( size( WFM::Args() ) > 2 && WFM::Args(2) == true )	// going backwards?
 	return `auto;					// don't execute this once more
 
-    boolean onlyKernelUpdate = Kernel::switched;	// see update/inst_rpmupdate.ycp, packager/sw_single.ycp
-
     boolean reread_inittab = false;
 
     integer	current_step	= 0;	// Required by logStep()
@@ -202,8 +200,7 @@ this process can take some time.</p>
 	sleep( 5*1000 );
     }
 
-
-    if ( onlyKernelUpdate )
+    if ( Kernel::get_inform_about_kernel_change () )
     {
 	// inform the user that he/she has to reboot to activate new kernel
 	Popup::Message(_("Reboot your system
@@ -211,18 +208,21 @@ to activate the new kernel.
 "));
     }
 
-	// ...
-	// Migrate configuration from XFree86 3.x to XFree86 4.x
-	// if possible
-	// ---
-	if ( Mode::update () ) {
-		integer flag = (integer) SCR::Execute (.target.bash,
-			"/usr/bin/tail -n 1 /etc/X11/XF86Config | grep -q '#3x'"
-		);
-		if (flag == 0) {
-			SCR::Execute (.target.bash, Directory::ybindir + "/xmigrate.pl");
-		}
+    // ...
+    // Migrate configuration from XFree86 3.x to XFree86 4.x
+    // if possible
+    // ---
+    if ( Mode::update () )
+    {
+	integer flag = (integer)
+	    SCR::Execute (.target.bash,
+			  "/usr/bin/tail -n 1 /etc/X11/XF86Config | grep -q '#3x'"
+			  );
+	if (flag == 0)
+	{
+	    SCR::Execute (.target.bash, Directory::ybindir + "/xmigrate.pl");
 	}
+    }
 
     if ( Mode::update () )
     {
