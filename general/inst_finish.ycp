@@ -530,6 +530,10 @@ Please wait while the base system is being installed.
     }
 
     // --------------------------------------------------------------
+    // Copy DHCP client cache so that we can request the same IP (#43974).
+    WFM::Execute (.local.bash, "/bin/cp -p /var/lib/dhcpcd/dhcpcd-*.cache " + Installation::destdir);
+
+    // --------------------------------------------------------------
     // installation source cache
 
     Pkg::SourceCacheCopyTo (Installation::destdir);

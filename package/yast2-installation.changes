@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Sep  6 13:33:34 CEST 2004 - mvidner@suse.cz
+
+- Copy the DHCP client cache so that we can request the same IP
+  (#43974).
+- 2.10.14
+
+-------------------------------------------------------------------
 Mon Sep  6 09:50:37 CEST 2004 - jsrain@suse.cz
 
 - avoid asking to confirm one license multiple times (#44145)
