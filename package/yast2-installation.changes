@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Sep 10 16:15:09 CEST 2002 - arvin@suse.de
+
+- added more provides/obsoletes (bug #19325)
+
+-------------------------------------------------------------------
 Tue Sep 10 14:34:13 CEST 2002 - arvin@suse.de
 
 - again fix initial language
