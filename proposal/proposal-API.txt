@@ -200,11 +200,10 @@ map MakeProposal( boolean force_reset, boolean language_changed );
 			language. This is only relevant for the "language"
 			module.
 
-		boolean proposal_changed (optional)
+		boolean mode_changed (optional)
 
 			This module just caused a change of the installation
-			proposal. This is only relevant for the "inst mode"
-			module.
+			mode. This is only relevant for the "inst mode" module.
 
 
 
