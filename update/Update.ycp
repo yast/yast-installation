@@ -11,6 +11,8 @@
 {
     module "Update";
 
+    global integer affected_count = 0;
+    // number of packages affected by update
 
     global string newKernel = "";
     // update kernelname if there has not been found a old kernel
