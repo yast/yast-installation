@@ -587,6 +587,10 @@ will look different than in the manual.");
 	SCR::Execute(.target.remove, "/var/lib/YaST2/runme_at_boot");
     }
 
+    // stop packagemanager
+    Pkg::SourceFinishAll();
+    Pkg::TargetFinish();
+
     UI::CloseDialog();
 
     if (m <= -1)	return `back;
