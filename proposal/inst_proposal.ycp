@@ -922,12 +922,12 @@ To use the settings as displayed, press <b>Next</b>.
 	{
 	    if ( Mode::initial && !Mode::live_eval )
 	    {
-		if ( WFM::CallFunction(`inst_confirm_abort(`painless) ) )
+		if (Popup::ConfirmAbort (`painless))
 		    return `abort;
 	    }
 	    else
 	    {
-		if ( WFM::CallFunction(`inst_confirm_abort(`incomplete) ) )
+		if (Popup::ConfirmAbort (`incomplete))
 		    return `abort;
 	    }
 	}

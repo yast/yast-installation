@@ -11,6 +11,7 @@
     textdomain "installation";
 
     import "Wizard";
+    import "Popup";
     import "Language";
 
 
@@ -75,7 +76,7 @@ Linux system. They provide a brief summary of new features and changes.
 
 	if (ret == `abort)
 	{
-	    if (CallFunction (`inst_confirm_abort (`incomplete)))
+	    if (Popup::ConfirmAbort (`incomplete))
 		break;
 	}
 	else if (ret == `help)

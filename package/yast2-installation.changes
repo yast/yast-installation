@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Sun Aug 31 14:56:10 CEST 2003 - arvin@suse.de
+
+- use Popup::ConfirmAbort
+
+-------------------------------------------------------------------
 Sat Aug 30 22:27:57 CEST 2003 - arvin@suse.de
 
 - moved reactivation of network to yast2-network (bug #29561)

@@ -292,7 +292,7 @@ disk that will not boot. With this option, try to fix problems manually.
 
 	if ( ret == `abort )	// the abort button (not check box!)
 	{
-	    if ( WFM::CallFunction(`inst_confirm_abort(`painless) ) )
+	    if (Popup::ConfirmAbort (`painless))
 		break;
 	}
 
@@ -314,7 +314,7 @@ disk that will not boot. With this option, try to fix problems manually.
 
 	    if (newmode == `abort) // the abort check box (not button!)
 	    {
-		if ( WFM::CallFunction(`inst_confirm_abort(`painless) ) )
+		if (Popup::ConfirmAbort (`painless))
 		{
 		    ret = `abort;
 		    break;
