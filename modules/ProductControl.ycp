@@ -109,8 +109,13 @@ global define boolean Read( string controlfile) ``{
         }
         // Default is true
         ProductFeatures::delete_old_packages = software["delete_old_packages"]:true;
+
+        // TODO: Temporary workaround. This should be checked in the control file
+        if (Arch::i386 && issubstring(Product::distproduct, "DVD"))
+        {
         ProductFeatures::inform_about_suboptimal_distribution =
             software["inform_about_suboptimal_distribution"]:false;
+        }
     }
     if (haskey(productControl, "globals"))
     {
