@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Aug 12 15:48:57 CEST 2002 - kkaempf@suse.de
+
+- read /etc/install.inf:InstMode correctly
+
+-------------------------------------------------------------------
 Thu Aug  8 16:23:00 CEST 2002 - kkaempf@suse.de
 
 - honor "/etc/install.inf:NoShell" to suppress extra shell on tty2.
