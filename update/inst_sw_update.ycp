@@ -59,7 +59,7 @@
 	    if (product == nil) product = $[];
 	    Update::updateVersion = product["product"]:"?";
 	    string product_package = product["requires"]:"";
-	    bool requires_selected = Pkg::IsSelected (product_package);
+	    boolean requires_selected = Pkg::IsSelected (product_package);
 	    if (requires_selected == nil) requires_selected = false;
 	    if (!requires_selected
 		&& !Pkg::IsProvided (product_package))
