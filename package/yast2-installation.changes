@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Oct 24 13:09:25 CEST 2003 - arvin@suse.de
+
+- added help text for "Repair Installed System" (bug #30402)
+
+-------------------------------------------------------------------
 Fri Oct 17 11:37:46 CEST 2003 - ms@suse.de
 
 - inst_finish: (#32366)
@@ -11,7 +16,7 @@ Fri Oct 17 11:37:46 CEST 2003 - ms@suse.de
   removed dead code which sets the default runlevel to 3 if there
   is no XF86Config file present. This task is done if the X11
   configuration is finished and if there is no X11 configuration
-  the default initdefault with aaa_base is set to 3 already  
+  the default initdefault with aaa_base is set to 3 already
 
 -------------------------------------------------------------------
 Wed Sep 24 12:25:08 CEST 2003 - snwint@suse.de
