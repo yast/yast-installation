@@ -5,13 +5,7 @@ log "======================="
 #=============================================
 # 7) setup logfile size
 #---------------------------------------------
-if [ -z "$Y2MAXLOGSIZE" ];then
-	Y2MAXLOGSIZE=`LANG=C df /var/log/YaST2 |\
-		tail -n 1 | awk '{ print int($4/10) }'`
-	test -n $Y2MAXLOGSIZE && test $Y2MAXLOGSIZE -gt 5000 && Y2MAXLOGSIZE=5000
-	export Y2MAXLOGSIZE
-fi
-test -z "$Y2MAXLOGSIZE" && export Y2MAXLOGSIZE=50
+test -z "$Y2MAXLOGSIZE" && export Y2MAXLOGSIZE=100
 test -z "$Y2MAXLOGNUM"  && export Y2MAXLOGNUM=5
 log "\tSet YaST2 LOG parameters:"
 log "\tMaximum log size:  $Y2MAXLOGSIZE"
