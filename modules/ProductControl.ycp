@@ -109,6 +109,8 @@ global define boolean Read( string controlfile) ``{
         }
         // Default is true
         ProductFeatures::delete_old_packages = software["delete_old_packages"]:true;
+        ProductFeatures::inform_about_suboptimal_distribution =
+            software["inform_about_suboptimal_distribution"]:false;
     }
     if (haskey(productControl, "globals"))
     {
@@ -117,6 +119,8 @@ global define boolean Read( string controlfile) ``{
         ProductFeatures::language = globals["language"]:"";
         ProductFeatures::keyboard = globals["keyboard"]:"";
         ProductFeatures::timezone = globals["timezone"]:"";
+        ProductFeatures::use_desktop_scheduler =
+            globals["use_desktop_scheduler"]:true;
     }
 
     // FIXME: Handle reading errors
