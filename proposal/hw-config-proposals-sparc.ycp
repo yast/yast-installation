@@ -4,6 +4,7 @@
 // Proposal list for hardware configuration for SPARCs
 //
 [
+"x11_proposal",
 "printer_proposal",
 "sound_proposal"
 ]
