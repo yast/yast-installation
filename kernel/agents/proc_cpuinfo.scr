@@ -24,7 +24,7 @@
 .proc.cpuinfo
 
 `ag_ini(
-    IniAgent( "/proc/cpuinfo",
+    `IniAgent( "/proc/cpuinfo",
 	$[
 	    /* allow comments after value, read only file */
 	    "options"	: [ "comments_last", "read_only" ],

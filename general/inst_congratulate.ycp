@@ -92,7 +92,7 @@ after <b>Finish</b>. Note: The Control Center does not have a back button to
 return to this installation sequence.</p>
 ");
 
-    Wizard::SetContents (caption, contents, help, WFM::Args (0), WFM::Args (1));
+    Wizard::SetContents (caption, contents, help, (boolean)WFM::Args (0), (boolean)WFM::Args (1));
 
     Wizard::ReplaceNextButton (`PushButton (`id(`next), `opt(`default),
 					    Label::FinishButton ()));
@@ -121,7 +121,7 @@ return to this installation sequence.</p>
 
     Wizard::RestoreNextButton ();
 
-    if (ret == `next && UI::QueryWidget (`id(`start_y2cc), `Value))
+    if (ret == `next && (boolean)UI::QueryWidget (`id(`start_y2cc), `Value))
     {
 	// Create empty /var/lib/YaST2/start_y2cc file to signal the calling script
 	// that the YaST2 control center should be started after the installation

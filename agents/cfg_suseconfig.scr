@@ -12,5 +12,5 @@
 .sysconfig.suseconfig
 
 `ag_ini(
-    SysConfigFile("/etc/sysconfig/suseconfig")
+    `SysConfigFile("/etc/sysconfig/suseconfig")
 )

@@ -64,7 +64,7 @@
 	}
 	else
 	{
-	    if (WFM::CallFunction (`inst_rootpart (true, true, `boot_popup)) != `next)
+	    if (WFM::CallFunction ("inst_rootpart", [true, true, `boot_popup]) != `next)
 		return `cancel;
 	}
 
@@ -373,8 +373,8 @@ disk that will not boot. With this option, try to fix problems manually.
 
     if (Mode::repair)
     {
-	WFM::CallModule ("inst_repair", []);
+	WFM::CallFunction ("inst_repair");
     }
 
-    return ret;
+    return (symbol)ret;
 }

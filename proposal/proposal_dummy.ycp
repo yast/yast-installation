@@ -14,8 +14,8 @@
 {
     textdomain "installation";
 
-    string func  = WFM::Args(0);
-    map    param = WFM::Args(1);
+    string func  = (string) WFM::Args(0);
+    map    param = (map) WFM::Args(1);
     map    ret   = $[];
 
     if ( func == "MakeProposal" )

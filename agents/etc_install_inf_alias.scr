@@ -18,7 +18,7 @@
 .etc.install_inf_alias
 
 `ag_ini(
-    IniAgent( "/etc/install.inf",
+    `IniAgent( "/etc/install.inf",
 	$[
 	    "options" : [ "read_only", "global_values", "flat" ],
 	    // Everything except the pattern in "params" is a comment.
