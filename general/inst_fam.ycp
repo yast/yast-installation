@@ -34,5 +34,5 @@
 	}
     }
 
-    return `next;
- }
+    return `auto;
+}
