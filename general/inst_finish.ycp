@@ -16,6 +16,8 @@
 
     import "Arch";
     import "AutoInstall";
+    import "AutoinstScripts";
+    import "AutoinstConfig";
     import "Bootloader";
     import "Console";
     import "Directory";
@@ -149,8 +151,9 @@ Please wait while the base system is being installed.
     if (Mode::autoinst)
     {
 	// progress stage title
-        Progress::Title (_("Executing postinstall (chroot) scripts"));
-        // FIXME: AutoInstall::Finish();
+        Progress::Title (_("Executing auto-install scripts in the installation environment."));
+        AutoinstScripts::Write("chroot-scripts", false);
+        AutoInstall::Finish(Installation::destdir);
     }
 
     // copy hardware status to installed system
@@ -271,7 +274,10 @@ Please wait while the base system is being installed.
     // Override linuxrc settings in autoinst mode
     if ( Mode::autoinst )
     {
-	 // linuxrc = AutoInstall::Linuxrc(linuxrc);
+        if (AutoinstConfig::ForceBoot)
+        {
+	    linuxrc["Root"] = Bootloader::getRootDevice ();
+        }
     }
 
     // --------------------------------------------------------------
@@ -644,11 +650,10 @@ with the load address of your root DASD.
     }
 
 
-	if (Mode::autoinst)
-	{
-		import "AutoinstScripts";
-		AutoinstScripts::Write("chroot-scripts", true);
-	}
+    if (Mode::autoinst)
+    {
+        AutoinstScripts::Write("chroot-scripts", true);
+    }
 
 
     // --------------------------------------------------------------
