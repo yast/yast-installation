@@ -1,9 +1,10 @@
 @HEADER-COMMENT@
 
-# neededforbuild  autoconf automake yast2-testsuite dejagnu expect tcl yast2-core yast2-core-devel yast2-devtools
+# neededforbuild  yast2-devel-packages 
 
 @HEADER@
-Requires:	yast2 yast2-lib-wizard yast2-lib-sequencer yast2-storage yast2-mouse yast2-country yast2-bootloader
+Requires:	yast2
+Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
 BuildArchitectures:	noarch
 
 Summary:	Installation workflow
@@ -25,55 +26,48 @@ from an installation media.
 %doc @DOCDIR@
 
 %dir /var/lib/YaST2
-@YAST2DIR@/*.ycp
 
-%dir @YAST2DIR@/clients
-@YAST2DIR@/clients/inst*.ycp
-@YAST2DIR@/clients/password.ycp
-@YAST2DIR@/clients/vendor.ycp
-@YAST2DIR@/clients/menu.ycp
+%dir @clientdir@
+@clientdir@/inst*.ycp
+@clientdir@/password.ycp
+@clientdir@/vendor.ycp
+@clientdir@/menu.ycp
 
-%dir @YAST2DIR@/modules
-@YAST2DIR@/modules/*.ycp
+%dir @moduledir@
+@moduledir@/*.ycp
 
-%dir @YAST2DIR@/include
-@YAST2DIR@/include/*.ycp
-@YAST2DIR@/include/packages/*.ycp
+%dir @yncludedir@
+@yncludedir@/*.ycp
+@yncludedir@/packages/*.ycp
 
-%dir @YAST2DIR@/images
-@YAST2DIR@/images/*.png
+%dir @configdir@
+@configdir@/*.y2cc
 
-%dir @YAST2DIR@/menuentries
-@YAST2DIR@/menuentries/*.y2cc
+%dir @scrconfdir@
+# kernel/agents
+@scrconfdir@/boot_vmlinuz_version.scr
+@scrconfdir@/cfg_kernel.scr
+@scrconfdir@/proc_cpuinfo.scr
+@scrconfdir@/proc_cmdline.scr
 
-%dir @YAST2DIR@/servers_non_y2
-@YAST2DIR@/servers_non_y2/ag_instsource
+# agents
+@scrconfdir@/descr_info.scr
+@scrconfdir@/etc_passwd.scr
+@scrconfdir@/cfg_suseconfig.scr
+@scrconfdir@/proc_mounts.scr
+@scrconfdir@/cfg_windowmanager.scr
+@scrconfdir@/etc_install_inf.scr
+@scrconfdir@/run_get_suseconfig_modules.scr
+@scrconfdir@/proc_modules.scr
+@scrconfdir@/run_df.scr
 
-%dir @YAST2DIR@/scrconf
-@YAST2DIR@/scrconf/boot_vmlinuz_version.scr
-@YAST2DIR@/scrconf/cfg_kernel.scr
-@YAST2DIR@/scrconf/cfg_suseconfig.scr
-@YAST2DIR@/scrconf/descr_info.scr
-@YAST2DIR@/scrconf/etc_install_inf.scr
-@YAST2DIR@/scrconf/etc_passwd.scr
-@YAST2DIR@/scrconf/menuentries.scr
-@YAST2DIR@/scrconf/proc_cmdline.scr
-@YAST2DIR@/scrconf/proc_cpuinfo.scr
-@YAST2DIR@/scrconf/proc_modules.scr
-@YAST2DIR@/scrconf/proc_mounts.scr
-@YAST2DIR@/scrconf/run_df.scr
-@YAST2DIR@/scrconf/run_get_suseconfig_modules.scr
-@YAST2DIR@/scrconf/yast2_instsource.scr
-
-@YAST2DIR@/bin/create_update_inf
-@YAST2DIR@/bin/update_unique_keys.pl
-@YAST2DIR@/bin/check.boot
-@YAST2DIR@/bin/WinINF.pm
-@YAST2DIR@/bin/pars-inf.pl
-@YAST2DIR@/bin/y2merge.pl
-@YAST2DIR@/bin/YaST2*
-@YAST2DIR@/bin/yast2-funcs
-@YAST2DIR@/bin/yast2_kde
-@YAST2DIR@/bin/patch_lilo_conf
-@YAST2DIR@/bin/inst_setup_vnc
+# scripts
+#FIXME@ybindir@/create_update_inf
+#FIXME@ybindir@/update_unique_keys.pl
+#FIXME@ybindir@/check.boot
+#FIXME@ybindir@/WinINF.pm
+#FIXME@ybindir@/pars-inf.pl
+@ybindir@/y2merge.pl
+@ybindir@/yast2-funcs
+@ybindir@/inst_setup_vnc
 

@@ -15,8 +15,7 @@ module_DATA = \
 	inst_mode.ycp				\
 	inst_startup.ycp			\
 	inst_suseconfig.ycp			\
-	installation.ycp			\
-	menu.ycp
+	installation.ycp
 
 
 EXTRA_DIST = $(module_DATA) $(ynclude_DATA)
