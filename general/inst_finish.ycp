@@ -105,10 +105,8 @@ Please wait while the base system is being installed.
 
     if ( !Mode::update )
     {
-	list current_sel = SCR::Read(.package.selInstallSet);
-	if (contains (current_sel, "Minimal")
-	    && contains (current_sel, "Gnome")
-	    && (!contains (current_sel, "Kde")))
+	if (!Pkg::IsProvided ("kdebase3-kdm")
+	    && Pkg::IsProvided ("gdm2"))
 	{
 	    default_wm = "gnome";
 	}
@@ -182,8 +180,7 @@ Please wait while the base system is being installed.
     }
 
     // Check if X11 package is installed.
-    SCR::Write (.targetpkg.dbTargetPath, Installation::destdir );
-    boolean x11_installed = SCR::Read (.targetpkg.installed, "xf86");
+    boolean x11_installed = Pkg::IsProvided("xf86");
 
     y2milestone ("x11_installed: <%1>", x11_installed );
 
@@ -307,27 +304,11 @@ Please wait while the base system is being installed.
 	SCR::Execute (.target.mkdir, Installation::sourcedir);
     }
 
-    // --------------------------------------------------------------
-    // re-mount installation media on target
-
-    integer mountresult = InstMedia::MountMedium (1);
-
-    if (mountresult == 0)
-    {
-	// this uses /dev/cdrom
-	InstMedia::InstallYaSTData ();
-    }
 
     // --------------------------------------------------------------
-    // saving package-information to running system
-
-    Packages::installPackageInformation (Language::language);
-
-
+    // copy /etc/raidtab to target if it was created
     if ( !Mode::update )
     {
-	// --------------------------------------------------------------
-	// copy /etc/raidtab to target if it was created
 
 	if (Storage::GetRaidtabCreated())
 	{
@@ -349,9 +330,9 @@ Please wait while the base system is being installed.
 
     if (Mode::autoinst)
     {
-		Progress::NextStep();
-		// progress stage title
-		AutoInstall::Save();
+	Progress::NextStep();
+	// progress stage title
+	AutoInstall::Save();
     }
 
     ModulesConf::Save ();
@@ -696,12 +677,10 @@ with the load address of your root DASD.
     if (!Mode::live_eval)
     {
 	// first, umount everthing mounted *in* the target.
-	// /var/adm/mount (Installation::sourcedir)
 	// /proc/bus/usb
 	// /proc
 	// /boot
 
-	WFM::Execute(.local.umount, Installation::destdir + Installation::sourcedir);
 	if (Hotplug::haveUSB)
 	{
 	    WFM::Execute(.local.umount, Installation::destdir + "/proc/bus/usb");
