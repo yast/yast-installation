@@ -102,15 +102,13 @@ langfile=/etc/sysconfig/language
 eval `grep "^[[:space:]]*RC_LANG=" $langfile 2>/dev/null`
 
 # if an entry 'Console:  ....' exists in install.inf,
-# YaST runs on a console which is connected to a serial port 
+# YaST runs on a console which is connected to a serial port
 if [ "$Console" ]; then
     # don't use UTF-8 in case of a serial console
     export LANG=$RC_LANG
 else
     # get rid of encoding and/or modifier
-    lang=${RC_LANG%%@*}
-    lang=${lang%%.*}
-    export LANG="${lang}.UTF-8"
+    export LANG=${RC_LANG%%[.@]*}.UTF-8
 fi
 
 # start unicode if encoding is UTF-8
