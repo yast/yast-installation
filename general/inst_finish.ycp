@@ -465,15 +465,15 @@ Please wait while the base system is being installed.
 	    string filename = "/etc/X11/XF86Config";
 	    InjectFile (filename);
 	}
+
 	// ... /
 	// make current X11 configuration available in installed or updated system
 	// copy /etc/X11/XF86Config from inst-sys to [/mnt]/etc/X11/XF86Config.install
 	// ---
 	y2milestone ("Include X11 config [instsys] to installed system: XF86Config.install");
 	string filename = "/etc/X11/XF86Config";
-	SCR::Execute (.local.bash,
-		"/bin/cp " + filename + " " + Installation::destdir + filename + ".install"
-	);
+	WFM::Execute (.local.bash, "/bin/cp " + filename + " " +
+		      Installation::destdir + filename + ".install");
     }
 
     // --------------------------------------------------------------
