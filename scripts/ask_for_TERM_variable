@@ -11,8 +11,8 @@ echo "  2) VT102"
 echo "  3) VT220$HVC_CONSOLE_HINT"
 echo "  4) X Terminal Emulator (xterm)"
 echo "  5) X Terminal Emulator (xterm-vt220)"
-echo "  6) X Terminal Emulator (xterm-sco)"
-echo "  7) X Terminal Emulator (xterm-sun)"
+echo "  6) X Terminal Emulator (xterm-sun)"
+echo "  7) screen session"
 echo "  8) Linux VGA or Framebuffer Console"
 echo "  9) Other"
 echo ""
@@ -35,10 +35,10 @@ case $SELECTION in
     TERM=xterm-vt200
     ;;
   6)
-    TERM=xterm-sco
+    TERM=xterm-sun
     ;;
   7)
-    TERM=xterm-sun
+    TERM=screen
     ;;
   8)
     TERM=linux
