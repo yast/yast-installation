@@ -30,6 +30,7 @@ from an installation media.
 @moduledir@/*.ycp
 @yncludedir@/*.ycp
 @configdir@/*.y2cc
+@ydatadir@/*.ycp
 
 # kernel/agents
 @scrconfdir@/boot_vmlinuz_version.scr
