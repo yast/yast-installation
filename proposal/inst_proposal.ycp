@@ -336,7 +336,7 @@
 	{
 	    // Module list for new installation proposal
 
-	    if (Arch::S390)
+	    if (Arch::s390)
 	    {
 		// S390 lack some hardware (e.g. keyboard and mouse)
 
