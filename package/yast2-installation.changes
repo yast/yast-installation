@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Sep  3 10:15:44 CEST 2003 - kkaempf@suse.de
+
+- copy XF86Config from inst-sys to XF86Config.install in
+  the system (#29910)
+
+-------------------------------------------------------------------
 Tue Sep  2 13:54:53 CEST 2003 - kkaempf@suse.de
 
 - make repair system accessible
