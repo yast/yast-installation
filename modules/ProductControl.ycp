@@ -323,19 +323,19 @@ global define string getWorkflowLabel(string stage, string mode)
 global define void AddWizardSteps(list<map> stagemode) ``{
     string first_id = "";
     foreach (map sm , stagemode, ``{
-            string slabel = getWorkflowLabel(sm["stage"]:"", sm["mode"]:"");
-            UI::WizardCommand(`AddStepHeading( slabel ) );
-            foreach(map m, getModules(sm["stage"]:"", sm["mode"]:""), ``{
-                y2debug("adding step: %1", m );
-                if (m["label"]:"" != "") {
-                if (first_id=="")
-                {
-                first_id = m["id"]:"";
-                }
-                UI::WizardCommand(`AddStep( m["label"]:"",     m["id"]:"" ) );
-                }
-                });
-            });
+	string slabel = getWorkflowLabel(sm["stage"]:"", sm["mode"]:"");
+	UI::WizardCommand(`AddStepHeading( slabel ) );
+	foreach(map m, getModules(sm["stage"]:"", sm["mode"]:""), ``{
+	    y2debug("adding step: %1", m );
+	    if (m["label"]:"" != "") {
+		if (first_id=="")
+		{
+		    first_id = m["id"]:"";
+		}
+		UI::WizardCommand(`AddStep( m["label"]:"",     m["id"]:"" ) );
+	    }
+	});
+    });
 
     UI::WizardCommand(`SetCurrentStep( first_id ) );
     return;
