@@ -110,6 +110,11 @@ Please wait while the base system is being installed.
 	{
 	    default_wm = "gnome";
 	}
+	else if (!Pkg::IsSelected ("kdebase3-kdm")
+	    && Pkg::IsSelected ("gdm2"))
+	{
+	    default_wm = "gnome";
+	}
     }
 
     Progress::NextStep();
@@ -181,6 +186,8 @@ Please wait while the base system is being installed.
 
     // Check if X11 package is installed.
     boolean x11_installed = Pkg::IsProvided("xf86");
+    if (!x11_installed)
+	x11_installed = Pkg::IsSelected ("xf86");
 
     y2milestone ("x11_installed: <%1>", x11_installed );
 
