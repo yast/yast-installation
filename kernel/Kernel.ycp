@@ -73,6 +73,7 @@
 	list discardlist = [
 	  "linuxrc", "textmode", "install", "gateway",
 	  "initrd", "noshells", "network", "netmask", "ip",
+	  "domain", "forcerootimage", "insmod", "nameserver",
 	  "instmode",
 	  "autoyast",
 	  "nosshd",
@@ -90,7 +91,9 @@
 	  "fake_initrd",
 	  "load_ramdisk",
 	  "install",
+	  "start_shell",
 	  "vnc", "vncpassword",
+	  "usessh", sshpassword", "nosshkeyey",
 	  "rescue",
 	  "info"
 	];
