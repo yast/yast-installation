@@ -136,7 +136,7 @@ fi
 log "X11i=$X11i"
 
 # get total memory
-eval $(grep 'MemTotal' /proc/meminfo | sed -e 's/: */=/' -e 's/ *kB//')
+eval $(grep '^MemTotal' /proc/meminfo | sed -e 's/: */=/' -e 's/ *kB//')
 log "MemTotal=$MemTotal"
 #
 # 1 TB of memory is enough and bash cannot use nums >2^31 (singed int)
