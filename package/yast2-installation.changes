@@ -3,6 +3,7 @@ Mon Mar 22 15:58:33 CET 2004 - sh@suse.de
 
 - V 2.9.39
 - Fixed bug #36292: Wizard steps not translated 
+- Preliminary fix for bug #36713: Use textdomain from XML file
 
 -------------------------------------------------------------------
 Mon Mar 22 11:14:07 CET 2004 - arvin@suse.de
