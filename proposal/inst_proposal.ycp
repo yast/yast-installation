@@ -417,15 +417,21 @@
      * Create the proposal dialog
      * (the inner part, excluding the wizard frame)
      **/
-    define void build_dialog () ``{
+    define void build_dialog () {
 
 	// headline for installation proposal
 	string headline = _("Installation Settings");
+	// icon for installation proposal
+	string icon = "";
 
-	if ( proposal_mode == `net)
+	if ( proposal_mode == `net) {
 	    headline = _("Network Configuration");
-	else if ( proposal_mode == `hw)
+	    icon = "lan";
+	}
+	else if ( proposal_mode == `hw) {
 	    headline = _("Hardware Configuration");
+	    icon = "controller";
+	}
 
 	/* radiobuttons */
 	term skip_buttons =
@@ -488,7 +494,10 @@
 			    (boolean) WFM::Args(0),	// have_back_button
 			    false			// have_next_button
 			    );
-    };
+
+	if(icon != "") Wizard::SetDesktopIcon(icon);
+
+    }
 
 
 
