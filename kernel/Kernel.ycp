@@ -44,6 +44,11 @@
     global string cmdLine = "";
 
     /**
+     * list of modules which shall be probed ASAP after root is mounted
+     */
+    global string kernelModules = "";
+
+    /**
      * @return strign  the kernel vga paramter
      */
     global string vgaType = "";
@@ -337,9 +342,11 @@
 	y2milestone ("IDERecorders(%1)", idecdrws);
 	if (size (idecdrws) > 0)
 	{
-	    Initrd::AddModule ("cdrom", "");
-	    Initrd::AddModule ("ide-cd", "");
-	    Initrd::AddModule ("ide-scsi", "");
+// Don't add to initrd because of #19376
+//	    Initrd::AddModule ("ide-scsi", "");
+	    AddModuleToLoad ("cdrom");
+	    AddModuleToLoad ("ide-cd");
+	    AddModuleToLoad ("ide-scsi");
 	    y2milestone ("old boot_parameters '%1'", cmdLine);
 	    foreach (`dev, idecdrws,
 	    ``{
@@ -383,6 +390,28 @@
 	y2milestone ("cmdLine '%1'", cmdLine);
 	return;
     }
+
+    /**
+     * AddModuleToLoad ()
+     * @param string module name
+     * add the module name to sysconfig variable
+     */
+    global define void AddModuleToLoad (string name)
+    ``{
+	kernelModules = kernelModules + " " + name;
+    }
+
+    /**
+     * SaveModuleToLoad ()
+     * save the sysconfig variable to the file
+     */
+    global define void SaveModulesToLoad ()
+    ``{
+	y2milestone ("Modules to be loader at boot time: %1", kernelModules);
+	SCR::Write (.sysconfig.kernel.MODULES_LOADED_ON_BOOT, kernelModules);
+	SCR::Write (.sysconfig.kernel, nil);
+    }
+
 
     /**
      * Constructor
