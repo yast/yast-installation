@@ -87,6 +87,10 @@
 	    }
 	});
 
+	// Make sure the labels for default function keys are retranslated, too.
+	// Using UI::DefaultFunctionKeyMap() from "common_messages.ycp".
+	UI::SetFunctionKeys( UI::DefaultFunctionKeyMap() );
+
 
 	// Activate language changes on static part of wizard dialog
 
