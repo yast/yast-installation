@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Sun Sep 14 14:27:12 CEST 2003 - snwint@suse.de
+
+- added test for utf8 serial console to YaST2.{start,firstboot}
+
+-------------------------------------------------------------------
 Sat Sep 13 18:39:23 CEST 2003 - nashif@suse.de
 
 - remove inst_startup from autoinst workflow, add it autoinst_init (#30678)
