@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Fri Apr 16 14:26:09 CEST 2004 - lslezak@suse.cz
+
+- UML mode fixes: don't copy mtab to the host (it's not needed),
+  find kernel and initrd even when symlinks are missing
+  (workaround for bug #39063)
+- added help text in UML installation proposal
+- version 2.9.55
+
+-------------------------------------------------------------------
 Mon Apr  5 14:38:22 CEST 2004 - fehr@suse.de
 
 - load module dm-snapshort at to prevent hangs if LVM contains 

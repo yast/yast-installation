@@ -665,17 +665,40 @@ with the load address of your root DASD.
 	    // copy kernel and initrd to host system
 	    integer result = 0;
 
+	    string initrd_name = "/boot/initrd";
+	    string kernel_name = "/boot/linux";
+
+	    // check whether kernel symlink exists
+	    integer fsize = (integer) SCR::Read(.target.size, kernel_name);
+	    if (fsize < 0)
+	    {
+		// workaround when symlink doesn't exists
+		map out = (map)SCR::Execute(.target.bash_output, "ls -1 /boot/linux-*");
+		list<string> kernels = splitstring(out["stdout"]:"", "\n");
+
+		kernel_name = kernels[0]:"";
+		y2milestone("Kernel used: %1", kernel_name);
+	    }
+
+	    // check whether initrd symlink exists
+	    fsize = (integer) SCR::Read(.target.size, initrd_name);
+	    if (fsize < 0)
+	    {
+		// workaround when symlink doesn't exists
+		map out = (map)SCR::Execute(.target.bash_output, "ls -1 /boot/initrd-*");
+		list<string> initrds = splitstring(out["stdout"]:"", "\n");
+
+		initrd_name = initrds[0]:"";
+		y2milestone("Initrd used: %1", initrd_name);
+	    }
+
 	    result = (integer) SCR::Execute(.target.bash, sformat("/bin/mv %1/initrd %1/initrd.inst", mpoint));
-	    result = (integer) SCR::Execute(.target.bash, sformat("/bin/cp /boot/initrd %1", mpoint));
+	    result = (integer) SCR::Execute(.target.bash, sformat("/bin/cp %1 %2/initrd", initrd_name, mpoint));
 	    y2debug("initrd copy result: %1", result);
 
 	    result = (integer) SCR::Execute(.target.bash, sformat("/bin/mv %1/linux %1/linux.inst", mpoint));
-	    result = (integer) SCR::Execute(.target.bash, sformat("/bin/cp /boot/linux %1", mpoint));
+	    result = (integer) SCR::Execute(.target.bash, sformat("/bin/cp %1 %2/linux", kernel_name, mpoint));
 	    y2debug("kernel copy result: %1", result);
-
-	    // copy mtab (to get root device name)
-	    result = (integer) SCR::Execute(.target.bash, sformat("/bin/cp /etc/mtab %1", mpoint));
-	    y2debug("/etc/mtab copy result: %1", result);
 
 	    boolean unmounted = (boolean)SCR::Execute(.target.umount, mpoint);
 	    y2milestone("hostfs unmounted: %1", unmounted);
