@@ -1,0 +1,98 @@
+/**
+ * Module:	inst_uml_user.ycp
+ *
+ * Authors:	Ladislav Slezak <lslezak@suse.cz>
+ *
+ * Purpose:	Ask the user for user settings for uml.
+ */
+
+{
+    textdomain "installation";
+
+    import "UML";
+    import "Wizard";
+    import "Popup";
+    import "Users";
+    import "UsersCache";	// ?? required for initialization of the module
+    import "Report";
+
+    // screen title for uml options
+    string title = _("UML User Settings");
+
+    // build and show dialog
+
+    Wizard::OpenAcceptDialog ();
+
+    term contents = `HVSquash(
+	`VBox(
+	    `Left(`TextEntry(`id(`username),
+		    // text entry label
+		    _("Login Name"),
+		    UML::username
+		)
+	    ),
+	    `VSpacing(1),
+	    `Left(`TextEntry(`id(`homedir),
+		    // text entry label
+		    _("Home Directory"),
+		    UML::homedir
+		)
+	    )
+	)
+    );
+
+    // help text for uml user settings
+    string help_text = _("<p><b>User Settings</b></p><br><p>Here you can set UML user account.</p>")
+	+ _("<p>Kernel and disk image will be stored in the <b>home directory</b> of the UML user.</p>")
+    ;
+
+//    Wizard::SetContents (title, contents, help_text, (boolean) WFM::Args(0),
+//			 (boolean) WFM::Args(1));
+
+    Wizard::SetContents (title, contents, help_text, true, true);
+
+    // allow only valid login name characters
+    UI::ChangeWidget (`id (`username), `ValidChars, Users::ValidLognameChars());
+
+    any ret = nil;
+
+    while (ret != `cancel && ret != `back && ret != `next)
+    {
+	ret = Wizard::UserInput ();
+
+	if (ret == `cancel || ret == `back)
+	    break;
+
+	if (ret == `next)
+	{
+	    string username = (string) UI::QueryWidget (`id(`username), `Value);
+	    string homedir = (string) UI::QueryWidget (`id(`homedir), `Value);
+
+	    // check user name and home directory
+	    string error = Users::CheckUsername(username);
+	    string error_home = Users::CheckHome(homedir);
+
+	    if (error != "")
+	    {
+                Report::Error(error);
+                UI::SetFocus(`id(`username));
+		ret = `again;
+	    }
+	    else if (error_home != "")
+	    {
+                Report::Error(error_home);
+                UI::SetFocus(`id(`homedir));
+		ret = `again;
+	    }
+	    else
+	    {
+		UML::username = username;
+		UML::homedir = homedir;
+	    }
+	}
+    }
+
+    Wizard::CloseDialog();
+
+    return ret;
+}
