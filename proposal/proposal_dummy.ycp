@@ -65,7 +65,9 @@
 
 	ret =
 	    $[
+	      // this is a heading
 	      "rich_text_title"	:	_( "Dummy"  ),
+	      // this is a menu entry
 	      "menu_title"	:	_( "&Dummy" ),
 	      "id"		:	"dummy_stuff"
 	    ];

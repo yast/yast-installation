@@ -251,10 +251,12 @@
 	    y2error( "Write() failed for one or more submodules" );
 	    // Submodules handle their own error reporting
 
+	    // text for a message box
 	    UI::TimedMessagePopup( _( "Configuration saved.\nThere were errors." ), 3 );
 	}
 	else
 	{
+	    // text for a message box
 	    UI::TimedMessagePopup( _( "Configuration saved successfully." ), 3 );
 	}
     };
@@ -789,8 +791,11 @@ To use the settings as displayed, press <b>Accept</b>.
 	    }
 	}
 	else if (input == `reset_to_defaults
-		 && UI::ContinueCancelPopup( _("Really reset everything to default values?") + "\n"
-					     + _("You will lose all changes.") ) )
+		 && UI::ContinueCancelPopup(
+					    // question in a popup box
+					    _("Really reset everything to default values?") + "\n" +
+					    // explain consequences of a decision
+					    _("You will lose all changes.") ) )
 	{
 	    make_proposal( true, false );	// force_reset
 	}
@@ -802,6 +807,7 @@ To use the settings as displayed, press <b>Accept</b>.
 
 		UI::ChangeWidget( `id(`proposal), `Value,
 				  HTML::Newlines( 3 ) +
+				  // message show when user has disabled the configuration
 				  HTML::Para( _( "Skipping hardware configuration upon user request" ) )
 				  );
 		UI::ChangeWidget(`id(`menu), `Enabled, false );
