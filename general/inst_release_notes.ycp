@@ -11,20 +11,49 @@
     textdomain "installation";
 
     import "Wizard";
+    import "Language";
+
+
+    /* filename of release notes */
+    string file = "";
+
+    /* release notes */
+    string text = "";
+
+
+    /* function to load release notes */
+    define boolean load_release_notes () ``{
+
+	string tmp = "/usr/share/doc/RELEASE_NOTES.%1.html";
+
+	file = sformat (tmp, Language::language);
+	text = SCR::Read (.target.string, [file, ""]);
+	if (text != "")
+	    return true;
+
+	file = sformat (tmp, substring (Language::language, 0, 2));
+	text = SCR::Read (.target.string, [file, ""]);
+	if (text != "")
+	    return true;
+
+	file = sformat (tmp, "en");
+	text = SCR::Read (.target.string, [file, ""]);
+	if (text != "")
+	    return true;
+
+	return false;
+    };
+
 
     /* Congratulation Dialog caption */
     string caption = _("Release Notes");
 
-    string text = "these are the release notes FIXME";
-
-    // FIXME: language
-    string notes_file = "/usr/share/doc/RELEASE_NOTES.en.html";
-    string notes_text = SCR::Read (.target.string, [notes_file, ""]);
+    load_release_notes ();
 
     term contents = `VBox (
 			   `VSpacing (0.5),
-			   `Left (`Label (sformat (_("Content of file %1"), notes_file))),
-			   `RichText (`opt(`richText), notes_text),
+			   `Left (`Label (sformat (_("Content of file %1"), file))),
+			   `RichText (`opt(`richText), text),
 			   `VSpacing (0.5)
 			   );
 
@@ -45,8 +74,7 @@
 	    Wizard::RestoreNextButton();
 	    return `abort;
 	}
-
-	if ( ret == `help )
+	else if ( ret == `help )
 	{
 	    Wizard::ShowHelp (help);
 	}
