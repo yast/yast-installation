@@ -23,6 +23,7 @@ textdomain "installation";
 import "Directory";
 import "Installation";
 import "Require";
+import "Mode";
 
 //=======================================
 // System Global Variables
@@ -33,19 +34,8 @@ global string  versionLink = "";
 //=======================================
 // Global Functions
 //---------------------------------------
-//---[ X11Version ]----//
-global define void X11Version() ``{
-	// ...
-	// The module constructor. Sets some proprietary module data defined
-	// for public access This is done only once (and automatically)
-	// when the module is loaded for the first time
-	// ---
-	GetVersion();
-	return;
-}
-
 //---[ GetVersion ]----//
-global define void GetVersion() ``{
+global define string GetVersion() ``{
 	// ...
 	// Set the global variable version to:
 	// ""  -   No X11 found
@@ -63,7 +53,7 @@ global define void GetVersion() ``{
 	// if there is only one entry pointing to XFree86 version 3
 	// XFree86 3 has to be used for this card
 	// ---
-	integer ver = SCR::Execute( .target.bash,
+	integer ver = (integer)SCR::Execute( .target.bash,
 		Directory::bindir + "/version"
 	);
 	if (ver == 4) {
@@ -75,12 +65,23 @@ global define void GetVersion() ``{
 	return( version );
 }
 
+//---[ X11Version ]----//
+global define void X11Version() ``{
+	// ...
+	// The module constructor. Sets some proprietary module data defined
+	// for public access This is done only once (and automatically)
+	// when the module is loaded for the first time
+	// ---
+	GetVersion();
+	return;
+}
+
 //---[ GetX11Link ]----//
-global define void GetX11Link() ``{
+global define string GetX11Link() ``{
 	// ...
 	// Read the endpoint of the X11 link
 	// ---
-	integer ver = SCR::Execute( .target.bash,
+	integer ver = (integer)SCR::Execute( .target.bash,
 		Directory::bindir + "/version -link " + Installation::destdir
 	);
 	if (ver == 4) {
