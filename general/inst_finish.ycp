@@ -574,7 +574,7 @@ with the load address of your root DASD.
     // write network settings to installed system
     if (Arch::s390 || Mode::vnc || Mode::usessh)
     {
-	WFM::Execute (.local.bash, "/create_interface " + Installation::destdir);
+	WFM::Execute (.local.bash, "/sbin/create_interface " + Installation::destdir);
     }
 
     // --------------------------------------------------------------
