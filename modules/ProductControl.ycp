@@ -276,7 +276,8 @@ void PrepareScripts(map m) {
         string type = (interpreter == "shell") ? "sh" : "pl";
         string f = sformat("%1/%2_pre.%3", tmp_dir, m["name"]:"", type);
         WFM::Write(.local.string,f , source);
-        logfiles = add(logfiles, sformat("%1.log", f));
+        logfiles = add(logfiles, sformat("%1.log", sformat("%1_pre.%2",
+                        m["name"]:"", type)));
     }
     if (haskey(m,"postscript"))
     {
@@ -285,7 +286,8 @@ void PrepareScripts(map m) {
         string type = (interpreter == "shell") ? "sh" : "pl";
         string f = sformat("%1/%2_post.%3", tmp_dir, m["name"]:"", type);
         WFM::Write(.local.string, f, source);
-        logfiles = add(logfiles, sformat("%1.log", f));
+        logfiles = add(logfiles, sformat("%1.log", sformat("%1_post.%2",
+                         m["name"]:"", type)));
     }
     return;
 }
@@ -308,6 +310,7 @@ global define list<map> getModules(string stage, string mode)
             id = id + 1;
             return (m);
             });
+    y2debug("Log files: %1", logfiles);
     return modules;
 }
 

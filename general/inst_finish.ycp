@@ -705,11 +705,13 @@ with the load address of your root DASD.
     }
     if (size(ProductControl::logfiles)>0)
     {
+        y2milestone("Writing hook logs into system: %1",
+                ProductControl::logfiles);
         foreach(string logfile, ProductControl::logfiles, ``{
-                logfile = "/var/log/YaST2/" + logfile;
-                if (WFM::Read (.local.size, logfile) > 0)
+                string fulllogfile = "/var/log/YaST2/" + logfile;
+                if (WFM::Read (.local.size, fulllogfile) > 0)
                 {
-                    WFM::Execute (.local.bash, "/bin/cp " + logfile + " " +
+                    WFM::Execute (.local.bash, "/bin/cp " + fulllogfile + " " +
                     Installation::destdir + "/var/log/YaST2/" + logfile);
                 }
                 });
