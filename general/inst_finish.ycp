@@ -67,9 +67,6 @@ Please wait while the base system is being installed.
 
 
     integer progress_length = 14;
-    // In autoinst mode we need one more step
-    if (Mode::autoinst)
-	 progress_length = progress_length + 1;
 
     Progress::New(
 		  // Headline for last dialog of base installation: Install LILO etc.
@@ -166,9 +163,11 @@ Please wait while the base system is being installed.
 
     if (Mode::autoinst)
     {
-        AutoInstall::copyPrescriptData();
+        AutoInstall::saveMiscData();
+
         // progress stage title
         Progress::Title (_("Executing postinstall (chroot) scripts"));
+
         AutoInstall::scriptSettings("chroot-scripts");
     }
 
@@ -352,10 +351,12 @@ Please wait while the base system is being installed.
     Display::Save();
 
     if (Mode::autoinst)
-    {
-	Progress::NextStep();
-	// progress stage title
+    {		
 	AutoInstall::Save();
+	if ( !Mode::update)
+	{
+	    AutoInstall::Finalize();
+	}
     }
 
     ModulesConf::Save ();
@@ -376,11 +377,7 @@ Please wait while the base system is being installed.
 	SCR::Write (.sysconfig.windowmanager, nil);
     }
 
-    if ( Mode::autoinst &&  !Mode::update)
-    {
-	AutoInstall::Finalize();
-    }
-
+  
     // --------------------------------------------------------------
     // console and /etc/initab (if serial console)
 
