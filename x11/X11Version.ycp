@@ -29,8 +29,6 @@ import "Installation";
 import "Require";
 import "Mode";
 
-import "Mode";
-
 //=======================================
 // System Global Variables
 //---------------------------------------
