@@ -35,6 +35,16 @@ export Y2MAXLOGSIZE=50000
 export Y2MAXLOGNUM=5
 }
 
+
+#
+# Special continue mode for configuring an already installed
+# system using an XML control file
+#
+if [ -r /var/lib/autoinstall/autoconf/autoconf.xml ]; then
+	/usr/lib/YaST2/bin/YaST2 installation continue
+	exit 0
+fi
+
 # Touch info dir. SuSEconfig probably should regenerated some
 # indices
 
