@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Jul 04 13:21:20 CEST 2003 - arvin@suse.de
+
+- convert update workflow into a proposal
+
+-------------------------------------------------------------------
 Fri May 23 15:20:32 CEST 2003 - arvin@suse.de
 
 - take kernel command line from install.inf (bug #25745)
