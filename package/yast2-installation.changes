@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Dec  1 12:04:13 CET 2004 - sh@suse.de
+
+- Fixed bug #48722: Inconsistent lower/upper case in mode dialog 
+
+-------------------------------------------------------------------
 Mon Nov 29 12:32:36 CET 2004 - ms@suse.de
 
 - startup scripts ready now. reports can be send using bug: (#46886)
