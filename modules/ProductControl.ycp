@@ -887,14 +887,13 @@ global symbol Run()
         }
 
 	symbol result = (symbol) WFM::CallFunction (getClientName(step_name), args);
-	addToStack(step_name);
 
 
         // Remove file if step was run and returned (without a crash);
 	if (m < size(modules) - 1 && !Stage::initial())
         {
-            if (SCR::Execute(.target.remove, "/var/lib/YaST2/step")!=0)
-                y2error("Error removing succesfull step identifier");
+            if (!(boolean)SCR::Execute(.target.remove, "/var/lib/YaST2/step"))
+                y2error("Error removing step identifier");
         }
 
 	// Dont call hook scripts after installation is done. (#36831)
@@ -905,6 +904,8 @@ global symbol Run()
 
 	// This should be safe (#36831)
 	Hooks::Checkpoint ( step_name, false);          // exit hook
+
+	addToStack(step_name);
 
 	if ( retranslate ) 
 	{
