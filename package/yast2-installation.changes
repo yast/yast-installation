@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Sep 03 14:33:07 CEST 2004 - arvin@suse.de
+
+- call Bootloader::Update instead of Bootloader::Write during
+  update (bug #44286)
+
+-------------------------------------------------------------------
 Mon Aug 30 17:23:29 CEST 2004 - jsrain@suse.cz
 
 - ask to confirm licenses of packages before installing/updating
