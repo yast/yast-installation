@@ -15,6 +15,7 @@ if [ ! "$Locale" = "" ];then
 fi
 set_language_init
 umount /var/adm/mount &>/dev/null
+unset LC_CTYPE
 log "\tLanguage set to: $LANG"
 
 #=============================================
