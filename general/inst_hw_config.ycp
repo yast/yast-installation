@@ -45,8 +45,8 @@
 	  ]),
 	  "button_label"	: _("&Printer..."),
 	  "button_id"		: `printer,
-	  "summary_module"	: ``(CallFunction(`printer_summary() ) ),
-	  "conf_module"		: ``(CallFunction(`printer() ) ),
+	  "summary_module"	: ``(WFM::CallFunction(`printer_summary() ) ),
+	  "conf_module"		: ``(WFM::CallFunction(`printer() ) ),
 	  "is_installed"	: (((SCR::Read(.target.size, "/usr/lib/YaST2/clients/printconf.ycp") != -1)
 				    && (SCR::Read(.target.size, "/etc/init.d/lpd") != -1))
                                    ||
@@ -61,8 +61,8 @@
 	  "test_mode_summary"	: summaryDevicesList([summaryDevice("EarBlaster MegaSonic Plus", "Configured with volume 60%.")]),
 	  "button_label"	: _("&Sound..."),
 	  "button_id"		: `sound,
-	  "summary_module"	: ``(CallFunction(`sound_summary() ) ),
-	  "conf_module"		: ``(CallFunction(`sound() ) ),
+	  "summary_module"	: ``(WFM::CallFunction(`sound_summary() ) ),
+	  "conf_module"		: ``(WFM::CallFunction(`sound() ) ),
 	  "is_installed"	: (SCR::Read(.target.size, "/usr/lib/YaST2/clients/sound.ycp") != -1)
 	];
 
@@ -73,8 +73,8 @@
 	  "test_mode_summary"	: summaryDevicesList([summaryDevice("SpiderNet GigaBit 1000 plus", "Configured with DHCP.")]),
 	  "button_label"	: _("N&etwork..."),
 	  "button_id"		: `network,
-	  "summary_module"	: ``(CallFunction(`lan_summary() ) ),
-	  "conf_module"		: ``(CallFunction(`lan( .installation ) ) ),
+	  "summary_module"	: ``(WFM::CallFunction(`lan_summary() ) ),
+	  "conf_module"		: ``(WFM::CallFunction(`lan( .installation ) ) ),
 	  "is_installed"	: (SCR::Read(.target.size, "/usr/lib/YaST2/clients/lan.ycp") != -1)
 	];
 
@@ -85,8 +85,8 @@
 	  "test_mode_summary"	: summaryDevicesList([]),
 	  "button_label"	: _("&Modem..."),
 	  "button_id"		: `modem,
-	  "summary_module"	: ``(CallFunction(`modem_summary() ) ),
-	  "conf_module"		: ``(CallFunction(`modem( .installation ) ) ),
+	  "summary_module"	: ``(WFM::CallFunction(`modem_summary() ) ),
+	  "conf_module"		: ``(WFM::CallFunction(`modem( .installation ) ) ),
 	  "is_installed"	: (SCR::Read(.target.size, "/usr/lib/YaST2/clients/modem.ycp") != -1)
 	];
 
@@ -97,8 +97,8 @@
 	  "test_mode_summary"	: summaryDevicesList([summaryDevice("BitWarbler Titanium", "Configured with provider Fast'n'easy.")]),
 	  "button_label"	: _("&ISDN..."),
 	  "button_id"		: `isdn,
-	  "summary_module"	: ``(CallFunction(`isdn_summary() ) ),
-	  "conf_module"		: ``(CallFunction(`isdn( .installation ) ) ),
+	  "summary_module"	: ``(WFM::CallFunction(`isdn_summary() ) ),
+	  "conf_module"		: ``(WFM::CallFunction(`isdn( .installation ) ) ),
 	  "is_installed"	: (SCR::Read(.target.size, "/usr/lib/YaST2/clients/isdn.ycp") != -1)
 	];
 
@@ -109,8 +109,8 @@
 	  "test_mode_summary"	: summaryDevicesList([summaryDevice("EyeBlaster UltraTV Plus", "Installed as TV card number 0.")]),
 	  "button_label"	: _("&TV card..."),
 	  "button_id"		: `tv,
-	  "summary_module"	: ``(CallFunction(`tv_summary() ) ),
-	  "conf_module"		: ``(CallFunction(`tv() ) ),
+	  "summary_module"	: ``(WFM::CallFunction(`tv_summary() ) ),
+	  "conf_module"		: ``(WFM::CallFunction(`tv() ) ),
 	  "is_installed"	: (SCR::Read(.target.size, "/usr/lib/YaST2/clients/tv.ycp") != -1),
 	  "force_reread"	: [ `sound ]
 	];
@@ -306,17 +306,17 @@ Just press the appropriate configuration button in this dialog.
 	{
 	    // imap server cd or fw_admin_host: configure network
 
-	    CallModule( "lan", [] );
+	    WFM::CallModule( "lan", [] );
 
 	    // imap server cd: configure imap
 	    if (is_imap_server)
 	    {
-		if (CallModule( "imap", [] ) == `next)
+		if (WFM::CallModule( "imap", [] ) == `next)
 		    break;
 	    }
 	    else if (is_fwadmin_host)
 	    {
-		if (CallModule( "fwcdadmin", [] ) == `next)
+		if (WFM::CallModule( "fwcdadmin", [] ) == `next)
 		    break;
 	    }
 	}

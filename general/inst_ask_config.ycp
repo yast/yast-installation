@@ -31,17 +31,17 @@
 	{
 	    // imap server cd or fw_admin_host: configure network
 
-	    CallFunction( `lan() );
+	    WFM::CallFunction( `lan() );
 
 	    // imap server cd: configure imap
 	    if ( Product::imap_server )
 	    {
-		if ( CallFunction( `imap() ) == `next)
+		if ( WFM::CallFunction( `imap() ) == `next)
 		    break;
 	    }
 	    else if ( Product::fwadmin_host )
 	    {
-		if ( CallFunction( `fwcdadmin() ) == `next)
+		if ( WFM::CallFunction( `fwcdadmin() ) == `next)
 		    break;
 	    }
 	}
@@ -162,8 +162,8 @@ configuration requires system administrator privileges.
 			  _("Congratulations!"),
 			  contents,
 			  help_text,
-			  Args(0),	// have_back_button
-			  Args(1)	// have_next_button
+			  WFM::Args(0),	// have_back_button
+			  WFM::Args(1)	// have_next_button
 			  );
 
     Wizard::ReplaceAbortButton(`Empty());	// don't need that any more
@@ -201,7 +201,7 @@ configuration requires system administrator privileges.
 		else
 		{
 		    y2milestone( "Calling hardware configuration" );
-		    CallFunction( `inst_hw_config() );
+		    WFM::CallFunction( `inst_hw_config() );
 		    button_id = `next;	// fall out of input loop
 		}
 	    }

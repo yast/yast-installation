@@ -26,7 +26,7 @@
     import "Wizard";
 
 
-    if ( size( Args() ) > 2 && Args(2) == true )	// going backwards?
+    if ( size( WFM::Args() ) > 2 && WFM::Args(2) == true )	// going backwards?
 	return `auto;					// don't execute this once more
 
     boolean reread_inittab = false;
@@ -112,7 +112,7 @@ the CPU and the amount of memory, this process can take some time.
     Wizard::SetContents(
 			  // Dialog title for SuSEconfig dialog
 			  _("Writing the system configuration"),
-			  contents, help_text, Args(0), Args(1));
+			  contents, help_text, WFM::Args(0), WFM::Args(1));
     Wizard::DisableAbortButton();
 
 

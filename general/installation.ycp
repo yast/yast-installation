@@ -19,8 +19,12 @@
 
     // this is installation, so start SCR always locally (as plugin) !
 
-    integer scrHandle = SCROpen ("scr", false);
-    SCRSetDefault (scrHandle);
+    integer scrHandle = WFM::SCROpen ("scr", false);
+    WFM::SCRSetDefault (scrHandle);
+
+    // y2milestone ("ARVIN %1", scrHandle);
+    // y2milestone ("ARVIN 2a %1", SCR::SuSEVersion ());
+    // y2milestone ("ARVIN 2b %1", SCR::Read (.probe.cpu));
 
     import "Arch";
     import "Mode";
@@ -511,7 +515,7 @@ will look different than in the manual.");
 
 	// Call the wizard dialog
 	y2milestone( "Calling %1", argterm );
-	symbol result = CallFunction(argterm);
+	symbol result = WFM::CallFunction (argterm);
 
 
 	Installation::immediate_prepdisk = false; //FIXME !

@@ -63,7 +63,7 @@
 
     define map submod_make_proposal( string submodule, boolean force_reset, boolean language_changed )
     ``{
-	map proposal = CallFunction ( submodule, [ "MakeProposal", $[ "force_reset":      force_reset,
+	map proposal = WFM::CallFunction ( submodule, [ "MakeProposal", $[ "force_reset":      force_reset,
 								      "language_changed": language_changed ] ] );
 	y2debug( "%1 MakeProposal() returns %2", submodule, proposal );
 
@@ -83,7 +83,7 @@
     ``{
 	// Call the AskUser() function
 
-	map     ask_user_result   = CallFunction( submod, [ "AskUser", $[ "has_next": false] ] );
+	map     ask_user_result   = WFM::CallFunction( submod, [ "AskUser", $[ "has_next": false] ] );
 	symbol  workflow_sequence = ask_user_result["workflow_sequence"]:`next;
 	boolean language_changed  = ask_user_result["language_changed"]:false;
 
@@ -113,7 +113,7 @@
 
     define map submod_description (string submodule)
     ``{
-	map description = CallFunction( submodule, [ "Description", $[] ] );
+	map description = WFM::CallFunction( submodule, [ "Description", $[] ] );
 
 	return description;
     };
@@ -220,7 +220,7 @@
      **/
     define boolean submod_write_settings( string submodule )
     ``{
-	map result = CallFunction( submodule, [ "Write", $[] ] );
+	map result = WFM::CallFunction( submodule, [ "Write", $[] ] );
 	if ( result == nil )
 	    result = $[];
 
@@ -538,7 +538,7 @@
 			    _("Installation Settings"),
 			    vbox,
 			    UI::WidgetExists(`id(`HelpText) ) ? help_text() : "",
-			    Args(0),	// have_back_button
+			    WFM::Args(0),	// have_back_button
 			    false	// have_next_button
 			    );
     };
@@ -710,7 +710,7 @@ To use the settings as displayed, press <b>Accept</b>.
 	// In autoinst mode, this has been called already.
 	//
 	if (!Mode::autoinst)
-	    CallFunction(`inst_startup() );
+	    WFM::CallFunction(`inst_startup() );
 
 	//
 	// Let user decide between
@@ -722,7 +722,7 @@ To use the settings as displayed, press <b>Accept</b>.
 
 	do
 	{
-	    any ret = CallFunction(`inst_mode() );
+	    any ret = WFM::CallFunction(`inst_mode() );
 
 	    if ( ret == `abort || ret == `finish )
 	    {
@@ -779,7 +779,7 @@ To use the settings as displayed, press <b>Accept</b>.
 	{
 	    if ( Mode::initial )
 	    {
-		if ( CallFunction(`inst_confirm_abort(`painless) ) )
+		if ( WFM::CallFunction(`inst_confirm_abort(`painless) ) )
 		    return `abort;
 	    }
 	    else
@@ -817,7 +817,7 @@ To use the settings as displayed, press <b>Accept</b>.
 	{
 	    if ( Mode::initial )
 	    {
-		input = CallFunction(`inst_doit( true,		// have_back
+		input = WFM::CallFunction(`inst_doit( true,		// have_back
 						 true,		// have_next
 						 false ) );	// going_backwards
 	    }
