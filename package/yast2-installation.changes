@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Aug 30 17:23:29 CEST 2004 - jsrain@suse.cz
+
+- ask to confirm licenses of packages before installing/updating
+  (#44145)
+
+-------------------------------------------------------------------
 Fri Aug 27 16:59:56 CEST 2004 - mvidner@suse.cz
 
 - When showing the address for a VNC installation, don't rely on
