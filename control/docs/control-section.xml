@@ -938,7 +938,7 @@ default
 
                 </example>
 
-                <para>A more complete example with other options is hown below:</para>
+                <para>A more complete example with other options is shown below:</para>
                 <programlisting><xi:include href="examples/partitions2.xml" parse="text"
                     xmlns:xi="http://www.w3.org/2001/XInclude"/>
                 </programlisting>
