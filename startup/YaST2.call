@@ -141,7 +141,7 @@ function prepare_for_qt () {
 	# set YaST2 Qt options for local displays
 	#---------------------------------------------
 	if [ ! -z "$NEED_XSERVER" ];then
-		Y2_QT_ARGS="--fullscreen --noborder"
+		Y2_QT_ARGS="--fullscreen --noborder --auto-fonts"
 	fi
 }
 
