@@ -748,7 +748,7 @@ with the load address of your root DASD.
 		{
 		WFM::Execute( .local.umount,
 		              Installation::destdir + e["mount"]:"" );
-		umountList = filter( `m, umountList, ``(m!=e["mount"]:""));
+		umountList = filter (string m, umountList, ``(m!=e["mount"]:""));
 		y2milestone( "loop umount %1 new list %2", e["mount"]:"",
 		             umountList );
 		}
