@@ -632,6 +632,66 @@ with the load address of your root DASD.
 	ModulesConf::RunDepmod (false);
     }
 
+    // installation inside UML machine
+    if (Arch::is_uml)
+    {
+	y2milestone("Starting UML mode configuration");
+
+	// disable HW services - they are useless and usually failing in UML
+	list<string> disable_services = ["kbd", "hotplug", "hwscan", "powersaved"];
+	foreach(string s, disable_services, ``{
+		integer disabled = (integer) SCR::Execute(.target.bash, sformat("/sbin/insserv -r %1", s));
+		y2milestone("insserv - service %1 exit status: %2", s, disabled);
+	    }
+	);
+
+	// copy files to the host system
+	string tmpdir = (string) SCR::Read(.target.tmpdir);
+	string mpoint = tmpdir + "/hostfs";
+
+	SCR::Execute(.target.mkdir, mpoint);
+
+	// use hostfs
+	boolean mounted = (boolean) SCR::Execute(.target.mount, ["none", mpoint], "-t hostfs -o .");
+
+	if (mounted == false)
+	{
+	    Report::Error(_("Cannot mount host file system."));
+	}
+	else
+	{
+	    y2milestone("hostfs mounted to %1", mpoint);
+
+	    // copy kernel and initrd to host system
+	    integer result = 0;
+
+	    result = (integer) SCR::Execute(.target.bash, sformat("/bin/mv %1/initrd %1/initrd.inst", mpoint));
+	    result = (integer) SCR::Execute(.target.bash, sformat("/bin/cp /boot/initrd %1", mpoint));
+	    y2debug("initrd copy result: %1", result);
+
+	    result = (integer) SCR::Execute(.target.bash, sformat("/bin/mv %1/linux %1/linux.inst", mpoint));
+	    result = (integer) SCR::Execute(.target.bash, sformat("/bin/cp /boot/linux %1", mpoint));
+	    y2debug("kernel copy result: %1", result);
+
+	    // copy mtab (to get root device name)
+	    result = (integer) SCR::Execute(.target.bash, sformat("/bin/cp /etc/mtab %1", mpoint));
+	    y2debug("/etc/mtab copy result: %1", result);
+
+	    boolean unmounted = (boolean)SCR::Execute(.target.umount, mpoint);
+	    y2milestone("hostfs unmounted: %1", unmounted);
+
+	    if (unmounted != true)
+	    {
+		// it's important to remount it read only!
+		// (.target agent removes content of the temporary directory at exit!)
+		y2warning("hostfs unmount failed, remounting read-only");
+		// umount failed, remount it read-only
+		mounted = (boolean) SCR::Execute(.target.mount, ["none", mpoint], "-t hostfs -o remount,ro");
+	    }
+	}
+	y2milestone("UML mode configuration was finished");
+    }
+
     // --------------------------------------------------------------
     // copy the root password for root user from inst-sys to the installed system
     // copy the ssh files to the fresh installed system

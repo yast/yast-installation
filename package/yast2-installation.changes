@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Mar 31 17:19:12 CEST 2004 - lslezak@suse.cz
+
+- inst_finish.ycp - copy kernel image, initrd and /etc/mtab to
+  the host system in UML installation mode
+
+-------------------------------------------------------------------
 Tue Mar 30 11:25:44 CEST 2004 - arvin@suse.de
 
 - disable virtual desktops in fvwm during vnc installation
