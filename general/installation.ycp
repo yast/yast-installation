@@ -156,7 +156,7 @@
     // UI::WizardCommand() can safely be called even if the respective UI
     // doesn't support the wizard widget, but for optimization it makes sense
     // to do expensive operations only when it is available.
-    list<map> stagemode = [$["stage":"initial","mode":"installation"], $["stage":"continue","mode":"installation"]];
+    list<map> stagemode = [$["stage":"initial","mode":Mode::mode], $["stage":"continue","mode":Mode::mode]];
     ProductControl::AddWizardSteps(stagemode);
 
     // classified_user_settings contain secrets, like passwords ...
@@ -342,7 +342,7 @@ differ from those in the manual.
     any	    former_result = `next;
     integer m = 0;			// current module
 
-    Wizard::SetFocusToNextButton();    
+    Wizard::SetFocusToNextButton();
 
     list<map> modules = ProductControl::getModules(Mode::stage, Mode::mode);
     map defaults = ProductControl::getModeDefaults(Mode::stage, Mode::mode);
