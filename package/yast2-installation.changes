@@ -5,6 +5,11 @@ Fri Mar  7 17:21:06 CET 2003 - nashif@suse.de
   (#24772 )
 
 -------------------------------------------------------------------
+Fri Mar  7 14:04:21 CET 2003 - kkaempf@suse.de
+
+- copy kernel config to /usr/src/linux/... (#24835)
+
+-------------------------------------------------------------------
 Thu Mar  6 13:33:40 CET 2003 - fehr@suse.de
 
 - umount fs based on crypto loop files before all other umounts

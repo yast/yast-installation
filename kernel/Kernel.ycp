@@ -406,6 +406,18 @@
     }
 
     /**
+     * CopyConfig()
+     * copy kernel source configuration to /usr/src/linux/..
+     */
+    global define void CopyConfig ()
+    ``{
+	SCR::Execute (.target.mkdir, "/usr/src/linux/include/linux");
+	SCR::Execute (.target.bash, "/bin/cp /boot/vmlinuz.autoconf.h /usr/src/linux/include/linux/autoconf.h");
+	SCR::Execute (.target.bash, "/bin/cp /boot/vmlinuz.version.h /usr/src/linux/include/linux/version.h");
+	SCR::Execute (.target.bash, "/bin/cp /boot/vmlinuz.config /usr/src/linux/.config");
+    }
+
+    /**
      * Constructor
      * pass /proc/cmdline to /var/lib/libhd/cmdline
      * extract relevant settings from /proc/cmdline
