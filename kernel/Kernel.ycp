@@ -1,26 +1,24 @@
 /**
- * File:
- *	Kernel.ycp
+ * File:	modules/Kernel.ycp
+ * Package:	Installation
+ * Summary:	Kernel related functions and data
+ * Authors:	Klaus Kaempf <kkaempf@suse.de>
  *
- * Module:
- *	Kernel
- *
- * Authors:
- *	Klaus Kaempf (kkaempf@suse.de)
- *
- * Summary:
- *	All kernel related functions are here
- *<UL>
- *<LI>	determine kernel rpm</LI>
- *<LI>	determine flags</LI>
- *<LI>	determine hard reboot</LI>
- *</UL>
  * $Id$
+ *
+ * <ul>
+ * <li>determine kernel rpm</li>
+ * <li>determine flags</li>
+ * <li>determine hard reboot</li>
+ * </ul>
  */
+
 {
+
     module "Kernel";
 
     import "Arch";
+    import "Initrd";
 
     textdomain "installation";
 
@@ -402,4 +400,6 @@
 
 	ProbeKernel ();
     }
+
+/* EOF */
 }

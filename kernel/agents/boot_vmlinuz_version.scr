@@ -1,19 +1,13 @@
 /**
- * File:
- *   boot_vmlinuz_version.scr
- * Summary:
- *   SCR Agent for reading /etc/exports
- * Access:
- *   read/write
- * Authors:
- *   Unknown <yast2-hacker@suse.de>
- * See:
- *   anyagent
- *   libscr
+ * File:	boot_vmlinuz_version.scr
+ * Summary:	Agent for reading /etc/exports
+ * Authors:	Klaus Kaempf <kkaempf@suse.de>
+ * Access:	read/write
+ *
  * Example:
  *   Read(.boot.vmlinuz_version, "/boot/vmlinuz")
  *   ("2.2.18")
- * 
+ *
  * $Id$
  *
  * Returns the version of the kernel image given as the second argument
@@ -21,9 +15,9 @@
 .boot.vmlinuz_version
 
 `ag_anyagent(
-  Description (
-  ``(Run("/sbin/get_kernel_version ", `arg(0))),
-  "\n", true,
-  ``(String ("^\n"))
-  )
+    Description(
+	``(Run("/sbin/get_kernel_version ", `arg(0))),
+	"\n", true,
+	``(String("^\n"))
+    )
 )
