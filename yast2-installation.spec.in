@@ -36,6 +36,7 @@ This controls the system installation.
 %doc @docdir@
 
 @clientdir@/*.ycp
+@includedir@/installation/*.ycp
 @moduledir@/*.ycp
 @configdir@/*.y2cc
 @desktopdir@/*.desktop

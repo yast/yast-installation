@@ -22,7 +22,7 @@
     import "Product";
     import "Mode";
     import "Installation";
-    import "AutoInstall";
+    import "AutoinstConfig";
     import "Wizard";
     import "HTML";
     import "Popup";
@@ -38,7 +38,7 @@
     symbol	proposal_mode = nil;
 
     // skip if not interactive mode.
-    if (!AutoInstall::interactive && Mode::autoinst) {
+    if (!AutoinstConig::Confirm && Mode::autoinst) {
 	return `auto;
     }
 
