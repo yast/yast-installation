@@ -2,6 +2,7 @@
 Mon Sep 13 12:57:41 CEST 2004 - jsrain@suse.cz
 
 - set FAM_ONLY_LOCAL and start fam according to default windowmanager
+- 2.10.18
 
 -------------------------------------------------------------------
 Mon Sep 13 11:28:33 CEST 2004 - arvin@suse.de
