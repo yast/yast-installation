@@ -29,11 +29,14 @@
     if ( size( WFM::Args() ) > 2 && WFM::Args(2) == true )	// going backwards?
 	return `auto;					// don't execute this once more
 
+    boolean onlyKernelUpdate = false;
+    if (Mode::normal)
+    {
+	onlyKernelUpdate = Kernel::switched;		// see update/inst_rpmupdate.ycp
+    }
+
     boolean reread_inittab = false;
 
-    // checking if module is called in running system (after a complete installation)
-    map		updateMap	= $[];
-    boolean	onlyKernelUpdate= lookup ( updateMap,	  "onlyKernel",	false );
     integer	current_step	= 0;	// Required by logStep()
 
     string log_destination = ">>/var/log/YaST2/y2log.SuSEconfig";		// Required by doStep()
@@ -202,32 +205,6 @@ the CPU and the amount of memory, this process can take some time.
 	sleep( 5*1000 );
     }
 
-
-    any retAsk = `no_log;
-
-    if (! Mode::live_eval
-	&& Mode::update )
-    {
-	// Show logging after update ?
-	if ( UI::AskShowLog () )
-	{
-	    retAsk = `yes_short;
-	}
-    }
-
-    while ( retAsk != `no_log )
-    {
-	string text = "";
-
-	if ( retAsk == `yes_short ) {
-	    text = SCR::Read (.target.string, "/var/log/YaST2/y2logRPMShort");
-	}
-	if ( retAsk == `yes_long ) {
-	    text = SCR::Read (.target.string, "/var/log/YaST2/y2logRPM");
-	}
-
-	retAsk = UI::DisplayLogFile( text, retAsk );
-    }
 
     if ( onlyKernelUpdate )
     {
