@@ -53,7 +53,7 @@
     term contents = `VBox (
 			   `VSpacing (0.5),
 			   `Left (`Label (sformat (_("Content of File %1"), file))),
-			   `RichText (`opt(`richText), text),
+			   `RichText (text),
 			   `VSpacing (0.5)
 			   );
 
