@@ -463,6 +463,17 @@ differ from those in the manual.
         // We show a stub dialog instead.
         if (result == nil)
         {
+            /**
+             * If workflow module is marked as optional, skip if it returns nil,
+             * For example, if its not installed.
+             */
+            if (mod["optional"]:false)
+            {
+                y2milestone("Skipping optional %1", symbolof(argterm) );
+                m = m + 1;
+                continue;         
+            }
+
             any r = nil;
             r = Popup::ModuleError(sformat("The module %1 does not work.", symbolof(argterm)));
             if      (r == `next)   m = m + 1;

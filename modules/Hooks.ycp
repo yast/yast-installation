@@ -31,7 +31,8 @@
      * @return void
      */
 
-    global define void Checkpoint (string filename, boolean at_entry) ``{
+    global define void Checkpoint (string filename, boolean at_entry)
+    {
 	if (WFM::Read (.local.size, "/tmp/"+filename) >= 0)
 	{
 	    if (at_entry)
@@ -83,7 +84,8 @@
      * @param string  filename == name of .ycp file
      * @param string at_entry == true before call of file == false after call of file
      */
-    global define void Run(string filename, boolean at_entry) ``{
+    global define void Run(string filename, boolean at_entry) 
+    {
         y2milestone("Running Hook: %1" , filename);
         if (at_entry)
         {
