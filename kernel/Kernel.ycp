@@ -108,6 +108,7 @@
 	  "vnc", "vncpassword",
 	  "usessh", "sshpassword", "nosshkey",
 	  "rescue",
+	  "repair",
 	  "info"
 	];
 
