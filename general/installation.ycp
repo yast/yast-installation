@@ -116,7 +116,9 @@
     if (Mode::initial)
     {
 	Pkg::InstSysMode();
-	Mouse::Set (Mouse::Probe ());
+	// InputDevice section is written via xupdate in YaST2
+	// start script, therefore no apply code is needed
+	// Mouse::Set (Mouse::Probe ());
 
 	Installation::encoding = Console::SelectFont( Language::language );
 
