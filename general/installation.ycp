@@ -24,6 +24,7 @@
 
     import "Arch";
     import "Mode";
+    import "Directory";
     import "Stage";
     import "Installation";
     import "ProductControl";
@@ -89,6 +90,7 @@
 
 	UI::SetLanguage (Language::language, Installation::encoding);
 	WFM::SetLanguage (Language::language, "UTF-8");
+	UI::RecordMacro( Directory::logdir + "/macro_inst_initial.ycp" );
     }
 
     // Properly setup timezone for continue mode.
@@ -98,6 +100,7 @@
 	import "Timezone";
 	Timezone::Set( Timezone::timezone, true );
 	Pkg::SetLocale (Language::language);
+	UI::RecordMacro( Directory::logdir + "/macro_inst_cont.ycp" );
     }
 
     ///////////////////////////////////////////////////////////////////////////////
