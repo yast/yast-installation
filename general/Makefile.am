@@ -14,7 +14,8 @@ client_DATA =					\
 	inst_congratulate.ycp			\
 	inst_default_desktop.ycp		\
 	inst_fam.ycp				\
-	installation.ycp
+	installation.ycp			\
+	release_notes_popup.ycp
 
 EXTRA_DIST = $(client_DATA)
 
