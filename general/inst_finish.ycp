@@ -744,8 +744,9 @@ with the load address of your root DASD.
 	while (umountLength > 0)
 	{
 	    umountLength = umountLength - 1;
-	    WFM::Execute(.local.umount, Installation::destdir + select (umountList, umountLength, ""));
-	    y2milestone( "umount target: %1", select (umountList, umountLength, "")) ;
+	    string tmp = Installation::destdir + select (umountList, umountLength, "");
+	    y2milestone("umount target: %1", tmp);
+	    WFM::Execute(.local.umount, tmp);
 	}
 
 	// disable loop device of crypto fs
