@@ -65,6 +65,7 @@
 
 	// Activate language changes on static part of wizard dialog
 
+	ProductControl::RetranslateWizardSteps();
 	Wizard::RetranslateButtons();
 	Wizard::SetFocusToNextButton();
 
@@ -153,11 +154,14 @@
 	Wizard::OpenNextBackStepsDialog();
     }
 
+    string wizard_mode = Mode::demo ? "installation" : Mode::mode;
+    
     // UI::WizardCommand() can safely be called even if the respective UI
     // doesn't support the wizard widget, but for optimization it makes sense
     // to do expensive operations only when it is available.
-    list<map> stagemode = [$["stage":"initial","mode":Mode::mode], $["stage":"continue","mode":Mode::mode]];
-    ProductControl::AddWizardSteps(stagemode);
+    list<map> stage_mode = [$["stage": "initial" , "mode": wizard_mode ],
+			    $["stage": "continue", "mode": wizard_mode ]];
+    ProductControl::AddWizardSteps(stage_mode);
 
     // classified_user_settings contain secrets, like passwords ...
     // they should not be logged !

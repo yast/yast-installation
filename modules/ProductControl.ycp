@@ -7,6 +7,8 @@
  * $Id$
  */
 {
+textdomain "control";	// FIXME: Workaround for missing initialization in libycp 
+    
 module "ProductControl";
 
 import "XML";
@@ -51,6 +53,10 @@ global string current_control_file = "";
 
 // Current Wizard Step
 global string CurrentWizardStep = "";
+
+
+// Last recently used stage_mode for RetranslateWizardSteps
+global list<map> last_stage_mode = [];
 
 
 // List of module to disable in the current run
@@ -321,18 +327,30 @@ global define string getWorkflowLabel(string stage, string mode)
  *
  */
 global define void AddWizardSteps(list<map> stagemode) ``{
+    last_stage_mode = stagemode;
+    
+    // UI::WizardCommand() can safely be called even if the respective UI
+    // doesn't support the wizard widget, but for optimization it makes sense
+    // to do expensive operations only when it is available.
+
+    // if ( ! UI::HasSpecialWidget(`Wizard ) )
+    // return;
+
+    string step_textdomain = "control";	// TO DO: get this from the XML file
     string first_id = "";
+    // UI::WizardCommand(`SetVerboseCommands( true ) );
     foreach (map sm , stagemode, ``{
+	y2debug( "Adding wizard steps for %1", sm );
 	string slabel = getWorkflowLabel(sm["stage"]:"", sm["mode"]:"");
-	UI::WizardCommand(`AddStepHeading( slabel ) );
+	UI::WizardCommand(`AddStepHeading( dgettext( step_textdomain, slabel ) ) );
 	foreach(map m, getModules(sm["stage"]:"", sm["mode"]:""), ``{
-	    y2debug("adding step: %1", m );
+	    y2debug("Adding wizard step: %1", m );
 	    if (m["label"]:"" != "") {
 		if (first_id=="")
 		{
 		    first_id = m["id"]:"";
 		}
-		UI::WizardCommand(`AddStep( m["label"]:"",     m["id"]:"" ) );
+		UI::WizardCommand(`AddStep( dgettext( step_textdomain, m["label"]:"" ), m["id"]:"" ) );
 	    }
 	});
     });
@@ -346,12 +364,23 @@ global define void AddWizardSteps(list<map> stagemode) ``{
  * Update Steps
  */
 global define void UpdateWizardSteps(list<map> stagemode) ``{
+    last_stage_mode = stagemode;
+    
     UI::WizardCommand(`DeleteSteps());
     AddWizardSteps( stagemode );
     UI::WizardCommand(`UpdateSteps());
     UI::WizardCommand(`SetCurrentStep( CurrentWizardStep ) );
     return;
 }
+
+
+global define void RetranslateWizardSteps() ``{
+    if ( size( last_stage_mode ) > 0 )
+    {
+	y2debug( "Retranslating wizard steps" );
+	UpdateWizardSteps( last_stage_mode );
+    }
+};
 
 
 /**
