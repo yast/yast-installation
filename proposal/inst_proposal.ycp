@@ -378,7 +378,7 @@
 	list submodules = [];
 
         // FIXME: Declare more types in control file
-        map proposal_type = $[ `ini: "initial", `net: "network", `hw : "hardware", `uml : "uml"];
+        map proposal_type = $[ `ini: "initial", `net: "network", `hw : "hardware", `uml : "uml", `dirinstall : "dirinstall"];
         string proptype = proposal_type[proposal_mode]:"";
 
         submodules = ProductControl::getProposals (
