@@ -36,7 +36,7 @@
     boolean	onlyKernelUpdate= lookup ( updateMap,	  "onlyKernel",	false );
     integer	current_step	= 0;	// Required by logStep()
 
-    string log_destination = ">>/var/log/y2log.SuSEconfig";		// Required by doStep()
+    string log_destination = ">>/var/log/YaST2/y2log.SuSEconfig";		// Required by doStep()
 
     if ( Mode::cont )
     {
@@ -211,10 +211,10 @@ the CPU and the amount of memory, this process can take some time.
 	string text = "";
 
 	if ( retAsk == `yes_short ) {
-	    text = SCR::Read (.target.string, "/var/log/y2logRPMShort");
+	    text = SCR::Read (.target.string, "/var/log/YaST2/y2logRPMShort");
 	}
 	if ( retAsk == `yes_long ) {
-	    text = SCR::Read (.target.string, "/var/log/y2logRPM");
+	    text = SCR::Read (.target.string, "/var/log/YaST2/y2logRPM");
 	}
 
 	retAsk = UI::DisplayLogFile( text, retAsk );

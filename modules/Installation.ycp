@@ -42,7 +42,7 @@
     global string yastdir		= "/var/lib/YaST";
     global string yast2dir		= "/var/lib/YaST2";
 
-    global string mountlog		= "/var/log/y2logMount";
+    global string mountlog		= "/var/log/YaST2/y2logMount";
 
     // see installation.ycp
     global boolean immediate_prepdisk	= false;
