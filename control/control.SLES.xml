@@ -361,11 +361,6 @@ textdomain="control"
                 </module>
                 <module>
 	            <label>Network</label>
-                    <name>proposal</name>
-                    <arguments>true,true,`net</arguments>
-                </module>
-                <module>
-	            <label>Network</label>
                     <name>ask_net_test</name>
                     <arguments>true,true</arguments>
                 </module>
