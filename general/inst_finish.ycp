@@ -90,16 +90,13 @@ Please wait while the base system is being installed.
 
     if ( !Mode::update )
     {
-	if (!Pkg::IsProvided ("kdebase3-kdm")
-	    && Pkg::IsProvided ("gdm2"))
+	if ((!(Pkg::IsProvided ("kdebase3-kdm")		// if kdm isn't installed yet
+	      || Pkg::IsSelected ("kdebase3-kdm")))	//   or earmarked for installation
+	   &&						// and
+	      (Pkg::IsProvided ("gdm2")			//  gdm2 is installed
+		|| Pkg::IsSelected ("gdm2")))		//    or earmarked for installation
 	{
-	    default_wm = "gnome";
-	    default_dm = "gdm";
-	}
-	else if (!Pkg::IsSelected ("kdebase3-kdm")
-	    && Pkg::IsSelected ("gdm2"))
-	{
-	    default_wm = "gnome";
+	    default_wm = "gnome";			// then we switch to gdm/gnome
 	    default_dm = "gdm";
 	}
     }

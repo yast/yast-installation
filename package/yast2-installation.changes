@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Sat Mar 15 22:54:09 CET 2003 - kkaempf@suse.de
+
+- gdm2 might not be installed yet but earmarked for installation
+  (#25410)
+- 2.7.38
+
+-------------------------------------------------------------------
 Fri Mar 14 17:41:40 CET 2003 - sh@suse.de
 
 - The final and super-great ultimate path for release notes:
