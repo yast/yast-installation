@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Mar 16 14:26:03 CET 2004 - fehr@suse.de
+
+- fix typo devmap_mkmod.sh -> devmap_mknod.sh
+- 2.9.32
+
+-------------------------------------------------------------------
 Tue Mar 16 01:53:54 CET 2004 - nashif@suse.de
 
 - Enabled evms_config in control file
