@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb 06 16:13:58 CET 2004 - arvin@suse.de
+
+- set default runlevel to 5 during installation (see bug #32366)
+
+-------------------------------------------------------------------
 Fri Feb 06 11:46:47 CET 2004 - arvin@suse.de
 
 - fixed copying of temporary X11 config
