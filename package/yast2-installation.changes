@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Mar 14 14:15:34 CET 2005 - ms@suse.de
+
+- fixed missing reboot on SSH installation (#67043)
+
+-------------------------------------------------------------------
 Fri Mar 11 16:50:14 CET 2005 - ms@suse.de
 
 - added option --auto-fonts to Y2_QT_ARGS (#72174)
