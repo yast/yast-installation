@@ -161,6 +161,8 @@
 		haveUSB = true;
 	});
 
+	y2milestone ("haveUSB = %1", haveUSB);
+
 	if (haveUSB)
 	{
 	    // prevent multiple mounts for /proc/bus/usb
@@ -198,6 +200,8 @@
 	    if (start_result)
 		haveFireWire = true;
 	});
+
+	y2milestone ("haveFireWire = %1", haveFireWire);
     }
 
 
