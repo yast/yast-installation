@@ -223,37 +223,71 @@ if test -d /proc/iSeries; then
     # thus, we unset them to force ncurses to detect the terminal size itself
     unset LINES COLUMNS
 else
-#
-#	if we a running on a s390 or s390x
-#
-	HOSTTYPE=$(uname -m)
-	if [ "$HOSTTYPE" = "s390" -o "$HOSTTYPE" = "s390x" ]
-	then
-		Display_IP=`grep Display_IP: /etc/install.inf | sed -e 's/Display_IP: \\(.*\\)/\\1/'`
-		[ ! -z "$Display_IP" ] && export DISPLAY="$Display_IP:0.0"
-	else
-#		if not running on iSeries:
-#		start a root shell on second virtual console
-		if ! grep -qs '^NoShell:.*1' /etc/install.inf ; then
-			SPID=`/usr/lib/YaST2/bin/startshell /dev/tty2`
-		fi
+	Display_IP=$(awk ' /^Display_IP:/ { print $2 }' < /etc/install.inf )
+	[ ! -z "$Display_IP" ] && export DISPLAY="$Display_IP:0.0"
+
+#	start a root shell on second virtual console
+	if ! grep -qs '^NoShell:.*1' /etc/install.inf ; then
+		SPID=`/usr/lib/YaST2/bin/startshell /dev/tty2`
 	fi
 fi
 
+# make sure to clear the flags
+unset VNC
+unset Y2_NETWORK_ACTIVE
+unset Y2_SSH_ACTIVE
 # tell YaST2 to start VNC server
 if grep -qs '^VNC:.*1' /etc/install.inf ; then
     export VNC=1
+fi
+
+# activate network for remote access via remote X or ssh
+if grep -qs '^\(Display_IP\|VNC\):.*1' /etc/install.inf ; then
+    rcnetwork start
+    Y2_NETWORK_ACTIVE=1
+fi
+# activate network for remote access via ssh
+if grep -qs '^UseSSH:.*1' /etc/install.inf ; then
+    test -z "$Y2_NETWORK_ACTIVE" || rcnetwork start
+    rcsshd start
+    Y2_NETWORK_ACTIVE=1
+    Y2_SSH_ACTIVE=1
 fi
 
 #
 # Start Y2 and tell it to continue the installation. It will install
 # the remaining packages and afterwards call SuSEconfig.
 #
+# Installation via ssh requires a remote login, but YaST2 must be started manually
+# just loop around the file and proceed when it is gone (removed by YaST2.sshinstall)
+#
+if test ! -z "$Y2_SSH_ACTIVE" ; then
 /usr/lib/YaST2/bin/YaST2 installation continue
+else
+#
+cat <<EOF
+
+		***  sshd has been started  ***
+
+	you can login now and proceed with the installation
+	run the command '/usr/lib/YaST2/bin/YaST2.sshinstall'
+
+	active interfaces:
+
+EOF
+/sbin/ifconfig | grep -A1 "^[a-z]"
+echo
+while test -f /var/lib/YaST2/runme_at_boot ; do sleep 3 ; done
+fi
 
 test -z "$SPID" || kill $SPID
 # kill VNC server
 killall Xvnc &>/dev/null
+
+if test ! -z "$Y2_NETWORK_ACTIVE" ; then
+test -z "$Y2_SSH_ACTIVE" && rcsshd stop
+rcnetwork stop
+fi
 
 #
 # Stop pcmcia again. If needed it will be started by the
