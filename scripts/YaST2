@@ -264,7 +264,7 @@ if [ "`uname -m`" != alpha  ]; then
                 Textmode=1
             fi
           fi
-          if [ -e $x11_driver_dir/vesa_drv.o -a "`uname -m`" = ia64 ] ; then
+          if [ -e $x11_driver_dir/vesa_drv.o ] ; then
             XVersion=4
             XServer=vesa
           fi
