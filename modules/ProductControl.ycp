@@ -563,11 +563,14 @@ global define void AddWizardSteps(list<map> stagemode)
                 {
                     first_id = m["id"]:"";
                 }
-                UI::WizardCommand(`AddStep( dgettext(
+		if (last_label != "")
+		{
+	            UI::WizardCommand(`AddStep( dgettext(
                                                      wizard_textdomain,
                                                      last_label ),
                                             m["id"]:"" )
                                   );
+		}
             }
         });
     });
