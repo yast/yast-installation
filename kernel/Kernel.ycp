@@ -84,6 +84,7 @@
 	  "root",
 	  "boot_file",
 	  "BOOT_IMAGE",
+	  "SuSE",
 	  "auto",
 	  "auto2",
 	  "fake_initrd",
