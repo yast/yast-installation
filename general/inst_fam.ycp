@@ -39,10 +39,10 @@
 
     if ( !Mode::update () )
     {
+	string default_wm = (string)
+	    SCR::Read (.sysconfig.windowmanager.DEFAULT_WM);
 	if (SCR::Read (.target.size, ("/etc/sysconfig/fam")) != -1)
 	{
-	    string default_wm = (string)
-		SCR::Read (.sysconfig.windowmanager.DEFAULT_WM);
 	    y2milestone ("Default WM: %1", default_wm);
 	    string local_only = ProductFeatures::fam_local_only;
 	    y2milestone ("Fam activation: %1", local_only);
@@ -55,6 +55,16 @@
 		SCR::Write (.sysconfig.fam.FAM_LOCAL_ONLY, "yes");
 		SCR::Write (.sysconfig.fam, nil);
 		Service::Enable ("fam");
+	    }
+	}
+
+	// FIXME IT IS NOT YAST's TASK TO CREATE ENVIRONMENT FOR DESKTOPS THIS
+	// WAY. See bug 72018.
+	if (Pkg::IsProvided ("netapplet"))
+	{
+	    if (default_wm == "gnome")
+	    {
+		Service::Enable ("netdaemon");
 	    }
 	}
     }
