@@ -16,11 +16,12 @@ STATUS        : Development
 **************/
 {
 import "X11Version";
+import "Mode";
 
 //==========================================
 // Check if X11 is installed
 //------------------------------------------
-if ( X11Version::have_x11 ) {
+if ( (X11Version::have_x11) && (! Mode::serial_console) || (! Mode::vnc) ) {
 	return WFM::CallFunction ( `x11 ( true, true ) );
 } else {
 	return `next;
