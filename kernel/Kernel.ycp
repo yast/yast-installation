@@ -77,8 +77,8 @@
 	// list of parameters to be discarded (linuxrc/yast internals)
 
 	list discardlist = [
-	  "linuxrc",
-	  "initrd",
+	  "linuxrc", "textmode", "install", "gateway",
+	  "initrd", "noshells", "network", "netmask", "ip",
 	  "instmode",
 	  "autoyast",
 	  "nosshd",
@@ -88,7 +88,7 @@
 	  "expert",
 	  "manual",
 	  "root",
-	  "BOOT_FILE",		// BOOT_IMAGE is filtered below
+	  "boot_file",		// BOOT_IMAGE is filtered below
 	  "auto",
 	  "auto2",
 	  "fake_initrd",
@@ -122,7 +122,7 @@
 		{
 		    Boot::VgaType = param_value_list[1]:"";
 		}
-		else if (!contains (discardlist, param_value_list[0]:""))
+		else if (!contains (discardlist, tolower(param_value_list[0]:"")))
 		{
 		    AddCmdLine (param_value_list[0]:"", param_value_list[1]:"");
 		}
