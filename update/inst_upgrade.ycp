@@ -38,6 +38,7 @@
     UI::CloseDialog();
 
     // ------------------------------------------------------------------------
+    // retrieve selection information
 
     boolean retval = false;
     list current_sel = Pkg::GetSelections (`installed, "base");
@@ -53,8 +54,6 @@
     string title = _("Choose update mode");
 
     list available_base_selections = Pkg::GetSelections (`available, "base");
-
-    y2milestone( "getSelGroups return: %1", available_base_selections );
 
     // Construct Box with Checkbox for each software category
 
