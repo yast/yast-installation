@@ -69,11 +69,6 @@
     global boolean product_cd	= false;
 
     /**
-     * true for SuSE Linux Professional
-     */
-    global boolean professional	= false;
-
-    /**
      * true for SuSE Linux Personal
      */
     global boolean personal	= false;
@@ -84,9 +79,9 @@
     global boolean unitedlinux	= false;
 
     /**
-     * true for 'box' product
+     *
      */
-    global boolean box		= false;
+    global list flags		= [];
 
     // -----------------------------------------------
     /**
@@ -107,6 +102,8 @@
 	    baseproduct		= SCR::Read(.content.BASEPRODUCT);
 	    if (baseproduct == "") baseproduct = name;
 	    baseversion		= SCR::Read(.content.BASEVERSION);
+
+	    flags		= splitstring (SCR::Read (.content.FLAGS), " ");
 	}
 	else
 	{
@@ -123,6 +120,8 @@
 	    baseproduct		= last_product["baseproduct"]:"";
 	    if (baseproduct == "") baseproduct = name;
 	    baseversion		= last_product["baseversion"]:"";
+
+	    flags		= last_product["flags"]:[]; // FIXME ???
 	}
 
 	imap_server	= (name == "eMail Server");
@@ -134,11 +133,9 @@
 
 	dist		= select (splitstring(distproduct, "-"), 2, "");
 
-	professional	= (dist == "Professional");
 	personal	= (dist == "Personal");
-	box		= (personal || professional);
 	unitedlinux	= (name == "UnitedLinux");
- 
+
 	/* handle live cd and certification cd as product cd,
 	 * will disable software selection dialog
 	 */

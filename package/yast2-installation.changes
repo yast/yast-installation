@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Feb 11 21:39:29 CET 2003 - arvin@suse.de
+
+- handle update flag from content file (bug #21561)
+
+-------------------------------------------------------------------
 Mon Feb 10 20:53:53 CET 2003 - arvin@suse.de
 
 - setup complete environment for qt during installation

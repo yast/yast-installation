@@ -76,7 +76,7 @@ to boot the installed system or to update it.
 
     boolean offer_update = false;
 
-    if (Product::box			// "Personal" or "Professional"
+    if (contains (Product::flags, "update")
 	|| Kernel::suse_update)		// or "suse_update" given in cmdline
     {
 	offer_update = true;		// -> offer update
