@@ -114,6 +114,7 @@ textdomain="control"
                 <proposal_module>printer</proposal_module>
                 <proposal_module>sound</proposal_module>
                 <proposal_module>tv</proposal_module>
+                <proposal_module>bluetooth</proposal_module>
             </proposal_modules>
         </proposal>
     </proposals>
