@@ -23,7 +23,7 @@ from an installation media.
 
 %files
 %defattr(-,root,root)
-%doc @DOCDIR@
+%doc @docdir@
 
 %dir /var/lib/YaST2
 
