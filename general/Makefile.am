@@ -2,7 +2,11 @@
 # Makefile.am for installation/general
 #
 
-SUBDIRS = testsuite
+SUBDIRS = testsuite 
+
+yncludedir = @yncludedir@/installation
+
+ynclude_DATA = dialogs.ycp
 
 client_DATA =					\
 	inst_info.ycp				\
@@ -15,7 +19,7 @@ client_DATA =					\
 	inst_congratulate.ycp			\
 	installation.ycp
 
-EXTRA_DIST = $(client_DATA)
+EXTRA_DIST = $(client_DATA) $(ynclude_DATA)
 
 install-data-local:
 	install -d -m 755 $(DESTDIR)/var/lib/YaST2

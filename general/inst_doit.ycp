@@ -17,6 +17,8 @@
 
     import "Label";
 
+    include "installation/dialogs.ycp";
+
     if (Mode::autoinst)
     {
 	if (!AutoinstConfig::Confirm)
