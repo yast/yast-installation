@@ -401,7 +401,7 @@ Please wait while the base system is being installed.
 	    }
 	});
 
-	Storage::UpdateFstab (Update::installedVersion, Update::updateVersion);
+	Storage::Update (Update::installedVersion, Update::updateVersion);
     }
     else	// install mode
     {
