@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Feb 16 16:01:35 CET 2004 - arvin@suse.de
+
+- added more flexible package handling for products
+
+-------------------------------------------------------------------
 Mon Feb 16 13:49:50 CET 2004 - mvidner@suse.cz
 
 - added runlevel_proposal to installation_proposals (#30028)
