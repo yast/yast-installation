@@ -6,8 +6,8 @@
 Requires:	yast2
 Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
 
-Provides:	yast-trans-inst-general yast2-trans-inst-proposal
-Obsoletes:	yast-trans-inst-general yast2-trans-inst-proposal
+Provides:	yast2-trans-inst-general yast2-trans-inst-proposal
+Obsoletes:	yast2-trans-inst-general yast2-trans-inst-proposal
 Provides:	yast2-trans-inst-x11 yast2-trans-inst-update
 Obsoletes:	yast2-trans-inst-x11 yast2-trans-inst-update
 

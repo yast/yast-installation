@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Sep 04 12:48:03 CEST 2002 - arvin@suse.de
+
+- fixed provide/obsolete of trans packages (bug #18691)
+
+-------------------------------------------------------------------
 Tue Sep  3 22:34:44 CEST 2002 - kkaempf@suse.de
 
 - adapt update workflow to package manager
@@ -227,7 +232,7 @@ Mon Aug 05 12:10:21 CEST 2002 - arvin@suse.de
 Sat Aug 03 15:33:51 CEST 2002 - arvin@suse.de
 
 - removed option -noxim for qt frontend since bug #17161 is now
-  solved by changes to yast-qt
+  solved by changes to yast2-qt
 
 -------------------------------------------------------------------
 Fri Aug 02 15:02:54 CEST 2002 - arvin@suse.de
@@ -298,7 +303,7 @@ Wed Jul 17 16:29:25 CEST 2002 - arvin@suse.de
 -------------------------------------------------------------------
 Tue Jul 16 17:25:31 CEST 2002 - sh@suse.de
 
-- provide/obsolete yast-trans-inst-proposal and
+- provide/obsolete yast2-trans-inst-proposal and
   yast2-trans-inst-general
 
 -------------------------------------------------------------------
