@@ -435,33 +435,39 @@ Please wait while the base system is being installed.
     // second phase of the installation can find it.
 	X11Version::GetX11Link();
 
-    if ( Mode::update )
+    if (x11_installed)
     {
-	if ( (x11_installed) && (X11Version::versionLink == "3") ) {
-	    //========================================
-	    // Update mode...
-	    //----------------------------------------
-	    // - set a flag at the end of the config to indicate later migration
-	    // - copy the config to the installed system
-	    string filename = "/etc/X11/XF86Config";
-	    WFM::Execute (.local.bash,
+	string filename = "/etc/X11/XF86Config";
+	if ( Mode::update )
+	{
+	    if (X11Version::versionLink == "3")
+	    {
+		//========================================
+		// Update mode...
+		//----------------------------------------
+		// - set a flag at the end of the config to indicate later migration
+		// - copy the config to the installed system
+		WFM::Execute (.local.bash,
 			  "echo -e '\n#3x' >> " + filename
 			  );
-	    SCR::Execute (.target.bash,"/bin/ln -sf " +
+		SCR::Execute (.target.bash,"/bin/ln -sf " +
 			  Installation::destdir + "/usr/X11R6/bin/XFree86 " +
 			  Installation::destdir + "/var/X11R6/bin/X"
 			  );
-	    InjectFile ( filename );
+		InjectFile ( filename );
+	    }
 	}
-    }
-    else
-    {
-	if ( x11_installed ) {
+	else
+	{
 	    //========================================
 	    // Installation mode...
 	    //----------------------------------------
-	    InjectFile ("/etc/X11/XF86Config");
+	    InjectFile (filename);
 	}
+
+	// make current X11 configuration available in installed or updated system
+	// copy /etc/X11/XF86Config from inst-sys to [/mnt]/etc/X11/XF86Config.install
+	SCR::Execute (.local.bash, "/bin/cp " + filename + " " + Installation::destdir + filename + ".install");
     }
 
     // --------------------------------------------------------------
