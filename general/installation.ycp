@@ -543,19 +543,16 @@ will look different than in the manual.");
 	}
 	else if (result == `cancel)
 	{
-	    UI::CloseDialog();
-	    return `cancel;
+	    break;
 	}
 	else if (result == `abort)
 	{
-	    UI::CloseDialog();
 	    Misc::WriteYaSTInf($["Aborted" : "1"]);
-	    return `cancel;
+	    break;
 	}
 	else if (result == `finish)
 	{
-	    UI::CloseDialog();
-	    return `next;
+	    break;
 	}
 	else if (result == `again)
 	{
@@ -575,7 +572,8 @@ will look different than in the manual.");
     // re-enable automatic probing
     WFM::Execute (.local.bash, "/bin/echo \"/sbin/modprobe\" >/proc/sys/kernel/modprobe");
 
-    if (Mode::cont)
+    if (Mode::cont
+	&& result == `finish)
     {
 	// remove /etc/install.inf, not needed any more
 	SCR::Execute (.target.remove, "/etc/install.inf");
