@@ -8,8 +8,8 @@
  */
 
 {
-
     module "Product";
+
     import "Mode";
 
     /**
@@ -28,7 +28,6 @@
 
     /**
      * base product
-     *
      */
     global string baseproduct	= "";			// "UnitedLinux"
     global string baseversion	= "";			// "1.0"
@@ -84,9 +83,22 @@
     global boolean unitedlinux	= false;
 
     /**
+     * control how the base selection is chosen:
+     *   `fixed - the base selection is fixed (see fixed_base_selection below)
+     *   `auto  - a base selection is automatically choosen (depending on disk
+     *            space)
+     */
+    global symbol base_selection_choice		= `auto;
+
+    /**
+     * name of the fixed base selection
+     */
+    global string fixed_base_selection		= "";
+
+    /**
      * run YOU during the Internet connection test
      */
-    global boolean run_you     = true;
+    global boolean run_you	= true;
 
     /**
      * list of flags from content file
@@ -160,8 +172,7 @@
 			  || certify_cd
 			  || (name == "Product CD");
 
-	run_you         = ! contains (flags, "no_you");
-
+	run_you		= ! contains (flags, "no_you");
     }
 
 /* EOF */

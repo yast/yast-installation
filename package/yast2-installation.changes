@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Feb 11 16:11:02 CET 2004 - arvin@suse.de
+
+- more control over base selection handling
+
+-------------------------------------------------------------------
 Tue Feb 10 17:59:40 CET 2004 - arvin@suse.de
 
 - added type specification in inst_proposal.ycp
