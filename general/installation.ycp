@@ -525,7 +525,7 @@ will look different than in the manual.");
  //---------------------------------------------------------------------------------------------------------------------------------------------------
  [ `initial,  `inst_do_resize	    (false, false),      Arch::i386||Arch::x86_64||Arch::ia64,	! live_eval &&	! autoinst		, false],
  //---------------------------------------------------------------------------------------------------------------------------------------------------
- [ `initial,  `inst_prepdisk	    (false, false),      true,			! live_eval						, false],
+ [ `initial,  `inst_prepdisk	    (false, false),      true,			true,                                                    false],
  [ `initial,  `inst_rpmcopy	    (false, false),      true,			! live_eval		  ||	  screen_shot_mode	, false],
  //---------------------------------------------------------------------------------------------------------------------------------------------------
  [ `initial,  `inst_finish	    (false, false),      true,			! test_mode						, false],
@@ -538,15 +538,15 @@ will look different than in the manual.");
  [ `continue, `inst_x11         (true,  true),       Arch::x11_setup_needed, Mode::x11_setup_needed &&  autoinst && ! update_mode  , false],
  [ `continue, `autoinst_configure   (false, false),      true,						  autoinst &&    ! update_mode	, false],
  [ `continue, `inst_proposal	    (true,  true, `net), true,						! autoinst &&    ! update_mode	, false],
- [ `continue, `inst_ask_net_test    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
- [ `continue, `inst_do_net_test	    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
- [ `continue, `inst_you		    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
- [ `continue, `inst_auth	    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
+ [ `continue, `inst_ask_net_test    (true,  true),       true,				! live_eval &&	! autoinst &&    ! update_mode	, true ],
+ [ `continue, `inst_do_net_test	    (true,  true),       true,				! live_eval &&	! autoinst &&    ! update_mode	, true ],
+ [ `continue, `inst_you		    (true,  true),       true,				! live_eval &&	! autoinst &&    ! update_mode	, true ],
+ [ `continue, `inst_auth	    (true,  true),       true,				! live_eval &&	! autoinst &&    ! update_mode	, true ],
  [ `continue, `inst_user	    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
  [ `continue, `inst_suseconfig	    (false, false),      true,			! test_mode						, false],
- [ `continue, `inst_release_notes   (true,  true),	 true,						! autoinst &&   ! update_mode	, false],
+ [ `continue, `inst_release_notes   (true,  true),	 true,				! live_eval &&	! autoinst &&   ! update_mode	, false],
  [ `continue, `inst_proposal	    (true,  true, `hw),  true,						! autoinst &&   ! update_mode	, false],
- [ `continue, `inst_congratulate    (true,  true),	 true,						! autoinst &&   ! update_mode	, false]
+ [ `continue, `inst_congratulate    (true,  true),	 true,				! live_eval &&	! autoinst &&   ! update_mode	, false]
 ];
 
 
@@ -572,6 +572,14 @@ will look different than in the manual.");
 	boolean	  immediate_prep_mode	= module_info[4]:false;
 
 	boolean	  do_continue		= false;
+
+	symbol	  old_mode		= `dummy;
+
+	if( m > 0 )
+	{
+	    list old_module_info = modules[m - 1]:[];
+	    old_mode = old_module_info[0]:`dummy;
+	}
 
 	////////////////////////////////////////////////////////////////
 	// Check if the module has to be executed
@@ -602,6 +610,18 @@ will look different than in the manual.");
 	    if	    (former_result == `next) m = m + 1;
 	    else			     m = m - 1;
 	}
+
+	if ( Mode::live_eval && main_mode != old_mode && main_mode == `continue )
+	{
+	    Mode::initial = false;
+	    Mode::cont = true;
+
+	    Wizard::CloseDialog();
+	    Wizard::OpenNextBackDialog();
+            // or, instead of the above, do:
+            // Wizard::ReplaceButtonBox( Wizard::BackAbortNextButtonBox() );
+	}
+
 	if ( do_continue ) continue;
 	//		   ^^^^^^^
 	/////////////////////////////////////////////////////////////////

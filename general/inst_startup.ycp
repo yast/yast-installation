@@ -136,17 +136,21 @@
     // 2. Initialize (module loading)
     // --------------------------------------------------------------
 
-    // give user feedback what's happening
-    showFeedback( _("Probing hard disk controllers") );
-    if (StorageControllers::Probe() <= 0)
+    // In live_eval mode, all modules have been loaded by linuxrc.
+    if ( !Mode::live_eval )
     {
-	// Oops, no storage controllers ?
-	// no storage controllers found, where are the hard disks attached ?
-	UI::MessagePopup(_("No hard disks were found for the installation.
+       // give user feedback what's happening
+       showFeedback( _("Probing hard disk controllers") );
+       if (StorageControllers::Probe() <= 0)
+       {
+           // Oops, no storage controllers ?
+           // no storage controllers found, where are the hard disks attached ?
+           UI::MessagePopup(_("No hard disks were found for the installation.
 Please check your hardware!
 "));
-	clearFeedback();
-	return `cancel;
+           clearFeedback();
+           return `cancel;
+       }
     }
 
     // give user feedback what's happening

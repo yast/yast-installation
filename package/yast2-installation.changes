@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Apr 28 17:25:45 CEST 2003 - arvin@suse.de
+
+- fixes for live eval (bug #26457)
+
+-------------------------------------------------------------------
 Wed Apr 23 12:09:20 CEST 2003 - ms@suse.de
 
 - add config migration from 3x to 4x if possible
