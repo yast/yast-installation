@@ -98,6 +98,11 @@
 	dist		= select (splitstring(distproduct, "-"), 2, "");
 
 	run_you		= ! contains (flags, "no_you");
+
+	// set the product name for UI
+        import "Wizard";
+
+        Wizard::SetProductName(name);
     }
 
 /* EOF */
