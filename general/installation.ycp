@@ -150,7 +150,7 @@
     if ( Mode::cont )
     {
 	import "Timezone";
-	Timezone::Set( Timezone::timezone );
+	Timezone::Set( Timezone::timezone, true );
 
 	if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_continue.ycp") > 0)
 	    WFM::CallFunction (product_continue());
