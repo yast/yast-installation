@@ -3,6 +3,7 @@
  * Package:	Installation
  * Summary:	Kernel related functions and data
  * Authors:	Klaus Kaempf <kkaempf@suse.de>
+ *		Arvin Schnell <arvin@suse.de>
  *
  * $Id$
  *
@@ -409,6 +410,9 @@
 	    // extract extra boot parameters given in installation
 	    ExtractCmdlineParameters (tmp);
 	}
+
+	// FIXME should be configurable
+	AddCmdLine ("desktop", "");
 
 	ProbeKernel ();
     }
