@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Feb 26 12:31:27 CET 2003 - arvin@suse.de
+
+- disable all sources if user aborts installation (bug #24292)
+
+-------------------------------------------------------------------
 Tue Feb 25 11:19:26 CET 2003 - arvin@suse.de
 
 - make Hardware Configuration Dialog unconfuseable (bug #24020)
