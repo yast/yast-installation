@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Aug 11 15:51:52 CEST 2003 - arvin@suse.de
+
+- use ycp based ncurses menu at end of installation
+
+-------------------------------------------------------------------
 Fri Aug 08 10:54:34 CEST 2003 - arvin@suse.de
 
 - variable handling of release notes url
