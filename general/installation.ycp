@@ -560,7 +560,7 @@ will look different than in the manual.");
 		UI::CloseDialog();
 		return nil;
 	    }
-	    else continue;
+	    continue;
 	}
 
 	if	(result == `next)
