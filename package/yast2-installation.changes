@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jan 13 11:35:45 CET 2005 - jsrain@suse.cz
+
+- changed the "System will boot now..." message at the end of
+  isnt_finish.ycp (#41592)
+
+-------------------------------------------------------------------
 Wed Jan 12 12:44:29 CET 2005 - ms@suse.de
 
 - removed xmset calls to disable/enable the mouse pointer.

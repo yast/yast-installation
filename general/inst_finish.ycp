@@ -572,7 +572,7 @@ with the load address of your root DASD.
         // and we're ready to start (boot into) the installed system
         // Message that will be displayed along with information
         // how the boot loader was installed
-        Misc::boot_msg = _("Now booting your system...");
+        Misc::boot_msg = _("The system will reboot now...");
     }
 
     //-------------------------------------------------------------
