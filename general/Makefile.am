@@ -19,3 +19,6 @@ module_DATA = \
 
 
 EXTRA_DIST = $(module_DATA) $(ynclude_DATA)
+
+install-data-local:
+	install -d -m 755 $(DESTDIR)/var/lib/YaST2
