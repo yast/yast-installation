@@ -16,6 +16,9 @@ import "ProductFeatures";
 import "Mode";
 import "Arch";
 import "Stage";
+import "Directory";
+
+
 
 // current proposal label
 global string current_proposal_label = "";
@@ -79,6 +82,7 @@ global list<map> last_stage_mode = [];
 global list<string> DisabledModules = [];
 
 
+// Log files for hooks
 global list<string> logfiles = [];
 
 
@@ -87,7 +91,8 @@ global list<string> logfiles = [];
  * @param map module map
  * @return boolean
  */
-global define boolean checkDisabled (map mod ) {
+global define boolean checkDisabled (map mod ) 
+{
     if (contains(DisabledModules, mod["name"]:""))
     {
         return true;
@@ -100,8 +105,8 @@ global define boolean checkDisabled (map mod ) {
   * @param string control file
   * @return boolean
   */
-global define boolean Read( string controlfile) ``{
-
+global define boolean Read( string controlfile) 
+{
     productControl = XML::XMLToYCPFile(controlfile);
     workflows = productControl["workflows"]:[];
     proposals = productControl["proposals"]:[];
@@ -161,6 +166,8 @@ global define boolean Read( string controlfile) ``{
             software["inform_about_suboptimal_distribution"]:false;
         }
     }
+
+
     if (haskey(productControl, "globals"))
     {
         globals = productControl["globals"]:$[];
@@ -218,7 +225,8 @@ boolean Check(string allowed, string current)
  * @param map default data
  * @return boolean true if arch match
  */
-global define boolean checkArch(map mod , map def) ``{
+global define boolean checkArch(map mod , map def)
+{
     y2milestone("mod: %1", mod);
     string archs = mod["archs"]:"";
     if (archs == "")
@@ -241,7 +249,6 @@ global define boolean checkArch(map mod , map def) ``{
 };
 
 
-
 /**
  * Return term to be used to run module
  * @param map module data
@@ -252,19 +259,23 @@ global define term getTerm (map mod, map def) ``{
     // All client start with "inst_".
 
     string client = "";
-    if (!Stage::firstboot ())
-    {
-        if (issubstring(mod["name"]:"dummy", "inst_"))
-            client = mod["name"]:"dummy";
-        else
-            client = "inst_" + mod["name"]:"dummy";
-    }
-    else
+    if (Stage::firstboot ())
     {
         // Firstboot mode has no predefined prefix. Name of module is
         // taken as is.
 
         client = mod["name"]:"dummy";
+    }
+    else
+    {
+        if (issubstring(mod["name"]:"dummy", "inst_"))
+        {
+            client = mod["name"]:"dummy";
+        }
+        else
+        {
+            client = "inst_" + mod["name"]:"dummy";
+        }
     }
 
 
@@ -312,12 +323,18 @@ global define term getTerm (map mod, map def) ``{
  */
 global define map getModeDefaults(string stage, string mode)
 {
-    map workflow = (map)select(filter(map wf, workflows, ``(
+    list<map> tmp = filter(map wf, workflows, ``(
                 Check(wf["stage"]:"", stage) && Check(wf["mode"]:"", mode )
-                    )), 0 , $[] );
+    ));
+    map workflow = tmp[0]:$[];
     return workflow["defaults"]:$[];
 }
 
+/**
+ * Prepare Workflow Scripts
+ * @param m Workflow module map
+ * @return void
+ */
 void PrepareScripts(map m) {
     string tmp_dir = (string)WFM::Read(.local.tmpdir, []);
     if (haskey(m,"prescript"))
@@ -345,11 +362,59 @@ void PrepareScripts(map m) {
 
 
 
+global list<string> RequiredFiles (string stage, string mode) 
+{
+    // Files needed during installation.
+    list<string> needed_client_files = [];
+
+    list<map> tmp = filter(map wf, workflows, ``(
+                Check(wf["stage"]:"", stage) && Check(wf["mode"]:"", mode )
+    ));
+    map workflow = tmp[0]:$[];
+
+    list<map> modules = workflow["modules"]:[];
+    integer id = 1;
+    modules = filter(map m, modules, ``(m["enabled"]:true));
+
+    foreach(map m, modules, ``{
+            string client = "";
+            if (Stage::firstboot ())
+            {
+                client = m["name"]:"dummy";
+            }
+            else
+            {
+                if (issubstring(m["name"]:"dummy", "inst_"))
+                {
+                    client = m["name"]:"dummy";
+                }
+                else
+                {
+                    client = "inst_" + m["name"]:"dummy";
+                }
+            }
+            client = Directory::clientdir + "/" + client + ".ycp";
+            needed_client_files = add(needed_client_files, client);
+    });
+    
+    needed_client_files=toset(needed_client_files);
+    return needed_client_files;
+}
+
+
+
+/**
+ * Get Workflow
+ * @param stage Stage
+ * @param mode Mdoe
+ * @return map Workflow map
+ */
 global define map getCompleteWorkflow(string stage, string mode)
 {
-    map workflow = select(filter(map wf, workflows, ``(
-                Check(wf["stage"]:"",stage) && Check(wf["mode"]:"", mode )
-                    )), 0 , $[] );
+    list<map> tmp = filter(map wf, workflows, ``(
+                Check(wf["stage"]:"", stage) && Check(wf["mode"]:"", mode )
+    ));
+    map workflow = tmp[0]:$[];
     return workflow;
 }
 
@@ -363,9 +428,10 @@ global define map getCompleteWorkflow(string stage, string mode)
  */
 global define list<map> getModules(string stage, string mode, symbol which)
 {
-    map workflow = select(filter(map wf, workflows, ``(
-                Check(wf["stage"]:"",stage) && Check(wf["mode"]:"", mode )
-                    )), 0 , $[] );
+    list<map> tmp = filter(map wf, workflows, ``(
+                Check(wf["stage"]:"", stage) && Check(wf["mode"]:"", mode )
+    ));
+    map workflow = tmp[0]:$[];
 
     y2debug("Workflow: %1", workflow );
     list<map> modules = workflow["modules"]:[];
@@ -376,12 +442,14 @@ global define list<map> getModules(string stage, string mode, symbol which)
     {
         modules = filter(map m, modules, ``(m["enabled"]:true));
     }
+
     modules = maplist(map m, modules, ``{
             m["id"] = sformat("%1_%2", stage, id);
             PrepareScripts(m);
             id = id + 1;
             return (m);
             });
+
     y2debug("Log files: %1", logfiles);
     return modules;
 }
@@ -394,11 +462,11 @@ global define list<map> getModules(string stage, string mode, symbol which)
  */
 global define string getWorkflowLabel(string stage, string mode)
 {
-    map workflow = select(filter(map wf, workflows, ``(
-                Check(wf["stage"]:"",stage) && Check(wf["mode"]:"",mode)
-                    )), 0 , $[] );
+    list<map> tmp = filter(map wf, workflows, ``(
+                Check(wf["stage"]:"", stage) && Check(wf["mode"]:"", mode )
+    ));
+    map workflow = tmp[0]:$[];
     return workflow["label"]:"";
-
 }
 
 
@@ -407,7 +475,8 @@ global define string getWorkflowLabel(string stage, string mode)
  * Add Wizard Steps
  *
  */
-global define void AddWizardSteps(list<map> stagemode) ``{
+global define void AddWizardSteps(list<map> stagemode)
+{
     last_stage_mode = stagemode;
 
     // UI::WizardCommand() can safely be called even if the respective UI
@@ -455,7 +524,8 @@ global define void AddWizardSteps(list<map> stagemode) ``{
 /**
  * Update Steps
  */
-global define void UpdateWizardSteps(list<map> stagemode) ``{
+global define void UpdateWizardSteps(list<map> stagemode)
+{
     last_stage_mode = stagemode;
 
     UI::WizardCommand(`DeleteSteps());
@@ -466,7 +536,11 @@ global define void UpdateWizardSteps(list<map> stagemode) ``{
 }
 
 
-global define void RetranslateWizardSteps() ``{
+/**
+ * Retranslate Wizard Steps
+ */
+global define void RetranslateWizardSteps()
+{
     if ( size( last_stage_mode ) > 0 )
     {
 	y2debug( "Retranslating wizard steps" );
@@ -591,6 +665,9 @@ global list<string> getLockedProposals ()
 }
 
 
+/**
+ * Initialize Product Control
+ */
 global define void Init()
 {
 
@@ -616,6 +693,7 @@ global define void Init()
     {
         order=prepend(order, firstboot_control_file);
     }
+
     if ( custom_control_file != "")
     {
         order=prepend(order, custom_control_file);
@@ -641,9 +719,9 @@ global define void Init()
 }
 
 /**
-  * ProductControl Constructor
-  * @return void
-  */
+ * ProductControl Constructor
+ * @return void
+ */
 global define void ProductControl()
 {
     Init();
