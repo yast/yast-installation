@@ -210,8 +210,13 @@ disk that will not boot. With this option, try to fix problems manually.
     }
 
     radio_buttons = add (radio_buttons, `VSpacing(0.2));
+    radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`repair),
+				       // label for radio button 3: Start repair system
+				       _("&Repair installed system"), false ) ));
+
+    radio_buttons = add (radio_buttons, `VSpacing(0.2));
     radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`boot),
-				       // label for radio button 3: Boot installed system
+				       // label for radio button 4: Boot installed system
 				       _("&Boot installed system"), false ) ));
 
     if ( ! called_from_ask_user )
@@ -334,6 +339,11 @@ disk that will not boot. With this option, try to fix problems manually.
 	    {
 		Mode::update = true;
 		Mode::installation = false;
+		break;
+	    }
+
+	    if (newmode == `repair)			// FIXME
+	    {
 		break;
 	    }
 
