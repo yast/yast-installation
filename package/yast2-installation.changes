@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Sep 11 13:40:41 CEST 2002 - kkaempf@suse.de
+
+- properly unmount sources also on abort and end of update
+- 2.6.58
+
+-------------------------------------------------------------------
 Wed Sep 11 00:42:12 CEST 2002 - kkaempf@suse.de
 
 - remove obsolete package data after update
