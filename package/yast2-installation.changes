@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Sep 18 11:38:50 CEST 2003 - arvin@suse.de
+
+- shut down temporary network before online test during update
+  (bug #31030)
+
+-------------------------------------------------------------------
 Thu Sep 18 10:55:43 CEST 2003 - arvin@suse.de
 
 - don't use external pcmcia during firstboot (bug #31252)
