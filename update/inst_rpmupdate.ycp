@@ -196,6 +196,14 @@ Check the log file /var/log/y2log
 
     any ret = `ok;
 
+    bool kernel_affected = false;
+
+    if (Mode::normal)
+    {
+	list kernels = filter (string k, Pkg::GetPackages(`installed, true), ``(substring(k, 0, 2) == "k_" ));
+	kernel_affected = (size (kernels) > 0);
+    }
+
     if ( Mode::initial )
     {
 	Pkg::PkgCommit(1);
@@ -203,6 +211,12 @@ Check the log file /var/log/y2log
     else
     {
 	Pkg::PkgCommit(0);
+    }
+
+    if (kernel_affected)			// kernel affected
+    {
+	import "Boot";
+	Boot::Write();				// re-write initrd and bootloader
     }
 
     // Now that we know how many packages to install, we can show the dialog
