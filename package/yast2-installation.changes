@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Aug 22 20:18:17 CEST 2002 - fehr@suse.de
+
+- call /sbin/vgscan if root filesystem is on LVM before calling 
+  Boot::Save() (#18180) 
+
+-------------------------------------------------------------------
 Thu Aug 22 14:43:26 CEST 2002 - arvin@suse.de
 
 - don't run the modules s390silo, s390netadopt and suseconfig
