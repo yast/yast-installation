@@ -438,10 +438,10 @@ will look different than in the manual.");
 //  -Step-	 -Module-	    -Back- -Next- -spec-  -Architecture(s)-		      -Mode(s)-                           -immediate_prepdisk-
 
 [
- [ `initial,  `autoinst_init	    (false, false),      !Arch::s390,		! test_mode &&		  autoinst			, false],
+ [ `initial,  `autoinst_init	    (false, false),      true,			! test_mode &&		  autoinst			, false],
  [ `initial,  `inst_language	    (false, true, true), true,						! autoinst			, false],
  [ `initial,  `inst_startup	    (false, true),       true,						  autoinst                      , false],
- [ `initial,  `autoinst_setup	    (false, false),      !Arch::s390,		! test_mode &&		  autoinst			, false],
+ [ `initial,  `autoinst_setup	    (false, false),      true,			! test_mode &&		  autoinst			, false],
  //---------------------------------------------------------------------------------------------------------------------------------------------------
  [ `initial,  `inst_proposal	    (true,  true),       true,			true							, false],
  //---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -454,14 +454,14 @@ will look different than in the manual.");
 
  //===================================================================================================================================================
 
- [ `continue, `inst_rpmcopy	    (false, false),      !Arch::s390,		! live_eval && ! test_mode &&		 ! update_mode	, false],
+ [ `continue, `inst_rpmcopy	    (false, false),      true,			! live_eval && ! test_mode &&		 ! update_mode	, false],
  [ `continue, `inst_rpmupdate	    (false, false),      true,								   update_mode	, false],
  [ `continue, `inst_language	    (false, true),       true,					  screen_shot_mode &&    ! update_mode  , false],
  [ `continue, `inst_root	    (false, true),       true,						! autoinst &&    ! update_mode	, true ],
  [ `continue, `inst_user	    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
  [ `continue, `inst_x11		    (true,  true),       Arch::x11_setup_needed, Mode::x11_setup_needed &&		 ! update_mode  , false],
- [ `continue, `autoinst_configure   (false, false),      !Arch::s390,					  autoinst &&    ! update_mode	, false],
- [ `continue, `inst_suseconfig	    (false, false),      !Arch::s390,		! test_mode						, false],
+ [ `continue, `autoinst_configure   (false, false),      true,						  autoinst &&    ! update_mode	, false],
+ [ `continue, `inst_suseconfig	    (false, false),      true,			! test_mode						, false],
  [ `continue, `inst_proposal	    (true,  true),       true,						! autoinst &&   ! update_mode	, false]
 ];
 
