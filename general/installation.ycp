@@ -85,20 +85,6 @@
 
     // ==================================================================================
 
-    define boolean arch_is_allowed( list allowed_archs )
-    ``{
-
-	list not_allowed = filter(  `arch, allowed_archs, ``( tolower(substring( arch,0,3)) == "not" ));
-	not_allowed	 = maplist( `arch, not_allowed,	  ``( substring( arch, 4)));
-
-	if ( contains( not_allowed, Arch::architecture ))	return( false );
-	if ( contains( allowed_archs, "ALL" ))			return( true );
-	if ( contains( allowed_archs, Arch::architecture ))	return( true );
-
-	return( false );
-    };
-
-
     /**
      * Returns a list of strings describing the "easy installation"
      * @return list of strings
@@ -425,8 +411,6 @@ will look different than in the manual.");
 
     //--------------------------------------------------------------------
 
-    boolean all_modes	= true;	// use only if no other modes are used!
-
     // Some abbreviations to keep the table below less wide
     boolean autoinst	= Mode::autoinst;
     boolean live_eval	= Mode::live_eval;
@@ -444,47 +428,45 @@ will look different than in the manual.");
 // Module:	       Name of the module
 // Back:	       Is Back-Button sensitive
 // Next:	       Is Next-Button sensitive
-// Architecture:       Step is not executed if there is no "NOT_<arch>" entry in the list.
-//	               Step is executed if "ALL" is in the list or <arch> itself.
-//	               ["ALL", "NOT_<arch>"] means all architectures, but not <arch>!
-// Mode:	       A Step is executed if Mode is "true" or if the entry is "all_modes".
+// Architecture:       Step is executed if Architecture is "true".
+// Mode:	       A Step is executed if Mode is "true".
 // immediate_prepdisk: A special mode that be dynmically switched on, so we need an own column.
 //                     Generally it should switch off all modules between inst_custom_part and inst_prepdisk.
 //
 // Caution: A Step is only executed if Architecture AND Mode is true!!
 //
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  -Step-	 -Module-	    -Back- -Next- -spec-  -Architecture(s)-		                       -Mode(s)-                             -immediate_prepdisk-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  -Step-	 -Module-	    -Back- -Next- -spec-  -Architecture(s)-		      -Mode(s)-                           -immediate_prepdisk-
 
 [
- [ `initial,  `autoinst_init	    (false, false),      [ "ALL", "NOT_s390" ],		  ! test_mode &&		  autoinst			, false],
- [ `initial,  `inst_language	    (false, true, true), [ "ALL"	     ],		  ! autoinst							, false],
- [ `initial,  `inst_startup			(false, true),       [ "ALL"	     ],						  autoinst                      , false],
- [ `initial,  `autoinst_setup	    (false, false),      [ "ALL", "NOT_s390" ],		  ! test_mode &&		  autoinst			, false],
- //-------------------------------------------------------------------------------------------------------------------------------------------------------------
- [ `initial,  `inst_proposal	    (true,  true),       [ "ALL"	     ],						  all_modes			, false],
- //-------------------------------------------------------------------------------------------------------------------------------------------------------------
- [ `initial,  `inst_do_resize	    (false, false),      [ "i386"	     ], ! live_eval &&				  ! autoinst			, false],
- //-------------------------------------------------------------------------------------------------------------------------------------------------------------
- [ `initial,  `inst_prepdisk	    (false, false),      [ "ALL"	     ], ! live_eval								, false],
- [ `initial,  `inst_rpmcopy			(false, false),      [ "ALL"	     ], ! live_eval				  ||	  screen_shot_mode	, false],
- [ `initial,  `inst_s390silo	    (true,  true),       [	     "s390"  ], ! live_eval								, false],
- //------------------------------------------------------------------------------------------------------------------------------------------------------------
- [ `initial,  `inst_s390netadopt    (true,  true),       [	     "s390"  ], ! live_eval								, false],
- [ `initial,  `inst_suseconfig	    (false, false),      [	     "s390"  ],		  ! test_mode							, false],
- [ `initial,  `inst_finish	    (false, false),      [ "ALL"	     ],		  ! test_mode							, false],
+ [ `initial,  `autoinst_init	    (false, false),      !Arch::s390,		! test_mode &&		  autoinst			, false],
+ [ `initial,  `inst_language	    (false, true, true), true,						! autoinst			, false],
+ [ `initial,  `inst_startup	    (false, true),       true,						  autoinst                      , false],
+ [ `initial,  `autoinst_setup	    (false, false),      !Arch::s390,		! test_mode &&		  autoinst			, false],
+ //---------------------------------------------------------------------------------------------------------------------------------------------------
+ [ `initial,  `inst_proposal	    (true,  true),       true,			true							, false],
+ //---------------------------------------------------------------------------------------------------------------------------------------------------
+ [ `initial,  `inst_do_resize	    (false, false),      Arch::i386,		! live_eval &&		! autoinst			, false],
+ //---------------------------------------------------------------------------------------------------------------------------------------------------
+ [ `initial,  `inst_prepdisk	    (false, false),      true,			! live_eval						, false],
+ [ `initial,  `inst_rpmcopy	    (false, false),      true,			! live_eval		  ||	  screen_shot_mode	, false],
+ [ `initial,  `inst_s390silo	    (true,  true),       Arch::s390,		! live_eval						, false],
+ //---------------------------------------------------------------------------------------------------------------------------------------------------
+ [ `initial,  `inst_s390netadopt    (true,  true),       Arch::s390,		! live_eval						, false],
+ [ `initial,  `inst_suseconfig	    (false, false),      Arch::s390,		! test_mode						, false],
+ [ `initial,  `inst_finish	    (false, false),      true,			! test_mode						, false],
 
- //==============================================================================================================================================================
+ //===================================================================================================================================================
 
- [ `continue, `inst_rpmcopy	    (false, false),      [ "ALL", "NOT_s390" ], ! live_eval && ! test_mode &&				 ! update_mode	, false],
- [ `continue, `inst_rpmupdate	    (false, false),      [ "ALL"	     ],								   update_mode	, false],
- [ `continue, `inst_language	    (false, true),       [ "ALL"	     ],					  screen_shot_mode &&    ! update_mode  , false],
- [ `continue, `inst_root	    (false, true),       [ "ALL"	     ],						  ! autoinst &&  ! update_mode	, true ],
- [ `continue, `inst_user	    (true,  true),       [ "ALL"	     ],						  ! autoinst &&  ! update_mode	, true ],
- [ `continue, `inst_x11		    (true,  true),       [ "ALL", "NOT_s390" ],					  ! update_mode				, false],
- [ `continue, `autoinst_configure   (false, false),      [ "ALL", "NOT_s390" ],						  autoinst &&    ! update_mode	, false],
- [ `continue, `inst_suseconfig	    (false, false),      [ "ALL", "NOT_s390" ],		  ! test_mode							, false],
- [ `continue, `inst_proposal	    (true,  true),       [ "ALL"	     ],						  ! autoinst && ! update_mode	, false]
+ [ `continue, `inst_rpmcopy	    (false, false),      !Arch::s390,		! live_eval && ! test_mode &&		 ! update_mode	, false],
+ [ `continue, `inst_rpmupdate	    (false, false),      true,								   update_mode	, false],
+ [ `continue, `inst_language	    (false, true),       true,					  screen_shot_mode &&    ! update_mode  , false],
+ [ `continue, `inst_root	    (false, true),       true,						! autoinst &&    ! update_mode	, true ],
+ [ `continue, `inst_user	    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
+ [ `continue, `inst_x11		    (true,  true),       !Arch::s390,							 ! update_mode  , false],
+ [ `continue, `autoinst_configure   (false, false),      !Arch::s390,					  autoinst &&    ! update_mode	, false],
+ [ `continue, `inst_suseconfig	    (false, false),      !Arch::s390,		! test_mode						, false],
+ [ `continue, `inst_proposal	    (true,  true),       true,						! autoinst &&   ! update_mode	, false]
 ];
 
 
@@ -497,8 +479,6 @@ will look different than in the manual.");
     any	    former_result = `next;
     integer m = 0;			// current module
 
-    string architecture = Arch::architecture;
-
     if ( UI::WidgetExists(`id(`next) ) )	UI::SetFocus(`id(`next) );
     else					UI::SetFocus(`id(`accept ) );
 
@@ -507,7 +487,7 @@ will look different than in the manual.");
 	list	  module_info		= modules[m]:[];
 	symbol	  main_mode		= module_info[0]:`dummy;  // `initial or `continue
 	term	  argterm		= module_info[1]:`dummy();
-	list	  allowed_archs		= module_info[2]:[];
+	boolean	  allowed_arch		= module_info[2]:true;
 	boolean	  allowed_mode		= module_info[3]:false;
 	boolean	  immediate_prep_mode	= module_info[4]:false;
 
@@ -527,8 +507,7 @@ will look different than in the manual.");
 	{
 	    do_continue = true;
 	}
-	if ( !allowed_mode
-	    || !arch_is_allowed(allowed_archs))
+	if (!allowed_arch || !allowed_mode)
 	{
 	    do_continue = true;
 	}
