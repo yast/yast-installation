@@ -2,6 +2,7 @@
  *
  * Author:	Klaus Kämpf <kkaempf@suse.de>
  *		Stefan Hundhammer <sh@suse.de>
+ *		Arvin Schnell <arvin@suse.de>
  *
  * Purpose:	This module ask about do the installation or not,
  *
@@ -43,18 +44,21 @@
      **/
     define term confirmInstallationDialog() ``{
 
+	string confirmation_message = "";
+	string confirmation_button = "";
 
-	// Confirmation message:
-	//
-	// Ask user if he really wishes to begin the installation, i.e.  format
-	// hard disk partitions and install software. Before this point,
-	// nothing has been changed - now we really mean business.
-	//
-	// `Yes' will prepare (format) the disk and install the software.
-	// `No' will go back; further config steps are possible.
-	// Translators notice: Line length < 48 chars.
-
-	string confirmation_message = _("Warning:
+	if (Mode::installation)
+	{
+	    // Confirmation message:
+	    //
+	    // Ask user if he really wishes to begin the installation, i.e.
+	    // format hard disk partitions and install software. Before this
+	    // point nothing has been changed - now we really mean business.
+	    //
+	    // `Yes' will prepare (format) the disk and install the software.
+	    // `No' will go back; further config steps are possible.
+	    // Translators notice: Line length < 48 chars.
+	    confirmation_message = _("Warning:
 YaST2 has obtained all the information
 required to install SuSE Linux.
 The installation will be carried out according
@@ -66,6 +70,36 @@ to the previous dialog.
 Start installation?
 ");
 
+	    // PushButton: Allright, really start installation
+	    confirmation_button = _("&Yes, install");
+	}
+
+	if (Mode::update)
+	{
+	    // Confirmation message:
+	    //
+	    // Ask user if he really wishes to begin the update, i.e. update
+	    // software. Before this point nothing has been changed - now we
+	    // really mean business.
+	    //
+	    // `Yes' will update the software.
+	    // `No' will go back; further config steps are possible.
+	    // Translators notice: Line length < 48 chars.
+	    confirmation_message = _("Warning:
+YaST2 has all the data required for updating SuSE Linux.
+The update will be carried out according to your
+settings made in the previous dialogs.
+To commit the update and all choices made
+so far, choose \"Yes\".  Choose \"No\" to return
+to the previous dialog.
+
+Start update?
+");
+
+	    // PushButton: Allright, really start update
+	    confirmation_button = _("&Yes, update");
+	}
+
 	term dialog = `HBox(
 			    `HSpacing(1),
 			    `VBox(
@@ -73,8 +107,7 @@ Start installation?
 
 				  `Heading( confirmation_message ),
 				  `HBox(
-					// PushButton: Allright, really start installation
-					`PushButton(`id(`yes),  _("&Yes, install")),
+					`PushButton(`id(`yes), confirmation_button),
 					`HStretch(),
 					`PushButton(`id(`no), `opt(`default), NoButtonLabel() )
 					),
@@ -87,101 +120,23 @@ Start installation?
     };
 
 
-
-    // <NOTUSED>
-
-    /**
-     * Save the current settings to floppy.
-     * Currently not used.
-     **/
-    define void saveSettingsToFloppy() ``{
-
-	string floppy_path = "/media/floppy";
-	WFM::Execute (.local.umount, floppy_path); // Just for safety
-
-	// Yes/No MsgBox; default: Yes
-	while (UI::YesNoPopup(_("The current configuration settings will be saved
-on a floppy disk.  Please insert a formatted floppy.
-
-Write data to floppy disk now?
-")))
-	{
-
-	    // mount floppy_path by WFM, so use Execute() and Write()
-
-	    if ( WFM::Execute (.local.mount, [StorageDevices::FloppyDevice, floppy_path]) )
-	    {
-		boolean success = WFM::Write (.local.ycp, floppy_path + "/settings.ycp");
-
-		WFM::Execute (.local.umount, floppy_path);
-		if (success)
-		{
-		    // msgbox
-		    // data saved to floppy disk
-		    UI::MessagePopup(_("Your settings have been written to the floppy disk."));
-		    break;
-		}
-		else
-		{
-		    // msgbox
-		    // failed to save data to floppy disk
-		    UI::MessagePopup(_("Error saving settings to the floppy disk.
-Please verify that the floppy is formatted
-and that the write protection is removed.
-"));
-		}
-	    }
-	    else
-	    {
-		// msgbox
-		// failed to find a floppy disk
-		any ret = UI::AnyQuestionPopup3(_("Could not find a formatted floppy disk."),
-						// msgbox
-						// failed to find a floppy disk
-						_("Check for a floppy disk
-in the correct drive.
-Is the disk formatted and verified?
-"), UI::RetryButtonLabel(), UI::CancelButtonLabel(),
-						// this is a button label
-						_("&Format floppy"), `focus_yes);
-
-		if (ret == `no)		// cancel
-		{
-		    break;
-		}
-		else if (ret == `retry)	// format floppy
-		{
-		    UI::OpenDialog( `opt( `decorated ),
-				    `HBox(`HSpacing(1), `Label(UI::PleaseWaitMsg()), `HSpacing(1)));
-		    SCR::Execute (.target.bash, "/sbin/mkdosfs " + StorageDevices::FloppyDevice);
-		    UI::CloseDialog();
-		}
-		// default: retry loop
-	    }
-	}
-    };
-    // </NOTUSED>
-
-
-
     //
     // main()
     //
 
     UI::OpenDialog(`opt(`decorated, `warncolor), confirmInstallationDialog() );
 
-    symbol  button	= nil;
-    boolean confirmed	= false;
+    boolean confirmed = false;
 
-    repeat
+    while (true)
     {
-	button = UI::UserInput();
+	symbol button = UI::UserInput();
 
-	if ( button == `yes )
-	{
-	    confirmed = true;
-	}
-    } until ( button == `yes || button == `no );
+	confirmed = button == `yes;
+
+	if ( button == `yes || button == `no )
+	    break;
+    }
 
     UI::CloseDialog();
 
