@@ -9,6 +9,7 @@
  */
 {
     textdomain "installation";
+
     import "ProductFeatures";
     import "Timezone";
     import "Keyboard";

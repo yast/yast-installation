@@ -21,6 +21,7 @@
 
     import "Arch";
     import "Mode";
+    import "Linuxrc";
     import "Installation";
 
     import "Hotplug";

@@ -122,8 +122,7 @@
     {
 	// Force new installation, no update possible
 
-	Mode::update ()		= false;
-	Mode::installation ()	= true;
+	Mode::SetMode ("installation");
 
 	if ( called_from_ask_user )
 	{
