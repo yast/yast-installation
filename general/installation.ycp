@@ -178,10 +178,6 @@
     }
 
 
-    // initialize Report behaviour
-    // Default in autoinst mode is showing messages and warnings with timeout of 10 sec.
-    // Errors are shown without timeout.
-
     if (Mode::autoinst)
     {
 	Report::DisplayErrors(true, 10);
@@ -308,6 +304,14 @@
 	    {
 		y2milestone("Found control file, switching to autoinst mode");
 		Mode::autoinst = true;
+		// initialize Report behaviour
+		// Default in autoinst mode is showing messages and warnings with timeout of 10 sec.
+		// Errors are shown without timeout.
+	
+		Report::DisplayErrors(true, 10);
+		Report::DisplayMessages(true, 10);
+		Report::DisplayWarnings(true, 10);
+	
 	    }
 	    SCR::Execute(.target.umount, "/media/floppy");
 	}
@@ -318,6 +322,7 @@
 	string	warnfile = Installation::sourcedir+"/README.BETA";
 	string	warning	 = SCR::Read(.target.string, [warnfile, ""]);
 
+	
 	if (warning != "")
 	{
 	    Mode::beta = true;
