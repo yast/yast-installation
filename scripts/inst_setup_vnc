@@ -19,7 +19,7 @@ cat <<-EOF
 	***           You can connect to $IP, display :1 now
 	***
 
-	(When YaST2 is finished, close your VNC viewer and return to this window.) 
+	(When YaST2 is finished, close your VNC viewer and return to this window.)
 
 EOF
 
@@ -36,7 +36,5 @@ hostname $IP
 	-rfbport 5901 \
 	-fn -gnu-unifont-medium-r-normal--16-160-75-75-p-80-iso10646-1 \
 	-fp /usr/X11R6/lib/X11/fonts/misc/,/usr/X11R6/lib/X11/fonts/uni/ \
-	&> /tmp/vncserver.log & 
+	&> /tmp/vncserver.log &
 export DISPLAY=:1
-
-echo "RunVNC: 1" >> /etc/install.inf
