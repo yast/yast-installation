@@ -202,6 +202,11 @@
 
     if (Mode::cont)
     {
+	if (SCR::Read(.target.size, Installation::destdir + "/var/lib/YaST2/update_mode") > 0)
+	{
+	    Mode::update = true;
+	}
+
 	Installation::encoding = Console::Restore();
 	if (lookup (UI::GetDisplayInfo(), "HasFullUtf8Support", true))
 	{
@@ -574,6 +579,10 @@ will look different than in the manual.");
     {
 	// remove /etc/install.inf, not needed any more
 	SCR::Execute (.target.remove, "/etc/install.inf");
+	if (Mode::update)
+	{
+	    SCR::Execute(.target.remove, "/var/lib/YaST2/update_mode");
+	}
     }
 
     UI::CloseDialog();
