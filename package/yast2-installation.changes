@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Dec 09 10:52:54 CET 2004 - arvin@suse.de
+
+- disable inclusion of fetchop and mmtimer in
+  MODULES_LOADED_ON_BOOT on SGI Altix (bug #46971)
+
+-------------------------------------------------------------------
 Fri Dec  3 15:05:57 CET 2004 - ms@suse.de
 
 - include some patches from old startup code which has been
@@ -9,12 +15,12 @@ Fri Dec  3 15:05:57 CET 2004 - ms@suse.de
   this will lead to the same horrible situation we had in the past.
   if there is anything which has to be handled differntly on another
   architecture this must be done separately to be able to maintain
-  that code longer than two days 
+  that code longer than two days
 
 -------------------------------------------------------------------
 Wed Dec  1 12:04:13 CET 2004 - sh@suse.de
 
-- Fixed bug #48722: Inconsistent lower/upper case in mode dialog 
+- Fixed bug #48722: Inconsistent lower/upper case in mode dialog
 
 -------------------------------------------------------------------
 Mon Nov 29 12:32:36 CET 2004 - ms@suse.de
