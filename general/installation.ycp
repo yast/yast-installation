@@ -53,8 +53,30 @@
 	if (server == nil) server = "";
 	string serverdir = SCR::Read (.etc.install_inf.Serverdir);
 	if (serverdir == nil) serverdir = "";
+	string username = SCR::Read (.etc.install_inf.Username);
+	if (username == nil) username = "";
+	string password = SCR::Read (.etc.install_inf.Password);
+	if (password == nil) password = "";
+	string workdomain = SCR::Read (.etc.install_inf.WorkDomain);
+	if (workdomain == nil) workdomain = "";
+	string proxy = SCR::Read (.etc.install_inf.Proxy);
+	if (proxy == nil) proxy = "";
+	string proxyport = SCR::Read (.etc.install_inf.ProxyPort);
+	if (proxyport == nil) proxyport = "";
+	string proxyproto = SCR::Read (.etc.install_inf.ProxyProto);
+	if (proxyproto == nil) proxyproto = "";
 
-	map tmp = $[ "instmode" : instmode, "cdrom" : cdrom, "server" : server, "serverdir" : serverdir ];
+	map tmp = $[ "instmode" : instmode,
+		     "cdrom" : cdrom,
+		     "server" : server,
+		     "serverdir" : serverdir,
+		     "username" : username,
+		     "password" : password,
+		     "workdomain" : workdomain,
+		     "proxy" : proxy,
+		     "proxyport" : proxyport,
+		     "proxyproto" : proxyproto
+		];
 	InstMedia::initializeInstMedia (tmp);
     }
 

@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Mon Aug 12 17:01:52 CEST 2002 - kkaempf@suse.de
 
-- fix nfs parameters passing from /etc/install.inf
+- fix network parameters passing from /etc/install.inf
 - install k_athlon if vendor_id == "AuthenticAMD"  && cpu family >= 6
 - drop "acpismp=force" for hyperthreading SMP
 
