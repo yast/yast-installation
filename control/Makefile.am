@@ -1,10 +1,14 @@
 # Makefile.am for installation/general
 
 controldir = $(yast2dir)/control
+productdir = /var/lib/YaST2
 
 control_DATA = \
 	control.xml \
+	control.SLES.xml \
 	control.dtd
+
+product_DATA = ProductFeatures
 
 # Note: The control.glade -> control.xml symlink is required to make xgettext
 # auto-detect the type of this file (glade) so it will extract all
@@ -14,7 +18,7 @@ control_DATA = \
 # the file. 
 
 
-EXTRA_DIST =  $(control_DATA)
+EXTRA_DIST =  $(control_DATA) $(product_DATA)
 
 install-data-local:
 	install -d -m 755 $(DESTDIR)/var/lib/YaST2/control

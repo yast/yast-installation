@@ -27,9 +27,9 @@
 
 	UI::OpenDialog(
 		       `HBox(
-			     `VSpacing(20),
+			     `VSpacing(22),		// force height to 22/25 of screen height
 			     `VBox(
-				   `HSpacing(60),
+				   `HSpacing(78),	// force width to 78/80 of screen width
 				   `VSpacing(0.2),
 				   `RichText(`opt(`plainText), infotext ),
 				   `ReplacePoint (`id(`rp1), `Empty () ),

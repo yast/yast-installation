@@ -14,7 +14,6 @@
  *	Klaus Kaempf <kkaempf@suse.de>
  *
  */
-
 {
     module "Vendor";
 
@@ -29,8 +28,8 @@
      * !! can only be called in inst_finish !!
      */
 
-    global define void DriverUpdate ()
-    ``{
+    global define void DriverUpdate1 ()
+    {
 	list<string> updatefiles = (list<string>)WFM::Read (.local.dir, ["/update", []]);
 	if (size (updatefiles) <= 0)
 	    return;
@@ -46,19 +45,29 @@
 
 	// unpack update files and run update.post scripts
 	SCR::Execute(.target.bash,
-		"cd / ; " +
-		"echo \"Installing driver update\"  >> /var/log/YaST2/y2logRPM ; " +
-		"for i in /tmp/update/[0-9]*/install ; do " +
-			"[ -f \"$i/update.tar.gz\" ] && /bin/tar -zxf \"$i/update.tar.gz\" ; " +
-			"rpm -Uv $i/*.rpm 2>> /var/log/YaST2/y2logRPM ; " +
-			"[ -f \"$i/update.post\" ] && /bin/chmod +x \"$i/update.post\" && \"$i/update.post\" \"$i\" ; " +
-		"done"
-	);
+		     "cd / ; " +
+		     "echo \"Installing driver update\"  >> /var/log/YaST2/y2logRPM ; " +
+		     "for i in /tmp/update/[0-9]*/install ; do " +
+		     "    [ -f \"$i/update.tar.gz\" ] && /bin/tar -zxf \"$i/update.tar.gz\" ; " +
+		     "    rpm -Uv $i/*.rpm 2>> /var/log/YaST2/y2logRPM ; " +
+		     "    [ -f \"$i/update.post\" ] && /bin/chmod +x \"$i/update.post\" && \"$i/update.post\" \"$i\" ; " +
+		     "done");
+    }
+
+    global define void DriverUpdate2 ()
+    {
+	list<string> updatefiles = (list<string>)WFM::Read (.local.dir, ["/update", []]);
+	if (size (updatefiles) <= 0)
+	    return;
+
+	// run update.post2 scripts
+	SCR::Execute(.target.bash,
+		     "cd / ; " +
+		     "for i in /tmp/update/[0-9]*/install ; do " +
+		     "    [ -f \"$i/update.post2\" ] && /bin/chmod +x \"$i/update.post2\" && \"$i/update.post2\" \"$i\" ; " +
+		     "done");
 
 	// remove driver update dir
 	SCR::Execute(.target.bash, "/bin/rm -rf /tmp/update");
-
-	return;
     }
-
 }

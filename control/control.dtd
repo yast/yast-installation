@@ -13,7 +13,8 @@
 
 <!ELEMENT defaults ( arguments, archs ) >
 
-<!ENTITY % y2_globals "language| keyboard| timezone| enable_autologin" >
+<!ENTITY % y2_globals "language| keyboard| timezone| enable_autologin|
+use_desktop_scheduler|io_scheduler" >
 <!ELEMENT globals (%y2_globals;)* >
 
 <!ELEMENT keyboard ( #PCDATA ) >
@@ -22,6 +23,11 @@
 
 <!ELEMENT language ( #PCDATA ) >
 
+<!ELEMENT io_scheduler ( #PCDATA ) >
+<!ELEMENT only_update_selected ( #PCDATA ) >
+<!ATTLIST only_update_selected config:type NMTOKEN #FIXED "boolean" >
+<!ELEMENT use_desktop_scheduler ( #PCDATA ) >
+<!ATTLIST use_desktop_scheduler config:type NMTOKEN #FIXED "boolean" >
 <!ELEMENT enable_autologin ( #PCDATA ) >
 <!ATTLIST enable_autologin config:type NMTOKEN #FIXED "boolean" >
 
@@ -56,8 +62,10 @@
 <!ELEMENT selection_type ( #PCDATA ) >
 <!ATTLIST selection_type config:type NMTOKEN #FIXED "symbol" >
 
-<!ELEMENT software (delete_old_packages| selection_type| base_selection| addons| packages)* >
+<!ELEMENT software (delete_old_packages| selection_type| base_selection|
+        addons| packages|only_update_selected|software_proposal)* >
 <!ELEMENT delete_old_packages ( #PCDATA ) >
+<!ELEMENT software_proposal ( #PCDATA ) >
 <!ATTLIST delete_old_packages config:type NMTOKEN #FIXED "boolean" >
 
 <!ELEMENT stage ( #PCDATA ) >

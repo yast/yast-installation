@@ -175,7 +175,8 @@ Please check your hardware!
 	{
 	    Report::Error(_("No hard disks and no hard disk controllers were
 found for the installation.
-Please check your hardware!"));
+Check your hardware!
+"));
 	}
 
 	clearFeedback();

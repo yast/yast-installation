@@ -13,7 +13,7 @@
 @YAST2-CHECKS-TESTSUITE@
 
 ## Nasty hack: xgettext doesn't work for XML files, so let's symlink it
-( cd control; ln -s control.xml control.glade )
+( cd control; ln -sf control.xml control.glade )
 
 ## and generate the output...
 @YAST2-OUTPUT@

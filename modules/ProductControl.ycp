@@ -109,11 +109,19 @@ global define boolean Read( string controlfile) ``{
         }
         // Default is true
         ProductFeatures::delete_old_packages = software["delete_old_packages"]:true;
+        ProductFeatures::onlyUpdateSelected =
+            software["only_update_selected"]:false;
+
+        // What is the software proposal based on?
+        // Possible values: selection|desktop
+        //
+        ProductFeatures::software_proposal =
+            software["software_proposal"]:"selection";
 
         // TODO: Temporary workaround. This should be checked in the control file
         if (Arch::i386 && issubstring(Product::distproduct, "DVD"))
         {
-        ProductFeatures::inform_about_suboptimal_distribution =
+            ProductFeatures::inform_about_suboptimal_distribution =
             software["inform_about_suboptimal_distribution"]:false;
         }
     }
@@ -126,12 +134,13 @@ global define boolean Read( string controlfile) ``{
         ProductFeatures::timezone = globals["timezone"]:"";
         ProductFeatures::use_desktop_scheduler =
             globals["use_desktop_scheduler"]:true;
+        ProductFeatures::io_scheduler =
+            globals["io_scheduler"]:"as";
     }
 
     // FIXME: Handle reading errors
     return true;
 }
-
 
 
 
@@ -154,30 +163,40 @@ boolean Check(string allowed, string current) {
   */
 global define void ProductControl() ``{
 
-
+    // FIXME: Hack, with fixed names. Should be changed after SLES.
+    // #41696: Default control file is the one from 9.1. This is
+    // only a fallback solution if someone forgets the control.xml
+    // file in the installation source. Can happen with alot of
+    // customers used to older products.
+    if (issubstring(Product::name, "SLES"))
+    {
+        packaged_control_file = "/usr/share/YaST2/control/control.SLES.xml";
+    }
     boolean ret = false;
-    if (Mode::initial)
+    current_control_file = "";
+    list<string> order =
+        [
+	 default_control_file,  // "/control.xml"
+	 saved_control_file, // "/var/lib/YaST2/control.xml"
+	 packaged_control_file // "/usr/share/YaST2/control/control.xml"
+	 ];
+    foreach(string cf, order, ``{
+	if ((integer)SCR::Read( .target.size, cf )>0
+            && current_control_file == "")
+	{
+	    current_control_file = cf;
+	}
+    });
+
+    // Just to be sure..
+    if (current_control_file == "")
     {
-        ret = (integer)SCR::Read( .target.size, default_control_file )>0;
-    }
-    else if (Mode::cont)
-    {
-        ret = (integer)SCR::Read( .target.size, saved_control_file )>0;
+        current_control_file = packaged_control_file; // /usr/share/YaST2/control/control.xml
     }
 
-    if (!ret)
-    {
-        current_control_file = packaged_control_file;
-    }
-    else
-    {
-        if (Mode::initial)
-            current_control_file = "/control.xml";
-        else
-            current_control_file = saved_control_file;
-    }
     y2milestone("Reading controlfile: %1", current_control_file );
     Read( current_control_file );
+    return;
 }
 
 /**
