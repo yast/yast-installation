@@ -53,12 +53,6 @@
     global list kernel_packages = [];
 
     //---------------------------------------------------------------
-    // local variables
-
-    // if we need an apic kernel, @see ExtractCmdlineParameters
-    boolean apic_kernel = false;
-
-    //---------------------------------------------------------------
     // local defines
 
     /**
@@ -88,7 +82,8 @@
 	  "expert",
 	  "manual",
 	  "root",
-	  "boot_file",		// BOOT_IMAGE is filtered below
+	  "boot_file",
+	  "BOOT_IMAGE",
 	  "auto",
 	  "auto2",
 	  "fake_initrd",
@@ -110,15 +105,7 @@
 	    // now only collect keys not in discardlist
 	    if (size (param_value_list) > 0)
 	    {
-		// check if "BOOT_IMAGE=apic" given
-		// and drop "BOOT_IMAGE"
-
-		if (param_value_list[0]:"" == "BOOT_IMAGE")
-		{
-		    if (param_value_list[1]:"" == "apic")
-			apic_kernel = true;
-		}
-		else if (param_value_list[0]:"" == "vga")
+		if (param_value_list[0]:"" == "vga")
 		{
 		    Boot::VgaType = param_value_list[1]:"";
 		}
@@ -144,10 +131,9 @@
     ``{
 	kernel_packages = ["k_deflt"];
 
-	if (Arch::has_smp
-	    || apic_kernel)
+	if (Arch::has_smp)
 	{
-	    y2milestone ("Kernel switch: SMP/APIC board !");
+	    y2milestone ("Kernel switch: SMP board !");
 	    kernel_packages = ["k_smp"];
 	    switched = true;
 	}

@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Aug 16 15:21:48 CEST 2002 - kkaempf@suse.de
+
+- drop BOOT_IMAGE=apic evaluation. enableapic is passed
+  as normal kernel parameter to k_deflt now.
+
+-------------------------------------------------------------------
 Thu Aug 15 13:53:54 CEST 2002 - kkaempf@suse.de
 
 - linuxrc doesn't reboot on PCMCIA systems any more (#17739)
