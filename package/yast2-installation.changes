@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Sep  9 12:48:47 CEST 2003 - kkaempf@suse.de
+
+- use kernel k_psmp on smp-systems with
+  less than 4GB memory or without PAE support
+
+-------------------------------------------------------------------
 Tue Sep 09 12:42:20 CEST 2003 - arvin@suse.de
 
 - added kernel option desktop
