@@ -6,8 +6,8 @@ module_DATA =				\
 	UML.ycp
 
 client_DATA = uml.ycp			\
-	proposal_uml_options.ycp	\
-	proposal_uml_disks.ycp		\
+	uml_options_proposal.ycp	\
+	uml_disks_proposal.ycp		\
 	inst_uml_options.ycp		\
 	inst_uml_disks.ycp		\
 	inst_uml_kickoff.ycp

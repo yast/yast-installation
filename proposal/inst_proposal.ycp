@@ -19,13 +19,13 @@
     textdomain "installation";
 
     import "Arch";
-    import "Product";
     import "Mode";
     import "Installation";
     import "AutoinstConfig";
     import "Wizard";
     import "HTML";
     import "Popup";
+    import "ProductControl";
 
     include "installation/dialogs.ycp";
 
@@ -377,202 +377,18 @@
 
 	list submodules = [];
 
-	if ( proposal_mode == `ini && Mode::installation)
-	{
-	    // Module list for installation proposal
+        // FIXME: Declare more types in control file
+        map proposal_type = $[ `ini: "initial", `net: "network", `hw : "hardware" ];
+        string proptype = proposal_type[proposal_mode]:"";
 
-	    if (Arch::s390)
-	    {
-		submodules = load_submodules_list( "installation-proposals-s390.ycp",
-						   [
-						    // Fallback list
-						    "proposal_mode",
-						    "proposal_partitions",
-						    "proposal_software",
-						    "proposal_timezone",
-						    "proposal_language",
-						    ]
-						   );
-	    }
-	    else
-	    {
-		if (Mode::live_eval)
-		{
-		    submodules = [
-				  "proposal_keyboard",
-				  "proposal_mouse",
-				  "proposal_timezone",
-				  "proposal_language"
-		    ];
-		}
-		else
-		{
-		    submodules = load_submodules_list( "installation-proposals.ycp",
-						       [
-							// Fallback list
-							"proposal_mode",
-							"proposal_keyboard",
-							"proposal_mouse",
-							"proposal_partitions",
-							"proposal_software",
-							"bootloader_proposal",
-							"proposal_timezone",
-							"proposal_language",
-							]
-						       );
-		}
-	    }
-	}
-	else if ( proposal_mode == `ini && Mode::update)
-	{
-	    // Module list for update proposal
-
-	    if (Arch::s390)
-	    {
-		submodules = load_submodules_list( "update-proposals-s390.ycp",
-						   [
-						    // Fallback list
-						    "proposal_mode",
-						    "proposal_rootpart",
-						    "proposal_update",
-						    "proposal_packages",
-						    "proposal_backup",
-						    "proposal_language"
-						    ]
-						   );
-	    }
-	    else
-	    {
-		submodules = load_submodules_list( "update-proposals.ycp",
-						   [
-						    // Fallback list
-						    "proposal_mode",
-						    "proposal_rootpart",
-						    "proposal_update",
-						    "proposal_packages",
-						    "proposal_backup",
-						    "proposal_language",
-						    "proposal_keyboard"
-						    ]
-						   );
-	    }
-	}
-	else if (proposal_mode == `uml)
-	{
-	    submodules = load_submodules_list( "uml-config-proposals.ycp",
-					       [
-						// Fallback list
-						"proposal_uml_user",
-						"proposal_uml_options",
-						"proposal_uml_disks",
-						"proposal_uml_network"
-						]
-					       );
-	}
-	else if ( proposal_mode == `net )
-	{
-	    // Module list for network configuration proposal
-
-	    if ( Arch::sparc )
-	    {
-		submodules = load_submodules_list( "net-config-proposals-sparc.ycp",
-						   [
-						    // Fallback list
-						    "lan_proposal",
-						    "modem_proposal",
-						    "proxy_proposal",
-						    "remote_proposal"
-						    ]
-						   );
-	    }
-	    else if ( Arch::ppc64 )
-	    {
-		submodules = load_submodules_list( "net-config-proposals-ppc64.ycp",
-						   [
-						    // Fallback list
-						    "lan_proposal",
-						    "proxy_proposal",
-						    "remote_proposal"
-						    ]
-						   );
-	    }
-	    else if ( Arch::s390 )
-	    {
-		submodules = load_submodules_list( "net-config-proposals-s390.ycp",
-						   [
-						    // Fallback list
-						    "lan_proposal",
-						    "proxy_proposal",
-						    "remote_proposal"
-						    ]
-						   );
-	    }
-	    else
-	    {
-		submodules = load_submodules_list( "net-config-proposals.ycp",
-						   [
-						    // Fallback list
-						    "lan_proposal",
-						    "dsl_proposal",
-						    "isdn_proposal",
-						    "modem_proposal",
-						    "proxy_proposal",
-						    "remote_proposal"
-						    ]
-						   );
-	    }
-	}
-	else if ( proposal_mode == `hw )
-	{
-	    // Module list for hardware configuration proposal
-
-	    if ( Arch::sparc )
-	    {
-		submodules = load_submodules_list( "hw-config-proposals-sparc.ycp",
-						   [
-						    // Fallback list
-						    "x11_proposal",
-						    "printer_proposal",
-						    "sound_proposal"
-						    ]
-						   );
-	    }
-	    else if ( Arch::ppc64 )
-	    {
-		submodules = load_submodules_list( "hw-config-proposals-ppc64.ycp",
-						   [
-						    // Fallback list
-						    "x11_proposal",
-						    "printer_proposal"
-						    ]
-						   );
-	    }
-	    else if ( Arch::s390 )
-	    {
-		submodules = load_submodules_list( "hw-config-proposals-s390.ycp",
-						   [
-						    // Fallback list
-						    "printer_proposal"
-						    ]
-						   );
-	    }
-	    else
-	    {
-		submodules = load_submodules_list( "hw-config-proposals.ycp",
-						   [
-						    // Fallback list
-						    "x11_proposal",
-						    "printer_proposal",
-						    "sound_proposal",
-						    "tv_proposal"
-						    ]
-						   );
-	    }
-	}
-	else
-	{
-	    y2error( "Undefined mode - no submodule list" );
-	}
+        submodules = ProductControl::getProposals (
+                Mode::stage,
+                Mode::mode,
+                proptype );
+        if (size(submodules) == 0 )
+        {
+            y2error("No proposals available");
+        }
 
 	// in normal mode we don't want to switch between installation and update
 	if (Mode::normal)
@@ -1008,33 +824,18 @@ resolved before continuing.
 						      false] ); 	// going_backwards
 	    }
 
-	    if ( input == `next )
-	    {
-		boolean skip = UI::WidgetExists(`id(`skip) ) ? (boolean) UI::QueryWidget(`id(`skip), `Value ) : true;
+            if ( input == `next )
+            {
+                boolean skip = UI::WidgetExists(`id(`skip) ) ? (boolean) UI::QueryWidget(`id(`skip), `Value ) : true;
 
-		if ( ! skip )
-		{
-		    write_settings();
-		}
+                if ( ! skip )
+                {
+                    write_settings();
+                }
 
-		if( ! Mode::initial &&
-		    ( Product::openteam_server || Product::fwadmin_host ) )
-		{
-		    if ( Product::openteam_server )
-		    {
-			return (symbol) WFM::CallFunction( "openteam" );
-		    }
-		    else if ( Product::fwadmin_host )
-		    {
-			return (symbol) WFM::CallFunction( "fwcdadmin" );
-		    }
-		}
-		else
-		{
-		    return `next;
-		}
-	    }
-	}
+                return `next;
+            }
+        }
 	else if ( input == `back )
 	{
 	    return `back;

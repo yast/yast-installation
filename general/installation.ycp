@@ -1,8 +1,6 @@
 /**
  * Module:		installation.ycp
  *
- * $Id$
- *
  * Authors:		Klaus Kaempf <kkaempf@suse.de>
  *			Mathias Kettner <kettner@suse.de>
  *			Michael Hager <mike@suse.de>
@@ -14,6 +12,7 @@
  *			Describing and calling all submodules, depending on
  *			the installation should be started or continued.
  *
+ * $Id$
  */
 {
     textdomain "installation";
@@ -43,6 +42,7 @@
     import "Popup";
     import "Report";
     import "Hooks";
+    import "ProductControl";
 
     import "FileSystems";
 
@@ -336,65 +336,6 @@ differ from those in the manual.
     boolean repair	= Mode::repair;
     boolean screen_shot_mode = Mode::screen_shot;
 
-    // - - - - - - - - - - - - -
-
-    list modules   =
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Step:	       First step( initial) or continue mode (after first reboot)
-// Module:	       Name of the module
-// Back:	       Is Back-Button sensitive
-// Next:	       Is Next-Button sensitive
-// Architecture:       Step is executed if Architecture is "true".
-// Mode:	       A Step is executed if Mode is "true".
-// immediate_prepdisk: A special mode that be dynmically switched on, so we need an own column.
-//                     Generally it should switch off all modules between inst_custom_part and inst_prepdisk.
-//
-// Caution: A Step is only executed if Architecture AND Mode is true!!
-//
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  0-Step-	1-Module-	    -Back- -Next- -spec-  2-Architecture(s)-		      3-Mode(s)-                           4-immediate_prepdisk-
-
-[
- [ `initial,  `inst_info            (false, true),       true,                  !Mode::screen_shot && !Mode::live_eval,                   false],
- [ `initial,  `inst_language	    (false, true, true), true,						! autoinst	&&    !	repair  , false],
- [ `initial,  `inst_repair	        (false, true),	     true,									repair			, false],
- [ `initial,  `inst_autoinit	    (false, false),      true,			! test_mode &&		  autoinst			, false],
- [ `initial,  `inst_autosetup	    (false, false),      true,			! test_mode &&		  autoinst			, false],
- //---------------------------------------------------------------------------------------------------------------------------------------------------
- [ `initial,  `inst_proposal	    (true,  true, `ini), true,			true									, false],
- //---------------------------------------------------------------------------------------------------------------------------------------------------
- [ `initial,  `inst_do_resize	    (false, false),      Arch::i386||Arch::x86_64||Arch::ia64,	! live_eval &&	! autoinst && !Mode::update , false],
- //---------------------------------------------------------------------------------------------------------------------------------------------------
- [ `initial,  `inst_prepdisk	    (false, false),      true,			true				                     , false],
- [ `initial,  `inst_kickoff		    (false, false),      true,			( ! live_eval	  ||  screen_shot_mode)  , false],
- [ `initial,  `inst_rpmcopy	        (false, false),      true,			( ! live_eval	  ||  screen_shot_mode)  , false],
- //---------------------------------------------------------------------------------------------------------------------------------------------------
- [ `initial,  `inst_finish	        (false, false),      true,			! test_mode						         , false],
-
- //===================================================================================================================================================
-
- [ `continue, `inst_netsetup        (false, false, `up), true,          true,                                                             false],
- [ `continue, `inst_netprobe	    (false, false),      true,		! update_mode							     , false],
- [ `continue, `inst_autopost        (false, false),      true,		autoinst				, false],
- [ `continue, `inst_rpmcopy	        (false, false),      true,		!autoconf && ! live_eval && ! test_mode	     , false],
- [ `continue, `inst_netsetup        (false, false, `dn), true,          update_mode,                                                      false],
- [ `continue, `inst_language        (false, true),       true,		screen_shot_mode &&    ! update_mode         , false],
- [ `continue, `inst_root	        (false, true),       true,		! autoinst &&    ! update_mode	             , true ],
- [ `continue, `inst_autoconfigure   (false, false),      true,					  autoinst &&    ! update_mode	 , false],
- [ `continue, `inst_proposal	    (true,  true, `net), true,				! autoinst &&   ! update_mode	     , false],
- [ `continue, `inst_ask_net_test    (true,  true),       true,				! live_eval &&	! autoinst	         , true ],
- [ `continue, `inst_do_net_test	    (true,  true),       true,				! live_eval &&	! autoinst           , true ],
- [ `continue, `inst_you		    (true,  true),       true,				! live_eval &&	! autoinst	             , true ],
- [ `continue, `inst_auth	    (true,  true),       true,				! live_eval &&	! autoinst &&    ! update_mode	, true ],
- [ `continue, `inst_user	    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
- [ `continue, `inst_suseconfig	    (false, false),      true,			! test_mode						, false],
- [ `continue, `inst_release_notes   (true,  true),	 true,				! live_eval &&	! autoinst	, false],
- [ `continue, `inst_proposal	    (true,  true, `hw),  true,						! autoinst &&    ! update_mode	, false],
- [ `continue, `inst_congratulate    (true,  true),	 true,				! live_eval &&	! autoinst	, false]
-];
-
 
     //////////////////////////////////////////////////////////////////
     // All settings the user does are saved into a map. The submodules
@@ -408,166 +349,126 @@ differ from those in the manual.
     if ( UI::WidgetExists(`id(`next) ) )	UI::SetFocus(`id(`next) );
     else					UI::SetFocus(`id(`accept ) );
 
+
+    list modules = ProductControl::getModules(Mode::stage, Mode::mode);
+    map defaults = ProductControl::getModeDefaults(Mode::stage, Mode::mode);
     while ((m >= 0) && (m < size(modules)))
     {
-	list	  module_info		= modules[m]:[];
-	symbol	  main_mode		= module_info[0]:`dummy;  // `initial or `continue
-	term	  argterm		= module_info[1]:`dummy();
-	boolean	  allowed_arch		= module_info[2]:true;
-	boolean	  allowed_mode		= module_info[3]:false;
-	boolean	  immediate_prep_mode	= module_info[4]:false;
+        map mod = modules[m]:$[];
+        term argterm = ProductControl::getTerm( mod, defaults);
 
-	boolean	  do_continue		= false;
+        boolean   do_continue           = false;
 
-	symbol	  old_mode		= `dummy;
+        if (!ProductControl::checkArch(mod, defaults))
+        {
+            y2milestone("continue (arch)..");
+            do_continue = true;
+        }
 
-	if( m > 0 )
-	{
-	    list old_module_info = modules[m - 1]:[];
-	    old_mode = old_module_info[0]:`dummy;
-	}
+        if (!mod["update"]:true && Mode::update)
+        {
+            y2milestone("continue (update)..");
+            do_continue = true;
+        }
 
-	////////////////////////////////////////////////////////////////
-	// Check if the module has to be executed
+        if ( do_continue )
+        {
+            if      (former_result == `next) m = m + 1;
+            else                             m = m - 1;
+        }
+        if ( do_continue ) continue;
 
-	if ( Mode::cont
-	     &&	main_mode != `continue)
-	{
-	    do_continue = true;
-	}
-	if ( !Mode::cont
-	     &&	main_mode != `initial
-	     && !Mode::live_eval)
-	{
-	    do_continue = true;
-	}
-	if (!allowed_arch || !allowed_mode)
-	{
-	    do_continue = true;
-	}
-	if ( immediate_prep_mode
-	     && Storage::immediate_prepdisk )
-	{
-	    do_continue = true;
-	}
+        y2milestone("Running module: %1 (%2)", argterm, m);
+        argterm = add (argterm, former_result == `back);
 
-	if ( do_continue )
-	{
-	    if	    (former_result == `next) m = m + 1;
-	    else			     m = m - 1;
-	}
+        symbol module_name = symbolof( argterm );
 
-	if ( Mode::live_eval && main_mode != old_mode && main_mode == `continue )
-	{
-	    Mode::initial = false;
-	    Mode::cont = true;
+        if ( module_name != `inst_doit )        // This is only a popup
+        {
+            Wizard::ClearContents();
+        }
 
-	    Wizard::CloseDialog();
-	    Wizard::OpenNextBackDialog();
-            // or, instead of the above, do:
-            // Wizard::ReplaceButtonBox( Wizard::BackAbortNextButtonBox() );
-	}
+       // --------------------------------------
+       // Call the wizard dialog
 
-	if ( do_continue ) continue;
-	//		   ^^^^^^^
-	/////////////////////////////////////////////////////////////////
+        y2milestone( "Calling %1", argterm );
 
-	// Tell modules if we were going backwards.
-	argterm = add (argterm, former_result == `back);
-
-	// Clear the old dialog contents for faster feedback
-
-	symbol module_name = symbolof( argterm );
-
-	if ( module_name != `inst_doit )	// This is only a popup
-	{
-	    Wizard::ClearContents();
-	}
-
-	// --------------------------------------
-	// Call the wizard dialog
-
-	y2milestone( "Calling %1", argterm );
-
-	Hooks::Checkpoint (sformat("%1", module_name), true);		// entry hook, (""+symbol is a symbol->string conversion)
+        Hooks::Checkpoint (sformat("%1", module_name), true);           // entry hook, (""+symbol is a symbol->string conversion)
 
         list args = [];
 
         integer i = 0;
         while (i < size(argterm)) {
             args[i] = select(argterm, i, -1);
-
             i = i + 1;
         }
 
         symbol result = (symbol) WFM::CallFunction (substring(sformat("%1", module_name), 1), args);
 
-	Hooks::Checkpoint (sformat("%1", module_name), false);		// exit hook
+        Hooks::Checkpoint (sformat("%1", module_name), false);          // exit hook
+
+        if ( module_name == `inst_language || module_name == `autoinst_init )   // language change very likely
+        {
+            retranslateWizardDialog();
+        }
 
 
-	Installation::immediate_prepdisk = false; //FIXME !
+        // If the module return nil, something basic went wrong.
+        // We show a stub dialog instead.
+        if (result == nil)
+        {
+            any r = nil;
+            r = Popup::ModuleError(sformat("The module %1 does not work.", symbolof(argterm)));
+            if      (r == `next)   m = m + 1;
+            else if (r == `back)   m = m - 1;
+            else if (r != `again)
+            {
+                UI::CloseDialog();
+                return nil;
+            }
+            continue;
+        }
 
-	if ( module_name == `inst_language || module_name == `autoinst_init )	// language change very likely
-	{
-	    retranslateWizardDialog();
-	}
+        if      (result == `next)
+        {
+            m = m + 1;
+        }
+        else if (result == `back)
+        {
+            m = m - 1;
+        }
+        else if (result == `cancel)
+        {
+            break;
+        }
+        else if (result == `abort)
+        {
+            // Close Sources
+            Pkg::SourceFinishAll ();
+            Pkg::TargetFinish ();
 
+            // tell linuxrc that we aborted
+            Misc::WriteYaSTInf($["Aborted" : "1"]);
+            break;
+        }
+        else if (result == `finish)
+        {
+            break;
+        }
+        else if (result == `again)
+        {
+            continue; // Show same dialog again
+        }
+        else if (result == `auto)
+        {
+            if (former_result != nil) {
+                if      (former_result == `next) m = m + 1;
+                else if (former_result == `back) m = m - 1;
+            }
+            continue;
+        }
+        former_result = result;
 
-	// If the module return nil, something basic went wrong.
-	// We show a stub dialog instead.
-	if (result == nil)
-	{
-	    any r = nil;
-	    r = Popup::ModuleError(sformat("The module %1 does not work.", symbolof(argterm)));
-	    if	    (r == `next)   m = m + 1;
-	    else if (r == `back)   m = m - 1;
-	    else if (r != `again)
-	    {
-		UI::CloseDialog();
-		return nil;
-	    }
-	    continue;
-	}
-
-	if	(result == `next)
-	{
-	    m = m + 1;
-	}
-	else if (result == `back)
-	{
-	    m = m - 1;
-	}
-	else if (result == `cancel)
-	{
-	    break;
-	}
-	else if (result == `abort)
-	{
-	    // disable all sources and finish target
-	    Pkg::SourceFinishAll ();
-	    Pkg::TargetFinish ();
-
-	    // tell linuxrc that we aborted
-	    Misc::WriteYaSTInf($["Aborted" : "1"]);
-	    break;
-	}
-	else if (result == `finish)
-	{
-	    break;
-	}
-	else if (result == `again)
-	{
-	    continue; // Show same dialog again
-	}
-	else if (result == `auto)
-	{
-	    if (former_result != nil) {
-		if	(former_result == `next) m = m + 1;
-		else if (former_result == `back) m = m - 1;
-	    }
-	    continue;
-	}
-	former_result = result;
     }
 
     // re-enable automatic probing

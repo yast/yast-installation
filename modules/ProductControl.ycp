@@ -1,0 +1,268 @@
+/**
+ * File:	modules/ProductControl.ycp
+ * Package:	installation
+ * Summary:	Product Control routines
+ * Authors:	Anas Nashif <nashif@suse.de>
+ *
+ * $Id$
+ */
+{
+module "ProductControl";
+
+import "XML";
+import "Product";
+import "Mode";
+import "Arch";
+
+global map productControl = $[];
+
+global list workflows = [];
+global list proposals = [];
+global map partitioning = $[];
+global map software = $[];
+
+global string default_control_file = "/control.xml";
+global string saved_control_file = "/var/lib/YaST2/control.xml";
+global string packaged_control_file = "/usr/share/YaST2/control/control.xml";
+global string current_control_file = "";
+
+/**
+  * Read XML Control File
+  * @param string control file
+  * @return boolean
+  */
+global define boolean Read( string controlfile) ``{
+
+    productControl = XML::XMLToYCPFile(controlfile);
+    workflows = productControl["workflows"]:[];
+    proposals = productControl["proposals"]:[];
+
+    if (haskey(productControl, "partitioning") &&
+            size( productControl["partitioning", "partitions"]:[] ) > 0)
+    {
+        partitioning = productControl["partitioning"]:$[];
+        Product::FlexiblePartitioning = partitioning;
+        Product::flexible_partitioning = true;
+    }
+    if (haskey(productControl, "software"))
+    {
+        software = productControl["software"]:$[];
+        Product::base_selection_choice = software["selection_type"]:`auto;
+        if (size(software["base_selection"]:"") > 0 )
+        {
+            Product::fixed_base_selection = software["base_selection"]:"Minimal";
+        }
+    }
+
+    // FIXME: Handle reading errors
+    return true;
+}
+
+
+
+/**
+  * ProductControl Constructor
+  * @return void
+  */
+global define void ProductControl() ``{
+
+    boolean ret = false;
+    if (Mode::initial)
+    {
+        ret = (integer)SCR::Read( .target.size, default_control_file )>0;
+    }
+    else if (Mode::cont)
+    {
+        ret = (integer)SCR::Read( .target.size, saved_control_file )>0;
+    }
+
+    if (!ret)
+    {
+        current_control_file = packaged_control_file;
+    }
+    else
+    {
+        if (Mode::initial)
+            current_control_file = "/control.xml";
+        else
+            current_control_file = saved_control_file;
+    }
+    y2milestone("Reading controlfile: %1", current_control_file );
+    Read( current_control_file );
+}
+
+/**
+ * Check if valid architecture
+ * @param map module data
+ * @param map default data
+ * @return boolean true if arch match
+ */
+global define boolean checkArch(map mod , map def) ``{
+    y2milestone("mod: %1", mod);
+    string archs = mod["archs"]:"";
+    if (archs == "")
+    {
+        archs=def["archs"]:"all";
+    }
+
+    if (archs == "all") {
+        return true;
+    }
+
+    y2milestone("short arch desc: %1", Arch::arch_short );
+    y2milestone("supported archs: %1", archs );
+    if (issubstring(archs,Arch::arch_short))
+    {
+        return true;
+    }
+
+    return false;
+};
+
+
+
+/**
+ * Return term to be used to run module
+ * @param map module data
+ * @param map default data
+ * @return term module data with params
+ */
+global define term getTerm (map mod, map def) ``{
+    // All client start with "inst_".
+
+    string client = "";
+    if (issubstring(mod["name"]:"dummy", "inst_"))
+        client = mod["name"]:"dummy";
+    else
+        client = "inst_" + mod["name"]:"dummy";
+
+
+    term a = toterm(client);
+    string arguments = mod["arguments"]:"";
+    list args = splitstring(arguments, ",");
+    if (size(args) == 0 )
+    {
+        args = splitstring(def["arguments"]:"", ",");
+    }
+    foreach(string arg, args,
+            ``{
+            if (arg == "true")
+            {
+            a=add(a, true);
+            }
+            else if (arg == "false") {
+            a=add(a, false);
+            }
+            else if (findfirstof(arg, "`") != nil)
+            {
+            if (findfirstof(arg, "`") == 0)
+            {
+            term s = toterm(substring(arg,1));
+            symbol ss = symbolof(s);
+            a=add(a, ss);
+            }
+            }
+            else
+            {
+            a=add(a,arg);
+            }
+            });
+    return a;
+}
+
+
+/**
+ * Get wrokflow defaults
+ * @param string stage
+ * @param string mode
+ * @return map defaults
+ */
+global define map getModeDefaults(string stage, string mode)
+``{
+    map workflow = (map)select(filter(map wf, workflows, ``(
+                wf["stage"]:"" == stage && wf["mode"]:"" == mode
+                    )), 0 , $[] );
+    return workflow["defaults"]:$[];
+}
+
+/**
+ * Get modules of current Workflow
+ * @param string stage
+ * @param string mode
+ * @return list<map> modules
+ */
+global define list getModules(string stage, string mode)
+``{
+    map workflow = (map)select(filter(map wf, workflows, ``(
+                wf["stage"]:"" == stage && wf["mode"]:"" == mode
+                    )), 0 , $[] );
+    list<map> modules = workflow["modules"]:[];
+    return modules;
+}
+
+
+
+/**
+ * Get modules of current Workflow
+ * @param string stage
+ * @param string mode
+ * @return list<map> modules
+ */
+global define list getProposals(string stage, string mode, string proptype)
+``{
+    // First we search for proposals for current stage if there are
+    // any. (initial or continue)
+
+    list props = (list)filter(map p, proposals, ``(
+                    p["stage"]:"" == stage || p["stage"]:"" == "" ));
+
+    // Then we check for mode: installation or update
+    props = (list)filter(map p, props, ``(
+                    p["mode"]:"" == mode || p["mode"]:"" == ""));
+
+    // Now we check for architecture
+    y2debug("Architecture: %1", Arch::architecture );
+    list arch_proposals = filter(map p, props, ``(
+                    issubstring(p["archs"]:"dummy", Arch::arch_short )));
+
+    y2debug("arch proposals: %1", arch_proposals );
+    props = filter(map p, props, ``(
+                    p["archs"]:"" == "all" || !haskey(p, "archs") ));
+
+
+    // If architecture specific proposals available, we continue with those
+    // and check for proposal type, else we continue with pre arch proposal
+    // list
+    if (size(arch_proposals) > 0 )
+    {
+        props = filter(map p, arch_proposals, ``(
+                     p["type"]:"" == proptype ));
+
+    }
+    else
+    {
+        props = filter(map p, props, ``(
+                     p["type"]:"" == proptype ));
+    }
+    if (size(props)> 1 )
+    {
+        y2error("Something Wrong happened, more than proposal after filter:
+                %1", props);
+    }
+
+    // All proposal file names end with _proposal
+    list<string> final_proposals = maplist(string p, props[0, "modules"]:[], ``{
+            if (!issubstring(p, "_proposal"))
+                return(p + "_proposal");
+            else
+                return(p);
+
+            });
+
+    return final_proposals;
+}
+
+
+
+// EOF
+}

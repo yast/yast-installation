@@ -9,19 +9,21 @@
 
 {
     module "Hooks";
-
     import "Popup";
 
-    // void Checkpoint (string filename, boolean at_entry)
-    // called whenever an inst_*.ycp file is called during
-    // installation.
-    //
-    // checks if /tmp/<filename> exists and pops up a "Entry: <filename>"
-    // or "Exit: <filename>" box
-    //
-    // filename == name of .ycp file
-    // at_entry == true before call of file
-    //		== false after call of file
+
+    list supported_types = ["sh", "pl", "ycp"];
+
+    /**
+     * called whenever an inst_*.ycp file is called during
+     * installation.
+     * checks if /tmp/<filename> exists and pops up a "Entry: <filename>"
+     * or "Exit: <filename>" box
+     *
+     * @param string  filename == name of .ycp file
+     * @param string at_entry == true before call of file == false after call of file
+     * @return void
+     */
 
     global define void Checkpoint (string filename, boolean at_entry) ``{
 	if (WFM::Read (.local.size, "/tmp/"+filename) >= 0)
@@ -35,5 +37,14 @@
 		Popup::Message (sformat ("Exit: %1", filename));
 	    }
 	}
+        return;
     }
+
+    /**
+     * Run scripts // TODO
+     */
+    global define void Run(string filename, boolean at_entry) ``{
+        y2milestone("Running Script %1", filename);
+    }
+
 }

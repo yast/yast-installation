@@ -8,11 +8,10 @@
  * Summary:
  *	provide vendor/driver update disk functions
  *
- * $Id$
- *
  * Author:
  *	Klaus Kaempf <kkaempf@suse.de>
  *
+ * $Id$
  */
 
 {
