@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Feb 12 12:03:24 CET 2003 - fehr@suse.de
+
+- Write keytable info to yast.inf again in inst_finish.ycp 
+
+-------------------------------------------------------------------
 Tue Feb 11 21:39:29 CET 2003 - arvin@suse.de
 
 - handle update flag from content file (bug #21561)
