@@ -29,7 +29,6 @@
     import "StorageControllers";
     import "StorageDevices";
     import "Storage";
-    import "Boot";
     import "Kernel";		// call constructor, extract cmdline
     import "Wizard";
 

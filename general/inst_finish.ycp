@@ -35,7 +35,7 @@
     import "StorageDevices";
     import "StorageControllers";
     import "ModulesConf";
-    import "Boot";
+    import "Bootloader";
     import "PackageSelectionIO";
     import "Update";
     import "Vendor";
@@ -66,7 +66,7 @@ Please wait while the base system is being installed.
 	[];
 
 
-    integer progress_length = 14;
+    integer progress_length = 16;
 
     Progress::New(
 		  // Headline for last dialog of base installation: Install LILO etc.
@@ -141,7 +141,7 @@ Please wait while the base system is being installed.
 	}
 	else
 	{
-	    linuxrc["Root"] = Boot::RootPartitionDevice;
+	    linuxrc["Root"] = Bootloader::getRootDevice ();
 	}
     }
     y2milestone ("%1 boot", (Mode::hardBoot)?"Hard":"Soft");
@@ -238,7 +238,7 @@ Please wait while the base system is being installed.
 
     foreach(`m, storage_initrdm,
     ``{
-	Boot::AddInitrdModule (m, "");
+	Initrd::AddModule (m, "");
     });
 
     Progress::NextStage();
@@ -265,7 +265,7 @@ Please wait while the base system is being installed.
     {
 	if (AutoInstall::ForceBoot && Mode::hardBoot)
 	{
-	    linuxrc["Root"] = Boot::RootPartitionDevice;
+	    linuxrc["Root"] = Bootloader::getRootDevice ();
 	}
 	if (AutoInstall::Reboot && !Mode::hardBoot)
 	{
@@ -390,17 +390,6 @@ Please wait while the base system is being installed.
     }
     else	// install mode
     {
-	// get list of bootable 'foreign' primary partitions
-	// ["<device> <comment>", "<device> <comment>", ...]
-	list foreign_primaries = Storage::GetForeignPrimary();
-
-	// --------------------------------------------------------------
-	// boot concept
-
-	if (foreign_primaries != nil)
-	{
-	    Boot::others = foreign_primaries;
-	}
     }
 
     // Run depmod to update modules.dep
@@ -546,7 +535,7 @@ Please wait while the base system is being installed.
     {
 	SCR::Execute (.target.bash, "/sbin/vgscan");
     }
-    Boot::Save ();		// save /etc/sysconfig parameters
+//    Boot::Save ();		// save /etc/sysconfig parameters
 
     // --------------------------------------------------------------
     // driver update ?!
@@ -602,7 +591,7 @@ with the load address of your root DASD.
 
     if (AutoInstall::Bootloader["write_bootloader"]:true)
     {
-	Boot::Write ();		// install boot manager
+	Bootloader::Write ();		// install boot manager
     }
 
     // --------------------------------------------------------------

@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Dec  4 15:29:17 CET 2002 - jsrain@suse.cz
+
+- adapted to new bootloader module interface
+- 2.7.1
+
+-------------------------------------------------------------------
 Tue Oct 22 16:53:21 CEST 2002 - ms@suse.de
 
 - removed inst_x11 to be part of the installation workflow

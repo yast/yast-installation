@@ -9,7 +9,7 @@
 , "proposal_mouse"
 , "proposal_partitions"
 , "proposal_software"
-, "proposal_bootloader"
+, "bootloader_proposal"
 , "proposal_timezone"
 , "proposal_language"
 ]
