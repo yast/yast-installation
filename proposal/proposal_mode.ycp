@@ -66,8 +66,11 @@
 
 	symbol result = WFM::CallFunction (`inst_mode (`AskUser ));
 
-	if (tmp1 != Mode::installation || tmp2 != Mode::update)
+	boolean mode_changed = tmp1 != Mode::installation || tmp2 != Mode::update;
+
+	if (mode_changed)
 	{
+	    Pkg::PkgReset ();
 	    Update::Detach ();
 	    RootPart::UnmountPartitions ();
 	}
@@ -75,7 +78,7 @@
 	// Fill return map
 
 	ret = $[ "workflow_sequence" : result,
-		 "mode_changed" : tmp1 != Mode::installation || tmp2 != Mode::update];
+		 "mode_changed" : mode_changed];
     }
     else if ( func == "Description" )
     {
