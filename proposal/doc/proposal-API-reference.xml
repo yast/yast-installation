@@ -61,6 +61,17 @@
     </para>
     <variablelist>
       <varlistentry>
+	<term><type>list&lt;string&gt;</type> <returnvalue>links</returnvalue></term>
+	<listitem>
+	  <para>A list of additional hyperlink ids used in summaries returned by 
+	    this section. All possible values must be included.</para>
+
+	  <para>Example: ["device_enable", "device_test"]</para>
+	  
+	  
+	</listitem>
+      </varlistentry>
+      <varlistentry>
 	<term>
 	  <type>string</type> <returnvalue>preformatted_proposal</returnvalue> (optional)</term>
 	<listitem>
@@ -82,7 +93,12 @@
 	  <para>
 	    Human readable proposal, not formatted yet.
 	    The caller will format each list item (string) as a
-	    HTML list item ( "&lt;li&gt; ... &lt;/li&gt;" ).</para>
+	    HTML list item ( "&lt;li&gt; ... &lt;/li&gt;" ). 
+	  </para>
+	  <para>
+	    The proposal can contain hyperlinks with ids listed in the list
+	    <parameter>links</parameter>.
+	  </para>
 
 	  <para>
 	    The caller will make a HTML unsorted list of this, e.g.:</para>
@@ -180,6 +196,7 @@
       <funcprototype>
 	<funcdef><type>map</type> <function>AskUser</function></funcdef>
 	<paramdef><type>boolean</type> <parameter>has_next</parameter></paramdef>
+	<paramdef><type>string</type> <parameter>chosen_id</parameter></paramdef>
       </funcprototype>
     </funcsynopsis>
   </refsynopsisdiv>
@@ -193,6 +210,19 @@
 	    Use a "next" button even if the module by itself has only one
 	    step, thus would normally have an "OK" button - or would rename
 	    the "next" button to something like "finish" or "accept".
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><type>string</type> <parameter>chosen_id</parameter></term>
+	<listitem>
+	  <para>
+	    If a section proposal contains hyperlinks and user clicks
+	    on one of them, this defines the id of the hyperlink.
+	    All hyperlink IDs must be set in the map retuned
+	    by <function>Description</function>.
+	    If a user didn't click on a proposal hyperlink, this parameter is not
+	    defined.
 	  </para>
 	</listitem>
       </varlistentry>

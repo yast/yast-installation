@@ -45,6 +45,7 @@
     list	titles     = [];
     map		submod2id  = $[];
     map		id2submod  = $[];
+    map		link2submod = $[];
     boolean	have_blocker = false;
     symbol	proposal_mode = nil;
 
@@ -169,6 +170,8 @@
 	boolean skip_the_rest = false;
 	have_blocker = false;
 	
+	link2submod = $[];
+	
 	map<string, string> html = $[];
 	foreach ( string submod, submodules, ``{
 	    string prop = "";
@@ -205,6 +208,14 @@
         	}
 
 		prop_map = submod_make_proposal( submod, force_reset, language_changed );
+		
+		// update link map
+		if (haskey (prop_map, "links"))
+		{
+		    foreach ( string link, prop_map["links"]:[], ``{
+			link2submod[link] = submod;
+		    });
+		}
 	    }
 
 	    if ( prop_map["language_changed"]:false
@@ -591,19 +602,6 @@
 		    id2submod[id]     = submod;
 		    menu_list         = add( menu_list, `item(`id( id ), menu_title + "..." ) );
 
-		    // if module provided a list of URL links, prepare structures for them
-		    // each link has an id, this id will be passed to the module if user
-		    // clicks the link
-		    if ( haskey (description, "links") )
-		    {
-			list<string> links = description["links"]:[];
-			y2milestone ("Additional links for module %1: %2", submod, links);
-			
-			foreach (string link, links, ``{
-			    id2submod[link] = submod;
-			});
-		    }
-		    
 		    no = no + 1;
 		}
 	    }
@@ -862,6 +860,13 @@ a proposal that is locked, ask your system administrator</p>");
 	{
 	    // get module for hyperlink id
 	    string submod = id2submod[input]:"";
+	    
+	    if (submod == "")
+	    {
+		// also try hyperlinks
+		submod = link2submod[input]:"";
+	    }
+	    
 	    if (submod != "")
 	    {
 		// if submod is not the same as input id, provide id to the module
