@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Jan 26 16:12:23 CET 2005 - nashif@suse.de
+
+- install inst_default_desktop.ycp (#49838)
+
+-------------------------------------------------------------------
 Tue Jan 25 07:21:53 CET 2005 - nashif@suse.de
 
 - Fixed arguments in control file
