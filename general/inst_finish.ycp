@@ -518,7 +518,6 @@ Please wait while the base system is being installed.
     Boot::Save ();		// save /etc/sysconfig parameters
 
     Installation::Save();
-    Mode::Save();
 
     // --------------------------------------------------------------
     // driver update ?!
