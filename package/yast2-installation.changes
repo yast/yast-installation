@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Feb  9 15:05:33 CET 2005 - jsrain@suse.cz
+
+- additional kernel parameters in control file Prof moved to
+  the new variable (#50369)
+
+-------------------------------------------------------------------
 Tue Feb  8 16:14:44 CET 2005 - nashif@suse.de
 
 - Moved ProductControl to yast2 package
