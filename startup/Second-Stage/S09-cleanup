@@ -1,5 +1,5 @@
 #!/bin/sh
-log "Starting S10-cleanup..."
+log "Starting S09-cleanup..."
 log "======================="
 
 #=============================================
