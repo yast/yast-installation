@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Sep 14 17:05:15 CEST 2004 - mvidner@suse.cz
+
+- Copy the DHCP cache to the right place (#45150).
+
+-------------------------------------------------------------------
 Tue Sep 14 12:46:53 CEST 2004 - arvin@suse.de
 
 - fixed help text in main proposal (bug #45093)
