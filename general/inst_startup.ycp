@@ -161,7 +161,9 @@ installation. Check your hardware.
     showFeedback( _("Loading kernel modules for hard disk controllers") );
     StorageControllers::Initialize();
 
-    ModuleLoading::Load ("lvm-mod", "", "Linux", "LVM", Mode::manual, true);
+    ModuleLoading::Load ("dm-mod", "", "Linux", "DM", Mode::manual, true);
+    SCR::Execute (.target.bash, "/sbin/devmap_mkmod.sh");
+
 
     // --------------------------------------------------------------
     //				  Hard disks
