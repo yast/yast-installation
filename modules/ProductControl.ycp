@@ -344,7 +344,8 @@ global define void AddWizardSteps(list<map> stagemode) ``{
     foreach (map sm , stagemode, ``{
 	y2debug( "Adding wizard steps for %1", sm );
 	string slabel = getWorkflowLabel(sm["stage"]:"", sm["mode"]:"");
-	UI::WizardCommand(`AddStepHeading( dgettext( wizard_textdomain, slabel ) ) );
+	if ( slabel != "" )
+	    UI::WizardCommand(`AddStepHeading( dgettext( wizard_textdomain, slabel ) ) );
 	foreach(map m, getModules(sm["stage"]:"", sm["mode"]:""), ``{
 	    y2debug("Adding wizard step: %1", m );
 	    if (m["label"]:"" != "") {
