@@ -1,0 +1,26 @@
+/**************
+FILE          : inst_x11.ycp
+***************
+PROJECT       : YaST2
+              :
+AUTHOR        : Marcus Schäfer <ms@suse.de>
+              :
+BELONGS TO    : YaST2
+              : (X11 integration part using SaX2/ISaX)
+              :
+DESCRIPTION   : The installation workflow will call inst_x11
+              : This module will check if we have X11 installed
+              : and import the main X11 module (x11.ycp)
+              :
+STATUS        : Development
+**************/
+{
+import "X11Version";
+
+//==========================================
+// Check if X11 is installed
+//------------------------------------------
+if ( X11Version::have_x11 ) {
+	WFM::CallFunction ( `x11 ( true, true ) );
+}
+}
