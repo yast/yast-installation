@@ -100,13 +100,34 @@ textdomain="control"
             <type>network</type>
             <stage>continue,normal</stage>
             <proposal_modules config:type="list">
-                <proposal_module>lan</proposal_module>
-                <proposal_module>dsl</proposal_module>
-                <proposal_module>isdn</proposal_module>
-                <proposal_module>modem</proposal_module>
-                <proposal_module>remote</proposal_module>
-                <proposal_module>firewall</proposal_module>
-                <proposal_module>proxy</proposal_module>
+                <proposal_module>
+		    <name>lan</name>
+		    <presentation_order>20</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>dsl</name>
+		    <presentation_order>30</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>isdn</name>
+		    <presentation_order>40</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>modem</name>
+		    <presentation_order>50</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>remote</name>
+		    <presentation_order>60</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>firewall</name>
+		    <presentation_order>10</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>proxy</name>
+		    <presentation_order>70</presentation_order>
+		</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>
