@@ -1,0 +1,251 @@
+/*
+ *
+ * Module:             vendor.ycp
+ *
+ * Author:             Klaus Kaempf (kkaempf@suse.de)
+ *
+ *
+ * Submodules:
+ *
+ *
+ * Purpose:	load vendor driver CD
+ *
+ * Modify:
+ *
+ * Returns:	`ok
+ *		`abort
+ *
+ * $Id$
+ */
+
+{
+    textdomain "general";
+
+    import "Arch";
+    import "Installation";
+    import "StorageDevices";
+
+    import "Wizard";
+
+    include "ui/common_popups.ycp";
+    include "ui/common_functions.ycp";
+    include "ui/common_messages.ycp";
+
+    // display message if the CD seems to be wrong
+
+    define wrong_cd (string reason, boolean must_umount) ``{
+	UI::MessagePopup (reason);
+	if (must_umount)
+	{
+	    // free mount point
+	    SCR::Execute (.target.umount, Installation::sourcedir);
+	}
+	UI::CloseDialog();
+	return `abort;
+    };
+
+    // run <name>.inst file
+    // return 0 on success
+
+    define run_inst (string fpath, string fname)
+    ``{
+	integer result = 0;
+
+	y2milestone ("run_inst %1/%2", fpath, fname);
+
+	SCR::Execute (.target.bash, "/bin/cp " + fpath + "/" + fname + " /tmp");
+
+	// force it to be readable and executable
+	SCR::Execute (.target.bash, "/bin/chmod 774 /tmp/" + fname);
+
+	result = SCR::Execute (.target.bash, "(cd /tmp; ./" + fname + " " + fpath + ")");
+	SCR::Execute (.target.remove, "/tmp/" + fname);
+
+	return result;
+    };
+
+    map user_settings	= SCR::Read (.target.ycp, "/var/lib/YaST2/settings.ycp");
+    map infoMap		= SCR::Read (.target.ycp, "/var/lib/YaST2/infomap.ycp");
+    string version	= infoMap["produktversion"]:"8.0";
+
+    string language	= UI::GetLanguage(true);
+    boolean is_mounted	= false;
+
+    include "installation_ui.ycp";
+
+    //------------------------------------------------------------
+
+    integer arg_n = size(Args()) - 1;
+
+    string default_device = "/dev/cdrom";
+    string alternate_device = StorageDevices::FloppyDevice;
+
+    while (arg_n >= 0)
+    {
+	if (substring (Args (arg_n), 0, 1) == "/")
+	{
+	    default_device = Args (arg_n);
+	}
+	arg_n = arg_n - 1;
+    }
+
+    any result = nil;
+
+    Wizard::CreateDialog();
+    Wizard::ReplaceAbortButton(`Empty());
+
+    // VENDOR: main screen heading
+    string title = _("Vendor Driver CD");
+    Wizard::SetContents (title, `Empty(), "", true, true);
+
+    // free mount point
+    SCR::Execute (.target.umount, Installation::sourcedir);
+
+    // try to mount device
+
+    while (SCR::Execute (.target.mount, [ default_device, Installation::sourcedir]) == false)
+    {
+	if ((alternate_device != default_device)
+	    && (SCR::Execute (.target.mount, [ alternate_device, Installation::sourcedir]) == true))
+	{
+	    break;
+	}
+	// VENDOR: cant mount /dev/cdrom popup
+	if (!UI::ContinueCancelPopup( _("Please insert the vendor CD-ROM")))
+	{
+	    UI::CloseDialog();
+	    return `abort;
+	}
+    }
+
+    is_mounted = true;
+
+    // CD is mounted. Check contents.
+
+    string cdpath = Installation::sourcedir;
+    y2milestone ("Trying %1", cdpath);
+    list dirlist = SCR::Read(.target.dir, cdpath);
+
+    if ((size (dirlist) <= 0)
+	|| (!contains (dirlist, "linux")))
+    {
+	// VENDOR: vendor cd contains wrong data
+	return wrong_cd(_("Couldn't find driver data on the CD-ROM\nAborting now."), is_mounted);
+    }
+
+    cdpath = cdpath + "/linux";
+
+    y2milestone ("Trying %1", cdpath);
+
+    list dirlist = SCR::Read(.target.dir, cdpath);
+    if ((size (dirlist) <= 0)
+	|| (!contains (dirlist, "suse")))
+    {
+	// VENDOR: vendor cd contains wrong data
+	return wrong_cd(_("Couldn't find driver data on the CD-ROM\nAborting now."), is_mounted);
+    }
+
+    cdpath = cdpath + "/suse/" + Arch::architecture + "-" + version;
+    y2milestone ("Trying %1", cdpath);
+
+    list dirlist = SCR::Read(.target.dir, cdpath);
+    if (size (dirlist) <= 0)
+    {
+	// VENDOR: vendor cd doesn't contain data for current system and linux version
+	return wrong_cd(_("The CD-ROM data does not match the running SuSE Linux system.
+Aborting now.
+"), is_mounted);
+    }
+
+    y2milestone ("found %1", dirlist);
+
+    // filter files ending in .inst (allow .ins for dos :-})
+
+    list instlist = [];
+    foreach (`fname, dirlist,
+    ``{
+	list splitted = splitstring (fname, ".");
+	if ((size (splitted) == 2)
+	    && (substring (splitted[1]:"", 0, 3) == "ins"))
+	{
+	    instlist = add (instlist, splitted[0]:"");
+	}
+    });
+
+    y2milestone ("inst %1", instlist);
+
+    if (size (dirlist) <= 0)
+    {
+	// VENDOR: vendor cd contains wrong data
+	return wrong_cd(_("Couldn't find driver data on the CD-ROM\nAborting now."), is_mounted);
+    }
+
+    integer inst_count = 0;
+
+    string short_lang = "";
+    if (size (language) > 2)
+	short_lang = substring (language, 0, 2);
+
+    // try to load .inst files, try with (xx_XX) ISO language first,
+    // then with 2 char language code
+    // show data from matching files
+
+    foreach (`fname, instlist,
+    ``{
+
+	// try full ISO language code first
+	string description = SCR::Read(.target.string, cdpath + "/" + fname + "-" + language + ".desc");
+
+	// try with 2 char language code
+	if (size (description) <= 0)
+	{
+	    description = SCR::Read(.target.string, cdpath + "/" + fname + "-" + short_lang + ".desc");
+	}
+
+	// try without language code
+	if (size (description) <= 0)
+	{
+	    description = SCR::Read(.target.string, cdpath + "/" + fname + ".desc");
+	}
+
+	// show contents
+	if (size (description) > 0)
+	{
+	    if (UI::YesNoPopup( description ) )
+	    {
+		Wizard::SetContents (title, `HVCenter(`Label(_("Installing driver..."))), "", true, true);
+		integer inst_result = run_inst (cdpath, fname + ".inst");
+		if (inst_result == 0)
+		{
+		    inst_count = inst_count + 1;
+		}
+		else
+		{
+		    // VENDOR: popup if installation of driver failed
+		    UI::MessagePopup (_("The installation failed.
+Contact the address on the CD-ROM.\n"));
+		}
+		Wizard::SetContents (title, `Empty(), "", true, true);
+	    }
+	}
+    });
+
+    string result_message = "";
+    if (inst_count > 0)
+    {
+	result_message = sformat (_("Installed %1 drivers from CD"), inst_count);
+    }
+    else
+    {
+	// VENDOR: vendor cd contains wrong data
+	result_message = _("No driver data found on the CD-ROM.\nAborting now.");
+    }
+
+    UI::MessagePopup (result_message);
+
+    // free mount point
+    SCR::Execute (.target.umount, Installation::sourcedir);
+
+    UI::CloseDialog();
+    return `ok;
+}

@@ -1,0 +1,61 @@
+/**
+ * File:
+ *	Vendor.ycp
+ *
+ * Module:
+ *	Vendor
+ *
+ * Summary:
+ *	provide vendor/driver update disk functions
+ *
+ * $Id$
+ *
+ * Author:
+ *	Klaus Kaempf <kkaempf@suse.de>
+ *
+ */
+
+{
+    module "Vendor";
+
+    // --------------------------------------------------------------
+    // driver update ?!
+
+    /**
+     * DriverUpdate
+     * copy /update/install/* to target:/tmp/install/
+     * !! can only be called in inst_finish !!
+     */
+
+    global define void DriverUpdate ()
+    ``{
+	list updatefiles = WFM::Read (.local.dir, ["/update/install", []]);
+	if (size (updatefiles) <= 0)
+	    return;
+
+	SCR::Execute(.target.mkdir, "/tmp/install");
+	byteblock updatebuffer = #[];
+	foreach (`updatefile, updatefiles,
+	``{
+	    updatebuffer = WFM::Read (.local.byte, "/update/install/"+updatefile);
+	    SCR::Write (.target.byte, "/tmp/install/"+updatefile, updatebuffer);
+	});
+
+	if (SCR::Read (.target.size, "/tmp/install/update.tar.gz") > 0)
+	{
+	    SCR::Execute(.target.bash, "/bin/tar -C / -xzf /tmp/install/update.tar.gz");
+	}
+	else
+	{
+	    SCR::Execute(.target.bash, "/bin/tar -C / -xzf /tmp/install/update.tgz");
+	}
+	SCR::Execute(.target.bash, "chmod +x /tmp/install/update.post");
+	SCR::Execute(.target.bash, "/tmp/install/update.post");
+
+	// remove driver update dir
+	SCR::Execute(.target.bash, "/bin/rm -rf /tmp/install");
+
+	return;
+    }
+
+}

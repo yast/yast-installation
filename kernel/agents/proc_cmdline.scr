@@ -1,0 +1,35 @@
+/**
+ * File:
+ *   proc_cmdline.scr
+ * Summary:
+ *   SCR Agent for reading /proc/cmdline
+ * Access:
+ *   read-only
+ * Authors:
+ *   Unknown <yast2-hacker@suse.de>
+ * See:
+ *   anyagent
+ *   libscr
+ *   man alsactl
+ * Example:
+ *   Read(.proc.cmdline)
+ *   (["auto", "BOOT_IMAGE=linux", "ro", "root=801", "BOOT_FILE=/boot/vmlinuz"])
+ * 
+ * $Id$
+ *
+ * Returns a <b>list</b> of arguments given to the kernal at boottime.
+ * (might have been set by lilo, ...)
+ */
+.proc.cmdline
+
+`ag_anyagent(
+  Description (
+      ``(File("/proc/cmdline")),	// real filename
+      "#\n",			// Comment
+      true,			// read-only
+      ``(List (
+	String ("^ \n"),
+	" "
+      ))
+    )
+) 

@@ -1,0 +1,736 @@
+/**
+ * * $Id$
+ *
+ * Module:	inst_finish.ycp
+ *
+ * Author:	Klaus Kämpf <kkaempf@suse.de>
+ *
+ * Purpose:	This module finishes the installation, writes
+ * 		some files (rc_config fstab ... and so on).
+ *
+ *
+ * Writes:
+ * [target] /var/lib/YaST2/runme_at_boot  	run yast2 after initial boot
+ * [target] /var/lib/YaST2/settings.ycp      save settings
+ * [target] /var/lib/YaST2/infomap.ycp	infoMap (descr/info)
+ * SCR::Write (.etc.shadow.root,
+ */
+{
+    import "Arch";
+    import "Mode";
+    import "Installation";
+    import "AutoInstall";
+    import "Misc";
+    import "Language";
+    import "Mouse";
+    import "Timezone";
+    import "Console";
+    import "Display";
+    import "Monitor";
+    import "Keyboard";
+    import "Storage";
+    import "InstMedia";
+    import "Packages";
+    import "Kernel";
+    import "User";
+    import "Hotplug";
+    import "Product";
+    import "Progress";
+    import "Report";
+    import "StorageDevices";
+    import "StorageControllers";
+    import "ModulesConf";
+    import "Boot";
+    import "PackageSelectionIO";
+    import "Update";
+    import "Vendor";
+    import "HwStatus";
+
+    include "partitioning/partition_defines.ycp";
+    textdomain "general";
+
+    // Help text for last dialog of base installation
+    string help_text = _("<p>
+Please wait while the base system is being installed.
+</p>");
+
+    list progress_stages =
+	[
+	// progress stages
+	 _("Update configuration"),
+	 _("Copy files to installed system"),
+	 _("Install boot manager"),
+	 _("Prepare system for initial boot")
+	];
+
+    list progress_descriptions =
+	[];
+
+
+    integer progress_length = 14;
+    // In autoinst mode we need one more step
+    if (Mode::autoinst)
+	 progress_length = progress_length + 1;
+
+    Progress::New(
+		  // Headline for last dialog of base installation: Install LILO etc.
+		  _("Finishing Basic Installation"),
+		  "",	// Initial progress bar label - not empty (reserve space!)
+		  progress_length,	// progress bar length
+		  progress_stages,
+		  progress_descriptions,
+		  help_text );
+
+    // --------------------------------------------------------------
+    // do things needed in inst-sys
+
+
+    // Saving package selections to disk
+    if ( Mode::update )
+    {
+	Update::Save();
+    }
+    else
+    {
+	Packages::Save();
+	PackageSelectionIO::savePackageSelection( false );
+    }
+
+    // window manager setting
+    // see x11/inst_xf86config.ycp for display manager setting
+    // default_wm will be used below !
+
+    string default_wm = "kde";
+
+    if ( !Mode::update )
+    {
+	list current_sel = SCR::Read(.package.selInstallSet);
+	if (contains (current_sel, "Minimal")
+	    && contains (current_sel, "Gnome")
+	    && (!contains (current_sel, "Kde")))
+	{
+	    default_wm = "gnome";
+	}
+    }
+
+    Progress::NextStep();
+    // progress stage title
+    Progress::Title (_("Configuring system for initial boot."));
+
+    // Tell linuxrc where root is
+    // Tell linuxrc to reboot on an SMP system
+    // also reboot if the x11 server was unknown
+    //   and defaulted to VGA16 (no fbdev !)
+    //
+    // (see inst_pkg_toinstall). Since running /dev/fb (fbdev) and vga16
+    // clash, we do a hard reboot to turn fbdev off. Oh well ...
+
+    // collect data for linuxrc, will be written to /etc/yast.inf
+    map linuxrc = $[];
+
+    if (Storage::CheckForLvmRootFs()
+	|| Storage::CheckForMdRootFs()
+	|| Product::certify_cd
+	|| (Mode::installMap["reboot"]:"" == "1")
+	|| (Display::xserver_is_unknown
+	    && !Display::has_fbdev))
+    {
+	linuxrc["Root"] = "reboot";
+	linuxrc["RebootMsg"] = "1";
+	Mode::hardBoot = true;
+    }
+    else
+    {
+	// linuxrc is supposed to hard reboot on pcmcia system
+	// -> Kernel::switched is true anyway !
+	if (Arch::has_pcmcia)
+	{
+	    Mode::hardBoot = true;
+	    linuxrc["RebootMsg"] = "1";
+	}
+	else
+	{
+	    linuxrc["RebootMsg"] = "0";
+	}
+	if ( Mode::update )
+	{
+	    linuxrc["Root"] = Update::selectedRootPartition;
+	}
+	else
+	{
+	    linuxrc["Root"] = Boot::RootPartitionDevice;
+	}
+    }
+    y2milestone ("%1 boot", (Mode::hardBoot)?"Hard":"Soft");
+
+    // Copy pre-install scripts to /var/adm/scripts and logs
+    // to /var/adm/inst-log
+
+    // this should better be done via InjectFile after SCR re-start below.
+    // But InjectFile can't handle wildcards.
+
+    if (Mode::autoinst)
+    {
+	y2milestone("Autoinstall: Copying Pre-Install scripts to installed system");
+	SCR::Execute(.target.bash,"/bin/cp " +  AutoInstall::tmpdir + "/prescripts/* " + Installation::destdir + AutoInstall::scripts_dir);
+	SCR::Execute(.target.bash,"/bin/cp " +  AutoInstall::tmpdir + "/prescripts/logs/* " + Installation::destdir + AutoInstall::logs_dir);
+	y2milestone("Autoinstall: Done");
+    }
+
+    // copy hardware status to installed system
+    SCR::Execute (.target.bash,"/bin/cp -a /var/lib/hardware " + Installation::destdir + "/var/lib");
+
+    // if VNC, copy setup data
+    if (Mode::vnc)
+    {
+	SCR::Execute (.target.bash,"/bin/cp -a /root/.vnc " + Installation::destdir + "/root");
+    }
+
+    // Check if X11 package is installed.
+    SCR::Write (.targetpkg.dbTargetPath, Installation::destdir );
+    boolean x11_installed = SCR::Read (.targetpkg.installed, "xf86");
+
+    y2milestone ("x11_installed: <%1>", x11_installed );
+
+    // --------------------------------------------------------------
+    //   stop SCR
+    //   restart on destination
+
+    y2milestone ("Stopping SCR");
+
+    SCRClose(Installation::scrHandle);
+    y2milestone ("Re-starting SCR on %1", Installation::destdir);
+    Installation::scrHandle = SCROpen ("chroot="+Installation::destdir+":scr", false);
+    SCRSetDefault (Installation::scrHandle);
+
+    // it's not mounted on the target !!
+    InstMedia::is_mounted = false;
+
+    // re-init tmpdir from new SCR !
+    Misc::tmpdir = SCR::Read (.target.tmpdir);
+    string tmpdir = Misc::tmpdir;
+
+    define InjectFile (string filename)
+    ``{
+	y2milestone("InjectFile: <%1>", filename );
+	byteblock copy_buffer = WFM::Read (.local.byte, filename);
+	return SCR::Write (.target.byte, filename, copy_buffer);
+    }
+
+    // --------------------------------------------------------------
+    // Tell new boot scripts to launch yast2, once the
+    // new system has done its virgin boot. The Write call
+    // creates any missing directory :-).
+
+    if (!SCR::Write (.target.string, "/var/lib/YaST2/runme_at_boot", ""))
+    {
+	y2error ("Couldn't create target /var/lib/YaST2/runme_at_boot");
+    }
+
+    // --------------------------------------------------------------
+    // get targets
+    // first build map of module names (remove duplicates)
+    // then make list of modules as string
+    // FIXME: should only include module needed for root-device
+
+    Progress::NextStep ();
+    // progress stage title
+    Progress::Title (_("Initializing kernel modules..."));
+
+    // now check if we really need reiserfs/jfs and lvm_mod
+
+    list storage_initrdm =  Storage::GetRootInitrdModules();
+
+    foreach(`m, storage_initrdm,
+    ``{
+	Boot::AddInitrdModule (m, "");
+    });
+
+    Progress::NextStage();
+    // progress stage title
+    Progress::Title (_("Configuring CD-ROM devices"));
+
+    // setup ide-scsi
+    // !! must be called _after_ Storage::GetRootInitrdModules
+    list ide_recorders = StorageDevices::ProbeIDERecorders ();
+    Kernel::IDERecorders (ide_recorders);
+
+    if (Kernel::switched || AutoInstall::Reboot)
+    {
+	linuxrc["Root"] = "reboot";
+	if (Mode::autoinst)
+	    linuxrc["RebootMsg"] = "0";
+	else
+	    linuxrc["RebootMsg"] = "1";
+
+	Mode::hardBoot = true;
+    }
+
+    // --------------------------------------------------------------
+    // mount the installation image on the target.
+    // Inform YaST1 about the installation image.
+
+    // create mountpoint on target
+    Progress::NextStep ();
+
+    if ( !Mode::update )
+    {
+	// progress stage title
+	Progress::Title (_("Creating mount points"));
+
+	SCR::Execute (.target.mkdir, Installation::sourcedir);
+    }
+    // setup /dev/cdrom, /dev/dvd, etc.
+    // needed in InstMedia::InstallYaSTData()
+
+    StorageDevices::MakeCDLinks (ide_recorders);
+
+    // --------------------------------------------------------------
+    // re-mount installation media on target
+
+    integer mountresult = InstMedia::MountMedium (1);
+
+    if (mountresult == 0)
+    {
+	// this uses /dev/cdrom
+	InstMedia::InstallYaSTData ();
+    }
+
+    // --------------------------------------------------------------
+    // saving package-information to running system
+
+    Packages::installPackageInformation (Language::language);
+
+
+    if ( !Mode::update )
+    {
+	// --------------------------------------------------------------
+	// copy /etc/raidtab to target if it was created
+
+	if (Storage::GetRaidtabCreated())
+	{
+	    InjectFile ("/etc/raidtab");
+	}
+    }
+
+    // --------------------------------------------------------------
+    // Save the state of the hardware modules.
+    Progress::NextStep ();
+    // progress stage title
+    Progress::Title (_("Saving configuration data on target system."));
+
+    Mouse::Save();
+    Timezone::Save();
+    Language::Save();
+    Keyboard::Save(true);
+    Display::Save();
+    Monitor::Save();
+
+    if (Mode::autoinst)
+    {
+	Progress::NextStep();
+	// progress stage title
+	Progress::Title (_("Executing postinstall (chroot) scripts"));
+	AutoInstall::Save();
+	AutoInstall::scriptSettings("chroot-scripts");
+    }
+
+    ModulesConf::Save ();
+
+    // --------------------------------------------------------------
+    // check for Kde vs. Gnome, see inst_xf86config
+    Progress::NextStep ();
+    // progress stage title
+
+    if ( !Mode::update )
+    {
+	Progress::Title (_("Initializing default window manager"));
+
+	SCR::Write (.sysconfig.windowmanager.DEFAULT_WM, default_wm);
+	SCR::Write (.sysconfig.windowmanager, nil);
+    }
+
+    // --------------------------------------------------------------
+    // console and /etc/initab (if serial console)
+    Console::Save();
+
+    // --------------------------------------------------------------
+    // Write fstab
+    Progress::NextStep ();
+
+    if ( Mode::update )
+    {
+	// re-do all top-level "media" convenience links
+	list mediafiles = SCR::Read (.target.dir, ["/media", []]);
+
+	foreach (`mediafile, mediafiles,
+	``{
+	    mediafile = "/" + mediafile;
+	    if (SCR::Read (.target.size, mediafile) < 0)	// not existing
+	    {
+		SCR::Execute(.target.symlink, "/media"+mediafile, mediafile);
+	    }
+	});
+    }
+    else	// install mode
+    {
+	// progress stage title
+	Progress::Title (_("Creating file system table (/etc/fstab)"));
+
+	include "partitioning/write_fstab.ycp";
+
+	map targetMap = Storage::GetTargetMap();
+	map zipdrives = StorageDevices::zipDrives;
+
+	map s390_device_map = $[];
+	map oldTargetMap = $[];
+
+	if (Arch::s390)
+	{
+	    s390_device_map = get_s390_device_map (targetMap);
+	    y2milestone ("s390_device_map=%1", s390_device_map );
+	    oldTargetMap = targetMap;
+	    targetMap = rename_s390_dasd_device (targetMap, s390_device_map);
+	}
+
+	write_cryptotab (targetMap);
+	string foreign_primary = write_fstab (targetMap, zipdrives, StorageDevices::cddevices);
+
+	if (Arch::s390)
+	{
+	    targetMap = oldTargetMap;
+	}
+
+
+	// --------------------------------------------------------------
+	// boot concept
+
+	if ((foreign_primary != "") && (foreign_primary != "X"))
+	{
+	    Boot::other = " -o \""+foreign_primary+"\"";
+	}
+    }
+
+    // Run depmod to update modules.dep
+    Progress::NextStep ();
+    // progress stage title
+    Progress::Title(_("Updating kernel module dependencies"));
+
+    ModulesConf::Save();
+
+    if ( !Mode::update )
+    {
+	// Set default runlevel to "xdm", if X11 packages are installed
+
+	if ( !Mode::test && x11_installed )
+	{
+	    SCR::Execute(.target.bash, "/bin/sed -e 's/^id:[0-9sSa-cA-C]*:initdefault:/id:5:initdefault:/' /etc/inittab >"+tmpdir+"/inittab && /bin/cp "+tmpdir+"/inittab /etc");
+	    SCR::Execute(.target.remove, tmpdir+"/inittab");
+	}
+    }
+    else
+    {
+	// Set default runlevel cause inittab will be overwritten by
+	// installing aaa_base
+
+	integer last_runlevel = (Update::last_runlevel != -1) ? Update::last_runlevel : 3;
+
+	y2milestone("Set run-level to %1", last_runlevel );
+
+	SCR::Execute(.target.bash,
+		     "/bin/sed -e 's/^id:[0-9sSa-cA-C]*:initdefault:/id:"
+		     + last_runlevel + ":initdefault:/' /etc/inittab >"
+		     + tmpdir + "/inittab && cp "
+		     + tmpdir + "/inittab /etc");
+	SCR::Execute(.target.remove, tmpdir + "/inittab");
+
+	if ( ! Arch::ppc )
+	{
+	    // saving kernel
+	    SCR::Execute (.target.bash, "/bin/cp /boot/vmlinuz /boot/vmlinuz.suse");
+	    SCR::Execute (.target.bash, "/bin/cp /boot/initrd /boot/initrd.suse");
+	}
+    }
+
+    Progress::NextStage();
+    // progress stage title
+    Progress::Title(_("Copying configuration files to installed system"));
+
+    // --------------------------------------------------------------
+    // Copy /etc/install.inf and /etc/XF86Config into built system so that the
+    // second phase of the installation can find it.
+
+    InjectFile ("/etc/install.inf");
+    SCR::Execute(.target.bash, "/bin/cp /etc/install.inf /var/lib/YaST2");
+
+    if ( Mode::update )
+    {
+	// Update mode
+	if ( Mouse::mset == "imps/2" )
+	{
+	    // Patching xf86config for wheel mouses.
+	    if ( SCR::Execute (.target.bash, "/usr/lib/YaST2/bin/update_xf86config") !=0 )
+	    {
+		y2error ( "Patch of XF86Config for wheelmouse");
+	    }
+	    else
+	    {
+		y2milestone ( "XF86Config has been patched for wheelmouse" );
+	    }
+	}
+    }
+    else
+    {
+	// Installation mode
+	// copy XF86Config only if needed
+	if ( x11_installed )
+	{
+
+	    if (Mouse::mset == "")
+	    {
+		InjectFile ("/etc/XF86Config");
+		InjectFile ("/etc/X11/XF86Config");
+	    }
+	    else
+	    {
+		// replace with probed type
+		InjectFile ("/etc/XF86Config");
+		InjectFile ("/etc/X11/XF86Config");
+		SCR::Execute(.target.bash, "/bin/sed -e \"s#PS/2#"+Mouse::mset+"#\" /etc/XF86Config >"+tmpdir+"/XF86Config");
+		SCR::Execute(.target.bash, "/bin/mv -f "+tmpdir+"/XF86Config /etc");
+		SCR::Execute(.target.bash, "/bin/sed -e \"s#Microsoft#"+Mouse::mset+"#\" /etc/X11/XF86Config >"+tmpdir+"/XF86Config");
+		SCR::Execute(.target.bash, "/bin/mv -f "+tmpdir+"/XF86Config /etc/X11");
+	    }
+	}
+    }
+
+    // --------------------------------------------------------------
+    // Copy blinux configuration
+
+    if (Mode::braille)
+    {
+	InjectFile ("/etc/suse-blinux.conf");
+    }
+
+    // --------------------------------------------------------------
+    // boot manager configuration
+
+    Progress::NextStage();
+    // progress stage title
+    Progress::Title (_("Installing boot manager..."));
+
+    Boot::Save ();		// save /etc/sysconfig parameters
+
+    Installation::Save();
+    Mode::Save();
+
+    // --------------------------------------------------------------
+    // driver update ?!
+
+    Vendor::DriverUpdate();
+
+    // --------------------------------------------------------------
+    // message after first round of packet installation
+    // now the installed system is run and more packages installed
+    // just warn the user that the screen is going back to text mode
+    // and yast2 will come up again.
+    // dont mention this "going back to text mode" here, maybe this
+    // wont be necessary in the final version
+
+    // we should tell the user to remove the cd on an SMP or Laptop system
+    // where we do a hard reboot. However, the cdrom is still mounted here
+    // and cant be removed.
+
+    if (!Mode::live_eval)
+    {
+	if (Arch::s390)
+	{
+	    // for s390:
+	    // Message that will be displayed along with information
+	    // how the boot loader was installed
+	    Misc::boot_msg = _("<p>
+Your system will now be shut down.
+After shutdown, reload the system
+with the load address of your <b>root DASD</b>.
+</p>
+");
+	}
+	else if (!Mode::hardBoot)
+	{
+
+	    // Final message after all packages from CD1 are installed
+	    // and we're ready to start (boot into) the installed system
+	    // Message that will be displayed along with information
+	    // how the boot loader was installed
+	    Misc::boot_msg = _("Now booting your system...");
+	}
+    }
+
+    // write boot information for linuxrc
+
+    linuxrc["Language"] = Language::language;
+    // Optional:  linuxrc["Keytable"] = Keyboard::keytable;
+
+    Misc::WriteYaSTInf (linuxrc);
+
+    // Dont't write bootloader if explicitly specified in autoinst configuration
+    // Default is to write bootloader configuration
+
+    if (AutoInstall::Bootloader["write_bootloader"]:true)
+    {
+	Boot::Write ();		// install boot manager
+    }
+
+    // --------------------------------------------------------------
+    // write final hardware status, ** must be last **
+
+    if (Mode::update)
+    {
+	// ensure "no" status for all pci and isapnp devices
+	HwStatus::Update();
+    }
+
+    // write "yes" status for known devices (mouse, keyboard, storage, etc.)
+    HwStatus::Save();
+
+    // --------------------------------------------------------------
+    // Check if there is a message left to display
+    // and display it, if necessary
+
+    if ( size( Misc::boot_msg ) > 0 )
+    {
+	if ( ! Mode::autoinst		// Don't overwrite autoinst default values
+	     && ! Mode::hardBoot )	// Leave popup open when hard reboot
+	{
+	    // Set timeout for boot message
+	    Report::DisplayMessages(true, 10);
+	}
+
+	Report::Message(Misc::boot_msg);
+	Misc::boot_msg = "";
+    }
+
+    // --------------------------------------------------------------
+    // Copy YaST2 log files into installed system
+
+    Progress::NextStage();
+    // progress stage title
+    Progress::Title(_("Copying log files to installed system"));
+
+    integer log_num = 4;	// maximum number of rotated logs
+    while (log_num >= 0)
+    {
+	string log_add = (log_num == 0) ? "" : ("-" + log_num);
+
+	log_add = "/var/log/y2log" + log_add;
+
+	if (WFM::Read (.local.size, log_add) > 0)
+	{
+	    string logbuf = WFM::Read (.local.string, log_add);
+	    SCR::Write (.target.string, "/var/log/y2log-" + (log_num+1), logbuf);
+	    y2milestone ("Copied %1 to target", log_add);
+	}
+	else
+	{
+	    y2milestone ("Skipping non-existant log %1", log_add);
+	}
+	log_num = log_num - 1;
+    }
+
+    // copy y2start.log
+    SCR::Write (.target.string, "/var/log/y2start.log-initial", WFM::Read (.local.string, "/var/log/y2start.log"));
+
+
+    // --------------------------------------------------------------
+    // Unmount all mounted devices (from inst_prepdisk)
+
+    Progress::NextStep();
+    // progress stage title
+    Progress::Title(_("Unmounting all mounted devices"));
+
+    // cdrom in target system
+    InstMedia::UnmountMedium ();
+
+    // loop over all filesystems
+
+    map mountPoints = Storage::GetMountPoints();
+    list umountList = [];
+
+    // go through mountPoints collecting paths in umountList
+    // *** umountList is lexically ordered !
+
+    foreach (`mountpoint,`mountval,mountPoints,
+    ``{
+	if (mountpoint != "swap")		// dont umount / on target
+	{
+	    umountList = add (umountList, mountpoint);
+	}
+    });
+
+    // now unmount all mountpoints in reverse order !
+
+    // remove [Installation::destdir]/etc/mtab which was faked for %post
+    // scripts in inst_rpmcopy
+    SCR::Execute(.target.remove, "/etc/mtab");
+
+    // Stop SCR on target
+    SCRClose (Installation::scrHandle);
+
+    if (!Mode::live_eval)
+    {
+	// first, umount everthing mounted *in* the target.
+	// /var/adm/mount (Installation::sourcedir)
+	// /proc/bus/usb
+	// /proc
+	// /boot
+
+	WFM::Execute(.local.umount, Installation::destdir + Installation::sourcedir);
+	if (Hotplug::haveUSB)
+	{
+	    WFM::Execute(.local.umount, Installation::destdir + "/proc/bus/usb");
+	}
+	WFM::Execute(.local.umount, Installation::destdir + "/proc");
+
+	// *** umountList is lexically ordered !
+	// now umount in reverse order (guarantees "/" as last umount)
+
+	integer umountLength = size (umountList);
+	while (umountLength > 0)
+	{
+	    umountLength = umountLength - 1;
+	    WFM::Execute(.local.umount, Installation::destdir + select (umountList, umountLength, ""));
+	    y2milestone( "umount target: %1", select (umountList, umountLength, "")) ;
+	}
+
+	// disable loop device of crypto fs
+	integer max_loop_dev = Storage::NumLoopDevices();
+	boolean unload_crypto = false;
+
+	while (max_loop_dev > 0)
+	{
+	    unload_crypto   = true;
+	    string exec_str = sformat( "/sbin/losetup -d /dev/loop%1", max_loop_dev-1 );
+	    y2milestone( "loopdev: %1", exec_str);
+	    WFM::Execute(.local.bash, exec_str);
+	    max_loop_dev = max_loop_dev -1;
+	}
+
+	map targetMap = Storage::GetTargetMap();
+	if( size(filter(`k,`v, targetMap, ``(lookup (v, "is_lvm_vg", false)))) >0 )
+	{
+	    y2milestone( "shutting down LVM" );
+	    WFM::Execute(.local.bash, "vgchange -A n -a n" );
+	    WFM::Execute(.local.bash, "umount /etc/lvmtab.d" );
+	}
+
+	// does not work in 7.2
+	// boot.crypto fails to load module
+	// so we leave it loaded
+	// if ( unload_crypto ) WFM::Execute(.local.bash, "/sbin/rmmod loop_fish2");
+
+    }
+
+    Progress::Finish();
+
+    return `next;
+}

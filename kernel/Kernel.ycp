@@ -1,0 +1,385 @@
+/**
+ * File:
+ *	Kernel.ycp
+ *
+ * Module:
+ *	Kernel
+ *
+ * Authors:
+ *	Klaus Kaempf (kkaempf@suse.de)
+ *
+ * Summary:
+ *	All kernel related functions are here
+ *<UL>
+ *<LI>	determine kernel rpm</LI>
+ *<LI>	determine flags</LI>
+ *<LI>	determine hard reboot</LI>
+ *</UL>
+ * $Id$
+ */
+{
+    module "Kernel";
+
+    import "Arch";
+    import "Boot";
+
+    textdomain "packages";
+
+    /**
+     * @return	switched	if the kernel was switches during
+     *				installation (e.g. from k_deftl to k_smp)
+     *				(Determines hard boot vs. warm boot)
+     */
+
+    global boolean switched = false;
+
+    /**
+     * @return	binary		determines the name of the kernel binary
+     *				below '/boot'.
+     */
+
+    global string binary = "vmlinuz";
+
+    /**
+     * @return	string	the kernel command line
+     * Don't write it directly, @see: AddCmdLine()
+     */
+    global string cmdLine = "";
+
+    /**
+     * @return	kernel_packages	a list kernels to be installed.
+     */
+
+    global list kernel_packages = [];
+
+    //---------------------------------------------------------------
+    // local variables
+
+    // if we need an apic kernel, @see ExtractCmdlineParameters
+    boolean apic_kernel = false;
+
+    //---------------------------------------------------------------
+    // local defines
+
+    /**
+     * @param	cmdline	string
+     *
+     * @return	void
+     * Filters out yast2 specific boot parameters and sets
+     * Parameters to the important cmdline parts.
+     */
+
+    define void ExtractCmdlineParameters (string line)
+    ``{
+	// discard \n
+	line = deletechars (line, "\n");
+
+	// list of parameters to be discarded (linuxrc/yast internals)
+
+	list discardlist = [
+	  "linuxrc",
+	  "initrd",
+	  "instmode",
+	  "autoyast",
+	  "nosshd",
+	  "rw", "ro",
+	  "ramdisk_size",
+	  "SuSE",
+	  "expert",
+	  "manual",
+	  "root",
+	  "BOOT_FILE",		// BOOT_IMAGE is filtered below
+	  "auto",
+	  "auto2",
+	  "fake_initrd",
+	  "load_ramdisk",
+	  "install",
+	  "vnc", "vncpassword",
+	  "rescue",
+	  "info"
+	];
+
+	list cmdlist = splitstring (line, " ");
+
+	foreach (`parameter, cmdlist,
+	``{
+	    // split "key=value" to ["key", "value"]
+
+	    list param_value_list = splitstring (parameter, "=");
+
+	    // now only collect keys not in discardlist
+	    if (size (param_value_list) > 0)
+	    {
+		// check if "BOOT_IMAGE=apic" given
+		// and drop "BOOT_IMAGE"
+
+		if (param_value_list[0]:"" == "BOOT_IMAGE")
+		{
+		    if (param_value_list[1]:"" == "apic")
+			apic_kernel = true;
+		}
+		else if (param_value_list[0]:"" == "vga")
+		{
+		    Boot::VgaType = param_value_list[1]:"";
+		}
+		else if (!contains (discardlist, param_value_list[0]:""))
+		{
+		    AddCmdLine (param_value_list[0]:"", param_value_list[1]:"");
+		}
+	    }
+	});
+
+	return;
+    }
+
+    //---------------------------------------------------------------
+
+    /**
+     * select kernel depending on architecture and system type.
+     *
+     * @return void
+     */
+
+    global define void ProbeKernel ()
+    ``{
+	kernel_packages = ["k_deflt"];
+	
+	if (Arch::has_smp
+	    || apic_kernel)
+	{
+	    y2milestone ("Kernel switch: SMP/APIC board !");
+	    kernel_packages = ["k_smp"];
+	    switched = true;
+	}
+
+	if (Arch::i386)
+	{
+	    // get flags from WFM /proc/cpuinfo (for pae and tsc tests below)
+
+	    list cpuflags = lookup (SCR::Read (.proc.cpuinfo), "flags", []);
+
+	    // check for > 4GB memory
+	    list memories = SCR::Read(.probe.memory);
+	    integer memsize = memories[0,"resource","phys_mem",0,"range"]:0;
+	    y2milestone ("Physical memory %1", memsize);
+
+	    if (contains (cpuflags, "ht"))		// hyper threading
+	    {
+		AddCmdLine ("acpismp", "force");
+	    }
+
+	    if (Arch::has_smp)
+	    {
+		// x86, SMP -> must check PAE
+		if (!contains (cpuflags, "pae"))
+		{
+		    y2milestone ("Kernel switch: CPU w/o PAE !");
+		    kernel_packages = ["k_psmp"];
+		    switched = true;
+		}
+	    }
+	    else if ((contains (cpuflags, "ht"))		// hyper threading
+		     || (memsize > 0x100000000))		// > 4GB
+	    {
+		y2milestone ("Kernel switch: Jackson/Memory !");
+		kernel_packages = ["k_smp"];
+		switched = true;
+	    }
+	    else
+	    {
+		// non-smp
+
+		// read cpu specific information (for first cpu only)
+		map cpu = select (SCR::Read (.probe.cpu), 0, $[]);
+		integer cpu_family = cpu["family"]:0;
+		integer cpu_model = cpu["model"]:0;
+
+		// special handling for cyrix, it pretends to be a pentium but isnt
+		//   so extra check for "tsc" flag
+		if ((cpu_family < 5)	// not pentium
+		    || ((cpu_family == 5)
+			&& (!contains (cpuflags, "tsc"))))
+		{
+		    y2milestone ("Kernel switch: Not a pentium !");
+		    kernel_packages = ["k_i386"];	   
+		    switched = true;
+		}
+	    }
+	}
+	else if (Arch::alpha
+		 && !Arch::has_smp)
+	{
+	    if (serial_console)
+	    {
+		kernel_packages = ["k_serial"];
+		switched = true;
+	    }
+
+	    if (tga_controller_found)
+	    {
+		kernel_packages = ["k_tga"];
+		switched = true;
+	    }
+	}
+	else if (Arch::ppc)
+	{
+	    binary = "vmlinux";
+	    switched = false;
+	    if (Arch::board_mac_new
+		|| Arch::board_mac_old)
+	    {
+		kernel_packages = ["k_deflt"];
+	    }
+
+	    if (Arch::board_mac_nubus)
+	    {
+		kernel_packages = ["kernel-nubus"];
+		binary = "vmlinux-nubus";
+	    }
+
+	    if (Arch::board_chrp)
+	    {
+		// XXX fixme
+		string chrp_cpu = "";
+		list cpuProbe = SCR::Read(.probe.cpu);
+		foreach (`cpuProbe, cpuProbe,
+		``{
+		    chrp_cpu = cpuProbe["model"]:"";
+		    chrp_cpu = tolower (chrp_cpu);
+		});
+
+		if (issubstring (chrp_cpu, "power3"))
+		{
+		    kernel_packages = ["kernel-ppc64"];
+		    binary = "zImage.ppc64";
+		    // "k_chrp64"
+		}
+		else if (issubstring(chrp_cpu, "rs64-iii")
+			 || issubstring(chrp_cpu, "rs64-iv")
+			 || issubstring(chrp_cpu, "power4"))
+		{
+		    kernel_packages = ["kernel-ppc64"];
+		    binary = "zImage.ppc64";
+		}
+		else
+		{
+		    kernel_packages = ["k_deflt"];
+		}
+	    }
+	    else if (Arch::board_iseries)
+	    {
+		kernel_packages = ["k_iseries"];
+	    }
+	    else if (Arch::board_prep)
+	    {
+		kernel_packages = ["k_deflt"];
+		binary = "zImage.prep";
+	    }
+	}
+	else if (Arch::sparc64)
+	{
+	    if (Arch::has_smp)
+	    {
+		kernel_packages = ["k_smp"];
+		switched = true;
+	    }
+	    else
+	    {
+		kernel_packages = ["k_deflt"];
+	    }
+	}
+	else if (Arch::ia64)
+	{
+	    list cpuProbe = SCR::Read (.probe.cpu);
+	    integer revision = cpuProbe[0,"revision"]:0;
+ 	    if (revision == 6) // C0 stepping
+	    {
+		if (Arch::has_smp)		  
+		    kernel_packages = ["k_c0smp"];
+		else
+		    kernel_packages = ["k_c0"];
+		switched = true;
+	    }
+	}
+	else if (Arch::s390)
+	{
+	    binary = "zilo-kernel/image";
+	}
+
+	y2milestone("Kernel determined: %1", kernel_packages);
+	return;
+
+    }  // ProbeKernel ()
+
+
+    /**
+     * IDERecorders ()
+     * @param	list(string)	list of ide cdrecorders (i.e. ["hdc", "hdd"])
+     *
+     */
+    global define void IDERecorders (list idecdrws)
+    ``{
+	y2milestone ("IDERecorders(%1)", idecdrws);
+	if (size (idecdrws) > 0)
+	{
+	    Boot::AddInitrdModule ("ide-scsi", "");
+	    y2milestone ("old boot_parameters '%1'", cmdLine);
+	    foreach (`dev, idecdrws,
+	    ``{
+		AddCmdLine (dev, "ide-scsi");
+	    });
+	    y2milestone ("new boot_parameters '%1'", cmdLine);
+
+	    switched = true;	// must do a hard reboot !
+	}
+	return;
+    };
+
+    /*
+     * 	Set a custom kernel.
+     *	@return void
+     */
+   
+    global define void Set (list custom_kernels)
+    ``{
+	kernel_packages = custom_kernels;
+	
+	return;
+    }
+
+    /**
+     * AddCmdLine ()
+     * @param	string	name of parameter
+     * @param	string	args of parameter
+     *
+     * add "name=args" to kernel boot parameters
+     * add just "name" if args = ""
+     * @see: cmdLine
+     */
+    global define void AddCmdLine (string name, string arg)
+    ``{
+	cmdLine = cmdLine + " " + name;
+	if (arg != "")
+	{
+	    cmdLine = cmdLine + "=" + arg;
+	}
+	y2milestone ("cmdLine '%1'", cmdLine);
+	return;
+    }
+
+    /**
+     * Constructor
+     * pass /proc/cmdline to /var/lib/libhd/cmdline
+     * extract relevant settings from /proc/cmdline
+     * @return void
+     */
+
+    global define void Kernel ()
+    ``{
+	// extract extra boot parameters given in installation
+
+	ExtractCmdlineParameters (SCR::Read(.target.string, "/proc/cmdline"));
+
+	ProbeKernel ();
+    }
+}

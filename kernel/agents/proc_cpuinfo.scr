@@ -1,0 +1,80 @@
+/**
+ * File:
+ *   proc_cpuinfo.scr
+ * Summary:
+ *   SCR Agent for reading /proc/cpuinfo
+ * Access:
+ *   read-only
+ * Authors:
+ *   Unknown <yast2-hacker@suse.de>
+ * See:
+ *   anyagent
+ *   libscr
+ * Example:
+ *   Read(.proc.cpuinfo)
+ *   ($["bogomips":1101.00000000000, 
+ *      "cache":256, 
+ *      "coma_bug":false, 
+ *      "cpuid_level":2, 
+ *      "f00f_bug":false, 
+ *      "family":6, 
+ *      "fdiv_bug":false, 
+ *      "flags":["fpu", "vme", "de", "pse", "tsc", "msr", "pae", "mce", 
+ *               "cx8", "sep", "mtrr", "pge", "mca", "cmov", "pat", "pse36", 
+ *               "mmx", "fxsr", "sse"], 
+ *      "fpu":true, 
+ *      "fpu_exception":true, 
+ *      "hlt_bug":false, 
+ *      "mhz":551.258972167969, 
+ *      "model":8, 
+ *      "model_name":"Pentium III (Coppermine)", 
+ *      "processor":0, 
+ *      "stepping":1, 
+ *      "vendor_id":"GenuineIntel", 
+ *      "wp":true
+ *   ])
+ * 
+ * $Id$
+ *
+ * Returns a <b>list of maps</b>. Each map (list-entry) corresponds 
+ * with one processor.
+ * Keys for the maps are: "processor", "vendor_id", "family", "model_name", 
+ * "model", "name", "stepping", "mhz", "cache", "fdiv_bug", "hlt_bug", 
+ * "sep_bug", "f00f_bug", "coma_bug", "fpu_exception", "cpuid_level", "wp", 
+ * "flags", "bogomips"
+ * <p><b>Warning:</b> Currently only reports <b>one</b> (the last) processor.</p>
+ */
+.proc.cpuinfo
+
+`ag_anyagent(
+  Description (
+  ``(File("/proc/cpuinfo")),	// real filename
+  "#\n",			// Comment
+  true,				// read-only
+  ``(Tuple (
+      Choice (
+	[ "processor",	Optional (Sequence (Whitespace(), ": ", `processor (Number()),	  Optional(String("^\n"))))],
+	[ "vendor_id",	Optional (Sequence (Whitespace(), ": ", `vendor_id (String("^\n")), Optional(String("^\n"))))],
+	[ "cpu family",	Optional (Sequence (Whitespace(), ": ", `family (Number()),	Optional(String("^\n"))))],
+	[ "model name",	Optional (Sequence (Whitespace(), ": ", `model_name (String("^\n")), Optional(String("^\n"))))],
+	[ "model",	Optional (Sequence (Whitespace(), ": ", `model (Number()),	Optional(String("^\n"))))],
+	[ "name",	Optional (Sequence (Whitespace(), ": ", `name (String("^\n")), Optional(String("^\n"))))],
+	[ "stepping",	Optional (Sequence (Whitespace(), ": ", `stepping(Number()),	Optional(String("^\n"))))],
+	[ "cpu MHz",	Optional (Sequence (Whitespace(), ": ", `mhz(Float()),		Optional(String("^\n"))))],
+	[ "cache size",	Optional (Sequence (Whitespace(), ": ", `cache(Number()),		Optional(String("^\n"))))],
+	[ "fdiv_bug",	Optional (Sequence (Whitespace(), ": ", `fdiv_bug(Boolean()),	Optional(String("^\n"))))],
+	[ "hlt_bug",	Optional (Sequence (Whitespace(), ": ", `hlt_bug(Boolean()),	Optional(String("^\n"))))],
+	[ "sep_bug",	Optional (Sequence (Whitespace(), ": ", `sep_bug(Boolean()),	Optional(String("^\n"))))],
+	[ "f00f_bug",	Optional (Sequence (Whitespace(), ": ", `f00f_bug(Boolean()),	Optional(String("^\n"))))],
+	[ "coma_bug",	Optional (Sequence (Whitespace(), ": ", `coma_bug(Boolean()),	Optional(String("^\n"))))],
+	[ "fpu_exception",Optional (Sequence (Whitespace(), ": ", `fpu_exception(Boolean()), Optional(String("^\n"))))],
+	[ "fpu",	Optional (Sequence (Whitespace(), ": ", `fpu(Boolean()),		Optional(String("^\n"))))],
+	[ "cpuid level",Optional (Sequence (Whitespace(), ": ", `cpuid_level(Number()),	Optional(String("^\n"))))],
+	[ "wp",		Optional (Sequence (Whitespace(), ": ", `wp(Boolean()),		Optional(String("^\n"))))],
+	[ "flags",	Optional (Sequence (Whitespace(), ": ", `flags(List(String("^ \n"), " ")), Optional(String("^\n"))))],
+	[ "bogomips",	Optional (Sequence (Whitespace(), ": ", `bogomips(Float()), Optional(String("^\n"))))]
+      ),
+      Continue ("\n")
+    ))
+  )
+)

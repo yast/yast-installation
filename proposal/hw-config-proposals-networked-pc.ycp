@@ -1,0 +1,14 @@
+//
+// hw-config-proposals-networked-pc.ycp
+//
+// Proposal list for hardware configuration for networked PCs
+// (PCs with a network card)
+//
+[
+ "lan_proposal",
+ "proposal_printer",
+ "modem_proposal",
+ "isdn_proposal",
+ "proposal_sound",
+ "proposal_tv",
+]

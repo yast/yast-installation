@@ -1,0 +1,15 @@
+//
+// installation-proposals.ycp
+//
+// define list and order of installation proposal modules
+//
+[
+  "proposal_mode"
+, "proposal_keyboard"
+, "proposal_mouse"
+, "proposal_partitions"
+, "proposal_software"
+, "proposal_bootloader"
+, "proposal_timezone"
+, "proposal_language"
+]

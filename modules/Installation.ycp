@@ -1,0 +1,112 @@
+/**
+ * File:
+ *	Installation.ycp
+ *
+ * Module:
+ *	Installation
+ *
+ * Summary:
+ *	provide installation related information
+ *
+ * $Id$
+ *
+ * Author:
+ *	Klaus Kaempf <kkaempf@suse.de>
+ *
+ */
+
+{
+    module "Installation";
+
+    import "Mode";
+
+    // current scr handle
+    // used in installation.ycp and inst_finish.ycp
+
+    global integer scrHandle		= 0;
+
+    // usual mountpoint for the destination
+
+    global string destdir		= "/";
+
+    // usual mountpoint for the source (i.e. CD)
+
+    global string sourcedir		= "/var/adm/mount";
+
+    // where the package description are
+    global string descrsourcedir	= sourcedir+"/suse/setup/descr";
+
+    // where the package descriptions go
+    global string descrdestdir		= "/var/adm/current_package_descr";
+
+    global string yastdir		= "/var/lib/YaST";
+    global string yast2dir		= "/var/lib/YaST2";
+
+    global string mountlog		= "/var/log/y2logMount";
+
+    // see installation.ycp
+    global boolean immediate_prepdisk	= false;
+
+    // Data from suse/setup/descr/info (installation source related)
+    global map infoMap			= $[];
+
+    // default language for the installation (from installation source)
+    global string defaultLanguage	= "en_US";
+
+    // encoding for the language
+    global string encoding		= "ISO-8859-1";
+
+    // remember if user was informed about text fallback
+    // see general/installation.ycp
+    global boolean shown_text_mode_warning = false;
+
+    global define void Save ()
+    ``{
+	SCR::Write (.target.ycp, [Installation::yast2dir + "/infomap.ycp", 0600], infoMap);
+	return;
+    }
+
+    //---------------------------------------------------------------
+    // constructor
+
+    global define Installation () ``{
+
+	// get setup data from linuxrc
+	// check setup/descr/info for CD type
+
+	if (Mode::cont)
+	{
+	    infoMap    = SCR::Read (.target.ycp, ["/var/lib/YaST2/infomap.ycp", $[]]);
+	    destdir    = "/";
+	}
+	else if (Mode::initial)
+	{
+	    if ( !Mode::test)
+	    {
+		infoMap = SCR::Read(.descr.info);
+
+		// install.inf (linuxrc) might contain "cd" even
+		// if the media is DVD. Fix this here (cf. #14469).
+		if ((Mode::installMap["instmode"]:"" == "cd")
+		    && (infoMap["media"]:"" == "dvd"))
+		{
+		    Mode::installMap["instmode"] = "dvd";
+		}
+	    }
+	    SCR::UnmountAgent (.descr.info);
+	    y2debug ("Initial infoMap: %1", infoMap);
+	    destdir = "/mnt";
+	}
+
+	// set defaultLanguage from suse/setup/descr/info file
+
+	defaultLanguage = infoMap["lang"]:"en_US";
+
+	// strip encoding if present
+
+	if (findfirstof (defaultLanguage, ".") > 0)
+	{
+	    defaultLanguage = select (splitstring (defaultLanguage, "."), 0, "en_US");
+	}
+    }
+}

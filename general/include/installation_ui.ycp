@@ -1,0 +1,317 @@
+/**
+ *
+ * $Id$
+ *
+ * Module:	installation_ui.ycp
+ *
+ * Author:	Klaus Kämpf <kkaempf@suse.de>
+ *		Stefan Hundhammer <sh@suse.de>
+ *
+ * Purpose: 	General UI defines for installation workflow
+ *
+ */
+{
+  // include/installation_ui.ycp
+
+  textdomain "general";
+
+  UI(``{
+
+
+      global define ConfirmAbort( symbol how_to ) ``{
+	  string what_will_happen = "";
+
+
+	  if ( how_to == `painless )
+	  {
+	      // Warning text for aborting an installation before anything is installed
+	      what_will_happen = _("If you abort the installation now,
+SuSE Linux will not be installed.
+Your hard disk will remain untouched.");
+	  }
+	  else if ( how_to == `incomplete )
+	  {
+	      // Warning text for aborting an installation during the install process
+	      // - After some installation steps have been performed - e.g.
+	      // disks formatted / some packages already installed
+	      what_will_happen = _("If you abort the installation now, you will
+have an incomplete SuSE Linux system
+which may or may not be usable.
+You may need to reinstall.");
+	  }
+	  else if ( how_to == `unusable )
+	  {
+	      // Warning text for aborting an installation during the install process
+	      // right in the middle of some critical process (e.g. formatting)
+	      what_will_happen = _("If you abort the installation now,
+SuSE Linux will be unusable.
+You will need to reinstall.");
+	  }
+	  else
+	  {
+	      y2warning("Unknown symbol for what will happen when aborting - please correct in calling module" );
+	  }
+
+
+	  OpenDialog(
+		     `opt(`decorated),
+		     `HBox(
+			   `HSpacing(1),
+			   `VBox(
+				 `VSpacing(0.2),
+				 `HCenter(
+					  `HSquash(
+						   `VBox(
+							 // Confirm user request to abort installation
+							 `Left( `Label( _("Really abort the installation?") ) ),
+							 `Left( `Label( what_will_happen ) )
+							 )
+						   )
+					  ),
+				 `HBox(
+				       // Button that will really abort the installation
+				       `PushButton(`id(`really_abort), _("&Abort Installation") ),
+				       `HStretch(),
+
+				       // Button that will continue with the installation
+				       `PushButton(`id(`continue), `opt(`default), _("&Continue Installation") )
+				       ),
+				 `VSpacing(0.2)
+				 ),
+			   `HSpacing(1)
+			   )
+		     );
+
+	  any ret = UserInput();
+	  CloseDialog();
+
+	  return (ret == `really_abort);
+      };
+
+
+      /*
+       * Small dialog that has a next, cancel and back button that
+       * appears, if one of the submodules does not work. This is
+       * useful during development.
+       */
+      // DEBUG
+      global define ModuleError(string text) ``{
+	  OpenDialog(
+		     `opt(`decorated, `warncolor),
+		     `HBox(
+			   `HSpacing(1),
+			   `VBox(
+				 `VSpacing(0.2),
+				 `Heading(text),
+				 `HBox(
+				       `PushButton(`id(`back),	  _("&Back")),
+				       `PushButton(`id(`again),	  _("&Retry")),
+				       `PushButton(`id(`cancel),  _("&Quit")),
+				       `PushButton(`id(`next),	  _("&Next"))
+				       ),
+				 `VSpacing(0.2)
+				 ),
+			   `HSpacing(1)
+			   )
+		     );
+	any r = UserInput();
+	CloseDialog();
+	return r;
+      };
+
+      /*
+       * Displays a message to the user in a small dialog with an OK
+       * button.
+       */
+
+      global define DisplayMessage(string message) ``{
+	  // ok pushbutton: confirm the dialog
+	  OpenDialog(
+		     `opt(`decorated),
+		     `HBox(
+			   `HSpacing(1),
+			   `VBox(
+				 `VSpacing(0.2),
+				 `Label(message),
+				 `PushButton(`opt(`default), _("&OK")),
+				 `VSpacing(0.2)
+				 ),
+			   `HSpacing(1)
+			   )
+		     );
+	  UserInput();
+	  CloseDialog();
+      };
+
+      /**
+	* Displays a message with timeout to the user in a small dialog
+	* with an OK
+	* button.
+	*/
+
+      global define DisplayTimedMessage(string message, integer seconds) ``{
+	  OpenDialog(
+		     `opt(`decorated),
+		     `HBox(
+			   `HSpacing(1),
+			   `VBox(
+				 `VSpacing(0.2),
+				 `Label(message),
+				 `HCenter(
+					  `Label(`id(`remaining_time), "" + seconds)
+					  ),
+				 `HBox(
+				       // "Stop" button for timeout message: Stop counting down
+				       // (i.e. leave the popup message open without timeout)
+				       `PushButton(`id(`timed_stop), _("&Stop") ),
+
+				       // "OK" button for timeout message: Close popup dialog
+				       // (i.e. confirm the message)
+				       `PushButton(`id(`timed_ok), `opt(`default), _("&OK") )
+				       ),
+				 `VSpacing(0.2)
+				 )
+			   )
+		     );
+
+	  sleep (1000);
+	  any which_input = `empty;
+	  while (seconds > 0) {
+	    which_input = PollInput();
+	    if (which_input == `timed_ok)
+		break;
+	    if (which_input == `timed_stop) {
+		while (which_input == `timed_stop)
+		    which_input = UserInput();
+		break;
+	    }
+	    sleep (1000);
+	    seconds = seconds - 1;
+	    ChangeWidget (`id(`remaining_time), `Value, ""+seconds);
+	  }
+	  CloseDialog();
+      };
+
+      /*
+       * Are your sure?
+       */
+
+      global define YesOrNo(any message, string yes_button_message, string no_button_message) ``{
+	  OpenDialog(
+		     `opt(`decorated),
+		     `HBox(
+			   `HSpacing(1),
+			   `VBox(
+				 `VSpacing(0.2),
+				 `Label(message),
+				 `HBox(
+				       `PushButton(`id(`yes), `opt(`default), yes_button_message),
+				       `HSpacing(2),
+				       `PushButton( no_button_message )
+				       ),
+				 `VSpacing(0.2)
+				 ),
+			   `HSpacing(1)
+			   )
+		     );
+	  any ret = UserInput();
+	  CloseDialog();
+	  return (ret == `yes);
+      };
+
+      /*
+       * Are your sure? with possibiltity to specify default-Button ( values: `no_default, `yes_default )
+       */
+
+      global define YesNoOpt(any message, string yes_button_message, string no_button_message, symbol def_symbol) ``{
+	  term yes_button = `Empty();
+	  term no_button  = `Empty();
+
+	  if ( def_symbol == `no_default )
+	  {
+	      yes_button = `PushButton( `id(`yes),  yes_button_message );
+	      no_button  = `PushButton( `id(`no_button), `opt(`default), no_button_message );
+	  }
+	  else
+	  {
+	      yes_button = `PushButton(`id(`yes), `opt(`default), yes_button_message);
+	      no_button = `PushButton( `id(`no_button), no_button_message );
+	  }
+
+	  OpenDialog(
+		     `opt(`decorated),
+		     `HBox(
+			   `HSpacing(1),
+			   `VBox(
+				 `VSpacing(0.2),
+				 `Label(message),
+				 `HBox(
+				       yes_button,
+				       `HSpacing(2),
+				       no_button
+				       ),
+				 `VSpacing(0.2)
+				 ),
+			   `HSpacing(1)
+			   )
+		     );
+	  any ret = UserInput();
+	  CloseDialog();
+	  return (ret == `yes);
+      };
+
+
+      // Return a pretty description of a byte count, with two fraction digits
+      // and using KB, MB or GB as unit as appropriate.
+      global define size_text (integer bytes) ``{
+	float whole = tofloat (bytes) / 1024.0;
+	// KiloByte abbreviated
+	string unit = _("KB");
+	if (whole > 1024.0 || whole < -1024.0)
+	  {
+	    whole = whole / 1024.0;
+	    // MegaByte abbreviated
+	    unit = _("MB");
+	    if (whole > 1024.0 || whole < -1024.0)
+	      {
+		whole = whole / 1024.0;
+		// GigaByte abbreviated
+		unit = _("GB");
+	      }
+	  }
+	return tostring (whole, 2) + " " + unit;
+      };
+
+      /*
+       * Small dialog that has a cancel and continue button that
+       * appears just befor the video mode is tested.
+       */
+      global define ContinueCancel(string message,
+			    string continue_button_message,
+			    string cancel_button_message ) ``{
+	  OpenDialog(
+		     `opt(`decorated),
+		     `HBox(
+			   `HSpacing(1),
+			   `VBox(
+				 `VSpacing(0.2),
+				 `Label(message),
+				 `HBox(
+				       `PushButton(`id(`continue), `opt(`default),continue_button_message),
+				       `HSpacing(2),
+				       `PushButton(`id(`cancel),   cancel_button_message)
+				       ),
+				 `VSpacing(0.2)
+				 ),
+			   `HSpacing(1)
+			   )
+		     );
+	any r = UserInput();
+	CloseDialog();
+	return ( r == `continue );
+      };
+
+
+  });   // UI defines END
+
+}

@@ -1,0 +1,300 @@
+<HTML>
+<HEAD>
+<TITLE>SuSE Linux Vendor Driver CD Documentation</TITLE>
+</HEAD>
+<BODY>
+<H1>Vendor Driver CD</H1>
+<BR>
+<P>
+
+<H2>Purpose</H2>
+
+With the <i>vendor driver CD</i> extension of YaST2, the user can install
+software (i.e. device drivers) from a vendor CD at the end of the
+installation.<BR>
+<P>
+This gives an easy tool esp. to re-construct a damaged pre-installed
+system.<BR>
+<P>
+In the forthcoming documentation, the notion <i>driver</i> is used throughout.
+Keep in mind, that any kind of software (i.e. rpm packages, shell scripts,
+etc.) can be installed by the <i>vendor driver CD</i> mechanism.
+<BR>
+<P>
+
+<H2>Current limitations</H2>
+
+only accepts <TT>/dev/cdrom</TT> (by default)<BR>
+mounts it on <TT>/var/adm/mount</TT><BR>
+all directories and files are expected in lower case, this must be
+taken into account if case-preserving file systems are used.<BR>
+<P>
+the functionality to load the software from another device (i.e. floppy)
+is built-in but not accessible on the desktop.
+<BR>
+<P>
+
+<H2>Expected directory layout</H2>
+
+The directory layout is choosen to support multiple distributions,
+architectures, and product versions on a single vendor CD.<BR>
+This document only describes the layout for YaST2 as available
+on SuSE Linux 7.1<BR>
+<P>
+<BR>
+On the CD-ROM, a toplevel directory <TT>linux</TT> must exist.<BR>
+<P>
+
+Below <TT>linux</TT>, a directory named <TT>suse</TT> must exist.<BR>
+<P>
+
+Below <TT>linux/suse</TT>, a directory describing the architecture and
+SuSE version must exists.<BR>
+<P>
+
+The following architectures are currently known:<BR>
+<PRE>
+i386 sparc sparc64 ppc axp s390 ia64
+</PRE>
+<P>
+
+The version is the product version of SuSE Linux, i.e 7.1<BR>
+<P>
+
+<H3>Example:</H3>
+
+The complete directory path for the SuSE Linux 7.1 (i386) would be:<BR>
+<P>
+
+<pre>linux/suse/i386-7.1/</pre>
+<BR>
+The complete directory path for (a future) SuSE Linux 7.2 (sparc64) would be:<BR>
+<P>
+
+<pre>linux/suse/sparc64-7.2/</pre>
+
+
+<H2>Files</H2>
+
+In the aforementioned directory, the driver description and data files reside.
+YaST2 <b>only</b> checks the architecture and SuSE Linux version.<BR>
+YaST2 does <b>not</b> check the running kernel version.
+<BR><BR>
+<P>
+<B>BEWARE</B>: With SuSE 7.1, the user might have choosen two kernels (2.2.18, 2.4.x)
+for installation. By default, kernel 2.2.18 is running.<BR>
+ In order to support
+both kernels, vendors should check <TT>/boot/vmlinuz*</TT> and/or
+<TT>/lib/modules/*</TT> to determine which kernels are actually installed !!
+<BR><BR>
+<P>
+Each driver must be accompanied by at least two files. One (or more) description
+file (which contains descriptive text) and one installation (script) file.<BR>
+<P>
+
+There should be multiple description files for each driver, one per
+supported language. At least a default (in english) should be provided.<BR>
+<P>
+
+YaST2 first looks at all files with an <TT>.inst</TT> extension. These are the
+installation script files, one per driver.<BR>
+<P>
+
+The file name (without the <TT>.inst</TT> extension) serves as a key to identify
+the driver and the accompanying description files.
+This makes it possible to put multiple drivers into one directory.<BR>
+<P>
+
+The description files have <TT>.desc</TT> as the extension start with the name
+(key) of the corresponding <TT>.inst</TT> file.<BR>
+<P>
+
+<H3>Example:</H3>
+
+The driver is named <TT>modem</TT>.<BR>
+The installation script must be named <TT>modem.inst</TT>.<BR>
+The default description file must be named <TT>modem.desc</TT>.<BR>
+<BR>
+<P>
+Remark: The choosen name is only mandatory for the <TT>.inst</TT>
+and <TT>.desc</TT> file. The installation script might reference any
+other file on the CD.
+<BR>
+<P>
+In order to support translation description files, YaST2 appends the
+ISO language code to the driver name before loading the default description
+file. (see Example)
+<BR>
+<P>
+
+<H3>Example:</H3>
+
+For german as spoken in austria, the ISO language code is <TT>de_AT</TT>.<BR>
+<P>
+The austrian(-german) description file for driver <TT>modem</TT> would be
+<TT>modem-de_AT.desc</TT>.<BR>
+<P>
+
+If the full (5-char) ISO code cannot be found, YaST2 falls back to the
+2-char language code.<BR>
+With this mechanism, several languages (i.e.
+<TT>de_AT</TT> for austrian, <TT>de_CH</TT> for swiss,
+ and <TT>de_DE</TT> for german) can be
+supported by a single description file: <TT>modem-de.desc</TT>.<BR>
+<P>
+
+In order to support non ISO-1 (non western europe / us) languages (like
+japanese), the description file must be coded in UTF8.<BR>
+UTF8 is the standard coding used in Linux, a good introduction can be
+found on <A HREF="http://czyborra.com">czyborra.com</A><BR>
+On Linux, several UTF8 editors are available. One prominent example is
+<TT>yudit</TT>.<BR>
+<P>
+
+<H3>Complete example:</H3>
+
+Two drivers, one called <TT>modem</TT> with chinese (<TT>zh_CN</TT>)
+ and japanese (<TT>ja_JP</TT>)
+description files, one called <TT>speedblazer</TT> with german (<TT>de</TT>),
+ french (<TT>fr</TT>),
+and portuguese (as spoken in brazil, <TT>pt_BR</TT>) description files.
+All for SuSE
+Linux 7.1 (i386)<BR>
+<P>
+
+<H4>Directory on CD</H4>
+
+<PRE>linux/suse/i386-7.1</PRE>
+
+<H4>Files in this directory</H4>
+
+<PRE>
+modem.inst
+modem.desc
+modem-zh_CN.desc
+modem-ja_JP.desc
+speedblazer.inst
+speedblazer.desc
+speedblazer-de.desc
+speedblazer-fr.desc
+speedblazer-pt_BR.desc
+</PRE>
+<BR>
+The <TT>.desc</TT> files without a language code should contain the
+default description in english.
+<BR>
+<P>
+
+<H2>Workflow</H2>
+
+YaST2 always runs with <tt>root</tt> permissions.<BR><P>
+
+<H3>Start</H3>
+
+When started up, the <i>vendor driver CD</i> module of YaST2 tries
+to mount <TT>/dev/cdrom</TT> to <TT>/var/adm/mount</TT>. If it fails,
+the user is asked to insert the vendor driver CD.<BR>
+<P>
+<H3>Mounting and checking the media</H3>
+After a successful mount, YaST2 tries to find the correct directory
+as described above. For a SuSE Linux 7.1 (i386) distribution, YaST2
+would look for the <TT>linux/suse</TT> on the CD.<BR>
+If this fails, the CD is rejected with the message "Couldn't find driver data on the CD-ROM"<BR>
+Then the directory <TT>linux/suse/i386-7.1</TT> is searched. YaST2 will
+fail with "CD-ROM data doesn't match running SuSE Linux" if this directory
+doesn't exist.<BR>
+This and all further error messages will be presented in the correct
+language the user has choosen at start of the installation.<BR>
+<P>
+<H3>Scanning the directory</H3>
+Next, YaST2 scans the directory for installation script files (files ending
+in <TT>.ins</TT>).<BR>
+<B>Attention</B>: YaST2 only checks for a matching 3 character extension in
+order to support DOS compatible file systems.<BR>
+If no files with extension <TT>.ins</TT> can be found, YaST2 rejects
+the CD with "Couldn't find driver data on the CD-ROM".<BR>
+<P>
+<H3>Reading descriptions</H3>
+For each installation script file, a matching description file is searched. The
+match algorithm is described above.<BR>
+If no matching description file can be found, the driver is <b>silently skipped</b>.
+<BR>
+<P>
+For each driver, the first matching description file is read in and
+presented to the user in a pop-up window. The window has two buttons,
+one labled <i>Yes, install ...</i> and one labled <i>No</i>.<BR>
+The button labels will be properly translated by YaST2.<BR>
+<P>
+<H3>User interaction</H3>
+If the user clicks on the <i>No</i> button, the driver is skipped.<BR>
+If the user clicks on the <i>Yes, install ...</i> button, the installtion
+script file is copied to the <tt>/tmp</tt> directory of the running SuSE Linux
+system. This copying is done to prevent errors when executing files from
+mounted media, which is normally not allowed by default.<BR>
+YaST2 does a <TT>chmod 774</TT> to the file in order to force read, write,
+and execute permissions for root.<BR>
+Then the working directory is set to <TT>/tmp</TT> and the installation
+script is executed with the full directory path as the argument.<BR>
+There is no automatic mode, the user is asked separately for each driver.<BR>
+<P>
+<H3>Example</H3>
+The <TT>modem</TT> and <TT>speedblazer</TT> are present on the CD just
+like the example above.<BR>
+Lets say the user has choosen german language as spoken in switzerland
+(ISO code <TT>de_CH</TT>).<BR>
+<BR>
+For driver <TT>modem</TT> the default description file is read, since neither
+<TT>modem-de_CH.desc</TT> not <TT>modem-de.desc</TT> exist.<BR> If the
+user clicks <i>Yes, install ...</i>, the file
+<TT>linux/suse/i386-7.1/modem.inst</TT> is copied to <TT>/tmp</TT>, made
+executable (by running <TT>/bin/chmod 744 /tmp/modem.inst</TT>), the working directory
+changed to <TT>/tmp</TT> (by executing <TT>cd /tmp</TT>), and the
+installation script is started with the directory path as argument
+(<TT>./modem.inst /var/adm/mount/linux/suse/i386-7.1</TT>).<BR>
+<BR>
+<P>
+<H3>Installation script</H3>
+The script is free to do what it wants to do. Keep in mind that only
+standard linux tools will be available. For example, <tt>perl</tt> is considered a
+standard tool, <tt>tcl</tt> is not.<BR>
+<BR>
+Usually, the script should check if it's applicable. Probing the hardware
+and checking the kernel version are minimum requirements to be checked
+by the script.<BR>
+<BR>
+Based on the director path passed as parameter, the script can easily
+extract further data from the CD (rpm package files) and install required
+software (by calling <TT>rpm</TT>).
+<BR>
+<B>Attention:</B> The script together with any data on the CD should be
+self-complete, i.e. it must not have any package dependencies which exceed
+a minimal <I>SuSE Linux Personal</I> installation.<BR>
+<BR>
+<P>
+<H3>Cleaning up</H3>
+After execution, the installation script is removed from <TT>/tmp</TT>. The
+script should remove any temporary files created during execution.<BR>
+<BR>
+<H3>Error processing</H3>
+YaST2 evaluates the exit code of the script. If it is non-zero, a popup
+with the message "Installation failed" is presented to the user.<BR>
+<BR>
+<H3>Order of installation</H3>
+YaST2 can not guarantee a fixed order of installation with multiple <TT>.inst</TT>
+files. It's up to the installation script to ensure necessary pre- and post-
+installation requirements.<BR>
+<BR><P>
+<H3>End of installation</H3>
+After all <TT>.inst</TT> files have been processed, YaST2 present a summary
+with the number of successfully installed drivers.<BR>
+If no drivers could be successfully installed, YaST2 pops up a message
+reading "Couldn't find driver data on the CD-ROM".<BR>
+<BR>
+As the final step, the cdrom will be unmounted.<BR>
+<BR>
+<P>
+<HR>
+<SMALL>Last changed 17-01-2001 17:45 by <A HREF="mailto:kkaempf@suse.de">Klaus K&auml;mpf</A></SMALL><BR>
+<SMALL>Copyright &copy; by <A HREF="http://www.suse.de">SuSE Linux AG</A></SMALL>
+</BODY>
+</HTML>

@@ -1,0 +1,94 @@
+/**
+ * File:	modules/Product.ycp
+ * Package:	yast2
+ * Summary:	Product data
+ * Authors:	Klaus Kaempf <kkaempf@suse.de>
+ *
+ * $Id$
+ */
+
+{
+
+module "Product";
+import "Mode";
+
+/**
+ * General product name
+ */
+global string name		= "SuSE Linux";
+
+/**
+ * Distribution: Personal, Professional, etc.
+ */
+global string dist		= "";
+
+/**
+ * true if IMAP server
+ */
+global boolean imap_server	= false;
+
+/**
+ * true if Firewall Admin
+ */
+global boolean fwadmin_host	= false;
+
+/**
+ * true if SLES server
+ */
+global boolean sles_server	= false;
+
+/**
+ * true if SLCS server
+ */
+global boolean slcs_server	= false;
+
+/**
+ * true for Certification CD
+ */
+global boolean certify_cd	= false;
+
+/**
+ * true for general product CD
+ */
+global boolean product_cd	= false;
+
+/**
+ * true for SuSE Linux Professional
+ */
+global boolean professional	= false;
+
+/**
+ * true for SuSE Linux Personal
+ */
+global boolean personal		= false;
+
+/**
+ * Constructor
+ */
+global define void Product () ``{
+
+    name		= lookup (Installation::infoMap, "produktname", "");
+    imap_server		= (name == "eMail Server");
+    sles_server		= (name == "SusE SLES");
+    slcs_server		= (name == "SusE SLCS");
+    fwadmin_host	= (name == "SuSE Firewall Adminhost");
+    certify_cd		= (name == "Certification CD");
+
+    string rawdist	= lookup (Installation::infoMap, "distname", "");
+    dist		= select(splitstring(rawdist,"-"),2,"");
+
+    professional	= (dist == "Professional");
+    personal		= (dist == "Personal");
+
+    /* handle live cd and certification cd as product cd,
+     * will disable software selection dialog
+     */
+
+    product_cd	   = Mode::live_eval
+			 || certify_cd
+			 || (name == "Product CD");
+
+}
+
+/* EOF */
+}

@@ -1,0 +1,397 @@
+/**
+ *
+ * $Id$
+ *
+ * Module:		inst_hw_config.ycp
+ *
+ * Author:		Stefan Hundhammer <sh@suse.de>
+ *                      Jan Holesovsky <kendy@suse.cz>
+ *
+ *
+ * Purpose:		Let the user branch into various configuration dialogs
+ *
+ * Autoinstaller hackers please notice:
+ * Please _don't_ clutter this file with if ( config_mode ) unless
+ * at least _one_ of the configurations is enabled in this mode.
+ * Currently, you can't get here anyway in config_mode.
+ */
+{
+
+    import "Arch";
+    import "Mode";
+    import "Installation";
+    import "Wizard";
+    import "Product";
+
+    textdomain "general";
+
+    include "ui/common_popups.ycp";
+    include "ui/summary.ycp";
+
+    Mode::cont = false;
+
+    // Some user_settings flags
+    boolean is_imap_server	= Product::imap_server;
+    boolean is_fwadmin_host	= Product::fwadmin_host;
+    boolean test_mode		= Mode::test;
+    test_mode = false;
+
+    map printers =
+        $[
+	  "headline"		: _("Printers"),
+	  "summary"		: "",
+	  "test_mode_summary"	: summaryDevicesList([summaryDevice("Hyper OfficeJet Pro 7000", "Configured as lp."),
+						     summaryDevice("ScreamNeedle Writer 24+", summaryNotConfigured())
+	  ]),
+	  "button_label"	: _("&Printer..."),
+	  "button_id"		: `printer,
+	  "summary_module"	: ``(CallFunction(`printer_summary() ) ),
+	  "conf_module"		: ``(CallFunction(`printer() ) ),
+	  "is_installed"	: (((SCR::Read(.target.size, "/usr/lib/YaST2/clients/printconf.ycp") != -1)
+				    && (SCR::Read(.target.size, "/etc/init.d/lpd") != -1))
+                                   ||
+				   ((SCR::Read(.target.size, "/usr/lib/YaST2/clients/cups.ycp") != -1)
+				    && (SCR::Read(.target.size, "/etc/init.d/cups") != -1)))
+	];
+
+    map sound_cards =
+        $[
+	  "headline"		: _("Sound Cards"),
+	  "summary"		: "",
+	  "test_mode_summary"	: summaryDevicesList([summaryDevice("EarBlaster MegaSonic Plus", "Configured with volume 60%.")]),
+	  "button_label"	: _("&Sound..."),
+	  "button_id"		: `sound,
+	  "summary_module"	: ``(CallFunction(`sound_summary() ) ),
+	  "conf_module"		: ``(CallFunction(`sound() ) ),
+	  "is_installed"	: (SCR::Read(.target.size, "/usr/lib/YaST2/clients/sound.ycp") != -1)
+	];
+
+    map network_cards =
+        $[
+	  "headline"		: _("Network Interfaces"),
+	  "summary"		: "",
+	  "test_mode_summary"	: summaryDevicesList([summaryDevice("SpiderNet GigaBit 1000 plus", "Configured with DHCP.")]),
+	  "button_label"	: _("N&etwork..."),
+	  "button_id"		: `network,
+	  "summary_module"	: ``(CallFunction(`lan_summary() ) ),
+	  "conf_module"		: ``(CallFunction(`lan( .installation ) ) ),
+	  "is_installed"	: (SCR::Read(.target.size, "/usr/lib/YaST2/clients/lan.ycp") != -1)
+	];
+
+    map modems =
+        $[
+	  "headline"		: _("Modems"),
+	  "summary"		: "",
+	  "test_mode_summary"	: summaryDevicesList([]),
+	  "button_label"	: _("&Modem..."),
+	  "button_id"		: `modem,
+	  "summary_module"	: ``(CallFunction(`modem_summary() ) ),
+	  "conf_module"		: ``(CallFunction(`modem( .installation ) ) ),
+	  "is_installed"	: (SCR::Read(.target.size, "/usr/lib/YaST2/clients/modem.ycp") != -1)
+	];
+
+    map isdn_adapters =
+        $[
+	  "headline"		: _("ISDN Adapters"),
+	  "summary"		: "",
+	  "test_mode_summary"	: summaryDevicesList([summaryDevice("BitWarbler Titanium", "Configured with provider Fast'n'easy.")]),
+	  "button_label"	: _("&ISDN..."),
+	  "button_id"		: `isdn,
+	  "summary_module"	: ``(CallFunction(`isdn_summary() ) ),
+	  "conf_module"		: ``(CallFunction(`isdn( .installation ) ) ),
+	  "is_installed"	: (SCR::Read(.target.size, "/usr/lib/YaST2/clients/isdn.ycp") != -1)
+	];
+
+    map tv_cards =
+        $[
+	  "headline"		: _("TV Cards"),
+	  "summary"		: "",
+	  "test_mode_summary"	: summaryDevicesList([summaryDevice("EyeBlaster UltraTV Plus", "Installed as TV card number 0.")]),
+	  "button_label"	: _("&TV card..."),
+	  "button_id"		: `tv,
+	  "summary_module"	: ``(CallFunction(`tv_summary() ) ),
+	  "conf_module"		: ``(CallFunction(`tv() ) ),
+	  "is_installed"	: (SCR::Read(.target.size, "/usr/lib/YaST2/clients/tv.ycp") != -1),
+	  "force_reread"	: [ `sound ]
+	];
+
+
+
+    // Everything we can configure must be listed here:
+    list can_configure =
+	[
+	 printers,
+	 sound_cards,
+	 tv_cards,
+	 network_cards,
+	 modems,
+	 isdn_adapters
+	];
+
+
+    // The order of the above list is optimized for newbies and home PCs.
+    // Real pros may want to change the order to configure network before
+    // anything else so even network printers can be configured.
+    // We assume those pros have a network card, so this is the base
+    // for that decision.
+
+    boolean have_network_card = false;
+
+    if ( ! test_mode )
+    {
+	if ( size( SCR::Read(.probe.netcard) ) > 0 )
+	{
+	    have_network_card = true;
+	}
+    }
+
+
+    if ( have_network_card )
+    {
+	can_configure =
+	    [
+	     network_cards,
+	     printers,
+	     modems,
+	     isdn_adapters,
+	     sound_cards,
+	     tv_cards
+	    ];
+    }
+
+    if ( Arch::sparc )
+    {
+	// No ISDN or TV cards for SPARCs, but we can safely assume they have a
+	// network card, so let's not bother with the newbie mode that puts
+	// printers on top of the list.
+
+	can_configure =
+	    [
+	     network_cards,
+	     printers,
+	     modems,
+	     sound_cards
+	    ];
+    }
+
+    // Let's filter out the uninstalled things
+    can_configure = filter(`dev, can_configure, ``(lookup(dev, "is_installed", false)));
+
+    /**
+     * Create the richtext with the information about the devices. Uses the global
+     * variable can_configure.
+     */
+    define devRichTextInfo() ``{
+	string text = "";
+	foreach(`dev, can_configure, ``{
+	    text = text + sformat("<p><b>%1:</b></p><p>%2</p>",
+		                  lookup(dev, "headline", ""),
+				  lookup(dev, "summary", ""));
+	});
+
+	return text;
+    };
+
+    /**
+     * Changes the summary of the numth's record in the can_configure list.
+     *
+     * @param integer num Which device's text to change
+     * @param string text The new text
+     */
+    define devChangeNthSummary(integer num, string text) ``{
+	integer count = 0;
+
+	can_configure = maplist(`dev, can_configure, ``{
+	    if (num == count)
+	    {
+		dev = add(dev, "summary", text);
+	    }
+	    count = count+1;
+	    return dev;
+	});
+
+	UI::ChangeWidget(`id(`dev_info), `Value, devRichTextInfo());
+    };
+
+    /**
+     * Reads the summary (using "summary_module") of the numth's record in the can_configure list.
+     */
+    define devReadNthSummary(integer num) ``{
+	devChangeNthSummary(num, _("Getting information..."));
+
+	map dev = select(can_configure, num,
+	    // default value
+	    $[ "summary_module" : ``{ return _("Error: Cannot get the requested information."); } ]
+	);
+
+	string text = "";
+
+	if ( test_mode == nil || ! test_mode)
+	{
+	    text = eval(lookup(dev, "summary_module", ``{}));
+	}
+	else
+	{
+	    text = lookup(dev, "test_mode_summary", "");
+	}
+
+	devChangeNthSummary(num, text);
+    };
+
+    // Let's create buttons for the possible configurations
+    term buttons = `VBox();
+    foreach(`dev, can_configure, ``{
+	symbol button_id = lookup(dev, "button_id", `empty);
+	if (test_mode != nil && test_mode)
+	{
+	    button_id = `empty;
+	}
+	buttons = add(buttons, `PushButton(`id(button_id), `opt(`hstretch),
+					   lookup(dev, "button_label", _("Configure..."))));
+	buttons = add(buttons, `VSpacing(0.5));
+    });
+
+    // Build window contents
+
+    term contents =
+	`VBox(
+	      `VSpacing(0.3),
+	      `HBox(
+		    `RichText( `id(`dev_info), "" ),
+		    `HSquash( `Top( buttons ))
+		    ),
+	      `VSpacing(0.5)
+	      );
+
+	// Help text for inst_hw_config.ycp:
+	// The user is prompted to branch into various configuration dialogs.
+	//
+	// Help text (HTML-like) START
+	string help_text =  _("<p>
+Configure any of the system components shown here.
+</p>
+");
+
+	// Help text (HTML-like) continued
+	help_text = help_text +  _("<p>
+All configuration dialogs return to this screen after
+completion.
+</p>
+");
+
+	// Help text (HTML-like) END
+	help_text = help_text +  _("<p>
+Not all hardware can be detected automatically.
+If your hardware is not shown here, configure it
+manually.
+Just press the appropriate configuration button in this dialog.
+</p>
+");
+
+	Wizard::SetContents(
+				// Headline for hardware configuration screen:
+				// The user can perform various configurations from here,
+				// e.g. printer, sound, network, modem, ISDN.
+				_("System Component Configuration"),
+				contents,
+				help_text,
+				false,	// have_back_button
+				true		// have_next_button
+				);
+
+    // imap server cd or fw_admin_host: configure network
+    if (is_imap_server || is_fwadmin_host)
+    {
+	while (true)
+	{
+	    // imap server cd or fw_admin_host: configure network
+
+	    CallModule( "lan", [] );
+
+	    // imap server cd: configure imap
+	    if (is_imap_server)
+	    {
+		if (CallModule( "imap", [] ) == `next)
+		    break;
+	    }
+	    else if (is_fwadmin_host)
+	    {
+		if (CallModule( "fwcdadmin", [] ) == `next)
+		    break;
+	    }
+	}
+
+	// we're at the end of installation here, dhclient will
+	// be restarted during bootup after we exit isnt_ask_config
+	SCR::Execute(.target.bash, "/etc/init.d/dhclient stop 2>/dev/null"); // just in case
+	// same for lpd
+	SCR::Execute(.target.bash, "/etc/init.d/lpd stop 2>/dev/null"); // just in case
+	// remove libhd kludge
+	SCR::Execute(.target.remove, "/var/lib/libhd/cmdline");
+
+	return `next;
+    }
+
+    // Initialize the summary texts:
+    integer count = 0;
+    while (count < size(can_configure))
+    {
+	devReadNthSummary(count);
+
+	count = count+1;
+    }
+
+    // Do the work:
+    symbol ret = `empty;
+    repeat
+    {
+	ret = UI::UserInput();
+
+	count = 0;
+	foreach(`dev, can_configure, ``{
+	    // Which device should be configured?
+	    if (ret == lookup(dev, "button_id", `none))
+	    {
+		// Configure it!
+		eval(lookup(dev, "conf_module", ``{}));
+
+		// Reread afffected summaries...
+		list force_reread = lookup(dev, "force_reread", nil);
+		if (force_reread != nil)
+		{
+		    integer cnt = 0;
+		    list reread_numbers =
+			maplist(`re_dev, can_configure, ``{
+			    integer ret = nil;
+			    symbol re_id = lookup(re_dev, "button_id", nil);
+			    if (re_id != nil && contains(force_reread, re_id))
+			    {
+				ret = cnt;
+			    }
+			    cnt = cnt + 1;
+			    return ret;
+			});
+		    foreach(`number, reread_numbers, ``{
+			if (number != nil)
+			{
+			    devReadNthSummary(number);
+			}
+		    });
+		}
+
+		// And change the summary
+		devReadNthSummary(count);
+
+		ret = `empty;
+	    }
+	    count = count+1;
+	});
+	if (ret == `abort && !UI::ReallyAbortPopup(false))
+	{
+	    ret = `empty;
+	}
+    } until (ret == `next || ret == `abort);
+
+    return;
+}
+

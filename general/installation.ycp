@@ -1,0 +1,593 @@
+/**
+ * Module:		installation.ycp
+ *
+ * $Id$
+ *
+ * Authors:		Klaus Kaempf <kkaempf@suse.de>
+ *			Mathias Kettner <kettner@suse.de>
+ *			Michael Hager <mike@suse.de>
+ *			Stefan Hundhammer <sh@suse.de>
+ *
+ * Purpose:		Set up the UI and define macros for the
+ *			installation dialog, general framework, ...
+ *			Describing and calling all submodules, depending on
+ *			the installation should be started or continued.
+ *
+ */
+{
+    textdomain "general";
+
+    // this is installation, so start SCR always locally (as plugin) !
+
+    integer scrHandle = SCROpen ("scr", false);
+    SCRSetDefault (scrHandle);
+
+    import "Arch";
+    import "Mode";
+    import "Installation";
+    import "Language";
+    Installation::scrHandle = scrHandle;
+
+    import "AutoInstall";
+    import "Mouse";
+    import "Console";
+    import "StorageDevices";
+    import "Misc";
+    import "Keyboard";
+
+    import "InstMedia";
+    import "Wizard";
+    import "Report";
+
+
+    // initialize InstMedia
+
+    InstMedia::initializeInstMedia (Mode::installMap);
+
+    include "installation_ui.ycp";
+    include "partitioning/partition_defines.ycp";
+
+    // ==================================================================================
+
+    define boolean arch_is_allowed( list allowed_archs )
+    ``{
+
+	list not_allowed = filter(  `arch, allowed_archs, ``( tolower(substring( arch,0,3)) == "not" ));
+	not_allowed	 = maplist( `arch, not_allowed,	  ``( substring( arch, 4)));
+
+	if ( contains( not_allowed, Arch::architecture ))	return( false );
+	if ( contains( allowed_archs, "ALL" ))			return( true );
+	if ( contains( allowed_archs, Arch::architecture ))	return( true );
+
+	return( false );
+    };
+
+
+    /**
+     * Returns a list of strings describing the "easy installation"
+     * @return list of strings
+     **/
+    global define list EasyInstallationStepDescriptions() ``{
+	return [
+		// Descriptions of the installation steps.
+		//
+		// Translations shouldn't get much wider than the originals,
+		// but feel free to include more newlines.
+		_("Language\nSelection"),
+		_("Installation\nSettings"),
+		_("Perform\nInstallation")
+	];
+    };
+
+
+    /**
+     * Re-translate static part of wizard dialog and other predefined messages
+     * after language change
+     */
+    define void retranslateWizardDialog()
+    ``{
+
+	y2debug( "Retranslating messages" );
+	include "ui/common_messages.ycp";
+
+
+	// Override default "Abort" button label - this is special just for the installation.
+	// Notice: This is really required right here since any module might
+	// include "ui/common_messages.ycp", thus restoring the original definition.
+	UI(``{
+	    global define AbortButtonLabel() ``{
+		return ( _("Abo&rt Installation") );
+	    }
+	});
+
+
+	// Activate language changes on static part of wizard dialog
+
+	if ( Mode::initial )
+	{
+	    Wizard::SetEasyInstallationStep( EasyInstallationStepDescriptions(), 1 );
+	}
+
+	Wizard::ReplaceButtonBox( Wizard::HasAcceptButton() ?
+				  Wizard::AbortAcceptButtonBox() :
+				  Wizard::BackAbortNextButtonBox() );
+
+	if ( UI::WidgetExists(`id(`next) ) )	UI::SetFocus(`id(`next) );
+	else					UI::SetFocus(`id(`accept ) );
+    }
+
+    // ==================================================================================
+
+
+    // properly setup initial language
+
+    if (Mode::initial)
+    {
+	Mouse::Set (Mouse::Probe ());
+
+	Installation::encoding = Console::SelectFont( Language::language );
+
+	if (lookup (UI::GetDisplayInfo(), "HasFullUtf8Support", true))
+	{
+	    Installation::encoding = "UTF-8";
+	}
+
+	UI::SetLanguage (Language::language, Installation::encoding);
+	WFM::SetLanguage (Language::language, "UTF-8");
+    }
+
+    // Properly setup timezone for continue mode.
+    //
+    if ( Mode::cont )
+    {
+	import "Timezone";
+	Timezone::Set( Timezone::timezone );
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////								    ///////
+    ///////		 OO   OO      OO      O	  OO	O		    ///////
+    ///////		 OO   OO      OO      O	  OO	O		    ///////
+    ///////		 O O O O     O	O     O	  O O	O		    ///////
+    ///////		 O  O  O    OOOOOO    O	  O  O	O		    ///////
+    ///////		 O     O   O	  O   O	  O   O O		    ///////
+    ///////		 O     M  O	   O  O	  O    OO		    ///////
+    ///////		 O     M  O	   O  O	  O    OO		    ///////
+    ///////								    ///////
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+
+
+    UI::``{
+	// Override default "Abort" button label - this is special just for the installation.
+	// Notice: This is really required right here since any module might
+	// include "ui/common_messages.ycp", thus restoring the original definition.
+	global define AbortButtonLabel() ``{
+	    return ( _("Abo&rt Installation") );
+	}
+
+    };
+
+    if ( Mode::initial )
+    {
+	Wizard::OpenDialog( Wizard::EasyInstallationDialog( Wizard::AbortAcceptButtonBox(),
+							    EasyInstallationStepDescriptions() ) );
+    }
+    else
+    {
+	Wizard::OpenNextBackDialog();
+    }
+
+    // classified_user_settings contain secrets, like passwords ...
+    // they should not be loged !
+    map classified_user_settings = $[ "crypt_nb":0 ];
+
+    if (Arch::alpha)
+    {
+	// get smp for alpha from /etc/install.inf
+	Arch::setSMP (Mode::installMap["smp"]:"" == "1");
+    }
+
+
+    // initialize Report behaviour
+    // Default in autoinst mode is showing messages and warnings with timeout of 10 sec.
+    // Errors are shown without timeout.
+
+    if (Mode::autoinst)
+    {
+	Report::DisplayErrors(true, 10);
+	Report::DisplayMessages(true, 10);
+	Report::DisplayWarnings(true, 10);
+    }
+
+    // Don't log Report messages by default
+    Report::LogMessages(false);
+    Report::LogErrors(false);
+    Report::LogWarnings(false);
+
+    /*
+     * The Mode::cont flag decides, if the installation
+     * should be _started_ or _continued_.
+     */
+
+    ///////////////////////////////////////////////////////////////////
+    // Settings for:
+    // Installation: CONTINUE INSTALLATION
+    ///////////////////////////////////////////////////////////////////
+
+    if (Mode::cont)
+    {
+	Installation::encoding = Console::Restore();
+	if (lookup (UI::GetDisplayInfo(), "HasFullUtf8Support", true))
+	{
+	    Installation::encoding = "UTF-8";
+	}
+
+	////////////////////////////////////////////////////////////
+	// re-init network in continue mode with network installation
+
+	if (! Mode::test)
+	{
+	    SCR::Execute (.target.bash, "/sbin/ifconfig lo 127.0.0.1 up");
+
+	    if ((Mode::boot == "nfs")
+		|| (Mode::boot == "http")
+		|| (Mode::boot == "smb")
+		|| (Mode::boot == "ftp"))
+	    {
+
+		string netdev	= Mode::installMap["netdevice"]:"eth0";
+		string ipaddr	= Mode::installMap["ip"]:"";
+		string ifconfig = "/sbin/ifconfig "+netdev+" "+ipaddr;
+
+		string netmask	= Mode::installMap["netmask"]:"";
+		if (netmask != "")  ifconfig = ifconfig + " netmask " + netmask;
+
+		SCR::Execute (.target.bash, ifconfig);
+
+		string gateway = Mode::installMap["gateway"]:"";
+		if (gateway != "")
+		{
+		    ifconfig = "/sbin/route add default gw "+ gateway;
+		    SCR::Execute(.target.bash, ifconfig);
+		}
+
+		if (Mode::boot == "nfs")
+		{
+		    SCR::Execute(.target.bash, "/sbin/rcportmap start");
+		}
+	    }
+	}
+
+	////////////////////////////////////////////////////////////
+	// activate language settings and console font
+
+	string language = Language::language;
+
+	UI::SetLanguage (language, Installation::encoding);
+	WFM::SetLanguage (language, "UTF-8");
+
+	string ckb_cmd = Keyboard::ckb_cmd;
+	string xkb_cmd = Keyboard::xkb_cmd;
+
+
+	if ( ! Mode::test )
+	{
+	    if (ckb_cmd != "")
+		SCR::Execute (.target.bash, ckb_cmd );
+	    if (xkb_cmd != "")
+		SCR::Execute (.target.bash, xkb_cmd );
+	    y2milestone("lang: %1, encoding %2, ckb_cmd: %3 xkb: %4", language, Installation::encoding, ckb_cmd, xkb_cmd);
+	}
+
+	retranslateWizardDialog();
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    // Settings for:
+    // Installation: INITIAL INSTALLATION
+    ///////////////////////////////////////////////////////////////////
+
+    else if (!Mode::screen_shot
+	     && !Mode::live_eval )
+    {
+	// --------------------------------------------------------------
+	// do we have a floppy drive attached ?
+
+	if (StorageDevices::FloppyReady())
+	{
+	    /////////////////////////////////////////////////////////////
+	    // Try to load settings from disk, if a floppy is present
+
+	    // FIXME !!
+
+	    SCR::Execute(.target.mount, [StorageDevices::FloppyDevice, "/media/floppy"], "-t auto");
+	    import "Packages";
+
+	    // Check for autoinst.xml. if available
+	    // set mode to autoinst. Later, the file is parsed and installation
+	    // is performed automatically.
+
+	    if (SCR::Read(.target.size,"/media/floppy/autoinst.xml")>0)
+	    {
+		y2milestone("Found control file, switching to autoinst mode");
+		Mode::autoinst = true;
+	    }
+	    SCR::Execute(.target.umount, "/media/floppy");
+	}
+
+	//////////////////////////////////////////////////////////////
+	// Show warning, if existent.
+
+	string	warnfile = Installation::descrsourcedir+"/common.war";
+	string	warning	 = SCR::Read(.target.string, [warnfile, ""]);
+
+	if (warning != "")
+	{
+	    Mode::beta = true;
+	    Report::Warning (warning);
+	}
+    }
+
+    /////////////////////////////////////////
+    // show message if text_fallback
+    /////////////////////////////////////////
+
+    if ((Mode::text_fallback || Mode::no_x11)
+	&& !Mode::serial_console
+	&& !Arch::board_iseries
+	&& !Installation::shown_text_mode_warning )
+    {
+	// somehow the graphical frontend failed and we're running in
+	// text mode. Inform the user about this fact.
+
+	string x11_msg = "";
+	if (Mode::text_fallback)
+	{
+	    x11_msg = sformat(_("Your computer doesn't fulfill all requirements to allow
+a graphical installation. Either you have less than %1 MB
+memory or the X server could not be started.\n
+As a fallback the text frontend of YaST2 will guide you
+through the installation. This frontend will offer the
+same functionality as the graphical one, but the screens
+will look different than in the manual."), "64");
+
+	}
+	else if (Mode::no_x11)
+	{
+	    x11_msg = _("The graphical interface could not be started.\n
+Either the required packages weren't installed (minimal installation) or
+the graphics card isn't properly supported.\n
+As a fallback the text frontend of YaST2 will guide you
+through the installation. This frontend will offer the
+same functionality as the graphical one, but the screens
+will look different than in the manual.");
+	}
+
+	Report::Message(x11_msg);
+
+
+	// show this warning only once
+	Installation::shown_text_mode_warning = true;
+    }
+
+
+    //--------------------------------------------------------------------
+
+    boolean all_modes	= true;	// use only if no other modes are used!
+
+    // Some abbreviations to keep the table below less wide
+    boolean autoinst	= Mode::autoinst;
+    boolean live_eval	= Mode::live_eval;
+    boolean test_mode	= Mode::test;
+    boolean update_mode	= Mode::update;
+    boolean screen_shot_mode = Mode::screen_shot;
+
+    // - - - - - - - - - - - - -
+
+    list modules   =
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Step:	       First step( initial) or continue mode (after first reboot)
+// Module:	       Name of the module
+// Back:	       Is Back-Button sensitive
+// Next:	       Is Next-Button sensitive
+// Architecture:       Step is not executed if there is no "NOT_<arch>" entry in the list.
+//	               Step is executed if "ALL" is in the list or <arch> itself.
+//	               ["ALL", "NOT_<arch>"] means all architectures, but not <arch>!
+// Mode:	       A Step is executed if Mode is "true" or if the entry is "all_modes".
+// immediate_prepdisk: A special mode that be dynmically switched on, so we need an own column.
+//                     Generally it should switch off all modules between inst_custom_part and inst_prepdisk.
+//
+// Caution: A Step is only executed if Architecture AND Mode is true!!
+//
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  -Step-	 -Module-	    -Back- -Next- -spec-  -Architecture(s)-		                       -Mode(s)-                             -immediate_prepdisk-
+
+[
+ [ `initial,  `autoinst_init	    (false, true),       [ "ALL", "NOT_s390" ],		  ! test_mode &&		  autoinst			, false],
+ [ `initial,  `inst_language	    (false, true, true), [ "ALL"	     ],	  	  ! autoinst							, false],
+ [ `initial,  `inst_startup	    (false, true),       [ "ALL"	     ],						  autoinst                      , false],
+ [ `initial,  `autoinst_setup	    (false, true),       [ "ALL", "NOT_s390" ],		  ! test_mode &&		  autoinst			, false],
+ //-------------------------------------------------------------------------------------------------------------------------------------------------------------
+ [ `initial,  `inst_proposal	    (true,  true),       [ "ALL"	     ],						  all_modes			, false],
+ //-------------------------------------------------------------------------------------------------------------------------------------------------------------
+ [ `initial,  `inst_do_resize	    (false, false),      [ "i386"	     ], ! live_eval &&				  ! autoinst			, false],
+ //-------------------------------------------------------------------------------------------------------------------------------------------------------------
+ [ `initial,  `inst_prepdisk	    (false, false),      [ "ALL"	     ], ! live_eval								, false],
+ [ `initial,  `inst_rpmcopy	    (false, false),      [ "ALL"	     ], ! live_eval				  ||	  screen_shot_mode	, false],
+ [ `initial,  `inst_s390silo	    (true,  true),       [	     "s390"  ], ! live_eval								, false],
+ //------------------------------------------------------------------------------------------------------------------------------------------------------------
+ [ `initial,  `inst_s390netadopt    (true,  true),       [	     "s390"  ], ! live_eval								, false],
+ [ `initial,  `inst_suseconfig	    (false, false),      [	     "s390"  ],		  ! test_mode							, false],
+ [ `initial,  `inst_finish	    (false, false),      [ "ALL"	     ],		  ! test_mode							, false],
+
+ //==============================================================================================================================================================
+
+ [ `continue, `inst_rpmcopy	    (false, false),      [ "ALL", "NOT_s390" ], ! live_eval && ! test_mode &&				 ! update_mode	, false],
+ [ `continue, `inst_rpmupdate	    (false, false),      [ "ALL"	     ],								   update_mode	, false],
+ [ `continue, `inst_language	    (false, true),       [ "ALL"	     ],					  screen_shot_mode &&    ! update_mode  , false],
+ [ `continue, `inst_root	    (false, true),       [ "ALL"	     ],						  ! autoinst &&  ! update_mode	, true ],
+ [ `continue, `inst_user	    (true,  true),       [ "ALL"	     ],						  ! autoinst &&  ! update_mode	, true ],
+ [ `continue, `inst_x11		    (true,  true),       [ "ALL", "NOT_s390" ],					  ! update_mode				, false],
+ [ `continue, `autoinst_configure   (false, false),      [ "ALL", "NOT_s390" ],					  	  autoinst &&    ! update_mode	, false],
+ [ `continue, `inst_suseconfig	    (false, false),      [ "ALL", "NOT_s390" ],		  ! test_mode							, false],
+ [ `continue, `inst_proposal	    (true,  true),       [ "ALL"	     ],						  ! autoinst && ! update_mode	, false]
+];
+
+
+    //////////////////////////////////////////////////////////////////
+    // All settings the user does are saved into a map. The submodules
+    // are called as functions and thus have access to this variable.
+    // They return `next, `back, `cancel, `again or `auto.
+    // A submodule that can't be loaded (syntax error) returns nil.
+
+    any	    former_result = `next;
+    integer m = 0;			// current module
+
+    string architecture = Arch::architecture;
+
+    if ( UI::WidgetExists(`id(`next) ) )	UI::SetFocus(`id(`next) );
+    else					UI::SetFocus(`id(`accept ) );
+
+    while ((m >= 0) && (m < size(modules)))
+    {
+	list	  module_info		= modules[m]:[];
+	symbol	  main_mode		= module_info[0]:`dummy;  // `initial or `continue
+	term	  argterm		= module_info[1]:`dummy();
+	list	  allowed_archs		= module_info[2]:[];
+	boolean	  allowed_mode		= module_info[3]:false;
+	boolean	  immediate_prep_mode	= module_info[4]:false;
+
+	boolean	  do_continue		= false;
+
+	////////////////////////////////////////////////////////////////
+	// Check if the module has to be executed
+
+	if ( Mode::cont
+	     &&	main_mode != `continue)
+	{
+	    do_continue = true;
+	}
+	if ( !Mode::cont
+	     &&	main_mode != `initial
+	     && !Mode::live_eval)
+	{
+	    do_continue = true;
+	}
+	if ( !allowed_mode
+	    || !arch_is_allowed(allowed_archs))
+	{
+	    do_continue = true;
+	}
+	if ( immediate_prep_mode
+	    && Installation::immediate_prepdisk )
+	{
+	    do_continue = true;
+	}
+
+	if ( do_continue )
+	{
+	    if	    (former_result == `next) m = m + 1;
+	    else			     m = m - 1;
+	}
+	if ( do_continue ) continue;
+	//		   ^^^^^^^
+	/////////////////////////////////////////////////////////////////
+
+	// Tell modules if we were going backwards.
+	argterm = add (argterm, former_result == `back);
+
+	// Clear the old dialog contents for faster feedback
+
+	symbol module_name = symbolof( argterm );
+
+	if ( module_name != `inst_doit )	// This is only a popup
+	{
+	    Wizard::ClearContents();
+	}
+
+	// Call the wizard dialog
+	y2milestone( "Calling %1", argterm );
+	symbol result = CallFunction(argterm);
+
+
+	Installation::immediate_prepdisk = false; //FIXME !
+
+	if ( module_name == `inst_language )	// language change very likely
+	{
+	    retranslateWizardDialog();
+	}
+
+
+	// If the module return nil, something basic went wrong.
+	// We show a stub dialog instead.
+	if (result == nil)
+	{
+	    any r = nil;
+	    r = UI::ModuleError(("The module " + symbolof(argterm)) + " does not work.");
+	    if	    (r == `next)   m = m + 1;
+	    else if (r == `back)   m = m - 1;
+	    else if (r != `again)
+	    {
+		UI::CloseDialog();
+		return nil;
+	    }
+	    else continue;
+	}
+
+	if	(result == `next)
+	{
+	    m = m + 1;
+	}
+	else if (result == `back)
+	{
+	    m = m - 1;
+	}
+	else if (result == `cancel)
+	{
+	    UI::CloseDialog();
+	    return `cancel;
+	}
+	else if (result == `abort)
+	{
+	    UI::CloseDialog();
+	    Misc::WriteYaSTInf($["Aborted" : "1"]);
+	    return `cancel;
+	}
+	else if (result == `finish)
+	{
+	    UI::CloseDialog();
+	    return `next;
+	}
+	else if (result == `again)
+	{
+	    continue; // Show same dialog again
+	}
+	else if (result == `auto)
+	{
+	    if (former_result != nil) {
+		if	(former_result == `next) m = m + 1;
+		else if (former_result == `back) m = m - 1;
+	    }
+	    continue;
+	}
+	former_result = result;
+    }
+
+    // re-enable automatic probing
+    WFM::Execute (.local.bash, "/bin/echo \"/sbin/modprobe\" >/proc/sys/kernel/modprobe");
+
+    if (Mode::cont)
+    {
+	// remove /etc/install.inf, not needed any more
+	SCR::Execute (.target.remove, "/etc/install.inf");
+    }
+
+    UI::CloseDialog();
+
+    if (m <= -1)	return `back;
+    else		return `next;
+}

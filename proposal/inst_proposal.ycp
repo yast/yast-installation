@@ -1,0 +1,842 @@
+/**
+ * Module:		inst_proposal.ycp
+ *
+ * $Id$
+ *
+ * Author:		Stefan Hundhammer <sh@suse.de>
+ *
+ * Purpose:		Create and display reasonable proposal for basic
+ *			installation and call sub-workflows as required
+ *			on user request.
+ *
+ *			See also file proposal-API.txt for details.
+ */
+{
+    textdomain "proposal";
+
+    import "Arch";
+    import "Mode";
+    import "Installation";
+    import "AutoInstall";
+    import "Wizard";
+    import "HTML";
+
+    include "ui/common_popups.ycp";
+
+
+    // values used in defined functions
+
+    list	submodules = [];
+    list 	titles     = [];
+    map	 	submod2id  = $[];
+    map	 	id2submod  = $[];
+    boolean 	have_blocker = false;
+
+    // skip if not interactive mode.
+    if (!AutoInstall::interactive && Mode::autoinst) {
+	return `auto;
+    }
+    
+    /**
+     * Display preformatted proposal in the RichText widget
+     *
+     * @param proposal human readable proposal preformatted in HTML
+     **/
+
+    define void display_proposal( string proposal )
+    ``{
+	UI::ChangeWidget(`id(`proposal), `Value, proposal );
+    };
+
+
+    /**
+     * Call a submodule's MakeProposal() function.
+     *
+     * @param  submodule	name of the submodule's proposal dispatcher
+     * @param  force_reset 	discard any existing (cached) proposal
+     * @param  language_changed	installation language changed since last call
+     * @return proposal_map	see proposal-API.txt
+     **/
+
+    define map submod_make_proposal( string submodule, boolean force_reset, boolean language_changed )
+    ``{
+	map proposal = CallFunction ( submodule, [ "MakeProposal", $[ "force_reset":      force_reset,
+								      "language_changed": language_changed ] ] );
+	y2debug( "%1 MakeProposal() returns %2", submodule, proposal );
+
+	return proposal;
+    };
+
+
+    /**
+     * Call a submodule's AskUser() function.
+     *
+     * @param  submodule	name of the submodule's proposal dispatcher
+     * @param  has_next		force a "next" button even if the submodule would otherwise rename it
+     * @return workflow_sequence see proposal-API.txt
+     **/
+
+    define symbol submod_ask_user( string submodule, boolean has_next )
+    ``{
+	// Call the AskUser() function
+
+	map     ask_user_result   = CallFunction( submod, [ "AskUser", $[ "has_next": false] ] );
+	symbol  workflow_sequence = ask_user_result["workflow_sequence"]:`next;
+	boolean language_changed  = ask_user_result["language_changed"]:false;
+
+	if (    workflow_sequence != `cancel
+	     && workflow_sequence != `back
+	     && workflow_sequence != `abort )
+	{
+	    if ( language_changed )
+	    {
+		retranslate_proposal_dialog();
+	    }
+
+	    // Make a new proposal based on those user changes
+	    make_proposal( false, language_changed );
+	}
+
+	return workflow_sequence;
+    };
+
+
+    /**
+     * Call a submodule's Description() function.
+     *
+     * @param  submodule	name of the submodule's proposal dispatcher or nil if no such module
+     * @return description_map	see proposal-API.txt
+     **/
+
+    define map submod_description (string submodule)
+    ``{
+	map description = CallFunction( submodule, [ "Description", $[] ] );
+
+	return description;
+    };
+
+
+    /**
+     * Call each submodule's MakeProposal() function in turn and display the
+     * proposals in the RichText widget.
+     *
+     * @param  force_reset 	discard any existing (cached) proposal
+     * @param  language_changed	installation language changed since last call
+     **/
+
+    define void make_proposal( boolean force_reset, boolean language_changed )
+    ``{
+	string prop = "";
+	integer no = 0;
+	map prop_map = $[];
+	boolean skip_the_rest = false;
+	have_blocker = false;
+	UI::BusyCursor();
+
+	foreach ( `submod, submodules,
+	``{
+	    if ( ! skip_the_rest )
+	    {
+		prop = prop + HTML::Heading( HTML::Link( select( titles, no, "ERROR: missing title" ),
+							 submod2id[submod]:"" ) );
+		prop_map = submod_make_proposal( submod, force_reset, language_changed );
+	    }
+
+	    if ( prop_map["language_changed"]:false )
+	    {
+		skip_the_rest = true;
+		retranslate_proposal_dialog();
+		make_proposal( force_reset, true );
+	    }
+
+	    if ( ! skip_the_rest )
+	    {
+		prop = prop + format_sub_proposal( prop_map );
+		display_proposal( prop );
+		no = no + 1;
+	    }
+	});
+
+	term doit_button = UI::WidgetExists(`id(`accept) ) ? `id(`accept) : `id(`next);
+	UI::NormalCursor();
+	UI::ChangeWidget( doit_button, `Enabled, ! have_blocker );
+    };
+
+
+    /**
+     * Format a submodule's proposal in HTML
+     *
+     * @param  prop proposal map - see proposal-API.txt
+     * @return HTML string
+     **/
+
+    define string format_sub_proposal( map prop )
+    ``{
+	string html = "";
+	string warning = prop["warning"]:"";
+
+	if ( warning != nil && warning != "" )
+	{
+	    symbol level = prop["warning_level"]:`warning;
+
+	    if      ( level == `notice  )	warning = HTML::Bold( warning );
+	    else if ( level == `warning )	warning = HTML::Colorize( warning, "red" );
+	    else if ( level == `error	)	warning = HTML::Colorize( warning, "red" );
+	    else if ( level == `blocker	)
+	    {
+		have_blocker = true;
+		warning = HTML::Colorize( warning, "red" );
+	    }
+
+	    html = html + HTML::Para( warning );
+	}
+
+	string preformatted_prop = prop["preformatted_proposal"]:"";
+
+	if ( preformatted_prop != "" )
+	{
+	    html = html + preformatted_prop;
+	}
+	else
+	{
+	    list raw_prop = prop["raw_proposal"]:["ERROR: No proposal"];
+	    html = html + HTML::List( raw_prop );
+	}
+
+	return html;
+    };
+
+
+
+
+    /**
+     * Call a submodule's Write() function.
+     *
+     * @param  submodule	name of the submodule's proposal dispatcher
+     * @return success		true if Write() was successful of if there is no Write() function
+     **/
+    define boolean submod_write_settings( string submodule )
+    ``{
+	map result = CallFunction( submodule, [ "Write", $[] ] );
+	if ( result == nil )
+	    result = $[];
+
+	return result["success"]:true;
+    };
+
+
+    /**
+     * Call each submodule's "Write()" function to let it write its settings,
+     * i.e. the settings effective.
+     **/
+    define void write_settings() ``{
+	boolean success = true;
+
+	foreach ( `submod, submodules, ``{
+	    boolean submod_success = submod_write_settings( submod );
+	    if (submod_success == nil)
+		submod_success = true;
+
+	    if ( ! submod_success )
+		y2error( "Write() failed for submodule %1", submod );
+
+	    success = success && submod_success;
+	});
+
+	if ( ! success )
+	{
+	    y2error( "Write() failed for one or more submodules" );
+	    // Submodules handle their own error reporting
+	    
+	    UI::TimedMessagePopup( _( "Configuration saved.\nThere were errors." ), 3 );
+	}
+	else
+	{
+	    UI::TimedMessagePopup( _( "Configuration saved successfully." ), 3 );
+	}
+    };
+
+
+    /**
+     * Force the a RichText widget to use the busy cursor
+     *
+     * @param widget_id  ID  of the widget, e.g. `id(`proposal)
+     **/
+    define void richtext_busy_cursor( any widget_id ) ``{
+	UI::ChangeWidget( widget_id, `Enabled, false );
+    };
+
+
+    /**
+     * Switch a RichText widget back to use the normal cursor
+     *
+     * @param widget_id  ID  of the widget, e.g. `id(`proposal)
+     **/
+    define void richtext_normal_cursor( any widget_id ) ``{
+	UI::ChangeWidget( widget_id, `Enabled, true );
+    };
+
+
+    /**
+     * Retranslate the proposal (wizard) dialog after the language is changed.
+     **/
+    define void retranslate_proposal_dialog() ``{
+
+	y2debug( "Retranslating proposal dialog" );
+
+	build_dialog();
+	Wizard::ReplaceButtonBox( Wizard::HasAcceptButton() ?
+				  Wizard::AbortAcceptButtonBox() :
+				  Wizard::NextBackButtonBox() );
+	get_submod_descriptions_and_build_menu();
+    };
+
+
+    /**
+     * Load a list of submodules. Try loading it from a file named 'file_name'
+     * from one of several predefined directories. If there is no such list,
+     * use 'fallback_list'.
+     *
+     * @param  file_name	YCP file name to load from
+     * @param  fallback_list	fallback list of submodule names (strings)
+     * @return submodules_list	list of submodule names (strings)
+     **/
+    define list load_submodules_list( string file_name, list fallback_list ) ``{
+
+	list submodules = SCR::Read(.target.ycp, [ file_name, [] ] );
+
+	if ( submodules == [] )
+	{
+	    submodules = SCR::Read(.target.yast2, [ file_name, [] ] );
+	}
+
+	if ( submodules == [] )
+	{
+	    submodules = fallback_list;
+	}
+
+	return submodules;
+    };
+
+
+
+    /**
+     * Load a list of submodules matching the current internal states
+     *
+     * @return submodules_list	list of submodule names (strings)
+     **/
+    define list load_matching_submodules_list() ``{
+
+	list submodules = [];
+
+	if ( Mode::initial )
+	{
+	    // Module list for new installation proposal
+
+	    submodules = load_submodules_list( "installation-proposals.ycp",
+					       [
+						// Fallback list
+						"proposal_mode",
+						"proposal_keyboard",
+						"proposal_mouse",
+						"proposal_partitions",
+						"proposal_software",
+						"proposal_bootloader",
+						"proposal_timezone",
+						"proposal_language",
+
+					       ]
+					       );
+	}
+	else if ( Mode::cont )
+	{
+	    // Module list for hardware configuration proposal
+
+	    if ( Arch::sparc )
+	    {
+		// SPARC machines usually have some kinds of hardware built-in
+
+		submodules = load_submodules_list( "hw-config-proposals-sparc.ycp",
+						   [
+						    // Fallback list
+						    "lan_proposal",
+						    "proposal_printer",
+						    "modem_proposal",
+						    "proposal_sound"
+						   ]
+						   );
+	    }
+	    else // no SPARC
+	    {
+		if ( have_network_card() )
+		{
+		    // Professional networked machine - configure network cards
+		    // first so even a networked printer can be found
+		    submodules = load_submodules_list( "hw-config-proposals-networked-pc.ycp",
+						       [
+							// Fallback list
+							"lan_proposal",
+							"proposal_printer",
+							"modem_proposal",
+							"isdn_proposal",
+							"proposal_sound",
+							"proposal_tv"
+						       ]
+						       );
+		}
+		else // no network card
+		{
+		    // Home PC - focus on printing and multimedia
+
+		    submodules = load_submodules_list( "hw-config-proposals-home-pc.ycp",
+						       [
+							// Fallback list
+							"proposal_printer",
+							"proposal_sound",
+							"proposal_tv",
+							"lan_proposal",
+							"modem_proposal",
+							"isdn_proposal"
+						       ]
+						       );
+		}
+	    }
+	}
+	else
+	{
+	    y2error( "Undefined mode - no submodule list" );
+	}
+
+	return submodules;
+    };
+
+
+
+    /**
+     * Find out if the target machine has a network card.
+     * @return true if a network card is found, false otherwise
+     **/
+    define boolean have_network_card() ``{
+
+	if ( Mode::test )
+	    return true;
+
+	return size( SCR::Read(.probe.netcard) ) > 0;
+    };
+
+
+    /**
+     * Create the proposal dialog
+     * (the inner part, excluding the wizard frame)
+     **/
+    define void build_dialog() ``{
+
+	if ( Mode::initial )
+	{
+	    Wizard::SetEasyInstallationStep( EasyInstallationStepDescriptions(), 2 );
+	}
+
+	term bottom_box =
+	    `ReplacePoint(`id(`rep_menu),
+			  `MenuButton(`id(`menu_dummy), _( "&Change..." ), [`item(`id(`dummy), "" ) ] )
+			  );
+
+	if ( Mode::cont )
+	{
+	    // Check box: Skip all the configurations in this dialog -
+	    // do this later manually or not at all
+	    // Translators: About 40 characters max,
+	    // use newlines for longer translations.
+	    term check_box_skip	= `CheckBox(`id(`skip ), `opt(`notify), _( "&Don't configure this now" ) );
+
+	    // Check box: Should the YaST2 control center automatically
+	    // be started after this part of the installation is done?
+	    // Translators: About 40 characters max,
+	    // use newlines for longer translations.
+	    term check_box_start_y2cc = `CheckBox(`id(`start_y2cc), _( "&Start control center" ), false);
+
+	    term menu = `ReplacePoint(`id(`rep_menu),
+				      // "Change" menu
+				      `MenuButton(`id(`menu_dummy), _( "&Change..." ), [`item(`id(`dummy), "" ) ] )
+				      );
+
+	    map display = UI::GetDisplayInfo();
+
+	    if ( display[ "DefaultWidth"  ]:0 >= 800 &&
+		 display[ "DefaultHeight" ]:0 >= 600 )
+	    {
+		// For Qt 800x600 or better, there is room enough to put both
+		// check boxes in a row and the menu in the center in between.
+		// This looks better than the fallback layout below.
+		bottom_box =
+		    `VBox(
+			  `HBox(
+				`HWeight( 1, `Left( check_box_skip ) ),
+				menu,
+				`HWeight( 1, `Right( check_box_start_y2cc ) )
+				),
+			  `VSpacing( 0.2 )
+			  );
+	    }
+	    else
+	    {
+		// Fallback layout for NCurses or Qt < 800x600:
+		// The menu at the left, the checkboxes below each other in a
+		// column at the right.
+		
+		bottom_box =
+		    `VBox(
+			  `HBox(
+				`Left( menu ),
+				`HVSquash(
+					  `VBox(
+						`Left( check_box_skip ),
+						`Left( check_box_start_y2cc )
+						)
+					  )
+				),
+			  `VSpacing( 0.2 )
+			  );
+	    }
+	}
+
+	term vbox =
+	    `VBox(
+		  // Help message between headline and installation proposal / settings summary.
+		  // May contain newlines, but don't make it very much longer than the original.
+		  `Left( `Label( _("Click any headline to make changes or use the \"Change...\" menu below.") ) ),
+		  `RichText( `id(`proposal),
+			     // Initial contents of proposal subwindow while proposals are calculated
+			     HTML::Newlines( 3 ) + HTML::Para( _("Analyzing your system...") )
+			     ),
+		  bottom_box
+		  );
+
+
+	Wizard::SetContents(
+			    // Headline for installation proposal
+			    _("Installation Settings"),
+			    vbox,
+			    UI::WidgetExists(`id(`HelpText) ) ? help_text() : "",
+			    Args(0),	// have_back_button
+			    false	// have_next_button
+			    );
+    };
+
+
+
+    /**
+     * Query all submodules about their descriptions, build a "Change" menu
+     * from that, and cache the descriptions for further usage: They will
+     * become hyperlinks in the RichText widget, too.
+     **/
+    define void get_submod_descriptions_and_build_menu() ``{
+
+	list	menu_list	= [];
+	list	new_submodules	= [];
+	integer	no		= 1;
+	titles = [];
+
+	foreach(`submod, submodules, ``{
+	    map description   = submod_description( submod );
+
+	    if ( description == nil )
+	    {
+		y2milestone( "Submodule %1 not available (not installed?)", submod );
+	    }
+	    else
+	    {
+		new_submodules = add( new_submodules, submod );
+		string title      = description["rich_text_title"]:submod;
+		string menu_title = description["menu_title"     ]:title;
+		string id         = description["id"             ]:sformat( "module_%1", no );
+
+		titles            = add( titles,  title );
+		submod2id[submod] = id;
+		id2submod[id]     = submod;
+		menu_list         = add( menu_list, `item(`id( id ), menu_title + "..." ) );
+
+		no = no + 1;
+	    }
+	});
+
+	submodules = new_submodules; // maybe some submodules are not installed
+
+	// For future use:
+	// menu_list = add( menu_list, `item(`id(`change_everything), "Change &everything..." ) );
+
+	menu_list = add( menu_list, `item(`id(`reset_to_defaults), _( "&Reset to defaults" ) ) );
+	UI::ReplaceWidget(`id(`rep_menu), `MenuButton(`id(`menu), _("&Change..."), menu_list ) );
+    };
+
+
+
+    /**
+     * Help text for proposal dialog.
+     *
+     * @return string help text
+     **/
+    define string help_text() ``{
+
+	string help_text = "";
+
+	    // General part of the help text for all types of proposals
+	string how_to_change = _("<p>
+Change the values by clicking on the respective headline
+or by using the <b>Change...</b> menu.
+</p>
+");
+
+	if ( Mode::initial )
+	{
+	    // Help text for installation proposal
+	    // General part ("You can change values...") is added as the next paragraph.
+	    help_text = _("<p>
+Use <b>Accept</b> to perform a new installation with the values displayed.
+</p>
+") + how_to_change;
+
+	    // Help text for installation proposal, continued
+	    help_text = help_text + _("<p>
+To update an existing SuSE Linux system instead of doing a new install,
+click the <b>Mode</b> headline or select <b>Mode</b> in the
+<b>Change...</b> menu.
+</p>
+");
+	    /**
+	     * Deliberately omitting "boot installed system" here to avoid
+	     * confusion: The user will be prompted for that if Linux
+	     * partitions are found.
+	     * - sh@suse.de 2002-02-26
+	     **/
+
+
+	    // Help text for installation proposal, continued
+	    help_text = help_text + _("<p>
+Your hard disk has not been modified in any way, so you can still safely abort.
+</p>
+");
+	}
+	else if ( Mode::cont )
+	{
+	    // Help text for hardware configuration proposal
+	    // General part ("You can change values...") is added as the next paragraph.
+	    help_text = _("<p>
+Put the hardware settings into effect by pressing <b>Accept</b>.
+</p>
+") + how_to_change;
+
+	    // Help text for hardware configuration proposal, continued
+	    help_text = help_text + _("<p>
+The settings displayed are not in use yet. Because the network is not yet
+functioning, <b>network printers</b> cannot be detected.
+Use the YaST2 Control Center to configure network printers
+after the network is up and running.
+</p>
+");
+	}
+	else
+	{
+	    // Generic help text for other proposals (not basic installation or
+	    // hardhware configuration.
+	    // General part ("You can change values...") is added as the next paragraph.
+	    help_text = _("<p>
+To use the settings as displayed, press <b>Accept</b>.
+</p>
+") + how_to_change;
+	}
+
+	return help_text;
+    };
+
+
+
+    /*-----------------------------------------------------------------------*/
+    /*				    main()				     */
+    /*-----------------------------------------------------------------------*/
+
+
+
+    //
+    // Create dialog
+    //
+    // This is done as early as possible for instant feedback, even though the
+    // menu is still empty. Fortunately enough, nobody will notice this since
+    // we also disable it until everything in there is known. This is to be
+    // done before even the submodule descriptions are known since they usually
+    // are in separate YCP files that liberally import other YCP modules which
+    // in turn takes considerable time for the module constructors.
+    //
+
+    y2milestone( "Installation step #2" );
+    build_dialog();
+
+    UI::ChangeWidget(`id(`menu_dummy), `Enabled, false );
+    richtext_busy_cursor(`id(`proposal ) );
+
+    if ( Wizard::HasAcceptButton() )
+    {
+	UI::ChangeWidget(`id(`accept), `Enabled, false );
+    }
+
+
+    if ( Mode::initial )
+    {
+	//
+	// Do hardware probing
+	//
+	// This must happen before submodule descriptions are initialized; module
+	// constructors might depend on it.
+	// In autoinst mode, this has been called already.
+	//
+	if (!Mode::autoinst)
+	    CallFunction(`inst_startup() );
+
+	//
+	// Let user decide between
+	//
+	// - New installation
+	// - Update
+	// - Boot installed system
+	//
+
+	do
+	{
+	    any ret = CallFunction(`inst_mode() );
+
+	    if ( ret == `abort || ret == `finish )
+	    {
+		return ret;
+	    }
+	} while ( ret == `again );
+    }
+
+
+    //
+    // Get submodule descriptions
+    //
+
+    submodules = load_matching_submodules_list();
+    get_submod_descriptions_and_build_menu();
+
+
+
+    //
+    // Make the initial proposal
+    //
+
+    make_proposal( false, false );
+
+    // Set keyboard focus to the [Accept] or [Next] button
+    UI::SetFocus( UI::WidgetExists(`id(`accept) ) ? `id(`accept ) : `id(`next ) );
+
+    //
+    // Input loop
+    //
+
+    any input = nil;
+
+    while ( true )
+    {
+	richtext_normal_cursor(`id(`proposal ) );
+	input = Wizard::UserInput();
+	richtext_busy_cursor(`id(`proposal ) );
+
+	// check for hyperlink id
+
+	if (is (input, string))
+	{
+	    // get module for hyperlink id
+	    string submod = id2submod[input]:"";
+	    if (submod != "")
+	    {
+		// Call AskUser() function.
+		// This will trigger another call to make_proposal() internally.
+		input = submod_ask_user( submod, false );
+	    }
+	}
+	else if (input == `abort )
+	{
+	    if ( Mode::initial )
+	    {
+		if ( CallFunction(`inst_confirm_abort(`painless) ) )
+		    return `abort;
+	    }
+	    else
+	    {
+		if ( UI::ReallyAbortPopup( false ) )
+		    return `abort;
+	    }
+	}
+	else if (input == `reset_to_defaults
+		 && UI::ContinueCancelPopup( _("Really reset everything to default values?") + "\n"
+					     + _("You will lose all changes.") ) )
+	{
+	    make_proposal( true, false );	// force_reset
+	}
+	else if ( input == `skip )
+	{
+	    if ( UI::QueryWidget(`id(`skip), `Value ) )
+	    {
+		// User doesn't want to use any of the settings
+		
+		UI::ChangeWidget( `id(`proposal), `Value,
+				  HTML::Newlines( 3 ) + 
+				  HTML::Para( _( "Skipping hardware configuration upon user request" ) )
+				  );
+		UI::ChangeWidget(`id(`menu), `Enabled, false );
+	    }
+	    else
+	    {
+		// User changed his mind and wants the settings back - recreate them
+		make_proposal( false, false );
+		UI::ChangeWidget(`id(`menu), `Enabled, true );
+	    }
+	}
+	else if ( input == `next )
+	{
+	    if ( Mode::initial )
+	    {
+		input = CallFunction(`inst_doit( true,		// have_back
+						 true,		// have_next
+						 false ) );	// going_backwards
+	    }
+
+	    if ( Mode::cont )
+	    {
+		if ( UI::QueryWidget(`id(`start_y2cc), `Value ) )
+		{
+		    // Create empty /var/lib/YaST2/start_y2cc file to signal the calling script
+		    // that the YaST2 control center should be started after the installation
+
+		    SCR::Write( .target.string, "/var/lib/YaST2/start_y2cc", "" );
+		}
+
+	    }
+
+	    if ( input == `next )
+	    {
+		boolean skip = UI::WidgetExists(`id(`skip) ) ? UI::QueryWidget(`id(`skip), `Value ) : true;
+
+		if ( ! skip )
+		{
+		    write_settings();
+		}
+		
+		return `next;
+	    }
+	}
+	else if ( input == `back )
+	{
+	    return `back;
+	}
+	else if ( input == `help )
+	{
+	    Wizard::ShowHelp( help_text() );
+	}
+
+    } // while input loop
+
+
+    // NOTREACHED
+}

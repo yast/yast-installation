@@ -1,0 +1,185 @@
+/**
+ * Module: 		inst_startup.ycp
+ *
+ * Authors:		Mathias Kettner <kettner@suse.de>
+ *			Klaus Kaempf <kkaempf@suse.de> (initial)
+ *			Stefan Hundhammer <sh@suse.de> (UI)
+ *
+ * Purpose:
+ * This module does the startup:
+ * - Set hostname and domainname
+ * - Determine architecture and boot mode
+ * - Find controllers and status enabled/disabled
+ * - Probe all controllers for disks
+ * - Probe all disks for partition data
+ *
+ * $Id$
+ */
+
+{
+    textdomain "general";
+
+    import "Arch";
+    import "Mode";
+    import "Installation";
+
+    import "Hotplug";
+    import "Mouse";
+    import "ModuleLoading";
+    import "StorageControllers";
+    import "StorageDevices";
+    import "Storage";
+    import "Boot";
+    import "Kernel";
+    import "InstMedia";
+    import "Wizard";
+
+    include "ui/common_popups.ycp";
+
+    y2milestone("inst_startup START");
+
+
+
+    boolean popup_open = false;
+    /**
+     * Show feedback message in a simple dialog.
+     * @param msg message to show
+     **/
+    define void showFeedback( string msg ) ``{
+	if ( popup_open )
+	{
+	    UI::CloseDialog();
+	}
+
+	/**
+	 * The UI normally changes the X cursor to a busy cursor anyway if the
+	 * YCP application isn't ready to process user input (i.e. outside
+	 * UI::UserInput()), but some hardware probings seem to interfere with
+	 * the X cursor. Thus, let's make sure we really have a busy cursor
+	 * while the probings are performed. Setting the busy cursor once more
+	 * doesn't hurt in any case.
+	 **/
+	UI::BusyCursor();
+	
+	UI::OpenDialog( `VBox( `Label( msg ) ) );
+	y2milestone( msg );
+	popup_open = true;
+    };
+
+
+    /**
+     * Close feedback dialog if it is open
+     **/
+    define void clearFeedback() ``{
+	if ( popup_open )
+	    UI::CloseDialog();
+    };
+
+
+
+    if ( Mode::initial )
+    {
+	Wizard::SetEasyInstallationStep( EasyInstallationStepDescriptions(), 2 );
+    }
+
+    
+    // --------------------------------------------------------------
+    // hostname, domainname
+    // Set hostname and domainname to something reasonable.
+    // Some programs depend on it (rpm install scripts, Xlib)
+
+    if (!Arch::s390
+	&& !Mode::test)
+    {
+	SCR::Execute(.target.bash, "/bin/hostname linux");
+	SCR::Execute(.target.bash, "/bin/domainname local");
+
+	// fallback for br_FR
+	SCR::Execute (.target.symlink, "/usr/share/locale/fr", "/usr/share/locale/br");
+    }
+
+ 
+    // --------------------------------------------------------------
+    //				      USB
+    // --------------------------------------------------------------
+
+    showFeedback( _("Probing USB devices") );
+    Hotplug::StartUSB ();    
+    
+    // --------------------------------------------------------------
+    //				     Mouse
+    // --------------------------------------------------------------
+	
+    showFeedback( _("Probing mouse devices") );
+    if (!Mouse::Found())
+    {
+	// Let the USB modules settle for a while.
+	// Mouse probing may fail otherwise...
+	//
+	SCR::Execute(.target.bash, "/bin/sleep 4");
+
+	Mouse::Set (Mouse::Probe ());
+    }
+
+    // --------------------------------------------------------------
+    //				    Floppy
+    // --------------------------------------------------------------
+
+    showFeedback( _("Probing floppy disk devices") );
+    StorageDevices::FloppyReady ();
+
+    // --------------------------------------------------------------
+    //			     Hard disk controllers
+    // 1. Probe
+    // 2. Initialize (module loading)
+    // --------------------------------------------------------------
+
+    showFeedback( _("Probing hard disk controllers") );
+    if (StorageControllers::Probe() <= 0)
+    {
+	// Oops, no storage controllers ?
+	// no storage controllers found, where are the hard disks attached ?
+	UI::MessagePopup(_("No hard disks were found for the installation.
+Please check your hardware!
+"));
+	clearFeedback();
+	return `cancel;
+    }
+
+
+    showFeedback( _("Loading kernel modules for hard disk controllers") );
+    StorageControllers::Initialize();
+
+    ModuleLoading::Load ("lvm-mod", "", "Linux", "LVM", Mode::manual, true);
+
+    // --------------------------------------------------------------
+    //				  Hard disks
+    // --------------------------------------------------------------
+
+    showFeedback( _("Probing hard disks") );
+    map targetMap = StorageDevices::Probe (true);
+    if (size (targetMap) == 0)
+    {
+	UI::ErrorPopup(_("No hard disks were found for the installation.
+Please check your hardware!
+"));
+	clearFeedback();
+	return `cancel;
+    }
+
+    if (!Mode::live_eval)
+    {
+	// disable automatic probing
+	SCR::Execute (.target.bash, "/bin/echo \"/etc/nothing\" >/proc/sys/kernel/modprobe");
+    }
+
+    // mount first installation medium if not done by linuxrc
+
+    if (!Mode::sourcemounted)
+    {
+	MediaUI::ChangeMedium (1,true);
+    }
+
+    clearFeedback();
+    return `next;
+}

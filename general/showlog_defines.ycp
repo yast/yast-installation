@@ -1,0 +1,78 @@
+/**
+ * Module: showlog_defines.ycp
+ *
+ * Purpose: UI defines for log view
+ *
+ * Author: Klaus Kaempf <kkaempf@suse.de>
+ *
+ *
+ * $Id$
+ *
+ */
+{
+  UI( ``{
+      textdomain "general";
+
+      
+      global define DisplayLogFile( string msg_text, any kind ) ``{
+	  term text = `LogView(`id(`log),
+			       "", 10, 0);
+
+	  if ( kind == `yes_long )
+	  {
+	      OpenDialog(`opt ( `decorated ),
+			 `HBox (`VSpacing(20),
+			 `VBox (`HSpacing(75),
+				`Heading( _("Installation log file")),
+				text,
+				`HBox(				
+				`PushButton( `id(`yes_short),  _("&Short info") ),
+				`HStretch(),				
+				`PushButton( `id(`no_log), `opt(`default), OKButtonLabel() )
+				)
+				))
+			 );
+	  }
+	  else
+	  {
+	      OpenDialog(`opt ( `decorated ),
+			 `HBox (`VSpacing(20),
+			 `VBox (`HSpacing(75),
+				`Heading( _("Installation log file")),
+				text,
+				`HBox(					
+				`PushButton( `id(`yes_long),  _("&Long info") ),
+				`HStretch(),				
+				`PushButton( `id(`no_log), `opt(`default), OKButtonLabel() )
+				)
+				))
+			 );
+	  }
+	  
+	  ChangeWidget(`id(`log), `LastLine, msg_text );
+	  SetFocus(`id(`no_log) );
+
+	  any r = UserInput();
+	  CloseDialog();
+	  return (r);
+      };
+  });
+
+
+  //
+  // Popup display for logging
+  //
+
+  UI( ``{
+      textdomain "general";      
+     global define AskShowLog( ) ``{
+	 return AnyQuestionPopup( _("Installation log file"),
+				  _("Would you like to see the installation log file?"),
+				  YesButtonLabel(),
+				  NoButtonLabel(),
+				  `focus_no );
+      };
+  });
+
+
+}

@@ -1,0 +1,239 @@
+/**
+ * Module:	inst_suseconfig.ycp
+ *
+ * Authors:	Andreas Schwab <schwab@suse.de>
+ *			Stefan Hundhammer <sh@suse.de>
+ *
+ * Purpose:	-Showing the "Finishing the installation" frame
+ *			-Running "SuSEconfig"
+ *			-Running "init" to reread inittab, which has been
+ *			 changed by SuSEconfig.
+ *			-Showing the loginname which can be used.
+ *
+ * scr:		Read( .rc.system.ENABLE_SUSECONFIG )
+ *			Read( .run.get.suseconfig.modules )
+ *
+ * $Id$
+ */
+{
+    include "showlog_defines.ycp";
+    textdomain "general";
+
+    import "Arch";
+    import "Mode";
+    import "Installation";
+
+    import "Wizard";
+
+
+    if ( size( Args() ) > 2 && Args(2) == true )	// going backwards?
+	return `auto;					// don't execute this once more
+
+    boolean reread_inittab = false;
+
+    // checking if module is called in running system (after a complete installation)
+    map		updateMap	= $[];
+    boolean	onlyKernelUpdate= lookup ( updateMap,	  "onlyKernel",	false );
+    integer	current_step	= 0;	// Required by logStep()
+
+    string log_destination = ">>/var/log/y2log.SuSEconfig";		// Required by doStep()
+
+    if ( Mode::cont )
+    {
+	reread_inittab = true;
+    }
+
+    /**
+     * Display a step in the LogView widget and increment the progress bar.
+     * Uses global variable 'current_step'.
+     *
+     * @param step_descr description of the step.
+     */
+    define logStep( string step_descr ) ``{
+	current_step = current_step + 1;
+	UI::ChangeWidget( `id(`progress), `Value, current_step );
+	UI::ChangeWidget( `id(`log), `LastLine, step_descr + "\n" );
+    };
+
+
+    /**
+     * Run a step on the target and log its output to the globally specified
+     * 'log_destination'.
+     *
+     * @param step command to execute in this step
+     */
+    define runStep( string step ) ``{
+
+	string command = sformat( "HOME=/tmp %1 %2 2>&1", step, log_destination );
+	// Setting $HOME to '/tmp' to avoid cluttering '/' with spurious files - bug #13204
+	
+	if ( Mode::test )
+	{
+	    y2milestone( "Test mode - NOT executing '%1'", command );
+	    sleep( 300 );
+	}
+	else
+	{
+	    y2milestone( "Executing '%1'", command );
+	    SCR::Execute( .target.bash, command );
+	}
+    };
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //                      Main Dialog
+    ////////////////////////////////////////////////////////////////////////////////
+
+
+    // Help text for SuSEconfig dialog
+    string help_text = _("<p>
+<tt>SuSEconfig</tt> has to write the configuration of your SuSE Linux system.  Depending on
+the CPU and the amount of memory, this process can take some time.
+</p>
+");
+
+
+    list modules = SCR::Read( .run.get.suseconfig.modules );
+    integer max_steps = size( modules ) + 1;	// ldconfig
+
+    if ( reread_inittab )
+    {
+	max_steps = max_steps + 1;		// restart 'init'
+    }
+
+    term contents = `VBox(
+			  `LogView(`id(`log), "", 10, 0 ),
+
+			  // Progress bar that displays overall progress in this dialog
+			  `ProgressBar(`id(`progress), _("Progress"), max_steps, 0 )
+			  );
+
+
+    Wizard::SetContents(
+			  // Dialog title for SuSEconfig dialog
+			  _("Writing the system configuration"),
+			  contents, help_text, Args(0), Args(1));
+    Wizard::DisableAbortButton();
+
+
+    // --------------------------------------------------------------
+    // Put config of installed kernel into kernel sources
+
+    y2debug( "Testmode: %1", Mode::test );
+
+    //
+    // Preliminary 'ldconfig' - this takes a long time at first run.
+    //
+    // SusEconfig calls this internally, too, but we want to avoid giving the
+    // impression the very first SuSEconfig module takes that long: It's
+    // simply not true, it's 'ldconfig' that takes this long. So make this fact
+    // transparent by explicitly calling it (and informing the user about that)
+    // prior to calling any SuSEconfig module.
+    //
+
+    logStep( _("Setting up linker cache") );
+    runStep( "/sbin/ldconfig" );
+
+    // This is the same as:
+    //    runStep( "/sbin/SuSEconfig --verbose --module aaa_at_first" );
+    // but that "aaa_at_first" module will go away soon. Or so it is said. ;-)
+
+
+    if ( Mode::initial || Mode::cont
+	 || tolower( SCR::Read(.sysconfig.suseconfig.ENABLE_SUSECONFIG) ) == "yes" )
+    {
+	//
+	// Call each SuSEconfig module individually
+	//
+
+	foreach ( `mod, modules, ``{
+	    // Inform user about current SuSEconfig step
+	    logStep( sformat (_("Running SuSEconfig.%1"), mod));
+	    runStep( "/sbin/SuSEconfig --verbose --module "   + mod );
+	});
+
+	if ( ! Mode::test )
+	{
+	    SCR::Execute (.target.remove, "/var/lib/YaST2/run_suseconfig");
+	}
+
+
+	//
+	// Call "all the rest" of the SuSEconfig main program
+	//
+
+	logStep( _("Finishing SuSEconfig") );
+	runStep( "/sbin/SuSEconfig --verbose --nomodule" );
+    }
+    else
+    {
+	logStep( _("SuSEconfig disabled in /etc/rc.config") );
+	y2milestone( "SuSEconfig disabled in /etc/rc.config" );
+    }
+
+
+
+    //
+    // Tell init to reread inittab which might have been changed by SuSEconfig.
+    //
+
+    if ( reread_inittab )
+    {
+	runStep( "/sbin/init q" );
+    }
+
+
+    // The final LogView line to be displayed after SuSEconfig etc. is done.
+    UI::ChangeWidget( `id(`log), `LastLine, "\n" + UI(_("Done.") ) + "\n" );
+
+
+    if ( Mode::test )
+    {
+	UI::MakeScreenShot();	// doesn't work manually - not widget with keyboard focus!
+	sleep( 5*1000 );
+    }
+
+
+    any retAsk = `no_log;
+
+    if (! Mode::live_eval
+	&& Mode::update )
+    {
+	// Show logging after update ?
+	if ( UI::AskShowLog () )
+	{
+	    retAsk = `yes_short;
+	}
+    }
+
+    while ( retAsk != `no_log )
+    {
+	string text = "";
+
+	if ( retAsk == `yes_short ) {
+	    text = SCR::Read (.target.string, "/var/log/y2logRPMShort");
+	}
+	if ( retAsk == `yes_long ) {
+	    text = SCR::Read (.target.string, "/var/log/y2logRPM");
+	}
+
+	retAsk = UI::DisplayLogFile( text, retAsk );
+    }
+
+    if ( onlyKernelUpdate )
+    {
+	UI::MessagePopup(_("Reboot your system
+to activate the new kernel.
+"));
+    }
+
+
+    if ( Mode::update )
+    {
+	return `next;
+    }
+    else
+    {
+	return `auto;
+    }
+}

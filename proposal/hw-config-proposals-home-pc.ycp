@@ -1,0 +1,14 @@
+//
+// hw-config-proposals-home-pc.ycp
+//
+// Proposal list for hardware configuration for home PCs
+// (PCs without a network card)
+//
+[
+ "proposal_printer",
+ "proposal_sound",
+ "proposal_tv",
+ "lan_proposal",
+ "modem_proposal",
+ "isdn_proposal"
+]

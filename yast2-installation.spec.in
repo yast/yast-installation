@@ -1,0 +1,78 @@
+@HEADER-COMMENT@
+# neededforbuild  autoconf automake ycpdoc yast2-testsuite dejagnu expect tcl yast2-core yast2-devtools
+
+@HEADER@
+Requires:	yast2 yast2-lib-wizard yast2-lib-sequencer yast2-storage yast2-mouse yast2-country yast2-bootloader
+BuildArchitectures:	noarch
+
+Summary:	Installation workflow
+
+%description
+This controls the system installation or update when started
+from an installation media.
+
+@PREP@
+
+@BUILD-YCP@
+
+@INSTALL-YCP@
+
+@CLEAN@
+
+%files
+%defattr(-,root,root)
+%doc @DOCDIR@
+
+%dir /var/lib/YaST2
+@YAST2DIR@/*.ycp
+
+%dir @YAST2DIR@/clients
+@YAST2DIR@/clients/inst*.ycp
+@YAST2DIR@/clients/password.ycp
+@YAST2DIR@/clients/vendor.ycp
+@YAST2DIR@/clients/menu.ycp
+
+%dir @YAST2DIR@/modules
+@YAST2DIR@/modules/*.ycp
+
+%dir @YAST2DIR@/include
+@YAST2DIR@/include/*.ycp
+@YAST2DIR@/include/packages/*.ycp
+
+%dir @YAST2DIR@/images
+@YAST2DIR@/images/*.png
+
+%dir @YAST2DIR@/menuentries
+@YAST2DIR@/menuentries/*.y2cc
+
+%dir @YAST2DIR@/servers_non_y2
+@YAST2DIR@/servers_non_y2/ag_instsource
+
+%dir @YAST2DIR@/scrconf
+@YAST2DIR@/scrconf/boot_vmlinuz_version.scr
+@YAST2DIR@/scrconf/cfg_kernel.scr
+@YAST2DIR@/scrconf/cfg_suseconfig.scr
+@YAST2DIR@/scrconf/descr_info.scr
+@YAST2DIR@/scrconf/etc_install_inf.scr
+@YAST2DIR@/scrconf/etc_passwd.scr
+@YAST2DIR@/scrconf/menuentries.scr
+@YAST2DIR@/scrconf/proc_cmdline.scr
+@YAST2DIR@/scrconf/proc_cpuinfo.scr
+@YAST2DIR@/scrconf/proc_modules.scr
+@YAST2DIR@/scrconf/proc_mounts.scr
+@YAST2DIR@/scrconf/run_df.scr
+@YAST2DIR@/scrconf/run_get_suseconfig_modules.scr
+@YAST2DIR@/scrconf/yast2_instsource.scr
+
+@YAST2DIR@/bin/create_update_inf
+@YAST2DIR@/bin/update_unique_keys.pl
+@YAST2DIR@/bin/check.boot
+@YAST2DIR@/bin/WinINF.pm
+@YAST2DIR@/bin/pars-inf.pl
+@YAST2DIR@/bin/y2merge.pl
+@YAST2DIR@/bin/YaST2*
+@YAST2DIR@/bin/yast2-funcs
+@YAST2DIR@/bin/yast2_kde
+@YAST2DIR@/bin/patch_lilo_conf
+@YAST2DIR@/bin/inst_setup_vnc
+

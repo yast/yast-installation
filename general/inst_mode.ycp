@@ -1,0 +1,375 @@
+/**
+ *
+ * Author:	Klaus Kämpf <kkaempf@suse.de>
+ *
+ * Purpose: 	Ask for the installation method:
+ *		- New installation
+ *		- Update
+ *		- Boot installed system
+ *
+ *		Arguments:
+ *
+ *		Args(0): symbol `AskUser if this is called by the proposal
+ *			 AskUser() function
+ *
+ *		Returns automatically if no Linux partition is found.
+ *
+ * rw: Mode::installation, Mode::update
+ *
+ * $Id$
+ *
+ */
+{
+    import "Mode";
+    import "Product";
+    import "Wizard";
+
+    include "partitioning/partition_defines.ycp";
+    import "Storage";
+    import "Update";
+
+    textdomain "general";
+
+
+    boolean called_from_ask_user = false;
+    
+    if ( size( Args() ) > 0
+	 && is( Args(0), symbol )
+	 && Args(0) == `AskUser )
+    {
+	called_from_ask_user = true;
+    }
+
+    
+    if ( ! Storage::HaveLinuxPartitions()
+	 || Mode::autoinst
+	 || Mode::live_eval
+	 || Product::certify_cd
+	 || Arch::s390
+	 || Product::imap_server
+	 || Product::fwadmin_host )
+    {
+	// Force new installation, no update possible
+
+	Mode::update		= false;
+	Mode::installation	= true;
+
+	if ( called_from_ask_user )
+	{
+	    // Translators notice: About 60 Characters wide maximum -
+	    // use more line breaks if neccessary.
+	    // Plain text, no HTML!
+	    UI::NotifyPopup( _( "
+There is no SuSE Linux on any of your hard disks.
+It is only possible to perform a new installation at the moment.
+
+After SuSE Linux is installed, you can use this selection
+to boot the installed system or to update it.
+" ) );
+	}
+
+	return `auto;
+    }
+
+
+    // help text for installation method
+    string help_text =_("\
+<p>
+It appears that your machine has a Linux system installed.
+</p>");
+
+    help_text = help_text + _("\
+<p>
+To verify this, existing partitions must be mounted. This can be a
+time-consuming process for large partitions.
+</p>");
+
+    help_text = help_text + _("\
+<p>
+Please choose what to do:
+</p>");
+
+    help_text = help_text + _("\
+<p>
+Select <b>new installation</b> if there is no existing SuSE Linux
+system on your machine or if you want to replace an existing SuSE
+Linux system completely, abandoning all its configuration data.
+</p>");
+
+    help_text = help_text + _("\
+<p>
+Select <b>update an existing system</b> to upgrade a SuSE Linux system
+already installed on your machine. This option will preserve
+configuration settings from your existing system whenever possible.
+</p>");
+
+    help_text = help_text + _("<p>
+Select <b>boot installed system</b> if you have a SuSE Linux system on your
+hard disk that will not boot. With this option, try to
+fix problems manually.
+</p>
+");
+
+    term radio_buttons =
+	      `VBox(
+		    `VSpacing(0.4),
+		    `Left(`RadioButton(`id(`install),
+				       // label for radio button 1, New installation
+				       _("New &installation"), ! Mode::update ) ),
+		    `VSpacing(0.2),
+		    `Left(`RadioButton(`id(`update),
+				       // label for radio button 2, update
+				       _("&Update an existing system"), Mode::update )),
+		    `VSpacing(0.2),
+		    `Left(`RadioButton(`id(`boot),
+				       // label for radio button 3: Boot installed system
+				       _("&Boot installed system"), false ) )
+		    );
+
+    if ( ! called_from_ask_user )
+    {
+	// If this is _not_ called from the proposal's ask_user function but
+	// initially, the user _must_ make a decision, but there should clearly
+	// be a safe exit - so let's give him an "abort installation" option.
+	
+	radio_buttons = add( radio_buttons, `VSpacing(1.2) );
+	radio_buttons = add( radio_buttons,
+			     `Left(`RadioButton(`id(`abort),
+						// label for radio button 4: Abort installation alltogether
+						_("Abo&rt Installation")  ) )
+			     );
+    }
+    
+    term radio_box = `RadioButtonGroup( `id( `options ),
+					`HSquash(
+						 `Frame (
+							 // message above radiobuttons (installation/update)
+							 _("Please select"),
+							 `HBox(
+							       `HSpacing(1),
+							       radio_buttons
+							       )
+							 )
+						 )
+					);
+
+    term buttons = `PushButton(`id(`ok), `opt(`default), UI::OKButtonLabel() );
+
+    if ( called_from_ask_user )
+    {
+	// If we were called from the proposal's ask_user function, there must
+	// be a cancel button as a safe exit.
+	
+	buttons = `HBox(
+			`HWeight( 1, `PushButton(`id(`ok), `opt(`default), UI::OKButtonLabel() ) ),
+			`HSpacing( 1 ),
+			`HWeight( 1, `PushButton(`id(`cancel), UI::CancelButtonLabel() ) )
+			);
+	
+    }
+
+    term ask_mode_dialog = `HBox(`id(`ask_mode_dialog ),
+				 `VSpacing( 15 ),		// force dialog height
+				 `VBox( 
+				       `HSpacing( 30 ),	// force help text width
+				       `RichText( help_text )
+				       ),
+				 `HSpacing( 3 ),
+				 `VBox(
+				       `VSpacing( 1 ),
+				       `Top( radio_box ),
+				       buttons
+				       ),
+				 `HSpacing( 3 )
+				 );
+
+    
+
+    // Event handling
+
+    any ret = nil;
+    
+    while ( true )
+    {
+	if ( ! UI::WidgetExists(`id(`ask_mode_dialog ) ) )
+	{
+	    // If there is no inst_mode dialog any more or yet, open one.
+	    //
+	    // Background: People complained inst_mode should become a popup
+	    // dialog rather than a wizard dialog lest it breaks the
+	    // three-step-installation feeling. Subsequent dialogs, however (update or
+	    // boot installed system) are wizard dialogs again which would be
+	    // arranged _below_ this inst_mode popup dialog, thus that popup
+	    // dialog needs to be closed whenever a wizard dialog appears. When
+	    // we get back here, however, we need it again - so simply open a
+	    // new one if the old one is closed.
+	    //
+	    // What a mess.
+	    //
+	    // sh@suse.de 2002-03-06
+	    
+	    UI::OpenDialog( ask_mode_dialog );
+	}
+	    
+	if (!Mode::autoinst)
+	{
+	    ret = UI::UserInput();
+	}
+	else
+	{
+	    ret = `ok;
+	}
+
+	if ( ret == `abort )	// the abort button (not check box!)
+	{
+	    if ( CallFunction(`inst_confirm_abort(`painless) ) )
+		break;
+	}
+
+	if ( ret == `cancel )
+	    break;
+
+	if (ret == `ok || ret == `next || ret == `accept )
+	{
+	    ret = `next;
+	    
+	    any newmode = UI::QueryWidget(`id(`options), `CurrentButton);
+	    
+	    if (newmode == nil)
+	    {
+		UI::MessagePopup(_("Choose one of the\noptions to continue."));
+		continue;
+	    }
+
+	    if ( newmode == `abort ) // the abort check box (not button!)
+	    {
+		if ( CallFunction(`inst_confirm_abort(`painless) ) )
+		{
+		    ret = `abort;
+		    break;
+		}
+		else
+		{
+		    // User doesn't want to abort after all - select some radio
+		    // button other than "abort". Since this "abort" radio
+		    // button can only be present if this is called initially
+		    // and there must be a Linux partition, "update" is the
+		    // safest selection.
+		    
+		    UI::ChangeWidget(Mode::update ? `id(`update ) : `id(`install), `Value, true );
+		    continue;
+		}
+	    }
+	    if (newmode == `install)
+	    {
+		Mode::installation = true;
+		Mode::update = false;
+	    }
+	    else if (newmode == `update)
+	    {
+		Mode::update = true;
+		Mode::installation = false;
+
+		map targetMap = Storage::GetTargetMap();
+		targetMap  = Storage::GetLvmMdSystemInfo( targetMap );
+		Storage::SetTargetMap( targetMap );
+
+		UI::CloseDialog(); // close the inst_mode dialog
+		ret = CallFunction( `inst_updateControl() );
+		
+		if ( ret == `back )
+		{
+		    Storage::ResetOndiskTarget();
+		    Storage::SetPartProposalFirst( true );
+		    ret = `again;
+		    break;
+		}
+		else if ( ret == `abort || ret == `cancel  )
+		{
+		    ret = `abort;
+		    break;
+		}
+		else	// `finish
+		{
+		    ret = `finish;
+		    break;
+		}
+	    }
+	    else if ( newmode == `boot )
+	    {
+		Mode::update = false;
+		Mode::installation = false;
+
+	        y2milestone( "User wishes to boot installed system" );
+
+		map targetMap = Storage::GetTargetMap();
+		targetMap  = Storage::GetLvmMdSystemInfo( targetMap );
+		Storage::SetTargetMap( targetMap );
+
+		UI::CloseDialog(); // close the inst_mode dialog
+		Wizard::OpenNextBackDialog();
+		ret = CallFunction( `inst_rootpart( true, true ) );
+		Wizard::CloseDialog();
+
+		if ( ret == `abort && CallFunction(`inst_confirm_abort(`painless) ) )
+		{
+		    break;
+		}
+
+		if ( ret == `back )
+		    continue;
+
+		if ( ret == `next )
+		{
+		    string root_part = Update::selectedRootPartition;
+		    y2milestone( "Preparing boot from partition %1", root_part );
+
+		    UI::OpenDialog( `opt(`decorated),
+				// Information popup: Inform user what partition
+				// will be booted from after user selected
+				// "Boot installed system"
+				    `Label( sformat(_("Booting from %1"), root_part ) ) );
+
+		    if ( ! Mode::test )
+		    {
+			import "Misc";
+
+			Misc::WriteYaSTInf($["Root" : root_part]);
+			UI::CloseDialog();
+			ret = `finish;
+			break;
+		    }
+		    else
+		    {
+			sleep( 5 * 1000 );
+			UI::CloseDialog();
+			ret = `again;
+			break;
+		    }
+
+		    ret = `abort;
+		    break;
+		}
+		else
+		{
+		    ret = `again;
+		    break;
+		}
+	    }
+	    // Handle your option here
+	    break;
+	}
+    }
+
+    if ( UI::WidgetExists(`id(`ask_mode_dialog) ) )	// dialog still open?
+    {
+	UI::CloseDialog();				// close it
+    }
+
+    
+    if ( ret == nil )	// This should never happen, but who knows?
+	ret = `cancel;
+
+
+    return ret;
+}

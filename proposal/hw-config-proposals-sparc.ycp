@@ -1,0 +1,11 @@
+//
+// hw-config-proposals-sparc.ycp
+//
+// Proposal list for hardware configuration for SPARCs
+//
+[
+ "lan_proposal",
+ "proposal_printer",
+ "modem_proposal",
+ "proposal_sound"
+]

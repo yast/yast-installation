@@ -1,0 +1,14 @@
+{
+  import "Wizard";
+
+  map user_settings = $[
+	"test_mode"	: true,
+	"tmpdir"	: "/tmp"
+  ];
+  boolean config_mode = false;
+
+  Wizard::CreateDialog();
+  CallFunction (`inst_ask_config (true, true));
+  UI::CloseDialog();
+}
+

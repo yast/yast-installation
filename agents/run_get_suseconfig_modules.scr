@@ -1,0 +1,44 @@
+/**
+ * File:
+ *   run_get_suseconfig_modules
+ * Summary:
+ *   SCR Agent that returns all SuSEconfig modules
+ * Access:
+ *   read-only
+ * Authors:
+ *   Stefan Hundhammer <sh@suse.de>
+ * See:
+ *   anyagent
+ *   libscr
+ *   man ls
+ * Example:
+ *   Read(.run.get.suseconfig.modules)
+ *   (["3ddiag", "fonts", "kdm2", "pam", "pcmcia", ... , "ypclient"])
+ *
+ * $Id$
+ *
+ * Returns a <b>list</b> of SuSEconfig modules.
+ */
+.run.get.suseconfig.modules
+
+`ag_anyagent(
+	     Description (
+			  ``( Run( "		\
+cd /sbin/conf.d;				\
+/bin/ls						\
+| /usr/bin/sed -e 's/^SuSEconfig\.//'		\
+| grep -v 'aaa_at_first'			\
+| grep -v '~$'					\
+| egrep -v '\.(swp|bak|sav|save|orig)$'		\
+| egrep -v '\.rpm(orig|save|new)$'
+"
+				 )
+			      ),
+			  "\n",			// Comment
+			  true,			// read-only
+			  ``(List (
+				   String ("^ \t\n"),
+				   String ("\n\t ")
+				   ))
+			  )
+	     )

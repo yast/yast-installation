@@ -1,0 +1,5 @@
+-------------------------------------------------------------------
+Mon Jun 24 15:24:43 CEST 2002 - kkaempf@suse.de
+
+- New package: split off purely installation related code 
+  from yast2.rpm

@@ -1,0 +1,110 @@
+/**
+ * File:
+ *   etc_install_inf.scr
+ * Summary:
+ *   SCR Agent for reading /etc/install.inf
+ * Access:
+ *   read-only
+ * Authors:
+ *   Unknown <yast2-hacker@suse.de>
+ * See:
+ *   anyagent
+ *   libscr
+ *   man exports
+ * Example:
+ *   Read(.etc.install_inf)
+ *   ($["keytable":"de-lat1-nd", 
+ *      "language":"german", 
+ *      "llocale":"de_DE",
+        ...
+ *   ])
+ * 
+ * $Id$
+ *
+ * Returns a <b>map</b> containing information from the installation.
+ * Possible keys for the maps are:<BR><TT>language, keytable, keyboard,
+ * display, bootmode, sourcemounted, cdrom, partition, fstype, netdevice, ip,
+ * netmask, gateway, nameserver, server, serverdir, alias, machinename, domain,
+ * smp, mouse_device, mouse_type, initrd_modules, options, floppy_disk,
+ * yast2_update, textmode, framebuffer, llocale, font, unicodemap, screenmap,
+ * fontmagic, haspcmcia, usb, serial, manual, braille, demo, disks, console,
+ * unknown</tt>
+ */
+.etc.install_inf
+
+`ag_anyagent(
+  Description (
+    ``(File("/etc/install.inf")),	// real file name
+    "#\n",				// Comment
+    true,				// read-only
+    ``(Tuple (
+	  Choice (
+	   [ "Keytable:",	Sequence (Whitespace (), `keytable (String("^\n")))],
+	   [ "Keyboard:",	Sequence (Whitespace (), `keyboard (String("^\n")))],
+	   [ "Display:",	Sequence (Whitespace (), `display(String("^\n")))],
+	   [ "InstMode:",	Sequence (Whitespace (), `instmode(String("^\n")))],
+	   [ "Sourcemounted:",	Sequence (Whitespace (), `sourcemounted(String("^\n")))],
+	   [ "Cdrom:",		Sequence (Whitespace (), `cdrom(String("^\n")))],
+	   [ "Partition:",	Sequence (Whitespace (), `partition(String("^\n")))],
+	   [ "Fstyp:",		Sequence (Whitespace (), `fstype(String("^\n")))],
+	   [ "Netdevice:",	Sequence (Whitespace (), `netdevice(String("^\n")))],
+	   [ "IP:", 		Sequence (Whitespace (), `ip(String("^\n")))],
+	   [ "Netmask:",	Sequence (Whitespace (), `netmask(String("^\n")))],
+	   [ "Network:",	Sequence (Whitespace (), `network(String("^\n")))],
+	   [ "Gateway:",	Sequence (Whitespace (), `gateway(String("^\n")))],
+	   [ "Nameserver:",	Sequence (Whitespace (), `nameserver(String("^\n")))],
+	   [ "Server:",		Sequence (Whitespace (), `server(String("^\n")))],
+	   [ "Serverdir:",	Sequence (Whitespace (), `serverdir(String("^\n")))],
+	   [ "Alias:",		Sequence (Whitespace (), `alias(String("^\n")))],
+	   [ "Machinename:",	Sequence (Whitespace (), `machinename(String("^\n")))],
+	   [ "Domain:",		Sequence (Whitespace (), `domain(String("^\n")))],
+	   [ "SMP:",		Sequence (Whitespace (), `smp(String("^\n")))],
+	   [ "Mousedevice:",	Sequence (Whitespace (), `mouse_device(String("^\n")))],
+	   [ "Mousetype:",	Sequence (Whitespace (), `mouse_type(String("^\n")))],
+	   [ "InitrdModules:",	Sequence (Whitespace (), `initrd_modules(List(String("^ \"\n"), " ")))],
+	   [ "Options:",	Sequence (Whitespace (), `options(String("^\n")))],
+	   [ "Floppydisk:",	Sequence (Whitespace (), `floppy_disk(String("^\n")))],
+	   [ "YaST2update:",	Sequence (Whitespace (), `yast2_update(String("^\n")))],
+	   [ "Textmode:",	Sequence (Whitespace (), `textmode(String("^\n")))],
+	   [ "Framebuffer:",	Sequence (Whitespace (), `framebuffer(Hexval("^\n")))],
+	   [ "Locale:",		Sequence (Whitespace (), `language(String("^\n")))],
+	   [ "Font:",		Sequence (Whitespace (), `font(String("^\n")))],
+	   [ "Unicodemap:",	Sequence (Whitespace (), `unicodemap(String("^\n")))],
+	   [ "Screenmap:",	Sequence (Whitespace (), `screenmap(String("^\n")))],
+	   [ "Fontmagic:",	Sequence (Whitespace (), `fontmagic(String("^\n")))],
+	   [ "HasPCMCIA:",	Sequence (Whitespace (), `haspcmcia(String("^\n")))],
+	   [ "USB:",		Sequence (Whitespace (), `usb(String("^\n")))],
+	   [ "YaST2serial:",	Sequence (Whitespace (), `serial(String("^\n")))],
+	   [ "AutoYaST:",	Sequence (Whitespace (), `autoinstall(String("^\n")))],
+	   [ "YaST2color:",	Sequence (Whitespace (), `color(String("^\n")))],
+	   [ "Manual:",		Sequence (Whitespace (), `manual(String("^\n")))],
+	   [ "Braille:",	Sequence (Whitespace (), `braille(String("^\n")))],
+	   [ "Demo:",		Sequence (Whitespace (), `demo(String("^\n")))],
+	   [ "Disks:",		Sequence (Whitespace (), `disks(String("^\n")))],
+	   [ "Console:",	Sequence (Whitespace (), `console(String("^\n")))],
+	   [ "Reboot:",		Sequence (Whitespace (), `reboot(String("^\n")))],
+
+	   [ "X11i:",		Sequence (Whitespace (), `x11i(String("^\n")))],
+	   [ "XServer:",	Sequence (Whitespace (), `xserver(String("^\n")))],
+	   [ "XVersion:",	Sequence (Whitespace (), `xversion(String("^\n")))],
+	   [ "XBusID:",		Sequence (Whitespace (), `xbusid(String("^\n")))],
+	   [ "XkbRules:",	Sequence (Whitespace (), `xkbrules(String("^\n")))],
+	   [ "XkbModel:",	Sequence (Whitespace (), `xkbmodel(String("^\n")))],
+	   [ "FTP-User:",	Sequence (Whitespace (), `ftpuser(String("^\n")))],
+	   [ "FTP-Proxy:",	Sequence (Whitespace (), `ftpproxy(String("^\n")))],
+	   [ "FTP-Proxyport:",	Sequence (Whitespace (), `ftpproxyport(String("^\n")))],
+	   [ "Username:",	Sequence (Whitespace (), `username(String("^\n")))],
+	   [ "Password:",	Sequence (Whitespace (), `password(String("^\n")))],
+	   [ "AsWorkgroup:",	Sequence (Whitespace (), `asworkgroup(String("^\n")))],
+	   [ "WorkDomain:",	Sequence (Whitespace (), `workdomain(String("^\n")))],
+	   [ "Chandev:",	Sequence (Whitespace (), `chandev(String("^\n")))],
+	   [ "VNC:",		Sequence (Whitespace (), `vnc(String("^\n")))],
+	   [ "VNCpassword:",	Sequence (Whitespace (), `vncpassword(String("^\n")))],
+	   [ "RunVNC:",		Sequence (Whitespace (), `runvnc(String("^\n")))],
+
+	   [ "",		`unknown (String ("^\n"))]
+	  ),
+	  Continue ("\n")
+	))
+    )
+)

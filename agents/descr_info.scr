@@ -1,0 +1,105 @@
+/**
+ * File:
+ *   descr_info.scr
+ * Summary:
+ *   SCR Agent for reading /var/adm/mount/suse/setup/descr/info
+ * Access:
+ *   read-only
+ * Authors:
+ *   Unknown <yast2-hacker@suse.de>
+ * See:
+ *   anyagent
+ *   libscr
+ * Example:
+ *   Read(.descr.info)
+ *   ($["distident":"SuSE-Linux-full-i386-7.1.0#1",
+ *      "diststring":"SuSE",
+ *      "elf":"",
+ *      "haslivecd":"0",
+ *      "lang":"de_DE",
+ *      "media":"cdrom",
+ *      "minversion":"7.1",
+ *      "minyastversion":"1.05",
+ *      "produktname":"SuSE Linux",
+ *      "produktversion":"7.1",
+ *      "timezone":"Europe/Berlin"
+ *    ])
+ *
+ * $Id$
+ *
+ * Returns a <b>map</b> of information read from
+ * /var/adm/mount/suse/setup/descr/info<br>
+ * Keys for the maps are: <br><tt>
+ * "diststring", "distident", "minyastversion", "minversion", "produktname", "produktversion", "elf", "haslivecd", "lang", "timezone", "media", "autofdiskdisk", "autofdisk", "fstabsearch", "fstabformat", "autofdisktable", "fastinstall", "autolilo", "lilodosname", "autonet", "autoname", "autonameserver", "autoservices", "autoinstall", "addinstall", "installwait", "autokernel", "cdromdevice", "noaskswap", "endmessage", "endstartup", "checkdependency", "neverstop", "preinstall", "postinstall", "lastinstall", "prescript", "postscript", "lastscript", "askbootdisk", "ldaphost", "ldapport", "ldapbinddn", "ldapbindpw", "ldapbasedn", "ldaptarget", "unknown"
+ * </tt>
+ *
+ */
+.descr.info
+
+`ag_anyagent(
+  Description (
+    ``(File("/var/adm/mount/suse/setup/descr/info")),	// real file name
+      "#\n",				// Comment
+      true,				// read-only
+      ``(Tuple (
+	Optional (Whitespace ()),
+	Choice (
+	  [ "DISTRIBUTION_NAME",	Sequence (Whitespace (), `distname (String("^\n")))],
+	  [ "DISTRIBUTION_VERSION",	Sequence (Whitespace (), `distversion (String("^\n")))],
+	  [ "DISTRIBUTION_RELEASE",	Sequence (Whitespace (), `distrel (String("^\n")))],
+	  [ "DIST_STRING",	Sequence (Whitespace (), `diststring (String("^\n")))],
+	  [ "DIST_IDENT",	Sequence (Whitespace (), `distident (String("^\n")))],
+	  [ "MIN_YAST_VERSION",	Sequence (Whitespace (), `minyastversion (String("^\n")))],
+	  [ "MIN_DIST_VERSION",	Sequence (Whitespace (), `minversion (String("^\n")))],
+	  [ "PRODUKT_NAME",	Sequence (Whitespace (), `produktname (String("^\n")))],
+	  [ "PRODUKT_VERSION",	Sequence (Whitespace (), `produktversion (String("^\n")))],
+	  [ "ELF",		`elf (String(""))],
+	  [ "HAS_LIVE_CD=",	`haslivecd (String("^\n"))],
+	  [ "LANG=",		`lang (String("^\n"))],
+	  [ "TIMEZONE=",	`timezone (String("^\n"))],
+	  [ "MEDIA=",		`media (String("^\n"))],
+	  [ "AUTO_FDISK_DISK",	Sequence (Whitespace (), `autofdiskdisk (List(String("^\n"), Whitespace ())))],
+	  [ "AUTO_FDISK",       Sequence (Whitespace (), `autofdisk (String("^\n")))],
+	  [ "FSTAB_SEARCH",	Sequence (Whitespace (), `fstabsearch (String("^\n")))],
+	  [ "FSTAB_FORMAT",	Sequence (Whitespace (), `fstabformat (List(String("^\n"), Whitespace ())))],
+	  [ "AUTO_FDISK_TABLE",	Sequence (Whitespace (), `autofdisktable (String("^\n")))],
+	  [ "FAST_INSTALL",	Sequence (Whitespace (), `fastinstall (String("^\n")))],
+	  [ "AUTO_LILO",	Sequence (Whitespace (), `autolilo (String("^\n")))],
+	  [ "LILO_DOS_NAME",	Sequence (Whitespace (), `lilodosname (String("^\n")))],
+	  [ "AUTO_NET",		Sequence (Whitespace (), `autonet (String("^\n")))],
+	  [ "AUTO_NAME",	Sequence (Whitespace (), `autoname (String("^\n")))],
+	  [ "AUTO_NAMESERVER",	Sequence (Whitespace (), `autonameserver (String("^\n")))],
+	  [ "AUTO_SERVICES",	Sequence (Whitespace (), `autoservices (String("^\n")))],
+	  [ "AUTO_INSTALL",	Sequence (Whitespace (), `autoinstall (String("^\n")))],
+	  [ "ADD_INSTALL",	Sequence (Whitespace (), `addinstall (String("^\n")))],
+	  [ "INSTALL_WAIT",	Sequence (Whitespace (), `installwait (String("^\n")))],
+	  [ "AUTO_KERNEL",	Sequence (Whitespace (), `autokernel (String("^\n")))],
+	  [ "CDROM_DEVICE",	Sequence (Whitespace (), `cdromdevice (String("^\n")))],
+	  [ "NO_ASK_SWAP",	Sequence (Whitespace (), `noaskswap (String("^\n")))],
+	  [ "END_MESSAGE",	Sequence (Whitespace (), `endmessage (String("^\n")))],
+	  [ "END_STARTUP",	Sequence (Whitespace (), `endstartup (String("^\n")))],
+	  [ "CHECK_DEPENDENCY",	Sequence (Whitespace (), `checkdependency (String("^\n")))],
+	  [ "NEVER_STOP",	Sequence (Whitespace (), `neverstop (String("^\n")))],
+	  [ "PRE_INSTALL",	Sequence (Whitespace (), `preinstall (String("^\n")))],
+	  [ "POST_INSTALL",	Sequence (Whitespace (), `postinstall (String("^\n")))],
+	  [ "LAST_INSTALL",	Sequence (Whitespace (), `lastinstall (String("^\n")))],
+	  [ "PRE_SCRIPT",	Sequence (Whitespace (), `prescript (String("^\n")))],
+	  [ "POST_SCRIPT",	Sequence (Whitespace (), `postscript (String("^\n")))],
+	  [ "LAST_SCRIPT",	Sequence (Whitespace (), `lastscript (String("^\n")))],
+	  [ "ASK_BOOTDISK",	Sequence (Whitespace (), `askbootdisk (String("^\n")))],
+	  [ "LDAPHOST",		Sequence (Whitespace (), `ldaphost (String("^\n")))],
+	  [ "LDAPPORT",		Sequence (Whitespace (), `ldapport (String("^\n")))],
+	  [ "LDAPBINDDN",	Sequence (Whitespace (), `ldapbinddn (String("^\n")))],
+	  [ "LDAPBINDPW",	Sequence (Whitespace (), `ldapbindpw (String("^\n")))],
+	  [ "LDAPBASEDN",	Sequence (Whitespace (), `ldapbasedn (String("^\n")))],
+	  [ "LDAPTARGET",	Sequence (Whitespace (), `ldaptarget (String("^\n")))],
+	  [ Sequence ("RC_CONFIG_0", Whitespace(), String ("^\t ")),
+				Sequence (Whitespace (), Name (Match()), Value (List(String("^ \t\n"), Whitespace ())))],
+	  [ Sequence ("RC_CONFIG_1", Whitespace(), String ("^\t ")),
+				Sequence (Whitespace (), Name (Match()), Value (List(String("^ \t\n"), Whitespace ())))],
+	  [ "",			`unknown (String ("^\n"))]
+	),
+	Continue ("\n")
+      ))
+   )
+)

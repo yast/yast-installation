@@ -1,0 +1,186 @@
+/**
+ *
+ * Author:	Klaus Kämpf <kkaempf@suse.de>
+ *		Stefan Hundhammer <sh@suse.de>
+ *
+ * Purpose:	This module ask about do the installation or not,
+ *
+ * $Id$
+ */
+{
+    textdomain "general";
+
+    import "Wizard";
+    import "Mode";
+    import "AutoInstall";
+
+    include "ui/common_messages.ycp";
+
+    if (Mode::autoinst)
+    {
+	if (!AutoInstall::Confirm)
+	{
+	    Wizard::SetEasyInstallationStep( EasyInstallationStepDescriptions(), 3 );
+	    return `next;
+	}
+    }
+
+    if ( Args(2) )	// going backwards?
+    {
+	// This module can only be reached in backward direction if any of the
+	// subsequent modules failed - creating the partitions, formatting etc.
+	//
+	// None of the subsequent interactive dialogs are allowed to have a
+	// `next button enabled, so there is no chance of getting here manually.
+	
+	return `back;
+    }
+
+
+    /**
+     * Returns a term containing the final installation confirmation dialog.
+     * @return confirmation dialog as term
+     **/
+    define term confirmInstallationDialog() ``{
+
+
+	// Confirmation message:
+	//
+	// Ask user if he really wishes to begin the installation, i.e.  format
+	// hard disk partitions and install software. Before this point,
+	// nothing has been changed - now we really mean business.
+	//
+	// `Yes' will prepare (format) the disk and install the software.
+	// `No' will go back; further config steps are possible.
+	// Translators notice: Line length < 48 chars.
+	
+	string confirmation_message = _("Warning:
+YaST2 has obtained all the information
+required to install SuSE Linux.
+The installation will be carried out according
+to settings made in the previous dialogs.
+To commit the installation and all choices made
+so far, choose \"Yes\".  Choose \"No\" to return
+to the previous dialog.
+
+Start installation?
+");
+	
+	term dialog = `HBox(
+			    `HSpacing(1),
+			    `VBox(
+				  `VSpacing(0.2),
+				
+				  `Heading( confirmation_message ),
+				  `HBox(
+					// PushButton: Allright, really start installation
+					`PushButton(`id(`yes),  _("&Yes, install")),
+					`HStretch(),
+					`PushButton(`id(`no), `opt(`default), NoButtonLabel() )
+					),
+				  `VSpacing(0.2)
+				  ),
+			    `HSpacing(1)
+			    );
+
+	return dialog;
+    };
+
+
+
+    // <NOTUSED>
+
+    /**
+     * Save the current settings to floppy.
+     * Currently not used.
+     **/
+    define void saveSettingsToFloppy() ``{
+	
+	string floppy_path = "/media/floppy";
+	WFM::Execute (.local.umount, floppy_path); // Just for safety
+
+	// Yes/No MsgBox; default: Yes
+	while (UI::YesNoPopup(_("The current configuration settings will be saved
+on a floppy disk.  Please insert a formatted floppy.
+
+Write data to floppy disk now?
+")))
+	{
+
+	    // mount floppy_path by WFM, so use Execute() and Write()
+
+	    if ( WFM::Execute (.local.mount, [StorageDevices::FloppyDevice, floppy_path]) )
+	    {
+		boolean success = WFM::Write (.local.ycp, floppy_path+"/settings.ycp");
+
+		WFM::Execute (.local.umount, floppy_path);
+		if (success)
+		{
+		    // msgbox
+		    // data saved to floppy disk
+		    UI::MessagePopup(_("Your settings have been written to the floppy disk."));
+		    break;
+		}
+		else
+		{
+		    UI::MessagePopup(_("Error saving settings to the floppy disk.
+Please verify that the floppy is formatted
+and that the write protection is removed.
+"));
+		}
+	    }
+	    else
+	    {
+		any ret = UI::AnyQuestionPopup3(_("Could not find a formatted floppy disk."),
+						_("Check for a floppy disk
+in the correct drive.
+Is the disk formatted and verified?
+"), UI::RetryButtonLabel(), UI::CancelButtonLabel(), _("&Format floppy"), `focus_yes);
+
+		if (ret == `no)		// cancel
+		{
+		    break;
+		}
+		else if (ret == `retry)	// format floppy
+		{
+		    UI::OpenDialog( `opt( `decorated ),
+				    `HBox(`HSpacing(1), `Label(UI::PleaseWaitMsg()), `HSpacing(1)));
+		    SCR::Execute (.target.bash, "/sbin/mkdosfs " + StorageDevices::FloppyDevice);
+		    UI::CloseDialog();
+		}
+		// default: retry loop
+	    }
+	}
+    };
+    // </NOTUSED>
+
+
+
+    //
+    // main()
+    //
+
+    UI::OpenDialog(`opt(`decorated, `warncolor), confirmInstallationDialog() );
+
+    symbol  button	= nil;
+    boolean confirmed	= false;
+
+    repeat
+    {
+	button = UI::UserInput();
+	
+	if ( button == `yes )
+	{
+	    confirmed = true;
+	}
+    } until ( button == `yes || button == `no );
+
+    UI::CloseDialog();
+
+    if ( confirmed )
+    {
+	Wizard::SetEasyInstallationStep( EasyInstallationStepDescriptions(), 3 );
+    }
+
+    return confirmed ? `next : `back;
+}
