@@ -476,6 +476,10 @@ fi
 
 logmeminfo "2"
 
+if [ "$SPLASH" = yes -a -x /sbin/splash -a -n "$SPLASHCFG" ] ; then
+  /sbin/splash -t "YaST running"
+fi
+
 if [ "$server_running" ] ; then
   log "Starting: y2base \"$modulename\" $moduleargs qt $y2qt_args"
   y2base "$modulename" $moduleargs qt $y2qt_args
@@ -490,6 +494,7 @@ if [ "$server_running" ] ; then
   done
 else
   log "X server did not start: using text mode"
+  test -f /proc/splash && echo verbose > /proc/splash
   (
     log "Starting: y2base \"$modulename\" '("no_x11")' $moduleargs ncurses"
     y2base "$modulename" '("no_x11")' $moduleargs ncurses
