@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Aug  9 19:37:28 CEST 2004 - nashif@suse.de
+
+- Enable locking of proposals in control file
+- Updated DTD for control file
+
+-------------------------------------------------------------------
 Thu Jul 29 10:10:04 CEST 2004 - nashif@suse.de
 
 - New variables for ui and language handling added to control file
