@@ -257,65 +257,26 @@
             <para>The following listing shows a typical installation
                 workflow:</para>
             <programlisting>
-                    &lt;workflows config:type="list"&gt;
-        &lt;workflow&gt;
-            &lt;!-- 'label' is what the user will see --&gt;
-	    &lt;label&gt;Base Installation&lt;/label&gt;
-            &lt;!-- default settings for all modules --&gt;
-            &lt;defaults&gt;
-                &lt;!-- arguments for the clients --&gt;
-                &lt;arguments&gt;false,false&lt;/arguments&gt;
-                &lt;!-- allowed architectures "all", "i386", "i386,ia64,x86_64"  --&gt;
-                &lt;archs&gt;all&lt;/archs&gt;
-            &lt;/defaults&gt;
-            &lt;stage&gt;initial&lt;/stage&gt;
-            &lt;mode&gt;installation,update&lt;/mode&gt;
-            &lt;modules  config:type="list"&gt;
-                &lt;module&gt;
-                    &lt;name&gt;info&lt;/name&gt;
-                    &lt;arguments&gt;false,true&lt;/arguments&gt;
-                &lt;/module&gt;
-                &lt;module&gt;
-                    &lt;name&gt;proposal&lt;/name&gt;
-                    &lt;arguments&gt;true,true,`ini&lt;/arguments&gt;
-	            &lt;label&gt;Installation Settings&lt;/label&gt;
-                &lt;/module&gt;
-                &lt;module&gt;
-                    &lt;name&gt;do_resize&lt;/name&gt;
-                    &lt;update config:type="boolean"&gt;false&lt;/update&gt;
-                    &lt;archs&gt;i386,x86_64,ia64&lt;/archs&gt;
-	            &lt;label&gt;Perform Installation&lt;/label&gt;
-                &lt;/module&gt;
-                &lt;module&gt;
-                    &lt;name&gt;prepdisk&lt;/name&gt;
-                    &lt;!-- Multiple modules with the same 'label' will be
-                         collapsed to one single user-visible step.
-                         The step is considered finished when the last module
-                         with the same 'label' is finished.  --&gt;
-	            &lt;label&gt;Perform Installation&lt;/label&gt;
-                &lt;/module&gt;
-                &lt;module&gt;
-                    &lt;name&gt;kickoff&lt;/name&gt;
-	            &lt;label&gt;Perform Installation&lt;/label&gt;
-                &lt;/module&gt;
-                &lt;module&gt;
-                    &lt;name&gt;rpmcopy&lt;/name&gt;
-	            &lt;label&gt;Perform Installation&lt;/label&gt;
-                &lt;/module&gt;
-                &lt;module&gt;
-                    &lt;name&gt;finish&lt;/name&gt;
-	            &lt;label&gt;Perform Installation&lt;/label&gt;
-                &lt;/module&gt;
-            &lt;/modules&gt;
-        &lt;/workflow&gt;
 
+            <xi:include href="examples/workflow.xml" parse="text"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
             </programlisting>
 
 
         </section>
         <section id="control_proposals">
             <title>Proposals</title>      
-            <para>FIXME</para>
+            <para>Part of the installation workflow are proposal screens, which
+                consists of group of related configuration settings. For
+                example <emphasis>Network</emphasis>,
+                <emphasis>Hardware</emphasis> and the initial
+                <emphasis>Installation</emphasis> proposal.
+            </para>
+            <para>
+                If you with for some reason to add or modify a proposal, which
+                is discourged because of configuration dependencies, then this
+                would be possible using the control file.
+            </para>
         </section>
         <section id="control_globals">
             <title>Installation and Product Variables</title>
@@ -349,14 +310,8 @@
             <programlisting>
                 
 
-    &lt;globals&gt;
-        &lt;enable_autologin config:type="boolean"&gt;true&lt;/enable_autologin&gt;
-        &lt;language&gt;de_DE&lt;/language&gt;
-        &lt;timezone&gt;Canada/Eastern&lt;/timezone&gt;
-        &lt;use_desktop_scheduler config:type="boolean"&gt;true&lt;/use_desktop_scheduler&gt;
-        &lt;io_scheduler&gt;as&lt;/io_scheduler&gt;
-    &lt;/globals&gt;
-
+            <xi:include href="examples/globals.xml" parse="text"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
 
             </programlisting>
 
@@ -399,9 +354,9 @@
             </para>
             <programlisting>
 
-                for i in `grep -l baseconf SUSE-SLES-Version-9/CD1/suse/setup/descr/* `; do 
-                basename $i .sel; 
-                done
+for i in `grep -l baseconf SUSE-SLES-Version-9/CD1/suse/setup/descr/* `; do 
+  basename $i .sel; 
+done
 
             </programlisting>
             <para>
@@ -409,10 +364,10 @@
             </para>
             <programlisting>
 
-                Full-Installation
-                Minimal+X11
-                Minimal
-                default
+Full-Installation
+Minimal+X11
+Minimal
+default
 
             </programlisting>
             <para>
@@ -945,67 +900,16 @@
                         will be on that disk.
                     </para>
                     <programlisting>
-                                &lt;partitions config:type="list"&gt;
-            &lt;partition&gt;
-                &lt;disk config:type="integer"&gt;3&lt;/disk&gt;
-                &lt;mount&gt;/var&lt;/mount&gt;
-                &lt;percent config:type="integer"&gt;100&lt;/percent&gt;               
-            &lt;/partition&gt;
-            &lt;partition&gt;
-                &lt;disk config:type="integer"&gt;2&lt;/disk&gt;                                
-                &lt;mount&gt;/&lt;/mount&gt;
-                &lt;size&gt;1G&lt;/size&gt;
-            &lt;/partition&gt;
-            &lt;partition&gt;
-                &lt;disk config:type="integer"&gt;2&lt;/disk&gt;                                
-                &lt;mount&gt;/usr&lt;/mount&gt;
-                &lt;size&gt;2G&lt;/size&gt;
-            &lt;/partition&gt;
-            &lt;partition&gt;
-                &lt;disk config:type="integer"&gt;2&lt;/disk&gt;                                
-                &lt;mount&gt;/opt&lt;/mount&gt;
-                &lt;size&gt;2G&lt;/size&gt;
-            &lt;/partition&gt;
-           &lt;partition&gt;
-                &lt;disk config:type="integer"&gt;1&lt;/disk&gt;
-                &lt;mount&gt;/home&lt;/mount&gt;
-                &lt;percent config:type="integer"&gt;100&lt;/percent&gt;               
-            &lt;/partition&gt;       
-        &lt;/partitions&gt;
+                    <xi:include href="examples/partitions.xml" parse="text"
+                        xmlns:xi="http://www.w3.org/2001/xinclude"/>
                     </programlisting>
 
                 </example>
 
                 <para>A more complete example with other options is hown below:</para>
                 <programlisting>
-                        &lt;partitioning&gt;        
-        &lt;partitions config:type="list"&gt;
-            &lt;partition&gt;
-                &lt;disk config:type="integer"&gt;2&lt;/disk&gt;
-                &lt;mount&gt;swap&lt;/mount&gt;
-                &lt;size&gt;auto&lt;/size&gt;
-            &lt;/partition&gt;
-            &lt;partition&gt;
-                &lt;disk config:type="integer"&gt;1&lt;/disk&gt;
-                &lt;fstopt&gt;defaults&lt;/fstopt&gt;
-                &lt;fsys&gt;reiser&lt;/fsys&gt;
-                &lt;increasable config:type="boolean"&gt;true&lt;/increasable&gt;
-                &lt;mount&gt;/&lt;/mount&gt;
-                &lt;size&gt;2gb&lt;/size&gt;
-            &lt;/partition&gt;
-            &lt;partition&gt;
-                &lt;disk config:type="integer"&gt;2&lt;/disk&gt;
-                &lt;fstopt&gt;defaults,data=writeback,noatime&lt;/fstopt&gt;
-                &lt;fsys&gt;reiser&lt;/fsys&gt;
-                &lt;increasable config:type="boolean"&gt;true&lt;/increasable&gt;
-                &lt;mount&gt;/var&lt;/mount&gt;
-                &lt;pct config:type="integer"&gt;100&lt;/pct&gt;
-                &lt;size&gt;2gb&lt;/size&gt;
-            &lt;/partition&gt;
-        &lt;/partitions&gt;
-        &lt;prefer_remove config:type="boolean"&gt;true&lt;/prefer_remove&gt;
-        &lt;remove_special_partitions config:type="boolean"&gt;false&lt;/remove_special_partitions&gt;
-    &lt;/partitioning&gt;
+                <xi:include href="examples/partitions2.xml" parse="text"
+                    xmlns:xi="http://www.w3.org/2001/XInclude"/>
                 </programlisting>
 
 
@@ -1038,19 +942,8 @@
 
             <programlisting>
                 
-                &lt;module&gt;
-                    &lt;name&gt;info&lt;/name&gt;
-                    &lt;arguments&gt;false,true&lt;/arguments&gt;
-                    &lt;prescript&gt;
-                        &lt;interpreter&gt;shell&lt;/interpreter&gt;
-                        &lt;source&gt;
-&lt;![CDATA[#!/bin/sh
-touch /tmp/anas
-echo anas &gt; /tmp/anas
-]]&gt;
-                        &lt;/source&gt;
-                    &lt;/prescript&gt;
-                &lt;/module&gt;
+            <xi:include href="examples/scripts.xml" parse="text"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
 
             </programlisting>
 
