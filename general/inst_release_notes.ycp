@@ -30,17 +30,17 @@
 	string tmp = "/usr/share/doc/release-notes/RELEASE-NOTES.%1.rtf";
 
 	file = sformat (tmp, Language::language);
-	text = SCR::Read (.target.string, [file, ""]);
+	text = (string)SCR::Read (.target.string, [file, ""]);
 	if (text != "")
 	    return true;
 
 	file = sformat (tmp, substring (Language::language, 0, 2));
-	text = SCR::Read (.target.string, [file, ""]);
+	text = (string)SCR::Read (.target.string, [file, ""]);
 	if (text != "")
 	    return true;
 
 	file = sformat (tmp, "en");
-	text = SCR::Read (.target.string, [file, ""]);
+	text = (string)SCR::Read (.target.string, [file, ""]);
 	if (text != "")
 	    return true;
 

@@ -15,8 +15,8 @@
     import "Packages";
     import "Storage";
 
-    string func  = WFM::Args(0);
-    map    param = WFM::Args(1);
+    string func  = (string) WFM::Args(0);
+    map    param = (map) WFM::Args(1);
     map    ret   = $[];
 
     if ( func == "MakeProposal" )
@@ -65,7 +65,7 @@
 
 	while ( result == `again )
 	{
-	    result = WFM::CallFunction (`inst_sw_select (true, true));
+	    result = (symbol) WFM::CallFunction ("inst_sw_select", [true, true]);
 	}
 
 	// Fill return map

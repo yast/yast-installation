@@ -22,7 +22,7 @@
 .etc.install_inf
 
 `ag_ini(
-    IniAgent( "/etc/install.inf",
+    `IniAgent( "/etc/install.inf",
 	$[
 	    "options" : [ "read_only", "global_values", "flat" ],
 	    "comments" : [ "^#.*", "^[ \t]*$", ],

@@ -17,8 +17,8 @@
     import "RootPart";
     import "Update";
 
-    string func  = WFM::Args(0);
-    map    param = WFM::Args(1);
+    string func  = (string) WFM::Args(0);
+    map    param = (map) WFM::Args(1);
     map    ret   = $[];
 
     if ( func == "MakeProposal" )
@@ -65,7 +65,7 @@
 	boolean tmp1 = Mode::installation;
 	boolean tmp2 = Mode::update;
 
-	symbol result = WFM::CallFunction (`inst_mode (`AskUser ));
+	symbol result = (symbol) WFM::CallFunction ("inst_mode", [`AskUser]);
 
 	boolean mode_changed = tmp1 != Mode::installation || tmp2 != Mode::update;
 
