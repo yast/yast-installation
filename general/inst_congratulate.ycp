@@ -17,29 +17,40 @@
     import "Popup";
     import "Label";
     import "GetInstArgs";
+    import "ProductControl";
 
+    map argmap = GetInstArgs::argmap();
 
     // show button "start control center"?
-    boolean show_y2cc_button = true;
+    boolean show_y2cc_checkbox = true;
+    if (argmap["show_y2cc_checkbox"]:"yes" == "no" 
+            && haskey(argmap, "show_y2cc_checkbox"))
+        show_y2cc_checkbox = false;
+
+
 
     map display = UI::GetDisplayInfo();
-
     if (!display["TextMode"]:true)
     {
 	if (!Pkg::IsProvided ("yast2-control-center"))
 	{
-	    show_y2cc_button = false;
+	    show_y2cc_checkbox = false;
 	}
     }
 
     integer space = display["TextMode"]:true ? 1 : 3;
 
-    // Check box: Should the YaST2 control center automatically
-    // be started after this part of the installation is done?
-    // Translators: About 40 characters max,
-    // use newlines for longer translations.
-    term check_box_start_y2cc = `CheckBox (`id(`start_y2cc),
-					   _("&Start YaST Control Center"), false);
+    term check_box_start_y2cc = `Empty();
+    if (show_y2cc_checkbox)
+    {
+        // Check box: Should the YaST2 control center automatically
+        // be started after this part of the installation is done?
+        // Translators: About 40 characters max,
+        // use newlines for longer translations.
+        check_box_start_y2cc = `CheckBox (`id(`start_y2cc),
+                                           _("&Start YaST Control Center"), false);
+    }
+
 
     // caption for dialog "Congratulation Dialog"
     string caption = _("Installation Completed");
@@ -72,6 +83,7 @@ After clicking <b>Finish</b>, you can log in to the system.</p>
 			   `VSpacing (2)
 			   );
 
+    string help_file = "";
     // help 1/4 for dialog "Congratulation Dialog"
     string help = _("<p>Your system is ready for use.</p>") +
 
