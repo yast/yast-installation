@@ -209,17 +209,17 @@ Please wait while the base system is being installed.
 
     // --------------------------------------------------------------
     // --------------------------------------------------------------
-
-    WFM::Execute (.local.bash, "/bin/cp /usr/lib/liby2util* " + Installation::destdir + "/usr/lib");
-    WFM::Execute (.local.bash, "/bin/cp /usr/lib/liby2pm* " + Installation::destdir + "/usr/lib");
-    WFM::Execute (.local.bash, "/bin/cp /usr/lib/libycp.* " + Installation::destdir + "/usr/lib");
-    WFM::Execute (.local.bash, "/bin/cp /usr/lib/liby2.* " + Installation::destdir + "/usr/lib");
-    WFM::Execute (.local.bash, "/bin/cp /usr/lib/libscr.* " + Installation::destdir + "/usr/lib");
-    WFM::Execute (.local.bash, "/bin/cp /usr/lib/libyui.* " + Installation::destdir + "/usr/lib");
-
-    WFM::Execute (.local.bash, "/bin/cp -a /usr/share/YaST2/* " + Installation::destdir + "/usr/share/YaST2");
-    WFM::Execute (.local.bash, "/bin/cp -a /usr/lib/YaST2/* " + Installation::destdir + "/usr/lib/YaST2");
-
+//
+//    WFM::Execute (.local.bash, "/bin/cp /usr/lib/liby2util* " + Installation::destdir + "/usr/lib");
+//    WFM::Execute (.local.bash, "/bin/cp /usr/lib/liby2pm* " + Installation::destdir + "/usr/lib");
+//    WFM::Execute (.local.bash, "/bin/cp /usr/lib/libycp.* " + Installation::destdir + "/usr/lib");
+//    WFM::Execute (.local.bash, "/bin/cp /usr/lib/liby2.* " + Installation::destdir + "/usr/lib");
+//    WFM::Execute (.local.bash, "/bin/cp /usr/lib/libscr.* " + Installation::destdir + "/usr/lib");
+//    WFM::Execute (.local.bash, "/bin/cp /usr/lib/libyui.* " + Installation::destdir + "/usr/lib");
+//
+//    WFM::Execute (.local.bash, "/bin/cp -a /usr/share/YaST2/* " + Installation::destdir + "/usr/share/YaST2");
+//    WFM::Execute (.local.bash, "/bin/cp -a /usr/lib/YaST2/* " + Installation::destdir + "/usr/lib/YaST2");
+//
     // --------------------------------------------------------------
     // --------------------------------------------------------------
 
