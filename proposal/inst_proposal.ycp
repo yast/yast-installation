@@ -177,7 +177,8 @@
 		prop_map = submod_make_proposal( submod, force_reset, language_changed );
 	    }
 
-	    if ( prop_map["language_changed"]:false )
+	    if ( prop_map["language_changed"]:false
+		 && ! skip_the_rest)
 	    {
 		skip_the_rest = true;
 		retranslate_proposal_dialog();
@@ -196,7 +197,7 @@
 		skip_the_rest = true;
 	    }
 	});
-
+	
 	UI::NormalCursor();
     };
 
