@@ -336,20 +336,37 @@
 	{
 	    // Module list for new installation proposal
 
-	    submodules = load_submodules_list( "installation-proposals.ycp",
-					       [
-						// Fallback list
-						"proposal_mode",
-						"proposal_keyboard",
-						"proposal_mouse",
-						"proposal_partitions",
-						"proposal_software",
-						"proposal_bootloader",
-						"proposal_timezone",
-						"proposal_language",
+	    if (Arch::S390)
+	    {
+		// S390 lack some hardware (e.g. keyboard and mouse)
 
-					       ]
-					       );
+		submodules = load_submodules_list( "installation-proposals-s390.ycp",
+						   [
+						    // Fallback list
+						    "proposal_mode",
+						    "proposal_partitions",
+						    "proposal_software",
+						    "proposal_timezone",
+						    "proposal_language",
+						    ]
+						   );
+	    }
+	    else
+	    {
+		submodules = load_submodules_list( "installation-proposals.ycp",
+						   [
+						    // Fallback list
+						    "proposal_mode",
+						    "proposal_keyboard",
+						    "proposal_mouse",
+						    "proposal_partitions",
+						    "proposal_software",
+						    "proposal_bootloader",
+						    "proposal_timezone",
+						    "proposal_language",
+						    ]
+						   );
+	    }
 	}
 	else if ( Mode::cont )
 	{

@@ -4,6 +4,7 @@
 
 ydata_DATA = 					\
 	installation-proposals.ycp		\
+	installation-proposals-s390.ycp		\
 	hw-config-proposals-home-pc.ycp		\
 	hw-config-proposals-networked-pc.ycp	\
 	hw-config-proposals-sparc.ycp

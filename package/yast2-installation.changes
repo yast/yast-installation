@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jul 10 15:51:00 CEST 2002 - arvin@suse.de
+
+- omit keyboard, mouse and bootloader in initial proposal on s390
+- fixed location of ycp data files
+
+-------------------------------------------------------------------
 Thu Jul 04 16:10:45 CEST 2002 - arvin@suse.de
 
 - moved non binary files to /usr/share/YaST2
