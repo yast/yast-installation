@@ -103,48 +103,14 @@ Please wait while the base system is being installed.
     // progress stage title
     Progress::Title (_("Configuring system for initial boot."));
 
-    // Tell linuxrc where root is
-    // Tell linuxrc to reboot on an SMP system
-    // also reboot on x86 if the x11 server was unknown
-    //   and defaulted to VGA16 (no fbdev !)
-    //
-    // (see inst_pkg_toinstall). Since running /dev/fb (fbdev) and vga16
-    // clash, we do a hard reboot to turn fbdev off. Oh well ...
-
     // collect data for linuxrc, will be written to /etc/yast.inf
     map linuxrc = $[];
 
-    if (Storage::CheckForLvmRootFs()
-	|| Storage::CheckForMdRootFs()
-	|| Product::certify_cd
-	|| (SCR::Read (.etc.install_inf.Reboot) == "1")
-	|| (Arch::i386
-	    && Display::xserver_is_unknown
-	    && !Display::has_fbdev))
-    {
-	y2debug (".etc.install_inf.Reboot: %1", SCR::Read (.etc.install_inf.Reboot));
-	y2debug ("xserver_is_unknown: %1", Display::xserver_is_unknown);
-	y2debug ("has_fbdev: %1", Display::has_fbdev);
-
-	linuxrc["Root"] = "reboot";
-	linuxrc["RebootMsg"] = "1";
-	Mode::hardBoot = true;
-    }
-    else
-    {
-	// might be changed later when evaluating Kernel::switched !
-
-	linuxrc["RebootMsg"] = "0";
-	if ( Mode::update )
-	{
-	    linuxrc["Root"] = Update::selectedRootPartition;
-	}
-	else
-	{
-	    linuxrc["Root"] = Bootloader::getRootDevice ();
-	}
-    }
-    y2milestone ("%1 boot", (Mode::hardBoot)?"Hard":"Soft");
+    // always do hard reboot to ensure that all stuff is initializes
+    // correctly. but no reboot message form linuxrc.
+    Mode::hardBoot = true;
+    linuxrc["Root"] = "reboot";
+    linuxrc["RebootMsg"] = "0";
 
     // Copy pre-install scripts to /var/adm/scripts and logs
     // to /var/adm/inst-log
@@ -262,17 +228,7 @@ Please wait while the base system is being installed.
     list ide_recorders = StorageDevices::ProbeIDERecorders ();
     Kernel::IDERecorders (ide_recorders);
 
-    // check if IDERecorders asked for reboot
-    if ( Kernel::switched )
-    {
-	linuxrc["Root"] = "reboot";
-	linuxrc["RebootMsg"] = "1";
-
-	Mode::hardBoot = true;
-    }
-
     // Override linuxrc settings in autoinst mode
-
     if ( Mode::autoinst )
     {
 	linuxrc = AutoInstall::Linuxrc(linuxrc);
@@ -569,9 +525,8 @@ After shutdown, reload the system
 with the load address of your root DASD.
 ");
 	}
-	else if (!Mode::hardBoot)
+	else
 	{
-
 	    // Final message after all packages from CD1 are installed
 	    // and we're ready to start (boot into) the installed system
 	    // Message that will be displayed along with information
@@ -589,8 +544,9 @@ with the load address of your root DASD.
     Misc::WriteYaSTInf (linuxrc);
 
     //--------------------------------------------------------------
-    // Install bootloader always - #23018
-    Bootloader::Write ();           // install boot manager
+    // Install bootloader (always, see #23018)
+    // should also set Misc::boot_msg appropriate
+    Bootloader::Write ();
 
     // --------------------------------------------------------------
     // write network settings to installed system
@@ -629,19 +585,10 @@ with the load address of your root DASD.
     // Check if there is a message left to display
     // and display it, if necessary
 
-    if ( size( Misc::boot_msg ) > 0 )
+    if (size (Misc::boot_msg) > 0 && !Mode::autoinst)
     {
-	if ( ! Mode::autoinst		// Don't overwrite autoinst default values
-	     && ! Mode::hardBoot )	// Leave popup open when hard reboot
-	{
-	    // Set timeout for boot message
-	    Report::DisplayMessages(true, 10);
-	}
-
-	// workaround to avoid system lookup with UI messages (FIXME/TODO)
-	if ( ! Mode::autoinst )
-		Report::Message(Misc::boot_msg);
-
+	Report::DisplayMessages (true, 10);
+	Report::Message (Misc::boot_msg);
 	Misc::boot_msg = "";
     }
 

@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb 21 11:30:37 CET 2003 - arvin@suse.de
+
+- always do hard reboot (bug #23903)
+
+-------------------------------------------------------------------
 Thu Feb 20 11:39:23 CET 2003 - arvin@suse.de
 
 - use title-style capitalization for menu names (bug #23848)
