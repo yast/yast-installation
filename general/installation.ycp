@@ -243,15 +243,15 @@
 		|| (Mode::boot == "ftp"))
 	    {
 		string netdev = SCR::Read (.etc.install_inf.Netdevice);
-		if (isnil (netdev)) netdev = "eth0";
+		if (netdev == nil) netdev = "eth0";
 
 		string ipaddr = SCR::Read (.etc.install_inf.IP);
-		if (isnil (ipaddr)) ipaddr = "";
+		if (ipaddr == nil) ipaddr = "";
 
 		string ifconfig = "/sbin/ifconfig " + netdev + " " + ipaddr;
 
 		string netmask = SCR::Read (.etc.install_inf.Netmask);
-		if (!isnil (netmask) && netmask != "")
+		if (netmask != nil && netmask != "")
 		{
 		    ifconfig = ifconfig + " netmask " + netmask;
 		}
@@ -259,7 +259,7 @@
 		SCR::Execute (.target.bash, ifconfig);
 
 		string gateway = SCR::Read (.etc.install_inf.Gateway);
-		if (!isnil (gateway) && gateway != "")
+		if (gateway != nil && gateway != "")
 		{
 		    ifconfig = "/sbin/route add default gw " + gateway;
 		    SCR::Execute (.target.bash, ifconfig);
