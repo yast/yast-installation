@@ -456,6 +456,7 @@ Please wait while the base system is being installed.
     // second phase of the installation can find it.
 
     InjectFile ("/etc/install.inf");
+    // just for debug so we can see the original install.inf later
     SCR::Execute(.target.bash, "/bin/cp /etc/install.inf /var/lib/YaST2");
 
     if ( Mode::update )
@@ -573,6 +574,13 @@ with the load address of your root DASD.
     if (AutoInstall::Bootloader["write_bootloader"]:true)
     {
 	Boot::Write ();		// install boot manager
+    }
+
+    // --------------------------------------------------------------
+    // write network settings to installed system
+    if (Arch::s390)
+    {
+	WFM::Execute (.local.bash,"/create_interface " + Installation::destdir);
     }
 
     // --------------------------------------------------------------
