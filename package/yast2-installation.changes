@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Apr 02 15:59:59 CEST 2004 - arvin@suse.de
+
+- finally changed license to GPL for good
+
+-------------------------------------------------------------------
 Thu Apr 01 11:34:10 CEST 2004 - arvin@suse.de
 
 - symmetricalized calls to inst_netsetup (bug #37763)
