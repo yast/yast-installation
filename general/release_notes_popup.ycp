@@ -58,7 +58,7 @@
     if (! load_release_notes ())
     {
 	// error report
-	Report::Error (_("Cannot loader release notes"));
+	Report::Error (_("Cannot load release notes"));
 	return nil;
     }
 
