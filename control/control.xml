@@ -12,7 +12,7 @@
     <!-- Force a selection (`fixed) to be used instead of automatically 
     Calculating the selection depending on space (`auto)  -->
     <software>
-        <selection_type config:type="symbol">fixed</selection_type>
+        <selection_type config:type="symbol">auto</selection_type>
         <base_selection>Minimal</base_selection>
         <addons config:type="list">
             <addon>X11</addon>
@@ -211,6 +211,7 @@
                 </module>
                 <module>
                     <name>root</name>	
+                    <arguments>false,true</arguments>
                 </module>
                 <module>
                     <name>proposal</name>	 		 
