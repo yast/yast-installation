@@ -564,9 +564,9 @@ with the load address of your root DASD.
 
     Misc::WriteYaSTInf (linuxrc);
 
-    // Dont't write bootloader if explicitly specified in autoinst configuration
-    // Default is to write bootloader configuration
-
+    //--------------------------------------------------------------
+    // Install bootloader always - #23018
+    Bootloader::Write ();           // install boot manager
 
     // --------------------------------------------------------------
     // write network settings to installed system
