@@ -104,8 +104,13 @@ eval `grep "^[[:space:]]*RC_LANG=" $langfile 2>/dev/null`
 # if an entry 'Console:  ....' exists in install.inf,
 # YaST runs on a console which is connected to a serial port
 if [ "$Console" ]; then
-    # don't use UTF-8 in case of a serial console
-    export LANG=$RC_LANG
+    if testutf8 ; [ $? = 2 ] ; then
+        # get rid of encoding and/or modifier
+        export LANG=${RC_LANG%%[.@]*}.UTF-8
+    else
+        # don't use UTF-8 in case of a serial console
+        export LANG=$RC_LANG
+    fi
 else
     # get rid of encoding and/or modifier
     export LANG=${RC_LANG%%[.@]*}.UTF-8

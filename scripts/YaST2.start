@@ -37,11 +37,19 @@ infofile=/content
 # if an entry 'Console:  ....' exists in install.inf,
 # YaST runs on a console which is connected to a serial port 
 if [ "$Console" ]; then
-    # don't use UTF-8 in case of a serial console
-    [ "$LANGUAGE" ] && LANG=$LANGUAGE
+    if testutf8 ; [ $? = 2 ] ; then
+        # append UTF-8
+        [ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}.UTF-8"
+        echo "utf8 console: $LANG" >>/var/log/YaST2/y2start.log
+    else
+        # don't use UTF-8 in case of a serial console
+        [ "$LANGUAGE" ] && LANG=$LANGUAGE
+        echo "non-utf8 console: $LANG" >>/var/log/YaST2/y2start.log
+    fi
 else
     # append UTF-8
     [ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}.UTF-8"
+    echo "utf8 console: $LANG" >>/var/log/YaST2/y2start.log
 fi
 
 # umount does not work with low memory since rootfs is still in use
