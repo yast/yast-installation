@@ -10,7 +10,7 @@
  *
  */
 {
-    UI( ``{
+    UI::{
 	textdomain "installation";
 
 	global define DisplayLogFile( string msg_text, any kind ) ``{
@@ -58,14 +58,14 @@
 	    CloseDialog();
 	    return (r);
 	};
-    });
+    };
 
 
     //
     // Popup display for logging
     //
 
-    UI( ``{
+    UI::{
 	textdomain "installation";
 	global define AskShowLog( ) ``{
 	    return AnyQuestionPopup(
@@ -77,6 +77,6 @@
 				    NoButtonLabel(),
 				    `focus_no );
 	};
-    });
+    };
 
 }
