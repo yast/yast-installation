@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Aug 10 15:21:56 CEST 2004 - nashif@suse.de
+
+- Add default label for proposals
+
+-------------------------------------------------------------------
 Tue Aug 10 14:31:34 CEST 2004 - mvidner@suse.cz
 
 - Fixed arguments for proposals (`initial)
