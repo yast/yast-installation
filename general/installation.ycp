@@ -41,35 +41,29 @@
     import "Label";
     import "Popup";
     import "Report";
-    import "Hooks";
+
 
     import "Linuxrc";
-
-    // ======================================================================
-
 
     /**
      * Re-translate static part of wizard dialog and other predefined messages
      * after language change
      */
     void retranslateWizardDialog()
-    {
-	y2debug( "Retranslating messages" );
+	{
+	    y2milestone( "Retranslating messages" );
 
-	// Make sure the labels for default function keys are retranslated, too.
-	// Using Label::DefaultFunctionKeyMap() from Label module.
-	UI::SetFunctionKeys( Label::DefaultFunctionKeyMap() );
+	    // Make sure the labels for default function keys are retranslated, too.
+	    // Using Label::DefaultFunctionKeyMap() from Label module.
+	    UI::SetFunctionKeys( Label::DefaultFunctionKeyMap() );
 
-	// Activate language changes on static part of wizard dialog
+	    // Activate language changes on static part of wizard dialog
 
-	ProductControl::RetranslateWizardSteps();
-	Wizard::RetranslateButtons();
-	Wizard::SetFocusToNextButton();
-
-    }
-
-    // ======================================================================
-
+	    ProductControl::RetranslateWizardSteps();
+	    Wizard::RetranslateButtons();
+	    Wizard::SetFocusToNextButton();
+	    return;
+	}
 
     // properly set up initial language
 
@@ -99,19 +93,7 @@
 	UI::RecordMacro( Directory::logdir + "/macro_inst_cont.ycp" );
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////
-    ///////								    ///////
-    ///////		 OO   OO      OO      O	  OO	O		    ///////
-    ///////		 OO   OO      OO      O	  OO	O		    ///////
-    ///////		 O O O O     O	O     O	  O O	O		    ///////
-    ///////		 O  O  O    OOOOOO    O	  O  O	O		    ///////
-    ///////		 O     O   O	  O   O	  O   O O		    ///////
-    ///////		 O     M  O	   O  O	  O    OO		    ///////
-    ///////		 O     M  O	   O  O	  O    OO		    ///////
-    ///////								    ///////
-    ///////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////
+
 
     // Detect mode early to be able to setup steps correctly
     if (Stage::cont ())
@@ -154,10 +136,13 @@
     // UI::WizardCommand() can safely be called even if the respective UI
     // doesn't support the wizard widget, but for optimization it makes sense
     // to do expensive operations only when it is available.
+
     list<map> stage_mode = [$["stage": "initial" , "mode": wizard_mode ],
-			    $["stage": "continue", "mode": wizard_mode ],
-			    $["stage": "firstboot",  "mode": wizard_mode ]];
+                            $["stage": "continue", "mode": wizard_mode ],
+                            $["stage": "firstboot",  "mode": wizard_mode ]];
+
     ProductControl::AddWizardSteps(stage_mode);
+  
 
     // classified_user_settings contain secrets, like passwords ...
     // they should not be logged !
@@ -308,29 +293,7 @@ differ from those in the manual.
     }
 
 
-    //--------------------------------------------------------------------
 
-    //////////////////////////////////////////////////////////////////
-    // All settings the user does are saved into a map. The submodules
-    // are called as functions and thus have access to this variable.
-    // They return `next, `back, `cancel, `again or `auto.
-    // A submodule that can't be loaded (syntax error) returns nil.
-
-    any	    former_result = `next;
-    integer m = 0;			// current module
-
-    Wizard::SetFocusToNextButton();
-
-    y2debug("Starting Workflow with  \"%1\" \"%2\"",  Stage::stage (), Mode::mode ());
-    list<map> modules = ProductControl::getModules(
-            Stage::stage (),
-            Mode::mode (),
-            `enabled
-            );
-
-    map defaults = ProductControl::getModeDefaults(Stage::stage (), Mode::mode ());
-
-    y2debug("modules: %1", modules);
 
     // skip language dialog if selected in isolinux. (#37679)
     if (Stage::initial () && SCR::Read (.etc.install_inf.Language)!= nil)
@@ -343,174 +306,15 @@ differ from those in the manual.
         }
     }
 
-    if (size(modules) == 0 )
+
+    symbol ret = ProductControl::Run();
+
+    if (ret == `abort)
     {
-        y2error("No workflow found: %1", modules );
-        Report::Error(_("No Workflow defined for this installation mode."));
-        return `abort;
+	// tell linuxrc that we aborted
+	Linuxrc::WriteYaSTInf($["Aborted" : "1"]);
     }
-    while ((m >= 0) && (m < size(modules)))
-    {
-        map mod = modules[m]:$[];
-        term argterm = ProductControl::getTerm( mod, defaults);
-        boolean retranslate = mod["retranslate"]:false;
-
-        boolean   do_continue           = false;
-
-        if (!ProductControl::checkArch(mod, defaults))
-        {
-            y2milestone("continue (arch)..");
-            do_continue = true;
-        }
-
-        if (ProductControl::checkDisabled(mod))
-        {
-            y2milestone("continue (status)..");
-            do_continue = true;
-        }
-
-        if (!mod["update"]:true && Mode::update ())
-        {
-            y2milestone("continue (update)..");
-            do_continue = true;
-        }
-
-        if ( do_continue )
-        {
-            if      (former_result == `next) m = m + 1;
-            else                             m = m - 1;
-        }
-        if ( do_continue ) continue;
-
-        // proposal type
-        symbol type = `dummy;
-        if (haskey(mod, "type") && mod["type"]:""!="") 
-        {
-            type = symbolof(toterm(mod["type"]:"dummy"));
-            argterm = add (argterm, type);
-        }
-        y2milestone("Running module: %1 (%2)", argterm, m);
-        argterm = add (argterm, former_result == `back);
-
-        symbol module_name = symbolof( argterm );
-
-        if ( module_name != `inst_doit )        // This is only a popup
-        {
-            Wizard::ClearContents();
-        }
-
-       // --------------------------------------
-       // Call the wizard dialog
-
-        y2milestone( "Calling %1", argterm );
-        // entry hook, (""+symbol is a symbol->string conversion)
-        Hooks::Checkpoint (sformat("%1", module_name), true);
-        Hooks::Run (mod["name"]:"", true);
-
-        list args = [];
-
-        integer i = 0;
-        while (i < size(argterm)) 
-        {
-            any def = nil;
-            args[i] = argterm[i]:def;
-            i = i + 1;
-        }
-
-
-	UI::WizardCommand(`SetCurrentStep( mod["id"]:"" ) );
-        ProductControl::CurrentWizardStep = mod["id"]:"";
-
-        symbol result = (symbol) WFM::CallFunction (substring(sformat("%1", module_name), 1), args);
-
-        // Dont call hook scripts after installation is done. (#36831)
-        if (m < size(modules) - 1)
-        {
-            Hooks::Run (mod["name"]:"", false );
-        }
-        else
-        {
-            y2milestone("Not running hooks at the end of the installation");
-        }
-
-        // This should be safe (#36831)
-        Hooks::Checkpoint ( mod["name"]:"", false);          // exit hook
-
-        if ( retranslate )   // language change very likely
-        {
-            retranslateWizardDialog();
-            retranslate = false;
-        }
-
-        // If the module return nil, something basic went wrong.
-        // We show a stub dialog instead.
-        if (result == nil)
-        {
-            /**
-             * If workflow module is marked as optional, skip if it returns nil,
-             * For example, if its not installed.
-             */
-            if (mod["optional"]:false)
-            {
-                y2milestone("Skipping optional %1", symbolof(argterm) );
-                m = m + 1;
-                continue;         
-            }
-
-            any r = nil;
-            r = Popup::ModuleError(sformat("The module %1 does not work.", symbolof(argterm)));
-            if      (r == `next)   m = m + 1;
-            else if (r == `back)   m = m - 1;
-            else if (r != `again)
-            {
-                UI::CloseDialog();
-                return nil;
-            }
-            continue;
-        }
-
-        if      (result == `next)
-        {
-            m = m + 1;
-        }
-        else if (result == `back)
-        {
-            m = m - 1;
-        }
-        else if (result == `cancel)
-        {
-            break;
-        }
-        else if (result == `abort)
-        {
-            // Close Sources
-            Pkg::SourceFinishAll ();
-            Pkg::TargetFinish ();
-
-            // tell linuxrc that we aborted
-            Linuxrc::WriteYaSTInf($["Aborted" : "1"]);
-            break;
-        }
-        else if (result == `finish)
-        {
-            break;
-        }
-        else if (result == `again)
-        {
-            continue; // Show same dialog again
-        }
-        else if (result == `auto)
-        {
-            if (former_result != nil)
-            {
-                if      (former_result == `next) m = m + 1;
-                else if (former_result == `back) m = m - 1;
-            }
-            continue;
-        }
-        former_result = result;
-
-    }
+	    
 
     // re-enable automatic probing
     if (!Mode::test ())
@@ -536,7 +340,5 @@ differ from those in the manual.
     Pkg::TargetFinish();
 
     UI::CloseDialog();
-
-    if (m <= -1)	return `back;
-    else		return `next;
+    return ret;
 }

@@ -12,11 +12,13 @@
     textdomain "installation";
 
     import "ProductFeatures";
+    import "ProductControl";
     import "Mode";
     import "Service";
+    import "GetArgs";
 
     /* Called backwards */
-    if(WFM::Args(2) == true)
+    if(GetArgs::going_back())
 	return `auto;
 
     if ( !Mode::update () )
@@ -27,7 +29,7 @@
 		SCR::Read (.sysconfig.windowmanager.DEFAULT_WM);
 	    y2milestone ("Default WM: %1", default_wm);
 	    string local_only = ProductFeatures::fam_local_only;
-	    y2milestone ("Fam actiovation: %1", local_only);
+	    y2milestone ("Fam activation: %1", local_only);
 	    if (local_only == "always" || local_only == default_wm)
 	    {
 		y2milestone ("Setting fam to local_only");

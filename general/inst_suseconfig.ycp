@@ -26,10 +26,10 @@
     import "Popup";
     import "Wizard";
     import "Kernel";
+    import "GetArgs";
 
-
-    if ( size( WFM::Args() ) > 2 && WFM::Args(2) == true )	// going backwards?
-	return `auto;					// don't execute this once more
+    if ( GetArgs::going_back())	// going backwards?
+	return `auto;			// don't execute this once more
 
     boolean reread_inittab = false;
 
@@ -107,17 +107,10 @@ this process can take some time.</p>
 			  );
 
 
-    boolean back_ok = false;
-    boolean next_ok = false;
-    if (size (WFM::Args()) > 1)
-    {
-	back_ok = (boolean) WFM::Args(0);
-	next_ok = (boolean) WFM::Args(1);
-    }
     Wizard::SetContents(
 			  // Dialog title for SuSEconfig dialog
 			  _("Writing the system configuration"),
-			  contents, help, back_ok, next_ok);
+			  contents, help, GetArgs::enable_back(), GetArgs::enable_next());
     Wizard::DisableAbortButton();
 
 

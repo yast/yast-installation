@@ -18,24 +18,9 @@
     import "Label";
 
 
-    if (Mode::autoinst ())
-    {
-	if (!AutoinstConfig::Confirm)
-	{
-	    return `next;
-	}
-    }
+    if (Mode::autoinst () && !AutoinstConfig::Confirm)
+        return `next;
 
-    if ( (boolean) WFM::Args(2) )	// going backwards?
-    {
-	// This module can only be reached in backward direction if any of the
-	// subsequent modules failed - creating the partitions, formatting etc.
-	//
-	// None of the subsequent interactive dialogs are allowed to have a
-	// `next button enabled, so there is no chance of getting here manually.
-
-	return `back;
-    }
 
     define void ConfirmLicenses () {
 	if (Mode::autoinst ())

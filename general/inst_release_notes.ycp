@@ -18,6 +18,7 @@
     import "Mode";
     import "Misc";
     import "Stage";
+    import "GetArgs";
 
     /* filename of release notes */
     string file = "";
@@ -78,8 +79,8 @@
     string help = _("<p>Here are the <b>release notes</b> for the installed
 Linux system. They provide a brief summary of new features and changes.</p>");
 
-    Wizard::SetContents (caption, contents, help, (boolean)WFM::Args(0),
-            (boolean)WFM::Args(1));
+    Wizard::SetContents (caption, contents, help, GetArgs::enable_back(),
+            GetArgs::enable_next());
 
     // FIXME: richtext eats return key
     // UI::SetFocus (`id (`text));

@@ -9,6 +9,7 @@ module_DATA =			\
 	Installation.ycp	\
 	ProductControl.ycp	\
 	Product.ycp		\
+	GetArgs.ycp		\
 	Vendor.ycp
 
 EXTRA_DIST = $(module_DATA)

@@ -7,7 +7,6 @@ productdir = /var/lib/YaST2
 
 control_DATA = \
 	control.xml \
-	control.SLES.xml \
 	control.dtd
 
 product_DATA = ProductFeatures

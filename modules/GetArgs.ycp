@@ -1,0 +1,49 @@
+/**
+ * File:	modules/GetArgs.ycp
+ * Package:	yast2
+ * Summary:	Get client arguments
+ * Authors:	Anas Nashif <nashif@suse.de>
+ *
+ * $Id: Product.ycp 20401 2004-11-24 15:41:05Z nashif $
+ */
+
+
+{
+
+    module "GetArgs";
+
+    map args = $[];
+    void Init () {
+        /* Check arguments */
+        args = $[];
+        if(size(WFM::Args()) > 0 && is(WFM::Args(0), map))
+        {
+            args = (map) WFM::Args(0);
+        }
+    }
+
+    global boolean enable_next() {
+        Init();
+        return args["enable_next"]:false;
+    }
+
+    global boolean enable_back() {
+        Init();
+        return args["enable_back"]:false;
+    }
+
+    global boolean going_back() {
+        Init();
+        return args["going_back"]:false;
+    }
+    
+    global string proposal() {
+        Init();
+        return args["proposal"]:"";
+    }
+
+    global map argmap () {
+        Init();
+        return args;
+    }
+}

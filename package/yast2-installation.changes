@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Jan 24 16:29:32 CET 2005 - nashif@suse.de
+
+- Moved installation workflow routines out of installation.ycp
+- Adapted arguments of installation clients 
+- Enhanced control file and made it more readable (arguments of clients
+  are clearer now)
+
+-------------------------------------------------------------------
 Mon Jan 24 11:27:55 CET 2005 - ms@suse.de
 
 - fixed language environment (#49811)

@@ -22,14 +22,10 @@ STATUS        : Development
     import "Mode";
     import "Installation";
     import "Arch";
+    import "GetArgs";
 
-    boolean next = true;
-    boolean back = true;
-
-    if (!(boolean)WFM::Args(0))
-            back = false;
-    if (!(boolean)WFM::Args(1))
-            next = false;
+    boolean next = GetArgs::enable_next();
+    boolean back = GetArgs::enable_back();
 
     //==========================================
     // Check if X11 is installed

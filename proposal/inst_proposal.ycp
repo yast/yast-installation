@@ -27,6 +27,7 @@
     import "Popup";
     import "ProductControl";
     import "Language";
+    import "GetArgs";
 
     define void retranslate_proposal_dialog();
     define void load_matching_submodules_list();
@@ -37,18 +38,19 @@
     define void set_icon();
     define string help_text();
 
+
     // values used in defined functions
 
+    map 		proposal_properties = $[];
     list<string>	submodules = [];
     list<string>	submodules_presentation = [];
-    string              proptype = "";
     list<string>	locked_modules = [];
     list	titles     = [];
     map		submod2id  = $[];
     map		id2submod  = $[];
     map		link2submod = $[];
     boolean	have_blocker = false;
-    symbol	proposal_mode = nil;
+    string	proposal_mode = "";
 
     // skip if not interactive mode.
     if (!AutoinstConfig::Confirm && Mode::autoinst ()) {
@@ -426,7 +428,6 @@
 
     /**
      * Load a list of submodules matching the current internal states
-     * @param mode `initial, `network, or `hardware to indicate which list to use
      *
      * @return submodules_list	list of submodule names (strings)
      **/
@@ -437,12 +438,16 @@
         modules = ProductControl::getProposals (
                 Stage::stage (),
                 Mode::mode (),
-                proptype );
-        locked_modules = ProductControl::getLockedProposals ();
+                proposal_mode );
+	
+        locked_modules = ProductControl::getLockedProposals (Stage::stage (), Mode::mode (), proposal_mode);
+	
         y2milestone("getting proposals for stage: \"%1\" mode: \"%2\" proposal type: \"%3\"",
                 Stage::stage (),
                 Mode::mode (),
-                proptype );
+                proposal_mode );
+
+	proposal_properties = ProductControl::getProposalProperties(Stage::stage (), Mode::mode (), proposal_mode);
 
         if (size(modules) == 0 )
         {
@@ -491,16 +496,20 @@
     define void build_dialog () {
 
 	// headline for installation proposal
-	string headline = ProductControl::current_proposal_label;
+	
+	string headline = proposal_properties["label"]:"";
+
+	
         y2milestone("headline: %1", headline );
+	
         if ( headline == "")
         {
             headline =  _("Installation Settings");
         }
         else
         {
-            headline = dgettext( ProductControl::current_proposal_textdomain ,
-                    ProductControl::current_proposal_label );
+            headline = dgettext( ProductControl::getProposalTextDomain() ,
+				 headline );
         }
 
 	// icon for installation proposal
@@ -535,8 +544,8 @@
 
 	term vbox = nil;
 
-	if (proposal_mode == `initial || proposal_mode == `uml ||
-	    proposal_mode == `dirinstall)
+	if (proposal_mode == "initial" || proposal_mode == "uml" ||
+	    proposal_mode == "dirinstall")
 	{
 	    vbox = `VBox(
 			 // Help message between headline and installation proposal / settings summary.
@@ -565,7 +574,7 @@
 	}
 
 	Wizard::SetContents(headline, vbox, help_text(),
-			    (boolean) WFM::Args(0),	// have_back_button
+			    GetArgs::enable_back(),	// have_back_button
 			    false			// have_next_button
 			    );
 	set_icon();
@@ -632,9 +641,15 @@
     {
 	string icon = "software";
 
-	if 	( proposal_mode == `network		) icon = "network";
-	else if ( proposal_mode == `hardware		) icon = "printer";
-	// else if ( proposal_mode == `uml		) icon = "";
+	if ( proposal_mode == "network"	)
+	    icon = "network";
+	else if ( proposal_mode == "hardware" )
+	    icon = "printer";
+	else if ( proposal_properties["icon"]:"" != "" )
+	    icon =  proposal_properties["icon"]:"";
+
+		
+ 	// else if ( proposal_mode == `uml		) icon = "";
 	// else if ( proposal_mode == `dirinstall  ) icon = "";
 
 	Wizard::SetTitleIcon( icon );
@@ -657,7 +672,7 @@ or by using the <b>Change...</b> menu.
 </p>
 ");
 
-	if ( proposal_mode == `initial && Mode::installation () )
+	if ( proposal_mode == "initial" && Mode::installation () )
 	{
 	    // Help text for installation proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -686,7 +701,7 @@ Your hard disk has not been modified in any way, so you can still safely abort.
 </p>
 ");
 	}
-	else if ( proposal_mode == `initial && Mode::update () )
+	else if ( proposal_mode == "initial" && Mode::update () )
 	{
 	    // Help text for update proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -708,7 +723,7 @@ Your hard disk has not been modified in any way, so you can still safely abort.
 </p>
 ");
 	}
-	else if ( proposal_mode == `network )
+	else if ( proposal_mode == "network" )
 	{
 	    // Help text for network configuration proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -717,7 +732,7 @@ Put the network settings into effect by pressing <b>Next</b>.
 </p>
 ") + how_to_change;
 	}
-	else if ( proposal_mode == `service )
+	else if ( proposal_mode == "service" )
 	{
 	    // Help text for service configuration proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -726,7 +741,7 @@ Put the service settings into effect by pressing <b>Next</b>.
 </p>
 ") + how_to_change;
 	}
-	else if ( proposal_mode == `hardware )
+	else if ( proposal_mode == "hardware" )
 	{
 	    // Help text for hardware configuration proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -735,13 +750,20 @@ Put the hardware settings into effect by pressing <b>Next</b>.
 </p>
 ") + how_to_change;
 	}
-	else if (proposal_mode == `uml)
+	else if (proposal_mode == "uml")
 	{
 	    // Proposal in uml module
 	    help_text_string = _("<P><B>UML Installation Proposal</B></P>")
 	    + _("<P>UML (User Mode Linux) installation allows you to start independent
 Linux virtual machines in the host system.</P>");
 	}
+	else if (proposal_properties["help"]:"" != "")
+	{
+	    // Proposal help from control file module
+	    help_text_string = dgettext( ProductControl::getProposalTextDomain() ,
+				  proposal_properties["help"]:"") +
+                how_to_change;
+	}	
 	else
 	{
 	    // Generic help text for other proposals (not basic installation or
@@ -753,10 +775,11 @@ To use the settings as displayed, press <b>Next</b>.
 ") + how_to_change;
 	}
 
-        if (size(locked_modules) > 0 ) {
+        if (size(locked_modules) > 0 )
+	{
             help_text_string = help_text_string + _("<p>Some proposals might be
 locked by the system administrator and cannot be changed. If you need to change
-a proposal that is locked, ask your system administrator</p>");
+a proposal that is locked, ask your system administrator.</p>");
         }
 
 	return help_text_string;
@@ -782,13 +805,7 @@ a proposal that is locked, ask your system administrator</p>");
     //
 
     y2milestone( "Installation step #2" );
-    proposal_mode = (symbol) WFM::Args(2);
-    proptype = substring(sformat("%1", proposal_mode), 1 );
-
-/*    submodules = ProductControl::getProposals (
-            Stage::stage (),
-            Mode::mode (),
-            proptype );*/
+    proposal_mode = GetArgs::proposal();
 
     //
     // Get submodule descriptions
@@ -960,9 +977,7 @@ resolved before continuing.
 
 	    if ( Stage::stage () == "initial" )
 	    {
-		input = WFM::CallFunction("inst_doit", [true,		// have_back
-						      true,		// have_next
-						      false] ); 	// going_backwards
+		input = WFM::CallFunction("inst_doit", [] );
 	    }
 
             if ( input == `next )
