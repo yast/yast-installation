@@ -260,6 +260,24 @@ global define map getModeDefaults(string stage, string mode)
     return workflow["defaults"]:$[];
 }
 
+void PrepareScripts(map m) {
+    string tmp_dir = (string)SCR::Read(.target.tmpdir);
+    if (haskey(m,"prescript"))
+    {
+        string interpreter = m["prescript", "interpreter"]:"shell";
+        string source = m["prescript", "source"]:"";
+        string type = (interpreter == "shell") ? "sh" : "pl";
+        SCR::Write(.target.string, sformat("%1/%2_pre.%3", tmp_dir, m["name"]:"", type), source);
+    }
+    if (haskey(m,"postscript"))
+    {
+        string interpreter = m["postscript", "interpreter"]:"shell";
+        string source = m["postscript", "source"]:"";
+        string type = (interpreter == "shell") ? "sh" : "pl";
+        SCR::Write(.target.string, sformat("%1/%2_post.%3", tmp_dir, m["name"]:"", type), source);
+    }
+    return;
+}
 /**
  * Get modules of current Workflow
  * @param string stage
@@ -275,6 +293,7 @@ global define list<map> getModules(string stage, string mode)
     integer id = 1;
     modules = maplist(map m, modules, ``{
             m["id"] = sformat("%1_%2", stage, id);
+            PrepareScripts(m);
             id = id + 1;
             return (m);
             });
