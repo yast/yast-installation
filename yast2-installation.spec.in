@@ -53,6 +53,7 @@ This controls the system installation.
 @scrconfdir@/proc_mounts.scr
 @scrconfdir@/cfg_windowmanager.scr
 @scrconfdir@/etc_install_inf.scr
+@scrconfdir@/etc_install_inf_alias.scr
 @scrconfdir@/run_get_suseconfig_modules.scr
 @scrconfdir@/proc_modules.scr
 @scrconfdir@/run_df.scr

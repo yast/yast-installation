@@ -112,20 +112,17 @@
 
 	//////////////////////////////////////////////////////////////
 	// Attention: for s390 inst_s390netadopt inserts alias modules
+	// FIXME no such file or function in 8.2
 
 	if (!Arch::s390)
 	{
-	    string install_alias = SCR::Read (.etc.install_inf.Alias);
-	    if (install_alias != nil)
-	    {
-		list install_alias_split = splitstring (install_alias, " ");
-		if (size (install_alias_split) == 2)
-		{
-		    SCR::Write (add (.modules.alias, install_alias_split[0]:""),
-				install_alias_split[1]:"");
-		    modules_conf_changed = true;
-		}
-	    }
+	    // #24836, Alias needs special treatment because of multiple cards
+	    list(string) install_aliases = SCR::Dir (.etc.install_inf_alias);
+	    foreach (string alias, install_aliases, ``{
+		string target = SCR::Read (add (.etc.install_inf_alias, alias));
+		SCR::Write (add (.modules.alias, alias), target);
+		modules_conf_changed = true;
+	    });
 	}
 
 	// if needed, re-write /etc/modules.conf and run /sbin/depmod

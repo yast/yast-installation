@@ -1,0 +1,39 @@
+/**
+ * File:	etc_install_inf_alias.scr
+ * Summary:	Agent for reading/writing module aliases in /etc/install.inf
+ * Access:	read only
+ * Author:	Martin Vidner <mvidner@suse.cz>
+ *
+ * Bug #24836: ini agent cannot handle multiple Alias entries.
+ *
+ * Example:
+ *   Dir(.etc.install_inf_alias)
+ *   (["eth0", "eth1"])
+ **
+ *   Read(.etc.install_inf_alias.eth0)
+ *   ("pcnet32")
+ *
+ * $Id$
+ */
+.etc.install_inf_alias
+
+`ag_ini(
+    IniAgent( "/etc/install.inf",
+	$[
+	    "options" : [ "read_only", "global_values", "flat" ],
+	    // Everything except the pattern in "params" is a comment.
+	    // I love negated regexps.
+	    "comments" : [
+		"^[ \t]*[^A].*",
+		"^[ \t]*A[^l].*",
+		"^[ \t]*Al[^i].*",
+		"^[ \t]*Ali[^a].*",
+		"^[ \t]*Alia[^s].*",
+		"^[ \t]*Alias[^ \t:].*", 
+		],
+	    "params" : [
+		$[ "match" : [ "^[ \t]*Alias[ \t]*:[ \t]*(.*)[ \t]+(.*)[ \t]*$", "Alias: %s %s" ] ]
+	    ]
+	]
+    )
+)
