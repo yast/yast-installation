@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jul 24 13:39:36 CEST 2003 - gs@suse.de
+
+- YaST2.start: call unicode_start/unicode_stop;
+               export YAST_DOES_ACS removed 
+
+-------------------------------------------------------------------
 Fri Jul 04 13:21:20 CEST 2003 - arvin@suse.de
 
 - convert update workflow into a proposal
