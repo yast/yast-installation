@@ -32,6 +32,7 @@ hostname $IP
 	-geometry 800x600 \
 	-depth 15 \
 	-rfbwait 120000 \
+	-httpd /usr/share/vnc/classes \
 	-rfbport 5901 \
 	-fn -gnu-unifont-medium-r-normal--16-160-75-75-p-80-iso10646-1 \
 	-fp /usr/X11R6/lib/X11/fonts/misc/,/usr/X11R6/lib/X11/fonts/uni/ \

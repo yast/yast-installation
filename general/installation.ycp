@@ -138,7 +138,7 @@
 	}
 
 	UI::SetLanguage (Language::language, Installation::encoding);
-	WFM::SetLanguage (Language::language, "UTF-8");
+	WFM::SetLanguage (Language::language, Installation::encoding);
     }
 
     // Properly setup timezone for continue mode.
