@@ -169,6 +169,11 @@ textdomain="control"
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
                 <module>
+                    <name>checkmedia</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
 	            <label>Installation Settings</label>
                     <name>proposal</name>
                     <proposal>initial</proposal>
