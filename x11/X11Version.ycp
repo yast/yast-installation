@@ -27,6 +27,7 @@ textdomain "installation";
 import "Directory";
 import "Installation";
 import "Require";
+import "Package";
 import "Mode";
 
 //=======================================
@@ -128,17 +129,22 @@ global define boolean have_x11 () ``{
 	// check if the required packages are installed
 	// ---
 	boolean ret = true;
-	if ( ! Mode::autoinst) {
-		list<string> pacs = ["XFree86", "yast2-x11","sax2"];
-		if (!Require::RequireAndConflict (pacs, [],
-		// notification 1/2
-		_("<p>To access the X11 system, the <b>%1</b> package must be installed.</p>") +
-		// notification 2/2
-		_("<p>Do you want to install it now?</p>"))
-		) {
-		return false;
-		}
-	}
+	list<string> pacs = ["XFree86", "yast2-x11","sax2"];
+        // Dont ask for installing packages, just return in autoinst mode
+        if ( Mode::autoinst)
+        {
+            ret = Package::InstalledAll(pacs);
+        }
+        else {
+            if (!Require::RequireAndConflict (pacs, [],
+                        // notification 1/2
+                        _("<p>To access the X11 system, the <b>%1</b> package must be installed.</p>") +
+                        // notification 2/2
+                        _("<p>Do you want to install it now?</p>"))
+               ) {
+                ret = false;
+            }
+        }
 	y2milestone ("have_x11 = %1", ret);
 	return ret;
 }
