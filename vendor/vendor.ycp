@@ -8,7 +8,6 @@
  */
 
 {
-
     textdomain "installation";
 
     import "Arch";
@@ -50,7 +49,6 @@
 	return result;
     };
 
-    include "installation_ui.ycp";
     string language = UI::GetLanguage(true);
 
     boolean is_mounted = false;
