@@ -168,7 +168,8 @@
 	{
 	    // get flags from WFM /proc/cpuinfo (for pae and tsc tests below)
 
-	    list cpuflags = lookup (SCR::Read (.proc.cpuinfo), "flags", []);
+	    string cpuinfo_flags = SCR::Read(.proc.cpuinfo.value.0."flags");	// check only first processor
+	    list cpuflags = (size(cpuinfo_flags) > 0) ? splitstring(cpuinfo_flags, " ") : [];
 
 	    // check for > 4GB memory
 	    list memories = SCR::Read(.probe.memory);
