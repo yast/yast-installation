@@ -1,46 +1,40 @@
 /**
- * File:
- *   proc_cpuinfo.scr
- * Summary:
- *   SCR Agent for reading /proc/cpuinfo
- * Access:
- *   read-only
- * Authors:
- *   Unknown <yast2-hacker@suse.de>
- * See:
- *   anyagent
- *   libscr
+ * File:	proc_cpuinfo.scr
+ * Summary:	SCR Agent for reading /proc/cpuinfo
+ * Author:	Klaus Kaempf <kkaempf@suse.de>
+ * Access:	read-only
+ *
  * Example:
  *   Read(.proc.cpuinfo)
- *   ($["bogomips":1101.00000000000, 
- *      "cache":256, 
- *      "coma_bug":false, 
- *      "cpuid_level":2, 
- *      "f00f_bug":false, 
- *      "family":6, 
- *      "fdiv_bug":false, 
- *      "flags":["fpu", "vme", "de", "pse", "tsc", "msr", "pae", "mce", 
- *               "cx8", "sep", "mtrr", "pge", "mca", "cmov", "pat", "pse36", 
- *               "mmx", "fxsr", "sse"], 
- *      "fpu":true, 
- *      "fpu_exception":true, 
- *      "hlt_bug":false, 
- *      "mhz":551.258972167969, 
- *      "model":8, 
- *      "model_name":"Pentium III (Coppermine)", 
- *      "processor":0, 
- *      "stepping":1, 
- *      "vendor_id":"GenuineIntel", 
+ *   ($["bogomips":1101.00000000000,
+ *      "cache":256,
+ *      "coma_bug":false,
+ *      "cpuid_level":2,
+ *      "f00f_bug":false,
+ *      "family":6,
+ *      "fdiv_bug":false,
+ *      "flags":["fpu", "vme", "de", "pse", "tsc", "msr", "pae", "mce",
+ *               "cx8", "sep", "mtrr", "pge", "mca", "cmov", "pat", "pse36",
+ *               "mmx", "fxsr", "sse"],
+ *      "fpu":true,
+ *      "fpu_exception":true,
+ *      "hlt_bug":false,
+ *      "mhz":551.258972167969,
+ *      "model":8,
+ *      "model_name":"Pentium III (Coppermine)",
+ *      "processor":0,
+ *      "stepping":1,
+ *      "vendor_id":"GenuineIntel",
  *      "wp":true
  *   ])
- * 
+ *
  * $Id$
  *
- * Returns a <b>list of maps</b>. Each map (list-entry) corresponds 
+ * Returns a <b>list of maps</b>. Each map (list-entry) corresponds
  * with one processor.
- * Keys for the maps are: "processor", "vendor_id", "family", "model_name", 
- * "model", "name", "stepping", "mhz", "cache", "fdiv_bug", "hlt_bug", 
- * "sep_bug", "f00f_bug", "coma_bug", "fpu_exception", "cpuid_level", "wp", 
+ * Keys for the maps are: "processor", "vendor_id", "family", "model_name",
+ * "model", "name", "stepping", "mhz", "cache", "fdiv_bug", "hlt_bug",
+ * "sep_bug", "f00f_bug", "coma_bug", "fpu_exception", "cpuid_level", "wp",
  * "flags", "bogomips"
  * <p><b>Warning:</b> Currently only reports <b>one</b> (the last) processor.</p>
  */
