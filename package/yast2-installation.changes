@@ -1,7 +1,13 @@
 -------------------------------------------------------------------
+Mon Sep 20 13:52:35 CEST 2004 - sh@suse.de
+
+- V 2.10.24 
+- Merged accidentially split translatable messages
+
+-------------------------------------------------------------------
 Fri Sep 17 16:12:53 CEST 2004 - sh@suse.de
 
-- V 2.10.33
+- V 2.10.23
 - Changed final installation confirmation dialog according to
   bug #45279 
 
