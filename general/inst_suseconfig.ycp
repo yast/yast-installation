@@ -57,7 +57,7 @@
      *
      * @param step_descr description of the step.
      */
-    define logStep( string step_descr ) ``{
+    define void logStep( string step_descr ) ``{
 	current_step = current_step + 1;
 	UI::ChangeWidget( `id(`progress), `Value, current_step );
 	UI::ChangeWidget( `id(`log), `LastLine, step_descr + "\n" );
@@ -70,7 +70,7 @@
      *
      * @param step command to execute in this step
      */
-    define runStep( string step ) ``{
+    define void runStep( string step ) ``{
 
 	string command = sformat( "HOME=%1 %2 %3 2>&1", Misc::tmpdir, step, log_destination );
 	// Setting $HOME to Misc::/tmpdir to avoid cluttering '/' with spurious files - bug #13204
@@ -101,7 +101,7 @@ the CPU and the amount of memory, this process can take some time.
 ");
 
 
-    list modules = SCR::Read( .run.get.suseconfig.modules );
+    list<string> modules = (list<string>) SCR::Read( .run.get.suseconfig.modules );
     integer max_steps = size( modules ) + 1; // + ldconfig
 
     if ( reread_inittab )
@@ -121,8 +121,8 @@ the CPU and the amount of memory, this process can take some time.
     boolean next_ok = false;
     if (size (WFM::Args()) > 1)
     {
-	back_ok = WFM::Args(0);
-	next_ok = WFM::Args(1);
+	back_ok = (boolean) WFM::Args(0);
+	next_ok = (boolean) WFM::Args(1);
     }
     Wizard::SetContents(
 			  // Dialog title for SuSEconfig dialog
@@ -158,13 +158,13 @@ the CPU and the amount of memory, this process can take some time.
 
 
     if ( Mode::initial || Mode::cont
-	 || tolower( SCR::Read(.sysconfig.suseconfig.ENABLE_SUSECONFIG) ) == "yes" )
+	 || tolower( (string) SCR::Read(.sysconfig.suseconfig.ENABLE_SUSECONFIG) ) == "yes" )
     {
 	//
 	// Call each SuSEconfig module individually
 	//
 
-	foreach ( `mod, modules, ``{
+	foreach (string mod, modules, ``{
 	    // inform user about current SuSEconfig step
 	    logStep( sformat (_("Running SuSEconfig.%1"), mod));
 	    runStep( "/sbin/SuSEconfig --verbose --module "   + mod );
@@ -204,7 +204,7 @@ the CPU and the amount of memory, this process can take some time.
 
 
     // The final LogView line to be displayed after SuSEconfig etc. is done.
-    UI::ChangeWidget( `id(`log), `LastLine, "\n" + UI(_("Done.") ) + "\n" );
+    UI::ChangeWidget( `id(`log), `LastLine, "\n" + _("Done.") + "\n" );
 
 
     if ( Mode::test )
@@ -227,7 +227,7 @@ to activate the new kernel.
 	// if possible
 	// ---
 	if ( Mode::update ) {
-		integer flag = SCR::Execute (.target.bash,
+		integer flag = (integer) SCR::Execute (.target.bash,
 			"/usr/bin/tail -n 1 /etc/X11/XF86Config | grep -q '#3x'"
 		);
 		if (flag == 0) {
