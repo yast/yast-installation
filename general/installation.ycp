@@ -314,7 +314,6 @@ differ from those in the manual.
 	// tell linuxrc that we aborted
 	Linuxrc::WriteYaSTInf($["Aborted" : "1"]);
     }
-	    
 
     // re-enable automatic probing
     if (!Mode::test ())
@@ -329,7 +328,13 @@ differ from those in the manual.
 	    SCR::Execute(.target.remove, "/var/lib/YaST2/update_mode");
 	    SCR::Execute(.target.bash, "/bin/rm -rf /var/adm/current_package_descr");
 	}
+        y2milestone("Removing /var/lib/YaST2/runme_at_boot");
 	SCR::Execute(.target.remove, "/var/lib/YaST2/runme_at_boot");
+
+        // This file has the current step of the workflow to be used
+        // for crash recovery during installation. It can be deleted when
+        // the installation has been completed.
+	SCR::Execute(.target.remove, "/var/lib/YaST2/step");
 
 	if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_post.ycp") > 0)
 	    WFM::CallFunction ("product_post", [Mode::update ()]);

@@ -225,7 +225,7 @@ textdomain="control"
             <modules  config:type="list">
                 <module>
                     <enable_next>yes</enable_next>
-                    <enable_back>false</enable_back>
+                    <enable_back>no</enable_back>
  	            <label>Language</label>
                     <name>language</name>
                     <retranslate config:type="boolean">true</retranslate>
@@ -269,7 +269,7 @@ textdomain="control"
                 </module>
                 <module>
                     <enable_next>yes</enable_next>
-                    <enable_back>false</enable_back>
+                    <enable_back>no</enable_back>
 	            <label>Language</label>
                     <name>language</name>
                     <retranslate config:type="boolean">true</retranslate>
@@ -304,8 +304,8 @@ textdomain="control"
             <label>Configuration</label>
             <mode>update</mode>
             <defaults>
-                <enable_next>false</enable_next>
-                <enable_back>false</enable_back>
+                <enable_next>no</enable_next>
+                <enable_back>no</enable_back>
                 <archs>all</archs>
             </defaults>
             <modules  config:type="list">
@@ -319,20 +319,20 @@ textdomain="control"
                 <module>
 	            <label>Network</label>
                     <name>ask_net_test</name>
-                    <enable_next>true</enable_next>
-                    <enable_back>true</enable_back>
+                    <enable_next>yes</enable_next>
+                    <enable_back>yes</enable_back>
                 </module>
                 <module>
 	            <label>Network</label>
                     <name>do_net_test</name>
-                    <enable_next>true</enable_next>
-                    <enable_back>true</enable_back>
+                    <enable_next>yes</enable_next>
+                    <enable_back>yes</enable_back>
                 </module>
                 <module>
 	            <label>Online Update</label>
                     <name>you</name>
-                    <enable_next>true</enable_next>
-                    <enable_back>true</enable_back>
+                    <enable_next>yes</enable_next>
+                    <enable_back>yes</enable_back>
                 </module>
                 <module>
 	            <label>Clean Up</label>
@@ -341,13 +341,13 @@ textdomain="control"
                 <module>
 	            <label>Release Notes</label>
                     <name>release_notes</name>
-                    <enable_next>true</enable_next>
-                    <enable_back>true</enable_back>
+                    <enable_next>yes</enable_next>
+                    <enable_back>yes</enable_back>
                 </module>
                 <module>
                     <name>congratulate</name>
-                    <enable_next>true</enable_next>
-                    <enable_back>true</enable_back>
+                    <enable_next>yes</enable_next>
+                    <enable_back>yes</enable_back>
                 </module>
             </modules>
         </workflow>
@@ -356,15 +356,14 @@ textdomain="control"
             <label>Configuration</label>
             <mode>installation</mode>
             <defaults>
-                <enable_next>false</enable_next>
-                <enable_back>false</enable_back>
+                <enable_back>yes</enable_back>
+                <enable_next>yes</enable_next>
                 <archs>all</archs>
             </defaults>
             <modules  config:type="list">
                 <module>
 	            <label>Perform Installation</label>
                     <name>netsetup</name>
-                    <arguments>false,false,`up</arguments>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
@@ -373,18 +372,17 @@ textdomain="control"
                 <module>
 	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
                 </module>
                 <module>
 	            <label>Root Password</label>
                     <name>root</name>
-                    <enable_next>false</enable_next>
-                    <enable_back>true</enable_back>
+                    <enable_back>no</enable_back>
                 </module>
                 <module>
 	            <label>Network</label>
                     <name>proposal</name>
-                    <enable_next>true</enable_next>
-                    <enable_back>true</enable_back>
                     <proposal>network</proposal>
                 </module>
 		<module>
@@ -393,54 +391,40 @@ textdomain="control"
                 <module>
 	            <label>Network</label>
                     <name>ask_net_test</name>
-                    <enable_next>true</enable_next>
-                    <enable_back>true</enable_back>
                 </module>
                 <module>
 	            <label>Network</label>
                     <name>do_net_test</name>
-                    <enable_next>true</enable_next>
-                    <enable_back>true</enable_back>
                 </module>
                 <module>
 	            <label>Online Update</label>
                     <name>you</name>
-                    <enable_next>true</enable_next>
-                    <enable_back>true</enable_back>
                 </module>
                 <module>
 	            <label>Users</label>
                     <name>auth</name>
-                    <enable_next>true</enable_next>
-                    <enable_back>true</enable_back>
                 </module>
                 <module>
 	            <label>Users</label>
                     <name>user</name>
-                    <enable_next>true</enable_next>
-                    <enable_back>true</enable_back>
                 </module>
                 <module>
 	            <label>Clean Up</label>
                     <name>suseconfig</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
                 </module>
                 <module>
 	            <label>Release Notes</label>
                     <name>release_notes</name>
-                    <enable_next>true</enable_next>
-                    <enable_back>true</enable_back>
                 </module>
                 <module>
 	            <label>Device Configuration</label>
                     <name>proposal</name>
-                    <enable_next>true</enable_next>
-                    <enable_back>true</enable_back>
                     <proposal>hardware</proposal>
                 </module>
                 <module>
                     <name>congratulate</name>
-                    <enable_next>true</enable_next>
-                    <enable_back>true</enable_back>
                 </module>
             </modules>
         </workflow>
@@ -450,8 +434,8 @@ textdomain="control"
             <mode>autoinstallation</mode>
             <defaults>
                 <archs>all</archs>
-                <enable_next>false</enable_next>
-                <enable_back>false</enable_back>
+                <enable_next>no</enable_next>
+                <enable_back>no</enable_back>
             </defaults>
             <modules  config:type="list">
                 <module>
@@ -498,8 +482,8 @@ textdomain="control"
         </workflow>
         <workflow>
             <defaults>
-                <enable_next>false</enable_next>
-                <enable_back>false</enable_back>
+                <enable_next>no</enable_next>
+                <enable_back>no</enable_back>
                 <archs>all</archs>
             </defaults>
             <stage>continue</stage>
