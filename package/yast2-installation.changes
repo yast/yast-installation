@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Sat Feb  7 09:33:56 CET 2004 - nashif@suse.de
+
+- remove vendor.y2cc file
+
+-------------------------------------------------------------------
 Fri Feb 06 16:13:58 CET 2004 - arvin@suse.de
 
 - set default runlevel to 3 or 5 during installation depending
