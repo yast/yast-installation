@@ -13,13 +13,13 @@
 
     import "Wizard";
     import "Mode";
-    import "AutoInstall";
+    import "AutoinstConfig";
 
     import "Label";
 
     if (Mode::autoinst)
     {
-	if (!AutoInstall::Confirm)
+	if (!AutoinstConfig::Confirm)
 	{
 	    Wizard::SetEasyInstallationStep( EasyInstallationStepDescriptions(), 3 );
 	    return `next;
