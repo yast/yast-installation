@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Aug 19 17:53:40 CEST 2002 - arvin@suse.de
+
+- don't probe for mouse, floppy and usb devices on s390
+
+-------------------------------------------------------------------
 Mon Aug 19 16:24:31 CEST 2002 - arvin@suse.de
 
 - don't run X11 configuration on S390 (bug #17371)
