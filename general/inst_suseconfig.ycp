@@ -27,6 +27,7 @@
     import "Wizard";
     import "Kernel";
     import "GetInstArgs";
+    import "Product"; // ugly, because of initializing the &product; macro
 
     if ( GetInstArgs::going_back())	// going backwards?
 	return `auto;			// don't execute this once more
