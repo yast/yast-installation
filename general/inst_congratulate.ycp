@@ -92,7 +92,6 @@ return to this installation sequence.</p>
 
     Wizard::SetContents (caption, contents, help, WFM::Args (0), WFM::Args (1));
 
-    Wizard::DisableAbortButton ();
     Wizard::ReplaceNextButton (`PushButton (`id(`next), `opt(`default),
 					    Label::FinishButton ()));
     UI::SetFocus (`id (`next));
@@ -118,7 +117,6 @@ return to this installation sequence.</p>
 
     } until ( ret == `next || ret == `back );
 
-    Wizard::EnableAbortButton ();
     Wizard::RestoreNextButton ();
 
     if (ret == `next && UI::QueryWidget (`id(`start_y2cc), `Value))
