@@ -10,6 +10,9 @@ infofile=/content
 if [ -f $infofile ];then
 	LANGUAGE=`sed -n 's/^LANGUAGE \([^ ]*\)/\1/p' $infofile`
 fi
+if [ ! "$Locale" = "" ];then
+	LANGUAGE=$Locale
+fi
 set_language_init
 umount /var/adm/mount &>/dev/null
 log "\tLanguage set to: $LANG"
