@@ -48,6 +48,14 @@
 
     include "partitioning/partition_defines.ycp";
 
+
+    define void set_runlevel (integer runlevel) ``{
+	y2milestone ("setting default runlevel to %1", runlevel);
+	SCR::Write (.etc.inittab.id, sformat ("%1:initdefault:", runlevel));
+	SCR::Write (.etc.inittab, nil);
+    }
+
+
     // Help text for last dialog of base installation
     string help_text = _("<p>
 Please wait while the base system is being installed.
@@ -396,16 +404,17 @@ Please wait while the base system is being installed.
 
     ModulesConf::Save (true);
 
-	if ( Mode::update )
+    if ( !Mode::update )
+    {
+	// see bug #32366 why we need this here
+	set_runlevel (5);
+    }
+    else if ( Mode::update )
     {
 	// Set default runlevel cause inittab will be overwritten by
 	// installing aaa_base
 
-	integer last_runlevel = (Update::last_runlevel != -1) ? Update::last_runlevel : 3;
-
-	y2milestone ("setting default runlevel to %1", last_runlevel);
-	SCR::Write (.etc.inittab.id, sformat ("%1:initdefault:", last_runlevel));
-	SCR::Write (.etc.inittab, nil);
+	set_runlevel ((Update::last_runlevel != -1) ? Update::last_runlevel : 3);
 
 	if (!Arch::ppc
 	    && Mode::update)
