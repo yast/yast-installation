@@ -59,6 +59,7 @@ textdomain="control"
             <type>uml</type>
             <stage>normal</stage>
             <proposal_modules config:type="list">
+                <proposal_module>uml_source</proposal_module>
                 <proposal_module>uml_user</proposal_module>
                 <proposal_module>uml_options</proposal_module>
                 <proposal_module>uml_disks</proposal_module>
