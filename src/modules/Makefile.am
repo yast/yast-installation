@@ -2,13 +2,14 @@
 # Makefile.am for installation/modules
 #
 
-SUBDIRS = testsuite
-
 module_DATA =			\
 	Installation.ycp	\
 	Product.ycp		\
 	GetInstArgs.ycp		\
-	Vendor.ycp
+	Vendor.ycp		\
+	Hotplug.ycp		\
+	HwStatus.ycp		\
+	X11Version.ycp
 
 EXTRA_DIST = $(module_DATA)
 
