@@ -1,4 +1,6 @@
 # Makefile.am for installation/general
+#
+SUBDIRS = docs
 
 controldir = $(yast2dir)/control
 productdir = /var/lib/YaST2
