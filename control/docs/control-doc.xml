@@ -1,5 +1,5 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "/usr/share/xml/docbook/schema/dtd/4.2/docbookx.dtd"[
-<!ENTITY  control-section  SYSTEM "control-section_mod.xml">
+<!ENTITY  control-section  SYSTEM "control-section.xml">
 ]>
 
 
