@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Feb 22 13:11:41 CET 2005 - sh@suse.de
+
+- V 2.11.17 
+
+-------------------------------------------------------------------
 Tue Feb 22 13:05:23 CET 2005 - ms@suse.de
 
 - fixed Y2MAXLOGSIZE setting, which was set to 0 because df within
