@@ -964,8 +964,9 @@ To use the settings as displayed, press <b>Next</b>.
 	    if (have_blocker)
 	    {
 		// error message is a popup
-		Popup::Error (_("The proposal contains an error. That has to be
-resolved before continuing."));
+		Popup::Error (_("The proposal contains an error that must be
+resolved before continuing.
+"));
 		continue;
 	    }
 

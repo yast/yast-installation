@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Sep 04 17:45:53 CEST 2003 - arvin@suse.de
+
+- proof-read messages
+
+-------------------------------------------------------------------
 Wed Sep  3 17:27:51 CEST 2003 - gs@suse.de
 
 - installation.ycp: call UI::SetKeyboard in continue mode
