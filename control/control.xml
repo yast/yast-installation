@@ -174,6 +174,8 @@ textdomain="control"
 
     <workflows config:type="list">
         <workflow>
+            <!-- 'label' is what the user will see -->
+	    <label>Base Installation</label>
             <!-- default settings for all modules -->
             <defaults>
                 <!-- arguments for the clients -->
@@ -182,9 +184,7 @@ textdomain="control"
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
-            <!-- 'label' is what the user will see -->
-	    <label>Base Installation</label>
-            <mode>installation</mode>
+            <mode>installation,update</mode>
             <modules  config:type="list">
                 <module>
                     <name>info</name>
@@ -337,6 +337,63 @@ textdomain="control"
         <workflow>
             <stage>continue</stage>
             <label>Configuration</label>
+            <mode>update</mode>
+            <defaults>
+                <arguments>false,false</arguments>
+                <archs>all</archs>
+            </defaults>
+            <modules  config:type="list">
+                <module>
+                    <name>netsetup</name>
+                    <arguments>false,false,`up</arguments>
+                </module>
+                <module>
+                    <name>rpmcopy</name>
+                </module>
+                <module>
+	            <label>Network</label>
+                    <name>netsetup</name>
+                    <arguments>false,false,`dn</arguments>
+                </module>
+                <module>
+	            <label>Network</label>
+                    <name>proposal</name>
+                    <arguments>true,true,`net</arguments>
+                </module>
+                <module>
+	            <label>Network</label>
+                    <name>ask_net_test</name>
+                    <arguments>true,true</arguments>
+                </module>
+                <module>
+	            <label>Network</label>
+                    <name>do_net_test</name>
+                    <arguments>true,true</arguments>
+                </module>
+                <module>
+	            <label>Online Update</label>
+                    <name>you</name>
+                    <arguments>true,true</arguments>
+                </module>
+                <module>
+	            <label>Clean Up</label>
+                    <name>suseconfig</name>
+                    <arguments>false,false</arguments>
+                </module>
+                <module>
+	            <label>Release Notes</label>
+                    <name>release_notes</name>
+                    <arguments>true,true</arguments>
+                </module>
+                <module>
+                    <name>congratulate</name>
+                    <arguments>true,true</arguments>
+                </module>
+            </modules>
+        </workflow>
+        <workflow>
+            <stage>continue</stage>
+            <label>Configuration</label>
             <mode>installation</mode>
             <defaults>
                 <arguments>false,false</arguments>
@@ -427,6 +484,11 @@ textdomain="control"
                 <module>
 	            <label>Settings</label>
                     <name>autosetup</name>
+                </module>
+                <module>
+	            <label>Installation Settings</label>
+                    <name>proposal</name>
+                    <arguments>true,true,`ini</arguments>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
