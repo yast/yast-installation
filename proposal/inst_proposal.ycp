@@ -27,8 +27,6 @@
     import "Popup";
     import "ProductControl";
 
-    include "installation/dialogs.ycp";
-
     define void retranslate_proposal_dialog();
     define list<string> load_matching_submodules_list();
     define boolean get_submod_descriptions_and_build_menu();
@@ -423,11 +421,6 @@
      **/
     define void build_dialog () ``{
 
-	if ( Mode::initial )
-	{
-	    Wizard::SetEasyInstallationStep( EasyInstallationStepDescriptions(), 2 );
-	}
-
 	// headline for installation proposal
 	string headline = _("Installation Settings");
 
@@ -493,11 +486,9 @@
 			 );
 	}
 
-	Wizard::SetContents(headline,
-			    vbox,
-			    UI::WidgetExists(`id(`HelpText) ) ? help_text() : "",
+	Wizard::SetContents(headline, vbox, help_text(),
 			    (boolean) WFM::Args(0),	// have_back_button
-			    false	// have_next_button
+			    false			// have_next_button
 			    );
     };
 
