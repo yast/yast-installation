@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Fri Dec 20 17:04:37 CET 2002 - arvin@suse.de
+
+- merged from 8.1 branch:
+  - only set hostname during vnc installation if necessary
+    (bug #21454)
+  - popup with info.txt (EULA) now has a timeout during
+    autoinstallation (bug #21413)
+  - remove /root/.vnc/passwd after installation (bug #21360)
+  - popup with info.txt now has two buttons (accept and cancel)
+  - start portmapper if instmode==nfs also on s390 (#21094)
+
+-------------------------------------------------------------------
 Thu Dec 12 12:40:22 CET 2002 - jsrain@suse.de
 
 - added handling of modules required to be loaded early after
