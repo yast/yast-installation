@@ -31,7 +31,6 @@
     import "Storage";
     import "Boot";
     import "Kernel";
-    import "InstMedia";
     import "Wizard";
 
     include "ui/common_popups.ycp";
