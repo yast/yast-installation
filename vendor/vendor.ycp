@@ -1,30 +1,22 @@
-/*
- *
- * Module:             vendor.ycp
- *
- * Author:             Klaus Kaempf (kkaempf@suse.de)
- *
- * Purpose:	load vendor driver CD
- *
- * Modify:
- *
- * Returns:	`ok
- *		`abort
+/**
+ * File:	clients/vendor.ycp
+ * Package:	yast2
+ * Summary:	Load vendor driver CD
+ * Authors:	Klaus Kaempf <kkaempf@suse.de>
  *
  * $Id$
  */
 
 {
+
     textdomain "installation";
 
     import "Arch";
     import "Installation";
-    import "StorageDevices";
-
-    import "Wizard";
-
-    import "Popup";
     import "Label";
+    import "Popup";
+    import "StorageDevices";
+    import "Wizard";
 
     // display message if the CD seems to be wrong
 
@@ -275,4 +267,6 @@ Contact the address on the CD-ROM.\n"));
 
     UI::CloseDialog();
     return `ok;
+
+/* EOF */
 }
