@@ -99,7 +99,7 @@ the CPU and the amount of memory, this process can take some time.
 
 
     list modules = SCR::Read( .run.get.suseconfig.modules );
-    integer max_steps = size( modules ) + 1;	// ldconfig
+    integer max_steps = size( modules ) + 2; // + ldconfig + mkinfodir
 
     if ( reread_inittab )
     {
@@ -150,6 +150,11 @@ the CPU and the amount of memory, this process can take some time.
     //    runStep( "/sbin/SuSEconfig --verbose --module aaa_at_first" );
     // but that "aaa_at_first" module will go away soon. Or so it is said. ;-)
 
+
+    // postprocess for .info files
+
+    logStep( _("Creating /usr/share/info/dir...") );
+    runStep( "/usr/bin/mkinfodir" );
 
     if ( Mode::initial || Mode::cont
 	 || tolower( SCR::Read(.sysconfig.suseconfig.ENABLE_SUSECONFIG) ) == "yes" )
