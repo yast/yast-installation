@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Feb  2 18:21:48 CET 2005 - ms@suse.de
+
+- fixed control center call (#50389)
+
+-------------------------------------------------------------------
 Tue Feb  1 17:02:20 CET 2005 - nashif@suse.de
 
 - Fixed left "steps" display problems (#50388)
