@@ -376,7 +376,6 @@ differ from those in the manual.
  [ `initial,  `inst_info            (false, true),       true,                  !Mode::screen_shot && !Mode::live_eval,                   false],
  [ `initial,  `inst_language	    (false, true, true), true,						! autoinst	&&    !	repair  , false],
  [ `initial,  `inst_repair	    (false, true),	 true,									repair	, false],
- [ `initial,  `inst_startup	    (false, true),       true,						  autoinst                      , false],
  [ `initial,  `autoinst_init	    (false, false),      true,			! test_mode &&		  autoinst			, false],
  [ `initial,  `autoinst_setup	    (false, false),      true,			! test_mode &&		  autoinst			, false],
  //---------------------------------------------------------------------------------------------------------------------------------------------------
