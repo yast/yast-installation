@@ -318,7 +318,6 @@ Please wait while the base system is being installed.
 
 	if (doc_server == "yes")
 	{
-	    SCR::Execute (.target.bash, "/sbin/insserv apache");
 	    SCR::Write (.sysconfig.apache.DOC_SERVER, doc_server);
 	    SCR::Write (.sysconfig.apache, nil);
 	}
