@@ -16,12 +16,12 @@
 .proc.cmdline
 
 `ag_anyagent(
-    Description(
-	``(File("/proc/cmdline")),	// real filename
+    `Description(
+	(`File("/proc/cmdline")),	// real filename
 	"#\n",				// comment
 	true,				// read-only
-	``(List(
-	    String("^ \n"),
+	(`List(
+	    `String("^ \n"),
 	    " "
 	))
     )

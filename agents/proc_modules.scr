@@ -26,22 +26,22 @@
 .proc.modules
 
 `ag_anyagent(
-  Description (
-  ``(File("/proc/modules")),	// real file name
+  `Description (
+  (`File("/proc/modules")),	// real file name
   "#\n",			// Comment
   true,				// read-only
-  ``(Tuple (
-      Name(String("^ \t")),
-      Whitespace (),
-      Value (
-	Tuple (
-	  `size (Number()),
-	  Whitespace(),
-	  `used (String("^ \n")),
-	  Optional (String ("^\n"))
+  (`Tuple (
+      `Name(`String("^ \t")),
+      `Whitespace (),
+      `Value (
+	`Tuple (
+	  `size (`Number()),
+	  `Whitespace(),
+	  `used (`String("^ \n")),
+	  `Optional (`String ("^\n"))
 	)
       ),
-      Continue ("\n")
+      `Continue ("\n")
     ) )
   )
 )
