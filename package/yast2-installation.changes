@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Mar 11 17:16:03 CET 2003 - kkaempf@suse.de
+
+- also set /etc/sysconfig/displaymanager:DISPLAYMANAGER (#25087)
+
+-------------------------------------------------------------------
 Mon Mar 10 19:03:34 CET 2003 - kkaempf@suse.de
 
 - check for existance of /usr/src/linux/include/linux before

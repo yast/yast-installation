@@ -82,8 +82,11 @@ Please wait while the base system is being installed.
 
     // window manager setting
     // default_wm will be used below !
+    // display manager setting
+    // default_dm will be used below !
 
     string default_wm = "kde";
+    string default_dm = "kdm";
 
     if ( !Mode::update )
     {
@@ -91,11 +94,13 @@ Please wait while the base system is being installed.
 	    && Pkg::IsProvided ("gdm2"))
 	{
 	    default_wm = "gnome";
+	    default_dm = "gdm";
 	}
 	else if (!Pkg::IsSelected ("kdebase3-kdm")
 	    && Pkg::IsSelected ("gdm2"))
 	{
 	    default_wm = "gnome";
+	    default_dm = "gdm";
 	}
     }
 
@@ -303,6 +308,8 @@ Please wait while the base system is being installed.
 
 	SCR::Write (.sysconfig.windowmanager.DEFAULT_WM, default_wm);
 	SCR::Write (.sysconfig.windowmanager, nil);
+	SCR::Write (.sysconfig.displaymanager.DISPLAYMANAGER, default_dm);
+	SCR::Write (.sysconfig.displaymanager, nil);
     }
 
     // --------------------------------------------------------------
