@@ -403,14 +403,16 @@ Please wait while the base system is being installed.
     }
     else	// install mode
     {
-	string foreign_primary = Storage::GetForeignPrimary();
+	// get list of bootable 'foreign' primary partitions
+	// ["<device> <comment>", "<device> <comment>", ...]
+	list foreign_primaries = Storage::GetForeignPrimary();
 
 	// --------------------------------------------------------------
 	// boot concept
 
-	if ((foreign_primary != "") && (foreign_primary != "X"))
+	if (foreign_primaries != nil)
 	{
-	    Boot::other = " -o \""+foreign_primary+"\"";
+	    Boot::others = foreign_primaries;
 	}
     }
 
