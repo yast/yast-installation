@@ -84,7 +84,7 @@ their licenses, click <b>I Disagree with All</b>.</p>");
 				`HBox (
 				    `HStretch (),
 				    // push button
-				    `PushButton (`id (`close), _("&Close")),
+				    `PushButton (`id (`close), Label::CloseButton ()),
 				    `HStretch ()
 				)
 			    )
@@ -133,8 +133,7 @@ according to the installation settings in the previous dialogs.</p>")
 	    + _("<p>Go back and check the settings if you are unsure.</p>")
 	    ;
 
-	// Label for the button that confirms startint the installation
-	string confirm_button_label = _("&Install");
+	string confirm_button_label = Label::InstallButton ();
 
 	if ( Mode::update () )
 	{
