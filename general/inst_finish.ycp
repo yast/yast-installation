@@ -133,7 +133,7 @@ Please wait while the base system is being installed.
     if (Storage::CheckForLvmRootFs()
 	|| Storage::CheckForMdRootFs()
 	|| Product::certify_cd
-	|| (Mode::installMap["reboot"]:"" == "1")
+	|| (SCR::Read (.etc.install_inf.Reboot) == "1")
 	|| (Display::xserver_is_unknown
 	    && !Display::has_fbdev))
     {
