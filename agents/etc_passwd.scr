@@ -30,42 +30,42 @@
 .etc.passwd
 
 `ag_anyagent(
-  Description (
-      ``(File("/etc/passwd")),	// real filename
+  `Description (
+      (`File("/etc/passwd")),	// real filename
       "#",			// Comment
       true,
-      ``(List (
-	Or (
-	  Tuple (
-	  `username (String("+")),
+      (`List (
+	`Or (
+	  `Tuple (
+	  `username (`String("+")),
 	  ":",
-	  `password (String ("")),
+	  `password (`String ("")),
 	  ":",
-	  `uid (String ("")),
+	  `uid (`String ("")),
 	  ":",
-	  `gid (String ("")),
+	  `gid (`String ("")),
 	  ":",
-	  `fullname (String ("")),
+	  `fullname (`String ("")),
 	  ":",
-	  `home (String ("")),
+	  `home (`String ("")),
 	  ":",
-	  `shell (String (""))
+	  `shell (`String (""))
 	),
 
-	Tuple (
-	  `username (String ("^:")),
+	`Tuple (
+	  `username (`String ("^:")),
 	  ":",
-	  `password (Or (String ("^:"), "")),
+	  `password (`Or (`String ("^:"), "")),
 	  ":",
-	  `uid (Number ()),
+	  `uid (`Number ()),
 	  ":",
-	  `gid (Number ()),
+	  `gid (`Number ()),
 	  ":",
-	  `fullname (Or (String ("^:"), "")),
+	  `fullname (`Or (`String ("^:"), "")),
 	  ":",
-	  `home (String ("^:")),
+	  `home (`String ("^:")),
 	  ":",
-	  `shell (String ("^\n"))
+	  `shell (`String ("^\n"))
 	)),
 	"\n"
       ))

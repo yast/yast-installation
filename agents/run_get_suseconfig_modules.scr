@@ -22,8 +22,8 @@
 .run.get.suseconfig.modules
 
 `ag_anyagent(
-	     Description (
-			  ``( Run( "		\
+	     `Description (
+			  ( `Run( "		\
 cd /sbin/conf.d;				\
 /bin/ls						\
 | /usr/bin/sed -e 's/^SuSEconfig\.//'		\
@@ -36,9 +36,9 @@ cd /sbin/conf.d;				\
 			      ),
 			  "\n",			// Comment
 			  true,			// read-only
-			  ``(List (
-				   String ("^ \t\n"),
-				   String ("\n\t ")
+			  (`List (
+				   `String ("^ \t\n"),
+				   `String ("\n\t ")
 				   ))
 			  )
 	     )

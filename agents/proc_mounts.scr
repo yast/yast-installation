@@ -37,23 +37,23 @@
 .proc.mounts
 
 `ag_anyagent(
-  Description (
-	``(File("/proc/mounts")),     // real file name
+  `Description (
+	(`File("/proc/mounts")),     // real file name
 	"#\n",                    // Comment
 	false,                    // read-only
-	``(List (
-	    Tuple (
-		`spec (String("^\t ")),
-		Separator ("\t "),
-		`file (String("^\t ")),
-		Separator ("\t "),
-		`vfstype (String("^\t ")),
-		Separator ("\t "),
-		`mntops (String("^ \t\n")),
-		Optional(Whitespace()),
-		Optional(`freq (Number())),
-		Optional(Whitespace()),
-		Optional(`passno (Number()))
+	(`List (
+	    `Tuple (
+		`spec (`String("^\t ")),
+		`Separator ("\t "),
+		`file (`String("^\t ")),
+		`Separator ("\t "),
+		`vfstype (`String("^\t ")),
+		`Separator ("\t "),
+		`mntops (`String("^ \t\n")),
+		`Optional(`Whitespace()),
+		`Optional(`freq (`Number())),
+		`Optional(`Whitespace()),
+		`Optional(`passno (`Number()))
 		),
 	    "\n"
 	    ))
