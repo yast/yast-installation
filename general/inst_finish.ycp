@@ -631,6 +631,14 @@ with the load address of your root DASD.
 	Misc::boot_msg = "";
     }
 
+
+	if (Mode::autoinst)
+	{
+		import "AutoinstScripts";
+		AutoinstScripts::Write("chroot-scripts", true);
+	}
+
+
     // --------------------------------------------------------------
     // Copy YaST2 log files into installed system
 
