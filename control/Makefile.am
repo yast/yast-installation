@@ -2,7 +2,9 @@
 
 controldir = $(yast2dir)/control
 
-control_DATA = control.xml
+control_DATA = \
+	control.xml \
+	control.dtd
 
 
 EXTRA_DIST =  $(control_DATA)
