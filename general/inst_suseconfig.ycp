@@ -30,10 +30,11 @@
 	return `auto;					// don't execute this once more
 
     boolean onlyKernelUpdate = false;
-    if (Mode::normal)
+    if (Mode::normal				// runtime
+	&& Mode::update)			// and update
     {
 	import "Kernel";
-	onlyKernelUpdate = Kernel::switched;		// see update/inst_rpmupdate.ycp
+	onlyKernelUpdate = Kernel::switched;		// see update/inst_rpmupdate.ycp, packager/sw_single.ycp
     }
 
     boolean reread_inittab = false;

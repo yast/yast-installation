@@ -247,6 +247,7 @@ fi
 unset VNC
 unset Y2_NETWORK_ACTIVE
 unset Y2_SSH_ACTIVE
+unset USE_SSH
 # tell YaST2 to start VNC server
 if grep -qs '^VNC:.*1' /etc/install.inf ; then
     export VNC=1
@@ -256,10 +257,13 @@ fi
 if grep -qs '^\(Display_IP\|VNC\):.*1' /etc/install.inf ; then
     rcnetwork start
     Y2_NETWORK_ACTIVE=1
+    rcsshd start
+    Y2_SSH_ACTIVE=1
 fi
 
 # activate network for remote access via ssh
 if grep -qs '^UseSSH:.*1' /etc/install.inf ; then
+    USE_SSH=1
     test -z "$Y2_NETWORK_ACTIVE" && rcnetwork start
     rcsshd start
     Y2_NETWORK_ACTIVE=1
@@ -273,7 +277,21 @@ fi
 # Installation via ssh requires a remote login, but YaST2 must be started manually
 # just loop around the file and proceed when it is gone (removed by YaST2.sshinstall)
 #
-if test -z "$Y2_SSH_ACTIVE" ; then
+if test -z "$USE_SSH" ; then
+#
+# This is VNC and X
+#
+if [ -z "$VNC" ]
+then
+# Print this message if we do a X-Install
+cat <<-EOF
+
+	***
+	***           Please return to your X-Server screen to finish installation
+	***
+
+EOF
+fi
     /usr/lib/YaST2/bin/YaST2 installation continue
 else
 #

@@ -271,8 +271,9 @@ shift
 moduleargs=\(\"$*\"\)
 
 qt_bg=""
-if echo $moduleargs | egrep -q '\(initial|continue\)' ; then
-    qt_bg="-bg #dedede"
+# why this check? what other moduleargs are possible?
+if echo $moduleargs | egrep -q '\(\"initial|continue\"\)' ; then
+    qt_bg="-bg #cccccc"
 fi
 
 PATH=/var/X11R6/bin:$ybindir:$PATH

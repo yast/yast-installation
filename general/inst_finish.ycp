@@ -80,18 +80,6 @@ Please wait while the base system is being installed.
     // --------------------------------------------------------------
     // do things needed in inst-sys
 
-
-    // Saving package selections to disk
-    if ( Mode::update )
-    {
-	Update::Save();
-    }
-    else
-    {
-	Packages::Save();
-	PackageSelectionIO::savePackageSelection( false );
-    }
-
     // window manager setting
     // default_wm will be used below !
 
@@ -206,20 +194,6 @@ Please wait while the base system is being installed.
     WFM::SCRClose (Installation::scrHandle);
 
 
-    // --------------------------------------------------------------
-    // --------------------------------------------------------------
-//
-//    WFM::Execute (.local.bash, "/bin/cp /usr/lib/liby2util* " + Installation::destdir + "/usr/lib");
-//    WFM::Execute (.local.bash, "/bin/cp /usr/lib/liby2pm* " + Installation::destdir + "/usr/lib");
-//    WFM::Execute (.local.bash, "/bin/cp /usr/lib/libycp.* " + Installation::destdir + "/usr/lib");
-//    WFM::Execute (.local.bash, "/bin/cp /usr/lib/liby2.* " + Installation::destdir + "/usr/lib");
-//    WFM::Execute (.local.bash, "/bin/cp /usr/lib/libscr.* " + Installation::destdir + "/usr/lib");
-//    WFM::Execute (.local.bash, "/bin/cp /usr/lib/libyui.* " + Installation::destdir + "/usr/lib");
-//
-//    WFM::Execute (.local.bash, "/bin/cp -a /usr/share/YaST2/* " + Installation::destdir + "/usr/share/YaST2");
-//    WFM::Execute (.local.bash, "/bin/cp -a /usr/lib/YaST2/* " + Installation::destdir + "/usr/lib/YaST2");
-//
-    // --------------------------------------------------------------
     // --------------------------------------------------------------
 
 
@@ -358,7 +332,20 @@ Please wait while the base system is being installed.
 	}
     }
 
-    ModulesConf::Save ();
+    ModulesConf::Save (false);
+
+    string update_dir = SCR::Read (.etc.install_inf.UpdateDir);
+    if (update_dir != nil)
+    {
+	SCR::Write (.target.string, "/var/lib/YaST2/vendor_update", update_dir);
+    }
+
+
+    if (!Product::box)
+    {
+	SCR::Write (.sysconfig.suseconfig.CWD_IN_USER_PATH, "no");
+	SCR::Write (.sysconfig.suseconfig, nil);
+    }
 
     // --------------------------------------------------------------
     // check for Kde vs. Gnome, see inst_xf86config
@@ -424,13 +411,12 @@ Please wait while the base system is being installed.
 
     Progress::Title(_("Updating kernel module dependencies"));
 
-    ModulesConf::Save ();
-    ModulesConf::RunDepmod ();
+    ModulesConf::Save (true);
 
     if ( !Mode::update )
     {
 	// Set default runlevel to 5 if X11 packages are installed
-	if ( !Mode::test && x11_installed )
+	if ( !Mode::test && Mode::x11_setup_needed && x11_installed )
 	{
 	    y2milestone ("setting default runlevel to 5");
 	    SCR::Write (.etc.inittab.id, "5:initdefault:");
@@ -448,11 +434,14 @@ Please wait while the base system is being installed.
 	SCR::Write (.etc.inittab.id, sformat ("%1:initdefault:", last_runlevel));
 	SCR::Write (.etc.inittab, nil);
 
-	if ( ! Arch::ppc )
+	if (!Arch::ppc
+	    && Mode::update)
 	{
-	    // saving kernel
-	    SCR::Execute (.target.bash, "/bin/cp /boot/vmlinuz /boot/vmlinuz.suse");
-	    SCR::Execute (.target.bash, "/bin/cp /boot/initrd /boot/initrd.suse");
+	    // lilo might need {vmlinuz,initrd}.suse
+	    SCR::Execute (.target.remove, "/boot/vmlinuz.suse");
+	    SCR::Execute (.target.symlink, "/boot/vmlinuz.shipped", "/boot/vmlinuz.suse");
+	    SCR::Execute (.target.remove, "/boot/initrd.suse");
+	    SCR::Execute (.target.symlink, "/boot/initrd.shipped", "/boot/initrd.suse");
 	}
     }
 
@@ -622,6 +611,7 @@ with the load address of your root DASD.
     if (Arch::s390 || Mode::vnc || Mode::usessh)
     {
 	WFM::Execute (.local.bash, "/sbin/create_interface " + Installation::destdir);
+	ModulesConf::RunDepmod (false);
     }
 
     // --------------------------------------------------------------
@@ -697,6 +687,12 @@ with the load address of your root DASD.
 
     // copy y2start.log
     SCR::Write (.target.string, "/var/log/YaST2/y2start.log-initial", WFM::Read (.local.string, ["/var/log/YaST2/y2start.log", ""]));
+
+
+    // --------------------------------------------------------------
+
+    if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_finish.ycp") > 0)
+	WFM::CallFunction (product_finish(Mode::update));
 
     // --------------------------------------------------------------
     // Unmount all mounted devices (from inst_prepdisk)

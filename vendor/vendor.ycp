@@ -53,25 +53,22 @@
 
 	y2milestone ("run_inst %1/%2", fpath, fname);
 
-	SCR::Execute (.target.bash, "/bin/cp " + fpath + "/" + fname + " /tmp");
+	string tmpdir = SCR::Read (.target.tmpdir);
+	SCR::Execute (.target.bash, "/bin/cp " + fpath + "/" + fname + " " + tmpdir);
 
 	// force it to be readable and executable
-	SCR::Execute (.target.bash, "/bin/chmod 774 /tmp/" + fname);
+	SCR::Execute (.target.bash, "/bin/chmod 774 " + tmpdir + "/" + fname);
 
-	result = SCR::Execute (.target.bash, "(cd /tmp; ./" + fname + " " + fpath + ")");
-	SCR::Execute (.target.remove, "/tmp/" + fname);
+	result = SCR::Execute (.target.bash, "(cd " + tmpdir + "; ./" + fname + " " + fpath + ")");
+	SCR::Execute (.target.remove, tmpdir + "/" + fname);
 
 	return result;
     };
 
-    // FIXME, must be TargetProductData
-    map productdata = Pkg::SourceProductData(0);
-    string version = productdata["productversion"]:"novers";
-
-    string language	= UI::GetLanguage(true);
-    boolean is_mounted	= false;
-
     include "installation_ui.ycp";
+    string language = UI::GetLanguage(true);
+
+    boolean is_mounted = false;
 
     //------------------------------------------------------------
 
@@ -123,32 +120,65 @@
     // CD is mounted. Check contents.
 
     string cdpath = Installation::sourcedir;
-    y2milestone ("Trying %1", cdpath);
-    list dirlist = SCR::Read(.target.dir, cdpath);
 
-    if ((size (dirlist) <= 0)
-	|| (!contains (dirlist, "linux")))
+
+    // get directory on update disk from installation (value from install.inf)
+    //
+    // if not set, determine directory from installed products
+    //
+
+    string update_dir =	SCR::Read (.target.string, ["/var/lib/YaST2/vendor_update", ""]);
+    if (update_dir != "")
     {
-	// VENDOR: vendor cd contains wrong data
-	return wrong_cd(_("Couldn't find driver data on the CD-ROM\nAborting now."), is_mounted);
+	cdpath = cdpath + update_dir;
+    }
+    else
+    {
+	list productdata = Pkg::TargetProducts();
+	if (productdata == nil) productdata = [];
+	string product = productdata[0,"product"]:"SuSE Linux 8.1";
+	list splitproduct = splitstring (product, " ");
+	string version = splitproduct[size(splitproduct)-1]:"8.1";
+
+	y2milestone ("Trying %1", cdpath);
+	list dirlist = SCR::Read(.target.dir, cdpath);
+
+	if ((size (dirlist) <= 0)
+	    || (!contains (dirlist, "linux")))
+	{
+	    // VENDOR: vendor cd contains wrong data
+	    return wrong_cd(_("Couldn't find driver data on the CD-ROM\nAborting now."), is_mounted);
+	}
+
+	cdpath = cdpath + "/linux";
+
+	y2milestone ("Trying %1", cdpath);
+
+	dirlist = SCR::Read(.target.dir, cdpath);
+	if ((size (dirlist) <= 0)
+	    || (!(contains (dirlist, "suse")
+		|| contains (dirlist, "unitedlinux"))))
+	{
+	    // VENDOR: vendor cd contains wrong data
+	    return wrong_cd(_("Couldn't find driver data on the CD-ROM\nAborting now."), is_mounted);
+	}
+
+	string vendordir = "/suse/";
+
+	if (SCR::Read(.target.size, "/etc/UnitedLinux-release") > 0)
+	{
+	    vendordir = "/UnitedLinux/";
+	    version = "ul1";
+	}
+
+	cdpath = cdpath + vendordir + Arch::architecture + "-" + version;
+
     }
 
-    cdpath = cdpath + "/linux";
 
     y2milestone ("Trying %1", cdpath);
 
-    list dirlist = SCR::Read(.target.dir, cdpath);
-    if ((size (dirlist) <= 0)
-	|| (!contains (dirlist, "suse")))
-    {
-	// VENDOR: vendor cd contains wrong data
-	return wrong_cd(_("Couldn't find driver data on the CD-ROM\nAborting now."), is_mounted);
-    }
-
-    cdpath = cdpath + "/suse/" + Arch::architecture + "-" + version;
-    y2milestone ("Trying %1", cdpath);
-
-    list dirlist = SCR::Read(.target.dir, cdpath);
+    dirlist = SCR::Read(.target.dir, cdpath);
     if (size (dirlist) <= 0)
     {
 	// VENDOR: vendor cd doesn't contain data for current system and linux version

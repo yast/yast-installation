@@ -514,27 +514,59 @@
 
 	    map display = UI::GetDisplayInfo();
 
-	    if ( display[ "DefaultWidth"  ]:0 >= 800 &&
-		 display[ "DefaultHeight" ]:0 >= 600 )
+	    // show button to "start control center"?
+	    boolean show_y2cc_button = true;
+
+	    if (!display["TextMode"]:true)
 	    {
-		// For Qt 800x600 or better, there is room enough to put both
-		// check boxes in a row and the menu in the center in between.
-		// This looks better than the fallback layout below.
-		bottom_box =
-		    `VBox(
-			  `HBox(
-				`HWeight( 1, `Left( check_box_skip ) ),
-				menu,
-				`HWeight( 1, `Right( check_box_start_y2cc ) )
-				),
-			  `VSpacing( 0.2 )
-			  );
+		if (!Pkg::IsProvided ("yast2-control-center"))
+		{
+		    show_y2cc_button = false;
+		}
+	    }
+
+	    if (show_y2cc_button)
+	    {
+		if ( display[ "DefaultWidth"  ]:0 >= 800 &&
+		     display[ "DefaultHeight" ]:0 >= 600 )
+		{
+		    // For Qt 800x600 or better, there is room enough to put both
+		    // check boxes in a row and the menu in the center in between.
+		    // This looks better than the fallback layout below.
+		    bottom_box =
+			`VBox(
+			      `HBox(
+				    `HWeight( 1, `Left( check_box_skip ) ),
+				    menu,
+				    `HWeight( 1, `Right( check_box_start_y2cc ) )
+				    ),
+			      `VSpacing( 0.2 )
+			      );
+		}
+		else
+		{
+		    // Fallback layout for NCurses or Qt < 800x600:
+		    // The menu at the left, the checkboxes below each other in a
+		    // column at the right.
+
+		    bottom_box =
+			`VBox(
+			      `HBox(
+				    `Left( menu ),
+				    `HVSquash(
+					      `VBox(
+						    `Left( check_box_skip ),
+						    `Left( check_box_start_y2cc )
+						    )
+					      )
+				    ),
+			      `VSpacing( 0.2 )
+			      );
+		}
 	    }
 	    else
 	    {
-		// Fallback layout for NCurses or Qt < 800x600:
-		// The menu at the left, the checkboxes below each other in a
-		// column at the right.
+		// Now without the control center button.
 
 		bottom_box =
 		    `VBox(
@@ -542,8 +574,7 @@
 				`Left( menu ),
 				`HVSquash(
 					  `VBox(
-						`Left( check_box_skip ),
-						`Left( check_box_start_y2cc )
+						`Left( check_box_skip )
 						)
 					  )
 				),
@@ -807,6 +838,11 @@ To use the settings as displayed, press <b>Accept</b>.
 		input = submod_ask_user( submod, false );
 	    }
 	}
+	else if (input == `finish )
+	{
+	    // For update only: This does all by itself, and when it's done, it returns `finish.
+	    return `finish;
+	}
 	else if (input == `abort )
 	{
 	    if ( Mode::initial )
@@ -879,7 +915,22 @@ To use the settings as displayed, press <b>Accept</b>.
 		    write_settings();
 		}
 
-		return `next;
+		if( ! Mode::initial &&
+		    ( Product::openteam_server || Product::fwadmin_host ) )
+		{
+			if ( Product::openteam_server )
+			{
+			    return WFM::CallFunction( `openteam() );
+			}
+			else if ( Product::fwadmin_host )
+			{
+			    return WFM::CallFunction( `fwcdadmin() );
+			}
+		}
+		else
+		{
+			return `next;
+		}
 	    }
 	}
 	else if ( input == `back )

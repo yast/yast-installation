@@ -28,7 +28,6 @@
      * save arguments for a kernel module
      * @param name	string, name of kernel module
      * @param arg	string, arguments ("opt1=val1 opt2=val2 ...")
-     *
      */
     global define void ModuleArgs (string name, string arg)
     ``{
@@ -50,9 +49,13 @@
      * RunDepmod
      * runs /sbin/depmod
      * !! call only when SCR runs on target !!
+     * @param force	boolean, force depmod run (option "-a" instead of "-A")
      */
-    global define void RunDepmod ()
+    global define void RunDepmod (boolean force)
     ``{
+	if (Arch::s390)
+	    return;
+
 	import "Kernel";
 
 	string kernel_version = SCR::Read (.boot.vmlinuz_version, ["/boot/" + Kernel::binary]);
@@ -61,11 +64,13 @@
 
 	if (size (kernel_version) > 0)
 	{
-	    SCR::Execute(.target.bash, "unset MODPATH; /sbin/depmod -a -F /boot/System.map-"+kernel_version+" "+kernel_version);
+	    SCR::Execute (.target.bash, "unset MODPATH; /sbin/depmod " + (force ? "-a" : "-A") +
+			  " -F /boot/System.map-" + kernel_version + " " + kernel_version);
 	}
 	else
 	{
-	    SCR::Execute(.target.bash, "unset MODPATH; /sbin/depmod -a -F /boot/System.map-`uname -r` `uname -r`");
+	    SCR::Execute (.target.bash, "unset MODPATH; /sbin/depmod " + (force ? "-a" : "-A") +
+			  " -F /boot/System.map-`uname -r` `uname -r`");
 	}
     }
 
@@ -73,11 +78,10 @@
     /**
      * Save
      * save module names and arguments to /etc/modules.conf
+     * @param force	boolean, force depmod run even if /etc/modules.conf is unchanged
      * !! call only when SCR runs on target !!
-     *
-     * TODO: at a flag to run depmod unconditionally and use it in inst_finish
      */
-    global define void Save ()
+    global define void Save (boolean force)
     ``{
 	list module_names = StorageControllers::moduleNames;
 	list module_args = StorageControllers::moduleArgs;
@@ -130,12 +134,14 @@
 	if (modules_conf_changed)
 	{
 	    SCR::Write (.modules, nil);
+	}
 
+	if (modules_conf_changed || force)
+	{
 	    if (!Mode::test)
 	    {
-		RunDepmod ();
+		RunDepmod (true);
 	    }
 	}
     }
-
 }

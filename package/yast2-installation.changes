@@ -1,4 +1,189 @@
 -------------------------------------------------------------------
+Wed Oct 16 14:03:27 CEST 2002 - arvin@suse.de
+
+- correctly handle quotes in /etc/install.inf (bug #20986)
+
+-------------------------------------------------------------------
+Wed Oct 16 11:10:07 CEST 2002 - kkaempf@suse.de
+
+- use proper tmpdir for vendor-supplied script when loading
+  vendor driver disk (#20967)
+- 2.6.87
+
+-------------------------------------------------------------------
+Tue Oct 15 16:29:21 CEST 2002 - choeger@suse.de
+
+- renamed product id text from "Open Team Server" to "Openexchange Server",
+  because this text is shown into the installation window and the name of
+  the cd is associated with this name
+
+-------------------------------------------------------------------
+Mon Oct 14 18:21:52 CEST 2002 - sh@suse.de
+
+- V 2.6.85
+- Fixed bug #19214: Return to proposal after update
+
+-------------------------------------------------------------------
+Mon Oct 14 15:57:34 CEST 2002 - kkaempf@suse.de
+
+- use "UpdateDir" from install.inf when checking vendor
+  update media (#19442)
+- set /sysconfig/suseconfig/CWD_IN_USER_PATH="no" on non-box
+  products (#17464)
+- 2.6.84
+
+-------------------------------------------------------------------
+Mon Oct 14 15:41:33 CEST 2002 - sh@suse.de
+
+- V 2.6.83
+- Fixed bug #19628: Obsolete MediaUI::ChangeMedium() call
+
+-------------------------------------------------------------------
+Thu Oct 10 15:26:07 CEST 2002 - arvin@suse.de
+
+- make info text (aka beta warning) scroll-able (bug #20063)
+
+-------------------------------------------------------------------
+Wed Oct  9 09:23:53 CEST 2002 - jsrain@suse.cz
+
+- now not enabling 2 gettys on same serial line on p690 (#19788)
+
+-------------------------------------------------------------------
+Tue Oct  8 15:37:59 CEST 2002 - kkaempf@suse.de
+
+- disable update for non-box products (#20695)
+- 2.6.80
+
+-------------------------------------------------------------------
+Mon Oct  7 17:09:46 CEST 2002 - kkaempf@suse.de
+
+- display media.1/info.txt if exists before starting installation
+  (#18504)
+
+-------------------------------------------------------------------
+Tue Oct  1 17:01:15 CEST 2002 - kkaempf@suse.de
+
+- runlevel 5 only where applicable (#20369)
+
+-------------------------------------------------------------------
+Thu Sep 26 18:17:35 CEST 2002 - arvin@suse.de
+
+- remove console kernel option if it's autodectected like
+  pseries can do (bug #20177)
+
+-------------------------------------------------------------------
+Thu Sep 26 12:56:01 CEST 2002 - choeger@suse.de
+
+- call product specific YaST2 modules before finishing the
+  installation
+
+-------------------------------------------------------------------
+Tue Sep 24 11:48:17 CEST 2002 - arvin@suse.de
+
+- run depmod after network setup for ssh and vnc installation
+  (bug #20040)
+
+-------------------------------------------------------------------
+Mon Sep 23 15:31:25 CEST 2002 - arvin@suse.de
+
+- again fix for qt background color (bug #18926)
+
+-------------------------------------------------------------------
+Fri Sep 20 17:02:45 CEST 2002 - arvin@suse.de
+
+- in final proposal screen hide button to start control center if
+  the control center is not available (bug #19926)
+
+-------------------------------------------------------------------
+Fri Sep 20 16:58:14 CEST 2002 - kkaempf@suse.de
+
+- re-init Product module in running system from cached
+  product data properly
+- 2.6.72
+
+-------------------------------------------------------------------
+Fri Sep 20 13:30:40 CEST 2002 - kkaempf@suse.de
+
+- initialize Product module from content data
+- 2.6.71
+
+-------------------------------------------------------------------
+Fri Sep 20 13:08:08 CEST 2002 - kkaempf@suse.de
+
+- add agent to read "/content" file
+- 2.6.69
+
+-------------------------------------------------------------------
+Fri Sep 20 11:47:05 CEST 2002 - kkaempf@suse.de
+
+- linuxrc provides 'content' at / now, no need to mount the source.
+- 2.6.70
+
+-------------------------------------------------------------------
+Fri Sep 20 11:32:26 CEST 2002 - kkaempf@suse.de
+
+- force reboot on s390 after installation
+- 2.6.69
+
+-------------------------------------------------------------------
+Thu Sep 19 21:17:17 CEST 2002 - kkaempf@suse.de
+
+- umount /var/adm/mount after retrieving content file
+- 2.6.68
+
+-------------------------------------------------------------------
+Wed Sep 18 17:49:20 CEST 2002 - kkaempf@suse.de
+
+- added product hooks to installation workflow
+- 2.6.67
+
+-------------------------------------------------------------------
+Wed Sep 18 16:28:57 CEST 2002 - arvin@suse.de
+
+- removed all code regarding zilo (bug #19821)
+- fixed qt background color (bug #18926)
+
+-------------------------------------------------------------------
+Wed Sep 18 16:00:39 CEST 2002 - arvin@suse.de
+
+- provides/obsoletes the old yast
+
+-------------------------------------------------------------------
+Mon Sep 16 12:37:32 CEST 2002 - kkaempf@suse.de
+
+- remove unneeded Save() functions (#19591)
+
+-------------------------------------------------------------------
+Thu Sep 12 22:14:45 CEST 2002 - fehr@suse.de
+
+- remove obsolete LVM and MD initialisation in inst_mode.ycp
+- 2.6.63
+
+-------------------------------------------------------------------
+Thu Sep 12 17:15:52 CEST 2002 - kkaempf@suse.de
+
+- remove control files (#19564)
+- 2.6.62
+
+-------------------------------------------------------------------
+Thu Sep 12 15:26:35 CEST 2002 - kkaempf@suse.de
+
+- fix vendor path for UnitedLinux (#19442)
+- 2.6.61
+
+-------------------------------------------------------------------
+Thu Sep 12 14:38:52 CEST 2002 - kkaempf@suse.de
+
+- dont warn about kernel if not in update mode.
+- 2.6.60
+
+-------------------------------------------------------------------
+Thu Sep 12 13:10:40 CEST 2002 - kkaempf@suse.de
+
+- symlink *.shipped to *.suse on update for LILO compatibility
+- 2.6.59
+
+-------------------------------------------------------------------
 Wed Sep 11 13:40:41 CEST 2002 - kkaempf@suse.de
 
 - properly unmount sources also on abort and end of update

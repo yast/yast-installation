@@ -1,7 +1,7 @@
 		      API for YaST2 installation proposal
 
 Author:	 Stefan Hundhammer <sh@suse.de>
-Updated: 2002-02-22
+Updated: 2002-10-14
 
 
 				  Motivation
@@ -243,6 +243,16 @@ map AskUser( boolean has_next )
 				Continue with the workflow sequence in the
 				current direction - forward if the last
 				submodule returned `next, backward otherwise.
+
+			`finish 
+				Finish the installation. This is pretty much
+				specific to "inst_mode.ycp" when the user
+				selected "update" here: This handles everything
+				all by itself. If this returns with `finish,
+				the update is finished, and continuing here
+				doesn't make any more sense. Thus, the proposal
+				mechanism returns with return code `finish to
+				its caller. See also bug #19214.
 
 
 		boolean language_changed (optional)

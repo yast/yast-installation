@@ -5,6 +5,10 @@
 @HEADER@
 Requires:	yast2
 Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
+Requires:	yast2-packager
+
+Provides:	yast
+Obsoletes:	yast
 
 Provides:	yast2-trans-inst-proposal y2t_inst
 Obsoletes:	yast2-trans-inst-proposal y2t_inst
@@ -43,7 +47,6 @@ This controls the system installation.
 @scrconfdir@/proc_cmdline.scr
 
 # agents
-@scrconfdir@/descr_info.scr
 @scrconfdir@/etc_passwd.scr
 @scrconfdir@/cfg_suseconfig.scr
 @scrconfdir@/proc_mounts.scr
