@@ -45,7 +45,6 @@ This controls the system installation.
 
 # agents
 @scrconfdir@/etc_passwd.scr
-@scrconfdir@/cfg_suseconfig.scr
 @scrconfdir@/proc_mounts.scr
 @scrconfdir@/cfg_windowmanager.scr
 @scrconfdir@/etc_install_inf.scr
