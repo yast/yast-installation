@@ -435,8 +435,15 @@
 	// headline for installation proposal
 	string headline = ProductControl::current_proposal_label;
         y2milestone("headline: %1", headline );
-        if (headline == "")
+        if ( headline == "")
+        {
             headline =  _("Installation Settings");
+        }
+        else
+        {
+            headline = dgettext( ProductControl::current_proposal_textdomain ,
+                    ProductControl::current_proposal_label );
+        }
 
 	// icon for installation proposal
 	string icon = "";
@@ -863,7 +870,7 @@ resolved before continuing.
 		continue;
 	    }
 
-	    if ( Mode::initial )
+	    if ( Mode::mode == "initial" )
 	    {
 		input = WFM::CallFunction("inst_doit", [true,		// have_back
 						      true,		// have_next

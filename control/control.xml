@@ -149,6 +149,7 @@ textdomain="control"
                 <proposal_module>modem</proposal_module>
                 <proposal_module>proxy</proposal_module>
                 <proposal_module>remote</proposal_module>
+                <proposal_module>firewall</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>

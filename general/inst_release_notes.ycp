@@ -15,7 +15,8 @@
     import "Wizard";
     import "Popup";
     import "Language";
-
+    import "Mode";
+    import "Misc";
 
     /* filename of release notes */
     string file = "";
@@ -25,9 +26,21 @@
 
 
     /* function to load release notes */
-    define boolean load_release_notes () ``{
+    define boolean load_release_notes ()
+    {
 
-	string tmp = "/usr/share/doc/release-notes/RELEASE-NOTES.%1.rtf";
+        string path_to_relnotes = "/usr/share/doc/release-notes";
+        if (Mode::firstboot)
+        {
+            string tmp_path =
+                (string)Misc::SysconfigRead(.sysconfig.firstboot.FIRSTBOOT_RELEASE_NOTES_PATH, "");
+            if (tmp_path != ""
+                    && size((list)SCR::Read(.target.dir, tmp_path)) > 0 )
+            {
+                path_to_relnotes = tmp_path;
+            }
+        }
+	string tmp = path_to_relnotes + "/RELEASE-NOTES.%1.rtf";
 
 	file = sformat (tmp, Language::language);
 	text = (string)SCR::Read (.target.string, [file, ""]);
@@ -64,7 +77,8 @@
     string help = _("<p>Here are the <b>release notes</b> for the installed
 Linux system. They provide a brief summary of new features and changes.</p>");
 
-    Wizard::SetContents (caption, contents, help, true, true);
+    Wizard::SetContents (caption, contents, help, (boolean)WFM::Args(0),
+            (boolean)WFM::Args(1));
 
     // FIXME: richtext eats return key
     // UI::SetFocus (`id (`text));

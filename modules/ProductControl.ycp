@@ -19,6 +19,9 @@ import "Arch";
 // current proposal label
 global string current_proposal_label = "";
 
+// current proposal textdomain
+global string current_proposal_textdomain = "";
+
 // locked proposal
 global list<string> locked_proposals = [];
 
@@ -40,6 +43,14 @@ global map software = $[];
 // Software configuration
 global map<string, any> globals = $[];
 
+
+// Control file for firstboot workflow and proposals
+//
+global string firstboot_control_file = "/usr/share/YaST2/control/firstboot.xml";
+
+// Location of a custom control file
+global string custom_control_file = "";
+
 // The custom control file location, usually copied from
 // the root of the CD to the installation directory by linuxrc
 global string default_control_file = "/control.xml";
@@ -53,7 +64,6 @@ global string packaged_control_file = "/usr/share/YaST2/control/control.xml";
 
 // The control file we are using for this session.
 global string current_control_file = "";
-
 
 
 // Current Wizard Step
@@ -177,47 +187,6 @@ boolean Check(string allowed, string current)
 }
 
 
-/**
-  * ProductControl Constructor
-  * @return void
-  */
-global define void ProductControl() ``{
-
-    // FIXME: Hack, with fixed names. Should be changed after SLES.
-    // #41696: Default control file is the one from 9.1. This is
-    // only a fallback solution if someone forgets the control.xml
-    // file in the installation source. Can happen with alot of
-    // customers used to older products.
-    if (issubstring(Product::name, "SLES"))
-    {
-        packaged_control_file = "/usr/share/YaST2/control/control.SLES.xml";
-    }
-    boolean ret = false;
-    current_control_file = "";
-    list<string> order =
-        [
-	 default_control_file,  // "/control.xml"
-	 saved_control_file, // "/var/lib/YaST2/control.xml"
-	 packaged_control_file // "/usr/share/YaST2/control/control.xml"
-	 ];
-    foreach(string cf, order, ``{
-	if ((integer)SCR::Read( .target.size, cf )>0
-            && current_control_file == "")
-	{
-	    current_control_file = cf;
-	}
-    });
-
-    // Just to be sure..
-    if (current_control_file == "")
-    {
-        current_control_file = packaged_control_file; // /usr/share/YaST2/control/control.xml
-    }
-
-    y2milestone("Reading controlfile: %1", current_control_file );
-    Read( current_control_file );
-    return;
-}
 
 /**
  * Check if valid architecture
@@ -318,7 +287,7 @@ global define term getTerm (map mod, map def) ``{
  * @return map defaults
  */
 global define map getModeDefaults(string stage, string mode)
-``{
+{
     map workflow = (map)select(filter(map wf, workflows, ``(
                 Check(wf["stage"]:"", stage) && Check(wf["mode"]:"", mode )
                     )), 0 , $[] );
@@ -349,21 +318,40 @@ void PrepareScripts(map m) {
     }
     return;
 }
+
+
+
+global define map getCompleteWorkflow(string stage, string mode)
+{
+    map workflow = select(filter(map wf, workflows, ``(
+                Check(wf["stage"]:"",stage) && Check(wf["mode"]:"", mode )
+                    )), 0 , $[] );
+    return workflow;
+}
+
+
 /**
  * Get modules of current Workflow
  * @param string stage
  * @param string mode
+ * @param boolean all enabled and disabled or enabled only
  * @return list<map> modules
  */
-global define list<map> getModules(string stage, string mode)
-``{
+global define list<map> getModules(string stage, string mode, symbol which)
+{
     map workflow = select(filter(map wf, workflows, ``(
                 Check(wf["stage"]:"",stage) && Check(wf["mode"]:"", mode )
                     )), 0 , $[] );
+
     y2debug("Workflow: %1", workflow );
     list<map> modules = workflow["modules"]:[];
     y2debug("modules: %1", modules );
+
     integer id = 1;
+    if (which == `enabled)
+    {
+        modules = filter(map m, modules, ``(m["enabled"]:true));
+    }
     modules = maplist(map m, modules, ``{
             m["id"] = sformat("%1_%2", stage, id);
             PrepareScripts(m);
@@ -381,7 +369,7 @@ global define list<map> getModules(string stage, string mode)
  * @return string
  */
 global define string getWorkflowLabel(string stage, string mode)
-``{
+{
     map workflow = select(filter(map wf, workflows, ``(
                 Check(wf["stage"]:"",stage) && Check(wf["mode"]:"",mode)
                     )), 0 , $[] );
@@ -417,14 +405,19 @@ global define void AddWizardSteps(list<map> stagemode) ``{
         {
 	    UI::WizardCommand(`AddStepHeading( dgettext( wizard_textdomain, slabel ) ) );
         }
-	foreach(map m, getModules(sm["stage"]:"", sm["mode"]:""), ``{
+	foreach(map m, getModules(sm["stage"]:"", sm["mode"]:"", `enabled),
+            ``{
 	    y2debug("Adding wizard step: %1", m );
 	    if (m["label"]:"" != "") {
 		if (first_id=="")
 		{
 		    first_id = m["id"]:"";
 		}
-		UI::WizardCommand(`AddStep( dgettext( wizard_textdomain, m["label"]:"" ), m["id"]:"" ) );
+		UI::WizardCommand(`AddStep( dgettext(
+                            wizard_textdomain,
+                            m["label"]:"" ),
+                        m["id"]:"" )
+                    );
 	    }
 	});
     });
@@ -464,8 +457,11 @@ global define void RetranslateWizardSteps() ``{
  * @param string mode
  * @return list<string> modules
  */
-global define list<string> getProposals(string stage, string mode, string proptype)
-``{
+global define list<string> getProposals(
+        string stage,
+        string mode,
+        string proptype)
+{
     // First we search for proposals for current stage if there are
     // any. (initial or continue)
 
@@ -524,21 +520,83 @@ global define list<string> getProposals(string stage, string mode, string propty
 
             });
 
-    string proposal_textdomain = (string)
+    current_proposal_textdomain = (string)
            productControl["textdomain"]:"control";
 
-    y2debug( "Using textdomain '%1' for proposals", proposal_textdomain);
-    current_proposal_label = dgettext( proposal_textdomain ,
-            props[0, "label"]:"" );
+    y2debug( "Using textdomain '%1' for proposals", current_proposal_textdomain);
+
+    current_proposal_label = props[0, "label"]:"";
     y2milestone("Proposal label: %1", current_proposal_label );
 
     return final_proposals;
 }
 
 
+/**
+ * Get Proposal list that cant be changed by the user.
+ */
 global list<string> getLockedProposals ()
 {
     return locked_proposals;
+}
+
+
+global define void Init()
+{
+
+    // FIXME: Hack, with fixed names. Should be changed after SLES.
+    // #41696: Default control file is the one from 9.1. This is
+    // only a fallback solution if someone forgets the control.xml
+    // file in the installation source. Can happen with alot of
+    // customers used to older products.
+    if (issubstring(Product::name, "SLES"))
+    {
+        packaged_control_file = "/usr/share/YaST2/control/control.SLES.xml";
+    }
+    boolean ret = false;
+    current_control_file = "";
+    list<string> order =
+        [
+	 default_control_file,  // "/control.xml"
+	 saved_control_file, // "/var/lib/YaST2/control.xml"
+	 packaged_control_file // "/usr/share/YaST2/control/control.xml"
+	 ];
+
+    if (Mode::mode == "firstboot")
+    {
+        order=prepend(order, firstboot_control_file);
+    }
+    if ( custom_control_file != "")
+    {
+        order=prepend(order, custom_control_file);
+    }
+
+    foreach(string cf, order, ``{
+	if ((integer)SCR::Read( .target.size, cf )>0
+            && current_control_file == "")
+	{
+	    current_control_file = cf;
+	}
+    });
+
+    // Just to be sure..
+    if (current_control_file == "")
+    {
+        current_control_file = packaged_control_file; // /usr/share/YaST2/control/control.xml
+    }
+
+    y2milestone("Reading controlfile: %1", current_control_file );
+    Read( current_control_file );
+    return;
+}
+
+/**
+  * ProductControl Constructor
+  * @return void
+  */
+global define void ProductControl()
+{
+    Init();
 }
 
 // EOF
