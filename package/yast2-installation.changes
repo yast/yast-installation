@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Sun Mar 28 16:05:19 CEST 2004 - nashif@suse.de
+
+- fixed hook scrips, now using WFM::Read(.local...) (#36831 )
+- Not executing any scripting after last client
+- Detecting mode before installation steps are sets (#37070 )
+- logging hook output to /var/log/YaST2 and copying those
+file to installed system.
+
+-------------------------------------------------------------------
 Thu Mar 25 16:49:04 CET 2004 - sh@suse.de
 
 - Fixed bug #34618: Don't use full-screen if started remotely 
