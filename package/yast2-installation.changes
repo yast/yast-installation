@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Feb 10 20:53:53 CET 2003 - arvin@suse.de
+
+- setup complete environment for qt during installation
+
+-------------------------------------------------------------------
 Mon Feb 10 18:24:12 CET 2003 - arvin@suse.de
 
 - skip proposal dialog if it's empty (bug #23520)
