@@ -21,6 +21,8 @@ import "X11Version";
 // Check if X11 is installed
 //------------------------------------------
 if ( X11Version::have_x11 ) {
-	WFM::CallFunction ( `x11 ( true, true ) );
+	return WFM::CallFunction ( `x11 ( true, true ) );
+} else {
+	return `next;
 }
 }
