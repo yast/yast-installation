@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Sep  8 15:47:16 CEST 2004 - visnov@suse.cz
+
+- implemented reordering of proposal items
+- implemented support for hyperlinks in proposal summaries 
+
+-------------------------------------------------------------------
 Tue Sep 07 14:18:56 CEST 2004 - arvin@suse.de
 
 - added proposal step to initialize sources during update before
