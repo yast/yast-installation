@@ -707,7 +707,7 @@ with the load address of your root DASD.
     // go through mountPoints collecting paths in umountList
     // *** umountList is lexically ordered !
 
-    foreach (`mountpoint,`mountval,mountPoints,
+    foreach (string mountpoint, list mountval, mountPoints,
     ``{
 	if (mountpoint != "swap")		// dont umount / on target
 	{
