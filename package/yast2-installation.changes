@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Aug 22 12:31:17 CEST 2002 - kkaempf@suse.de
+
+- drop "ht" flag probing, done in libhd now (#13532).
+
+-------------------------------------------------------------------
 Thu Aug 22 10:45:21 CEST 2002 - kkaempf@suse.de
 
 - run "SuSEconfig --module bootsplash" before bootloader

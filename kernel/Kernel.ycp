@@ -160,10 +160,9 @@
 		    switched = true;
 		}
 	    }
-	    else if ((contains (cpuflags, "ht"))		// hyper threading
-		     || (memsize > 0x100000000))		// > 4GB
+	    else if (memsize > 0x100000000)		// > 4GB
 	    {
-		y2milestone ("Kernel switch: Jackson/Memory !");
+		y2milestone ("Kernel switch: Memory !");
 		kernel_packages = ["k_smp"];
 		switched = true;
 	    }
