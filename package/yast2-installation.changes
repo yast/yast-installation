@@ -1,10 +1,10 @@
 -------------------------------------------------------------------
-Tue Jul  2 13:52:03 CEST 2002 - msvec@suse.cz
+Thu Jul 04 16:10:45 CEST 2002 - arvin@suse.de
 
-- 2.6.0
+- moved non binary files to /usr/share/YaST2
 
 -------------------------------------------------------------------
 Mon Jun 24 15:24:43 CEST 2002 - kkaempf@suse.de
 
-- New package: split off purely installation related code 
+- New package: split off purely installation related code
   from yast2.rpm
