@@ -45,7 +45,7 @@
     };
 
 
-    /* Congratulation Dialog caption */
+    /* caption for dialog "Release Notes" */
     string caption = _("Release Notes");
 
     load_release_notes ();
@@ -57,7 +57,9 @@
 			   `VSpacing (0.5)
 			   );
 
-    string help = _("FIXME");
+    /* help text for dialog "Release Notes" */
+    string help = _("Here are the <b>relase notes</b> of the installed
+Linux system. They provide a brief summary of new features and changes.");
 
     Wizard::SetContentsButtons (caption, contents, help,
 				BackButtonLabel(), NextButtonLabel());
@@ -68,13 +70,15 @@
 
 	ret = Wizard::UserInput();
 
-	if ( ret == `abort &&
-	     WFM::CallFunction (`inst_confirm_abort(`painless) ) )
+	if (ret == `abort)
 	{
-	    Wizard::RestoreNextButton();
-	    return `abort;
+	    if (UI::ReallyAbortPopup (false))
+	    {
+		Wizard::RestoreNextButton();
+		break;
+	    }
 	}
-	else if ( ret == `help )
+	else if (ret == `help)
 	{
 	    Wizard::ShowHelp (help);
 	}
