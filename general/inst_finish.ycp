@@ -394,6 +394,8 @@ Please wait while the base system is being installed.
 		SCR::Execute(.target.symlink, "/media"+mediafile, mediafile);
 	    }
 	});
+
+	// FIXME subfs
     }
     else	// install mode
     {

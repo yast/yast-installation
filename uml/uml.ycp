@@ -1,0 +1,43 @@
+/**
+ * File:	installation/uml/uml.ycp
+ * Module:	System installation
+ * Summary:	Main uml installation
+ * Authors:	Arvin Schnell <arvin@suse.de>
+ *
+ * $Id$
+ */
+
+{
+    textdomain "installation";
+
+    import "Mode";
+    import "Wizard";
+
+    // set normal mode and update
+    // Mode::normal = true;
+    // Mode::installation = false;
+    // Mode::update = false;
+
+    // wizard stage
+    integer current_stage = -1;
+
+    // create initial dialog
+    Wizard::CreateDialog ();
+
+    // calling inst_proposal
+    symbol ret = (symbol) WFM::CallFunction ("inst_proposal", [true, true, `uml]);
+
+    if (ret == `next)
+    {
+	// WFM::CallFunction ("inst_kickoff", [false, false]);
+	// WFM::CallFunction ("inst_rpmcopy", [false, false]);
+
+	// Wizard::OpenNextBackDialog();
+	// WFM::CallFunction ("inst_suseconfig", [false, false]);
+	// Wizard::CloseDialog();
+    }
+
+    Wizard::CloseDialog ();
+
+    return `next;
+}

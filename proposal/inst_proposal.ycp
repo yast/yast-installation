@@ -457,6 +457,18 @@
 						   );
 	    }
 	}
+	else if (proposal_mode == `uml)
+	{
+	    submodules = load_submodules_list( "uml-config-proposals.ycp",
+					       [
+						// Fallback list
+						"proposal_uml_user",
+						"proposal_uml_options",
+						"proposal_uml_disks",
+						"proposal_uml_network"
+						]
+					       );
+	}
 	else if ( proposal_mode == `net )
 	{
 	    // Module list for network configuration proposal
