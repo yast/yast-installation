@@ -499,6 +499,7 @@ will look different than in the manual.");
  [ `continue, `inst_proposal	    (true,  true, `net), true,						! autoinst &&    ! update_mode	, false],
  [ `continue, `inst_ask_net_test    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
  [ `continue, `inst_do_net_test	    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
+ [ `continue, `inst_you		    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
  [ `continue, `inst_auth	    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
  [ `continue, `inst_user	    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
  [ `continue, `inst_suseconfig	    (false, false),      true,			! test_mode						, false],
