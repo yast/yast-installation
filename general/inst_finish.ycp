@@ -560,7 +560,7 @@ with the load address of your root DASD.
     // write boot information for linuxrc
 
     linuxrc["Language"] = Language::language;
-    // Optional:  linuxrc["Keytable"] = Keyboard::keytable;
+    linuxrc["Keytable"] = Keyboard::keytable;
 
     Misc::WriteYaSTInf (linuxrc);
 
