@@ -226,24 +226,22 @@
 
 	retranslateWizardDialog();
     }
-
-    ///////////////////////////////////////////////////////////////////
-    // Settings for:
-    // Installation: INITIAL INSTALLATION
-    ///////////////////////////////////////////////////////////////////
-
     else if (!Mode::screen_shot
-	     && !Mode::live_eval )
+	     && !Mode::live_eval
+             && !Mode::firstboot
+             )
     {
-	// --------------------------------------------------------------
+
+        ///////////////////////////////////////////////////////////////////
+        // Settings for:
+        // Installation: INITIAL INSTALLATION
+        ///////////////////////////////////////////////////////////////////
+
 	// do we have a floppy drive attached ?
 
 	if (StorageDevices::FloppyReady())
 	{
-	    /////////////////////////////////////////////////////////////
 	    // Try to load settings from disk, if a floppy is present
-
-	    // FIXME !!
 
 	    SCR::Execute(.target.mount, [StorageDevices::FloppyDevice, "/media/floppy"], "-t auto");
 
@@ -255,7 +253,7 @@
 	    {
 		y2milestone("Found control file, switching to autoinst mode");
 		Mode::autoinst = true;
-		// initialize Report behaviour
+		// initialize Report behavior
 		// Default in autoinst mode is showing messages and warnings with timeout of 10 sec.
 		// Errors are shown without timeout.
 
@@ -270,7 +268,6 @@
     /////////////////////////////////////////
     // show message if text_fallback
     /////////////////////////////////////////
-
     if ((Mode::text_fallback || Mode::no_x11)
 	&& (Mode::x11_setup_needed && Arch::x11_setup_needed)
 	&& !Installation::shown_text_mode_warning)
@@ -394,9 +391,9 @@ differ from those in the manual.
        // Call the wizard dialog
 
         y2milestone( "Calling %1", argterm );
-
-        Hooks::Checkpoint (sformat("%1", module_name), true);           // entry hook, (""+symbol is a symbol->string conversion)
-        Hooks::Run (mod["name"]:"", true);           // entry hook, (""+symbol is a symbol->string conversion)
+        // entry hook, (""+symbol is a symbol->string conversion)
+        Hooks::Checkpoint (sformat("%1", module_name), true);
+        Hooks::Run (mod["name"]:"", true);
 
         list args = [];
 
@@ -417,7 +414,9 @@ differ from those in the manual.
             Hooks::Run (mod["name"]:"", false );
         }
         else
+        {
             y2milestone("Not running hooks at the end of the installation");
+        }
 
         // This should be safe (#36831)
         Hooks::Checkpoint ( mod["name"]:"", false);          // exit hook
@@ -476,7 +475,8 @@ differ from those in the manual.
         }
         else if (result == `auto)
         {
-            if (former_result != nil) {
+            if (former_result != nil)
+            {
                 if      (former_result == `next) m = m + 1;
                 else if (former_result == `back) m = m - 1;
             }
