@@ -39,6 +39,7 @@
     // values used in defined functions
 
     list<string>	submodules = [];
+    string              proptype = "";
     list<string>	locked_modules = [];
     list	titles     = [];
     map		submod2id  = $[];
@@ -384,7 +385,6 @@
     define list<string> load_matching_submodules_list() ``{
 
 	list<string> submodules = [];
-        string proptype = substring(sformat("%1", proposal_mode), 1 );
 
         submodules = ProductControl::getProposals (
                 Mode::stage,
@@ -724,11 +724,12 @@ a proposal which is locked, ask your System Administrator</p>");
 
     y2milestone( "Installation step #2" );
     proposal_mode = (symbol) WFM::Args(2);
-    //
-    // Get submodule descriptions
-    //
+    proptype = substring(sformat("%1", proposal_mode), 1 );
 
-    submodules = load_matching_submodules_list();
+    submodules = ProductControl::getProposals (
+            Mode::stage,
+            Mode::mode,
+            proptype );
     build_dialog();
 
     UI::ChangeWidget(`id(`menu_dummy), `Enabled, false );
@@ -768,6 +769,10 @@ a proposal which is locked, ask your System Administrator</p>");
                 break;
         }
     }
+    //
+    // Get submodule descriptions
+    //
+    submodules = load_matching_submodules_list();
 
 
     if (!get_submod_descriptions_and_build_menu ())
@@ -870,7 +875,7 @@ resolved before continuing.
 		continue;
 	    }
 
-	    if ( Mode::mode == "initial" )
+	    if ( Mode::stage == "initial" )
 	    {
 		input = WFM::CallFunction("inst_doit", [true,		// have_back
 						      true,		// have_next
