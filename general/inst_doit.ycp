@@ -83,6 +83,7 @@ their licenses, click <b>I Disagree with All</b>.</p>");
 				`RichText (help),
 				`HBox (
 				    `HStretch (),
+				    // push button
 				    `PushButton (`id (`close), _("&Close")),
 				    `HStretch ()
 				)
@@ -119,14 +120,16 @@ their licenses, click <b>I Disagree with All</b>.</p>");
 	// Heading for confirmation popup before the installation really starts
 	string heading = "<h3>" + _("Confirm Installation") + "</h3>";
 
-	// Text for confirmation popup before the installation really starts
 	string body =
+	// Text for confirmation popup before the installation really starts 1/3
 	    _("<p>All information required for the base installation is now complete.</p>")
+	// Text for confirmation popup before the installation really starts 2/3
 	    + _("
 <p>If you continue now, partitions on your hard disk will be <b>formatted</b>
 (erasing any existing data in those partitions) 
 and <b>data will be overwritten</b>
 according to the installation settings in the previous dialogs.</p>")
+	// Text for confirmation popup before the installation really starts 3/3
 	    + _("<p>Go back and check the settings if you are unsure.</p>")
 	    ;
 
@@ -138,12 +141,14 @@ according to the installation settings in the previous dialogs.</p>")
 	    // Heading for confirmation popup before the update really starts
 	    heading = "<h3>" + _("Confirm Update") + "</h3>";
 
-	    // Text for confirmation popup before the update really starts
 	    body =
+	    // Text for confirmation popup before the update really starts 1/3
 		_("<p>All information required to perform an update is now complete.</p>")
+	    // Text for confirmation popup before the update really starts 2/3
 		+ _("
 <p>If you continue now, data on your hard disk will be overwritten 
 according to the settings in the previous dialogs.</p>")
+	    // Text for confirmation popup before the update really starts 3/3
 		+ _("<p>Go back and check the settings if you are unsure.</p>")
 		;
 

@@ -42,11 +42,11 @@
     term check_box_start_y2cc = `Empty();
     if (show_y2cc_checkbox)
     {
+        check_box_start_y2cc = `CheckBox (`id(`start_y2cc),
         // Check box: Should the YaST2 control center automatically
         // be started after this part of the installation is done?
         // Translators: About 40 characters max,
         // use newlines for longer translations.
-        check_box_start_y2cc = `CheckBox (`id(`start_y2cc),
                                            _("&Start YaST Control Center"), false);
     }
 

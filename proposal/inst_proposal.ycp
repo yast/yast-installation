@@ -518,6 +518,7 @@
 	
         if ( headline == "")
         {
+	    // dialog headline
             headline =  _("Installation Settings");
         }
         else
@@ -539,8 +540,10 @@
 							 // do this later manually or not at all
 							 // Translators: About 40 characters max,
 							 // use newlines for longer translations.
+							// radio button
 							 _("&Skip Configuration"), false)),
 				      `Left(`RadioButton(`id(`dontskip), `opt(`notify),
+							// radio button
 							 _("&Use Following Configuration"), true)),
 				      `VSpacing(1)
 				      )
@@ -551,6 +554,7 @@
 	    `HBox (
 		   `HStretch (),
 		   `ReplacePoint(`id(`rep_menu),
+				// menu button
 				 `MenuButton(`id(`menu_dummy), _("&Change..."), [`item(`id(`dummy), "" ) ] )
 				 ),
 		   `HStretch ()
@@ -603,6 +607,7 @@
 			    );
 	set_icon();
 	if ( Stage::stage () == "initial" )
+	    // push button
 	    Wizard::ShowReleaseNotesButton (_("&Show Release Notes"), `rel_notes);
     }
 
@@ -664,7 +669,9 @@
 	    }
 	});
 
+	// menu button item
 	menu_list = add( menu_list, `item(`id(`reset_to_defaults), _("&Reset to defaults") ) );
+	// menu button
 	UI::ReplaceWidget(`id(`rep_menu), `MenuButton(`id(`menu), _("&Change..."), menu_list ) );
 
 	return no > 1;
@@ -795,6 +802,7 @@ Put the hardware settings into effect by pressing <b>Next</b>.
 	{
 	    // Proposal in uml module
 	    help_text_string = _("<P><B>UML Installation Proposal</B></P>")
+	    // help text
 	    + _("<P>UML (User Mode Linux) installation allows you to start independent
 Linux virtual machines in the host system.</P>");
 	}
@@ -818,6 +826,7 @@ To use the settings as displayed, press <b>Next</b>.
 
         if (size(locked_modules) > 0 )
 	{
+	    // help text
             help_text_string = help_text_string + _("<p>Some proposals might be
 locked by the system administrator, so cannot be changed. To change
 a proposal that is locked, ask your system administrator.</p>");

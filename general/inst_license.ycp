@@ -56,6 +56,7 @@ if (regexpmatch(license_data["text"]:"", "</.*>")) {
     rt = `RichText(`id( `welcome_text), `opt(`plainText), license_data["text"]:"" );
 }
 
+// dialog caption
 string caption = _("License Agreement");
 
 term contents = `VBox (
@@ -70,7 +71,9 @@ term contents = `VBox (
             `HBox(
                 `HSpacing (2*space),
             `VBox(
+		// radio button
                 `Left(`RadioButton(`id(`yes), _("Yes, I Agree to the License Agreement"))),
+		// radio button
                 `Left( `RadioButton(`id(`no), _("No, I Do Not Agree")))
                 ),
             `HSpacing (2*space)
@@ -79,7 +82,7 @@ term contents = `VBox (
         `VSpacing(2)
         );
 
-
+// help text
 string help = _("<p>Read the license agreement carefully and select
 one of the available options. If you do not agree to the license agreement,
 the configuration will be aborted.</p>
@@ -97,6 +100,7 @@ while (true)
     symbol accept = (symbol)UI::QueryWidget(`id(`eula), `CurrentButton);
     if (accept == `no)
     {
+	// yes-no popup
        if ( Popup::YesNo(_("Reread or reconsider the license agreement?")) )
        {
            continue;
@@ -110,6 +114,7 @@ while (true)
            }
            else if (action == "halt")
            {
+		// timed ok/cancel popup
                if (!Popup::TimedOKCancel(_("System is shutting down..."), 10))
                {
                    continue;
@@ -130,6 +135,7 @@ while (true)
     }
     else if ( accept != `yes && accept != `no )
     {
+	// message popup
         Popup::Message(_("Accept or decline the license agreement."));
         continue;
     }

@@ -44,6 +44,7 @@
 
     term contents = `VBox (
 			   `VSpacing (0.5),
+			    // label, %1 is file name
 			   `Left (`Label (sformat (_("Content of File %1"), file))),
 			   `RichText (`id (`text), text),
 			   `VSpacing (0.5)

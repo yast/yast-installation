@@ -45,6 +45,7 @@
 	if (!RootPart::didSearchForRootPartitions)
 	{
 	    UI::OpenDialog (`opt(`decorated ),
+			    // label
 			    `Label(_("Evaluating root partition. One moment please...")));
 	    RootPart::FindRootPartitions ();
 	    UI::CloseDialog ();
