@@ -176,7 +176,7 @@
 
     if (Mode::autoinst)
     {
-	Report::DisplayErrors(true, 10);
+	Report::DisplayErrors(true, 0);
 	Report::DisplayMessages(true, 10);
 	Report::DisplayWarnings(true, 10);
     }
