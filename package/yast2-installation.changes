@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Dec 20 17:25:00 CET 2002 - arvin@suse.de
+
+- changed label of second button of popup with info.txt (EULA)
+  from "Cancel" to "Do Not Accept" (bug #21874)
+
+-------------------------------------------------------------------
 Fri Dec 20 17:04:37 CET 2002 - arvin@suse.de
 
 - merged from 8.1 branch:
