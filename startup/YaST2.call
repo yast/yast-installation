@@ -34,7 +34,6 @@ function start_control_center () {
 # start the YaST2 control center in Qt or ncurses mode
 # ---
 	set_lang_from_sysconfig
-	if echo $moduleargs | grep -q continue ; then
 	if [ -e /var/lib/YaST2/start_y2cc ]; then
 		rm -f /var/lib/YaST2/start_y2cc
 		if [ "$1" = "ncurses" ];then
@@ -49,7 +48,6 @@ function start_control_center () {
 			log "\tStarting YaST2 control center in Qt mode"
 			y2controlcenter qt $Y2_QT_ARGS -Q
 		fi
-	fi
 	fi
 }
 
