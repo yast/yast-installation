@@ -35,7 +35,7 @@
     import "Kernel";
     import "RootPart";
     import "Update";
-    import "Linxurc";
+    import "Linuxrc";
 
     textdomain "installation";
 
