@@ -1,10 +1,14 @@
-//
-// hw-config-proposals-sparc.ycp
-//
-// Proposal list for hardware configuration for SPARCs
-//
+/**
+ * File:	hw-config-proposals-sparc.ycp
+ * Package:	installation
+ * Summary:	Proposal list for hardware configuration for sparc
+ * Authors:	Arvin Schnell <arvin@suse.de>
+ *
+ * $Id$
+ */
+
 [
-"x11_proposal",
-"printer_proposal",
-"sound_proposal"
+    "x11_proposal",
+    "printer_proposal",
+    "sound_proposal"
 ]

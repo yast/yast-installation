@@ -1,8 +1,12 @@
-//
-// update-proposals.ycp
-//
-// define list and order of update proposal modules
-//
+/**
+ * File:	update-proposals.ycp
+ * Package:	installation
+ * Summary:	Define list and order of update proposal modules
+ * Authors:	Arvin Schnell <arvin@suse.de>
+ *
+ * $Id$
+ */
+
 [
     "proposal_mode",
     "proposal_rootpart",
