@@ -9,13 +9,14 @@ textdomain="control"
 
     <textdomain>control</textdomain>
     <globals>
-        <enable_autologin config:type="boolean">true</enable_autologin>
-        <inform_about_suboptimal_distribution config:type="boolean">true</inform_about_suboptimal_distribution>
-        <ui_mode>simple</ui_mode>
-        <fam_local_only>gnome</fam_local_only>
-	<enable_firewall config:type="boolean">true</enable_firewall>
-	<firewall_enable_ssh config:type="boolean">false</firewall_enable_ssh>
 	<additional_kernel_parameters></additional_kernel_parameters>
+        <enable_autologin config:type="boolean">true</enable_autologin>
+	<enable_firewall config:type="boolean">true</enable_firewall>
+        <fam_local_only>gnome</fam_local_only>
+	<firewall_enable_ssh config:type="boolean">false</firewall_enable_ssh>
+        <inform_about_suboptimal_distribution config:type="boolean">true</inform_about_suboptimal_distribution>
+        <skip_language_dialog config:type="boolean">true</skip_language_dialog>
+        <ui_mode>simple</ui_mode>
     </globals>
     <software>
         <delete_old_packages config:type="boolean">true</delete_old_packages>
