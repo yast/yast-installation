@@ -43,7 +43,17 @@
 
     // initialize InstMedia
 
-    InstMedia::initializeInstMedia (Mode::installMap);
+    // FIXME: temporary workaround
+    {
+	string instmode = SCR::Read (.etc.install_inf.Instmode);
+	if (instmode == nil) instmode = "cd";
+
+	string cdrom = SCR::Read (.etc.install_inf.Cdrom);
+	if (cdrom == nil) cdrom = "cdrom";
+
+	map tmp = $[ "instmode" : instmode, "cdrom" : cdrom ];
+	InstMedia::initializeInstMedia (tmp);
+    }
 
     include "installation_ui.ycp";
     include "partitioning/partition_defines.ycp";
