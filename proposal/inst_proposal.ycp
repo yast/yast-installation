@@ -417,14 +417,14 @@
 	    else
 	    {
 		y2milestone ("Continue network proposal");
-		// Professional networked machine - configure network cards
-		// first so even a networked printer can be found
+
 		submodules = load_submodules_list( "net-config-proposals.ycp",
 						   [
 						    // Fallback list
 						    "lan_proposal",
-						    "modem_proposal",
-						    "isdn_proposal"
+						    "dsl_proposal",
+						    "isdn_proposal",
+						    "modem_proposal"
 						    ]
 						   );
 	    }
@@ -476,7 +476,6 @@
 	    else
 	    {
 		y2milestone ("Continue proposal");
-		// PC
 
 		submodules = load_submodules_list( "hw-config-proposals.ycp",
 						   [
