@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Aug 22 09:46:46 CEST 2002 - kkaempf@suse.de
+
+- selected packages are also provided after installation
+  V 2.6.28
+
+-------------------------------------------------------------------
 Thu Aug 22 09:22:28 CEST 2002 - kkaempf@suse.de
 
 - dont use .package agent in inst_finish
