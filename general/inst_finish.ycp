@@ -519,7 +519,13 @@ Please wait while the base system is being installed.
 
     Pkg::SourceCacheCopyTo (Installation::destdir);
 
-    Pkg::SourceFinish (Packages::theSource);
+    // disable all sources
+    foreach (`src, Packages::theSources,
+    ``{
+	Pkg::SourceFinish (src);
+    });
+
+    Pkg::TargetFinish();
 
     // --------------------------------------------------------------
     // boot manager configuration
@@ -673,7 +679,7 @@ with the load address of your root DASD.
     }
 
     // copy y2start.log
-    SCR::Write (.target.string, "/var/log/YaST2/y2start.log-initial", WFM::Read (.local.string, "/var/log/YaST2/y2start.log"));
+    SCR::Write (.target.string, "/var/log/YaST2/y2start.log-initial", WFM::Read (.local.string, ["/var/log/YaST2/y2start.log", ""]));
 
     // --------------------------------------------------------------
     // Unmount all mounted devices (from inst_prepdisk)
