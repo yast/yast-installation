@@ -37,13 +37,13 @@
 
 	y2milestone ("run_inst %1/%2", fpath, fname);
 
-	string tmpdir = SCR::Read (.target.tmpdir);
+	string tmpdir = (string) SCR::Read (.target.tmpdir);
 	SCR::Execute (.target.bash, "/bin/cp " + fpath + "/" + fname + " " + tmpdir);
 
 	// force it to be readable and executable
 	SCR::Execute (.target.bash, "/bin/chmod 774 " + tmpdir + "/" + fname);
 
-	integer result = SCR::Execute (.target.bash, "(cd " + tmpdir + "; ./" + fname + " " + fpath + ")");
+	integer result = (integer) SCR::Execute (.target.bash, "(cd " + tmpdir + "; ./" + fname + " " + fpath + ")");
 	SCR::Execute (.target.remove, tmpdir + "/" + fname);
 
 	return result;
@@ -62,9 +62,9 @@
 
     while (arg_n >= 0)
     {
-	if (substring (WFM::Args (arg_n), 0, 1) == "/")
+	if (substring ((string) WFM::Args (arg_n), 0, 1) == "/")
 	{
-	    default_device = WFM::Args (arg_n);
+	    default_device = (string) WFM::Args (arg_n);
 	}
 	arg_n = arg_n - 1;
     }
@@ -110,7 +110,7 @@
     // if not set, determine directory from installed products
     //
 
-    string update_dir =	SCR::Read (.target.string, ["/var/lib/YaST2/vendor_update", ""]);
+    string update_dir =	(string) SCR::Read (.target.string, ["/var/lib/YaST2/vendor_update", ""]);
     if (update_dir != "")
     {
 	cdpath = cdpath + update_dir;
@@ -124,7 +124,7 @@
 	string version = splitproduct[size(splitproduct)-1]:"8.1";
 
 	y2milestone ("Trying %1", cdpath);
-	list dirlist = SCR::Read(.target.dir, cdpath);
+	list dirlist = (list) SCR::Read(.target.dir, cdpath);
 
 	if ((size (dirlist) <= 0)
 	    || (!contains (dirlist, "linux")))
@@ -138,7 +138,7 @@ Aborting now."), is_mounted);
 
 	y2milestone ("Trying %1", cdpath);
 
-	dirlist = SCR::Read(.target.dir, cdpath);
+	dirlist = (list) SCR::Read(.target.dir, cdpath);
 	if ((size (dirlist) <= 0)
 	    || (!(contains (dirlist, "suse")
 		  || contains (dirlist, "unitedlinux"))))
@@ -163,7 +163,7 @@ Aborting now."), is_mounted);
 
     y2milestone ("Trying %1", cdpath);
 
-    list dirlist = SCR::Read(.target.dir, cdpath);
+    list<string> dirlist = (list<string>) SCR::Read(.target.dir, cdpath);
     if (size (dirlist) <= 0)
     {
 	// VENDOR: vendor cd doesn't contain data for current system and linux version
@@ -176,10 +176,10 @@ Aborting now.
 
     // filter files ending in .inst (allow .ins for dos :-})
 
-    list instlist = [];
-    foreach (`fname, dirlist,
+    list<string> instlist = [];
+    foreach (string fname, dirlist,
 	     ``{
-	list splitted = splitstring (fname, ".");
+	list<string> splitted = splitstring (fname, ".");
 	if ((size (splitted) == 2)
 	    && (substring (splitted[1]:"", 0, 3) == "ins"))
 	{
@@ -206,21 +206,21 @@ Aborting now."), is_mounted);
     // then with 2 char language code
     // show data from matching files
 
-    foreach (`fname, instlist, ``{
+    foreach (string fname, instlist, ``{
 
 	// try full ISO language code first
-	string description = SCR::Read(.target.string, cdpath + "/" + fname + "-" + language + ".desc");
+	string description = (string) SCR::Read(.target.string, cdpath + "/" + fname + "-" + language + ".desc");
 
 	// try with 2 char language code
 	if (size (description) <= 0)
 	{
-	    description = SCR::Read(.target.string, cdpath + "/" + fname + "-" + short_lang + ".desc");
+	    description = (string) SCR::Read(.target.string, cdpath + "/" + fname + "-" + short_lang + ".desc");
 	}
 
 	// try without language code
 	if (size (description) <= 0)
 	{
-	    description = SCR::Read(.target.string, cdpath + "/" + fname + ".desc");
+	    description = (string) SCR::Read(.target.string, cdpath + "/" + fname + ".desc");
 	}
 
 	// show contents
