@@ -266,27 +266,6 @@ You will need to reinstall.");
       };
 
 
-      // Return a pretty description of a byte count, with two fraction digits
-      // and using KB, MB or GB as unit as appropriate.
-      global define size_text (integer bytes) ``{
-	float whole = tofloat (bytes) / 1024.0;
-	// KiloByte abbreviated
-	string unit = _("KB");
-	if (whole > 1024.0 || whole < -1024.0)
-	  {
-	    whole = whole / 1024.0;
-	    // MegaByte abbreviated
-	    unit = _("MB");
-	    if (whole > 1024.0 || whole < -1024.0)
-	      {
-		whole = whole / 1024.0;
-		// GigaByte abbreviated
-		unit = _("GB");
-	      }
-	  }
-	return tostring (whole, 2) + " " + unit;
-      };
-
       /*
        * Small dialog that has a cancel and continue button that
        * appears just befor the video mode is tested.
