@@ -44,28 +44,23 @@
 	{
 	    UI::OpenDialog (`opt(`decorated ),
 			    `Label(_("Evaluating root partition. One moment please...")));
-	    RootPart::FindRootPartitions (false);
+	    RootPart::FindRootPartitions ();
 	    UI::CloseDialog ();
 	}
 
-	if (size (RootPart::validRootPartitions) == 0)
+	if (RootPart::numberOfValidRootPartitions == 0)
 	{
 	    // a popup
 	    Popup::Message(_("No Linux root partition found."));
 	    return `cancel;
 	}
 
-	// We must only change UpdateL::selectedRootPartition if booting
+	// We must only change RootPart::selectedRootPartition if booting
 	// is inevitable.
 
-	if (size (RootPart::validRootPartitions) == 1)
+	if (RootPart::numberOfValidRootPartitions == 1)
 	{
-	    RootPart::selectedRootPartition = "";
-
-	    foreach (`p, `r, RootPart::validRootPartitions, ``{
-		if (RootPart::selectedRootPartition == "")
-		    RootPart::selectedRootPartition = p;
-	    });
+	    RootPart::SetSelectedToValid ();
 	}
 	else
 	{
