@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Mar 10 18:34:58 CET 2003 - mvidner@suse.de
+
+- Added .etc.install_inf_alias to work around an ini-agent
+  limitation (#24836).
+- 2.7.31
+
+-------------------------------------------------------------------
 Mon Mar 10 16:10:27 CET 2003 - arvin@suse.de
 
 - fixed compose characters for certain locales (bug #14751)
