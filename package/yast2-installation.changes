@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Mar 11 12:57:37 CET 2005 - ms@suse.de
+
+- fixed setting TERM variable (#71771)
+
+-------------------------------------------------------------------
 Mon Mar  7 08:27:03 CET 2005 - jsrain@suse.cz
 
 - initialize &product; macro in inst_suseconfig (#70899)

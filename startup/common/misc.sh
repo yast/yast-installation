@@ -136,7 +136,6 @@ function set_term_variable () {
 #--------------------------------------------------
 # set TERM variable and save it to /etc/install.inf
 #
-	export TERM=vt100
 	if [ -z "$AutoYaST" ] && [ -z "$VNC" ] && [ -z "$UseSSH" ];then
 		ask_for_term
 		export TERM
