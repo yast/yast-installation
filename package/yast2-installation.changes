@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Feb 10 18:24:12 CET 2003 - arvin@suse.de
+
+- skip proposal dialog if it's empty (bug #23520)
+
+-------------------------------------------------------------------
 Fri Feb  7 16:12:49 CET 2003 - jsuchome@suse.de
 
 - adapted inst_confirm_abort for the use from yast2-repair
