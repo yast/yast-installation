@@ -94,10 +94,24 @@ ps > /dev/null 2> /dev/null
 # first CD have been installed. The rpm installation must be
 # continued in this case.
 
-# set language (always with encoding UTF-8)
+# source install.inf, setting a variable $Moo=... for each line Moo: ...
+eval $(grep ': ' /etc/install.inf | sed -e 's/"/"\\""/g' -e 's/:  */="/' -e 's/$/"/')
+
+# set installation language (use UTF-8 encoding if possible)
 langfile=/etc/sysconfig/language
 eval `grep "^[[:space:]]*RC_LANG=" $langfile 2>/dev/null`
-export LANG="${RC_LANG%%.*}.UTF-8"
+
+# if an entry 'Console:  ....' exists in install.inf,
+# YaST runs on a console which is connected to a serial port 
+if [ "$Console" ]; then
+    # don't use UTF-8 in case of a serial console
+    export LANG=$RC_LANG
+else
+    # get rid of encoding and/or modifier
+    lang=${RC_LANG%%@*}
+    lang=${lang%%.*}
+    export LANG="${lang}.UTF-8"
+fi
 
 # start unicode if encoding is UTF-8
 if echo $LANG | grep -q '\.UTF-8$'; then
