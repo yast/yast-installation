@@ -175,6 +175,12 @@
 	    ];
     }
 
+    if ( Arch::board_iseries )
+    {
+	// iSeries has only network cards, right now
+	can_configure = [ network_cards ];
+    }
+
     // Let's filter out the uninstalled things
     can_configure = filter(`dev, can_configure, ``(lookup(dev, "is_installed", false)));
 

@@ -2,6 +2,7 @@
 Fri Aug 02 15:02:54 CEST 2002 - arvin@suse.de
 
 - run qt frontend with option -noxim (bug #17161)
+- configure only network card on iSeries
 
 -------------------------------------------------------------------
 Wed Jul 31 16:21:07 CEST 2002 - msvec@suse.cz
