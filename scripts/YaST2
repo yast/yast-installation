@@ -131,12 +131,14 @@ function wait_for_x11()
 		sleep 1
 		if test -e /tmp/.X11-unix/X0 && test -x $TESTX ; then
 			$TESTX "$YaST2color" 2>/dev/null
+			err=$?
 			# exit code 1 -> XOpenDisplay failed...
-			if test $? = 1;then
+			if test $err = 1;then
 				continue
 			fi
 			# exit code 2 -> color or dimensions doesn't fit...
-			if test $? = 2;then
+			if test $err = 2;then
+				kill $xserver_pid
 				break;
 			fi
 			server_running=1
@@ -432,13 +434,7 @@ else
       X $xpseudo -deferglyphs 16 2>/dev/tty8 1>&2 vt07 &
       xserver_pid=$!
       # wait for the X server to come up
-      while kill -0 $xserver_pid 2>/dev/null ; do
-        sleep 1
-        if test -e /tmp/.X11-unix/X0 && test -x $TESTX && $TESTX "$YaST2color" 2>/dev/null ; then
-          server_running=1
-          break
-        fi
-      done
+      wait_for_x11
     fi
   fi
 fi
