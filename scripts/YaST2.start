@@ -217,11 +217,31 @@ if [ "$YaST2update" = 1 ] ; then
   [ -r /y2update/logconf.ycp ] && cp /y2update/logconf.ycp /root
 fi
 
+# Calculate reasonable log file size based on free disk space:
+# We want to fill the RAM disk from which we are running no more
+# than half with y2log files. With a maximum of 5 log files, each 
+# should get no more than 1/10 of the free disk space, but no more 
+# than 5000 (5 MB) per log file in any case.
+#
+# Sample 'df' output:
+#
+# LANG=C df /var/log/YaST2
+# Filesystem           1K-blocks      Used Available Use% Mounted on
+# /dev/hda2             10490116   4020616   6469500  39% /
+
+if [ -z "$Y2MAXLOGSIZE" ] ; then
+    LANG=C Y2MAXLOGSIZE=`df /var/log/YaST2 | awk '/^\/dev\// { print int($4/10) }'`
+    test $Y2MAXLOGSIZE -gt 5000 && Y2MAXLOGSIZE=5000
+    export Y2MAXLOGSIZE
+fi
+
 test -z "$Y2MAXLOGSIZE" && export Y2MAXLOGSIZE=50
 test -z "$Y2MAXLOGNUM"  && export Y2MAXLOGNUM=5
 
+
+
 # revert to normal MODPATH
-# TOTO, I think we're not in kansas any more
+# TODO, I think we're not in kansas any more
 unset MODPATH
 
 # remove this link, otherwise YaST2 thinks it is an update

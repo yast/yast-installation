@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Sep  8 18:01:53 CEST 2003 - sh@suse.de
+
+- V 2.8.24
+- Fixed bug #29927: Logfile setting too restrictive
+  Now checking free space on RAM disk with 'df' and using
+  max 10% of that per log file (max 5000) 
+
+-------------------------------------------------------------------
 Mon Sep  8 11:53:17 CEST 2003 - snwint@suse.de
 
 - advance splash progress bar in YaST2{,.start}
