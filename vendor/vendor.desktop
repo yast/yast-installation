@@ -17,15 +17,14 @@ X-SuSE-YaST-SortKey=
 X-SuSE-YaST-AutoinstResource=
 
 Icon=software2
-Exec=/sbin/yast2 vendor 
+Exec=/sbin/yast2 vendor
 
 Name=Load Vendor Driver CD
 GenericName=This module installs a non-SuSE driver from a vendor-specific CD-ROM.
 Name[cs]=Načíst CD s ovladačem od výrobce
 GenericName[cs]=Tento modul instaluje ovladače třetích stran z CD od výrobce.
 Name[de]=Treiber-CD des Händlers laden
-GenericName[de]=Dieses Modul dient dazu, keine SuSE-Treiber, sondern Treiber von
-einer Hersteller-spezifischen CD zu laden.
+GenericName[de]=Dieses Modul dient dazu, keine SuSE-Treiber, sondern Treiber von einer Hersteller-spezifischen CD zu laden.
 Name[es]=Cargar CD de controladores del fabricante
 GenericName[es]=Este módulo instala drivers no-SuSE desde un CD del fabricante.
 Name[hu]=Meghajtó-CD betöltése
@@ -45,13 +44,12 @@ GenericName[sv]=Den här modulen installerar en icke-SuSE-drivrutin från tillve
 Name[bg]=Зареждане на CD от производителя
 GenericName[bg]=Този модул инсталира не-SuSE драйвер от CD на производителя.
 GenericName[da]=Dette modul installerer en ikke-SuSE driver fra en producentspecifik CD-ROM.
-Name[el]=Φόρτωση CD οδηγού κατασκευαστή 
+Name[el]=Φόρτωση CD οδηγού κατασκευαστή
 GenericName[el]=Αυτή η μονάδα εγκαθιστά έναν μη-SuSE οδηγό από ένα συγκεκριμένο CD-ROM κατασκευαστή.
 Name[fr]= harger le CD pilote du constructeur
-GenericName[fr]=Ce module installe le pilote d'un constructeur spécifique 
-ne faisant pas partie de la distribution SuSE.
+GenericName[fr]=Ce module installe le pilote d'un constructeur spécifique ne faisant pas partie de la distribution SuSE.
 Name[ja]=メーカーのドライバ CD を読み込む
-GenericName[ja]=このモジュールは SuSE 社製以外のメーカのドライバをそのメーカーの CD からインストールします。  
+GenericName[ja]=このモジュールは SuSE 社製以外のメーカのドライバをそのメーカーの CD からインストールします。
 GenericName[lt]=Šis modulis įdiegia ne SuSE sukurtas tvarkykles iš gamintojo CD-ROM'o.
 GenericName[ru]=Этот модуль устанавливает не-SuSE драйверы с CD-дисков поставщиков.
 Name[sl]=Naloži proizvajalčev CD z gonilniki
