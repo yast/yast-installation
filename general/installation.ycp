@@ -228,51 +228,6 @@
 	}
 
 	////////////////////////////////////////////////////////////
-	// re-init network in continue mode with network installation
-
-	if (!Mode::test && !Arch::s390)
-	{
-	    SCR::Execute (.target.bash, "/sbin/ifconfig lo 127.0.0.1 up");
-
-	    if ((Mode::boot == "nfs")
-		|| (Mode::boot == "http")
-		|| (Mode::boot == "smb")
-		|| (Mode::boot == "ftp"))
-	    {
-		// TODO: handle dhcp case correctly
-
-		string netdev = SCR::Read (.etc.install_inf.Netdevice);
-		if (netdev == nil) netdev = "eth0";
-
-		string ipaddr = SCR::Read (.etc.install_inf.IP);
-		if (ipaddr == nil) ipaddr = "";
-
-		string ifconfig = "/sbin/ifconfig " + netdev + " " + ipaddr;
-
-		string netmask = SCR::Read (.etc.install_inf.Netmask);
-		if (netmask != nil && netmask != "")
-		{
-		    ifconfig = ifconfig + " netmask " + netmask;
-		}
-
-		SCR::Execute (.target.bash, ifconfig);
-
-		string gateway = SCR::Read (.etc.install_inf.Gateway);
-		if (gateway != nil && gateway != "")
-		{
-		    ifconfig = "/sbin/route add default gw " + gateway;
-		    SCR::Execute (.target.bash, ifconfig);
-		}
-
-	    }
-	}
-
-	if (Mode::boot == "nfs")
-	{
-	    SCR::Execute (.target.bash, "/sbin/rcportmap start");
-	}
-
-	////////////////////////////////////////////////////////////
 	// activate language settings and console font
 
 	string language = Language::language;
@@ -331,88 +286,8 @@
 		Report::DisplayErrors(true, 10);
 		Report::DisplayMessages(true, 10);
 		Report::DisplayWarnings(true, 10);
-
 	    }
 	    SCR::Execute(.target.umount, "/media/floppy");
-	}
-
-	//////////////////////////////////////////////////////////////
-	// Show info, if existent.
-
-	string infofile = "/info.txt";		// copied there by linuxrc
-	string infotext = SCR::Read (.target.string, [infofile, ""]);
-
-	if (infotext != "")
-	{
-	    map tmp1 = Report::Export ();
-	    map tmp2 = tmp1["messages"]:$[];
-	    integer timeout_seconds = tmp2["timeout"]:0;
-
-	    UI::OpenDialog(
-			   `HBox(
-				 `VSpacing(20),
-				 `VBox(
-				       `HSpacing(60),
-				       `VSpacing(0.2),
-				       `RichText(`opt(`plainText), infotext ),
-				       `ReplacePoint (`id(`rp1), `Empty () ),
-				       `HBox(
-					     `HStretch(),
-					     // Button to accept a license agreement
-					     `HWeight(1, `PushButton(`id(`accept), `opt(`default), _("I &Agree") ) ),
-					     `HStretch(),
-					     // Button to reject a license agreement
-					     `HWeight(1, `PushButton(`id(`donotaccept), _("I Do &Not Agree") ) ),
-					     `HStretch(),
-					     `ReplacePoint(`id(`rp2), `Empty ())
-					     )
-				       )
-				 )
-			   );
-
-	    UI::SetFocus (`id(`accept));
-
-	    symbol info_ret = `empty;
-
-	    if (timeout_seconds == 0)
-	    {
-		info_ret = UI::UserInput ();
-	    }
-	    else
-	    {
-		UI::ReplaceWidget (`id(`rp1), `Label (`id(`remaining_time), "" + timeout_seconds));
-		UI::ReplaceWidget (`id(`rp2), `PushButton (`id(`stop), Label::StopButton()));
-
-		while (timeout_seconds > 0) {
-		    sleep (1000);
-		    info_ret = UI::PollInput ();
-		    if (info_ret == `accept || info_ret == `donotaccept)
-			break;
-		    if (info_ret == `stop) {
-			while (info_ret == `stop)
-			    info_ret = UI::UserInput ();
-			break;
-		    }
-		    info_ret = `accept;
-		    timeout_seconds = timeout_seconds - 1;
-		    UI::ChangeWidget (`id(`remaining_time), `Value, "" + timeout_seconds);
-		}
-	    }
-
-	    UI::CloseDialog ();
-
-	    if (info_ret != `accept)
-	    {
-		y2milestone ("user didn't accept info.txt");
-
-		// disable all sources and finish target
-		Pkg::SourceFinishAll ();
-		Pkg::TargetFinish ();
-
-		// tell linuxrc that we aborted
-		Misc::WriteYaSTInf ($["Aborted" : "1"]);
-		return nil;
-	    }
 	}
     }
 
@@ -495,6 +370,7 @@ appear different than those in the manual.
 //  0-Step-	1-Module-	    -Back- -Next- -spec-  2-Architecture(s)-		      3-Mode(s)-                           4-immediate_prepdisk-
 
 [
+ [ `initial,  `inst_info            (false, true),       true,                  !Mode::screen_shot && !Mode::live_eval,                   false],
  [ `initial,  `inst_language	    (false, true, true), true,						! autoinst	&&    !	repair  , false],
  [ `initial,  `inst_repair	    (false, true),	 true,									repair	, false],
  [ `initial,  `inst_startup	    (false, true),       true,						  autoinst                      , false],
@@ -513,12 +389,14 @@ appear different than those in the manual.
 
  //===================================================================================================================================================
 
+ [ `continue, `inst_netsetup        (false, false, `up), true,          true,                                                             false],
  [ `continue, `inst_netprobe	    (false, false),      true,		true								, false],
- [ `continue, `autoinst_post    (false, false),      true,		autoinst				, false],
+ [ `continue, `autoinst_post        (false, false),      true,		autoinst				, false],
  [ `continue, `inst_rpmcopy	    (false, false),      true,		!autoconf && ! live_eval && ! test_mode				, false],
- [ `continue, `inst_language    (false, true),       true,					  screen_shot_mode &&    ! update_mode  , false],
+ [ `continue, `inst_netsetup        (false, false, `dn), true,          true,                                                             false],
+ [ `continue, `inst_language        (false, true),       true,					  screen_shot_mode &&    ! update_mode  , false],
  [ `continue, `inst_root	    (false, true),       true,						! autoinst &&    ! update_mode	, true ],
- [ `continue, `inst_x11         (true,  true),       Arch::x11_setup_needed, Mode::x11_setup_needed &&    autoinst &&    ! update_mode  , false],
+ [ `continue, `inst_x11             (true,  true),       Arch::x11_setup_needed, Mode::x11_setup_needed &&    autoinst &&    ! update_mode  , false],
  [ `continue, `autoinst_configure   (false, false),      true,						  autoinst &&    ! update_mode	, false],
  [ `continue, `inst_proposal	    (true,  true, `net), true,						! autoinst &&    ! update_mode	, false],
  [ `continue, `inst_ask_net_test    (true,  true),       true,				! live_eval &&	! autoinst       	        , true ],
