@@ -127,10 +127,10 @@
 		// use more line breaks if neccessary.
 		// Plain text, no HTML!
 		Popup::Notify( _( "
-There is no SuSE Linux on any of your hard disks.
+There is no Linux on any of your hard disks.
 It is only possible to perform a new installation at the moment.
 
-After SuSE Linux is installed, you can use this selection
+After Linux is installed, you can use this selection
 to boot the installed system or to update it.
 " ) );
 	    }
@@ -173,9 +173,9 @@ Please choose what to do:
     // help text for installation method
     help_text = help_text + _("\
 <p>
-Select <b>new installation</b> if there is no existing SuSE Linux
-system on your machine or if you want to replace an existing SuSE
-Linux system completely, abandoning all its configuration data.
+Select <b>new installation</b> if there is no existing Linux system on your
+machine or if you want to replace an existing Linux system completely,
+abandoning all its configuration data.
 </p>");
 
     if (offer_update)
@@ -183,19 +183,17 @@ Linux system completely, abandoning all its configuration data.
 	// help text for installation method
 	help_text = help_text + _("\
 <p>
-Select <b>update an existing system</b> to upgrade a SuSE Linux system
-already installed on your machine. This option will preserve
-configuration settings from your existing system whenever possible.
+Select <b>update an existing system</b> to update a Linux system already
+installed on your machine. This option will preserve configuration settings
+from your existing system whenever possible.
 </p>");
     }
 
     // help text for installation method
     help_text = help_text + _("<p>
-Select <b>boot installed system</b> if you have a SuSE Linux system on your
-hard disk that will not boot. With this option, try to
-fix problems manually.
-</p>
-");
+Select <b>boot installed system</b> if you have a Linux system on your hard
+disk that will not boot. With this option, try to fix problems manually.
+</p>");
 
     term radio_buttons =
 	      `VBox(
