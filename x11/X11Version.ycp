@@ -18,7 +18,6 @@ STATUS        : Development
 **************/
 {
 module "X11Version";
-textdomain "x11";
 
 //=======================================
 // System Global Variables
