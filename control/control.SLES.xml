@@ -1,36 +1,39 @@
 <?xml version="1.0"?>
-<!DOCTYPE productDefines SYSTEM "/usr/share/YaST2/control/control.dtd">
 <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
     xmlns:config="http://www.suse.com/1.0/configns">
 
 <!--
-$Id$
 Work around for the text domain
 textdomain="control"
 -->
 
     <textdomain>control</textdomain>
     <globals>
+	<additional_kernel_parameters></additional_kernel_parameters>
         <enable_autologin config:type="boolean">false</enable_autologin>
-        <use_desktop_scheduler config:type="boolean">false</use_desktop_scheduler>
-        <io_scheduler>cfq</io_scheduler>
+	<enable_firewall config:type="boolean">true</enable_firewall>
+        <fam_local_only>gnome</fam_local_only>
+	<firewall_enable_ssh config:type="boolean">false</firewall_enable_ssh>
+        <incomplete_translation_treshold>95</incomplete_translation_treshold>
+        <inform_about_suboptimal_distribution config:type="boolean">true</inform_about_suboptimal_distribution>
+        <skip_language_dialog config:type="boolean">true</skip_language_dialog>
+        <ui_mode>simple</ui_mode>
     </globals>
-
     <software>
-        <delete_old_packages config:type="boolean">false</delete_old_packages>
-        <only_update_installed
-            config:type="boolean">true</only_update_installed>
+        <delete_old_packages config:type="boolean">true</delete_old_packages>
         <selection_type config:type="symbol">auto</selection_type>
     </software>
     <partitioning>
-        <evms_config config:type="boolean">true</evms_config>
+        <evms_config config:type="boolean">false</evms_config>
     </partitioning>
 
     <proposals config:type="list">
         <proposal>
-            <mode>installation,demo,autoinst</mode>
+            <label>Installation Settings</label>
+            <mode>installation,demo,autoinstallation</mode>
             <stage>initial</stage>
-            <type>initial</type>
+            <name>initial</name>
+            <enable_skip>no</enable_skip>
             <proposal_modules config:type="list">
                 <proposal_module>hwinfo</proposal_module>
                 <proposal_module>mode</proposal_module>
@@ -45,18 +48,11 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
-            <mode>installation</mode>
-            <type>dirinstall</type>
+            <label>UML Installation Settings</label>
+            <mode>normal</mode>
+            <name>uml</name>
             <stage>normal</stage>
-            <proposal_modules config:type="list">
-                <proposal_module>dirinstall_options</proposal_module>
-                <proposal_module>software</proposal_module>
-            </proposal_modules>
-        </proposal>
-        <proposal>
-            <mode>installation</mode>
-            <type>uml</type>
-            <stage>normal</stage>
+            <enable_skip>no</enable_skip>
             <proposal_modules config:type="list">
 		<proposal_module>uml_source</proposal_module>
                 <proposal_module>uml_user</proposal_module>
@@ -66,9 +62,11 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
+            <label>Update Settings</label>
             <mode>update</mode>
-            <type>initial</type>
+            <name>initial</name>
             <stage>normal</stage>
+            <enable_skip>no</enable_skip>
             <proposal_modules config:type="list">
                 <proposal_module>update</proposal_module>
                 <proposal_module>packages</proposal_module>
@@ -76,10 +74,13 @@ textdomain="control"
                 <proposal_module>language</proposal_module>
             </proposal_modules>
         </proposal>
+
         <proposal>
+            <label>Installation Settings</label>
             <mode>update</mode>
             <stage>initial</stage>
-            <type>initial</type>
+            <name>initial</name>
+            <enable_skip>no</enable_skip>
             <proposal_modules config:type="list">
 		<proposal_module>hwinfo</proposal_module>
                 <proposal_module>mode</proposal_module>
@@ -93,144 +94,118 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
-            <archs>s390</archs>
-            <mode>installation</mode>
-            <stage>initial</stage>
-            <type>initial</type>
-            <proposal_modules config:type="list">
-                <proposal_module>mode</proposal_module>
-                <proposal_module>partitions</proposal_module>
-                <proposal_module>software</proposal_module>
-                <proposal_module>timezone</proposal_module>
-                <proposal_module>language</proposal_module>
-                <proposal_module>runlevel</proposal_module>
-            </proposal_modules>
-        </proposal>
-        <proposal>
-            <archs>s390</archs>
-            <mode>update</mode>
-            <stage>initial</stage>
-            <type>initial</type>
-            <proposal_modules config:type="list">
-                <proposal_module>mode</proposal_module>
-		<proposal_module>media</proposal_module>
-                <proposal_module>rootpart</proposal_module>
-                <proposal_module>update</proposal_module>
-                <proposal_module>packages</proposal_module>
-                <proposal_module>backup</proposal_module>
-                <proposal_module>language</proposal_module>
-            </proposal_modules>
-        </proposal>
-        <proposal>
-            <type>network</type>
+            <label>Network Configuration</label>
+            <name>network</name>
             <stage>continue,normal</stage>
+            <enable_skip>yes</enable_skip>
             <proposal_modules config:type="list">
-                <proposal_module>lan</proposal_module>
-                <proposal_module>dsl</proposal_module>
-                <proposal_module>isdn</proposal_module>
-                <proposal_module>modem</proposal_module>
-                <proposal_module>proxy</proposal_module>
-		<proposal_module>remote</proposal_module>
+                <proposal_module>
+		    <name>lan</name>
+		    <presentation_order>20</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>dsl</name>
+		    <presentation_order>30</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>isdn</name>
+		    <presentation_order>40</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>modem</name>
+		    <presentation_order>50</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>remote</name>
+		    <presentation_order>60</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>firewall</name>
+		    <presentation_order>10</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>proxy</name>
+		    <presentation_order>70</presentation_order>
+		</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>
-            <type>service</type>
-            <stage>continue,normal</stage>
-            <proposal_modules config:type="list">
-                <proposal_module>ca_mgm</proposal_module>
-                <proposal_module>ldap-server</proposal_module>
-            </proposal_modules>
-        </proposal>
-        <proposal>
-            <type>hardware</type>
+            <label>Hardware Configuration</label>
+            <name>hardware</name>
             <stage>continue</stage>
+            <enable_skip>yes</enable_skip>
             <proposal_modules config:type="list">
                 <proposal_module>x11</proposal_module>
                 <proposal_module>printer</proposal_module>
                 <proposal_module>sound</proposal_module>
                 <proposal_module>tv</proposal_module>
-            </proposal_modules>
-        </proposal>
-        <proposal>
-            <archs>s390,ppc64</archs>
-            <type>network</type>
-            <stage>continue</stage>
-            <proposal_modules config:type="list">
-                <proposal_module>lan</proposal_module>
-                <proposal_module>proxy</proposal_module>
-		<proposal_module>remote</proposal_module>
-            </proposal_modules>
-        </proposal>
-        <proposal>
-            <archs>ppc64</archs>
-            <type>hardware</type>
-            <stage>continue</stage>
-            <proposal_modules config:type="list">
-                <proposal_module>x11</proposal_module>
-                <proposal_module>printer</proposal_module>
-            </proposal_modules>
-        </proposal>
-        <proposal>
-            <archs>s390</archs>
-            <type>hardware</type>
-            <stage>continue</stage>
-            <proposal_modules config:type="list">
-                <proposal_module>printer</proposal_module>
+                <proposal_module>bluetooth</proposal_module>
             </proposal_modules>
         </proposal>
     </proposals>
 
     <workflows config:type="list">
         <workflow>
-	    <label>Base Installation</label>
             <defaults>
-                <arguments>false,false</arguments>
                 <archs>all</archs>
             </defaults>
-            <stage>initial</stage>
+	    <label>Base Installation</label>
             <mode>installation,update</mode>
+            <stage>initial</stage>
             <modules  config:type="list">
                 <module>
+	            <label>Language</label>
                     <name>info</name>
-                    <arguments>false,true</arguments>
                 </module>
                 <module>
                     <name>language</name>
-                    <arguments>false,true,true</arguments>
 	            <label>Language</label>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+                    <arguments>
+                        <first_run>yes</first_run>
+                    </arguments>
+                    <retranslate config:type="boolean">true</retranslate>
                 </module>
                 <module>
-                    <name>proposal</name>
-                    <arguments>true,true,`initial</arguments>
+	            <label>Language</label>
+                    <name>checkmedia</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
 	            <label>Installation Settings</label>
+                    <name>proposal</name>
+                    <proposal>initial</proposal>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>do_resize</name>
                     <update config:type="boolean">false</update>
                     <archs>i386,x86_64,ia64</archs>
 	            <label>Perform Installation</label>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>prepdisk</name>
 	            <label>Perform Installation</label>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>kickoff</name>
-	            <label>Perform Installation</label>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
-	            <label>Perform Installation</label>
                 </module>
                 <module>
-                    <name>finish</name>
 	            <label>Perform Installation</label>
+                    <name>finish</name>
                 </module>
             </modules>
         </workflow>
         <workflow>
             <defaults>
-                <arguments>false,false</arguments>
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
@@ -240,12 +215,94 @@ textdomain="control"
                 <module>
 	            <label>System Information</label>
                     <name>info</name>
-                    <arguments>false,true</arguments>
                 </module>
                 <module>
 	            <label>Perform Repair</label>
                     <name>repair</name>
-                    <arguments>false,true,true</arguments>
+                </module>
+            </modules>
+        </workflow>
+        <workflow>
+            <defaults>
+                <archs>all</archs>
+            </defaults>
+            <stage>initial</stage>
+	    <label>Base Installation</label>
+            <mode>screen_shot</mode>
+            <modules  config:type="list">
+                <module>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+ 	            <label>Language</label>
+                    <name>language</name>
+                    <retranslate config:type="boolean">true</retranslate>
+                </module>
+                <module>
+	            <label>Installation Settings</label>
+                    <name>proposal</name>
+                    <proposal>initial</proposal>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>do_resize</name>
+                    <update config:type="boolean">false</update>
+                    <archs>i386,x86_64,ia64</archs>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>prepdisk</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>kickoff</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>rpmcopy</name>
+                </module>
+            </modules>
+        </workflow>
+        <workflow>
+            <defaults>
+                <archs>all</archs>
+            </defaults>
+            <stage>initial</stage>
+	    <label>Base Installation</label>
+            <mode>demo</mode>
+            <modules  config:type="list">
+                <module>
+	            <label>Language</label>
+                    <name>info</name>
+                </module>
+                <module>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+	            <label>Language</label>
+                    <name>language</name>
+                    <retranslate config:type="boolean">true</retranslate>
+                </module>
+                <module>
+	            <label>Installation Settings</label>
+                    <name>proposal</name>
+                    <proposal>initial</proposal>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>do_resize</name>
+                    <update config:type="boolean">false</update>
+                    <archs>i386,x86_64,ia64</archs>
+                </module>
+                <module>
+ 	            <label>Perform Installation</label>
+                   <name>prepdisk</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>kickoff</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>rpmcopy</name>
                 </module>
             </modules>
         </workflow>
@@ -254,50 +311,51 @@ textdomain="control"
             <label>Configuration</label>
             <mode>update</mode>
             <defaults>
-                <arguments>false,false</arguments>
                 <archs>all</archs>
+                <enable_back>no</enable_back>
+                <enable_next>no</enable_next>
             </defaults>
             <modules  config:type="list">
                 <module>
+	            <label>Perform Installation</label>
                     <name>netsetup</name>
-                    <arguments>false,false,`up</arguments>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
                 </module>
                 <module>
 	            <label>Network</label>
-                    <name>netsetup</name>
-                    <arguments>false,false,`dn</arguments>
-                </module>
-                <module>
-	            <label>Network</label>
                     <name>ask_net_test</name>
-                    <arguments>true,true</arguments>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
                 </module>
                 <module>
 	            <label>Network</label>
                     <name>do_net_test</name>
-                    <arguments>true,true</arguments>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
                 </module>
                 <module>
 	            <label>Online Update</label>
                     <name>you</name>
-                    <arguments>true,true</arguments>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
                 </module>
                 <module>
 	            <label>Clean Up</label>
                     <name>suseconfig</name>
-                    <arguments>false,false</arguments>
                 </module>
                 <module>
 	            <label>Release Notes</label>
                     <name>release_notes</name>
-                    <arguments>true,true</arguments>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
                 </module>
                 <module>
                     <name>congratulate</name>
-                    <arguments>true,true</arguments>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
                 </module>
             </modules>
         </workflow>
@@ -306,104 +364,99 @@ textdomain="control"
             <label>Configuration</label>
             <mode>installation</mode>
             <defaults>
-                <arguments>false,false</arguments>
+                <enable_back>yes</enable_back>
+                <enable_next>yes</enable_next>
                 <archs>all</archs>
             </defaults>
             <modules  config:type="list">
                 <module>
+	            <label>Perform Installation</label>
                     <name>netsetup</name>
-                    <arguments>false,false,`up</arguments>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>netprobe</name>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
-                </module>
-                <module>
-                    <name>netsetup</name>
-                    <arguments>false,false,`dn</arguments>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
                 </module>
                 <module>
 	            <label>Root Password</label>
                     <name>root</name>
-                    <arguments>false,true</arguments>
+                    <enable_back>no</enable_back>
                 </module>
                 <module>
 	            <label>Network</label>
                     <name>proposal</name>
-                    <arguments>true,true,`network</arguments>
+                    <proposal>network</proposal>
                 </module>
+		<module>
+	            <label>Network</label>
+                    <name>fam</name>
+		</module>
                 <module>
 	            <label>Network</label>
                     <name>ask_net_test</name>
-                    <arguments>true,true</arguments>
                 </module>
                 <module>
 	            <label>Network</label>
                     <name>do_net_test</name>
-                    <arguments>true,true</arguments>
                 </module>
                 <module>
 	            <label>Online Update</label>
                     <name>you</name>
-                    <arguments>true,true</arguments>
-                </module>
-                <module>
-                    <label>Service</label>
-                    <name>proposal</name>
-                    <arguments>true,true,`service</arguments>
                 </module>
                 <module>
 	            <label>Users</label>
                     <name>auth</name>
-                    <arguments>true,true</arguments>
                 </module>
                 <module>
 	            <label>Users</label>
                     <name>user</name>
-                    <arguments>true,true</arguments>
                 </module>
-
                 <module>
 	            <label>Clean Up</label>
                     <name>suseconfig</name>
-                    <arguments>false,false</arguments>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
                 </module>
                 <module>
 	            <label>Release Notes</label>
                     <name>release_notes</name>
-                    <arguments>true,true</arguments>
                 </module>
                 <module>
 	            <label>Device Configuration</label>
                     <name>proposal</name>
-                    <arguments>true,true,`hardware</arguments>
+                    <proposal>hardware</proposal>
                 </module>
                 <module>
+	            <label>Device Configuration</label>
                     <name>congratulate</name>
-                    <arguments>true,true</arguments>
                 </module>
             </modules>
         </workflow>
         <workflow>
             <stage>initial</stage>
             <label>Base Installation</label>
-            <mode>autoinst</mode>
+            <mode>autoinstallation</mode>
             <defaults>
-                <arguments>false,false</arguments>
                 <archs>all</archs>
+                <enable_back>no</enable_back>
+                <enable_next>no</enable_next>
             </defaults>
             <modules  config:type="list">
                 <module>
-	            <label>Language</label>
+	            <label>AutoYaST Settings</label>
                     <name>info</name>
-                    <arguments>false,true</arguments>
                 </module>
                 <module>
-	            <label>AutoYaSTSettings</label>
+	            <label>AutoYaST Settings</label>
                     <name>autoinit</name>
                     <archs>all</archs>
+                    <retranslate config:type="boolean">true</retranslate>
                 </module>
                 <module>
 	            <label>AutoYaST Settings</label>
@@ -412,7 +465,9 @@ textdomain="control"
                 <module>
 	            <label>AutoYaST Settings</label>
                     <name>proposal</name>
-                    <arguments>true,true,`initial</arguments>
+                    <proposal>initial</proposal>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
@@ -438,21 +493,24 @@ textdomain="control"
         </workflow>
         <workflow>
             <defaults>
-                <arguments>false,false</arguments>
                 <archs>all</archs>
+                <enable_back>no</enable_back>
+                <enable_next>no</enable_next>
             </defaults>
             <stage>continue</stage>
             <label>Configuration</label>
-            <mode>autoinst</mode>
+            <mode>autoinstallation</mode>
             <modules  config:type="list">
                 <module>
+	            <label>Perform Installation</label>
                     <name>netsetup</name>
-                    <arguments>false,false,`up</arguments>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>netprobe</name>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>autopost</name>
                 </module>
                 <module>
@@ -460,8 +518,8 @@ textdomain="control"
                     <name>rpmcopy</name>
                 </module>
                 <module>
-                    <name>netsetup</name>
-                    <arguments>false,false,`dn</arguments>
+	            <label>System Configuration</label>
+                    <name>x11</name>
                 </module>
                 <module>
 	            <label>System Configuration</label>
