@@ -461,7 +461,7 @@ global define void RetranslateWizardSteps() ``{
  * @param string mode
  * @return list<string> modules
  */
-global define list<string> getProposals(
+global define list < list > getProposals(
         string stage,
         string mode,
         string proptype)
@@ -508,14 +508,40 @@ global define list<string> getProposals(
                 %1", props);
     }
 
-    // All proposal file names end with _proposal
-    list<string> final_proposals = maplist(string p, props[0, "proposal_modules"]:[], ``{
-            if (!issubstring(p, "_proposal"))
-                return(p + "_proposal");
-            else
-                return(p);
+    // old style proposal
+    y2milestone ("Proposal modules: %1",props[0, "proposal_modules"]:nil );
 
-            });
+    list< list > final_proposals = maplist(any p, props[0, "proposal_modules"]:[], ``{
+	    
+	    string proposal_name = "";
+	    integer order_value = 50;
+	    if ( is (p, string) )
+	    {
+		proposal_name = (string)p;
+	    }
+	    else
+	    {
+		map<string,string> pm = (map<string,string>)p;
+		proposal_name = pm["name"]:"";
+		string proposal_order = pm["presentation_order"]:"50";
+		
+		order_value = tointeger (proposal_order);
+		if (order_value == nil)
+		{
+		    y2error ("Unable to use '%1' as proposal order, using %2 instead"
+			, proposal_order, 50);
+		    order_value = 50;
+		}
+	    }
+
+	    // All proposal file names end with _proposal
+            if (!issubstring(proposal_name, "_proposal"))
+                return( [proposal_name + "_proposal", order_value ] );
+            else
+                return( [proposal_name, order_value] );
+
+    });
+
     locked_proposals = maplist(string p, props[0, "locked_modules"]:[], ``{
             if (!issubstring(p, "_proposal"))
                 return(p + "_proposal");
