@@ -149,6 +149,7 @@ return to this installation sequence.</p>
 	// Create empty /var/lib/YaST2/start_y2cc file to signal the calling script
 	// that the YaST2 control center should be started after the installation
 	SCR::Write (.target.string, "/var/lib/YaST2/start_y2cc", "");
+	y2milestone( "Going to start YaST2 control center after the installation workflow" );
     }
 
     return ret;
