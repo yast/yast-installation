@@ -32,7 +32,7 @@ fi
 # source install.inf, setting a variable $Moo=... for each line Moo: ...
 eval $(grep ': ' /etc/install.inf | sed -e 's/"/"\\""/g' -e 's/:  */="/' -e 's/$/"/')
 
-# set language
+# set language (always with encoding UTF-8)
 infofile=/content
 [ -f $infofile ] && LANGUAGE=`sed -n 's/^LANGUAGE \([^ ]*\)/\1/p' $infofile`
 [ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}.UTF-8"

@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jul 30 10:23:01 CEST 2003 - arvin@suse.de
+
+- always let YaST run in an UTF-8 environment during installation
+  (bug #14751)
+
+-------------------------------------------------------------------
 Fri Jul 25 15:13:04 CEST 2003 - arvin@suse.de
 
 - removed handling of XFree86 Version 3 from YaST2.start
