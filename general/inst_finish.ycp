@@ -401,7 +401,7 @@ Please wait while the base system is being installed.
 	    }
 	});
 
-	// FIXME subfs
+	Storage::UpdateFstab (Update::installedVersion, Update::updateVersion);
     }
     else	// install mode
     {
