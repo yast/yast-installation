@@ -30,6 +30,7 @@
     import "Mode";
     import "Installation";
     import "Language";
+    import "Storage";
     Installation::scrHandle = scrHandle;
 
     import "AutoInstall";
@@ -487,7 +488,7 @@ will look different than in the manual.");
 	    do_continue = true;
 	}
 	if ( immediate_prep_mode
-	    && Installation::immediate_prepdisk )
+	    && Storage::immediate_prepdisk )
 	{
 	    do_continue = true;
 	}
