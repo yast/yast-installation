@@ -434,6 +434,9 @@ Please wait while the base system is being installed.
 	}
     }
 
+    // Write list of modules to load after system gets up
+    Kernel::SaveModulesToLoad ();
+
     Progress::NextStage();
 
     // progress stage title

@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Dec 12 12:40:22 CET 2002 - jsrain@suse.de
+
+- added handling of modules required to be loaded early after
+  mounting root
+- not adding ide-scsi to initrd, but scheduling relevant modules
+  to be loaded after boot (#19376)
+
+-------------------------------------------------------------------
 Wed Dec 11 16:51:45 CET 2002 - lslezak@suse.cz
 
 - .proc.cpuinfo agent rewritten to INI-agent (now supports
