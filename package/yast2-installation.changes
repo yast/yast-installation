@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri May 23 15:20:32 CEST 2003 - arvin@suse.de
+
+- take kernel command line from install.inf (bug #25745)
+
+-------------------------------------------------------------------
 Mon Apr 28 17:25:45 CEST 2003 - arvin@suse.de
 
 - fixes for live eval (bug #26457)
