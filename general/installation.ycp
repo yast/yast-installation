@@ -261,7 +261,7 @@
 	    if (SCR::Read(.target.size,"/media/floppy/autoinst.xml")>0)
 	    {
 		y2milestone("Found control file, switching to autoinst mode");
-		Mode::SetMode ("autoinst");
+		Mode::SetMode ("autoinstallation");
 		// initialize Report behavior
 		// Default in autoinst mode is showing messages and warnings with timeout of 10 sec.
 		// Errors are shown without timeout.

@@ -28,7 +28,7 @@ textdomain="control"
     <proposals config:type="list">
         <proposal>
             <label>Installation Settings</label>
-            <mode>installation,demo,autoinst</mode>
+            <mode>installation,demo,autoinstallation</mode>
             <stage>initial</stage>
             <type>initial</type>
             <proposal_modules config:type="list">
@@ -442,7 +442,7 @@ textdomain="control"
         <workflow>
             <stage>initial</stage>
             <label>Base Installation</label>
-            <mode>autoinst</mode>
+            <mode>autoinstallation</mode>
             <defaults>
                 <arguments>false,false</arguments>
                 <archs>all</archs>
@@ -498,7 +498,7 @@ textdomain="control"
             </defaults>
             <stage>continue</stage>
             <label>Configuration</label>
-            <mode>autoinst</mode>
+            <mode>autoinstallation</mode>
             <modules  config:type="list">
                 <module>
                     <name>netsetup</name>
