@@ -426,8 +426,8 @@ fi
 if [ -z "$DISPLAY" ];then
 	NEED_XSERVER=1
 fi
-# 3.1.5) Check for XF86Config...
-if [ ! -f /etc/X11/XF86Config ];then
+# 3.1.5) Check for XF86Config and xorg.conf...
+if [ ! -f /etc/X11/XF86Config ] && [ ! -f /etc/X11/xorg.conf ];then
 if [ ! -f /usr/X11R6/lib/X11/XF86Config_4 ];then
 	log "\tNo X11 configuration template found -> Medium Qt disabled"
 	MEDIUM[0]=0
