@@ -5,11 +5,11 @@
 //
 [
   "proposal_mode"
-, "proposal_language"
 , "proposal_keyboard"
 , "proposal_mouse"
 , "proposal_partitions"
 , "proposal_software"
 , "proposal_bootloader"
 , "proposal_timezone"
+, "proposal_language"
 ]
