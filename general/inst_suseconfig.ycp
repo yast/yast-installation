@@ -90,12 +90,10 @@
     ////////////////////////////////////////////////////////////////////////////////
 
 
-    // Help text for SuSEconfig dialog
-    string help_text = _("<p>
-<tt>SuSEconfig</tt> has to write the configuration of your SuSE Linux system.  Depending on
-the CPU and the amount of memory, this process can take some time.
-</p>
-");
+    /* Help text for SUSEconfig dialog */
+    string help = _("<p><tt>SuSEconfig</tt> has to write the configuration
+of your &product; system. Depending on the CPU and the amount of memory,
+this process can take some time.</p>");
 
 
     list<string> modules = (list<string>) SCR::Read( .run.get.suseconfig.modules );
@@ -124,7 +122,7 @@ the CPU and the amount of memory, this process can take some time.
     Wizard::SetContents(
 			  // Dialog title for SuSEconfig dialog
 			  _("Writing the system configuration"),
-			  contents, help_text, back_ok, next_ok);
+			  contents, help, back_ok, next_ok);
     Wizard::DisableAbortButton();
 
 
