@@ -78,7 +78,7 @@
     // Set hostname and domainname to something reasonable.
     // Some programs depend on it (rpm install scripts, Xlib)
 
-    if (!Arch::s390
+    if (!Arch::s390 ()
 	&& !Mode::test)
     {
 	SCR::Execute(.target.bash, "/bin/hostname linux");
@@ -93,7 +93,7 @@
     //				      USB
     // --------------------------------------------------------------
 
-    if (!(Arch::s390 || Arch::board_iseries))
+    if (!(Arch::s390 () || Arch::board_iseries ()))
     {
         // give user feedback what's happening
 	showFeedback( _("Probing USB devices") );
@@ -104,7 +104,7 @@
     //				FireWire (ieee1394)
     // --------------------------------------------------------------
 
-    if (!(Arch::s390 || Arch::board_iseries))
+    if (!(Arch::s390 () || Arch::board_iseries ()))
     {
         // give user feedback what's happening
 	showFeedback( _("Probing FireWire devices...") );
@@ -115,7 +115,7 @@
     //				    Floppy
     // --------------------------------------------------------------
 
-    if (!(Arch::s390 || Arch::board_iseries))
+    if (!(Arch::s390 () || Arch::board_iseries ()))
     {
         // give user feedback what's happening
 	showFeedback( _("Probing floppy disk devices") );

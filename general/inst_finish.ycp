@@ -413,7 +413,7 @@ Please wait while the base system is being installed.
 
 	set_runlevel (Update::last_runlevel != -1 ? Update::last_runlevel : 3);
 
-	if (!Arch::ppc
+	if (!Arch::ppc ()
 	    && Mode::update)
 	{
 	    // lilo might need {vmlinuz,initrd}.suse
@@ -560,7 +560,7 @@ Please wait while the base system is being installed.
     // where we do a hard reboot. However, the cdrom is still mounted here
     // and cant be removed.
 
-    if (Arch::s390)
+    if (Arch::s390 ())
     {
         // for s390:
         // Message that will be displayed along with information
@@ -599,7 +599,7 @@ with the load address of your root DASD.
     // --------------------------------------------------------------
     // write network settings to installed system
 
-    if (Arch::s390 || Mode::vnc || Mode::usessh)
+    if (Arch::s390 () || Mode::vnc || Mode::usessh)
     {
 	y2milestone("Creating network interface");
 	WFM::Execute (.local.bash, "/sbin/create_interface " + Installation::destdir);
@@ -607,7 +607,7 @@ with the load address of your root DASD.
     }
 
     // installation inside UML machine
-    if (Arch::is_uml)
+    if (Arch::is_uml ())
     {
 	y2milestone("Starting UML mode configuration");
 
