@@ -171,18 +171,11 @@ Please wait while the base system is being installed.
 
     y2milestone ("x11_installed: <%1>", x11_installed );
 
+
     // --------------------------------------------------------------
     // Copy /etc/install.inf into built system so that the
     // second phase of the installation can find it.
-
-    SCR::Execute (.target.bash, "/bin/grep -v Sourcemounted /etc/install.inf >" +
-		      Installation::destdir + "/etc/install.inf");
-
-    // just for debug so we can see the original install.inf later
-    SCR::Execute (.target.bash, "/bin/cp /etc/install.inf " +
-		  Installation::destdir + "/var/lib/YaST2/install.inf");
-    SCR::Execute (.target.bash, "/bin/chmod 0600 " +
-		  Installation::destdir + "/var/lib/YaST2/install.inf");
+    Linuxrc::SaveInstallInf (Installation::destdir);
 
     // Copy control.xml so it can be read once again during continue mode
     SCR::Execute (.target.bash, "/bin/cp " + ProductControl::current_control_file  + " " +
