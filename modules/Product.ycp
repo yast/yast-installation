@@ -38,51 +38,6 @@
     global string relnotesurl	= "";
 
     /**
-     * true if IMAP server
-     */
-    global boolean imap_server	= false;
-
-    /**
-     * true if Open Team server
-     */
-    global boolean openteam_server	= false;
-
-    /**
-     * true if Firewall Admin
-     */
-    global boolean fwadmin_host	= false;
-
-    /**
-     * true if SLES server
-     */
-    global boolean sles_server	= false;
-
-    /**
-     * true if SLCS server
-     */
-    global boolean slcs_server	= false;
-
-    /**
-     * true for Certification CD
-     */
-    global boolean certify_cd	= false;
-
-    /**
-     * true for general product CD
-     */
-    global boolean product_cd	= false;
-
-    /**
-     * true for SuSE Linux Personal
-     */
-    global boolean personal	= false;
-
-    /**
-     * true for UnitedLinux
-     */
-    global boolean unitedlinux	= false;
-
-    /**
      *  Control how the base selection is chosen:
      *    `fixed - the base selection is fixed (see fixed_base_selection below)
      *    `auto  - a base selection is automatically choosen (depending on disk
@@ -97,7 +52,7 @@
 
     /**
      *  If non-empty it will be called with WFM::CallFunction
-     * 	from Packages::ComputeSystemPackageList. Gets a list of packages
+     *	from Packages::ComputeSystemPackageList. Gets a list of packages
      *  as the one and only argument and must return a list of packages
      *  again.
      */
@@ -112,6 +67,13 @@
      * list of flags from content file
      */
     global list flags		= [];
+
+
+    // Flexible partitioning
+    global boolean flexible_partitioning = false;
+
+    global map FlexiblePartitioning = $[];
+
 
     // -----------------------------------------------
     /**
@@ -159,26 +121,8 @@
 	    flags		= splitstring (last_product["flags"]:"", " ");
 	}
 
-	imap_server	= (name == "eMail Server");
-	openteam_server	= (name == "Openexchange Server");
-	sles_server	= (name == "SusE SLES");
-	slcs_server	= (name == "SusE SLCS");
-	fwadmin_host	= (name == "SuSE Firewall Adminhost");
-	certify_cd	= (name == "Certification CD");
-
 	if(distproduct == nil) distproduct = "";
 	dist		= select (splitstring(distproduct, "-"), 2, "");
-
-	personal	= (dist == "Personal");
-	unitedlinux	= (name == "UnitedLinux");
-
-	/* handle live cd and certification cd as product cd,
-	 * will disable software selection dialog
-	 */
-
-	product_cd	= Mode::live_eval
-			  || certify_cd
-			  || (name == "Product CD");
 
 	run_you		= ! contains (flags, "no_you");
     }

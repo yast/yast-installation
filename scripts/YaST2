@@ -53,6 +53,26 @@ function set_proxy()
 }
 
 
+function set_syslog()
+{
+    Loghost=$(awk ' /^Loghost:/ { print $2 }' < /etc/install.inf)
+
+     test ! -z $Loghost && {
+        mkdir /etc/YaST2
+        cat <<EOF > /etc/YaST2/log.conf
+[Log]
+file = true
+syslog = true
+
+EOF
+        grep -iwq y2debug < /proc/cmdline && {
+            echo "debug=true" >> /etc/YaST2/log.conf
+        }
+        echo "*.* @$Loghost" >> /etc/syslog.conf
+        kill -HUP `cat /var/run/syslogd.pid`
+    }
+}
+
 function log {
     echo "$@" >> $logdir/y2start.log 2>/dev/null
 }
@@ -118,6 +138,9 @@ logmeminfo "1"
 
 # setup proxy
 set_proxy
+
+# setup syslog
+set_syslog
 
 #
 #	if we a running on a s390 or s390x

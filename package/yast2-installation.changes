@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb 27 03:31:46 CET 2004 - nashif@suse.de
+
+- New control file based installation merged
+
+-------------------------------------------------------------------
 Fri Feb 20 19:53:00 CET 2004 - arvin@suse.de
 
 - handle abort button in inst_finish (bug #30303)

@@ -1,0 +1,126 @@
+/**
+ * File:	modules/ProductWorkflow.ycp
+ * Package:	installation
+ * Summary:	Product Workflow data
+ * Authors:	Anas Nashif <nashif@suse.de>
+ *
+ * $Id$
+ */
+{
+module "ProductWorkflow";
+import "ProductControl";
+import "Arch";
+
+
+
+/**
+ * Constructer
+ * @return void
+ */
+global define void ProductWorkflow() ``{
+    return;
+}
+
+
+/**
+ * Check if valid architecture
+ * @param map module data
+ * @param map default data
+ * @return boolean true if arch match
+ */
+global define boolean checkArch(map mod , map def) ``{
+    y2milestone("mod: %1", mod);
+    string archs = mod["archs"]:"";
+    if (archs == "")
+    {
+        archs=def["archs"]:"all";
+    }
+
+    if (archs == "all") {
+        return true;
+    }
+
+    y2milestone("short arch desc: %1", Arch::arch_short );
+    y2milestone("supported archs: %1", archs );
+    if (issubstring(archs,Arch::arch_short))
+    {
+        return true;
+    }
+
+    return false;
+};
+
+
+
+/**
+ * Return term to be used to run module
+ * @param map module data
+ * @param map default data
+ * @return term module data with params
+ */
+global define term getTerm (map mod, map def) ``{
+    term a = toterm(mod["name"]:"dummy");
+    string arguments = mod["arguments"]:"";
+    list args = splitstring(arguments, ",");
+    if (size(args) == 0 )
+    {
+        args = splitstring(def["arguments"]:"", ",");
+    }
+    foreach(string arg, args,
+            ``{
+            if (arg == "true")
+            {
+            a=add(a, true);
+            }
+            else if (arg == "false") {
+            a=add(a, false);
+            }
+            else if (findfirstof(arg, "`") != nil)
+            {
+            if (findfirstof(arg, "`") == 0)
+            {
+            term s = toterm(substring(arg,1));
+            symbol ss = symbolof(s);
+            a=add(a, ss);
+            }
+            }
+            else
+            {
+            a=add(a,arg);
+            }
+            });
+    return a;
+}
+
+
+/**
+ * Get wrokflow defaults
+ * @param string stage
+ * @param string mode
+ * @return map defaults
+ */
+global define map getModeDefaults(string stage, string mode)
+``{
+    map workflow = (map)select(filter(map wf, ProductControl::workflows, ``(
+                wf["stage"]:"" == stage && wf["mode"]:"" == mode
+                    )), 0 , $[] );
+    return workflow["defaults"]:$[];
+}
+
+/**
+ * Get modules of current Workflow
+ * @param string stage
+ * @param string mode
+ * @return list<map> modules
+ */
+global define list getModules(string stage, string mode)
+``{
+    map workflow = (map)select(filter(map wf, ProductControl::workflows, ``(
+                wf["stage"]:"" == stage && wf["mode"]:"" == mode
+                    )), 0 , $[] );
+    list<map> modules = workflow["modules"]:[];
+    return modules;
+}
+
+
+}

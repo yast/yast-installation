@@ -1,6 +1,6 @@
 @HEADER-COMMENT@
 
-# neededforbuild  gpp libgpp libxcrypt libxcrypt-devel hwinfo hwinfo-devel udev yast2-devel-packages
+# neededforbuild  gpp libgpp libxcrypt libxcrypt-devel hwinfo hwinfo-devel udev yast2-devel-packages yast2-xml
 
 @HEADER@
 Requires:	yast2
@@ -34,13 +34,14 @@ This controls the system installation.
 %files
 %defattr(-,root,root)
 %doc @docdir@
+%dir /usr/share/YaST2/control
+/usr/share/YaST2/control/*.xml
 
 @clientdir@/*.ycp
 @yncludedir@/installation
 @moduledir@/*.ycp
 @moduledir@/*.ybc
 @desktopdir@/*.desktop
-@ydatadir@/*.ycp
 
 # agents
 @scrconfdir@/etc_passwd.scr

@@ -339,6 +339,7 @@ disk that will not boot. With this option, try to fix problems manually.
 	    {
 		Mode::installation = true;
 		Mode::update = false;
+                Mode::mode = "installation";
 		break;
 	    }
 
@@ -346,6 +347,7 @@ disk that will not boot. With this option, try to fix problems manually.
 	    {
 		Mode::update = true;
 		Mode::installation = false;
+                Mode::mode = "update";
 		break;
 	    }
 
@@ -354,6 +356,7 @@ disk that will not boot. With this option, try to fix problems manually.
 		Mode::repair = true;
 		Mode::installation = false;
 		Mode::update = false;
+                Mode::mode = "repair";
 		ret = `finish;
 		break;
 	    }
@@ -364,6 +367,7 @@ disk that will not boot. With this option, try to fix problems manually.
 		{
 		    Mode::update = false;
 		    Mode::installation = false;
+                    Mode::mode = "";
 		    ret = `finish;
 		    break;
 		}

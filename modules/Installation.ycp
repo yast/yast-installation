@@ -8,11 +8,10 @@
  * Summary:
  *	provide installation related information
  *
- * $Id$
- *
  * Author:
  *	Klaus Kaempf <kkaempf@suse.de>
  *
+ * $Id$
  */
 
 {
@@ -36,9 +35,6 @@
     global string yast2dir		= "/var/lib/YaST2";
 
     global string mountlog		= "/var/log/YaST2/y2logMount";
-
-    // see installation.ycp
-    global boolean immediate_prepdisk	= false;
 
     // default language for the installation (from installation source)
     global string defaultLanguage	= "en_US";

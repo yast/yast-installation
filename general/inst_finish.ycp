@@ -37,6 +37,7 @@
     import "PackageSelectionIO";
     import "Packages";
     import "Product";
+    import "ProductControl";
     import "Progress";
     import "Report";
     import "RunlevelEd";
@@ -188,6 +189,11 @@ Please wait while the base system is being installed.
     SCR::Execute (.target.bash, "/bin/chmod 0600 " +
 		  Installation::destdir + "/var/lib/YaST2/install.inf");
 
+    // Copy control.xml so it can be read once again during continue mode
+    SCR::Execute (.target.bash, "/bin/cp " + ProductControl::current_control_file  + " " +
+		  Installation::destdir + "/var/lib/YaST2/control.xml");
+    SCR::Execute (.target.bash, "/bin/chmod 0600 " +
+		  Installation::destdir + "/var/lib/YaST2/control.xml");
 
     if ( !Mode::live_eval )
     {
