@@ -1,6 +1,7 @@
 -------------------------------------------------------------------
 Wed Apr 23 12:09:20 CEST 2003 - ms@suse.de
 
+- add config migration from 3x to 4x if possible
 - ensure XF86Config is available if someone performs an update
   within a XFree86 3.x environment
 
