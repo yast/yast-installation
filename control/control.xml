@@ -220,6 +220,24 @@
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
+            <mode>repair</mode>
+            <modules  config:type="list">
+                <module>
+                    <name>info</name>
+                    <arguments>false,true</arguments>
+                </module>
+                <module>
+                    <name>repair</name>
+                    <arguments>false,true,true</arguments>
+                </module>
+            </modules> 
+        </workflow>
+        <workflow>
+            <defaults>
+                <arguments>false,false</arguments>
+                <archs>all</archs>
+            </defaults>
+            <stage>initial</stage>
             <mode>screen_shot</mode>
             <modules  config:type="list">
                 <module>
