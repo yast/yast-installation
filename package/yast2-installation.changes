@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Sat Apr 03 17:44:03 CEST 2004 - arvin@suse.de
+
+- use fbiterm for CJK locales if appropriate (bug #37823)
+
+-------------------------------------------------------------------
 Fri Apr 02 15:59:59 CEST 2004 - arvin@suse.de
 
 - finally changed license to GPL for good

@@ -84,6 +84,36 @@ function logmeminfo {
 }
 
 
+# check whether the system can use fbiterm
+# also handle the CJK language mangle on linux console
+function check_run_fbiterm ()
+{
+    RUN_FBITERM=0
+    if test "$MemTotal" -lt "57344" ; then
+	return
+    fi
+    TTY=`/usr/bin/tty`
+    if test "$TERM" = "linux" -a \( "$TTY" = /dev/console -o "$TTY" != "${TTY#/dev/tty[0-9]}" \) ; then
+	case "$LANG" in
+	ja*.UTF-8|ko*.UTF-8|zh*.UTF-8)
+	    # check whether fbiterm can run on console
+	    if test -x /usr/bin/fbiterm && /usr/bin/fbiterm echo >/dev/null 2>&1; then
+		RUN_FBITERM=1
+	    else
+		# use english
+		export LANG=en_US.UTF-8
+		export LC_CTYPE=en_US.UTF-8
+	    fi
+	    ;;
+	ja*|ko*|zh*)
+	    # use english
+	    export LANG=en_US.UTF-8
+	    export LC_CTYPE=en_US.UTF-8
+	    ;;
+	esac
+    fi
+}
+
 function y2cc_qt()
 {
     # set lang from sysconfig
@@ -120,7 +150,12 @@ function y2cc_ncurses()
 
 	    # Start the control center
 	    log "Starting YaST2 control center in NCurses mode"
-	    y2base menu ncurses
+	    check_run_fbiterm
+	    if test "$RUN_FBITERM" = "1" ; then
+		/usr/bin/fbiterm y2base menu ncurses
+	    else
+		y2base menu ncurses
+	    fi
 	fi
     fi
 }
@@ -365,12 +400,22 @@ fi
 
 if [ "$Textmode" = 1 -o "$UseSSH" = 1 ] ; then
   log "text mode requested"
-  (
-    y2base "$modulename" $moduleargs ncurses
-    y2exitcode=$?
-    [ $y2exitcode -eq 0 ] && y2cc_ncurses
-    exit $y2exitcode
-  )
+  check_run_fbiterm
+  if test "$RUN_FBITERM" = "1" ; then
+    (
+      /usr/bin/fbiterm y2base "$modulename" $moduleargs ncurses
+      y2exitcode=$?
+      [ $y2exitcode -eq 0 ] && y2cc_ncurses
+      exit $y2exitcode
+    )
+  else
+    (
+      y2base "$modulename" $moduleargs ncurses
+      y2exitcode=$?
+      [ $y2exitcode -eq 0 ] && y2cc_ncurses
+      exit $y2exitcode
+    )
+  fi
   y2exitcode=$?
   exit $y2exitcode
 fi
