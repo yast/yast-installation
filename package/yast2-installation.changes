@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Mar 31 19:41:34 CEST 2004 - nashif@suse.de
+
+- Added 2 options to control file:
+   inform_about_suboptimal_distribution
+   use_desktop_scheduler
+
+-------------------------------------------------------------------
 Wed Mar 31 17:19:12 CEST 2004 - lslezak@suse.cz
 
 - inst_finish.ycp - copy kernel image, initrd and /etc/mtab to
