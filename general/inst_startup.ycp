@@ -152,7 +152,7 @@
     StorageControllers::Initialize ();
 
     ModuleLoading::Load ("dm-mod", "", "Linux", "DM", Mode::manual, true);
-    SCR::Execute (.target.bash, "/sbin/devmap_mkmod.sh");
+    SCR::Execute (.target.bash, "/sbin/devmap_mknod.sh");
 
 
     // --------------------------------------------------------------
