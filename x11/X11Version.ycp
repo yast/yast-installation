@@ -57,14 +57,32 @@ global define string GetVersion() ``{
 	// if there is only one entry pointing to XFree86 version 3
 	// XFree86 3 has to be used for this card
 	// ---
-	integer ver = (integer) SCR::Execute( .target.bash,
-		Directory::bindir + "/version"
-	);
-	if (ver == 4) {
-		version = "4";
-	} else {
-		version = "3";
+	list<map> gfxcards = (list<map>) SCR::Read(.probe.display);
+	/* more cards -> ver=4 */
+	if(size(gfxcards) > 1) {
+	    version = "4";
 	}
+	/* one cards -> inspect drivers */
+	else if(size(gfxcards) == 1) {
+	    foreach(map gfxcard, gfxcards, {
+		list<map> drivers = gfxcard["x11"]:[];
+		/* do we have any 4 driver? */
+		foreach(map driver, drivers, {
+		    if(version == "") {
+			if(driver["version"]:"" == "4") version = "4";
+		    }
+		});
+		/* do we have any 3 driver? */
+		foreach(map driver, drivers, {
+		    if(version == "") {
+			if(driver["version"]:"" == "3") version = "3";
+		    }
+		});
+	    });
+	}
+	/* not sure about default */
+	if(version == "") version = "4";
+
 	y2milestone( "xfree_version: <%1>", version );
 	return( version );
 }
