@@ -627,6 +627,7 @@ with the load address of your root DASD.
 
     if (Arch::s390 || Mode::vnc || Mode::usessh)
     {
+	y2milestone("Creating network interface");
 	WFM::Execute (.local.bash, "/sbin/create_interface " + Installation::destdir);
 	ModulesConf::RunDepmod (false);
     }
@@ -640,7 +641,7 @@ with the load address of your root DASD.
 	WFM::Execute (.local.bash, "umask 077 ; awk  -F : ' /^root:/ { print $1\":\"$2 }' < /etc/shadow > "
 		+ Installation::destdir + "/tmp/rootpwd.txt");
 	SCR::Execute (.target.bash, "/bin/cat /tmp/rootpwd.txt | /usr/sbin/chpasswd -e ; rm -fv /tmp/rootpwd.txt");
-    	WFM::Execute (.local.bash, "/bin/cp -a /etc/ssh/*key* " + Installation::destdir + "/etc/ssh/");
+	WFM::Execute (.local.bash, "/bin/cp -a /etc/ssh/*key* " + Installation::destdir + "/etc/ssh/");
     }
 
     // --------------------------------------------------------------
