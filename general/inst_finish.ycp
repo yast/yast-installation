@@ -224,6 +224,17 @@ Please wait while the base system is being installed.
     }
 
     // --------------------------------------------------------------
+    // setup linker cache
+    // otherwise "SuSEconfig --module fonts" fails
+
+    Progress::NextStep ();
+    // progress stage title
+    Progress::Title (_("Setting up linker cache"));
+
+    if (SCR::Execute (.target.bash, "/sbin/ldconfig") != 0)
+	y2error ("ldconfig failed\n");
+
+    // --------------------------------------------------------------
     // get targets
     // first build map of module names (remove duplicates)
     // then make list of modules as string
