@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Sat Aug 03 15:33:51 CEST 2002 - arvin@suse.de
+
+- removed option -noxim for qt frontend since bug #17161 is now
+  solved by changes to yast-qt
+
+-------------------------------------------------------------------
 Fri Aug 02 15:02:54 CEST 2002 - arvin@suse.de
 
 - run qt frontend with option -noxim (bug #17161)

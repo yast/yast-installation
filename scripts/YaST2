@@ -130,9 +130,6 @@ function y2cc_ncurses()
     fi
 }
 
-# Extra options for qt frontend
-qt_opts="-noxmi"
-
 # This environment variable will tell child processes they are started from
 # within a YaST2 environment
 export YAST2_RUNNING=$$
@@ -276,7 +273,7 @@ if [ "$VNC" = "1" ] ; then
     if [ -x /usr/X11R6/bin/Xvnc ] ; then
 	. /usr/lib/YaST2/bin/inst_setup_vnc
 	export DISPLAY=:1
-	y2base "$modulename" $moduleargs qt -style=platinum -fn $Y2_XFONT -geometry 800x600+1+1 -no-wm $qt_bg $qt_opts
+	y2base "$modulename" $moduleargs qt -style=platinum -fn $Y2_XFONT -geometry 800x600+1+1 -no-wm $qt_bg
 	y2exitcode=$?
 	[ $y2exitcode -eq 0 ] && y2cc_qt
 	exit $y2exitcode
@@ -286,7 +283,7 @@ if [ "$VNC" = "1" ] ; then
 fi
 
 if [ "$DISPLAY" != "" ] ; then
-    y2base "$modulename" $moduleargs qt -style=platinum -fn $Y2_XFONT -geometry 800x600 $qt_bg $qt_opts
+    y2base "$modulename" $moduleargs qt -style=platinum -fn $Y2_XFONT -geometry 800x600 $qt_bg
     y2exitcode=$?
     [ $y2exitcode -eq 0 ] && y2cc_qt
     exit $y2exitcode
@@ -433,7 +430,7 @@ fi
 logmeminfo "2"
 
 if [ "$server_running" ] ; then
-  y2base "$modulename" $moduleargs qt -style=platinum -fn $Y2_XFONT -geometry 800x600 -no-wm $qt_bg $qt_opts
+  y2base "$modulename" $moduleargs qt -style=platinum -fn $Y2_XFONT -geometry 800x600 -no-wm $qt_bg
   y2exitcode=$?
   [ $y2exitcode -eq 0 ] && y2cc_qt
   sleep 1
