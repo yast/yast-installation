@@ -505,6 +505,7 @@ Please wait while the base system is being installed.
     // progress stage title
     Progress::Title (_("Installing boot manager..."));
 
+    SCR::Execute (.target.bash, "/sbin/SuSEconfig --module bootsplash");
     Boot::Save ();		// save /etc/sysconfig parameters
 
     Installation::Save();
