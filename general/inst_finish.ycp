@@ -287,11 +287,9 @@ Please wait while the base system is being installed.
     }
 
 
-    if (false)		// FIXME !!!
-    {
-	SCR::Write (.sysconfig.suseconfig.CWD_IN_USER_PATH, "no");
-	SCR::Write (.sysconfig.suseconfig, nil);
-    }
+    SCR::Write (.sysconfig.suseconfig.CWD_IN_USER_PATH,
+		contains (Product::flags, "usercwd") ? "yes" : "no");
+    SCR::Write (.sysconfig.suseconfig, nil);
 
     // --------------------------------------------------------------
     // check for Kde vs. Gnome, see inst_xf86config
