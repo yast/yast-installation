@@ -124,7 +124,7 @@
 	    if (mode_changed || rootpart_changed ||
 		workflow_sequence == `finish)
 	    {
-		RootPart::UnmountPartitions ();
+		RootPart::UnmountPartitions (false);
 	    }
 	    */
 
