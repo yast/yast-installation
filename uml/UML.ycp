@@ -1,0 +1,18 @@
+/**
+ * Module:	UML.ycp
+ *
+ * Authors:	Arvin Schnell <arvin@suse.de>
+ *
+ * Purpose:	UML installation module
+ *
+ * $Id$
+ */
+{
+    module "UML";
+
+    global integer memory_size = 256;
+
+    global integer number_of_cpus = 1;
+
+    global list <integer> disks = [ 1024 ];
+}
