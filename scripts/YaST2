@@ -121,7 +121,7 @@ function y2cc_ncurses()
 export YAST2_RUNNING=$$
 
 # Qt create .qt and .xftcache and we don't want those things in /
-export HOME=/tmp
+export HOME=/root
 
 echo -n > $logdir/y2start.log
 log env
