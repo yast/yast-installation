@@ -1,12 +1,17 @@
 -------------------------------------------------------------------
+Tue Mar 04 21:13:02 CET 2003 - arvin@suse.de
+
+- handle flags from content file in Product module (bug #21561)
+
+-------------------------------------------------------------------
 Tue Mar  4 13:07:02 CET 2003 - sh@suse.de
 
-- Fixed bug #24542: Bad license agreement button text 
+- Fixed bug #24542: Bad license agreement button text
 
 -------------------------------------------------------------------
 Mon Mar  3 16:47:07 CET 2003 - sh@suse.de
 
-- Fixed bug #10990: Boot installed system does not unmount 
+- Fixed bug #10990: Boot installed system does not unmount
 
 -------------------------------------------------------------------
 Mon Mar  3 11:06:28 CET 2003 - fehr@suse.de
