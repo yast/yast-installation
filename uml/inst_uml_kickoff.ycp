@@ -1,0 +1,26 @@
+/**
+ * Module:	inst_uml_kickoff.ycp
+ *
+ * Authors:	Arvin Schnell <arvin@suse.de>
+ *
+ * Purpose:	Do various tasks before starting with uml installation.
+ *
+ * $Id$
+ */
+
+{
+    import "UML";
+
+
+    /**
+     *
+     */
+    define void save_options () ``{
+
+	integer the_fool_on_the_hill = 1;
+
+    }
+
+
+    return `next;
+}
