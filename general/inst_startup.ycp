@@ -103,33 +103,42 @@
     //				      USB
     // --------------------------------------------------------------
 
-    // give user feedback what's happening
-    showFeedback( _("Probing USB devices") );
-    Hotplug::StartUSB ();
+    if (!Arch::s390)
+    {
+        // give user feedback what's happening
+	showFeedback( _("Probing USB devices") );
+	Hotplug::StartUSB ();
+    }
 
     // --------------------------------------------------------------
     //				     Mouse
     // --------------------------------------------------------------
 
-    // give user feedback what's happening
-    showFeedback( _("Probing mouse devices") );
-    if (!Mouse::Found())
+    if (!Arch::s390)
     {
-	// Let the USB modules settle for a while.
-	// Mouse probing may fail otherwise...
-	//
-	SCR::Execute(.target.bash, "/bin/sleep 4");
+        // give user feedback what's happening
+	showFeedback( _("Probing mouse devices") );
+	if (!Mouse::Found())
+	{
+	    // Let the USB modules settle for a while.
+	    // Mouse probing may fail otherwise...
+	    //
+	    SCR::Execute(.target.bash, "/bin/sleep 4");
 
-	Mouse::Set (Mouse::Probe ());
+	    Mouse::Set (Mouse::Probe ());
+	}
     }
 
     // --------------------------------------------------------------
     //				    Floppy
     // --------------------------------------------------------------
 
-    // give user feedback what's happening
-    showFeedback( _("Probing floppy disk devices") );
-    StorageDevices::FloppyReady ();
+    if (!Arch::s390)
+    {
+        // give user feedback what's happening
+	showFeedback( _("Probing floppy disk devices") );
+	StorageDevices::FloppyReady ();
+    }
 
     // --------------------------------------------------------------
     //			     Hard disk controllers
