@@ -15,16 +15,33 @@ import "ProductFeatures";
 import "Mode";
 import "Arch";
 
+// The complete parsed control file
 global map productControl = $[];
 
+// all workflows
 global list workflows = [];
+
+// all proposals
 global list proposals = [];
+
+// Flexible partitioning map. XML represenation of the the part.info file
 global map partitioning = $[];
+
+// Software configuration
 global map software = $[];
 
+// The custom control file location, usually copied from
+// the root of the CD to the installation directory by linuxrc
 global string default_control_file = "/control.xml";
+
+// The file above get saved into the installed system for later
+// processing
 global string saved_control_file = "/var/lib/YaST2/control.xml";
+
+// The packaged file which contains all default worklfows
 global string packaged_control_file = "/usr/share/YaST2/control/control.xml";
+
+// The control file we are using for this session.
 global string current_control_file = "";
 
 /**
