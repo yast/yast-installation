@@ -1,7 +1,7 @@
 		      API for YaST2 installation proposal
 
 Author:	 Stefan Hundhammer <sh@suse.de>
-Updated: 2002-10-14
+Updated: 2003-01-28
 
 
 				  Motivation
@@ -303,6 +303,15 @@ map Description()
 			readable.
 
 			Example: "input_dev"
+
+	This map may be empty. In this case, this proposal section will
+	silently be ignored. Proposals modules may use this if there is no
+	useful proposal at all. Use with caution - this may be confusing for
+	the user.
+
+	Note: In this case, all other proposal functions must return a useful
+	success value so they can be called without problems.
+
 
 map Write()
 

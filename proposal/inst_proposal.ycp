@@ -664,17 +664,20 @@
 	    }
 	    else
 	    {
-		new_submodules = add( new_submodules, submod );
-		string title      = description["rich_text_title"]:submod;
-		string menu_title = description["menu_title"     ]:title;
-		string id         = description["id"             ]:sformat( "module_%1", no );
+		if ( description != $[] )
+		{
+		    new_submodules = add( new_submodules, submod );
+		    string title      = description["rich_text_title"]:submod;
+		    string menu_title = description["menu_title"     ]:title;
+		    string id         = description["id"             ]:sformat( "module_%1", no );
 
-		titles            = add( titles,  title );
-		submod2id[submod] = id;
-		id2submod[id]     = submod;
-		menu_list         = add( menu_list, `item(`id( id ), menu_title + "..." ) );
+		    titles            = add( titles,  title );
+		    submod2id[submod] = id;
+		    id2submod[id]     = submod;
+		    menu_list         = add( menu_list, `item(`id( id ), menu_title + "..." ) );
 
-		no = no + 1;
+		    no = no + 1;
+		}
 	    }
 	});
 
