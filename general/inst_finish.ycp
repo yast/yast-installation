@@ -486,7 +486,7 @@ Please wait while the base system is being installed.
 	{
 	    string fullproxy = proxyproto + "://" + proxy + ":" + proxyport + "/";
 
-	    y2milestone ("setting proxy to %s", fullproxy);
+	    y2milestone ("setting proxy to %1", fullproxy);
 
 	    // maybe use Proxy module
 	    SCR::Write (.sysconfig.proxy.HTTP_PROXY, fullproxy);
