@@ -11,6 +11,7 @@ textdomain="control"
     <textdomain>control</textdomain>
     <globals>
         <enable_autologin config:type="boolean">true</enable_autologin>
+        <ui_mode>simple</ui_mode>
     </globals>
     <software>
         <delete_old_packages config:type="boolean">true</delete_old_packages>
