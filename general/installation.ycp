@@ -39,6 +39,8 @@
     import "Packages";
 
     import "Wizard";
+    import "Label";
+    import "Popup";
     import "Report";
     import "Hooks";
 
@@ -73,26 +75,13 @@
      * Re-translate static part of wizard dialog and other predefined messages
      * after language change
      */
-    define void retranslateWizardDialog()
-    ``{
+    define void retranslateWizardDialog() ``{
 
 	y2debug( "Retranslating messages" );
-	include "ui/common_messages.ycp";
-
-
-	// Override default "Abort" button label - this is special just for the installation.
-	// Notice: This is really required right here since any module might
-	// include "ui/common_messages.ycp", thus restoring the original definition.
-	UI(``{
-	    global define AbortButtonLabel() ``{
-		return ( _("Abo&rt Installation") );
-	    }
-	});
 
 	// Make sure the labels for default function keys are retranslated, too.
-	// Using UI::DefaultFunctionKeyMap() from "common_messages.ycp".
-	UI::SetFunctionKeys( UI::DefaultFunctionKeyMap() );
-
+	// Using Label::DefaultFunctionKeyMap() from Label module.
+	UI::SetFunctionKeys( Label::DefaultFunctionKeyMap() );
 
 	// Activate language changes on static part of wizard dialog
 
@@ -102,8 +91,8 @@
 	}
 
 	Wizard::ReplaceButtonBox( Wizard::HasAcceptButton() ?
-				  Wizard::AbortAcceptButtonBox() :
-				  Wizard::BackAbortNextButtonBox() );
+				  Wizard::AbortInstallationAcceptButtonBox() :
+				  Wizard::BackAbortInstallationNextButtonBox() );
 
 	if ( UI::WidgetExists(`id(`next) ) )	UI::SetFocus(`id(`next) );
 	else					UI::SetFocus(`id(`accept ) );
@@ -184,19 +173,9 @@
     ///////////////////////////////////////////////////////////////////////////////
 
 
-    UI::``{
-	// Override default "Abort" button label - this is special just for the installation.
-	// Notice: This is really required right here since any module might
-	// include "ui/common_messages.ycp", thus restoring the original definition.
-	global define AbortButtonLabel() ``{
-	    return ( _("Abo&rt Installation") );
-	}
-
-    };
-
     if ( Mode::initial && ! Mode::repair )
     {
-	Wizard::OpenDialog( Wizard::EasyInstallationDialog( Wizard::AbortAcceptButtonBox(),
+	Wizard::OpenDialog( Wizard::EasyInstallationDialog( Wizard::AbortInstallationAcceptButtonBox(),
 							    EasyInstallationStepDescriptions() ) );
     }
     else
@@ -404,7 +383,7 @@
 	    else
 	    {
 		UI::ReplaceWidget (`id(`rp1), `Label (`id(`remaining_time), "" + timeout_seconds));
-		UI::ReplaceWidget (`id(`rp2), `PushButton (`id(`stop), StopButtonLabel()));
+		UI::ReplaceWidget (`id(`rp2), `PushButton (`id(`stop), Label::StopButton()));
 
 		while (timeout_seconds > 0) {
 		    sleep (1000);
@@ -665,7 +644,7 @@ will look different than in the manual.");
 	if (result == nil)
 	{
 	    any r = nil;
-	    r = UI::ModuleError(("The module " + symbolof(argterm)) + " does not work.");
+	    r = Popup::ModuleError(("The module " + symbolof(argterm)) + " does not work.");
 	    if	    (r == `next)   m = m + 1;
 	    else if (r == `back)   m = m - 1;
 	    else if (r != `again)
