@@ -83,20 +83,28 @@
     global boolean unitedlinux	= false;
 
     /**
-     * control how the base selection is chosen:
-     *   `fixed - the base selection is fixed (see fixed_base_selection below)
-     *   `auto  - a base selection is automatically choosen (depending on disk
-     *            space)
+     *  Control how the base selection is chosen:
+     *    `fixed - the base selection is fixed (see fixed_base_selection below)
+     *    `auto  - a base selection is automatically choosen (depending on disk
+     *             space)
      */
     global symbol base_selection_choice		= `auto;
 
     /**
-     * name of the fixed base selection
+     *  Name of the fixed base selection.
      */
     global string fixed_base_selection		= "";
 
     /**
-     * run YOU during the Internet connection test
+     *  If non-empty it will be called with WFM::CallFunction
+     * 	from Packages::ComputeSystemPackageList. Gets a list of packages
+     *  as the one and only argument and must return a list of packages
+     *  again.
+     */
+    global string packages_transmogrify		= "";
+
+    /**
+     *  Run YOU during the Internet connection test.
      */
     global boolean run_you	= true;
 
