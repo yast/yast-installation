@@ -292,7 +292,7 @@
 	{
 	    list cpuProbe = SCR::Read (.probe.cpu);
 	    string model = cpuProbe[0,"model"]:"Itanium";
-	    if (issubstring(model, "Itanium 2")
+	    if (issubstring(model, "Itanium 2"))
 	    {
 		if (Arch::has_smp)
 		    kernel_packages = ["k_itanium2-smp"];
