@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Feb 10 17:59:40 CET 2004 - arvin@suse.de
+
+- added type specification in inst_proposal.ycp
+
+-------------------------------------------------------------------
 Tue Feb 10 16:02:19 CET 2004 - nashif@suse.de
 
 - remove x11 from workflow for autoyast
