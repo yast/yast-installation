@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Aug 22 08:54:17 CEST 2002 - kkaempf@suse.de
+
+- ignore network/ssh boot options (#18154)
+
+-------------------------------------------------------------------
 Wed Aug 21 19:35:48 CEST 2002 - kkaempf@suse.de
 
 - parse /etc/install.inf in InstMedia
