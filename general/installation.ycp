@@ -301,6 +301,8 @@ differ from those in the manual.
     {
         if ( ProductFeatures::skip_language_dialog )
         {
+            y2milestone("Skipping language dialog, Language changed to %1",
+                    (string)selected_locale );
             ProductControl::DisabledModules=add(ProductControl::DisabledModules,
             "language");
         }
