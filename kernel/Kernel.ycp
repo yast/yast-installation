@@ -27,14 +27,12 @@
      *				installation (e.g. from k_deftl to k_smp)
      *				(Determines hard boot vs. warm boot)
      */
-
     global boolean switched = false;
 
     /**
      * @return	binary		determines the name of the kernel binary
      *				below '/boot'.
      */
-
     global string binary = "vmlinuz";
 
     /**
@@ -56,13 +54,11 @@
     /**
      * @return	kernel_packages	a list kernels to be installed.
      */
-
     global list kernel_packages = [];
 
     /**
      * @return  if "suse_update" given in cmdline
      */
-
     global boolean suse_update = false;
 
     //---------------------------------------------------------------
@@ -75,7 +71,6 @@
      * Filters out yast2 specific boot parameters and sets
      * Parameters to the important cmdline parts.
      */
-
     define void ExtractCmdlineParameters (string line)
     ``{
 	// discard \n
@@ -158,7 +153,6 @@
      *
      * @return void
      */
-
     global define void ProbeKernel ()
     ``{
 	kernel_packages = ["k_deflt"];
@@ -332,11 +326,9 @@
 
     }  // ProbeKernel ()
 
-
     /**
      * IDERecorders ()
      * @param	list(string)	list of ide cdrecorders (i.e. ["hdc", "hdd"])
-     *
      */
     global define void IDERecorders (list idecdrws)
     ``{
@@ -352,6 +344,7 @@
 	    foreach (`dev, idecdrws,
 	    ``{
 		AddCmdLine (dev, "ide-scsi");
+		AddCmdLine (dev + "lun", "0");
 	    });
 	    y2milestone ("new boot_parameters '%1'", cmdLine);
 
@@ -364,7 +357,6 @@
      *	Set a custom kernel.
      *	@return void
      */
-
     global define void Set (list custom_kernels)
     ``{
 	kernel_packages = custom_kernels;
@@ -413,14 +405,12 @@
 	SCR::Write (.sysconfig.kernel, nil);
     }
 
-
     /**
      * Constructor
      * pass /proc/cmdline to /var/lib/libhd/cmdline
      * extract relevant settings from /proc/cmdline
      * @return void
      */
-
     global define void Kernel ()
     ``{
 	string tmp = SCR::Read (.target.string, "/proc/cmdline");
