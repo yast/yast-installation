@@ -143,19 +143,7 @@
 
 	if (!Mouse::Found())
 	{
-	    // ...
-	    // Let the USB modules settle for a while.
-	    // Mouse probing may fail otherwise...
-	    //
-	    // FIXME: I don't think it's required any more but someone has to confirm
-	    SCR::Execute(.target.bash, "/bin/sleep 4");
-	    if ( Installation::x11_setup_needed () && !Linuxrc::text () ) {
-		SCR::Execute (.target.bash, "/usr/X11R6/bin/xmset --disable");
-	    }
 	    Mouse::Set (Mouse::Probe ());
-	    if ( Installation::x11_setup_needed () && !Linuxrc::text () ) {
-		SCR::Execute (.target.bash, "/usr/X11R6/bin/xmset --enable");
-	    }
 	}
 
 	UI::CloseDialog();
