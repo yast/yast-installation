@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Feb 18 10:55:09 CET 2005 - jsrain@suse.cz
+
+- added "Initializing..." title to installation before something
+  else is shown (#51039)
+
+-------------------------------------------------------------------
 Thu Feb 17 12:41:33 CET 2005 - ms@suse.de
 
 - fixed inst-sys copy process of XF86Config to take care
