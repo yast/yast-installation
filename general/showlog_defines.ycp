@@ -10,69 +10,73 @@
  *
  */
 {
-  UI( ``{
-      textdomain "installation";
+    UI( ``{
+	textdomain "installation";
+
+	global define DisplayLogFile( string msg_text, any kind ) ``{
+	    term text = `LogView(`id(`log), "", 10, 0);
+
+	    if ( kind == `yes_long )
+	    {
+		OpenDialog(`opt ( `decorated ),
+			   `HBox (`VSpacing(20),
+				  `VBox (`HSpacing(75),
+					 // this is a heading
+					 `Heading( _("Installation log file")),
+					 text,
+					 `HBox(
+					       // this is a button label
+					       `PushButton( `id(`yes_short),  _("&Short info") ),
+					       `HStretch(),
+					       `PushButton( `id(`no_log), `opt(`default), OKButtonLabel() )
+					       )
+					 ))
+			   );
+	    }
+	    else
+	    {
+		OpenDialog(`opt ( `decorated ),
+			   `HBox (`VSpacing(20),
+				  `VBox (`HSpacing(75),
+					 // this is a heading
+					 `Heading( _("Installation log file")),
+					 text,
+					 `HBox(
+					       // this is a button label
+					       `PushButton( `id(`yes_long),  _("&Long info") ),
+					       `HStretch(),
+					       `PushButton( `id(`no_log), `opt(`default), OKButtonLabel() )
+					       )
+					 ))
+			   );
+	    }
+
+	    ChangeWidget(`id(`log), `LastLine, msg_text );
+	    SetFocus(`id(`no_log) );
+
+	    any r = UserInput();
+	    CloseDialog();
+	    return (r);
+	};
+    });
 
 
-      global define DisplayLogFile( string msg_text, any kind ) ``{
-	  term text = `LogView(`id(`log),
-			       "", 10, 0);
+    //
+    // Popup display for logging
+    //
 
-	  if ( kind == `yes_long )
-	  {
-	      OpenDialog(`opt ( `decorated ),
-			 `HBox (`VSpacing(20),
-			 `VBox (`HSpacing(75),
-				`Heading( _("Installation log file")),
-				text,
-				`HBox(
-				`PushButton( `id(`yes_short),  _("&Short info") ),
-				`HStretch(),
-				`PushButton( `id(`no_log), `opt(`default), OKButtonLabel() )
-				)
-				))
-			 );
-	  }
-	  else
-	  {
-	      OpenDialog(`opt ( `decorated ),
-			 `HBox (`VSpacing(20),
-			 `VBox (`HSpacing(75),
-				`Heading( _("Installation log file")),
-				text,
-				`HBox(
-				`PushButton( `id(`yes_long),  _("&Long info") ),
-				`HStretch(),
-				`PushButton( `id(`no_log), `opt(`default), OKButtonLabel() )
-				)
-				))
-			 );
-	  }
-
-	  ChangeWidget(`id(`log), `LastLine, msg_text );
-	  SetFocus(`id(`no_log) );
-
-	  any r = UserInput();
-	  CloseDialog();
-	  return (r);
-      };
-  });
-
-
-  //
-  // Popup display for logging
-  //
-
-  UI( ``{
-      textdomain "installation";
-     global define AskShowLog( ) ``{
-	 return AnyQuestionPopup( _("Installation log file"),
-				  _("Would you like to see the installation log file?"),
-				  YesButtonLabel(),
-				  NoButtonLabel(),
-				  `focus_no );
-      };
-  });
-
+    UI( ``{
+	textdomain "installation";
+	global define AskShowLog( ) ``{
+	    return AnyQuestionPopup(
+				    // heading for a popup box
+				    _("Installation log file"),
+				    // question in a popup box
+				    _("Would you like to see the installation log file?"),
+				    YesButtonLabel(),
+				    NoButtonLabel(),
+				    `focus_no );
+	};
+    });
 
 }
