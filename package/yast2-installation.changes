@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Jul 23 15:29:46 CEST 2002 - olh@suse.de
+
+- new kernel names and binaries for ppc.
+
+-------------------------------------------------------------------
 Tue Jul 23 12:17:48 CEST 2002 - olh@suse.de
 
 - add -httpd /usr/share/vnc/classes to inst_setup_vnc
