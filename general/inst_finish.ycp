@@ -140,7 +140,6 @@ Please wait while the base system is being installed.
 
     // always do hard reboot to ensure that all stuff is initializes
     // correctly. but no reboot message form linuxrc.
-    Mode::hardBoot = true;
     linuxrc["Root"] = "reboot";
     linuxrc["RebootMsg"] = "0";
 
