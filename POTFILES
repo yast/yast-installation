@@ -1,1 +1,4 @@
-./control/control.glade
+control/control.PROF.glade
+control/control.SLES.glade
+control/control.SLD.glade
+control/control.glade

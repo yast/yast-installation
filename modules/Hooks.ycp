@@ -86,7 +86,8 @@
      */
     global define void Run(string filename, boolean at_entry) 
     {
-        y2milestone("Running Hook: %1" , filename);
+        y2debug("Running Hook: %1" , filename);
+        // do not run scripts twice
         if (at_entry)
         {
 	    if (WFM::Read (.local.size, sformat("%1/%2_pre.sh", tmp_dir, filename)) > 0)
@@ -115,6 +116,7 @@
                 y2debug("Hook not found: %1/%2_post.{sh,pl}" , tmp_dir, filename);
             }
         }
+        return;
     }
 
 }

@@ -28,9 +28,9 @@ textdomain="control"
     <proposals config:type="list">
         <proposal>
             <label>Installation Settings</label>
-            <mode>installation,demo,autoinst</mode>
+            <mode>installation,demo,autoinstallation</mode>
             <stage>initial</stage>
-            <type>initial</type>
+            <name>initial</name>
             <proposal_modules config:type="list">
                 <proposal_module>hwinfo</proposal_module>
                 <proposal_module>mode</proposal_module>
@@ -47,7 +47,7 @@ textdomain="control"
         <proposal>
             <label>Directory Installation</label>
             <mode>normal</mode>
-            <type>dirinstall</type>
+            <name>dirinstall</name>
             <stage>normal</stage>
             <proposal_modules config:type="list">
                 <proposal_module>dirinstall_options</proposal_module>
@@ -57,7 +57,7 @@ textdomain="control"
         <proposal>
             <label>UML Installation Settings</label>
             <mode>normal</mode>
-            <type>uml</type>
+            <name>uml</name>
             <stage>normal</stage>
             <proposal_modules config:type="list">
 		<proposal_module>uml_source</proposal_module>
@@ -68,27 +68,23 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
-            <label>Installation Settings</label>
+            <label>Update Settings</label>
             <mode>update</mode>
-            <type>initial</type>
+            <name>initial</name>
             <stage>normal</stage>
             <proposal_modules config:type="list">
-		<proposal_module>hwinfo</proposal_module>
-                <proposal_module>mode</proposal_module>
-		<proposal_module>media</proposal_module>
-                <proposal_module>rootpart</proposal_module>
                 <proposal_module>update</proposal_module>
                 <proposal_module>packages</proposal_module>
                 <proposal_module>backup</proposal_module>
                 <proposal_module>language</proposal_module>
-                <proposal_module>keyboard</proposal_module>
             </proposal_modules>
         </proposal>
+
         <proposal>
             <label>Installation Settings</label>
             <mode>update</mode>
             <stage>initial</stage>
-            <type>initial</type>
+            <name>initial</name>
             <proposal_modules config:type="list">
 		<proposal_module>hwinfo</proposal_module>
                 <proposal_module>mode</proposal_module>
@@ -103,7 +99,7 @@ textdomain="control"
         </proposal>
         <proposal>
             <label>Network Configuration</label>
-            <type>network</type>
+            <name>network</name>
             <stage>continue,normal</stage>
             <proposal_modules config:type="list">
                 <proposal_module>
@@ -138,7 +134,7 @@ textdomain="control"
         </proposal>
         <proposal>
             <label>Hardware Configuration</label>
-            <type>hardware</type>
+            <name>hardware</name>
             <stage>continue</stage>
             <proposal_modules config:type="list">
                 <proposal_module>x11</proposal_module>
@@ -154,7 +150,6 @@ textdomain="control"
         <workflow>
 	    <label>Base Installation</label>
             <defaults>
-                <arguments>false,false</arguments>
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
@@ -162,18 +157,18 @@ textdomain="control"
             <modules  config:type="list">
                 <module>
                     <name>info</name>
-                    <arguments>false,true</arguments>
                 </module>
                 <module>
                     <name>language</name>
-                    <arguments>false,true,true</arguments>
 	            <label>Language</label>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
                 <module>
-                    <name>proposal</name>
-                    <arguments>true,true,`initial</arguments>
 	            <label>Installation Settings</label>
+                    <name>proposal</name>
+                    <proposal>initial</proposal>
                 </module>
                 <module>
                     <name>do_resize</name>
@@ -201,7 +196,6 @@ textdomain="control"
         </workflow>
         <workflow>
             <defaults>
-                <arguments>false,false</arguments>
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
@@ -211,18 +205,15 @@ textdomain="control"
                 <module>
 	            <label>System Information</label>
                     <name>info</name>
-                    <arguments>false,true</arguments>
                 </module>
                 <module>
 	            <label>Perform Repair</label>
                     <name>repair</name>
-                    <arguments>false,true,true</arguments>
                 </module>
             </modules>
         </workflow>
         <workflow>
             <defaults>
-                <arguments>false,false</arguments>
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
@@ -230,7 +221,8 @@ textdomain="control"
             <mode>screen_shot</mode>
             <modules  config:type="list">
                 <module>
-                    <arguments>false,true,true</arguments>
+                    <enable_next>yes</enable_next>
+                    <enable_back>false</enable_back>
  	            <label>Language</label>
                     <name>language</name>
                     <retranslate config:type="boolean">true</retranslate>
@@ -238,7 +230,7 @@ textdomain="control"
                 <module>
 	            <label>Installation Settings</label>
                     <name>proposal</name>
-                    <arguments>true,true,`initial</arguments>
+                    <proposal>initial</proposal>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
@@ -262,7 +254,6 @@ textdomain="control"
         </workflow>
         <workflow>
             <defaults>
-                <arguments>false,false</arguments>
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
@@ -272,10 +263,10 @@ textdomain="control"
                 <module>
 	            <label>Language</label>
                     <name>info</name>
-                    <arguments>false,true</arguments>
                 </module>
                 <module>
-                    <arguments>false,true,true</arguments>
+                    <enable_next>yes</enable_next>
+                    <enable_back>false</enable_back>
 	            <label>Language</label>
                     <name>language</name>
                     <retranslate config:type="boolean">true</retranslate>
@@ -283,7 +274,7 @@ textdomain="control"
                 <module>
 	            <label>Installation Settings</label>
                     <name>proposal</name>
-                    <arguments>true,true,`initial</arguments>
+                    <proposal>initial</proposal>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
@@ -310,7 +301,8 @@ textdomain="control"
             <label>Configuration</label>
             <mode>update</mode>
             <defaults>
-                <arguments>false,false</arguments>
+                <enable_next>false</enable_next>
+                <enable_back>false</enable_back>
                 <archs>all</archs>
             </defaults>
             <modules  config:type="list">
@@ -324,31 +316,35 @@ textdomain="control"
                 <module>
 	            <label>Network</label>
                     <name>ask_net_test</name>
-                    <arguments>true,true</arguments>
+                    <enable_next>true</enable_next>
+                    <enable_back>true</enable_back>
                 </module>
                 <module>
 	            <label>Network</label>
                     <name>do_net_test</name>
-                    <arguments>true,true</arguments>
+                    <enable_next>true</enable_next>
+                    <enable_back>true</enable_back>
                 </module>
                 <module>
 	            <label>Online Update</label>
                     <name>you</name>
-                    <arguments>true,true</arguments>
+                    <enable_next>true</enable_next>
+                    <enable_back>true</enable_back>
                 </module>
                 <module>
 	            <label>Clean Up</label>
                     <name>suseconfig</name>
-                    <arguments>false,false</arguments>
                 </module>
                 <module>
 	            <label>Release Notes</label>
                     <name>release_notes</name>
-                    <arguments>true,true</arguments>
+                    <enable_next>true</enable_next>
+                    <enable_back>true</enable_back>
                 </module>
                 <module>
                     <name>congratulate</name>
-                    <arguments>true,true</arguments>
+                    <enable_next>true</enable_next>
+                    <enable_back>true</enable_back>
                 </module>
             </modules>
         </workflow>
@@ -357,7 +353,8 @@ textdomain="control"
             <label>Configuration</label>
             <mode>installation</mode>
             <defaults>
-                <arguments>false,false</arguments>
+                <enable_next>false</enable_next>
+                <enable_back>false</enable_back>
                 <archs>all</archs>
             </defaults>
             <modules  config:type="list">
@@ -377,12 +374,15 @@ textdomain="control"
                 <module>
 	            <label>Root Password</label>
                     <name>root</name>
-                    <arguments>false,true</arguments>
+                    <enable_next>false</enable_next>
+                    <enable_back>true</enable_back>
                 </module>
                 <module>
 	            <label>Network</label>
                     <name>proposal</name>
-                    <arguments>true,true,`network</arguments>
+                    <enable_next>true</enable_next>
+                    <enable_back>true</enable_back>
+                    <proposal>network</proposal>
                 </module>
 		<module>
                     <name>fam</name>
@@ -390,63 +390,70 @@ textdomain="control"
                 <module>
 	            <label>Network</label>
                     <name>ask_net_test</name>
-                    <arguments>true,true</arguments>
+                    <enable_next>true</enable_next>
+                    <enable_back>true</enable_back>
                 </module>
                 <module>
 	            <label>Network</label>
                     <name>do_net_test</name>
-                    <arguments>true,true</arguments>
+                    <enable_next>true</enable_next>
+                    <enable_back>true</enable_back>
                 </module>
                 <module>
 	            <label>Online Update</label>
                     <name>you</name>
-                    <arguments>true,true</arguments>
+                    <enable_next>true</enable_next>
+                    <enable_back>true</enable_back>
                 </module>
                 <module>
 	            <label>Users</label>
                     <name>auth</name>
-                    <arguments>true,true</arguments>
+                    <enable_next>true</enable_next>
+                    <enable_back>true</enable_back>
                 </module>
                 <module>
 	            <label>Users</label>
                     <name>user</name>
-                    <arguments>true,true</arguments>
+                    <enable_next>true</enable_next>
+                    <enable_back>true</enable_back>
                 </module>
-
                 <module>
 	            <label>Clean Up</label>
                     <name>suseconfig</name>
-                    <arguments>false,false</arguments>
                 </module>
                 <module>
 	            <label>Release Notes</label>
                     <name>release_notes</name>
-                    <arguments>true,true</arguments>
+                    <enable_next>true</enable_next>
+                    <enable_back>true</enable_back>
                 </module>
                 <module>
 	            <label>Device Configuration</label>
                     <name>proposal</name>
-                    <arguments>true,true,`hardware</arguments>
+                    <enable_next>true</enable_next>
+                    <enable_back>true</enable_back>
+                    <proposal>hardware</proposal>
                 </module>
                 <module>
                     <name>congratulate</name>
-                    <arguments>true,true</arguments>
+                    <enable_next>true</enable_next>
+                    <enable_back>true</enable_back>
                 </module>
             </modules>
         </workflow>
         <workflow>
             <stage>initial</stage>
             <label>Base Installation</label>
-            <mode>autoinst</mode>
+            <mode>autoinstallation</mode>
             <defaults>
-                <arguments>false,false</arguments>
                 <archs>all</archs>
+                <enable_next>false</enable_next>
+                <enable_back>false</enable_back>
             </defaults>
             <modules  config:type="list">
                 <module>
 	            <label>Auto-Install Settings</label>
                     <name>info</name>
-                    <arguments>false,true</arguments>
                 </module>
                 <module>
 	            <label>Auto-Install Settings</label>
@@ -461,7 +468,8 @@ textdomain="control"
                 <module>
 	            <label>Auto-Install Settings</label>
                     <name>proposal</name>
-                    <arguments>true,true,`initial</arguments>
+                    <arguments>true,true</arguments>
+                    <proposal>initial</proposal>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
@@ -487,12 +495,13 @@ textdomain="control"
         </workflow>
         <workflow>
             <defaults>
-                <arguments>false,false</arguments>
+                <enable_next>false</enable_next>
+                <enable_back>false</enable_back>
                 <archs>all</archs>
             </defaults>
             <stage>continue</stage>
             <label>Configuration</label>
-            <mode>autoinst</mode>
+            <mode>autoinstallation</mode>
             <modules  config:type="list">
                 <module>
                     <name>netsetup</name>
@@ -515,7 +524,6 @@ textdomain="control"
                 <module>
 	            <label>System Configuration</label>
                     <name>x11</name>
-                    <arguments>false,false</arguments>
                 </module>
                 <module>
 	            <label>Clean Up</label>

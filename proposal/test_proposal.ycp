@@ -15,16 +15,13 @@ import "Wizard";
 Stage::Set ("continue");
 // Linuxrc::manual () = true;
 
-map symbols = $[
-    "hardware": `hardware,
-    "hw": `hardware,
-    "net": `network,
-    "network": `network,
-    ];
-symbol what = symbols[WFM::Args (0)]:`network;
-
 Wizard::CreateDialog ();
-WFM::call ("inst_proposal", [ true, nil, what ]);
+
+map args = $[];
+args["enable_back"] = true;
+args["enable_next"] = nil;
+args["proposal"] = WFM::Args (0);
+WFM::call ("inst_proposal", [args ]);
 UI::CloseDialog ();
 
 /* EOF */

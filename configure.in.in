@@ -13,7 +13,12 @@
 @YAST2-CHECKS-TESTSUITE@
 
 ## Nasty hack: xgettext doesn't work for XML files, so let's symlink it
-( cd control; ln -sf control.xml control.glade )
+( cd control; 
+ for xml in `ls *.xml`; do
+    ln -sf $xml  `basename $xml .xml`.glade
+ done
+ )
+find control -name *.glade > POTFILES
 
 
 AX_CHECK_DOCBOOK
