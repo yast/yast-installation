@@ -15,10 +15,10 @@
     import "ProductControl";
     import "Mode";
     import "Service";
-    import "GetArgs";
+    import "GetInstArgs";
 
     /* Called backwards */
-    if(GetArgs::going_back())
+    if(GetInstArgs::going_back())
 	return `auto;
 
     if ( !Mode::update () )

@@ -22,10 +22,10 @@ STATUS        : Development
     import "Mode";
     import "Installation";
     import "Arch";
-    import "GetArgs";
+    import "GetInstArgs";
 
-    boolean next = GetArgs::enable_next();
-    boolean back = GetArgs::enable_back();
+    boolean next = GetInstArgs::enable_next();
+    boolean back = GetInstArgs::enable_back();
 
     //==========================================
     // Check if X11 is installed

@@ -1,5 +1,5 @@
 /**
- * File:	modules/GetArgs.ycp
+ * File:	modules/GetInstArgs.ycp
  * Package:	yast2
  * Summary:	Get client arguments
  * Authors:	Anas Nashif <nashif@suse.de>
@@ -10,7 +10,7 @@
 
 {
 
-    module "GetArgs";
+    module "GetInstArgs";
 
     map args = $[];
     void Init () {

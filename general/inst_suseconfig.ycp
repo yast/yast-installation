@@ -26,9 +26,9 @@
     import "Popup";
     import "Wizard";
     import "Kernel";
-    import "GetArgs";
+    import "GetInstArgs";
 
-    if ( GetArgs::going_back())	// going backwards?
+    if ( GetInstArgs::going_back())	// going backwards?
 	return `auto;			// don't execute this once more
 
     boolean reread_inittab = false;
@@ -110,7 +110,7 @@ this process can take some time.</p>
     Wizard::SetContents(
 			  // Dialog title for SuSEconfig dialog
 			  _("Writing the system configuration"),
-			  contents, help, GetArgs::enable_back(), GetArgs::enable_next());
+			  contents, help, GetInstArgs::enable_back(), GetInstArgs::enable_next());
     Wizard::DisableAbortButton();
 
 
