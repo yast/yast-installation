@@ -703,7 +703,7 @@ Your hard disk has not been modified in any way, so you can still safely abort.
 	    // Help text for network configuration proposal
 	    // General part ("You can change values...") is added as the next paragraph.
 	    help_text = _("<p>
-Put the network settings into effect by pressing <b>Accept</b>.
+Put the network settings into effect by pressing <b>Next</b>.
 </p>
 ") + how_to_change;
 	}
@@ -712,7 +712,7 @@ Put the network settings into effect by pressing <b>Accept</b>.
 	    // Help text for hardware configuration proposal
 	    // General part ("You can change values...") is added as the next paragraph.
 	    help_text = _("<p>
-Put the hardware settings into effect by pressing <b>Accept</b>.
+Put the hardware settings into effect by pressing <b>Next</b>.
 </p>
 ") + how_to_change;
 	}
@@ -722,7 +722,7 @@ Put the hardware settings into effect by pressing <b>Accept</b>.
 	    // hardhware configuration.
 	    // General part ("You can change values...") is added as the next paragraph.
 	    help_text = _("<p>
-To use the settings as displayed, press <b>Accept</b>.
+To use the settings as displayed, press <b>Next</b>.
 </p>
 ") + how_to_change;
 	}
