@@ -488,7 +488,7 @@ differ from those in the manual.
 
 	y2milestone( "Calling %1", argterm );
 
-	Hooks::Checkpoint (tostring(module_name), true);		// entry hook, (""+symbol is a symbol->string conversion)
+	Hooks::Checkpoint (sformat("%1", module_name), true);		// entry hook, (""+symbol is a symbol->string conversion)
 
         list args = [];
 
@@ -499,9 +499,9 @@ differ from those in the manual.
             i = i + 1;
         }
 
-        symbol result = (symbol) WFM::CallFunction (substring(tostring(module_name), 1), args);
+        symbol result = (symbol) WFM::CallFunction (substring(sformat("%1", module_name), 1), args);
 
-	Hooks::Checkpoint (tostring(module_name), false);		// exit hook
+	Hooks::Checkpoint (sformat("%1", module_name), false);		// exit hook
 
 
 	Installation::immediate_prepdisk = false; //FIXME !
@@ -517,7 +517,7 @@ differ from those in the manual.
 	if (result == nil)
 	{
 	    any r = nil;
-	    r = Popup::ModuleError(("The module " + tostring(symbolof(argterm))) + " does not work.");
+	    r = Popup::ModuleError(sformat("The module %1 does not work.", symbolof(argterm)));
 	    if	    (r == `next)   m = m + 1;
 	    else if (r == `back)   m = m - 1;
 	    else if (r != `again)
