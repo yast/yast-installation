@@ -1,6 +1,6 @@
 @HEADER-COMMENT@
 
-# neededforbuild  yast2-devel-packages
+# neededforbuild  gpp libgpp libxcrypt libxcrypt-devel hwinfo hwinfo-devel yast2-devel-packages
 
 @HEADER@
 Requires:	yast2
@@ -58,13 +58,7 @@ This controls the system installation.
 @scrconfdir@/proc_modules.scr
 @scrconfdir@/run_df.scr
 
-# scripts
-#FIXME@ybindir@/create_update_inf
-#FIXME@ybindir@/update_unique_keys.pl
-#FIXME@ybindir@/check.boot
-#FIXME@ybindir@/WinINF.pm
-#FIXME@ybindir@/pars-inf.pl
-#FIXME@ybindir@/y2merge.pl
+# programs and scripts
 @ybindir@/inst_setup_vnc
 @ybindir@/YaST2
 @ybindir@/YaST2.firstboot
@@ -72,3 +66,4 @@ This controls the system installation.
 @ybindir@/YaST2.sshinstall
 @ybindir@/ask_for_TERM_variable
 @ybindir@/check.boot
+@ybindir@/version

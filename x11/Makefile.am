@@ -1,11 +1,12 @@
 #
 # Makefile.am for installation/x11
 #
+
 ybin_PROGRAMS = version
 version_LDADD = -lhd
 
 module_DATA = \
-    X11Version.ycp
+	X11Version.ycp
 
 client_DATA = \
 	inst_x11.ycp
