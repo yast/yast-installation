@@ -285,11 +285,11 @@
     /**
      * Retranslate the proposal (wizard) dialog after the language is changed.
      **/
-    define void retranslate_proposal_dialog() ``{
+    define void retranslate_proposal_dialog(symbol mode) ``{
 
 	y2debug( "Retranslating proposal dialog" );
 
-	build_dialog();
+	build_dialog(mode);
 	Wizard::ReplaceButtonBox( Wizard::HasAcceptButton() ?
 				  Wizard::AbortAcceptButtonBox() :
 				  Wizard::NextBackButtonBox() );
@@ -517,124 +517,76 @@
      * Create the proposal dialog
      * (the inner part, excluding the wizard frame)
      **/
-    define void build_dialog() ``{
+    define void build_dialog (symbol mode) ``{
 
 	if ( Mode::initial )
 	{
 	    Wizard::SetEasyInstallationStep( EasyInstallationStepDescriptions(), 2 );
 	}
 
-	term bottom_box =
-	    `ReplacePoint(`id(`rep_menu),
-			  `MenuButton(`id(`menu_dummy), _( "&Change..." ), [`item(`id(`dummy), "" ) ] )
-			  );
+	// headline for installation proposal
+	string headline = _("Installation Settings");
 
-	if ( Mode::cont )
+	if (mode == `net)
+	    headline = _("Network Configuration");
+	else if (mode == `hw)
+	    headline = _("Hardware Configuration");
+
+	/* radiobuttons */
+	term skip_buttons =
+	    `RadioButtonGroup (`id(`rb),
+			       `VBox (
+				      `VSpacing(1),
+				      `Left(`RadioButton(`id(`skip), `opt(`notify),
+							 // Check box: Skip all the configurations in this dialog -
+							 // do this later manually or not at all
+							 // Translators: About 40 characters max,
+							 // use newlines for longer translations.
+							 _("&Skip configuration"), false)),
+				      `Left(`RadioButton(`id(`dontskip), `opt(`notify),
+							 _("&Use following configuration"), true)),
+				      `VSpacing(1)
+				      )
+			       );
+
+	/* change menu */
+	term menu_box =
+	    `HBox (
+		   `HStretch (),
+		   `ReplacePoint(`id(`rep_menu),
+				 `MenuButton(`id(`menu_dummy), _( "&Change..." ), [`item(`id(`dummy), "" ) ] )
+				 ),
+		   `HStretch ()
+		   );
+
+	term vbox = nil;
+
+	if (mode == `ini)
 	{
-	    // Check box: Skip all the configurations in this dialog -
-	    // do this later manually or not at all
-	    // Translators: About 40 characters max,
-	    // use newlines for longer translations.
-	    term check_box_skip	= `CheckBox(`id(`skip ), `opt(`notify), _( "&Don't configure this now" ) );
-
-	    // Check box: Should the YaST2 control center automatically
-	    // be started after this part of the installation is done?
-	    // Translators: About 40 characters max,
-	    // use newlines for longer translations.
-	    term check_box_start_y2cc = `CheckBox(`id(`start_y2cc), _( "&Start control center" ), false);
-
-	    term menu = `ReplacePoint(`id(`rep_menu),
-				      // "Change" menu
-				      `MenuButton(`id(`menu_dummy), _( "&Change..." ), [`item(`id(`dummy), "" ) ] )
-				      );
-
-	    map display = UI::GetDisplayInfo();
-
-	    // show button to "start control center"?
-	    boolean show_y2cc_button = true;
-
-	    if (!display["TextMode"]:true)
-	    {
-		if (!Pkg::IsProvided ("yast2-control-center"))
-		{
-		    show_y2cc_button = false;
-		}
-	    }
-
-	    if (show_y2cc_button)
-	    {
-		if ( display[ "DefaultWidth"  ]:0 >= 800 &&
-		     display[ "DefaultHeight" ]:0 >= 600 )
-		{
-		    // For Qt 800x600 or better, there is room enough to put both
-		    // check boxes in a row and the menu in the center in between.
-		    // This looks better than the fallback layout below.
-		    bottom_box =
-			`VBox(
-			      `HBox(
-				    `HWeight( 1, `Left( check_box_skip ) ),
-				    menu,
-				    `HWeight( 1, `Right( check_box_start_y2cc ) )
+	    vbox = `VBox(
+			 `RichText( `id(`proposal),
+				    // Initial contents of proposal subwindow while proposals are calculated
+				    HTML::Newlines( 3 ) + HTML::Para( _("Analyzing your system...") )
 				    ),
-			      `VSpacing( 0.2 )
-			      );
-		}
-		else
-		{
-		    // Fallback layout for NCurses or Qt < 800x600:
-		    // The menu at the left, the checkboxes below each other in a
-		    // column at the right.
-
-		    bottom_box =
-			`VBox(
-			      `HBox(
-				    `Left( menu ),
-				    `HVSquash(
-					      `VBox(
-						    `Left( check_box_skip ),
-						    `Left( check_box_start_y2cc )
-						    )
-					      )
-				    ),
-			      `VSpacing( 0.2 )
-			      );
-		}
-	    }
-	    else
-	    {
-		// Now without the control center button.
-
-		bottom_box =
-		    `VBox(
-			  `HBox(
-				`Left( menu ),
-				`HVSquash(
-					  `VBox(
-						`Left( check_box_skip )
-						)
-					  )
+			 menu_box
+			 );
+	}
+	else
+	{
+	    vbox = `VBox(
+			 skip_buttons,
+			 `HBox (
+				`HSpacing (4),
+				`RichText( `id(`proposal),
+					   // Initial contents of proposal subwindow while proposals are calculated
+					   HTML::Newlines( 3 ) + HTML::Para( _("Analyzing your system...") )
+					   )
 				),
-			  `VSpacing( 0.2 )
-			  );
-	    }
+			 menu_box
+			 );
 	}
 
-	term vbox =
-	    `VBox(
-		  // Help message between headline and installation proposal / settings summary.
-		  // May contain newlines, but don't make it very much longer than the original.
-		  `Left( `Label( _("Click any headline to make changes or use the \"Change...\" menu below.") ) ),
-		  `RichText( `id(`proposal),
-			     // Initial contents of proposal subwindow while proposals are calculated
-			     HTML::Newlines( 3 ) + HTML::Para( _("Analyzing your system...") )
-			     ),
-		  bottom_box
-		  );
-
-
-	Wizard::SetContents(
-			    // Headline for installation proposal
-			    _("Installation Settings"),
+	Wizard::SetContents(headline,
 			    vbox,
 			    UI::WidgetExists(`id(`HelpText) ) ? help_text() : "",
 			    WFM::Args(0),	// have_back_button
@@ -791,7 +743,7 @@ To use the settings as displayed, press <b>Accept</b>.
     //
 
     y2milestone( "Installation step #2" );
-    build_dialog();
+    build_dialog(WFM::Args(2));
 
     UI::ChangeWidget(`id(`menu_dummy), `Enabled, false );
     richtext_busy_cursor(`id(`proposal ) );
@@ -904,7 +856,7 @@ To use the settings as displayed, press <b>Accept</b>.
 	{
 	    make_proposal( true, false );	// force_reset
 	}
-	else if ( input == `skip )
+	else if ( input == `skip || input == `dontskip )
 	{
 	    if ( UI::QueryWidget(`id(`skip), `Value ) )
 	    {
@@ -913,7 +865,7 @@ To use the settings as displayed, press <b>Accept</b>.
 		UI::ChangeWidget( `id(`proposal), `Value,
 				  HTML::Newlines( 3 ) +
 				  // message show when user has disabled the configuration
-				  HTML::Para( _( "Skipping hardware configuration upon user request" ) )
+				  HTML::Para( _( "Skipping configuration upon user request" ) )
 				  );
 		UI::ChangeWidget(`id(`menu), `Enabled, false );
 	    }
@@ -931,18 +883,6 @@ To use the settings as displayed, press <b>Accept</b>.
 		input = WFM::CallFunction(`inst_doit( true,		// have_back
 						 true,		// have_next
 						 false ) );	// going_backwards
-	    }
-
-	    if ( Mode::cont )
-	    {
-		if ( UI::QueryWidget(`id(`start_y2cc), `Value ) )
-		{
-		    // Create empty /var/lib/YaST2/start_y2cc file to signal the calling script
-		    // that the YaST2 control center should be started after the installation
-
-		    SCR::Write( .target.string, "/var/lib/YaST2/start_y2cc", "" );
-		}
-
 	    }
 
 	    if ( input == `next )
