@@ -72,7 +72,7 @@
     any result = nil;
 
     Wizard::CreateDialog();
-    Wizard::ReplaceAbortButton(`Empty());
+    Wizard::HideAbortButton();
 
     // VENDOR: main screen heading
     string title = _("Vendor Driver CD");
