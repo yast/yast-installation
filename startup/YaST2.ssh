@@ -24,6 +24,7 @@
 #----------------------------------------
 if [ -f /var/lib/YaST2/runme_at_boot ];then
 	/usr/lib/YaST2/startup/YaST2.call installation continue
+	rm -fv /var/lib/YaST2/runme_at_boot
 else
 	exit 1
 fi

@@ -24,6 +24,12 @@
 . /usr/lib/YaST2/startup/common/functions.sh
 
 #=============================================
+# prefere stuff in /y2update (#40833)
+#---------------------------------------------
+PLUS_LD=/y2update/lib64:/y2update/lib:/y2update/plugin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PLUS_LD
+
+#=============================================
 # 1.1) set splash progress bar to 70%
 #---------------------------------------------
 set_splash 70
