@@ -99,7 +99,7 @@ function y2cc_qt()
 
             # Start the control center
             log "Starting YaST2 control center in Qt mode"
-            y2controlcenter qt --fullscreen --noborder -Q
+            y2controlcenter qt $y2cc_qt_args -Q
         fi
     fi
 }
@@ -264,7 +264,13 @@ modulename=${1:-installation}
 shift
 moduleargs=\(\"$*\"\)
 
-y2qt_args="--fullscreen --noborder"
+if [ -z "${DISPLAY/:*}" -o "${DISPLAY/:*/}" == "localhost"  ]; then
+    # Use --fullscreen --noborder only for local displays -
+    # if $DISPLAY has either nothing or "localhost" before ":"
+    y2qt_args="--fullscreen --noborder"
+    y2cc_qt_args="--fullscreen --noborder"
+fi
+
 
 
 PATH=/var/X11R6/bin:$ybindir:$PATH
