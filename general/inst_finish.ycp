@@ -200,15 +200,15 @@ Please wait while the base system is being installed.
     // --------------------------------------------------------------
     // --------------------------------------------------------------
 
-    WFM::Execute (.local.bash, "cp /usr/lib/liby2util* " + Installation::destdir + "/usr/lib");
-    WFM::Execute (.local.bash, "cp /usr/lib/liby2pm* " + Installation::destdir + "/usr/lib");
-    WFM::Execute (.local.bash, "cp /usr/lib/libycp.* " + Installation::destdir + "/usr/lib");
-    WFM::Execute (.local.bash, "cp /usr/lib/liby2.* " + Installation::destdir + "/usr/lib");
-    WFM::Execute (.local.bash, "cp /usr/lib/libscr.* " + Installation::destdir + "/usr/lib");
-    WFM::Execute (.local.bash, "cp /usr/lib/libyui.* " + Installation::destdir + "/usr/lib");
+    WFM::Execute (.local.bash, "/bin/cp /usr/lib/liby2util* " + Installation::destdir + "/usr/lib");
+    WFM::Execute (.local.bash, "/bin/cp /usr/lib/liby2pm* " + Installation::destdir + "/usr/lib");
+    WFM::Execute (.local.bash, "/bin/cp /usr/lib/libycp.* " + Installation::destdir + "/usr/lib");
+    WFM::Execute (.local.bash, "/bin/cp /usr/lib/liby2.* " + Installation::destdir + "/usr/lib");
+    WFM::Execute (.local.bash, "/bin/cp /usr/lib/libscr.* " + Installation::destdir + "/usr/lib");
+    WFM::Execute (.local.bash, "/bin/cp /usr/lib/libyui.* " + Installation::destdir + "/usr/lib");
 
-    WFM::Execute (.local.bash, "cp /usr/share/YaST2/* " + Installation::destdir + "/usr/share/YaST2");
-    WFM::Execute (.local.bash, "cp /usr/lib/YaST2/* " + Installation::destdir + "/usr/lib/YaST2");
+    WFM::Execute (.local.bash, "/bin/cp -a /usr/share/YaST2/* " + Installation::destdir + "/usr/share/YaST2");
+    WFM::Execute (.local.bash, "/bin/cp -a /usr/lib/YaST2/* " + Installation::destdir + "/usr/lib/YaST2");
 
     // --------------------------------------------------------------
     // --------------------------------------------------------------
@@ -615,7 +615,7 @@ with the load address of your root DASD.
 	WFM::Execute (.local.bash, "umask 077 ; awk  -F : ' /^root:/ { print $1\":\"$2 }' < /etc/shadow > "
 		+ Installation::destdir + "/tmp/rootpwd.txt");
 	WFM::Execute (.target.bash, "cat /tmp/rootpwd.txt | /usr/sbin/chpasswd -e ; rm -fv /tmp/rootpwd.txt");
-    	WFM::Execute (.local.bash, "cp -a /etc/ssh/*key* " + Installation::destdir + "/etc/ssh/");
+    	WFM::Execute (.local.bash, "/bin/cp -a /etc/ssh/*key* " + Installation::destdir + "/etc/ssh/");
     }
 
     // --------------------------------------------------------------
@@ -753,8 +753,8 @@ with the load address of your root DASD.
 	if( size(filter(`k,`v, targetMap, ``(lookup (v, "is_lvm_vg", false)))) >0 )
 	{
 	    y2milestone( "shutting down LVM" );
-	    WFM::Execute(.local.bash, "vgchange -A n -a n" );
-	    WFM::Execute(.local.bash, "umount /etc/lvmtab.d" );
+	    WFM::Execute(.local.bash, "/sbin/vgchange -A n -a n" );
+	    WFM::Execute(.local.bash, "/bin/umount /etc/lvmtab.d" );
 	}
 
 	// does not work in 7.2
