@@ -5,6 +5,7 @@
 SUBDIRS = testsuite
 
 module_HEADERS =		\
+	Hooks.ycp	\
 	Installation.ycp	\
 	ModuleLoading.ycp	\
 	Product.ycp		\
