@@ -293,10 +293,7 @@ else
     [ "$xsrvarg" = vga ] && xpseudo='-cc 3'
 
     if [ -f /etc/X11/XF86Config ] ; then
-      xcfg=/etc/X11/XF86Config
-      cp $xcfg /etc/X11/XF86Config.new
-      sed -e "s#Screen.*Screen\[.*\]#Screen	"\""Screen[$xsrvarg]#" /etc/X11/XF86Config.new > $xcfg
-      rm /etc/X11/XF86Config.new
+      sed -i -e "s#Screen.*Screen\[.*\]#Screen	"\""Screen[$xsrvarg]#" /etc/X11/XF86Config
     fi
   else
     [ -x /usr/X11R6/bin/XF86_VGA16 ] && xsrv=XF86_VGA16
