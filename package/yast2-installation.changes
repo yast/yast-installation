@@ -2,6 +2,8 @@
 Wed Sep 11 13:40:41 CEST 2002 - kkaempf@suse.de
 
 - properly unmount sources also on abort and end of update
+- move package log to yast2-packager
+- handle run-time kernel switch extra
 - 2.6.58
 
 -------------------------------------------------------------------
