@@ -30,7 +30,7 @@
     import "GetInstArgs";
 
     define void retranslate_proposal_dialog();
-    define void load_matching_submodules_list();
+    define symbol load_matching_submodules_list();
     define boolean get_submod_descriptions_and_build_menu();
     define void make_proposal( boolean force_reset, boolean language_changed );
     define string format_sub_proposal( map prop );
@@ -51,6 +51,8 @@
     map		link2submod = $[];
     boolean	have_blocker = false;
     string	proposal_mode = "";
+
+    symbol proposal_result = nil;
 
     // skip if not interactive mode.
     if (!AutoinstConfig::Confirm && Mode::autoinst ()) {
@@ -431,7 +433,7 @@
      *
      * @return submodules_list	list of submodule names (strings)
      **/
-    define void load_matching_submodules_list() ``{
+    define symbol load_matching_submodules_list() ``{
 
 	list< list > modules = [];
 
@@ -439,6 +441,10 @@
                 Stage::stage (),
                 Mode::mode (),
                 proposal_mode );
+        if (modules == nil ) {
+            y2error("Error loading proposals");
+            return `abort;
+        }
 	
         locked_modules = ProductControl::getLockedProposals (Stage::stage (), Mode::mode (), proposal_mode);
 	
@@ -452,6 +458,7 @@
         if (size(modules) == 0 )
         {
             y2error("No proposals available");
+            return `abort;
         }
 
 	// in normal mode we don't want to switch between installation and update
@@ -812,7 +819,10 @@ a proposal that is locked, ask your system administrator.</p>");
     //
     // Get submodule descriptions
     //
-    load_matching_submodules_list();
+    proposal_result = load_matching_submodules_list();
+    if (proposal_result == `abort)
+        return `abort;
+
     build_dialog();
 
     UI::ChangeWidget(`id(`menu_dummy), `Enabled, false );
@@ -855,7 +865,9 @@ a proposal that is locked, ask your system administrator.</p>");
 	Wizard::SetHelpText (help_text ());
 
 	// this will recreate the dialog after the mode selection
-	load_matching_submodules_list();
+	proposal_result = load_matching_submodules_list();
+        if (proposal_result == `abort)
+            return `abort;
     }
 
     if (!get_submod_descriptions_and_build_menu ())

@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!DOCTYPE productDefines SYSTEM "/usr/share/YaST2/control/control.dtd">
 <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
     xmlns:config="http://www.suse.com/1.0/configns">
 
@@ -156,12 +155,12 @@ textdomain="control"
 
     <workflows config:type="list">
         <workflow>
-	    <label>Base Installation</label>
             <defaults>
                 <archs>all</archs>
             </defaults>
-            <stage>initial</stage>
+	    <label>Base Installation</label>
             <mode>installation,update</mode>
+            <stage>initial</stage>
             <modules  config:type="list">
                 <module>
                     <name>info</name>
@@ -237,8 +236,8 @@ textdomain="control"
             <mode>screen_shot</mode>
             <modules  config:type="list">
                 <module>
-                    <enable_next>yes</enable_next>
                     <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
  	            <label>Language</label>
                     <name>language</name>
                     <retranslate config:type="boolean">true</retranslate>
@@ -281,8 +280,8 @@ textdomain="control"
                     <name>info</name>
                 </module>
                 <module>
-                    <enable_next>yes</enable_next>
                     <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
 	            <label>Language</label>
                     <name>language</name>
                     <retranslate config:type="boolean">true</retranslate>
@@ -317,9 +316,9 @@ textdomain="control"
             <label>Configuration</label>
             <mode>update</mode>
             <defaults>
-                <enable_next>no</enable_next>
-                <enable_back>no</enable_back>
                 <archs>all</archs>
+                <enable_back>no</enable_back>
+                <enable_next>no</enable_next>
             </defaults>
             <modules  config:type="list">
                 <module>
@@ -331,20 +330,20 @@ textdomain="control"
                 <module>
 	            <label>Network</label>
                     <name>ask_net_test</name>
-                    <enable_next>yes</enable_next>
                     <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
                 </module>
                 <module>
 	            <label>Network</label>
                     <name>do_net_test</name>
-                    <enable_next>yes</enable_next>
                     <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
                 </module>
                 <module>
 	            <label>Online Update</label>
                     <name>you</name>
-                    <enable_next>yes</enable_next>
                     <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
                 </module>
                 <module>
 	            <label>Clean Up</label>
@@ -353,13 +352,13 @@ textdomain="control"
                 <module>
 	            <label>Release Notes</label>
                     <name>release_notes</name>
-                    <enable_next>yes</enable_next>
                     <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
                 </module>
                 <module>
                     <name>congratulate</name>
-                    <enable_next>yes</enable_next>
                     <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
                 </module>
             </modules>
         </workflow>
@@ -398,6 +397,7 @@ textdomain="control"
                     <proposal>network</proposal>
                 </module>
 		<module>
+	            <label>Network</label>
                     <name>fam</name>
 		</module>
                 <module>
@@ -436,6 +436,7 @@ textdomain="control"
                     <proposal>hardware</proposal>
                 </module>
                 <module>
+	            <label>Device Configuration</label>
                     <name>congratulate</name>
                 </module>
             </modules>
@@ -446,8 +447,8 @@ textdomain="control"
             <mode>autoinstallation</mode>
             <defaults>
                 <archs>all</archs>
-                <enable_next>no</enable_next>
                 <enable_back>no</enable_back>
+                <enable_next>no</enable_next>
             </defaults>
             <modules  config:type="list">
                 <module>
@@ -495,21 +496,24 @@ textdomain="control"
         </workflow>
         <workflow>
             <defaults>
-                <enable_next>no</enable_next>
-                <enable_back>no</enable_back>
                 <archs>all</archs>
+                <enable_back>no</enable_back>
+                <enable_next>no</enable_next>
             </defaults>
             <stage>continue</stage>
             <label>Configuration</label>
             <mode>autoinstallation</mode>
             <modules  config:type="list">
                 <module>
+	            <label>Perform Installation</label>
                     <name>netsetup</name>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>netprobe</name>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>autopost</name>
                 </module>
                 <module>

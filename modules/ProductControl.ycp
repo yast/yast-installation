@@ -600,13 +600,15 @@ define list<map> getMatchingProposal(
     y2milestone("Stage: %1 Mode: %2", Stage::stage(), Mode::mode());
     
     // First we search for proposals for current stage if there are
-    // any. (initial or continue)
-
+    // any. 
     list<map> props = filter(map p, proposals, ``(Check(p["stage"]:"", stage)));
+    y2debug("1. proposals: %1", props);
 
     // Then we check for mode: installation or update
     props = filter(map p, props, ``(
                     Check(p["mode"]:"", mode)));
+
+    y2debug("2. proposals: %1", props);
 
     // Now we check for architecture
     y2debug("Architecture: %1, Proposals: %2", Arch::architecture (), props );
@@ -615,7 +617,7 @@ define list<map> getMatchingProposal(
                 p["name"]:"" == proptype &&
                 issubstring(p["archs"]:"dummy", Arch::arch_short () )));
 
-    y2debug("arch proposals: %1", arch_proposals );
+    y2debug("3. arch proposals: %1", arch_proposals );
     
     props = filter(map p, props, ``(
 				    p["archs"]:"" == "all" || !haskey(p, "archs")
@@ -623,6 +625,7 @@ define list<map> getMatchingProposal(
 		   );
 
 
+    y2debug("4. proposals: %1", arch_proposals );
     // If architecture specific proposals are available, we continue with those
     // and check for proposal type, else we continue with pre arch proposal
     // list
@@ -693,6 +696,7 @@ global define list < list > getProposals(string stage, string mode, string propt
     });
 
   
+    y2debug("final proposals: %1", final_proposals );
     return final_proposals;
 }
 
