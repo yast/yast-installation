@@ -173,6 +173,7 @@
     if (Stage::cont ())
     {
 	Installation::encoding = Console::Restore();
+	Console::Init ();
 	if (UI::GetDisplayInfo()["HasFullUtf8Support"]:true)
 	{
 	    Installation::encoding = "UTF-8";
