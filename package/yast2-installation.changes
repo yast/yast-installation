@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Aug 22 10:45:21 CEST 2002 - kkaempf@suse.de
+
+- run "SuSEconfig --module bootsplash" before bootloader
+  V 2.6.29
+
+-------------------------------------------------------------------
 Thu Aug 22 09:46:46 CEST 2002 - kkaempf@suse.de
 
 - selected packages are also provided after installation
