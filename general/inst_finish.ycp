@@ -186,7 +186,7 @@ Please wait while the base system is being installed.
     // Copy control.xml so it can be read once again during continue mode
     SCR::Execute (.target.bash, "/bin/cp " + ProductControl::current_control_file  + " " +
 		  Installation::destdir + "/var/lib/YaST2/control.xml");
-    SCR::Execute (.target.bash, "/bin/chmod 0600 " +
+    SCR::Execute (.target.bash, "/bin/chmod 0644 " +
 		  Installation::destdir + "/var/lib/YaST2/control.xml");
 
     // --------------------------------------------------------------
