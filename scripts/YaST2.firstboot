@@ -21,12 +21,6 @@ touch /etc/modules.conf
 /sbin/depmod -a -F /boot/System.map-`uname -r` `uname -r` >/dev/null 2>&1
 
 #
-# Remove usb modules booted from installation CD
-# and start hotplug. Must be done after depmod!
-#
-rmmod hid usb-storage uhci usb-uhci usb-ohci usbcore >/dev/null 2>&1
-
-#
 # Start syslog daemon
 #
 
