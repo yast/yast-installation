@@ -14,7 +14,9 @@
  * SCR::Write (.etc.shadow.root,
  */
 {
+
     import "Arch";
+    import "Initrd";
     import "Mode";
     import "Installation";
     import "X11Version";

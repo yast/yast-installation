@@ -5,6 +5,8 @@
  * Authors:	Arvin Schnell <arvin@suse.de>
  *
  * Display release notes.
+ *
+ * $Id$
  */
 
 {
@@ -59,9 +61,8 @@
 			   );
 
     /* help text for dialog "Release Notes" */
-    string help = _("Here are the <b>release notes</b> for the installed
-Linux system. They provide a brief summary of new features and changes.
-");
+    string help = _("<p>Here are the <b>release notes</b> for the installed
+Linux system. They provide a brief summary of new features and changes.</p>");
 
     Wizard::SetContents (caption, contents, help, true, true);
 

@@ -15,9 +15,11 @@
  */
 
 {
+
     textdomain "installation";
 
     import "Arch";
+    import "Product";
     import "Mode";
     import "Installation";
     import "AutoInstall";

@@ -16,9 +16,11 @@
  * $Id$
  */
 {
+
     textdomain "installation";
 
     import "Arch";
+    import "Directory";
     import "Mode";
     import "Installation";
     import "Misc";

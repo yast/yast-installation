@@ -5,6 +5,8 @@
  * Authors:	Arvin Schnell <arvin@suse.de>
  *
  * Display a nice congratulation message for the user.
+ *
+ * $Id$
  */
 
 {
