@@ -18,7 +18,7 @@ STATUS        : Development
 **************/
 {
 module "X11Version";
-textdomain "base";
+textdomain "installation";
 
 import "Directory";
 import "Installation";
