@@ -65,10 +65,10 @@ global define boolean Read( string controlfile) ``{
     if (haskey(productControl, "software"))
     {
         software = productControl["software"]:$[];
-        Product::base_selection_choice = software["selection_type"]:`auto;
+        ProductFeatures::base_selection_choice = software["selection_type"]:`auto;
         if (size(software["base_selection"]:"") > 0 )
         {
-            Product::fixed_base_selection = software["base_selection"]:"Minimal";
+            ProductFeatures::fixed_base_selection = software["base_selection"]:"Minimal";
         }
     }
 
@@ -270,7 +270,7 @@ global define list getProposals(string stage, string mode, string proptype)
     }
     if (size(props)> 1 )
     {
-        y2error("Something Wrong happened, more than proposal after filter:
+        y2error("Something Wrong happened, more than one proposal after filter:
                 %1", props);
     }
 
