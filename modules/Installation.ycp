@@ -69,14 +69,6 @@
 	    destdir = "/mnt";
 	}
 
-	map productdata = Pkg::SourceProductData(0);
-	defaultLanguage = productdata["language"]:"en_US";
-
-	// strip encoding if present
-
-	if (findfirstof (defaultLanguage, ".") > 0)
-	{
-	    defaultLanguage = select (splitstring (defaultLanguage, "."), 0, "en_US");
-	}
+	defaultLanguage = Pkg::GetLocale();
     }
 }
