@@ -826,7 +826,7 @@ with the load address of your root DASD.
 	if( size(filter(string k, map v, targetMap, ``(v["is_lvm_vg"]:false))) >0 )
 	{
 	    y2milestone( "shutting down LVM" );
-	    WFM::Execute(.local.bash, "/sbin/vgchange -A n -a n" );
+	    WFM::Execute(.local.bash, "/sbin/vgchange -a n" );
 	    WFM::Execute(.local.bash, "/bin/umount /etc/lvmtab.d" );
 	}
 
