@@ -1,4 +1,6 @@
+#
 # Makefile.am for installation/x11
+#
 
 module_DATA = \
 	X11Version.ycp
@@ -8,7 +10,7 @@ client_DATA = \
 
 fvwmdir = /usr/X11R6/share/fvwm/
 fvwm_DATA = \
-	fvwmrc.notitle
+	fvwmrc.yast2
 
 EXTRA_DIST = $(client_DATA) $(module_DATA) $(fvwm_DATA)
 
