@@ -110,7 +110,7 @@
 	// --------------------------------------------------------------
 	//                   Mouse
 	// --------------------------------------------------------------
-	if (!(Arch::s390 || Arch::board_iseries))
+	if (!(Arch::s390 || Arch::board_iseries) && !Mode::text)
 	{
 	    y2milestone("Call Mouse probing...");
 	    if (!Mouse::Found())

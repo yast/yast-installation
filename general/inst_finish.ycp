@@ -393,7 +393,7 @@ Please wait while the base system is being installed.
     if ( !Mode::update )
     {
 	// Set default runlevel to 5 if X11 packages are installed
-	if ( !Mode::test && Mode::x11_setup_needed && x11_installed )
+	if ( !Mode::test && Mode::x11_setup_needed && x11_installed && AutoInstall::default_rl == "5")
 	{
 	    y2milestone ("setting default runlevel to 5");
 	    SCR::Write (.etc.inittab.id, "5:initdefault:");
