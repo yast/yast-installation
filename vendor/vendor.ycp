@@ -1,4 +1,4 @@
-/*
+#/*
  *
  * Module:             vendor.ycp
  *
@@ -178,7 +178,7 @@
 
     y2milestone ("Trying %1", cdpath);
 
-    dirlist = SCR::Read(.target.dir, cdpath);
+    list dirlist = SCR::Read(.target.dir, cdpath);
     if (size (dirlist) <= 0)
     {
 	// VENDOR: vendor cd doesn't contain data for current system and linux version
