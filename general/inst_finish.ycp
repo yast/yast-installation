@@ -777,7 +777,7 @@ with the load address of your root DASD.
 	}
 	else	// not y2log, y2log-*
 	{
-	    InjectFile( file );
+	    InjectFile( Directory::logdir + "/" + file );
 	}
     });
 
