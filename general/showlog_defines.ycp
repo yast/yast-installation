@@ -9,7 +9,6 @@
  */
 {
     import "Label";
-    import "Popup";
 
     UI::{
 	textdomain "installation";
@@ -56,27 +55,10 @@
 	    SetFocus(`id(`no_log) );
 
 	    any r = UserInput();
+
 	    CloseDialog();
-	    return (r);
-	};
-    };
 
-
-    //
-    // Popup display for logging
-    //
-
-    UI::{
-	textdomain "installation";
-	global define AskShowLog( ) ``{
-	    return Popup::AnyQuestion(
-				    // heading for a popup box
-				    _("Installation log file"),
-				    // question in a popup box
-				    _("Would you like to see the installation log file?"),
-				    Label::YesButton(),
-				    Label::NoButton(),
-				    `focus_no );
+	    return r;
 	};
     };
 
