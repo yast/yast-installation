@@ -9,15 +9,15 @@ textdomain="control"
 -->
 
     <textdomain>control</textdomain>
-    <!-- global data to be set in the initial proposal -->
     <globals>
         <enable_autologin config:type="boolean">true</enable_autologin>
+        <inform_about_suboptimal_distribution config:type="boolean">true</inform_about_suboptimal_distribution>
+        <ui_mode>simple</ui_mode>
+        <fam_local_only>gnome</fam_local_only>
+	<enable_firewall config:type="boolean">true</enable_firewall>
+	<firewall_enable_ssh config:type="boolean">false</firewall_enable_ssh>
     </globals>
-
-    <!-- Force a selection (`fixed) to be used instead of automatically
-    Calculating the selection depending on space (`auto)  -->
     <software>
-        <!-- Delete old packages, should be set to false for SLES-->
         <delete_old_packages config:type="boolean">true</delete_old_packages>
         <selection_type config:type="symbol">auto</selection_type>
     </software>
@@ -27,15 +27,10 @@ textdomain="control"
 
     <proposals config:type="list">
         <proposal>
-            <!-- installation, autoinst, update, repair, etc. -->
-            <mode>installation,demo,autoinst</mode>
-            <!-- initial or continue -->
-            <stage>initial</stage>
-            <!-- Type of proposal, initial, hardware, network -->
-            <type>initial</type>
             <label>Installation Settings</label>
-
-            <!-- Proposal modules, order matters -->
+            <mode>installation,demo,autoinst</mode>
+            <stage>initial</stage>
+            <type>initial</type>
             <proposal_modules config:type="list">
                 <proposal_module>hwinfo</proposal_module>
                 <proposal_module>mode</proposal_module>
@@ -50,29 +45,20 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
-            <label>Service Configuration</label>
-            <type>service</type>
-            <stage>continue,normal</stage>
-            <proposal_modules config:type="list">
-                <proposal_module>ca_mgm</proposal_module>
-                <proposal_module>ldap-server</proposal_module>
-            </proposal_modules>
-        </proposal>
-        <proposal>
+            <label>Directory Installation</label>
             <mode>normal</mode>
             <type>dirinstall</type>
             <stage>normal</stage>
-            <label>Directory Installation</label>
             <proposal_modules config:type="list">
                 <proposal_module>dirinstall_options</proposal_module>
                 <proposal_module>software</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>
+            <label>UML Installation Settings</label>
             <mode>normal</mode>
             <type>uml</type>
             <stage>normal</stage>
-            <label>UML Installation Settings</label>
             <proposal_modules config:type="list">
 		<proposal_module>uml_source</proposal_module>
                 <proposal_module>uml_user</proposal_module>
@@ -87,10 +73,15 @@ textdomain="control"
             <type>initial</type>
             <stage>normal</stage>
             <proposal_modules config:type="list">
+		<proposal_module>hwinfo</proposal_module>
+                <proposal_module>mode</proposal_module>
+		<proposal_module>media</proposal_module>
+                <proposal_module>rootpart</proposal_module>
                 <proposal_module>update</proposal_module>
                 <proposal_module>packages</proposal_module>
                 <proposal_module>backup</proposal_module>
                 <proposal_module>language</proposal_module>
+                <proposal_module>keyboard</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>
@@ -111,48 +102,38 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
-            <label>Installation Settings</label>
-            <archs>s390</archs>
-            <mode>installation</mode>
-            <stage>initial</stage>
-            <type>initial</type>
-            <proposal_modules config:type="list">
-                <proposal_module>mode</proposal_module>
-                <proposal_module>partitions</proposal_module>
-                <proposal_module>software</proposal_module>
-                <proposal_module>timezone</proposal_module>
-                <proposal_module>language</proposal_module>
-                <proposal_module>runlevel</proposal_module>
-            </proposal_modules>
-        </proposal>
-        <proposal>
-            <label>Installation Settings</label>
-            <archs>s390</archs>
-            <mode>update</mode>
-            <stage>initial</stage>
-            <type>initial</type>
-            <proposal_modules config:type="list">
-                <proposal_module>mode</proposal_module>
-		<proposal_module>media</proposal_module>
-                <proposal_module>rootpart</proposal_module>
-                <proposal_module>update</proposal_module>
-                <proposal_module>packages</proposal_module>
-                <proposal_module>backup</proposal_module>
-                <proposal_module>language</proposal_module>
-            </proposal_modules>
-        </proposal>
-        <proposal>
             <label>Network Configuration</label>
             <type>network</type>
             <stage>continue,normal</stage>
             <proposal_modules config:type="list">
-                <proposal_module>lan</proposal_module>
-                <proposal_module>dsl</proposal_module>
-                <proposal_module>isdn</proposal_module>
-                <proposal_module>modem</proposal_module>
-                <proposal_module>proxy</proposal_module>
-                <proposal_module>remote</proposal_module>
-                <proposal_module>firewall</proposal_module>
+                <proposal_module>
+		    <name>lan</name>
+		    <presentation_order>20</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>dsl</name>
+		    <presentation_order>30</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>isdn</name>
+		    <presentation_order>40</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>modem</name>
+		    <presentation_order>50</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>remote</name>
+		    <presentation_order>60</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>firewall</name>
+		    <presentation_order>10</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>proxy</name>
+		    <presentation_order>70</presentation_order>
+		</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>
@@ -167,63 +148,27 @@ textdomain="control"
                 <proposal_module>bluetooth</proposal_module>
             </proposal_modules>
         </proposal>
-        <proposal>
-            <label>Network Configuration</label>
-            <archs>s390,ppc64</archs>
-            <type>network</type>
-            <stage>continue</stage>
-            <proposal_modules config:type="list">
-                <proposal_module>lan</proposal_module>
-                <proposal_module>proxy</proposal_module>
-                <proposal_module>remote</proposal_module>
-            </proposal_modules>
-        </proposal>
-        <proposal>
-            <label>Hardware Configuration</label>
-            <archs>ppc64</archs>
-            <type>hardware</type>
-            <stage>continue</stage>
-            <proposal_modules config:type="list">
-                <proposal_module>x11</proposal_module>
-                <proposal_module>printer</proposal_module>
-            </proposal_modules>
-        </proposal>
-        <proposal>
-            <label>Hardware Configuration</label>
-            <archs>s390</archs>
-            <type>hardware</type>
-            <stage>continue</stage>
-            <proposal_modules config:type="list">
-                <proposal_module>printer</proposal_module>
-            </proposal_modules>
-        </proposal>
     </proposals>
 
     <workflows config:type="list">
         <workflow>
-            <!-- 'label' is what the user will see -->
 	    <label>Base Installation</label>
-            <!-- default settings for all modules -->
             <defaults>
-                <!-- arguments for the clients -->
                 <arguments>false,false</arguments>
-                <!-- allowed architectures "all", "i386", "i386,ia64,x86_64"  -->
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
             <mode>installation,update</mode>
-            <modules config:type="list">
+            <modules  config:type="list">
                 <module>
                     <name>info</name>
                     <arguments>false,true</arguments>
                 </module>
                 <module>
                     <name>language</name>
-                    <retranslate config:type="boolean">true</retranslate>
                     <arguments>false,true,true</arguments>
-                    <!-- 'label' is the workflow step description the user
-	                 will see in the side bar during installation.   -->
 	            <label>Language</label>
+                    <retranslate config:type="boolean">true</retranslate>
                 </module>
                 <module>
                     <name>proposal</name>
@@ -238,10 +183,6 @@ textdomain="control"
                 </module>
                 <module>
                     <name>prepdisk</name>
-                    <!-- Multiple modules with the same 'label' will be
-                         collapsed to one single user-visible step.
-                         The step is considered finished when the last module
-                         with the same 'label' is finished.  -->
 	            <label>Perform Installation</label>
                 </module>
                 <module>
@@ -266,7 +207,7 @@ textdomain="control"
             <stage>initial</stage>
 	    <label>Preparation</label>
             <mode>repair</mode>
-            <modules config:type="list">
+            <modules  config:type="list">
                 <module>
 	            <label>System Information</label>
                     <name>info</name>
@@ -287,12 +228,12 @@ textdomain="control"
             <stage>initial</stage>
 	    <label>Base Installation</label>
             <mode>screen_shot</mode>
-            <modules config:type="list">
+            <modules  config:type="list">
                 <module>
+                    <arguments>false,true,true</arguments>
  	            <label>Language</label>
                     <name>language</name>
                     <retranslate config:type="boolean">true</retranslate>
-                    <arguments>false,true,true</arguments>
                 </module>
                 <module>
 	            <label>Installation Settings</label>
@@ -327,17 +268,17 @@ textdomain="control"
             <stage>initial</stage>
 	    <label>Base Installation</label>
             <mode>demo</mode>
-            <modules config:type="list">
+            <modules  config:type="list">
                 <module>
 	            <label>Language</label>
                     <name>info</name>
                     <arguments>false,true</arguments>
                 </module>
                 <module>
+                    <arguments>false,true,true</arguments>
 	            <label>Language</label>
                     <name>language</name>
                     <retranslate config:type="boolean">true</retranslate>
-                    <arguments>false,true,true</arguments>
                 </module>
                 <module>
 	            <label>Installation Settings</label>
@@ -372,7 +313,7 @@ textdomain="control"
                 <arguments>false,false</arguments>
                 <archs>all</archs>
             </defaults>
-            <modules config:type="list">
+            <modules  config:type="list">
                 <module>
                     <name>netsetup</name>
                     <arguments>false,false,`up</arguments>
@@ -419,15 +360,18 @@ textdomain="control"
                 <arguments>false,false</arguments>
                 <archs>all</archs>
             </defaults>
-            <modules config:type="list">
+            <modules  config:type="list">
                 <module>
+	            <label>Perform Installation</label>
                     <name>netsetup</name>
                     <arguments>false,false,`up</arguments>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>netprobe</name>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
                 </module>
                 <module>
@@ -440,6 +384,9 @@ textdomain="control"
                     <name>proposal</name>
                     <arguments>true,true,`network</arguments>
                 </module>
+		<module>
+                    <name>fam</name>
+		</module>
                 <module>
 	            <label>Network</label>
                     <name>ask_net_test</name>
@@ -454,11 +401,6 @@ textdomain="control"
 	            <label>Online Update</label>
                     <name>you</name>
                     <arguments>true,true</arguments>
-                </module>
-                <module>
-                    <label>Service</label>
-                    <name>proposal</name>
-                    <arguments>true,true,`service</arguments>
                 </module>
                 <module>
 	            <label>Users</label>
@@ -500,24 +442,24 @@ textdomain="control"
                 <arguments>false,false</arguments>
                 <archs>all</archs>
             </defaults>
-            <modules config:type="list">
+            <modules  config:type="list">
                 <module>
-	            <label>Language</label>
+	            <label>Auto-Install Settings</label>
                     <name>info</name>
                     <arguments>false,true</arguments>
                 </module>
                 <module>
-	            <label>Autoinstall Settings</label>
-                    <retranslate config:type="boolean">true</retranslate>
+	            <label>Auto-Install Settings</label>
                     <name>autoinit</name>
                     <archs>all</archs>
+                    <retranslate config:type="boolean">true</retranslate>
                 </module>
                 <module>
-	            <label>Autoinstall Settings</label>
+	            <label>Auto-Install Settings</label>
                     <name>autosetup</name>
                 </module>
                 <module>
-	            <label>Autoinstall Settings</label>
+	            <label>Auto-Install Settings</label>
                     <name>proposal</name>
                     <arguments>true,true,`initial</arguments>
                 </module>
@@ -551,7 +493,7 @@ textdomain="control"
             <stage>continue</stage>
             <label>Configuration</label>
             <mode>autoinst</mode>
-            <modules config:type="list">
+            <modules  config:type="list">
                 <module>
                     <name>netsetup</name>
                     <arguments>false,false,`up</arguments>
@@ -569,6 +511,11 @@ textdomain="control"
                 <module>
 	            <label>System Configuration</label>
                     <name>autoconfigure</name>
+                </module>
+                <module>
+	            <label>System Configuration</label>
+                    <name>x11</name>
+                    <arguments>false,false</arguments>
                 </module>
                 <module>
 	            <label>Clean Up</label>

@@ -172,7 +172,7 @@
     // to do expensive operations only when it is available.
     list<map> stage_mode = [$["stage": "initial" , "mode": wizard_mode ],
 			    $["stage": "continue", "mode": wizard_mode ],
-			    $["stage": "normal",  "mode": wizard_mode ]];
+			    $["stage": "firstboot",  "mode": wizard_mode ]];
     ProductControl::AddWizardSteps(stage_mode);
 
     // classified_user_settings contain secrets, like passwords ...
@@ -407,6 +407,13 @@ differ from those in the manual.
         }
         if ( do_continue ) continue;
 
+        // proposal type
+        symbol type = `dummy;
+        if (haskey(mod, "type") && mod["type"]:""!="") 
+        {
+            type = symbolof(toterm(mod["type"]:"dummy"));
+            argterm = add (argterm, type);
+        }
         y2milestone("Running module: %1 (%2)", argterm, m);
         argterm = add (argterm, former_result == `back);
 
@@ -434,6 +441,7 @@ differ from those in the manual.
             args[i] = argterm[i]:def;
             i = i + 1;
         }
+
 
 	UI::WizardCommand(`SetCurrentStep( mod["id"]:"" ) );
         ProductControl::CurrentWizardStep = mod["id"]:"";
