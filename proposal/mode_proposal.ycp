@@ -73,7 +73,7 @@
 	{
 	    Pkg::PkgReset ();
 	    Update::Detach ();
-	    RootPart::UnmountPartitions ();
+	    RootPart::UnmountPartitions (false);
 	}
 
 	// Fill return map
