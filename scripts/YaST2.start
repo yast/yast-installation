@@ -90,11 +90,11 @@ export HVC_CONSOLE_HINT="  (recommended with p690 hvc console)"
 export Console=hvc0,9600
 }
 
-if [ ! -z "$Console" -a -z "$AutoYaST" ] ; then
+if [ ! -z "$Console" -a -z "$AutoYaST" -a "$VNC" = 0 -a "$UseSSH" = 0 ] ; then
   . /usr/lib/YaST2/bin/ask_for_TERM_variable
   echo "TERM: $TERM" >> /etc/install.inf
   export TERM
-elif [ ! -z "$Console" -a ! -z "$AutoYaST" ] ; then
+elif [ ! -z "$Console" -a ! -z "$AutoYaST" -a "$VNC" != 0 -a "$UseSSH" != 0 ] ; then
   export TERM=vt100
   echo "TERM: $TERM" >> /etc/install.inf
 fi

@@ -2,7 +2,8 @@
  * File:	clients/inst_finish.ycp
  * Package:	installation
  * Summary:	Finish installation
- * Author:	Klaus Kämpf <kkaempf@suse.de>
+ * Authors:	Klaus KÃ¤mpf <kkaempf@suse.de>
+ *		Arvin Schnell <arvin@suse.de>
  *
  * $Id$
  *
