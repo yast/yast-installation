@@ -141,7 +141,7 @@ global define boolean Read( string controlfile) ``{
             software["packages_transmogrify"]:"";
  
         // TODO: Temporary workaround. This should be checked in the control file
-        if (Arch::i386 && issubstring(Product::distproduct, "DVD"))
+        if (Arch::i386 () && issubstring(Product::distproduct, "DVD"))
         {
             ProductFeatures::inform_about_suboptimal_distribution =
             software["inform_about_suboptimal_distribution"]:false;
@@ -216,9 +216,9 @@ global define boolean checkArch(map mod , map def) ``{
         return true;
     }
 
-    y2milestone("short arch desc: %1", Arch::arch_short );
+    y2milestone("short arch desc: %1", Arch::arch_short () );
     y2milestone("supported archs: %1", archs );
-    if (issubstring(archs,Arch::arch_short))
+    if (issubstring(archs,Arch::arch_short ()))
     {
         return true;
     }
@@ -482,10 +482,10 @@ global define list < list > getProposals(
                     Check(p["mode"]:"", mode)));
 
     // Now we check for architecture
-    y2debug("Architecture: %1", Arch::architecture );
+    y2debug("Architecture: %1", Arch::architecture () );
     list<map> arch_proposals = filter(map p, props, ``(
                 p["type"]:"" == proptype &&
-                issubstring(p["archs"]:"dummy", Arch::arch_short )));
+                issubstring(p["archs"]:"dummy", Arch::arch_short () )));
 
     y2debug("arch proposals: %1", arch_proposals );
     props = filter(map p, props, ``(

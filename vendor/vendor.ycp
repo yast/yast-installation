@@ -157,7 +157,7 @@ Aborting now."), is_mounted);
 	    version = "ul1";
 	}
 
-	cdpath = cdpath + vendordir + Arch::architecture + "-" + version;
+	cdpath = cdpath + vendordir + Arch::architecture () + "-" + version;
 
     }
 

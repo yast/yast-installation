@@ -82,7 +82,7 @@
 	// --------------------------------------------------------------
 	//                   Mouse
 	// --------------------------------------------------------------
-	if (!Arch::s390 || Arch::board_iseries)
+	if (!Arch::s390 () || Arch::board_iseries ())
 	{
 	    y2milestone("Call Mouse probing...");
 	    if (!Mouse::Found())
@@ -269,7 +269,7 @@
     // show message if text_fallback
     /////////////////////////////////////////
     if ((Mode::text_fallback || Mode::no_x11)
-	&& (Mode::x11_setup_needed && Arch::x11_setup_needed)
+	&& (Mode::x11_setup_needed && Arch::x11_setup_needed ())
 	&& !Installation::shown_text_mode_warning)
     {
 	string x11_msg = "";

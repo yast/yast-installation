@@ -151,7 +151,7 @@
 
     global define void StartUSB ()
     ``{
-	if (Arch::sparc)	// why this and why here ???
+	if (Arch::sparc ())	// why this and why here ???
 	    return;
 
 	list<map> usb_controllers = (list<map>) SCR::Read(.probe.usbctrl);
@@ -191,7 +191,7 @@
 
     global define void StartFireWire ()
     ``{
-	if (Arch::sparc)	// why this and why here ???
+	if (Arch::sparc ())	// why this and why here ???
 	    return;
 
 	list<map> firewire_controllers = (list<map>) SCR::Read (.probe.ieee1394ctrl);
