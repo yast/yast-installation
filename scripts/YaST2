@@ -70,17 +70,15 @@ function y2cc_qt()
     set_lang_from_sysconfig
 
     if echo $moduleargs | grep -q continue ; then
-	log "Continue mode"
+
         # Check for semaphore file (created in inst_proposal.ycp)
         if [ -e /var/lib/YaST2/start_y2cc ]; then
-            log "y2cc requested"
 
             # Delete semaphore file (created in inst_proposal.ycp)
             rm -f /var/lib/YaST2/start_y2cc
 
             # Start the control center
             log "Starting YaST2 control center in Qt mode"
-            log "y2controlcenter qt --fullscreen --noborder -Q"
             y2controlcenter qt --fullscreen --noborder -Q
         fi
     fi
@@ -93,14 +91,16 @@ function y2cc_ncurses()
     set_lang_from_sysconfig
 
     if echo $moduleargs | grep -q continue ; then
+
 	# Check for semaphore file (created in inst_proposal.ycp)
 	if [ -e /var/lib/YaST2/start_y2cc ]; then
-	    log "y2cc requested"
+
 	    # Delete semaphore file (created in inst_proposal.ycp)
 	    rm -f /var/lib/YaST2/start_y2cc
 
+	    # Start the control center
 	    log "Starting YaST2 control center in NCurses mode"
-	    y2menu
+	    y2base menu ncurses
 	fi
     fi
 }
