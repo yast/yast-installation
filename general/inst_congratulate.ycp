@@ -132,7 +132,7 @@ return to this installation sequence.</p>
 
     } until ( ret == `next || ret == `back );
 
-    Wizard::RestoreNextButton ();
+    //Wizard::RestoreNextButton ();
 
     if (!UI::WidgetExists(`id(`start_y2cc)))
     {
