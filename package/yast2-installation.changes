@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Mar 17 16:36:24 CET 2003 - arvin@suse.de
+
+- start fvwm2 for vnc installation (bug #25405)
+
+-------------------------------------------------------------------
 Mon Mar 17 15:30:26 CET 2003 - arvin@suse.de
 
 - turn of silent splash mode before displaying messages during
