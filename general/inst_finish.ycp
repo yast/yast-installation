@@ -120,7 +120,7 @@ Please wait while the base system is being installed.
 
     // Tell linuxrc where root is
     // Tell linuxrc to reboot on an SMP system
-    // also reboot if the x11 server was unknown
+    // also reboot on x86 if the x11 server was unknown
     //   and defaulted to VGA16 (no fbdev !)
     //
     // (see inst_pkg_toinstall). Since running /dev/fb (fbdev) and vga16
@@ -133,7 +133,8 @@ Please wait while the base system is being installed.
 	|| Storage::CheckForMdRootFs()
 	|| Product::certify_cd
 	|| (SCR::Read (.etc.install_inf.Reboot) == "1")
-	|| (Display::xserver_is_unknown
+	|| (Arch::i386
+	    && Display::xserver_is_unknown
 	    && !Display::has_fbdev))
     {
 	y2debug (".etc.install_inf.Reboot: %1", SCR::Read (.etc.install_inf.Reboot));
