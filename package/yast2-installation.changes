@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Aug 14 10:03:38 CEST 2003 - arvin@suse.de
+
+- fixed log of failed packages (bug #28758)
+
+-------------------------------------------------------------------
 Tue Aug 12 20:31:12 CEST 2003 - arvin@suse.de
 
 - added remote administration proposal to network proposal
