@@ -46,14 +46,28 @@
             </modules>
         </proposal>
         <proposal>
-            <mode>installation</mode>
-            <stage>initial</stage>
+            <mode>normal</mode>
             <type>uml</type>
+            <stage>normal</stage>
             <modules config:type="list">
                 <module>uml_user</module>
                 <module>uml_options</module>
                 <module>uml_disks</module>
                 <module>uml_network</module>
+            </modules>
+        </proposal>
+        <proposal>
+            <mode>update</mode>
+            <type>initial</type>
+            <stage>normal</stage>
+            <modules config:type="list">
+                <module>mode</module>
+                <module>rootpart</module>
+                <module>update</module>
+                <module>packages</module>
+                <module>backup</module>
+                <module>language</module>
+                <module>keyboard</module>
             </modules>
         </proposal>
         <proposal>
