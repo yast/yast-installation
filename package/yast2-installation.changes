@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Aug 01 20:10:11 CEST 2003 - arvin@suse.de
+
+- call inst_netprobe during install
+- added desktop files
+
+-------------------------------------------------------------------
 Wed Jul 30 11:42:24 CEST 2003 - arvin@suse.de
 
 - don't complain when no storage controllers can be found
