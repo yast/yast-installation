@@ -48,12 +48,19 @@ list<string> patterns = argmap["patterns"]:default_patterns;
 map license_data = CustomDialogs::load_file_locale(patterns,directory, Language::language);
 
 
+string text = "";
+if (license_data["text"]:"" != "" )
+    text = license_data["text"]:"";
+else {
+    if (SCR::Read(.target.size, "/etc/YaST2/info.txt") > 0 )
+        text = (string)SCR::Read(.target.string, "/etc/YaST2/info.txt" );
+}
 
 term rt = `Empty();
-if (regexpmatch(license_data["text"]:"", "</.*>")) {
-    rt = `RichText(`id( `welcome_text), license_data["text"]:"");
+if (regexpmatch(text, "</.*>")) {
+    rt = `RichText(`id( `welcome_text), text);
 } else {
-    rt = `RichText(`id( `welcome_text), `opt(`plainText), license_data["text"]:"" );
+    rt = `RichText(`id( `welcome_text), `opt(`plainText), text );
 }
 
 // dialog caption

@@ -49,7 +49,7 @@ use. YaST will now guide you through some basic configuration.  Click
 ");
 
 /* welcome text */
-string welcome_text = welcome["text"]:text;
+string welcome_text = welcome["text"]:"" != "" ? welcome["text"]:"" : text;
 
 
 // help ttext

@@ -16,6 +16,7 @@
     import "Wizard";
     import "Popup";
     import "Label";
+    import "ProductFeatures";
     import "GetInstArgs";
 
     map argmap = GetInstArgs::argmap();
@@ -38,8 +39,15 @@
     }
 
     integer space = display["TextMode"]:true ? 1 : 3;
+    string vendor_url_tmp = (string)ProductFeatures::GetFeatureProperties("globals/vendor_url");
+    
+    string vendor_url = "http://www.novell.com/linux/";
+
+    if (vendor_url_tmp != nil && vendor_url != "")
+        vendor_url = vendor_url_tmp;
 
     term check_box_start_y2cc = `Empty();
+    
     if (show_y2cc_checkbox)
     {
         check_box_start_y2cc = `CheckBox (`id(`start_y2cc),
@@ -63,9 +71,7 @@ After clicking <b>Finish</b>, you can log in to the system.</p>
 ") +
 
     // congratulation text 3/4
-    // Translators: If there exists a SUSE web-page for your language
-    // change the address accordingly. If in doubt leave the original.
-	_("<p>Visit us at www.suse.com.</p>") +
+        sformat(_("<p>Visit us at %1.</p>"), vendor_url ) +
 
     // congratulation text 4/4
 	_("<p>Have a lot of fun!<br>Your SUSE Development Team</p>");
@@ -143,6 +149,7 @@ return to this installation sequence.</p>
 	// Create empty /var/lib/YaST2/start_y2cc file to signal the calling script
 	// that the YaST2 control center should be started after the installation
 	SCR::Write (.target.string, "/var/lib/YaST2/start_y2cc", "");
+	y2milestone( "Going to start YaST2 control center after the installation workflow" );
     }
 
     return ret;
