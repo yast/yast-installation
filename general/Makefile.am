@@ -17,6 +17,7 @@ client_DATA =					\
 	inst_suseconfig.ycp			\
 	inst_congratulate.ycp			\
 	inst_release_notes.ycp			\
+	inst_authentication.ycp			\
 	installation.ycp
 
 EXTRA_DIST = $(client_DATA) $(ynclude_DATA)

@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Jan 29 14:42:42 CET 2003 - arvin@suse.de
+
+- added dialog to ask for preferred method of user authentication
+
+-------------------------------------------------------------------
 Tue Jan 28 18:47:16 CET 2003 - arvin@suse.de
 
 - added final congratulations dialog
