@@ -28,7 +28,7 @@ IO_SCHEDULER="as"
 #
 EVMS_CONFIG="no"
 
-## Type:    string
+## Type:    string(simple,expert)
 ## Default: expert
 #
 # UI mode
