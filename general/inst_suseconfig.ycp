@@ -109,10 +109,17 @@ the CPU and the amount of memory, this process can take some time.
 			  );
 
 
+    boolean back_ok = false;
+    boolean next_ok = false;
+    if (size (WFM::Args()) > 1)
+    {
+	back_ok = WFM::Args(0);
+	next_ok = WFM::Args(1);
+    }
     Wizard::SetContents(
 			  // Dialog title for SuSEconfig dialog
 			  _("Writing the system configuration"),
-			  contents, help_text, WFM::Args(0), WFM::Args(1));
+			  contents, help_text, back_ok, next_ok);
     Wizard::DisableAbortButton();
 
 
