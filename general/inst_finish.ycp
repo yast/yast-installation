@@ -87,6 +87,7 @@ Please wait while the base system is being installed.
 
     string default_wm = "kde";
     string default_dm = "kdm";
+    string doc_server = "";
 
     if ( !Mode::update )
     {
@@ -99,6 +100,18 @@ Please wait while the base system is being installed.
 	    default_wm = "gnome";			// then we switch to gdm/gnome
 	    default_dm = "gdm";
 	}
+
+	// check who provides suse_help_viewer
+	// if kdebase3-SuSE isn't installed by apache or apache2, set /etc/sysconfig/apache:DOC_SERVER
+
+	if ((!(Pkg::IsProvided ("kdebase3-SuSE") || Pkg::IsSelected ("kdebase3-SuSE")))
+	   &&
+	      (Pkg::IsProvided ("apache2") || Pkg::IsSelected ("apache2")
+	       || Pkg::IsProvided ("apache") || Pkg::IsSelected ("apache")))
+	{
+	    doc_server = "yes";
+	}
+
     }
 
     Progress::NextStep();
@@ -302,6 +315,12 @@ Please wait while the base system is being installed.
 	SCR::Write (.sysconfig.windowmanager, nil);
 	SCR::Write (.sysconfig.displaymanager.DISPLAYMANAGER, default_dm);
 	SCR::Write (.sysconfig.displaymanager, nil);
+
+	if (doc_server != "")
+	{
+	    SCR::Write (.sysconfig.apache.DOC_SERVER, doc_server);
+	    SCR::Write (.sysconfig.apache, nil);
+	}
     }
 
     // --------------------------------------------------------------

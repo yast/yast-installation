@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Mar 17 09:21:22 CET 2003 - kkaempf@suse.de
+
+- start apache as doc_server if suse_help_viewer isn't provided
+  by kdebase3-SuSE (25436)
+- 2.7.39
+
+-------------------------------------------------------------------
 Sat Mar 15 22:54:09 CET 2003 - kkaempf@suse.de
 
 - gdm2 might not be installed yet but earmarked for installation
