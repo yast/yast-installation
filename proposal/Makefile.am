@@ -8,7 +8,8 @@ ydata_DATA = 					\
 	hw-config-proposals-home-pc.ycp		\
 	hw-config-proposals-networked-pc.ycp	\
 	hw-config-proposals-sparc.ycp		\
-	hw-config-proposals-ppc64.ycp
+	hw-config-proposals-ppc64.ycp		\
+	hw-config-proposals-s390.ycp
 
 client_DATA =					\
 	inst_proposal.ycp			\

@@ -1,0 +1,8 @@
+//
+// hw-config-proposals-ppc64.ycp
+//
+// Proposal list for hardware configuration for ppc64
+//
+[
+"lan_proposal"
+]
