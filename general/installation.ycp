@@ -138,8 +138,7 @@
     // to do expensive operations only when it is available.
 
     list<map> stage_mode = [$["stage": "initial" , "mode": wizard_mode ],
-                            $["stage": "continue", "mode": wizard_mode ],
-                            $["stage": "firstboot",  "mode": wizard_mode ]];
+                            $["stage": "continue", "mode": wizard_mode ]];
 
     ProductControl::AddWizardSteps(stage_mode);
   
@@ -297,10 +296,10 @@ differ from those in the manual.
 
 
     // skip language dialog if selected in isolinux. (#37679)
-    if (Stage::initial () && SCR::Read (.etc.install_inf.Language)!= nil)
+    any selected_locale = Linuxrc::InstallInf("Locale");
+    if (Stage::initial () && selected_locale!= nil && (string)selected_locale!="en_US")
     {
-        string tmp_language = (string)SCR::Read (.etc.install_inf.Language);
-        if ( tmp_language !="" && ProductFeatures::skip_language_dialog )
+        if ( ProductFeatures::skip_language_dialog )
         {
             ProductControl::DisabledModules=add(ProductControl::DisabledModules,
             "language");
@@ -308,6 +307,7 @@ differ from those in the manual.
     }
 
 
+    // Run the installation workflow
     symbol ret = ProductControl::Run();
 
     if (ret == `abort)
