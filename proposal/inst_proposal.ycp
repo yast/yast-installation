@@ -197,7 +197,7 @@
 		skip_the_rest = true;
 	    }
 	});
-	
+
 	UI::NormalCursor();
     };
 
@@ -370,29 +370,23 @@
 
     /**
      * Load a list of submodules matching the current internal states
-     * @param mode `ini, `net, or `hw to indicate which list to use
+     * @param mode `initial, `network, or `hardware to indicate which list to use
      *
      * @return submodules_list	list of submodule names (strings)
      **/
     define list<string> load_matching_submodules_list() ``{
 
 	list<string> submodules = [];
-
-        // FIXME: Declare more types in control file
-        map <symbol, string> proposal_type = $[ `ini : "initial",
-						`net : "network",
-						`serv : "service",
-						`hw : "hardware",
-						`uml : "uml",
-						`dirinstall : "dirinstall" ];
-
-        string proptype = proposal_type[proposal_mode]:"";
+        string proptype = substring(sformat("%1", proposal_mode), 1 );
 
         submodules = ProductControl::getProposals (
                 Mode::stage,
                 Mode::mode,
                 proptype );
-        y2milestone("getting proposals for stage: \"%1\" mode: \"%2\" proposal type: \"%3\"", Mode::stage, Mode::mode, proptype );
+        y2milestone("getting proposals for stage: \"%1\" mode: \"%2\" proposal type: \"%3\"",
+                Mode::stage,
+                Mode::mode,
+                proptype );
 
         if (size(submodules) == 0 )
         {
@@ -431,19 +425,13 @@
     define void build_dialog () {
 
 	// headline for installation proposal
-	string headline = _("Installation Settings");
+	string headline = ProductControl::current_proposal_label;
+        y2milestone("headline: %1", headline );
+        if (headline == "")
+            headline =  _("Installation Settings");
+
 	// icon for installation proposal
 	string icon = "";
-
-	if ( proposal_mode == `net) {
-	    headline = _("Network Configuration");
-	}
-	else if ( proposal_mode == `hw) {
-	    headline = _("Hardware Configuration");
-	}
-	else if ( proposal_mode == `serv) {
-	    headline = _("Service Configuration");
-	}
 
 	/* radiobuttons */
 	term skip_buttons =
@@ -474,7 +462,7 @@
 
 	term vbox = nil;
 
-	if (proposal_mode == `ini || proposal_mode == `uml ||
+	if (proposal_mode == `initial || proposal_mode == `uml ||
 	    proposal_mode == `dirinstall)
 	{
 	    vbox = `VBox(
@@ -570,8 +558,8 @@
     define void set_icon() ``{
 	string icon = "software";
 
-	if 	( proposal_mode == `net		) icon = "network";
-	else if ( proposal_mode == `hw		) icon = "printer";
+	if 	( proposal_mode == `network		) icon = "network";
+	else if ( proposal_mode == `hardware		) icon = "printer";
 	// else if ( proposal_mode == `uml		) icon = "";
 	// else if ( proposal_mode == `dirinstall  ) icon = "";
 
@@ -595,7 +583,7 @@ or by using the <b>Change...</b> menu.
 </p>
 ");
 
-	if ( proposal_mode == `ini && Mode::installation )
+	if ( proposal_mode == `initial && Mode::installation )
 	{
 	    // Help text for installation proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -624,7 +612,7 @@ Your hard disk has not been modified in any way, so you can still safely abort.
 </p>
 ");
 	}
-	else if ( proposal_mode == `ini && Mode::update )
+	else if ( proposal_mode == `initial && Mode::update )
 	{
 	    // Help text for update proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -646,7 +634,7 @@ Your hard disk has not been modified in any way, so you can still safely abort.
 </p>
 ");
 	}
-	else if ( proposal_mode == `net )
+	else if ( proposal_mode == `network )
 	{
 	    // Help text for network configuration proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -655,7 +643,7 @@ Put the network settings into effect by pressing <b>Next</b>.
 </p>
 ") + how_to_change;
 	}
-	else if ( proposal_mode == `serv )
+	else if ( proposal_mode == `service )
 	{
 	    // Help text for service configuration proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -664,7 +652,7 @@ Put the service settings into effect by pressing <b>Next</b>.
 </p>
 ") + how_to_change;
 	}
-	else if ( proposal_mode == `hw )
+	else if ( proposal_mode == `hardware )
 	{
 	    // Help text for hardware configuration proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -715,6 +703,11 @@ To use the settings as displayed, press <b>Next</b>.
 
     y2milestone( "Installation step #2" );
     proposal_mode = (symbol) WFM::Args(2);
+    //
+    // Get submodule descriptions
+    //
+
+    submodules = load_matching_submodules_list();
     build_dialog();
 
     UI::ChangeWidget(`id(`menu_dummy), `Enabled, false );
@@ -759,11 +752,6 @@ To use the settings as displayed, press <b>Next</b>.
     }
 
 
-    //
-    // Get submodule descriptions
-    //
-
-    submodules = load_matching_submodules_list();
     if (!get_submod_descriptions_and_build_menu ())
     {
 	return `auto;
@@ -773,7 +761,6 @@ To use the settings as displayed, press <b>Next</b>.
     //
     // Make the initial proposal
     //
-
     make_proposal( false, false );
 
     // Set keyboard focus to the [Accept] or [Next] button
