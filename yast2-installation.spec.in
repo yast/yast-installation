@@ -28,17 +28,13 @@ from an installation media.
 %dir /var/lib/YaST2
 
 %dir @clientdir@
-@clientdir@/inst*.ycp
-@clientdir@/password.ycp
-@clientdir@/vendor.ycp
-@clientdir@/menu.ycp
+@clientdir@/*.ycp
 
 %dir @moduledir@
 @moduledir@/*.ycp
 
 %dir @yncludedir@
 @yncludedir@/*.ycp
-@yncludedir@/packages/*.ycp
 
 %dir @configdir@
 @configdir@/*.y2cc
@@ -67,7 +63,7 @@ from an installation media.
 #FIXME@ybindir@/check.boot
 #FIXME@ybindir@/WinINF.pm
 #FIXME@ybindir@/pars-inf.pl
-@ybindir@/y2merge.pl
+#FIXME@ybindir@/y2merge.pl
 @ybindir@/yast2-funcs
 @ybindir@/inst_setup_vnc
 
