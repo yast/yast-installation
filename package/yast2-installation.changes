@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Mar 18 16:18:30 CET 2004 - arvin@suse.de
+
+- fixed update work flow setting (bug #36429 and #35007)
+
+-------------------------------------------------------------------
 Thu Mar 18 09:59:01 CET 2004 - mvidner@suse.cz
 
 - Fall back to runlevel 3 if we accidentally don't set it

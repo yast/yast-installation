@@ -199,6 +199,7 @@
 	    y2milestone ("setting Mode::update = true");
 	    Mode::update = true;
 	    Mode::installation = false;
+	    Mode::mode = "update";
 	}
 
 	Installation::encoding = Console::Restore();
