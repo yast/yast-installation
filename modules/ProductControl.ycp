@@ -857,7 +857,7 @@ global symbol Run()
     {
 	y2error("No workflow found: %1", modules );
 	// error report
-	Report::Error(_("No Workflow defined for this installation mode."));
+	Report::Error(_("No workflow defined for this installation mode."));
 	return `abort;
     }
 
