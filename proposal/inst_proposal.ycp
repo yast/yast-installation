@@ -831,8 +831,10 @@ a proposal that is locked, ask your system administrator</p>");
         }
 
 	Wizard::SetHelpText (help_text ());
-    }
 
+	// this will recreate the dialog after the mode selection
+	load_matching_submodules_list();
+    }
 
     if (!get_submod_descriptions_and_build_menu ())
     {
