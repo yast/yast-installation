@@ -9,6 +9,7 @@
 {
 
 import "Mode";
+import "Stage";
 import "Wizard";
 
 Stage::Set ("continue");
