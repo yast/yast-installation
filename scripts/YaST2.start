@@ -78,6 +78,11 @@ elif [ ! -z "$Console" -a ! -z "$AutoYaST" ] ; then
   echo "TERM: $TERM" >> /etc/install.inf
 fi
 
+# start repair system
+grep -qi repair < /proc/cmdline && {
+echo "Repair: true" >> /etc/install.inf
+}
+
 cp -f /proc/mounts /etc/mtab
 
 function setup_XF86Config {

@@ -168,7 +168,7 @@
 
     };
 
-    if ( Mode::initial )
+    if ( Mode::initial && ! Mode::repair )
     {
 	Wizard::OpenDialog( Wizard::EasyInstallationDialog( Wizard::AbortAcceptButtonBox(),
 							    EasyInstallationStepDescriptions() ) );
@@ -451,6 +451,7 @@ will look different than in the manual.");
     boolean live_eval	= Mode::live_eval;
     boolean test_mode	= Mode::test;
     boolean update_mode	= Mode::update;
+    boolean repair	= Mode::repair;
     boolean screen_shot_mode = Mode::screen_shot;
 
     // - - - - - - - - - - - - -
@@ -474,7 +475,8 @@ will look different than in the manual.");
 //  0-Step-	1-Module-	    -Back- -Next- -spec-  2-Architecture(s)-		      3-Mode(s)-                           4-immediate_prepdisk-
 
 [
- [ `initial,  `inst_language	    (false, true, true), true,						! autoinst			, false],
+ [ `initial,  `inst_language	    (false, true, true), true,						! autoinst	&&    !	repair  , false],
+ [ `initial,  `inst_repair	    (false, true),	 true,									repair	, false],
  [ `initial,  `inst_startup	    (false, true),       true,						  autoinst                      , false],
  [ `initial,  `autoinst_init	    (false, false),      true,			! test_mode &&		  autoinst			, false],
  [ `initial,  `autoinst_setup	    (false, false),      true,			! test_mode &&		  autoinst			, false],
