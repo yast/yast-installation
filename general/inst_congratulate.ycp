@@ -92,6 +92,7 @@ return to this installation sequence.</p>
     Wizard::DisableAbortButton ();
     Wizard::ReplaceNextButton (`PushButton (`id(`next), `opt(`default),
 					    FinishButtonLabel ()));
+    UI::SetFocus (`id (`next));
 
     // FIXME: richtext eats return key
     // UI::SetFocus (`id (`text));

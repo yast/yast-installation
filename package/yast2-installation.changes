@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Mar 12 15:12:54 CET 2003 - arvin@suse.de
+
+- fixed focus in last installation dialog (bug #25171)
+
+-------------------------------------------------------------------
 Wed Mar 12 10:19:51 CET 2003 - ms@suse.de
 
 - fixed broken mouse bug in continue mode (#24914)
