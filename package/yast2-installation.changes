@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Mar 14 17:32:20 CET 2003 - sh@suse.de
+
+- Using file name RELEASE_NOTES.rtf to allow coexistence with
+  RELEASE_NOTES.html for Konqueror 
+
+-------------------------------------------------------------------
 Fri Mar 14 11:14:01 CET 2003 - fehr@suse.de
 
 - remove handling of IDE recorders from inst_finish.ycp
