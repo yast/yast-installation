@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Aug 19 08:13:17 CEST 2003 - arvin@suse.de
+
+- better way for mouse probing in text mode (bug #29005)
+
+-------------------------------------------------------------------
 Mon Aug 18 11:22:04 CEST 2003 - arvin@suse.de
 
 - don't probe mouse in text mode (bug #29005)

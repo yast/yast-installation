@@ -110,7 +110,7 @@
 	// --------------------------------------------------------------
 	//                   Mouse
 	// --------------------------------------------------------------
-	if (!(Arch::s390 || Arch::board_iseries) && !Mode::text)
+	if (!(Arch::s390 || Arch::board_iseries))
 	{
 	    y2milestone("Call Mouse probing...");
 	    if (!Mouse::Found())
@@ -120,11 +120,11 @@
 		// Mouse probing may fail otherwise...
 		//
 		SCR::Execute(.target.bash, "/bin/sleep 4");
-		if ( Mode::x11_setup_needed ) {
+		if ( Mode::x11_setup_needed && !Mode::text ) {
 		    SCR::Execute (.target.bash, "/usr/X11R6/bin/xmset --disable");
 		}
 		Mouse::Set (Mouse::Probe ());
-		if ( Mode::x11_setup_needed ) {
+		if ( Mode::x11_setup_needed && !Mode::text ) {
 		    SCR::Execute (.target.bash, "/usr/X11R6/bin/xmset --enable");
 		}
 	    }
