@@ -1,7 +1,6 @@
 # Makefile.am for installation/system
 
 module_DATA =		\
-	ModulesConf.ycp	\
 	HwStatus.ycp
 
 EXTRA_DIST = $(module_DATA)

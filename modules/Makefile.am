@@ -5,7 +5,6 @@ SUBDIRS = testsuite
 module_DATA =			\
 	Hooks.ycp		\
 	Installation.ycp	\
-	ModuleLoading.ycp	\
 	Product.ycp		\
 	Vendor.ycp
 
