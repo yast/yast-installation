@@ -47,11 +47,14 @@
     {
 	string instmode = SCR::Read (.etc.install_inf.InstMode);
 	if (instmode == nil) instmode = "cd";
-
 	string cdrom = SCR::Read (.etc.install_inf.Cdrom);
 	if (cdrom == nil) cdrom = "cdrom";
+	string server = SCR::Read (.etc.install_inf.Server);
+	if (server == nil) server = "";
+	string serverdir = SCR::Read (.etc.install_inf.Serverdir);
+	if (serverdir == nil) serverdir = "";
 
-	map tmp = $[ "instmode" : instmode, "cdrom" : cdrom ];
+	map tmp = $[ "instmode" : instmode, "cdrom" : cdrom, "server" : server, "serverdir" : serverdir ];
 	InstMedia::initializeInstMedia (tmp);
     }
 
