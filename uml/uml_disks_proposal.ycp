@@ -11,9 +11,9 @@
     import "UML";
     import "HTML";
 
-    string func  = (string) WFM::Args(0);
-    map    param = (map) WFM::Args(1);
-    map    ret   = $[];
+    string func = (string) WFM::Args (0);
+    map param = (map) WFM::Args (1);
+    map ret = $[];
 
     if ( func == "MakeProposal" )
     {
@@ -33,9 +33,12 @@
 
 	list tmp = [];
 
-	foreach (integer size, UML::disks, ``{
-	    // Proposal for uml installation
-	    tmp = add (tmp, sformat (_("Disk: %1 MB ubaX"), size)); // FIXME
+	integer i = 1;
+	foreach (integer s, UML::disks, ``{
+	    // Disk name for uml installation proposal
+	    // %1 is a number, %2 size of disk
+	    tmp = add (tmp, sformat (_("Disk %1: %2 MB"), i, s));
+	    i = i + 1;
 	});
 
 	ret = $[ "preformatted_proposal" :
