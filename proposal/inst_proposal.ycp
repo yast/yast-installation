@@ -27,7 +27,7 @@
     import "Popup";
     import "ProductControl";
     import "Language";
-    import "GetArgs";
+    import "GetInstArgs";
 
     define void retranslate_proposal_dialog();
     define void load_matching_submodules_list();
@@ -574,7 +574,7 @@
 	}
 
 	Wizard::SetContents(headline, vbox, help_text(),
-			    GetArgs::enable_back(),	// have_back_button
+			    GetInstArgs::enable_back(),	// have_back_button
 			    false			// have_next_button
 			    );
 	set_icon();
@@ -805,7 +805,7 @@ a proposal that is locked, ask your system administrator.</p>");
     //
 
     y2milestone( "Installation step #2" );
-    proposal_mode = GetArgs::proposal();
+    proposal_mode = GetInstArgs::proposal();
 
     //
     // Get submodule descriptions
