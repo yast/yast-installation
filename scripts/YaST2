@@ -36,6 +36,23 @@
 . /usr/lib/YaST2/bin/yast2-funcs
 
 
+function set_proxy()
+{
+    if grep -qs '^Proxy:.*' /etc/install.inf ; then
+
+	Proxy=$(awk ' /^Proxy:/ { print $2 }' < /etc/install.inf)
+	ProxyPort=$(awk ' /^ProxyPort:/ { print $2 }' < /etc/install.inf)
+	ProxyProto=$(awk ' /^ProxyProto:/ { print $2 }' < /etc/install.inf)
+
+	FullProxy="${ProxyProto}://${Proxy}:${ProxyPort}/"
+
+	export http_proxy=$FullProxy
+	export ftp_proxy=$FullProxy
+
+    fi
+}
+
+
 function log {
     echo "$@" >> $logdir/y2start.log 2>/dev/null
 }
@@ -127,6 +144,9 @@ echo -n > $logdir/y2start.log
 log env
 log echo "Y2DEBUG ($Y2DEBUG)"
 logmeminfo "1"
+
+# setup proxy
+set_proxy
 
 #
 #	if we a running on a s390 or s390x
