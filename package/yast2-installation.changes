@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Mar 19 15:47:08 CET 2004 - arvin@suse.de
+
+- omit skip/don't skip buttons in uml proposal
+
+-------------------------------------------------------------------
 Thu Mar 18 16:18:30 CET 2004 - arvin@suse.de
 
 - fixed update work flow setting (bug #36429 and #35007)

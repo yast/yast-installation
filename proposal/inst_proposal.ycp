@@ -15,7 +15,6 @@
  */
 
 {
-
     textdomain "installation";
 
     import "Arch";
@@ -462,7 +461,7 @@
 
 	term vbox = nil;
 
-	if ( proposal_mode == `ini )
+	if (proposal_mode == `ini || proposal_mode == `uml)
 	{
 	    vbox = `VBox(
 			 // Help message between headline and installation proposal / settings summary.
