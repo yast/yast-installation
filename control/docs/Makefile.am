@@ -1,43 +1,42 @@
 #
 # Makefile.am 
 #
-STYLESHEET_FO=$(ydatadir)/docbook/stylesheets/customize-fo.xsl
-STYLESHEET_HTML=$(ydatadir)/docbook/stylesheets/customize-html.xsl
-COMPONENT=control-doc
 
-htmldir = $(docdir)/$(COMPONENT)
+htmldir = $(docdir)/control-doc
+xml_files =  $(wildcard *.xml) 
 
-html: html/index.html html/susebooks.css
+html_DATA = $(wildcard html/*.html) \
+	    html/index.html \
+	    html/yast2docs.css
 
-pdf: clean.xml $(COMPONENT).pdf
+pdf: control-doc.pdf
 
-validate:
-	xmllint --xinclude --valid --noout $(COMPONENT).xml
+html/index.html: control-doc.xml
+	XML_CATALOG_FILES=@XML_CATALOG@\
+	@XSLTPROC@ @XSLTPROC_FLAGS@ --xinclude \
+	@STYLESHEET_HTML@ $<
 
-$(COMPONENT).fo: $(COMPONENT).xml
-	xsltproc --xinclude -o $(COMPONENT).fo $(STYLESHEET_FO)  $(COMPONENT).xml
+control-doc.fo: control-doc.xml
+	XML_CATALOG_FILES=@XML_CATALOG@ \
+	@XSLTPROC@ @XSLTPROC_FLAGS@ --xinclude \
+	-o $@ @STYLESHEET_PDF@  $<
 
-$(COMPONENT).pdf: $(COMPONENT).fo
-	fop -q $(COMPONENT).fo $(COMPONENT).pdf
+control-doc.pdf: control-doc.fo
+	fop -q $< $@
 
 
-html/susebooks.css:
-	cp $(ydatadir)/docbook/css/susebooks.css html
+html/yast2docs.css:
+	cp @STYLESHEET_CSS@ html
 	cp -a $(ydatadir)/docbook/images html
 
-clean.xml: control-section.xml
-	xmllint --xinclude --noent --dropdtd -o $@ $<
-	cp $@ control-section_mod.xml
-	
 
-html/index.html: clean.xml
-	xsltproc --xinclude $(STYLESHEET_HTML) $(COMPONENT).xml
+EXTRA_DIST = $(xml_files)
 
-html_DATA = $(wildcard html/*) 
-
-EXTRA_DIST = *.xml $(html_DATA)
-
-CLEANFILES = CATALOG.local *.out *.aux *.dvi *.tex *.ps *.pdf *.log *.dsl *.fo clean.xml
+CLEANFILES =  $(html_DATA)
 
 clean-local:
-	rm -rf html/*.html
+	rm -rf html
+
+install-data-local:
+	mkdir -p $(DESTDIR)$(htmldir)
+	cp -a $(srcdir)/html/images $(DESTDIR)$(htmldir)

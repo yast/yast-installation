@@ -15,5 +15,8 @@
 ## Nasty hack: xgettext doesn't work for XML files, so let's symlink it
 ( cd control; ln -sf control.xml control.glade )
 
+
+AX_CHECK_DOCBOOK
+
 ## and generate the output...
 @YAST2-OUTPUT@
