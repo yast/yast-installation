@@ -32,7 +32,7 @@
 
     if (ProductFeatures::language != "")
     {
-        string language = ProductFeatures::language
+        string language = ProductFeatures::language;
         // Set it in the Language module.
         Language::Set( language );
 

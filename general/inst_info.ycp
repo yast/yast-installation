@@ -13,7 +13,7 @@
     textdomain "installation";
 
     import "Label";
-    import "Misc";
+    import "Linuxrc";
     import "Report";
 
     string infofile = "/info.txt";		// copied there by linuxrc
@@ -84,7 +84,7 @@
 	    y2milestone ("user didn't accept info.txt");
 
 	    // tell linuxrc that we aborted
-	    Misc::WriteYaSTInf ($["Aborted" : "1"]);
+	    Linuxrc::WriteYaSTInf ($["Aborted" : "1"]);
 	    return `abort;
 	}
     }
