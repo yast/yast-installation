@@ -260,7 +260,7 @@ Please wait while the base system is being installed.
 
     // now check if we really need reiserfs/jfs and lvm_mod
 
-    list storage_initrdm =  Storage::GetRootInitrdModules();
+    list storage_initrdm = Storage::GetRootInitrdModules();
 
     foreach(`m, storage_initrdm,
     ``{
@@ -330,7 +330,6 @@ Please wait while the base system is being installed.
 
     if ( !Mode::update )
     {
-
 	if (Storage::GetRaidtabCreated())
 	{
 	    InjectFile ("/etc/raidtab");
@@ -425,7 +424,8 @@ Please wait while the base system is being installed.
 
     Progress::Title(_("Updating kernel module dependencies"));
 
-    ModulesConf::Save();
+    ModulesConf::Save ();
+    ModulesConf::RunDepmod ();
 
     if ( !Mode::update )
     {
@@ -437,21 +437,16 @@ Please wait while the base system is being installed.
 	    SCR::Write (.etc.inittab, nil);
 	}
     }
-    else	// normal install
+    else
     {
 	// Set default runlevel cause inittab will be overwritten by
 	// installing aaa_base
 
 	integer last_runlevel = (Update::last_runlevel != -1) ? Update::last_runlevel : 3;
 
-	y2milestone("Set run-level to %1", last_runlevel );
-
-	SCR::Execute(.target.bash,
-		     "/bin/sed -e 's/^id:[0-9sSa-cA-C]*:initdefault:/id:"
-		     + last_runlevel + ":initdefault:/' /etc/inittab >"
-		     + tmpdir + "/inittab && cp "
-		     + tmpdir + "/inittab /etc");
-	SCR::Execute(.target.remove, tmpdir + "/inittab");
+	y2milestone ("setting default runlevel to %1", last_runlevel);
+	SCR::Write (.etc.inittab.id, sformat ("%1:initdefault:", last_runlevel));
+	SCR::Write (.etc.inittab, nil);
 
 	if ( ! Arch::ppc )
 	{
