@@ -477,6 +477,11 @@ textdomain="control"
             </defaults>
             <modules  config:type="list">
                 <module>
+	            <label>Language</label>
+                    <name>info</name>
+                    <arguments>false,true</arguments>
+                </module>
+                <module>
 	            <label>Auto-Install Settings</label>
                     <name>autoinit</name>
                     <archs>all</archs>
