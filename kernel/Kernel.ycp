@@ -110,7 +110,7 @@
 		{
 		    Boot::VgaType = param_value_list[1]:"";
 		}
-		else if (!contains (discardlist, tolower(param_value_list[0]:"")))
+		else if (!contains (discardlist, param_value_list[0]:""))
 		{
 		    AddCmdLine (param_value_list[0]:"", param_value_list[1]:"");
 		}
