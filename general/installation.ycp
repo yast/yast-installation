@@ -39,7 +39,7 @@
 
     import "Wizard";
     import "Report";
-
+    import "Hooks";
 
     include "installation_ui.ycp";
     include "partitioning/partition_defines.ycp";
@@ -581,9 +581,16 @@ will look different than in the manual.");
 	    Wizard::ClearContents();
 	}
 
+	// --------------------------------------
 	// Call the wizard dialog
+
 	y2milestone( "Calling %1", argterm );
+
+	Hooks::Checkpoint ("" + module_name, true);		// entry hook, (""+symbol is a symbol->string conversion)
+
 	symbol result = WFM::CallFunction (argterm);
+
+	Hooks::Checkpoint ("" + module_name, false);		// exit hook
 
 
 	Installation::immediate_prepdisk = false; //FIXME !

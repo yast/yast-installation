@@ -1,0 +1,40 @@
+/**
+ * File:	modules/Hooks.ycp
+ * Package:	yast2
+ * Summary:	Provide debug hooks during installation
+ * Authors:	Klaus Kaempf <kkaempf@suse.de>
+ *
+ * $Id$
+ */
+
+{
+
+    module "Hooks";
+
+    // void Checkpoint (string filename, boolean at_entry)
+    // called whenever an inst_*.ycp file is called during
+    // installation.
+    //
+    // checks if /tmp/<filename> exists and pops up a "Entry: <filename>"
+    // or "Exit: <filename>" box
+    //
+    // filename == name of .ycp file
+    // at_entry == true before call of file
+    //		== false after call of file
+
+    global define void Checkpoint (string filename, boolean at_entry) ``{
+	if (WFM::Read (.local.size, "/tmp/"+filename) >= 0)
+	{
+	    include "ui/common_popups.ycp";
+	    if (at_entry)
+	    {
+		UI::MessagePopup (sformat ("Entry: %1", filename));
+	    }
+	    else
+	    {
+		UI::MessagePopup (sformat ("Exit: %1", filename));
+	    }
+	}
+    }
+
+}
