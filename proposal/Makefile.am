@@ -2,7 +2,7 @@
 # Makefile.am for installation/proposal
 #
 
-data_DATA = 					\
+ydata_DATA = 					\
 	installation-proposals.ycp		\
 	hw-config-proposals-home-pc.ycp		\
 	hw-config-proposals-networked-pc.ycp	\
@@ -16,4 +16,4 @@ client_DATA =					\
 
 doc_DATA = proposal-API.txt
 
-EXTRA_DIST = $(client_DATA) $(data_DATA) $(doc_DATA)
+EXTRA_DIST = $(client_DATA) $(ydata_DATA) $(doc_DATA)
