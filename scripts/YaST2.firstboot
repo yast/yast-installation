@@ -311,7 +311,9 @@ EOF
 fi
 
 # kill shell on second virtual console
-test -z "$SPID" || kill $SPID &>/dev/null
+if test ! -z "$SPID" ; then
+    kill -KILL $SPID &>/dev/null
+fi
 
 # kill VNC server
 killall Xvnc &>/dev/null

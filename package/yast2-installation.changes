@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Feb 27 12:36:16 CET 2003 - arvin@suse.de
+
+- kill (with SIGKILL) shell on tty2 after installation (bug #24404)
+
+-------------------------------------------------------------------
 Wed Feb 26 17:17:43 CET 2003 - kkaempf@suse.de
 
 - pass language to packagemanager (#23828)
