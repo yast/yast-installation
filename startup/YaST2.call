@@ -191,6 +191,11 @@ function prepare_for_vnc () {
 	set_splash 100
 
 	#=============================================
+	# Setup y2base options
+	#---------------------------------------------
+	Y2_QT_ARGS="--fullscreen --noborder --auto-fonts"
+
+	#=============================================
 	# Setup VNC server and start it
 	#---------------------------------------------
 	setupVNCAuthentication
