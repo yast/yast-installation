@@ -331,8 +331,6 @@ Please wait while the base system is being installed.
 
     Progress::NextStep ();
 
-    // progress stage title
-
     if ( !Mode::update )
     {
 	// progress stage title
@@ -342,6 +340,17 @@ Please wait while the base system is being installed.
 	SCR::Write (.sysconfig.windowmanager, nil);
     }
 
+    // --------------------------------------------------------------
+    // setup fonts
+
+    if (SCR::Read (.target.size, "/sbin/conf.d/SuSEconfig.fonts") != -1)
+    {
+	// progress stage title
+	Progress::Title (_("Initializing fonts"));
+
+	if (SCR::Execute (.target.bash, "/sbin/SuSEconfig --module fonts") != 0)
+	    y2error ("SuSEconfig --module fonts failed");
+    }
 
     // --------------------------------------------------------------
     // console and /etc/initab (if serial console)
