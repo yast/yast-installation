@@ -42,7 +42,6 @@ Style *        HilightFore white, HilightBack black
 Style *        ForeColor black, BackColor white
 Style *        BorderColorset 0
 Style *        HilightBorderColorset 0
-Style *        NoTitle
 
 #=============================
 # Title Style
@@ -74,3 +73,5 @@ AddToFunc Move-or-Iconify	I Raise
 
 AddToFunc Resize-or-Raise	I Raise
 +				M Resize
+
+AddToFunc InitFunction		I Module FvwmCommandS
