@@ -180,6 +180,14 @@ Please wait while the base system is being installed.
                 Installation::destdir + "/var/lib/YaST2/");
     }
 
+    // on SGI Altix add fetchop and mmtimer to MODULES_LOADED_ON_BOOT
+    if (SCR::Read (.target.size, "/proc/sgi_sn") > 0)
+    {
+	y2milestone ("found SGI Altix, adding fetchop and mmtimer");
+	Kernel::AddModuelesToLoad ("fetchop");
+	Kernel::AddModuelesToLoad ("mmtimer");
+    }
+
 
     // --------------------------------------------------------------
     //   stop SCR
