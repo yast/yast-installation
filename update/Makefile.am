@@ -13,7 +13,6 @@ client_DATA = \
 	inst_sw_update.ycp			\
 	inst_rpmupdate.ycp			\
 	inst_updateControl.ycp			\
-	inst_update.ycp				\
 	inst_upgrade.ycp			\
 	inst_kernel.ycp				\
 	inst_prepost_update.ycp			\
