@@ -579,7 +579,7 @@ with the load address of your root DASD.
 
     // --------------------------------------------------------------
     // write network settings to installed system
-    if (Arch::s390 || Mode:vnc || Mode::usessh)
+    if (Arch::s390 || Mode::vnc || Mode::usessh)
     {
 	WFM::Execute (.local.bash, "/create_interface " + Installation::destdir);
     }
@@ -589,7 +589,7 @@ with the load address of your root DASD.
     // copy the ssh files to the fresh installed system
     if (!Mode::update && Mode::usessh)
     {
-	WFM::Execute (.local.bash, "umask 077 ; awk  -F : ' /^root:/ { print $1":"$2 }' < /etc/shadow > "
+	WFM::Execute (.local.bash, "umask 077 ; awk  -F : ' /^root:/ { print $1\":\"$2 }' < /etc/shadow > "
 		+ Installation::destdir + "/tmp/rootpwd.txt");
 	WFM::Execute (.target.bash, "cat /tmp/rootpwd.txt | /usr/sbin/chpasswd -e ; rm -fv /tmp/rootpwd.txt");
     	WFM::Execute (.local.bash, "cp -a /etc/ssh/*key* " + Installation::destdir + "/etc/ssh/");
