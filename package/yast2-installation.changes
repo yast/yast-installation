@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Sep 11 00:42:12 CEST 2002 - kkaempf@suse.de
+
+- remove obsolete package data after update
+- release source (CD) and target (rpmdb)
+- 2.6.57
+
+-------------------------------------------------------------------
 Tue Sep 10 16:15:09 CEST 2002 - arvin@suse.de
 
 - added more provides/obsoletes (bug #19325)
