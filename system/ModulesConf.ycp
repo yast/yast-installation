@@ -92,8 +92,8 @@
 		list install_alias_split = splitstring (install_alias, " ");
 		if (size (install_alias_split) == 2)
 		{
-		    SCR::Write (.modules.alias, select (install_alias_split, 1, ""),
-				select (install_alias_split, 0, ""));
+		    SCR::Write (.modules.alias, install_alias_split[1]:"",
+				install_alias_split[0]:"");
 		    modules_conf_changed = true;
 		}
 	    }
