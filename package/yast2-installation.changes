@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Mar 24 11:13:46 CET 2004 - gs@suse.de
+
+- workaround beta3 pre bug: deactivate Hooks::Run 
+  (causes crash after inst_finish)
+- V 2.9.41
+
+-------------------------------------------------------------------
 Mon Mar 22 20:32:41 CET 2004 - nashif@suse.de
 
 - Execute features client if variables are set in control file
