@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Mar 15 16:59:19 CET 2005 - ms@suse.de
+
+- IMPORTANT: fixed locale setup (#72145)
+
+-------------------------------------------------------------------
 Tue Mar 15 09:44:32 CET 2005 - jsrain@suse.cz
 
 - enable netdaemon if GNOME is default desktop (#72018)
