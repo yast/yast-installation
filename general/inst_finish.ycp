@@ -183,7 +183,7 @@ Please wait while the base system is being installed.
     // if VNC, copy setup data
     if (Mode::vnc)
     {
-	SCR::Execute (.target.bash,"/bin/cp -a /root/.vnc " + Installation::destdir + "/root");
+	WFM::Execute (.local.bash,"/bin/cp -a /root/.vnc " + Installation::destdir + "/root");
     }
 
     // Check if X11 package is installed.
