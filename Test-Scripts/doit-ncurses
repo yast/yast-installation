@@ -1,5 +1,6 @@
 #!/bin/sh
 
 PATH=$PATH:/usr/lib/YaST2/bin
-cd /usr/lib/YaST2/clients
+cd /usr/share/YaST2/clients
+
 y2base installation.ycp '("test")' '("initial")' ncurses -geometry 800x600
