@@ -666,6 +666,11 @@ with the load address of your root DASD.
 	    result = (integer) SCR::Execute(.target.bash, sformat("/bin/cp %1 %2/linux", kernel_name, mpoint));
 	    y2debug("kernel copy result: %1", result);
 
+	    // copy mtab (to get root device name)
+	    result = (integer) SCR::Execute(.target.bash, sformat("/bin/cp /etc/mtab %1", mpoint));
+	    y2debug("/etc/mtab copy result: %1", result);
+
+
 	    boolean unmounted = (boolean)SCR::Execute(.target.umount, mpoint);
 	    y2milestone("hostfs unmounted: %1", unmounted);
 
