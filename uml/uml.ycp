@@ -29,12 +29,7 @@
 
     if (ret == `next)
     {
-	// WFM::CallFunction ("inst_kickoff", [false, false]);
-	// WFM::CallFunction ("inst_rpmcopy", [false, false]);
-
-	// Wizard::OpenNextBackDialog();
-	// WFM::CallFunction ("inst_suseconfig", [false, false]);
-	// Wizard::CloseDialog();
+	WFM::CallFunction ("inst_uml_kickoff", [false, false]);
     }
 
     Wizard::CloseDialog ();

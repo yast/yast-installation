@@ -18,13 +18,13 @@
 
     // build and show dialog
 
-    Wizard::OpenAcceptDialog();
+    Wizard::OpenAcceptDialog ();
 
     term contents = `HVSquash(
 			      `VBox(
 				    `Left(`ComboBox(`id(`memory), `opt(`editable),
 						    // combobox label
-						    _("Memory size:"),
+						    _("Memory size in MB:"),
 						    ["128", "256", "512", "1024", "2048"])),
 				    `Left(`ComboBox(`id(`ncpus), `opt(`editable),
 						    // combobxo label
@@ -40,6 +40,9 @@
     Wizard::SetContents (title, contents, help_text, (boolean) WFM::Args(0),
 			 (boolean) WFM::Args(1));
 
+    UI::ChangeWidget (`id(`memory), `ValidChars, "0123456789");
+    UI::ChangeWidget (`id(`ncpus), `ValidChars, "0123456789");
+
     UI::ChangeWidget (`id(`memory), `Value, tostring (UML::memory_size));
     UI::ChangeWidget (`id(`ncpus), `Value, tostring (UML::number_of_cpus));
 
@@ -47,7 +50,7 @@
 
     while (true)
     {
-	ret = Wizard::UserInput();
+	ret = Wizard::UserInput ();
 
 	if (ret == `abort && Popup::ConfirmAbort (`painless))
 	    break;

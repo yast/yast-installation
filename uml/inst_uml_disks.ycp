@@ -1,0 +1,99 @@
+/**
+ * Module: 	inst_uml_disks.ycp
+ *
+ * Authors:	Arvin Schnell <arvin@suse.de>
+ *
+ * Purpose:	Ask the user for virtual disks for uml.
+ */
+
+{
+    textdomain "installation";
+
+    import "UML";
+    import "Wizard";
+    import "Popup";
+
+
+    // screen title for uml disks
+    string title = _("Virtual Disks");
+
+    // build and show dialog
+
+    Wizard::OpenAcceptDialog ();
+
+    term contents = `VBox(
+			  `VBox(
+				`Left(`Table(`id(`disks),
+					     `header (_("Size")),
+					     []))
+				),
+			  `HBox(
+				`PushButton (`id (`add), _("Add")),
+				`PushButton (`id (`edit), _("Edit")),
+				`PushButton (`id (`delete), _("Delete"))
+				)
+			  );
+
+    // help text for backup dialog during update 1/7
+    string help_text = _("<p>FIXME</p>
+");
+
+    Wizard::SetContents (title, contents, help_text, (boolean) WFM::Args(0),
+			 (boolean) WFM::Args(1));
+
+    list disks = [];
+    foreach (integer s, UML::disks, ``{
+	disks = add (disks, `item (`id(size (disks)), s));
+    });
+    UI::ChangeWidget (`id(`disks), `Items, disks);
+
+    any ret = nil;
+
+    while (true)
+    {
+	ret = Wizard::UserInput ();
+
+	if (ret == `abort && Popup::ConfirmAbort (`painless))
+	    break;
+
+	if (ret == `cancel || ret == `back)
+	    break;
+
+	if (ret == `add)
+	{
+	    disks = add (disks, `item (`id (size (disks)), size (disks) * 1000));
+	    UI::ChangeWidget (`id(`disks), `Items, disks);
+	}
+
+	if (ret == `edit)
+	{
+	}
+
+	if (ret == `delete)
+	{
+	    integer i = (integer) UI::QueryWidget (`id(`disks), `CurrentItem);
+	}
+
+	if (ret == `next)
+	{
+	    if (size (disks) <= 0)
+	    {
+		// error popup
+		string message = _("At least one disk is required.");
+		Popup::Message (message);
+		continue;
+	    }
+
+	    // UML::disks = [];
+	    // foreach (integer s, disks, ``{
+	    // UML::disks = add (UML::disks, s);
+	    //});
+
+	    break;
+	}
+    }
+
+    Wizard::CloseDialog ();
+
+    return ret;
+}

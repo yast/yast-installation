@@ -14,5 +14,5 @@
 
     global integer number_of_cpus = 1;
 
-    global list <integer> disks = [ 1024 ];
+    global list <integer> disks = [ 1024, 512, 2048 ];
 }

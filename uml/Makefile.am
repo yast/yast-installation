@@ -7,7 +7,10 @@ module_DATA =				\
 
 client_DATA = uml.ycp			\
 	proposal_uml_options.ycp	\
-	proposal_uml_disks.ycp
+	proposal_uml_disks.ycp		\
+	inst_uml_options.ycp		\
+	inst_uml_disks.ycp		\
+	inst_uml_kickoff.ycp
 
 desktop_DATA = uml.desktop
 
