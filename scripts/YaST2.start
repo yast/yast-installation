@@ -36,7 +36,7 @@ LANGUAGE=en_US
 [ -f $infofile ] && LANGUAGE=`sed -n 's/^LANGUAGE \([^ ]*\)/\1/p' $infofile`
 
 # if an entry 'Console:  ....' exists in install.inf,
-# YaST runs on a console which is connected to a serial port 
+# YaST runs on a console which is connected to a serial port
 if [ "$Console" ]; then
     if testutf8 ; [ $? = 2 ] ; then
         # append UTF-8
@@ -60,7 +60,7 @@ grep -iq iseries /proc/cpuinfo || { echo >/dev/tty10 ; }
 for i in \
   Language Font Locale Unicodemap Screenmap Fontmagic\
   Sourcemounted Display Cdrom Bootmode SMP Mousedevice MouseXF86 Floppydisk\
-  YaST2update YaST2serial Textmode Keyboard Framebuffer\
+  YaST2update Textmode Keyboard Framebuffer\
   Netdevice IP Netmask Gateway Nameserver Server Serverdir X11i\
   LANG TIMEZONE MEDIA XServer XVersion XBusID XkbRules XkbModel XkbLayout\
   USB HasPCMCIA VNC VNCpassword UseSSH
@@ -228,8 +228,8 @@ fi
 
 # Calculate reasonable log file size based on free disk space:
 # We want to fill the RAM disk from which we are running no more
-# than half with y2log files. With a maximum of 5 log files, each 
-# should get no more than 1/10 of the free disk space, but no more 
+# than half with y2log files. With a maximum of 5 log files, each
+# should get no more than 1/10 of the free disk space, but no more
 # than 5000 (5 MB) per log file in any case.
 #
 # Sample 'df' output:
