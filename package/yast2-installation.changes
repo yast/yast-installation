@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Feb 12 15:23:00 CET 2003 - kkaempf@suse.de
+
+- remove call to mkinfodir (#23588)
+
+-------------------------------------------------------------------
 Wed Feb 12 12:03:24 CET 2003 - fehr@suse.de
 
 - Write keytable info to yast.inf again in inst_finish.ycp 
