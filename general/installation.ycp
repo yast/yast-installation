@@ -511,6 +511,7 @@ will look different than in the manual.");
 
  //===================================================================================================================================================
 
+ [ `continue, `inst_netprobe	    (false, false),      true,										, false],
  [ `continue, `inst_rpmcopy	    (false, false),      true,		!autoconf && ! live_eval && ! test_mode				, false],
  [ `continue, `inst_language	    (false, true),       true,					  screen_shot_mode &&    ! update_mode  , false],
  [ `continue, `inst_root	    (false, true),       true,						! autoinst &&    ! update_mode	, true ],
