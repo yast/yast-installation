@@ -583,6 +583,7 @@ will look different than in the manual.");
 	{
 	    SCR::Execute(.target.remove, "/var/lib/YaST2/update_mode");
 	}
+	SCR::Execute(.target.remove, "/var/lib/YaST2/runme_at_boot");
     }
 
     UI::CloseDialog();
