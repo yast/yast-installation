@@ -64,9 +64,9 @@
 	return result;
     };
 
-    map user_settings	= SCR::Read (.target.ycp, "/var/lib/YaST2/settings.ycp");
-    map infoMap		= SCR::Read (.target.ycp, "/var/lib/YaST2/infomap.ycp");
-    string version	= infoMap["produktversion"]:"8.0";
+    // FIXME, must be TargetProductData
+    map productdata = Pkg::SourceProductData(0);
+    string version = productdata["productversion"]:"novers";
 
     string language	= UI::GetLanguage(true);
     boolean is_mounted	= false;

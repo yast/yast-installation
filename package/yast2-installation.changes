@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Aug 27 23:16:31 CEST 2002 - kkaempf@suse.de
+
+- init packagemanager properly
+- drop all references to old data (suse/setup/descr/info)
+
+-------------------------------------------------------------------
 Tue Aug 27 12:10:15 CEST 2002 - arvin@suse.de
 
 - load firewire support during installation (bug #18379)

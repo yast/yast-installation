@@ -33,12 +33,6 @@
 
     global string sourcedir		= "/var/adm/mount";
 
-    // where the package description are
-    global string descrsourcedir	= sourcedir+"/suse/setup/descr";
-
-    // where the package descriptions go
-    global string descrdestdir		= "/var/adm/current_package_descr";
-
     global string yastdir		= "/var/lib/YaST";
     global string yast2dir		= "/var/lib/YaST2";
 
@@ -46,9 +40,6 @@
 
     // see installation.ycp
     global boolean immediate_prepdisk	= false;
-
-    // Data from suse/setup/descr/info (installation source related)
-    global map infoMap			= $[];
 
     // default language for the installation (from installation source)
     global string defaultLanguage	= "en_US";
@@ -60,11 +51,6 @@
     // see general/installation.ycp
     global boolean shown_text_mode_warning = false;
 
-    global define void Save ()
-    ``{
-	SCR::Write (.target.ycp, [Installation::yast2dir + "/infomap.ycp", 0600], infoMap);
-	return;
-    }
 
     //---------------------------------------------------------------
     // constructor
@@ -76,7 +62,6 @@
 
 	if (Mode::cont)
 	{
-	    infoMap    = SCR::Read (.target.ycp, ["/var/lib/YaST2/infomap.ycp", $[]]);
 	    destdir    = "/";
 	}
 	else if (Mode::initial)
@@ -84,9 +69,8 @@
 	    destdir = "/mnt";
 	}
 
-	// set defaultLanguage from suse/setup/descr/info file
-
-	defaultLanguage = infoMap["lang"]:"en_US";
+	map productdata = Pkg::SourceProductData(0);
+	defaultLanguage = productdata["language"]:"en_US";
 
 	// strip encoding if present
 

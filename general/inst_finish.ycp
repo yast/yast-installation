@@ -11,8 +11,6 @@
  *
  * Writes:
  * [target] /var/lib/YaST2/runme_at_boot	run yast2 after initial boot
- * [target] /var/lib/YaST2/settings.ycp      save settings
- * [target] /var/lib/YaST2/infomap.ycp	infoMap (descr/info)
  * SCR::Write (.etc.shadow.root,
  */
 {
@@ -511,8 +509,6 @@ Please wait while the base system is being installed.
 	SCR::Execute (.target.bash, "/sbin/vgscan");
 	}
     Boot::Save ();		// save /etc/sysconfig parameters
-
-    Installation::Save();
 
     // --------------------------------------------------------------
     // driver update ?!
