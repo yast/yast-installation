@@ -41,7 +41,7 @@
 
     boolean retval = false;
     list current_sel = Pkg::GetSelections (`installed, "base");
-    if (current_sel == nil || curret_sel == [])
+    if (current_sel == nil || current_sel == [])
 	current_sel = Pkg::GetSelections (`selected, "base");
     if (current_sel == nil)
 	current_sel = [];
