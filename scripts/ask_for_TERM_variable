@@ -60,3 +60,7 @@ case $SELECTION in
   esac
 done 
 
+echo ""
+echo ""
+echo "Please wait while YaST2 will be started"
+echo ""
