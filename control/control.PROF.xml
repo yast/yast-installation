@@ -152,6 +152,7 @@ textdomain="control"
             <stage>initial</stage>
             <modules  config:type="list">
                 <module>
+	            <label>Language</label>
                     <name>info</name>
                 </module>
                 <module>
@@ -165,6 +166,7 @@ textdomain="control"
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
                 <module>
+	            <label>Language</label>
                     <name>checkmedia</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
@@ -175,26 +177,28 @@ textdomain="control"
                     <proposal>initial</proposal>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>do_resize</name>
                     <update config:type="boolean">false</update>
                     <archs>i386,x86_64,ia64</archs>
 	            <label>Perform Installation</label>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>prepdisk</name>
 	            <label>Perform Installation</label>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>kickoff</name>
-	            <label>Perform Installation</label>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
-	            <label>Perform Installation</label>
                 </module>
                 <module>
-                    <name>finish</name>
 	            <label>Perform Installation</label>
+                    <name>finish</name>
                 </module>
             </modules>
         </workflow>
@@ -311,9 +315,11 @@ textdomain="control"
             </defaults>
             <modules  config:type="list">
                 <module>
+	            <label>Perform Installation</label>
                     <name>netsetup</name>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
                 </module>
                 <module>
