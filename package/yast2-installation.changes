@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Apr  1 15:44:12 CEST 2003 - jsrain@suse.de
+
+- added init= kernel parameter to discard list (#25478)
+
+-------------------------------------------------------------------
 Tue Mar 18 13:37:15 CET 2003 - kkaempf@suse.de
 
 - drop "insserv apache" again, opens port 80

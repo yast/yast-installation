@@ -104,6 +104,7 @@
 	  "usessh", "sshpassword", "nosshkey",
 	  "rescue",
 	  "repair",
+	  "init",
 	  "info"
 	];
 
