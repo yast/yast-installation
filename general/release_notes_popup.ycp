@@ -62,6 +62,13 @@
 	return nil;
     }
 
+    text =
+// beginning of the rich text with the release notes
+_("<b>These are the release notes done at first initial release which are
+part of the installation media.During installation, if a connection
+to the Internet is available, you can update the release notes
+from the SUSE Linux webserver.</b>") + text;
+
     term contents = `HBox (
 	`VSpacing (35),
 	`VBox (
