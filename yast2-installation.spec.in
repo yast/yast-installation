@@ -39,7 +39,6 @@ This controls the system installation.
 @yncludedir@/installation
 @moduledir@/*.ycp
 @moduledir@/*.ybc
-@configdir@/*.y2cc
 @desktopdir@/*.desktop
 @ydatadir@/*.ycp
 
