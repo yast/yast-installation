@@ -156,7 +156,7 @@ if [ -x /etc/init.d/hotplug -a -f "$FSTAB_TMP" -a "$USB" = yes ] ; then
   while read LINE; do
     read DEV MP FST OPT REST < <(echo $LINE)
     case "$DEV" in
-      none|usbdevfs)
+      none|usbdevfs|usbfs)
 	if [ "$MP" = "/proc/bus/usb" -a "$OPT" != "noauto" ] ; then
 	  echo "# $LINE"
 	  WRITE=yes
