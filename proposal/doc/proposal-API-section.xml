@@ -1,0 +1,166 @@
+<section id="proposal_api">
+  <title>
+    API for YaST2 installation proposal
+  </title>
+
+  <section id="proposal_api_motivation">
+    <title>Motivation</title>
+
+    <para>
+      After five releases, YaST2 is now smart enough to make reasonable proposals for
+      (near) every installation setting, thus it is no longer necessary to ask the
+      user that many questions during installation: Most users simply hit the [next]
+      button anyway.
+    </para>
+
+    <para>
+      Hence, YaST2 now collects all the individual proposals from its submodules and
+      presents them for confirmation right away. The user can change each individual
+      setting, but he is no longer required to go through all the steps just to
+      change some simple things. The only that (currently) really has to be queried
+      is the installation language - this cannot reasonably be guessed (yet?).
+    </para>
+
+    <para>
+      The new YaST2 installation includes the following steps:
+    </para>
+    <itemizedlist>
+      <listitem><para>(Minimal) hardware probing - no user interaction
+	  required</para></listitem>
+      <listitem><para>Language selection - user picks installation
+	  language</para></listitem>
+
+      <listitem><para>Installation proposal - very much like the old installation summary just
+	  before the real installation started, only this time the user CAN change
+	  settings by clicking into the summary (or via a separate menu as a
+	  fallback).</para></listitem>
+
+      <listitem><para>Create / format partitions according to proposal / user selection - no user
+	  interaction required</para></listitem>
+
+      <listitem><para>Install software packages from CD / DVD / other installation
+	  media</para></listitem>
+    </itemizedlist>
+
+    <para>
+      After this, all that is remained left is basic system configuration like:
+    </para>
+
+    <itemizedlist>
+      <listitem><para>X11</para></listitem>
+      <listitem><para>Network interface(s)</para></listitem>
+      <listitem><para>Network services</para></listitem>
+      <listitem><para>Additional hardware (printer, sound card, scanner, ...)</para></listitem>
+    </itemizedlist>
+
+  </section>
+  <section id="proposal_api_overview">
+    <title>Overview</title>
+    <para>YaST2 installation modules should cooperate with the main program in a
+      consistent API. General usage:</para>
+
+    <itemizedlist>
+
+      <listitem><para>inst_proposal (main program) creates empty dialog with
+	  RichText widget</para></listitem>
+
+      <listitem><para>inst_proposal calls each sub-module in turn to
+	  make proposal</para></listitem>
+
+      <listitem><para>user may choose to change individual settings
+	  (i.e., clicks on a hyperlink)</para></listitem>
+
+      <listitem><para>inst_proposal starts that module's sub-workflow which runs independently.
+	  After this, inst_proposal tells all subsequent (all?) modules to check
+	  their states and return whether a change of their proposal is necessary
+	  after the user interaction.</para></listitem>
+
+      <listitem><para>main program calls each sub-module to write the settings to the
+	  system</para></listitem>
+    </itemizedlist>
+
+
+  </section>
+  <section id="proposal_api_dispatcher_interface">
+    <title>The Dispatcher Interface</title>
+    <para>
+      Each submodule provides a function dispatcher that can be called with
+      'CallFunction()'. The function to be called is passed as a parameter to this
+      dispatcher. Parameters to the function are passed as another parameter in a
+      map.  The result of each call is a map, the contents of which depend on the function
+      called.</para>
+    <para>
+
+      The reason for this additional overhead is to provide extensibility and
+      reusability for the installation workflow: A list of submodules to be called is
+      read from file. This requires, however, that no explicit 'mod::func()' calls
+      are used in 'inst_proposal.ycp'. Rather, the list contains the name of the
+      submodule. Since each submodule is required to provide an identical API, this
+      is sufficient.</para>
+
+    <example>
+      <title>Proposal Example</title>
+      <para>
+	Proposal is to call
+      </para>
+
+      <itemizedlist>
+	<listitem><para>input_devices (keyboard, mouse)</para></listitem>
+	<listitem><para>partitioning</para></listitem>
+	<listitem><para>software_selection</para></listitem>
+	<listitem><para>boot_loader</para></listitem>
+	<listitem><para>timezone</para></listitem>
+      </itemizedlist>
+
+
+      <para>inst_proposal calls</para>
+      <programlisting>
+	map result = CallFunction (input_devices( "MakeProposal", $[ "force_reset"     : false,
+	"language_changed": false ] ) );
+	map result = CallFunction (partitioning ( "MakeProposal", $[ "force_reset"	  : false,
+	"language_changed": false ] ) );
+	...
+
+      </programlisting>
+      <para>
+	If the user clicks on the hyperlink on "input_devices" in the proposal display,
+	inst_proposal calls:</para>
+
+      <programlisting>
+	
+	map result = CallFunction (input_devices( "AskUser", $[ "has_next": true ] ) );
+      </programlisting>
+      </example>
+
+  </section>
+  <section id="proposal_api_functions">
+    <title>API functions</title>
+    <note>
+      <para>
+	If any parameter is marked as "optional", it should only be specified if
+	it contains a meaningful value. Don't add it with a 'nil' value.</para>
+    </note>
+
+    <para>The dispatcher provides the following functions:</para>
+
+    <itemizedlist>
+      <listitem><link
+	  linkend="proposal_MakeProposal">MakeProposal</link></listitem>
+      <listitem><link linkend="proposal_AskUser">AskUser</link></listitem>
+      <listitem><link
+	  linkend="proposal_Description">Description</link></listitem>
+      <listitem><link linkend="proposal_Write">Write</link></listitem>
+    </itemizedlist>    
+  </section>
+  <section id="proposal_api_dummy_proposal">
+    <title>Dummy Proposal</title>
+    <programlisting>
+
+      <xi:include href="dummy_proposal.ycp" parse="text"
+	xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+    </programlisting>
+  </section>
+  
+
+</section>
