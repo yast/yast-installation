@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# vim: syntax=sh
+#
+# login via ssh and run this script
+# 
+test -f /var/lib/YaST2/runme_at_boot || {
+#
+cat <<EOF
+
+It seems that YaST2 was already started after the inital boot.
+exiting now.
+
+EOF
+exit 1
+}
+#
+cat <<EOF
+
+	continue with YaST2 installation ...
+
+EOF
+#
+/usr/lib/YaST2/bin/YaST2 installation continue ; ec=$?
+#
+cat <<EOF
+
+	continue with booting ...
+
+	You can login with the (new?) root password or the
+	new created user accound in a few seconds ...
+
+EOF
+#
+rm -fv /var/lib/YaST2/runme_at_boot 
+

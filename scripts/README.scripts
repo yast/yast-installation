@@ -22,3 +22,12 @@ This script is run by /etc/init.d/boot if the file
 /var/lib/YaST2/runme_at_boot exists.  It is responsible for starting YaST2
 again after the initial boot to install any leftover packages and
 finishing the installation.
+
+YaST2.sshinstall
+----------------
+
+This script is used for ssh installations, and started directly by the admin.
+YaST2.firstboot will configure the network, start ssh and loop around the file
+/var/lib/YaST2/runme_at_boot. It will wait until the file disappears, then 
+continue with booting.
+

@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Aug 19 17:58:45 CEST 2002 - olh@suse.de
+
+- implemented starting of ssh in installed system (needed for
+  some kinds of remote installation)
+
+-------------------------------------------------------------------
 Mon Aug 19 17:53:40 CEST 2002 - arvin@suse.de
 
 - don't probe for mouse, floppy and usb devices on s390

@@ -98,7 +98,7 @@ Please wait while the base system is being installed.
 	PackageSelectionIO::savePackageSelection( false );
     }
 
-    // window manager setting    
+    // window manager setting
     // default_wm will be used below !
 
     string default_wm = "kde";
@@ -178,7 +178,7 @@ Please wait while the base system is being installed.
     // if VNC, copy setup data
     if (Mode::vnc)
     {
-	WFM::Execute (.local.bash,"/bin/cp -a /root/.vnc " + Installation::destdir + "/root");
+	WFM::Execute (.local.bash, "/bin/cp -a /root/.vnc " + Installation::destdir + "/root");
     }
 
     // Check if X11 package is installed.
@@ -268,7 +268,7 @@ Please wait while the base system is being installed.
     }
 
     // Override linuxrc settings in autoinst mode
-    
+
     if ( Mode::autoinst )
     {
 	if (AutoInstall::ForceBoot && Mode::hardBoot)
@@ -579,9 +579,20 @@ with the load address of your root DASD.
 
     // --------------------------------------------------------------
     // write network settings to installed system
-    if (Arch::s390)
+    if (Arch::s390 || Mode:vnc || Mode::usessh)
     {
-	WFM::Execute (.local.bash,"/create_interface " + Installation::destdir);
+	WFM::Execute (.local.bash, "/create_interface " + Installation::destdir);
+    }
+
+    // --------------------------------------------------------------
+    // copy the root password for root user from inst-sys to the installed system
+    // copy the ssh files to the fresh installed system
+    if (!Mode::update && Mode::usessh)
+    {
+	WFM::Execute (.local.bash, "umask 077 ; awk  -F : ' /^root:/ { print $1":"$2 }' < /etc/shadow > "
+		+ Installation::destdir + "/tmp/rootpwd.txt");
+	WFM::Execute (.target.bash, "cat /tmp/rootpwd.txt | /usr/sbin/chpasswd -e ; rm -fv /tmp/rootpwd.txt");
+    	WFM::Execute (.local.bash, "cp -a /etc/ssh/*key* " + Installation::destdir + "/etc/ssh/");
     }
 
     // --------------------------------------------------------------
