@@ -327,14 +327,15 @@
 
     /**
      * Load a list of submodules matching the current internal states
+     * @param mode `ini, `net, or `hw to indicate which list to use
      *
      * @return submodules_list	list of submodule names (strings)
      **/
-    define list load_matching_submodules_list() ``{
+    define list load_matching_submodules_list( symbol mode ) ``{
 
 	list submodules = [];
 
-	if ( Mode::initial )
+	if ( mode == `ini )
 	{
 	    // Module list for new installation proposal
 
@@ -372,22 +373,20 @@
 						   );
 	    }
 	}
-	else if ( Mode::cont )
+	else if ( mode == `net )
 	{
-	    // Module list for hardware configuration proposal
+	    // Module list for network configuration proposal
 
 	    if ( Arch::sparc )
 	    {
 		y2milestone ("Continue SPARC proposal");
 		// SPARC machines usually have some kinds of hardware built-in
 
-		submodules = load_submodules_list( "hw-config-proposals-sparc.ycp",
+		submodules = load_submodules_list( "net-config-proposals-sparc.ycp",
 						   [
 						    // Fallback list
 						    "lan_proposal",
-						    "printer_proposal",
-						    "modem_proposal",
-						    "sound_proposal",
+						    "modem_proposal"
 						   ]
 						   );
 	    }
@@ -396,7 +395,7 @@
 		y2milestone ("Continue PPC64 proposal");
 		// ppc64
 
-		submodules = load_submodules_list( "hw-config-proposals-ppc64.ycp",
+		submodules = load_submodules_list( "net-config-proposals-ppc64.ycp",
 						   [
 						    // Fallback list
 						    "lan_proposal"
@@ -408,52 +407,84 @@
 		y2milestone ("Continue S390 proposal");
 		// s390
 
-		submodules = load_submodules_list( "hw-config-proposals-s390.ycp",
+		submodules = load_submodules_list( "net-config-proposals-s390.ycp",
+						   [
+						    // Fallback list
+						    "lan_proposal"
+						    ]
+						   );
+	    }
+	    else
+	    {
+		y2milestone ("Continue network proposal");
+		// Professional networked machine - configure network cards
+		// first so even a networked printer can be found
+		submodules = load_submodules_list( "net-config-proposals.ycp",
 						   [
 						    // Fallback list
 						    "lan_proposal",
+						    "modem_proposal",
+						    "isdn_proposal"
+						    ]
+						   );
+	    }
+	}
+	else if ( mode == `hw )
+	{
+	    // Module list for hardware configuration proposal
+
+	    if ( Arch::sparc )
+	    {
+		y2milestone ("Continue SPARC proposal");
+		// SPARC machines usually have some kinds of hardware built-in
+
+		submodules = load_submodules_list( "hw-config-proposals-sparc.ycp",
+						   [
+						    // Fallback list
+						    "printer_proposal",
+						    "sound_proposal"
+						   ]
+						   );
+	    }
+	    else if ( Arch::ppc64 )
+	    {
+		
+		y2milestone ("Continue PPC64 proposal");
+		// ppc64
+
+		submodules = load_submodules_list( "hw-config-proposals-ppc64.ycp",
+						   [
+						    // Fallback list
+						    "printer_proposal"
+						    ]
+						   );
+	    }
+	    else if ( Arch::s390 )
+	    {
+		y2milestone ("Continue S390 proposal");
+		// s390
+
+		submodules = load_submodules_list( "hw-config-proposals-s390.ycp",
+						   [
+						    // Fallback list
 						    "printer_proposal"
 						    ]
 						   );
 	    }
 	    else
 	    {
-		if ( have_network_card() )
-		{
-		    y2milestone ("Continue network proposal");
-		    // Professional networked machine - configure network cards
-		    // first so even a networked printer can be found
-		    submodules = load_submodules_list( "hw-config-proposals-networked-pc.ycp",
-						       [
-							// Fallback list
-							"x11_proposal",
-							"lan_proposal",
-							"printer_proposal",
-							"modem_proposal",
-							"isdn_proposal",
-							"sound_proposal",
-							"tv_proposal",
-						       ]
-						       );
-		}
-		else // no network card
-		{
-		    y2milestone ("Continue proposal");
-		    // Home PC - focus on printing and multimedia
+		y2milestone ("Continue proposal");
+		// PC
 
-		    submodules = load_submodules_list( "hw-config-proposals-home-pc.ycp",
-						       [
-							// Fallback list
-							"x11_proposal",
-							"printer_proposal",
-							"sound_proposal",
-							"tv_proposal",
-							"lan_proposal",
-							"modem_proposal",
-							"isdn_proposal",
-						       ]
-						       );
-		}
+		submodules = load_submodules_list( "hw-config-proposals.ycp",
+						   [
+						    // Fallback list
+						    "x11_proposal",
+						    "printer_proposal",
+						    "sound_proposal",
+						    "tv_proposal"
+						    ]
+						   );
 	    }
 	}
 	else
@@ -472,6 +503,8 @@
      **/
     define boolean have_network_card() ``{
 
+	// Maybe obsolete
+	
 	if ( Mode::test )
 	    return true;
 
@@ -801,7 +834,7 @@ To use the settings as displayed, press <b>Accept</b>.
     // Get submodule descriptions
     //
 
-    submodules = load_matching_submodules_list();
+    submodules = load_matching_submodules_list( WFM::Args(2) );
     get_submod_descriptions_and_build_menu();
 
 

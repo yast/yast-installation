@@ -4,6 +4,5 @@
 // Proposal list for hardware configuration for ppc64
 //
 [
-"lan_proposal",
 "printer_proposal"
 ]
