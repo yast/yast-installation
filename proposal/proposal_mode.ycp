@@ -59,12 +59,15 @@
 	//
 	// sequence = DummyMod::AskUser( has_next );
 
+	boolean tmp1 = Mode::installation;
+	boolean tmp2 = Mode::update;
+
 	symbol result = WFM::CallFunction (`inst_mode (`AskUser ));
 
 	// Fill return map
 
 	ret = $[ "workflow_sequence" : result,
-		 "mode_changed" : true ];
+		 "mode_changed" : tmp1 != Mode::installation || tmp2 != Mode::update];
     }
     else if ( func == "Description" )
     {

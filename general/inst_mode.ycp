@@ -72,9 +72,6 @@
 
 	string root_part = Update::selectedRootPartition;
 
-	y2milestone( "Preparing boot from partition %1", root_part );
-	Update::UnmountPartitions();
-
 	UI::OpenDialog( `opt(`decorated),
 			// Information popup: Inform user what partition
 			// will be booted from after user selected

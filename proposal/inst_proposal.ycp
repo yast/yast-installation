@@ -91,6 +91,7 @@
 	symbol  workflow_sequence = ask_user_result["workflow_sequence"]:`next;
 	boolean language_changed  = ask_user_result["language_changed"]:false;
 	boolean mode_changed      = ask_user_result["mode_changed"]:false;
+	boolean rootpart_changed  = ask_user_result["rootpart_changed"]:false;
 
 	if (workflow_sequence != `cancel && workflow_sequence != `back &&
 	    workflow_sequence != `abort && workflow_sequence != `finish)
@@ -98,6 +99,12 @@
 	    if ( language_changed )
 	    {
 		retranslate_proposal_dialog();
+	    }
+
+	    if (mode_changed || rootpart_changed ||
+		workflow_sequence == `finish)
+	    {
+		Update::UnmountPartitions ();
 	    }
 
 	    if (mode_changed)
