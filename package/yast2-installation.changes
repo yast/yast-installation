@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Wed Aug 11 18:03:11 CEST 2004 - nashif@suse.de
+
+- Copy EULA to installed system for later use in firstboot module
+
+-------------------------------------------------------------------
+Wed Aug 11 16:09:43 CEST 2004 - nashif@suse.de
+
+- Added firewall to network proposal (#43718)
+
+-------------------------------------------------------------------
 Tue Aug 10 15:21:56 CEST 2004 - nashif@suse.de
 
 - Add default label for proposals

@@ -183,6 +183,14 @@ Please wait while the base system is being installed.
     SCR::Execute (.target.bash, "/bin/chmod 0644 " +
 		  Installation::destdir + "/var/lib/YaST2/control.xml");
 
+    // Copy info.txt so it can be used in firstboot
+    if (SCR::Read(.target.size, "/info.txt") > 0)
+    {
+        SCR::Execute (.target.bash, "/bin/cp /info.txt " +
+                Installation::destdir + "/var/lib/YaST2/");
+    }
+
+
     // --------------------------------------------------------------
     //   stop SCR
     //   restart on destination
