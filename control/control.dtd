@@ -14,18 +14,19 @@
 <!ELEMENT defaults ( arguments, archs ) >
 
 <!ENTITY % y2_globals "language| keyboard| timezone| enable_autologin|
-use_desktop_scheduler|io_scheduler" >
+use_desktop_scheduler|io_scheduler|ui_mode" >
 <!ELEMENT globals (%y2_globals;)* >
 
 <!ELEMENT keyboard ( #PCDATA ) >
+<!ELEMENT ui_mode ( #PCDATA ) >
 
 <!ELEMENT label ( #PCDATA ) >
 
 <!ELEMENT language ( #PCDATA ) >
 
 <!ELEMENT io_scheduler ( #PCDATA ) >
-<!ELEMENT only_update_selected ( #PCDATA ) >
-<!ATTLIST only_update_selected config:type NMTOKEN #FIXED "boolean" >
+<!ELEMENT only_update_installed ( #PCDATA ) >
+<!ATTLIST only_update_installed config:type NMTOKEN #FIXED "boolean" >
 <!ELEMENT use_desktop_scheduler ( #PCDATA ) >
 <!ATTLIST use_desktop_scheduler config:type NMTOKEN #FIXED "boolean" >
 <!ELEMENT enable_autologin ( #PCDATA ) >
@@ -33,7 +34,7 @@ use_desktop_scheduler|io_scheduler" >
 
 <!ELEMENT mode ( #PCDATA ) >
 
-<!ENTITY % wf_module "archs | arguments | label | name | update " >
+<!ENTITY % wf_module "archs | arguments | label | name | update | retranslate" >
 <!ELEMENT module (%wf_module;)* >
 
 <!ELEMENT modules ( module+ ) >
@@ -63,7 +64,7 @@ use_desktop_scheduler|io_scheduler" >
 <!ATTLIST selection_type config:type NMTOKEN #FIXED "symbol" >
 
 <!ELEMENT software (delete_old_packages| selection_type| base_selection|
-        addons| packages|only_update_selected|software_proposal)* >
+        addons| packages|only_update_installed|software_proposal)* >
 <!ELEMENT delete_old_packages ( #PCDATA ) >
 <!ELEMENT software_proposal ( #PCDATA ) >
 <!ATTLIST delete_old_packages config:type NMTOKEN #FIXED "boolean" >
@@ -75,6 +76,9 @@ use_desktop_scheduler|io_scheduler" >
 <!ELEMENT timezone ( #PCDATA ) >
 
 <!ELEMENT type ( #PCDATA ) >
+
+<!ELEMENT retranslate ( #PCDATA ) >
+<!ATTLIST retranslate config:type NMTOKEN #FIXED "boolean" >
 
 <!ELEMENT update ( #PCDATA ) >
 <!ATTLIST update config:type NMTOKEN #FIXED "boolean" >
