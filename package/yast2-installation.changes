@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Mar  1 12:13:09 CET 2005 - jsrain@suse.cz
+
+- removed obsolete symlink juggling (#66016)
+
+-------------------------------------------------------------------
 Thu Feb 24 16:10:03 CET 2005 - ms@suse.de
 
 - added logsize check to FirstStage/F07-logging
