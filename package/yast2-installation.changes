@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar 18 09:59:01 CET 2004 - mvidner@suse.cz
+
+- Fall back to runlevel 3 if we accidentally don't set it
+  in the installation proposal. It would be 0 (#35662).
+
+-------------------------------------------------------------------
 Wed Mar 17 22:56:12 CET 2004 - nashif@suse.de
 
 - Add runlevel to s390 proposal
