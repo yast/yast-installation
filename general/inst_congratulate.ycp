@@ -44,7 +44,7 @@
     string text = _("<p><b>Congratulations!</b></p>") +
 
     // congratulation text 2/4
-	_("<p>The installation of SuSE Linux on your machine is complete.
+	_("<p>The installation of &product; on your machine is complete.
 After clicking <b>Finish</b>, you can log in to the system.</p>
 ") +
 
