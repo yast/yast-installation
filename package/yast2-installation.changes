@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Aug 05 18:56:15 CEST 2002 - arvin@suse.de
+
+- even more changed for new /etc/install.inf agent
+
+-------------------------------------------------------------------
 Mon Aug  5 16:57:21 CEST 2002 - ms@suse.de
 
 - do not call module x11 if serial_console or vnc session
