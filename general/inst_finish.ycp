@@ -32,7 +32,6 @@
     import "InstMedia";
     import "Packages";
     import "Kernel";
-    import "User";
     import "Hotplug";
     import "Product";
     import "Progress";
