@@ -22,6 +22,7 @@
     import "Installation";
     import "Wizard";
     import "Product";
+    import "Directory";
 
     textdomain "installation";
 
@@ -47,10 +48,10 @@
 	  "button_id"		: `printer,
 	  "summary_module"	: ``(WFM::CallFunction(`printer_summary() ) ),
 	  "conf_module"		: ``(WFM::CallFunction(`printer() ) ),
-	  "is_installed"	: (((SCR::Read(.target.size, "/usr/lib/YaST2/clients/printconf.ycp") != -1)
+	  "is_installed"	: (((SCR::Read(.target.size, Directory::clientdir + "/printconf.ycp") != -1)
 				    && (SCR::Read(.target.size, "/etc/init.d/lpd") != -1))
                                    ||
-				   ((SCR::Read(.target.size, "/usr/lib/YaST2/clients/cups.ycp") != -1)
+				   ((SCR::Read(.target.size, Directory::clientdir + "/cups.ycp") != -1)
 				    && (SCR::Read(.target.size, "/etc/init.d/cups") != -1)))
 	];
 
@@ -63,7 +64,7 @@
 	  "button_id"		: `sound,
 	  "summary_module"	: ``(WFM::CallFunction(`sound_summary() ) ),
 	  "conf_module"		: ``(WFM::CallFunction(`sound() ) ),
-	  "is_installed"	: (SCR::Read(.target.size, "/usr/lib/YaST2/clients/sound.ycp") != -1)
+	  "is_installed"	: (SCR::Read(.target.size, Directory::clientdir + "/sound.ycp") != -1)
 	];
 
     map network_cards =
@@ -75,7 +76,7 @@
 	  "button_id"		: `network,
 	  "summary_module"	: ``(WFM::CallFunction(`lan_summary() ) ),
 	  "conf_module"		: ``(WFM::CallFunction(`lan( .installation ) ) ),
-	  "is_installed"	: (SCR::Read(.target.size, "/usr/lib/YaST2/clients/lan.ycp") != -1)
+	  "is_installed"	: (SCR::Read(.target.size, Directory::clientdir + "/lan.ycp") != -1)
 	];
 
     map modems =
@@ -87,7 +88,7 @@
 	  "button_id"		: `modem,
 	  "summary_module"	: ``(WFM::CallFunction(`modem_summary() ) ),
 	  "conf_module"		: ``(WFM::CallFunction(`modem( .installation ) ) ),
-	  "is_installed"	: (SCR::Read(.target.size, "/usr/lib/YaST2/clients/modem.ycp") != -1)
+	  "is_installed"	: (SCR::Read(.target.size, Directory::clientdir + "/modem.ycp") != -1)
 	];
 
     map isdn_adapters =
@@ -99,7 +100,7 @@
 	  "button_id"		: `isdn,
 	  "summary_module"	: ``(WFM::CallFunction(`isdn_summary() ) ),
 	  "conf_module"		: ``(WFM::CallFunction(`isdn( .installation ) ) ),
-	  "is_installed"	: (SCR::Read(.target.size, "/usr/lib/YaST2/clients/isdn.ycp") != -1)
+	  "is_installed"	: (SCR::Read(.target.size, Directory::clientdir + "/isdn.ycp") != -1)
 	];
 
     map tv_cards =
@@ -111,7 +112,7 @@
 	  "button_id"		: `tv,
 	  "summary_module"	: ``(WFM::CallFunction(`tv_summary() ) ),
 	  "conf_module"		: ``(WFM::CallFunction(`tv() ) ),
-	  "is_installed"	: (SCR::Read(.target.size, "/usr/lib/YaST2/clients/tv.ycp") != -1),
+	  "is_installed"	: (SCR::Read(.target.size, Directory::clientdir + "/tv.ycp") != -1),
 	  "force_reread"	: [ `sound ]
 	];
 
