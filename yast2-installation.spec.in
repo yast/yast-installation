@@ -39,6 +39,7 @@ This controls the system installation.
 @moduledir@/*.ycp
 @yncludedir@/*.ycp
 @configdir@/*.y2cc
+@desktopdir@/*.desktop
 @ydatadir@/*.ycp
 
 # kernel/agents
