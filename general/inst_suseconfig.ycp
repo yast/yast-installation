@@ -16,7 +16,6 @@
  * $Id$
  */
 {
-    include "showlog_defines.ycp";
     textdomain "installation";
 
     import "Arch";
