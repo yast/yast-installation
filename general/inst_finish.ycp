@@ -467,20 +467,28 @@ Please wait while the base system is being installed.
 	    //========================================
 	    // Installation mode...
 	    //----------------------------------------
-	    y2milestone ("Include X11 config [instsys] to installed system");
-	    string filename = "/etc/X11/XF86Config";
-	    InjectFile (filename);
+		// make current X11 configuration available in installed system
+		// copy /etc/X11/XF86Config from inst-sys to [/mnt]/etc/X11/xorg.conf
+		// ---
+	    y2milestone ("Include X11 config [instsys] to installed system: xorg.conf");
+		string filename = "/etc/X11/XF86Config";
+		WFM::Execute (.local.bash, "/bin/cp " + filename + " " +
+			Installation::destdir + "/etc/X11/xorg.conf"
+		);
+	}
 	}
 
 	// ... /
-	// make current X11 configuration available in installed or updated system
-	// copy /etc/X11/XF86Config from inst-sys to [/mnt]/etc/X11/XF86Config.install
+	// create backup copy from from inst-sys config to be available in installed
+	// or updated system copy /etc/X11/XF86Config from inst-sys to
+	// [/mnt]/etc/X11/xorg.conf.install
 	// ---
-	y2milestone ("Include X11 config [instsys] to installed system: XF86Config.install");
+	y2milestone ("Include X11 config [instsys] to installed system: xorg.conf.install");
 	string filename = "/etc/X11/XF86Config";
 	WFM::Execute (.local.bash, "/bin/cp " + filename + " " +
-		      Installation::destdir + filename + ".install");
-    }
+		Installation::destdir + "/etc/X11/xorg.conf" + ".install"
+	);
+	}
 
     // --------------------------------------------------------------
     // Save http_proxy and ftp_proxy
