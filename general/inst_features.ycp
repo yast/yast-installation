@@ -39,8 +39,6 @@
         // Set Console font
         Console::SelectFont( language );
 
-        Installation::encoding = (use_utf8) ? "UTF-8" : Encoding::console;
-
         // Set it in YaST2
         Language::WfmSetLanguage();
     }
