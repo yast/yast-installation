@@ -76,39 +76,9 @@
 	// discard \n
 	line = deletechars (line, "\n");
 
-	// list of parameters to be discarded (linuxrc/yast internals)
-
-	// TODO: remove most of these (see bug #25745)
+	// list of parameters to be discarded (yast internals)
 
 	list discardlist = [
-	  "linuxrc", "textmode", "install", "gateway",
-	  "initrd", "noshells", "network", "netmask", "ip",
-	  "domain", "forcerootimage", "insmod", "nameserver",
-	  "netdevice", "pcmcia",
-	  "instmode",
-	  "autoyast",
-	  "nosshd",
-	  "rw", "ro",
-	  "ramdisk_size",
-	  "SuSE",
-	  "expert",
-	  "manual",
-	  "root",
-	  "boot_file",
-	  "BOOT_IMAGE",
-	  "SuSE",
-	  "auto",
-	  "auto2",
-	  "fake_initrd",
-	  "load_ramdisk",
-	  "install",
-	  "start_shell",
-	  "vnc", "vncpassword",
-	  "usessh", "sshpassword", "nosshkey",
-	  "rescue",
-	  "repair",
-	  "init",
-	  "info"
 	];
 
 	list(string) cmdlist = [];
