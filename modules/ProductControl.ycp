@@ -247,10 +247,20 @@ global define term getTerm (map mod, map def) ``{
     // All client start with "inst_".
 
     string client = "";
-    if (issubstring(mod["name"]:"dummy", "inst_"))
-        client = mod["name"]:"dummy";
+    if (!Mode::firstboot)
+    {
+        if (issubstring(mod["name"]:"dummy", "inst_"))
+            client = mod["name"]:"dummy";
+        else
+            client = "inst_" + mod["name"]:"dummy";
+    }
     else
-        client = "inst_" + mod["name"]:"dummy";
+    {
+        // Firstboot mode has no predefined prefix. Name of module is
+        // taken as is.
+
+        client = mod["name"]:"dummy";
+    }
 
 
     term a = toterm(client);
@@ -260,6 +270,8 @@ global define term getTerm (map mod, map def) ``{
     {
         args = splitstring(def["arguments"]:"", ",");
     }
+
+
     foreach(string arg, args,
             ``{
             if (arg == "true")
@@ -455,7 +467,9 @@ global define list<string> getProposals(string stage, string mode, string propty
 
     y2debug("arch proposals: %1", arch_proposals );
     props = filter(map p, props, ``(
-                    p["archs"]:"" == "all" || !haskey(p, "archs") ));
+                 p["archs"]:"" == "all" || !haskey(p, "archs")
+                )
+                );
 
 
     // If architecture specific proposals available, we continue with those
