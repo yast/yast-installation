@@ -1,6 +1,8 @@
 #
 # Makefile.am 
 #
+#
+SUBDIRS = examples
 
 htmldir = $(docdir)/control-doc
 xml_files =  $(wildcard *.xml) 
