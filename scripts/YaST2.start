@@ -9,7 +9,8 @@
 
 # depending on the architecture, Add braille & x11 info to
 # /etc/install.inf, and clear the screen before
-case "$(uname -m)" in
+HOSTTYPE="$(uname -m)"
+case "$HOSTTYPE" in
     s390|s390x)  ;;
     ppc*)
 	echo -e \\033c
@@ -296,7 +297,7 @@ fuser -vm / >/dev/tty11
 #  umount /var/log
 # yyyyyyyyyyyyyyyyy
 
-test -d /proc/iSeries || chvt 1
+[ -d /proc/iSeries -o "$HOSTTYPE" = "s390" -o "$HOSTTYPE" = "s390x" ] || chvt 1
 
 # write the trigger for ssh installation
 # this will proceed in /sbin/inst_setup
