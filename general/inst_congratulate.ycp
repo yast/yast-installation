@@ -58,7 +58,7 @@ After clicking <b>Finish</b>, you can log in to the system.</p>
 			   `VSpacing (space),
 			   `HBox (
 				  `HSpacing (2*space),
-				  `RichText (text),
+				  `RichText (`id (`text), text),
 				  `HSpacing (2*space)
 				  ),
 			   `VSpacing (space),
@@ -89,6 +89,9 @@ return to this installation sequence.</p>
 
     Wizard::SetContentsButtons (caption, contents, help, BackButtonLabel(),
 				FinishButtonLabel());
+
+    // FIXME: richtext eats return key
+    // UI::SetFocus (`id (`text));
 
     any ret = nil;
 

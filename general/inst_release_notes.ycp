@@ -53,7 +53,7 @@
     term contents = `VBox (
 			   `VSpacing (0.5),
 			   `Left (`Label (sformat (_("Content of File %1"), file))),
-			   `RichText (text),
+			   `RichText (`id (`text), text),
 			   `VSpacing (0.5)
 			   );
 
@@ -64,6 +64,9 @@ Linux system. They provide a brief summary of new features and changes.
 
     Wizard::SetContentsButtons (caption, contents, help,
 				BackButtonLabel(), NextButtonLabel());
+
+    // FIXME: richtext eats return key
+    // UI::SetFocus (`id (`text));
 
     any ret = nil;
 
