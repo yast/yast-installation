@@ -21,11 +21,14 @@ textdomain="control"
         <delete_old_packages config:type="boolean">false</delete_old_packages>
         <selection_type config:type="symbol">auto</selection_type>
     </software>
+    <partitioning>
+        <evms_config config:type="boolean">true</evms_config>
+    </partitioning>
 
     <proposals config:type="list">
         <proposal>
             <!-- installation, autoinst, update, repair, etc. -->
-            <mode>installation,demo</mode>
+            <mode>installation,demo,autoinst</mode>
             <!-- initial or continue -->
             <stage>initial</stage>
             <!-- Type of proposal, initial, hardware, network -->
@@ -59,7 +62,7 @@ textdomain="control"
             <type>uml</type>
             <stage>normal</stage>
             <proposal_modules config:type="list">
-                <proposal_module>uml_source</proposal_module>
+		<proposal_module>uml_source</proposal_module>
                 <proposal_module>uml_user</proposal_module>
                 <proposal_module>uml_options</proposal_module>
                 <proposal_module>uml_disks</proposal_module>
@@ -105,6 +108,7 @@ textdomain="control"
                 <proposal_module>software</proposal_module>
                 <proposal_module>timezone</proposal_module>
                 <proposal_module>language</proposal_module>
+                <proposal_module>runlevel</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>
@@ -174,6 +178,8 @@ textdomain="control"
 
     <workflows config:type="list">
         <workflow>
+            <!-- 'label' is what the user will see -->
+	    <label>Base Installation</label>
             <!-- default settings for all modules -->
             <defaults>
                 <!-- arguments for the clients -->
@@ -182,9 +188,7 @@ textdomain="control"
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
-            <!-- 'label' is what the user will see -->
-	    <label>Base Installation</label>
-            <mode>installation</mode>
+            <mode>installation,update</mode>
             <modules  config:type="list">
                 <module>
                     <name>info</name>
@@ -337,6 +341,63 @@ textdomain="control"
         <workflow>
             <stage>continue</stage>
             <label>Configuration</label>
+            <mode>update</mode>
+            <defaults>
+                <arguments>false,false</arguments>
+                <archs>all</archs>
+            </defaults>
+            <modules  config:type="list">
+                <module>
+                    <name>netsetup</name>
+                    <arguments>false,false,`up</arguments>
+                </module>
+                <module>
+                    <name>rpmcopy</name>
+                </module>
+                <module>
+	            <label>Network</label>
+                    <name>netsetup</name>
+                    <arguments>false,false,`dn</arguments>
+                </module>
+                <module>
+	            <label>Network</label>
+                    <name>proposal</name>
+                    <arguments>true,true,`net</arguments>
+                </module>
+                <module>
+	            <label>Network</label>
+                    <name>ask_net_test</name>
+                    <arguments>true,true</arguments>
+                </module>
+                <module>
+	            <label>Network</label>
+                    <name>do_net_test</name>
+                    <arguments>true,true</arguments>
+                </module>
+                <module>
+	            <label>Online Update</label>
+                    <name>you</name>
+                    <arguments>true,true</arguments>
+                </module>
+                <module>
+	            <label>Clean Up</label>
+                    <name>suseconfig</name>
+                    <arguments>false,false</arguments>
+                </module>
+                <module>
+	            <label>Release Notes</label>
+                    <name>release_notes</name>
+                    <arguments>true,true</arguments>
+                </module>
+                <module>
+                    <name>congratulate</name>
+                    <arguments>true,true</arguments>
+                </module>
+            </modules>
+        </workflow>
+        <workflow>
+            <stage>continue</stage>
+            <label>Configuration</label>
             <mode>installation</mode>
             <defaults>
                 <arguments>false,false</arguments>
@@ -412,7 +473,7 @@ textdomain="control"
         </workflow>
         <workflow>
             <stage>initial</stage>
-            <label>Configuration</label>
+            <label>Base Installation</label>
             <mode>autoinst</mode>
             <defaults>
                 <arguments>false,false</arguments>
@@ -420,12 +481,23 @@ textdomain="control"
             </defaults>
             <modules  config:type="list">
                 <module>
+	            <label>Language</label>
+                    <name>info</name>
+                    <arguments>false,true</arguments>
+                </module>
+                <module>
+	            <label>Auto-Install Settings</label>
                     <name>autoinit</name>
                     <archs>all</archs>
                 </module>
                 <module>
-	            <label>Settings</label>
+	            <label>Auto-Install Settings</label>
                     <name>autosetup</name>
+                </module>
+                <module>
+	            <label>Auto-Install Settings</label>
+                    <name>proposal</name>
+                    <arguments>true,true,`ini</arguments>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
@@ -434,6 +506,10 @@ textdomain="control"
                 <module>
 	            <label>Perform Installation</label>
                     <name>kickoff</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>autoimage</name>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
@@ -446,12 +522,17 @@ textdomain="control"
             </modules>
         </workflow>
         <workflow>
+            <defaults>
+                <arguments>false,false</arguments>
+                <archs>all</archs>
+            </defaults>
             <stage>continue</stage>
             <label>Configuration</label>
             <mode>autoinst</mode>
             <modules  config:type="list">
                 <module>
                     <name>netsetup</name>
+                    <arguments>false,false,`up</arguments>
                 </module>
                 <module>
                     <name>netprobe</name>
@@ -464,10 +545,7 @@ textdomain="control"
                     <name>rpmcopy</name>
                 </module>
                 <module>
-	            <label>X11 Setup</label>
-                    <name>x11</name>
-                </module>
-                <module>
+	            <label>System Configuration</label>
                     <name>autoconfigure</name>
                 </module>
                 <module>
