@@ -226,6 +226,16 @@ else
     echo "Executed switch2mesasoft script"
 fi
 
+#
+# setup anti aliased fonts
+#
+test -x /sbin/conf.d/SuSEconfig.fonts
+if [ $? -eq 0 ]; then
+    /sbin/conf.d/SuSEconfig.fonts
+    echo "Executed fonts script"
+fi
+
+#
 # for iSeries virtual console, detect screen size and terminal
 #
 if test -d /proc/iSeries; then
