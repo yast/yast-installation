@@ -108,6 +108,7 @@ textdomain="control"
                 <proposal_module>software</proposal_module>
                 <proposal_module>timezone</proposal_module>
                 <proposal_module>language</proposal_module>
+                <proposal_module>runlevel</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>
@@ -540,10 +541,7 @@ textdomain="control"
                     <name>rpmcopy</name>
                 </module>
                 <module>
-	            <label>X11 Setup</label>
-                    <name>x11</name>
-                </module>
-                <module>
+	            <label>System Configuration</label>
                     <name>autoconfigure</name>
                 </module>
                 <module>

@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Wed Mar 17 22:56:12 CET 2004 - nashif@suse.de
+
+- Add runlevel to s390 proposal
+- remove x11 from autoinst workflow (handled differently)
+
+-------------------------------------------------------------------
+Wed Mar 17 05:46:03 CET 2004 - nashif@suse.de
+
+- update wizard steps at the right spot to enable switching back
+  to installation mode
+
+-------------------------------------------------------------------
 Tue Mar 16 16:02:52 CET 2004 - msvec@suse.cz
 
 - added icons to network and hardware proposals
