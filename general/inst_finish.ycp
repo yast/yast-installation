@@ -379,22 +379,11 @@ Please wait while the base system is being installed.
 
     if ( Mode::update )
     {
-	// re-do all top-level "media" convenience links
-	list<string> mediafiles = (list<string>) SCR::Read (.target.dir, ["/media", []]);
-
-	foreach (string mediafile, mediafiles, {
-	    mediafile = "/" + mediafile;
-	    if (SCR::Read (.target.size, mediafile) < 0)	// not existing
-	    {
-		SCR::Execute(.target.symlink, "/media"+mediafile, mediafile);
-	    }
-	});
-
 	Storage::Update (Update::installedVersion, Update::updateVersion);
     }
-    else	// install mode
+    else
     {
-	Storage::FinishInstall();
+	Storage::FinishInstall ();
     }
 
     // Run depmod to update modules.dep
