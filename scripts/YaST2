@@ -332,7 +332,7 @@ fi
 # iSeries and p690 dont have a keyboard but a special console, no need to
 # run via serial console.
 
-if [ ! "$update" -a "$Keyboard" = "0" -a ! "$Braille" -a "$NOTISERIES" != 0 -a "$NOTHVCCONSOLE" != 0 -a "$HOSTTYPE" != "s390" -a "$HOSTTYPE" != "s390x" ] ; then
+if [ ! "$update" -a "$Keyboard" = "0" -a ! "$Braille" -a "$NOTISERIES" != 0 -a "$NOTHVCCONSOLE" != 0 -a "$HOSTTYPE" != "s390" -a "$HOSTTYPE" != "s390x"  -a -z "$Console" ] ; then
     log "no keyboard?"
     echo "No keyboard detected. Trying to connect via serial interface /dev/ttyS0."
     echo "On your terminal computer start the user interface with"
