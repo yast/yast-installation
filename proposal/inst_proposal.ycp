@@ -426,6 +426,7 @@
 		    submodules = load_submodules_list( "hw-config-proposals-networked-pc.ycp",
 						       [
 							// Fallback list
+							"x11_proposal",
 							"lan_proposal",
 							"printer_proposal",
 							"modem_proposal",
@@ -443,6 +444,7 @@
 		    submodules = load_submodules_list( "hw-config-proposals-home-pc.ycp",
 						       [
 							// Fallback list
+							"x11_proposal",
 							"printer_proposal",
 							"sound_proposal",
 							"tv_proposal",
