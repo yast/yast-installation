@@ -185,8 +185,8 @@ if [    \( -x /etc/init.d/pcmcia -o -x /etc/init.d/hotplug \) \
 fi
 
 # Now start hotplug
-if [ -x /etc/init.d/hotplug ] ; then
-  /etc/init.d/hotplug start
+if [ -x /sbin/rchotplug ] ; then
+    rchotplug start
 fi
 
 # Start cardmanager for laptops
@@ -359,7 +359,9 @@ fi
 #
 # stop hotplug, it unmounts usbdevfs and avoids error messages
 #
-test -x /etc/init.d/hotplug && /etc/init.d/hotplug stop # > /dev/null 2>&1
+if [ -x /sbin/rchotplug ] ; then
+    /sbin/rchotplug stop
+fi
 
 if echo $LANG | grep -q '\.UTF-8$'; then
     unicode_stop
