@@ -11,7 +11,7 @@ if test ! -z "$SPID" ; then
 	kill -KILL $SPID &>/dev/null
 fi
 # 13.2) kill VNC server and remove VNC passwd
-if [ ! -z "$VNC" ] ; then
+if [ ! -z "$VNC" ] && [ "$VNC" -eq 1 ] ; then
 	log "\tkill all VNC sessions..."
 	killall Xvnc &>/dev/null
 	rm -fv /root/.vnc/passwd

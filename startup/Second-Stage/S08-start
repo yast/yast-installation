@@ -17,12 +17,12 @@ callHooks preSecondCall
 # will be displayed on the controling terminal
 # ---
 disable_splash
-if test -z "$USE_SSH" ; then
+if [ -z $USE_SSH ] || [ "$USE_SSH" -eq 0 ] ; then
 	log "\tStarting X11/VNC based session..."
 	#==================================================
 	# We are going to start a VNC or X11 based session
 	#--------------------------------------------------
-	if [ ! -z "$VNC" ] ; then
+	if [ ! -z "$VNC" ] && [ "$VNC" -eq 1 ] ; then
 		vnc_message
 	fi
 	startYaST2
