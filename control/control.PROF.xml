@@ -141,7 +141,7 @@ textdomain="control"
                 </module>
                 <module>
                     <name>proposal</name>
-                    <arguments>true,true,`ini</arguments>
+                    <arguments>true,true,`initial</arguments>
 	            <label>Installation Settings</label>
                 </module>
                 <module>
@@ -207,7 +207,7 @@ textdomain="control"
                 <module>
 	            <label>Installation Settings</label>
                     <name>proposal</name>
-                    <arguments>true,true,`ini</arguments>
+                    <arguments>true,true,`initial</arguments>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
@@ -252,7 +252,7 @@ textdomain="control"
                 <module>
 	            <label>Installation Settings</label>
                     <name>proposal</name>
-                    <arguments>true,true,`ini</arguments>
+                    <arguments>true,true,`initial</arguments>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
@@ -433,7 +433,7 @@ textdomain="control"
                 <module>
 	            <label>Auto-Install Settings</label>
                     <name>proposal</name>
-                    <arguments>true,true,`ini</arguments>
+                    <arguments>true,true,`initial</arguments>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
