@@ -25,7 +25,7 @@ textdomain="control"
     <proposals config:type="list">
         <proposal>
             <!-- installation, autoinst, update, repair, etc. -->
-            <mode>installation,demo</mode>
+            <mode>installation,demo,autoinst</mode>
             <!-- initial or continue -->
             <stage>initial</stage>
             <!-- Type of proposal, initial, hardware, network -->
@@ -477,16 +477,16 @@ textdomain="control"
             </defaults>
             <modules  config:type="list">
                 <module>
-	            <label>Settings</label>
+	            <label>Auto-Install Settings</label>
                     <name>autoinit</name>
                     <archs>all</archs>
                 </module>
                 <module>
-	            <label>Settings</label>
+	            <label>Auto-Install Settings</label>
                     <name>autosetup</name>
                 </module>
                 <module>
-	            <label>Installation Settings</label>
+	            <label>Auto-Install Settings</label>
                     <name>proposal</name>
                     <arguments>true,true,`ini</arguments>
                 </module>
