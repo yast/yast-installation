@@ -494,6 +494,7 @@ will look different than in the manual.");
  [ `continue, `autoinst_configure   (false, false),      true,						  autoinst &&    ! update_mode	, false],
  [ `continue, `inst_suseconfig	    (false, false),      true,			! test_mode						, false],
  [ `continue, `inst_proposal	    (true,  true, `net), true,						! autoinst &&   ! update_mode	, false],
+ [ `continue, `inst_release_notes   (true,  true),	 true,						! autoinst &&   ! update_mode	, false],
  [ `continue, `inst_proposal	    (true,  true, `hw),  true,						! autoinst &&   ! update_mode	, false],
  [ `continue, `inst_congratulate    (true,  true),	 true,						! autoinst &&   ! update_mode	, false]
 ];

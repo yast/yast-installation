@@ -2,6 +2,7 @@
 Tue Jan 28 18:47:16 CET 2003 - arvin@suse.de
 
 - added final congratulations dialog
+- added dialog with release notes
 
 -------------------------------------------------------------------
 Mon Jan 27 17:47:38 CET 2003 - sh@suse.de
@@ -9,7 +10,7 @@ Mon Jan 27 17:47:38 CET 2003 - sh@suse.de
 - V 2.7.5
 - Use new y2base/qt command line options for better WM cooperation
 - Don't start a WM any more in YaST2 start script
-  (testX does that now) 
+  (testX does that now)
 
 -------------------------------------------------------------------
 Wed Jan 22 17:11:20 CET 2003 - arvin@suse.de
