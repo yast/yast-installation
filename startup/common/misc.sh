@@ -46,8 +46,8 @@ function import_install_inf () {
 	#	sed -e 's/"/"\\""/g' -e 's/:  */="/' -e 's/$/"/'
 	#)
 	IFS_SAVE=$IFS
-	IFS="
-	"
+IFS="
+"
 	for i in `cat /etc/install.inf | sed -e s'@: @%@'`;do
 		varname=`echo $i | cut -f 1 -d% | tr -d " "`
 		varvals=`echo $i | cut -f 2 -d%`

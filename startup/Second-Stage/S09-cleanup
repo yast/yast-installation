@@ -30,16 +30,5 @@ if rcpcmcia status ; then
 	/etc/init.d/pcmcia stop
 fi
 fi
-# 13.5) remove network config for pcmcia and usb
-if [ -f "$IFCFG_PCMCIA_SAVE" ] ; then
-	mv $IFCFG_PCMCIA_SAVE $IFCFG_PCMCIA
-else
-	rm -f $IFCFG_PCMCIA
-fi
-if [ -f "$IFCFG_USB_SAVE" ] ; then
-	mv $IFCFG_USB_SAVE $IFCFG_PCMCIA
-else
-	rm -f $IFCFG_USB
-fi
 
 stop_unicode
