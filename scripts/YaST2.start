@@ -1,0 +1,297 @@
+#! /bin/sh
+
+# YYYYYYYYYYYYYYYYYY
+#
+#  mkdir -p /var/log
+#  mount 10.10.0.64:/space/log /var/log
+#
+# yyyyyyyyyyyyyyyyyyyyy
+
+# depending on the architecture, Add braille & x11 info to
+# /etc/install.inf, and clear the screen before
+case "$(uname -m)" in
+    s390|s390x)  ;;
+    ppc*)
+	echo -e \\033c
+	/usr/sbin/hwinfo --special=x11
+	;;
+    *)
+	echo -e \\033c
+	/usr/sbin/hwinfo --special=braille
+	/usr/sbin/hwinfo --special=x11
+esac
+
+
+# driver update
+
+if [ -x /update/install/update.pre ] ; then
+  /update/install/update.pre
+fi
+
+# source install.inf, setting a variable $Moo=... for each line Moo: ...
+eval $(grep ': ' /etc/install.inf |
+    sed -e 's/"/"\\\\""/g
+    s/:  */="/
+    s/$/"/')
+
+# !!! won't work with FTP installs !!!
+if [ "$Sourcemounted" != 1 ] ; then
+  if [ "$Bootmode" = Net ] ; then
+    mount "$Server:$Serverdir" /var/adm/mount
+  fi
+  if [ "$Bootmode" = CD ] ; then
+    mount "/dev/$Cdrom" /var/adm/mount
+  fi
+  if [ "$Bootmode" = DVD ] ; then
+    mount "/dev/$Cdrom" /var/adm/mount
+  fi
+  if [ "$Bootmode" = Harddisk ] ; then
+    mount $Partition /var/adm/mount
+  fi
+fi
+
+infofile=/var/adm/mount/suse/setup/descr/info
+[ -f $infofile ]  && eval "`grep = $infofile`"
+
+[ "$Locale" ] && LANG="${Locale%%.*}.UTF-8"
+
+grep -iq iseries /proc/cpuinfo || { echo >/dev/tty10 ; }
+for i in \
+  Language Font Locale Unicodemap Screenmap Fontmagic\
+  Sourcemounted Display Cdrom Bootmode SMP Mousedevice MouseXF86 Floppydisk\
+  YaST2update YaST2serial Textmode Keyboard Framebuffer\
+  Netdevice IP Netmask Gateway Nameserver Server Serverdir X11i\
+  LANG TIMEZONE MEDIA XServer XVersion XBusID XkbRules XkbModel XkbLayout\
+  USB HasPCMCIA VNC VNCpassword
+do
+  if [ "${!i}" ] ; then
+    export $i
+    grep -iq iseries /proc/cpuinfo || { echo "$i=${!i}" >/dev/tty10 ; }
+  fi
+done
+
+test -d /proc/iSeries -a ! -e /tmp/vnc_installation && {
+  : ${TERM:=vt100}; LINES=24; COLUMNS=80
+  export LINES COLUMNS TERM
+  eval `/bin/initviocons -e`
+  echo "TERM: $TERM" >> /etc/install.inf
+}
+
+# p690 hvc console needs vt220
+grep -qi console=hvc < /proc/cmdline && {
+echo "Console: hvc0" >> /etc/install.inf
+export HVC_CONSOLE_HINT="  (recommended with p690 hvc console)"
+export Console=hvc
+}
+
+if [ ! -z "$Console" -a -z "$AutoYaST" ] ; then
+  . /usr/lib/YaST2/bin/ask_for_TERM_variable
+  echo "TERM: $TERM" >> /etc/install.inf
+  export TERM
+elif [ ! -z "$Console" -a ! -z "$AutoYaST" ] ; then
+  export TERM=vt100
+  echo "TERM: $TERM" >> /etc/install.inf
+fi
+
+cp -f /proc/mounts /etc/mtab
+
+function setup_XF86Config {
+
+[ -f /usr/X11R6/lib/X11/XF86Config_3 ] && cp -f /usr/X11R6/lib/X11/XF86Config_3 /etc/XF86Config
+[ -f /usr/X11R6/lib/X11/XF86Config_4 ] && cp -f /usr/X11R6/lib/X11/XF86Config_4 /etc/X11/XF86Config
+
+# XVersion 4
+xcfg=/etc/X11/XF86Config
+
+if [ "$MouseXF86" ] ; then
+  cp $xcfg /tmp
+  sed -e "s#Microsoft#$MouseXF86#" /tmp/XF86Config >$xcfg
+fi
+
+if [ "$XServer" -a "$XServer" != vga -a "$XServer" != fbdev ] ; then
+  cp $xcfg /tmp
+  sed -e "s#ChangeMe#$XServer#" /tmp/XF86Config >$xcfg
+  rm /tmp/XF86Config
+fi
+
+if [ "$XBusID" ] ; then
+  cp $xcfg /tmp
+  sed -e 's/#BusID/BusID/' -e "s#98:76:54#$XBusID#" /tmp/XF86Config >$xcfg
+  rm /tmp/XF86Config
+fi
+
+if [ "$XkbModel" ] ; then
+  cp $xcfg /tmp
+  if [ "$XkbModel" = "macintosh" ] ; then
+    sed -e "s#^.*XkbKeycodes.*# Option  \"XkbKeycodes\" \"macintosh\"#" \
+    -e "s#^.*XkbModel.*# Option  \"XbkModel\" \"macintosh\"#" \
+    -e "s#^.*/dev/mouse.*# Option \"Device\" \"/dev/input/mice\"#" \
+    -e "s#^.*Microsoft.*# Option \"Protocol\" \"IMPS/2\"#" /tmp/XF86Config >$xcfg
+	# this centers the screen on many framebuffer drivers with XF86_FBDev
+	     > /dev/tty7
+	     fbset -a -vyres 480 -vxres 640
+  else
+  case "$(uname -m)" in
+  	ppc*)
+	sed -e "s#pc104#$XkbModel#" \
+	    -e "s#^.*/dev/mouse.*# Option \"Device\" \"/dev/psaux\"#" \
+	    -e "s#^.*Microsoft.*# Option \"Protocol\" \"PS/2\"#" /tmp/XF86Config >$xcfg
+	# this centers the screen on many framebuffer drivers with XF86_FBDev
+	     > /dev/tty7
+	     fbset -a -vyres 480 -vxres 640
+		;;
+	*)
+	sed -e "s#pc104#$XkbModel#" /tmp/XF86Config >$xcfg
+    		;;
+  esac
+  fi
+  rm /tmp/XF86Config
+fi
+
+if [ "$XkbRules" ] ; then
+  cp $xcfg /tmp
+  sed -e "s#xfree86#$XkbRules#" /tmp/XF86Config >$xcfg
+  rm /tmp/XF86Config
+fi
+
+#if [ "$XkbLayout" ] ; then
+#  cp $xcfg /tmp
+#  sed -e "s#XkbLayout.*\"de\"#XkbLayout \"$XkbLayout\"#" /tmp/XF86Config >$xcfg
+#  rm /tmp/XF86Config
+#fi
+
+grep 'XF86Ext: ' /etc/install.inf | sed -e 's/^.*: //' | while IFS= read -r flup ; do (
+  cp $xcfg /tmp
+  sed -e '/# extensions/ i\' -e "$flup" /tmp/XF86Config >$xcfg
+  rm /tmp/XF86Config
+) ; done
+
+grep 'XF86Raw: ' /etc/install.inf | sed -e 's/^.*: //' | while IFS= read -r flup ; do (
+  cp $xcfg /tmp
+  zap=device
+  [ "$XServer" = vga ] && zap=vga
+  [ "$XServer" = fbdev ] && zap=fbdev
+  sed -e "/# ${zap}_options/ i\\" -e "$flup" /tmp/XF86Config >$xcfg
+  rm /tmp/XF86Config
+) ; done
+
+
+# XVersion 3
+xcfg=/etc/XF86Config
+
+if [ "$MouseXF86" ] ; then
+  cp $xcfg /tmp
+  sed -e "s#PS/2#$MouseXF86#" /tmp/XF86Config >$xcfg
+fi
+
+if [ "$XkbModel" ] ; then
+  cp $xcfg /tmp
+  sed -e "s#pc104#$XkbModel#" /tmp/XF86Config >$xcfg
+  rm /tmp/XF86Config
+fi
+
+if [ "$XkbRules" ] ; then
+  cp $xcfg /tmp
+  sed -e "s#xfree86#$XkbRules#" /tmp/XF86Config >$xcfg
+  rm /tmp/XF86Config
+fi
+
+if [ "$XkbLayout" ] ; then
+  cp $xcfg /tmp
+  sed -e "s#XkbLayout.*\"de\"#XkbLayout	\"$XkbLayout\"#" /tmp/XF86Config >$xcfg
+  rm /tmp/XF86Config
+fi
+
+}
+
+case "$(uname -m)" in
+    s390|s390x) ;;
+    *)  	setup_XF86Config
+esac
+
+# remove mouse here, re-init in inst_startup
+rm -f /dev/mouse
+# if we know the mouse device, set the link here (needed for SPARC)
+if [ "$Mousedevice" ] ; then
+  ln -sf $Mousedevice /dev/mouse
+fi
+
+#
+# Check for driver update mode
+# If /udpate/y2update/y2update.gz exists (copied there by linuxrc)
+# uncompress the y2update.gz file, and mount it to /y2update.
+#
+# Else make a symlink from /y2update to /update/y2update.
+# YaST2 will look for config files and components there.
+#
+mkdir -p /media/floppy
+
+UPDATE_MOUNTED=false
+if [ "$YaST2update" = 1 ] ; then
+  if [ -r /update/y2update/y2update.gz ] ; then
+    echo -n "Packed extension disk..."
+    gunzip -c /update/y2update/y2update.gz > /dev/ram5
+    mkdir -p /y2update
+    if mount /dev/ram5 /y2update ; then
+      echo "OK."
+      UPDATE_MOUNTED=true
+    else
+      echo failed.
+    fi
+  else
+    if [ -d /update/y2update ] ; then
+      echo -n "Unpacked extension disk..."
+      ln -sf /update/y2update /y2update
+      UPDATE_MOUNTED=true
+    fi
+  fi
+  [ -r /y2update/logconf.ycp ] && cp /y2update/logconf.ycp /root
+fi
+
+export Y2MAXLOGSIZE=50
+export Y2MAXLOGNUM=5
+
+# revert to normal MODPATH
+# Toto, I think we're not in kansas any more
+unset MODPATH
+
+# remove this link, otherwise YaST2 thinks it is an update
+rm -f /var/X11R6/bin/X
+
+
+/usr/lib/YaST2/bin/YaST2 installation initial
+
+
+yast2exitcode=$?
+
+# just in case ...
+if [ `grep " /mnt" /proc/mounts | wc -l` -ge 1 ] ; then
+    grep " /mnt" /proc/mounts | cut -d " " -f 2 | sort -r | xargs -n 1 umount
+fi
+if [ `grep ^/dev/ /proc/swaps | wc -l` -ge 1 ] ; then
+    grep ^/dev/ /proc/swaps | cut -d " " -f 1 | xargs -n 1 swapoff 2>/dev/null
+fi
+
+#
+# Unmount update filesystem
+#
+if [ "$UPDATE_MOUNTED" = true ] ; then umount /y2update ; fi
+
+[ "$Sourcemounted" != 1 ] && umount /var/adm/mount
+rm -f /etc/mtab
+
+# do not write to non existant ttys
+grep -qi iseries /proc/cpuinfo || {
+ps aux >/dev/tty9
+cat /proc/mounts >/dev/tty10
+echo >/dev/tty10
+fuser -vm / >/dev/tty11
+}
+
+# YYYYYYYYYYYYYYYYY
+#  umount /var/log
+# yyyyyyyyyyyyyyyyy
+
+test -d /proc/iSeries || chvt 1
+
+exit $yast2exitcode

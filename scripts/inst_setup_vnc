@@ -1,0 +1,41 @@
+# vim: syntax=sh
+
+# an empty password doesnt work(?), use "linux123" instead
+test -z "$VNCPassword" && VNCPassword=linux123
+
+if [ ! -e /root/.vnc/passwd ]; then
+	rm -f /root 2>/dev/null
+	mkdir -p /root/.vnc
+	/usr/X11R6/bin/vncpasswd.arg /root/.vnc/passwd "$VNCPassword" && echo OK || echo something went wrong with vncpasswd.arg...
+	chmod 600 /root/.vnc/passwd
+fi
+
+echo
+echo starting VNC server...
+echo a log can be found in /tmp/vncserver.log ...
+cat <<-EOF
+
+	***
+	***           You can connect to $IP, display :1 now
+	***
+
+	(When YaST2 is finished, close your VNC viewer and return to this window.) 
+
+EOF
+
+# fake hostname to make VNC screen pretty
+hostname $IP
+
+/usr/X11R6/bin/Xvnc :1 \
+	-rfbauth /root/.vnc/passwd \
+	-desktop Installation \
+	-geometry 800x600 \
+	-depth 15 \
+	-rfbwait 120000 \
+	-rfbport 5901 \
+	-fn -gnu-unifont-medium-r-normal--16-160-75-75-p-80-iso10646-1 \
+	-fp /usr/X11R6/lib/X11/fonts/misc/,/usr/X11R6/lib/X11/fonts/uni/ \
+	&> /tmp/vncserver.log & 
+export DISPLAY=:1
+
+echo "RunVNC: 1" >> /etc/install.inf

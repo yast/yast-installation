@@ -1,0 +1,62 @@
+
+unset TERM
+echo -e "\033c"
+
+while test -z "$TERM" ; do
+echo ""
+echo "What type of terminal do you have ?"
+echo ""
+echo "  1) VT100"
+echo "  2) VT102"
+echo "  3) VT220$HVC_CONSOLE_HINT"
+echo "  4) X Terminal Emulator (xterm)"
+echo "  5) X Terminal Emulator (xterm-vt220)"
+echo "  6) X Terminal Emulator (xterm-sco)"
+echo "  7) X Terminal Emulator (xterm-sun)"
+echo "  8) Linux VGA or Framebuffer Console"
+echo "  9) Other"
+echo ""
+echo -n "Type the number of your choice and press Return: "
+read SELECTION
+case $SELECTION in
+  1)
+    TERM=vt100
+    ;;
+  2)
+    TERM=vt102
+    ;;
+  3)
+    TERM=vt220
+    ;;
+  4)
+    TERM=xterm
+    ;;
+  5)
+    TERM=xterm-vt200
+    ;;
+  6)
+    TERM=xterm-sco
+    ;;
+  7)
+    TERM=xterm-sun
+    ;;
+  8)
+    TERM=linux
+    ;;
+  9)
+    echo ""
+    echo ""
+    echo "Specify a valid terminal type exactly as it is listed in the terminfo"
+    echo "database."
+    echo ""
+    echo -n "Terminal type: "
+    read TERM
+    ;;
+  *)
+    echo ""
+    echo ""
+    echo "This selection was not correct, please try again!"
+    ;;
+  esac
+done 
+
