@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Aug 21 19:35:48 CEST 2002 - kkaempf@suse.de
+
+- parse /etc/install.inf in InstMedia
+
+-------------------------------------------------------------------
 Wed Aug 21 18:01:05 CEST 2002 - kkaempf@suse.de
 
 - fix for build
