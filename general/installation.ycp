@@ -112,6 +112,7 @@
     {
 	Wizard::OpenNextBackStepsDialog();
     }
+    // dialog caption
     Wizard::SetContents(_("Initializing..."), `Empty (), "", false, false);
 
     // --------------------------------------------------------------

@@ -165,12 +165,14 @@
     {
 	if (found_controllers)
 	{
+	    // error report
 	    Report::Error(_("No hard disks were found for the installation.
 Please check your hardware!
 "));
 	}
 	else
 	{
+	    // error report
 	    Report::Error(_("No hard disks and no hard disk controllers were
 found for the installation.
 Check your hardware.

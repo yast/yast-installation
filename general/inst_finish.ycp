@@ -656,6 +656,7 @@ with the load address of your root DASD.
 
 	if (mounted == false)
 	{
+	    // error report
 	    Report::Error(_("Cannot mount host file system."));
 	}
 	else
