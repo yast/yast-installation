@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Apr  6 15:39:25 CEST 2005 - ms@suse.de
+
+- inst-sys move XF86Config to xorg.conf (#66989)
+
+-------------------------------------------------------------------
 Tue Mar 29 14:23:17 CET 2005 - jsrain@suse.cz
 
 - updated the layout of the source files in the repository
