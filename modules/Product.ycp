@@ -106,7 +106,7 @@
 	    if (tmp1 != nil)
 		flags		= splitstring (tmp1, " ");
 	}
-	else
+	else if (!Mode::config)
 	{
 	    Pkg::TargetInit ("/", false);
 	    list all_products = Pkg::TargetProducts();		// get all products
