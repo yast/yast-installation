@@ -104,8 +104,8 @@ Check the log file /var/log/y2log.
 	    if (mount_type != "")
 	    {
 		mount_type = "-t " + mount_type;
-	    }				
-	    
+	    }
+
 	    ret_bool = SCR::Execute (.target.mount,
 				     [partition, Installation::destdir, Installation::mountlog],
 				     mount_type);
@@ -125,7 +125,8 @@ Check the log file /var/log/y2log.
 		fstab = [];
 	    }
 
-	    if (SCR::Execute (.target.bash, "/bin/cp " + Installation::destdir + "/etc/cryptotab /etc") == 0)
+	    if ((SCR::Read (.target.size, Installation::destdir + "/etc/cryptotab") > 0)
+		&& (SCR::Execute (.target.bash, "/bin/cp " + Installation::destdir + "/etc/cryptotab /etc") == 0))
 	    {
 		crtab = SCR::Read( .etc.cryptotab );
 	    }
@@ -267,7 +268,7 @@ Check the log file /var/log/y2log.
 				    string command = "/sbin/raidstart --all --configfile "
 					+ Installation::destdir
 					+ "/etc/raidtab";
-				    
+
 				    ret_from_shell = SCR::Execute (.target.bash, command);
 				    if ( ret_from_shell != 0 )
 				    {
@@ -279,14 +280,14 @@ Check the log file /var/log/y2log.
 					raidMounted = true;
 				    }
 				}
-				    
+
 				string mount_type = FileSystems::GetMountString( FileSystems::DetectFs( spec ), "");
 
 				if (mount_type != "")
 				{
 				    mount_type = "-t " + mount_type;
-				}				
-				
+				}
+
 				ret_bool = SCR::Execute (.target.mount,
 							 [ spec, Installation::destdir + mounts["file"]:"", Installation::mountlog],
 							 mount_type );
@@ -342,13 +343,14 @@ Check the log file /var/log/y2log.
 	    Update::UnmountPartitions();
 	}
 
-	// setting timezone 
+	// setting timezone
 	Timezone::Set(Timezone::timezone);
 
 	// setting keyboard
 	Keyboard::SetConsole( Keyboard::current_kbd );
 	Keyboard::SetX11( Keyboard::current_kbd );
-	
+
+	y2milestone ("mountPartition(%1) = %2", partition, success);
 	return success;
 
     };
@@ -484,20 +486,22 @@ Check the log file /var/log/y2log.
 	partition_list = add (partition_list, `item(`id(p), p + " (" + r + ")"));
     });
 
-    term partitionsel = `SelectionBox(`id(`partition),"", partition_list ) ;
-
+    term partitionsel = `SelectionBox(`id(`partition), "", partition_list ) ;
+y2milestone ("partitionsel (%1)", partitionsel);
 
     /* ----------------------------------------------------------------------
      * Build dialog
      * ----------------------------------------------------------------------*/
 
     term contents = `VBox(
-			  `Heading ( _("SuSE YaST2 - Update") ),
+			  // heading for 'select root partiton' dialogue
+			  `Heading ( _("Select system") ),
 			  `VSpacing(0.7),
 			  `HCenter(
 				   `HSquash(
 					    `VBox(
 						  `HSpacing( 40 ),	// force minimum width
+						  // label for selection list of root partitions
 						  `Left( `Label ( _("Select your root partition:") ) ),
 						  partitionsel
 						  )
@@ -509,7 +513,7 @@ Check the log file /var/log/y2log.
 
     // helptext for root-partition
     string help_text = _("<p>
-Choose the <b>root partition</b> to use during update.
+Choose the <b>root partition</b> to use.
 </p>
 ");
 
@@ -536,8 +540,8 @@ Choose the <b>root partition</b> to use during update.
 
     repeat
     {
-	
-	ret= Wizard::UserInput();	
+
+	ret= Wizard::UserInput();
 
 	if ( ret == `abort && CallFunction(`inst_confirm_abort(`painless) ) )
 	    return `abort;
@@ -556,7 +560,7 @@ Choose the <b>root partition</b> to use during update.
 		// unmount old partitions
 		Update::UnmountPartitions();
 		Update::selectedRootPartition = "";
-	    }	 	  
+	    }
 	    selectedRootPartition = UI::QueryWidget(`id(`partition), `CurrentItem);
 	    if ( ret == `next )
 	    {
@@ -567,10 +571,11 @@ Choose the <b>root partition</b> to use during update.
 		else
 		{
 		    Update::selectedRootPartition = selectedRootPartition;
+		    y2milestone ("Update::selectedRootPartition %1", Update::selectedRootPartition);
 		}
  	    }
 	}
     } until (ret == `next );
-    
+
     return ret;
 }
