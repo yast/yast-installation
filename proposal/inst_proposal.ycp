@@ -651,6 +651,13 @@ Put the hardware settings into effect by pressing <b>Next</b>.
 </p>
 ") + how_to_change;
 	}
+	else if (proposal_mode == `uml)
+	{
+	    // Proposal in uml module
+	    help_text_string = _("<P><B>UML installation proposal</B></P>")
+	    + _("<P>UML (User Mode Linux) installation allows you to start independent
+Linux virtual machines in the host system.</P>");
+	}
 	else
 	{
 	    // Generic help text for other proposals (not basic installation or
