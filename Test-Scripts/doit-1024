@@ -1,5 +1,6 @@
 #!/bin/sh
 
 PATH=$PATH:/usr/lib/YaST2/bin
-cd /usr/lib/YaST2/clients
+cd /usr/share/YaST2/clients
+
 y2base installation.ycp '("test")' '("initial")' qt -geometry 1024x768 -style=platinum -font '-gnu-unifont-medium-r-normal--16-160-75-75-p-80-iso10646-1' -bg '#dfdbd6'
