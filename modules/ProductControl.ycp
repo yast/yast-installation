@@ -44,7 +44,7 @@ global map partitioning = $[];
 // Software configuration
 global map software = $[];
 
-// Software configuration
+// Global configuration
 global map<string, any> globals = $[];
 
 
@@ -55,13 +55,18 @@ global string firstboot_control_file = "/usr/share/YaST2/control/firstboot.xml";
 // Location of a custom control file
 global string custom_control_file = "";
 
+
+
+// Control file in service packs
+global string y2update_control_file = "/y2update/control.xml";
+
 // The custom control file location, usually copied from
 // the root of the CD to the installation directory by linuxrc
 global string default_control_file = "/control.xml";
 
 // The file above get saved into the installed system for later
 // processing
-global string saved_control_file = "/var/lib/YaST2/control.xml";
+global string saved_control_file = Directory::vardir + "/control.xml";
 
 // The packaged file which contains all default worklfows
 global string packaged_control_file = "/usr/share/YaST2/control/control.xml";
@@ -108,6 +113,8 @@ global define boolean checkDisabled (map mod )
 global define boolean Read( string controlfile) 
 {
     productControl = XML::XMLToYCPFile(controlfile);
+    if (productControl == nil)
+        return false;
     workflows = productControl["workflows"]:[];
     proposals = productControl["proposals"]:[];
 
@@ -259,10 +266,11 @@ global define term getTerm (map mod, map def) ``{
     // All client start with "inst_".
 
     string client = "";
-    if (Stage::firstboot ())
+    if (Stage::firstboot () || custom_control_file != "")
     {
         // Firstboot mode has no predefined prefix. Name of module is
-        // taken as is.
+        // taken as is. This also applies to custom control files used
+	// for mini workflows, but not installation workflows.
 
         client = mod["name"]:"dummy";
     }
@@ -289,28 +297,28 @@ global define term getTerm (map mod, map def) ``{
 
 
     foreach(string arg, args,
-            ``{
-            if (arg == "true")
-            {
+    {
+	if (arg == "true")
+	{
             a=add(a, true);
-            }
-            else if (arg == "false") {
+	}
+	else if (arg == "false") {
             a=add(a, false);
-            }
-            else if (findfirstof(arg, "`") != nil)
-            {
+	}
+	else if (findfirstof(arg, "`") != nil)
+	{
             if (findfirstof(arg, "`") == 0)
             {
-            term s = toterm(substring(arg,1));
-            symbol ss = symbolof(s);
-            a=add(a, ss);
+		term s = toterm(substring(arg,1));
+		symbol ss = symbolof(s);
+		a=add(a, ss);
             }
-            }
-            else
-            {
+	}
+	else
+	{
             a=add(a,arg);
-            }
-            });
+	}
+    });
     return a;
 }
 
@@ -362,6 +370,10 @@ void PrepareScripts(map m) {
 
 
 
+/**
+ * Get list of required files for the workflow.
+ * @return list<string> Required files list.
+ */
 global list<string> RequiredFiles (string stage, string mode) 
 {
     // Files needed during installation.
@@ -376,25 +388,26 @@ global list<string> RequiredFiles (string stage, string mode)
     integer id = 1;
     modules = filter(map m, modules, ``(m["enabled"]:true));
 
-    foreach(map m, modules, ``{
-            string client = "";
-            if (Stage::firstboot ())
-            {
-                client = m["name"]:"dummy";
-            }
-            else
-            {
-                if (issubstring(m["name"]:"dummy", "inst_"))
-                {
-                    client = m["name"]:"dummy";
-                }
-                else
-                {
-                    client = "inst_" + m["name"]:"dummy";
-                }
-            }
-            client = Directory::clientdir + "/" + client + ".ycp";
-            needed_client_files = add(needed_client_files, client);
+    foreach(map m, modules,
+    {
+	string client = "";
+	if (Stage::firstboot ())
+	{
+	    client = m["name"]:"dummy";
+	}
+	else
+	{
+	    if (issubstring(m["name"]:"dummy", "inst_"))
+	    {
+		client = m["name"]:"dummy";
+	    }
+	    else
+	    {
+		client = "inst_" + m["name"]:"dummy";
+	    }
+	}
+	client = Directory::clientdir + "/" + client + ".ycp";
+	needed_client_files = add(needed_client_files, client);
     });
     
     needed_client_files=toset(needed_client_files);
@@ -428,6 +441,7 @@ global define map getCompleteWorkflow(string stage, string mode)
  */
 global define list<map> getModules(string stage, string mode, symbol which)
 {
+    y2debug("workflows: %1", workflows );
     list<map> tmp = filter(map wf, workflows, ``(
                 Check(wf["stage"]:"", stage) && Check(wf["mode"]:"", mode )
     ));
@@ -473,7 +487,8 @@ global define string getWorkflowLabel(string stage, string mode)
 
 /**
  * Add Wizard Steps
- *
+ * @param list<map> stagemode A List of maps containing info about complete
+ *                  installation workflow.
  */
 global define void AddWizardSteps(list<map> stagemode)
 {
@@ -499,7 +514,7 @@ global define void AddWizardSteps(list<map> stagemode)
 	    UI::WizardCommand(`AddStepHeading( dgettext( wizard_textdomain, slabel ) ) );
         }
 	foreach(map m, getModules(sm["stage"]:"", sm["mode"]:"", `enabled),
-            ``{
+		``{
 	    y2debug("Adding wizard step: %1", m );
 	    if (m["label"]:"" != "") {
 		if (first_id=="")
@@ -507,10 +522,10 @@ global define void AddWizardSteps(list<map> stagemode)
 		    first_id = m["id"]:"";
 		}
 		UI::WizardCommand(`AddStep( dgettext(
-                            wizard_textdomain,
-                            m["label"]:"" ),
-                        m["id"]:"" )
-                    );
+						     wizard_textdomain,
+						     m["label"]:"" ),
+					    m["id"]:"" )
+				  );
 	    }
 	});
     });
@@ -659,6 +674,7 @@ global define list < list > getProposals(
 
 /**
  * Get Proposal list that cant be changed by the user.
+ * @return list<string> list of locked proposals
  */
 global list<string> getLockedProposals ()
 {
@@ -668,8 +684,9 @@ global list<string> getLockedProposals ()
 
 /**
  * Initialize Product Control
+ * @return boolean True on success
  */
-global define void Init()
+global define boolean Init()
 {
 
     // FIXME: Hack, with fixed names. Should be changed after SLES.
@@ -681,13 +698,17 @@ global define void Init()
     {
         packaged_control_file = "/usr/share/YaST2/control/control.SLES.xml";
     }
+
+
+    
     boolean ret = false;
     current_control_file = "";
     list<string> order =
         [
-	 default_control_file,  // "/control.xml"
-	 saved_control_file, // "/var/lib/YaST2/control.xml"
-	 packaged_control_file // "/usr/share/YaST2/control/control.xml"
+	 y2update_control_file,  // /y2update/control.xml
+	 default_control_file,  // /control.xml
+	 saved_control_file, // /var/lib/YaST2/control.xml
+	 packaged_control_file // /usr/share/YaST2/control/control.xml
 	 ];
 
     if (Stage::stage () == "firstboot")
@@ -700,7 +721,8 @@ global define void Init()
         order=prepend(order, custom_control_file);
     }
 
-    foreach(string cf, order, ``{
+    foreach(string cf, order,
+    {
 	if ((integer)SCR::Read( .target.size, cf )>0
             && current_control_file == "")
 	{
@@ -709,14 +731,16 @@ global define void Init()
     });
 
     // Just to be sure..
+    /*
     if (current_control_file == "")
     {
         current_control_file = packaged_control_file; // /usr/share/YaST2/control/control.xml
     }
+    */
 
     y2milestone("Reading controlfile: %1", current_control_file );
     Read( current_control_file );
-    return;
+    return (current_control_file != "");
 }
 
 /**
@@ -725,7 +749,11 @@ global define void Init()
  */
 global define void ProductControl()
 {
-    Init();
+    if (!Init())
+    {
+        y2error("No control file found");
+    }
+    return;
 }
 
 // EOF
