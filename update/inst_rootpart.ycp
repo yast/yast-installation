@@ -39,14 +39,13 @@
     map targetMap 			= Storage::GetTargetMap();
     string selectedRootPartition	= Update::selectedRootPartition;
     map partitionMap 			= Update::validRootPartitions;
-    
+
     y2milestone("valid root partitions :%1", partitionMap );
 
     if ( Mode::test )
     {
 	targetMap = SCR::Read(.target.ycp, "test/test_target_map.ycp");
     }
-
 
     //------------------------------------------------------------------------
 
@@ -76,7 +75,7 @@ Check the log file /var/log/y2log.
 	if ( !Mode::test )
 	{
 	    // Checking filesystem
-	    symbol used_fs = Storage::DetectFs( partition );
+	    symbol used_fs = FileSystems::DetectFs( partition );
 	    if ( used_fs == `ext2 )
 	    {
 		// is ext2-fs
@@ -100,7 +99,7 @@ Check the log file /var/log/y2log.
 
 	if ( !Mode::test )
 	{
-	    string mount_type = FileSystems::GetMountString( Storage::DetectFs( partition ), "");
+	    string mount_type = FileSystems::GetMountString( FileSystems::DetectFs( partition ), "");
 
 	    if (mount_type != "")
 	    {
@@ -114,8 +113,9 @@ Check the log file /var/log/y2log.
 
 	if ( ret_bool )
 	{
-	    // Reading fstab and mount all required mount-points to Installation::destdir
+	    Update::AddMountedPartition([Installation::destdir, "mount"]);
 
+	    // Reading fstab and mount all required mount-points to Installation::destdir
 	    if (SCR::Execute (.target.bash, "/bin/cp " + Installation::destdir + "/etc/fstab /etc") == 0)
 	    {
 		fstab = SCR::Read( .etc.fstab );
@@ -198,6 +198,7 @@ Check the log file /var/log/y2log.
 					    "passno" : 0,
 					    "vfstype": vfstype ];
 			    fstab = prepend( fstab, add_fs );
+			    Update::AddMountedPartition([loop, "loop"]);
 			}
 
 		    }
@@ -224,7 +225,7 @@ Check the log file /var/log/y2log.
 			if ( !Mode::test )
 			{
 			    // Checking filesystem, if needed
-			    symbol used_fs = Storage::DetectFs( spec );
+			    symbol used_fs = FileSystems::DetectFs( spec );
 			    if ( used_fs == `ext2 )
 			    {
 				// is ext2-fs
@@ -279,7 +280,7 @@ Check the log file /var/log/y2log.
 				    }
 				}
 				    
-				string mount_type = FileSystems::GetMountString( Storage::DetectFs( spec ), "");
+				string mount_type = FileSystems::GetMountString( FileSystems::DetectFs( spec ), "");
 
 				if (mount_type != "")
 				{
@@ -292,6 +293,7 @@ Check the log file /var/log/y2log.
 				if ( !ret_bool )
 				{
 				    y2error("mounting %1 on %2 failed", mounts["spec"]:"", "/mnt" + mounts["file"]:"");
+				    Update::AddMountedPartition([Installation::destdir + mounts["file"]:"", "mount"]);
 				    success = false;
 				}
 			    }
@@ -315,6 +317,10 @@ Check the log file /var/log/y2log.
 				{
 				    y2error("swapon failed: %1", command );
 				}
+				else
+				{
+				    Update::AddMountedPartition([spec, "swap"]);
+				}
 			    }
 			}
 		    }
@@ -331,7 +337,9 @@ Check the log file /var/log/y2log.
 	if ( !success )
 	{
 	    UI::MessagePopup(message);
-	    SCR::Execute (.target.umount, Installation::destdir);
+
+	    // some mount failed, unmount all mounted fs
+	    Update::UnmountPartitions();
 	}
 
 	// setting timezone 
@@ -345,107 +353,6 @@ Check the log file /var/log/y2log.
 
     };
 
-    //------------------------------------------------------------------------
-    //
-    // Unmounting partition Installation::destdir
-    //
-    //------------------------------------------------------------------------
-
-    define unmountPartition( ) ``{
-
-	integer ret_from_shell = 0;
-	boolean ret_bool = true;
-
-	if (SCR::Execute (.target.bash, "/bin/cp " + Installation::destdir + "/etc/fstab /etc") == 0)
-	{
-	    fstab = SCR::Read( .etc.fstab );
-	}
-	else
-	{
-	    fstab = [];
-	}
-
-	if (SCR::Execute (.target.bash, "/bin/cp " + Installation::destdir + "/etc/cryptotab /etc") == 0)
-	{
-	    crtab = SCR::Read( .etc.cryptotab );
-	}
-	else
-	{
-	    crtab = [];
-	}
-
-	if ( fstab == nil || size ( fstab ) == 0 )
-	{
-	    y2milestone( "no unmount of single mount-points needed." );
-	}
-	else
-	{
-	    y2milestone("old crtab : %1", crtab );
-	    foreach ( `mounts, crtab,
-	    ``{
-		string fspath  = mounts["mount"]:"";
-		string loop    = mounts["loop"]:"";
-
-		if (fspath != "/" )
-		{
-		    y2milestone("unmount %1", fspath );
-		    ret_bool = SCR::Execute (.target.umount, Installation::destdir + fspath);
-		    if ( !ret_bool )
-		    {
-			y2error ("unmounting %1 failed", fspath);
-		    }
-		    ret_bool = WFM::Execute (.local.bash, "losetup -d " + loop );
-		    if ( !ret_bool )
-		    {
-			y2error ("losetup -d %1 failed", loop);
-		    }
-		}
-	      });
-
-	    y2milestone("old fstab : %1", fstab );
-	    foreach ( `mounts, fstab,
-	    ``{
-		string fspath  = mounts["file"]:"";
-		string vfstype = mounts["vfstype"]:"";
-		string spec    = mounts["spec"]:"";
-		string mntops  = mounts["mntops"]:"";
-
-		if (contains (allowed_fs, vfstype)
-		    && fspath != "/"
-		    && !issubstring (mntops,"noauto"))
-		{
-		    y2milestone("unmount %1", fspath );
-		    ret_bool = SCR::Execute (.target.umount, Installation::destdir + fspath);
-		    if ( !ret_bool )
-		    {
-			y2error ("unmounting %1 failed", fspath);
-		    }
-		}
-		else if (vfstype == "swap" && fspath == "swap" )
-		{
-		  y2milestone("unmounting %1 to %2", spec, fspath);
-
-		  if ( !Mode::test )
-		  {
-			string command = "/sbin/swapoff ";
-
-			if ( spec != "" )
-			{
-			    command = command + spec;
-
-			    // swapoff
-			    ret_from_shell = SCR::Execute (.target.bash, command);
-			    if ( ret_from_shell != 0 )
-			    {
-				y2error("unmounting failed: %1", command );
-			    }
-			}
-		    }
-		}
-	    }); // foreach (mount entry)
-	}
-	SCR::Execute (.target.umount, "/mnt" );
-    };
 
 //
 //***************************** Main-Function ********************************
@@ -464,7 +371,7 @@ Check the log file /var/log/y2log.
 
 	SCR::Execute (.target.modprobe, "reiserfs", "");
 	SCR::Execute (.target.modprobe, "jfs", "");
-	SCR::Execute (.target.modprobe, "xfs", "");		
+	SCR::Execute (.target.modprobe, "xfs", "");
 	SCR::Execute (.target.modprobe, "ext3", "");
 	SCR::Execute (.target.modprobe, "xor", "");
 	SCR::Execute (.target.modprobe, "raid0", "");
@@ -486,10 +393,10 @@ Check the log file /var/log/y2log.
 			get_device_name( device, partition["nr"]:0 );
 		    boolean ret_bool = true;
 
-		    // Mount partition to Installation::destdir
-
+		    // Test if partition is root
 		    if ( !Mode::test )
 		    {
+			//Mount partition to Installation::destdir
 			ret_bool = SCR::Execute (.target.mount, [partition, Installation::destdir, Installation::mountlog ]);
 
 			if ( ret_bool )
@@ -503,6 +410,7 @@ Check the log file /var/log/y2log.
 				list release_lines = splitstring (suse_release, "\n");
 				partitionMap[partition] = release_lines[0]:"?";
 			    }
+			    // unmount partition
 			    SCR::Execute (.target.umount, Installation::destdir);
 			}
 		    }
@@ -535,7 +443,7 @@ Check the log file /var/log/y2log.
 	    // There is a mounted root-partition. --> This frame have
 	    // been called by inst_sw_backup. So we have to unmount
 	    // the root-partition
-	    unmountPartition( );
+	    Update::UnmountPartitions();
 	    Update::selectedRootPartition = "" ;
 	    return `auto;
 	}
@@ -639,7 +547,7 @@ Choose the <b>root partition</b> to use during update.
 
 	if ( ret == `back )
 	{
-	    unmountPartition( );
+	    Update::UnmountPartitions();
 	    return `back;
 	}
 
@@ -649,7 +557,7 @@ Choose the <b>root partition</b> to use during update.
 	    if ( size ( selectedRootPartition ) > 0 )
 	    {
 		// unmount old partitions
-		unmountPartition( );
+		Update::UnmountPartitions();
 		Update::selectedRootPartition = "";
 	    }	 	  
 	    selectedRootPartition = UI::QueryWidget(`id(`partition), `CurrentItem);

@@ -55,11 +55,60 @@
     global integer packagesInstalled = 0;
     // counter for installed packages
 
+    /**
+     * List of mounted partitions, activated swap partitions and loop devices.
+     * Used for reversing action if mode is changed from update to new
+     * installation or if root directory for update is changed. Each item is
+     * list [string value, string type], where type is "mount", "swap", "loop",
+     * value is path to mounted directory, swap partition name or loop device
+     * name according to type value.
+     */
+    list activated = [];
 
     /*-----------------------------------------------------------------------
      * GLOBAL FUNCTIONS
      *-----------------------------------------------------------------------*/
 
+    /**
+     * Unmount all mounted partitions, deactivate swaps, detach loopback
+     * devices. Uses list activated to make actions in reverse order.
+     * @return void
+     */
+    global define void UnmountPartitions() ``{
+	 foreach(list info, activated, ``{
+		string file = info[0]:"";
+		string type = info[1]:"";
+
+		if (file != "" && type != "")
+		{
+		    if (type == "mount")
+		    {
+			SCR::Execute (.target.umount, file);
+		    }
+		    else if (type == "swap")
+		    {
+			SCR::Execute (.target.bash, "/sbin/swapoff " + file);
+		    }
+		    else if (type == "loop")
+		    {
+			WFM::Execute (.local.bash, "losetup -d " + file );
+		    }
+		}
+	    }
+	);
+
+	// clear activated list
+	activated = [];
+    };
+
+    /**
+     * Add information about mounted partition to internal list.
+     * @param partinfo partinfo has to be list with exactly two strings, see description of list "activated"
+     * @return void
+     */
+    global define void AddMountedPartition(list partinfo) ``{
+	prepend(activated, partinfo);
+    }
 
     /**
      * Restore()

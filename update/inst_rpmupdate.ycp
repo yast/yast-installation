@@ -475,7 +475,7 @@ Check the log file /var/log/y2log
 			packageName = substring ( packageName, pos+1, size(packageName) -pos -5 );
 
 			SCR::Execute (.target.bash, "/bin/echo NOT installing "+packageName+" >>"+
-					Installation::destdir+"/var/log/y2logRPMShort");
+					Installation::destdir+"/var/log/YaST2/y2logRPMShort");
 		    });
 
 		    cdnum = cdnum + 1;
