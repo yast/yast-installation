@@ -417,8 +417,8 @@ differ from those in the manual.
         symbol result = (symbol) WFM::CallFunction (substring(sformat("%1", module_name), 1), args);
 
 
-        Hooks::Run (sformat("%1", module_name), false );
-        Hooks::Checkpoint ( mod["name"]:"", false);          // exit hook
+        //Hooks::Run (sformat("%1", module_name), false );
+        //Hooks::Checkpoint ( mod["name"]:"", false);          // exit hook
 
         if ( module_name == `inst_language || module_name == `autoinst_init )   // language change very likely
         {
