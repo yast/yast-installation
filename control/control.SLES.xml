@@ -401,7 +401,7 @@ textdomain="control"
                     <arguments>false,true</arguments>
                 </module>
                 <module>
-	            <label>AutoYaSTSettings</label>
+	            <label>AutoYaST Settings</label>
                     <name>autoinit</name>
                     <archs>all</archs>
                 </module>
