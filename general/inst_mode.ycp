@@ -28,6 +28,7 @@
     include "partitioning/partition_defines.ycp";
     import "Storage";
     import "Kernel";
+    import "RootPart";
     import "Update";
 
     textdomain "installation";
@@ -37,15 +38,15 @@
 
 	y2milestone( "User wishes to boot installed system" );
 
-	if (!Update::didSearchForRootPartitions)
+	if (!RootPart::didSearchForRootPartitions)
 	{
 	    UI::OpenDialog (`opt(`decorated ),
 			    `Label(_("Evaluating root partition. One moment please...")));
-	    Update::FindRootPartitions (false);
+	    RootPart::FindRootPartitions (false);
 	    UI::CloseDialog ();
 	}
 
-	if (size (Update::validRootPartitions) == 0)
+	if (size (RootPart::validRootPartitions) == 0)
 	{
 	    // a popup
 	    UI::MessagePopup(_("No Linux root partition found."));
@@ -55,13 +56,13 @@
 	// We must only change UpdateL::selectedRootPartition if booting
 	// is inevitable.
 
-	if (size (Update::validRootPartitions) == 1)
+	if (size (RootPart::validRootPartitions) == 1)
 	{
-	    Update::selectedRootPartition = "";
+	    RootPart::selectedRootPartition = "";
 
-	    foreach (`p, `r, Update::validRootPartitions, ``{
-		if (Update::selectedRootPartition == "")
-		    Update::selectedRootPartition = p;
+	    foreach (`p, `r, RootPart::validRootPartitions, ``{
+		if (RootPart::selectedRootPartition == "")
+		    RootPart::selectedRootPartition = p;
 	    });
 	}
 	else
@@ -70,7 +71,7 @@
 		return `cancel;
 	}
 
-	string root_part = Update::selectedRootPartition;
+	string root_part = RootPart::selectedRootPartition;
 
 	UI::OpenDialog( `opt(`decorated),
 			// Information popup: Inform user what partition
@@ -79,6 +80,7 @@
 			`Label( sformat(_("Booting from %1"), root_part ) ) );
 
 	Update::Detach ();
+	RootPart::UnmountPartitions ();
 
 	sleep (1000);
 

@@ -13,6 +13,8 @@
 
     import "HTML";
     import "Mode";
+    import "RootPart";
+    import "Update";
 
     string func  = WFM::Args(0);
     map    param = WFM::Args(1);
@@ -67,6 +69,7 @@
 	if (tmp1 != Mode::installation || tmp2 != Mode::update)
 	{
 	    Update::Detach ();
+	    RootPart::UnmountPartitions ();
 	}
 
 	// Fill return map

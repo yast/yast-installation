@@ -104,7 +104,7 @@
 	    if (mode_changed || rootpart_changed ||
 		workflow_sequence == `finish)
 	    {
-		Update::UnmountPartitions ();
+		RootPart::UnmountPartitions ();
 	    }
 	    */
 
