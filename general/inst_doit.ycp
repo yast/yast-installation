@@ -111,7 +111,7 @@ Write data to floppy disk now?
 
 	    if ( WFM::Execute (.local.mount, [StorageDevices::FloppyDevice, floppy_path]) )
 	    {
-		boolean success = WFM::Write (.local.ycp, floppy_path+"/settings.ycp");
+		boolean success = WFM::Write (.local.ycp, floppy_path + "/settings.ycp");
 
 		WFM::Execute (.local.umount, floppy_path);
 		if (success)
@@ -123,6 +123,8 @@ Write data to floppy disk now?
 		}
 		else
 		{
+		    // msgbox
+		    // failed to save data to floppy disk
 		    UI::MessagePopup(_("Error saving settings to the floppy disk.
 Please verify that the floppy is formatted
 and that the write protection is removed.
@@ -131,6 +133,8 @@ and that the write protection is removed.
 	    }
 	    else
 	    {
+		// msgbox
+		// failed to find a floppy disk
 		any ret = UI::AnyQuestionPopup3(_("Could not find a formatted floppy disk."),
 						_("Check for a floppy disk
 in the correct drive.

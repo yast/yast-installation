@@ -147,7 +147,7 @@ the CPU and the amount of memory, this process can take some time.
 	//
 
 	foreach ( `mod, modules, ``{
-	    // Inform user about current SuSEconfig step
+	    // inform user about current SuSEconfig step
 	    logStep( sformat (_("Running SuSEconfig.%1"), mod));
 	    runStep( "/sbin/SuSEconfig --verbose --module "   + mod );
 	});
@@ -162,13 +162,15 @@ the CPU and the amount of memory, this process can take some time.
 	// Call "all the rest" of the SuSEconfig main program
 	//
 
+	// inform user that SuSEconfig has finished
 	logStep( _("Finishing SuSEconfig") );
 	runStep( "/sbin/SuSEconfig --verbose --nomodule" );
     }
     else
     {
-	logStep( _("SuSEconfig disabled in /etc/rc.config") );
-	y2milestone( "SuSEconfig disabled in /etc/rc.config" );
+	// inform user that SuSEconfig has been disabled
+	logStep( _("SuSEconfig disabled in /etc/sysconfig/suseconfig") );
+	y2milestone( "SuSEconfig disabled in /etc/sysconfig/suseconfig" );
     }
 
 
@@ -222,6 +224,7 @@ the CPU and the amount of memory, this process can take some time.
 
     if ( onlyKernelUpdate )
     {
+	// inform the user that he/she has to reboot to activate new kernel
 	UI::MessagePopup(_("Reboot your system
 to activate the new kernel.
 "));
