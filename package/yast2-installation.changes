@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jul 30 11:42:24 CEST 2003 - arvin@suse.de
+
+- don't complain when no storage controllers can be found
+  (bug #23686)
+
+-------------------------------------------------------------------
 Wed Jul 30 10:23:01 CEST 2003 - arvin@suse.de
 
 - always let YaST run in an UTF-8 environment during installation

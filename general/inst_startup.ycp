@@ -136,21 +136,19 @@
     // 2. Initialize (module loading)
     // --------------------------------------------------------------
 
-    // In live_eval mode, all modules have been loaded by linuxrc.
+    // In live_eval mode, all modules have been loaded by linuxrc. But
+    // they are loaded by StorageControllers::Initialize(). Well, there
+    // also was another reason for skipping StorageControllers::Probe ()
+    // but nobody seems to remembers.
     if ( !Mode::live_eval )
     {
-       // give user feedback what's happening
-       showFeedback( _("Probing hard disk controllers") );
-       if (StorageControllers::Probe() <= 0)
-       {
-           // Oops, no storage controllers ?
-           // no storage controllers found, where are the hard disks attached ?
-           Popup::Message(_("No hard disks were found for the installation.
-Please check your hardware!
-"));
-           clearFeedback();
-           return `cancel;
-       }
+	// give user feedback what's happening
+	showFeedback( _("Probing hard disk controllers") );
+	StorageControllers::Probe();
+
+	// Don't complain if no storage controllers can be found. Disks
+	// could be detected even without proper knowledge about the
+	// controller.
     }
 
     // give user feedback what's happening
