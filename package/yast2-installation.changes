@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Sep 05 15:01:29 CEST 2002 - arvin@suse.de
+
+- always run depmod after installation (bug #18382)
+
+-------------------------------------------------------------------
 Wed Sep  4 16:12:19 CEST 2002 - kkaempf@suse.de
 
 - move update branch to yast2-update (#18876)

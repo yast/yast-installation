@@ -10,6 +10,7 @@
  *
  * Summary:
  *	All modules.conf related functions are here
+ *
  * $Id$
  */
 {
@@ -46,14 +47,39 @@
 
 
     /**
+     * RunDepmod
+     * runs /sbin/depmod
+     * !! call only when SCR runs on target !!
+     */
+    global define void RunDepmod ()
+    ``{
+	import "Kernel";
+
+	string kernel_version = SCR::Read (.boot.vmlinuz_version, ["/boot/" + Kernel::binary]);
+
+	y2milestone ("running /sbin/depmod");
+
+	if (size (kernel_version) > 0)
+	{
+	    SCR::Execute(.target.bash, "unset MODPATH; /sbin/depmod -a -F /boot/System.map-"+kernel_version+" "+kernel_version);
+	}
+	else
+	{
+	    SCR::Execute(.target.bash, "unset MODPATH; /sbin/depmod -a -F /boot/System.map-`uname -r` `uname -r`");
+	}
+    }
+
+
+    /**
      * Save
      * save module names and arguments to /etc/modules.conf
      * !! call only when SCR runs on target !!
+     *
+     * TODO: at a flag to run depmod unconditionally and use it in inst_finish
      */
-
     global define void Save ()
     ``{
-	list module_names =  StorageControllers::moduleNames;
+	list module_names = StorageControllers::moduleNames;
 	list module_args = StorageControllers::moduleArgs;
 
 	// make module names to one long string
@@ -99,7 +125,7 @@
 	    }
 	}
 
-	// if needed, re-write /etc/modules.conf
+	// if needed, re-write /etc/modules.conf and run /sbin/depmod
 
 	if (modules_conf_changed)
 	{
@@ -107,23 +133,9 @@
 
 	    if (!Mode::test)
 	    {
-	        import "Kernel";
-
-		string kernel_version = SCR::Read (.boot.vmlinuz_version, ["/boot/" + Kernel::binary]);
-
-		if (size (kernel_version) > 0)
-		{
-		    SCR::Execute(.target.bash, "unset MODPATH; /sbin/depmod -a -F /boot/System.map-"+kernel_version+" "+kernel_version);
-		}
-		else
-		{
-		    SCR::Execute(.target.bash, "unset MODPATH; /sbin/depmod -a -F /boot/System.map-`uname -r` `uname -r`");
-		}
-
+		RunDepmod ();
 	    }
-
 	}
-
-	return;
     }
+
 }
