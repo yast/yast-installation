@@ -17,6 +17,7 @@
 
     import "Label";
 
+
     if (Mode::autoinst)
     {
 	if (!AutoinstConfig::Confirm)
@@ -123,86 +124,83 @@ their licenses, click <b>I Disagree to All</b>.</p>");
 	});
     }
 
+
     /**
-     * Returns a term containing the final installation confirmation dialog.
-     * @return confirmation dialog as term
+     * Confirm installation or update.
+     * Returns 'true' if the user confirms, 'false' otherwise.
      **/
-    define term confirmInstallationDialog() ``{
+    boolean confirmInstallation()
+    {
+	// Heading for confirmation popup before the installation really starts
+	string heading = "<h3>" + _( "Confirm Installation" ) + "</h3>";
 
-	string confirmation_message = "";
-	string confirmation_button = "";
+	// Text for confirmation popup before the installation really starts
+	string body =
+	    _( "<p>All information required for base installation is now complete.</p>" )
+	    + _( "<p>If you continue now, " )
+	    + _( "partitions on your hard disk will be <b>formatted</b> " )
+	    + _( "(<b>erasing any existing data in those partitions</b>) " )
+	    + _( "and <b>data will be overwritten</b> " )
+	    + _( "according to the installation settings in the previous dialogs.</p>" )
+	    + _( "<p>You can still go back and check the settings if you are unsure.</p>" )
+	    ;
 
-	if (Mode::installation)
+	// Label for the button that confirms startint the installation
+	string confirm_button_label = _( "&Install" );
+
+	if ( Mode::update )
 	{
-	    // Confirmation message:
-	    //
-	    // Ask user if he really wishes to begin the installation, i.e.
-	    // format hard disk partitions and install software. Before this
-	    // point nothing has been changed - now we really mean business.
-	    //
-	    // `Yes' will prepare (format) the disk and install the software.
-	    // `No' will go back; further config steps are possible.
-	    // Translators notice: Line length < 48 chars.
-	    confirmation_message = sformat (_("Warning:
-YaST2 has obtained all the information
-required to install %1.
-The installation will be carried out according
-to settings made in the previous dialogs.
-To commit the installation and all choices made
-so far, choose \"Yes\".  Choose \"No\" to return
-to the previous dialog.
+	    // Heading for confirmation popup before the update really starts
+	    heading = "<h3>" + _( "Confirm Update" ) + "</h3>";
+	
+	    // Text for confirmation popup before the update really starts
+	    body =
+		_( "<p>All information required to perform an update is now complete.</p>" )
+		+ _( "<p>If you continue now, data on your hard disk will be overwritten " )
+		+ _( "according to the settings in the previous dialogs.</p>" )
+		+ _( "<p>You can still go back and check the settings if you are unsure.</p>" )
+		;
 
-Start installation?
-"), UI::GetProductName ());
-
-	    // PushButton: Allright, really start installation
-	    confirmation_button = _("&Yes, install");
+	    // Label for the button that confirms startint the installation
+	    confirm_button_label = _( "Start &Update" );
 	}
 
-	if (Mode::update)
-	{
-	    // Confirmation message:
-	    //
-	    // Ask user if he really wishes to begin the update, i.e. update
-	    // software. Before this point nothing has been changed - now we
-	    // really mean business.
-	    //
-	    // `Yes' will update the software.
-	    // `No' will go back; further config steps are possible.
-	    // Translators notice: Line length < 48 chars.
-	    confirmation_message = sformat (_("Warning:
-YaST2 has all the data required for updating %1.
-The update will be carried out according to your
-settings made in the previous dialogs.
-To commit the update and all choices made
-so far, choose \"Yes\".  Choose \"No\" to return
-to the previous dialog.
+	string heading_bg_color = "#A9CEDD";
 
-Start update?
-"), UI::GetProductName ());
+	map display_info = UI::GetDisplayInfo();
+	string text = display_info[ "RichTextSupportsTable" ]:false ?
+	    sformat( "<table bgcolor=\"%1\"><tr><td>%2</td></tr></table>%3",
+		     heading_bg_color, heading, body )
+	    : ( heading + body );
 
-	    // PushButton: Allright, really start update
-	    confirmation_button = _("&Yes, Update");
-	}
 
-	term dialog = `HBox(
-			    `HSpacing(1),
-			    `VBox(
-				  `VSpacing(0.2),
 
-				  `Heading( confirmation_message ),
-				  `HBox(
-					`PushButton(`id(`yes), confirmation_button),
-					`HStretch(),
-					`PushButton(`id(`no), `opt(`default), Label::NoButton() )
-					),
-				  `VSpacing(0.2)
-				  ),
-			    `HSpacing(1)
-			    );
+	UI::OpenDialog(
+		       `VBox(
+			     `VSpacing( 0.4 ),
+			     `HSpacing( 60 ),		// force width
+			     `HBox(
+				   `HSpacing( 0.7 ),
+				   `VSpacing( 12 ),	// force height
+				   `RichText( text ),
+				   `HSpacing( 0.7 )
+				   ),
+			     `HBox(
+				   `HStretch(),
+				   `PushButton(`id(`back), `opt(`default), Label::BackButton() ),
+				   `HStretch(),
+				   `PushButton(`id(`confirm), confirm_button_label ),
+				   `HStretch()
+				   )
+			     )
+		       );
 
-	return dialog;
-    };
+	symbol button = (symbol) UI::UserInput();
+	UI::CloseDialog();
+
+	return ( button == `confirm );
+    }
+
 
 
     //
@@ -210,22 +208,10 @@ Start update?
     //
 
     ConfirmLicenses ();
+    boolean confirmed = confirmInstallation();
 
-    UI::OpenDialog(`opt(`decorated, `warncolor), confirmInstallationDialog() );
-
-    boolean confirmed = false;
-
-    while (true)
-    {
-	any button = UI::UserInput();
-
-	confirmed = button == `yes;
-
-	if ( button == `yes || button == `no )
-	    break;
-    }
-
-    UI::CloseDialog();
+    if ( confirmed )
+	y2milestone( "User confirmed %1", Mode::update ? "update" : "installation" );
 
     return confirmed ? `next : `back;
 }
