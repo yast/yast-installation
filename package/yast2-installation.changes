@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Sat Feb 15 16:26:26 CET 2003 - nashif@suse.de
+
+- call inst_x11 in autoinst mode
+
+-------------------------------------------------------------------
 Wed Feb 12 15:23:00 CET 2003 - kkaempf@suse.de
 
 - remove call to mkinfodir (#23588)
