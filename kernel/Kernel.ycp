@@ -163,11 +163,6 @@
 	    integer memsize = memories[0,"resource","phys_mem",0,"range"]:0;
 	    y2milestone ("Physical memory %1", memsize);
 
-	    if (contains (cpuflags, "ht"))		// hyper threading
-	    {
-		AddCmdLine ("acpismp", "force");
-	    }
-
 	    if (Arch::has_smp)
 	    {
 		// x86, SMP -> must check PAE
