@@ -40,7 +40,6 @@ This controls the system installation.
 %dir /usr/share/YaST2/control
 /usr/share/YaST2/control/*.xml
 /usr/share/YaST2/control/*.dtd
-/var/lib/YaST2/ProductFeatures
 
 @clientdir@/*.ycp
 @moduledir@/*.ycp

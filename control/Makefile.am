@@ -3,13 +3,11 @@
 SUBDIRS = docs tests
 
 controldir = $(yast2dir)/control
-productdir = /var/lib/YaST2
 
 control_DATA = \
 	control.xml \
 	control.dtd
 
-product_DATA = ProductFeatures
 
 # Note: The control.glade -> control.xml symlink is required to make xgettext
 # auto-detect the type of this file (glade) so it will extract all
