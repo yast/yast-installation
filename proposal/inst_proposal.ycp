@@ -785,6 +785,11 @@ a proposal that is locked, ask your system administrator</p>");
             Mode::stage,
             Mode::mode,
             proptype );*/
+
+    //
+    // Get submodule descriptions
+    //
+    load_matching_submodules_list();
     build_dialog();
 
     UI::ChangeWidget(`id(`menu_dummy), `Enabled, false );
@@ -826,11 +831,6 @@ a proposal that is locked, ask your system administrator</p>");
 
 	Wizard::SetHelpText (help_text ());
     }
-
-    //
-    // Get submodule descriptions
-    //
-    load_matching_submodules_list();
 
 
     if (!get_submod_descriptions_and_build_menu ())

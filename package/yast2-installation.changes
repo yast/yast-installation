@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Sep 15 14:48:09 CEST 2004 - visnov@suse.cz
+
+- initialize proposal heading before creating dialog (#45340) 
+
+-------------------------------------------------------------------
 Tue Sep 14 18:22:06 CEST 2004 - sh@suse.de
 
 - V 2.10.20
@@ -10,6 +15,7 @@ Tue Sep 14 17:05:15 CEST 2004 - mvidner@suse.cz
 - Copy the DHCP cache to the right place (#45150).
 
 -------------------------------------------------------------------
+>>>>>>> 1.324
 Tue Sep 14 12:46:53 CEST 2004 - arvin@suse.de
 
 - fixed help text in main proposal (bug #45093)
