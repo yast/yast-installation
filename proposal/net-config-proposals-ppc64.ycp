@@ -1,0 +1,8 @@
+//
+// net-config-proposals-ppc64.ycp
+//
+// Proposal list for network configuration for ppc64
+//
+[
+"lan_proposal"
+]

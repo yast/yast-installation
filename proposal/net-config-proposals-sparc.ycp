@@ -1,0 +1,9 @@
+//
+// net-config-proposals-sparc.ycp
+//
+// Proposal list for network configuration for SPARCs
+//
+[
+"lan_proposal",
+"modem_proposal"
+]

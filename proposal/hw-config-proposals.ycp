@@ -1,0 +1,11 @@
+//
+// hw-config-proposals.ycp
+//
+// Default HW proposal
+//
+[
+"x11_proposal",
+"printer_proposal",
+"sound_proposal",
+"tv_proposal"
+]

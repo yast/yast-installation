@@ -1,0 +1,10 @@
+//
+// net-config-proposals.ycp
+//
+// Default network proposal
+//
+[
+"lan_proposal",
+"modem_proposal",
+"isdn_proposal"
+]
