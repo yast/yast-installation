@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Mar  3 16:47:07 CET 2003 - sh@suse.de
+
+- Fixed bug #10990: Boot installed system does not unmount 
+
+-------------------------------------------------------------------
 Mon Mar  3 11:06:28 CET 2003 - fehr@suse.de
 
 - call win resize module not only on i386 but also on x86_64 and ia64

@@ -336,6 +336,7 @@ fix problems manually.
 		if ( ret == `next )
 		{
 		    string root_part = Update::selectedRootPartition;
+		    Update::UnmountPartitions();
 		    y2milestone( "Preparing boot from partition %1", root_part );
 
 		    UI::OpenDialog( `opt(`decorated),
