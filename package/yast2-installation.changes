@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Aug 08 10:54:34 CEST 2003 - arvin@suse.de
+
+- variable handling of release notes url
+
+-------------------------------------------------------------------
 Wed Aug 06 09:37:19 CEST 2003 - arvin@suse.de
 
 - don't copy kernel config from to /usr/src/linux (bug #28496)
