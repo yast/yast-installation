@@ -419,6 +419,7 @@ textdomain="control"
             </defaults>
             <modules  config:type="list">
                 <module>
+	            <label>Settings</label>
                     <name>autoinit</name>
                     <archs>all</archs>
                 </module>
