@@ -180,7 +180,7 @@ fi
 
 #
 # Check for driver update mode
-# If /udpate/y2update/y2update.gz exists (copied there by linuxrc)
+# If /update/y2update/y2update.gz exists (copied there by linuxrc)
 # uncompress the y2update.gz file, and mount it to /y2update.
 #
 # Else make a symlink from /y2update to /update/y2update.
@@ -214,7 +214,7 @@ test -z "$Y2MAXLOGSIZE" && export Y2MAXLOGSIZE=50
 test -z "$Y2MAXLOGNUM"  && export Y2MAXLOGNUM=5
 
 # revert to normal MODPATH
-# Toto, I think we're not in kansas any more
+# TOTO, I think we're not in kansas any more
 unset MODPATH
 
 # remove this link, otherwise YaST2 thinks it is an update
