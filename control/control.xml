@@ -59,7 +59,7 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
-            <mode>installation</mode>
+            <mode>normal</mode>
             <type>dirinstall</type>
             <stage>normal</stage>
             <label>Directory Installation</label>
@@ -69,7 +69,7 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
-            <mode>installation</mode>
+            <mode>normal</mode>
             <type>uml</type>
             <stage>normal</stage>
             <label>UML Installation Settings</label>
