@@ -380,7 +380,6 @@ differ from those in the manual.
  [ `continue, `inst_netsetup        (false, false, `dn), true,          update_mode,                                                      false],
  [ `continue, `inst_language        (false, true),       true,		screen_shot_mode &&    ! update_mode         , false],
  [ `continue, `inst_root	        (false, true),       true,		! autoinst &&    ! update_mode	             , true ],
- [ `continue, `inst_x11             (true,  true),       Arch::x11_setup_needed, Mode::x11_setup_needed &&    autoinst &&    ! update_mode  , false],
  [ `continue, `autoinst_configure   (false, false),      true,					  autoinst &&    ! update_mode	 , false],
  [ `continue, `inst_proposal	    (true,  true, `net), true,				! autoinst &&   ! update_mode	     , false],
  [ `continue, `inst_ask_net_test    (true,  true),       true,				! live_eval &&	! autoinst	         , true ],

@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Feb 10 16:02:19 CET 2004 - nashif@suse.de
+
+- remove x11 from workflow for autoyast
+
+-------------------------------------------------------------------
 Tue Feb 10 10:32:08 CET 2004 - arvin@suse.de
 
 - fixed building on s390
