@@ -467,12 +467,12 @@ Please wait while the base system is being installed.
 		y2milestone ("Update: XFree86 version 3 detected");
 		string filename = "/etc/XF86Config";
 		WFM::Execute (.local.bash,
-			  "echo -e '\n#3x' >> " + filename
-			  );
+			      "echo -e '\n#3x' >> " + filename
+			      );
 		SCR::Execute (.target.bash,"/bin/ln -sf " +
-			  Installation::destdir + "/usr/X11R6/bin/XFree86 " +
-			  Installation::destdir + "/var/X11R6/bin/X"
-			  );
+			      Installation::destdir + "/usr/X11R6/bin/XFree86 " +
+			      Installation::destdir + "/var/X11R6/bin/X"
+			      );
 		y2milestone ("Update: Include X11 config [3.x] to installed system");
 		y2milestone ("Update: X11 config [3.x] prepared for migration to [4.x]");
 		InjectFile ( filename );
@@ -483,17 +483,18 @@ Please wait while the base system is being installed.
 	    //========================================
 	    // Installation mode...
 	    //----------------------------------------
-		// make current X11 configuration available in installed system
-		// copy /etc/X11/XF86Config from inst-sys to [/mnt]/etc/X11/xorg.conf
-		// ---
+	    // make current X11 configuration available in installed system
+	    // copy /etc/X11/XF86Config from inst-sys to [/mnt]/etc/X11/xorg.conf
+	    // ---
 	    y2milestone ("Include X11 config [instsys] to installed system: xorg.conf");
-		string filename = "/etc/X11/XF86Config";
-		WFM::Execute (.local.bash, "/bin/cp " + filename + " " +
-			Installation::destdir + "/etc/X11/xorg.conf"
-		);
+	    string filename = "/etc/X11/XF86Config";
+	    WFM::Execute (.local.bash, "/bin/cp " + filename + " " +
+			  Installation::destdir + "/etc/X11/xorg.conf"
+			  );
 	}
-	}
+    }
 
+    {
 	// ... /
 	// create backup copy from from inst-sys config to be available in installed
 	// or updated system copy /etc/X11/XF86Config from inst-sys to
@@ -502,9 +503,9 @@ Please wait while the base system is being installed.
 	y2milestone ("Include X11 config [instsys] to installed system: xorg.conf.install");
 	string filename = "/etc/X11/XF86Config";
 	WFM::Execute (.local.bash, "/bin/cp " + filename + " " +
-		Installation::destdir + "/etc/X11/xorg.conf" + ".install"
-	);
-	}
+		      Installation::destdir + "/etc/X11/xorg.conf" + ".install"
+		      );
+    }
 
     // --------------------------------------------------------------
     // Save http_proxy and ftp_proxy
