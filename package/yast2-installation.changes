@@ -1,8 +1,13 @@
 -------------------------------------------------------------------
+Tue Aug 12 20:31:12 CEST 2003 - arvin@suse.de
+
+- added remote administration proposal to network proposal
+
+-------------------------------------------------------------------
 Tue Aug 12 14:38:03 CEST 2003 - gs@suse.de
 
-- YaST2.start: don't run in UTF-8 mode on a console which is connected
-  to a serial port 
+- YaST2.start: don't run in UTF-8 mode on a console which is
+  connected to a serial port
 
 -------------------------------------------------------------------
 Mon Aug 11 15:51:52 CEST 2003 - arvin@suse.de

@@ -452,7 +452,8 @@
 						    // Fallback list
 						    "lan_proposal",
 						    "modem_proposal",
-						    "proxy_proposal"
+						    "proxy_proposal",
+						    "remote_proposal"
 						    ]
 						   );
 	    }
@@ -462,7 +463,8 @@
 						   [
 						    // Fallback list
 						    "lan_proposal",
-						    "proxy_proposal"
+						    "proxy_proposal",
+						    "remote_proposal"
 						    ]
 						   );
 	    }
@@ -472,7 +474,8 @@
 						   [
 						    // Fallback list
 						    "lan_proposal",
-						    "proxy_proposal"
+						    "proxy_proposal",
+						    "remote_proposal"
 						    ]
 						   );
 	    }
@@ -485,7 +488,8 @@
 						    "dsl_proposal",
 						    "isdn_proposal",
 						    "modem_proposal",
-						    "proxy_proposal"
+						    "proxy_proposal",
+						    "remote_proposal"
 						    ]
 						   );
 	    }
