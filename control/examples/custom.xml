@@ -12,6 +12,8 @@ textdomain="control"
     <!-- global data to be set in the initial proposal -->
     <globals>
         <enable_autologin config:type="boolean">true</enable_autologin>
+        <language>de_DE</language>
+        <timezone>Canada/Eastern</timezone>
     </globals>
 
     <!-- Force a selection (`fixed) to be used instead of automatically
@@ -19,10 +21,37 @@ textdomain="control"
     <software>
         <!-- Delete old packages, should be set to false for SLES-->
         <delete_old_packages config:type="boolean">true</delete_old_packages>
-        <selection_type config:type="symbol">auto</selection_type>
+        <selection_type config:type="symbol">fixed</selection_type>
+        <base_selection>Minimal+X11</base_selection>
     </software>
     <partitioning>
         <evms_config config:type="boolean">false</evms_config>
+        <partitions config:type="list">
+            <partition>
+                <disk config:type="integer">2</disk>
+                <mount>swap</mount>
+                <size>auto</size>
+            </partition>
+            <partition>
+                <disk config:type="integer">1</disk>
+                <fstopt>defaults</fstopt>
+                <fsys>reiser</fsys>
+                <increasable config:type="boolean">true</increasable>
+                <mount>/</mount>
+                <size>2gb</size>
+            </partition>
+            <partition>
+                <disk config:type="integer">2</disk>
+                <fstopt>defaults,data=writeback,noatime</fstopt>
+                <fsys>reiser</fsys>
+                <increasable config:type="boolean">true</increasable>
+                <mount>/var</mount>
+                <pct config:type="integer">100</pct>
+                <size>2gb</size>
+            </partition>
+        </partitions>
+        <prefer_remove config:type="boolean">true</prefer_remove>
+        <remove_special_partitions config:type="boolean">false</remove_special_partitions>
     </partitioning>
 
     <proposals config:type="list">
@@ -193,13 +222,15 @@ textdomain="control"
                 <module>
                     <name>info</name>
                     <arguments>false,true</arguments>
-                </module>
-                <module>
-                    <name>language</name>
-                    <arguments>false,true,true</arguments>
-                    <!-- 'label' is the workflow step description the user
-	                 will see in the side bar during installation.   -->
-	            <label>Language</label>
+                    <prescript>
+                        <interpreter>shell</interpreter>
+                        <source>
+<![CDATA[#!/bin/sh
+touch /tmp/anas
+echo anas > /tmp/anas
+]]>
+                        </source>
+                    </prescript>
                 </module>
                 <module>
                     <name>proposal</name>
