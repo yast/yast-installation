@@ -165,9 +165,11 @@ Please wait while the base system is being installed.
     }
 
     // Check if X11 package is installed.
-    boolean x11_installed = Pkg::IsProvided("XFree86");
+    boolean x11_installed = Pkg::IsProvided("xorg-x11");
     if (!x11_installed)
-	x11_installed = Pkg::IsSelected ("XFree86");
+    {
+	x11_installed = Pkg::IsSelected ("xorg-x11");
+    }
 
     y2milestone ("x11_installed: <%1>", x11_installed );
 
