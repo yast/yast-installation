@@ -268,7 +268,9 @@
 	    button_id = `empty;
 	}
 	buttons = add(buttons, `PushButton(`id(button_id), `opt(`hstretch),
-					   lookup(dev, "button_label", _("Configure..."))));
+					   lookup(dev, "button_label",
+						  // this is a button label
+						  _("Configure..."))));
 	buttons = add(buttons, `VSpacing(0.5));
     });
 
