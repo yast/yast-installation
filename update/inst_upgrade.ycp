@@ -17,13 +17,34 @@
     import "Arch";
     import "Mode";
     import "Installation";
-    import "InstMedia";
     import "Wizard";
     import "Update";
+    import "Packages";
 
     // ------------------------------------------------------------------------
+
+    y2milestone("Setting targetroot of package DB: %1", Installation::destdir);    
+    Pkg::TargetInit (Installation::destdir, false);
+    SCR::Execute(.target.mkdir, Installation::destdir+"/var/log/YaST2");	// just in case
+    Pkg::TargetLogfile (Installation::destdir+"/var/log/YaST2/y2logRPM");
+
+    UI::OpenDialog(`opt(`decorated ),
+		   // intermediate popup while initializing internal packagemanagement
+		   `Label(_("Reading package information; One moment please...")));
+
+    Mode::update = true;
+    Packages::Init( true );
+    Update::updateEvaluated = false; // evaluate updatelist new    
+    UI::CloseDialog();
+
+    // ------------------------------------------------------------------------
+
     boolean retval = false;
-    list current_sel = SCR::Read (.package.selInstallSet);
+    list current_sel = Pkg::GetSelections (`installed, "base");
+    if (current_sel == nil || curret_sel == [])
+	current_sel = Pkg::GetSelections (`selected, "base");
+    if (current_sel == nil)
+	current_sel = [];
 
     y2milestone("Current software sel: %1", current_sel);    
 
@@ -31,44 +52,32 @@
 
     string title = _("Choose update mode");
 
-    list pacsels = [];
+    list available_base_selections = Pkg::GetSelections (`available, "base");
 
-    pacsels = filter(`sel,
-		     SCR::Read(.package.selGroups),
-		     ``( select( sel, 1, "paylist") != "paylist"
-			 && select( sel, 2, "baseconf") != "addon"));
-
-    y2milestone( "getSelGroups return: %1", pacsels );
+    y2milestone( "getSelGroups return: %1", available_base_selections );
 
     // Construct Box with Checkbox for each software category
 
     // Title of frame around "Upgrade"
-    term baseconfs = `VBox();
+    term baseconfsbox = `VBox();
 
-    foreach(`sel, pacsels,
+    foreach(`sel, available_base_selections,
     ``{
-	string   selid   = select( sel, 0, "");
-	string   group   = select( sel, 2, "");
-	string   seldesc = select( sel, 1, "");
+	map seldata = Pkg::SelectionData (sel);
 
-	if ( group == "baseconf" )
+	string seldesc = seldata["summary"]:"";
+
+	if (size ( current_sel ) == 0
+	    && !Update::onlyUpdateSelected
+	    && sel == "default" )
 	{
-	    if ( size ( current_sel ) == 0
-		 && !Update::onlyUpdateSelected
-		 && selid == "default" )
-	    {
-		// resetting to default selection
-		current_sel = ["default"];		
-		SCR::Execute (.package.selectSelInstall,
-			      select( current_sel, 0, "" ),
-			      true);
-		
-	    }
-
-	    baseconfs = add(baseconfs, `Left(`RadioButton(`id(selid),`opt(`notify, `autoShortcut),
-							  seldesc,
-							  contains (current_sel, selid))));
+	    // resetting to default selection
+	    current_sel = [sel];		
 	}
+
+	baseconfsbox = add(baseconfsbox, `Left(`RadioButton(`id(sel),`opt(`notify, `autoShortcut),
+						seldata["summary"]:"",
+						contains (current_sel, sel))));
     });
 
     string wrn_msg = "";
@@ -76,7 +85,7 @@
 
     // Checking: already selected addons or single selection?
 
-    if (  SCR::Read (.package.isSingleSelected ) )
+    if (Pkg::IsManualSelection())
     {
 	// Display warning message
 	wrn_msg = _("\
@@ -96,20 +105,23 @@ You will lose that selection if you change the basic selection.");
 			`RadioButtonGroup( `id(`bgoup), `opt(`notify),
 				 `VBox(
 					 `Left(`RadioButton(`id(`upgrade),`opt(`notify),
-							// radio button label, add a & shortcut !
+							// radio button label for update including new packages
+							// translator: add a & shortcut
 							  _("&Update your system to one of the predefined software selections\n(this may include new software packages):"), false) ),
 					 `VSpacing(0.5),
 					 `HBox(
 					     `HSpacing(4),
-					     `RadioButtonGroup(`id(`baseconf),`opt(`notify), baseconfs)
+					     `RadioButtonGroup(`id(`baseconf),`opt(`notify), baseconfsbox)
 					     ),
 					 `VSpacing(1.5),
 					 `Left(`RadioButton(`id(`notupgrade),`opt(`notify),
-							// radio button label, add a & shortcut !
+							// radio button label for update of already installed packages only
+							// translator: add a & shortcut
 							  _("U&pdate installed packages only. No additional software will be installed."), true) ),
 					 `VSpacing(1.5),
 					 `Left(`CheckBox(`id(`delete),`opt(`notify),
-							 // check box label, add a & shortcut !
+							// check box label
+							// translator: add a & shortcut
 							 _("&Clean up the system - delete unmaintained packages."), Update::deleteOldPackages) ),
 					 `VSpacing(1.5)
 					 )
@@ -148,30 +160,18 @@ be missing, such as new YaST2 modules.
 
     if ( Update::onlyUpdateSelected )
     {
-	foreach(`sel, pacsels,
+	foreach(`sel, available_base_selections,
 	``{
-	    string   selid   = select(sel, 0, "");
-	    string   group   = select(sel, 2, "");
-
-	    if ( group == "baseconf" )
-	    {
-		UI::ChangeWidget(`id(selid), `Enabled, false);
-	    }
+	    UI::ChangeWidget(`id(sel), `Enabled, false);
 	});
 
 	UI::ChangeWidget(`id(`notupgrade), `Value, true);
     }
     else
     {
-	foreach(`sel, pacsels,
+	foreach(`sel, available_base_selections,
 	``{
-	    string   selid   = select(sel, 0, "");
-	    string   group   = select(sel, 2, "");
-
-	    if ( group == "baseconf" )
-	    {
-		UI::ChangeWidget(`id(selid), `Enabled, true);
-	    }
+	    UI::ChangeWidget(`id(sel), `Enabled, true);
 	});
 
 	UI::ChangeWidget(`id(`upgrade), `Value, true);
@@ -221,46 +221,29 @@ be missing, such as new YaST2 modules.
 		     && !UI::QueryWidget(`id(`notupgrade), `Value))
 		{
 		    // software-group-selection has been changed
-		    SCR::Execute (.package.selectSelInstall,
-				  select( current_sel, 0, "" ),
-				  true);
+		    Pkg::SetSelection (current_sel[0]:"");
 		    Update::onlyUpdateSelected = false;
  		}
 		else
 		{
 		    if ( UI::QueryWidget(`id(`notupgrade), `Value) )
 		    {
-			SCR::Execute (.package.selectSelInstall,
-				      "",
-				      true);
-			
 			Update::onlyUpdateSelected = true;	
 			
-			foreach(`sel, pacsels,
-			    ``{
-			    string   selid   = select(sel, 0, "");
-			    string   group   = select(sel, 2, "");
-
-			    if ( group == "baseconf" )
-			    {
-				UI::ChangeWidget(`id(selid), `Enabled, false);
-			    }
+			foreach(`sel, available_base_selections,
+			``{
+			    UI::ChangeWidget(`id(sel), `Enabled, false);
 			});
 		    }
 		    else
 		    {
 			Update::onlyUpdateSelected = false;
-			SCR::Execute (.package.selectSelInstall,
-				      "default",
-				      true);
+			Pkg::SetSelection ("default");
 		    }
 		}
 
 		// resetting package-selection
-
-		SCR::Execute(.package.setDeleteSelection, []);
-		SCR::Execute(.package.setUpdateSelection, []);
-		SCR::Execute(.package.setInstallSelection, [], false);
+		Pkg::ActivateSelections ();
 
 		// Evaluate update packages new
 		Update::updateEvaluated = false;
