@@ -22,8 +22,8 @@
     <funcsynopsis>
       <funcprototype>
 	<funcdef><type>map</type> <function>MakeProposal</function></funcdef>
-	<paramdef><type>boolean</type><parameter>force_reset</parameter></paramdef>
-	<paramdef><type>boolean</type><parameter>language_changed</parameter></paramdef>
+	<paramdef><type>boolean</type> <parameter>force_reset</parameter></paramdef>
+	<paramdef><type>boolean</type> <parameter>language_changed</parameter></paramdef>
       </funcprototype>
     </funcsynopsis>
   </refsynopsisdiv>
