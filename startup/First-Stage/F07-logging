@@ -3,10 +3,24 @@ log "Starting F07-logging..."
 log "======================="
 
 #=============================================
-# 7) setup logfile size
+# 7) setup default logfile size
 #---------------------------------------------
 test -z "$Y2MAXLOGSIZE" && export Y2MAXLOGSIZE=100
 test -z "$Y2MAXLOGNUM"  && export Y2MAXLOGNUM=5
+
+#=============================================
+# 7.1) setup logfile size as 1/3 of FreeRam
+#---------------------------------------------
+RAM=`cat /proc/meminfo | grep MemFree | cut -f2 -d:`
+RAM=`echo $RAM | cut -f1 -d" "`
+USE=`expr $RAM / 3`
+if [ "$USE" -gt "$Y2MAXLOGSIZE" ];then
+	export Y2MAXLOGSIZE=$USE
+fi
+
+#=============================================
+# 7.2) report used logfile size and lognum
+#---------------------------------------------
 log "\tSet YaST2 LOG parameters:"
-log "\tMaximum log size:  $Y2MAXLOGSIZE"
+log "\tMaximum log size:  $Y2MAXLOGSIZE Kb"
 log "\tMaximum log count: $Y2MAXLOGNUM"
