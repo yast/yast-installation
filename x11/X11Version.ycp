@@ -26,7 +26,6 @@ textdomain "installation";
 
 import "Directory";
 import "Installation";
-import "Require";
 import "Package";
 import "Mode";
 
@@ -136,7 +135,7 @@ global define boolean have_x11 () ``{
             ret = Package::InstalledAll(pacs);
         }
         else {
-            if (!Require::RequireAndConflict (pacs, [],
+            if (!Package::InstallAllMsg (pacs, 
                         // notification 1/2
                         _("<p>To access the X11 system, the <b>%1</b> package must be installed.</p>") +
                         // notification 2/2

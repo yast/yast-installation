@@ -522,11 +522,11 @@ textdomain="control"
                 </module>
                 <module>
 	            <label>System Configuration</label>
-                    <name>autoconfigure</name>
+                    <name>x11</name>
                 </module>
                 <module>
 	            <label>System Configuration</label>
-                    <name>x11</name>
+                    <name>autoconfigure</name>
                 </module>
                 <module>
 	            <label>Clean Up</label>
