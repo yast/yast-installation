@@ -32,10 +32,19 @@ fi
 # source install.inf, setting a variable $Moo=... for each line Moo: ...
 eval $(grep ': ' /etc/install.inf | sed -e 's/"/"\\""/g' -e 's/:  */="/' -e 's/$/"/')
 
-# set language (always with encoding UTF-8)
+# set language
 infofile=/content
 [ -f $infofile ] && LANGUAGE=`sed -n 's/^LANGUAGE \([^ ]*\)/\1/p' $infofile`
-[ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}.UTF-8"
+
+# if an entry 'Console:  ....' exists in install.inf,
+# YaST runs on a console which is connected to a serial port 
+if [ "$Console" ]; then
+    # don't use UTF-8 in case of a serial console
+    [ "$LANGUAGE" ] && LANG=$LANGUAGE
+else
+    # append UTF-8
+    [ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}.UTF-8"
+fi
 
 # umount does not work with low memory since rootfs is still in use
 umount /var/adm/mount &>/dev/null
