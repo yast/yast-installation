@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Feb 26 17:17:43 CET 2003 - kkaempf@suse.de
+
+- pass language to packagemanager (#23828)
+
+-------------------------------------------------------------------
 Wed Feb 26 12:31:27 CET 2003 - arvin@suse.de
 
 - disable all sources if user aborts installation (bug #24292)

@@ -144,6 +144,8 @@
 
 	if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_continue.ycp") > 0)
 	    WFM::CallFunction (product_continue());
+
+	Pkg::SetLocale (Language::language);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
