@@ -33,9 +33,9 @@
 
     boolean called_from_ask_user = false;
 
-    if ( size( Args() ) > 0
-	 && is( Args(0), symbol )
-	 && Args(0) == `AskUser )
+    if ( size( WFM::Args() ) > 0
+	 && is( WFM::Args(0), symbol )
+	 && WFM::Args(0) == `AskUser )
     {
 	called_from_ask_user = true;
     }
@@ -222,7 +222,7 @@ fix problems manually.
 
 	if ( ret == `abort )	// the abort button (not check box!)
 	{
-	    if ( CallFunction(`inst_confirm_abort(`painless) ) )
+	    if ( WFM::CallFunction(`inst_confirm_abort(`painless) ) )
 		break;
 	}
 
@@ -243,7 +243,7 @@ fix problems manually.
 
 	    if ( newmode == `abort ) // the abort check box (not button!)
 	    {
-		if ( CallFunction(`inst_confirm_abort(`painless) ) )
+		if ( WFM::CallFunction(`inst_confirm_abort(`painless) ) )
 		{
 		    ret = `abort;
 		    break;
@@ -275,7 +275,7 @@ fix problems manually.
 		Storage::SetTargetMap( targetMap );
 
 		UI::CloseDialog(); // close the inst_mode dialog
-		ret = CallFunction( `inst_updateControl() );
+		ret = WFM::CallFunction( `inst_updateControl() );
 
 		if ( ret == `back )
 		{
@@ -308,10 +308,10 @@ fix problems manually.
 
 		UI::CloseDialog(); // close the inst_mode dialog
 		Wizard::OpenNextBackDialog();
-		ret = CallFunction( `inst_rootpart( true, true ) );
+		ret = WFM::CallFunction( `inst_rootpart( true, true ) );
 		Wizard::CloseDialog();
 
-		if ( ret == `abort && CallFunction(`inst_confirm_abort(`painless) ) )
+		if ( ret == `abort && WFM::CallFunction(`inst_confirm_abort(`painless) ) )
 		{
 		    break;
 		}

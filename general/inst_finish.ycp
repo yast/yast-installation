@@ -198,10 +198,10 @@ Please wait while the base system is being installed.
 
     y2milestone ("Stopping SCR");
 
-    SCRClose(Installation::scrHandle);
+    WFM::SCRClose (Installation::scrHandle);
     y2milestone ("Re-starting SCR on %1", Installation::destdir);
-    Installation::scrHandle = SCROpen ("chroot="+Installation::destdir+":scr", false);
-    SCRSetDefault (Installation::scrHandle);
+    Installation::scrHandle = WFM::SCROpen ("chroot="+Installation::destdir+":scr", false);
+    WFM::SCRSetDefault (Installation::scrHandle);
 
     // it's not mounted on the target !!
     InstMedia::is_mounted = false;
@@ -674,7 +674,7 @@ with the load address of your <b>root DASD</b>.
     SCR::Execute(.target.remove, "/etc/mtab");
 
     // Stop SCR on target
-    SCRClose (Installation::scrHandle);
+    WFM::SCRClose (Installation::scrHandle);
 
     if (!Mode::live_eval)
     {

@@ -13,8 +13,8 @@
     textdomain "installation";
     import "HTML";
 
-    string func  = Args(0);
-    map    param = Args(1);
+    string func  = WFM::Args(0);
+    map    param = WFM::Args(1);
     map    ret   = $[];
 
     if ( func == "MakeProposal" )
@@ -42,7 +42,7 @@
 	//
 	// sequence = DummyMod::AskUser( has_next );
 
-	symbol result = CallFunction (`inst_mode (`AskUser ));
+	symbol result = WFM::CallFunction (`inst_mode (`AskUser ));
 
 	// Fill return map
 

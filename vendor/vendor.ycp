@@ -75,16 +75,16 @@
 
     //------------------------------------------------------------
 
-    integer arg_n = size(Args()) - 1;
+    integer arg_n = size(WFM::Args()) - 1;
 
     string default_device = "/dev/cdrom";
     string alternate_device = StorageDevices::FloppyDevice;
 
     while (arg_n >= 0)
     {
-	if (substring (Args (arg_n), 0, 1) == "/")
+	if (substring (WFM::Args (arg_n), 0, 1) == "/")
 	{
-	    default_device = Args (arg_n);
+	    default_device = WFM::Args (arg_n);
 	}
 	arg_n = arg_n - 1;
     }

@@ -23,7 +23,7 @@
   string what_will_happen = "";
 
 
-  if ( Args(0) == `painless )
+  if ( WFM::Args(0) == `painless )
   {
       // Warning text for aborting an installation before anything is installed
       what_will_happen = UI( _("If you abort the installation now,
@@ -31,14 +31,14 @@ SuSE Linux will not be installed.
 Your hard disk will remain unchanged.
 ") );
   }
-  else if ( Args(0) == `nothing )
+  else if ( WFM::Args(0) == `nothing )
   {
       // nothing will happe
       what_will_happen = UI( _("If you abort the installation now,
 your hard disk will remain unchanged.
 ") );
   }
-  else if ( Args(0) == `incomplete )
+  else if ( WFM::Args(0) == `incomplete )
   {
       // Warning text for aborting an installation during the install process
       // - After some installation steps have been performed - e.g.
@@ -48,7 +48,7 @@ have an incomplete SuSE Linux system
 which may or may not be usable.
 You may need to reinstall.") );
   }
-  else if ( Args(0) == `unusable )
+  else if ( WFM::Args(0) == `unusable )
   {
       // Warning text for aborting an installation during the install process
       // right in the middle of some critical process (e.g. formatting)
@@ -56,7 +56,7 @@ You may need to reinstall.") );
 SuSE Linux will be unusable.
 You will need to reinstall.") );
   }
-  else if ( Args(0) == `desaster)
+  else if ( WFM::Args(0) == `desaster)
   {
       // Warning text for aborting an installation during a partition resizing etc.
       what_will_happen = UI( _("If you abort the installation now,
