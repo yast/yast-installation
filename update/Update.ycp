@@ -1,19 +1,17 @@
 /**
- * Module: 		Update.ycp
+ * Module:		Update.ycp
  *
  * Authors:		Anas Nashif (nashif@suse.de)
  *
- * Purpose: 		Update module
+ * Purpose:		Update module
  *
- *				
+ *
  * $Id$
  */
 {
     module "Update";
 
-    import "Packages";
 
-    
     global string newKernel = "";
     // update kernelname if there has not been found a old kernel
     // in the db.
@@ -26,11 +24,11 @@
 
     global boolean deleteOldPackages = false;
     // Flag is set true if the user decides to delete unmaintained packages
-    
+
     global integer last_runlevel = -1;
 
     global  list notDeletedPackages = [];
-    
+
     global list notInsertedPackages = [];
 
     global string selectedRootPartition = "";
@@ -72,7 +70,8 @@
 
     global define void Restore()
     ``{
-	Packages::Init( true );
+	// TODO remove this later ??
+	Pkg::InitTarget("/", false);
 
 	if (!Mode::test)
 	{
@@ -101,7 +100,7 @@
 	}
 
 	list update_list = [];
-	
+
 	if (!Mode::test)
 	{
 	    update_list = SCR::Read (.target.ycp,
@@ -114,13 +113,14 @@
 				     ["/tmp/pacs_to_update.ycp",
 				      []]);
 	}
-	
-	SCR::Execute (.package.setUpdateSelection, update_list );
+
+	// TODO FIXME: use Pkg::
+	// SCR::Execute (.package.setUpdateSelection, update_list );
 
 	packagesInstalled = SCR::Read (.target.ycp,
 			       [Installation::yast2dir+"/package_counter.ycp",
 			       0] );
-	
+
 	y2milestone("Restored updatelist list");
 	return;
     }
@@ -136,7 +136,7 @@
 	if (!Mode::test)
 	{
 	    SCR::Write (.target.ycp,
-			Installation::destdir + 		    
+			Installation::destdir +
 			Installation::yast2dir+
 			"/notDeletedPackages.ycp",
 			notDeletedPackages );
@@ -152,7 +152,7 @@
 	if (!Mode::test)
 	{
 	    SCR::Write (.target.ycp,
-			Installation::destdir + 		    
+			Installation::destdir +
 			Installation::yast2dir+
 			"/notInsertedPackages.ycp",
 			notInsertedPackages );
@@ -165,13 +165,13 @@
 			notInsertedPackages );
 	}
 
-	
+
 	list update_list = SCR::Read (.package.updatePackageNames);
 
 	if (!Mode::test)
 	{
 	    SCR::Write (.target.ycp,
-			Installation::destdir + 		    
+			Installation::destdir +
 			Installation::yast2dir+
 			"/pacs_to_update.ycp",
 			update_list );
@@ -185,14 +185,14 @@
 	}
 
 	SCR::Write (.target.ycp,
-		    Installation::destdir + 		    
+		    Installation::destdir +
 		    Installation::yast2dir+"/package_counter.ycp",
 		    packagesInstalled );
-	
+
 	return;
     }
 
-    
+
 }
 
 
