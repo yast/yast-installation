@@ -18,6 +18,8 @@
 {
     module "Vendor";
 
+    import "Installation";
+
     // --------------------------------------------------------------
     // driver update ?!
 
