@@ -421,8 +421,10 @@ differ from those in the manual.
         list args = [];
 
         integer i = 0;
-        while (i < size(argterm)) {
-            args[i] = select(argterm, i, -1);
+        while (i < size(argterm)) 
+        {
+            any def = nil;
+            args[i] = argterm[i]:def;
             i = i + 1;
         }
 
