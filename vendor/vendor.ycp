@@ -27,14 +27,14 @@
 
     import "Wizard";
 
-    include "ui/common_popups.ycp";
+    import "Popup";
     include "ui/common_functions.ycp";
-    include "ui/common_messages.ycp";
+    import "Label";
 
     // display message if the CD seems to be wrong
 
     define wrong_cd (string reason, boolean must_umount) ``{
-	UI::MessagePopup (reason);
+	Popup::Message (reason);
 	if (must_umount)
 	{
 	    // free mount point
@@ -108,7 +108,7 @@
 	    break;
 	}
 	// VENDOR: cant mount /dev/cdrom popup
-	if (!UI::ContinueCancelPopup( _("Please insert the vendor CD-ROM")))
+	if (!Popup::ContinueCancel( _("Please insert the vendor CD-ROM")))
 	{
 	    UI::CloseDialog();
 	    return `abort;
@@ -241,7 +241,7 @@ Aborting now.
 	// show contents
 	if (size (description) > 0)
 	{
-	    if (UI::YesNoPopup( description ) )
+	    if (Popup::YesNo( description ) )
 	    {
 		// VENDOR: dialog heading
 		Wizard::SetContents (title, `HVCenter(`Label(_("Installing driver..."))), "", true, true);
@@ -253,7 +253,7 @@ Aborting now.
 		else
 		{
 		    // VENDOR: popup if installation of driver failed
-		    UI::MessagePopup (_("The installation failed.
+		    Popup::Message (_("The installation failed.
 Contact the address on the CD-ROM.\n"));
 		}
 		Wizard::SetContents (title, `Empty(), "", true, true);
@@ -273,7 +273,7 @@ Contact the address on the CD-ROM.\n"));
 	result_message = _("No driver data found on the CD-ROM.\nAborting now.");
     }
 
-    UI::MessagePopup (result_message);
+    Popup::Message (result_message);
 
     // free mount point
     SCR::Execute (.target.umount, Installation::sourcedir);

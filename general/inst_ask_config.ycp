@@ -20,9 +20,8 @@
     import "Installation";
     import "Product";
     import "Wizard";
+    import "Popup";
     import "User";
-
-
 
 
     if ( Product::imap_server || Product::openteam_server || Product::fwadmin_host )
@@ -199,7 +198,7 @@ configuration requires system administrator privileges.
 		    // we had last time.	<sh@suse.de>
 
 		    // Warning popup: No hardware config in autoinstallation mode
-		    UI::MessagePopup( _("Not supported for autoinstallation.") );
+		    Popup::Message( _("Not supported for autoinstallation.") );
 		}
 		else
 		{

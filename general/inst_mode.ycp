@@ -24,6 +24,8 @@
     import "Mode";
     import "Product";
     import "Wizard";
+    import "Popup";
+    import "Label";
 
     include "partitioning/partition_defines.ycp";
     import "Storage";
@@ -49,7 +51,7 @@
 	if (size (RootPart::validRootPartitions) == 0)
 	{
 	    // a popup
-	    UI::MessagePopup(_("No Linux root partition found."));
+	    Popup::Message(_("No Linux root partition found."));
 	    return `cancel;
 	}
 
@@ -121,7 +123,7 @@
 	    // Translators notice: About 60 Characters wide maximum -
 	    // use more line breaks if neccessary.
 	    // Plain text, no HTML!
-	    UI::NotifyPopup( _( "
+	    Popup::Notify( _( "
 There is no SuSE Linux on any of your hard disks.
 It is only possible to perform a new installation at the moment.
 
@@ -235,7 +237,7 @@ fix problems manually.
 						 )
 					);
 
-    term buttons = `PushButton(`id(`ok), `opt(`default), UI::OKButtonLabel() );
+    term buttons = `PushButton(`id(`ok), `opt(`default), Label::OKButton() );
 
     if ( called_from_ask_user )
     {
@@ -243,9 +245,9 @@ fix problems manually.
 	// be a cancel button as a safe exit.
 
 	buttons = `HBox(
-			`HWeight( 1, `PushButton(`id(`ok), `opt(`default), UI::OKButtonLabel() ) ),
+			`HWeight( 1, `PushButton(`id(`ok), `opt(`default), Label::OKButton() ) ),
 			`HSpacing( 1 ),
-			`HWeight( 1, `PushButton(`id(`cancel), UI::CancelButtonLabel() ) )
+			`HWeight( 1, `PushButton(`id(`cancel), Label::CancelButton() ) )
 			);
 
     }
@@ -302,7 +304,7 @@ fix problems manually.
 	    if (newmode == nil)
 	    {
 		// this is a label of a message box
-		UI::MessagePopup(_("Choose one of the\noptions to continue."));
+		Popup::Message(_("Choose one of the\noptions to continue."));
 		continue;
 	    }
 

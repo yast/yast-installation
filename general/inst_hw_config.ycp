@@ -24,7 +24,7 @@
 
     textdomain "installation";
 
-    include "ui/common_popups.ycp";
+    import "Popup";
     include "ui/summary.ycp";
 
     Mode::cont = false;
@@ -413,7 +413,7 @@ Just press the appropriate configuration button in this dialog.
 	    }
 	    count = count+1;
 	});
-	if (ret == `abort && !UI::ReallyAbortPopup(false))
+	if (ret == `abort && !Popup::ReallyAbort(false))
 	{
 	    ret = `empty;
 	}
