@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Mar 16 21:18:06 CET 2004 - kkaempf@suse.de
+
+- run cleanup script for GNOME (#36196)
+
+-------------------------------------------------------------------
 Tue Mar 16 14:26:03 CET 2004 - fehr@suse.de
 
 - fix typo devmap_mkmod.sh -> devmap_mknod.sh
