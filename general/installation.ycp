@@ -338,8 +338,7 @@
 	    // FIXME !!
 
 	    SCR::Execute(.target.mount, [StorageDevices::FloppyDevice, "/media/floppy"], "-t auto");
-	    import "Packages";
-
+	   
 	    // Check for autoinst.xml. if available
 	    // set mode to autoinst. Later, the file is parsed and installation
 	    // is performed automatically.
@@ -438,9 +437,9 @@ will look different than in the manual.");
 //  -Step-	 -Module-	    -Back- -Next- -spec-  -Architecture(s)-		      -Mode(s)-                           -immediate_prepdisk-
 
 [
- [ `initial,  `autoinst_init	    (false, false),      true,			! test_mode &&		  autoinst			, false],
  [ `initial,  `inst_language	    (false, true, true), true,						! autoinst			, false],
  [ `initial,  `inst_startup	    (false, true),       true,						  autoinst                      , false],
+ [ `initial,  `autoinst_init	    (false, false),      true,			! test_mode &&		  autoinst			, false], 
  [ `initial,  `autoinst_setup	    (false, false),      true,			! test_mode &&		  autoinst			, false],
  //---------------------------------------------------------------------------------------------------------------------------------------------------
  [ `initial,  `inst_proposal	    (true,  true),       true,			true							, false],
