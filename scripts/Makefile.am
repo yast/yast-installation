@@ -2,7 +2,8 @@
 # Makefile.am for installation/scripts
 #
 
-ybin_SCRIPTS = \
+ybin_SCRIPTS =			\
+	YaST2			\
 	YaST2.start		\
 	YaST2.firstboot		\
 	check.boot		\

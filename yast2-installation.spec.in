@@ -56,6 +56,7 @@ from an installation media.
 #FIXME@ybindir@/pars-inf.pl
 #FIXME@ybindir@/y2merge.pl
 @ybindir@/inst_setup_vnc
+@ybindir@/YaST2
 @ybindir@/YaST2.firstboot
 @ybindir@/YaST2.start
 @ybindir@/ask_for_TERM_variable
