@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Sep 22 09:30:45 CEST 2004 - visnov@suse.cz
+
+- reinitialize dialog after mode chosen (#45784) 
+
+-------------------------------------------------------------------
 Tue Sep 21 14:48:15 CEST 2004 - arvin@suse.de
 
 - use suse marble in congratulation screen (bug #45712)
