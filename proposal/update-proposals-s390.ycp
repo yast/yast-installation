@@ -1,8 +1,12 @@
-//
-// update-proposals-s390.ycp
-//
-// define list and order of update proposal modules
-//
+/**
+ * File:	update-proposals-s390.ycp
+ * Package:	installation
+ * Summary:	Define list and order of update proposal modules for s390
+ * Authors:	Arvin Schnell <arvin@suse.de>
+ *
+ * $Id$
+ */
+
 [
     "proposal_mode",
     "proposal_rootpart",

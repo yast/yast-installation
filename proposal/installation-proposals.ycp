@@ -1,15 +1,19 @@
-//
-// installation-proposals.ycp
-//
-// define list and order of installation proposal modules
-//
+/**
+ * File:	installation-proposals.ycp
+ * Package:	installation
+ * Summary:	Define list and order of installation proposal modules
+ * Authors:	Arvin Schnell <arvin@suse.de>
+ *
+ * $Id$
+ */
+
 [
-  "proposal_mode"
-, "proposal_keyboard"
-, "proposal_mouse"
-, "proposal_partitions"
-, "proposal_software"
-, "bootloader_proposal"
-, "proposal_timezone"
-, "proposal_language"
+    "proposal_mode",
+    "proposal_keyboard",
+    "proposal_mouse",
+    "proposal_partitions",
+    "proposal_software",
+    "bootloader_proposal",
+    "proposal_timezone",
+    "proposal_language",
 ]

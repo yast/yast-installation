@@ -1,10 +1,14 @@
-//
-// net-config-proposals-ppc64.ycp
-//
-// Proposal list for network configuration for ppc64
-//
+/**
+ * File:	net-config-proposals-s390.ycp
+ * Package:	installation
+ * Summary:	Proposal list for network configuration for s390
+ * Authors:	Arvin Schnell <arvin@suse.de>
+ *
+ * $Id$
+ */
+
 [
-"lan_proposal",
-"proxy_proposal",
-"remote_proposal"
+    "lan_proposal",
+    "proxy_proposal",
+    "remote_proposal"
 ]
