@@ -1,0 +1,233 @@
+/**
+ * Module:		inst_kernel.ypc
+ *
+ * Author:		Stefan Schubert <schubi@suse.de>
+ *
+ * Purpose:		Lets  choose the kernel by the user
+ *
+ * module 'Packages':
+ * rw: newKernel
+ *
+ * "rw" read/write
+ * "wr" write only
+ *
+ *
+ * $Id$
+ *
+ */
+{
+    textdomain "update";
+
+    import "Arch";
+    import "Mode";
+    import "Installation";
+    import "Update";
+    import "Packages";
+    import "Wizard";
+    import "Kernel";
+
+//
+// preparing update
+//
+
+  define prepareUpdate() ``{
+      any ret = nil;
+      if ( size ( SCR::Read(.package.updateSet) ) <= 0
+	  && size ( SCR::Read(.package.deleteSet) ) <= 0
+	  && size ( newKernel ) <= 0 )
+      {
+	  UI::MessagePopup(_("There is nothing to update."));
+	  ret = `again;
+      }
+      else
+      {
+	  if (!UI(``{
+	      OpenDialog(`opt(`decorated, `warncolor),
+	  // configuration was confirmed, pop-up text if we *really* should go on.
+  	  // `Yes' will start the update.
+	  // `No' will go back; further config steps are possible.
+  	  // "Now we mean business. There is no going back after this point!"
+          // Warning MsgBox.  line length < 48 chars.
+			 `HBox(
+			       `HSpacing(1),
+			       `VBox(
+				     `VSpacing(0.2),
+				     `Heading(_("Warning:
+
+YaST2 has all the data required for updating SuSE Linux.
+The update will be carried out according to your
+settings made in the previous dialogs.
+To commit the update and all choices made
+so far, choose \"Yes\".  Choose \"No\" to return 
+to the previous dialog.
+") ),
+				     `HBox(
+					   // all right, start installation *now*
+					   `PushButton(`id(`yes),  _("&Yes -- start")),
+					   `HStretch(),
+					   // no, don't go on, i just changed my mind
+					   `PushButton(`opt(`default), NoButtonLabel())
+					   ),
+				     `VSpacing(0.2)
+				     ),
+			       `HSpacing(1)
+			       )
+			 );
+
+	      boolean ok = (UserInput() == `yes);
+	      CloseDialog();
+	      return ok;
+	  }))
+	  {
+	      ret = `again;
+	  }
+	  else
+	  {
+	      ret = `auto;
+	      if ( !Mode::test )
+	      {
+		  // removing old logging
+		  SCR::Execute (.target.bash, "/bin/rm " + Installation::destdir + "/var/log/y2logRPM*");
+	      }
+	  }
+      }
+
+      // selecting manuall selected kernel for update
+      if ( size ( newKernel ) > 0 )
+      {
+	  SCR::Execute( .package.selectUpdate, newKernel );
+      }
+
+      return ret;
+  } // prepareUpdate()
+
+
+//-------------------------------------------------------------------------
+// main function
+//-------------------------------------------------------------------------  
+
+    string newKernel = Update::newKernel;
+    string oldKernel = SCR::Read( .targetpkg.installedKernel );
+
+    // reset old selection
+
+    if ( size ( newKernel ) > 0 )
+    {
+	SCR::Execute(.package.deselectUpdate,  newKernel );
+	SCR::Execute(.package.deselectInstall, newKernel );
+    }
+    
+    
+    if ( size ( oldKernel ) > 0 )
+    {
+	// There have been found a kernel-rpm which can be updated.
+	// --> doit without asking the user.
+
+	if ( prepareUpdate() == `again )
+	{
+	    return `back;
+	}
+	else
+	{
+	    return `auto;
+	}
+    }
+
+    map kernelMap = SCR::Read( .package.kernelList );
+
+    y2milestone ( "Available kernel: %1", kernelMap );
+
+    
+    // Build the contents of the dialog.
+
+    /* ----------------------------------------------------------------------
+     * kernels
+     * ----------------------------------------------------------------------*/
+
+    // build up kernel selection box
+    //   with the default selection according to userSettings
+
+    term kernelsel =
+	`SelectionBox(`id(`kernel), `opt(`notify), "",
+		    maplist(`kernel_code, `kernel_name, kernelMap,
+			    ``(`item(`id(kernel_code), kernel_name,
+				     newKernel == kernel_code))));
+
+
+    /* ----------------------------------------------------------------------
+     * Build dialog
+     * ----------------------------------------------------------------------*/
+
+    term contents = `VBox(
+			`Heading ( _("SuSE Linux Kernel") ),
+			`VSpacing(0.7),
+			`HBox(
+			      `HWeight( 10, `HStretch() ),
+			      `HWeight( 50,
+					`VBox (
+					       `Left( `Label ( _("Select the desired kernel:") ) ),
+					       kernelsel
+					       )
+					),
+			      `HWeight( 10, `HStretch() )
+			      ),
+			`VSpacing(2)
+			);
+
+    // Show a Wizardwindow with  that contents. Don't use the Id `next,
+    // `back, and `help
+
+    // helptext for language,keyboard,timezone screen
+    string help_text = _("<p>
+Choose the <b>kernel</b> to use for the installation and later in the installed system.
+</p>
+");
+
+    help_text = help_text + _("\
+<p>
+Select <b>next</b> to start the update.
+</p>");
+
+    Wizard::SetContents( "", contents,
+			     help_text,
+			     Args(0), Args(1));
+
+    any ret = nil;
+
+    repeat
+    {
+	ret= UI::UserInput();
+
+	if ( ret == `abort && CallFunction(`inst_confirm_abort(`painless) ))
+	    return `abort;
+
+	if (ret == `next || ret == `back)
+	{
+	    newKernel = UI::QueryWidget(`id(`kernel), `CurrentItem);
+
+	    if ( ret == `next )
+	    {
+		if (  size ( newKernel ) <= 0 )
+		{
+		    UI::MessagePopup(_("Select a kernel."));
+		    return `again;
+		}
+		else
+		{
+		    Update::newKernel = newKernel;
+		    if ( newKernel != "k_deflt" )
+		    {
+			Kernel::switched = true;
+		    }
+		    else
+		    {
+			Kernel::switched = false;
+		    }
+		    return prepareUpdate();
+		}
+	    }
+	}
+    } until (ret == `next || ret == `back);
+
+    return ret;
+}

@@ -1,0 +1,38 @@
+/*
+ * $Id$
+ *
+ * Author:	Stefan Schubert <schubi@suse.de>
+ * Module:	inst_update.ycp
+ * Purpose:	update code
+ *
+ */
+
+{
+    textdomain "update";
+    
+    import "Wizard";
+
+    
+    term contents = `Label ( "Update" );
+  
+    Wizard::SetContents(_("Dummy"), contents,
+
+_("<p>
+This is a dummy test module.
+It does nothing.
+</p>
+<p>
+Should you ever read this text in a real YaST2 environment (even
+during Beta testing), please report it immediately. 
+</p>
+"), Args(0), Args(1));
+
+    any ret = nil;
+
+    repeat
+    {
+	ret = UI::UserInput();
+    } until (ret == `next || ret == `back);
+
+    return ret;
+}
