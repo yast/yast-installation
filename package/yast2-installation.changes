@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Dec 11 16:51:45 CET 2002 - lslezak@suse.cz
+
+- .proc.cpuinfo agent rewritten to INI-agent (now supports
+  multiple CPU, all keys from /proc/cpuinfo can be read)
+
+-------------------------------------------------------------------
 Mon Dec 09 12:49:20 CET 2002 - arvin@suse.de
 
 - add modules ide-cd and cdrom before ide-scsi to INITRD_MODULES
