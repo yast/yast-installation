@@ -115,7 +115,7 @@
     if (!(Arch::s390 || Arch::board_iseries))
     {
         // give user feedback what's happening
-	showFeedback( _("Probing FireWire devices") );
+	showFeedback( _("Probing FireWire devices...") );
 	Hotplug::StartFireWire ();
     }
 

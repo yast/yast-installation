@@ -52,14 +52,15 @@
 
     term contents = `VBox (
 			   `VSpacing (0.5),
-			   `Left (`Label (sformat (_("Content of file %1"), file))),
+			   `Left (`Label (sformat (_("Content of File %1"), file))),
 			   `RichText (`opt(`richText), text),
 			   `VSpacing (0.5)
 			   );
 
     /* help text for dialog "Release Notes" */
-    string help = _("Here are the <b>relase notes</b> of the installed
-Linux system. They provide a brief summary of new features and changes.");
+    string help = _("Here are the <b>release notes</b> for the installed
+Linux system. They provide a brief summary of new features and changes.
+");
 
     Wizard::SetContentsButtons (caption, contents, help,
 				BackButtonLabel(), NextButtonLabel());
