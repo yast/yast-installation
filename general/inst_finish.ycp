@@ -733,50 +733,8 @@ with the load address of your root DASD.
     // progress stage title
     Progress::Title(_("Copying log files to installed system"));
 
-    integer log_num = 4;	// maximum number of rotated logs
-    while (log_num >= 0)
-    {
-	string log_add = (log_num == 0) ? "" : ("-" + log_num);
-
-	log_add = Directory::logdir + "/y2log" + log_add;
-
-	if (WFM::Read (.local.size, log_add) > 0)
-	{
-	    WFM::Execute (.local.bash, "/bin/cp " + log_add + " " +
-			  Installation::destdir +
-			  Directory::logdir + "/y2log-" + (log_num+1));
-
-	    y2milestone ("Copied %1 to target", log_add);
-	}
-	else
-	{
-	    y2milestone ("Skipping non-existant log %1", log_add);
-	}
-	log_num = log_num - 1;
-    }
-
-    if (size(ProductControl::logfiles)>0)
-    {
-        y2milestone("Writing hook logs into system: %1",
-		    ProductControl::logfiles);
-
-        foreach(string logfile, ProductControl::logfiles, {
-	    string fulllogfile = Directory::logdir + "/" + logfile;
-	    if (WFM::Read (.local.size, fulllogfile) > 0)
-	    {
-		WFM::Execute (.local.bash, "/bin/cp " + fulllogfile + " " +
-			      Installation::destdir +
-			      Directory::logdir + "/" + logfile);
-	    }
-	});
-    }
-
-    // copy y2start.log
-    SCR::Write (.target.string, Directory::logdir + "/y2start.log-initial",
-		WFM::Read (.local.string, [Directory::logdir + "/y2start.log", ""]));
-    // copy badlist
-    SCR::Write (.target.string, Directory::logdir + "/badlist-initial",
-		WFM::Read (.local.string, [Directory::logdir + "/badlist", ""]));
+    WFM::Execute (.local.bash, sformat( "/bin/cp %1/* %2/%3",
+					Directory::logdir, Installation::destdir, Directory::logdir ) );
 
 
     // --------------------------------------------------------------
