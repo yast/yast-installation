@@ -52,7 +52,7 @@ if [ "$Sourcemounted" != 1 ] ; then
 fi
 
 infofile=/var/adm/mount/content
-[ -f $infofile ]  && LANGUAGE="`grep LANGUAGE $infofile | sed s/LANGUAGE//`"
+[ -f $infofile ] && LANGUAGE=`sed -n 's/^LANGUAGE \([^ ]*\)/\1/p' $infofile`
 
 [ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}.UTF-8"
 
