@@ -17,11 +17,12 @@ STATUS        : Development
 {
     import "X11Version";
     import "Mode";
+    import "Arch";
 
     //==========================================
     // Check if X11 is installed
     //------------------------------------------
-    if (X11Version::have_x11 && Mode::x11_setup_needed)
+    if (X11Version::have_x11 && Mode::x11_setup_needed && Arch::x11_setup_needed)
     {
 	return WFM::CallFunction (`x11 (true, true));
     }
