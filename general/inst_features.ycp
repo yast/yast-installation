@@ -15,7 +15,7 @@
     import "Language";
     import "Installation";
     import "Console";
-    import "RunlevelED";
+    import "RunlevelEd";
 
     // Timezone
     if (ProductFeatures::timezone != "")
@@ -34,7 +34,7 @@
     // Runlevel
     if (ProductFeatures::runlevel != "")
     {
-        RunlevelED::default = ProductFeatures::runlevel;
+        RunlevelEd::default = ProductFeatures::runlevel;
     }
 
     if (ProductFeatures::language != "")
