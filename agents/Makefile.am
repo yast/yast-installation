@@ -1,6 +1,6 @@
 #
 # Makefile.am for installation/agents
 #
-scrconf_DATA = $(patsubst $(srcdir)/%,%,$(wildcard $(srcdir)/*.scr))
+scrconf_DATA = $(wildcard *.scr)
 EXTRA_DIST = $(scrconf_DATA)
 

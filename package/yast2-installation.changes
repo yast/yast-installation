@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Jul 31 16:21:07 CEST 2002 - msvec@suse.cz
+
+- new agent for /etc/install.inf
+
+-------------------------------------------------------------------
 Mon Jul 29 18:15:45 CEST 2002 - arvin@suse.de
 
 - fixed return value in inst_x11.ycp
