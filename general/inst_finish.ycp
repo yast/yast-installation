@@ -600,7 +600,10 @@ with the load address of your root DASD.
     //--------------------------------------------------------------
     // Install bootloader (always, see #23018)
     // should also set Misc::boot_msg appropriate
-    Bootloader::Write ();
+    if (!Mode::update)
+	Bootloader::Write ();
+    else
+	Bootloader::Update (Update::installedVersion, Update::updateVersion);
 
     // --------------------------------------------------------------
     // write network settings to installed system
