@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Mar 12 06:45:02 CET 2004 - nashif@suse.de
+
+- Update control file for autoinst
+- Enable swittching of steps upon mode change
+- Added possibility to disable a workflow step in runtime
+
+-------------------------------------------------------------------
 Thu Mar 11 18:50:55 CET 2004 - sh@suse.de
 
 - Fixed bug #34618: Don't use full screen in remote installation 
