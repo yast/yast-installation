@@ -248,8 +248,8 @@ if [ "$YaST2update" = 1 ] ; then
   [ -r /y2update/logconf.ycp ] && cp /y2update/logconf.ycp /root
 fi
 
-export Y2MAXLOGSIZE=50
-export Y2MAXLOGNUM=5
+test -z "$Y2MAXLOGSIZE" && export Y2MAXLOGSIZE=50
+test -z "$Y2MAXLOGNUM"  && export Y2MAXLOGNUM=5
 
 # revert to normal MODPATH
 # Toto, I think we're not in kansas any more
