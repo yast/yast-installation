@@ -5,6 +5,12 @@ Fri Aug 02 15:02:54 CEST 2002 - arvin@suse.de
 - configure only network card on iSeries
 
 -------------------------------------------------------------------
+Fri Aug  2 14:31:49 CEST 2002 - olh@suse.de
+
+- export Y2DEBUG and increase logsize in YaST2.firstboot when
+  booted with 'debug'
+
+-------------------------------------------------------------------
 Wed Jul 31 16:21:07 CEST 2002 - msvec@suse.cz
 
 - remove MakeCDLinks from inst_finish.ycp (#17309)
