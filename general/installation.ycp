@@ -83,7 +83,7 @@
 
 	Installation::encoding = Console::SelectFont( Language::language );
 
-	if (lookup (UI::GetDisplayInfo(), "HasFullUtf8Support", true))
+	if (UI::GetDisplayInfo()["HasFullUtf8Support"]:true)
 	{
 	    Installation::encoding = "UTF-8";
 	}
@@ -204,7 +204,7 @@
     if (Stage::cont ())
     {
 	Installation::encoding = Console::Restore();
-	if (lookup (UI::GetDisplayInfo(), "HasFullUtf8Support", true))
+	if (UI::GetDisplayInfo()["HasFullUtf8Support"]:true)
 	{
 	    Installation::encoding = "UTF-8";
 	}
@@ -350,7 +350,8 @@ differ from those in the manual.
     list<map> modules = ProductControl::getModules(
             Stage::stage (),
             Mode::mode (),
-            `enabled);
+            `enabled
+            );
 
     map defaults = ProductControl::getModeDefaults(Stage::stage (), Mode::mode ());
 
@@ -367,6 +368,12 @@ differ from those in the manual.
         }
     }
 
+    if (size(modules) == 0 )
+    {
+        y2error("No workflow found: %1", modules );
+        Report::Error(_("No Workflow defined for this installation mode."));
+        return `abort;
+    }
     while ((m >= 0) && (m < size(modules)))
     {
         map mod = modules[m]:$[];
