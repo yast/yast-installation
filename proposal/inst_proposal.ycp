@@ -28,7 +28,7 @@
     import "Language";
 
     define void retranslate_proposal_dialog();
-    define list<string> load_matching_submodules_list();
+    define void load_matching_submodules_list();
     define boolean get_submod_descriptions_and_build_menu();
     define void make_proposal( boolean force_reset, boolean language_changed );
     define string format_sub_proposal( map prop );
@@ -39,6 +39,7 @@
     // values used in defined functions
 
     list<string>	submodules = [];
+    list<string>	submodules_presentation = [];
     string              proptype = "";
     list<string>	locked_modules = [];
     list	titles     = [];
@@ -92,11 +93,12 @@
      * @return workflow_sequence see proposal-API.txt
      **/
 
-    define symbol submod_ask_user( string submodule, boolean has_next )
+    define symbol submod_ask_user( string submodule, map<string,any> additional_info )
     ``{
 	// Call the AskUser() function
 
-	map     ask_user_result   = (map) WFM::CallFunction( submodule, [ "AskUser", $[ "has_next": false] ] );
+	map     ask_user_result   = (map) WFM::CallFunction( submodule, 
+	    [ "AskUser", additional_info ] );
 	symbol  workflow_sequence = ask_user_result["workflow_sequence"]:`next;
 	boolean language_changed  = ask_user_result["language_changed"]:false;
 	boolean mode_changed      = ask_user_result["mode_changed"]:false;
@@ -122,7 +124,7 @@
 
 	    if (mode_changed)
 	    {
-		submodules = load_matching_submodules_list();
+		load_matching_submodules_list();
 		if (!get_submod_descriptions_and_build_menu ())
 		{
 		    y2error ("i'm in dutch");
@@ -162,26 +164,46 @@
 
     define void make_proposal( boolean force_reset, boolean language_changed )
     ``{
-	string prop = "";
 	integer no = 0;
 	map prop_map = $[];
 	boolean skip_the_rest = false;
 	have_blocker = false;
+	
+	map<string, string> html = $[];
+	foreach ( string submod, submodules, ``{
+	    string prop = "";
 
+    	    if (!contains(locked_modules, submod))
+            {
+		prop = prop + HTML::Heading( HTML::Link( titles[no]:"ERROR: missing title" ,
+	    						 submod2id[submod]:"" ) );
+    	    } else {
+		prop = prop + HTML::Heading(
+                    titles[no]:"ERROR: missing title");
+            }
+
+	    html[submod] = prop + HTML::Para( _("Analyzing your system..."));
+	    no = no + 1;
+	});
+	
+	no = 0;
+	
 	UI::BusyCursor();
 
 	foreach ( string submod, submodules,
 	``{
+	    string prop = "";
 	    if ( ! skip_the_rest )
 	    {
-                if (!contains(locked_modules, submod))
-                {
-		prop = prop + HTML::Heading( HTML::Link( titles[no]:"ERROR: missing title" ,
-							 submod2id[submod]:"" ) );
-                } else {
-		prop = prop + HTML::Heading(
-                    titles[no]:"ERROR: missing title");
-                }
+    		if (!contains(locked_modules, submod))
+        	{
+		    prop = prop + HTML::Heading( HTML::Link( titles[no]:"ERROR: missing title" ,
+	    						 submod2id[submod]:"" ) );
+    		} else {
+		    prop = prop + HTML::Heading(
+                	titles[no]:"ERROR: missing title");
+        	}
+
 		prop_map = submod_make_proposal( submod, force_reset, language_changed );
 	    }
 
@@ -196,7 +218,17 @@
 	    if ( ! skip_the_rest )
 	    {
 		prop = prop + format_sub_proposal( prop_map );
-		display_proposal( prop );
+		
+		html[submod] = prop;
+		
+		// now do the complete html
+		string proposal = "";
+		foreach (string mod, submodules_presentation, ``{
+		    proposal = proposal + html[mod]:"";
+		});
+		display_proposal( proposal );
+
+		// display_proposal( prop );
 		no = no + 1;
 	    }
 
@@ -205,7 +237,7 @@
 		skip_the_rest = true;
 	    }
 	});
-
+	
 	UI::NormalCursor();
     };
 
@@ -382,11 +414,11 @@
      *
      * @return submodules_list	list of submodule names (strings)
      **/
-    define list<string> load_matching_submodules_list() ``{
+    define void load_matching_submodules_list() ``{
 
-	list<string> submodules = [];
+	list< list > modules = [];
 
-        submodules = ProductControl::getProposals (
+        modules = ProductControl::getProposals (
                 Mode::stage,
                 Mode::mode,
                 proptype );
@@ -395,8 +427,8 @@
                 Mode::stage,
                 Mode::mode,
                 proptype );
-
-        if (size(submodules) == 0 )
+    
+        if (size(modules) == 0 )
         {
             y2error("No proposals available");
         }
@@ -404,10 +436,20 @@
 	// in normal mode we don't want to switch between installation and update
 	if (Mode::normal)
 	{
-	    submodules = filter (string v, submodules, ``(v != "mode_proposal"));
+	    modules = filter (list v, modules, ``(v[0]:"" != "mode_proposal"));
 	}
+	
+	// now create the list of modules and order of modules for presentation
+    	submodules = maplist (list mod, modules, ``(mod[0]:"") );
+	
+	// sort modules according to presentation ordering
+	modules = sort (list mod1, list mod2, modules, ``(
+	    mod1[1]:50 < mod2[1]:50
+	));
 
-	return submodules;
+	// setup the list
+	submodules_presentation = maplist (list mod, modules, ``(mod[0]:"") );
+	y2milestone ("Presentation order: %1", submodules_presentation);
     };
 
 
@@ -549,6 +591,19 @@
 		    id2submod[id]     = submod;
 		    menu_list         = add( menu_list, `item(`id( id ), menu_title + "..." ) );
 
+		    // if module provided a list of URL links, prepare structures for them
+		    // each link has an id, this id will be passed to the module if user
+		    // clicks the link
+		    if ( haskey (description, "links") )
+		    {
+			list<string> links = description["links"]:[];
+			y2milestone ("Additional links for module %1: %2", submod, links);
+			
+			foreach (string link, links, ``{
+			    id2submod[link] = submod;
+			});
+		    }
+		    
 		    no = no + 1;
 		}
 	    }
@@ -726,10 +781,10 @@ a proposal that is locked, ask your system administrator</p>");
     proposal_mode = (symbol) WFM::Args(2);
     proptype = substring(sformat("%1", proposal_mode), 1 );
 
-    submodules = ProductControl::getProposals (
+/*    submodules = ProductControl::getProposals (
             Mode::stage,
             Mode::mode,
-            proptype );
+            proptype );*/
     build_dialog();
 
     UI::ChangeWidget(`id(`menu_dummy), `Enabled, false );
@@ -772,7 +827,7 @@ a proposal that is locked, ask your system administrator</p>");
     //
     // Get submodule descriptions
     //
-    submodules = load_matching_submodules_list();
+    load_matching_submodules_list();
 
 
     if (!get_submod_descriptions_and_build_menu ())
@@ -809,9 +864,19 @@ a proposal that is locked, ask your system administrator</p>");
 	    string submod = id2submod[input]:"";
 	    if (submod != "")
 	    {
+		// if submod is not the same as input id, provide id to the module
+		map<string,any> additional_info = $[
+		    "has_next" : false,
+		];
+
+		if (submod != input)
+		{ 
+		    additional_info["chosen_id"] = input;
+		}
+
 		// Call AskUser() function.
 		// This will trigger another call to make_proposal() internally.
-		input = submod_ask_user( submod, false );
+		input = submod_ask_user( submod, additional_info );
 
 		// The workflow_sequence doesn't get handled as a workflow sequence
 		// so we have to do this special case here. Kind of broken.
