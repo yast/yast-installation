@@ -58,9 +58,9 @@
 	    // `Yes' will prepare (format) the disk and install the software.
 	    // `No' will go back; further config steps are possible.
 	    // Translators notice: Line length < 48 chars.
-	    confirmation_message = _("Warning:
+	    confirmation_message = sformat (_("Warning:
 YaST2 has obtained all the information
-required to install SuSE Linux.
+required to install %1.
 The installation will be carried out according
 to settings made in the previous dialogs.
 To commit the installation and all choices made
@@ -68,7 +68,7 @@ so far, choose \"Yes\".  Choose \"No\" to return
 to the previous dialog.
 
 Start installation?
-");
+"), UI::GetProductName ());
 
 	    // PushButton: Allright, really start installation
 	    confirmation_button = _("&Yes, install");
@@ -85,8 +85,8 @@ Start installation?
 	    // `Yes' will update the software.
 	    // `No' will go back; further config steps are possible.
 	    // Translators notice: Line length < 48 chars.
-	    confirmation_message = _("Warning:
-YaST2 has all the data required for updating SuSE Linux.
+	    confirmation_message = sformat (_("Warning:
+YaST2 has all the data required for updating %1.
 The update will be carried out according to your
 settings made in the previous dialogs.
 To commit the update and all choices made
@@ -94,7 +94,7 @@ so far, choose \"Yes\".  Choose \"No\" to return
 to the previous dialog.
 
 Start update?
-");
+"), UI::GetProductName ());
 
 	    // PushButton: Allright, really start update
 	    confirmation_button = _("&Yes, Update");
