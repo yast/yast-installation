@@ -162,6 +162,8 @@ global define boolean Read( string controlfile) ``{
             globals["use_desktop_scheduler"]:true;
         ProductFeatures::io_scheduler =
             globals["io_scheduler"]:"as";
+	ProductFeatures::fam_local_only =
+	    globals["fam_local_only"]:"never";
     }
 
     return true;

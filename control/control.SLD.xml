@@ -13,6 +13,7 @@ textdomain="control"
     <globals>
         <enable_autologin config:type="boolean">false</enable_autologin>
         <use_desktop_scheduler config:type="boolean">false</use_desktop_scheduler>
+        <fam_local_only>gnome</fam_local_only>
     </globals>
 
     <software>
@@ -321,6 +322,9 @@ textdomain="control"
                     <name>root</name>
                     <arguments>false,true</arguments>
                 </module>
+		<module>
+                    <name>fam</name>
+		</module>
                 <module>
 	            <label>Network</label>
                     <name>proposal</name>
