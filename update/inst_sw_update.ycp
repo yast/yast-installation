@@ -17,9 +17,7 @@
     import "Mode";
     import "Installation";
     import "InstMedia";
-    import "MediaUI";
     import "Wizard";
-    import "Packages";
     import "Update";
 
     //
@@ -104,8 +102,6 @@
 				 InstMedia::splitted );
 	if ( retAsk == `retry )
 	{
-	    boolean success = MediaUI::ChangeMedium ( 1, true );
-
 	    if ( !success )
 	    {
 		return `cancel;
@@ -113,7 +109,6 @@
 	    else
 	    {
 		// next try
-		Packages::Init( true );
 		Update::updateEvaluated = false; // evaluate updatelist new
 		versionMap = SCR::Execute(.package.compareSuSEVersions, "");
 
