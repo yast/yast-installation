@@ -1,0 +1,22 @@
+#!/bin/sh
+log "Starting F09-cleanup..."
+log "======================="
+
+#=============================================
+# 9) first stage done, cleanup and save level
+#---------------------------------------------
+# 9.1) unmount file systems...
+if [ `grep " /mnt" /proc/mounts | wc -l` -ge 1 ] ; then
+	grep " /mnt" /proc/mounts | cut -d " " -f 2 | sort -r | xargs -n 1 umount
+fi
+# 9.2) turn off swap space...
+if [ `grep ^/dev/ /proc/swaps | wc -l` -ge 1 ] ; then
+	grep ^/dev/ /proc/swaps | cut -d " " -f 1 | xargs -n 1 swapoff 2>/dev/null
+fi
+
+#=============================================
+# 9.4) write exit code for evaluation
+#---------------------------------------------
+log "\tYaST2 exit code on level (1): $yast2exitcode"
+echo $yast2exitcode > /tmp/YaST2-First-Stage-Exit-Code
+stop_unicode

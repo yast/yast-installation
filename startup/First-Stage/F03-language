@@ -1,0 +1,20 @@
+#!/bin/sh
+log "Starting F03-language..."
+log "========================"
+
+#=============================================
+# 3) set language environment
+#---------------------------------------------
+LANGUAGE=en_US
+infofile=/content
+if [ -f $infofile ];then
+	LANGUAGE=`sed -n 's/^LANGUAGE \([^ ]*\)/\1/p' $infofile`
+fi
+set_language_init
+umount /var/adm/mount &>/dev/null
+log "\tLanguage set to: $LANG"
+
+#=============================================
+# 3.1) start unicode mode
+#---------------------------------------------
+start_unicode

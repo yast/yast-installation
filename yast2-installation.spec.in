@@ -59,13 +59,7 @@ This controls the system installation.
 @scrconfdir@/run_df.scr
 
 # programs and scripts
-@ybindir@/inst_setup_vnc
-@ybindir@/YaST2
-@ybindir@/YaST2.firstboot
-@ybindir@/YaST2.start
-@ybindir@/YaST2.sshinstall
-@ybindir@/ask_for_TERM_variable
-@ybindir@/check.boot
+@ystartupdir@/startup
 
 # fvwmrc
 /usr/X11R6/share/fvwm/
