@@ -230,7 +230,7 @@ if [ -r /etc/sysconfig/pcmcia -a -x /etc/init.d/pcmcia ] ; then
   # And: If we did a reboot we need the start command here!!!
   #
   if grep -qs '^PCMCIA:' /etc/install.inf ; then
-    test -x /etc/init.d/pcmcia && /etc/init.d/pcmcia start external
+    test -x /etc/init.d/pcmcia && /etc/init.d/pcmcia start
   fi
 fi
 
