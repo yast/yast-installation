@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb 20 19:53:00 CET 2004 - arvin@suse.de
+
+- handle abort button in inst_finish (bug #30303)
+
+-------------------------------------------------------------------
 Fri Feb 20 11:28:26 CET 2004 - arvin@suse.de
 
 - removed obsolete code from start scripts (bug #31805)
