@@ -16,7 +16,6 @@
     import "Mode";
     import "Installation";
     import "Update";
-    import "Packages";
     import "SpaceCalculation";
     import "Wizard";
 
@@ -85,22 +84,8 @@
 
     // ------------------------------------------------------------------------
 
-    y2milestone("Setting targetroot of package DB: %1", Installation::destdir);    
-    Pkg::TargetInit (Installation::destdir, false);
-    SCR::Execute(.target.mkdir, Installation::destdir+"/var/log/YaST2");	// just in case
-    Pkg::TargetLogfile (Installation::destdir+"/var/log/YaST2/y2logRPM");
-
     backupPath = Pkg::GetBackupPath();
     y2milestone("Current backuppath is %1.", backupPath );
-
-    UI::OpenDialog(`opt(`decorated ),
-		   // intermediate popup while initializing internal packagemanagement
-		   `Label(_("Reading package information; One moment please...")));
-
-    Mode::update = true;
-    Packages::Init( true );
-    Update::updateEvaluated = false; // evaluate updatelist new    
-    UI::CloseDialog();
 
     // Get information about available partitions
 
