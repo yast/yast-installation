@@ -349,8 +349,6 @@ Just press the appropriate configuration button in this dialog.
 	SCR::Execute(.target.bash, "/etc/init.d/dhclient stop 2>/dev/null"); // just in case
 	// same for lpd
 	SCR::Execute(.target.bash, "/etc/init.d/lpd stop 2>/dev/null"); // just in case
-	// remove libhd kludge
-	SCR::Execute(.target.remove, "/var/lib/libhd/cmdline");
 
 	return `next;
     }

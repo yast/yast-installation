@@ -51,8 +51,6 @@
 	SCR::Execute(.target.bash, "/etc/init.d/dhclient stop 2>/dev/null"); // just in case
 	// same for lpd
 	SCR::Execute(.target.bash, "/etc/init.d/lpd stop 2>/dev/null"); // just in case
-	// remove libhd kludge
-	SCR::Execute(.target.remove, "/var/lib/libhd/cmdline");
 
 	return `next;
     }
@@ -226,12 +224,6 @@ configuration requires system administrator privileges.
     // Cleanups prior to program end
     //
 
-
-    // remove libhd kludge
-    if (!Mode::config)
-    {
-	SCR::Execute(.target.remove, "/var/lib/libhd/cmdline");
-    }
 
     if (button_id == `next)
     {
