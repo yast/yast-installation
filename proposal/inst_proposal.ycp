@@ -360,19 +360,33 @@
 	    else
 	    {
 		y2milestone ("Initial proposal");
-		submodules = load_submodules_list( "installation-proposals.ycp",
-						   [
-						    // Fallback list
-						    "proposal_mode",
-						    "proposal_keyboard",
-						    "proposal_mouse",
-						    "proposal_partitions",
-						    "proposal_software",
-						    "bootloader_proposal",
-						    "proposal_timezone",
-						    "proposal_language",
-						    ]
-						   );
+
+		if (Mode::live_eval)
+		{
+		    submodules =
+			[
+			 "proposal_keyboard",
+			 "proposal_mouse",
+			 "proposal_timezone",
+			 "proposal_language"
+			 ];
+		}
+		else
+		{
+		    submodules = load_submodules_list( "installation-proposals.ycp",
+						       [
+							// Fallback list
+							"proposal_mode",
+							"proposal_keyboard",
+							"proposal_mouse",
+							"proposal_partitions",
+							"proposal_software",
+							"bootloader_proposal",
+							"proposal_timezone",
+							"proposal_language",
+							]
+						       );
+		}
 	    }
 	}
 	else if ( proposal_mode == `net )
@@ -787,15 +801,18 @@ To use the settings as displayed, press <b>Next</b>.
 	// - Boot installed system
 	//
 
-	do
-	{
-	    any ret = WFM::CallFunction(`inst_mode() );
-
-	    if ( ret == `abort || ret == `finish )
+        if ( !Mode::live_eval )
+        {
+	    do
 	    {
-		return ret;
-	    }
-	} while ( ret == `again );
+	        any ret = WFM::CallFunction(`inst_mode() );
+
+	        if ( ret == `abort || ret == `finish )
+	        {
+		    return ret;
+	        }
+	    } while ( ret == `again );
+	}
     }
 
 
@@ -851,7 +868,7 @@ To use the settings as displayed, press <b>Next</b>.
 	}
 	else if (input == `abort )
 	{
-	    if ( Mode::initial )
+	    if ( Mode::initial && !Mode::live_eval )
 	    {
 		if ( WFM::CallFunction(`inst_confirm_abort(`painless) ) )
 		    return `abort;
@@ -892,7 +909,7 @@ To use the settings as displayed, press <b>Next</b>.
 	}
 	else if ( input == `next )
 	{
-	    if ( Mode::initial )
+	    if ( Mode::initial && !Mode::live_eval )
 	    {
 		input = WFM::CallFunction(`inst_doit( true,		// have_back
 						 true,		// have_next

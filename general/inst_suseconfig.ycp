@@ -144,8 +144,11 @@ the CPU and the amount of memory, this process can take some time.
     // prior to calling any SuSEconfig module.
     //
 
-    logStep( _("Setting up linker cache") );
-    runStep( "/sbin/ldconfig" );
+    if ( !Mode::live_eval )
+    {
+	logStep( _("Setting up linker cache") );
+	runStep( "/sbin/ldconfig" );
+    }
 
     // This is the same as:
     //    runStep( "/sbin/SuSEconfig --verbose --module aaa_at_first" );
