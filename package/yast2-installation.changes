@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Sep 12 14:06:05 CEST 2003 - arvin@suse.de
+
+- fixed permissions of /var/lib/YaST2/install.inf (bug #30630)
+
+-------------------------------------------------------------------
 Thu Sep 11 17:32:40 CEST 2003 - kkaempf@suse.de
 
 - use kernel k_smp4G on SMP-systems with
