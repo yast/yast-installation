@@ -205,8 +205,12 @@ Please wait while the base system is being installed.
     define InjectFile (string filename)
     ``{
 	y2milestone("InjectFile: <%1>", filename );
-	byteblock copy_buffer = WFM::Read (.local.byte, filename);
-	return SCR::Write (.target.byte, filename, copy_buffer);
+	WFM::Execute (.local.bash, "/bin/cp " + filename + " " + Installation::destdir + filename);
+	return;
+
+	// this just needs too much memory
+	//byteblock copy_buffer = WFM::Read (.local.byte, filename);
+	//return SCR::Write (.target.byte, filename, copy_buffer);
     }
 
     // --------------------------------------------------------------
@@ -637,8 +641,12 @@ with the load address of your root DASD.
 
 	if (WFM::Read (.local.size, log_add) > 0)
 	{
-	    string logbuf = WFM::Read (.local.string, log_add);
-	    SCR::Write (.target.string, "/var/log/YaST2/y2log-" + (log_num+1), logbuf);
+	    WFM::Execute (.local.bash, "/bin/cp " + log_add + " " + Installation::destdir + "/var/log/YaST2/y2log-" + (log_num+1));
+
+	    // this just needs too much memory
+	    // string logbuf = WFM::Read (.local.string, log_add);
+	    // SCR::Write (.target.string, "/var/log/YaST2/y2log-" + (log_num+1), logbuf);
+
 	    y2milestone ("Copied %1 to target", log_add);
 	}
 	else
