@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Jul 19 18:05:51 CEST 2002 - fehr@suse.de
+
+- removed writing of /etc/fstab from inst_finish it is now in 
+  inst_prepdisk
+- version 2.6.5
+
+-------------------------------------------------------------------
 Thu Jul 18 13:37:59 CEST 2002 - fehr@suse.de
 
 - moved variable immediate_prepdisk from module Installation to
