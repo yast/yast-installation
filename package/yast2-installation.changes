@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Aug  7 12:16:33 CEST 2002 - kkaempf@suse.de
+
+- allow for multiple foreign primary partitions (#17458)
+
+-------------------------------------------------------------------
 Wed Aug 07 10:47:45 CEST 2002 - arvin@suse.de
 
 - removed access to variable DEFAULT_LANGUAGE in YaST2 start
