@@ -221,6 +221,22 @@ Please wait while the base system is being installed.
 	//return SCR::Write (.target.byte, filename, copy_buffer);
     }
 
+
+    define void InjectRenamedFile( string dir, string src_name, string target_name )
+    {
+	y2milestone("InjectRenamedFile: <%1/%2> -> <%3/%4/%5>",
+		    dir, src_name,
+		    Installation::destdir, dir, target_name );
+	WFM::Execute (.local.bash,
+		      sformat( "/bin/cp %1/%2 %3/%4/%5",
+			       dir, src_name,
+			       Installation::destdir, dir, target_name ) );
+	return;
+    }
+
+    
+    
+
     // --------------------------------------------------------------
     // Tell new boot scripts to launch yast2, once the
     // new system has done its virgin boot. The Write call
@@ -742,8 +758,28 @@ with the load address of your root DASD.
     // progress stage title
     Progress::Title(_("Copying log files to installed system"));
 
-    WFM::Execute (.local.bash, sformat( "/bin/cp %1/* %2/%3",
-					Directory::logdir, Installation::destdir, Directory::logdir ) );
+
+    list<string> log_files = (list<string>) WFM::Read(.local.dir, Directory::logdir );
+
+    foreach ( string file, log_files,
+    {
+	if ( file == "y2log" || regexpmatch( file, "y2log-[0-9]+" ) )
+	{
+	    // Prepare y2log, y2log-* for log rotation
+
+	    integer target_no = 1;
+
+	    if ( size( file ) > size( "y2log-" ) )
+		target_no = 1 + tointeger( substring( file, size( "y2log-" ), 5 ) );
+
+	    InjectRenamedFile( Directory::logdir, file, sformat( "y2log-%1", target_no ) );
+	}
+	else	// not y2log, y2log-*
+	{
+	    InjectFile( file );
+	}
+    });
+
 
 
     // --------------------------------------------------------------
