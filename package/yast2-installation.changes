@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Feb 10 13:13:50 CET 2005 - jsrain@suse.cz
+
+- reduced forced minimal size of the release notes popup (#50637)
+
+-------------------------------------------------------------------
 Wed Feb  9 19:16:22 CET 2005 - nashif@suse.de
 
 - Save files control.xml and info.txt from installation into 

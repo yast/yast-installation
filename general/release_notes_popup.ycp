@@ -70,9 +70,9 @@ to the Internet is available, you can update the release notes
 from the SUSE Linux webserver.</b>") + text;
 
     term contents = `HBox (
-	`VSpacing (35),
+	`VSpacing (22),
 	`VBox (
-	    `HSpacing (130),
+	    `HSpacing (70),
 	    `VSpacing (0.5),
 	    `Left (`Heading (_("Release Notes"))),
 	    `RichText (`id (`text), text),
