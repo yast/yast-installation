@@ -1,0 +1,16 @@
+#!/bin/sh
+log "Starting S04-language..."
+log "========================"
+
+#=============================================
+# 6) set language environment
+#---------------------------------------------
+langfile=/etc/sysconfig/language
+eval `grep "^[[:space:]]*RC_LANG=" $langfile 2>/dev/null`
+set_language_cont
+log "\tLanguage set to: $LANG"
+
+#=============================================
+# 7) start unicode mode
+#---------------------------------------------
+start_unicode
