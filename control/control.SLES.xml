@@ -189,7 +189,7 @@ textdomain="control"
             </defaults>
             <stage>initial</stage>
             <mode>installation,update</mode>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
                     <name>info</name>
                     <arguments>false,true</arguments>
@@ -242,7 +242,7 @@ textdomain="control"
             <stage>initial</stage>
 	    <label>Preparation</label>
             <mode>repair</mode>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
 	            <label>System Information</label>
                     <name>info</name>
@@ -263,7 +263,7 @@ textdomain="control"
             <stage>initial</stage>
 	    <label>Base Installation</label>
             <mode>screen_shot</mode>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
  	            <label>Language</label>
                     <name>language</name>
@@ -302,7 +302,7 @@ textdomain="control"
             <stage>initial</stage>
 	    <label>Base Installation</label>
             <mode>demo</mode>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
 	            <label>Language</label>
                     <name>info</name>
@@ -346,7 +346,7 @@ textdomain="control"
                 <arguments>false,false</arguments>
                 <archs>all</archs>
             </defaults>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
                     <name>netsetup</name>
                     <arguments>false,false,`up</arguments>
@@ -397,7 +397,7 @@ textdomain="control"
                 <arguments>false,false</arguments>
                 <archs>all</archs>
             </defaults>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
                     <name>netsetup</name>
                     <arguments>false,false,`up</arguments>
@@ -407,6 +407,10 @@ textdomain="control"
                 </module>
                 <module>
                     <name>rpmcopy</name>
+                </module>
+		<module>
+                    <name>netsetup</name>
+                    <arguments>false,false,`dn</arguments>
                 </module>
                 <module>
 	            <label>Root Password</label>
@@ -473,7 +477,7 @@ textdomain="control"
                 <arguments>false,false</arguments>
                 <archs>all</archs>
             </defaults>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
 	            <label>Language</label>
                     <name>info</name>
@@ -537,6 +541,10 @@ textdomain="control"
                 <module>
 	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
+                </module>
+                <module>
+                    <name>netsetup</name>
+                    <arguments>false,false,`dn</arguments>
                 </module>
                 <module>
 	            <label>System Configuration</label>
