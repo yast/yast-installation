@@ -16,7 +16,8 @@ echo a log can be found in /tmp/vncserver.log ...
 cat <<-EOF
 
 	***
-	***           You can connect to $IP, display :1 now
+	***           You can connect to $IP, display :1 now with vncviewer
+	***           Or use a Java capable browser on  http://$IP:5801/
 	***
 
 	(When YaST2 is finished, close your VNC viewer and return to this window.)
