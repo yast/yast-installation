@@ -55,9 +55,12 @@
 
 
 
-<!ELEMENT proposal ( archs | mode | proposal_modules | stage | type )* >
+<!ELEMENT proposal ( archs | locked_modules |  mode | proposal_modules | stage | type )* >
 <!ELEMENT proposal_modules (proposal_module+)>
 <!ATTLIST proposal_modules config:type NMTOKEN #FIXED "list" >
+<!ELEMENT locked_modules (proposal_module+)>
+<!ATTLIST locked_modules config:type NMTOKEN #FIXED "list" >
+
 <!ELEMENT proposal_module (#PCDATA)>
 
 <!ELEMENT proposals ( proposal+ ) >
