@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Sep 11 17:32:40 CEST 2003 - kkaempf@suse.de
+
+- use kernel k_smp4G on SMP-systems with
+  memory <= 4GB or without PAE support
+
+-------------------------------------------------------------------
 Thu Sep 11 11:12:36 CEST 2003 - arvin@suse.de
 
 - check for /proc/splash (bug #30472)
