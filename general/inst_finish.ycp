@@ -55,12 +55,15 @@ Please wait while the base system is being installed.
 
     list progress_stages =
 	[
-	// progress stages
+	 // progress stages
 	 _("Update configuration"),
+	 // progress stages
 	 _("Copy files to installed system"),
+	 // progress stages
 	 _("Install boot manager"),
+	 // progress stages
 	 _("Prepare system for initial boot")
-	];
+	 ];
 
     list progress_descriptions =
 	[];
@@ -275,7 +278,7 @@ Please wait while the base system is being installed.
 	    linuxrc["Root"] = "reboot";
 	    Mode::hardBoot = true;
 	}
-	
+
 	if (AutoInstall::RebootMsg)
 	{
 	    linuxrc["RebootMsg"] = "1";
@@ -283,10 +286,10 @@ Please wait while the base system is being installed.
 	else
 	{
 	    linuxrc["RebootMsg"] = "0";
-	}	    
-	
+	}
+
     }
-    
+
     // --------------------------------------------------------------
     // mount the installation image on the target.
     // Inform YaST1 about the installation image.
@@ -364,6 +367,7 @@ Please wait while the base system is being installed.
 
     if ( !Mode::update )
     {
+	// progress stage title
 	Progress::Title (_("Initializing default window manager"));
 
 	SCR::Write (.sysconfig.windowmanager.DEFAULT_WM, default_wm);

@@ -344,12 +344,11 @@
 	&& !Arch::board_iseries
 	&& !Installation::shown_text_mode_warning )
     {
-	// somehow the graphical frontend failed and we're running in
-	// text mode. Inform the user about this fact.
-
 	string x11_msg = "";
 	if (Mode::text_fallback)
 	{
+	    // somehow the graphical frontend failed and we're running in
+	    // text mode. Inform the user about this fact.
 	    x11_msg = sformat(_("Your computer doesn't fulfill all requirements to allow
 a graphical installation. Either you have less than %1 MB
 memory or the X server could not be started.\n
@@ -361,6 +360,8 @@ will look different than in the manual."), "64");
 	}
 	else if (Mode::no_x11)
 	{
+	    // somehow the graphical frontend failed and we're running in
+	    // text mode. Inform the user about this fact.
 	    x11_msg = _("The graphical interface could not be started.\n
 Either the required packages weren't installed (minimal installation) or
 the graphics card isn't properly supported.\n
