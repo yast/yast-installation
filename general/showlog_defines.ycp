@@ -5,11 +5,12 @@
  *
  * Author: Klaus Kaempf <kkaempf@suse.de>
  *
- *
  * $Id$
- *
  */
 {
+    import "Label";
+    import "Popup";
+
     UI::{
 	textdomain "installation";
 
