@@ -235,13 +235,7 @@ modulename=${1:-installation}
 shift
 moduleargs=\(\"$*\"\)
 
-qt_bg=""
-if echo $moduleargs | egrep -q '\(\"initial|continue\"\)' ; then
-# bah :( what a bad color, the qtrc has a nicer one !
-    qt_bg="-bg #cccccc"
-fi
-
-y2qt_args="--fullscreen --noborder $qt_bg"
+y2qt_args="--fullscreen --noborder"
 
 
 PATH=/var/X11R6/bin:$ybindir:$PATH
