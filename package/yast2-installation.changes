@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Jul 25 15:12:25 CEST 2003 - gs@suse.de
+
+- YaST2.firstboot: read RC_LANG from /etc/sysconfig/language and
+                   export LANG accordingly;
+		   call unicode_start/unicode_stop (if required)
+
+-------------------------------------------------------------------
 Thu Jul 24 13:39:36 CEST 2003 - gs@suse.de
 
 - YaST2.start: call unicode_start/unicode_stop;
