@@ -411,7 +411,7 @@ textdomain="control"
         </workflow>
         <workflow>
             <stage>initial</stage>
-            <label>Configuration</label>
+            <label>Base Installation</label>
             <mode>autoinst</mode>
             <defaults>
                 <arguments>false,false</arguments>
