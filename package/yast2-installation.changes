@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Sun Mar 21 19:48:42 CET 2004 - nashif@suse.de
+
+- read/set language/keyboard/timezone
+- added client to set product variables before entering proposal
+
+-------------------------------------------------------------------
 Fri Mar 19 15:47:08 CET 2004 - arvin@suse.de
 
 - omit skip/don't skip buttons in uml proposal
