@@ -261,7 +261,7 @@ moduleargs=\(\"$*\"\)
 
 qt_bg=""
 if echo $moduleargs | egrep -q '\(initial|continue\)' ; then
-    qt_bg="-bg #dfdbd6"
+    qt_bg="-bg #cccccc"
 fi
 
 PATH=/var/X11R6/bin:$ybindir:$PATH
