@@ -370,9 +370,8 @@
     /////////////////////////////////////////
 
     if ((Mode::text_fallback || Mode::no_x11)
-	&& !Mode::serial_console
-	&& !Arch::board_iseries
-	&& !Installation::shown_text_mode_warning )
+	&& Mode::x11_setup_needed
+	&& !Installation::shown_text_mode_warning)
     {
 	string x11_msg = "";
 	if (Mode::text_fallback)
@@ -463,7 +462,7 @@ will look different than in the manual.");
  [ `continue, `inst_language	    (false, true),       true,					  screen_shot_mode &&    ! update_mode  , false],
  [ `continue, `inst_root	    (false, true),       true,						! autoinst &&    ! update_mode	, true ],
  [ `continue, `inst_user	    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
- [ `continue, `inst_x11		    (true,  true),       !Arch::s390,							 ! update_mode  , false],
+ [ `continue, `inst_x11		    (true,  true),       !Arch::s390,		Mode::x11_setup_needed &&		 ! update_mode  , false],
  [ `continue, `autoinst_configure   (false, false),      !Arch::s390,					  autoinst &&    ! update_mode	, false],
  [ `continue, `inst_suseconfig	    (false, false),      !Arch::s390,		! test_mode						, false],
  [ `continue, `inst_proposal	    (true,  true),       true,						! autoinst &&   ! update_mode	, false]

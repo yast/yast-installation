@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Aug 20 19:08:14 CEST 2002 - arvin@suse.de
+
+- use new variable Mode::x11_setup_needed
+
+-------------------------------------------------------------------
 Tue Aug 20 12:00:23 CEST 2002 - arvin@suse.de
 
 - don't probe for mouse, floppy and usb devices on iseries

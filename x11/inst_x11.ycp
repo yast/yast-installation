@@ -15,15 +15,18 @@ DESCRIPTION   : The installation workflow will call inst_x11
 STATUS        : Development
 **************/
 {
-import "X11Version";
-import "Mode";
+    import "X11Version";
+    import "Mode";
 
-//==========================================
-// Check if X11 is installed
-//------------------------------------------
-if ( (X11Version::have_x11) && (! Mode::serial_console) || (! Mode::vnc) ) {
-	return WFM::CallFunction ( `x11 ( true, true ) );
-} else {
+    //==========================================
+    // Check if X11 is installed
+    //------------------------------------------
+    if (X11Version::have_x11 && Mode::x11_setup_needed)
+    {
+	return WFM::CallFunction (`x11 (true, true));
+    }
+    else
+    {
 	return `next;
-}
+    }
 }
