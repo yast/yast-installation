@@ -945,7 +945,9 @@ a proposal that is locked, ask your system administrator</p>");
 	}
 	else if ( input == `next )
 	{
-	    if (have_blocker)
+            boolean skip = UI::WidgetExists(`id(`skip) ) ? (boolean) UI::QueryWidget(`id(`skip), `Value ) : true;
+            boolean skip_blocker = UI::WidgetExists(`id(`skip) ) && skip;
+	    if (have_blocker && !skip_blocker)
 	    {
 		// error message is a popup
 		Popup::Error (_("The proposal contains an error that must be
@@ -963,8 +965,6 @@ resolved before continuing.
 
             if ( input == `next )
             {
-                boolean skip = UI::WidgetExists(`id(`skip) ) ? (boolean) UI::QueryWidget(`id(`skip), `Value ) : true;
-
                 if ( ! skip )
                 {
                     write_settings();
