@@ -19,8 +19,8 @@
 
     // this is installation, so start SCR always locally (as plugin) !
 
-    integer scrHandle = WFM::SCROpen ("scr", false);
-    WFM::SCRSetDefault (scrHandle);
+    integer scr_handle = WFM::SCROpen ("scr", false);
+    WFM::SCRSetDefault (scr_handle);
 
     import "Arch";
     import "Mode";
@@ -28,7 +28,7 @@
     import "ProductControl";
     import "Language";
     import "Storage";
-    Installation::scrHandle = scrHandle;
+    Installation::scr_handle = scr_handle;
 
     import "AutoInstall";
     import "Mouse";

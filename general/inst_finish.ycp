@@ -205,15 +205,16 @@ Please wait while the base system is being installed.
 
         y2milestone ("Stopping SCR");
 
-        WFM::SCRClose (Installation::scrHandle);
+        WFM::SCRClose (Installation::scr_handle);
 
 
     // --------------------------------------------------------------
 
 
-        y2milestone ("Re-starting SCR on %1", Installation::destdir);
-        Installation::scrHandle = WFM::SCROpen ("chroot="+Installation::destdir+":scr", false);
-        WFM::SCRSetDefault (Installation::scrHandle);
+	y2milestone ("Re-starting SCR on %1", Installation::destdir);
+	Installation::scr_handle = WFM::SCROpen ("chroot="+Installation::destdir+":scr", false);
+	Installation::scr_destdir = "/";
+	WFM::SCRSetDefault (Installation::scr_handle);
     }
 
     // re-init tmpdir from new SCR !
@@ -746,7 +747,7 @@ with the load address of your root DASD.
     if (!Mode::live_eval)
     {
 	// Stop SCR on target
-	WFM::SCRClose (Installation::scrHandle);
+	WFM::SCRClose (Installation::scr_handle);
 
 	// first, umount everthing mounted *in* the target.
 	// /proc/bus/usb
