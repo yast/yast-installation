@@ -330,6 +330,7 @@
 	y2debug( "Retranslating proposal dialog" );
 
 	build_dialog();
+	ProductControl::RetranslateWizardSteps();
 	Wizard::RetranslateButtons();
 	get_submod_descriptions_and_build_menu();
     };
