@@ -98,8 +98,7 @@ Please wait while the base system is being installed.
 	PackageSelectionIO::savePackageSelection( false );
     }
 
-    // window manager setting
-    // see x11/inst_xf86config.ycp for display manager setting
+    // window manager setting    
     // default_wm will be used below !
 
     string default_wm = "kde";
@@ -276,7 +275,7 @@ Please wait while the base system is being installed.
     }
 
     // Override linuxrc settings in autoinst mode
-
+    
     if ( Mode::autoinst )
     {
 	if (AutoInstall::ForceBoot && Mode::hardBoot)
@@ -376,6 +375,11 @@ Please wait while the base system is being installed.
 
 	SCR::Write (.sysconfig.windowmanager.DEFAULT_WM, default_wm);
 	SCR::Write (.sysconfig.windowmanager, nil);
+    }
+
+    if ( Mode::autoinst &&  !Mode::update)
+    {
+	AutoInstall::Finalize();
     }
 
     // --------------------------------------------------------------
