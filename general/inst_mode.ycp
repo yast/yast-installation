@@ -79,7 +79,7 @@
 			`Label( sformat(_("Booting from %1"), root_part ) ) );
 
 	Update::Detach ();
-	RootPart::UnmountPartitions ();
+	RootPart::UnmountPartitions (false);
 
 	sleep (1000);
 
