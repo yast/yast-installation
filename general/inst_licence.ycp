@@ -1,0 +1,118 @@
+/**
+ * File:	clients/inst_firstboot.ycp
+ * Package:	Configuration of firstboot
+ * Summary:	Main file
+ * Authors:	Anas Nashif <nashif@suse.de>
+ *
+ * $Id$
+ *
+ */
+
+{
+
+textdomain "installation";
+import "ProductControl";
+import "Wizard";
+import "Popup";
+import "Misc";
+import "GetInstArgs";
+
+if (GetInstArgs::going_back())
+    return `auto;
+
+string license_file = "";
+
+map display = UI::GetDisplayInfo();
+integer space = display["TextMode"]:true ? 1 : 3;
+
+string caption = _("License Agreement");
+
+term contents = `VBox (
+        `VSpacing (space),
+        `HBox (
+            `HSpacing (2*space),
+            Richtext::DetectRichText(licence_file, ""),
+            `HSpacing (2*space)
+            ),
+        `VSpacing (2),
+        `RadioButtonGroup(`id(`eula),
+            `HBox(
+                `HSpacing (2*space),
+            `VBox(
+                `Left(`RadioButton(`id(`yes), _("Yes, I Agree to the License Agreement"))),
+                `Left( `RadioButton(`id(`no), _("No, I Do Not Agree")))
+                ),
+            `HSpacing (2*space)
+                )
+            ),
+        `VSpacing(2)
+        );
+
+
+string help = _("<p>Read the license agreement carefully and select
+one of the available options. If you do not agree to the license agreement,
+the configuration will be aborted.</p>
+");
+
+Wizard::SetContents(caption, contents, help, GetInstArgs::enable_back(), GetInstArgs::enable_next());
+//Wizard::DisableAbortButton();
+Wizard::SetFocusToNextButton();
+
+any ret = nil;
+boolean halt = false;
+while (true)
+{
+    ret = UI::UserInput();
+    symbol accept = (symbol)UI::QueryWidget(`id(`eula), `CurrentButton);
+    if (accept == `no)
+    {
+       if ( Popup::YesNo(_("Reread or reconsider the license agreement?")) )
+       {
+           continue;
+       }
+       else
+       {
+           string action = (string)Misc::SysconfigRead(
+                   .sysconfig.firstboot.LICENSE_REFUSAL_ACTION, "");
+           if (action == "continue")
+           {
+               ret = `next;
+               break;
+           }
+           else if (action == "halt")
+           {
+               if (!Popup::TimedOKCancel(_("System is shutting down..."), 10))
+               {
+                   continue;
+               } else {
+                   halt = true;
+               }
+               break;
+           }
+           else if (action == "abort")
+           {
+                ret = `abort;
+           }
+       }
+    }
+    else if (ret == `abort)
+    {
+        break;
+    }
+    else if ( accept != `yes && accept != `no )
+    {
+        Popup::Message(_("Accept or decline the license agreement."));
+        continue;
+    }
+    break;
+}
+
+if (halt)
+{
+    UI::CloseDialog();
+    SCR::Execute(.target.bash, "/sbin/halt");
+}
+return (symbol)ret;
+
+/* EOF */
+}
