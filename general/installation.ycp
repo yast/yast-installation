@@ -349,7 +349,7 @@
 					  `HBox (`PushButton (`id(`accept), `opt(`default),
 							      AcceptButtonLabel()),
 						 `PushButton (`id(`cancel),
-							      CancelButtonLabel()),
+							      DoNotAcceptButtonLabel()),
 						 `ReplacePoint (`id(`rp2), `Empty ())
 						 )
 					  )
