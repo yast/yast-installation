@@ -564,6 +564,9 @@
 	if (mode == `ini)
 	{
 	    vbox = `VBox(
+			 // Help message between headline and installation proposal / settings summary.
+			 // May contain newlines, but don't make it very much longer than the original.
+			 `Left( `Label( _("Click any headline to make changes or use the \"Change...\" menu below.") ) ),
 			 `RichText( `id(`proposal),
 				    // Initial contents of proposal subwindow while proposals are calculated
 				    HTML::Newlines( 3 ) + HTML::Para( _("Analyzing your system...") )
@@ -588,7 +591,7 @@
 
 	Wizard::SetContents(headline,
 			    vbox,
-			    UI::WidgetExists(`id(`HelpText) ) ? help_text() : "",
+			    UI::WidgetExists(`id(`HelpText) ) ? help_text(WFM::Args(2)) : "",
 			    WFM::Args(0),	// have_back_button
 			    false	// have_next_button
 			    );
@@ -650,7 +653,7 @@
      *
      * @return string help text
      **/
-    define string help_text() ``{
+    define string help_text(symbol mode) ``{
 
 	string help_text = "";
 
@@ -661,7 +664,7 @@ or by using the <b>Change...</b> menu.
 </p>
 ");
 
-	if ( Mode::initial )
+	if ( mode == `ini )
 	{
 	    // Help text for installation proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -691,7 +694,16 @@ Your hard disk has not been modified in any way, so you can still safely abort.
 </p>
 ");
 	}
-	else if ( Mode::cont )
+	else if ( mode == `net )
+	{
+	    // Help text for network configuration proposal
+	    // General part ("You can change values...") is added as the next paragraph.
+	    help_text = _("<p>
+Put the network settings into effect by pressing <b>Accept</b>.
+</p>
+") + how_to_change;
+	}
+	else if ( mode == `hw )
 	{
 	    // Help text for hardware configuration proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -702,9 +714,8 @@ Put the hardware settings into effect by pressing <b>Accept</b>.
 
 	    // Help text for hardware configuration proposal, continued
 	    help_text = help_text + _("<p>
-The settings displayed are not in use yet. Because the network is not yet
-functioning, <b>network printers</b> cannot be detected.
-Use the YaST2 Control Center to configure network printers
+Because the network is not yet functioning, <b>network printers</b> cannot
+be detected. Use the YaST2 Control Center to configure network printers
 after the network is up and running.
 </p>
 ");
@@ -914,7 +925,7 @@ To use the settings as displayed, press <b>Accept</b>.
 	}
 	else if ( input == `help )
 	{
-	    Wizard::ShowHelp( help_text() );
+	    Wizard::ShowHelp( help_text(WFM::Args(2)) );
 	}
 
     } // while input loop
