@@ -78,6 +78,8 @@
 			// "Boot installed system"
 			`Label( sformat(_("Booting from %1"), root_part ) ) );
 
+	Update::Detach ();
+
 	sleep (1000);
 
 	if ( ! Mode::test )

@@ -527,7 +527,8 @@ will look different than in the manual.");
  [ `initial,  `inst_do_resize	    (false, false),      Arch::i386||Arch::x86_64||Arch::ia64,	! live_eval &&	! autoinst && !Mode::update , false],
  //---------------------------------------------------------------------------------------------------------------------------------------------------
  [ `initial,  `inst_prepdisk	    (false, false),      true,			true,                                                    false],
- [ `initial,  `inst_rpmcopy	    (false, false),      true,			! live_eval		  ||	  screen_shot_mode	, false],
+ [ `initial,  `inst_rpmcopy	    (false, false),      true,			( ! live_eval	  ||	  screen_shot_mode) && !Mode::update, false],
+ [ `initial,  `inst_rpmupdate	    (false, false),      true,			( ! live_eval	  ||	  screen_shot_mode) && Mode::update, false],
  //---------------------------------------------------------------------------------------------------------------------------------------------------
  [ `initial,  `inst_finish	    (false, false),      true,			! test_mode						, false],
 

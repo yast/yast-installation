@@ -64,6 +64,11 @@
 
 	symbol result = WFM::CallFunction (`inst_mode (`AskUser ));
 
+	if (tmp1 != Mode::installation || tmp2 != Mode::update)
+	{
+	    Update::Detach ();
+	}
+
 	// Fill return map
 
 	ret = $[ "workflow_sequence" : result,
