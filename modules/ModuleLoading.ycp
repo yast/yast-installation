@@ -14,7 +14,7 @@
     textdomain "installation";
 
     import "Mode";
-    import "Boot";
+    import "Initrd";
     import "Wizard";
 
     string vendor_name = "";
@@ -85,7 +85,7 @@
 			boolean ask_before_loading, boolean with_modprobe)
     ``{
 	if ((modulename != "")
-	    && (!contains (Boot::initrdModules, modulename))
+	    && (!contains (Initrd::ListModules (), modulename))
 	    && !Mode::test)
 	{
 	    // always look whether the module is already loaded
