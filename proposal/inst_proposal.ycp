@@ -179,6 +179,11 @@
 		display_proposal( prop );
 		no = no + 1;
 	    }
+
+	    if ( prop_map["warning_level"]:`none == `fatal )
+	    {
+		skip_the_rest = true;
+	    }
 	});
 
 	term doit_button = UI::WidgetExists(`id(`accept) ) ? `id(`accept) : `id(`next);
@@ -206,7 +211,7 @@
 	    if      ( level == `notice  )	warning = HTML::Bold( warning );
 	    else if ( level == `warning )	warning = HTML::Colorize( warning, "red" );
 	    else if ( level == `error	)	warning = HTML::Colorize( warning, "red" );
-	    else if ( level == `blocker	)
+	    else if ( level == `blocker	|| level == `fatal )
 	    {
 		have_blocker = true;
 		warning = HTML::Colorize( warning, "red" );

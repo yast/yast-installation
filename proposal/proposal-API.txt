@@ -186,13 +186,16 @@ map MakeProposal( boolean force_reset, boolean language_changed );
 			`warning (default)
 			`error
 			`blocker
+			`fatal
 
-			'blocker will prevent the user from continuing the
+			`blocker will prevent the user from continuing the
 			installation. If any proposal contains a `blocker
 			warning, the "accept" button in the proposal dialog
 			will be disabled - the user needs to fix that blocker
 			before continuing.
 
+			`fatal is like `blocker but also stops building
+			the proposal
 
 		boolean language_changed (optional)
 
