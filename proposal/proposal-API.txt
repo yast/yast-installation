@@ -200,6 +200,12 @@ map MakeProposal( boolean force_reset, boolean language_changed );
 			language. This is only relevant for the "language"
 			module.
 
+		boolean proposal_changed (optional)
+
+			This module just caused a change of the installation
+			proposal. This is only relevant for the "inst mode"
+			module.
+
 
 
 map AskUser( boolean has_next )
@@ -244,7 +250,7 @@ map AskUser( boolean has_next )
 				current direction - forward if the last
 				submodule returned `next, backward otherwise.
 
-			`finish 
+			`finish
 				Finish the installation. This is pretty much
 				specific to "inst_mode.ycp" when the user
 				selected "update" here: This handles everything

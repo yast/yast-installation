@@ -1,17 +1,18 @@
 /**
- * Module:		proposal_mode.ycp
+ * Module:	proposal_mode.ycp
  *
- * $Id$
+ * Authors:	Klaus Kaempf <kkaempf@suse.de>
+ *		Arvin Schnell <arvin@suse.de>
  *
- * Author:		Klaus Kaempf <kkaempf@suse.de>
+ * Purpose:	Proposal function dispatcher - mode.
  *
- * Purpose:		Proposal function dispatcher - mode.
- *
- *			See also file proposal-API.txt for details.
+ *		See also file proposal-API.txt for details.
  */
 {
     textdomain "installation";
+
     import "HTML";
+    import "Mode";
 
     string func  = WFM::Args(0);
     map    param = WFM::Args(1);
@@ -28,10 +29,26 @@
 
 	// Fill return map
 
-	ret = $[ "raw_proposal" :
-	       // Proposal for installation mode
-	       [ HTML::Bold( _("New installation") ) ]
-	];
+	if (Mode::installation)
+	{
+	    ret = $[ "raw_proposal" :
+		     // Proposal for installation mode
+		     [ HTML::Bold( _("New installation") ) ]
+	    ];
+	}
+	else if (Mode::update)
+	{
+	    ret = $[ "raw_proposal" :
+		     // Proposal for installation mode
+		     [ HTML::Bold( _("Update") ) ]
+	    ];
+	}
+	else
+	{
+	    ret = $[ "raw_proposal" :
+		     [ HTML::Bold( "Error: Unknown Mode" ) ]
+	    ];
+	}
     }
     else if ( func == "AskUser" )
     {
@@ -46,7 +63,8 @@
 
 	// Fill return map
 
-	ret = $[ "workflow_sequence" : result ];
+	ret = $[ "workflow_sequence" : result,
+		 "proposal_changed" : true ];
     }
     else if ( func == "Description" )
     {

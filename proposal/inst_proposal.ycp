@@ -62,10 +62,12 @@
      * @return proposal_map	see proposal-API.txt
      **/
 
-    define map submod_make_proposal( string submodule, boolean force_reset, boolean language_changed )
+    define map submod_make_proposal( string submodule, boolean force_reset,
+				     boolean language_changed )
     ``{
-	map proposal = WFM::CallFunction ( submodule, [ "MakeProposal", $[ "force_reset":      force_reset,
-								      "language_changed": language_changed ] ] );
+	map proposal = WFM::CallFunction ( submodule, [ "MakeProposal",
+							$[ "force_reset" : force_reset,
+							   "language_changed" : language_changed ] ] );
 	y2debug( "%1 MakeProposal() returns %2", submodule, proposal );
 
 	return proposal;
@@ -87,6 +89,7 @@
 	map     ask_user_result   = WFM::CallFunction( submod, [ "AskUser", $[ "has_next": false] ] );
 	symbol  workflow_sequence = ask_user_result["workflow_sequence"]:`next;
 	boolean language_changed  = ask_user_result["language_changed"]:false;
+	boolean proposal_changed  = ask_user_result["proposal_changed"]:false;
 
 	if (    workflow_sequence != `cancel
 	     && workflow_sequence != `back
@@ -95,6 +98,15 @@
 	    if ( language_changed )
 	    {
 		retranslate_proposal_dialog();
+	    }
+
+	    if (proposal_changed)
+	    {
+		submodules = load_matching_submodules_list();
+		if (!get_submod_descriptions_and_build_menu ())
+		{
+		    y2error ("i'm in dutch");
+		}
 	    }
 
 	    // Make a new proposal based on those user changes
@@ -337,7 +349,7 @@
 
 	list submodules = [];
 
-	if ( proposal_mode == `ini )
+	if ( proposal_mode == `ini && Mode::installation)
 	{
 	    // Module list for new installation proposal
 
@@ -389,6 +401,17 @@
 		}
 	    }
 	}
+	else if ( proposal_mode == `ini && Mode::update)
+	{
+	    submodules = load_submodules_list( "update-proposal.ycp",
+					       [
+						// Fallback list
+						"proposal_mode",
+						"proposal_backup",
+						"proposal_rootpart"
+						]
+					       );
+	}
 	else if ( proposal_mode == `net )
 	{
 	    // Module list for network configuration proposal
@@ -404,7 +427,7 @@
 						    "lan_proposal",
 						    "modem_proposal",
 						    "proxy_proposal"
-						   ]
+						    ]
 						   );
 	    }
 	    else if ( Arch::ppc64 )

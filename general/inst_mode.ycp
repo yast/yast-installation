@@ -1,6 +1,7 @@
 /**
  *
- * Author:	Klaus Kämpf <kkaempf@suse.de>
+ * Authors:	Klaus Kämpf <kkaempf@suse.de>
+ *		Arvin Schnell <arvin@suse.de>
  *
  * Purpose:	Ask for the installation method:
  *		- New installation
@@ -288,29 +289,8 @@ fix problems manually.
 	    {
 		Mode::update = true;
 		Mode::installation = false;
-
-		UI::CloseDialog(); // close the inst_mode dialog
-		ret = WFM::CallFunction( `inst_updateControl() );
-
-		if ( ret == `back )
-		{
-		    Storage::ResetOndiskTarget();
-		    Storage::SetPartProposalFirst( true );
-		    ret = `again;
-		    break;
-		}
-		else if ( ret == `abort || ret == `cancel  )
-		{
-		    ret = `abort;
-		    break;
-		}
-		else	// `finish
-		{
-		    ret = `finish;
-		    break;
-		}
 	    }
-	    else if ( newmode == `boot )
+	    else if (newmode == `boot)
 	    {
 		Mode::update = false;
 		Mode::installation = false;
