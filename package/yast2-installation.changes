@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Mar 11 18:50:55 CET 2004 - sh@suse.de
+
+- Fixed bug #34618: Don't use full screen in remote installation 
+
+-------------------------------------------------------------------
 Wed Mar 10 14:40:11 CET 2004 - arvin@suse.de
 
 - don't warn if only no disk controller can be found (bug #35546)
