@@ -47,27 +47,23 @@ function logmeminfo {
 }
 
 
-function import_lang_from_sysconfig()
+function ensure_logdir()
 {
-    if [ -z "$LANG" -a -r /etc/sysconfig/language ]; then
-	. /etc/sysconfig/language
+    if [ -L "$logdir" ] ; then
+	rm "$logdir"
+    fi
 
-    	if [ -n "$DEFAULT_LANGUAGE" ]; then
-	    LANG=$DEFAULT_LANGUAGE
-	fi
-
-	if [ -n "$RC_LANG" ]; then
-	    LANG=$RC_LANG
-	fi
-
-	log "Imported LANG from /etc/sysconfig: $LANG"
-	export LANG
+    if [ ! -d "$logdir" ] ; then
+	mkdir $logdir
     fi
 }
 
+
 function y2cc_qt()
 {
-    import_lang_from_sysconfig
+    # set lang from sysconfig
+    set_lang_from_sysconfig
+
     if echo $moduleargs | grep -q continue ; then
 	log "Continue mode"
         if [ -e /var/lib/YaST2/start_y2cc ]; then
@@ -119,7 +115,9 @@ function y2cc_qt()
 
 function y2cc_ncurses()
 {
-    import_lang_from_sysconfig
+    # set lang from sysconfig
+    set_lang_from_sysconfig
+
     if echo $moduleargs | grep -q continue ; then
 	if [ -e /var/lib/YaST2/start_y2cc ]; then
 	    # Check for semaphore file (created in inst_proposal.ycp)
@@ -129,6 +127,9 @@ function y2cc_ncurses()
 	fi
     fi
 }
+
+# make sure that logdir exists (older versions linuxrc don't create it)
+ensure_logdir
 
 # This environment variable will tell child processes they are started from
 # within a YaST2 environment

@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Aug 07 10:47:45 CEST 2002 - arvin@suse.de
+
+- removed access to variable DEFAULT_LANGUAGE in YaST2 start
+  script (now only RC_LANG is unsed)
+
+-------------------------------------------------------------------
 Tue Aug 06 12:51:33 CEST 2002 - arvin@suse.de
 
 - don't start vnc server twice after reboot during installation
