@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Mar 25 12:12:44 CET 2004 - arvin@suse.de
+
+- removed network proposal from update work flow
+
+-------------------------------------------------------------------
 Wed Mar 24 16:10:31 CET 2004 - arvin@suse.de
 
 - renamed usbdevfs to usbfs (bug #31869)
