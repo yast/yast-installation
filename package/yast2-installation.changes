@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Aug 26 11:49:21 CEST 2003 - arvin@suse.de
+
+- don't gray out next button in proposal in case of blockers
+  (bug #29320)
+
+-------------------------------------------------------------------
 Fri Aug 22 18:11:20 CEST 2003 - arvin@suse.de
 
 - fixed reading of memory info (bug #29017)
