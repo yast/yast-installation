@@ -110,7 +110,31 @@
 	if (ret == `edit)
 	{
 	    string id = (string) UI::QueryWidget (`id(`disks), `CurrentItem);
-	    // FIXME
+	    if (id != nil)
+	    {
+		integer i = -1;
+		integer l = 0;
+		foreach (term t, disks, ``{
+		    if (t[0,0]:"" == id)
+			i = l;
+		    l = l + 1;
+		});
+
+		if (i != -1)
+		{
+		    term t = disks[i]:`Empty();
+		    integer s = t[1]:0;
+
+		    s = ask_size (s);
+		    if (s >= 0)
+		    {
+			t[1] = s;
+			disks[i] = t;
+			UI::ChangeWidget (`id(`disks), `Items, disks);
+			UI::ChangeWidget (`id(`disks), `CurrentItem, id);
+		    }
+		}
+	    }
 	}
 
 	if (ret == `delete)
