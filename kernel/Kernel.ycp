@@ -78,6 +78,8 @@
 
 	// list of parameters to be discarded (linuxrc/yast internals)
 
+	// TODO: remove most of these (see bug #25745)
+
 	list discardlist = [
 	  "linuxrc", "textmode", "install", "gateway",
 	  "initrd", "noshells", "network", "netmask", "ip",
@@ -450,17 +452,17 @@
 
     /**
      * Constructor
-     * pass /proc/cmdline to /var/lib/libhd/cmdline
-     * extract relevant settings from /proc/cmdline
+     * extract relevant settings from Cmdline in install.inf
      * @return void
      */
     global define void Kernel ()
     ``{
-	string tmp = SCR::Read (.target.string, "/proc/cmdline");
-	y2milestone ("original kernel command line is: %1", tmp);
-
-	// extract extra boot parameters given in installation
-	ExtractCmdlineParameters (tmp);
+	string tmp = SCR::Read (.etc.install_inf.Cmdline);
+	y2milestone ("cmdline from install.inf is: %1", tmp);
+	if (tmp != nil) {
+	    // extract extra boot parameters given in installation
+	    ExtractCmdlineParameters (tmp);
+	}
 
 	ProbeKernel ();
     }
