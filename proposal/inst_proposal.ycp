@@ -15,7 +15,6 @@
  */
 
 {
-
     textdomain "installation";
 
     import "Arch";
@@ -24,7 +23,6 @@
     import "AutoInstall";
     import "Wizard";
     import "HTML";
-
     import "Popup";
 
 
@@ -155,6 +153,7 @@
 	map prop_map = $[];
 	boolean skip_the_rest = false;
 	have_blocker = false;
+
 	UI::BusyCursor();
 
 	foreach ( `submod, submodules,
@@ -186,9 +185,7 @@
 	    }
 	});
 
-	term doit_button = UI::WidgetExists(`id(`accept) ) ? `id(`accept) : `id(`next);
 	UI::NormalCursor();
-	UI::ChangeWidget( doit_button, `Enabled, ! have_blocker );
     };
 
 
@@ -831,11 +828,8 @@ To use the settings as displayed, press <b>Next</b>.
     UI::ChangeWidget(`id(`menu_dummy), `Enabled, false );
     richtext_busy_cursor(`id(`proposal ) );
 
-    if ( Wizard::HasAcceptButton() )
-    {
-	UI::ChangeWidget(`id(`accept), `Enabled, false );
-    }
-
+    // don't know who disables the button
+    UI::ChangeWidget(UI::WidgetExists(`id(`accept)) ? `id(`accept) : `id(`next), `Enabled, true);
 
     if ( Mode::initial )
     {
@@ -888,7 +882,7 @@ To use the settings as displayed, press <b>Next</b>.
     make_proposal( false, false );
 
     // Set keyboard focus to the [Accept] or [Next] button
-    UI::SetFocus( UI::WidgetExists(`id(`accept) ) ? `id(`accept ) : `id(`next ) );
+    UI::SetFocus(UI::WidgetExists(`id(`accept)) ? `id(`accept) : `id(`next));
 
     //
     // Input loop
@@ -967,6 +961,14 @@ To use the settings as displayed, press <b>Next</b>.
 	}
 	else if ( input == `next )
 	{
+	    if (have_blocker)
+	    {
+		// error message is a popup
+		Popup::Error (_("The proposal contains an error. That has to be
+resolved before continuing."));
+		continue;
+	    }
+
 	    if ( Mode::initial && !Mode::live_eval )
 	    {
 		input = WFM::CallFunction(`inst_doit( true,		// have_back
