@@ -1,0 +1,12 @@
+//
+// installation-proposals-s390.ycp
+//
+// define list and order of installation proposal modules
+//
+[
+    "proposal_mode",
+    "proposal_partitions",
+    "proposal_software",
+    "proposal_timezone",
+    "proposal_language"
+]
