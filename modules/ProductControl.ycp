@@ -153,16 +153,23 @@ global define boolean Read( string controlfile) ``{
 
 boolean Check(string allowed, string current)
 {
+    // create allowed list
     list<string> allowedlist = filter(string s,
             splitstring(deletechars(allowed, " "), ","), ``(s!=""));
     y2debug("allowedlist: %1", allowedlist );
     y2debug("current: %1", current );
     if (size(allowedlist) == 0 )
+    {
         return true;
+    }
     else if (contains(allowedlist, current ))
+    {
         return true;
+    }
     else
+    {
         return false;
+    }
 }
 
 
@@ -349,7 +356,9 @@ global define list<map> getModules(string stage, string mode)
     map workflow = select(filter(map wf, workflows, ``(
                 Check(wf["stage"]:"",stage) && Check(wf["mode"]:"", mode )
                     )), 0 , $[] );
+    y2debug("Workflow: %1", workflow );
     list<map> modules = workflow["modules"]:[];
+    y2debug("modules: %1", modules );
     integer id = 1;
     modules = maplist(map m, modules, ``{
             m["id"] = sformat("%1_%2", stage, id);
