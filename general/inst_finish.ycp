@@ -260,8 +260,7 @@ Please wait while the base system is being installed.
 
     list<string> storage_initrdm = (list<string>)Storage::GetRootInitrdModules();
 
-    foreach(string m, storage_initrdm,
-    ``{
+    foreach(string m, storage_initrdm, {
 	Initrd::AddModule (m, "");
     });
 
@@ -383,8 +382,7 @@ Please wait while the base system is being installed.
 	// re-do all top-level "media" convenience links
 	list<string> mediafiles = (list<string>) SCR::Read (.target.dir, ["/media", []]);
 
-	foreach (string mediafile, mediafiles,
-	``{
+	foreach (string mediafile, mediafiles, {
 	    mediafile = "/" + mediafile;
 	    if (SCR::Read (.target.size, mediafile) < 0)	// not existing
 	    {
@@ -626,7 +624,7 @@ with the load address of your root DASD.
 
 	// disable HW services - they are useless and usually failing in UML
 	list<string> disable_services = ["kbd", "hotplug", "hwscan", "powersaved"];
-	foreach(string s, disable_services, ``{
+	foreach(string s, disable_services, {
 		integer disabled = (integer) SCR::Execute(.target.bash, sformat("/sbin/insserv -r %1", s));
 		y2milestone("insserv - service %1 exit status: %2", s, disabled);
 	    }
@@ -731,17 +729,6 @@ with the load address of your root DASD.
     // write "yes" status for known devices (mouse, keyboard, storage, etc.)
     HwStatus::Save();
 
-    // --------------------------------------------------------------
-    // Check if there is a message left to display
-    // and display it, if necessary
-
-    if (size (Misc::boot_msg) > 0 && !Mode::autoinst)
-    {
-	Report::DisplayMessages (true, 10);
-	Report::Message (Misc::boot_msg);
-	Misc::boot_msg = "";
-    }
-
 
     if (Mode::autoinst)
     {
@@ -784,7 +771,7 @@ with the load address of your root DASD.
     {
         y2milestone("Writing hook logs into system: %1",
                 ProductControl::logfiles);
-        foreach(string logfile, ProductControl::logfiles, ``{
+        foreach(string logfile, ProductControl::logfiles, {
                 string fulllogfile = "/var/log/YaST2/" + logfile;
                 if (WFM::Read (.local.size, fulllogfile) > 0)
                 {
@@ -820,8 +807,7 @@ with the load address of your root DASD.
     // go through mountPoints collecting paths in umountList
     // *** umountList is lexically ordered !
 
-    foreach (string mountpoint, list mountval, mountPoints,
-    ``{
+    foreach (string mountpoint, list mountval, mountPoints, {
 	if (mountpoint != "swap")		// dont umount / on target
 	{
 	    umountList = add (umountList, mountpoint);
@@ -858,7 +844,7 @@ with the load address of your root DASD.
     // file is not on the root fs
     y2milestone( "umount list %1", umountList );
     foreach( map e,  targetMap["/dev/loop","partitions"]:[],
-            ``{
+            {
             if( size(e["mount"]:"")>0 )
             {
             WFM::Execute( .local.umount,
@@ -916,6 +902,19 @@ with the load address of your root DASD.
 
     if (UI::PollInput () == `abort && Popup::ConfirmAbort (`incomplete))
         return `abort;
+
+
+    // --------------------------------------------------------------
+    // Check if there is a message left to display
+    // and display it, if necessary
+
+    if (size (Misc::boot_msg) > 0 && !Mode::autoinst)
+    {
+	Report::DisplayMessages (true, 10);
+	Report::Message (Misc::boot_msg);
+	Misc::boot_msg = "";
+    }
+
 
     return `next;
 }
