@@ -52,6 +52,25 @@ global string current_control_file = "";
 // Current Wizard Step
 global string CurrentWizardStep = "";
 
+
+// List of module to disable in the current run
+global list<string> DisabledModules = [];
+
+
+
+/**
+ * Check if a module is disabled
+ * @param map module map
+ * @return boolean
+ */
+global define boolean checkDisabled (map mod ) {
+    if (contains(DisabledModules, mod["name"]:""))
+    {
+        return true;
+    }
+    return false;
+}
+
 /**
   * Read XML Control File
   * @param string control file

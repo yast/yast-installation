@@ -360,6 +360,12 @@ differ from those in the manual.
             do_continue = true;
         }
 
+        if (ProductControl::checkDisabled(mod))
+        {
+            y2milestone("continue (status)..");
+            do_continue = true;
+        }
+
         if (!mod["update"]:true && Mode::update)
         {
             y2milestone("continue (update)..");
