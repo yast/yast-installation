@@ -121,7 +121,7 @@ Thu Apr 10 15:49:20 CEST 2003 - ms@suse.de
 -------------------------------------------------------------------
 Tue Apr  8 12:51:55 CEST 2003 - jsrain@suse.de
 
-- fixed parsing of kernel parameters containging blank space
+- fixed parsing of kernel parameters containing blank space
   (#26147)
 
 -------------------------------------------------------------------
