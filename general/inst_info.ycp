@@ -7,9 +7,13 @@
  */
 {
     textdomain "installation";
+    
+    import "Label";
+    import "Misc";
+    import "Report";
 
     string infofile = "/info.txt";		// copied there by linuxrc
-    string infotext = SCR::Read (.target.string, [infofile, ""]);
+    string infotext = (string)SCR::Read (.target.string, [infofile, ""]);
 
     if (infotext != "")
     {
@@ -45,7 +49,7 @@
 
 	if (timeout_seconds == 0)
 	{
-	    info_ret = UI::UserInput ();
+	    info_ret = (symbol)UI::UserInput ();
 	}
 	else
 	{
@@ -55,12 +59,12 @@
 	    while (timeout_seconds > 0)
 	    {
 		sleep (1000);
-		info_ret = UI::PollInput ();
+		info_ret = (symbol)UI::PollInput ();
 		if (info_ret == `accept || info_ret == `donotaccept)
 		    break;
 		if (info_ret == `stop) {
 		    while (info_ret == `stop)
-			info_ret = UI::UserInput ();
+			info_ret = (symbol)UI::UserInput ();
 		    break;
 		}
 		info_ret = `accept;
