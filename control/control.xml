@@ -55,7 +55,7 @@
             </modules>
         </proposal>
         <proposal>
-            <mode>normal</mode>
+            <mode>installation</mode>
             <type>uml</type>
             <stage>normal</stage>
             <modules config:type="list">

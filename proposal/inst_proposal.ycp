@@ -385,7 +385,7 @@
                 Mode::stage,
                 Mode::mode,
                 proptype );
-        y2milestone("getting proposals with: \"%1\" \"%2\" \"%3\"", Mode::stage, Mode::mode, proptype );
+        y2milestone("getting proposals for stage: \"%1\" mode: \"%2\" proposal type: \"%3\"", Mode::stage, Mode::mode, proptype );
 
         if (size(submodules) == 0 )
         {
