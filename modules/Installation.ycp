@@ -21,12 +21,14 @@
 
     // current scr handle
     // used in installation.ycp and inst_finish.ycp
+    global integer scr_handle		= 0;
 
-    global integer scrHandle		= 0;
-
-    // usual mountpoint for the destination
-
+    // Usual mountpoint for the destination.
     global string destdir		= "/";
+
+    // Usual mountpoint for the destination seen from the (default) SCR.  It's
+    // set to "/" when the SCR is restarted in the target system.
+    global string scr_destdir		= "/";
 
     // usual mountpoint for the source (i.e. CD)
 
@@ -58,11 +60,13 @@
 
 	if (Mode::cont)
 	{
-	    destdir    = "/";
+	    destdir = "/";
+	    scr_destdir = "/";
 	}
 	else if (Mode::initial)
 	{
 	    destdir = "/mnt";
+	    scr_destdir = "/mnt";
 	}
 
 	defaultLanguage = Pkg::GetLocale();
