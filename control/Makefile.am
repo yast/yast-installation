@@ -1,6 +1,6 @@
 # Makefile.am for installation/general
 
-controldir = /usr/share/YaST2/control
+controldir = $(yast2dir)/control
 
 control_DATA = control.xml
 
