@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Sep 24 12:25:08 CEST 2003 - snwint@suse.de
+
+- look for x11 drivers in lib64 dir on x86_64 (#31649)
+
+-------------------------------------------------------------------
 Thu Sep 18 11:38:50 CEST 2003 - arvin@suse.de
 
 - shut down temporary network before online test during update

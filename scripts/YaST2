@@ -162,17 +162,20 @@ log "update=$update"
 # note: $X11i is set if the user has *explicitly* requested a server
 # don't use "fbdev" or "vga"  on Alphas (we do need the correct server here)!
 
+x11_driver_dir=/usr/X11R6/lib/modules/drivers
+[ -d /usr/X11R6/lib64/modules/drivers ] && x11_driver_dir=/usr/X11R6/lib64/modules/drivers
+
 if [ "`uname -m`" != alpha  ]; then
   if [ ! "$X11i" ] ; then
     if [  "$XServer" != firegl1 -a "$XServer" != vmware ] ; then
-#     if [ ! \( "$XVersion" = 4 -a -e "/usr/X11R6/lib/modules/drivers/${XServer}_drv.o" \) ] ; then
+#     if [ ! \( "$XVersion" = 4 -a -e "$x11_driver_dir/${XServer}_drv.o" \) ] ; then
         if [ "$fbdev_ok" = 1 ] ; then
-          if [ -e /usr/X11R6/lib/modules/drivers/fbdev_drv.o ] ; then
+          if [ -e $x11_driver_dir/fbdev_drv.o ] ; then
             XVersion=4
             XServer=fbdev
           fi
           else
-          if [ -e /usr/X11R6/lib/modules/drivers/vga_drv.o ] ; then
+          if [ -e $x11_driver_dir/vga_drv.o ] ; then
             XVersion=4
             XServer=vga
 	    if [ "`uname -m`" = ppc ] ; then
@@ -196,7 +199,7 @@ else
   if [ "$XVersion" = 4 ] ; then
     xsrv=XFree86
     xsrvarg=fbdev
-    [ -f "/usr/X11R6/lib/modules/drivers/${XServer}_drv.o" ] && xsrvarg='0'
+    [ -f "$x11_driver_dir/${XServer}_drv.o" ] && xsrvarg='0'
     [ "$XServer" = vga ] && xsrvarg='vga'
     [ "$XServer" = fbdev ] && xsrvarg='fbdev'
     [ "$XServer" = fbdev -a ! "$fbdev_ok" ] && xsrvarg='vga'
