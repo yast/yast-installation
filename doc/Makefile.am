@@ -1,1 +1,1 @@
-SUBDIRS = autodocs
+SUBDIRS = autodocs proposal

@@ -1,7 +1,5 @@
 # Makefile.am for installation/general
 
-SUBDIRS = testsuite 
-
 client_DATA =	$(wildcard *.ycp)
 
 EXTRA_DIST = $(client_DATA)
