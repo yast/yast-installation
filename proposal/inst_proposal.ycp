@@ -603,8 +603,9 @@
 	list<string>	new_submodules	= [];
 	integer	no			= 1;
 	titles = [];
+	map descriptions = $[];
 
-	foreach(string submod, submodules_presentation, ``{
+	foreach(string submod, submodules, ``{
 	    map description   = submod_description( submod );
 
 	    if ( description == nil )
@@ -615,15 +616,15 @@
 	    {
 		if ( description != $[] )
 		{
+		    description["no"] = no;
+		    descriptions[submod] = description;
 		    new_submodules = add( new_submodules, submod );
 		    string title      = description["rich_text_title"]:submod;
-		    string menu_title = description["menu_title"     ]:title;
 		    string id         = description["id"             ]:sformat( "module_%1", no );
 
 		    titles            = add( titles,  title );
 		    submod2id[submod] = id;
 		    id2submod[id]     = submod;
-		    menu_list         = add( menu_list, `item(`id( id ), menu_title + "..." ) );
 
 		    no = no + 1;
 		}
@@ -631,6 +632,19 @@
 	});
 
 	submodules = new_submodules;	// maybe some submodules are not installed
+
+	// now build the menu button
+	foreach (string submod, submodules_presentation, {
+	    map descr = descriptions[submod]:$[];
+	    if (descr != $[])
+	    {
+		integer no = descr["no"]:0;
+		string id = descr["id"]:sformat( "module_%1", no);
+		string menu_title = descr["menu_title"]:descr["rich_text_title"]:submod;
+		menu_list = add( menu_list,
+		    `item(`id( id ), menu_title + "..." ));
+	    }
+	});
 
 	menu_list = add( menu_list, `item(`id(`reset_to_defaults), _("&Reset to defaults") ) );
 	UI::ReplaceWidget(`id(`rep_menu), `MenuButton(`id(`menu), _("&Change..."), menu_list ) );
