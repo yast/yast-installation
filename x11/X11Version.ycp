@@ -15,8 +15,12 @@ DESCRIPTION   : Provides a function to determine the _used_ XFree-version
               :
               :
 STATUS        : Development
-**************/
+ *
+ * $Id$
+ */
+
 {
+
 module "X11Version";
 textdomain "installation";
 

@@ -4,10 +4,14 @@
  * Authors:	Arvin Schnell <arvin@suse.de>
  *
  * Purpose:	Show info in existent.
+ *
+ * $Id$
  */
+
 {
+
     textdomain "installation";
-    
+
     import "Label";
     import "Misc";
     import "Report";

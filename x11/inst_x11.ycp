@@ -13,7 +13,10 @@ DESCRIPTION   : The installation workflow will call inst_x11
               : and import the main X11 module (x11.ycp)
               :
 STATUS        : Development
-**************/
+ *
+ * $Id$
+ */
+
 {
     import "X11Version";
     import "Mode";

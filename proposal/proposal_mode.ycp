@@ -7,6 +7,7 @@
  * Purpose:	Proposal function dispatcher - mode.
  *
  *		See also file proposal-API.txt for details.
+ * $Id$
  */
 {
     textdomain "installation";
