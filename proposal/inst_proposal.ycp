@@ -39,6 +39,7 @@
     // values used in defined functions
 
     list<string>	submodules = [];
+    list<string>	locked_modules = [];
     list	titles     = [];
     map		submod2id  = $[];
     map		id2submod  = $[];
@@ -172,8 +173,14 @@
 	``{
 	    if ( ! skip_the_rest )
 	    {
+                if (!contains(locked_modules, submod))
+                {
 		prop = prop + HTML::Heading( HTML::Link( titles[no]:"ERROR: missing title" ,
 							 submod2id[submod]:"" ) );
+                } else {
+		prop = prop + HTML::Heading(
+                    titles[no]:"ERROR: missing title");
+                }
 		prop_map = submod_make_proposal( submod, force_reset, language_changed );
 	    }
 
@@ -383,6 +390,7 @@
                 Mode::stage,
                 Mode::mode,
                 proptype );
+        locked_modules = ProductControl::getLockedProposals ();
         y2milestone("getting proposals for stage: \"%1\" mode: \"%2\" proposal type: \"%3\"",
                 Mode::stage,
                 Mode::mode,
@@ -678,6 +686,12 @@ To use the settings as displayed, press <b>Next</b>.
 </p>
 ") + how_to_change;
 	}
+
+        if (size(locked_modules) > 0 ) {
+            help_text_string = help_text_string + _("<p>Some proposals might be
+locked by the System Administrator and can't be changed. If you need to change
+a proposal which is locked, ask your System Administrator</p>");
+        }
 
 	return help_text_string;
     };

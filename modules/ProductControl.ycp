@@ -19,6 +19,9 @@ import "Arch";
 global string current_proposal_label = "";
 
 
+// locked proposal
+global list<string> locked_proposals = [];
+
 // The complete parsed control file
 global map productControl = $[];
 
@@ -511,6 +514,14 @@ global define list<string> getProposals(string stage, string mode, string propty
                 return(p);
 
             });
+    locked_proposals = maplist(string p, props[0, "locked_modules"]:[], ``{
+            if (!issubstring(p, "_proposal"))
+                return(p + "_proposal");
+            else
+                return(p);
+
+            });
+
     string proposal_textdomain = (string)
            productControl["textdomain"]:"control";
 
@@ -522,6 +533,10 @@ global define list<string> getProposals(string stage, string mode, string propty
 }
 
 
+global list<string> getLockedProposals ()
+{
+    return locked_proposals;
+}
 
 // EOF
 }
