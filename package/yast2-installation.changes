@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jan  4 09:45:17 CET 2005 - jsrain@suse.cz
+
+- on SGI Altix add fetchop and mmtimer to MODULES_LOADED_ON_BOOT
+  (was disabled due to problems in Kernel.ycp) (bug #46971)
+
+-------------------------------------------------------------------
 Thu Dec 16 15:13:23 CET 2004 - sh@suse.de
 
 - Applied patch from bug #49275: Enable user to skip proposal
