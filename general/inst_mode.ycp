@@ -94,7 +94,6 @@
 
 
     boolean called_from_ask_user = false;
-
     if ( size( WFM::Args() ) > 0
 	 && is( WFM::Args(0), symbol )
 	 && WFM::Args(0) == `AskUser )
@@ -103,10 +102,17 @@
     }
 
 
+    boolean offer_update = false;
+    if (contains (Product::flags, "update") || Kernel::suse_update)
+    {
+	offer_update = true;
+    }
+
+
     if ( ! Storage::HaveLinuxPartitions()
 	 || Mode::autoinst
 	 || Mode::live_eval
-	 || !contains (Product::flags, "update"))
+	 || !offer_update)
     {
 	// Force new installation, no update possible
 
@@ -115,16 +121,28 @@
 
 	if ( called_from_ask_user )
 	{
-	    // Translators notice: About 60 Characters wide maximum -
-	    // use more line breaks if neccessary.
-	    // Plain text, no HTML!
-	    Popup::Notify( _( "
+	    if (offer_update)
+	    {
+		// Translators notice: About 60 Characters wide maximum -
+		// use more line breaks if neccessary.
+		// Plain text, no HTML!
+		Popup::Notify( _( "
 There is no SuSE Linux on any of your hard disks.
 It is only possible to perform a new installation at the moment.
 
 After SuSE Linux is installed, you can use this selection
 to boot the installed system or to update it.
 " ) );
+	    }
+	    else
+	    {
+		// Translators notice: About 60 Characters wide maximum -
+		// use more line breaks if neccessary.
+		// Plain text, no HTML!
+		Popup::Notify( _( "
+This product does only offer a new installation.
+" ) );
+	    }
 	}
 
 	return `auto;
@@ -132,13 +150,6 @@ to boot the installed system or to update it.
 
     //---------------------------------------------------------------
 
-    boolean offer_update = false;
-
-    if (contains (Product::flags, "update")
-	|| Kernel::suse_update)		// or "suse_update" given in cmdline
-    {
-	offer_update = true;		// -> offer update
-    }
 
     // help text for installation method
     string help_text =_("\
