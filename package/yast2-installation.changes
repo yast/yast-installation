@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jul 18 13:37:59 CEST 2002 - fehr@suse.de
+
+- moved variable immediate_prepdisk from module Installation to
+  module Storage.
+
+-------------------------------------------------------------------
 Wed Jul 17 16:29:25 CEST 2002 - arvin@suse.de
 
 - fixed S390 reboot message (bug #17049)
