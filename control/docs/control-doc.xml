@@ -1,8 +1,5 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-"/usr/share/xml/docbook/schema/dtd/4.2/docbookx.dtd"[
-
-<!ENTITY  control_docbook  SYSTEM "control-section.xml">
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "/usr/share/xml/docbook/schema/dtd/4.2/docbookx.dtd"[
+<!ENTITY  control-section  SYSTEM "control-section_mod.xml">
 ]>
 
 
@@ -41,6 +38,6 @@
 
   <toc>
  </toc>
-&control_docbook;
+&control-section;
 </article>
 
