@@ -72,7 +72,8 @@ global boolean personal		= false;
  */
 global define void Product () ``{
 
-    name		= lookup (Installation::infoMap, "produktname", "");
+    map productdata = Pkg::SourceProductData(0);
+    name		= productdata["productname"]:"";
     imap_server		= (name == "eMail Server");
     openteam_server	= (name == "Open Team Server");
     sles_server		= (name == "SusE SLES");
@@ -80,9 +81,10 @@ global define void Product () ``{
     fwadmin_host	= (name == "SuSE Firewall Adminhost");
     certify_cd		= (name == "Certification CD");
 
-    string rawdist	= lookup (Installation::infoMap, "distname", "");
-    dist		= select(splitstring(rawdist,"-"),2,"");
+    string rawdist	= productdata["baseproductname"]:"";
+    dist		= select (splitstring(rawdist,"-"),2,"");
 
+    // FIXME
     professional	= (dist == "Professional");
     personal		= (dist == "Personal");
 

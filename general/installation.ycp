@@ -150,6 +150,7 @@
 
     if (Mode::initial)
     {
+	Pkg::InstSysMode();
 	Mouse::Set (Mouse::Probe ());
 
 	Installation::encoding = Console::SelectFont( Language::language );
@@ -354,7 +355,7 @@
 	//////////////////////////////////////////////////////////////
 	// Show warning, if existent.
 
-	string	warnfile = Installation::descrsourcedir+"/common.war";
+	string	warnfile = Installation::sourcedir+"/README.BETA";
 	string	warning	 = SCR::Read(.target.string, [warnfile, ""]);
 
 	if (warning != "")
