@@ -92,9 +92,8 @@
 	boolean language_changed  = ask_user_result["language_changed"]:false;
 	boolean mode_changed      = ask_user_result["mode_changed"]:false;
 
-	if (    workflow_sequence != `cancel
-	     && workflow_sequence != `back
-	     && workflow_sequence != `abort )
+	if (workflow_sequence != `cancel && workflow_sequence != `back &&
+	    workflow_sequence != `abort && workflow_sequence != `finish)
 	{
 	    if ( language_changed )
 	    {
@@ -796,35 +795,33 @@ To use the settings as displayed, press <b>Next</b>.
 
     if ( Mode::initial )
     {
-	//
 	// Do hardware probing
 	//
 	// This must happen before submodule descriptions are initialized; module
 	// constructors might depend on it.
 	// In autoinst mode, this has been called already.
-	//
+
 	if (!Mode::autoinst)
 	    WFM::CallFunction(`inst_startup() );
 
-	//
 	// Let user decide between
 	//
 	// - New installation
 	// - Update
 	// - Boot installed system
-	//
 
         if ( !Mode::live_eval )
         {
-	    do
+	    while (true)
 	    {
-	        any ret = WFM::CallFunction(`inst_mode() );
+	        any ret = WFM::CallFunction (`inst_mode());
 
-	        if ( ret == `abort || ret == `finish )
-	        {
+	        if (ret == `abort || ret == `finish)
 		    return ret;
-	        }
-	    } while ( ret == `again );
+
+		if (ret == `next)
+		    break;
+	    }
 	}
     }
 
@@ -872,14 +869,18 @@ To use the settings as displayed, press <b>Next</b>.
 		// Call AskUser() function.
 		// This will trigger another call to make_proposal() internally.
 		input = submod_ask_user( submod, false );
+
+		// The workflow_sequence doesn't get handled as a workflow sequence
+		// so we have to do this special case here. Kind of broken.
+		if (input == `finish)
+		    return `finish;
 	    }
 	}
-	else if (input == `finish )
+	else if (input == `finish)
 	{
-	    // For update only: This does all by itself, and when it's done, it returns `finish.
 	    return `finish;
 	}
-	else if (input == `abort )
+	else if (input == `abort)
 	{
 	    if ( Mode::initial && !Mode::live_eval )
 	    {
@@ -925,8 +926,8 @@ To use the settings as displayed, press <b>Next</b>.
 	    if ( Mode::initial && !Mode::live_eval )
 	    {
 		input = WFM::CallFunction(`inst_doit( true,		// have_back
-						 true,		// have_next
-						 false ) );	// going_backwards
+						      true,		// have_next
+						      false ) );	// going_backwards
 	    }
 
 	    if ( input == `next )
@@ -941,18 +942,18 @@ To use the settings as displayed, press <b>Next</b>.
 		if( ! Mode::initial &&
 		    ( Product::openteam_server || Product::fwadmin_host ) )
 		{
-			if ( Product::openteam_server )
-			{
-			    return WFM::CallFunction( `openteam() );
-			}
-			else if ( Product::fwadmin_host )
-			{
-			    return WFM::CallFunction( `fwcdadmin() );
-			}
+		    if ( Product::openteam_server )
+		    {
+			return WFM::CallFunction( `openteam() );
+		    }
+		    else if ( Product::fwadmin_host )
+		    {
+			return WFM::CallFunction( `fwcdadmin() );
+		    }
 		}
 		else
 		{
-			return `next;
+		    return `next;
 		}
 	    }
 	}

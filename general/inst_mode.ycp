@@ -52,13 +52,16 @@
 	    return `cancel;
 	}
 
-	Update::selectedRootPartitionForBooting = "";
+	// We must only change UpdateL::selectedRootPartition if booting
+	// is inevitable.
 
 	if (size (Update::validRootPartitions) == 1)
 	{
+	    Update::selectedRootPartition = "";
+
 	    foreach (`p, `r, Update::validRootPartitions, ``{
-		if (Update::selectedRootPartitionForBooting == "")
-		    Update::selectedRootPartitionForBooting = p;
+		if (Update::selectedRootPartition == "")
+		    Update::selectedRootPartition = p;
 	    });
 	}
 	else
@@ -67,7 +70,7 @@
 		return `cancel;
 	}
 
-	string root_part = Update::selectedRootPartitionForBooting;
+	string root_part = Update::selectedRootPartition;
 
 	y2milestone( "Preparing boot from partition %1", root_part );
 	Update::UnmountPartitions();
@@ -190,7 +193,7 @@ fix problems manually.
 		    `VSpacing(0.4),
 		    `Left(`RadioButton(`id(`install),
 				       // label for radio button 1, New installation
-				       _("New &installation"), ! Mode::update ) ));
+				       _("New &installation"), Mode::installation ) ));
     if (offer_update)
     {
 	radio_buttons = add (radio_buttons, `VSpacing(0.2));
@@ -289,7 +292,7 @@ fix problems manually.
 	if ( ret == `cancel )
 	    break;
 
-	if (ret == `ok || ret == `next || ret == `accept )
+	if (ret == `ok || ret == `next || ret == `accept)
 	{
 	    ret = `next;
 
@@ -329,11 +332,10 @@ fix problems manually.
 
 	    if (newmode == `boot)
 	    {
-		Mode::update = false;
-		Mode::installation = false;
-
 		if (handle_boot () == `finish)
 		{
+		    Mode::update = false;
+		    Mode::installation = false;
 		    ret = `finish;
 		    break;
 		}
