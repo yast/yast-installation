@@ -80,7 +80,6 @@
      * @param string at_entry == true before call of file == false after call of file
      */
     global define void Run(string filename, boolean at_entry) ``{
-        string tmp = (string)SCR::Read(.target.tmpdir);
         if (at_entry)
         {
 	    if (WFM::Read (.local.size, sformat("%1/%2_pre.sh", tmp_dir, filename)) > 0)
