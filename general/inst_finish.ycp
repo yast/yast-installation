@@ -316,7 +316,7 @@ Please wait while the base system is being installed.
     }
 
 
-    if (!Product::box)	// FIXME !!!
+    if (false)		// FIXME !!!
     {
 	SCR::Write (.sysconfig.suseconfig.CWD_IN_USER_PATH, "no");
 	SCR::Write (.sysconfig.suseconfig, nil);
