@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Jul 20 11:18:33 CEST 2004 - arvin@suse.de
+
+- use capitalized SUSE in congratulation screen (bug #38853)
+
+-------------------------------------------------------------------
 Tue Jun 15 19:16:26 CEST 2004 - sh@suse.de
 
 - Fixed typo in ssh install script (#42058)
