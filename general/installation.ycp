@@ -162,7 +162,8 @@
     // doesn't support the wizard widget, but for optimization it makes sense
     // to do expensive operations only when it is available.
     list<map> stage_mode = [$["stage": "initial" , "mode": wizard_mode ],
-			    $["stage": "continue", "mode": wizard_mode ]];
+			    $["stage": "continue", "mode": wizard_mode ],
+			    $["stage": "normal",  "mode": wizard_mode ]];
     ProductControl::AddWizardSteps(stage_mode);
 
     // classified_user_settings contain secrets, like passwords ...
@@ -344,11 +345,13 @@ differ from those in the manual.
     map defaults = ProductControl::getModeDefaults(Mode::stage, Mode::mode);
 
     y2debug("Starting Workflow with  \"%1\" \"%2\"",  Mode::stage, Mode::mode);
+    y2debug("modules: %1", modules);
 
     while ((m >= 0) && (m < size(modules)))
     {
         map mod = modules[m]:$[];
         term argterm = ProductControl::getTerm( mod, defaults);
+        boolean retranslate = mod["retranslate"]:false;
 
         boolean   do_continue           = false;
 
@@ -419,9 +422,10 @@ differ from those in the manual.
         // This should be safe (#36831)
         Hooks::Checkpoint ( mod["name"]:"", false);          // exit hook
 
-        if ( module_name == `inst_language || module_name == `autoinst_init )   // language change very likely
+        if ( retranslate )   // language change very likely
         {
             retranslateWizardDialog();
+            retranslate = false;
         }
 
         // If the module return nil, something basic went wrong.

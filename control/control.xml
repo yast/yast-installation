@@ -214,6 +214,7 @@ textdomain="control"
                 </module>
                 <module>
                     <name>language</name>
+                    <retranslate config:type="boolean">true</retranslate>
                     <arguments>false,true,true</arguments>
                     <!-- 'label' is the workflow step description the user
 	                 will see in the side bar during installation.   -->
@@ -285,6 +286,7 @@ textdomain="control"
                 <module>
  	            <label>Language</label>
                     <name>language</name>
+                    <retranslate config:type="boolean">true</retranslate>
                     <arguments>false,true,true</arguments>
                 </module>
                 <module>
@@ -329,6 +331,7 @@ textdomain="control"
                 <module>
 	            <label>Language</label>
                     <name>language</name>
+                    <retranslate config:type="boolean">true</retranslate>
                     <arguments>false,true,true</arguments>
                 </module>
                 <module>
@@ -508,6 +511,7 @@ textdomain="control"
                 </module>
                 <module>
 	            <label>Autoinstall Settings</label>
+                    <retranslate config:type="boolean">true</retranslate>
                     <name>autoinit</name>
                     <archs>all</archs>
                 </module>
