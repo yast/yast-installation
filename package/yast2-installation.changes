@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Sep 10 11:34:10 CEST 2003 - sh@suse.de
+
+- Fixed max log file size calculation: Set LANG only in subshell
+
+-------------------------------------------------------------------
 Tue Sep  9 12:48:47 CEST 2003 - kkaempf@suse.de
 
 - use kernel k_psmp on smp-systems with
