@@ -294,6 +294,8 @@
 	else if (Arch::s390)
 	{
 	    binary = "zilo-kernel/image";
+	    kernel_packages = ["k_deflt"];
+	    switched = false;
 	}
 
 	y2milestone("Kernel determined: %1", kernel_packages);
