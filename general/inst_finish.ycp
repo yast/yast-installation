@@ -261,7 +261,7 @@ Please wait while the base system is being installed.
     if ( Kernel::switched )
     {
 	linuxrc["Root"] = "reboot";
-    linuxrc["RebootMsg"] = "1";
+	linuxrc["RebootMsg"] = "1";
 
 	Mode::hardBoot = true;
     }
