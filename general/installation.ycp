@@ -46,8 +46,6 @@
 
     import "FileSystems";
 
-    include "partitioning/partition_defines.ycp";
-
     // ======================================================================
 
 
