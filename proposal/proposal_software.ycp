@@ -31,8 +31,7 @@
 	{
 	    // don't set flag partition_changed if it's the first "change"
 	    if ( Packages::timestamp != 0 )
-	    {
-		y2milestone("anas: init");
+	    {		
 		partition_changed = true;
 	    }
 	}
@@ -40,8 +39,7 @@
 	Packages::timestamp = Storage::GetTargetChangeTime();
 
 	if ( language_changed || partition_changed )
-	{
-		y2milestone("anas: init 2");
+	{	    
 	    reinit = true;
 	}
 	y2milestone("package proposal: %1, %2",  force_reset, reinit );
