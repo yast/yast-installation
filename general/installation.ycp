@@ -348,7 +348,7 @@
 					  `ReplacePoint (`id(`rp1), `Empty ()),
 					  `HBox (`PushButton (`id(`accept), `opt(`default),
 							      AcceptButtonLabel()),
-						 `PushButton (`id(`cancel),
+						 `PushButton (`id(`donotaccept),
 							      DoNotAcceptButtonLabel()),
 						 `ReplacePoint (`id(`rp2), `Empty ())
 						 )
@@ -372,7 +372,7 @@
 		while (timeout_seconds > 0) {
 		    sleep (1000);
 		    info_ret = UI::PollInput ();
-		    if (info_ret == `accept || info_ret == `cancel)
+		    if (info_ret == `accept || info_ret == `donotaccept)
 			break;
 		    if (info_ret == `stop) {
 			while (info_ret == `stop)
@@ -491,16 +491,11 @@ will look different than in the manual.");
  [ `continue, `inst_root	    (false, true),       true,						! autoinst &&    ! update_mode	, true ],
  [ `continue, `inst_user	    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
 
- // ...
- // The X11 workflow is now part of the proposal widget dispatcher
- // therefore it is disabled at this point
- // ---
- // [ `continue, `inst_x11		    (true,  true),       Arch::x11_setup_needed, Mode::x11_setup_needed &&		 ! update_mode  , false],
-
  [ `continue, `autoinst_configure   (false, false),      true,						  autoinst &&    ! update_mode	, false],
  [ `continue, `inst_suseconfig	    (false, false),      true,			! test_mode						, false],
  [ `continue, `inst_proposal	    (true,  true, `net), true,						! autoinst &&   ! update_mode	, false],
- [ `continue, `inst_proposal	    (true,  true, `hw),  true,						! autoinst &&   ! update_mode	, false]
+ [ `continue, `inst_proposal	    (true,  true, `hw),  true,						! autoinst &&   ! update_mode	, false],
+ [ `continue, `inst_congratulate    (true,  true),	 true,						! autoinst &&   ! update_mode	, false]
 ];
 
 

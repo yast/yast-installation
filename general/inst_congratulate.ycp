@@ -1,0 +1,83 @@
+/**
+ * File:	installation/general/inst_congrat.ycp
+ * Module:	Installation
+ * Summary:	Display congratulation
+ * Authors:	Arvin Schnell <arvin@suse.de>
+ *
+ * Display a nice congratulation message for the user.
+ */
+
+{
+    textdomain "installation";
+
+    import "Mode";
+    import "Wizard";
+
+    // show button "start control center"?
+    boolean show_y2cc_button = true;
+
+    map display = UI::GetDisplayInfo();
+    if (!display["TextMode"]:true)
+    {
+	if (!Pkg::IsProvided ("yast2-control-center"))
+	{
+	    show_y2cc_button = false;
+	}
+    }
+
+
+    // Check box: Should the YaST2 control center automatically
+    // be started after this part of the installation is done?
+    // Translators: About 40 characters max,
+    // use newlines for longer translations.
+    term check_box_start_y2cc = `CheckBox(`id(`start_y2cc), _( "&Start control center" ), false);
+
+
+    /* Congratulation Dialog caption */
+    string caption = _("Installation complete");
+
+    // I guess this must be read from a file soon.
+    string text = _("Congratulations FIXME");
+
+    term contents = `VBox (
+			   `VSpacing(1),
+			   `RichText(`opt(`richText), text),
+			   `VSpacing(1),
+			   check_box_start_y2cc,
+			   `VSpacing(1)
+			   );
+
+    string help = _("FIXME");
+
+    Wizard::SetContentsButtons (caption, contents, help,
+				BackButtonLabel(), FinishButtonLabel());
+
+    any ret = nil;
+
+    repeat {
+
+	ret = Wizard::UserInput();
+
+	if ( ret == `abort &&
+	     WFM::CallFunction (`inst_confirm_abort(`painless) ) )
+	{
+	    Wizard::RestoreNextButton();
+	    return `abort;
+	}
+
+	if ( ret == `help )
+	{
+	    Wizard::ShowHelp (help);
+	}
+
+    } until ( ret == `next || ret == `back );
+
+    if (UI::QueryWidget (`id(`start_y2cc), `Value))
+    {
+	// Create empty /var/lib/YaST2/start_y2cc file to signal the calling script
+	// that the YaST2 control center should be started after the installation
+	SCR::Write (.target.string, "/var/lib/YaST2/start_y2cc", "");
+    }
+
+    return ret;
+}

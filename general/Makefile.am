@@ -15,6 +15,7 @@ client_DATA =					\
 	inst_mode.ycp				\
 	inst_startup.ycp			\
 	inst_suseconfig.ycp			\
+	inst_congratulate.ycp			\
 	installation.ycp
 
 
