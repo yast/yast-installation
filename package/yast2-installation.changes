@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Sep  5 20:47:47 CEST 2002 - kkaempf@suse.de
+
+- continue with inst_rpmcopy after update
+- 2.6.48
+
+-------------------------------------------------------------------
 Thu Sep 05 19:10:43 CEST 2002 - arvin@suse.de
 
 - more old trans-package fun
