@@ -423,14 +423,11 @@ Please wait while the base system is being installed.
 	// copy XF86Config only if needed
 	if ( x11_installed )
 	{
-	    InjectFile ("/etc/XF86Config");
 	    InjectFile ("/etc/X11/XF86Config");
 
 	    if (Mouse::mset != "")
 	    {
 		// replace with probed type
-		SCR::Execute(.target.bash, "/bin/sed -e \"s#PS/2#"+Mouse::mset+"#\" /etc/XF86Config >"+tmpdir+"/XF86Config");
-		SCR::Execute(.target.bash, "/bin/mv -f "+tmpdir+"/XF86Config /etc");
 		SCR::Execute(.target.bash, "/bin/sed -e \"s#Microsoft#"+Mouse::mset+"#\" /etc/X11/XF86Config >"+tmpdir+"/XF86Config");
 		SCR::Execute(.target.bash, "/bin/mv -f "+tmpdir+"/XF86Config /etc/X11");
 	    }
