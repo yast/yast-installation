@@ -238,9 +238,9 @@ else
 	fi
 fi
 
-# start VNC server
+# tell YaST2 to start VNC server
 if grep -qs '^VNC:.*1' /etc/install.inf ; then
-    test -f /usr/lib/YaST2/bin/inst_setup_vnc && . /usr/lib/YaST2/bin/inst_setup_vnc
+    export VNC=1
 fi
 
 #

@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Aug 06 12:51:33 CEST 2002 - arvin@suse.de
+
+- don't start vnc server twice after reboot during installation
+  (bug #17415)
+
+-------------------------------------------------------------------
 Mon Aug 05 18:56:15 CEST 2002 - arvin@suse.de
 
 - even more changed for new /etc/install.inf agent
