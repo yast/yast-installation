@@ -9,7 +9,7 @@
         <timezone>Canada/Eastern</timezone>
     </globals>
 
-    <!-- Force a selection (`fixed) to be used instead of automatically 
+    <!-- Force a selection (`fixed) to be used instead of automatically
     Calculating the selection depending on space (`auto)  -->
     <software>
         <selection_type config:type="symbol">auto</selection_type>
@@ -33,11 +33,11 @@
 
             <!-- Proposal modules, order matters -->
             <modules config:type="list">
-                <module>hwinfo</module> 
+                <module>hwinfo</module>
                 <module>mode</module>
                 <module>keyboard</module>
                 <module>mouse</module>
-                <module>partitions</module> 
+                <module>partitions</module>
                 <module>software</module>
                 <module>bootloader</module>
                 <module>timezone</module>
@@ -181,7 +181,8 @@
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
-	    <display_name>Base Installation</display_name>
+            <!-- 'label' is what the user will see -->
+	    <label>Base Installation</label>
             <mode>installation</mode>
             <modules  config:type="list">
                 <module>
@@ -189,38 +190,44 @@
                     <arguments>false,true</arguments>
                 </module>
                 <module>
-	            <display_name>Language</display_name>
                     <name>language</name>
                     <arguments>false,true,true</arguments>
+                    <!-- 'label' is the workflow step description the user
+	                 will see in the side bar during installation.   -->
+	            <label>Language</label>
                 </module>
                 <module>
-	            <display_name>Installaton Settings</display_name>
-                    <name>proposal</name>	 		 
+                    <name>proposal</name>
                     <arguments>true,true,`ini</arguments>
+	            <label>Installaton Settings</label>
                 </module>
                 <module>
-	            <display_name>Perform Installation</display_name>
-                    <name>do_resize</name>	 
+                    <name>do_resize</name>
                     <update config:type="boolean">false</update>
                     <archs>i386,x86_64,ia64</archs>
+	            <label>Perform Installation</label>
                 </module>
                 <module>
-	            <display_name>Perform Installation</display_name>
-                    <name>prepdisk</name>	 
+                    <name>prepdisk</name>
+                    <!-- Multiple modules with the same 'label' will be
+                         collapsed to one single user-visible step.
+                         The step is considered finished when the last module
+                         with the same 'label' is finished.  -->
+	            <label>Perform Installation</label>
                 </module>
                 <module>
-	            <display_name>Perform Installation</display_name>
                     <name>kickoff</name>
+	            <label>Perform Installation</label>
                 </module>
                 <module>
-	            <display_name>Perform Installation</display_name>
-                    <name>rpmcopy</name>	 
+                    <name>rpmcopy</name>
+	            <label>Perform Installation</label>
                 </module>
                 <module>
-	            <display_name>Perform Installation</display_name>
-                    <name>finish</name>	
+                    <name>finish</name>
+	            <label>Perform Installation</label>
                 </module>
-            </modules> 
+            </modules>
         </workflow>
         <workflow>
             <defaults>
@@ -228,20 +235,20 @@
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
-	    <display_name>Preparation</display_name>
+	    <label>Preparation</label>
             <mode>repair</mode>
             <modules  config:type="list">
                 <module>
-	            <display_name>System Information</display_name>
+	            <label>System Information</label>
                     <name>info</name>
                     <arguments>false,true</arguments>
                 </module>
                 <module>
-	            <display_name>Perform Repair</display_name>
+	            <label>Perform Repair</label>
                     <name>repair</name>
                     <arguments>false,true,true</arguments>
                 </module>
-            </modules> 
+            </modules>
         </workflow>
         <workflow>
             <defaults>
@@ -249,38 +256,38 @@
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
-	    <display_name>Base Installation</display_name>
+	    <label>Base Installation</label>
             <mode>screen_shot</mode>
             <modules  config:type="list">
                 <module>
- 	            <display_name>Language</display_name>
+ 	            <label>Language</label>
                     <name>language</name>
                     <arguments>false,true,true</arguments>
                 </module>
                 <module>
-	            <display_name>Installaton Settings</display_name>
-                    <name>proposal</name>	 		 
+	            <label>Installaton Settings</label>
+                    <name>proposal</name>
                     <arguments>true,true,`ini</arguments>
                 </module>
                 <module>
-	            <display_name>Perform Installation</display_name>
-                    <name>do_resize</name>	 
+	            <label>Perform Installation</label>
+                    <name>do_resize</name>
                     <update config:type="boolean">false</update>
                     <archs>i386,x86_64,ia64</archs>
                 </module>
                 <module>
-	            <display_name>Perform Installation</display_name>
-                    <name>prepdisk</name>	 
+	            <label>Perform Installation</label>
+                    <name>prepdisk</name>
                 </module>
                 <module>
-	            <display_name>Perform Installation</display_name>
+	            <label>Perform Installation</label>
                     <name>kickoff</name>
                 </module>
                 <module>
-	            <display_name>Perform Installation</display_name>
-                    <name>rpmcopy</name>	 
+	            <label>Perform Installation</label>
+                    <name>rpmcopy</name>
                 </module>
-            </modules> 
+            </modules>
         </workflow>
         <workflow>
             <defaults>
@@ -288,47 +295,47 @@
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
-	    <display_name>Base Installation</display_name>
+	    <label>Base Installation</label>
             <mode>demo</mode>
             <modules  config:type="list">
                 <module>
-	            <display_name>Language</display_name>
+	            <label>Language</label>
                     <name>info</name>
                     <arguments>false,true</arguments>
                 </module>
                 <module>
-	            <display_name>Language</display_name>
+	            <label>Language</label>
                     <name>language</name>
                     <arguments>false,true,true</arguments>
                 </module>
                 <module>
-	            <display_name>Installaton Settings</display_name>
-                    <name>proposal</name>	 		 
+	            <label>Installaton Settings</label>
+                    <name>proposal</name>
                     <arguments>true,true,`ini</arguments>
                 </module>
                 <module>
-	            <display_name>Perform Installation</display_name>
-                    <name>do_resize</name>	 
+	            <label>Perform Installation</label>
+                    <name>do_resize</name>
                     <update config:type="boolean">false</update>
                     <archs>i386,x86_64,ia64</archs>
                 </module>
                 <module>
- 	            <display_name>Perform Installation</display_name>
-                   <name>prepdisk</name>	 
+ 	            <label>Perform Installation</label>
+                   <name>prepdisk</name>
                 </module>
                 <module>
-	            <display_name>Perform Installation</display_name>
+	            <label>Perform Installation</label>
                     <name>kickoff</name>
                 </module>
                 <module>
-	            <display_name>Perform Installation</display_name>
-                    <name>rpmcopy</name>	 
+	            <label>Perform Installation</label>
+                    <name>rpmcopy</name>
                 </module>
-            </modules> 
+            </modules>
         </workflow>
         <workflow>
             <stage>continue</stage>
-            <display_name>Configuration</display_name>
+            <label>Configuration</label>
             <mode>installation</mode>
             <defaults>
                 <arguments>false,false</arguments>
@@ -336,75 +343,75 @@
             </defaults>
             <modules  config:type="list">
                 <module>
-                    <name>netsetup</name>	     
+                    <name>netsetup</name>
                     <arguments>false,false,`up</arguments>
                 </module>
                 <module>
-                    <name>netprobe</name>	     
+                    <name>netprobe</name>
                 </module>
                 <module>
                     <name>rpmcopy</name>
                 </module>
                 <module>
-	            <display_name>Root Password</display_name>
-                    <name>root</name>	
+	            <label>Root Password</label>
+                    <name>root</name>
                     <arguments>false,true</arguments>
                 </module>
                 <module>
-	            <display_name>Network</display_name>
-                    <name>proposal</name>	 		 
+	            <label>Network</label>
+                    <name>proposal</name>
                     <arguments>true,true,`net</arguments>
                 </module>
                 <module>
-	            <display_name>Network</display_name>
+	            <label>Network</label>
                     <name>ask_net_test</name>
                     <arguments>true,true</arguments>
                 </module>
                 <module>
-	            <display_name>Network</display_name>
+	            <label>Network</label>
                     <name>do_net_test</name>
                     <arguments>true,true</arguments>
                 </module>
                 <module>
-	            <display_name>Online Update</display_name>
+	            <label>Online Update</label>
                     <name>you</name>
                     <arguments>true,true</arguments>
                 </module>
                 <module>
-	            <display_name>Users</display_name>
+	            <label>Users</label>
                     <name>auth</name>
                     <arguments>true,true</arguments>
                 </module>
                 <module>
-	            <display_name>Users</display_name>
+	            <label>Users</label>
                     <name>user</name>
                     <arguments>true,true</arguments>
                 </module>
 
                 <module>
-	            <display_name>Clean Up</display_name>
+	            <label>Clean Up</label>
                     <name>suseconfig</name>
                     <arguments>false,false</arguments>
                 </module>
                 <module>
-	            <display_name>Release Notes</display_name>
+	            <label>Release Notes</label>
                     <name>release_notes</name>
                     <arguments>true,true</arguments>
                 </module>
                 <module>
-	            <display_name>Device Configuration</display_name>
-                    <name>proposal</name>	 		 
+	            <label>Device Configuration</label>
+                    <name>proposal</name>
                     <arguments>true,true,`hw</arguments>
                 </module>
                 <module>
-                    <name>congratulate</name>	 		 
+                    <name>congratulate</name>
                     <arguments>true,true</arguments>
                 </module>
             </modules>
         </workflow>
         <workflow>
             <stage>initial</stage>
-            <display_name>Configuration</display_name>
+            <label>Configuration</label>
             <mode>autoinst</mode>
             <defaults>
                 <arguments>false,false</arguments>
@@ -413,57 +420,57 @@
             <modules  config:type="list">
                 <module>
                     <name>autoinit</name>
-                    <archs>all</archs>		
+                    <archs>all</archs>
                 </module>
                 <module>
-	            <display_name>Settings</display_name>
-                    <name>autosetup</name>	 		 
+	            <label>Settings</label>
+                    <name>autosetup</name>
                 </module>
                 <module>
-	            <display_name>Perform Installation</display_name>
-                    <name>prepdisk</name>	 
+	            <label>Perform Installation</label>
+                    <name>prepdisk</name>
                 </module>
                 <module>
-	            <display_name>Perform Installation</display_name>
+	            <label>Perform Installation</label>
                     <name>kickoff</name>
                 </module>
                 <module>
-	            <display_name>Perform Installation</display_name>
-                    <name>rpmcopy</name>	 
-                </module>
-                <module>
-	            <display_name>Perform Installation</display_name>
-                    <name>finish</name>	
-                </module>
-            </modules> 
-        </workflow>
-        <workflow>
-            <stage>continue</stage>
-            <display_name>Configuration</display_name>
-            <mode>autoinst</mode>
-            <modules  config:type="list">
-                <module>
-                    <name>netsetup</name>	     
-                </module>
-                <module>
-                    <name>netprobe</name>	     
-                </module>
-                <module>
-                    <name>autopost</name>	     
-                </module>
-                <module>
-	            <display_name>Perform Installation</display_name>
+	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
                 </module>
                 <module>
-	            <display_name>X11 Setup</display_name>
-                    <name>x11</name>	
+	            <label>Perform Installation</label>
+                    <name>finish</name>
+                </module>
+            </modules>
+        </workflow>
+        <workflow>
+            <stage>continue</stage>
+            <label>Configuration</label>
+            <mode>autoinst</mode>
+            <modules  config:type="list">
+                <module>
+                    <name>netsetup</name>
+                </module>
+                <module>
+                    <name>netprobe</name>
+                </module>
+                <module>
+                    <name>autopost</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>rpmcopy</name>
+                </module>
+                <module>
+	            <label>X11 Setup</label>
+                    <name>x11</name>
                 </module>
                 <module>
                     <name>autoconfigure</name>
                 </module>
                 <module>
-	            <display_name>Clean Up</display_name>
+	            <label>Clean Up</label>
                     <name>suseconfig</name>
                 </module>
             </modules>
