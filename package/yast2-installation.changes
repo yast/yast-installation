@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Jul 29 18:15:45 CEST 2002 - arvin@suse.de
+
+- fixed return value in inst_x11.ycp
+
+-------------------------------------------------------------------
 Fri Jul 26 13:35:24 CEST 2002 - ms@suse.de
 
 - add subdirectory x11 and include the base modules
@@ -22,7 +27,7 @@ Sat Jul 20 11:35:06 CEST 2002 - olh@suse.de
 -------------------------------------------------------------------
 Fri Jul 19 18:05:51 CEST 2002 - fehr@suse.de
 
-- removed writing of /etc/fstab from inst_finish it is now in 
+- removed writing of /etc/fstab from inst_finish it is now in
   inst_prepdisk
 - version 2.6.5
 
