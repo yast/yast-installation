@@ -48,8 +48,7 @@
      * @param proposal human readable proposal preformatted in HTML
      **/
 
-    define void display_proposal( string proposal )
-    ``{
+    define void display_proposal( string proposal ) ``{
 	UI::ChangeWidget(`id(`proposal), `Value, proposal );
     };
 
@@ -101,11 +100,13 @@
 		retranslate_proposal_dialog();
 	    }
 
+	    /*
 	    if (mode_changed || rootpart_changed ||
 		workflow_sequence == `finish)
 	    {
 		Update::UnmountPartitions ();
 	    }
+	    */
 
 	    if (mode_changed)
 	    {
