@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Mar 29 14:23:17 CET 2005 - jsrain@suse.cz
+
+- updated the layout of the source files in the repository
+
+-------------------------------------------------------------------
 Wed Mar 23 15:04:17 CET 2005 - ms@suse.de
 
 - fixed vnc server arguments (#70896)
