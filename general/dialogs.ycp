@@ -1,24 +1,24 @@
 /**
- * File 		include/installation/dialogs.ycp
- * Module:      installation
+ * File 	include/installation/dialogs.ycp
+ * Module:	installation
  *
  * $Id$
  *
- * Authors:     Klaus Kaempf <kkaempf@suse.de>
- *          Mathias Kettner <kettner@suse.de>
- *          Michael Hager <mike@suse.de>
- *          Stefan Hundhammer <sh@suse.de>
- *          Arvin Schnell <arvin@suse.de>
- *
+ * Authors:	Klaus Kaempf <kkaempf@suse.de>
+ *		Mathias Kettner <kettner@suse.de>
+ *		Michael Hager <mike@suse.de>
+ *		Stefan Hundhammer <sh@suse.de>
+ *		Arvin Schnell <arvin@suse.de>
  */
 
 {
-	textdomain "installation";
+    textdomain "installation";
+
     /**
      * Returns a list of strings describing the "easy installation"
      * @return list of strings
      **/
-    global define list EasyInstallationStepDescriptions() ``{
+    define list EasyInstallationStepDescriptions() ``{
 	return [
 		// Descriptions of the installation steps.
 		// Translations shouldn't get much wider than the originals,
