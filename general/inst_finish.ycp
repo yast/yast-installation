@@ -441,6 +441,10 @@ Please wait while the base system is being installed.
 	    SCR::Execute (.target.remove, "/boot/initrd.suse");
 	    SCR::Execute (.target.symlink, "/boot/initrd.shipped", "/boot/initrd.suse");
 	}
+
+	// remove old junk from GNOME, script is in yast2-update
+	// will be run in just updated system
+	SCR::Execute (.target.bash, Directory::ybindir + "/gnome-postinstall");
     }
 
     // Write list of modules to load after system gets up
