@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Aug 27 10:43:05 CEST 2002 - arvin@suse.de
+
+- fixes for ssh installation
+
+-------------------------------------------------------------------
 Mon Aug 26 12:43:26 CEST 2002 - arvin@suse.de
 
 - don't run x11 configuration if x11 is missing (bug #18208)
