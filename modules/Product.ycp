@@ -89,7 +89,6 @@
      */
     global define void Product () ``{
 
-
 	if (Mode::initial)
 	{
 	    name		= SCR::Read(.content.PRODUCT);
@@ -103,7 +102,9 @@
 	    if (baseproduct == "") baseproduct = name;
 	    baseversion		= SCR::Read(.content.BASEVERSION);
 
-	    flags		= splitstring (SCR::Read (.content.FLAGS), " ");
+	    any tmp1 = SCR::Read (.content.FLAGS);
+	    if (tmp1 != nil)
+		flags		= splitstring (tmp1, " ");
 	}
 	else
 	{

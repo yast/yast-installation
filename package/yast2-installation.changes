@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Feb 18 20:47:55 CET 2003 - arvin@suse.de
+
+- fixed reading of content file if FLAGS line is missing
+
+-------------------------------------------------------------------
 Sat Feb 15 16:26:26 CET 2003 - nashif@suse.de
 
 - call inst_x11 in autoinst mode
@@ -11,7 +16,7 @@ Wed Feb 12 15:23:00 CET 2003 - kkaempf@suse.de
 -------------------------------------------------------------------
 Wed Feb 12 12:03:24 CET 2003 - fehr@suse.de
 
-- Write keytable info to yast.inf again in inst_finish.ycp 
+- Write keytable info to yast.inf again in inst_finish.ycp
 
 -------------------------------------------------------------------
 Tue Feb 11 21:39:29 CET 2003 - arvin@suse.de
