@@ -1,931 +1,1059 @@
-<section id="control_functionality">
-    <title>Functionality</title>
-    <para>
-        The product control enables customization of the installation makes it
-        possible to enable and disable features during installation in the
-        final installed product. It controls the workflow and what is really
-        shown to the user during installation.	
-    </para>
-    <para>
-        Beside workflow configuration, other system variables are
-        configurable and can be predefined by the system administrator,to name
-        a fre the  software selection, environment
-        settings such as language, time zone, keyboard can be configured and would
-        override default variables provided with shipped products.
-    </para>
-    <para>
-        The idea of having a pre-defined installation workflow and pre-defined
-        system settings is the middle ground between manual installation and
-        automated installation. 
-    </para>
-    <para>
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<section id="product_control">
+    <title>Product Installation Control</title>
 
-        The product configuration file is provided in text on the installation
-        media and defines various settings needed during installation. The
-        following is a list of supported  configuration options:
-
-    </para>
-    <itemizedlist>
-        <listitem>
-            <para>Workflow</para>
-            <para>
-                Replaces the static workflow list with a configurable list
-                using the product configuration file. Entire sections of the workflow
-                can be skipped. 
-            </para>
-            <para>For example, it will be possible to set the language variable  in
-                the configuration file and if the installation language is to be
-                forced for some reason, i.e. IT department wants to force French
-                installations in Quebec, Canada, then the entire dialogue is
-                skipped. If the IT department is to recommend some settings but
-                still give  the user the choice to change the default settings, the language
-                dialogue will be shown with Frenchy preselected.
-            </para>
-            <para>
-                If non of the above options is used, the default dialogue
-                settings is shown.
-            </para>
-        </listitem>
-        <listitem>
-            <para>Proposals</para>
-            <para>
-                As with the workflow, proposals are also be configurable. For
-                example, certain products would skip some proposals. 
-                In the proposal screen the pre-configured
-                settings can be shown with the possibility to change them or with
-                inactive links if the configuration is to be forced.
-            </para>
-        </listitem>
-        <listitem>
-            <para>System Variables</para>
-            <para>
-                Lets the user  define system variables like language, keyboard,
-                time zone, window manager, display manager etc. 
-                The defined variables will be used as defaults in the
-                respective dialogues.</para>
-
-        </listitem>
-        <listitem>
-            <para>Package Selections and additional individual packages</para>
-            <para>
-                Define what base package selection and add-on selections should be
-                used for the installation. Additionally provide the possibility to
-                define a list of additional packages. All packages and selections can
-                be selected depending on the architecture using a special
-                architecture attribute in the configuration file.
-            </para>
-
-        </listitem>
-        <listitem>
-            <para>Partitioning</para>
-            <para>
-                Integrates flexible partitioning into configuration file,
-                instead of the separate file currently used.
-            </para>
-        </listitem>
-        <listitem>
-            <para>Scripting and Hooks</para>
-            <para>
-                To customize installation further more, hooks and special slots can
-                be defined where the user can execute scripts. For example, scripts
-                can be executed at the very beginning of the installation (After
-                processing the configuration file), in the installation system before
-                initial boot, in the chroot-ed environment and after
-                initial boot and before/after every step in the
-                workflow. Scripting languages supported during
-                installation are currently Shell, Perl.
-            </para>
-        </listitem>           
-    </itemizedlist>
-</section>
-<section>
-    <title>Implementation</title>
-    <para>
-        The control file is implemented in  simple structured XML syntax which so far
-        has been used for automated installation . The XML structure used can be
-        mapped easily to YaST data structures and all data types available in YaST
-        are supported for easy data access and manipulation.
-    </para>
-    <para>
-        The primary use of the control file is to configure the workflow of the
-        installation and it offers the possibility to  predefine a certain setup,
-        but it also defines product installation  features and other product
-        related variables.
-    </para>
-    <note>      
+    <section id="control_functionality">
+        <title>Functionality</title>
         <para>
-            Note that the control file is not an optional tool to help customize
-            installation, it is required during installation and without the file,
-            installation may fail or lead to unexpected results. YaST provides a
-            default and general control file which is always available in the
-            system. The general and product independent control files is installed by
-            the package <emphasis>yast2-installation</emphasis> in 
-            <filename>/usr/share/YaST2/control/control.xml</filename>.
-        </para>
-    </note>
-
-    <para>
-        During installation, <emphasis>linuxrc</emphasis> searches for the a file
-        named <filename>control.xml</filename> on the installation medium (CD,
-        NFS, FTP..) and copies the file into the installation system and makes
-        the file available to YaST. YaST then starts and looks for the control
-        file in 3 location before it starts with the installation workflow:
-    </para>
-    <itemizedlist>
-        <listitem>
-            <para><filename>/control.xml</filename></para>
-            <para>Usually the file is in top directory after it has been copied by
-                linuxrc and during initial installation phase.</para>
-        </listitem>
-        <listitem>
-            <para><filename>/var/lib/YaST2/control.xml</filename></para>
-            <para>After reading the file, and before second installation phase, the
-                control file is copies from the top directory to
-                <filename>/var/lib/YaST2/control.xml</filename> 
-            </para>
-        </listitem>
-        <listitem>
-            <para><filename>/usr/share/YaST2/control/control.xml</filename></para>
-            <para>This is the location where
-                <emphasis>yast2-installation</emphasis> installs the file in all
-                products. The file is the same on all products.</para>
-        </listitem>
-
-    </itemizedlist>
-    <para>
-        One of the main reasons for using the control is to provide non
-        YaST developers to change the installation behavior and customize
-        various settings without the need to change YaST packages. 
-    </para>
-    <para>
-        The control	file for the various product shall therefore be maintained out of the
-        YaST development trees and in separate SUSE internal and product specific packages.
-    </para>
-</section>
-
-<section id="control_configuration">
-    <title>Configuration</title>
-    <section id="control_workflows">
-        <title>workflows</title>
-
-        <para>
-            Using the control file, multiple workflows can be defined for
-            different modes and installation stages. Thus, the element
-            <emphasis>workflows</emphasis> in the control file evaluates to a list
-            of workflows.
+            The product control enables customization of the installation makes it
+            possible to enable and disable features during installation in the
+            final installed product. It controls the workflow and what is really
+            shown to the user during installation.	
         </para>
         <para>
-            Beside defining what YaST clients should be executed during
-            installation, the workflow configuration also let you specify the
-            wizard steps and how they should appear during graphical
-            installation.
+            Beside workflow configuration, other system variables are
+            configurable and can be predefined by the system administrator,to name
+            a fre the  software selection, environment
+            settings such as language, time zone, keyboard can be configured and would
+            override default variables provided with shipped products.
         </para>
         <para>
-            A workflow list element is a map with the following elements:
+            The idea of having a pre-defined installation workflow and pre-defined
+            system settings is the middle ground between manual installation and
+            automated installation. 
+        </para>
+        <para>
+
+            The product configuration file is provided in text on the installation
+            media and defines various settings needed during installation. The
+            following is a list of supported  configuration options:
+
         </para>
         <itemizedlist>
             <listitem>
-                <para>label</para>
-                <para>The label of the workflow as it appears on the left side of the
-                    wizard. For example <emphasis>Base Installation</emphasis></para>
-            </listitem>
-            <listitem>
-                <para>defaults</para>
-                <para>The default arguments to the clients. This is a map element. </para>
-            </listitem>
-            <listitem>
-                <para>stage</para>
-                <para>This options defines the  stage or phase of installation.. Possible values are
-                    <emphasis>initial</emphasis> for the initial stage and
-                    <emphasis>continue</emphasis> for the workflow of the installation
-                    after reboot </para>
-            </listitem>
-            <listitem>
-                <para>mode</para>
+                <para>Workflow</para>
                 <para>
-                    Defines installation mode. Several modes are available, most
-                    important modes are:</para>
-                <itemizedlist>
-                    <listitem>
-                        <para>installation</para>
-                    </listitem>
-                    <listitem>
-                        <para>update</para>
-                    </listitem>       
-                    <listitem>
-                        <para>autoinst</para>
-                    </listitem>  
-
-                </itemizedlist>
-            </listitem>
-            <listitem>
-                <para>modules</para>
-                <para>
-                    This is the actual workflow and is a list of elements
-                    describing the order in which the installation should
-                    proceed.
+                    Replaces the static workflow list with a configurable list
+                    using the product configuration file. Entire sections of the workflow
+                    can be skipped. 
+                </para>
+                <para>For example, it will be possible to set the language variable  in
+                    the configuration file and if the installation language is to be
+                    forced for some reason, i.e. IT department wants to force French
+                    installations in Quebec, Canada, then the entire dialogue is
+                    skipped. If the IT department is to recommend some settings but
+                    still give  the user the choice to change the default settings, the language
+                    dialogue will be shown with Frenchy preselected.
                 </para>
                 <para>
-                    A module element is a map with the following configuration
-                    options:</para>
-                <itemizedlist>
-                    <listitem>
-                        <para>name: The name of the module. All installation clients and
-                            modules have a unified prefix (inst_) which can be ommited
-                            here. For example, if the YaST file for the module is called
-                            <emphasis>inst_test</emphasis>, then the name in the control
-                            file is <emphasis>test</emphasis>
-                        </para>
-                    </listitem>
-                    <listitem>
-                        <para>label: The label of the module in the step dialog. This is
-                            an optional element. If it is not set, the label of the
-                            previous module is used.</para>
-
-                    </listitem>
-                    <listitem>
-                        <para>arguments: The arguments for the module is a comma separated
-                            list which can accept booleans and symbols. </para>
-                    </listitem>
-                </itemizedlist>
+                    If non of the above options is used, the default dialogue
+                    settings is shown.
+                </para>
             </listitem>
+            <listitem>
+                <para>Proposals</para>
+                <para>
+                    As with the workflow, proposals are also be configurable. For
+                    example, certain products would skip some proposals. 
+                    In the proposal screen the pre-configured
+                    settings can be shown with the possibility to change them or with
+                    inactive links if the configuration is to be forced.
+                </para>
+            </listitem>
+            <listitem>
+                <para>System Variables</para>
+                <para>
+                    Lets the user  define system variables like language, keyboard,
+                    time zone, window manager, display manager etc. 
+                    The defined variables will be used as defaults in the
+                    respective dialogues.</para>
+
+            </listitem>
+            <listitem>
+                <para>Package Selections and additional individual packages</para>
+                <para>
+                    Define what base package selection and add-on selections should be
+                    used for the installation. Additionally provide the possibility to
+                    define a list of additional packages. All packages and selections can
+                    be selected depending on the architecture using a special
+                    architecture attribute in the configuration file.
+                </para>
+
+            </listitem>
+            <listitem>
+                <para>Partitioning</para>
+                <para>
+                    Integrates flexible partitioning into configuration file,
+                    instead of the separate file currently used.
+                </para>
+            </listitem>
+            <listitem>
+                <para>Scripting and Hooks</para>
+                <para>
+                    To customize installation further more, hooks and special slots can
+                    be defined where the user can execute scripts. For example, scripts
+                    can be executed at the very beginning of the installation (After
+                    processing the configuration file), in the installation system before
+                    initial boot, in the chroot-ed environment and after
+                    initial boot and before/after every step in the
+                    workflow. Scripting languages supported during
+                    installation are currently Shell, Perl.
+                </para>
+            </listitem>           
         </itemizedlist>
-        <para>The following listing shows a typical installation
-            workflow:</para>
-        <programlisting>
-            <xi:include href="examples/workflow.xml" parse="text"
-                xmlns:xi="http://www.w3.org/2001/XInclude"/>
-        </programlisting>
-
-
     </section>
-    <section id="control_proposals">
-        <title>Proposals</title>      
-        <para>FIXME</para>
-    </section>
-    <section id="control_globals">
-        <title>Installation and Product Variables</title>
-        <para>It is possible to define some installation variables (language,
-            timezone, keyboard,.. ) and force them in the proposal. User will still
-            be able to change them however.</para>
-        <para>The following variables can be set:</para>
+    <section>
+        <title>Implementation</title>
+        <para>
+            The control file is implemented in  simple structured XML syntax which so far
+            has been used for automated installation . The XML structure used can be
+            mapped easily to YaST data structures and all data types available in YaST
+            are supported for easy data access and manipulation.
+        </para>
+        <para>
+            The primary use of the control file is to configure the workflow of the
+            installation and it offers the possibility to  predefine a certain setup,
+            but it also defines product installation  features and other product
+            related variables.
+        </para>
+        <note>      
+            <para>
+                Note that the control file is not an optional tool to help customize
+                installation, it is required during installation and without the file,
+                installation may fail or lead to unexpected results. YaST provides a
+                default and general control file which is always available in the
+                system. The general and product independent control files is installed by
+                the package <emphasis>yast2-installation</emphasis> in 
+                <filename>/usr/share/YaST2/control/control.xml</filename>.
+            </para>
+        </note>
+
+        <para>
+            During installation, <emphasis>linuxrc</emphasis> searches for the a file
+            named <filename>control.xml</filename> on the installation medium (CD,
+            NFS, FTP..) and copies the file into the installation system and makes
+            the file available to YaST. YaST then starts and looks for the control
+            file in 3 location before it starts with the installation workflow:
+        </para>
         <itemizedlist>
             <listitem>
-                <para>Timzeone</para>
+                <para><filename>/control.xml</filename></para>
+                <para>Usually the file is in top directory after it has been copied by
+                    linuxrc and during initial installation phase.</para>
             </listitem>
             <listitem>
-                <para>Language</para>
+                <para><filename>/var/lib/YaST2/control.xml</filename></para>
+                <para>After reading the file, and before second installation phase, the
+                    control file is copies from the top directory to
+                    <filename>/var/lib/YaST2/control.xml</filename> 
+                </para>
             </listitem>
             <listitem>
-                <para>Keyboard</para>
-            </listitem>      
-            <listitem>
-                <para>Auto Login (not recommended for multi-user environments and
-                    server installations)</para>
-            </listitem>     
-            <listitem>
-                <para>IO Scheduler</para>
-                <para>Default is <emphasis>as</emphasis>.</para>
+                <para><filename>/usr/share/YaST2/control/control.xml</filename></para>
+                <para>This is the location where
+                    <emphasis>yast2-installation</emphasis> installs the file in all
+                    products. The file is the same on all products.</para>
             </listitem>
-            <listitem>
-                <para>Desktop Scheduler</para>
-            </listitem>
+
         </itemizedlist>
-        <para>the following example shows all options above</para>
-        <programlisting>
-            <xi:include href="examples/globals.xml" parse="text"
-                xmlns:xi="http://www.w3.org/2001/XInclude"/>
-        </programlisting>
-
+        <para>
+            One of the main reasons for using the control is to provide non
+            YaST developers to change the installation behavior and customize
+            various settings without the need to change YaST packages. 
+        </para>
+        <para>
+            The control	file for the various product shall therefore be maintained out of the
+            YaST development trees and in separate SUSE internal and product specific packages.
+        </para>
     </section>
-    <section id="control_software">
-        <title>Software</title>
-        <para>
-            Using this section in the control file you can change the software
-            proposal during installation.
-        </para>
-        <para>
-            By default, the software proposal is generated depending on the available
-            space in the system. If enough space is available, a fairly large
-            selection of packages and add-on package groups is automatically
-            selected. This behavior is controlled by the
-            <emphasis>selection_type</emphasis> element in the control file.      
-        </para>
-        <para>
-            The default value for the above element is <emphasis>auto</emphasis>. To
-            force a selection which can not be changed by the user, the value
-            <emphasis>fixed</emphasis> has to be used.
-        </para>
-        <para>If a fixed software selection is desired, then the fixed selection
-            name has to be specifed in the control file. This selection must be a
-            base selection. To specify the name of the base selectiont to be forced,
-            use the <emphasis>base_selection</emphasis> element.</para>
-        <para>
-            The list of base selections can be found on the first CD of the product
-            in the directory <filename>suse/setup/descr</filename> or by using the
-            following command (The example shows the list of selections for <emphasis>SLES 9</emphasis>):
-        </para>
-        <para>
-            To switch from <emphasis>desktop</emphasis> based proposals to the normal
-            behavior of software proposals in YaST , the
-            <emphasis>software_proposal</emphasis> element has been
-            introduced. Setting the value to <emphasis>desktop</emphasis> will make
-            YaST show a dialog with Desktops to select from,
-            i.e. <acronym>KDE</acronym> or <emphasis>Gnome</emphasis>. If this
-            element is not defined, default behavior is assumed.
-        </para>
-        <programlisting>
 
-            for i in `grep -l baseconf SUSE-SLES-Version-9/CD1/suse/setup/descr/* `; do 
-            basename $i .sel; 
-            done
-
-        </programlisting>
-        <para>
-            The above will have the following output:
-        </para>
-        <programlisting>
-
-            Full-Installation
-            Minimal+X11
-            Minimal
-            default
-
-        </programlisting>
-        <para>
-            which matches the base selections in <emphasis>SLES 9</emphasis>.
-        </para>
-        <para>Additionally, you can configure how updating of packages should be
-            performed. The following options are available:</para>
-        <itemizedlist>
-            <listitem>
-                <para>delete_old_packages</para>
-                <para>Do not delete old RPMs when updating.</para>
-            </listitem>
-            <listitem>
-                <para>only_update_selected</para>
-                <para>One can update (only update packages already installed) or
-                    upgrade (also install new packages with new functionality). For
-                    example, SLES should do "update", not "upgrade" by default</para>
-            </listitem>
-        </itemizedlist>
-
-    </section>
-    <section id="control_partitioning">
-        <title>Partitioning</title>
-        <para>
-            If present, the partition proposal will be based on the data
-            provided in the control file.
-        </para>
-        <section id="control_partitioning_algorithm">
-            <title>Algorithm for space allocation</title>
+    <section id="control_configuration">
+        <title>Configuration</title>
+        <section id="control_workflows">
+            <title>workflows</title>
 
             <para>
-                Space allocation on a disk happens in the following order.
-                First all partition get the size allocated that is determined by the
-                size parameter of the partition description. If a disk cannot hold the
-                sum of these sizes this disk is not considered for installation.
-                If all demands by the size parameter are fulfilled and there is still 
-                space available on the disk, the partitions which have a parameter "percent"
-                specified are increased until the size demanded by by "percent" is fulfilled.
-                If there is still available space on the disk (this normally only can 
-                happen if the sum of all percent values are below 100), all partitions that 
-                are specified with a size of zero are enlarged as far as possible. If a
-                "maxsize" is specified for a partition, all enlargement are only done up 
-                to the specified maxsize.
+                Using the control file, multiple workflows can be defined for
+                different modes and installation stages. Thus, the element
+                <emphasis>workflows</emphasis> in the control file evaluates to a list
+                of workflows.
             </para>
-
             <para>
-                If more than one of the available disks is eligible to hold a certain
-                partition set, the disk is selected as follows. If there is a partition
-                allocated on that disk that has its size specified by keywords "percent"
-                or by "size=0" and does not have a "maxsize" value set then the desired
-                size for this partition is considered to be unlimited. If a partition
-                group contains a partition which an unlimited desired size, the disk
-                that maximizes the partition size for the unlimited partitions is
-                selected. If all partitions in a partition group are limited in size
-                then the smallest disk that can hold the desired sizes of all partitions
-                is selected for that partition group.
+                Beside defining what YaST clients should be executed during
+                installation, the workflow configuration also let you specify the
+                wizard steps and how they should appear during graphical
+                installation.
             </para>
-
             <para>
-                If there are multiple partition groups the the partition group with
-                the lowest number (means highest priority) get assigned its disk first.
-                Afterward the partition group with the next priority gets assigned a 
-                the optimal disk from the so far unassigned disks.
+                A workflow list element is a map with the following elements:
             </para>
+            <itemizedlist>
+                <listitem>
+                    <para>label</para>
+                    <para>The label of the workflow as it appears on the left side of the
+                        wizard. For example <emphasis>Base Installation</emphasis></para>
+                </listitem>
+                <listitem>
+                    <para>defaults</para>
+                    <para>The default arguments to the clients. This is a map element. </para>
+                </listitem>
+                <listitem>
+                    <para>stage</para>
+                    <para>This options defines the  stage or phase of installation.. Possible values are
+                        <emphasis>initial</emphasis> for the initial stage and
+                        <emphasis>continue</emphasis> for the workflow of the installation
+                        after reboot </para>
+                </listitem>
+                <listitem>
+                    <para>mode</para>
+                    <para>
+                        Defines installation mode. Several modes are available, most
+                        important modes are:</para>
+                    <itemizedlist>
+                        <listitem>
+                            <para>installation</para>
+                        </listitem>
+                        <listitem>
+                            <para>update</para>
+                        </listitem>       
+                        <listitem>
+                            <para>autoinst</para>
+                        </listitem>  
 
-        </section>
-        <section id="control_partitioning_options">
-            <title>Configuration Options</title>
+                    </itemizedlist>
+                </listitem>
+                <listitem>
+                    <para>modules</para>
+                    <para>
+                        This is the actual workflow and is a list of elements
+                        describing the order in which the installation should
+                        proceed.
+                    </para>
+                    <para>
+                        A module element is a map with the following configuration
+                        options:</para>
+                    <itemizedlist>
+                        <listitem>
+                            <para>name: The name of the module. All installation clients and
+                                modules have a unified prefix (inst_) which can be ommited
+                                here. For example, if the YaST file for the module is called
+                                <emphasis>inst_test</emphasis>, then the name in the control
+                                file is <emphasis>test</emphasis>
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>label: The label of the module in the step dialog. This is
+                                an optional element. If it is not set, the label of the
+                                previous module is used.</para>
 
-            <para>
-                The following elements are global to all disks and
-                partitions:
-            </para>
-
-            <variablelist><title>prefer_remove</title>
-                <varlistentry>
-                    <term>Possible values</term>
-                    <listitem>
-                        <para>
-                            true|false
-                        </para>
-                    </listitem>
-                </varlistentry>
-
-                <varlistentry>
-                    <term>Default value</term>
-                    <listitem>
-                        <para>
-                            true
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Description</term>
-                    <listitem>
-                        <para>
-                            If set to false the partition suggestion tries to use gaps on the 
-                            disks or to re-use existing partitions.
-                            If set to true then the partition suggestion prefers removal of
-                            existing partitions.
-                        </para>
-                    </listitem>
-                </varlistentry>
-            </variablelist>
-
-
-            <variablelist><title>remove_special_partitions</title>
-                <varlistentry>
-                    <term>Possible values</term>
-                    <listitem>
-                        <para>
-                            true|false
-                        </para>
-                    </listitem>
-                </varlistentry>
-
-                <varlistentry>
-                    <term>Default value</term>
-                    <listitem>
-                        <para>
-                            false
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Description</term>
-                    <listitem>
-                        <para>
-                            If set to false YaST2 will not remove some special partitions (e.g. 0x12
-                            Compaq diagnostics, 0xde Dell Utility) if they exists on the disk
-                            even if prefer_remove is set to true.
-                            If set to true YaST2 will remove even those special partitions. 
-                            <caution>
-                                <para>Caution: Since some machines are not even bootable any more when these 
-                                    partitions are removed one should really know what he does when 
-                                    setting this to true  </para>
-                            </caution>         
-                        </para>
-                    </listitem>
-                </varlistentry>
-            </variablelist>
-
-            <variablelist><title>keep_partition_fsys</title>
-                <varlistentry>
-                    <term>Possible values</term>
-                    <listitem>
-                        <para>
-                            comma separated list of 
-                            reiser, xfs, fat, vfat, ext2, ext3, jfs, ntfs, swap
-                        </para>
-                    </listitem>
-                </varlistentry>
-
-                <varlistentry>
-                    <term>Default value</term>
-                    <listitem>
-                        <para>
-                            Empty list
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Description</term>
-                    <listitem>
-                        <para>
-                            Partitions that contain filesystems in that list are not deleted even
-                            if prefer_remove  is set to true.
-                        </para>
-                    </listitem>
-                </varlistentry>
-            </variablelist>
-
-
-            <variablelist><title>keep_partition_id</title>
-                <varlistentry>
-                    <term>Possible values</term>
-                    <listitem>
-                        <para>
-                            comma separated list of possible partition ids
-                        </para>
-                    </listitem>
-                </varlistentry>
-
-                <varlistentry>
-                    <term>Default value</term>
-                    <listitem>
-                        <para>
-                            Empty list
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Description</term>
-                    <listitem>
-                        <para>
-                            Partitions that have a partition id that is contained in the list are
-                            not deleted even if prefer_remove  is set to true.
-
-                        </para>
-                    </listitem>
-                </varlistentry>
-            </variablelist>
-
-            <variablelist><title>keep_partition_num</title>
-                <varlistentry>
-                    <term>Possible values</term>
-                    <listitem>
-                        <para>
-                            comma separated list of possible partition numbers
-                        </para>
-                    </listitem>
-                </varlistentry>
-
-                <varlistentry>
-                    <term>Default value</term>
-                    <listitem>
-                        <para>
-                            Empty list
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Description</term>
-                    <listitem>
-                        <para>
-                            Partitions that have a partition number that is contained in the list are
-                            not deleted even if prefer_remove  is set to true.
-
-                        </para>
-                    </listitem>
-                </varlistentry>
-            </variablelist>
-
-            <para>
-                To configure individual partitions and disks, a list element is
-                used with its items describing how should the partitions be created and
-                configured
-            </para>
-
-            <para>
-                The attributes of such a partition
-                are determined by several elements. These elements are described in more detail later.
-            </para>
-            <note>
-                <title>General remarks to all option values</title>
-                <para>
-                    If there is a blank or a equal 
-                    sign (=) contained in an option value, the values has to be surrounded 
-                    by double quotes ("). Values that describe sizes can be followed by the 
-                    letters K, M, G. (K means Kilobytes, M Megabytes and G Gigabytes).
-                </para>
-            </note>
-            <variablelist>
-                <title>mount</title>
-                <varlistentry>
-                    <term>Example</term>
-                    <listitem>
-                        <para>
-                            &lt;mount&gt;swap&lt;/mount&gt;
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Description</term>
-                    <listitem>
-                        <para>
-                            This entry describes the mount point of the partition. For a swap
-                            partition the special value "swap" has to be used.
-                        </para>
-                    </listitem>
-                </varlistentry>
-            </variablelist>
-            <variablelist>
-                <title>fsys</title>
-                <varlistentry>
-                    <term>Example</term>
-                    <listitem>
-                        <para>
-                            &lt;fsys&gt;reiser&lt;/fsys&gt;
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Description</term>
-                    <listitem>
-                        <para>
-                            This entry describes the filesystem type created on this partition.
-                            Possible Filesystem types are: reiser, ext2, ext3, xfs, vfat, jfs, swap
-                            If no filesystem type is given for a partition, reiserfs is used.
-                        </para>
-                    </listitem>
-                </varlistentry>
-            </variablelist>
-            <variablelist>
-                <title>formatopt</title>
-                <varlistentry>
-                    <term>Example</term>
-                    <listitem>
-                        <para>
-                            &lt;formatopt&gt;reiser&lt;formatopt&gt;
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Description</term>
-                    <listitem>
-                        <para>
-                            This entry describes the options given to the format command. Multiple
-                            options have to be separated by blanks. There must not be a blank between
-                            option letter and option value. This entry is optional.
-                        </para>
-                    </listitem>
-                </varlistentry>
-            </variablelist>
-
-            <variablelist>
-                <title>fstopt</title>
-                <varlistentry>
-                    <term>Example</term>
-                    <listitem>
-                        <para>
-                            &lt;fstopt&gt;acl,user_xattr&lt;fstopt&gt;
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Description</term>
-                    <listitem>
-                        <para>
-                            This entry describes the options written to <filename>/etc/fstab</filename>. Multiple
-                            options have to be separated by comma. This entry is optional.
-                        </para>
-                    </listitem>
-                </varlistentry>
-            </variablelist>
-
-            <variablelist>
-                <title>label</title>
-                <varlistentry>
-                    <term>Example</term>
-                    <listitem>
-                        <para>
-                            &lt;label&gt;emil&lt;label&gt;
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Description</term>
-                    <listitem>
-                        <para>
-                            If the filesystem can have a label, the value of the label is set 
-                            to this value.
-                        </para>
-                    </listitem>
-                </varlistentry>
-            </variablelist>
-
-            <variablelist>
-                <title>id</title>
-                <varlistentry>
-                    <term>Example</term>
-                    <listitem>
-                        <para>
-                            &lt;id&gt;0x8E&lt;id&gt;
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Description</term>
-                    <listitem>
-                        <para>
-                            This keyword makes it possible to create partitions with partition
-                            ide other than 0x83 (for normal filesystem partitions) or 0x82 (for
-                            swap partitions). This make it possible to create LVM or MD partitions 
-                            on a disk. 
-                        </para>
-                    </listitem>
-                </varlistentry>
-            </variablelist>
-
-
-            <variablelist>
-                <title>size</title>
-                <varlistentry>
-                    <term>Example</term>
-                    <listitem>
-                        <para>
-                            &lt;size&gt;2G&lt;size&gt;
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Description</term>
-                    <listitem>
-                        <para>
-                            This keyword determines the size that is at least needed for a 
-                            partition. A size value of zero means that YaST2 should try to make
-                            the partition as large as possible after all other demands regarding 
-                            partition size are fulfilled. The special value of "auto" can be
-                            given for the <filename>/boot</filename> and swap partition. If auto is set for a /boot or
-                            swap partition YaST2 computes a suitable partition size by itself.
-                        </para>
-                    </listitem>
-                </varlistentry>
-            </variablelist>
-
-            <variablelist>
-                <title>percent</title>
-                <varlistentry>
-                    <term>Example</term>
-                    <listitem>
-                        <para>
-                            &lt;percent&gt;30&lt;percent&gt;
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Description</term>
-                    <listitem>
-                        <para>
-                            This keyword determines that a partition should be allocated a certain
-                            percentage of the available space for installation on a disk. 
-                        </para>
-                    </listitem>
-                </varlistentry>
-            </variablelist>
-
-            <variablelist>
-                <title>maxsize</title>
-                <varlistentry>
-                    <term>Example</term>
-                    <listitem>
-                        <para>
-                            &lt;maxsize&gt;4G&lt;maxsize&gt;
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Description</term>
-                    <listitem>
-                        <para>        
-                            This keyword limits the maximal amount of space that is allocated
-                            to a certain partition. This keyword is only useful in conjunction
-                            with a size specification by keyword "percent" or by an entry of
-                            "size=0".
-
-                        </para>
-                    </listitem>
-                </varlistentry>
-            </variablelist>
-
-            <variablelist>
-                <title>increasable</title>
-                <varlistentry>
-                    <term>Example</term>
-                    <listitem>
-                        <para>
-                            &lt;increasable config:type="boolean"&gt;true&lt;increasable&gt;
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Default</term>
-                    <listitem>
-                        <para>        
-                            false
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Description</term>
-                    <listitem>
-                        <para>        
-                            After determining the optimal disk usage the partition may be 
-                            increased if there is unallocated space in the same gap available.
-                            If this keyword is set, the partition may grow larger than specified
-                            by the maxsize and percent parameter. This keyword is intended to
-                            avoid having unallocated space on a disk after partitioning if
-                            possible.
-
-                        </para>
-                    </listitem>
-                </varlistentry>
-            </variablelist>
-
-            <variablelist>
-                <title>disk</title>
-                <varlistentry>
-                    <term>Example</term>
-                    <listitem>
-                        <para>
-                            &lt;disk&gt;2&lt;disk&gt;
-                        </para>
-                    </listitem>
-                </varlistentry>
-                <varlistentry>
-                    <term>Description</term>
-                    <listitem>
-                        <para>        
-                            This keyword specifies which partitions should be placed on which
-                            disks if multiple disks are present in the system. All partitions with
-                            the same disk value will be placed on the same disk. The value after
-                            the keyword determines the priority of the partition group. Lower 
-                            numbers mean higher priority. If there are not enough disks in the 
-                            system a partition group with lower priority is assigned a separate 
-                            disks before a partition group with higher priority. A partition 
-                            without disk keyword is implicitly assigned the highest priority 0.          
-
-                        </para>
-                    </listitem>
-                </varlistentry>
-            </variablelist>
-
-            <example>
-                <title>Flexible Partitioning</title>
-                <para>    If in the example below the machine has three disks then each of the
-                    partition groups gets on a separate disk. So one disk will hold
-                    <filename>/var</filename>, another disk will hold
-                    /home<filename></filename> 
-                    and another disk will hold
-                    <filename>/</filename>, <filename>/usr</filename> and<filename> /opt</filename>. 
-                    If in the above example the machine has only two disks then <filename>/home</filename>
-                    will still be on a separate disk (since it has lower priority than
-                    the other partition groups) and <filename>/</filename>,
-                    <filename>/usr</filename>, 
-                    <filename>/opt</filename> and <filename>/var</filename> will share the other disk.
-                </para>
-                <para>
-                    If there is only one disk in the system of course all partitions 
-                    will be on that disk.
-                </para>
-                <programlisting>
-                    <xi:include href="examples/partitions.xml" parse="text"
-                        xmlns:xi="http://www.w3.org/2001/XInclude"/>
-                </programlisting>
-
-            </example>
-
-            <para>A more complete example with other options is hown below:</para>
+                        </listitem>
+                        <listitem>
+                            <para>arguments: The arguments for the module is a comma separated
+                                list which can accept booleans and symbols. </para>
+                        </listitem>
+                    </itemizedlist>
+                </listitem>
+            </itemizedlist>
+            <para>The following listing shows a typical installation
+                workflow:</para>
             <programlisting>
-                <xi:include href="examples/partitions2.xml" parse="text"
-                    xmlns:xi="http://www.w3.org/2001/XInclude"/>
+                    &lt;workflows config:type="list"&gt;
+        &lt;workflow&gt;
+            &lt;!-- 'label' is what the user will see --&gt;
+	    &lt;label&gt;Base Installation&lt;/label&gt;
+            &lt;!-- default settings for all modules --&gt;
+            &lt;defaults&gt;
+                &lt;!-- arguments for the clients --&gt;
+                &lt;arguments&gt;false,false&lt;/arguments&gt;
+                &lt;!-- allowed architectures "all", "i386", "i386,ia64,x86_64"  --&gt;
+                &lt;archs&gt;all&lt;/archs&gt;
+            &lt;/defaults&gt;
+            &lt;stage&gt;initial&lt;/stage&gt;
+            &lt;mode&gt;installation,update&lt;/mode&gt;
+            &lt;modules  config:type="list"&gt;
+                &lt;module&gt;
+                    &lt;name&gt;info&lt;/name&gt;
+                    &lt;arguments&gt;false,true&lt;/arguments&gt;
+                &lt;/module&gt;
+                &lt;module&gt;
+                    &lt;name&gt;proposal&lt;/name&gt;
+                    &lt;arguments&gt;true,true,`ini&lt;/arguments&gt;
+	            &lt;label&gt;Installation Settings&lt;/label&gt;
+                &lt;/module&gt;
+                &lt;module&gt;
+                    &lt;name&gt;do_resize&lt;/name&gt;
+                    &lt;update config:type="boolean"&gt;false&lt;/update&gt;
+                    &lt;archs&gt;i386,x86_64,ia64&lt;/archs&gt;
+	            &lt;label&gt;Perform Installation&lt;/label&gt;
+                &lt;/module&gt;
+                &lt;module&gt;
+                    &lt;name&gt;prepdisk&lt;/name&gt;
+                    &lt;!-- Multiple modules with the same 'label' will be
+                         collapsed to one single user-visible step.
+                         The step is considered finished when the last module
+                         with the same 'label' is finished.  --&gt;
+	            &lt;label&gt;Perform Installation&lt;/label&gt;
+                &lt;/module&gt;
+                &lt;module&gt;
+                    &lt;name&gt;kickoff&lt;/name&gt;
+	            &lt;label&gt;Perform Installation&lt;/label&gt;
+                &lt;/module&gt;
+                &lt;module&gt;
+                    &lt;name&gt;rpmcopy&lt;/name&gt;
+	            &lt;label&gt;Perform Installation&lt;/label&gt;
+                &lt;/module&gt;
+                &lt;module&gt;
+                    &lt;name&gt;finish&lt;/name&gt;
+	            &lt;label&gt;Perform Installation&lt;/label&gt;
+                &lt;/module&gt;
+            &lt;/modules&gt;
+        &lt;/workflow&gt;
+
             </programlisting>
 
 
+        </section>
+        <section id="control_proposals">
+            <title>Proposals</title>      
+            <para>FIXME</para>
+        </section>
+        <section id="control_globals">
+            <title>Installation and Product Variables</title>
+            <para>It is possible to define some installation variables (language,
+                timezone, keyboard,.. ) and force them in the proposal. User will still
+                be able to change them however.</para>
+            <para>The following variables can be set:</para>
+            <itemizedlist>
+                <listitem>
+                    <para>Timzeone</para>
+                </listitem>
+                <listitem>
+                    <para>Language</para>
+                </listitem>
+                <listitem>
+                    <para>Keyboard</para>
+                </listitem>      
+                <listitem>
+                    <para>Auto Login (not recommended for multi-user environments and
+                        server installations)</para>
+                </listitem>     
+                <listitem>
+                    <para>IO Scheduler</para>
+                    <para>Default is <emphasis>as</emphasis>.</para>
+                </listitem>
+                <listitem>
+                    <para>Desktop Scheduler</para>
+                </listitem>
+            </itemizedlist>
+            <para>the following example shows all options above</para>
+            <programlisting>
+                
+
+    &lt;globals&gt;
+        &lt;enable_autologin config:type="boolean"&gt;true&lt;/enable_autologin&gt;
+        &lt;language&gt;de_DE&lt;/language&gt;
+        &lt;timezone&gt;Canada/Eastern&lt;/timezone&gt;
+        &lt;use_desktop_scheduler config:type="boolean"&gt;true&lt;/use_desktop_scheduler&gt;
+        &lt;io_scheduler&gt;as&lt;/io_scheduler&gt;
+    &lt;/globals&gt;
+
+
+            </programlisting>
 
         </section>
+        <section id="control_software">
+            <title>Software</title>
+            <para>
+                Using this section in the control file you can change the software
+                proposal during installation.
+            </para>
+            <para>
+                By default, the software proposal is generated depending on the available
+                space in the system. If enough space is available, a fairly large
+                selection of packages and add-on package groups is automatically
+                selected. This behavior is controlled by the
+                <emphasis>selection_type</emphasis> element in the control file.      
+            </para>
+            <para>
+                The default value for the above element is <emphasis>auto</emphasis>. To
+                force a selection which can not be changed by the user, the value
+                <emphasis>fixed</emphasis> has to be used.
+            </para>
+            <para>If a fixed software selection is desired, then the fixed selection
+                name has to be specifed in the control file. This selection must be a
+                base selection. To specify the name of the base selectiont to be forced,
+                use the <emphasis>base_selection</emphasis> element.</para>
+            <para>
+                The list of base selections can be found on the first CD of the product
+                in the directory <filename>suse/setup/descr</filename> or by using the
+                following command (The example shows the list of selections for <emphasis>SLES 9</emphasis>):
+            </para>
+            <para>
+                To switch from <emphasis>desktop</emphasis> based proposals to the normal
+                behavior of software proposals in YaST , the
+                <emphasis>software_proposal</emphasis> element has been
+                introduced. Setting the value to <emphasis>desktop</emphasis> will make
+                YaST show a dialog with Desktops to select from,
+                i.e. <acronym>KDE</acronym> or <emphasis>Gnome</emphasis>. If this
+                element is not defined, default behavior is assumed.
+            </para>
+            <programlisting>
 
-    </section>
-    <section id="control_hooks">
-        <title>Hooks</title>
-        <para>
-            It is possible to add hooks before and after any workflow step
-            for further customization of the installed system and to to perform
-            non-standard tasks during installation.
-        </para>
-        <para>Two additional elements define custom script hooks:</para>
-        <itemizedlist>
-            <listitem>
-                <para>prescript: Executed before the module is called.</para>
-            </listitem>
-            <listitem>
-                <para>postscript: Executed after the module is called.</para>
-            </listitem>
-        </itemizedlist>
-        <para>
-            Both script types accept two elements, the interpreter used (shell or
-            perl) and the source of the scripts which is embedded in the XML file
-            using CDATA sections to avoid confusion with the XML syntax. The
-            following example shows how scripts can be embedded in the control file:
-        </para>
+                for i in `grep -l baseconf SUSE-SLES-Version-9/CD1/suse/setup/descr/* `; do 
+                basename $i .sel; 
+                done
 
-        <programlisting>
-            <xi:include href="examples/scripts.xml" parse="text"
-                xmlns:xi="http://www.w3.org/2001/XInclude"/>
-        </programlisting>
+            </programlisting>
+            <para>
+                The above will have the following output:
+            </para>
+            <programlisting>
 
+                Full-Installation
+                Minimal+X11
+                Minimal
+                default
+
+            </programlisting>
+            <para>
+                which matches the base selections in <emphasis>SLES 9</emphasis>.
+            </para>
+            <para>Additionally, you can configure how updating of packages should be
+                performed. The following options are available:</para>
+            <itemizedlist>
+                <listitem>
+                    <para>delete_old_packages</para>
+                    <para>Do not delete old RPMs when updating.</para>
+                </listitem>
+                <listitem>
+                    <para>only_update_selected</para>
+                    <para>One can update (only update packages already installed) or
+                        upgrade (also install new packages with new functionality). For
+                        example, SLES should do "update", not "upgrade" by default</para>
+                </listitem>
+            </itemizedlist>
+
+        </section>
+        <section id="control_partitioning">
+            <title>Partitioning</title>
+            <para>
+                If present, the partition proposal will be based on the data
+                provided in the control file.
+            </para>
+            <section id="control_partitioning_algorithm">
+                <title>Algorithm for space allocation</title>
+
+                <para>
+                    Space allocation on a disk happens in the following order.
+                    First all partition get the size allocated that is determined by the
+                    size parameter of the partition description. If a disk cannot hold the
+                    sum of these sizes this disk is not considered for installation.
+                    If all demands by the size parameter are fulfilled and there is still 
+                    space available on the disk, the partitions which have a parameter "percent"
+                    specified are increased until the size demanded by by "percent" is fulfilled.
+                    If there is still available space on the disk (this normally only can 
+                    happen if the sum of all percent values are below 100), all partitions that 
+                    are specified with a size of zero are enlarged as far as possible. If a
+                    "maxsize" is specified for a partition, all enlargement are only done up 
+                    to the specified maxsize.
+                </para>
+
+                <para>
+                    If more than one of the available disks is eligible to hold a certain
+                    partition set, the disk is selected as follows. If there is a partition
+                    allocated on that disk that has its size specified by keywords "percent"
+                    or by "size=0" and does not have a "maxsize" value set then the desired
+                    size for this partition is considered to be unlimited. If a partition
+                    group contains a partition which an unlimited desired size, the disk
+                    that maximizes the partition size for the unlimited partitions is
+                    selected. If all partitions in a partition group are limited in size
+                    then the smallest disk that can hold the desired sizes of all partitions
+                    is selected for that partition group.
+                </para>
+
+                <para>
+                    If there are multiple partition groups the the partition group with
+                    the lowest number (means highest priority) get assigned its disk first.
+                    Afterward the partition group with the next priority gets assigned a 
+                    the optimal disk from the so far unassigned disks.
+                </para>
+
+            </section>
+            <section id="control_partitioning_options">
+                <title>Configuration Options</title>
+
+                <para>
+                    The following elements are global to all disks and
+                    partitions:
+                </para>
+
+                <variablelist><title>prefer_remove</title>
+                    <varlistentry>
+                        <term>Possible values</term>
+                        <listitem>
+                            <para>
+                                true|false
+                            </para>
+                        </listitem>
+                    </varlistentry>
+
+                    <varlistentry>
+                        <term>Default value</term>
+                        <listitem>
+                            <para>
+                                true
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Description</term>
+                        <listitem>
+                            <para>
+                                If set to false the partition suggestion tries to use gaps on the 
+                                disks or to re-use existing partitions.
+                                If set to true then the partition suggestion prefers removal of
+                                existing partitions.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+
+
+                <variablelist><title>remove_special_partitions</title>
+                    <varlistentry>
+                        <term>Possible values</term>
+                        <listitem>
+                            <para>
+                                true|false
+                            </para>
+                        </listitem>
+                    </varlistentry>
+
+                    <varlistentry>
+                        <term>Default value</term>
+                        <listitem>
+                            <para>
+                                false
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Description</term>
+                        <listitem>
+                            <para>
+                                If set to false YaST2 will not remove some special partitions (e.g. 0x12
+                                Compaq diagnostics, 0xde Dell Utility) if they exists on the disk
+                                even if prefer_remove is set to true.
+                                If set to true YaST2 will remove even those special partitions. 
+                                <caution>
+                                    <para>Caution: Since some machines are not even bootable any more when these 
+                                        partitions are removed one should really know what he does when 
+                                        setting this to true  </para>
+                                </caution>         
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+
+                <variablelist><title>keep_partition_fsys</title>
+                    <varlistentry>
+                        <term>Possible values</term>
+                        <listitem>
+                            <para>
+                                comma separated list of 
+                                reiser, xfs, fat, vfat, ext2, ext3, jfs, ntfs, swap
+                            </para>
+                        </listitem>
+                    </varlistentry>
+
+                    <varlistentry>
+                        <term>Default value</term>
+                        <listitem>
+                            <para>
+                                Empty list
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Description</term>
+                        <listitem>
+                            <para>
+                                Partitions that contain filesystems in that list are not deleted even
+                                if prefer_remove  is set to true.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+
+
+                <variablelist><title>keep_partition_id</title>
+                    <varlistentry>
+                        <term>Possible values</term>
+                        <listitem>
+                            <para>
+                                comma separated list of possible partition ids
+                            </para>
+                        </listitem>
+                    </varlistentry>
+
+                    <varlistentry>
+                        <term>Default value</term>
+                        <listitem>
+                            <para>
+                                Empty list
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Description</term>
+                        <listitem>
+                            <para>
+                                Partitions that have a partition id that is contained in the list are
+                                not deleted even if prefer_remove  is set to true.
+
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+
+                <variablelist><title>keep_partition_num</title>
+                    <varlistentry>
+                        <term>Possible values</term>
+                        <listitem>
+                            <para>
+                                comma separated list of possible partition numbers
+                            </para>
+                        </listitem>
+                    </varlistentry>
+
+                    <varlistentry>
+                        <term>Default value</term>
+                        <listitem>
+                            <para>
+                                Empty list
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Description</term>
+                        <listitem>
+                            <para>
+                                Partitions that have a partition number that is contained in the list are
+                                not deleted even if prefer_remove  is set to true.
+
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+
+                <para>
+                    To configure individual partitions and disks, a list element is
+                    used with its items describing how should the partitions be created and
+                    configured
+                </para>
+
+                <para>
+                    The attributes of such a partition
+                    are determined by several elements. These elements are described in more detail later.
+                </para>
+                <note>
+                    <title>General remarks to all option values</title>
+                    <para>
+                        If there is a blank or a equal 
+                        sign (=) contained in an option value, the values has to be surrounded 
+                        by double quotes ("). Values that describe sizes can be followed by the 
+                        letters K, M, G. (K means Kilobytes, M Megabytes and G Gigabytes).
+                    </para>
+                </note>
+                <variablelist>
+                    <title>mount</title>
+                    <varlistentry>
+                        <term>Example</term>
+                        <listitem>
+                            <para>
+                                &lt;mount&gt;swap&lt;/mount&gt;
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Description</term>
+                        <listitem>
+                            <para>
+                                This entry describes the mount point of the partition. For a swap
+                                partition the special value "swap" has to be used.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+                <variablelist>
+                    <title>fsys</title>
+                    <varlistentry>
+                        <term>Example</term>
+                        <listitem>
+                            <para>
+                                &lt;fsys&gt;reiser&lt;/fsys&gt;
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Description</term>
+                        <listitem>
+                            <para>
+                                This entry describes the filesystem type created on this partition.
+                                Possible Filesystem types are: reiser, ext2, ext3, xfs, vfat, jfs, swap
+                                If no filesystem type is given for a partition, reiserfs is used.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+                <variablelist>
+                    <title>formatopt</title>
+                    <varlistentry>
+                        <term>Example</term>
+                        <listitem>
+                            <para>
+                                &lt;formatopt&gt;reiser&lt;formatopt&gt;
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Description</term>
+                        <listitem>
+                            <para>
+                                This entry describes the options given to the format command. Multiple
+                                options have to be separated by blanks. There must not be a blank between
+                                option letter and option value. This entry is optional.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+
+                <variablelist>
+                    <title>fstopt</title>
+                    <varlistentry>
+                        <term>Example</term>
+                        <listitem>
+                            <para>
+                                &lt;fstopt&gt;acl,user_xattr&lt;fstopt&gt;
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Description</term>
+                        <listitem>
+                            <para>
+                                This entry describes the options written to <filename>/etc/fstab</filename>. Multiple
+                                options have to be separated by comma. This entry is optional.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+
+                <variablelist>
+                    <title>label</title>
+                    <varlistentry>
+                        <term>Example</term>
+                        <listitem>
+                            <para>
+                                &lt;label&gt;emil&lt;label&gt;
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Description</term>
+                        <listitem>
+                            <para>
+                                If the filesystem can have a label, the value of the label is set 
+                                to this value.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+
+                <variablelist>
+                    <title>id</title>
+                    <varlistentry>
+                        <term>Example</term>
+                        <listitem>
+                            <para>
+                                &lt;id&gt;0x8E&lt;id&gt;
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Description</term>
+                        <listitem>
+                            <para>
+                                This keyword makes it possible to create partitions with partition
+                                ide other than 0x83 (for normal filesystem partitions) or 0x82 (for
+                                swap partitions). This make it possible to create LVM or MD partitions 
+                                on a disk. 
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+
+
+                <variablelist>
+                    <title>size</title>
+                    <varlistentry>
+                        <term>Example</term>
+                        <listitem>
+                            <para>
+                                &lt;size&gt;2G&lt;size&gt;
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Description</term>
+                        <listitem>
+                            <para>
+                                This keyword determines the size that is at least needed for a 
+                                partition. A size value of zero means that YaST2 should try to make
+                                the partition as large as possible after all other demands regarding 
+                                partition size are fulfilled. The special value of "auto" can be
+                                given for the <filename>/boot</filename> and swap partition. If auto is set for a /boot or
+                                swap partition YaST2 computes a suitable partition size by itself.
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+
+                <variablelist>
+                    <title>percent</title>
+                    <varlistentry>
+                        <term>Example</term>
+                        <listitem>
+                            <para>
+                                &lt;percent&gt;30&lt;percent&gt;
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Description</term>
+                        <listitem>
+                            <para>
+                                This keyword determines that a partition should be allocated a certain
+                                percentage of the available space for installation on a disk. 
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+
+                <variablelist>
+                    <title>maxsize</title>
+                    <varlistentry>
+                        <term>Example</term>
+                        <listitem>
+                            <para>
+                                &lt;maxsize&gt;4G&lt;maxsize&gt;
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Description</term>
+                        <listitem>
+                            <para>        
+                                This keyword limits the maximal amount of space that is allocated
+                                to a certain partition. This keyword is only useful in conjunction
+                                with a size specification by keyword "percent" or by an entry of
+                                "size=0".
+
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+
+                <variablelist>
+                    <title>increasable</title>
+                    <varlistentry>
+                        <term>Example</term>
+                        <listitem>
+                            <para>
+                                &lt;increasable config:type="boolean"&gt;true&lt;increasable&gt;
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Default</term>
+                        <listitem>
+                            <para>        
+                                false
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Description</term>
+                        <listitem>
+                            <para>        
+                                After determining the optimal disk usage the partition may be 
+                                increased if there is unallocated space in the same gap available.
+                                If this keyword is set, the partition may grow larger than specified
+                                by the maxsize and percent parameter. This keyword is intended to
+                                avoid having unallocated space on a disk after partitioning if
+                                possible.
+
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+
+                <variablelist>
+                    <title>disk</title>
+                    <varlistentry>
+                        <term>Example</term>
+                        <listitem>
+                            <para>
+                                &lt;disk&gt;2&lt;disk&gt;
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                    <varlistentry>
+                        <term>Description</term>
+                        <listitem>
+                            <para>        
+                                This keyword specifies which partitions should be placed on which
+                                disks if multiple disks are present in the system. All partitions with
+                                the same disk value will be placed on the same disk. The value after
+                                the keyword determines the priority of the partition group. Lower 
+                                numbers mean higher priority. If there are not enough disks in the 
+                                system a partition group with lower priority is assigned a separate 
+                                disks before a partition group with higher priority. A partition 
+                                without disk keyword is implicitly assigned the highest priority 0.          
+
+                            </para>
+                        </listitem>
+                    </varlistentry>
+                </variablelist>
+
+                <example>
+                    <title>Flexible Partitioning</title>
+                    <para>    If in the example below the machine has three disks then each of the
+                        partition groups gets on a separate disk. So one disk will hold
+                        <filename>/var</filename>, another disk will hold
+                        /home<filename/> 
+                        and another disk will hold
+                        <filename>/</filename>, <filename>/usr</filename> and<filename> /opt</filename>. 
+                        If in the above example the machine has only two disks then <filename>/home</filename>
+                        will still be on a separate disk (since it has lower priority than
+                        the other partition groups) and <filename>/</filename>,
+                        <filename>/usr</filename>, 
+                        <filename>/opt</filename> and <filename>/var</filename> will share the other disk.
+                    </para>
+                    <para>
+                        If there is only one disk in the system of course all partitions 
+                        will be on that disk.
+                    </para>
+                    <programlisting>
+                                &lt;partitions config:type="list"&gt;
+            &lt;partition&gt;
+                &lt;disk config:type="integer"&gt;3&lt;/disk&gt;
+                &lt;mount&gt;/var&lt;/mount&gt;
+                &lt;percent config:type="integer"&gt;100&lt;/percent&gt;               
+            &lt;/partition&gt;
+            &lt;partition&gt;
+                &lt;disk config:type="integer"&gt;2&lt;/disk&gt;                                
+                &lt;mount&gt;/&lt;/mount&gt;
+                &lt;size&gt;1G&lt;/size&gt;
+            &lt;/partition&gt;
+            &lt;partition&gt;
+                &lt;disk config:type="integer"&gt;2&lt;/disk&gt;                                
+                &lt;mount&gt;/usr&lt;/mount&gt;
+                &lt;size&gt;2G&lt;/size&gt;
+            &lt;/partition&gt;
+            &lt;partition&gt;
+                &lt;disk config:type="integer"&gt;2&lt;/disk&gt;                                
+                &lt;mount&gt;/opt&lt;/mount&gt;
+                &lt;size&gt;2G&lt;/size&gt;
+            &lt;/partition&gt;
+           &lt;partition&gt;
+                &lt;disk config:type="integer"&gt;1&lt;/disk&gt;
+                &lt;mount&gt;/home&lt;/mount&gt;
+                &lt;percent config:type="integer"&gt;100&lt;/percent&gt;               
+            &lt;/partition&gt;       
+        &lt;/partitions&gt;
+                    </programlisting>
+
+                </example>
+
+                <para>A more complete example with other options is hown below:</para>
+                <programlisting>
+                        &lt;partitioning&gt;        
+        &lt;partitions config:type="list"&gt;
+            &lt;partition&gt;
+                &lt;disk config:type="integer"&gt;2&lt;/disk&gt;
+                &lt;mount&gt;swap&lt;/mount&gt;
+                &lt;size&gt;auto&lt;/size&gt;
+            &lt;/partition&gt;
+            &lt;partition&gt;
+                &lt;disk config:type="integer"&gt;1&lt;/disk&gt;
+                &lt;fstopt&gt;defaults&lt;/fstopt&gt;
+                &lt;fsys&gt;reiser&lt;/fsys&gt;
+                &lt;increasable config:type="boolean"&gt;true&lt;/increasable&gt;
+                &lt;mount&gt;/&lt;/mount&gt;
+                &lt;size&gt;2gb&lt;/size&gt;
+            &lt;/partition&gt;
+            &lt;partition&gt;
+                &lt;disk config:type="integer"&gt;2&lt;/disk&gt;
+                &lt;fstopt&gt;defaults,data=writeback,noatime&lt;/fstopt&gt;
+                &lt;fsys&gt;reiser&lt;/fsys&gt;
+                &lt;increasable config:type="boolean"&gt;true&lt;/increasable&gt;
+                &lt;mount&gt;/var&lt;/mount&gt;
+                &lt;pct config:type="integer"&gt;100&lt;/pct&gt;
+                &lt;size&gt;2gb&lt;/size&gt;
+            &lt;/partition&gt;
+        &lt;/partitions&gt;
+        &lt;prefer_remove config:type="boolean"&gt;true&lt;/prefer_remove&gt;
+        &lt;remove_special_partitions config:type="boolean"&gt;false&lt;/remove_special_partitions&gt;
+    &lt;/partitioning&gt;
+                </programlisting>
+
+
+
+            </section>
+
+        </section>
+        <section id="control_hooks">
+            <title>Hooks</title>
+            <para>
+                It is possible to add hooks before and after any workflow step
+                for further customization of the installed system and to to perform
+                non-standard tasks during installation.
+            </para>
+            <para>Two additional elements define custom script hooks:</para>
+            <itemizedlist>
+                <listitem>
+                    <para>prescript: Executed before the module is called.</para>
+                </listitem>
+                <listitem>
+                    <para>postscript: Executed after the module is called.</para>
+                </listitem>
+            </itemizedlist>
+            <para>
+                Both script types accept two elements, the interpreter used (shell or
+                perl) and the source of the scripts which is embedded in the XML file
+                using CDATA sections to avoid confusion with the XML syntax. The
+                following example shows how scripts can be embedded in the control file:
+            </para>
+
+            <programlisting>
+                
+                &lt;module&gt;
+                    &lt;name&gt;info&lt;/name&gt;
+                    &lt;arguments&gt;false,true&lt;/arguments&gt;
+                    &lt;prescript&gt;
+                        &lt;interpreter&gt;shell&lt;/interpreter&gt;
+                        &lt;source&gt;
+&lt;![CDATA[#!/bin/sh
+touch /tmp/anas
+echo anas &gt; /tmp/anas
+]]&gt;
+                        &lt;/source&gt;
+                    &lt;/prescript&gt;
+                &lt;/module&gt;
+
+            </programlisting>
+
+        </section>
     </section>
 </section>
