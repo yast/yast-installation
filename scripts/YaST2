@@ -377,13 +377,15 @@ else
     # 1st, we try the 31.5k mode lines only; if this does not
     # work, we use all mode lines
     if [ "$XVersion" = 4 ]; then
+      if ! echo $moduleargs | grep -q continue ; then
+      if [ -f "/usr/X11R6/bin/xupdate" ];then
+         cat /etc/X11/XF86Config | \
+             /usr/X11R6/bin/xupdate > /etc/X11/XF86Config.new
+         mv /etc/X11/XF86Config.new /etc/X11/XF86Config
+      fi
+      fi
       sed -e '/[3-6]\. *Try/ d' /etc/X11/XF86Config >/etc/X11/XF86Config_31.5k
       ln -snf /usr/X11R6/bin/$xsrv /var/X11R6/bin/X
-      if [ -f "/usr/X11R6/bin/xupdate" ];then
-        cat /etc/X11/XF86Config_31.5k | \
-          /usr/X11R6/bin/xupdate > /etc/X11/XF86Config_31.5k.new
-        mv /etc/X11/XF86Config_31.5k.new /etc/X11/XF86Config_31.5k
-      fi
       X $xpseudo -xf86config /etc/X11/XF86Config_31.5k -deferglyphs 16 2>/dev/tty8 1>&2 vt07 &
       xserver_pid=$!
       # wait for the X server to come up

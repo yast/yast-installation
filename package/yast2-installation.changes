@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Mar 12 10:19:51 CET 2003 - ms@suse.de
+
+- fixed broken mouse bug in continue mode (#24914)
+
+-------------------------------------------------------------------
 Tue Mar 11 17:16:03 CET 2003 - kkaempf@suse.de
 
 - also set /etc/sysconfig/displaymanager:DISPLAYMANAGER (#25087)
