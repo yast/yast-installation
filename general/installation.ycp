@@ -116,9 +116,25 @@
     if (Mode::initial)
     {
 	Pkg::InstSysMode();
-	// InputDevice section is written via xupdate in YaST2
-	// start script, therefore no apply code is needed
-	// Mouse::Set (Mouse::Probe ());
+
+	// --------------------------------------------------------------
+	//                   Mouse
+	// --------------------------------------------------------------
+	if (!(Arch::s390 || Arch::board_iseries))
+	{
+	y2milestone("Call Mouse probing...");
+	if (!Mouse::Found())
+	{
+		// ...
+		// Let the USB modules settle for a while.
+		// Mouse probing may fail otherwise...
+		//
+		SCR::Execute(.target.bash, "/bin/sleep 4");
+		SCR::Execute (.target.bash, "/usr/X11R6/bin/xmset --disable");
+		Mouse::Set (Mouse::Probe ());
+		SCR::Execute (.target.bash, "/usr/X11R6/bin/xmset --enable");
+	}
+	}
 
 	Installation::encoding = Console::SelectFont( Language::language );
 

@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Thu Mar  6 12:58:31 CET 2003 - ms@suse.de
+
+- removed mouse probing code from inst_startup.ycp and put
+  that code into installation.ycp. Changed the mouse probing
+  code to disconnect the device in front of the probing and
+  re-connect it after the probing is done to avoid any
+  jumping mouse cursors (#24355)
+
+-------------------------------------------------------------------
 Tue Mar 04 21:13:02 CET 2003 - arvin@suse.de
 
 - handle flags from content file in Product module (bug #21561)

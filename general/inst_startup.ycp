@@ -120,25 +120,6 @@
     }
 
     // --------------------------------------------------------------
-    //				     Mouse
-    // --------------------------------------------------------------
-
-    if (!(Arch::s390 || Arch::board_iseries))
-    {
-        // give user feedback what's happening
-	showFeedback( _("Probing mouse devices") );
-	if (!Mouse::Found())
-	{
-	    // Let the USB modules settle for a while.
-	    // Mouse probing may fail otherwise...
-	    //
-	    SCR::Execute(.target.bash, "/bin/sleep 4");
-
-	    Mouse::Set (Mouse::Probe ());
-	}
-    }
-
-    // --------------------------------------------------------------
     //				    Floppy
     // --------------------------------------------------------------
 
