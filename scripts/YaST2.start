@@ -51,10 +51,10 @@ if [ "$Sourcemounted" != 1 ] ; then
   fi
 fi
 
-infofile=/var/adm/mount/suse/setup/descr/info
-[ -f $infofile ]  && eval "`grep = $infofile`"
+infofile=/var/adm/mount/content
+[ -f $infofile ]  && LANGUAGE="`grep LANGUAGE $infofile | sed s/LANGUAGE//`"
 
-[ "$Locale" ] && LANG="${Locale%%.*}.UTF-8"
+[ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}.UTF-8"
 
 grep -iq iseries /proc/cpuinfo || { echo >/dev/tty10 ; }
 for i in \
