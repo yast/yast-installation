@@ -32,7 +32,7 @@
     import "Kernel";		// call constructor, extract cmdline
     import "Wizard";
 
-    include "ui/common_popups.ycp";
+    import "Popup";
 
     y2milestone("inst_startup START");
 
@@ -145,7 +145,7 @@
        {
            // Oops, no storage controllers ?
            // no storage controllers found, where are the hard disks attached ?
-           UI::MessagePopup(_("No hard disks were found for the installation.
+           Popup::Message(_("No hard disks were found for the installation.
 Please check your hardware!
 "));
            clearFeedback();
@@ -168,7 +168,7 @@ Please check your hardware!
     map targetMap = StorageDevices::Probe (true);
     if (size (targetMap) == 0)
     {
-	UI::ErrorPopup(_("No hard disks were found for the installation.
+	Popup::Error(_("No hard disks were found for the installation.
 Please check your hardware!
 "));
 	clearFeedback();

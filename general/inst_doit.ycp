@@ -15,7 +15,7 @@
     import "Mode";
     import "AutoInstall";
 
-    include "ui/common_messages.ycp";
+    import "Label";
 
     if (Mode::autoinst)
     {
@@ -109,7 +109,7 @@ Start update?
 				  `HBox(
 					`PushButton(`id(`yes), confirmation_button),
 					`HStretch(),
-					`PushButton(`id(`no), `opt(`default), NoButtonLabel() )
+					`PushButton(`id(`no), `opt(`default), Label::NoButton() )
 					),
 				  `VSpacing(0.2)
 				  ),

@@ -12,6 +12,8 @@
 
     import "Mode";
     import "Wizard";
+    import "Label";
+
 
     // show button "start control center"?
     boolean show_y2cc_button = true;
@@ -91,7 +93,7 @@ return to this installation sequence.</p>
 
     Wizard::DisableAbortButton ();
     Wizard::ReplaceNextButton (`PushButton (`id(`next), `opt(`default),
-					    FinishButtonLabel ()));
+					    Label::FinishButton ()));
     UI::SetFocus (`id (`next));
 
     // FIXME: richtext eats return key

@@ -25,6 +25,7 @@
     import "Misc";
 
     import "Wizard";
+    import "Popup";
 
 
     if ( size( WFM::Args() ) > 2 && WFM::Args(2) == true )	// going backwards?
@@ -215,7 +216,7 @@ the CPU and the amount of memory, this process can take some time.
     if ( onlyKernelUpdate )
     {
 	// inform the user that he/she has to reboot to activate new kernel
-	UI::MessagePopup(_("Reboot your system
+	Popup::Message(_("Reboot your system
 to activate the new kernel.
 "));
     }

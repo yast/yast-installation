@@ -25,7 +25,7 @@
     import "Wizard";
     import "HTML";
 
-    include "ui/common_popups.ycp";
+    import "Popup";
 
 
     // values used in defined functions
@@ -279,12 +279,12 @@
 	    // Submodules handle their own error reporting
 
 	    // text for a message box
-	    UI::TimedMessagePopup( _("Configuration saved.\nThere were errors."), 3 );
+	    Popup::TimedMessage( _("Configuration saved.\nThere were errors."), 3 );
 	}
 	// else
 	// {
 	//     // text for a message box
-	//     UI::TimedMessagePopup( _("Configuration saved successfully."), 3 );
+	//     Popup::TimedMessage( _("Configuration saved successfully."), 3 );
 	// }
     };
 
@@ -934,7 +934,7 @@ To use the settings as displayed, press <b>Next</b>.
 	    }
 	}
 	else if (input == `reset_to_defaults
-		 && UI::ContinueCancelPopup(
+		 && Popup::ContinueCancel(
 					    // question in a popup box
 					    _("Really reset everything to default values?") + "\n" +
 					    // explain consequences of a decision

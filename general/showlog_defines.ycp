@@ -28,7 +28,7 @@
 					       // this is a button label
 					       `PushButton( `id(`yes_short),  _("&Short info") ),
 					       `HStretch(),
-					       `PushButton( `id(`no_log), `opt(`default), OKButtonLabel() )
+					       `PushButton( `id(`no_log), `opt(`default), Label::OKButton() )
 					       )
 					 ))
 			   );
@@ -45,7 +45,7 @@
 					       // this is a button label
 					       `PushButton( `id(`yes_long),  _("&Long info") ),
 					       `HStretch(),
-					       `PushButton( `id(`no_log), `opt(`default), OKButtonLabel() )
+					       `PushButton( `id(`no_log), `opt(`default), Label::OKButton() )
 					       )
 					 ))
 			   );
@@ -68,13 +68,13 @@
     UI::{
 	textdomain "installation";
 	global define AskShowLog( ) ``{
-	    return AnyQuestionPopup(
+	    return Popup::AnyQuestion(
 				    // heading for a popup box
 				    _("Installation log file"),
 				    // question in a popup box
 				    _("Would you like to see the installation log file?"),
-				    YesButtonLabel(),
-				    NoButtonLabel(),
+				    Label::YesButton(),
+				    Label::NoButton(),
 				    `focus_no );
 	};
     };

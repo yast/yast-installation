@@ -8,8 +8,9 @@
  */
 
 {
-
     module "Hooks";
+
+    import "Popup";
 
     // void Checkpoint (string filename, boolean at_entry)
     // called whenever an inst_*.ycp file is called during
@@ -25,16 +26,14 @@
     global define void Checkpoint (string filename, boolean at_entry) ``{
 	if (WFM::Read (.local.size, "/tmp/"+filename) >= 0)
 	{
-	    include "ui/common_popups.ycp";
 	    if (at_entry)
 	    {
-		UI::MessagePopup (sformat ("Entry: %1", filename));
+		Popup::Message (sformat ("Entry: %1", filename));
 	    }
 	    else
 	    {
-		UI::MessagePopup (sformat ("Exit: %1", filename));
+		Popup::Message (sformat ("Exit: %1", filename));
 	    }
 	}
     }
-
 }
