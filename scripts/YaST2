@@ -75,44 +75,13 @@ function y2cc_qt()
         if [ -e /var/lib/YaST2/start_y2cc ]; then
             log "y2cc requested"
 
-            width=`/usr/X11R6/bin/xwininfo -root | sed -n -e '/Width:/s/^.*Width:[ \t]//p'`
-            height=`/usr/X11R6/bin/xwininfo -root | sed -n -e '/Height:/s/^.*Height:[ \t]//p'`
-	    wm_pid=0
-
-            #	# Start a window manager - y2cc needs a window manager for reasonable keyboard operation.
-	    #	
-            #	if [ -x /usr/X11R6/bin/mwm ]; then
-            #		# MWM (the Motif window manager) is easy to use, but not necessarily available.
-            #		log "Starting mwm"
-            #		/usr/X11R6/bin/mwm -xrm '*clientDecoration: none' -xrm '*showFeedback: none' &
-	    #	
-	    #		# MWM doesn't let windows grow any larger than the desktop, so
-	    #		# leave width and height alone.
-            #	elif [ -x /usr/X11R6/bin/twm ]; then
-            #		# TWM's quirks may confuse newbies, but it's part of XFree86,
-            #		# so it should always be available.
-            #		log "Starting twm"
-            #		/usr/X11R6/bin/twm &
-            #		# Compensate for window manager decorations
-            #		height=$(($height-24))
-            #		width=$(($width-4))
-            #	else
-            #		log "No window manager available"
-            #	fi
-
-            # Export geometry for modules started via the y2cc
-            export Y2_GEOMETRY="${width}x${height}+0+0"
-
             # Delete semaphore file (created in inst_proposal.ycp)
             rm -f /var/lib/YaST2/start_y2cc
 
             # Start the control center
-            log "Starting YaST2 control center in Qt mode with -geometry $Y2_GEOMETRY"
-            y2controlcenter qt -style=platinum -fn $Y2_XFONT -geometry $Y2_GEOMETRY -Q
-
-	    # The window manager will go down along with the X server.
-	    # MWM has been told to shut up with the '*showFeedback' resource,
-	    # so it shouldn't ask questions before going down.
+            log "Starting YaST2 control center in Qt mode"
+            log "y2controlcenter qt -style=platinum --fullscreen --noborder -Q"
+            y2controlcenter qt -style=platinum --fullscreen --noborder -Q
         fi
     fi
 }
@@ -267,10 +236,12 @@ shift
 moduleargs=\(\"$*\"\)
 
 qt_bg=""
-# why this check? what other moduleargs are possible?
 if echo $moduleargs | egrep -q '\(\"initial|continue\"\)' ; then
     qt_bg="-bg #cccccc"
 fi
+
+y2qt_args="-style=platinum --fullscreen --noborder $qt_bg"
+
 
 PATH=/var/X11R6/bin:$ybindir:$PATH
 
@@ -282,11 +253,8 @@ if [ "$VNC" = "1" ] ; then
     if [ -x /usr/X11R6/bin/Xvnc ] ; then
 	. /usr/lib/YaST2/bin/inst_setup_vnc
 	export DISPLAY=:1
-	y2base "$modulename" $moduleargs qt -style=platinum -fn $Y2_XFONT -geometry 800x600+1+1 -no-wm $qt_bg
-	# This should probably become:
-	# y2base "$modulename" $moduleargs qt -style=platinum -fn $Y2_XFONT -fullscreen -noborder $qt_bg
-	# (no test environment to make sure this doesn't break anything)
-	# -sh 2003-01-27
+	log "Starting: y2base \"$modulename\" $moduleargs qt $y2qt_args"
+	y2base "$modulename" $moduleargs qt $y2qt_args
 	y2exitcode=$?
 	[ $y2exitcode -eq 0 ] && y2cc_qt
 	exit $y2exitcode
@@ -296,7 +264,8 @@ if [ "$VNC" = "1" ] ; then
 fi
 
 if [ "$DISPLAY" != "" ] ; then
-    y2base "$modulename" $moduleargs qt -style=platinum -fn $Y2_XFONT -geometry 800x600 $qt_bg
+    log "Starting: y2base \"$modulename\" $moduleargs qt $y2qt_args"
+    y2base "$modulename" $moduleargs qt $y2qt_args
     y2exitcode=$?
     [ $y2exitcode -eq 0 ] && y2cc_qt
     exit $y2exitcode
@@ -315,9 +284,9 @@ if [ ! "$update" -a "$YaST2serial" = "1" ] ; then
     log "using serial interface"
     echo "Trying to connect via serial interface /dev/ttyS0."
     echo "On your terminal computer start the user interface with"
-    echo "y2base \"serial(115200):/dev/ttyS0\" qt -geometry 800x600 -style=platinum"
+    echo "y2base \"serial(115200):/dev/ttyS0\" qt $y2qt_args"
     echo "or"
-    echo "y2base \"serial(115200):/dev/ttyS1\" qt -geometry 800x600 -style=platinum"
+    echo "y2base \"serial(115200):/dev/ttyS1\" qt $y2qt_args"
     echo "or start the YaST2 menu by typing \"yast2\" and select YaST2/Remote Install"
     y2base "$modulename" $moduleargs "serial(115200):/dev/ttyS0"
     y2exitcode=$?
@@ -340,9 +309,9 @@ if [ ! "$update" -a "$Keyboard" = "0" -a ! "$Braille" -a "$NOTISERIES" != 0 -a "
     log "no keyboard?"
     echo "No keyboard detected. Trying to connect via serial interface /dev/ttyS0."
     echo "On your terminal computer start the user interface with"
-    echo "y2base \"serial(115200):/dev/ttyS0\" qt -geometry 800x600 -style=platinum"
+    echo "y2base \"serial(115200):/dev/ttyS0\" qt $y2qt_args"
     echo "or"
-    echo "y2base \"serial(115200):/dev/ttyS1\" qt -geometry 800x600 -style=platinum"
+    echo "y2base \"serial(115200):/dev/ttyS1\" qt $y2qt_args"
     echo "or start the YaST2 menu by typing \"yast2\" and select YaST2/Remote Install"
     y2base "$modulename" $moduleargs "serial(115200):/dev/ttyS0" --timeout 15
     y2exitcode=$?
@@ -380,6 +349,7 @@ fi
 if [ ! "$xsrv" -o "$MemTotal" -lt "57344" ] ; then
   log "no X server or not enough memory: using text mode"
   (
+    log "Starting: y2base \"$modulename\" '(\"text_fallback\")' $moduleargs ncurses"
     y2base "$modulename" '("text_fallback")' $moduleargs ncurses
     y2exitcode=$?
     [ $y2exitcode -eq 0 ] && y2cc_ncurses
@@ -443,7 +413,8 @@ fi
 logmeminfo "2"
 
 if [ "$server_running" ] ; then
-  y2base "$modulename" $moduleargs qt -style=platinum -fn $Y2_XFONT -fullscreen -noborder $qt_bg
+  log "Starting: y2base \"$modulename\" $moduleargs qt $y2qt_args"
+  y2base "$modulename" $moduleargs qt $y2qt_args
   y2exitcode=$?
   [ $y2exitcode -eq 0 ] && y2cc_qt
   sleep 1
@@ -455,6 +426,7 @@ if [ "$server_running" ] ; then
 else
   log "X server did not start: using text mode"
   (
+    log "Starting: y2base \"$modulename\" '("no_x11")' $moduleargs ncurses"
     y2base "$modulename" '("no_x11")' $moduleargs ncurses
     y2exitcode=$?
     [ $y2exitcode -eq 0 ] && y2cc_ncurses
