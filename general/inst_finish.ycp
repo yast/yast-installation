@@ -26,7 +26,6 @@
     import "Timezone";
     import "Console";
     import "Display";
-    import "Monitor";
     import "Keyboard";
     import "Storage";
     import "InstMedia";
@@ -324,7 +323,6 @@ Please wait while the base system is being installed.
     Language::Save();
     Keyboard::Save(true);
     Display::Save();
-    Monitor::Save();
 
     if (Mode::autoinst)
     {
