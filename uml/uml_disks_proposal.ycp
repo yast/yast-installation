@@ -31,7 +31,7 @@
 	    UML::disks = [ 1024 ];
 	}
 
-	list tmp = [];
+	list<string> tmp = [];
 
 	integer i = 1;
 	foreach (integer s, UML::disks, ``{

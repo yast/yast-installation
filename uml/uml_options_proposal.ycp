@@ -32,7 +32,7 @@
 	    UML::number_of_cpus = 1;
 	}
 
-	list tmp = [];
+	list<string> tmp = [];
 
 	// Proposal for uml installation
 	tmp = add (tmp, sformat (_("Memory size: %1 MB"), UML::memory_size));

@@ -30,7 +30,7 @@
     include "installation/dialogs.ycp";
 
     define void retranslate_proposal_dialog();
-    define list load_matching_submodules_list();
+    define list<string> load_matching_submodules_list();
     define boolean get_submod_descriptions_and_build_menu();
     define void make_proposal( boolean force_reset, boolean language_changed );
     define string format_sub_proposal( map prop );
@@ -39,7 +39,7 @@
 
     // values used in defined functions
 
-    list	submodules = [];
+    list<string>	submodules = [];
     list	titles     = [];
     map		submod2id  = $[];
     map		id2submod  = $[];
@@ -236,7 +236,7 @@
 	}
 	else
 	{
-	    list raw_prop = prop["raw_proposal"]:["ERROR: No proposal"];
+	    list<string> raw_prop = prop["raw_proposal"]:["ERROR: No proposal"];
 	    html = html + HTML::List( raw_prop );
 	}
 
@@ -373,12 +373,12 @@
      *
      * @return submodules_list	list of submodule names (strings)
      **/
-    define list load_matching_submodules_list() ``{
+    define list<string> load_matching_submodules_list() ``{
 
-	list submodules = [];
+	list<string> submodules = [];
 
         // FIXME: Declare more types in control file
-        map proposal_type = $[ `ini: "initial", `net: "network", `hw : "hardware", `uml : "uml", `dirinstall : "dirinstall"];
+        map<symbol, string> proposal_type = $[ `ini: "initial", `net: "network", `hw : "hardware", `uml : "uml", `dirinstall : "dirinstall"];
         string proptype = proposal_type[proposal_mode]:"";
 
         submodules = ProductControl::getProposals (
@@ -511,9 +511,9 @@
      **/
     define boolean get_submod_descriptions_and_build_menu() ``{
 
-	list	menu_list	= [];
-	list	new_submodules	= [];
-	integer	no		= 1;
+	list		menu_list	= [];
+	list<string>	new_submodules	= [];
+	integer	no			= 1;
 	titles = [];
 
 	foreach(string submod, submodules, ``{
