@@ -1,9 +1,4 @@
-#
 # Makefile.am for installation/x11
-#
-
-ybin_PROGRAMS = version
-version_LDADD = -lhd -lsysfs
 
 module_DATA = \
 	X11Version.ycp

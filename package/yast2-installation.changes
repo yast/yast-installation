@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Mar  9 13:08:25 CET 2004 - msvec@suse.cz
+
+- replaced X11 version detection code with (simpler) YCP
+- package could be noarch currently (reduced NFB a lot)
+
+-------------------------------------------------------------------
 Mon Mar 08 11:54:40 CET 2004 - arvin@suse.de
 
 - call more generalized storage function during update
