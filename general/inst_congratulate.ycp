@@ -1,5 +1,5 @@
 /**
- * File:	installation/general/inst_congrat.ycp
+ * File:	installation/general/inst_congratulate.ycp
  * Module:	Installation
  * Summary:	Display congratulation
  * Authors:	Arvin Schnell <arvin@suse.de>
@@ -30,10 +30,11 @@
     // be started after this part of the installation is done?
     // Translators: About 40 characters max,
     // use newlines for longer translations.
-    term check_box_start_y2cc = `CheckBox(`id(`start_y2cc), _( "&Start control center" ), false);
+    term check_box_start_y2cc = `CheckBox (`id(`start_y2cc),
+					   _("&Start control center"), false);
 
 
-    /* Congratulation Dialog caption */
+    /* caption for dialog "Congratulation Dialog" */
     string caption = _("Installation complete");
 
     // I guess this must be read from a file soon.
@@ -47,6 +48,7 @@
 			   `VSpacing(1)
 			   );
 
+    /* help for dialog "Congratulation Dialog" */
     string help = _("FIXME");
 
     Wizard::SetContentsButtons (caption, contents, help,
@@ -58,21 +60,22 @@
 
 	ret = Wizard::UserInput();
 
-	if ( ret == `abort &&
-	     WFM::CallFunction (`inst_confirm_abort(`painless) ) )
+	if (ret == `abort)
 	{
-	    Wizard::RestoreNextButton();
-	    return `abort;
+	    if (UI::ReallyAbortPopup (false))
+	    {
+		Wizard::RestoreNextButton();
+		break;
+	    }
 	}
-
-	if ( ret == `help )
+	else if ( ret == `help )
 	{
 	    Wizard::ShowHelp (help);
 	}
 
     } until ( ret == `next || ret == `back );
 
-    if (UI::QueryWidget (`id(`start_y2cc), `Value))
+    if (ret == `next && UI::QueryWidget (`id(`start_y2cc), `Value))
     {
 	// Create empty /var/lib/YaST2/start_y2cc file to signal the calling script
 	// that the YaST2 control center should be started after the installation
