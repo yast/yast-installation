@@ -539,15 +539,15 @@ will look different than in the manual.");
  [ `continue, `inst_x11         (true,  true),       Arch::x11_setup_needed, Mode::x11_setup_needed &&    autoinst &&    ! update_mode  , false],
  [ `continue, `autoinst_configure   (false, false),      true,						  autoinst &&    ! update_mode	, false],
  [ `continue, `inst_proposal	    (true,  true, `net), true,						! autoinst &&    ! update_mode	, false],
- [ `continue, `inst_ask_net_test    (true,  true),       true,				! live_eval &&	! autoinst &&    	        , true ],
- [ `continue, `inst_do_net_test	    (true,  true),       true,				! live_eval &&	! autoinst &&                   , true ],
- [ `continue, `inst_you		    (true,  true),       true,				! live_eval &&	! autoinst &&            	, true ],
+ [ `continue, `inst_ask_net_test    (true,  true),       true,				! live_eval &&	! autoinst       	        , true ],
+ [ `continue, `inst_do_net_test	    (true,  true),       true,				! live_eval &&	! autoinst                      , true ],
+ [ `continue, `inst_you		    (true,  true),       true,				! live_eval &&	! autoinst               	, true ],
  [ `continue, `inst_auth	    (true,  true),       true,				! live_eval &&	! autoinst &&    ! update_mode	, true ],
  [ `continue, `inst_user	    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
  [ `continue, `inst_suseconfig	    (false, false),      true,			! test_mode						, false],
- [ `continue, `inst_release_notes   (true,  true),	 true,				! live_eval &&	! autoinst &&               	, false],
+ [ `continue, `inst_release_notes   (true,  true),	 true,				! live_eval &&	! autoinst               	, false],
  [ `continue, `inst_proposal	    (true,  true, `hw),  true,						! autoinst &&    ! update_mode	, false],
- [ `continue, `inst_congratulate    (true,  true),	 true,				! live_eval &&	! autoinst &&               	, false]
+ [ `continue, `inst_congratulate    (true,  true),	 true,				! live_eval &&	! autoinst               	, false]
 ];
 
 
