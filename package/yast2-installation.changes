@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Dec 09 12:49:20 CET 2002 - arvin@suse.de
+
+- add modules ide-cd and cdrom before ide-scsi to INITRD_MODULES
+  when an ide cdwriter is found (bug #22343)
+
+-------------------------------------------------------------------
 Wed Dec  4 15:29:17 CET 2002 - jsrain@suse.cz
 
 - adapted to new bootloader module interface
