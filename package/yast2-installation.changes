@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Feb 20 11:39:23 CET 2003 - arvin@suse.de
+
+- use title-style capitalization for menu names (bug #23848)
+
+-------------------------------------------------------------------
 Thu Feb 20 09:51:29 CET 2003 - ms@suse.de
 
 - add support for mouse wheel during installation (#21660)
