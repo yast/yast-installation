@@ -440,21 +440,21 @@ textdomain="control"
             </defaults>
             <modules  config:type="list">
                 <module>
-	            <label>Auto-Install Settings</label>
+	            <label>AutoYaST Settings</label>
                     <name>info</name>
                 </module>
                 <module>
-	            <label>Auto-Install Settings</label>
+	            <label>AutoYaST Settings</label>
                     <name>autoinit</name>
                     <archs>all</archs>
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
                 <module>
-	            <label>Auto-Install Settings</label>
+	            <label>AutoYaST Settings</label>
                     <name>autosetup</name>
                 </module>
                 <module>
-	            <label>Auto-Install Settings</label>
+	            <label>AutoYaST Settings</label>
                     <name>proposal</name>
                     <proposal>initial</proposal>
                     <enable_back>no</enable_back>
