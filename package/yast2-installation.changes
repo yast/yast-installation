@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jan 22 11:36:10 CET 2003 - jsrain@suse.de
+
+- returned accidentally removed call of Bootloaer::Write () function
+  (#23018)
+
+-------------------------------------------------------------------
 Fri Dec 20 17:25:00 CET 2002 - arvin@suse.de
 
 - changed label of second button of popup with info.txt (EULA)
