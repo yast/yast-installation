@@ -35,9 +35,10 @@ Your hard disk will remain untouched.");
 	      // - After some installation steps have been performed - e.g.
 	      // disks formatted / some packages already installed
 	      what_will_happen = _("If you abort the installation now, you will
-have an incomplete Linux system
-which may or may not be usable.
-You may need to reinstall.");
+have an incomplete Linux system,
+which might or might not be usable.
+You might need to reinstall.
+");
 	  }
 	  else if ( how_to == `unusable )
 	  {

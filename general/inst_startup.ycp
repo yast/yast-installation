@@ -147,7 +147,7 @@
 	if (StorageControllers::Probe() <= 0)
 	{
 	    Popup::Warning(_("No hard disk controllers were found for the
-installation. Please check your hardware!
+installation. Check your hardware.
 "));
 
 	    // Don't abort if no storage controllers can be found. Disks

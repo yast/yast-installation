@@ -147,7 +147,8 @@
 	    || (!contains (dirlist, "linux")))
 	{
 	    // VENDOR: vendor cd contains wrong data
-	    return wrong_cd(_("Couldn't find driver data on the CD-ROM\nAborting now."), is_mounted);
+	    return wrong_cd(_("Could not find driver data on the CD-ROM.
+Aborting now."), is_mounted);
 	}
 
 	cdpath = cdpath + "/linux";
@@ -160,7 +161,8 @@
 		|| contains (dirlist, "unitedlinux"))))
 	{
 	    // VENDOR: vendor cd contains wrong data
-	    return wrong_cd(_("Couldn't find driver data on the CD-ROM\nAborting now."), is_mounted);
+	    return wrong_cd(_("Could not find driver data on the CD-ROM.
+Aborting now."), is_mounted);
 	}
 
 	string vendordir = "/suse/";
@@ -207,7 +209,8 @@ Aborting now.
     if (size (dirlist) <= 0)
     {
 	// VENDOR: vendor cd contains wrong data
-	return wrong_cd(_("Couldn't find driver data on the CD-ROM\nAborting now."), is_mounted);
+	return wrong_cd(_("Could not find driver data on the CD-ROM.
+Aborting now."), is_mounted);
     }
 
     integer inst_count = 0;

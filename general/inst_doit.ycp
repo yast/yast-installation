@@ -97,7 +97,7 @@ Start update?
 ");
 
 	    // PushButton: Allright, really start update
-	    confirmation_button = _("&Yes, update");
+	    confirmation_button = _("&Yes, Update");
 	}
 
 	term dialog = `HBox(
