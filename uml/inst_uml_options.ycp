@@ -41,9 +41,9 @@
 			 (boolean) WFM::Args(1));
 
     UI::ChangeWidget (`id(`memory), `ValidChars, "0123456789");
-    UI::ChangeWidget (`id(`ncpus), `ValidChars, "0123456789");
-
     UI::ChangeWidget (`id(`memory), `Value, tostring (UML::memory_size));
+
+    UI::ChangeWidget (`id(`ncpus), `ValidChars, "0123456789");
     UI::ChangeWidget (`id(`ncpus), `Value, tostring (UML::number_of_cpus));
 
     any ret = nil;
@@ -51,9 +51,6 @@
     while (true)
     {
 	ret = Wizard::UserInput ();
-
-	if (ret == `abort && Popup::ConfirmAbort (`painless))
-	    break;
 
 	if (ret == `cancel || ret == `back)
 	    break;
@@ -81,6 +78,7 @@
 
 	    UML::memory_size = tmp1;
 	    UML::number_of_cpus = tmp2;
+
 	    break;
 	}
     }
