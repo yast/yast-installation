@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Aug 26 10:18:44 CEST 2002 - kkaempf@suse.de
+
+- ignore even more boot options (#18154)
+
+-------------------------------------------------------------------
 Thu Aug 22 20:18:17 CEST 2002 - fehr@suse.de
 
 - call /sbin/vgscan if root filesystem is on LVM before calling
