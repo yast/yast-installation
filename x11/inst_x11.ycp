@@ -20,6 +20,7 @@ STATUS        : Development
 {
     import "X11Version";
     import "Mode";
+    import "Installation";
     import "Arch";
 
     boolean next = true;
