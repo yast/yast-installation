@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Sep  8 11:53:17 CEST 2003 - snwint@suse.de
+
+- advance splash progress bar in YaST2{,.start}
+- driver updates are applied in inst_setup (used to be in YaST2.start)
+- don't clear screen in YaST2.start
+
+-------------------------------------------------------------------
 Thu Sep 04 17:45:53 CEST 2003 - arvin@suse.de
 
 - proof-read messages
