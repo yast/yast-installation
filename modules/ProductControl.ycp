@@ -336,13 +336,15 @@ global define void AddWizardSteps(list<map> stagemode) ``{
     // if ( ! UI::HasSpecialWidget(`Wizard ) )
     // return;
 
-    string step_textdomain = "control";	// TO DO: get this from the XML file
+    string wizard_textdomain = (string) productControl["textdomain"]:"control";
+    y2debug( "Using textdomain '%1' for wizard steps", wizard_textdomain );
+    
     string first_id = "";
     // UI::WizardCommand(`SetVerboseCommands( true ) );
     foreach (map sm , stagemode, ``{
 	y2debug( "Adding wizard steps for %1", sm );
 	string slabel = getWorkflowLabel(sm["stage"]:"", sm["mode"]:"");
-	UI::WizardCommand(`AddStepHeading( dgettext( step_textdomain, slabel ) ) );
+	UI::WizardCommand(`AddStepHeading( dgettext( wizard_textdomain, slabel ) ) );
 	foreach(map m, getModules(sm["stage"]:"", sm["mode"]:""), ``{
 	    y2debug("Adding wizard step: %1", m );
 	    if (m["label"]:"" != "") {
@@ -350,7 +352,7 @@ global define void AddWizardSteps(list<map> stagemode) ``{
 		{
 		    first_id = m["id"]:"";
 		}
-		UI::WizardCommand(`AddStep( dgettext( step_textdomain, m["label"]:"" ), m["id"]:"" ) );
+		UI::WizardCommand(`AddStep( dgettext( wizard_textdomain, m["label"]:"" ), m["id"]:"" ) );
 	    }
 	});
     });
