@@ -311,7 +311,6 @@ textdomain="control"
             <modules  config:type="list">
                 <module>
                     <name>netsetup</name>
-                    <arguments>false,false,`up</arguments>
                 </module>
                 <module>
                     <name>rpmcopy</name>
@@ -492,7 +491,6 @@ textdomain="control"
             <modules  config:type="list">
                 <module>
                     <name>netsetup</name>
-                    <arguments>false,false,`up</arguments>
                 </module>
                 <module>
                     <name>netprobe</name>
