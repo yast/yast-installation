@@ -253,12 +253,12 @@
 	    // Submodules handle their own error reporting
 
 	    // text for a message box
-	    UI::TimedMessagePopup( _( "Configuration saved.\nThere were errors." ), 3 );
+	    UI::TimedMessagePopup( _("Configuration saved.\nThere were errors."), 3 );
 	}
 	// else
 	// {
 	//     // text for a message box
-	//     UI::TimedMessagePopup( _( "Configuration saved successfully." ), 3 );
+	//     UI::TimedMessagePopup( _("Configuration saved successfully."), 3 );
 	// }
     };
 
@@ -543,9 +543,9 @@
 							 // do this later manually or not at all
 							 // Translators: About 40 characters max,
 							 // use newlines for longer translations.
-							 _("&Skip configuration"), false)),
+							 _("&Skip Configuration"), false)),
 				      `Left(`RadioButton(`id(`dontskip), `opt(`notify),
-							 _("&Use following configuration"), true)),
+							 _("&Use Following Configuration"), true)),
 				      `VSpacing(1)
 				      )
 			       );
@@ -555,7 +555,7 @@
 	    `HBox (
 		   `HStretch (),
 		   `ReplacePoint(`id(`rep_menu),
-				 `MenuButton(`id(`menu_dummy), _( "&Change..." ), [`item(`id(`dummy), "" ) ] )
+				 `MenuButton(`id(`menu_dummy), _("&Change..."), [`item(`id(`dummy), "" ) ] )
 				 ),
 		   `HStretch ()
 		   );
@@ -643,7 +643,7 @@
 	// For future use:
 	// menu_list = add( menu_list, `item(`id(`change_everything), "Change &everything..." ) );
 
-	menu_list = add( menu_list, `item(`id(`reset_to_defaults), _( "&Reset to defaults" ) ) );
+	menu_list = add( menu_list, `item(`id(`reset_to_defaults), _("&Reset to defaults") ) );
 	UI::ReplaceWidget(`id(`rep_menu), `MenuButton(`id(`menu), _("&Change..."), menu_list ) );
     };
 
@@ -874,7 +874,7 @@ To use the settings as displayed, press <b>Accept</b>.
 	    UI::ChangeWidget( `id(`proposal), `Value,
 			      HTML::Newlines( 3 ) +
 			      // message show when user has disabled the configuration
-			      HTML::Para( _( "Skipping configuration upon user request" ) )
+			      HTML::Para( _("Skipping configuration upon user request") )
 			      );
 	    UI::ChangeWidget(`id(`menu), `Enabled, false );
 	}
