@@ -104,8 +104,8 @@ if [ -f $HTPLG_SYS -a -f $HTPLG_TMP ] ; then
   if [ "$PCMCIA_SYSTEM" = kernel ] ; then
     cp $HTPLG_SYS $HTPLG_TMP
     sed -e "s/^[[:space:]]*\(H.*G_START_NET\).*$/\1=yes/" \
-        -e "s/^[[:space:]]*\(H.*G_START_PCI\).*$/\1=yes/" \
-        $HTPLG_TMP > $HTPLG_SYS
+	-e "s/^[[:space:]]*\(H.*G_START_PCI\).*$/\1=yes/" \
+	$HTPLG_TMP > $HTPLG_SYS
   fi
 fi
 rm -f $HTPLG_TMP
@@ -123,14 +123,14 @@ if [ -x /etc/init.d/hotplug -a -f "$FSTAB_TMP" -a "$USB" = yes ] ; then
     read DEV MP FST OPT REST < <(echo $LINE)
     case "$DEV" in
       none|usbdevfs)
-        if [ "$MP" = "/proc/bus/usb" -a "$OPT" != "noauto" ] ; then
-          echo "# $LINE"
-          WRITE=yes
-        else
-          echo "$LINE"
-          WRITE=no
-        fi
-        ;;
+	if [ "$MP" = "/proc/bus/usb" -a "$OPT" != "noauto" ] ; then
+	  echo "# $LINE"
+	  WRITE=yes
+	else
+	  echo "$LINE"
+	  WRITE=no
+	fi
+	;;
       *) echo "$LINE" ;;
     esac
   done < $FSTAB_TMP > $FSTAB
@@ -278,20 +278,19 @@ fi
 # just loop around the file and proceed when it is gone (removed by YaST2.sshinstall)
 #
 if test -z "$USE_SSH" ; then
-#
-# This is VNC and X
-#
-if [ -z "$VNC" ]
-then
-# Print this message if we do a X-Install
-cat <<-EOF
+    #
+    # This is VNC and X
+    #
+    if [ ! -z "$VNC" ] ; then
+    # Print this message if we do a X-Install
+    cat <<-EOF
 
 	***
 	***           Please return to your X-Server screen to finish installation
 	***
 
 EOF
-fi
+    fi
     /usr/lib/YaST2/bin/YaST2 installation continue
 else
 #
@@ -331,8 +330,8 @@ fi
 #
 if [ -x /etc/init.d/pcmcia ] ; then
     if /etc/init.d/pcmcia status ; then
-        /sbin/cardctl eject
-        /etc/init.d/pcmcia stop
+	/sbin/cardctl eject
+	/etc/init.d/pcmcia stop
     fi
 fi
 
