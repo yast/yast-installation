@@ -266,7 +266,8 @@
         </section>
         <section id="control_proposals">
             <title>Proposals</title>      
-            <para>Part of the installation workflow are proposal screens, which
+            <para>
+                Part of the installation workflows are proposal screens, which
                 consists of group of related configuration settings. For
                 example <emphasis>Network</emphasis>,
                 <emphasis>Hardware</emphasis> and the initial
@@ -277,6 +278,38 @@
                 is discourged because of configuration dependencies, then this
                 would be possible using the control file.
             </para>
+            <programlisting>
+
+            <xi:include href="examples/proposal.xml" parse="text"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+            </programlisting>
+            <para>
+                The proposal in the above listing is displayed in the so called
+                <emphasis>continue</emphasis> mode which is the second phase
+                of the installation. The proposal consists of different
+                configuration options which are controled using a special API.
+            </para>
+            <para>
+                Currently, proposals names and captions as fixed and cant be
+                changed. It is not possible to create a special proposal
+                screen, instead those available should be used:
+                <emphasis>network</emphasis>, <emphasis>hardware</emphasis>,
+                <emphasis>service</emphasis>.
+            </para>
+            <para>
+                In the workflow, the proposals are called as any workflow step
+                with an additional argument identifying the proposal screen  to be
+                started. (<emphasis>`net</emphasis> for network,
+                <emphasis>`hw</emphasis> for hardware and
+                <emphasis>`service</emphasis> for service proposals. The
+                following examples shows how the network proposal is called as
+                a workflow step:
+            </para>
+            <programlisting>
+            <xi:include href="examples/callprop.xml" parse="text"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+            </programlisting>
+                
         </section>
         <section id="control_globals">
             <title>Installation and Product Variables</title>
@@ -900,6 +933,7 @@ default
                         will be on that disk.
                     </para>
                     <programlisting>
+
                     <xi:include href="examples/partitions.xml" parse="text"
                         xmlns:xi="http://www.w3.org/2001/xinclude"/>
                     </programlisting>
@@ -908,6 +942,7 @@ default
 
                 <para>A more complete example with other options is hown below:</para>
                 <programlisting>
+
                 <xi:include href="examples/partitions2.xml" parse="text"
                     xmlns:xi="http://www.w3.org/2001/XInclude"/>
                 </programlisting>
