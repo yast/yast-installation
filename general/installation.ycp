@@ -245,6 +245,9 @@
 		SCR::Execute (.target.bash, ckb_cmd );
 	    if (xkb_cmd != "")
 		SCR::Execute (.target.bash, xkb_cmd );
+
+            // ncurses calls 'dumpkeys | loadkeys --unicode' in UTF-8 locale  
+	    UI::SetKeyboard();
 	    y2milestone("lang: %1, encoding %2, ckb_cmd: %3 xkb: %4", language, Installation::encoding, ckb_cmd, xkb_cmd);
 	}
 
