@@ -38,6 +38,7 @@
     import "PackageSelectionIO";
     import "Packages";
     import "Product";
+    import "Popup";
     import "ProductControl";
     import "Progress";
     import "Report";
@@ -49,8 +50,6 @@
     import "Update";
     import "Vendor";
     import "X11Version";
-
-    include "partitioning/partition_defines.ycp";
 
 
     define void set_runlevel (integer runlevel) ``{
