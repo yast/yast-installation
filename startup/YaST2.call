@@ -298,6 +298,10 @@ function start_yast () {
 			$Y2_MODE
 	fi
 	Y2_EXIT_CODE=$?
+	if [ $SELECTED_MEDIUM = "SSH" ];then
+		log "\tPreparing SSH installation for reboot"
+		echo $Y2_EXIT_CODE > /tmp/YaST2_ssh_installation_finished
+	fi
 	if [ $Y2_EXIT_CODE -eq 0 ];then
 		start_control_center $Y2_MODE
 	fi
