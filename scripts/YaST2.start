@@ -32,6 +32,7 @@ eval $(grep ': ' /etc/install.inf | sed -e 's/"/"\\""/g' -e 's/:  */="/' -e 's/$
 
 # set language
 infofile=/content
+LANGUAGE=en_US
 [ -f $infofile ] && LANGUAGE=`sed -n 's/^LANGUAGE \([^ ]*\)/\1/p' $infofile`
 
 # if an entry 'Console:  ....' exists in install.inf,
