@@ -1,7 +1,12 @@
 -------------------------------------------------------------------
+Mon Sep 09 12:24:03 CEST 2002 - arvin@suse.de
+
+- setup proxy configuration for installation (bug #19189)
+
+-------------------------------------------------------------------
 Mon Sep  9 12:20:13 CEST 2002 - kkaempf@suse.de
 
-- remove runme_at_boot at end 
+- remove runme_at_boot at end
 - 2.6.51
 
 -------------------------------------------------------------------

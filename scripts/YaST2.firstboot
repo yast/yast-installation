@@ -20,6 +20,27 @@
 touch /etc/modules.conf
 /sbin/depmod -a -F /boot/System.map-`uname -r` `uname -r` >/dev/null 2>&1
 
+
+#
+# set env. var. http_proxy and ftp_proxy
+#
+function set_proxy()
+{
+    if grep -qs '^Proxy:.*' /etc/install.inf ; then
+
+	Proxy=$(awk ' /^Proxy:/ { print $2 }' < /etc/install.inf)
+	ProxyPort=$(awk ' /^ProxyPort:/ { print $2 }' < /etc/install.inf)
+	ProxyProto=$(awk ' /^ProxyProto:/ { print $2 }' < /etc/install.inf)
+
+	FullProxy="${ProxyProto}://${Proxy}:${ProxyPort}/"
+
+	export http_proxy=$FullProxy
+	export ftp_proxy=$FullProxy
+
+    fi
+}
+
+
 #
 # Start syslog daemon
 #
@@ -35,6 +56,9 @@ export Y2MAXLOGSIZE=50000
 export Y2MAXLOGNUM=5
 }
 
+
+# setup proxy
+set_proxy
 
 #
 # Special continue mode for configuring an already installed
