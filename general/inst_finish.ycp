@@ -434,6 +434,10 @@ Please wait while the base system is being installed.
 		WFM::Execute (.local.bash,
 			"echo -e '\n#3x' >> " + filename
 		);
+		SCR::Execute (.target.bash,"/bin/ln -sf " +
+			Installation::destdir + "/usr/X11R6/bin/XFree86 " +
+			Installation::destdir + "/var/X11R6/bin/X"
+		);
 		InjectFile ( filename );
 	}
 	} else {
