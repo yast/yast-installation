@@ -2,6 +2,11 @@
 <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
     xmlns:config="http://www.suse.com/1.0/configns">
 
+<!--
+Work around for the text domain
+textdomain="control"
+-->
+
     <textdomain>control</textdomain>
     <!-- global data to be set in the initial proposal -->
     <globals>
