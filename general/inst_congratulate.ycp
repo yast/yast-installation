@@ -93,7 +93,8 @@ after <b>Finish</b> is pressed. Note: The Control Center does not have a back bu
 return to this installation sequence.</p>
 ");
 
-    Wizard::SetContents (caption, contents, help, GetInstArgs::enable_back(), GetInstArgs::enable_next());
+    Wizard::SetContents (caption, contents, help, 
+            GetInstArgs::enable_back(), GetInstArgs::enable_next());
     Wizard::SetTitleIcon ("SuSEmenu");
 
     Wizard::SetNextButton(`next, Label::FinishButton() );

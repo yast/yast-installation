@@ -10,8 +10,10 @@
 <!ELEMENT arguments ( #PCDATA ) >
 
 <!ELEMENT base_selection ( #PCDATA ) >
+<!ELEMENT enable_back ( #PCDATA ) >
+<!ELEMENT enable_next ( #PCDATA ) >
 
-<!ELEMENT defaults ( arguments, archs ) >
+<!ELEMENT defaults ( archs?, arguments?, enable_back?, enable_next?) >
 
 <!ENTITY % y2_globals "language| keyboard| timezone| enable_autologin| runlevel
 | use_desktop_scheduler|io_scheduler|ui_mode" >
@@ -37,7 +39,7 @@
 
 <!ELEMENT mode ( #PCDATA ) >
 
-<!ENTITY % wf_module "archs | arguments | label | name | update | retranslate" >
+<!ENTITY % wf_module "archs | arguments| enable_back| enable_next | label | name | proposal | update | retranslate" >
 <!ELEMENT module (%wf_module;)* >
 
 <!ELEMENT modules ( module+ ) >
@@ -55,7 +57,7 @@
 
 
 
-<!ELEMENT proposal ( archs | locked_modules |  mode | proposal_modules | stage | type )* >
+<!ELEMENT proposal ( archs | enable_skip| locked_modules |  mode | name | proposal_modules | stage )* >
 <!ELEMENT proposal_modules (proposal_module+)>
 <!ATTLIST proposal_modules config:type NMTOKEN #FIXED "list" >
 <!ELEMENT locked_modules (proposal_module+)>
@@ -89,7 +91,7 @@
 <!ELEMENT update ( #PCDATA ) >
 <!ATTLIST update config:type NMTOKEN #FIXED "boolean" >
 
-<!ELEMENT workflow ( defaults | label | mode | modules | stage )* >
+<!ELEMENT workflow ( defaults? | label | mode | modules | stage )* >
 
 <!ELEMENT workflows ( workflow+ ) >
 <!ATTLIST workflows config:type NMTOKEN #FIXED "list" >

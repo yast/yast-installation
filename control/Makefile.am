@@ -25,3 +25,9 @@ install-data-local:
 	-install -d -m 755 $(DESTDIR)$(productdir)/control
 
 include $(top_srcdir)/Makefile.am.common
+
+
+validate:
+	trang -I rnc -O rng control.rnc control.rng
+	xmllint --relaxng control.rng control.PROF.xml --noout
+
