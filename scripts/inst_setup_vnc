@@ -1,5 +1,12 @@
 # vim: syntax=sh
 
+
+function turn_off_silent_splash()
+{
+    echo "verbose" > /proc/splash
+}
+
+
 # an empty password doesnt work(?), use "linux123" instead
 test -z "$VNCPassword" && VNCPassword=linux123
 
@@ -9,6 +16,8 @@ if [ ! -e /root/.vnc/passwd ]; then
 	/usr/X11R6/bin/vncpasswd.arg /root/.vnc/passwd "$VNCPassword" && echo OK || echo something went wrong with vncpasswd.arg...
 	chmod 600 /root/.vnc/passwd
 fi
+
+turn_off_silent_splash
 
 echo
 echo starting VNC server...
