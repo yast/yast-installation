@@ -38,6 +38,7 @@
 
     textdomain "installation";
 
+    string start_mode = Mode::mode;
 
     define symbol handle_boot () ``{
 
@@ -377,6 +378,12 @@ disk that will not boot. With this option, try to fix problems manually.
     }
 
     UI::CloseDialog();
+    if (Mode::mode != start_mode )
+    {
+        ProductControl::UpdateWizardSteps([$["stage":"initial","mode":Mode::mode], $["stage":"continue","mode":Mode::mode]]);
+        y2milestone("Switching Steps from %1 to %2 ", start_mode, Mode::mode);
+
+    }
 
     if (Mode::repair)
     {

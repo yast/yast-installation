@@ -713,7 +713,6 @@ To use the settings as displayed, press <b>Next</b>.
 
         if ( !Mode::live_eval )
         {
-            string start_mode = Mode::mode;
 	    while (true)
 	    {
 	        any ret = WFM::CallFunction ("inst_mode", []);
@@ -724,12 +723,6 @@ To use the settings as displayed, press <b>Next</b>.
 		if (ret != `again)
 		    break;
 	    }
-            if (Mode::mode != start_mode )
-            {
-                ProductControl::UpdateWizardSteps([$["stage":"initial","mode":Mode::mode], $["stage":"continue","mode":Mode::mode]]);
-                y2milestone("Switching Steps");
-
-            }
 	}
     }
 
