@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Sep 22 16:48:43 CEST 2004 - sh@suse.de
+
+- Made final installation confirmation dialog wider and higher
+  to avoid scrolling even for more verbose languages (de, fr) 
+- V 2.10.27
+
+-------------------------------------------------------------------
 Wed Sep 22 09:30:45 CEST 2004 - visnov@suse.cz
 
 - reinitialize dialog after mode chosen (#45784) 

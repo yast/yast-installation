@@ -180,10 +180,10 @@ according to the settings in the previous dialogs.</p>" )
 	UI::OpenDialog(
 		       `VBox(
 			     `VSpacing( 0.4 ),
-			     `HSpacing( 60 ),		// force width
+			     `HSpacing( 70 ),		// force width
 			     `HBox(
 				   `HSpacing( 0.7 ),
-				   `VSpacing( 12 ),	// force height
+				   `VSpacing( 15 ),	// force height
 				   `RichText( text ),
 				   `HSpacing( 0.7 )
 				   ),
