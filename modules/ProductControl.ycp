@@ -137,6 +137,9 @@ global define boolean Read( string controlfile) ``{
         ProductFeatures::software_proposal =
             software["software_proposal"]:"selection";
 
+        ProductFeatures::packages_transmogrify =
+            software["packages_transmogrify"]:"";
+ 
         // TODO: Temporary workaround. This should be checked in the control file
         if (Arch::i386 && issubstring(Product::distproduct, "DVD"))
         {
@@ -147,6 +150,7 @@ global define boolean Read( string controlfile) ``{
     if (haskey(productControl, "globals"))
     {
         globals = productControl["globals"]:$[];
+
         ProductFeatures::enable_autologin = globals["enable_autologin"]:true;
         ProductFeatures::language = globals["language"]:"";
         ProductFeatures::skip_language_dialog = globals["skip_language_dialog"]:false;
