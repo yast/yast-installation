@@ -1,3 +1,5 @@
+- don't check if module is present in initrd before loading it
+
 -------------------------------------------------------------------
 Fri Oct 24 15:58:50 CEST 2003 - ms@suse.de
 

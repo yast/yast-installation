@@ -14,7 +14,7 @@
     textdomain "installation";
 
     import "Mode";
-    import "Initrd";
+//    import "Initrd";
     import "Wizard";
     import "Label";
 
@@ -86,7 +86,9 @@
 			boolean ask_before_loading, boolean with_modprobe)
     ``{
 	if ((modulename != "")
-	    && (!contains (Initrd::ListModules (), modulename))
+// there is no reason for checking initrd, if I need the module to get loaded, I just  need to
+// check if it isn't already loaded
+//	    && (!contains (Initrd::ListModules (), modulename))
 	    && !Mode::test)
 	{
 	    // always look whether the module is already loaded
