@@ -1,13 +1,18 @@
 -------------------------------------------------------------------
+Wed Mar 24 16:10:31 CET 2004 - arvin@suse.de
+
+- renamed usbdevfs to usbfs (bug #31869)
+
+-------------------------------------------------------------------
 Wed Mar 24 15:07:03 CET 2004 - sh@suse.de
 
-- Fixed bug #36850: Strange texts in y2qt wizard side bar 
+- Fixed bug #36850: Strange texts in y2qt wizard side bar
 - V 2.9.42
 
 -------------------------------------------------------------------
 Wed Mar 24 11:13:46 CET 2004 - gs@suse.de
 
-- workaround beta3 pre bug: deactivate Hooks::Run 
+- workaround beta3 pre bug: deactivate Hooks::Run
   (causes crash after inst_finish)
 - V 2.9.41
 
@@ -21,7 +26,7 @@ Mon Mar 22 20:32:41 CET 2004 - nashif@suse.de
 Mon Mar 22 15:58:33 CET 2004 - sh@suse.de
 
 - V 2.9.39
-- Fixed bug #36292: Wizard steps not translated 
+- Fixed bug #36292: Wizard steps not translated
 - Preliminary fix for bug #36713: Use textdomain from XML file
 
 -------------------------------------------------------------------
