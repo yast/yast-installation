@@ -549,11 +549,10 @@ Please wait while the base system is being installed.
 	    // for s390:
 	    // Message that will be displayed along with information
 	    // how the boot loader was installed
-	    Misc::boot_msg = _("<p>
+	    Misc::boot_msg = _("
 Your system will now be shut down.
 After shutdown, reload the system
-with the load address of your <b>root DASD</b>.
-</p>
+with the load address of your root DASD.
 ");
 	}
 	else if (!Mode::hardBoot)
