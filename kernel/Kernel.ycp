@@ -108,7 +108,34 @@
 	  "info"
 	];
 
-	list cmdlist = splitstring (line, " ");
+	list(string) cmdlist = [];
+
+	integer parse_index = 0;
+	boolean in_quotes = false;
+	boolean after_backslash = false;
+	string current_param = "";
+	while (parse_index < size (line))
+	{
+	    string current_char = substring (line, parse_index, 1);
+	    if (current_char == "\"" && ! after_backslash)
+		in_quotes = ! in_quotes;
+	    if (current_char == " " && ! in_quotes)
+	    {
+		cmdlist = add (cmdlist, current_param);
+		current_param = "";
+	    }
+	    else
+		current_param = current_param + current_char;
+	    if (current_char == "\\")
+		after_backslash = true;
+	    else
+		after_backslash = false;
+	    parse_index = parse_index + 1;
+	}
+	cmdlist = add (cmdlist, current_param);
+
+//	this is wrong because of eg. >>o="p a r a m"<<, see bugzilla 26147
+//	list cmdlist = splitstring (line, " ");
 
 	// some systems (pseries) can autodetect the serial console
 	if (contains (cmdlist, "AUTOCONSOLE"))
