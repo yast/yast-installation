@@ -141,6 +141,19 @@ global define boolean Read( string controlfile) ``{
         ProductFeatures::packages_transmogrify =
             software["packages_transmogrify"]:"";
  
+        /*
+         *  Kernel dependent packages, i.e. if xxx is given, xxx-smp will be installed
+         *  in case of an SMP system
+         */
+        ProductFeatures::kernel_packages = software["kernel_packages"]:[];
+
+        /*
+         *  Additional packages which are not in any selection
+         */
+        ProductFeatures::packages = software["packages"]:[];
+
+        
+        
         // TODO: Temporary workaround. This should be checked in the control file
         if (Arch::i386 () && issubstring(Product::distproduct, "DVD"))
         {

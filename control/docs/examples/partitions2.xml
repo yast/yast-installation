@@ -19,7 +19,7 @@
                 <fsys>reiser</fsys>
                 <increasable config:type="boolean">true</increasable>
                 <mount>/var</mount>
-                <pct config:type="integer">100</pct>
+                <percent config:type="integer">100</percent>
                 <size>2gb</size>
             </partition>
         </partitions>
