@@ -35,6 +35,7 @@
     import "StorageDevices";
     import "Misc";
     import "Keyboard";
+    import "Packages";
 
     import "Wizard";
     import "Report";
@@ -621,6 +622,13 @@ will look different than in the manual.");
 	}
 	else if (result == `abort)
 	{
+	    // disable all sources
+	    foreach (`src, Packages::theSources, ``{
+		Pkg::SourceFinish (src);
+	    });
+	    Pkg::TargetFinish ();
+
+	    // tell linuxrc that we aborted
 	    Misc::WriteYaSTInf($["Aborted" : "1"]);
 	    break;
 	}
