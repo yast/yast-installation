@@ -184,8 +184,8 @@ Please wait while the base system is being installed.
     if (SCR::Read (.target.size, "/proc/sgi_sn") > 0)
     {
 	y2milestone ("found SGI Altix, adding fetchop and mmtimer");
-	Kernel::AddModulesToLoad ("fetchop");
-	Kernel::AddModulesToLoad ("mmtimer");
+	Kernel::AddModuleToLoad ("fetchop");
+	Kernel::AddModuleToLoad ("mmtimer");
     }
 
 
