@@ -103,7 +103,7 @@
 
 		map current_options = SCR::Read (add (.modules.options, mname));
 
-		map new_options = Misc::MergeOptions (options, current_options);
+		map new_options = Misc::SplitOptions (options, current_options);
 
 		SCR::Write (add (.modules.options, mname), new_options);
 		modules_conf_changed = true;
