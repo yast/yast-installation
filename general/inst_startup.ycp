@@ -33,8 +33,6 @@
     import "Wizard";
     import "Report";
 
-
-    include "installation/dialogs.ycp";
     y2milestone("inst_startup START");
 
 
@@ -73,13 +71,6 @@
 	if ( popup_open )
 	    UI::CloseDialog();
     };
-
-
-
-    if ( Mode::initial )
-    {
-	Wizard::SetEasyInstallationStep( EasyInstallationStepDescriptions(), 2 );
-    }
 
 
     // --------------------------------------------------------------

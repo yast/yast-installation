@@ -25,7 +25,7 @@ textdomain="control"
     <proposals config:type="list">
         <proposal>
             <!-- installation, autoinst, update, repair, etc. -->
-            <mode>installation</mode>
+            <mode>installation,demo</mode>
             <!-- initial or continue -->
             <stage>initial</stage>
             <!-- Type of proposal, initial, hardware, network -->
@@ -122,7 +122,7 @@ textdomain="control"
         </proposal>
         <proposal>
             <type>network</type>
-            <stage>continue</stage>
+            <stage>continue,normal</stage>
             <proposal_modules config:type="list">
                 <proposal_module>lan</proposal_module>
                 <proposal_module>dsl</proposal_module>

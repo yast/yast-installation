@@ -94,11 +94,6 @@ global define boolean Read( string controlfile) ``{
   */
 global define void ProductControl() ``{
 
-    if (Mode::update)
-        Mode::mode="update";
-
-    if (Mode::normal)
-        Mode::stage ="normal";
 
     boolean ret = false;
     if (Mode::initial)
@@ -225,15 +220,71 @@ global define map getModeDefaults(string stage, string mode)
  * @param string mode
  * @return list<map> modules
  */
-global define list getModules(string stage, string mode)
+global define list<map> getModules(string stage, string mode)
 ``{
     map workflow = select(filter(map wf, workflows, ``(
                 wf["stage"]:"" == stage && wf["mode"]:"" == mode
                     )), 0 , $[] );
     list<map> modules = workflow["modules"]:[];
+    integer id = 1;
+    modules = maplist(map m, modules, ``{
+            m["id"] = sformat("%1_%2", stage, id);
+            id = id + 1;
+            return (m);
+            });
     return modules;
 }
 
+/**
+ * Get Workflow Label
+ * @param string stage
+ * @param string mode
+ * @return string
+ */
+global define string getWorkflowLabel(string stage, string mode)
+``{
+    map workflow = select(filter(map wf, workflows, ``(
+                wf["stage"]:"" == stage && wf["mode"]:"" == mode
+                    )), 0 , $[] );
+    return workflow["label"]:"";
+
+}
+
+
+
+
+boolean Check(string allowed, string current) {
+    list<string> allowedlist = filter(string s, splitstring(deletechars(allowed, " "), ","), ``(s!=""));
+    if (size(allowedlist) == 0 )
+        return true;
+    else if (contains(allowedlist, current ))
+        return true;
+    else
+        return false;
+}
+
+
+
+global define void AddWizardSteps(list<string> stages, string mode) ``{
+        string first_id = "";
+        foreach (string stage , stages, ``{
+                string slabel = getWorkflowLabel(stage, mode);
+                UI::WizardCommand(`AddStepHeading( slabel ) );
+                foreach(map m, getModules(stage, mode), ``{
+                    if (m["label"]:"" != "") {
+                    if (first_id=="")
+                    {
+                        first_id = m["id"]:"";
+                    }
+                    UI::WizardCommand(`AddStep( m["label"]:"",     m["id"]:"" ) );
+                    }
+                    });
+        });
+
+        UI::WizardCommand(`SetCurrentStep( first_id ) );
+    return;
+
+}
 
 
 /**
@@ -247,12 +298,11 @@ global define list<string> getProposals(string stage, string mode, string propty
     // First we search for proposals for current stage if there are
     // any. (initial or continue)
 
-    list<map> props = filter(map p, proposals, ``(
-                    p["stage"]:"" == stage || p["stage"]:"" == "" ));
+    list<map> props = filter(map p, proposals, ``(Check(p["stage"]:"", stage)));
 
     // Then we check for mode: installation or update
     props = filter(map p, props, ``(
-                    p["mode"]:"" == mode || p["mode"]:"" == ""));
+                    Check(p["mode"]:"", mode)));
 
     // Now we check for architecture
     y2debug("Architecture: %1", Arch::architecture );
