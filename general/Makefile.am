@@ -5,6 +5,7 @@ SUBDIRS = testsuite
 client_DATA =					\
 	inst_info.ycp				\
 	inst_startup.ycp			\
+	inst_features.ycp			\
 	inst_mode.ycp				\
 	inst_doit.ycp				\
 	inst_finish.ycp				\
