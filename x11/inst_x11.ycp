@@ -19,12 +19,23 @@ STATUS        : Development
     import "Mode";
     import "Arch";
 
+
     //==========================================
     // Check if X11 is installed
     //------------------------------------------
     if (X11Version::have_x11() && Mode::x11_setup_needed && Arch::x11_setup_needed)
     {
-	return WFM::CallFunction (`x11 (true, true));
+	any ret = WFM::CallFunction (`x11 (true, true));
+
+	// Set default runlevel to 3 if X11 is unconfigured
+	if (SCR::Read (.target.size, "/etc/X11/XF86Config") <= 0)
+	{
+	    y2milestone ("setting default runlevel to 3");
+	    SCR::Write (.etc.inittab.id, "3:initdefault:");
+	    SCR::Write (.etc.inittab, nil);
+	}
+
+	return ret;
     }
     else
     {
