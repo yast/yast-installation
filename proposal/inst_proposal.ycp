@@ -395,7 +395,7 @@
 	// in normal mode we don't want to switch between installation and update
 	if (Mode::normal)
 	{
-	    submodules = filter (string v, submodules, ``(v != "proposal_mode"));
+	    submodules = filter (string v, submodules, ``(v != "mode_proposal"));
 	}
 
 	return submodules;
