@@ -119,9 +119,12 @@
 	have_linux = true;
     }
 
+    if (Mode::autoinst ())
+    {
+	return `auto;
+    }
 
-    if (!called_from_ask_user && (!offer_update || !have_linux) ||
-	Mode::autoinst ())
+    if (!called_from_ask_user && (!offer_update || !have_linux))
     {
 	// Initially force new installation , no update possible
 	Mode::SetMode ("installation");
