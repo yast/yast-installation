@@ -26,7 +26,7 @@
 .proc.modules
 
 `ag_anyagent(
-  Description (
+  SCR::AnyAgent (
   ``(File("/proc/modules")),	// real file name
   "#\n",			// Comment
   true,				// read-only

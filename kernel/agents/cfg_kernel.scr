@@ -13,5 +13,5 @@
 .sysconfig.kernel
 
 `ag_ini(
-  SysConfigFile("/etc/sysconfig/kernel")
+  SCR::SysConfigFile("/etc/sysconfig/kernel")
 )

@@ -37,7 +37,7 @@
 .descr.info
 
 `ag_anyagent(
-  Description (
+  SCR::AnyAgent (
     ``(File("/var/adm/mount/suse/setup/descr/info")),	// real file name
       "#\n",				// Comment
       true,				// read-only

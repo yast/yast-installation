@@ -47,7 +47,7 @@
 .proc.cpuinfo
 
 `ag_anyagent(
-  Description (
+  SCR::AnyAgent (
   ``(File("/proc/cpuinfo")),	// real filename
   "#\n",			// Comment
   true,				// read-only
