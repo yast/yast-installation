@@ -64,7 +64,7 @@
 	// Fill return map
 
 	ret = $[ "workflow_sequence" : result,
-		 "proposal_changed" : true ];
+		 "mode_changed" : true ];
     }
     else if ( func == "Description" )
     {

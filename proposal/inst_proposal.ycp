@@ -89,7 +89,7 @@
 	map     ask_user_result   = WFM::CallFunction( submod, [ "AskUser", $[ "has_next": false] ] );
 	symbol  workflow_sequence = ask_user_result["workflow_sequence"]:`next;
 	boolean language_changed  = ask_user_result["language_changed"]:false;
-	boolean proposal_changed  = ask_user_result["proposal_changed"]:false;
+	boolean mode_changed      = ask_user_result["mode_changed"]:false;
 
 	if (    workflow_sequence != `cancel
 	     && workflow_sequence != `back
@@ -100,7 +100,7 @@
 		retranslate_proposal_dialog();
 	    }
 
-	    if (proposal_changed)
+	    if (mode_changed)
 	    {
 		submodules = load_matching_submodules_list();
 		if (!get_submod_descriptions_and_build_menu ())
@@ -407,8 +407,11 @@
 					       [
 						// Fallback list
 						"proposal_mode",
+						"proposal_rootpart",
+						"proposal_update",
+						"proposal_packages",
 						"proposal_backup",
-						"proposal_rootpart"
+						"proposal_language"
 						]
 					       );
 	}
@@ -681,10 +684,7 @@
 	    }
 	});
 
-	submodules = new_submodules; // maybe some submodules are not installed
-
-	// For future use:
-	// menu_list = add( menu_list, `item(`id(`change_everything), "Change &everything..." ) );
+	submodules = new_submodules;	// maybe some submodules are not installed
 
 	menu_list = add( menu_list, `item(`id(`reset_to_defaults), _("&Reset to defaults") ) );
 	UI::ReplaceWidget(`id(`rep_menu), `MenuButton(`id(`menu), _("&Change..."), menu_list ) );

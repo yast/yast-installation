@@ -296,10 +296,11 @@ fix problems manually.
 		Mode::installation = false;
 
 	        y2milestone( "User wishes to boot installed system" );
+		Update::FindRootPartitions ();
 
 		UI::CloseDialog(); // close the inst_mode dialog
 		Wizard::OpenNextBackDialog();
-		ret = WFM::CallFunction( `inst_rootpart( true, true ) );
+		ret = WFM::CallFunction( `inst_rootpart( true, true, true ) );
 		Wizard::CloseDialog();
 
 		if ( ret == `abort && WFM::CallFunction(`inst_confirm_abort(`painless) ) )
