@@ -35,7 +35,7 @@ eval $(grep ': ' /etc/install.inf | sed -e 's/"/"\\""/g' -e 's/:  */="/' -e 's/$
 # set language
 infofile=/content
 [ -f $infofile ] && LANGUAGE=`sed -n 's/^LANGUAGE \([^ ]*\)/\1/p' $infofile`
-[ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}.UTF-8"
+[ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}"
 
 # umount does not work with low memory since rootfs is still in use
 umount /var/adm/mount &>/dev/null
