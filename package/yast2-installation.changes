@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Aug 13 22:12:31 CEST 2004 - nashif@suse.de
+
+- Fixed update (#43795)
+
+-------------------------------------------------------------------
 Wed Aug 11 18:03:11 CEST 2004 - nashif@suse.de
 
 - Copy EULA to installed system for later use in firstboot module
