@@ -30,7 +30,7 @@
     import "StorageDevices";
     import "Storage";
     import "Boot";
-    import "Kernel";
+    import "Kernel";		// call constructor, extract cmdline
     import "Wizard";
 
     include "ui/common_popups.ycp";
@@ -195,13 +195,6 @@ Please check your hardware!
     {
 	// disable automatic probing
 	SCR::Execute (.target.bash, "/bin/echo \"/etc/nothing\" >/proc/sys/kernel/modprobe");
-    }
-
-    // mount first installation medium if not done by linuxrc
-
-    if (!Mode::sourcemounted)
-    {
-	MediaUI::ChangeMedium (1,true);
     }
 
     clearFeedback();

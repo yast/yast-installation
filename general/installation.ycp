@@ -122,6 +122,10 @@
 
 	UI::SetLanguage (Language::language, Installation::encoding);
 	WFM::SetLanguage (Language::language, "UTF-8");
+
+
+	if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_initial.ycp") > 0)
+	    WFM::CallFunction (product_initial());
     }
 
     // Properly setup timezone for continue mode.
@@ -130,6 +134,9 @@
     {
 	import "Timezone";
 	Timezone::Set( Timezone::timezone );
+
+	if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_continue.ycp") > 0)
+	    WFM::CallFunction (product_continue());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -300,7 +307,7 @@
 	    // FIXME !!
 
 	    SCR::Execute(.target.mount, [StorageDevices::FloppyDevice, "/media/floppy"], "-t auto");
-	   
+
 	    // Check for autoinst.xml. if available
 	    // set mode to autoinst. Later, the file is parsed and installation
 	    // is performed automatically.
@@ -312,26 +319,35 @@
 		// initialize Report behaviour
 		// Default in autoinst mode is showing messages and warnings with timeout of 10 sec.
 		// Errors are shown without timeout.
-	
+
 		Report::DisplayErrors(true, 10);
 		Report::DisplayMessages(true, 10);
 		Report::DisplayWarnings(true, 10);
-	
+
 	    }
 	    SCR::Execute(.target.umount, "/media/floppy");
 	}
 
 	//////////////////////////////////////////////////////////////
-	// Show warning, if existent.
+	// Show info, if existent.
 
-	string	warnfile = Installation::sourcedir+"/README.BETA";
-	string	warning	 = SCR::Read(.target.string, [warnfile, ""]);
+	string infofile = "/info.txt";		// copied there by linuxrc
+	string infotext = SCR::Read (.target.string, [infofile, ""]);
 
-	
-	if (warning != "")
+	if (infotext != "")
 	{
-	    Mode::beta = true;
-	    Report::Warning (warning);
+	    UI::OpenDialog (`HBox (`VSpacing (20),
+				   `VBox (`HSpacing (60),
+					  `VSpacing (0.2),
+					  `RichText (`opt(`plainText), infotext),
+					  `PushButton (`id(`ok), `opt(`default),
+						       OKButtonLabel())
+					  )
+				   )
+			    );
+	    UI::SetFocus (`id(`ok));
+	    UI::UserInput ();
+	    UI::CloseDialog ();
 	}
     }
 
@@ -411,7 +427,7 @@ will look different than in the manual.");
 [
  [ `initial,  `inst_language	    (false, true, true), true,						! autoinst			, false],
  [ `initial,  `inst_startup	    (false, true),       true,						  autoinst                      , false],
- [ `initial,  `autoinst_init	    (false, false),      true,			! test_mode &&		  autoinst			, false], 
+ [ `initial,  `autoinst_init	    (false, false),      true,			! test_mode &&		  autoinst			, false],
  [ `initial,  `autoinst_setup	    (false, false),      true,			! test_mode &&		  autoinst			, false],
  //---------------------------------------------------------------------------------------------------------------------------------------------------
  [ `initial,  `inst_proposal	    (true,  true),       true,			true							, false],
@@ -572,8 +588,7 @@ will look different than in the manual.");
     // re-enable automatic probing
     WFM::Execute (.local.bash, "/bin/echo \"/sbin/modprobe\" >/proc/sys/kernel/modprobe");
 
-    if (Mode::cont
-	&& result == `finish)
+    if (Mode::cont)
     {
 	// remove /etc/install.inf, not needed any more
 	SCR::Execute (.target.remove, "/etc/install.inf");
@@ -583,6 +598,9 @@ will look different than in the manual.");
 	    SCR::Execute(.target.bash, "/bin/rm -rf /var/adm/current_package_descr");
 	}
 	SCR::Execute(.target.remove, "/var/lib/YaST2/runme_at_boot");
+
+	if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_post.ycp") > 0)
+	    WFM::CallFunction (product_post(Mode::update));
     }
 
     // stop packagemanager

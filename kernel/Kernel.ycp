@@ -52,6 +52,12 @@
 
     global list kernel_packages = [];
 
+    /**
+     * @return  if "suse_update" given in cmdline
+     */
+
+    global boolean suse_update = false;
+
     //---------------------------------------------------------------
     // local defines
 
@@ -99,6 +105,20 @@
 	];
 
 	list cmdlist = splitstring (line, " ");
+
+	// some systems (pseries) can autodetect the serial console
+	if (contains (cmdlist, "AUTOCONSOLE"))
+	{
+	    discardlist = add (discardlist, "console");
+	    discardlist = add (discardlist, "AUTOCONSOLE");
+	}
+
+	// backdoor to re-enable update on UL/SLES
+	if (contains (cmdlist, "suse_update"))
+	{
+	    discardlist = add (discardlist, "suse_update");
+	    suse_update = true;
+	}
 
 	foreach (`parameter, cmdlist,
 	``{
@@ -293,9 +313,9 @@
 	}
 	else if (Arch::s390)
 	{
-	    binary = "zilo-kernel/image";
+	    binary = "none";				// not required on S390
 	    kernel_packages = ["k_deflt"];
-	    switched = false;
+	    switched = true;				// force reboot
 	}
 
 	y2milestone("Kernel determined: %1", kernel_packages);

@@ -9,92 +9,143 @@
 
 {
 
-module "Product";
-import "Mode";
+    module "Product";
+    import "Mode";
 
-/**
- * General product name
- */
-global string name		= "SuSE Linux";
-
-/**
- * Distribution: Personal, Professional, etc.
- */
-global string dist		= "";
-
-/**
- * true if IMAP server
- */
-global boolean imap_server	= false;
-
-/**
- * true if Open Team server
- */
-global boolean openteam_server	= false;
-
-/**
- * true if Firewall Admin
- */
-global boolean fwadmin_host	= false;
-
-/**
- * true if SLES server
- */
-global boolean sles_server	= false;
-
-/**
- * true if SLCS server
- */
-global boolean slcs_server	= false;
-
-/**
- * true for Certification CD
- */
-global boolean certify_cd	= false;
-
-/**
- * true for general product CD
- */
-global boolean product_cd	= false;
-
-/**
- * true for SuSE Linux Professional
- */
-global boolean professional	= false;
-
-/**
- * true for SuSE Linux Personal
- */
-global boolean personal		= false;
-
-/**
- * Constructor
- */
-global define void Product () ``{
-
-    map productdata	= Pkg::SourceProductData(0);	// get _last_ installed product
-    name		= productdata["productname"]:"";
-    imap_server		= (name == "eMail Server");
-    openteam_server	= (name == "Open Team Server");
-    sles_server		= (name == "SusE SLES");
-    slcs_server		= (name == "SusE SLCS");
-    fwadmin_host	= (name == "SuSE Firewall Adminhost");
-    certify_cd		= (name == "Certification CD");
-
-    string rawdist	= productdata["baseproductname"]:"";
-    dist		= select (splitstring(rawdist,"-"),2,"");
-
-    // FIXME
-    professional	= (dist == "Professional");
-    personal		= (dist == "Personal");
-
-    /* handle live cd and certification cd as product cd,
-     * will disable software selection dialog
+    /**
+     * General product name and version
      */
+    global string name		= "";			// "SuSE Linux"
+    global string version	= "";			// "8.1"
+    global string vendor	= "";			// "SuSE Linux AG"
 
-    product_cd	   = Mode::live_eval
-			 || certify_cd
-			 || (name == "Product CD");
+    /**
+     * Distribution: Personal, Professional, etc.
+     */
+    global string dist		= "";
+    global string distproduct	= "";			// "SuSE-Linux-Professional-INT-i386"
+    global string distversion	= "";			// "8.1-0"
+
+    /**
+     * base product
+     *
+     */
+    global string baseproduct	= "";			// "UnitedLinux"
+    global string baseversion	= "";			// "1.0"
+
+    /**
+     * true if IMAP server
+     */
+    global boolean imap_server	= false;
+
+    /**
+     * true if Open Team server
+     */
+    global boolean openteam_server	= false;
+
+    /**
+     * true if Firewall Admin
+     */
+    global boolean fwadmin_host	= false;
+
+    /**
+     * true if SLES server
+     */
+    global boolean sles_server	= false;
+
+    /**
+     * true if SLCS server
+     */
+    global boolean slcs_server	= false;
+
+    /**
+     * true for Certification CD
+     */
+    global boolean certify_cd	= false;
+
+    /**
+     * true for general product CD
+     */
+    global boolean product_cd	= false;
+
+    /**
+     * true for SuSE Linux Professional
+     */
+    global boolean professional	= false;
+
+    /**
+     * true for SuSE Linux Personal
+     */
+    global boolean personal	= false;
+
+    /**
+     * true for UnitedLinux
+     */
+    global boolean unitedlinux	= false;
+
+    /**
+     * true for 'box' product
+     */
+    global boolean box		= false;
+
+    // -----------------------------------------------
+    /**
+     * Constructor
+     */
+    global define void Product () ``{
+
+
+	if (Mode::initial)
+	{
+	    name		= SCR::Read(.content.PRODUCT);
+	    version		= SCR::Read(.content.VERSION);
+	    vendor		= SCR::Read(.content.VENDOR);
+
+	    distproduct		= SCR::Read(.content.DISTPRODUCT);
+	    distversion		= SCR::Read(.content.DISTVERSION);
+
+	    baseproduct		= SCR::Read(.content.BASEPRODUCT);
+	    if (baseproduct == "") baseproduct = name;
+	    baseversion		= SCR::Read(.content.BASEVERSION);
+	}
+	else
+	{
+	    Pkg::TargetInit ("/", false);
+	    list all_products = Pkg::TargetProducts();		// get all products
+
+	    map last_product = all_products[0]:$[];		// get last installed product
+
+	    name		= last_product["name"]:"";
+	    version		= last_product["version"]:"";
+	    vendor		= last_product["vendor"]:"";
+	    distproduct		= last_product["distproduct"]:"";
+	    distversion		= last_product["distversion"]:"";
+	    baseproduct		= last_product["baseproduct"]:"";
+	    if (baseproduct == "") baseproduct = name;
+	    baseversion		= last_product["baseversion"]:"";
+	}
+
+	imap_server	= (name == "eMail Server");
+	openteam_server	= (name == "Openexchange Server");
+	sles_server	= (name == "SusE SLES");
+	slcs_server	= (name == "SusE SLCS");
+	fwadmin_host	= (name == "SuSE Firewall Adminhost");
+	certify_cd	= (name == "Certification CD");
+
+	dist		= select (splitstring(distproduct, "-"), 2, "");
+
+	professional	= (dist == "Professional");
+	personal	= (dist == "Personal");
+	box		= (personal || professional);
+	unitedlinux	= (name == "UnitedLinux");
+ 
+	/* handle live cd and certification cd as product cd,
+	 * will disable software selection dialog
+	 */
+
+	product_cd	= Mode::live_eval
+			  || certify_cd
+			  || (name == "Product CD");
 
 }
 

@@ -30,31 +30,15 @@ if [ -x /update/install/update.pre ] ; then
 fi
 
 # source install.inf, setting a variable $Moo=... for each line Moo: ...
-eval $(grep ': ' /etc/install.inf |
-    sed -e 's/"/"\\\\""/g
-    s/:  */="/
-    s/$/"/')
+eval $(grep ': ' /etc/install.inf | sed -e 's/"/"\\""/g' -e 's/:  */="/' -e 's/$/"/')
 
-# !!! won't work with FTP installs !!!
-if [ "$Sourcemounted" != 1 ] ; then
-  if [ "$Bootmode" = Net ] ; then
-    mount "$Server:$Serverdir" /var/adm/mount
-  fi
-  if [ "$Bootmode" = CD ] ; then
-    mount "/dev/$Cdrom" /var/adm/mount
-  fi
-  if [ "$Bootmode" = DVD ] ; then
-    mount "/dev/$Cdrom" /var/adm/mount
-  fi
-  if [ "$Bootmode" = Harddisk ] ; then
-    mount $Partition /var/adm/mount
-  fi
-fi
-
-infofile=/var/adm/mount/content
+# set language
+infofile=/content
 [ -f $infofile ] && LANGUAGE=`sed -n 's/^LANGUAGE \([^ ]*\)/\1/p' $infofile`
-
 [ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}.UTF-8"
+
+# umount does not work with low memory since rootfs is still in use
+umount /var/adm/mount &>/dev/null
 
 grep -iq iseries /proc/cpuinfo || { echo >/dev/tty10 ; }
 for i in \
@@ -78,11 +62,11 @@ test -d /proc/iSeries -a ! -e /tmp/vnc_installation && {
   echo "TERM: $TERM" >> /etc/install.inf
 }
 
-# p690 hvc console needs vt220
+# p690 hvc console needs vt320, it is handled as serial console installation
 grep -qi console=hvc < /proc/cmdline && {
-echo "Console: hvc0" >> /etc/install.inf
+echo "Console: hvc0,9600" >> /etc/install.inf
 export HVC_CONSOLE_HINT="  (recommended with p690 hvc console)"
-export Console=hvc
+export Console=hvc0,9600
 }
 
 if [ ! -z "$Console" -a -z "$AutoYaST" ] ; then

@@ -26,6 +26,7 @@
 
     include "partitioning/partition_defines.ycp";
     import "Storage";
+    import "Kernel";
     import "Update";
 
     textdomain "installation";
@@ -45,7 +46,6 @@
 	 || Mode::autoinst
 	 || Mode::live_eval
 	 || Product::certify_cd
-	 || Arch::s390
 	 || Product::imap_server
 	 || Product::openteam_server
 	 || Product::fwadmin_host )
@@ -72,6 +72,15 @@ to boot the installed system or to update it.
 	return `auto;
     }
 
+    //---------------------------------------------------------------
+
+    boolean offer_update = false;
+
+    if (Product::box			// "Personal" or "Professional"
+	|| Kernel::suse_update)		// or "suse_update" given in cmdline
+    {
+	offer_update = true;		// -> offer update
+    }
 
     // help text for installation method
     string help_text =_("\
@@ -100,13 +109,16 @@ system on your machine or if you want to replace an existing SuSE
 Linux system completely, abandoning all its configuration data.
 </p>");
 
-    // help text for installation method
-    help_text = help_text + _("\
+    if (offer_update)
+    {
+	// help text for installation method
+	help_text = help_text + _("\
 <p>
 Select <b>update an existing system</b> to upgrade a SuSE Linux system
 already installed on your machine. This option will preserve
 configuration settings from your existing system whenever possible.
 </p>");
+    }
 
     // help text for installation method
     help_text = help_text + _("<p>
@@ -121,16 +133,19 @@ fix problems manually.
 		    `VSpacing(0.4),
 		    `Left(`RadioButton(`id(`install),
 				       // label for radio button 1, New installation
-				       _("New &installation"), ! Mode::update ) ),
-		    `VSpacing(0.2),
-		    `Left(`RadioButton(`id(`update),
+				       _("New &installation"), ! Mode::update ) ));
+    if (offer_update)
+    {
+	radio_buttons = add (radio_buttons, `VSpacing(0.2));
+	radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`update),
 				       // label for radio button 2, update
-				       _("&Update an existing system"), Mode::update )),
-		    `VSpacing(0.2),
-		    `Left(`RadioButton(`id(`boot),
+				       _("&Update an existing system"), Mode::update )));
+    }
+
+    radio_buttons = add (radio_buttons, `VSpacing(0.2));
+    radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`boot),
 				       // label for radio button 3: Boot installed system
-				       _("&Boot installed system"), false ) )
-		    );
+				       _("&Boot installed system"), false ) ));
 
     if ( ! called_from_ask_user )
     {
@@ -277,10 +292,6 @@ fix problems manually.
 		Mode::update = true;
 		Mode::installation = false;
 
-		map targetMap = Storage::GetTargetMap();
-		targetMap  = Storage::GetLvmMdSystemInfo( targetMap );
-		Storage::SetTargetMap( targetMap );
-
 		UI::CloseDialog(); // close the inst_mode dialog
 		ret = WFM::CallFunction( `inst_updateControl() );
 
@@ -308,10 +319,6 @@ fix problems manually.
 		Mode::installation = false;
 
 	        y2milestone( "User wishes to boot installed system" );
-
-		map targetMap = Storage::GetTargetMap();
-		targetMap  = Storage::GetLvmMdSystemInfo( targetMap );
-		Storage::SetTargetMap( targetMap );
 
 		UI::CloseDialog(); // close the inst_mode dialog
 		Wizard::OpenNextBackDialog();
