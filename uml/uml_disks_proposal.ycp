@@ -54,7 +54,8 @@
 	//
 	// sequence = DummyMod::AskUser( has_next );
 
-	symbol result = (symbol) WFM::CallFunction ("inst_uml_disks", [true, has_next]);
+	symbol result = (symbol) WFM::CallFunction ("inst_uml_disks",
+						    [true, has_next]);
 
 	// Fill return map
 
