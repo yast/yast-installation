@@ -26,6 +26,15 @@ touch /etc/modules.conf
 
 test -x /etc/init.d/syslog && /etc/init.d/syslog start
 
+#
+# enable debugging options
+#
+grep -iq < /proc/cmdline debug && {
+export Y2DEBUG=1
+export Y2MAXLOGSIZE=50000
+export Y2MAXLOGNUM=5
+}
+
 # Touch info dir. SuSEconfig probably should regenerated some
 # indices
 
