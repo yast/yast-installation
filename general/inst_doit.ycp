@@ -183,7 +183,7 @@ according to the settings in the previous dialogs.</p>" )
 			     `HSpacing( 70 ),		// force width
 			     `HBox(
 				   `HSpacing( 0.7 ),
-				   `VSpacing( 15 ),	// force height
+				   `VSpacing( 18 ),	// force height
 				   `RichText( text ),
 				   `HSpacing( 0.7 )
 				   ),

@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Sep 30 15:12:09 CEST 2004 - sh@suse.de
+
+- V 2.10.30
+- Made final confirmation popup higher to accomodate all text
+  without scrolling even in more verbose languages (de, fr) 
+
+-------------------------------------------------------------------
 Wed Sep 29 14:13:35 CEST 2004 - mls@suse.de
 
 - stop splash animation before starting yast
