@@ -32,6 +32,7 @@
     boolean onlyKernelUpdate = false;
     if (Mode::normal)
     {
+	import "Kernel";
 	onlyKernelUpdate = Kernel::switched;		// see update/inst_rpmupdate.ycp
     }
 
