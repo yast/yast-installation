@@ -254,17 +254,39 @@ Please wait while the base system is being installed.
     list ide_recorders = StorageDevices::ProbeIDERecorders ();
     Kernel::IDERecorders (ide_recorders);
 
-    if (Kernel::switched || AutoInstall::Reboot)
+    if ( Kernel::switched )
     {
 	linuxrc["Root"] = "reboot";
-	if (Mode::autoinst)
-	    linuxrc["RebootMsg"] = "0";
-	else
-	    linuxrc["RebootMsg"] = "1";
+    linuxrc["RebootMsg"] = "1";
 
 	Mode::hardBoot = true;
     }
 
+    // Override linuxrc settings in autoinst mode
+
+    if ( Mode::autoinst )
+    {
+	if (AutoInstall::ForceBoot && Mode::hardBoot)
+	{
+	    linuxrc["Root"] = Boot::RootPartitionDevice;
+	}
+	if (AutoInstall::Reboot && !Mode::hardBoot)
+	{
+	    linuxrc["Root"] = "reboot";
+	    Mode::hardBoot = true;
+	}
+	
+	if (AutoInstall::RebootMsg)
+	{
+	    linuxrc["RebootMsg"] = "1";
+	}
+	else
+	{
+	    linuxrc["RebootMsg"] = "0";
+	}	    
+	
+    }
+    
     // --------------------------------------------------------------
     // mount the installation image on the target.
     // Inform YaST1 about the installation image.
