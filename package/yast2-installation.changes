@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Aug 06 09:37:19 CEST 2003 - arvin@suse.de
+
+- don't copy kernel config from to /usr/src/linux (bug #28496)
+
+-------------------------------------------------------------------
 Fri Aug 01 20:10:11 CEST 2003 - arvin@suse.de
 
 - call inst_netprobe during install

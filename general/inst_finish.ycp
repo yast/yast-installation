@@ -431,10 +431,6 @@ Please wait while the base system is being installed.
     Progress::Title(_("Copying configuration files to installed system"));
 
     // --------------------------------------------------------------
-    // Copy kernel config
-    Kernel::CopyConfig ();
-
-    // --------------------------------------------------------------
     // Copy /etc/XF86Config into built system so that the
     // second phase of the installation can find it.
 	X11Version::GetX11Link();
