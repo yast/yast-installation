@@ -51,6 +51,7 @@
     import "Update";
     import "Vendor";
     import "X11Version";
+    import "Linuxrc";
 
     // collect data for linuxrc, will be written to /etc/yast.inf
     map<string,string> linuxrc = $[];
@@ -591,7 +592,7 @@ with the load address of your root DASD.
     linuxrc["Language"] = Language::language;
     linuxrc["Keytable"] = Keyboard::keymap;
 
-    Misc::WriteYaSTInf (linuxrc);
+    Linuxrc::WriteYaSTInf (linuxrc);
 
     //--------------------------------------------------------------
     // Install bootloader (always, see #23018)

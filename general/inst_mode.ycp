@@ -35,6 +35,7 @@
     import "Kernel";
     import "RootPart";
     import "Update";
+    import "Linxurc";
 
     textdomain "installation";
 
@@ -87,8 +88,7 @@
 
 	if ( ! Mode::test )
 	{
-	    import "Misc";
-	    Misc::WriteYaSTInf ($["Root" : root_part]);
+	    Linuxrc::WriteYaSTInf ($["Root" : root_part]);
 
 	    SCR::Write(.md.activate, "");
 	    SCR::Write(.lvm.activate, "");
