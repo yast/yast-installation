@@ -22,7 +22,7 @@
 .run.get.suseconfig.modules
 
 `ag_anyagent(
-	     Description (
+   SCR::AnyAgent (
 			  ``( Run( "		\
 cd /sbin/conf.d;				\
 /bin/ls						\
