@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Aug 27 15:09:13 CEST 2004 - arvin@suse.de
+
+- merged proof read messages
+
+-------------------------------------------------------------------
 Wed Aug 25 11:56:57 CEST 2004 - arvin@suse.de
 
 - avoid tmp file in /tmp (bug #39444)
