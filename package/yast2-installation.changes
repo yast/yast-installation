@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Aug 22 18:11:20 CEST 2003 - arvin@suse.de
+
+- fixed reading of memory info (bug #29017)
+
+-------------------------------------------------------------------
 Fri Aug 22 11:27:23 CEST 2003 - arvin@suse.de
 
 - fixed update workflow
