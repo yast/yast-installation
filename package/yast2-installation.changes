@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Nov 29 12:32:36 CET 2004 - ms@suse.de
+
+- startup scripts ready now. reports can be send using bug: (#46886)
+
+-------------------------------------------------------------------
 Thu Nov 11 18:11:38 CET 2004 - arvin@suse.de
 
 - always use Directory::logdir
