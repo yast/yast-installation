@@ -30,6 +30,9 @@ global map partitioning = $[];
 // Software configuration
 global map software = $[];
 
+// Software configuration
+global map<string, any> globals = $[];
+
 // The custom control file location, usually copied from
 // the root of the CD to the installation directory by linuxrc
 global string default_control_file = "/control.xml";
@@ -70,6 +73,13 @@ global define boolean Read( string controlfile) ``{
         {
             ProductFeatures::fixed_base_selection = software["base_selection"]:"Minimal";
         }
+        // Default is true
+        ProductFeatures::delete_old_packages = software["delete_old_packages"]:true;
+    }
+    if (haskey(productControl, "globals"))
+    {
+        globals = productControl["globals"]:$[];
+        ProductFeatures::enable_autologin = globals["enable_autologin"]:true;
     }
 
     // FIXME: Handle reading errors
@@ -275,7 +285,7 @@ global define list getProposals(string stage, string mode, string proptype)
     }
 
     // All proposal file names end with _proposal
-    list<string> final_proposals = maplist(string p, props[0, "modules"]:[], ``{
+    list<string> final_proposals = maplist(string p, props[0, "proposal_modules"]:[], ``{
             if (!issubstring(p, "_proposal"))
                 return(p + "_proposal");
             else
