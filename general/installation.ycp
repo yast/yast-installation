@@ -275,7 +275,7 @@
 	&& !Installation::shown_text_mode_warning)
     {
 	string x11_msg = "";
-	if (Mode::text_fallback && Mode::initial)
+	if ( (Mode::no_x11 || Mode::text_fallback) && Mode::initial)
 	{
 	    // Somehow the graphical frontend failed and we're running in
 	    // text mode. Inform the user about this fact.
@@ -290,7 +290,7 @@ differ from those in the manual.
 "), "96");
 
 	}
-	else if (Mode::text_fallback && Mode::cont)
+	else if ( (Mode::no_x11 || Mode::text_fallback ) && Mode::cont)
 	{
 	    // The script YaST2 wants to inform about a problem with the
 	    // option no_x11 but it's broken.
