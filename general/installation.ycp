@@ -582,6 +582,7 @@ will look different than in the manual.");
 	if (Mode::update)
 	{
 	    SCR::Execute(.target.remove, "/var/lib/YaST2/update_mode");
+	    SCR::Execute(.target.bash, "/bin/rm -rf /var/adm/current_package_descr");
 	}
 	SCR::Execute(.target.remove, "/var/lib/YaST2/runme_at_boot");
     }
