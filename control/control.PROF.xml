@@ -14,6 +14,7 @@ textdomain="control"
 	<enable_firewall config:type="boolean">true</enable_firewall>
         <fam_local_only>gnome</fam_local_only>
 	<firewall_enable_ssh config:type="boolean">false</firewall_enable_ssh>
+        <incomplete_translation_treshold>95</incomplete_translation_treshold>
         <inform_about_suboptimal_distribution config:type="boolean">true</inform_about_suboptimal_distribution>
         <skip_language_dialog config:type="boolean">true</skip_language_dialog>
         <ui_mode>simple</ui_mode>
