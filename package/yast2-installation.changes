@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jul 16 17:25:31 CEST 2002 - sh@suse.de
+
+- V 2.6.3
+- provide/obsolete yast-trans-inst-proposal, yast2-trans-inst-general 
+
+-------------------------------------------------------------------
 Wed Jul 10 15:51:00 CEST 2002 - arvin@suse.de
 
 - omit keyboard, mouse and bootloader in initial proposal on s390

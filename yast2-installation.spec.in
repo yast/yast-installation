@@ -6,6 +6,9 @@
 Requires:	yast2
 Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
 
+Provides:	yast-trans-inst-general yast2-trans-inst-proposal
+Obsoletes:	yast-trans-inst-general yast2-trans-inst-proposal
+
 BuildArchitectures:	noarch
 
 Summary:	Installation workflow
