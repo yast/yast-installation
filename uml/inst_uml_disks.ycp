@@ -5,17 +5,50 @@
  *
  * Purpose:	Ask the user for virtual disks for uml.
  */
-
 {
     textdomain "installation";
 
     import "UML";
-    import "Wizard";
+    import "Label";
     import "Popup";
+    import "Wizard";
 
 
     // screen title for uml disks
     string title = _("Virtual Disks");
+
+
+    define integer ask_size (integer s) ``{
+
+	UI::OpenDialog (`opt(`decorated),
+			// heading in a popup dialog
+			`VBox(`Heading(_("Size of Virtual Disk") ),
+			      `VSpacing(0.5),
+			      `ComboBox(`id(`size), `opt(`editable),
+					// combobox label
+					_("Disk size in MB:"),
+					["512", "1024", "2048", "4096"]),
+			      `VSpacing(0.5),
+			      `HBox(
+				    `PushButton(`id(`ok), `opt(`default), Label::OKButton()),
+				    `PushButton(`id(`cancel), Label::CancelButton())
+				    )
+			      )
+			);
+
+	UI::ChangeWidget (`id(`size), `ValidChars, "0123456789");
+	UI::ChangeWidget (`id(`size), `Value, tostring (s));
+
+	if ((symbol) UI::UserInput() == `ok)
+	    s = tointeger ((string) UI::QueryWidget (`id(`size), `Value));
+	else
+	    s = -1;
+
+	UI::CloseDialog ();
+
+	return s;
+    }
+
 
     // build and show dialog
 
@@ -24,13 +57,13 @@
     term contents = `VBox(
 			  `VBox(
 				`Left(`Table(`id(`disks),
-					     `header (_("Size")),
-					     []))
+					     // column heading
+					     `header (_("Size")), []))
 				),
 			  `HBox(
-				`PushButton (`id (`add), _("Add")),
-				`PushButton (`id (`edit), _("Edit")),
-				`PushButton (`id (`delete), _("Delete"))
+				`PushButton (`id (`add), Label::AddButton()),
+				`PushButton (`id (`edit), Label::EditButton()),
+				`PushButton (`id (`delete), Label::DeleteButton())
 				)
 			  );
 
@@ -41,17 +74,20 @@
     Wizard::SetContents (title, contents, help_text, (boolean) WFM::Args(0),
 			 (boolean) WFM::Args(1));
 
-    list disks = [];
+    integer id_cnt = 0;
+
+    list <term> disks = [];
     foreach (integer s, UML::disks, ``{
-	disks = add (disks, `item (`id(size (disks)), s));
+	disks = add (disks, `item (`id (sformat ("d%1", id_cnt)), s));
+	id_cnt = id_cnt + 1;
     });
     UI::ChangeWidget (`id(`disks), `Items, disks);
 
-    any ret = nil;
+    symbol ret = nil;
 
     while (true)
     {
-	ret = Wizard::UserInput ();
+	ret = (symbol) Wizard::UserInput ();
 
 	if (ret == `abort && Popup::ConfirmAbort (`painless))
 	    break;
@@ -61,17 +97,30 @@
 
 	if (ret == `add)
 	{
-	    disks = add (disks, `item (`id (size (disks)), size (disks) * 1000));
-	    UI::ChangeWidget (`id(`disks), `Items, disks);
+	    integer s = ask_size (1024);
+	    if (s >= 0)
+	    {
+		disks = add (disks, `item (`id (sformat ("d%1", id_cnt)), s));
+		UI::ChangeWidget (`id(`disks), `Items, disks);
+		UI::ChangeWidget (`id(`disks), `CurrentItem, sformat ("d%1", id_cnt));
+		id_cnt = id_cnt + 1;
+	    }
 	}
 
 	if (ret == `edit)
 	{
+	    string id = (string) UI::QueryWidget (`id(`disks), `CurrentItem);
+	    // FIXME
 	}
 
 	if (ret == `delete)
 	{
-	    integer i = (integer) UI::QueryWidget (`id(`disks), `CurrentItem);
+	    string id = (string) UI::QueryWidget (`id(`disks), `CurrentItem);
+	    if (id != nil)
+	    {
+		disks = filter (term t, disks, ``(t[0]:`Empty() != `id(id)));
+		UI::ChangeWidget (`id(`disks), `Items, disks);
+	    }
 	}
 
 	if (ret == `next)
@@ -84,10 +133,10 @@
 		continue;
 	    }
 
-	    // UML::disks = [];
-	    // foreach (integer s, disks, ``{
-	    // UML::disks = add (UML::disks, s);
-	    //});
+	    UML::disks = [];
+	    foreach (term t, disks, ``{
+		UML::disks = add (UML::disks, t[1]:0);
+	    });
 
 	    break;
 	}
