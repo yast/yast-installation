@@ -257,11 +257,12 @@
 		    SCR::Execute (.target.bash, ifconfig);
 		}
 
-		if (Mode::boot == "nfs")
-		{
-		    SCR::Execute (.target.bash, "/sbin/rcportmap start");
-		}
 	    }
+	}
+
+	if (Mode::boot == "nfs")
+	{
+	     SCR::Execute (.target.bash, "/sbin/rcportmap start");
 	}
 
 	////////////////////////////////////////////////////////////
@@ -336,18 +337,62 @@
 
 	if (infotext != "")
 	{
+	    map tmp1 = Report::Export ();
+	    map tmp2 = tmp1["messages"]:$[];
+	    integer timeout_seconds = tmp2["timeout"]:0;
+
 	    UI::OpenDialog (`HBox (`VSpacing (20),
 				   `VBox (`HSpacing (60),
 					  `VSpacing (0.2),
 					  `RichText (`opt(`plainText), infotext),
-					  `PushButton (`id(`ok), `opt(`default),
-						       OKButtonLabel())
+					  `ReplacePoint (`id(`rp1), `Empty ()),
+					  `HBox (`PushButton (`id(`accept), `opt(`default),
+							      AcceptButtonLabel()),
+						 `PushButton (`id(`cancel),
+							      CancelButtonLabel()),
+						 `ReplacePoint (`id(`rp2), `Empty ())
+						 )
 					  )
 				   )
 			    );
-	    UI::SetFocus (`id(`ok));
-	    UI::UserInput ();
+
+	    UI::SetFocus (`id(`accept));
+
+	    symbol info_ret = `empty;
+
+	    if (timeout_seconds == 0)
+	    {
+		info_ret = UI::UserInput ();
+	    }
+	    else
+	    {
+		UI::ReplaceWidget (`id(`rp1), `Label (`id(`remaining_time), "" + timeout_seconds));
+		UI::ReplaceWidget (`id(`rp2), `PushButton (`id(`stop), StopButtonLabel()));
+
+		while (timeout_seconds > 0) {
+		    sleep (1000);
+		    info_ret = UI::PollInput ();
+		    if (info_ret == `accept || info_ret == `cancel)
+			break;
+		    if (info_ret == `stop) {
+			while (info_ret == `stop)
+			    info_ret = UI::UserInput ();
+			break;
+		    }
+		    info_ret = `accept;
+		    timeout_seconds = timeout_seconds - 1;
+		    UI::ChangeWidget (`id(`remaining_time), `Value, "" + timeout_seconds);
+		}
+	    }
+
 	    UI::CloseDialog ();
+
+	    if (info_ret != `accept)
+	    {
+		y2milestone ("user didn't accept info.txt");
+		Misc::WriteYaSTInf ($["Aborted" : "1"]);
+		return;
+	    }
 	}
     }
 

@@ -316,6 +316,10 @@ test -z "$SPID" || kill $SPID &>/dev/null
 # kill VNC server
 killall Xvnc &>/dev/null
 
+# assume that the /root/.vnc/passwd file was overwritten during
+# VNC installation nanyway
+test -z "$VNC" || rm -fv /root/.vnc/passwd
+
 if test ! -z "$Y2_NETWORK_ACTIVE" ; then
     test -z "$Y2_SSH_ACTIVE" && rcsshd stop
     rcnetwork stop

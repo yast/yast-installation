@@ -25,7 +25,9 @@ cat <<-EOF
 EOF
 
 # fake hostname to make VNC screen pretty
-hostname $IP
+if [ "$(hostname)" = "(none)" ] ; then
+	hostname $IP
+fi
 
 /usr/X11R6/bin/Xvnc :1 \
 	-rfbauth /root/.vnc/passwd \
