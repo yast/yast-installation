@@ -859,7 +859,7 @@ To use the settings as displayed, press <b>Next</b>.
 	        if (ret == `abort || ret == `finish)
 		    return ret;
 
-		if (ret == `next)
+		if (ret != `again)
 		    break;
 	    }
 	}
