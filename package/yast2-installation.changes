@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Sep 18 10:55:43 CEST 2003 - arvin@suse.de
+
+- don't use external pcmcia during firstboot (bug #31252)
+
+-------------------------------------------------------------------
 Mon Sep 15 19:26:33 CEST 2003 - msvec@suse.cz
 
 - 2.8.34
@@ -6,7 +11,7 @@ Mon Sep 15 19:26:33 CEST 2003 - msvec@suse.cz
 -------------------------------------------------------------------
 Mon Sep 15 15:15:25 CEST 2003 - gs@suse.de
 
-- YaST2.start: set default value for LANGUAGE 
+- YaST2.start: set default value for LANGUAGE
 
 -------------------------------------------------------------------
 Mon Sep 15 11:03:04 CEST 2003 - arvin@suse.de
