@@ -2,6 +2,7 @@
 Tue Mar  1 12:13:09 CET 2005 - jsrain@suse.cz
 
 - removed obsolete symlink juggling (#66016)
+- 2.11.19
 
 -------------------------------------------------------------------
 Thu Feb 24 16:10:03 CET 2005 - ms@suse.de
