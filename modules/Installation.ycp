@@ -33,7 +33,6 @@
 
     global string sourcedir		= "/var/adm/mount";
 
-    global string yastdir		= "/var/lib/YaST";
     global string yast2dir		= "/var/lib/YaST2";
 
     global string mountlog		= "/var/log/YaST2/y2logMount";
@@ -55,7 +54,8 @@
     //---------------------------------------------------------------
     // constructor
 
-    global define Installation () ``{
+    global define Installation ()
+    ``{
 
 	// get setup data from linuxrc
 	// check setup/descr/info for CD type
