@@ -13,7 +13,8 @@
 
 <!ELEMENT defaults ( arguments, archs ) >
 
-<!ELEMENT globals ( language, keyboard, timezone, enable_autologin ) >
+<!ENTITY % y2_globals "language| keyboard| timezone| enable_autologin" >
+<!ELEMENT globals (%y2_globals;)* >
 
 <!ELEMENT keyboard ( #PCDATA ) >
 
@@ -53,7 +54,7 @@
 <!ELEMENT selection_type ( #PCDATA ) >
 <!ATTLIST selection_type config:type NMTOKEN #FIXED "symbol" >
 
-<!ELEMENT software (delete_old_packages, selection_type, base_selection, addons, packages) >
+<!ELEMENT software (delete_old_packages| selection_type| base_selection| addons| packages)* >
 <!ELEMENT delete_old_packages ( #PCDATA ) >
 <!ATTLIST delete_old_packages config:type NMTOKEN #FIXED "boolean" >
 

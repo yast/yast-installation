@@ -11,25 +11,15 @@ textdomain="control"
     <textdomain>control</textdomain>
     <!-- global data to be set in the initial proposal -->
     <globals>
-        <language>en_US</language>
-        <keyboard>en_US</keyboard>
-        <timezone>Canada/Eastern</timezone>
         <enable_autologin config:type="boolean">true</enable_autologin>
     </globals>
 
     <!-- Force a selection (`fixed) to be used instead of automatically
     Calculating the selection depending on space (`auto)  -->
     <software>
+        <!-- Delete old packages, should be set to false for SLES-->
         <delete_old_packages config:type="boolean">true</delete_old_packages>
         <selection_type config:type="symbol">auto</selection_type>
-        <!-- Delete old packages, should be set to false for SLES-->
-        <base_selection>Minimal</base_selection>
-        <addons config:type="list">
-            <addon>X11</addon>
-        </addons>
-        <packages config:type="list">
-            <package>package</package>
-        </packages>
     </software>
 
     <proposals config:type="list">
@@ -56,7 +46,7 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
-            <mode>normal</mode>
+            <mode>installation</mode>
             <type>dirinstall</type>
             <stage>normal</stage>
             <proposal_modules config:type="list">
