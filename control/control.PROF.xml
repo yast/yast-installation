@@ -483,12 +483,17 @@ textdomain="control"
                     <name>rpmcopy</name>
                 </module>
                 <module>
+                    <name>netsetup</name>
+                    <arguments>false,false,`dn</arguments>
+                </module>
+                <module>
 	            <label>System Configuration</label>
                     <name>autoconfigure</name>
                 </module>
                 <module>
-                    <name>netsetup</name>
-                    <arguments>false,false,`dn</arguments>
+	            <label>System Configuration</label>
+                    <name>x11</name>
+                    <arguments>false,false</arguments>
                 </module>
                 <module>
 	            <label>Clean Up</label>

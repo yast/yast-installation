@@ -571,13 +571,13 @@ textdomain="control"
 	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
                 </module>
-                <module>
-	            <label>System Configuration</label>
-                    <name>autoconfigure</name>
-                </module>
 		<module>
                     <name>netsetup</name>
                     <arguments>false,false,`dn</arguments>
+                </module>
+                <module>
+	            <label>System Configuration</label>
+                    <name>autoconfigure</name>
                 </module>
                 <module>
 	            <label>Clean Up</label>
