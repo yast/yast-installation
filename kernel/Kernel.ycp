@@ -185,14 +185,14 @@
 		if ((memsize <= fourGB)
 		    || !contains (cpuflags, "pae"))
 		{
-		    y2milestone ("Kernel switch: less than 4GB mem or CPU w/o PAE !");
-		    kernel_packages = ["k_psmp"];
+		    y2milestone ("Kernel switch: SMP, mem <= 4GB or no PAE support !");
+		    kernel_packages = ["k_smp4G"];
 		    switched = true;
 		}
 	    }
 	    else if (memsize > fourGB)				// > 4GB
 	    {
-		y2milestone ("Kernel switch: Memory !");
+		y2milestone ("Kernel switch: SMP, mem > 4GB");
 		kernel_packages = ["k_smp"];
 		switched = true;
 	    }
