@@ -82,7 +82,9 @@
 
 	ret =
 	    $[
+	      // this is a heading
 	      "rich_text_title"	:	_( "Software"  ),
+	      // this is a menu entry
 	      "menu_title"	:	_( "&Software" ),
 	      "id"		:	"software_stuff"
 	    ];
