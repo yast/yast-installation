@@ -190,6 +190,13 @@ from your existing system whenever possible.
 
     // help text for installation method
     help_text = help_text + _("<p>
+Select <b>Repair Installed System</b> if you have a damaged Linux system on
+your hard disk. With this option, try to fix problems automatically.
+</p>
+");
+
+    // help text for installation method
+    help_text = help_text + _("<p>
 Select <b>Boot Installed System</b> if you have a Linux system on your hard
 disk that will not boot. With this option, try to fix problems manually.
 </p>
