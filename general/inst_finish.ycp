@@ -12,7 +12,6 @@
  */
 
 {
-
     textdomain "installation";
 
     import "Arch";
@@ -802,6 +801,9 @@ with the load address of your root DASD.
     }
 
     Progress::Finish();
+
+    if (UI::PollInput () == `abort && Popup::ConfirmAbort (`incomplete))
+        return `abort;
 
     return `next;
 }
