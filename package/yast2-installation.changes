@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Feb  8 16:14:44 CET 2005 - nashif@suse.de
+
+- Moved ProductControl to yast2 package
+
+-------------------------------------------------------------------
 Mon Feb  7 13:46:48 CET 2005 - jsrain@suse.cz
 
 - fixed order of items in the "Change" button in proposals (#50204)
