@@ -6,13 +6,13 @@
  *	Hotplug
  *
  * Summary:
- *	provide hotplug (USB, PCMCIA) functions
+ *	provide hotplug (USB, FireWire, PCMCIA) functions
  *
  * $Id$
  *
- * Author:
+ * Authors:
  *	Klaus Kaempf <kkaempf@suse.de>
- *
+ *	Arvin Schnell <arvin@suse.de>
  */
 
 {
@@ -25,8 +25,12 @@
     /**
      * if a usb controller was found and initialized
      */
-
     global boolean haveUSB = false;
+
+    /**
+     * if a firewire controller was found and initialized
+     */
+    global boolean haveFireWire = false;
 
     // start a controller (by loading its module)
     // return true if successfull
@@ -145,7 +149,7 @@
 
     global define void StartUSB ()
     ``{
-	if (Arch::sparc)
+	if (Arch::sparc)	// why this and why here ???
 	    return;
 
 	list usb_controllers = SCR::Read(.probe.usbctrl);
@@ -173,14 +177,37 @@
 	}
     }
 
+    /**
+     * @param	none
+     *
+     * @returns	void
+     * probe for firewire type, load appropriate modules, and mount
+     * usbdevfs to /proc/bus/usb
+     */
+
+    global define void StartFireWire ()
+    ``{
+	if (Arch::sparc)	// why this and why here ???
+	    return;
+
+	list firewire_controllers = SCR::Read (.probe.ieee1394ctrl);
+
+	foreach (`controller, firewire_controllers,
+	``{
+	    boolean start_result = startController (controller);
+	    if (start_result)
+		haveFireWire = true;
+	});
+    }
+
 
     /**
-     * Start storage related USB stuff
+     * Start storage related USB and FireWire stuff
      *
      */
 
-   global define void StartStorage ()
-   ``{
+    global define void StartStorage ()
+    ``{
 	// If USB capable, there might be an usb storage device (i.e. ZIP)
 	// activate the module _last_ since it might interfere with other
 	// controllers (i.e. having usb-storage first might result in
@@ -196,9 +223,14 @@
 		StorageDevices::FloppyReady();
 	    }
 	}
+
+	if (haveFireWire)
+	{
+	    // load sbp2
+
+	    ModuleLoading::Load ("sbp2", "", "", "SBP2 Protocol", Mode::manual, true);
+	}
+
 	return;
     }
 }
-
-
-
