@@ -287,7 +287,7 @@ As a fallback, the text front-end of YaST2 will guide you
 through the installation. This front-end offers the
 same functionality as the graphical one, but the screens
 differ from those in the manual.
-"), "64");
+"), "96");
 
 	}
 	else if (Mode::no_x11)

@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Apr 05 11:04:34 CEST 2004 - arvin@suse.de
+
+- adjusted decision of frontend depending on memory size to memory
+  requirements of new interpreter (bug #38298)
+- fixed memory value in warning popup
+
+-------------------------------------------------------------------
 Sat Apr 03 17:44:03 CEST 2004 - arvin@suse.de
 
 - use fbiterm for CJK locales if appropriate (bug #37823)

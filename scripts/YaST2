@@ -431,7 +431,7 @@ fi
 #
 # TODO: on s390 the minimal memory requirements may be lower than
 # this, since we have no X Server running locally.
-if [ ! "$xsrv" -o "$MemTotal" -lt "57344" ] ; then
+if [ ! "$xsrv" -o "$MemTotal" -lt "90000" ] ; then
   log "no X server or not enough memory: using text mode"
   (
     log "Starting: y2base \"$modulename\" '(\"text_fallback\")' $moduleargs ncurses"
