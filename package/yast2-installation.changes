@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Feb 22 13:05:23 CET 2005 - ms@suse.de
+
+- fixed Y2MAXLOGSIZE setting, which was set to 0 because df within
+  inst-sys is not an option for checking the filesystem space
+
+-------------------------------------------------------------------
 Mon Feb 21 18:10:26 CET 2005 - sh@suse.de
 
 - Proper log-rotating in inst_finish  
