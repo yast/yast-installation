@@ -58,16 +58,16 @@
     if (! load_release_notes ())
     {
 	// error report
-	Report::Error (_("Cannot load release notes"));
+	Report::Error (_("Cannot load release notes."));
 	return nil;
     }
 
     text =
 // beginning of the rich text with the release notes
-_("<b>These are the release notes done at first initial release which are
+_("<b>These are the release notes made for the first initial release. They are
 part of the installation media. During installation, if a connection
-to the Internet is available, you can update the release notes
-from the SUSE Linux webserver.</b>") + text;
+to the Internet is available, you can download updated release notes
+from the SUSE Linux Web server.</b>") + text;
 
     term contents = `HBox (
 	`VSpacing (22),
