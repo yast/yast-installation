@@ -62,7 +62,7 @@
       * On some products, this can be turned on to prevent old
       * RPMs from being deleted (#35235)
       */
-    global boolean delete_old_packages          = false;
+    global boolean delete_old_packages          = true;
 
     /*********************************************************************
       *   Partitioning
@@ -90,7 +90,7 @@
     /**
      * autologin is enabled by default.
      */
-    global boolean auto_login = true;
+    global boolean enable_autologin = true;
 
 
 
