@@ -68,22 +68,18 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
-            <label>Installation Settings</label>
+            <label>Update Settings</label>
             <mode>update</mode>
             <type>initial</type>
             <stage>normal</stage>
             <proposal_modules config:type="list">
-		<proposal_module>hwinfo</proposal_module>
-                <proposal_module>mode</proposal_module>
-		<proposal_module>media</proposal_module>
-                <proposal_module>rootpart</proposal_module>
                 <proposal_module>update</proposal_module>
                 <proposal_module>packages</proposal_module>
                 <proposal_module>backup</proposal_module>
                 <proposal_module>language</proposal_module>
-                <proposal_module>keyboard</proposal_module>
             </proposal_modules>
         </proposal>
+
         <proposal>
             <label>Installation Settings</label>
             <mode>update</mode>
