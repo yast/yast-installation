@@ -1,8 +1,9 @@
 @HEADER-COMMENT@
-# neededforbuild yast2-devel-packages yast2-xml
+
+# neededforbuild  yast2-devel-packages yast2-xml
 
 @HEADER@
-Requires:	yast2
+Requires:	yast2 yast2-update
 Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
 Requires:	yast2-packager yast2-network yast2-online-update yast2-users
 Requires:	curl release-notes
@@ -39,6 +40,7 @@ This controls the system installation.
 %dir /usr/share/YaST2/control
 /usr/share/YaST2/control/*.xml
 /usr/share/YaST2/control/*.dtd
+/var/lib/YaST2/ProductFeatures
 
 @clientdir@/*.ycp
 @moduledir@/*.ycp
@@ -63,3 +65,6 @@ This controls the system installation.
 @ybindir@/YaST2.sshinstall
 @ybindir@/ask_for_TERM_variable
 @ybindir@/check.boot
+
+# fvwmrc
+/usr/X11R6/share/fvwm/

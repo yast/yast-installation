@@ -7,6 +7,11 @@
 #
 # yyyyyyyyyyyyyyyyyyyyy
 
+
+# any stuff in /y2update must be preferred (see bug #40833)
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/y2update/lib64:/y2update/lib:/y2update/plugin
+
+
 # set splash progress bar to 70%
 [ -f /proc/splash ] && echo "show $((70*65534/100))" >/proc/splash
 
@@ -27,6 +32,14 @@ esac
 # set splash progress bar to 80%
 [ -f /proc/splash ] &&  echo "show $((80*65534/100))" >/proc/splash
 
+# p690 hvc console needs vt320, it is handled as serial console installation
+grep -qi console=hvc < /proc/cmdline && {
+echo "Console: hvc0,9600" >> /etc/install.inf
+export HVC_CONSOLE_HINT="  (recommended with p690 hvc console)"
+export Console=hvc0,9600
+}
+
+
 # source install.inf, setting a variable $Moo=... for each line Moo: ...
 eval $(grep ': ' /etc/install.inf | sed -e 's/"/"\\""/g' -e 's/:  */="/' -e 's/$/"/')
 
@@ -37,7 +50,9 @@ LANGUAGE=en_US
 
 # if an entry 'Console:  ....' exists in install.inf,
 # YaST runs on a console which is connected to a serial port
-if [ "$Console" ]; then
+# The console on an iSeries box is /dev/tty1, but it is not a real
+# serial console, so linuxrc can not create a Console: entry
+if [ -n "$Console" -o -d /proc/iSeries ] ; then
     if testutf8 ; [ $? = 2 ] ; then
         # append UTF-8
         [ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}.UTF-8"
@@ -73,31 +88,23 @@ done
 
 # start unicode if encoding is UTF-8
 if echo $LANG | grep -q '\.UTF-8$'; then
-    unicode_start
+    test -x /bin/unicode_start && /bin/unicode_start
 fi
 
 test -d /proc/iSeries -a ! -e /tmp/vnc_installation && {
   : ${TERM:=vt100}; LINES=24; COLUMNS=80
   export LINES COLUMNS TERM
   eval `/bin/initviocons -e`
-  echo "TERM: $TERM" >> /etc/install.inf
 }
 
-# p690 hvc console needs vt320, it is handled as serial console installation
-grep -qi console=hvc < /proc/cmdline && {
-echo "Console: hvc0,9600" >> /etc/install.inf
-export HVC_CONSOLE_HINT="  (recommended with p690 hvc console)"
-export Console=hvc0,9600
-}
-
-if [ ! -z "$Console" -a -z "$AutoYaST" -a "$VNC" = 0 -a "$UseSSH" = 0 ] ; then
+if [ ! -z "$Console" -a -z "$AutoYaST" -a "$VNC" = 0 -a "$UseSSH" = 0 -a "$TERM" != "xterm" ] ; then
   . /usr/lib/YaST2/bin/ask_for_TERM_variable
-  echo "TERM: $TERM" >> /etc/install.inf
   export TERM
 elif [ ! -z "$Console" -a ! -z "$AutoYaST" -a "$VNC" != 0 -a "$UseSSH" != 0 ] ; then
   export TERM=vt100
-  echo "TERM: $TERM" >> /etc/install.inf
 fi
+
+echo "TERM: $TERM" >> /etc/install.inf
 
 # start repair system
 grep -qi repair < /proc/cmdline && {
@@ -300,7 +307,7 @@ fuser -vm / >/dev/tty11
 echo $yast2exitcode > /tmp/YaST2_ssh_installation_finished
 
 if echo $LANG | grep -q '\.UTF-8$'; then
-    unicode_stop
+    test -x /bin/unicode_stop && /bin/unicode_stop
 fi
 
 exit $yast2exitcode

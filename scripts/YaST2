@@ -333,6 +333,9 @@ if [ "$UseSSH" != 1 ] && [ -z "${DISPLAY/:*}" -o "${DISPLAY/:*/}" == "localhost"
     y2cc_qt_args="--fullscreen --noborder"
 fi
 
+# Don't rely on Qt default fonts during installation - display DPI is unreliable
+y2qt_args="${y2qt_args} --auto-fonts"
+
 
 
 PATH=/var/X11R6/bin:$ybindir:$PATH
@@ -350,7 +353,7 @@ if [ "$VNC" = "1" ] ; then
     if [ -x /usr/X11R6/bin/Xvnc ] ; then
 	. /usr/lib/YaST2/bin/inst_setup_vnc
 	export DISPLAY=:1
-	/usr/X11R6/bin/fvwm2 -f /usr/X11R6/share/fvwm/fvwmrc.yast2 &
+	/usr/X11R6/bin/fvwm2 -f /usr/X11R6/share/fvwm/fvwmrc.yast2 > /var/log/YaST2/fvwm2.log 2>&1 &
 	log "Starting: y2base \"$modulename\" $moduleargs qt $y2qt_args"
 	y2base "$modulename" $moduleargs qt $y2qt_args
 	y2exitcode=$?
@@ -375,27 +378,6 @@ if [ \( ! "$update" \) -a "$Braille" ] ; then
    mv -f /tmp/suse-blinux.conf /etc
    /etc/init.d/suse-blinux start
    xsrv=
-fi
-
-# iSeries and p690 dont have a keyboard but a special console, no need to
-# run via serial console.
-
-if [ ! "$update" -a "$Keyboard" = "0" -a ! "$Braille" -a "$NOTISERIES" != 0 -a "$NOTHVCCONSOLE" != 0 -a "$HOSTTYPE" != "s390" -a "$HOSTTYPE" != "s390x"  -a -z "$Console" ] ; then
-    log "no keyboard?"
-    echo "No keyboard detected. Trying to connect via serial interface /dev/ttyS0."
-    echo "On your terminal computer start the user interface with"
-    echo "y2base \"serial(115200):/dev/ttyS0\" qt $y2qt_args"
-    echo "or"
-    echo "y2base \"serial(115200):/dev/ttyS1\" qt $y2qt_args"
-    echo "or start the YaST2 menu by typing \"yast2\" and select YaST2/Remote Install"
-    y2base "$modulename" $moduleargs "serial(115200):/dev/ttyS0" --timeout 15
-    y2exitcode=$?
-    [ $y2exitcode -eq 0 ] && y2cc_ncurses
-    if [ "$y2exitcode" = 13 ] ; then
-	echo "Connection timeout. Continuing with normal setup."
-    else
-	exit $y2exitcode
-    fi
 fi
 
 if [ "$Textmode" = 1 -o "$UseSSH" = 1 ] ; then
@@ -432,17 +414,28 @@ fi
 # TODO: on s390 the minimal memory requirements may be lower than
 # this, since we have no X Server running locally.
 if [ ! "$xsrv" -o "$MemTotal" -lt "90000" ] ; then
-  log "no X server or not enough memory: using text mode"
-  (
+    log "no X server or not enough memory: using text mode"
     log "Starting: y2base \"$modulename\" '(\"text_fallback\")' $moduleargs ncurses"
-    y2base "$modulename" '("text_fallback")' $moduleargs ncurses
+    check_run_fbiterm
+    if test "$RUN_FBITERM" = "1" ; then
+	(
+	    /usr/bin/fbiterm y2base "$modulename" '("text_fallback")' $moduleargs ncurses
+	    y2exitcode=$?
+	    [ $y2exitcode -eq 0 ] && y2cc_ncurses
+	    exit $y2exitcode
+	)
+    else
+	(
+	    y2base "$modulename" '("text_fallback")' $moduleargs ncurses
+	    y2exitcode=$?
+	    [ $y2exitcode -eq 0 ] && y2cc_ncurses
+	    exit $y2exitcode
+	)
+    fi
     y2exitcode=$?
-    [ $y2exitcode -eq 0 ] && y2cc_ncurses
     exit $y2exitcode
-  )
-  y2exitcode=$?
-  exit $y2exitcode
 fi
+
 
 server_running=
 TESTX=/usr/X11R6/bin/testX

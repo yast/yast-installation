@@ -74,13 +74,10 @@ textdomain="control"
             <type>initial</type>
             <stage>normal</stage>
             <proposal_modules config:type="list">
-                <proposal_module>mode</proposal_module>
-                <proposal_module>rootpart</proposal_module>
                 <proposal_module>update</proposal_module>
                 <proposal_module>packages</proposal_module>
                 <proposal_module>backup</proposal_module>
                 <proposal_module>language</proposal_module>
-                <proposal_module>keyboard</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>
@@ -438,6 +435,11 @@ textdomain="control"
                     <arguments>true,true</arguments>
                 </module>
                 <module>
+                    <label>Service</label>
+                    <name>proposal</name>
+                    <arguments>true,true,`serv</arguments>
+                </module>
+                <module>
 	            <label>Users</label>
                     <name>auth</name>
                     <arguments>true,true</arguments>
@@ -484,16 +486,16 @@ textdomain="control"
                     <arguments>false,true</arguments>
                 </module>
                 <module>
-	            <label>Auto-Install Settings</label>
+	            <label>Autoinstall Settings</label>
                     <name>autoinit</name>
                     <archs>all</archs>
                 </module>
                 <module>
-	            <label>Auto-Install Settings</label>
+	            <label>Autoinstall Settings</label>
                     <name>autosetup</name>
                 </module>
                 <module>
-	            <label>Auto-Install Settings</label>
+	            <label>Autoinstall Settings</label>
                     <name>proposal</name>
                     <arguments>true,true,`ini</arguments>
                 </module>
@@ -542,13 +544,13 @@ textdomain="control"
 	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
                 </module>
-		<module>
-                    <name>netsetup</name>
-                    <arguments>false,false,`dn</arguments>
-                </module>
                 <module>
 	            <label>System Configuration</label>
                     <name>autoconfigure</name>
+                </module>
+		<module>
+                    <name>netsetup</name>
+                    <arguments>false,false,`dn</arguments>
                 </module>
                 <module>
 	            <label>Clean Up</label>

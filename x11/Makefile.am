@@ -6,7 +6,11 @@ module_DATA = \
 client_DATA = \
 	inst_x11.ycp
 
-EXTRA_DIST = $(client_DATA) $(module_DATA)
+fvwmdir = /usr/X11R6/share/fvwm/
+fvwm_DATA = \
+	fvwmrc.notitle
+
+EXTRA_DIST = $(client_DATA) $(module_DATA) $(fvwm_DATA)
 
 YCPCFLAGS = -M ../modules
 

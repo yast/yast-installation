@@ -89,6 +89,9 @@
 	{
 	    import "Misc";
 	    Misc::WriteYaSTInf ($["Root" : root_part]);
+
+	    SCR::Write(.md.activate, "");
+	    SCR::Write(.lvm.activate, "");
 	}
 
 	UI::CloseDialog ();

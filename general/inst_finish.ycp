@@ -19,6 +19,7 @@
     import "AutoInstall";
     import "AutoinstScripts";
     import "AutoinstConfig";
+    import "ProductFeatures";
     import "Bootloader";
     import "Console";
     import "Directory";
@@ -152,7 +153,7 @@ Please wait while the base system is being installed.
     if (Mode::autoinst)
     {
 	// progress stage title
-        Progress::Title (_("Executing auto-install scripts in the installation environment."));
+        Progress::Title (_("Executing autoinstall scripts in the installation environment."));
         AutoinstScripts::Write("chroot-scripts", false);
         AutoInstall::Finish(Installation::destdir);
     }
@@ -281,9 +282,17 @@ Please wait while the base system is being installed.
     // Override linuxrc settings in autoinst mode
     if ( Mode::autoinst )
     {
-        if (AutoinstConfig::ForceBoot)
+        if (AutoinstConfig::ForceBoot )
         {
 	    linuxrc["Root"] = Bootloader::getRootDevice ();
+        }
+        else if (AutoinstConfig::RebootMsg)
+        {
+            linuxrc["RebootMsg"] = "1";
+        }
+        else if (AutoinstConfig::Halt)
+        {
+            linuxrc["Root"] = "halt";
         }
     }
 
@@ -325,6 +334,7 @@ Please wait while the base system is being installed.
     Language::Save();
     Keyboard::Save(true);
     Display::Save();
+    ProductFeatures::Save();
 
     if (Mode::autoinst)
     {
@@ -566,9 +576,8 @@ Please wait while the base system is being installed.
 	//    Boot::Save ();		// save /etc/sysconfig parameters
 
 	// --------------------------------------------------------------
-	// driver update ?!
-
-	Vendor::DriverUpdate();
+	// driver update
+	Vendor::DriverUpdate1 ();
     }
 
     // --------------------------------------------------------------
@@ -644,6 +653,11 @@ with the load address of your root DASD.
 		y2milestone("insserv - service %1 exit status: %2", s, disabled);
 	    }
 	);
+
+	// modify inittab - halt system when Ctrl+Alt+Del is received
+	// can be used by uml_mconsole for safe system shutdown
+	// replace -r (reboot) option by -h (halt)
+	SCR::Execute(.target.bash, "/usr/bin/sed -e 's|^ca::ctrlaltdel:/sbin/shutdown \\(.*\\)-r\\(.*\\)$|ca::ctrlaltdel:/sbin/shutdown \\1-h\\2|' /etc/inittab > /tmp/inittab.sed.$$ && mv /tmp/inittab.sed.$$ /etc/inittab");
 
 	// copy files to the host system
 	string tmpdir = (string) SCR::Read(.target.tmpdir);
@@ -843,6 +857,10 @@ with the load address of your root DASD.
 
     if (!Mode::live_eval)
     {
+	// --------------------------------------------------------------
+	// driver update
+	Vendor::DriverUpdate2 ();
+
 	// Stop SCR on target
 	WFM::SCRClose (Installation::scr_handle);
 

@@ -25,6 +25,7 @@
     import "HTML";
     import "Popup";
     import "ProductControl";
+    import "Language";
 
     define void retranslate_proposal_dialog();
     define list<string> load_matching_submodules_list();
@@ -105,6 +106,8 @@
 	    if ( language_changed )
 	    {
 		retranslate_proposal_dialog();
+		Pkg::SetLocale (Language::language);
+		Pkg::SetAdditionalLocales ([Language::language]);
 	    }
 
 	    /*
@@ -375,7 +378,13 @@
 	list<string> submodules = [];
 
         // FIXME: Declare more types in control file
-        map<symbol, string> proposal_type = $[ `ini: "initial", `net: "network", `hw : "hardware", `uml : "uml", `dirinstall : "dirinstall"];
+        map <symbol, string> proposal_type = $[ `ini : "initial",
+						`net : "network",
+						`serv : "service",
+						`hw : "hardware",
+						`uml : "uml",
+						`dirinstall : "dirinstall" ];
+
         string proptype = proposal_type[proposal_mode]:"";
 
         submodules = ProductControl::getProposals (
@@ -430,6 +439,9 @@
 	}
 	else if ( proposal_mode == `hw) {
 	    headline = _("Hardware Configuration");
+	}
+	else if ( proposal_mode == `serv) {
+	    headline = _("Service Configuration");
 	}
 
 	/* radiobuttons */
@@ -565,7 +577,7 @@
 	Wizard::SetTitleIcon( icon );
     };
 
-    
+
     /**
      * Help text for proposal dialog.
      *
@@ -642,6 +654,15 @@ Put the network settings into effect by pressing <b>Next</b>.
 </p>
 ") + how_to_change;
 	}
+	else if ( proposal_mode == `serv )
+	{
+	    // Help text for service configuration proposal
+	    // General part ("You can change values...") is added as the next paragraph.
+	    help_text_string = _("<p>
+Put the service settings into effect by pressing <b>Next</b>.
+</p>
+") + how_to_change;
+	}
 	else if ( proposal_mode == `hw )
 	{
 	    // Help text for hardware configuration proposal
@@ -654,7 +675,7 @@ Put the hardware settings into effect by pressing <b>Next</b>.
 	else if (proposal_mode == `uml)
 	{
 	    // Proposal in uml module
-	    help_text_string = _("<P><B>UML installation proposal</B></P>")
+	    help_text_string = _("<P><B>UML Installation Proposal</B></P>")
 	    + _("<P>UML (User Mode Linux) installation allows you to start independent
 Linux virtual machines in the host system.</P>");
 	}

@@ -1,16 +1,223 @@
 -------------------------------------------------------------------
+Tue Jun 15 19:16:26 CEST 2004 - sh@suse.de
+
+- Fixed typo in ssh install script (#42058)
+
+-------------------------------------------------------------------
+Tue Jun 15 14:11:06 CEST 2004 - sh@suse.de
+
+- Fixed bug #41597: EULA must be scrolled in both dimensions
+
+-------------------------------------------------------------------
+Tue Jun 15 12:23:23 CEST 2004 - arvin@suse.de
+
+- added Requires for yast2-update (bug #42013)
+
+-------------------------------------------------------------------
+Fri Jun 11 00:58:40 CEST 2004 - nashif@suse.de
+
+- Added variable software_proposal to control file (NLD)
+
+-------------------------------------------------------------------
+Thu Jun 10 03:53:14 CEST 2004 - nashif@suse.de
+
+- Added control for NLD
+
+-------------------------------------------------------------------
+Tue Jun  8 04:55:22 CEST 2004 - nashif@suse.de
+
+- Also install control file for SLES to avoid lots of possible
+  confusion when control file is not found on installation media
+  and fallback file is used.
+  (#41696)
+
+-------------------------------------------------------------------
+Tue Jun  8 04:37:03 CEST 2004 - nashif@suse.de
+
+- Fixed bug #41696: yast uses elevator=anticipatory instead of
+  elevator=as
+
+-------------------------------------------------------------------
+Sun May 30 00:38:55 CEST 2004 - nashif@suse.de
+
+- Added Services to main control file for translation (#41367)
+- 2.9.83
+
+-------------------------------------------------------------------
+Thu May 27 14:40:46 CEST 2004 - mvidner@suse.cz
+
+- Added variables to ProductFeatures
+  so that yast2-nis-client testsuite passes (~#41038).
+- 2.9.82
+
+-------------------------------------------------------------------
+Thu May 27 12:21:19 CEST 2004 - arvin@suse.de
+
+- added special console handling for iSeries (bug #39025)
+
+-------------------------------------------------------------------
+Wed May 26 11:12:56 CEST 2004 - arvin@suse.de
+
+- set LD_LIBRARY_PATH in 1st stage installation start script
+  (bug #40833)
+
+-------------------------------------------------------------------
+Tue May 25 14:10:33 CEST 2004 - jsrain@suse.cz
+
+- set the I/O scheduler in ProductFeatures (#41038)
+- 2.9.79
+
+-------------------------------------------------------------------
+Mon May 24 14:58:50 CEST 2004 - arvin@suse.de
+
+- again ask for TERM variable if it's set to "vt100" (bug #40991)
+
+-------------------------------------------------------------------
+Tue May 18 15:32:30 CEST 2004 - arvin@suse.de
+
+- moved fvwmrc.notitle from sax2 here (bug #37480)
+
+-------------------------------------------------------------------
+Tue May 11 13:54:26 CEST 2004 - lslezak@suse.cz
+
+- don't ask for TERM variable if it's already set to "xterm"
+  or "vt100" from linuxrc (don't ask in UML installation) (#39947)
+- version 2.9.76
+
+-------------------------------------------------------------------
+Tue May 04 11:13:53 CEST 2004 - arvin@suse.de
+
+- merged proofread messages
+
+-------------------------------------------------------------------
+Fri Apr 30 16:30:13 CEST 2004 - arvin@suse.de
+
+- readded vnc remote proposal to SLES workflow (bug #31023)
+
+-------------------------------------------------------------------
+Wed Apr 28 15:26:30 CEST 2004 - lslezak@suse.cz
+
+- set Ctrl+Alt+Del handler in /etc/inittab to halt (instead of
+  reboot) in UML system (safe shutdown from host system using
+  uml_mconsole)
+- version 2.9.73
+
+-------------------------------------------------------------------
+Wed Apr 28 15:38:45 CEST 2004 - arvin@suse.de
+
+- quick implementation of execution of update.post2 scripts
+  (bug #38677)
+
+-------------------------------------------------------------------
+Tue Apr 27 18:25:25 CEST 2004 - gs@suse.de
+
+- write Console: entry for p690 hvc console before reading
+  /etc/install.inf (bug #39527)
+
+-------------------------------------------------------------------
+Tue Apr 27 10:34:06 CEST 2004 - arvin@suse.de
+
+- call Pkg::SetAdditionalLocales after language change from
+  proposal (bug #38366)
+
+-------------------------------------------------------------------
+Mon Apr 26 12:34:02 CEST 2004 - arvin@suse.de
+
+- activate lvm and md before booting into a installed system
+  (bug #39423)
+
+-------------------------------------------------------------------
+Thu Apr 22 18:12:43 CEST 2004 - arvin@suse.de
+
+- removed support of starting yast2 installation without keyboard
+  (linuxrc always reports a keyboard now) (bug #39235)
+
+-------------------------------------------------------------------
+Thu Apr 22 11:08:53 CEST 2004 - arvin@suse.de
+
+- run unicode_{start,stop} only if they are present (bug #35714)
+
+-------------------------------------------------------------------
+Wed Apr 21 13:23:17 CEST 2004 - arvin@suse.de
+
+- uses special sles screen for user authentication on sles
+
+-------------------------------------------------------------------
+Mon Apr 19 08:44:01 CEST 2004 - lslezak@suse.cz
+
+- UML mode fixes: don't copy mtab to the host (it's not needed),
+  find kernel and initrd even when symlinks are missing
+  (workaround for bug #39063)
+- added help text in UML installation proposal
+- version 2.9.64
+
+-------------------------------------------------------------------
+Fri Apr 16 17:58:43 CEST 2004 - nashif@suse.de
+
+- store variables needed in run-time in a sysconfig like file
+- first try to load saved control file before fallback to packaged one.
+
+-------------------------------------------------------------------
+Fri Apr 16 14:57:44 CEST 2004 - arvin@suse.de
+
+- fixed network start for remote x11 installation (bug #38832)
+
+-------------------------------------------------------------------
 Fri Apr 16 14:26:09 CEST 2004 - lslezak@suse.cz
 
 - UML mode fixes: don't copy mtab to the host (it's not needed),
   find kernel and initrd even when symlinks are missing
   (workaround for bug #39063)
 - added help text in UML installation proposal
-- version 2.9.55
+
+-------------------------------------------------------------------
+Fri Apr 16 11:08:42 CEST 2004 - arvin@suse.de
+
+- removed keyboard proposal from update proposal for the update
+  in the running system (bug #37817)
+
+-------------------------------------------------------------------
+Fri Apr 16 10:57:57 CEST 2004 - arvin@suse.de
+
+- don't run on serial console in case of vnc or ssh installation
+  (bug #37325)
+
+-------------------------------------------------------------------
+Thu Apr 15 18:26:04 CEST 2004 - arvin@suse.de
+
+- add "service" proposal to SLES installation
+
+-------------------------------------------------------------------
+Thu Apr 15 12:03:00 CEST 2004 - arvin@suse.de
+
+- log fvwm output for vnc installation (bug #30061)
+
+-------------------------------------------------------------------
+Wed Apr 07 12:37:53 CEST 2004 - arvin@suse.de
+
+- avoid tmp file creation in check.boot script (bug #38572)
+
+-------------------------------------------------------------------
+Tue Apr 06 19:04:33 CEST 2004 - arvin@suse.de
+
+- use fbiterm for CJK locales if appropriate (bug #37823)
+
+-------------------------------------------------------------------
+Tue Apr  6 18:55:20 CEST 2004 - nashif@suse.de
+
+- only_update_selected option added to product feature set
+- V 2.9.56
+
+-------------------------------------------------------------------
+Tue Apr  6 16:26:14 CEST 2004 - sh@suse.de
+
+- V 2.9.55
+- Fixed bug #36908: Use dynamic fonts based on resolution
 
 -------------------------------------------------------------------
 Mon Apr  5 14:38:22 CEST 2004 - fehr@suse.de
 
-- load module dm-snapshort at to prevent hangs if LVM contains 
+- load module dm-snapshort at to prevent hangs if LVM contains
   snapshot LVs (#36422)
 
 -------------------------------------------------------------------
