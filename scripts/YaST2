@@ -413,10 +413,12 @@ fi
 logmeminfo "2"
 
 if [ "$server_running" ] ; then
+  set_inst_qt_env
   log "Starting: y2base \"$modulename\" $moduleargs qt $y2qt_args"
   y2base "$modulename" $moduleargs qt $y2qt_args
   y2exitcode=$?
   [ $y2exitcode -eq 0 ] && y2cc_qt
+  clr_inst_qt_env
   sleep 1
   kill $xserver_pid
   # wait for the X server to shut down
