@@ -31,8 +31,8 @@
     import "Storage";
     import "Kernel";		// call constructor, extract cmdline
     import "Wizard";
+	import "Report";
 
-    import "Popup";
 
     y2milestone("inst_startup START");
 
@@ -146,7 +146,7 @@
 	showFeedback( _("Probing hard disk controllers") );
 	if (StorageControllers::Probe() <= 0)
 	{
-	    Popup::Warning(_("No hard disk controllers were found for the
+	    Report::Warning(_("No hard disk controllers were found for the
 installation. Check your hardware.
 "));
 
@@ -171,7 +171,7 @@ installation. Check your hardware.
     map targetMap = StorageDevices::Probe (true);
     if (size (targetMap) == 0)
     {
-	Popup::Error(_("No hard disks were found for the installation.
+	Report::Error(_("No hard disks were found for the installation.
 Please check your hardware!
 "));
 	clearFeedback();
