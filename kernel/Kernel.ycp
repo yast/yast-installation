@@ -405,6 +405,7 @@
      */
     global define void Kernel ()
     ``{
+	if (Mode::initial || Mode::cont) {
 	string tmp = SCR::Read (.etc.install_inf.Cmdline);
 	y2milestone ("cmdline from install.inf is: %1", tmp);
 	if (tmp != nil) {
@@ -414,6 +415,7 @@
 
 	// FIXME should be configurable
 	AddCmdLine ("desktop", "");
+	}
 
 	ProbeKernel ();
     }
