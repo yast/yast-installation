@@ -243,7 +243,7 @@
 	////////////////////////////////////////////////////////////
 	// re-init network in continue mode with network installation
 
-	if (! Mode::test)
+	if (!Mode::test && !Arch:s390)
 	{
 	    SCR::Execute (.target.bash, "/sbin/ifconfig lo 127.0.0.1 up");
 
@@ -252,6 +252,8 @@
 		|| (Mode::boot == "smb")
 		|| (Mode::boot == "ftp"))
 	    {
+		// TODO: handle dhcp case correctly
+
 		string netdev = SCR::Read (.etc.install_inf.Netdevice);
 		if (netdev == nil) netdev = "eth0";
 
