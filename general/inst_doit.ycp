@@ -36,6 +36,88 @@
 	return `back;
     }
 
+    define void ConfirmLicenses () {
+	if (Mode::autoinst)
+	{
+	    return;
+	}
+	list<string> to_install = Pkg::GetPackages (`selected, true);
+	map<string,string> licenses = Pkg::PkgGetLicensesToConfirm (to_install);
+	boolean deny_all = false;
+	foreach (string package,  string license, licenses, {
+	    if (deny_all)
+	    {
+		Pkg::PkgTaboo (package);
+	    }
+	    else
+	    {
+		term popup = `VBox (
+		    `HSpacing (80),
+		    // dialog heading, %1 is package name
+		    `Heading (sformat (_("Confirm package licence: %1"),
+			package)),
+		    `HBox (
+			`VSpacing (20),
+			`RichText (`id (`lic), license)
+		    ),
+		    `HBox (
+			`PushButton (`id (`help), Label::HelpButton ()),
+			`HStretch (),
+			// push button
+			`PushButton (`id (`accept), _("I &Agree")),
+			// push button
+			`PushButton (`id (`deny), _("I &Disagree")),
+			// push button
+			`PushButton (`id (`deny_all), _("I D&isagree to All"))
+		    )
+		);
+		UI::OpenDialog (popup);
+		symbol ret = nil;
+		while (ret == nil)
+		{
+		    ret = (symbol)UI::UserInput ();
+		    if (ret == `help)
+		    {
+			ret = nil;
+			// help text
+			string help = _("<p><b><big>License Confirmation</big></b><br>
+The package in the headline of the dialog requires an explicit confirmation
+of accepting its license.
+If you reject the license of the package, the package will not be installed.
+<br>
+To accept the license of the package, click <b>I Agree</b>.
+To reject the licence of the package, click <b>I Disagree</b>.
+<br>
+To reject installing all packages requiring confirmation of
+their licenses, click <b>I Disagree to All</b>.</p>");
+			UI::OpenDialog (`HBox (
+			    `VSpacing (18),
+			    `VBox (
+				`HSpacing (70),
+				`RichText (help),
+				`HBox (
+				    `HStretch (),
+				    `PushButton (`id (`close), _("&Close")),
+				    `HStretch ()
+				)
+			    )
+			));
+			UI::UserInput ();
+			UI::CloseDialog ();
+		    }
+		}
+		UI::CloseDialog ();
+		if (ret != `accept)
+		{
+		    if (ret == `deny_all)
+		    {
+			deny_all = true;
+		    }
+		    Pkg::PkgTaboo (package);
+		}
+	    }
+	});
+    }
 
     /**
      * Returns a term containing the final installation confirmation dialog.
@@ -122,6 +204,8 @@ Start update?
     //
     // main()
     //
+
+    ConfirmLicenses ();
 
     UI::OpenDialog(`opt(`decorated, `warncolor), confirmInstallationDialog() );
 
