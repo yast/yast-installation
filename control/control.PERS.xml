@@ -416,7 +416,7 @@ textdomain="control"
             </defaults>
             <modules  config:type="list">
                 <module>
-	            <label>Language</label>
+	            <label>Auto-Install Settings</label>
                     <name>info</name>
                     <arguments>false,true</arguments>
                 </module>
