@@ -411,7 +411,8 @@
 		submodules = load_submodules_list( "hw-config-proposals-s390.ycp",
 						   [
 						    // Fallback list
-						    "lan_proposal"
+						    "lan_proposal",
+						    "printer_proposal"
 						    ]
 						   );
 	    }
