@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Apr  8 12:51:55 CEST 2003 - jsrain@suse.de
+
+- fixed parsing of kernel parameters containging blank space
+  (#26147)
+
+-------------------------------------------------------------------
 Tue Apr  1 15:44:12 CEST 2003 - jsrain@suse.de
 
 - added init= kernel parameter to discard list (#25478)
