@@ -33,6 +33,7 @@ textdomain="control"
             <stage>initial</stage>
             <!-- Type of proposal, initial, hardware, network -->
             <type>initial</type>
+            <label>Installation Settings</label>
 
             <!-- Proposal modules, order matters -->
             <proposal_modules config:type="list">
@@ -49,9 +50,19 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
+            <label>Service Configuration</label>
+            <type>service</type>
+            <stage>continue,normal</stage>
+            <proposal_modules config:type="list">
+                <proposal_module>ca_mgm</proposal_module>
+                <proposal_module>ldap-server</proposal_module>
+            </proposal_modules>
+        </proposal>
+        <proposal>
             <mode>installation</mode>
             <type>dirinstall</type>
             <stage>normal</stage>
+            <label>Directory Installation</label>
             <proposal_modules config:type="list">
                 <proposal_module>dirinstall_options</proposal_module>
                 <proposal_module>software</proposal_module>
@@ -61,6 +72,7 @@ textdomain="control"
             <mode>installation</mode>
             <type>uml</type>
             <stage>normal</stage>
+            <label>UML Installation Settings</label>
             <proposal_modules config:type="list">
 		<proposal_module>uml_source</proposal_module>
                 <proposal_module>uml_user</proposal_module>
@@ -70,6 +82,7 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
+            <label>Installation Settings</label>
             <mode>update</mode>
             <type>initial</type>
             <stage>normal</stage>
@@ -81,6 +94,7 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
+            <label>Installation Settings</label>
             <mode>update</mode>
             <stage>initial</stage>
             <type>initial</type>
@@ -95,6 +109,7 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
+            <label>Installation Settings</label>
             <archs>s390</archs>
             <mode>installation</mode>
             <stage>initial</stage>
@@ -109,6 +124,7 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
+            <label>Installation Settings</label>
             <archs>s390</archs>
             <mode>update</mode>
             <stage>initial</stage>
@@ -123,6 +139,7 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
+            <label>Network Configuration</label>
             <type>network</type>
             <stage>continue,normal</stage>
             <proposal_modules config:type="list">
@@ -135,6 +152,7 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
+            <label>Hardware Configuration</label>
             <type>hardware</type>
             <stage>continue</stage>
             <proposal_modules config:type="list">
@@ -145,6 +163,7 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
+            <label>Network Configuration</label>
             <archs>s390,ppc64</archs>
             <type>network</type>
             <stage>continue</stage>
@@ -155,6 +174,7 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
+            <label>Hardware Configuration</label>
             <archs>ppc64</archs>
             <type>hardware</type>
             <stage>continue</stage>
@@ -164,6 +184,7 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
+            <label>Hardware Configuration</label>
             <archs>s390</archs>
             <type>hardware</type>
             <stage>continue</stage>
@@ -200,7 +221,7 @@ textdomain="control"
                 </module>
                 <module>
                     <name>proposal</name>
-                    <arguments>true,true,`ini</arguments>
+                    <arguments>true,true,`initial</arguments>
 	            <label>Installation Settings</label>
                 </module>
                 <module>
@@ -269,7 +290,7 @@ textdomain="control"
                 <module>
 	            <label>Installation Settings</label>
                     <name>proposal</name>
-                    <arguments>true,true,`ini</arguments>
+                    <arguments>true,true,`initial</arguments>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
@@ -313,7 +334,7 @@ textdomain="control"
                 <module>
 	            <label>Installation Settings</label>
                     <name>proposal</name>
-                    <arguments>true,true,`ini</arguments>
+                    <arguments>true,true,`initial</arguments>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
@@ -417,7 +438,7 @@ textdomain="control"
                 <module>
 	            <label>Network</label>
                     <name>proposal</name>
-                    <arguments>true,true,`net</arguments>
+                    <arguments>true,true,`network</arguments>
                 </module>
                 <module>
 	            <label>Network</label>
@@ -437,7 +458,7 @@ textdomain="control"
                 <module>
                     <label>Service</label>
                     <name>proposal</name>
-                    <arguments>true,true,`serv</arguments>
+                    <arguments>true,true,`service</arguments>
                 </module>
                 <module>
 	            <label>Users</label>
@@ -463,7 +484,7 @@ textdomain="control"
                 <module>
 	            <label>Device Configuration</label>
                     <name>proposal</name>
-                    <arguments>true,true,`hw</arguments>
+                    <arguments>true,true,`hardware</arguments>
                 </module>
                 <module>
                     <name>congratulate</name>
@@ -497,7 +518,7 @@ textdomain="control"
                 <module>
 	            <label>Autoinstall Settings</label>
                     <name>proposal</name>
-                    <arguments>true,true,`ini</arguments>
+                    <arguments>true,true,`initial</arguments>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
