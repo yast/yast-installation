@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Feb  9 19:16:22 CET 2005 - nashif@suse.de
+
+- Save files control.xml and info.txt from installation into 
+  /etc/YaST2.
+
+-------------------------------------------------------------------
 Wed Feb  9 15:05:33 CET 2005 - jsrain@suse.cz
 
 - additional kernel parameters in control file Prof moved to
