@@ -305,10 +305,6 @@ Please wait while the base system is being installed.
 
 	SCR::Execute (.target.mkdir, Installation::sourcedir);
     }
-    // setup /dev/cdrom, /dev/dvd, etc.
-    // needed in InstMedia::InstallYaSTData()
-
-    StorageDevices::MakeCDLinks (ide_recorders);
 
     // --------------------------------------------------------------
     // re-mount installation media on target
