@@ -407,14 +407,14 @@ Please wait while the base system is being installed.
     if ( !Mode::update )
     {
 	// see bug #32366 why we need this here
-	set_runlevel (5);
+	set_runlevel (x11_installed ? 5 : 3);
     }
     else if ( Mode::update )
     {
 	// Set default runlevel cause inittab will be overwritten by
 	// installing aaa_base
 
-	set_runlevel ((Update::last_runlevel != -1) ? Update::last_runlevel : 3);
+	set_runlevel (Update::last_runlevel != -1 ? Update::last_runlevel : 3);
 
 	if (!Arch::ppc
 	    && Mode::update)
