@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Sep 17 16:12:53 CEST 2004 - sh@suse.de
+
+- V 2.10.33
+- Changed final installation confirmation dialog according to
+  bug #45279 
+
+-------------------------------------------------------------------
 Fri Sep 17 12:12:12 CEST 2004 - arvin@suse.de
 
 - moved popup with boot message further to the end (bug #45432)
