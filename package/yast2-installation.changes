@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Feb 25 11:19:26 CET 2003 - arvin@suse.de
+
+- make Hardware Configuration Dialog unconfuseable (bug #24020)
+
+-------------------------------------------------------------------
 Mon Feb 24 19:55:43 CET 2003 - kkaempf@suse.de
 
 - add debug hooks (#23787)
@@ -12,8 +17,9 @@ Mon Feb 24 18:25:31 CET 2003 - sh@suse.de
 -------------------------------------------------------------------
 Mon Feb 24 18:00:37 CET 2003 - gs@suse.de
 
-- don't add .UTF-8 to LANG variable (causes problems with ncurses) 
+- don't add .UTF-8 to LANG variable (causes problems with ncurses)
   bug #23348
+
 -------------------------------------------------------------------
 Mon Feb 24 17:23:55 CET 2003 - mvidner@suse.de
 
