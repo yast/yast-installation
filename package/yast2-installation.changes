@@ -4,6 +4,7 @@ Thu Feb 10 13:13:50 CET 2005 - jsrain@suse.cz
 - reduced forced minimal size of the release notes popup (#50637)
 - fixed the order of proposal creation (and thus firewall
   is enabled again) (#50622)
+- 2.11.15
 
 -------------------------------------------------------------------
 Wed Feb  9 19:16:22 CET 2005 - nashif@suse.de
