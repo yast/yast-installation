@@ -203,7 +203,13 @@ map MakeProposal( boolean force_reset, boolean language_changed );
 		boolean mode_changed (optional)
 
 			This module just caused a change of the installation
-			mode. This is only relevant for the "inst mode" module.
+			mode. This is only relevant for the "inst mode"
+			module.
+
+		boolean rootpart_changed (optional)
+
+			This module just caused a change of the root partition.
+			This is only relevant for the "root part" module.
 
 
 
