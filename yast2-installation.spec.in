@@ -1,6 +1,6 @@
 @HEADER-COMMENT@
 
-# neededforbuild  gpp libgpp libxcrypt libxcrypt-devel hwinfo hwinfo-devel yast2-devel-packages
+# neededforbuild  gpp libgpp libxcrypt libxcrypt-devel hwinfo hwinfo-devel udev yast2-devel-packages
 
 @HEADER@
 Requires:	yast2
