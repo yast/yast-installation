@@ -5,10 +5,10 @@
 // (PCs without a network card)
 //
 [
- "proposal_printer",
- "proposal_sound",
- "proposal_tv",
- "lan_proposal",
- "modem_proposal",
- "isdn_proposal"
+"printer_proposal",
+"sound_proposal",
+"tv_proposal",
+"lan_proposal",
+"modem_proposal",
+"isdn_proposal",
 ]

@@ -4,8 +4,8 @@
 // Proposal list for hardware configuration for SPARCs
 //
 [
- "lan_proposal",
- "proposal_printer",
- "modem_proposal",
- "proposal_sound"
+"lan_proposal",
+"printer_proposal",
+"modem_proposal",
+"sound_proposal",
 ]

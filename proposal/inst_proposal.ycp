@@ -1,17 +1,20 @@
 /**
- * Module:		inst_proposal.ycp
+ * File:	clients/inst_proposal.ycp
+ * Module:	Installation
+ * Summary:	Create and display proposal
+ * Authors:	Stefan Hundhammer <sh@suse.de>
  *
  * $Id$
  *
- * Author:		Stefan Hundhammer <sh@suse.de>
+ * Create and display reasonable proposal for basic
+ * installation and call sub-workflows as required
+ * on user request.
  *
- * Purpose:		Create and display reasonable proposal for basic
- *			installation and call sub-workflows as required
- *			on user request.
- *
- *			See also file proposal-API.txt for details.
+ * See also file proposal-API.txt for details.
  */
+
 {
+
     textdomain "installation";
 
     import "Arch";
@@ -360,9 +363,9 @@
 						   [
 						    // Fallback list
 						    "lan_proposal",
-						    "proposal_printer",
+						    "printer_proposal",
 						    "modem_proposal",
-						    "proposal_sound"
+						    "sound_proposal",
 						   ]
 						   );
 	    }
@@ -376,11 +379,11 @@
 						       [
 							// Fallback list
 							"lan_proposal",
-							"proposal_printer",
+							"printer_proposal",
 							"modem_proposal",
 							"isdn_proposal",
-							"proposal_sound",
-							"proposal_tv"
+							"sound_proposal",
+							"tv_proposal",
 						       ]
 						       );
 		}
@@ -390,13 +393,13 @@
 
 		    submodules = load_submodules_list( "hw-config-proposals-home-pc.ycp",
 						       [
-							// Fallback list
-							"proposal_printer",
-							"proposal_sound",
-							"proposal_tv",
+							// Fallback list							"lan_proposal",
+							"printer_proposal",
+							"sound_proposal",
+							"tv_proposal",
 							"lan_proposal",
 							"modem_proposal",
-							"isdn_proposal"
+							"isdn_proposal",
 						       ]
 						       );
 		}
@@ -838,5 +841,7 @@ To use the settings as displayed, press <b>Accept</b>.
     } // while input loop
 
 
-    // NOTREACHED
+// NOTREACHED
+
+/* EOF */
 }
