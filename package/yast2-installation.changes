@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Sep 05 19:10:43 CEST 2002 - arvin@suse.de
+
+- more old trans-package fun
+
+-------------------------------------------------------------------
 Thu Sep 05 15:01:29 CEST 2002 - arvin@suse.de
 
 - always run depmod after installation (bug #18382)
