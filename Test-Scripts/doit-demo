@@ -3,4 +3,4 @@
 PATH=$PATH:/usr/lib/YaST2/bin
 cd /usr/share/YaST2/clients
 
-y2base installation.ycp '("demo")' '("initial")' qt -geometry 1024x768 -style=thinkeramik -bg '#eeeeee'
+y2base installation.ycp '("demo")' '("initial")' qt -geometry 1024x768 -bg '#eeeeee'
