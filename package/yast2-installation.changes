@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Sep  4 16:12:19 CEST 2002 - kkaempf@suse.de
+
+- move update branch to yast2-update (#18876)
+- 2.6.45
+
+-------------------------------------------------------------------
 Wed Sep 04 12:48:03 CEST 2002 - arvin@suse.de
 
 - fixed provide/obsolete of trans packages (bug #18691)
