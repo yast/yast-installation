@@ -13,11 +13,12 @@
 
 <!ELEMENT defaults ( arguments, archs ) >
 
-<!ENTITY % y2_globals "language| keyboard| timezone| enable_autologin|
-use_desktop_scheduler|io_scheduler|ui_mode" >
+<!ENTITY % y2_globals "language| keyboard| timezone| enable_autologin| runlevel
+| use_desktop_scheduler|io_scheduler|ui_mode" >
 <!ELEMENT globals (%y2_globals;)* >
 
 <!ELEMENT keyboard ( #PCDATA ) >
+<!ELEMENT runlevel ( #PCDATA ) >
 <!ELEMENT ui_mode ( #PCDATA ) >
 
 <!ELEMENT label ( #PCDATA ) >

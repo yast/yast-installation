@@ -138,6 +138,7 @@ global define boolean Read( string controlfile) ``{
         ProductFeatures::language = globals["language"]:"";
         ProductFeatures::skip_language_dialog = globals["skip_language_dialog"]:false;
         ProductFeatures::keyboard = globals["keyboard"]:"";
+        ProductFeatures::runlevel = globals["runlevel"]:"";
         ProductFeatures::timezone = globals["timezone"]:"";
         ProductFeatures::ui_mode = globals["ui_mode"]:"expert";
         ProductFeatures::use_desktop_scheduler =

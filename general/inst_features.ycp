@@ -15,6 +15,7 @@
     import "Language";
     import "Installation";
     import "Console";
+    import "RunlevelED";
 
     // Timezone
     if (ProductFeatures::timezone != "")
@@ -28,6 +29,12 @@
         Keyboard::default_kbd = ProductFeatures::keyboard;
         Keyboard::SetConsole( ProductFeatures::keyboard);
         Keyboard::SetX11( ProductFeatures::keyboard );
+    }
+
+    // Runlevel
+    if (ProductFeatures::runlevel != "")
+    {
+        RunlevelED::default = ProductFeatures::runlevel;
     }
 
     if (ProductFeatures::language != "")
