@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Sep  9 12:20:13 CEST 2002 - kkaempf@suse.de
+
+- remove runme_at_boot at end 
+- 2.6.51
+
+-------------------------------------------------------------------
 Fri Sep  6 12:56:08 CEST 2002 - kkaempf@suse.de
 
 - s390'ers want it different -> k_deflt on smp systems (#18990)
