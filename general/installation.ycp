@@ -26,6 +26,7 @@
     import "Mode";
     import "Installation";
     import "ProductControl";
+    import "ProductFeatures";
     import "Language";
     import "Storage";
     Installation::scr_handle = scr_handle;
@@ -341,6 +342,17 @@ differ from those in the manual.
 
     y2debug("Starting Workflow with  \"%1\" \"%2\"",  Mode::stage, Mode::mode);
     y2debug("modules: %1", modules);
+
+    // skip language dialog if selected in isolinux. (#37679)
+    if (Mode::initial && SCR::Read (.etc.install_inf.Language)!= nil)
+    {
+        string tmp_language = (string)SCR::Read (.etc.install_inf.Language);
+        if ( tmp_language !="" && ProductFeatures::skip_language_dialog )
+        {
+            ProductControl::DisabledModules=add(ProductControl::DisabledModules,
+            "language");
+        }
+    }
 
     while ((m >= 0) && (m < size(modules)))
     {
