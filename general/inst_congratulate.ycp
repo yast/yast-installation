@@ -93,6 +93,7 @@ return to this installation sequence.</p>
 ");
 
     Wizard::SetContents (caption, contents, help, (boolean)WFM::Args (0), (boolean)WFM::Args (1));
+    Wizard::SetTitleIcon ("SuSEmenu");
 
     Wizard::SetNextButton(`next, Label::FinishButton() );
     Wizard::SetFocusToNextButton();
