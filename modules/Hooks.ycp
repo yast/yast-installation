@@ -11,7 +11,7 @@
     module "Hooks";
     import "Popup";
 
-    string tmp_dir = (string)SCR::Read(.target.tmpdir);
+    string tmp_dir = (string)WFM::Read(.local.tmpdir, []);
     string log_dir = "/var/log/YaST2";
 
     // script types, ycp does not make  sense, it can be added directly
@@ -52,26 +52,28 @@
      */
     void ExecuteScript (string script, string type)
     {
-            // string message =  sformat(_("Executing user supplied script: %1"), scriptName);
-            string executionString = "";
-            string scriptPath = sformat("%1/%2", tmp_dir, script);
-            if (type == "shell")
-            {
-                executionString = sformat("/bin/sh -x %1 2&> %2/%3.log",
-                        scriptPath, log_dir, script);
-                SCR::Execute (.target.bash, executionString);
-            }
-            else if (type == "perl")
-            {
-                executionString = sformat("/usr/bin/perl %1 2&> %2/%3.log",
-                        scriptPath, log_dir, script);
-                SCR::Execute (.target.bash,executionString);
-            }
-            else
-            {
-                y2error("Unknown interpreter: %1", type);
-            }
-            y2milestone("Script Execution command: %1", executionString );
+
+        y2milestone("Executing script: %1", script);
+        // string message =  sformat(_("Executing user supplied script: %1"), scriptName);
+        string executionString = "";
+        string scriptPath = sformat("%1/%2", tmp_dir, script);
+        if (type == "shell")
+        {
+            executionString = sformat("/bin/sh -x %1 2&> %2/%3.log",
+                    scriptPath, log_dir, script);
+            WFM::Execute (.local.bash, executionString);
+        }
+        else if (type == "perl")
+        {
+            executionString = sformat("/usr/bin/perl %1 2&> %2/%3.log",
+                    scriptPath, log_dir, script);
+            WFM::Execute (.local.bash,executionString);
+        }
+        else
+        {
+            y2error("Unknown interpreter: %1", type);
+        }
+        y2milestone("Script Execution command: %1", executionString );
     }
 
     /**
@@ -80,6 +82,7 @@
      * @param string at_entry == true before call of file == false after call of file
      */
     global define void Run(string filename, boolean at_entry) ``{
+        y2milestone("Running Hook: %1" , filename);
         if (at_entry)
         {
 	    if (WFM::Read (.local.size, sformat("%1/%2_pre.sh", tmp_dir, filename)) > 0)
@@ -90,6 +93,10 @@
             {
                 ExecuteScript(sformat("%1_pre.pl", filename), "perl");
             }
+            else
+            {
+                y2error("Hook not found: %1/%2_pre.{sh,pl}" , tmp_dir, filename);
+            }
         } else {
 	    if (WFM::Read (.local.size, sformat("%1/%2_post.sh", tmp_dir, filename)) > 0)
             {
@@ -98,6 +105,10 @@
             else if (WFM::Read (.local.size, sformat("%1/%2_post.pl", tmp_dir, filename)) > 0)
             {
                 ExecuteScript(sformat("%1_post.pl", filename), "perl");
+            }
+            else
+            {
+                y2error("Hook not found: %1/%2_post.{sh,pl}" , tmp_dir, filename);
             }
         }
     }

@@ -8,7 +8,7 @@
  */
 {
 textdomain "control";	// FIXME: Workaround for missing initialization in libycp 
-    
+
 module "ProductControl";
 
 import "XML";
@@ -63,6 +63,7 @@ global list<map> last_stage_mode = [];
 global list<string> DisabledModules = [];
 
 
+global list<string> logfiles = [];
 
 /**
  * Check if a module is disabled
@@ -267,20 +268,24 @@ global define map getModeDefaults(string stage, string mode)
 }
 
 void PrepareScripts(map m) {
-    string tmp_dir = (string)SCR::Read(.target.tmpdir);
+    string tmp_dir = (string)WFM::Read(.local.tmpdir, []);
     if (haskey(m,"prescript"))
     {
         string interpreter = m["prescript", "interpreter"]:"shell";
         string source = m["prescript", "source"]:"";
         string type = (interpreter == "shell") ? "sh" : "pl";
-        SCR::Write(.target.string, sformat("%1/%2_pre.%3", tmp_dir, m["name"]:"", type), source);
+        string f = sformat("%1/%2_pre.%3", tmp_dir, m["name"]:"", type);
+        WFM::Write(.local.string,f , source);
+        logfiles = add(logfiles, sformat("%1.log", f));
     }
     if (haskey(m,"postscript"))
     {
         string interpreter = m["postscript", "interpreter"]:"shell";
         string source = m["postscript", "source"]:"";
         string type = (interpreter == "shell") ? "sh" : "pl";
-        SCR::Write(.target.string, sformat("%1/%2_post.%3", tmp_dir, m["name"]:"", type), source);
+        string f = sformat("%1/%2_post.%3", tmp_dir, m["name"]:"", type);
+        WFM::Write(.local.string, f, source);
+        logfiles = add(logfiles, sformat("%1.log", f));
     }
     return;
 }
@@ -328,7 +333,7 @@ global define string getWorkflowLabel(string stage, string mode)
  */
 global define void AddWizardSteps(list<map> stagemode) ``{
     last_stage_mode = stagemode;
-    
+
     // UI::WizardCommand() can safely be called even if the respective UI
     // doesn't support the wizard widget, but for optimization it makes sense
     // to do expensive operations only when it is available.
@@ -338,7 +343,7 @@ global define void AddWizardSteps(list<map> stagemode) ``{
 
     string wizard_textdomain = (string) productControl["textdomain"]:"control";
     y2debug( "Using textdomain '%1' for wizard steps", wizard_textdomain );
-    
+
     string first_id = "";
     // UI::WizardCommand(`SetVerboseCommands( true ) );
     foreach (map sm , stagemode, ``{
@@ -368,7 +373,7 @@ global define void AddWizardSteps(list<map> stagemode) ``{
  */
 global define void UpdateWizardSteps(list<map> stagemode) ``{
     last_stage_mode = stagemode;
-    
+
     UI::WizardCommand(`DeleteSteps());
     AddWizardSteps( stagemode );
     UI::WizardCommand(`UpdateSteps());

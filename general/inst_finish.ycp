@@ -703,6 +703,17 @@ with the load address of your root DASD.
 	}
 	log_num = log_num - 1;
     }
+    if (size(ProductControl::logfiles)>0)
+    {
+        foreach(string logfile, ProductControl::logfiles, ``{
+                logfile = "/var/log/YaST2/" + logfile;
+                if (WFM::Read (.local.size, logfile) > 0)
+                {
+                    WFM::Execute (.local.bash, "/bin/cp " + logfile + " " +
+                    Installation::destdir + "/var/log/YaST2/" + logfile);
+                }
+                });
+    }
 
     // copy y2start.log
     SCR::Write (.target.string, "/var/log/YaST2/y2start.log-initial", WFM::Read (.local.string, ["/var/log/YaST2/y2start.log", ""]));

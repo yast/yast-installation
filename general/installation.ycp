@@ -112,9 +112,6 @@
 
 	UI::SetLanguage (Language::language, Installation::encoding);
 	WFM::SetLanguage (Language::language, "UTF-8");
-
-	if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_initial.ycp") > 0)
-	    WFM::CallFunction ("product_initial", []);
     }
 
     // Properly setup timezone for continue mode.
@@ -123,10 +120,6 @@
     {
 	import "Timezone";
 	Timezone::Set( Timezone::timezone, true );
-
-	if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_continue.ycp") > 0)
-	    WFM::CallFunction ("product_continue", []);
-
 	Pkg::SetLocale (Language::language);
     }
 
@@ -144,6 +137,17 @@
     ///////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////
 
+    // Detect mode early to be able to setup steps correctly
+    if (Mode::cont)
+    {
+	if (SCR::Read(.target.size, Installation::destdir + "/var/lib/YaST2/update_mode") > 0)
+	{
+	    y2milestone ("setting Mode::update = true");
+	    Mode::update = true;
+	    Mode::installation = false;
+	    Mode::mode = "update";
+	}
+    }
 
     if ( Mode::initial && ! Mode::repair )
     {
@@ -155,7 +159,7 @@
     }
 
     string wizard_mode = Mode::demo ? "installation" : Mode::mode;
-    
+
     // UI::WizardCommand() can safely be called even if the respective UI
     // doesn't support the wizard widget, but for optimization it makes sense
     // to do expensive operations only when it is available.
@@ -166,13 +170,6 @@
     // classified_user_settings contain secrets, like passwords ...
     // they should not be logged !
     map classified_user_settings = $[ "crypt_nb":0 ];
-
-    if (Arch::alpha)
-    {
-	// get smp for alpha from /etc/install.inf
-	Arch::setSMP (SCR::Read (.etc.install_inf.SMP) == "1");
-    }
-
 
     if (Mode::autoinst)
     {
@@ -198,14 +195,6 @@
 
     if (Mode::cont)
     {
-	if (SCR::Read(.target.size, Installation::destdir + "/var/lib/YaST2/update_mode") > 0)
-	{
-	    y2milestone ("setting Mode::update = true");
-	    Mode::update = true;
-	    Mode::installation = false;
-	    Mode::mode = "update";
-	}
-
 	Installation::encoding = Console::Restore();
 	if (lookup (UI::GetDisplayInfo(), "HasFullUtf8Support", true))
 	{
@@ -351,7 +340,9 @@ differ from those in the manual.
 
     list<map> modules = ProductControl::getModules(Mode::stage, Mode::mode);
     map defaults = ProductControl::getModeDefaults(Mode::stage, Mode::mode);
+
     y2debug("Starting Workflow with  \"%1\" \"%2\"",  Mode::stage, Mode::mode);
+
     while ((m >= 0) && (m < size(modules)))
     {
         map mod = modules[m]:$[];
@@ -410,21 +401,26 @@ differ from those in the manual.
             i = i + 1;
         }
 
-	// FIXME
 	UI::WizardCommand(`SetCurrentStep( mod["id"]:"" ) );
         ProductControl::CurrentWizardStep = mod["id"]:"";
 
         symbol result = (symbol) WFM::CallFunction (substring(sformat("%1", module_name), 1), args);
 
+        // Dont call hook scripts after installation is done. (#36831)
+        if (m < size(modules) - 1)
+        {
+            Hooks::Run (mod["name"]:"", false );
+        }
+        else
+            y2milestone("Not running hooks at the end of the installation");
 
-        //Hooks::Run (sformat("%1", module_name), false );
-        //Hooks::Checkpoint ( mod["name"]:"", false);          // exit hook
+        // This should be safe (#36831)
+        Hooks::Checkpoint ( mod["name"]:"", false);          // exit hook
 
         if ( module_name == `inst_language || module_name == `autoinst_init )   // language change very likely
         {
             retranslateWizardDialog();
         }
-
 
         // If the module return nil, something basic went wrong.
         // We show a stub dialog instead.
