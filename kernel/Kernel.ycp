@@ -194,11 +194,18 @@
 		integer cpu_family = cpu["family"]:0;
 		integer cpu_model = cpu["model"]:0;
 
+		if ((cpu["vendor"]:"" == "AuthenticAMD")
+		    && (cpu_family >= 6))
+		{
+		    y2milestone ("Kernel switch: Athlon !");
+		    kernel_packages = ["k_athlon"];
+		    switched = true;
+		}
 		// special handling for cyrix, it pretends to be a pentium but isnt
 		//   so extra check for "tsc" flag
-		if ((cpu_family < 5)	// not pentium
-		    || ((cpu_family == 5)
-			&& (!contains (cpuflags, "tsc"))))
+		else if ((cpu_family < 5)	// not pentium
+			 || ((cpu_family == 5)
+			     && (!contains (cpuflags, "tsc"))))
 		{
 		    y2milestone ("Kernel switch: Not a pentium !");
 		    kernel_packages = ["k_i386"];
