@@ -55,8 +55,8 @@
      * Re-translate static part of wizard dialog and other predefined messages
      * after language change
      */
-    define void retranslateWizardDialog() ``{
-
+    void retranslateWizardDialog()
+    {
 	y2debug( "Retranslating messages" );
 
 	// Make sure the labels for default function keys are retranslated, too.
