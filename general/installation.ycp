@@ -445,7 +445,13 @@ will look different than in the manual.");
  [ `continue, `inst_language	    (false, true),       true,					  screen_shot_mode &&    ! update_mode  , false],
  [ `continue, `inst_root	    (false, true),       true,						! autoinst &&    ! update_mode	, true ],
  [ `continue, `inst_user	    (true,  true),       true,						! autoinst &&    ! update_mode	, true ],
- [ `continue, `inst_x11		    (true,  true),       Arch::x11_setup_needed, Mode::x11_setup_needed &&		 ! update_mode  , false],
+
+ // ...
+ // The X11 workflow is now part of the proposal widget dispatcher
+ // therefore it is disabled at this point
+ // ---
+ // [ `continue, `inst_x11		    (true,  true),       Arch::x11_setup_needed, Mode::x11_setup_needed &&		 ! update_mode  , false],
+
  [ `continue, `autoinst_configure   (false, false),      true,						  autoinst &&    ! update_mode	, false],
  [ `continue, `inst_suseconfig	    (false, false),      true,			! test_mode						, false],
  [ `continue, `inst_proposal	    (true,  true),       true,						! autoinst &&   ! update_mode	, false]

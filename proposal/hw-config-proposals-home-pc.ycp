@@ -11,4 +11,5 @@
 "lan_proposal",
 "modem_proposal",
 "isdn_proposal",
+"x11_proposal",
 ]
