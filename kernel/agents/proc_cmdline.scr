@@ -23,7 +23,7 @@
 .proc.cmdline
 
 `ag_anyagent(
-  SCR::AnyAgent (
+  Description (
       ``(File("/proc/cmdline")),	// real filename
       "#\n",			// Comment
       true,			// read-only

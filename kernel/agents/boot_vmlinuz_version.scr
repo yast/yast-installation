@@ -21,7 +21,7 @@
 .boot.vmlinuz_version
 
 `ag_anyagent(
-  SCR::AnyAgent (
+  Description (
   ``(Run("/sbin/get_kernel_version ", `arg(0))),
   "\n", true,
   ``(String ("^\n"))
