@@ -17,6 +17,22 @@
     import "Service";
     import "GetInstArgs";
 
+    /**
+     * Is GNOME installed?
+     * @return true if it is
+     */
+    boolean GnomeInstalled () {
+	return Pkg::IsProvided ("gnome-session");
+    }
+
+    /**
+     * Is KDE installed?
+     * @return true if it is
+     */
+    boolean KdeInstalled () {
+	return Pkg::IsProvided ("kdebase3");
+    }
+
     /* Called backwards */
     if(GetInstArgs::going_back())
 	return `auto;
@@ -30,7 +46,10 @@
 	    y2milestone ("Default WM: %1", default_wm);
 	    string local_only = ProductFeatures::fam_local_only;
 	    y2milestone ("Fam activation: %1", local_only);
-	    if (local_only == "always" || local_only == default_wm)
+	    if (local_only == "always"
+		|| local_only == default_wm
+		|| (local_only == "gnome" && GnomeInstalled ())
+		|| (local_only == "kde" && KdeInstalled ()))
 	    {
 		y2milestone ("Setting fam to local_only");
 		SCR::Write (.sysconfig.fam.FAM_LOCAL_ONLY, "yes");
