@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jan 30 16:08:44 CET 2003 - kkaempf@suse.de
+
+- call /usr/bin/mkinfodir in inst_suseconfig
+  (replaces SuSEconfig.man_info)
+
+-------------------------------------------------------------------
 Wed Jan 29 14:42:42 CET 2003 - arvin@suse.de
 
 - added dialog to ask for preferred method of user authentication
