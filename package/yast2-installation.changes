@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Apr 15 17:18:13 CEST 2003 - arvin@suse.de
+
+- removed call of SuSEconfig.3ddiag and switch2mesasoft after
+  reboot during installation since they don't exist anymore
+
+-------------------------------------------------------------------
 Thu Apr 10 15:49:20 CEST 2003 - ms@suse.de
 
 - fixed conditions of xmset calls (#26214)

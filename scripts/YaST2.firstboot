@@ -221,19 +221,6 @@ mkdir -p /var/adm/SuSEconfig
 touch /var/adm/SuSEconfig/run-texhash
 
 #
-# ensure to have a proper libGL
-#
-
-test -x /sbin/conf.d/SuSEconfig.3ddiag
-if [ $? -eq 0 ]; then
-    /sbin/conf.d/SuSEconfig.3ddiag
-    echo "Executed 3ddiag script"
-else
-    test -x /usr/X11R6/bin/switch2mesasoft && /usr/X11R6/bin/switch2mesasoft
-    echo "Executed switch2mesasoft script"
-fi
-
-#
 # for iSeries virtual console, detect screen size and terminal
 #
 if test -d /proc/iSeries; then
