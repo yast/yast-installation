@@ -183,8 +183,8 @@
 		if (!contains (cpuflags, "pae"))
 		{
 		    y2milestone ("Kernel switch: CPU w/o PAE !");
-		    kernel_packages = ["k_psmp"];
-		    switched = true;
+		    kernel_packages = ["k_deflt"];
+		    switched = false;
 		}
 	    }
 	    else if (memsize > 0x100000000)		// > 4GB
@@ -207,16 +207,6 @@
 		{
 		    y2milestone ("Kernel switch: Athlon !");
 		    kernel_packages = ["k_athlon"];
-		    switched = true;
-		}
-		// special handling for cyrix, it pretends to be a pentium but isnt
-		//   so extra check for "tsc" flag
-		else if ((cpu_family < 5)	// not pentium
-			 || ((cpu_family == 5)
-			     && (!contains (cpuflags, "tsc"))))
-		{
-		    y2milestone ("Kernel switch: Not a pentium !");
-		    kernel_packages = ["k_i386"];
 		    switched = true;
 		}
 	    }

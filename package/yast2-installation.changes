@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Aug 28 16:04:41 CEST 2003 - kkaempf@suse.de
+
+- Install default kernel on SMP systems without 'PAE'
+  (i.e. Pentium1-SMP)
+- Drop check for unsupported Cyrix-CPUs without 'TSC'
+
+-------------------------------------------------------------------
 Tue Aug 26 11:49:21 CEST 2003 - arvin@suse.de
 
 - don't gray out next button in proposal in case of blockers
