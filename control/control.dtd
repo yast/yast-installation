@@ -40,7 +40,9 @@
 <!ELEMENT packages ( package ) >
 <!ATTLIST packages config:type NMTOKEN #FIXED "list" >
 
-<!ELEMENT productDefines ( textdomain, globals, software, proposals, workflows ) >
+<!ELEMENT productDefines ( textdomain, globals, software, partitioning, proposals, workflows ) >
+
+
 
 
 <!ELEMENT proposal ( archs | mode | proposal_modules | stage | type )* >
@@ -73,6 +75,11 @@
 
 <!ELEMENT workflows ( workflow+ ) >
 <!ATTLIST workflows config:type NMTOKEN #FIXED "list" >
+
+<!ELEMENT partitioning (evms_config?)>
+<!ELEMENT evms_config ( #PCDATA ) >
+<!ATTLIST evms_config config:type NMTOKEN #FIXED "boolean" >
+
 
 <!ATTLIST productDefines
         xmlns CDATA #REQUIRED
