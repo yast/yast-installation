@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Sat Sep 13 18:39:23 CEST 2003 - nashif@suse.de
+
+- remove inst_startup from autoinst workflow, add it autoinst_init (#30678)
+
+-------------------------------------------------------------------
 Fri Sep 12 17:25:56 CEST 2003 - ms@suse.de
 
 - added milestone texts for X11 config update/inject (#30612)
