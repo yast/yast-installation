@@ -79,26 +79,26 @@ function y2cc_qt()
             height=`/usr/X11R6/bin/xwininfo -root | sed -n -e '/Height:/s/^.*Height:[ \t]//p'`
 	    wm_pid=0
 
-            # Start a window manager - y2cc needs a window manager for reasonable keyboard operation.
-
-            if [ -x /usr/X11R6/bin/mwm ]; then
-        	# MWM (the Motif window manager) is easy to use, but not necessarily available.
-        	log "Starting mwm"
-        	/usr/X11R6/bin/mwm -xrm '*clientDecoration: none' -xrm '*showFeedback: none' &
-
-		# MWM doesn't let windows grow any larger than the desktop, so
-		# leave width and height alone.
-            elif [ -x /usr/X11R6/bin/twm ]; then
-        	# TWM's quirks may confuse newbies, but it's part of XFree86,
-        	# so it should always be available.
-        	log "Starting twm"
-        	/usr/X11R6/bin/twm &
-        	# Compensate for window manager decorations
-        	height=$(($height-24))
-        	width=$(($width-4))
-            else
-        	log "No window manager available"
-            fi
+            #	# Start a window manager - y2cc needs a window manager for reasonable keyboard operation.
+	    #	
+            #	if [ -x /usr/X11R6/bin/mwm ]; then
+            #		# MWM (the Motif window manager) is easy to use, but not necessarily available.
+            #		log "Starting mwm"
+            #		/usr/X11R6/bin/mwm -xrm '*clientDecoration: none' -xrm '*showFeedback: none' &
+	    #	
+	    #		# MWM doesn't let windows grow any larger than the desktop, so
+	    #		# leave width and height alone.
+            #	elif [ -x /usr/X11R6/bin/twm ]; then
+            #		# TWM's quirks may confuse newbies, but it's part of XFree86,
+            #		# so it should always be available.
+            #		log "Starting twm"
+            #		/usr/X11R6/bin/twm &
+            #		# Compensate for window manager decorations
+            #		height=$(($height-24))
+            #		width=$(($width-4))
+            #	else
+            #		log "No window manager available"
+            #	fi
 
             # Export geometry for modules started via the y2cc
             export Y2_GEOMETRY="${width}x${height}+0+0"
@@ -283,6 +283,10 @@ if [ "$VNC" = "1" ] ; then
 	. /usr/lib/YaST2/bin/inst_setup_vnc
 	export DISPLAY=:1
 	y2base "$modulename" $moduleargs qt -style=platinum -fn $Y2_XFONT -geometry 800x600+1+1 -no-wm $qt_bg
+	# This should probably become:
+	# y2base "$modulename" $moduleargs qt -style=platinum -fn $Y2_XFONT -fullscreen -noborder $qt_bg
+	# (no test environment to make sure this doesn't break anything)
+	# -sh 2003-01-27
 	y2exitcode=$?
 	[ $y2exitcode -eq 0 ] && y2cc_qt
 	exit $y2exitcode
@@ -439,7 +443,7 @@ fi
 logmeminfo "2"
 
 if [ "$server_running" ] ; then
-  y2base "$modulename" $moduleargs qt -style=platinum -fn $Y2_XFONT -geometry 800x600 -no-wm $qt_bg
+  y2base "$modulename" $moduleargs qt -style=platinum -fn $Y2_XFONT -fullscreen -noborder $qt_bg
   y2exitcode=$?
   [ $y2exitcode -eq 0 ] && y2cc_qt
   sleep 1
