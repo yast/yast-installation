@@ -205,6 +205,10 @@ global define boolean ReadControlFile( string controlfile)
 	    globals["enable_firewall"]:true;
 	ProductFeatures::firewall_enable_ssh =
 	    globals["firewall_enable_ssh"]:false;
+
+        // Additional kernel parameters, i.e. elevator, desktop
+        ProductFeatures::additional_kernel_parameters =
+            globals["additional_kernel_parameters"]:"";
     }
 
     return true;
