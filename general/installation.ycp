@@ -160,7 +160,7 @@
     ProductControl::AddWizardSteps(stagemode);
 
     // classified_user_settings contain secrets, like passwords ...
-    // they should not be loged !
+    // they should not be logged !
     map classified_user_settings = $[ "crypt_nb":0 ];
 
     if (Arch::alpha)
