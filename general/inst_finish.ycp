@@ -199,6 +199,11 @@ Please wait while the base system is being installed.
 
 
     // --------------------------------------------------------------
+    // installation source cache
+
+    Pkg::SourceCacheCopyTo (Installation::destdir);
+
+    // --------------------------------------------------------------
     //   stop SCR
     //   restart on destination
 
@@ -521,11 +526,6 @@ Please wait while the base system is being installed.
     {
 	InjectFile ("/etc/suse-blinux.conf");
     }
-
-    // --------------------------------------------------------------
-    // installation source cache
-
-    Pkg::SourceCacheCopyTo (Installation::destdir);
 
     // --------------------------------------------------------------
     // boot manager configuration
