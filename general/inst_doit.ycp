@@ -40,7 +40,7 @@
 		term popup = `VBox (
 		    `HSpacing (80),
 		    // dialog heading, %1 is package name
-		    `Heading (sformat (_("Confirm package license: %1"),
+		    `Heading (sformat (_("Confirm Package License: %1"),
 			package)),
 		    `HBox (
 			`VSpacing (20),
@@ -54,7 +54,7 @@
 			// push button
 			`PushButton (`id (`deny), _("I &Disagree")),
 			// push button
-			`PushButton (`id (`deny_all), _("I D&isagree to All"))
+			`PushButton (`id (`deny_all), _("I D&isagree with All"))
 		    )
 		);
 		UI::OpenDialog (popup);
@@ -68,14 +68,14 @@
 			// help text
 			string help = _("<p><b><big>License Confirmation</big></b><br>
 The package in the headline of the dialog requires an explicit confirmation
-of accepting its license.
+of acceptance of its license.
 If you reject the license of the package, the package will not be installed.
 <br>
 To accept the license of the package, click <b>I Agree</b>.
 To reject the license of the package, click <b>I Disagree</b>.
 <br>
-To reject installing all packages requiring confirmation of
-their licenses, click <b>I Disagree to All</b>.</p>");
+To reject installation of all packages requiring confirmation of
+their licenses, click <b>I Disagree with All</b>.</p>");
 			UI::OpenDialog (`HBox (
 			    `VSpacing (18),
 			    `VBox (
@@ -117,39 +117,38 @@ their licenses, click <b>I Disagree to All</b>.</p>");
     boolean confirmInstallation()
     {
 	// Heading for confirmation popup before the installation really starts
-	string heading = "<h3>" + _( "Confirm Installation" ) + "</h3>";
+	string heading = "<h3>" + _("Confirm Installation") + "</h3>";
 
 	// Text for confirmation popup before the installation really starts
 	string body =
-	    _( "<p>All information required for base installation is now complete.</p>" )
-	    + _( "
+	    _("<p>All information required for the base installation is now complete.</p>")
+	    + _("
 <p>If you continue now, partitions on your hard disk will be <b>formatted</b>
-(<b>erasing any existing data in those partitions</b>) 
+(erasing any existing data in those partitions) 
 and <b>data will be overwritten</b>
-according to the installation settings in the previous dialogs.</p>"
-		 )
-	    + _( "<p>You can still go back and check the settings if you are unsure.</p>" )
+according to the installation settings in the previous dialogs.</p>")
+	    + _("<p>Go back and check the settings if you are unsure.</p>")
 	    ;
 
 	// Label for the button that confirms startint the installation
-	string confirm_button_label = _( "&Install" );
+	string confirm_button_label = _("&Install");
 
 	if ( Mode::update () )
 	{
 	    // Heading for confirmation popup before the update really starts
-	    heading = "<h3>" + _( "Confirm Update" ) + "</h3>";
+	    heading = "<h3>" + _("Confirm Update") + "</h3>";
 
 	    // Text for confirmation popup before the update really starts
 	    body =
-		_( "<p>All information required to perform an update is now complete.</p>" )
-		+ _( "
+		_("<p>All information required to perform an update is now complete.</p>")
+		+ _("
 <p>If you continue now, data on your hard disk will be overwritten 
-according to the settings in the previous dialogs.</p>" )
-		+ _( "<p>You can still go back and check the settings if you are unsure.</p>" )
+according to the settings in the previous dialogs.</p>")
+		+ _("<p>Go back and check the settings if you are unsure.</p>")
 		;
 
 	    // Label for the button that confirms startint the installation
-	    confirm_button_label = _( "Start &Update" );
+	    confirm_button_label = _("Start &Update");
 	}
 
 	string heading_bg_color = "#A9CEDD";

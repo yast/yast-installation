@@ -148,10 +148,9 @@ It appears that your machine has a Linux system installed.
     else
     {
 	// help text for installation method
-	help_text = help_text + _("\
-<p>
-It appears that your machine does not have a Linux system installed.  Thus
-only a new installation is possible.
+	help_text = help_text + _("<p>
+It appears that your machine does not have a Linux system installed.  
+Only a new installation is possible.
 </p>");
     }
 
@@ -167,8 +166,7 @@ Please choose what to do:
 Select <b>New Installation</b> if there is no existing Linux system on your
 machine or if you want to replace an existing Linux system completely,
 abandoning all its configuration data.
-</p>
-");
+</p>");
 
     if (have_linux)
     {
@@ -179,15 +177,13 @@ abandoning all its configuration data.
 Select <b>Update an Existing System</b> to update a Linux system already
 installed on your machine. This option preserves configuration settings
 from your existing system whenever possible.
-</p>
-");
+</p>");
 	}
 	else
 	{
 	    // help text for installation method
-	    help_text = help_text + _("<p>This product does not offer an update.
-</p>
-");
+	    help_text = help_text + _("<p>
+This product does not offer an update.</p>");
 	}
     }
 
@@ -197,8 +193,7 @@ from your existing system whenever possible.
 	help_text = help_text + _("<p>
 Select <b>Repair Installed System</b> if you have a damaged Linux system on
 your hard disk. With this option, try to fix problems automatically.
-</p>
-");
+</p>");
     }
 
     if (have_linux)
@@ -207,8 +202,7 @@ your hard disk. With this option, try to fix problems automatically.
 	help_text = help_text + _("<p>
 Select <b>Boot Installed System</b> if you have a Linux system on your hard
 disk that will not boot. With this option, try to fix problems manually.
-</p>
-");
+</p>");
     }
 
 
@@ -234,7 +228,7 @@ disk that will not boot. With this option, try to fix problems manually.
 	radio_buttons = add (radio_buttons, `VSpacing(0.2));
 	radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`repair),
 				// label for radio button 3: Start repair system
-				_("&Repair installed system"), false)));
+				_("&Repair Installed System"), false)));
     }
 
     if (have_linux)

@@ -787,7 +787,7 @@ To use the settings as displayed, press <b>Next</b>.
         if (size(locked_modules) > 0 )
 	{
             help_text_string = help_text_string + _("<p>Some proposals might be
-locked by the system administrator and cannot be changed. If you need to change
+locked by the system administrator, so cannot be changed. To change
 a proposal that is locked, ask your system administrator.</p>");
         }
 
