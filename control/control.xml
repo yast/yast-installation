@@ -47,6 +47,15 @@
         </proposal>
         <proposal>
             <mode>normal</mode>
+            <type>dirinstall</type>
+            <stage>normal</stage>
+            <modules config:type="list">
+                <module>dirinstall_options</module>
+                <module>software</module>
+            </modules>
+        </proposal>
+        <proposal>
+            <mode>normal</mode>
             <type>uml</type>
             <stage>normal</stage>
             <modules config:type="list">
