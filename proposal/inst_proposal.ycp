@@ -98,7 +98,7 @@
     ``{
 	// Call the AskUser() function
 
-	map     ask_user_result   = (map) WFM::CallFunction( submodule, 
+	map     ask_user_result   = (map) WFM::CallFunction( submodule,
 	    [ "AskUser", additional_info ] );
 	symbol  workflow_sequence = ask_user_result["workflow_sequence"]:`next;
 	boolean language_changed  = ask_user_result["language_changed"]:false;
@@ -125,6 +125,8 @@
 
 	    if (mode_changed)
 	    {
+		Wizard::SetHelpText (help_text ());
+
 		load_matching_submodules_list();
 		if (!get_submod_descriptions_and_build_menu ())
 		{
@@ -169,9 +171,9 @@
 	map prop_map = $[];
 	boolean skip_the_rest = false;
 	have_blocker = false;
-	
+
 	link2submod = $[];
-	
+
 	map<string, string> html = $[];
 	foreach ( string submod, submodules, ``{
 	    string prop = "";
@@ -188,9 +190,9 @@
 	    html[submod] = prop + HTML::Para( _("Analyzing your system..."));
 	    no = no + 1;
 	});
-	
+
 	no = 0;
-	
+
 	UI::BusyCursor();
 
 	foreach ( string submod, submodules,
@@ -208,7 +210,7 @@
         	}
 
 		prop_map = submod_make_proposal( submod, force_reset, language_changed );
-		
+
 		// update link map
 		if (haskey (prop_map, "links"))
 		{
@@ -229,9 +231,9 @@
 	    if ( ! skip_the_rest )
 	    {
 		prop = prop + format_sub_proposal( prop_map );
-		
+
 		html[submod] = prop;
-		
+
 		// now do the complete html
 		string proposal = "";
 		foreach (string mod, submodules_presentation, ``{
@@ -248,7 +250,7 @@
 		skip_the_rest = true;
 	    }
 	});
-	
+
 	UI::NormalCursor();
     };
 
@@ -438,7 +440,7 @@
                 Mode::stage,
                 Mode::mode,
                 proptype );
-    
+
         if (size(modules) == 0 )
         {
             y2error("No proposals available");
@@ -449,10 +451,10 @@
 	{
 	    modules = filter (list v, modules, ``(v[0]:"" != "mode_proposal"));
 	}
-	
+
 	// now create the list of modules and order of modules for presentation
     	submodules = maplist (list mod, modules, ``(mod[0]:"") );
-	
+
 	// sort modules according to presentation ordering
 	modules = sort (list mod1, list mod2, modules, ``(
 	    mod1[1]:50 < mod2[1]:50
@@ -821,7 +823,10 @@ a proposal that is locked, ask your system administrator</p>");
             if (ret != `again)
                 break;
         }
+
+	Wizard::SetHelpText (help_text ());
     }
+
     //
     // Get submodule descriptions
     //
@@ -860,13 +865,13 @@ a proposal that is locked, ask your system administrator</p>");
 	{
 	    // get module for hyperlink id
 	    string submod = id2submod[input]:"";
-	    
+
 	    if (submod == "")
 	    {
 		// also try hyperlinks
 		submod = link2submod[input]:"";
 	    }
-	    
+
 	    if (submod != "")
 	    {
 		// if submod is not the same as input id, provide id to the module
@@ -875,7 +880,7 @@ a proposal that is locked, ask your system administrator</p>");
 		];
 
 		if (submod != input)
-		{ 
+		{
 		    additional_info["chosen_id"] = input;
 		}
 
@@ -968,7 +973,7 @@ resolved before continuing.
 	{
 	    return `back;
 	}
-	else if ( input == `help )
+	else if ( input == `help ) // does this ever happen with the new wizard?
 	{
 	    Wizard::ShowHelp( help_text() );
 	}
