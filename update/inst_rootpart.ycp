@@ -527,14 +527,14 @@ Choose the <b>root partition</b> to use.
 
     if ( size ( selectedRootPartition ) > 0 )
     {
-	UI::ChangeWidget(`id(`partition), `CurrentItem, `id(selectedRootPartition) );
+	UI::ChangeWidget(`id(`partition), `CurrentItem, selectedRootPartition );
     }
     else
     {
 	// preselect first entry
 	if ( size ( partitionMap ) > 0 )
 	{
-	    UI::ChangeWidget(`id(`partition), `CurrentItem, `id(first_partition));
+	    UI::ChangeWidget(`id(`partition), `CurrentItem, first_partition);
 	}
     }
 
