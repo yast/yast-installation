@@ -16,8 +16,7 @@ BuildArchitectures:	noarch
 Summary:	Installation workflow
 
 %description
-This controls the system installation or update when started
-from an installation media.
+This controls the system installation.
 
 @PREP@
 
