@@ -622,12 +622,12 @@ with the load address of your <b>root DASD</b>.
     {
 	string log_add = (log_num == 0) ? "" : ("-" + log_num);
 
-	log_add = "/var/log/y2log" + log_add;
+	log_add = "/var/log/YaST2/y2log" + log_add;
 
 	if (WFM::Read (.local.size, log_add) > 0)
 	{
 	    string logbuf = WFM::Read (.local.string, log_add);
-	    SCR::Write (.target.string, "/var/log/y2log-" + (log_num+1), logbuf);
+	    SCR::Write (.target.string, "/var/log/YaST2/y2log-" + (log_num+1), logbuf);
 	    y2milestone ("Copied %1 to target", log_add);
 	}
 	else
@@ -638,7 +638,7 @@ with the load address of your <b>root DASD</b>.
     }
 
     // copy y2start.log
-    SCR::Write (.target.string, "/var/log/y2start.log-initial", WFM::Read (.local.string, "/var/log/y2start.log"));
+    SCR::Write (.target.string, "/var/log/YaST2/y2start.log-initial", WFM::Read (.local.string, "/var/log/YaST2/y2start.log"));
 
 
     // --------------------------------------------------------------

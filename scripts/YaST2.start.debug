@@ -29,15 +29,15 @@ fi
 rm -f /dev/mouse
 
 mount 10.10.0.167:/yast2_test/varlog/$NET_IP /var/log
-[ -f /var/log/y2log ] && { \
-    mv /var/log/y2log /var/log/y2log.$(date +'%T')
+[ -f /var/log/YaST2/y2log ] && { \
+    mv /var/log/YaST2/y2log /var/log/YaST2/y2log.$(date +'%T')
 }
 
 #
-# Load ramdisk image from update disk, uncompress the y2update.gz file, 
+# Load ramdisk image from update disk, uncompress the y2update.gz file,
 # if existent and mount it to /y2update. YaST2 will look for config files
 # and components there.
-# 
+#
 UPDATE_MOUNTED=false
 mkdir -p /media/floppy
 if mount /dev/fd0 /media/floppy -t msdos ; then
@@ -57,7 +57,7 @@ fi
 
 #
 # Create link in order to use /var/lib/YaST2 from inst-sys
-# 
+#
 ln -sfn /var/adm/mount/suse/inst-sys/var/lib/YaST2 /var/lib
 
 export Y2MAXLOGSIZE=500
