@@ -55,7 +55,9 @@
 	    y2milestone ("First source product %1", product);
 	    if (product == nil) product = $[];
 	    Update::updateVersion = product["product"]:"?";
-	    Update::updateBasePackages = Pkg::IsSelected (product["requires"]:"");
+	    bool requires_selected = Pkg::IsSelected (product["requires"]:"");
+	    if (requires_selected == nil) requires_selected = true;
+	    Update::updateBasePackages = requires_selected;
 	}
 
 	// do not delete "aps" if it is in use
