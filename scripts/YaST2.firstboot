@@ -261,11 +261,11 @@ fi
 # Installation via ssh requires a remote login, but YaST2 must be started manually
 # just loop around the file and proceed when it is gone (removed by YaST2.sshinstall)
 #
-if test ! -z "$Y2_SSH_ACTIVE" ; then
-/usr/lib/YaST2/bin/YaST2 installation continue
+if test -z "$Y2_SSH_ACTIVE" ; then
+    /usr/lib/YaST2/bin/YaST2 installation continue
 else
 #
-cat <<EOF
+    cat <<EOF
 
 		***  sshd has been started  ***
 
@@ -275,9 +275,9 @@ cat <<EOF
 	active interfaces:
 
 EOF
-/sbin/ifconfig | grep -A1 "^[a-z]"
-echo
-while test -f /var/lib/YaST2/runme_at_boot ; do sleep 3 ; done
+    /sbin/ifconfig | grep -A1 "^[a-z]"
+    echo
+    while test -f /var/lib/YaST2/runme_at_boot ; do sleep 3 ; done
 fi
 
 test -z "$SPID" || kill $SPID
@@ -285,8 +285,8 @@ test -z "$SPID" || kill $SPID
 killall Xvnc &>/dev/null
 
 if test ! -z "$Y2_NETWORK_ACTIVE" ; then
-test -z "$Y2_SSH_ACTIVE" && rcsshd stop
-rcnetwork stop
+    test -z "$Y2_SSH_ACTIVE" && rcsshd stop
+    rcnetwork stop
 fi
 
 #
