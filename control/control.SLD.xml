@@ -190,7 +190,7 @@ textdomain="control"
                 </module>
                 <module>
                     <name>proposal</name>
-                    <arguments>true,true,`ini</arguments>
+                    <arguments>true,true,`initial</arguments>
 	            <label>Installation Settings</label>
                 </module>
                 <module>
@@ -321,7 +321,7 @@ textdomain="control"
                 <module>
 	            <label>Network</label>
                     <name>proposal</name>
-                    <arguments>true,true,`net</arguments>
+                    <arguments>true,true,`network</arguments>
                 </module>
                 <module>
 	            <label>Network</label>
@@ -341,7 +341,7 @@ textdomain="control"
                 <module>
                     <label>Service</label>
                     <name>proposal</name>
-                    <arguments>true,true,`serv</arguments>
+                    <arguments>true,true,`service</arguments>
                 </module>
                 <module>
 	            <label>Users</label>
@@ -367,7 +367,7 @@ textdomain="control"
                 <module>
 	            <label>Device Configuration</label>
                     <name>proposal</name>
-                    <arguments>true,true,`hw</arguments>
+                    <arguments>true,true,`hardware</arguments>
                 </module>
                 <module>
                     <name>congratulate</name>
@@ -401,7 +401,7 @@ textdomain="control"
                 <module>
 	            <label>Auto-Install Settings</label>
                     <name>proposal</name>
-                    <arguments>true,true,`ini</arguments>
+                    <arguments>true,true,`initial</arguments>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
