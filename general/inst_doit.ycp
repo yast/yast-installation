@@ -137,11 +137,12 @@ their licenses, click <b>I Disagree to All</b>.</p>");
 	// Text for confirmation popup before the installation really starts
 	string body =
 	    _( "<p>All information required for base installation is now complete.</p>" )
-	    + _( "<p>If you continue now, " )
-	    + _( "partitions on your hard disk will be <b>formatted</b> " )
-	    + _( "(<b>erasing any existing data in those partitions</b>) " )
-	    + _( "and <b>data will be overwritten</b> " )
-	    + _( "according to the installation settings in the previous dialogs.</p>" )
+	    + _( "
+<p>If you continue now, partitions on your hard disk will be <b>formatted</b>
+(<b>erasing any existing data in those partitions</b>) 
+and <b>data will be overwritten</b>
+according to the installation settings in the previous dialogs.</p>"
+		 )
 	    + _( "<p>You can still go back and check the settings if you are unsure.</p>" )
 	    ;
 
@@ -152,12 +153,13 @@ their licenses, click <b>I Disagree to All</b>.</p>");
 	{
 	    // Heading for confirmation popup before the update really starts
 	    heading = "<h3>" + _( "Confirm Update" ) + "</h3>";
-	
+
 	    // Text for confirmation popup before the update really starts
 	    body =
 		_( "<p>All information required to perform an update is now complete.</p>" )
-		+ _( "<p>If you continue now, data on your hard disk will be overwritten " )
-		+ _( "according to the settings in the previous dialogs.</p>" )
+		+ _( "
+<p>If you continue now, data on your hard disk will be overwritten 
+according to the settings in the previous dialogs.</p>" )
 		+ _( "<p>You can still go back and check the settings if you are unsure.</p>" )
 		;
 
