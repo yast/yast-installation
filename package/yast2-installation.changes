@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Feb 24 18:00:37 CET 2003 - gs@suse.de
+
+- don't add .UTF-8 to LANG variable (causes problems with ncurses) 
+  bug #23348
+-------------------------------------------------------------------
 Mon Feb 24 17:23:55 CET 2003 - mvidner@suse.de
 
 - Added proxy to the network configuration proposal (#24204).
