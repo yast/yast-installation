@@ -95,7 +95,7 @@
             }
             else
             {
-                y2error("Hook not found: %1/%2_pre.{sh,pl}" , tmp_dir, filename);
+                y2debug("Hook not found: %1/%2_pre.{sh,pl}" , tmp_dir, filename);
             }
         } else {
 	    if (WFM::Read (.local.size, sformat("%1/%2_post.sh", tmp_dir, filename)) > 0)
@@ -108,7 +108,7 @@
             }
             else
             {
-                y2error("Hook not found: %1/%2_post.{sh,pl}" , tmp_dir, filename);
+                y2debug("Hook not found: %1/%2_post.{sh,pl}" , tmp_dir, filename);
             }
         }
     }
