@@ -331,9 +331,7 @@
 	y2debug( "Retranslating proposal dialog" );
 
 	build_dialog();
-	Wizard::ReplaceButtonBox( Wizard::HasAcceptButton() ?
-				  Wizard::AbortAcceptButtonBox() :
-				  Wizard::BackNextButtonBox() );
+	Wizard::RetranslateButtons();
 	get_submod_descriptions_and_build_menu();
     };
 
@@ -668,8 +666,24 @@ To use the settings as displayed, press <b>Next</b>.
     UI::ChangeWidget(`id(`menu_dummy), `Enabled, false );
     richtext_busy_cursor(`id(`proposal ) );
 
-    // don't know who disables the button
-    UI::ChangeWidget(UI::WidgetExists(`id(`accept)) ? `id(`accept) : `id(`next), `Enabled, true);
+    // The "next" button is disabled via Wizard::SetContents() until everything is set up allright
+    Wizard::EnableNextButton();
+
+    // FIXME
+    // FIXME
+    // FIXME
+    // FIXME
+    // FIXME
+    // FIXME
+    // FIXME
+    // FIXME
+    // FIXME
+    // FIXME
+    // FIXME
+    // FIXME
+    // FIXME
+    // FIXME
+    // FIXME
 
     if ( Mode::initial )
     {

@@ -94,9 +94,8 @@ return to this installation sequence.</p>
 
     Wizard::SetContents (caption, contents, help, (boolean)WFM::Args (0), (boolean)WFM::Args (1));
 
-    Wizard::ReplaceNextButton (`PushButton (`id(`next), `opt(`default),
-					    Label::FinishButton ()));
-    UI::SetFocus (`id (`next));
+    Wizard::SetNextButton(`next, Label::FinishButton() );
+    Wizard::SetFocusToNextButton();
 
     // FIXME: richtext eats return key
     // UI::SetFocus (`id (`text));

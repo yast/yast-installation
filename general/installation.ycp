@@ -65,12 +65,9 @@
 
 	// Activate language changes on static part of wizard dialog
 
-	Wizard::ReplaceButtonBox( Wizard::HasAcceptButton() ?
-				  Wizard::AbortInstallationAcceptButtonBox() :
-				  Wizard::BackAbortInstallationNextButtonBox() );
+	Wizard::RetranslateButtons();
+	Wizard::SetFocusToNextButton();
 
-	if ( UI::WidgetExists(`id(`next) ) )	UI::SetFocus(`id(`next) );
-	else					UI::SetFocus(`id(`accept ) );
     }
 
     // ==================================================================================
