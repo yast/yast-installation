@@ -81,6 +81,7 @@ textdomain="control"
             <stage>initial</stage>
             <type>initial</type>
             <proposal_modules config:type="list">
+		<proposal_module>hwinfo</proposal_module>
                 <proposal_module>mode</proposal_module>
 		<proposal_module>media</proposal_module>
                 <proposal_module>rootpart</proposal_module>

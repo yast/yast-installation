@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Sep 13 11:28:33 CEST 2004 - arvin@suse.de
+
+- added system info entry to update proposal (bug #45096)
+
+-------------------------------------------------------------------
 Fri Sep 10 13:03:30 CEST 2004 - snwint@suse.de
 
 - use vesa driver as fallback, not vga (see #38253, comment #11)
@@ -13,7 +18,7 @@ Thu Sep  9 15:49:46 CEST 2004 - mvidner@suse.cz
 Wed Sep  8 15:47:16 CEST 2004 - visnov@suse.cz
 
 - implemented reordering of proposal items
-- implemented support for hyperlinks in proposal summaries 
+- implemented support for hyperlinks in proposal summaries
 
 -------------------------------------------------------------------
 Tue Sep 07 14:18:56 CEST 2004 - arvin@suse.de
