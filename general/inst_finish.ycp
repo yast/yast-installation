@@ -25,6 +25,7 @@
     import "Directory";
     import "Display";
     import "Hotplug";
+    import "HWConfig";
     import "HwStatus";
     import "Initrd";
     import "Installation";
@@ -345,6 +346,10 @@ Please wait while the base system is being installed.
     SCR::Write (.sysconfig.suseconfig.CWD_IN_USER_PATH,
 		contains (Product::flags, "usercwd") ? "yes" : "no");
     SCR::Write (.sysconfig.suseconfig, nil);
+
+    HWConfig::SetValue ("static-printer", "STARTMODE", "auto");
+    HWConfig::SetValue ("static-printer", "MODULE", "lp");
+
 
     // --------------------------------------------------------------
     // check for Kde vs. Gnome, see inst_xf86config
