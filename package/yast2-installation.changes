@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Mar 10 19:03:34 CET 2003 - kkaempf@suse.de
+
+- check for existance of /usr/src/linux/include/linux before
+  copying kernel config.
+- 2.7.32
+
+-------------------------------------------------------------------
 Mon Mar 10 18:34:58 CET 2003 - mvidner@suse.de
 
 - Added .etc.install_inf_alias to work around an ini-agent
