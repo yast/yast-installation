@@ -1,0 +1,2457 @@
+-------------------------------------------------------------------
+Tue Mar 29 14:23:17 CET 2005 - jsrain@suse.cz
+
+- updated the layout of the source files in the repository
+- 2.12.0
+
+-------------------------------------------------------------------
+Wed Mar 23 15:04:17 CET 2005 - ms@suse.de
+
+- fixed vnc server arguments (#70896)
+
+-------------------------------------------------------------------
+Sat Mar 19 10:15:14 CET 2005 - ms@suse.de
+
+- fixed second stage locale setup for textbased installation (#73631)
+
+-------------------------------------------------------------------
+Tue Mar 15 16:59:19 CET 2005 - ms@suse.de
+
+- IMPORTANT: fixed locale setup (#72145)
+
+-------------------------------------------------------------------
+Tue Mar 15 09:44:32 CET 2005 - jsrain@suse.cz
+
+- enable netdaemon if GNOME is default desktop (#72018)
+
+-------------------------------------------------------------------
+Mon Mar 14 15:23:17 CET 2005 - jsrain@suse.cz
+
+- enable FAM daemon when GNOME is installed
+
+-------------------------------------------------------------------
+Mon Mar 14 14:15:34 CET 2005 - ms@suse.de
+
+- fixed missing reboot on SSH installation (#67043)
+
+-------------------------------------------------------------------
+Fri Mar 11 16:50:14 CET 2005 - ms@suse.de
+
+- added option --auto-fonts to Y2_QT_ARGS (#72174)
+
+-------------------------------------------------------------------
+Fri Mar 11 12:57:37 CET 2005 - ms@suse.de
+
+- fixed setting TERM variable (#71771)
+
+-------------------------------------------------------------------
+Mon Mar  7 08:27:03 CET 2005 - jsrain@suse.cz
+
+- initialize &product; macro in inst_suseconfig (#70899)
+- set hwcfg file for parallel printer (#64412)
+
+-------------------------------------------------------------------
+Thu Mar  3 17:36:56 CET 2005 - ms@suse.de
+
+- fixed LANG setting in F03-language (#66498)
+
+-------------------------------------------------------------------
+Thu Mar  3 12:53:00 CET 2005 - ms@suse.de
+
+- fixed startup scripts for pcmcia/usb network installations (#65164)
+
+-------------------------------------------------------------------
+Wed Mar  2 10:53:37 CET 2005 - jsrain@suse.cz
+
+- merged texts from proofread
+
+-------------------------------------------------------------------
+Wed Mar  2 06:42:11 CET 2005 - nashif@suse.de
+
+- url in last dialog is set to www.novell.com/linux
+
+-------------------------------------------------------------------
+Tue Mar  1 12:13:09 CET 2005 - jsrain@suse.cz
+
+- removed obsolete symlink juggling (#66016)
+
+-------------------------------------------------------------------
+Thu Feb 24 16:10:03 CET 2005 - ms@suse.de
+
+- added logsize check to FirstStage/F07-logging
+
+-------------------------------------------------------------------
+Wed Feb 23 11:35:18 CET 2005 - jsrain@suse.cz
+
+- fixed comments for translators
+
+-------------------------------------------------------------------
+Tue Feb 22 18:30:15 CET 2005 - ms@suse.de
+
+- fixed check for X11 configuration in continue mode (#66224)
+
+-------------------------------------------------------------------
+Tue Feb 22 13:11:41 CET 2005 - sh@suse.de
+
+- V 2.11.17 
+
+-------------------------------------------------------------------
+Tue Feb 22 13:05:23 CET 2005 - ms@suse.de
+
+- fixed Y2MAXLOGSIZE setting, which was set to 0 because df within
+  inst-sys is not an option for checking the filesystem space
+
+-------------------------------------------------------------------
+Mon Feb 21 18:10:26 CET 2005 - sh@suse.de
+
+- Proper log-rotating in inst_finish  
+- V 2.11.16
+
+-------------------------------------------------------------------
+Fri Feb 18 10:55:09 CET 2005 - jsrain@suse.cz
+
+- added "Initializing..." title to installation before something
+  else is shown (#51039)
+
+-------------------------------------------------------------------
+Thu Feb 17 12:41:33 CET 2005 - ms@suse.de
+
+- fixed inst-sys copy process of XF86Config to take care
+  about the new name xorg.conf
+
+-------------------------------------------------------------------
+Wed Feb 16 14:53:57 CET 2005 - jsrain@suse.cz
+
+- fix displaying release notes if the localized version is not
+  available (#50911)
+
+-------------------------------------------------------------------
+Thu Feb 10 13:13:50 CET 2005 - jsrain@suse.cz
+
+- reduced forced minimal size of the release notes popup (#50637)
+- fixed the order of proposal creation (and thus firewall
+  is enabled again) (#50622)
+- 2.11.15
+
+-------------------------------------------------------------------
+Wed Feb  9 19:16:22 CET 2005 - nashif@suse.de
+
+- Save files control.xml and info.txt from installation into 
+  /etc/YaST2.
+
+-------------------------------------------------------------------
+Wed Feb  9 15:05:33 CET 2005 - jsrain@suse.cz
+
+- additional kernel parameters in control file Prof moved to
+  the new variable (#50369)
+
+-------------------------------------------------------------------
+Tue Feb  8 16:14:44 CET 2005 - nashif@suse.de
+
+- Moved ProductControl to yast2 package
+
+-------------------------------------------------------------------
+Mon Feb  7 13:46:48 CET 2005 - jsrain@suse.cz
+
+- fixed order of items in the "Change" button in proposals (#50204)
+- merged texts from proofread
+- added label informing about release notes from media
+- fixed translating empty string in the installation steps
+- 2.11.12
+
+-------------------------------------------------------------------
+Fri Feb  4 13:14:54 CET 2005 - jsrain@suse.cz
+
+- display release notes from installation proposal
+
+-------------------------------------------------------------------
+Wed Feb  2 18:21:48 CET 2005 - ms@suse.de
+
+- fixed control center call (#50389)
+
+-------------------------------------------------------------------
+Tue Feb  1 17:02:20 CET 2005 - nashif@suse.de
+
+- Fixed left "steps" display problems (#50388)
+
+-------------------------------------------------------------------
+Wed Jan 26 16:12:23 CET 2005 - nashif@suse.de
+
+- install inst_default_desktop.ycp (#49838)
+
+-------------------------------------------------------------------
+Tue Jan 25 07:21:53 CET 2005 - nashif@suse.de
+
+- Fixed arguments in control file
+- Fixed deleting completed steps
+- 2.11.10
+
+-------------------------------------------------------------------
+Mon Jan 24 16:29:32 CET 2005 - nashif@suse.de
+
+- Moved installation workflow routines out of installation.ycp
+- Adapted arguments of installation clients 
+- Enhanced control file and made it more readable (arguments of clients
+  are clearer now)
+
+-------------------------------------------------------------------
+Mon Jan 24 11:27:55 CET 2005 - ms@suse.de
+
+- fixed language environment (#49811)
+
+-------------------------------------------------------------------
+Thu Jan 13 11:35:45 CET 2005 - jsrain@suse.cz
+
+- changed the "System will boot now..." message at the end of
+  isnt_finish.ycp (#41592)
+- 2.11.8
+
+-------------------------------------------------------------------
+Wed Jan 12 12:44:29 CET 2005 - ms@suse.de
+
+- removed xmset calls to disable/enable the mouse pointer.
+- prevent patching X11 configuration in continue mode
+
+-------------------------------------------------------------------
+Wed Jan 12 11:39:31 CET 2005 - ms@suse.de
+
+- fixed yast startup in continue mode. The evaluation of the
+  variables USE_SSH and VNC was wrong in S08-start and
+  S09-cleanup
+
+-------------------------------------------------------------------
+Tue Jan 11 16:16:38 CET 2005 - jsrain@suse.cz
+
+- prevent disabling the Next button in the proposal (#46708)
+
+-------------------------------------------------------------------
+Wed Jan  5 17:30:11 CET 2005 - jsrain@suse.cz
+
+- removed unneeded imports and variables from installation.ycp
+- adapted to changed interface of Kernel.ycp
+- 2.11.7
+
+-------------------------------------------------------------------
+Tue Jan  4 09:45:17 CET 2005 - jsrain@suse.cz
+
+- on SGI Altix add fetchop and mmtimer to MODULES_LOADED_ON_BOOT
+  (was disabled due to problems in Kernel.ycp) (bug #46971)
+- disable Back/Accept buttons in inst_finish.ycp (#37025)
+
+-------------------------------------------------------------------
+Thu Dec 16 15:13:23 CET 2004 - sh@suse.de
+
+- Applied patch from bug #49275: Enable user to skip proposal
+  even if there is a blocker error in it
+
+-------------------------------------------------------------------
+Thu Dec 09 10:52:54 CET 2004 - arvin@suse.de
+
+- disable inclusion of fetchop and mmtimer in
+  MODULES_LOADED_ON_BOOT on SGI Altix (bug #46971)
+
+-------------------------------------------------------------------
+Fri Dec  3 15:05:57 CET 2004 - ms@suse.de
+
+- include some patches from old startup code which has been
+  changed while developing the new startup concept. Please note
+  all architecture dependant code has to be part of the startup/arch
+  directories and must be included in a clean way to the new scripts.
+  I will not include any arch changes made in the last weeks because
+  this will lead to the same horrible situation we had in the past.
+  if there is anything which has to be handled differntly on another
+  architecture this must be done separately to be able to maintain
+  that code longer than two days
+
+-------------------------------------------------------------------
+Wed Dec  1 12:04:13 CET 2004 - sh@suse.de
+
+- Fixed bug #48722: Inconsistent lower/upper case in mode dialog
+
+-------------------------------------------------------------------
+Mon Nov 29 12:32:36 CET 2004 - ms@suse.de
+
+- startup scripts ready now. reports can be send using bug: (#46886)
+
+-------------------------------------------------------------------
+Thu Nov 11 18:11:38 CET 2004 - arvin@suse.de
+
+- always use Directory::logdir
+
+-------------------------------------------------------------------
+Thu Nov 11 17:47:45 CET 2004 - sh@suse.de
+
+- Record macros during installation:
+  /var/log/YaST2/macro_inst_initial.ycp for initial stage,
+  /var/log/YaST2/macro_inst_cont.ycp  for "continue" mode
+
+-------------------------------------------------------------------
+Tue Nov 02 08:45:57 CET 2004 - arvin@suse.de
+
+- allow to select repair/boot in installation mode selection even
+  when no update is possible (bug #39874)
+
+-------------------------------------------------------------------
+Mon Nov  1 14:32:25 CET 2004 - visnov@suse.cz
+
+- set product name in wizard (#46247)
+
+-------------------------------------------------------------------
+Wed Oct 27 11:20:44 CEST 2004 - arvin@suse.de
+
+- on SGI Altix add fetchop and mmtimer to MODULES_LOADED_ON_BOOT
+  (bug #46971)
+
+-------------------------------------------------------------------
+Tue Oct 26 12:36:26 CEST 2004 - jsrain@suse.cz
+
+- moved parts of Mode.ycp to Installation.ycp
+- adapted to Mode.ycp clean-up
+- 2.11.2
+
+-------------------------------------------------------------------
+Tue Oct 19 10:46:15 CEST 2004 - lslezak@suse.cz
+
+- UML mode: copy /etc/mtab file to host system (#42859)
+- version 2.11.1
+
+-------------------------------------------------------------------
+Mon Oct 11 10:43:25 CEST 2004 - jsrain@suse.cz
+
+- moved default logon/window manager setting to extra client,
+  setting it according to the base package selection (#46619)
+- 2.11.0
+
+-------------------------------------------------------------------
+Mon Oct 11 15:04:26 CEST 2004 - jsrain@suse.cz
+
+- adapted to functional interface of Arch.ycp
+
+-------------------------------------------------------------------
+Thu Sep 30 15:12:09 CEST 2004 - sh@suse.de
+
+- V 2.10.30
+- Made final confirmation popup higher to accomodate all text
+  without scrolling even in more verbose languages (de, fr)
+
+-------------------------------------------------------------------
+Wed Sep 29 14:13:35 CEST 2004 - mls@suse.de
+
+- stop splash animation before starting yast
+- go to verbose mode if X didn't start
+
+-------------------------------------------------------------------
+Mon Sep 27 15:37:03 CEST 2004 - arvin@suse.de
+
+- don't create top-level "media" convenience links (bug #46152)
+
+-------------------------------------------------------------------
+Wed Sep 22 16:48:43 CEST 2004 - sh@suse.de
+
+- Made final installation confirmation dialog wider and higher
+  to avoid scrolling even for more verbose languages (de, fr)
+- V 2.10.27
+
+-------------------------------------------------------------------
+Wed Sep 22 09:30:45 CEST 2004 - visnov@suse.cz
+
+- reinitialize dialog after mode chosen (#45784)
+
+-------------------------------------------------------------------
+Tue Sep 21 14:48:15 CEST 2004 - arvin@suse.de
+
+- use suse marble in congratulation screen (bug #45712)
+
+-------------------------------------------------------------------
+Mon Sep 20 13:52:35 CEST 2004 - sh@suse.de
+
+- V 2.10.24
+- Merged accidentially split translatable messages
+
+-------------------------------------------------------------------
+Fri Sep 17 16:12:53 CEST 2004 - sh@suse.de
+
+- V 2.10.23
+- Changed final installation confirmation dialog according to
+  bug #45279
+
+-------------------------------------------------------------------
+Fri Sep 17 12:12:12 CEST 2004 - arvin@suse.de
+
+- moved popup with boot message further to the end (bug #45432)
+
+-------------------------------------------------------------------
+Thu Sep 16 17:00:17 CEST 2004 - snwint@suse.de
+
+- use language info from linuxrc to set LANG in YaST.start; this is
+  just to run ncurses yast in fbiterm for exotic languages
+
+-------------------------------------------------------------------
+Wed Sep 15 15:16:41 CEST 2004 - arvin@suse.de
+
+- fixed back button in internet test dialog (bug #45319)
+
+-------------------------------------------------------------------
+Wed Sep 15 14:48:09 CEST 2004 - visnov@suse.cz
+
+- initialize proposal heading before creating dialog (#45340)
+
+-------------------------------------------------------------------
+Tue Sep 14 18:22:06 CEST 2004 - sh@suse.de
+
+- V 2.10.20
+- Fixed bug #45271: Mixture of en_UK / en_US: "licence" / "license"
+
+-------------------------------------------------------------------
+Tue Sep 14 17:05:15 CEST 2004 - mvidner@suse.cz
+
+- Copy the DHCP cache to the right place (#45150).
+
+-------------------------------------------------------------------
+Tue Sep 14 12:46:53 CEST 2004 - arvin@suse.de
+
+- fixed help text in main proposal (bug #45093)
+
+-------------------------------------------------------------------
+Tue Sep 14 10:53:02 CEST 2004 - jsrain@suse.cz
+
+- added enable_firewall and firewall_ssh_enable to control file
+  for PROF
+- added related handlinng to ProductControl
+
+-------------------------------------------------------------------
+Mon Sep 13 12:57:41 CEST 2004 - jsrain@suse.cz
+
+- set FAM_ONLY_LOCAL and start fam according to default windowmanager
+- 2.10.18
+
+-------------------------------------------------------------------
+Mon Sep 13 11:28:33 CEST 2004 - arvin@suse.de
+
+- added system info entry to update proposal (bug #45096)
+
+-------------------------------------------------------------------
+Fri Sep 10 13:03:30 CEST 2004 - snwint@suse.de
+
+- use vesa driver as fallback, not vga (see #38253, comment #11)
+
+-------------------------------------------------------------------
+Thu Sep  9 15:49:46 CEST 2004 - mvidner@suse.cz
+
+- Added a client to test the network and hardware proposals (#44677).
+- 2.10.16
+
+-------------------------------------------------------------------
+Wed Sep  8 15:47:16 CEST 2004 - visnov@suse.cz
+
+- implemented reordering of proposal items
+- implemented support for hyperlinks in proposal summaries
+
+-------------------------------------------------------------------
+Tue Sep 07 14:18:56 CEST 2004 - arvin@suse.de
+
+- added proposal step to initialize sources during update before
+  mounting filesystems (needed to solve bug #44724)
+
+-------------------------------------------------------------------
+Mon Sep  6 13:33:34 CEST 2004 - mvidner@suse.cz
+
+- Copy the DHCP client cache so that we can request the same IP
+  (#43974).
+- 2.10.14
+
+-------------------------------------------------------------------
+Mon Sep  6 09:50:37 CEST 2004 - jsrain@suse.cz
+
+- avoid asking to confirm one license multiple times (#44145)
+
+-------------------------------------------------------------------
+Fri Sep 03 14:33:07 CEST 2004 - arvin@suse.de
+
+- call Bootloader::Update instead of Bootloader::Write during
+  update (bug #44286)
+
+-------------------------------------------------------------------
+Mon Aug 30 17:23:29 CEST 2004 - jsrain@suse.cz
+
+- ask to confirm licenses of packages before installing/updating
+  (#44145)
+- 2.10.12
+
+-------------------------------------------------------------------
+Fri Aug 27 16:59:56 CEST 2004 - mvidner@suse.cz
+
+- When showing the address for a VNC installation, don't rely on
+  install.inf, print the current IP (#43974).
+- 2.10.11
+
+-------------------------------------------------------------------
+Fri Aug 27 15:09:13 CEST 2004 - arvin@suse.de
+
+- merged proof read messages
+
+-------------------------------------------------------------------
+Wed Aug 25 11:56:57 CEST 2004 - arvin@suse.de
+
+- avoid tmp file in /tmp (bug #39444)
+
+-------------------------------------------------------------------
+Wed Aug 18 09:10:38 CEST 2004 - arvin@suse.de
+
+- updated fvwmrc.yast2 (see bug #43796)
+
+-------------------------------------------------------------------
+Tue Aug 17 15:27:40 CEST 2004 - nashif@suse.de
+
+- XFree86 -> xorg-x11 (#43832)
+
+-------------------------------------------------------------------
+Fri Aug 13 22:12:31 CEST 2004 - nashif@suse.de
+
+- Fixed update (#43795)
+
+-------------------------------------------------------------------
+Wed Aug 11 18:03:11 CEST 2004 - nashif@suse.de
+
+- Copy EULA to installed system for later use in firstboot module
+
+-------------------------------------------------------------------
+Wed Aug 11 16:09:43 CEST 2004 - nashif@suse.de
+
+- Added firewall to network proposal (#43718)
+
+-------------------------------------------------------------------
+Tue Aug 10 15:21:56 CEST 2004 - nashif@suse.de
+
+- Add default label for proposals
+
+-------------------------------------------------------------------
+Tue Aug 10 14:31:34 CEST 2004 - mvidner@suse.cz
+
+- Fixed arguments for proposals (`initial)
+
+-------------------------------------------------------------------
+Mon Aug  9 19:37:28 CEST 2004 - nashif@suse.de
+
+- Enable locking of proposals in control file
+- Updated DTD for control file
+
+-------------------------------------------------------------------
+Thu Jul 29 10:10:04 CEST 2004 - nashif@suse.de
+
+- New variables for ui and language handling added to control file
+- Use Linuxrc module for install.inf and yast.inf handling
+
+-------------------------------------------------------------------
+Tue Jul 20 11:18:33 CEST 2004 - arvin@suse.de
+
+- use capitalized SUSE in congratulation screen (bug #38853)
+
+-------------------------------------------------------------------
+Tue Jun 15 19:16:26 CEST 2004 - sh@suse.de
+
+- Fixed typo in ssh install script (#42058)
+
+-------------------------------------------------------------------
+Tue Jun 15 14:11:06 CEST 2004 - sh@suse.de
+
+- Fixed bug #41597: EULA must be scrolled in both dimensions
+
+-------------------------------------------------------------------
+Tue Jun 15 12:23:23 CEST 2004 - arvin@suse.de
+
+- added Requires for yast2-update (bug #42013)
+
+-------------------------------------------------------------------
+Fri Jun 11 00:58:40 CEST 2004 - nashif@suse.de
+
+- Added variable software_proposal to control file (NLD)
+
+-------------------------------------------------------------------
+Thu Jun 10 03:53:14 CEST 2004 - nashif@suse.de
+
+- Added control for NLD
+
+-------------------------------------------------------------------
+Tue Jun  8 04:55:22 CEST 2004 - nashif@suse.de
+
+- Also install control file for SLES to avoid lots of possible
+  confusion when control file is not found on installation media
+  and fallback file is used.
+  (#41696)
+
+-------------------------------------------------------------------
+Tue Jun  8 04:37:03 CEST 2004 - nashif@suse.de
+
+- Fixed bug #41696: yast uses elevator=anticipatory instead of
+  elevator=as
+
+-------------------------------------------------------------------
+Sun May 30 00:38:55 CEST 2004 - nashif@suse.de
+
+- Added Services to main control file for translation (#41367)
+- 2.9.83
+
+-------------------------------------------------------------------
+Thu May 27 14:40:46 CEST 2004 - mvidner@suse.cz
+
+- Added variables to ProductFeatures
+  so that yast2-nis-client testsuite passes (~#41038).
+- 2.9.82
+
+-------------------------------------------------------------------
+Thu May 27 12:21:19 CEST 2004 - arvin@suse.de
+
+- added special console handling for iSeries (bug #39025)
+
+-------------------------------------------------------------------
+Wed May 26 11:12:56 CEST 2004 - arvin@suse.de
+
+- set LD_LIBRARY_PATH in 1st stage installation start script
+  (bug #40833)
+
+-------------------------------------------------------------------
+Tue May 25 14:10:33 CEST 2004 - jsrain@suse.cz
+
+- set the I/O scheduler in ProductFeatures (#41038)
+- 2.9.79
+
+-------------------------------------------------------------------
+Mon May 24 14:58:50 CEST 2004 - arvin@suse.de
+
+- again ask for TERM variable if it's set to "vt100" (bug #40991)
+
+-------------------------------------------------------------------
+Tue May 18 15:32:30 CEST 2004 - arvin@suse.de
+
+- moved fvwmrc.notitle from sax2 here (bug #37480)
+
+-------------------------------------------------------------------
+Tue May 11 13:54:26 CEST 2004 - lslezak@suse.cz
+
+- don't ask for TERM variable if it's already set to "xterm"
+  or "vt100" from linuxrc (don't ask in UML installation) (#39947)
+- version 2.9.76
+
+-------------------------------------------------------------------
+Tue May 04 11:13:53 CEST 2004 - arvin@suse.de
+
+- merged proofread messages
+
+-------------------------------------------------------------------
+Fri Apr 30 16:30:13 CEST 2004 - arvin@suse.de
+
+- readded vnc remote proposal to SLES workflow (bug #31023)
+
+-------------------------------------------------------------------
+Wed Apr 28 15:26:30 CEST 2004 - lslezak@suse.cz
+
+- set Ctrl+Alt+Del handler in /etc/inittab to halt (instead of
+  reboot) in UML system (safe shutdown from host system using
+  uml_mconsole)
+- version 2.9.73
+
+-------------------------------------------------------------------
+Wed Apr 28 15:38:45 CEST 2004 - arvin@suse.de
+
+- quick implementation of execution of update.post2 scripts
+  (bug #38677)
+
+-------------------------------------------------------------------
+Tue Apr 27 18:25:25 CEST 2004 - gs@suse.de
+
+- write Console: entry for p690 hvc console before reading
+  /etc/install.inf (bug #39527)
+
+-------------------------------------------------------------------
+Tue Apr 27 10:34:06 CEST 2004 - arvin@suse.de
+
+- call Pkg::SetAdditionalLocales after language change from
+  proposal (bug #38366)
+
+-------------------------------------------------------------------
+Mon Apr 26 12:34:02 CEST 2004 - arvin@suse.de
+
+- activate lvm and md before booting into a installed system
+  (bug #39423)
+
+-------------------------------------------------------------------
+Thu Apr 22 18:12:43 CEST 2004 - arvin@suse.de
+
+- removed support of starting yast2 installation without keyboard
+  (linuxrc always reports a keyboard now) (bug #39235)
+
+-------------------------------------------------------------------
+Thu Apr 22 11:08:53 CEST 2004 - arvin@suse.de
+
+- run unicode_{start,stop} only if they are present (bug #35714)
+
+-------------------------------------------------------------------
+Wed Apr 21 13:23:17 CEST 2004 - arvin@suse.de
+
+- uses special sles screen for user authentication on sles
+
+-------------------------------------------------------------------
+Mon Apr 19 08:44:01 CEST 2004 - lslezak@suse.cz
+
+- UML mode fixes: don't copy mtab to the host (it's not needed),
+  find kernel and initrd even when symlinks are missing
+  (workaround for bug #39063)
+- added help text in UML installation proposal
+- version 2.9.64
+
+-------------------------------------------------------------------
+Fri Apr 16 17:58:43 CEST 2004 - nashif@suse.de
+
+- store variables needed in run-time in a sysconfig like file
+- first try to load saved control file before fallback to packaged one.
+
+-------------------------------------------------------------------
+Fri Apr 16 14:57:44 CEST 2004 - arvin@suse.de
+
+- fixed network start for remote x11 installation (bug #38832)
+
+-------------------------------------------------------------------
+Fri Apr 16 14:26:09 CEST 2004 - lslezak@suse.cz
+
+- UML mode fixes: don't copy mtab to the host (it's not needed),
+  find kernel and initrd even when symlinks are missing
+  (workaround for bug #39063)
+- added help text in UML installation proposal
+
+-------------------------------------------------------------------
+Fri Apr 16 11:08:42 CEST 2004 - arvin@suse.de
+
+- removed keyboard proposal from update proposal for the update
+  in the running system (bug #37817)
+
+-------------------------------------------------------------------
+Fri Apr 16 10:57:57 CEST 2004 - arvin@suse.de
+
+- don't run on serial console in case of vnc or ssh installation
+  (bug #37325)
+
+-------------------------------------------------------------------
+Thu Apr 15 18:26:04 CEST 2004 - arvin@suse.de
+
+- add "service" proposal to SLES installation
+
+-------------------------------------------------------------------
+Thu Apr 15 12:03:00 CEST 2004 - arvin@suse.de
+
+- log fvwm output for vnc installation (bug #30061)
+
+-------------------------------------------------------------------
+Wed Apr 07 12:37:53 CEST 2004 - arvin@suse.de
+
+- avoid tmp file creation in check.boot script (bug #38572)
+
+-------------------------------------------------------------------
+Tue Apr 06 19:04:33 CEST 2004 - arvin@suse.de
+
+- use fbiterm for CJK locales if appropriate (bug #37823)
+
+-------------------------------------------------------------------
+Tue Apr  6 18:55:20 CEST 2004 - nashif@suse.de
+
+- only_update_selected option added to product feature set
+- V 2.9.56
+
+-------------------------------------------------------------------
+Tue Apr  6 16:26:14 CEST 2004 - sh@suse.de
+
+- V 2.9.55
+- Fixed bug #36908: Use dynamic fonts based on resolution
+
+-------------------------------------------------------------------
+Mon Apr  5 14:38:22 CEST 2004 - fehr@suse.de
+
+- load module dm-snapshort at to prevent hangs if LVM contains
+  snapshot LVs (#36422)
+
+-------------------------------------------------------------------
+Mon Apr 05 11:32:21 CEST 2004 - arvin@suse.de
+
+- show correct warning in second stage installation when xserver
+  can't be started (bug #38298)
+
+-------------------------------------------------------------------
+Mon Apr 05 11:04:34 CEST 2004 - arvin@suse.de
+
+- adjusted decision of frontend depending on memory size to memory
+  requirements of new interpreter (bug #38298)
+- fixed memory value in warning popup
+
+-------------------------------------------------------------------
+Sat Apr 03 17:44:03 CEST 2004 - arvin@suse.de
+
+- use fbiterm for CJK locales if appropriate (bug #37823)
+
+-------------------------------------------------------------------
+Fri Apr 02 15:59:59 CEST 2004 - arvin@suse.de
+
+- finally changed license to GPL for good
+
+-------------------------------------------------------------------
+Thu Apr 01 11:34:10 CEST 2004 - arvin@suse.de
+
+- symmetricalized calls to inst_netsetup (bug #37763)
+
+-------------------------------------------------------------------
+Thu Apr 01 11:03:37 CEST 2004 - arvin@suse.de
+
+- removed step label for inst_netsetup (bug #37546)
+
+-------------------------------------------------------------------
+Wed Mar 31 19:41:34 CEST 2004 - nashif@suse.de
+
+- Added 2 options to control file:
+   inform_about_suboptimal_distribution
+   use_desktop_scheduler
+
+-------------------------------------------------------------------
+Wed Mar 31 17:19:12 CEST 2004 - lslezak@suse.cz
+
+- inst_finish.ycp - copy kernel image, initrd and /etc/mtab to
+  the host system in UML installation mode
+
+-------------------------------------------------------------------
+Tue Mar 30 11:25:44 CEST 2004 - arvin@suse.de
+
+- disable virtual desktops in fvwm during vnc installation
+  (bug #37480)
+
+-------------------------------------------------------------------
+Mon Mar 29 14:48:56 CEST 2004 - fehr@suse.de
+
+- call Storage::FinishInstall() at end of installation
+
+-------------------------------------------------------------------
+Mon Mar 29 14:46:51 CEST 2004 - sh@suse.de
+
+- Fixed bug #36713 (relies on yast2-core with fix for bug #36711):
+  textdomain for wizard steps should come from control.xml
+
+-------------------------------------------------------------------
+Mon Mar 29 05:22:12 CEST 2004 - nashif@suse.de
+
+- fixed copying of hook script logs into installed system
+
+-------------------------------------------------------------------
+Sun Mar 28 16:05:19 CEST 2004 - nashif@suse.de
+
+- fixed hook scrips, now using WFM::Read(.local...) (#36831 )
+- Not executing any scripting after last client
+- Detecting mode before installation steps are sets (#37070 )
+- logging hook output to /var/log/YaST2 and copying those
+file to installed system.
+
+-------------------------------------------------------------------
+Thu Mar 25 16:49:04 CET 2004 - sh@suse.de
+
+- Fixed bug #34618: Don't use full-screen if started remotely
+
+-------------------------------------------------------------------
+Thu Mar 25 14:50:07 CET 2004 - ms@suse.de
+
+- fixed driver to use on ia64 systems. there is no framebuffer
+  available but the vesa driver is working now (#34909)
+- fixed possible loop at installation. handle different exit codes
+  from testX in scripts/YaST2. The needed changes to testX have
+  been made within the sax2 package (#36794)
+
+-------------------------------------------------------------------
+Thu Mar 25 12:12:44 CET 2004 - arvin@suse.de
+
+- removed network proposal from update work flow
+
+-------------------------------------------------------------------
+Wed Mar 24 16:10:31 CET 2004 - arvin@suse.de
+
+- renamed usbdevfs to usbfs (bug #31869)
+
+-------------------------------------------------------------------
+Wed Mar 24 15:07:03 CET 2004 - sh@suse.de
+
+- Fixed bug #36850: Strange texts in y2qt wizard side bar
+- V 2.9.42
+
+-------------------------------------------------------------------
+Wed Mar 24 11:13:46 CET 2004 - gs@suse.de
+
+- workaround beta3 pre bug: deactivate Hooks::Run
+  (causes crash after inst_finish)
+- V 2.9.41
+
+-------------------------------------------------------------------
+Mon Mar 22 20:32:41 CET 2004 - nashif@suse.de
+
+- Execute features client if variables are set in control file
+- V 2.9.40
+
+-------------------------------------------------------------------
+Mon Mar 22 15:58:33 CET 2004 - sh@suse.de
+
+- V 2.9.39
+- Fixed bug #36292: Wizard steps not translated
+- Preliminary fix for bug #36713: Use textdomain from XML file
+
+-------------------------------------------------------------------
+Mon Mar 22 11:14:07 CET 2004 - arvin@suse.de
+
+- introduced and handle new variable Installation::scr_destdir
+  to be used by Storage (bug #34996)
+
+-------------------------------------------------------------------
+Sun Mar 21 19:48:42 CET 2004 - nashif@suse.de
+
+- read/set language/keyboard/timezone
+- added client to set product variables before entering proposal
+
+-------------------------------------------------------------------
+Fri Mar 19 15:47:08 CET 2004 - arvin@suse.de
+
+- omit skip/don't skip buttons in uml proposal
+
+-------------------------------------------------------------------
+Thu Mar 18 16:18:30 CET 2004 - arvin@suse.de
+
+- fixed update work flow setting (bug #36429 and #35007)
+
+-------------------------------------------------------------------
+Thu Mar 18 09:59:01 CET 2004 - mvidner@suse.cz
+
+- Fall back to runlevel 3 if we accidentally don't set it
+  in the installation proposal. It would be 0 (#35662).
+
+-------------------------------------------------------------------
+Wed Mar 17 22:56:12 CET 2004 - nashif@suse.de
+
+- Add runlevel to s390 proposal
+- remove x11 from autoinst workflow (handled differently)
+
+-------------------------------------------------------------------
+Wed Mar 17 05:46:03 CET 2004 - nashif@suse.de
+
+- update wizard steps at the right spot to enable switching back
+  to installation mode
+
+-------------------------------------------------------------------
+Tue Mar 16 16:02:52 CET 2004 - msvec@suse.cz
+
+- added icons to network and hardware proposals
+
+-------------------------------------------------------------------
+Tue Mar 16 21:18:06 CET 2004 - kkaempf@suse.de
+
+- run cleanup script for GNOME (#36196)
+
+-------------------------------------------------------------------
+Tue Mar 16 14:26:03 CET 2004 - fehr@suse.de
+
+- fix typo devmap_mkmod.sh -> devmap_mknod.sh
+- 2.9.32
+
+-------------------------------------------------------------------
+Tue Mar 16 01:53:54 CET 2004 - nashif@suse.de
+
+- Enabled evms_config in control file
+
+-------------------------------------------------------------------
+Tue Mar 16 01:31:55 CET 2004 - nashif@suse.de
+
+- Update steps when switching modes (#35590)
+
+-------------------------------------------------------------------
+Mon Mar 15 12:00:07 CET 2004 - arvin@suse.de
+
+- don't ask for terminal type during vnc installation (bug #33534)
+
+-------------------------------------------------------------------
+Fri Mar 12 06:45:02 CET 2004 - nashif@suse.de
+
+- Update control file for autoinst
+- Enable swittching of steps upon mode change
+- Added possibility to disable a workflow step in runtime
+
+-------------------------------------------------------------------
+Thu Mar 11 18:50:55 CET 2004 - sh@suse.de
+
+- Fixed bug #34618: Don't use full screen in remote installation
+
+-------------------------------------------------------------------
+Wed Mar 10 14:40:11 CET 2004 - arvin@suse.de
+
+- don't warn if only no disk controller can be found (bug #35546)
+
+-------------------------------------------------------------------
+Wed Mar 10 09:51:29 CET 2004 - arvin@suse.de
+
+- extended uml installation work flow
+
+-------------------------------------------------------------------
+Wed Mar 10 07:08:09 CET 2004 - nashif@suse.de
+
+- Set wizard steps depending on installation mode
+
+-------------------------------------------------------------------
+Wed Mar 10 03:04:53 CET 2004 - nashif@suse.de
+
+- removed include dir from spec
+
+-------------------------------------------------------------------
+Wed Mar 10 01:07:58 CET 2004 - sh@suse.de
+
+- V 2.9.24
+- Migration to new wizard
+
+-------------------------------------------------------------------
+Tue Mar  9 13:08:25 CET 2004 - msvec@suse.cz
+
+- replaced X11 version detection code with (simpler) YCP
+- package could be noarch currently (reduced NFB a lot)
+
+-------------------------------------------------------------------
+Mon Mar 08 11:54:40 CET 2004 - arvin@suse.de
+
+- call more generalized storage function during update
+
+-------------------------------------------------------------------
+Fri Mar 05 12:07:50 CET 2004 - arvin@suse.de
+
+- load correct device mapper module and create nodes
+
+-------------------------------------------------------------------
+Thu Mar  4 16:40:36 CET 2004 - visnov@suse.cz
+
+- added type info
+- 2.9.20
+
+-------------------------------------------------------------------
+Wed Mar  3 17:48:49 CET 2004 - nashif@suse.de
+
+- Moved product features to new feature module
+
+-------------------------------------------------------------------
+Wed Mar  3 17:43:45 CET 2004 - sh@suse.de
+
+- Applied rw's patch for bug #34531
+
+-------------------------------------------------------------------
+Wed Mar 03 15:45:45 CET 2004 - arvin@suse.de
+
+- call storage function to update fstab (bug #34996)
+
+-------------------------------------------------------------------
+Tue Mar  2 17:47:11 CET 2004 - sh@suse.de
+
+- Added user-visible workflow step descriptions for new wizard
+  layout
+
+-------------------------------------------------------------------
+Mon Mar 01 16:53:44 CET 2004 - arvin@suse.de
+
+- work on UML installation
+
+-------------------------------------------------------------------
+Fri Feb 27 03:31:46 CET 2004 - nashif@suse.de
+
+- New control file based installation merged
+
+-------------------------------------------------------------------
+Fri Feb 20 19:53:00 CET 2004 - arvin@suse.de
+
+- handle abort button in inst_finish (bug #30303)
+
+-------------------------------------------------------------------
+Fri Feb 20 11:28:26 CET 2004 - arvin@suse.de
+
+- removed obsolete code from start scripts (bug #31805)
+
+-------------------------------------------------------------------
+Mon Feb 16 16:52:00 CET 2004 - mvidner@suse.cz
+
+- set the runlevel according to the proposal
+- 2.9.15
+
+-------------------------------------------------------------------
+Mon Feb 16 16:01:35 CET 2004 - arvin@suse.de
+
+- added more flexible package handling for products
+
+-------------------------------------------------------------------
+Mon Feb 16 13:49:50 CET 2004 - mvidner@suse.cz
+
+- added runlevel_proposal to installation_proposals (#30028)
+- 2.9.14
+
+-------------------------------------------------------------------
+Mon Feb 16 11:20:01 CET 2004 - arvin@suse.de
+
+- removed obsolete Mode::hardBoot
+
+-------------------------------------------------------------------
+Fri Feb 13 15:16:41 CET 2004 - sh@suse.de
+
+- Applied patch from bug #34531: Kernel 2.6 hotplug handling
+
+-------------------------------------------------------------------
+Wed Feb 11 16:11:02 CET 2004 - arvin@suse.de
+
+- more control over base selection handling
+
+-------------------------------------------------------------------
+Tue Feb 10 17:59:40 CET 2004 - arvin@suse.de
+
+- added type specification in inst_proposal.ycp
+
+-------------------------------------------------------------------
+Tue Feb 10 16:02:19 CET 2004 - nashif@suse.de
+
+- remove x11 from workflow for autoyast
+
+-------------------------------------------------------------------
+Tue Feb 10 10:32:08 CET 2004 - arvin@suse.de
+
+- fixed building on s390
+
+-------------------------------------------------------------------
+Sat Feb  7 09:33:56 CET 2004 - nashif@suse.de
+
+- remove vendor.y2cc file
+
+-------------------------------------------------------------------
+Fri Feb 06 16:13:58 CET 2004 - arvin@suse.de
+
+- set default runlevel to 3 or 5 during installation depending
+  on the presents of X11 (see bug #32366)
+
+-------------------------------------------------------------------
+Fri Feb 06 11:46:47 CET 2004 - arvin@suse.de
+
+- fixed copying of temporary X11 config
+
+-------------------------------------------------------------------
+Mon Feb  2 15:49:46 CET 2004 - lslezak@suse.cz
+
+- InitHWinfo module enabled in installation proposal
+- version 2.9.4
+
+-------------------------------------------------------------------
+Sat Jan 31 21:07:11 CET 2004 - arvin@suse.de
+
+- removed useless 'global'
+
+-------------------------------------------------------------------
+Mon Jan 26 17:28:06 CET 2004 - jsrain@suse.de
+
+- removed cfg_susecnfig.scr from file list (was moved to yast2.rpm)
+- 2.9.2
+
+-------------------------------------------------------------------
+Fri Dec 12 14:23:14 CET 2003 - jsrain@suse.de
+
+- don't check if module is present in initrd before loading it
+
+-------------------------------------------------------------------
+Fri Oct 24 15:58:50 CEST 2003 - ms@suse.de
+
+- added stuff from yast2/library/x11 to installation package
+
+-------------------------------------------------------------------
+Fri Oct 24 13:09:25 CEST 2003 - arvin@suse.de
+
+- added help text for "Repair Installed System" (bug #30402)
+
+-------------------------------------------------------------------
+Fri Oct 17 11:37:46 CEST 2003 - ms@suse.de
+
+- inst_finish: (#32366)
+  removed runlevel setup code which is handled within the X11
+  module now (XProposal.ycp). The update code for initdefault
+  is still present because during update the X11 configuration
+  is not started
+
+- inst_x11: (#32366)
+  removed dead code which sets the default runlevel to 3 if there
+  is no XF86Config file present. This task is done if the X11
+  configuration is finished and if there is no X11 configuration
+  the default initdefault with aaa_base is set to 3 already
+
+-------------------------------------------------------------------
+Wed Sep 24 12:25:08 CEST 2003 - snwint@suse.de
+
+- look for x11 drivers in lib64 dir on x86_64 (#31649)
+
+-------------------------------------------------------------------
+Thu Sep 18 11:38:50 CEST 2003 - arvin@suse.de
+
+- shut down temporary network before online test during update
+  (bug #31030)
+
+-------------------------------------------------------------------
+Thu Sep 18 10:55:43 CEST 2003 - arvin@suse.de
+
+- don't use external pcmcia during firstboot (bug #31252)
+
+-------------------------------------------------------------------
+Mon Sep 15 19:26:33 CEST 2003 - msvec@suse.cz
+
+- 2.8.34
+
+-------------------------------------------------------------------
+Mon Sep 15 15:15:25 CEST 2003 - gs@suse.de
+
+- YaST2.start: set default value for LANGUAGE
+
+-------------------------------------------------------------------
+Mon Sep 15 11:03:04 CEST 2003 - arvin@suse.de
+
+- skip network probing during update (bug #30545)
+
+-------------------------------------------------------------------
+Sun Sep 14 15:07:36 CEST 2003 - arvin@suse.de
+
+- reset packagemanager when changing installation mode (bug #27970)
+
+-------------------------------------------------------------------
+Sun Sep 14 14:27:12 CEST 2003 - snwint@suse.de
+
+- added test for utf8 serial console to YaST2.{start,firstboot}
+
+-------------------------------------------------------------------
+Sat Sep 13 18:39:23 CEST 2003 - nashif@suse.de
+
+- remove inst_startup from autoinst workflow, add it autoinst_init
+  (bug #30678)
+
+-------------------------------------------------------------------
+Fri Sep 12 17:25:56 CEST 2003 - ms@suse.de
+
+- added milestone texts for X11 config update/inject (#30612)
+- fixed lookup path for XFree86 3.x config (#30612)
+
+-------------------------------------------------------------------
+Fri Sep 12 14:06:05 CEST 2003 - arvin@suse.de
+
+- fixed permissions of /var/lib/YaST2/install.inf (bug #30630)
+
+-------------------------------------------------------------------
+Thu Sep 11 17:32:40 CEST 2003 - kkaempf@suse.de
+
+- use kernel k_smp4G on SMP-systems with
+  memory <= 4GB or without PAE support
+
+-------------------------------------------------------------------
+Thu Sep 11 11:12:36 CEST 2003 - arvin@suse.de
+
+- check for /proc/splash (bug #30472)
+
+-------------------------------------------------------------------
+Wed Sep 10 11:34:10 CEST 2003 - sh@suse.de
+
+- Fixed max log file size calculation:
+  Set LANG only in subshell,
+  don't rely on /dev in 'df' output - use last line instead
+
+-------------------------------------------------------------------
+Tue Sep  9 12:48:47 CEST 2003 - kkaempf@suse.de
+
+- use kernel k_psmp on smp-systems with
+  less than 4GB memory or without PAE support
+
+-------------------------------------------------------------------
+Tue Sep 09 12:42:20 CEST 2003 - arvin@suse.de
+
+- added kernel option desktop
+
+-------------------------------------------------------------------
+Mon Sep  8 18:01:53 CEST 2003 - sh@suse.de
+
+- V 2.8.24
+- Fixed bug #29927: Logfile setting too restrictive
+  Now checking free space on RAM disk with 'df' and using
+  max 10% of that per log file (max 5000)
+
+-------------------------------------------------------------------
+Mon Sep  8 11:53:17 CEST 2003 - snwint@suse.de
+
+- advance splash progress bar in YaST2{,.start}
+- driver updates are applied in inst_setup (used to be in YaST2.start)
+- don't clear screen in YaST2.start
+
+-------------------------------------------------------------------
+Thu Sep 04 17:45:53 CEST 2003 - arvin@suse.de
+
+- proof-read messages
+
+-------------------------------------------------------------------
+Wed Sep  3 17:27:51 CEST 2003 - gs@suse.de
+
+- installation.ycp: call UI::SetKeyboard in continue mode
+  (enable unicode for ncurses in UTF-8 locale)
+
+-------------------------------------------------------------------
+Wed Sep  3 10:15:44 CEST 2003 - kkaempf@suse.de
+
+- copy XF86Config from inst-sys to XF86Config.install in
+  the system (#29910)
+
+-------------------------------------------------------------------
+Tue Sep  2 13:54:53 CEST 2003 - kkaempf@suse.de
+
+- make repair system accessible
+
+-------------------------------------------------------------------
+Mon Sep 01 17:42:20 CEST 2003 - arvin@suse.de
+
+- removed obsolete inst_hw_config.ycp and inst_confirm_abort.ycp
+
+-------------------------------------------------------------------
+Sun Aug 31 14:56:10 CEST 2003 - arvin@suse.de
+
+- use Popup::ConfirmAbort
+
+-------------------------------------------------------------------
+Sat Aug 30 22:27:57 CEST 2003 - arvin@suse.de
+
+- moved reactivation of network to yast2-network (bug #29561)
+- moved display of into.txt into separate file
+
+-------------------------------------------------------------------
+Thu Aug 28 16:55:51 CEST 2003 - ms@suse.de
+
+- fixed xmigrate call (#29535)
+
+-------------------------------------------------------------------
+Thu Aug 28 16:04:41 CEST 2003 - kkaempf@suse.de
+
+- Install default kernel on SMP systems without 'PAE'
+  (i.e. Pentium1-SMP)
+- Drop check for unsupported Cyrix-CPUs without 'TSC'
+
+-------------------------------------------------------------------
+Tue Aug 26 11:49:21 CEST 2003 - arvin@suse.de
+
+- don't gray out next button in proposal in case of blockers
+  (bug #29320)
+
+-------------------------------------------------------------------
+Fri Aug 22 18:11:20 CEST 2003 - arvin@suse.de
+
+- fixed reading of memory info (bug #29017)
+
+-------------------------------------------------------------------
+Fri Aug 22 11:27:23 CEST 2003 - arvin@suse.de
+
+- fixed update workflow
+
+-------------------------------------------------------------------
+Thu Aug 21 14:42:12 CEST 2003 - arvin@suse.de
+
+- removed obsolete installation_ui.ycp
+
+-------------------------------------------------------------------
+Thu Aug 21 10:04:25 CEST 2003 - kkaempf@suse.de
+
+- copy badlist (if existing) to installed system (#29092)
+
+-------------------------------------------------------------------
+Tue Aug 19 08:13:17 CEST 2003 - arvin@suse.de
+
+- better way for mouse probing in text mode (bug #29005)
+
+-------------------------------------------------------------------
+Mon Aug 18 11:22:04 CEST 2003 - arvin@suse.de
+
+- don't probe mouse in text mode (bug #29005)
+
+-------------------------------------------------------------------
+Fri Aug 15 15:20:38 CEST 2003 - arvin@suse.de
+
+- removed obsolete showlog_defines.ycp
+
+-------------------------------------------------------------------
+Tue Aug 12 20:31:12 CEST 2003 - arvin@suse.de
+
+- added remote administration proposal to network proposal
+
+-------------------------------------------------------------------
+Tue Aug 12 14:38:03 CEST 2003 - gs@suse.de
+
+- YaST2.start: don't run in UTF-8 mode on a console which is
+  connected to a serial port
+
+-------------------------------------------------------------------
+Mon Aug 11 15:51:52 CEST 2003 - arvin@suse.de
+
+- use ycp based ncurses menu at end of installation
+
+-------------------------------------------------------------------
+Fri Aug 08 10:54:34 CEST 2003 - arvin@suse.de
+
+- variable handling of release notes url
+
+-------------------------------------------------------------------
+Wed Aug 06 09:37:19 CEST 2003 - arvin@suse.de
+
+- don't copy kernel config from to /usr/src/linux (bug #28496)
+
+-------------------------------------------------------------------
+Fri Aug 01 20:10:11 CEST 2003 - arvin@suse.de
+
+- call inst_netprobe during install
+- added desktop files
+
+-------------------------------------------------------------------
+Wed Jul 30 11:42:24 CEST 2003 - arvin@suse.de
+
+- don't complain when no storage controllers can be found
+  (bug #23686)
+
+-------------------------------------------------------------------
+Wed Jul 30 10:23:01 CEST 2003 - arvin@suse.de
+
+- always let YaST run in an UTF-8 environment during installation
+  (bug #14751)
+
+-------------------------------------------------------------------
+Fri Jul 25 15:13:04 CEST 2003 - arvin@suse.de
+
+- removed handling of XFree86 Version 3 from YaST2.start
+
+-------------------------------------------------------------------
+Fri Jul 25 15:12:25 CEST 2003 - gs@suse.de
+
+- YaST2.firstboot: read RC_LANG from /etc/sysconfig/language and
+                   export LANG accordingly;
+		   call unicode_start/unicode_stop (if required)
+
+-------------------------------------------------------------------
+Thu Jul 24 13:39:36 CEST 2003 - gs@suse.de
+
+- YaST2.start: call unicode_start/unicode_stop;
+               export YAST_DOES_ACS removed
+
+-------------------------------------------------------------------
+Fri Jul 04 13:21:20 CEST 2003 - arvin@suse.de
+
+- convert update workflow into a proposal
+
+-------------------------------------------------------------------
+Fri May 23 15:20:32 CEST 2003 - arvin@suse.de
+
+- take kernel command line from install.inf (bug #25745)
+
+-------------------------------------------------------------------
+Mon Apr 28 17:25:45 CEST 2003 - arvin@suse.de
+
+- fixes for live eval (bug #26457)
+
+-------------------------------------------------------------------
+Wed Apr 23 12:09:20 CEST 2003 - ms@suse.de
+
+- add config migration from 3x to 4x if possible
+- ensure XF86Config is available if someone performs an update
+  within a XFree86 3.x environment
+
+-------------------------------------------------------------------
+Tue Apr 15 17:18:13 CEST 2003 - arvin@suse.de
+
+- removed call of SuSEconfig.3ddiag and switch2mesasoft after
+  reboot during installation since they don't exist anymore
+
+-------------------------------------------------------------------
+Thu Apr 10 15:49:20 CEST 2003 - ms@suse.de
+
+- fixed conditions of xmset calls (#26214)
+
+-------------------------------------------------------------------
+Tue Apr  8 12:51:55 CEST 2003 - jsrain@suse.de
+
+- fixed parsing of kernel parameters containing blank space
+  (#26147)
+
+-------------------------------------------------------------------
+Tue Apr  1 15:44:12 CEST 2003 - jsrain@suse.de
+
+- added init= kernel parameter to discard list (#25478)
+
+-------------------------------------------------------------------
+Tue Mar 18 13:37:15 CET 2003 - kkaempf@suse.de
+
+- drop "insserv apache" again, opens port 80
+- 2.7.43
+
+-------------------------------------------------------------------
+Mon Mar 17 18:11:40 CET 2003 - kkaempf@suse.de
+
+- "insserv apache" if it's DOC_SERVER (#25436)
+- 2.7.42
+
+-------------------------------------------------------------------
+Mon Mar 17 16:36:24 CET 2003 - arvin@suse.de
+
+- start fvwm2 for vnc installation (bug #25405)
+
+-------------------------------------------------------------------
+Mon Mar 17 15:30:26 CET 2003 - arvin@suse.de
+
+- turn of silent splash mode before displaying messages during
+  vnc and ssh installation (bug #25407)
+
+-------------------------------------------------------------------
+Mon Mar 17 09:21:22 CET 2003 - kkaempf@suse.de
+
+- start apache as doc_server if suse_help_viewer isn't provided
+  by kdebase3-SuSE (25436)
+- 2.7.39
+
+-------------------------------------------------------------------
+Sat Mar 15 22:54:09 CET 2003 - kkaempf@suse.de
+
+- gdm2 might not be installed yet but earmarked for installation
+  (#25410)
+- 2.7.38
+
+-------------------------------------------------------------------
+Fri Mar 14 17:41:40 CET 2003 - sh@suse.de
+
+- The final and super-great ultimate path for release notes:
+  /usr/share/doc/release-notes/RELEASE-NOTES.*.rtf
+
+-------------------------------------------------------------------
+Fri Mar 14 17:38:44 CET 2003 - sh@suse.de
+
+- Moved RTF version of release notes from /usr/share/doc to
+  /usr/share/doc/release_notes
+
+-------------------------------------------------------------------
+Fri Mar 14 17:32:20 CET 2003 - sh@suse.de
+
+- Using file name RELEASE_NOTES.rtf to allow coexistence with
+  RELEASE_NOTES.html for Konqueror
+
+-------------------------------------------------------------------
+Fri Mar 14 11:14:01 CET 2003 - fehr@suse.de
+
+- remove handling of IDE recorders from inst_finish.ycp
+  this is now done much sooner in StorageDevices.ycp (bug #25293)
+
+-------------------------------------------------------------------
+Wed Mar 12 15:12:54 CET 2003 - arvin@suse.de
+
+- fixed focus in last installation dialog (bug #25171)
+
+-------------------------------------------------------------------
+Wed Mar 12 10:19:51 CET 2003 - ms@suse.de
+
+- fixed broken mouse bug in continue mode (#24914)
+
+-------------------------------------------------------------------
+Tue Mar 11 17:16:03 CET 2003 - kkaempf@suse.de
+
+- also set /etc/sysconfig/displaymanager:DISPLAYMANAGER (#25087)
+
+-------------------------------------------------------------------
+Mon Mar 10 19:03:34 CET 2003 - kkaempf@suse.de
+
+- check for existance of /usr/src/linux/include/linux before
+  copying kernel config.
+- 2.7.32
+
+-------------------------------------------------------------------
+Mon Mar 10 18:34:58 CET 2003 - mvidner@suse.de
+
+- Added .etc.install_inf_alias to work around an ini-agent
+  limitation (#24836).
+- 2.7.31
+
+-------------------------------------------------------------------
+Mon Mar 10 16:10:27 CET 2003 - arvin@suse.de
+
+- fixed compose characters for certain locales (bug #14751)
+
+-------------------------------------------------------------------
+Fri Mar  7 17:21:06 CET 2003 - nashif@suse.de
+
+- Dont read product data from installed system if in config mode
+  (#24772 )
+
+-------------------------------------------------------------------
+Fri Mar  7 14:04:21 CET 2003 - kkaempf@suse.de
+
+- copy kernel config to /usr/src/linux/... (#24835)
+
+-------------------------------------------------------------------
+Thu Mar  6 13:33:40 CET 2003 - fehr@suse.de
+
+- umount fs based on crypto loop files before all other umounts
+  (#24751)
+
+-------------------------------------------------------------------
+Thu Mar  6 12:58:31 CET 2003 - ms@suse.de
+
+- removed mouse probing code from inst_startup.ycp and put
+  that code into installation.ycp. Changed the mouse probing
+  code to disconnect the device in front of the probing and
+  re-connect it after the probing is done to avoid any
+  jumping mouse cursors (#24355)
+
+-------------------------------------------------------------------
+Tue Mar 04 21:13:02 CET 2003 - arvin@suse.de
+
+- handle flags from content file in Product module (bug #21561)
+
+-------------------------------------------------------------------
+Tue Mar  4 13:07:02 CET 2003 - sh@suse.de
+
+- Fixed bug #24542: Bad license agreement button text
+
+-------------------------------------------------------------------
+Mon Mar  3 16:47:07 CET 2003 - sh@suse.de
+
+- Fixed bug #10990: Boot installed system does not unmount
+
+-------------------------------------------------------------------
+Mon Mar  3 11:06:28 CET 2003 - fehr@suse.de
+
+- call win resize module not only on i386 but also on x86_64 and ia64
+
+-------------------------------------------------------------------
+Thu Feb 27 12:36:16 CET 2003 - arvin@suse.de
+
+- kill (with SIGKILL) shell on tty2 after installation (bug #24404)
+
+-------------------------------------------------------------------
+Wed Feb 26 17:17:43 CET 2003 - kkaempf@suse.de
+
+- pass language to packagemanager (#23828)
+
+-------------------------------------------------------------------
+Wed Feb 26 12:31:27 CET 2003 - arvin@suse.de
+
+- disable all sources if user aborts installation (bug #24292)
+
+-------------------------------------------------------------------
+Tue Feb 25 11:19:26 CET 2003 - arvin@suse.de
+
+- make Hardware Configuration Dialog unconfuseable (bug #24020)
+
+-------------------------------------------------------------------
+Mon Feb 24 19:55:43 CET 2003 - kkaempf@suse.de
+
+- add debug hooks (#23787)
+
+-------------------------------------------------------------------
+Mon Feb 24 18:25:31 CET 2003 - sh@suse.de
+
+- V 2.7.20
+- Fixed bug #24038: Installation language re-selection does not work
+
+-------------------------------------------------------------------
+Mon Feb 24 18:00:37 CET 2003 - gs@suse.de
+
+- don't add .UTF-8 to LANG variable (causes problems with ncurses)
+  bug #23348
+
+-------------------------------------------------------------------
+Mon Feb 24 17:23:55 CET 2003 - mvidner@suse.de
+
+- Added proxy to the network configuration proposal (#24204).
+
+-------------------------------------------------------------------
+Fri Feb 21 15:21:41 CET 2003 - arvin@suse.de
+
+- better text for "abort installation" popup (bug #24019)
+
+-------------------------------------------------------------------
+Fri Feb 21 12:40:55 CET 2003 - arvin@suse.de
+
+- fixed button labels and help texts (bug #23912)
+
+-------------------------------------------------------------------
+Fri Feb 21 12:00:14 CET 2003 - sh@suse.de
+
+- Fixed bug #24027: Root exploit in inst_suseconfig
+
+-------------------------------------------------------------------
+Fri Feb 21 11:30:37 CET 2003 - arvin@suse.de
+
+- always do hard reboot (bug #23903)
+
+-------------------------------------------------------------------
+Thu Feb 20 15:49:44 CET 2003 - kkaempf@suse.de
+
+- drop /etc/XF86Config (#23965)
+
+-------------------------------------------------------------------
+Thu Feb 20 11:39:23 CET 2003 - arvin@suse.de
+
+- use title-style capitalization for menu names (bug #23848)
+
+-------------------------------------------------------------------
+Thu Feb 20 09:51:29 CET 2003 - ms@suse.de
+
+- add support for mouse wheel during installation (#21660)
+
+-------------------------------------------------------------------
+Wed Feb 19 16:42:22 CET 2003 - arvin@suse.de
+
+- disable all sources if user aborts installation (bug #23776)
+
+-------------------------------------------------------------------
+Wed Feb 19 16:07:29 CET 2003 - fehr@suse.de
+
+- fix wrong variable of keyboard module in inst_finish.ycp (#23782)
+
+-------------------------------------------------------------------
+Wed Feb 19 08:35:05 CET 2003 - arvin@suse.de
+
+- run SuSEconfig fonts during inst_finish for anti aliased fonts
+  (bug #23768)
+
+-------------------------------------------------------------------
+Tue Feb 18 20:47:55 CET 2003 - arvin@suse.de
+
+- fixed reading of content file if FLAGS line is missing
+
+-------------------------------------------------------------------
+Sat Feb 15 16:26:26 CET 2003 - nashif@suse.de
+
+- call inst_x11 in autoinst mode
+
+-------------------------------------------------------------------
+Wed Feb 12 15:23:00 CET 2003 - kkaempf@suse.de
+
+- remove call to mkinfodir (#23588)
+
+-------------------------------------------------------------------
+Wed Feb 12 12:03:24 CET 2003 - fehr@suse.de
+
+- Write keytable info to yast.inf again in inst_finish.ycp
+
+-------------------------------------------------------------------
+Tue Feb 11 21:39:29 CET 2003 - arvin@suse.de
+
+- handle update flag from content file (bug #21561)
+
+-------------------------------------------------------------------
+Mon Feb 10 20:53:53 CET 2003 - arvin@suse.de
+
+- setup complete environment for qt during installation
+
+-------------------------------------------------------------------
+Mon Feb 10 18:24:12 CET 2003 - arvin@suse.de
+
+- skip proposal dialog if it's empty (bug #23520)
+
+-------------------------------------------------------------------
+Fri Feb  7 16:12:49 CET 2003 - jsuchome@suse.de
+
+- adapted inst_confirm_abort for the use from yast2-repair
+
+-------------------------------------------------------------------
+Thu Feb  6 16:16:29 CET 2003 - jsrain@suse.de
+
+- removed missleading help text about starting of network during
+  hardware proposal, when network has already been started (#20912)
+
+-------------------------------------------------------------------
+Wed Feb 05 17:05:43 CET 2003 - arvin@suse.de
+
+- merged proofread messages
+
+-------------------------------------------------------------------
+Mon Feb  3 18:18:08 CET 2003 - sh@suse.de
+
+- V 2.7.7
+- Added default function key handling
+
+-------------------------------------------------------------------
+Thu Jan 30 16:08:44 CET 2003 - kkaempf@suse.de
+
+- call /usr/bin/mkinfodir in inst_suseconfig
+  (replaces SuSEconfig.man_info)
+
+-------------------------------------------------------------------
+Wed Jan 29 14:42:42 CET 2003 - arvin@suse.de
+
+- added dialog to ask for preferred method of user authentication
+
+-------------------------------------------------------------------
+Tue Jan 28 18:47:16 CET 2003 - arvin@suse.de
+
+- added final congratulations dialog
+- added dialog with release notes
+
+-------------------------------------------------------------------
+Mon Jan 27 17:47:38 CET 2003 - sh@suse.de
+
+- V 2.7.5
+- Use new y2base/qt command line options for better WM cooperation
+- Don't start a WM any more in YaST2 start script
+  (testX does that now)
+
+-------------------------------------------------------------------
+Wed Jan 22 17:11:20 CET 2003 - arvin@suse.de
+
+- use newer interface to modules agent (bug #22995)
+
+-------------------------------------------------------------------
+Wed Jan 22 11:36:10 CET 2003 - jsrain@suse.de
+
+- returned accidentally removed call of Bootloader::Write ()
+  function (bug #23018)
+- 2.7.3
+
+-------------------------------------------------------------------
+Fri Dec 20 17:25:00 CET 2002 - arvin@suse.de
+
+- changed label of second button of popup with info.txt (EULA)
+  from "Cancel" to "Do Not Accept" (bug #21874)
+
+-------------------------------------------------------------------
+Fri Dec 20 17:04:37 CET 2002 - arvin@suse.de
+
+- merged from 8.1 branch:
+  - only set hostname during vnc installation if necessary
+    (bug #21454)
+  - popup with info.txt (EULA) now has a timeout during
+    autoinstallation (bug #21413)
+  - remove /root/.vnc/passwd after installation (bug #21360)
+  - popup with info.txt now has two buttons (accept and cancel)
+  - start portmapper if instmode==nfs also on s390 (#21094)
+
+-------------------------------------------------------------------
+Thu Dec 12 12:40:22 CET 2002 - jsrain@suse.de
+
+- added handling of modules required to be loaded early after
+  mounting root
+- not adding ide-scsi to initrd, but scheduling relevant modules
+  to be loaded after boot (#19376)
+
+-------------------------------------------------------------------
+Wed Dec 11 16:51:45 CET 2002 - lslezak@suse.cz
+
+- .proc.cpuinfo agent rewritten to INI-agent (now supports
+  multiple CPU, all keys from /proc/cpuinfo can be read)
+
+-------------------------------------------------------------------
+Mon Dec 09 12:49:20 CET 2002 - arvin@suse.de
+
+- add modules ide-cd and cdrom before ide-scsi to INITRD_MODULES
+  when an ide cdwriter is found (bug #22343)
+
+-------------------------------------------------------------------
+Wed Dec  4 15:29:17 CET 2002 - jsrain@suse.cz
+
+- adapted to new bootloader module interface
+- 2.7.1
+
+-------------------------------------------------------------------
+Tue Oct 22 16:53:21 CEST 2002 - ms@suse.de
+
+- removed inst_x11 to be part of the installation workflow
+- add x11_proposal to:
+  hw-config-proposals-home-pc.ycp
+  hw-config-proposals-networked-pc.ycp
+
+-------------------------------------------------------------------
+Wed Oct 16 14:03:27 CEST 2002 - arvin@suse.de
+
+- correctly handle quotes in /etc/install.inf (bug #20986)
+
+-------------------------------------------------------------------
+Wed Oct 16 11:10:07 CEST 2002 - kkaempf@suse.de
+
+- use proper tmpdir for vendor-supplied script when loading
+  vendor driver disk (#20967)
+- 2.6.87
+
+-------------------------------------------------------------------
+Tue Oct 15 16:29:21 CEST 2002 - choeger@suse.de
+
+- renamed product id text from "Open Team Server" to "Openexchange Server",
+  because this text is shown into the installation window and the name of
+  the cd is associated with this name
+
+-------------------------------------------------------------------
+Mon Oct 14 18:21:52 CEST 2002 - sh@suse.de
+
+- V 2.6.85
+- Fixed bug #19214: Return to proposal after update
+
+-------------------------------------------------------------------
+Mon Oct 14 15:57:34 CEST 2002 - kkaempf@suse.de
+
+- use "UpdateDir" from install.inf when checking vendor
+  update media (#19442)
+- set /sysconfig/suseconfig/CWD_IN_USER_PATH="no" on non-box
+  products (#17464)
+- 2.6.84
+
+-------------------------------------------------------------------
+Mon Oct 14 15:41:33 CEST 2002 - sh@suse.de
+
+- V 2.6.83
+- Fixed bug #19628: Obsolete MediaUI::ChangeMedium() call
+
+-------------------------------------------------------------------
+Thu Oct 10 15:26:07 CEST 2002 - arvin@suse.de
+
+- make info text (aka beta warning) scroll-able (bug #20063)
+
+-------------------------------------------------------------------
+Wed Oct  9 09:23:53 CEST 2002 - jsrain@suse.cz
+
+- now not enabling 2 gettys on same serial line on p690 (#19788)
+
+-------------------------------------------------------------------
+Tue Oct  8 15:37:59 CEST 2002 - kkaempf@suse.de
+
+- disable update for non-box products (#20695)
+- 2.6.80
+
+-------------------------------------------------------------------
+Mon Oct  7 17:09:46 CEST 2002 - kkaempf@suse.de
+
+- display media.1/info.txt if exists before starting installation
+  (#18504)
+
+-------------------------------------------------------------------
+Tue Oct  1 17:01:15 CEST 2002 - kkaempf@suse.de
+
+- runlevel 5 only where applicable (#20369)
+
+-------------------------------------------------------------------
+Thu Sep 26 18:17:35 CEST 2002 - arvin@suse.de
+
+- remove console kernel option if it's autodectected like
+  pseries can do (bug #20177)
+
+-------------------------------------------------------------------
+Thu Sep 26 12:56:01 CEST 2002 - choeger@suse.de
+
+- call product specific YaST2 modules before finishing the
+  installation
+
+-------------------------------------------------------------------
+Tue Sep 24 11:48:17 CEST 2002 - arvin@suse.de
+
+- run depmod after network setup for ssh and vnc installation
+  (bug #20040)
+
+-------------------------------------------------------------------
+Mon Sep 23 15:31:25 CEST 2002 - arvin@suse.de
+
+- again fix for qt background color (bug #18926)
+
+-------------------------------------------------------------------
+Fri Sep 20 17:02:45 CEST 2002 - arvin@suse.de
+
+- in final proposal screen hide button to start control center if
+  the control center is not available (bug #19926)
+
+-------------------------------------------------------------------
+Fri Sep 20 16:58:14 CEST 2002 - kkaempf@suse.de
+
+- re-init Product module in running system from cached
+  product data properly
+- 2.6.72
+
+-------------------------------------------------------------------
+Fri Sep 20 13:30:40 CEST 2002 - kkaempf@suse.de
+
+- initialize Product module from content data
+- 2.6.71
+
+-------------------------------------------------------------------
+Fri Sep 20 13:08:08 CEST 2002 - kkaempf@suse.de
+
+- add agent to read "/content" file
+- 2.6.69
+
+-------------------------------------------------------------------
+Fri Sep 20 11:47:05 CEST 2002 - kkaempf@suse.de
+
+- linuxrc provides 'content' at / now, no need to mount the source.
+- 2.6.70
+
+-------------------------------------------------------------------
+Fri Sep 20 11:32:26 CEST 2002 - kkaempf@suse.de
+
+- force reboot on s390 after installation
+- 2.6.69
+
+-------------------------------------------------------------------
+Thu Sep 19 21:17:17 CEST 2002 - kkaempf@suse.de
+
+- umount /var/adm/mount after retrieving content file
+- 2.6.68
+
+-------------------------------------------------------------------
+Wed Sep 18 17:49:20 CEST 2002 - kkaempf@suse.de
+
+- added product hooks to installation workflow
+- 2.6.67
+
+-------------------------------------------------------------------
+Wed Sep 18 16:28:57 CEST 2002 - arvin@suse.de
+
+- removed all code regarding zilo (bug #19821)
+- fixed qt background color (bug #18926)
+
+-------------------------------------------------------------------
+Wed Sep 18 16:00:39 CEST 2002 - arvin@suse.de
+
+- provides/obsoletes the old yast
+
+-------------------------------------------------------------------
+Mon Sep 16 12:37:32 CEST 2002 - kkaempf@suse.de
+
+- remove unneeded Save() functions (#19591)
+
+-------------------------------------------------------------------
+Thu Sep 12 22:14:45 CEST 2002 - fehr@suse.de
+
+- remove obsolete LVM and MD initialisation in inst_mode.ycp
+- 2.6.63
+
+-------------------------------------------------------------------
+Thu Sep 12 17:15:52 CEST 2002 - kkaempf@suse.de
+
+- remove control files (#19564)
+- 2.6.62
+
+-------------------------------------------------------------------
+Thu Sep 12 15:26:35 CEST 2002 - kkaempf@suse.de
+
+- fix vendor path for UnitedLinux (#19442)
+- 2.6.61
+
+-------------------------------------------------------------------
+Thu Sep 12 14:38:52 CEST 2002 - kkaempf@suse.de
+
+- dont warn about kernel if not in update mode.
+- 2.6.60
+
+-------------------------------------------------------------------
+Thu Sep 12 13:10:40 CEST 2002 - kkaempf@suse.de
+
+- symlink *.shipped to *.suse on update for LILO compatibility
+- 2.6.59
+
+-------------------------------------------------------------------
+Wed Sep 11 13:40:41 CEST 2002 - kkaempf@suse.de
+
+- properly unmount sources also on abort and end of update
+- move package log to yast2-packager
+- handle run-time kernel switch extra
+- 2.6.58
+
+-------------------------------------------------------------------
+Wed Sep 11 00:42:12 CEST 2002 - kkaempf@suse.de
+
+- remove obsolete package data after update
+- release source (CD) and target (rpmdb)
+- 2.6.57
+
+-------------------------------------------------------------------
+Tue Sep 10 16:15:09 CEST 2002 - arvin@suse.de
+
+- added more provides/obsoletes (bug #19325)
+
+-------------------------------------------------------------------
+Tue Sep 10 14:34:13 CEST 2002 - arvin@suse.de
+
+- again fix initial language
+
+-------------------------------------------------------------------
+Mon Sep  9 15:46:39 CEST 2002 - kkaempf@suse.de
+
+- fix initial language
+- 2.6.54
+
+-------------------------------------------------------------------
+Mon Sep 09 15:41:19 CEST 2002 - arvin@suse.de
+
+- run ncurses control center after installation (instead of ycp
+  based one) (bug #19246)
+
+-------------------------------------------------------------------
+Mon Sep  9 12:48:38 CEST 2002 - kkaempf@suse.de
+
+- drop "noarch"
+- 2.6.53
+
+-------------------------------------------------------------------
+Mon Sep 09 12:24:03 CEST 2002 - arvin@suse.de
+
+- setup proxy configuration for installation (bug #19189)
+
+-------------------------------------------------------------------
+Mon Sep  9 12:20:13 CEST 2002 - kkaempf@suse.de
+
+- remove runme_at_boot at end
+- 2.6.51
+
+-------------------------------------------------------------------
+Fri Sep  6 12:56:08 CEST 2002 - kkaempf@suse.de
+
+- s390'ers want it different -> k_deflt on smp systems (#18990)
+- 2.6.50
+
+-------------------------------------------------------------------
+Fri Sep  6 12:48:51 CEST 2002 - kkaempf@suse.de
+
+- properly detect update_mode after restart
+- 2.6.49
+
+-------------------------------------------------------------------
+Thu Sep  5 20:47:47 CEST 2002 - kkaempf@suse.de
+
+- continue with inst_rpmcopy after update
+- 2.6.48
+
+-------------------------------------------------------------------
+Thu Sep 05 19:10:43 CEST 2002 - arvin@suse.de
+
+- more old trans-package fun
+
+-------------------------------------------------------------------
+Thu Sep 05 15:01:29 CEST 2002 - arvin@suse.de
+
+- always run depmod after installation (bug #18382)
+- set HOME=/root during installation (bug #18882)
+
+-------------------------------------------------------------------
+Wed Sep  4 16:12:19 CEST 2002 - kkaempf@suse.de
+
+- move update branch to yast2-update (#18876)
+- 2.6.45
+
+-------------------------------------------------------------------
+Wed Sep 04 12:48:03 CEST 2002 - arvin@suse.de
+
+- fixed provide/obsolete of trans packages (bug #18691)
+
+-------------------------------------------------------------------
+Tue Sep  3 22:34:44 CEST 2002 - kkaempf@suse.de
+
+- adapt update workflow to package manager
+- 2.6.41
+
+-------------------------------------------------------------------
+Mon Sep 02 14:14:15 CEST 2002 - arvin@suse.de
+
+- set default runlevel back to 3 if X11 is not configured
+  (bug #18705)
+
+-------------------------------------------------------------------
+Mon Sep 02 11:04:17 CEST 2002 - arvin@suse.de
+
+- set HOME=/tmp during installation so qt doesn't pollute root
+  filesystem (bug #18663)
+
+-------------------------------------------------------------------
+Fri Aug 30 11:18:15 CEST 2002 - arvin@suse.de
+
+- hide output of kill in YaST2.firstboot (bug #18585)
+- moved X11Version.ycp to yast2 package
+
+-------------------------------------------------------------------
+Thu Aug 29 10:43:43 CEST 2002 - arvin@suse.de
+
+- fixed network start for ssh installation (bug #18506)
+- fixed password saving for ssh installation (bug #18507)
+- start in textmode for ssh installation (bug #18571)
+
+-------------------------------------------------------------------
+Thu Aug 29 10:41:00 CEST 2002 - kkaempf@suse.de
+
+- close source in inst_finish (#18508)
+
+-------------------------------------------------------------------
+Wed Aug 28 22:34:37 CEST 2002 - kkaempf@suse.de
+
+- trigger cache copying at end
+- 2.6.35
+
+-------------------------------------------------------------------
+Tue Aug 27 23:16:31 CEST 2002 - kkaempf@suse.de
+
+- init packagemanager properly
+- drop all references to old data (suse/setup/descr/info)
+
+-------------------------------------------------------------------
+Tue Aug 27 12:10:15 CEST 2002 - arvin@suse.de
+
+- load firewire support during installation (bug #18379)
+- create_interfaces has moved from / to /sbin
+
+-------------------------------------------------------------------
+Tue Aug 27 10:43:05 CEST 2002 - arvin@suse.de
+
+- fixes for ssh installation
+
+-------------------------------------------------------------------
+Mon Aug 26 12:43:26 CEST 2002 - arvin@suse.de
+
+- don't run x11 configuration if x11 is missing (bug #18208)
+
+-------------------------------------------------------------------
+Mon Aug 26 10:18:44 CEST 2002 - kkaempf@suse.de
+
+- ignore even more boot options (#18154)
+
+-------------------------------------------------------------------
+Thu Aug 22 20:18:17 CEST 2002 - fehr@suse.de
+
+- call /sbin/vgscan if root filesystem is on LVM before calling
+  Boot::Save() (#18180)
+
+-------------------------------------------------------------------
+Thu Aug 22 14:43:26 CEST 2002 - arvin@suse.de
+
+- use the same workflow on s390 as on other architectures
+
+-------------------------------------------------------------------
+Thu Aug 22 12:31:17 CEST 2002 - kkaempf@suse.de
+
+- drop "ht" flag probing, done in libhd now (#13532).
+
+-------------------------------------------------------------------
+Thu Aug 22 10:45:21 CEST 2002 - kkaempf@suse.de
+
+- run "SuSEconfig --module bootsplash" before bootloader
+  V 2.6.29
+
+-------------------------------------------------------------------
+Thu Aug 22 09:46:46 CEST 2002 - kkaempf@suse.de
+
+- selected packages are also provided after installation
+  V 2.6.28
+
+-------------------------------------------------------------------
+Thu Aug 22 09:22:28 CEST 2002 - kkaempf@suse.de
+
+- dont use .package agent in inst_finish
+  V 2.6.27
+
+-------------------------------------------------------------------
+Wed Aug 21 18:01:05 CEST 2002 - kkaempf@suse.de
+
+- fix for build
+  V 2.6.26
+
+-------------------------------------------------------------------
+Wed Aug 21 16:31:59 CEST 2002 - kkaempf@suse.de
+
+- adaptions to new packager
+- V 2.6.25
+
+-------------------------------------------------------------------
+Tue Aug 20 19:08:14 CEST 2002 - arvin@suse.de
+
+- use new Mode::x11_setup_needed and Arch::x11_setup_needed
+
+-------------------------------------------------------------------
+Tue Aug 20 12:00:23 CEST 2002 - arvin@suse.de
+
+- don't probe for mouse, floppy and usb devices on iseries
+
+-------------------------------------------------------------------
+Mon Aug 19 17:58:45 CEST 2002 - olh@suse.de
+
+- implemented starting of ssh in installed system (needed for
+  some kinds of remote installation)
+
+-------------------------------------------------------------------
+Mon Aug 19 17:53:40 CEST 2002 - arvin@suse.de
+
+- don't probe for mouse, floppy and usb devices on s390
+
+-------------------------------------------------------------------
+Mon Aug 19 16:24:31 CEST 2002 - arvin@suse.de
+
+- don't run X11 configuration on S390 (bug #17371)
+
+-------------------------------------------------------------------
+Mon Aug 19 09:32:04 CEST 2002 - kkaempf@suse.de
+
+- Moving target by ppc team. One bit more entered to #17739.
+
+-------------------------------------------------------------------
+Fri Aug 16 15:21:48 CEST 2002 - kkaempf@suse.de
+
+- drop BOOT_IMAGE=apic evaluation. enableapic is passed
+  as normal kernel parameter to k_deflt now.
+- add "SuSE" to list of kernel parameters to discard.
+
+-------------------------------------------------------------------
+Thu Aug 15 13:53:54 CEST 2002 - kkaempf@suse.de
+
+- linuxrc doesn't reboot on PCMCIA systems any more (#17739)
+
+-------------------------------------------------------------------
+Wed Aug 14 17:12:01 CEST 2002 - arvin@suse.de
+
+- added special hardware configuration list for ppc64 and s390
+  (bug #17742)
+
+-------------------------------------------------------------------
+Wed Aug 14 11:32:07 CEST 2002 - kkaempf@suse.de
+
+- fix NoShell: check (#17714)
+
+-------------------------------------------------------------------
+Mon Aug 12 17:01:52 CEST 2002 - kkaempf@suse.de
+
+- fix network parameters passing from /etc/install.inf
+- install k_athlon if vendor_id == "AuthenticAMD"  && cpu family >= 6
+- drop "acpismp=force" for hyperthreading SMP
+
+-------------------------------------------------------------------
+Mon Aug 12 15:48:57 CEST 2002 - kkaempf@suse.de
+
+- read /etc/install.inf:InstMode correctly
+
+-------------------------------------------------------------------
+Thu Aug  8 16:23:00 CEST 2002 - kkaempf@suse.de
+
+- honor "/etc/install.inf:NoShell" to suppress extra shell on tty2.
+
+-------------------------------------------------------------------
+Wed Aug  7 12:16:33 CEST 2002 - kkaempf@suse.de
+
+- allow for multiple foreign primary partitions (#17458)
+
+-------------------------------------------------------------------
+Wed Aug 07 10:47:45 CEST 2002 - arvin@suse.de
+
+- removed access to variable DEFAULT_LANGUAGE in YaST2 start
+  script (now only RC_LANG is unsed)
+
+-------------------------------------------------------------------
+Tue Aug 06 12:51:33 CEST 2002 - arvin@suse.de
+
+- don't start vnc server twice after reboot during installation
+  (bug #17415)
+
+-------------------------------------------------------------------
+Mon Aug 05 18:56:15 CEST 2002 - arvin@suse.de
+
+- even more changed for new /etc/install.inf agent
+
+-------------------------------------------------------------------
+Mon Aug  5 16:57:21 CEST 2002 - ms@suse.de
+
+- do not call module x11 if serial_console or vnc session
+  is active: (#17233)
+
+-------------------------------------------------------------------
+Mon Aug  5 15:17:53 CEST 2002 - kkaempf@suse.de
+
+- call "/create_interface <destdir>" on S/390 in order to get network
+  setup data to installed system.
+
+-------------------------------------------------------------------
+Mon Aug 05 12:10:21 CEST 2002 - arvin@suse.de
+
+- further changed for new /etc/install.inf agent
+
+-------------------------------------------------------------------
+Sat Aug 03 15:33:51 CEST 2002 - arvin@suse.de
+
+- removed option -noxim for qt frontend since bug #17161 is now
+  solved by changes to yast2-qt
+
+-------------------------------------------------------------------
+Fri Aug 02 15:02:54 CEST 2002 - arvin@suse.de
+
+- run qt frontend with option -noxim (bug #17161)
+- configure only network card on iSeries
+
+-------------------------------------------------------------------
+Fri Aug  2 14:31:49 CEST 2002 - olh@suse.de
+
+- export Y2DEBUG and increase logsize in YaST2.firstboot when
+  booted with 'debug'
+
+-------------------------------------------------------------------
+Wed Jul 31 16:21:07 CEST 2002 - msvec@suse.cz
+
+- remove MakeCDLinks from inst_finish.ycp (#17309)
+
+-------------------------------------------------------------------
+Wed Jul 31 16:21:07 CEST 2002 - msvec@suse.cz
+
+- new agent for /etc/install.inf
+
+-------------------------------------------------------------------
+Mon Jul 29 18:15:45 CEST 2002 - arvin@suse.de
+
+- fixed return value in inst_x11.ycp
+
+-------------------------------------------------------------------
+Fri Jul 26 13:35:24 CEST 2002 - ms@suse.de
+
+- add subdirectory x11 and include the base modules
+  X11Version and inst_x11 to be present at any time
+
+-------------------------------------------------------------------
+Tue Jul 23 15:29:46 CEST 2002 - olh@suse.de
+
+- new kernel names and binaries for ppc.
+
+-------------------------------------------------------------------
+Tue Jul 23 12:17:48 CEST 2002 - olh@suse.de
+
+- add -httpd /usr/share/vnc/classes to inst_setup_vnc
+
+-------------------------------------------------------------------
+Sat Jul 20 11:35:06 CEST 2002 - olh@suse.de
+
+- use WFM::Execute (.local to copy vnc data to target directory
+
+-------------------------------------------------------------------
+Fri Jul 19 18:05:51 CEST 2002 - fehr@suse.de
+
+- removed writing of /etc/fstab from inst_finish it is now in
+  inst_prepdisk
+- version 2.6.5
+
+-------------------------------------------------------------------
+Thu Jul 18 13:37:59 CEST 2002 - fehr@suse.de
+
+- moved variable immediate_prepdisk from module Installation to
+  module Storage.
+
+-------------------------------------------------------------------
+Wed Jul 17 16:29:25 CEST 2002 - arvin@suse.de
+
+- fixed S390 reboot message (bug #17049)
+
+-------------------------------------------------------------------
+Tue Jul 16 17:25:31 CEST 2002 - sh@suse.de
+
+- provide/obsolete yast2-trans-inst-proposal and
+  yast2-trans-inst-general
+
+-------------------------------------------------------------------
+Wed Jul 10 15:51:00 CEST 2002 - arvin@suse.de
+
+- omit keyboard, mouse and bootloader in initial proposal on s390
+- fixed location of ycp data files
+
+-------------------------------------------------------------------
+Thu Jul 04 16:10:45 CEST 2002 - arvin@suse.de
+
+- moved non binary files to /usr/share/YaST2
+
+-------------------------------------------------------------------
+Mon Jun 24 15:24:43 CEST 2002 - kkaempf@suse.de
+
+- New package: split off purely installation related code
+  from yast2.rpm

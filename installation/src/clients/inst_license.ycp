@@ -1,0 +1,160 @@
+/**
+ * File:	clients/inst_license.ycp
+ * Package:	Installation
+ * Summary:	Generic License File
+ * Authors:	Anas Nashif <nashif@suse.de>
+ *
+ * $Id$
+ *
+ */
+
+{
+
+textdomain "installation";
+import "Wizard";
+import "Popup";
+import "GetInstArgs";
+import "CustomDialogs";
+import "Directory";
+import "Language";
+
+
+// first check if we are allowed to run this client again
+if (GetInstArgs::going_back())
+    return `auto;
+
+map display = UI::GetDisplayInfo();
+integer space = display["TextMode"]:true ? 1 : 3;
+
+// all the arguments
+map argmap = GetInstArgs::argmap();
+
+
+// Action when license is not accepted
+// abort|continue|halt
+string action = argmap["action"]:"abort";
+
+
+list<string> default_patterns = ["info.txt"];
+
+string directory = argmap["directory"]:"/var/lib/YaST2";
+
+if (argmap["directory"]:"" != "")
+        directory = Directory::custom_workflow_dir + directory;
+
+
+list<string> patterns = argmap["patterns"]:default_patterns;
+
+map license_data = CustomDialogs::load_file_locale(patterns,directory, Language::language);
+
+
+string text = "";
+if (license_data["text"]:"" != "" )
+    text = license_data["text"]:"";
+else {
+    if (SCR::Read(.target.size, "/etc/YaST2/info.txt") > 0 )
+        text = (string)SCR::Read(.target.string, "/etc/YaST2/info.txt" );
+}
+
+term rt = `Empty();
+if (regexpmatch(text, "</.*>")) {
+    rt = `RichText(`id( `welcome_text), text);
+} else {
+    rt = `RichText(`id( `welcome_text), `opt(`plainText), text );
+}
+
+// dialog caption
+string caption = _("License Agreement");
+
+term contents = `VBox (
+        `VSpacing (space),
+        `HBox (
+            `HSpacing (2*space),
+            rt,
+            `HSpacing (2*space)
+            ),
+        `VSpacing (2),
+        `RadioButtonGroup(`id(`eula),
+            `HBox(
+                `HSpacing (2*space),
+            `VBox(
+		// radio button
+                `Left(`RadioButton(`id(`yes), _("Yes, I Agree to the License Agreement"))),
+		// radio button
+                `Left( `RadioButton(`id(`no), _("No, I Do Not Agree")))
+                ),
+            `HSpacing (2*space)
+                )
+            ),
+        `VSpacing(2)
+        );
+
+// help text
+string help = _("<p>Read the license agreement carefully and select
+one of the available options. If you do not agree to the license agreement,
+the configuration will be aborted.</p>
+");
+
+Wizard::SetContents(caption, contents, help,
+        GetInstArgs::enable_back(), GetInstArgs::enable_next());
+Wizard::SetFocusToNextButton();
+
+any ret = nil;
+boolean halt = false;
+while (true)
+{
+    ret = UI::UserInput();
+    symbol accept = (symbol)UI::QueryWidget(`id(`eula), `CurrentButton);
+    if (accept == `no)
+    {
+	// yes-no popup
+       if ( Popup::YesNo(_("Reread or reconsider the license agreement?")) )
+       {
+           continue;
+       }
+       else
+       {
+           if (action == "continue")
+           {
+               ret = `next;
+               break;
+           }
+           else if (action == "halt")
+           {
+		// timed ok/cancel popup
+               if (!Popup::TimedOKCancel(_("System is shutting down..."), 10))
+               {
+                   continue;
+               } else {
+                   halt = true;
+               }
+               break;
+           }
+           else if (action == "abort")
+           {
+                ret = `abort;
+           }
+       }
+    }
+    else if (ret == `abort)
+    {
+        break;
+    }
+    else if ( accept != `yes && accept != `no )
+    {
+	// message popup
+        Popup::Message(_("Accept or decline the license agreement."));
+        continue;
+    }
+    break;
+}
+
+if (halt)
+{
+    UI::CloseDialog();
+    SCR::Execute(.target.bash, "/sbin/halt");
+}
+return (symbol)ret;
+
+/* EOF */
+}

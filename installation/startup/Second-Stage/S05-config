@@ -1,0 +1,8 @@
+#!/bin/sh
+log "Starting S05-config..."
+log "======================"
+
+#=============================================
+# 8) provide configurations
+#---------------------------------------------
+log "\tNo configurations needs to be provided"

@@ -1,0 +1,55 @@
+/**
+ * Module:	inst_features.ycp
+ *
+ * Authors:	Anas Nashif <nashif@suse.de>
+ *
+ * Purpose:     Enable all the set features in the control file
+                before going into proposal
+ * $Id$
+ */
+{
+    textdomain "installation";
+
+    import "ProductFeatures";
+    import "Timezone";
+    import "Keyboard";
+    import "Language";
+    import "Installation";
+    import "Console";
+    import "RunlevelEd";
+
+    // Timezone
+    if (ProductFeatures::timezone != "")
+    {
+        Timezone::Set( ProductFeatures::timezone, true );
+    }
+
+    // Keyboard
+    if (ProductFeatures::keyboard != "")
+    {
+        Keyboard::default_kbd = ProductFeatures::keyboard;
+        Keyboard::SetConsole( ProductFeatures::keyboard);
+        Keyboard::SetX11( ProductFeatures::keyboard );
+    }
+
+    // Runlevel
+    if (ProductFeatures::runlevel != "")
+    {
+        RunlevelEd::default = ProductFeatures::runlevel;
+    }
+
+    if (ProductFeatures::language != "")
+    {
+        string language = ProductFeatures::language;
+        // Set it in the Language module.
+        Language::Set( language );
+
+        // Set Console font
+        Console::SelectFont( language );
+
+        // Set it in YaST2
+        Language::WfmSetLanguage();
+    }
+
+    return `auto;
+}

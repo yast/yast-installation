@@ -1,0 +1,43 @@
+#!/bin/sh
+log "Starting S08-start..."
+log "====================="
+
+#=============================================
+# 12) start preSecondCall hook scripts...
+#---------------------------------------------
+callHooks preSecondCall
+
+#=============================================
+# 12.1) goto run stage, start YaST2 (continue)
+#---------------------------------------------
+# Start YaST2 and tell it to continue the installation. The remaining
+# packages will be installed and the configruation workflow follows. In
+# case of a SSH installation a remote login is requires and the user
+# has to start YaST2 manually. Because of this reason a view messages
+# will be displayed on the controling terminal
+# ---
+disable_splash
+if [ -z $USE_SSH ] || [ "$USE_SSH" -eq 0 ] ; then
+	log "\tStarting X11/VNC based session..."
+	#==================================================
+	# We are going to start a VNC or X11 based session
+	#--------------------------------------------------
+	if [ ! -z "$VNC" ] && [ "$VNC" -eq 1 ] ; then
+		vnc_message
+	fi
+	startYaST2
+else
+	log "\tStarting SSH remote based session..."
+	#==================================================
+	# We are going to start a SSH based remote session
+	#--------------------------------------------------
+	ssh_message
+	while [ -f /var/lib/YaST2/runme_at_boot ]; do
+		sleep 3
+	done
+fi
+
+#=============================================
+# 12.2) start postSecondCall hook scripts...
+#---------------------------------------------
+callHooks postSecondCall
