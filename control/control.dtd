@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!ELEMENT addon ( #PCDATA ) >
+
+<!ELEMENT addons ( addon ) >
+<!ATTLIST addons config:type NMTOKEN #FIXED "list" >
+
+<!ELEMENT archs ( #PCDATA ) >
+
+<!ELEMENT arguments ( #PCDATA ) >
+
+<!ELEMENT base_selection ( #PCDATA ) >
+
+<!ELEMENT defaults ( arguments, archs ) >
+
+<!ELEMENT globals ( language, keyboard, timezone ) >
+
+<!ELEMENT keyboard ( #PCDATA ) >
+
+<!ELEMENT label ( #PCDATA ) >
+
+<!ELEMENT language ( #PCDATA ) >
+
+<!ELEMENT mode ( #PCDATA ) >
+
+<!ELEMENT module ( #PCDATA | archs | arguments | label | name | update )* >
+
+<!ELEMENT modules ( module+ ) >
+<!ATTLIST modules config:type NMTOKEN #FIXED "list" >
+
+<!ELEMENT name ( #PCDATA ) >
+
+<!ELEMENT package ( #PCDATA ) >
+
+<!ELEMENT packages ( package ) >
+<!ATTLIST packages config:type NMTOKEN #FIXED "list" >
+
+<!ELEMENT productDefines ( textdomain, globals, software, proposals, workflows ) >
+
+
+<!ELEMENT proposal ( archs | mode | modules | stage | type )* >
+
+<!ELEMENT proposals ( proposal+ ) >
+<!ATTLIST proposals config:type NMTOKEN #FIXED "list" >
+
+<!ELEMENT selection_type ( #PCDATA ) >
+<!ATTLIST selection_type config:type NMTOKEN #FIXED "symbol" >
+
+<!ELEMENT software ( selection_type, base_selection, addons, packages ) >
+
+<!ELEMENT stage ( #PCDATA ) >
+
+<!ELEMENT textdomain ( #PCDATA ) >
+
+<!ELEMENT timezone ( #PCDATA ) >
+
+<!ELEMENT type ( #PCDATA ) >
+
+<!ELEMENT update ( #PCDATA ) >
+<!ATTLIST update config:type NMTOKEN #FIXED "boolean" >
+
+<!ELEMENT workflow ( defaults | label | mode | modules | stage )* >
+
+<!ELEMENT workflows ( workflow+ ) >
+<!ATTLIST workflows config:type NMTOKEN #FIXED "list" >
+
+<!ATTLIST productDefines
+        xmlns CDATA #REQUIRED
+        xmlns:config CDATA #REQUIRED
+>
+
