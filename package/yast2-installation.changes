@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Mar 15 09:44:32 CET 2005 - jsrain@suse.cz
+
+- enable netdaemon if GNOME is default desktop (#72018)
+
+-------------------------------------------------------------------
 Mon Mar 14 15:23:17 CET 2005 - jsrain@suse.cz
 
 - enable FAM daemon when GNOME is installed
