@@ -45,6 +45,8 @@
     import "HwStatus";
     import "Directory";
 
+    import "FileSystems";
+
     include "partitioning/partition_defines.ycp";
     textdomain "installation";
 
@@ -200,10 +202,10 @@ Please wait while the base system is being installed.
     }
 
     // re-init tmpdir from new SCR !
-    Misc::tmpdir = SCR::Read (.target.tmpdir);
+    Misc::tmpdir = (string) SCR::Read (.target.tmpdir);
     string tmpdir = Misc::tmpdir;
 
-    define InjectFile (string filename)
+    define void InjectFile (string filename)
     ``{
 	y2milestone("InjectFile: <%1>", filename );
 	WFM::Execute (.local.bash, "/bin/cp " + filename + " " + Installation::destdir + filename);
@@ -252,7 +254,7 @@ Please wait while the base system is being installed.
 
     list storage_initrdm = Storage::GetRootInitrdModules();
 
-    foreach(`m, storage_initrdm,
+    foreach(string m, storage_initrdm,
     ``{
 	Initrd::AddModule (m, "");
     });
@@ -313,7 +315,7 @@ Please wait while the base system is being installed.
 
     ModulesConf::Save (false);
 
-    string update_dir = SCR::Read (.etc.install_inf.UpdateDir);
+    string update_dir = (string) SCR::Read (.etc.install_inf.UpdateDir);
     if (update_dir != nil)
     {
 	SCR::Write (.target.string, "/var/lib/YaST2/vendor_update", update_dir);
@@ -371,9 +373,9 @@ Please wait while the base system is being installed.
     if ( Mode::update )
     {
 	// re-do all top-level "media" convenience links
-	list mediafiles = SCR::Read (.target.dir, ["/media", []]);
+	list<string> mediafiles = (list<string>) SCR::Read (.target.dir, ["/media", []]);
 
-	foreach (`mediafile, mediafiles,
+	foreach (string mediafile, mediafiles,
 	``{
 	    mediafile = "/" + mediafile;
 	    if (SCR::Read (.target.size, mediafile) < 0)	// not existing
@@ -481,9 +483,9 @@ Please wait while the base system is being installed.
 
     if (Mode::initial)
     {
-	string proxy = SCR::Read (.etc.install_inf.Proxy);
-	string proxyport = SCR::Read (.etc.install_inf.ProxyPort);
-	string proxyproto = SCR::Read (.etc.install_inf.ProxyProto);
+	string proxy = (string) SCR::Read (.etc.install_inf.Proxy);
+	string proxyport = (string) SCR::Read (.etc.install_inf.ProxyPort);
+	string proxyproto = (string) SCR::Read (.etc.install_inf.ProxyProto);
 
 	if (proxy != nil && proxyport != nil && proxyproto != nil)
 	{
@@ -681,7 +683,7 @@ with the load address of your root DASD.
     // --------------------------------------------------------------
 
     if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_finish.ycp") > 0)
-	WFM::CallFunction (product_finish(Mode::update));
+	WFM::CallFunction ("product_finish", [Mode::update]);
 
     // --------------------------------------------------------------
     // Unmount all mounted devices (from inst_prepdisk)
@@ -733,7 +735,7 @@ with the load address of your root DASD.
 	// could mess up umounting of normale filesystems if the crypt
 	// file is not on the root fs
 	y2milestone( "umount list %1", umountList );
-	foreach( `e,  targetMap["/dev/loop","partitions"]:[],
+	foreach( map e,  targetMap["/dev/loop","partitions"]:[],
 	    ``{
 	    if( size(e["mount"]:"")>0 )
 		{
@@ -758,7 +760,7 @@ with the load address of your root DASD.
 	while (umountLength > 0)
 	{
 	    umountLength = umountLength - 1;
-	    string tmp = Installation::destdir + select (umountList, umountLength, "");
+	    string tmp = Installation::destdir + (string) (umountList[umountLength]:"");
 	    y2milestone("umount target: %1", tmp);
 	    WFM::Execute(.local.umount, tmp);
 	}
@@ -776,7 +778,7 @@ with the load address of your root DASD.
 	    max_loop_dev = max_loop_dev -1;
 	}
 
-	if( size(filter(`k,`v, targetMap, ``(lookup (v, "is_lvm_vg", false)))) >0 )
+	if( size(filter(any k, map v, targetMap, ``(v["is_lvm_vg"]:false))) >0 )
 	{
 	    y2milestone( "shutting down LVM" );
 	    WFM::Execute(.local.bash, "/sbin/vgchange -A n -a n" );

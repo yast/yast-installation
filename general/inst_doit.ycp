@@ -26,7 +26,7 @@
 	}
     }
 
-    if ( WFM::Args(2) )	// going backwards?
+    if ( (boolean) WFM::Args(2) )	// going backwards?
     {
 	// This module can only be reached in backward direction if any of the
 	// subsequent modules failed - creating the partitions, formatting etc.
@@ -130,7 +130,7 @@ Start update?
 
     while (true)
     {
-	symbol button = UI::UserInput();
+	any button = UI::UserInput();
 
 	confirmed = button == `yes;
 

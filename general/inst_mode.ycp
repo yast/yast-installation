@@ -27,6 +27,8 @@
     import "Popup";
     import "Label";
 
+    import "FileSystems";
+
     include "partitioning/partition_defines.ycp";
     import "Storage";
     import "Kernel";
