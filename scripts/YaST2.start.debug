@@ -19,12 +19,6 @@ export LANG TEXT_MODE TIMEZONE MEDIA
 cp -f /proc/mounts /etc/mtab
 rm -f /id_list
 
-if [ "$MOUSE_TYPE" ] ; then
-  sed -e "s#PS/2#$MOUSE_TYPE#" /usr/X11R6/lib/X11/XF86Config >/etc/XF86Config
-else
-  cp /usr/X11R6/lib/X11/XF86Config /etc/XF86Config
-fi
-
 # remove mouse here, re-init in inst_startup
 rm -f /dev/mouse
 

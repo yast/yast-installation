@@ -223,7 +223,7 @@ else
 fi
 
 # only if we have a config file
-[ -f /etc/X11/XF86Config -o -f /etc/XF86Config ] || xsrv=
+[ -f /etc/X11/XF86Config ] || xsrv=
 
 log "XVersion=$XVersion"
 log "XServer=$XServer"
