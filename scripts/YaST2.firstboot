@@ -246,9 +246,10 @@ if grep -qs '^\(Display_IP\|VNC\):.*1' /etc/install.inf ; then
     rcnetwork start
     Y2_NETWORK_ACTIVE=1
 fi
+
 # activate network for remote access via ssh
 if grep -qs '^UseSSH:.*1' /etc/install.inf ; then
-    test -z "$Y2_NETWORK_ACTIVE" || rcnetwork start
+    test -z "$Y2_NETWORK_ACTIVE" && rcnetwork start
     rcsshd start
     Y2_NETWORK_ACTIVE=1
     Y2_SSH_ACTIVE=1
