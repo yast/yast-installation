@@ -11,15 +11,73 @@
 {
     import "UML";
 
+    path umlpath = .uml.options;
+
+
+    /**
+     *
+     */
+    define void register_options_file () ``{
+        string scr_file = (string)(SCR::Read (.target.tmpdir)) + "/uml_option.scr";
+        SCR::Write (.target.string, scr_file,
+		    sformat ("%1\n\n`ag_ini(`SysConfigFile(\"%2\"))\n", umlpath,
+			     sformat ("%1/OPTIONS", UML::homedir)));
+        SCR::RegisterAgent (umlpath, scr_file);
+    }
+
+
+    /**
+     *
+     */
+    define void unregister_options_file () ``{
+	SCR::UnregisterAgent (umlpath);
+    }
+
 
     /**
      *
      */
     define void save_options () ``{
 
-	integer the_fool_on_the_hill = 1;
+	SCR::Write (add (umlpath, "MEMORY"), UML::memory_size);
+	SCR::Write (add (umlpath, "NCPUS"), UML::number_of_cpus);
 
     }
+
+
+    /**
+     *
+     */
+    define void make_disks () ``{
+
+	// FIXME progress bars
+
+	SCR::Write (add (umlpath, "NDISKS"), size (UML::disks));
+
+	integer i = 0;
+	foreach (integer s, UML::disks, ``{
+
+	    string disk_file = sformat ("ubd%1", i);
+
+	    SCR::Write (add (umlpath, sformat ("DISK%1", i)), disk_file);
+
+	    string cmd = "/bin/dd if=/dev/zero of=" + UML::homedir + "/" + disk_file
+	        + " bs=1M " + sformat ("count=%1", s);
+	    SCR::Execute (.target.bash, cmd);
+
+	    i = i + 1;
+
+	});
+
+    }
+
+
+    register_options_file ();
+
+    save_options ();
+    make_disks ();
+
+    unregister_options_file ();
 
 
     return `next;
