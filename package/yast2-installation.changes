@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Sat Aug 30 22:27:57 CEST 2003 - arvin@suse.de
+
+- moved reactivation of network to yast2-network (bug #29561)
+- moved display of into.txt into separate file
+
+-------------------------------------------------------------------
 Thu Aug 28 16:55:51 CEST 2003 - ms@suse.de
 
 - fixed xmigrate call (#29535)
