@@ -527,6 +527,8 @@ Please wait while the base system is being installed.
 
     Pkg::SourceCacheCopyTo (Installation::destdir);
 
+    Pkg::SourceFinish (Packages::theSource);
+
     // --------------------------------------------------------------
     // boot manager configuration
 
