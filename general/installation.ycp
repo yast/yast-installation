@@ -654,7 +654,7 @@ will look different than in the manual.");
 
 	Installation::immediate_prepdisk = false; //FIXME !
 
-	if ( module_name == `inst_language )	// language change very likely
+	if ( module_name == `inst_language || module_name == `autoinst_init )	// language change very likely
 	{
 	    retranslateWizardDialog();
 	}
