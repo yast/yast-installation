@@ -1,7 +1,12 @@
 -------------------------------------------------------------------
+Fri Aug 02 15:02:54 CEST 2002 - arvin@suse.de
+
+- run qt frontend with option -noxim (bug #17161)
+
+-------------------------------------------------------------------
 Wed Jul 31 16:21:07 CEST 2002 - msvec@suse.cz
 
-- remove MakeCDLings from inst_finish.ycp (#17309)
+- remove MakeCDLinks from inst_finish.ycp (#17309)
 
 -------------------------------------------------------------------
 Wed Jul 31 16:21:07 CEST 2002 - msvec@suse.cz
