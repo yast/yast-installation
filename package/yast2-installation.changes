@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Feb  1 17:02:20 CET 2005 - nashif@suse.de
+
+- Fixed left "steps" display problems (#50388)
+
+-------------------------------------------------------------------
 Wed Jan 26 16:12:23 CET 2005 - nashif@suse.de
 
 - install inst_default_desktop.ycp (#49838)

@@ -266,6 +266,11 @@ global define boolean checkArch(map mod , map def)
 
 
 string getClientName(string name ) {
+
+    if (Mode::test()) 
+    {
+        return "inst_test_workflow";
+    }
     // All client start with "inst_".
     string client = "";
     if ( custom_control_file != "")
@@ -312,8 +317,13 @@ global define term getClientTerm (map step, map def, any former_result)
         arguments = (map<string, any>)union(arguments, other_args );
 
     if (is(former_result,symbol) && former_result == `back)
-	arguments["going_back"] = true;
-    
+        arguments["going_back"] = true;
+
+    if (Mode::test())
+    {
+        arguments["step_name"] = step["name"]:"";
+        arguments["step_id"] = step["id"]:"";
+    }
     result = add(result, arguments);
     return result;
 
@@ -512,6 +522,8 @@ global define void AddWizardSteps(list<map> stagemode)
         {
             UI::WizardCommand(`AddStepHeading( dgettext( wizard_textdomain, slabel ) ) );
         }
+
+        string last_label = "";
         foreach(map m, getModules(sm["stage"]:"", sm["mode"]:"", `enabled),
                 ``{
             y2debug("Adding wizard step: %1", m );
@@ -524,6 +536,17 @@ global define void AddWizardSteps(list<map> stagemode)
                 UI::WizardCommand(`AddStep( dgettext(
                                                      wizard_textdomain,
                                                      m["label"]:"" ),
+                                            m["id"]:"" )
+                                  );
+                last_label = m["label"]:"";
+            } else {
+                if (first_id=="")
+                {
+                    first_id = m["id"]:"";
+                }
+                UI::WizardCommand(`AddStep( dgettext(
+                                                     wizard_textdomain,
+                                                     last_label ),
                                             m["id"]:"" )
                                   );
             }
