@@ -58,7 +58,7 @@ After clicking <b>Finish</b>, you can log in to the system.</p>
 			   `VSpacing (space),
 			   `HBox (
 				  `HSpacing (2*space),
-				  `RichText (`opt(`richText), text),
+				  `RichText (text),
 				  `HSpacing (2*space)
 				  ),
 			   `VSpacing (space),
