@@ -276,6 +276,9 @@ function start_yast () {
 # Start YaST2 refering to the contents of the Y2_*
 # startup variables
 # ---
+	if [ "$SPLASH" = yes -a -x /sbin/splash -a -n "$SPLASHCFG" ];then
+		/sbin/splash -t "YaST running"
+	fi
 	log "\tStarting YaST2:"
 	log "\tMODULE_NAME: $Y2_MODULE_NAME"
 	log "\tMODE_FLAGS:  $Y2_MODE_FLAGS"

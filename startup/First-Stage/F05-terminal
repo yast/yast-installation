@@ -17,3 +17,12 @@ if [ ! -z "$Console" ] && [ "$TERM" != "linux" ] ; then
 	set_term_variable
 	log "\tType:    $TERM"
 fi
+
+#=============================================
+# 5.1) check for p690 hvc console
+#---------------------------------------------
+grep -qi console=hvc < /proc/cmdline && {
+	echo "Console: hvc0,9600" >> /etc/install.inf
+	export HVC_CONSOLE_HINT="  (recommended with p690 hvc console)"
+	export Console=hvc0,9600
+}

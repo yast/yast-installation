@@ -59,7 +59,7 @@ function set_language_init () {
 # returns an appropriate exit code. This code only
 # works in first stage (init)
 # ---
-	if [ "$Console" ]; then
+	if [ -n "$Console" -o -d /proc/iSeries ];then
 		if testutf8 ; [ $? = 2 ] ; then
 			# append UTF-8
 			[ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}.UTF-8"
@@ -80,7 +80,7 @@ function set_language_cont () {
 # returns an appropriate exit code. This code only
 # works in second stage (continue)
 # ---
-	if [ "$Console" ]; then
+	if [ -n "$Console" -o -d /proc/iSeries ];then
 		if testutf8 ; [ $? = 2 ] ; then
 			# get rid of encoding and/or modifier
 			export LANG=${RC_LANG%%[.@]*}.UTF-8
@@ -99,7 +99,7 @@ function start_unicode () {
 #--------------------------------------------------
 # start unicode mode if LANG is a UTF-8 locale
 # ---
-	if [ -f /bin/unicode_start ];then
+	if [ -x /bin/unicode_start ];then
 	if echo $LANG | grep -q '\.UTF-8$'; then
 		log "\tStarting UTF-8 mode..."
 		unicode_start
@@ -112,7 +112,7 @@ function stop_unicode () {
 #--------------------------------------------------
 # stop unicode mode if LANG is a UTF-8 locale
 # ---
-	if [ -f /bin/unicode_stop ];then
+	if [ -x /bin/unicode_stop ];then
 	if echo $LANG | grep -q '\.UTF-8$'; then
 		log "\tStopping UTF-8 mode..."
 		unicode_stop
