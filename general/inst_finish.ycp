@@ -195,6 +195,25 @@ Please wait while the base system is being installed.
     y2milestone ("Stopping SCR");
 
     WFM::SCRClose (Installation::scrHandle);
+
+
+    // --------------------------------------------------------------
+    // --------------------------------------------------------------
+
+    WFM::Execute (.local.bash, "cp /usr/lib/liby2util* " + Installation::destdir + "/usr/lib");
+    WFM::Execute (.local.bash, "cp /usr/lib/liby2pm* " + Installation::destdir + "/usr/lib");
+    WFM::Execute (.local.bash, "cp /usr/lib/libycp.* " + Installation::destdir + "/usr/lib");
+    WFM::Execute (.local.bash, "cp /usr/lib/liby2.* " + Installation::destdir + "/usr/lib");
+    WFM::Execute (.local.bash, "cp /usr/lib/libscr.* " + Installation::destdir + "/usr/lib");
+    WFM::Execute (.local.bash, "cp /usr/lib/libyui.* " + Installation::destdir + "/usr/lib");
+
+    WFM::Execute (.local.bash, "cp /usr/share/YaST2/* " + Installation::destdir + "/usr/share/YaST2");
+    WFM::Execute (.local.bash, "cp /usr/lib/YaST2/* " + Installation::destdir + "/usr/lib/YaST2");
+
+    // --------------------------------------------------------------
+    // --------------------------------------------------------------
+
+
     y2milestone ("Re-starting SCR on %1", Installation::destdir);
     Installation::scrHandle = WFM::SCROpen ("chroot="+Installation::destdir+":scr", false);
     WFM::SCRSetDefault (Installation::scrHandle);
@@ -660,7 +679,6 @@ with the load address of your root DASD.
 
     // copy y2start.log
     SCR::Write (.target.string, "/var/log/YaST2/y2start.log-initial", WFM::Read (.local.string, "/var/log/YaST2/y2start.log"));
-
 
     // --------------------------------------------------------------
     // Unmount all mounted devices (from inst_prepdisk)
