@@ -3,4 +3,4 @@
 PATH=$PATH:/usr/lib/YaST2/bin
 cd /usr/share/YaST2/clients
 
-y2base installation.ycp '("test")' '("continue")' qt -geometry 800x600 -style=platinum -font '-gnu-unifont-medium-r-normal--16-160-75-75-p-80-iso10646-1' -bg '#cccccc'
+y2base installation.ycp '("test")' '("continue")' qt -geometry 800x600 -style=platinum -bg '#cccccc'
