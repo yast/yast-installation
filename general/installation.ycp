@@ -341,9 +341,7 @@ differ from those in the manual.
     any	    former_result = `next;
     integer m = 0;			// current module
 
-    if ( UI::WidgetExists(`id(`next) ) )	UI::SetFocus(`id(`next) );
-    else					UI::SetFocus(`id(`accept ) );
-
+    Wizard::SetFocusToNextButton();    
 
     list<map> modules = ProductControl::getModules(Mode::stage, Mode::mode);
     map defaults = ProductControl::getModeDefaults(Mode::stage, Mode::mode);
