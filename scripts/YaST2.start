@@ -55,6 +55,9 @@ do
   fi
 done
 
+# start unicode on console
+unicode_start
+
 test -d /proc/iSeries -a ! -e /tmp/vnc_installation && {
   : ${TERM:=vt100}; LINES=24; COLUMNS=80
   export LINES COLUMNS TERM
@@ -77,9 +80,6 @@ elif [ ! -z "$Console" -a ! -z "$AutoYaST" ] ; then
   export TERM=vt100
   echo "TERM: $TERM" >> /etc/install.inf
 fi
-
-# variable for ncurses (enables the use of ACS characters)
-export YAST_DOES_ACS=1
 
 # start repair system
 grep -qi repair < /proc/cmdline && {
@@ -294,5 +294,7 @@ fuser -vm / >/dev/tty11
 # write the trigger for ssh installation
 # this will proceed in /sbin/inst_setup
 echo $yast2exitcode > /tmp/YaST2_ssh_installation_finished
+
+unicode_stop
 
 exit $yast2exitcode
