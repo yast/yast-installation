@@ -7,6 +7,7 @@
  * $Id$
  */
 {
+textdomain "installation";
 module "ProductControl";
 
 import "XML";
@@ -17,7 +18,6 @@ import "Arch";
 
 // current proposal label
 global string current_proposal_label = "";
-
 
 // locked proposal
 global list<string> locked_proposals = [];
@@ -414,7 +414,9 @@ global define void AddWizardSteps(list<map> stagemode) ``{
 	y2debug( "Adding wizard steps for %1", sm );
 	string slabel = getWorkflowLabel(sm["stage"]:"", sm["mode"]:"");
 	if ( slabel != "" )
+        {
 	    UI::WizardCommand(`AddStepHeading( dgettext( wizard_textdomain, slabel ) ) );
+        }
 	foreach(map m, getModules(sm["stage"]:"", sm["mode"]:""), ``{
 	    y2debug("Adding wizard step: %1", m );
 	    if (m["label"]:"" != "") {
@@ -526,9 +528,8 @@ global define list<string> getProposals(string stage, string mode, string propty
            productControl["textdomain"]:"control";
 
     y2debug( "Using textdomain '%1' for proposals", proposal_textdomain);
-    string default_proposal_label =  _("Installation Settings");
     current_proposal_label = dgettext( proposal_textdomain ,
-            props[0, "label"]:default_proposal_label );
+            props[0, "label"]:"" );
     y2milestone("Proposal label: %1", current_proposal_label );
 
     return final_proposals;
