@@ -84,6 +84,7 @@
 	  "linuxrc", "textmode", "install", "gateway",
 	  "initrd", "noshells", "network", "netmask", "ip",
 	  "domain", "forcerootimage", "insmod", "nameserver",
+	  "netdevice", "pcmcia",
 	  "instmode",
 	  "autoyast",
 	  "nosshd",
