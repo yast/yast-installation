@@ -6,6 +6,7 @@
  * Purpose:	Ask for the installation method:
  *		- New installation
  *		- Update
+ *		- Repair
  *		- Boot installed system
  *
  *		Arguments:
@@ -13,9 +14,8 @@
  *		Args(0): symbol `AskUser if this is called by the proposal
  *			 AskUser() function
  *
- *		Returns automatically if no Linux partition is found.
- *
- * rw: Mode::installation (), Mode::update ()
+ *		Returns automatically if no Linux partition is found or an
+ *		update is not supported.
  *
  * $Id$
  *
@@ -27,10 +27,7 @@
     import "Popup";
     import "Label";
     import "ProductControl";
-
     import "FileSystems";
-
-    include "partitioning/partition_defines.ycp";
     import "Storage";
     import "Kernel";
     import "RootPart";
@@ -41,8 +38,8 @@
 
     string start_mode = Mode::mode ();
 
-    define symbol handle_boot () ``{
-
+    define symbol handle_boot ()
+    {
 	y2milestone( "User wishes to boot installed system" );
 
 	if (!RootPart::didSearchForRootPartitions)
@@ -116,57 +113,45 @@
     }
 
 
-    if ( ! Storage::HaveLinuxPartitions()
-	 || Mode::autoinst ()
-	 || !offer_update)
+    boolean have_linux = false;
+    if (Storage::HaveLinuxPartitions ())
     {
-	// Force new installation, no update possible
+	have_linux = true;
+    }
 
+
+    if (!called_from_ask_user && (!offer_update || !have_linux) ||
+	Mode::autoinst ())
+    {
+	// Initially force new installation , no update possible
 	Mode::SetMode ("installation");
-
-	if ( called_from_ask_user )
-	{
-	    if (offer_update)
-	    {
-		// Translators notice: About 60 Characters wide maximum -
-		// use more line breaks if neccessary.
-		// Plain text, no HTML!
-		Popup::Notify( _("
-There is no Linux on any of your hard disks.
-It is only possible to perform a new installation at the moment.
-
-After Linux is installed, you can use this selection
-to boot the installed system or to update it.
-") );
-	    }
-	    else
-	    {
-		// Translators notice: About 60 Characters wide maximum -
-		// use more line breaks if neccessary.
-		// Plain text, no HTML!
-		Popup::Notify( _("\nThis product only offers a new installation.
-") );
-	    }
-	}
-
 	return `auto;
     }
+
 
     //---------------------------------------------------------------
 
 
-    // help text for installation method
-    string help_text =_("\
+    string help_text = "";
+
+    if (have_linux)
+    {
+	// help text for installation method
+	help_text = help_text + _("\
 <p>
 It appears that your machine has a Linux system installed.
 </p>");
-
-    // help text for installation method
-    help_text = help_text + _("\
+    }
+    else
+    {
+	// help text for installation method
+	help_text = help_text + _("\
 <p>
-To verify this, existing partitions must be mounted. This can be a
-time-consuming process for large partitions.
+It appears that your machine does not have a Linux system installed.  Thus
+only a new installation is possible.
 </p>");
+    }
+
 
     // help text for installation method
     help_text = help_text + _("\
@@ -182,54 +167,80 @@ abandoning all its configuration data.
 </p>
 ");
 
-    if (offer_update)
+    if (have_linux)
     {
-	// help text for installation method
-	help_text = help_text + _("<p>
+	if (offer_update)
+	{
+	    // help text for installation method
+	    help_text = help_text + _("<p>
 Select <b>Update an Existing System</b> to update a Linux system already
 installed on your machine. This option preserves configuration settings
 from your existing system whenever possible.
 </p>
 ");
+	}
+	else
+	{
+	    // help text for installation method
+	    help_text = help_text + _("<p>This product does not offer an update.
+</p>
+");
+	}
     }
 
-    // help text for installation method
-    help_text = help_text + _("<p>
+    if (have_linux)
+    {
+	// help text for installation method
+	help_text = help_text + _("<p>
 Select <b>Repair Installed System</b> if you have a damaged Linux system on
 your hard disk. With this option, try to fix problems automatically.
 </p>
 ");
+    }
 
-    // help text for installation method
-    help_text = help_text + _("<p>
+    if (have_linux)
+    {
+	// help text for installation method
+	help_text = help_text + _("<p>
 Select <b>Boot Installed System</b> if you have a Linux system on your hard
 disk that will not boot. With this option, try to fix problems manually.
 </p>
 ");
+    }
 
-    term radio_buttons =
-	      `VBox(
-		    `VSpacing(0.4),
-		    `Left(`RadioButton(`id(`install),
-				       // label for radio button 1, New installation
-				       _("New &installation"), Mode::installation () ) ));
-    if (offer_update)
+
+    term radio_buttons = `VBox (`VSpacing (0.4));
+
+    if (true)
+    {
+	radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`install),
+				// label for radio button 1, New installation
+				_("New &installation"), Mode::installation ())));
+    }
+
+    if (have_linux && offer_update)
     {
 	radio_buttons = add (radio_buttons, `VSpacing(0.2));
 	radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`update),
-				       // label for radio button 2, update
-				       _("&Update an existing system"), Mode::update () )));
+				// label for radio button 2, update
+				_("&Update an existing system"), Mode::update ())));
     }
 
-    radio_buttons = add (radio_buttons, `VSpacing(0.2));
-    radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`repair),
-				       // label for radio button 3: Start repair system
-				       _("&Repair Installed System"), false ) ));
+    if (have_linux)
+    {
+	radio_buttons = add (radio_buttons, `VSpacing(0.2));
+	radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`repair),
+				// label for radio button 3: Start repair system
+				_("&Repair Installed System"), false)));
+    }
 
-    radio_buttons = add (radio_buttons, `VSpacing(0.2));
-    radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`boot),
-				       // label for radio button 4: Boot installed system
-				       _("&Boot installed system"), false ) ));
+    if (have_linux)
+    {
+	radio_buttons = add (radio_buttons, `VSpacing(0.2));
+	radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`boot),
+				// label for radio button 4: Boot installed system
+				_("&Boot installed system"), false)));
+    }
 
     if ( ! called_from_ask_user )
     {
@@ -346,13 +357,13 @@ disk that will not boot. With this option, try to fix problems manually.
 
 	    if (newmode == `update)
 	    {
-                Mode::SetMode ("update");
+		Mode::SetMode ("update");
 		break;
 	    }
 
 	    if (newmode == `repair)
 	    {
-                Mode::SetMode ("repair");
+		Mode::SetMode ("repair");
 		ret = `finish;
 		break;
 	    }
@@ -361,7 +372,7 @@ disk that will not boot. With this option, try to fix problems manually.
 	    {
 		if (handle_boot () == `finish)
 		{
-                    Mode::SetMode ("");
+		    Mode::SetMode ("");
 		    ret = `finish;
 		    break;
 		}
@@ -370,11 +381,12 @@ disk that will not boot. With this option, try to fix problems manually.
     }
 
     UI::CloseDialog();
-    if (Mode::mode () != start_mode )
-    {
-        ProductControl::UpdateWizardSteps([$["stage":"initial","mode":Mode::mode ()], $["stage":"continue","mode":Mode::mode ()]]);
-        y2milestone("Switching Steps from %1 to %2 ", start_mode, Mode::mode ());
 
+    if (Mode::mode () != start_mode)
+    {
+	ProductControl::UpdateWizardSteps ([$["stage":"initial", "mode":Mode::mode ()],
+					    $["stage":"continue", "mode":Mode::mode ()]]);
+	y2milestone ("Switching Steps from %1 to %2 ", start_mode, Mode::mode ());
     }
 
     if (Mode::repair ())

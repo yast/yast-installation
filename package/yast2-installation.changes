@@ -1,7 +1,13 @@
 -------------------------------------------------------------------
+Tue Nov 02 08:45:57 CET 2004 - arvin@suse.de
+
+- allow to select repair/boot in installation mode selection even
+  when no update is possible (bug #39874)
+
+-------------------------------------------------------------------
 Mon Nov  1 14:32:25 CET 2004 - visnov@suse.cz
 
-- set product name in wizard (#46247) 
+- set product name in wizard (#46247)
 
 -------------------------------------------------------------------
 Wed Oct 27 11:20:44 CEST 2004 - arvin@suse.de
