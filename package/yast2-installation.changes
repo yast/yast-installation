@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Apr 01 11:03:37 CEST 2004 - arvin@suse.de
+
+- removed step label for inst_netsetup (bug #37546)
+
+-------------------------------------------------------------------
 Wed Mar 31 19:41:34 CEST 2004 - nashif@suse.de
 
 - Added 2 options to control file:
