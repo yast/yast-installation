@@ -35,7 +35,7 @@ eval $(grep ': ' /etc/install.inf | sed -e 's/"/"\\""/g' -e 's/:  */="/' -e 's/$
 # set language
 infofile=/content
 [ -f $infofile ] && LANGUAGE=`sed -n 's/^LANGUAGE \([^ ]*\)/\1/p' $infofile`
-[ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}"
+[ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}.UTF-8"
 
 # umount does not work with low memory since rootfs is still in use
 umount /var/adm/mount &>/dev/null
@@ -77,6 +77,9 @@ elif [ ! -z "$Console" -a ! -z "$AutoYaST" ] ; then
   export TERM=vt100
   echo "TERM: $TERM" >> /etc/install.inf
 fi
+
+# variable for ncurses (enables the use of ACS characters)
+export YAST_DOES_ACS=1
 
 # start repair system
 grep -qi repair < /proc/cmdline && {
