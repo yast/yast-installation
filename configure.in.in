@@ -15,7 +15,7 @@
 @YAST2-CHECKS-TESTSUITE@
 
 ## Nasty hack: xgettext doesn't work for XML files, so let's symlink it
-ln -s control/control.xml control/control.glade
+ln -s control.xml control/control.glade
 
 ## and generate the output...
 @YAST2-OUTPUT@
