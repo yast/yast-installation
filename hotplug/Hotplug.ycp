@@ -159,7 +159,17 @@
 
 	if (haveUSB)
 	{
-	    SCR::Execute (.target.mount, ["usbdevfs", "/proc/bus/usb"], "-t usbdevfs");
+	    // prevent multiple mounts for /proc/bus/usb
+	    list mtab = SCR::Read(.etc.mtab);
+	    if (mtab == nil) mtab = [];
+	    boolean usb_mounted = false;
+	    foreach (`mpoint, mtab,
+	    ``{
+		if (mpoint["file"]:"" == "/proc/bus/usb")
+		    usb_mounted = true;
+	    });
+	    if (!usb_mounted)
+		SCR::Execute (.target.mount, ["usbdevfs", "/proc/bus/usb"], "-t usbdevfs");
 	}
     }
 
