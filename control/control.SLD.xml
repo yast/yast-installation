@@ -17,7 +17,8 @@ textdomain="control"
 
     <software>
         <delete_old_packages config:type="boolean">false</delete_old_packages>
-        <only_update_selected config:type="boolean">true</only_update_selected>
+        <only_update_installed
+            config:type="boolean">true</only_update_installed>
         <selection_type config:type="symbol">auto</selection_type>
         <software_proposal>desktop</software_proposal>
     </software>
