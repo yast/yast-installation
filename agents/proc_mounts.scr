@@ -37,7 +37,7 @@
 .proc.mounts
 
 `ag_anyagent(
-  SCR::AnyAgent (
+  Description (
 	``(File("/proc/mounts")),     // real file name
 	"#\n",                    // Comment
 	false,                    // read-only

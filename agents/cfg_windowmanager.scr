@@ -12,5 +12,5 @@
 .sysconfig.windowmanager
 
 `ag_ini(
-    SCR::SysConfigFile("/etc/sysconfig/windowmanager")
+    SysConfigFile("/etc/sysconfig/windowmanager")
 )
