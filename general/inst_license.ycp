@@ -11,12 +11,11 @@
 {
 
 textdomain "installation";
-import "ProductControl";
 import "Wizard";
 import "Popup";
-import "RichText";
 import "GetInstArgs";
 import "CustomDialogs";
+import "Directory";
 
 
 // first check if we are allowed to run this client again
@@ -36,8 +35,15 @@ string action = argmap["action"]:"abort";
 
 
 list<string> default_patterns = ["info.txt"];
+
 string directory = argmap["directory"]:"/var/lib/YaST2";
+
+if (argmap["directory"]:"" != "")
+        directory = Directory::custom_workflow_dir + directory;
+
+
 list<string> patterns = argmap["patterns"]:default_patterns;
+
 map license_data = CustomDialogs::load_file_locale(patterns,directory);
 
 

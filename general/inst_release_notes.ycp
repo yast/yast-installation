@@ -14,17 +14,21 @@
 
     import "Wizard";
     import "Popup";
-    import "Language";
-    import "Mode";
-    import "Misc";
-    import "Stage";
     import "GetInstArgs";
     import "CustomDialogs";
+    import "Directory";
 
     map argmap = GetInstArgs::argmap();
     list<string> default_patterns = ["RELEASE-NOTES.%1.rtf"];
+    
     string directory = argmap["directory"]:"/usr/share/doc/release-notes";
+
+    if (argmap["directory"]:"" != "")
+            directory = Directory::custom_workflow_dir + directory;
+    
+    
     list<string> patterns = argmap["patterns"]:default_patterns;
+
     map relnotes = CustomDialogs::load_file_locale(patterns,directory);
 
     /* filename of release notes */
