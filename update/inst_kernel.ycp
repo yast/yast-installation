@@ -107,7 +107,7 @@ to the previous dialog.
 //-------------------------------------------------------------------------  
 
     string newKernel = Update::newKernel;
-    string oldKernel = SCR::Read( .targetpkg.installedKernel );
+    string oldKernel = filter(string k, Pkg::GetPackages(`installed, true), ``(substring(k, 0, 2) == "k_" ))[0]:"";
 
     // reset old selection
 
@@ -133,11 +133,12 @@ to the previous dialog.
 	}
     }
 
-    map kernelMap = SCR::Read( .package.kernelList );
+    list kernels = filter(string k, Pkg::GetPackages(`available, true), ``(substring(k, 0, 2) == "k_" ));
+    map kernelMap = listmap(string k, kernels, ``{[k, Pkg::GetSummary(k)]});
 
     y2milestone ( "Available kernel: %1", kernelMap );
 
-    
+
     // Build the contents of the dialog.
 
     /* ----------------------------------------------------------------------
@@ -215,14 +216,8 @@ Select <b>next</b> to start the update.
 		else
 		{
 		    Update::newKernel = newKernel;
-		    if ( newKernel != "k_deflt" )
-		    {
-			Kernel::switched = true;
-		    }
-		    else
-		    {
-			Kernel::switched = false;
-		    }
+		    Kernel::switched = (newKernel != oldKernel );
+
 		    return prepareUpdate();
 		}
 	    }
