@@ -52,6 +52,8 @@
     import "Vendor";
     import "X11Version";
 
+    // collect data for linuxrc, will be written to /etc/yast.inf
+    map<string,string> linuxrc = $[];
 
     define void set_runlevel (integer runlevel)
     {
@@ -135,8 +137,6 @@ Please wait while the base system is being installed.
     // progress stage title
     Progress::Title (_("Configuring system for initial boot."));
 
-    // collect data for linuxrc, will be written to /etc/yast.inf
-    map<string,string> linuxrc = $[];
 
     // always do hard reboot to ensure that all stuff is initializes
     // correctly. but no reboot message form linuxrc.
@@ -294,14 +294,9 @@ Please wait while the base system is being installed.
 	Progress::Title (_("Creating mount points"));
 
 	SCR::Execute (.target.mkdir, Installation::sourcedir);
-    }
 
+        // copy /etc/raidtab to target if it was created
 
-    // --------------------------------------------------------------
-    // copy /etc/raidtab to target if it was created
-
-    if ( !Mode::update )
-    {
 	if (Storage::GetRaidtabCreated())
 	{
 	    InjectFile ("/etc/raidtab");
