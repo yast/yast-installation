@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Sep  9 15:46:39 CEST 2002 - kkaempf@suse.de
+
+- fix initial language
+- 2.6.54
+
+-------------------------------------------------------------------
 Mon Sep 09 15:41:19 CEST 2002 - arvin@suse.de
 
 - run ncurses control center after installation (instead of ycp
