@@ -47,6 +47,7 @@
 	 || Product::certify_cd
 	 || Arch::s390
 	 || Product::imap_server
+	 || Product::openteam_server
 	 || Product::fwadmin_host )
     {
 	// Force new installation, no update possible
