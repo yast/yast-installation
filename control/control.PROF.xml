@@ -454,8 +454,9 @@ textdomain="control"
                 <module>
 	            <label>Auto-Install Settings</label>
                     <name>proposal</name>
-                    <arguments>true,true</arguments>
                     <proposal>initial</proposal>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
