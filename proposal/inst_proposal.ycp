@@ -201,6 +201,7 @@
 	Wizard::DisableNextButton ();
 	UI::BusyCursor();
 
+        y2debug("Submodules list before execution: %1", submodules );
 	foreach ( string submod, submodules,
 	``{
 	    string prop = "";
@@ -410,6 +411,8 @@
      * @param  fallback_list	fallback list of submodule names (strings)
      * @return submodules_list	list of submodule names (strings)
      **/
+
+    /* OBSOLETE CODE
     define list load_submodules_list( string file_name, list fallback_list ) ``{
 
 	list submodules = (list) SCR::Read(.target.ycp, [ file_name, [] ] );
@@ -426,6 +429,8 @@
 
 	return submodules;
     };
+
+    */
 
 
     /**
@@ -469,6 +474,7 @@
 
 	// now create the list of modules and order of modules for presentation
     	submodules = maplist (list mod, modules, ``(mod[0]:"") );
+        y2milestone ("Execution order: %1", submodules);
 
 	// sort modules according to presentation ordering
 	modules = sort (list mod1, list mod2, modules, ``(
@@ -478,6 +484,7 @@
 	// setup the list
 	submodules_presentation = maplist (list mod, modules, ``(mod[0]:"") );
 	y2milestone ("Presentation order: %1", submodules_presentation);
+        y2milestone ("Execution order: %1", submodules);
     };
 
 
@@ -551,8 +558,18 @@
 
 	term vbox = nil;
 
-	if (proposal_mode == "initial" || proposal_mode == "uml" ||
-	    proposal_mode == "dirinstall" || proposal_properties["enable_skip"]:"no" == "no")
+        boolean enable_skip = true;
+        if (haskey(proposal_properties, "enable_skip"))
+        {
+            enable_skip = proposal_properties["enable_skip"]:"yes" == "yes";
+        } else {
+            if (proposal_mode == "initial" || proposal_mode == "uml")
+                enable_skip = false;
+            else
+                enable_skip = true;
+        }
+        
+	if (!enable_skip)
 	{
 	    vbox = `VBox(
 			 // Help message between headline and installation proposal / settings summary.
@@ -632,6 +649,7 @@
 	});
 
 	submodules = new_submodules;	// maybe some submodules are not installed
+        y2milestone ("Execution order after rewrite: %1", submodules);
 
 	// now build the menu button
 	foreach (string submod, submodules_presentation, {
