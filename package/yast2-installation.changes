@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Mar 17 15:30:26 CET 2003 - arvin@suse.de
+
+- turn of silent splash mode before displaying messages during
+  vnc and ssh installation (bug #25407)
+
+-------------------------------------------------------------------
 Mon Mar 17 09:21:22 CET 2003 - kkaempf@suse.de
 
 - start apache as doc_server if suse_help_viewer isn't provided
@@ -22,13 +28,13 @@ Fri Mar 14 17:41:40 CET 2003 - sh@suse.de
 Fri Mar 14 17:38:44 CET 2003 - sh@suse.de
 
 - Moved RTF version of release notes from /usr/share/doc to
-  /usr/share/doc/release_notes 
+  /usr/share/doc/release_notes
 
 -------------------------------------------------------------------
 Fri Mar 14 17:32:20 CET 2003 - sh@suse.de
 
 - Using file name RELEASE_NOTES.rtf to allow coexistence with
-  RELEASE_NOTES.html for Konqueror 
+  RELEASE_NOTES.html for Konqueror
 
 -------------------------------------------------------------------
 Fri Mar 14 11:14:01 CET 2003 - fehr@suse.de
