@@ -1,12 +1,10 @@
 /**
- *
  * $Id$
  *
  * Module:		inst_hw_config.ycp
  *
  * Author:		Stefan Hundhammer <sh@suse.de>
  *                      Jan Holesovsky <kendy@suse.cz>
- *
  *
  * Purpose:		Let the user branch into various configuration dialogs
  *
@@ -39,11 +37,13 @@
 
     map printers =
         $[
+	  // this is a headline in the hardware proposal
 	  "headline"		: _("Printers"),
 	  "summary"		: "",
 	  "test_mode_summary"	: summaryDevicesList([summaryDevice("Hyper OfficeJet Pro 7000", "Configured as lp."),
 						     summaryDevice("ScreamNeedle Writer 24+", summaryNotConfigured())
 	  ]),
+	  // this is a button label
 	  "button_label"	: _("&Printer..."),
 	  "button_id"		: `printer,
 	  "summary_module"	: ``(CallFunction(`printer_summary() ) ),
@@ -57,9 +57,11 @@
 
     map sound_cards =
         $[
+	  // this is a headline in the hardware proposal
 	  "headline"		: _("Sound Cards"),
 	  "summary"		: "",
 	  "test_mode_summary"	: summaryDevicesList([summaryDevice("EarBlaster MegaSonic Plus", "Configured with volume 60%.")]),
+	  // this is a button label
 	  "button_label"	: _("&Sound..."),
 	  "button_id"		: `sound,
 	  "summary_module"	: ``(CallFunction(`sound_summary() ) ),
@@ -69,9 +71,11 @@
 
     map network_cards =
         $[
+	  // this is a headline in the hardware proposal
 	  "headline"		: _("Network Interfaces"),
 	  "summary"		: "",
 	  "test_mode_summary"	: summaryDevicesList([summaryDevice("SpiderNet GigaBit 1000 plus", "Configured with DHCP.")]),
+	  // this is a button label
 	  "button_label"	: _("N&etwork..."),
 	  "button_id"		: `network,
 	  "summary_module"	: ``(CallFunction(`lan_summary() ) ),
@@ -81,9 +85,11 @@
 
     map modems =
         $[
+	  // this is a headline in the hardware proposal
 	  "headline"		: _("Modems"),
 	  "summary"		: "",
 	  "test_mode_summary"	: summaryDevicesList([]),
+	  // this is a button label
 	  "button_label"	: _("&Modem..."),
 	  "button_id"		: `modem,
 	  "summary_module"	: ``(CallFunction(`modem_summary() ) ),
@@ -93,9 +99,11 @@
 
     map isdn_adapters =
         $[
+	  // this is a headline in the hardware proposal
 	  "headline"		: _("ISDN Adapters"),
 	  "summary"		: "",
 	  "test_mode_summary"	: summaryDevicesList([summaryDevice("BitWarbler Titanium", "Configured with provider Fast'n'easy.")]),
+	  // this is a button label
 	  "button_label"	: _("&ISDN..."),
 	  "button_id"		: `isdn,
 	  "summary_module"	: ``(CallFunction(`isdn_summary() ) ),
@@ -105,9 +113,11 @@
 
     map tv_cards =
         $[
+	  // this is a headline in the hardware proposal
 	  "headline"		: _("TV Cards"),
 	  "summary"		: "",
 	  "test_mode_summary"	: summaryDevicesList([summaryDevice("EyeBlaster UltraTV Plus", "Installed as TV card number 0.")]),
+	  // this is a button label
 	  "button_label"	: _("&TV card..."),
 	  "button_id"		: `tv,
 	  "summary_module"	: ``(CallFunction(`tv_summary() ) ),
@@ -224,11 +234,15 @@
      * Reads the summary (using "summary_module") of the numth's record in the can_configure list.
      */
     define devReadNthSummary(integer num) ``{
+	// message temporarily show while getting proposal for hardware
 	devChangeNthSummary(num, _("Getting information..."));
 
 	map dev = select(can_configure, num,
 	    // default value
-	    $[ "summary_module" : ``{ return _("Error: Cannot get the requested information."); } ]
+	    $[ "summary_module" : ``{
+		// error message
+		return _("Error: Cannot get the requested information.");
+	    } ]
 	);
 
 	string text = "";
@@ -401,4 +415,3 @@ Just press the appropriate configuration button in this dialog.
 
     return;
 }
-
