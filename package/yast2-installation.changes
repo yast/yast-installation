@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Jul 25 15:13:04 CEST 2003 - arvin@suse.de
+
+- removed handling of XFree86 Version 3 from YaST2.start
+
+-------------------------------------------------------------------
 Fri Jul 25 15:12:25 CEST 2003 - gs@suse.de
 
 - YaST2.firstboot: read RC_LANG from /etc/sysconfig/language and
@@ -9,7 +14,7 @@ Fri Jul 25 15:12:25 CEST 2003 - gs@suse.de
 Thu Jul 24 13:39:36 CEST 2003 - gs@suse.de
 
 - YaST2.start: call unicode_start/unicode_stop;
-               export YAST_DOES_ACS removed 
+               export YAST_DOES_ACS removed
 
 -------------------------------------------------------------------
 Fri Jul 04 13:21:20 CEST 2003 - arvin@suse.de

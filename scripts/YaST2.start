@@ -92,7 +92,6 @@ cp -f /proc/mounts /etc/mtab
 
 function setup_XF86Config {
 
-[ -f /usr/X11R6/lib/X11/XF86Config_3 ] && cp -f /usr/X11R6/lib/X11/XF86Config_3 /etc/XF86Config
 [ -f /usr/X11R6/lib/X11/XF86Config_4 ] && cp -f /usr/X11R6/lib/X11/XF86Config_4 /etc/X11/XF86Config
 
 # XVersion 4
@@ -149,12 +148,6 @@ if [ "$XkbRules" ] ; then
   rm /tmp/XF86Config
 fi
 
-#if [ "$XkbLayout" ] ; then
-#  cp $xcfg /tmp
-#  sed -e "s#XkbLayout.*\"de\"#XkbLayout \"$XkbLayout\"#" /tmp/XF86Config >$xcfg
-#  rm /tmp/XF86Config
-#fi
-
 grep 'XF86Ext: ' /etc/install.inf | sed -e 's/^.*: //' | while IFS= read -r flup ; do (
   cp $xcfg /tmp
   sed -e '/# extensions/ i\' -e "$flup" /tmp/XF86Config >$xcfg
@@ -169,33 +162,6 @@ grep 'XF86Raw: ' /etc/install.inf | sed -e 's/^.*: //' | while IFS= read -r flup
   sed -e "/# ${zap}_options/ i\\" -e "$flup" /tmp/XF86Config >$xcfg
   rm /tmp/XF86Config
 ) ; done
-
-
-# XVersion 3
-xcfg=/etc/XF86Config
-
-if [ "$MouseXF86" ] ; then
-  cp $xcfg /tmp
-  sed -e "s#PS/2#$MouseXF86#" /tmp/XF86Config >$xcfg
-fi
-
-if [ "$XkbModel" ] ; then
-  cp $xcfg /tmp
-  sed -e "s#pc104#$XkbModel#" /tmp/XF86Config >$xcfg
-  rm /tmp/XF86Config
-fi
-
-if [ "$XkbRules" ] ; then
-  cp $xcfg /tmp
-  sed -e "s#xfree86#$XkbRules#" /tmp/XF86Config >$xcfg
-  rm /tmp/XF86Config
-fi
-
-if [ "$XkbLayout" ] ; then
-  cp $xcfg /tmp
-  sed -e "s#XkbLayout.*\"de\"#XkbLayout	\"$XkbLayout\"#" /tmp/XF86Config >$xcfg
-  rm /tmp/XF86Config
-fi
 
 }
 
