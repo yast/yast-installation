@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Sep 02 11:04:17 CEST 2002 - arvin@suse.de
+
+- set HOME=/tmp during installation so qt doesn't pollute root
+  filesystem (bug #18663)
+
+-------------------------------------------------------------------
 Fri Aug 30 11:18:15 CEST 2002 - arvin@suse.de
 
 - hide output of kill in YaST2.firstboot (bug #18585)

@@ -47,18 +47,6 @@ function logmeminfo {
 }
 
 
-function ensure_logdir()
-{
-    if [ -L "$logdir" ] ; then
-	rm "$logdir"
-    fi
-
-    if [ ! -d "$logdir" ] ; then
-	mkdir $logdir
-    fi
-}
-
-
 function y2cc_qt()
 {
     # set lang from sysconfig
@@ -128,12 +116,12 @@ function y2cc_ncurses()
     fi
 }
 
-# make sure that logdir exists (older versions linuxrc don't create it)
-ensure_logdir
-
 # This environment variable will tell child processes they are started from
 # within a YaST2 environment
 export YAST2_RUNNING=$$
+
+# Qt create .qt and .xftcache and we don't want those things in /
+export HOME=/tmp
 
 echo -n > $logdir/y2start.log
 log env
