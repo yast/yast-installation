@@ -17,4 +17,5 @@
     "bootloader_proposal",
     "proposal_timezone",
     "proposal_language",
+    "runlevel_proposal",
 ]

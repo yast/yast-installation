@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Feb 16 13:49:50 CET 2004 - mvidner@suse.cz
+
+- added runlevel_proposal to installation_proposals (#30028)
+- 2.9.14
+
+-------------------------------------------------------------------
 Mon Feb 16 11:20:01 CET 2004 - arvin@suse.de
 
 - removed obsolete Mode::hardBoot
