@@ -421,15 +421,26 @@ Please wait while the base system is being installed.
     // --------------------------------------------------------------
     // Copy /etc/XF86Config into built system so that the
     // second phase of the installation can find it.
+	X11Version::GetX11Link();
 
     if ( Mode::update ) {
 	if ( (x11_installed) && (X11Version::versionLink == "3") ) {
+		//========================================
 		// Update mode...
-		InjectFile ("/etc/X11/XF86Config");
+		//----------------------------------------
+		// - set a flag at the end of the config to indicate later migration
+		// - copy the config to the installed system
+		string filename = "/etc/X11/XF86Config";
+		WFM::Execute (.local.bash,
+			"echo -e '\n#3x' >> " + filename
+		);
+		InjectFile ( filename );
 	}
 	} else {
 	if ( x11_installed ) {
+		//========================================
 		// Installation mode...
+		//----------------------------------------
 		InjectFile ("/etc/X11/XF86Config");
 	}
 	}

@@ -217,6 +217,18 @@ to activate the new kernel.
 "));
     }
 
+	// ...
+	// Migrate configuration from XFree86 3.x to XFree86 4.x
+	// if possible
+	// ---
+	if ( Mode::update ) {
+		integer flag = SCR::Execute (.target.bash,
+			"/usr/bin/tail -n 1 /etc/X11/XF86Config | grep -q '#3x'"
+		);
+		if (flag == 0) {
+			SCR::Execute (.target.bash, Directory::ybindir + "/xmigrate");
+		}
+	}
 
     if ( Mode::update )
     {
