@@ -146,7 +146,7 @@
      *
      * @returns	void
      * probe for usb type, load appropriate modules, and mount
-     * usbdevfs to /proc/bus/usb
+     * usbfs to /proc/bus/usb
      */
 
     global define void StartUSB ()
@@ -177,7 +177,7 @@
 		    usb_mounted = true;
 	    });
 	    if (!usb_mounted)
-		SCR::Execute (.target.mount, ["usbdevfs", "/proc/bus/usb"], "-t usbdevfs");
+		SCR::Execute (.target.mount, ["usbfs", "/proc/bus/usb"], "-t usbfs");
 	}
     }
 
@@ -186,7 +186,7 @@
      *
      * @returns	void
      * probe for firewire type, load appropriate modules, and mount
-     * usbdevfs to /proc/bus/usb
+     * usbfs to /proc/bus/usb
      */
 
     global define void StartFireWire ()
