@@ -54,7 +54,7 @@
 		term popup = `VBox (
 		    `HSpacing (80),
 		    // dialog heading, %1 is package name
-		    `Heading (sformat (_("Confirm package licence: %1"),
+		    `Heading (sformat (_("Confirm package license: %1"),
 			package)),
 		    `HBox (
 			`VSpacing (20),
@@ -86,7 +86,7 @@ of accepting its license.
 If you reject the license of the package, the package will not be installed.
 <br>
 To accept the license of the package, click <b>I Agree</b>.
-To reject the licence of the package, click <b>I Disagree</b>.
+To reject the license of the package, click <b>I Disagree</b>.
 <br>
 To reject installing all packages requiring confirmation of
 their licenses, click <b>I Disagree to All</b>.</p>");
