@@ -86,13 +86,14 @@
 
 	if (!Arch::s390)
 	{
-	    string install_alias = Mode::installMap["alias"]:"";
-	    if (install_alias != "")
+	    string install_alias = SCR::Read (.etc.install_inf.Alias);
+	    if (install_alias != nil)
 	    {
 		list install_alias_split = splitstring (install_alias, " ");
 		if (size (install_alias_split) == 2)
 		{
-		    SCR::Write (.modules.alias, select (install_alias_split, 1, ""), select (install_alias_split, 0, ""));
+		    SCR::Write (.modules.alias, select (install_alias_split, 1, ""),
+				select (install_alias_split, 0, ""));
 		    modules_conf_changed = true;
 		}
 	    }
