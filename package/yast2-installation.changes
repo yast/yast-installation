@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Thu Mar 25 14:50:07 CET 2004 - ms@suse.de
+
+- fixed driver to use on ia64 systems. there is no framebuffer
+  available but the vesa driver is working now (#34909)
+- fixed possible loop at installation. handle different exit codes
+  from testX in scripts/YaST2. The needed changes to testX have
+  been made within the sax2 package (#36794)
+
+-------------------------------------------------------------------
 Thu Mar 25 12:12:44 CET 2004 - arvin@suse.de
 
 - removed network proposal from update work flow
