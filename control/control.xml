@@ -100,6 +100,7 @@ textdomain="control"
             <type>initial</type>
             <proposal_modules config:type="list">
                 <proposal_module>mode</proposal_module>
+		<proposal_module>media</proposal_module>
                 <proposal_module>rootpart</proposal_module>
                 <proposal_module>update</proposal_module>
                 <proposal_module>packages</proposal_module>
@@ -131,6 +132,7 @@ textdomain="control"
             <type>initial</type>
             <proposal_modules config:type="list">
                 <proposal_module>mode</proposal_module>
+		<proposal_module>media</proposal_module>
                 <proposal_module>rootpart</proposal_module>
                 <proposal_module>update</proposal_module>
                 <proposal_module>packages</proposal_module>

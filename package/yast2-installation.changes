@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Sep 07 14:18:56 CEST 2004 - arvin@suse.de
+
+- added proposal step to initialize sources during update before
+  mounting filesystems (needed to solve bug #44724)
+
+-------------------------------------------------------------------
 Mon Sep  6 13:33:34 CEST 2004 - mvidner@suse.cz
 
 - Copy the DHCP client cache so that we can request the same IP
