@@ -199,7 +199,7 @@ textdomain="control"
                 <module>
                     <name>proposal</name>
                     <arguments>true,true,`ini</arguments>
-	            <label>Installaton Settings</label>
+	            <label>Installation Settings</label>
                 </module>
                 <module>
                     <name>do_resize</name>
@@ -265,7 +265,7 @@ textdomain="control"
                     <arguments>false,true,true</arguments>
                 </module>
                 <module>
-	            <label>Installaton Settings</label>
+	            <label>Installation Settings</label>
                     <name>proposal</name>
                     <arguments>true,true,`ini</arguments>
                 </module>
@@ -309,7 +309,7 @@ textdomain="control"
                     <arguments>false,true,true</arguments>
                 </module>
                 <module>
-	            <label>Installaton Settings</label>
+	            <label>Installation Settings</label>
                     <name>proposal</name>
                     <arguments>true,true,`ini</arguments>
                 </module>
