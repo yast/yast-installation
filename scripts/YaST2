@@ -71,8 +71,8 @@ function y2cc_qt()
 
     if echo $moduleargs | grep -q continue ; then
 	log "Continue mode"
+        # Check for semaphore file (created in inst_proposal.ycp)
         if [ -e /var/lib/YaST2/start_y2cc ]; then
-            # Check for semaphore file (created in inst_proposal.ycp)
             log "y2cc requested"
 
             width=`/usr/X11R6/bin/xwininfo -root | sed -n -e '/Width:/s/^.*Width:[ \t]//p'`
@@ -124,11 +124,14 @@ function y2cc_ncurses()
     set_lang_from_sysconfig
 
     if echo $moduleargs | grep -q continue ; then
+	# Check for semaphore file (created in inst_proposal.ycp)
 	if [ -e /var/lib/YaST2/start_y2cc ]; then
-	    # Check for semaphore file (created in inst_proposal.ycp)
-	    log "Starting YaST2 control center in NCurses mode"
+	    log "y2cc requested"
+	    # Delete semaphore file (created in inst_proposal.ycp)
 	    rm -f /var/lib/YaST2/start_y2cc
-	    y2base menu ncurses
+
+	    log "Starting YaST2 control center in NCurses mode"
+	    y2menu
 	fi
     fi
 }
