@@ -136,14 +136,12 @@ function set_term_variable () {
 #--------------------------------------------------
 # set TERM variable and save it to /etc/install.inf
 #
-	if [ -z "$AutoYaST" -a "$VNC" = 0 -a "$UseSSH" = 0 ]; then
+	export TERM=vt100
+	if [ -z "$AutoYaST" ] && [ -z "$VNC" ] && [ -z "$UseSSH" ];then
 		ask_for_term
 		export TERM
-		echo "TERM: $TERM" >> /etc/install.inf
-	elif [ -a ! -z "$AutoYaST" -a "$VNC" != 0 -a "$UseSSH" != 0 ];then
-		export TERM=vt100
-		echo "TERM: $TERM" >> /etc/install.inf
 	fi
+	echo "TERM: $TERM" >> /etc/install.inf
 }
 
 #----[ got_kernel_param ]----#
