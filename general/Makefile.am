@@ -18,7 +18,7 @@ client_DATA =					\
 	installation.ycp
 
 
-EXTRA_DIST = $(module_DATA) $(ynclude_DATA)
+EXTRA_DIST = $(client_DATA) $(ynclude_DATA)
 
 install-data-local:
 	install -d -m 755 $(DESTDIR)/var/lib/YaST2
