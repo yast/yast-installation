@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Mar  7 17:21:06 CET 2003 - nashif@suse.de
+
+- Dont read product data from installed system if in config mode
+  (#24772 )
+
+-------------------------------------------------------------------
 Thu Mar  6 13:33:40 CET 2003 - fehr@suse.de
 
 - umount fs based on crypto loop files before all other umounts
