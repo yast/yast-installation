@@ -8,10 +8,11 @@
  * Summary:
  *	provide vendor/driver update disk functions
  *
+ * $Id$
+ *
  * Author:
  *	Klaus Kaempf <kkaempf@suse.de>
  *
- * $Id$
  */
 
 {
@@ -22,37 +23,38 @@
 
     /**
      * DriverUpdate
-     * copy /update/install/* to target:/tmp/install/
+     * copy /update/* to target:/tmp/update/
      * !! can only be called in inst_finish !!
      */
 
     global define void DriverUpdate ()
     ``{
-	list<string> updatefiles = (list<string>) WFM::Read (.local.dir, ["/update/install", []]);
+	list<string> updatefiles = (list<string>)WFM::Read (.local.dir, ["/update", []]);
 	if (size (updatefiles) <= 0)
 	    return;
 
-	SCR::Execute(.target.mkdir, "/tmp/install");
-	byteblock updatebuffer = #[];
-	foreach (string updatefile, updatefiles,
-	``{
-	    updatebuffer = (byteblock) WFM::Read (.local.byte, "/update/install/"+updatefile);
-	    SCR::Write (.target.byte, "/tmp/install/"+updatefile, updatebuffer);
-	});
+	// clean up, just in case
+	SCR::Execute(.target.bash, "/bin/rm -rf /tmp/update");
 
-	if (SCR::Read (.target.size, "/tmp/install/update.tar.gz") > 0)
-	{
-	    SCR::Execute(.target.bash, "/bin/tar -C / -xzf /tmp/install/update.tar.gz");
-	}
-	else
-	{
-	    SCR::Execute(.target.bash, "/bin/tar -C / -xzf /tmp/install/update.tgz");
-	}
-	SCR::Execute(.target.bash, "chmod +x /tmp/install/update.post");
-	SCR::Execute(.target.bash, "/tmp/install/update.post");
+	// copy log file
+	WFM::Execute(.local.bash, "l=/var/log/driverupdate.log ; [ -f $l ] && /bin/cat $l >>" + Installation::destdir + "$l");
+
+	// copy all update files
+	WFM::Execute(.local.bash, "/bin/cp -a /update " + Installation::destdir + "/tmp/update");
+
+	// unpack update files and run update.post scripts
+	SCR::Execute(.target.bash,
+		"cd / ; " +
+		"echo \"Installing driver update\"  >> /var/log/YaST2/y2logRPM ; " +
+		"for i in /tmp/update/[0-9]*/install ; do " +
+			"[ -f \"$i/update.tar.gz\" ] && /bin/tar -zxf \"$i/update.tar.gz\" ; " +
+			"rpm -Uv $i/*.rpm 2>> /var/log/YaST2/y2logRPM ; " +
+			"[ -f \"$i/update.post\" ] && /bin/chmod +x \"$i/update.post\" && \"$i/update.post\" \"$i\" ; " +
+		"done"
+	);
 
 	// remove driver update dir
-	SCR::Execute(.target.bash, "/bin/rm -rf /tmp/install");
+	SCR::Execute(.target.bash, "/bin/rm -rf /tmp/update");
 
 	return;
     }
