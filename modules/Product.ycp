@@ -84,6 +84,11 @@
     global boolean unitedlinux	= false;
 
     /**
+     * run YOU during the Internet connection test
+     */
+    global boolean run_you     = true;
+
+    /**
      * list of flags from content file
      */
     global list flags		= [];
@@ -155,7 +160,9 @@
 			  || certify_cd
 			  || (name == "Product CD");
 
-}
+	run_you         = ! contains (flags, "no_you");
+
+    }
 
 /* EOF */
 }
