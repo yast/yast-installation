@@ -19,3 +19,29 @@ install: configure
 reconf: all
 	./config.status --recheck
 	./config.status
+
+clean:
+	rm -f `find -name Makefile.in`
+	rm -f `find -name Makefile`
+	rm -f `find -name *.ybc`
+	rm -rf aclocal.m4*
+	rm -rf autom4te.cache
+	rm -rf config.cache
+	rm -rf config.guess
+	rm -rf config.h
+	rm -rf config.h.in*
+	rm -rf config.log
+	rm -rf config.status
+	rm -rf config.sub
+	rm -rf configure
+	rm -rf configure.in
+	rm -rf depcomp
+	rm -rf install-sh
+	rm -rf libtool
+	rm -rf ltconfig
+	rm -rf ltmain.sh
+	rm -rf missing
+	rm -rf mkinstalldirs
+	rm -rf stamp-h*
+	rm -rf *.pot
+	rm -f Makefile.am.common
