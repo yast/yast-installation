@@ -545,7 +545,7 @@
 	term vbox = nil;
 
 	if (proposal_mode == "initial" || proposal_mode == "uml" ||
-	    proposal_mode == "dirinstall")
+	    proposal_mode == "dirinstall" || proposal_properties["enable_skip"]:"no" == "no")
 	{
 	    vbox = `VBox(
 			 // Help message between headline and installation proposal / settings summary.
