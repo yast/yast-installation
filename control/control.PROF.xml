@@ -45,17 +45,6 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
-            <label>Directory Installation</label>
-            <mode>normal</mode>
-            <name>dirinstall</name>
-            <stage>normal</stage>
-            <enable_skip>no</enable_skip>
-            <proposal_modules config:type="list">
-                <proposal_module>dirinstall_options</proposal_module>
-                <proposal_module>software</proposal_module>
-            </proposal_modules>
-        </proposal>
-        <proposal>
             <label>UML Installation Settings</label>
             <mode>normal</mode>
             <name>uml</name>
