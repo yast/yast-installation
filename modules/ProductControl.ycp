@@ -47,6 +47,11 @@ global string packaged_control_file = "/usr/share/YaST2/control/control.xml";
 // The control file we are using for this session.
 global string current_control_file = "";
 
+
+
+// Current Wizard Step
+global string CurrentWizardStep = "";
+
 /**
   * Read XML Control File
   * @param string control file
@@ -86,6 +91,20 @@ global define boolean Read( string controlfile) ``{
     return true;
 }
 
+
+
+
+boolean Check(string allowed, string current) {
+    list<string> allowedlist = filter(string s, splitstring(deletechars(allowed, " "), ","), ``(s!=""));
+    y2debug("allowedlist: %1", allowedlist );
+    y2debug("current: %1", current );
+    if (size(allowedlist) == 0 )
+        return true;
+    else if (contains(allowedlist, current ))
+        return true;
+    else
+        return false;
+}
 
 
 /**
@@ -209,7 +228,7 @@ global define term getTerm (map mod, map def) ``{
 global define map getModeDefaults(string stage, string mode)
 ``{
     map workflow = (map)select(filter(map wf, workflows, ``(
-                wf["stage"]:"" == stage && wf["mode"]:"" == mode
+                Check(wf["stage"]:"", stage) && Check(wf["mode"]:"", mode )
                     )), 0 , $[] );
     return workflow["defaults"]:$[];
 }
@@ -223,7 +242,7 @@ global define map getModeDefaults(string stage, string mode)
 global define list<map> getModules(string stage, string mode)
 ``{
     map workflow = select(filter(map wf, workflows, ``(
-                wf["stage"]:"" == stage && wf["mode"]:"" == mode
+                Check(wf["stage"]:"",stage) && Check(wf["mode"]:"", mode )
                     )), 0 , $[] );
     list<map> modules = workflow["modules"]:[];
     integer id = 1;
@@ -244,46 +263,48 @@ global define list<map> getModules(string stage, string mode)
 global define string getWorkflowLabel(string stage, string mode)
 ``{
     map workflow = select(filter(map wf, workflows, ``(
-                wf["stage"]:"" == stage && wf["mode"]:"" == mode
+                Check(wf["stage"]:"",stage) && Check(wf["mode"]:"",mode)
                     )), 0 , $[] );
     return workflow["label"]:"";
 
 }
 
 
+/**
+ * Add Wizard Steps
+ *
+ */
+global define void AddWizardSteps(list<map> stagemode) ``{
+    string first_id = "";
+    foreach (map sm , stagemode, ``{
+            string slabel = getWorkflowLabel(sm["stage"]:"", sm["mode"]:"");
+            UI::WizardCommand(`AddStepHeading( slabel ) );
+            foreach(map m, getModules(sm["stage"]:"", sm["mode"]:""), ``{
+                y2debug("adding step: %1", m );
+                if (m["label"]:"" != "") {
+                if (first_id=="")
+                {
+                first_id = m["id"]:"";
+                }
+                UI::WizardCommand(`AddStep( m["label"]:"",     m["id"]:"" ) );
+                }
+                });
+            });
 
-
-boolean Check(string allowed, string current) {
-    list<string> allowedlist = filter(string s, splitstring(deletechars(allowed, " "), ","), ``(s!=""));
-    if (size(allowedlist) == 0 )
-        return true;
-    else if (contains(allowedlist, current ))
-        return true;
-    else
-        return false;
+    UI::WizardCommand(`SetCurrentStep( first_id ) );
+    return;
 }
 
 
-
-global define void AddWizardSteps(list<string> stages, string mode) ``{
-        string first_id = "";
-        foreach (string stage , stages, ``{
-                string slabel = getWorkflowLabel(stage, mode);
-                UI::WizardCommand(`AddStepHeading( slabel ) );
-                foreach(map m, getModules(stage, mode), ``{
-                    if (m["label"]:"" != "") {
-                    if (first_id=="")
-                    {
-                        first_id = m["id"]:"";
-                    }
-                    UI::WizardCommand(`AddStep( m["label"]:"",     m["id"]:"" ) );
-                    }
-                    });
-        });
-
-        UI::WizardCommand(`SetCurrentStep( first_id ) );
+/**
+ * Update Steps
+ */
+global define void UpdateWizardSteps(list<map> stagemode) ``{
+    UI::WizardCommand(`DeleteSteps());
+    AddWizardSteps( stagemode );
+    UI::WizardCommand(`UpdateSteps());
+    UI::WizardCommand(`SetCurrentStep( CurrentWizardStep ) );
     return;
-
 }
 
 

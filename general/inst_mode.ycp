@@ -26,6 +26,7 @@
     import "Wizard";
     import "Popup";
     import "Label";
+    import "ProductControl";
 
     import "FileSystems";
 
@@ -340,6 +341,8 @@ disk that will not boot. With this option, try to fix problems manually.
 		Mode::installation = true;
 		Mode::update = false;
                 Mode::mode = "installation";
+                ProductControl::UpdateWizardSteps([$["stage":"initial","mode":"installation"], $["stage":"continue","mode":"installation"]]);
+                y2milestone("Switching Steps");
 		break;
 	    }
 
@@ -348,6 +351,8 @@ disk that will not boot. With this option, try to fix problems manually.
 		Mode::update = true;
 		Mode::installation = false;
                 Mode::mode = "update";
+                ProductControl::UpdateWizardSteps([$["stage":"initial","mode":"update"], $["stage":"continue","mode":"update"]]);
+                y2milestone("Switching Steps");
 		break;
 	    }
 
