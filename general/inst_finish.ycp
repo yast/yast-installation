@@ -34,6 +34,7 @@
     import "Language";
     import "Misc";
     import "Mode";
+    import "Stage";
     import "ModulesConf";
     import "Mouse";
     import "PackageSelectionIO";
