@@ -1,0 +1,31 @@
+/**
+ * File:	test_proposal.ycp
+ * Summary:	For testing the network and hardware proposals.
+ * Author:	Michal Svec <msvec@suse.cz>
+ *
+ * $Id$
+ */
+
+{
+
+import "Mode";
+import "Wizard";
+
+Mode::cont = true;
+Mode::stage = "continue";
+// Mode::manual = true;
+
+map symbols = $[
+    "hardware": `hardware,
+    "hw": `hardware,
+    "net": `network,
+    "network": `network,
+    ];
+symbol what = symbols[WFM::Args (0)]:`network;
+
+Wizard::CreateDialog ();
+WFM::call ("inst_proposal", [ true, nil, what ]);
+UI::CloseDialog ();
+
+/* EOF */
+}
