@@ -264,7 +264,7 @@
 
 
     /**
-     * Force the a RichText widget to use the busy cursor
+     * Force a RichText widget to use the busy cursor
      *
      * @param widget_id  ID  of the widget, e.g. `id(`proposal)
      **/
@@ -603,9 +603,10 @@
     /**
      * Query all submodules about their descriptions, build a "Change" menu
      * from that, and cache the descriptions for further usage: They will
-     * become hyperlinks in the RichText widget, too.
+     * become hyperlinks in the RichText widget, too. Return false if no
+     * submodule exists.
      **/
-    define void get_submod_descriptions_and_build_menu() ``{
+    define boolean get_submod_descriptions_and_build_menu() ``{
 
 	list	menu_list	= [];
 	list	new_submodules	= [];
@@ -645,6 +646,8 @@
 
 	menu_list = add( menu_list, `item(`id(`reset_to_defaults), _("&Reset to defaults") ) );
 	UI::ReplaceWidget(`id(`rep_menu), `MenuButton(`id(`menu), _("&Change..."), menu_list ) );
+
+	return no > 1;
     };
 
 
@@ -795,8 +798,10 @@ To use the settings as displayed, press <b>Accept</b>.
     //
 
     submodules = load_matching_submodules_list( WFM::Args(2) );
-    get_submod_descriptions_and_build_menu();
-
+    if (!get_submod_descriptions_and_build_menu ())
+    {
+	return `auto;
+    }
 
 
     //
