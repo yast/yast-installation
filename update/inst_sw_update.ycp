@@ -19,6 +19,7 @@
     import "Wizard";
     import "Packages";
     import "Update";
+    import "Kernel";
 
     boolean retval = false;
 
@@ -26,6 +27,8 @@
 
     if ( !Update::updateEvaluated )
     {
+	Update::newKernel = Kernel::kernel_packages[0]:"";
+
 	Update::updateEvaluated = true;
 
 	UI::OpenDialog(`opt(`decorated ),`Label(_("Evaluating update packages. One moment please...")));
