@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb 20 11:28:26 CET 2004 - arvin@suse.de
+
+- removed obsolete code from start scripts (bug #31805)
+
+-------------------------------------------------------------------
 Mon Feb 16 16:52:00 CET 2004 - mvidner@suse.cz
 
 - set the runlevel according to the proposal

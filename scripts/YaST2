@@ -106,7 +106,7 @@ function y2cc_ncurses()
 }
 
 # set splash progress bar to 90%
-[ -f /proc/splash ] && echo "show $((90*65534/100))" >/proc/splash   
+[ -f /proc/splash ] && echo "show $((90*65534/100))" >/proc/splash
 
 # Qt create .qt and .xftcache and we don't want those things in /
 export HOME=/root
@@ -253,7 +253,7 @@ PATH=/var/X11R6/bin:$ybindir:$PATH
 set_inst_qt_env
 
 # set splash progress bar to 100%
-[ -f /proc/splash ] && echo "show $((100*65534/100))" >/proc/splash   
+[ -f /proc/splash ] && echo "show $((100*65534/100))" >/proc/splash
 
 if [ "$VNC" = "1" ] ; then
     if [ -x /usr/X11R6/bin/Xvnc ] ; then
@@ -275,29 +275,6 @@ if [ "$DISPLAY" != "" ] ; then
     y2base "$modulename" $moduleargs qt $y2qt_args
     y2exitcode=$?
     [ $y2exitcode -eq 0 ] && y2cc_qt
-    exit $y2exitcode
-fi
-
-#
-# Use serial line, if either no keyboard is detected or
-# the user pressed the right alt key. If the serial
-# selection is done via the missing keyboard, a timeout
-# of 15 seconds is introduced. If the detection goes wrong,
-# the installation resumes after 15 seconds with ncurses
-# or Qt interface
-#
-
-if [ ! "$update" -a "$YaST2serial" = "1" ] ; then
-    log "using serial interface"
-    echo "Trying to connect via serial interface /dev/ttyS0."
-    echo "On your terminal computer start the user interface with"
-    echo "y2base \"serial(115200):/dev/ttyS0\" qt $y2qt_args"
-    echo "or"
-    echo "y2base \"serial(115200):/dev/ttyS1\" qt $y2qt_args"
-    echo "or start the YaST2 menu by typing \"yast2\" and select YaST2/Remote Install"
-    y2base "$modulename" $moduleargs "serial(115200):/dev/ttyS0"
-    y2exitcode=$?
-    [ $y2exitcode -eq 0 ] && y2cc_ncurses
     exit $y2exitcode
 fi
 
