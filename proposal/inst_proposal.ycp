@@ -973,10 +973,6 @@ resolved before continuing.
 	{
 	    return `back;
 	}
-	else if ( input == `help ) // does this ever happen with the new wizard?
-	{
-	    Wizard::ShowHelp( help_text() );
-	}
 
     } // while input loop
 
