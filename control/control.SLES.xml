@@ -401,16 +401,16 @@ textdomain="control"
                     <arguments>false,true</arguments>
                 </module>
                 <module>
-	            <label>Auto-Install Settings</label>
+	            <label>AutoYaSTSettings</label>
                     <name>autoinit</name>
                     <archs>all</archs>
                 </module>
                 <module>
-	            <label>Auto-Install Settings</label>
+	            <label>AutoYaST Settings</label>
                     <name>autosetup</name>
                 </module>
                 <module>
-	            <label>Auto-Install Settings</label>
+	            <label>AutoYaST Settings</label>
                     <name>proposal</name>
                     <arguments>true,true,`initial</arguments>
                 </module>
