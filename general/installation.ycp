@@ -275,9 +275,9 @@
 	&& !Installation::shown_text_mode_warning)
     {
 	string x11_msg = "";
-	if (Mode::text_fallback)
+	if (Mode::text_fallback && Mode::initial)
 	{
-	    // somehow the graphical frontend failed and we're running in
+	    // Somehow the graphical frontend failed and we're running in
 	    // text mode. Inform the user about this fact.
 	    x11_msg = sformat(_("Your computer does not fulfill all requirements for
 a graphical installation. There is less than %1 MB
@@ -290,9 +290,13 @@ differ from those in the manual.
 "), "96");
 
 	}
-	else if (Mode::no_x11)
+	else if (Mode::text_fallback && Mode::cont)
 	{
-	    // somehow the graphical frontend failed and we're running in
+	    // The script YaST2 wants to inform about a problem with the
+	    // option no_x11 but it's broken.
+	    // else if (Mode::no_x11)
+
+	    // Somehow the graphical frontend failed and we're running in
 	    // text mode. Inform the user about this fact.
 	    x11_msg = _("The graphical interface could not be started.
 
