@@ -322,10 +322,6 @@ textdomain="control"
                     <name>rpmcopy</name>
                 </module>
                 <module>
-                    <name>netsetup</name>
-                    <arguments>false,false,`dn</arguments>
-                </module>
-                <module>
 	            <label>Network</label>
                     <name>ask_net_test</name>
                     <arguments>true,true</arguments>
@@ -366,20 +362,18 @@ textdomain="control"
             </defaults>
             <modules  config:type="list">
                 <module>
+	            <label>Perform Installation</label>
                     <name>netsetup</name>
                     <arguments>false,false,`up</arguments>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>netprobe</name>
                 </module>
                 <module>
+	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
                 </module>
-                <module>
-                    <name>netsetup</name>
-                    <arguments>false,false,`dn</arguments>
-                </module>
-
                 <module>
 	            <label>Root Password</label>
                     <name>root</name>
@@ -513,10 +507,6 @@ textdomain="control"
                 <module>
 	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
-                </module>
-                <module>
-                    <name>netsetup</name>
-                    <arguments>false,false,`dn</arguments>
                 </module>
                 <module>
 	            <label>System Configuration</label>
