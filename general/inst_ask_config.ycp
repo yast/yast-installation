@@ -25,7 +25,7 @@
 
 
 
-    if ( Product::imap_server || Product::fwadmin_host )
+    if ( Product::imap_server || Product::openteam_server || Product::fwadmin_host )
     {
 	while (true)
 	{
@@ -37,6 +37,11 @@
 	    if ( Product::imap_server )
 	    {
 		if ( WFM::CallFunction( `imap() ) == `next)
+		    break;
+	    }
+	    else if ( Product::openteam_server )
+	    {
+		if ( WFM::CallFunction( `openteam() ) == `next)
 		    break;
 	    }
 	    else if ( Product::fwadmin_host )

@@ -28,6 +28,11 @@ global string dist		= "";
 global boolean imap_server	= false;
 
 /**
+ * true if Open Team server
+ */
+global boolean openteam_server	= false;
+
+/**
  * true if Firewall Admin
  */
 global boolean fwadmin_host	= false;
@@ -69,6 +74,7 @@ global define void Product () ``{
 
     name		= lookup (Installation::infoMap, "produktname", "");
     imap_server		= (name == "eMail Server");
+    openteam_server	= (name == "Open Team Server");
     sles_server		= (name == "SusE SLES");
     slcs_server		= (name == "SusE SLCS");
     fwadmin_host	= (name == "SuSE Firewall Adminhost");

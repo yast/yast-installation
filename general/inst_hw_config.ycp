@@ -30,7 +30,8 @@
     Mode::cont = false;
 
     // Some user_settings flags
-    boolean is_imap_server	= Product::imap_server;
+    boolean is_imap_server      = Product::imap_server;
+    boolean is_openteam_server  = Product::openteam_server;
     boolean is_fwadmin_host	= Product::fwadmin_host;
     boolean test_mode		= Mode::test;
     test_mode = false;
@@ -323,7 +324,7 @@ Just press the appropriate configuration button in this dialog.
 				);
 
     // imap server cd or fw_admin_host: configure network
-    if (is_imap_server || is_fwadmin_host)
+    if (is_imap_server || is_openteam_server || is_fwadmin_host)
     {
 	while (true)
 	{
@@ -335,6 +336,11 @@ Just press the appropriate configuration button in this dialog.
 	    if (is_imap_server)
 	    {
 		if (WFM::CallModule( "imap", [] ) == `next)
+		    break;
+	    }
+	    else if (is_openteam_server)
+	    {
+		if (WFM::CallModule( "openteam", [] ) == `next)
 		    break;
 	    }
 	    else if (is_fwadmin_host)
