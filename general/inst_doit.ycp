@@ -1,10 +1,10 @@
 /**
  *
- * Author:	Klaus Kämpf <kkaempf@suse.de>
+ * Authors:	Klaus KÃ¤mpf <kkaempf@suse.de>
  *		Stefan Hundhammer <sh@suse.de>
  *		Arvin Schnell <arvin@suse.de>
  *
- * Purpose:	This module ask about do the installation or not,
+ * Purpose:	Asks user to really do the installation/update.
  *
  * $Id$
  */
