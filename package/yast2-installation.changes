@@ -2,6 +2,7 @@
 Mon Mar  7 08:27:03 CET 2005 - jsrain@suse.cz
 
 - initialize &product; macro in inst_suseconfig (#70899)
+- set hwcfg file for parallel printer (#64412)
 
 -------------------------------------------------------------------
 Thu Mar  3 17:36:56 CET 2005 - ms@suse.de
