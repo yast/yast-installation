@@ -122,7 +122,7 @@
 	    if (baseproduct == "") baseproduct = name;
 	    baseversion		= last_product["baseversion"]:"";
 
-	    flags		= last_product["flags"]:[]; // FIXME ???
+	    flags		= splitstring (last_product["flags"]:"", " ");
 	}
 
 	imap_server	= (name == "eMail Server");
