@@ -340,8 +340,12 @@ disk that will not boot. With this option, try to fix problems manually.
 		break;
 	    }
 
-	    if (newmode == `repair)			// FIXME
+	    if (newmode == `repair)
 	    {
+		Mode::repair = true;
+		Mode::installation = false;
+		Mode::update = false;
+		ret = `finish;
 		break;
 	    }
 
@@ -359,6 +363,11 @@ disk that will not boot. With this option, try to fix problems manually.
     }
 
     UI::CloseDialog();
+
+    if (Mode::repair)
+    {
+	WFM::CallModule ("inst_repair", []);
+    }
 
     return ret;
 }
