@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Sep 12 17:25:56 CEST 2003 - ms@suse.de
+
+- added milestone texts for X11 config update/inject (#30612)
+- fixed lookup path for XFree86 3.x config (#30612) 
+
+-------------------------------------------------------------------
 Fri Sep 12 14:06:05 CEST 2003 - arvin@suse.de
 
 - fixed permissions of /var/lib/YaST2/install.inf (bug #30630)
