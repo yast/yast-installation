@@ -22,9 +22,13 @@ list<string> default_patterns = ["welcome.%1.txt", "welcome.txt"];
 
 string directory = argmap["directory"]:Directory::datadir;
 
+if (argmap["directory"]:"" != "")
+    directory = Directory::custom_workflow_dir + directory;
+
 list<string> patterns = argmap["patterns"]:default_patterns;
 
 map welcome = CustomDialogs::load_file_locale(patterns,directory);
+y2debug("welcome map: %1", welcome );
 
 
 map display = UI::GetDisplayInfo();
@@ -52,10 +56,11 @@ basic configuration of the system.</p>
 
 term rt = `Empty();
 
-if (regexpmatch(text, "</.*>")) {
-    rt = `RichText(`id( `welcome_text), text);
+if (regexpmatch(welcome_text, "</.*>")) {
+    rt = `RichText(`id( `welcome_text), welcome_text);
 } else {
-    rt = `RichText(`id( `welcome_text), `opt(`plainText), text);
+    y2debug("plain text");
+    rt = `RichText(`id( `welcome_text), `opt(`plainText), welcome_text);
 }
 
 
