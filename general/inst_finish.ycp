@@ -45,6 +45,7 @@
     import "Update";
     import "Vendor";
     import "HwStatus";
+    import "Directory";
 
     include "partitioning/partition_defines.ycp";
     textdomain "installation";
@@ -469,7 +470,7 @@ Please wait while the base system is being installed.
 	if ( Mouse::mset == "imps/2" )
 	{
 	    // Patching xf86config for wheel mouses.
-	    if ( SCR::Execute (.target.bash, "/usr/lib/YaST2/bin/update_xf86config") !=0 )
+	    if (SCR::Execute (.target.bash, Directory::ybindir + "/update_xf86config") != 0)
 	    {
 		y2error ( "Patch of XF86Config for wheelmouse");
 	    }
