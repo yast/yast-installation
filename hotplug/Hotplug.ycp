@@ -43,7 +43,7 @@
 	// check module information
 	// skip controller if no module info available
 
-	list module_drivers = controller["drivers"]:[];
+	list<map> module_drivers = controller["drivers"]:[];
 
 	if (size (module_drivers) == 0)
 	    return true;

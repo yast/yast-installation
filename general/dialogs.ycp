@@ -18,7 +18,7 @@
      * Returns a list of strings describing the "easy installation"
      * @return list of strings
      **/
-    define list EasyInstallationStepDescriptions() ``{
+    define list<string> EasyInstallationStepDescriptions() ``{
 	return [
 		// Descriptions of the installation steps.
 		// Translations shouldn't get much wider than the originals,

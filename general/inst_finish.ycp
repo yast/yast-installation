@@ -64,7 +64,7 @@
 Please wait while the base system is being installed.
 </p>");
 
-    list progress_stages =
+    list<string> progress_stages =
 	[
 	 // progress stages
 	 _("Update configuration"),
@@ -139,7 +139,7 @@ Please wait while the base system is being installed.
     Progress::Title (_("Configuring system for initial boot."));
 
     // collect data for linuxrc, will be written to /etc/yast.inf
-    map linuxrc = $[];
+    map<string,string> linuxrc = $[];
 
     // always do hard reboot to ensure that all stuff is initializes
     // correctly. but no reboot message form linuxrc.
@@ -266,7 +266,7 @@ Please wait while the base system is being installed.
 
     // now check if we really need reiserfs/jfs and lvm_mod
 
-    list storage_initrdm = Storage::GetRootInitrdModules();
+    list<string> storage_initrdm = (list<string>)Storage::GetRootInitrdModules();
 
     foreach(string m, storage_initrdm,
     ``{
@@ -715,8 +715,8 @@ with the load address of your root DASD.
 
     // loop over all filesystems
 
-    map mountPoints = Storage::GetMountPoints();
-    list umountList = [];
+    map<string,list> mountPoints = (map<string,list>)Storage::GetMountPoints();
+    list<string> umountList = [];
 
     // go through mountPoints collecting paths in umountList
     // *** umountList is lexically ordered !
@@ -750,7 +750,7 @@ with the load address of your root DASD.
 	}
 	WFM::Execute(.local.umount, Installation::destdir + "/proc");
 
-	map targetMap = Storage::GetTargetMap();
+	map<string,map> targetMap = Storage::GetTargetMap();
 
 	// first umount all file based crypto fs since they potentially
 	// could mess up umounting of normale filesystems if the crypt
@@ -799,7 +799,7 @@ with the load address of your root DASD.
 	    max_loop_dev = max_loop_dev -1;
 	}
 
-	if( size(filter(any k, map v, targetMap, ``(v["is_lvm_vg"]:false))) >0 )
+	if( size(filter(string k, map v, targetMap, ``(v["is_lvm_vg"]:false))) >0 )
 	{
 	    y2milestone( "shutting down LVM" );
 	    WFM::Execute(.local.bash, "/sbin/vgchange -A n -a n" );

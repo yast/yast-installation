@@ -19,10 +19,10 @@ import "Arch";
 global map productControl = $[];
 
 // all workflows
-global list workflows = [];
+global list<map> workflows = [];
 
 // all proposals
-global list proposals = [];
+global list<map> proposals = [];
 
 // Flexible partitioning map. XML represenation of the the part.info file
 global map partitioning = $[];
@@ -173,7 +173,7 @@ global define term getTerm (map mod, map def) ``{
 
     term a = toterm(client);
     string arguments = mod["arguments"]:"";
-    list args = splitstring(arguments, ",");
+    list<string> args = splitstring(arguments, ",");
     if (size(args) == 0 )
     {
         args = splitstring(def["arguments"]:"", ",");
@@ -206,7 +206,7 @@ global define term getTerm (map mod, map def) ``{
 
 
 /**
- * Get wrokflow defaults
+ * Get workflow defaults
  * @param string stage
  * @param string mode
  * @return map defaults
@@ -227,7 +227,7 @@ global define map getModeDefaults(string stage, string mode)
  */
 global define list getModules(string stage, string mode)
 ``{
-    map workflow = (map)select(filter(map wf, workflows, ``(
+    map workflow = select(filter(map wf, workflows, ``(
                 wf["stage"]:"" == stage && wf["mode"]:"" == mode
                     )), 0 , $[] );
     list<map> modules = workflow["modules"]:[];
@@ -240,23 +240,23 @@ global define list getModules(string stage, string mode)
  * Get modules of current Workflow
  * @param string stage
  * @param string mode
- * @return list<map> modules
+ * @return list<string> modules
  */
-global define list getProposals(string stage, string mode, string proptype)
+global define list<string> getProposals(string stage, string mode, string proptype)
 ``{
     // First we search for proposals for current stage if there are
     // any. (initial or continue)
 
-    list props = (list)filter(map p, proposals, ``(
+    list<map> props = filter(map p, proposals, ``(
                     p["stage"]:"" == stage || p["stage"]:"" == "" ));
 
     // Then we check for mode: installation or update
-    props = (list)filter(map p, props, ``(
+    props = filter(map p, props, ``(
                     p["mode"]:"" == mode || p["mode"]:"" == ""));
 
     // Now we check for architecture
     y2debug("Architecture: %1", Arch::architecture );
-    list arch_proposals = filter(map p, props, ``(
+    list<map> arch_proposals = filter(map p, props, ``(
                     issubstring(p["archs"]:"dummy", Arch::arch_short )));
 
     y2debug("arch proposals: %1", arch_proposals );

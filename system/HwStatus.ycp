@@ -19,7 +19,7 @@
 
     // status map for devices, key is "unique id", value is symbol (`yes, `no)
 
-    map statusmap = $[];
+    map<string, symbol> statusmap = $[];
 
     /**
      * Set
@@ -51,7 +51,7 @@
      */
     global define void Save ()
     ``{
-	foreach (`id, `stat, statusmap,
+	foreach (string id, symbol stat, statusmap,
 	``{
 	    SCR::Write(.probe.status.configured, id, stat);
 	});
