@@ -200,7 +200,7 @@ this process can take some time.</p>
 	sleep( 5*1000 );
     }
 
-    if ( Kernel::get_inform_about_kernel_change () )
+    if ( Kernel::GetInformAboutKernelChange () )
     {
 	// inform the user that he/she has to reboot to activate new kernel
 	Popup::Message(_("Reboot your system
