@@ -50,7 +50,7 @@
     symbol	proposal_mode = nil;
 
     // skip if not interactive mode.
-    if (!AutoinstConfig::Confirm && Mode::autoinst) {
+    if (!AutoinstConfig::Confirm && Mode::autoinst ()) {
 	return `auto;
     }
 
@@ -432,13 +432,13 @@
 	list< list > modules = [];
 
         modules = ProductControl::getProposals (
-                Mode::stage,
-                Mode::mode,
+                Stage::stage (),
+                Mode::mode (),
                 proptype );
         locked_modules = ProductControl::getLockedProposals ();
         y2milestone("getting proposals for stage: \"%1\" mode: \"%2\" proposal type: \"%3\"",
-                Mode::stage,
-                Mode::mode,
+                Stage::stage (),
+                Mode::mode (),
                 proptype );
 
         if (size(modules) == 0 )
@@ -447,7 +447,7 @@
         }
 
 	// in normal mode we don't want to switch between installation and update
-	if (Mode::normal)
+	if (Mode::normal ())
 	{
 	    modules = filter (list v, modules, ``(v[0]:"" != "mode_proposal"));
 	}
@@ -474,7 +474,7 @@
 
 	// Maybe obsolete
 
-	if ( Mode::test )
+	if ( Mode::test () )
 	    return true;
 
 	return size( (list<map>) SCR::Read(.probe.netcard) ) > 0;
@@ -654,7 +654,7 @@ or by using the <b>Change...</b> menu.
 </p>
 ");
 
-	if ( proposal_mode == `initial && Mode::installation )
+	if ( proposal_mode == `initial && Mode::installation () )
 	{
 	    // Help text for installation proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -683,7 +683,7 @@ Your hard disk has not been modified in any way, so you can still safely abort.
 </p>
 ");
 	}
-	else if ( proposal_mode == `initial && Mode::update )
+	else if ( proposal_mode == `initial && Mode::update () )
 	{
 	    // Help text for update proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -783,8 +783,8 @@ a proposal that is locked, ask your system administrator</p>");
     proptype = substring(sformat("%1", proposal_mode), 1 );
 
 /*    submodules = ProductControl::getProposals (
-            Mode::stage,
-            Mode::mode,
+            Stage::stage (),
+            Mode::mode (),
             proptype );*/
 
     //
@@ -799,7 +799,7 @@ a proposal that is locked, ask your system administrator</p>");
     // The "next" button is disabled via Wizard::SetContents() until everything is set up allright
     Wizard::EnableNextButton();
 
-    if ( Mode::initial )
+    if ( Stage::initial () )
     {
 	// Do hardware probing
 	//
@@ -807,7 +807,7 @@ a proposal that is locked, ask your system administrator</p>");
 	// constructors might depend on it.
 	// In autoinst mode, this has been called already.
 
-	if (!Mode::autoinst)
+	if (!Mode::autoinst ())
         {
 	    WFM::CallFunction("inst_startup", []);
 	    WFM::CallFunction("inst_features", []);
@@ -903,7 +903,7 @@ a proposal that is locked, ask your system administrator</p>");
 	}
 	else if (input == `abort)
 	{
-	    if ( Mode::initial )
+	    if ( Stage::initial () )
 	    {
 		if (Popup::ConfirmAbort (`painless))
 		    return `abort;
@@ -953,7 +953,7 @@ resolved before continuing.
 		continue;
 	    }
 
-	    if ( Mode::stage == "initial" )
+	    if ( Stage::stage () == "initial" )
 	    {
 		input = WFM::CallFunction("inst_doit", [true,		// have_back
 						      true,		// have_next

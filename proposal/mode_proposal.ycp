@@ -32,14 +32,14 @@
 
 	// Fill return map
 
-	if (Mode::installation)
+	if (Mode::installation ())
 	{
 	    ret = $[ "raw_proposal" :
 		     // Proposal for installation mode
 		     [ HTML::Bold( _("New installation") ) ]
 	    ];
 	}
-	else if (Mode::update)
+	else if (Mode::update ())
 	{
 	    ret = $[ "raw_proposal" :
 		     // Proposal for installation mode
@@ -62,12 +62,12 @@
 	//
 	// sequence = DummyMod::AskUser( has_next );
 
-	boolean tmp1 = Mode::installation;
-	boolean tmp2 = Mode::update;
+	boolean tmp1 = Mode::installation ();
+	boolean tmp2 = Mode::update ();
 
 	symbol result = (symbol) WFM::CallFunction ("inst_mode", [`AskUser]);
 
-	boolean mode_changed = tmp1 != Mode::installation || tmp2 != Mode::update;
+	boolean mode_changed = tmp1 != Mode::installation () || tmp2 != Mode::update ();
 
 	if (mode_changed)
 	{

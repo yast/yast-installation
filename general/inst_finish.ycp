@@ -107,7 +107,7 @@ Please wait while the base system is being installed.
 
     string doc_server = "";
 
-    if ( !Mode::update )
+    if ( !Mode::update () )
     {
 	// check who provides suse_help_viewer
 	// if kdebase3-SuSE isn't installed by apache or apache2, set /etc/sysconfig/apache:DOC_SERVER
@@ -135,7 +135,7 @@ Please wait while the base system is being installed.
     // Copy pre-install scripts to /var/adm/scripts and logs
     // to /var/adm/inst-log
 
-    if (Mode::autoinst)
+    if (Mode::autoinst ())
     {
 	// progress stage title
         Progress::Title (_("Executing autoinstall scripts in the installation environment."));
@@ -147,7 +147,7 @@ Please wait while the base system is being installed.
     SCR::Execute (.target.bash,"/bin/cp -a /var/lib/hardware " + Installation::destdir + "/var/lib");
 
     // if VNC, copy setup data
-    if (Mode::vnc)
+    if (Linuxrc::vnc ())
     {
 	WFM::Execute (.local.bash, "/bin/cp -a /root/.vnc " + Installation::destdir + "/root");
     }
@@ -257,7 +257,7 @@ Please wait while the base system is being installed.
     Progress::Title (_("Configuring CD-ROM devices"));
 
     // Override linuxrc settings in autoinst mode
-    if ( Mode::autoinst )
+    if ( Mode::autoinst () )
     {
         if (AutoinstConfig::ForceBoot )
         {
@@ -279,7 +279,7 @@ Please wait while the base system is being installed.
     // create mountpoint on target
     Progress::NextStep ();
 
-    if ( !Mode::update )
+    if ( !Mode::update () )
     {
 	// progress stage title
 	Progress::Title (_("Creating mount points"));
@@ -326,7 +326,7 @@ Please wait while the base system is being installed.
 
     Progress::NextStep ();
 
-    if ( !Mode::update )
+    if ( !Mode::update () )
     {
 	// progress stage title
 	Progress::Title (_("Initializing default window manager"));
@@ -364,7 +364,7 @@ Please wait while the base system is being installed.
 
     Progress::NextStep ();
 
-    if ( Mode::update )
+    if ( Mode::update () )
     {
 	Storage::Update (Update::installedVersion, Update::updateVersion);
     }
@@ -383,7 +383,7 @@ Please wait while the base system is being installed.
 
     ModulesConf::Save (true);
 
-    if ( !Mode::update )
+    if ( !Mode::update () )
     {
 	// see bug #32366 why we need this here
 	// and 30028
@@ -393,7 +393,7 @@ Please wait while the base system is being installed.
 	set_runlevel (RunlevelEd::default == ""?
 		      3 : tointeger (RunlevelEd::default));
     }
-    else if ( Mode::update )
+    else if ( Mode::update () )
     {
 	// Set default runlevel cause inittab will be overwritten by
 	// installing aaa_base
@@ -401,7 +401,7 @@ Please wait while the base system is being installed.
 	set_runlevel (Update::last_runlevel != -1 ? Update::last_runlevel : 3);
 
 	if (!Arch::ppc ()
-	    && Mode::update)
+	    && Mode::update ())
 	{
 	    // lilo might need {vmlinuz,initrd}.suse
 	    SCR::Execute (.target.remove, "/boot/vmlinuz.suse");
@@ -430,7 +430,7 @@ Please wait while the base system is being installed.
 
     if (x11_installed)
     {
-	if ( Mode::update )
+	if ( Mode::update () )
 	{
 	    if (X11Version::versionLink == "3")
 	    {
@@ -476,7 +476,7 @@ Please wait while the base system is being installed.
     // --------------------------------------------------------------
     // Save http_proxy and ftp_proxy
 
-    if (Mode::initial)
+    if (Stage::initial ())
     {
 	string proxy = (string) SCR::Read (.etc.install_inf.Proxy);
 	string proxyport = (string) SCR::Read (.etc.install_inf.ProxyPort);
@@ -498,7 +498,7 @@ Please wait while the base system is being installed.
     // --------------------------------------------------------------
     // Copy blinux configuration
 
-    if (Mode::braille)
+    if (Linuxrc::braille ())
     {
 	InjectFile ("/etc/suse-blinux.conf");
     }
@@ -578,7 +578,7 @@ with the load address of your root DASD.
     //--------------------------------------------------------------
     // Install bootloader (always, see #23018)
     // should also set Misc::boot_msg appropriate
-    if (!Mode::update)
+    if (!Mode::update ())
 	Bootloader::Write ();
     else
 	Bootloader::Update (Update::installedVersion, Update::updateVersion);
@@ -586,7 +586,7 @@ with the load address of your root DASD.
     // --------------------------------------------------------------
     // write network settings to installed system
 
-    if (Arch::s390 () || Mode::vnc || Mode::usessh)
+    if (Arch::s390 () || Linuxrc::vnc () || Linuxrc::usessh ())
     {
 	y2milestone("Creating network interface");
 	WFM::Execute (.local.bash, "/sbin/create_interface " + Installation::destdir);
@@ -690,7 +690,7 @@ with the load address of your root DASD.
     // copy the root password for root user from inst-sys to the installed system
     // copy the ssh files to the fresh installed system
 
-    if (!Mode::update && Mode::usessh)
+    if (!Mode::update () && Linuxrc::usessh ())
     {
 	WFM::Execute (.local.bash, "umask 077 ; awk  -F : ' /^root:/ { print $1\":\"$2 }' < /etc/shadow > "
 		+ Installation::destdir + "/tmp/rootpwd.txt");
@@ -701,7 +701,7 @@ with the load address of your root DASD.
     // --------------------------------------------------------------
     // write final hardware status, ** must be last **
 
-    if (Mode::update)
+    if (Mode::update ())
     {
 	// ensure "no" status for all pci and isapnp devices
 	HwStatus::Update();
@@ -711,7 +711,7 @@ with the load address of your root DASD.
     HwStatus::Save();
 
 
-    if (Mode::autoinst)
+    if (Mode::autoinst ())
     {
         Progress::Title (_("Executing autoinstall scripts in the installation environment."));
         AutoinstScripts::Write("chroot-scripts", true);
@@ -771,7 +771,7 @@ with the load address of your root DASD.
     // --------------------------------------------------------------
 
     if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_finish.ycp") > 0)
-	WFM::CallFunction ("product_finish", [Mode::update]);
+	WFM::CallFunction ("product_finish", [Mode::update ()]);
 
     // --------------------------------------------------------------
     // Unmount all mounted devices (from inst_prepdisk)
@@ -889,7 +889,7 @@ with the load address of your root DASD.
     // Check if there is a message left to display
     // and display it, if necessary
 
-    if (size (Misc::boot_msg) > 0 && !Mode::autoinst)
+    if (size (Misc::boot_msg) > 0 && !Mode::autoinst ())
     {
 	Report::DisplayMessages (true, 10);
 	Report::Message (Misc::boot_msg);

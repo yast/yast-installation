@@ -11,6 +11,7 @@
     module "Product";
 
     import "Mode";
+    import "Stage";
 
     /**
      * General product name and version
@@ -53,7 +54,7 @@
      */
     global define void Product () ``{
 
-	if (Mode::initial)
+	if (Stage::initial ())
 	{
 	    name		= (string) SCR::Read(.content.PRODUCT);
 	    version		= (string) SCR::Read(.content.VERSION);
@@ -72,7 +73,7 @@
 	    if (tmp1 != nil)
 		flags		= splitstring ((string) tmp1, " ");
 	}
-	else if (!Mode::config)
+	else if (!Mode::config ())
 	{
 	    Pkg::TargetInit ("/", false);
 	    list all_products = Pkg::TargetProducts();		// get all products

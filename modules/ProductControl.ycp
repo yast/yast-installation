@@ -15,6 +15,7 @@ import "Product";
 import "ProductFeatures";
 import "Mode";
 import "Arch";
+import "Stage";
 
 // current proposal label
 global string current_proposal_label = "";
@@ -238,7 +239,7 @@ global define term getTerm (map mod, map def) ``{
     // All client start with "inst_".
 
     string client = "";
-    if (!Mode::firstboot)
+    if (!Stage::firstboot ())
     {
         if (issubstring(mod["name"]:"dummy", "inst_"))
             client = mod["name"]:"dummy";
@@ -598,7 +599,7 @@ global define void Init()
 	 packaged_control_file // "/usr/share/YaST2/control/control.xml"
 	 ];
 
-    if (Mode::mode == "firstboot")
+    if (Stage::stage () == "firstboot")
     {
         order=prepend(order, firstboot_control_file);
     }
