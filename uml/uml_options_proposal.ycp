@@ -11,9 +11,9 @@
     import "UML";
     import "HTML";
 
-    string func  = (string) WFM::Args(0);
-    map    param = (map) WFM::Args(1);
-    map    ret   = $[];
+    string func = (string) WFM::Args (0);
+    map param = (map) WFM::Args (1);
+    map ret = $[];
 
     if ( func == "MakeProposal" )
     {
@@ -35,10 +35,10 @@
 	list tmp = [];
 
 	// Proposal for uml installation
-	tmp = add (tmp, sformat (_("Memory: %1 MB"), UML::memory_size));
+	tmp = add (tmp, sformat (_("Memory size: %1 MB"), UML::memory_size));
 
 	// Proposal for backup during update
-	tmp = add (tmp, sformat (_("CPU: %1"), UML::number_of_cpus));
+	tmp = add (tmp, sformat (_("Number of CPUs: %1"), UML::number_of_cpus));
 
 	ret = $[ "preformatted_proposal" :
 		 HTML::List (tmp)
@@ -53,7 +53,8 @@
 	//
 	// sequence = DummyMod::AskUser( has_next );
 
-	symbol result = (symbol) WFM::CallFunction ("inst_uml_options", [true, has_next]);
+	symbol result = (symbol) WFM::CallFunction ("inst_uml_options",
+						    [true, has_next]);
 
 	// Fill return map
 

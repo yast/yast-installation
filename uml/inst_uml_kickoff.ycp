@@ -10,6 +10,8 @@
 
 {
     import "UML";
+    import "Directory";
+
 
     path umlpath = .uml.options;
 
@@ -72,10 +74,22 @@
     }
 
 
+    /**
+     *
+     */
+    define void copy_start_script () ``{
+
+	SCR::Execute (.target.bash, "/bin/cp " + Directory::ybindir + "/start-uml "
+		      + UML::homedir);
+
+    }
+
+
     register_options_file ();
 
     save_options ();
     make_disks ();
+    copy_start_script ();
 
     unregister_options_file ();
 

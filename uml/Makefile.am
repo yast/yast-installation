@@ -2,6 +2,8 @@
 # Makefile.am for installation/uml
 #
 
+SUBDIRS = scripts
+
 module_DATA =				\
 	UML.ycp
 

@@ -63,3 +63,4 @@ This controls the system installation.
 @ybindir@/ask_for_TERM_variable
 @ybindir@/check.boot
 @ybindir@/version
+@ybindir@/start-uml
