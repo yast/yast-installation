@@ -500,12 +500,8 @@ Please wait while the base system is being installed.
 
     Pkg::SourceCacheCopyTo (Installation::destdir);
 
-    // disable all sources
-    foreach (`src, Packages::theSources,
-    ``{
-	Pkg::SourceFinish (src);
-    });
-
+    // disable all sources and finish target
+    Pkg::SourceFinishAll ();
     Pkg::TargetFinish();
 
     // --------------------------------------------------------------

@@ -407,10 +407,8 @@
 	    {
 		y2milestone ("user didn't accept info.txt");
 
-		// disable all sources
-		foreach (`src, Packages::theSources, ``{
-		    Pkg::SourceFinish (src);
-		});
+		// disable all sources and finish target
+		Pkg::SourceFinishAll ();
 		Pkg::TargetFinish ();
 
 		// tell linuxrc that we aborted
@@ -669,10 +667,8 @@ will look different than in the manual.");
 	}
 	else if (result == `abort)
 	{
-	    // disable all sources
-	    foreach (`src, Packages::theSources, ``{
-		Pkg::SourceFinish (src);
-	    });
+	    // disable all sources and finish target
+	    Pkg::SourceFinishAll ();
 	    Pkg::TargetFinish ();
 
 	    // tell linuxrc that we aborted
@@ -716,7 +712,7 @@ will look different than in the manual.");
 	    WFM::CallFunction (product_post(Mode::update));
     }
 
-    // stop packagemanager
+    // disable all sources and finish target
     Pkg::SourceFinishAll();
     Pkg::TargetFinish();
 
