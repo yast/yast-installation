@@ -560,6 +560,7 @@ global define list < list > getProposals(
         string mode,
         string proptype)
 {
+    y2milestone("Stage: %1 Mode: %2", Stage::stage(), Mode::mode());
     // First we search for proposals for current stage if there are
     // any. (initial or continue)
 
