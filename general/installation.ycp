@@ -119,7 +119,6 @@
     {
 	if (SCR::Read(.target.size, Installation::destdir + "/var/lib/YaST2/update_mode") > 0)
 	{
-	    y2milestone ("setting Mode::update () = true");
 	    Mode::SetMode ("update");
 	}
     }
@@ -228,12 +227,13 @@
 
             // ncurses calls 'dumpkeys | loadkeys --unicode' in UTF-8 locale
 	    UI::SetKeyboard();
-	    y2milestone("lang: %1, encoding %2, ckb_cmd: %3 xkb: %4", language, Installation::encoding, ckb_cmd, xkb_cmd);
+	    y2milestone ("lang: %1, encoding %2, ckb_cmd: %3 xkb: %4", language,
+			 Installation::encoding, ckb_cmd, xkb_cmd);
 	}
 
 	retranslateWizardDialog();
     }
-    else if (!Mode::screen_shot
+    else if (!Mode::screen_shot ()
              && !Stage::firstboot ()
              )
     {
@@ -258,7 +258,7 @@
 	    if (SCR::Read(.target.size,"/media/floppy/autoinst.xml")>0)
 	    {
 		y2milestone("Found control file, switching to autoinst mode");
-		Mode::autoinst () = true;
+		Mode::SetMode ("autoinst");
 		// initialize Report behavior
 		// Default in autoinst mode is showing messages and warnings with timeout of 10 sec.
 		// Errors are shown without timeout.
@@ -274,12 +274,12 @@
     /////////////////////////////////////////
     // show message if text_fallback
     /////////////////////////////////////////
-    if ((Linuxrc::text ()_fallback || Installation::no_x11 ())
+    if ((Installation::text_fallback () || Installation::no_x11 ())
 	&& (Installation::x11_setup_needed () && Arch::x11_setup_needed ())
 	&& !Installation::shown_text_mode_warning)
     {
 	string x11_msg = "";
-	if ((Installation::no_x11 () || Linuxrc::text ()_fallback) && Stage::initial ())
+	if ((Installation::no_x11 () || Installation::text_fallback ()) && Stage::initial ())
 	{
 	    // Somehow the graphical frontend failed and we're running in
 	    // text mode. Inform the user about this fact.
@@ -294,7 +294,7 @@ differ from those in the manual.
 "), "96");
 
 	}
-	else if ((Installation::no_x11 () || Linuxrc::text ()_fallback) && Stage::cont ())
+	else if ((Installation::no_x11 () || Installation::text_fallback ()) && Stage::cont ())
 	{
 	    // The script YaST2 wants to inform about a problem with the
 	    // option no_x11 but it's broken.
@@ -329,7 +329,7 @@ differ from those in the manual.
     boolean test_mode	= Mode::test ();
     boolean update_mode	= Mode::update ();		// FIXME: work's only after reboot
     boolean repair	= Mode::repair ();
-    boolean screen_shot_mode = Mode::screen_shot;
+    boolean screen_shot_mode = Mode::screen_shot ();
 
 
     //////////////////////////////////////////////////////////////////
