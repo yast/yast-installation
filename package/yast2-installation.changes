@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Feb  2 15:49:46 CET 2004 - lslezak@suse.cz
+
+- InitHWinfo module enabled in installation proposal
+- version 2.9.4
+
+-------------------------------------------------------------------
 Sat Jan 31 21:07:11 CET 2004 - arvin@suse.de
 
 - removed useless 'global'
