@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Feb 19 16:07:29 CET 2003 - fehr@suse.de
+
+- fix wrong variable of keyboard module in inst_finish.ycp (#23782)
+
+-------------------------------------------------------------------
 Wed Feb 19 08:35:05 CET 2003 - arvin@suse.de
 
 - run SuSEconfig fonts during inst_finish for anti aliased fonts
