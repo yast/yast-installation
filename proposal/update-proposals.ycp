@@ -1,0 +1,14 @@
+//
+// update-proposals.ycp
+//
+// define list and order of update proposal modules
+//
+[
+    "proposal_mode",
+    "proposal_rootpart",
+    "proposal_update",
+    "proposal_packages",
+    "proposal_backup",
+    "proposal_language",
+    "proposal_keyboard"
+]
