@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb 13 15:16:41 CET 2004 - sh@suse.de
+
+- Applied patch from bug #34531: Kernel 2.6 hotplug handling 
+
+-------------------------------------------------------------------
 Wed Feb 11 16:11:02 CET 2004 - arvin@suse.de
 
 - more control over base selection handling
