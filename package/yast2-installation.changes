@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Mar 25 16:49:04 CET 2004 - sh@suse.de
+
+- Fixed bug #34618: Don't use full-screen if started remotely 
+
+-------------------------------------------------------------------
 Thu Mar 25 14:50:07 CET 2004 - ms@suse.de
 
 - fixed driver to use on ia64 systems. there is no framebuffer

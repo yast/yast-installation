@@ -289,7 +289,7 @@ modulename=${1:-installation}
 shift
 moduleargs=\(\"$*\"\)
 
-if [ -z "${DISPLAY/:*}" -o "${DISPLAY/:*/}" == "localhost"  ]; then
+if [ "$UseSSH" != 1 ] && [ -z "${DISPLAY/:*}" -o "${DISPLAY/:*/}" == "localhost"  ]; then
     # Use --fullscreen --noborder only for local displays -
     # if $DISPLAY has either nothing or "localhost" before ":"
     y2qt_args="--fullscreen --noborder"
