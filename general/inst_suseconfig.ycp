@@ -1,32 +1,29 @@
 /**
- * Module:	inst_suseconfig.ycp
- *
+ * File:	clients/inst_suseconfig.ycp
+ * Package:	Installation
+ * Summary:	Run SUSEconfig
  * Authors:	Andreas Schwab <schwab@suse.de>
- *			Stefan Hundhammer <sh@suse.de>
- *
- * Purpose:	-Showing the "Finishing the installation" frame
- *			-Running "SuSEconfig"
- *			-Running "init" to reread inittab, which has been
- *			 changed by SuSEconfig.
- *			-Showing the loginname which can be used.
- *
- * scr:		Read( .rc.system.ENABLE_SUSECONFIG )
- *			Read( .run.get.suseconfig.modules )
+ *		Stefan Hundhammer <sh@suse.de>
  *
  * $Id$
+ *
+ * Purpose:
+ * - shows the "Finishing the installation" frame
+ * - runs "SuSEconfig"
+ * - runs "init" to reread inittab, which has been changed by SuSEconfig.
+ * - shows the loginname which can be used.
  */
+
 {
 
     textdomain "installation";
 
     import "Arch";
     import "Directory";
-    import "Mode";
     import "Installation";
-    import "Misc";
-
-    import "Wizard";
+    import "Mode";
     import "Popup";
+    import "Wizard";
 
 
     if ( size( WFM::Args() ) > 2 && WFM::Args(2) == true )	// going backwards?
@@ -72,8 +69,8 @@
      */
     define void runStep( string step ) ``{
 
-	string command = sformat( "HOME=%1 %2 %3 2>&1", Misc::tmpdir, step, log_destination );
-	// Setting $HOME to Misc::/tmpdir to avoid cluttering '/' with spurious files - bug #13204
+	string command = sformat( "HOME=%1 %2 %3 2>&1", Directory::tmpdir, step, log_destination );
+	// Setting $HOME to Directory::tmpdir to avoid cluttering '/' with spurious files - bug #13204
 
 	if ( Mode::test )
 	{
