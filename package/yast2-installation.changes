@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb  7 16:12:49 CET 2003 - jsuchome@suse.de
+
+- adapted inst_confirm_abort for the use from yast2-repair
+
+-------------------------------------------------------------------
 Thu Feb  6 16:16:29 CET 2003 - jsrain@suse.de
 
 - removed missleading help text about starting of network during

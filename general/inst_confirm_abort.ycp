@@ -22,6 +22,12 @@
   textdomain "installation";
   string what_will_happen = "";
 
+  // Confirm user request to abort installation
+  string abort_label = _("Really abort the installation?");
+  // Button that will really abort the installation
+  string abort_button = _("&Abort Installation");
+  // Button that will continue with the installation
+  string continue_button = _("&Continue Installation");
 
   if ( WFM::Args(0) == `painless )
   {
@@ -65,6 +71,15 @@ all systems on this disk could be unusable.
 Reinstallation may be required.
 ") );
   }
+  else if ( WFM::Args(0) == `repair )
+  {
+      // Confirm user request to abort System Repair
+      abort_label = _("Really abort YaST System Repair?");
+      // Button that will really abort the repair
+      abort_button = _("Abort System Repair");
+      // Button that will continue with the repair
+      continue_button = _("&Continue System Repair");
+  }
   else
   {
       y2warning("Unknown symbol for what will happen when aborting - please correct in calling module" );
@@ -80,19 +95,16 @@ Reinstallation may be required.
 			     `HCenter(
 				      `HSquash(
 					       `VBox(
-						     // Confirm user request to abort installation
-						     `Left( `Label( _("Really abort the installation?") ) ),
+						     `Left( `Label( abort_label  ) ),
 						     `Left( `Label( what_will_happen ) )
 						     )
 					       )
 				      ),
 			     `HBox(
-				   // Button that will really abort the installation
-				   `PushButton(`id(`really_abort), _("&Abort Installation") ),
+				   `PushButton(`id(`really_abort), abort_button ),
 				   `HStretch(),
 
-				   // Button that will continue with the installation
-				   `PushButton(`id(`continue), `opt(`default), _("&Continue Installation") )
+				   `PushButton(`id(`continue), `opt(`default), continue_button)
 				   ),
 			     `VSpacing(0.2)
 			     ),
