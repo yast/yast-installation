@@ -17,6 +17,7 @@
     import "GetInstArgs";
     import "CustomDialogs";
     import "Directory";
+    import "Language";
 
     map argmap = GetInstArgs::argmap();
     list<string> default_patterns = ["RELEASE-NOTES.%1.rtf"];
@@ -29,7 +30,7 @@
     
     list<string> patterns = argmap["patterns"]:default_patterns;
 
-    map relnotes = CustomDialogs::load_file_locale(patterns,directory);
+    map relnotes = CustomDialogs::load_file_locale(patterns,directory, Language::language);
 
     /* filename of release notes */
     string file = relnotes["file"]:"";

@@ -15,6 +15,7 @@ import "Directory";
 import "GetInstArgs";
 import "RichText";
 import "CustomDialogs";
+import "Language";
 
 map argmap = GetInstArgs::argmap();
 
@@ -27,7 +28,7 @@ if (argmap["directory"]:"" != "")
 
 list<string> patterns = argmap["patterns"]:default_patterns;
 
-map welcome = CustomDialogs::load_file_locale(patterns,directory);
+map welcome = CustomDialogs::load_file_locale(patterns,directory, Language::language);
 y2debug("welcome map: %1", welcome );
 
 

@@ -16,6 +16,7 @@ import "Popup";
 import "GetInstArgs";
 import "CustomDialogs";
 import "Directory";
+import "Language";
 
 
 // first check if we are allowed to run this client again
@@ -44,7 +45,7 @@ if (argmap["directory"]:"" != "")
 
 list<string> patterns = argmap["patterns"]:default_patterns;
 
-map license_data = CustomDialogs::load_file_locale(patterns,directory);
+map license_data = CustomDialogs::load_file_locale(patterns,directory, Language::language);
 
 
 
