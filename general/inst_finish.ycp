@@ -739,15 +739,13 @@ with the load address of your root DASD.
     {
 	string log_add = (log_num == 0) ? "" : ("-" + log_num);
 
-	log_add = "/var/log/YaST2/y2log" + log_add;
+	log_add = Directory::logdir + "/y2log" + log_add;
 
 	if (WFM::Read (.local.size, log_add) > 0)
 	{
-	    WFM::Execute (.local.bash, "/bin/cp " + log_add + " " + Installation::destdir + "/var/log/YaST2/y2log-" + (log_num+1));
-
-	    // this just needs too much memory
-	    // string logbuf = WFM::Read (.local.string, log_add);
-	    // SCR::Write (.target.string, "/var/log/YaST2/y2log-" + (log_num+1), logbuf);
+	    WFM::Execute (.local.bash, "/bin/cp " + log_add + " " +
+			  Installation::destdir +
+			  Directory::logdir + "/y2log-" + (log_num+1));
 
 	    y2milestone ("Copied %1 to target", log_add);
 	}
@@ -757,24 +755,29 @@ with the load address of your root DASD.
 	}
 	log_num = log_num - 1;
     }
+
     if (size(ProductControl::logfiles)>0)
     {
         y2milestone("Writing hook logs into system: %1",
-                ProductControl::logfiles);
+		    ProductControl::logfiles);
+
         foreach(string logfile, ProductControl::logfiles, {
-                string fulllogfile = "/var/log/YaST2/" + logfile;
-                if (WFM::Read (.local.size, fulllogfile) > 0)
-                {
-                    WFM::Execute (.local.bash, "/bin/cp " + fulllogfile + " " +
-                    Installation::destdir + "/var/log/YaST2/" + logfile);
-                }
-                });
+	    string fulllogfile = Directory::logdir + "/" + logfile;
+	    if (WFM::Read (.local.size, fulllogfile) > 0)
+	    {
+		WFM::Execute (.local.bash, "/bin/cp " + fulllogfile + " " +
+			      Installation::destdir +
+			      Directory::logdir + "/" + logfile);
+	    }
+	});
     }
 
     // copy y2start.log
-    SCR::Write (.target.string, "/var/log/YaST2/y2start.log-initial", WFM::Read (.local.string, ["/var/log/YaST2/y2start.log", ""]));
+    SCR::Write (.target.string, Directory::logdir + "/y2start.log-initial",
+		WFM::Read (.local.string, [Directory::logdir + "/y2start.log", ""]));
     // copy badlist
-    SCR::Write (.target.string, "/var/log/YaST2/badlist-initial", WFM::Read (.local.string, ["/var/log/YaST2/badlist", ""]));
+    SCR::Write (.target.string, Directory::logdir + "/badlist-initial",
+		WFM::Read (.local.string, [Directory::logdir + "/badlist", ""]));
 
 
     // --------------------------------------------------------------

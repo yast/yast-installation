@@ -9,10 +9,12 @@
 
 {
     module "Hooks";
+
     import "Popup";
+    import "Directory";
 
     string tmp_dir = (string)WFM::Read(.local.tmpdir, []);
-    string log_dir = "/var/log/YaST2";
+    string log_dir = Directory::logdir;
 
     // script types, ycp does not make  sense, it can be added directly
     // to the workflow.
