@@ -625,7 +625,8 @@
      * so use icon names directly rather than looking them up in the .desktop file
      * with Wizard::SetDesktopIcon().
      **/
-    define void set_icon() ``{
+    define void set_icon()
+    {
 	string icon = "software";
 
 	if 	( proposal_mode == `network		) icon = "network";
