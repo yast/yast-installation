@@ -6,7 +6,7 @@
 Requires:	yast2
 Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
 Requires:	yast2-packager yast2-network yast2-online-update yast2-users
-Requires:	release-notes
+Requires:	curl release-notes
 
 Provides:	yast
 Obsoletes:	yast
