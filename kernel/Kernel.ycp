@@ -203,7 +203,6 @@
 		// read cpu specific information (for first cpu only)
 		map cpu = select (SCR::Read (.probe.cpu), 0, $[]);
 		integer cpu_family = cpu["family"]:0;
-		integer cpu_model = cpu["model"]:0;
 
 		if ((cpu["vendor"]:"" == "AuthenticAMD")
 		    && (cpu_family >= 6))
