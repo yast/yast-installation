@@ -15,7 +15,6 @@
 
     import "Mode";
 //    import "Initrd";
-    import "Wizard";
     import "Label";
 
     string vendor_name = "";
