@@ -239,7 +239,7 @@
 		    chrp_cpu = tolower (chrp_cpu);
 		});
 
-		if (issubstring (chrp_cpu, "power3")	
+		if (issubstring (chrp_cpu, "power3")
 		    && Arch::ppc32)
 		{
 		    kernel_packages = ["kernel-power3"];
@@ -366,9 +366,11 @@
 
     global define void Kernel ()
     ``{
-	// extract extra boot parameters given in installation
+	string tmp = SCR::Read (.target.string, "/proc/cmdline");
+	y2milestone ("original kernel command line is: %1", tmp);
 
-	ExtractCmdlineParameters (SCR::Read(.target.string, "/proc/cmdline"));
+	// extract extra boot parameters given in installation
+	ExtractCmdlineParameters (tmp);
 
 	ProbeKernel ();
     }
