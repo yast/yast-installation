@@ -79,7 +79,7 @@
     // Some programs depend on it (rpm install scripts, Xlib)
 
     if (!Arch::s390 ()
-	&& !Mode::test)
+	&& !Mode::test ())
     {
 	SCR::Execute(.target.bash, "/bin/hostname linux");
 	SCR::Execute(.target.bash, "/bin/domainname local");
@@ -148,9 +148,9 @@
     showFeedback( _("Loading kernel modules for hard disk controllers") );
     StorageControllers::Initialize ();
 
-    ModuleLoading::Load ("dm-mod", "", "Linux", "DM", Mode::manual, true);
+    ModuleLoading::Load ("dm-mod", "", "Linux", "DM", Linuxrc::manual (), true);
     SCR::Execute (.target.bash, "/sbin/devmap_mknod.sh");
-    ModuleLoading::Load ("dm-snapshot", "", "Linux", "DM", Mode::manual, true);
+    ModuleLoading::Load ("dm-snapshot", "", "Linux", "DM", Linuxrc::manual (), true);
 
 
     // --------------------------------------------------------------

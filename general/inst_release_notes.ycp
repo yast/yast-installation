@@ -17,6 +17,7 @@
     import "Language";
     import "Mode";
     import "Misc";
+    import "Stage";
 
     /* filename of release notes */
     string file = "";
@@ -30,7 +31,7 @@
     {
 
         string path_to_relnotes = "/usr/share/doc/release-notes";
-        if (Mode::firstboot)
+        if (Stage::firstboot ())
         {
             string tmp_path =
                 (string)Misc::SysconfigRead(.sysconfig.firstboot.FIRSTBOOT_RELEASE_NOTES_PATH, "");

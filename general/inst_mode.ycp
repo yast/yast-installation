@@ -15,7 +15,7 @@
  *
  *		Returns automatically if no Linux partition is found.
  *
- * rw: Mode::installation, Mode::update
+ * rw: Mode::installation (), Mode::update ()
  *
  * $Id$
  *
@@ -39,7 +39,7 @@
 
     textdomain "installation";
 
-    string start_mode = Mode::mode;
+    string start_mode = Mode::mode ();
 
     define symbol handle_boot () ``{
 
@@ -86,7 +86,7 @@
 
 	sleep (1000);
 
-	if ( ! Mode::test )
+	if ( ! Mode::test () )
 	{
 	    Linuxrc::WriteYaSTInf ($["Root" : root_part]);
 
@@ -117,13 +117,13 @@
 
 
     if ( ! Storage::HaveLinuxPartitions()
-	 || Mode::autoinst
+	 || Mode::autoinst ()
 	 || !offer_update)
     {
 	// Force new installation, no update possible
 
-	Mode::update		= false;
-	Mode::installation	= true;
+	Mode::update ()		= false;
+	Mode::installation ()	= true;
 
 	if ( called_from_ask_user )
 	{
@@ -213,13 +213,13 @@ disk that will not boot. With this option, try to fix problems manually.
 		    `VSpacing(0.4),
 		    `Left(`RadioButton(`id(`install),
 				       // label for radio button 1, New installation
-				       _("New &installation"), Mode::installation ) ));
+				       _("New &installation"), Mode::installation () ) ));
     if (offer_update)
     {
 	radio_buttons = add (radio_buttons, `VSpacing(0.2));
 	radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`update),
 				       // label for radio button 2, update
-				       _("&Update an existing system"), Mode::update )));
+				       _("&Update an existing system"), Mode::update () )));
     }
 
     radio_buttons = add (radio_buttons, `VSpacing(0.2));
@@ -297,7 +297,7 @@ disk that will not boot. With this option, try to fix problems manually.
 
     while ( true )
     {
-	if (!Mode::autoinst)
+	if (!Mode::autoinst ())
 	{
 	    ret = UI::UserInput();
 	}
@@ -341,26 +341,19 @@ disk that will not boot. With this option, try to fix problems manually.
 
 	    if (newmode == `install)
 	    {
-		Mode::installation = true;
-		Mode::update = false;
-                Mode::mode = "installation";
+		Mode::SetMode ("installation");
 		break;
 	    }
 
 	    if (newmode == `update)
 	    {
-		Mode::update = true;
-		Mode::installation = false;
-                Mode::mode = "update";
+                Mode::SetMode ("update");
 		break;
 	    }
 
 	    if (newmode == `repair)
 	    {
-		Mode::repair = true;
-		Mode::installation = false;
-		Mode::update = false;
-                Mode::mode = "repair";
+                Mode::SetMode ("repair");
 		ret = `finish;
 		break;
 	    }
@@ -369,9 +362,7 @@ disk that will not boot. With this option, try to fix problems manually.
 	    {
 		if (handle_boot () == `finish)
 		{
-		    Mode::update = false;
-		    Mode::installation = false;
-                    Mode::mode = "";
+                    Mode::SetMode ("");
 		    ret = `finish;
 		    break;
 		}
@@ -380,14 +371,14 @@ disk that will not boot. With this option, try to fix problems manually.
     }
 
     UI::CloseDialog();
-    if (Mode::mode != start_mode )
+    if (Mode::mode () != start_mode )
     {
-        ProductControl::UpdateWizardSteps([$["stage":"initial","mode":Mode::mode], $["stage":"continue","mode":Mode::mode]]);
-        y2milestone("Switching Steps from %1 to %2 ", start_mode, Mode::mode);
+        ProductControl::UpdateWizardSteps([$["stage":"initial","mode":Mode::mode ()], $["stage":"continue","mode":Mode::mode ()]]);
+        y2milestone("Switching Steps from %1 to %2 ", start_mode, Mode::mode ());
 
     }
 
-    if (Mode::repair)
+    if (Mode::repair ())
     {
 	WFM::CallFunction ("inst_repair");
     }

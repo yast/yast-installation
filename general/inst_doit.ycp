@@ -18,7 +18,7 @@
     import "Label";
 
 
-    if (Mode::autoinst)
+    if (Mode::autoinst ())
     {
 	if (!AutoinstConfig::Confirm)
 	{
@@ -38,7 +38,7 @@
     }
 
     define void ConfirmLicenses () {
-	if (Mode::autoinst)
+	if (Mode::autoinst ())
 	{
 	    return;
 	}
@@ -149,7 +149,7 @@ according to the installation settings in the previous dialogs.</p>"
 	// Label for the button that confirms startint the installation
 	string confirm_button_label = _( "&Install" );
 
-	if ( Mode::update )
+	if ( Mode::update () )
 	{
 	    // Heading for confirmation popup before the update really starts
 	    heading = "<h3>" + _( "Confirm Update" ) + "</h3>";
@@ -213,7 +213,7 @@ according to the settings in the previous dialogs.</p>" )
     boolean confirmed = confirmInstallation();
 
     if ( confirmed )
-	y2milestone( "User confirmed %1", Mode::update ? "update" : "installation" );
+	y2milestone( "User confirmed %1", Mode::update () ? "update" : "installation" );
 
     return confirmed ? `next : `back;
 }

@@ -19,7 +19,7 @@
     if(WFM::Args(2) == true)
 	return `auto;
 
-    if ( !Mode::update )
+    if ( !Mode::update () )
     {
 	if (SCR::Read (.target.size, ("/etc/sysconfig/fam")) != -1)
 	{

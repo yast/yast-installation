@@ -131,7 +131,7 @@ global define boolean have_x11 () ``{
 	boolean ret = true;
 	list<string> pacs = ["xorg-x11", "yast2-x11","sax2"];
         // Dont ask for installing packages, just return in autoinst mode
-        if ( Mode::autoinst)
+        if ( Mode::autoinst ())
         {
             ret = Package::InstalledAll(pacs);
         }

@@ -22,6 +22,7 @@
     import "Directory";
     import "Installation";
     import "Mode";
+    import "Stage";
     import "Popup";
     import "Wizard";
 
@@ -30,8 +31,8 @@
 	return `auto;					// don't execute this once more
 
     boolean onlyKernelUpdate = false;
-    if (Mode::normal				// runtime
-	&& Mode::update)			// and update
+    if (Mode::normal ()				// runtime
+	&& Mode::update ())			// and update
     {
 	import "Kernel";
 	onlyKernelUpdate = Kernel::switched;		// see update/inst_rpmupdate.ycp, packager/sw_single.ycp
@@ -43,7 +44,7 @@
 
     string log_destination = ">>/var/log/YaST2/y2log.SuSEconfig";		// Required by doStep()
 
-    if ( Mode::cont )
+    if ( Stage::cont () )
     {
 	reread_inittab = true;
     }
@@ -72,7 +73,7 @@
 	string command = sformat( "HOME=%1 %2 %3 2>&1", Directory::tmpdir, step, log_destination );
 	// Setting $HOME to Directory::tmpdir to avoid cluttering '/' with spurious files - bug #13204
 
-	if ( Mode::test )
+	if ( Mode::test () )
 	{
 	    y2milestone( "Test mode - NOT executing '%1'", command );
 	    sleep( 300 );
@@ -130,7 +131,7 @@ this process can take some time.</p>
     // --------------------------------------------------------------
     // Put config of installed kernel into kernel sources
 
-    y2debug( "Testmode: %1", Mode::test );
+    y2debug( "Testmode: %1", Mode::test () );
 
     //
     // Preliminary 'ldconfig' - this takes a long time at first run.
@@ -150,7 +151,7 @@ this process can take some time.</p>
     // but that "aaa_at_first" module will go away soon. Or so it is said. ;-)
 
 
-    if ( Mode::initial || Mode::cont
+    if ( Stage::initial () || Stage::cont ()
 	 || tolower( (string) SCR::Read(.sysconfig.suseconfig.ENABLE_SUSECONFIG) ) == "yes" )
     {
 	//
@@ -163,7 +164,7 @@ this process can take some time.</p>
 	    runStep( "/sbin/SuSEconfig --verbose --module "   + mod );
 	});
 
-	if ( ! Mode::test )
+	if ( ! Mode::test () )
 	{
 	    SCR::Execute (.target.remove, "/var/lib/YaST2/run_suseconfig");
 	}
@@ -200,7 +201,7 @@ this process can take some time.</p>
     UI::ChangeWidget( `id(`log), `LastLine, "\n" + _("Done.") + "\n" );
 
 
-    if ( Mode::test )
+    if ( Mode::test () )
     {
 	UI::MakeScreenShot();	// doesn't work manually - not widget with keyboard focus!
 	sleep( 5*1000 );
@@ -219,7 +220,7 @@ to activate the new kernel.
 	// Migrate configuration from XFree86 3.x to XFree86 4.x
 	// if possible
 	// ---
-	if ( Mode::update ) {
+	if ( Mode::update () ) {
 		integer flag = (integer) SCR::Execute (.target.bash,
 			"/usr/bin/tail -n 1 /etc/X11/XF86Config | grep -q '#3x'"
 		);
@@ -228,7 +229,7 @@ to activate the new kernel.
 		}
 	}
 
-    if ( Mode::update )
+    if ( Mode::update () )
     {
 	return `next;
     }

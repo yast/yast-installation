@@ -11,9 +11,8 @@
 import "Mode";
 import "Wizard";
 
-Mode::cont = true;
-Mode::stage = "continue";
-// Mode::manual = true;
+Stage::Set ("continue");
+// Linuxrc::manual () = true;
 
 map symbols = $[
     "hardware": `hardware,

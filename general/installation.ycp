@@ -75,7 +75,7 @@
 
     // properly set up initial language
 
-    if (Mode::initial)
+    if (Stage::initial ())
     {
 	Pkg::InstSysMode();
 
@@ -92,7 +92,7 @@
 
     // Properly setup timezone for continue mode.
     //
-    if ( Mode::cont )
+    if ( Stage::cont () )
     {
 	import "Timezone";
 	Timezone::Set( Timezone::timezone, true );
@@ -114,18 +114,16 @@
     ///////////////////////////////////////////////////////////////////////////////
 
     // Detect mode early to be able to setup steps correctly
-    if (Mode::cont)
+    if (Stage::cont ())
     {
 	if (SCR::Read(.target.size, Installation::destdir + "/var/lib/YaST2/update_mode") > 0)
 	{
-	    y2milestone ("setting Mode::update = true");
-	    Mode::update = true;
-	    Mode::installation = false;
-	    Mode::mode = "update";
+	    y2milestone ("setting Mode::update () = true");
+	    Mode::SetMode ("update");
 	}
     }
 
-    if ( Mode::initial && ! Mode::repair )
+    if ( Stage::initial () && ! Mode::repair () )
     {
 	Wizard::OpenAcceptAbortStepsDialog();
     }
@@ -137,7 +135,7 @@
     // --------------------------------------------------------------
     //                   Mouse
     // --------------------------------------------------------------
-    if (Mode::initial && (!Arch::s390 () || Arch::board_iseries ()))
+    if (Stage::initial () && (!Arch::s390 () || Arch::board_iseries ()))
     {
 	UI::BusyCursor();
 	/* Busy popup label */
@@ -152,11 +150,11 @@
 	    //
 	    // FIXME: I don't think it's required any more but someone has to confirm
 	    SCR::Execute(.target.bash, "/bin/sleep 4");
-	    if ( Mode::x11_setup_needed && !Mode::text ) {
+	    if ( Installation::x11_setup_needed () && !Linuxrc::text () ) {
 		SCR::Execute (.target.bash, "/usr/X11R6/bin/xmset --disable");
 	    }
 	    Mouse::Set (Mouse::Probe ());
-	    if ( Mode::x11_setup_needed && !Mode::text ) {
+	    if ( Installation::x11_setup_needed () && !Linuxrc::text () ) {
 		SCR::Execute (.target.bash, "/usr/X11R6/bin/xmset --enable");
 	    }
 	}
@@ -164,7 +162,7 @@
 	UI::CloseDialog();
     }
 
-    string wizard_mode = Mode::demo ? "installation" : Mode::mode;
+    string wizard_mode = Mode::test () ? "installation" : Mode::mode ();
 
     // UI::WizardCommand() can safely be called even if the respective UI
     // doesn't support the wizard widget, but for optimization it makes sense
@@ -178,7 +176,7 @@
     // they should not be logged !
     map classified_user_settings = $[ "crypt_nb":0 ];
 
-    if (Mode::autoinst)
+    if (Mode::autoinst ())
     {
 	Report::DisplayErrors(true, 0);
 	Report::DisplayMessages(true, 10);
@@ -191,7 +189,7 @@
     Report::LogWarnings(false);
 
     /*
-     * The Mode::cont flag decides, if the installation
+     * The Stage::cont () flag decides, if the installation
      * should be _started_ or _continued_.
      */
 
@@ -200,7 +198,7 @@
     // Installation: CONTINUE INSTALLATION
     ///////////////////////////////////////////////////////////////////
 
-    if (Mode::cont)
+    if (Stage::cont ())
     {
 	Installation::encoding = Console::Restore();
 	if (lookup (UI::GetDisplayInfo(), "HasFullUtf8Support", true))
@@ -220,7 +218,7 @@
 	string xkb_cmd = Keyboard::xkb_cmd;
 
 
-	if ( ! Mode::test )
+	if ( ! Mode::test () )
 	{
 	    if (ckb_cmd != "")
 		SCR::Execute (.target.bash, ckb_cmd );
@@ -235,7 +233,7 @@
 	retranslateWizardDialog();
     }
     else if (!Mode::screen_shot
-             && !Mode::firstboot
+             && !Stage::firstboot ()
              )
     {
 
@@ -259,7 +257,7 @@
 	    if (SCR::Read(.target.size,"/media/floppy/autoinst.xml")>0)
 	    {
 		y2milestone("Found control file, switching to autoinst mode");
-		Mode::autoinst = true;
+		Mode::autoinst () = true;
 		// initialize Report behavior
 		// Default in autoinst mode is showing messages and warnings with timeout of 10 sec.
 		// Errors are shown without timeout.
@@ -275,12 +273,12 @@
     /////////////////////////////////////////
     // show message if text_fallback
     /////////////////////////////////////////
-    if ((Mode::text_fallback || Mode::no_x11)
-	&& (Mode::x11_setup_needed && Arch::x11_setup_needed ())
+    if ((Linuxrc::text ()_fallback || Installation::no_x11 ())
+	&& (Installation::x11_setup_needed () && Arch::x11_setup_needed ())
 	&& !Installation::shown_text_mode_warning)
     {
 	string x11_msg = "";
-	if ((Mode::no_x11 || Mode::text_fallback) && Mode::initial)
+	if ((Installation::no_x11 () || Linuxrc::text ()_fallback) && Stage::initial ())
 	{
 	    // Somehow the graphical frontend failed and we're running in
 	    // text mode. Inform the user about this fact.
@@ -295,11 +293,11 @@ differ from those in the manual.
 "), "96");
 
 	}
-	else if ((Mode::no_x11 || Mode::text_fallback) && Mode::cont)
+	else if ((Installation::no_x11 () || Linuxrc::text ()_fallback) && Stage::cont ())
 	{
 	    // The script YaST2 wants to inform about a problem with the
 	    // option no_x11 but it's broken.
-	    // else if (Mode::no_x11)
+	    // else if (Installation::no_x11 ())
 
 	    // Somehow the graphical frontend failed and we're running in
 	    // text mode. Inform the user about this fact.
@@ -325,11 +323,11 @@ differ from those in the manual.
     //--------------------------------------------------------------------
 
     // Some abbreviations to keep the table below less wide
-    boolean autoinst	= Mode::autoinst;
+    boolean autoinst	= Mode::autoinst ();
     boolean autoconf	= AutoInstall::autoconf;
-    boolean test_mode	= Mode::test;
-    boolean update_mode	= Mode::update;		// FIXME: work's only after reboot
-    boolean repair	= Mode::repair;
+    boolean test_mode	= Mode::test ();
+    boolean update_mode	= Mode::update ();		// FIXME: work's only after reboot
+    boolean repair	= Mode::repair ();
     boolean screen_shot_mode = Mode::screen_shot;
 
 
@@ -344,18 +342,18 @@ differ from those in the manual.
 
     Wizard::SetFocusToNextButton();
 
-    y2debug("Starting Workflow with  \"%1\" \"%2\"",  Mode::stage, Mode::mode);
+    y2debug("Starting Workflow with  \"%1\" \"%2\"",  Stage::stage (), Mode::mode ());
     list<map> modules = ProductControl::getModules(
-            Mode::stage,
-            Mode::mode,
+            Stage::stage (),
+            Mode::mode (),
             `enabled);
 
-    map defaults = ProductControl::getModeDefaults(Mode::stage, Mode::mode);
+    map defaults = ProductControl::getModeDefaults(Stage::stage (), Mode::mode ());
 
     y2debug("modules: %1", modules);
 
     // skip language dialog if selected in isolinux. (#37679)
-    if (Mode::initial && SCR::Read (.etc.install_inf.Language)!= nil)
+    if (Stage::initial () && SCR::Read (.etc.install_inf.Language)!= nil)
     {
         string tmp_language = (string)SCR::Read (.etc.install_inf.Language);
         if ( tmp_language !="" && ProductFeatures::skip_language_dialog )
@@ -385,7 +383,7 @@ differ from those in the manual.
             do_continue = true;
         }
 
-        if (!mod["update"]:true && Mode::update)
+        if (!mod["update"]:true && Mode::update ())
         {
             y2milestone("continue (update)..");
             do_continue = true;
@@ -508,14 +506,14 @@ differ from those in the manual.
     }
 
     // re-enable automatic probing
-    if (!Mode::test)
+    if (!Mode::test ())
         WFM::Execute (.local.bash, "/bin/echo \"/sbin/modprobe\" >/proc/sys/kernel/modprobe");
 
-    if (Mode::cont)
+    if (Stage::cont ())
     {
 	// remove /etc/install.inf, not needed any more
 	SCR::Execute (.target.remove, "/etc/install.inf");
-	if (Mode::update)
+	if (Mode::update ())
 	{
 	    SCR::Execute(.target.remove, "/var/lib/YaST2/update_mode");
 	    SCR::Execute(.target.bash, "/bin/rm -rf /var/adm/current_package_descr");
@@ -523,7 +521,7 @@ differ from those in the manual.
 	SCR::Execute(.target.remove, "/var/lib/YaST2/runme_at_boot");
 
 	if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_post.ycp") > 0)
-	    WFM::CallFunction ("product_post", [Mode::update]);
+	    WFM::CallFunction ("product_post", [Mode::update ()]);
     }
 
     // disable all sources and finish target

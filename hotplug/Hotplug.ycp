@@ -21,6 +21,7 @@
     import "Arch";
     import "ModuleLoading";
     import "HwStatus";
+    import "Linuxrc";
 
     import "Mode";
 
@@ -90,7 +91,7 @@
 		    string module_args = module_entry[1]:"";
 
 		    symbol load_result = `ok;
-		    if (Mode::manual)
+		    if (Linuxrc::manual ())
 		    {
 			list vendor_device = ModuleLoading::prepareVendorDeviceInfo (controller);
 			load_result = ModuleLoading::Load (module_name, module_args,
