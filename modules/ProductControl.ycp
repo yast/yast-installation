@@ -7,8 +7,6 @@
  * $Id$
  */
 {
-textdomain "control";	// FIXME: Workaround for missing initialization in libycp 
-
 module "ProductControl";
 
 import "XML";
