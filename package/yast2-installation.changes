@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Aug 14 11:32:07 CEST 2002 - kkaempf@suse.de
+
+- fix NoShell: check (#17714)
+
+-------------------------------------------------------------------
 Mon Aug 12 17:01:52 CEST 2002 - kkaempf@suse.de
 
 - fix network parameters passing from /etc/install.inf
