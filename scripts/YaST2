@@ -80,8 +80,8 @@ function y2cc_qt()
 
             # Start the control center
             log "Starting YaST2 control center in Qt mode"
-            log "y2controlcenter qt -style=platinum --fullscreen --noborder -Q"
-            y2controlcenter qt -style=platinum --fullscreen --noborder -Q
+            log "y2controlcenter qt --fullscreen --noborder -Q"
+            y2controlcenter qt --fullscreen --noborder -Q
         fi
     fi
 }
@@ -237,10 +237,11 @@ moduleargs=\(\"$*\"\)
 
 qt_bg=""
 if echo $moduleargs | egrep -q '\(\"initial|continue\"\)' ; then
+# bah :( what a bad color, the qtrc has a nicer one !
     qt_bg="-bg #cccccc"
 fi
 
-y2qt_args="-style=platinum --fullscreen --noborder $qt_bg"
+y2qt_args="--fullscreen --noborder $qt_bg"
 
 
 PATH=/var/X11R6/bin:$ybindir:$PATH
@@ -248,6 +249,8 @@ PATH=/var/X11R6/bin:$ybindir:$PATH
 #
 # if $DISPLAY is set, try to start yast2 there
 #
+
+set_inst_qt_env
 
 if [ "$VNC" = "1" ] ; then
     if [ -x /usr/X11R6/bin/Xvnc ] ; then
@@ -413,7 +416,6 @@ fi
 logmeminfo "2"
 
 if [ "$server_running" ] ; then
-  set_inst_qt_env
   log "Starting: y2base \"$modulename\" $moduleargs qt $y2qt_args"
   y2base "$modulename" $moduleargs qt $y2qt_args
   y2exitcode=$?
