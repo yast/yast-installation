@@ -291,13 +291,13 @@
 	else if (Arch::ia64)
 	{
 	    list cpuProbe = SCR::Read (.probe.cpu);
-	    integer revision = cpuProbe[0,"revision"]:0;
-	    if (revision == 6) // C0 stepping
+	    string model = cpuProbe[0,"model"]:"Itanium";
+	    if (issubstring(model, "Itanium 2")
 	    {
 		if (Arch::has_smp)
-		    kernel_packages = ["k_c0smp"];
+		    kernel_packages = ["k_itanium2-smp"];
 		else
-		    kernel_packages = ["k_c0"];
+		    kernel_packages = ["k_itanium2"];
 		switched = true;
 	    }
 	}
