@@ -315,7 +315,7 @@ if [ "$VNC" = "1" ] ; then
     if [ -x /usr/X11R6/bin/Xvnc ] ; then
 	. /usr/lib/YaST2/bin/inst_setup_vnc
 	export DISPLAY=:1
-	/usr/X11R6/bin/fvwm2 -f /usr/X11R6/share/fvwm/fvwmrc &
+	/usr/X11R6/bin/fvwm2 -f /usr/X11R6/share/fvwm/fvwmrc.notitle &
 	log "Starting: y2base \"$modulename\" $moduleargs qt $y2qt_args"
 	y2base "$modulename" $moduleargs qt $y2qt_args
 	y2exitcode=$?

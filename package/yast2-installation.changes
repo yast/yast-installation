@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Mar 30 11:25:44 CEST 2004 - arvin@suse.de
+
+- disable virtual desktops in fvwm during vnc installation
+  (bug #37480)
+
+-------------------------------------------------------------------
 Mon Mar 29 14:48:56 CEST 2004 - fehr@suse.de
 
 - call Storage::FinishInstall() at end of installation
@@ -26,7 +32,7 @@ file to installed system.
 -------------------------------------------------------------------
 Thu Mar 25 16:49:04 CET 2004 - sh@suse.de
 
-- Fixed bug #34618: Don't use full-screen if started remotely 
+- Fixed bug #34618: Don't use full-screen if started remotely
 
 -------------------------------------------------------------------
 Thu Mar 25 14:50:07 CET 2004 - ms@suse.de
