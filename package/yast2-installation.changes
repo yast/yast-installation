@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Mar  3 12:53:00 CET 2005 - ms@suse.de
+
+- fixed startup scripts for pcmcia/usb network installations (#65164)
+
+-------------------------------------------------------------------
 Wed Mar  2 10:53:37 CET 2005 - jsrain@suse.cz
 
 - merged texts from proofread
