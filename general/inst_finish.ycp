@@ -145,7 +145,7 @@ Please wait while the base system is being installed.
     {
 	// progress stage title
         Progress::Title (_("Executing postinstall (chroot) scripts"));
-        AutoInstall::Finish();
+        // FIXME: AutoInstall::Finish();
     }
 
     // copy hardware status to installed system
@@ -266,7 +266,7 @@ Please wait while the base system is being installed.
     // Override linuxrc settings in autoinst mode
     if ( Mode::autoinst )
     {
-	linuxrc = AutoInstall::Linuxrc(linuxrc);
+	 // linuxrc = AutoInstall::Linuxrc(linuxrc);
     }
 
     // --------------------------------------------------------------

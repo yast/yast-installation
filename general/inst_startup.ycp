@@ -34,6 +34,7 @@
 	import "Report";
 
 
+    include "installation/dialogs.ycp";
     y2milestone("inst_startup START");
 
 
