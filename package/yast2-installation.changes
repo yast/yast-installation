@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Aug 05 12:10:21 CEST 2002 - arvin@suse.de
+
+- further changed for new /etc/install.inf agent
+
+-------------------------------------------------------------------
 Sat Aug 03 15:33:51 CEST 2002 - arvin@suse.de
 
 - removed option -noxim for qt frontend since bug #17161 is now

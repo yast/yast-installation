@@ -196,7 +196,7 @@
     if (Arch::alpha)
     {
 	// get smp for alpha from /etc/install.inf
-	Arch::setSMP (Mode::installMap["smp"]:"" == "1");
+	Arch::setSMP (SCR::Read (.etc.install_inf.SMP) == "1");
     }
 
 
