@@ -17,4 +17,5 @@ log "\tLanguage set to: $LANG"
 #=============================================
 # 3.1) start unicode mode
 #---------------------------------------------
+export LANG
 start_unicode
