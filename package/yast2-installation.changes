@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Mar 14 17:38:44 CET 2003 - sh@suse.de
+
+- Moved RTF version of release notes from /usr/share/doc to
+  /usr/share/doc/release_notes 
+
+-------------------------------------------------------------------
 Fri Mar 14 17:32:20 CET 2003 - sh@suse.de
 
 - Using file name RELEASE_NOTES.rtf to allow coexistence with
