@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Aug 26 14:35:51 CEST 2002 - kkaempf@suse.de
+
+- move language proposal just below mode proposal (#18164)
+
+-------------------------------------------------------------------
 Mon Aug 26 12:43:26 CEST 2002 - arvin@suse.de
 
 - don't run x11 configuration if x11 is missing (bug #18208)
