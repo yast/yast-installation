@@ -30,7 +30,7 @@
 .etc.passwd
 
 `ag_anyagent(
-  SCR::AnyAgent (
+  Description (
       ``(File("/etc/passwd")),	// real filename
       "#",			// Comment
       true,

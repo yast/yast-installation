@@ -44,7 +44,7 @@
 .run.df
 
 `ag_anyagent(
-  SCR::AnyAgent (
+  Description (
       ``(Run("/bin/df -P")),		// real file name
       "\n",			// Comment
       true,			// read-only
