@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Oct 22 16:53:21 CEST 2002 - ms@suse.de
+
+- removed inst_x11 to be part of the installation workflow
+- add x11_proposal to:
+  hw-config-proposals-home-pc.ycp
+  hw-config-proposals-networked-pc.ycp
+
+-------------------------------------------------------------------
 Wed Oct 16 14:03:27 CEST 2002 - arvin@suse.de
 
 - correctly handle quotes in /etc/install.inf (bug #20986)
