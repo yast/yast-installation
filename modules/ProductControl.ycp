@@ -11,6 +11,7 @@ module "ProductControl";
 
 import "XML";
 import "Product";
+import "ProductFeatures";
 import "Mode";
 import "Arch";
 
@@ -41,8 +42,8 @@ global define boolean Read( string controlfile) ``{
             size( productControl["partitioning", "partitions"]:[] ) > 0)
     {
         partitioning = productControl["partitioning"]:$[];
-        Product::FlexiblePartitioning = partitioning;
-        Product::flexible_partitioning = true;
+        ProductFeatures::flexible_partitioning = true;
+        ProductFeatures::FlexiblePartitioning = partitioning;
     }
     if (haskey(productControl, "software"))
     {
