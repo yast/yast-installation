@@ -79,29 +79,6 @@
     {
 	Pkg::InstSysMode();
 
-	// --------------------------------------------------------------
-	//                   Mouse
-	// --------------------------------------------------------------
-	if (!Arch::s390 () || Arch::board_iseries ())
-	{
-	    y2milestone("Call Mouse probing...");
-	    if (!Mouse::Found())
-	    {
-		// ...
-		// Let the USB modules settle for a while.
-		// Mouse probing may fail otherwise...
-		//
-		SCR::Execute(.target.bash, "/bin/sleep 4");
-		if ( Mode::x11_setup_needed && !Mode::text ) {
-		    SCR::Execute (.target.bash, "/usr/X11R6/bin/xmset --disable");
-		}
-		Mouse::Set (Mouse::Probe ());
-		if ( Mode::x11_setup_needed && !Mode::text ) {
-		    SCR::Execute (.target.bash, "/usr/X11R6/bin/xmset --enable");
-		}
-	    }
-	}
-
 	Installation::encoding = Console::SelectFont( Language::language );
 
 	if (lookup (UI::GetDisplayInfo(), "HasFullUtf8Support", true))
@@ -155,6 +132,36 @@
     else
     {
 	Wizard::OpenNextBackStepsDialog();
+    }
+
+    // --------------------------------------------------------------
+    //                   Mouse
+    // --------------------------------------------------------------
+    if (Mode::initial && (!Arch::s390 () || Arch::board_iseries ()))
+    {
+	UI::BusyCursor();
+	/* Busy popup label */
+	UI::OpenDialog(`VBox(`Label(_("Probing mouse..."))));
+	y2milestone("Call Mouse probing...");
+
+	if (!Mouse::Found())
+	{
+	    // ...
+	    // Let the USB modules settle for a while.
+	    // Mouse probing may fail otherwise...
+	    //
+	    // FIXME: I don't think it's required any more but someone has to confirm
+	    SCR::Execute(.target.bash, "/bin/sleep 4");
+	    if ( Mode::x11_setup_needed && !Mode::text ) {
+		SCR::Execute (.target.bash, "/usr/X11R6/bin/xmset --disable");
+	    }
+	    Mouse::Set (Mouse::Probe ());
+	    if ( Mode::x11_setup_needed && !Mode::text ) {
+		SCR::Execute (.target.bash, "/usr/X11R6/bin/xmset --enable");
+	    }
+	}
+
+	UI::CloseDialog();
     }
 
     string wizard_mode = Mode::demo ? "installation" : Mode::mode;
