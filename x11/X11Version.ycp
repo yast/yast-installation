@@ -106,7 +106,7 @@ global define boolean have_x11 () ``{
 	// ---
 	boolean ret = true;
 	if ( ! Mode::autoinst) {
-		list pacs = ["XFree86", "yast2-x11","sax2"];
+		list<string> pacs = ["XFree86", "yast2-x11","sax2"];
 		if (!Require::RequireAndConflict (pacs, [],
 		// notification 1/2
 		_("<p>To access the X11 system, the <b>%1</b> package must be installed.</p>") +
