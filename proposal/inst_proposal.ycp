@@ -461,7 +461,8 @@
 
 	term vbox = nil;
 
-	if (proposal_mode == `ini || proposal_mode == `uml)
+	if (proposal_mode == `ini || proposal_mode == `uml ||
+	    proposal_mode == `dirinstall)
 	{
 	    vbox = `VBox(
 			 // Help message between headline and installation proposal / settings summary.
