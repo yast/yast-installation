@@ -4,5 +4,6 @@
 // Proposal list for network configuration for ppc64
 //
 [
-"lan_proposal"
+"lan_proposal",
+"proxy_proposal",
 ]
