@@ -58,7 +58,7 @@ function set_syslog()
     Loghost=$(awk ' /^Loghost:/ { print $2 }' < /etc/install.inf)
 
      test ! -z $Loghost && {
-        mkdir /etc/YaST2
+        mkdir -p /etc/YaST2
         cat <<EOF > /etc/YaST2/log.conf
 [Log]
 file = true
