@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Feb 16 14:53:57 CET 2005 - jsrain@suse.cz
+
+- fix displaying release notes if the localized version is not
+  available (#50911)
+
+-------------------------------------------------------------------
 Thu Feb 10 13:13:50 CET 2005 - jsrain@suse.cz
 
 - reduced forced minimal size of the release notes popup (#50637)
