@@ -167,7 +167,7 @@ Aborting now."), is_mounted);
     if (size (dirlist) <= 0)
     {
 	// VENDOR: vendor cd doesn't contain data for current system and linux version
-	return wrong_cd(_("The CD-ROM data does not match the running SuSE Linux system.
+	return wrong_cd(_("The CD-ROM data does not match the running Linux system.
 Aborting now.
 "), is_mounted);
     }

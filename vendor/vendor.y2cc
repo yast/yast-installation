@@ -18,7 +18,7 @@ Group = Misc
 Icon = software2.png
 
 ; *one* *short* descriptive line for y2cc
-Helptext = _("This module installs a non-SuSE driver from a vendor-specific CD-ROM.")
+Helptext = _("This module installs a driver from a vendor-specific CD-ROM.")
 
 ; arguments, seperated by space
 Arguments =
