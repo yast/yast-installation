@@ -25,6 +25,7 @@
     import "Arch";
     import "Mode";
     import "Installation";
+    import "ProductControl";
     import "Language";
     import "Storage";
     Installation::scrHandle = scrHandle;
@@ -42,7 +43,6 @@
     import "Popup";
     import "Report";
     import "Hooks";
-    import "ProductControl";
 
     import "FileSystems";
 

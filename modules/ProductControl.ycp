@@ -109,6 +109,9 @@ global define boolean Read( string controlfile) ``{
     {
         globals = productControl["globals"]:$[];
         ProductFeatures::enable_autologin = globals["enable_autologin"]:true;
+        ProductFeatures::language = globals["language"]:"";
+        ProductFeatures::keyboard = globals["keyboard"]:"";
+        ProductFeatures::timezone = globals["timezone"]:"";
     }
 
     // FIXME: Handle reading errors
