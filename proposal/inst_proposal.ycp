@@ -32,6 +32,7 @@
     define void make_proposal( boolean force_reset, boolean language_changed );
     define string format_sub_proposal( map prop );
     define void build_dialog ();
+    define void set_icon();
     define string help_text();
 
     // values used in defined functions
@@ -426,11 +427,9 @@
 
 	if ( proposal_mode == `net) {
 	    headline = _("Network Configuration");
-	    icon = "lan";
 	}
 	else if ( proposal_mode == `hw) {
 	    headline = _("Hardware Configuration");
-	    icon = "controller";
 	}
 
 	/* radiobuttons */
@@ -495,9 +494,7 @@
 			    (boolean) WFM::Args(0),	// have_back_button
 			    false			// have_next_button
 			    );
-
-	if(icon != "") Wizard::SetDesktopIcon(icon);
-
+	set_icon();
     }
 
 
@@ -550,7 +547,25 @@
     };
 
 
+    /**
+     * Set an appropriate wizard icon for the current proposal mode.
+     *
+     * .desktop files may or may not be available (e.g. in the inst-sys they are not),
+     * so use icon names directly rather than looking them up in the .desktop file
+     * with Wizard::SetDesktopIcon().
+     **/
+    define void set_icon() ``{
+	string icon = "software";
 
+	if 	( proposal_mode == `net		) icon = "network";
+	else if ( proposal_mode == `hw		) icon = "printer";
+	// else if ( proposal_mode == `uml		) icon = "";
+	// else if ( proposal_mode == `dirinstall  ) icon = "";
+
+	Wizard::SetTitleIcon( icon );
+    };
+
+    
     /**
      * Help text for proposal dialog.
      *
@@ -678,22 +693,6 @@ To use the settings as displayed, press <b>Next</b>.
 
     // The "next" button is disabled via Wizard::SetContents() until everything is set up allright
     Wizard::EnableNextButton();
-
-    // FIXME
-    // FIXME
-    // FIXME
-    // FIXME
-    // FIXME
-    // FIXME
-    // FIXME
-    // FIXME
-    // FIXME
-    // FIXME
-    // FIXME
-    // FIXME
-    // FIXME
-    // FIXME
-    // FIXME
 
     if ( Mode::initial )
     {
