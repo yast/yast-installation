@@ -336,8 +336,8 @@
 	y2milestone ("IDERecorders(%1)", idecdrws);
 	if (size (idecdrws) > 0)
 	{
-	    Initrd::AddModule ("ide-cd", "");
 	    Initrd::AddModule ("cdrom", "");
+	    Initrd::AddModule ("ide-cd", "");
 	    Initrd::AddModule ("ide-scsi", "");
 	    y2milestone ("old boot_parameters '%1'", cmdLine);
 	    foreach (`dev, idecdrws,
