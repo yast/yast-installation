@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Sep  3 17:27:51 CEST 2003 - gs@suse.de
+
+- installation.ycp: call UI::SetKeyboard in continue mode
+  (enable unicode for ncurses in UTF-8 locale)
+
+-------------------------------------------------------------------
 Wed Sep  3 10:15:44 CEST 2003 - kkaempf@suse.de
 
 - copy XF86Config from inst-sys to XF86Config.install in
