@@ -11,7 +11,9 @@
 {
     import "UML";
     import "Directory";
+    import "Report";
 
+    textdomain "installation";
 
     path umlpath = .uml.options;
 
@@ -84,15 +86,20 @@
 
     }
 
+    if (UML::CreateUser())
+    {
+	register_options_file ();
 
-    register_options_file ();
+	save_options ();
+	make_disks ();
+	copy_start_script ();
 
-    save_options ();
-    make_disks ();
-    copy_start_script ();
-
-    unregister_options_file ();
-
+	unregister_options_file ();
+    }
+    else
+    {
+	Report::Error(sformat(_("Cannot create UML user %1"), UML::username));
+    }
 
     return `next;
 }
