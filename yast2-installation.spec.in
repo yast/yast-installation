@@ -1,6 +1,5 @@
 @HEADER-COMMENT@
-
-# neededforbuild  gpp libgpp libxcrypt libxcrypt-devel hwinfo hwinfo-devel udev yast2-devel-packages yast2-xml
+# neededforbuild yast2-devel-packages yast2-xml
 
 @HEADER@
 Requires:	yast2
@@ -18,6 +17,8 @@ Provides:	yast2-trans-inst-general y2t_inst-general
 Obsoletes:	yast2-trans-inst-general y2t_inst-general
 Provides:	yast2-instsys
 Obsoletes:	yast2-instsys
+
+BuildArchitectures: noarch
 
 Summary:	Installation workflow
 
@@ -63,4 +64,3 @@ This controls the system installation.
 @ybindir@/YaST2.sshinstall
 @ybindir@/ask_for_TERM_variable
 @ybindir@/check.boot
-@ybindir@/version
