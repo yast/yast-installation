@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Apr 05 11:32:21 CEST 2004 - arvin@suse.de
+
+- show correct warning in second stage installation when xserver
+  can't be started (bug #38298)
+
+-------------------------------------------------------------------
 Mon Apr 05 11:04:34 CEST 2004 - arvin@suse.de
 
 - adjusted decision of frontend depending on memory size to memory
