@@ -1,5 +1,6 @@
 @HEADER-COMMENT@
-# neededforbuild  autoconf automake ycpdoc yast2-testsuite dejagnu expect tcl yast2-core yast2-devtools
+
+# neededforbuild  autoconf automake yast2-testsuite dejagnu expect tcl yast2-core yast2-core-devel yast2-devtools
 
 @HEADER@
 Requires:	yast2 yast2-lib-wizard yast2-lib-sequencer yast2-storage yast2-mouse yast2-country yast2-bootloader
