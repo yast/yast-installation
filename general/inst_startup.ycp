@@ -135,17 +135,14 @@
 
     boolean found_controllers = true;
 
-    if ( !Mode::live_eval )
-    {
-	// give user feedback what's happening
-	showFeedback( _("Probing hard disk controllers") );
-	found_controllers = StorageControllers::Probe () > 0;
+    // give user feedback what's happening
+    showFeedback( _("Probing hard disk controllers") );
+    found_controllers = StorageControllers::Probe () > 0;
 
-	// Don't abort or even warn if no storage controllers can be
-	// found.  Disks might be detected even without proper knowledge
-	// about the controller.  There's a warning below if no disks were
-	// found.
-    }
+    // Don't abort or even warn if no storage controllers can be
+    // found.  Disks might be detected even without proper knowledge
+    // about the controller.  There's a warning below if no disks were
+    // found.
 
     // give user feedback what's happening
     showFeedback( _("Loading kernel modules for hard disk controllers") );
@@ -183,11 +180,8 @@ Check your hardware!
 	return `cancel;
     }
 
-    if (!Mode::live_eval)
-    {
-	// disable automatic probing
-	SCR::Execute (.target.bash, "/bin/echo \"/etc/nothing\" >/proc/sys/kernel/modprobe");
-    }
+    // disable automatic probing
+    SCR::Execute (.target.bash, "/bin/echo \"/etc/nothing\" >/proc/sys/kernel/modprobe");
 
     clearFeedback();
     return `next;

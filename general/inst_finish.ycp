@@ -53,7 +53,8 @@
     import "X11Version";
 
 
-    define void set_runlevel (integer runlevel) ``{
+    define void set_runlevel (integer runlevel)
+    {
 	y2milestone ("setting default runlevel to %1", runlevel);
 	SCR::Write (.etc.inittab.id, sformat ("%1:initdefault:", runlevel));
 	SCR::Write (.etc.inittab, nil);
@@ -80,11 +81,6 @@ Please wait while the base system is being installed.
     list progress_descriptions =
 	[];
 
-    if ( Mode::live_eval )
-    {
-	// no boot manager config
-	progress_stages = remove(progress_stages, 2);
-    }
 
     integer progress_length = 16;
 
@@ -178,11 +174,8 @@ Please wait while the base system is being installed.
     // Copy /etc/install.inf into built system so that the
     // second phase of the installation can find it.
 
-    if ( !Mode::live_eval )
-    {
-        SCR::Execute (.target.bash, "/bin/grep -v Sourcemounted /etc/install.inf >" +
+    SCR::Execute (.target.bash, "/bin/grep -v Sourcemounted /etc/install.inf >" +
 		      Installation::destdir + "/etc/install.inf");
-    }
 
     // just for debug so we can see the original install.inf later
     SCR::Execute (.target.bash, "/bin/cp /etc/install.inf " +
@@ -196,33 +189,29 @@ Please wait while the base system is being installed.
     SCR::Execute (.target.bash, "/bin/chmod 0600 " +
 		  Installation::destdir + "/var/lib/YaST2/control.xml");
 
-    if ( !Mode::live_eval )
-    {
-        // --------------------------------------------------------------
-        //   stop SCR
-        //   restart on destination
-        //   _Not_ in live_eval mode!
+    // --------------------------------------------------------------
+    //   stop SCR
+    //   restart on destination
 
-        y2milestone ("Stopping SCR");
+    y2milestone ("Stopping SCR");
 
-        WFM::SCRClose (Installation::scr_handle);
+    WFM::SCRClose (Installation::scr_handle);
 
 
     // --------------------------------------------------------------
 
 
-	y2milestone ("Re-starting SCR on %1", Installation::destdir);
-	Installation::scr_handle = WFM::SCROpen ("chroot="+Installation::destdir+":scr", false);
-	Installation::scr_destdir = "/";
-	WFM::SCRSetDefault (Installation::scr_handle);
-    }
+    y2milestone ("Re-starting SCR on %1", Installation::destdir);
+    Installation::scr_handle = WFM::SCROpen ("chroot="+Installation::destdir+":scr", false);
+    Installation::scr_destdir = "/";
+    WFM::SCRSetDefault (Installation::scr_handle);
 
     // re-init tmpdir from new SCR !
     Directory::ResetTmpDir();
     string tmpdir = Directory::tmpdir;
 
     define void InjectFile (string filename)
-    ``{
+    {
 	y2milestone("InjectFile: <%1>", filename );
 	WFM::Execute (.local.bash, "/bin/cp " + filename + " " + Installation::destdir + filename);
 	return;
@@ -246,15 +235,12 @@ Please wait while the base system is being installed.
     // setup linker cache
     // otherwise "SuSEconfig --module fonts" fails
 
-    if ( !Mode::live_eval )
-    {
-	Progress::NextStep ();
-	// progress stage title
-	Progress::Title (_("Setting up linker cache"));
+    Progress::NextStep ();
+    // progress stage title
+    Progress::Title (_("Setting up linker cache"));
 
-	if (SCR::Execute (.target.bash, "/sbin/ldconfig") != 0)
-	    y2error ("ldconfig failed\n");
-    }
+    if (SCR::Execute (.target.bash, "/sbin/ldconfig") != 0)
+        y2error ("ldconfig failed\n");
 
     // --------------------------------------------------------------
     // get targets
@@ -335,12 +321,7 @@ Please wait while the base system is being installed.
     Keyboard::Save(true);
     Display::Save();
     ProductFeatures::Save();
-
-    if (Mode::autoinst)
-    {
-	AutoInstall::Save();
-    }
-
+    AutoInstall::Save();
     ModulesConf::Save (false);
 
     string update_dir = (string) SCR::Read (.etc.install_inf.UpdateDir);
@@ -561,24 +542,21 @@ Please wait while the base system is being installed.
     // --------------------------------------------------------------
     // boot manager configuration
 
-    if ( !Mode::live_eval )
+    Progress::NextStage();
+
+    // progress stage title
+    Progress::Title (_("Installing boot manager..."));
+
+    SCR::Execute (.target.bash, "/sbin/SuSEconfig --module bootsplash");
+    if (Storage::CheckForLvmRootFs() )
     {
-	Progress::NextStage();
-
-	// progress stage title
-	Progress::Title (_("Installing boot manager..."));
-
-	SCR::Execute (.target.bash, "/sbin/SuSEconfig --module bootsplash");
-	if (Storage::CheckForLvmRootFs() )
-	{
-	    SCR::Execute (.target.bash, "/sbin/vgscan");
-	}
-	//    Boot::Save ();		// save /etc/sysconfig parameters
-
-	// --------------------------------------------------------------
-	// driver update
-	Vendor::DriverUpdate1 ();
+        SCR::Execute (.target.bash, "/sbin/vgscan");
     }
+    //    Boot::Save ();		// save /etc/sysconfig parameters
+
+    // --------------------------------------------------------------
+    // driver update
+    Vendor::DriverUpdate1 ();
 
     // --------------------------------------------------------------
     // message after first round of packet installation
@@ -592,27 +570,24 @@ Please wait while the base system is being installed.
     // where we do a hard reboot. However, the cdrom is still mounted here
     // and cant be removed.
 
-    if (!Mode::live_eval)
+    if (Arch::s390)
     {
-	if (Arch::s390)
-	{
-	    // for s390:
-	    // Message that will be displayed along with information
-	    // how the boot loader was installed
-	    Misc::boot_msg = _("
+        // for s390:
+        // Message that will be displayed along with information
+        // how the boot loader was installed
+        Misc::boot_msg = _("
 Your system will now be shut down.
 After shutdown, reload the system
 with the load address of your root DASD.
 ");
-	}
-	else
-	{
-	    // Final message after all packages from CD1 are installed
-	    // and we're ready to start (boot into) the installed system
-	    // Message that will be displayed along with information
-	    // how the boot loader was installed
-	    Misc::boot_msg = _("Now booting your system...");
-	}
+    }
+    else
+    {
+        // Final message after all packages from CD1 are installed
+        // and we're ready to start (boot into) the installed system
+        // Message that will be displayed along with information
+        // how the boot loader was installed
+        Misc::boot_msg = _("Now booting your system...");
     }
 
     //-------------------------------------------------------------
@@ -626,10 +601,7 @@ with the load address of your root DASD.
     //--------------------------------------------------------------
     // Install bootloader (always, see #23018)
     // should also set Misc::boot_msg appropriate
-    if ( !Mode::live_eval )
-    {
-	Bootloader::Write ();
-    }
+    Bootloader::Write ();
 
     // --------------------------------------------------------------
     // write network settings to installed system
@@ -855,86 +827,83 @@ with the load address of your root DASD.
     // scripts in inst_rpmcopy
     SCR::Execute(.target.remove, "/etc/mtab");
 
-    if (!Mode::live_eval)
+    // --------------------------------------------------------------
+    // driver update
+    Vendor::DriverUpdate2 ();
+
+    // Stop SCR on target
+    WFM::SCRClose (Installation::scr_handle);
+
+    // first, umount everthing mounted *in* the target.
+    // /proc/bus/usb
+    // /proc
+
+    if (Hotplug::haveUSB)
     {
-	// --------------------------------------------------------------
-	// driver update
-	Vendor::DriverUpdate2 ();
-
-	// Stop SCR on target
-	WFM::SCRClose (Installation::scr_handle);
-
-	// first, umount everthing mounted *in* the target.
-	// /proc/bus/usb
-	// /proc
-
-	if (Hotplug::haveUSB)
-	{
-	    WFM::Execute(.local.umount, Installation::destdir + "/proc/bus/usb");
-	}
-	WFM::Execute(.local.umount, Installation::destdir + "/proc");
-
-	map<string,map> targetMap = Storage::GetTargetMap();
-
-	// first umount all file based crypto fs since they potentially
-	// could mess up umounting of normale filesystems if the crypt
-	// file is not on the root fs
-	y2milestone( "umount list %1", umountList );
-	foreach( map e,  targetMap["/dev/loop","partitions"]:[],
-	    ``{
-	    if( size(e["mount"]:"")>0 )
-		{
-		WFM::Execute( .local.umount,
-		              Installation::destdir + e["mount"]:"" );
-		umountList = filter (string m, umountList, ``(m!=e["mount"]:""));
-		y2milestone( "loop umount %1 new list %2", e["mount"]:"",
-		             umountList );
-		}
-	    if( size(e["loop_dev"]:"")>0 )
-		{
-		string cmd = "/sbin/losetup -d " + e["loop_dev"]:"";
-		y2milestone( "cmd %1", cmd );
-		WFM::Execute( .local.bash, cmd );
-		}
-	    });
-
-	// *** umountList is lexically ordered !
-	// now umount in reverse order (guarantees "/" as last umount)
-
-	integer umountLength = size (umountList);
-	while (umountLength > 0)
-	{
-	    umountLength = umountLength - 1;
-	    string tmp = Installation::destdir + (string) (umountList[umountLength]:"");
-	    y2milestone("umount target: %1", tmp);
-	    WFM::Execute(.local.umount, tmp);
-	}
-
-	// disable loop device of crypto fs
-	integer max_loop_dev = Storage::NumLoopDevices();
-	boolean unload_crypto = false;
-
-	while (max_loop_dev > 0)
-	{
-	    unload_crypto   = true;
-	    string exec_str = sformat( "/sbin/losetup -d /dev/loop%1", max_loop_dev-1 );
-	    y2milestone( "loopdev: %1", exec_str);
-	    WFM::Execute(.local.bash, exec_str);
-	    max_loop_dev = max_loop_dev -1;
-	}
-
-	if( size(filter(string k, map v, targetMap, ``(v["is_lvm_vg"]:false))) >0 )
-	{
-	    y2milestone( "shutting down LVM" );
-	    WFM::Execute(.local.bash, "/sbin/vgchange -a n" );
-	}
-
-	// does not work in 7.2
-	// boot.crypto fails to load module
-	// so we leave it loaded
-	// if ( unload_crypto ) WFM::Execute(.local.bash, "/sbin/rmmod loop_fish2");
-
+        WFM::Execute(.local.umount, Installation::destdir + "/proc/bus/usb");
     }
+    WFM::Execute(.local.umount, Installation::destdir + "/proc");
+
+    map<string,map> targetMap = Storage::GetTargetMap();
+
+    // first umount all file based crypto fs since they potentially
+    // could mess up umounting of normale filesystems if the crypt
+    // file is not on the root fs
+    y2milestone( "umount list %1", umountList );
+    foreach( map e,  targetMap["/dev/loop","partitions"]:[],
+            ``{
+            if( size(e["mount"]:"")>0 )
+            {
+            WFM::Execute( .local.umount,
+                Installation::destdir + e["mount"]:"" );
+            umountList = filter (string m, umountList, ``(m!=e["mount"]:""));
+            y2milestone( "loop umount %1 new list %2", e["mount"]:"",
+                umountList );
+            }
+            if( size(e["loop_dev"]:"")>0 )
+            {
+            string cmd = "/sbin/losetup -d " + e["loop_dev"]:"";
+            y2milestone( "cmd %1", cmd );
+            WFM::Execute( .local.bash, cmd );
+            }
+            });
+
+    // *** umountList is lexically ordered !
+    // now umount in reverse order (guarantees "/" as last umount)
+
+    integer umountLength = size (umountList);
+    while (umountLength > 0)
+    {
+        umountLength = umountLength - 1;
+        string tmp = Installation::destdir + (string) (umountList[umountLength]:"");
+        y2milestone("umount target: %1", tmp);
+        WFM::Execute(.local.umount, tmp);
+    }
+
+    // disable loop device of crypto fs
+    integer max_loop_dev = Storage::NumLoopDevices();
+    boolean unload_crypto = false;
+
+    while (max_loop_dev > 0)
+    {
+        unload_crypto   = true;
+        string exec_str = sformat( "/sbin/losetup -d /dev/loop%1", max_loop_dev-1 );
+        y2milestone( "loopdev: %1", exec_str);
+        WFM::Execute(.local.bash, exec_str);
+        max_loop_dev = max_loop_dev -1;
+    }
+
+    if( size(filter(string k, map v, targetMap, ``(v["is_lvm_vg"]:false))) >0 )
+    {
+        y2milestone( "shutting down LVM" );
+        WFM::Execute(.local.bash, "/sbin/vgchange -a n" );
+    }
+
+    // does not work in 7.2
+    // boot.crypto fails to load module
+    // so we leave it loaded
+    // if ( unload_crypto ) WFM::Execute(.local.bash, "/sbin/rmmod loop_fish2");
+
 
     Progress::Finish();
 

@@ -227,7 +227,6 @@
 	retranslateWizardDialog();
     }
     else if (!Mode::screen_shot
-	     && !Mode::live_eval
              && !Mode::firstboot
              )
     {
@@ -320,7 +319,6 @@ differ from those in the manual.
     // Some abbreviations to keep the table below less wide
     boolean autoinst	= Mode::autoinst;
     boolean autoconf	= AutoInstall::autoconf;
-    boolean live_eval	= Mode::live_eval;
     boolean test_mode	= Mode::test;
     boolean update_mode	= Mode::update;		// FIXME: work's only after reboot
     boolean repair	= Mode::repair;

@@ -734,21 +734,18 @@ To use the settings as displayed, press <b>Next</b>.
 	//
 	// - New installation
 	// - Update
-	// - Boot installed system
+        // - Boot installed system
 
-        if ( !Mode::live_eval )
+        while (true)
         {
-	    while (true)
-	    {
-	        any ret = WFM::CallFunction ("inst_mode", []);
+            any ret = WFM::CallFunction ("inst_mode", []);
 
-	        if (ret == `abort || ret == `finish)
-		    return (symbol) ret;
+            if (ret == `abort || ret == `finish)
+                return (symbol) ret;
 
-		if (ret != `again)
-		    break;
-	    }
-	}
+            if (ret != `again)
+                break;
+        }
     }
 
 
@@ -802,7 +799,7 @@ To use the settings as displayed, press <b>Next</b>.
 	}
 	else if (input == `abort)
 	{
-	    if ( Mode::initial && !Mode::live_eval )
+	    if ( Mode::initial )
 	    {
 		if (Popup::ConfirmAbort (`painless))
 		    return `abort;
@@ -852,7 +849,7 @@ resolved before continuing.
 		continue;
 	    }
 
-	    if ( Mode::initial && !Mode::live_eval )
+	    if ( Mode::initial )
 	    {
 		input = WFM::CallFunction("inst_doit", [true,		// have_back
 						      true,		// have_next
