@@ -34,6 +34,11 @@
     global string baseversion	= "";			// "1.0"
 
     /**
+     * url of release notes (downloaded during internet test)
+     */
+    global string relnotesurl	= "";
+
+    /**
      * true if IMAP server
      */
     global boolean imap_server	= false;
@@ -102,6 +107,8 @@
 	    if (baseproduct == "") baseproduct = name;
 	    baseversion		= SCR::Read(.content.BASEVERSION);
 
+	    relnotesurl		= SCR::Read(.content.RELNOTESURL);
+
 	    any tmp1 = SCR::Read (.content.FLAGS);
 	    if (tmp1 != nil)
 		flags		= splitstring (tmp1, " ");
@@ -121,6 +128,8 @@
 	    baseproduct		= last_product["baseproduct"]:"";
 	    if (baseproduct == "") baseproduct = name;
 	    baseversion		= last_product["baseversion"]:"";
+
+	    relnotesurl		= last_product["relnotesurl"]:"";
 
 	    flags		= splitstring (last_product["flags"]:"", " ");
 	}
