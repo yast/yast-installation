@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Feb 24 18:25:31 CET 2003 - sh@suse.de
+
+- V 2.7.20
+- Fixed bug #24038: Installation language re-selection does not work
+
+-------------------------------------------------------------------
 Mon Feb 24 18:00:37 CET 2003 - gs@suse.de
 
 - don't add .UTF-8 to LANG variable (causes problems with ncurses) 

@@ -34,6 +34,7 @@
     map		submod2id  = $[];
     map		id2submod  = $[];
     boolean	have_blocker = false;
+    symbol	proposal_mode = nil;
 
     // skip if not interactive mode.
     if (!AutoInstall::interactive && Mode::autoinst) {
@@ -286,11 +287,11 @@
     /**
      * Retranslate the proposal (wizard) dialog after the language is changed.
      **/
-    define void retranslate_proposal_dialog(symbol mode) ``{
+    define void retranslate_proposal_dialog() ``{
 
 	y2debug( "Retranslating proposal dialog" );
 
-	build_dialog(mode);
+	build_dialog();
 	Wizard::ReplaceButtonBox( Wizard::HasAcceptButton() ?
 				  Wizard::AbortAcceptButtonBox() :
 				  Wizard::NextBackButtonBox() );
@@ -332,11 +333,11 @@
      *
      * @return submodules_list	list of submodule names (strings)
      **/
-    define list load_matching_submodules_list( symbol mode ) ``{
+    define list load_matching_submodules_list() ``{
 
 	list submodules = [];
 
-	if ( mode == `ini )
+	if ( proposal_mode == `ini )
 	{
 	    // Module list for new installation proposal
 
@@ -374,7 +375,7 @@
 						   );
 	    }
 	}
-	else if ( mode == `net )
+	else if ( proposal_mode == `net )
 	{
 	    // Module list for network configuration proposal
 
@@ -434,7 +435,7 @@
 						   );
 	    }
 	}
-	else if ( mode == `hw )
+	else if ( proposal_mode == `hw )
 	{
 	    // Module list for hardware configuration proposal
 
@@ -522,7 +523,7 @@
      * Create the proposal dialog
      * (the inner part, excluding the wizard frame)
      **/
-    define void build_dialog (symbol mode) ``{
+    define void build_dialog () ``{
 
 	if ( Mode::initial )
 	{
@@ -532,9 +533,9 @@
 	// headline for installation proposal
 	string headline = _("Installation Settings");
 
-	if (mode == `net)
+	if ( proposal_mode == `net)
 	    headline = _("Network Configuration");
-	else if (mode == `hw)
+	else if ( proposal_mode == `hw)
 	    headline = _("Hardware Configuration");
 
 	/* radiobuttons */
@@ -566,7 +567,7 @@
 
 	term vbox = nil;
 
-	if (mode == `ini)
+	if ( proposal_mode == `ini )
 	{
 	    vbox = `VBox(
 			 // Help message between headline and installation proposal / settings summary.
@@ -596,7 +597,7 @@
 
 	Wizard::SetContents(headline,
 			    vbox,
-			    UI::WidgetExists(`id(`HelpText) ) ? help_text(WFM::Args(2)) : "",
+			    UI::WidgetExists(`id(`HelpText) ) ? help_text() : "",
 			    WFM::Args(0),	// have_back_button
 			    false	// have_next_button
 			    );
@@ -661,7 +662,7 @@
      *
      * @return string help text
      **/
-    define string help_text(symbol mode) ``{
+    define string help_text() ``{
 
 	string help_text = "";
 
@@ -672,7 +673,7 @@ or by using the <b>Change...</b> menu.
 </p>
 ");
 
-	if ( mode == `ini )
+	if ( proposal_mode == `ini )
 	{
 	    // Help text for installation proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -702,7 +703,7 @@ Your hard disk has not been modified in any way, so you can still safely abort.
 </p>
 ");
 	}
-	else if ( mode == `net )
+	else if ( proposal_mode == `net )
 	{
 	    // Help text for network configuration proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -711,7 +712,7 @@ Put the network settings into effect by pressing <b>Next</b>.
 </p>
 ") + how_to_change;
 	}
-	else if ( mode == `hw )
+	else if ( proposal_mode == `hw )
 	{
 	    // Help text for hardware configuration proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -754,7 +755,8 @@ To use the settings as displayed, press <b>Next</b>.
     //
 
     y2milestone( "Installation step #2" );
-    build_dialog(WFM::Args(2));
+    proposal_mode = WFM::Args(2);
+    build_dialog();
 
     UI::ChangeWidget(`id(`menu_dummy), `Enabled, false );
     richtext_busy_cursor(`id(`proposal ) );
@@ -801,7 +803,7 @@ To use the settings as displayed, press <b>Next</b>.
     // Get submodule descriptions
     //
 
-    submodules = load_matching_submodules_list( WFM::Args(2) );
+    submodules = load_matching_submodules_list();
     if (!get_submod_descriptions_and_build_menu ())
     {
 	return `auto;
@@ -927,7 +929,7 @@ To use the settings as displayed, press <b>Next</b>.
 	}
 	else if ( input == `help )
 	{
-	    Wizard::ShowHelp( help_text(WFM::Args(2)) );
+	    Wizard::ShowHelp( help_text() );
 	}
 
     } // while input loop
