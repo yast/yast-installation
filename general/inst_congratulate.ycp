@@ -123,7 +123,11 @@ return to this installation sequence.</p>
 
     Wizard::RestoreNextButton ();
 
-    if (ret == `next && (boolean)UI::QueryWidget (`id(`start_y2cc), `Value))
+    if (!UI::WidgetExists(`id(`start_y2cc)))
+    {
+        return ret;
+    }
+    else if (ret == `next && (boolean)UI::QueryWidget (`id(`start_y2cc), `Value))
     {
 	// Create empty /var/lib/YaST2/start_y2cc file to signal the calling script
 	// that the YaST2 control center should be started after the installation
