@@ -316,8 +316,9 @@ Please wait while the base system is being installed.
 	SCR::Write (.sysconfig.displaymanager.DISPLAYMANAGER, default_dm);
 	SCR::Write (.sysconfig.displaymanager, nil);
 
-	if (doc_server != "")
+	if (doc_server == "yes")
 	{
+	    SCR::Execute (.target.bash, "/sbin/insserv apache");
 	    SCR::Write (.sysconfig.apache.DOC_SERVER, doc_server);
 	    SCR::Write (.sysconfig.apache, nil);
 	}
