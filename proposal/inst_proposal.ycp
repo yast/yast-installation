@@ -729,7 +729,7 @@ Use <b>Accept</b> to perform a new installation with the values displayed.
 
 	    // Help text for installation proposal, continued
 	    help_text = help_text + _("<p>
-To update an existing SuSE Linux system instead of doing a new install,
+To update an existing &product; system instead of doing a new install,
 click the <b>Mode</b> headline or select <b>Mode</b> in the
 <b>Change...</b> menu.
 </p>
