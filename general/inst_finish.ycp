@@ -24,7 +24,6 @@
     import "Console";
     import "Directory";
     import "Display";
-    import "FileSystems";
     import "Hotplug";
     import "HwStatus";
     import "Initrd";
@@ -37,8 +36,6 @@
     import "Stage";
     import "ModulesConf";
     import "Mouse";
-    import "PackageSelectionIO";
-    import "Packages";
     import "Product";
     import "Popup";
     import "ProductControl";
@@ -46,13 +43,12 @@
     import "Report";
     import "RunlevelEd";
     import "Storage";
-    import "StorageControllers";
-    import "StorageDevices";
     import "Timezone";
     import "Update";
     import "Vendor";
     import "X11Version";
     import "Linuxrc";
+    import "Wizard";
 
     // collect data for linuxrc, will be written to /etc/yast.inf
     map<string,string> linuxrc = $[];
@@ -97,6 +93,9 @@ Please wait while the base system is being installed.
 		  progress_stages,
 		  progress_descriptions,
 		  help_text );
+
+    Wizard::DisableBackButton ();
+    Wizard::DisableNextButton ();
 
     // --------------------------------------------------------------
     // do things needed in inst-sys
