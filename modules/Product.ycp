@@ -72,7 +72,7 @@ global boolean personal		= false;
  */
 global define void Product () ``{
 
-    map productdata = Pkg::SourceProductData(0);
+    map productdata	= Pkg::SourceProductData(0);	// get _last_ installed product
     name		= productdata["productname"]:"";
     imap_server		= (name == "eMail Server");
     openteam_server	= (name == "Open Team Server");
