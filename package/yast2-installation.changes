@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Aug 10 14:31:34 CEST 2004 - mvidner@suse.cz
+
+- Fixed arguments for proposals (`initial)
+
+-------------------------------------------------------------------
 Mon Aug  9 19:37:28 CEST 2004 - nashif@suse.de
 
 - Enable locking of proposals in control file
