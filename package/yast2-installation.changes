@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Mar 10 16:10:27 CET 2003 - arvin@suse.de
+
+- fixed compose characters for certain locales (bug #14751)
+
+-------------------------------------------------------------------
 Fri Mar  7 17:21:06 CET 2003 - nashif@suse.de
 
 - Dont read product data from installed system if in config mode
