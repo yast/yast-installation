@@ -6,8 +6,10 @@
 Requires:	yast2
 Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
 
-Provides:	yast2-trans-inst-general yast2-trans-inst-proposal
-Obsoletes:	yast2-trans-inst-general yast2-trans-inst-proposal
+Provides:	yast2-trans-inst-proposal y2t_inst
+Obsoletes:	yast2-trans-inst-proposal y2t_inst
+Provides:	yast2-trans-inst-general y2t_inst-general
+Obsoletes:	yast2-trans-inst-general y2t_inst-general
 
 Summary:	Installation workflow
 
