@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Sep 10 13:03:30 CEST 2004 - snwint@suse.de
+
+- use vesa driver as fallback, not vga (see #38253, comment #11)
+
+-------------------------------------------------------------------
 Thu Sep  9 15:49:46 CEST 2004 - mvidner@suse.cz
 
 - Added a client to test the network and hardware proposals (#44677).
