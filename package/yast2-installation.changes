@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jul 26 13:35:24 CEST 2002 - ms@suse.de
+
+- add subdirectory x11 and include the base modules
+  X11Version and inst_x11 to be present at any time
+
+-------------------------------------------------------------------
 Tue Jul 23 15:29:46 CEST 2002 - olh@suse.de
 
 - new kernel names and binaries for ppc.
