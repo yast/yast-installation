@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Aug 22 11:27:23 CEST 2003 - arvin@suse.de
+
+- fixed update workflow
+
+-------------------------------------------------------------------
 Thu Aug 21 14:42:12 CEST 2003 - arvin@suse.de
 
 - removed obsolete installation_ui.ycp
