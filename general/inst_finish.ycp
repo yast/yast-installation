@@ -672,6 +672,30 @@ with the load address of your root DASD.
 	}
 	WFM::Execute(.local.umount, Installation::destdir + "/proc");
 
+	map targetMap = Storage::GetTargetMap();
+
+	// first umount all file based crypto fs since they potetially
+	// could mess up umounting of normale filesystems if the crypt
+	// file is not on the root fs
+	y2milestone( "umount list %1", umountList );
+	foreach( `e,  targetMap["/dev/loop","partitions"]:[],
+	    ``{
+	    if( size(e["mount"]:"")>0 )
+		{
+		WFM::Execute( .local.umount, 
+		              Installation::destdir + e["mount"]:"" );
+		umountList = filter( `m, umountList, ``(m!=e["mount"]:""));
+		y2milestone( "loop umount %1 new list %2", e["mount"]:"",
+		             umountList );
+		}
+	    if( size(e["loop_dev"]:"")>0 )
+		{
+		string cmd = "/sbin/losetup -d " + e["loop_dev"]:"";
+		y2milestone( "cmd %1", cmd );
+		WFM::Execute( .local.bash, cmd );
+		}
+	    });
+
 	// *** umountList is lexically ordered !
 	// now umount in reverse order (guarantees "/" as last umount)
 
@@ -696,7 +720,6 @@ with the load address of your root DASD.
 	    max_loop_dev = max_loop_dev -1;
 	}
 
-	map targetMap = Storage::GetTargetMap();
 	if( size(filter(`k,`v, targetMap, ``(lookup (v, "is_lvm_vg", false)))) >0 )
 	{
 	    y2milestone( "shutting down LVM" );
