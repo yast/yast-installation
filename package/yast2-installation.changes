@@ -1,13 +1,18 @@
 -------------------------------------------------------------------
+Wed Sep 15 15:16:41 CEST 2004 - arvin@suse.de
+
+- fixed back button in internet test dialog (bug #45319)
+
+-------------------------------------------------------------------
 Wed Sep 15 14:48:09 CEST 2004 - visnov@suse.cz
 
-- initialize proposal heading before creating dialog (#45340) 
+- initialize proposal heading before creating dialog (#45340)
 
 -------------------------------------------------------------------
 Tue Sep 14 18:22:06 CEST 2004 - sh@suse.de
 
 - V 2.10.20
-- Fixed bug #45271: Mixture of en_UK / en_US: "licence" / "license" 
+- Fixed bug #45271: Mixture of en_UK / en_US: "licence" / "license"
 
 -------------------------------------------------------------------
 Tue Sep 14 17:05:15 CEST 2004 - mvidner@suse.cz
