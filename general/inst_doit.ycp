@@ -136,10 +136,14 @@ and that the write protection is removed.
 		// msgbox
 		// failed to find a floppy disk
 		any ret = UI::AnyQuestionPopup3(_("Could not find a formatted floppy disk."),
+						// msgbox
+						// failed to find a floppy disk
 						_("Check for a floppy disk
 in the correct drive.
 Is the disk formatted and verified?
-"), UI::RetryButtonLabel(), UI::CancelButtonLabel(), _("&Format floppy"), `focus_yes);
+"), UI::RetryButtonLabel(), UI::CancelButtonLabel(),
+						// this is a button label
+						_("&Format floppy"), `focus_yes);
 
 		if (ret == `no)		// cancel
 		{

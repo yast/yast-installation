@@ -75,11 +75,16 @@
     global define list EasyInstallationStepDescriptions() ``{
 	return [
 		// Descriptions of the installation steps.
-		//
 		// Translations shouldn't get much wider than the originals,
 		// but feel free to include more newlines.
 		_("Language\nSelection"),
+		// Descriptions of the installation steps.
+		// Translations shouldn't get much wider than the originals,
+		// but feel free to include more newlines.
 		_("Installation\nSettings"),
+		// Descriptions of the installation steps.
+		// Translations shouldn't get much wider than the originals,
+		// but feel free to include more newlines.
 		_("Perform\nInstallation")
 	];
     };
