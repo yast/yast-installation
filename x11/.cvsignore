@@ -3,4 +3,5 @@ Makefile.in
 .deps
 .libs
 version
+*.ybc
 .dep
