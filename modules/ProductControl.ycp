@@ -526,7 +526,9 @@ global define list<string> getProposals(string stage, string mode, string propty
            productControl["textdomain"]:"control";
 
     y2debug( "Using textdomain '%1' for proposals", proposal_textdomain);
-    current_proposal_label = dgettext( proposal_textdomain , props[0, "label"]:"" );
+    string default_proposal_label =  _("Installation Settings");
+    current_proposal_label = dgettext( proposal_textdomain ,
+            props[0, "label"]:default_proposal_label );
     y2milestone("Proposal label: %1", current_proposal_label );
 
     return final_proposals;

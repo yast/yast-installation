@@ -357,7 +357,7 @@ textdomain="control"
                 <module>
 	            <label>Network</label>
                     <name>proposal</name>
-                    <arguments>true,true,`net</arguments>
+                    <arguments>true,true,`network</arguments>
                 </module>
                 <module>
 	            <label>Network</label>
@@ -398,7 +398,7 @@ textdomain="control"
                 <module>
 	            <label>Device Configuration</label>
                     <name>proposal</name>
-                    <arguments>true,true,`hw</arguments>
+                    <arguments>true,true,`hardware</arguments>
                 </module>
                 <module>
                     <name>congratulate</name>
