@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Sep 15 11:03:04 CEST 2003 - arvin@suse.de
+
+- skip network probing during update (bug #30545)
+
+-------------------------------------------------------------------
 Sun Sep 14 15:07:36 CEST 2003 - arvin@suse.de
 
 - reset packagemanager when changing installation mode (bug #27970)
