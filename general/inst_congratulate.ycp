@@ -12,6 +12,7 @@
 
     import "Mode";
     import "Wizard";
+    import "Popup";
     import "Label";
 
 
@@ -107,7 +108,7 @@ return to this installation sequence.</p>
 
 	if (ret == `abort)
 	{
-	    if (CallFunction (`inst_confirm_abort (`incomplete)))
+	    if (Popup::ConfirmAbort (`incomplete))
 		break;
 	}
 	else if ( ret == `help )
