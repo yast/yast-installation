@@ -141,6 +141,7 @@
 	fwadmin_host	= (name == "SuSE Firewall Adminhost");
 	certify_cd	= (name == "Certification CD");
 
+	if(distproduct == nil) distproduct = "";
 	dist		= select (splitstring(distproduct, "-"), 2, "");
 
 	personal	= (dist == "Personal");
