@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Feb 24 17:23:55 CET 2003 - mvidner@suse.de
+
+- Added proxy to the network configuration proposal (#24204).
+
+-------------------------------------------------------------------
 Fri Feb 21 15:21:41 CET 2003 - arvin@suse.de
 
 - better text for "abort installation" popup (bug #24019)
