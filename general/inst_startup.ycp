@@ -31,7 +31,7 @@
     import "Storage";
     import "Kernel";		// call constructor, extract cmdline
     import "Wizard";
-	import "Report";
+    import "Report";
 
 
     include "installation/dialogs.ycp";
