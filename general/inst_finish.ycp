@@ -169,15 +169,15 @@ Please wait while the base system is being installed.
 
     // Copy control.xml so it can be read once again during continue mode
     SCR::Execute (.target.bash, "/bin/cp " + ProductControl::current_control_file  + " " +
-		  Installation::destdir + "/var/lib/YaST2/control.xml");
+		  Installation::destdir + Directory::etcdir + "/control.xml");
     SCR::Execute (.target.bash, "/bin/chmod 0644 " +
-		  Installation::destdir + "/var/lib/YaST2/control.xml");
+		  Installation::destdir + Directory::etcdir + "/control.xml");
 
     // Copy info.txt so it can be used in firstboot
     if (SCR::Read(.target.size, "/info.txt") > 0)
     {
         SCR::Execute (.target.bash, "/bin/cp /info.txt " +
-                Installation::destdir + "/var/lib/YaST2/");
+                Installation::destdir + Directory::etcdir + "/eula.txt");
     }
 
     // on SGI Altix add fetchop and mmtimer to MODULES_LOADED_ON_BOOT
@@ -226,9 +226,10 @@ Please wait while the base system is being installed.
     // new system has done its virgin boot. The Write call
     // creates any missing directory :-).
 
-    if (!SCR::Write (.target.string, "/var/lib/YaST2/runme_at_boot", ""))
+    string runme_at_boot = Directory::vardir + "/runme_at_boot";
+    if (!SCR::Write (.target.string, runme_at_boot, ""))
     {
-	y2error ("Couldn't create target /var/lib/YaST2/runme_at_boot");
+	y2error ("Couldn't create target %1", runme_at_boot );
     }
 
     // --------------------------------------------------------------
@@ -321,7 +322,7 @@ Please wait while the base system is being installed.
     string update_dir = (string) SCR::Read (.etc.install_inf.UpdateDir);
     if (update_dir != nil)
     {
-	SCR::Write (.target.string, "/var/lib/YaST2/vendor_update", update_dir);
+	SCR::Write (.target.string, Directory::vardir + "/vendor_update", update_dir);
     }
 
 
