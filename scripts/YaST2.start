@@ -211,6 +211,7 @@ esac
 
 # remove mouse here, re-init in inst_startup
 rm -f /dev/mouse
+
 # if we know the mouse device, set the link here (needed for SPARC)
 if [ "$Mousedevice" ] ; then
   ln -sf $Mousedevice /dev/mouse
@@ -258,6 +259,9 @@ unset MODPATH
 # remove this link, otherwise YaST2 thinks it is an update
 rm -f /var/X11R6/bin/X
 
+# remove the trigger for the ssh installation
+rm -f /tmp/YaST2_ssh_installation_finished
+
 
 /usr/lib/YaST2/bin/YaST2 installation initial
 
@@ -293,5 +297,9 @@ fuser -vm / >/dev/tty11
 # yyyyyyyyyyyyyyyyy
 
 test -d /proc/iSeries || chvt 1
+
+# write the trigger for ssh installation
+# this will proceed in /sbin/inst_setup
+echo $yast2exitcode > /tmp/YaST2_ssh_installation_finished
 
 exit $yast2exitcode
