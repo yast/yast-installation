@@ -6,6 +6,7 @@
 Requires:	yast2
 Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
 Requires:	yast2-packager
+Requires:	release-notes
 
 Provides:	yast
 Obsoletes:	yast
