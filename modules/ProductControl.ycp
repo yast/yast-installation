@@ -82,12 +82,17 @@ global define boolean Read( string controlfile) ``{
     workflows = productControl["workflows"]:[];
     proposals = productControl["proposals"]:[];
 
-    if (haskey(productControl, "partitioning") &&
-            size( productControl["partitioning", "partitions"]:[] ) > 0)
+    if (haskey(productControl, "partitioning"))
     {
-        partitioning = productControl["partitioning"]:$[];
-        ProductFeatures::flexible_partitioning = true;
-        ProductFeatures::FlexiblePartitioning = partitioning;
+        if (size( productControl["partitioning", "partitions"]:[] ) > 0)
+        {
+            partitioning = productControl["partitioning"]:$[];
+            ProductFeatures::flexible_partitioning = true;
+            ProductFeatures::FlexiblePartitioning = partitioning;
+        }
+        if (productControl["partitioning", "evms_config"]:false) {
+            ProductFeatures::evms_config = true;
+        }
     }
     if (haskey(productControl, "software"))
     {
