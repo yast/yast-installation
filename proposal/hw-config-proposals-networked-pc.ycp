@@ -5,11 +5,11 @@
 // (PCs with a network card)
 //
 [
+"x11_proposal",
 "lan_proposal",
 "printer_proposal",
 "modem_proposal",
 "isdn_proposal",
 "sound_proposal",
-"tv_proposal",
-"x11_proposal",
+"tv_proposal"
 ]
