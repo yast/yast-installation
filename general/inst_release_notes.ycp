@@ -1,0 +1,57 @@
+/**
+ * File:	installation/general/inst_relase_notes.ycp
+ * Module:	Installation
+ * Summary:	Display release notes
+ * Authors:	Arvin Schnell <arvin@suse.de>
+ *
+ * Display release notes.
+ */
+
+{
+    textdomain "installation";
+
+    import "Wizard";
+
+    /* Congratulation Dialog caption */
+    string caption = _("Release Notes");
+
+    string text = "these are the release notes FIXME";
+
+    // FIXME: language
+    string notes_file = "/usr/share/doc/RELEASE_NOTES.en.html";
+    string notes_text = SCR::Read (.target.string, [notes_file, ""]);
+
+    term contents = `VBox (
+			   `VSpacing (0.5),
+			   `Left (`Label (sformat (_("Content of file %1"), notes_file))),
+			   `RichText (`opt(`richText), notes_text),
+			   `VSpacing (0.5)
+			   );
+
+    string help = _("FIXME");
+
+    Wizard::SetContentsButtons (caption, contents, help,
+				BackButtonLabel(), NextButtonLabel());
+
+    any ret = nil;
+
+    repeat {
+
+	ret = Wizard::UserInput();
+
+	if ( ret == `abort &&
+	     WFM::CallFunction (`inst_confirm_abort(`painless) ) )
+	{
+	    Wizard::RestoreNextButton();
+	    return `abort;
+	}
+
+	if ( ret == `help )
+	{
+	    Wizard::ShowHelp (help);
+	}
+
+    } until ( ret == `next || ret == `back );
+
+    return ret;
+}
