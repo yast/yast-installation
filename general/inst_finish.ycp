@@ -173,15 +173,12 @@ Please wait while the base system is being installed.
     // Copy pre-install scripts to /var/adm/scripts and logs
     // to /var/adm/inst-log
 
-    // this should better be done via InjectFile after SCR re-start below.
-    // But InjectFile can't handle wildcards.
-
     if (Mode::autoinst)
     {
-	y2milestone("Autoinstall: Copying Pre-Install scripts to installed system");
-	SCR::Execute(.target.bash,"/bin/cp " +  AutoInstall::tmpdir + "/prescripts/* " + Installation::destdir + AutoInstall::scripts_dir);
-	SCR::Execute(.target.bash,"/bin/cp " +  AutoInstall::tmpdir + "/prescripts/logs/* " + Installation::destdir + AutoInstall::logs_dir);
-	y2milestone("Autoinstall: Done");
+        AutoInstall::copyPrescriptData();
+        // progress stage title
+        Progress::Title (_("Executing postinstall (chroot) scripts"));
+        AutoInstall::scriptSettings("chroot-scripts");
     }
 
     // copy hardware status to installed system
@@ -360,11 +357,9 @@ Please wait while the base system is being installed.
 
     if (Mode::autoinst)
     {
-	Progress::NextStep();
-	// progress stage title
-	Progress::Title (_("Executing postinstall (chroot) scripts"));
-	AutoInstall::Save();
-	AutoInstall::scriptSettings("chroot-scripts");
+		Progress::NextStep();
+		// progress stage title
+		AutoInstall::Save();
     }
 
     ModulesConf::Save ();
@@ -617,7 +612,10 @@ with the load address of your root DASD.
 	    Report::DisplayMessages(true, 10);
 	}
 
-	Report::Message(Misc::boot_msg);
+	// workaround to avoid system lookup with UI messages (FIXME/TODO)
+	if ( ! Mode::autoinst )
+		Report::Message(Misc::boot_msg);
+
 	Misc::boot_msg = "";
     }
 

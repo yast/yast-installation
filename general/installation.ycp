@@ -432,17 +432,17 @@ will look different than in the manual.");
 //  -Step-	 -Module-	    -Back- -Next- -spec-  -Architecture(s)-		                       -Mode(s)-                             -immediate_prepdisk-
 
 [
- [ `initial,  `autoinst_init	    (false, true),       [ "ALL", "NOT_s390" ],		  ! test_mode &&		  autoinst			, false],
+ [ `initial,  `autoinst_init	    (false, false),      [ "ALL", "NOT_s390" ],		  ! test_mode &&		  autoinst			, false],
  [ `initial,  `inst_language	    (false, true, true), [ "ALL"	     ],		  ! autoinst							, false],
- [ `initial,  `inst_startup	    (false, true),       [ "ALL"	     ],						  autoinst                      , false],
- [ `initial,  `autoinst_setup	    (false, true),       [ "ALL", "NOT_s390" ],		  ! test_mode &&		  autoinst			, false],
+ [ `initial,  `inst_startup			(false, true),       [ "ALL"	     ],						  autoinst                      , false],
+ [ `initial,  `autoinst_setup	    (false, false),      [ "ALL", "NOT_s390" ],		  ! test_mode &&		  autoinst			, false],
  //-------------------------------------------------------------------------------------------------------------------------------------------------------------
  [ `initial,  `inst_proposal	    (true,  true),       [ "ALL"	     ],						  all_modes			, false],
  //-------------------------------------------------------------------------------------------------------------------------------------------------------------
  [ `initial,  `inst_do_resize	    (false, false),      [ "i386"	     ], ! live_eval &&				  ! autoinst			, false],
  //-------------------------------------------------------------------------------------------------------------------------------------------------------------
  [ `initial,  `inst_prepdisk	    (false, false),      [ "ALL"	     ], ! live_eval								, false],
- [ `initial,  `inst_rpmcopy	    (false, false),      [ "ALL"	     ], ! live_eval				  ||	  screen_shot_mode	, false],
+ [ `initial,  `inst_rpmcopy			(false, false),      [ "ALL"	     ], ! live_eval				  ||	  screen_shot_mode	, false],
  [ `initial,  `inst_s390silo	    (true,  true),       [	     "s390"  ], ! live_eval								, false],
  //------------------------------------------------------------------------------------------------------------------------------------------------------------
  [ `initial,  `inst_s390netadopt    (true,  true),       [	     "s390"  ], ! live_eval								, false],
