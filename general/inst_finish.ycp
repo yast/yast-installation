@@ -17,6 +17,7 @@
     import "Arch";
     import "Mode";
     import "Installation";
+	import "X11Version";
     import "AutoInstall";
     import "Misc";
     import "Language";
@@ -421,38 +422,17 @@ Please wait while the base system is being installed.
     // Copy /etc/XF86Config into built system so that the
     // second phase of the installation can find it.
 
-    if ( Mode::update )
-    {
-	// Update mode
-	if ( Mouse::mset == "imps/2" )
-	{
-	    // Patching xf86config for wheel mouses.
-	    if (SCR::Execute (.target.bash, Directory::ybindir + "/update_xf86config") != 0)
-	    {
-		y2error ( "Patch of XF86Config for wheelmouse");
-	    }
-	    else
-	    {
-		y2milestone ( "XF86Config has been patched for wheelmouse" );
-	    }
+    if ( Mode::update ) {
+	if ( (x11_installed) && (X11Version::versionLink == "3") ) {
+		// Update mode...
+		InjectFile ("/etc/X11/XF86Config");
 	}
-    }
-    else
-    {
-	// Installation mode
-	// copy XF86Config only if needed
-	if ( x11_installed )
-	{
-	    InjectFile ("/etc/X11/XF86Config");
-
-	    if (Mouse::mset != "")
-	    {
-		// replace with probed type
-		SCR::Execute(.target.bash, "/bin/sed -e \"s#Microsoft#"+Mouse::mset+"#\" /etc/X11/XF86Config >"+tmpdir+"/XF86Config");
-		SCR::Execute(.target.bash, "/bin/mv -f "+tmpdir+"/XF86Config /etc/X11");
-	    }
+	} else {
+	if ( x11_installed ) {
+		// Installation mode...
+		InjectFile ("/etc/X11/XF86Config");
 	}
-    }
+	}
 
     // --------------------------------------------------------------
     // Save http_proxy and ftp_proxy

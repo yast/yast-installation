@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Apr 23 12:09:20 CEST 2003 - ms@suse.de
+
+- ensure XF86Config is available if someone performs an update
+  within a XFree86 3.x environment
+
+-------------------------------------------------------------------
 Tue Apr 15 17:18:13 CEST 2003 - arvin@suse.de
 
 - removed call of SuSEconfig.3ddiag and switch2mesasoft after
