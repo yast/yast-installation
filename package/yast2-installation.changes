@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Oct 24 15:58:50 CEST 2003 - ms@suse.de
+
+- added stuff from yast2/library/x11 to installation package
+
+-------------------------------------------------------------------
 Fri Oct 24 13:09:25 CEST 2003 - arvin@suse.de
 
 - added help text for "Repair Installed System" (bug #30402)
