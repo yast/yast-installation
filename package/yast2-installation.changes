@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Feb 16 16:29:19 CET 2004 - mvidner@suse.cz
+
+- set the runlevel according to the proposal
+
+-------------------------------------------------------------------
 Mon Feb 16 16:01:35 CET 2004 - arvin@suse.de
 
 - added more flexible package handling for products
