@@ -1,5 +1,5 @@
 /**
- * Module: 		ModuleLoading.ycp
+ * Module:		ModuleLoading.ycp
  *
  * Authors:		Klaus Kaempf <kkaempf@suse.de> (initial)
  *
@@ -11,7 +11,7 @@
 {
     module "ModuleLoading";
 
-    textdomain "general";
+    textdomain "installation";
 
     import "Mode";
     import "Boot";
@@ -95,7 +95,7 @@
 		// already loaded
 		return true;
 	    }
-		
+
 	    // sformat( _("Loading module %1"), modulename);
 
 	    if (ask_before_loading)

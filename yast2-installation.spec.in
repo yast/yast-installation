@@ -1,10 +1,10 @@
 @HEADER-COMMENT@
-
-# neededforbuild  yast2-devel-packages
+# neededforbuild yast2-devel-packages
 
 @HEADER@
 Requires:	yast2
 Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
+
 BuildArchitectures:	noarch
 
 Summary:	Installation workflow
@@ -25,21 +25,11 @@ from an installation media.
 %defattr(-,root,root)
 %doc @docdir@
 
-%dir /var/lib/YaST2
-
-%dir @clientdir@
 @clientdir@/*.ycp
-
-%dir @moduledir@
 @moduledir@/*.ycp
-
-%dir @yncludedir@
 @yncludedir@/*.ycp
-
-%dir @configdir@
 @configdir@/*.y2cc
 
-%dir @scrconfdir@
 # kernel/agents
 @scrconfdir@/boot_vmlinuz_version.scr
 @scrconfdir@/cfg_kernel.scr
@@ -65,4 +55,3 @@ from an installation media.
 #FIXME@ybindir@/pars-inf.pl
 #FIXME@ybindir@/y2merge.pl
 @ybindir@/inst_setup_vnc
-

@@ -2,7 +2,7 @@
  *
  * Author:	Klaus Kämpf <kkaempf@suse.de>
  *
- * Purpose: 	Ask for the installation method:
+ * Purpose:	Ask for the installation method:
  *		- New installation
  *		- Update
  *		- Boot installed system
@@ -28,11 +28,11 @@
     import "Storage";
     import "Update";
 
-    textdomain "general";
+    textdomain "installation";
 
 
     boolean called_from_ask_user = false;
-    
+
     if ( size( Args() ) > 0
 	 && is( Args(0), symbol )
 	 && Args(0) == `AskUser )
@@ -40,7 +40,7 @@
 	called_from_ask_user = true;
     }
 
-    
+
     if ( ! Storage::HaveLinuxPartitions()
 	 || Mode::autoinst
 	 || Mode::live_eval
@@ -131,7 +131,7 @@ fix problems manually.
 	// If this is _not_ called from the proposal's ask_user function but
 	// initially, the user _must_ make a decision, but there should clearly
 	// be a safe exit - so let's give him an "abort installation" option.
-	
+
 	radio_buttons = add( radio_buttons, `VSpacing(1.2) );
 	radio_buttons = add( radio_buttons,
 			     `Left(`RadioButton(`id(`abort),
@@ -139,7 +139,7 @@ fix problems manually.
 						_("Abo&rt Installation")  ) )
 			     );
     }
-    
+
     term radio_box = `RadioButtonGroup( `id( `options ),
 					`HSquash(
 						 `Frame (
@@ -159,18 +159,18 @@ fix problems manually.
     {
 	// If we were called from the proposal's ask_user function, there must
 	// be a cancel button as a safe exit.
-	
+
 	buttons = `HBox(
 			`HWeight( 1, `PushButton(`id(`ok), `opt(`default), UI::OKButtonLabel() ) ),
 			`HSpacing( 1 ),
 			`HWeight( 1, `PushButton(`id(`cancel), UI::CancelButtonLabel() ) )
 			);
-	
+
     }
 
     term ask_mode_dialog = `HBox(`id(`ask_mode_dialog ),
 				 `VSpacing( 15 ),		// force dialog height
-				 `VBox( 
+				 `VBox(
 				       `HSpacing( 30 ),	// force help text width
 				       `RichText( help_text )
 				       ),
@@ -183,12 +183,12 @@ fix problems manually.
 				 `HSpacing( 3 )
 				 );
 
-    
+
 
     // Event handling
 
     any ret = nil;
-    
+
     while ( true )
     {
 	if ( ! UI::WidgetExists(`id(`ask_mode_dialog ) ) )
@@ -207,10 +207,10 @@ fix problems manually.
 	    // What a mess.
 	    //
 	    // sh@suse.de 2002-03-06
-	    
+
 	    UI::OpenDialog( ask_mode_dialog );
 	}
-	    
+
 	if (!Mode::autoinst)
 	{
 	    ret = UI::UserInput();
@@ -232,9 +232,9 @@ fix problems manually.
 	if (ret == `ok || ret == `next || ret == `accept )
 	{
 	    ret = `next;
-	    
+
 	    any newmode = UI::QueryWidget(`id(`options), `CurrentButton);
-	    
+
 	    if (newmode == nil)
 	    {
 		UI::MessagePopup(_("Choose one of the\noptions to continue."));
@@ -255,7 +255,7 @@ fix problems manually.
 		    // button can only be present if this is called initially
 		    // and there must be a Linux partition, "update" is the
 		    // safest selection.
-		    
+
 		    UI::ChangeWidget(Mode::update ? `id(`update ) : `id(`install), `Value, true );
 		    continue;
 		}
@@ -276,7 +276,7 @@ fix problems manually.
 
 		UI::CloseDialog(); // close the inst_mode dialog
 		ret = CallFunction( `inst_updateControl() );
-		
+
 		if ( ret == `back )
 		{
 		    Storage::ResetOndiskTarget();
@@ -366,7 +366,7 @@ fix problems manually.
 	UI::CloseDialog();				// close it
     }
 
-    
+
     if ( ret == nil )	// This should never happen, but who knows?
 	ret = `cancel;
 

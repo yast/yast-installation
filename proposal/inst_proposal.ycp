@@ -12,7 +12,7 @@
  *			See also file proposal-API.txt for details.
  */
 {
-    textdomain "proposal";
+    textdomain "installation";
 
     import "Arch";
     import "Mode";
@@ -27,16 +27,16 @@
     // values used in defined functions
 
     list	submodules = [];
-    list 	titles     = [];
-    map	 	submod2id  = $[];
-    map	 	id2submod  = $[];
-    boolean 	have_blocker = false;
+    list	titles     = [];
+    map		submod2id  = $[];
+    map		id2submod  = $[];
+    boolean	have_blocker = false;
 
     // skip if not interactive mode.
     if (!AutoInstall::interactive && Mode::autoinst) {
 	return `auto;
     }
-    
+
     /**
      * Display preformatted proposal in the RichText widget
      *
@@ -53,7 +53,7 @@
      * Call a submodule's MakeProposal() function.
      *
      * @param  submodule	name of the submodule's proposal dispatcher
-     * @param  force_reset 	discard any existing (cached) proposal
+     * @param  force_reset	discard any existing (cached) proposal
      * @param  language_changed	installation language changed since last call
      * @return proposal_map	see proposal-API.txt
      **/
@@ -120,7 +120,7 @@
      * Call each submodule's MakeProposal() function in turn and display the
      * proposals in the RichText widget.
      *
-     * @param  force_reset 	discard any existing (cached) proposal
+     * @param  force_reset	discard any existing (cached) proposal
      * @param  language_changed	installation language changed since last call
      **/
 
@@ -247,7 +247,7 @@
 	{
 	    y2error( "Write() failed for one or more submodules" );
 	    // Submodules handle their own error reporting
-	    
+
 	    UI::TimedMessagePopup( _( "Configuration saved.\nThere were errors." ), 3 );
 	}
 	else
@@ -483,7 +483,7 @@
 		// Fallback layout for NCurses or Qt < 800x600:
 		// The menu at the left, the checkboxes below each other in a
 		// column at the right.
-		
+
 		bottom_box =
 		    `VBox(
 			  `HBox(
@@ -779,9 +779,9 @@ To use the settings as displayed, press <b>Accept</b>.
 	    if ( UI::QueryWidget(`id(`skip), `Value ) )
 	    {
 		// User doesn't want to use any of the settings
-		
+
 		UI::ChangeWidget( `id(`proposal), `Value,
-				  HTML::Newlines( 3 ) + 
+				  HTML::Newlines( 3 ) +
 				  HTML::Para( _( "Skipping hardware configuration upon user request" ) )
 				  );
 		UI::ChangeWidget(`id(`menu), `Enabled, false );
@@ -822,7 +822,7 @@ To use the settings as displayed, press <b>Accept</b>.
 		{
 		    write_settings();
 		}
-		
+
 		return `next;
 	    }
 	}

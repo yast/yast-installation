@@ -19,7 +19,7 @@
  */
 
 {
-    textdomain "general";
+    textdomain "installation";
 
     import "Arch";
     import "Installation";

@@ -23,7 +23,7 @@
     import "Wizard";
     import "Product";
 
-    textdomain "general";
+    textdomain "installation";
 
     include "ui/common_popups.ycp";
     include "ui/summary.ycp";

@@ -11,9 +11,9 @@
  */
 {
   UI( ``{
-      textdomain "general";
+      textdomain "installation";
 
-      
+
       global define DisplayLogFile( string msg_text, any kind ) ``{
 	  term text = `LogView(`id(`log),
 			       "", 10, 0);
@@ -25,9 +25,9 @@
 			 `VBox (`HSpacing(75),
 				`Heading( _("Installation log file")),
 				text,
-				`HBox(				
+				`HBox(
 				`PushButton( `id(`yes_short),  _("&Short info") ),
-				`HStretch(),				
+				`HStretch(),
 				`PushButton( `id(`no_log), `opt(`default), OKButtonLabel() )
 				)
 				))
@@ -40,15 +40,15 @@
 			 `VBox (`HSpacing(75),
 				`Heading( _("Installation log file")),
 				text,
-				`HBox(					
+				`HBox(
 				`PushButton( `id(`yes_long),  _("&Long info") ),
-				`HStretch(),				
+				`HStretch(),
 				`PushButton( `id(`no_log), `opt(`default), OKButtonLabel() )
 				)
 				))
 			 );
 	  }
-	  
+
 	  ChangeWidget(`id(`log), `LastLine, msg_text );
 	  SetFocus(`id(`no_log) );
 
@@ -64,7 +64,7 @@
   //
 
   UI( ``{
-      textdomain "general";      
+      textdomain "installation";
      global define AskShowLog( ) ``{
 	 return AnyQuestionPopup( _("Installation log file"),
 				  _("Would you like to see the installation log file?"),

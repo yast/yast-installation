@@ -7,13 +7,13 @@
  * Author:	Klaus Kämpf <kkaempf@suse.de>
  *		Stefan Hundhammer <sh@suse.de>
  *
- * Purpose: 	General UI defines for installation workflow
+ * Purpose:	General UI defines for installation workflow
  *
  */
 {
   // include/installation_ui.ycp
 
-  textdomain "general";
+  textdomain "installation";
 
   UI(``{
 

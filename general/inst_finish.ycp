@@ -6,11 +6,11 @@
  * Author:	Klaus Kämpf <kkaempf@suse.de>
  *
  * Purpose:	This module finishes the installation, writes
- * 		some files (rc_config fstab ... and so on).
+ *		some files (rc_config fstab ... and so on).
  *
  *
  * Writes:
- * [target] /var/lib/YaST2/runme_at_boot  	run yast2 after initial boot
+ * [target] /var/lib/YaST2/runme_at_boot	run yast2 after initial boot
  * [target] /var/lib/YaST2/settings.ycp      save settings
  * [target] /var/lib/YaST2/infomap.ycp	infoMap (descr/info)
  * SCR::Write (.etc.shadow.root,
@@ -47,7 +47,7 @@
     import "HwStatus";
 
     include "partitioning/partition_defines.ycp";
-    textdomain "general";
+    textdomain "installation";
 
     // Help text for last dialog of base installation
     string help_text = _("<p>

@@ -10,7 +10,7 @@
  *			See also file proposal-API.txt for details.
  */
 {
-    textdomain "proposal";
+    textdomain "installation";
     import "HTML";
 
     string func  = Args(0);
@@ -25,10 +25,10 @@
 	// call some function that makes a proposal here:
 	//
 	// DummyMod::MakeProposal( force_reset );
-	
+
 	// Fill return map
 
-	ret = $[ "raw_proposal" : 
+	ret = $[ "raw_proposal" :
 	       // Proposal for installation mode
 	       [ HTML::Bold( _("New installation") ) ]
 	];
@@ -45,7 +45,7 @@
 	symbol result = CallFunction (`inst_mode (`AskUser ));
 
 	// Fill return map
-	
+
 	ret = $[ "workflow_sequence" : result ];
     }
     else if ( func == "Description" )
@@ -53,7 +53,7 @@
 	// Fill return map.
 	//
 	// Static values do just nicely here, no need to call a function.
-	
+
 	ret =
 	    $[
 	      "rich_text_title"	:	_( "Mode"  ),

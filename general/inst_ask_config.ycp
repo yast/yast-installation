@@ -9,19 +9,20 @@
  *
  * Purpose:		Inform the user that the base installation is complete now;
  *			if the user wants, he can get into the hardware
- * 			configuration from here.
+ *			configuration from here.
  *
  */
 {
-    textdomain "general";
+
+    textdomain "installation";
 
     import "Mode";
     import "Installation";
     import "Product";
     import "Wizard";
     import "User";
-   
-   
+
+
 
 
     if ( Product::imap_server || Product::fwadmin_host )
@@ -59,7 +60,7 @@
 
     // Build window contents
 
-    
+
     string login_name = User::login;
 
     if ( Mode::demo && size( login_name ) < 1 )
@@ -88,12 +89,12 @@
 	      `HSpacing( 2.5 ),
 	      `VBox(
 		    `VSpacing( 0.3 ),
-		    
+
 		    // Success message
 		    // Translators caution: no automatic line wrap!
 		    // Insert newline(s) in translation if it gets wider than about 60 characters.
 		    `Left( `Label( _("SuSE Linux was sucessfully installed.") ) ),
-		    
+
 		    login_msg,
 		    `VSpacing(),
 
@@ -107,7 +108,7 @@ hardware now is optional.
 Do this at any time using the
 YaST2 Control Center.
 ") ) ),
-	      
+
 		    `VSpacing( 2 ),
 
 		    // PushButton that will go to the hardware configuration dialog
@@ -142,18 +143,18 @@ In this case, press <b>Finish Installation</b> now.
     help_text = help_text + _("<p>
 To configure these devices at another time, log in as a normal user
 and start the <b>YaST2 Control Center</b> from your desktop (KDE by
-default). 
+default).
 </p>
 ");
 
     // Help text (HTML-like), continued
     help_text = help_text + _("<p>
-You will be prompted for the <i>root password</i>, because this type of 
+You will be prompted for the <i>root password</i>, because this type of
 configuration requires system administrator privileges.
 </p>
 ");
 
-    
+
     Wizard::SetContents(
 			  // Headline for final installation screen:
 			  // Basic installation done, may continue to set up additional
@@ -220,12 +221,12 @@ configuration requires system administrator privileges.
 			   false,	// have_back_button
 			   false	// have_next_button
 			 );
-    
+
     //
     // Cleanups prior to program end
     //
-    
-    
+
+
     // remove libhd kludge
     if (!Mode::config)
     {

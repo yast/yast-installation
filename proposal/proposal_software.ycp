@@ -10,11 +10,11 @@
  *			See also file proposal-API.txt for details.
  */
 {
-    textdomain "proposal";
+    textdomain "installation";
 
     import "Packages";
     import "Storage";
-    
+
     string func  = Args(0);
     map    param = Args(1);
     map    ret   = $[];
@@ -38,10 +38,10 @@
 	}
 	// save information about target change time in module Packages
 	Packages::timestamp = Storage::GetTargetChangeTime();
-	
+
 	if ( language_changed || partition_changed )
 	{
-	    	y2milestone("anas: init 2");
+		y2milestone("anas: init 2");
 	    reinit = true;
 	}
 	y2milestone("package proposal: %1, %2",  force_reset, reinit );
@@ -71,7 +71,7 @@
 	}
 
 	// Fill return map
-	
+
 	ret = $[ "workflow_sequence" : result ];
     }
     else if ( func == "Description" )
@@ -79,7 +79,7 @@
 	// Fill return map.
 	//
 	// Static values do just nicely here, no need to call a function.
-	
+
 	ret =
 	    $[
 	      "rich_text_title"	:	_( "Software"  ),

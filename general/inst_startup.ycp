@@ -1,5 +1,5 @@
 /**
- * Module: 		inst_startup.ycp
+ * Module:		inst_startup.ycp
  *
  * Authors:		Mathias Kettner <kettner@suse.de>
  *			Klaus Kaempf <kkaempf@suse.de> (initial)
@@ -17,7 +17,7 @@
  */
 
 {
-    textdomain "general";
+    textdomain "installation";
 
     import "Arch";
     import "Mode";
@@ -60,7 +60,7 @@
 	 * doesn't hurt in any case.
 	 **/
 	UI::BusyCursor();
-	
+
 	UI::OpenDialog( `VBox( `Label( msg ) ) );
 	y2milestone( msg );
 	popup_open = true;
@@ -82,7 +82,7 @@
 	Wizard::SetEasyInstallationStep( EasyInstallationStepDescriptions(), 2 );
     }
 
-    
+
     // --------------------------------------------------------------
     // hostname, domainname
     // Set hostname and domainname to something reasonable.
@@ -98,18 +98,18 @@
 	SCR::Execute (.target.symlink, "/usr/share/locale/fr", "/usr/share/locale/br");
     }
 
- 
+
     // --------------------------------------------------------------
     //				      USB
     // --------------------------------------------------------------
 
     showFeedback( _("Probing USB devices") );
-    Hotplug::StartUSB ();    
-    
+    Hotplug::StartUSB ();
+
     // --------------------------------------------------------------
     //				     Mouse
     // --------------------------------------------------------------
-	
+
     showFeedback( _("Probing mouse devices") );
     if (!Mouse::Found())
     {

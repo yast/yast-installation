@@ -19,7 +19,7 @@
  */
 
 {
-  textdomain "general";
+  textdomain "installation";
   string what_will_happen = "";
 
 
@@ -37,7 +37,7 @@ Your hard disk will remain unchanged.
       what_will_happen = UI( _("If you abort the installation now,
 your hard disk will remain unchanged.
 ") );
-  }      
+  }
   else if ( Args(0) == `incomplete )
   {
       // Warning text for aborting an installation during the install process

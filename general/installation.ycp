@@ -15,7 +15,7 @@
  *
  */
 {
-    textdomain "general";
+    textdomain "installation";
 
     // this is installation, so start SCR always locally (as plugin) !
 
@@ -408,7 +408,7 @@ will look different than in the manual.");
 
 [
  [ `initial,  `autoinst_init	    (false, true),       [ "ALL", "NOT_s390" ],		  ! test_mode &&		  autoinst			, false],
- [ `initial,  `inst_language	    (false, true, true), [ "ALL"	     ],	  	  ! autoinst							, false],
+ [ `initial,  `inst_language	    (false, true, true), [ "ALL"	     ],		  ! autoinst							, false],
  [ `initial,  `inst_startup	    (false, true),       [ "ALL"	     ],						  autoinst                      , false],
  [ `initial,  `autoinst_setup	    (false, true),       [ "ALL", "NOT_s390" ],		  ! test_mode &&		  autoinst			, false],
  //-------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -432,7 +432,7 @@ will look different than in the manual.");
  [ `continue, `inst_root	    (false, true),       [ "ALL"	     ],						  ! autoinst &&  ! update_mode	, true ],
  [ `continue, `inst_user	    (true,  true),       [ "ALL"	     ],						  ! autoinst &&  ! update_mode	, true ],
  [ `continue, `inst_x11		    (true,  true),       [ "ALL", "NOT_s390" ],					  ! update_mode				, false],
- [ `continue, `autoinst_configure   (false, false),      [ "ALL", "NOT_s390" ],					  	  autoinst &&    ! update_mode	, false],
+ [ `continue, `autoinst_configure   (false, false),      [ "ALL", "NOT_s390" ],						  autoinst &&    ! update_mode	, false],
  [ `continue, `inst_suseconfig	    (false, false),      [ "ALL", "NOT_s390" ],		  ! test_mode							, false],
  [ `continue, `inst_proposal	    (true,  true),       [ "ALL"	     ],						  ! autoinst && ! update_mode	, false]
 ];

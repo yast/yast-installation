@@ -33,6 +33,6 @@ Geometry =
 SortKey = 
 
 ; which textdomain to use for translations (important!)
-Textdomain = general
+Textdomain = installation
 
 ; vim:syntax=dosini

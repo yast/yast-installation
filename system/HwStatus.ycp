@@ -15,7 +15,7 @@
 {
     module "HwStatus";
 
-    textdomain "system";
+    textdomain "installation";
 
     // status map for devices, key is "unique id", value is symbol (`yes, `no)
 

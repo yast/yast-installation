@@ -18,7 +18,7 @@
     import "Arch";
     import "Misc";
 
-    textdomain "system";
+    textdomain "installation";
 
     map modules = $[];
 

@@ -23,7 +23,7 @@
     import "Arch";
     import "Boot";
 
-    textdomain "packages";
+    textdomain "installation";
 
     /**
      * @return	switched	if the kernel was switches during
@@ -143,7 +143,7 @@
     global define void ProbeKernel ()
     ``{
 	kernel_packages = ["k_deflt"];
-	
+
 	if (Arch::has_smp
 	    || apic_kernel)
 	{
@@ -201,7 +201,7 @@
 			&& (!contains (cpuflags, "tsc"))))
 		{
 		    y2milestone ("Kernel switch: Not a pentium !");
-		    kernel_packages = ["k_i386"];	   
+		    kernel_packages = ["k_i386"];
 		    switched = true;
 		}
 	    }
@@ -292,9 +292,9 @@
 	{
 	    list cpuProbe = SCR::Read (.probe.cpu);
 	    integer revision = cpuProbe[0,"revision"]:0;
- 	    if (revision == 6) // C0 stepping
+	    if (revision == 6) // C0 stepping
 	    {
-		if (Arch::has_smp)		  
+		if (Arch::has_smp)
 		    kernel_packages = ["k_c0smp"];
 		else
 		    kernel_packages = ["k_c0"];
@@ -336,14 +336,14 @@
     };
 
     /*
-     * 	Set a custom kernel.
+     *	Set a custom kernel.
      *	@return void
      */
-   
+
     global define void Set (list custom_kernels)
     ``{
 	kernel_packages = custom_kernels;
-	
+
 	return;
     }
 

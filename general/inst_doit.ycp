@@ -8,7 +8,7 @@
  * $Id$
  */
 {
-    textdomain "general";
+    textdomain "installation";
 
     import "Wizard";
     import "Mode";
@@ -32,7 +32,7 @@
 	//
 	// None of the subsequent interactive dialogs are allowed to have a
 	// `next button enabled, so there is no chance of getting here manually.
-	
+
 	return `back;
     }
 
@@ -53,7 +53,7 @@
 	// `Yes' will prepare (format) the disk and install the software.
 	// `No' will go back; further config steps are possible.
 	// Translators notice: Line length < 48 chars.
-	
+
 	string confirmation_message = _("Warning:
 YaST2 has obtained all the information
 required to install SuSE Linux.
@@ -65,12 +65,12 @@ to the previous dialog.
 
 Start installation?
 ");
-	
+
 	term dialog = `HBox(
 			    `HSpacing(1),
 			    `VBox(
 				  `VSpacing(0.2),
-				
+
 				  `Heading( confirmation_message ),
 				  `HBox(
 					// PushButton: Allright, really start installation
@@ -95,7 +95,7 @@ Start installation?
      * Currently not used.
      **/
     define void saveSettingsToFloppy() ``{
-	
+
 	string floppy_path = "/media/floppy";
 	WFM::Execute (.local.umount, floppy_path); // Just for safety
 
@@ -168,7 +168,7 @@ Is the disk formatted and verified?
     repeat
     {
 	button = UI::UserInput();
-	
+
 	if ( button == `yes )
 	{
 	    confirmed = true;

@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Jul  2 13:52:03 CEST 2002 - msvec@suse.cz
+
+- 2.6.0
+
+-------------------------------------------------------------------
 Mon Jun 24 15:24:43 CEST 2002 - kkaempf@suse.de
 
 - New package: split off purely installation related code 
