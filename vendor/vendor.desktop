@@ -55,3 +55,4 @@ GenericName[ru]=Этот модуль устанавливает не-SuSE др�
 Name[sl]=Naloži proizvajalčev CD z gonilniki
 GenericName[sl]=Modul namesti ne-SuSE gonilnik s CD-ROM-a proizvajalca.
 GenericName[tr]=Bu modül üreticiye özel CD-ROM'dan SuSE sürücüsü olmayan bir sürücü kurulumu yapar
+X-KDE-SubstituteUID=true
