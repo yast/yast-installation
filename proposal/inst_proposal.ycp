@@ -387,7 +387,8 @@
 						   [
 						    // Fallback list
 						    "lan_proposal",
-						    "modem_proposal"
+						    "modem_proposal",
+						    "proxy_proposal"
 						   ]
 						   );
 	    }
@@ -399,7 +400,8 @@
 		submodules = load_submodules_list( "net-config-proposals-ppc64.ycp",
 						   [
 						    // Fallback list
-						    "lan_proposal"
+						    "lan_proposal",
+						    "proxy_proposal"
 						    ]
 						   );
 	    }
@@ -411,7 +413,8 @@
 		submodules = load_submodules_list( "net-config-proposals-s390.ycp",
 						   [
 						    // Fallback list
-						    "lan_proposal"
+						    "lan_proposal",
+						    "proxy_proposal"
 						    ]
 						   );
 	    }
@@ -425,7 +428,8 @@
 						    "lan_proposal",
 						    "dsl_proposal",
 						    "isdn_proposal",
-						    "modem_proposal"
+						    "modem_proposal",
+						    "proxy_proposal"
 						    ]
 						   );
 	    }
