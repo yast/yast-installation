@@ -322,14 +322,14 @@ textdomain="control"
                     <name>root</name>
                     <arguments>false,true</arguments>
                 </module>
-		<module>
-                    <name>fam</name>
-		</module>
                 <module>
 	            <label>Network</label>
                     <name>proposal</name>
                     <arguments>true,true,`network</arguments>
                 </module>
+		<module>
+                    <name>fam</name>
+		</module>
                 <module>
 	            <label>Network</label>
                     <name>ask_net_test</name>
