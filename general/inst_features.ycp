@@ -12,6 +12,9 @@
     import "ProductFeatures";
     import "Timezone";
     import "Keyboard";
+    import "Language";
+    import "Installation";
+    import "Console";
 
     // Timezone
     if (ProductFeatures::timezone != "")
@@ -27,8 +30,19 @@
         Keyboard::SetX11( ProductFeatures::keyboard );
     }
 
-    if (ProductFeatures::keyboard != "") {
+    if (ProductFeatures::language != "")
+    {
+        string language = ProductFeatures::language
+        // Set it in the Language module.
+        Language::Set( language );
 
+        // Set Console font
+        Console::SelectFont( language );
+
+        Installation::encoding = (use_utf8) ? "UTF-8" : Encoding::console;
+
+        // Set it in YaST2
+        Language::WfmSetLanguage();
     }
 
     return `auto;

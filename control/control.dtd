@@ -23,6 +23,8 @@ use_desktop_scheduler|io_scheduler|ui_mode" >
 <!ELEMENT label ( #PCDATA ) >
 
 <!ELEMENT language ( #PCDATA ) >
+<!ELEMENT skip_language_dialog ( #PCDATA ) >
+<!ATTLIST skip_language_dialog config:type NMTOKEN #FIXED "boolean" >
 
 <!ELEMENT io_scheduler ( #PCDATA ) >
 <!ELEMENT only_update_installed ( #PCDATA ) >
