@@ -24,7 +24,7 @@
     /* function to load release notes */
     define boolean load_release_notes () ``{
 
-	string tmp = "/usr/share/doc/release_notes/RELEASE_NOTES.%1.rtf";
+	string tmp = "/usr/share/doc/release-notes/RELEASE-NOTES.%1.rtf";
 
 	file = sformat (tmp, Language::language);
 	text = SCR::Read (.target.string, [file, ""]);

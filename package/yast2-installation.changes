@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Mar 14 17:41:40 CET 2003 - sh@suse.de
+
+- The final and super-great ultimate path for release notes:
+  /usr/share/doc/release-notes/RELEASE-NOTES.*.rtf
+
+-------------------------------------------------------------------
 Fri Mar 14 17:38:44 CET 2003 - sh@suse.de
 
 - Moved RTF version of release notes from /usr/share/doc to
