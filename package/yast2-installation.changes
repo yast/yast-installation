@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Mar 29 14:48:56 CEST 2004 - fehr@suse.de
+
+- call Storage::FinishInstall() at end of installation
+
+-------------------------------------------------------------------
 Mon Mar 29 14:46:51 CEST 2004 - sh@suse.de
 
 - Fixed bug #36713 (relies on yast2-core with fix for bug #36711):
