@@ -578,6 +578,8 @@
 			    false			// have_next_button
 			    );
 	set_icon();
+	if ( Stage::stage () == "initial" )
+	    Wizard::ShowReleaseNotesButton (_("&Show Release Notes"), `rel_notes);
     }
 
 
@@ -917,6 +919,10 @@ a proposal that is locked, ask your system administrator.</p>");
 		    return `finish;
 	    }
 	}
+	else if (input == `rel_notes)
+	{
+	    WFM::CallFunction("release_notes_popup", [] );
+	}
 	else if (input == `finish)
 	{
 	    return `finish;
@@ -987,11 +993,13 @@ resolved before continuing.
                     write_settings();
                 }
 
+		Wizard::HideReleaseNotesButton();
                 return `next;
             }
         }
 	else if ( input == `back )
 	{
+	    Wizard::HideReleaseNotesButton();
 	    return `back;
 	}
 
