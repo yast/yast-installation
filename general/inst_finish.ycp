@@ -151,12 +151,9 @@ Please wait while the base system is being installed.
 
     if (Mode::autoinst)
     {
-        AutoInstall::saveMiscData();
-
-        // progress stage title
+	// progress stage title
         Progress::Title (_("Executing postinstall (chroot) scripts"));
-
-        AutoInstall::scriptSettings("chroot-scripts");
+        AutoInstall::Finish();        
     }
 
     // copy hardware status to installed system
@@ -263,25 +260,7 @@ Please wait while the base system is being installed.
 
     if ( Mode::autoinst )
     {
-	if (AutoInstall::ForceBoot && Mode::hardBoot)
-	{
-	    linuxrc["Root"] = Bootloader::getRootDevice ();
-	}
-	if (AutoInstall::Reboot && !Mode::hardBoot)
-	{
-	    linuxrc["Root"] = "reboot";
-	    Mode::hardBoot = true;
-	}
-
-	if (AutoInstall::RebootMsg)
-	{
-	    linuxrc["RebootMsg"] = "1";
-	}
-	else
-	{
-	    linuxrc["RebootMsg"] = "0";
-	}
-
+	linuxrc = AutoInstall::Linuxrc(linuxrc);
     }
 
     // --------------------------------------------------------------
@@ -326,10 +305,6 @@ Please wait while the base system is being installed.
     if (Mode::autoinst)
     {
 	AutoInstall::Save();
-	if ( !Mode::update)
-	{
-	    AutoInstall::Finalize();
-	}
     }
 
     ModulesConf::Save (false);
@@ -592,10 +567,6 @@ with the load address of your root DASD.
     // Dont't write bootloader if explicitly specified in autoinst configuration
     // Default is to write bootloader configuration
 
-    if (AutoInstall::Bootloader["write_bootloader"]:true)
-    {
-	Bootloader::Write ();		// install boot manager
-    }
 
     // --------------------------------------------------------------
     // write network settings to installed system
