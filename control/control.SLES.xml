@@ -9,20 +9,29 @@ textdomain="control"
 -->
 
     <textdomain>control</textdomain>
+    <!-- global data to be set in the initial proposal -->
     <globals>
         <enable_autologin config:type="boolean">false</enable_autologin>
     </globals>
+
+    <!-- Force a selection (`fixed) to be used instead of automatically
+    Calculating the selection depending on space (`auto)  -->
     <software>
+        <!-- Delete old packages, should be set to false for SLES-->
         <delete_old_packages config:type="boolean">false</delete_old_packages>
         <selection_type config:type="symbol">auto</selection_type>
     </software>
 
     <proposals config:type="list">
         <proposal>
-            <mode>installation</mode>
+            <!-- installation, autoinst, update, repair, etc. -->
+            <mode>installation,demo</mode>
+            <!-- initial or continue -->
             <stage>initial</stage>
+            <!-- Type of proposal, initial, hardware, network -->
             <type>initial</type>
 
+            <!-- Proposal modules, order matters -->
             <proposal_modules config:type="list">
                 <proposal_module>hwinfo</proposal_module>
                 <proposal_module>mode</proposal_module>
@@ -41,7 +50,6 @@ textdomain="control"
             <type>dirinstall</type>
             <stage>normal</stage>
             <proposal_modules config:type="list">
-                <proposal_module>language</proposal_module>
                 <proposal_module>dirinstall_options</proposal_module>
                 <proposal_module>software</proposal_module>
             </proposal_modules>
@@ -114,7 +122,7 @@ textdomain="control"
         </proposal>
         <proposal>
             <type>network</type>
-            <stage>continue</stage>
+            <stage>continue,normal</stage>
             <proposal_modules config:type="list">
                 <proposal_module>lan</proposal_module>
                 <proposal_module>dsl</proposal_module>
@@ -165,11 +173,15 @@ textdomain="control"
 
     <workflows config:type="list">
         <workflow>
+            <!-- default settings for all modules -->
             <defaults>
+                <!-- arguments for the clients -->
                 <arguments>false,false</arguments>
+                <!-- allowed architectures "all", "i386", "i386,ia64,x86_64"  -->
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
+            <!-- 'label' is what the user will see -->
 	    <label>Base Installation</label>
             <mode>installation</mode>
             <modules  config:type="list">
@@ -180,12 +192,14 @@ textdomain="control"
                 <module>
                     <name>language</name>
                     <arguments>false,true,true</arguments>
+                    <!-- 'label' is the workflow step description the user
+	                 will see in the side bar during installation.   -->
 	            <label>Language</label>
                 </module>
                 <module>
                     <name>proposal</name>
                     <arguments>true,true,`ini</arguments>
-	            <label>Installaton Settings</label>
+	            <label>Installation Settings</label>
                 </module>
                 <module>
                     <name>do_resize</name>
@@ -195,6 +209,10 @@ textdomain="control"
                 </module>
                 <module>
                     <name>prepdisk</name>
+                    <!-- Multiple modules with the same 'label' will be
+                         collapsed to one single user-visible step.
+                         The step is considered finished when the last module
+                         with the same 'label' is finished.  -->
 	            <label>Perform Installation</label>
                 </module>
                 <module>
@@ -247,7 +265,7 @@ textdomain="control"
                     <arguments>false,true,true</arguments>
                 </module>
                 <module>
-	            <label>Installaton Settings</label>
+	            <label>Installation Settings</label>
                     <name>proposal</name>
                     <arguments>true,true,`ini</arguments>
                 </module>
@@ -291,7 +309,7 @@ textdomain="control"
                     <arguments>false,true,true</arguments>
                 </module>
                 <module>
-	            <label>Installaton Settings</label>
+	            <label>Installation Settings</label>
                     <name>proposal</name>
                     <arguments>true,true,`ini</arguments>
                 </module>
