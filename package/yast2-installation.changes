@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Mar 24 15:07:03 CET 2004 - sh@suse.de
+
+- Fixed bug #36850: Strange texts in y2qt wizard side bar 
+- V 2.9.42
+
+-------------------------------------------------------------------
 Wed Mar 24 11:13:46 CET 2004 - gs@suse.de
 
 - workaround beta3 pre bug: deactivate Hooks::Run 
