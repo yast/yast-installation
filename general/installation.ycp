@@ -156,7 +156,7 @@
     // UI::WizardCommand() can safely be called even if the respective UI
     // doesn't support the wizard widget, but for optimization it makes sense
     // to do expensive operations only when it is available.
-    ProductControl::AddWizardSteps(["initial", "continue"] , "installation");
+    ProductControl::AddWizardSteps(["initial", "continue"] , Mode::mode);
 
     // classified_user_settings contain secrets, like passwords ...
     // they should not be loged !
