@@ -176,19 +176,21 @@
 	    // check for > 4GB memory
 	    list memories = SCR::Read(.probe.memory);
 	    integer memsize = memories[0,"resource","phys_mem",0,"range"]:0;
+	    integer fourGB = 0x100000000;
 	    y2milestone ("Physical memory %1", memsize);
 
 	    if (Arch::has_smp)
 	    {
 		// x86, SMP -> must check PAE
-		if (!contains (cpuflags, "pae"))
+		if ((memsize <= fourGB)
+		    || !contains (cpuflags, "pae"))
 		{
-		    y2milestone ("Kernel switch: CPU w/o PAE !");
-		    kernel_packages = ["k_deflt"];
-		    switched = false;
+		    y2milestone ("Kernel switch: less than 4GB mem or CPU w/o PAE !");
+		    kernel_packages = ["k_psmp"];
+		    switched = true;
 		}
 	    }
-	    else if (memsize > 0x100000000)		// > 4GB
+	    else if (memsize > fourGB)				// > 4GB
 	    {
 		y2milestone ("Kernel switch: Memory !");
 		kernel_packages = ["k_smp"];
