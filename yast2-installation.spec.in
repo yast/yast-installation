@@ -38,15 +38,10 @@ This controls the system installation.
 @clientdir@/*.ycp
 @yncludedir@/installation
 @moduledir@/*.ycp
+@moduledir@/*.ybc
 @configdir@/*.y2cc
 @desktopdir@/*.desktop
 @ydatadir@/*.ycp
-
-# kernel/agents
-@scrconfdir@/boot_vmlinuz_version.scr
-@scrconfdir@/cfg_kernel.scr
-@scrconfdir@/proc_cpuinfo.scr
-@scrconfdir@/proc_cmdline.scr
 
 # agents
 @scrconfdir@/etc_passwd.scr
