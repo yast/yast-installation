@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Aug 21 16:31:59 CEST 2002 - kkaempf@suse.de
+
+- adaptions to new packager
+- V 2.6.25
+
+-------------------------------------------------------------------
 Tue Aug 20 19:08:14 CEST 2002 - arvin@suse.de
 
 - use new Mode::x11_setup_needed and Arch::x11_setup_needed
