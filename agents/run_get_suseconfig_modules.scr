@@ -13,7 +13,7 @@
  *   man ls
  * Example:
  *   Read(.run.get.suseconfig.modules)
- *   (["3ddiag", "fonts", "kdm2", "pam", "pcmcia", ... , "ypclient"])
+ *   (["fonts", "kdm2", "pam", "pcmcia", ... , "ypclient"])
  *
  * $Id$
  *
