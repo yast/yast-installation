@@ -1,6 +1,6 @@
 @HEADER-COMMENT@
 
-# neededforbuild  yast2-devel-packages 
+# neededforbuild  yast2-devel-packages
 
 @HEADER@
 Requires:	yast2
@@ -64,6 +64,5 @@ from an installation media.
 #FIXME@ybindir@/WinINF.pm
 #FIXME@ybindir@/pars-inf.pl
 #FIXME@ybindir@/y2merge.pl
-@ybindir@/yast2-funcs
 @ybindir@/inst_setup_vnc
 
