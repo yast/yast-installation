@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Tue Mar 16 01:53:54 CET 2004 - nashif@suse.de
+
+- Enabled evms_config in control file
+
+-------------------------------------------------------------------
+Tue Mar 16 01:31:55 CET 2004 - nashif@suse.de
+
+- Update steps when switching modes (#35590)
+
+-------------------------------------------------------------------
 Mon Mar 15 12:00:07 CET 2004 - arvin@suse.de
 
 - don't ask for terminal type during vnc installation (bug #33534)

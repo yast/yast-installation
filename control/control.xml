@@ -21,6 +21,9 @@ textdomain="control"
         <delete_old_packages config:type="boolean">true</delete_old_packages>
         <selection_type config:type="symbol">auto</selection_type>
     </software>
+    <partitioning>
+        <evms_config config:type="boolean">false</evms_config>
+    </partitioning>
 
     <proposals config:type="list">
         <proposal>
