@@ -19,6 +19,7 @@
 
     import "Stage";
     import "Linuxrc";
+    import "Directory";
 
     // current scr handle
     // used in installation.ycp and inst_finish.ycp
@@ -37,7 +38,7 @@
 
     global string yast2dir		= "/var/lib/YaST2";
 
-    global string mountlog		= "/var/log/YaST2/y2logMount";
+    global string mountlog		= Directory::logdir + "/y2logMount";
 
     // default language for the installation (from installation source)
     global string defaultLanguage	= "en_US";

@@ -35,7 +35,7 @@
 
     integer	current_step	= 0;	// Required by logStep()
 
-    string log_destination = ">>/var/log/YaST2/y2log.SuSEconfig";		// Required by doStep()
+    string log_destination = ">> " + Directory::logdir + "/y2log.SuSEconfig";		// Required by doStep()
 
     if ( Stage::cont () )
     {

@@ -18,6 +18,7 @@
     module "Vendor";
 
     import "Installation";
+    import "Directory";
 
     // --------------------------------------------------------------
     // driver update ?!
@@ -46,10 +47,10 @@
 	// unpack update files and run update.post scripts
 	SCR::Execute(.target.bash,
 		     "cd / ; " +
-		     "echo \"Installing driver update\"  >> /var/log/YaST2/y2logRPM ; " +
+		     "echo \"Installing driver update\" >> " + Directory::logdir + "/y2logRPM ; " +
 		     "for i in /tmp/update/[0-9]*/install ; do " +
 		     "    [ -f \"$i/update.tar.gz\" ] && /bin/tar -zxf \"$i/update.tar.gz\" ; " +
-		     "    rpm -Uv $i/*.rpm 2>> /var/log/YaST2/y2logRPM ; " +
+		     "    rpm -Uv $i/*.rpm 2 >> " + Directory::logdir + "/y2logRPM ; " +
 		     "    [ -f \"$i/update.post\" ] && /bin/chmod +x \"$i/update.post\" && \"$i/update.post\" \"$i\" ; " +
 		     "done");
     }
