@@ -734,6 +734,7 @@ with the load address of your root DASD.
 
     if (Mode::autoinst)
     {
+        Progress::Title (_("Executing autoinstall scripts in the installation environment."));
         AutoinstScripts::Write("chroot-scripts", true);
     }
 
