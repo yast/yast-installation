@@ -340,6 +340,7 @@
 
 	    if (Arch::s390)
 	    {
+		y2milestone ("Initial S390 proposal");
 		// S390 lack some hardware (e.g. keyboard and mouse)
 
 		submodules = load_submodules_list( "installation-proposals-s390.ycp",
@@ -355,6 +356,7 @@
 	    }
 	    else
 	    {
+		y2milestone ("Initial proposal");
 		submodules = load_submodules_list( "installation-proposals.ycp",
 						   [
 						    // Fallback list
@@ -376,6 +378,7 @@
 
 	    if ( Arch::sparc )
 	    {
+		y2milestone ("Continue SPARC proposal");
 		// SPARC machines usually have some kinds of hardware built-in
 
 		submodules = load_submodules_list( "hw-config-proposals-sparc.ycp",
@@ -390,6 +393,7 @@
 	    }
 	    else if ( Arch::ppc64 )
 	    {
+		y2milestone ("Continue PPC64 proposal");
 		// ppc64
 
 		submodules = load_submodules_list( "hw-config-proposals-ppc64.ycp",
@@ -401,6 +405,7 @@
 	    }
 	    else if ( Arch::s390 )
 	    {
+		y2milestone ("Continue S390 proposal");
 		// s390
 
 		submodules = load_submodules_list( "hw-config-proposals-s390.ycp",
@@ -414,6 +419,7 @@
 	    {
 		if ( have_network_card() )
 		{
+		    y2milestone ("Continue network proposal");
 		    // Professional networked machine - configure network cards
 		    // first so even a networked printer can be found
 		    submodules = load_submodules_list( "hw-config-proposals-networked-pc.ycp",
@@ -430,6 +436,7 @@
 		}
 		else // no network card
 		{
+		    y2milestone ("Continue proposal");
 		    // Home PC - focus on printing and multimedia
 
 		    submodules = load_submodules_list( "hw-config-proposals-home-pc.ycp",
