@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Feb  6 16:16:29 CET 2003 - jsrain@suse.de
+
+- removed missleading help text about starting of network during
+  hardware proposal, when network has already been started (#20912)
+
+-------------------------------------------------------------------
 Wed Feb 05 17:05:43 CET 2003 - arvin@suse.de
 
 - merged proofread messages

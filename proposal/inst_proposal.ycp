@@ -712,14 +712,6 @@ Put the network settings into effect by pressing <b>Accept</b>.
 Put the hardware settings into effect by pressing <b>Accept</b>.
 </p>
 ") + how_to_change;
-
-	    // Help text for hardware configuration proposal, continued
-	    help_text = help_text + _("<p>
-Because the network is not yet functioning, <b>network printers</b> cannot
-be detected. Use the YaST2 Control Center to configure network printers
-after the network is up and running.
-</p>
-");
 	}
 	else
 	{
