@@ -9,12 +9,32 @@
 
 {
     module "ProductFeatures";
+    textdomain "base";
 
+    /*********************************************************************
+      *   Those are variables from the content file, we can override them
+      *   in the control file
+     *********************************************************************/
 
     /**
      * url of release notes (downloaded during internet test)
      */
     global string relnotesurl	= "";
+
+    /**
+     *  Run YOU during the Internet connection test.
+     */
+    global boolean run_you	= true;
+
+    /**
+     * list of flags from content file
+     */
+    global list flags		= [];
+
+
+    /*********************************************************************
+      *   Packages and Selections
+     *********************************************************************/
 
     /**
      *  Control how the base selection is chosen:
@@ -37,15 +57,16 @@
      */
     global string packages_transmogrify		= "";
 
-    /**
-     *  Run YOU during the Internet connection test.
-     */
-    global boolean run_you	= true;
 
-    /**
-     * list of flags from content file
-     */
-    global list flags		= [];
+    /***
+      * On some products, this can be turned on to prevent old
+      * RPMs from being deleted (#35235)
+      */
+    global boolean delete_old_packages          = false;
+
+    /*********************************************************************
+      *   Partitioning
+     *********************************************************************/
 
     /**
      * Flexible partitioning
@@ -56,6 +77,23 @@
      * Flexible partitioning map
      */
     global map FlexiblePartitioning = $[];
+
+
+
+
+    /*********************************************************************
+      *   Misc. Features
+      *
+     *********************************************************************/
+
+
+    /**
+     * autologin is enabled by default.
+     */
+    global boolean auto_login = true;
+
+
+
 
 
     // -----------------------------------------------
