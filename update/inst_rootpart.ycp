@@ -134,7 +134,14 @@ Check the log file /var/log/y2log.
 	    {
 		crtab = [];
 	    }
-	    y2milestone( "crtab=%1", crtab );
+
+	    if (SCR::Read (.target.size, Installation::destdir + "/etc/raidtab") > 0)
+	    {
+		SCR::Execute (.target.bash, "/bin/cp " + Installation::destdir + "/etc/raidtab /etc");
+	    }
+
+	    y2milestone("fstab: %1", fstab);
+	    y2milestone("crtab: %1", crtab);
 
 	    if ( size ( fstab ) == 0 )
 	    {
@@ -169,7 +176,7 @@ Check the log file /var/log/y2log.
 			    crypt_nb = crypt_nb + 1;
 			}
 
-			string crypt_passwd = UI::DlgUpdateCryptFs( device, fspath );
+			string crypt_passwd = DlgUpdateCryptFs( device, fspath );
 
 			if ( crypt_passwd == nil )
 			{
@@ -187,7 +194,7 @@ Check the log file /var/log/y2log.
 
 			    crypt_ok = SCR::Write(.losetup, setloop );
 
-			    y2milestone("crypt ok:%2", crypt_ok );
+			    y2milestone("crypt ok: %1", crypt_ok );
 			}
 
 			if ( crypt_ok )
@@ -294,8 +301,11 @@ Check the log file /var/log/y2log.
 				if ( !ret_bool )
 				{
 				    y2error("mounting %1 on %2 failed", mounts["spec"]:"", "/mnt" + mounts["file"]:"");
-				    Update::AddMountedPartition([Installation::destdir + mounts["file"]:"", "mount"]);
 				    success = false;
+				}
+				else
+				{
+				    Update::AddMountedPartition([Installation::destdir + mounts["file"]:"", "mount"]);
 				}
 			    }
 			}
@@ -360,8 +370,10 @@ Check the log file /var/log/y2log.
 //***************************** Main-Function ********************************
 //
 
-    // if no valid partitions defined yet, go look for them
+    // activate lvm
+    SCR::Write (.lvm.activate, "");
 
+    // if no valid partitions defined yet, go look for them
     if ( size ( partitionMap ) <= 0 )
     {
 	// evaluate possible partitions
@@ -377,6 +389,7 @@ Check the log file /var/log/y2log.
 	SCR::Execute (.target.modprobe, "raid0", "");
 	SCR::Execute (.target.modprobe, "raid1", "");
 	SCR::Execute (.target.modprobe, "raid5", "");
+	SCR::Execute (.target.modprobe, "lvm-mod", "");
 
 	foreach (`device, `description, targetMap,
 	``{
