@@ -1,11 +1,13 @@
+#
 # Makefile.am for installation/modules
+#
 
 SUBDIRS = testsuite
 
 module_DATA =			\
 	Hooks.ycp		\
 	Installation.ycp	\
-	ProductControl.ycp		\
+	ProductControl.ycp	\
 	Product.ycp		\
 	Vendor.ycp
 
