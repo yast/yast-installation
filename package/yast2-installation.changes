@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Feb 20 09:51:29 CET 2003 - ms@suse.de
+
+- add support for mouse wheel during installation (#21660)
+
+-------------------------------------------------------------------
 Wed Feb 19 16:42:22 CET 2003 - arvin@suse.de
 
 - disable all sources if user aborts installation (bug #23776)
