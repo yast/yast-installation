@@ -2,8 +2,6 @@
 # Makefile.am for y2m_inst/ycp/system
 #
 
-modulesdir = $(YAST2DIR)/modules
+module_DATA = ModulesConf.ycp HwStatus.ycp
 
-modules_DATA = ModulesConf.ycp HwStatus.ycp
-
-EXTRA_DIST = $(modules_DATA) 
+EXTRA_DIST = $(module_DATA)
