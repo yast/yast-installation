@@ -45,7 +45,7 @@
 
     // FIXME: temporary workaround
     {
-	string instmode = SCR::Read (.etc.install_inf.Instmode);
+	string instmode = SCR::Read (.etc.install_inf.InstMode);
 	if (instmode == nil) instmode = "cd";
 
 	string cdrom = SCR::Read (.etc.install_inf.Cdrom);
