@@ -3,6 +3,7 @@ Thu Aug 29 10:43:43 CEST 2002 - arvin@suse.de
 
 - fixed network start for ssh installation (bug #18506)
 - fixed password saving for ssh installation (bug #18507)
+- start in textmode for ssh installation (bug #18571)
 
 -------------------------------------------------------------------
 Thu Aug 29 10:41:00 CEST 2002 - kkaempf@suse.de
