@@ -355,7 +355,6 @@ textdomain="control"
                     <name>rpmcopy</name>
                 </module>
                 <module>
-	            <label>Network</label>
                     <name>netsetup</name>
                     <arguments>false,false,`dn</arguments>
                 </module>
@@ -398,7 +397,7 @@ textdomain="control"
                 <arguments>false,false</arguments>
                 <archs>all</archs>
             </defaults>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
                     <name>netsetup</name>
                     <arguments>false,false,`up</arguments>

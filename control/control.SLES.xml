@@ -355,7 +355,6 @@ textdomain="control"
                     <name>rpmcopy</name>
                 </module>
                 <module>
-	            <label>Network</label>
                     <name>netsetup</name>
                     <arguments>false,false,`dn</arguments>
                 </module>
@@ -524,7 +523,7 @@ textdomain="control"
             <stage>continue</stage>
             <label>Configuration</label>
             <mode>autoinst</mode>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
                     <name>netsetup</name>
                     <arguments>false,false,`up</arguments>
