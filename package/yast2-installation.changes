@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Sep 16 17:00:17 CEST 2004 - snwint@suse.de
+
+- use language info from linuxrc to set LANG in YaST.start; this is
+  just to run ncurses yast in fbiterm for exotic languages
+
+-------------------------------------------------------------------
 Wed Sep 15 15:16:41 CEST 2004 - arvin@suse.de
 
 - fixed back button in internet test dialog (bug #45319)
