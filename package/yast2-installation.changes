@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Aug 15 13:53:54 CEST 2002 - kkaempf@suse.de
+
+- linuxrc doesn't reboot on PCMCIA systems any more (#17739)
+
+-------------------------------------------------------------------
 Wed Aug 14 17:12:01 CEST 2002 - arvin@suse.de
 
 - added special hardware configuration list for ppc64 and s390

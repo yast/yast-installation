@@ -146,18 +146,9 @@ Please wait while the base system is being installed.
     }
     else
     {
-	// linuxrc is supposed to hard reboot on pcmcia system
-	// -> Kernel::switched is true anyway !
-	if (Arch::has_pcmcia)
-	{
-	    Mode::hardBoot = true;
-	    linuxrc["RebootMsg"] = "1";
-	}
-	else
-	{
-	    linuxrc["RebootMsg"] = "0";
-	}
+	// might be changed later when evaluating Kernel::switched !
 
+	linuxrc["RebootMsg"] = "0";
 	if ( Mode::update )
 	{
 	    linuxrc["Root"] = Update::selectedRootPartition;
@@ -266,6 +257,7 @@ Please wait while the base system is being installed.
     list ide_recorders = StorageDevices::ProbeIDERecorders ();
     Kernel::IDERecorders (ide_recorders);
 
+    // check if IDERecorders asked for reboot
     if ( Kernel::switched )
     {
 	linuxrc["Root"] = "reboot";
