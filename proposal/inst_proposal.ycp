@@ -712,7 +712,7 @@ or by using the <b>Change...</b> menu.
 </p>
 ");
 
-	if ( proposal_mode == `ini )
+	if ( proposal_mode == `ini && Mode::installation )
 	{
 	    // Help text for installation proposal
 	    // General part ("You can change values...") is added as the next paragraph.
@@ -735,6 +735,27 @@ click the <b>Mode</b> headline or select <b>Mode</b> in the
 	     * - sh@suse.de 2002-02-26
 	     **/
 
+	    // Help text for installation proposal, continued
+	    help_text = help_text + _("<p>
+Your hard disk has not been modified in any way, so you can still safely abort.
+</p>
+");
+	}
+	else if ( proposal_mode == `ini && Mode::update )
+	{
+	    // Help text for update proposal
+	    // General part ("You can change values...") is added as the next paragraph.
+	    help_text = _("<p>
+Use <b>Accept</b> to perform a update with the values displayed.
+</p>
+") + how_to_change;
+
+	    /**
+	     * Deliberately omitting "boot installed system" here to avoid
+	     * confusion: The user will be prompted for that if Linux
+	     * partitions are found.
+	     * - sh@suse.de 2002-02-26
+	     **/
 
 	    // Help text for installation proposal, continued
 	    help_text = help_text + _("<p>
