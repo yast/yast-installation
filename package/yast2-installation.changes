@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Sep 02 14:14:15 CEST 2002 - arvin@suse.de
+
+- set default runlevel back to 3 if X11 is not configured
+  (bug #18705)
+
+-------------------------------------------------------------------
 Mon Sep 02 11:04:17 CEST 2002 - arvin@suse.de
 
 - set HOME=/tmp during installation so qt doesn't pollute root

@@ -351,7 +351,7 @@ Please wait while the base system is being installed.
     Display::Save();
 
     if (Mode::autoinst)
-    {		
+    {
 	AutoInstall::Save();
 	if ( !Mode::update)
 	{
@@ -377,7 +377,7 @@ Please wait while the base system is being installed.
 	SCR::Write (.sysconfig.windowmanager, nil);
     }
 
-  
+
     // --------------------------------------------------------------
     // console and /etc/initab (if serial console)
 
@@ -429,12 +429,12 @@ Please wait while the base system is being installed.
 
     if ( !Mode::update )
     {
-	// Set default runlevel to "xdm", if X11 packages are installed
-
+	// Set default runlevel to 5 if X11 packages are installed
 	if ( !Mode::test && x11_installed )
 	{
-	    SCR::Execute(.target.bash, "/bin/sed -e 's/^id:[0-9sSa-cA-C]*:initdefault:/id:5:initdefault:/' /etc/inittab >"+tmpdir+"/inittab && /bin/cp "+tmpdir+"/inittab /etc");
-	    SCR::Execute(.target.remove, tmpdir+"/inittab");
+	    y2milestone ("setting default runlevel to 5");
+	    SCR::Write (.etc.inittab.id, "5:initdefault:");
+	    SCR::Write (.etc.inittab, nil);
 	}
     }
     else	// normal install
@@ -492,17 +492,12 @@ Please wait while the base system is being installed.
 	// copy XF86Config only if needed
 	if ( x11_installed )
 	{
+	    InjectFile ("/etc/XF86Config");
+	    InjectFile ("/etc/X11/XF86Config");
 
-	    if (Mouse::mset == "")
-	    {
-		InjectFile ("/etc/XF86Config");
-		InjectFile ("/etc/X11/XF86Config");
-	    }
-	    else
+	    if (Mouse::mset != "")
 	    {
 		// replace with probed type
-		InjectFile ("/etc/XF86Config");
-		InjectFile ("/etc/X11/XF86Config");
 		SCR::Execute(.target.bash, "/bin/sed -e \"s#PS/2#"+Mouse::mset+"#\" /etc/XF86Config >"+tmpdir+"/XF86Config");
 		SCR::Execute(.target.bash, "/bin/mv -f "+tmpdir+"/XF86Config /etc");
 		SCR::Execute(.target.bash, "/bin/sed -e \"s#Microsoft#"+Mouse::mset+"#\" /etc/X11/XF86Config >"+tmpdir+"/XF86Config");
