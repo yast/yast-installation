@@ -107,7 +107,7 @@
 
 
     boolean offer_update = false;
-    if (contains (Product::flags, "update") || Kernel::suse_update)
+    if (contains (Product::flags, "update") || Kernel::GetSuSEUpdate ())
     {
 	offer_update = true;
     }

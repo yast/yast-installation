@@ -1,7 +1,8 @@
 -------------------------------------------------------------------
-Wed Jan  5 10:14:13 CET 2005 - jsrain@suse.cz
+Wed Jan  5 17:30:11 CET 2005 - jsrain@suse.cz
 
 - removed unneeded imports and variables from installation.ycp
+- adapted to changed interface of Kernel.ycp
 
 -------------------------------------------------------------------
 Tue Jan  4 09:45:17 CET 2005 - jsrain@suse.cz
