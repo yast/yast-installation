@@ -81,20 +81,6 @@
 	}
 	else if (Mode::initial)
 	{
-	    if ( !Mode::test)
-	    {
-		infoMap = SCR::Read(.descr.info);
-
-		// install.inf (linuxrc) might contain "cd" even
-		// if the media is DVD. Fix this here (cf. #14469).
-		if ((Mode::installMap["instmode"]:"" == "cd")
-		    && (infoMap["media"]:"" == "dvd"))
-		{
-		    Mode::installMap["instmode"] = "dvd";
-		}
-	    }
-	    SCR::UnmountAgent (.descr.info);
-	    y2debug ("Initial infoMap: %1", infoMap);
 	    destdir = "/mnt";
 	}
 
