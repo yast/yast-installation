@@ -399,6 +399,17 @@
 						    ]
 						   );
 	    }
+	    else if ( Arch::s390 )
+	    {
+		// s390
+
+		submodules = load_submodules_list( "hw-config-proposals-s390.ycp",
+						   [
+						    // Fallback list
+						    "lan_proposal"
+						    ]
+						   );
+	    }
 	    else
 	    {
 		if ( have_network_card() )

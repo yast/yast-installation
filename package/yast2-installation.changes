@@ -1,7 +1,8 @@
 -------------------------------------------------------------------
 Wed Aug 14 17:12:01 CEST 2002 - arvin@suse.de
 
-- added special hardware configuration list for ppc64 (bug #17742)
+- added special hardware configuration list for ppc64 and s390
+  (bug #17742)
 
 -------------------------------------------------------------------
 Wed Aug 14 11:32:07 CEST 2002 - kkaempf@suse.de
