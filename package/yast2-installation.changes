@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Sep  6 12:48:51 CEST 2002 - kkaempf@suse.de
+
+- properly detect update_mode after restart
+- 2.6.49
+
+-------------------------------------------------------------------
 Thu Sep  5 20:47:47 CEST 2002 - kkaempf@suse.de
 
 - continue with inst_rpmcopy after update
