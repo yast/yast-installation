@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Jan 11 16:16:38 CET 2005 - jsrain@suse.cz
+
+- prevent disabling the Next button in the proposal (#46708)
+
+-------------------------------------------------------------------
 Wed Jan  5 17:30:11 CET 2005 - jsrain@suse.cz
 
 - removed unneeded imports and variables from installation.ycp

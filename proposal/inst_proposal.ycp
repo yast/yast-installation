@@ -194,6 +194,7 @@
 
 	no = 0;
 
+	Wizard::DisableNextButton ();
 	UI::BusyCursor();
 
 	foreach ( string submod, submodules,
@@ -252,6 +253,7 @@
 	    }
 	});
 
+	Wizard::EnableNextButton ();
 	UI::NormalCursor();
     };
 
