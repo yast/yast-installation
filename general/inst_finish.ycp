@@ -365,7 +365,7 @@ Please wait while the base system is being installed.
 	    SCR::Write (.etc.inittab, nil);
 	}
     }
-    else
+    else	// Update
     {
 	// Set default runlevel cause inittab will be overwritten by
 	// installing aaa_base
@@ -394,6 +394,10 @@ Please wait while the base system is being installed.
 
     // progress stage title
     Progress::Title(_("Copying configuration files to installed system"));
+
+    // --------------------------------------------------------------
+    // Copy kernel config
+    Kernel::CopyConfig ();
 
     // --------------------------------------------------------------
     // Copy /etc/XF86Config into built system so that the
