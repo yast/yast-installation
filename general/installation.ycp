@@ -36,14 +36,9 @@
     import "Misc";
     import "Keyboard";
 
-    import "InstMedia";
     import "Wizard";
     import "Report";
 
-
-    // initialize InstMedia
-
-    InstMedia::initializeInstMedia (InstMedia::installInf2installMap());
 
     include "installation_ui.ycp";
     include "partitioning/partition_defines.ycp";
