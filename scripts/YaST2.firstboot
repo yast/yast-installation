@@ -226,7 +226,7 @@ else
 	Display_IP=$(awk ' /^Display_IP:/ { print $2 }' < /etc/install.inf )
 	[ ! -z "$Display_IP" ] && export DISPLAY="$Display_IP:0.0"
 
-#	start a root shell on second virtual console
+	# start a root shell on second virtual console
 	if ! grep -qs '^NoShell:.*1' /etc/install.inf ; then
 		SPID=`/usr/lib/YaST2/bin/startshell /dev/tty2`
 	fi
@@ -281,7 +281,9 @@ EOF
     while test -f /var/lib/YaST2/runme_at_boot ; do sleep 3 ; done
 fi
 
-test -z "$SPID" || kill $SPID
+# kill shell on second virtual console
+test -z "$SPID" || kill $SPID &>/dev/null
+
 # kill VNC server
 killall Xvnc &>/dev/null
 

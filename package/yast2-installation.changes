@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Aug 30 11:18:15 CEST 2002 - arvin@suse.de
+
+- hide output of kill in YaST2.firstboot (bug #18585)
+
+-------------------------------------------------------------------
 Thu Aug 29 10:43:43 CEST 2002 - arvin@suse.de
 
 - fixed network start for ssh installation (bug #18506)
