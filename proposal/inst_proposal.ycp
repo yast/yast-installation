@@ -378,13 +378,15 @@
 	list submodules = [];
 
         // FIXME: Declare more types in control file
-        map proposal_type = $[ `ini: "initial", `net: "network", `hw : "hardware" ];
+        map proposal_type = $[ `ini: "initial", `net: "network", `hw : "hardware", `uml : "uml"];
         string proptype = proposal_type[proposal_mode]:"";
 
         submodules = ProductControl::getProposals (
                 Mode::stage,
                 Mode::mode,
                 proptype );
+        y2milestone("getting proposals with: \"%1\" \"%2\" \"%3\"", Mode::stage, Mode::mode, proptype );
+
         if (size(submodules) == 0 )
         {
             y2error("No proposals available");

@@ -67,6 +67,12 @@ global define boolean Read( string controlfile) ``{
   */
 global define void ProductControl() ``{
 
+    if (Mode::update)
+        Mode::mode="update";
+
+    if (Mode::normal)
+        Mode::stage ="normal";
+
     boolean ret = false;
     if (Mode::initial)
     {
