@@ -827,7 +827,6 @@ with the load address of your root DASD.
 	{
 	    y2milestone( "shutting down LVM" );
 	    WFM::Execute(.local.bash, "/sbin/vgchange -a n" );
-	    WFM::Execute(.local.bash, "/bin/umount /etc/lvmtab.d" );
 	}
 
 	// does not work in 7.2
