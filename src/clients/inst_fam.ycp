@@ -44,7 +44,8 @@
 	if (SCR::Read (.target.size, ("/etc/sysconfig/fam")) != -1)
 	{
 	    y2milestone ("Default WM: %1", default_wm);
-	    string local_only = ProductFeatures::fam_local_only;
+	    string local_only = ProductFeatures::GetStringFeature (
+		"globals", "fam_local_only");
 	    y2milestone ("Fam activation: %1", local_only);
 	    if (local_only == "always"
 		|| local_only == default_wm
