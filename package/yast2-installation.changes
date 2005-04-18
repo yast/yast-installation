@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Apr 18 15:19:44 CEST 2005 - jsrain@suse.cz
+
+- adapted to new interface of ProductFeatures.ycp
+
+-------------------------------------------------------------------
 Thu Apr 14 17:19:30 CEST 2005 - visnov@suse.cz
 
 - 2.12.1 

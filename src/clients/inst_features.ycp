@@ -19,28 +19,28 @@
     import "RunlevelEd";
 
     // Timezone
-    if (ProductFeatures::timezone != "")
+    if (ProductFeatures::GetStringFeature ("globals", "timezone") != "")
     {
-        Timezone::Set( ProductFeatures::timezone, true );
+        Timezone::Set( ProductFeatures::GetStringFeature ("globals", "timezone"), true );
     }
 
     // Keyboard
-    if (ProductFeatures::keyboard != "")
+    if (ProductFeatures::GetStringFeature ("globals", "keyboard") != "")
     {
-        Keyboard::default_kbd = ProductFeatures::keyboard;
-        Keyboard::SetConsole( ProductFeatures::keyboard);
-        Keyboard::SetX11( ProductFeatures::keyboard );
+        Keyboard::default_kbd = ProductFeatures::GetStringFeature ("globals", "keyboard");
+        Keyboard::SetConsole( ProductFeatures::GetStringFeature ("globals", "keyboard"));
+        Keyboard::SetX11( ProductFeatures::GetStringFeature ("globals", "keyboard") );
     }
 
     // Runlevel
-    if (ProductFeatures::runlevel != "")
+    if (ProductFeatures::GetStringFeature ("globals", "runlevel") != "")
     {
-        RunlevelEd::default = ProductFeatures::runlevel;
+        RunlevelEd::default = ProductFeatures::GetStringFeature ("globals", "runlevel");
     }
 
-    if (ProductFeatures::language != "")
+    if (ProductFeatures::GetStringFeature ("globals", "language") != "")
     {
-        string language = ProductFeatures::language;
+        string language = ProductFeatures::GetStringFeature ("globals", "language");
         // Set it in the Language module.
         Language::Set( language );
 

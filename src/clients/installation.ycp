@@ -301,7 +301,8 @@ differ from those in the manual.
     any selected_locale = Linuxrc::InstallInf("Locale");
     if (Stage::initial () && selected_locale!= nil && (string)selected_locale!="en_US")
     {
-        if ( ProductFeatures::skip_language_dialog )
+        if ( ProductFeatures::GetBooleanFeature (
+	    "globals", "skip_language_dialog") )
         {
             y2milestone("Skipping language dialog, Language changed to %1",
                     (string)selected_locale );
