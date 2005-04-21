@@ -16,7 +16,7 @@ X-SuSE-YaST-Geometry=
 X-SuSE-YaST-SortKey=
 X-SuSE-YaST-AutoInstResource=
 
-Icon=software2
+Icon=yast-vendor
 Exec=/sbin/yast2 vendor
 
 Name=Load Vendor Driver CD
