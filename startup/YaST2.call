@@ -99,29 +99,29 @@ function prepare_for_qt () {
 	if [ ! -f /var/lib/YaST2/runme_at_boot ];then
 		# Activate correct device/screen section...
 		sed -e "s#Screen.*Screen\[.*\]#Screen   "\""Screen[$X11_CONFIG_ID]#" \
-			/etc/X11/XF86Config >/etc/X11/XF86Config.new
-		mv /etc/X11/XF86Config.new /etc/X11/XF86Config
+			/etc/X11/xorg.conf >/etc/X11/xorg.conf.new
+		mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
 		
 		# update core pointer input device section...
 		if [ -f "/usr/X11R6/bin/xupdate" ];then
-			cat /etc/X11/XF86Config | \
-				/usr/X11R6/bin/xupdate > /etc/X11/XF86Config.new
-			mv /etc/X11/XF86Config.new /etc/X11/XF86Config
+			cat /etc/X11/xorg.conf | \
+				/usr/X11R6/bin/xupdate > /etc/X11/xorg.conf.new
+			mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
 		fi
 
 		# update Bus ID in device sections...
 		if [ "$XBusID" ] ; then
 			sed -e 's/#BusID/BusID/' \
-				-e "s#98:76:54#$XBusID#" /etc/X11/XF86Config \
-			> /etc/X11/XF86Config.new
-			mv /etc/X11/XF86Config.new /etc/X11/XF86Config
+				-e "s#98:76:54#$XBusID#" /etc/X11/xorg.conf \
+			> /etc/X11/xorg.conf.new
+			mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
 		fi
 
 		# update driver if accelerated driver should be used...
 		if [ "$X11_CONFIG_ID" = 0 ];then
-			sed -e "s#ChangeMe#$XServer#" /etc/X11/XF86Config \
-			> /etc/X11/XF86Config.new
-			mv /etc/X11/XF86Config.new /etc/X11/XF86Config
+			sed -e "s#ChangeMe#$XServer#" /etc/X11/xorg.conf \
+			> /etc/X11/xorg.conf.new
+			mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
 		fi
 	fi
 	#=============================================
