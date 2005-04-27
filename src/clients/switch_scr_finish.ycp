@@ -39,7 +39,7 @@ if (func == "Info")
     return (any)$[
 	"steps" : 1,
 	// progress step title
-	"title" : _("switch_scr"),
+	"title" : _("Moving to installed system..."),
 	"when" : [ `installation, `update, `autoinst ],
     ];
 }
