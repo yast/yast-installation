@@ -1,0 +1,50 @@
+/**
+ * File:
+ *      include/installation/misc.ycp
+ *
+ * Module:
+ *      System installation
+ *
+ * Summary:
+ *      Miscelaneous functions
+ *
+ * Authors:
+ *      Jiri Srain <jsrain@suse.cz>
+ *
+ * $Id: misc.ycp 23020 2005-04-18 13:58:56Z jsrain $
+ *
+ */
+
+
+
+{
+
+textdomain "installation";
+
+import "Installation";
+
+void InjectFile (string filename) {
+    y2milestone("InjectFile: <%1>", filename );
+    WFM::Execute (.local.bash, "/bin/cp " + filename + " " + Installation::destdir + filename);
+    return;
+
+    // this just needs too much memory
+    //byteblock copy_buffer = WFM::Read (.local.byte, filename);
+    //return SCR::Write (.target.byte, filename, copy_buffer);
+}
+
+
+void InjectRenamedFile( string dir, string src_name, string target_name ) {
+    y2milestone("InjectRenamedFile: <%1/%2> -> <%3/%4/%5>",
+	dir, src_name,
+	Installation::destdir, dir, target_name );
+    WFM::Execute (.local.bash,
+	sformat( "/bin/cp %1/%2 %3/%4/%5",
+	    dir, src_name,
+	    Installation::destdir, dir, target_name ) );
+    return;
+}
+
+
+
+} //end of include

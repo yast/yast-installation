@@ -1,0 +1,155 @@
+/**
+ * File:
+ *  umount_finish.ycp
+ *
+ * Module:
+ *  Step of base instalaltion finish
+ *
+ * Authors:
+ *  Jiri Srain <jsrain@suse.cz>
+ *
+ * $Id: printer_auto.ycp 20576 2004-12-15 15:00:18Z jsrain $
+ *
+ */
+
+{
+
+textdomain "installation";
+
+import "Installation";
+import "Storage";
+import "Hotplug";
+import "Vendor";
+
+any ret = nil;
+string func = "";
+map param = $[];
+
+/* Check arguments */
+if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
+    func = (string)WFM::Args(0);
+    if(size(WFM::Args()) > 1 && is(WFM::Args(1), map))
+	param = (map)WFM::Args(1);
+}
+
+y2milestone ("starting umount_finish");
+y2debug("func=%1", func);
+y2debug("param=%1", param);
+
+if (func == "Info")
+{
+    return (any)$[
+	"steps" : 1,
+	// progress step title
+	"title" : _("Unmounting all mounted devices..."),
+	"when" : [ `installation, `update, `autoinst ],
+    ];
+}
+else if (func == "Write")
+{
+    // loop over all filesystems
+    map<string,list> mountPoints = (map<string,list>)Storage::GetMountPoints();
+    list<string> umountList = [];
+
+    // go through mountPoints collecting paths in umountList
+    // *** umountList is lexically ordered !
+
+    foreach (string mountpoint, list mountval, mountPoints, {
+	if (mountpoint != "swap")		// dont umount / on target
+	{
+	    umountList = add (umountList, mountpoint);
+	}
+    });
+
+    // now unmount all mountpoints in reverse order !
+
+    // remove [Installation::destdir]/etc/mtab which was faked for %post
+    // scripts in inst_rpmcopy
+    SCR::Execute(.target.remove, "/etc/mtab");
+
+    // Stop SCR on target
+    WFM::SCRClose (Installation::scr_handle);
+
+    // first, umount everthing mounted *in* the target.
+    // /proc/bus/usb
+    // /proc
+
+    if (Hotplug::haveUSB)
+    {
+        WFM::Execute(.local.umount, Installation::destdir + "/proc/bus/usb");
+    }
+    WFM::Execute(.local.umount, Installation::destdir + "/proc");
+
+    map<string,map> targetMap = Storage::GetTargetMap();
+
+    // first umount all file based crypto fs since they potentially
+    // could mess up umounting of normale filesystems if the crypt
+    // file is not on the root fs
+    y2milestone( "umount list %1", umountList );
+    foreach( map e,  targetMap["/dev/loop","partitions"]:[],
+            {
+            if( size(e["mount"]:"")>0 )
+            {
+            WFM::Execute( .local.umount,
+                Installation::destdir + e["mount"]:"" );
+            umountList = filter (string m, umountList, ``(m!=e["mount"]:""));
+            y2milestone( "loop umount %1 new list %2", e["mount"]:"",
+                umountList );
+            }
+            if( size(e["loop_dev"]:"")>0 )
+            {
+            string cmd = "/sbin/losetup -d " + e["loop_dev"]:"";
+            y2milestone( "cmd %1", cmd );
+            WFM::Execute( .local.bash, cmd );
+            }
+            });
+
+    // *** umountList is lexically ordered !
+    // now umount in reverse order (guarantees "/" as last umount)
+
+    integer umountLength = size (umountList);
+    while (umountLength > 0)
+    {
+        umountLength = umountLength - 1;
+        string tmp = Installation::destdir + (string) (umountList[umountLength]:"");
+        y2milestone("umount target: %1", tmp);
+        WFM::Execute(.local.umount, tmp);
+    }
+
+    // disable loop device of crypto fs
+    integer max_loop_dev = Storage::NumLoopDevices();
+    boolean unload_crypto = false;
+
+    while (max_loop_dev > 0)
+    {
+        unload_crypto   = true;
+        string exec_str = sformat( "/sbin/losetup -d /dev/loop%1", max_loop_dev-1 );
+        y2milestone( "loopdev: %1", exec_str);
+        WFM::Execute(.local.bash, exec_str);
+        max_loop_dev = max_loop_dev -1;
+    }
+
+    if( size(filter(string k, map v, targetMap, ``(v["is_lvm_vg"]:false))) >0 )
+    {
+        y2milestone( "shutting down LVM" );
+        WFM::Execute(.local.bash, "/sbin/vgchange -a n" );
+    }
+
+    // does not work in 7.2
+    // boot.crypto fails to load module
+    // so we leave it loaded
+    // if ( unload_crypto ) WFM::Execute(.local.bash, "/sbin/rmmod loop_fish2");
+
+}
+else
+{
+    y2error ("unknown function: %1", func);
+    ret = nil;
+}
+
+y2debug("ret=%1", ret);
+y2milestone("umount_finish finished");
+return ret;
+
+
+} /* EOF */
