@@ -2,5 +2,5 @@
 # Makefile.am for installation/src
 #
 
-SUBDIRS = modules clients config
+SUBDIRS = modules clients config include
 
