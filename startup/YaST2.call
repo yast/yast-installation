@@ -110,12 +110,12 @@ function prepare_for_qt () {
 		fi
 
 		# update Bus ID in device sections...
-		if [ "$XBusID" ] ; then
-			sed -e 's/#BusID/BusID/' \
-				-e "s#98:76:54#$XBusID#" /etc/X11/xorg.conf \
-			> /etc/X11/xorg.conf.new
-			mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
-		fi
+		#if [ "$XBusID" ] ; then
+		#	sed -e 's/#BusID/BusID/' \
+		#		-e "s#98:76:54#$XBusID#" /etc/X11/xorg.conf \
+		#	> /etc/X11/xorg.conf.new
+		#	mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
+		#fi
 
 		# update driver if accelerated driver should be used...
 		if [ "$X11_CONFIG_ID" = 0 ];then

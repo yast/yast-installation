@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon May  9 18:27:54 CEST 2005 - ms@suse.de
+
+- removed sed update of BusID (#78950)
+
+-------------------------------------------------------------------
 Wed Apr 27 12:56:15 CEST 2005 - jsrain@suse.cz
 
 - modularized inst_finish.ycp
