@@ -14,7 +14,7 @@
 
 {
 
-textdomain "x11";
+textdomain "installation";
 
 import "X11Version";
 import "Mode";
@@ -96,7 +96,7 @@ else if (func == "Write")
 	    // copy /etc/X11/XF86Config from inst-sys to [/mnt]/etc/X11/xorg.conf
 	    // ---
 	    y2milestone ("Include X11 config [instsys] to installed system: xorg.conf");
-	    string filename = "/etc/X11/XF86Config";
+	    string filename = "/etc/X11/xorg.conf";
 	    WFM::Execute (.local.bash, "/bin/cp " + filename + " " +
 			  Installation::destdir + "/etc/X11/xorg.conf"
 			  );
@@ -110,7 +110,7 @@ else if (func == "Write")
 	// [/mnt]/etc/X11/xorg.conf.install
 	// ---
 	y2milestone ("Include X11 config [instsys] to installed system: xorg.conf.install");
-	string filename = "/etc/X11/XF86Config";
+	string filename = "/etc/X11/xorg.conf";
 	WFM::Execute (.local.bash, "/bin/cp " + filename + " " +
 		      Installation::destdir + "/etc/X11/xorg.conf" + ".install"
 		      );
