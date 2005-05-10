@@ -3,6 +3,7 @@ Tue May 10 14:05:01 CEST 2005 - jsrain@suse.cz
 
 - copy /etc/X11/xorg.conf instead of XF86Config to the target
   system
+- 2.12.5
 
 -------------------------------------------------------------------
 Mon May  9 18:27:54 CEST 2005 - ms@suse.de
