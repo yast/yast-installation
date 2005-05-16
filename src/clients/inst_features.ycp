@@ -35,7 +35,7 @@
     // Runlevel
     if (ProductFeatures::GetStringFeature ("globals", "runlevel") != "")
     {
-        RunlevelEd::default = ProductFeatures::GetStringFeature ("globals", "runlevel");
+        RunlevelEd::default_runlevel = ProductFeatures::GetStringFeature ("globals", "runlevel");
     }
 
     if (ProductFeatures::GetStringFeature ("globals", "language") != "")
