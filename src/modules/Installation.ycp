@@ -50,8 +50,8 @@
     // see general/installation.ycp
     global boolean shown_text_mode_warning = false;
 
-    boolean _text_fallback = false;
-    boolean _no_x11 = false;
+    boolean _text_fallback = nil;
+    boolean _no_x11 = nil;
 
 
     //---------------------------------------------------------------
@@ -80,6 +80,9 @@
     define void Initialize () {
         integer arg_count = size(WFM::Args());
         integer arg_no = 0;
+
+	_text_fallback= false;
+	_no_x11  = false;
 
         while ( arg_no < arg_count )
         {
