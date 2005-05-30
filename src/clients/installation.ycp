@@ -288,7 +288,15 @@ differ from those in the manual.
 ");
 	}
 
-	Report::Message(x11_msg);
+	if (x11_msg != "")
+	{
+	    Report::Message(x11_msg);
+	}
+	else
+	{
+	    y2error ("There should be a more detailed message displayed here,\
+but something went wrong, that's why it is only in the log");
+	}
 
 	// show this warning only once
 	Installation::shown_text_mode_warning = true;

@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon May 30 15:55:55 CEST 2005 - jsrain@suse.cz
+
+- display message when fallen into text mode installation (#53748)
+
+-------------------------------------------------------------------
 Mon May 16 10:53:27 CEST 2005 - jsrain@suse.cz
 
 - renamed 'default' variable
