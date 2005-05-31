@@ -348,7 +348,7 @@ fi
 #=============================================
 # 2.3) obtain RAM size in Kb
 #---------------------------------------------
-MEM_TOTAL=`grep '^MemTotal' /proc/meminfo | cut -f2 -d:|cut -f1 -dk|tr -d " "`
+MEM_TOTAL=`awk '/^MemTotal:/{ n=2  ;printf "%d\n", $n/3 }' /proc/meminfo`
 if [ ${#MEM_TOTAL} -gt 9 ];then
 	MEM_TOTAL=1000000000
 fi
@@ -491,6 +491,7 @@ fi
 # environment. The standard method of installing the system
 # should be Qt based. Refering to the variables Textmode,
 # Braille, UseSSH and VNC another medium could be selected
+# VNC overrides UseSSH
 # ---
 log "Evaluate medium selection..."
 log "============================"

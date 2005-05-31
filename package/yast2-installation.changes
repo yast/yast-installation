@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue May 31 11:04:04 CEST 2005 - ms@suse.de
+
+- applied patch from Olaf to avoid some time consuming calls (#86178)
+- allow "vnc=1 usessh=1" as install and debug method (#45127)
+
+-------------------------------------------------------------------
 Mon May 30 15:55:55 CEST 2005 - jsrain@suse.cz
 
 - display message when fallen into text mode installation (#53748)
