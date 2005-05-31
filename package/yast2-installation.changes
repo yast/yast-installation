@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue May 31 11:39:56 CEST 2005 - ms@suse.de
+
+- implement check for driver update mode (#84155)
+
+-------------------------------------------------------------------
 Tue May 31 11:04:04 CEST 2005 - ms@suse.de
 
 - applied patch from Olaf to avoid some time consuming calls (#86178)
