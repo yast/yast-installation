@@ -348,7 +348,7 @@ fi
 #=============================================
 # 2.3) obtain RAM size in Kb
 #---------------------------------------------
-MEM_TOTAL=`awk '/^MemTotal:/{ n=2  ;printf "%d\n", $n/3 }' /proc/meminfo`
+MEM_TOTAL=`awk '/^MemTotal:/{ print $2 }' /proc/meminfo`
 if [ ${#MEM_TOTAL} -gt 9 ];then
 	MEM_TOTAL=1000000000
 fi
