@@ -9,6 +9,10 @@ log "======================="
 awk '/ \/mnt/{ print $2 }' /proc/mounts | sort -r | xargs --no-run-if-empty umount
 # 9.2) turn off swap space (files and partitions)
 swapoff -a
+# 9.3) unmount update filesystem
+if [ "$UPDATE_MOUNTED" = true ];then
+	umount /y2update
+fi
 
 #=============================================
 # 9.4) write exit code for evaluation
