@@ -9,4 +9,4 @@ CLEANFILES = $(html_DATA)
 # There might be some duplicate filenames
 # but let's solve that later. For now we want to find all Modules::.
 index.html: $(srcdir)/../../src/*/*.ycp
-	@ybindir@/ycpdoc -d. $^
+	${YCPDOC} -d. $^

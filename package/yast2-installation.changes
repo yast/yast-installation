@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jun  1 14:12:06 CEST 2005 - mvidner@suse.cz
+
+- Added a scr file for .etc.install_inf_options (#75720).
+- 2.12.7
+
+-------------------------------------------------------------------
 Tue May 31 11:39:56 CEST 2005 - ms@suse.de
 
 - implement check for driver update mode (#84155)
