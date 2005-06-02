@@ -57,8 +57,10 @@ Linux system. They provide a brief summary of new features and changes.</p>");
     Wizard::SetContents (caption, contents, help, GetInstArgs::enable_back(),
             GetInstArgs::enable_next());
 
-    // FIXME: richtext eats return key
-    // UI::SetFocus (`id (`text));
+    // FIXME: richtext eats return key, but only in NCurses and we want to
+    // make users read release notes (and make PgDn work). For Next, F10 is
+    // availbale
+    UI::SetFocus (`id (`text));
 
     any ret = nil;
 
