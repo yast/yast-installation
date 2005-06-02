@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jun  2 16:57:14 CEST 2005 - jsrain@suse.cz
+
+- put focus on the release notes to allow scrolling without pushing
+  Tab many times to move the focus (#80215)
+
+-------------------------------------------------------------------
 Wed Jun  1 14:12:06 CEST 2005 - mvidner@suse.cz
 
 - Added a scr file for .etc.install_inf_options (#75720).

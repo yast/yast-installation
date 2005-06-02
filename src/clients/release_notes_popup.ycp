@@ -85,8 +85,10 @@ from the SUSE Linux Web server.</b>") + text;
     UI::OpenDialog (contents);
     UI::SetFocus (`close);
 
-    // FIXME: richtext eats return key
-    // UI::SetFocus (`id (`text));
+    // FIXME: richtext eats return key, but only in NCurses and we want to
+    // make users read release notes (and make PgDn work). For Next, F10 is
+    // availbale
+    UI::SetFocus (`id (`text));
 
     any ret = nil;
     repeat {
