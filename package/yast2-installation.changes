@@ -2,6 +2,7 @@
 Mon Jul 11 16:21:58 CEST 2005 - jsrain@suse.cz
 
 - removed dependency on vanished Display.ycp to fix build
+- 2.12.8
 
 -------------------------------------------------------------------
 Mon Jul 11 11:14:18 CEST 2005 - ms@suse.de
