@@ -57,7 +57,7 @@ function wait_for_x11() {
 # after a X-Server has been started you can wait until
 # the server is ready for requests using this function
 # ---
-	TESTX=/usr/X11R6/bin/testX
+	TESTX=/usr/sbin/testX
 	while kill -0 $xserver_pid 2>/dev/null ; do
 		sleep 1
 		if test -e /tmp/.X11-unix/X0 && test -x $TESTX ; then
@@ -103,9 +103,9 @@ function prepare_for_qt () {
 		mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
 		
 		# update core pointer input device section...
-		if [ -f "/usr/X11R6/bin/xupdate" ];then
+		if [ -f "/usr/sbin/xupdate" ];then
 			cat /etc/X11/xorg.conf | \
-				/usr/X11R6/bin/xupdate > /etc/X11/xorg.conf.new
+				/usr/sbin/xupdate > /etc/X11/xorg.conf.new
 			mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
 		fi
 
@@ -215,7 +215,7 @@ function check_Qt () {
 # check if the prepared medium Qt is valid
 # ---
 	if [ ! -z "$NEED_XSERVER" ];then
-		if ! have_pid $xserver_pid;then
+		if [ $server_running = 0 ];then
 			# /.../
 			# X-Server couldn't be started, selecting
 			# NCURSES mode as fallback ?
@@ -227,7 +227,7 @@ function check_Qt () {
 			Y2_MODE=ncurses
 		fi
 	else
-		/usr/X11R6/bin/testX --fast 2>/dev/null
+		/usr/sbin/testX --fast 2>/dev/null
 		if test $? = 1;then
 			log "\tCannot access Display: $DISPLAY, falling back to ncurses"
 			SELECTED_MEDIUM="NCURSES"
@@ -263,7 +263,7 @@ function check_vnc () {
 		log "\tPlease make sure the password is at least 8 characters long"
 		fatalError
 	fi
-	if ! have_pid $xserver_pid;then
+	if [ $server_running = 0 ];then
 		# /.../
 		# XVnc server couldn't be started, what to do now, I think
 		# this is a fatal error here
@@ -579,7 +579,7 @@ start_yast
 clr_inst_qt_env
 
 # 9.2) kill X-Server...
-if have_pid $xserver_pid;then
+if [ $server_running = 1 ];then
 	sleep 1 && kill $xserver_pid
 	while kill -0 $xserver_pid 2>/dev/null ; do
 		sleep 1
