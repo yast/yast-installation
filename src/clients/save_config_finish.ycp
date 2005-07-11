@@ -21,7 +21,7 @@ import "Mouse";
 import "Timezone";
 import "Language";
 import "Keyboard";
-import "Display";
+//import "Display";
 import "ProductFeatures";
 import "AutoInstall";
 import "Console";
@@ -46,7 +46,7 @@ y2debug("param=%1", param);
 if (func == "Info")
 {
     return (any)$[
-	"steps" : Mode::autoinst () ? 9 : 8,
+	"steps" : Mode::autoinst () ? 8 : 7,
 	"when" : [ `installation, `update, `autoinst ],
     ];
 }
@@ -67,10 +67,6 @@ else if (func == "Write")
     // progress step title
     Progress::Title (_("Saving keyboard configuration..."));
     Keyboard::Save(true);
-    Progress::NextStep ();
-    // progress step title
-    Progress::Title (_("Saving display configuration..."));
-    Display::Save();
     Progress::NextStep ();
     // progress step title
     Progress::Title (_("Saving product information..."));
