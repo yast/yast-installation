@@ -5,6 +5,7 @@ Thu Jul 14 18:18:42 CEST 2005 - jsrain@suse.cz
 - added support for tabs in proposals
 - adapted to new partitioner using storage-lib (arvin)
 - moved inst_desktop.ycp to yast2-packager
+- 2.12.9
 
 -------------------------------------------------------------------
 Mon Jul 11 16:21:58 CEST 2005 - jsrain@suse.cz
