@@ -22,6 +22,8 @@
 textdomain "installation";
 
 import "Installation";
+import "Mode";
+import "ProductControl";
 
 void InjectFile (string filename) {
     y2milestone("InjectFile: <%1>", filename );

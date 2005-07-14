@@ -15,6 +15,7 @@ textdomain "installation";
 import "Wizard";
 import "GetInstArgs";
 import "CustomDialogs";
+import "Installation";
 import "Mode";
 import "Label";
 import "RootPart";
