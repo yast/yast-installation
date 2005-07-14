@@ -90,17 +90,10 @@ else if (func == "Write")
             {
             if( size(e["mount"]:"")>0 )
             {
-            WFM::Execute( .local.umount,
-                Installation::destdir + e["mount"]:"" );
+	    Storage::Umount( e["device"]:"" );
             umountList = filter (string m, umountList, ``(m!=e["mount"]:""));
             y2milestone( "loop umount %1 new list %2", e["mount"]:"",
                 umountList );
-            }
-            if( size(e["loop_dev"]:"")>0 )
-            {
-            string cmd = "/sbin/losetup -d " + e["loop_dev"]:"";
-            y2milestone( "cmd %1", cmd );
-            WFM::Execute( .local.bash, cmd );
             }
             });
 
@@ -129,7 +122,7 @@ else if (func == "Write")
         max_loop_dev = max_loop_dev -1;
     }
 
-    if( size(filter(string k, map v, targetMap, ``(v["is_lvm_vg"]:false))) >0 )
+    if( size(filter(string k, map v, targetMap, ``(v["type"]:`CT_UNKNOWN==`CT_LVM))) >0 )
     {
         y2milestone( "shutting down LVM" );
         WFM::Execute(.local.bash, "/sbin/vgchange -a n" );
