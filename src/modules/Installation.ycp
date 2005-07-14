@@ -50,6 +50,9 @@
     // see general/installation.ycp
     global boolean shown_text_mode_warning = false;
 
+    // remember that hardware has already been probed
+    global boolean probing_done = false;
+
     boolean _text_fallback = nil;
     boolean _no_x11 = nil;
 
