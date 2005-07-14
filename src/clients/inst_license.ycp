@@ -96,7 +96,7 @@ the configuration will be aborted.</p>
 ");
 
 Wizard::SetContents(caption, contents, help,
-        GetInstArgs::enable_back(), GetInstArgs::enable_next());
+    GetInstArgs::enable_back(), GetInstArgs::enable_next());
 Wizard::SetFocusToNextButton();
 
 any ret = nil;
@@ -154,6 +154,8 @@ if (halt)
     UI::CloseDialog();
     SCR::Execute(.target.bash, "/sbin/halt");
 }
+if (ret == `accept)
+    ret = `next;
 return (symbol)ret;
 
 /* EOF */

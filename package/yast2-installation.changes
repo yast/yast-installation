@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Jul 14 07:54:49 CEST 2005 - jsrain@suse.de
+
+- added clients for license confirmation and desktop selection
+
+-------------------------------------------------------------------
 Mon Jul 11 16:21:58 CEST 2005 - jsrain@suse.cz
 
 - removed dependency on vanished Display.ycp to fix build

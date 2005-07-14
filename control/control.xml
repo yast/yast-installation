@@ -34,6 +34,7 @@ textdomain="control"
             <stage>initial</stage>
             <name>initial</name>
             <enable_skip>no</enable_skip>
+
             <proposal_modules config:type="list">
                 <proposal_module>hwinfo</proposal_module>
                 <proposal_module>mode</proposal_module>
@@ -170,6 +171,18 @@ textdomain="control"
                 <module>
 	            <label>Language</label>
                     <name>checkmedia</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+	            <label>License Agreement</label>
+                    <name>license</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+	            <label>Desktop Selection</label>
+                    <name>desktop</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
