@@ -29,6 +29,8 @@
     import "Language";
     import "GetInstArgs";
 
+    include "installation/misc.ycp";
+
     define void retranslate_proposal_dialog();
     define symbol load_matching_submodules_list();
     define boolean get_submod_descriptions_and_build_menu();
@@ -38,12 +40,17 @@
     define void set_icon();
     define string help_text();
 
-
     // values used in defined functions
 
     map 		proposal_properties = $[];
     list<string>	submodules = [];
     list<string>	submodules_presentation = [];
+    map<string,integer> mod2tab = $[]; // module -> tab it is in
+    list<string>	display_only_modules = []; // modules which do not have propose, but only summary
+    integer		current_tab = 0; // ID of current tab
+    boolean		has_tab = false; // true if is tabbed proposal
+    map<string, string> html = $[]; // proposals of all modules - HTML part
+    list<string>	present_only = [];
     list<string>	locked_modules = [];
     list	titles     = [];
     map		submod2id  = $[];
@@ -132,6 +139,7 @@
 	    {
 		Wizard::SetHelpText (help_text ());
 
+		build_dialog();
 		load_matching_submodules_list();
 		if (!get_submod_descriptions_and_build_menu ())
 		{
@@ -172,6 +180,7 @@
 
     define void make_proposal( boolean force_reset, boolean language_changed )
     ``{
+	integer tab_to_switch = 999;
 	integer no = 0;
 	map prop_map = $[];
 	boolean skip_the_rest = false;
@@ -179,7 +188,7 @@
 
 	link2submod = $[];
 
-	map<string, string> html = $[];
+	html = $[];
 	foreach ( string submod, submodules, ``{
 	    string prop = "";
 
@@ -217,6 +226,20 @@
         	}
 
 		prop_map = submod_make_proposal( submod, force_reset, language_changed );
+
+		// check if it is needed to switch to another tab
+		// because of an error
+		if (haskey (mod2tab, submod))
+		{
+		    symbol warn_level = prop_map["warning_level"]:`ok;
+		    if (contains ([`blocker, `fatal, `error], warn_level))
+		    {
+			if (mod2tab[submod]:999 < tab_to_switch)
+			{
+			    tab_to_switch = mod2tab[submod]:999;
+			}
+		    }
+		}
 
 		// update link map
 		if (haskey (prop_map, "links"))
@@ -257,6 +280,20 @@
 		skip_the_rest = true;
 	    }
 	});
+	if (has_tab && tab_to_switch < 999)
+	{
+	    // FIXME copy-paste from event loop
+	    current_tab = tab_to_switch;
+	    load_matching_submodules_list();
+	    string proposal = "";
+	    foreach (string mod, submodules_presentation, ``{
+		proposal = proposal + html[mod]:"";
+	    });
+	    display_proposal( proposal );
+	    get_submod_descriptions_and_build_menu ();
+	}
+
+	// now do the display-only proposals
 
 	Wizard::EnableNextButton ();
 	UI::NormalCursor();
@@ -473,16 +510,60 @@
 	}
 
 	// now create the list of modules and order of modules for presentation
-    	submodules = maplist (list mod, modules, ``(mod[0]:"") );
+	submodules = maplist (list mod, modules, ``(mod[0]:"") );
         y2milestone ("Execution order: %1", submodules);
 
-	// sort modules according to presentation ordering
-	modules = sort (list mod1, list mod2, modules, ``(
-	    mod1[1]:50 < mod2[1]:50
-	));
+y2internal ("Has tab 2: %1", has_tab);
+	if (has_tab)
+	{
+	    y2milestone ("Proposal uses tabs");
+	    map data = ProductControl::getProposalProperties (
+                Stage::stage (),
+                Mode::mode (),
+                proposal_mode );
+	    submodules_presentation = data["proposal_tabs", current_tab, "proposal_modules"]:[];
+            // All proposal file names end with _proposal
+	    submodules_presentation = maplist (string m, submodules_presentation, {
+		if (!issubstring(m, "_proposal"))
+		    m = m + "_proposal";
+		return m;
+	    });
+	    integer index = -1;
+	    mod2tab = $[];
+	    list<list<string> > tmp_all_submods = maplist (map tab, data["proposal_tabs"]:[], {
+		index = index + 1;
+		foreach (string m, tab["proposal_modules"]:[], {
+		    if (!issubstring(m, "_proposal"))
+			m = m + "_proposal";
+		    if (index < mod2tab[m]:999)
+			mod2tab[m] = index;
+		});
+		return tab["proposal_modules"]:[];
+	    });
 
-	// setup the list
-	submodules_presentation = maplist (list mod, modules, ``(mod[0]:"") );
+	    list<string> all_submods = flatten (tmp_all_submods);
+	    all_submods = maplist (string m, all_submods, {
+		if (!issubstring(m, "_proposal"))
+		    m = m + "_proposal";
+		return m;
+	    });
+	    display_only_modules = filter (string m, all_submods, {
+		return ! contains (submodules, m);
+	    });
+	    submodules = (list<string>)merge (submodules, display_only_modules);
+	}
+	else
+	{
+	    y2milestone ("Proposal doesn't use tabs");
+	    // sort modules according to presentation ordering
+	    modules = sort (list mod1, list mod2, modules, ``(
+		mod1[1]:50 < mod2[1]:50
+	    ));
+
+	    // setup the list
+	    submodules_presentation = maplist (list mod, modules, ``(mod[0]:"") );
+	}
+
 	y2milestone ("Presentation order: %1", submodules_presentation);
         y2milestone ("Execution order: %1", submodules);
     };
@@ -572,17 +653,53 @@
             else
                 enable_skip = true;
         }
-        
+        term rt = `RichText( `id(`proposal),
+				    // Initial contents of proposal subwindow while proposals are calculated
+				    HTML::Newlines( 3 ) + HTML::Para( _("Analyzing your system...") )
+				    );
+	map data = ProductControl::getProposalProperties (
+                Stage::stage (),
+                Mode::mode (),
+                proposal_mode );
+	if (haskey (data, "proposal_tabs"))
+	{
+	    has_tab = true;
+	    integer index = -1;
+	    list<map> tabs = data["proposal_tabs"]:[];
+	    list<integer> tab_ids = maplist (map tab, tabs, {
+		index = index + 1;
+		return index;
+	    });
+	    if (UI::HasSpecialWidget (`DumbTab))
+	    {
+		list<term> panes = maplist (integer t, tab_ids, {
+		    string label = tabs[t, "label"]:"Tab";
+		    return `item (`id (t), label, t == 0);
+		});
+		rt = `DumbTab (`id (`_cwm_tab), panes, rt);
+	    }
+	    else
+	    {
+		term tabbar = `HBox ();
+		foreach (integer t, tab_ids, {
+		    string label = tabs[t, "label"]:"Tab";
+		    tabbar = add (tabbar, `PushButton (`id (t), label));
+		});
+		rt = `VBox (`Left(tabbar), `Frame( "", rt));
+	    }
+	}
+	else
+	{
+	    has_tab = false;
+	}
+y2internal ("Has tabs: %1", has_tab);
 	if (!enable_skip)
 	{
 	    vbox = `VBox(
 			 // Help message between headline and installation proposal / settings summary.
 			 // May contain newlines, but don't make it very much longer than the original.
 			 `Left( `Label( _("Click any headline to make changes or use the \"Change...\" menu below.") ) ),
-			 `RichText( `id(`proposal),
-				    // Initial contents of proposal subwindow while proposals are calculated
-				    HTML::Newlines( 3 ) + HTML::Para( _("Analyzing your system...") )
-				    ),
+			 rt,
 			 menu_box
 			 );
 	}
@@ -591,12 +708,9 @@
 	    vbox = `VBox(
 			 skip_buttons,
 			 `HBox (
-				`HSpacing (4),
-				`RichText( `id(`proposal),
-					   // Initial contents of proposal subwindow while proposals are calculated
-					   HTML::Newlines( 3 ) + HTML::Para( _("Analyzing your system...") )
-					   )
-				),
+			    `HSpacing (4),
+			    rt
+			 ),
 			 menu_box
 			 );
 	}
@@ -857,14 +971,14 @@ a proposal that is locked, ask your system administrator.</p>");
     y2milestone( "Installation step #2" );
     proposal_mode = GetInstArgs::proposal();
 
+    build_dialog();
+
     //
     // Get submodule descriptions
     //
     proposal_result = load_matching_submodules_list();
     if (proposal_result == `abort)
         return `abort;
-
-    build_dialog();
 
     UI::ChangeWidget(`id(`menu_dummy), `Enabled, false );
     richtext_busy_cursor(`id(`proposal ) );
@@ -880,17 +994,21 @@ a proposal that is locked, ask your system administrator.</p>");
 	// constructors might depend on it.
 	// In autoinst mode, this has been called already.
 
+/* moved to inst_system_analysis
+
 	if (!Mode::autoinst ())
         {
 	    WFM::CallFunction("inst_startup", []);
 	    WFM::CallFunction("inst_features", []);
         }
-
+*/
 	// Let user decide between
 	//
 	// - New installation
 	// - Update
         // - Boot installed system
+
+/* moved to installation workflow
 
         while (true)
         {
@@ -909,6 +1027,7 @@ a proposal that is locked, ask your system administrator.</p>");
 	proposal_result = load_matching_submodules_list();
         if (proposal_result == `abort)
             return `abort;
+*/
     }
 
     if (!get_submod_descriptions_and_build_menu ())
@@ -936,6 +1055,20 @@ a proposal that is locked, ask your system administrator.</p>");
 	richtext_normal_cursor(`id(`proposal ) );
 	input = Wizard::UserInput();
 	richtext_busy_cursor(`id(`proposal ) );
+
+	// check for tab
+
+	if (is (input, integer))
+	{
+	    current_tab = (integer)input;
+	    load_matching_submodules_list();
+	    string proposal = "";
+	    foreach (string mod, submodules_presentation, ``{
+		proposal = proposal + html[mod]:"";
+	    });
+	    display_proposal( proposal );
+	    get_submod_descriptions_and_build_menu ();
+	}
 
 	// check for hyperlink id
 

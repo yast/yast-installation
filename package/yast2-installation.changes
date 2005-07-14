@@ -1,7 +1,8 @@
 -------------------------------------------------------------------
-Thu Jul 14 07:54:49 CEST 2005 - jsrain@suse.de
+Thu Jul 14 14:42:56 CEST 2005 - jsrain@suse.de
 
-- added clients for license confirmation and desktop selection
+- added installation workflow
+- added support for tabs in proposals
 
 -------------------------------------------------------------------
 Mon Jul 11 16:21:58 CEST 2005 - jsrain@suse.cz

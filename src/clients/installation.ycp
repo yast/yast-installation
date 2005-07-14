@@ -45,6 +45,8 @@
 
     import "Linuxrc";
 
+    include "installation/misc.ycp";
+
     /**
      * Re-translate static part of wizard dialog and other predefined messages
      * after language change
@@ -104,14 +106,16 @@
 	}
     }
 
+/* It should be possible to go back even in first stage
     if ( Stage::initial () && ! Mode::repair () )
     {
 	Wizard::OpenAcceptAbortStepsDialog();
     }
     else
-    {
+    {*/
 	Wizard::OpenNextBackStepsDialog();
-    }
+//    }
+
     // dialog caption
     Wizard::SetContents(_("Initializing..."), `Empty (), "", false, false);
 
@@ -133,17 +137,7 @@
 	UI::CloseDialog();
     }
 
-    string wizard_mode = Mode::test () ? "installation" : Mode::mode ();
-
-    // UI::WizardCommand() can safely be called even if the respective UI
-    // doesn't support the wizard widget, but for optimization it makes sense
-    // to do expensive operations only when it is available.
-
-    list<map> stage_mode = [$["stage": "initial" , "mode": wizard_mode ],
-                            $["stage": "continue", "mode": wizard_mode ]];
-
-    ProductControl::AddWizardSteps(stage_mode);
-  
+    UpdateWizardSteps ();
 
     // classified_user_settings contain secrets, like passwords ...
     // they should not be logged !

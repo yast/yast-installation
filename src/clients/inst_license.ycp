@@ -105,6 +105,16 @@ while (true)
 {
     ret = UI::UserInput();
     symbol accept = (symbol)UI::QueryWidget(`id(`eula), `CurrentButton);
+    if (ret == `back)
+    {
+	break;
+    }
+    else if (ret == `abort)
+    {
+	// TODO ask to confirm
+        break;
+    }
+
     if (accept == `no)
     {
 	// yes-no popup
@@ -136,10 +146,6 @@ while (true)
            }
        }
     }
-    else if (ret == `abort)
-    {
-        break;
-    }
     else if ( accept != `yes && accept != `no )
     {
 	// message popup
@@ -154,8 +160,6 @@ if (halt)
     UI::CloseDialog();
     SCR::Execute(.target.bash, "/sbin/halt");
 }
-if (ret == `accept)
-    ret = `next;
 return (symbol)ret;
 
 /* EOF */
