@@ -11,11 +11,28 @@
 {
 
 textdomain "installation";
-import "Wizard";
-import "Popup";
 import "GetInstArgs";
-import "CustomDialogs";
 import "Label";
+import "Packages";
+import "Popup";
+import "Wizard";
+
+map<symbol,string> desktop2selection = $[
+    `gnome : "default-Gnome",
+    `kde : "default",
+    `min_x11 : "Minimal+X11",
+    `text : "Minimal",
+];
+
+map<string,symbol> selection2desktop = mapmap (symbol d, string s,
+    desktop2selection,
+{
+    return $[ s : d ];
+});
+
+symbol alt_desktop = nil;
+if (Packages::preferred_base_selection != nil)
+    alt_desktop = selection2desktop[Packages::preferred_base_selection]:`kde;
 
 
 map display = UI::GetDisplayInfo();
@@ -33,14 +50,15 @@ graphical desktop environment, and somebody has to
 figure out some more text about this, but not more
 than three or four lines total.");
 
-term contents = `RadioButtonGroup (`HBox (
+term contents = `RadioButtonGroup (`id (`desktop), `HBox (
     `HWeight(1, `Empty()),	// Distribute excess space 1:2 (left:right)
     `VBox(
 	`VWeight (15, `Empty ()),
 	`VWeight (30, `VBox (
 	    `Left (`RadioButton (`id (`gnome), `opt (`notify, `boldFont),
 		// radio button
-		_("&GNOME"))),
+		_("&GNOME"),
+		alt_desktop == `gnome)),
 	    `Left (`HBox (
 		`HSpacing (3),
 		`Top (`Label (gnome_blurb)),
@@ -51,7 +69,8 @@ term contents = `RadioButtonGroup (`HBox (
 	`VWeight (30, `VBox (
 	    `Left (`RadioButton (`id (`kde), `opt(`notify, `boldFont),
 		// radio button
-		_( "&KDE" ) ) ),
+		_("&KDE"),
+		alt_desktop == `kde)),
 	    `Left (`HBox (
 		`HSpacing (3),
 		`Top (`Label (kde_blurb)),
@@ -62,7 +81,9 @@ term contents = `RadioButtonGroup (`HBox (
 	`VWeight (30, `VBox (
 	    `Left (`RadioButton (`id (`other), `opt(`notify, `boldFont),
 		// radio button
-		_( "&Other"))),
+		_( "&Other"),
+		alt_desktop != `gnome && alt_desktop != `kde
+		    && alt_desktop != nil)),
 	    `Left (`HBox (
 		`HSpacing (3),
 		`PushButton (`id (`select), _("&Select..."))
@@ -77,7 +98,7 @@ term expert_dialog = `VBox (
     `MarginBox(2, 0.7, `Frame (_("Alternate Desktops"),
 	`MarginBox (1, 0.5, `RadioButtonGroup (`id (`desktop), `VBox (
 	    `Left (`RadioButton (`id (`min_x11),
-		_("Minimal &Graphical System"), true)),
+		_("Minimal &Graphical System"))),
 	    `Left (`RadioButton (`id (`text),
 		_("&Text Mode")))
 	))
@@ -99,8 +120,6 @@ Wizard::SetTitleIcon( "yast-x11" );
 
 symbol ret = nil;
 
-symbol alt_desktop = `min_x11;
-
 repeat {
     map event = UI::WaitForEvent();
     ret = (symbol)event["ID"]:nil;
@@ -111,13 +130,19 @@ repeat {
 	UI::ChangeWidget (`select, `Enabled,
 	    UI::QueryWidget (`other, `Value));
     }
+    else if (ret == `next)
+    {
+	alt_desktop = (symbol)UI::QueryWidget (`id (`desktop), `CurrentButton);
+    }
     else if (ret == `select)
     {
 	UI::OpenDialog (expert_dialog);
-	UI::ChangeWidget (`id (`desktop), `CurrentButton, alt_desktop);
+	symbol selected = alt_desktop;
+	if (selected != `text)
+	    selected = `min_x11;
+	UI::ChangeWidget (`id (`desktop), `CurrentButton, selected);
 	any popup_ret = UI::UserInput ();
-	symbol selected = (symbol)
-	    UI::QueryWidget (`id (`desktop), `CurrentButton);
+	selected = (symbol)UI::QueryWidget (`id (`desktop), `CurrentButton);
 	UI::CloseDialog ();
 	if (popup_ret == `ok)
 	{
@@ -132,6 +157,17 @@ Wizard::EnableNextButton ();
 
 if (ret == `accept)
     ret = `next;
+
+if (ret == `next)
+{
+    string base_selection = desktop2selection[alt_desktop]:"default";
+    if (Packages::preferred_base_selection != base_selection)
+    {
+	y2milestone ("Setting preferred base selection: %1", base_selection);
+	Packages::base_selection_changed = true;
+	Packages::preferred_base_selection = base_selection;
+    }
+}
 
 return ret;
 
