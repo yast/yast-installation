@@ -56,6 +56,18 @@
     boolean _text_fallback = nil;
     boolean _no_x11 = nil;
 
+//
+// variables to store data of the installation clients
+//
+
+// inst_license
+
+/**
+ * The license has already been accepted, the respectiev radio button
+ * can be preselected
+ */
+global boolean license_accepted = false;
+
 
     //---------------------------------------------------------------
     // constructor
