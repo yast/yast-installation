@@ -12,17 +12,19 @@
 
 textdomain "installation";
 
-import "Wizard";
 import "GetInstArgs";
-import "CustomDialogs";
 import "Installation";
-import "Mode";
+import "Kernel";
 import "Label";
-import "RootPart";
-import "Popup";
-import "Update";
 import "Linuxrc";
+import "Mode";
+import "Popup";
+import "Product";
 import "ProductControl";
+import "RootPart";
+import "Storage";
+import "Update";
+import "Wizard";
 
 string start_mode = Mode::mode ();
 
@@ -137,7 +139,9 @@ Wizard::SetContents (_("Analyzing the computer"), `Empty (), "", false, false);
 // constructors might depend on it.
 // In autoinst mode, this has been called already.
 
+y2milestone ("Probing done: %1", Installation::probing_done);
 if (! Installation::probing_done)
+{
     if (!Mode::autoinst ())
     {
 	WFM::CallFunction("inst_startup", []);
@@ -166,9 +170,9 @@ if (! (have_linux && offer_update))
     return `auto;
 }
 if (Mode::autoinst ())
-    return auto;
+    return `auto;
 
-Wizard::SetContents (_("Compatible Linux System Detected"), contents, "", true, true);
+Wizard::SetContents (_("Installation Mode"), contents, "", true, true);
 Wizard::SetTitleIcon ("icons/penguin.png");
 
 symbol ret = nil;
@@ -208,10 +212,11 @@ repeat {
     }
     else if (ret == `abort)
     {
-	if (! Popup::ConfirmAbort (`painless))
-	    continue;
+	if (Popup::ConfirmAbort (Stage::initial () ? `painless : `incomplete)
+	    return `abort;
+	continue;
     }
-} until (ret == `back || ret == `next || ret == `cancel);
+} until (ret == `back || ret == `next);
 
 
 if (ret == `next)
