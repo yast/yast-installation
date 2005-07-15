@@ -22,6 +22,7 @@ import "Popup";
 import "Product";
 import "ProductControl";
 import "RootPart";
+import "Stage";
 import "Storage";
 import "Update";
 import "Wizard";
@@ -212,7 +213,7 @@ repeat {
     }
     else if (ret == `abort)
     {
-	if (Popup::ConfirmAbort (Stage::initial () ? `painless : `incomplete)
+	if (Popup::ConfirmAbort (Stage::initial () ? `painless : `incomplete))
 	    return `abort;
 	continue;
     }
