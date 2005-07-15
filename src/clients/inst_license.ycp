@@ -121,7 +121,7 @@ while (true)
     }
     else if (ret == `abort)
     {
-	if (Popup::ConfirmAbort (Stage::initial () ? `painless : `incomplete)
+	if (Popup::ConfirmAbort (Stage::initial () ? `painless : `incomplete))
 	    return `abort;
 	continue;
     }
