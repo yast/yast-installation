@@ -18,6 +18,7 @@
     textdomain "installation";
 
     import "Arch";
+    import "Label";
     import "Mode";
     import "Stage";
     import "Installation";
@@ -986,50 +987,6 @@ a proposal that is locked, ask your system administrator.</p>");
     // The "next" button is disabled via Wizard::SetContents() until everything is set up allright
     Wizard::EnableNextButton();
 
-    if ( Stage::initial () )
-    {
-	// Do hardware probing
-	//
-	// This must happen before submodule descriptions are initialized; module
-	// constructors might depend on it.
-	// In autoinst mode, this has been called already.
-
-/* moved to inst_system_analysis
-
-	if (!Mode::autoinst ())
-        {
-	    WFM::CallFunction("inst_startup", []);
-	    WFM::CallFunction("inst_features", []);
-        }
-*/
-	// Let user decide between
-	//
-	// - New installation
-	// - Update
-        // - Boot installed system
-
-/* moved to installation workflow
-
-        while (true)
-        {
-            any ret = WFM::CallFunction ("inst_mode", []);
-
-            if (ret == `abort || ret == `finish)
-                return (symbol) ret;
-
-            if (ret != `again)
-                break;
-        }
-
-	Wizard::SetHelpText (help_text ());
-
-	// this will recreate the dialog after the mode selection
-	proposal_result = load_matching_submodules_list();
-        if (proposal_result == `abort)
-            return `abort;
-*/
-    }
-
     if (!get_submod_descriptions_and_build_menu ())
     {
 	return `auto;
@@ -1043,6 +1000,8 @@ a proposal that is locked, ask your system administrator.</p>");
 
     // Set keyboard focus to the [Accept] or [Next] button
     Wizard::SetFocusToNextButton();
+    if (Stage::initial ())
+	Wizard::SetNextButton (`next, Label::AcceptButton ());
 
     //
     // Input loop
