@@ -36,7 +36,6 @@ textdomain="control"
             <enable_skip>no</enable_skip>
             <proposal_modules config:type="list">
                 <proposal_module>hwinfo</proposal_module>
-                <proposal_module>mode</proposal_module>
                 <proposal_module>keyboard</proposal_module>
                 <proposal_module>mouse</proposal_module>
                 <proposal_module>partitions</proposal_module>
@@ -51,15 +50,14 @@ textdomain="control"
                     <label>Overview</label>
                     <proposal_modules config:type="list">
                         <proposal_module>partitions</proposal_module>
-                        <proposal_module>software</proposal_module>
-                        <proposal_module>language</proposal_module>
+                        <proposal_module>software_simple</proposal_module>
+                        <proposal_module>language_simple</proposal_module>
                     </proposal_modules>
                 </proposal_tab>
                 <proposal_tab>
                     <label>Expert</label>
                     <proposal_modules config:type="list">
                         <proposal_module>hwinfo</proposal_module>
-                        <proposal_module>mode</proposal_module>
                         <proposal_module>keyboard</proposal_module>
                         <proposal_module>mouse</proposal_module>
                         <proposal_module>partitions</proposal_module>
@@ -108,7 +106,6 @@ textdomain="control"
             <enable_skip>no</enable_skip>
             <proposal_modules config:type="list">
 		<proposal_module>hwinfo</proposal_module>
-                <proposal_module>mode</proposal_module>
 		<proposal_module>media</proposal_module>
                 <proposal_module>rootpart</proposal_module>
                 <proposal_module>update</proposal_module>
@@ -178,10 +175,6 @@ textdomain="control"
             <mode>installation</mode>
             <stage>initial</stage>
             <modules  config:type="list">
-                <module>
-	            <label>Language</label>
-                    <name>info</name>
-                </module>
                 <module>
                     <name>language</name>
 	            <label>Language</label>
@@ -261,10 +254,6 @@ textdomain="control"
             <mode>update</mode>
             <stage>initial</stage>
             <modules  config:type="list">
-                <module>
-	            <label>Language</label>
-                    <name>info</name>
-                </module>
                 <module>
                     <name>language</name>
 	            <label>Language</label>
@@ -396,10 +385,6 @@ textdomain="control"
 	    <label>Base Installation</label>
             <mode>demo</mode>
             <modules  config:type="list">
-                <module>
-	            <label>Language</label>
-                    <name>info</name>
-                </module>
                 <module>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
@@ -574,10 +559,6 @@ textdomain="control"
                 <enable_next>no</enable_next>
             </defaults>
             <modules  config:type="list">
-                <module>
-	            <label>AutoYaST Settings</label>
-                    <name>info</name>
-                </module>
                 <module>
 	            <label>AutoYaST Settings</label>
                     <name>autoinit</name>
