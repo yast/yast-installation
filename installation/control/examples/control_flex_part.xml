@@ -1,0 +1,320 @@
+<?xml version="1.0"?>
+<productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
+    xmlns:config="http://www.suse.com/1.0/configns">
+
+    <globals>
+        <test/>
+    </globals>
+
+    <software>
+        <selection_type config:type="symbol">fixed</selection_type>
+        <base>Minimal</base>
+        <addons config:type="list">
+            <addon>X11</addon>
+        </addons>
+        <packages config:type="list">
+            <package>package</package>
+        </packages>
+    </software>
+    <partitioning>
+        <partitions config:type="list">
+            <listentry>
+                <disk config:type="integer">2</disk>
+                <mount>swap</mount>
+                <size>auto</size>
+            </listentry>
+            <listentry>
+                <disk config:type="integer">1</disk>
+                <fstopt>defaults</fstopt>
+                <fsys>reiser</fsys>
+                <increasable config:type="boolean">true</increasable>
+                <mount>/</mount>
+                <size>2gb</size>
+            </listentry>
+            <listentry>
+                <disk config:type="integer">2</disk>
+                <fstopt>defaults,data=writeback,noatime</fstopt>
+                <fsys>reiser</fsys>
+                <increasable config:type="boolean">true</increasable>
+                <mount>/var</mount>
+                <pct config:type="integer">100</pct>
+                <size>2gb</size>
+            </listentry>
+        </partitions>
+        <prefer_remove config:type="boolean">true</prefer_remove>
+        <remove_special_partitions config:type="boolean">false</remove_special_partitions>
+    </partitioning>
+
+    <proposals config:type="list">
+        <proposal>
+            <mode>installation</mode>
+            <stage>initial</stage>
+            <type>initial</type>
+            <modules config:type="list">
+                <module>proposal_hwinfo</module> 
+                <module>proposal_mode</module>
+                <module>proposal_keyboard</module>
+                <module>proposal_mouse</module>
+                <module>proposal_partitions</module> 
+                <module>proposal_software</module>
+                <module>bootloader_proposal</module>
+                <module>proposal_timezone</module>
+                <module>proposal_language</module>
+            </modules>
+        </proposal>
+        <proposal>
+            <mode>update</mode>
+            <stage>initial</stage>
+            <type>initial</type>
+            <modules config:type="list">
+                <module>proposal_mode</module>
+                <module>proposal_rootpart</module>
+                <module>proposal_update</module>
+                <module>proposal_packages</module>
+                <module>proposal_backup</module>
+                <module>proposal_language</module>
+                <module>proposal_keyboard</module>
+            </modules>
+        </proposal>
+        <proposal>
+            <archs>s390</archs>
+            <mode>installation</mode>
+            <stage>initial</stage>
+            <type>initial</type>
+            <modules config:type="list">
+                <module>proposal_mode</module>
+                <module>proposal_partitions</module>
+                <module>proposal_software</module>
+                <module>proposal_timezone</module>
+                <module>proposal_language</module>
+            </modules>
+        </proposal>
+        <proposal>
+            <archs>s390</archs>
+            <mode>update</mode>
+            <stage>initial</stage>
+            <type>initial</type>
+            <modules config:type="list">
+                <module>proposal_mode</module>
+                <module>proposal_rootpart</module>
+                <module>proposal_update</module>
+                <module>proposal_packages</module>
+                <module>proposal_backup</module>
+                <module>proposal_language</module>
+            </modules>
+        </proposal>
+        <proposal>
+            <type>network</type>
+            <stage>continue</stage>
+            <modules config:type="list">
+                <module>lan_proposal</module>
+                <module>dsl_proposal</module>
+                <module>isdn_proposal</module>
+                <module>modem_proposal</module>
+                <module>proxy_proposal</module>
+                <module>remote_proposal</module>
+            </modules>
+        </proposal>
+        <proposal>
+            <type>hardware</type>
+            <stage>continue</stage>
+            <modules config:type="list">
+                <module>x11_proposal</module>
+                <module>printer_proposal</module>
+                <module>sound_proposal</module>
+                <module>tv_proposal</module>
+            </modules>
+        </proposal>
+        <proposal>
+            <archs>s390,ppc64</archs>
+            <type>network</type>
+            <stage>continue</stage>
+            <modules config:type="list">
+                <module>lan_proposal</module>
+                <module>proxy_proposal</module>
+                <module>remote_proposal</module>
+            </modules>
+        </proposal>
+        <proposal>
+            <archs>ppc64</archs>
+            <type>hardware</type>
+            <stage>continue</stage>
+            <modules config:type="list">
+                <module>x11_proposal</module>
+                <module>printer_proposal</module>
+            </modules>
+        </proposal>
+        <proposal>
+            <archs>s390</archs>
+            <type>hardware</type>
+            <stage>continue</stage>
+            <modules config:type="list">
+                <module>printer_proposal</module>
+            </modules>
+        </proposal>
+    </proposals>
+
+    <workflows config:type="list">
+        <workflow>
+            <defaults>
+                <arguments>false,false</arguments>
+                <archs>all</archs>
+            </defaults>
+            <stage>initial</stage>
+            <mode>installation</mode>
+            <modules  config:type="list">
+                <module>
+                    <name>inst_info</name>
+                    <arguments>false,true</arguments>
+                </module>
+                <module>
+                    <name>inst_language</name>
+                    <arguments>false,true,true</arguments>
+                </module>
+                <module>
+                    <name>inst_proposal</name>	 		 
+                    <arguments>true,true,`ini</arguments>
+                </module>
+                <module>
+                    <name>inst_do_resize</name>	 
+                </module>
+                <module>
+                    <name>inst_prepdisk</name>	 
+                </module>
+                <module>
+                    <name>inst_kickoff</name>
+                </module>
+                <module>
+                    <name>inst_rpmcopy</name>	 
+                </module>
+                <module>
+                    <name>inst_finish</name>	
+                </module>
+            </modules> 
+        </workflow>
+        <workflow>
+            <stage>continue</stage>
+            <mode>installation</mode>
+            <defaults>
+                <arguments>false,false</arguments>
+                <archs>all</archs>
+            </defaults>
+            <modules  config:type="list">
+                <module>
+                    <name>inst_netsetup</name>	     
+                    <arguments>false,false,`up</arguments>
+                </module>
+                <module>
+                    <name>inst_netprobe</name>	     
+                </module>
+                <module>
+                    <name>inst_rpmcopy</name>
+                </module>
+                <module>
+                    <name>inst_root</name>	
+                </module>
+                <module>
+                    <name>inst_proposal</name>	 		 
+                    <arguments>true,true,`net</arguments>
+                </module>
+                <module>
+                    <name>inst_ask_net_test</name>
+                    <arguments>true,true</arguments>
+                </module>
+                <module>
+                    <name>inst_do_net_test</name>
+                    <arguments>true,true</arguments>
+                </module>
+                <module>
+                    <name>inst_you</name>
+                    <arguments>true,true</arguments>
+                </module>
+                <module>
+                    <name>inst_auth</name>
+                    <arguments>true,true</arguments>
+                </module>
+                <module>
+                    <name>inst_user</name>
+                    <arguments>true,true</arguments>
+                </module>
+
+                <module>
+                    <name>inst_suseconfig</name>
+                    <arguments>false,false</arguments>
+                </module>
+                <module>
+                    <name>inst_release_notes</name>
+                    <arguments>true,true</arguments>
+                </module>
+                <module>
+                    <name>inst_release_notes</name>
+                    <arguments>true,true</arguments>
+                </module>
+                <module>
+                    <name>inst_proposal</name>	 		 
+                    <arguments>true,true,`hw</arguments>
+                </module>
+                <module>
+                    <name>inst_congratulate</name>	 		 
+                    <arguments>true,true</arguments>
+                </module>
+            </modules>
+        </workflow>
+        <workflow>
+            <stage>initial</stage>
+            <mode>autoinst</mode>
+            <defaults>
+                <arguments>false,false</arguments>
+                <archs>all</archs>
+            </defaults>
+            <modules  config:type="list">
+                <module>
+                    <name>autoinst_init</name>
+                    <archs>all</archs>		
+                </module>
+                <module>
+                    <name>autoinst_setup</name>	 		 
+                </module>
+                <module>
+                    <name>inst_prepdisk</name>	 
+                </module>
+                <module>
+                    <name>inst_kickoff</name>
+                </module>
+                <module>
+                    <name>inst_rpmcopy</name>	 
+                </module>
+                <module>
+                    <name>inst_finish</name>	
+                </module>
+            </modules> 
+        </workflow>
+        <workflow>
+            <stage>continue</stage>
+            <mode>autoinst</mode>
+            <modules  config:type="list">
+                <module>
+                    <name>inst_netsetup</name>	     
+                </module>
+                <module>
+                    <name>inst_netprobe</name>	     
+                </module>
+                <module>
+                    <name>autoinst_post</name>	     
+                </module>
+                <module>
+                    <name>inst_rpmcopy</name>
+                </module>
+                <module>
+                    <name>inst_x11</name>	
+                </module>
+                <module>
+                    <name>autoinst_configure</name>
+                </module>
+                <module>
+                    <name>inst_suseconfig</name>
+                </module>
+            </modules>
+        </workflow>
+    </workflows>
+</productDefines>

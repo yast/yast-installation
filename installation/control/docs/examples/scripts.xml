@@ -1,0 +1,14 @@
+
+                <module>
+                    <name>info</name>
+                    <arguments>false,true</arguments>
+                    <prescript>
+                        <interpreter>shell</interpreter>
+                        <source>
+<![CDATA[#!/bin/sh
+touch /tmp/anas
+echo anas > /tmp/anas
+]]>
+                        </source>
+                    </prescript>
+                </module>

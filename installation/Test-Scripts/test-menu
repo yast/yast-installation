@@ -1,0 +1,6 @@
+#!/bin/sh
+
+PATH=$PATH:/usr/lib/YaST2/bin
+cd /usr/share/YaST2/clients
+
+/usr/lib/YaST2/bin/y2base menu '("test")' qt -geometry 800x600 -style=platinum

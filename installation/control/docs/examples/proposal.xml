@@ -1,0 +1,15 @@
+
+
+        <proposal>
+            <type>network</type>
+            <stage>continue,normal</stage>
+            <proposal_modules config:type="list">
+                <proposal_module>lan</proposal_module>
+                <proposal_module>dsl</proposal_module>
+                <proposal_module>isdn</proposal_module>
+                <proposal_module>modem</proposal_module>
+                <proposal_module>proxy</proposal_module>
+        <proposal_module>remote</proposal_module>
+            </proposal_modules>
+        </proposal>
+

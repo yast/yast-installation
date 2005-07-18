@@ -1,0 +1,263 @@
+/**
+ * File:	clients/inst_system_analysis.ycp
+ * Package:	Installation
+ * Summary:	Installation mode selection, system analysis
+ * Authors:	Jiri Srain <jsrain@suse.cz>
+ *
+ * $Id: inst_license.ycp 24033 2005-07-14 05:56:01Z jsrain $
+ *
+ */
+
+{
+
+textdomain "installation";
+
+import "GetInstArgs";
+import "Installation";
+import "Kernel";
+import "Label";
+import "Linuxrc";
+import "Mode";
+import "Popup";
+import "Product";
+import "ProductControl";
+import "RootPart";
+import "Stage";
+import "Storage";
+import "Update";
+import "Wizard";
+
+string start_mode = Mode::mode ();
+
+
+// FIXME copy-paste from inst_mode
+    define symbol handle_boot ()
+    {
+	y2milestone( "User wishes to boot installed system" );
+
+	if (!RootPart::didSearchForRootPartitions)
+	{
+	    UI::OpenDialog (`opt(`decorated ),
+			    // label
+			    `Label(_("Evaluating root partition. One moment please...")));
+	    RootPart::FindRootPartitions ();
+	    UI::CloseDialog ();
+	}
+
+	if (RootPart::numberOfValidRootPartitions == 0)
+	{
+	    // a popup
+	    Popup::Message(_("No Linux root partition found."));
+	    return `cancel;
+	}
+
+	// We must only change RootPart::selectedRootPartition if booting
+	// is inevitable.
+
+	if (RootPart::numberOfValidRootPartitions == 1)
+	{
+	    RootPart::SetSelectedToValid ();
+	}
+	else
+	{
+	    if (WFM::CallFunction ("inst_rootpart", [true, true, `boot_popup]) != `next)
+		return `cancel;
+	}
+
+	string root_part = RootPart::selectedRootPartition;
+
+	UI::OpenDialog( `opt(`decorated),
+			// Information popup: Inform user what partition
+			// will be booted from after user selected
+			// "Boot installed system"
+			`Label( sformat(_("Booting from %1"), root_part ) ) );
+
+	Update::Detach ();
+	RootPart::UnmountPartitions (false);
+
+	sleep (1000);
+
+	if ( ! Mode::test () )
+	{
+	    Linuxrc::WriteYaSTInf ($["Root" : root_part]);
+
+	    SCR::Write(.md.activate, "");
+	    SCR::Write(.lvm.activate, "");
+	}
+
+	UI::CloseDialog ();
+
+	return `finish;
+    }
+
+term radio_box = `Frame (_("Installation Mode"), `RadioButtonGroup (
+    `id (`inst_mode),
+    `MarginBox (
+	`leftMargin (1),
+	`rightMargin (1.5),
+	`topMargin (0.5),
+	`bottomMargin (0.5),
+	`VBox(
+	    `Left (`RadioButton (`id (`install), _("New &Installation"),
+		! Mode::update ())),
+	    `VSpacing( 0.5 ),
+	    `Left (`RadioButton (`id (`update), _("&Update"),
+		Mode::update ()))
+	)
+    )
+));
+
+term contents = `VBox (
+    `VWeight (60, `HVCenter (radio_box)),
+    `VWeight (10, `Empty ()),
+    `HBox (
+	`HWeight (4, `Empty()),
+	`PushButton (`id (`expert), _("E&xpert...")),
+	`HWeight (1, `Empty ())
+    ),
+    `VWeight (10, `Empty ())
+);
+
+term expert_dialog = `VBox (
+    `MarginBox (2, 0.7, `Frame (_("Expert Options"),
+	`MarginBox (1, 0.5, `RadioButtonGroup (`id (`expert_mode), `VBox (
+	    `Left (`RadioButton (`id (`repair),
+		_("&Repair Installed System"), true)),
+	    `Left (`RadioButton (`id (`boot), _("&Boot Installed System")))
+	)))
+    )),
+    `Right (`HBox (
+	`PushButton (`id (`ok), Label::OKButton ()),
+	`PushButton (`id (`cancel), Label::CancelButton ())
+    ))
+);
+
+Wizard::SetContents (_("Analyzing the computer"), `Empty (), "", false, false);
+
+// Do hardware probing
+//
+// This must happen before submodule descriptions are initialized; module
+// constructors might depend on it.
+// In autoinst mode, this has been called already.
+
+y2milestone ("Probing done: %1", Installation::probing_done);
+if (! Installation::probing_done)
+{
+    if (!Mode::autoinst ())
+    {
+	WFM::CallFunction("inst_startup", []);
+	WFM::CallFunction("inst_features", []);
+	Installation::probing_done = true;
+    }
+}
+
+// FIXME copy-paste from inst_mode
+    boolean offer_update = false;
+    if (contains (Product::flags, "update") || Kernel::GetSuSEUpdate ())
+    {
+	offer_update = true;
+    }
+
+// FIXME copy-paste from inst_mode
+    boolean have_linux = false;
+    if (Storage::HaveLinuxPartitions ())
+    {
+	have_linux = true;
+    }
+
+if (! (have_linux && offer_update))
+{
+    Mode::SetMode ("installation");
+    return `auto;
+}
+if (Mode::autoinst ())
+    return `auto;
+
+Wizard::SetContents (_("Installation Mode"), contents, "", true, true);
+Wizard::SetTitleIcon ("icons/penguin.png");
+
+symbol ret = nil;
+symbol new_mode = Mode::update () ? `update : `install;
+
+repeat {
+    ret = (symbol)UI::UserInput();
+
+    if (ret == `next)
+    {
+	new_mode = (symbol)UI::QueryWidget (`id (`inst_mode), `CurrentButton);
+	if (new_mode == nil)
+	{
+	    // this is a label of a message box
+	    Popup::Message(_("Choose one of the\noptions to continue."));
+	    continue;
+	}
+    }
+    else if (ret == `expert)
+    {
+	UI::OpenDialog( expert_dialog );
+	ret = (symbol)UI::UserInput();
+	if (ret == `ok)
+	{
+	    new_mode = (symbol)
+		UI::QueryWidget (`id (`expert_mode), `CurrentButton);
+	    if (new_mode == `boot)
+	    {
+		if (handle_boot () == `finish)
+		    Mode::SetMode ("");
+		else
+		    ret = nil;
+	    }
+	    ret = `next;
+	}
+	UI::CloseDialog();
+    }
+    else if (ret == `abort)
+    {
+	if (Popup::ConfirmAbort (Stage::initial () ? `painless : `incomplete))
+	    return `abort;
+	continue;
+    }
+} until (ret == `back || ret == `next);
+
+
+if (ret == `next)
+{
+    if (new_mode == `install)
+    {
+	Mode::SetMode ("installation");
+    }
+
+    if (new_mode == `update)
+    {
+	Mode::SetMode ("update");
+    }
+
+    if (new_mode == `repair)
+    {
+	Mode::SetMode ("repair");
+	ret = `finish;
+    }
+
+    if (new_mode == `boot)
+    {
+	Mode::SetMode ("");
+	ret = `finish;
+    }
+}
+
+
+if (ret != `finish && Mode::mode () != start_mode)
+{
+    y2milestone ("Switching Steps from %1 to %2 ", start_mode, Mode::mode ());
+    void UpdateWizardSteps ();
+}
+
+if (Mode::repair ())
+{
+    WFM::CallFunction ("inst_repair");
+}
+
+return ret;
+
+/* EOF */
+}
