@@ -27,6 +27,8 @@ import "Storage";
 import "Update";
 import "Wizard";
 
+include "installation/misc.ycp";
+
 string start_mode = Mode::mode ();
 
 
@@ -249,7 +251,13 @@ if (ret == `next)
 if (ret != `finish && Mode::mode () != start_mode)
 {
     y2milestone ("Switching Steps from %1 to %2 ", start_mode, Mode::mode ());
-    void UpdateWizardSteps ();
+    UpdateWizardSteps ();
+    if (! Mode::repair ())
+    {
+	ret = ProductControl::RunFrom (ProductControl::CurrentStep () + 1);
+	if (ret == `next)
+	    ret = `finish;
+    }
 }
 
 if (Mode::repair ())

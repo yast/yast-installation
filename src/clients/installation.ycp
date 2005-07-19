@@ -313,9 +313,55 @@ but something went wrong, that's why it is only in the log");
         }
     }
 
+    symbol ret = nil;
+    string restart_data_file = "/var/lib/YaST2/continue_installation";
+    string reboot_file = "/var/lib/YaST2/reboot";
+    string restart_file = "/var/lib/YaST2/restart_yast";
+    if (Stage::cont ()
+	&& (integer)SCR::Read (.target.size, restart_data_file) > 0)
+    {
+	string contents = (string)
+	    SCR::Read (.target.string, restart_data_file);
+	integer next_step = tointeger (contents);
+	if (next_step == nil)
+	{
+	    y2error ("Data file specifying step to continue corrupted");
+	    ret = ProductControl::Run();
+	}
+	else
+	{
+	    ret = ProductControl::RunFrom (next_step);
+	}
+	SCR::Execute (.target.bash, sformat (
+	    "test -f %1 && /bin/rm -f %1", reboot_file));
+	SCR::Execute (.target.bash, sformat (
+	    "test -f %1 && /bin/rm -f %1", restart_file));
+	SCR::Execute (.target.bash, sformat (
+	    "test -f %1 && /bin/rm -f %1", restart_data_file));
+    }
+    else
+    {
+	// Run the installation workflow
+	ret = ProductControl::Run();
+    }
 
-    // Run the installation workflow
-    symbol ret = ProductControl::Run();
+    if (Stage::cont () && (ret == `reboot || ret == `restart_yast))
+    {
+	integer last_step = ProductControl::CurrentStep ();
+	integer next_step = last_step + 1;
+	SCR::Write (.target.string, restart_data_file,
+	    sformat ("%1", next_step));
+	if (ret == `reboot)
+	{
+	    SCR::Execute (.target.bash, sformat (
+		"touch %1", reboot_file));
+	}
+	else if (ret == `restart_yast)
+	{
+	    SCR::Execute (.target.bash, sformat (
+		"touch %1", restart_file));
+	}
+    }
 
     if (ret == `abort)
     {
@@ -327,7 +373,7 @@ but something went wrong, that's why it is only in the log");
     if (!Mode::test ())
         WFM::Execute (.local.bash, "/bin/echo \"/sbin/modprobe\" >/proc/sys/kernel/modprobe");
 
-    if (Stage::cont ())
+    if (Stage::cont () && ret != `reboot && ret != `restart_yast)
     {
 	// remove /etc/install.inf, not needed any more
 	SCR::Execute (.target.remove, "/etc/install.inf");

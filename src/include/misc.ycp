@@ -49,6 +49,7 @@ void InjectRenamedFile( string dir, string src_name, string target_name ) {
 
 void UpdateWizardSteps () {
     string wizard_mode = Mode::test () ? "installation" : Mode::mode ();
+    y2milestone ("Switching Steps to %1 ", wizard_mode);
 
     list<map> stage_mode = [
 	$["stage": "initial" , "mode": wizard_mode ],
@@ -58,5 +59,7 @@ void UpdateWizardSteps () {
 
     ProductControl::UpdateWizardSteps(stage_mode);
 }
+
+
 
 } //end of include
