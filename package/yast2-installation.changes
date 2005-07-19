@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Jul 19 17:25:15 CEST 2005 - jsrain@suse.cz
+
+- fixed switch from installation to update and vice versa
+- added support for reboot and restart of YaST during 2nd stage
+  installation
+- updated control file to show 3 installation stages
+
+-------------------------------------------------------------------
 Mon Jul 18 13:38:50 CEST 2005 - jsrain@suse.cz
 
 - updated control file

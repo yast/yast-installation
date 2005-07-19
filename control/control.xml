@@ -171,7 +171,7 @@ textdomain="control"
             <defaults>
                 <archs>all</archs>
             </defaults>
-	    <label>Base Installation</label>
+	    <label>Preparation</label>
             <mode>installation</mode>
             <stage>initial</stage>
             <modules  config:type="list">
@@ -215,6 +215,10 @@ textdomain="control"
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
+		<module>
+		    <heading>yes</heading>
+		    <label>Installation</label>
+		</module>
                 <module>
 	            <label>Installation Summary</label>
                     <name>proposal</name>
@@ -250,7 +254,7 @@ textdomain="control"
             <defaults>
                 <archs>all</archs>
             </defaults>
-	    <label>Base Installation</label>
+	    <label>Preparation</label>
             <mode>update</mode>
             <stage>initial</stage>
             <modules  config:type="list">
@@ -283,11 +287,15 @@ textdomain="control"
                     <enable_next>yes</enable_next>
                 </module>
                 <module>
-	            <label>Desktop Selection</label>
-                    <name>desktop</name>
+	            <label>System for Update</label>
+                    <name>update_partition</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
+		<module>
+		    <heading>yes</heading>
+		    <label>Update</label>
+		</module>
                 <module>
 	            <label>Update Summary</label>
                     <name>proposal</name>
@@ -419,7 +427,6 @@ textdomain="control"
         </workflow>
         <workflow>
             <stage>continue</stage>
-            <label>Configuration</label>
             <mode>update</mode>
             <defaults>
                 <archs>all</archs>
@@ -435,6 +442,10 @@ textdomain="control"
 	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
                 </module>
+		<module>
+		    <heading>yes</heading>
+		    <label>Configuration</label>
+		</module>
                 <module>
 	            <label>Network</label>
                     <name>ask_net_test</name>
@@ -472,7 +483,6 @@ textdomain="control"
         </workflow>
         <workflow>
             <stage>continue</stage>
-            <label>Configuration</label>
             <mode>installation</mode>
             <defaults>
                 <enable_back>yes</enable_back>
@@ -494,6 +504,10 @@ textdomain="control"
                     <enable_back>no</enable_back>
                     <enable_next>no</enable_next>
                 </module>
+		<module>
+		    <heading>yes</heading>
+		    <label>Configuration</label>
+		</module>
                 <module>
 	            <label>Root Password</label>
                     <name>root</name>
@@ -605,7 +619,6 @@ textdomain="control"
                 <enable_next>no</enable_next>
             </defaults>
             <stage>continue</stage>
-            <label>Configuration</label>
             <mode>autoinstallation</mode>
             <modules  config:type="list">
                 <module>
@@ -624,6 +637,10 @@ textdomain="control"
 	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
                 </module>
+		<module>
+		    <heading>yes</heading>
+		    <label>Configuration</label>
+		</module>
                 <module>
 	            <label>System Configuration</label>
                     <name>x11</name>
