@@ -57,6 +57,7 @@ function wait_for_x11() {
 # after a X-Server has been started you can wait until
 # the server is ready for requests using this function
 # ---
+	server_running=0
 	TESTX=/usr/sbin/testX
 	while kill -0 $xserver_pid 2>/dev/null ; do
 		sleep 1
