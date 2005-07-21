@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Jul 21 17:01:57 CEST 2005 - fehr@suse.de
+
+- replace obsolete SCR agent calls by call to Storage::ActivateHld()
+
+-------------------------------------------------------------------
 Thu Jul 21 11:54:19 CEST 2005 - ms@suse.de
 
 - fixed YaST2.call::wait_for_x11() to set an initial value

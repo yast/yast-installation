@@ -87,9 +87,7 @@
 	if ( ! Mode::test () )
 	{
 	    Linuxrc::WriteYaSTInf ($["Root" : root_part]);
-
-	    SCR::Write(.md.activate, "");
-	    SCR::Write(.lvm.activate, "");
+	    Storage::ActivateHld(true);
 	}
 
 	UI::CloseDialog ();
