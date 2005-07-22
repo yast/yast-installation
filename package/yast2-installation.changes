@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Jul 22 13:09:38 CEST 2005 - jsrain@suse.cz
+
+- fixed dialog captions of proposals
+
+-------------------------------------------------------------------
 Thu Jul 21 17:01:57 CEST 2005 - fehr@suse.de
 
 - replace obsolete SCR agent calls by call to Storage::ActivateHld()
