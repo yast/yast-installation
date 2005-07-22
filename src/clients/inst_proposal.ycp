@@ -514,7 +514,6 @@
 	submodules = maplist (list mod, modules, ``(mod[0]:"") );
         y2milestone ("Execution order: %1", submodules);
 
-y2internal ("Has tab 2: %1", has_tab);
 	if (has_tab)
 	{
 	    y2milestone ("Proposal uses tabs");
@@ -693,7 +692,6 @@ y2internal ("Has tab 2: %1", has_tab);
 	{
 	    has_tab = false;
 	}
-y2internal ("Has tabs: %1", has_tab);
 	if (!enable_skip)
 	{
 	    vbox = `VBox(
@@ -972,6 +970,7 @@ a proposal that is locked, ask your system administrator.</p>");
     y2milestone( "Installation step #2" );
     proposal_mode = GetInstArgs::proposal();
 
+    proposal_properties = ProductControl::getProposalProperties(Stage::stage (), Mode::mode (), proposal_mode);
     build_dialog();
 
     //
