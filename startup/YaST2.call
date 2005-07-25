@@ -310,6 +310,35 @@ function start_yast () {
 	fi
 	if [ $Y2_EXIT_CODE -eq 0 ];then
 		start_control_center $Y2_MODE
+		start_yast_and_reboot
+		start_yast_again
+	fi
+}
+
+#----[ start_yast_and_reboot ]----#
+function start_yast_and_reboot () {
+#------------------------------------------------------
+# This function will reboot the system and start yast
+# again by touching the file /var/lib/YaST2/runme_at_boot.
+# The function is triggered by the file /var/lib/YaST2/reboot
+# ---
+	if [ -f /var/lib/YaST2/reboot ];then
+		rm -f /var/lib/YaST2/reboot
+		touch /var/lib/YaST2/runme_at_boot
+		/sbin/shutdown -r now
+	fi
+}
+
+#----[ start_yast_again ]----#
+function start_yast_again () {
+#------------------------------------------------------
+# This function will restart yast again with the same
+# options as used before. The function is triggered by 
+# the file /var/lib/YaST2/restart_yast
+# ---
+	if [ -f /var/lib/YaST2/restart_yast ];then
+		rm -f /var/lib/YaST2/restart_yast
+		start_yast
 	fi
 }
 
