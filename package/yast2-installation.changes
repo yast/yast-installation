@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jul 25 14:56:54 CEST 2005 - ms@suse.de
+
+- include functions start_yast_and_reboot() and start_yast_again()
+  according to a feature request for Jiri.
+
+-------------------------------------------------------------------
 Fri Jul 22 13:09:38 CEST 2005 - jsrain@suse.cz
 
 - fixed dialog captions of proposals
