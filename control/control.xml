@@ -229,12 +229,10 @@ textdomain="control"
                     <name>do_resize</name>
                     <update config:type="boolean">false</update>
                     <archs>i386,x86_64,ia64</archs>
-	            <label>Perform Installation</label>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>prepdisk</name>
-	            <label>Perform Installation</label>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
@@ -302,27 +300,25 @@ textdomain="control"
                     <proposal>initial</proposal>
                 </module>
                 <module>
-	            <label>Perform Installation</label>
+	            <label>Perform Update</label>
                     <name>do_resize</name>
                     <update config:type="boolean">false</update>
                     <archs>i386,x86_64,ia64</archs>
-	            <label>Perform Installation</label>
                 </module>
                 <module>
-	            <label>Perform Installation</label>
+	            <label>Perform Update</label>
                     <name>prepdisk</name>
-	            <label>Perform Installation</label>
                 </module>
                 <module>
-	            <label>Perform Installation</label>
+	            <label>Perform Update</label>
                     <name>kickoff</name>
                 </module>
                 <module>
-	            <label>Perform Installation</label>
+	            <label>Perform Update</label>
                     <name>rpmcopy</name>
                 </module>
                 <module>
-	            <label>Perform Installation</label>
+	            <label>Perform Update</label>
                     <name>finish</name>
                 </module>
             </modules>
@@ -435,11 +431,11 @@ textdomain="control"
             </defaults>
             <modules  config:type="list">
                 <module>
-	            <label>Perform Installation</label>
+	            <label>Perform Update</label>
                     <name>netsetup</name>
                 </module>
                 <module>
-	            <label>Perform Installation</label>
+	            <label>Perform Update</label>
                     <name>rpmcopy</name>
                 </module>
 		<module>
