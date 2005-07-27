@@ -19,8 +19,8 @@ X-SuSE-YaST-AutoInstResource=
 Icon=yast-vendor
 Exec=/sbin/yast2 vendor
 
-Name=Load Vendor Driver CD
-GenericName=This module installs a driver from a vendor-specific CD-ROM.
+Name=Vendor Driver CD
+GenericName=Install a driver from a vendor-specific CD-ROM
 Name[cs]=Načíst CD s ovladačem od výrobce
 GenericName[cs]=Tento modul instaluje ovladače třetích stran z CD od výrobce.
 Name[de]=Treiber-CD des Händlers laden
