@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Jul 28 09:16:59 CEST 2005 - jsrain@suse.cz
+
+- updated the installation confirmation popup (#98841)
+
+-------------------------------------------------------------------
 Mon Jul 25 14:56:54 CEST 2005 - ms@suse.de
 
 - include functions start_yast_and_reboot() and start_yast_again()

@@ -127,7 +127,6 @@ their licenses, click <b>I Disagree with All</b>.</p>");
 	    + _("
 <p>If you continue now, partitions on your hard disk will be <b>formatted</b>
 (erasing any existing data in those partitions) 
-and <b>data will be overwritten</b>
 according to the installation settings in the previous dialogs.</p>")
 	// Text for confirmation popup before the installation really starts 3/3
 	    + _("<p>Go back and check the settings if you are unsure.</p>")
