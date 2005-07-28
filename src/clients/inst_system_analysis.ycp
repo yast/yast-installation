@@ -90,6 +90,7 @@ string start_mode = Mode::mode ();
 	return `finish;
     }
 
+// frame
 term radio_box = `Frame (_("Installation Mode"), `RadioButtonGroup (
     `id (`inst_mode),
     `MarginBox (
@@ -98,9 +99,11 @@ term radio_box = `Frame (_("Installation Mode"), `RadioButtonGroup (
 	`topMargin (0.5),
 	`bottomMargin (0.5),
 	`VBox(
+	    // radio button
 	    `Left (`RadioButton (`id (`install), _("New &Installation"),
 		! Mode::update ())),
 	    `VSpacing( 0.5 ),
+	    // radio button
 	    `Left (`RadioButton (`id (`update), _("&Update"),
 		Mode::update ()))
 	)
@@ -112,18 +115,23 @@ term contents = `VBox (
     `VWeight (10, `Empty ()),
     `HBox (
 	`HWeight (4, `Empty()),
-	`PushButton (`id (`expert), _("E&xpert...")),
+	// push button
+	`PushButton (`id (`expert), _("&Other...")),
 	`HWeight (1, `Empty ())
     ),
     `VWeight (10, `Empty ())
 );
 
 term expert_dialog = `VBox (
-    `MarginBox (2, 0.7, `Frame (_("Expert Options"),
+    // frame
+    `MarginBox (2, 0.7, `Frame (_("Other Options"),
 	`MarginBox (1, 0.5, `RadioButtonGroup (`id (`expert_mode), `VBox (
 	    `Left (`RadioButton (`id (`repair),
+		// radio button
 		_("&Repair Installed System"), true)),
-	    `Left (`RadioButton (`id (`boot), _("&Boot Installed System")))
+	    `Left (`RadioButton (`id (`boot),
+		// radio button
+		_("&Boot Installed System")))
 	)))
     )),
     `Right (`HBox (
@@ -131,6 +139,39 @@ term expert_dialog = `VBox (
 	`PushButton (`id (`cancel), Label::CancelButton ())
     ))
 );
+
+// help text for installation method
+string help_text = _("<p><big><b>Installation Mode</b></big><br>
+Please choose what to do:</p>");
+
+// help text for installation method
+help_text = help_text + _("<p>
+Select <b>New Installation</b> if there is no existing Linux system on your
+machine or if you want to replace an existing Linux system completely,
+abandoning all its configuration data.
+</p>");
+
+
+// help text for installation method
+help_text = help_text + _("<p>
+Select <b>Update an Existing System</b> to update a Linux system already
+installed on your machine. This option preserves configuration settings
+from your existing system whenever possible.
+</p>");
+
+// help text for installation method
+help_text = help_text + _("<p>Click <b>Other...</b> and then 
+select <<b>Repair Installed System</b> if you have a damaged Linux system on
+your hard disk. With this option, try to fix problems automatically.
+</p>");
+
+// help text for installation method
+help_text = help_text + _("<p>Click <b>Other...</b> and then
+select <b>Boot Installed System</b> if you have a Linux system on your hard
+disk that will not boot. With this option, try to fix problems manually.
+</p>");
+
+
 
 Wizard::SetContents (_("Analyzing the computer"), `Empty (), "", false, false);
 
@@ -173,7 +214,7 @@ if (! (have_linux && offer_update))
 if (Mode::autoinst ())
     return `auto;
 
-Wizard::SetContents (_("Installation Mode"), contents, "", true, true);
+Wizard::SetContents (_("Installation Mode"), contents, help_text, true, true);
 Wizard::SetTitleIcon ("icons/penguin.png");
 
 symbol ret = nil;
