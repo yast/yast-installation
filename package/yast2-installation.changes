@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Aug  2 15:24:14 CEST 2005 - jsrain@suse.cz
+
+- do not allow going back after 2nd stage installation is
+  interrupted by reboot
+- restore settings after reboot during 2nd stage installation
+
+-------------------------------------------------------------------
 Thu Jul 28 11:31:15 CEST 2005 - jsrain@suse.cz
 
 - updated the installation confirmation popup (#98841)

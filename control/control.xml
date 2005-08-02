@@ -460,6 +460,10 @@ textdomain="control"
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
+		<module>
+		    <label>Online Update</label>
+		    <name>restore_settings</name>
+		</module>
                 <module>
 	            <label>Clean Up</label>
                     <name>suseconfig</name>
@@ -530,6 +534,10 @@ textdomain="control"
 	            <label>Online Update</label>
                     <name>you</name>
                 </module>
+		<module>
+		    <label>Online Update</label>
+		    <name>restore_settings</name>
+		</module>
                 <module>
 	            <label>Users</label>
                     <name>auth</name>
