@@ -330,7 +330,7 @@ but something went wrong, that's why it is only in the log");
 	}
 	else
 	{
-	    ret = ProductControl::RunFrom (next_step);
+	    ret = ProductControl::RunFrom (next_step, false);
 	}
 	SCR::Execute (.target.bash, sformat (
 	    "test -f %1 && /bin/rm -f %1", reboot_file));

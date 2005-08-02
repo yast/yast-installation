@@ -293,7 +293,9 @@ if (ret != `finish && Mode::mode () != start_mode)
     UpdateWizardSteps ();
     if (! Mode::repair ())
     {
-	ret = ProductControl::RunFrom (ProductControl::CurrentStep () + 1);
+	ret = ProductControl::RunFrom (
+	    ProductControl::CurrentStep () + 1,
+	    true);
 	if (ret == `next)
 	    ret = `finish;
     }
