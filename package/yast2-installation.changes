@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Aug  3 13:01:20 CEST 2005 - jsrain@suse.cz
+
+- fixed behavior in proposal with tabs if one of the submodules
+  returned an error (#100203)
+
+-------------------------------------------------------------------
 Tue Aug  2 15:24:14 CEST 2005 - jsrain@suse.cz
 
 - do not allow going back after 2nd stage installation is
