@@ -182,6 +182,7 @@
     define void make_proposal( boolean force_reset, boolean language_changed )
     ``{
 	integer tab_to_switch = 999;
+	boolean current_tab_affected = false;
 	integer no = 0;
 	map prop_map = $[];
 	boolean skip_the_rest = false;
@@ -239,6 +240,10 @@
 			{
 			    tab_to_switch = mod2tab[submod]:999;
 			}
+			if (mod2tab[submod]:999 == current_tab)
+			{
+			    current_tab_affected = true;
+			}
 		    }
 		}
 
@@ -281,9 +286,9 @@
 		skip_the_rest = true;
 	    }
 	});
-	if (has_tab && tab_to_switch < 999)
+	if (has_tab && tab_to_switch < 999 && ! current_tab_affected)
 	{
-	    // FIXME copy-paste from event loop
+	    // FIXME copy-paste from event loop (but for last 2 lines)
 	    current_tab = tab_to_switch;
 	    load_matching_submodules_list();
 	    string proposal = "";
@@ -292,6 +297,8 @@
 	    });
 	    display_proposal( proposal );
 	    get_submod_descriptions_and_build_menu ();
+	    if (UI::HasSpecialWidget (`DumbTab))
+		UI::ChangeWidget (`id (`_cwm_tab), `CurrentItem, current_tab);
 	}
 
 	// now do the display-only proposals
