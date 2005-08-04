@@ -557,12 +557,12 @@ textdomain="control"
                     <name>release_notes</name>
                 </module>
                 <module>
-	            <label>Device Configuration</label>
+	            <label>Hardware Configuration</label>
                     <name>proposal</name>
                     <proposal>hardware</proposal>
                 </module>
                 <module>
-	            <label>Device Configuration</label>
+	            <label>Hardware Configuration</label>
                     <name>congratulate</name>
                 </module>
             </modules>
