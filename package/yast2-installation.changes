@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Aug  5 13:00:16 CEST 2005 - lslezak@suse.cz
+
+- added virtual machine proposal into contol file
+- 2.12.15
+
+-------------------------------------------------------------------
 Wed Aug  3 13:01:20 CEST 2005 - jsrain@suse.cz
 
 - fixed behavior in proposal with tabs if one of the submodules

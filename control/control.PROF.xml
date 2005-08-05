@@ -62,6 +62,19 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
+            <label>Virtual Machine Installation Settings</label>
+            <mode>normal</mode>
+            <name>vm</name>
+            <stage>normal</stage>
+            <enable_skip>no</enable_skip>
+            <proposal_modules config:type="list">
+                <proposal_module>vm_options</proposal_module>
+                <proposal_module>vm_disks</proposal_module>
+                <proposal_module>vm_source</proposal_module>
+                <proposal_module>vm_network</proposal_module>
+            </proposal_modules>
+        </proposal>
+        <proposal>
             <label>Update Settings</label>
             <mode>update</mode>
             <name>initial</name>
