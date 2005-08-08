@@ -43,7 +43,7 @@
     
     string vendor_url = "http://www.novell.com/linux/";
 
-    if (vendor_url_tmp != nil && vendor_url != "")
+    if (vendor_url_tmp != nil && vendor_url_tmp != "")
         vendor_url = vendor_url_tmp;
 
     term check_box_start_y2cc = `Empty();
