@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Aug  9 15:22:24 CEST 2005 - ms@suse.de
+
+- fixed shell warning (#100729)
+
+-------------------------------------------------------------------
 Mon Aug  8 14:06:10 CEST 2005 - jsrain@suse.cz
 
 - show URL of product vendor in congratulation dialog (#102542)
