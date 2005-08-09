@@ -134,7 +134,7 @@ function prepare_for_qt () {
 		X -deferglyphs 16 2>/dev/tty8 1>&2 vt07 &
 		xserver_pid=$!
 		wait_for_x11
-		if [ $server_running = 1 ];then
+		if [ "$server_running" = 1 ];then
 			log "\tX-Server is ready: $xserver_pid"
 		fi
 	fi
@@ -204,7 +204,7 @@ function prepare_for_vnc () {
 		disable_splash
 		startVNCServer
 		wait_for_x11
-		if [ $server_running = 1 ];then
+		if [ "$server_running" = 1 ];then
 			log "\tXvnc-Server is ready: $xserver_pid"
 		fi
 	fi
@@ -216,7 +216,7 @@ function check_Qt () {
 # check if the prepared medium Qt is valid
 # ---
 	if [ ! -z "$NEED_XSERVER" ];then
-		if [ $server_running = 0 ];then
+		if [ "$server_running" = 0 ];then
 			# /.../
 			# X-Server couldn't be started, selecting
 			# NCURSES mode as fallback ?
@@ -264,7 +264,7 @@ function check_vnc () {
 		log "\tPlease make sure the password is at least 8 characters long"
 		fatalError
 	fi
-	if [ $server_running = 0 ];then
+	if [ "$server_running" = 0 ];then
 		# /.../
 		# XVnc server couldn't be started, what to do now, I think
 		# this is a fatal error here
@@ -609,7 +609,7 @@ start_yast
 clr_inst_qt_env
 
 # 9.2) kill X-Server...
-if [ $server_running = 1 ];then
+if [ "$server_running" = 1 ];then
 	sleep 1 && kill $xserver_pid
 	while kill -0 $xserver_pid 2>/dev/null ; do
 		sleep 1
