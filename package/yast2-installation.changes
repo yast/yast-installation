@@ -2,6 +2,7 @@
 Fri Aug 12 14:35:19 CEST 2005 - jsrain@suse.cz
 
 - force language selection in NCurses (#102958)
+- 2.12.16
 
 -------------------------------------------------------------------
 Fri Aug 12 12:32:42 CEST 2005 - ms@suse.de
