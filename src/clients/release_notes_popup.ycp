@@ -64,10 +64,10 @@
 
     text =
 // beginning of the rich text with the release notes
-_("<b>These are the release notes made for the first initial release. They are
+_("<p><b>These are the release notes made for the first initial release. They are
 part of the installation media. During installation, if a connection
 to the Internet is available, you can download updated release notes
-from the SUSE Linux Web server.</b>") + text;
+from the SUSE Linux Web server.</b></p>") + text;
 
     term contents = `HBox (
 	`VSpacing (22),
