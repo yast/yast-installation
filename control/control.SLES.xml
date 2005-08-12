@@ -36,7 +36,6 @@ textdomain="control"
             <enable_skip>no</enable_skip>
             <proposal_modules config:type="list">
                 <proposal_module>hwinfo</proposal_module>
-                <proposal_module>mode</proposal_module>
                 <proposal_module>keyboard</proposal_module>
                 <proposal_module>mouse</proposal_module>
                 <proposal_module>partitions</proposal_module>
@@ -46,6 +45,30 @@ textdomain="control"
                 <proposal_module>language</proposal_module>
                 <proposal_module>runlevel</proposal_module>
             </proposal_modules>
+            <proposal_tabs config:type="list">
+                <proposal_tab>
+                    <label>Overview</label>
+                    <proposal_modules config:type="list">
+                        <proposal_module>partitions</proposal_module>
+                        <proposal_module>software_simple</proposal_module>
+                        <proposal_module>language_simple</proposal_module>
+                    </proposal_modules>
+                </proposal_tab>
+                <proposal_tab>
+                    <label>Expert</label>
+                    <proposal_modules config:type="list">
+                        <proposal_module>hwinfo</proposal_module>
+                        <proposal_module>keyboard</proposal_module>
+                        <proposal_module>mouse</proposal_module>
+                        <proposal_module>partitions</proposal_module>
+                        <proposal_module>software</proposal_module>
+                        <proposal_module>bootloader</proposal_module>
+                        <proposal_module>timezone</proposal_module>
+                        <proposal_module>language</proposal_module>
+                        <proposal_module>runlevel</proposal_module>
+                    </proposal_modules>
+                </proposal_tab>
+            </proposal_tabs>
         </proposal>
         <proposal>
             <label>UML Installation Settings</label>
@@ -96,7 +119,6 @@ textdomain="control"
             <enable_skip>no</enable_skip>
             <proposal_modules config:type="list">
 		<proposal_module>hwinfo</proposal_module>
-                <proposal_module>mode</proposal_module>
 		<proposal_module>media</proposal_module>
                 <proposal_module>rootpart</proposal_module>
                 <proposal_module>update</proposal_module>
@@ -162,14 +184,10 @@ textdomain="control"
             <defaults>
                 <archs>all</archs>
             </defaults>
-	    <label>Base Installation</label>
-            <mode>installation,update</mode>
+	    <label>Preparation</label>
+            <mode>installation</mode>
             <stage>initial</stage>
             <modules  config:type="list">
-                <module>
-	            <label>Language</label>
-                    <name>info</name>
-                </module>
                 <module>
                     <name>language</name>
 	            <label>Language</label>
@@ -187,7 +205,35 @@ textdomain="control"
                     <enable_next>yes</enable_next>
                 </module>
                 <module>
-	            <label>Installation Settings</label>
+	            <label>License Agreement</label>
+                    <name>license</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+	            <label>System Analysis</label>
+                    <name>system_analysis</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+	            <label>Time Zone</label>
+                    <name>timezone</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+	            <label>Desktop Selection</label>
+                    <name>desktop</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+		<module>
+		    <heading>yes</heading>
+		    <label>Installation</label>
+		</module>
+                <module>
+	            <label>Installation Summary</label>
                     <name>proposal</name>
                     <proposal>initial</proposal>
                 </module>
@@ -196,12 +242,10 @@ textdomain="control"
                     <name>do_resize</name>
                     <update config:type="boolean">false</update>
                     <archs>i386,x86_64,ia64</archs>
-	            <label>Perform Installation</label>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>prepdisk</name>
-	            <label>Perform Installation</label>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
@@ -213,6 +257,81 @@ textdomain="control"
                 </module>
                 <module>
 	            <label>Perform Installation</label>
+                    <name>finish</name>
+                </module>
+            </modules>
+        </workflow>
+        <workflow>
+            <defaults>
+                <archs>all</archs>
+            </defaults>
+	    <label>Preparation</label>
+            <mode>update</mode>
+            <stage>initial</stage>
+            <modules  config:type="list">
+                <module>
+                    <name>language</name>
+	            <label>Language</label>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+                    <arguments>
+                        <first_run>yes</first_run>
+                    </arguments>
+                    <retranslate config:type="boolean">true</retranslate>
+                </module>
+                <module>
+	            <label>Language</label>
+                    <name>checkmedia</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+	            <label>License Agreement</label>
+                    <name>license</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+	            <label>System Analysis</label>
+                    <name>system_analysis</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+	            <label>System for Update</label>
+                    <name>update_partition</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+		<module>
+		    <heading>yes</heading>
+		    <label>Update</label>
+		</module>
+                <module>
+	            <label>Update Summary</label>
+                    <name>proposal</name>
+                    <proposal>initial</proposal>
+                </module>
+                <module>
+	            <label>Perform Update</label>
+                    <name>do_resize</name>
+                    <update config:type="boolean">false</update>
+                    <archs>i386,x86_64,ia64</archs>
+                </module>
+                <module>
+	            <label>Perform Update</label>
+                    <name>prepdisk</name>
+                </module>
+                <module>
+	            <label>Perform Update</label>
+                    <name>kickoff</name>
+                </module>
+                <module>
+	            <label>Perform Update</label>
+                    <name>rpmcopy</name>
+                </module>
+                <module>
+	            <label>Perform Update</label>
                     <name>finish</name>
                 </module>
             </modules>
@@ -284,10 +403,6 @@ textdomain="control"
             <mode>demo</mode>
             <modules  config:type="list">
                 <module>
-	            <label>Language</label>
-                    <name>info</name>
-                </module>
-                <module>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
 	            <label>Language</label>
@@ -321,7 +436,6 @@ textdomain="control"
         </workflow>
         <workflow>
             <stage>continue</stage>
-            <label>Configuration</label>
             <mode>update</mode>
             <defaults>
                 <archs>all</archs>
@@ -330,13 +444,17 @@ textdomain="control"
             </defaults>
             <modules  config:type="list">
                 <module>
-	            <label>Perform Installation</label>
+	            <label>Perform Update</label>
                     <name>netsetup</name>
                 </module>
                 <module>
-	            <label>Perform Installation</label>
+	            <label>Perform Update</label>
                     <name>rpmcopy</name>
                 </module>
+		<module>
+		    <heading>yes</heading>
+		    <label>Configuration</label>
+		</module>
                 <module>
 	            <label>Network</label>
                     <name>ask_net_test</name>
@@ -355,6 +473,10 @@ textdomain="control"
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
+		<module>
+		    <label>Online Update</label>
+		    <name>restore_settings</name>
+		</module>
                 <module>
 	            <label>Clean Up</label>
                     <name>suseconfig</name>
@@ -374,7 +496,6 @@ textdomain="control"
         </workflow>
         <workflow>
             <stage>continue</stage>
-            <label>Configuration</label>
             <mode>installation</mode>
             <defaults>
                 <enable_back>yes</enable_back>
@@ -396,6 +517,10 @@ textdomain="control"
                     <enable_back>no</enable_back>
                     <enable_next>no</enable_next>
                 </module>
+		<module>
+		    <heading>yes</heading>
+		    <label>Configuration</label>
+		</module>
                 <module>
 	            <label>Root Password</label>
                     <name>root</name>
@@ -422,6 +547,10 @@ textdomain="control"
 	            <label>Online Update</label>
                     <name>you</name>
                 </module>
+		<module>
+		    <label>Online Update</label>
+		    <name>restore_settings</name>
+		</module>
                 <module>
 	            <label>Users</label>
                     <name>auth</name>
@@ -441,12 +570,12 @@ textdomain="control"
                     <name>release_notes</name>
                 </module>
                 <module>
-	            <label>Device Configuration</label>
+	            <label>Hardware Configuration</label>
                     <name>proposal</name>
                     <proposal>hardware</proposal>
                 </module>
                 <module>
-	            <label>Device Configuration</label>
+	            <label>Hardware Configuration</label>
                     <name>congratulate</name>
                 </module>
             </modules>
@@ -461,10 +590,6 @@ textdomain="control"
                 <enable_next>no</enable_next>
             </defaults>
             <modules  config:type="list">
-                <module>
-	            <label>AutoYaST Settings</label>
-                    <name>info</name>
-                </module>
                 <module>
 	            <label>AutoYaST Settings</label>
                     <name>autoinit</name>
@@ -511,7 +636,6 @@ textdomain="control"
                 <enable_next>no</enable_next>
             </defaults>
             <stage>continue</stage>
-            <label>Configuration</label>
             <mode>autoinstallation</mode>
             <modules  config:type="list">
                 <module>
@@ -530,6 +654,10 @@ textdomain="control"
 	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
                 </module>
+		<module>
+		    <heading>yes</heading>
+		    <label>Configuration</label>
+		</module>
                 <module>
 	            <label>System Configuration</label>
                     <name>x11</name>
