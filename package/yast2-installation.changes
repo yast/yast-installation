@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Aug 12 12:32:42 CEST 2005 - ms@suse.de
+
+- fixed use of graphical installer within SSH session (#53767)
+
+-------------------------------------------------------------------
 Fri Aug 12 10:15:26 CEST 2005 - ms@suse.de
 
 - fixed set_splash function to work with SuSE 10.0

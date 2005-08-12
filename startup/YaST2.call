@@ -241,7 +241,9 @@ function check_Qt () {
 #----[ check_network ]----#
 function check_network () {
 #------------------------------------------------------
-# check if the prepared medium SSH is valid
+# check if the prepared medium SSH is valid. It is valid
+# if there is a network interface accessable and we are
+# able to use ncurses or X11
 # ---
 	if ! found_iface ; then
 		# /.../
@@ -250,6 +252,9 @@ function check_network () {
 		# ---
 		log "\tNo network interface found, fatal error"
 		fatalError
+	fi
+	if [ ! -z "$DISPLAY" ];then
+		Y2_MODE=qt
 	fi
 }
 
