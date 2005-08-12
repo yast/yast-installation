@@ -168,7 +168,8 @@ function set_splash () {
 #--------------------------------------------------
 # set splash progressbar to a value given in $1
 # ---
-	[ -f /proc/splash ] && echo "show $(($1*65534/100))" >/proc/splash
+	[ -f /proc/splash ] && echo "show $(($1*65535/100))" >/proc/splash
+	[ "$1" = 100 ] && /sbin/splash -q
 }
 
 #----[ disable_splash ]-----#
