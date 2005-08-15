@@ -20,20 +20,13 @@
 function setupVNCAuthentication () {
 #---------------------------------------------------
 # handle the VNCPassword variable to create a valid
-# password file. If not set use "linux123" as pwd
+# password file.
 #
 	VNCPASS_EXCEPTION=0
 	VNCPASS=/usr/X11R6/bin/vncpasswd.arg
-	if [ -z "$vncpassword" ];then
-	if [ ! -z "$VNCPassword" ];then
-		vncpassword=$VNCPassword
-	else
-		vncpassword=""
-	fi
-	fi
 	if [ ! -e /root/.vnc/passwd ]; then
 		rm -rf /root/.vnc && mkdir -p /root/.vnc
-		$VNCPASS /root/.vnc/passwd "$vncpassword"
+		$VNCPASS /root/.vnc/passwd "$VNCPassword"
 		if [ $? = 0 ];then
 			chmod 600 /root/.vnc/passwd
 		else
