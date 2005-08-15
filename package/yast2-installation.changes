@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Aug 15 13:02:07 CEST 2005 - jsrain@suse.cz
+
+- make the OK button in other installatino options popup default
+  button (#104589)
+
+-------------------------------------------------------------------
 Fri Aug 12 14:35:19 CEST 2005 - jsrain@suse.cz
 
 - force language selection in NCurses (#102958)
