@@ -135,7 +135,7 @@ term expert_dialog = `VBox (
 	)))
     )),
     `Right (`HBox (
-	`PushButton (`id (`ok), Label::OKButton ()),
+	`PushButton (`id (`ok), `opt (`default), Label::OKButton ()),
 	`PushButton (`id (`cancel), Label::CancelButton ())
     ))
 );
