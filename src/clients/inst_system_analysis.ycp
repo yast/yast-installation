@@ -142,7 +142,7 @@ term expert_dialog = `VBox (
 
 // help text for installation method
 string help_text = _("<p><big><b>Installation Mode</b></big><br>
-Please choose what to do:</p>");
+Select what to do:</p>");
 
 // help text for installation method
 help_text = help_text + _("<p>
@@ -160,20 +160,20 @@ from your existing system whenever possible.
 </p>");
 
 // help text for installation method
-help_text = help_text + _("<p>Click <b>Other...</b> and then 
-select <<b>Repair Installed System</b> if you have a damaged Linux system on
+help_text = help_text + _("<p>Click <b>Other</b> then 
+select <b>Repair Installed System</b> if you have a damaged Linux system on
 your hard disk. With this option, try to fix problems automatically.
 </p>");
 
 // help text for installation method
-help_text = help_text + _("<p>Click <b>Other...</b> and then
+help_text = help_text + _("<p>Click <b>Other</b> then
 select <b>Boot Installed System</b> if you have a Linux system on your hard
 disk that will not boot. With this option, try to fix problems manually.
 </p>");
 
 
 
-Wizard::SetContents (_("Analyzing the computer"), `Empty (), "", false, false);
+Wizard::SetContents (_("Analyzing the Computer"), `Empty (), "", false, false);
 
 // Do hardware probing
 //

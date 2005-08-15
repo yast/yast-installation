@@ -85,7 +85,7 @@ else if (func == "Write")
 
     Progress::NextStep ();
     // progress step title
-    Progress::Title (_("Configurign superuser's environment..."));
+    Progress::Title (_("Configuring the superuser's environment..."));
     SCR::Write (.sysconfig.suseconfig.CWD_IN_USER_PATH,
                 contains (Product::flags, "usercwd") ? "yes" : "no");
     SCR::Write (.sysconfig.suseconfig, nil);
