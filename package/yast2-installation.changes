@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Aug 16 08:51:16 CEST 2005 - jsrain@suse.cz
+
+- build relation between old keys and new UDIs (#104676)
+
+-------------------------------------------------------------------
 Mon Aug 15 16:49:22 CEST 2005 - jsrain@suse.cz
 
 - merged texts from proofread
