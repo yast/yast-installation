@@ -67,6 +67,10 @@
 	// so they have a defined status after update
 	SCR::Read (.probe.pci);
 	SCR::Read (.probe.isapnp);
+
+	// build relation between old keys and new UDIs (bug #104676)
+	SCR::Execute (.target.bash,
+	    "hwinfo --pci --block --mouse --save-config=all");
     }
 
 }
