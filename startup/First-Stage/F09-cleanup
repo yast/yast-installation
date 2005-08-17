@@ -5,11 +5,16 @@ log "======================="
 #=============================================
 # 9) first stage done, cleanup and save level
 #---------------------------------------------
-# 9.1) reverse umount file systems...
+# 9.1) try to umount inst-sys and save exit status
+umount /var/adm/mount &>/dev/null
+umount_exit=$?
+echo "umount_result:$umount_exit" >> /etc/install.inf
+log "\tTrying to umount inst-sys exits with code: $umount_exit"
+# 9.2) reverse umount file systems...
 awk '/ \/mnt/{ print $2 }' /proc/mounts | sort -r | xargs --no-run-if-empty umount
-# 9.2) turn off swap space (files and partitions)
+# 9.3) turn off swap space (files and partitions)
 swapoff -a
-# 9.3) unmount update filesystem
+# 9.4) unmount update filesystem
 if [ "$UPDATE_MOUNTED" = true ];then
 	umount /y2update
 fi
