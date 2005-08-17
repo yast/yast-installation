@@ -5,7 +5,7 @@
 # PROJECT       : YaST (Yet another Setup Tool v2)
 # COPYRIGHT     : (c) 2004 SUSE Linux AG, Germany. All rights reserved
 #               :
-# AUTHORS       : Marcus Schaefer <ms@suse.de> 
+# AUTHORS       : Marcus Schaefer <ms@suse.de>
 #               :
 #               :
 # BELONGS TO    : System installation and Administration
@@ -168,8 +168,8 @@ function set_splash () {
 #--------------------------------------------------
 # set splash progressbar to a value given in $1
 # ---
-	[ -f /proc/splash ] && echo "show $(($1*65535/100))" >/proc/splash
-	[ "$1" = 100 ] && /sbin/splash -q
+	[ -f /proc/splash ] && echo "show $(($1*65535/100))" > /proc/splash
+	[ "$1" = 100 -a -x /sbin/splash ] && /sbin/splash -q
 }
 
 #----[ disable_splash ]-----#

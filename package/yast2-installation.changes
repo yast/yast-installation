@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Aug 17 15:09:44 CEST 2005 - arvin@suse.de
+
+- check if /sbin/splash exists (bug #105159)
+- 2.12.18
+
+-------------------------------------------------------------------
 Tue Aug 16 08:51:16 CEST 2005 - jsrain@suse.cz
 
 - build relation between old keys and new UDIs (#104676)
@@ -211,7 +217,7 @@ Mon Apr 18 15:19:44 CEST 2005 - jsrain@suse.cz
 -------------------------------------------------------------------
 Thu Apr 14 17:19:30 CEST 2005 - visnov@suse.cz
 
-- 2.12.1 
+- 2.12.1
 
 -------------------------------------------------------------------
 Wed Apr  6 15:39:25 CEST 2005 - ms@suse.de
@@ -313,7 +319,7 @@ Tue Feb 22 18:30:15 CET 2005 - ms@suse.de
 -------------------------------------------------------------------
 Tue Feb 22 13:11:41 CET 2005 - sh@suse.de
 
-- V 2.11.17 
+- V 2.11.17
 
 -------------------------------------------------------------------
 Tue Feb 22 13:05:23 CET 2005 - ms@suse.de
@@ -324,7 +330,7 @@ Tue Feb 22 13:05:23 CET 2005 - ms@suse.de
 -------------------------------------------------------------------
 Mon Feb 21 18:10:26 CET 2005 - sh@suse.de
 
-- Proper log-rotating in inst_finish  
+- Proper log-rotating in inst_finish
 - V 2.11.16
 
 -------------------------------------------------------------------
@@ -356,7 +362,7 @@ Thu Feb 10 13:13:50 CET 2005 - jsrain@suse.cz
 -------------------------------------------------------------------
 Wed Feb  9 19:16:22 CET 2005 - nashif@suse.de
 
-- Save files control.xml and info.txt from installation into 
+- Save files control.xml and info.txt from installation into
   /etc/YaST2.
 
 -------------------------------------------------------------------
@@ -410,7 +416,7 @@ Tue Jan 25 07:21:53 CET 2005 - nashif@suse.de
 Mon Jan 24 16:29:32 CET 2005 - nashif@suse.de
 
 - Moved installation workflow routines out of installation.ycp
-- Adapted arguments of installation clients 
+- Adapted arguments of installation clients
 - Enhanced control file and made it more readable (arguments of clients
   are clearer now)
 
