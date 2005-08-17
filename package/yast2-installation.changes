@@ -1,10 +1,17 @@
 -------------------------------------------------------------------
+Wed Aug 17 15:45:40 CEST 2005 - jsrain@suse.cz
+
+- handle correctly if _proposal client returns nil as warning level
+  (#105154)
+
+-------------------------------------------------------------------
 Wed Aug 17 15:09:44 CEST 2005 - arvin@suse.de
 
 - check if /sbin/splash exists (bug #105159)
 - 2.12.18
 
 -------------------------------------------------------------------
+>>>>>>> .r25009
 Tue Aug 16 08:51:16 CEST 2005 - jsrain@suse.cz
 
 - build relation between old keys and new UDIs (#104676)

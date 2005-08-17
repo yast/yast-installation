@@ -234,6 +234,8 @@
 		if (haskey (mod2tab, submod))
 		{
 		    symbol warn_level = prop_map["warning_level"]:`ok;
+		    if (warn_level == nil)
+			warn_level = `ok;
 		    if (contains ([`blocker, `fatal, `error], warn_level))
 		    {
 			if (mod2tab[submod]:999 < tab_to_switch)
