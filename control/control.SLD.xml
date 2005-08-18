@@ -12,8 +12,8 @@ textdomain="control"
 	<additional_kernel_parameters></additional_kernel_parameters>
         <enable_autologin config:type="boolean">true</enable_autologin>
 	<enable_firewall config:type="boolean">true</enable_firewall>
-        <fam_local_only>gnome</fam_local_only>
 	<firewall_enable_ssh config:type="boolean">false</firewall_enable_ssh>
+	<fam_local_only>never</fam_local_only>
         <incomplete_translation_treshold>95</incomplete_translation_treshold>
         <inform_about_suboptimal_distribution config:type="boolean">true</inform_about_suboptimal_distribution>
         <skip_language_dialog config:type="boolean">true</skip_language_dialog>
@@ -211,7 +211,7 @@ textdomain="control"
                 </module>
                 <module>
 	            <label>Desktop Selection</label>
-                    <name>desktop</name>
+                    <name>desktop_new</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
