@@ -3,6 +3,7 @@ Wed Aug 17 17:37:02 CEST 2005 - ms@suse.de
 
 - added umount_result key to /etc/install.inf containing the exit
   code from trying to umount the inst-sys (#103800)
+- 2.12.19
 
 -------------------------------------------------------------------
 Wed Aug 17 15:45:40 CEST 2005 - jsrain@suse.cz
