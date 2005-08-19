@@ -2,6 +2,7 @@
 Fri Aug 19 15:39:31 CEST 2005 - jsrain@suse.cz
 
 - reverted forcing language dialog in NCurses (#102958)
+- 2.12.21
 
 -------------------------------------------------------------------
 Fri Aug 19 15:33:08 CEST 2005 - ms@suse.de
