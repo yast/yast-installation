@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Aug 19 11:32:09 CEST 2005 - arvin@suse.de
+
+- improved initialisation of libstorage callbacks (bug #105562)
+
+-------------------------------------------------------------------
 Wed Aug 17 17:37:02 CEST 2005 - ms@suse.de
 
 - added umount_result key to /etc/install.inf containing the exit
