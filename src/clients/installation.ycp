@@ -295,9 +295,8 @@ but something went wrong, that's why it is only in the log");
 
 
     // skip language dialog if selected in isolinux. (#37679)
-    // but force language selection in NCurses (#102958)
     any selected_locale = Linuxrc::InstallInf("Locale");
-    if (Stage::initial () && selected_locale!= nil && (string)selected_locale!="en_US" && ! Linuxrc::text ())
+    if (Stage::initial () && selected_locale!= nil && (string)selected_locale!="en_US")
     {
         if ( ProductFeatures::GetBooleanFeature (
 	    "globals", "skip_language_dialog") )

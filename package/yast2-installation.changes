@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Aug 19 15:39:31 CEST 2005 - jsrain@suse.cz
+
+- reverted forcing language dialog in NCurses (#102958)
+
+-------------------------------------------------------------------
 Fri Aug 19 15:33:08 CEST 2005 - ms@suse.de
 
 - fixed mouse probing call, was never called in initial stage (#100665)
