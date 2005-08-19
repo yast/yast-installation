@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Aug 19 15:33:08 CEST 2005 - ms@suse.de
+
+- fixed mouse probing call, was never called in initial stage (#100665)
+
+-------------------------------------------------------------------
 Fri Aug 19 11:32:09 CEST 2005 - arvin@suse.de
 
 - improved initialisation of libstorage callbacks (bug #105562)
