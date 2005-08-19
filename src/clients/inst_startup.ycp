@@ -27,6 +27,7 @@
     import "Hotplug";
     import "Mouse";
     import "ModuleLoading";
+    import "Storage";
     import "StorageControllers";
     import "StorageDevices";
     import "Kernel";		// call constructor, extract cmdline
@@ -114,6 +115,8 @@
     // --------------------------------------------------------------
     //				    Floppy
     // --------------------------------------------------------------
+
+    Storage::InstallCallbacks();
 
     if (!(Arch::s390 () || Arch::board_iseries ()))
     {
