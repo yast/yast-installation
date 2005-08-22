@@ -809,12 +809,12 @@
      **/
     define void set_icon()
     {
-	string icon = "software";
+	string icon = "yast-software";
 
 	if ( proposal_mode == "network"	)
-	    icon = "network";
+	    icon = "yast-network";
 	else if ( proposal_mode == "hardware" )
-	    icon = "printer";
+	    icon = "yast-printer";
 	else if ( proposal_properties["icon"]:"" != "" )
 	    icon =  proposal_properties["icon"]:"";
 
