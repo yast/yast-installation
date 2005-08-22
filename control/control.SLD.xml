@@ -208,6 +208,9 @@ textdomain="control"
                     <name>timezone</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
+                    <arguments>
+                        <first_run>yes</first_run>
+                    </arguments>
                 </module>
                 <module>
 	            <label>Desktop Selection</label>
