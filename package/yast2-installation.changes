@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Aug 22 11:24:03 CEST 2005 - jsrain@suse.cz
+
+- fixed title icons for proposal dialogs (#105165)
+
+-------------------------------------------------------------------
 Fri Aug 19 15:39:31 CEST 2005 - jsrain@suse.cz
 
 - reverted forcing language dialog in NCurses (#102958)
