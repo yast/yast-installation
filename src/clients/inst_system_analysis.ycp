@@ -291,6 +291,9 @@ if (ret != `finish && Mode::mode () != start_mode)
 {
     y2milestone ("Switching Steps from %1 to %2 ", start_mode, Mode::mode ());
     UpdateWizardSteps ();
+    y2milestone ("Resetting disk target to read values");
+    Storage::ResetOndiskTarget ();
+    y2debug ("Original target map (from disk): %1", Storage::GetTargetMap ());
     if (! Mode::repair ())
     {
 	ret = ProductControl::RunFrom (
