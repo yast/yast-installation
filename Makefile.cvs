@@ -21,6 +21,7 @@ reconf: all
 	./config.status
 
 clean:
+	rm -f autodocs-ycp.ami OUTPUT2 pluglib-bindings.ami OUTPUT autodocs-cc.ami
 	rm -f `find -name Makefile.in`
 	rm -f `find -name Makefile`
 	rm -f `find -name *.ybc`

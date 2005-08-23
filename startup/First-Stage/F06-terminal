@@ -1,9 +1,9 @@
 #!/bin/sh
-log "Starting F05-terminal..."
+log "Starting F06-terminal..."
 log "========================"
 
 #=============================================
-# 5) setup virtual console
+# 6) setup virtual console
 #---------------------------------------------
 eval `initviocons -e`
 export LINES COLUMNS TERM
@@ -13,7 +13,7 @@ log "\tColumns: $COLUMNS"
 log "\tType:    $TERM"
 
 #=============================================
-# 5.1) setup TERM variable
+# 6.1) setup TERM variable
 #---------------------------------------------
 if [ ! -z "$Console" ] && [ "$TERM" != "linux" ] ; then
 	log "\tAsking for Serial console type..."
@@ -22,7 +22,7 @@ if [ ! -z "$Console" ] && [ "$TERM" != "linux" ] ; then
 fi
 
 #=============================================
-# 5.2) check for p690 hvc console
+# 6.2) check for p690 hvc console
 #---------------------------------------------
 grep -qi console=hvc < /proc/cmdline && {
 	echo "Console: hvc0,9600" >> /etc/install.inf

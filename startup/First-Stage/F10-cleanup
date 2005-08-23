@@ -1,26 +1,21 @@
 #!/bin/sh
-log "Starting F09-cleanup..."
+log "Starting F10-cleanup..."
 log "======================="
 
 #=============================================
-# 9) first stage done, cleanup and save level
+# 10) first stage done, cleanup and save level
 #---------------------------------------------
-# 9.1) try to umount inst-sys and save exit status
-umount /var/adm/mount &>/dev/null
-umount_exit=$?
-echo "umount_result:$umount_exit" >> /etc/install.inf
-log "\tTrying to umount inst-sys exits with code: $umount_exit"
-# 9.2) reverse umount file systems...
+# 10.1) reverse umount file systems...
 awk '/ \/mnt/{ print $2 }' /proc/mounts | sort -r | xargs --no-run-if-empty umount
-# 9.3) turn off swap space (files and partitions)
+# 10.2) turn off swap space (files and partitions)
 swapoff -a
-# 9.4) unmount update filesystem
+# 10.3) unmount update filesystem
 if [ "$UPDATE_MOUNTED" = true ];then
 	umount /y2update
 fi
 
 #=============================================
-# 9.4) write exit code for evaluation
+# 10.4) write exit code for evaluation
 #---------------------------------------------
 log "\tYaST2 exit code on level (1): $yast2exitcode"
 echo $yast2exitcode > /tmp/YaST2-First-Stage-Exit-Code
