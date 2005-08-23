@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Aug 23 15:02:53 CEST 2005 - ms@suse.de
+
+- fixed umount call in First-Stage setup -> added F03-umount (#103800)
+
+-------------------------------------------------------------------
 Tue Aug 23 12:46:16 CEST 2005 - jsrain@suse.cz
 
 - mark correct tab selected after language is changed (#105995)

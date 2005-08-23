@@ -1,9 +1,9 @@
 #!/bin/sh
-log "Starting F03-language..."
+log "Starting F04-language..."
 log "========================"
 
 #=============================================
-# 3) set language environment
+# 4) set language environment
 #---------------------------------------------
 LANGUAGE=en_US
 infofile=/content
@@ -18,7 +18,7 @@ unset LC_CTYPE
 log "\tLanguage set to: $LANG"
 
 #=============================================
-# 3.1) start unicode mode
+# 4.1) start unicode mode
 #---------------------------------------------
 export LANG
 start_unicode

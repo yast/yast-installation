@@ -1,9 +1,9 @@
 #!/bin/sh
-log "Starting F06-config..."
+log "Starting F07-config..."
 log "======================"
 
 #=============================================
-# 6) create /etc/mtab
+# 7) create /etc/mtab
 #---------------------------------------------
 log "\tCreating /etc/mtab"
 cp -f /proc/mounts /etc/mtab

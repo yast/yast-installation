@@ -1,14 +1,14 @@
 #!/bin/sh
-log "Starting F08-start..."
+log "Starting F09-start..."
 log "====================="
 
 #=============================================
-# 8) call preFirstCall hook scripts
+# 9) call preFirstCall hook scripts
 #---------------------------------------------
 callHooks preFirstCall
 
 #=============================================
-# 8.1) check for driver update mode
+# 9.1) check for driver update mode
 #---------------------------------------------
 # If /update/y2update/y2update.gz exists (copied there by linuxrc)
 # uncompress the y2update.gz file, and mount it to /y2update.
@@ -40,7 +40,7 @@ if [ "$YaST2update" = 1 ] ; then
 fi
 
 #=============================================
-# 8.2) goto run stage, start YaST2 (initial)
+# 9.2) goto run stage, start YaST2 (initial)
 #---------------------------------------------
 rm -f /var/X11R6/bin/X
 rm -f /tmp/YaST2_ssh_installation_finished
@@ -49,13 +49,13 @@ log "\tDelegate program call to YaST2.call installation initial"
 yast2exitcode=$?
 
 #=============================================
-# 8.3) save log file to installed system
+# 9.3) save log file to installed system
 #---------------------------------------------
 log "\tCopy first level log file to installed system"
 mkdir -p /mnt/var/log/YaST2
 cp /var/log/YaST2/y2start.log /mnt/var/log/YaST2
 
 #=============================================
-# 8.4) call postFirstCall hook scripts
+# 9.4) call postFirstCall hook scripts
 #---------------------------------------------
 callHooks postFirstCall
