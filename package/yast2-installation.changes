@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Aug 23 10:13:05 CEST 2005 - jsrain@suse.cz
+
+- mark correct tab selected after language is changed (#105995)
+
+-------------------------------------------------------------------
 Mon Aug 22 12:18:08 CEST 2005 - jsrain@suse.cz
 
 - fixed title icons for proposal dialogs (#105165)

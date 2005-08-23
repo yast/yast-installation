@@ -728,6 +728,8 @@
 			    false			// have_next_button
 			    );
 	set_icon();
+	if (UI::HasSpecialWidget (`DumbTab))
+	    UI::ChangeWidget (`id (`_cwm_tab), `CurrentItem, current_tab);
 	if ( Stage::stage () == "initial" )
 	    // push button
 	    Wizard::ShowReleaseNotesButton (_("&Show Release Notes"), `rel_notes);
