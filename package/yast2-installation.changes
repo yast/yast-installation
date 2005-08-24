@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Aug 24 10:39:48 CEST 2005 - ms@suse.de
+
+- fixed umount_result setting in /etc/install.inf. A space is
+  needed between the colon and the value (#112620)
+
+-------------------------------------------------------------------
 Tue Aug 23 15:02:53 CEST 2005 - ms@suse.de
 
 - fixed umount call in First-Stage setup -> added F03-umount (#103800)
