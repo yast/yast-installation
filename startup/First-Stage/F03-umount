@@ -7,5 +7,5 @@ log "======================"
 #------------------------------------------------
 umount /var/adm/mount &>/dev/null
 umount_exit=$?
-echo "umount_result:$umount_exit" >> /etc/install.inf
+echo "umount_result: $umount_exit" >> /etc/install.inf
 log "\tTrying to umount inst-sys exits with code: $umount_exit"
