@@ -650,10 +650,6 @@ textdomain="control"
 		</module>
                 <module>
 	            <label>System Configuration</label>
-                    <name>x11</name>
-                </module>
-                <module>
-	            <label>System Configuration</label>
                     <name>autoconfigure</name>
                 </module>
                 <module>
