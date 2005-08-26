@@ -57,11 +57,13 @@
 		"package" : "kdebase3-kdm",
 		"wm" : "kde",
 		"dm" : "kdm",
+		"cursor" : "crystalwhite",
 	    ],
 	    "gnome" : $[
 		"package" : "gdm",
 		"wm" : "gnome",
 		"dm" : "gdm",
+		"cursor" : "industrial",
 	    ],
 	    "twm" : $[
 		"package" : "xorg-x11",
@@ -72,6 +74,7 @@
 
 	string default_wm = "kde";
 	string default_dm = "kdm";
+	string default_cursor = "crystalwhite";
 
 	boolean desktop_found = false;
 	string selection_desktop = "kde";
@@ -112,6 +115,11 @@
 			y2milestone (
 			    "Setting window manager %1 - package selecteed",
 			    default_wm);
+			default_cursor
+			    = desktop_data[d, "cursor"]:default_cursor;
+			y2milestone (
+			    "Setting cursor theme %1 - package selected",
+			    default_cursor);
 		    }
 		}
 		return desktop_found;
@@ -119,8 +127,10 @@
 
 	y2milestone ("Default desktop: %1", default_wm);
 	y2milestone ("Default logon manager: %1", default_dm);
+	y2milestone ("Default cursor theme: %1", default_cursor);
 
 	SCR::Write (.sysconfig.windowmanager.DEFAULT_WM, default_wm);
+	SCR::Write (.sysconfig.windowmanager.X_MOUSE_CURSOR, default_cursor);
 	SCR::Write (.sysconfig.windowmanager, nil);
 	SCR::Write (.sysconfig.displaymanager.DISPLAYMANAGER, default_dm);
 	SCR::Write (.sysconfig.displaymanager, nil);
