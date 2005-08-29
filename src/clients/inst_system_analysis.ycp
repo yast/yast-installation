@@ -18,6 +18,7 @@ import "Kernel";
 import "Label";
 import "Linuxrc";
 import "Mode";
+import "Packages";
 import "Popup";
 import "Product";
 import "ProductControl";
@@ -294,6 +295,11 @@ if (ret != `finish && Mode::mode () != start_mode)
     y2milestone ("Resetting disk target to read values");
     Storage::ResetOndiskTarget ();
     y2debug ("Original target map (from disk): %1", Storage::GetTargetMap ());
+    y2milestone ("Resetting package manager");
+    Kernel::ProbeKernel();
+    Pkg::PkgReset ();
+    Packages::Init( true );
+
     if (! Mode::repair ())
     {
 	ret = ProductControl::RunFrom (

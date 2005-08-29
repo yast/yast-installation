@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Aug 29 09:56:30 CEST 2005 - jsrain@suse.cz
+
+- reset package manager when switched installation mode (#105857)
+
+-------------------------------------------------------------------
 Fri Aug 26 10:23:24 CEST 2005 - jsrain@suse.cz
 
 - set default cursor theme according to default desktop (#74309)
