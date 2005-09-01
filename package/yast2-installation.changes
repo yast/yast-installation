@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Sep  1 13:45:29 CEST 2005 - ms@suse.de
+
+- start hald in Second-Stage/S06-services (#114667)
+
+-------------------------------------------------------------------
 Mon Aug 29 09:56:30 CEST 2005 - jsrain@suse.cz
 
 - reset package manager when switched installation mode (#105857)

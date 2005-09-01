@@ -42,4 +42,11 @@ if [ -r /etc/sysconfig/pcmcia ];then
 fi
 fi
 
+#=============================================
+# 9.1) start hald
+#---------------------------------------------
+if [ -x /usr/sbin/rchal ] ; then
+	/usr/sbin/rchal start
+fi
+
 sleep 1
