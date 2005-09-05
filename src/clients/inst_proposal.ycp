@@ -1155,6 +1155,8 @@ resolved before continuing.
 	else if ( input == `back )
 	{
 	    Wizard::HideReleaseNotesButton();
+	    if (Stage::initial ())
+		Wizard::SetNextButton (`next, Label::NextButton ());
 	    return `back;
 	}
 
