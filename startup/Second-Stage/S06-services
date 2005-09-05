@@ -46,6 +46,7 @@ fi
 # 9.1) start hald
 #---------------------------------------------
 if [ -x /usr/sbin/rchal ] ; then
+	/usr/sbin/rcdbus start
 	/usr/sbin/rchal start
 fi
 
