@@ -152,7 +152,7 @@ function prepare_for_ncurses () {
 # prepare NCURSES installation
 # ---
 	#=============================================
-	# Create Braile config if not update mode
+	# Create Braille config if not update mode
 	#---------------------------------------------
 	if [ $INST_MODE = "normal" ];then
 	if [ ! -z "$Braille" ];then
@@ -535,7 +535,7 @@ if [ "$Textmode" = 1 ];then
 	log "\tMedium Textmode (ncurses) has been selected"
 	SELECTED_MEDIUM="NCURSES"
 fi
-if [ "$Braille" = 1 ];then
+if [ ! -z "$Braille" ];then
 	log "\tMedium Braille (ncurses) has been selected"
 	SELECTED_MEDIUM="NCURSES"
 fi
