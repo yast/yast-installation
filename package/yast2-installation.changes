@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Sep  5 16:25:44 CEST 2005 - ms@suse.de
+
+- start dbus in Second-Stage/S06-services (#114667)
+
+-------------------------------------------------------------------
 Mon Sep  5 12:46:43 CEST 2005 - jsrain@suse.cz
 
 - save all configured hardware at the end of installation (#104676)
