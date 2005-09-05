@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Sep  5 12:46:43 CEST 2005 - jsrain@suse.cz
+
+- save all configured hardware at the end of installation (#104676)
+- 2.12.25
+
+-------------------------------------------------------------------
 Thu Sep  1 13:45:29 CEST 2005 - ms@suse.de
 
 - start hald in Second-Stage/S06-services (#114667)

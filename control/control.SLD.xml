@@ -566,6 +566,10 @@ textdomain="control"
                 </module>
                 <module>
 	            <label>Hardware Configuration</label>
+		    <name>save_hardware_status</name>
+                </module>
+                <module>
+	            <label>Hardware Configuration</label>
                     <name>congratulate</name>
                 </module>
             </modules>
