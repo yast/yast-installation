@@ -175,6 +175,7 @@ disk that will not boot. With this option, try to fix problems manually.
 
 
 Wizard::SetContents (_("Analyzing the Computer"), `Empty (), "", false, false);
+Wizard::SetTitleIcon ("yast-inst-mode");
 
 // Do hardware probing
 //
