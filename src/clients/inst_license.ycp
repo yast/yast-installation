@@ -107,6 +107,7 @@ the configuration will be aborted.</p>
 
 Wizard::SetContents(caption, contents, help,
     GetInstArgs::enable_back(), GetInstArgs::enable_next());
+Wizard::SetTitleIcon ("yast-license");
 Wizard::SetFocusToNextButton();
 
 any ret = nil;
