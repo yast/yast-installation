@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Sep  6 17:01:51 CEST 2005 - jsrain@suse.cz
+
+- fixed freezing installation while saving configured hardware
+ (#115387)
+
+-------------------------------------------------------------------
 Tue Sep  6 13:28:06 CEST 2005 - jsrain@suse.cz
 
 - use correct icons for license agreement and installation mode

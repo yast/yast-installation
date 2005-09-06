@@ -20,8 +20,8 @@ y2milestone ("Saving configured devices...");
 map out = (map)SCR::Execute (.target.bash_output, "
 hwinfo --pci --block --mouse --keyboard --isdn --save-config=all
 
-[ -d /var/lib/hardware/udi/org/freedesktop/Hal/devices ] && \ 
-perl -pi -e \"s/hwinfo.configured = 'new'/hwinfo.configured = 'no'/\" \ 
+[ -d /var/lib/hardware/udi/org/freedesktop/Hal/devices ] && \
+perl -pi -e \"s/hwinfo.configured = 'new'/hwinfo.configured = 'no'/\" \
 /var/lib/hardware/udi/org/freedesktop/Hal/devices/*");
 
 y2milestone ("Result: %1", out);
