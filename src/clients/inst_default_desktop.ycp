@@ -63,7 +63,7 @@
 		"package" : "gdm",
 		"wm" : "gnome",
 		"dm" : "gdm",
-		"cursor" : "industrial",
+		"cursor" : "Industrial",
 	    ],
 	    "twm" : $[
 		"package" : "xorg-x11",
