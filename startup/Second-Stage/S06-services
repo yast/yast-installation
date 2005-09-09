@@ -47,6 +47,7 @@ fi
 #---------------------------------------------
 if [ -x /usr/sbin/rchal ] ; then
 	/usr/sbin/rcdbus start
+	/usr/sbin/rcacpid start
 	/usr/sbin/rchal start
 fi
 
