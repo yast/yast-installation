@@ -298,6 +298,7 @@ if (ret != `finish && Mode::mode () != start_mode)
     y2debug ("Original target map (from disk): %1", Storage::GetTargetMap ());
     y2milestone ("Resetting package manager");
     Kernel::ProbeKernel();
+    Pkg::TargetFinish ();
     Pkg::PkgReset ();
     Packages::Init( true );
 
