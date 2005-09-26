@@ -1,8 +1,10 @@
 -------------------------------------------------------------------
-Mon Sep 26 13:15:23 CEST 2005 - jsrain@suse.cz
+Mon Sep 26 17:48:58 CEST 2005 - jsrain@suse.cz
 
 - do close target before switching from update to bare metal
   installation (#115075)
+- do not set default window manager in sysconfig if neither KDE
+  nor GNOME are installed (#115412)
 
 -------------------------------------------------------------------
 Fri Sep  9 14:14:24 CEST 2005 - ms@suse.de
