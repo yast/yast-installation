@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Sep 30 14:22:28 CEST 2005 - jsrain@suse.cz
+
+- remove checking whether to run language selection (language
+  module knows better whether it is needed)
+
+-------------------------------------------------------------------
 Mon Sep 26 17:48:58 CEST 2005 - jsrain@suse.cz
 
 - do close target before switching from update to bare metal

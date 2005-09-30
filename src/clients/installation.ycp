@@ -291,23 +291,6 @@ but something went wrong, that's why it is only in the log");
 	Installation::shown_text_mode_warning = true;
     }
 
-
-
-
-    // skip language dialog if selected in isolinux. (#37679)
-    any selected_locale = Linuxrc::InstallInf("Locale");
-    if (Stage::initial () && selected_locale!= nil && (string)selected_locale!="en_US")
-    {
-        if ( ProductFeatures::GetBooleanFeature (
-	    "globals", "skip_language_dialog") )
-        {
-            y2milestone("Skipping language dialog, Language changed to %1",
-                    (string)selected_locale );
-            ProductControl::DisabledModules=add(ProductControl::DisabledModules,
-            "language");
-        }
-    }
-
     symbol ret = nil;
     string restart_data_file = "/var/lib/YaST2/continue_installation";
     string reboot_file = "/var/lib/YaST2/reboot";
