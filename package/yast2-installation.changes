@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Oct 13 16:21:53 CEST 2005 - ms@suse.de
+
+- fixed startup scripts because Stefan changed the X11 module
+  naming from drv.o to drv.so :-(
+
+-------------------------------------------------------------------
 Fri Sep 30 14:22:28 CEST 2005 - jsrain@suse.cz
 
 - remove checking whether to run language selection (language

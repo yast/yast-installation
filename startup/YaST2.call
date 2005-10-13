@@ -435,7 +435,7 @@ fi
 # 3.1.2) X-Server module check...
 XServerAccel=$XServer
 if [ "$XServer" = "vmware" ];then
-	if [ ! -f "$X11_DRIVER_DIR/${XServer}_drv.o" ];then
+	if [ ! -f "$X11_DRIVER_DIR/${XServer}_drv.so" ];then
 		log "\t$XServer driver not installed -> Medium Qt disabled"
 		MEDIUM[0]=0
 	fi
@@ -446,14 +446,14 @@ else
 		log "\tNo Framebuffer available: Using vesa driver"
 		XServer=vesa
 	fi
-	if [ ! -f "$X11_DRIVER_DIR/${XServer}_drv.o" ];then
+	if [ ! -f "$X11_DRIVER_DIR/${XServer}_drv.so" ];then
 		log "\t$XServer driver not installed -> Medium Qt disabled"
 		MEDIUM[0]=0
 	fi
 	X11_CONFIG_ID=$XServer
 fi
 if [ "$acceleratedx" = "1" ];then
-	if [ ! -f "$X11_DRIVER_DIR/${XServerAccel}_drv.o" ];then
+	if [ ! -f "$X11_DRIVER_DIR/${XServerAccel}_drv.so" ];then
 		log "\t$XServerAccel driver not installed -> X11 acceleration disabled"
 	else
 		MEDIUM[0]=1
