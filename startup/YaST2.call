@@ -517,6 +517,11 @@ if [ ! -x /usr/X11R6/bin/Xvnc ] ; then
 	log "\tNo Xvnc server installed -> Medium VNC disabled"
 	MEDIUM[2]=0
 fi
+# 3.3.3) Check for testX binary
+if [ ! -x /usr/sbin/testX ] ; then
+	log "\tNo testX binary installed -> Medium VNC disabled"
+	MEDIUM[2]=0
+fi
 
 #=============================================
 # 4) Evaluate medium selection
