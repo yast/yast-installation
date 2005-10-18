@@ -226,7 +226,7 @@ to activate the new kernel.
 	// ---
 	if ( Mode::update () )
 	{
-		SCR::Execute (.target.bash, Directory::ybindir + "/update_xf86config")
+		SCR::Execute (.target.bash, Directory::ybindir + "/update_xf86config");
 	}
 
     if ( Mode::update () )
