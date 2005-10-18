@@ -220,6 +220,15 @@ to activate the new kernel.
         }
     }
 
+	// ...
+	// Update mouse configuration if device /dev/mouse or /dev/psaux
+	// is still in use
+	// ---
+	if ( Mode::update () )
+	{
+		SCR::Execute (.target.bash, Directory::ybindir + "/update_xf86config")
+	}
+
     if ( Mode::update () )
     {
 	return `next;
