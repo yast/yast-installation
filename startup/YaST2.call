@@ -210,7 +210,7 @@ function prepare_for_vnc () {
 	fi
 }
 
-#----[ check_qt ]----#
+#----[ check_Qt ]----#
 function check_Qt () {
 #------------------------------------------------------
 # check if the prepared medium Qt is valid
