@@ -67,7 +67,7 @@
 	    ],
 	    "fvwm2" : $[
 		"package" : "xorg-x11",
-		"wm" : "",
+		"wm" : "fvwm2",
 		"dm" : "xdm",
 		"cursor" : "crystalwhite",
 	    ],
