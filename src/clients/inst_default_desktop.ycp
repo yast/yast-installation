@@ -65,9 +65,9 @@
 		"dm" : "gdm",
 		"cursor" : "Industrial",
 	    ],
-	    "fvwm2" : $[
+	    "twm" : $[
 		"package" : "xorg-x11",
-		"wm" : "fvwm2",
+		"wm" : "",
 		"dm" : "xdm",
 		"cursor" : "crystalwhite",
 	    ],
@@ -98,7 +98,7 @@
 	// if no desktop was found according to default selection, try
 	// installed packages
 	// first the logon manager
-	desktop_order = add (desktop_order, "fvwm2");
+	desktop_order = add (desktop_order, "twm");
 	desktop_order = prepend (desktop_order, selection_desktop);
 	desktop_found = false;
 	find (string d, desktop_order, {
