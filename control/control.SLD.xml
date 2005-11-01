@@ -214,7 +214,7 @@ textdomain="control"
                 </module>
                 <module>
 	            <label>Desktop Selection</label>
-                    <name>desktop_new</name>
+                    <name>desktop</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
