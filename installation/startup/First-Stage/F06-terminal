@@ -1,0 +1,31 @@
+#!/bin/sh
+log "Starting F06-terminal..."
+log "========================"
+
+#=============================================
+# 6) setup virtual console
+#---------------------------------------------
+eval `initviocons -e`
+export LINES COLUMNS TERM
+log "\tSetup virtual console:"
+log "\tLines:   $LINES"
+log "\tColumns: $COLUMNS"
+log "\tType:    $TERM"
+
+#=============================================
+# 6.1) setup TERM variable
+#---------------------------------------------
+if [ ! -z "$Console" ] && [ "$TERM" != "linux" ] ; then
+	log "\tAsking for Serial console type..."
+	set_term_variable
+	log "\tType:    $TERM"
+fi
+
+#=============================================
+# 6.2) check for p690 hvc console
+#---------------------------------------------
+grep -qi console=hvc < /proc/cmdline && {
+	echo "Console: hvc0,9600" >> /etc/install.inf
+	export HVC_CONSOLE_HINT="  (recommended with p690 hvc console)"
+	export Console=hvc0,9600
+}

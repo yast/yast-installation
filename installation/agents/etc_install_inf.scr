@@ -1,0 +1,34 @@
+/**
+ * File:	etc_install_inf.scr
+ * Summary:	Agent for reading/writing /etc/install.inf
+ * Access:	read / write
+ * Author:	Michal Svec <msvec@suse.cz>
+ *
+ * Example:
+ *   Dir(.etc.install_inf)
+ *   (["IP", "Nameserver"])
+ **
+ *   Read(.etc.install_inf.IP)
+ *   ("1.2.3.4")
+ **
+ *   Write(.etc.install_inf.IP, "5.6.7.8")
+ *   (true)
+ *
+ * WARNING! Ini agent cannot handle multiple entries with the same name,
+ * such as Alias in install.inf. Use .etc.install_inf_alias instead.
+ *
+ * $Id$
+ */
+.etc.install_inf
+
+`ag_ini(
+    `IniAgent( "/etc/install.inf",
+	$[
+	    "options" : [ "read_only", "global_values", "flat" ],
+	    "comments" : [ "^#.*", "^[ \t]*$", ],
+	    "params" : [
+		$[ "match" : [ "^[ \t]*([a-zA-Z0-9_]+)[ \t]*:[ \t]*(.*)[ \t]*$", "%s: %s" ] ]
+	    ]
+	]
+    )
+)

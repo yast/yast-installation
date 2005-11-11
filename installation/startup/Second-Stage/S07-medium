@@ -1,0 +1,48 @@
+#!/bin/sh
+log "Starting S08-medium..."
+log "======================"
+
+#=============================================
+# 11) check medium related install.inf vars
+#---------------------------------------------
+Y2_NETWORK_ACTIVE=0
+Y2_SSH_ACTIVE=0
+USE_SSH=0
+VNC=0
+log "\tChecking kernel commandline..."
+#=============================================
+# 11.1 start shell on second virtual console
+#---------------------------------------------
+if ! got_install_param '^NoShell:.*1' ; then
+	log "\tGot kernel parameter <NoShell> -> start shell on tty2"
+	SPID=`/usr/lib/YaST2/bin/startshell /dev/tty2`
+fi
+#=============================================
+# 11.2) prepare for VNC installation
+#---------------------------------------------
+if got_install_param '^VNC:.*1' ; then
+	log "\tGot kernel parameter VNC -> export VNC variable"
+	export VNC=1
+fi
+#=============================================
+# 11.3) prepare for SSH installation
+#---------------------------------------------
+if got_install_param '^UseSSH:.*1' ; then
+	log "\tGot kernel parameter UseSSH -> export UseSSH variable"
+	export USE_SSH=1
+fi
+#=============================================
+# 11.4) activate network for SSH or VNC inst.
+#---------------------------------------------
+if [ $VNC -eq 1 ] || [ $USE_SSH -eq 1 ];then
+	log "\tVNC/SSH installation used -> activate network"
+	rcnetwork start && Y2_NETWORK_ACTIVE=1
+fi
+if [ $USE_SSH -eq 1 ];then
+	rcsshd start    && Y2_SSH_ACTIVE=1
+fi
+log "\tSummary for commandline checks:"
+log "\tY2_NETWORK_ACTIVE = $Y2_NETWORK_ACTIVE"
+log "\tY2_SSH_ACTIVE     = $Y2_SSH_ACTIVE"
+log "\tUSE_SSH           = $USE_SSH"
+log "\tVNC               = $VNC"

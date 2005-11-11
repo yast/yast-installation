@@ -1,0 +1,381 @@
+/**
+ * Module:		installation.ycp
+ *
+ * Authors:		Klaus Kaempf <kkaempf@suse.de>
+ *			Mathias Kettner <kettner@suse.de>
+ *			Michael Hager <mike@suse.de>
+ *			Stefan Hundhammer <sh@suse.de>
+ *			Arvin Schnell <arvin@suse.de>
+ *
+ * Purpose:		Set up the UI and define macros for the
+ *			installation dialog, general framework, ...
+ *			Describing and calling all submodules, depending on
+ *			the installation should be started or continued.
+ *
+ * $Id$
+ */
+{
+    textdomain "installation";
+
+    // this is installation, so start SCR always locally (as plugin) !
+
+    integer scr_handle = WFM::SCROpen ("scr", false);
+    WFM::SCRSetDefault (scr_handle);
+
+    import "Arch";
+    import "Mode";
+    import "Directory";
+    import "Stage";
+    import "Installation";
+    import "ProductControl";
+    import "ProductFeatures";
+    import "Language";
+    Installation::scr_handle = scr_handle;
+
+    import "Mouse";
+    import "Console";
+    import "StorageDevices";
+    import "Keyboard";
+
+    import "Wizard";
+    import "Label";
+    import "Popup";
+    import "Report";
+
+
+    import "Linuxrc";
+
+    include "installation/misc.ycp";
+
+    /**
+     * Re-translate static part of wizard dialog and other predefined messages
+     * after language change
+     */
+    void retranslateWizardDialog()
+	{
+	    y2milestone( "Retranslating messages" );
+
+	    // Make sure the labels for default function keys are retranslated, too.
+	    // Using Label::DefaultFunctionKeyMap() from Label module.
+	    UI::SetFunctionKeys( Label::DefaultFunctionKeyMap() );
+
+	    // Activate language changes on static part of wizard dialog
+
+	    ProductControl::RetranslateWizardSteps();
+	    Wizard::RetranslateButtons();
+	    Wizard::SetFocusToNextButton();
+	    return;
+	}
+
+    // properly set up initial language
+
+    if (Stage::initial ())
+    {
+	Pkg::InstSysMode();
+
+	Installation::encoding = Console::SelectFont( Language::language );
+
+	if (UI::GetDisplayInfo()["HasFullUtf8Support"]:true)
+	{
+	    Installation::encoding = "UTF-8";
+	}
+
+	UI::SetLanguage (Language::language, Installation::encoding);
+	WFM::SetLanguage (Language::language, "UTF-8");
+	UI::RecordMacro( Directory::logdir + "/macro_inst_initial.ycp" );
+    }
+
+    // Properly setup timezone for continue mode.
+    //
+    if ( Stage::cont () )
+    {
+	import "Timezone";
+	Timezone::Set( Timezone::timezone, true );
+	Pkg::SetLocale (Language::language);
+	UI::RecordMacro( Directory::logdir + "/macro_inst_cont.ycp" );
+    }
+
+
+
+    // Detect mode early to be able to setup steps correctly
+    if (Stage::cont ())
+    {
+	if (SCR::Read(.target.size, Installation::destdir + "/var/lib/YaST2/update_mode") > 0)
+	{
+	    Mode::SetMode ("update");
+	}
+    }
+
+/* It should be possible to go back even in first stage
+    if ( Stage::initial () && ! Mode::repair () )
+    {
+	Wizard::OpenAcceptAbortStepsDialog();
+    }
+    else
+    {*/
+	Wizard::OpenNextBackStepsDialog();
+//    }
+
+    // dialog caption
+    Wizard::SetContents(_("Initializing..."), `Empty (), "", false, false);
+
+    // --------------------------------------------------------------
+    //                   Mouse
+    // --------------------------------------------------------------
+    if (Stage::initial () && (!Arch::s390 () || Arch::board_iseries ()))
+    {
+	UI::BusyCursor();
+	/* Busy popup label */
+	UI::OpenDialog(`VBox(`Label(_("Probing mouse..."))));
+	y2milestone("Call Mouse probing...");
+	Mouse::Set (Mouse::Probe ());
+	UI::CloseDialog();
+    }
+
+    UpdateWizardSteps ();
+
+    // classified_user_settings contain secrets, like passwords ...
+    // they should not be logged !
+    map classified_user_settings = $[ "crypt_nb":0 ];
+
+    if (Mode::autoinst ())
+    {
+	Report::DisplayErrors(true, 0);
+	Report::DisplayMessages(true, 10);
+	Report::DisplayWarnings(true, 10);
+    }
+
+    // Don't log Report messages by default
+    Report::LogMessages(false);
+    Report::LogErrors(false);
+    Report::LogWarnings(false);
+
+    /*
+     * The Stage::cont () flag decides, if the installation
+     * should be _started_ or _continued_.
+     */
+
+    ///////////////////////////////////////////////////////////////////
+    // Settings for:
+    // Installation: CONTINUE INSTALLATION
+    ///////////////////////////////////////////////////////////////////
+
+    if (Stage::cont ())
+    {
+	Installation::encoding = Console::Restore();
+	Console::Init ();
+	if (UI::GetDisplayInfo()["HasFullUtf8Support"]:true)
+	{
+	    Installation::encoding = "UTF-8";
+	}
+
+	////////////////////////////////////////////////////////////
+	// activate language settings and console font
+
+	string language = Language::language;
+
+	UI::SetLanguage (language, Installation::encoding);
+	WFM::SetLanguage (language, "UTF-8");
+
+	string ckb_cmd = Keyboard::ckb_cmd;
+	string xkb_cmd = Keyboard::xkb_cmd;
+
+
+	if ( ! Mode::test () )
+	{
+	    if (ckb_cmd != "")
+		SCR::Execute (.target.bash, ckb_cmd );
+	    if (xkb_cmd != "")
+		SCR::Execute (.target.bash, xkb_cmd );
+
+            // ncurses calls 'dumpkeys | loadkeys --unicode' in UTF-8 locale
+	    UI::SetKeyboard();
+	    y2milestone ("lang: %1, encoding %2, ckb_cmd: %3 xkb: %4", language,
+			 Installation::encoding, ckb_cmd, xkb_cmd);
+	}
+
+	retranslateWizardDialog();
+    }
+    else if (!Mode::screen_shot ()
+             && !Stage::firstboot ()
+             )
+    {
+
+        ///////////////////////////////////////////////////////////////////
+        // Settings for:
+        // Installation: INITIAL INSTALLATION
+        ///////////////////////////////////////////////////////////////////
+
+	// do we have a floppy drive attached ?
+
+	if (StorageDevices::FloppyReady())
+	{
+	    // Try to load settings from disk, if a floppy is present
+
+	    SCR::Execute(.target.mount, [StorageDevices::FloppyDevice, "/media/floppy"], "-t auto");
+
+	    // Check for autoinst.xml. if available
+	    // set mode to autoinst. Later, the file is parsed and installation
+	    // is performed automatically.
+
+	    if (SCR::Read(.target.size,"/media/floppy/autoinst.xml")>0)
+	    {
+		y2milestone("Found control file, switching to autoinst mode");
+		Mode::SetMode ("autoinstallation");
+		// initialize Report behavior
+		// Default in autoinst mode is showing messages and warnings with timeout of 10 sec.
+		// Errors are shown without timeout.
+
+		Report::DisplayErrors(true, 0);
+		Report::DisplayMessages(true, 10);
+		Report::DisplayWarnings(true, 10);
+	    }
+	    SCR::Execute(.target.umount, "/media/floppy");
+	}
+    }
+
+    /////////////////////////////////////////
+    // show message if text_fallback
+    /////////////////////////////////////////
+    if ((Installation::text_fallback () || Installation::no_x11 ())
+	&& (Installation::x11_setup_needed () && Arch::x11_setup_needed ())
+	&& !Installation::shown_text_mode_warning)
+    {
+	string x11_msg = "";
+	if ((Installation::no_x11 () || Installation::text_fallback ()) && Stage::initial ())
+	{
+	    // Somehow the graphical frontend failed and we're running in
+	    // text mode. Inform the user about this fact.
+	    x11_msg = sformat(_("Your computer does not fulfill all requirements for
+a graphical installation. There is less than %1 MB
+memory or the X server could not be started.
+
+As a fallback, the text front-end of YaST2 will guide you
+through the installation. This front-end offers the
+same functionality as the graphical one, but the screens
+differ from those in the manual.
+"), "96");
+
+	}
+	else if ((Installation::no_x11 () || Installation::text_fallback ()) && Stage::cont ())
+	{
+	    // The script YaST2 wants to inform about a problem with the
+	    // option no_x11 but it's broken.
+	    // else if (Installation::no_x11 ())
+
+	    // Somehow the graphical frontend failed and we're running in
+	    // text mode. Inform the user about this fact.
+	    x11_msg = _("The graphical interface could not be started.
+
+The required packages were not installed (minimal installation) or
+the graphics card is not properly supported.
+
+As a fallback, the text front-end of YaST2 will guide you
+through the installation. This front-end offers the
+same functionality as the graphical one, but the screens
+differ from those in the manual.
+");
+	}
+
+	if (x11_msg != "")
+	{
+	    Report::Message(x11_msg);
+	}
+	else
+	{
+	    y2error ("There should be a more detailed message displayed here,\
+but something went wrong, that's why it is only in the log");
+	}
+
+	// show this warning only once
+	Installation::shown_text_mode_warning = true;
+    }
+
+    symbol ret = nil;
+    string restart_data_file = "/var/lib/YaST2/continue_installation";
+    string reboot_file = "/var/lib/YaST2/reboot";
+    string restart_file = "/var/lib/YaST2/restart_yast";
+    if (Stage::cont ()
+	&& (integer)SCR::Read (.target.size, restart_data_file) > 0)
+    {
+	string contents = (string)
+	    SCR::Read (.target.string, restart_data_file);
+	integer next_step = tointeger (contents);
+	if (next_step == nil)
+	{
+	    y2error ("Data file specifying step to continue corrupted");
+	    ret = ProductControl::Run();
+	}
+	else
+	{
+	    ret = ProductControl::RunFrom (next_step, false);
+	}
+	SCR::Execute (.target.bash, sformat (
+	    "test -f %1 && /bin/rm -f %1", reboot_file));
+	SCR::Execute (.target.bash, sformat (
+	    "test -f %1 && /bin/rm -f %1", restart_file));
+	SCR::Execute (.target.bash, sformat (
+	    "test -f %1 && /bin/rm -f %1", restart_data_file));
+    }
+    else
+    {
+	// Run the installation workflow
+	ret = ProductControl::Run();
+    }
+
+    if (Stage::cont () && (ret == `reboot || ret == `restart_yast))
+    {
+	integer last_step = ProductControl::CurrentStep ();
+	integer next_step = last_step + 1;
+	SCR::Write (.target.string, restart_data_file,
+	    sformat ("%1", next_step));
+	if (ret == `reboot)
+	{
+	    SCR::Execute (.target.bash, sformat (
+		"touch %1", reboot_file));
+	}
+	else if (ret == `restart_yast)
+	{
+	    SCR::Execute (.target.bash, sformat (
+		"touch %1", restart_file));
+	}
+    }
+
+    if (ret == `abort)
+    {
+	// tell linuxrc that we aborted
+	Linuxrc::WriteYaSTInf($["Aborted" : "1"]);
+    }
+
+    // re-enable automatic probing
+    if (!Mode::test ())
+        WFM::Execute (.local.bash, "/bin/echo \"/sbin/modprobe\" >/proc/sys/kernel/modprobe");
+
+    if (Stage::cont () && ret != `reboot && ret != `restart_yast)
+    {
+	// remove /etc/install.inf, not needed any more
+	SCR::Execute (.target.remove, "/etc/install.inf");
+	if (Mode::update ())
+	{
+	    SCR::Execute(.target.remove, "/var/lib/YaST2/update_mode");
+	    SCR::Execute(.target.bash, "/bin/rm -rf /var/adm/current_package_descr");
+	}
+        y2milestone("Removing /var/lib/YaST2/runme_at_boot");
+	SCR::Execute(.target.remove, "/var/lib/YaST2/runme_at_boot");
+
+        // This file has the current step of the workflow to be used
+        // for crash recovery during installation. It can be deleted when
+        // the installation has been completed.
+	SCR::Execute(.target.remove, "/var/lib/YaST2/step");
+
+	if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_post.ycp") > 0)
+	    WFM::CallFunction ("product_post", [Mode::update ()]);
+    }
+
+    // disable all sources and finish target
+    Pkg::SourceFinishAll();
+    Pkg::TargetFinish();
+
+    UI::CloseDialog();
+    return ret;
+}

@@ -1,0 +1,1169 @@
+/**
+ * File:	clients/inst_proposal.ycp
+ * Module:	Installation
+ * Summary:	Create and display proposal
+ * Authors:	Stefan Hundhammer <sh@suse.de>
+ *		Arvin Schnell <arvin@suse.de>
+ *
+ * $Id$
+ *
+ * Create and display reasonable proposal for basic
+ * installation and call sub-workflows as required
+ * on user request.
+ *
+ * See also file proposal-API.txt for details.
+ */
+
+{
+    textdomain "installation";
+
+    import "Arch";
+    import "Label";
+    import "Mode";
+    import "Stage";
+    import "Installation";
+    import "AutoinstConfig";
+    import "Wizard";
+    import "HTML";
+    import "Popup";
+    import "ProductControl";
+    import "Language";
+    import "GetInstArgs";
+
+    include "installation/misc.ycp";
+
+    define void retranslate_proposal_dialog();
+    define symbol load_matching_submodules_list();
+    define boolean get_submod_descriptions_and_build_menu();
+    define void make_proposal( boolean force_reset, boolean language_changed );
+    define string format_sub_proposal( map prop );
+    define void build_dialog ();
+    define void set_icon();
+    define string help_text();
+
+    // values used in defined functions
+
+    map 		proposal_properties = $[];
+    list<string>	submodules = [];
+    list<string>	submodules_presentation = [];
+    map<string,integer> mod2tab = $[]; // module -> tab it is in
+    list<string>	display_only_modules = []; // modules which do not have propose, but only summary
+    integer		current_tab = 0; // ID of current tab
+    boolean		has_tab = false; // true if is tabbed proposal
+    map<string, string> html = $[]; // proposals of all modules - HTML part
+    list<string>	present_only = [];
+    list<string>	locked_modules = [];
+    list	titles     = [];
+    map		submod2id  = $[];
+    map		id2submod  = $[];
+    map		link2submod = $[];
+    boolean	have_blocker = false;
+    string	proposal_mode = "";
+
+    symbol proposal_result = nil;
+
+    // skip if not interactive mode.
+    if (!AutoinstConfig::Confirm && Mode::autoinst ()) {
+	return `auto;
+    }
+
+    /**
+     * Display preformatted proposal in the RichText widget
+     *
+     * @param proposal human readable proposal preformatted in HTML
+     **/
+
+    define void display_proposal( string proposal ) ``{
+	UI::ChangeWidget(`id(`proposal), `Value, proposal );
+    };
+
+
+    /**
+     * Call a submodule's MakeProposal() function.
+     *
+     * @param  submodule	name of the submodule's proposal dispatcher
+     * @param  force_reset	discard any existing (cached) proposal
+     * @param  language_changed	installation language changed since last call
+     * @return proposal_map	see proposal-API.txt
+     **/
+
+    define map submod_make_proposal( string submodule, boolean force_reset,
+				     boolean language_changed )
+    ``{
+	map proposal = (map) WFM::CallFunction ( submodule, [ "MakeProposal",
+							$[ "force_reset" : force_reset,
+							   "language_changed" : language_changed ] ] );
+	y2debug( "%1 MakeProposal() returns %2", submodule, proposal );
+
+	return proposal;
+    };
+
+
+    /**
+     * Call a submodule's AskUser() function.
+     *
+     * @param  submodule	name of the submodule's proposal dispatcher
+     * @param  has_next		force a "next" button even if the submodule would otherwise rename it
+     * @return workflow_sequence see proposal-API.txt
+     **/
+
+    define symbol submod_ask_user( string submodule, map<string,any> additional_info )
+    ``{
+	// Call the AskUser() function
+
+	map     ask_user_result   = (map) WFM::CallFunction( submodule,
+	    [ "AskUser", additional_info ] );
+	symbol  workflow_sequence = ask_user_result["workflow_sequence"]:`next;
+	boolean language_changed  = ask_user_result["language_changed"]:false;
+	boolean mode_changed      = ask_user_result["mode_changed"]:false;
+	boolean rootpart_changed  = ask_user_result["rootpart_changed"]:false;
+
+	if (workflow_sequence != `cancel && workflow_sequence != `back &&
+	    workflow_sequence != `abort && workflow_sequence != `finish)
+	{
+	    if ( language_changed )
+	    {
+		retranslate_proposal_dialog();
+		Pkg::SetLocale (Language::language);
+		Pkg::SetAdditionalLocales ([Language::language]);
+	    }
+
+	    /*
+	    if (mode_changed || rootpart_changed ||
+		workflow_sequence == `finish)
+	    {
+		RootPart::UnmountPartitions (false);
+	    }
+	    */
+
+	    if (mode_changed)
+	    {
+		Wizard::SetHelpText (help_text ());
+
+		build_dialog();
+		load_matching_submodules_list();
+		if (!get_submod_descriptions_and_build_menu ())
+		{
+		    y2error ("i'm in dutch");
+		}
+	    }
+
+	    // Make a new proposal based on those user changes
+	    make_proposal( false, language_changed );
+	}
+
+	return workflow_sequence;
+    };
+
+
+    /**
+     * Call a submodule's Description() function.
+     *
+     * @param  submodule	name of the submodule's proposal dispatcher or nil if no such module
+     * @return description_map	see proposal-API.txt
+     **/
+
+    define map submod_description (string submodule)
+    ``{
+	map description = (map) WFM::CallFunction( submodule, [ "Description", $[] ] );
+
+	return description;
+    };
+
+
+    /**
+     * Call each submodule's MakeProposal() function in turn and display the
+     * proposals in the RichText widget.
+     *
+     * @param  force_reset	discard any existing (cached) proposal
+     * @param  language_changed	installation language changed since last call
+     **/
+
+    define void make_proposal( boolean force_reset, boolean language_changed )
+    ``{
+	integer tab_to_switch = 999;
+	boolean current_tab_affected = false;
+	integer no = 0;
+	map prop_map = $[];
+	boolean skip_the_rest = false;
+	have_blocker = false;
+
+	link2submod = $[];
+
+	html = $[];
+	foreach ( string submod, submodules, ``{
+	    string prop = "";
+
+    	    if (!contains(locked_modules, submod))
+            {
+		prop = prop + HTML::Heading( HTML::Link( titles[no]:"ERROR: missing title" ,
+	    						 submod2id[submod]:"" ) );
+    	    } else {
+		prop = prop + HTML::Heading(
+                    titles[no]:"ERROR: missing title");
+            }
+
+	    html[submod] = prop + HTML::Para( _("Analyzing your system..."));
+	    no = no + 1;
+	});
+
+	no = 0;
+
+	Wizard::DisableNextButton ();
+	UI::BusyCursor();
+
+        y2debug("Submodules list before execution: %1", submodules );
+	foreach ( string submod, submodules,
+	``{
+	    string prop = "";
+	    if ( ! skip_the_rest )
+	    {
+    		if (!contains(locked_modules, submod))
+        	{
+		    prop = prop + HTML::Heading( HTML::Link( titles[no]:"ERROR: missing title" ,
+	    						 submod2id[submod]:"" ) );
+    		} else {
+		    prop = prop + HTML::Heading(
+                	titles[no]:"ERROR: missing title");
+        	}
+
+		prop_map = submod_make_proposal( submod, force_reset, language_changed );
+
+		// check if it is needed to switch to another tab
+		// because of an error
+		if (haskey (mod2tab, submod))
+		{
+		    symbol warn_level = prop_map["warning_level"]:`ok;
+		    if (warn_level == nil)
+			warn_level = `ok;
+		    if (contains ([`blocker, `fatal, `error], warn_level))
+		    {
+			if (mod2tab[submod]:999 < tab_to_switch)
+			{
+			    tab_to_switch = mod2tab[submod]:999;
+			}
+			if (mod2tab[submod]:999 == current_tab)
+			{
+			    current_tab_affected = true;
+			}
+		    }
+		}
+
+		// update link map
+		if (haskey (prop_map, "links"))
+		{
+		    foreach ( string link, prop_map["links"]:[], ``{
+			link2submod[link] = submod;
+		    });
+		}
+	    }
+
+	    if ( prop_map["language_changed"]:false
+		 && ! skip_the_rest)
+	    {
+		skip_the_rest = true;
+		retranslate_proposal_dialog();
+		make_proposal( force_reset, true );
+	    }
+
+	    if ( ! skip_the_rest )
+	    {
+		prop = prop + format_sub_proposal( prop_map );
+
+		html[submod] = prop;
+
+		// now do the complete html
+		string proposal = "";
+		foreach (string mod, submodules_presentation, ``{
+		    proposal = proposal + html[mod]:"";
+		});
+		display_proposal( proposal );
+
+		// display_proposal( prop );
+		no = no + 1;
+	    }
+
+	    if ( prop_map["warning_level"]:`none == `fatal )
+	    {
+		skip_the_rest = true;
+	    }
+	});
+	if (has_tab && tab_to_switch < 999 && ! current_tab_affected)
+	{
+	    // FIXME copy-paste from event loop (but for last 2 lines)
+	    current_tab = tab_to_switch;
+	    load_matching_submodules_list();
+	    string proposal = "";
+	    foreach (string mod, submodules_presentation, ``{
+		proposal = proposal + html[mod]:"";
+	    });
+	    display_proposal( proposal );
+	    get_submod_descriptions_and_build_menu ();
+	    if (UI::HasSpecialWidget (`DumbTab))
+		UI::ChangeWidget (`id (`_cwm_tab), `CurrentItem, current_tab);
+	}
+
+	// now do the display-only proposals
+
+	Wizard::EnableNextButton ();
+	UI::NormalCursor();
+    };
+
+
+    /**
+     * Format a submodule's proposal in HTML
+     *
+     * @param  prop proposal map - see proposal-API.txt
+     * @return HTML string
+     **/
+
+    define string format_sub_proposal( map prop )
+    ``{
+	string html = "";
+	string warning = prop["warning"]:"";
+
+	if ( warning != nil && warning != "" )
+	{
+	    symbol level = prop["warning_level"]:`warning;
+
+	    if      ( level == `notice  )	warning = HTML::Bold( warning );
+	    else if ( level == `warning )	warning = HTML::Colorize( warning, "red" );
+	    else if ( level == `error	)	warning = HTML::Colorize( warning, "red" );
+	    else if ( level == `blocker	|| level == `fatal )
+	    {
+		have_blocker = true;
+		warning = HTML::Colorize( warning, "red" );
+	    }
+
+	    html = html + HTML::Para( warning );
+	}
+
+	string preformatted_prop = prop["preformatted_proposal"]:"";
+
+	if ( preformatted_prop != "" )
+	{
+	    html = html + preformatted_prop;
+	}
+	else
+	{
+	    list<string> raw_prop = prop["raw_proposal"]:["ERROR: No proposal"];
+	    html = html + HTML::List( raw_prop );
+	}
+
+	return html;
+    };
+
+
+
+
+    /**
+     * Call a submodule's Write() function.
+     *
+     * @param  submodule	name of the submodule's proposal dispatcher
+     * @return success		true if Write() was successful of if there is no Write() function
+     **/
+    define boolean submod_write_settings( string submodule )
+    ``{
+	map result = (map) WFM::CallFunction( submodule, [ "Write", $[] ] );
+	if ( result == nil )
+	    result = $[];
+
+	return result["success"]:true;
+    };
+
+
+    /**
+     * Call each submodule's "Write()" function to let it write its settings,
+     * i.e. the settings effective.
+     **/
+    define void write_settings() ``{
+
+	boolean success = true;
+
+	foreach (string submod, submodules, ``{
+	    boolean submod_success = submod_write_settings( submod );
+	    if (submod_success == nil)
+		submod_success = true;
+
+	    if ( ! submod_success )
+		y2error( "Write() failed for submodule %1", submod );
+
+	    success = success && submod_success;
+	});
+
+	if ( ! success )
+	{
+	    y2error( "Write() failed for one or more submodules" );
+	    // Submodules handle their own error reporting
+
+	    // text for a message box
+	    Popup::TimedMessage( _("Configuration saved.\nThere were errors."), 3 );
+	}
+	// else
+	// {
+	//     // text for a message box
+	//     Popup::TimedMessage( _("Configuration saved successfully."), 3 );
+	// }
+    };
+
+
+    /**
+     * Force a RichText widget to use the busy cursor
+     *
+     * @param widget_id  ID  of the widget, e.g. `id(`proposal)
+     **/
+    define void richtext_busy_cursor( any widget_id ) ``{
+        if (is(widget_id, symbol)) {
+            UI::ChangeWidget( (symbol) widget_id, `Enabled, false );
+        } else {
+            UI::ChangeWidget( (term) widget_id, `Enabled, false );
+        }
+    };
+
+
+    /**
+     * Switch a RichText widget back to use the normal cursor
+     *
+     * @param widget_id  ID  of the widget, e.g. `id(`proposal)
+     **/
+    define void richtext_normal_cursor( any widget_id ) ``{
+        if (is(widget_id, symbol)) {
+	    UI::ChangeWidget( (symbol) widget_id, `Enabled, true );
+        } else {
+	    UI::ChangeWidget( (term) widget_id, `Enabled, true );
+        }
+    };
+
+
+    /**
+     * Retranslate the proposal (wizard) dialog after the language is changed.
+     **/
+    define void retranslate_proposal_dialog() ``{
+
+	y2debug( "Retranslating proposal dialog" );
+
+	build_dialog();
+	ProductControl::RetranslateWizardSteps();
+	Wizard::RetranslateButtons();
+	get_submod_descriptions_and_build_menu();
+    };
+
+
+    /**
+     * Load a list of submodules. Try loading it from a file named 'file_name'
+     * from one of several predefined directories. If there is no such list,
+     * use 'fallback_list'.
+     *
+     * @param  file_name	YCP file name to load from
+     * @param  fallback_list	fallback list of submodule names (strings)
+     * @return submodules_list	list of submodule names (strings)
+     **/
+
+    /* OBSOLETE CODE
+    define list load_submodules_list( string file_name, list fallback_list ) ``{
+
+	list submodules = (list) SCR::Read(.target.ycp, [ file_name, [] ] );
+
+	if ( submodules == [] )
+	{
+	    submodules = (list) SCR::Read(.target.yast2, [ file_name, [] ] );
+	}
+
+	if ( submodules == [] )
+	{
+	    submodules = fallback_list;
+	}
+
+	return submodules;
+    };
+
+    */
+
+
+    /**
+     * Load a list of submodules matching the current internal states
+     *
+     * @return submodules_list	list of submodule names (strings)
+     **/
+    define symbol load_matching_submodules_list() ``{
+
+	list< list > modules = [];
+
+        modules = ProductControl::getProposals (
+                Stage::stage (),
+                Mode::mode (),
+                proposal_mode );
+        if (modules == nil ) {
+            y2error("Error loading proposals");
+            return `abort;
+        }
+	
+        locked_modules = ProductControl::getLockedProposals (Stage::stage (), Mode::mode (), proposal_mode);
+	
+        y2milestone("getting proposals for stage: \"%1\" mode: \"%2\" proposal type: \"%3\"",
+                Stage::stage (),
+                Mode::mode (),
+                proposal_mode );
+
+	proposal_properties = ProductControl::getProposalProperties(Stage::stage (), Mode::mode (), proposal_mode);
+
+        if (size(modules) == 0 )
+        {
+            y2error("No proposals available");
+            return `abort;
+        }
+
+	// in normal mode we don't want to switch between installation and update
+	if (Mode::normal ())
+	{
+	    modules = filter (list v, modules, ``(v[0]:"" != "mode_proposal"));
+	}
+
+	// now create the list of modules and order of modules for presentation
+	submodules = maplist (list mod, modules, ``(mod[0]:"") );
+        y2milestone ("Execution order: %1", submodules);
+
+	if (has_tab)
+	{
+	    y2milestone ("Proposal uses tabs");
+	    map data = ProductControl::getProposalProperties (
+                Stage::stage (),
+                Mode::mode (),
+                proposal_mode );
+	    submodules_presentation = data["proposal_tabs", current_tab, "proposal_modules"]:[];
+            // All proposal file names end with _proposal
+	    submodules_presentation = maplist (string m, submodules_presentation, {
+		if (!issubstring(m, "_proposal"))
+		    m = m + "_proposal";
+		return m;
+	    });
+	    integer index = -1;
+	    mod2tab = $[];
+	    list<list<string> > tmp_all_submods = maplist (map tab, data["proposal_tabs"]:[], {
+		index = index + 1;
+		foreach (string m, tab["proposal_modules"]:[], {
+		    if (!issubstring(m, "_proposal"))
+			m = m + "_proposal";
+		    if (index < mod2tab[m]:999)
+			mod2tab[m] = index;
+		});
+		return tab["proposal_modules"]:[];
+	    });
+
+	    list<string> all_submods = flatten (tmp_all_submods);
+	    all_submods = maplist (string m, all_submods, {
+		if (!issubstring(m, "_proposal"))
+		    m = m + "_proposal";
+		return m;
+	    });
+	    display_only_modules = filter (string m, all_submods, {
+		return ! contains (submodules, m);
+	    });
+	    submodules = (list<string>)merge (submodules, display_only_modules);
+	}
+	else
+	{
+	    y2milestone ("Proposal doesn't use tabs");
+	    // sort modules according to presentation ordering
+	    modules = sort (list mod1, list mod2, modules, ``(
+		mod1[1]:50 < mod2[1]:50
+	    ));
+
+	    // setup the list
+	    submodules_presentation = maplist (list mod, modules, ``(mod[0]:"") );
+	}
+
+	y2milestone ("Presentation order: %1", submodules_presentation);
+        y2milestone ("Execution order: %1", submodules);
+    };
+
+
+    /**
+     * Find out if the target machine has a network card.
+     * @return true if a network card is found, false otherwise
+     **/
+    define boolean have_network_card() ``{
+
+	// Maybe obsolete
+
+	if ( Mode::test () )
+	    return true;
+
+	return size( (list<map>) SCR::Read(.probe.netcard) ) > 0;
+    };
+
+
+    /**
+     * Create the proposal dialog
+     * (the inner part, excluding the wizard frame)
+     **/
+    define void build_dialog () {
+
+	// headline for installation proposal
+	
+	string headline = proposal_properties["label"]:"";
+
+	
+        y2milestone("headline: %1", headline );
+	
+        if ( headline == "")
+        {
+	    // dialog headline
+            headline =  _("Installation Settings");
+        }
+        else
+        {
+            headline = dgettext( ProductControl::getProposalTextDomain() ,
+				 headline );
+        }
+
+	// icon for installation proposal
+	string icon = "";
+
+	/* radiobuttons */
+	term skip_buttons =
+	    `RadioButtonGroup (
+			       `VBox (
+				      `VSpacing(1),
+				      `Left(`RadioButton(`id(`skip), `opt(`notify),
+							 // Check box: Skip all the configurations in this dialog -
+							 // do this later manually or not at all
+							 // Translators: About 40 characters max,
+							 // use newlines for longer translations.
+							// radio button
+							 _("&Skip Configuration"), false)),
+				      `Left(`RadioButton(`id(`dontskip), `opt(`notify),
+							// radio button
+							 _("&Use Following Configuration"), true)),
+				      `VSpacing(1)
+				      )
+			       );
+
+	/* change menu */
+	term menu_box =
+	    `HBox (
+		   `HStretch (),
+		   `ReplacePoint(`id(`rep_menu),
+				// menu button
+				 `MenuButton(`id(`menu_dummy), _("&Change..."), [`item(`id(`dummy), "" ) ] )
+				 ),
+		   `HStretch ()
+		   );
+
+	term vbox = nil;
+
+        boolean enable_skip = true;
+        if (haskey(proposal_properties, "enable_skip"))
+        {
+            enable_skip = proposal_properties["enable_skip"]:"yes" == "yes";
+        } else {
+            if (proposal_mode == "initial" || proposal_mode == "uml")
+                enable_skip = false;
+            else
+                enable_skip = true;
+        }
+        term rt = `RichText( `id(`proposal),
+				    // Initial contents of proposal subwindow while proposals are calculated
+				    HTML::Newlines( 3 ) + HTML::Para( _("Analyzing your system...") )
+				    );
+	map data = ProductControl::getProposalProperties (
+                Stage::stage (),
+                Mode::mode (),
+                proposal_mode );
+	if (haskey (data, "proposal_tabs"))
+	{
+	    has_tab = true;
+	    integer index = -1;
+	    list<map> tabs = data["proposal_tabs"]:[];
+	    list<integer> tab_ids = maplist (map tab, tabs, {
+		index = index + 1;
+		return index;
+	    });
+	    if (UI::HasSpecialWidget (`DumbTab))
+	    {
+		list<term> panes = maplist (integer t, tab_ids, {
+		    string label = tabs[t, "label"]:"Tab";
+		    return `item (`id (t), label, t == 0);
+		});
+		rt = `DumbTab (`id (`_cwm_tab), panes, rt);
+	    }
+	    else
+	    {
+		term tabbar = `HBox ();
+		foreach (integer t, tab_ids, {
+		    string label = tabs[t, "label"]:"Tab";
+		    tabbar = add (tabbar, `PushButton (`id (t), label));
+		});
+		rt = `VBox (`Left(tabbar), `Frame( "", rt));
+	    }
+	}
+	else
+	{
+	    has_tab = false;
+	}
+	if (!enable_skip)
+	{
+	    vbox = `VBox(
+			 // Help message between headline and installation proposal / settings summary.
+			 // May contain newlines, but don't make it very much longer than the original.
+			 `Left( `Label( _("Click any headline to make changes or use the \"Change...\" menu below.") ) ),
+			 rt,
+			 menu_box
+			 );
+	}
+	else
+	{
+	    vbox = `VBox(
+			 skip_buttons,
+			 `HBox (
+			    `HSpacing (4),
+			    rt
+			 ),
+			 menu_box
+			 );
+	}
+
+	Wizard::SetContents(headline, vbox, help_text(),
+			    GetInstArgs::enable_back(),	// have_back_button
+			    false			// have_next_button
+			    );
+	set_icon();
+	if (UI::HasSpecialWidget (`DumbTab))
+	    UI::ChangeWidget (`id (`_cwm_tab), `CurrentItem, current_tab);
+	if ( Stage::stage () == "initial" )
+	    // push button
+	    Wizard::ShowReleaseNotesButton (_("&Show Release Notes"), `rel_notes);
+    }
+
+
+
+    /**
+     * Query all submodules about their descriptions, build a "Change" menu
+     * from that, and cache the descriptions for further usage: They will
+     * become hyperlinks in the RichText widget, too. Return false if no
+     * submodule exists.
+     **/
+    define boolean get_submod_descriptions_and_build_menu() ``{
+
+	list		menu_list	= [];
+	list<string>	new_submodules	= [];
+	integer	no			= 1;
+	titles = [];
+	map descriptions = $[];
+
+	foreach(string submod, submodules, ``{
+	    map description   = submod_description( submod );
+
+	    if ( description == nil )
+	    {
+		y2milestone( "Submodule %1 not available (not installed?)", submod );
+	    }
+	    else
+	    {
+		if ( description != $[] )
+		{
+		    description["no"] = no;
+		    descriptions[submod] = description;
+		    new_submodules = add( new_submodules, submod );
+		    string title      = description["rich_text_title"]:submod;
+		    string id         = description["id"             ]:sformat( "module_%1", no );
+
+		    titles            = add( titles,  title );
+		    submod2id[submod] = id;
+		    id2submod[id]     = submod;
+
+		    no = no + 1;
+		}
+	    }
+	});
+
+	submodules = new_submodules;	// maybe some submodules are not installed
+        y2milestone ("Execution order after rewrite: %1", submodules);
+
+	// now build the menu button
+	foreach (string submod, submodules_presentation, {
+	    map descr = descriptions[submod]:$[];
+	    if (descr != $[])
+	    {
+		integer no = descr["no"]:0;
+		string id = descr["id"]:sformat( "module_%1", no);
+		string menu_title = descr["menu_title"]:descr["rich_text_title"]:submod;
+		menu_list = add( menu_list,
+		    `item(`id( id ), menu_title + "..." ));
+	    }
+	});
+
+	// menu button item
+	menu_list = add( menu_list, `item(`id(`reset_to_defaults), _("&Reset to defaults") ) );
+	// menu button
+	UI::ReplaceWidget(`id(`rep_menu), `MenuButton(`id(`menu), _("&Change..."), menu_list ) );
+
+	return no > 1;
+    };
+
+
+    /**
+     * Set an appropriate wizard icon for the current proposal mode.
+     *
+     * .desktop files may or may not be available (e.g. in the inst-sys they are not),
+     * so use icon names directly rather than looking them up in the .desktop file
+     * with Wizard::SetDesktopIcon().
+     **/
+    define void set_icon()
+    {
+	string icon = "yast-software";
+
+	if ( proposal_mode == "network"	)
+	    icon = "yast-network";
+	else if ( proposal_mode == "hardware" )
+	    icon = "yast-printer";
+	else if ( proposal_properties["icon"]:"" != "" )
+	    icon =  proposal_properties["icon"]:"";
+
+		
+ 	// else if ( proposal_mode == `uml		) icon = "";
+	// else if ( proposal_mode == `dirinstall  ) icon = "";
+
+	Wizard::SetTitleIcon( icon );
+    };
+
+
+    /**
+     * Help text for proposal dialog.
+     *
+     * @return string help text
+     **/
+    define string help_text() ``{
+
+	string help_text_string = "";
+
+	    // General part of the help text for all types of proposals
+	string how_to_change = _("<p>
+Change the values by clicking on the respective headline
+or by using the <b>Change...</b> menu.
+</p>
+");
+
+	if ( proposal_mode == "initial" && Mode::installation () )
+	{
+	    // Help text for installation proposal
+	    // General part ("You can change values...") is added as the next paragraph.
+	    help_text_string = _("<p>
+Use <b>Accept</b> to perform a new installation with the values displayed.
+</p>
+") + how_to_change;
+
+	    // Help text for installation proposal, continued
+	    help_text_string = help_text_string + _("<p>
+To update an existing &product; system instead of doing a new install,
+click the <b>Mode</b> headline or select <b>Mode</b> in the
+<b>Change...</b> menu.
+</p>
+");
+	    /**
+	     * Deliberately omitting "boot installed system" here to avoid
+	     * confusion: The user will be prompted for that if Linux
+	     * partitions are found.
+	     * - sh@suse.de 2002-02-26
+	     **/
+
+	    // Help text for installation proposal, continued
+	    help_text_string = help_text_string + _("<p>
+Your hard disk has not been modified in any way, so you can still safely abort.
+</p>
+");
+	}
+	else if ( proposal_mode == "initial" && Mode::update () )
+	{
+	    // Help text for update proposal
+	    // General part ("You can change values...") is added as the next paragraph.
+	    help_text_string = _("<p>
+Use <b>Accept</b> to perform an update with the values displayed.
+</p>
+") + how_to_change;
+
+	    /**
+	     * Deliberately omitting "boot installed system" here to avoid
+	     * confusion: The user will be prompted for that if Linux
+	     * partitions are found.
+	     * - sh@suse.de 2002-02-26
+	     **/
+
+	    // Help text for installation proposal, continued
+	    help_text_string = help_text_string + _("<p>
+Your hard disk has not been modified in any way, so you can still safely abort.
+</p>
+");
+	}
+	else if ( proposal_mode == "network" )
+	{
+	    // Help text for network configuration proposal
+	    // General part ("You can change values...") is added as the next paragraph.
+	    help_text_string = _("<p>
+Put the network settings into effect by pressing <b>Next</b>.
+</p>
+") + how_to_change;
+	}
+	else if ( proposal_mode == "service" )
+	{
+	    // Help text for service configuration proposal
+	    // General part ("You can change values...") is added as the next paragraph.
+	    help_text_string = _("<p>
+Put the service settings into effect by pressing <b>Next</b>.
+</p>
+") + how_to_change;
+	}
+	else if ( proposal_mode == "hardware" )
+	{
+	    // Help text for hardware configuration proposal
+	    // General part ("You can change values...") is added as the next paragraph.
+	    help_text_string = _("<p>
+Put the hardware settings into effect by pressing <b>Next</b>.
+</p>
+") + how_to_change;
+	}
+	else if (proposal_mode == "uml")
+	{
+	    // Proposal in uml module
+	    help_text_string = _("<P><B>UML Installation Proposal</B></P>")
+	    // help text
+	    + _("<P>UML (User Mode Linux) installation allows you to start independent
+Linux virtual machines in the host system.</P>");
+	}
+	else if (proposal_properties["help"]:"" != "")
+	{
+	    // Proposal help from control file module
+	    help_text_string = dgettext( ProductControl::getProposalTextDomain() ,
+				  proposal_properties["help"]:"") +
+                how_to_change;
+	}	
+	else
+	{
+	    // Generic help text for other proposals (not basic installation or
+	    // hardhware configuration.
+	    // General part ("You can change values...") is added as the next paragraph.
+	    help_text_string = _("<p>
+To use the settings as displayed, press <b>Next</b>.
+</p>
+") + how_to_change;
+	}
+
+        if (size(locked_modules) > 0 )
+	{
+	    // help text
+            help_text_string = help_text_string + _("<p>Some proposals might be
+locked by the system administrator, so cannot be changed. To change
+a proposal that is locked, ask your system administrator.</p>");
+        }
+
+	return help_text_string;
+    };
+
+
+
+    /*-----------------------------------------------------------------------*/
+    /*				    main()				     */
+    /*-----------------------------------------------------------------------*/
+
+
+
+    //
+    // Create dialog
+    //
+    // This is done as early as possible for instant feedback, even though the
+    // menu is still empty. Fortunately enough, nobody will notice this since
+    // we also disable it until everything in there is known. This is to be
+    // done before even the submodule descriptions are known since they usually
+    // are in separate YCP files that liberally import other YCP modules which
+    // in turn takes considerable time for the module constructors.
+    //
+
+    y2milestone( "Installation step #2" );
+    proposal_mode = GetInstArgs::proposal();
+
+    proposal_properties = ProductControl::getProposalProperties(Stage::stage (), Mode::mode (), proposal_mode);
+    build_dialog();
+
+    //
+    // Get submodule descriptions
+    //
+    proposal_result = load_matching_submodules_list();
+    if (proposal_result == `abort)
+        return `abort;
+
+    UI::ChangeWidget(`id(`menu_dummy), `Enabled, false );
+    richtext_busy_cursor(`id(`proposal ) );
+
+    // The "next" button is disabled via Wizard::SetContents() until everything is set up allright
+    Wizard::EnableNextButton();
+
+    if (!get_submod_descriptions_and_build_menu ())
+    {
+	return `auto;
+    }
+
+
+    //
+    // Make the initial proposal
+    //
+    make_proposal( false, false );
+
+    // Set keyboard focus to the [Accept] or [Next] button
+    Wizard::SetFocusToNextButton();
+    if (Stage::initial ())
+	Wizard::SetNextButton (`next, Label::AcceptButton ());
+
+    //
+    // Input loop
+    //
+
+    any input = nil;
+
+    while ( true )
+    {
+	richtext_normal_cursor(`id(`proposal ) );
+	input = Wizard::UserInput();
+	richtext_busy_cursor(`id(`proposal ) );
+
+	// check for tab
+
+	if (is (input, integer))
+	{
+	    current_tab = (integer)input;
+	    load_matching_submodules_list();
+	    string proposal = "";
+	    foreach (string mod, submodules_presentation, ``{
+		proposal = proposal + html[mod]:"";
+	    });
+	    display_proposal( proposal );
+	    get_submod_descriptions_and_build_menu ();
+	}
+
+	// check for hyperlink id
+
+	if (is (input, string))
+	{
+	    // get module for hyperlink id
+	    string submod = id2submod[input]:"";
+
+	    if (submod == "")
+	    {
+		// also try hyperlinks
+		submod = link2submod[input]:"";
+	    }
+
+	    if (submod != "")
+	    {
+		// if submod is not the same as input id, provide id to the module
+		map<string,any> additional_info = $[
+		    "has_next" : false,
+		];
+
+		if (submod != input)
+		{
+		    additional_info["chosen_id"] = input;
+		}
+
+		// Call AskUser() function.
+		// This will trigger another call to make_proposal() internally.
+		input = submod_ask_user( submod, additional_info );
+
+		// The workflow_sequence doesn't get handled as a workflow sequence
+		// so we have to do this special case here. Kind of broken.
+		if (input == `finish)
+		    return `finish;
+	    }
+	}
+	else if (input == `rel_notes)
+	{
+	    WFM::CallFunction("release_notes_popup", [] );
+	}
+	else if (input == `finish)
+	{
+	    return `finish;
+	}
+	else if (input == `abort)
+	{
+	    if ( Stage::initial () )
+	    {
+		if (Popup::ConfirmAbort (`painless))
+		    return `abort;
+	    }
+	    else
+	    {
+		if (Popup::ConfirmAbort (`incomplete))
+		    return `abort;
+	    }
+	}
+	else if (input == `reset_to_defaults
+		 && Popup::ContinueCancel(
+					    // question in a popup box
+					    _("Really reset everything to default values?") + "\n" +
+					    // explain consequences of a decision
+					    _("You will lose all changes.") ) )
+	{
+	    make_proposal( true, false );	// force_reset
+	}
+	else if ( input == `skip || input == `dontskip )
+	{
+	    if ((boolean) UI::QueryWidget (`id(`skip), `Value))
+	    {
+		// User doesn't want to use any of the settings
+		UI::ChangeWidget( `id(`proposal), `Value,
+				  HTML::Newlines( 3 ) +
+				  // message show when user has disabled the configuration
+				  HTML::Para( _("Skipping configuration upon user request") )
+				  );
+		UI::ChangeWidget(`id(`menu), `Enabled, false );
+	    }
+	    else
+	    {
+		// User changed his mind and wants the settings back - recreate them
+		make_proposal( false, false );
+		UI::ChangeWidget(`id(`menu), `Enabled, true );
+	    }
+	}
+	else if ( input == `next )
+	{
+            boolean skip = UI::WidgetExists(`id(`skip) ) ? (boolean) UI::QueryWidget(`id(`skip), `Value ) : true;
+            boolean skip_blocker = UI::WidgetExists(`id(`skip) ) && skip;
+	    if (have_blocker && !skip_blocker)
+	    {
+		// error message is a popup
+		Popup::Error (_("The proposal contains an error that must be
+resolved before continuing.
+"));
+		continue;
+	    }
+
+	    if ( Stage::stage () == "initial" )
+	    {
+		input = WFM::CallFunction("inst_doit", [] );
+	    }
+
+            if ( input == `next )
+            {
+                if ( ! skip )
+                {
+                    write_settings();
+                }
+
+		Wizard::HideReleaseNotesButton();
+                return `next;
+            }
+        }
+	else if ( input == `back )
+	{
+	    Wizard::HideReleaseNotesButton();
+	    if (Stage::initial ())
+		Wizard::SetNextButton (`next, Label::NextButton ());
+	    return `back;
+	}
+
+    } // while input loop
+
+
+// NOTREACHED
+
+/* EOF */
+}
