@@ -46,8 +46,13 @@ if (func == "Info")
 }
 else if (func == "Write")
 {
-    HWConfig::SetValue ("static-printer", "STARTMODE", "auto");
-    HWConfig::SetValue ("static-printer", "MODULE", "lp");
+    // FIXME this agent needn't be installed
+    list<string> parports = (list<string>)SCR::Read (.proc.parport.devices);
+    if (parports != nil && size (parports) > 0)
+    {
+	HWConfig::SetValue ("static-printer", "STARTMODE", "auto");
+	HWConfig::SetValue ("static-printer", "MODULE", "lp");
+    }
     if (Mode::update ())
     {
 	// ensure "no" status for all pci and isapnp devices

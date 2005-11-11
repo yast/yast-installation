@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Nov 11 08:20:27 CET 2005 - jsrain@suse.cz
+
+- write hwcfg-static-printer only if parallel port is present
+  (#116406)
+
+-------------------------------------------------------------------
 Tue Nov  1 13:02:58 CET 2005 - jsrain@suse.cz
 
 - adapted to inst_desktop_new.ycp -> inst_desktop.ycp rename
