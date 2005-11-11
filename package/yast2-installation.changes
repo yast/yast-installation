@@ -3,6 +3,7 @@ Fri Nov 11 08:20:27 CET 2005 - jsrain@suse.cz
 
 - write hwcfg-static-printer only if parallel port is present
   (#116406)
+- 2.13.2
 
 -------------------------------------------------------------------
 Tue Nov  1 13:02:58 CET 2005 - jsrain@suse.cz
