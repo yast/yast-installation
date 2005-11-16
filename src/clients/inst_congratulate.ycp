@@ -18,6 +18,9 @@
     import "Label";
     import "ProductFeatures";
     import "GetInstArgs";
+    import "Call";
+    import "Package";
+    import "ProductControl";
 
     map argmap = GetInstArgs::argmap();
 
@@ -27,7 +30,16 @@
             && haskey(argmap, "show_y2cc_checkbox"))
         show_y2cc_checkbox = false;
 
-
+    // show button "clone system"?
+    boolean show_clone_checkbox = true;
+    if (argmap["show_clone_checkbox"]:"yes" == "no"
+            && haskey(argmap, "show_clone_checkbox"))
+        show_clone_checkbox = false;
+    boolean clone_enabled = false;
+    if( Package::AvailableAny(["autoyast2"]) &&
+        size(ProductControl::clone_modules) > 0 ) {
+        clone_enabled = true;
+    }
 
     map display = UI::GetDisplayInfo();
     if (!display["TextMode"]:true)
@@ -47,7 +59,8 @@
         vendor_url = vendor_url_tmp;
 
     term check_box_start_y2cc = `Empty();
-    
+    term check_box_do_clone   = `Empty();
+
     if (show_y2cc_checkbox)
     {
         check_box_start_y2cc = `CheckBox (`id(`start_y2cc),
@@ -58,6 +71,13 @@
                                            _("&Start YaST Control Center"), false);
     }
 
+    if (show_clone_checkbox)
+    {
+        check_box_do_clone = `CheckBox (`id(`do_clone),
+        // Check box: start the clone process and store the autoyast
+        // profile in /root/autoinst.xml
+                                           _("&Clone this system for later autoyast use"), false);
+    }
 
     // caption for dialog "Congratulation Dialog"
     string caption = _("Installation Completed");
@@ -80,11 +100,20 @@ After clicking <b>Finish</b>, you can log in to the system.</p>
 			   `VSpacing (space),
 			   `HBox (
 				  `HSpacing (2*space),
-				  `RichText (`id (`text), text),
+                                  `VBox(
+			         	  `RichText (`id (`text), text),
+                                          `VSpacing (space/2),
+                                          `Left(check_box_start_y2cc),
+                                          `Left(check_box_do_clone)
+                                          ),
 				  `HSpacing (2*space)
 				  ),
 			   `VSpacing (space),
-			   check_box_start_y2cc,
+               // FIXME: those two checkboxes are centered.
+               // would be nice to have them left aligned.
+               // While trying that, I had all flavours of 
+               // alignment that one can think of but not 
+               // the one I wanted.
 			   `VSpacing (2)
 			   );
 
@@ -116,6 +145,8 @@ return to this installation sequence.</p>
 
     Wizard::SetNextButton(`next, Label::FinishButton() );
     Wizard::SetFocusToNextButton();
+    if( UI::WidgetExists(`id(`do_clone)) )
+        UI::ChangeWidget (`id(`do_clone), `Enabled, clone_enabled);
 
     // FIXME: richtext eats return key
     // UI::SetFocus (`id (`text));
@@ -139,6 +170,10 @@ return to this installation sequence.</p>
     } until ( ret == `next || ret == `back );
 
     //Wizard::RestoreNextButton ();
+
+    if (UI::WidgetExists(`id(`do_clone)) && ret == `next && (boolean)UI::QueryWidget (`id(`do_clone), `Value)) {
+        Call::Function("clone_system" , ["doClone"]);
+    }
 
     if (!UI::WidgetExists(`id(`start_y2cc)))
     {
