@@ -109,11 +109,6 @@ After clicking <b>Finish</b>, you can log in to the system.</p>
 				  `HSpacing (2*space)
 				  ),
 			   `VSpacing (space),
-               // FIXME: those two checkboxes are centered.
-               // would be nice to have them left aligned.
-               // While trying that, I had all flavours of 
-               // alignment that one can think of but not 
-               // the one I wanted.
 			   `VSpacing (2)
 			   );
 
