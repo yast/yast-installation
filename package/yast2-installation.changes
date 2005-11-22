@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Nov 22 12:58:19 CET 2005 - jsrain@suse.cz
+
+- added default desktop to control files
+
+-------------------------------------------------------------------
 Fri Nov 11 08:20:27 CET 2005 - jsrain@suse.cz
 
 - write hwcfg-static-printer only if parallel port is present

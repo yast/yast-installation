@@ -22,6 +22,7 @@ textdomain="control"
     <software>
         <delete_old_packages config:type="boolean">true</delete_old_packages>
         <selection_type config:type="symbol">auto</selection_type>
+        <base_selection>default-Gnome</base_selection>
     </software>
     <partitioning>
         <evms_config config:type="boolean">false</evms_config>
