@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Nov 28 12:50:08 CET 2005 - jsrain@suse.cz
+
+- adjusted default desktop in control files (#132491)
+
+-------------------------------------------------------------------
 Tue Nov 22 12:58:19 CET 2005 - jsrain@suse.cz
 
 - added default desktop to control files
