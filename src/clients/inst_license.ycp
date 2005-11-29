@@ -28,7 +28,7 @@ integer space = display["TextMode"]:true ? 1 : 3;
 map argmap = GetInstArgs::argmap();
 
 
-// Action when license is not accepted
+// Action if license is not accepted
 // abort|continue|halt
 string action = argmap["action"]:"abort";
 
@@ -36,8 +36,18 @@ string text = "";
 
 if (Stage::initial ())
 {
-    string infofile = "/info.txt";		// copied there by linuxrc
-    text = (string)SCR::Read (.target.string, [infofile, ""]);
+    // linuxrc unzips license files from CD1 /media.1/license.zip
+    // to the inst-sys into /var/lib/YaST2/license/license.*.txt
+    // for all languages.
+    // The fallback (and en_US) is /var/lib/YaST2/license/license.txt
+    
+    map license_data =
+	CustomDialogs::load_file_locale( [ "license.%1.txt",			// pattern (lang for %1)
+					   "license.txt"     ],			// fallback pattern
+					 Directory::vardir + "/license",	// directory
+					 Language::language );			// language
+
+    text = license_data[ "text" ]:"";
 }
 else
 {

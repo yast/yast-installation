@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Nov 29 14:19:05 CET 2005 - sh@suse.de
+
+- Implemented feature #110081: License translations
+- V 2.13.3
+
+-------------------------------------------------------------------
 Mon Nov 28 12:50:08 CET 2005 - jsrain@suse.cz
 
 - adjusted default desktop in control files (#132491)
