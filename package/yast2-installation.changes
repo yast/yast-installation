@@ -3,6 +3,7 @@ Wed Nov 30 08:07:25 CET 2005 - lslezak@suse.cz
 
 - removed Xen and UML sections from control files
   (moved to yast2-vm package)
+- 2.13.4
 
 -------------------------------------------------------------------
 Tue Nov 29 14:19:05 CET 2005 - sh@suse.de
