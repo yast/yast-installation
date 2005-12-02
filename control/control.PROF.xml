@@ -26,6 +26,10 @@ textdomain="control"
     <partitioning>
         <evms_config config:type="boolean">false</evms_config>
     </partitioning>
+    <network>
+        <force_static_ip config:type="boolean">false</force_static_ip>
+        <network_manager_is_default config:type="boolean">true</network_manager_is_default>
+    </network>
 
     <proposals config:type="list">
         <proposal>
