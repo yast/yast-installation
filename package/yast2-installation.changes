@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Dec  2 16:19:15 CET 2005 - mvidner@suse.cz
+
+- Added control file variables network_manager_is_default,
+  force_static_ip.
+- 2.13.4
+
+-------------------------------------------------------------------
 Fri Dec  2 09:57:48 CET 2005 - jsrain@suse.cz
 
 - mark missing texts for translation (#136021)
