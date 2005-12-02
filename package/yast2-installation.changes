@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Dec  2 09:57:48 CET 2005 - jsrain@suse.cz
+
+- mark missing texts for translation (#136021)
+
+-------------------------------------------------------------------
 Wed Nov 30 08:07:25 CET 2005 - lslezak@suse.cz
 
 - removed Xen and UML sections from control files

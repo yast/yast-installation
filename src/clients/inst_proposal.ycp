@@ -196,11 +196,13 @@
 
     	    if (!contains(locked_modules, submod))
             {
-		prop = prop + HTML::Heading( HTML::Link( titles[no]:"ERROR: missing title" ,
+		// heading in proposal, in case the module doesn't create one
+		prop = prop + HTML::Heading( HTML::Link( titles[no]:_("ERROR: missing title") ,
 	    						 submod2id[submod]:"" ) );
     	    } else {
 		prop = prop + HTML::Heading(
-                    titles[no]:"ERROR: missing title");
+		   // heading in proposal, in case the module doesn't create one
+                    titles[no]:_("ERROR: missing title"));
             }
 
 	    html[submod] = prop + HTML::Para( _("Analyzing your system..."));
@@ -220,11 +222,12 @@
 	    {
     		if (!contains(locked_modules, submod))
         	{
-		    prop = prop + HTML::Heading( HTML::Link( titles[no]:"ERROR: missing title" ,
+		   // heading in proposal, in case the module doesn't create one
+		    prop = prop + HTML::Heading( HTML::Link( titles[no]:_("ERROR: missing title") ,
 	    						 submod2id[submod]:"" ) );
     		} else {
 		    prop = prop + HTML::Heading(
-                	titles[no]:"ERROR: missing title");
+                	titles[no]:_("ERROR: missing title"));
         	}
 
 		prop_map = submod_make_proposal( submod, force_reset, language_changed );
@@ -346,7 +349,8 @@
 	}
 	else
 	{
-	    list<string> raw_prop = prop["raw_proposal"]:["ERROR: No proposal"];
+	    // fallback proposal, means usually an internal error
+	    list<string> raw_prop = prop["raw_proposal"]:[_("ERROR: No proposal")];
 	    html = html + HTML::List( raw_prop );
 	}
 
