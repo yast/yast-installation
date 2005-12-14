@@ -46,9 +46,9 @@ fi
 # 9.1) start hald
 #---------------------------------------------
 if [ -x /usr/sbin/rchal ] ; then
-	/usr/sbin/rcdbus start
-	/usr/sbin/rcacpid start
-	/usr/sbin/rchal start
+	test -f /usr/sbin/rcdbus  && /usr/sbin/rcdbus  start
+	test -f /usr/sbin/rcacpid && /usr/sbin/rcacpid start
+	test -f /usr/sbin/rchal   && /usr/sbin/rchal   start
 fi
 
 sleep 1

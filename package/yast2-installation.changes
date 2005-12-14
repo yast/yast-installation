@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Dec 14 12:07:13 CET 2005 - ms@suse.de
+
+- make service startup more robust (#138433)
+
+-------------------------------------------------------------------
 Fri Dec  2 16:19:15 CET 2005 - mvidner@suse.cz
 
 - Added control file variables network_manager_is_default,
