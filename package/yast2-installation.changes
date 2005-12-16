@@ -4,6 +4,7 @@ Fri Dec 16 16:15:24 CET 2005 - jsrain@suse.cz
 - do not call obsolete gnome-postinstall script
 - added list of modules to offer clone at the end of installation
   to control files
+- 2.13.5
 
 -------------------------------------------------------------------
 Wed Dec 14 12:07:13 CET 2005 - ms@suse.de
