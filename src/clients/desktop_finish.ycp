@@ -65,13 +65,6 @@ else if (func == "Write")
 	SCR::Write (.sysconfig.apache.DOC_SERVER, doc_server);
 	SCR::Write (.sysconfig.apache, nil);
     }
-
-    if (Mode::update ())
-    {
-	// remove old junk from GNOME, script is in yast2-update
-	// will be run in just updated system
-	SCR::Execute (.target.bash, Directory::ybindir + "/gnome-postinstall");
-    }
 }
 else
 {

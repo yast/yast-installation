@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Dec 16 15:57:33 CET 2005 - jsrain@suse.cz
+
+- do not call obsolete gnome-postinstall script
+
+-------------------------------------------------------------------
 Wed Dec 14 12:07:13 CET 2005 - ms@suse.de
 
 - make service startup more robust (#138433)
