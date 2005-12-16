@@ -31,6 +31,22 @@ textdomain="control"
         <force_static_ip config:type="boolean">false</force_static_ip>
         <network_manager_is_default config:type="boolean">false</network_manager_is_default>
     </network>
+    <clone_modules config:type="list">
+	<clone_module>language</clone_module>
+	<clone_module>keyboard</clone_module>
+	<clone_module>timezone</clone_module>
+	<clone_module>users</clone_module>
+	<clone_module>lan</clone_module>
+	<clone_module>firewall</clone_module>
+	<clone_module>host</clone_module>
+	<clone_module>routing</clone_module>
+	<clone_module>proxy</clone_module>
+	<clone_module>runlevel</clone_module>
+	<clone_module>x11</clone_module>
+	<clone_module>nis</clone_module>
+	<clone_module>ldap</clone_module>
+	<clone_module>printer</clone_module>
+    </clone_modules>
 
     <proposals config:type="list">
         <proposal>
