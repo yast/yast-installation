@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Dec 19 18:10:00 CET 2005 - sh@suse.de
+
+- Implemented feature #300359: Show Beta notice during installation
+  Now showing /info.txt in a popup (with a simple "OK" button)
+  over the license agreement 
+- V 2.13.6
+
+-------------------------------------------------------------------
 Fri Dec 16 16:15:24 CET 2005 - jsrain@suse.cz
 
 - do not call obsolete gnome-postinstall script
