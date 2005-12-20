@@ -1,9 +1,7 @@
 #
 # Makefile.am for installation/startup
 #
-ystartupbindir=$(ystartupdir)/startup/arch
+ystartupbindir=$(ystartupdir)/startup/arch/ia64
 
 install-data-local:
 	-install -d -m 755 $(DESTDIR)/$(ystartupbindir)
-
-SUBDIRS = ppc s390 x86_64 ia64

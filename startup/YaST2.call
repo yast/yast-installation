@@ -83,6 +83,36 @@ function wait_for_x11() {
 	done
 }
 
+#----[ get_bus_id ]----#
+function get_bus_id () {
+#------------------------------------------------------
+# ask the PCi bus for the location of the first
+# graphics card.
+# ---
+	for line in $(/sbin/lspci -n | grep "Class 0300" | cut -f 1 -d " ");do
+		echo $line | grep -q -E "^[0-9]{2}:[0-9]{2}\.[0-9]"
+		if [ $? = 0 ];then
+			PCIBus=$(echo $line | cut -f1 -d:);
+			PCISlot=$(echo $line | cut -f2 -d: | cut -f 1 -d.);
+			PCIFunc=$(echo $line | cut -f2 -d.);
+			log "\tFound standard BusID: $PCIBus:$PCISlot:$PCIFunc"
+			printf "PCI:0@%d:%d:%d" $PCIBus $PCISlot $PCIFunc
+			break
+		else
+			echo $line | grep -q -E "^[0-9]{4}:[0-9]{2}:[0-9]{2}\.[0-9]"
+			if [ $? = 0 ];then
+				PCIDomain=$(echo $line | cut -f1 -d:);
+				PCIBus=$(echo $line | cut -f2 -d:);
+				PCISlot=$(echo $line | cut -f3 -d: | cut -f 1 -d.);
+				PCIFunc=$(echo $line | cut -f2 -d.);
+				log "\tFound domain BusID: $PCIBus@$PCIDomain:$PCISlot $PCIFunc"
+				printf "PCI:%d@%d:%d:%d" $PCIBus $PCIDomain $PCISlot $PCIFunc
+				break
+			fi
+		fi
+	done
+}
+
 #----[ prepare_for_qt ]----#
 function prepare_for_qt () {
 #------------------------------------------------------
@@ -110,16 +140,18 @@ function prepare_for_qt () {
 			mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
 		fi
 
-		# update Bus ID in device sections...
-		#if [ "$XBusID" ] ; then
-		#	sed -e 's/#BusID/BusID/' \
-		#		-e "s#98:76:54#$XBusID#" /etc/X11/xorg.conf \
-		#	> /etc/X11/xorg.conf.new
-		#	mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
-		#fi
-
-		# update driver if accelerated driver should be used...
+		# update driver and busID if accelerated driver should be used...
 		if [ "$X11_CONFIG_ID" = 0 ];then
+			# replace BusID placeholder with real busID
+			XBusID=$(get_bus_id)
+			if [ ! -z "$XBusID" ];then
+				sed -e 's/#BusID/BusID/' \
+					-e "s#1:0:0#$XBusID#" /etc/X11/xorg.conf \
+				> /etc/X11/xorg.conf.new
+				mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
+			fi
+
+			# replace driver placeholder with real name
 			sed -e "s#ChangeMe#$XServer#" /etc/X11/xorg.conf \
 			> /etc/X11/xorg.conf.new
 			mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
@@ -354,6 +386,7 @@ function start_yast_again () {
 #---------------------------------------------
 . /usr/lib/YaST2/startup/common/functions.sh
 . /usr/lib/YaST2/startup/requires
+. /usr/lib/YaST2/startup/arch/ia64/x11.sh
 
 #=============================================
 # 1.1) set splash progress bar to 90%
@@ -433,6 +466,9 @@ if ! check_qt ; then
 	MEDIUM[0]=0
 fi
 # 3.1.2) X-Server module check...
+# BEG IA64: use accelerated X11 driver
+ia64_check_x11
+# END IA64:
 XServerAccel=$XServer
 if [ "$XServer" = "vmware" ];then
 	if [ ! -f "$X11_DRIVER_DIR/${XServer}_drv.so" ];then
@@ -456,6 +492,7 @@ if [ "$acceleratedx" = "1" ];then
 	if [ ! -f "$X11_DRIVER_DIR/${XServerAccel}_drv.so" ];then
 		log "\t$XServerAccel driver not installed -> X11 acceleration disabled"
 	else
+		log "\tUsing accelerated driver -> $XServerAccel"
 		MEDIUM[0]=1
 		XServer=$XServerAccel
 		X11_CONFIG_ID=0
