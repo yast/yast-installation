@@ -76,7 +76,7 @@
         check_box_do_clone = `CheckBox (`id(`do_clone),
         // Check box: start the clone process and store the autoyast
         // profile in /root/autoinst.xml
-                                           _("&Clone this System for Autoyast"), false);
+                                           _("&Clone This System for Autoyast"), false);
     }
 
     // caption for dialog "Congratulation Dialog"
@@ -135,10 +135,11 @@ return to this installation sequence.</p>
 ");
 
     if( show_clone_checkbox ) {
-        help = help + _("<p>The clone checkbox allows you to create an autoyast profile.
+        help = help + _("<p>The clone check box allows you to create an autoyast profile.
 Autoyast is a way to do a complete SUSE Linux installation without user interaction. To let Autoyast
-know how the installed system should look like, it needs a so called profile. With the checkbox
-selected, a profile of the current system will be stored in /root/autoyast.xml.</p>");
+know what the installed system should look like, it needs a profile. With the check box
+selected, a profile of the current system will be stored in /root/autoyast.xml.</p>
+");
     }
 
     Wizard::SetContents (caption, contents, help, 
