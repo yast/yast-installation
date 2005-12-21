@@ -197,12 +197,12 @@
     	    if (!contains(locked_modules, submod))
             {
 		// heading in proposal, in case the module doesn't create one
-		prop = prop + HTML::Heading( HTML::Link( titles[no]:_("ERROR: missing title") ,
+		prop = prop + HTML::Heading( HTML::Link( titles[no]:_("ERROR: Missing Title") ,
 	    						 submod2id[submod]:"" ) );
     	    } else {
 		prop = prop + HTML::Heading(
 		   // heading in proposal, in case the module doesn't create one
-                    titles[no]:_("ERROR: missing title"));
+                    titles[no]:_("ERROR: Missing Title"));
             }
 
 	    html[submod] = prop + HTML::Para( _("Analyzing your system..."));
@@ -223,11 +223,11 @@
     		if (!contains(locked_modules, submod))
         	{
 		   // heading in proposal, in case the module doesn't create one
-		    prop = prop + HTML::Heading( HTML::Link( titles[no]:_("ERROR: missing title") ,
+		    prop = prop + HTML::Heading( HTML::Link( titles[no]:_("ERROR: Missing Title") ,
 	    						 submod2id[submod]:"" ) );
     		} else {
 		    prop = prop + HTML::Heading(
-                	titles[no]:_("ERROR: missing title"));
+                	titles[no]:_("ERROR: Missing Title"));
         	}
 
 		prop_map = submod_make_proposal( submod, force_reset, language_changed );

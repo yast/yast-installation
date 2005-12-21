@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Dec 21 10:36:13 CET 2005 - visnov@suse.cz
+
+- merged proofread texts 
+
+-------------------------------------------------------------------
 Tue Dec 20 13:14:02 CET 2005 - ms@suse.de
 
 - added support for graphical installation on ia64 archs (#140142)
