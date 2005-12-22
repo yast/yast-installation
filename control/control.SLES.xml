@@ -27,6 +27,10 @@ textdomain="control"
     <partitioning>
         <evms_config config:type="boolean">false</evms_config>
 	<try_separate_home config:type="boolean">true</try_separate_home>
+        <limit_try_home>5G</limit_try_home>
+        <root_space_percent>40</root_space_percent>
+        <root_base_size>3G</root_base_size>
+        <root_max_size>10G</root_max_size>
     </partitioning>
     <network>
         <force_static_ip config:type="boolean">false</force_static_ip>
