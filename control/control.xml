@@ -25,6 +25,7 @@ textdomain="control"
     </software>
     <partitioning>
         <evms_config config:type="boolean">false</evms_config>
+        <try_separate_home config:type="boolean">true</try_separate_home>
     </partitioning>
     <network>
         <force_static_ip config:type="boolean">false</force_static_ip>
