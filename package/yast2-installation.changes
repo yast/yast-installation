@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Dec 22 12:25:26 CET 2005 - fehr@suse.de
+
+- added try_separate_home to partitioning section of control.xml
+
+-------------------------------------------------------------------
 Wed Dec 21 11:30:11 CET 2005 - ms@suse.de
 
 - fixed startup Makefile.am
