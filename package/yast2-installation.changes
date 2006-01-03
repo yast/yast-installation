@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Jan  3 12:11:15 CET 2006 - ms@suse.de
+
+- don't call initvicons on s390/s390x architectures (#140383)
+
+-------------------------------------------------------------------
 Thu Dec 22 12:25:26 CET 2005 - fehr@suse.de
 
 - added try_separate_home to partitioning section of control.xml
