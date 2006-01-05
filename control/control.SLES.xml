@@ -97,6 +97,47 @@ textdomain="control"
             </proposal_tabs>
         </proposal>
         <proposal>
+            <archs>s390</archs>
+            <label>Installation Settings</label>
+            <mode>installation,demo,autoinstallation</mode>
+            <stage>initial</stage>
+            <name>initial</name>
+            <enable_skip>no</enable_skip>
+            <proposal_modules config:type="list">
+                <proposal_module>hwinfo</proposal_module>
+                <proposal_module>mouse</proposal_module>
+                <proposal_module>partitions</proposal_module>
+                <proposal_module>software</proposal_module>
+                <proposal_module>bootloader</proposal_module>
+                <proposal_module>timezone</proposal_module>
+                <proposal_module>language</proposal_module>
+                <proposal_module>runlevel</proposal_module>
+            </proposal_modules>
+            <proposal_tabs config:type="list">
+                <proposal_tab>
+                    <label>Overview</label>
+                    <proposal_modules config:type="list">
+                        <proposal_module>partitions</proposal_module>
+                        <proposal_module>software_simple</proposal_module>
+                        <proposal_module>language_simple</proposal_module>
+                    </proposal_modules>
+                </proposal_tab>
+                <proposal_tab>
+                    <label>Expert</label>
+                    <proposal_modules config:type="list">
+                        <proposal_module>hwinfo</proposal_module>
+                        <proposal_module>mouse</proposal_module>
+                        <proposal_module>partitions</proposal_module>
+                        <proposal_module>software</proposal_module>
+                        <proposal_module>bootloader</proposal_module>
+                        <proposal_module>timezone</proposal_module>
+                        <proposal_module>language</proposal_module>
+                        <proposal_module>runlevel</proposal_module>
+                    </proposal_modules>
+                </proposal_tab>
+            </proposal_tabs>
+        </proposal>
+        <proposal>
             <label>Update Settings</label>
             <mode>update</mode>
             <name>initial</name>
@@ -125,6 +166,22 @@ textdomain="control"
                 <proposal_module>backup</proposal_module>
                 <proposal_module>language</proposal_module>
                 <proposal_module>keyboard</proposal_module>
+            </proposal_modules>
+        </proposal>
+        <proposal>
+            <archs>s390</archs>
+            <label>Installation Settings</label>
+            <mode>update</mode>
+            <stage>initial</stage>
+            <name>initial</name>
+            <enable_skip>no</enable_skip>
+            <proposal_modules config:type="list">
+		<proposal_module>hwinfo</proposal_module>
+                <proposal_module>rootpart</proposal_module>
+                <proposal_module>update</proposal_module>
+                <proposal_module>packages</proposal_module>
+                <proposal_module>backup</proposal_module>
+                <proposal_module>language</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>
@@ -161,6 +218,51 @@ textdomain="control"
 		    <name>proxy</name>
 		    <presentation_order>70</presentation_order>
 		</proposal_module>
+            </proposal_modules>
+        <proposal>
+	    <archs>s390,ppc64</archs>
+            <label>Network Configuration</label>
+            <name>network</name>
+            <stage>continue,normal</stage>
+            <enable_skip>yes</enable_skip>
+            <proposal_modules config:type="list">
+                <proposal_module>
+		    <name>lan</name>
+		    <presentation_order>20</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>remote</name>
+		    <presentation_order>60</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>firewall</name>
+		    <presentation_order>10</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>proxy</name>
+		    <presentation_order>70</presentation_order>
+		</proposal_module>
+            </proposal_modules>
+        </proposal>
+        <proposal>
+            <archs>ppc64</archs>
+            <label>Hardware Configuration</label>
+            <name>hardware</name>
+            <stage>continue</stage>
+            <enable_skip>yes</enable_skip>
+            <proposal_modules config:type="list">
+                <proposal_module>x11</proposal_module>
+                <proposal_module>printer</proposal_module>
+            </proposal_modules>
+        </proposal>
+        <proposal>
+            <archs>s390</archs>
+            <label>Hardware Configuration</label>
+            <name>hardware</name>
+            <stage>continue</stage>
+            <enable_skip>yes</enable_skip>
+            <proposal_modules config:type="list">
+                <proposal_module>printer</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>
