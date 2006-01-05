@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Jan  5 13:52:48 CET 2006 - mvidner@suse.cz
+
+- control file: for SLES, ask for the host name in the main workflow (F4126)
+
+-------------------------------------------------------------------
 Thu Jan  5 13:04:46 CET 2006 - jsuchome@suse.cz
 
 - control file: for NLD, do not enable autologin by default (#140990)
