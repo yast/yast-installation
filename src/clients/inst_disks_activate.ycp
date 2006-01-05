@@ -120,7 +120,7 @@ if (have_dasd || have_zfcp)
 	}
     }
 
-    if (has_dasd && ret == `next)
+    if (have_dasd && ret == `next)
     {
 	string cmd = "/sbin/dasd_reload";
 	y2milestone( "Initialize cmd %1 ret %2", cmd,
