@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jan  5 14:29:12 CET 2006 - sh@suse.de
+
+- V 2.13.7
+- Fixed bugs #79289, #114037: trouble with y2cc at end of installation
+  Dropped y2cc at end of installation (OK from aj + gp)
+
+-------------------------------------------------------------------
 Thu Jan  5 13:52:48 CET 2006 - mvidner@suse.cz
 
 - control file: for SLES, ask for the host name in the main workflow (F4126)

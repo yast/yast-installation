@@ -28,29 +28,6 @@
 #=============================================
 # Functions...
 #---------------------------------------------
-#----[ start_control_center ]----#
-function start_control_center () {
-#------------------------------------------------------
-# start the YaST2 control center in Qt or ncurses mode
-# ---
-	set_lang_from_sysconfig
-	if [ -e /var/lib/YaST2/start_y2cc ]; then
-		rm -f /var/lib/YaST2/start_y2cc
-		if [ "$1" = "ncurses" ];then
-			log "\tStarting YaST2 control center in NCurses mode"
-			check_run_fbiterm
-			if [ "$RUN_FBITERM" = "1" ]; then
-				/usr/bin/fbiterm y2base menu ncurses
-			else
-				y2base menu ncurses
-			fi
-		else
-			log "\tStarting YaST2 control center in Qt mode"
-			y2controlcenter qt $Y2_QT_ARGS -Q
-		fi
-	fi
-}
-
 #----[ wait_for_x11 ]----#
 function wait_for_x11() {
 #------------------------------------------------------
@@ -346,7 +323,6 @@ function start_yast () {
 		echo $Y2_EXIT_CODE > /tmp/YaST2_ssh_installation_finished
 	fi
 	if [ $Y2_EXIT_CODE -eq 0 ];then
-		start_control_center $Y2_MODE
 		start_yast_and_reboot
 		start_yast_again
 	fi
