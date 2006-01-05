@@ -6,6 +6,7 @@ Thu Jan  5 16:49:24 CET 2006 - jsrain@suse.cz
 - Added iSCSI to installation workflow (real call still missing)
 - moved DASD/zFCP disk activation prior installation mode selection
   (#140936)
+- 2.13.8
 
 -------------------------------------------------------------------
 Thu Jan  5 14:29:12 CET 2006 - sh@suse.de
