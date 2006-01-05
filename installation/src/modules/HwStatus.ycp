@@ -1,0 +1,76 @@
+/**
+ * File:
+ *	HwStatus.ycp
+ *
+ * Module:
+ *	HwStatus
+ *
+ * Authors:
+ *	Klaus Kaempf (kkaempf@suse.de)
+ *
+ * Summary:
+ *	All hardware status relevant functions are here
+ * $Id$
+ */
+{
+    module "HwStatus";
+
+    textdomain "installation";
+
+    // status map for devices, key is "unique id", value is symbol (`yes, `no)
+
+    map<string, symbol> statusmap = $[];
+
+    /**
+     * Set
+     * set status for a hardware device
+     * @param id	string, unique-id for device
+     * @param stat	symbol, status of device (`yes or `no)
+     *
+     */
+    global define void Set (string id, symbol stat)
+    ``{
+	statusmap[id] = stat;
+    }
+
+    /**
+     * Get()
+     * get status for device
+     * @param id	string, unique-id for device
+     * @returns symbol	status of device, (`yes or `no)
+     *			returns `unknown if status wasn't set before
+     */
+    global define symbol Get (string id)
+    ``{
+	return statusmap[id]:`unknown;
+    }
+
+    /**
+     * Save()
+     * save stati for all devices
+     */
+    global define void Save ()
+    ``{
+	foreach (string id, symbol stat, statusmap,
+	``{
+	    SCR::Write(.probe.status.configured, id, stat);
+	});
+    }
+
+    /**
+     * Update()
+     * set stati for all devices
+     */
+    global define void Update ()
+    ``{
+	// probe all pci and isapnp devices once
+	// so they have a defined status after update
+	SCR::Read (.probe.pci);
+	SCR::Read (.probe.isapnp);
+
+	// build relation between old keys and new UDIs (bug #104676)
+	SCR::Execute (.target.bash,
+	    "hwinfo --pci --block --mouse --save-config=all");
+    }
+
+}

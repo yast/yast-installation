@@ -1,0 +1,146 @@
+/**
+ * File:	installation/general/inst_congratulate.ycp
+ * Module:	Installation
+ * Summary:	Display congratulation
+ * Authors:	Arvin Schnell <arvin@suse.de>
+ *
+ * Display a congratulation message for the user.
+ *
+ * $Id$
+ */
+
+{
+    textdomain "installation";
+
+    import "Mode";
+    import "Wizard";
+    import "Popup";
+    import "Label";
+    import "ProductFeatures";
+    import "GetInstArgs";
+    import "Call";
+    import "Package";
+    import "ProductControl";
+
+    map argmap = GetInstArgs::argmap();
+
+    // show button "clone system"?
+    boolean show_clone_checkbox = true;
+    if (argmap["show_clone_checkbox"]:"yes" == "no"
+            && haskey(argmap, "show_clone_checkbox"))
+        show_clone_checkbox = false;
+    boolean clone_enabled = false;
+    if( Package::AvailableAny(["autoyast2"]) &&
+        size(ProductControl::clone_modules) > 0 ) {
+        clone_enabled = true;
+    }
+
+    map display = UI::GetDisplayInfo();
+    integer space = display["TextMode"]:true ? 1 : 3;
+    string vendor_url_tmp = ProductFeatures::GetStringFeature("globals", "vendor_url");
+    
+    string vendor_url = "http://www.novell.com/linux/";
+
+    if (vendor_url_tmp != nil && vendor_url_tmp != "")
+        vendor_url = vendor_url_tmp;
+
+    term check_box_do_clone   = `Empty();
+
+    if (show_clone_checkbox)
+    {
+        check_box_do_clone = `CheckBox (`id(`do_clone),
+        // Check box: start the clone process and store the autoyast
+        // profile in /root/autoinst.xml
+                                           _("&Clone This System for Autoyast"), false);
+    }
+
+    // caption for dialog "Congratulation Dialog"
+    string caption = _("Installation Completed");
+
+    // congratulation text 1/4
+    string text = _("<p><b>Congratulations!</b></p>") +
+
+    // congratulation text 2/4
+	_("<p>The installation of &product; on your machine is complete.
+After clicking <b>Finish</b>, you can log in to the system.</p>
+") +
+
+    // congratulation text 3/4
+        sformat(_("<p>Visit us at %1.</p>"), vendor_url ) +
+
+    // congratulation text 4/4
+	_("<p>Have a lot of fun!<br>Your SUSE Development Team</p>");
+
+    term contents = `VBox (
+			   `VSpacing (space),
+			   `HBox (
+				  `HSpacing (2*space),
+                                  `VBox(
+			         	  `RichText (`id (`text), text),
+                                          `VSpacing (space/2),
+                                          `Left(check_box_do_clone)
+                                          ),
+				  `HSpacing (2*space)
+				  ),
+			   `VSpacing (space),
+			   `VSpacing (2)
+			   );
+
+    string help_file = "";
+    // help 1/4 for dialog "Congratulation Dialog"
+    string help = _("<p>Your system is ready for use.</p>") +
+
+    // help 2/4 for dialog "Congratulation Dialog"
+	_("<p><b>Finish</b> will close the YaST installation and continue
+to the login screen.</p>
+") +
+
+    // help 3/4 for dialog "Congratulation Dialog"
+	_("<p>If you choose the default graphical desktop KDE, you can
+adjust some KDE settings to your hardware. Also notice
+our SUSE Welcome Dialog.</p>
+");
+
+    if( show_clone_checkbox ) {
+        help = help + _("<p>The clone check box allows you to create an autoyast profile.
+Autoyast is a way to do a complete SUSE Linux installation without user interaction. To let Autoyast
+know what the installed system should look like, it needs a profile. With the check box
+selected, a profile of the current system will be stored in /root/autoyast.xml.</p>
+");
+    }
+
+    Wizard::SetContents (caption, contents, help, 
+            GetInstArgs::enable_back(), GetInstArgs::enable_next());
+    Wizard::SetTitleIcon ("SuSEmenu");
+
+    Wizard::SetNextButton(`next, Label::FinishButton() );
+    Wizard::SetFocusToNextButton();
+    if( UI::WidgetExists(`id(`do_clone)) )
+        UI::ChangeWidget (`id(`do_clone), `Enabled, clone_enabled);
+
+    any ret = nil;
+
+    repeat {
+
+	ret = Wizard::UserInput();
+
+	if (ret == `abort)
+	{
+	    if (Popup::ConfirmAbort (`incomplete))
+		break;
+	}
+	else if ( ret == `help )
+	{
+	    Wizard::ShowHelp (help);
+	}
+
+    } until ( ret == `next || ret == `back );
+
+    //Wizard::RestoreNextButton ();
+
+    if (UI::WidgetExists(`id(`do_clone)) && ret == `next && (boolean)UI::QueryWidget (`id(`do_clone), `Value)) {
+        Call::Function("clone_system" , ["doClone"]);
+    }
+
+    return ret;
+}

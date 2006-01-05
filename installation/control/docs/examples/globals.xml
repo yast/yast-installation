@@ -1,0 +1,10 @@
+
+
+    <globals>
+        <enable_autologin config:type="boolean">true</enable_autologin>
+        <language>de_DE</language>
+        <timezone>Canada/Eastern</timezone>
+        <use_desktop_scheduler config:type="boolean">true</use_desktop_scheduler>
+        <io_scheduler>as</io_scheduler>
+    </globals>
+
