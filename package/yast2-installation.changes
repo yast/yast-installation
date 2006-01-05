@@ -1,8 +1,11 @@
 -------------------------------------------------------------------
-Thu Jan  5 14:56:43 CET 2006 - jsrain@suse.cz
+Thu Jan  5 16:49:24 CET 2006 - jsrain@suse.cz
 
 - Removed unneeded stuff from proposals on some architectures for
   SLES (#140999, #140991)
+- Added iSCSI to installation workflow (real call still missing)
+- moved DASD/zFCP disk activation prior installation mode selection
+  (#140936)
 
 -------------------------------------------------------------------
 Thu Jan  5 14:29:12 CET 2006 - sh@suse.de
