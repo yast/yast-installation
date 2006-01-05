@@ -1,6 +1,0 @@
-#!/bin/sh
-
-PATH=$PATH:/usr/lib/YaST2/bin
-cd /usr/share/YaST2/clients
-
-y2base installation.ycp '("test")' '("initial")' qt -geometry 800x600 -style=platinum -bg '#cccccc'
