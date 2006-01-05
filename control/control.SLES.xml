@@ -524,7 +524,7 @@ textdomain="control"
 		    <label>Configuration</label>
 		</module>
                 <module>
-	            <label>Host Name</label>
+	            <label>Hostname</label>
                     <name>hostname</name>
                     <enable_back>no</enable_back>
                 </module>
