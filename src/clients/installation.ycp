@@ -291,6 +291,16 @@ but something went wrong, that's why it is only in the log");
 	Installation::shown_text_mode_warning = true;
     }
 
+    // update the workflow according to current situation
+    // disable disks activation if not needed
+    // FIXME the right value in Linuxrc
+    boolean iscsi = Linuxrc::InstallInf("iSCSI") == "1";
+    if (! (Arch::s390() || iscsi))
+    {
+	ProductControl::DisabledModules = add (ProductControl::DisabledModules,
+	    "disks_activate");
+    }
+
     symbol ret = nil;
     string restart_data_file = "/var/lib/YaST2/continue_installation";
     string reboot_file = "/var/lib/YaST2/reboot";

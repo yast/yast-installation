@@ -208,6 +208,12 @@ textdomain="control"
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
+		<module>
+	            <label>Disks Activation</label>
+                    <name>disks_activate</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+		</module>
                 <module>
 	            <label>System Analysis</label>
                     <name>system_analysis</name>
@@ -292,6 +298,12 @@ textdomain="control"
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
+		<module>
+	            <label>Disks Activation</label>
+                    <name>disks_activate</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+		</module>
                 <module>
 	            <label>System Analysis</label>
                     <name>system_analysis</name>
