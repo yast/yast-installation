@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Jan  5 13:04:46 CET 2006 - jsuchome@suse.cz
+
+- control file: for NLD, do not enable autologin by default (#140990)
+
+-------------------------------------------------------------------
 Tue Jan  3 12:11:15 CET 2006 - ms@suse.de
 
 - don't call initvicons on s390/s390x architectures (#140383)
