@@ -32,6 +32,6 @@ fi
 #---------------------------------------------
 grep -qi console=hvc < /proc/cmdline && {
 	echo "Console: hvc0,9600" >> /etc/install.inf
-	export HVC_CONSOLE_HINT="  (recommended with p690 hvc console)"
+	export HVC_CONSOLE_HINT="  (for POWER4/POWER5 systems via HMC terminal)"
 	export Console=hvc0,9600
 }
