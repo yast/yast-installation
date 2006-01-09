@@ -17,7 +17,7 @@ textdomain="control"
         <incomplete_translation_treshold>95</incomplete_translation_treshold>
         <inform_about_suboptimal_distribution config:type="boolean">true</inform_about_suboptimal_distribution>
         <skip_language_dialog config:type="boolean">true</skip_language_dialog>
-        <ui_mode>simple</ui_mode>
+        <ui_mode>expert</ui_mode>
     </globals>
     <software>
         <delete_old_packages config:type="boolean">true</delete_old_packages>

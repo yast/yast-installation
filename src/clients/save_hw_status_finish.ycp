@@ -53,6 +53,23 @@ else if (func == "Write")
 	HWConfig::SetValue ("static-printer", "STARTMODE", "auto");
 	HWConfig::SetValue ("static-printer", "MODULE", "lp");
     }
+    // PS/2 mouse on PPC
+    map out = (map)SCR::Execute (.target.bash_output,
+"#!/bin/sh
+set -e
+if test -f /etc/sysconfig/hardware/hwcfg-static-psmouse
+then
+ exit 0
+fi
+cd /proc/device-tree
+if find * -name name -print0 | xargs -0 grep -qw 8042
+then
+cat > /etc/sysconfig/hardware/hwcfg-static-psmouse <<EOF
+MODULE='psmouse'
+EOF
+fi
+");
+    y2milestone ("PS/2 mouse saving process returnes: %1", out);
     if (Mode::update ())
     {
 	// ensure "no" status for all pci and isapnp devices
