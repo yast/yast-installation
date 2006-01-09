@@ -24,6 +24,7 @@ import "Arch";
 import "GetInstArgs";
 import "Label";
 import "Popup";
+import "Storage";
 import "Wizard";
 
 // all the arguments
@@ -90,7 +91,7 @@ if (have_dasd || have_zfcp)
     Wizard::SetFocusToNextButton();
 
     any ret = nil;
-    bool disks_changed = false;
+    boolean disks_changed = false;
     while (ret == nil)
     {
 	ret = UI::UserInput ();
