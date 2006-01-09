@@ -90,28 +90,33 @@ if (have_dasd || have_zfcp)
     Wizard::SetFocusToNextButton();
 
     any ret = nil;
+    bool disks_changed = false;
     while (ret == nil)
     {
 	ret = UI::UserInput ();
 	if (ret == `dasd)
 	{
-	    WFM::call ("dasd");
+	    ret = WFM::call ("dasd");
 	    ret = `redraw;
 	}
 	else if (ret == `zfcp)
 	{
-	    WFM::call ("zfcp");
+	    ret = WFM::call ("zfcp");
 	    ret = `redraw;
 	}
 	else if (ret == `iscsi)
 	{
 	    Popup::Message("iSCSI dialog not yet implemented");
 // FIXME client name
-//	    WFM::call ("iscsi");
-	    ret = `redraw;
+//	    ret = WFM::call ("iscsi");
+	    if (ret == `next)
+		ret = `redraw;
+	    else
+		ret = nil;
 	}
 	if (ret == `redraw)
 	{
+	    disks_changed = true;
 	    Wizard::SetContents(caption, contents, help,
 		GetInstArgs::enable_back(), GetInstArgs::enable_next());
 	    Wizard::SetTitleIcon("disk");
@@ -125,6 +130,11 @@ if (have_dasd || have_zfcp)
 	string cmd = "/sbin/dasd_reload";
 	y2milestone( "Initialize cmd %1 ret %2", cmd,
 	    SCR::Execute( .target.bash_output, cmd ));
+    }
+
+    if (disks_changed)
+    {
+	Storage::ReReadTargetMap();
     }
 
     y2debug("ret=%1", ret);
@@ -142,7 +152,9 @@ else
     return `auto;
 // FIXME client name
 // FIXME argument map
-//    return WFM::call ("iscsi");
+//    any ret = WFM::call ("iscsi");
+//    Storage::ReReadTargetMap();
+//    return ret;
 }
 
 
