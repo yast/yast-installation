@@ -4,6 +4,7 @@ Mon Jan  9 16:47:46 CET 2006 - jsrain@suse.cz
 - write mouse information on PPC (#116406)
 - UI mode set to expert for SLES
 - reset storage after (de)activating any disk (#140936)
+- 2.13.9
 
 -------------------------------------------------------------------
 Fri Jan  6 16:20:23 CET 2006 - ms@suse.de
