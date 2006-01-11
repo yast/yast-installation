@@ -97,12 +97,12 @@ if (have_dasd || have_zfcp)
 	ret = UI::UserInput ();
 	if (ret == `dasd)
 	{
-	    ret = WFM::call ("dasd");
+	    ret = WFM::call ("inst_dasd");
 	    ret = `redraw;
 	}
 	else if (ret == `zfcp)
 	{
-	    ret = WFM::call ("zfcp");
+	    ret = WFM::call ("inst_zfcp");
 	    ret = `redraw;
 	}
 	else if (ret == `iscsi)
