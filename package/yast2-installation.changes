@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jan 11 14:50:18 CET 2006 - jsrain@suse.cz
+
+- call installation clients for DASD/zFCP configuration instead of
+  the run-time ones
+
+-------------------------------------------------------------------
 Mon Jan  9 16:47:46 CET 2006 - jsrain@suse.cz
 
 - write mouse information on PPC (#116406)
