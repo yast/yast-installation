@@ -334,8 +334,8 @@ textdomain="control"
                     </arguments>
                 </module>
                 <module>
-	            <label>Software Selection</label>
-                    <name>selections</name>
+	            <label>Desktop Selection</label>
+                    <name>desktop</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
