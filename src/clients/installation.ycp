@@ -296,9 +296,11 @@ but something went wrong, that's why it is only in the log");
     boolean iscsi = Linuxrc::InstallInf("WithiSCSI") == "1";
     if (! (Arch::s390() || iscsi))
     {
+	y2milestone ("Disabling disk activation module");
 	ProductControl::DisabledModules = add (ProductControl::DisabledModules,
 	    "disks_activate");
     }
+    retranslateWizardDialog();
 
     symbol ret = nil;
     string restart_data_file = "/var/lib/YaST2/continue_installation";

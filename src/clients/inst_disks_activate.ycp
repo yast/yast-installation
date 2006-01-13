@@ -146,9 +146,9 @@ else
     y2milestone ("Redirecting disk activation module to iSCSI module");
     Popup::Message("iSCSI dialog not yet implemented");
     return `auto;
-    any ret = WFM::call ("inst_iscsi", argmap);
+    any ret = WFM::call ("inst_iscsi", [argmap]);
     Storage::ReReadTargetMap();
-    return ret;
+    return (symbol)ret;
 }
 
 
