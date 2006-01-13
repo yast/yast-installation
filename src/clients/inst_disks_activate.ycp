@@ -107,13 +107,8 @@ if (have_dasd || have_zfcp)
 	}
 	else if (ret == `iscsi)
 	{
-	    Popup::Message("iSCSI dialog not yet implemented");
-// FIXME client name
-//	    ret = WFM::call ("iscsi");
-	    if (ret == `next)
-		ret = `redraw;
-	    else
-		ret = nil;
+	    ret = WFM::call ("inst_iscsi");
+	    ret = `redraw;
 	}
 	if (ret == `redraw)
 	{
@@ -151,11 +146,9 @@ else
     y2milestone ("Redirecting disk activation module to iSCSI module");
     Popup::Message("iSCSI dialog not yet implemented");
     return `auto;
-// FIXME client name
-// FIXME argument map
-//    any ret = WFM::call ("iscsi");
-//    Storage::ReReadTargetMap();
-//    return ret;
+    any ret = WFM::call ("inst_iscsi", argmap);
+    Storage::ReReadTargetMap();
+    return ret;
 }
 
 

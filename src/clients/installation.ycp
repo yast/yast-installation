@@ -293,8 +293,7 @@ but something went wrong, that's why it is only in the log");
 
     // update the workflow according to current situation
     // disable disks activation if not needed
-    // FIXME the right value in Linuxrc
-    boolean iscsi = Linuxrc::InstallInf("iSCSI") == "1";
+    boolean iscsi = Linuxrc::InstallInf("WithiSCSI") == "1";
     if (! (Arch::s390() || iscsi))
     {
 	ProductControl::DisabledModules = add (ProductControl::DisabledModules,

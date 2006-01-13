@@ -53,6 +53,7 @@ list<map<string,any> > stages = [
 	    "desktop",
 	    "fonts",
 	    "storage",
+	    "iscsi-client",
 	    "kernel",
 	    "x11",
 	    "proxy",
