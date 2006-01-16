@@ -33,7 +33,7 @@ textdomain="control"
     </partitioning>
     <network>
         <force_static_ip config:type="boolean">false</force_static_ip>
-        <network_manager_is_default config:type="boolean">true</network_manager_is_default>
+        <network_manager>laptop</network_manager>
     </network>
     <clone_modules config:type="list">
 	<clone_module>language</clone_module>

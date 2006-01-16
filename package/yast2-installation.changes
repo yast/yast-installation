@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jan 16 17:07:17 CET 2006 - mvidner@suse.cz
+
+- Prefer the string product feature network/network_manager (always,
+  laptop, never) over boolean network/network_manager_is_default.
+
+-------------------------------------------------------------------
 Fri Jan 13 14:12:31 CET 2006 - jsrain@suse.cz
 
 - run the desktop dialog also on SLES (#142771)
