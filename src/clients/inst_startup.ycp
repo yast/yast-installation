@@ -116,8 +116,6 @@
     //				    Floppy
     // --------------------------------------------------------------
 
-    Storage::InstallCallbacks();
-
     if (!(Arch::s390 () || Arch::board_iseries ()))
     {
         // give user feedback what's happening
