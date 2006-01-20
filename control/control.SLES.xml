@@ -246,6 +246,14 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
+            <type>service</type>
+            <stage>continue,normal</stage>
+            <proposal_modules config:type="list">
+                <proposal_module>ca_mgm</proposal_module>
+                <proposal_module>ldap-server</proposal_module>
+            </proposal_modules>
+        </proposal>
+        <proposal>
             <archs>ppc64</archs>
             <label>Hardware Configuration</label>
             <name>hardware</name>
@@ -672,6 +680,11 @@ textdomain="control"
 		    <label>Online Update</label>
 		    <name>restore_settings</name>
 		</module>
+                <module>
+                    <label>Service</label>
+                    <name>proposal</name>
+                    <arguments>true,true,`serv</arguments>
+                </module>
                 <module>
 	            <label>Users</label>
                     <name>auth</name>
