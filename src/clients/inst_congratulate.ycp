@@ -26,9 +26,7 @@
 
     // show button "clone system"?
     boolean show_clone_checkbox = true;
-    if (argmap["show_clone_checkbox"]:"yes" == "no"
-            && haskey(argmap, "show_clone_checkbox"))
-        show_clone_checkbox = false;
+    boolean clone_checkbox_active = ProductFeatures::GetBooleanFeature("enable_clone");
     boolean clone_enabled = false;
     if( Package::AvailableAny(["autoyast2"]) &&
         size(ProductControl::clone_modules) > 0 ) {
@@ -51,7 +49,7 @@
         check_box_do_clone = `CheckBox (`id(`do_clone),
         // Check box: start the clone process and store the autoyast
         // profile in /root/autoinst.xml
-                                           _("&Clone This System for Autoyast"), false);
+                                           _("&Clone This System for Autoyast"), clone_checkbox_active);
     }
 
     // caption for dialog "Congratulation Dialog"
