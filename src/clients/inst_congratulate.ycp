@@ -26,7 +26,7 @@
 
     // show button "clone system"?
     boolean show_clone_checkbox = true;
-    boolean clone_checkbox_active = ProductFeatures::GetBooleanFeature("enable_clone");
+    boolean clone_checkbox_active = ProductFeatures::GetBooleanFeature("globals", "enable_clone");
     boolean clone_enabled = false;
     if( Package::AvailableAny(["autoyast2"]) &&
         size(ProductControl::clone_modules) > 0 ) {
