@@ -326,7 +326,7 @@ textdomain="control"
                     <enable_next>yes</enable_next>
                 </module>
 		<module>
-	            <label>Disks Activation</label>
+	            <label>Disk Activation</label>
                     <name>disks_activate</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
@@ -416,7 +416,7 @@ textdomain="control"
                     <enable_next>yes</enable_next>
                 </module>
 		<module>
-	            <label>Disks Activation</label>
+	            <label>Disk Activation</label>
                     <name>disks_activate</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
