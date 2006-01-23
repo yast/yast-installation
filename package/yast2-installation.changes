@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Jan 23 09:30:07 CET 2006 - jsrain@suse.cz
+
+- added "enable_clone" option (#144101)
+
+-------------------------------------------------------------------
 Mon Jan 16 17:07:17 CET 2006 - mvidner@suse.cz
 
 - Prefer the string product feature network/network_manager (always,
