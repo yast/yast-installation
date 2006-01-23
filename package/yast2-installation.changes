@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jan 23 13:03:09 CET 2006 - ms@suse.de
+
+- added y2start.log message if YaST exits abnormally (#141016)
+- fixed repatching of xorg.conf file (#144538)
+
+-------------------------------------------------------------------
 Mon Jan 23 09:30:07 CET 2006 - jsrain@suse.cz
 
 - added "enable_clone" option (#144101)
