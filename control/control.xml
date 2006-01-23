@@ -18,6 +18,7 @@ textdomain="control"
         <inform_about_suboptimal_distribution config:type="boolean">true</inform_about_suboptimal_distribution>
         <skip_language_dialog config:type="boolean">true</skip_language_dialog>
         <ui_mode>simple</ui_mode>
+        <enable_clone config:type="boolean">false</enable_clone>
     </globals>
     <software>
         <delete_old_packages config:type="boolean">true</delete_old_packages>
