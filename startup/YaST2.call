@@ -105,6 +105,10 @@ function prepare_for_qt () {
 	# patch X11 conf. if not update/continue mode
 	#---------------------------------------------
 	if [ ! -f /var/lib/YaST2/runme_at_boot ];then
+	if [ ! -f /etc/X11/xorg.conf.instorig ];then
+		# create backup copy...
+		cp /etc/X11/xorg.conf /etc/X11/xorg.conf.instorig
+
 		# Activate correct device/screen section...
 		sed -e "s#Screen.*Screen\[.*\]#Screen   "\""Screen[$X11_CONFIG_ID]#" \
 			/etc/X11/xorg.conf >/etc/X11/xorg.conf.new
@@ -133,6 +137,7 @@ function prepare_for_qt () {
 			> /etc/X11/xorg.conf.new
 			mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
 		fi
+	fi
 	fi
 	#=============================================
 	# start X-Server and wait until ready
@@ -318,6 +323,22 @@ function start_yast () {
 			$Y2_MODE
 	fi
 	Y2_EXIT_CODE=$?
+	Y2_ABORT_MESSAGE="YaST seems to be aborted abnormally !"
+	Y2_OK_MESSAGE="YaST procedure ended successfully"
+	if [ -s /etc/yast.inf ];then
+		#=============================================
+		# check yast.inf contents
+		#---------------------------------------------
+		cat /etc/yast.inf | grep -q -i "Aborted: 1"
+		if [ $? = 0 ];then
+			log "\t$Y2_ABORT_MESSAGE"
+		fi
+	else
+		#=============================================
+		# YaST ended successfully
+		#---------------------------------------------
+		log "\t$Y2_OK_MESSAGE"
+	fi
 	if [ $SELECTED_MEDIUM = "SSH" ];then
 		log "\tPreparing SSH installation for reboot"
 		echo $Y2_EXIT_CODE > /tmp/YaST2_ssh_installation_finished
