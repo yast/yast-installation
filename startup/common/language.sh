@@ -59,6 +59,9 @@ function set_language_init () {
 # returns an appropriate exit code. This code only
 # works in first stage (init)
 # ---
+	if [ ! -x /bin/testutf8 ];then
+		return
+	fi
 	if [ -n "$Console" -o -d /proc/iSeries ];then
 		if testutf8 ; [ $? = 2 ] ; then
 			# append UTF-8
@@ -80,6 +83,9 @@ function set_language_cont () {
 # returns an appropriate exit code. This code only
 # works in second stage (continue)
 # ---
+	if [ ! -x /bin/testutf8 ];then
+		return
+	fi
 	if [ -n "$Console" -o -d /proc/iSeries ];then
 		if testutf8 ; [ $? = 2 ] ; then
 			# get rid of encoding and/or modifier
