@@ -1,0 +1,89 @@
+/**
+ * File:
+ *  copy_files_finish.ycp
+ *
+ * Module:
+ *  Step of base instalaltion finish
+ *
+ * Authors:
+ *  Jiri Srain <jsrain@suse.cz>
+ *
+ * $Id: printer_auto.ycp 20576 2004-12-15 15:00:18Z jsrain $
+ *
+ */
+
+{
+
+textdomain "installation";
+
+import "Linuxrc";
+import "Installation";
+import "Directory";
+import "ProductControl";
+
+any ret = nil;
+string func = "";
+map param = $[];
+
+/* Check arguments */
+if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
+    func = (string)WFM::Args(0);
+    if(size(WFM::Args()) > 1 && is(WFM::Args(1), map))
+	param = (map)WFM::Args(1);
+}
+
+y2milestone ("starting copy_files_finish");
+y2debug("func=%1", func);
+y2debug("param=%1", param);
+
+if (func == "Info")
+{
+    return (any)$[
+	"steps" : 1,
+	// progress step title
+	"title" : _("Copying files to installed system..."),
+	"when" : [ `installation, `update, `autoinst ],
+    ];
+}
+else if (func == "Write")
+{
+    // copy hardware status to installed system
+    SCR::Execute (.target.bash,"/bin/cp -a /var/lib/hardware " + Installation::destdir + "/var/lib");
+
+    // if VNC, copy setup data
+    if (Linuxrc::vnc ())
+    {
+	WFM::Execute (.local.bash, "/bin/cp -a /root/.vnc " + Installation::destdir + "/root");
+    }
+
+
+    // --------------------------------------------------------------
+    // Copy /etc/install.inf into built system so that the
+    // second phase of the installation can find it.
+    Linuxrc::SaveInstallInf (Installation::destdir);
+
+    // Copy control.xml so it can be read once again during continue mode
+    SCR::Execute (.target.bash, "/bin/cp " + ProductControl::current_control_file  + " " +
+	Installation::destdir + Directory::etcdir + "/control.xml");
+    SCR::Execute (.target.bash, "/bin/chmod 0644 " +
+	Installation::destdir + Directory::etcdir + "/control.xml");
+
+    // Copy info.txt so it can be used in firstboot
+    if (SCR::Read(.target.size, "/info.txt") > 0)
+    {
+	SCR::Execute (.target.bash, "/bin/cp /info.txt " +
+	    Installation::destdir + Directory::etcdir + "/eula.txt");
+    }
+}
+else
+{
+    y2error ("unknown function: %1", func);
+    ret = nil;
+}
+
+y2debug("ret=%1", ret);
+y2milestone("copy_files_finish finished");
+return ret;
+
+
+} /* EOF */

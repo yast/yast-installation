@@ -1,0 +1,191 @@
+/**
+ * Module:		inst_startup.ycp
+ *
+ * Authors:		Mathias Kettner <kettner@suse.de>
+ *			Klaus Kaempf <kkaempf@suse.de> (initial)
+ *			Stefan Hundhammer <sh@suse.de> (UI)
+ *
+ * Purpose:
+ * This module does the startup:
+ * - Set hostname and domainname
+ * - Determine architecture and boot mode
+ * - Find controllers and status enabled/disabled
+ * - Probe all controllers for disks
+ * - Probe all disks for partition data
+ *
+ * $Id$
+ */
+
+{
+    textdomain "installation";
+
+    import "Arch";
+    import "Mode";
+    import "Linuxrc";
+    import "Installation";
+
+    import "Hotplug";
+    import "Mouse";
+    import "ModuleLoading";
+    import "Storage";
+    import "StorageControllers";
+    import "StorageDevices";
+    import "Kernel";		// call constructor, extract cmdline
+    import "Wizard";
+    import "Report";
+
+    y2milestone("inst_startup START");
+
+
+
+    boolean popup_open = false;
+    /**
+     * Show feedback message in a simple dialog.
+     * @param msg message to show
+     **/
+    define void showFeedback( string msg ) ``{
+	if ( popup_open )
+	{
+	    UI::CloseDialog();
+	}
+
+	/**
+	 * The UI normally changes the X cursor to a busy cursor anyway if the
+	 * YCP application isn't ready to process user input (i.e. outside
+	 * UI::UserInput()), but some hardware probings seem to interfere with
+	 * the X cursor. Thus, let's make sure we really have a busy cursor
+	 * while the probings are performed. Setting the busy cursor once more
+	 * doesn't hurt in any case.
+	 **/
+	UI::BusyCursor();
+
+	UI::OpenDialog( `VBox( `Label( msg ) ) );
+	y2milestone( msg );
+	popup_open = true;
+    };
+
+
+    /**
+     * Close feedback dialog if it is open
+     **/
+    define void clearFeedback() ``{
+	if ( popup_open )
+	    UI::CloseDialog();
+    };
+
+
+    // --------------------------------------------------------------
+    // hostname, domainname
+    // Set hostname and domainname to something reasonable.
+    // Some programs depend on it (rpm install scripts, Xlib)
+
+    if (!Arch::s390 ()
+	&& !Mode::test ())
+    {
+	SCR::Execute(.target.bash, "/bin/hostname linux");
+	SCR::Execute(.target.bash, "/bin/domainname local");
+
+	// fallback for br_FR
+	SCR::Execute (.target.symlink, "/usr/share/locale/fr", "/usr/share/locale/br");
+    }
+
+
+    // --------------------------------------------------------------
+    //				      USB
+    // --------------------------------------------------------------
+
+    if (!(Arch::s390 () || Arch::board_iseries ()))
+    {
+        // give user feedback what's happening
+	showFeedback( _("Probing USB devices") );
+	Hotplug::StartUSB ();
+    }
+
+    // --------------------------------------------------------------
+    //				FireWire (ieee1394)
+    // --------------------------------------------------------------
+
+    if (!(Arch::s390 () || Arch::board_iseries ()))
+    {
+        // give user feedback what's happening
+	showFeedback( _("Probing FireWire devices...") );
+	Hotplug::StartFireWire ();
+    }
+
+    // --------------------------------------------------------------
+    //				    Floppy
+    // --------------------------------------------------------------
+
+    if (!(Arch::s390 () || Arch::board_iseries ()))
+    {
+        // give user feedback what's happening
+	showFeedback( _("Probing floppy disk devices") );
+	StorageDevices::FloppyReady ();
+    }
+
+    // --------------------------------------------------------------
+    //			     Hard disk controllers
+    // 1. Probe
+    // 2. Initialize (module loading)
+    // --------------------------------------------------------------
+
+    // In live_eval mode, all modules have been loaded by linuxrc. But
+    // they are loaded by StorageControllers::Initialize(). Well, there
+    // also was another reason for skipping StorageControllers::Probe ()
+    // but nobody seems to remembers.
+
+    boolean found_controllers = true;
+
+    // give user feedback what's happening
+    showFeedback( _("Probing hard disk controllers") );
+    found_controllers = StorageControllers::Probe () > 0;
+
+    // Don't abort or even warn if no storage controllers can be
+    // found.  Disks might be detected even without proper knowledge
+    // about the controller.  There's a warning below if no disks were
+    // found.
+
+    // give user feedback what's happening
+    showFeedback( _("Loading kernel modules for hard disk controllers") );
+    StorageControllers::Initialize ();
+
+    ModuleLoading::Load ("dm-mod", "", "Linux", "DM", Linuxrc::manual (), true);
+    SCR::Execute (.target.bash, "/sbin/devmap_mknod.sh");
+    ModuleLoading::Load ("dm-snapshot", "", "Linux", "DM", Linuxrc::manual (), true);
+
+
+    // --------------------------------------------------------------
+    //				  Hard disks
+    // --------------------------------------------------------------
+
+    // give user feedback what's happening
+    showFeedback( _("Probing hard disks") );
+    map targetMap = StorageDevices::Probe (true);
+    if (size (targetMap) == 0)
+    {
+	if (found_controllers)
+	{
+	    // error report
+	    Report::Error(_("No hard disks were found for the installation.
+Please check your hardware!
+"));
+	}
+	else
+	{
+	    // error report
+	    Report::Error(_("No hard disks and no hard disk controllers were
+found for the installation.
+Check your hardware.
+"));
+	}
+
+	clearFeedback();
+	return `cancel;
+    }
+
+    // disable automatic probing
+    SCR::Execute (.target.bash, "/bin/echo \"/etc/nothing\" >/proc/sys/kernel/modprobe");
+
+    clearFeedback();
+    return `next;
+}

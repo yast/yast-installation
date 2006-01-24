@@ -1,0 +1,41 @@
+/**
+ * File:	clients/inst_restore_settings
+ * Package:	Installation
+ * Summary:	Restore settings after restart during 2nd-stage installation
+ * Authors:	Anas Nashif <nashif@suse.de>
+ *
+ * $Id: inst_license.ycp 24081 2005-07-15 13:44:20Z jsrain $
+ *
+ */
+
+{
+
+textdomain "installation";
+
+import "GetInstArgs";
+import "Service";
+import "NetworkDevices";
+import "SuSEFirewall";
+
+if(GetInstArgs::going_back())
+    return `back;
+
+foreach (string service, ["network"], {
+    if (Service::Enabled (service) && Service::Status (service) != 0)
+    {
+	Service::Start (service);
+    }
+});
+
+NetworkDevices::Read ();
+
+if (SuSEFirewall::IsEnabled () && ! SuSEFirewall::IsStarted ())
+{
+    SuSEFirewall::StartServices ();
+}
+
+
+return `auto;
+
+/* EOF */
+}

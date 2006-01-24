@@ -1,0 +1,87 @@
+/**
+ * File:	installation/general/inst_relase_notes.ycp
+ * Module:	Installation
+ * Summary:	Display release notes
+ * Authors:	Arvin Schnell <arvin@suse.de>
+ *
+ * Display release notes.
+ *
+ * $Id$
+ */
+
+{
+    textdomain "installation";
+
+    import "Wizard";
+    import "Popup";
+    import "GetInstArgs";
+    import "CustomDialogs";
+    import "Directory";
+    import "Language";
+    import "Mode";
+
+    map argmap = GetInstArgs::argmap();
+    list<string> default_patterns = ["RELEASE-NOTES.%1.rtf"];
+    
+    string directory = argmap["directory"]:"/usr/share/doc/release-notes";
+
+    if (argmap["directory"]:"" != "")
+            directory = Directory::custom_workflow_dir + directory;
+    
+    
+    list<string> patterns = argmap["patterns"]:default_patterns;
+
+    map relnotes = CustomDialogs::load_file_locale(patterns,directory, Language::language);
+
+    /* filename of release notes */
+    string file = relnotes["file"]:"";
+
+    /* release notes */
+    string text = relnotes["text"]:"";
+
+
+    /* caption for dialog "Release Notes" */
+    string caption = _("Release Notes");
+
+    term contents = `VBox (
+			   `VSpacing (0.5),
+			    // label, %1 is file name
+			   `Left (`Label (sformat (_("Content of File %1"), file))),
+			   `RichText (`id (`text), text),
+			   `VSpacing (0.5)
+			   );
+
+    /* help text for dialog "Release Notes" */
+    string help = _("<p>Here are the <b>release notes</b> for the installed
+Linux system. They provide a brief summary of new features and changes.</p>");
+    if (Mode::normal()) Wizard::CreateDialog();
+    Wizard::SetContents (caption, contents, help, GetInstArgs::enable_back(),
+            GetInstArgs::enable_next());
+
+    // FIXME: richtext eats return key, but only in NCurses and we want to
+    // make users read release notes (and make PgDn work). For Next, F10 is
+    // availbale
+    UI::SetFocus (`id (`text));
+
+    any ret = nil;
+
+    repeat {
+
+	ret = Wizard::UserInput();
+
+	if (ret == `abort)
+	{
+	    if (Mode::normal()) break;
+	    if (Popup::ConfirmAbort (`incomplete))
+		break;
+	}
+	else if (ret == `help)
+	{
+	    Wizard::ShowHelp (help);
+	}
+
+    } until ( ret == `next || ret == `back );
+    if (Mode::normal()) Wizard::CloseDialog();
+
+    return ret;
+}
