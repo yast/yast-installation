@@ -144,8 +144,6 @@ if (have_dasd || have_zfcp)
 else
 {
     y2milestone ("Redirecting disk activation module to iSCSI module");
-    Popup::Message("iSCSI dialog not yet implemented");
-    return `auto;
     any ret = WFM::call ("inst_iscsi", [argmap]);
     Storage::ReReadTargetMap();
     return (symbol)ret;
