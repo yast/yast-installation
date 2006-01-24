@@ -107,7 +107,7 @@ if (have_dasd || have_zfcp)
 	}
 	else if (ret == `iscsi)
 	{
-	    ret = WFM::call ("inst_iscsi");
+	    ret = WFM::call ("inst_iscsi-client");
 	    ret = `redraw;
 	}
 	if (ret == `redraw)
@@ -144,7 +144,7 @@ if (have_dasd || have_zfcp)
 else
 {
     y2milestone ("Redirecting disk activation module to iSCSI module");
-    any ret = WFM::call ("inst_iscsi", [argmap]);
+    any ret = WFM::call ("inst_iscsi-client", [argmap]);
     Storage::ReReadTargetMap();
     return (symbol)ret;
 }
