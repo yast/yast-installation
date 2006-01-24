@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jan 24 08:29:29 CET 2006 - jsrain@suse.cz
+
+- enable iSCSI dialog during installation
+- 2.13.12
+
+-------------------------------------------------------------------
 Mon Jan 23 13:21:46 CET 2006 - mvidner@suse.cz
 
 - Added networkmanager_proposal to the network proposal.
