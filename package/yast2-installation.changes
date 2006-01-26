@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Jan 26 12:51:17 CET 2006 - fehr@suse.de
+
+- remove loading of dm modules, if needed this is done in libstorage
+
+-------------------------------------------------------------------
 Tue Jan 24 13:00:43 CET 2006 - ms@suse.de
 
 - added check for testutf8 binary (#144699)
