@@ -149,11 +149,6 @@
     showFeedback( _("Loading kernel modules for hard disk controllers") );
     StorageControllers::Initialize ();
 
-    ModuleLoading::Load ("dm-mod", "", "Linux", "DM", Linuxrc::manual (), true);
-    SCR::Execute (.target.bash, "/sbin/devmap_mknod.sh");
-    ModuleLoading::Load ("dm-snapshot", "", "Linux", "DM", Linuxrc::manual (), true);
-
-
     // --------------------------------------------------------------
     //				  Hard disks
     // --------------------------------------------------------------
