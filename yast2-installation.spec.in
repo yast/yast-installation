@@ -1,8 +1,8 @@
 @HEADER-COMMENT@
 
-# neededforbuild  yast2-devel-packages yast2-xml
 
 @HEADER@
+BuildRequires:	yast2-devel-packages yast2-xml
 Requires:	yast2 yast2-update
 Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
 Requires:	yast2-packager yast2-network yast2-online-update yast2-users
