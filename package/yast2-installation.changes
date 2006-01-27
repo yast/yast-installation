@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Jan 27 14:37:30 CET 2006 - ms@suse.de
+
+- adding truetype font path to the vnc font path (#139351)
+
+-------------------------------------------------------------------
 Thu Jan 26 12:51:17 CET 2006 - fehr@suse.de
 
 - remove loading of dm modules, if needed this is done in libstorage
