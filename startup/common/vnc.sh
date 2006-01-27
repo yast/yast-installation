@@ -82,7 +82,7 @@ function startVNCServer () {
 		-httpd /usr/share/vnc/classes \
 		-rfbport 5901 \
 		-httpport 5801 \
-		-fp /usr/X11R6/lib/X11/fonts/misc/,/usr/X11R6/lib/X11/fonts/uni/ \
+		-fp /usr/X11R6/lib/X11/fonts/misc/,/usr/X11R6/lib/X11/fonts/uni/,/usr/X11R6/lib/X11/fonts/truetype/ \
 	&> /tmp/vncserver.log &
 	xserver_pid=$!
 	export DISPLAY=:0
