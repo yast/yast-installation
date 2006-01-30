@@ -67,23 +67,27 @@ function get_bus_id () {
 # graphics card.
 # ---
 	for line in $(/sbin/lspci -n | grep "Class 0300" | cut -f 1 -d " ");do
-		echo $line | grep -q -E "^[0-9]{2}:[0-9]{2}\.[0-9]"
+		echo $line |\
+			grep -q -E "^[0-9a-f]{2}:[0-9a-f]{2}\.[0-9a-f]"
 		if [ $? = 0 ];then
 			PCIBus=$(echo $line | cut -f1 -d:);
 			PCISlot=$(echo $line | cut -f2 -d: | cut -f 1 -d.);
 			PCIFunc=$(echo $line | cut -f2 -d.);
 			log "\tFound standard BusID: $PCIBus:$PCISlot:$PCIFunc"
-			printf "PCI:0@%d:%d:%d" $PCIBus $PCISlot $PCIFunc
+			printf "PCI:%d@0:%d:%d" \
+				0x$PCIBus 0x$PCISlot 0x$PCIFunc
 			break
 		else
-			echo $line | grep -q -E "^[0-9]{4}:[0-9]{2}:[0-9]{2}\.[0-9]"
+			echo $line |\
+				grep -q -E "^[0-9a-f]{4}:[0-9a-f]{2}:[0-9a-f]{2}\.[0-9a-f]"
 			if [ $? = 0 ];then
 				PCIDomain=$(echo $line | cut -f1 -d:);
 				PCIBus=$(echo $line | cut -f2 -d:);
 				PCISlot=$(echo $line | cut -f3 -d: | cut -f 1 -d.);
 				PCIFunc=$(echo $line | cut -f2 -d.);
 				log "\tFound domain BusID: $PCIBus@$PCIDomain:$PCISlot $PCIFunc"
-				printf "PCI:%d@%d:%d:%d" $PCIBus $PCIDomain $PCISlot $PCIFunc
+				printf "PCI:%d@%d:%d:%d" \
+					0x$PCIBus 0x$PCIDomain 0x$PCISlot 0x$PCIFunc
 				break
 			fi
 		fi
