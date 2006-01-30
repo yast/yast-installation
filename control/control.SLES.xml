@@ -346,12 +346,6 @@ textdomain="control"
                         <first_run>yes</first_run>
                     </arguments>
                 </module>
-                <module>
-	            <label>Desktop Selection</label>
-                    <name>desktop</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
-                </module>
 		<module>
 		    <heading>yes</heading>
 		    <label>Installation</label>
