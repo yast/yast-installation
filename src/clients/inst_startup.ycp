@@ -75,22 +75,6 @@
 
 
     // --------------------------------------------------------------
-    // hostname, domainname
-    // Set hostname and domainname to something reasonable.
-    // Some programs depend on it (rpm install scripts, Xlib)
-
-    if (!Arch::s390 ()
-	&& !Mode::test ())
-    {
-	SCR::Execute(.target.bash, "/bin/hostname linux");
-	SCR::Execute(.target.bash, "/bin/domainname local");
-
-	// fallback for br_FR
-	SCR::Execute (.target.symlink, "/usr/share/locale/fr", "/usr/share/locale/br");
-    }
-
-
-    // --------------------------------------------------------------
     //				      USB
     // --------------------------------------------------------------
 

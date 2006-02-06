@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Mon Feb  6 10:43:59 CET 2006 - olh@suse.de
+
+- remove the /usr/share/locale/br symlink creation, there is
+  no user of /usr/share/locale files inside the inst-sys
+- remove the hostname linux, domainname local calls
+  the hostname is already set in inst_setup.
+  yast can not be restarted with ssh installs
+
+-------------------------------------------------------------------
 Tue Jan 31 14:30:07 CET 2006 - fehr@suse.de
 
 - disable proposal with separate /home for SLES
