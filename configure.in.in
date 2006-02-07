@@ -18,7 +18,7 @@
     ln -sf $xml  `basename $xml .xml`.glade
  done
  )
-find control -name *.glade > POTFILES
+find control -name \*.glade | LC_ALL=C sort > POTFILES
 
 
 AX_CHECK_DOCBOOK
