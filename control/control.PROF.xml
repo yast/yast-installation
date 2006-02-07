@@ -540,9 +540,13 @@ textdomain="control"
 		    <label>Configuration</label>
 		</module>
                 <module>
+	            <label>Hostname</label>
+                    <name>hostname</name>
+                    <enable_back>no</enable_back>
+                </module>
+                <module>
 	            <label>Root Password</label>
                     <name>root</name>
-                    <enable_back>no</enable_back>
                 </module>
                 <module>
 	            <label>Network</label>
