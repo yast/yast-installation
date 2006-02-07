@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Feb  7 17:57:40 CET 2006 - mvidner@suse.cz
+
+- control files: Configure the hostname in the main installation
+  workflow also in SuSE Linux (#142758) and SLED (#137340).
+- 2.13.13
+
+-------------------------------------------------------------------
 Mon Feb  6 10:43:59 CET 2006 - olh@suse.de
 
 - remove the /usr/share/locale/br symlink creation, there is
