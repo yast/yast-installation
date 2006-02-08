@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Feb  9 00:56:18 CET 2006 - jsrain@suse.de
+
+- added control file merging functionality
+
+-------------------------------------------------------------------
 Tue Feb  7 17:57:40 CET 2006 - mvidner@suse.cz
 
 - control files: Configure the hostname in the main installation

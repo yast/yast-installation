@@ -1,0 +1,521 @@
+/**
+ * File:
+ *	AddOnProduct.ycp
+ *
+ * Module:
+ *	AddOnProduct
+ *
+ * Summary:
+ *	This module provides integration of the add-on products
+ *
+ * Authors:
+ *	Jiri Srain<jsrain@suse.de>
+ */
+
+{
+module "AddOnProduct";
+
+import "XML";
+import "ProductControl";
+import "ProductFeatures";
+
+integer src_id = -1;
+
+boolean system_proposals_prepared = false;
+
+boolean system_workflows_prepared = false;
+
+/**
+ * Adapts the inst-sys from the tarball
+ * @param filename string the filename with the tarball to use to the update
+ * @return boolean true on success
+ */
+boolean UpdateInstSys (string filename) {
+    src_id = src_id + 1;
+    string tmpdir = (string)SCR::Read (.target.tmpdir);
+    tmpdir = sformat ("%1/%2", tmpdir, src_id);
+    map out = (map)SCR::Execute (.target.bash, sformat ("
+/bin/mkdir %1;
+cd %1;
+/bin/tar -xvf %2;
+adddir %1;
+", tmpdir, filename));
+//TODO path to adddir
+    if (out["exit"]:0 != 0)
+    {
+	y2error ("Including installation image failed: %1", out);
+	return false;
+    }
+    y2milestone ("Including installation image succeeded");
+    return true;
+}
+
+/**
+ * Check all proposals, split those ones which have multiple modes or
+ * architectures or stages into multiple proposals
+ * @param proposals a list of proposals
+ * @return a list of updated proposals
+ */
+list<map> PrepareProposals(list<map> proposals) {
+    list<map> new_proposals = [];
+    foreach (map p, proposals, {
+	string mode = p["mode"]:"";
+	list<string> modes = splitstring (mode, ",");
+	if (size(modes) == 0)
+	    modes = [""];
+	foreach (string m, modes, {
+	    map mp = p;
+	    mp["mode"] = m;
+	    string arch = p["archs"]:"";
+	    list<string> archs = splitstring (arch, ",");
+	    if (size(archs) == 0)
+		archs = [""];
+	    foreach (string a, archs, {
+		map amp = mp;
+		amp["archs"] = a;
+		string stage = amp["stage"]:"";
+		list<string> stages = splitstring(stage, ",");
+		if (size (stages) == 0)
+		    stages = [""];
+		foreach (string s, stages, {
+		    map samp = amp;
+		    samp["stage"] = s;
+		    new_proposals = add (new_proposals, samp);
+		});
+	    });
+	});
+    });
+    return new_proposals;
+}
+
+/**
+ * Check all proposals, split those ones which have multiple modes or
+ * architectures or stages into multiple proposals.
+ * Works with base product proposals.
+ */
+void PrepareSystemProposals() {
+    if (system_proposals_prepared)
+	return;
+    ProductControl::proposals = PrepareProposals(ProductControl::proposals);
+    system_proposals_prepared = true;
+}
+
+/**
+ * Check all workflows, split those ones which have multiple modes or
+ * architectures or stages into multiple workflows
+ * @param workflows a list of workflows
+ * @return a list of updated workflows
+ */
+list<map> PrepareWorkflows(list<map> workflows) {
+    list<map> new_workflows = [];
+    foreach (map w, workflows, {
+	string mode = w["mode"]:"";
+	list<string> modes = splitstring (mode, ",");
+	if (size(modes) == 0)
+	    modes = [""];
+	foreach (string m, modes, {
+	    map mw = w;
+	    mw["mode"] = m;
+	    mw["defaults"] = mw["defaults"]:$[];
+	    string arch = mw["defaults", "archs"]:"";
+	    list<string> archs = splitstring (arch, ",");
+	    if (size(archs) == 0)
+		archs = [""];
+	    foreach (string a, archs, {
+		map amw = mw;
+		amw["defaults", "archs"] = a;
+		string stage = amw["stage"]:"";
+		list<string> stages = splitstring(stage, ",");
+		if (size (stages) == 0)
+		    stages = [""];
+		foreach (string s, stages, {
+		    map samw = amw;
+		    samw["stage"] = s;
+		    new_workflows = add (new_workflows, samw);
+		});
+	    });
+	});
+    });
+    return new_workflows;
+}
+
+/**
+ * Check all workflows, split those ones which have multiple modes or
+ * architectures or stages into multiple worlflows.
+ * Works with base product workflows.
+ */
+void PrepareSystemWorkflows() {
+    if (system_workflows_prepared)
+	return;
+    ProductControl::workflows = PrepareWorkflows(ProductControl::workflows);
+    system_workflows_prepared = true;
+}
+
+/**
+ * Replace a module in a proposal with a set of other modules
+ * @param proposal a map describing the proposal
+ * @param old string the old item to be replaced
+ * @param new a list of items to be put into instead of the old one
+ * @return a map with the updated proposal
+ */
+map ReplaceProposalModule(map proposal, string old, list<string> new) {
+    list<list> modules = maplist (any m, proposal["proposal_modules"]:[], {
+	if ((is (m, string) && (string)m == old)
+	    || is (m, map) && ((map)m)["name"]:"" == old)
+	{
+	    if (is (m, map))
+	    {
+		return maplist (string it, new, {
+		    return union ((map)m, $[ "name" : it ]);
+		});
+	    }
+	    else
+	    {
+		return new;
+	    }
+	}
+	else
+	{
+	    return [m];
+	}
+    });
+    proposal["proposal_modules"] = flatten(modules);
+    if (haskey (proposal, "proposal_tabs"))
+    {
+	proposal["proposal_tabs"] = maplist (map tab,
+	    proposal["proposal_tabs"]:[],
+	{
+	    list<list<string> > modules = maplist (string m,
+		tab["proposal_modules"]:[],
+	    {
+		if (m == old)
+		    return new;
+		else
+		    return [ m ];
+	    });
+	    tab["proposal_modules"] = flatten(modules);
+	    return tab;
+	});
+    }
+    return proposal;
+}
+
+
+/**
+ * Merge add-on proposal to a base proposal
+ * @param base map the base product proposal
+ * @param addon map the proposal of the addon productA
+ * @param prod_name a name of the add-on product
+ * @return map merged proposals
+ */
+map MergeProposal(map base, map addon, string prod_name, string domain)
+{
+    list<string> appends = addon["append_modules"]:[];
+    list<string> removes = addon["remove_modules"]:[];
+    map<string,list<string> > replaces = listmap(map a,
+	addon["replace_modules"]:[],
+    {
+	string old = a["replace"]:"";
+	list<string> new = a["modules"]:[];
+	return $[ old : new ];
+    });
+    if (size (removes) > 0)
+    {
+        foreach (string r, removes, {
+	    base = ReplaceProposalModule (base, r, []);
+	});
+    }
+    if (size (replaces) > 0)
+    {
+	foreach (string old, list<string> new, replaces, {
+	    base = ReplaceProposalModule (base, old, new);
+	});
+    }
+    if (size (appends) > 0)
+    {
+	boolean as_map = false;
+	list<any> append2 = appends;
+	if (is (base["proposal_modules", 0]:nil, map))
+	{
+	    append2 = maplist (string m, appends, {
+		return $[ "name" : m, "presentation_order" : 9999 ];
+	    });
+	}
+	base["proposal_modules"] = merge (base["proposal_modules"]:[], append2);
+	if (haskey (base, "proposal_tabs"))
+	{
+	    map new_tab = $[
+		"label" : prod_name,
+		"proposal_modules" : appends,
+		"textdomain" : domain,
+	    ];
+	    base["proposal_tabs"] = add (base["proposal_tabs"]:[], new_tab);
+	}
+    }
+    if (addon["enable_skip"]:"yes" == "no")
+	base["enable_skip"] = "no";
+    return base;
+}
+
+/**
+ * Update system proposals according to proposal update metadata
+ * @param proposals a list of update proposals
+ * @param prod_name string the product name (used in case of tabs)
+ * @param domain string the text domain (for translations)
+ * @return boolean true on success
+ */
+boolean UpdateProposals(list<map> proposals, string prod_name, string domain) {
+    foreach (map proposal, proposals, {
+	string name = proposal["name"]:"";
+	string stage = proposal["stage"]:"";
+	string mode = proposal["mode"]:"";
+	string arch = proposal["archs"]:"";
+	boolean found = false;
+	list<map> new_proposals = [];
+	map arch_all_prop = $[];
+	foreach (map p, ProductControl::proposals, {
+	    if (p["stage"]:"" != stage || p["mode"]:"" != mode
+		    || p["name"]:"" != name)
+		continue;
+	    if (p["archs"]:"" == arch || arch == "" || arch == "all")
+	    {
+		p = MergeProposal (p, proposal, prod_name, domain);
+		found = true;
+	    }
+	    else if (p["archs"]:"" == "" || p["archs"]:"" == "all")
+	    {
+		arch_all_prop = p;
+	    }
+	    new_proposals = add (new_proposals, p);
+	});
+	if (! found)
+	{
+	    if (arch_all_prop != $[])
+	    {
+		arch_all_prop["archs"] = arch;
+		proposal = MergeProposal (arch_all_prop, proposal,
+		    prod_name, domain);
+	    }
+	    else // completly new proposal
+	    {
+		proposal["textdomain"] = domain;
+	    }
+	    new_proposals = add (new_proposals, proposal);
+	}
+	ProductControl::proposals = new_proposals;
+    });
+    return true;
+}
+
+/**
+ * Replace a module in a workflow with a set of other modules
+ * @param workflow a map describing the workflow
+ * @param old string the old item to be replaced
+ * @param new a list of items to be put into instead of the old one
+ * @param domain string a text domain
+ * @param keep boolean true to keep original one (and just insert before)
+ * @return a map with the updated workflow
+ */
+map ReplaceWorkflowModule(map workflow, string old, list<map> new,
+	string domain, boolean keep)
+    {
+    list<list<map> > modules = maplist (map m, workflow["modules"]:[], {
+	if (m["name"]:"" == old)
+	{
+	    list<map> new_list = maplist (map n, new, {
+		n["textdomain"] = domain;
+		return n;
+	    });
+	    if (keep)
+		new_list = add (new_list, m);
+	    return new_list;
+	}
+	else
+	{
+	    return [m];
+	}
+    });
+    workflow["modules"] = flatten(modules);
+    return workflow;
+}
+
+
+/**
+ * Merge add-on workflow to a base workflow
+ * @param base map the base product workflow
+ * @param addon map the workflow of the addon product
+ * @param prod_name a name of the add-on product
+ * @return map merged workflows
+ */
+map MergeWorkflow(map base, map addon, string prod_name, string domain)
+{
+    list<map> appends = addon["append_modules"]:[];
+    list<string> removes = addon["remove_modules"]:[];
+    map<string,list<map> > inserts = listmap (map i,
+	addon["insert_modules"]:[],
+    {
+	string before = i["before"]:"";
+	list<map> new = i["modules"]:[];
+	return $[ before : new ];
+    });
+    map<string,list<map> > replaces = listmap(map a,
+	addon["replace_modules"]:[],
+    {
+	string old = a["replace"]:"";
+	list<map> new = a["modules"]:[];
+	return $[ old : new ];
+    });
+    if (size (removes) > 0)
+    {
+        foreach (string r, removes, {
+	    base = ReplaceWorkflowModule (base, r, [], domain, false);
+	});
+    }
+    if (size (replaces) > 0)
+    {
+	foreach (string old, list<map> new, replaces, {
+	    base = ReplaceWorkflowModule (base, old, new, domain, false);
+	});
+    }
+    if (size (inserts) > 0)
+    {
+	foreach (string old, list<map> new, inserts, {
+	    base = ReplaceWorkflowModule (base, old, new, domain, true);
+	});
+    }
+    if (size (appends) > 0)
+    {
+	foreach (map new, appends, {
+	    new["textdomain"] = domain;
+	    base["modules"] = add (base["modules"]:[], new);
+	});
+    }
+    return base;
+}
+
+/**
+ * Update system workflows according to workflow update metadata
+ * @param workflows a list of update workflows
+ * @param prod_name string the product name (used in case of tabs)
+ * @param domain string the text domain (for translations)
+ * @return boolean true on success
+ */
+boolean UpdateWorkflows(list<map> workflows, string prod_name, string domain) {
+    foreach (map workflow, workflows, {
+	string stage = workflow["stage"]:"";
+	string mode = workflow["mode"]:"";
+	string arch = workflow["archs"]:"";
+	boolean found = false;
+	list<map> new_workflows = [];
+	map arch_all_wf = $[];
+	foreach (map w, ProductControl::workflows, {
+	    if (w["stage"]:"" != stage || w["mode"]:"" != mode)
+		continue;
+	    if (w["defaults", "archs"]:"" == arch
+		|| arch == "" || arch == "all")
+	    {
+		w = MergeWorkflow (w, workflow, prod_name, domain);
+		found = true;
+	    }
+	    else if (w["defaults", "archs"]:"" == ""
+		|| w["default", "archs"]:"" == "all")
+	    {
+		arch_all_wf = w;
+	    }
+	    new_workflows = add (new_workflows, w);
+	});
+	if (! found)
+	{
+	    if (arch_all_wf != $[])
+	    {
+		arch_all_wf["defaults", "archs"] = arch;
+		workflow = MergeWorkflow (arch_all_wf, workflow,
+		    prod_name, domain);
+	    }
+	    else // completly new workflow
+	    {
+		workflow["textdomain"] = domain; // FIXME
+	    }
+	    new_workflows = add (new_workflows, workflow);
+	}
+	ProductControl::workflows = new_workflows;
+    });
+    return true;
+}
+
+/**
+ * Adapts the installation workflow according to specified XML file
+ * @param update_file a map containing the add-on product control file
+ * @param name string the name of the add-on product
+ * @return boolean true on success
+ */
+boolean UpdateInstallation (map update_file, string name) {
+    PrepareSystemProposals ();
+    PrepareSystemWorkflows ();
+    string domain = update_file["textdomain"]:"control";
+    list<map> proposals = update_file["proposals"]:[];
+    proposals = PrepareProposals (proposals);
+    UpdateProposals (proposals, name, domain);
+    list<map> workflows = update_file["workflows"]:[];
+    workflows = PrepareWorkflows (workflows);
+    UpdateWorkflows (workflows, name, domain);
+    return true;
+}
+
+/**
+ * Update product options
+ * @param update_file a map containing update control file
+ * @return boolean true on success
+ */
+boolean UpdateProductInfo(map update_file) {
+    foreach (string section, ["globals", "software", "partitioning", "network"],
+    {
+	map<string,any> sect = ProductFeatures::GetSection(section);
+	map<string,any> addon = update_file[section]:$[];
+	sect = (map<string,any>)union (sect, addon);
+	ProductFeatures::SetSection(section, sect);
+    });
+    list<string> addon_clone = update_file["clone_modules"]:[];
+    ProductControl::clone_modules
+	= (list<string>)merge (ProductControl::clone_modules, addon_clone);
+    return true;
+}
+
+global boolean Integrate (integer srcid) {
+    string filename = Pkg::SourceProvideFile (srcid, 1, "/control.xml");
+    map update_file = XML::XMLToYCPFile (filename);
+    string name = update_file["display_name"]:"";
+    if (! UpdateInstallation (update_file["update"]:$[], name))
+	return false;
+    if (! UpdateProductInfo (update_file))
+	return false;
+    string y2update = Pkg::SourceProvideFile (srcid, 1, "/add_on_update.tgz");
+    UpdateInstSys (y2update);
+    return true;
+}
+
+global symbol StartInstall(integer srcid) {
+    string control = Pkg::SourceProvideFile (srcid, 1, "/control.xml");
+    string binaries = Pkg::SourceProvideFile (srcid, 1, "/add_on_update.tgz");
+    // UNPACK binaries
+    map out = (map)SCR::Execute (.target.bash, sformat ("
+/bin/mkdir /y2update;
+cd /y2update;
+/bin/tar -xvf %1;
+", binaries));
+    // set control file
+    ProductControl::custom_control_file = control;
+    if (!ProductControl::Init())
+    {
+	y2error ("control file %1 not found", control);
+    }
+    // start workflow
+    list<map> stage_mode = [$["stage": "normal",  "mode": "installation" ]];
+    ProductControl::AddWizardSteps(stage_mode);
+    symbol ret = ProductControl::Run();
+    return ret;
+}
+
+
+
+} // module end
