@@ -1,0 +1,82 @@
+/**
+ * File:	clients/inst_add-on.ycp
+ * Package:	yast2-installation
+ * Summary:	Select add-on products for installation
+ * Authors:	Jiri Srain <jsrain@suse.de>
+ *
+ */
+
+{
+textdomain "installation";
+
+import "AddOnProduct";
+import "GetInstArgs";
+import "Popup";
+import "Report";
+import "Wizard";
+
+map argmap = GetInstArgs::argmap();
+
+// main screen heading
+string title = _("Add-on Product Installation");
+string help = "";
+term contents = `VBox (
+    // text entry
+    `TextEntry (`id (`url), _("Media &URL"), "dir:///local/instset/CD1"),
+    // text entry
+    `TextEntry (`id (`pth), _("&Path on Media"), "/"),
+    // text entry
+    `PushButton (`id (`add), _("&Add"))
+);
+
+Wizard::SetContents (title, contents, help,
+    GetInstArgs::enable_back(), GetInstArgs::enable_next());
+Wizard::SetDesktopIcon("vendor");
+
+symbol ret = nil;
+
+repeat {
+    ret = (symbol)Wizard::UserInput();
+    if (ret == `abort || ret == `cancel)
+    {
+	if (Popup::ConfirmAbort (`incomplete))
+	    break;
+    }
+    else if ( ret == `help )
+    {
+	Wizard::ShowHelp (help);
+    }
+    else if (ret == `add)
+    {
+	string url = (string)UI::QueryWidget (`id (`url), `Value);
+	string pth = (string)UI::QueryWidget (`id (`pth), `Value);
+	// label - popup window
+	UI::OpenDialog (`Label (_("Adding the catalog")));
+	integer srcid = Pkg::SourceCreate (url, pth);
+	UI::CloseDialog();
+	if (srcid < 0)
+	{
+	    // error message
+	    Report::Message (_("No catalog found on the media"));
+	}
+	else
+	{
+	    if (AddOnProduct::Integrate (srcid))
+	    {
+		// report message
+		Report::Message (_("Add-on product was added successfully"));
+	    }
+	    else
+	    {
+		Report::Message (
+		    // error report
+		    _("Error occurred while integrating the add-on product"));
+	    }
+	}
+    }
+} until ( ret == `next || ret == `back );
+
+return ret;
+
+/* EOF */
+}

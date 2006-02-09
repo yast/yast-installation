@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Feb  9 21:27:28 CET 2006 - jsrain@suse.de
+
+- added add-on product installation in running system
+
+-------------------------------------------------------------------
 Thu Feb  9 00:56:18 CET 2006 - jsrain@suse.de
 
 - added control file merging functionality
