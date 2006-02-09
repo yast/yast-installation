@@ -15,9 +15,14 @@
 {
 module "AddOnProduct";
 
-import "XML";
+textdomain "installation";
+
+import "Mode";
 import "ProductControl";
 import "ProductFeatures";
+import "Report";
+import "XML";
+import "Wizard";
 
 integer src_id = -1;
 
@@ -34,7 +39,7 @@ boolean UpdateInstSys (string filename) {
     src_id = src_id + 1;
     string tmpdir = (string)SCR::Read (.target.tmpdir);
     tmpdir = sformat ("%1/%2", tmpdir, src_id);
-    map out = (map)SCR::Execute (.target.bash, sformat ("
+    map out = (map)SCR::Execute (.target.bash_output, sformat ("
 /bin/mkdir %1;
 cd %1;
 /bin/tar -xvf %2;
@@ -459,6 +464,19 @@ boolean UpdateInstallation (map update_file, string name) {
     list<map> workflows = update_file["workflows"]:[];
     workflows = PrepareWorkflows (workflows);
     UpdateWorkflows (workflows, name, domain);
+// FIXME following code copy-pasted from clients/installation.ycp
+    y2milestone( "Retranslating messages" );
+
+    // Make sure the labels for default function keys are retranslated, too.
+    // Using Label::DefaultFunctionKeyMap() from Label module.
+    UI::SetFunctionKeys( Label::DefaultFunctionKeyMap() );
+
+    // Activate language changes on static part of wizard dialog
+
+    ProductControl::RetranslateWizardSteps();
+    Wizard::RetranslateButtons();
+    Wizard::SetFocusToNextButton();
+// FIXME end of copy-paste
     return true;
 }
 
@@ -481,6 +499,61 @@ boolean UpdateProductInfo(map update_file) {
     return true;
 }
 
+/**
+ * Remove the /y2update directory from the system
+ */
+void CleanY2Update() {
+    SCR::Execute (.target.bash, "/bin/rm -rf /y2update");
+}
+
+/**
+ * Do installation of the add-on product within an installed system
+ * @param srcid integer the ID of the installation source providing the CD
+ * @return symbol the result symbol from wizard sequencer
+ */
+global symbol DoInstall(integer srcid) {
+    string control = Pkg::SourceProvideFile (srcid, 1, "/control.xml");
+    string binaries = Pkg::SourceProvideFile (srcid, 1, "/add_on_update.tgz");
+    // UNPACK binaries
+    map out = (map)SCR::Execute (.target.bash_output, sformat ("
+test -d /y2update && rm -rf /y2update;
+/bin/mkdir /y2update;
+cd /y2update;
+/bin/tar -xvf %1;
+", binaries));
+    if (out["exit"]:0 != 0)
+    {
+	Report::Error (_("Error occurred while preparing installation system"));
+	CleanY2Update();
+	return nil;
+    }
+    // set control file
+    ProductControl::custom_control_file = control;
+    if (!ProductControl::Init())
+    {
+	Report::Error (sformat (_("Control file %1 not found on media"),
+	    control));
+	CleanY2Update();
+	return nil;
+    }
+    // start workflow
+    Wizard::OpenNextBackStepsDialog();
+    // dialog caption
+    Wizard::SetContents(_("Initializing..."), `Empty (), "", false, false);
+    list<map> stage_mode = [$["stage": "normal",  "mode": "installation" ]];
+    ProductControl::AddWizardSteps(stage_mode);
+    Mode::SetMode ("installation");
+    symbol ret = ProductControl::Run();
+    UI::CloseDialog();
+    CleanY2Update();
+    return ret;
+}
+
+/**
+ * Integrate the add-on product to the installation workflow
+ * @param srcid integer the source ID of the installation source
+ * @return boolean true on success
+ */
 global boolean Integrate (integer srcid) {
     string filename = Pkg::SourceProvideFile (srcid, 1, "/control.xml");
     map update_file = XML::XMLToYCPFile (filename);
@@ -492,28 +565,6 @@ global boolean Integrate (integer srcid) {
     string y2update = Pkg::SourceProvideFile (srcid, 1, "/add_on_update.tgz");
     UpdateInstSys (y2update);
     return true;
-}
-
-global symbol StartInstall(integer srcid) {
-    string control = Pkg::SourceProvideFile (srcid, 1, "/control.xml");
-    string binaries = Pkg::SourceProvideFile (srcid, 1, "/add_on_update.tgz");
-    // UNPACK binaries
-    map out = (map)SCR::Execute (.target.bash, sformat ("
-/bin/mkdir /y2update;
-cd /y2update;
-/bin/tar -xvf %1;
-", binaries));
-    // set control file
-    ProductControl::custom_control_file = control;
-    if (!ProductControl::Init())
-    {
-	y2error ("control file %1 not found", control);
-    }
-    // start workflow
-    list<map> stage_mode = [$["stage": "normal",  "mode": "installation" ]];
-    ProductControl::AddWizardSteps(stage_mode);
-    symbol ret = ProductControl::Run();
-    return ret;
 }
 
 
