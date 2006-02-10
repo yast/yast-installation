@@ -17,6 +17,7 @@ module "AddOnProduct";
 
 textdomain "installation";
 
+import "Label";
 import "Mode";
 import "ProductControl";
 import "ProductFeatures";
@@ -24,11 +25,38 @@ import "Report";
 import "XML";
 import "Wizard";
 
-integer src_id = -1;
 
+// variables for installation with product
+/**
+ * ID for cache in the inst-sys
+ */
+integer src_cache_id = -1;
+
+/**
+ * System proposals have already been prepared for merging?
+ */
 boolean system_proposals_prepared = false;
 
+/**
+ * System workflows have already been prepared for merging?
+ */
 boolean system_workflows_prepared = false;
+
+/**
+ * List of all selected sources
+ */
+global list<map<string,any> > add_on_products = [];
+
+/**
+ * ID of currently added source for the add-on product
+ */
+global integer src_id  = nil;
+
+// for the add-on product workflow - needed for dialog skipping
+/**
+ * return value of last step in the product adding workflow
+ */
+global symbol last_ret = nil;
 
 /**
  * Adapts the inst-sys from the tarball
@@ -36,16 +64,16 @@ boolean system_workflows_prepared = false;
  * @return boolean true on success
  */
 boolean UpdateInstSys (string filename) {
-    src_id = src_id + 1;
+    src_cache_id = src_cache_id + 1;
     string tmpdir = (string)SCR::Read (.target.tmpdir);
-    tmpdir = sformat ("%1/%2", tmpdir, src_id);
+    tmpdir = sformat ("%1/%2", tmpdir, src_cache_id);
     map out = (map)SCR::Execute (.target.bash_output, sformat ("
 /bin/mkdir %1;
 cd %1;
 /bin/tar -xvf %2;
 adddir %1;
 ", tmpdir, filename));
-//TODO path to adddir
+//TODO full path to adddir
     if (out["exit"]:0 != 0)
     {
 	y2error ("Including installation image failed: %1", out);
@@ -508,12 +536,12 @@ void CleanY2Update() {
 
 /**
  * Do installation of the add-on product within an installed system
- * @param srcid integer the ID of the installation source providing the CD
+ * srcid is got via AddOnProduct::src_id
  * @return symbol the result symbol from wizard sequencer
  */
-global symbol DoInstall(integer srcid) {
-    string control = Pkg::SourceProvideFile (srcid, 1, "/control.xml");
-    string binaries = Pkg::SourceProvideFile (srcid, 1, "/add_on_update.tgz");
+global symbol DoInstall() {
+    string control = Pkg::SourceProvideFile (src_id, 1, "/control.xml");
+    string binaries = Pkg::SourceProvideFile (src_id, 1, "/add_on_update.tgz");
     // UNPACK binaries
     map out = (map)SCR::Execute (.target.bash_output, sformat ("
 test -d /y2update && rm -rf /y2update;
