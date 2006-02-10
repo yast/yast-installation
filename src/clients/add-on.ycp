@@ -13,55 +13,18 @@ import "AddOnProduct";
 import "Report";
 import "Wizard";
 
+include "installation/add-on-workflow.ycp";
+
 Wizard::CreateDialog();
 Wizard::SetDesktopIcon("vendor");
 Wizard::HideBackButton();
 
-// main screen heading
-string title = _("Add-on Product Installation");
-string help = "";
-term contents = `VBox (
-    // text entry
-    `TextEntry (`id (`url), _("Media &URL"), "dir:///local/instset/CD1"),
-    // text entry
-    `TextEntry (`id (`pth), _("&Path on Media"), "/")
-);
-Wizard::SetContents (title, contents, help, true, true);
+symbol ret = RunWizard();
 
-symbol ret = nil;
-integer srcid = 0;
-while (ret == nil)
+if (ret == `next)
 {
-    ret = (symbol)UI::UserInput();
-    if (ret == `back || ret == `cancel || ret == `abort)
-    {
-	return `abort;
-    }
-    else if (ret == `next)
-    {
-	string url = (string)UI::QueryWidget (`id (`url), `Value);
-	string pth = (string)UI::QueryWidget (`id (`pth), `Value);
-	// label - popup window
-	UI::OpenDialog (`Label (_("Adding the catalog")));
-	srcid = Pkg::SourceCreate (url, pth);
-	UI::CloseDialog();
-	if (srcid < 0)
-	{
-	    // error message
-	    Report::Message (_("No catalog found on the media"));
-	    ret = nil;
-	}
-    }
-    else
-    {
-	ret = nil;
-    }
+    ret = AddOnProduct::DoInstall ();
 }
-
-// TODO: In case of multiple products on the media, ask which ones to install
-// and select them
-
-ret = AddOnProduct::DoInstall (srcid);
 UI::CloseDialog();
 return ret;
 

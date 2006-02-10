@@ -15,24 +15,34 @@ import "Popup";
 import "Report";
 import "Wizard";
 
+include "installation/add-on-workflow.ycp";
+
 map argmap = GetInstArgs::argmap();
 
-// main screen heading
-string title = _("Add-on Product Installation");
-string help = "";
-term contents = `VBox (
-    // text entry
-    `TextEntry (`id (`url), _("Media &URL"), "dir:///local/instset/CD1"),
-    // text entry
-    `TextEntry (`id (`pth), _("&Path on Media"), "/"),
-    // text entry
-    `PushButton (`id (`add), _("&Add"))
-);
+void Redraw (boolean enable_back, boolean enable_next) {
+    // main screen heading
+    string title = _("Add-on Product Installation");
+    string help = "";
+    integer index = -1;
+    list items = maplist (map<string,any> product, AddOnProduct::add_on_products, {
+	index = index + 1;
+	return `item (`id (index),
+	    sformat (_("Media %1"), product["media"]:-1),
+	    sformat (_("Product %1"), product["product"]:""));
+    });
+    term contents = `VBox (
+	`Table (`id (`summary), `header (_("Media"), _("Product")), items),
+	`HBox (
+	    `PushButton (`id (`add), Label::AddButton ()),
+	    `PushButton (`id (`delete), Label::DeleteButton ())
+	)
+    );
 
-Wizard::SetContents (title, contents, help,
-    GetInstArgs::enable_back(), GetInstArgs::enable_next());
-Wizard::SetDesktopIcon("vendor");
+    Wizard::SetContents (title, contents, help, enable_back, enable_next);
+    Wizard::SetDesktopIcon("vendor");
+}
 
+Redraw (GetInstArgs::enable_back(), GetInstArgs::enable_next());
 symbol ret = nil;
 
 repeat {
@@ -42,37 +52,36 @@ repeat {
 	if (Popup::ConfirmAbort (`incomplete))
 	    break;
     }
-    else if ( ret == `help )
+    else if (ret == `delete)
     {
-	Wizard::ShowHelp (help);
+	integer selected = (integer)UI::QueryWidget (`id (`summary), `CurrentItem);
+	if (selected == nil)
+	{
+	    Report::Message (_("Select a product to delete"));
+	    continue;
+	}
+	// remove whole media if the product is the onle one on the media
+	integer media = AddOnProduct::add_on_products[selected, "media"]:-1;
+	integer med_count = size (filter (map<string,any> prod,
+	    AddOnProduct::add_on_products,
+	{
+	    return prod["media"]:-1 == media;
+	}));
+	if (med_count == 1)
+	    Pkg::SourceDelete (media);
+	// remove the selected record
+	AddOnProduct::add_on_products[selected] = nil;
+	AddOnProduct::add_on_products = filter (map<string,any> prod,
+	    AddOnProduct::add_on_products,
+	{
+	    return prod != nil;
+	});
+	Redraw (GetInstArgs::enable_back(), GetInstArgs::enable_next());
     }
     else if (ret == `add)
     {
-	string url = (string)UI::QueryWidget (`id (`url), `Value);
-	string pth = (string)UI::QueryWidget (`id (`pth), `Value);
-	// label - popup window
-	UI::OpenDialog (`Label (_("Adding the catalog")));
-	integer srcid = Pkg::SourceCreate (url, pth);
-	UI::CloseDialog();
-	if (srcid < 0)
-	{
-	    // error message
-	    Report::Message (_("No catalog found on the media"));
-	}
-	else
-	{
-	    if (AddOnProduct::Integrate (srcid))
-	    {
-		// report message
-		Report::Message (_("Add-on product was added successfully"));
-	    }
-	    else
-	    {
-		Report::Message (
-		    // error report
-		    _("Error occurred while integrating the add-on product"));
-	    }
-	}
+	symbol ret = RunWizard ();
+	Redraw (GetInstArgs::enable_back(), GetInstArgs::enable_next());
     }
 } until ( ret == `next || ret == `back );
 
