@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Sun Feb 12 20:41:09 CET 2006 - olh@suse.de
+
+- umount /dev and /sys unconditionally in umount_finish.ycp
+
+-------------------------------------------------------------------
 Sun Feb 12 19:41:28 CET 2006 - olh@suse.de
 
 - remove obsolete comment from umount_finish.ycp
