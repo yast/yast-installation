@@ -128,11 +128,6 @@ else if (func == "Write")
         WFM::Execute(.local.bash, "/sbin/vgchange -a n" );
     }
 
-    // does not work in 7.2
-    // boot.crypto fails to load module
-    // so we leave it loaded
-    // if ( unload_crypto ) WFM::Execute(.local.bash, "/sbin/rmmod loop_fish2");
-
 }
 else
 {
