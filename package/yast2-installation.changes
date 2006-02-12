@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Sun Feb 12 16:45:43 CET 2006 - kkaempf@suse.de
+
+- redirect stderr to /var/log/YaST2/zypp.log when running
+  1st or 2nd stage installation.
+
+-------------------------------------------------------------------
 Thu Feb  9 21:27:28 CET 2006 - jsrain@suse.de
 
 - added add-on product installation in running system

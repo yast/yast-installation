@@ -319,7 +319,7 @@ function start_yast () {
 			$Y2_MODE_FLAGS      \
 			$Y2_MODULE_ARGS     \
 			$Y2_MODE            \
-			$Y2_QT_ARGS
+			$Y2_QT_ARGS 2> /var/log/YaST2/zypp.log
 	else
 		/usr/bin/fbiterm y2base \
 			"$Y2_MODULE_NAME"   \
