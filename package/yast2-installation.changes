@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Sun Feb 12 18:35:41 CET 2006 - visnov@suse.cz
+
+- revert redirect
+
+-------------------------------------------------------------------
 Sun Feb 12 16:45:43 CET 2006 - kkaempf@suse.de
 
 - redirect stderr to /var/log/YaST2/zypp.log when running
