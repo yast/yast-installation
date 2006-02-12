@@ -78,7 +78,10 @@ else if (func == "Write")
     {
         WFM::Execute(.local.umount, Installation::destdir + "/proc/bus/usb");
     }
+    // inst_prepdisk mounts them unconditionally, they keep destdir busy
     WFM::Execute(.local.umount, Installation::destdir + "/proc");
+    WFM::Execute(.local.umount, Installation::destdir + "/sys");
+    WFM::Execute(.local.umount, Installation::destdir + "/dev");
 
     map<string,map> targetMap = Storage::GetTargetMap();
 
