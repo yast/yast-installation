@@ -318,7 +318,7 @@ symbol ProductSelect () {
 	}
     }
 
-    else if (ret == `abort)
+    if (ret == `abort)
 	Pkg::SourceDelete (AddOnProduct::src_id);
 
     AddOnProduct::last_ret = ret;
