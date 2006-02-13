@@ -28,9 +28,12 @@ import "SourceManager";
 include "inst_source_dialogs.ycp";
 
 
-
+/**
+ * Run dialog for selecting the media
+ * @return symbol for wizard sequencer
+ */
 symbol MediaSelect () {
-
+    y2milestone ("Running media select dialog");
     term contents = `HBox (`HStretch (), `VBox (
 	`RadioButtonGroup (`id (`type), `VBox (
 	    `VStretch (),
@@ -182,12 +185,16 @@ symbol MediaSelect () {
     return ret;
 }
 
+/**
+ * Run dialog for selecting the catalog on the media (if more than one present)
+ * @return symbol for wizard sequencer
+ */
 symbol CatalogSelect () {
     list<integer> sources = SourceManager::newSources;
     if (size (sources) == 0)
     {
-	Report::Message (_("No source found on medium"));
-	return `abort;
+	Report::Error (_("No source found on medium"));
+	return `back;
     }
     if (size (sources) == 1)
     {
@@ -195,8 +202,9 @@ symbol CatalogSelect () {
 	y2milestone ("Only one source available - skipping dialog");
 	return AddOnProduct::last_ret;
     }
-    list medias = maplist (integer src, sources, {
-	return `item (`id (src), sformat (_("Media ID %1"), src));
+    y2milestone ("Running catalog select dialog");
+    list catalogs = maplist (integer src, sources, {
+	return `item (`id (src), sformat (_("Catalog ID %1"), src));
     });
 
     // dialog caption
@@ -205,7 +213,7 @@ symbol CatalogSelect () {
 
     term contents = `HBox (`HStretch(), `VBox (
 	`VStretch (),
-	`SelectionBox (`id (`medias), medias, sources[0]:0),
+	`SelectionBox (`id (`catalogs), catalogs, sources[0]:0),
 	`VStretch()
     ), `HStretch ());
     Wizard::SetContents (title, contents, help, true, true);
@@ -224,7 +232,7 @@ symbol CatalogSelect () {
 	}
 	else if (ret == `next)
 	{
-	    selected = (integer)UI::QueryWidget (`id (`medias), `CurrentItem);
+	    selected = (integer)UI::QueryWidget (`id (`catalogs), `CurrentItem);
 	    if (selected == nil)
 	    {
 		ret = nil;
@@ -262,6 +270,7 @@ symbol ProductSelect () {
 	    "media" : AddOnProduct::src_id,
 	    "product" : nil,
 	]);
+// TODO select the product, set it above
 	return `next;
     }
     if (size (products) <= 1)
@@ -274,11 +283,42 @@ symbol ProductSelect () {
 // TODO select the product, set it above
 	return `next;
     }
+    y2milestone ("Running product selection dialog");
     symbol ret = nil;
-return AddOnProduct::last_ret;
-// TODO select appropriate products
+    list items = maplist (any product, products, {
+	return `item (`id (product), sformat ("%1", product));
+    });
+    term contents = `HBox (`HStretch(), `VBox (
+	`VStretch (),
+	`MultiSelectionBox (`id (`products), _("Available Products"), items),
+	`VStretch ()
+    ), `HStretch ());
+    while (ret == nil)
+    {
+	ret = (symbol)UI::UserInput();
+	if (ret == `cancel || ret == `abort)
+	{
+	    break; // TODO ask
+	}
+	if (ret == `next)
+	{
+	    list selected = (list)UI::QueryWidget (`id (`products), `SelectedItems);
+	    foreach (any product, selected, {
+		AddOnProduct::add_on_products = add (AddOnProduct::add_on_products, $[
+		    "media" : AddOnProduct::src_id,
+		    "product" : nil,
+		]);
+// TODO select the product, set it above
+	    });
+// TODO run solver, check the result, if it fails, deselect products, unregister sources, abort
+	}
+	else if (ret != `back)
+	{
+	    ret = nil;
+	}
+    }
 
-    if (ret == `abort)
+    else if (ret == `abort)
 	Pkg::SourceDelete (AddOnProduct::src_id);
 
     AddOnProduct::last_ret = ret;

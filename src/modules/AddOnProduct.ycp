@@ -541,7 +541,7 @@ void CleanY2Update() {
  */
 global symbol DoInstall() {
     string control = Pkg::SourceProvideFile (src_id, 1, "/control.xml");
-    string binaries = Pkg::SourceProvideFile (src_id, 1, "/add_on_update.tgz");
+    string binaries = Pkg::SourceProvideFile (src_id, 1, "/y2update.tgz");
     // UNPACK binaries
     map out = (map)SCR::Execute (.target.bash_output, sformat ("
 test -d /y2update && rm -rf /y2update;
@@ -590,7 +590,7 @@ global boolean Integrate (integer srcid) {
 	return false;
     if (! UpdateProductInfo (update_file))
 	return false;
-    string y2update = Pkg::SourceProvideFile (srcid, 1, "/add_on_update.tgz");
+    string y2update = Pkg::SourceProvideFile (srcid, 1, "/y2update.tgz");
     UpdateInstSys (y2update);
     return true;
 }
