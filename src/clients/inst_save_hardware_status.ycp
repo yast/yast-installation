@@ -4,7 +4,7 @@
  * Summary:	Save status of configured hardware
  * Authors:	Jiri Srain <jsrain@suse.cz>
  *
- * $Id: inst_release_notes.ycp 23599 2005-06-02 15:00:59Z jsrain $
+ * $Id$
  */
 
 {

@@ -4,7 +4,7 @@
  * Summary:	Restore settings after restart during 2nd-stage installation
  * Authors:	Anas Nashif <nashif@suse.de>
  *
- * $Id: inst_license.ycp 24081 2005-07-15 13:44:20Z jsrain $
+ * $Id$
  *
  */
 
