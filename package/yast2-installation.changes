@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Feb 14 18:32:18 CET 2006 - jdsn@suse.de
+
+- new release notes module (multiple release notes) FATE: 120129 
+- 2.13.16
+
+-------------------------------------------------------------------
 Tue Feb 14 01:22:52 CET 2006 - jsrain@suse.de
 
 - fixed add-on product workflow and proposal merging
