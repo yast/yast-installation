@@ -59,6 +59,28 @@ global integer src_id  = nil;
 global symbol last_ret = nil;
 
 /**
+ * List of used control files, to be copied to target system
+ */
+global list<string> control_files_to_add = [];
+
+/**
+ * Items if add-on product to be performed at the start of inst_finish
+ */
+global list<string> finish_steps_before_chroot = [];
+
+/**
+ * Items of add-on product to be performed after swictching to chroot
+ */
+global list<string> finish_steps_after_chroot = [];
+
+/**
+ * Items of add-on product to be performed before unmounting disks
+ */
+global list<string> finish_steps_before_umount = [];
+
+
+
+/**
  * Adapts the inst-sys from the tarball
  * @param filename string the filename with the tarball to use to the update
  * @return boolean true on success
@@ -512,6 +534,25 @@ boolean RedrawWizardSteps () {
 }
 
 /**
+ * Add specified steps to inst_finish
+ * Just modifies internal variables, inst_finish grabs them itself
+ * @param additional_steps a map specifying the steps to be added
+ * @return boolean true on success
+ */
+boolean UpdateInstFinish (map<string,list<string> > additional_steps) {
+    list<string> before_chroot = additional_steps["before_chroot"]:[];
+    list<string> after_chroot = additional_steps["after_chroot"]:[];
+    list<string> before_umount = additional_steps["before_umount"]:[];
+    finish_steps_before_chroot = (list<string>)
+	merge (finish_steps_before_chroot, before_chroot);
+    finish_steps_after_chroot = (list<string>)
+	merge (finish_steps_after_chroot, after_chroot);
+    finish_steps_before_umount = (list<string>)
+	merge (finish_steps_before_umount, before_umount);
+    return true;
+}
+
+/**
  * Adapts the installation workflow according to specified XML file
  * @param update_file a map containing the add-on product control file
  * @param name string the name of the add-on product
@@ -650,14 +691,7 @@ cd /y2update;
     return ret;
 }
 
-/**
- * Integrate the add-on product to the installation workflow
- * @param srcid integer the source ID of the installation source
- * @return boolean true on success
- */
-global boolean Integrate (integer srcid) {
-    y2milestone ("Integrating source %1", srcid);
-    string filename = Pkg::SourceProvideFile (srcid, 1, "/control.xml");
+global boolean WFIntegrate (string filename) {
     map update_file = XML::XMLToYCPFile (filename);
     string name = update_file["display_name"]:"";
     boolean ret = UpdateInstallation (update_file["update"]:$[], name,
@@ -687,7 +721,38 @@ global boolean Integrate (integer srcid) {
 	y2error ("Redrawing the wizard steps failed");
 	return false;
     }
+    if (! UpdateInstFinish (update_file["update", "inst_finish"]:$[]))
+    {
+	y2error ("Adding inst_finish steps failed");
+	return false;
+    }
+
+}
+
+/**
+ * Integrate the add-on product to the installation workflow
+ * @param srcid integer the source ID of the installation source
+ * @return boolean true on success
+ */
+global boolean Integrate (integer srcid) {
+    y2milestone ("Integrating source %1", srcid);
+    string filename = Pkg::SourceProvideFile (srcid, 1, "/control.xml");
+    if (! WFIntegrate (filename))
+    {
+	y2error ("Workflow update failed");
+	return false;
+    }
     string y2update = Pkg::SourceProvideFile (srcid, 1, "/y2update.tgz");
+    string tmpdir = (string)SCR::Read (.target.tmpdir) + "/control_files";
+    map out = (map)SCR::Execute (.target.bash_output, sformat ("
+test -d %1 || /sbin/mkdir %1;
+cp %2 %1/%3.xml;
+", tmpdir, filename, srcid));
+    if (out["exit"]:-1 != 0)
+    {
+	y2error ("Error occurred while copying control file: %1", out);
+    }
+    control_files_to_add = add (control_files_to_add, sformat ("%1.xml", srcid));
     UpdateInstSys (y2update);
     return true;
 }

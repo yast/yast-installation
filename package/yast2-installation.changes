@@ -1,9 +1,14 @@
 -------------------------------------------------------------------
-Tue Feb 14 19:36:14 CET 2006 - jsrain@suse.de
+Tue Feb 14 23:40:31 CET 2006 - jsrain@suse.de
 
 - added possibility to use standalone-installation proposals when
   installing with base product
 - added support for replacing 2nd stage workflow
+- added support for disabling individual proposal
+- added support for inserting steps to inst_finish for add-on
+  products
+- added copying merged control files to installed system, merging
+  them for 2nd stage workflow
 
 -------------------------------------------------------------------
 Tue Feb 14 18:32:18 CET 2006 - jdsn@suse.de

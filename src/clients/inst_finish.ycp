@@ -16,6 +16,7 @@
 {
     textdomain "installation";
 
+    import "AddOnProduct";
     import "Installation";
     import "Misc";
     import "Mode";
@@ -100,6 +101,11 @@ else
 {
     y2milestone ("inst_finish steps definition not found in control file");
 }
+
+// merge steps from add-on products
+stages[0, "steps"] = merge (AddOnProduct::finish_steps_before_chroot, stages[0, "steps"]:[]);
+stages[1, "steps"] = merge (AddOnProduct::finish_steps_after_chroot, stages[1, "steps"]:[]);
+stages[3, "steps"] = merge (stages[3, "steps"]:[], AddOnProduct::finish_steps_before_umount);
 
 symbol run_type = `installation;
 if (Mode::update ())
