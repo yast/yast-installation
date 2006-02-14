@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Feb 14 18:38:45 CET 2006 - jsrain@suse.de
+
+- added possibility to use standalone-installation proposals when
+  installing with base product
+
+-------------------------------------------------------------------
 Tue Feb 14 18:32:18 CET 2006 - jdsn@suse.de
 
 - new release notes module (multiple release notes) FATE: 120129 

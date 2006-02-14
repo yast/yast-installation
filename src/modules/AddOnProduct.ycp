@@ -494,12 +494,12 @@ boolean UpdateWorkflows(list<map> workflows, string prod_name, string domain) {
  * Adapts the installation workflow according to specified XML file
  * @param update_file a map containing the add-on product control file
  * @param name string the name of the add-on product
+ * @param domain string the text domain for the add-on product
  * @return boolean true on success
  */
-boolean UpdateInstallation (map update_file, string name) {
+boolean UpdateInstallation (map update_file, string name, string domain) {
     PrepareSystemProposals ();
     PrepareSystemWorkflows ();
-    string domain = update_file["textdomain"]:"control";
     list<map> proposals = update_file["proposals"]:[];
     proposals = PrepareProposals (proposals);
     UpdateProposals (proposals, name, domain);
@@ -519,6 +519,20 @@ boolean UpdateInstallation (map update_file, string name) {
     Wizard::RetranslateButtons();
     Wizard::SetFocusToNextButton();
 // FIXME end of copy-paste
+    return true;
+}
+boolean AddNewProposals (list<map> proposals) {
+    list<string> forbidden = maplist (map p, ProductControl::proposals, {
+	return p["name"]:"";
+    });
+    forbidden = toset (forbidden);
+    foreach (map proposal, proposals, {
+	if (! contains (forbidden, proposal["name"]:""))
+	{
+	    y2milestone ("Adding new proposal %1", proposal["name"]:"");
+	    ProductControl::proposals = add (ProductControl::proposals, proposal);
+	}
+    });
     return true;
 }
 
@@ -597,13 +611,27 @@ cd /y2update;
  * @return boolean true on success
  */
 global boolean Integrate (integer srcid) {
+    y2milestone ("Integrating source %1", srcid);
     string filename = Pkg::SourceProvideFile (srcid, 1, "/control.xml");
     map update_file = XML::XMLToYCPFile (filename);
     string name = update_file["display_name"]:"";
-    if (! UpdateInstallation (update_file["update"]:$[], name))
+    boolean ret = UpdateInstallation (update_file["update"]:$[], name,
+        update_file["textdomain"]:"control");
+    if (! ret)
+    {
+	y2error ("Failed to udpate installation workflow");
 	return false;
+    }
     if (! UpdateProductInfo (update_file))
+    {
+	y2error ("Failed to set product options");
 	return false;
+    }
+    if (! AddNewProposals (update_file["proposals"]:[]))
+    {
+	y2error ("Failed to add new proposals");
+	return false;
+    }
     string y2update = Pkg::SourceProvideFile (srcid, 1, "/y2update.tgz");
     UpdateInstSys (y2update);
     return true;
