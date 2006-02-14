@@ -491,21 +491,10 @@ boolean UpdateWorkflows(list<map> workflows, string prod_name, string domain) {
 }
 
 /**
- * Adapts the installation workflow according to specified XML file
- * @param update_file a map containing the add-on product control file
- * @param name string the name of the add-on product
- * @param domain string the text domain for the add-on product
+ * Redraw the wizard steps bar
  * @return boolean true on success
  */
-boolean UpdateInstallation (map update_file, string name, string domain) {
-    PrepareSystemProposals ();
-    PrepareSystemWorkflows ();
-    list<map> proposals = update_file["proposals"]:[];
-    proposals = PrepareProposals (proposals);
-    UpdateProposals (proposals, name, domain);
-    list<map> workflows = update_file["workflows"]:[];
-    workflows = PrepareWorkflows (workflows);
-    UpdateWorkflows (workflows, name, domain);
+boolean RedrawWizardSteps () {
 // FIXME following code copy-pasted from clients/installation.ycp
     y2milestone( "Retranslating messages" );
 
@@ -521,6 +510,31 @@ boolean UpdateInstallation (map update_file, string name, string domain) {
 // FIXME end of copy-paste
     return true;
 }
+
+/**
+ * Adapts the installation workflow according to specified XML file
+ * @param update_file a map containing the add-on product control file
+ * @param name string the name of the add-on product
+ * @param domain string the text domain for the add-on product
+ * @return boolean true on success
+ */
+boolean UpdateInstallation (map update_file, string name, string domain) {
+    PrepareSystemProposals ();
+    PrepareSystemWorkflows ();
+    list<map> proposals = update_file["proposals"]:[];
+    proposals = PrepareProposals (proposals);
+    UpdateProposals (proposals, name, domain);
+    list<map> workflows = update_file["workflows"]:[];
+    workflows = PrepareWorkflows (workflows);
+    UpdateWorkflows (workflows, name, domain);
+    return true;
+}
+
+/**
+ * Add new defined proposal to the list of system proposals
+ * @param proposals a lsit of proposals to be added
+ * @return boolean true on success
+ */
 boolean AddNewProposals (list<map> proposals) {
     list<string> forbidden = maplist (map p, ProductControl::proposals, {
 	return p["name"]:"";
@@ -533,6 +547,37 @@ boolean AddNewProposals (list<map> proposals) {
 	    ProductControl::proposals = add (ProductControl::proposals, proposal);
 	}
     });
+    return true;
+}
+
+/**
+ * Replace workflows for 2nd stage of installation
+ * @param workflows a list of the workflows
+ * @return boolean true on success
+ */
+boolean Replaceworkflows (list<map> workflows) {
+    workflows = PrepareWorkflows (workflows);
+    workflows = filter (map w, workflows, {
+	if (w["stage"]:"" == "initial")
+	{
+	    y2error ("Attempting to replace 1st stage workflow. This is not possible");
+	    return false;
+	}
+	return true;
+    });
+    map<string,map<string, boolean> > sm = $[];
+    foreach (map w, workflows, {
+	sm[w["stage"]:""] = sm[w["stage"]:""]:$[];
+	sm[w["stage"]:"", w["mode"]:""] = true;
+	return [w["stage"]:"", w["mode"]:""];
+    });
+    y2milestone ("Existing replace workflows: %1", sm);
+    y2milestone ("Workflows before filtering: %1", size (ProductControl::workflows));
+    ProductControl::workflows = filter (map w, ProductControl::workflows, {
+	return ! sm[w["stage"]:"", w["mode"]:""]:false;
+    });
+    y2milestone ("Workflows after filtering: %1", size (ProductControl::workflows));
+    ProductControl::workflows = (list<map>)merge (ProductControl::workflows, workflows);
     return true;
 }
 
@@ -630,6 +675,16 @@ global boolean Integrate (integer srcid) {
     if (! AddNewProposals (update_file["proposals"]:[]))
     {
 	y2error ("Failed to add new proposals");
+	return false;
+    }
+    if (! Replaceworkflows (update_file["workflows"]:[]))
+    {
+	y2error ("Failed to replace workflows");
+	return false;
+    }
+    if (! RedrawWizardSteps ())
+    {
+	y2error ("Redrawing the wizard steps failed");
 	return false;
     }
     string y2update = Pkg::SourceProvideFile (srcid, 1, "/y2update.tgz");
