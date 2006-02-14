@@ -22,6 +22,7 @@
     integer scr_handle = WFM::SCROpen ("scr", false);
     WFM::SCRSetDefault (scr_handle);
 
+    import "AddOnProduct";
     import "Arch";
     import "Mode";
     import "Directory";
@@ -103,6 +104,20 @@
 	if (SCR::Read(.target.size, Installation::destdir + "/var/lib/YaST2/update_mode") > 0)
 	{
 	    Mode::SetMode ("update");
+	}
+    }
+
+    // Merge control files of add-on products
+    if (Stage::cont ())
+    {
+	string listname = Installation::destdir + Directory::etcdir + "/control_files/order.ycp";
+	if (SCR::Read (.target.size, listname) > 0)
+	{
+	    list<string> files = (list<string>)SCR::Read (.target.ycp, listname);
+	    foreach (string f, files, {
+		f = Installation::destdir + Directory::etcdir + "/control_files/" + f;
+		AddOnProduct::WFIntegrate (f);
+	    });
 	}
     }
 

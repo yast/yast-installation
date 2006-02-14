@@ -985,6 +985,9 @@ a proposal that is locked, ask your system administrator.</p>");
     y2milestone( "Installation step #2" );
     proposal_mode = GetInstArgs::proposal();
 
+    if (contains (ProductControl::DisabledProposals, proposal_mode))
+	return `auto;
+
     proposal_properties = ProductControl::getProposalProperties(Stage::stage (), Mode::mode (), proposal_mode);
     build_dialog();
 
