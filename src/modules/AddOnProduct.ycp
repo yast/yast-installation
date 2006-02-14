@@ -192,10 +192,12 @@ void PrepareSystemWorkflows() {
  * @return a map with the updated proposal
  */
 map ReplaceProposalModule(map proposal, string old, list<string> new) {
+    boolean found = false;
     list<list> modules = maplist (any m, proposal["proposal_modules"]:[], {
 	if ((is (m, string) && (string)m == old)
 	    || is (m, map) && ((map)m)["name"]:"" == old)
 	{
+	    found = true;
 	    if (is (m, map))
 	    {
 		return maplist (string it, new, {
@@ -212,6 +214,8 @@ map ReplaceProposalModule(map proposal, string old, list<string> new) {
 	    return [m];
 	}
     });
+    if (! found)
+	y2internal ("Replace/Remove proposal item %1 not found", old);
     proposal["proposal_modules"] = flatten(modules);
     if (haskey (proposal, "proposal_tabs"))
     {
@@ -309,7 +313,10 @@ boolean UpdateProposals(list<map> proposals, string prod_name, string domain) {
 	foreach (map p, ProductControl::proposals, {
 	    if (p["stage"]:"" != stage || p["mode"]:"" != mode
 		    || p["name"]:"" != name)
+	    {
+		new_proposals = add (new_proposals, p);
 		continue;
+	    }
 	    if (p["archs"]:"" == arch || arch == "" || arch == "all")
 	    {
 		p = MergeProposal (p, proposal, prod_name, domain);
@@ -351,7 +358,8 @@ boolean UpdateProposals(list<map> proposals, string prod_name, string domain) {
  */
 map ReplaceWorkflowModule(map workflow, string old, list<map> new,
 	string domain, boolean keep)
-    {
+{
+    boolean found = false;
     list<list<map> > modules = maplist (map m, workflow["modules"]:[], {
 	if (m["name"]:"" == old)
 	{
@@ -359,6 +367,7 @@ map ReplaceWorkflowModule(map workflow, string old, list<map> new,
 		n["textdomain"] = domain;
 		return n;
 	    });
+	    found = true;
 	    if (keep)
 		new_list = add (new_list, m);
 	    return new_list;
@@ -368,6 +377,8 @@ map ReplaceWorkflowModule(map workflow, string old, list<map> new,
 	    return [m];
 	}
     });
+    if (! found)
+	y2internal ("Insert/Replace/Remove workflow module %1 not found", old);
     workflow["modules"] = flatten(modules);
     return workflow;
 }
@@ -443,7 +454,10 @@ boolean UpdateWorkflows(list<map> workflows, string prod_name, string domain) {
 	map arch_all_wf = $[];
 	foreach (map w, ProductControl::workflows, {
 	    if (w["stage"]:"" != stage || w["mode"]:"" != mode)
+	    {
+		new_workflows = add (new_workflows, w);
 		continue;
+	    }
 	    if (w["defaults", "archs"]:"" == arch
 		|| arch == "" || arch == "all")
 	    {
