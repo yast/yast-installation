@@ -12,6 +12,7 @@ textdomain "installation";
 import "AddOnProduct";
 import "GetInstArgs";
 import "Popup";
+import "ProductControl";
 import "Report";
 import "Wizard";
 
@@ -84,6 +85,18 @@ repeat {
 	Redraw (GetInstArgs::enable_back(), GetInstArgs::enable_next());
     }
 } until ( ret == `next || ret == `back );
+
+if (ret == `next)
+{
+    foreach (map<string,any> prod, AddOnProduct::add_on_products, {
+	AddOnProduct::Integrate (prod["media"]:0);
+    });
+    ret = ProductControl::RunFrom (
+	ProductControl::CurrentStep () + 1,
+	true);
+    if (ret == `next)
+	ret = `finish;
+}
 
 return ret;
 
