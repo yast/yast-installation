@@ -196,6 +196,7 @@ if (! Installation::probing_done)
 
 // FIXME copy-paste from inst_mode
     boolean offer_update = false;
+    y2milestone ("Product flags: %1", Product::flags);
     if (contains (Product::flags, "update") || Kernel::GetSuSEUpdate ())
     {
 	offer_update = true;
@@ -208,6 +209,7 @@ if (! Installation::probing_done)
 	have_linux = true;
     }
 
+y2milestone ("Have Linux: %1, Offer Update: %2", have_linux, offer_update);
 if (! (have_linux && offer_update))
 {
     Mode::SetMode ("installation");
