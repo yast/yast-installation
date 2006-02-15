@@ -9,6 +9,7 @@ Tue Feb 14 23:40:31 CET 2006 - jsrain@suse.de
   products
 - added copying merged control files to installed system, merging
   them for 2nd stage workflow
+- 2.13.17
 
 -------------------------------------------------------------------
 Tue Feb 14 18:32:18 CET 2006 - jdsn@suse.de
