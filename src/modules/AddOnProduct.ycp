@@ -93,9 +93,8 @@ boolean UpdateInstSys (string filename) {
 /bin/mkdir %1;
 cd %1;
 /bin/tar -xvf %2;
-adddir %1;
+/sbin/adddir %1 /;
 ", tmpdir, filename));
-//TODO full path to adddir
     if (out["exit"]:0 != 0)
     {
 	y2error ("Including installation image failed: %1", out);
@@ -503,7 +502,11 @@ boolean UpdateWorkflows(list<map> workflows, string prod_name, string domain) {
 	    }
 	    else // completly new workflow
 	    {
-		workflow["textdomain"] = domain; // FIXME
+		workflow["textdomain"] = domain;
+		workflow["modules"] = maplist (map mod, workflow["modules"]:[], {
+		    mod["textdomain"] = domain;
+		    return mod;
+		});
 	    }
 	    new_workflows = add (new_workflows, workflow);
 	}
@@ -691,6 +694,11 @@ cd /y2update;
     return ret;
 }
 
+/**
+ * Integrate the changes in the workflow
+ * @param filename string filename of the control file (local filename)
+ * @return boolean true on success
+ */
 global boolean WFIntegrate (string filename) {
     map update_file = XML::XMLToYCPFile (filename);
     string name = update_file["display_name"]:"";
@@ -726,11 +734,12 @@ global boolean WFIntegrate (string filename) {
 	y2error ("Adding inst_finish steps failed");
 	return false;
     }
-
+    return true;
 }
 
 /**
- * Integrate the add-on product to the installation workflow
+ * Integrate the add-on product to the installation workflow, including
+ * preparations for 2nd stage and inst-sys update
  * @param srcid integer the source ID of the installation source
  * @return boolean true on success
  */
@@ -745,8 +754,8 @@ global boolean Integrate (integer srcid) {
     string y2update = Pkg::SourceProvideFile (srcid, 1, "/y2update.tgz");
     string tmpdir = (string)SCR::Read (.target.tmpdir) + "/control_files";
     map out = (map)SCR::Execute (.target.bash_output, sformat ("
-test -d %1 || /sbin/mkdir %1;
-cp %2 %1/%3.xml;
+test -d %1 || /bin/mkdir %1;
+/bin/cp %2 %1/%3.xml;
 ", tmpdir, filename, srcid));
     if (out["exit"]:-1 != 0)
     {
@@ -754,6 +763,11 @@ cp %2 %1/%3.xml;
     }
     control_files_to_add = add (control_files_to_add, sformat ("%1.xml", srcid));
     UpdateInstSys (y2update);
+    return true;
+}
+
+global boolean CheckProductDependencies (list<string> products) {
+// TODO check the dependencies of the product
     return true;
 }
 
