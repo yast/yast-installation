@@ -66,7 +66,7 @@ symbol MediaSelect () {
     // dialog caption
     string title = _("Add-on Product Media");
     // help
-    string help = _("<p>
+    string help_text = _("<p>
 Add-on product can be installed from the CD, over a
 network, or from the hard disk.</p>");
 
@@ -89,7 +89,7 @@ into one directory.</p>");
 Specify the directory where the packages from
 the first CD are located, such as /data1/CD1.</p>");
 
-    Wizard::SetContents (title, contents, help, false, true);
+    Wizard::SetContents (title, contents, help_text, false, true);
 
     symbol ret = nil;
     string url = "";
