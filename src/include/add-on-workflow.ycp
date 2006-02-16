@@ -25,6 +25,8 @@ import "Popup";
 import "SLP";
 import "Sequencer";
 import "SourceManager";
+import "Stage";
+
 include "inst_source_dialogs.ycp";
 
 
@@ -63,7 +65,30 @@ symbol MediaSelect () {
 
     // dialog caption
     string title = _("Add-on Product Media");
-    string help = "";
+    // help
+    string help = _("<p>
+Add-on product can be installed from the CD, over a
+network, or from the hard disk.</p>");
+
+    // help, continued
+    help_text = help_text + _("<p>
+To install add-on product from <b>CD</b>,
+have the product CD set or the DVD available.</p>");
+
+    // help, continued
+    help_text = help_text + _("<p>
+The product CDs can be copied to the <b>hard disk</b>.
+Insert the path name where the first
+CD is located, for example, /data1/<b>CD1</b>.
+Only the base path is required if all CDs are copied
+into one directory.</p>");
+
+    // help, continued
+    help_text = help_text + _("<p>
+<b>Network</b> installation requires a working network connection.
+Specify the directory where the packages from
+the first CD are located, such as /data1/CD1.</p>");
+
     Wizard::SetContents (title, contents, help, false, true);
 
     symbol ret = nil;
@@ -71,8 +96,24 @@ symbol MediaSelect () {
     while (ret == nil) {
 	symbol createResult = `again;
 	ret = (symbol)UI::UserInput ();
-	if (ret == `abort || ret == `back || ret == `cancel)
+	if (ret == `back)
 	    break;
+	else if (ret == `abort || ret == `cancel)
+	{
+	    ret = `abort;
+	    if (Stage::initial())
+	    {
+	        if (Popup::ConfirmAbort (`painless))
+		    break;
+	    }
+	    else
+	    {
+		// yes-no popup
+		if (Popup::YesNo (_("Really abort add-on product installation?")))
+		    break;
+	    }
+	    continue;
+	}
 	else if (ret != `next)
 	    continue;
 	symbol input = (symbol)UI::QueryWidget (`id (`type), `CurrentButton);
@@ -224,7 +265,19 @@ symbol CatalogSelect () {
 	ret = (symbol)UI::UserInput ();
 	if (ret == `abort || ret == `cancel)
 	{
-	    break;
+	    ret = `abort;
+	    if (Stage::initial())
+	    {
+	        if (Popup::ConfirmAbort (`painless))
+		    break;
+	    }
+	    else
+	    {
+		// yes-no popup
+		if (Popup::YesNo (_("Really abort add-on product installation?")))
+		    break;
+	    }
+	    continue;
 	}
 	else if (ret == `back)
 	{
@@ -261,32 +314,40 @@ symbol CatalogSelect () {
 }
 
 symbol ProductSelect () {
-// TODO check available products in catalog
-    list products = [];
+    list<map<string,any> > products = Pkg::ResolvableProperties ("", `product, "");
+    products = filter (map<string,any> p, products, {
+	return p["source"]:-1 == AddOnProduct::src_id;
+    });
     if (size (products) == 0)
     {
 	y2milestone ("No poduct found on the media, but anyway, using it :-)");
 	AddOnProduct::add_on_products = add (AddOnProduct::add_on_products, $[
 	    "media" : AddOnProduct::src_id,
-	    "product" : nil,
+	    "product" : _("No product found in the catalog"),
 	]);
-// TODO select the product, set it above
 	return `next;
     }
-    if (size (products) <= 1)
+    if (size (products) == 1)
     {
 	y2milestone ("Only one product available - skipping dialog");
+	map<string,any> prod = products[0]:$[];
+	Pkg::ResolvableInstall (prod["name"]:"", `product);
+	if (! AddOnProduct::CheckProductDependencies ([prod["name"]:""]))
+	{
+	    Pkg::ResolvableRemove (prod["name"]:"", `product);
+	    Popup::Message (_("Dependencies of the add-on product cannot be fullfilled"));
+	    return `back;
+	}
 	AddOnProduct::add_on_products = add (AddOnProduct::add_on_products, $[
 	    "media" : AddOnProduct::src_id,
-	    "product" : nil,
+	    "product" : prod["name"]:"",
 	]);
-// TODO select the product, set it above
 	return `next;
     }
     y2milestone ("Running product selection dialog");
     symbol ret = nil;
-    list items = maplist (any product, products, {
-	return `item (`id (product), sformat ("%1", product));
+    list items = maplist (map<string,any> product, products, {
+	return `item (`id (product["name"]:""), product["name"]:"");
     });
     term contents = `HBox (`HStretch(), `VBox (
 	`VStretch (),
@@ -298,19 +359,41 @@ symbol ProductSelect () {
 	ret = (symbol)UI::UserInput();
 	if (ret == `cancel || ret == `abort)
 	{
-	    break; // TODO ask
+	    ret = `abort;
+	    if (Stage::initial())
+	    {
+	        if (Popup::ConfirmAbort (`painless))
+		    break;
+	    }
+	    else
+	    {
+		// yes-no popup
+		if (Popup::YesNo (_("Really abort add-on product installation?")))
+		    break;
+	    }
+	    continue;
 	}
 	if (ret == `next)
 	{
-	    list selected = (list)UI::QueryWidget (`id (`products), `SelectedItems);
-	    foreach (any product, selected, {
+	    list<string> selected = (list<string>)UI::QueryWidget (`id (`products), `SelectedItems);
+	    foreach (string product, selected, {
+		Pkg::ResolvableInstall (product, `product);
+	    });
+	    if (! AddOnProduct::CheckProductDependencies (selected))
+	    {
+		foreach (string product, selected, {
+		    Pkg::ResolvableRemove (product, `product);
+		});
+		Popup::Message (_("Dependencies of the selected add-on products cannot be fullfilled"));
+		ret = nil;
+		continue;
+	    }
+	    foreach (string product, selected, {
 		AddOnProduct::add_on_products = add (AddOnProduct::add_on_products, $[
 		    "media" : AddOnProduct::src_id,
-		    "product" : nil,
+		    "product" : product,
 		]);
-// TODO select the product, set it above
 	    });
-// TODO run solver, check the result, if it fails, deselect products, unregister sources, abort
 	}
 	else if (ret != `back)
 	{
