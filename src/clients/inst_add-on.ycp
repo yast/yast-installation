@@ -37,7 +37,7 @@ void Redraw (boolean enable_back, boolean enable_next) {
 	    // placeholder for unknown URL
 	    data["url"]:_("Unknown"), dir);
 	return `item (`id (index),
-	    media
+	    media,
 	    sformat (_("Product %1"), product["product"]:""));
     });
     term contents = `VBox (
