@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb 17 22:32:52 CET 2006 - jsrain@suse.de
+
+- removed dependency on yast2-online-update
+
+-------------------------------------------------------------------
 Fri Feb 17 14:19:46 CET 2006 - mvidner@suse.cz
 
 - inst_release_notes: Let the combo box have a label.
