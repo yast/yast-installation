@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb 17 14:02:30 CET 2006 - mvidner@suse.cz
+
+- inst_disks_activate: fixed the textdomain (s390 -> installation)
+
+-------------------------------------------------------------------
 Thu Feb 16 23:29:18 CET 2006 - jsrain@suse.de
 
 - several fixes of add-on product installation
