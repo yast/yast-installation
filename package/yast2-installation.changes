@@ -1,7 +1,8 @@
 -------------------------------------------------------------------
-Fri Feb 17 22:32:52 CET 2006 - jsrain@suse.de
+Fri Feb 17 23:58:34 CET 2006 - jsrain@suse.de
 
 - removed dependency on yast2-online-update
+- integrated add-on product selection to installation workflow
 
 -------------------------------------------------------------------
 Fri Feb 17 14:19:46 CET 2006 - mvidner@suse.cz

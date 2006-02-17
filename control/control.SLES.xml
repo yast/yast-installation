@@ -337,6 +337,12 @@ textdomain="control"
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
+		<module>
+		    <label>Add-On Products</label>
+		    <name>add-on</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+		</module>
                 <module>
 	            <label>Time Zone</label>
                     <name>timezone</name>
@@ -427,6 +433,12 @@ textdomain="control"
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
+		<module>
+		    <label>Add-On Products</label>
+		    <name>add-on</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+		</module>
 		<module>
 		    <heading>yes</heading>
 		    <label>Update</label>

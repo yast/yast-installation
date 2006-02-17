@@ -91,8 +91,7 @@ string start_mode = Mode::mode ();
 	return `finish;
     }
 
-// frame
-term radio_box = `Frame (_("Installation Mode"), `RadioButtonGroup (
+term radio_box = `RadioButtonGroup (
     `id (`inst_mode),
     `MarginBox (
 	`leftMargin (1),
@@ -100,16 +99,22 @@ term radio_box = `Frame (_("Installation Mode"), `RadioButtonGroup (
 	`topMargin (0.5),
 	`bottomMargin (0.5),
 	`VBox(
-	    // radio button
-	    `Left (`RadioButton (`id (`install), _("New &Installation"),
-		! Mode::update ())),
-	    `VSpacing( 0.5 ),
-	    // radio button
-	    `Left (`RadioButton (`id (`update), _("&Update"),
-		Mode::update ()))
+	    // frame
+	    `Frame (_("Installation Mode"), `VBox (
+		// radio button
+		`Left (`RadioButton (`id (`install), _("New &Installation"),
+		    ! Mode::update ())),
+		`VSpacing( 0.5 ),
+		// radio button
+		`Left (`RadioButton (`id (`update), _("&Update"),
+		    Mode::update ()))
+	    )),
+	    `VSpacing (2),
+	    // check box
+	    `Left (`CheckBox (`id (`add_on), _("In&clude Add-On Products from Separate Media")))
 	)
     )
-));
+);
 
 term contents = `VBox (
     `VWeight (60, `HVCenter (radio_box)),
@@ -159,6 +164,11 @@ Select <b>Update an Existing System</b> to update a Linux system already
 installed on your machine. This option preserves configuration settings
 from your existing system whenever possible.
 </p>");
+
+// help text for installation method
+help_text = help_text + _("<p>
+To install an Add-On Product from separate media together with &product;, select
+<b>Include Add-On Products from Separate Media</b>.</p>");
 
 // help text for installation method
 help_text = help_text + _("<p>Click <b>Other</b> then 
@@ -288,6 +298,19 @@ if (ret == `next)
 	Mode::SetMode ("");
 	ret = `finish;
     }
+
+    if (new_mode == `install || new_mode == `update)
+    {
+	boolean add_on = (boolean)UI::QueryWidget (`id (`add_on), `Value);
+	ProductControl::DisabledModules = filter (string m, ProductControl::DisabledModules, {
+	    return m != "add-on" && m != "inst_add-on";
+	});
+	if (! add_on)
+	{
+	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "add-on");
+	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "inst_add-on");
+	}
+    }
 }
 
 
@@ -312,6 +335,16 @@ if (ret != `finish && Mode::mode () != start_mode)
 	if (ret == `next)
 	    ret = `finish;
     }
+}
+else if (ret != `finish && ! Mode::repair())
+{
+    UpdateWizardSteps ();
+    ret = ProductControl::RunFrom (
+	ProductControl::CurrentStep () + 1,
+	true);
+    if (ret == `next)
+	ret = `finish;
+
 }
 
 if (Mode::repair ())

@@ -668,7 +668,8 @@ cd /y2update;
 ", binaries));
     if (out["exit"]:0 != 0)
     {
-	Report::Error (_("Error occurred while preparing installation system"));
+	// error report
+	Report::Error (_("Error occurred while preparing installation system."));
 	CleanY2Update();
 	return nil;
     }
@@ -676,7 +677,8 @@ cd /y2update;
     ProductControl::custom_control_file = control;
     if (!ProductControl::Init())
     {
-	Report::Error (sformat (_("Control file %1 not found on media"),
+	// error report
+	Report::Error (sformat (_("Control file %1 not found on media."),
 	    control));
 	CleanY2Update();
 	return nil;

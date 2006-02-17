@@ -27,12 +27,26 @@ void Redraw (boolean enable_back, boolean enable_next) {
     integer index = -1;
     list items = maplist (map<string,any> product, AddOnProduct::add_on_products, {
 	index = index + 1;
+	map data = Pkg::SourceGeneralData (product["media"]:-1);
+	// placeholder for unknown path
+	string dir = data["product_dir"]:_("Unknown");
+	if (dir == "")
+	    dir = "/";
+	// table cell, %1 is URL, %2 is directory name
+	string media = sformat (_("URL: %1, Directory: %2"),
+	    // placeholder for unknown URL
+	    data["url"]:_("Unknown"), dir);
 	return `item (`id (index),
-	    sformat (_("Media %1"), product["media"]:-1),
+	    media
 	    sformat (_("Product %1"), product["product"]:""));
     });
     term contents = `VBox (
-	`Table (`id (`summary), `header (_("Media"), _("Product")), items),
+	`Table (`id (`summary), `header (
+		// table header
+		_("Media"),
+		// table header
+		_("Product")),
+	    items),
 	`HBox (
 	    `PushButton (`id (`add), Label::AddButton ()),
 	    `PushButton (`id (`delete), Label::DeleteButton ())
@@ -58,7 +72,8 @@ repeat {
 	integer selected = (integer)UI::QueryWidget (`id (`summary), `CurrentItem);
 	if (selected == nil)
 	{
-	    Report::Message (_("Select a product to delete"));
+	    // message report
+	    Report::Message (_("Select a product to delete."));
 	    continue;
 	}
 	// remove whole media if the product is the onle one on the media

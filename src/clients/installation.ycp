@@ -81,6 +81,7 @@
 	    Installation::encoding = "UTF-8";
 	}
 
+	ProductControl::DisabledModules = add (ProductControl::DisabledModules, "add-on");
 	UI::SetLanguage (Language::language, Installation::encoding);
 	WFM::SetLanguage (Language::language, "UTF-8");
 	UI::RecordMacro( Directory::logdir + "/macro_inst_initial.ycp" );
@@ -118,6 +119,10 @@
 		f = Installation::destdir + Directory::etcdir + "/control_files/" + f;
 		AddOnProduct::WFIntegrate (f);
 	    });
+	}
+	else
+	{
+	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "add-on");
 	}
     }
 
