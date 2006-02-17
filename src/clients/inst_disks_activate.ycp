@@ -14,7 +14,7 @@
  * <h3>Initialization of the disks</h3>
  */
 
-textdomain "s390";
+textdomain "installation";
 
 /* The main () */
 y2milestone ("----------------------------------------");
