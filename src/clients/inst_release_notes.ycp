@@ -75,7 +75,8 @@
     }
     else
     {
-        relnoteslayout=`VBox( `Left( `ComboBox(`id(`productsel), `opt(`notify), "" /* _("Products") */ , relnotesproducts)),
+	// FIXME use a different label
+        relnoteslayout=`VBox( `Left( `ComboBox(`id(`productsel), `opt(`notify), caption /* _("Products") */ , relnotesproducts)),
                                       relnotesrichtext );
     }
 
