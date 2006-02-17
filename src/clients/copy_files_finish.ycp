@@ -70,16 +70,19 @@ else if (func == "Write")
 	Installation::destdir + Directory::etcdir + "/control.xml");
     // Copy also control files of add-on products
     string cf_dir = (string)SCR::Read (.target.tmpdir) + "/control_files";
-    SCR::Execute (.target.bash, "/bin/mkdir " + Installation::destdir + Directory::etcdir + "/control_files");
-    foreach (string file, AddOnProduct::control_files_to_add, {
-	SCR::Execute (.target.bash, "/bin/cp " + cf_dir + "/" + file + " "
-	    + Installation::destdir + Directory::etcdir + "/control_files");
+    if (size (AddOnProduct::control_files_to_add) > 0)
+    {
+	SCR::Execute (.target.bash, "/bin/mkdir " + Installation::destdir + Directory::etcdir + "/control_files");
+	foreach (string file, AddOnProduct::control_files_to_add, {
+	    SCR::Execute (.target.bash, "/bin/cp " + cf_dir + "/" + file + " "
+		+ Installation::destdir + Directory::etcdir + "/control_files");
+	    SCR::Execute (.target.bash, "/bin/chmod 0644 " +
+		Installation::destdir + Directory::etcdir + "/control_files/" + file);
+	});
+	SCR::Write (.target.ycp, Installation::destdir + Directory::etcdir + "/control_files/order.ycp", AddOnProduct::control_files_to_add);
 	SCR::Execute (.target.bash, "/bin/chmod 0644 " +
-	    Installation::destdir + Directory::etcdir + "/control_files/" + file);
-    });
-    SCR::Write (.target.ycp, Installation::destdir + Directory::etcdir + "/control_files/order.ycp", AddOnProduct::control_files_to_add);
-    SCR::Execute (.target.bash, "/bin/chmod 0644 " +
-	Installation::destdir + Directory::etcdir + "/control_files/order.ycp");
+	    Installation::destdir + Directory::etcdir + "/control_files/order.ycp");
+    }
 
     // Copy info.txt so it can be used in firstboot
     if (SCR::Read(.target.size, "/info.txt") > 0)
