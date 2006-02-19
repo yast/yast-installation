@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Sun Feb 19 17:48:17 CET 2006 - jsrain@suse.de
+
+- made inst_proposal more resistent to incorrect data returned from
+  client modules (#148271)
+
+-------------------------------------------------------------------
 Fri Feb 17 23:58:34 CET 2006 - jsrain@suse.de
 
 - removed dependency on yast2-online-update

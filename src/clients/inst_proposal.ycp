@@ -342,6 +342,8 @@
 	}
 
 	string preformatted_prop = prop["preformatted_proposal"]:"";
+	if (preformatted_prop == nil)
+	    preformatted_prop = "";
 
 	if ( preformatted_prop != "" )
 	{
