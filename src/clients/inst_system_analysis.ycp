@@ -229,7 +229,7 @@ if (Mode::autoinst ())
     return `auto;
 
 Wizard::SetContents (_("Installation Mode"), contents, help_text, true, true);
-Wizard::SetTitleIcon ("icons/penguin.png");
+Wizard::SetTitleIcon ("yast-inst-mode");
 
 symbol ret = nil;
 symbol new_mode = Mode::update () ? `update : `install;
