@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Feb 22 23:05:28 CET 2006 - jsrain@suse.de
+
+- using correct icon (#151630)
+
+-------------------------------------------------------------------
 Wed Feb 22 12:45:54 CET 2006 - ms@suse.de
 
 - added console startup message when y2base is called (#148165)
