@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Feb 22 01:20:18 CET 2006 - jsrain@suse.de
+
+- do not offer creating AutoYaST profile in first boot mode
+  (#152285)
+
+-------------------------------------------------------------------
 Sun Feb 19 17:48:17 CET 2006 - jsrain@suse.de
 
 - made inst_proposal more resistent to incorrect data returned from

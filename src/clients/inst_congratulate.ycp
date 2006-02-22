@@ -21,11 +21,12 @@
     import "Call";
     import "Package";
     import "ProductControl";
+    import "Stage";
 
     map argmap = GetInstArgs::argmap();
 
     // show button "clone system"?
-    boolean show_clone_checkbox = true;
+    boolean show_clone_checkbox = ! Stage::firstboot ();
     boolean clone_checkbox_active = ProductFeatures::GetBooleanFeature("globals", "enable_clone");
     boolean clone_enabled = false;
     if( Package::AvailableAny(["autoyast2"]) &&
