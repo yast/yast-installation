@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Feb 22 12:45:54 CET 2006 - ms@suse.de
+
+- added console startup message when y2base is called (#148165)
+
+-------------------------------------------------------------------
 Wed Feb 22 10:28:42 CET 2006 - visnov@suse.cz
 
 - adapt BuildRequires
