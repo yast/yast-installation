@@ -657,7 +657,7 @@ void CleanY2Update() {
  * @return symbol the result symbol from wizard sequencer
  */
 global symbol DoInstall() {
-    string control = Pkg::SourceProvideFile (src_id, 1, "/control.xml");
+    string control = Pkg::SourceProvideFile (src_id, 1, "/installation.xml");
     string binaries = Pkg::SourceProvideFile (src_id, 1, "/y2update.tgz");
     // UNPACK binaries
     map out = (map)SCR::Execute (.target.bash_output, sformat ("
@@ -747,7 +747,7 @@ global boolean WFIntegrate (string filename) {
  */
 global boolean Integrate (integer srcid) {
     y2milestone ("Integrating source %1", srcid);
-    string filename = Pkg::SourceProvideFile (srcid, 1, "/control.xml");
+    string filename = Pkg::SourceProvideFile (srcid, 1, "/installation.xml");
     if (! WFIntegrate (filename))
     {
 	y2error ("Workflow update failed");
