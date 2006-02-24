@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb 24 16:57:03 CET 2006 - ms@suse.de
+
+- added qt plugin check to check_network function (#149025)
+
+-------------------------------------------------------------------
 Thu Feb 23 16:15:50 CET 2006 - jsrain@suse.de
 
 - changed the name of the add-on product control file (#152770)
