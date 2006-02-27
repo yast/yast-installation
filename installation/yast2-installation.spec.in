@@ -1,0 +1,67 @@
+@HEADER-COMMENT@
+
+
+@HEADER@
+BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2 yast2-devtools yast2-testsuite
+Requires:	yast2 yast2-update
+Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
+Requires:	yast2-packager yast2-network yast2-users
+Requires:	curl release-notes
+Requires:       autoyast2-installation
+
+Provides:	yast
+Obsoletes:	yast
+
+Provides:	yast2-trans-inst-proposal y2t_inst
+Obsoletes:	yast2-trans-inst-proposal y2t_inst
+Provides:	yast2-trans-inst-general y2t_inst-general
+Obsoletes:	yast2-trans-inst-general y2t_inst-general
+Provides:	yast2-instsys
+Obsoletes:	yast2-instsys
+
+BuildArchitectures: noarch
+
+Summary:	Installation workflow
+
+%description
+This controls the system installation.
+
+@PREP@
+
+@BUILD@
+
+@INSTALL@
+
+@CLEAN@
+
+%files
+%defattr(-,root,root)
+%doc @docdir@
+%dir /usr/share/YaST2/control
+/usr/share/YaST2/control/*.xml
+/usr/share/YaST2/control/*.dtd
+
+@clientdir@/*.ycp
+@moduledir@/*.ycp
+@moduledir@/*.ybc
+@desktopdir@/*.desktop
+%dir @yncludedir@/installation
+@yncludedir@/installation/*
+
+# agents
+@scrconfdir@/etc_passwd.scr
+@scrconfdir@/proc_mounts.scr
+@scrconfdir@/cfg_windowmanager.scr
+@scrconfdir@/cfg_fam.scr
+@scrconfdir@/etc_install_inf.scr
+@scrconfdir@/etc_install_inf_alias.scr
+@scrconfdir@/etc_install_inf_options.scr
+@scrconfdir@/run_get_suseconfig_modules.scr
+@scrconfdir@/proc_modules.scr
+@scrconfdir@/run_df.scr
+
+# programs and scripts
+@ystartupdir@/startup
+
+# fvwmrc
+/usr/X11R6/share/fvwm/

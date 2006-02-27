@@ -1,0 +1,72 @@
+/**
+ * File:
+ *  kernel_finish.ycp
+ *
+ * Module:
+ *  Step of base installation finish
+ *
+ * Authors:
+ *  Jiri Srain <jsrain@suse.cz>
+ *
+ * $Id$
+ *
+ */
+
+{
+
+textdomain "installation";
+
+import "ModulesConf";
+import "Kernel";
+
+any ret = nil;
+string func = "";
+map param = $[];
+
+/* Check arguments */
+if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
+    func = (string)WFM::Args(0);
+    if(size(WFM::Args()) > 1 && is(WFM::Args(1), map))
+	param = (map)WFM::Args(1);
+}
+
+y2milestone ("starting kernel_finish");
+y2debug("func=%1", func);
+y2debug("param=%1", param);
+
+if (func == "Info")
+{
+    return (any)$[
+	"steps" : 1,
+	// progress step title
+	"title" : _("Updating kernel module dependencies..."),
+	"when" : [ `installation, `update, `autoinst ],
+    ];
+}
+else if (func == "Write")
+{
+    ModulesConf::Save (true);
+
+    // on SGI Altix add fetchop and mmtimer to MODULES_LOADED_ON_BOOT
+    if (SCR::Read (.target.size, "/proc/sgi_sn") > 0)
+    {
+	y2milestone ("found SGI Altix, adding fetchop and mmtimer");
+	Kernel::AddModuleToLoad ("fetchop");
+	Kernel::AddModuleToLoad ("mmtimer");
+    }
+
+    // Write list of modules to load after system gets up
+    Kernel::SaveModulesToLoad ();
+}
+else
+{
+    y2error ("unknown function: %1", func);
+    ret = nil;
+}
+
+y2debug("ret=%1", ret);
+y2milestone("kernel_finish finished");
+return ret;
+
+
+} /* EOF */

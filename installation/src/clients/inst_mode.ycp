@@ -1,0 +1,394 @@
+/**
+ *
+ * Authors:	Klaus Kämpf <kkaempf@suse.de>
+ *		Arvin Schnell <arvin@suse.de>
+ *
+ * Purpose:	Ask for the installation method:
+ *		- New installation
+ *		- Update
+ *		- Repair
+ *		- Boot installed system
+ *
+ *		Arguments:
+ *
+ *		Args(0): symbol `AskUser if this is called by the proposal
+ *			 AskUser() function
+ *
+ *		Returns automatically if no Linux partition is found or an
+ *		update is not supported.
+ *
+ * $Id$
+ *
+ */
+{
+    import "Mode";
+    import "Product";
+    import "Wizard";
+    import "Popup";
+    import "Label";
+    import "ProductControl";
+    import "FileSystems";
+    import "Storage";
+    import "Kernel";
+    import "RootPart";
+    import "Update";
+    import "Linuxrc";
+
+    textdomain "installation";
+
+    string start_mode = Mode::mode ();
+
+    define symbol handle_boot ()
+    {
+	y2milestone( "User wishes to boot installed system" );
+
+	if (!RootPart::didSearchForRootPartitions)
+	{
+	    UI::OpenDialog (`opt(`decorated ),
+			    // label
+			    `Label(_("Evaluating root partition. One moment please...")));
+	    RootPart::FindRootPartitions ();
+	    UI::CloseDialog ();
+	}
+
+	if (RootPart::numberOfValidRootPartitions == 0)
+	{
+	    // a popup
+	    Popup::Message(_("No Linux root partition found."));
+	    return `cancel;
+	}
+
+	// We must only change RootPart::selectedRootPartition if booting
+	// is inevitable.
+
+	if (RootPart::numberOfValidRootPartitions == 1)
+	{
+	    RootPart::SetSelectedToValid ();
+	}
+	else
+	{
+	    if (WFM::CallFunction ("inst_rootpart", [true, true, `boot_popup]) != `next)
+		return `cancel;
+	}
+
+	string root_part = RootPart::selectedRootPartition;
+
+	UI::OpenDialog( `opt(`decorated),
+			// Information popup: Inform user what partition
+			// will be booted from after user selected
+			// "Boot installed system"
+			`Label( sformat(_("Booting from %1"), root_part ) ) );
+
+	Update::Detach ();
+	RootPart::UnmountPartitions (false);
+
+	sleep (1000);
+
+	if ( ! Mode::test () )
+	{
+	    Linuxrc::WriteYaSTInf ($["Root" : root_part]);
+	    Storage::ActivateHld(true);
+	}
+
+	UI::CloseDialog ();
+
+	return `finish;
+    }
+
+
+    boolean called_from_ask_user = false;
+    if ( size( WFM::Args() ) > 0
+	 && is( WFM::Args(0), symbol )
+	 && WFM::Args(0) == `AskUser )
+    {
+	called_from_ask_user = true;
+    }
+
+
+    boolean offer_update = false;
+    if (contains (Product::flags, "update") || Kernel::GetSuSEUpdate ())
+    {
+	offer_update = true;
+    }
+
+
+    boolean have_linux = false;
+    if (Storage::HaveLinuxPartitions ())
+    {
+	have_linux = true;
+    }
+
+    if (Mode::autoinst ())
+    {
+	return `auto;
+    }
+
+    if (!called_from_ask_user && (!offer_update || !have_linux))
+    {
+	// Initially force new installation , no update possible
+	Mode::SetMode ("installation");
+	return `auto;
+    }
+
+
+    //---------------------------------------------------------------
+
+
+    string help_text = "";
+
+    if (have_linux)
+    {
+	// help text for installation method
+	help_text = help_text + _("\
+<p>
+It appears that your machine has a Linux system installed.
+</p>");
+    }
+    else
+    {
+	// help text for installation method
+	help_text = help_text + _("<p>
+It appears that your machine does not have a Linux system installed.  
+Only a new installation is possible.
+</p>");
+    }
+
+
+    // help text for installation method
+    help_text = help_text + _("\
+<p>
+Please choose what to do:
+</p>");
+
+    // help text for installation method
+    help_text = help_text + _("<p>
+Select <b>New Installation</b> if there is no existing Linux system on your
+machine or if you want to replace an existing Linux system completely,
+abandoning all its configuration data.
+</p>");
+
+    if (have_linux)
+    {
+	if (offer_update)
+	{
+	    // help text for installation method
+	    help_text = help_text + _("<p>
+Select <b>Update an Existing System</b> to update a Linux system already
+installed on your machine. This option preserves configuration settings
+from your existing system whenever possible.
+</p>");
+	}
+	else
+	{
+	    // help text for installation method
+	    help_text = help_text + _("<p>
+This product does not offer an update.</p>");
+	}
+    }
+
+    if (have_linux)
+    {
+	// help text for installation method
+	help_text = help_text + _("<p>
+Select <b>Repair Installed System</b> if you have a damaged Linux system on
+your hard disk. With this option, try to fix problems automatically.
+</p>");
+    }
+
+    if (have_linux)
+    {
+	// help text for installation method
+	help_text = help_text + _("<p>
+Select <b>Boot Installed System</b> if you have a Linux system on your hard
+disk that will not boot. With this option, try to fix problems manually.
+</p>");
+    }
+
+
+    term radio_buttons = `VBox (`VSpacing (0.4));
+
+    if (true)
+    {
+	radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`install),
+				// label for radio button 1, New installation
+				_("New &installation"), Mode::installation ())));
+    }
+
+    if (have_linux && offer_update)
+    {
+	radio_buttons = add (radio_buttons, `VSpacing(0.2));
+	radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`update),
+				// label for radio button 2, update
+				_("&Update an existing system"), Mode::update ())));
+    }
+
+    if (have_linux)
+    {
+	radio_buttons = add (radio_buttons, `VSpacing(0.2));
+	radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`repair),
+				// label for radio button 3: Start repair system
+				_("&Repair Installed System"), false)));
+    }
+
+    if (have_linux)
+    {
+	radio_buttons = add (radio_buttons, `VSpacing(0.2));
+	radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`boot),
+				// label for radio button 4: Boot installed system
+				_("&Boot installed system"), false)));
+    }
+
+    if ( ! called_from_ask_user )
+    {
+	// If this is _not_ called from the proposal's ask_user function but
+	// initially, the user _must_ make a decision, but there should clearly
+	// be a safe exit - so let's give him an "abort installation" option.
+
+	radio_buttons = add( radio_buttons, `VSpacing(1.2) );
+	radio_buttons = add( radio_buttons,
+			     `Left(`RadioButton(`id(`abort), Label::AbortInstallationButton ()))
+			     );
+    }
+
+    term radio_box = `RadioButtonGroup( `id( `options ),
+					`HSquash(
+						 `Frame (
+							 // message above radiobuttons (installation/update)
+							 _("Please select"),
+							 `HBox(
+							       `HSpacing(1),
+							       radio_buttons
+							       )
+							 )
+						 )
+					);
+
+    term buttons = `PushButton(`id(`ok), `opt(`default), Label::OKButton() );
+
+    if ( called_from_ask_user )
+    {
+	// If we were called from the proposal's ask_user function, there must
+	// be a cancel button as a safe exit.
+
+	buttons = `HBox(
+			`HWeight( 1, `PushButton(`id(`ok), `opt(`default), Label::OKButton() ) ),
+			`HSpacing( 1 ),
+			`HWeight( 1, `PushButton(`id(`cancel), Label::CancelButton() ) )
+			);
+
+    }
+
+    term ask_mode_dialog = `HBox(`id(`ask_mode_dialog ),
+				 `VSpacing( 15 ),		// force dialog height
+				 `VBox(
+				       `HSpacing( 30 ),	// force help text width
+				       `RichText( help_text )
+				       ),
+				 `HSpacing( 3 ),
+				 `VBox(
+				       `VSpacing( 1 ),
+				       `Top( radio_box ),
+				       buttons
+				       ),
+				 `HSpacing( 3 )
+				 );
+
+
+
+    // Event handling
+
+    UI::OpenDialog( ask_mode_dialog );
+
+    any ret = nil;
+
+    while ( true )
+    {
+	if (!Mode::autoinst ())
+	{
+	    ret = UI::UserInput();
+	}
+	else
+	{
+	    ret = `ok;
+	}
+
+	if ( ret == `abort )	// the abort button (not check box!)
+	{
+	    if (Popup::ConfirmAbort (`painless))
+		break;
+	}
+
+	if ( ret == `cancel )
+	    break;
+
+	if (ret == `ok || ret == `next || ret == `accept)
+	{
+	    ret = `next;
+
+	    any newmode = UI::QueryWidget(`id(`options), `CurrentButton);
+
+	    if (newmode == nil)
+	    {
+		// this is a label of a message box
+		Popup::Message(_("Choose one of the\noptions to continue."));
+		continue;
+	    }
+
+	    if (newmode == `abort) // the abort check box (not button!)
+	    {
+		if (Popup::ConfirmAbort (`painless))
+		{
+		    ret = `abort;
+		    break;
+		}
+
+		continue;
+	    }
+
+	    if (newmode == `install)
+	    {
+		Mode::SetMode ("installation");
+		break;
+	    }
+
+	    if (newmode == `update)
+	    {
+		Mode::SetMode ("update");
+		break;
+	    }
+
+	    if (newmode == `repair)
+	    {
+		Mode::SetMode ("repair");
+		ret = `finish;
+		break;
+	    }
+
+	    if (newmode == `boot)
+	    {
+		if (handle_boot () == `finish)
+		{
+		    Mode::SetMode ("");
+		    ret = `finish;
+		    break;
+		}
+	    }
+	}
+    }
+
+    UI::CloseDialog();
+
+    if (Mode::mode () != start_mode)
+    {
+	ProductControl::UpdateWizardSteps ([$["stage":"initial", "mode":Mode::mode ()],
+					    $["stage":"continue", "mode":Mode::mode ()]]);
+	y2milestone ("Switching Steps from %1 to %2 ", start_mode, Mode::mode ());
+    }
+
+    if (Mode::repair ())
+    {
+	WFM::CallFunction ("inst_repair");
+    }
+
+    return (symbol)ret;
+}

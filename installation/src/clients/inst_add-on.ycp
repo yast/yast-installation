@@ -1,0 +1,121 @@
+/**
+ * File:	clients/inst_add-on.ycp
+ * Package:	yast2-installation
+ * Summary:	Select add-on products for installation
+ * Authors:	Jiri Srain <jsrain@suse.de>
+ *
+ */
+
+{
+textdomain "installation";
+
+import "AddOnProduct";
+import "GetInstArgs";
+import "Packages";
+import "Popup";
+import "ProductControl";
+import "Report";
+import "Wizard";
+
+include "installation/add-on-workflow.ycp";
+
+map argmap = GetInstArgs::argmap();
+
+void Redraw (boolean enable_back, boolean enable_next) {
+    // main screen heading
+    string title = _("Add-on Product Installation");
+    string help = "";
+    integer index = -1;
+    list items = maplist (map<string,any> product, AddOnProduct::add_on_products, {
+	index = index + 1;
+	map data = Pkg::SourceGeneralData (product["media"]:-1);
+	// placeholder for unknown path
+	string dir = data["product_dir"]:_("Unknown");
+	if (dir == "")
+	    dir = "/";
+	// table cell, %1 is URL, %2 is directory name
+	string media = sformat (_("URL: %1, Directory: %2"),
+	    // placeholder for unknown URL
+	    data["url"]:_("Unknown"), dir);
+	return `item (`id (index),
+	    media,
+	    sformat (_("Product %1"), product["product"]:""));
+    });
+    term contents = `VBox (
+	`Table (`id (`summary), `header (
+		// table header
+		_("Media"),
+		// table header
+		_("Product")),
+	    items),
+	`HBox (
+	    `PushButton (`id (`add), Label::AddButton ()),
+	    `PushButton (`id (`delete), Label::DeleteButton ())
+	)
+    );
+
+    Wizard::SetContents (title, contents, help, enable_back, enable_next);
+    Wizard::SetDesktopIcon("vendor");
+}
+
+Packages::SelectProduct ();
+Redraw (GetInstArgs::enable_back(), GetInstArgs::enable_next());
+symbol ret = nil;
+
+repeat {
+    ret = (symbol)Wizard::UserInput();
+    if (ret == `abort || ret == `cancel)
+    {
+	if (Popup::ConfirmAbort (`incomplete))
+	    break;
+    }
+    else if (ret == `delete)
+    {
+	integer selected = (integer)UI::QueryWidget (`id (`summary), `CurrentItem);
+	if (selected == nil)
+	{
+	    // message report
+	    Report::Message (_("Select a product to delete."));
+	    continue;
+	}
+	// remove whole media if the product is the onle one on the media
+	integer media = AddOnProduct::add_on_products[selected, "media"]:-1;
+	integer med_count = size (filter (map<string,any> prod,
+	    AddOnProduct::add_on_products,
+	{
+	    return prod["media"]:-1 == media;
+	}));
+	if (med_count == 1)
+	    Pkg::SourceDelete (media);
+	// remove the selected record
+	AddOnProduct::add_on_products[selected] = nil;
+	AddOnProduct::add_on_products = filter (map<string,any> prod,
+	    AddOnProduct::add_on_products,
+	{
+	    return prod != nil;
+	});
+	Redraw (GetInstArgs::enable_back(), GetInstArgs::enable_next());
+    }
+    else if (ret == `add)
+    {
+	symbol ret = RunWizard ();
+	Redraw (GetInstArgs::enable_back(), GetInstArgs::enable_next());
+    }
+} until ( ret == `next || ret == `back );
+
+if (ret == `next)
+{
+    foreach (map<string,any> prod, AddOnProduct::add_on_products, {
+	AddOnProduct::Integrate (prod["media"]:0);
+    });
+    ret = ProductControl::RunFrom (
+	ProductControl::CurrentStep () + 1,
+	true);
+    if (ret == `next)
+	ret = `finish;
+}
+
+return ret;
+
+/* EOF */
+}

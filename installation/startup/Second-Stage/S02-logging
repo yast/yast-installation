@@ -1,0 +1,23 @@
+#!/bin/sh
+log "Starting S02-logging..."
+log "======================="
+
+#=============================================
+# 3) start syslog daemon
+#---------------------------------------------
+if [ -x /etc/init.d/syslog ];then
+	/etc/init.d/syslog start
+fi
+
+#=============================================
+# 3.1) set debug and logging options
+#---------------------------------------------
+if got_kernel_param "debug" ; then
+	export Y2MAXLOGSIZE=50000
+	export Y2MAXLOGNUM=5
+	export Y2DEBUG=1
+	log "\tSet YaST2 DEBUG LOG parameters:"
+	log "\tMaximum log size:  $Y2MAXLOGSIZE"
+	log "\tMaximum log count: $Y2MAXLOGNUM"
+	log "\tY2DEBUG: $Y2DEBUG"
+fi
