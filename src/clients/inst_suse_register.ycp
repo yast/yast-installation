@@ -26,6 +26,11 @@
     import "String";
     import "Label";
 
+
+    map ui = UI::GetDisplayInfo();
+    boolean textmode = (boolean) ui["TextMode"]:nil;
+
+
     map argmap = GetInstArgs::argmap();
 
 
@@ -276,9 +281,9 @@ map<string, string> suseRegister(string parameter)
                                                         `HBox(
                                                               `HWeight(1, `PushButton(`id(`start_browser), mi_browser_btn ) ),
                                                               `HSpacing(`opt(`hstretch), 3),
-                                                              `HWeight(1, `PushButton(`id(`skip_config),  mi_skip_btn ) ),
-                                                              `HSpacing(`opt(`hstretch), 3),
-                                                              `HWeight(1, `PushButton( `id(`config_done), `opt(`disabled), mi_done_btn  ) )
+                                                              `HWeight(1, `PushButton(`id(`skip_config),  mi_skip_btn ) ) //,
+                                                             // `HSpacing(`opt(`hstretch), 3),
+                                                             // `HWeight(1, `PushButton( `id(`config_done), `opt(`disabled), mi_done_btn  ) )
                                                         )
                                            )
                         )),
@@ -376,7 +381,10 @@ map<string, string> suseRegister(string parameter)
 
 
     repeat {
-        ret = Wizard::UserInput();
+        // browser only pops into foreground if no other Dialogs are open
+        // if a browser is open ret will be set to `browser_running ... then no user input is required to proceed
+        if (ret == `browser_running) ret = `next;
+        else ret = Wizard::UserInput();
 
         if (ret == `abort)
         {
@@ -439,35 +447,13 @@ map<string, string> suseRegister(string parameter)
 
                         if ( mi_ret == `start_browser  )
                         {
-                            UI::ChangeWidget( `id(`config_done), `Enabled, true  );
+                            // UI::ChangeWidget( `id(`config_done), `Enabled, true  );
 
-                            //TODO:
-                            // find a consistent way to launch firefox or w3m
-
-                            // ... this is work in progress (not yet in SVN) ...
-
-                            /* cases:
-                                      NCurses: always launch w3m as an unprivileged user (user not defined yet)
-
-                                      QT:
-                                         - during installation: start XUL browser (provided by stark@suse.de)
-                                                                (hopefully on monday evening)
-                                         - in installed system: start users firefox with new-window option
-                                                                command: "firefox -new-window $URL"
-                                                                works with FF 1.5 and higher (and therefor with CODE 10)
-
-                                         - if no FF is installed, fallback to "xterm -e w3m $URL"
-
-                                      ANY: if a w3m call is needed, but w3m is not installed, display error message
-                            */
-
-
-                            //SCR::Execute(.target.bash_output, sformat("firefox -a firefox -remote \"openURL(%1, new-window)\" || firefox %1", "http://www.google.de" ));
-                            //SCR::Execute(.target.bash, sformat("firefox %1", "http://www.google.de" ));
-                            //SCR::Execute(.target.bash, sformat("screen w3m %1", "http://www.google.de" ));
-                            // UI::RedrawScreen();
+                            // just a test .... the still_in_mi thing
+                            ret = `browser_running;
+                            mi_loopend = true;
                         }
-                        if ( mi_ret == `skip_config  )
+                        else if ( mi_ret == `skip_config  )
                         {
                             mi_loopend = true;
                             loopend = true;
@@ -477,10 +463,10 @@ map<string, string> suseRegister(string parameter)
                         /* if the browser start really blocks the YCP workflow the following block can run without the if-clause
                            if so the third button "config_done" in manual interaction dialog can disappear
                         */
-                        if ( mi_ret == `config_done  )
+                        if ( ! mi_loopend  ) // mi_ret == `config_done  )
                         {
                             // deacticate DONE button
-                            UI::ChangeWidget( `id(`config_done), `Enabled, false );
+                            // UI::ChangeWidget( `id(`config_done), `Enabled, false );
                             // show the user, that we are doing something
                             UI::ChangeWidget( `id(`needinfo), `Value, _("Checking ...") );
 
@@ -506,9 +492,55 @@ map<string, string> suseRegister(string parameter)
 
                     } until ( mi_loopend == true  );
 
-                    //TODO: according to mi_ret, ret has to be set
-
+                    // now close the dialog in order to bring the browser window to foreground
                     UI::CloseDialog();
+
+                    // now we can launch the browser
+
+                    //TODO:
+                    // find a consistent way to launch firefox or w3m
+
+                    // ... this is work in progress (not yet in SVN) ...
+
+                    /* cases:
+                              NCurses: always launch w3m as an unprivileged user (user not defined yet)
+
+                              QT:
+                                 - during installation: start XUL browser (provided by stark@suse.de)
+                                                        (hopefully on monday evening)
+                                 - in installed system: start users firefox with new-window option
+                                                        command: "firefox -new-window $URL"
+                                                        works with FF 1.5 and higher (and therefor with CODE 10)
+
+                                 - if no FF is installed, fallback to "xterm -e w3m $URL"
+
+                              ANY: if a w3m call is needed, but w3m is not installed, display error message
+                    */
+
+
+                    //SCR::Execute(.target.bash_output, sformat("firefox -a firefox -remote \"openURL(%1, new-window)\" || firefox %1", "http://www.google.de" ));
+                    //SCR::Execute(.target.bash, sformat("firefox %1", "http://www.google.de" ));
+                    //SCR::Execute(.target.bash, sformat("screen w3m %1", "http://www.google.de" ));
+
+                    if (ret == `browser_running)
+                    {
+                        // browser_running means we have to launch a browser :)
+                        // its called like that, because in any other location in the code the name makes sense
+
+                        // just simple handling right now for testing
+
+                        if ( textmode == false  )
+                            SCR::Execute(.target.bash, sformat("firefox %1", "http://www.google.de" ));
+                        else if (textmode == true ) 
+                            SCR::Execute(.target.bash, sformat("screen -m w3m %1", "http://www.google.de" ));
+                        else {  // shitt we are running in a new UI
+                        }
+
+                        // SCR::Execute(.target.bash, "xosview");
+                        UI::RedrawScreen();
+                    }
+
+
                 }
                 // NO ELSE CASE HERE!!!
                 // ... because information_data may be changed during error code 1 case by a suse_register run
