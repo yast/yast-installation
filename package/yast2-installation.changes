@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Feb 27 18:32:05 CET 2006 - jsrain@suse.de
+
+- fixed setting default desktop according to destop dialog (#152709)
+
+-------------------------------------------------------------------
 Fri Feb 24 19:40:37 CET 2006 - jsrain@suse.de
 
 - select base product before runing add-on products dialog
