@@ -113,9 +113,11 @@
 	    desktop_order = prepend (desktop_order, selection_desktop);
 	    desktop_found = false;
 	    find (string d, desktop_order, {
-		    if (Pkg::IsProvided (desktop_data[d, "package"]:"")
-			|| Pkg::IsSelected (desktop_data[d, "package"]:""))
+		    string package = desktop_data[d, "package"]:"";
+		    if (Pkg::IsProvided (package)
+			|| Pkg::IsSelected (package))
 		    {
+			y2milestone ("package %1 selected or installed", package);
 			if (! desktop_found)
 			{
 			    desktop_found = true;
@@ -133,6 +135,10 @@
 				"Setting cursor theme %1 - package selected",
 				default_cursor);
 			}
+		    }
+		    else if (! desktop_found)
+		    {
+			y2milestone ("Package %1 not selected or installed, trying next desktop...", package);
 		    }
 		    return desktop_found;
 	    });
