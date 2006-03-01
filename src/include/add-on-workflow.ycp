@@ -199,10 +199,12 @@ the first CD are located, such as /data1/CD1.</p>");
         }
         else if ( input == `cd )
         {
+	    Pkg::SourceReleaseAll();
             createResult = SourceManager::createSource( "cd:///" );
         }
         else if ( input == `dvd )
         {
+	    Pkg::SourceReleaseAll();
             createResult = SourceManager::createSource( "dvd:///" );
         }
 	else if ( input == `local_dir )
