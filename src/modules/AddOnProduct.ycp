@@ -748,23 +748,37 @@ global boolean WFIntegrate (string filename) {
 global boolean Integrate (integer srcid) {
     y2milestone ("Integrating source %1", srcid);
     string filename = Pkg::SourceProvideFile (srcid, 1, "/installation.xml");
-    if (! WFIntegrate (filename))
+    if (filename == nil)
     {
-	y2error ("Workflow update failed");
-	return false;
+	y2milestone ("Add-on product control file not found, not touching the workglow");
     }
-    string y2update = Pkg::SourceProvideFile (srcid, 1, "/y2update.tgz");
-    string tmpdir = (string)SCR::Read (.target.tmpdir) + "/control_files";
-    map out = (map)SCR::Execute (.target.bash_output, sformat ("
+    else
+    {
+	if (! WFIntegrate (filename))
+	{
+	    y2error ("Workflow update failed");
+	    return false;
+	}
+	string tmpdir = (string)SCR::Read (.target.tmpdir) + "/control_files";
+	map out = (map)SCR::Execute (.target.bash_output, sformat ("
 test -d %1 || /bin/mkdir %1;
 /bin/cp %2 %1/%3.xml;
 ", tmpdir, filename, srcid));
-    if (out["exit"]:-1 != 0)
-    {
-	y2error ("Error occurred while copying control file: %1", out);
+	if (out["exit"]:-1 != 0)
+	{
+	    y2error ("Error occurred while copying control file: %1", out);
+	}
+	control_files_to_add = add (control_files_to_add, sformat ("%1.xml", srcid));
     }
-    control_files_to_add = add (control_files_to_add, sformat ("%1.xml", srcid));
-    UpdateInstSys (y2update);
+    string y2update = Pkg::SourceProvideFile (srcid, 1, "/y2update.tgz");
+    if (y2update == nil)
+    {
+	y2milestone ("No YaST update found on the media");
+    }
+    else
+    {
+	UpdateInstSys (y2update);
+    }
     return true;
 }
 

@@ -1,8 +1,10 @@
 -------------------------------------------------------------------
-Wed Mar  1 20:06:20 CET 2006 - jsrain@suse.de
+Wed Mar  1 23:19:47 CET 2006 - jsrain@suse.de
 
 - release all medias before registering add-on product CD or DVD
   (#154348)
+- check whether files are on the add-on product media before using
+  them (#154314)
 
 -------------------------------------------------------------------
 Mon Feb 27 18:32:05 CET 2006 - jsrain@suse.de
