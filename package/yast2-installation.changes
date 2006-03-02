@@ -5,6 +5,7 @@ Wed Mar  1 23:19:47 CET 2006 - jsrain@suse.de
   (#154348)
 - check whether files are on the add-on product media before using
   them (#154314)
+- 2.13.26
 
 -------------------------------------------------------------------
 Mon Feb 27 18:32:05 CET 2006 - jsrain@suse.de
