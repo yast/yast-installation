@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Mar  3 17:28:36 CET 2006 - jsrain@suse.de
+
+- added .desktop file for add-on product installation
+
+-------------------------------------------------------------------
 Fri Mar  3 10:43:12 CET 2006 - visnov@suse.cz
 
 - reset package manager before installing patches 
