@@ -6,7 +6,7 @@
  *                              machine registration
  *                              if needed, launch browser for user/customer registration
  *                              ZMD configuration
- * Authors:     Jens Daniel Schmidt <jdsn@suse.de>
+ * Authors:     J. Daniel Schmidt <jdsn@suse.de>
  *
  * Perform Customer Center Configuration
  *
@@ -16,9 +16,7 @@
 {
     textdomain "installation";
 
-    import "Internet";
     import "Wizard";
-    import "Report";
     import "Popup";
     import "GetInstArgs";
     import "CustomDialogs";
@@ -36,58 +34,35 @@
     map argmap = GetInstArgs::argmap();
 
 
-    // TODO: SIGI:
-    //             texts are toooo loooong and too complex, rather use short and easy sentences
-    //             button texts are to long, only name the action, and decribe it in a short sentence above
-
     /* strings for main (wizard) layout  */
     string nccc = _("Novell Customer Center Configuration");
     string nccc_top = _(
-"It is recommended to configure your Customer Center.
-By donig so, you will get access to the latest updates.
-You may skip this step now and configure it any time later.");
+"Here will be some great Marketing blabla
+like Novell Customer Center is a great thing!");
 
-    string nccc_configure = _("Configure Novell Customer Center");
-    string nccc_noconfigure = _("Skip configuration and Online Update");
+    string nccc_configure = _("Configure now (recommended)");
+    string nccc_noconfigure = _("Configure later");
 
-    string nccc_sub_hwinfo  = _("Submit hardware profile (recommended)");
-    string nccc_sub_sysdata = _("Submit optional system data (recommended)");
-    string nccc_sub_comment = _(
-"Some systems will require these data 
-to get updates or other benefits.");
+    string nccc_sub_hwinfo  = _("Hardware profile");
+    string nccc_sub_sysdata = _("System configuration");
+    string nccc_sub_comment = _("For better convenience please allow to transmit:");
 
-    string nccc_sub_show    = _(
-"You may see the information to be transmitted 
-by pressing this button:");
-
-    string nccc_sub_showbtn = _("Show information");
+    string nccc_sub_show    = _("Display the information to be transmitted:");
+    string nccc_sub_showbtn = _("Show");
 
 
-    /*  strings for "ask for online update"-popup   */
-    string ask_update_main = _(
-"Your online update configuration was successful.
-You can now run online update before proceeding 
-with the installation.");
-
-    string ask_update_skipinfo = _("Skipping Online Update will proceed with the installation now.");
-    string ask_update_run_btn = _("Run Online Update");
-    string ask_update_skip_btn = _("Skip Online Update");
+    /*  strings for success popup   */
+    string nccc_success_msg = _("Your configuration was successful.");
 
 
    /* strings for manual interaction popup */
     string mi_required = _("Manual interaction is required");
     string mi_needinfo = _("The server needs the following information:");
+    string mi_browser_btn = _("Continue");
+    string mi_start_browser = _(
+"A webbrowser will be launched now to complete
+the configuration on the presented website.");
 
-    string mi_use_start_browser = _(
-"Use Start browser to complete your Customer Center Configuration 
-on the presented website.");
-    string mi_skip_configuration = _(
-"You may skip the Customer Center Configuration now.
-To get access to updates you can finish this configuration at any later time.");
-
-    string mi_browser_btn = _("Start browser");
-    string mi_skip_btn = _("Skip configuration");
-    string mi_done_btn = _("Configuration done");
 
 
     /* string for show information popup */
@@ -96,19 +71,18 @@ To get access to updates you can finish this configuration at any later time.");
 
     /*  strings for conflict popup */
     string conflict_need_info = _(
-"The server requires additional system information.
-Check configuration settings will lead back to the main
-dialog where you can check and adjust options.
-");
+"The server requires additional system information. The submission 
+of the hardware profile will be activated automatically."
+);
 
-    string conflict_skip_info = _(
-"Skip configuration and update will end the configuration
-and online update will not be run.
-You can finish this configuration at any later time.
-");
+    string conflict_skip_info = _("");
+//"Skip configuration and update will end the configuration
+//and online update will not be run.
+//You can finish this configuration at any later time.
+//");
 
-    string conflict_retry_btn = _("Check configuration settings");
-    string conflict_skip_btn = _("Skip configuration and update");
+    string conflict_retry_btn = _("Continue");
+    string conflict_skip_btn = _("Cancel");
 
 
     /* error messages  */
@@ -118,7 +92,7 @@ You can finish this configuration at any later time.
 
     /* CCC error / unknown error */
     string error_retry_btn = _("Retry");
-    string error_skip_btn  = _("Skip configuration");
+    string error_skip_btn  = _("Cancel");
 
 
 
@@ -163,15 +137,16 @@ You can finish this configuration at any later time.
 map<string, string> suseRegister(string parameter)
 {
     // handle parameters
-    string params="";
+    string params = " -y ";
     if (parameter == "p") params = params + " -p ";
     if ( ! subhwinfo  )   params = params + " --no-hw-data ";
     if ( ! subsysdata )   params = params + " --no-optional ";
 
-    // run suse_register
-    map<string, any> info = (map<string, any> ) SCR::Execute(.target.bash_output, sformat("/usr/bin/suse_register %1", params ));
+    // run suse_register ... -y beautifies the output for usage in yast
+    y2milestone ("Calling /usr/bin/suse_register %1", params);
+    map<string, any> info = (map<string, any>) SCR::Execute(.target.bash_output, sformat("/usr/bin/suse_register %1", params ));
     string exitcode = sformat("%1", info["exit"]:99);
-
+    y2milestone ("/usr/bin/suse_register returned %1", exitcode);
 
     /* vvvvvvv  for demonstration purposes set DEMO to true   vvvvvvvvv */
     boolean DEMO = true;
@@ -198,18 +173,35 @@ map<string, string> suseRegister(string parameter)
         );
         UI::UserInput();
         exitcode = (string) UI::QueryWidget(`id(`err), `Value);
+        if (exitcode == "1") info["stdout"]="http://www.opensuse.org";
         UI::CloseDialog();
     }
     /* ^^^^^^^    end of DEMO   - (FIXME: to be removed after testing)  ^^^^^^^^ */
 
 
     // transform to map<string, string>
-    return (map<string, string>) $[
-              "exit"  :exitcode ,
-              "stdout":info["stdout"]:"",
-              "stderr":info["stderr"]:""
-            ];
+    map<string, string> response = $[
+                                     "exit"  :exitcode ,
+                                     "stdout":info["stdout"]:"",
+                                     "stderr":info["stderr"]:""
+                                    ];
+
+    y2milestone ("Server response: %1", response);
+    return response;
 }
+
+
+
+boolean amIroot()
+{
+    // check if we are root
+    map<string, any> userid = (map<string, any>) SCR::Execute(.target.bash_output, "ui -u");
+    if ( userid["stdout"]:"1" == "0" )
+        return true;
+    else
+        return false;
+}
+
 
 
 
@@ -223,24 +215,23 @@ map<string, string> suseRegister(string parameter)
     /* vv   MAIN (WIZARD) LAYOUT  vv  */
     term sr_layout=nil;
     sr_layout=`HVCenter( `VBox(
-                     `Left ( `Label( nccc_top )),
-                     `VSpacing(0.5),
                      `Left (
                              `RadioButtonGroup( `id(`sr_perform), `VBox(
-                             `Left (
-                                `RadioButton(`id(`configure), `opt(`notify), nccc_configure, true )),
-                             `Left ( `HBox( `HSpacing( 3.0 ), `Frame( "",
+                             `Left ( `Label( nccc_top ) ),
+                             `VSpacing(1),
+                             `Left ( `RadioButton(`id(`noconfigure), `opt(`notify), nccc_noconfigure )),
+                             `Left ( `RadioButton(`id(`configure),   `opt(`notify), nccc_configure, true )),
+                             `Left ( `HBox( `HSpacing( 3.0 ),
                                       `VBox (
+                                              `Left( `Label( nccc_sub_comment ) ),
+                                              `VSpacing(0.5),
                                               `Left( `CheckBox(`id(`hwinfo),  `opt(`notify),  nccc_sub_hwinfo,  subhwinfo  ) ),
                                               `Left( `CheckBox(`id(`sysdata), `opt(`notify), nccc_sub_sysdata, subsysdata ) ),
                                               `VSpacing(0.5),
-                                              `Left( `Label( nccc_sub_comment ) ),
-                                              `VSpacing(0.5),
                                               `Left( `Label( nccc_sub_show  ) ),
                                               `PushButton(`id(`showinfo), nccc_sub_showbtn )
-                                   ) ) )) ,
-                             `VSpacing(0.5),
-                             `Left ( `RadioButton(`id(`noconfigure), `opt(`notify), nccc_noconfigure ))
+                                   ) ) ) ,
+                             `VSpacing(0.5)
                            )))
     ));
 
@@ -249,14 +240,14 @@ map<string, string> suseRegister(string parameter)
 
 
 
-
     /* vv      SHOW INFO POPUP     vv  */
-    term showinformation = `HBox( `HWeight(1, `HSpacing(0.5)),
-                                  `HWeight( 90, `VBox(
-                                  `VWeight( 3 , `Label( transmit_info ) ),
-                                  `VWeight( 75, `RichText(`id(`information_text), `opt(`plainText), information_text )),
-                                  `VWeight( 5, `PushButton (`id (`close_showinfo), Label::CloseButton () ) ) )),
-                                  `HWeight(1, `HSpacing(0.5))
+    term showinformation = `HBox( `HSpacing(0.5),
+                                  `MinSize(  70, 22 ,`VBox(
+                                     `Label( transmit_info ),
+                                     `RichText(`id(`information_text), `opt(`plainText), information_text ),
+                                     `PushButton (`id (`close_showinfo), Label::CloseButton () )  )
+                                   ),
+                                  `HSpacing(0.5)
     );
     /* ^^      END  SHOW INFO       ^^  */
 
@@ -266,30 +257,18 @@ map<string, string> suseRegister(string parameter)
 
     /* vv  MANUAL INTERACTION POPUP vv  */
     term manual_interaction = `HBox(
-                       `HWeight(1, `HSpacing(0.5)),
-                       `HWeight(90, `VBox(
-                                          `VWeight(  3, `Left( `Label( `opt(`boldFont), mi_required ) ) ),
-                                          `VWeight(  1, `VSpacing(0.5)),
-                                          `VWeight(  3, `Left( `Label( mi_needinfo ) ) ),
-                                          `VWeight( 10,
-                                                        `HBox( `HWeight(  1, `HSpacing(0.5)),
-                                                               `HWeight( 80, `RichText(`id(`needinfo), `opt(`plainText), needinfo   )),
-                                                               `HWeight(  1, `HSpacing(0.5))
-                                                         )
-                                          ),
-                                          `VWeight(  3, `Left( `Label( mi_use_start_browser  ) )),
-                                          `VWeight(  3, `Left( `Label( mi_skip_configuration ) )),
-                                          `VWeight(  3,
-                                                        `HBox(
-                                                              `HWeight(1, `PushButton(`id(`start_browser), mi_browser_btn ) ),
-                                                              `HSpacing(`opt(`hstretch), 3),
-                                                              `HWeight(1, `PushButton(`id(`skip_config),  mi_skip_btn ) ) //,
-                                                             // `HSpacing(`opt(`hstretch), 3),
-                                                             // `HWeight(1, `PushButton( `id(`config_done), `opt(`disabled), mi_done_btn  ) )
-                                                        )
+                                   `MinSize( 50, 20, `VBox(
+                                           `Left( `Label( `opt(`boldFont), mi_required ) )  ,
+                                           `VSpacing(0.5) ,
+                                           `Left( `Label( mi_start_browser  ) ) ,
+                                           `Left( `Label( mi_needinfo ) )  ,
+                                                  `RichText(`id(`needinfo), `opt(`plainText), needinfo    ),
+                                           `HBox(
+                                                  `PushButton(`id(`start_browser), mi_browser_btn )  ,
+                                                  `HSpacing( 3),
+                                                  `PushButton(`id(`cancel),  Label::CancelButton()  )
                                            )
-                        )),
-                       `HWeight(1, `HSpacing(0.5))
+                                   ))
     );
     /* ^^  END MANUAL INTERACTION  ^^  */
 
@@ -297,70 +276,39 @@ map<string, string> suseRegister(string parameter)
 
     /* vv      CCC CONFLICT POPUP      vv  */
     term ccc_conflict=
-    `HBox(
-          `HWeight(1, `HSpacing(0.5)),
-          `HWeight(90, `VBox(
-                             `VWeight(  2, `Left( `Label( `opt(`boldFont), nccc ) ) ),
-                             `VWeight(  1, `VSpacing(0.5)),
-                             `VWeight(  5, `Left( `Label( conflict_need_info  )  ) ),
-                             `VWeight(  1, `VSpacing(0.5)),
-                             `VWeight(  5, `Left( `Label( conflict_skip_info  )  ) ),
-                             `VWeight(  3,
-                             `HBox(
-                                   `HWeight(1, `PushButton(`id(`retry), conflict_retry_btn ) ),
-                                   `HSpacing( 3 ),
-                                   `HWeight(1, `PushButton(`id(`skip),  conflict_skip_btn ) )
-                                  )
-                            )
-           )),
-          `HWeight(1, `HSpacing(0.5))
+    `VBox(
+          `Left( `Label( `opt(`boldFont), nccc ) ),
+          `VSpacing( 0.5 ),
+          `Left( `Label( conflict_need_info  )  ),
+          `Left( `Label( conflict_skip_info  )  ),
+          `PushButton(`id(`ok), Label::OKButton())
     );
     /* ^^       END CCC CONFLICT       ^^  */
 
 
     /* vv      CCC ERROR POPUP      vv  */
     term ccc_error=
-    `HBox(
-          `HWeight(1, `HSpacing(0.5)),
-          `HWeight(90, `VBox(
-                             `VWeight(  2, `Left( `Label( `opt(`boldFont), "Error" ) ) ),
-                             `VWeight(  1, `VSpacing(0.5)),
-                             `VWeight(  5, `Left( `Label( "unknown error"  )  ) ),
-                            // `VWeight(  1, `VSpacing(0.5)),
-                            // `VWeight(  3, `Left( `Label( "really unknown error"  )  ) ),
-                             `VWeight(  2,
-                             `HBox(
-                                   `HWeight(1, `PushButton(`id(`retry), error_retry_btn   ) ),
-                                   `HSpacing( 3 ),
-                                   `HWeight(1, `PushButton(`id(`skip),  error_skip_btn  ) )
-                                  )
-                            )
-           )),
-          `HWeight(1, `HSpacing(0.5))
+    `VBox(
+           `Left( `Label( `opt(`boldFont), _("Error") ) ),
+           `VSpacing( 0.5 ),
+           `Left( `Label( `id(`err_description), _("unknown error")  ) ),
+           `HBox(
+                  `HWeight(1, `PushButton(`id(`ok), Label::OKButton()  ) ),
+                  `HSpacing( 3 ),
+                  `HWeight(1, `PushButton(`id(`cancel),  Label::CancelButton() ) )
+                )
     );
     /* ^^      END CCC ERROR        ^^  */
 
 
 
     /* vv      OK DONE UPDATE??    vv  */
-    term done_ask_update=
-    `HBox(
-          `HWeight(1, `HSpacing(0.5)),
-          `HWeight(90, `VBox(
-                             `VWeight(  2, `Left( `Label( `opt(`boldFont), nccc ) ) ),
-                             `VWeight(  1, `VSpacing(0.5)),
-                             `VWeight(  3, `Left( `Label( ask_update_main  )  ) ),
-                             `VWeight(  1, `VSpacing(0.5)),
-                             `VWeight(  2, `Left( `Label( ask_update_skipinfo  )  ) ),
-                             `VWeight(  2,
-                             `HBox(
-                                   `HWeight(1, `PushButton(`id(`update), ask_update_run_btn  ) ),
-                                   `HSpacing( 3 ),
-                                   `HWeight(1, `PushButton(`id(`noupdate), ask_update_skip_btn ) )
-                                  )
-                            )
-           )),
-          `HWeight(1, `HSpacing(0.5))
+    term nccc_success=
+    `VBox(
+           `Left( `Label( `opt(`boldFont), nccc ) ),
+           `VSpacing( 0.5 ),
+           `Left( `Label( nccc_success_msg  ) ),
+           `PushButton(`id(`ok), Label::OKButton() )
     );
     /* ^^    END OK DONE UPDATE??   ^^  */
 
@@ -369,24 +317,16 @@ map<string, string> suseRegister(string parameter)
     // check if we are in installation workflow or running independently
     if (Mode::normal()) Wizard::CreateDialog();
 
-
     // we always need the next button
     Wizard::SetContents (nccc, contents, help, GetInstArgs::enable_back(), true);
 
+    y2debug (UI::DumpWidgetTree());
+
     boolean loopend = false;
-
-
-    // FIXME: for debugging  - to be removed after testing
-    UI::DumpWidgetTree();
-
     any ret = nil;
 
-
     repeat {
-        // browser only pops into foreground if no other Dialogs are open
-        // if a browser is open ret will be set to `browser_running ... then no user input is required to proceed
-        if (ret == `browser_running) ret = `next;
-        else ret = Wizard::UserInput();
+        ret = Wizard::UserInput();
 
         if (ret == `abort)
         {
@@ -430,10 +370,9 @@ map<string, string> suseRegister(string parameter)
                 /* run suse_register to see if we need manual interaction */
                 information_data = suseRegister("");
 
-
                 // error code 1: needinfo
                 // manual interaction is requiered
-                // this case MUST be first 
+                // this case MUST be first
                 //  ... because during manual interaction further suse_register calls change the error code
                 if (information_data["exit"]:"99" == "1")
                 {
@@ -446,29 +385,46 @@ map<string, string> suseRegister(string parameter)
                     repeat
                     {
                         mi_ret = UI::UserInput();
-
                         if ( mi_ret == `start_browser  )
                         {
+                            UI::ChangeWidget( `id(`needinfo), `Value, _("Browser starting ...") );
                             // UI::ChangeWidget( `id(`config_done), `Enabled, true  );
 
-                            // just a test .... the still_in_mi thing
-                            ret = `browser_running;
-                            mi_loopend = true;
+                            // now we launch the browser
+                            string browser_cmd ="/bin/true";
+                            boolean iamroot = amIroot();
+
+                            if ( textmode )
+                               browser_cmd = "screen w3m ";
+                            else
+                            {
+                                if ( iamroot )
+                                    browser_cmd = "/usr/bin/xulrunner /usr/share/YaST2/yastbrowser/application.ini -url ";
+                                else
+                                    browser_cmd = "firefox -new-window ";
+                            }
+
+                            if ( iamroot )
+                            {
+                                // if I am root add an "su suse-ncc " to the command
+                                // browser_cmd = "su -l suse-ncc " + browser_cmd;
+
+                                // FIXME!!!  sux is obsolete, su does xauth now
+                                // FIXME!!!  but the call with "su" is still not working!!
+                                // FIXME!!!  resulting in "cannot open display" errors even with "export DISPLAY"
+                            }
+                            SCR::Execute(.target.bash, sformat("%1 %2", browser_cmd, information_data["stdout"]:"http://www.opensuse.org" ));
+
+                            UI::RedrawScreen();
+
                         }
-                        else if ( mi_ret == `skip_config  )
+                        else if ( mi_ret == `cancel  )
                         {
                             mi_loopend = true;
-                            loopend = true;
-                            ret = `skip;
                         }
 
-                        /* if the browser start really blocks the YCP workflow the following block can run without the if-clause
-                           if so the third button "config_done" in manual interaction dialog can disappear
-                        */
-                        if ( ! mi_loopend  ) // mi_ret == `config_done  )
+                        if ( ! mi_loopend  )
                         {
-                            // deacticate DONE button
-                            // UI::ChangeWidget( `id(`config_done), `Enabled, false );
                             // show the user, that we are doing something
                             UI::ChangeWidget( `id(`needinfo), `Value, _("Checking ...") );
 
@@ -483,7 +439,7 @@ map<string, string> suseRegister(string parameter)
                             else if (information_data["exit"]:"99" == "1")
                             {
                                 // still needinfo, change displayed information and stay in manual interaction
-                                UI::ChangeWidget( `id(`needinfo), `Value, information_data["stderr"]:"Error: recieved data is invalid"  );
+                                UI::ChangeWidget( `id(`needinfo), `Value, information_data["stderr"]:"Error: could not retrieve data"  );
                             }
                             else
                             {
@@ -494,85 +450,39 @@ map<string, string> suseRegister(string parameter)
 
                     } until ( mi_loopend == true  );
 
-                    // now close the dialog in order to bring the browser window to foreground
+                    // we are done with manual interaction
                     UI::CloseDialog();
 
-                    // now we can launch the browser
-
-                    //TODO:
-                    // find a consistent way to launch firefox or w3m
-
-                    // ... this is work in progress (not yet in SVN) ...
-
-                    /* cases:
-                              NCurses: always launch w3m as an unprivileged user (user not defined yet)
-
-                              QT:
-                                 - during installation: start XUL browser (provided by stark@suse.de)
-                                                        (hopefully on monday evening)
-                                 - in installed system: start users firefox with new-window option
-                                                        command: "firefox -new-window $URL"
-                                                        works with FF 1.5 and higher (and therefor with CODE 10)
-
-                                 - if no FF is installed, fallback to "xterm -e w3m $URL"
-
-                              ANY: if a w3m call is needed, but w3m is not installed, display error message
-                    */
-
-
-                    //SCR::Execute(.target.bash_output, sformat("firefox -a firefox -remote \"openURL(%1, new-window)\" || firefox %1", "http://www.google.de" ));
-                    //SCR::Execute(.target.bash, sformat("firefox %1", "http://www.google.de" ));
-                    //SCR::Execute(.target.bash, sformat("screen w3m %1", "http://www.google.de" ));
-
-                    if (ret == `browser_running)
+                    if (mi_ret == `cancel)
                     {
-                        // browser_running means we have to launch a browser :)
-                        // its called like that, because in any other location in the code the name makes sense
-
-                        // just simple handling right now for testing
-
-                        if ( textmode == false  )
-                            SCR::Execute(.target.bash, sformat("firefox %1", "http://www.google.de" ));
-                        else if (textmode == true ) 
-                            SCR::Execute(.target.bash, sformat("screen -m w3m %1", "http://www.google.de" ));
-                        else {  // shitt we are running in a new UI
-                        }
-
-                        // SCR::Execute(.target.bash, "xosview");
-                        UI::RedrawScreen();
+                        UI::ChangeWidget(`id(`noconfigure), `Value, true);
+                        configure_status = false;
                     }
-
-
                 }
+
                 // NO ELSE CASE HERE!!!
                 // ... because information_data may be changed during error code 1 case by a suse_register run
-                // and therefor NO MORE suse_register call below this line!!!
+                // and therefor NO MORE suse_register calls below this line!!!
 
                 /*  handle error codes from FIRST suse_register call AND from manual interaction  */
                 if (information_data["exit"]:"99" == "3")
                 {
                     // error code 3 means:
                     // conflict between transmitted data and data to be transmit according to customer contract
+                    // hwconfig is needed
                     UI::OpenDialog(ccc_conflict);
-                    UI::SetFocus (`id (`retry ));
-                    symbol retry = (symbol) UI::UserInput();
-
-                    if ( retry == `skip )
-                    {
-                        // user wants to skip, end of loop
-                        ret = `skip;
-                        loopend = true;
-                    }
-                    // no else here!!
-                    // if ( retry == `check_config ) nothing will happen, user wants to check config
+                    UI::SetFocus (`id (`ok));
+                    UI::UserInput();
                     UI::CloseDialog();
+                    UI::ChangeWidget(`id(`hwinfo), `Value, true );
+                    subhwinfo = true;
                 }
 
                 // error code 0 means: everything is OK
                 // no more interaction requiered - ZMD is configuered by suse_register
                 if (information_data["exit"]:"99" == "0")
                 {
-                    UI::OpenDialog( done_ask_update );
+                    UI::OpenDialog( nccc_success );
                     UI::SetFocus (`id (`update ));
                     symbol update = (symbol) UI::UserInput();
                     UI::CloseDialog();
@@ -595,10 +505,10 @@ map<string, string> suseRegister(string parameter)
                     UI::SetFocus (`id (`retry ));
                     symbol retry = (symbol) UI::UserInput();
                     UI::CloseDialog();
-                    if ( retry == `skip )
+                    if ( retry == `cancel )
                     {
-                        loopend = true;
-                        ret = `skip;
+                        UI::ChangeWidget(`id(`noconfigure), `Value, true);
+                        configure_status = false;
                     }
                 }
 
@@ -615,20 +525,6 @@ map<string, string> suseRegister(string parameter)
         }
 
     } until ( loopend || ret == `back );
-
-    // if `next, start online update
-    if (ret == `next)
-    {
-	y2milestone( "Enabling to start online update" );
-	
-	if( Pkg::Init() )
-	    Internet::do_you = true;
-	else
-	    // translators: error message if YaST cannot be reset to
-	    // start online update
-	    Report::Error (_("Unable to prepare online update, 
-cannot reach consistent state after registration.") );
-    }
 
     if (Mode::normal()) Wizard::CloseDialog();
 
