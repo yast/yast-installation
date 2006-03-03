@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Mar  3 10:43:12 CET 2006 - visnov@suse.cz
+
+- reset package manager before installing patches 
+
+-------------------------------------------------------------------
 Wed Mar  1 23:19:47 CET 2006 - jsrain@suse.de
 
 - release all medias before registering add-on product CD or DVD

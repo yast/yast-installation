@@ -16,7 +16,9 @@
 {
     textdomain "installation";
 
+    import "Internet";
     import "Wizard";
+    import "Report";
     import "Popup";
     import "GetInstArgs";
     import "CustomDialogs";
@@ -613,6 +615,20 @@ map<string, string> suseRegister(string parameter)
         }
 
     } until ( loopend || ret == `back );
+
+    // if `next, start online update
+    if (ret == `next)
+    {
+	y2milestone( "Enabling to start online update" );
+	
+	if( Pkg::Init() )
+	    Internet::do_you = true;
+	else
+	    // translators: error message if YaST cannot be reset to
+	    // start online update
+	    Report::Error (_("Unable to prepare online update, 
+cannot reach consistent state after registration.") );
+    }
 
     if (Mode::normal()) Wizard::CloseDialog();
 
