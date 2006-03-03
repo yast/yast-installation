@@ -3,6 +3,7 @@ Fri Mar  3 23:30:36 CET 2006 - jsrain@suse.de
 
 - added .desktop file for add-on product installation (#154930)
 - properly initialize source for add-on product (#154980)
+- 2.13.27
 
 -------------------------------------------------------------------
 Fri Mar  3 10:43:12 CET 2006 - visnov@suse.cz
