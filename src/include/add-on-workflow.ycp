@@ -248,7 +248,19 @@ symbol CatalogSelect () {
     }
     if (size (sources) == 1)
     {
-	AddOnProduct::src_id  = SourceManager::newSources[0]:0;
+	if (AddOnProduct::last_ret != `next)
+	{
+	    Pkg::SourceDelete(sources[0]:0);
+	    return AddOnProduct::last_ret;
+	}
+	integer src_id = SourceManager::newSources[0]:0;
+	map data = Pkg::SourceGeneralData (src_id);
+	string url = data["url"]:"";
+	string product_dir = data["product_dir"]:"";
+	Pkg::SourceDelete (src_id);
+	src_id = Pkg::SourceCreate (url, product_dir);
+	AddOnProduct::src_id = src_id;
+	SourceManager::newSources = [src_id];
 	y2milestone ("Only one source available - skipping dialog");
 	return AddOnProduct::last_ret;
     }
@@ -326,8 +338,13 @@ Select which catalog you want to use.</p>");
 	    if (src != selected)
 		Pkg::SourceDelete (src);
 	});
-	SourceManager::newSources = [ selected ];
-	AddOnProduct::src_id  = SourceManager::newSources[0]:0;
+	map data = Pkg::SourceGeneralData (selected);
+	string url = data["url"]:"";
+	string product_dir = data["product_dir"]:"";
+	Pkg::SourceDelete (selected);
+	selected = Pkg::SourceCreate (url, product_dir);
+	AddOnProduct::src_id = selected;
+	SourceManager::newSources = [selected];
     }
     AddOnProduct::last_ret = ret;
     return ret;
