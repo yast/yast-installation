@@ -40,15 +40,13 @@
 "Here will be some great Marketing blabla
 like Novell Customer Center is a great thing!");
 
-    string nccc_configure = _("Configure now (recommended)");
-    string nccc_noconfigure = _("Configure later");
+    string nccc_configure   = _("Configure Now (Recommended)");
+    string nccc_noconfigure = _("Configure Later");
 
-    string nccc_sub_hwinfo  = _("Hardware profile");
-    string nccc_sub_sysdata = _("System configuration");
-    string nccc_sub_comment = _("For better convenience please allow to transmit:");
-
-    string nccc_sub_show    = _("Display the information to be transmitted:");
-    string nccc_sub_showbtn = _("Show");
+    string nccc_sub_comment = _("Include Extra Information");
+    string nccc_sub_hwinfo  = _("Hardware Profile");
+    string nccc_sub_optional= _("Optional Data");
+    string nccc_sub_showbtn = _("Preview Information");
 
 
     /*  strings for success popup   */
@@ -56,50 +54,33 @@ like Novell Customer Center is a great thing!");
 
 
    /* strings for manual interaction popup */
-    string mi_required = _("Manual interaction is required");
-    string mi_needinfo = _("The server needs the following information:");
+    string mi_required = _("Manual Interaction Required");
+    string mi_needinfo = _("Needed Information");
     string mi_browser_btn = _("Continue");
     string mi_start_browser = _(
-"A webbrowser will be launched now to complete
-the configuration on the presented website.");
+"A Web browser will start in which to complete
+the configuration on the opened Web site.");
 
 
 
     /* string for show information popup */
-    string transmit_info = _("Information to be transmitted");
-    string show_info_retrieve_error = _("Error: Could not retrieve data!");
+    string transmit_info = _("Information to Send");
 
     /*  strings for conflict popup */
     string conflict_need_info = _(
-"The server requires additional system information. The submission 
-of the hardware profile will be activated automatically."
+"The server requires additional system information. Activating 
+submission of the hardware profile automatically."
 );
-
-    string conflict_skip_info = _("");
-//"Skip configuration and update will end the configuration
-//and online update will not be run.
-//You can finish this configuration at any later time.
-//");
-
-    string conflict_retry_btn = _("Continue");
-    string conflict_skip_btn = _("Cancel");
 
 
     /* error messages  */
-    string data_invalid = _("Error: recieved data is invalid");
-
-
-
-    /* CCC error / unknown error */
-    string error_retry_btn = _("Retry");
-    string error_skip_btn  = _("Cancel");
-
-
+    string data_invalid = _("Error: Recieved data is invalid.");
+    string retrieve_error = _("Error: Could not retrieve data.");
 
 
     /* help text for dialog "Novell Customer Center Configuration" */
     string help = _("<p><b>Novell Customer Center Configuration</b></p>
-<p>Please configure your Novell Customer Center in order to get access to updates for your system.</p>");
+<p>To be replaced by a useful text. This text should explain what we are doing here in this yast module.</p>");
 
 
     /* other string variables */
@@ -118,12 +99,12 @@ of the hardware profile will be activated automatically."
 
 
     //TODO: STANO:
-    // read hwinfo and sysdata setting from config file(s)
+    // read hwinfo and optional setting from config file(s)
     // (root from/to sysconfig, user read from sysconfig and write to homedir .somedotfile (eg. ~/.suse_register ))
     // this is not mandatory for the beta6, but should be in beta7 or at least one later
     /* initial setting: both true */
-    boolean subhwinfo  = true;
-    boolean subsysdata = true;
+    boolean subhwinfo   = true;
+    boolean suboptional = true;
 
 
 
@@ -139,8 +120,10 @@ map<string, string> suseRegister(string parameter)
     // handle parameters
     string params = " -y ";
     if (parameter == "p") params = params + " -p ";
-    if ( ! subhwinfo  )   params = params + " --no-hw-data ";
-    if ( ! subsysdata )   params = params + " --no-optional ";
+    else if( Mode::normal() ) params = params + " --force-registration ";
+
+    if ( subhwinfo   == false )   params = params + " --no-hw-data ";
+    if ( suboptional == false )   params = params + " --no-optional ";
 
     // run suse_register ... -y beautifies the output for usage in yast
     y2milestone ("Calling /usr/bin/suse_register %1", params);
@@ -156,7 +139,7 @@ map<string, string> suseRegister(string parameter)
 
         UI::OpenDialog(
             `VBox(
-                  `Label(`opt(`boldFont), "DEMONTRATION MODE"),
+                  `Label(`opt(`boldFont), "DEMONSTRATION MODE"),
                   `Label("suse_register is running in background now"),
                   `Label("for testing purposes you can define its error code"),
                   `Label(
@@ -195,7 +178,8 @@ map<string, string> suseRegister(string parameter)
 boolean amIroot()
 {
     // check if we are root
-    map<string, any> userid = (map<string, any>) SCR::Execute(.target.bash_output, "ui -u");
+    map<string, any> userid = (map<string, any>) SCR::Execute(.target.bash_output, "id -u");
+    y2milestone("%1", userid);
     if ( userid["stdout"]:"1" == "0" )
         return true;
     else
@@ -223,13 +207,13 @@ boolean amIroot()
                              `Left ( `RadioButton(`id(`configure),   `opt(`notify), nccc_configure, true )),
                              `Left ( `HBox( `HSpacing( 3.0 ),
                                       `VBox (
-                                              `Left( `Label( nccc_sub_comment ) ),
-                                              `VSpacing(0.5),
-                                              `Left( `CheckBox(`id(`hwinfo),  `opt(`notify),  nccc_sub_hwinfo,  subhwinfo  ) ),
-                                              `Left( `CheckBox(`id(`sysdata), `opt(`notify), nccc_sub_sysdata, subsysdata ) ),
-                                              `VSpacing(0.5),
-                                              `Left( `Label( nccc_sub_show  ) ),
-                                              `PushButton(`id(`showinfo), nccc_sub_showbtn )
+                                             `VSpacing(0.5),
+                                             `Left( `Label( nccc_sub_comment ) ),
+                                             `Left( `CheckBox(`id(`hwinfo),  `opt(`notify), nccc_sub_hwinfo,  subhwinfo  ) ),
+                                             `Left( `CheckBox(`id(`optional), `opt(`notify), nccc_sub_optional, suboptional ) ),
+                                             `VSpacing(0.5),
+                                            // `Left( `Label( nccc_sub_show  ) ),
+                                             `PushButton(`id(`showinfo), nccc_sub_showbtn )
                                    ) ) ) ,
                              `VSpacing(0.5)
                            )))
@@ -280,7 +264,6 @@ boolean amIroot()
           `Left( `Label( `opt(`boldFont), nccc ) ),
           `VSpacing( 0.5 ),
           `Left( `Label( conflict_need_info  )  ),
-          `Left( `Label( conflict_skip_info  )  ),
           `PushButton(`id(`ok), Label::OKButton())
     );
     /* ^^       END CCC CONFLICT       ^^  */
@@ -291,7 +274,7 @@ boolean amIroot()
     `VBox(
            `Left( `Label( `opt(`boldFont), _("Error") ) ),
            `VSpacing( 0.5 ),
-           `Left( `Label( `id(`err_description), _("unknown error")  ) ),
+           `Left( `Label( `id(`err_description), _("Unknown error")  ) ),
            `HBox(
                   `HWeight(1, `PushButton(`id(`ok), Label::OKButton()  ) ),
                   `HSpacing( 3 ),
@@ -320,7 +303,7 @@ boolean amIroot()
     // we always need the next button
     Wizard::SetContents (nccc, contents, help, GetInstArgs::enable_back(), true);
 
-    y2debug (UI::DumpWidgetTree());
+    y2debug ("%1", UI::DumpWidgetTree());
 
     boolean loopend = false;
     any ret = nil;
@@ -341,10 +324,10 @@ boolean amIroot()
         {
             configure_status = (boolean) UI::QueryWidget(`id(`configure),  `Value);
         }
-        else if (ret == `hwinfo || ret == `sysdata)
+        else if (ret == `hwinfo || ret == `optional)
         {
             subhwinfo  = (boolean) UI::QueryWidget(`id(`hwinfo),  `Value);
-            subsysdata = (boolean) UI::QueryWidget(`id(`sysdata), `Value);
+            suboptional= (boolean) UI::QueryWidget(`id(`optional), `Value);
         }
         else if (ret == `showinfo)
         {
@@ -353,7 +336,7 @@ boolean amIroot()
             if ( information_data["exit"]:"99" == "0" )
             {    information_text = information_data["stdout"]:""; }
             else
-            {    information_text = show_info_retrieve_error; }
+            {    information_text = retrieve_error; }
 
             //TODO: include more error codes from suse_register (eg. network unreachable, aso. ...)
 
@@ -378,7 +361,7 @@ boolean amIroot()
                 {
                     UI::OpenDialog( manual_interaction );
                     UI::SetFocus (`id (`start_browser ));
-                    UI::ChangeWidget( `id(`needinfo), `Value, information_data["stderr"]:"Error: recieved data is invalid"  );
+                    UI::ChangeWidget( `id(`needinfo), `Value, information_data["stderr"]:data_invalid );
                     any mi_ret =nil;
                     boolean mi_loopend = false;
 
@@ -387,8 +370,10 @@ boolean amIroot()
                         mi_ret = UI::UserInput();
                         if ( mi_ret == `start_browser  )
                         {
-                            UI::ChangeWidget( `id(`needinfo), `Value, _("Browser starting ...") );
-                            // UI::ChangeWidget( `id(`config_done), `Enabled, true  );
+                            UI::ChangeWidget( `id(`needinfo), `Value, _("Starting Browser...") );
+
+                            // after each browser start, the optional data submittance has to be deactivated
+                            suboptional = false;
 
                             // now we launch the browser
                             string browser_cmd ="/bin/true";
@@ -399,21 +384,32 @@ boolean amIroot()
                             else
                             {
                                 if ( iamroot )
+                                {
+                                    UI::OpenDialog(`VBox(`Label("root"), `PushButton("ok")));
+                                    UI::UserInput();
+                                    UI::CloseDialog();
                                     browser_cmd = "/usr/bin/xulrunner /usr/share/YaST2/yastbrowser/application.ini -url ";
+                                }
                                 else
-                                    browser_cmd = "firefox -new-window ";
+                                {    browser_cmd = "firefox -new-window "; }
                             }
 
                             if ( iamroot )
                             {
+                                y2milestone("YES WE ARE ROOOOOOOOOOOOOT");
                                 // if I am root add an "su suse-ncc " to the command
-                                // browser_cmd = "su -l suse-ncc " + browser_cmd;
+                                browser_cmd = "su - suse-ncc -c \"export DISPLAY=`echo $DISPLAY` &&  " + browser_cmd ;
+//                                    su - suse-ncc -c "export DISPLAY=`echo $DISPLAY` && xterm"
 
                                 // FIXME!!!  sux is obsolete, su does xauth now
                                 // FIXME!!!  but the call with "su" is still not working!!
                                 // FIXME!!!  resulting in "cannot open display" errors even with "export DISPLAY"
                             }
-                            SCR::Execute(.target.bash, sformat("%1 %2", browser_cmd, information_data["stdout"]:"http://www.opensuse.org" ));
+
+                            string browser_command  = browser_cmd + information_data["stdout"]:"http://www.opensuse.org";
+                            if (iamroot) browser_command = browser_command + "\"";
+
+                            SCR::Execute(.target.bash, browser_command);
 
                             UI::RedrawScreen();
 
@@ -426,7 +422,7 @@ boolean amIroot()
                         if ( ! mi_loopend  )
                         {
                             // show the user, that we are doing something
-                            UI::ChangeWidget( `id(`needinfo), `Value, _("Checking ...") );
+                            UI::ChangeWidget( `id(`needinfo), `Value, _("Checking...") );
 
                             information_data = suseRegister("");
 
@@ -439,7 +435,7 @@ boolean amIroot()
                             else if (information_data["exit"]:"99" == "1")
                             {
                                 // still needinfo, change displayed information and stay in manual interaction
-                                UI::ChangeWidget( `id(`needinfo), `Value, information_data["stderr"]:"Error: could not retrieve data"  );
+                                UI::ChangeWidget( `id(`needinfo), `Value, information_data["stderr"]:retrieve_error );
                             }
                             else
                             {
@@ -453,11 +449,7 @@ boolean amIroot()
                     // we are done with manual interaction
                     UI::CloseDialog();
 
-                    if (mi_ret == `cancel)
-                    {
-                        UI::ChangeWidget(`id(`noconfigure), `Value, true);
-                        configure_status = false;
-                    }
+                    if (mi_ret == `cancel) configure_status = false;
                 }
 
                 // NO ELSE CASE HERE!!!
@@ -474,7 +466,6 @@ boolean amIroot()
                     UI::SetFocus (`id (`ok));
                     UI::UserInput();
                     UI::CloseDialog();
-                    UI::ChangeWidget(`id(`hwinfo), `Value, true );
                     subhwinfo = true;
                 }
 
@@ -483,7 +474,6 @@ boolean amIroot()
                 if (information_data["exit"]:"99" == "0")
                 {
                     UI::OpenDialog( nccc_success );
-                    UI::SetFocus (`id (`update ));
                     symbol update = (symbol) UI::UserInput();
                     UI::CloseDialog();
                     if ( update == `update ) ret = `next;
@@ -502,16 +492,18 @@ boolean amIroot()
                     // display generic error message
                     // TODO: specify error and show it via ChangeWidget, if desired
                     UI::OpenDialog(ccc_error);
-                    UI::SetFocus (`id (`retry ));
+                    UI::SetFocus (`id (`ok ));
                     symbol retry = (symbol) UI::UserInput();
                     UI::CloseDialog();
-                    if ( retry == `cancel )
-                    {
-                        UI::ChangeWidget(`id(`noconfigure), `Value, true);
-                        configure_status = false;
-                    }
+                    if ( retry == `cancel ) configure_status = false;
                 }
 
+                // update main widget settings - they may have changed
+                if (configure_status) UI::ChangeWidget(`id(`configure), `Value, true);
+                else UI::ChangeWidget(`id(`noconfigure), `Value, true);
+
+                UI::ChangeWidget( `id(`hwinfo ),   `Value, subhwinfo );
+                UI::ChangeWidget( `id(`optional ), `Value, suboptional );
 
             }
             else
