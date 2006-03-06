@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Mar  7 00:26:26 CET 2006 - jsrain@suse.de
+
+- fixed back button behavior in installation mode dialog (#155044)
+
+-------------------------------------------------------------------
 Mon Mar  6 10:47:31 CET 2006 - visnov@suse.cz
 
 - enable media callbacks in the add-on product handling 
