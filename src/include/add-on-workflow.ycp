@@ -257,6 +257,7 @@ symbol CatalogSelect () {
 	map data = Pkg::SourceGeneralData (src_id);
 	string url = data["url"]:"";
 	string product_dir = data["product_dir"]:"";
+	y2milestone ("Deleting source %1", src_id);
 	Pkg::SourceDelete (src_id);
 	src_id = Pkg::SourceCreate (url, product_dir);
 	AddOnProduct::src_id = src_id;
