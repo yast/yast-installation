@@ -12,6 +12,7 @@ textdomain "installation";
 import "AddOnProduct";
 import "GetInstArgs";
 import "Packages";
+import "PackageCallbacksInit";
 import "Popup";
 import "ProductControl";
 import "Report";
@@ -59,6 +60,9 @@ void Redraw (boolean enable_back, boolean enable_next) {
 }
 
 Packages::SelectProduct ();
+
+PackageCallbacksInit::SetMediaCallbacks();
+
 Redraw (GetInstArgs::enable_back(), GetInstArgs::enable_next());
 symbol ret = nil;
 
