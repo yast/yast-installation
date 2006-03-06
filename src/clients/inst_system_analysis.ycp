@@ -313,6 +313,8 @@ if (ret == `next)
     }
 }
 
+if (ret == `back)
+    return ret;
 
 if (ret != `finish && Mode::mode () != start_mode)
 {
