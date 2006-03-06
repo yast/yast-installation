@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Mar  6 10:47:31 CET 2006 - visnov@suse.cz
+
+- enable media callbacks in the add-on product handling 
+
+-------------------------------------------------------------------
 Fri Mar  3 23:30:36 CET 2006 - jsrain@suse.de
 
 - added .desktop file for add-on product installation (#154930)
