@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Mar  7 20:07:43 CET 2006 - jsrain@suse.de
+
+- added yastbrowser
+
+-------------------------------------------------------------------
 Tue Mar  7 00:26:26 CET 2006 - jsrain@suse.de
 
 - fixed back button behavior in installation mode dialog (#155044)
