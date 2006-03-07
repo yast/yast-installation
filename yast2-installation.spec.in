@@ -34,6 +34,9 @@ This controls the system installation.
 
 @CLEAN@
 
+%pre
+/usr/sbin/useradd -r -s /bin/bash -c "Novell Customer Center User" -d /tmp/suse-ncc-fakehome -g nogroup suse-ncc 2> /dev/null || :
+
 %files
 %defattr(-,root,root)
 %doc @docdir@
