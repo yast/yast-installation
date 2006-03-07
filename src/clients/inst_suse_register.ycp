@@ -25,7 +25,14 @@
     import "Mode";
     import "String";
     import "Label";
+    import "Internet";
 
+    // no network - no suse_register
+    if (!Internet::suse_register)
+    {
+        Internet::do_you = false;
+        return `auto;
+    }
 
     map ui = UI::GetDisplayInfo();
     boolean textmode = (boolean) ui["TextMode"]:nil;
@@ -571,6 +578,18 @@ exit 0";
     } until ( loopend || ret == `back );
 
     if (Mode::normal()) Wizard::CloseDialog();
+
+    if (ret == `skip)
+    {
+        // skipping suse register - no online update
+        Internet::do_you = false;
+        ret = `next;
+    }
+    else
+    {
+        // ok we can do online update
+        Internet::do_you = true;
+    }
 
     return ret;
 }
