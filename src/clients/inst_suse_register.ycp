@@ -132,7 +132,7 @@ map<string, string> suseRegister(string parameter)
     y2milestone ("/usr/bin/suse_register returned %1", exitcode);
 
     /* vvvvvvv  for demonstration purposes set DEMO to true   vvvvvvvvv */
-    boolean DEMO = true;
+    boolean DEMO = false;
     if ( DEMO )
     {
         list<string> errs = ["0", "1", "2", "3", "4", "5", "6", "17", "99"] ;
