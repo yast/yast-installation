@@ -47,6 +47,7 @@ This controls the system installation.
 @desktopdir@/*.desktop
 %dir @yncludedir@/installation
 @yncludedir@/installation/*
+/usr/share/YaST2/yastbrowser
 
 # agents
 @scrconfdir@/etc_passwd.scr
