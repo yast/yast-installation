@@ -37,8 +37,8 @@
     /* strings for main (wizard) layout  */
     string nccc = _("Novell Customer Center Configuration");
     string nccc_top = _(
-"Here will be some great Marketing blabla
-like Novell Customer Center is a great thing!");
+"Use the Novell Customer Center to get technical
+support, product updates and manage subscriptions.");
 
     string nccc_configure   = _("Configure Now (Recommended)");
     string nccc_noconfigure = _("Configure Later");
@@ -179,20 +179,78 @@ boolean amIroot()
 {
     // check if we are root
     map<string, any> userid = (map<string, any>) SCR::Execute(.target.bash_output, "id -u");
-    y2milestone("%1", userid);
-    if ( userid["stdout"]:"1" == "0" )
+    y2milestone("running under user id %1", userid);
+    if ( String::FirstChunk(userid["stdout"]:"1", "\n") == "0" )
         return true;
     else
         return false;
 }
 
 
+boolean setXauth()
+{
+    // set .xauth for the user "suse-ncc" to be able to forward X to the user
+
+    return SCR::Execute(.target.bash,
+"if test `id -u` == 0
+then
+  cd /root && umask 077 && \
+  ( ([ -d .xauth ] || mkdir .xauth) && \
+    (grep ^suse-ncc$ .xauth/export >/dev/null 2>&1 || echo suse-ncc >> .xauth/export) )
+fi
+
+") == 0 ? true:false;
+
+}
+
+
+
+string su_exec(string user, string group, string command)
+{
+    // create a script to run a system call as different user
+    // thanks to werner for the nice script
+    string exec = sformat("
+#!/bin/bash -x
+
+user=%1
+group=%2
+cmd=%3
+", user, group, command )
++
+"
+fakehome=/tmp/$user-fakehome
+
+tmp=$(mktemp /tmp/.Xauthority.XXXXXX) || exit 1
+mkdir -p $fakehome
+trap \"rm -rf $tmp $fakehome\" EXIT INT HUP TERM
+chmod 600 $tmp
+chmod 700 $fakehome
+chown $user:$group $tmp $fakehome
+
+
+if test \"${DISPLAY%:*}\" = \"localhost\" ; then
+    disp=$(hostname -s)/unix:${DISPLAY#*:}
+else
+    disp=\"${DISPLAY}\"
+fi
+
+exec 4< ${XAUTHORITY:-$HOME/.Xauthority}
+su -s /bin/bash -- $user -c \"xauth -qif <(cat 0<&4) extract - $disp | xauth -qf $tmp merge -\"
+exec 4<&-
+
+su -s /bin/bash -- $user -c \"cd; XAUTHORITY=$tmp $cmd\"
+
+exit 0";
+
+    y2milestone("executing via su_exec: %1", exec);
+
+    return exec;
+}
+
+
 
 
 /* ----------------------------------- END FUNCTIONS -------------------------------------------------------------  */
-
-    //TODO: for JDSN
-    // implement usefull logging
 
 
 
@@ -367,50 +425,44 @@ boolean amIroot()
 
                     repeat
                     {
+                        string browser_cmd ="/bin/true";
+                        boolean iamroot = amIroot();
+
                         mi_ret = UI::UserInput();
                         if ( mi_ret == `start_browser  )
                         {
                             UI::ChangeWidget( `id(`needinfo), `Value, _("Starting Browser...") );
 
-                            // after each browser start, the optional data submittance has to be deactivated
+                            // after each browser run, deactivate optional data submittance
                             suboptional = false;
 
                             // now we launch the browser
-                            string browser_cmd ="/bin/true";
-                            boolean iamroot = amIroot();
+                            string bcmd     ="";
+                            string bcmd_url =information_data["stdout"]:"http://www.opensuse.org";
 
-                            if ( textmode )
-                               browser_cmd = "screen w3m ";
+                            if ( textmode == true )
+                               bcmd = " screen w3m ";
                             else
                             {
-                                if ( iamroot )
+                                if ( iamroot == true )
                                 {
-                                    UI::OpenDialog(`VBox(`Label("root"), `PushButton("ok")));
-                                    UI::UserInput();
-                                    UI::CloseDialog();
-                                    browser_cmd = "/usr/bin/xulrunner /usr/share/YaST2/yastbrowser/application.ini -url ";
+                                    // setXauth();
+                                    UI::OpenDialog(`VBox(`Label("root"),`PushButton("ok"))); UI::UserInput(); UI::CloseDialog();
+                                    bcmd = " /usr/bin/xulrunner /usr/share/YaST2/yastbrowser/application.ini -url ";
                                 }
                                 else
-                                {    browser_cmd = "firefox -new-window "; }
+                                {    bcmd = " firefox -new-window "; }
                             }
 
-                            if ( iamroot )
+                            string bcmd_full =  bcmd + bcmd_url;
+
+                            if ( iamroot == true )
                             {
-                                y2milestone("YES WE ARE ROOOOOOOOOOOOOT");
-                                // if I am root add an "su suse-ncc " to the command
-                                browser_cmd = "su - suse-ncc -c \"export DISPLAY=`echo $DISPLAY` &&  " + browser_cmd ;
-//                                    su - suse-ncc -c "export DISPLAY=`echo $DISPLAY` && xterm"
-
-                                // FIXME!!!  sux is obsolete, su does xauth now
-                                // FIXME!!!  but the call with "su" is still not working!!
-                                // FIXME!!!  resulting in "cannot open display" errors even with "export DISPLAY"
+                                // in case of  root execute it as a different user
+                                bcmd_full = su_exec("suse-ncc", "users", bcmd_full);
                             }
 
-                            string browser_command  = browser_cmd + information_data["stdout"]:"http://www.opensuse.org";
-                            if (iamroot) browser_command = browser_command + "\"";
-
-                            SCR::Execute(.target.bash, browser_command);
-
+                            SCR::Execute(.target.bash, bcmd_full );
                             UI::RedrawScreen();
 
                         }
