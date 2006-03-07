@@ -497,9 +497,15 @@ textdomain="control"
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
-               <module>
-                    <label>Online Update</label>
+                <module>
+                    <label>Customer Center</label>
                     <name>suse_register</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+                    <label>Online Update</label>
+                    <name>ask_online_update</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
