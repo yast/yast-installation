@@ -37,8 +37,8 @@
     /* strings for main (wizard) layout  */
     string nccc = _("Novell Customer Center Configuration");
     string nccc_top = _(
-"Use the Novell Customer Center to get technical
-support, product updates and manage subscriptions.");
+"Get technical support and product updates and
+manage subscriptions with Novell Customer Center.");
 
     string nccc_configure   = _("Configure Now (Recommended)");
     string nccc_noconfigure = _("Configure Later");
