@@ -21,6 +21,9 @@
     import "Mode";
     import "String";
     import "Label";
+    import "Internet";
+
+    if (!Internet::do_you) return `auto;
 
     map ui = UI::GetDisplayInfo();
 
@@ -28,11 +31,11 @@
 
 
     /*  strings for "ask for online update"-popup   */
-    string ask_update_run_btn  = _("Run update");
-    string ask_update_skip_btn = _("Skip update");
+    string ask_update_run_btn  = _("Run Update");
+    string ask_update_skip_btn = _("Skip Update");
 
     string online_update = _("Online Update");
-    string ask_update_main = _("Do you want to run an online update now?");
+    string ask_update_main = _("Run Online Update now?");
 
     string help = _(
 "Please specify if you want to run an online update now.
@@ -78,6 +81,12 @@ You may skip this step and run an online update later.");
         }
 
     } until ( ret == `next || ret == `back || ret == `skip);
+
+    if ( ret == `skip )
+    {
+        Internet::do_you = false;
+        ret = `next;
+    }
 
     return ret;
 }
