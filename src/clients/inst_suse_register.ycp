@@ -591,5 +591,5 @@ exit 0";
         Internet::do_you = true;
     }
 
-    return ret;
+    return (symbol)ret;
 }

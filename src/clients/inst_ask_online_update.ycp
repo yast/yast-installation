@@ -88,5 +88,5 @@ You may skip this step and run an online update later.");
         ret = `next;
     }
 
-    return ret;
+    return (symbol)ret;
 }
