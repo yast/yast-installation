@@ -1,0 +1,32 @@
+{
+
+// testedfiles: AddOnProduct.ycp
+
+include "testsuite.ycp";
+
+map READ = $[
+    "target" : $[
+	"size" : 0,
+    ],
+];
+
+TESTSUITE_INIT([READ], nil);
+
+import "AddOnProduct";
+
+list<map> workflows = [
+  $[
+    "defaults":$["archs":"i386,x86_64"],
+    "label":"Preparation",
+    "mode":"installation,update",
+    "modules":[
+      $["arguments":$["first_run":"yes"], "enable_back":"no", "enable_next":"yes", "label":"Language", "name":"language", "retranslate":true],
+      $["label":"Perform Installation", "name":"finish"]
+    ],
+    "stage":"initial"
+  ]
+];
+
+TEST(``(AddOnProduct::PrepareWorkflows(workflows)), [], nil);
+
+}
