@@ -38,8 +38,19 @@ function createStageList () {
 	fi
 	for file in $STAGE_DIR/*;do
 		BASEFILE=`basename $file`
-		PREFIX=`echo $BASEFILE | cut -c1`
-		INDEX=`echo $BASEFILE | cut -c2-3 | sed -e s@^0@@`
+		if [ ! -f $file ];then
+			continue
+		fi
+		case $BASEFILE in
+			[FS%][0-9][0-9]*)
+				PREFIX=`echo $BASEFILE | cut -c1`
+				INDEX=`echo $BASEFILE | cut -c2-3 | sed -e s@^0@@`
+			;;
+			*)
+				log "\tUnknown stage entry: $BASEFILE... ignored"
+				continue
+			;;
+		esac
 		if [ "$PREFIX" = "$PREFIX_LOOKUP" ] || [ "$PREFIX_LOOKUP" = "%" ];then
 			while true;do
 				if [ -z ${STAGE_LIST[$INDEX]} ];then

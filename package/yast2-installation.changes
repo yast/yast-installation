@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Mar  8 11:25:57 CET 2006 - ms@suse.de
+
+- fixed createStageList() function to be more restrictive on checking
+  for stage files. Adapt startup documentation according to this
+  change (#144783)
+
+-------------------------------------------------------------------
 Tue Mar  7 22:27:45 CET 2006 - jdsn@suse.de
 
 - added functionality to skip suse register and/or online update 
