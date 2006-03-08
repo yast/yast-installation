@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Mar  8 17:00:41 CET 2006 - jdsn@suse.de
+
+- fixed launch of yastbrowser (during installation)
+- 2.13.29
+
+-------------------------------------------------------------------
 Wed Mar  8 11:25:57 CET 2006 - ms@suse.de
 
 - fixed createStageList() function to be more restrictive on checking
