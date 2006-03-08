@@ -28,10 +28,13 @@
     import "Internet";
 
     // no network - no suse_register
-    if (!Internet::suse_register)
+    if (!Mode::normal())
     {
-        Internet::do_you = false;
-        return `auto;
+        if (!Internet::suse_register)
+        {
+            Internet::do_you = false;
+            return `auto;
+        }
     }
 
     map ui = UI::GetDisplayInfo();
@@ -432,7 +435,6 @@ exit 0";
 
                     repeat
                     {
-                        string browser_cmd ="/bin/true";
                         boolean iamroot = amIroot();
 
                         mi_ret = UI::UserInput();
@@ -454,7 +456,7 @@ exit 0";
                                 if ( iamroot == true )
                                 {
                                     // setXauth();
-                                    UI::OpenDialog(`VBox(`Label("root"),`PushButton("ok"))); UI::UserInput(); UI::CloseDialog();
+                                    // UI::OpenDialog(`VBox(`Label("root"),`PushButton("ok"))); UI::UserInput(); UI::CloseDialog();
                                     bcmd = " /usr/bin/xulrunner /usr/share/YaST2/yastbrowser/application.ini -url ";
                                 }
                                 else
@@ -578,17 +580,19 @@ exit 0";
     } until ( loopend || ret == `back );
 
     if (Mode::normal()) Wizard::CloseDialog();
-
-    if (ret == `skip)
-    {
-        // skipping suse register - no online update
-        Internet::do_you = false;
-        ret = `next;
-    }
     else
     {
-        // ok we can do online update
-        Internet::do_you = true;
+        if (ret == `skip)
+        {
+            // skipping suse register - no online update
+            Internet::do_you = false;
+            ret = `next;
+        }
+        else
+        {
+            // ok we can do online update
+            Internet::do_you = true;
+        }
     }
 
     return (symbol)ret;
