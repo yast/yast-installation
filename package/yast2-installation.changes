@@ -5,11 +5,16 @@ Wed Mar  8 17:00:41 CET 2006 - jdsn@suse.de
 - 2.13.29
 
 -------------------------------------------------------------------
-Wed Mar  8 11:25:57 CET 2006 - ms@suse.de
+Wed Mar  8 15:25:57 CET 2006 - ms@suse.de
 
 - fixed createStageList() function to be more restrictive on checking
   for stage files. Adapt startup documentation according to this
   change (#144783)
+
+-------------------------------------------------------------------
+Wed Mar  8 14:25:02 CET 2006 - lrupp@suse.de
+
+- added suseRegister to Requires
 
 -------------------------------------------------------------------
 Tue Mar  7 22:27:45 CET 2006 - jdsn@suse.de
