@@ -1,0 +1,92 @@
+/**
+ * File:        installation/general/inst_ask_online_update.ycp
+ * Module:      Installation
+ * Summary:     Ask if the user wants to run an online update during installation
+ * Authors:     J. Daniel Schmidt <jdsn@suse.de>
+ *
+ * Ask if the user wants to run an online update during installation
+ *
+ * $Id: inst_ask_online_update.ycp 1 2006-02-17 13:20:02Z jdsn $
+ */
+
+{
+    textdomain "installation";
+
+    import "Wizard";
+    import "Popup";
+    import "GetInstArgs";
+    import "CustomDialogs";
+    import "Directory";
+    import "Language";
+    import "Mode";
+    import "String";
+    import "Label";
+    import "Internet";
+
+    if (!Internet::do_you) return `auto;
+
+    map ui = UI::GetDisplayInfo();
+
+    map argmap = GetInstArgs::argmap();
+
+
+    /*  strings for "ask for online update"-popup   */
+    string ask_update_run_btn  = _("Run Update");
+    string ask_update_skip_btn = _("Skip Update");
+
+    string online_update = _("Online Update");
+    string ask_update_main = _("Run Online Update now?");
+
+    string help = _(
+"Please specify if you want to run an online update now.
+You may skip this step and run an online update later.");
+
+    /* vv   MAIN (WIZARD) LAYOUT  vv  */
+    term sr_layout=nil;
+    sr_layout=`HVCenter(
+    `VBox(
+           `Left( `Label( ask_update_main  ) ),
+           `Left( `RadioButtonGroup(`id(`run_update) , `VBox(
+                         `RadioButton(`id(`update), ask_update_run_btn, true ),
+                         `RadioButton(`id(`noupdate), ask_update_skip_btn)
+           ) ) )
+    ));
+
+    term contents = `VBox ( `VSpacing (0.5), sr_layout, `VSpacing (0.5));
+    /* ^^       END MAIN LAYOUT     ^^  */
+
+    // check if we are in installation workflow or running independently (for development)
+    if (Mode::normal()) Wizard::CreateDialog();
+
+    Wizard::SetContents (online_update, contents, help, GetInstArgs::enable_back(), GetInstArgs::enable_next());
+
+    any ret=nil;
+
+    repeat {
+        ret = Wizard::UserInput();
+
+        if (ret == `abort)
+        {
+            if (Mode::normal()) break;
+            if (Popup::ConfirmAbort (`incomplete))  break;
+        }
+        else if (ret == `help)
+        {
+            Wizard::ShowHelp (help);
+        }
+        else if ( ret == `next )
+        {
+            if ( (boolean) UI::QueryWidget(`id(`noupdate), `Value) )
+                ret = `skip;
+        }
+
+    } until ( ret == `next || ret == `back || ret == `skip);
+
+    if ( ret == `skip )
+    {
+        Internet::do_you = false;
+        ret = `next;
+    }
+
+    return (symbol)ret;
+}

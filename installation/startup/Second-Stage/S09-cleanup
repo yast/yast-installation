@@ -1,0 +1,34 @@
+#!/bin/sh
+log "Starting S09-cleanup..."
+log "======================="
+
+#=============================================
+# 13) second stage done, cleanup level
+#---------------------------------------------
+# 13.1) kill shell on second virtual console
+if test ! -z "$SPID" ; then
+	log "\tkill X-Server with PID: $SPID"
+	kill -KILL $SPID &>/dev/null
+fi
+# 13.2) kill VNC server and remove VNC passwd
+if [ ! -z "$VNC" ] && [ "$VNC" -eq 1 ] ; then
+	log "\tkill all VNC sessions..."
+	killall Xvnc &>/dev/null
+	rm -fv /root/.vnc/passwd
+fi
+# 13.3) stop network and sshd
+if test ! -z "$Y2_NETWORK_ACTIVE" ; then
+	log "\tShutdown SSH daemon and network interfaces..."
+	test -z "$Y2_SSH_ACTIVE" && rcsshd stop
+	rcnetwork stop
+fi
+# 13.4) stop pcmcia service
+if [ -x /sbin/rcpcmcia ] ; then
+if rcpcmcia status ; then
+	log "\tShutdown PCMCIA services..."
+	/sbin/cardctl eject
+	/etc/init.d/pcmcia stop
+fi
+fi
+
+stop_unicode

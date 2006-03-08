@@ -1,0 +1,109 @@
+/**
+ * File:	modules/Product.ycp
+ * Package:	yast2
+ * Summary:	Product data
+ * Authors:	Klaus Kaempf <kkaempf@suse.de>
+ *
+ * $Id$
+ */
+
+{
+    module "Product";
+
+    import "Mode";
+    import "Stage";
+
+    /**
+     * General product name and version
+     */
+    global string name		= "";			// "SuSE Linux"
+    global string version	= "";			// "8.1"
+    global string vendor	= "";			// "SuSE Linux AG"
+
+    /**
+     * Distribution: Personal, Professional, etc.
+     */
+    global string dist		= "";
+    global string distproduct	= "";			// "SuSE-Linux-Professional-INT-i386"
+    global string distversion	= "";			// "8.1-0"
+
+    /**
+     * base product
+     */
+    global string baseproduct	= "";			// "UnitedLinux"
+    global string baseversion	= "";			// "1.0"
+
+    /**
+     * url of release notes (downloaded during internet test)
+     */
+    global string relnotesurl	= "";
+
+    /**
+     *  Run YOU during the Internet connection test.
+     */
+    global boolean run_you	= true;
+
+    /**
+     * list of flags from content file
+     */
+    global list flags		= [];
+
+    // -----------------------------------------------
+    /**
+     * Constructor
+     */
+    global define void Product () ``{
+
+	if (Stage::initial ())
+	{
+	    name		= (string) SCR::Read(.content.PRODUCT);
+	    version		= (string) SCR::Read(.content.VERSION);
+	    vendor		= (string) SCR::Read(.content.VENDOR);
+
+	    distproduct		= (string) SCR::Read(.content.DISTPRODUCT);
+	    distversion		= (string) SCR::Read(.content.DISTVERSION);
+
+	    baseproduct		= (string) SCR::Read(.content.BASEPRODUCT);
+	    if (baseproduct == "") baseproduct = name;
+	    baseversion		= (string) SCR::Read(.content.BASEVERSION);
+
+	    relnotesurl		= (string) SCR::Read(.content.RELNOTESURL);
+
+	    any tmp1 = SCR::Read (.content.FLAGS);
+	    if (tmp1 != nil)
+		flags		= splitstring ((string) tmp1, " ");
+	}
+	else if (!Mode::config ())
+	{
+	    Pkg::TargetInit ("/", false);
+	    list all_products = Pkg::TargetProducts();		// get all products
+
+	    map last_product = all_products[0]:$[];		// get last installed product
+
+	    name		= last_product["name"]:"";
+	    version		= last_product["version"]:"";
+	    vendor		= last_product["vendor"]:"";
+	    distproduct		= last_product["distproduct"]:"";
+	    distversion		= last_product["distversion"]:"";
+	    baseproduct		= last_product["baseproduct"]:"";
+	    if (baseproduct == "") baseproduct = name;
+	    baseversion		= last_product["baseversion"]:"";
+
+	    relnotesurl		= last_product["relnotesurl"]:"";
+
+	    flags		= splitstring (last_product["flags"]:"", " ");
+	}
+
+	if(distproduct == nil) distproduct = "";
+	dist		= splitstring(distproduct, "-")[2]:"";
+
+	run_you		= ! contains (flags, "no_you");
+
+	// set the product name for UI
+        import "Wizard";
+
+        Wizard::SetProductName(name);
+    }
+
+/* EOF */
+}
