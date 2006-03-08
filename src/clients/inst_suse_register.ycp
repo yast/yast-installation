@@ -457,13 +457,13 @@ exit 0";
                                 {
                                     // setXauth();
                                     // UI::OpenDialog(`VBox(`Label("root"),`PushButton("ok"))); UI::UserInput(); UI::CloseDialog();
-                                    bcmd = " /usr/bin/xulrunner /usr/share/YaST2/yastbrowser/application.ini -url ";
+                                    bcmd = " MOZ_DISABLE_PANGO=1 /usr/bin/xulrunner /usr/share/YaST2/yastbrowser/application.ini -url ";
                                 }
                                 else
                                 {    bcmd = " firefox -new-window "; }
                             }
 
-                            string bcmd_full =  bcmd + bcmd_url;
+                            string bcmd_full =  bcmd + "'" + bcmd_url + "'";
 
                             if ( iamroot == true )
                             {
@@ -569,8 +569,7 @@ exit 0";
             }
             else
             {
-                // skipping - online update must NOT run!!
-                // TODO: STANO: is it ok to return `skip to the wizard ... he has to handle this
+                // skipping - no online update!!
                 loopend = true;
                 ret = `skip;
             }
