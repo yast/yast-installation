@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Mar  9 17:35:30 CET 2006 - jsrain@suse.de
+
+- fixed asking for add-on product CD (#156469)
+
+-------------------------------------------------------------------
 Thu Mar  9 17:36:39 CET 2006 - mvidner@suse.cz
 
 - Control files: added network/startmode, being ifplugd for SL and
