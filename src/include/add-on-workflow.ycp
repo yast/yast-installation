@@ -203,12 +203,18 @@ the first CD are located, such as /data1/CD1.</p>
         else if ( input == `cd )
         {
 	    Pkg::SourceReleaseAll();
-            createResult = SourceManager::createSource( "cd:///" );
+	    if (Popup::ContinueCancel (_("Insert the add-on product CD")))
+		createResult = SourceManager::createSource( "cd:///" );
+	    else
+		ret = `back;
         }
         else if ( input == `dvd )
         {
 	    Pkg::SourceReleaseAll();
-            createResult = SourceManager::createSource( "dvd:///" );
+	    if (Popup::ContinueCancel (_("Insert the add-on product DVD")))
+		createResult = SourceManager::createSource( "dvd:///" );
+	    else
+		ret = `back;
         }
 	else if ( input == `local_dir )
 	{
