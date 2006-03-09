@@ -37,9 +37,9 @@
     string online_update = _("Online Update");
     string ask_update_main = _("Run Online Update now?");
 
-    string help = _(
-"Please specify if you want to run an online update now.
-You may skip this step and run an online update later.");
+    string help = _("Select whether to run an online update now.
+You may skip this step and run an online update later.
+");
 
     /* vv   MAIN (WIZARD) LAYOUT  vv  */
     term sr_layout=nil;

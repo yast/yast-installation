@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Mar  9 12:01:07 CET 2006 - ms@suse.de
+
+- include proofread message texts
+
+-------------------------------------------------------------------
 Wed Mar  8 17:00:41 CET 2006 - jdsn@suse.de
 
 - fixed launch of yastbrowser (during installation)

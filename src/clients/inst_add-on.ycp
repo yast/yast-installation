@@ -24,7 +24,7 @@ map argmap = GetInstArgs::argmap();
 
 void Redraw (boolean enable_back, boolean enable_next) {
     // main screen heading
-    string title = _("Add-on Product Installation");
+    string title = _("Add-On Product Installation");
     string help = "";
     integer index = -1;
     list items = maplist (map<string,any> product, AddOnProduct::add_on_products, {

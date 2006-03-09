@@ -669,7 +669,7 @@ cd /y2update;
     if (out["exit"]:0 != 0)
     {
 	// error report
-	Report::Error (_("Error occurred while preparing installation system."));
+	Report::Error (_("An error occurred while preparing the installation system."));
 	CleanY2Update();
 	return nil;
     }

@@ -64,11 +64,12 @@ symbol MediaSelect () {
     );
 
     // dialog caption
-    string title = _("Add-on Product Media");
+    string title = _("Add-On Product Media");
     // help
     string help_text = _("<p><big><b>Catalog Media</b></big><br>
-Add-on product can be installed from the CD, over a
-network, or from the hard disk.</p>");
+Add-on products can be installed from CD, over a
+network, or from the hard disk.</p>
+");
 
     // help, continued
     help_text = help_text + _("<p>
@@ -77,17 +78,19 @@ have the product CD set or the DVD available.</p>");
 
     // help, continued
     help_text = help_text + _("<p>
-The product CDs can be copied to the <b>hard disk</b>.
-Insert the path name where the first
+The product CDs can be copied to the hard disk.
+Insert the path where the first
 CD is located, for example, /data1/<b>CD1</b>.
 Only the base path is required if all CDs are copied
-into one directory.</p>");
+into one directory.</p>
+");
 
     // help, continued
     help_text = help_text + _("<p>
-<b>Network</b> installation requires a working network connection.
+Network installation requires a working network connection.
 Specify the directory where the packages from
-the first CD are located, such as /data1/CD1.</p>");
+the first CD are located, such as /data1/CD1.</p>
+");
 
     Wizard::SetContents (title, contents, help_text, Stage::initial(), true);
 
@@ -281,8 +284,9 @@ symbol CatalogSelect () {
     string title = _("Catalog Selection");
     // help text
     string help_text = _("<p><big><b>Catalog Selection</b></big><br>
-There were multiple catalogs found on the selected media.
-Select which catalog you want to use.</p>");
+There were multiple catalogs found on the selected medium.
+Select the catalog to use.</p>
+");
 
     term contents = `HBox (`HStretch(), `VBox (
 	`VStretch (),
@@ -322,7 +326,7 @@ Select which catalog you want to use.</p>");
 	    {
 		ret = nil;
 		// popup message
-		Popup::Message (_("Select a catalog"));
+		Popup::Message (_("Select a catalog."));
 	    }
 	}
     }
@@ -375,7 +379,7 @@ symbol ProductSelect () {
 	{
 	    Pkg::ResolvableRemove (prod["name"]:"", `product);
 	    // message popup
-	    Popup::Message (_("Dependencies of the add-on product cannot be fullfilled"));
+	    Popup::Message (_("Dependencies of the add-on product cannot be fullfilled."));
 	    return `back;
 	}
 	AddOnProduct::add_on_products = add (AddOnProduct::add_on_products, $[
@@ -399,8 +403,9 @@ symbol ProductSelect () {
     ), `HStretch ());
     // help text
     string help_text = _("<p><b><big>Product Selection</big></b><br>
-There were multiple products found in the catalog. Select products which
-you want to install.</p>");
+There were multiple products found in the catalog. Select the products
+to install.</p>
+");
     Wizard::SetContents (title, contents, help_text, true, true);
     while (ret == nil)
     {
@@ -433,7 +438,7 @@ you want to install.</p>");
 		    Pkg::ResolvableRemove (product, `product);
 		});
 		// message popup
-		Popup::Message (_("Dependencies of the selected add-on products cannot be fullfilled"));
+		Popup::Message (_("Dependencies of the selected add-on products cannot be fullfilled."));
 		ret = nil;
 		continue;
 	    }
