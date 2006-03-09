@@ -36,6 +36,7 @@ textdomain="control"
     <network>
         <force_static_ip config:type="boolean">false</force_static_ip>
         <network_manager>never</network_manager>
+	<startmode>auto</startmode>
     </network>
     <clone_modules config:type="list">
 	<clone_module>language</clone_module>

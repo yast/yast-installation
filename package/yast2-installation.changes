@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Mar  9 17:36:39 CET 2006 - mvidner@suse.cz
+
+- Control files: added network/startmode, being ifplugd for SL and
+  SLED, auto for SLES (#156388).
+- 2.13.30
+
+-------------------------------------------------------------------
 Thu Mar  9 12:01:07 CET 2006 - ms@suse.de
 
 - include proofread message texts

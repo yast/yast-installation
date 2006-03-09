@@ -35,6 +35,7 @@ textdomain="control"
     <network>
         <force_static_ip config:type="boolean">false</force_static_ip>
         <network_manager>laptop</network_manager>
+	<startmode>ifplugd</startmode>
     </network>
     <clone_modules config:type="list">
 	<clone_module>language</clone_module>
@@ -510,8 +511,8 @@ textdomain="control"
                     <enable_next>yes</enable_next>
                 </module>
                 <module>
-                   <label>Online Update</label>
-                   <name>you</name>
+	            <label>Online Update</label>
+                    <name>you</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
