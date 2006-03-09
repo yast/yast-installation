@@ -46,8 +46,7 @@
 
     /* strings for main (wizard) layout  */
     string nccc = _("Novell Customer Center Configuration");
-    string nccc_top = _(
-"Get technical support and product updates and
+    string nccc_top = _("Get technical support and product updates and
 manage subscriptions with Novell Customer Center.");
 
     string nccc_configure   = _("Configure Now (Recommended)");
@@ -67,8 +66,7 @@ manage subscriptions with Novell Customer Center.");
     string mi_required = _("Manual Interaction Required");
     string mi_needinfo = _("Needed Information");
     string mi_browser_btn = _("Continue");
-    string mi_start_browser = _(
-"A Web browser will start in which to complete
+    string mi_start_browser = _("A Web browser will start in which to complete
 the configuration on the opened Web site.");
 
 
@@ -77,10 +75,8 @@ the configuration on the opened Web site.");
     string transmit_info = _("Information to Send");
 
     /*  strings for conflict popup */
-    string conflict_need_info = _(
-"The server requires additional system information. Activating 
-submission of the hardware profile automatically."
-);
+    string conflict_need_info = _("The server requires additional system information. Activating 
+submission of the hardware profile automatically.");
 
 
     /* error messages  */

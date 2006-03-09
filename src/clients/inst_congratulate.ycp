@@ -101,10 +101,10 @@ our SUSE Welcome Dialog.</p>
 ");
 
     if( show_clone_checkbox ) {
-        help = help + _("<p>The clone check box allows you to create an autoyast profile.
-Autoyast is a way to do a complete SUSE Linux installation without user interaction. To let Autoyast
-know what the installed system should look like, it needs a profile. With the check box
-selected, a profile of the current system will be stored in /root/autoyast.xml.</p>
+        help = help + _("<p>Use <b>Clone</b> if you want to create an AutoYaST profile.
+AutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST
+needs a profile to know what the installed system should look like. If this option is
+selected, a profile of the current system is stored in /root/autoyast.xml.</p>
 ");
     }
 

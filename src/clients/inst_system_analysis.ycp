@@ -167,8 +167,9 @@ from your existing system whenever possible.
 
 // help text for installation method
 help_text = help_text + _("<p>
-To install an Add-On Product from separate media together with &product;, select
-<b>Include Add-On Products from Separate Media</b>.</p>");
+To install an add-on product from separate media together with &product;, select
+<b>Include Add-On Products from Separate Media</b>.</p>
+");
 
 // help text for installation method
 help_text = help_text + _("<p>Click <b>Other</b> then 
