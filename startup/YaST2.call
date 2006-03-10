@@ -311,6 +311,8 @@ function start_yast () {
 	if [ "$SPLASH" = yes -a -x /sbin/splash -a -n "$SPLASHCFG" ];then
 		/sbin/splash -t "YaST running"
 	fi
+	export QT_IM_MODULE=xim
+
 	echo "*** Starting YaST2 ***"
 	log "\tStarting YaST2:"
 	log "\tMODULE_NAME: $Y2_MODULE_NAME"
@@ -318,6 +320,7 @@ function start_yast () {
 	log "\tMODULE_ARGS: $Y2_MODULE_ARGS"
 	log "\tMODE:        $Y2_MODE"
 	log "\tQT_ARGS:     $Y2_QT_ARGS"
+	log "\tQT_IM_MODULE:$QT_IM_MODULE"
 
 	if [ ! "$RUN_FBITERM" = "1" ]; then
 		y2base \

@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Mar 10 12:17:56 CET 2006 - ms@suse.de
+
+- forcing using xim for Qt Input (#156962)
+
+-------------------------------------------------------------------
 Thu Mar  9 17:35:30 CET 2006 - jsrain@suse.de
 
 - fixed asking for add-on product CD (#156469)
