@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Mar 10 18:33:55 CET 2006 - jdsn@suse.de
+
+- fixed security bug (#157008)
+- added link to browser for Novell privacy statement
+
+-------------------------------------------------------------------
 Fri Mar 10 17:55:11 CET 2006 - mvidner@suse.cz
 
 - Start ncurses UI in non-threaded mode to enable spawning of
