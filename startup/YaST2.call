@@ -160,7 +160,7 @@ function prepare_for_qt () {
 	# set YaST2 Qt options for local displays
 	#---------------------------------------------
 	if [ ! -z "$NEED_XSERVER" ];then
-		Y2_QT_ARGS="--fullscreen --noborder --auto-fonts"
+		Y2_UI_ARGS="--fullscreen --noborder --auto-fonts"
 	fi
 }
 
@@ -212,7 +212,7 @@ function prepare_for_vnc () {
 	#=============================================
 	# Setup y2base options
 	#---------------------------------------------
-	Y2_QT_ARGS="--fullscreen --noborder --auto-fonts"
+	Y2_UI_ARGS="--fullscreen --noborder --auto-fonts"
 
 	#=============================================
 	# Setup VNC server and start it
@@ -319,22 +319,20 @@ function start_yast () {
 	log "\tMODE_FLAGS:  $Y2_MODE_FLAGS"
 	log "\tMODULE_ARGS: $Y2_MODULE_ARGS"
 	log "\tMODE:        $Y2_MODE"
-	log "\tQT_ARGS:     $Y2_QT_ARGS"
+	log "\tUI_ARGS:     $Y2_UI_ARGS"
 	log "\tQT_IM_MODULE:$QT_IM_MODULE"
 
-	if [ ! "$RUN_FBITERM" = "1" ]; then
-		y2base \
+	if [ "$RUN_FBITERM" = "1" ]; then
+	    OPT_FBITERM=/usr/bin/fbiterm
+	else
+	    OPT_FBITERM=
+	fi
+	$OPT_FBITERM y2base \
 			"$Y2_MODULE_NAME"   \
 			$Y2_MODE_FLAGS      \
 			$Y2_MODULE_ARGS     \
 			$Y2_MODE            \
-			$Y2_QT_ARGS
-	else
-		/usr/bin/fbiterm y2base \
-			"$Y2_MODULE_NAME"   \
-			$Y2_MODULE_ARGS     \
-			$Y2_MODE
-	fi
+			$Y2_UI_ARGS
 	Y2_EXIT_CODE=$?
 	Y2_ABORT_MESSAGE="YaST seems to be aborted abnormally !"
 	Y2_OK_MESSAGE="YaST procedure ended successfully"
@@ -651,6 +649,13 @@ case $SELECTED_MEDIUM in
 	SSH) check_network ;;
 	VNC) check_vnc     ;;
 esac
+
+# The prepare_for_ncurses in step 6 is kinda useless if step 7 can
+# change Y2MODE to ncurses in several ways
+# Anyway, #150799
+if [ "$Y2_MODE" = "ncurses" ]; then
+    Y2_UI_ARGS=--nothreads
+fi
 
 #=============================================
 # 8) Call YaST2
