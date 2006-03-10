@@ -116,6 +116,121 @@ submission of the hardware profile automatically.");
 
 
 
+    /* vv   MAIN (WIZARD) LAYOUT  vv  */
+    term sr_layout=nil;
+    sr_layout=`HVCenter( `VBox(
+                     `Left (
+                             `RadioButtonGroup( `id(`sr_perform), `VBox(
+                             `Left ( `Label( nccc_top ) ),
+                             `VSpacing(1),
+                             `Left ( `RadioButton(`id(`noconfigure), `opt(`notify), nccc_noconfigure )),
+                             `Left ( `RadioButton(`id(`configure),   `opt(`notify), nccc_configure, true )),
+                             `Left ( `HBox( `HSpacing( 3.0 ),
+                                      `VBox (
+                                             `VSpacing(0.5),
+                                             `Left( `Label( nccc_sub_comment ) ),
+                                             `Left( `CheckBox(`id(`hwinfo),  `opt(`notify), nccc_sub_hwinfo,  subhwinfo  ) ),
+                                             `Left( `CheckBox(`id(`optional), `opt(`notify), nccc_sub_optional, suboptional ) ),
+                                             `VSpacing(0.5),
+                                            // `Left( `Label( nccc_sub_show  ) ),
+                                             `PushButton(`id(`showinfo), nccc_sub_showbtn )
+                                   ) ) ) ,
+                             `VSpacing(0.5)
+                           )))
+    ));
+
+    term contents = `VBox ( `VSpacing (0.5), sr_layout, `VSpacing (0.5));
+    /* ^^       END MAIN LAYOUT     ^^  */
+
+
+
+    /* vv      SHOW INFO POPUP     vv  */
+    term showinformation = `HBox( `HSpacing(0.5),
+                                  `MinSize(  70, 22 ,`VBox(
+                                     `Label( transmit_info ),
+                                     `RichText(`id(`information_text), information_text ),
+                                     `PushButton (`id (`info_close), Label::CloseButton () )  )
+                                   ),
+                                  `HSpacing(0.5)
+    );
+    /* ^^      END  SHOW INFO       ^^  */
+
+
+
+
+
+    /* vv  MANUAL INTERACTION POPUP vv  */
+    term manual_interaction = `HBox(
+                                   `MinSize( 50, 20, `VBox(
+                                           `Left( `Label( `opt(`boldFont), mi_required ) )  ,
+                                           `VSpacing(0.5) ,
+                                           `Left( `Label( mi_start_browser  ) ) ,
+                                           `Left( `Label( mi_needinfo ) )  ,
+                                                  `RichText(`id(`needinfo), needinfo    ),
+                                           `HBox(
+                                                  `PushButton(`id(`start_browser), mi_browser_btn )  ,
+                                                  `HSpacing( 3),
+                                                  `PushButton(`id(`cancel),  Label::CancelButton()  )
+                                           )
+                                   ))
+    );
+    /* ^^  END MANUAL INTERACTION  ^^  */
+
+
+
+    /* vv      CCC CONFLICT POPUP      vv  */
+    term ccc_conflict=
+    `VBox(
+          `Left( `Label( `opt(`boldFont), nccc ) ),
+          `VSpacing( 0.5 ),
+          `Left( `Label( conflict_need_info  )  ),
+          `PushButton(`id(`ok), Label::OKButton())
+    );
+    /* ^^       END CCC CONFLICT       ^^  */
+
+
+    /* vv      CCC ERROR POPUP      vv  */
+    term error_message=
+    `VBox(
+           `Left( `Label( `opt(`boldFont), _("Error") ) ),
+           `VSpacing( 0.5 ),
+           `Left( `Label( `id(`err_description), _("An error occurred while connecting to the server.")  ) ),
+           `HBox(
+                  `HWeight(1, `PushButton(`id(`ok), Label::OKButton()  ) ),
+                  `HSpacing( 3 ),
+                  `HWeight(1, `PushButton(`id(`err_detail), _("Details")  ) ),
+                  `HSpacing( 3 ),
+                  `HWeight(1, `PushButton(`id(`cancel),  Label::CancelButton() ) )
+                )
+    );
+    /* ^^      END CCC ERROR        ^^  */
+
+
+    /* vv      CCC ERROR POPUP      vv  */
+    term error_message_details=
+    `MinSize( 50, 15,  `VBox(
+           `Left( `Label( `opt(`boldFont), _("Error Message") ) ),
+           `VSpacing( 0.5 ),
+           `RichText(`id(`errordetail), "" ),
+           `PushButton(`id(`ok), Label::OKButton())
+    ));
+    /* ^^      END CCC ERROR        ^^  */
+
+
+
+    /* vv      OK DONE UPDATE??    vv  */
+    term nccc_success=
+    `VBox(
+           `Left( `Label( `opt(`boldFont), nccc ) ),
+           `VSpacing( 0.5 ),
+           `Left( `Label( nccc_success_msg  ) ),
+           `PushButton(`id(`ok), Label::OKButton() )
+    );
+    /* ^^    END OK DONE UPDATE??   ^^  */
+
+
+
+
 /* ---------------------------------- LOCAL FUNCTIONS ------------------------------------------------------------  */
 
 /* function to call suse_register
@@ -193,22 +308,31 @@ boolean amIroot()
 }
 
 
-boolean setXauth()
+boolean report_error()
 {
-    // set .xauth for the user "suse-ncc" to be able to forward X to the user
+    // function to display an error message
+    // and offer a detailled view of the error report
 
-    return SCR::Execute(.target.bash,
-"if test `id -u` == 0
-then
-  cd /root && umask 077 && \
-  ( ([ -d .xauth ] || mkdir .xauth) && \
-    (grep ^suse-ncc$ .xauth/export >/dev/null 2>&1 || echo suse-ncc >> .xauth/export) )
-fi
+    UI::OpenDialog(error_message);
+    UI::SetFocus (`id (`cancel ));
+    symbol retry = nil;
 
-") == 0 ? true:false;
+    repeat
+    {
+        retry = (symbol) UI::UserInput();
 
+        if ( retry == `cancel ) configure_status = false;
+        else if (retry == `err_detail)
+        {
+            UI::OpenDialog(error_message_details);
+            UI::ChangeWidget( `id(`errordetail), `Value, (string)information_data["stderr"]:"no error message available");
+            UI::UserInput();
+            UI::CloseDialog();
+        }
+    } until ( retry != `err_detail );
+
+    UI::CloseDialog();
 }
-
 
 
 string su_exec(string user, string group, string command)
@@ -224,7 +348,7 @@ cmd=%3
 ", user, group, command )
 +
 "
-fakehome=/tmp/$user-fakehome
+fakehome=/var/lib/YaST2/$user-fakehome
 
 tmp=$(mktemp /tmp/.Xauthority.XXXXXX) || exit 1
 mkdir -p $fakehome
@@ -255,109 +379,46 @@ exit 0";
 
 
 
+string browser_command(string url)
+{
+    string bcmd="/bin/false";
+    boolean iamroot = amIroot();
+
+    if ( textmode )
+        bcmd = " screen w3m ";
+    else
+    {
+        if ( iamroot )
+        {
+            // setXauth();
+            bcmd = " MOZ_DISABLE_PANGO=1 /usr/bin/xulrunner /usr/share/YaST2/yastbrowser/application.ini -url ";
+        }
+        else
+        {    bcmd = " firefox -new-window "; }
+    }
+
+    // add url to browser command
+    bcmd =  bcmd + "'" + url + "'";
+
+    // add su call to not run a browser a root during installation
+    if ( iamroot ) bcmd = su_exec("suse-ncc", "nogroup", bcmd );
+
+    return bcmd;
+}
+
+
+boolean launchBrowser(string url)
+{
+    // get command to run correct browser and execute it
+    string command = browser_command(url);
+    SCR::Execute(.target.bash, command );
+    UI::RedrawScreen();
+
+    return true;
+}
 
 /* ----------------------------------- END FUNCTIONS -------------------------------------------------------------  */
 
-
-
-    /* vv   MAIN (WIZARD) LAYOUT  vv  */
-    term sr_layout=nil;
-    sr_layout=`HVCenter( `VBox(
-                     `Left (
-                             `RadioButtonGroup( `id(`sr_perform), `VBox(
-                             `Left ( `Label( nccc_top ) ),
-                             `VSpacing(1),
-                             `Left ( `RadioButton(`id(`noconfigure), `opt(`notify), nccc_noconfigure )),
-                             `Left ( `RadioButton(`id(`configure),   `opt(`notify), nccc_configure, true )),
-                             `Left ( `HBox( `HSpacing( 3.0 ),
-                                      `VBox (
-                                             `VSpacing(0.5),
-                                             `Left( `Label( nccc_sub_comment ) ),
-                                             `Left( `CheckBox(`id(`hwinfo),  `opt(`notify), nccc_sub_hwinfo,  subhwinfo  ) ),
-                                             `Left( `CheckBox(`id(`optional), `opt(`notify), nccc_sub_optional, suboptional ) ),
-                                             `VSpacing(0.5),
-                                            // `Left( `Label( nccc_sub_show  ) ),
-                                             `PushButton(`id(`showinfo), nccc_sub_showbtn )
-                                   ) ) ) ,
-                             `VSpacing(0.5)
-                           )))
-    ));
-
-    term contents = `VBox ( `VSpacing (0.5), sr_layout, `VSpacing (0.5));
-    /* ^^       END MAIN LAYOUT     ^^  */
-
-
-
-    /* vv      SHOW INFO POPUP     vv  */
-    term showinformation = `HBox( `HSpacing(0.5),
-                                  `MinSize(  70, 22 ,`VBox(
-                                     `Label( transmit_info ),
-                                     `RichText(`id(`information_text), `opt(`plainText), information_text ),
-                                     `PushButton (`id (`close_showinfo), Label::CloseButton () )  )
-                                   ),
-                                  `HSpacing(0.5)
-    );
-    /* ^^      END  SHOW INFO       ^^  */
-
-
-
-
-
-    /* vv  MANUAL INTERACTION POPUP vv  */
-    term manual_interaction = `HBox(
-                                   `MinSize( 50, 20, `VBox(
-                                           `Left( `Label( `opt(`boldFont), mi_required ) )  ,
-                                           `VSpacing(0.5) ,
-                                           `Left( `Label( mi_start_browser  ) ) ,
-                                           `Left( `Label( mi_needinfo ) )  ,
-                                                  `RichText(`id(`needinfo), `opt(`plainText), needinfo    ),
-                                           `HBox(
-                                                  `PushButton(`id(`start_browser), mi_browser_btn )  ,
-                                                  `HSpacing( 3),
-                                                  `PushButton(`id(`cancel),  Label::CancelButton()  )
-                                           )
-                                   ))
-    );
-    /* ^^  END MANUAL INTERACTION  ^^  */
-
-
-
-    /* vv      CCC CONFLICT POPUP      vv  */
-    term ccc_conflict=
-    `VBox(
-          `Left( `Label( `opt(`boldFont), nccc ) ),
-          `VSpacing( 0.5 ),
-          `Left( `Label( conflict_need_info  )  ),
-          `PushButton(`id(`ok), Label::OKButton())
-    );
-    /* ^^       END CCC CONFLICT       ^^  */
-
-
-    /* vv      CCC ERROR POPUP      vv  */
-    term ccc_error=
-    `VBox(
-           `Left( `Label( `opt(`boldFont), _("Error") ) ),
-           `VSpacing( 0.5 ),
-           `Left( `Label( `id(`err_description), _("Unknown error")  ) ),
-           `HBox(
-                  `HWeight(1, `PushButton(`id(`ok), Label::OKButton()  ) ),
-                  `HSpacing( 3 ),
-                  `HWeight(1, `PushButton(`id(`cancel),  Label::CancelButton() ) )
-                )
-    );
-    /* ^^      END CCC ERROR        ^^  */
-
-
-
-    /* vv      OK DONE UPDATE??    vv  */
-    term nccc_success=
-    `VBox(
-           `Left( `Label( `opt(`boldFont), nccc ) ),
-           `VSpacing( 0.5 ),
-           `Left( `Label( nccc_success_msg  ) ),
-           `PushButton(`id(`ok), Label::OKButton() )
-    );
-    /* ^^    END OK DONE UPDATE??   ^^  */
 
 
 
@@ -398,17 +459,23 @@ exit 0";
             information_data = suseRegister("p");
 
             if ( information_data["exit"]:"99" == "0" )
-            {    information_text = information_data["stdout"]:""; }
-            else
-            {    information_text = retrieve_error; }
+            {
+                information_text = information_data["stdout"]:"";
+                UI::OpenDialog(  showinformation );
+                UI::ChangeWidget(`id(`information_text), `Value, information_text );
+                any info_ret = nil;
 
-            //TODO: include more error codes from suse_register (eg. network unreachable, aso. ...)
+                repeat
+                {
+                    info_ret = UI::UserInput();
+                    if ( is(info_ret, string) ) launchBrowser( (string) info_ret);
 
-            UI::OpenDialog(  showinformation );
-            UI::ChangeWidget(`id(`information_text), `Value, information_text );
+                } until ( info_ret == `info_close );
 
-            UI::UserInput();
-            UI::CloseDialog();
+                UI::CloseDialog();
+            }
+            else  report_error();
+
         }
         else if (ret == `next)
         {
@@ -428,11 +495,11 @@ exit 0";
                     UI::ChangeWidget( `id(`needinfo), `Value, information_data["stderr"]:data_invalid );
                     any mi_ret =nil;
                     boolean mi_loopend = false;
+                    boolean recheck = true;
 
                     repeat
                     {
-                        boolean iamroot = amIroot();
-
+                        recheck = true;
                         mi_ret = UI::UserInput();
                         if ( mi_ret == `start_browser  )
                         {
@@ -442,41 +509,27 @@ exit 0";
                             suboptional = false;
 
                             // now we launch the browser
-                            string bcmd     ="";
-                            string bcmd_url =information_data["stdout"]:"http://www.opensuse.org";
+                            string browser_url = information_data["stdout"]:"http://www.opensuse.org";
+                            string browser_cmd =  browser_command(browser_url);
 
-                            if ( textmode == true )
-                               bcmd = " screen w3m ";
-                            else
-                            {
-                                if ( iamroot == true )
-                                {
-                                    // setXauth();
-                                    // UI::OpenDialog(`VBox(`Label("root"),`PushButton("ok"))); UI::UserInput(); UI::CloseDialog();
-                                    bcmd = " MOZ_DISABLE_PANGO=1 /usr/bin/xulrunner /usr/share/YaST2/yastbrowser/application.ini -url ";
-                                }
-                                else
-                                {    bcmd = " firefox -new-window "; }
-                            }
-
-                            string bcmd_full =  bcmd + "'" + bcmd_url + "'";
-
-                            if ( iamroot == true )
-                            {
-                                // in case of  root execute it as a different user
-                                bcmd_full = su_exec("suse-ncc", "users", bcmd_full);
-                            }
-
-                            SCR::Execute(.target.bash, bcmd_full );
+                            SCR::Execute(.target.bash, browser_cmd );
                             UI::RedrawScreen();
 
                         }
                         else if ( mi_ret == `cancel  )
                         {
+                            recheck = false;
                             mi_loopend = true;
                         }
+                        else if ( is(mi_ret, string) )
+                        {
+                            // launch browser
+                            launchBrowser( (string) mi_ret);
+                            recheck = false;
+                        }
 
-                        if ( ! mi_loopend  )
+
+                        if ( recheck )
                         {
                             // show the user, that we are doing something
                             UI::ChangeWidget( `id(`needinfo), `Value, _("Checking...") );
@@ -546,21 +599,9 @@ exit 0";
                      information_data["exit"]:"99" != "1"
                    )
                 {
-                    // display generic error message
-                    // TODO: specify error and show it via ChangeWidget, if desired
-                    UI::OpenDialog(ccc_error);
-                    UI::SetFocus (`id (`ok ));
-                    symbol retry = (symbol) UI::UserInput();
-                    UI::CloseDialog();
-                    if ( retry == `cancel ) configure_status = false;
+                    // display error message
+                    report_error();
                 }
-
-                // update main widget settings - they may have changed
-                if (configure_status) UI::ChangeWidget(`id(`configure), `Value, true);
-                else UI::ChangeWidget(`id(`noconfigure), `Value, true);
-
-                UI::ChangeWidget( `id(`hwinfo ),   `Value, subhwinfo );
-                UI::ChangeWidget( `id(`optional ), `Value, suboptional );
 
             }
             else
@@ -569,8 +610,13 @@ exit 0";
                 loopend = true;
                 ret = `skip;
             }
-
         }
+
+        // update main widget settings - they may have changed
+        if (configure_status) UI::ChangeWidget(`id(`configure), `Value, true);
+        else UI::ChangeWidget(`id(`noconfigure), `Value, true);
+        UI::ChangeWidget( `id(`hwinfo ),   `Value, subhwinfo );
+        UI::ChangeWidget( `id(`optional ), `Value, suboptional );
 
     } until ( loopend || ret == `back );
 
