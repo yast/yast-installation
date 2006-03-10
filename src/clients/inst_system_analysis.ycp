@@ -235,6 +235,12 @@ Wizard::SetTitleIcon ("yast-inst-mode");
 symbol ret = nil;
 symbol new_mode = Mode::update () ? `update : `install;
 
+string umount_result = Linuxrc::InstallInf ("umount_result");
+string media = Linuxrc::InstallInf ("InstMode");
+y2milestone ("Umont result: %1, inst mode: %2", umount_result, media);
+if (umount_result != "0" && (media == "cd" || media == "dvd"))
+    UI::ChangeWidget (`id (`add_on), `Enabled, false);
+
 repeat {
     ret = (symbol)UI::UserInput();
 
