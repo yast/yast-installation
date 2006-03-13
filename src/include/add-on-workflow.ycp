@@ -269,6 +269,12 @@ symbol CatalogSelect () {
 	y2milestone ("Deleting source %1", src_id);
 	Pkg::SourceDelete (src_id);
 	src_id = Pkg::SourceCreate (url, product_dir);
+	if (src_id == -1)
+	{
+	    // error report
+	    Report:Error (_("Failed to initialize the catalog."));
+	    return `finish;
+	}
 	AddOnProduct::src_id = src_id;
 	SourceManager::newSources = [src_id];
 	y2milestone ("Only one source available - skipping dialog");
@@ -354,6 +360,12 @@ Select the catalog to use.</p>
 	string product_dir = data["product_dir"]:"";
 	Pkg::SourceDelete (selected);
 	selected = Pkg::SourceCreate (url, product_dir);
+	if (selected == -1)
+	{
+	    // error report
+	    Report:Error (_("Failed to initialize the catalog."));
+	    return `finish;
+	}
 	AddOnProduct::src_id = selected;
 	SourceManager::newSources = [selected];
     }
@@ -480,14 +492,17 @@ symbol RunWizard() {
 	"media" : $[
 	    `abort : `abort,
 	    `next : "catalog",
+	    `finish : `next,
 	],
 	"catalog" : $[
 	    `abort : `abort,
 	    `next : "product",
+	    `finish : `next,
 	],
 	"product" : $[
 	    `abort : `abort,
 	    `next : `next,
+	    `finish : `next,
 	],
     ];
     return Sequencer::Run(aliases, sequence);
