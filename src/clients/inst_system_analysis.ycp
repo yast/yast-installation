@@ -323,6 +323,15 @@ if (ret == `next)
 if (ret == `back)
     return ret;
 
+if (Packages::add_on_products_list != nil)
+{
+    y2milestone ("Found list of add-on products to preselect");
+    Packages::SelectProduct ();
+    PackageCallbacksInit::SetMediaCallbacks();
+    AddOnProduct::AddPreselectedAddOnProducts (Packages::add_on_products_list);
+    Packages::add_on_products_list = nil; // do not select them any more
+}
+
 if (ret != `finish && Mode::mode () != start_mode)
 {
     y2milestone ("Switching Steps from %1 to %2 ", start_mode, Mode::mode ());

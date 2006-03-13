@@ -787,6 +787,46 @@ global boolean CheckProductDependencies (list<string> products) {
     return true;
 }
 
-
+/**
+ * Auto-integrate add-on products in specified file
+ * @param filelist string a file containing a list of add-on products to integrate
+ * @return boolean true on exit
+ */
+global boolean AddPreselectedAddOnProducts(string filelist) {
+    if (filelist == nil)
+    {
+	y2milestone ("No add-on products defined on the media");
+	return true;
+    }
+    list<string> products = splitstring ((string)SCR::Read (.target.string, filelist), "\r\n");
+    foreach (string p, products, {
+	if (p == "")
+	    return;
+	list<string> elements = splitstring (p, " \t");
+	elements = filter (string e, elemets, { return e != ""; });
+	string url = elements[0]:"";
+	string pth = elemetns[1]:"/";
+	elemnts = remove (elements, 0);
+	elemnts = remove (elements, 0);
+	integer src = Pkg::SourceCreate (url, pth);
+	Integrate (src);
+	if (size (elements) > 0)
+	{
+	    foreach (string e, elements, {
+		Pkg::ResolvableInstall (e, `product, "");
+	    });
+	}
+	else
+	{
+	    list<map<string,any> > products = Pkg::ResolvableProperties ("", `product, "");
+	    products = filter (map<string,any> p, products, {
+		return p["source"]:-1 == src;
+	    });
+	    foreach (map<string,any> p, products, {
+		Pkg::ResolvableInstall (p["name"]:"", `product, "");
+	    });
+	}
+    });
+}
 
 } // module end
