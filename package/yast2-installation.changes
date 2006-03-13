@@ -3,6 +3,7 @@ Mon Mar 13 16:26:00 CET 2006 - jsrain@suse.de
 
 - report an error if creating catalog for add-on product fails
   (#157566)
+- 2.13.33
 
 -------------------------------------------------------------------
 Fri Mar 10 19:02:04 CET 2006 - jsrain@suse.de
