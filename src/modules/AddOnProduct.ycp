@@ -803,17 +803,17 @@ global boolean AddPreselectedAddOnProducts(string filelist) {
 	if (p == "")
 	    return;
 	list<string> elements = splitstring (p, " \t");
-	elements = filter (string e, elemets, { return e != ""; });
+	elements = filter (string e, elements, { return e != ""; });
 	string url = elements[0]:"";
-	string pth = elemetns[1]:"/";
-	elemnts = remove (elements, 0);
-	elemnts = remove (elements, 0);
+	string pth = elements[1]:"/";
+	elements = remove (elements, 0);
+	elements = remove (elements, 0);
 	integer src = Pkg::SourceCreate (url, pth);
 	Integrate (src);
 	if (size (elements) > 0)
 	{
 	    foreach (string e, elements, {
-		Pkg::ResolvableInstall (e, `product, "");
+		Pkg::ResolvableInstall (e, `product);
 	    });
 	}
 	else
@@ -823,7 +823,7 @@ global boolean AddPreselectedAddOnProducts(string filelist) {
 		return p["source"]:-1 == src;
 	    });
 	    foreach (map<string,any> p, products, {
-		Pkg::ResolvableInstall (p["name"]:"", `product, "");
+		Pkg::ResolvableInstall (p["name"]:"", `product);
 	    });
 	}
     });

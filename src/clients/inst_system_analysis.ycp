@@ -12,6 +12,7 @@
 
 textdomain "installation";
 
+import "AddOnProduct";
 import "GetInstArgs";
 import "Installation";
 import "Kernel";
@@ -20,6 +21,7 @@ import "Linuxrc";
 import "Mode";
 import "Packages";
 import "Popup";
+import "PackageCallbacksInit";
 import "Product";
 import "ProductControl";
 import "RootPart";

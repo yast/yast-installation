@@ -272,7 +272,7 @@ symbol CatalogSelect () {
 	if (src_id == -1)
 	{
 	    // error report
-	    Report:Error (_("Failed to initialize the catalog."));
+	    Report::Error (_("Failed to initialize the catalog."));
 	    return `finish;
 	}
 	AddOnProduct::src_id = src_id;
@@ -363,7 +363,7 @@ Select the catalog to use.</p>
 	if (selected == -1)
 	{
 	    // error report
-	    Report:Error (_("Failed to initialize the catalog."));
+	    Report::Error (_("Failed to initialize the catalog."));
 	    return `finish;
 	}
 	AddOnProduct::src_id = selected;
