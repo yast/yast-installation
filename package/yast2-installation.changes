@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Tue Mar 14 18:11:53 CET 2006 - jdsn@suse.de
+
+- 2.13.34 
+
+-------------------------------------------------------------------
+Tue Mar 14 18:09:58 CET 2006 - jdsn@suse.de
+
+- new browser for registration
+- new texts for registration module 
+
+-------------------------------------------------------------------
 Mon Mar 13 16:26:00 CET 2006 - jsrain@suse.de
 
 - report an error if creating catalog for add-on product fails
