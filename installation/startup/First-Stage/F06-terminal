@@ -1,0 +1,37 @@
+#!/bin/sh
+log "Starting F06-terminal..."
+log "========================"
+
+#=============================================
+# 6) setup virtual console
+#---------------------------------------------
+. /usr/lib/YaST2/startup/arch/s390/console.sh
+# BEG S390: check if initvicons needs to be called
+s390_check_need_initvicons
+# END S390:
+if [ $NEED_INITVICONS = "yes" ];then
+	eval `initviocons -e`
+	export LINES COLUMNS TERM
+	log "\tSetup virtual console:"
+	log "\tLines:   $LINES"
+	log "\tColumns: $COLUMNS"
+	log "\tType:    $TERM"
+fi
+
+#=============================================
+# 6.1) setup TERM variable
+#---------------------------------------------
+if [ ! -z "$Console" ] && [ "$TERM" != "linux" ] ; then
+	log "\tAsking for Serial console type..."
+	set_term_variable
+	log "\tType:    $TERM"
+fi
+
+#=============================================
+# 6.2) check for p690 hvc console
+#---------------------------------------------
+grep -qi console=hvc < /proc/cmdline && {
+	echo "Console: hvc0,9600" >> /etc/install.inf
+	export HVC_CONSOLE_HINT="  (for POWER4/POWER5 systems via HMC terminal)"
+	export Console=hvc0,9600
+}

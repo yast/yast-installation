@@ -1,0 +1,132 @@
+/**
+ * File:
+ *  x11_finish.ycp
+ *
+ * Module:
+ *  Step of base installation finish
+ *
+ * Authors:
+ *  Jiri Srain <jsrain@suse.cz>
+ *
+ * $Id$
+ *
+ */
+
+{
+
+textdomain "installation";
+
+import "X11Version";
+import "Mode";
+import "Installation";
+
+include "installation/misc.ycp";
+
+any ret = nil;
+string func = "";
+map param = $[];
+
+/* Check arguments */
+if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
+    func = (string)WFM::Args(0);
+    if(size(WFM::Args()) > 1 && is(WFM::Args(1), map))
+	param = (map)WFM::Args(1);
+}
+
+y2milestone ("starting x11_finish");
+y2debug("func=%1", func);
+y2debug("param=%1", param);
+
+if (func == "Info")
+{
+    return (any)$[
+	"steps" : 1,
+	// progress step title
+	"title" : _("Copying X Window System configuration into system..."),
+	"when" : [ `installation, `update, `autoinst ],
+    ];
+}
+else if (func == "Write")
+{
+    // --------------------------------------------------------------
+    // Copy /etc/XF86Config into built system so that the
+    // second phase of the installation can find it.
+    X11Version::GetX11Link();
+
+    // Check if X11 package is installed.
+    boolean x11_installed = Pkg::IsProvided("xorg-x11");
+    if (!x11_installed)
+    {
+	x11_installed = Pkg::IsSelected ("xorg-x11");
+    }
+
+    y2milestone ("x11_installed: <%1>", x11_installed );
+
+    if (x11_installed)
+    {
+	if ( Mode::update () )
+	{
+	    if (X11Version::versionLink == "3")
+	    {
+		//========================================
+		// Update mode...
+		//----------------------------------------
+		// - set a flag at the end of the config to indicate later migration
+		// - copy the config to the installed system
+		y2milestone ("Update: XFree86 version 3 detected");
+		string filename = "/etc/XF86Config";
+		WFM::Execute (.local.bash,
+			      "echo -e '\n#3x' >> " + filename
+			      );
+		SCR::Execute (.target.bash,"/bin/ln -sf " +
+			      Installation::destdir + "/usr/X11R6/bin/XFree86 " +
+			      Installation::destdir + "/var/X11R6/bin/X"
+			      );
+		y2milestone ("Update: Include X11 config [3.x] to installed system");
+		y2milestone ("Update: X11 config [3.x] prepared for migration to [4.x]");
+		InjectFile ( filename );
+	    }
+	}
+	else
+	{
+	    //========================================
+	    // Installation mode...
+	    //----------------------------------------
+	    // make current X11 configuration available in installed system
+	    // copy /etc/X11/XF86Config from inst-sys to [/mnt]/etc/X11/xorg.conf
+	    // ---
+	    y2milestone ("Include X11 config [instsys] to installed system: xorg.conf");
+	    string filename = "/etc/X11/xorg.conf";
+	    WFM::Execute (.local.bash, "/bin/cp " + filename + " " +
+			  Installation::destdir + "/etc/X11/xorg.conf"
+			  );
+	}
+    }
+
+    {
+	// ... /
+	// create backup copy from from inst-sys config to be available in installed
+	// or updated system copy /etc/X11/XF86Config from inst-sys to
+	// [/mnt]/etc/X11/xorg.conf.install
+	// ---
+	y2milestone ("Include X11 config [instsys] to installed system: xorg.conf.install");
+	string filename = "/etc/X11/xorg.conf";
+	WFM::Execute (.local.bash, "/bin/cp " + filename + " " +
+		      Installation::destdir + "/etc/X11/xorg.conf" + ".install"
+		      );
+    }
+}
+else
+{
+    y2error ("unknown function: %1", func);
+    ret = nil;
+}
+
+y2debug("ret=%1", ret);
+y2milestone("x11_finish finished");
+return ret;
+
+
+} /* EOF */
+
+

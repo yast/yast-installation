@@ -1,0 +1,99 @@
+/**
+ * File:	installation/general/inst_relase_notes.ycp
+ * Module:	Installation
+ * Summary:	Display release notes
+ * Authors:	Arvin Schnell <arvin@suse.de>
+ *
+ * Display release notes.
+ *
+ * $Id$
+ */
+
+{
+    textdomain "installation";
+
+    import "Language";
+    import "Report";
+    import "Label";
+
+    /* filename of release notes */
+    string file = "";
+
+    /* release notes */
+    string text = "";
+
+
+    /* function to load release notes */
+    define boolean load_release_notes ()
+    {
+        string path_to_relnotes = "/docu";
+	list<integer> sources = Pkg::SourceStartCache (true);
+	integer source_id = sources[0]:0;
+	string path_templ = path_to_relnotes + "/RELEASE-NOTES.%1.rtf";
+	y2debug ("Path template: %1", path_templ);
+	string tmp = sformat (path_templ, Language::language);
+	y2debug ("Trying to get %1", tmp);
+	tmp = Pkg::SourceProvideFile (source_id, 1, tmp);
+	if (tmp == nil)
+	{
+	    tmp = sformat (path_templ, substring (Language::language, 0, 2));
+	    y2debug ("Trying to get %1", tmp);
+	    tmp = Pkg::SourceProvideFile (source_id, 1, tmp);
+	}
+	if (tmp == nil)
+	{
+	    tmp = sformat (path_templ, "en");
+	    y2debug ("Trying to get %1", tmp);
+	    tmp = Pkg::SourceProvideFile (source_id, 1, tmp);
+	}
+	if (tmp == nil)
+	    return false;
+
+	text = (string)SCR::Read (.target.string, [tmp, ""]);
+	if (text != "" && text != nil)
+	    return true;
+	return false;
+    };
+
+    if (! load_release_notes ())
+    {
+	// error report
+	Report::Error (_("Cannot load release notes."));
+	return nil;
+    }
+
+    text =
+// beginning of the rich text with the release notes
+_("<p><b>These are the release notes made for the first initial release. They are
+part of the installation media. During installation, if a connection
+to the Internet is available, you can download updated release notes
+from the SUSE Linux Web server.</b></p>") + text;
+
+    term contents = `HBox (
+	`VSpacing (22),
+	`VBox (
+	    `HSpacing (70),
+	    `VSpacing (0.5),
+	    `Left (`Heading (_("Release Notes"))),
+	    `RichText (`id (`text), text),
+	    `VSpacing (0.5),
+	    `PushButton (`id (`close), Label::CloseButton ()),
+	    `VSpacing (0.5)
+	)
+    );
+
+    UI::OpenDialog (contents);
+    UI::SetFocus (`close);
+
+    // FIXME: richtext eats return key, but only in NCurses and we want to
+    // make users read release notes (and make PgDn work). For Next, F10 is
+    // availbale
+    UI::SetFocus (`id (`text));
+
+    any ret = nil;
+    repeat {
+	ret = UI::UserInput();
+    } until ( ret == `close || ret == `back );
+    UI::CloseDialog ();
+    return ret;
+}

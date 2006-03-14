@@ -1,0 +1,32 @@
+/**
+ * File:	clients/add-on.ycp
+ * Package:	yast2-installation
+ * Summary:	Install an add-on product
+ * Authors:	Jiri Srain <jsrain@suse.de>
+ *
+ */
+
+{
+textdomain "installation";
+
+import "AddOnProduct";
+import "Report";
+import "Wizard";
+
+include "installation/add-on-workflow.ycp";
+
+Wizard::CreateDialog();
+Wizard::SetDesktopIcon("vendor");
+Wizard::HideBackButton();
+
+symbol ret = RunWizard();
+
+if (ret == `next)
+{
+    ret = AddOnProduct::DoInstall ();
+}
+UI::CloseDialog();
+return ret;
+
+/* EOF */
+}
