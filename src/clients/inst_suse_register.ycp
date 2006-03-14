@@ -40,22 +40,22 @@
     map ui = UI::GetDisplayInfo();
     boolean textmode = (boolean) ui["TextMode"]:nil;
 
-
     map argmap = GetInstArgs::argmap();
-
 
     /* strings for main (wizard) layout  */
     string nccc = _("Novell Customer Center Configuration");
+           nccc = _("Update Configuration");
     string nccc_top = _("Get technical support and product updates and
 manage subscriptions with Novell Customer Center.");
+           nccc_top = "";
 
     string nccc_configure   = _("Configure Now (Recommended)");
     string nccc_noconfigure = _("Configure Later");
 
-    string nccc_sub_comment = _("Include Extra Information");
+    string nccc_sub_comment = _("Include for Convenience");
     string nccc_sub_hwinfo  = _("Hardware Profile");
-    string nccc_sub_optional= _("Optional Data");
-    string nccc_sub_showbtn = _("Preview Information");
+    string nccc_sub_optional= _("Optional Information");
+    string nccc_sub_showbtn = _("Details...");
 
 
     /*  strings for success popup   */
@@ -85,16 +85,29 @@ submission of the hardware profile automatically.");
 
 
     /* help text for dialog "Novell Customer Center Configuration" */
-    string help = _("<p><b>Novell Customer Center Configuration</b></p>
-<p>To be replaced by a useful text. This text should explain what we are doing here in this yast module.</p>");
+    string help = _("<p><b>Update Configuration</b></p>
+<p>
+Configure your system to enable online updates by registering it with Novell.
+To do this now, select <b>Configure Now</b>.  Delay the registration with
+<b>Configure Later</b>.
+</p><p>
+To simplify the registration process, include information from your system
+with <b>Optional Information</b> and <b>Hardware
+Profile</b>.  <b>Details</b> shows the maximum amount of information that can
+be involved in your registration.</p>");
 
+
+    /*  further strings   */
+    string checking         = _("Checking...");
+    string error            = _("Error");
+    string server_error     = _("An error occurred while connecting to the server.");
+    string details          = _("Details...");
+    string error_msg        = _("Error Message");
+    string starting_browser = _("Starting Browser...");
 
     /* other string variables */
     map<string, string> information_data = nil;
     string information_text = "";
-
-    // dynamically filled by "suse_register -p" ... untranslated
-    string needinfo = "";
 
 
     /* some variables used below  */
@@ -114,8 +127,6 @@ submission of the hardware profile automatically.");
 
 
 
-
-
     /* vv   MAIN (WIZARD) LAYOUT  vv  */
     term sr_layout=nil;
     sr_layout=`HVCenter( `VBox(
@@ -132,8 +143,7 @@ submission of the hardware profile automatically.");
                                              `Left( `CheckBox(`id(`hwinfo),  `opt(`notify), nccc_sub_hwinfo,  subhwinfo  ) ),
                                              `Left( `CheckBox(`id(`optional), `opt(`notify), nccc_sub_optional, suboptional ) ),
                                              `VSpacing(0.5),
-                                            // `Left( `Label( nccc_sub_show  ) ),
-                                             `PushButton(`id(`showinfo), nccc_sub_showbtn )
+                                             `Right( `PushButton(`id(`showinfo), nccc_sub_showbtn ) )
                                    ) ) ) ,
                              `VSpacing(0.5)
                            )))
@@ -166,7 +176,7 @@ submission of the hardware profile automatically.");
                                            `VSpacing(0.5) ,
                                            `Left( `Label( mi_start_browser  ) ) ,
                                            `Left( `Label( mi_needinfo ) )  ,
-                                                  `RichText(`id(`needinfo), needinfo    ),
+                                                  `RichText(`id(`needinfo), ""  ),
                                            `HBox(
                                                   `PushButton(`id(`start_browser), mi_browser_btn )  ,
                                                   `HSpacing( 3),
@@ -183,7 +193,7 @@ submission of the hardware profile automatically.");
     `VBox(
           `Left( `Label( `opt(`boldFont), nccc ) ),
           `VSpacing( 0.5 ),
-          `Left( `Label( conflict_need_info  )  ),
+          `Left( `Label( conflict_need_info ) ),
           `PushButton(`id(`ok), Label::OKButton())
     );
     /* ^^       END CCC CONFLICT       ^^  */
@@ -192,13 +202,13 @@ submission of the hardware profile automatically.");
     /* vv      CCC ERROR POPUP      vv  */
     term error_message=
     `VBox(
-           `Left( `Label( `opt(`boldFont), _("Error") ) ),
+           `Left( `Label( `opt(`boldFont), error ) ),
            `VSpacing( 0.5 ),
-           `Left( `Label( `id(`err_description), _("An error occurred while connecting to the server.")  ) ),
+           `Left( `Label( `id(`err_description), server_error ) ),
            `HBox(
                   `HWeight(1, `PushButton(`id(`ok), Label::OKButton()  ) ),
                   `HSpacing( 3 ),
-                  `HWeight(1, `PushButton(`id(`err_detail), _("Details")  ) ),
+                  `HWeight(1, `PushButton(`id(`err_detail), details ) ),
                   `HSpacing( 3 ),
                   `HWeight(1, `PushButton(`id(`cancel),  Label::CancelButton() ) )
                 )
@@ -209,9 +219,9 @@ submission of the hardware profile automatically.");
     /* vv      CCC ERROR POPUP      vv  */
     term error_message_details=
     `MinSize( 50, 15,  `VBox(
-           `Left( `Label( `opt(`boldFont), _("Error Message") ) ),
+           `Left( `Label( `opt(`boldFont), error_msg ) ),
            `VSpacing( 0.5 ),
-           `RichText(`id(`errordetail), "" ),
+           `RichText(`id(`errordetail), `opt(`plainText) , "" ),
            `PushButton(`id(`ok), Label::OKButton())
     ));
     /* ^^      END CCC ERROR        ^^  */
@@ -223,7 +233,7 @@ submission of the hardware profile automatically.");
     `VBox(
            `Left( `Label( `opt(`boldFont), nccc ) ),
            `VSpacing( 0.5 ),
-           `Left( `Label( nccc_success_msg  ) ),
+           `Left( `Label( nccc_success_msg ) ),
            `PushButton(`id(`ok), Label::OKButton() )
     );
     /* ^^    END OK DONE UPDATE??   ^^  */
@@ -252,43 +262,10 @@ map<string, string> suseRegister(string parameter)
     string exitcode = sformat("%1", info["exit"]:99);
     y2milestone ("/usr/bin/suse_register returned %1", exitcode);
 
-    /* vvvvvvv  for demonstration purposes set DEMO to true   vvvvvvvvv */
-    boolean DEMO = false;
-    if ( DEMO )
-    {
-        list<string> errs = ["0", "1", "2", "3", "4", "5", "6", "17", "99"] ;
-
-        UI::OpenDialog(
-            `VBox(
-                  `Label(`opt(`boldFont), "DEMONSTRATION MODE"),
-                  `Label("suse_register is running in background now"),
-                  `Label("for testing purposes you can define its error code"),
-                  `Label(
-"
-0: everythings ok
-1: needinfo -> manual interaction
-2: unknown error
-3: conflict (according to contract more data is needed)
-4.. : unknown errors
-"),
-                  `ComboBox(`id(`err), "error code", errs ),
-                  `PushButton( `id(`go), "OK")
-            )
-        );
-        UI::UserInput();
-        exitcode = (string) UI::QueryWidget(`id(`err), `Value);
-        if (exitcode == "1") info["stdout"]="http://www.opensuse.org";
-        UI::CloseDialog();
-    }
-    /* ^^^^^^^    end of DEMO   - (FIXME: to be removed after testing)  ^^^^^^^^ */
-
-
     // transform to map<string, string>
-    map<string, string> response = $[
-                                     "exit"  :exitcode ,
-                                     "stdout":info["stdout"]:"",
-                                     "stderr":info["stderr"]:""
-                                    ];
+    map<string, string> response = $[  "exit"  :exitcode ,
+                                       "stdout":info["stdout"]:"",
+                                       "stderr":info["stderr"]:""  ];
 
     y2milestone ("Server response: %1", response);
     return response;
@@ -300,18 +277,15 @@ boolean amIroot()
 {
     // check if we are root
     map<string, any> userid = (map<string, any>) SCR::Execute(.target.bash_output, "id -u");
-    y2milestone("running under user id %1", userid);
-    if ( String::FirstChunk(userid["stdout"]:"1", "\n") == "0" )
-        return true;
-    else
-        return false;
+    y2milestone("running with user id %1", userid);
+    return  String::FirstChunk(userid["stdout"]:"1", "\n") == "0" ? true:false; 
 }
 
 
 boolean report_error()
 {
     // function to display an error message
-    // and offer a detailled view of the error report
+    // and offer a detailled view of the error message
 
     UI::OpenDialog(error_message);
     UI::SetFocus (`id (`cancel ));
@@ -338,49 +312,40 @@ boolean report_error()
 string su_exec(string user, string group, string command)
 {
     // create a script to run a system call as different user
-    // thanks to werner for the nice script
     string exec = sformat("
 #!/bin/bash -x
 
 user=%1
 group=%2
-cmd=%3
+cmd=\"%3\"
 ", user, group, command )
 +
 "
 fakehome=/var/lib/YaST2/$user-fakehome
+XA=/root/.xauth
 
-tmp=$(mktemp /tmp/.Xauthority.XXXXXX) || exit 1
+umask 077
+mkdir -p $XA
+grep ^$user$ $XA/export >/dev/null 2>&1  || echo $user >> $XA/export
+
 mkdir -p $fakehome
-trap \"rm -rf $tmp $fakehome\" EXIT INT HUP TERM
-chmod 600 $tmp
+trap \"rm -rf $fakehome\" EXIT INT HUP TERM
 chmod 700 $fakehome
-chown $user:$group $tmp $fakehome
+chown $user:$group $fakehome
 
-
-if test \"${DISPLAY%:*}\" = \"localhost\" ; then
-    disp=$(hostname -s)/unix:${DISPLAY#*:}
-else
-    disp=\"${DISPLAY}\"
-fi
-
-exec 4< ${XAUTHORITY:-$HOME/.Xauthority}
-su -s /bin/bash -- $user -c \"xauth -qif <(cat 0<&4) extract - $disp | xauth -qf $tmp merge -\"
-exec 4<&-
-
-su -s /bin/bash -- $user -c \"cd; XAUTHORITY=$tmp $cmd\"
+su -s /bin/bash -- $user -c \"cd; $cmd\"
 
 exit 0";
 
-    y2milestone("executing via su_exec: %1", exec);
+    y2milestone("using su_exec to launch browser");
 
     return exec;
 }
 
 
-
 string browser_command(string url)
 {
+    // create the command string to launch a browser
     string bcmd="/bin/false";
     boolean iamroot = amIroot();
 
@@ -389,18 +354,15 @@ string browser_command(string url)
     else
     {
         if ( iamroot )
-        {
-            // setXauth();
             bcmd = " MOZ_DISABLE_PANGO=1 /usr/bin/xulrunner /usr/share/YaST2/yastbrowser/application.ini -url ";
-        }
         else
-        {    bcmd = " firefox -new-window "; }
+            bcmd = " firefox -new-window ";
     }
 
     // add url to browser command
     bcmd =  bcmd + "'" + url + "'";
 
-    // add su call to not run a browser a root during installation
+    // in case of root add su call to not run a browser as root during installation
     if ( iamroot ) bcmd = su_exec("suse-ncc", "nogroup", bcmd );
 
     return bcmd;
@@ -411,6 +373,9 @@ boolean launchBrowser(string url)
 {
     // get command to run correct browser and execute it
     string command = browser_command(url);
+
+    y2milestone("launching browser: %1", command);
+
     SCR::Execute(.target.bash, command );
     UI::RedrawScreen();
 
@@ -461,7 +426,7 @@ boolean launchBrowser(string url)
             if ( information_data["exit"]:"99" == "0" )
             {
                 information_text = information_data["stdout"]:"";
-                UI::OpenDialog(  showinformation );
+                UI::OpenDialog( showinformation );
                 UI::ChangeWidget(`id(`information_text), `Value, information_text );
                 any info_ret = nil;
 
@@ -503,18 +468,10 @@ boolean launchBrowser(string url)
                         mi_ret = UI::UserInput();
                         if ( mi_ret == `start_browser  )
                         {
-                            UI::ChangeWidget( `id(`needinfo), `Value, _("Starting Browser...") );
-
-                            // after each browser run, deactivate optional data submittance
-                            suboptional = false;
-
                             // now we launch the browser
-                            string browser_url = information_data["stdout"]:"http://www.opensuse.org";
-                            string browser_cmd =  browser_command(browser_url);
-
-                            SCR::Execute(.target.bash, browser_cmd );
-                            UI::RedrawScreen();
-
+                            UI::ChangeWidget( `id(`needinfo), `Value, starting_browser );
+                            launchBrowser(information_data["stdout"]:"http://www.opensuse.org");
+                            suboptional = false;   // deactivate after each browser run
                         }
                         else if ( mi_ret == `cancel  )
                         {
@@ -532,7 +489,7 @@ boolean launchBrowser(string url)
                         if ( recheck )
                         {
                             // show the user, that we are doing something
-                            UI::ChangeWidget( `id(`needinfo), `Value, _("Checking...") );
+                            UI::ChangeWidget( `id(`needinfo), `Value, checking );
 
                             information_data = suseRegister("");
 
