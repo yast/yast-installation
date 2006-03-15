@@ -1,7 +1,9 @@
 -------------------------------------------------------------------
-Wed Mar 15 17:54:23 CET 2006 - jsrain@suse.de
+Wed Mar 15 18:21:54 CET 2006 - jsrain@suse.de
 
 - do not overwrite language settings during update (#156562)
+- do not offer network sources for Add-On products if no network is
+  configured (#156467)
 
 -------------------------------------------------------------------
 Tue Mar 14 18:16:32 CET 2006 - jdsn@suse.de
