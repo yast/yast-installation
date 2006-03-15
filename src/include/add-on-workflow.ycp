@@ -21,6 +21,7 @@
 textdomain "installation";
 
 import "AddOnProduct";
+import "Linuxrc";
 import "Popup";
 import "SLP";
 import "Sequencer";
@@ -62,6 +63,25 @@ symbol MediaSelect () {
 	    `VStretch ()
 	))), `HStretch ()
     );
+    string netdevice = Linuxrc::InstallInf ("Netdevice");
+    boolean net_avail = netdevice != "" && netdevice != nil;
+    if (Stage::initial())
+    {
+	y2milestone ("Network device: %1, Network available: %2", netdevice, net_avail);
+    }
+    if (Stage::initial() && ! net_avail)
+    {
+	term contents = `HBox (`HStretch (), `VBox (
+	    `RadioButtonGroup (`id (`type), `VBox (
+		`VStretch (),
+		// radio button
+		`Left (`RadioButton(`id(`cd),        _("&CD..."))),
+		// radio button
+		`Left (`RadioButton(`id(`dvd),       _("&DVD..."))),
+		`VStretch ()
+	    ))), `HStretch ()
+	);
+    }
 
     // dialog caption
     string title = _("Add-On Product Media");
