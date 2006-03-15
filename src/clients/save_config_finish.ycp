@@ -46,7 +46,7 @@ y2debug("param=%1", param);
 if (func == "Info")
 {
     return (any)$[
-	"steps" : Mode::autoinst () ? 8 : 7,
+	"steps" : Mode::autoinst () ? 8 : (Mode::update() ? 6 : 7),
 	"when" : [ `installation, `update, `autoinst ],
     ];
 }
@@ -60,10 +60,13 @@ else if (func == "Write")
     Progress::Title (_("Saving time zone..."));
     Timezone::Save();
     Progress::NextStep ();
-    // progress step title
-    Progress::Title (_("Saving language..."));
-    Language::Save();
-    Progress::NextStep ();
+    if (!Mode::update ())
+    {
+	// progress step title
+	Progress::Title (_("Saving language..."));
+	Language::Save();
+	Progress::NextStep ();
+    }
     // progress step title
     Progress::Title (_("Saving keyboard configuration..."));
     Keyboard::Save(true);
