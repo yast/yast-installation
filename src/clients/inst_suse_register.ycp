@@ -249,7 +249,7 @@ be involved in your registration.</p>");
 map<string, string> suseRegister(string parameter)
 {
     // handle parameters
-    string params = " -y ";
+    string params = " -y -L ~/.suse_register ";
     if (parameter == "p") params = params + " -p ";
     else if( Mode::normal() ) params = params + " --force-registration ";
 
@@ -258,7 +258,7 @@ map<string, string> suseRegister(string parameter)
 
     // run suse_register ... -y beautifies the output for usage in yast
     y2milestone ("Calling /usr/bin/suse_register %1", params);
-    map<string, any> info = (map<string, any>) SCR::Execute(.target.bash_output, sformat("/usr/bin/suse_register %1", params ));
+    map<string, any> info = (map<string, any>) SCR::Execute(.target.bash_output, sformat("umask 0077;  /usr/bin/suse_register %1", params ));
     string exitcode = sformat("%1", info["exit"]:99);
     y2milestone ("/usr/bin/suse_register returned %1", exitcode);
 
