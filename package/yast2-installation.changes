@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar 16 14:56:36 CET 2006 - fehr@suse.de
+
+- increase maximal size of root fs to 20 Gig (#158608)
+- 2.13.37
+
+-------------------------------------------------------------------
 Wed Mar 15 18:21:54 CET 2006 - jsrain@suse.de
 
 - do not overwrite language settings during update (#156562)
