@@ -325,6 +325,7 @@ if (ret == `next)
 if (ret == `back)
     return ret;
 
+Packages::InitializeCatalogs ();
 if (Packages::add_on_products_list != nil)
 {
     y2milestone ("Found list of add-on products to preselect");
