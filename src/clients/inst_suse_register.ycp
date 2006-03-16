@@ -16,6 +16,8 @@
 {
     textdomain "installation";
 
+    import "FileUtils";
+    import "URL";
     import "Wizard";
     import "Popup";
     import "GetInstArgs";
@@ -41,6 +43,9 @@
     boolean textmode = (boolean) ui["TextMode"]:nil;
 
     map argmap = GetInstArgs::argmap();
+
+    string services_file = sformat ("%1/update_services",
+	SCR::Read (.target.tmpdir));
 
     /* strings for main (wizard) layout  */
     string nccc = _("Novell Customer Center Configuration");
@@ -259,7 +264,7 @@ the transmitted information in the log file <tt>~/.suse_register.log</tt>.
 map<string, string> suseRegister(string parameter)
 {
     // handle parameters
-    string params = " -y -L ~/.suse_register.log ";
+    string params = sformat (" -y -L ~/.suse_register.log --dumpfile=%1 ", services_file);
     if (parameter == "p") params = params + " -p ";
     else if( Mode::normal() ) params = params + " --force-registration ";
 
@@ -390,6 +395,24 @@ boolean launchBrowser(string url)
     UI::RedrawScreen();
 
     return true;
+}
+
+// add the sources known from suse-register to yast
+boolean add_update_sources () {
+
+    if (!FileUtils::Exists (services_file))
+	return false;
+
+    foreach (string url,
+	splitstring ((string)SCR::Read(.target.string, services_file),"\n"), {
+
+	map parsed = URL::Parse (url);
+	if (parsed != $[])
+	{
+	    Pkg::SourceCreate (parsed["scheme"]:"http" + "://" + parsed["host"]:"" + parsed["port"]:"", parsed["path"]:"");
+	}
+
+    });
 }
 
 /* ----------------------------------- END FUNCTIONS -------------------------------------------------------------  */
@@ -557,6 +580,7 @@ boolean launchBrowser(string url)
                     else if ( update == `noupdate ) ret = `skip;
                     // we are done, end of loop
                     loopend = true;
+		    add_update_sources ();
                 }
 
                 // handle any other error codes
