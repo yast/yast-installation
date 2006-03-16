@@ -85,16 +85,26 @@ submission of the hardware profile automatically.");
 
 
     /* help text for dialog "Novell Customer Center Configuration" */
-    string help = _("<p><b>Update Configuration</b></p>
+    string help = _(
+"<p><b>Update Configuration</b></p>
 <p>
 Configure your system to enable online updates by registering it with Novell.
-To do this now, select <b>Configure Now</b>.  Delay the registration with
+To do this now, select <b>Configure Now</b>. Delay the registration with
 <b>Configure Later</b>.
-</p><p>
+</p>
+<p>
 To simplify the registration process, include information from your system
-with <b>Optional Information</b> and <b>Hardware
-Profile</b>.  <b>Details</b> shows the maximum amount of information that can
-be involved in your registration.</p>");
+with <b>Optional Information</b> and <b>Hardware Profile</b>. 
+<b>Details</b> shows the maximum amount of information that can be involved
+ in your registration.
+</p>
+<p>
+No information is passed to anyone outside Novell. The data is used for
+statistical purposes and to enhance your convenience regarding driver support
+and your Web account. Find a detailed privacy policy in <b>Details</b>. View
+the transmitted information in the log file <tt>~/.suse_register.log</tt>.
+</p>"
+);
 
 
     /*  further strings   */
@@ -249,7 +259,7 @@ be involved in your registration.</p>");
 map<string, string> suseRegister(string parameter)
 {
     // handle parameters
-    string params = " -y -L ~/.suse_register ";
+    string params = " -y -L ~/.suse_register.log ";
     if (parameter == "p") params = params + " -p ";
     else if( Mode::normal() ) params = params + " --force-registration ";
 
