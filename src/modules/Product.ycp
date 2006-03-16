@@ -48,6 +48,28 @@
      */
     global list flags		= [];
 
+
+global list<map<string,any> > FindBaseProducts() {
+    y2milestone ("Looking for base products");
+    list<map<string,any> > products = Pkg::ResolvableDependencies ("", `product, "");
+    products = filter (map<string,any> p, products, {
+	list<map<string,string> > requires = p["dependencies"]:[];
+	requires = filter (map<string,string> req, requires, {
+	    return req["dep_kind"]:"" == "requires" && req["res_kind"]:"" == "package";
+	});
+	return size (requires) == 0;
+    });
+    y2debug ("Found base products: %1", products);
+    if (size (products) == 0)
+	y2error ("No base product found");
+    else if (size (products) > 1)
+	y2warning ("More than one base product found");
+    return products;
+}
+
+
+
+
     // -----------------------------------------------
     /**
      * Constructor
@@ -56,6 +78,9 @@
 
 	if (Stage::initial ())
 	{
+	    // it should use the same mechanism as running system. But it would
+	    // mean to initialize package manager from constructor, which is
+	    // not reasonable
 	    name		= (string) SCR::Read(.content.PRODUCT);
 	    version		= (string) SCR::Read(.content.VERSION);
 	    vendor		= (string) SCR::Read(.content.VENDOR);
@@ -76,22 +101,30 @@
 	else if (!Mode::config ())
 	{
 	    Pkg::TargetInit ("/", false);
-	    list all_products = Pkg::TargetProducts();		// get all products
+//	    list all_products = Pkg::TargetProducts();		// get all products
 
-	    map last_product = all_products[0]:$[];		// get last installed product
+//	    map last_product = all_products[0]:$[];		// get last installed product
 
-	    name		= last_product["name"]:"";
-	    version		= last_product["version"]:"";
-	    vendor		= last_product["vendor"]:"";
-	    distproduct		= last_product["distproduct"]:"";
-	    distversion		= last_product["distversion"]:"";
-	    baseproduct		= last_product["baseproduct"]:"";
-	    if (baseproduct == "") baseproduct = name;
-	    baseversion		= last_product["baseversion"]:"";
+//	    name		= last_product["name"]:"";
+//	    version		= last_product["version"]:"";
+//	    vendor		= last_product["vendor"]:"";
+// TODO	    distproduct		= last_product["distproduct"]:"";
+// TODO	    distversion		= last_product["distversion"]:"";
+// TODO	    baseproduct		= last_product["baseproduct"]:"";
+// TODO	    if (baseproduct == "") baseproduct = name;
+// TODO	    baseversion		= last_product["baseversion"]:"";
 
-	    relnotesurl		= last_product["relnotesurl"]:"";
+//	    relnotesurl		= last_product["relnotesurl"]:"";
 
-	    flags		= splitstring (last_product["flags"]:"", " ");
+//	    flags		= splitstring (last_product["flags"]:"", " ");
+
+	    list<map<string,any> > base_products = FindBaseProducts();
+	    map<string,any> base_product = base_products[0]:$[];// there should be only one - hopefuly
+	    name = base_product["display_name"]:base_product["summary"]:base_product["name"]:"";
+	    version = base_product["version"]:"";
+	    vendor = base_product["vendor"]:"";
+	    relnotesurl = base_product["relnotes_url"]:"";
+	    flags = base_product["flags"]:[];
 	}
 
 	if(distproduct == nil) distproduct = "";
