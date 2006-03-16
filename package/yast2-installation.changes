@@ -3,6 +3,7 @@ Thu Mar 16 23:24:11 CET 2006 - jsrain@suse.de
 
 - added zFCP and DASD modules to list of modules to be cloned after
   SLES installation (#153378)
+- 2.13.38
 
 -------------------------------------------------------------------
 Thu Mar 16 23:10:06 CET 2006 - jsrain@suse.de
