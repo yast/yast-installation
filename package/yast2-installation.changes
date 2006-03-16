@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Mar 16 20:31:09 CET 2006 - jsrain@suse.de
+
+- fixed product handling (&product; macro) (#151050)
+
+-------------------------------------------------------------------
 Thu Mar 16 15:51:42 CET 2006 - jdsn@suse.de
 
 - fixed blocker bug (#158628), suse_register call in all products
