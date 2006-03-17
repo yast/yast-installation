@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Mar 17 09:30:02 CET 2006 - locilka@suse.cz
+
+- fixed .desktop file for Add-On Products, now it starts add-on
+  instead of sw_single when launched from YaST Control Center
+  (#158869).
+
+-------------------------------------------------------------------
 Thu Mar 16 23:24:11 CET 2006 - jsrain@suse.de
 
 - added zFCP and DASD modules to list of modules to be cloned after
