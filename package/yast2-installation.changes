@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Mar 17 22:50:06 CET 2006 - jsrain@suse.de
+
+- added AytoYaST support for add-on products
+
+-------------------------------------------------------------------
 Fri Mar 17 09:30:02 CET 2006 - locilka@suse.cz
 
 - fixed .desktop file for Add-On Products, now it starts add-on

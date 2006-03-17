@@ -11,10 +11,11 @@ X-SuSE-YaST-Call=add-on
 X-SuSE-YaST-Group=Software
 X-SuSE-YaST-Argument=
 X-SuSE-YaST-RootOnly=true
-X-SuSE-YaST-AutoInst=
+X-SuSE-YaST-AutoInst=configure
 X-SuSE-YaST-Geometry=
-X-SuSE-YaST-SortKey=20
+X-SuSE-YaST-SortKey=
 X-SuSE-YaST-AutoInstResource=
+X-SuSE-YaST-AutoInstPath=install
 
 Icon=yast-add-on
 Exec=/sbin/yast2 add-on
@@ -22,4 +23,3 @@ Exec=/sbin/yast2 add-on
 Name=Add-on Product
 GenericName=Install an Add-on Product
 X-KDE-SubstituteUID=true
-

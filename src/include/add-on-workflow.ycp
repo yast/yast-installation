@@ -23,10 +23,12 @@ textdomain "installation";
 import "AddOnProduct";
 import "Linuxrc";
 import "Popup";
+import "Report";
 import "SLP";
 import "Sequencer";
 import "SourceManager";
 import "Stage";
+import "Wizard";
 
 include "inst_source_dialogs.ycp";
 
@@ -401,10 +403,15 @@ symbol ProductSelect () {
     if (size (products) == 0)
     {
 	y2milestone ("No poduct found on the media, but anyway, using it :-)");
+        map data = Pkg::SourceGeneralData (AddOnProduct::src_id);
+        string url = data["url"]:"";
+        string product_dir = data["product_dir"]:"";
 	AddOnProduct::add_on_products = add (AddOnProduct::add_on_products, $[
 	    "media" : AddOnProduct::src_id,
 	    // table cell
 	    "product" : _("No product found in the catalog"),
+	    "media_url" : url,
+	    "product_dir" : product_dir,
 	]);
 	return `next;
     }
@@ -420,9 +427,14 @@ symbol ProductSelect () {
 	    Popup::Message (_("Dependencies of the add-on product cannot be fullfilled."));
 	    return `back;
 	}
+        map data = Pkg::SourceGeneralData (AddOnProduct::src_id);
+        string url = data["url"]:"";
+        string product_dir = data["product_dir"]:"";
 	AddOnProduct::add_on_products = add (AddOnProduct::add_on_products, $[
 	    "media" : AddOnProduct::src_id,
 	    "product" : prod["name"]:"",
+	    "media_url" : url,
+	    "product_dir" : product_dir,
 	]);
 	return `next;
     }
@@ -480,10 +492,15 @@ to install.</p>
 		ret = nil;
 		continue;
 	    }
+	    map data = Pkg::SourceGeneralData (AddOnProduct::src_id);
+	    string url = data["url"]:"";
+	    string product_dir = data["product_dir"]:"";
 	    foreach (string product, selected, {
 		AddOnProduct::add_on_products = add (AddOnProduct::add_on_products, $[
 		    "media" : AddOnProduct::src_id,
 		    "product" : product,
+		    "media_url" : url,
+		    "product_dir" : product_dir,
 		]);
 	    });
 	}
@@ -526,6 +543,91 @@ symbol RunWizard() {
 	],
     ];
     return Sequencer::Run(aliases, sequence);
+}
+
+
+void Redraw (boolean enable_back, boolean enable_next) {
+    // main screen heading
+    string title = _("Add-On Product Installation");
+    string help = "";
+    integer index = -1;
+    list items = maplist (map<string,any> product, AddOnProduct::add_on_products, {
+	index = index + 1;
+	map data = Pkg::SourceGeneralData (product["media"]:-1);
+	// placeholder for unknown path
+	string dir = data["product_dir"]:_("Unknown");
+	if (dir == "")
+	    dir = "/";
+	// table cell, %1 is URL, %2 is directory name
+	string media = sformat (_("URL: %1, Directory: %2"),
+	    // placeholder for unknown URL
+	    data["url"]:_("Unknown"), dir);
+	return `item (`id (index),
+	    media,
+	    sformat (_("Product %1"), product["product"]:""));
+    });
+    term contents = `VBox (
+	`Table (`id (`summary), `header (
+		// table header
+		_("Media"),
+		// table header
+		_("Product")),
+	    items),
+	`HBox (
+	    `PushButton (`id (`add), Label::AddButton ()),
+	    `PushButton (`id (`delete), Label::DeleteButton ())
+	)
+    );
+
+    Wizard::SetContents (title, contents, help, enable_back, enable_next);
+    Wizard::SetDesktopIcon("vendor");
+}
+
+symbol RunAddOnMainDialog(boolean enable_back, boolean enable_next) {
+    Redraw (enable_back, enable_next);
+    symbol ret = nil;
+
+    repeat {
+        ret = (symbol)Wizard::UserInput();
+        if (ret == `abort || ret == `cancel)
+        {
+            if (Popup::ConfirmAbort (`incomplete))
+                break;
+        }
+        else if (ret == `delete)
+        {
+            integer selected = (integer)UI::QueryWidget (`id (`summary), `CurrentItem);
+            if (selected == nil)
+            {
+                // message report
+                Report::Message (_("Select a product to delete."));
+                continue;
+            }
+            // remove whole media if the product is the onle one on the media
+            integer media = AddOnProduct::add_on_products[selected, "media"]:-1;
+            integer med_count = size (filter (map<string,any> prod,
+                AddOnProduct::add_on_products,
+            {
+                return prod["media"]:-1 == media;
+            }));
+            if (med_count == 1)
+                Pkg::SourceDelete (media);
+            // remove the selected record
+            AddOnProduct::add_on_products[selected] = nil;
+            AddOnProduct::add_on_products = filter (map<string,any> prod,
+                AddOnProduct::add_on_products,
+            {
+                return prod != nil;
+            });
+            Redraw (enable_back, enable_next);
+        }
+        else if (ret == `add)
+        {
+            symbol ret = RunWizard ();
+            Redraw (enable_back, enable_next);
+        }
+    } until ( ret == `next || ret == `back );
+    return ret;
 }
 
 
