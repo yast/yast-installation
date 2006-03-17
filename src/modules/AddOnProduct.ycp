@@ -78,6 +78,10 @@ global list<string> finish_steps_after_chroot = [];
  */
 global list<string> finish_steps_before_umount = [];
 
+global boolean modified = false;
+
+global list<integer> added_sources = [];
+
 
 
 /**
@@ -828,5 +832,23 @@ global boolean AddPreselectedAddOnProducts(string filelist) {
 	}
     });
 }
+
+global map Export () {
+    list<map<string,any> > exp = maplist (map<string,any> p, add_on_products, {
+	if (haskey (p, "media"))
+	    p = remove (p, "media");
+	return p;
+    });
+    return $[
+	"add_on_products" : exp,
+    ];
+}
+
+global boolean Import (map settings) {
+    add_on_products = settings["add_on_products"]:[];
+    modified = false;
+    return true;
+}
+
 
 } // module end
