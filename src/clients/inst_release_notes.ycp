@@ -21,7 +21,6 @@
     import "Language";
     import "Mode";
     import "String";
-    import "Label";
 
     map argmap = GetInstArgs::argmap();
 
@@ -82,21 +81,16 @@
     }
 
     term contents = `VBox ( `VSpacing (0.5), relnoteslayout, `VSpacing (0.5));
-    term CloseButtonBox = `HBox(
-     `HStretch(),
-     `HWeight(1, `ReplacePoint( `id(`rep_close), 
-                   `PushButton( `id(`close), Label::CloseButton()) )),
-     `HStretch() );
 
     /* help text for dialog "Release Notes" */
     string help = _("<p>Here are the <b>release notes</b> for the installed
 Linux system. They provide a brief summary of new features and changes.</p>");
 
-    // in normal mode only show a close button
-    if (Mode::normal()) Wizard::OpenCustomDialog(nil, CloseButtonBox );
+    // in normal mode no BackAbortNext-button layout
+    if (Mode::normal()) Wizard::OpenAcceptDialog();
 
     Wizard::SetContents (caption, contents, help, GetInstArgs::enable_back(),
-            GetInstArgs::enable_next());
+           GetInstArgs::enable_next());
 
     // FIXME: richtext eats return key, but only in NCurses and we want to
     // make users read release notes (and make PgDn work). For Next, F10 is
@@ -112,7 +106,7 @@ Linux system. They provide a brief summary of new features and changes.</p>");
 
 	ret = Wizard::UserInput();
 
-	if (ret == `abort || ret==`close)
+	if (ret == `abort)
 	{
 	    if (Mode::normal()) break;
 	    if (Popup::ConfirmAbort (`incomplete))
