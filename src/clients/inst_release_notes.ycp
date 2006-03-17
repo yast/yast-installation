@@ -21,6 +21,7 @@
     import "Language";
     import "Mode";
     import "String";
+    import "Label";
 
     map argmap = GetInstArgs::argmap();
 
@@ -75,17 +76,25 @@
     }
     else
     {
-	// FIXME use a different label
-        relnoteslayout=`VBox( `Left( `ComboBox(`id(`productsel), `opt(`notify), caption /* _("Products") */ , relnotesproducts)),
+        // no label here - double caption makes no sense
+        relnoteslayout=`VBox( `Left( `ComboBox(`id(`productsel), `opt(`notify), "", relnotesproducts)),
                                       relnotesrichtext );
     }
 
     term contents = `VBox ( `VSpacing (0.5), relnoteslayout, `VSpacing (0.5));
+    term CloseButtonBox = `HBox(
+     `HStretch(),
+     `HWeight(1, `ReplacePoint( `id(`rep_close), 
+                   `PushButton( `id(`close), Label::CloseButton()) )),
+     `HStretch() );
 
     /* help text for dialog "Release Notes" */
     string help = _("<p>Here are the <b>release notes</b> for the installed
 Linux system. They provide a brief summary of new features and changes.</p>");
-    if (Mode::normal()) Wizard::CreateDialog();
+
+    // in normal mode only show a close button
+    if (Mode::normal()) Wizard::OpenCustomDialog(nil, CloseButtonBox );
+
     Wizard::SetContents (caption, contents, help, GetInstArgs::enable_back(),
             GetInstArgs::enable_next());
 
@@ -103,7 +112,7 @@ Linux system. They provide a brief summary of new features and changes.</p>");
 
 	ret = Wizard::UserInput();
 
-	if (ret == `abort)
+	if (ret == `abort || ret==`close)
 	{
 	    if (Mode::normal()) break;
 	    if (Popup::ConfirmAbort (`incomplete))
