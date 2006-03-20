@@ -223,10 +223,14 @@ if (! Installation::probing_done)
     }
 
 y2milestone ("Have Linux: %1, Offer Update: %2", have_linux, offer_update);
+
+boolean other_options_disabled = false;
 if (! (have_linux && offer_update))
 {
-    Mode::SetMode ("installation");
-    return `auto;
+    // to offer add-on products
+    // Mode::SetMode ("installation");
+    // return `auto;
+    other_options_disabled = true;
 }
 if (Mode::autoinst ())
     return `auto;
@@ -242,6 +246,12 @@ string media = Linuxrc::InstallInf ("InstMode");
 y2milestone ("Umont result: %1, inst mode: %2", umount_result, media);
 if (umount_result != "0" && (media == "cd" || media == "dvd"))
     UI::ChangeWidget (`id (`add_on), `Enabled, false);
+
+// only installation (and addon products) enabled
+if (other_options_disabled) {
+    UI::ChangeWidget (`id (`update), `Enabled, false);
+    UI::ChangeWidget (`id (`expert), `Enabled, false);
+}
 
 repeat {
     ret = (symbol)UI::UserInput();
