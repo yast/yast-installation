@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Mar 20 10:08:13 CET 2006 - locilka@suse.cz
+
+- disabled skipping the 'Installation Mode' dialog when no other
+  installed Linux found. Just disabling 'Update' and 'Other'
+  options in that case (#157695).
+
+-------------------------------------------------------------------
 Fri Mar 17 22:50:06 CET 2006 - jsrain@suse.de
 
 - added AytoYaST support for add-on products
