@@ -210,7 +210,7 @@ the first CD are located, such as /data1/CD1.</p>
 	    boolean refresh = true;
 	    do {
 		url = editUrl( url );
-		if ( size( url ) == 0 ) break;
+		if ( size( url ) == 0 ) { ret = `back; break; }
 		createResult = SourceManager::createSource( url);
             } while ( createResult == `again );
         }
@@ -220,7 +220,7 @@ the first CD are located, such as /data1/CD1.</p>
 	    boolean refresh = true;
             do {
                 url = editUrl( url );
-                if ( size( url ) == 0 ) break;
+                if ( size( url ) == 0 ) { ret = `back; break; }
 		createResult = SourceManager::createSource( url);
             } while ( createResult == `again );
         }
@@ -245,7 +245,7 @@ the first CD are located, such as /data1/CD1.</p>
             url = "dir://";
             do {
                 url = editUrl( url );
-                if ( size( url ) == 0 ) break;
+                if ( size( url ) == 0 ) { ret = `back; break; }
 		createResult = SourceManager::createSource( url);
             } while ( createResult == `again );
 	}
@@ -254,7 +254,7 @@ the first CD are located, such as /data1/CD1.</p>
             url = "";
 	    do {
                 url = editRawUrl( url );
-                if ( size( url ) == 0 ) break;
+                if ( size( url ) == 0 ) { ret = `back; break; }
 		createResult = SourceManager::createSource( url);
 	    } while (createResult == `again);
 	}

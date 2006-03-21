@@ -3,6 +3,8 @@ Tue Mar 21 16:33:32 CET 2006 - locilka@suse.cz
 
 - adding "Local Directory" option for Add-On Products when no
   network is available (#159779).
+- avoid from adding "Unknown" Add-On Product when Cancel button
+  pressed in the Add New Add-On popup (#159784).
 
 -------------------------------------------------------------------
 Tue Mar 21 08:57:51 CET 2006 - jsuchome@suse.cz
