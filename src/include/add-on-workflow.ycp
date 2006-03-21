@@ -80,6 +80,8 @@ symbol MediaSelect () {
 		`Left (`RadioButton(`id(`cd),        _("&CD..."))),
 		// radio button
 		`Left (`RadioButton(`id(`dvd),       _("&DVD..."))),
+		// radio button
+		`Left (`RadioButton(`id(`local_dir), _("&Local Directory..."))),
 		`VStretch ()
 	    ))), `HStretch ()
 	);
