@@ -751,7 +751,7 @@ global boolean WFIntegrate (string filename) {
  */
 global boolean Integrate (integer srcid) {
     y2milestone ("Integrating source %1", srcid);
-    string filename = Pkg::SourceProvideFile (srcid, 1, "/installation.xml");
+    string filename = Pkg::SourceProvideOptionalFile (srcid, 1, "/installation.xml");
     if (filename == nil)
     {
 	y2milestone ("Add-on product control file not found, not touching the workglow");
@@ -774,7 +774,7 @@ test -d %1 || /bin/mkdir %1;
 	}
 	control_files_to_add = add (control_files_to_add, sformat ("%1.xml", srcid));
     }
-    string y2update = Pkg::SourceProvideFile (srcid, 1, "/y2update.tgz");
+    string y2update = Pkg::SourceProvideOptionalFile (srcid, 1, "/y2update.tgz");
     if (y2update == nil)
     {
 	y2milestone ("No YaST update found on the media");
