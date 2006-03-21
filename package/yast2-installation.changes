@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Mar 21 07:57:37 CET 2006 - visnov@suse.cz
+
+- try to get add-on product control files only optionally (#159116)
+- 2.13.40 
+
+-------------------------------------------------------------------
 Mon Mar 20 10:08:13 CET 2006 - locilka@suse.cz
 
 - disabled skipping the 'Installation Mode' dialog when no other
