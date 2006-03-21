@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Mar 21 08:57:51 CET 2006 - jsuchome@suse.cz
+
+- returned dependency on yast2-online-update
+
+-------------------------------------------------------------------
 Tue Mar 21 07:57:37 CET 2006 - visnov@suse.cz
 
 - try to get add-on product control files only optionally (#159116)
