@@ -662,7 +662,7 @@ void CleanY2Update() {
  */
 global symbol DoInstall() {
     string control = Pkg::SourceProvideFile (src_id, 1, "/installation.xml");
-    string binaries = Pkg::SourceProvideFile (src_id, 1, "/y2update.tgz");
+    string binaries = Pkg::SourceProvideOptionalFile (src_id, 1, "/y2update.tgz");
     // UNPACK binaries
     map out = (map)SCR::Execute (.target.bash_output, sformat ("
 test -d /y2update && rm -rf /y2update;
