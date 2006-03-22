@@ -9,7 +9,7 @@
 
 {
 
-module "Registration";
+module "Register";
 textdomain "installation";
 
 import "FileUtils";

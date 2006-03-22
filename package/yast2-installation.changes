@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Mar 20 05:30:01 CET 2006 - jdsn@suse.de
+
+- fixed missing module in makefile
+- 2.13.43 
+
+-------------------------------------------------------------------
 Wed Mar 22 19:03:57 CET 2006 - locilka@suse.cz
 
 - Added fallback for adding add-on products without file
