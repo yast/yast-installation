@@ -3,7 +3,7 @@
  * Module:	Installation
  * Summary:	Display release notes
  * Authors:	Arvin Schnell <arvin@suse.de>
- *              Jens Daniel Schmidt <jdsn@suse.de>
+ *          Jens Daniel Schmidt <jdsn@suse.de>
  *
  * Display release notes.
  *
@@ -67,15 +67,14 @@
 
     // use DumpTab or ComboBox layout
     if (  UI::HasSpecialWidget(`DumbTab ) && (
-           ( size(relnotesproducts)<4? true:false &&  prodnamelen<90? true:false ) ||
-           ( size(relnotesproducts)>3? true:false &&  prodnamelen<70? true:false )     )
+           ( size(relnotesproducts)<4  &&  prodnamelen<90 ) ||
+           ( size(relnotesproducts)>3  &&  prodnamelen<70 )    )
        )
     {
         relnoteslayout= `DumbTab ( relnotesproducts , relnotesrichtext );
     }
     else
     {
-        // no label here - double caption makes no sense
         relnoteslayout=`VBox( `Left( `ComboBox(`id(`productsel), `opt(`notify), _("&Product"), relnotesproducts)),
                                       relnotesrichtext );
     }
