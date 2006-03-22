@@ -28,6 +28,7 @@
     import "String";
     import "Label";
     import "Internet";
+    import "Register";
 
     // no network - no suse_register
     if (!Mode::normal())
@@ -44,15 +45,18 @@
 
     map argmap = GetInstArgs::argmap();
 
-    string services_file = sformat ("%1/update_services",
-	SCR::Read (.target.tmpdir));
-
     /* strings for main (wizard) layout  */
-    string nccc = _("Novell Customer Center Configuration");
-           nccc = _("Update Configuration");
-    string nccc_top = _("Get technical support and product updates and
-manage subscriptions with Novell Customer Center.");
-           nccc_top = "";
+    string title_nccc = _("Novell Customer Center Configuration");
+    string title_update = _("Update Configuration");
+    // for SLES/SLED and SL (2 months after release) use title_nccc
+    string title = title_update;
+
+    string nccc_top = _(
+"Get technical support and product updates and
+manage subscriptions with Novell Customer Center."
+);
+    // reactivate for SLES/SLED and for SL (2 months after release)
+    nccc_top = "";
 
     string nccc_configure   = _("Configure Now (Recommended)");
     string nccc_noconfigure = _("Configure Later");
@@ -71,17 +75,20 @@ manage subscriptions with Novell Customer Center.");
     string mi_required = _("Manual Interaction Required");
     string mi_needinfo = _("Needed Information");
     string mi_browser_btn = _("Continue");
-    string mi_start_browser = _("A Web browser will start in which to complete
-the configuration on the opened Web site.");
-
+    string mi_start_browser = _(
+"A Web browser will start in which to complete
+the configuration on the opened Web site."
+);
 
 
     /* string for show information popup */
-    string transmit_info = _("Information to Send");
+    string transmit_info = _("Registration and Privacy Information");
 
     /*  strings for conflict popup */
-    string conflict_need_info = _("The server requires additional system information. Activating 
-submission of the hardware profile automatically.");
+    string conflict_need_info = _(
+"The server requires additional system information. Activating 
+submission of the hardware profile automatically."
+);
 
 
     /* error messages  */
@@ -90,28 +97,36 @@ submission of the hardware profile automatically.");
 
 
     /* help text for dialog "Novell Customer Center Configuration" */
-    string help = _(
-"<p><b>Update Configuration</b></p>
-<p>
+string help_title = sformat( "<p><b>%1</b></p>", title);
+string help_para1 = _(
+"<p>
 Configure your system to enable online updates by registering it with Novell.
 To do this now, select <b>Configure Now</b>. Delay the registration with
 <b>Configure Later</b>.
-</p>
-<p> 
+</p>"
+);
+
+string help_para2 = _(
+"<p>
 To simplify the registration process, include information from your system
 with <b>Optional Information</b> and <b>Hardware Profile</b>. 
 <b>Details</b> shows the maximum amount of information that can be involved
  in your registration. To obtain this information, it contacts the Novell
 server to query what information is needed for your product. Only the identity
 of the installed product is sent in this initial exchange.
-</p>
-<p>
+</p>"
+);
+
+string help_para3 = _(
+"<p>
 No information is passed to anyone outside Novell. The data is used for
 statistical purposes and to enhance your convenience regarding driver support
 and your Web account. Find a detailed privacy policy in <b>Details</b>. View
 the transmitted information in the log file <tt>~/.suse_register.log</tt>.
 </p>"
 );
+string help = help_title + help_para1 + help_para2 + help_para3;
+
 
 
     /*  further strings   */
@@ -127,21 +142,12 @@ the transmitted information in the log file <tt>~/.suse_register.log</tt>.
     string information_text = "";
 
 
-    /* some variables used below  */
-
     // default is true, see statement in layout term
     boolean configure_status = true;
 
 
-
-    //TODO: STANO:
-    // read hwinfo and optional setting from config file(s)
-    // (root from/to sysconfig, user read from sysconfig and write to homedir .somedotfile (eg. ~/.suse_register ))
-    // this is not mandatory for the beta6, but should be in beta7 or at least one later
-    /* initial setting: both true */
-    boolean subhwinfo   = true;
-    boolean suboptional = true;
-
+    // Register::initialize() is mandatory - never remove it
+    Register::initialize();
 
 
     /* vv   MAIN (WIZARD) LAYOUT  vv  */
@@ -157,8 +163,8 @@ the transmitted information in the log file <tt>~/.suse_register.log</tt>.
                                       `VBox (
                                              `VSpacing(0.5),
                                              `Left( `Label( nccc_sub_comment ) ),
-                                             `Left( `CheckBox(`id(`hwinfo),  `opt(`notify), nccc_sub_hwinfo,  subhwinfo  ) ),
-                                             `Left( `CheckBox(`id(`optional), `opt(`notify), nccc_sub_optional, suboptional ) ),
+                                             `Left( `CheckBox(`id(`hwinfo),  `opt(`notify), nccc_sub_hwinfo,  Register::submit_hwdata ) ),
+                                             `Left( `CheckBox(`id(`optional), `opt(`notify), nccc_sub_optional, Register::submit_optional ) ),
                                              `VSpacing(0.5),
                                              `Right( `PushButton(`id(`showinfo), nccc_sub_showbtn ) )
                                    ) ) ) ,
@@ -208,7 +214,7 @@ the transmitted information in the log file <tt>~/.suse_register.log</tt>.
     /* vv      CCC CONFLICT POPUP      vv  */
     term ccc_conflict=
     `VBox(
-          `Left( `Label( `opt(`boldFont), nccc ) ),
+          `Left( `Label( `opt(`boldFont), title ) ),
           `VSpacing( 0.5 ),
           `Left( `Label( conflict_need_info ) ),
           `PushButton(`id(`ok), Label::OKButton())
@@ -248,7 +254,7 @@ the transmitted information in the log file <tt>~/.suse_register.log</tt>.
     /* vv      OK DONE UPDATE??    vv  */
     term nccc_success=
     `VBox(
-           `Left( `Label( `opt(`boldFont), nccc ) ),
+           `Left( `Label( `opt(`boldFont), title ) ),
            `VSpacing( 0.5 ),
            `Left( `Label( nccc_success_msg ) ),
            `PushButton(`id(`ok), Label::OKButton() )
@@ -257,48 +263,7 @@ the transmitted information in the log file <tt>~/.suse_register.log</tt>.
 
 
 
-
 /* ---------------------------------- LOCAL FUNCTIONS ------------------------------------------------------------  */
-
-/* function to call suse_register
-   the returned map is transformed to map<string, string>
-*/
-map<string, string> suseRegister(string parameter)
-{
-    // handle parameters
-    //  -y beautifies the output for usage in yast
-    //  -L log file
-    string params = sformat (" -y -L ~/.suse_register.log --dumpfile=%1 ", services_file);
-    if (parameter == "p") params = params + " -p ";
-    else if( Mode::normal() ) params = params + " --force-registration ";
-
-    if ( subhwinfo   == false )   params = params + " --no-hw-data ";
-    if ( suboptional == false )   params = params + " --no-optional ";
-
-    // run suse_register
-    y2milestone ("Calling /usr/bin/suse_register %1", params);
-    map<string, any> info = (map<string, any>) SCR::Execute(.target.bash_output, sformat("umask 0077;  /usr/bin/suse_register %1", params ));
-    string exitcode = sformat("%1", info["exit"]:99);
-    y2milestone ("/usr/bin/suse_register returned %1", exitcode);
-
-    // transform to map<string, string>
-    map<string, string> response = $[  "exit"  :exitcode ,
-                                       "stdout":info["stdout"]:"",
-                                       "stderr":info["stderr"]:""  ];
-
-    y2milestone ("Server response: %1", response);
-    return response;
-}
-
-
-
-boolean amIroot()
-{
-    // check if we are root
-    map<string, any> userid = (map<string, any>) SCR::Execute(.target.bash_output, "id -u");
-    y2milestone("running with user id %1", userid);
-    return  String::FirstChunk(userid["stdout"]:"1", "\n") == "0" ? true:false; 
-}
 
 
 boolean report_error()
@@ -328,7 +293,7 @@ boolean report_error()
 }
 
 
-string su_exec(string user, string group, string command)
+string su_exec2(string user, string group, string command)
 {
     // create a script to run a system call as different user
     string exec = sformat("
@@ -362,17 +327,61 @@ exit 0";
 }
 
 
+string su_exec(string user, string group, string command)
+{
+    // create a script to run a system call as different user
+    // thanks to werner for writing this script
+    string exec = sformat("
+#!/bin/bash -x
+
+user=%1
+group=%2
+cmd=\"%3\"
+", user, group, command )
++
+"
+fakehome=/var/lib/YaST2/$user-fakehome
+umask 0077
+
+tmp=$(mktemp /tmp/.Xauthority.XXXXXX) || exit 1
+mkdir -p $fakehome
+trap \"rm -rf $tmp $fakehome\" EXIT INT HUP TERM
+chmod 600 $tmp
+chmod 700 $fakehome
+chown $user:$group $tmp $fakehome
+
+
+if test \"${DISPLAY%:*}\" = \"localhost\" ; then
+    disp=$(hostname -s)/unix:${DISPLAY#*:}
+else
+    disp=\"${DISPLAY}\"
+fi
+
+exec 4< ${XAUTHORITY:-$HOME/.Xauthority}
+su -s /bin/bash -- $user -c \"xauth -qif <(cat 0<&4) extract - $disp | xauth -qf $tmp merge -\"
+exec 4<&-
+
+su -s /bin/bash -- $user -c \"cd; XAUTHORITY=$tmp $cmd\"
+
+exit 0";
+
+    y2milestone("using su_exec to launch browser");
+
+    return exec;
+}
+
+
+
 string browser_command(string url)
 {
     // create the command string to launch a browser
     string bcmd="/bin/false";
-    boolean iamroot = amIroot();
 
     if ( textmode )
         bcmd = " screen w3m ";
     else
     {
-        if ( iamroot )
+        if ( Register::iamroot )
             bcmd = " MOZ_DISABLE_PANGO=1 /usr/bin/xulrunner /usr/share/YaST2/yastbrowser/application.ini -url ";
         else
             bcmd = " firefox -new-window ";
@@ -382,7 +391,7 @@ string browser_command(string url)
     bcmd =  bcmd + "'" + url + "'";
 
     // in case of root add su call to not run a browser as root during installation
-    if ( iamroot ) bcmd = su_exec("suse-ncc", "nogroup", bcmd );
+    if ( Register::iamroot ) bcmd = su_exec("suse-ncc", "nogroup", bcmd );
 
     return bcmd;
 }
@@ -391,9 +400,9 @@ string browser_command(string url)
 boolean launchBrowser(string url)
 {
     // check for valid url
-    map parsed = URL::Parse( url );
+    map parsed = URL::Parse(url);
     if ( parsed == $[]) return false;
-    else url = parsed["scheme"]:"http" + "://" + parsed["host"]:"www.novell.com" + parsed["port"]:"", parsed["path"]:"";
+    // no rebuild of the url - parser seems to only parse one parameter in URL
 
     // get command to run correct browser and execute it
     string command = browser_command(url);
@@ -406,33 +415,15 @@ boolean launchBrowser(string url)
     return true;
 }
 
-// add the sources known from suse-register to yast
-boolean add_update_sources () {
-
-    if (!FileUtils::Exists (services_file))
-    return false;
-
-    foreach (string url,
-    splitstring ((string)SCR::Read(.target.string, services_file),"\n"), {
-
-    map parsed = URL::Parse (url);
-    if (parsed != $[])
-    {
-        Pkg::SourceCreate (parsed["scheme"]:"http" + "://" + parsed["host"]:"" + parsed["port"]:"", parsed["path"]:"");
-    }
-    });
-}
 
 /* ----------------------------------- END FUNCTIONS -------------------------------------------------------------  */
-
-
 
 
     // check if we are in installation workflow or running independently
     if (Mode::normal()) Wizard::CreateDialog();
 
     // we always need the next button
-    Wizard::SetContents (nccc, contents, help, GetInstArgs::enable_back(), true);
+    Wizard::SetContents (title, contents, help, GetInstArgs::enable_back(), true);
 
     y2debug ("%1", UI::DumpWidgetTree());
 
@@ -457,12 +448,12 @@ boolean add_update_sources () {
         }
         else if (ret == `hwinfo || ret == `optional)
         {
-            subhwinfo  = (boolean) UI::QueryWidget(`id(`hwinfo),  `Value);
-            suboptional= (boolean) UI::QueryWidget(`id(`optional), `Value);
+            Register::submit_hwdata  = (boolean) UI::QueryWidget(`id(`hwinfo),  `Value);
+            Register::submit_optional= (boolean) UI::QueryWidget(`id(`optional), `Value);
         }
         else if (ret == `showinfo)
         {
-            information_data = suseRegister("p");
+            information_data = Register::suseRegister(`p);
 
             if ( information_data["exit"]:"99" == "0" )
             {
@@ -488,7 +479,7 @@ boolean add_update_sources () {
             if ( configure_status == true )
             {
                 /* run suse_register to see if we need manual interaction */
-                information_data = suseRegister("");
+                information_data = Register::suseRegister(nil);
 
                 // error code 1: needinfo
                 // manual interaction is requiered
@@ -512,7 +503,7 @@ boolean add_update_sources () {
                             // now we launch the browser
                             UI::ChangeWidget( `id(`needinfo), `Value, starting_browser );
                             launchBrowser(information_data["stdout"]:"http://www.opensuse.org");
-                            suboptional = false;   // deactivate after each browser run
+                            Register::submit_optional = false;   // deactivate after each browser run
                         }
                         else if ( mi_ret == `cancel  )
                         {
@@ -532,7 +523,7 @@ boolean add_update_sources () {
                             // show the user, that we are doing something
                             UI::ChangeWidget( `id(`needinfo), `Value, checking );
 
-                            information_data = suseRegister("");
+                            information_data = Register::suseRegister(nil);
 
                             if (information_data["exit"]:"99" == "0" || information_data["exit"]:"99" == "3" )
                             {
@@ -574,7 +565,7 @@ boolean add_update_sources () {
                     UI::SetFocus (`id (`ok));
                     UI::UserInput();
                     UI::CloseDialog();
-                    subhwinfo = true;
+                    Register::submit_hwdata = true;
                 }
 
                 // error code 0 means: everything is OK
@@ -582,13 +573,12 @@ boolean add_update_sources () {
                 if (information_data["exit"]:"99" == "0")
                 {
                     UI::OpenDialog( nccc_success );
-                    symbol update = (symbol) UI::UserInput();
+                    UI::UserInput();
                     UI::CloseDialog();
-                    if ( update == `update ) ret = `next;
-                    else if ( update == `noupdate ) ret = `skip;
+
                     // we are done, end of loop
                     loopend = true;
-                    add_update_sources ();
+                    Register::add_update_sources();
                 }
 
                 // handle any other error codes
@@ -614,10 +604,15 @@ boolean add_update_sources () {
         // update main widget settings - they may have changed
         if (configure_status) UI::ChangeWidget(`id(`configure), `Value, true);
         else UI::ChangeWidget(`id(`noconfigure), `Value, true);
-        UI::ChangeWidget( `id(`hwinfo ),   `Value, subhwinfo );
-        UI::ChangeWidget( `id(`optional ), `Value, suboptional );
+
+        //FIXME: probably these two lines can be dropped if decided not to change these values after first suse_register call
+        UI::ChangeWidget( `id(`hwinfo ),   `Value, Register::submit_hwdata   );
+        UI::ChangeWidget( `id(`optional ), `Value, Register::submit_optional );
 
     } until ( loopend || ret == `back );
+
+    // Register::finish mandatory as well - do not remove
+    Register::finish();
 
     if (Mode::normal()) Wizard::CloseDialog();
     else
