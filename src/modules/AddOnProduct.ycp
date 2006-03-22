@@ -661,22 +661,43 @@ void CleanY2Update() {
  * @return symbol the result symbol from wizard sequencer
  */
 global symbol DoInstall() {
-    string control = Pkg::SourceProvideFile (src_id, 1, "/installation.xml");
+    string control = Pkg::SourceProvideOptionalFile (src_id, 1, "/installation.xml");
+    // Fallback -- Source didn't provide needed controll file
+    // Handling as it was an installation source
+    if (control == nil)
+    {
+	y2milestone("File /installation.xml not found, running sw_single for this source");
+	WFM::CallFunction ("sw_single", []);
+
+	return nil;
+    }
+
     string binaries = Pkg::SourceProvideOptionalFile (src_id, 1, "/y2update.tgz");
-    // UNPACK binaries
-    map out = (map)SCR::Execute (.target.bash_output, sformat ("
+    // File /y2update.tgz exists
+    if (binaries != nil)
+    {
+	// Try to extract files from the archive
+	map out = (map)SCR::Execute (.target.bash_output, sformat ("
 test -d /y2update && rm -rf /y2update;
 /bin/mkdir /y2update;
 cd /y2update;
 /bin/tar -xvf %1;
 ", binaries));
-    if (out["exit"]:0 != 0)
-    {
-	// error report
-	Report::Error (_("An error occurred while preparing the installation system."));
-	CleanY2Update();
-	return nil;
+
+	// Failed
+	if (out["exit"]:0 != 0)
+	{
+	    // error report
+	    Report::Error (_("An error occurred while preparing the installation system."));
+	    CleanY2Update();
+	    return nil;
+	}
     }
+    else
+    {
+	y2milestone("File /y2update.tgz not provided");
+    }
+
     // set control file
     ProductControl::custom_control_file = control;
     if (!ProductControl::Init())

@@ -12,6 +12,7 @@ textdomain "installation";
 import "AddOnProduct";
 import "Report";
 import "Wizard";
+import "Pkg";
 
 include "installation/add-on-workflow.ycp";
 
@@ -19,11 +20,15 @@ Wizard::CreateDialog();
 Wizard::SetDesktopIcon("vendor");
 Wizard::HideBackButton();
 
+// Initialize current sources
+Read();
 symbol ret = RunWizard();
 
 if (ret == `next)
 {
     ret = AddOnProduct::DoInstall ();
+    // Write only when there are some changes
+    Write();
 }
 UI::CloseDialog();
 return ret;
