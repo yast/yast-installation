@@ -33,6 +33,9 @@
     string directory="";
     integer prodnamelen=0;
 
+    map ui = UI::GetDisplayInfo();
+    boolean textmode = (boolean) ui["TextMode"]:true;
+
     if (argmap["directory"]:"" != "")
             basedirectory = Directory::custom_workflow_dir + basedirectory;
 
@@ -76,7 +79,7 @@
     else
     {
         // no label here - double caption makes no sense
-        relnoteslayout=`VBox( `Left( `ComboBox(`id(`productsel), `opt(`notify), "", relnotesproducts)),
+        relnoteslayout=`VBox( `Left( `ComboBox(`id(`productsel), `opt(`notify), textmode ? "               ":"", relnotesproducts)),
                                       relnotesrichtext );
     }
 

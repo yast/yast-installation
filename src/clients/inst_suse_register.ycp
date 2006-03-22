@@ -97,11 +97,13 @@ Configure your system to enable online updates by registering it with Novell.
 To do this now, select <b>Configure Now</b>. Delay the registration with
 <b>Configure Later</b>.
 </p>
-<p>
+<p> 
 To simplify the registration process, include information from your system
 with <b>Optional Information</b> and <b>Hardware Profile</b>. 
 <b>Details</b> shows the maximum amount of information that can be involved
- in your registration.
+ in your registration. To obtain this information, it contacts the Novell
+server to query what information is needed for your product. Only the identity
+of the installed product is sent in this initial exchange.
 </p>
 <p>
 No information is passed to anyone outside Novell. The data is used for
@@ -264,6 +266,8 @@ the transmitted information in the log file <tt>~/.suse_register.log</tt>.
 map<string, string> suseRegister(string parameter)
 {
     // handle parameters
+    //  -y beautifies the output for usage in yast
+    //  -L log file
     string params = sformat (" -y -L ~/.suse_register.log --dumpfile=%1 ", services_file);
     if (parameter == "p") params = params + " -p ";
     else if( Mode::normal() ) params = params + " --force-registration ";
@@ -271,7 +275,7 @@ map<string, string> suseRegister(string parameter)
     if ( subhwinfo   == false )   params = params + " --no-hw-data ";
     if ( suboptional == false )   params = params + " --no-optional ";
 
-    // run suse_register ... -y beautifies the output for usage in yast
+    // run suse_register
     y2milestone ("Calling /usr/bin/suse_register %1", params);
     map<string, any> info = (map<string, any>) SCR::Execute(.target.bash_output, sformat("umask 0077;  /usr/bin/suse_register %1", params ));
     string exitcode = sformat("%1", info["exit"]:99);
@@ -386,6 +390,11 @@ string browser_command(string url)
 
 boolean launchBrowser(string url)
 {
+    // check for valid url
+    map parsed = URL::Parse( url );
+    if ( parsed == $[]) return false;
+    else url = parsed["scheme"]:"http" + "://" + parsed["host"]:"www.novell.com" + parsed["port"]:"", parsed["path"]:"";
+
     // get command to run correct browser and execute it
     string command = browser_command(url);
 
@@ -401,17 +410,16 @@ boolean launchBrowser(string url)
 boolean add_update_sources () {
 
     if (!FileUtils::Exists (services_file))
-	return false;
+    return false;
 
     foreach (string url,
-	splitstring ((string)SCR::Read(.target.string, services_file),"\n"), {
+    splitstring ((string)SCR::Read(.target.string, services_file),"\n"), {
 
-	map parsed = URL::Parse (url);
-	if (parsed != $[])
-	{
-	    Pkg::SourceCreate (parsed["scheme"]:"http" + "://" + parsed["host"]:"" + parsed["port"]:"", parsed["path"]:"");
-	}
-
+    map parsed = URL::Parse (url);
+    if (parsed != $[])
+    {
+        Pkg::SourceCreate (parsed["scheme"]:"http" + "://" + parsed["host"]:"" + parsed["port"]:"", parsed["path"]:"");
+    }
     });
 }
 
@@ -580,14 +588,14 @@ boolean add_update_sources () {
                     else if ( update == `noupdate ) ret = `skip;
                     // we are done, end of loop
                     loopend = true;
-		    add_update_sources ();
+                    add_update_sources ();
                 }
 
                 // handle any other error codes
                 if (
-                     information_data["exit"]:"99" != "0" &&
-                     information_data["exit"]:"99" != "3" &&
-                     information_data["exit"]:"99" != "1"
+                     information_data["exit"]:"" != "0" &&
+                     information_data["exit"]:"" != "3" &&
+                     information_data["exit"]:"" != "1"
                    )
                 {
                     // display error message

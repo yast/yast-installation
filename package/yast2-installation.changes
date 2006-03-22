@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Mar 22 11:40:18 CET 2006 - jdsn@suse.de
+
+- changed help text in suse_register
+- patch to make the ComboBox appear longer in release_notes 
+
+-------------------------------------------------------------------
 Tue Mar 21 16:33:32 CET 2006 - locilka@suse.cz
 
 - adding "Local Directory" option for Add-On Products when no
