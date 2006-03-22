@@ -16,7 +16,6 @@ import "FileUtils";
 import "URL";
 import "Mode";
 import "String";
-import "Language";
 import "Misc";
 import "Stage";
 
@@ -200,6 +199,7 @@ global map<string, string> suseRegister(symbol parameter)
     if (parameter == `autoyast)
     {
         //TODO: append values from map to the suse_register call
+        y2milestone ("called from autoyast");
     }
 
     if ( Mode::normal() )         params = params + " --force-registration ";
@@ -260,6 +260,7 @@ global boolean add_update_sources ()
  */
 global void Read()
 {
+    y2milestone ("called Register::Read");
 }
 
 
