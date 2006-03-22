@@ -64,6 +64,7 @@ This controls the system installation.
 @scrconfdir@/run_get_suseconfig_modules.scr
 @scrconfdir@/proc_modules.scr
 @scrconfdir@/run_df.scr
+@scrconfdir@/cfg_suse_register.scr
 
 # programs and scripts
 @ystartupdir@/startup
