@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Mar 20 05:00:17 CET 2006 - jdsn@suse.de
+
+- fixed ssh bug in suse_register
+- suse_register reads and writes configuration to sysconfig
+- final texts in suse_register
+- 2.13.41 
+
+-------------------------------------------------------------------
 Wed Mar 22 13:43:12 CET 2006 - mvidner@suse.cz
 
 - Fixed release notes download (by Product::FindBaseProducts), #159490.
