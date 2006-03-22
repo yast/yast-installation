@@ -1,0 +1,296 @@
+/**
+ * File:	modules/Register.ycp
+ * Package:	Installation
+ * Summary:	Registration related stuff
+ * Authors:	J. Daniel Schmidt <jdsn@suse.de>
+ *
+ * $Id: Regster.ycp 1 2005-03-13 08:45:05Z jdsn $
+ */
+
+{
+
+module "Registration";
+textdomain "installation";
+
+import "FileUtils";
+import "URL";
+import "Mode";
+import "String";
+import "Language";
+import "Misc";
+import "Stage";
+
+
+
+// --------------------------------------------------------------
+// START: Locally defined data
+// --------------------------------------------------------------
+
+string services_file = sformat ("%1/update_services", SCR::Read (.target.tmpdir));
+
+// ------------------------------------------------------------------
+// END:   Locally defined data
+// ------------------------------------------------------------------
+
+// --------------------------------------------------------------
+// START: Globally defined data, access via Register::<variable>
+// --------------------------------------------------------------
+
+global boolean do_registration = true;
+global boolean iamroot = false;
+
+global boolean submit_optional = false;
+global boolean submit_hwdata   = false;
+
+
+// ------------------------------------------------------------------
+// END: Globally defined data, access via Register::<variable>
+// ------------------------------------------------------------------
+
+
+// ------------------------------------------------------------------
+// START: Locally defined functions
+// ------------------------------------------------------------------
+
+/*
+ * get_home_dir()
+ *
+ * get the home directory of the user running this module
+ * because not only root is allowed to run inst_suse_register
+ *
+ * @return home directory as string
+ *
+ */
+string get_home_dir()
+{
+    map<string, any> gethome = (map<string, any>) SCR::Execute(.target.bash_output, " cd; pwd ");
+    return ((integer) gethome["exit"]:1 == 0) ?  String::FirstChunk(gethome["stdout"]:"/tmp", "\n") : "/tmp";
+}
+
+
+
+/*
+ * amIroot()
+ *
+ * checks if running as root
+ * returns true if running as root - else returns false
+ *
+ */
+boolean amIroot()
+{
+    // check if we are root
+    map<string, any> userid = (map<string, any>) SCR::Execute(.target.bash_output, "id -u");
+    y2milestone("running with user id %1", userid);
+    return  String::FirstChunk(userid["stdout"]:"1", "\n") == "0" ? true:false; 
+}
+
+
+/*
+ * read_config()
+ *
+ * reads the configuration of the registration module from sysconfig and/or user's home
+ *
+ */
+void read_config()
+{
+    // TODO:
+    // if in installation mode read the default values from two variables in control.xml
+    // only in installed system read from filesystem
+
+    if (FileUtils::Exists("/etc/sysconfig/suse_register"))
+    {
+        submit_optional = (string) SCR::Read( .sysconfig.suse_register.SUBMIT_OPTIONAL ) == "true" ? true:false;
+        submit_hwdata   = (string) SCR::Read( .sysconfig.suse_register.SUBMIT_HWDATA )   == "true" ? true:false;
+    }
+
+    if (!iamroot)
+    {
+        string home_config = sformat("%1/.suse_register", get_home_dir() );
+        if (FileUtils::Exists(home_config))
+        {
+            foreach (string line,
+              splitstring ((string)SCR::Read(.target.string, home_config ),"\n"), {
+                if       ( regexpmatch(line, "^SUBMIT_OPTIONAL=\"[^\"]*\".*$") )
+                    submit_optional = regexpsub(line, "^SUBMIT_OPTIONAL=\"([^\"]*)\".*$", "\\1") == "true" ? true:false; 
+                else if  ( regexpmatch(line, "^SUBMIT_HWDATA=\"[^\"]*\".*$") )
+                    submit_hwdata  =  regexpsub(line, "^SUBMIT_HWDATA=\"([^\"]*)\".*$", "\\1") == "true" ? true:false; 
+            });
+        }
+    }
+}
+
+
+
+/*
+ * write_config()
+ *
+ * writes the configuration to the system
+ * either to sysconfig if runnig as root or to user's home if running as non-root
+ *
+ */
+void write_config()
+{
+    if (iamroot)
+    {
+        SCR::Write(.sysconfig.suse_register.SUBMIT_OPTIONAL, sformat("%1", submit_optional ? true:false ));
+        SCR::Write(.sysconfig.suse_register.SUBMIT_HWDATA,   sformat("%1", submit_hwdata   ? true:false ));
+    }
+    else
+    {
+       string home_config = sformat("%1/.suse_register", get_home_dir() );
+       string confdata    = sformat("#\n# .suse_register is created and read by YaST\n# it stores the configuration status of the registration module\n#\n\nSUBMIT_OPTIONAL=\"%1\"\nSUBMIT_HWDATA=\"%2\"", submit_optional ? true:false, submit_hwdata ? true:false );
+       SCR::Write(.target.string, home_config,  confdata);
+    }
+
+}
+
+
+// ------------------------------------------------------------------
+// END: Locally defined functions
+// ------------------------------------------------------------------
+
+
+// ---------------------------------------------------------------------------------------
+// START: Globally defined functions
+// ---------------------------------------------------------------------------------------
+
+
+
+/*
+ * initialize
+ *
+ * Initialize booleans: submit_optional, submit_hwdata and iamroot
+ *
+ */
+global void initialize()
+{
+    read_config();
+    iamroot = amIroot();
+}
+
+
+
+/*
+ * finish
+ *
+ * Finishing the modules stuff: calling write_config()
+ *
+ */
+global void finish()
+{
+    write_config();
+}
+
+/*
+ * suseRegister()
+ * the returned map is transformed to map<string, string>
+*/
+global map<string, string> suseRegister(symbol parameter)
+{
+    // handle parameters
+    //  -y beautifies the output for usage in yast
+    //  -L log file
+    //  -p list parameters (no dumpfile with -p)
+
+    // always log and beautify!
+    string params = " -y -L ~/.suse_register.log ";
+    if (parameter == `p) params = params + " -p ";
+    else params = params + sformat(" --dumpfile=%1 ", services_file);
+
+    if (parameter == `autoyast)
+    {
+        //TODO: append values from map to the suse_register call
+    }
+
+    if ( Mode::normal() )         params = params + " --force-registration ";
+    if ( submit_hwdata   == false )   params = params + " --no-hw-data ";
+    if ( submit_optional == false )   params = params + " --no-optional ";
+
+    // run suse_register
+    y2milestone ("Calling /usr/bin/suse_register %1", params);
+    map<string, any> info = (map<string, any>) SCR::Execute(.target.bash_output, sformat("umask 0077;  /usr/bin/suse_register %1", params ));
+    string exitcode = sformat("%1", info["exit"]:99);
+    y2milestone ("/usr/bin/suse_register returned %1", exitcode);
+
+    // transform to map<string, string>
+    map<string, string> response = $[  "exit"  :exitcode ,
+                                       "stdout":info["stdout"]:"",
+                                       "stderr":info["stderr"]:""  ];
+
+    y2milestone ("Server response: %1", response);
+    return response;
+}
+
+
+
+
+global boolean add_update_sources ()
+{
+
+    // make it possible to be run as non-root (system will be inconsistent then)
+    // TODO: to be removed when rug lets authorized users add installation sources
+    if ( !iamroot ) return false;
+
+    if (!FileUtils::Exists (services_file))
+    return false;
+
+    foreach (string url,
+    splitstring ((string)SCR::Read(.target.string, services_file),"\n"), {
+
+    map parsed = URL::Parse (url);
+    if (parsed != $[])
+    {
+        Pkg::SourceCreate (parsed["scheme"]:"http" + "://" + parsed["host"]:"" + parsed["port"]:"", parsed["path"]:"");
+    }
+    });
+}
+
+
+
+
+
+// ------------------------------------------------------------------
+// END: Globally defined functions
+// ------------------------------------------------------------------
+
+
+
+/*
+ * Read()
+ */
+global void Read()
+{
+}
+
+
+/*
+ * Import()
+ */
+global boolean Import(map settings)
+{
+    return true;
+}
+
+
+
+
+/**
+ * AutoYaST interface function: Export()
+ * @return map with the settings
+ */
+global map Export()
+{
+    return $[];
+}
+
+/**
+ * AutoYaST interface function: Summary()
+ * @return summary string (html)
+ */
+global string Summary()
+{
+    return "";
+}
+
+
+} // -EOF-
