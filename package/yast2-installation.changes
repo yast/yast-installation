@@ -1,5 +1,5 @@
 -------------------------------------------------------------------
-Mon Mar 20 05:30:01 CET 2006 - jdsn@suse.de
+Mon Mar 22 19:04:55 CET 2006 - jdsn@suse.de
 
 - fixed missing module in makefile
 - 2.13.43 
@@ -13,7 +13,7 @@ Wed Mar 22 19:03:57 CET 2006 - locilka@suse.cz
 - 2.13.42
 
 -------------------------------------------------------------------
-Mon Mar 20 05:00:17 CET 2006 - jdsn@suse.de
+Mon Mar 22 18:45:17 CET 2006 - jdsn@suse.de
 
 - fixed ssh bug in suse_register
 - suse_register reads and writes configuration to sysconfig
