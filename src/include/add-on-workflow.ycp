@@ -32,6 +32,21 @@ import "Wizard";
 
 include "inst_source_dialogs.ycp";
 
+/**
+ * Initialize current inst. sources
+ */
+symbol Read () {
+    Pkg::SourceStartManager(true);
+    return `next;
+}
+
+/**
+ * Write (changed) inst. sources
+ */
+symbol Write () {
+    Pkg::SourceFinishAll();
+    return `next;
+}
 
 /**
  * Run dialog for selecting the media

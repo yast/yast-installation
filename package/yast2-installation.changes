@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Mar 22 19:03:57 CET 2006 - locilka@suse.cz
+
+- Added fallback for adding add-on products without file
+  installation.xml. In this case, the product is added as a normal
+  installation source and sw_single is called.
+- 2.13.42
+
+-------------------------------------------------------------------
 Mon Mar 20 05:00:17 CET 2006 - jdsn@suse.de
 
 - fixed ssh bug in suse_register
