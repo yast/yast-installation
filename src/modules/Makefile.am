@@ -10,6 +10,7 @@ module_DATA =			\
 	Hotplug.ycp		\
 	HwStatus.ycp		\
 	X11Version.ycp		\
+	Register.ycp		\
 	AddOnProduct.ycp
 
 EXTRA_DIST = $(module_DATA)
