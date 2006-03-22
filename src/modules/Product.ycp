@@ -54,12 +54,14 @@ global list<map<string,any> > FindBaseProducts() {
     list<map<string,any> > products = Pkg::ResolvableDependencies ("", `product, "");
     products = filter (map<string,any> p, products, {
 	list<map<string,string> > requires = p["dependencies"]:[];
+	// what other products it requires
 	requires = filter (map<string,string> req, requires, {
-	    return req["dep_kind"]:"" == "requires" && req["res_kind"]:"" == "package";
+	    return req["dep_kind"]:"" == "requires" && req["res_kind"]:"" == "product";
 	});
+	// none -> it is a base product
 	return size (requires) == 0;
     });
-    y2debug ("Found base products: %1", products);
+    y2milestone ("Found base products: %1", products);
     if (size (products) == 0)
 	y2error ("No base product found");
     else if (size (products) > 1)
