@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Mar 22 13:43:12 CET 2006 - mvidner@suse.cz
+
+- Fixed release notes download (by Product::FindBaseProducts), #159490.
+
+-------------------------------------------------------------------
 Wed Mar 22 11:40:18 CET 2006 - jdsn@suse.de
 
 - changed help text in suse_register
