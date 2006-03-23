@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Mar 23 18:34:18 CET 2006 - jdsn@suse.de
+
+- fixed security issue: suse-ncc dummy user got his own group 
+
+-------------------------------------------------------------------
 Thu Mar 23 18:33:25 CET 2006 - jdsn@suse.de
 
 - added controlfile configured default settings for suse_register 

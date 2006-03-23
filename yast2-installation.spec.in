@@ -36,7 +36,8 @@ This controls the system installation.
 @CLEAN@
 
 %pre
-/usr/sbin/useradd -r -s /bin/bash -c "Novell Customer Center User" -d /var/lib/YaST2/suse-ncc-fakehome -g nogroup suse-ncc 2> /dev/null || :
+/usr/sbin/groupadd -r suse-ncc 2> /dev/null || :
+/usr/sbin/useradd -r -s /bin/bash -c "Novell Customer Center User" -d /var/lib/YaST2/suse-ncc-fakehome -g suse-ncc suse-ncc 2> /dev/null || :
 
 %files
 %defattr(-,root,root)

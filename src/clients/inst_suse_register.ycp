@@ -406,7 +406,7 @@ string browser_command(string url)
     bcmd =  bcmd + "'" + url + "'";
 
     // in case of root add su call to not run a browser as root during installation
-    if ( Register::iamroot ) bcmd = su_exec("suse-ncc", "nogroup", bcmd );
+    if ( Register::iamroot ) bcmd = su_exec("suse-ncc", "suse-ncc", bcmd );
 
     return bcmd;
 }
