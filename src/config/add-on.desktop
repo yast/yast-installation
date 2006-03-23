@@ -17,7 +17,7 @@ X-SuSE-YaST-SortKey=
 X-SuSE-YaST-AutoInstResource=
 X-SuSE-YaST-AutoInstPath=install
 
-Icon=yast-add-on
+Icon=yast-sw_source
 Exec=/sbin/yast2 add-on
 
 Name=Add-on Product
