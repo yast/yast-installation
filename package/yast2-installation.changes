@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Mar 23 16:23:37 CET 2006 - locilka@suse.cz
+
+- Display license immediately after the Add-On product is scanned
+  and added. Handle user interaction.
+- 2.13.46
+
+-------------------------------------------------------------------
 Thu Mar 23 14:16:46 CET 2006 - jdsn@suse.de
 
 - final texts for suse_register

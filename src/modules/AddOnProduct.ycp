@@ -743,7 +743,7 @@ void CleanUpLicense (string tmpdir) {
  *
  * @return boolean whether the license has been accepted
  */
-boolean AcceptedLicenseAndInfoFile () {
+global boolean AcceptedLicenseAndInfoFile (integer src_id) {
     // Check for info.txt
     string info_file = Pkg::SourceProvideOptionalFile (src_id, 1, "/media.1/info.txt");
     string license_file = Pkg::SourceProvideOptionalFile (src_id, 1, "/media.1/license.zip");
@@ -848,12 +848,14 @@ unzip -qqo '%2'
 /**
  * Do installation of the add-on product within an installed system
  * srcid is got via AddOnProduct::src_id
+ *
+ * @param string src_id
  * @return symbol the result symbol from wizard sequencer
  */
 global symbol DoInstall() {
     // Display /media.1/info.txt if such file exists
     // Display license and wait for agreement
-    boolean license_ret = AcceptedLicenseAndInfoFile();
+    boolean license_ret = AcceptedLicenseAndInfoFile(src_id);
     if (license_ret != true) {
 	y2milestone("Removing the current source ID %1", src_id);
 	Pkg::SourceDelete(src_id);
@@ -971,15 +973,6 @@ global boolean WFIntegrate (string filename) {
  */
 global boolean Integrate (integer srcid) {
     y2milestone ("Integrating source %1", srcid);
-
-    // Display /media.1/info.txt if such file exists
-    // Display license and wait for agreement
-    boolean license_ret = AcceptedLicenseAndInfoFile();
-    if (license_ret != true) {
-	y2milestone("Removing the current source ID %1", srcid);
-	Pkg::SourceDelete(srcid);
-	return nil;
-    }
 
     string filename = Pkg::SourceProvideOptionalFile (srcid, 1, "/installation.xml");
     if (filename == nil)
