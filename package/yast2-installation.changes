@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Mar 23 13:19:03 CET 2006 - locilka@suse.cz
+
+- Displaying license of the Add-On product if exists. Trying the
+  localized version first. Waiting for user interaction if needed.
+- Displaying info.txt if exists
+- 2.13.44
+
+-------------------------------------------------------------------
 Mon Mar 22 19:04:55 CET 2006 - jdsn@suse.de
 
 - fixed missing module in makefile

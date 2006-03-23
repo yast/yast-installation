@@ -122,7 +122,7 @@ Wizard::SetContents(caption, contents, help,
 Wizard::SetTitleIcon ("yast-license");
 
 if ( Stage::initial() )
-    show_info_txt();	// show /info.txt in a popup (returns immediately if no such file)
+    show_info_txt("/info.txt");	// show /info.txt in a popup (returns immediately if no such file)
      
 Wizard::SetFocusToNextButton();
 

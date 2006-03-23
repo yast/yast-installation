@@ -11,10 +11,11 @@
     import "Report";
     import "Label";
 
-    void show_info_txt()
+    /*
+     * @param string info_file (/info.txt" - Copied from inst media to inst-sys by linuxrc)
+     */
+    void show_info_txt(string info_file)
     {
-	string info_file = "/info.txt";	// Copied from inst media to inst-sys by linuxrc
-
 	if ( SCR::Read(.target.size, info_file ) <= 0 )
 	{
 	    y2milestone( "No %1", info_file );
