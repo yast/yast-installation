@@ -27,7 +27,7 @@ textdomain="control"
     <software>
         <delete_old_packages config:type="boolean">true</delete_old_packages>
         <selection_type config:type="symbol">auto</selection_type>
-        <base_selection>default-Gnome</base_selection>
+        <base_selection>default</base_selection>
     </software>
     <partitioning>
         <evms_config config:type="boolean">false</evms_config>
@@ -83,8 +83,9 @@ textdomain="control"
                 <proposal_tab>
                     <label>Overview</label>
                     <proposal_modules config:type="list">
+                        <proposal_module>keyboard</proposal_module>
                         <proposal_module>partitions</proposal_module>
-                        <proposal_module>software_simple</proposal_module>
+                        <proposal_module>software</proposal_module>
                         <proposal_module>language_simple</proposal_module>
                     </proposal_modules>
                 </proposal_tab>
@@ -126,7 +127,7 @@ textdomain="control"
                     <label>Overview</label>
                     <proposal_modules config:type="list">
                         <proposal_module>partitions</proposal_module>
-                        <proposal_module>software_simple</proposal_module>
+                        <proposal_module>software</proposal_module>
                         <proposal_module>language_simple</proposal_module>
                     </proposal_modules>
                 </proposal_tab>
