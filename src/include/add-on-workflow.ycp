@@ -294,6 +294,7 @@ symbol CatalogSelect () {
 	Report::Error (_("No catalog found on medium."));
 	return `back;
     }
+
     if (size (sources) == 1)
     {
 	if (AddOnProduct::last_ret != `next)
@@ -314,6 +315,16 @@ symbol CatalogSelect () {
 	    Report::Error (_("Failed to initialize the catalog."));
 	    return `finish;
 	}
+
+	// Display /media.1/info.txt if such file exists
+	// Display license and wait for agreement
+	boolean license_ret = AddOnProduct::AcceptedLicenseAndInfoFile(src_id);
+	if (license_ret != true) {
+	    y2milestone("Removing the current source ID %1", src_id);
+	    Pkg::SourceDelete(src_id);
+	    return `finish;
+	}
+
 	AddOnProduct::src_id = src_id;
 	SourceManager::newSources = [src_id];
 	y2milestone ("Only one source available - skipping dialog");
@@ -405,6 +416,16 @@ Select the catalog to use.</p>
 	    Report::Error (_("Failed to initialize the catalog."));
 	    return `finish;
 	}
+
+	// Display /media.1/info.txt if such file exists
+	// Display license and wait for agreement
+	boolean license_ret = AddOnProduct::AcceptedLicenseAndInfoFile(selected);
+	if (license_ret != true) {
+	    y2milestone("Removing the current source ID %1", selected);
+	    Pkg::SourceDelete(selected);
+	    return `finish;
+	}
+
 	AddOnProduct::src_id = selected;
 	SourceManager::newSources = [selected];
     }
