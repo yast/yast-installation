@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Mar 23 14:16:46 CET 2006 - jdsn@suse.de
+
+- final texts for suse_register
+- nonroot - warning for suse_register
+- 2.13.45 
+
+-------------------------------------------------------------------
 Thu Mar 23 13:19:03 CET 2006 - locilka@suse.cz
 
 - Displaying license of the Add-On product if exists. Trying the
