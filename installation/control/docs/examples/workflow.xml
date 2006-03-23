@@ -1,0 +1,51 @@
+    <workflows config:type="list">
+        <workflow>
+            <!-- 'label' is what the user will see -->
+	    <label>Base Installation</label>
+            <!-- default settings for all modules -->
+            <defaults>
+                <!-- arguments for the clients -->
+                <arguments>false,false</arguments>
+                <!-- allowed architectures "all", "i386", "i386,ia64,x86_64"  -->
+                <archs>all</archs>
+            </defaults>
+            <stage>initial</stage>
+            <mode>installation,update</mode>
+            <modules  config:type="list">
+                <module>
+                    <name>info</name>
+                    <arguments>false,true</arguments>
+                </module>
+                <module>
+                    <name>proposal</name>
+                    <arguments>true,true,`ini</arguments>
+	            <label>Installation Settings</label>
+                </module>
+                <module>
+                    <name>do_resize</name>
+                    <update config:type="boolean">false</update>
+                    <archs>i386,x86_64,ia64</archs>
+	            <label>Perform Installation</label>
+                </module>
+                <module>
+                    <name>prepdisk</name>
+                    <!-- Multiple modules with the same 'label' will be
+                         collapsed to one single user-visible step.
+                         The step is considered finished when the last module
+                         with the same 'label' is finished.  -->
+	            <label>Perform Installation</label>
+                </module>
+                <module>
+                    <name>kickoff</name>
+	            <label>Perform Installation</label>
+                </module>
+                <module>
+                    <name>rpmcopy</name>
+	            <label>Perform Installation</label>
+                </module>
+                <module>
+                    <name>finish</name>
+	            <label>Perform Installation</label>
+                </module>
+            </modules>
+        </workflow>

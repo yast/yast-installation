@@ -1,0 +1,14 @@
+[Desktop Entry]
+X-SuSE-translate=true
+Type=Application
+Categories=Qt;X-SuSE-YaST;X-SuSE-YaST-Misc;
+
+X-SuSE-YaST-Call=inst_suse_register
+X-SuSE-YaST-RootOnly=false
+X-SuSE-YaST-Group=Software
+
+Icon=yast-release-notes
+Exec=/sbin/yast2 inst_suse_register
+
+Name=Product Registration
+GenericName=suse_register
