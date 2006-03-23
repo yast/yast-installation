@@ -3,7 +3,7 @@ Thu Mar 23 13:19:03 CET 2006 - locilka@suse.cz
 
 - Displaying license of the Add-On product if exists. Trying the
   localized version first. Waiting for user interaction if needed.
-- Displaying info.txt if exists
+- Displaying info.txt if exists (#160017)
 - 2.13.44
 
 -------------------------------------------------------------------
