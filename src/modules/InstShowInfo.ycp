@@ -1,11 +1,13 @@
 /**
- * Module:	inst_show_info_txt.ycp
+ * Module:	InstShowInfo.ycp
  *
  * Author:	Stefan Hundhammer <sh@suse.de>
  *
  * Purpose:	Show /info.txt (if present) in a popup
  */
 {
+    module "InstShowInfo";
+
     textdomain "installation";
 
     import "Report";
@@ -14,7 +16,7 @@
     /*
      * @param string info_file (/info.txt" - Copied from inst media to inst-sys by linuxrc)
      */
-    void show_info_txt(string info_file)
+    global void show_info_txt(string info_file)
     {
 	if ( SCR::Read(.target.size, info_file ) <= 0 )
 	{

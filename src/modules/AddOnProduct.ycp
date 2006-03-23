@@ -27,8 +27,7 @@ import "Wizard";
 import "FileUtils";
 import "Language";
 import "Popup";
-
-include "installation/inst_show_info_txt.ycp";
+import "InstShowInfo";
 
 // variables for installation with product
 /**
@@ -800,7 +799,7 @@ unzip -qqo '%2'
     }
 
     // Display info as a popup if exists
-    if (info_file != nil) { any info_closed = show_info_txt(info_file); }
+    if (info_file != nil) { any info_closed = InstShowInfo::show_info_txt(info_file); }
     
     // Waiting for user interaction if needed...
     if (any_license_needs_to_be_accepted) {
