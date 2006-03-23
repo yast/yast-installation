@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar 23 18:33:25 CET 2006 - jdsn@suse.de
+
+- added controlfile configured default settings for suse_register 
+- 2.13.47
+
+-------------------------------------------------------------------
 Thu Mar 23 16:23:37 CET 2006 - locilka@suse.cz
 
 - Display license immediately after the Add-On product is scanned

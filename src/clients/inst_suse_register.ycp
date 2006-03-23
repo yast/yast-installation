@@ -366,7 +366,13 @@ else
     disp=\"${DISPLAY}\"
 fi
 
-exec 4< ${XAUTHORITY:-$HOME/.Xauthority}
+
+: ${XAUTHORITY:=$HOME/.Xauthority}
+if test ! -e $XAUTHORITY ; then
+    su -s /bin/bash -- $user -c \"cd; $cmd\"
+    exit 0
+fi
+exec 4< ${XAUTHORITY}
 su -s /bin/bash -- $user -c \"xauth -qif <(cat 0<&4) extract - $disp | xauth -qf $tmp merge -\"
 exec 4<&-
 
@@ -597,7 +603,6 @@ boolean launchBrowser(string url)
 
                     // we are done, end of loop
                     loopend = true;
-                    Register::add_update_sources();
                 }
 
                 // handle any other error codes

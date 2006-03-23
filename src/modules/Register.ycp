@@ -18,18 +18,9 @@ import "Mode";
 import "String";
 import "Misc";
 import "Stage";
+import "ProductFeatures";
 
 
-
-// --------------------------------------------------------------
-// START: Locally defined data
-// --------------------------------------------------------------
-
-string services_file = sformat ("%1/update_services", SCR::Read (.target.tmpdir));
-
-// ------------------------------------------------------------------
-// END:   Locally defined data
-// ------------------------------------------------------------------
 
 // --------------------------------------------------------------
 // START: Globally defined data, access via Register::<variable>
@@ -92,16 +83,18 @@ boolean amIroot()
  */
 void read_config()
 {
-    // TODO:
-    // if in installation mode read the default values from two variables in control.xml
-    // only in installed system read from filesystem
+    // first read from control file
+    submit_optional = ProductFeatures::GetBooleanFeature("register", "enable_register_optional");
+    submit_hwdata   = ProductFeatures::GetBooleanFeature("register", "enable_register_hwdata");
 
+    // then read from sysconfig
     if (FileUtils::Exists("/etc/sysconfig/suse_register"))
     {
         submit_optional = (string) SCR::Read( .sysconfig.suse_register.SUBMIT_OPTIONAL ) == "true" ? true:false;
         submit_hwdata   = (string) SCR::Read( .sysconfig.suse_register.SUBMIT_HWDATA )   == "true" ? true:false;
     }
 
+    // and in case of nonroot read from user's home
     if (!iamroot)
     {
         string home_config = sformat("%1/.suse_register", get_home_dir() );
@@ -194,7 +187,6 @@ global map<string, string> suseRegister(symbol parameter)
     // always log and beautify!
     string params = " -y -L ~/.suse_register.log ";
     if (parameter == `p) params = params + " -p ";
-    else params = params + sformat(" --dumpfile=%1 ", services_file);
 
     if (parameter == `autoyast)
     {
@@ -220,32 +212,6 @@ global map<string, string> suseRegister(symbol parameter)
     y2milestone ("Server response: %1", response);
     return response;
 }
-
-
-
-
-global boolean add_update_sources ()
-{
-
-    // make it possible to be run as non-root (system will be inconsistent then)
-    // TODO: to be removed when rug lets authorized users add installation sources
-    if ( !iamroot ) return false;
-
-    if (!FileUtils::Exists (services_file))
-    return false;
-
-    foreach (string url,
-    splitstring ((string)SCR::Read(.target.string, services_file),"\n"), {
-
-    map parsed = URL::Parse (url);
-    if (parsed != $[])
-    {
-        Pkg::SourceCreate (parsed["scheme"]:"http" + "://" + parsed["host"]:"" + parsed["port"]:"", parsed["path"]:"");
-    }
-    });
-}
-
-
 
 
 
