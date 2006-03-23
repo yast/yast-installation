@@ -3,6 +3,7 @@
 #
 
 module_DATA =			\
+	InstShowInfo.ycp	\
 	Installation.ycp	\
 	Product.ycp		\
 	GetInstArgs.ycp		\
