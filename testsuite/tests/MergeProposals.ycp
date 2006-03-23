@@ -10,7 +10,15 @@ map READ = $[
     ],
 ];
 
-TESTSUITE_INIT([READ], nil);
+map WRITE = $[];
+
+map EXEC = $[
+    "target" : $[
+	"bash_output" : $["exit" : 0, "stdout" : "", "stderr" : ""],
+    ],
+];
+
+TESTSUITE_INIT([READ, WRITE, EXEC], nil);
 
 import "AddOnProduct";
 import "ProductControl";
