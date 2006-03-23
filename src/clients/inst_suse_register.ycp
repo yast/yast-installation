@@ -90,6 +90,15 @@ the configuration on the opened Web site."
 submission of the hardware profile automatically."
 );
 
+     /*  nonroot-message strings */
+     string nonroot_title = _("Update Source Issues");
+     string nonroot_message = _(
+"Registering as a regular user does not include the update source
+in YaST Online Update (YOU). To include the source automatically,
+register as root.
+Otherwise use other update tools or add the source to YOU manually."
+);
+
 
     /* error messages  */
     string data_invalid = _("Error: Recieved data is invalid.");
@@ -427,8 +436,18 @@ boolean launchBrowser(string url)
 
     y2debug ("%1", UI::DumpWidgetTree());
 
+
+    // if we are running as nonroot show a message
+    if ( !Register::iamroot )
+        if ( !Popup::ContinueCancelHeadline( nonroot_title, nonroot_message ) )
+            return `cancel;
+
+
     boolean loopend = false;
     any ret = nil;
+
+
+/* -------------------------------- PROGRAM LOGIC START ----------------------------------------------------------- */
 
     repeat {
         ret = Wizard::UserInput();
