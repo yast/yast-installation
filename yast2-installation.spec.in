@@ -2,7 +2,7 @@
 
 
 @HEADER@
-BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2 yast2-devtools yast2-testsuite
+BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2 yast2-devtools yast2-testsuite yast2-country
 Requires:	yast2 yast2-update
 Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
 Requires:	yast2-packager yast2-network yast2-users
