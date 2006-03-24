@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Mar 24 15:15:30 CET 2006 - locilka@suse.cz
+
+- Filling up list of release_notes urls for all installed products
+  in the Product.ycp. Needed for internet_test (#160563).
+- 2.13.49 
+
+-------------------------------------------------------------------
 Fri Mar 24 11:00:06 CET 2006 - ms@suse.de
 
 - added initvicons call in second stage S05-config (#160299)
