@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Mar 24 11:00:06 CET 2006 - ms@suse.de
+
+- added initvicons call in second stage S05-config (#160299)
+
+-------------------------------------------------------------------
 Thu Mar 23 18:34:18 CET 2006 - jdsn@suse.de
 
 - fixed security issue: suse-ncc dummy user got his own group 

@@ -3,6 +3,22 @@ log "Starting S05-config..."
 log "======================"
 
 #=============================================
-# 8) provide configurations
+# 8) provide configuration files
 #---------------------------------------------
-log "\tNo configurations needs to be provided"
+log "\tNo configuration files needs to be provided..."
+
+#=============================================
+# 8.1) setup virtual console
+#---------------------------------------------
+. /usr/lib/YaST2/startup/arch/s390/console.sh
+# BEG S390: check if initvicons needs to be called
+s390_check_need_initvicons
+# END S390:
+if [ $NEED_INITVICONS = "yes" ];then
+	eval `initviocons -e`
+	export LINES COLUMNS TERM
+	log "\tSetup virtual console:"
+	log "\tLines:   $LINES"
+	log "\tColumns: $COLUMNS"
+	log "\tType:    $TERM"
+fi
