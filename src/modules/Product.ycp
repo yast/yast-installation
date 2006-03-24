@@ -37,6 +37,12 @@
      * url of release notes (downloaded during internet test)
      */
     global string relnotesurl	= "";
+    
+    /**
+     * list of all urls of release notes (downloaded during internet test)
+     * bugzilla #160563
+     */
+    global list <string> relnotesurl_all = [];
 
     /**
      *  Run YOU during the Internet connection test.
@@ -53,6 +59,9 @@ global list<map<string,any> > FindBaseProducts() {
     y2milestone ("Looking for base products");
     list<map<string,any> > products = Pkg::ResolvableDependencies ("", `product, "");
     products = filter (map<string,any> p, products, {
+	if (p["relnotes_url"]:nil != nil) {
+	    relnotesurl_all = add (relnotesurl_all, (string) p["relnotes_url"]:"");
+	}
 	list<map<string,string> > requires = p["dependencies"]:[];
 	// what other products it requires
 	requires = filter (map<string,string> req, requires, {
