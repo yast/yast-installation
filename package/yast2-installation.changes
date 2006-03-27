@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Mar 27 23:47:38 CEST 2006 - jsrain@suse.de
+
+- removed desktop selection from NLD workflow (#160650)
+
+-------------------------------------------------------------------
 Fri Mar 24 15:15:30 CET 2006 - locilka@suse.cz
 
 - Filling up list of release_notes urls for all installed products
