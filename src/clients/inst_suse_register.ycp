@@ -46,11 +46,14 @@
     map argmap = GetInstArgs::argmap();
 
     /* strings for main (wizard) layout  */
+
+    // Transltors: This is title/brand - only translate the Configuration
     string title_nccc = _("Novell Customer Center Configuration");
     string title_update = _("Update Configuration");
     // for SLES/SLED and SL (2 months after release) use title_nccc
     string title = title_update;
 
+    // Translators: limit to 2x 50 charachters - if more needed take 3x 50 chars but NOTHING more
     string nccc_top = _(
 "Get technical support and product updates and
 manage subscriptions with Novell Customer Center."
@@ -94,10 +97,13 @@ submission of the hardware profile automatically."
      string nonroot_title = _("Update Source Issues");
      string nonroot_message = _(
 "Registering as a regular user does not include the update source
-in YaST Online Update (YOU). To include the source automatically,
-register as root.
-Otherwise use other update tools or add the source to YOU manually."
+in the Online Update YaST module. If you continue and later want 
+to update with Online Update, the source must be added manually.
+Other tools, such as Software Updater in the panel, can still be 
+used.  Alternatively, cancel then register through YaST as root 
+so the sources are available to all tools."
 );
+
 
 
     /* error messages  */
@@ -202,8 +208,8 @@ string help = help_title + help_para1 + help_para2 + help_para3;
 
 
     /* vv  MANUAL INTERACTION POPUP vv  */
-    term manual_interaction = `HBox(
-                                   `MinSize( 50, 20, `VBox(
+    term manual_interaction = //`HBox(
+                                   `MinSize( 65, 25, `HBox( `VBox(
                                            `Left( `Label( `opt(`boldFont), mi_required ) )  ,
                                            `VSpacing(0.5) ,
                                            `Left( `Label( mi_start_browser  ) ) ,
@@ -503,6 +509,9 @@ boolean launchBrowser(string url)
         {
             if ( configure_status == true )
             {
+                // remove the zmd flag file (requested by mvidner)
+                SCR::Execute(.target.bash, " rm -f /var/lib/zypp/zmd_updated_the_sources " );
+
                 /* run suse_register to see if we need manual interaction */
                 information_data = Register::suseRegister(nil);
 
@@ -528,6 +537,7 @@ boolean launchBrowser(string url)
                             // now we launch the browser
                             UI::ChangeWidget( `id(`needinfo), `Value, starting_browser );
                             launchBrowser(information_data["stdout"]:"http://www.opensuse.org");
+                            // FIXME: probably this line can be dropped - see FIXME below; drop with SP1 probably
                             Register::submit_optional = false;   // deactivate after each browser run
                         }
                         else if ( mi_ret == `cancel  )
@@ -629,7 +639,8 @@ boolean launchBrowser(string url)
         if (configure_status) UI::ChangeWidget(`id(`configure), `Value, true);
         else UI::ChangeWidget(`id(`noconfigure), `Value, true);
 
-        //FIXME: probably these two lines can be dropped if decided not to change these values after first suse_register call
+        //FIXME: probably these two lines can be dropped (see FIXME above as well)
+        //       if decided not to change these values after first suse_register call; probably drop for SP1
         UI::ChangeWidget( `id(`hwinfo ),   `Value, Register::submit_hwdata   );
         UI::ChangeWidget( `id(`optional ), `Value, Register::submit_optional );
 

@@ -7,8 +7,8 @@ X-SuSE-YaST-Call=inst_suse_register
 X-SuSE-YaST-RootOnly=false
 X-SuSE-YaST-Group=Software
 
-Icon=yast-release-notes
+Icon=yast-product-registration
 Exec=/sbin/yast2 inst_suse_register
 
 Name=Product Registration
-GenericName=suse_register
+GenericName=Product Registration

@@ -26,12 +26,14 @@ import "ProductFeatures";
 // START: Globally defined data, access via Register::<variable>
 // --------------------------------------------------------------
 
-global boolean do_registration = true;
+global boolean autoYaSTModified = false;
+global boolean do_registration = false;
 global boolean iamroot = false;
 
 global boolean submit_optional = false;
 global boolean submit_hwdata   = false;
 
+global map<string, string> registration_data = $[];
 
 // ------------------------------------------------------------------
 // END: Globally defined data, access via Register::<variable>
@@ -71,7 +73,7 @@ boolean amIroot()
     // check if we are root
     map<string, any> userid = (map<string, any>) SCR::Execute(.target.bash_output, "id -u");
     y2milestone("running with user id %1", userid);
-    return  String::FirstChunk(userid["stdout"]:"1", "\n") == "0" ? true:false; 
+    return  String::FirstChunk(userid["stdout"]:"1", "\n") == "0" ? true:false;
 }
 
 
@@ -103,9 +105,9 @@ void read_config()
             foreach (string line,
               splitstring ((string)SCR::Read(.target.string, home_config ),"\n"), {
                 if       ( regexpmatch(line, "^SUBMIT_OPTIONAL=\"[^\"]*\".*$") )
-                    submit_optional = regexpsub(line, "^SUBMIT_OPTIONAL=\"([^\"]*)\".*$", "\\1") == "true" ? true:false; 
+                    submit_optional = regexpsub(line, "^SUBMIT_OPTIONAL=\"([^\"]*)\".*$", "\\1") == "true" ? true:false;
                 else if  ( regexpmatch(line, "^SUBMIT_HWDATA=\"[^\"]*\".*$") )
-                    submit_hwdata  =  regexpsub(line, "^SUBMIT_HWDATA=\"([^\"]*)\".*$", "\\1") == "true" ? true:false; 
+                    submit_hwdata  =  regexpsub(line, "^SUBMIT_HWDATA=\"([^\"]*)\".*$", "\\1") == "true" ? true:false;
             });
         }
     }
@@ -170,6 +172,7 @@ global void initialize()
  */
 global void finish()
 {
+    iamroot = amIroot();
     write_config();
 }
 
@@ -190,13 +193,17 @@ global map<string, string> suseRegister(symbol parameter)
 
     if (parameter == `autoyast)
     {
-        //TODO: append values from map to the suse_register call
-        y2milestone ("called from autoyast");
+        // append values from map to the suse_register call
+        foreach (string key, string val, registration_data,  {
+            key = String::CutRegexMatch(key, "[^A-Za-z0-9_-]+", true );
+            params = params + sformat("  -a %1='%2'  ", key, String::Quote(val) );
+        });
+        y2milestone ("called from autoyast - added registration data to suse_register call");
     }
 
-    if ( Mode::normal() )         params = params + " --force-registration ";
-    if ( submit_hwdata   == false )   params = params + " --no-hw-data ";
-    if ( submit_optional == false )   params = params + " --no-optional ";
+    if ( Mode::normal() )           params = params + " --force-registration ";
+    if ( submit_hwdata   == false ) params = params + " --no-hw-data ";
+    if ( submit_optional == false ) params = params + " --no-optional ";
 
     // run suse_register
     y2milestone ("Calling /usr/bin/suse_register %1", params);
@@ -226,7 +233,7 @@ global map<string, string> suseRegister(symbol parameter)
  */
 global void Read()
 {
-    y2milestone ("called Register::Read");
+    initialize();
 }
 
 
@@ -235,9 +242,33 @@ global void Read()
  */
 global boolean Import(map settings)
 {
+    iamroot = amIroot();
+
+    submit_optional = false;
+    submit_hwdata   = false;
+    do_registration = false;
+    registration_data = $[];
+
+    submit_optional     = (boolean) settings["submit_optional"]:submit_optional;
+    submit_hwdata       = (boolean) settings["submit_hwdata"]:submit_hwdata;
+    do_registration     = (boolean) settings["do_registration"]:do_registration;
+    registration_data   = (map<string, string>) settings["registration_data"]:$[];
+
     return true;
 }
 
+
+
+/*
+ * Write()
+ */
+global boolean Write()
+{
+    iamroot = amIroot();
+    if (do_registration) suseRegister(`autoyast);
+    finish();
+    return true;
+}
 
 
 
@@ -247,17 +278,12 @@ global boolean Import(map settings)
  */
 global map Export()
 {
-    return $[];
+    return $[
+               "submit_optional":submit_optional,
+               "submit_hwdata":submit_hwdata,
+               "do_registration":do_registration,
+               "registration_data":registration_data
+    ];
 }
-
-/**
- * AutoYaST interface function: Summary()
- * @return summary string (html)
- */
-global string Summary()
-{
-    return "";
-}
-
 
 } // -EOF-
