@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Mar 28 20:53:13 CEST 2006 - jdsn@suse.de
+
+- added autoyast part of suse_register
+- icon for product registration (#160293)
+- fixes for inst_suse_register
+- 2.13.50 
+
+-------------------------------------------------------------------
 Mon Mar 27 23:47:38 CEST 2006 - jsrain@suse.de
 
 - removed desktop selection from NLD workflow (#160650)
