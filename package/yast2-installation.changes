@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Mar 28 21:29:07 CEST 2006 - jdsn@suse.de
+
+- added 'rm -f /var/lib/zypp/zmd_updated_the_sources'
+- 2.13.51 
+
+-------------------------------------------------------------------
 Tue Mar 28 20:53:13 CEST 2006 - jdsn@suse.de
 
 - added autoyast part of suse_register
