@@ -2,6 +2,8 @@
 Tue Mar 28 21:29:07 CEST 2006 - jdsn@suse.de
 
 - added 'rm -f /var/lib/zypp/zmd_updated_the_sources'
+  flag file to be deleted if suse_register runs during installation
+  file checked by online update - deletion requested by mvidner
 - 2.13.51 
 
 -------------------------------------------------------------------
