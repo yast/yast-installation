@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Mar 29 16:06:23 CEST 2006 - jdsn@suse.de
+
+- late feature "force registration" for suse_register (aj, shorn) 
+
+-------------------------------------------------------------------
 Tue Mar 28 21:29:07 CEST 2006 - jdsn@suse.de
 
 - added 'rm -f /var/lib/zypp/zmd_updated_the_sources'
