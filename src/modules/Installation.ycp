@@ -40,9 +40,6 @@
 
     global string mountlog		= Directory::logdir + "/y2logMount";
 
-    // default language for the installation (from installation source)
-    global string defaultLanguage	= "en_US";
-
     // encoding for the language
     global string encoding		= "ISO-8859-1";
 
@@ -88,8 +85,6 @@ global boolean license_accepted = false;
 	    destdir = "/mnt";
 	    scr_destdir = "/mnt";
 	}
-
-	defaultLanguage = Pkg::GetLocale();
     }
 
     define void Initialize () {
