@@ -721,7 +721,7 @@ the configuration will be aborted.</p>
     Wizard::SetContents(caption, contents, help,
 	false, true);
 
-    Wizard::SetTitleIcon ("yast-license");
+    Wizard::SetTitleIcon ("yast-product-registration");
     Wizard::SetFocusToNextButton();
 
     return true;
@@ -745,6 +745,7 @@ void CleanUpLicense (string tmpdir) {
  */
 global boolean AcceptedLicenseAndInfoFile (integer src_id) {
     // Check for info.txt
+    y2milestone("Checking source: ID %1", src_id);
     string info_file = Pkg::SourceProvideOptionalFile (src_id, 1, "/media.1/info.txt");
     string license_file = Pkg::SourceProvideOptionalFile (src_id, 1, "/media.1/license.zip");
 
@@ -752,6 +753,7 @@ global boolean AcceptedLicenseAndInfoFile (integer src_id) {
 
     // license is part of the add-on product
     if (license_file != nil) {
+	y2milestone("Product has a license");
 	string tmpdir = (string) SCR::Read(.target.tmpdir) + "/add-on-license/";
 	map out = (map)SCR::Execute (.target.bash_output, sformat ("
 rm -rf '%1' && \
