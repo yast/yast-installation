@@ -23,6 +23,7 @@ textdomain="control"
     <register>
         <enable_register_hwdata   config:type="boolean">true</enable_register_hwdata>
         <enable_register_optional config:type="boolean">true</enable_register_optional>
+        <display_register_forcereg config:type="boolean">false</display_register_forcereg>
     </register>
     <software>
         <delete_old_packages config:type="boolean">true</delete_old_packages>
