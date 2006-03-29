@@ -32,6 +32,8 @@ global boolean iamroot = false;
 
 global boolean submit_optional = false;
 global boolean submit_hwdata   = false;
+global boolean force_registration = false;
+global boolean display_forcereg = false;
 
 global map<string, string> registration_data = $[];
 
@@ -88,6 +90,8 @@ void read_config()
     // first read from control file
     submit_optional = ProductFeatures::GetBooleanFeature("register", "enable_register_optional");
     submit_hwdata   = ProductFeatures::GetBooleanFeature("register", "enable_register_hwdata");
+    // this boolean comes only from the control file - nowhere to be saved
+    display_forcereg = ProductFeatures::GetBooleanFeature("register", "display_register_forcereg");
 
     // then read from sysconfig
     if (FileUtils::Exists("/etc/sysconfig/suse_register"))
@@ -201,9 +205,9 @@ global map<string, string> suseRegister(symbol parameter)
         y2milestone ("called from autoyast - added registration data to suse_register call");
     }
 
-    if ( Mode::normal() )           params = params + " --force-registration ";
-    if ( submit_hwdata   == false ) params = params + " --no-hw-data ";
-    if ( submit_optional == false ) params = params + " --no-optional ";
+    if ( force_registration ) params = params + " --force-registration ";
+    if ( !submit_hwdata   )   params = params + " --no-hw-data ";
+    if ( !submit_optional )   params = params + " --no-optional ";
 
     // run suse_register
     y2milestone ("Calling /usr/bin/suse_register %1", params);
