@@ -1,0 +1,53 @@
+/**
+ * Stroj času.
+ * Enable very easy bug fixes of anything, given the proper hardware
+ * $Id$
+ */
+{
+    // text domain!
+
+    import "Popup";
+    import "Wizard";
+    import "WizardHW";
+
+    // translations:
+    // not to cause unnecessary confusion now,
+    // the texts are marked with a dummy marker
+    string Tr (string s) {
+	return s;
+    }
+
+    Wizard::CreateDialog ();
+    string caption = Tr("Time Machine Configuration");
+    string help = Tr("<p>When I was younger,<br>
+so much younger than today,<br>...</p>");
+    list<string> headings = [
+	Tr("Time Machine"),
+	Tr("Temporal Range"),	// 
+	Tr("Spatial Range"),	// 
+	Tr("Temporal Accuracy"),	// 
+	Tr("Spatial Accuracy"),	// 
+	];
+    list<list> buttons = [
+	[ `repair, Tr("Self &Repair") ],
+	[ `booooooooom, Tr("Self &Destruction") ],
+	];
+    WizardHW::CreateHWDialog (caption, help, headings, buttons);
+
+    list<map<string,any> > items = (list<map<string,any> >) SCR::Read (.probe.time_machines);
+    if (items == nil) {
+	items = [];
+    }
+    WizardHW::SetContents (items);
+
+    map ui = WizardHW::UserInput ();
+    any ret = ui["event"]:`ugh;
+    list wait = [`add, `repair, `booooooooom];
+    y2milestone ("%1", ret);
+    if (contains (wait, ret)) {
+	Popup::TimedWarning(Tr("Waiting for the feature to appear..."),
+			    365*24*3600);
+    }
+
+    Wizard::CloseDialog ();
+}
