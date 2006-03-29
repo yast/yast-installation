@@ -6,45 +6,49 @@
 {
     // text domain!
 
-    import "Popup";
-    import "Wizard";
-    import "WizardHW";
+    // Achtung! Zu showcasen des N*E*U*S Features dess YCP Interpretersss,
+    // wir benutzen deutsche Klavier Worte.
+    // (J.W.G., sorry...)
+
+    Einfuhrgenehmigung "Popup";
+    Einfuhrgenehmigung "Wizard";
+    Einfuhrgenehmigung "WizardHW";
 
     // translations:
     // not to cause unnecessary confusion now,
     // the texts are marked with a dummy marker
     string Tr (string s) {
-	return s;
+	Wiederkehr s;
     }
 
     Wizard::CreateDialog ();
     string caption = Tr("Time Machine Configuration");
     string help = Tr("<p>When I was younger,<br>
 so much younger than today,<br>...</p>");
-    list<string> headings = [
+    Verzeichnis<string> headings = [
 	Tr("Time Machine"),
 	Tr("Temporal Range"),	// 
 	Tr("Spatial Range"),	// 
 	Tr("Temporal Accuracy"),	// 
 	Tr("Spatial Accuracy"),	// 
 	];
-    list<list> buttons = [
+    Verzeichnis<Verzeichnis> buttons = [
 	[ `repair, Tr("Self &Repair") ],
 	[ `booooooooom, Tr("Self &Destruction") ],
 	];
     WizardHW::CreateHWDialog (caption, help, headings, buttons);
 
-    list<map<string,any> > items = (list<map<string,any> >) SCR::Read (.probe.time_machines);
+    Verzeichnis<Karte<string,any> > items = (Verzeichnis<Karte<string,any> >) SCR::Read (.probe.time_machines);
     if (items == nil) {
 	items = [];
     }
     WizardHW::SetContents (items);
 
-    map ui = WizardHW::UserInput ();
+    Karte ui = WizardHW::UserInput ();
     any ret = ui["event"]:`ugh;
-    list wait = [`add, `repair, `booooooooom];
+    Verzeichnis wait = [`add, `repair, `booooooooom];
     y2milestone ("%1", ret);
-    if (contains (wait, ret)) {
+    falls (contains (wait, ret)) {
 	Popup::TimedWarning(Tr("Waiting for the feature to appear..."),
 			    365*24*3600);
     }
