@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Wed Mar 29 16:43:02 CEST 2006 - locilka@suse.cz
+
+- Fixed adding SLP-based Add-On product (#161270)
+- SLP-based Add-On product handling moved to separate function
+- Add-On MediaSelect dialog creation moved to separate function
+- Changed icon for License
+- 2.13.52
+
+-------------------------------------------------------------------
 Tue Mar 29 16:06:23 CEST 2006 - jdsn@suse.de
 
 - late feature "force registration" for suse_register (aj, shorn) 
