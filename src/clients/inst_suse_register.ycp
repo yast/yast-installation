@@ -40,6 +40,9 @@
         }
     }
 
+    // Register::initialize() is mandatory - never remove it
+    Register::initialize();
+
     map ui = UI::GetDisplayInfo();
     boolean textmode = (boolean) ui["TextMode"]:nil;
 
@@ -67,6 +70,7 @@ manage subscriptions with Novell Customer Center."
     string nccc_sub_comment = _("Include for Convenience");
     string nccc_sub_hwinfo  = _("Hardware Profile");
     string nccc_sub_optional= _("Optional Information");
+    string nccc_forcereg= _("Registration Code");
     string nccc_sub_showbtn = _("Details...");
 
 
@@ -134,13 +138,22 @@ of the installed product is sent in this initial exchange.
 
 string help_para3 = _(
 "<p>
+If you purchased your copy of this product, enable <b>Registration Code</b>
+so you are prompted for your product code. 
+This registers you for the installation support included with your product.
+</p>"
+);
+
+string help_para4 = _(
+"<p>
 No information is passed to anyone outside Novell. The data is used for
 statistical purposes and to enhance your convenience regarding driver support
 and your Web account. Find a detailed privacy policy in <b>Details</b>. View
 the transmitted information in the log file <tt>~/.suse_register.log</tt>.
 </p>"
 );
-string help = help_title + help_para1 + help_para2 + help_para3;
+
+string help = help_title + help_para1 + help_para2 + (Register::display_forcereg ? help_para3:"") + help_para4;
 
 
 
@@ -160,11 +173,6 @@ string help = help_title + help_para1 + help_para2 + help_para3;
     // default is true, see statement in layout term
     boolean configure_status = true;
 
-
-    // Register::initialize() is mandatory - never remove it
-    Register::initialize();
-
-
     /* vv   MAIN (WIZARD) LAYOUT  vv  */
     term sr_layout=nil;
     sr_layout=`HVCenter( `VBox(
@@ -180,6 +188,7 @@ string help = help_title + help_para1 + help_para2 + help_para3;
                                              `Left( `Label( nccc_sub_comment ) ),
                                              `Left( `CheckBox(`id(`hwinfo),  `opt(`notify), nccc_sub_hwinfo,  Register::submit_hwdata ) ),
                                              `Left( `CheckBox(`id(`optional), `opt(`notify), nccc_sub_optional, Register::submit_optional ) ),
+                                              Register::display_forcereg ? `Left( `CheckBox(`id(`forcereg), `opt(`notify), nccc_forcereg, false ) ):`Empty() ,
                                              `VSpacing(0.5),
                                              `Right( `PushButton(`id(`showinfo), nccc_sub_showbtn ) )
                                    ) ) ) ,
@@ -477,10 +486,11 @@ boolean launchBrowser(string url)
         {
             configure_status = (boolean) UI::QueryWidget(`id(`configure),  `Value);
         }
-        else if (ret == `hwinfo || ret == `optional)
+        else if (ret == `hwinfo || ret == `optional || ret == `forcereg)
         {
             Register::submit_hwdata  = (boolean) UI::QueryWidget(`id(`hwinfo),  `Value);
             Register::submit_optional= (boolean) UI::QueryWidget(`id(`optional), `Value);
+            Register::force_registration = (boolean) UI::QueryWidget(`id(`forcereg), `Value);
         }
         else if (ret == `showinfo)
         {
