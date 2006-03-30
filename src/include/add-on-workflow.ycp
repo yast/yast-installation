@@ -360,7 +360,8 @@ symbol CatalogSelect () {
 	    Report::Error (_("Failed to initialize the catalog."));
 	    return `finish;
 	}
-
+/*
+// moved below, in order to check whether the product has been installed first
 	// Display /media.1/info.txt if such file exists
 	// Display license and wait for agreement
 	boolean license_ret = AddOnProduct::AcceptedLicenseAndInfoFile(src_id);
@@ -369,7 +370,7 @@ symbol CatalogSelect () {
 	    Pkg::SourceDelete(src_id);
 	    return `finish;
 	}
-
+*/
 	AddOnProduct::src_id = src_id;
 	SourceManager::newSources = [src_id];
 	y2milestone ("Only one source available - skipping dialog");
@@ -462,15 +463,6 @@ Select the catalog to use.</p>
 	    return `finish;
 	}
 
-	// Display /media.1/info.txt if such file exists
-	// Display license and wait for agreement
-	boolean license_ret = AddOnProduct::AcceptedLicenseAndInfoFile(selected);
-	if (license_ret != true) {
-	    y2milestone("Removing the current source ID %1", selected);
-	    Pkg::SourceDelete(selected);
-	    return `finish;
-	}
-
 	AddOnProduct::src_id = selected;
 	SourceManager::newSources = [selected];
     }
@@ -480,12 +472,27 @@ Select the catalog to use.</p>
 
 symbol ProductSelect () {
     list<map<string,any> > products = Pkg::ResolvableProperties ("", `product, "");
+    list<map<string,any> > installed_products = filter (map<string,any> p, products, {
+	return p["status"]:nil == `selected || p["status"]:nil == `installed;
+    });
+    y2milestone ("Already installed/selected products: %1", installed_products);
     products = filter (map<string,any> p, products, {
 	return p["source"]:-1 == AddOnProduct::src_id;
     });
+    y2milestone ("Products on the media: %1", products);
     if (size (products) == 0)
     {
 	y2milestone ("No poduct found on the media, but anyway, using it :-)");
+	// Display /media.1/info.txt if such file exists
+	// Display license and wait for agreement
+	// FIXME the same code is below
+	boolean license_ret = AddOnProduct::AcceptedLicenseAndInfoFile(AddOnProduct::src_id);
+	if (license_ret != true) {
+	    y2milestone("Removing the current source ID %1", AddOnProduct::src_id);
+	    Pkg::SourceDelete(AddOnProduct::src_id);
+	    return `finish;
+	}
+
         map data = Pkg::SourceGeneralData (AddOnProduct::src_id);
         string url = data["url"]:"";
         string product_dir = data["product_dir"]:"";
@@ -498,6 +505,41 @@ symbol ProductSelect () {
 	]);
 	return `next;
     }
+    products = filter (map<string,any> prod, products, {
+	boolean installed = false;
+	find (map<string,any> p, installed_products, {
+	    if (p["name"]:"" == prod["name"]:"" && p["version"]:"" == prod["version"]:"")
+	    {
+		installed = true;
+		y2milestone ("Product %1 installed", p);
+		return true;
+	    }
+	    return false;
+	});
+	if (installed)
+	{
+	    y2milestone ("Removing %1 from the list of available products", prod);
+	    return false;
+	}
+	return true;
+    });
+    if (size (products) == 0)
+    {
+	// message popup
+	Popup::Message (_("The product on the media is already installed
+or selected for installation."));
+	AddOnProduct::last_ret = `back;
+	return `back;
+    }
+    // Display /media.1/info.txt if such file exists
+    // Display license and wait for agreement
+    // FIXME the same code is above
+    boolean license_ret = AddOnProduct::AcceptedLicenseAndInfoFile(AddOnProduct::src_id);
+    if (license_ret != true) {
+	    y2milestone("Removing the current source ID %1", AddOnProduct::src_id);
+	    Pkg::SourceDelete(AddOnProduct::src_id);
+	    return `finish;
+    }
     if (size (products) == 1)
     {
 	y2milestone ("Only one product available - skipping dialog");
@@ -508,6 +550,7 @@ symbol ProductSelect () {
 	    Pkg::ResolvableRemove (prod["name"]:"", `product);
 	    // message popup
 	    Popup::Message (_("Dependencies of the add-on product cannot be fullfilled."));
+	    AddOnProduct::last_ret = `back;
 	    return `back;
 	}
         map data = Pkg::SourceGeneralData (AddOnProduct::src_id);
