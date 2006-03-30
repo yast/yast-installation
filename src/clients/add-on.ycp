@@ -10,6 +10,8 @@
 textdomain "installation";
 
 import "AddOnProduct";
+import "Confirm";
+import "PackageLock";
 import "Report";
 import "Wizard";
 import "Pkg";
@@ -19,6 +21,14 @@ include "installation/add-on-workflow.ycp";
 Wizard::CreateDialog();
 Wizard::SetDesktopIcon("vendor");
 Wizard::HideBackButton();
+
+// check whether running as root
+// and having the packager for ourselves
+if (! Confirm::MustBeRoot () || ! PackageLock::Check ())
+{
+    UI::CloseDialog ();
+    return `abort;
+}
 
 // Initialize current sources
 Read();
