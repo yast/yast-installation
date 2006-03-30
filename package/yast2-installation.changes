@@ -1,6 +1,8 @@
 -------------------------------------------------------------------
-Thu Mar 30 13:40:04 CEST 2006 - mvidner@suse.cz
+Thu Mar 30 13:42:35 CEST 2006 - mvidner@suse.cz
 
+- Reset zypp and release its lock before suse_register (#160319).
+  Therefore disabled the Back button.
 - Don't run add-on.ycp if another process has the zypp lock (#160319).
 
 -------------------------------------------------------------------
