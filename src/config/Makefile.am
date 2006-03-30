@@ -1,6 +1,6 @@
 # Makefile.am for installation/vendor
 
-desktop_DATA = vendor.desktop release_notes.desktop add-on.desktop
+desktop_DATA = vendor.desktop release_notes.desktop add-on.desktop suse_register.desktop
 
 fvwmdir = $(prefix)/X11R6/share/fvwm/
 fvwm_DATA = \

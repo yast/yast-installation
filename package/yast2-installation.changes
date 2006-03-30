@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Mar 30 12:31:49 CEST 2006 - jdsn@suse.de
+
+- included new desktop file in Makefile (162112) 
+
+-------------------------------------------------------------------
 Wed Mar 29 16:43:02 CEST 2006 - locilka@suse.cz
 
 - Fixed adding SLP-based Add-On product (#161270)
