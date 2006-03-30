@@ -452,8 +452,10 @@ boolean launchBrowser(string url)
     // check if we are in installation workflow or running independently
     if (Mode::normal()) Wizard::CreateDialog();
 
+    // disable back once zypp forgets the caches and lock by Init
+    boolean enable_back = false; // GetInstArgs::enable_back()
     // we always need the next button
-    Wizard::SetContents (title, contents, help, GetInstArgs::enable_back(), true);
+    Wizard::SetContents (title, contents, help, enable_back, true);
 
     y2debug ("%1", UI::DumpWidgetTree());
 
@@ -469,6 +471,11 @@ boolean launchBrowser(string url)
 
 
 /* -------------------------------- PROGRAM LOGIC START ----------------------------------------------------------- */
+
+    // before calling suse_register, which calls zmd,
+    // forget zypp caches and also release the zypp lock!
+    // reinitalize ZYpp while rug is adding the source for us
+    Pkg::Init ();
 
     repeat {
         ret = Wizard::UserInput();
