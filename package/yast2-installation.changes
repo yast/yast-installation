@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Fri Mar 31 17:32:03 CEST 2006 - mvidner@suse.cz
+
+- Tell ZMD to get the inst source (#156030)
+- No unlocking after all (#160319)
+  - Don't reset zypp
+  - Reenable Back
+  - Fetch update source from suse_resigster and add it
+- 2.13.55
+
+-------------------------------------------------------------------
 Wed Mar 29 17:57:35 CEST 2006 - jsrain@suse.de
 
 - prevent from installing one product multiple times (#159662)

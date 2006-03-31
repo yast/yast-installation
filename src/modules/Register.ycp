@@ -23,6 +23,16 @@ import "ProductFeatures";
 
 
 // --------------------------------------------------------------
+// START: Locally defined data
+// --------------------------------------------------------------
+
+string services_file = sformat ("%1/update_services", SCR::Read (.target.tmpdir));
+
+// ------------------------------------------------------------------
+// END:   Locally defined data
+// ------------------------------------------------------------------
+
+// --------------------------------------------------------------
 // START: Globally defined data, access via Register::<variable>
 // --------------------------------------------------------------
 
@@ -194,6 +204,7 @@ global map<string, string> suseRegister(symbol parameter)
     // always log and beautify!
     string params = " -y -L ~/.suse_register.log ";
     if (parameter == `p) params = params + " -p ";
+    else params = params + sformat(" --dumpfile=%1 ", services_file);
 
     if (parameter == `autoyast)
     {
@@ -223,6 +234,32 @@ global map<string, string> suseRegister(symbol parameter)
     y2milestone ("Server response: %1", response);
     return response;
 }
+
+
+
+
+global boolean add_update_sources ()
+{
+
+    // make it possible to be run as non-root (system will be inconsistent then)
+    // TODO: to be removed when rug lets authorized users add installation sources
+    if ( !iamroot ) return false;
+
+    if (!FileUtils::Exists (services_file))
+    return false;
+
+    foreach (string url,
+    splitstring ((string)SCR::Read(.target.string, services_file),"\n"), {
+
+    map parsed = URL::Parse (url);
+    if (parsed != $[])
+    {
+        Pkg::SourceCreate (parsed["scheme"]:"http" + "://" + parsed["host"]:"" + parsed["port"]:"", parsed["path"]:"");
+    }
+    });
+}
+
+
 
 
 

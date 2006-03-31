@@ -29,6 +29,7 @@
     import "Label";
     import "Internet";
     import "Register";
+    import "SourceManager";
 
     // no network - no suse_register
     if (!Mode::normal())
@@ -452,8 +453,7 @@ boolean launchBrowser(string url)
     // check if we are in installation workflow or running independently
     if (Mode::normal()) Wizard::CreateDialog();
 
-    // disable back once zypp forgets the caches and lock by Init
-    boolean enable_back = false; // GetInstArgs::enable_back()
+    boolean enable_back = GetInstArgs::enable_back();
     // we always need the next button
     Wizard::SetContents (title, contents, help, enable_back, true);
 
@@ -472,10 +472,15 @@ boolean launchBrowser(string url)
 
 /* -------------------------------- PROGRAM LOGIC START ----------------------------------------------------------- */
 
-    // before calling suse_register, which calls zmd,
-    // forget zypp caches and also release the zypp lock!
-    // reinitalize ZYpp while rug is adding the source for us
-    Pkg::Init ();
+    // no release needed, we add the source ourselves and ZMD can cope
+    if (false)
+    {
+	// before calling suse_register, which calls zmd,
+	// forget zypp caches and also release the zypp lock!
+	// reinitalize ZYpp while rug is adding the source for us
+	//Pkg::Init ();
+    }
+    SourceManager::SyncYaSTInstSourceWithZMD (); // #156030
 
     repeat {
         ret = Wizard::UserInput();
@@ -630,6 +635,7 @@ boolean launchBrowser(string url)
 
                     // we are done, end of loop
                     loopend = true;
+                    Register::add_update_sources();
                 }
 
                 // handle any other error codes
