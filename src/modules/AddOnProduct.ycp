@@ -721,7 +721,7 @@ the configuration will be aborted.</p>
     Wizard::SetContents(caption, contents, help,
 	false, true);
 
-    Wizard::SetTitleIcon ("yast-product-registration");
+    Wizard::SetTitleIcon ("yast-addon");
     Wizard::SetFocusToNextButton();
 
     return true;
