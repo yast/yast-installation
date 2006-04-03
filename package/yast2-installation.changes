@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Apr  3 14:32:08 CEST 2006 - ug@suse.de
+
+- by default, enable clone box on SLD
+
+-------------------------------------------------------------------
 Mon Apr  3 14:22:22 CEST 2006 - ug@suse.de
 
 - uncheck clone checkbox if cloning is greyed out (#162457)
