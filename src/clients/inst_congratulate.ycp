@@ -32,6 +32,8 @@
     if( Package::AvailableAny(["autoyast2"]) &&
         size(ProductControl::clone_modules) > 0 ) {
         clone_enabled = true;
+    } else {
+        clone_checkbox_active = false;
     }
 
     map display = UI::GetDisplayInfo();
