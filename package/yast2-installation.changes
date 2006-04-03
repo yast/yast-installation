@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Apr  3 14:22:22 CEST 2006 - ug@suse.de
+
+- uncheck clone checkbox if cloning is greyed out (#162457)
+
+-------------------------------------------------------------------
 Fri Mar 31 17:32:03 CEST 2006 - mvidner@suse.cz
 
 - Tell ZMD to get the inst source (#156030)
