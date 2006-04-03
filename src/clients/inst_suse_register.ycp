@@ -354,16 +354,19 @@ exit 0";
 
 string su_exec(string user, string group, string command)
 {
-    // create a script to run a system call as different user
-    // thanks to werner for writing this script
     string exec = sformat("
 #!/bin/bash -x
 
 user=%1
 group=%2
 cmd=\"%3\"
-", user, group, command )
-+
+", user, group, command );
+
+
+    // create a script to run a system call as different user
+    // thanks to werner (script) and jw (.screenrc.jail) for their help
+    if (!textmode)
+    {    exec = exec +
 "
 fakehome=/var/lib/YaST2/$user-fakehome
 umask 0077
@@ -395,6 +398,23 @@ exec 4<&-
 su -s /bin/bash -- $user -c \"cd; XAUTHORITY=$tmp $cmd\"
 
 exit 0";
+    }
+    else
+    {
+
+        SCR::Execute(.target.bash, "umask 0077; cat > /tmp/.screenrc.jail <<EOJAIL
+# screenrc.jail
+#
+# use in environments, where a screen session must not spawn any new processes.
+# 2006-04-03, jw
+
+escape \\377\\377
+shell /bin/true
+chacl * -x ?
+EOJAIL");
+
+        exec = exec + "screen -c /tmp/.screenrc.jail su -s /bin/bash -- $user -c \"$cmd\"";
+    }
 
     y2milestone("using su_exec to launch browser");
 
@@ -409,7 +429,12 @@ string browser_command(string url)
     string bcmd="/bin/false";
 
     if ( textmode )
-        bcmd = " screen w3m ";
+    {
+        if ( Register::iamroot )
+            bcmd = " w3m ";
+        else
+            bcmd = " screen w3m ";
+    }
     else
     {
         if ( Register::iamroot )
@@ -457,7 +482,7 @@ boolean launchBrowser(string url)
     // we always need the next button
     Wizard::SetContents (title, contents, help, enable_back, true);
 
-    y2debug ("%1", UI::DumpWidgetTree());
+    //y2debug ("%1", UI::DumpWidgetTree());
 
 
     // if we are running as nonroot show a message
@@ -473,13 +498,13 @@ boolean launchBrowser(string url)
 /* -------------------------------- PROGRAM LOGIC START ----------------------------------------------------------- */
 
     // no release needed, we add the source ourselves and ZMD can cope
-    if (false)
-    {
+    //if (false)
+    //{
 	// before calling suse_register, which calls zmd,
 	// forget zypp caches and also release the zypp lock!
 	// reinitalize ZYpp while rug is adding the source for us
 	//Pkg::Init ();
-    }
+    //}
     SourceManager::SyncYaSTInstSourceWithZMD (); // #156030
 
     repeat {
@@ -560,7 +585,8 @@ boolean launchBrowser(string url)
                             UI::ChangeWidget( `id(`needinfo), `Value, starting_browser );
                             launchBrowser(information_data["stdout"]:"http://www.opensuse.org");
                             // FIXME: probably this line can be dropped - see FIXME below; drop with SP1 probably
-                            Register::submit_optional = false;   // deactivate after each browser run
+                            // deactivated for testing
+                            // Register::submit_optional = false;   // deactivate after each browser run
                         }
                         else if ( mi_ret == `cancel  )
                         {
@@ -664,8 +690,9 @@ boolean launchBrowser(string url)
 
         //FIXME: probably these two lines can be dropped (see FIXME above as well)
         //       if decided not to change these values after first suse_register call; probably drop for SP1
-        UI::ChangeWidget( `id(`hwinfo ),   `Value, Register::submit_hwdata   );
-        UI::ChangeWidget( `id(`optional ), `Value, Register::submit_optional );
+        // deactivated for testing
+        // UI::ChangeWidget( `id(`hwinfo ),   `Value, Register::submit_hwdata   );
+        // UI::ChangeWidget( `id(`optional ), `Value, Register::submit_optional );
 
     } until ( loopend || ret == `back );
 
