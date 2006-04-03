@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Apr  3 18:27:15 CEST 2006 - jdsn@suse.de
+
+- fixed w3m in ncuses registration (#162462)
+- changes in suse_register to test new server side business logic
+- 2.13.57
+
+-------------------------------------------------------------------
 Mon Apr  3 14:33:44 CEST 2006 - locilka@suse.cz
 
 - Using yast-addon icon in the .desktop file and also in the source
