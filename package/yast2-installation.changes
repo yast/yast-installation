@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Apr  4 20:07:45 CEST 2006 - jsrain@suse.de
+
+- do not rewrite log from SCR running in chroot during installation
+
+-------------------------------------------------------------------
 Tue Apr  4 18:11:34 CEST 2006 - jdsn@suse.de
 
 - fixed w3m registration again (#162462)
