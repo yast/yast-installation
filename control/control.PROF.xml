@@ -19,12 +19,10 @@ textdomain="control"
         <skip_language_dialog config:type="boolean">true</skip_language_dialog>
         <ui_mode>simple</ui_mode>
         <enable_clone config:type="boolean">false</enable_clone>
-    </globals>
-    <register>
         <enable_register_hwdata   config:type="boolean">true</enable_register_hwdata>
         <enable_register_optional config:type="boolean">true</enable_register_optional>
         <display_register_forcereg config:type="boolean">true</display_register_forcereg>
-    </register>
+    </globals>
     <software>
         <delete_old_packages config:type="boolean">true</delete_old_packages>
         <selection_type config:type="symbol">auto</selection_type>
