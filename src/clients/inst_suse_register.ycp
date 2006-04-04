@@ -41,6 +41,15 @@
         }
     }
 
+    // error handling - skip if suseRegister is missing
+    integer sr_exist = (integer) SCR::Execute(.target.bash, "test -x /usr/bin/suse_register");
+    if (sr_exist != 0)
+    {
+        y2milestone("/usr/bin/suse_register does not exist - skipping registration");
+        Internet::do_you = false;
+        return `auto;
+    }
+
     // Register::initialize() is mandatory - never remove it
     Register::initialize();
 
@@ -53,6 +62,7 @@
 
     // Transltors: This is title/brand - only translate the Configuration
     string title_nccc = _("Novell Customer Center Configuration");
+    // following text is translated en->en in po file to "Configure Online Update"
     string title_update = _("Update Configuration");
     // for SLES/SLED and SL (2 months after release) use title_nccc
     string title = title_update;
@@ -318,40 +328,6 @@ boolean report_error()
 }
 
 
-string su_exec2(string user, string group, string command)
-{
-    // create a script to run a system call as different user
-    string exec = sformat("
-#!/bin/bash -x
-
-user=%1
-group=%2
-cmd=\"%3\"
-", user, group, command )
-+
-"
-fakehome=/var/lib/YaST2/$user-fakehome
-XA=/root/.xauth
-
-umask 077
-mkdir -p $XA
-grep ^$user$ $XA/export >/dev/null 2>&1  || echo $user >> $XA/export
-
-mkdir -p $fakehome
-trap \"rm -rf $fakehome\" EXIT INT HUP TERM
-chmod 700 $fakehome
-chown $user:$group $fakehome
-
-su -s /bin/bash -- $user -c \"cd; $cmd\"
-
-exit 0";
-
-    y2milestone("using su_exec to launch browser");
-
-    return exec;
-}
-
-
 string su_exec(string user, string group, string command)
 {
     string exec = sformat("
@@ -360,6 +336,33 @@ string su_exec(string user, string group, string command)
 user=%1
 group=%2
 cmd=\"%3\"
+
+fakehome=/var/lib/YaST2/$user-fakehome
+umask 0077
+
+XA=/root/.xauth
+mkdir -p $XA
+grep ^$user$ $XA/export >/dev/null 2>&1  || echo $user >> $XA/export
+
+mkdir -p $fakehome
+chmod 700 $fakehome
+tmp=$(mktemp $fakehome/.Xauthority.XXXXXX) || exit 1
+tmpjail=$(mktemp $fakehome/.screenrc.jail.XXXXXX) || exit 1
+chmod 600 $tmp $tmpjail
+chown $user:$group $tmp $tmpjail $fakehome
+trap \"rm -rf $fakehome\" EXIT INT HUP TERM
+
+cat > $tmpjail <<EOJAIL
+# screenrc.jail
+#
+# use in environments, where a screen session must not spawn any new processes.
+# 2006-04-03, jw
+
+escape \\377\\377
+shell /bin/true
+chacl * -x ?
+EOJAIL
+
 ", user, group, command );
 
 
@@ -368,17 +371,6 @@ cmd=\"%3\"
     if (!textmode)
     {    exec = exec +
 "
-fakehome=/var/lib/YaST2/$user-fakehome
-umask 0077
-
-tmp=$(mktemp /tmp/.Xauthority.XXXXXX) || exit 1
-mkdir -p $fakehome
-trap \"rm -rf $tmp $fakehome\" EXIT INT HUP TERM
-chmod 600 $tmp
-chmod 700 $fakehome
-chown $user:$group $tmp $fakehome
-
-
 if test \"${DISPLAY%:*}\" = \"localhost\" ; then
     disp=$(hostname -s)/unix:${DISPLAY#*:}
 else
@@ -401,19 +393,10 @@ exit 0";
     }
     else
     {
-
-        SCR::Execute(.target.bash, "umask 0077; cat > /tmp/.screenrc.jail <<EOJAIL
-# screenrc.jail
-#
-# use in environments, where a screen session must not spawn any new processes.
-# 2006-04-03, jw
-
-escape \\377\\377
-shell /bin/true
-chacl * -x ?
-EOJAIL");
-
-        exec = exec + "screen -c /tmp/.screenrc.jail su -s /bin/bash -- $user -c \"$cmd\"";
+        exec = exec +
+"
+screen -c $tmpjail su -s /bin/bash -- $user -c \"cd; $cmd\"
+exit 0";
     }
 
     y2milestone("using su_exec to launch browser");
