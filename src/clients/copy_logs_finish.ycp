@@ -60,7 +60,7 @@ else if (func == "Write")
 
 	   InjectRenamedFile( Directory::logdir, file, sformat( "y2log-%1", target_no ) );
 	}
-	if ( file == "zypp.log" )
+	else if ( file == "zypp.log" )
 	{
 	    // Save zypp.log from the inst-sys
 	   InjectRenamedFile( Directory::logdir, file, "zypp.log-1");
