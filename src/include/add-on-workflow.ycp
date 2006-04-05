@@ -343,6 +343,7 @@ symbol CatalogSelect () {
     {
 	if (AddOnProduct::last_ret != `next)
 	{
+	    y2milestone ("Deleting source %1", sources[0]:0);
 	    Pkg::SourceDelete(sources[0]:0);
 	    return AddOnProduct::last_ret;
 	}
@@ -354,6 +355,7 @@ symbol CatalogSelect () {
 	y2milestone ("Deleting source %1", src_id);
 	Pkg::SourceDelete (src_id);
 	src_id = Pkg::SourceCreate (url, product_dir);
+	SourceManager::newSources = [src_id];
 	if (src_id == -1)
 	{
 	    // error report
@@ -442,6 +444,7 @@ Select the catalog to use.</p>
     if (ret != `next)
     {
 	foreach (integer src, SourceManager::newSources, {
+	    y2milestone ("Deleting source %1", src);
 	    Pkg::SourceDelete (src);
 	});
     }
@@ -449,13 +452,18 @@ Select the catalog to use.</p>
     {
 	foreach (integer src, SourceManager::newSources, {
 	    if (src != selected)
+	    {
+		y2milestone ("Deleting source %1", src);
 		Pkg::SourceDelete (src);
+	    }
 	});
 	map data = Pkg::SourceGeneralData (selected);
 	string url = data["url"]:"";
 	string product_dir = data["product_dir"]:"";
+	y2milestone ("Deleting source %1", selected);
 	Pkg::SourceDelete (selected);
 	selected = Pkg::SourceCreate (url, product_dir);
+	SourceManager::newSources = [selected];
 	if (selected == -1)
 	{
 	    // error report
@@ -471,12 +479,12 @@ Select the catalog to use.</p>
 }
 
 symbol ProductSelect () {
-    list<map<string,any> > products = Pkg::ResolvableProperties ("", `product, "");
-    list<map<string,any> > installed_products = filter (map<string,any> p, products, {
+    list<map<string,any> > all_products = Pkg::ResolvableProperties ("", `product, "");
+    list<map<string,any> > installed_products = filter (map<string,any> p, all_products, {
 	return p["status"]:nil == `selected || p["status"]:nil == `installed;
     });
     y2milestone ("Already installed/selected products: %1", installed_products);
-    products = filter (map<string,any> p, products, {
+    list<map<string,any> > products = filter (map<string,any> p, all_products, {
 	return p["source"]:-1 == AddOnProduct::src_id;
     });
     y2milestone ("Products on the media: %1", products);
@@ -528,8 +536,9 @@ symbol ProductSelect () {
 	// message popup
 	Popup::Message (_("The product on the media is already installed
 or selected for installation."));
-	AddOnProduct::last_ret = `back;
-	return `back;
+	y2milestone ("Deleting installatino source %1", AddOnProduct::src_id);
+	Pkg::SourceDelete (AddOnProduct::src_id);
+	return `finish;
     }
     // Display /media.1/info.txt if such file exists
     // Display license and wait for agreement
@@ -544,7 +553,6 @@ or selected for installation."));
     {
 	y2milestone ("Only one product available - skipping dialog");
 	map<string,any> prod = products[0]:$[];
-	Pkg::ResolvableInstall (prod["name"]:"", `product);
 	if (! AddOnProduct::CheckProductDependencies ([prod["name"]:""]))
 	{
 	    Pkg::ResolvableRemove (prod["name"]:"", `product);
@@ -553,6 +561,24 @@ or selected for installation."));
 	    AddOnProduct::last_ret = `back;
 	    return `back;
 	}
+	// check whether the product is already available on some media - it is similar as below
+	integer found_source = -1;
+	foreach (map<string,any> p, all_products, {
+	    if (p["name"]:"" == prod["name"]:"" && p["version"]:"" == prod["version"]:""
+		&& p["media"]:-2 != prod["media"]:-3)
+	    {
+		y2milestone ("Product %1 already available on media %2", p, p["media"]:-1);
+		found_source = p["media"]:-1;
+		break;
+	    }
+	});
+	if (found_source != -1)
+	{
+	    y2milestone ("Deleting source %1", AddOnProduct::src_id);
+	    Pkg::SourceDelete (AddOnProduct::src_id);
+	    AddOnProduct::src_id = found_source;
+	}
+	Pkg::ResolvableInstall (prod["name"]:"", `product);
         map data = Pkg::SourceGeneralData (AddOnProduct::src_id);
         string url = data["url"]:"";
         string product_dir = data["product_dir"]:"";
@@ -605,6 +631,31 @@ to install.</p>
 	if (ret == `next)
 	{
 	    list<string> selected = (list<string>)UI::QueryWidget (`id (`products), `SelectedItems);
+	    // check whether the product is already available on some media - it is similar as above
+	    list<map<string,any> > prods = filter (map<string,any> p, products, {
+		return contains (selected, p["name"]:"");
+	    });
+	    boolean all_found = true;
+	    map<string,integer> prod2src = $[];
+	    foreach (map<string,any> prod, prods, {
+	      boolean product_found = false;
+	      foreach (map<string,any> p, all_products, {
+		if (p["name"]:"" == prod["name"]:"" && p["version"]:"" == prod["version"]:""
+		    && p["media"]:-2 != prod["media"]:-3)
+		{
+		    product_found = true;
+		    prod2src[prod["name"]:""] = p["media"]:-3;
+		    break;
+		}
+	      });
+	      all_found = all_found && product_found;
+	    });
+	    if (all_found)
+	    {
+	        y2milestone ("Deleting source %1", AddOnProduct::src_id);
+		Pkg::SourceDelete (AddOnProduct::src_id);
+		AddOnProduct::src_id = -1;
+	    }
 	    foreach (string product, selected, {
 		Pkg::ResolvableInstall (product, `product);
 	    });
@@ -623,7 +674,9 @@ to install.</p>
 	    string product_dir = data["product_dir"]:"";
 	    foreach (string product, selected, {
 		AddOnProduct::add_on_products = add (AddOnProduct::add_on_products, $[
-		    "media" : AddOnProduct::src_id,
+		    "media" : AddOnProduct::src_id == -1
+			? prod2src[product]:-1
+			: AddOnProduct::src_id,
 		    "product" : product,
 		    "media_url" : url,
 		    "product_dir" : product_dir,
@@ -637,7 +690,10 @@ to install.</p>
     }
 
     if (ret == `abort)
+    {
+	y2milestone ("Deleting source %1", AddOnProduct::src_id);
 	Pkg::SourceDelete (AddOnProduct::src_id);
+    }
 
     AddOnProduct::last_ret = ret;
     return ret;
@@ -737,7 +793,10 @@ symbol RunAddOnMainDialog(boolean enable_back, boolean enable_next) {
                 return prod["media"]:-1 == media;
             }));
             if (med_count == 1)
+	    {
+		y2milestone ("Deleting source %1", media);
                 Pkg::SourceDelete (media);
+	    }
             // remove the selected record
             AddOnProduct::add_on_products[selected] = nil;
             AddOnProduct::add_on_products = filter (map<string,any> prod,
