@@ -29,7 +29,6 @@
     import "Label";
     import "Internet";
     import "Register";
-    import "SourceManager";
 
     // no network - no suse_register
     if (!Mode::normal())
@@ -488,7 +487,6 @@ boolean launchBrowser(string url)
 	// reinitalize ZYpp while rug is adding the source for us
 	//Pkg::Init ();
     //}
-    SourceManager::SyncYaSTInstSourceWithZMD (); // #156030
 
     repeat {
         ret = Wizard::UserInput();

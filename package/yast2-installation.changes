@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Apr  5 18:13:11 CEST 2006 - mvidner@suse.cz
+
+- Call SourceManager::SyncYaSTInstSourceWithZMD () in
+  inst_rpmcopy(continue) because inst_suse_register does not run
+  without a network connection (#156030#c30).
+
+-------------------------------------------------------------------
 Wed Apr  5 17:05:27 CEST 2006 - jsrain@suse.de
 
 - do not rewrite log from SCR running in chroot during installation
