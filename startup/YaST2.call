@@ -308,12 +308,16 @@ function start_yast () {
 # Start YaST2 refering to the contents of the Y2_*
 # startup variables
 # ---
+	local overcommit
+	read  overcommit < /proc/sys/vm/overcommit_memory
+	echo "*** Starting YaST2 ***"
+	log "\tAllow big memory allocation: overcommit_memory=1"
+	echo 1 > /proc/sys/vm/overcommit_memory
 	if [ "$SPLASH" = yes -a -x /sbin/splash -a -n "$SPLASHCFG" ];then
 		/sbin/splash -t "YaST running"
 	fi
 	export QT_IM_MODULE=xim
 
-	echo "*** Starting YaST2 ***"
 	log "\tStarting YaST2:"
 	log "\tMODULE_NAME: $Y2_MODULE_NAME"
 	log "\tMODE_FLAGS:  $Y2_MODE_FLAGS"
@@ -358,6 +362,8 @@ function start_yast () {
 		start_yast_and_reboot
 		start_yast_again
 	fi
+	log "\tReset memory allocation: overcommit_memory=$overcommit"
+	echo $overcommit > /proc/sys/vm/overcommit_memory
 }
 
 #----[ start_yast_and_reboot ]----#

@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Apr  6 17:10:07 CEST 2006 - ms@suse.de
+
+- allow huge memory allocations (#151515)
+
+-------------------------------------------------------------------
 Thu Apr  6 15:19:13 CEST 2006 - jsuchome@suse.cz
 
 - Product.ycp: read SHORTLABEL value from content file (#163702)
