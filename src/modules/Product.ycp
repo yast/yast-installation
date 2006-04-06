@@ -54,6 +54,10 @@
      */
     global list flags		= [];
 
+    /**
+     * Short label for bootloader entry
+     */
+    global string shortlabel	= "";
 
 global list<map<string,any> > FindBaseProducts() {
     y2milestone ("Looking for base products");
@@ -104,6 +108,7 @@ global list<map<string,any> > FindBaseProducts() {
 	    baseversion		= (string) SCR::Read(.content.BASEVERSION);
 
 	    relnotesurl		= (string) SCR::Read(.content.RELNOTESURL);
+	    shortlabel		= (string) SCR::Read(.content.SHORTLABEL);
 
 	    any tmp1 = SCR::Read (.content.FLAGS);
 	    if (tmp1 != nil)
