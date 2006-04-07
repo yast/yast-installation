@@ -98,10 +98,10 @@ boolean amIroot()
 void read_config()
 {
     // first read from control file
-    submit_optional = ProductFeatures::GetBooleanFeature("register", "enable_register_optional");
-    submit_hwdata   = ProductFeatures::GetBooleanFeature("register", "enable_register_hwdata");
+    submit_optional = ProductFeatures::GetBooleanFeature("globals", "enable_register_optional");
+    submit_hwdata   = ProductFeatures::GetBooleanFeature("globals", "enable_register_hwdata");
     // this boolean comes only from the control file - nowhere to be saved
-    display_forcereg = ProductFeatures::GetBooleanFeature("register", "display_register_forcereg");
+    display_forcereg = ProductFeatures::GetBooleanFeature("globals", "display_register_forcereg");
 
     // then read from sysconfig
     if (FileUtils::Exists("/etc/sysconfig/suse_register"))
