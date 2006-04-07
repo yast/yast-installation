@@ -16,7 +16,8 @@
     /**
      * General product name and version
      */
-    global string name		= "";			// "SuSE Linux"
+    global string name		= "";			// "SuSE Linux 8.1"
+    global string short_name	= "";			// "SuSE Linux"
     global string version	= "";			// "8.1"
     global string vendor	= "";			// "SuSE Linux AG"
 
@@ -96,7 +97,8 @@ global list<map<string,any> > FindBaseProducts() {
 	    // it should use the same mechanism as running system. But it would
 	    // mean to initialize package manager from constructor, which is
 	    // not reasonable
-	    name		= (string) SCR::Read(.content.PRODUCT);
+	    name		= (string) SCR::Read(.content.LABEL);
+	    short_name		= (string) SCR::Read(.content.SHORTLABEL);
 	    version		= (string) SCR::Read(.content.VERSION);
 	    vendor		= (string) SCR::Read(.content.VENDOR);
 
@@ -137,6 +139,7 @@ global list<map<string,any> > FindBaseProducts() {
 	    list<map<string,any> > base_products = FindBaseProducts();
 	    map<string,any> base_product = base_products[0]:$[];// there should be only one - hopefuly
 	    name = base_product["display_name"]:base_product["summary"]:base_product["name"]:"";
+	    short_name = base_product["short_name"]:name;
 	    version = base_product["version"]:"";
 	    vendor = base_product["vendor"]:"";
 	    relnotesurl = base_product["relnotes_url"]:"";
