@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Apr 10 17:08:10 CEST 2006 - mvidner@suse.cz
+
+- Add installation sources for online update (#163192).
+- 2.13.63
+
+-------------------------------------------------------------------
 Fri Apr  7 23:01:33 CEST 2006 - jsrain@suse.de
 
 - provide Product::short_name (#163702)
