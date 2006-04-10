@@ -503,6 +503,10 @@ textdomain="control"
                 </module>
                 <module>
                     <label>Update Configuration</label>
+                    <name>addon_update_sources</name>
+                </module>
+                <module>
+                    <label>Update Configuration</label>
                     <name>suse_register</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
@@ -592,6 +596,10 @@ textdomain="control"
                 <module>
 	            <label>Network</label>
                     <name>do_net_test</name>
+                </module>
+                <module>
+                    <label>Update Configuration</label>
+                    <name>addon_update_sources</name>
                 </module>
                 <module>
                     <label>Update Configuration</label>
