@@ -86,7 +86,8 @@ manage subscriptions with Novell Customer Center."
 
     /*  strings for success popup   */
     string nccc_success_msg = _("Your configuration was successful.");
-
+    string nccc_success_server_added = _("An update server has been added to your configuration.");
+    string success_detail_label =("New Update Server");
 
    /* strings for manual interaction popup */
     string mi_required = _("Manual Interaction Required");
@@ -213,7 +214,7 @@ string help = help_title + help_para1 + help_para2 + (Register::display_forcereg
 
     /* vv      SHOW INFO POPUP     vv  */
     term showinformation = `HBox( `HSpacing(0.5),
-                                  `MinSize(  70, 22 ,`VBox(
+                                  `MinSize(  75, 22 ,`VBox(
                                      `Label( transmit_info ),
                                      `RichText(`id(`information_text), information_text ),
                                      `PushButton (`id (`info_close), Label::CloseButton () )  )
@@ -228,7 +229,7 @@ string help = help_title + help_para1 + help_para2 + (Register::display_forcereg
 
     /* vv  MANUAL INTERACTION POPUP vv  */
     term manual_interaction = //`HBox(
-                                   `MinSize( 65, 25, `HBox( `VBox(
+                                   `MinSize( 70, 25, `HBox( `VBox(
                                            `Left( `Label( `opt(`boldFont), mi_required ) )  ,
                                            `VSpacing(0.5) ,
                                            `Left( `Label( mi_start_browser  ) ) ,
@@ -265,9 +266,7 @@ string help = help_title + help_para1 + help_para2 + (Register::display_forcereg
            `HBox(
                   `HWeight(1, `PushButton(`id(`ok), Label::OKButton()  ) ),
                   `HSpacing( 3 ),
-                  `HWeight(1, `PushButton(`id(`err_detail), details ) ),
-                  `HSpacing( 3 ),
-                  `HWeight(1, `PushButton(`id(`cancel),  Label::CancelButton() ) )
+                  `HWeight(1, `PushButton(`id(`err_detail), details ) )
                 )
     );
     /* ^^      END CCC ERROR        ^^  */
@@ -285,16 +284,32 @@ string help = help_title + help_para1 + help_para2 + (Register::display_forcereg
 
 
 
-    /* vv      OK DONE UPDATE??    vv  */
+    /* vv       SUCCESS MESSAGE    vv  */
     term nccc_success=
     `VBox(
            `Left( `Label( `opt(`boldFont), title ) ),
            `VSpacing( 0.5 ),
            `Left( `Label( nccc_success_msg ) ),
-           `PushButton(`id(`ok), Label::OKButton() )
+           `Left( `Label( nccc_success_server_added ) ),
+           `HBox(
+                  `HWeight(1, `PushButton(`id(`ok), Label::OKButton()  ) ),
+                  `HSpacing( 3 ),
+                  `HWeight(1, `PushButton(`id(`success_detail), details ) )
+           )
     );
-    /* ^^    END OK DONE UPDATE??   ^^  */
+    /* ^^   SUCCESS MESSAGE END     ^^  */
 
+
+
+    /* vv    SUCCESS DETAILS     vv  */
+    term nccc_success_detail=
+    `MinSize( 60, 7,  `VBox(
+           `Left( `Label( `opt(`boldFont), success_detail_label ) ),
+           `VSpacing( 0.5 ),
+           `RichText(`id(`success_detail_richtext), `opt(`plainText) , "" ),
+           `PushButton(`id(`ok), Label::OKButton())
+    ));
+    /* ^^    SUCCESS DETAILS END    ^^  */
 
 
 /* ---------------------------------- LOCAL FUNCTIONS ------------------------------------------------------------  */
@@ -479,14 +494,6 @@ boolean launchBrowser(string url)
 
 /* -------------------------------- PROGRAM LOGIC START ----------------------------------------------------------- */
 
-    // no release needed, we add the source ourselves and ZMD can cope
-    //if (false)
-    //{
-	// before calling suse_register, which calls zmd,
-	// forget zypp caches and also release the zypp lock!
-	// reinitalize ZYpp while rug is adding the source for us
-	//Pkg::Init ();
-    //}
 
     repeat {
         ret = Wizard::UserInput();
@@ -565,9 +572,6 @@ boolean launchBrowser(string url)
                             // now we launch the browser
                             UI::ChangeWidget( `id(`needinfo), `Value, starting_browser );
                             launchBrowser(information_data["stdout"]:"http://www.opensuse.org");
-                            // FIXME: probably this line can be dropped - see FIXME below; drop with SP1 probably
-                            // deactivated for testing
-                            // Register::submit_optional = false;   // deactivate after each browser run
                         }
                         else if ( mi_ret == `cancel  )
                         {
@@ -636,8 +640,20 @@ boolean launchBrowser(string url)
                 // no more interaction requiered - ZMD is configuered by suse_register
                 if (information_data["exit"]:"99" == "0")
                 {
+                    symbol sret=nil;
                     UI::OpenDialog( nccc_success );
-                    UI::UserInput();
+                    repeat
+                    {
+                        sret = (symbol) UI::UserInput();
+                        if (sret == `success_detail)
+                        {
+                            // show the URL that was added as update source (URL is in STDERR of suse_register output)
+                            UI::OpenDialog( nccc_success_detail );
+                            UI::ChangeWidget(`id(`success_detail_richtext), `Value, information_data["stderr"]:"unknown" );
+                            UI::UserInput();
+                            UI::CloseDialog();
+                        }
+                    } until (sret == `ok );
                     UI::CloseDialog();
 
                     // we are done, end of loop
@@ -668,12 +684,6 @@ boolean launchBrowser(string url)
         // update main widget settings - they may have changed
         if (configure_status) UI::ChangeWidget(`id(`configure), `Value, true);
         else UI::ChangeWidget(`id(`noconfigure), `Value, true);
-
-        //FIXME: probably these two lines can be dropped (see FIXME above as well)
-        //       if decided not to change these values after first suse_register call; probably drop for SP1
-        // deactivated for testing
-        // UI::ChangeWidget( `id(`hwinfo ),   `Value, Register::submit_hwdata   );
-        // UI::ChangeWidget( `id(`optional ), `Value, Register::submit_optional );
 
     } until ( loopend || ret == `back );
 
