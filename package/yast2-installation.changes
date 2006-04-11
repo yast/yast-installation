@@ -2,6 +2,7 @@
 Tue Apr 11 22:19:03 CEST 2006 - jsrain@suse.de
 
 - fixed boot if root is on LVM (initialize udev symlinks) (#163073)
+- 2.13.65
 
 -------------------------------------------------------------------
 Tue Apr 11 16:01:40 CEST 2006 - jdsn@suse.de
