@@ -57,6 +57,8 @@ else if (func == "Write")
 
     // Write list of modules to load after system gets up
     Kernel::SaveModulesToLoad ();
+
+    SCR::Execute (.target.bash, "/sbin/udevtrigger ; /sbin/udevsettle --timeout=60");
 }
 else
 {
