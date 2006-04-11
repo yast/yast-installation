@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Apr 11 11:28:23 CEST 2006 - fehr@suse.de
+
+- flag for evms in control.SLES.xml needs to be true 
+
+-------------------------------------------------------------------
 Mon Apr 10 17:08:10 CEST 2006 - mvidner@suse.cz
 
 - Add installation sources for online update (#163192).
