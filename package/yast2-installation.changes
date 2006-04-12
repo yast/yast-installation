@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Apr 12 11:39:08 CEST 2006 - ms@suse.de
+
+- fixed displaying ftp password in plaintext in y2start.log (#164824)
+
+-------------------------------------------------------------------
 Wed Apr 12 11:05:34 CEST 2006 - mvidner@suse.cz
 
 - Do not mangle the URL obtained from suse_register (#165499).
