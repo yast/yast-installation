@@ -248,14 +248,9 @@ global boolean add_update_sources ()
     if (!FileUtils::Exists (services_file))
     return false;
 
-    foreach (string url,
-    splitstring ((string)SCR::Read(.target.string, services_file),"\n"), {
-
-    map parsed = URL::Parse (url);
-    if (parsed != $[])
-    {
-        Pkg::SourceCreate (parsed["scheme"]:"http" + "://" + parsed["host"]:"" + parsed["port"]:"", parsed["path"]:"");
-    }
+    list<string> urls = splitstring ((string)SCR::Read(.target.string, services_file), "\n");
+    foreach (string url, urls, {
+        Pkg::SourceCreate (url, "/");
     });
 }
 
