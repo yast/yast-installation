@@ -76,7 +76,10 @@ log "=========================="
 IFS_SAVE=$IFS
 IFS="
 "
-for i in `export`;do log "\t$i"; done
+for i in `export`;do
+	i=${i//Password*/Password=\"<your-password>\"}
+	log "\t$i"
+done
 IFS=$IFS_SAVE
 
 #=============================================
