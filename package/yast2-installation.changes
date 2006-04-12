@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Apr 12 11:05:34 CEST 2006 - mvidner@suse.cz
+
+- Do not mangle the URL obtained from suse_register (#165499).
+- 2.13.67
+
+-------------------------------------------------------------------
 Wed Apr 12 09:15:48 CEST 2006 - locilka@suse.cz
 
 - fixed Product.ycp - relnotes_url might be defined as an empty
