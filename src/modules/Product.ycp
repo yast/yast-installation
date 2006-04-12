@@ -64,7 +64,8 @@ global list<map<string,any> > FindBaseProducts() {
     y2milestone ("Looking for base products");
     list<map<string,any> > products = Pkg::ResolvableDependencies ("", `product, "");
     products = filter (map<string,any> p, products, {
-	if (p["relnotes_url"]:nil != nil) {
+	// bug 165314, relnotes_url needn't be defined (or empty string)
+	if (p["relnotes_url"]:"" != "") {
 	    relnotesurl_all = add (relnotesurl_all, (string) p["relnotes_url"]:"");
 	}
 	list<map<string,string> > requires = p["dependencies"]:[];

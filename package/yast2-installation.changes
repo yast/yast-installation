@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Apr 12 09:15:48 CEST 2006 - locilka@suse.cz
+
+- fixed Product.ycp - relnotes_url might be defined as an empty
+  string (#165314).
+- 2.13.66
+
+-------------------------------------------------------------------
 Tue Apr 11 22:19:03 CEST 2006 - jsrain@suse.de
 
 - fixed boot if root is on LVM (initialize udev symlinks) (#163073)
