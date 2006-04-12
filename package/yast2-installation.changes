@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Apr 11 16:24:48 CEST 2006 - jdsn@suse.de
+
+- added missing autoyast entries in suse_register.desktop 
+- 2.13.69
+
+-------------------------------------------------------------------
 Wed Apr 12 12:57:53 CEST 2006 - jsuchome@suse.cz
 
 - control files updated for manual online update run (#165503)
