@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Apr 13 18:17:52 CEST 2006 - jdsn@suse.de
+
+- changed control files according to (#165509) 
+
+-------------------------------------------------------------------
 Thu Apr 13 10:35:42 CEST 2006 - mvidner@suse.cz
 
 - Do not display errors if language specific release notes are missing

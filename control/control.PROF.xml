@@ -503,11 +503,11 @@ textdomain="control"
                     <enable_next>yes</enable_next>
                 </module>
                 <module>
-                    <label>Update Configuration</label>
+                    <label>Online Update</label>
                     <name>addon_update_sources</name>
                 </module>
                 <module>
-                    <label>Update Configuration</label>
+                    <label>Online Update</label>
                     <name>suse_register</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
@@ -599,11 +599,11 @@ textdomain="control"
                     <name>do_net_test</name>
                 </module>
                 <module>
-                    <label>Update Configuration</label>
+                    <label>Online Update</label>
                     <name>addon_update_sources</name>
                 </module>
                 <module>
-                    <label>Update Configuration</label>
+                    <label>Online Update</label>
                     <name>suse_register</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
