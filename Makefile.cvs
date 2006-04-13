@@ -21,7 +21,8 @@ reconf: all
 	./config.status
 
 clean:
-	rm -f autodocs-ycp.ami OUTPUT2 pluglib-bindings.ami OUTPUT autodocs-cc.ami
+	mv startup/doc/Makefile startup/doc/Makefile.save
+	rm -f autodocs-ycp.ami OUTPUT2 pluglib-bindings.ami OUTPUT autodocs-cc*
 	rm -f `find -name Makefile.in`
 	rm -f `find -name Makefile`
 	rm -f `find -name *.ybc`
@@ -47,3 +48,4 @@ clean:
 	rm -rf stamp-h*
 	rm -rf *.pot
 	rm -f Makefile.am.common
+	mv startup/doc/Makefile.save startup/doc/Makefile
