@@ -1,5 +1,12 @@
 -------------------------------------------------------------------
-Tue Apr 11 16:24:48 CEST 2006 - jdsn@suse.de
+Thu Apr 13 10:35:42 CEST 2006 - mvidner@suse.cz
+
+- Do not display errors if language specific release notes are missing
+  on the installation source (#165767).
+- 2.13.70
+
+-------------------------------------------------------------------
+Wed Apr 12 16:24:48 CEST 2006 - jdsn@suse.de
 
 - added missing autoyast entries in suse_register.desktop 
 - 2.13.69
