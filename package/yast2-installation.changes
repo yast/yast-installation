@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Apr 14 13:19:52 CEST 2006 - lslezak@suse.cz
+
+- call vm_finish client at the end of installation - disable
+  some services in Xen domU (#161720, #161721, #161756)
+- 2.13.71
+
+-------------------------------------------------------------------
 Thu Apr 13 18:17:52 CEST 2006 - jdsn@suse.de
 
 - changed control files according to (#165509) 

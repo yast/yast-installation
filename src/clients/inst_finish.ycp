@@ -84,6 +84,7 @@ list<map<string,any> > stages = [
 	// progress stage
 	"label" : _("Prepare system for initial boot"),
 	"steps" : [
+	    "vm",
 	    "copy_logs",
 	    "driver_update2",
 	    "umount",
