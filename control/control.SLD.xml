@@ -83,7 +83,7 @@ textdomain="control"
                     <label>Overview</label>
                     <proposal_modules config:type="list">
                         <proposal_module>partitions</proposal_module>
-                        <proposal_module>software_simple</proposal_module>
+                        <proposal_module>software</proposal_module>
                         <proposal_module>language_simple</proposal_module>
                     </proposal_modules>
                 </proposal_tab>
