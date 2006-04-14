@@ -4,6 +4,7 @@ Fri Apr 14 22:25:11 CEST 2006 - jsrain@suse.de
 - prevent from changing installation mode and system for update once
   it is selected (#165832)
 - added add-on products to installation/update proposal for SLES/SLED
+- 2.13.72
 
 -------------------------------------------------------------------
 Fri Apr 14 13:19:52 CEST 2006 - lslezak@suse.cz
