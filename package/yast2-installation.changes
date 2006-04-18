@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Apr 18 22:58:41 CEST 2006 - jsrain@suse.de
+
+- display proper popup when aborting add-on product installation
+  (#159689)
+
+-------------------------------------------------------------------
 Tue Apr 18 22:22:02 CEST 2006 - jdsn@suse.de
 
 - in inst_suse_register:

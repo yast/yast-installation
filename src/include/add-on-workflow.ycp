@@ -235,17 +235,17 @@ symbol MediaSelect () {
 	else if (ret == `abort || ret == `cancel)
 	{
 	    ret = `abort;
-	    if (Stage::initial())
+/*	    if (Stage::initial())
 	    {
 	        if (Popup::ConfirmAbort (`painless))
 		    break;
 	    }
 	    else
-	    {
+	    {*/
 		// yes-no popup
 		if (Popup::YesNo (_("Really abort add-on product installation?")))
 		    break;
-	    }
+//	    }
 	    continue;
 	}
 	else if (ret != `next)
@@ -413,17 +413,17 @@ Select the catalog to use.</p>
 	if (ret == `abort || ret == `cancel)
 	{
 	    ret = `abort;
-	    if (Stage::initial())
+/*	    if (Stage::initial())
 	    {
 	        if (Popup::ConfirmAbort (`painless))
 		    break;
 	    }
 	    else
-	    {
+	    {*/
 		// yes-no popup
 		if (Popup::YesNo (_("Really abort add-on product installation?")))
 		    break;
-	    }
+//	    }
 	    continue;
 	}
 	else if (ret == `back)
@@ -616,17 +616,17 @@ to install.</p>
 	if (ret == `cancel || ret == `abort)
 	{
 	    ret = `abort;
-	    if (Stage::initial())
+/*	    if (Stage::initial())
 	    {
 	        if (Popup::ConfirmAbort (`painless))
 		    break;
 	    }
 	    else
-	    {
+	    {*/
 		// yes-no popup
 		if (Popup::YesNo (_("Really abort add-on product installation?")))
 		    break;
-	    }
+//	    }
 	    continue;
 	}
 	if (ret == `next)
