@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Apr 18 10:12:19 CEST 2006 - mvidner@suse.cz
+
+- Skip popup and unnecessary work if there are no online update
+  sources for add-ons (#167233).
+- 2.13.73
+
+-------------------------------------------------------------------
 Fri Apr 14 22:25:11 CEST 2006 - jsrain@suse.de
 
 - prevent from changing installation mode and system for update once

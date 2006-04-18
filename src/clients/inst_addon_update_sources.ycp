@@ -47,8 +47,6 @@ list<string> UpdateUrls () {
 string heading = _("Add-On Product Installation");
 // feedback message
 string message = _("Reading packages available on the installation sources...");
-Popup::ShowFeedback (heading, message);
-
 
 list<string> knownUrls = KnownUrls ();
 y2milestone ("sources known: %1", knownUrls);
@@ -60,18 +58,23 @@ y2milestone ("sources for updates: %1", updateUrls);
 list<string> addUrls = filter (string u, updateUrls, ``( ! is_known[u]:false ));
 y2milestone ("sources to add: %1", addUrls);
 
-list<integer> added_ids = [];
-foreach (string u, addUrls, {
-    integer srcid = Pkg::SourceCreate (u, "/");
-    y2milestone ("got %1 from creating %2", srcid, u);
-    added_ids = add (added_ids, srcid);
-});
+if (addUrls != [])
+{
+    Popup::ShowFeedback (heading, message);
 
-y2milestone ("syncing to zmd"); 
-boolean synced = SourceManager::SyncAddedAndDeleted (added_ids, []);
-y2milestone ("sync status: %1", synced);
+    list<integer> added_ids = [];
+    foreach (string u, addUrls, {
+	integer srcid = Pkg::SourceCreate (u, "/");
+	y2milestone ("got %1 from creating %2", srcid, u);
+	added_ids = add (added_ids, srcid);
+    });
 
-Popup::ClearFeedback ();
+    y2milestone ("syncing to zmd"); 
+    boolean synced = SourceManager::SyncAddedAndDeleted (added_ids, []);
+    y2milestone ("sync status: %1", synced);
+
+    Popup::ClearFeedback ();
+}
 
 return `auto;
 
