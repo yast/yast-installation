@@ -54,7 +54,7 @@ symbol createResult = `again;
 /**
  * Function scans for SLP installation servers on the network
  *
- * @returns symbol one of `back, `ok
+ * @returns symbol one of `back, `next
  */
 symbol AddSourceTypeSLP () {
     // Return value (`back as a fall`back)
@@ -105,7 +105,7 @@ symbol AddSourceTypeSLP () {
 			)
 		    )
 		);
-		symbol ret = (symbol)UI::UserInput ();
+		ret = (symbol)UI::UserInput ();
 		if (ret == `ok)
 		{
 		    string service = (string) UI::QueryWidget (`services, `CurrentItem);
@@ -115,6 +115,7 @@ symbol AddSourceTypeSLP () {
 			// add the installation source
 			createResult = SourceManager::createSource(service);
 			y2milestone ("Adding source result: %1", createResult);
+			if (createResult == `ok) createResult = `next;
 		    }
 		    else
 		    {
@@ -228,7 +229,7 @@ symbol MediaSelect () {
     symbol ret = nil;
     string url = "";
     while (ret == nil) {
-	ret = (symbol)UI::UserInput ();
+	ret = (s22ymbol)UI::UserInput ();
 	if (ret == `back)
 	    break;
 	else if (ret == `abort || ret == `cancel)
