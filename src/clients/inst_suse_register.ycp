@@ -59,12 +59,14 @@
 
     /* strings for main (wizard) layout  */
 
-    // Transltors: This is title/brand - only translate the Configuration
+    // Translators: This is title/brand - verify how to translate it correctly
     string title_nccc = _("Novell Customer Center Configuration");
-    // following text is translated en->en in po file to "Configure Online Update"
-    string title_update = _("Update Configuration");
+
+    // Translators: Module Title for the Box
+    string title_box  = _("Online Update Configuration");  // (#165509)
+
     // for SLES/SLED and SL (2 months after release) use title_nccc
-    string title = title_update;
+    string title = title_box;
 
     // Translators: limit to 2x 50 charachters - if more needed take 3x 50 chars but NOTHING more
     string nccc_top = _(
@@ -124,6 +126,10 @@ so the sources are available to all tools."
     /* error messages  */
     string data_invalid = _("Error: Recieved data is invalid.");
     string retrieve_error = _("Error: Could not retrieve data.");
+    string no_browser_msg = _(
+"No Web browser available
+Run the suse_register command manually."
+);
 
 
     /* help text for dialog "Novell Customer Center Configuration" */
@@ -424,21 +430,36 @@ string browser_command(string url)
 {
     // create the command string to launch a browser
     string bcmd="/bin/false";
+    boolean cmd_ok = false;
 
     if ( textmode )
     {
+        cmd_ok = (integer) SCR::Execute(.target.bash, "test -x /usr/bin/w3m") == 0 ? true:false;
+
         if ( Register::iamroot )
             bcmd = " w3m ";
         else
+        {
+            cmd_ok = cmd_ok && (integer) SCR::Execute(.target.bash, "test -x /usr/bin/screen") == 0 ? true:false;
             bcmd = " screen w3m ";
+        }
     }
     else
     {
+
         if ( Register::iamroot )
+        {
+            cmd_ok = (integer) SCR::Execute(.target.bash, "test -x /usr/bin/xulrunner") == 0 ? true:false;
             bcmd = " MOZ_DISABLE_PANGO=1 /usr/bin/xulrunner /usr/share/YaST2/yastbrowser/application.ini -url ";
+        }
         else
+        {
+            cmd_ok = (integer) SCR::Execute(.target.bash, "test -x /usr/bin/firefox") == 0 ? true:false;
             bcmd = " firefox -new-window ";
+        }
     }
+
+    if (! cmd_ok) return "nobrowser";
 
     // add url to browser command
     bcmd =  bcmd + "'" + url + "'";
@@ -459,6 +480,7 @@ boolean launchBrowser(string url)
 
     // get command to run correct browser and execute it
     string command = browser_command(url);
+    if (command == "nobrowser") return false;
 
     y2milestone("launching browser: %1", command);
 
@@ -537,7 +559,13 @@ boolean launchBrowser(string url)
 
                 UI::CloseDialog();
             }
-            else  report_error();
+            else
+            {
+                if (! ( information_data["exit"]:"99"        == "199"     &&
+                        information_data["stdout"]:"aborted" == "aborted" &&
+                        information_data["stderr"]:"aborted" == "aborted"    ) )
+                report_error();
+            }
 
         }
         else if (ret == `next)
@@ -562,6 +590,7 @@ boolean launchBrowser(string url)
                     any mi_ret =nil;
                     boolean mi_loopend = false;
                     boolean recheck = true;
+                    boolean browserrun = true;
 
                     repeat
                     {
@@ -571,7 +600,10 @@ boolean launchBrowser(string url)
                         {
                             // now we launch the browser
                             UI::ChangeWidget( `id(`needinfo), `Value, starting_browser );
-                            launchBrowser(information_data["stdout"]:"http://www.opensuse.org");
+                            browserrun = launchBrowser(information_data["stdout"]:"http://www.opensuse.org");
+                            // deactivate force_registration after each suse_register call (#bugNo.)
+                            Register::force_registration = false;
+
                         }
                         else if ( mi_ret == `cancel  )
                         {
@@ -581,12 +613,12 @@ boolean launchBrowser(string url)
                         else if ( is(mi_ret, string) )
                         {
                             // launch browser
-                            launchBrowser( (string) mi_ret);
+                            browserrun = launchBrowser( (string) mi_ret);
                             recheck = false;
                         }
 
 
-                        if ( recheck )
+                        if ( recheck  && browserrun )
                         {
                             // show the user, that we are doing something
                             UI::ChangeWidget( `id(`needinfo), `Value, checking );
@@ -611,7 +643,14 @@ boolean launchBrowser(string url)
                             }
                         }
 
-                    } until ( mi_loopend == true  );
+
+                        if (! browserrun )
+                        {
+                            information_data = $["exit":"198", "stdout":"", "stderr":""  ];
+                            mi_loopend = true;
+                        }
+
+                    } until ( mi_loopend );
 
                     // we are done with manual interaction
                     UI::CloseDialog();
@@ -649,6 +688,7 @@ boolean launchBrowser(string url)
                         {
                             // show the URL that was added as update source (URL is in STDERR of suse_register output)
                             UI::OpenDialog( nccc_success_detail );
+                            UI::SetFocus(`id(`ok));
                             UI::ChangeWidget(`id(`success_detail_richtext), `Value, information_data["stderr"]:"unknown" );
                             UI::UserInput();
                             UI::CloseDialog();
@@ -658,14 +698,35 @@ boolean launchBrowser(string url)
 
                     // we are done, end of loop
                     loopend = true;
+
+                    UI::OpenDialog(`VBox(`Label(_("Setting up online update source..."))));
                     Register::add_update_sources();
+                    UI::CloseDialog();
                 }
+
+
+                // error handling - no browser available for interactive mode
+                if (information_data["exit"]:"99" == "198")
+                {
+                    Popup::Message(no_browser_msg);
+                    loopend = true;
+                }
+
 
                 // handle any other error codes
                 if (
-                     information_data["exit"]:"" != "0" &&
-                     information_data["exit"]:"" != "3" &&
-                     information_data["exit"]:"" != "1"
+                     (
+                       information_data["exit"]:"" != "0" &&
+                       information_data["exit"]:"" != "1" &&
+                       information_data["exit"]:"" != "3" &&
+                       information_data["exit"]:"" != "198"
+                     ) &&
+                    !(
+                       // if return value says that suse_register was aborted by user
+                       information_data["exit"]:"99"        == "199"     &&
+                       information_data["stdout"]:"aborted" == "aborted" &&
+                       information_data["stderr"]:"aborted" == "aborted"
+                     )
                    )
                 {
                     // display error message
@@ -684,6 +745,10 @@ boolean launchBrowser(string url)
         // update main widget settings - they may have changed
         if (configure_status) UI::ChangeWidget(`id(`configure), `Value, true);
         else UI::ChangeWidget(`id(`noconfigure), `Value, true);
+
+        UI::ChangeWidget(`id(`hwinfo), `Value, Register::submit_hwdata);
+        // (#165841)
+        if (Register::display_forcereg) UI::ChangeWidget( `id(`forcereg ), `Value, Register::force_registration );
 
     } until ( loopend || ret == `back );
 

@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Tue Apr 18 22:22:02 CEST 2006 - jdsn@suse.de
+
+- in inst_suse_register:
+- busy/waiting popups (#163366, #164794)
+- text changes (#165509)
+- autodisable checkbox "Registration Code" (# 165841)
+- error handling in case no browser is available
+- cleanup
+- 2.13.77
+
+-------------------------------------------------------------------
 Tue Apr 18 21:44:45 CEST 2006 - jsrain@suse.de
 
 - do not initialize catalogs before booting installed system (#162899)
