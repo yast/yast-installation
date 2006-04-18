@@ -2,6 +2,7 @@
 Tue Apr 18 21:44:45 CEST 2006 - jsrain@suse.de
 
 - do not initialize catalogs before booting installed system (#162899)
+- 2.13.76
 
 -------------------------------------------------------------------
 Tue Apr 18 18:08:18 CEST 2006 - mvidner@suse.cz
