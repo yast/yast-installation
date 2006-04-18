@@ -309,7 +309,6 @@ if (ret == `next)
     if (new_mode == `repair)
     {
 	Mode::SetMode ("repair");
-	ret = `finish;
     }
 
     if (new_mode == `boot)
@@ -332,8 +331,14 @@ if (ret == `next)
     }
 }
 
-if (ret == `back)
+if (ret == `back || ret == `finish)
     return ret;
+
+if (Mode::repair ())
+{
+    WFM::CallFunction ("inst_repair");
+    return `finish;
+}
 
 Packages::InitializeCatalogs ();
 if (Packages::add_on_products_list != nil)
@@ -345,7 +350,7 @@ if (Packages::add_on_products_list != nil)
     Packages::add_on_products_list = nil; // do not select them any more
 }
 
-if (ret != `finish && Mode::mode () != start_mode)
+if (Mode::mode () != start_mode)
 {
     y2milestone ("Switching Steps from %1 to %2 ", start_mode, Mode::mode ());
     UpdateWizardSteps ();
@@ -367,7 +372,7 @@ if (ret != `finish && Mode::mode () != start_mode)
 	    ret = `finish;
     }
 }
-else if (ret != `finish && ! Mode::repair())
+else if (! Mode::repair())
 {
     UpdateWizardSteps ();
     ret = ProductControl::RunFrom (
@@ -376,11 +381,6 @@ else if (ret != `finish && ! Mode::repair())
     if (ret == `next)
 	ret = `finish;
 
-}
-
-if (Mode::repair ())
-{
-    WFM::CallFunction ("inst_repair");
 }
 
 return ret;
