@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Apr 18 18:08:18 CEST 2006 - mvidner@suse.cz
+
+- Do not try to add empty URL as an update source (#165860#c12).
+
+-------------------------------------------------------------------
 Tue Apr 18 17:02:05 CEST 2006 - mvidner@suse.cz
 
 - Fixed a typo in the previous change.
