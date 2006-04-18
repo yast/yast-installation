@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Apr 18 14:06:21 CEST 2006 - @suse.cz
+
+- Add-On SLP source was allways returning `back also in case
+  of `ok (`next) (#165989)
+- 2.13.74
+
+-------------------------------------------------------------------
 Tue Apr 18 10:12:19 CEST 2006 - mvidner@suse.cz
 
 - Skip popup and unnecessary work if there are no online update
