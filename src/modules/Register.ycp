@@ -248,10 +248,13 @@ global boolean add_update_sources ()
     if (!FileUtils::Exists (services_file))
     return false;
 
-    list<string> urls = splitstring ((string)SCR::Read(.target.string, services_file), "\n");
+    // filters out empty items (#165860#c12)
+    list<string> urls = String::NewlineItems (
+	(string)SCR::Read(.target.string, services_file));
     foreach (string url, urls, {
         Pkg::SourceCreate (url, "/");
     });
+    return true;
 }
 
 
