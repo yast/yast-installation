@@ -1,5 +1,5 @@
 -------------------------------------------------------------------
-Tue Apr 18 14:06:21 CEST 2006 - @suse.cz
+Tue Apr 18 14:06:21 CEST 2006 - locilka@suse.cz
 
 - Add-On SLP source was allways returning `back also in case
   of `ok (`next) (#165989)
