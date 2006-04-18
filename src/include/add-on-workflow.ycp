@@ -229,7 +229,7 @@ symbol MediaSelect () {
     symbol ret = nil;
     string url = "";
     while (ret == nil) {
-	ret = (s22ymbol)UI::UserInput ();
+	ret = (symbol)UI::UserInput ();
 	if (ret == `back)
 	    break;
 	else if (ret == `abort || ret == `cancel)
