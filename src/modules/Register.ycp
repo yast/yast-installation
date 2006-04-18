@@ -4,7 +4,7 @@
  * Summary:	Registration related stuff
  * Authors:	J. Daniel Schmidt <jdsn@suse.de>
  *
- * $Id: Regster.ycp 1 2005-03-13 08:45:05Z jdsn $
+ * $Id: Register.ycp 1 2005-03-13 08:45:05Z jdsn $
  */
 
 {
@@ -18,6 +18,7 @@ import "Mode";
 import "String";
 import "Misc";
 import "Stage";
+import "Label";
 import "ProductFeatures";
 
 
@@ -222,14 +223,58 @@ global map<string, string> suseRegister(symbol parameter)
 
     // run suse_register
     y2milestone ("Calling /usr/bin/suse_register %1", params);
-    map<string, any> info = (map<string, any>) SCR::Execute(.target.bash_output, sformat("umask 0077;  /usr/bin/suse_register %1", params ));
-    string exitcode = sformat("%1", info["exit"]:99);
-    y2milestone ("/usr/bin/suse_register returned %1", exitcode);
+    string sr_bash_cmd = sformat("umask 0077;  /usr/bin/suse_register %1", params);
 
-    // transform to map<string, string>
-    map<string, string> response = $[  "exit"  :exitcode ,
-                                       "stdout":info["stdout"]:"",
-                                       "stderr":info["stderr"]:""  ];
+    map<string, string> response = $[];
+
+    if (parameter == `autoyast)
+    {
+        map<string, any> info = (map<string, any>) SCR::Execute(.target.bash_output, sr_bash_cmd );
+        string exitcode = sformat("%1", info["exit"]:99);
+        y2milestone ("/usr/bin/suse_register returned %1", exitcode);
+
+        // transform to map<string, string>
+        response = $[  "exit"  :exitcode ,
+                       "stdout":info["stdout"]:"",
+                       "stderr":info["stderr"]:""  ];
+    }
+    else
+    {   // (#164794)
+        boolean started = (boolean) SCR::Execute(.background.run_output_err, sr_bash_cmd );
+        UI::OpenDialog(`VBox( `Label( _("Contacting server...")),
+                              `PushButton(`id(`abort), Label::AbortButton() )
+        ) );
+
+        symbol poll_ret = nil;
+        repeat
+        {
+            poll_ret = (symbol) UI::TimeoutUserInput(200);
+
+            // check if  process still running ... and check status
+            if (! (boolean) SCR::Read(.background.isrunning))
+                poll_ret = `finish;
+
+        } until (poll_ret == `abort || poll_ret == `finish);
+
+        if (poll_ret == `finish)
+        {
+            // create return hash
+            response = $[ "exit":   sformat("%1", SCR::Read(.background.status)) ,
+                          "stdout": mergestring( (list<string>) SCR::Read(.background.newout), "\n") ,
+                          "stderr": mergestring( (list<string>) SCR::Read(.background.newerr), "\n")  ];
+        }
+        else
+        {
+            // kill background process
+            if (! (boolean)SCR::Execute(.background.kill))
+            {
+                sleep(300);
+                SCR::Execute(.background.kill);
+            }
+            response = $["exit":"199", "stdout":"aborted", "stderr":"aborted"];
+        }
+        UI::CloseDialog();
+    }
 
     y2milestone ("Server response: %1", response);
     return response;
