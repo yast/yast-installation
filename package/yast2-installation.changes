@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Apr 19 15:04:03 CEST 2006 - locilka@suse.cz
+
+- Added more debugging messages to the inst_proposal (#162831)
+- 2.13.78 
+
+-------------------------------------------------------------------
 Tue Apr 18 22:58:41 CEST 2006 - jsrain@suse.de
 
 - display proper popup when aborting add-on product installation

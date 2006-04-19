@@ -236,6 +236,7 @@
 		// because of an error
 		if (haskey (mod2tab, submod))
 		{
+		    y2milestone("Mod2Tab: '%1'", mod2tab[submod]:nil);
 		    symbol warn_level = prop_map["warning_level"]:`ok;
 		    if (warn_level == nil)
 			warn_level = `ok;
@@ -302,6 +303,7 @@
 	    });
 	    display_proposal( proposal );
 	    get_submod_descriptions_and_build_menu ();
+	    y2milestone("Switching to tab '%1'", current_tab);
 	    if (UI::HasSpecialWidget (`DumbTab))
 		UI::ChangeWidget (`id (`_cwm_tab), `CurrentItem, current_tab);
 	}
@@ -1032,6 +1034,7 @@ a proposal that is locked, ask your system administrator.</p>");
     {
 	richtext_normal_cursor(`id(`proposal ) );
 	input = Wizard::UserInput();
+	y2milestone("Proposal - UserInput: '%1'", input);
 	richtext_busy_cursor(`id(`proposal ) );
 
 	// check for tab
