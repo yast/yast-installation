@@ -33,6 +33,20 @@ map argmap = GetInstArgs::argmap();
 boolean have_dasd = false;
 boolean have_zfcp = false;
 
+void RestoreButtons (boolean enable_back, boolean enable_next) {
+    Wizard::RestoreAbortButton();
+    Wizard::RestoreNextButton();
+    Wizard::RestoreBackButton();
+    if (enable_back)
+	Wizard::EnableBackButton();
+    else
+	Wizard::DisableBackButton();
+    if (enable_next)
+	Wizard::EnableNextButton();
+    else
+	Wizard::DisableNextButton();
+}
+
 if (Arch::s390())
 {
     // popup label
@@ -119,6 +133,7 @@ if (have_dasd || have_zfcp)
 	    Wizard::SetFocusToNextButton();
 	    ret = nil;
 	}
+	RestoreButtons (GetInstArgs::enable_back(), GetInstArgs::enable_next());
     }
 
     if (have_dasd && ret == `next)

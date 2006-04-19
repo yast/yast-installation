@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Apr 19 19:55:47 CEST 2006 - jsrain@suse.de
+
+- restore buttons after calling DASD or zFCP module (#160399)
+
+-------------------------------------------------------------------
 Wed Apr 19 15:04:03 CEST 2006 - locilka@suse.cz
 
 - Added more debugging messages to the inst_proposal (#162831)
