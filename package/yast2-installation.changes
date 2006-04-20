@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Apr 20 18:51:55 CEST 2006 - jdsn@suse.de
+
+- proxy support for registration process (#165891)
+- disable w3m registration by control variable (aj)
+- 2.13.81 
+
+-------------------------------------------------------------------
 Thu Apr 20 16:09:23 CEST 2006 - mvidner@suse.cz
 
 - When cloning, save installation sources beforehand (#165860).
