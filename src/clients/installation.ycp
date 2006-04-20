@@ -354,9 +354,14 @@ but something went wrong, that's why it is only in the log");
 	ret = ProductControl::Run();
     }
 
-    if (Stage::cont () && (ret == `reboot || ret == `restart_yast))
+    if (Stage::cont () && (ret == `reboot || ret == `restart_yast || ret == `restart_same_step))
     {
 	integer last_step = ProductControl::CurrentStep ();
+	if (ret == `restart_same_step)
+	{
+	    last_step = last_step - 1;
+	    ret = `restart_yast;
+	}
 	integer next_step = last_step + 1;
 	SCR::Write (.target.string, restart_data_file,
 	    sformat ("%1", next_step));
