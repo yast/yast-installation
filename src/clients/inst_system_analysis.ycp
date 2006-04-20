@@ -341,14 +341,7 @@ if (Mode::repair ())
 }
 
 Packages::InitializeCatalogs ();
-if (Packages::add_on_products_list != nil)
-{
-    y2milestone ("Found list of add-on products to preselect");
-    Packages::SelectProduct ();
-    PackageCallbacksInit::SetMediaCallbacks();
-    AddOnProduct::AddPreselectedAddOnProducts (Packages::add_on_products_list);
-    Packages::add_on_products_list = nil; // do not select them any more
-}
+Packages::InitializeAddOnProducts ();
 
 if (Mode::mode () != start_mode)
 {
