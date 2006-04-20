@@ -469,6 +469,12 @@ string browser_command(string url)
     // add url to browser command
     bcmd =  bcmd + "'" + url + "'";
 
+    if (Register::use_proxy)
+    {   // (#165891)
+        bcmd = " http_proxy='"  + Register::http_proxy  + "' " + bcmd;
+        bcmd = " https_proxy='" + Register::https_proxy + "' " + bcmd;
+    }
+
     // in case of root add su call to not run a browser as root during installation
     if ( Register::iamroot ) bcmd = su_exec("suse-ncc", "suse-ncc", bcmd );
 

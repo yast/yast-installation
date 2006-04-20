@@ -46,6 +46,9 @@ global boolean submit_hwdata   = false;
 global boolean force_registration = false;
 global boolean display_forcereg = false;
 global boolean disable_w3m = false;
+global boolean use_proxy   = false;
+global string  http_proxy  = "";
+global string  https_proxy = "";
 
 global map<string, string> registration_data = $[];
 
@@ -105,6 +108,11 @@ void read_config()
     // this boolean comes only from the control file - nowhere to be saved
     display_forcereg = ProductFeatures::GetBooleanFeature("globals", "display_register_forcereg");
     disable_w3m = ProductFeatures::GetBooleanFeature("globals", "disable_register_w3m");
+
+    // read proxy settings
+    use_proxy   = (string) SCR::Read(.sysconfig.proxy.PROXY_ENABLED) == "yes" ? true:false;
+    http_proxy  = (string) SCR::Read(.sysconfig.proxy.HTTP_PROXY);
+    https_proxy = (string) SCR::Read(.sysconfig.proxy.HTTPS_PROXY);
 
     // then read from sysconfig
     if (FileUtils::Exists("/etc/sysconfig/suse_register"))
@@ -209,6 +217,13 @@ global map<string, string> suseRegister(symbol parameter)
     if (parameter == `p) params = params + " -p ";
     else params = params + sformat(" --dumpfile=%1 ", services_file);
 
+    string pre_sr = " umask 0077; ";
+    if (Register::use_proxy)
+    {   // (#165891)
+        pre_sr = pre_sr + " http_proxy=\""  + Register::http_proxy  + "\" ";
+        pre_sr = pre_sr + " https_proxy=\"" + Register::https_proxy + "\" ";
+    }
+
     if (parameter == `autoyast)
     {
         // append values from map to the suse_register call
@@ -224,8 +239,8 @@ global map<string, string> suseRegister(symbol parameter)
     if ( !submit_optional )   params = params + " --no-optional ";
 
     // run suse_register
-    y2milestone ("Calling /usr/bin/suse_register %1", params);
-    string sr_bash_cmd = sformat("umask 0077;  /usr/bin/suse_register %1", params);
+    string sr_bash_cmd = sformat(" %1 /usr/bin/suse_register %2", pre_sr, params);
+    y2milestone ("Calling suse_register with command: %1", sr_bash_cmd);
 
     map<string, string> response = $[];
 
