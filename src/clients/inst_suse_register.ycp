@@ -54,6 +54,7 @@
 
     map ui = UI::GetDisplayInfo();
     boolean textmode = (boolean) ui["TextMode"]:nil;
+    boolean interactive = ! (textmode && Register::disable_w3m);
 
     map argmap = GetInstArgs::argmap();
 
@@ -130,7 +131,11 @@ so the sources are available to all tools."
 "No Web browser available
 Run the suse_register command manually."
 );
-
+    string no_w3m_msg = _(
+"Your registration requires interactive input that is not
+supported in text mode. Run YaST2 in the graphical mode or
+run the suse_register command manually."
+);
 
     /* help text for dialog "Novell Customer Center Configuration" */
 string help_title = sformat( "<p><b>%1</b></p>", title);
@@ -582,7 +587,7 @@ boolean launchBrowser(string url)
                 // manual interaction is requiered
                 // this case MUST be first
                 //  ... because during manual interaction further suse_register calls change the error code
-                if (information_data["exit"]:"99" == "1")
+                if (information_data["exit"]:"99" == "1" && interactive)
                 {
                     UI::OpenDialog( manual_interaction );
                     UI::SetFocus (`id (`start_browser ));
@@ -657,10 +662,17 @@ boolean launchBrowser(string url)
 
                     if (mi_ret == `cancel) configure_status = false;
                 }
+                else if (information_data["exit"]:"99" == "1" && ! interactive)
+                {
+                    // w3m disabled - show message
+                    Popup::Message(no_w3m_msg);
+                    loopend = true;
+                    ret = `skip;
+                }
 
-                // NO ELSE CASE HERE!!!
-                // ... because information_data may be changed during error code 1 case by a suse_register run
-                // and therefor NO MORE suse_register calls below this line!!!
+                // during error code 1 information_data may be changed by a suse_register call
+                // no NO MORE suse_register calls below this line !!
+
 
                 /*  handle error codes from FIRST suse_register call AND from manual interaction  */
                 if (information_data["exit"]:"99" == "3")
@@ -679,6 +691,12 @@ boolean launchBrowser(string url)
                 // no more interaction requiered - ZMD is configuered by suse_register
                 if (information_data["exit"]:"99" == "0")
                 {
+                    // add update source
+                    UI::OpenDialog(`VBox(`Label(_("Setting up online update source..."))));
+                    Register::add_update_sources();
+                    UI::CloseDialog();
+
+                    // and then show success message
                     symbol sret=nil;
                     UI::OpenDialog( nccc_success );
                     repeat
@@ -698,10 +716,6 @@ boolean launchBrowser(string url)
 
                     // we are done, end of loop
                     loopend = true;
-
-                    UI::OpenDialog(`VBox(`Label(_("Setting up online update source..."))));
-                    Register::add_update_sources();
-                    UI::CloseDialog();
                 }
 
 
