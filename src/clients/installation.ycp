@@ -404,7 +404,7 @@ but something went wrong, that's why it is only in the log");
     }
 
     // disable all sources and finish target
-    Pkg::SourceFinishAll();
+    Pkg::SourceFinishAll();	// but see also inst_congratulate, #165860
     Pkg::TargetFinish();
 
     UI::CloseDialog();

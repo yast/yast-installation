@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Apr 20 16:09:23 CEST 2006 - mvidner@suse.cz
+
+- When cloning, save installation sources beforehand (#165860).
+- 2.13.80
+
+-------------------------------------------------------------------
 Wed Apr 19 19:55:47 CEST 2006 - jsrain@suse.de
 
 - restore buttons after calling DASD or zFCP module (#160399)
