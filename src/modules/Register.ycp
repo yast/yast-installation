@@ -220,8 +220,8 @@ global map<string, string> suseRegister(symbol parameter)
     string pre_sr = " umask 0077; ";
     if (Register::use_proxy)
     {   // (#165891)
-        pre_sr = pre_sr + " http_proxy=\""  + Register::http_proxy  + "\" ";
-        pre_sr = pre_sr + " https_proxy=\"" + Register::https_proxy + "\" ";
+        pre_sr = pre_sr + " http_proxy='"  + Register::http_proxy  + "' ";
+        pre_sr = pre_sr + " https_proxy='" + Register::https_proxy + "' ";
     }
 
     if (parameter == `autoyast)
