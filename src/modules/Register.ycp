@@ -45,6 +45,7 @@ global boolean submit_optional = false;
 global boolean submit_hwdata   = false;
 global boolean force_registration = false;
 global boolean display_forcereg = false;
+global boolean disable_w3m = false;
 
 global map<string, string> registration_data = $[];
 
@@ -103,6 +104,7 @@ void read_config()
     submit_hwdata   = ProductFeatures::GetBooleanFeature("globals", "enable_register_hwdata");
     // this boolean comes only from the control file - nowhere to be saved
     display_forcereg = ProductFeatures::GetBooleanFeature("globals", "display_register_forcereg");
+    disable_w3m = ProductFeatures::GetBooleanFeature("globals", "disable_register_w3m");
 
     // then read from sysconfig
     if (FileUtils::Exists("/etc/sysconfig/suse_register"))
