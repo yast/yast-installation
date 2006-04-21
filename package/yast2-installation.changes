@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Apr 21 23:26:26 CEST 2006 - jsrain@suse.de
+
+- determine base product accordign to flag (#160585)
+
+-------------------------------------------------------------------
 Fri Apr 21 17:26:15 CEST 2006 - jdsn@suse.de
 
 - added proxy support for registration browser (#165891) 
