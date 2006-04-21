@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Apr 21 17:26:15 CEST 2006 - jdsn@suse.de
+
+- added proxy support for registration browser (#165891) 
+- 2.13.83
+
+-------------------------------------------------------------------
 Thu Apr 20 22:22:59 CEST 2006 - jsrain@suse.de
 
 - handle installation restart with repeating last step (#167561)
