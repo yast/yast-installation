@@ -62,19 +62,14 @@
 
 global list<map<string,any> > FindBaseProducts() {
     y2milestone ("Looking for base products");
-    list<map<string,any> > products = Pkg::ResolvableDependencies ("", `product, "");
+    list<map<string,any> > products = Pkg::ResolvableProperties ("", `product, "");
     products = filter (map<string,any> p, products, {
 	// bug 165314, relnotes_url needn't be defined (or empty string)
 	if (p["relnotes_url"]:"" != "") {
 	    relnotesurl_all = add (relnotesurl_all, (string) p["relnotes_url"]:"");
 	}
-	list<map<string,string> > requires = p["dependencies"]:[];
-	// what other products it requires
-	requires = filter (map<string,string> req, requires, {
-	    return req["dep_kind"]:"" == "requires" && req["res_kind"]:"" == "product";
-	});
-	// none -> it is a base product
-	return size (requires) == 0;
+	return p["category"]:"" == "base"
+	    && (p["status"]:nil == `selected || p["status"]:nil == `installed);
     });
     y2milestone ("Found base products: %1", products);
     if (size (products) == 0)
