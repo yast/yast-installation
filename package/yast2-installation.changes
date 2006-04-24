@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Apr 24 11:52:47 CEST 2006 - ug@suse.de
+
+- X-SuSE-YaST-AutoInstRequires=lan
+  added to desktop file of suse register.
+  Otherwise the registration fails.
+
+-------------------------------------------------------------------
 Mon Apr 24 09:37:57 CEST 2006 - lnussel@suse.de
 
 - run rcSuSEfirewall2 reload when installing via vnc or ssh (#153467)
