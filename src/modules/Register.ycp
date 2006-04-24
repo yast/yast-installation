@@ -258,6 +258,7 @@ global map<string, string> suseRegister(symbol parameter)
     else
     {   // (#164794)
         boolean started = (boolean) SCR::Execute(.background.run_output_err, sr_bash_cmd );
+	// translators: busy popup while registering the system
         UI::OpenDialog(`VBox( `Label( _("Contacting server...")),
                               `PushButton(`id(`abort), Label::AbortButton() )
         ) );
