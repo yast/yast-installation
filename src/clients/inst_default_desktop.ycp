@@ -17,17 +17,17 @@
     if ( !Mode::update () )
     {
 	map<string,map<string,string> > desktop_data = $[
-	    "kde" : $[
-		"package" : "kdebase3-kdm",
-		"wm" : "kde",
-		"dm" : "kdm",
-		"cursor" : "crystalwhite",
-	    ],
 	    "gnome" : $[
 		"package" : "gdm",
 		"wm" : "gnome",
 		"dm" : "gdm",
 		"cursor" : "Industrial",
+	    ],
+	    "kde" : $[
+		"package" : "kdebase3-kdm",
+		"wm" : "kde",
+		"dm" : "kdm",
+		"cursor" : "crystalwhite",
 	    ],
 	    "twm" : $[
 		"package" : "xorg-x11",
@@ -37,9 +37,9 @@
 	    ],
 	];
 
-	string default_wm = "kde";
-	string default_dm = "kdm";
-	string default_cursor = "crystalwhite";
+	string default_wm = "gnome";
+	string default_dm = "gdm";
+	string default_cursor = "Industrial";
 
 	if (Packages::window_manager != "" && Packages::window_manager != nil)
 	{
@@ -86,10 +86,10 @@
 
 	    y2debug ("All packages in the selection: %1", packages);
 
-	    list<string> desktop_order = ["kde", "gnome"];
+	    list<string> desktop_order = ["gnome", "kde"];
 
 	    boolean desktop_found = false;
-	    string selection_desktop = "kde";
+	    string selection_desktop = "gnome";
 
 	    // check what packages are in the default selection
 	    // and adjust logon and window manager according to it
