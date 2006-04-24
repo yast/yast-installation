@@ -2,6 +2,7 @@
 Mon Apr 24 16:22:14 CEST 2006 - jsrain@suse.de
 
 - GDM is default if both KDE and GNOME installed (#155095)
+- 2.13.88
 
 -------------------------------------------------------------------
 Mon Apr 24 13:30:50 CEST 2006 - sh@suse.de
