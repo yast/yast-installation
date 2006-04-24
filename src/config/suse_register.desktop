@@ -8,6 +8,7 @@ X-SuSE-YaST-RootOnly=false
 X-SuSE-YaST-Group=Software
 X-SuSE-YaST-AutoInst=all
 X-SuSE-YaST-AutoInstClonable=true
+X-SuSE-YaST-AutoInstRequires=lan
 
 Icon=yast-product-registration
 Exec=/sbin/yast2 inst_suse_register
