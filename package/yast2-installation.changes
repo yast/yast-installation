@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Apr 24 09:37:57 CEST 2006 - lnussel@suse.de
+
+- run rcSuSEfirewall2 reload when installing via vnc or ssh (#153467)
+- 2.13.85
+
+-------------------------------------------------------------------
 Fri Apr 21 23:26:26 CEST 2006 - jsrain@suse.de
 
 - determine base product accordign to flag (#160585)
