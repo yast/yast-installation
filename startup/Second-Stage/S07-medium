@@ -37,6 +37,7 @@ fi
 if [ $VNC -eq 1 ] || [ $USE_SSH -eq 1 ];then
 	log "\tVNC/SSH installation used -> activate network"
 	rcnetwork start && Y2_NETWORK_ACTIVE=1
+	rcSuSEfirewall2 reload
 fi
 if [ $USE_SSH -eq 1 ];then
 	rcsshd start    && Y2_SSH_ACTIVE=1
