@@ -29,6 +29,8 @@
 	}
 	list<string> to_install = Pkg::GetPackages (`selected, true);
 	map<string,string> licenses = Pkg::PkgGetLicensesToConfirm (to_install);
+
+	// FIXME: Remove deny_all (bug #163001)
 	boolean deny_all = false;
 	foreach (string package,  string license, licenses, {
 	    if (deny_all)
@@ -52,9 +54,7 @@
 			// push button
 			`PushButton (`id (`accept), _("I &Agree")),
 			// push button
-			`PushButton (`id (`deny), _("I &Disagree")),
-			// push button
-			`PushButton (`id (`deny_all), _("I D&isagree with All"))
+			`PushButton (`id (`deny), _("I &Disagree"))
 		    )
 		);
 		UI::OpenDialog (popup);
@@ -66,6 +66,16 @@
 		    {
 			ret = nil;
 			// help text
+
+			
+// FIXME
+// FIXME
+// Remove reference to "Disagree with all" button (bug #163001) in help text
+// --sh 2006-04-24			
+// FIXME
+// FIXME
+			
+			
 			string help = _("<p><b><big>License Confirmation</big></b><br>
 The package in the headline of the dialog requires an explicit confirmation
 of acceptance of its license.
