@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Apr 25 16:19:11 CEST 2006 - locilka@suse.cz
+
+- Return `next instead of `ok in case of SLP Add-On Source (#165989)
+- 2.13.89
+
+-------------------------------------------------------------------
 Mon Apr 24 16:22:14 CEST 2006 - jsrain@suse.de
 
 - GDM is default if both KDE and GNOME installed (#155095)
