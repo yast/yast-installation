@@ -270,7 +270,7 @@ textdomain="control"
             </proposal_modules>
         </proposal>
         <proposal>
-            <type>service</type>
+            <name>service</name>
             <stage>continue,normal</stage>
             <proposal_modules config:type="list">
                 <proposal_module>ca_mgm</proposal_module>
@@ -745,7 +745,7 @@ textdomain="control"
                 <module>
                     <label>Service</label>
                     <name>proposal</name>
-                    <arguments>true,true,`serv</arguments>
+                    <proposal>service</proposal>
                 </module>
                 <module>
 	            <label>Users</label>

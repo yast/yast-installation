@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Apr 25 22:58:52 CEST 2006 - jsrain@suse.de
+
+- fixed service proposal in SLES control file (#159771)
+
+-------------------------------------------------------------------
 Tue Apr 25 16:19:11 CEST 2006 - locilka@suse.cz
 
 - Return `next instead of `ok in case of SLP Add-On Source (#165989)
