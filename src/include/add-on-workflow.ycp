@@ -256,6 +256,7 @@ symbol MediaSelect () {
 	    // moved to another function
 	    ret = AddSourceTypeSLP();
 	    y2milestone("SLP-Add returned: %1", ret);
+	    if (ret == `ok) ret = `next;
 	}
 
 	else if ( input == `ftp || input == `http || input == `https || input == `samba )
