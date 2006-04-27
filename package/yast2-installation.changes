@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Apr 27 11:16:56 CEST 2006 - ms@suse.de
+
+- removed update_xf87config call, checking for /dev/psaux was
+  broken and is no longer needed because the default mouse device
+  is /dev/input/mice since many versions now (#168816)
+
+-------------------------------------------------------------------
 Thu Apr 27 10:52:08 CEST 2006 - mvidner@suse.cz
 
 - When asking for update URLs, go trough products, not patterns (#169836).
