@@ -89,7 +89,8 @@ symbol AddSourceTypeSLP () {
 		    `VBox(
 			// translators: popup heading
 			`Heading (_("Choose SLP Catalog")),
-			`MinSize( 25, 7,
+			// bugzilla #168718
+			`MinSize( 76, 19,
 			    // translators: table header
 			    `Table (`id(`services), `header(
 				    // table header
