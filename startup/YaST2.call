@@ -355,6 +355,9 @@ function start_yast () {
 		log "\t$Y2_OK_MESSAGE"
 	fi
 	if [ $SELECTED_MEDIUM = "SSH" ];then
+		echo "*** Preparing SSH installation for reboot ***"
+		echo "*** NOTE: after reboot, you have to reconnect and call ***"
+		echo "*** /usr/lib/YaST2/startup/YaST2.ssh ***"
 		log "\tPreparing SSH installation for reboot"
 		echo $Y2_EXIT_CODE > /tmp/YaST2_ssh_installation_finished
 	fi
