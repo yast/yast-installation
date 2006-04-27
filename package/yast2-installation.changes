@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Apr 27 10:52:08 CEST 2006 - mvidner@suse.cz
+
+- When asking for update URLs, go trough products, not patterns (#169836).
+- 2.13.91
+
+-------------------------------------------------------------------
 Thu Apr 27 08:34:33 CEST 2006 - locilka@suse.cz
 
 - Making "SLP Catalog" selection bigger (maximum ncurses size) 

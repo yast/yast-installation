@@ -4,6 +4,10 @@
  * Summary:	Add installation sources for online update, #163192
  * Authors:	Martin Vidner <mvidner@suse.cz>
  *
+ * Assumptions:
+ * - the sources have been initialized
+ * - the sources will be saved afterwards
+ * (this means that running this client alone will not work)
  */
 
 {
@@ -34,8 +38,8 @@ list<string> KnownUrls () {
  * @return the installation sources to be added
  */
 list<string> UpdateUrls () {
-    // get available base patterns
-    list<map<string,any> > products = Pkg::ResolvableProperties ("", `pattern, "");
+    // get all available products
+    list<map<string,any> > products = Pkg::ResolvableProperties ("", `product, "");
     list<list<string> > urls = maplist (map<string, any> p, products, {
 	return p["update_urls"]:[];
     });
