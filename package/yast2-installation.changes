@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Apr 27 14:57:23 CEST 2006 - fehr@suse.de
+
+- set limit for separate /home to 14G for SLED (#169232)
+ 
+-------------------------------------------------------------------
 Thu Apr 27 11:16:56 CEST 2006 - ms@suse.de
 
 - removed update_xf87config call, checking for /dev/psaux was
