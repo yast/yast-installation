@@ -2,6 +2,7 @@
 Thu Apr 27 16:03:39 CEST 2006 - jsrain@suse.de
 
 - handle missing SHORTLABEL in content file (#170129)
+- 2.13.92
 
 -------------------------------------------------------------------
 Thu Apr 27 14:57:23 CEST 2006 - fehr@suse.de
