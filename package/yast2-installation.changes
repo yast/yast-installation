@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Apr 27 16:50:50 CEST 2006 - mvidner@suse.cz
+
+- Tell libzypp-zmd-backend not to write sources to zypp db,
+  we are going to do it ourselves (#170113).
+- 2.13.93
+
+-------------------------------------------------------------------
 Thu Apr 27 16:03:39 CEST 2006 - jsrain@suse.de
 
 - handle missing SHORTLABEL in content file (#170129)
@@ -12,7 +19,7 @@ Thu Apr 27 14:57:23 CEST 2006 - fehr@suse.de
 -------------------------------------------------------------------
 Thu Apr 27 11:16:56 CEST 2006 - ms@suse.de
 
-- removed update_xf87config call, checking for /dev/psaux was
+- removed update_xf86config call, checking for /dev/psaux was
   broken and is no longer needed because the default mouse device
   is /dev/input/mice since many versions now (#168816)
 

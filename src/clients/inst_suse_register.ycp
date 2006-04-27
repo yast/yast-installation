@@ -29,6 +29,7 @@
     import "Label";
     import "Internet";
     import "Register";
+    import "SourceManager";
 
     // no network - no suse_register
     if (!Mode::normal())
@@ -527,6 +528,8 @@ boolean launchBrowser(string url)
 
 /* -------------------------------- PROGRAM LOGIC START ----------------------------------------------------------- */
 
+    // #170113, the lock is needed around everything that may end up in ZMD
+    SourceManager::Lock ();
 
     repeat {
         ret = Wizard::UserInput();
@@ -771,6 +774,8 @@ boolean launchBrowser(string url)
         if (Register::display_forcereg) UI::ChangeWidget( `id(`forcereg ), `Value, Register::force_registration );
 
     } until ( loopend || ret == `back );
+
+    SourceManager::Unlock ();
 
     // Register::finish mandatory as well - do not remove
     Register::finish();
