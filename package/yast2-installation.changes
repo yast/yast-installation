@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Apr 27 08:34:33 CEST 2006 - locilka@suse.cz
+
+- Making "SLP Catalog" selection bigger (maximum ncurses size) 
+  (#168718)
+- 2.13.90
+
+-------------------------------------------------------------------
 Tue Apr 25 22:58:52 CEST 2006 - jsrain@suse.de
 
 - fixed service proposal in SLES control file (#159771)
