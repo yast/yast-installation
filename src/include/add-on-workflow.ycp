@@ -136,6 +136,34 @@ symbol AddSourceTypeSLP () {
 }
 
 /**
+ * Checks whether some network is available in the current moment,
+ * see the bug #170147 for more information.
+ */
+boolean IsAnyNetworkAvailable () {
+        boolean ret = false;
+        
+        string command = "TERM=dumb /sbin/ip -o address show | grep inet | grep -v scope.host";
+        y2milestone("Running %1", command);
+        map cmd_run = (map) SCR::Execute(.target.bash_output, command);
+        y2milestone("Command returned: %1", cmd_run);
+
+        // command failed
+        if (cmd_run["exit"]:-1 != 0) {
+            // some errors were there, we don't know the status, rather return that it's available
+            // `grep` also returns non zero exit code when there is nothing to do...
+            if (cmd_run["stdout"]:"" != "") {
+                y2error("Checking the network failed");
+                ret = true;
+            }
+        // some devices are listed
+        } else if (cmd_run["stdout"]:"" != nil && cmd_run["stdout"]:"" != "") {
+            ret = true;
+        }
+        
+        return ret;    
+}
+
+/**
  * Creates dialog content for MediaSelect
  */
 void CreateMediaSelectDialog () {
@@ -165,15 +193,10 @@ void CreateMediaSelectDialog () {
 	    `VStretch ()
 	))), `HStretch ()
     );
-    string netdevice = Linuxrc::InstallInf ("Netdevice");
-    boolean net_avail = netdevice != "" && netdevice != nil;
-    if (Stage::initial())
-    {
-	y2milestone ("Network device: %1, Network available: %2", netdevice, net_avail);
-    }
-    if (Stage::initial() && ! net_avail)
-    {
-	term contents = `HBox (`HStretch (), `VBox (
+    if (! IsAnyNetworkAvailable()) {
+	y2milestone ("Network is not available, skipping all Network-related options...");
+
+	contents = `HBox (`HStretch (), `VBox (
 	    `RadioButtonGroup (`id (`type), `VBox (
 		`VStretch (),
 		// radio button
@@ -182,9 +205,13 @@ void CreateMediaSelectDialog () {
 		`Left (`RadioButton(`id(`dvd),       _("&DVD..."))),
 		// radio button
 		`Left (`RadioButton(`id(`local_dir), _("&Local Directory..."))),
+		// radio button
+		`Left (`RadioButton (`id (`specify_url),_("Specify &URL..."))),
 		`VStretch ()
 	    ))), `HStretch ()
 	);
+    } else {
+	y2milestone("Network is available, allowing Network-related options...");
     }
 
     // dialog caption
