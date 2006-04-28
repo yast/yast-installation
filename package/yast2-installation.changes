@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Apr 28 14:10:50 CEST 2006 - locilka@suse.cz
+
+- Proper checking for available network when adding an Add-On
+  product. Network-related options are disabled in case of missing
+  network both in installation and running system (#170147).
+- 2.13.95
+
+-------------------------------------------------------------------
 Fri Apr 28 11:32:03 CEST 2006 - jsuchome@suse.cz
 
 - initialize package callbacks for add on product workflow (#170317)
