@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue May  2 15:25:35 CEST 2006 - locilka@suse.cz
+
+- Display KDE-related help in the Congratulations dialog only
+  in case of KDE as the default windowmanager (#170880).
+- 2.13.96 
+
+-------------------------------------------------------------------
 Fri Apr 28 14:10:50 CEST 2006 - locilka@suse.cz
 
 - Proper checking for available network when adding an Add-On
