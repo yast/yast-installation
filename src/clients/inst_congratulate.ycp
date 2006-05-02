@@ -23,6 +23,22 @@
     import "ProductControl";
     import "Stage";
 
+    /**
+     * Function returns true when the default windowmanager is KDE
+     * See bug 170880 for more information
+     *
+     * @return boolean wm is is_kde
+     */
+    boolean DisplayKDEHelp () {
+	string default_wm = (string) SCR::Read(.sysconfig.windowmanager."DEFAULT_WM");
+	y2debug("Default WM: %1", default_wm);
+	
+	if (default_wm != nil && tolower(default_wm) == "kde") {
+	    return true;
+	}
+	return false;
+    }
+
     map argmap = GetInstArgs::argmap();
 
     // show button "clone system"?
@@ -97,10 +113,10 @@ to the login screen.</p>
 ") +
 
     // help 3/4 for dialog "Congratulation Dialog"
-	_("<p>If you choose the default graphical desktop KDE, you can
+	(DisplayKDEHelp() ? _("<p>If you choose the default graphical desktop KDE, you can
 adjust some KDE settings to your hardware. Also notice
 our SUSE Welcome Dialog.</p>
-");
+") : ""); // Show this help only in case of KDE as the default windowmanager
 
     if( show_clone_checkbox ) {
         help = help + _("<p>Use <b>Clone</b> if you want to create an AutoYaST profile.
