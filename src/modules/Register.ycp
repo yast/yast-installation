@@ -263,6 +263,9 @@ global map<string, string> suseRegister(symbol parameter)
                               `PushButton(`id(`abort), Label::AbortButton() )
         ) );
 
+	// Bug #171061 - Busy cursor during "Contacting server..."
+	UI::BusyCursor();
+
         symbol poll_ret = nil;
         repeat
         {
@@ -273,6 +276,9 @@ global map<string, string> suseRegister(symbol parameter)
                 poll_ret = `finish;
 
         } until (poll_ret == `abort || poll_ret == `finish);
+
+	// Bug #171061 - Changing back to normal cursor
+	UI::NormalCursor();
 
         if (poll_ret == `finish)
         {
