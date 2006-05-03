@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed May  3 10:26:29 CEST 2006 - locilka@suse.cz
+
+- Busy cursor when "Contacting server" in suse_register (#171061).
+- 2.13.97
+
+-------------------------------------------------------------------
 Tue May  2 15:25:35 CEST 2006 - locilka@suse.cz
 
 - Display KDE-related help in the Congratulations dialog only
