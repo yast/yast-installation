@@ -58,9 +58,9 @@ else if ( func == "Description" )
 
     ret = $[
       // this is a heading
-      "rich_text_title"	:	_( "Add-on Products"  ),
+      "rich_text_title"	:	_( "Add-On Products"  ),
       // this is a menu entry
-      "menu_title"	:	_( "Add-on &Products" ),
+      "menu_title"	:	_( "Add-On &Products" ),
       "id"		:	"add_on"
     ];
 }
