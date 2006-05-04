@@ -126,10 +126,10 @@ so the sources are available to all tools."
 
 
     /* error messages  */
-    string data_invalid = _("Error: Recieved data is invalid.");
+    string data_invalid = _("Error: Data received is invalid.");
     string retrieve_error = _("Error: Could not retrieve data.");
     string no_browser_msg = _(
-"No Web browser available
+"No Web browser available.
 Run the suse_register command manually."
 );
     string no_w3m_msg = _(
@@ -185,8 +185,8 @@ string help = help_title + help_para1 + help_para2 + (Register::display_forcereg
     string error            = _("Error");
     string server_error     = _("An error occurred while connecting to the server.");
     string details          = _("Details...");
-    string error_msg        = _("Error Message");
-    string starting_browser = _("Starting Browser...");
+    string error_msg        = _("Error");
+    string starting_browser = _("Starting browser...");
 
     /* other string variables */
     map<string, string> information_data = nil;

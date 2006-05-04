@@ -120,7 +120,7 @@ else if (func == "Write") {
 	    integer srcid = Pkg::SourceCreate (media, pth);
 	    if (srcid == -1 || srcid == nil)
 		// error report
-		Report::Error (_("Failed to add Add-On Product."));
+		Report::Error (_("Failed to add add-on product."));
 	    sources[media, pth] = srcid;
 	}
 	prod["media"] = sources[media, pth]:-1;

@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu May  4 11:21:32 CEST 2006 - locilka@suse.cz
+
+- include proofread message texts
+- 2.13.98
+
+-------------------------------------------------------------------
 Wed May  3 10:26:29 CEST 2006 - locilka@suse.cz
 
 - Busy cursor when "Contacting server" in suse_register (#171061).
