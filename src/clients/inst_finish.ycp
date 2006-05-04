@@ -18,6 +18,7 @@
 
     import "AddOnProduct";
     import "Installation";
+    import "Linuxrc";
     import "Misc";
     import "Mode";
     import "Stage";
@@ -198,7 +199,10 @@ Progress::Title (_("Finished."));
 
 if (size (Misc::boot_msg) > 0 && !Mode::autoinst ())
 {
-    Report::DisplayMessages (true, 10);
+    if (Linuxrc::usessh ())
+	Report::DisplayMessages (true, 0);
+    else
+	Report::DisplayMessages (true, 10);
     Report::Message (Misc::boot_msg);
     Misc::boot_msg = "";
 }

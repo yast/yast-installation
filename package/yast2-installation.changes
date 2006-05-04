@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu May  4 13:10:48 CEST 2006 - jsrain@suse.cz
+
+- disable timeout in popup before installation reboot in case
+  of SSH installation (#160301)
+
+-------------------------------------------------------------------
 Thu May  4 11:21:32 CEST 2006 - locilka@suse.cz
 
 - include proofread message texts
