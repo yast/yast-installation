@@ -61,6 +61,20 @@ textdomain="control"
 	<clone_module>dasd</clone_module>
 	<clone_module>zfcp</clone_module>
     </clone_modules>
+    <texts>
+      <congratulate>
+	<label>
+&lt;p&gt;
+The installation has completed successfully.
+Your system is ready for use.
+Click Finish to log in to the system.
+&lt;/p&gt;
+&lt;p&gt;
+Please visit us at http://www.novell.com/linux/.
+&lt;/p&gt;
+	</label>
+      </congratulate>
+    </texts>
 
     <proposals config:type="list">
         <proposal>

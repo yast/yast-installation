@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu May  4 14:31:29 CEST 2006 - jsrain@suse.cz
+
+- added congratulate text to the control file (#170881)
+
+-------------------------------------------------------------------
 Thu May  4 13:10:48 CEST 2006 - jsrain@suse.cz
 
 - disable timeout in popup before installation reboot in case
