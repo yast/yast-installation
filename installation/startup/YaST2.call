@@ -1,0 +1,693 @@
+#!/bin/sh
+#================
+# FILE          : YaST2.call
+#----------------
+# PROJECT       : YaST (Yet another Setup Tool v2)
+# COPYRIGHT     : (c) 2004 SUSE Linux AG, Germany. All rights reserved
+#               :
+# AUTHORS       : Steffen Winterfeldt <snwint@suse.de>
+#               . Arvin Schnell <arvin@suse.de>
+#               : Marcus Schaefer <ms@suse.de>
+#               :
+# BELONGS TO    : System installation and Administration
+#               :
+# DESCRIPTION   : This is the main script to start the YaST2 installer
+#               : according to the possible installation environments
+#               : These are:
+#               : ---
+#               : - Standard Installation Qt/X11 or text based
+#               : - Via serial line ttyS0/115200 baud, 8N1, RTS/CTS
+#               :   which is the same as the NCURSES mode
+#               : - VNC Installation via browser
+#               : 
+#               :
+# STATUS        : $Id$
+#----------------
+#
+#set -x
+#=============================================
+# Functions...
+#---------------------------------------------
+#----[ wait_for_x11 ]----#
+function wait_for_x11() {
+#------------------------------------------------------
+# after a X-Server has been started you can wait until
+# the server is ready for requests using this function
+# ---
+	server_running=0
+	TESTX=/usr/sbin/testX
+	while kill -0 $xserver_pid 2>/dev/null ; do
+		sleep 1
+		if test -e /tmp/.X11-unix/X0 && test -x $TESTX ; then
+			$TESTX "$YaST2color" 2>/dev/null
+			err=$?
+			# exit code 1 -> XOpenDisplay failed...
+			if test $err = 1;then
+				log "\tTestX: XOpenDisplay failed"
+				server_running=0
+				continue
+			fi
+			# exit code 2 -> color or dimensions doesn't fit...
+			if test $err = 2;then
+				log "\tTestX: color or dimensions doesn't fit"
+				kill $xserver_pid
+				server_running=0
+				break;
+			fi
+			server_running=1
+			break
+		fi
+	done
+}
+
+#----[ get_bus_id ]----#
+function get_bus_id () {
+#------------------------------------------------------
+# ask the PCi bus for the location of the first
+# graphics card.
+# ---
+	for line in $(/sbin/lspci -n | grep "Class 0300" | cut -f 1 -d " ");do
+		echo $line |\
+			grep -q -E "^[0-9a-f]{2}:[0-9a-f]{2}\.[0-9a-f]"
+		if [ $? = 0 ];then
+			PCIBus=$(echo $line | cut -f1 -d:);
+			PCISlot=$(echo $line | cut -f2 -d: | cut -f 1 -d.);
+			PCIFunc=$(echo $line | cut -f2 -d.);
+			log "\tFound standard BusID: $PCIBus:$PCISlot:$PCIFunc"
+			printf "PCI:%d@0:%d:%d" \
+				0x$PCIBus 0x$PCISlot 0x$PCIFunc
+			break
+		else
+			echo $line |\
+				grep -q -E "^[0-9a-f]{4}:[0-9a-f]{2}:[0-9a-f]{2}\.[0-9a-f]"
+			if [ $? = 0 ];then
+				PCIDomain=$(echo $line | cut -f1 -d:);
+				PCIBus=$(echo $line | cut -f2 -d:);
+				PCISlot=$(echo $line | cut -f3 -d: | cut -f 1 -d.);
+				PCIFunc=$(echo $line | cut -f2 -d.);
+				log "\tFound domain BusID: $PCIBus@$PCIDomain:$PCISlot $PCIFunc"
+				printf "PCI:%d@%d:%d:%d" \
+					0x$PCIBus 0x$PCIDomain 0x$PCISlot 0x$PCIFunc
+				break
+			fi
+		fi
+	done
+}
+
+#----[ prepare_for_qt ]----#
+function prepare_for_qt () {
+#------------------------------------------------------
+# prepare Qt installation 
+# ---
+	#=============================================
+	# Setup Qt environment
+	#---------------------------------------------
+	set_inst_qt_env
+	set_splash 100
+
+	#=============================================
+	# patch X11 conf. if not update/continue mode
+	#---------------------------------------------
+	if [ ! -f /var/lib/YaST2/runme_at_boot ];then
+	if [ ! -f /etc/X11/xorg.conf.instorig ];then
+		# create backup copy...
+		cp /etc/X11/xorg.conf /etc/X11/xorg.conf.instorig
+
+		# Activate correct device/screen section...
+		sed -e "s#Screen.*Screen\[.*\]#Screen   "\""Screen[$X11_CONFIG_ID]#" \
+			/etc/X11/xorg.conf >/etc/X11/xorg.conf.new
+		mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
+		
+		# update core pointer input device section...
+		if [ -f "/usr/sbin/xupdate" ];then
+			cat /etc/X11/xorg.conf | \
+				/usr/sbin/xupdate > /etc/X11/xorg.conf.new
+			mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
+		fi
+
+		# update driver and busID if accelerated driver should be used...
+		if [ "$X11_CONFIG_ID" = 0 ];then
+			# replace BusID placeholder with real busID
+			XBusID=$(get_bus_id)
+			if [ ! -z "$XBusID" ];then
+				sed -e 's/#BusID/BusID/' \
+					-e "s#1:0:0#$XBusID#" /etc/X11/xorg.conf \
+				> /etc/X11/xorg.conf.new
+				mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
+			fi
+
+			# replace driver placeholder with real name
+			sed -e "s#ChangeMe#$XServer#" /etc/X11/xorg.conf \
+			> /etc/X11/xorg.conf.new
+			mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
+		fi
+	fi
+	fi
+	#=============================================
+	# start X-Server and wait until ready
+	#---------------------------------------------
+	if [ ! -z "$NEED_XSERVER" ];then
+		export DISPLAY=:0
+		ln -snf /usr/X11R6/bin/XFree86 /var/X11R6/bin/X
+		X -deferglyphs 16 2>/dev/tty8 1>&2 vt07 &
+		xserver_pid=$!
+		wait_for_x11
+		if [ "$server_running" = 1 ];then
+			log "\tX-Server is ready: $xserver_pid"
+		fi
+	fi
+	#=============================================
+	# set YaST2 Qt options for local displays
+	#---------------------------------------------
+	if [ ! -z "$NEED_XSERVER" ];then
+		Y2_UI_ARGS="--fullscreen --noborder --auto-fonts"
+	fi
+}
+
+#----[ prepare_for_ncurses ]----#
+function prepare_for_ncurses () {
+#------------------------------------------------------
+# prepare NCURSES installation
+# ---
+	#=============================================
+	# Create Braille config if not update mode
+	#---------------------------------------------
+	if [ $INST_MODE = "normal" ];then
+	if [ ! -z "$Braille" ];then
+		log "Braille config needed, setting up braille display"
+		sed -e "s#brlname=.*#brlname=$Braille#" \
+			-e "s#brlport=.*#brlport=$Brailledevice#" /etc/suse-blinux.conf \
+		>/tmp/suse-blinux.conf
+		mv -f /tmp/suse-blinux.conf /etc
+		/etc/init.d/suse-blinux start
+	fi
+	fi
+	#=============================================
+	# Check for FbIterm
+	#---------------------------------------------
+	check_run_fbiterm
+	log "\tCheck for FB-I-terminal: RUN_FBITERM = $RUN_FBITERM"
+}
+
+#----[ prepare_for_ssh ]----#
+function prepare_for_ssh () {
+#------------------------------------------------------
+# prepare SSH installation 
+# ---
+#
+	:
+}
+
+#----[ prepare_for_vnc ]----#
+function prepare_for_vnc () {
+#------------------------------------------------------
+# prepare VNC installation 
+# ---
+#
+	#=============================================
+	# Setup splash screen
+	#---------------------------------------------
+	set_splash 100
+
+	#=============================================
+	# Setup y2base options
+	#---------------------------------------------
+	Y2_UI_ARGS="--fullscreen --noborder --auto-fonts"
+
+	#=============================================
+	# Setup VNC server and start it
+	#---------------------------------------------
+	setupVNCAuthentication
+	if [ $VNCPASS_EXCEPTION = 0 ];then
+		disable_splash
+		startVNCServer
+		wait_for_x11
+		if [ "$server_running" = 1 ];then
+			log "\tXvnc-Server is ready: $xserver_pid"
+		fi
+	fi
+}
+
+#----[ check_Qt ]----#
+function check_Qt () {
+#------------------------------------------------------
+# check if the prepared medium Qt is valid
+# ---
+	if [ ! -z "$NEED_XSERVER" ];then
+		if [ "$server_running" = 0 ];then
+			# /.../
+			# X-Server couldn't be started, selecting
+			# NCURSES mode as fallback ?
+			# ---
+			log "\tX-Server couldn't be started, falling back to ncurses"
+			Y2_MODE_FLAGS='("text_fallback")'
+			SELECTED_MEDIUM="NCURSES"
+			prepare_for_ncurses
+			Y2_MODE=ncurses
+		fi
+	else
+		/usr/sbin/testX --fast 2>/dev/null
+		if test $? = 1;then
+			log "\tCannot access Display: $DISPLAY, falling back to ncurses"
+			SELECTED_MEDIUM="NCURSES"
+			prepare_for_ncurses
+			Y2_MODE=ncurses
+		fi
+	fi
+}
+
+#----[ check_network ]----#
+function check_network () {
+#------------------------------------------------------
+# check if the prepared medium SSH is valid. It is valid
+# if there is a network interface accessable and we are
+# able to use ncurses or X11
+# ---
+	if ! found_iface ; then
+		# /.../
+		# No network interface found for SSH or VNC installation
+		# this is a fatal error here
+		# ---
+		log "\tNo network interface found, fatal error"
+		fatalError
+	fi
+	if [ ! -z "$DISPLAY" ];then
+		log "\tDisplay: $DISPLAY found for ssh install"
+		Y2_MODE=qt
+	fi
+	if ! check_qt ; then
+		log "\tQt plugin check failed falling back to ncurses"
+		Y2_MODE=ncurses
+	fi
+}
+
+#----[ check_vnc ]----#
+function check_vnc () {
+#------------------------------------------------------
+# check if the prepared medium VNC is valid
+# ---
+	check_network
+	if [ $VNCPASS_EXCEPTION = 1 ];then
+		log "\tVNC access has been disabled due to a password exception"
+		log "\tPlease make sure the password is at least 8 characters long"
+		fatalError
+	fi
+	if [ "$server_running" = 0 ];then
+		# /.../
+		# XVnc server couldn't be started, what to do now, I think
+		# this is a fatal error here
+		# ---
+		log "\tXVnc server couldn't be started, fatal error"
+		fatalError
+	fi
+}
+
+#----[ start_yast ]----#
+function start_yast () {
+#------------------------------------------------------
+# Start YaST2 refering to the contents of the Y2_*
+# startup variables
+# ---
+	local overcommit
+	read  overcommit < /proc/sys/vm/overcommit_memory
+	echo "*** Starting YaST2 ***"
+	log "\tAllow big memory allocation: overcommit_memory=1"
+	echo 1 > /proc/sys/vm/overcommit_memory
+	if [ "$SPLASH" = yes -a -x /sbin/splash -a -n "$SPLASHCFG" ];then
+		/sbin/splash -t "YaST running"
+	fi
+	export QT_IM_MODULE=xim
+
+	log "\tStarting YaST2:"
+	log "\tMODULE_NAME: $Y2_MODULE_NAME"
+	log "\tMODE_FLAGS:  $Y2_MODE_FLAGS"
+	log "\tMODULE_ARGS: $Y2_MODULE_ARGS"
+	log "\tMODE:        $Y2_MODE"
+	log "\tUI_ARGS:     $Y2_UI_ARGS"
+	log "\tQT_IM_MODULE:$QT_IM_MODULE"
+
+	if [ "$RUN_FBITERM" = "1" ]; then
+	    OPT_FBITERM=/usr/bin/fbiterm
+	else
+	    OPT_FBITERM=
+	fi
+	$OPT_FBITERM y2base \
+			"$Y2_MODULE_NAME"   \
+			$Y2_MODE_FLAGS      \
+			$Y2_MODULE_ARGS     \
+			$Y2_MODE            \
+			$Y2_UI_ARGS
+	Y2_EXIT_CODE=$?
+	Y2_ABORT_MESSAGE="YaST seems to be aborted abnormally !"
+	Y2_OK_MESSAGE="YaST procedure ended successfully"
+	if [ -s /etc/yast.inf ];then
+		#=============================================
+		# check yast.inf contents
+		#---------------------------------------------
+		cat /etc/yast.inf | grep -q -i "Aborted: 1"
+		if [ $? = 0 ];then
+			log "\t$Y2_ABORT_MESSAGE"
+		fi
+	else
+		#=============================================
+		# YaST ended successfully
+		#---------------------------------------------
+		log "\t$Y2_OK_MESSAGE"
+	fi
+	if [ $SELECTED_MEDIUM = "SSH" ];then
+		echo "*** Preparing SSH installation for reboot ***"
+		echo "*** NOTE: after reboot, you have to reconnect and call ***"
+		echo "*** /usr/lib/YaST2/startup/YaST2.ssh ***"
+		log "\tPreparing SSH installation for reboot"
+		echo $Y2_EXIT_CODE > /tmp/YaST2_ssh_installation_finished
+	fi
+	if [ $Y2_EXIT_CODE -eq 0 ];then
+		start_yast_and_reboot
+		start_yast_again
+	fi
+	log "\tReset memory allocation: overcommit_memory=$overcommit"
+	echo $overcommit > /proc/sys/vm/overcommit_memory
+}
+
+#----[ start_yast_and_reboot ]----#
+function start_yast_and_reboot () {
+#------------------------------------------------------
+# This function will reboot the system and start yast
+# again by touching the file /var/lib/YaST2/runme_at_boot.
+# The function is triggered by the file /var/lib/YaST2/reboot
+# ---
+	if [ -f /var/lib/YaST2/reboot ];then
+		rm -f /var/lib/YaST2/reboot
+		touch /var/lib/YaST2/runme_at_boot
+		/sbin/shutdown -r now
+	fi
+}
+
+#----[ start_yast_again ]----#
+function start_yast_again () {
+#------------------------------------------------------
+# This function will restart yast again with the same
+# options as used before. The function is triggered by 
+# the file /var/lib/YaST2/restart_yast
+# ---
+	if [ -f /var/lib/YaST2/restart_yast ];then
+		rm -f /var/lib/YaST2/restart_yast
+		start_yast
+	fi
+}
+
+#=============================================
+# Start the Magic :-)
+#=============================================
+# 1) Source common script functions
+#---------------------------------------------
+. /usr/lib/YaST2/startup/common/functions.sh
+. /usr/lib/YaST2/startup/requires
+. /usr/lib/YaST2/startup/arch/ia64/x11.sh
+
+#=============================================
+# 1.1) set splash progress bar to 90%
+#---------------------------------------------
+set_splash 90
+#=============================================
+# 1.2) set root HOME directory
+#---------------------------------------------
+export HOME=/root
+#=============================================
+# 1.3) set HTTP/FTP proxy and configure syslog
+#---------------------------------------------
+set_syslog ; set_proxy
+
+#=============================================
+# 2) Initialize...
+#---------------------------------------------
+# 2.1) setup PATH
+PATH=/var/X11R6/bin:$ybindir:$PATH
+#=============================================
+# 2.2) get X11 driver directory
+#---------------------------------------------
+X11_DRIVER_DIR=/usr/X11R6/lib/modules/drivers
+if [ -d /usr/X11R6/lib64/modules/drivers ];then
+	X11_DRIVER_DIR=/usr/X11R6/lib64/modules/drivers
+fi
+#=============================================
+# 2.3) obtain RAM size in Kb
+#---------------------------------------------
+MEM_TOTAL=`awk '/^MemTotal:/{ print $2 }' /proc/meminfo`
+if [ ${#MEM_TOTAL} -gt 9 ];then
+	MEM_TOTAL=1000000000
+fi
+#=============================================
+# 2.4) check for valid framebuffer
+#---------------------------------------------
+FBDEV_OK=0
+if (: < /dev/fb0) 2>/dev/null ; then
+	FBDEV_OK=1
+fi
+#=============================================
+# 2.5) setup installation mode (update y/n)
+#---------------------------------------------
+INST_MODE="normal"
+if [ -f /var/lib/YaST2/update_mode ];then
+	INST_MODE="update"
+fi
+#=============================================
+# 2.6) import install.inf
+#---------------------------------------------
+import_install_inf
+
+#=============================================
+# 2.7) set LOG prefix
+#---------------------------------------------
+LOG_PREFIX="Stage [call]"
+
+#=============================================
+# 3) Medium prequalification
+#---------------------------------------------
+# Check which installation mediums can be used. There are
+# four mediums available: Qt(0) SSH(1), VNC(2) and NCURSES(3).
+# The following checks will create an array which contains
+# the possible mediums. An index of 1 indicates "can be used"
+# an index of 0 indicated "cannot be used"
+# ---
+MEDIUM=(1 1 1 1)
+
+#=============================================
+# 3.1) prequalification checks for Qt
+#---------------------------------------------
+log "Starting prequalification checks..."
+log "==================================="
+# 3.1.1) Qt plugin check...
+if ! check_qt ; then
+	log "\tQt plugin check failed -> Medium Qt disabled"
+	MEDIUM[0]=0
+fi
+# 3.1.2) X-Server module check...
+# BEG IA64: use accelerated X11 driver
+ia64_check_x11
+# END IA64:
+XServerAccel=$XServer
+if [ "$XServer" = "vmware" ];then
+	if [ ! -f "$X11_DRIVER_DIR/${XServer}_drv.so" ];then
+		log "\t$XServer driver not installed -> Medium Qt disabled"
+		MEDIUM[0]=0
+	fi
+	X11_CONFIG_ID=vmware
+else
+	XServer=fbdev
+	if [ $FBDEV_OK -eq 0 ];then
+		log "\tNo Framebuffer available: Using vesa driver"
+		XServer=vesa
+	fi
+	if [ ! -f "$X11_DRIVER_DIR/${XServer}_drv.so" ];then
+		log "\t$XServer driver not installed -> Medium Qt disabled"
+		MEDIUM[0]=0
+	fi
+	X11_CONFIG_ID=$XServer
+fi
+if [ "$acceleratedx" = "1" ];then
+	if [ ! -f "$X11_DRIVER_DIR/${XServerAccel}_drv.so" ];then
+		log "\t$XServerAccel driver not installed -> X11 acceleration disabled"
+	else
+		log "\tUsing accelerated driver -> $XServerAccel"
+		MEDIUM[0]=1
+		XServer=$XServerAccel
+		X11_CONFIG_ID=0
+	fi
+fi
+# 3.1.3) Memory check >= 90MB for Qt/X11...
+if [ $MEM_TOTAL -lt "$MEM_NEEDED" ];then
+	log "\tMemory requirement > 90MB not fulfilled -> Medium Qt disabled"
+	MEDIUM[0]=0
+fi
+# 3.1.4) Check if we need to start our own X11 server...
+if [ -z "$DISPLAY" ];then
+	NEED_XSERVER=1
+fi
+# 3.1.5) Check for xorg.conf...
+if [ ! -f /etc/X11/xorg.conf ];then
+if [ ! -f /usr/X11R6/lib/X11/xorg.conf ];then
+	log "\tNo X11 configuration template found -> Medium Qt disabled"
+	MEDIUM[0]=0
+else
+	cp /usr/X11R6/lib/X11/xorg.conf /etc/X11/xorg.conf
+fi
+fi 
+# 3.1.6) Check for WindowManager configuration
+if [ ! -f /usr/X11R6/share/fvwm/fvwmrc.yast2 ];then
+	log "\tNo Windowmanager configuration found -> Medium Qt disabled"
+	MEDIUM[0]=0
+fi
+# 3.1.7) Check for remote display usage
+if [ ! -z $Display_IP ];then
+	log "\tRemote Display usage -> Medium Qt enabled"
+	log "\tExporting DISPLAY to host: $Display_IP:0.0"
+	export DISPLAY="$Display_IP:0.0"
+	NEED_XSERVER=""
+	MEDIUM[0]=1
+fi
+
+#=============================================
+# 3.2) prequalification checks for SSH
+#---------------------------------------------
+# 3.2.1) Check for SSH daemon
+if [ -f /var/run/sshd.*pid ];then
+	ps `cat /var/run/sshd.*pid` >/dev/null || MEDIUM[2]=0
+else
+	log "\tNo SSH daemon running -> Medium SSH disabled"
+	MEDIUM[1]=0
+fi
+
+#=============================================
+# 3.3) prequalification checks for VNC
+#---------------------------------------------
+# 3.3.1) Check for WindowManager configuration
+if [ ! -f /usr/X11R6/share/fvwm/fvwmrc.yast2 ];then
+	log "\tNo Windowmanager configuration found -> Medium VNC disabled"
+	MEDIUM[2]=0
+fi
+# 3.3.2) Check for VNC X-Server binary
+if [ ! -x /usr/X11R6/bin/Xvnc ] ; then
+	log "\tNo Xvnc server installed -> Medium VNC disabled"
+	MEDIUM[2]=0
+fi
+# 3.3.3) Check for testX binary
+if [ ! -x /usr/sbin/testX ] ; then
+	log "\tNo testX binary installed -> Medium VNC disabled"
+	MEDIUM[2]=0
+fi
+
+#=============================================
+# 4) Evaluate medium selection
+#---------------------------------------------
+# At this point we are evaluating the variables which have
+# been imported from the install.inf file into the current
+# environment. The standard method of installing the system
+# should be Qt based. Refering to the variables Textmode,
+# Braille, UseSSH and VNC another medium could be selected
+# VNC overrides UseSSH
+# ---
+log "Evaluate medium selection..."
+log "============================"
+SELECTED_MEDIUM="QT"
+if [ "$Textmode" = 1 ];then
+	log "\tMedium Textmode (ncurses) has been selected"
+	SELECTED_MEDIUM="NCURSES"
+fi
+if [ ! -z "$Braille" ];then
+	log "\tMedium Braille (ncurses) has been selected"
+	SELECTED_MEDIUM="NCURSES"
+fi
+if [ "$UseSSH" = 1 ];then
+	log "\tMedium SSH has been selected"
+	SELECTED_MEDIUM="SSH"
+fi
+if [ "$VNC" = 1 ];then
+	log "\tMedium VNC has been selected"
+	SELECTED_MEDIUM="VNC"
+fi
+
+#=============================================
+# 5) Check selected medium
+#---------------------------------------------
+# Refering to the prequalification check results we need to
+# check if the selected medium is valid according to the
+# MEDIUM flag entry. If the medium is not valid we will
+# fallback to NCURSES mode
+# ---
+log "Check selected medium..."
+log "========================"
+log "\tWished medium is: $SELECTED_MEDIUM"
+case $SELECTED_MEDIUM in
+	QT)  {
+		if [ ${MEDIUM[0]} -eq 0 ];then
+			log "\tMedium Qt not available, falling back to ncurses"
+			SELECTED_MEDIUM="NCURSES"
+		fi
+	} ;;
+	SSH) {
+		if [ ${MEDIUM[1]} -eq 0 ];then
+			log "\tMedium SSH not available, falling back to ncurses"
+			SELECTED_MEDIUM="NCURSES"
+		fi
+	} ;;
+	VNC) {
+		if [ ${MEDIUM[2]} -eq 0 ];then
+			log "\tMedium VNC not available, falling back to ncurses"
+			SELECTED_MEDIUM="NCURSES"
+		fi
+	} ;;
+esac
+log "\tSelected medium is: $SELECTED_MEDIUM"
+
+#=============================================
+# 6) Prepare selected medium
+#---------------------------------------------
+case $SELECTED_MEDIUM in
+	QT)      prepare_for_qt      ; Y2_MODE=qt      ;;
+	SSH)     prepare_for_ssh     ; Y2_MODE=ncurses ;;
+	VNC)     prepare_for_vnc     ; Y2_MODE=qt      ;;
+	NCURSES) prepare_for_ncurses ; Y2_MODE=ncurses ;;
+esac
+
+#=============================================
+# 7) Check prepared medium
+#---------------------------------------------
+case $SELECTED_MEDIUM in
+	QT)  check_Qt      ;;
+	SSH) check_network ;;
+	VNC) check_vnc     ;;
+esac
+
+# The prepare_for_ncurses in step 6 is kinda useless if step 7 can
+# change Y2MODE to ncurses in several ways
+# Anyway, #150799
+if [ "$Y2_MODE" = "ncurses" ]; then
+    Y2_UI_ARGS=--nothreads
+fi
+
+#=============================================
+# 8) Call YaST2
+#---------------------------------------------
+Y2_MODULE_NAME=${1:-installation}; shift
+Y2_MODULE_ARGS=\(\"$*\"\)
+start_yast
+
+#=============================================
+# 9) Clean sweep
+#---------------------------------------------
+# 9.1) clear Qt environment...
+clr_inst_qt_env
+
+# 9.2) kill X-Server...
+if [ "$server_running" = 1 ];then
+	sleep 1 && kill $xserver_pid
+	while kill -0 $xserver_pid 2>/dev/null ; do
+		sleep 1
+	done
+fi
+
+#=============================================
+# 10) exit with YaST2 exit code
+#---------------------------------------------
+exit $Y2_EXIT_CODE

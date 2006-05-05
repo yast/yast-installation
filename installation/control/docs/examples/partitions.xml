@@ -1,0 +1,27 @@
+        <partitions config:type="list">
+            <partition>
+                <disk config:type="integer">3</disk>
+                <mount>/var</mount>
+                <percent config:type="integer">100</percent>               
+            </partition>
+            <partition>
+                <disk config:type="integer">2</disk>                                
+                <mount>/</mount>
+                <size>1G</size>
+            </partition>
+            <partition>
+                <disk config:type="integer">2</disk>                                
+                <mount>/usr</mount>
+                <size>2G</size>
+            </partition>
+            <partition>
+                <disk config:type="integer">2</disk>                                
+                <mount>/opt</mount>
+                <size>2G</size>
+            </partition>
+           <partition>
+                <disk config:type="integer">1</disk>
+                <mount>/home</mount>
+                <percent config:type="integer">100</percent>               
+            </partition>       
+        </partitions>

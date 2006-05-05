@@ -1,0 +1,46 @@
+/**
+ * File:	clients/inst_add-on.ycp
+ * Package:	yast2-installation
+ * Summary:	Select add-on products for installation
+ * Authors:	Jiri Srain <jsrain@suse.de>
+ *
+ */
+
+{
+textdomain "installation";
+
+import "AddOnProduct";
+import "GetInstArgs";
+import "Packages";
+import "PackageCallbacksInit";
+import "Popup";
+import "ProductControl";
+import "Report";
+import "Wizard";
+
+include "installation/add-on-workflow.ycp";
+
+map argmap = GetInstArgs::argmap();
+
+Packages::SelectProduct ();
+
+PackageCallbacksInit::SetMediaCallbacks();
+
+symbol ret = RunAddOnMainDialog (GetInstArgs::enable_back(), GetInstArgs::enable_next());
+
+if (ret == `next)
+{
+    foreach (map<string,any> prod, AddOnProduct::add_on_products, {
+	AddOnProduct::Integrate (prod["media"]:0);
+    });
+    ret = ProductControl::RunFrom (
+	ProductControl::CurrentStep () + 1,
+	true);
+    if (ret == `next)
+	ret = `finish;
+}
+
+return ret;
+
+/* EOF */
+}

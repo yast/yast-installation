@@ -1,0 +1,154 @@
+/**
+ * File:
+ *      bootloader_auto.ycp
+ *
+ * Module:
+ *      Bootloader installation and configuration
+ *
+ * Summary:
+ *      Bootloader autoinstallation preparation
+ *
+ * Authors:
+ *      Jiri Srain <jsrain@suse.cz>
+ *
+ * $Id: bootloader_auto.ycp 24249 2005-07-22 08:18:24Z jsrain $
+ *
+ */
+{
+textdomain "installation";
+
+y2milestone("----------------------------------------");
+y2milestone("add-on auto started");
+
+import "AddOnProduct";
+import "Progress";
+
+include "installation/add-on-workflow.ycp";
+
+boolean progress_orig = Progress::set (false);
+
+
+any ret = nil;
+string func = "";
+map param = $[];
+
+/* Check arguments */
+if(size((list)WFM::Args()) > 0 && is(WFM::Args(0), string)) {
+    func = (string)WFM::Args(0);
+    if(size((list)WFM::Args()) > 1 && is(WFM::Args(1), map))
+	param = (map)WFM::Args(1);
+}
+y2debug("func=%1", func);
+y2debug("param=%1", param);
+
+if(func == "Import")
+{
+    ret = AddOnProduct::Import((map<string,any>)param);
+}
+/**
+ * Create a summary
+ * return string
+ */
+else if(func == "Summary") {
+    ret = "<ul>\n";
+    foreach (map<string,any> prod, AddOnProduct::add_on_products, {
+	ret = (string)ret + sformat (_("<li>Media: %1, Path: %2, Product: %3</li>\n"),
+	    prod["media_url"]:"",
+	    prod["product_dir"]:"/",
+	    prod["product"]:""
+	);
+    });
+    ret = (string)ret + "</ul>";
+}
+/**
+ * did configuration changed
+ * return boolean
+*/
+else if (func == "GetModified") {
+    ret = AddOnProduct::modified;
+}
+/**
+ * set configuration as changed
+ * return boolean
+ */
+else if (func == "SetModified") {
+    AddOnProduct::modified = true;
+    ret = true;
+}
+/**
+ * Reset configuration
+ * return map or list
+ */
+else if (func == "Reset") {
+    AddOnProduct::add_on_products = [];
+    ret = $[];
+}
+
+/**
+ * Change configuration
+ * return symbol (i.e. `finish || `accept || `next || `cancel || `abort)
+ */
+else if (func == "Change") {
+    Wizard::CreateDialog ();
+    ret = RunAddOnMainDialog (true, true);
+    UI::CloseDialog ();
+    foreach (integer srcid, AddOnProduct::added_sources, {
+	Pkg::SourceFinish (srcid);
+    });
+    AddOnProduct::added_sources = [];
+    return ret;
+}
+/**
+ * Return configuration data
+ * return map or list
+ */
+else if (func == "Export") {
+    ret = AddOnProduct::Export();
+}
+/**
+ * Write configuration data
+ * return boolean
+ */
+else if (func == "Write") {
+    map<string,map<string,integer> > sources = $[];
+    AddOnProduct::add_on_products = maplist (map<string,any> prod, AddOnProduct::add_on_products, {
+	string media = prod["media_url"]:"";
+	string pth = prod["product_dir"]:"/";
+	sources[media] = sources[media]:$[];
+	if (sources[media, pth]:-1 == -1)
+	{
+	    integer srcid = Pkg::SourceCreate (media, pth);
+	    if (srcid == -1 || srcid == nil)
+		// error report
+		Report::Error (_("Failed to add add-on product."));
+	    sources[media, pth] = srcid;
+	}
+	prod["media"] = sources[media, pth]:-1;
+	Pkg::ResolvableInstall (prod["product"]:"", `product);
+    });
+    ret = true;
+}
+/**
+ * Read configuration data
+ * return boolean
+ */
+else if (func == "Read") {
+    y2milestone ("Read not supported");
+    ret = true;
+}
+/* unknown function */
+else {
+    y2error("unknown function: %1", func);
+    ret =  false;
+}
+Progress::set (progress_orig);
+
+y2debug("ret=%1", ret);
+y2milestone("add-on_auto finished");
+y2milestone("----------------------------------------");
+
+return ret;
+
+/* EOF */
+
+}
