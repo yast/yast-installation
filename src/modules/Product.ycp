@@ -56,6 +56,11 @@
     global list flags		= [];
 
     /**
+     * list of patterns from content file
+     */
+    global list patterns	= [];
+
+    /**
      * Short label for bootloader entry
      */
     global string shortlabel	= "";
@@ -113,6 +118,11 @@ global list<map<string,any> > FindBaseProducts() {
 	    any tmp1 = SCR::Read (.content.FLAGS);
 	    if (tmp1 != nil)
 		flags		= splitstring ((string) tmp1, " ");
+	    tmp1 = SCR::Read (.content.PATTERNS);
+	    if (tmp1 != nil)
+		patterns	= splitstring ((string) tmp1, " ");
+
+	    y2milestone("***PATTERNS: %1", patterns );
 	}
 	else if (!Mode::config ())
 	{
