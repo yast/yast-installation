@@ -58,7 +58,7 @@
     /**
      * list of patterns from content file
      */
-    global list patterns	= [];
+    global list<string> patterns	= [];
 
     /**
      * Short label for bootloader entry
