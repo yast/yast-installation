@@ -1,5 +1,5 @@
 -------------------------------------------------------------------
-Mon May  8 19:32:59 CEST 2006 - jdsl@suse.de
+Mon May  8 17:32:59 CEST 2006 - jdsl@suse.de
 
 - added hard require from y2-installation to suseRegister (hmuelle)
 - added new w3m-jail for registration (#167225)
