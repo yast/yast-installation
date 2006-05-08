@@ -68,15 +68,13 @@
     string title_box  = _("Online Update Configuration");  // (#165509)
 
     // for SLES/SLED and SL (2 months after release) use title_nccc
-    string title = title_box;
+    string title = title_nccc;
 
     // Translators: limit to 2x 50 charachters - if more needed take 3x 50 chars but NOTHING more
     string nccc_top = _(
 "Get technical support and product updates and
 manage subscriptions with Novell Customer Center."
 );
-    // reactivate for SLES/SLED and for SL (2 months after release)
-    nccc_top = "";
 
     string nccc_configure   = _("Configure Now (Recommended)");
     string nccc_noconfigure = _("Configure Later");
@@ -355,7 +353,7 @@ boolean report_error()
 
 
 string su_exec(string user, string group, string command)
-{
+{   // (#167255)
     string exec = sformat("
 #!/bin/bash -x
 
@@ -386,7 +384,30 @@ cat > $tmpjail <<EOJAIL
 
 escape \\377\\377
 shell /bin/true
-chacl * -x ?
+# stuff is needed for cursor keys. (bugzilla #167255)
+# We can neiter exclude one command from the list nor add it back later.
+# Resort to enumerate all except one. yacc.
+
+chacl * -x acladd,aclchg,acldel,aclgrp,aclumask,activity,addacl,allpartial,altscreen,at,autodetach
+chacl * -x autonuke,backtick,bell,bell_msg,bind,bindkey,blanker,blankerprg,break,breaktype,bufferfile
+chacl * -x c1,caption,charset,chdir,clear,colon,command,compacthist,console,copy,crlf,debug
+chacl * -x defautonuke,defbce,defbreaktype,defc1,defcharset,defencoding,defescape,defflow,defgr
+chacl * -x defhstatus,defkanji,deflog,deflogin,defmode,defmonitor,defnonblock,defobuflimit
+chacl * -x defscrollback,defshell,defsilence,defslowpaste,defutf8,defwrap,defwritelock,detach,digraph
+chacl * -x dinfo,displays,dumptermcap,echo,encoding,escape,eval,exec,fit,flow,focus,gr,hardcopy
+chacl * -x hardcopy_append,hardcopydir,hardstatus,height,help,history,hstatus,idle,ignorecase,info
+chacl * -x kanji,kill,lastmsg,license,lockscreen,log,logfile,login,logtstamp,mapdefault,mapnotnext
+chacl * -x maptimeout,markkeys,maxwin,meta,monitor,msgminwait,msgwait,multiuser,nethack,next,nonblock
+chacl * -x number,obuflimit,only,other,partial,password,paste,pastefont,pow_break,pow_detach
+chacl * -x pow_detach_msg,prev,printcmd,process,quit,readbuf,readreg,redisplay,register,remove
+chacl * -x removebuf,reset,resize,screen,scrollback,select,sessionname,setenv,setsid,shell
+chacl * -x shelltitle,silence,silencewait,sleep,slowpaste,sorendition,source,split,startup_message
+chacl * -x su,suspend,term,termcap,termcapinfo,terminfo,time,title,umask,unsetenv,utf8,vbell
+chacl * -x vbell_msg,vbellwait,verbose,version,wall,width,windowlist,windows,wrap,writebuf,writelock
+chacl * -x xoff,xon,zmodem,zombie
+#chacl * -x stuff
+chacl * -x chacl        # must be last.
+
 EOJAIL
 
 ", user, group, command );
@@ -490,8 +511,9 @@ boolean launchBrowser(string url)
     if ( parsed == $[]) return false;
     // no rebuild of the url - parser seems to only parse one parameter in URL
 
+    string uri = String::FirstChunk(url, "\n");  // (#167225)
     // get command to run correct browser and execute it
-    string command = browser_command(url);
+    string command = browser_command(uri);
     if (command == "nobrowser") return false;
 
     y2milestone("launching browser: %1", command);

@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Mon May  8 19:32:59 CEST 2006 - jdsl@suse.de
+
+- added hard require from y2-installation to suseRegister (hmuelle)
+- added new w3m-jail for registration (#167225)
+- fixed passing of url to browser(s) for registration (#167225)
+- switched to Enterprise strings for inst_suse_register (shorn)
+- 2.13.100
+
+-------------------------------------------------------------------
 Thu May  4 14:31:29 CEST 2006 - jsrain@suse.cz
 
 - added congratulate text to the control file (#170881)
