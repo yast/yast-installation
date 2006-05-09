@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue May  9 11:32:20 CEST 2006 - mvidner@suse.cz
+
+- Start the network also when doing a remote X11 installation (#165458,
+  hare).
+- 2.13.101
+
+-------------------------------------------------------------------
 Mon May  8 17:32:59 CEST 2006 - jdsl@suse.de
 
 - added hard require from y2-installation to suseRegister (hmuelle)

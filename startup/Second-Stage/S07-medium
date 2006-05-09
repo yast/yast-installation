@@ -32,10 +32,10 @@ if got_install_param '^UseSSH:.*1' ; then
 	export USE_SSH=1
 fi
 #=============================================
-# 11.4) activate network for SSH or VNC inst.
+# 11.4) activate network for SSH, VNC, or remote X11 inst.
 #---------------------------------------------
-if [ $VNC -eq 1 ] || [ $USE_SSH -eq 1 ];then
-	log "\tVNC/SSH installation used -> activate network"
+if [ $VNC -eq 1 ] || [ $USE_SSH -eq 1 ] || [ -n "$Display_IP" ] ;then
+	log "\tVNC/SSH/remote X11 installation used -> activate network"
 	rcnetwork start && Y2_NETWORK_ACTIVE=1
 	rcSuSEfirewall2 reload
 fi
