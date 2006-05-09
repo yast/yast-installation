@@ -30,6 +30,7 @@
     import "Internet";
     import "Register";
     import "SourceManager";
+    import "PackageSystem";
 
     // no network - no suse_register
     if (!Mode::normal())
@@ -550,6 +551,13 @@ boolean launchBrowser(string url)
 
 /* -------------------------------- PROGRAM LOGIC START ----------------------------------------------------------- */
 
+    if (Mode::normal ())
+    {
+	// #172665, make sure that the added sources have a safe home
+	// It also takes care of target for keys, shows busy popup
+	PackageSystem::EnsureSourceInit ();
+    }
+
     // #170113, the lock is needed around everything that may end up in ZMD
     SourceManager::Lock ();
 
@@ -802,7 +810,13 @@ boolean launchBrowser(string url)
     // Register::finish mandatory as well - do not remove
     Register::finish();
 
-    if (Mode::normal()) Wizard::CloseDialog();
+    if (Mode::normal())
+    {
+	// #172665
+	Pkg::SourceFinishAll ();
+	Pkg::TargetFinish ();
+	Wizard::CloseDialog();
+    }
     else
     {
         if (ret == `skip)

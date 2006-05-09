@@ -1,9 +1,12 @@
 -------------------------------------------------------------------
-Tue May  9 18:34:10 CEST 2006 - mvidner@suse.cz
+Tue May  9 19:30:47 CEST 2006 - mvidner@suse.cz
 
+- Save the update sources if registration is done later after the
+  installation (#172665).
 - When adding upate sources, do not add duplicates (check by the alias
   passed by suse_register on SLE), delete the duplicate beforehand
   (#168740#c3).
+- 2.13.102
 
 -------------------------------------------------------------------
 Tue May  9 11:32:20 CEST 2006 - mvidner@suse.cz
