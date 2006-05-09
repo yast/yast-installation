@@ -13,5 +13,5 @@ X-SuSE-YaST-AutoInstRequires=lan
 Icon=yast-product-registration
 Exec=/sbin/yast2 inst_suse_register
 
-Name=Online Update Configuration
-GenericName=Online Update Configuration
+Name=Novell Customer Center Configuration
+GenericName=Novell Customer Center Configuration

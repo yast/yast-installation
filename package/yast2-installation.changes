@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue May  9 19:35:47 CEST 2006 - jdsl@suse.de
+
+- switched to Enterprise wording for inst_suse_register (#173970)
+- 2.13.103
+
+-------------------------------------------------------------------
 Tue May  9 19:30:47 CEST 2006 - mvidner@suse.cz
 
 - Save the update sources if registration is done later after the
