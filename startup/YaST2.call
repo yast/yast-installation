@@ -354,7 +354,7 @@ function start_yast () {
 		#---------------------------------------------
 		log "\t$Y2_OK_MESSAGE"
 	fi
-	if [ $SELECTED_MEDIUM = "SSH" ];then
+	if [ $SELECTED_MEDIUM = "SSH" ] && [ ! "$VNC" = 1 ];then
 		echo "*** Preparing SSH installation for reboot ***"
 		echo "*** NOTE: after reboot, you have to reconnect and call ***"
 		echo "*** /usr/lib/YaST2/startup/YaST2.ssh ***"
