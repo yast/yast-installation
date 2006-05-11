@@ -162,9 +162,6 @@ Check your hardware.
 	return `cancel;
     }
 
-    // disable automatic probing
-    SCR::Execute (.target.bash, "/bin/echo \"/etc/nothing\" >/proc/sys/kernel/modprobe");
-
     clearFeedback();
     return `next;
 }
