@@ -3,6 +3,7 @@ Thu May 11 13:50:29 CEST 2006 - jsrain@suse.cz
 
 - do not disable automatic modprobe before adding add-on products
   (#172149)
+- 2.13.105
 
 -------------------------------------------------------------------
 Thu May 11 12:02:13 CEST 2006 - ms@suse.de
