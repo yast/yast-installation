@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu May 11 09:55:08 CEST 2006 - ms@suse.de
+
+- prevent ssh message from being displayed if vnc+ssh has
+  been specified as installation method (#173486)
+
+-------------------------------------------------------------------
 Wed May 10 13:40:16 CEST 2006 - jdsn@suse.de
 
 - removed search bar from registration browser (#169092)
