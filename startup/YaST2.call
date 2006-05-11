@@ -272,7 +272,7 @@ function check_network () {
 		fatalError
 	fi
 	if [ ! -z "$DISPLAY" ];then
-		log "\tDisplay: $DISPLAY found for ssh install"
+		log "\tDisplay: $DISPLAY found for network install"
 		Y2_MODE=qt
 	fi
 	if ! check_qt ; then
