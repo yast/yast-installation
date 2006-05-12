@@ -83,7 +83,7 @@ global list<string> finish_steps_before_umount = [];
 
 global boolean modified = false;
 
-global list<integer> added_sources = [];
+global list<integer> mode_config_sources = [];
 
 
 
@@ -1072,7 +1072,24 @@ global map Export () {
 global boolean Import (map settings) {
     add_on_products = settings["add_on_products"]:[];
     modified = false;
+    if (Mode::config ())
+    {
+	foreach (map prod, add_on_products, {
+	    string media = prod["media_url"]:"";
+	    string pth = prod["product_dir"]:"/";
+	    integer src = Pkg::SourceCreate (media, pth);
+	    if (src != -1)
+		mode_config_sources = add (mode_config_sources, src);
+	});
+    }
     return true;
+}
+
+global void CleanModeConfigSources () {
+    foreach (integer src, mode_config_sources, {
+	Pkg::SourceDelete (src);
+    });
+    mode_config_sources = [];
 }
 
 

@@ -22,6 +22,8 @@ y2milestone("add-on auto started");
 
 import "AddOnProduct";
 import "Progress";
+import "AutoinstSoftware";
+import "PackageCallbacksInit";
 
 include "installation/add-on-workflow.ycp";
 
@@ -90,12 +92,10 @@ else if (func == "Reset") {
  */
 else if (func == "Change") {
     Wizard::CreateDialog ();
+    AutoinstSoftware::pmInit ();
+    PackageCallbacksInit::InitPackageCallbacks ();
     ret = RunAddOnMainDialog (true, true);
     UI::CloseDialog ();
-    foreach (integer srcid, AddOnProduct::added_sources, {
-	Pkg::SourceFinish (srcid);
-    });
-    AddOnProduct::added_sources = [];
     return ret;
 }
 /**
