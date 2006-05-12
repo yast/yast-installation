@@ -4,6 +4,7 @@ Fri May 12 14:11:18 CEST 2006 - jsrain@suse.cz
 - initialize callbacks before adding an add-on product, properly
   handle installation sources of add-on products (both if preparing
   AutoYaST configuration (#172837)
+- 2.13.106
 
 -------------------------------------------------------------------
 Thu May 11 13:50:29 CEST 2006 - jsrain@suse.cz
