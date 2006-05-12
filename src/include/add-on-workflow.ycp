@@ -22,6 +22,7 @@ textdomain "installation";
 
 import "AddOnProduct";
 import "Linuxrc";
+import "Mode";
 import "Popup";
 import "Report";
 import "SLP";
@@ -541,6 +542,11 @@ symbol ProductSelect () {
 	    "media_url" : url,
 	    "product_dir" : product_dir,
 	]);
+	if (Mode::config ())
+	{
+	    AddOnProduct::mode_config_sources
+		= add (AddOnProduct::mode_config_sources, AddOnProduct::src_id);
+	}
 	return `next;
     }
     products = filter (map<string,any> prod, products, {
@@ -618,6 +624,11 @@ or selected for installation."));
 	    "media_url" : url,
 	    "product_dir" : product_dir,
 	]);
+	if (found_source == -1 && Mode::config ())
+	{
+	    AddOnProduct::mode_config_sources =
+		add (AddOnProduct::mode_config_sources, AddOnProduct::src_id);
+	}
 	return `next;
     }
     y2milestone ("Running product selection dialog");
@@ -712,6 +723,11 @@ to install.</p>
 		    "product_dir" : product_dir,
 		]);
 	    });
+	    if ( AddOnProduct::src_id != -1 && Mode::config ())
+	    {
+		AddOnProduct::mode_config_sources =
+		    add (AddOnProduct::mode_config_sources, AddOnProduct::src_id);
+	    }
 	}
 	else if (ret != `back)
 	{
