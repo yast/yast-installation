@@ -331,14 +331,20 @@ but something went wrong, that's why it is only in the log");
     {
 	string contents = (string)
 	    SCR::Read (.target.string, restart_data_file);
-	integer next_step = tointeger (contents);
+	list<string> contents_lines = splitstring (contents, "\n");
+	integer next_step = tointeger ((string)(contents_lines[0]:nil));
+	integer restarting_step = tointeger ((string)(contents_lines[1]:nil));
 	if (next_step == nil)
 	{
 	    y2error ("Data file specifying step to continue corrupted");
+	    ProductControl::first_step = 0;
+	    ProductControl::restarting_step = nil;
 	    ret = ProductControl::Run();
 	}
 	else
 	{
+	    ProductControl::first_step = next_step;
+	    ProductControl::restarting_step = restarting_step;
 	    ret = ProductControl::RunFrom (next_step, false);
 	}
 	SCR::Execute (.target.bash, sformat (
@@ -357,6 +363,7 @@ but something went wrong, that's why it is only in the log");
     if (Stage::cont () && (ret == `reboot || ret == `restart_yast || ret == `restart_same_step))
     {
 	integer last_step = ProductControl::CurrentStep ();
+	integer restarting_step = last_step;
 	if (ret == `restart_same_step)
 	{
 	    last_step = last_step - 1;
@@ -364,7 +371,7 @@ but something went wrong, that's why it is only in the log");
 	}
 	integer next_step = last_step + 1;
 	SCR::Write (.target.string, restart_data_file,
-	    sformat ("%1", next_step));
+	    sformat ("%1\n%2", next_step, restarting_step));
 	if (ret == `reboot)
 	{
 	    SCR::Execute (.target.bash, sformat (
