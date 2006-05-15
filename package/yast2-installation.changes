@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon May 15 12:59:58 CEST 2006 - jsrain@suse.cz
+
+- handle additional data for installation restart (#167561)
+
+-------------------------------------------------------------------
 Fri May 12 14:11:18 CEST 2006 - jsrain@suse.cz
 
 - initialize callbacks before adding an add-on product, properly
