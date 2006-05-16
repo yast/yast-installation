@@ -33,7 +33,7 @@ if ( func == "MakeProposal" )
     if (size (items) == 0)
     {
 	// summary string
-	items = [ "No add-on product selected for installation" ];
+	items = [ _("No add-on product selected for installation") ];
     }
     ret = $[
 	"raw_proposal" : items,
