@@ -18,7 +18,7 @@ textdomain="control"
         <inform_about_suboptimal_distribution config:type="boolean">true</inform_about_suboptimal_distribution>
         <skip_language_dialog config:type="boolean">true</skip_language_dialog>
         <ui_mode>simple</ui_mode>
-        <enable_clone config:type="boolean">true</enable_clone>
+        <enable_clone config:type="boolean">false</enable_clone>
         <enable_register_hwdata   config:type="boolean">true</enable_register_hwdata>
         <enable_register_optional config:type="boolean">true</enable_register_optional>
         <display_register_forcereg config:type="boolean">false</display_register_forcereg>
