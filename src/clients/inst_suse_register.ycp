@@ -539,10 +539,14 @@ boolean launchBrowser(string url)
     //y2debug ("%1", UI::DumpWidgetTree());
 
 
-    // if we are running as nonroot show a message
+    // check if we are running as nonroot
     if ( !Register::iamroot )
-        if ( !Popup::ContinueCancelHeadline( nonroot_title, nonroot_message ) )
-            return `cancel;
+    {    // do not run as non-root: #170736
+        return `auto;
+        // SL (box) has the following warning
+        //if ( !Popup::ContinueCancelHeadline( nonroot_title, nonroot_message ) )
+        //    return `cancel;
+    }
 
 
     boolean loopend = false;
