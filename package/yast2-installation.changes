@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri May 19 15:36:36 CEST 2006 - jsrain@suse.cz
+
+- more verbose logging of storing hardware status (#170188)
+
+-------------------------------------------------------------------
 Thu May 18 17:07:13 CEST 2006 - hare@suse.de
 
 - start iscsid if root is on iSCSI (#176804)

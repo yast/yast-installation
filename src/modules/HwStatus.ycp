@@ -53,6 +53,7 @@
     ``{
 	foreach (string id, symbol stat, statusmap,
 	``{
+	    y2milestone ("Setting status of %1 as %2", id, stat);
 	    SCR::Write(.probe.status.configured, id, stat);
 	});
     }
@@ -69,8 +70,15 @@
 	SCR::Read (.probe.isapnp);
 
 	// build relation between old keys and new UDIs (bug #104676)
-	SCR::Execute (.target.bash,
-	    "hwinfo --pci --block --mouse --save-config=all");
+	string command = "hwinfo --pci --block --mouse --save-config=all";
+	y2milestone ("Running %1", command);
+	map cmdret = (map)SCR::Execute (.target.bash_output, command);
+	integer exit = cmdret["exit"]:-1;
+	y2milestone ("Command retval: %1", cmdret["exit"]:-1);
+	if (exit != 0)
+	    y2error ("Command output: %1", cmdret);
+	else
+	    y2debug ("Command output: %1", cmdret);
     }
 
 }
