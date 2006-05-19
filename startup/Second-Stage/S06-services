@@ -51,4 +51,12 @@ if [ -x /usr/sbin/rchal ] ; then
 	test -f /usr/sbin/rchal   && /usr/sbin/rchal   start
 fi
 
+#==============================================
+# 9.2) start iscsid
+#----------------------------------------------
+if [ -d /sys/class/iscsi_session/session* ] ; then
+        log "\tStarting iscsid..."
+	test -x /sbin/iscsid && /sbin/iscsid -p /var/run/iscsi.pid -c /etc/iscsid.conf
+fi
+
 sleep 1
