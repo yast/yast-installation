@@ -1,0 +1,85 @@
+/**
+ * File:
+ *  copy_logs_finish.ycp
+ *
+ * Module:
+ *  Step of base installation finish
+ *
+ * Authors:
+ *  Jiri Srain <jsrain@suse.cz>
+ *
+ * $Id$
+ *
+ */
+
+{
+
+textdomain "installation";
+
+import "Directory";
+include "installation/misc.ycp";
+
+any ret = nil;
+string func = "";
+map param = $[];
+
+/* Check arguments */
+if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
+    func = (string)WFM::Args(0);
+    if(size(WFM::Args()) > 1 && is(WFM::Args(1), map))
+	param = (map)WFM::Args(1);
+}
+
+y2milestone ("starting copy_logs_finish");
+y2debug("func=%1", func);
+y2debug("param=%1", param);
+
+if (func == "Info")
+{
+    return (any)$[
+	"steps" : 1,
+	// progress step title
+	"title" : _("Copying log files to installed system..."),
+	"when" : [ `installation, `update, `autoinst ],
+    ];
+}
+else if (func == "Write")
+{
+    list<string> log_files = (list<string>) WFM::Read(.local.dir, Directory::logdir );
+
+    foreach ( string file, log_files,
+    {
+	if ( file == "y2log" || regexpmatch( file, "y2log-[0-9]+" ) )
+	{
+	    // Prepare y2log, y2log-* for log rotation
+
+	    integer target_no = 1;
+
+	   if ( size( file ) > size( "y2log-" ) )
+		target_no = 1 + tointeger( substring( file, size( "y2log-" ), 5 ) );
+
+	   InjectRenamedFile( Directory::logdir, file, sformat( "y2log-%1", target_no ) );
+	}
+	else if ( file == "zypp.log" )
+	{
+	    // Save zypp.log from the inst-sys
+	   InjectRenamedFile( Directory::logdir, file, "zypp.log-1");
+	}
+	else    // not y2log, y2log-*
+	{
+	    InjectFile( Directory::logdir + "/" + file );
+	}
+    });
+}
+else
+{
+    y2error ("unknown function: %1", func);
+    ret = nil;
+}
+
+y2debug("ret=%1", ret);
+y2milestone("copy_logs_finish finished");
+return ret;
+
+
+} /* EOF */
