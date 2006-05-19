@@ -31,6 +31,7 @@
     import "Register";
     import "SourceManager";
     import "PackageSystem";
+    import "Package";
 
     // no network - no suse_register
     if (!Mode::normal())
@@ -477,11 +478,14 @@ string browser_command(string url)
 
         if ( Register::iamroot )
         {
+            // check for and install mozilla-xulrunner if needed (#175166)
+            Package::InstallAllMsg(["mozilla-xulrunner"], nil);
             cmd_ok = (integer) SCR::Execute(.target.bash, "test -x /usr/bin/xulrunner") == 0 ? true:false;
             bcmd = " MOZ_DISABLE_PANGO=1 /usr/bin/xulrunner /usr/share/YaST2/yastbrowser/application.ini -url ";
         }
         else
-        {
+        {   // this case will never happen because we will not run as non-root (#170736)
+            Package::InstallAllMsg(["MozillaFirefox"], nil);  // (#175166)
             cmd_ok = (integer) SCR::Execute(.target.bash, "test -x /usr/bin/firefox") == 0 ? true:false;
             bcmd = " firefox -new-window ";
         }

@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri May 19 17:57:10 CEST 2006 - jdsn@suse.de
+
+- let inst_suse_register ask to install mozilla-xulrunner if 
+  missing (#175166)
+- prevent non-root user to run inst_suse_register (#170736)
+- 2.13.110
+
+-------------------------------------------------------------------
 Fri May 19 15:36:36 CEST 2006 - jsrain@suse.cz
 
 - more verbose logging of storing hardware status (#170188)
