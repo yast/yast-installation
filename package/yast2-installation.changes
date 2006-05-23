@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue May 23 18:58:20 CEST 2006 - jdsn@suse.de
+
+- gray out checkboxes in inst_suse_register when skipping (#178042)
+- 2.13.112 
+
+-------------------------------------------------------------------
 Tue May 23 15:07:42 CEST 2006 - jsrain@suse.cz
 
 - added different desktop files for SLE and BOX/openSUSE

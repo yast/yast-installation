@@ -205,7 +205,7 @@ string help = help_title + help_para1 + help_para2 + (Register::display_forcereg
                              `VSpacing(1),
                              `Left ( `RadioButton(`id(`noconfigure), `opt(`notify), nccc_noconfigure )),
                              `Left ( `RadioButton(`id(`configure),   `opt(`notify), nccc_configure, true )),
-                             `Left ( `HBox( `HSpacing( 3.0 ),
+                             `Left ( `id(`includeinfo), `HBox( `HSpacing( 3.0 ),
                                       `VBox (
                                              `VSpacing(0.5),
                                              `Left( `Label( nccc_sub_comment ) ),
@@ -806,6 +806,9 @@ boolean launchBrowser(string url)
         // update main widget settings - they may have changed
         if (configure_status) UI::ChangeWidget(`id(`configure), `Value, true);
         else UI::ChangeWidget(`id(`noconfigure), `Value, true);
+
+        // gray out if later is selected (#178042)
+        UI::ChangeWidget(`id(`includeinfo), `Enabled, UI::QueryWidget(`id(`configure),  `Value) );
 
         UI::ChangeWidget(`id(`hwinfo), `Value, Register::submit_hwdata);
         // (#165841)
