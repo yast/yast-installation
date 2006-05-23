@@ -92,7 +92,7 @@ global list<integer> mode_config_sources = [];
  * @param filename string the filename with the tarball to use to the update
  * @return boolean true on success
  */
-boolean UpdateInstSys (string filename) {
+global boolean UpdateInstSys (string filename) {
     src_cache_id = src_cache_id + 1;
     string tmpdir = (string)SCR::Read (.target.tmpdir);
     tmpdir = sformat ("%1/%2", tmpdir, src_cache_id);
