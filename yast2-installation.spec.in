@@ -32,6 +32,11 @@ This controls the system installation.
 @BUILD@
 
 @INSTALL@
+%if %sles_version
+    rm $RPM_BUILD_ROOT/%{prefix}/share/applications/YaST2/suse_register.desktop
+%else
+    rm $RPM_BUILD_ROOT/%{prefix}/share/applications/YaST2/customer_center.desktop
+%endif
 
 @CLEAN@
 

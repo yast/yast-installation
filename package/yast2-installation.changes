@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue May 23 15:07:42 CEST 2006 - jsrain@suse.cz
+
+- added different desktop files for SLE and BOX/openSUSE
+
+-------------------------------------------------------------------
 Tue May 23 13:20:03 CEST 2006 - jdsn@suse.de
 
 - fixed layouting in inst_ask_online_update (#177559) 
