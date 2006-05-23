@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue May 23 13:20:03 CEST 2006 - jdsn@suse.de
+
+- fixed layouting in inst_ask_online_update (#177559) 
+
+-------------------------------------------------------------------
 Fri May 19 17:57:10 CEST 2006 - jdsn@suse.de
 
 - let inst_suse_register ask to install mozilla-xulrunner if 
