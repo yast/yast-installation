@@ -46,10 +46,13 @@ You may skip this step and run an online update later.
     sr_layout=`HVCenter(
     `VBox(
            `Left( `Label( ask_update_main  ) ),
-           `Left( `RadioButtonGroup(`id(`run_update) , `VBox(
-                         `RadioButton(`id(`update), ask_update_run_btn, true ),
-                         `RadioButton(`id(`noupdate), ask_update_skip_btn)
-           ) ) )
+           `Left( `RadioButtonGroup(`id(`run_update) ,
+                  `HBox( `HSpacing(1),
+                     `VBox(
+                         `Left( `RadioButton(`id(`update), ask_update_run_btn, true )),
+                         `Left( `RadioButton(`id(`noupdate), ask_update_skip_btn))),
+                     `HSpacing(1)
+            ) ) )
     ));
 
     term contents = `VBox ( `VSpacing (0.5), sr_layout, `VSpacing (0.5));
