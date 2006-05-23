@@ -808,7 +808,7 @@ boolean launchBrowser(string url)
         else UI::ChangeWidget(`id(`noconfigure), `Value, true);
 
         // gray out if later is selected (#178042)
-        UI::ChangeWidget(`id(`includeinfo), `Enabled, UI::QueryWidget(`id(`configure),  `Value) );
+        UI::ChangeWidget(`id(`includeinfo), `Enabled, configure_status );
 
         UI::ChangeWidget(`id(`hwinfo), `Value, Register::submit_hwdata);
         // (#165841)
