@@ -882,9 +882,12 @@ global symbol DoInstall() {
 	// Try to extract files from the archive
 	map out = (map)SCR::Execute (.target.bash_output, sformat ("
 test -d /y2update && rm -rf /y2update;
-/bin/mkdir /y2update;
-cd /y2update;
+/bin/mkdir -p /y2update/all;
+cd /y2update/all;
 /bin/tar -xvf %1;
+cd /y2update;
+ln -s all/usr/share/YaST2/* .;
+ln -s all/usr/lib/YaST2/* .;
 ", binaries));
 
 	// Failed
