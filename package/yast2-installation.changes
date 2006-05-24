@@ -3,6 +3,7 @@ Wed May 24 12:52:21 CEST 2006 - jsrain@suse.cz
 
 - properly integrate YCP code for add-on product installation in
   running system (if YCP code present) (#178311)
+- 2.13.113
 
 -------------------------------------------------------------------
 Tue May 23 18:58:20 CEST 2006 - jdsn@suse.de
