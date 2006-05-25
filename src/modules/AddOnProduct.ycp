@@ -857,12 +857,15 @@ unzip -qqo '%2'
 global symbol DoInstall() {
     // Display /media.1/info.txt if such file exists
     // Display license and wait for agreement
+    // Not needed here, license already shown in the workflow
+    /*
     boolean license_ret = AcceptedLicenseAndInfoFile(src_id);
     if (license_ret != true) {
 	y2milestone("Removing the current source ID %1", src_id);
 	Pkg::SourceDelete(src_id);
 	return nil;
     }
+    */
 
     string control = Pkg::SourceProvideOptionalFile (src_id, 1, "/installation.xml");
     // Fallback -- Source didn't provide needed controll file
