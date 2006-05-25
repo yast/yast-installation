@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu May 25 08:46:56 CEST 2006 - jsrain@suse.cz
+
+- added possibility to specify add-on product URL as command-line
+  parameter of add-on.ycp (to run add-on product workflow via
+  autorun.sh)
+
+-------------------------------------------------------------------
 Wed May 24 12:52:21 CEST 2006 - jsrain@suse.cz
 
 - properly integrate YCP code for add-on product installation in

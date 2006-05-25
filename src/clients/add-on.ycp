@@ -38,8 +38,24 @@ PackageCallbacksInit::InitPackageCallbacks ();
 
 // Initialize current sources
 Read();
-symbol ret = RunWizard();
+symbol ret = nil;
 
+if (size (WFM::Args()) == 0)
+{
+    y2milestone ("Url not specified in the command line, asking user");
+    ret = RunWizard();
+}
+else
+{
+    string url = (string)WFM::Args(0);
+    y2milestone ("Specified URL %1", url);
+    do {
+	createResult = SourceManager::createSource (url);
+	y2milestone ("Source creating result: %1", createResult);
+    } while ( createResult == `again );
+    AddOnProduct::last_ret = `next;
+    ret = RunAutorunWizard ();
+}
 if (ret == `next)
 {
     ret = AddOnProduct::DoInstall ();

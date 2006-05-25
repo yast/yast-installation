@@ -773,6 +773,29 @@ symbol RunWizard() {
     return Sequencer::Run(aliases, sequence);
 }
 
+symbol RunAutorunWizard() {
+    map aliases = $[
+	"catalog" : ``(CatalogSelect ()),
+	"product" : ``(ProductSelect ()),
+    ];
+
+    map sequence = $[
+	"ws_start" : "catalog",
+	"catalog" : $[
+	    `abort : `abort,
+	    `next : "product",
+	    `finish : `next,
+	],
+	"product" : $[
+	    `abort : `abort,
+	    `next : `next,
+	    `finish : `next,
+	],
+    ];
+    return Sequencer::Run(aliases, sequence);
+
+}
+
 
 void Redraw (boolean enable_back, boolean enable_next) {
     // main screen heading
