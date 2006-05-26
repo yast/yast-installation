@@ -62,7 +62,7 @@ textdomain="control"
       <congratulate>
 	<label>
 &lt;p&gt;&lt;b&gt;Congratulations!&lt;/b&gt;&lt;/p&gt;
-&lt;p&gt;The installation of &amp;product; on your machine is complete.
+&lt;p&gt;The installation of SUSE Linux on your machine is complete.
 After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt;
 &lt;p&gt;Visit us at %1.&lt;/p&gt;
 &lt;p&gt;Have a lot of fun!&lt;br&gt;Your SUSE Development Team&lt;/p&gt;
