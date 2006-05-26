@@ -2,6 +2,7 @@
 Fri May 26 14:27:56 CEST 2006 - jsrain@suse.cz
 
 - fixed behavior if SLP source detection fails (#179036)
+- 2.13.115
 
 -------------------------------------------------------------------
 Thu May 25 08:46:56 CEST 2006 - jsrain@suse.cz
