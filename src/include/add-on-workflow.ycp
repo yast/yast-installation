@@ -72,7 +72,7 @@ symbol AddSourceTypeSLP () {
 	    {
 		y2warning("No SLP catalogs");
 		// error popup
-		Report::Error ( _("No SLP catalogs found.") );
+		Report::Message ( _("No SLP catalogs found.") );
 		ret = `back;
 
 	    /* Some serves were found */
@@ -286,6 +286,7 @@ symbol MediaSelect () {
 	    ret = AddSourceTypeSLP();
 	    y2milestone("SLP-Add returned: %1", ret);
 	    if (ret == `ok) ret = `next;
+	    else ret = nil;
 	}
 
 	else if ( input == `ftp || input == `http || input == `https || input == `samba )
