@@ -622,11 +622,11 @@ Please visit us at http://www.novell.com/linux/.
                     <name>do_net_test</name>
                 </module>
                 <module>
-                    <label>Update Configuration</label>
+                    <label>Customer Center</label>
                     <name>addon_update_sources</name>
                 </module>
                 <module>
-                    <label>Update Configuration</label>
+                    <label>Customer Center</label>
                     <name>suse_register</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>

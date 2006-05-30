@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue May 30 18:02:54 CEST 2006 - jdsn@suse.de
+
+- set correct title of installation step Customer Center (#179921)
+- 2.13.116
+
+-------------------------------------------------------------------
 Fri May 26 14:27:56 CEST 2006 - jsrain@suse.cz
 
 - fixed behavior if SLP source detection fails (#179036)
