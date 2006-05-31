@@ -3,6 +3,7 @@ Wed May 31 12:58:33 CEST 2006 - jsrain@suse.cz
 
 - avoid calling Pkg::SourceStartCache during 1st stage of the
   installation (#178007)
+- 2.13.117
 
 -------------------------------------------------------------------
 Tue May 30 18:02:54 CEST 2006 - jdsn@suse.de
