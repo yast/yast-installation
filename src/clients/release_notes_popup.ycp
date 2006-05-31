@@ -15,6 +15,8 @@
     import "Language";
     import "Report";
     import "Label";
+    import "Stage";
+    import "Packages";
 
     /* filename of release notes */
     string file = "";
@@ -27,8 +29,16 @@
     define boolean load_release_notes ()
     {
         string path_to_relnotes = "/docu";
-	list<integer> sources = Pkg::SourceStartCache (true);
-	integer source_id = sources[0]:0;
+	integer source_id = 0;
+	if (Stage::initial ())
+	{
+	    source_id = Packages::theSources[0]:0;
+	}
+	else
+	{
+	    list<integer> sources = Pkg::SourceStartCache (true);
+	    source_id = sources[0]:0;
+	}
 	string path_templ = path_to_relnotes + "/RELEASE-NOTES.%1.rtf";
 	y2debug ("Path template: %1", path_templ);
 	string tmp = sformat (path_templ, Language::language);
