@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jun  1 17:57:23 CEST 2006 - mvidner@suse.cz
+
+- Do log Report::{Message,Warning,Error} messages by default (#180862).
+- 2.13.119
+
+-------------------------------------------------------------------
 Thu Jun  1 14:55:44 CEST 2006 - jsrain@suse.cz
 
 - honor UPDATEURLS if installing add-on product in running system
