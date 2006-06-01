@@ -58,6 +58,7 @@ else
 }
 if (ret == `next)
 {
+    WFM::CallFunction ("inst_addon_update_sources", []);
     ret = AddOnProduct::DoInstall ();
     // Write only when there are some changes
     Write();

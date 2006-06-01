@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jun  1 14:55:44 CEST 2006 - jsrain@suse.cz
+
+- honor UPDATEURLS if installing add-on product in running system
+  (#180417)
+
+-------------------------------------------------------------------
 Wed May 31 12:58:33 CEST 2006 - jsrain@suse.cz
 
 - avoid calling Pkg::SourceStartCache during 1st stage of the
