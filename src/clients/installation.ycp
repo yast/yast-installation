@@ -165,11 +165,6 @@
 	Report::DisplayWarnings(true, 10);
     }
 
-    // Don't log Report messages by default
-    Report::LogMessages(false);
-    Report::LogErrors(false);
-    Report::LogWarnings(false);
-
     /*
      * The Stage::cont () flag decides, if the installation
      * should be _started_ or _continued_.
