@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Jun  6 09:53:16 CEST 2006 - jsrain@suse.cz
+
+- sync add-on product source to ZMD (#181743)
+
+-------------------------------------------------------------------
 Thu Jun  1 17:57:23 CEST 2006 - mvidner@suse.cz
 
 - Do log Report::{Message,Warning,Error} messages by default (#180862).

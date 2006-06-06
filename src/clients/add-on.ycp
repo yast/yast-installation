@@ -58,6 +58,21 @@ else
 }
 if (ret == `next)
 {
+    // feedback heading
+    string heading = _("Add-On Product Installation");
+    // feedback message
+    string message
+	= _("Reading packages available on the installation sources...");
+
+    Popup::ShowFeedback (heading, message);
+
+    y2milestone ("syncing srcid %1 to zmd", AddOnProduct::src_id);
+    boolean synced
+	= SourceManager::SyncAddedAndDeleted ([AddOnProduct::src_id], []);
+    y2milestone ("sync status: %1", synced);
+
+    Popup::ClearFeedback ();
+
     WFM::CallFunction ("inst_addon_update_sources", []);
     ret = AddOnProduct::DoInstall ();
     // Write only when there are some changes
