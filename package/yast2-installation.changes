@@ -1,8 +1,11 @@
 -------------------------------------------------------------------
-Tue Jun  6 17:50:24 CEST 2006 - mvidner@suse.cz
+Tue Jun  6 18:32:04 CEST 2006 - mvidner@suse.cz
 
+- Call suse_register with --nozypp meaning that we will tell rug
+  ourselves which zypp/yum sources it should add. This enables
+  rejecting broken or untrusted sources (#180820).
 - Moved the major part of Register::add_update_sources to
-  SourceManager::AddUpdateSources
+  SourceManager::AddUpdateSources.
 - 2.13.121
 
 -------------------------------------------------------------------
