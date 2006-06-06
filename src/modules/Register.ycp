@@ -209,10 +209,11 @@ global map<string, string> suseRegister(symbol parameter)
     // handle parameters
     //  -y beautifies the output for usage in yast
     //  -L log file
+    //  --nozypp do not add zypp and yum sources to zmd, #180820
     //  -p list parameters (no dumpfile with -p)
 
     // always log and beautify!
-    string params = " -y -L ~/.suse_register.log ";
+    string params = " -y -L ~/.suse_register.log --nozypp ";
     if (parameter == `p) params = params + " -p ";
     else params = params + sformat(" --dumpfile=%1 ", services_file);
 
