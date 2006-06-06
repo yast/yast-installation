@@ -1,7 +1,14 @@
 -------------------------------------------------------------------
+Tue Jun  6 17:50:24 CEST 2006 - mvidner@suse.cz
+
+- Moved the major part of Register::add_update_sources to
+  SourceManager::AddUpdateSources
+- 2.13.121
+
+-------------------------------------------------------------------
 Tue Jun  6 09:53:16 CEST 2006 - jsrain@suse.cz
 
-- sync add-on product source to ZMD (#181743)S
+- sync add-on product source to ZMD (#181743)
 - 2.13.120
 
 -------------------------------------------------------------------
