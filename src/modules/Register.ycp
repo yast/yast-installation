@@ -13,13 +13,13 @@ module "Register";
 textdomain "installation";
 
 import "FileUtils";
-import "URL";
 import "Mode";
 import "String";
 import "Misc";
 import "Stage";
 import "Label";
 import "ProductFeatures";
+import "SourceManager";
 
 
 
@@ -161,43 +161,6 @@ void write_config()
        SCR::Write(.target.string, home_config,  confdata);
     }
 
-}
-
-/**
- * Parse a URL query (already unescaped) to a map.
- * If no equal sign, the value will be nil.
- * @param query foo=bar&baz=qux
- * @return $["foo": "bar", "baz": "qux"]
- */
-map<string, string> ParseUrlQuery (string query) {
-    list<string> q_items = splitstring (query, "&");
-    map<string, string> q_map = listmap (string q_item, q_items, {
-	integer eqpos = search (q_item, "=");
-	if (eqpos == nil)
-	{
-	    return $[ q_item: nil ];
-	}
-	else
-	{
-	    string key = substring (q_item, 0, eqpos);
-	    string val = substring (q_item, eqpos + 1);
-	    return $[ key: val ];
-	}
-    });
-    return q_map;
-}
-
-/**
- * @return For existing sources, get a mapping from the alias to the id
- */
-map<string,integer> get_alias_to_id () {
-    list<integer> src_ids = Pkg::SourceGetCurrent (false /*enabled only?*/);
-    map<string,integer> a2i = listmap (integer src_id, src_ids, {
-	map gendata = Pkg::SourceGeneralData (src_id);
-	string alias = gendata["alias"]:"";
-	return $[ alias: src_id ];
-    });
-    return a2i;
 }
 
 // ------------------------------------------------------------------
@@ -353,52 +316,11 @@ global boolean add_update_sources ()
     if (!FileUtils::Exists (services_file))
     return false;
 
-    // prepare for lookup of known aliases
-    map<string,integer> aliases = get_alias_to_id ();
-    y2milestone ("alias mapping: %1", aliases);
-
     // filters out empty items (#165860#c12)
     list<string> urls = String::NewlineItems (
 	(string)SCR::Read(.target.string, services_file));
-    // add the sources.
-    // but do not make duplicates (#168740)
-    // we detect them based on alias that suse_register gives us (#158850#c17)
-    /// (but only for SLE... :-/ )
-    /// Need to test what happens when we get two different update
-    /// servers for SL
-    /// Anyway that means only that #168740 remains unfixed for SL
-    foreach (string url, urls, {
-	y2milestone ("Should add an update source: %1", url);
-	// inst_addon_update_sources also calls Pkg::SourceCreate
-	// but it already skips duplicates
 
-	// plan: (log each step!)
-	// parse the URL
-	map parsed_url = URL::Parse (url);
-	y2milestone ("parsed: %1", parsed_url);
-	// (reassemble and warn if it differs)
-	string reassembled = URL::Build (parsed_url);
-	if (url != reassembled)
-	{
-	    y2warning ("reassembled differs: %1", reassembled);
-	}
-	// get the alias
-	map<string, string> q_map = ParseUrlQuery (parsed_url["query"]:"");
-	y2milestone ("query: %1", q_map);
-	string alias = q_map["alias"]:"";
-	// check if alias already there (empty: box safeguard)
-	// if yes, delete the old one
-	if (alias != "" && haskey (aliases, alias))
-	{
-	    integer todel = aliases[alias]:-1;
-	    y2milestone ("deleting the old copy, source %1", todel); 
-	    Pkg::SourceDelete (todel);
-	}
-	// then add the new one
-	y2milestone ("adding source");
-        Pkg::SourceCreate (url, "/");
-    });
-    return true;
+    return SourceManager::AddUpdateSources (urls);
 }
 
 
