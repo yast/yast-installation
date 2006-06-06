@@ -1,0 +1,1260 @@
+/**
+ * File:	modules/SourceManager.ycp
+ * Package:	Package Source Management
+ * Summary:	SourceManager settings, input and output functions
+ * Authors:	Anas Nashif <nashif@suse.de>
+ *		Lukas Ocilka <locilka@suse.cz>
+ *		Martin Vidner <mvidner@suse.cz>
+ * Status:      Work in Progress
+ *
+ * $Id$
+ *
+ * Representation of the configuration of source-manager.
+ * Input and output routines.
+ */
+
+{
+
+textdomain "packager";
+module "SourceManager";
+
+import "Progress";
+import "Report";
+import "Popup";
+import "Label";
+import "Summary";
+import "Message";
+import "HTML";
+import "Arch";
+import "Mode";
+import "Stage";
+import "URL";
+import "InstURL";
+import "String";
+
+
+global list<integer> newSources = [];
+
+global integer numSources = 0;
+    
+global list<integer> sourceStates = [];
+
+global list<map<string,any> > sourceStatesIn = [];
+
+global list<map<string,any> > sourceStatesOut = [];
+
+
+list<map> slp_sources = [];
+
+string pm_init_blocker = "";
+
+global map url_tokens = $[];
+
+global string currentUrl = "";
+
+/**
+ * Prototypes
+ */
+global boolean Modified();
+
+/**
+ * Data was modified?
+ */
+global boolean modified = false;
+
+/**
+ */
+global boolean proposal_valid = false;
+
+/**
+ * Abort function
+ * return boolean return true if abort
+ */
+global boolean AbortFunction() {
+    return false;
+    }
+
+/**
+ * Abort function
+ * @return boolean return true if abort
+ */
+global define boolean Abort() ``{
+    if(AbortFunction != nil)
+    {
+	return AbortFunction () == true;
+    }
+    return false;
+}
+
+/**
+ * Data was modified?
+ * @return true if modified
+ */
+global boolean Modified() {
+    y2debug("modified=%1",modified);
+    //return modified;
+    return (sourceStatesIn != sourceStatesOut);
+}
+
+global boolean ReadSources()
+{
+    boolean success = Pkg::SourceStartManager( false );
+    if (!success)
+        return success;
+    sourceStates = Pkg::SourceStartCache ( false );
+    sourceStatesIn = Pkg::SourceEditGet();
+    sourceStatesOut = sourceStatesIn;
+    return true;
+}
+
+/*
+ * Disabled for now
+global list<map> ReadSLPSources() {
+    import "SLP";
+    list<map> _slp_sources = SLP::FindSrvs("service:install.suse", "");
+    _slp_sources = maplist (map s, _slp_sources, ``{
+               s["attr"] = SLP::GetAttrMap(s["srvurl"]:"");
+               return s;
+            });
+
+    _slp_sources = filter(map s , _slp_sources, 
+            ``(issubstring(s["attr","machine"]:"", Arch::architecture())));
+
+    return _slp_sources;
+}
+*/
+
+/**
+ * Read all source-manager settings
+ * @return true on success
+ */
+global boolean Read() {
+
+    /* SourceManager read dialog caption */
+    string caption = _("Initializing Available Catalogs");
+
+    integer steps = 2;
+
+
+    // We do not set help text here, because it was set outside
+    Progress::New( caption, " ", steps, [
+	    /* Progress stage 1/3 */
+	    _("Read configured catalogs"),
+	    /* Progress stage 2/3 */
+	    _("Detect available catalogs via SLP")
+	], [
+	    /* Progress step 1/3 */
+	    _("Reading configured catalogs..."),
+	    /* Progress step 2/3 */
+	    _("Detecting available catalogs..."),
+	    /* Progress finished */
+	    _("Finished")
+	],
+	""
+    );
+
+    // read database
+    if(Abort()) return false;
+    Progress::NextStage();
+
+
+    /* Error message */
+    if(!ReadSources()) Report::Error(_("Cannot read catalogs."));
+
+    // read another database
+    if(Abort()) return false;
+    Progress::NextStep();
+
+
+    /* Error message */
+    if(false) Report::Error(_("Cannot detect availabe catalogs."));
+
+    if(Abort()) return false;
+    /* Progress finished */
+    Progress::NextStage();
+
+    // slp_sources = ReadSLPSources();
+    
+    y2debug ("slp catalogs: %1", slp_sources);
+
+    if(Abort()) return false;
+    modified = false;
+    return true;
+}
+
+/**
+ * Commit changed sources
+ */ 
+global boolean CommitSources() {
+    y2debug("In: %1  Out: %2",   sourceStatesIn, sourceStatesOut );
+    boolean success = false;
+    while (true)
+    {
+        success = Pkg::SourceEditSet( sourceStatesOut );
+        if ( !success ) {
+	    // popup message header
+            string _msg1 = _("Unable to save changes to the catalog
+                    repository.
+");
+            string err = Pkg::LastErrorId();
+	    // popup message, after message header, header of details
+            string _msg2 = _("Details:") + "\n" + Pkg::LastError();
+	    // end of popup message, question
+            _msg2 = _msg2 + "\n" + _("Try again?");
+
+            boolean tryagain = Popup::YesNo( _msg1 + "\n" + _msg2 );
+            if (tryagain )
+                continue;
+            else
+                break;
+        }
+        else
+        {
+            break;
+        }
+    }
+    return success;
+}
+
+/**
+ * Write all source-manager settings
+ * @return true on success
+ */
+global boolean Write() {
+    
+    /* SourceManager read dialog caption */
+    string caption = _("Saving Catalog Configuration");
+
+    integer steps = 1;
+
+    // We do not set help text here, because it was set outside
+    Progress::New(caption, " ", steps, [
+	    /* Progress stage 1/1 */
+	    _("Write catalog settings"),
+	], [
+	    /* Progress step 1/1 */
+	    _("Writing the settings..."),
+
+	    /* Progress finished */
+	    _("Finished")
+	],
+	""
+    );
+
+    // write settings
+    if(Abort()) return false;
+   
+    Progress::NextStage();
+    /* Error message */
+
+    boolean exit = CommitSources();
+
+        
+    
+    if(Abort()) return false;
+    /* Progress finished */
+    Progress::NextStage();
+
+    if(Abort()) return false;
+    
+    return exit;
+}
+
+/**
+ * Get all source-manager settings from the first parameter
+ * (For use by autoinstallation.)
+ * @param settings The YCP structure to be imported.
+ * @return boolean True on success
+ */
+global boolean Import (map settings) {
+    return true;
+}
+
+/**
+ * Dump the source-manager settings to a single map
+ * (For use by autoinstallation.)
+ * @return map Dumped settings (later acceptable by Import ())
+ */
+global map Export () {
+    return $[];
+}
+
+
+
+
+global boolean CreateLocalMetaData ( 
+        integer SrcId, 
+        string metaDir,
+        string slidedir,
+        string descrDir, 
+        string prodDir) {
+
+    boolean  all_sources_ok=true;
+    string localdir = metaDir+"/"+descrDir;
+    WFM::Execute (.local.mkdir, localdir);
+    y2debug("created local dir : %1", localdir );
+    string datadir = Pkg::SourceProvideDir (SrcId, 1, descrDir+"/media.1");
+    if (datadir != nil)
+    {
+        WFM::Execute (.local.mkdir, localdir+"/media.1");
+        WFM::Execute (.local.bash, "/bin/cp " + datadir + "/* " + localdir+"/media.1");
+    }
+    else
+    {
+        y2error ("media doesn't provide %1", descrDir + "/media.1");
+        if (Popup::AnyQuestion (
+                    //	Popup::NoHeadline(),
+		    // popup headline
+                    _("Reading Media Description Failed"),
+                    sformat (
+			// popup message, %1 is filename
+                        _("Cannot read media description for %1.
+                            Packages from this media cannot be installed."), descrDir),
+                    Label::IgnoreButton (),
+                    Label::AbortButton (),
+                    `cancel))
+        {
+            return false;
+        }
+        else
+        {
+            all_sources_ok = false;
+        }
+    }
+
+    // content file
+    datadir = Pkg::SourceProvideFile (SrcId, 1, descrDir+"/content");
+    WFM::Execute (.local.bash, "/bin/cp " + datadir + " " + localdir + "/content");
+
+    // DESCRDIR
+    WFM::Execute (.local.bash, "/bin/grep DESCRDIR " + localdir + "/content > /tmp/descrdir");
+    string descrline = (string) WFM::Read (.local.string, "/tmp/descrdir");
+    list<string> descrsplit = splitstring (descrline, " \t\n");
+    string _descrdir = descrsplit[1]:"";
+    if (size (_descrdir) > 0)
+    {
+        y2milestone ("descrdir %1", _descrdir);
+        WFM::Execute (.local.mkdir, localdir+"/"+_descrdir);
+        datadir = Pkg::SourceProvideDir (SrcId, 1, descrDir+"/"+_descrdir);
+        if (datadir != nil)
+        {
+            WFM::Execute (.local.bash, "/bin/cp " + datadir + "/* " +localdir+"/"+_descrdir);
+        } else {
+            y2error("Error providing %1", _descrdir );
+        }
+    }
+
+    // copy GPG keys if there are any
+
+    string directory_file = Pkg::SourceProvideFile (
+	SrcId, 1, descrDir + "/directory.yast");
+
+    string directory_str = (string)
+	WFM::Read (.local.string, directory_file);
+    list<string> directory = splitstring (directory_str, "\n");
+    directory = filter (string d, directory, {
+	return substring (d, 0, 10) == "gpg-pubkey";
+    });
+    y2milestone ("GPG keys to be copied: %1", directory);
+    foreach (string k, directory, {
+	string file = Pkg::SourceProvideFile (
+	    SrcId, 1, descrDir + "/" + k);
+	WFM::Execute (.local.bash,
+	    "cp /" + file + " " + localdir);
+    });
+
+    // slide show
+
+    if (size (_descrdir) > 5)
+    {
+        string tmp = substring (_descrdir, 0, size (_descrdir) - 5) + "slide";
+        y2milestone("slide dir: %1", tmp );
+        WFM::Execute (.local.mkdir, localdir+"/"+tmp);
+        // FIXME: SourceProvideDir can't handle dirs with subdirs
+        datadir = Pkg::SourceProvideDir (SrcId, 1, descrDir+"/"+tmp);
+        // datadir = "/var/adm/YaST/InstSrcManager/IS_CACHE_0x00000001/MEDIA" + orderdir+"/"+tmp;
+        y2milestone ("tmp=%1, datadir=%2", tmp, datadir);
+        if (datadir != nil)
+        {
+            y2milestone ("copy slide show %1 %2", datadir, slidedir);
+            WFM::Execute (.local.bash, "/bin/cp -r " + datadir + "/* " + slidedir);
+
+            // if directory is empty, remove it.
+            WFM::Execute (.local.bash, "/bin/rmdir " + slidedir);
+        }
+    }
+
+    return all_sources_ok;
+
+}
+
+
+/**
+ * Get Source ID by index 
+ */
+global integer GetSrcIdByIndex(integer idx)   {
+    
+    integer SrcId = sourceStatesOut[idx, "SrcId"]:-1;
+  
+    return SrcId;
+}
+
+/**
+ * Set current used source URL by index 
+ */
+global void SetUrlByIndex(integer idx)   {
+    
+    integer SrcId = sourceStatesOut[idx, "SrcId"]:-1;
+    currentUrl = Pkg::SourceGeneralData(SrcId)["url"]:"";
+    return;
+}
+
+
+/**
+ * Get Source ID when only URL is known 
+ */
+global define integer getSourceId( string url ) {
+    
+    numSources = size( sourceStatesOut );
+    integer i = 0;
+    integer id = -1;
+    while ( i < numSources )
+    { 
+        map generalData = Pkg::SourceGeneralData(sourceStatesOut[i, "SrcId"]:-1 );
+	if ( generalData[ "url" ]:"" == url )
+	{
+	    id = sourceStatesOut[i, "SrcId"]:-1;
+	    break;
+	}
+
+	i = i + 1;
+    }
+    
+    return id;
+}
+
+
+
+
+
+
+/**
+ * Gather Source Metadata
+ */
+global define map SourceData(integer source) ``{
+    map g =  Pkg::SourceGeneralData( source );
+    y2milestone("generalData: %1", g);
+    map p =  Pkg::SourceProductData( source );
+    if (p == nil)
+    {
+	p = $[];
+    }
+
+    y2milestone("productData: %1", p);
+    return ((map)union(g,p));
+}
+
+/**
+ * Create a Source from an URL
+ */
+global symbol createSource( string url ) {
+    
+    if ( url != "" )
+    {
+	if (!Mode::commandline())
+	{
+	    // Popup::Message( sformat( "URL: %1", url ) );
+	    UI::OpenDialog(
+			   `VBox(
+				 `VSpacing( 0.2 ),
+				 `Label( _("Adding catalog...") ),
+				 `VSpacing( 0.2 )
+				 )
+			   );
+	}
+	newSources = Pkg::SourceScan( url, "" );
+
+	if (!Mode::commandline())	
+	    UI::CloseDialog();
+
+	
+	if ( size( newSources ) == 0  )
+	{
+	    string _msg1 = sformat( _("Unable to create catalog
+from URL '%1'."), InstURL::HidePassword(url) );
+	    string err = Pkg::LastErrorId();
+	    string _msg2 = "";
+	    if ( err != "ok" ) {
+		if ( err == "instsrc_duplicate" )
+		    _msg2 = _("A catalog for this product already exists.");
+		else
+		    _msg2 = _("Details:") + "\n" + Pkg::LastError();
+	    }
+	    // end of popup message, question
+	    _msg2 = _msg2 + "\n" + _("Try again?");
+
+	    boolean tryagain = Popup::YesNo( _msg1 + "\n" + _msg2 );
+	    if ( tryagain ) return `again;
+	    else return `cancel;
+	}
+	else
+	{
+	    list<integer> ul_sources = filter (integer s, newSources, {
+		map src_data = Pkg::SourceGeneralData (s);
+		string src_type = src_data["type"]:"";
+		return src_type == "YaST";
+	    });
+	    if (size (ul_sources) == 0)
+	    {
+		if (! Popup::AnyQuestion (
+					  Popup::NoHeadline (),
+// continue-back popup
+					  _("There is no product information available at the given location.
+If you expected to address a product, return back and enter
+the correct location.
+To make rpm packages located at the specified location available
+in the packages selection, continue."),
+					  Label::ContinueButton (),
+					  Label::BackButton (),
+					  `focus_yes))
+		{
+		    return `again;
+		}
+	    }
+	    foreach( integer id, newSources, ``{
+		map<string, any> sourceState = $[ "SrcId": id, "enabled": true ];
+		sourceStatesOut = add( sourceStatesOut, sourceState ); 
+	    } );
+	    return `ok;
+	}
+    }
+    return `cancel;
+}
+
+/**
+ * Delete Source by Source ID
+ */
+global void deleteSourceBySrcId( integer SrcId )   {
+
+    y2debug("removing source: %1 %2", SrcId,   sourceStatesOut );
+    numSources = size( sourceStatesOut );
+    integer i = 0;
+    
+    while ( i < numSources )
+    {
+
+	if ( sourceStatesOut[i, "SrcId"]:-1 == SrcId )
+	{	    
+	    sourceStatesOut = remove( sourceStatesOut, i );
+	    break;
+	}        
+
+	i = i + 1;
+    }
+    return;
+    
+}
+
+
+/**
+ * Delete Source by Source Index
+ */
+global void deleteSourceByIndex (integer idx ) {
+    
+    sourceStatesOut = remove( sourceStatesOut, idx );
+    return;
+}
+    
+/**
+ * Delete Source by Source URL
+ */
+global void deleteSourceByUrl (string url ) {
+    deleteSourceBySrcId(getSourceId(url));    
+    return;
+}
+
+/**
+ * Create Summary Item
+ */
+define string createItem( integer index, map source ) {
+    integer id = source[ "SrcId" ]:0;
+    map generalData = Pkg::SourceGeneralData( id );
+    map productData = Pkg::SourceProductData( id );
+    string sitem = "";
+    string status = source[ "enabled" ]:true
+	// status info, to be used inside summary
+	? _("Enabled")
+	// status info, to be used inside summary
+	: _("Disabled");
+    string color = source[ "enabled" ]:true ? "#006600" : "#FF0000";
+    sitem = sitem + HTML::Colorize("["+status+"] ",
+            color);
+    // translators: name of a source if no other idenfication found
+    sitem = sitem + productData[ "label" ]:generalData["type"]:_("unknown");
+    sitem = sitem + " ( " + generalData[ "url" ]:"" + ")";
+    return sitem;
+}
+
+
+/**
+ * Create Source Item for Overview
+ */
+define term  createOverviewItem( integer index, map source ) {
+    integer id = source[ "SrcId" ]:0;
+    map generalData = Pkg::SourceGeneralData( id );
+    map productData = Pkg::SourceProductData( id );
+      
+
+    term item = `item(
+		      `id(index ),
+		      source[ "enabled" ]:true
+		      // corresponds to the "Enable/Disable" button
+			? _("On")
+		      // corresponds to the "Enable/Disable" button
+			: _("Off"),
+		      productData[ "label" ]:generalData["type"]:_("Unknown"),
+		      generalData[ "url" ]:""
+		      );    
+   
+    return item;
+}
+
+
+/**
+ * Handle Multiple source URLs (order/instorder)
+ */ 
+boolean HandleMultipleSources( string url )	{
+
+    boolean metadir_used = false;
+    list<string> theSourceDirectories = [];
+    map<integer,integer> theSourceOrder = $[];
+
+    list theSources=[];
+    string tmpdir = (string) SCR::Read(.target.tmpdir );
+    string metadir = tmpdir + "/yast-install";
+
+
+    Pkg::SourceStartManager( false );
+    integer initial_source = Pkg::SourceScan(url, "")[0]:nil;
+    if (initial_source == nil)
+    {
+        y2error ("No source on '%1'", url);
+        return false;
+    }
+
+    return false;
+}
+
+
+/**
+ * Create a textual summary and a list of unconfigured cards
+ * @return summary of the current configuration
+ */
+global list Summary() {
+
+    string summary = "";
+    // summary header
+    summary = Summary::AddHeader(summary, _("Configured Catalogs"));
+    summary = Summary::OpenList(summary);
+    numSources = size( sourceStatesOut );
+    integer i = 0;
+    while ( i < numSources ) {
+       summary = Summary::AddListItem(summary,createItem(i, sourceStatesOut[ i ]:$[]));
+        i = i + 1;
+    }
+    summary = Summary::CloseList(summary);
+
+
+  
+    list unconf = maplist(map s, slp_sources, ``{
+	string id = substring(s["srvurl"]:"", 21);
+	y2debug("source url : %1", id );
+	// part of item in summary
+	return(`item(`id(id), s["attr", "label"]:_("Unknown")
+	    // part of item in summary meaning "switched on"
+	    + _(" On ") + s["pcHost"]:""));
+    });   
+
+    return [summary, unconf ];
+}
+
+/**
+ * Create an overview table with all configured cards
+ * @return table items
+ */
+global list Overview() {
+    numSources = size( sourceStatesOut );
+    integer i = 0;
+    list source_overview = [];
+    while ( i < numSources ) {
+	source_overview = add(source_overview,
+                createOverviewItem(i, sourceStatesOut[ i ]:$[] ));
+        i = i + 1;
+    }
+    return source_overview;
+}
+
+    // ------------------------------------------------------------------------------------------------------
+    // adding YaST installation source into the ZMD
+
+    /**
+     * Runs a bash command with timeout.
+     * @struct Returns map $[
+     *     "exit" : int_return_code,
+     *     "stdout"  : [ "script", "stdout", "lines" ],
+     *     "stderr"  : [ "script", "stderr", "lines" ],
+     * ]
+     *
+     * @param string command
+     * @param integer timeout in sec.
+     * @return map with out, err and ret_code
+     */
+    global map RunCommandWithTimeout (string run_command, integer script_time_out) {
+	y2milestone("Running command \"%1\" in background...", run_command);
+
+	boolean started = (boolean) SCR::Execute(.background.run_output_err, run_command);
+	if (!started) {
+	    y2error("Cannot run '%1'", run_command);
+	    return nil;
+	}
+	
+	list<string> script_out = [];
+	list<string> script_err = [];
+	integer time_spent = 0;
+	integer return_code = nil;
+	boolean timed_out = false;
+	integer sleep_step = 200; // ms
+	script_time_out = script_time_out * 1000;
+	
+	// while continuing is needed and while it is possible
+	while (! timed_out) {
+	    boolean running = (boolean) SCR::Read(.background.isrunning);
+	    // debugging #165821
+	    if (time_spent % 100000 == 0) {
+		y2milestone ("running: %1", running);
+		string flag = "/tmp/SourceManagerTimeout";
+		if (SCR::Read (.target.size, flag) != -1) {
+		    y2milestone ("Emergency exit");
+		    SCR::Execute (.target.remove, flag);
+		    break;
+		}
+	    }
+
+	    if (! running) {
+		break;
+	    }
+
+	    // at last, enable aborting the sync
+	    if (Mode::commandline ()) {
+		sleep (sleep_step);
+	    }
+	    else {
+		any ui = UI::TimeoutUserInput (sleep_step);
+		if (ui == `abort) {
+		    y2milestone ("aborted");
+		    timed_out = true;
+		    break;
+		}
+	    }
+
+	    // time-out
+	    if (time_spent >= script_time_out) {
+		y2error("Command timed out after %1 msec", time_spent);
+		timed_out = true;
+	    }
+	    
+	    time_spent = time_spent + sleep_step;
+	}
+	y2milestone("Time spent: %1 msec", time_spent);
+
+	// fetching the return code if not timed-out
+	if (! timed_out) {
+	    y2milestone ("getting output");
+	    script_out  = (list<string>) SCR::Read(.background.newout);
+	    y2milestone ("getting errors");
+	    script_err  = (list<string>) SCR::Read(.background.newerr);
+	    y2milestone ("getting status");
+	    return_code = (integer) SCR::Read(.background.status);
+	}
+	y2milestone ("killing");
+	SCR::Execute(.background.kill, "");
+
+	map command_ret = $[
+	    "exit"   : return_code,
+	    "stdout" : script_out,
+	    "stderr" : script_err,
+	];
+	if (timed_out)
+	    command_ret["timed_out"]	= time_spent;
+	return command_ret;
+    }
+
+    /**
+     * Run
+     * - with a timeout
+     * - on dumb terminal to disable colors etc
+     * - using 'exit $?' because of buggy behavior '.background vs. ZMD'
+     * @param command a command
+     * @param seconds timeout
+     * @return map with out, err and ret_code
+     */
+    global map RunDumbTimeout (string command, integer seconds) {
+	// explicit export in case TERM was not in the environment
+	map ret = RunCommandWithTimeout ("export TERM=dumb; " + command + "; exit $?", seconds);
+	if (ret == nil) ret = $[];
+	return ret;
+    }
+
+    /**
+     * Run with a long timeout
+     * @param command a command
+     * @return map with out, err and ret_code
+     */
+    map RunLong (string command) {
+	return RunDumbTimeout (command, 1800);
+    }
+
+    /**
+     * Detect whether ZMD is running
+     */
+    boolean CheckZMDStatus () {
+	string rug_command = "/usr/bin/rug";
+	map zmd_status = RunLong (rug_command + " ping >/dev/null");
+	y2milestone("ZMD status: %1, err: %2", zmd_status["exit"]:nil, zmd_status["stderr"]:[]);
+	// Argh zis suks so mutch! #170549
+	return zmd_status["exit"]:nil == 0 || zmd_status["stderr"]:[] == [];
+    }
+
+    list<string> known_urls = nil;
+
+    /**
+     * Force calling rug on next @ref IsUrlKnownToZMD
+     */
+    void ResetKnownServiceCache () {
+	known_urls = nil;
+    }
+
+    /**
+     * Update the cache after a successful rug service-{add,delete} call
+     * @param adding add url or delete it
+     * @param url what
+     */
+    void UpdateKnownServiceCache (boolean adding, string url) {
+	if (adding) {
+	    known_urls = add (known_urls, url);
+	} else {
+	    known_urls = filter (string u, known_urls, ``( u != url ));
+	}
+    }
+
+    /**
+     * Whether the URL is known to rug service-list.
+     * The known services are cached,
+     * the caller should use @ref ResetKnownServiceCache if appropriate
+     * (each time when coming from outside this module at least)
+     * @return boolean or nil if determining the status failed
+     */
+    boolean IsUrlKnownToZMD (string url) {
+	if (known_urls == nil)
+	{
+	    //format: "3|Active|ZYPP|ServiceName|ftp://example.org/update/10.1"
+	    // With empty lines and "Waking up ZMD...Done" as a distraction
+	    map ret = RunLong ("/usr/bin/rug --no-abbrev --terse service-list | cut -d'|' -f5 --only-delimited");
+	    if (ret["stdout"]:nil == nil) {
+		y2error("Listing of services failed, returned %1", ret);
+		return nil;
+	    }
+	    // really individual lines?
+	    known_urls = (list <string>) ret["stdout"]:[];
+	    y2milestone ("known %1", known_urls);
+	}
+	return contains (known_urls, url);
+    }
+
+    /**
+     * Adds a ZYPP service into ZMD
+     * @param src_id installation source id
+     * @return success
+     */
+    boolean AddOrDeleteZYPPServiceIntoZMD (integer src_id, boolean adding) {
+	map gendata = Pkg::SourceGeneralData (src_id);
+	string stype = gendata["type"]:""; // metadata type
+	if (stype == "YaST") stype = "zypp";	/* 'rug' only accepts yum or zypp  */
+	string url = gendata["url"]:"";
+	// ZMD must have unique URIs, so we append the alias
+	string alias = gendata["alias"]:"";
+	y2milestone ("id: %1, type: %2, url: %3, alias: %4", src_id, stype, url, alias);
+	if (stype == "" || url == "" || alias == "") {
+	    y2error ("Internal error: stype, url, or alias is empty ?!");
+	    return false;
+	}
+
+	// yum sources do not need+understand the alias, #164083
+	// The above reason is obsolete but we keep compatibility with
+	// the service-delete zmd helper
+	if (stype == "zypp")
+	{
+	    // URL (un)escapes for us
+	    // maybe a bug with "="?
+	    map parsed_url = URL::Parse (url);
+	    string query = parsed_url["query"]:"";
+	    if (query != "") query = query + "&";
+	    parsed_url["query"] = query + "alias=" + alias;
+	    string test_url = URL::Build (parsed_url);
+	    y2milestone ("test zmd url: %1", test_url);
+
+	    string separator = (search (url, "?") == nil)? "?": "&";
+	    url = url + separator + "alias=" + alias;
+	}
+	y2milestone ("zmd url: %1", url);
+
+	// we're done if known and adding or unknown and deleting.
+	// if the status is uncertain (error),
+	// we proceed to be able to report it
+	boolean done_already = adding == IsUrlKnownToZMD (url);
+	if (done_already) {
+	    y2milestone ("already in sync");
+	    return true;
+	}
+
+	string name = alias;
+	string owner = "zypp";	// not stype: #168739
+
+	string command = nil;
+	// be quiet, #179080
+	if (adding) {
+	    command = sformat (
+		"/usr/bin/rug --quiet service-add --type='%3' '%1' '%2' && /usr/bin/rug subscribe '%1'",
+		url, name, owner
+		);
+	}
+	else {
+	    command = sformat ("/usr/bin/rug --quiet service-delete '%1'", url);
+	}
+	map ret = RunLong (command); // #165145
+	if (ret["exit"]:nil == 0) {
+	    UpdateKnownServiceCache (adding, url);
+	    return true;
+	} else {
+	    string message = adding?
+		// rug is a command name
+		_("Your service was added successfully in YaST, but could not be synchronized with ZenWorks."):
+		_("Your service was deleted successfully in YaST, but could not be synchronized with ZenWorks.");
+	    message = message + ":";
+	    if (ret["stdout"]:[] != [])
+		message = message + "\n" + mergestring (ret["stdout"]:[], "\n");
+	    if (ret["stderr"]:[] != [])
+		message = message + "\n" + mergestring (ret["stderr"]:[], "\n");
+	    else if (haskey (ret, "timed_out"))
+		// error message
+		message = message + "\n" + sformat (_("Command timed out after %1 milliseconds."), ret["timed_out"]:1000);
+	    Report::LongError (message);
+	    return false;
+	}
+    }
+
+    /* ZMD service name - used for starting and stopping ZMD */
+    string zmd_service_name = "/etc/init.d/novell-zmd";
+
+    /**
+     * Start ZMD if it was not running
+     * Report::Error on failure
+     * @return an opaque handle
+     */
+    map ZMDStart () {
+	map zmd_handle = $[];
+	boolean running = CheckZMDStatus ();
+	zmd_handle ["was_running"] = running;
+	if (! running) {
+	    // Starting the service
+	    map zmd_start = RunLong (zmd_service_name + " start");
+	    y2milestone("ZMD start: %1", zmd_start);
+	}
+	// Checking the status after start
+	running = CheckZMDStatus ();
+	zmd_handle ["is_running"] = running;
+	if (! running) {
+	    Report::Error(Message::CannotStartService(zmd_service_name));
+	}
+	return zmd_handle;
+    }
+
+
+    /**
+     * @param zmd_handle what ZMDStart returned
+     * @return can we work with ZMD now
+     */
+    boolean ZMDWorking (map zmd_handle) {
+	return zmd_handle["is_running"]:false;
+    }
+
+    /**
+     * Restore the status before ZMDStart
+     * Report::Error on failure
+     * @param zmd_handle what ZMDStart returned
+     */
+    void ZMDRestore (map zmd_handle) {
+	// It was running, nothing to change
+	if (zmd_handle["was_running"]:false)
+	    return;
+	
+	if (zmd_handle["is_running"]:false)
+	{
+	    y2milestone("Stopping service ZMD %1", zmd_service_name);
+	    map zmd_stop = RunLong (zmd_service_name + " stop");
+	    y2milestone("ZMD stop: %1", zmd_stop);
+	    if (zmd_stop["exit"]:nil != 0) {
+		Report::Error(Message::CannotStopService(zmd_service_name));
+	    }
+	}
+	y2milestone("ZMD stopped");
+    }
+
+    integer source_locked = 0;
+    const string source_lock_flag = "/var/lib/zypp/sources-being-processed-by-yast";
+    /**
+     * Start a section where other processes (such as ZMD helpers) should not
+     * access the source database. #170113
+     * The calls may be nested.
+     */
+    global void Lock () {
+	if (source_locked == 0)
+	{
+	    SCR::Write (.target.string, source_lock_flag, "bug 170113");
+	}
+	source_locked = source_locked + 1;
+	y2milestone ("lock: %1", source_locked);
+    }
+
+    /**
+     * Other processes may access the source database again
+     */
+    global void Unlock () {
+	source_locked = source_locked - 1;
+	if (source_locked < 0)
+	{
+	    y2internal ("Too many unlocks!");
+	    source_locked = 0;
+	}
+	if (source_locked == 0)
+	{
+	 SCR::Execute (.target.remove, source_lock_flag);
+	}
+	y2milestone ("unlock: %1", source_locked);
+    }
+
+
+    /**
+     * Checks whether ZMD is running, starts it when isn't. Checks whether a ZYPP source is listed
+     * in the ZMD services, adds one if it is missing.
+     * Everything is done via the .background agent with timeout (number in seconds).
+     *
+     * @return boolean whether the syncing succeeds
+     */
+    global boolean SyncYaSTInstSourceWithZMD () {
+	// Notes for maintainer:
+	//     - using .background agent because of ZMD/rug call that can stuck
+	//     - using 'exit $?' that work well with ZMD/rug and .background together
+	//     - using TERM=dumb to suppress colors, progress bars etc. from ZMD/rug
+	//     - when the function finishes, it must leave ZMD in the same status (running/stopped)
+	//       as it was when the function started
+	//
+	// WARNIG: this function starts ZMD and expects that LIBZYPP has no lock over
+	//         the RPM database. You can run it only when the RPM is not locked
+	//         otherwise the ZMD will block itself!
+
+	UI::OpenDialog (`VBox (
+			    // popup progress information
+			    `Label(_("Initializing catalogs...")),
+			    `PushButton (`id (`abort), Label::AbortButton ())
+			    ));
+	y2milestone("--- Syncing YaST inst source with ZMD ---");
+
+	Lock ();
+
+	boolean ret = false;
+	// Check the ZMD status and start if not running
+	// If the ZMD wasn't running, we will try to start it
+	// and then we will have to stop it at the end
+	map zmd_handle = ZMDStart ();
+	if (ZMDWorking (zmd_handle)) {
+	    // now we can work
+
+	    if (true) {
+		list<integer> src_ids = Pkg::SourceGetCurrent (true /*enabled only?*/);
+		ResetKnownServiceCache ();
+		boolean added_ok = true;
+		foreach (integer src_id, src_ids, {
+		    added_ok = AddOrDeleteZYPPServiceIntoZMD (src_id, true /*add*/) && added_ok;
+		});
+		if (added_ok) {
+		    y2milestone("Adding ZYPP service succeeded");
+		} else {
+		    Report::Error(Message::CannotWriteSettingsTo("ZMD"));
+		    y2error("Adding ZYPP service failed");
+		}
+		ret = added_ok;
+	    }
+	}
+	ZMDRestore (zmd_handle);
+
+	Unlock ();
+
+	y2milestone("--- Syncing finished ---");
+	UI::CloseDialog();
+	return ret;
+    }
+
+    global boolean SyncAddedAndDeleted (list<integer> added_src_ids,
+					list<integer> deleted_src_ids) {
+	boolean ret = false;
+	Lock ();
+	map zmd_handle = ZMDStart ();
+	if (ZMDWorking (zmd_handle)) {
+	    ret = true;
+	    ResetKnownServiceCache ();
+
+	    // first delete, then add,
+	    // otherwise replacing a source with itself fails: #175159
+	    foreach (integer id, deleted_src_ids, {
+		ret = AddOrDeleteZYPPServiceIntoZMD (id, false) && ret;
+	    });
+	    foreach (integer id, added_src_ids, {
+		ret = AddOrDeleteZYPPServiceIntoZMD (id, true) && ret;
+	    });
+	}
+	ZMDRestore (zmd_handle);
+	Unlock ();
+	return ret;
+    }
+
+    /**
+     * Parse a URL query (already unescaped) to a map.
+     * If no equal sign, the value will be nil.
+     * @param query foo=bar&baz=qux
+     * @return $["foo": "bar", "baz": "qux"]
+     */
+    map<string, string> ParseUrlQuery (string query) {
+	list<string> q_items = splitstring (query, "&");
+	map<string, string> q_map = listmap (string q_item, q_items, {
+	    integer eqpos = search (q_item, "=");
+	    if (eqpos == nil)
+	    {
+		return $[ q_item: nil ];
+	    }
+	    else
+	    {
+		string key = substring (q_item, 0, eqpos);
+		string val = substring (q_item, eqpos + 1);
+		return $[ key: val ];
+	    }
+	});
+	return q_map;
+    }
+
+    /**
+     * @return For existing sources, get a mapping from the alias to the id
+     */
+    map<string,integer> get_alias_to_id () {
+	list<integer> src_ids = Pkg::SourceGetCurrent (false/*enabled only?*/);
+	map<string,integer> a2i = listmap (integer src_id, src_ids, {
+	    map gendata = Pkg::SourceGeneralData (src_id);
+	    string alias = gendata["alias"]:"";
+	    return $[ alias: src_id ];
+	});
+	return a2i;
+    }
+
+    /**
+     * Extract an alias parameter from the URL and check whether we have
+     * such a source already.
+     * @param url a source with an alias parameter (actually optional)
+     * @param alias_to_id a premade mapping, @see get_alias_to_id
+     * @return the source id or -1
+     */
+    integer SourceByAlias (string url, map<string,integer> alias_to_id) {
+	// parse the URL
+	map parsed_url = URL::Parse (url);
+	y2milestone ("parsed: %1", parsed_url);
+	// (reassemble and warn if it differs)
+	string reassembled = URL::Build (parsed_url);
+	if (url != reassembled)
+	{
+	    y2warning ("reassembled differs: %1", reassembled);
+	}
+	// get the alias
+	map<string, string> q_map = ParseUrlQuery (parsed_url["query"]:"");
+	y2milestone ("query: %1", q_map);
+	string alias = q_map["alias"]:"";
+
+	// (empty: box safeguard)
+	if (alias != "" && haskey (alias_to_id, alias))
+	{
+	    return alias_to_id[alias]:-1;
+	}
+	return -1;
+    }
+
+    /**
+     * Used by registration.
+     * This is really hairy because we simultaneously add them to zypp and
+     * zenworks, but not if they are not signed. (thus being better than
+     * inst_source)
+     * @param urls update sources to add
+     */
+    global boolean AddUpdateSources (list<string> urls) {
+	// prepare for lookup of known aliases
+	map<string,integer> aliases = get_alias_to_id ();
+	y2milestone ("alias mapping: %1", aliases);
+
+	Lock ();
+	map zmd_handle = ZMDStart ();
+	ResetKnownServiceCache ();
+
+	// add the sources.
+	// but do not make duplicates (#168740)
+	// we detect them based on alias that suse_register gives us (#158850#c17)
+	/// (but only for SLE... :-/ )
+	/// Need to test what happens when we get two different update
+	/// servers for SL
+	/// Anyway that means only that #168740 remains unfixed for SL
+	foreach (string url, urls, {
+	    // #180820
+	    boolean is_nu = search (url, "$RCE") != nil;
+	    y2milestone ("Should add an update source: %1", url);
+	    // inst_addon_update_sources also calls Pkg::SourceCreate
+	    // but it already skips duplicates
+
+	    // check if alias already there
+	    // if yes, delete the old one
+	    integer todel = SourceByAlias (url, aliases);
+	    if (todel != -1)
+	    {
+		y2milestone ("deleting the old copy, source %1", todel); 
+		if (!is_nu)
+		{
+		    AddOrDeleteZYPPServiceIntoZMD (todel, false);
+		}
+		Pkg::SourceDelete (todel);
+	    }
+	    // then add the new one
+	    y2milestone ("adding source");
+	    integer toadd = Pkg::SourceCreate (url, "/");
+	    // and add to zenworks too, but only if it succeeded here (#180820)
+	    if (!is_nu && toadd != -1 && toadd != nil)
+	    {
+		AddOrDeleteZYPPServiceIntoZMD (toadd, true);
+	    }
+	});
+
+	ZMDRestore (zmd_handle);
+	Unlock ();
+
+	return true;
+    }
+
+    // adding YaST installation source into the ZMD
+    // ------------------------------------------------------------------------------------------------------
+
+/* EOF */
+}

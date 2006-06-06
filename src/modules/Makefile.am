@@ -12,6 +12,9 @@ module_DATA =			\
 	HwStatus.ycp		\
 	X11Version.ycp		\
 	Register.ycp		\
+	SourceManager.ycp	\
+	InstURL.ycp		\
+	CheckMedia.ycp		\
 	AddOnProduct.ycp
 
 EXTRA_DIST = $(module_DATA)

@@ -5,7 +5,7 @@
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2 yast2-devtools yast2-testsuite yast2-country
 Requires:	yast2 yast2-update
 Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
-# SourceManager::AddUpdateSources
+# suse_register --nozypp
 Requires:	yast2-packager >= 2.13.129
 Requires:	yast2-network yast2-users
 Requires:	curl release-notes

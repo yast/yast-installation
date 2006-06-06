@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jun  6 18:56:57 CEST 2006 - mvidner@suse.cz
+
+- Moved SourceManager + deps from yast2-packager to yast2-installation
+  to avoid circular BuildRequires.
+- 2.13.122
+
+-------------------------------------------------------------------
 Tue Jun  6 18:32:04 CEST 2006 - mvidner@suse.cz
 
 - Call suse_register with --nozypp meaning that we will tell rug
