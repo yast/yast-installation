@@ -43,7 +43,7 @@ list<string> UpdateUrls () {
     list<list<string> > urls = maplist (map<string, any> p, products, {
 	return p["update_urls"]:[];
     });
-    return flatten (urls);
+    return (list<string>)toset (flatten (urls));
 }
 
 
@@ -73,7 +73,7 @@ if (addUrls != [])
 	added_ids = add (added_ids, srcid);
     });
 
-    y2milestone ("syncing to zmd"); 
+    y2milestone ("syncing to zmd");
     boolean synced = SourceManager::SyncAddedAndDeleted (added_ids, []);
     y2milestone ("sync status: %1", synced);
 
