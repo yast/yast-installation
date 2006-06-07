@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jun  7 16:15:36 CEST 2006 - jsrain@suse.cz
+
+- avoid adding update source of an add-on product twice during
+  installation (#182434)
+
+-------------------------------------------------------------------
 Tue Jun  6 18:56:57 CEST 2006 - mvidner@suse.cz
 
 - Moved SourceManager + deps from yast2-packager to yast2-installation
