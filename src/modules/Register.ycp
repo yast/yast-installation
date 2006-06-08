@@ -200,6 +200,32 @@ global void finish()
     write_config();
 }
 
+
+
+/*
+ * add_update_sources
+ *
+ * read update sources from services file and add them to yast and zmd
+ *
+ */
+global boolean add_update_sources ()
+{
+
+    // make it possible to be run as non-root (system will be inconsistent then)
+    // TODO: to be removed when rug lets authorized users add installation sources
+    if ( !iamroot ) return false;
+
+    if (!FileUtils::Exists (services_file))
+    return false;
+
+    // filters out empty items (#165860#c12)
+    list<string> urls = String::NewlineItems (
+	(string)SCR::Read(.target.string, services_file));
+
+    return SourceManager::AddUpdateSources (urls);
+}
+
+
 /*
  * suseRegister()
  * the returned map is transformed to map<string, string>
@@ -249,6 +275,9 @@ global map<string, string> suseRegister(symbol parameter)
         map<string, any> info = (map<string, any>) SCR::Execute(.target.bash_output, sr_bash_cmd );
         string exitcode = sformat("%1", info["exit"]:99);
         y2milestone ("/usr/bin/suse_register returned %1", exitcode);
+
+        // add update sources in autoyast mode as well, no matter what exit code suse_register returned (#181183)
+        Register::add_update_sources();
 
         // transform to map<string, string>
         response = $[  "exit"  :exitcode ,
@@ -303,31 +332,6 @@ global map<string, string> suseRegister(symbol parameter)
     y2milestone ("Server response: %1", response);
     return response;
 }
-
-
-
-
-global boolean add_update_sources ()
-{
-
-    // make it possible to be run as non-root (system will be inconsistent then)
-    // TODO: to be removed when rug lets authorized users add installation sources
-    if ( !iamroot ) return false;
-
-    if (!FileUtils::Exists (services_file))
-    return false;
-
-    // filters out empty items (#165860#c12)
-    list<string> urls = String::NewlineItems (
-	(string)SCR::Read(.target.string, services_file));
-
-    return SourceManager::AddUpdateSources (urls);
-}
-
-
-
-
-
 // ------------------------------------------------------------------
 // END: Globally defined functions
 // ------------------------------------------------------------------

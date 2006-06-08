@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun  8 11:49:04 CEST 2006 - jdsn@suse.de
+
+- create pango modules for registration browser (#165891)
+- sync zypp update sources in autoyast mode as well (#181183)
+- 2.13.124 
+
+-------------------------------------------------------------------
 Wed Jun  7 16:15:36 CEST 2006 - jsrain@suse.cz
 
 - avoid adding update source of an add-on product twice during
