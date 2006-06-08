@@ -1,0 +1,51 @@
+#
+# Makefile.cvs
+#
+
+LIB = $(shell y2tool get-lib)
+
+configure: all
+	./configure --libdir=/usr/$(LIB)
+
+all:
+	y2tool y2autoconf
+	y2tool y2automake
+	autoreconf --force --install
+
+install: configure
+	make
+	make install
+
+reconf: all
+	./config.status --recheck
+	./config.status
+
+clean:
+	mv startup/doc/Makefile startup/doc/Makefile.save
+	rm -f autodocs-ycp.ami OUTPUT2 pluglib-bindings.ami OUTPUT autodocs-cc*
+	rm -f `find -name Makefile.in`
+	rm -f `find -name Makefile`
+	rm -f `find -name *.ybc`
+	rm -f `find -name *.dep`
+	rm -rf aclocal.m4*
+	rm -rf autom4te.cache
+	rm -rf config.cache
+	rm -rf config.guess
+	rm -rf config.h
+	rm -rf config.h.in*
+	rm -rf config.log
+	rm -rf config.status
+	rm -rf config.sub
+	rm -rf configure
+	rm -rf configure.in
+	rm -rf depcomp
+	rm -rf install-sh
+	rm -rf libtool
+	rm -rf ltconfig
+	rm -rf ltmain.sh
+	rm -rf missing
+	rm -rf mkinstalldirs
+	rm -rf stamp-h*
+	rm -rf *.pot
+	rm -f Makefile.am.common
+	mv startup/doc/Makefile.save startup/doc/Makefile

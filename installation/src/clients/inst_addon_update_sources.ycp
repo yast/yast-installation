@@ -1,0 +1,86 @@
+/**
+ * File:	clients/inst_addon_update_sources.ycp
+ * Package:	yast2-installation
+ * Summary:	Add installation sources for online update, #163192
+ * Authors:	Martin Vidner <mvidner@suse.cz>
+ *
+ * Assumptions:
+ * - the sources have been initialized
+ * - the sources will be saved afterwards
+ * (this means that running this client alone will not work)
+ */
+
+{
+textdomain "installation";
+
+import "GetInstArgs";
+import "PackageCallbacksInit";
+import "Popup";
+import "SourceManager";
+
+if ( GetInstArgs::going_back())     // going backwards?
+    return `auto;                   // don't execute this once more
+
+
+/**
+ * @return the urls of known installation sources
+ */
+list<string> KnownUrls () {
+    list<integer> src_ids = Pkg::SourceGetCurrent (true /*enabled only?*/);
+    list<string> urls = maplist (integer src_id, src_ids, {
+	map gendata = Pkg::SourceGeneralData (src_id);
+	return gendata["url"]:"";
+    });
+    return urls;
+}
+
+/**
+ * @return the installation sources to be added
+ */
+list<string> UpdateUrls () {
+    // get all available products
+    list<map<string,any> > products = Pkg::ResolvableProperties ("", `product, "");
+    list<list<string> > urls = maplist (map<string, any> p, products, {
+	return p["update_urls"]:[];
+    });
+    return (list<string>)toset (flatten (urls));
+}
+
+
+// feedback heading
+string heading = _("Add-On Product Installation");
+// feedback message
+string message = _("Reading packages available on the installation sources...");
+
+list<string> knownUrls = KnownUrls ();
+y2milestone ("sources known: %1", knownUrls);
+map<string, boolean> is_known = listmap (string u, knownUrls, ``($[u: true]));
+
+list<string> updateUrls = UpdateUrls ();
+y2milestone ("sources for updates: %1", updateUrls);
+
+list<string> addUrls = filter (string u, updateUrls, ``( ! is_known[u]:false ));
+y2milestone ("sources to add: %1", addUrls);
+
+if (addUrls != [])
+{
+    Popup::ShowFeedback (heading, message);
+
+    list<integer> added_ids = [];
+    foreach (string u, addUrls, {
+	integer srcid = Pkg::SourceCreate (u, "/");
+	y2milestone ("got %1 from creating %2", srcid, u);
+	added_ids = add (added_ids, srcid);
+    });
+
+    y2milestone ("syncing to zmd");
+    boolean synced = SourceManager::SyncAddedAndDeleted (added_ids, []);
+    y2milestone ("sync status: %1", synced);
+
+    Popup::ClearFeedback ();
+}
+
+return `auto;
+
+/* EOF */
+}
