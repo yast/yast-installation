@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Jun  9 11:02:57 CEST 2006 - locilka@suse.cz
+
+- Identify the downloaded release notes by the product name during
+  the internet test. Changes were made in the module Product
+  (#180581).
+- 2.13.125
+
+-------------------------------------------------------------------
 Thu Jun  8 11:49:04 CEST 2006 - jdsn@suse.de
 
 - create pango modules for registration browser (#165891)

@@ -46,6 +46,11 @@
     global list <string> relnotesurl_all = [];
 
     /**
+     * map relnotes url to product name
+     */
+    global map <string, string> product_of_relnotes = $[];
+
+    /**
      *  Run YOU during the Internet connection test.
      */
     global boolean run_you	= true;
@@ -71,7 +76,10 @@ global list<map<string,any> > FindBaseProducts() {
     products = filter (map<string,any> p, products, {
 	// bug 165314, relnotes_url needn't be defined (or empty string)
 	if (p["relnotes_url"]:"" != "") {
-	    relnotesurl_all = add (relnotesurl_all, (string) p["relnotes_url"]:"");
+	    string rn_url = (string) p["relnotes_url"]:"";
+	    relnotesurl_all = add (relnotesurl_all, rn_url);
+	    // bug 180581, relnotes should be identified by name
+	    product_of_relnotes[rn_url] = p["display_name"]:"";
 	}
 	return p["category"]:"" == "base"
 	    && (p["status"]:nil == `selected || p["status"]:nil == `installed);
