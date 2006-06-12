@@ -5,12 +5,13 @@
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2 yast2-devtools yast2-testsuite yast2-country
 Requires:	yast2 yast2-update
 Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
-# suse_register --nozypp
-Requires:	yast2-packager >= 2.13.129
+# SignatureCheckDialogs::CheckSignaturesInYaST
+Requires:	yast2-packager >= 2.13.135
 Requires:	yast2-network yast2-users
 Requires:	curl release-notes
 Requires:	suseRegister
 Requires:       autoyast2-installation yast2-online-update
+PreReq:		%fillup_prereq
 
 Provides:	yast
 Obsoletes:	yast
@@ -46,6 +47,9 @@ This controls the system installation.
 /usr/sbin/groupadd -r suse-ncc 2> /dev/null || :
 /usr/sbin/useradd -r -s /bin/bash -c "Novell Customer Center User" -d /var/lib/YaST2/suse-ncc-fakehome -g suse-ncc suse-ncc 2> /dev/null || :
 
+%post
+%{fillup_only -ns security checksig}
+
 %files
 %defattr(-,root,root)
 %doc @docdir@
@@ -73,6 +77,8 @@ This controls the system installation.
 @scrconfdir@/proc_modules.scr
 @scrconfdir@/run_df.scr
 @scrconfdir@/cfg_suse_register.scr
+# fillup
+@fillupdir@/sysconfig.security-checksig
 
 # programs and scripts
 @ystartupdir@/startup

@@ -27,6 +27,7 @@ import "AutoInstall";
 import "Console";
 import "Product";
 import "Progress";
+import "SignatureCheckDialogs";
 
 any ret = nil;
 string func = "";
@@ -92,6 +93,12 @@ else if (func == "Write")
     SCR::Write (.sysconfig.suseconfig.CWD_IN_USER_PATH,
                 contains (Product::flags, "usercwd") ? "yes" : "no");
     SCR::Write (.sysconfig.suseconfig, nil);
+
+    // FIXME text freeze: progress (update count in Info too)
+    SCR::Write (.sysconfig.security.CHECK_SIGNATURES,
+		SignatureCheckDialogs::CheckSignatures ());
+    SCR::Write (.sysconfig.security, nil);
+
 }
 else
 {

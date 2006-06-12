@@ -2,5 +2,6 @@
 # Makefile.am for installation/agents
 #
 scrconf_DATA = $(wildcard *.scr)
-EXTRA_DIST = $(scrconf_DATA)
+fillup_DATA = sysconfig.security-checksig
+EXTRA_DIST = $(scrconf_DATA) $(fillup_DATA)
 

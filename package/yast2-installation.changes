@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Jun 12 16:07:52 CEST 2006 - mvidner@suse.cz
+
+- Fillup /etc/sysconfig/security:CHECK_SIGNATURES and initialize it
+  based on an install time kernel parameter.
+- 2.13.127
+
+-------------------------------------------------------------------
 Mon Jun 12 13:22:08 CEST 2006 - jdsn@suse.de
 
 - run pango module creation as root (#165891)
