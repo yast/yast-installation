@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Jun 12 13:22:08 CEST 2006 - jdsn@suse.de
+
+- run pango module creation as root (#165891)
+- fixed SLE desktop file of suse_register for autoyast (mc, ug)
+- 2.13.126 
+
+-------------------------------------------------------------------
 Fri Jun  9 11:02:57 CEST 2006 - locilka@suse.cz
 
 - Identify the downloaded release notes by the product name during

@@ -481,7 +481,8 @@ string browser_command(string url)
             // check for and install mozilla-xulrunner if needed (#175166)
             Package::InstallAllMsg(["mozilla-xulrunner"], nil);
             cmd_ok = (integer) SCR::Execute(.target.bash, "test -x /usr/bin/xulrunner") == 0 ? true:false;
-            bcmd = "touch /var/adm/SuSEconfig/run-pango ; /sbin/conf.d/SuSEconfig.pango ; MOZ_DISABLE_PANGO=1 /usr/bin/xulrunner /usr/share/YaST2/yastbrowser/application.ini -url ";
+            SCR::Execute(.target.bash, "touch /var/adm/SuSEconfig/run-pango ; /sbin/conf.d/SuSEconfig.pango");  //(#165891)
+            bcmd = " MOZ_DISABLE_PANGO=1 /usr/bin/xulrunner /usr/share/YaST2/yastbrowser/application.ini -url ";
         }
         else
         {   // this case will never happen because we will not run as non-root (#170736)

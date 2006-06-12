@@ -4,6 +4,7 @@ Type=Application
 Categories=Qt;X-SuSE-YaST;X-SuSE-YaST-Misc;
 
 X-SuSE-YaST-Call=inst_suse_register
+X-SuSE-YaST-AutoInstClient=suse_register_auto
 X-SuSE-YaST-RootOnly=false
 X-SuSE-YaST-Group=Software
 X-SuSE-YaST-AutoInst=all
