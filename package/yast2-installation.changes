@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jun 14 15:07:04 CEST 2006 - jdsn@suse.de
+
+- added a please-wait string in registration (already translated) 
+- 2.13.128
+
+-------------------------------------------------------------------
 Mon Jun 12 16:07:52 CEST 2006 - mvidner@suse.cz
 
 - Fillup /etc/sysconfig/security:CHECK_SIGNATURES and initialize it
