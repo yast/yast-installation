@@ -815,11 +815,15 @@ global list Overview() {
     }
 
     /**
+     * path to ZMD CLI
+     */
+    const string rug = "/usr/bin/rug";
+
+    /**
      * Detect whether ZMD is running
      */
     boolean CheckZMDStatus () {
-	string rug_command = "/usr/bin/rug";
-	map zmd_status = RunLong (rug_command + " ping >/dev/null");
+	map zmd_status = RunLong (rug + " ping >/dev/null");
 	y2milestone("ZMD status: %1, err: %2", zmd_status["exit"]:nil, zmd_status["stderr"]:[]);
 	// Argh zis suks so mutch! #170549
 	return zmd_status["exit"]:nil == 0 || zmd_status["stderr"]:[] == [];
@@ -859,7 +863,7 @@ global list Overview() {
 	{
 	    //format: "3|Active|ZYPP|ServiceName|ftp://example.org/update/10.1"
 	    // With empty lines and "Waking up ZMD...Done" as a distraction
-	    map ret = RunLong ("/usr/bin/rug --no-abbrev --terse service-list | cut -d'|' -f5 --only-delimited");
+	    map ret = RunLong (rug + " --no-abbrev --terse service-list | cut -d'|' -f5 --only-delimited");
 	    if (ret["stdout"]:nil == nil) {
 		y2error("Listing of services failed, returned %1", ret);
 		return nil;
@@ -924,12 +928,12 @@ global list Overview() {
 	// be quiet, #179080
 	if (adding) {
 	    command = sformat (
-		"/usr/bin/rug --quiet service-add --type='%3' '%1' '%2' && /usr/bin/rug subscribe '%1'",
-		url, name, owner
+		"%4 --quiet service-add --type='%3' '%1' '%2' && %4 subscribe '%1'",
+		url, name, owner, rug
 		);
 	}
 	else {
-	    command = sformat ("/usr/bin/rug --quiet service-delete '%1'", url);
+	    command = sformat ("%2 --quiet service-delete '%1'", url, rug);
 	}
 	map ret = RunLong (command); // #165145
 	if (ret["exit"]:nil == 0) {
