@@ -287,18 +287,9 @@ global map<string, string> suseRegister(symbol parameter)
     else
     {   // (#164794)
         boolean started = (boolean) SCR::Execute(.background.run_output_err, sr_bash_cmd );
-	// translators: busy popup while registering the system
 
-	// FIXME
-	// FIXME
-	// FIXME
-	// Some day maybe even our PMs will learn the meaning of words like "deadlines", "text freeze" etc.
-        textdomain "printer";
-	string fixme_get_this_out_of_here_ASAP = _("This usually takes one or two minutes");
-        textdomain "installation";
-	// FIXME
-	// FIXME
-	// FIXME
+	// translators: busy popup while registering the system
+	string fixme_get_this_out_of_here_ASAP = _("This may take a while");
 	
         UI::OpenDialog(`VBox( `Left( `Label( _("Contacting server...")) ),
                               `Left( `Label( fixme_get_this_out_of_here_ASAP )),  // (hmuelle, shorn)
