@@ -163,12 +163,17 @@
                     url_tokens["pass"] = password;
 		}
 	    }
-	    string servername = Linuxrc::InstallInf("Server");
+	    string servername = Linuxrc::InstallInf("ServerName");
+	    string server = Linuxrc::InstallInf("Server");
 	    string serverip = Linuxrc::InstallInf("ServerIP");
 
 	    if ((servername != nil) && (servername != ""))
 	    {
                 url_tokens["host"] = servername;
+	    }
+	    else if ((server != nil) && (server != ""))
+	    {
+                url_tokens["host"] = server;
 	    }
 	    else if ((serverip != nil) && (serverip != ""))
 	    {

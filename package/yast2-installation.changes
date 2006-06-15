@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jun 15 12:45:27 CEST 2006 - jsrain@suse.cz
+
+- set installation server as host name (not IP address) if it is
+  defined as host name during installation (#178933)
+
+-------------------------------------------------------------------
 Thu Jun 15 10:20:39 CEST 2006 - visnov@suse.cz
 
 - fix the please-wait string
