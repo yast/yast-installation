@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Jun 15 13:32:52 CEST 2006 - mvidner@suse.cz
+
+- SourceManager: factored out the rug pathname.
+
+-------------------------------------------------------------------
 Thu Jun 15 12:45:27 CEST 2006 - jsrain@suse.cz
 
 - set installation server as host name (not IP address) if it is
