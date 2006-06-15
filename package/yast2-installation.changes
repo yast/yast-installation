@@ -1,6 +1,7 @@
 -------------------------------------------------------------------
-Thu Jun 15 14:42:53 CEST 2006 - mvidner@suse.cz
+Thu Jun 15 18:47:05 CEST 2006 - mvidner@suse.cz
 
+- Do not complain if ZMD cannot be stopped (#166900).
 - When syncing the _original_ installation sources to ZMD,
   temporarily turn off signature checking because the user has
   already decided to trust the sources (#182747).
