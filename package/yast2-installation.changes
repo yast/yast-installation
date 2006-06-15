@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Jun 15 10:20:39 CEST 2006 - visnov@suse.cz
+
+- fix the please-wait string
+
+-------------------------------------------------------------------
 Wed Jun 14 15:07:04 CEST 2006 - jdsn@suse.de
 
 - added a please-wait string in registration (already translated) 
