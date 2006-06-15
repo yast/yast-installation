@@ -876,6 +876,29 @@ global list Overview() {
     }
 
     /**
+     * Get a ZMD preference
+     * @param pref see "rug get-prefs" 
+     */
+    string RugGetPref (string pref) {
+	// "pref|value"
+	map ret = RunLong (sformat ("%1 --terse get-prefs %2 | cut -d'|' -f2 --only-delimited", rug, pref));
+	if (ret["stdout"]:nil == nil) {
+	    y2error("GetPref failed, returned %1", ret);
+	    return nil;
+	}
+	string line = ret["stdout", 0]:"";
+	return deletechars (line, "\n");
+    }
+
+    /**
+     * Set a ZMD preference
+     */
+    void RugSetPref (string pref, string value) {
+	map ret = RunLong (sformat ("%1 set-prefs %2 '%3'", rug, pref, value));
+	y2milestone ("ret %1", ret);
+    }
+
+    /**
      * Adds a ZYPP service into ZMD
      * @param src_id installation source id
      * @return success
@@ -951,6 +974,7 @@ global list Overview() {
 		message = message + "\n" + mergestring (ret["stderr"]:[], "\n");
 	    else if (haskey (ret, "timed_out"))
 		// error message
+		// FIXME "ms" or plural gettext
 		message = message + "\n" + sformat (_("Command timed out after %1 milliseconds."), ret["timed_out"]:1000);
 	    Report::LongError (message);
 	    return false;
@@ -1085,6 +1109,12 @@ global list Overview() {
 	    // now we can work
 
 	    if (true) {
+		string zmd_security_level = RugGetPref ("security-level");
+		// The user has already decided to trust the inst sources
+		// otherwise we would not be here. Do not ask again.
+		// #182747
+		RugSetPref ("security-level", "none");
+
 		list<integer> src_ids = Pkg::SourceGetCurrent (true /*enabled only?*/);
 		ResetKnownServiceCache ();
 		boolean added_ok = true;
@@ -1098,6 +1128,12 @@ global list Overview() {
 		    y2error("Adding ZYPP service failed");
 		}
 		ret = added_ok;
+
+		// restore
+		if (zmd_security_level != nil)
+		{
+		    RugSetPref ("security-level", zmd_security_level);
+		}
 	    }
 	}
 	ZMDRestore (zmd_handle);

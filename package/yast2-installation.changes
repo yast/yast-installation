@@ -1,7 +1,11 @@
 -------------------------------------------------------------------
-Thu Jun 15 13:32:52 CEST 2006 - mvidner@suse.cz
+Thu Jun 15 14:42:53 CEST 2006 - mvidner@suse.cz
 
+- When syncing the _original_ installation sources to ZMD,
+  temporarily turn off signature checking because the user has
+  already decided to trust the sources (#182747).
 - SourceManager: factored out the rug pathname.
+- 2.13.130
 
 -------------------------------------------------------------------
 Thu Jun 15 12:45:27 CEST 2006 - jsrain@suse.cz
