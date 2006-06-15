@@ -1031,7 +1031,9 @@ global list Overview() {
 	    y2milestone("Stopping service ZMD %1", zmd_service_name);
 	    map zmd_stop = RunLong (zmd_service_name + " stop");
 	    y2milestone("ZMD stop: %1", zmd_stop);
-	    if (zmd_stop["exit"]:nil != 0) {
+	    // #166900, if stop fails it means it is still busy and
+	    // will stop later
+	    if (false && zmd_stop["exit"]:nil != 0) {
 		Report::Error(Message::CannotStopService(zmd_service_name));
 	    }
 	}
