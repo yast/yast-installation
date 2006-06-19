@@ -1,0 +1,28 @@
+    <partitioning>        
+        <partitions config:type="list">
+            <partition>
+                <disk config:type="integer">2</disk>
+                <mount>swap</mount>
+                <size>auto</size>
+            </partition>
+            <partition>
+                <disk config:type="integer">1</disk>
+                <fstopt>defaults</fstopt>
+                <fsys>reiser</fsys>
+                <increasable config:type="boolean">true</increasable>
+                <mount>/</mount>
+                <size>2gb</size>
+            </partition>
+            <partition>
+                <disk config:type="integer">2</disk>
+                <fstopt>defaults,data=writeback,noatime</fstopt>
+                <fsys>reiser</fsys>
+                <increasable config:type="boolean">true</increasable>
+                <mount>/var</mount>
+                <percent config:type="integer">100</percent>
+                <size>2gb</size>
+            </partition>
+        </partitions>
+        <prefer_remove config:type="boolean">true</prefer_remove>
+        <remove_special_partitions config:type="boolean">false</remove_special_partitions>
+    </partitioning>

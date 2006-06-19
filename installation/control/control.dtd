@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!ELEMENT addon ( #PCDATA ) >
+
+<!ELEMENT addons ( addon ) >
+<!ATTLIST addons config:type NMTOKEN #FIXED "list" >
+
+<!ELEMENT archs ( #PCDATA ) >
+
+<!ELEMENT arguments ( #PCDATA ) >
+
+<!ELEMENT base_selection ( #PCDATA ) >
+<!ELEMENT enable_back ( #PCDATA ) >
+<!ELEMENT enable_next ( #PCDATA ) >
+
+<!ELEMENT defaults ( archs?, arguments?, enable_back?, enable_next?) >
+
+<!ENTITY % y2_globals "language| keyboard| timezone| enable_autologin| runlevel
+| use_desktop_scheduler|io_scheduler|ui_mode" >
+<!ELEMENT globals (%y2_globals;)* >
+
+<!ELEMENT keyboard ( #PCDATA ) >
+<!ELEMENT runlevel ( #PCDATA ) >
+<!ELEMENT ui_mode ( #PCDATA ) >
+
+<!ELEMENT label ( #PCDATA ) >
+
+<!ELEMENT language ( #PCDATA ) >
+<!ELEMENT skip_language_dialog ( #PCDATA ) >
+<!ATTLIST skip_language_dialog config:type NMTOKEN #FIXED "boolean" >
+
+<!ELEMENT io_scheduler ( #PCDATA ) >
+<!ELEMENT only_update_installed ( #PCDATA ) >
+<!ATTLIST only_update_installed config:type NMTOKEN #FIXED "boolean" >
+<!ELEMENT use_desktop_scheduler ( #PCDATA ) >
+<!ATTLIST use_desktop_scheduler config:type NMTOKEN #FIXED "boolean" >
+<!ELEMENT enable_autologin ( #PCDATA ) >
+<!ATTLIST enable_autologin config:type NMTOKEN #FIXED "boolean" >
+
+<!ELEMENT mode ( #PCDATA ) >
+
+<!ENTITY % wf_module "archs | arguments| enable_back| enable_next | label | name | proposal | update | retranslate" >
+<!ELEMENT module (%wf_module;)* >
+
+<!ELEMENT modules ( module+ ) >
+<!ATTLIST modules config:type NMTOKEN #FIXED "list" >
+
+<!ELEMENT name ( #PCDATA ) >
+
+<!ELEMENT package ( #PCDATA ) >
+
+<!ELEMENT packages ( package ) >
+<!ATTLIST packages config:type NMTOKEN #FIXED "list" >
+
+<!ELEMENT productDefines ( textdomain, globals, software, partitioning, proposals, workflows ) >
+
+
+
+
+<!ELEMENT proposal ( archs | enable_skip| locked_modules |  mode | name | proposal_modules | stage )* >
+<!ELEMENT proposal_modules (proposal_module+)>
+<!ATTLIST proposal_modules config:type NMTOKEN #FIXED "list" >
+<!ELEMENT locked_modules (proposal_module+)>
+<!ATTLIST locked_modules config:type NMTOKEN #FIXED "list" >
+
+<!ELEMENT proposal_module (#PCDATA)>
+
+<!ELEMENT proposals ( proposal+ ) >
+<!ATTLIST proposals config:type NMTOKEN #FIXED "list" >
+
+<!ELEMENT selection_type ( #PCDATA ) >
+<!ATTLIST selection_type config:type NMTOKEN #FIXED "symbol" >
+
+<!ELEMENT software (delete_old_packages| selection_type| base_selection|
+        addons| packages|only_update_installed|software_proposal)* >
+<!ELEMENT delete_old_packages ( #PCDATA ) >
+<!ELEMENT software_proposal ( #PCDATA ) >
+<!ATTLIST delete_old_packages config:type NMTOKEN #FIXED "boolean" >
+
+<!ELEMENT stage ( #PCDATA ) >
+
+<!ELEMENT textdomain ( #PCDATA ) >
+
+<!ELEMENT timezone ( #PCDATA ) >
+
+<!ELEMENT type ( #PCDATA ) >
+
+<!ELEMENT retranslate ( #PCDATA ) >
+<!ATTLIST retranslate config:type NMTOKEN #FIXED "boolean" >
+
+<!ELEMENT update ( #PCDATA ) >
+<!ATTLIST update config:type NMTOKEN #FIXED "boolean" >
+
+<!ELEMENT workflow ( defaults? | label | mode | modules | stage )* >
+
+<!ELEMENT workflows ( workflow+ ) >
+<!ATTLIST workflows config:type NMTOKEN #FIXED "list" >
+
+<!ELEMENT partitioning (evms_config?)>
+<!ELEMENT evms_config ( #PCDATA ) >
+<!ATTLIST evms_config config:type NMTOKEN #FIXED "boolean" >
+
+
+<!ATTLIST productDefines
+        xmlns CDATA #REQUIRED
+        xmlns:config CDATA #REQUIRED
+>
+

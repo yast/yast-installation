@@ -1,0 +1,1107 @@
+/**
+ * File:
+ *	AddOnProduct.ycp
+ *
+ * Module:
+ *	AddOnProduct
+ *
+ * Summary:
+ *	This module provides integration of the add-on products
+ *
+ * Authors:
+ *	Jiri Srain<jsrain@suse.de>
+ */
+
+{
+module "AddOnProduct";
+
+textdomain "installation";
+
+import "Label";
+import "Mode";
+import "ProductControl";
+import "ProductFeatures";
+import "Report";
+import "XML";
+import "Wizard";
+import "FileUtils";
+import "Language";
+import "Popup";
+import "InstShowInfo";
+
+// variables for installation with product
+/**
+ * ID for cache in the inst-sys
+ */
+integer src_cache_id = -1;
+
+/**
+ * System proposals have already been prepared for merging?
+ */
+boolean system_proposals_prepared = false;
+
+/**
+ * System workflows have already been prepared for merging?
+ */
+boolean system_workflows_prepared = false;
+
+/**
+ * List of all selected sources
+ */
+global list<map<string,any> > add_on_products = [];
+
+/**
+ * ID of currently added source for the add-on product
+ */
+global integer src_id  = nil;
+
+// for the add-on product workflow - needed for dialog skipping
+/**
+ * return value of last step in the product adding workflow
+ */
+global symbol last_ret = nil;
+
+/**
+ * List of used control files, to be copied to target system
+ */
+global list<string> control_files_to_add = [];
+
+/**
+ * Items if add-on product to be performed at the start of inst_finish
+ */
+global list<string> finish_steps_before_chroot = [];
+
+/**
+ * Items of add-on product to be performed after swictching to chroot
+ */
+global list<string> finish_steps_after_chroot = [];
+
+/**
+ * Items of add-on product to be performed before unmounting disks
+ */
+global list<string> finish_steps_before_umount = [];
+
+global boolean modified = false;
+
+global list<integer> mode_config_sources = [];
+
+
+
+/**
+ * Adapts the inst-sys from the tarball
+ * @param filename string the filename with the tarball to use to the update
+ * @return boolean true on success
+ */
+global boolean UpdateInstSys (string filename) {
+    src_cache_id = src_cache_id + 1;
+    string tmpdir = (string)SCR::Read (.target.tmpdir);
+    tmpdir = sformat ("%1/%2", tmpdir, src_cache_id);
+    map out = (map)SCR::Execute (.target.bash_output, sformat ("
+/bin/mkdir %1;
+cd %1;
+/bin/tar -xvf %2;
+/sbin/adddir %1 /;
+", tmpdir, filename));
+    if (out["exit"]:0 != 0)
+    {
+	y2error ("Including installation image failed: %1", out);
+	return false;
+    }
+    y2milestone ("Including installation image succeeded");
+    return true;
+}
+
+/**
+ * Check all proposals, split those ones which have multiple modes or
+ * architectures or stages into multiple proposals
+ * @param proposals a list of proposals
+ * @return a list of updated proposals
+ */
+list<map> PrepareProposals(list<map> proposals) {
+    list<map> new_proposals = [];
+    foreach (map p, proposals, {
+	string mode = p["mode"]:"";
+	list<string> modes = splitstring (mode, ",");
+	if (size(modes) == 0)
+	    modes = [""];
+	foreach (string m, modes, {
+	    map mp = p;
+	    mp["mode"] = m;
+	    string arch = p["archs"]:"";
+	    list<string> archs = splitstring (arch, ",");
+	    if (size(archs) == 0)
+		archs = [""];
+	    foreach (string a, archs, {
+		map amp = mp;
+		amp["archs"] = a;
+		string stage = amp["stage"]:"";
+		list<string> stages = splitstring(stage, ",");
+		if (size (stages) == 0)
+		    stages = [""];
+		foreach (string s, stages, {
+		    map samp = amp;
+		    samp["stage"] = s;
+		    new_proposals = add (new_proposals, samp);
+		});
+	    });
+	});
+    });
+    return new_proposals;
+}
+
+/**
+ * Check all proposals, split those ones which have multiple modes or
+ * architectures or stages into multiple proposals.
+ * Works with base product proposals.
+ */
+void PrepareSystemProposals() {
+    if (system_proposals_prepared)
+	return;
+    ProductControl::proposals = PrepareProposals(ProductControl::proposals);
+    system_proposals_prepared = true;
+}
+
+/**
+ * Check all workflows, split those ones which have multiple modes or
+ * architectures or stages into multiple workflows
+ * @param workflows a list of workflows
+ * @return a list of updated workflows
+ */
+list<map> PrepareWorkflows(list<map> workflows) {
+    list<map> new_workflows = [];
+    foreach (map w, workflows, {
+	string mode = w["mode"]:"";
+	list<string> modes = splitstring (mode, ",");
+	if (size(modes) == 0)
+	    modes = [""];
+	foreach (string m, modes, {
+	    map mw = w;
+	    mw["mode"] = m;
+	    mw["defaults"] = mw["defaults"]:$[];
+	    string arch = mw["defaults", "archs"]:"";
+	    list<string> archs = splitstring (arch, ",");
+	    if (size(archs) == 0)
+		archs = [""];
+	    foreach (string a, archs, {
+		map amw = mw;
+		amw["defaults", "archs"] = a;
+		string stage = amw["stage"]:"";
+		list<string> stages = splitstring(stage, ",");
+		if (size (stages) == 0)
+		    stages = [""];
+		foreach (string s, stages, {
+		    map samw = amw;
+		    samw["stage"] = s;
+		    new_workflows = add (new_workflows, samw);
+		});
+	    });
+	});
+    });
+    return new_workflows;
+}
+
+/**
+ * Check all workflows, split those ones which have multiple modes or
+ * architectures or stages into multiple worlflows.
+ * Works with base product workflows.
+ */
+void PrepareSystemWorkflows() {
+    if (system_workflows_prepared)
+	return;
+    ProductControl::workflows = PrepareWorkflows(ProductControl::workflows);
+    system_workflows_prepared = true;
+}
+
+/**
+ * Replace a module in a proposal with a set of other modules
+ * @param proposal a map describing the proposal
+ * @param old string the old item to be replaced
+ * @param new a list of items to be put into instead of the old one
+ * @return a map with the updated proposal
+ */
+map ReplaceProposalModule(map proposal, string old, list<string> new) {
+    boolean found = false;
+    list<list> modules = maplist (any m, proposal["proposal_modules"]:[], {
+	if ((is (m, string) && (string)m == old)
+	    || is (m, map) && ((map)m)["name"]:"" == old)
+	{
+	    found = true;
+	    if (is (m, map))
+	    {
+		return maplist (string it, new, {
+		    return union ((map)m, $[ "name" : it ]);
+		});
+	    }
+	    else
+	    {
+		return new;
+	    }
+	}
+	else
+	{
+	    return [m];
+	}
+    });
+    if (! found)
+	y2internal ("Replace/Remove proposal item %1 not found", old);
+    proposal["proposal_modules"] = flatten(modules);
+    if (haskey (proposal, "proposal_tabs"))
+    {
+	proposal["proposal_tabs"] = maplist (map tab,
+	    proposal["proposal_tabs"]:[],
+	{
+	    list<list<string> > modules = maplist (string m,
+		tab["proposal_modules"]:[],
+	    {
+		if (m == old)
+		    return new;
+		else
+		    return [ m ];
+	    });
+	    tab["proposal_modules"] = flatten(modules);
+	    return tab;
+	});
+    }
+    return proposal;
+}
+
+
+/**
+ * Merge add-on proposal to a base proposal
+ * @param base map the base product proposal
+ * @param addon map the proposal of the addon productA
+ * @param prod_name a name of the add-on product
+ * @return map merged proposals
+ */
+map MergeProposal(map base, map addon, string prod_name, string domain)
+{
+    list<string> appends = addon["append_modules"]:[];
+    list<string> removes = addon["remove_modules"]:[];
+    map<string,list<string> > replaces = listmap(map a,
+	addon["replace_modules"]:[],
+    {
+	string old = a["replace"]:"";
+	list<string> new = a["modules"]:[];
+	return $[ old : new ];
+    });
+    if (size (removes) > 0)
+    {
+        foreach (string r, removes, {
+	    base = ReplaceProposalModule (base, r, []);
+	});
+    }
+    if (size (replaces) > 0)
+    {
+	foreach (string old, list<string> new, replaces, {
+	    base = ReplaceProposalModule (base, old, new);
+	});
+    }
+    if (size (appends) > 0)
+    {
+	boolean as_map = false;
+	list<any> append2 = appends;
+	if (is (base["proposal_modules", 0]:nil, map))
+	{
+	    append2 = maplist (string m, appends, {
+		return $[ "name" : m, "presentation_order" : 9999 ];
+	    });
+	}
+	base["proposal_modules"] = merge (base["proposal_modules"]:[], append2);
+	if (haskey (base, "proposal_tabs"))
+	{
+	    map new_tab = $[
+		"label" : prod_name,
+		"proposal_modules" : appends,
+		"textdomain" : domain,
+	    ];
+	    base["proposal_tabs"] = add (base["proposal_tabs"]:[], new_tab);
+	}
+    }
+    if (addon["enable_skip"]:"yes" == "no")
+	base["enable_skip"] = "no";
+    return base;
+}
+
+/**
+ * Update system proposals according to proposal update metadata
+ * @param proposals a list of update proposals
+ * @param prod_name string the product name (used in case of tabs)
+ * @param domain string the text domain (for translations)
+ * @return boolean true on success
+ */
+boolean UpdateProposals(list<map> proposals, string prod_name, string domain) {
+    foreach (map proposal, proposals, {
+	string name = proposal["name"]:"";
+	string stage = proposal["stage"]:"";
+	string mode = proposal["mode"]:"";
+	string arch = proposal["archs"]:"";
+	boolean found = false;
+	list<map> new_proposals = [];
+	map arch_all_prop = $[];
+	foreach (map p, ProductControl::proposals, {
+	    if (p["stage"]:"" != stage || p["mode"]:"" != mode
+		    || p["name"]:"" != name)
+	    {
+		new_proposals = add (new_proposals, p);
+		continue;
+	    }
+	    if (p["archs"]:"" == arch || arch == "" || arch == "all")
+	    {
+		p = MergeProposal (p, proposal, prod_name, domain);
+		found = true;
+	    }
+	    else if (p["archs"]:"" == "" || p["archs"]:"" == "all")
+	    {
+		arch_all_prop = p;
+	    }
+	    new_proposals = add (new_proposals, p);
+	});
+	if (! found)
+	{
+	    if (arch_all_prop != $[])
+	    {
+		arch_all_prop["archs"] = arch;
+		proposal = MergeProposal (arch_all_prop, proposal,
+		    prod_name, domain);
+	    }
+	    else // completly new proposal
+	    {
+		proposal["textdomain"] = domain;
+	    }
+	    new_proposals = add (new_proposals, proposal);
+	}
+	ProductControl::proposals = new_proposals;
+    });
+    return true;
+}
+
+/**
+ * Replace a module in a workflow with a set of other modules
+ * @param workflow a map describing the workflow
+ * @param old string the old item to be replaced
+ * @param new a list of items to be put into instead of the old one
+ * @param domain string a text domain
+ * @param keep boolean true to keep original one (and just insert before)
+ * @return a map with the updated workflow
+ */
+map ReplaceWorkflowModule(map workflow, string old, list<map> new,
+	string domain, boolean keep)
+{
+    boolean found = false;
+    list<list<map> > modules = maplist (map m, workflow["modules"]:[], {
+	if (m["name"]:"" == old)
+	{
+	    list<map> new_list = maplist (map n, new, {
+		n["textdomain"] = domain;
+		return n;
+	    });
+	    found = true;
+	    if (keep)
+		new_list = add (new_list, m);
+	    return new_list;
+	}
+	else
+	{
+	    return [m];
+	}
+    });
+    if (! found)
+	y2internal ("Insert/Replace/Remove workflow module %1 not found", old);
+    workflow["modules"] = flatten(modules);
+    return workflow;
+}
+
+
+/**
+ * Merge add-on workflow to a base workflow
+ * @param base map the base product workflow
+ * @param addon map the workflow of the addon product
+ * @param prod_name a name of the add-on product
+ * @return map merged workflows
+ */
+map MergeWorkflow(map base, map addon, string prod_name, string domain)
+{
+    list<map> appends = addon["append_modules"]:[];
+    list<string> removes = addon["remove_modules"]:[];
+    map<string,list<map> > inserts = listmap (map i,
+	addon["insert_modules"]:[],
+    {
+	string before = i["before"]:"";
+	list<map> new = i["modules"]:[];
+	return $[ before : new ];
+    });
+    map<string,list<map> > replaces = listmap(map a,
+	addon["replace_modules"]:[],
+    {
+	string old = a["replace"]:"";
+	list<map> new = a["modules"]:[];
+	return $[ old : new ];
+    });
+    if (size (removes) > 0)
+    {
+        foreach (string r, removes, {
+	    base = ReplaceWorkflowModule (base, r, [], domain, false);
+	});
+    }
+    if (size (replaces) > 0)
+    {
+	foreach (string old, list<map> new, replaces, {
+	    base = ReplaceWorkflowModule (base, old, new, domain, false);
+	});
+    }
+    if (size (inserts) > 0)
+    {
+	foreach (string old, list<map> new, inserts, {
+	    base = ReplaceWorkflowModule (base, old, new, domain, true);
+	});
+    }
+    if (size (appends) > 0)
+    {
+	foreach (map new, appends, {
+	    new["textdomain"] = domain;
+	    base["modules"] = add (base["modules"]:[], new);
+	});
+    }
+    return base;
+}
+
+/**
+ * Update system workflows according to workflow update metadata
+ * @param workflows a list of update workflows
+ * @param prod_name string the product name (used in case of tabs)
+ * @param domain string the text domain (for translations)
+ * @return boolean true on success
+ */
+boolean UpdateWorkflows(list<map> workflows, string prod_name, string domain) {
+    foreach (map workflow, workflows, {
+	string stage = workflow["stage"]:"";
+	string mode = workflow["mode"]:"";
+	string arch = workflow["archs"]:"";
+	boolean found = false;
+	list<map> new_workflows = [];
+	map arch_all_wf = $[];
+	foreach (map w, ProductControl::workflows, {
+	    if (w["stage"]:"" != stage || w["mode"]:"" != mode)
+	    {
+		new_workflows = add (new_workflows, w);
+		continue;
+	    }
+	    if (w["defaults", "archs"]:"" == arch
+		|| arch == "" || arch == "all")
+	    {
+		w = MergeWorkflow (w, workflow, prod_name, domain);
+		found = true;
+	    }
+	    else if (w["defaults", "archs"]:"" == ""
+		|| w["default", "archs"]:"" == "all")
+	    {
+		arch_all_wf = w;
+	    }
+	    new_workflows = add (new_workflows, w);
+	});
+	if (! found)
+	{
+	    if (arch_all_wf != $[])
+	    {
+		arch_all_wf["defaults", "archs"] = arch;
+		workflow = MergeWorkflow (arch_all_wf, workflow,
+		    prod_name, domain);
+	    }
+	    else // completly new workflow
+	    {
+		workflow["textdomain"] = domain;
+		workflow["modules"] = maplist (map mod, workflow["modules"]:[], {
+		    mod["textdomain"] = domain;
+		    return mod;
+		});
+	    }
+	    new_workflows = add (new_workflows, workflow);
+	}
+	ProductControl::workflows = new_workflows;
+    });
+    return true;
+}
+
+/**
+ * Redraw the wizard steps bar
+ * @return boolean true on success
+ */
+boolean RedrawWizardSteps () {
+// FIXME following code copy-pasted from clients/installation.ycp
+    y2milestone( "Retranslating messages" );
+
+    // Make sure the labels for default function keys are retranslated, too.
+    // Using Label::DefaultFunctionKeyMap() from Label module.
+    UI::SetFunctionKeys( Label::DefaultFunctionKeyMap() );
+
+    // Activate language changes on static part of wizard dialog
+
+    ProductControl::RetranslateWizardSteps();
+    Wizard::RetranslateButtons();
+    Wizard::SetFocusToNextButton();
+// FIXME end of copy-paste
+    return true;
+}
+
+/**
+ * Add specified steps to inst_finish
+ * Just modifies internal variables, inst_finish grabs them itself
+ * @param additional_steps a map specifying the steps to be added
+ * @return boolean true on success
+ */
+boolean UpdateInstFinish (map<string,list<string> > additional_steps) {
+    list<string> before_chroot = additional_steps["before_chroot"]:[];
+    list<string> after_chroot = additional_steps["after_chroot"]:[];
+    list<string> before_umount = additional_steps["before_umount"]:[];
+    finish_steps_before_chroot = (list<string>)
+	merge (finish_steps_before_chroot, before_chroot);
+    finish_steps_after_chroot = (list<string>)
+	merge (finish_steps_after_chroot, after_chroot);
+    finish_steps_before_umount = (list<string>)
+	merge (finish_steps_before_umount, before_umount);
+    return true;
+}
+
+/**
+ * Adapts the installation workflow according to specified XML file
+ * @param update_file a map containing the add-on product control file
+ * @param name string the name of the add-on product
+ * @param domain string the text domain for the add-on product
+ * @return boolean true on success
+ */
+boolean UpdateInstallation (map update_file, string name, string domain) {
+    PrepareSystemProposals ();
+    PrepareSystemWorkflows ();
+    list<map> proposals = update_file["proposals"]:[];
+    proposals = PrepareProposals (proposals);
+    UpdateProposals (proposals, name, domain);
+    list<map> workflows = update_file["workflows"]:[];
+    workflows = PrepareWorkflows (workflows);
+    UpdateWorkflows (workflows, name, domain);
+    return true;
+}
+
+/**
+ * Add new defined proposal to the list of system proposals
+ * @param proposals a lsit of proposals to be added
+ * @return boolean true on success
+ */
+boolean AddNewProposals (list<map> proposals) {
+    list<string> forbidden = maplist (map p, ProductControl::proposals, {
+	return p["name"]:"";
+    });
+    forbidden = toset (forbidden);
+    foreach (map proposal, proposals, {
+	if (! contains (forbidden, proposal["name"]:""))
+	{
+	    y2milestone ("Adding new proposal %1", proposal["name"]:"");
+	    ProductControl::proposals = add (ProductControl::proposals, proposal);
+	}
+    });
+    return true;
+}
+
+/**
+ * Replace workflows for 2nd stage of installation
+ * @param workflows a list of the workflows
+ * @return boolean true on success
+ */
+boolean Replaceworkflows (list<map> workflows) {
+    workflows = PrepareWorkflows (workflows);
+    workflows = filter (map w, workflows, {
+	if (w["stage"]:"" == "initial")
+	{
+	    y2error ("Attempting to replace 1st stage workflow. This is not possible");
+	    return false;
+	}
+	return true;
+    });
+    map<string,map<string, boolean> > sm = $[];
+    foreach (map w, workflows, {
+	sm[w["stage"]:""] = sm[w["stage"]:""]:$[];
+	sm[w["stage"]:"", w["mode"]:""] = true;
+	return [w["stage"]:"", w["mode"]:""];
+    });
+    y2milestone ("Existing replace workflows: %1", sm);
+    y2milestone ("Workflows before filtering: %1", size (ProductControl::workflows));
+    ProductControl::workflows = filter (map w, ProductControl::workflows, {
+	return ! sm[w["stage"]:"", w["mode"]:""]:false;
+    });
+    y2milestone ("Workflows after filtering: %1", size (ProductControl::workflows));
+    ProductControl::workflows = (list<map>)merge (ProductControl::workflows, workflows);
+    return true;
+}
+
+/**
+ * Update product options
+ * @param update_file a map containing update control file
+ * @return boolean true on success
+ */
+boolean UpdateProductInfo(map update_file) {
+    foreach (string section, ["globals", "software", "partitioning", "network"],
+    {
+	map<string,any> sect = ProductFeatures::GetSection(section);
+	map<string,any> addon = update_file[section]:$[];
+	sect = (map<string,any>)union (sect, addon);
+	ProductFeatures::SetSection(section, sect);
+    });
+    list<string> addon_clone = update_file["clone_modules"]:[];
+    ProductControl::clone_modules
+	= (list<string>)merge (ProductControl::clone_modules, addon_clone);
+    return true;
+}
+
+/**
+ * Remove the /y2update directory from the system
+ */
+void CleanY2Update() {
+    SCR::Execute (.target.bash, "/bin/rm -rf /y2update");
+}
+
+/**
+ * Displays License with Help and ( ) Yes / ( ) No radio buttons
+ *
+ * @param string file with the license
+ * @return boolean if succeeded
+ */
+boolean DisplayLicenseDialog (string license_file) {
+    string license_text = (string) SCR::Read(.target.string, license_file);
+    if (license_text == nil) {
+	y2error("Cannot read license file %1", license_file);
+
+	return false;
+    }
+
+    map display = UI::GetDisplayInfo();
+    integer space = display["TextMode"]:true ? 1 : 3;
+    
+    term rt = `Empty();
+    if (regexpmatch(license_text, "</.*>")) {
+	rt = `RichText(`id( `welcome_text), license_text);
+    } else {
+	rt = `RichText(`id( `welcome_text), `opt(`plainText), license_text);
+    }
+    
+    // dialog caption
+    string caption = _("License Agreement");
+
+    term contents = `VBox (
+	`VSpacing (space),
+	`HBox (
+	    `HSpacing (2*space),
+	    rt,
+	    `HSpacing (2*space)
+	),
+	`VSpacing (2),
+	`RadioButtonGroup(`id(`eula),
+	    `HBox(
+		`HSpacing (2*space),
+		`VBox(
+		    `Left(`RadioButton(`id(`yes),
+			// radio button
+			_("Yes, I Agree to the License Agreement")
+		    )),
+		    `Left(`RadioButton(`id(`no),
+			// radio button
+			_("No, I Do Not Agree")
+		    ))
+		),
+		`HSpacing (2*space)
+	    )
+	),
+	`VSpacing(2)
+    );
+    
+    // help text
+    string help = _("<p>Read the license agreement carefully and select
+one of the available options. If you do not agree to the license agreement,
+the configuration will be aborted.</p>
+");
+
+    Wizard::SetContents(caption, contents, help,
+	false, true);
+
+    Wizard::SetTitleIcon ("yast-addon");
+    Wizard::SetFocusToNextButton();
+
+    return true;
+}
+
+/**
+ * Removes the temporary directory for licenses
+ *
+ * @param string temporary directory path
+ */
+void CleanUpLicense (string tmpdir) {
+    SCR::Execute (.target.bash_output, sformat("rm -rf '%1'", tmpdir));
+}
+
+/**
+ * Show /media.1/info.txt file in a pop-up message if such file exists.
+ * Show license if such exists and return whether users accepts it.
+ * Returns 'nil' when did not succed.
+ *
+ * @return boolean whether the license has been accepted
+ */
+global boolean AcceptedLicenseAndInfoFile (integer src_id) {
+    // Check for info.txt
+    y2milestone("Checking source: ID %1", src_id);
+    string info_file = Pkg::SourceProvideOptionalFile (src_id, 1, "/media.1/info.txt");
+    string license_file = Pkg::SourceProvideOptionalFile (src_id, 1, "/media.1/license.zip");
+
+    boolean any_license_needs_to_be_accepted = false;
+
+    // license is part of the add-on product
+    if (license_file != nil) {
+	y2milestone("Product has a license");
+	string tmpdir = (string) SCR::Read(.target.tmpdir) + "/add-on-license/";
+	map out = (map)SCR::Execute (.target.bash_output, sformat ("
+rm -rf '%1' && \
+mkdir -p '%1' && \
+cd '%1' && \
+unzip -qqo '%2'
+", tmpdir, license_file));
+
+	// Extracting license failed, cannot accept the license
+	if (out["exit"]:0 != 0) {
+	    y2error("Cannot unzip license -> %1", out);
+	    // popup error
+	    Report::Error (_("An error occurred while preparing the installation system."));
+	    CleanUpLicense(tmpdir);
+
+	    return nil;
+	}
+	
+	string license_file = tmpdir + "license.txt";
+	string localized_license = sformat("%1license.%2.txt", tmpdir, Language::language);
+	if (FileUtils::Exists(localized_license) && FileUtils::IsFile(localized_license) && FileUtils::GetSize(localized_license) > 0)
+	    license_file = localized_license;
+	else
+	    y2milestone("License file %1 doesn't exist, using %2 as a fallback", localized_license, license_file);
+
+	// Extracted license file exists
+	if (FileUtils::IsFile(license_file)) {
+	    // Extracted license file is not empty
+	    if (FileUtils::GetSize(license_file) > 0) {
+		any_license_needs_to_be_accepted = true;
+		y2milestone("License file exists, displaying");
+		// Display the license, exit if not successful
+		if (!DisplayLicenseDialog(license_file)) {
+		    Report::Error (_("An error occurred while preparing the installation system."));
+		    CleanUpLicense(tmpdir);
+
+		    return nil;
+		}
+	    } else {
+		y2milestone("License is empty...");
+	    }
+	}
+	
+	CleanUpLicense(tmpdir);
+    }
+
+    // Display info as a popup if exists
+    if (info_file != nil) { any info_closed = InstShowInfo::show_info_txt(info_file); }
+    
+    // Waiting for user interaction if needed...
+    if (any_license_needs_to_be_accepted) {
+	any ret = nil;
+	while (true) {
+	    ret = UI::UserInput();
+	    symbol accept = (symbol) UI::QueryWidget(`id(`eula), `CurrentButton);
+	    // Aborting the license dialog
+	    if (ret == `abort) {
+		// popup question
+		if (Popup::ContinueCancel(_("Really abort add-on product installation?"))) {
+		    y2milestone("Aborting...");
+
+		    return false;
+		}
+		continue;
+	    // Go on
+	    } else if (ret == `next) {
+		// License declined
+		if (accept == `no) {
+		    if (Popup::YesNo(_("Reread or reconsider the license agreement?"))) {
+			continue;
+		    } else {
+			y2milestone("License has been declined.");
+
+			return false;
+		    }
+		// License accepted
+		} else if (accept == `yes) {
+		    y2milestone("License has been accepted.");
+
+		    return true;
+		} else {
+		    // message popup
+		    Popup::Message(_("Accept or decline the license agreement."));
+		    continue;
+		}
+	    }
+	}
+    // nothing to accept, just simply return 'true'
+    } else {
+	return true;
+    }
+}
+
+/**
+ * Do installation of the add-on product within an installed system
+ * srcid is got via AddOnProduct::src_id
+ *
+ * @param string src_id
+ * @return symbol the result symbol from wizard sequencer
+ */
+global symbol DoInstall() {
+    // Display /media.1/info.txt if such file exists
+    // Display license and wait for agreement
+    // Not needed here, license already shown in the workflow
+    /*
+    boolean license_ret = AcceptedLicenseAndInfoFile(src_id);
+    if (license_ret != true) {
+	y2milestone("Removing the current source ID %1", src_id);
+	Pkg::SourceDelete(src_id);
+	return nil;
+    }
+    */
+
+    string control = Pkg::SourceProvideOptionalFile (src_id, 1, "/installation.xml");
+    // Fallback -- Source didn't provide needed controll file
+    // Handling as it was an installation source
+    if (control == nil)
+    {
+	y2milestone("File /installation.xml not found, running sw_single for this source");
+	WFM::CallFunction ("sw_single", []);
+
+	return nil;
+    }
+
+    string binaries = Pkg::SourceProvideOptionalFile (src_id, 1, "/y2update.tgz");
+    // File /y2update.tgz exists
+    if (binaries != nil)
+    {
+	// Try to extract files from the archive
+	map out = (map)SCR::Execute (.target.bash_output, sformat ("
+test -d /y2update && rm -rf /y2update;
+/bin/mkdir -p /y2update/all;
+cd /y2update/all;
+/bin/tar -xvf %1;
+cd /y2update;
+ln -s all/usr/share/YaST2/* .;
+ln -s all/usr/lib/YaST2/* .;
+", binaries));
+
+	// Failed
+	if (out["exit"]:0 != 0)
+	{
+	    // error report
+	    Report::Error (_("An error occurred while preparing the installation system."));
+	    CleanY2Update();
+	    return nil;
+	}
+    }
+    else
+    {
+	y2milestone("File /y2update.tgz not provided");
+    }
+
+    // set control file
+    ProductControl::custom_control_file = control;
+    if (!ProductControl::Init())
+    {
+	// error report
+	Report::Error (sformat (_("Control file %1 not found on media."),
+	    control));
+	CleanY2Update();
+	return nil;
+    }
+    // start workflow
+    Wizard::OpenNextBackStepsDialog();
+    // dialog caption
+    Wizard::SetContents(_("Initializing..."), `Empty (), "", false, false);
+    list<map> stage_mode = [$["stage": "normal",  "mode": "installation" ]];
+    ProductControl::AddWizardSteps(stage_mode);
+    Mode::SetMode ("installation");
+    symbol ret = ProductControl::Run();
+    UI::CloseDialog();
+    CleanY2Update();
+    return ret;
+}
+
+/**
+ * Integrate the changes in the workflow
+ * @param filename string filename of the control file (local filename)
+ * @return boolean true on success
+ */
+global boolean WFIntegrate (string filename) {
+    map update_file = XML::XMLToYCPFile (filename);
+    string name = update_file["display_name"]:"";
+    boolean ret = UpdateInstallation (update_file["update"]:$[], name,
+        update_file["textdomain"]:"control");
+    if (! ret)
+    {
+	y2error ("Failed to udpate installation workflow");
+	return false;
+    }
+    if (! UpdateProductInfo (update_file))
+    {
+	y2error ("Failed to set product options");
+	return false;
+    }
+    if (! AddNewProposals (update_file["proposals"]:[]))
+    {
+	y2error ("Failed to add new proposals");
+	return false;
+    }
+    if (! Replaceworkflows (update_file["workflows"]:[]))
+    {
+	y2error ("Failed to replace workflows");
+	return false;
+    }
+    if (! RedrawWizardSteps ())
+    {
+	y2error ("Redrawing the wizard steps failed");
+	return false;
+    }
+    if (! UpdateInstFinish (update_file["update", "inst_finish"]:$[]))
+    {
+	y2error ("Adding inst_finish steps failed");
+	return false;
+    }
+    return true;
+}
+
+/**
+ * Integrate the add-on product to the installation workflow, including
+ * preparations for 2nd stage and inst-sys update
+ * @param srcid integer the source ID of the installation source
+ * @return boolean true on success
+ */
+global boolean Integrate (integer srcid) {
+    y2milestone ("Integrating source %1", srcid);
+
+    string filename = Pkg::SourceProvideOptionalFile (srcid, 1, "/installation.xml");
+    if (filename == nil)
+    {
+	y2milestone ("Add-on product control file not found, not touching the workglow");
+    }
+    else
+    {
+	if (! WFIntegrate (filename))
+	{
+	    y2error ("Workflow update failed");
+	    return false;
+	}
+	string tmpdir = (string)SCR::Read (.target.tmpdir) + "/control_files";
+	map out = (map)SCR::Execute (.target.bash_output, sformat ("
+test -d %1 || /bin/mkdir %1;
+/bin/cp %2 %1/%3.xml;
+", tmpdir, filename, srcid));
+	if (out["exit"]:-1 != 0)
+	{
+	    y2error ("Error occurred while copying control file: %1", out);
+	}
+	control_files_to_add = add (control_files_to_add, sformat ("%1.xml", srcid));
+    }
+    string y2update = Pkg::SourceProvideOptionalFile (srcid, 1, "/y2update.tgz");
+    if (y2update == nil)
+    {
+	y2milestone ("No YaST update found on the media");
+    }
+    else
+    {
+	UpdateInstSys (y2update);
+    }
+    return true;
+}
+
+global boolean CheckProductDependencies (list<string> products) {
+// TODO check the dependencies of the product
+    return true;
+}
+
+/**
+ * Auto-integrate add-on products in specified file
+ * @param filelist string a file containing a list of add-on products to integrate
+ * @return boolean true on exit
+ */
+global boolean AddPreselectedAddOnProducts(string filelist) {
+    if (filelist == nil)
+    {
+	y2milestone ("No add-on products defined on the media");
+	return true;
+    }
+    list<string> products = splitstring ((string)SCR::Read (.target.string, filelist), "\r\n");
+    foreach (string p, products, {
+	if (p == "")
+	    return;
+	list<string> elements = splitstring (p, " \t");
+	elements = filter (string e, elements, { return e != ""; });
+	string url = elements[0]:"";
+	string pth = elements[1]:"/";
+	elements = remove (elements, 0);
+	elements = remove (elements, 0);
+	integer src = Pkg::SourceCreate (url, pth);
+	if (! AcceptedLicenseAndInfoFile(src))
+	{
+	    Pkg::SourceDelete (src);
+	    return;
+	}
+	Integrate (src);
+	if (size (elements) > 0)
+	{
+	    foreach (string e, elements, {
+		Pkg::ResolvableInstall (e, `product);
+	    });
+	}
+	else
+	{
+	    list<map<string,any> > products = Pkg::ResolvableProperties ("", `product, "");
+	    products = filter (map<string,any> p, products, {
+		return p["source"]:-1 == src;
+	    });
+	    foreach (map<string,any> p, products, {
+		Pkg::ResolvableInstall (p["name"]:"", `product);
+	    });
+	}
+    });
+}
+
+global map Export () {
+    list<map<string,any> > exp = maplist (map<string,any> p, add_on_products, {
+	if (haskey (p, "media"))
+	    p = remove (p, "media");
+	return p;
+    });
+    return $[
+	"add_on_products" : exp,
+    ];
+}
+
+global boolean Import (map settings) {
+    add_on_products = settings["add_on_products"]:[];
+    modified = false;
+    if (Mode::config ())
+    {
+	foreach (map prod, add_on_products, {
+	    string media = prod["media_url"]:"";
+	    string pth = prod["product_dir"]:"/";
+	    integer src = Pkg::SourceCreate (media, pth);
+	    if (src != -1)
+		mode_config_sources = add (mode_config_sources, src);
+	});
+    }
+    return true;
+}
+
+global void CleanModeConfigSources () {
+    foreach (integer src, mode_config_sources, {
+	Pkg::SourceDelete (src);
+    });
+    mode_config_sources = [];
+}
+
+
+} // module end

@@ -1,0 +1,14 @@
+[Desktop Entry]
+X-SuSE-translate=true
+Type=Application
+Categories=Qt;X-SuSE-YaST;X-SuSE-YaST-Misc;
+
+X-SuSE-YaST-Call=inst_release_notes
+X-SuSE-YaST-RootOnly=false
+X-SuSE-YaST-Group=Misc
+
+Icon=yast-release-notes
+Exec=/sbin/yast2 inst_release_notes
+
+Name=Release Notes
+GenericName=release_notes

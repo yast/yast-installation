@@ -1,0 +1,85 @@
+/**
+ * File:	clients/add-on.ycp
+ * Package:	yast2-installation
+ * Summary:	Install an add-on product
+ * Authors:	Jiri Srain <jsrain@suse.de>
+ *
+ */
+
+{
+textdomain "installation";
+
+import "AddOnProduct";
+import "Confirm";
+import "PackageLock";
+import "PackageCallbacksInit";
+import "Report";
+import "Wizard";
+import "Pkg";
+
+include "installation/add-on-workflow.ycp";
+
+Wizard::CreateDialog();
+Wizard::SetDesktopIcon("vendor");
+Wizard::HideBackButton();
+
+// check whether running as root
+// and having the packager for ourselves
+if (! Confirm::MustBeRoot () || ! PackageLock::Check ())
+{
+    UI::CloseDialog ();
+    return `abort;
+}
+
+// initialize target to import all trusted keys (#165849)
+Pkg::TargetInit( "/", false );
+
+PackageCallbacksInit::InitPackageCallbacks ();
+
+// Initialize current sources
+Read();
+symbol ret = nil;
+
+if (size (WFM::Args()) == 0)
+{
+    y2milestone ("Url not specified in the command line, asking user");
+    ret = RunWizard();
+}
+else
+{
+    string url = (string)WFM::Args(0);
+    y2milestone ("Specified URL %1", url);
+    do {
+	createResult = SourceManager::createSource (url);
+	y2milestone ("Source creating result: %1", createResult);
+    } while ( createResult == `again );
+    AddOnProduct::last_ret = `next;
+    ret = RunAutorunWizard ();
+}
+if (ret == `next)
+{
+    // feedback heading
+    string heading = _("Add-On Product Installation");
+    // feedback message
+    string message
+	= _("Reading packages available on the installation sources...");
+
+    Popup::ShowFeedback (heading, message);
+
+    y2milestone ("syncing srcid %1 to zmd", AddOnProduct::src_id);
+    boolean synced
+	= SourceManager::SyncAddedAndDeleted ([AddOnProduct::src_id], []);
+    y2milestone ("sync status: %1", synced);
+
+    Popup::ClearFeedback ();
+
+    WFM::CallFunction ("inst_addon_update_sources", []);
+    ret = AddOnProduct::DoInstall ();
+    // Write only when there are some changes
+    Write();
+}
+UI::CloseDialog();
+return ret;
+
+/* EOF */
+}
