@@ -70,7 +70,15 @@ if (addUrls != [])
     foreach (string u, addUrls, {
 	integer srcid = Pkg::SourceCreate (u, "/");
 	y2milestone ("got %1 from creating %2", srcid, u);
-	added_ids = add (added_ids, srcid);
+	if (srcid == -1)
+	{
+	    // FIXME add better error message
+	    Report::Error (_("An error occurred while connecting to the server."));
+	}
+	else
+	{
+	    added_ids = add (added_ids, srcid);
+	}
     });
 
     y2milestone ("syncing to zmd");
