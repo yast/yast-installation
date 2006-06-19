@@ -1,2 +1,0 @@
-Within the ins-sys each script stored in the postFirstCall directory is
-called directly after the YaST2.call script has been finished

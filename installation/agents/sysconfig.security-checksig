@@ -1,9 +1,0 @@
-## Type:        list(yes,yast,no)
-## Default:     yes
-#
-# When working with packages and installation sources, check keys
-# and signatures: yes = in YaST and ZENWorks, yast = in YaST, no =
-# no checking.
-#
-CHECK_SIGNATURES=yes
-

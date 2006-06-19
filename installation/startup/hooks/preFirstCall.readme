@@ -1,2 +1,0 @@
-Within the inst-sys each script stored in the preFirstCall directory is
-called directly in front of the YaST2.call script

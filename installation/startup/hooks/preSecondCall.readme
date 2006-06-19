@@ -1,2 +1,0 @@
-Within the installed system each script stored in the preSecondCall
-directory is called directly in front of the the YaST2.call script
