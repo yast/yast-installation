@@ -1,8 +1,0 @@
-
-
-<module>
-    <label>Network</label>
-    <name>proposal</name>
-    <arguments>true,true,`net</arguments>
-</module>
-
