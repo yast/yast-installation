@@ -148,12 +148,10 @@
     <para>The dispatcher provides the following functions:</para>
 
     <itemizedlist>
-      <listitem><link
-	  linkend="proposal_MakeProposal">MakeProposal</link></listitem>
-      <listitem><link linkend="proposal_AskUser">AskUser</link></listitem>
-      <listitem><link
-	  linkend="proposal_Description">Description</link></listitem>
-      <listitem><link linkend="proposal_Write">Write</link></listitem>
+      <listitem id="proposal_MakeProposal">MakeProposal</listitem>
+      <listitem id="proposal_AskUser">AskUser</listitem>
+      <listitem id="proposal_Description">Description</listitem>
+      <listitem id="proposal_Write">Write</listitem>
     </itemizedlist>    
   </section>
   <section id="proposal_api_dummy_proposal">
