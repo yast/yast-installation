@@ -1044,6 +1044,11 @@ global boolean AddPreselectedAddOnProducts(string filelist) {
 	elements = remove (elements, 0);
 	elements = remove (elements, 0);
 	integer src = Pkg::SourceCreate (url, pth);
+	if (! AcceptedLicenseAndInfoFile(src))
+	{
+	    Pkg::SourceDelete (src);
+	    return;
+	}
 	Integrate (src);
 	if (size (elements) > 0)
 	{
