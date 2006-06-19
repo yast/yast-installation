@@ -1,6 +1,7 @@
 # Makefile.am for installation/general
 
 client_DATA =	$(wildcard *.ycp)
+YCPCFLAGS = -M ../modules
 
 EXTRA_DIST = $(client_DATA)
 
