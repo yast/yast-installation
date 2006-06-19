@@ -17,6 +17,7 @@ import "GetInstArgs";
 import "PackageCallbacksInit";
 import "Popup";
 import "SourceManager";
+import "Report";
 
 if ( GetInstArgs::going_back())     // going backwards?
     return `auto;                   // don't execute this once more
