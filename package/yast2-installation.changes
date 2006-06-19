@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Jun 19 15:18:43 CEST 2006 - mvidner@suse.cz
+
+- When registration succeeds, display only the actually added sources
+  (#180820#c26).
+- 2.13.132.1
+
+-------------------------------------------------------------------
 Mon Jun 19 14:05:21 CEST 2006 - jsrain@suse.cz
 
 - report an error when failed to register the update source for

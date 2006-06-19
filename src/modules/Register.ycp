@@ -206,17 +206,18 @@ global void finish()
  * add_update_sources
  *
  * read update sources from services file and add them to yast and zmd
- *
+ * @return a list of added URLs
  */
-global boolean add_update_sources ()
+global list<string> add_update_sources ()
 {
 
     // make it possible to be run as non-root (system will be inconsistent then)
     // TODO: to be removed when rug lets authorized users add installation sources
-    if ( !iamroot ) return false;
+    if ( !iamroot )
+	return [];
 
     if (!FileUtils::Exists (services_file))
-    return false;
+	return [];
 
     // filters out empty items (#165860#c12)
     list<string> urls = String::NewlineItems (
