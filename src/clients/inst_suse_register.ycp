@@ -741,7 +741,7 @@ boolean launchBrowser(string url)
                 {
                     // add update source
                     UI::OpenDialog(`VBox(`Label(_("Setting up online update source..."))));
-                    Register::add_update_sources();
+                    list<string> added = Register::add_update_sources();
                     UI::CloseDialog();
 
                     // and then show success message
@@ -752,10 +752,13 @@ boolean launchBrowser(string url)
                         sret = (symbol) UI::UserInput();
                         if (sret == `success_detail)
                         {
-                            // show the URL that was added as update source (URL is in STDERR of suse_register output)
+			    string text = mergestring (added, "\n");
+                            // Show the URLs that were added as update sources.
+			    // Not STDERR of suse_register output, we may have
+			    // declined some unsigned ones, #180820#c26.
                             UI::OpenDialog( nccc_success_detail );
                             UI::SetFocus(`id(`ok));
-                            UI::ChangeWidget(`id(`success_detail_richtext), `Value, information_data["stderr"]:"unknown" );
+                            UI::ChangeWidget(`id(`success_detail_richtext), `Value, text );
                             UI::UserInput();
                             UI::CloseDialog();
                         }
