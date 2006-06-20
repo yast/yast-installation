@@ -91,6 +91,11 @@ After clicking <b>Finish</b>, you can log in to the system.</p>
 	// congratulation text 4/4
 	_("<p>Have a lot of fun!<br>Your SUSE Development Team</p>");
     }
+    else
+    {
+	string text_domain = ProductControl::productControl["textdomain"]:"control";
+	text = dgettext (text_domain, text);
+    }
 
 
     term contents = `VBox (
