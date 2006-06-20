@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Jun 20 14:35:15 CEST 2006 - jsrain@suse.cz
+
+- translate the congratulate string (#186567)
+
+-------------------------------------------------------------------
 Mon Jun 19 15:18:43 CEST 2006 - mvidner@suse.cz
 
 - When registration succeeds, display only the actually added sources
