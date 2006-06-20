@@ -1243,8 +1243,11 @@ global list Overview() {
      * zenworks, but not if they are not signed. (thus being better than
      * inst_source)
      * @param urls update sources to add
+     * @return a list of added URLs
      */
-    global boolean AddUpdateSources (list<string> urls) {
+    global list<string> AddUpdateSources (list<string> urls) {
+	list<string> ret = [];
+
 	// prepare for lookup of known aliases
 	map<string,integer> aliases = get_alias_to_id ();
 	y2milestone ("alias mapping: %1", aliases);
@@ -1283,16 +1286,20 @@ global list Overview() {
 	    y2milestone ("adding source");
 	    integer toadd = Pkg::SourceCreate (url, "/");
 	    // and add to zenworks too, but only if it succeeded here (#180820)
-	    if (!is_nu && toadd != -1 && toadd != nil)
+	    if (toadd != -1 && toadd != nil)
 	    {
-		AddOrDeleteZYPPServiceIntoZMD (toadd, true);
+		ret = add (ret, url); // #180820#c26
+		if (!is_nu)
+		{
+		    AddOrDeleteZYPPServiceIntoZMD (toadd, true);
+		}
 	    }
 	});
 
 	ZMDRestore (zmd_handle);
 	Unlock ();
 
-	return true;
+	return ret;
     }
 
     // adding YaST installation source into the ZMD
