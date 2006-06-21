@@ -705,12 +705,13 @@ global list Overview() {
      *     "stderr"  : [ "script", "stderr", "lines" ],
      * ]
      *
-     * @param string command
-     * @param integer timeout in sec.
+     * @param run_command what to run
+     * @param log_command what to log (passwords masked)
+     * @param script_time_out in sec.
      * @return map with out, err and ret_code
      */
-    global map RunCommandWithTimeout (string run_command, integer script_time_out) {
-	y2milestone("Running command \"%1\" in background...", run_command);
+    global map RunCommandWithTimeout (string run_command, string log_command, integer script_time_out) {
+	y2milestone("Running command \"%1\" in background...", log_command);
 
 	boolean started = (boolean) SCR::Execute(.background.run_output_err, run_command);
 	if (!started) {
@@ -795,14 +796,28 @@ global list Overview() {
      * - on dumb terminal to disable colors etc
      * - using 'exit $?' because of buggy behavior '.background vs. ZMD'
      * @param command a command
+     * @param log_command a command to log
      * @param seconds timeout
      * @return map with out, err and ret_code
      */
-    global map RunDumbTimeout (string command, integer seconds) {
+    global map RunDumbTimeout (string command, string log_command, integer seconds) {
+	string dumb_format = "export TERM=dumb; %1; exit $?";
+	string dumb_command = sformat (dumb_format, command);
+	string dumb_log_command = sformat (dumb_format, log_command);
 	// explicit export in case TERM was not in the environment
-	map ret = RunCommandWithTimeout ("export TERM=dumb; " + command + "; exit $?", seconds);
+	map ret = RunCommandWithTimeout (dumb_command, dumb_log_command, seconds);
 	if (ret == nil) ret = $[];
 	return ret;
+    }
+
+    /**
+     * Run with a long timeout
+     * @param command a command
+     * @param log_command a command to log
+     * @return map with out, err and ret_code
+     */
+    map RunLongLog (string command, string log_command) {
+	return RunDumbTimeout (command, log_command, 1800);
     }
 
     /**
@@ -811,7 +826,7 @@ global list Overview() {
      * @return map with out, err and ret_code
      */
     map RunLong (string command) {
-	return RunDumbTimeout (command, 1800);
+	return RunLongLog (command, command);
     }
 
     /**
@@ -958,7 +973,7 @@ global list Overview() {
 	else {
 	    command = sformat ("%2 --quiet service-delete '%1'", url, rug);
 	}
-	map ret = RunLong (command); // #165145
+	map ret = RunLongLog (command, command); // #165145
 	if (ret["exit"]:nil == 0) {
 	    UpdateKnownServiceCache (adding, url);
 	    return true;
