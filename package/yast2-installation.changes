@@ -1,7 +1,8 @@
 -------------------------------------------------------------------
-Wed Jun 21 14:02:56 CEST 2006 - mvidner@suse.cz
+Wed Jun 21 15:46:49 CEST 2006 - mvidner@suse.cz
 
 - Include the password in URLs passed to ZMD (#186842).
+- Don't log the URL passwords.
 - 2.13.132.3
 
 -------------------------------------------------------------------
