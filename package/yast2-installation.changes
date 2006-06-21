@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jun 21 14:02:56 CEST 2006 - mvidner@suse.cz
+
+- Include the password in URLs passed to ZMD (#186842).
+- 2.13.132.3
+
+-------------------------------------------------------------------
 Wed Jun 21 11:03:58 CEST 2006 - jsrain@suse.cz
 
 - display the source URL dialog if adding add-on product update

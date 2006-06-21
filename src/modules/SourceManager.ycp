@@ -907,7 +907,7 @@ global list Overview() {
 	map gendata = Pkg::SourceGeneralData (src_id);
 	string stype = gendata["type"]:""; // metadata type
 	if (stype == "YaST") stype = "zypp";	/* 'rug' only accepts yum or zypp  */
-	string url = gendata["url"]:"";
+	string url = Pkg::SourceURL (src_id);	// #186842, with password
 	// ZMD must have unique URIs, so we append the alias
 	string alias = gendata["alias"]:"";
 	y2milestone ("id: %1, type: %2, url: %3, alias: %4", src_id, stype, url, alias);

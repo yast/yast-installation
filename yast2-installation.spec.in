@@ -7,6 +7,8 @@ Requires:	yast2 yast2-update
 Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
 # SignatureCheckDialogs::CheckSignaturesInYaST
 Requires:	yast2-packager >= 2.13.135
+# Pkg::SourceURL
+Requires:	yast2-pkg-bindings >= 2.13.86
 Requires:	yast2-network yast2-users
 Requires:	curl release-notes
 Requires:	suseRegister
