@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jun 21 16:52:28 CEST 2006 - mvidner@suse.cz
+
+- Don't show the URL passwords in registration success popup (#186978).
+- 2.13.132.4
+
+-------------------------------------------------------------------
 Wed Jun 21 15:46:49 CEST 2006 - mvidner@suse.cz
 
 - Include the password in URLs passed to ZMD (#186842).
