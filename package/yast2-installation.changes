@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jun 21 11:03:58 CEST 2006 - jsrain@suse.cz
+
+- display the source URL dialog if adding add-on product update
+  source fails in order to allow to enter password (#186804)
+
+-------------------------------------------------------------------
 Tue Jun 20 14:35:15 CEST 2006 - jsrain@suse.cz
 
 - translate the congratulate string (#186567)

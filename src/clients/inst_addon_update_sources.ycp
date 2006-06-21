@@ -19,6 +19,8 @@ import "Popup";
 import "SourceManager";
 import "Report";
 
+include "inst_source_dialogs.ycp";
+
 if ( GetInstArgs::going_back())     // going backwards?
     return `auto;                   // don't execute this once more
 
@@ -69,16 +71,32 @@ if (addUrls != [])
 
     list<integer> added_ids = [];
     foreach (string u, addUrls, {
-	integer srcid = Pkg::SourceCreate (u, "/");
-	y2milestone ("got %1 from creating %2", srcid, u);
-	if (srcid == -1)
+	boolean again = true;
+	while (again)
 	{
-	    // FIXME add better error message
-	    Report::Error (_("An error occurred while connecting to the server."));
-	}
-	else
-	{
-	    added_ids = add (added_ids, srcid);
+	    integer srcid = Pkg::SourceCreate (u, "/");
+	    y2milestone ("got %1 from creating %2", srcid, u);
+	    if (srcid == -1)
+	    {
+		// FIXME add better error message
+		// FIXME do not use dgettext
+		if (Popup::YesNo (_("An error occurred while connecting to the server.") + "\n"
++ dgettext ("packager", "Details:") + "\n"
++ Pkg::LastError() + "\n"
++ dgettext ("packager", "Try again?")))
+		{
+		    u = editUrl (u);
+		}
+		else
+		{
+		    again = false;
+		}
+	    }
+	    else
+	    {
+		added_ids = add (added_ids, srcid);
+		again = false;
+	    }
 	}
     });
 
