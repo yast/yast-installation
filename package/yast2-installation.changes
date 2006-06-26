@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Jun 26 08:54:43 CEST 2006 - jsrain@suse.cz
+
+- preselect patterns according to selected desktop (#183944)
+
+-------------------------------------------------------------------
 Wed Jun 21 11:03:58 CEST 2006 - jsrain@suse.cz
 
 - display the source URL dialog if adding add-on product update
