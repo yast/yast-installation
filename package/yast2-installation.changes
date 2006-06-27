@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Jun 27 14:02:45 CEST 2006 - mvidner@suse.cz
+
+- Don't show the URL passwords in registration success popup (#186978).
+- Include the password in URLs passed to ZMD (#186842).
+- Don't log the URL passwords.
+- 2.13.133
+
+-------------------------------------------------------------------
 Mon Jun 26 08:54:43 CEST 2006 - jsrain@suse.cz
 
 - preselect patterns according to selected desktop (#183944)

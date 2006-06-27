@@ -17,6 +17,7 @@
     textdomain "installation";
 
     import "FileUtils";
+    import "InstURL";
     import "URL";
     import "Wizard";
     import "Popup";
@@ -742,6 +743,9 @@ boolean launchBrowser(string url)
                     // add update source
                     UI::OpenDialog(`VBox(`Label(_("Setting up online update source..."))));
                     list<string> added = Register::add_update_sources();
+		    // #186978
+		    added = maplist (string u, added, ``(
+					 InstURL::HidePassword (u) ));
                     UI::CloseDialog();
 
                     // and then show success message
