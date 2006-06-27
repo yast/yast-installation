@@ -705,12 +705,13 @@ global list Overview() {
      *     "stderr"  : [ "script", "stderr", "lines" ],
      * ]
      *
-     * @param string command
-     * @param integer timeout in sec.
+     * @param run_command what to run
+     * @param log_command what to log (passwords masked)
+     * @param script_time_out in sec.
      * @return map with out, err and ret_code
      */
-    global map RunCommandWithTimeout (string run_command, integer script_time_out) {
-	y2milestone("Running command \"%1\" in background...", run_command);
+    global map RunCommandWithTimeout (string run_command, string log_command, integer script_time_out) {
+	y2milestone("Running command \"%1\" in background...", log_command);
 
 	boolean started = (boolean) SCR::Execute(.background.run_output_err, run_command);
 	if (!started) {
@@ -795,14 +796,28 @@ global list Overview() {
      * - on dumb terminal to disable colors etc
      * - using 'exit $?' because of buggy behavior '.background vs. ZMD'
      * @param command a command
+     * @param log_command a command to log
      * @param seconds timeout
      * @return map with out, err and ret_code
      */
-    global map RunDumbTimeout (string command, integer seconds) {
+    global map RunDumbTimeout (string command, string log_command, integer seconds) {
+	string dumb_format = "export TERM=dumb; %1; exit $?";
+	string dumb_command = sformat (dumb_format, command);
+	string dumb_log_command = sformat (dumb_format, log_command);
 	// explicit export in case TERM was not in the environment
-	map ret = RunCommandWithTimeout ("export TERM=dumb; " + command + "; exit $?", seconds);
+	map ret = RunCommandWithTimeout (dumb_command, dumb_log_command, seconds);
 	if (ret == nil) ret = $[];
 	return ret;
+    }
+
+    /**
+     * Run with a long timeout
+     * @param command a command
+     * @param log_command a command to log
+     * @return map with out, err and ret_code
+     */
+    map RunLongLog (string command, string log_command) {
+	return RunDumbTimeout (command, log_command, 1800);
     }
 
     /**
@@ -811,7 +826,7 @@ global list Overview() {
      * @return map with out, err and ret_code
      */
     map RunLong (string command) {
-	return RunDumbTimeout (command, 1800);
+	return RunLongLog (command, command);
     }
 
     /**
@@ -870,7 +885,10 @@ global list Overview() {
 	    }
 	    // really individual lines?
 	    known_urls = (list <string>) ret["stdout"]:[];
-	    y2milestone ("known %1", known_urls);
+	    list<string> log_known_urls = maplist (string u, known_urls, ``(
+						       InstURL::HidePassword(u)
+						       ));
+	    y2milestone ("known %1", log_known_urls);
 	}
 	return contains (known_urls, url);
     }
@@ -908,9 +926,10 @@ global list Overview() {
 	string stype = gendata["type"]:""; // metadata type
 	if (stype == "YaST") stype = "zypp";	/* 'rug' only accepts yum or zypp  */
 	string url = gendata["url"]:"";
+	string log_url = InstURL::HidePassword (url);
 	// ZMD must have unique URIs, so we append the alias
 	string alias = gendata["alias"]:"";
-	y2milestone ("id: %1, type: %2, url: %3, alias: %4", src_id, stype, url, alias);
+	y2milestone ("id: %1, type: %2, url: %3, alias: %4", src_id, stype, log_url, alias);
 	if (stype == "" || url == "" || alias == "") {
 	    y2error ("Internal error: stype, url, or alias is empty ?!");
 	    return false;
@@ -928,12 +947,13 @@ global list Overview() {
 	    if (query != "") query = query + "&";
 	    parsed_url["query"] = query + "alias=" + alias;
 	    string test_url = URL::Build (parsed_url);
-	    y2milestone ("test zmd url: %1", test_url);
+	    y2milestone ("test zmd url: %1", InstURL::HidePassword(test_url));
 
 	    string separator = (search (url, "?") == nil)? "?": "&";
 	    url = url + separator + "alias=" + alias;
 	}
-	y2milestone ("zmd url: %1", url);
+	log_url = InstURL::HidePassword (url);
+	y2milestone ("zmd url: %1", log_url);
 
 	// we're done if known and adding or unknown and deleting.
 	// if the status is uncertain (error),
@@ -948,17 +968,19 @@ global list Overview() {
 	string owner = "zypp";	// not stype: #168739
 
 	string command = nil;
+	string log_command = nil;
 	// be quiet, #179080
 	if (adding) {
-	    command = sformat (
-		"%4 --quiet service-add --type='%3' '%1' '%2' && %4 subscribe '%1'",
-		url, name, owner, rug
-		);
+	    const string format = "%4 --quiet service-add --type='%3' '%1' '%2' && %4 subscribe '%1'";
+	    command = sformat (format,         url, name, owner, rug);
+	    log_command = sformat (format, log_url, name, owner, rug);
 	}
 	else {
-	    command = sformat ("%2 --quiet service-delete '%1'", url, rug);
+	    const string format = "%2 --quiet service-delete '%1'";
+	    command = sformat (format, url, rug);
+	    log_command = sformat (format, log_url, rug);
 	}
-	map ret = RunLong (command); // #165145
+	map ret = RunLongLog (command, log_command); // #165145
 	if (ret["exit"]:nil == 0) {
 	    UpdateKnownServiceCache (adding, url);
 	    return true;
