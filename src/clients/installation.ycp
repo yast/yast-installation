@@ -46,6 +46,11 @@
 
     import "Linuxrc";
 
+    if( Mode::autoinst() ) {
+        map reportMap = $[ "errors":$[ "timeout":0 ], "warnings":$[ "timeout":10 ], "yesno_messages":$[ "timeout":10 ] ];
+        Report::Import( reportMap );
+    }
+
     include "installation/misc.ycp";
 
     /**
