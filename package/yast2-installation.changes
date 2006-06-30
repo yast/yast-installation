@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Jun 30 11:42:11 CEST 2006 - ug@suse.de
+
+- during autoinstall, timeout early warning popups
+
+-------------------------------------------------------------------
 Tue Jun 27 14:02:45 CEST 2006 - mvidner@suse.cz
 
 - Don't show the URL passwords in registration success popup (#186978).
