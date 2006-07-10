@@ -1217,16 +1217,31 @@ global list Overview() {
     }
 
     /**
-     * @return For existing sources, get a mapping from the alias to the id
+     * @param attr SourceGeneralData item
+     * @return For existing sources, get a mapping from an attribute to the id
      */
-    map<string,integer> get_alias_to_id () {
+    map<string,integer> get_attr_to_id (string attr) {
 	list<integer> src_ids = Pkg::SourceGetCurrent (false/*enabled only?*/);
 	map<string,integer> a2i = listmap (integer src_id, src_ids, {
 	    map gendata = Pkg::SourceGeneralData (src_id);
-	    string alias = gendata["alias"]:"";
+	    string alias = gendata[attr]:"";
 	    return $[ alias: src_id ];
 	});
 	return a2i;
+    }
+
+    /**
+     * @return For existing sources, get a mapping from the alias to the id
+     */
+    map<string,integer> get_alias_to_id () {
+	return get_attr_to_id ("alias");
+    }
+
+    /**
+     * @return For existing sources, get a mapping from the URL to the id
+     */
+    map<string,integer> get_url_to_id () {
+	return get_attr_to_id ("url");
     }
 
     /**
@@ -1236,7 +1251,9 @@ global list Overview() {
      * @param alias_to_id a premade mapping, @see get_alias_to_id
      * @return the source id or -1
      */
-    integer SourceByAlias (string url, map<string,integer> alias_to_id) {
+    integer SourceByAliasOrUrl (string url,
+				map<string,integer> alias_to_id,
+				map<string,integer> url_to_id) {
 	// parse the URL
 	map parsed_url = URL::Parse (url);
 	y2milestone ("parsed: %1", parsed_url);
@@ -1256,7 +1273,8 @@ global list Overview() {
 	{
 	    return alias_to_id[alias]:-1;
 	}
-	return -1;
+	// #188572: if no match by alias, try url
+	return url_to_id[url]:-1;
     }
 
     /**
@@ -1273,6 +1291,8 @@ global list Overview() {
 	// prepare for lookup of known aliases
 	map<string,integer> aliases = get_alias_to_id ();
 	y2milestone ("alias mapping: %1", aliases);
+	map<string,integer> by_url = get_url_to_id ();
+	y2milestone ("url mapping: %1", by_url);
 
 	Lock ();
 	map zmd_handle = ZMDStart ();
@@ -1294,7 +1314,7 @@ global list Overview() {
 
 	    // check if alias already there
 	    // if yes, delete the old one
-	    integer todel = SourceByAlias (url, aliases);
+	    integer todel = SourceByAliasOrUrl (url, aliases, by_url);
 	    if (todel != -1)
 	    {
 		y2milestone ("deleting the old copy, source %1", todel); 
