@@ -878,6 +878,12 @@ global symbol DoInstall() {
 	return nil;
     }
 
+    // copy the control file to local filesystem - in case of media release
+    string tmp = (string)SCR::Read (.target.tmpdir);
+    tmp = tmp + "/installation.xml";
+    SCR::Execute (.target.bash, sformat ("/bin/cp %1 %2", control, tmp));
+    control = tmp;
+
     string binaries = Pkg::SourceProvideOptionalFile (src_id, 1, "/y2update.tgz");
     // File /y2update.tgz exists
     if (binaries != nil)
