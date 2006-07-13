@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Jul 13 14:38:00 CEST 2006 - olh@suse.de
+
+- move /tmp/vncserver.log to /var/log/YaST2/vncserver.log
+
+-------------------------------------------------------------------
 Wed Jun 21 11:03:58 CEST 2006 - jsrain@suse.cz
 
 - display the source URL dialog if adding add-on product update
