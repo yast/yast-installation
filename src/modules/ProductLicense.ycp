@@ -1,0 +1,378 @@
+/**
+ * File:	ProductLicense.ycp
+ *
+ * Module:	ProductLicense
+ *
+ * Summary:	Provide access / dialog for product license
+ *
+ * Author:	Jiri Srain <jsrain@suse.cz>
+ *
+ */
+{
+
+module "ProductLicense";
+
+import "Directory";
+import "InstShowInfo";
+import "Language";
+import "Popup";
+import "Report";
+import "Stage";
+import "Wizard";
+
+textdomain "installation";
+
+/**
+ * Displays License with Help and ( ) Yes / ( ) No radio buttons
+ * @param string file with the license
+ */
+void DisplayLicenseDialog (list<string> languages, boolean back) {
+    string license_text = "";
+    map display = UI::GetDisplayInfo();
+    integer space = display["TextMode"]:true ? 1 : 3;
+    term rt = `RichText(`id( `welcome_text), "");
+
+    // dialog caption
+    string caption = _("License Agreement");
+
+    map<string,list> lang_names_orig = (map<string,list>)
+	WFM::CallFunction ("languages");
+    map<string,string> lang_names = mapmap (string code, list descr,
+	lang_names_orig,
+    {
+	return $[ code : descr[4]:"" ];
+    });
+    // language name
+    lang_names[""] = _("English");
+    lang_names["en"] = _("English");
+
+    list<list<string> > lang_pairs = maplist (string l, languages, {
+	string name = lang_names[l]:"";
+	if (name == "")
+	{
+	    string l_short = substring (l, 0, 2);
+	    foreach (string k, string v, lang_names, {
+		if (substring (k, 0, 2) == l_short)
+		{
+		    name = v;
+		    return true;
+		}
+		return false;
+	    });
+	}
+	return [ l, name ];
+    });
+    lang_pairs = sort (list<string> l1, list<string> l2, lang_pairs, {
+	return l1[1]:"" < l2[1]:"";
+    });
+    list langs = maplist (list<string> descr, lang_pairs, {
+	return `item (`id (descr[0]:""), descr[1]:"");
+    });
+
+    term contents = `VBox (
+	`VSpacing (space),
+	`HBox (
+	    `HSpacing (2*space),
+	    `VBox (
+		// combo box
+		`Left (`ComboBox (`id (`lang), `opt (`notify), _("Language"),
+		    langs)),
+		`ReplacePoint (`id (`license_rp), rt)
+	    ),
+	    `HSpacing (2*space)
+	),
+	`VSpacing (2),
+	`RadioButtonGroup(`id(`eula),
+	    `HBox(
+		`HSpacing (2*space),
+		`VBox(
+		    `Left(`RadioButton(`id(`yes),
+			// radio button
+			_("&Yes, I Agree to the License Agreement")
+		    )),
+		    `Left(`RadioButton(`id(`no),
+			// radio button
+			_("N&o, I Do Not Agree")
+		    ))
+		),
+		`HSpacing (2*space)
+	    )
+	),
+	`VSpacing(2)
+    );
+
+    // help text
+    string help = _("<p>Read the license agreement carefully and select
+one of the available options. If you do not agree to the license agreement,
+the configuration will be aborted.</p>
+");
+
+    Wizard::SetContents(caption, contents, help,
+	false, back);
+
+    Wizard::SetTitleIcon ("yast-addon");
+    Wizard::SetFocusToNextButton();
+}
+
+
+
+/**
+ * Removes the temporary directory for licenses
+ * @param string temporary directory path
+ */
+void CleanUpLicense (string tmpdir) {
+    if (tmpdir != nil)
+	SCR::Execute (.target.bash_output, sformat("rm -rf '%1'", tmpdir));
+}
+
+/**
+ * Get all files with license existing in specified directory
+ * @param dir string directory to look into
+ * @param patterns a list of patterns for the files, regular expressions
+ *   with %1 for the language
+ * @return a map $[ lang_code : filename ]
+ */
+map<string,string> LicenseFiles (string dir, list<string> patterns) {
+    map<string,string> ret = $[];
+    list<string> files = (list<string>)SCR::Read (.target.dir, dir);
+    y2internal ("All files in license directory: %1", files);
+    foreach (string p, patterns, {
+	if (! issubstring (p, "%"))
+	{
+	    foreach (string file, files, {
+		if (file == p)
+		{
+		    ret[""] = dir + "/" + file;
+		}
+	    });
+	}
+	else
+	{
+	    string regpat = sformat (p, "(.+)");
+	    foreach (string file, files, {
+		if (regexpmatch (file, regpat))
+		{
+		    string key = regexpsub (file, regpat, "\\1");
+		    ret[key] = dir + "/" + file;
+		}
+	    });
+	}
+    });
+    y2milestone ("Files containing license: %1", ret);
+    return ret;
+}
+
+/**
+ * Ask user to confirm license agreement
+ * @param src_id integer source to get the license from
+ * @param dir string directory to look for the license in if src_id is nil
+ *   and not 1st stage installation
+ * @param patterns a list of patterns for the files, regular expressions
+ *   with %1 for the language
+ */
+global symbol AskLicenseAgreement (integer src_id, string dir,
+    list<string> patterns, string action)
+{
+    string tmpdir = nil;
+    string info_file = nil;
+    string lic_lang = "";
+    map<string,string> licenses = $[];
+    list<string> available_langs = [];
+    string license_dir = nil;
+
+    if (src_id == nil)
+    {
+	if (Stage::initial ())
+	{
+	    license_dir = Directory::vardir + "/license";
+	}
+	else
+	{
+	    license_dir = dir;
+	}
+	info_file = (integer)SCR::Read (.target.size, "/info.txt") > 0
+	    ? "/info.txt"
+	    : nil;
+    }
+    else
+    {
+	y2milestone ("Getting license info from source %1", src_id);
+	tmpdir = (string) SCR::Read(.target.tmpdir) + "/product-license/";
+	license_dir = tmpdir;
+	string license_file = Pkg::SourceProvideOptionalFile (src_id, 1,
+	    "/media.1/license.zip");
+
+	// license is part of the add-on product
+	if (license_file != nil) {
+	    y2milestone("Product has a license");
+	    map out = (map)SCR::Execute (.target.bash_output, sformat ("
+rm -rf '%1' && \
+mkdir -p '%1' && \
+cd '%1' && \
+unzip -qqo '%2'
+", tmpdir, license_file));
+
+	    // Extracting license failed, cannot accept the license
+	    if (out["exit"]:0 != 0)
+	    {
+		y2error("Cannot unzip license -> %1", out);
+		// popup error
+		Report::Error (_("An error occurred while preparing the installation system."));
+		CleanUpLicense(tmpdir);
+		return nil; // FIXME
+	    }
+	}
+	info_file = Pkg::SourceProvideOptionalFile (src_id, 1, "/media.1/info.txt");
+    }
+    licenses = LicenseFiles (license_dir,
+	["license.txt", "license\\.%1\\.txt"]);
+    if (info_file == nil && size (licenses) == 0)
+	return `auto;
+    list<string> langs = [
+	Language::language,
+	substring (Language::language, 0, 2),
+	"en_US",
+	"en_EN",
+	"en",
+	"" // license.txt
+    ];
+    available_langs = maplist (string lang, string fn,
+	licenses,
+    {
+	return lang;
+    });
+y2internal ("Preffered lang: %1", Language::language);
+    if (size (available_langs) == 0)
+	return `auto; // no license available
+    lic_lang = find (string l, langs, {
+	return haskey (licenses, l);
+    });
+    if (lic_lang == nil)
+	lic_lang = available_langs[0]:"";
+y2internal ("Preselected language: %1", lic_lang);
+    DisplayLicenseDialog (available_langs, true);
+    // Display info as a popup if exists
+    if (info_file != nil)
+	InstShowInfo::show_info_txt(info_file);
+
+    if (lic_lang == nil)
+    {
+	CleanUpLicense(tmpdir);
+	return `auto;
+    }
+
+    symbol ret = `lang;
+    while (true)
+    {
+y2internal ("Event: %1", ret);
+	if (ret == `lang)
+	{
+	    lic_lang = (string)UI::QueryWidget (`id (`lang), `Value);
+	    string license_file = licenses[lic_lang]:"";
+y2internal ("File: %1", license_file);
+	    string license_text = (string)
+		SCR::Read(.target.string, license_file);
+y2internal ("Text: %1", substring (license_text, 0, 100));
+	    if (license_text == nil)
+	    {
+		license_text = "";
+// TODO error message
+	    }
+	    term rt = `Empty();
+	    if (regexpmatch(license_text, "</.*>"))
+		rt = `RichText(`id( `welcome_text), license_text);
+	    else
+		rt = `RichText(`id( `welcome_text), `opt(`plainText), license_text);
+	    UI::ReplaceWidget (`id (`license_rp), rt);
+	}
+	ret = (symbol)UI::UserInput();
+	symbol accept = (symbol) UI::QueryWidget(`id(`eula), `CurrentButton);
+	// Aborting the license dialog
+	if (ret == `abort) {
+	    // popup question
+	    if (Popup::ContinueCancel(_("Really abort add-on product installation?")))
+	    {
+		y2milestone("Aborting...");
+		return `abort;
+	    }
+	}
+	else if (ret == `next)
+	{
+	    // License declined
+	    if (accept == `no)
+	    {
+		if (Popup::YesNo(_("Reread or reconsider the license agreement?")))
+		{
+		    continue;
+		}
+		else
+		{
+		    y2milestone("License has been declined.");
+		    if (action == "abort")
+			return `abort;
+		    else if (action == "continue")
+			return `accepted;
+		    else if (action == "halt")
+		    {
+			return `halt;
+			// timed ok/cancel popup
+			if (!Popup::TimedOKCancel(_("System is shutting down..."), 10))
+			{
+			    continue;
+			}
+			else
+			{
+			    return `halt;
+			}
+		    }
+		    else
+		    {
+			y2error ("Unknown action %1", action);
+			return `abort;
+		    }
+		}
+	    }
+	    // License accepted
+	    else if (accept == `yes)
+	    {
+		y2milestone("License has been accepted.");
+		return `accepted;
+	    }
+	    else
+	    {
+		// message popup
+		Popup::Message(_("Accept or decline the license agreement."));
+		continue;
+	    }
+        }
+	else if (ret == `back)
+	{
+	    return `back;
+	}
+    }
+
+    CleanUpLicense(tmpdir);
+
+}
+
+global symbol AskAddOnLicenseAgreement (integer src_id) {
+    return AskLicenseAgreement (src_id, "",
+	[ "license\\.txt", "license\\.%1\\.txt" ],
+	"abort");
+}
+
+global symbol AskFirstStageLicenseAgreement (string action) {
+    return AskLicenseAgreement (nil, "",
+	[ "license\\.txt", "license\\.%1\\.txt" ],
+	action);
+}
+
+global symbol AskInstalledLicenseAgreement (string directory,
+    list<string> patterns, string action)
+{
+    return AskLicenseAgreement (nil, directory, patterns, action);
+
+}
+
+
+} // EOF

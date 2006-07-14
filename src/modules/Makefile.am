@@ -15,6 +15,7 @@ module_DATA =			\
 	SourceManager.ycp	\
 	InstURL.ycp		\
 	CheckMedia.ycp		\
+	ProductLicense.ycp	\
 	AddOnProduct.ycp
 
 EXTRA_DIST = $(module_DATA)
