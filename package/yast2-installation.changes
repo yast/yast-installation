@@ -3,6 +3,7 @@ Fri Jul 14 15:16:00 CEST 2006 - jsrain@suse.cz
 
 - adapted to changes in yast2-packager
 - use only one implementation of product license handling (#191523)
+- 2.13.136
 
 -------------------------------------------------------------------
 Fri Jul 14 14:51:37 CEST 2006 - olh@suse.de
@@ -10,7 +11,6 @@ Fri Jul 14 14:51:37 CEST 2006 - olh@suse.de
 - move /tmp/vncserver.log to /var/log/YaST2/vncserver.log
 
 -------------------------------------------------------------------
->>>>>>> .r31869
 Mon Jul 10 10:47:57 CEST 2006 - jsrain@suse.cz
 
 - correctly import add-on product control file even if no
