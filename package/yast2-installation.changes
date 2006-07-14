@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Jul 14 14:51:37 CEST 2006 - olh@suse.de
+
+- move /tmp/vncserver.log to /var/log/YaST2/vncserver.log
+
+-------------------------------------------------------------------
 Mon Jul 10 10:47:57 CEST 2006 - jsrain@suse.cz
 
 - correctly import add-on product control file even if no
