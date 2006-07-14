@@ -288,67 +288,45 @@ symbol MediaSelect () {
 	    if (ret == `ok) ret = `next;
 	    else ret = nil;
 	}
-
-	else if ( input == `ftp || input == `http || input == `https || input == `samba )
+	else if (contains ([`ftp, `http, `https, `samba, `nfs, `cd, `dvd,
+	    `local_dir, `specify_url], input))
 	{
 	    if ( input == `ftp ) url = "ftp://";
 	    else if ( input == `http ) url = "http://";
 	    else if ( input == `https ) url = "https://";
 	    else if ( input == `samba ) url = "smb://";
+	    else if ( input == `nfs ) url = "nfs://";
+	    else if ( input == `cd ) url = "cd:///";
+	    else if ( input == `dvd ) url = "dvd:///";
+	    else if ( input == `local_dir ) url = "dir://";
 	    else url = "";
-	    boolean refresh = true;
-	    do {
+	    if (input == `cd || input == `dvd)
+	    {
+		Pkg::SourceReleaseAll();
+		string msg = input == `cd
+		    ? _("Insert the add-on product CD")
+		    : _("Insert the add-on product DVD");
+		if (! Popup::ContinueCancel (msg))
+		{
+		    ret = `back;
+		    break;
+		}
+		createResult = SourceManager::createSource( url);
+	    }
+	    else
+	    {
+	      do {
 		url = editUrl( url );
 		if ( size( url ) == 0 ) { ret = `back; break; }
 		createResult = SourceManager::createSource( url);
-            } while ( createResult == `again );
+              } while ( createResult == `again );
+	    }
         }
-        else if ( input == `nfs )
-        {
-            url = "nfs://";
-	    boolean refresh = true;
-            do {
-                url = editUrl( url );
-                if ( size( url ) == 0 ) { ret = `back; break; }
-		createResult = SourceManager::createSource( url);
-            } while ( createResult == `again );
-        }
-        else if ( input == `cd )
-        {
-	    Pkg::SourceReleaseAll();
-	    if (Popup::ContinueCancel (_("Insert the add-on product CD")))
-		createResult = SourceManager::createSource( "cd:///" );
-	    else
-		ret = `back;
-        }
-        else if ( input == `dvd )
-        {
-	    Pkg::SourceReleaseAll();
-	    if (Popup::ContinueCancel (_("Insert the add-on product DVD")))
-		createResult = SourceManager::createSource( "dvd:///" );
-	    else
-		ret = `back;
-        }
-	else if ( input == `local_dir )
-	{
-            url = "dir://";
-            do {
-                url = editUrl( url );
-                if ( size( url ) == 0 ) { ret = `back; break; }
-		createResult = SourceManager::createSource( url);
-            } while ( createResult == `again );
-	}
-	else if (input == `specify_url)
-	{
-            url = "";
-	    do {
-                url = editRawUrl( url );
-                if ( size( url ) == 0 ) { ret = `back; break; }
-		createResult = SourceManager::createSource( url);
-	    } while (createResult == `again);
-	}
 	if (createResult != `ok)
+	{
+	    ret = nil;
 	    continue;
+	}
     }
 
     AddOnProduct::last_ret = ret;
@@ -530,7 +508,7 @@ symbol ProductSelect () {
 	if (license_ret != true) {
 	    y2milestone("Removing the current source ID %1", AddOnProduct::src_id);
 	    Pkg::SourceDelete(AddOnProduct::src_id);
-	    return `finish;
+	    return `abort;
 	}
 
         map data = Pkg::SourceGeneralData (AddOnProduct::src_id);
@@ -584,7 +562,7 @@ or selected for installation."));
     if (license_ret != true) {
 	    y2milestone("Removing the current source ID %1", AddOnProduct::src_id);
 	    Pkg::SourceDelete(AddOnProduct::src_id);
-	    return `finish;
+	    return `abort;
     }
     if (size (products) == 1)
     {
