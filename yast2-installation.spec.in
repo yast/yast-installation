@@ -3,10 +3,12 @@
 
 @HEADER@
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2 yast2-devtools yast2-testsuite yast2-country
-Requires:	yast2 yast2-update
+Requires:	yast2-update
 Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
 # SignatureCheckDialogs::CheckSignaturesInYaST
 Requires:	yast2-packager >= 2.13.135
+# Linuxrc::display_ip
+Requires:	yast2 >= 2.13.67
 Requires:	yast2-network yast2-users
 Requires:	curl release-notes
 Requires:	suseRegister
