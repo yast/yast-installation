@@ -53,7 +53,7 @@ function startVNCServer () {
 
 	echo
 	echo starting VNC server...
-	echo A log file will be written to: /var/log/YaST2/vncserver.log ...
+	echo A log file will be written to: /tmp/vncserver.log ...
 	cat <<-EOF
 	
 	***
@@ -83,7 +83,7 @@ function startVNCServer () {
 		-rfbport 5901 \
 		-httpport 5801 \
 		-fp /usr/X11R6/lib/X11/fonts/misc/,/usr/X11R6/lib/X11/fonts/uni/,/usr/X11R6/lib/X11/fonts/truetype/ \
-	&> /var/log/YaST2/vncserver.log &
+	&> /tmp/vncserver.log &
 	xserver_pid=$!
 	export DISPLAY=:0
 	export XCURSOR_CORE=1
