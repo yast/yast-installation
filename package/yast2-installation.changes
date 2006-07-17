@@ -1,8 +1,9 @@
 -------------------------------------------------------------------
-Mon Jul 17 10:03:36 CEST 2006 - jsrain@suse.cz
+Mon Jul 17 10:12:58 CEST 2006 - jsrain@suse.cz
 
 - check if there are any patches available before offering online
   update (jsuchome)
+- merged inst_default_desktop.ycp to desktop_finish.ycp
 
 -------------------------------------------------------------------
 Sun Jul 16 08:54:55 CEST 2006 - olh@suse.de
