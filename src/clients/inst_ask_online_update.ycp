@@ -58,6 +58,23 @@ You may skip this step and run an online update later.
     term contents = `VBox ( `VSpacing (0.5), sr_layout, `VSpacing (0.5));
     /* ^^       END MAIN LAYOUT     ^^  */
 
+    // check if there are some patches available
+
+    Pkg::PkgEstablish ();
+    integer selected = Pkg::ResolvableCountPatches (`affects_pkg_manager);
+    y2milestone ("Available patches for pkg management: %1", selected);
+    if (selected < 1)
+    {
+	selected = Pkg::ResolvableCountPatches (`all);
+	y2milestone ("All available patches: %1", selected);
+	if (selected < 1)
+	{
+	    y2milestone ("No patch available, skiping offer to run YOU");
+	    Internet::do_you = false;
+	    return `next;
+	}
+    }
+
     // check if we are in installation workflow or running independently (for development)
     if (Mode::normal()) Wizard::CreateDialog();
 
