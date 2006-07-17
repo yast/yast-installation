@@ -7,6 +7,8 @@ Requires:	yast2-update
 Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
 # SignatureCheckDialogs::CheckSignaturesInYaST
 Requires:	yast2-packager >= 2.13.135
+# Pkg::ResolvableCountPatches
+Requires:	yast2-pkg-bindings >= 2.13.89
 # Linuxrc::display_ip
 Requires:	yast2 >= 2.13.67
 Requires:	yast2-network yast2-users
