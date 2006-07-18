@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Jul 18 16:14:17 CEST 2006 - jsrain@suse.cz
+
+- fixed vendor URL in congratulate dialog (#187358)
+
+-------------------------------------------------------------------
 Mon Jul 17 10:12:58 CEST 2006 - jsrain@suse.cz
 
 - check if there are any patches available before offering online
