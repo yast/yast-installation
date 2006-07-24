@@ -1,13 +1,11 @@
 -------------------------------------------------------------------
-Mon Jul 24 10:36:07 CEST 2006 - jsrain@suse.cz
-
-- abort installation if package manager initialization fails
-  (#167674)
-
--------------------------------------------------------------------
-Mon Jul 24 08:28:52 CEST 2006 - jsrain@suse.cz
+Mon Jul 24 13:56:22 CEST 2006 - jsrain@suse.cz
 
 - fixed error reporting when creating a source (#159695)
+- abort installation if package manager initialization fails
+  (#167674)
+- report proper message if no catalog found via SLP and firewall
+  is running (#156444)
 
 -------------------------------------------------------------------
 Tue Jul 18 16:57:08 CEST 2006 - jsrain@suse.cz
