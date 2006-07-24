@@ -341,6 +341,13 @@ if (Mode::repair ())
 }
 
 Packages::InitializeCatalogs ();
+if (Packages::InitFailed ())
+{
+    // popup message
+    Popup::Message (_("Failed to initialize catalogs.
+Aborting the installation."));
+    return `abort;
+}
 Packages::InitializeAddOnProducts ();
 
 if (Mode::mode () != start_mode)
