@@ -196,7 +196,6 @@ global boolean CommitSources() {
             string _msg1 = _("Unable to save changes to the catalog
                     repository.
 ");
-            string err = Pkg::LastErrorId();
 	    // popup message, after message header, header of details
             string _msg2 = _("Details:") + "\n" + Pkg::LastError();
 	    // end of popup message, question
@@ -482,14 +481,8 @@ global symbol createSource( string url ) {
 	{
 	    string _msg1 = sformat( _("Unable to create catalog
 from URL '%1'."), InstURL::HidePassword(url) );
-	    string err = Pkg::LastErrorId();
-	    string _msg2 = "";
-	    if ( err != "ok" ) {
-		if ( err == "instsrc_duplicate" )
-		    _msg2 = _("A catalog for this product already exists.");
-		else
-		    _msg2 = _("Details:") + "\n" + Pkg::LastError();
-	    }
+
+	    string _msg2 = _("Details:") + "\n" + Pkg::LastError();
 	    // end of popup message, question
 	    _msg2 = _msg2 + "\n" + _("Try again?");
 
