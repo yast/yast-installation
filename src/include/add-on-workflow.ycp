@@ -28,6 +28,7 @@ import "Report";
 import "SLP";
 import "Sequencer";
 import "SourceManager";
+import "SuSEFirewall";
 import "Stage";
 import "Wizard";
 
@@ -66,13 +67,25 @@ symbol AddSourceTypeSLP () {
 	    UI::OpenDialog (`Label (_("Scanning network...")) );
 	    list<map> services = SLP::FindSrvs ("install.suse", "");
 	    UI::CloseDialog ();
-
+	    // FIXME: unify between here and inst_source handling
 	    /* No SLP servers found */
-	    if ( size(services) == 0 )
+	    if (services == nil || size(services) == 0)
 	    {
 		y2warning("No SLP catalogs");
-		// error popup
-		Report::Message ( _("No SLP catalogs found.") );
+		if ((! Stage::initial ()) && SuSEFirewall::IsStarted ())
+		{
+		     Report::Message(
+// error popup
+_("No SLP catalogs have been found on your network.
+This could be caused by a running SuSEfirewall2,
+which probably blocks the network scanning."));
+		}
+		else
+		{
+		    Report::Message (
+			// error popup
+			_("No SLP catalogs have been found on your network."));
+		}
 		ret = `back;
 
 	    /* Some serves were found */
