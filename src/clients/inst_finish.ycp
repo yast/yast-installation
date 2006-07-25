@@ -199,6 +199,7 @@ Progress::Title (_("Finished."));
 
 if (size (Misc::boot_msg) > 0 && !Mode::autoinst ())
 {
+    SCR::Execute (.target.bash, "/bin/echo -e '\a'");
     if (Linuxrc::usessh ())
 	Report::DisplayMessages (true, 0);
     else

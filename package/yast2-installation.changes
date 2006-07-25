@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Jul 25 14:32:18 CEST 2006 - jsrain@suse.cz
+
+- beep before rebooting the machine during installation (#144614)
+
+-------------------------------------------------------------------
 Mon Jul 24 13:56:22 CEST 2006 - jsrain@suse.cz
 
 - fixed error reporting when creating a source (#159695)
