@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jul 18 16:57:08 CEST 2006 - jsrain@suse.cz
+
+- fixed displaying catalog selection dialog if multiple catalogs
+  found on add-on media (#192761)
+
+-------------------------------------------------------------------
 Wed May  3 10:26:29 CEST 2006 - locilka@suse.cz
 
 - Busy cursor when "Contacting server" in suse_register (#171061).

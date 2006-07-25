@@ -428,11 +428,11 @@ There were multiple catalogs found on the selected medium.
 Select the catalog to use.</p>
 ");
 
-    term contents = `HBox (`HStretch(), `VBox (
-	`VStretch (),
-	`SelectionBox (`id (`catalogs), catalogs, sources[0]:0),
-	`VStretch()
-    ), `HStretch ());
+    term contents = `HBox (`HSpacing(4), `VBox (
+	`VSpacing (2),
+	`SelectionBox (`id (`catalogs), _("&Found Catalogs"), catalogs),
+	`VSpacing (2)
+    ), `HSpacing (4));
     Wizard::SetContents (title, contents, help_text, true, true);
     symbol ret = nil;
     integer selected = nil;
