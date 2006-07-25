@@ -92,6 +92,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <proposal_tab>
                     <label>Overview</label>
                     <proposal_modules config:type="list">
+                        <proposal_module>keyboard</proposal_module>
                         <proposal_module>partitions</proposal_module>
                         <proposal_module>software_simple</proposal_module>
                         <proposal_module>language_simple</proposal_module>
