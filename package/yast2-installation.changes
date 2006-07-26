@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Jul 26 09:18:36 CEST 2006 - jsrain@suse.cz
+
+- get version from installed product proper way (#157924)
+
+-------------------------------------------------------------------
 Tue Jul 25 14:32:18 CEST 2006 - jsrain@suse.cz
 
 - beep before rebooting the machine during installation (#144614)

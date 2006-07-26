@@ -118,11 +118,21 @@
     }
     else
     {
-	list productdata = Pkg::TargetProducts();
-	if (productdata == nil) productdata = [];
-	string product = productdata[0,"product"]:"SuSE Linux 8.1";
-	list splitproduct = splitstring (product, " ");
-	string version = splitproduct[size(splitproduct)-1]:"8.1";
+	Pkg::TargetInit ("/", false);
+	list<map<string,any> > products
+	    = Pkg::ResolvableProperties ("", `product, "");
+	if (products == nil) products = [];
+	products = filter (map<string,any> p, products, {
+	    return p["status"]:nil == `installed;
+	});
+	list<map<string,any> > base = filter (map<string,any> p, products, {
+	    return p["category"]:"" == "base";
+	});
+	if (size (base) == 0)
+	    base = products;
+	map<string,any> product = base[0]:$[];
+	string version = product["version"]:"";
+	version = splitstring (version, "-")[0]:""; // split off release
 
 	y2milestone ("Trying %1", cdpath);
 	list dirlist = (list) SCR::Read(.target.dir, cdpath);
