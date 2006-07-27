@@ -196,10 +196,15 @@
 
     	    if (!contains(locked_modules, submod))
             {
+		string heading = issubstring (
+			titles[no]:"",
+			"<a")
+		    ? titles[no]:_("ERROR: Missing Title")
+		    : HTML::Link( titles[no]:_("ERROR: Missing Title"), submod2id[submod]:"");
+
 		// heading in proposal, in case the module doesn't create one
-		prop = prop + HTML::Heading( HTML::Link( titles[no]:_("ERROR: Missing Title") ,
-	    						 submod2id[submod]:"" ) );
-    	    } else {
+		prop = prop + HTML::Heading( heading);
+	    } else {
 		prop = prop + HTML::Heading(
 		   // heading in proposal, in case the module doesn't create one
                     titles[no]:_("ERROR: Missing Title"));
@@ -222,9 +227,14 @@
 	    {
     		if (!contains(locked_modules, submod))
         	{
-		   // heading in proposal, in case the module doesn't create one
-		    prop = prop + HTML::Heading( HTML::Link( titles[no]:_("ERROR: Missing Title") ,
-	    						 submod2id[submod]:"" ) );
+		    string heading = issubstring (
+			    titles[no]:"",
+			    "<a")
+			? titles[no]:_("ERROR: Missing Title")
+			: HTML::Link( titles[no]:_("ERROR: Missing Title"), submod2id[submod]:"");
+
+		    // heading in proposal, in case the module doesn't create one
+		    prop = prop + HTML::Heading( heading);
     		} else {
 		    prop = prop + HTML::Heading(
                 	titles[no]:_("ERROR: Missing Title"));
@@ -773,7 +783,7 @@
 		    description["no"] = no;
 		    descriptions[submod] = description;
 		    new_submodules = add( new_submodules, submod );
-		    string title      = description["rich_text_title"]:submod;
+		    string title      = description["rich_text_title"]:description["rich_text_raw_title"]:submod;
 		    string id         = description["id"             ]:sformat( "module_%1", no );
 
 		    titles            = add( titles,  title );
@@ -795,9 +805,28 @@
 	    {
 		integer no = descr["no"]:0;
 		string id = descr["id"]:sformat( "module_%1", no);
-		string menu_title = descr["menu_title"]:descr["rich_text_title"]:submod;
-		menu_list = add( menu_list,
-		    `item(`id( id ), menu_title + "..." ));
+		if (haskey (descr, "menu_titles"))
+		{
+		    foreach (map<string,string> i, descr["menu_titles"]:[], {
+			string id = i["id"]:"";
+			string title = i["title"]:"";
+			if (id != "" && title != "")
+			{
+			    menu_list = add (menu_list, `item (`id (id),
+				title + "..."));
+			}
+			else
+			{
+			    y2error ("Invalid menu item: %1", i);
+			}
+		    });
+		}
+		else
+		{
+		    string menu_title = descr["menu_title"]:descr["rich_text_title"]:submod;
+		    menu_list = add( menu_list,
+			`item(`id( id ), menu_title + "..." ));
+		}
 	    }
 	});
 
