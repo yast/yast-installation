@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jul 27 14:18:01 CEST 2006 - jsrain@suse.cz
+
+- added support for merging multiple proposal items as one proposal
+  item (eg. to group langage and keyboard)
+
+-------------------------------------------------------------------
 Wed Jul 26 09:18:36 CEST 2006 - jsrain@suse.cz
 
 - get version from installed product proper way (#157924)
