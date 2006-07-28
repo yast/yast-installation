@@ -319,7 +319,7 @@ symbol MediaSelect () {
 		string msg = input == `cd
 		    ? _("Insert the add-on product CD")
 		    : _("Insert the add-on product DVD");
-		if (! Popup::ContinueCancel (msg))
+		if (! SourceManager::AskForCD (msg))
 		{
 		    ret = `back;
 		    break;

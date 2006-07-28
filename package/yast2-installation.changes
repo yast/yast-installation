@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Jul 28 09:42:00 CEST 2006 - jsrain@suse.cz
+
+- offer to eject the CD drive when asking for add-on CD (#181992)
+
+-------------------------------------------------------------------
 Thu Jul 27 14:18:01 CEST 2006 - jsrain@suse.cz
 
 - added support for merging multiple proposal items as one proposal
