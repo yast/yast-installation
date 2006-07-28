@@ -1340,5 +1340,66 @@ global list Overview() {
     // adding YaST installation source into the ZMD
     // ------------------------------------------------------------------------------------------------------
 
+/**
+ *
+ */
+global boolean AskForCD (string message) {
+    list<map<string,any> > cdroms = (list<map<string,any> >)
+	SCR::Read (.probe.cdrom);
+    boolean multiple_drives = size (cdroms) > 1;
+    term drives_sel = `Empty ();
+    list<string> devices = maplist (map<string,any> d, cdroms, {
+	return d["dev_name"]:"";
+    });
+    if (multiple_drives)
+    {
+	drives_sel = `SelectionBox (`id (`drives), _("&Drive to eject"),
+	     devices);
+    }
+    term contents = `HBox (`HSpacing (1), `VBox (
+	`VSpacing (0.5),
+	`Label (message),
+	`VSpacing (0.5),
+	drives_sel,
+	`VSpacing (0.5),
+	`HBox (
+	    `HStretch (),
+	    `HWeight (1, `PushButton (`id (`cont), Label::ContinueButton ())),
+	    `HWeight (1, `PushButton (`id (`cancel), Label::CancelButton ())),
+	    `HWeight (1, `PushButton (`id (`eject), _("&Eject"))),
+	    `HStretch ()
+	),
+	`VSpacing (0.5)
+    ), `HSpacing (1));
+    UI::OpenDialog (contents);
+    if (multiple_drives)
+	UI::ChangeWidget (`id (`drives), `CurrentItem, devices[0]:"");
+    UI::SetFocus (`id (`cont));
+    symbol ret = nil;
+    while (true)
+    {
+	ret = (symbol)UI::UserInput ();
+	if (ret == `cont || ret == `cancel)
+	{
+	    break;
+	}
+	if (ret == `eject)
+	{
+	    if (multiple_drives)
+	    {
+		string device = (string)UI::QueryWidget (`id (`drives), `Value);
+		SCR::Execute (.target.bash, sformat ("/bin/eject %1", device));
+	    }
+	    else
+	    {
+		SCR::Execute (.target.bash, sformat ("/bin/eject %1",
+		    devices[0]:""));
+	    }
+	}
+	ret = nil;
+    }
+    UI::CloseDialog ();
+    return ret == `cont;
+}
 /* EOF */
 }
