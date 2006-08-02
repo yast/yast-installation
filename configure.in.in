@@ -7,11 +7,6 @@
 @YAST2-INIT-COMMON@
 @YAST2-INIT-YCP@
 
-# different approach than in yast2.rpm, hopefully better 
-if test "${prefix}" = /usr; then
-    sysconfdir=/etc
-fi
-
 ## some common checks
 @YAST2-CHECKS-COMMON@
 @YAST2-CHECKS-YCP@
@@ -29,8 +24,16 @@ find control -name \*.glade | LC_ALL=C sort > POTFILES
 AX_CHECK_DOCBOOK
 
 AC_MSG_CHECKING([fvwm directory])
-# eval to expand $prefix
-eval XVersion=$sysconfdir/YaST2/XVersion
+coresysconfdir=`pkg-config --print-errors --variable=sysconfdir yast2-core`
+if test -z "$coresysconfdir"; then
+   AC_MSG_ERROR([yast2-core.rpm does not specify sysconfdir, get a newer one])
+fi
+#argh hack
+if test "$coresysconfdir" = /usr/etc; then
+   coresysconfdir=/etc
+fi
+XVersion=$coresysconfdir/YaST2/XVersion
+
 Xsharedir=`. $XVersion; echo $Xsharedir`
 if test -z "$Xsharedir"; then
    AC_MSG_ERROR([$XVersion not found, get a newer yast2.rpm])
