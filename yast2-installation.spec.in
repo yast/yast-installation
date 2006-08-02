@@ -88,4 +88,8 @@ This controls the system installation.
 @ystartupdir@/startup
 
 # fvwmrc
-/usr/X11R6/share/fvwm/
+%if 0%{?suse_version} <= 1010
+%{prefix}/X11R6/share/fvwm/
+%else
+%{prefix}/share/fvwm/
+%endif

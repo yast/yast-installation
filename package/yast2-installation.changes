@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Aug  2 14:10:41 CEST 2006 - mvidner@suse.cz
+
+- Added a configure-time check for fvwm directory
+
+-------------------------------------------------------------------
 Fri Jul 28 09:42:00 CEST 2006 - jsrain@suse.cz
 
 - offer to eject the CD drive when asking for add-on CD (#181992)
