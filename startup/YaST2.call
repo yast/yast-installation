@@ -25,6 +25,9 @@
 #----------------
 #
 #set -x
+
+. /etc/YaST2/XVersion
+
 #=============================================
 # Functions...
 #---------------------------------------------
@@ -148,8 +151,8 @@ function prepare_for_qt () {
 	#---------------------------------------------
 	if [ ! -z "$NEED_XSERVER" ];then
 		export DISPLAY=:0
-		ln -snf /usr/X11R6/bin/XFree86 /var/X11R6/bin/X
-		X -deferglyphs 16 2>/dev/tty8 1>&2 vt07 &
+		[ -z $Xstartpath ] || ln -snf $Xbindir/XFree86 /var/X11R6/bin/X
+		$Xexecutable -deferglyphs 16 2>/dev/tty8 1>&2 vt07 &
 		xserver_pid=$!
 		wait_for_x11
 		if [ "$server_running" = 1 ];then
@@ -422,13 +425,14 @@ set_syslog ; set_proxy
 # 2) Initialize...
 #---------------------------------------------
 # 2.1) setup PATH
-PATH=/var/X11R6/bin:$ybindir:$PATH
+PATH=$ybindir:$PATH
+[ -z Xstartpath ] || PATH=/var/X11R6/bin:$PATH
 #=============================================
 # 2.2) get X11 driver directory
 #---------------------------------------------
-X11_DRIVER_DIR=/usr/X11R6/lib/modules/drivers
-if [ -d /usr/X11R6/lib64/modules/drivers ];then
-	X11_DRIVER_DIR=/usr/X11R6/lib64/modules/drivers
+X11_DRIVER_DIR=$Xdriverpath
+if [ -d $Xdriver64path ];then
+	X11_DRIVER_DIR=$Xdriver64path
 fi
 #=============================================
 # 2.3) obtain RAM size in Kb
@@ -526,15 +530,15 @@ if [ -z "$DISPLAY" ];then
 fi
 # 3.1.5) Check for xorg.conf...
 if [ ! -f /etc/X11/xorg.conf ];then
-if [ ! -f /usr/X11R6/lib/X11/xorg.conf ];then
+if [ ! -f $Xorgconftempl ];then
 	log "\tNo X11 configuration template found -> Medium Qt disabled"
 	MEDIUM[0]=0
 else
-	cp /usr/X11R6/lib/X11/xorg.conf /etc/X11/xorg.conf
+	cp $Xorgconftempl /etc/X11/xorg.conf
 fi
 fi 
 # 3.1.6) Check for WindowManager configuration
-if [ ! -f /usr/X11R6/share/fvwm/fvwmrc.yast2 ];then
+if [ ! -f $Xsharedir/fvwm/fvwmrc.yast2 ];then
 	log "\tNo Windowmanager configuration found -> Medium Qt disabled"
 	MEDIUM[0]=0
 fi
@@ -562,12 +566,12 @@ fi
 # 3.3) prequalification checks for VNC
 #---------------------------------------------
 # 3.3.1) Check for WindowManager configuration
-if [ ! -f /usr/X11R6/share/fvwm/fvwmrc.yast2 ];then
+if [ ! -f $Xsharedir/fvwm/fvwmrc.yast2 ];then
 	log "\tNo Windowmanager configuration found -> Medium VNC disabled"
 	MEDIUM[2]=0
 fi
 # 3.3.2) Check for VNC X-Server binary
-if [ ! -x /usr/X11R6/bin/Xvnc ] ; then
+if [ ! -x $Xbindir/Xvnc ] ; then
 	log "\tNo Xvnc server installed -> Medium VNC disabled"
 	MEDIUM[2]=0
 fi

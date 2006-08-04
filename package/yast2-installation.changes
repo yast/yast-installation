@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Aug  4 16:33:11 CEST 2006 - jsrain@suse.cz
+
+- updated for X.Org 7
+
+-------------------------------------------------------------------
 Fri Aug  4 09:21:28 CEST 2006 - jsrain@suse.cz
 
 - moved SLP source scanning to SourceManager.ycp
