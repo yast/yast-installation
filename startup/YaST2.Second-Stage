@@ -18,7 +18,9 @@
 # STATUS        : $Id$
 #----------------
 #set -x
-#
+
+. /etc/YaST2/XVersion
+
 #=============================================
 # Functions...
 #---------------------------------------------
@@ -61,9 +63,9 @@ for i in \
 	/usr/lib/info/              \
 	/usr/local/info/            \
 	/usr/local/lib/info/        \
-	/usr/X11R6/info/            \
-	/usr/X11R6/lib/info/        \
-	/usr/X11R6/lib/xemacs/info/ \
+	$Xinfodir                 \
+	$Xlibdir/info/            \
+	$Xlibdir/xemacs/info/     \
 	/var/adm/packages
 do
 	test -d $i && touch $i 2> /dev/null
@@ -71,7 +73,7 @@ done
 for i in \
 	/usr/share/info             \
 	/usr/man /usr/share/man     \
-	/usr/X11R6/man              \
+	$Xmandir                  \
 	/usr/openwin/man            \
 	/usr/lib/perl5/man          \
 	/usr/lib/teTeX/man          \
