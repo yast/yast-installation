@@ -31,6 +31,8 @@ import "Stage";
 import "URL";
 import "InstURL";
 import "String";
+import "SLP";
+import "SuSEFirewall";
 
 
 global list<integer> newSources = [];
@@ -56,6 +58,7 @@ global string currentUrl = "";
  * Prototypes
  */
 global boolean Modified();
+global symbol createSource( string url );
 
 /**
  * Data was modified?
@@ -106,6 +109,82 @@ global boolean ReadSources()
     sourceStatesOut = sourceStatesIn;
     return true;
 }
+
+/**
+ * Function scans for SLP installation servers on the network
+ * @returns symbol one of `back, `next
+ */
+global string AddSourceTypeSLP () {
+    /* Scanning network for SLP servers */
+    // translators: popup busy message
+    UI::OpenDialog (`Label (_("Scanning network...")) );
+    list<map> services = SLP::FindSrvs ("install.suse", "");
+    UI::CloseDialog ();
+    // FIXME: unify between here and inst_source handling
+    /* No SLP servers found */
+    if (services == nil || size(services) == 0)
+    {
+	y2warning("No SLP catalogs");
+	if ((! Stage::initial ()) && SuSEFirewall::IsStarted ())
+	{
+	     Report::Message(
+// error popup
+_("No SLP catalogs have been found on your network.
+This could be caused by a running SuSEfirewall2,
+which probably blocks the network scanning."));
+	}
+	else
+	{
+	    Report::Message (
+		// error popup
+		_("No SLP catalogs have been found on your network."));
+	}
+	return nil;
+
+    /* Some serves were found */
+    }
+    else {
+	// show the dialog to pick the source
+	list<term> items = maplist (map service, services, ``{
+	    string url = service["srvurl"]:"";
+	    url = substring (url, 21);
+	    // split the URL
+	    map parsed_url = URL::Parse (url);
+	    return `item (`id (url), toupper ( parsed_url["scheme"]:"http" ), url);
+	});
+	UI::OpenDialog (
+	    `VBox(
+		// translators: popup heading
+		`Heading (_("Choose SLP Catalog")),
+		// bugzilla #168718
+		`MinSize( 76, 19,
+		    // translators: table header
+		    `Table (`id(`services), `header(
+			    // table header
+			    _("Type"),
+			    // table header
+			    _("URL")),
+			items)
+		),
+		`HBox (
+		    `PushButton (`id (`ok), `opt(`default), Label::SelectButton ()),
+		    `VSpacing (1),
+		    `PushButton (`id (`cancel), Label::CancelButton ())
+		)
+	    )
+	);
+	symbol ret = (symbol)UI::UserInput ();
+	if (ret == `ok)
+	{
+	    string service = (string) UI::QueryWidget (`services, `CurrentItem);
+	    UI::CloseDialog ();
+	    return service;
+	}
+    }
+    UI::CloseDialog ();
+    return nil;
+}
+
 
 /*
  * Disabled for now

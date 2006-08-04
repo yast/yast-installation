@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Aug  4 09:21:28 CEST 2006 - jsrain@suse.cz
+
+- moved SLP source scanning to SourceManager.ycp
+
+-------------------------------------------------------------------
 Wed Aug  2 14:10:41 CEST 2006 - mvidner@suse.cz
 
 - Added a configure-time check for fvwm directory
