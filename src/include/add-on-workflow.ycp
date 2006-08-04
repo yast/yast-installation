@@ -59,94 +59,16 @@ symbol createResult = `again;
  * @returns symbol one of `back, `next
  */
 symbol AddSourceTypeSLP () {
-    // Return value (`back as a fall`back)
-    symbol ret = `back;
-
-	    /* Scanning network for SLP servers */
-	    // translators: popup busy message
-	    UI::OpenDialog (`Label (_("Scanning network...")) );
-	    list<map> services = SLP::FindSrvs ("install.suse", "");
-	    UI::CloseDialog ();
-	    // FIXME: unify between here and inst_source handling
-	    /* No SLP servers found */
-	    if (services == nil || size(services) == 0)
-	    {
-		y2warning("No SLP catalogs");
-		if ((! Stage::initial ()) && SuSEFirewall::IsStarted ())
-		{
-		     Report::Message(
-// error popup
-_("No SLP catalogs have been found on your network.
-This could be caused by a running SuSEfirewall2,
-which probably blocks the network scanning."));
-		}
-		else
-		{
-		    Report::Message (
-			// error popup
-			_("No SLP catalogs have been found on your network."));
-		}
-		ret = `back;
-
-	    /* Some serves were found */
-	    }
-	    else {
-		// show the dialog to pick the source
-		list<term> items = maplist (map service, services, ``{
-		    string url = service["srvurl"]:"";
-		    url = substring (url, 21);
-		    // split the URL
-		    map parsed_url = URL::Parse (url);
-		    return `item (`id (url), toupper ( parsed_url["scheme"]:"http" ), url);
-		});
-		UI::OpenDialog (
-		    `VBox(
-			// translators: popup heading
-			`Heading (_("Choose SLP Catalog")),
-			// bugzilla #168718
-			`MinSize( 76, 19,
-			    // translators: table header
-			    `Table (`id(`services), `header(
-				    // table header
-				    _("Type"),
-				    // table header
-				    _("URL")),
-				items)
-			),
-			`HBox (
-			    `PushButton (`id (`ok), `opt(`default), Label::SelectButton ()),
-			    `VSpacing (1),
-			    `PushButton (`id (`cancel), Label::CancelButton ())
-			)
-		    )
-		);
-		ret = (symbol)UI::UserInput ();
-		if (ret == `ok)
-		{
-		    string service = (string) UI::QueryWidget (`services, `CurrentItem);
-		    y2milestone ("Trying to add source '%1'", service);
-		    if (service != nil)
-		    {
-			// add the installation source
-			createResult = SourceManager::createSource(service);
-			y2milestone ("Adding source result: %1", createResult);
-			if (createResult == `ok) createResult = `next;
-		    }
-		    else
-		    {
-			y2warning("No source selected, returning back...");
-			ret = `back;
-		    }
-		}
-		else
-		{
-		    y2milestone("Adding SLP source cancelled");
-		    ret = `back;
-		}
-		UI::CloseDialog ();
-	    }
-
-    return ret;
+    string service = SourceManager::AddSourceTypeSLP ();
+    y2milestone ("Trying to add source '%1'", service);
+    if (service != nil)
+    {
+	// add the installation source
+	symbol createResult = SourceManager::createSource(service);
+	y2milestone ("Adding source result: %1", createResult);
+	return `next;
+    }
+    return `back;
 }
 
 /**
@@ -298,7 +220,8 @@ symbol MediaSelect () {
 	    // moved to another function
 	    ret = AddSourceTypeSLP();
 	    y2milestone("SLP-Add returned: %1", ret);
-	    if (ret == `ok) ret = `next;
+	    if (ret == `next)
+		createResult = `ok;
 	    else ret = nil;
 	}
 	else if (contains ([`ftp, `http, `https, `samba, `nfs, `cd, `dvd,
