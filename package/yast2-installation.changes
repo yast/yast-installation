@@ -1,8 +1,9 @@
 -------------------------------------------------------------------
-Wed Aug  9 14:57:09 CEST 2006 - jsrain@suse.cz
+Wed Aug  9 15:30:57 CEST 2006 - jsrain@suse.cz
 
-- Read info about products from package manager without parsing all
+- read info about products from package manager without parsing all
   metadata and reading RPM database (#66046)
+- added unzip to Requires (#195911)
 
 -------------------------------------------------------------------
 Tue Aug  8 09:54:38 CEST 2006 - jsrain@suse.cz

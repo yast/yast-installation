@@ -17,6 +17,8 @@ Requires:	yast2-network yast2-users
 Requires:	curl release-notes
 Requires:	suseRegister
 Requires:       autoyast2-installation yast2-online-update
+# unzipping license file
+Requires:	unzip
 PreReq:		%fillup_prereq
 
 Provides:	yast
