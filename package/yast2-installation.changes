@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Aug 10 11:18:24 CEST 2006 - jsrain@suse.cz
+
+- fixed congratulation text for openSUSE (#198252)
+
+-------------------------------------------------------------------
 Wed Aug  9 15:30:57 CEST 2006 - jsrain@suse.cz
 
 - read info about products from package manager without parsing all
