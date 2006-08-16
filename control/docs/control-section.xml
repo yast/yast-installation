@@ -12,21 +12,21 @@
         </para>
         <para>
             Beside workflow configuration, other system variables are
-            configurable and can be predefined by the system administrator,to name
-            a fre the  software selection, environment
-            settings such as language, time zone, keyboard can be configured and would
+            configurable and can be predefined by the system administrator, to name
+            a few: the software selection, environment
+            settings such as language, time zone and keyboard can be configured and would
             override default variables provided with shipped products.
         </para>
         <para>
             The idea of having a pre-defined installation workflow and pre-defined
-            system settings is the middle ground between manual installation and
+            system settings provides a middle ground between manual installation and
             automated installation. 
         </para>
         <para>
 
-            The product configuration file is provided in text on the installation
-            media and defines various settings needed during installation. The
-            following is a list of supported  configuration options:
+            The product configuration file is provided as a text file on the
+	    installation media and defines various settings needed during installation.
+	    The following is a list of supported configuration options:
 
         </para>
         <itemizedlist>
@@ -37,23 +37,23 @@
                     using the product configuration file. Entire sections of the workflow
                     can be skipped. 
                 </para>
-                <para>For example, it will be possible to set the language variable  in
-                    the configuration file and if the installation language is to be
-                    forced for some reason, i.e. IT department wants to force French
-                    installations in Quebec, Canada, then the entire dialogue is
-                    skipped. If the IT department is to recommend some settings but
-                    still give  the user the choice to change the default settings, the language
-                    dialogue will be shown with Frenchy preselected.
+                <para>For example, it is possible to set the language variable in
+                    the configuration file if the installation language is to be
+                    forced for some reason, eg. if an IT department wants to force
+		    French installations, say in Quebec, Canada, then the entire
+		    dialogue can be skipped. If the IT department is to recommend some settings but
+                    still give the user the choice to change the default settings, the language
+                    dialogue will be shown with French preselected.
                 </para>
                 <para>
-                    If non of the above options is used, the default dialogue
-                    settings is shown.
+                    If none of the above options is used, the default dialogue
+                    settings are shown.
                 </para>
             </listitem>
             <listitem>
                 <para>Proposals</para>
                 <para>
-                    As with the workflow, proposals are also be configurable. For
+                    As with the workflow, proposals are also configurable. For
                     example, certain products would skip some proposals. 
                     In the proposal screen the pre-configured
                     settings can be shown with the possibility to change them or with
@@ -63,11 +63,11 @@
             <listitem>
                 <para>System Variables</para>
                 <para>
-                    Lets the user  define system variables like language, keyboard,
+                    Let the user define system variables like language, keyboard,
                     time zone, window manager, display manager etc. 
                     The defined variables will be used as defaults in the
-                    respective dialogues.</para>
-
+                    respective dialogues.
+		</para>
             </listitem>
             <listitem>
                 <para>Package Selections and additional individual packages</para>
@@ -158,12 +158,14 @@
         </itemizedlist>
         <para>
             One of the main reasons for using the control is to provide non
-            YaST developers to change the installation behavior and customize
-            various settings without the need to change YaST packages. 
+            YaST developers the ability to change the installation behavior and
+	    customize various settings without the need to change and re-build
+	    YaST packages. 
         </para>
         <para>
-            The control	file for the various product shall therefore be maintained out of the
-            YaST development trees and in separate SUSE internal and product specific packages.
+            The control	files for the various SUSE products are maintained out of the
+            YaST development trees and include separate internal and product specific
+	    packages. <!-- this is really unclear... -->
         </para>
     </section>
 
