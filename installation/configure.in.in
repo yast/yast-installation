@@ -1,0 +1,46 @@
+## configure.in.in for yast2-installation
+##
+## 'y2tool y2autoconf' should be called
+## from Makefile.cvs to get configure.in
+
+## Initialize
+@YAST2-INIT-COMMON@
+@YAST2-INIT-YCP@
+
+## some common checks
+@YAST2-CHECKS-COMMON@
+@YAST2-CHECKS-YCP@
+@YAST2-CHECKS-TESTSUITE@
+
+## Nasty hack: xgettext doesn't work for XML files, so let's symlink it
+( cd control; 
+ for xml in `ls *.xml`; do
+    ln -sf $xml  `basename $xml .xml`.glade
+ done
+ )
+find control -name \*.glade | LC_ALL=C sort > POTFILES
+
+
+AX_CHECK_DOCBOOK
+
+AC_MSG_CHECKING([fvwm directory])
+coresysconfdir=`pkg-config --print-errors --variable=sysconfdir yast2-core`
+if test -z "$coresysconfdir"; then
+   AC_MSG_ERROR([yast2-core.rpm does not specify sysconfdir, get a newer one])
+fi
+#argh hack
+if test "$coresysconfdir" = /usr/etc; then
+   coresysconfdir=/etc
+fi
+XVersion=$coresysconfdir/YaST2/XVersion
+
+Xsharedir=`. $XVersion; echo $Xsharedir`
+if test -z "$Xsharedir"; then
+   AC_MSG_ERROR([$XVersion not found, get a newer yast2.rpm])
+fi
+fvwmdir=$Xsharedir/fvwm
+AC_MSG_RESULT([$fvwmdir])
+AC_SUBST(fvwmdir)
+
+## and generate the output...
+@YAST2-OUTPUT@

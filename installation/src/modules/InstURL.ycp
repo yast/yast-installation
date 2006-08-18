@@ -1,0 +1,324 @@
+/**
+ * Module:		InstURL.ycp
+ *
+ * Authors:		Klaus Kaempf (kkaempf@suse.de)
+ *
+ * Purpose:		Convert /etc/install.inf data to URL
+ *
+ *
+ * $Id$
+ */
+
+{
+    textdomain "packager";
+
+    module "InstURL";
+    import "Linuxrc";
+    import "URL";
+    import "CheckMedia";
+
+
+    global boolean is_network = true;
+
+    
+    /**
+     * Hide Password
+     * @param url original URL
+     * @return string new URL with hidden password
+     */
+    global string  HidePassword(string url) {
+        map t = URL::Parse(url);
+        if (size(t["pass"]:"") > 0 )
+        {
+            t["pass"] = "PASSWORD";
+        }
+        return URL::Build(t);
+    }
+
+    /**
+     * Get device options for CD/DVD
+     * @return string device options (devices=/dev/cdrom)
+     */
+    string GetDevicesOption() {
+        string options = "";
+        list<map> devicelist = (list<map>) SCR::Read(.probe.cdrom);
+	list<string> devlist = maplist (map d, devicelist, {
+	    return d["dev_name"]:"";
+	});
+
+	list<string> ready = [];
+	foreach(map d, devicelist, {
+		string dname = d["dev_name"]:"";
+
+		if (d["notready"]:true == false && dname != nil && dname != "")
+		{
+		    ready = add(ready, dname);
+		}
+	    }
+	);
+
+
+	if (size (ready) != 0)
+	    devlist = ready;
+	foreach (string d, devlist, {
+	    if (d != "")
+	    {
+		if (options != "")
+		    options = options + ",";
+		options = options + d;
+	    }
+	});
+        if (options != "")
+        {
+            options = "devices=" + options;
+        }
+        return options;
+    }
+
+    /**
+     *
+     */
+    map GetURLOptions (string url) {
+        map<string,string> option_map = $[];
+        integer pos = findfirstof(url, "?");
+        if (pos!=nil)
+        {
+            string opts = substring(url, pos, size(url));
+            list<string> optpairs = splitstring(opts, "?");
+            option_map = listmap(string op, optpairs, ``{
+                    list<string> tmp = splitstring(op, "=");
+                    return($[tmp[0]:"": tmp[1]:""]);
+                    });
+        }
+        return option_map;
+    }
+
+    /**
+     *
+     */
+    global string  RewriteCDUrl(string url) {
+        map tokens = URL::Parse(url);
+        string new_url = "";
+        if (tokens["scheme"]:"" == "cd" || tokens["scheme"]:"" == "dvd")
+        {
+            y2milestone("Old options: %1", GetURLOptions(url));
+            integer pos = findfirstof(url, "?");
+            if (pos != nil)
+            {
+                string new_options = GetDevicesOption();
+                new_url = substring(url, 0, pos);
+                if (size(new_options) > 0 )
+                    new_url = new_url + "?" + GetDevicesOption();
+                else
+                    new_url = url;
+            }
+        } else {
+            new_url = url;
+        }
+        return new_url;
+    }
+    
+    /**
+     * Convert install.inf to a URL useable by the package manager
+     * @param extra_dir append path to original URL
+     * @return string new Source URL
+     */
+    global string installInf2Url (string extra_dir) {
+	string options = "";
+        map url_tokens =  $[];
+
+	string instmode = Linuxrc::InstallInf("InstMode");	// mode
+	if (instmode == nil)	// defaults to "CD"
+	{
+	    instmode = "cd";
+	}
+
+	if ((instmode == "cd")					// CD or DVD
+	    || (instmode == "dvd"))
+	{
+	    is_network = false;
+            options = GetDevicesOption();
+	}
+	else if (instmode == "hd")						// Harddisk
+	{
+	    is_network = false;
+            string partition = Linuxrc::InstallInf("Partition");
+            if (partition != nil )
+	        options = "device=/dev/" + partition + "&filesystem=auto";
+            else
+                y2error("no partition specified");
+	}
+
+        url_tokens["scheme"] = instmode;
+
+	if (is_network)
+	{
+	    string username = Linuxrc::InstallInf("Username");
+	    if ((username != nil) && (username != ""))
+	    {
+                url_tokens["user"] = username;
+		string password = Linuxrc::InstallInf("Password");
+		if ((password != nil) && (password != ""))
+		{
+                    url_tokens["pass"] = password;
+		}
+	    }
+	    string servername = Linuxrc::InstallInf("ServerName");
+	    string server = Linuxrc::InstallInf("Server");
+	    string serverip = Linuxrc::InstallInf("ServerIP");
+
+	    if ((servername != nil) && (servername != ""))
+	    {
+                url_tokens["host"] = servername;
+	    }
+	    else if ((server != nil) && (server != ""))
+	    {
+                url_tokens["host"] = server;
+	    }
+	    else if ((serverip != nil) && (serverip != ""))
+	    {
+                url_tokens["host"] = serverip;
+	    }
+
+	} // is_network
+
+	string isoimg = "";
+	string serverdir = Linuxrc::InstallInf("Serverdir");
+	if (Linuxrc::InstallInf("SourceType") == "file")
+	{
+	  if (serverdir != "" && serverdir != nil)
+	  {
+	    list<string> sd_items = splitstring (serverdir, "/");
+	    sd_items = filter (string i, sd_items, {
+		return i != "";
+	    });
+	    integer last = size (sd_items) - 1;
+	    isoimg = sd_items[last]:"";
+	    sd_items[last] = "";
+	    serverdir = mergestring (sd_items, "/");
+	  }
+	}
+
+        /*
+	if (((instmode == "hd") || is_network)				// if serverdir needed
+	    && ((serverdir != nil) && (serverdir != "")))		// and is valid
+	{
+	    // for smb mounts it is usual to not have a leading slash
+	    if (substring (serverdir, 0, 1) != "/")
+		serverdir = "/" + serverdir;
+	} 
+        */
+        string share = Linuxrc::InstallInf("Share");
+
+	if (extra_dir != "")
+	{
+            if (serverdir != nil)
+            {
+                // avoid too many slashes
+                if (findlastof(serverdir, "/") == size(serverdir) - 1)
+                {
+                    serverdir = substring(serverdir,  0  , size(serverdir) - 1 );
+                }
+
+                string slash = "";
+                if (substring (extra_dir, 0, 1) != "/")
+                    slash = "/";
+	        serverdir = serverdir + slash + extra_dir;
+                slash = "";
+            }
+            else
+                serverdir = extra_dir;
+	}
+
+	if (serverdir != nil && serverdir != "")
+        {
+            string fs = "";
+            if (instmode == "ftp" ) {
+                // ftp://foo/%2fbar is %2fbar on foo  (relative)
+                // ftp://foo/bar is bar on foo (absolute)
+                // ftp://foo//bar is /bar on foo (relative)
+		// Note: %2f is added by URL.ycp if the path starts with /
+		if (substring (serverdir, 0, 3) == "%2f")
+		    serverdir = "/" + substring (serverdir, 3);
+                fs = serverdir;
+
+            } else if (instmode == "smb" && (share != nil) && (share != "")) {
+                fs = share + "/" +  serverdir;
+            } else {
+                fs = serverdir;
+            }
+            url_tokens["path"] = fs;
+
+        }
+        else
+        {
+            // FIXME don't know why it is needed
+            // Needed as a seperator between URL and options (!)
+            url_tokens["path"] = "/"; 
+        }
+
+        string port = Linuxrc::InstallInf("Port");
+        if ((port != nil) && (port != ""))
+        {
+            url_tokens["port"]  = port;
+        }
+
+        string url = URL::Build(url_tokens);
+	string option_separator = "?";
+
+	if (is_network)
+	{
+	    string proxy = Linuxrc::InstallInf("Proxy");
+	    if ((proxy != nil) && (proxy != ""))
+	    {
+		url = url + option_separator + "proxy=" + proxy;
+		option_separator = "&";
+	    }
+	    string proxyport = Linuxrc::InstallInf("ProxyPort");
+	    if ((proxyport != nil) && (proxyport != ""))
+	    {
+		url = url + option_separator + "proxyport=" + proxyport;
+		option_separator = "&";
+	    }
+	    string proxyproto = Linuxrc::InstallInf("ProxyProto");
+	    if ((proxyproto != nil) && (proxyproto != ""))
+	    {
+		url = url + option_separator + "proxyproto=" + proxyproto;
+		option_separator = "&";
+	    }
+	    string proxyuser = Linuxrc::InstallInf("ProxyUser");
+	    if ((proxyuser != nil) && (proxyuser != ""))
+	    {
+		url = url + option_separator + "proxyuser=" + proxyuser;
+		option_separator = "&";
+	    }
+	    string proxypassword = Linuxrc::InstallInf("ProxyPassword");
+	    if ((proxypassword != nil) && (proxypassword != ""))
+	    {
+		url = url + option_separator + "proxypassword=" + proxypassword;
+		option_separator = "&";
+	    }
+	    string workgroup = Linuxrc::InstallInf ("WorkDomain");
+	    if (workgroup != nil && workgroup != "")
+	    {
+		url = url + option_separator + "workgroup=" + workgroup;
+		option_separator = "&";
+	    }
+	} // is_network
+
+	if (options != "")
+	{
+	    url = url + option_separator + options;
+	    option_separator = "&";
+	    y2milestone ("options %1", options);
+	}
+
+	if (isoimg != "")
+	{
+	    url = sformat ("iso:/?iso=%1&url=%2", isoimg, url);
+	}
+
+	y2debug ("URL %1", HidePassword(url));
+	return url;
+    }
+}

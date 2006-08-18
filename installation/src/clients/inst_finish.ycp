@@ -1,0 +1,213 @@
+/**
+ * File:	clients/inst_finish.ycp
+ * Package:	installation
+ * Summary:	Finish installation
+ * Authors:	Klaus Kämpf <kkaempf@suse.de>
+ *		Arvin Schnell <arvin@suse.de>
+ *              Jiri Srain <jsrain@suse.de>
+ *
+ * $Id$
+ *
+ * Writes:
+ * [target] /var/lib/YaST2/runme_at_boot	run yast2 after initial boot
+ * SCR::Write (.etc.shadow.root,
+ */
+
+{
+    textdomain "installation";
+
+    import "AddOnProduct";
+    import "Installation";
+    import "Linuxrc";
+    import "Misc";
+    import "Mode";
+    import "Stage";
+    import "Popup";
+    import "ProductControl";
+    import "Progress";
+    import "Report";
+    import "Wizard";
+
+
+
+// Help text for last dialog of base installation
+string help_text = _("<p>
+Please wait while the base system is being installed.
+</p>");
+
+list<map<string,any> > stages = [
+    $[
+	// progress stage
+	"label" : _("Copy files to installed system"),
+	"steps" : [
+	    "autoinst_scripts1",
+	    "copy_files",
+	    "switch_scr"
+	],
+    ],
+    $[
+	// progress stage
+	"label" : _("Save configuration"),
+	"steps" : [
+	    "ldconfig",
+	    "save_config",
+	    "runlevel",
+	    "desktop",
+	    "fonts",
+	    "storage",
+	    "iscsi-client",
+	    "kernel",
+	    "x11",
+	    "proxy",
+	    "pkg",
+	    "driver_update1",
+	    "yast_inf",
+	],
+    ],
+    $[
+	// progress stage
+	"label" : _("Install boot manager"),
+	"steps" : [
+	    "bootloader",
+	],
+    ],
+    $[
+	// progress stage
+	"label" : _("Save installation settings"),
+	"steps" : [
+	    "network",
+	    "ssh_settings",
+	    "save_hw_status",
+	    "autoinst_scripts2",
+	],
+    ],
+    $[
+	// progress stage
+	"label" : _("Prepare system for initial boot"),
+	"steps" : [
+	    "vm",
+	    "copy_logs",
+	    "driver_update2",
+	    "umount",
+	],
+    ],
+];
+
+if (size (ProductControl::inst_finish) > 0)
+{
+    y2milestone ("Using inst_finish steps definition from control file");
+    stages = ProductControl::inst_finish;
+}
+else
+{
+    y2milestone ("inst_finish steps definition not found in control file");
+}
+
+// merge steps from add-on products
+stages[0, "steps"] = merge (AddOnProduct::finish_steps_before_chroot, stages[0, "steps"]:[]);
+stages[1, "steps"] = merge (AddOnProduct::finish_steps_after_chroot, stages[1, "steps"]:[]);
+stages[3, "steps"] = merge (stages[3, "steps"]:[], AddOnProduct::finish_steps_before_umount);
+
+symbol run_type = `installation;
+if (Mode::update ())
+    run_type = `update;
+else if (Mode::autoinst ())
+    run_type = `autoinst;
+
+integer steps_count = 0;
+
+stages = maplist (map<string,any> stage, stages, {
+    list<map> steps = maplist (string s, stage["steps"]:[], {
+	s = s + "_finish";
+	map info = (map)WFM::CallFunction (s, ["Info"]);
+	if (info == nil)
+	{
+	    y2error ("Client %1 returned invalid data", s);
+	    return nil;
+	}
+	if (info["when"]:nil != nil && ! contains (info["when"]:[], run_type))
+	    return nil;
+	info["client"] = s;
+	steps_count = steps_count + info["steps"]:1;
+	return info;
+    });
+    stage["steps"] = filter (map s, steps, {
+	return s != nil;
+    });
+    return stage;
+});
+
+stages = filter (map<string,any> s, stages, {
+    return size (s["steps"]:[]) > 0;
+});
+
+list<string> stage_names = maplist (map<string,any> s, stages, {
+    return s["label"]:"";
+});
+
+Progress::New(
+    // Headline for last dialog of base installation: Install LILO etc.
+    _("Finishing Basic Installation"),
+    "",	// Initial progress bar label - not empty (reserve space!)
+    steps_count,
+    stage_names,
+    [],
+    help_text);
+
+Wizard::DisableBackButton ();
+Wizard::DisableNextButton ();
+
+boolean aborted = false;
+
+foreach (map<string,any> stage, stages, {
+    Progress::NextStage ();
+    boolean first = true;
+    foreach (map step, stage["steps"]:[], {
+	integer scount = step["steps"]:1;
+	if (scount != 0)
+	{
+	    if (first)
+		first = false;
+	    else
+		Progress::NextStep ();
+	}
+	if (haskey (step, "title"))
+	    Progress::Title (step["title"]:"");
+	WFM::CallFunction (step["client"]:"", ["Write"]);
+	if (UI::PollInput () == `abort && Popup::ConfirmAbort (`incomplete))
+	{
+	    aborted = true;
+	    break;
+	}
+    });
+    if (aborted)
+	break;
+});
+
+if (aborted)
+{
+    y2milestone ("inst_finish aborted");
+    return `abort;
+}
+
+Progress::Finish();
+Progress::Title (_("Finished."));
+
+// --------------------------------------------------------------
+// Check if there is a message left to display
+// and display it, if necessary
+
+if (size (Misc::boot_msg) > 0 && !Mode::autoinst ())
+{
+    SCR::Execute (.target.bash, "/bin/echo -e '\a'");
+    if (Linuxrc::usessh ())
+	Report::DisplayMessages (true, 0);
+    else
+	Report::DisplayMessages (true, 10);
+    Report::Message (Misc::boot_msg);
+    Misc::boot_msg = "";
+}
+
+return `next;
+
+} // EOF

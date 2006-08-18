@@ -1,0 +1,58 @@
+[Desktop Entry]
+Type=Application
+Categories=Qt;X-SuSE-YaST;X-SuSE-YaST-Misc;
+
+X-KDE-ModuleType=Library
+X-KDE-RootOnly=true
+X-KDE-HasReadOnlyMode=true
+X-KDE-Library=yast2
+X-SuSE-YaST-Call=vendor
+
+X-SuSE-YaST-Group=Misc
+X-SuSE-YaST-Argument=
+X-SuSE-YaST-RootOnly=true
+X-SuSE-YaST-AutoInst=
+X-SuSE-YaST-Geometry=
+X-SuSE-YaST-SortKey=
+X-SuSE-YaST-AutoInstResource=
+
+Icon=yast-vendor
+Exec=/sbin/yast2 vendor
+
+Name=Vendor Driver CD
+GenericName=Install a driver from a vendor-specific CD-ROM
+Name[cs]=Načíst CD s ovladačem od výrobce
+GenericName[cs]=Tento modul instaluje ovladače třetích stran z CD od výrobce.
+Name[de]=Treiber-CD des Händlers laden
+GenericName[de]=Dieses Modul dient dazu, keine SuSE-Treiber, sondern Treiber von einer Hersteller-spezifischen CD zu laden.
+Name[es]=Cargar CD de controladores del fabricante
+GenericName[es]=Este módulo instala drivers no-SuSE desde un CD del fabricante.
+Name[hu]=Meghajtó-CD betöltése
+GenericName[hu]=Ez a modul egy nem SuSE-s meghajtót telepít, melyet a hardver gyártótól CD-ROM-on kapott.
+Name[it]=Carica il CD dei driver del produttore
+GenericName[it]=Questo modulo installa un driver non SuSE da un CD-ROM specifico del produttore.
+Name[ko]=제조사 드라이버 CD 적재
+GenericName[ko]=이 모듈은 제조사 CD-ROM으로 부터 수세 드라이버가 아닌것을 설치합니다.
+Name[nl]=Laadt de fabrikant's driver-CD
+GenericName[nl]=Deze module installeert een niet-SuSE driver van een specifieke fabrikant CDROM.
+Name[pt]=Carregar CD de driver do fabricante
+GenericName[pt]=Este módulo instala um driver não-SuSE de um CD-ROM de fabricante.
+Name[sk]=Načítať CD s ovládačmi od výrobcu
+GenericName[sk]=Tento modul inštaluje ovládače z CD-ROM od výrobcu.
+Name[sv]=Ladda tillverkarens drivrutin-cd
+GenericName[sv]=Den här modulen installerar en icke-SuSE-drivrutin från tillverkarens cd-skiva.
+Name[bg]=Зареждане на CD от производителя
+GenericName[bg]=Този модул инсталира не-SuSE драйвер от CD на производителя.
+GenericName[da]=Dette modul installerer en ikke-SuSE driver fra en producentspecifik CD-ROM.
+Name[el]=Φόρτωση CD οδηγού κατασκευαστή
+GenericName[el]=Αυτή η μονάδα εγκαθιστά έναν μη-SuSE οδηγό από ένα συγκεκριμένο CD-ROM κατασκευαστή.
+Name[fr]= harger le CD pilote du constructeur
+GenericName[fr]=Ce module installe le pilote d'un constructeur spécifique ne faisant pas partie de la distribution SuSE.
+Name[ja]=メーカーのドライバ CD を読み込む
+GenericName[ja]=このモジュールは SuSE 社製以外のメーカのドライバをそのメーカーの CD からインストールします。
+GenericName[lt]=Šis modulis įdiegia ne SuSE sukurtas tvarkykles iš gamintojo CD-ROM'o.
+GenericName[ru]=Этот модуль устанавливает не-SuSE драйверы с CD-дисков поставщиков.
+Name[sl]=Naloži proizvajalčev CD z gonilniki
+GenericName[sl]=Modul namesti ne-SuSE gonilnik s CD-ROM-a proizvajalca.
+GenericName[tr]=Bu modül üreticiye özel CD-ROM'dan SuSE sürücüsü olmayan bir sürücü kurulumu yapar
+X-KDE-SubstituteUID=true

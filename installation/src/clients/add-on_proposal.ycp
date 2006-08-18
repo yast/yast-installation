@@ -1,0 +1,71 @@
+/**
+ * Module:	add-on_proposal.ycp
+ *
+ * Authors:	Jiri Srain <jsrain@suse.cz>
+ *
+ * Purpose:	Proposal function dispatcher - add-no products
+ *
+ *		See also file proposal-API.txt for details.
+ */
+{
+textdomain "installation";
+
+include "installation/add-on-workflow.ycp";
+
+string func  = (string) WFM::Args(0);
+map    param = (map) WFM::Args(1);
+map    ret   = $[];
+
+if ( func == "MakeProposal" )
+{
+    boolean force_reset      = param["force_reset"     ]:false;
+    boolean language_changed = param["language_changed"]:false;
+
+    list<string> items = maplist (map<string,any> product, AddOnProduct::add_on_products, {
+	map data = Pkg::SourceGeneralData (product["media"]:-1);
+	// placeholder for unknown path
+	string dir = data["product_dir"]:_("Unknown");
+	if (dir == "")
+	    dir = "/";
+	// summary item, %1 is product name, %2 media URL, %3 directory on media
+	return sformat ("%1 (Media %2, directory %3)", product["product"]:"", data["url"]:_("Unknown"), dir);
+    });
+    if (size (items) == 0)
+    {
+	// summary string
+	items = [ _("No add-on product selected for installation") ];
+    }
+    ret = $[
+	"raw_proposal" : items,
+    ];
+}
+else if ( func == "AskUser" )
+{
+    Wizard::CreateDialog();
+    symbol result = RunAddOnMainDialog (true, true);
+    UI::CloseDialog();
+
+    // Fill return map
+
+    ret = $[ "workflow_sequence" : result,
+	     "mode_changed" : false];
+}
+else if ( func == "Description" )
+{
+    // Fill return map.
+    //
+    // Static values do just nicely here, no need to call a function.
+
+    ret = $[
+      // this is a heading
+      "rich_text_title"	:	_( "Add-On Products"  ),
+      // this is a menu entry
+      "menu_title"	:	_( "Add-On &Products" ),
+      "id"		:	"add_on"
+    ];
+}
+
+return ret;
+
+
+}

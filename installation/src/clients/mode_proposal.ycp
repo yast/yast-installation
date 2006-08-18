@@ -1,0 +1,101 @@
+/**
+ * Module:	mode_proposal.ycp
+ *
+ * Authors:	Klaus Kaempf <kkaempf@suse.de>
+ *		Arvin Schnell <arvin@suse.de>
+ *
+ * Purpose:	Proposal function dispatcher - mode.
+ *
+ *		See also file proposal-API.txt for details.
+ * $Id$
+ */
+{
+    textdomain "installation";
+
+    import "HTML";
+    import "Mode";
+    import "RootPart";
+    import "Update";
+
+    string func  = (string) WFM::Args(0);
+    map    param = (map) WFM::Args(1);
+    map    ret   = $[];
+
+    if ( func == "MakeProposal" )
+    {
+	boolean force_reset      = param["force_reset"     ]:false;
+	boolean language_changed = param["language_changed"]:false;
+
+	// call some function that makes a proposal here:
+	//
+	// DummyMod::MakeProposal( force_reset );
+
+	// Fill return map
+
+	if (Mode::installation ())
+	{
+	    ret = $[ "raw_proposal" :
+		     // Proposal for installation mode
+		     [ HTML::Bold( _("New installation") ) ]
+	    ];
+	}
+	else if (Mode::update ())
+	{
+	    ret = $[ "raw_proposal" :
+		     // Proposal for installation mode
+		     [ HTML::Bold( _("Update") ) ]
+	    ];
+	}
+	else
+	{
+	    ret = $[ "raw_proposal" :
+		     [ HTML::Bold( "Error: Unknown Mode" ) ]
+	    ];
+	}
+    }
+    else if ( func == "AskUser" )
+    {
+	boolean has_next = param["has_next"]:false;
+
+	// call some function that displays a user dialog
+	// or a sequence of dialogs here:
+	//
+	// sequence = DummyMod::AskUser( has_next );
+
+	boolean tmp1 = Mode::installation ();
+	boolean tmp2 = Mode::update ();
+
+	symbol result = (symbol) WFM::CallFunction ("inst_mode", [`AskUser]);
+
+	boolean mode_changed = tmp1 != Mode::installation () || tmp2 != Mode::update ();
+
+	if (mode_changed)
+	{
+	    Pkg::PkgReset ();
+	    Update::Detach ();
+	    RootPart::UnmountPartitions (false);
+	}
+
+	// Fill return map
+
+	ret = $[ "workflow_sequence" : result,
+		 "mode_changed" : mode_changed];
+    }
+    else if ( func == "Description" )
+    {
+	// Fill return map.
+	//
+	// Static values do just nicely here, no need to call a function.
+
+	ret =
+	    $[
+	      // this is a heading
+	      "rich_text_title"	:	_( "Mode"  ),
+	      // this is a menu entry
+	      "menu_title"	:	_( "M&ode" ),
+	      "id"		:	"mode_stuff"
+	    ];
+    }
+
+    return ret;
+}

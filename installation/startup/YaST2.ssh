@@ -1,0 +1,45 @@
+#!/bin/sh
+#================
+# FILE          : YaST2.ssh
+#----------------
+# PROJECT       : YaST (Yet another Setup Tool v2)
+# COPYRIGHT     : (c) 2004 SUSE Linux AG, Germany. All rights reserved
+#               :
+# AUTHORS       : Steffen Winterfeldt <snwint@suse.de>
+#               . Arvin Schnell <arvin@suse.de>
+#               : Marcus Schaefer <ms@suse.de>
+#               :
+# BELONGS TO    : System installation and Administration
+#               :
+# DESCRIPTION   : This is the main script to restart the YaST2 installer
+#               : if we are within a ssh installation environment
+#               : This script is called manually
+#               :
+#               :
+# STATUS        : $Id$
+#----------------
+#
+#========================================
+# call YaST2 if flag file exists
+#----------------------------------------
+if [ -f /var/lib/YaST2/runme_at_boot ];then
+	/usr/lib/YaST2/startup/YaST2.call installation continue
+	rm -fv /var/lib/YaST2/runme_at_boot
+else
+	exit 1
+fi
+
+#========================================
+# boot into system
+#----------------------------------------
+cat <<-EOF
+	continue with booting ...
+
+	You can login with the (new?) root password or the
+	new created user account in a few seconds ...
+EOF
+
+#========================================
+# remove flag file
+#----------------------------------------
+rm -f /var/lib/YaST2/runme_at_boot
