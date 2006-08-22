@@ -93,61 +93,6 @@ string start_mode = Mode::mode ();
 	return `finish;
     }
 
-term radio_box = `RadioButtonGroup (
-    `id (`inst_mode),
-    `MarginBox (
-	`leftMargin (1),
-	`rightMargin (1.5),
-	`topMargin (0.5),
-	`bottomMargin (0.5),
-	`VBox(
-	    // frame
-	    `Frame (_("Installation Mode"), `VBox (
-		// radio button
-		`Left (`RadioButton (`id (`install), _("New &Installation"),
-		    ! Mode::update ())),
-		`VSpacing( 0.5 ),
-		// radio button
-		`Left (`RadioButton (`id (`update), _("&Update"),
-		    Mode::update ()))
-	    )),
-	    `VSpacing (2),
-	    // check box
-	    `Left (`CheckBox (`id (`add_on), _("In&clude Add-On Products from Separate Media")))
-	)
-    )
-);
-
-term contents = `VBox (
-    `VWeight (60, `HVCenter (radio_box)),
-    `VWeight (10, `Empty ()),
-    `HBox (
-	`HWeight (4, `Empty()),
-	// push button
-	`PushButton (`id (`expert), _("&Other...")),
-	`HWeight (1, `Empty ())
-    ),
-    `VWeight (10, `Empty ())
-);
-
-term expert_dialog = `VBox (
-    // frame
-    `MarginBox (2, 0.7, `Frame (_("Other Options"),
-	`MarginBox (1, 0.5, `RadioButtonGroup (`id (`expert_mode), `VBox (
-	    `Left (`RadioButton (`id (`repair),
-		// radio button
-		_("&Repair Installed System"), true)),
-	    `Left (`RadioButton (`id (`boot),
-		// radio button
-		_("&Boot Installed System")))
-	)))
-    )),
-    `Right (`HBox (
-	`PushButton (`id (`ok), `opt (`default), Label::OKButton ()),
-	`PushButton (`id (`cancel), Label::CancelButton ())
-    ))
-);
-
 // help text for installation method
 string help_text = _("<p><big><b>Installation Mode</b></big><br>
 Select what to do:</p>");
@@ -158,7 +103,6 @@ Select <b>New Installation</b> if there is no existing Linux system on your
 machine or if you want to replace an existing Linux system completely,
 abandoning all its configuration data.
 </p>");
-
 
 // help text for installation method
 help_text = help_text + _("<p>
@@ -174,18 +118,83 @@ To install an add-on product from separate media together with &product;, select
 ");
 
 // help text for installation method
-help_text = help_text + _("<p>Click <b>Other</b> then 
+help_text = help_text + _("<p>Select <b>Other Options</b> then 
 select <b>Repair Installed System</b> if you have a damaged Linux system on
 your hard disk. With this option, try to fix problems automatically.
 </p>");
 
 // help text for installation method
-help_text = help_text + _("<p>Click <b>Other</b> then
+help_text = help_text + _("<p>Select <b>Other Options</b> then
 select <b>Boot Installed System</b> if you have a Linux system on your hard
 disk that will not boot. With this option, try to fix problems manually.
 </p>");
 
+// see bugzilla #156529
+term InstModeDialogContent (symbol pre_selected) {
+    term other_options_layout_fix = `Empty();
+    term other_options            = `Empty();
 
+    if (pre_selected == `expert) {
+	other_options_layout_fix = `VSpacing(2.1);
+	other_options = `RadioButtonGroup (
+	    `id (`expert_options),
+	    `HBox (
+		`HSpacing (6),
+		`VBox (
+		    `Left (`RadioButton (`id (`repair), `opt (`notify),
+			// radio button
+			_("Re&pair Installed System"), true)),
+		    `Left (`RadioButton (`id (`boot), `opt (`notify),
+			// radio button
+			_("Boot Installed &System")))
+		)
+	    )
+	);
+    }
+
+    return `VBox (
+	`VWeight (60, `HVCenter (
+	    `MarginBox (
+	    `leftMargin (1),
+	    `rightMargin (1.5),
+	    `topMargin (0.5),
+	    `bottomMargin (0.5),
+	    `VBox (
+		other_options_layout_fix,
+		`Frame (
+		    // frame
+		    _("Select Mode"),
+		    `VBox (
+			// Basis RadioButtonGroup
+			`RadioButtonGroup (
+			    `id (`inst_mode),
+			    `VBox (
+				// radio button
+				`Left (`RadioButton (`id (`install), `opt(`notify), _("New &Installation"),
+				    ! Mode::update ())),
+				`VSpacing( 0.3 ),
+				// radio button
+				`Left (`RadioButton (`id (`update), `opt(`notify), _("&Update"),
+				    Mode::update ())),
+				`VSpacing( 1.3 ),
+				`Left (`RadioButton (`id (`expert), `opt(`notify), _("&Other Options")))
+			    )
+			),
+			// Other RadioButtonGroup
+			other_options
+		    )
+		),
+		`VSpacing (2),
+		`Left (`CheckBox (`id (`add_on), `opt(`notify),
+		    // check box
+		    _("In&clude Add-On Products from Separate Media"))
+		)
+	    )
+	)
+	)),
+	`VWeight (20, `Empty ())
+    );
+}
 
 Wizard::SetContents (_("Analyzing the Computer"), `Empty (), "", false, false);
 Wizard::SetTitleIcon ("yast-inst-mode");
@@ -235,7 +244,7 @@ if (! (have_linux && offer_update))
 if (Mode::autoinst ())
     return `auto;
 
-Wizard::SetContents (_("Installation Mode"), contents, help_text, true, true);
+Wizard::SetContents (_("Installation Mode"), InstModeDialogContent(`install), help_text, true, true);
 Wizard::SetTitleIcon ("yast-inst-mode");
 
 symbol ret = nil;
@@ -253,37 +262,88 @@ if (other_options_disabled) {
     UI::ChangeWidget (`id (`expert), `Enabled, false);
 }
 
-repeat {
-    ret = (symbol)UI::UserInput();
+// --> Handling User Input in Installation Mode
 
+boolean add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
+// Probably buggy UI, in case of two radio button groups, the second one
+// doesn't work (RadioButtonGroup (`id (`expert_options)))
+symbol current_expert_mode = `boot;
+repeat {
+    ret = (symbol) UI::UserInput();
+
+    // Use-Add-On-Product status changed
+    if (ret == `add_on) {
+	add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
+	continue;
+    }
+    // Other Options - Boot
+    else if (ret == `boot) {
+	current_expert_mode = `boot;
+
+	continue;
+    // Other Options - Repair
+    } else if (ret == `repair) {
+	current_expert_mode = `repair;
+
+	continue;
+    }
+    // Adjusting current UI - Other Options
+    else if (ret == `expert) {
+	// Remembering add-on state, switching off and disabling
+	add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
+
+	// Show other options
+	Wizard::SetContents (_("Installation Mode"), InstModeDialogContent(`expert), help_text, true, true);
+	
+	UI::ChangeWidget (`id(`add_on), `Value, false);
+	UI::ChangeWidget (`id(`add_on), `Enabled, false);
+	UI::ChangeWidget (`id(`inst_mode), `CurrentButton, `expert);
+	
+	continue;
+    }
+    // Adjusting current UI - Hide Other Options
+    else {
+	symbol selected_mode = (symbol)  UI::QueryWidget (`id (`inst_mode), `CurrentButton);
+
+	// Hide other options
+	Wizard::SetContents (_("Installation Mode"), InstModeDialogContent(`install), help_text, true, true);
+
+	// Enabling add-on, adjusting previous state (selected)
+	UI::ChangeWidget  (`id(`add_on), `Enabled, true);
+	UI::ChangeWidget  (`id(`add_on), `Value, add_on_selected);
+	// Can be ither `install or `update
+	UI::ChangeWidget  (`id(`inst_mode), `CurrentButton, selected_mode);
+    }
+
+    // Next button
     if (ret == `next)
     {
-	new_mode = (symbol)UI::QueryWidget (`id (`inst_mode), `CurrentButton);
+	new_mode = (symbol) UI::QueryWidget (`id (`inst_mode), `CurrentButton);
 	if (new_mode == nil)
 	{
 	    // this is a label of a message box
 	    Popup::Message(_("Choose one of the\noptions to continue."));
 	    continue;
 	}
-    }
-    else if (ret == `expert)
-    {
-	UI::OpenDialog( expert_dialog );
-	ret = (symbol)UI::UserInput();
-	if (ret == `ok)
-	{
-	    new_mode = (symbol)
-		UI::QueryWidget (`id (`expert_mode), `CurrentButton);
-	    if (new_mode == `boot)
-	    {
-		if (handle_boot () == `finish)
-		    Mode::SetMode ("");
-		else
-		    ret = nil;
+	
+	// Repair or Boot
+	if (new_mode == `expert) {
+	    if (! contains([`boot, `repair], current_expert_mode)) {
+		y2error("Internal error: Widget `expert_mode selected item: %1", current_expert_mode);
+		ret = nil;
+		continue;
 	    }
-	    ret = `next;
+	    new_mode = current_expert_mode;
+	    
+	    // Boot was selected
+	    if (new_mode == `boot) {
+		Mode::SetMode ("");
+		if (handle_boot() != `finish) {
+		    y2milestone("Not booting any OS");
+		    continue;
+		}
+	    }
 	}
-	UI::CloseDialog();
     }
     else if (ret == `abort)
     {
@@ -293,7 +353,9 @@ repeat {
     }
 } until (ret == `back || ret == `next);
 
+// <-- Handling User Input in Installation Mode
 
+y2milestone("Selected mode: %1, Return: %2", new_mode, ret);
 if (ret == `next)
 {
     if (new_mode == `install)
@@ -331,11 +393,14 @@ if (ret == `next)
     }
 }
 
-if (ret == `back || ret == `finish)
+if (ret == `back || ret == `finish) {
+    y2milestone("Returning: %1", ret);
     return ret;
+}
 
 if (Mode::repair ())
 {
+    y2milestone("Calling inst_repair");
     WFM::CallFunction ("inst_repair");
     return `finish;
 }

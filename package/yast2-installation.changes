@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Aug 22 14:27:53 CEST 2006 - locilka@suse.cz
+
+- New Installation Mode dialog (#156529)
+
+-------------------------------------------------------------------
 Tue Aug 22 13:41:54 CEST 2006 - jsrain@suse.cz
 
 - weaken dependency on suseRegister (#183656)
