@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Aug 22 13:41:54 CEST 2006 - jsrain@suse.cz
+
+- weaken dependency on suseRegister (#183656)
+
+-------------------------------------------------------------------
 Fri Aug 18 09:49:41 CEST 2006 - jsrain@suse.cz
 
 - fixed building documentation

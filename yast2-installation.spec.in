@@ -15,7 +15,7 @@ Requires:	yast2-pkg-bindings >= 2.13.92
 Requires:	yast2 >= 2.13.67
 Requires:	yast2-network yast2-users
 Requires:	curl release-notes
-Requires:	suseRegister
+Recommends:	suseRegister
 Requires:       autoyast2-installation yast2-online-update
 # unzipping license file
 Requires:	unzip
