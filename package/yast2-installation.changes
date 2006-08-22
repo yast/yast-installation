@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Aug 22 13:43:02 CEST 2006 - jsrain@suse.cz
+
+- weaken dependency on suseRegister (#183656)
+
+-------------------------------------------------------------------
 Tue Jul 18 16:57:08 CEST 2006 - jsrain@suse.cz
 
 - fixed displaying catalog selection dialog if multiple catalogs

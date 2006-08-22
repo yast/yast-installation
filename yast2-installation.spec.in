@@ -11,7 +11,7 @@ Requires:	yast2-packager >= 2.13.135
 Requires:	yast2-pkg-bindings >= 2.13.86
 Requires:	yast2-network yast2-users
 Requires:	curl release-notes
-Requires:	suseRegister
+Recommends:	suseRegister
 Requires:       autoyast2-installation yast2-online-update
 PreReq:		%fillup_prereq
 
