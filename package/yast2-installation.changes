@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Aug 22 19:26:28 CEST 2006 - mvidner@suse.cz
+
+- test_proposal and test_inst_client: also call
+  Mode::SetMode ("installation");
+
+-------------------------------------------------------------------
 Tue Aug 22 14:27:53 CEST 2006 - locilka@suse.cz
 
 - New Installation Mode dialog (#156529)
