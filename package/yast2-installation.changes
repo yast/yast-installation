@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Wed Aug 23 16:59:03 CEST 2006 - locilka@suse.cz
+
+- Added a new debugger tool scr_switch_debugger.ycp that is called
+  when switching to the installed system in switch_scr_finish.ycp
+  fails (#201058).
+- Additionally, YaST logs from installed system are stored under
+  the /var/log/YaST2/InstalledSystemLogs/ directory.
+- 2.13.147
+
+-------------------------------------------------------------------
 Wed Aug 23 16:44:18 CEST 2006 - jsrain@suse.cz
 
 - use version specific Xvnc parameters
