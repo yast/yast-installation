@@ -75,7 +75,7 @@ function startVNCServer () {
 	#==========================================
 	# Start Xvnc...
 	#------------------------------------------
-	$Xbindir/Xvnc :0 \
+	$Xbindir/Xvnc $Xvncparam :0 \
 		-rfbauth /root/.vnc/passwd \
 		-desktop Installation \
 		-geometry 800x600 \

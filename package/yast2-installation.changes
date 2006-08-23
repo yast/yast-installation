@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Aug 23 16:44:18 CEST 2006 - jsrain@suse.cz
+
+- use version specific Xvnc parameters
+
+-------------------------------------------------------------------
 Wed Aug 23 13:05:35 CEST 2006 - jsrain@suse.cz
 
 - temporary fix to copy /etc/X11/xorg.conf to the system during
