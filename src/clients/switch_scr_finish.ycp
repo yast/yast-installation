@@ -23,6 +23,36 @@ any ret = nil;
 string func = "";
 map param = $[];
 
+/**
+ * SCR Switch failed. Reporting error, collecting data.
+ * bugzilla #201058
+ */
+void ErrorDuringSCRSwitch (string chroot_dir) {
+    // import the library once it is needed
+    import "Popup";
+
+    y2error("Cannot switch to SCR '%1'", chroot_dir);
+    
+    // Ask users whether they want to debug the problem
+    if (Popup::YesNoHeadline (
+	// popup error headline
+	_("Installation Error"),
+	// popup question
+	_("An Error has occured during switching to the installed system
+and no recovery is possible.
+
+Would you like to run the automatic debugger to find out why it has failed?")
+    )) {
+	y2milestone("User decided to debug the current problem");
+	
+	// include the file once it is needed
+	include "installation/scr_switch_debugger.ycp";
+	RunSCRSwitchDebugger(chroot_dir);
+    } else {
+	y2warning("User decided not to debug the current problem");
+    }
+}
+
 /* Check arguments */
 if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
     func = (string)WFM::Args(0);
@@ -59,6 +89,14 @@ else if (func == "Write")
 
     y2milestone ("Re-starting SCR on %1", Installation::destdir);
     Installation::scr_handle = WFM::SCROpen ("chroot="+Installation::destdir+":scr", false);
+
+    // bugzilla #201058
+    // WFM::SCROpen returns negative integer in case of failure
+    if (Installation::scr_handle < 0) {
+	ErrorDuringSCRSwitch (Installation::destdir);
+	return false;
+    }
+
     Installation::scr_destdir = "/";
     WFM::SCRSetDefault (Installation::scr_handle);
 
