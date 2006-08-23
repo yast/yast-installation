@@ -3,6 +3,7 @@ Wed Aug 23 13:05:35 CEST 2006 - jsrain@suse.cz
 
 - temporary fix to copy /etc/X11/xorg.conf to the system during
   installation (#201121)
+- 2.13.145
 
 -------------------------------------------------------------------
 Tue Aug 22 19:26:28 CEST 2006 - mvidner@suse.cz
