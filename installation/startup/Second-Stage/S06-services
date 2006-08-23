@@ -1,0 +1,62 @@
+#!/bin/sh
+log "Starting S06-services..."
+log "========================"
+
+#=============================================
+# 9) start services
+#---------------------------------------------
+if [ -x /sbin/rcpcmcia ] ; then
+if [ -r /etc/sysconfig/pcmcia ];then
+	# /.../
+	# To start the pcmcia subsystem we need to set the following
+	# variables within /etc/sysconfig/pcmcia file
+	# ---
+	TMP=`/bin/mktemp /tmp/sysconfig.pcmcia.XXXXXX`
+	ISI=/etc/install.inf
+	RCC=/etc/sysconfig/pcmcia
+	cp $RCC $TMP
+	CORE=`sed -n "/^options/s/^.*pcmcia_core //p" $ISI`
+	PCIC=`sed -n "/^options/s/^.*\(i82365\|tcic\) //p" $ISI`
+	sed -e "/^PCMCIA_CORE_OPTS/s/=.*$/=\"$CORE\"/" \
+		-e "/^PCMCIA_PCIC_OPTS/s/=.*$/=\"$PCIC\"/" $TMP > $RCC
+	rm $TMP
+	# /.../
+	# It does not matter whether pcmcia is already active or not because:
+	# 1) loading an already loaded module does not harm
+	# 2) the cardmgr is already dead. cardmgr was the same binary as linuxrc.
+	# 3) there is no configuration info in network.opts, so eth0 will stay
+	#    completely untouched and its state is "up"
+	# ---
+	# We are safe to start the subsystem now
+	# ---
+	if grep -qs '^PCMCIA:' /etc/install.inf ; then
+		log "\tStarting PCMCIA service..."
+		log "\tUsing following PCMCIA configuration:"
+		IFS="
+		"
+		while read line;do
+			log "\t$line"
+		done < $RCC
+		rcpcmcia start
+	fi
+fi
+fi
+
+#=============================================
+# 9.1) start hald
+#---------------------------------------------
+if [ -x /usr/sbin/rchal ] ; then
+	test -f /usr/sbin/rcdbus  && /usr/sbin/rcdbus  start
+	test -f /usr/sbin/rcacpid && /usr/sbin/rcacpid start
+	test -f /usr/sbin/rchal   && /usr/sbin/rchal   start
+fi
+
+#==============================================
+# 9.2) start iscsid
+#----------------------------------------------
+if [ -d /sys/class/iscsi_session/session* ] ; then
+        log "\tStarting iscsid..."
+	test -x /sbin/iscsid && /sbin/iscsid -p /var/run/iscsi.pid -c /etc/iscsid.conf
+fi
+
+sleep 1

@@ -1,0 +1,85 @@
+/**
+ * Module:	InstShowInfo.ycp
+ *
+ * Author:	Stefan Hundhammer <sh@suse.de>
+ *
+ * Purpose:	Show /info.txt (if present) in a popup
+ */
+{
+    module "InstShowInfo";
+
+    textdomain "installation";
+
+    import "Report";
+    import "Label";
+
+    /*
+     * @param string info_file (/info.txt" - Copied from inst media to inst-sys by linuxrc)
+     */
+    global void show_info_txt(string info_file)
+    {
+	if ( SCR::Read(.target.size, info_file ) <= 0 )
+	{
+	    y2milestone( "No %1", info_file );
+	    return;
+	}
+
+	string info_text = (string) SCR::Read( .target.string, info_file );
+
+	map report_settings	= Report::Export();
+	map message_settings	= report_settings[ "messages" ]:$[];
+	integer timeout_seconds	= message_settings["timeout"]:0;
+	// timeout_seconds = 12;
+	boolean use_timeout = timeout_seconds > 0;
+	term button_box =
+	    `HBox(
+		  `HStretch(),
+		  `HWeight(1, `PushButton(`id(`ok), Label::OKButton() ) ),
+		  `HStretch()
+		  );
+
+	if ( use_timeout )
+	{
+	    button_box = add( button_box, `HWeight(1, `PushButton(`id(`stop), Label::StopButton() ) ) );
+	    button_box = add( button_box, `HStretch() );
+
+	}
+
+	UI::OpenDialog(
+		       `VBox(
+			     `MinSize(78, 18, `RichText(`opt(`plainText), info_text ) ),
+			     use_timeout ? 
+			     `Label(`id(`timeout), sformat( "   %1   ", timeout_seconds ) )
+			     : `VSpacing( 0.2 ),
+			     button_box,
+			     `VSpacing( 0.2 )
+			     )
+		       );
+
+	UI::SetFocus(`ok);
+	symbol button = `nothing;
+
+	do
+	{
+	    button = (symbol) ( use_timeout ?
+				UI::TimeoutUserInput( 1000 ) :
+				UI::UserInput() );
+
+	    if ( button == `timeout )
+	    {
+		timeout_seconds = timeout_seconds - 1;
+		UI::ChangeWidget(`timeout, `Value, sformat( "%1", timeout_seconds ) );
+	    }
+	    else if ( button == `stop )
+	    {
+		use_timeout = false;
+		UI::ChangeWidget(`stop, `Enabled, false );
+		UI::ChangeWidget(`timeout, `Value, "" );
+	    }
+	} while ( button != `ok && timeout_seconds > 0 );
+
+	UI::CloseDialog();
+    }
+
+    // show_info_txt();	// for debugging
+}

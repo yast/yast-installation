@@ -1,0 +1,75 @@
+/**
+ * File:	clients/inst_license.ycp
+ * Package:	Installation
+ * Summary:	Generic License File
+ * Authors:	Anas Nashif <nashif@suse.de>
+ *
+ * $Id$
+ *
+ */
+
+{
+
+textdomain "installation";
+
+import "CustomDialogs";
+import "Directory";
+import "GetInstArgs";
+import "Installation";
+import "Language";
+import "Popup";
+import "Stage";
+import "Wizard";
+import "InstShowInfo";
+import "ProductLicense";
+
+map display = UI::GetDisplayInfo();
+integer space = display["TextMode"]:true ? 1 : 3;
+
+// all the arguments
+map argmap = GetInstArgs::argmap();
+
+
+// Action if license is not accepted
+// abort|continue|halt
+string action = argmap["action"]:"abort";
+
+symbol ask_ret = nil;
+
+string text = "";
+
+if (Stage::initial ())
+{
+    ask_ret = ProductLicense::AskFirstStageLicenseAgreement (action);
+}
+else
+{
+    list<string> default_patterns = ["info.txt"];
+    string directory = argmap["directory"]:"/var/lib/YaST2";
+    if (argmap["directory"]:"" != "")
+	directory = Directory::custom_workflow_dir + directory;
+
+    list<string> patterns = argmap["patterns"]:default_patterns;
+    ask_ret = ProductLicense::AskInstalledLicenseAgreement (directory,
+	patterns, action);
+}
+
+if (ask_ret == `nil || ask_ret == `auto)
+    return `auto;
+else if (ask_ret == `abort || ask_ret == `back)
+    return ask_ret;
+else if (ask_ret == `halt)
+{
+    UI::CloseDialog();
+    SCR::Execute(.target.bash, "/sbin/halt");
+}
+else if (ask_ret == `next)
+    return `next;
+else
+{
+    y2error ("Unknown return: %1", ask_ret);
+    return `next;
+}
+
+/* EOF */
+}

@@ -1,0 +1,99 @@
+@HEADER-COMMENT@
+
+
+@HEADER@
+BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2 yast2-devtools yast2-testsuite yast2-country yast2-slp yast2-firewall
+# remove yast2-slp and yast2-firewall once SourceManager is moved back to yast2-packager
+Requires:	yast2-slp yast2-firewall
+Requires:	yast2-update
+Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
+# SignatureCheckDialogs::CheckSignaturesInYaST
+Requires:	yast2-packager >= 2.13.135
+# Pkg::ResolvableCountPatches
+Requires:	yast2-pkg-bindings >= 2.13.92
+# Linuxrc::display_ip
+Requires:	yast2 >= 2.13.67
+Requires:	yast2-network yast2-users
+Requires:	curl release-notes
+Recommends:	suseRegister
+Requires:       autoyast2-installation yast2-online-update
+# unzipping license file
+Requires:	unzip
+PreReq:		%fillup_prereq
+
+Provides:	yast
+Obsoletes:	yast
+
+Provides:	yast2-trans-inst-proposal y2t_inst
+Obsoletes:	yast2-trans-inst-proposal y2t_inst
+Provides:	yast2-trans-inst-general y2t_inst-general
+Obsoletes:	yast2-trans-inst-general y2t_inst-general
+Provides:	yast2-instsys
+Obsoletes:	yast2-instsys
+
+BuildArchitectures: noarch
+
+Summary:	Installation workflow
+
+%description
+This controls the system installation.
+
+@PREP@
+
+@BUILD@
+
+@INSTALL@
+%if %sles_version
+    rm $RPM_BUILD_ROOT/%{prefix}/share/applications/YaST2/suse_register.desktop
+%else
+    rm $RPM_BUILD_ROOT/%{prefix}/share/applications/YaST2/customer_center.desktop
+%endif
+
+@CLEAN@
+
+%pre
+/usr/sbin/groupadd -r suse-ncc 2> /dev/null || :
+/usr/sbin/useradd -r -s /bin/bash -c "Novell Customer Center User" -d /var/lib/YaST2/suse-ncc-fakehome -g suse-ncc suse-ncc 2> /dev/null || :
+
+%post
+%{fillup_only -ns security checksig}
+
+%files
+%defattr(-,root,root)
+%doc @docdir@
+%dir /usr/share/YaST2/control
+/usr/share/YaST2/control/*.xml
+/usr/share/YaST2/control/*.dtd
+
+@clientdir@/*.ycp
+@moduledir@/*.ycp
+@moduledir@/*.ybc
+@desktopdir@/*.desktop
+%dir @yncludedir@/installation
+@yncludedir@/installation/*
+/usr/share/YaST2/yastbrowser
+
+# agents
+@scrconfdir@/etc_passwd.scr
+@scrconfdir@/proc_mounts.scr
+@scrconfdir@/cfg_windowmanager.scr
+@scrconfdir@/cfg_fam.scr
+@scrconfdir@/etc_install_inf.scr
+@scrconfdir@/etc_install_inf_alias.scr
+@scrconfdir@/etc_install_inf_options.scr
+@scrconfdir@/run_get_suseconfig_modules.scr
+@scrconfdir@/proc_modules.scr
+@scrconfdir@/run_df.scr
+@scrconfdir@/cfg_suse_register.scr
+# fillup
+@fillupdir@/sysconfig.security-checksig
+
+# programs and scripts
+@ystartupdir@/startup
+
+# fvwmrc
+%if 0%{?suse_version} <= 1010
+%{prefix}/X11R6/share/fvwm/
+%else
+%{prefix}/share/fvwm/
+%endif

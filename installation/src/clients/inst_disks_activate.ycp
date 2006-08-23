@@ -1,0 +1,169 @@
+/**
+ * File:	clients/inst_disk_activate.ycp
+ * Package:	Activation of disks (DASD, zFCP, iSCSI) during installation
+ * Summary:	Main file
+ * Authors:	Jiri Srain <jsrain@suse.cz>
+ *
+ * $Id$
+ *
+ */
+
+{
+
+/***
+ * <h3>Initialization of the disks</h3>
+ */
+
+textdomain "installation";
+
+/* The main () */
+y2milestone ("----------------------------------------");
+y2milestone ("Disk activation module started");
+
+import "Arch";
+import "GetInstArgs";
+import "Label";
+import "Popup";
+import "Storage";
+import "Wizard";
+
+// all the arguments
+map argmap = GetInstArgs::argmap();
+
+boolean have_dasd = false;
+boolean have_zfcp = false;
+
+void RestoreButtons (boolean enable_back, boolean enable_next) {
+    Wizard::RestoreAbortButton();
+    Wizard::RestoreNextButton();
+    Wizard::RestoreBackButton();
+    if (enable_back)
+	Wizard::EnableBackButton();
+    else
+	Wizard::DisableBackButton();
+    if (enable_next)
+	Wizard::EnableNextButton();
+    else
+	Wizard::DisableNextButton();
+}
+
+if (Arch::s390())
+{
+    // popup label
+    UI::OpenDialog (`Label (_("Detecting Available Controllers")));
+
+    // detect DASD disks
+    list<map<string,any> > disks = (list<map<string,any> >)
+	SCR::Read (.probe.disk);
+
+    disks = filter (map<string,any> d, disks, ``(
+	tolower (d["device"]:"") == "dasd"
+    ));
+    have_dasd = size(disks) > 0;
+
+    // detect zFCP disks
+    list<map<string,any> > controllers = (list<map<string,any> >)
+	SCR::Read (.probe.storage);
+    controllers = filter (map<string,any> c, controllers, {
+	return c["device"]:"" == "zFCP controller";
+    });
+    have_zfcp = size(controllers) > 0;
+
+    UI::CloseDialog ();
+}
+
+if (have_dasd || have_zfcp)
+{
+    // dialog caption
+    string caption = _("Disk Activation");
+
+    string help = "";
+
+    term contents = `HBox (`HWeight (999, `HStretch ()), `VBox (
+        `VStretch (),
+        have_dasd
+	    ?`HWeight (1, `PushButton (`id (`dasd), `opt (`hstretch),
+		// push button
+		_("Configure &DASD Disks")))
+	    : `VSpacing (0),
+	`VSpacing (have_dasd ? 2 : 0),
+	have_zfcp
+	    ? `HWeight (1, `PushButton (`id (`zfcp), `opt (`hstretch),
+		// push button
+		_("Configure &ZFCP Disks")))
+	    : `VSpacing (0),
+	`VSpacing (have_zfcp ? 2 : 0),
+	`HWeight (1, `PushButton (`id (`iscsi), `opt (`hstretch),
+	    // push button
+	    _("Configure &iSCSI Disks"))),
+	`VStretch ()
+    ), `HWeight (999, `HStretch ()));
+
+    Wizard::SetContents(caption, contents, help,
+	GetInstArgs::enable_back(), GetInstArgs::enable_next());
+    Wizard::SetTitleIcon("disk");
+    Wizard::SetFocusToNextButton();
+
+    any ret = nil;
+    boolean disks_changed = false;
+    while (ret == nil)
+    {
+	ret = UI::UserInput ();
+	if (ret == `dasd)
+	{
+	    ret = WFM::call ("inst_dasd");
+	    ret = `redraw;
+	}
+	else if (ret == `zfcp)
+	{
+	    ret = WFM::call ("inst_zfcp");
+	    ret = `redraw;
+	}
+	else if (ret == `iscsi)
+	{
+	    ret = WFM::call ("inst_iscsi-client");
+	    ret = `redraw;
+	}
+	if (ret == `redraw)
+	{
+	    disks_changed = true;
+	    Wizard::SetContents(caption, contents, help,
+		GetInstArgs::enable_back(), GetInstArgs::enable_next());
+	    Wizard::SetTitleIcon("disk");
+	    Wizard::SetFocusToNextButton();
+	    ret = nil;
+	}
+	RestoreButtons (GetInstArgs::enable_back(), GetInstArgs::enable_next());
+    }
+
+    if (have_dasd && ret == `next)
+    {
+	string cmd = "/sbin/dasd_reload";
+	y2milestone( "Initialize cmd %1 ret %2", cmd,
+	    SCR::Execute( .target.bash_output, cmd ));
+    }
+
+    if (disks_changed)
+    {
+	Storage::ReReadTargetMap();
+    }
+
+    y2debug("ret=%1", ret);
+
+    /* Finish */
+    y2milestone("Disk activation module finished");
+    y2milestone("----------------------------------------");
+
+    return ret;
+}
+else
+{
+    y2milestone ("Redirecting disk activation module to iSCSI module");
+    any ret = WFM::call ("inst_iscsi-client", [argmap]);
+    Storage::ReReadTargetMap();
+    return (symbol)ret;
+}
+
+
+/* EOF */
+}

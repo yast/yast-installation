@@ -1,0 +1,29 @@
+/**
+ * File:	test_proposal.ycp
+ * Summary:	For testing the network and hardware proposals.
+ * Author:	Michal Svec <msvec@suse.cz>
+ *
+ * $Id$
+ */
+
+{
+
+import "Mode";
+import "Stage";
+import "Wizard";
+
+Stage::Set ("continue");
+Mode::SetMode ("installation");
+// Linuxrc::manual () = true;
+
+Wizard::CreateDialog ();
+
+map args = $[];
+args["enable_back"] = true;
+args["enable_next"] = nil;
+args["proposal"] = WFM::Args (0);
+WFM::call ("inst_proposal", [args ]);
+UI::CloseDialog ();
+
+/* EOF */
+}
