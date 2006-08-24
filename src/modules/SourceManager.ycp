@@ -1169,6 +1169,12 @@ global list Overview() {
 	return ret;
     }
 
+    /**
+     * Sync the changed sources to ZenWorks
+     * @param added_src_ids ids of sources that were added
+     * @param deleted_src_ids ids of sources that were deleted
+     * @return success
+     */
     global boolean SyncAddedAndDeleted (list<integer> added_src_ids,
 					list<integer> deleted_src_ids) {
 	boolean ret = false;
@@ -1178,6 +1184,9 @@ global list Overview() {
 	    ret = true;
 	    ResetKnownServiceCache ();
 
+	    string zmd_security_level = RugGetPref ("security-level");
+	    RugSetPref ("security-level", "none"); // #190403
+
 	    // first delete, then add,
 	    // otherwise replacing a source with itself fails: #175159
 	    foreach (integer id, deleted_src_ids, {
@@ -1186,6 +1195,11 @@ global list Overview() {
 	    foreach (integer id, added_src_ids, {
 		ret = AddOrDeleteZYPPServiceIntoZMD (id, true) && ret;
 	    });
+
+	    if (zmd_security_level != nil)
+	    {
+		RugSetPref ("security-level", zmd_security_level);
+	    }
 	}
 	ZMDRestore (zmd_handle);
 	Unlock ();

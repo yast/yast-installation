@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Aug 24 13:25:51 CEST 2006 - mvidner@suse.cz
+
+- To allow adding unsigned sources, temporarily "rug set-pref
+  security-level none" when syncing in inst_source (#190403).
+- 2.13.132.8
+
+-------------------------------------------------------------------
 Tue Aug 22 13:43:02 CEST 2006 - jsrain@suse.cz
 
 - weaken dependency on suseRegister (#183656)
