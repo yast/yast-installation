@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Sep  1 08:48:50 CEST 2006 - locilka@suse.cz
+
+- Fixed Installation Mode dialog to redraw itself only when needed.
+
+-------------------------------------------------------------------
 Wed Aug 23 16:59:03 CEST 2006 - locilka@suse.cz
 
 - Added a new debugger tool scr_switch_debugger.ycp that is called
