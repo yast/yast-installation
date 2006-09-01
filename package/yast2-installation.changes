@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Sep  1 15:49:08 CEST 2006 - jsrain@suse.cz
+
+- added unzip to dependencies (#195911)
+
+-------------------------------------------------------------------
 Thu Aug 24 13:25:51 CEST 2006 - mvidner@suse.cz
 
 - To allow adding unsigned sources, temporarily "rug set-pref

@@ -13,6 +13,7 @@ Requires:	yast2-network yast2-users
 Requires:	curl release-notes
 Recommends:	suseRegister
 Requires:       autoyast2-installation yast2-online-update
+Requires:	unzip
 PreReq:		%fillup_prereq
 
 Provides:	yast
