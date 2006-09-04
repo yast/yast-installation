@@ -84,7 +84,7 @@ function startVNCServer () {
 		-httpd /usr/share/vnc/classes \
 		-rfbport 5901 \
 		-httpport 5801 \
-		-fp $Xlibdir/X11/fonts/misc/,$Xlibdir/X11/fonts/uni/,$Xlibdir/X11/fonts/truetype/ \
+		-fp $Xfontdir/misc/,$Xfontdir/uni/,$Xfontdir/truetype/ \
 	&> /var/log/YaST2/vncserver.log &
 	xserver_pid=$!
 	export DISPLAY=:0
