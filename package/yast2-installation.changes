@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Sep  4 15:59:47 CEST 2006 - locilka@suse.cz
+
+- Running Installation in Wizard Window (#203510).
+- Needed binaries in inst-sys: xquery and fvwm-root.
+- Initially, a plain colored image is used as a background.
+- 2.13.148
+
+-------------------------------------------------------------------
 Mon Sep  4 15:49:40 CEST 2006 - ms@suse.de
 
 - fixed -fp setup of Xvnc (#203531)

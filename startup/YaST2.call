@@ -97,6 +97,66 @@ function get_bus_id () {
 	done
 }
 
+#----[ count_qt_geometry ]----#
+function count_qt_geometry () {
+    # current X-resolution, display 0
+    XRES=$(/usr/sbin/xquery -d :0 -r)
+
+    log "\t===Qt Geometry==="
+    log "\tResolution: ${XRES}"
+
+    # current X and Y resolution
+    XRES_X=$(echo $XRES | sed 's|[0123456789]\+ \([0123456789]\+\)x[0123456789]\+|\1|') #'
+    XRES_Y=$(echo $XRES | sed 's|[0123456789]\+ [0123456789]\+x\([0123456789]\+\)|\1|') #'
+
+    log "\tX: ${XRES_X}"
+    log "\tY: ${XRES_Y}"
+
+    # default values, minimal window 640x480
+    WINDOW_SIZE_X=640
+    WINDOW_SIZE_Y=480
+    OFFSET_X=0
+    OFFSET_Y=0
+    BACKGROUND_IMAGE=""
+
+    # cannot get any X-resolution
+    if [ "${XRES}" == "" ]; then
+	# cannot find out X resolution
+	WINDOW_SIZE_X=800
+	WINDOW_SIZE_Y=600
+    # reasonable
+    else
+	# FIXME: recount background image
+	BACKGROUND_IMAGE="/usr/lib/YaST2/startup/bkg.png"
+
+	# must be bigger or equal to 1400x1050
+	if [ "$(expr $XRES_X \>= 1400)" == "1" ] && [ "$(expr $XRES_Y \>= 1050)" == "1" ]; then
+	    WINDOW_SIZE_X=1024
+	    WINDOW_SIZE_Y=786
+	# must be bigger or equal to 800x600
+	elif [ "$(expr $XRES_X \>= 800)" == "1" ] && [ "$(expr $XRES_Y \>= 600)" == "1" ]; then
+	    WINDOW_SIZE_X=800
+	    WINDOW_SIZE_Y=600
+	fi
+
+	# X and Y offsets
+	OFFSET_X=$(expr ${XRES_X} - ${WINDOW_SIZE_X})
+	OFFSET_X=$(expr ${OFFSET_X} / 2)
+	OFFSET_Y=$(expr ${XRES_Y} - ${WINDOW_SIZE_Y})
+	OFFSET_Y=$(expr ${OFFSET_Y} / 2)
+    fi
+
+    log "\tWindow size X: ${WINDOW_SIZE_X}"
+    log "\tWindow size X: ${WINDOW_SIZE_Y}"
+    log "\tOffset X: ${OFFSET_X}"
+    log "\tOffset X: ${OFFSET_Y}"
+
+    # final window geometry, 'Window_XxWindow_Y+Offset_X+Offset_Y'
+    X_GEOMETRY="${WINDOW_SIZE_X}x${WINDOW_SIZE_Y}+${OFFSET_X}+${OFFSET_Y}"
+
+    log "\tUsed geometry: ${X_GEOMETRY}"
+}
+
 #----[ prepare_for_qt ]----#
 function prepare_for_qt () {
 #------------------------------------------------------
@@ -163,7 +223,11 @@ function prepare_for_qt () {
 	# set YaST2 Qt options for local displays
 	#---------------------------------------------
 	if [ ! -z "$NEED_XSERVER" ];then
-		Y2_UI_ARGS="--fullscreen --noborder --auto-fonts"
+		Y2_UI_ARGS="--noborder --auto-fonts"
+		count_qt_geometry
+		if [ "${X_GEOMETRY}" != "" ]; then
+		    Y2_UI_ARGS="${Y2_UI_ARGS} -geometry ${X_GEOMETRY}"
+		fi
 	fi
 }
 
@@ -215,7 +279,9 @@ function prepare_for_vnc () {
 	#=============================================
 	# Setup y2base options
 	#---------------------------------------------
-	Y2_UI_ARGS="--fullscreen --noborder --auto-fonts"
+	# xxx
+	#Y2_UI_ARGS="--fullscreen --noborder --auto-fonts"
+	Y2_UI_ARGS="--noborder --auto-fonts"
 
 	#=============================================
 	# Setup VNC server and start it
@@ -321,6 +387,18 @@ function start_yast () {
 	fi
 	export QT_IM_MODULE=xim
 
+	if [ "$RUN_FBITERM" = "1" ]; then
+	    OPT_FBITERM=/usr/bin/fbiterm
+	else
+	    OPT_FBITERM=
+	fi
+
+	# set up a background if any needed
+	if [ "${BACKGROUND_IMAGE}" != "" ]; then
+	    log "\tUsing background: ${BACKGROUND_IMAGE}"
+	    fvwm-root --dither ${BACKGROUND_IMAGE}
+	fi
+
 	log "\tStarting YaST2:"
 	log "\tMODULE_NAME: $Y2_MODULE_NAME"
 	log "\tMODE_FLAGS:  $Y2_MODE_FLAGS"
@@ -328,12 +406,6 @@ function start_yast () {
 	log "\tMODE:        $Y2_MODE"
 	log "\tUI_ARGS:     $Y2_UI_ARGS"
 	log "\tQT_IM_MODULE:$QT_IM_MODULE"
-
-	if [ "$RUN_FBITERM" = "1" ]; then
-	    OPT_FBITERM=/usr/bin/fbiterm
-	else
-	    OPT_FBITERM=
-	fi
 	$OPT_FBITERM y2base \
 			"$Y2_MODULE_NAME"   \
 			$Y2_MODE_FLAGS      \
@@ -695,3 +767,5 @@ fi
 # 10) exit with YaST2 exit code
 #---------------------------------------------
 exit $Y2_EXIT_CODE
+
+
