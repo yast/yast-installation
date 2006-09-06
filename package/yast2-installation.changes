@@ -3,6 +3,11 @@ Wed Sep  6 12:47:51 CEST 2006 - locilka@suse.cz
 
 - No such headline "Mode" in the Installation Settings dialog.
   Help fixed (#203811).
+- Added help into the Add-On Product Installation dialog.
+- Add and Delete buttons in the same dialog were moved to the left
+  side according the YaST style guide.
+- Disabling Delete button in case of no Products listed
+  (all filed as bug #203809).
 
 -------------------------------------------------------------------
 Mon Sep  4 15:59:47 CEST 2006 - locilka@suse.cz
