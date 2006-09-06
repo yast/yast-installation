@@ -715,7 +715,13 @@ symbol RunAutorunWizard() {
 void Redraw (boolean enable_back, boolean enable_next) {
     // main screen heading
     string title = _("Add-On Product Installation");
-    string help = "";
+
+    // Help for add-on products
+    string help = _("<p><big><b>Add-On Product Installation</b></big></br>
+Here you can see all add-on products that are selected for installation.
+To add a new product click <b>Add</b>, to remove already added one,
+select it and click <b>Delete</b>.</p>");
+
     integer index = -1;
     list items = maplist (map<string,any> product, AddOnProduct::add_on_products, {
 	index = index + 1;
@@ -739,14 +745,23 @@ void Redraw (boolean enable_back, boolean enable_next) {
 		// table header
 		_("Product")),
 	    items),
-	`HBox (
-	    `PushButton (`id (`add), Label::AddButton ()),
-	    `PushButton (`id (`delete), Label::DeleteButton ())
+	`Left(
+	    `HBox (
+		`PushButton (`id (`add), Label::AddButton ()),
+		`PushButton (`id (`delete), Label::DeleteButton ()),
+		`HStretch ()
+	    )
 	)
     );
 
     Wizard::SetContents (title, contents, help, enable_back, enable_next);
     Wizard::SetDesktopIcon("vendor");
+
+    // disable delete button if no items listed
+    // bug #203809
+    if (size(items) == 0) {
+	UI::ChangeWidget(`id (`delete), `Enabled, false);
+    }
 }
 
 symbol RunAddOnMainDialog(boolean enable_back, boolean enable_next) {
