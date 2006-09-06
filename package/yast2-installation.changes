@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Sep  6 17:41:07 CEST 2006 - mvidner@suse.cz
+
+- To allow adding unsigned sources, temporarily "rug set-pref
+  security-level none" when syncing in inst_source (#190403).
+- 2.13.149
+
+-------------------------------------------------------------------
 Wed Sep  6 12:47:51 CEST 2006 - locilka@suse.cz
 
 - No such headline "Mode" in the Installation Settings dialog.
