@@ -890,13 +890,15 @@ Use <b>Accept</b> to perform a new installation with the values displayed.
 </p>
 ") + how_to_change;
 
-	    // Help text for installation proposal, continued
-	    help_text_string = help_text_string + _("<p>
-To update an existing &product; system instead of doing a new install,
-click the <b>Mode</b> headline or select <b>Mode</b> in the
-<b>Change...</b> menu.
-</p>
-");
+// kicking out, bug #203811
+// no such headline
+//	    // Help text for installation proposal, continued
+//	    help_text_string = help_text_string + _("<p>
+//To update an existing &product; system instead of doing a new install,
+//click the <b>Mode</b> headline or select <b>Mode</b> in the
+//<b>Change...</b> menu.
+//</p>
+//");
 	    /**
 	     * Deliberately omitting "boot installed system" here to avoid
 	     * confusion: The user will be prompted for that if Linux
