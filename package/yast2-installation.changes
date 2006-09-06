@@ -15,7 +15,8 @@ Wed Sep  6 12:47:51 CEST 2006 - locilka@suse.cz
   side according the YaST style guide.
 - Disabling Delete button in case of no Products listed
   (all filed as bug #203809).
-- Used a correct (another) icon in License Agreement dialog.
+- Used a correct (another) icon in License Agreement dialog
+  (#203808).
 
 -------------------------------------------------------------------
 Mon Sep  4 15:59:47 CEST 2006 - locilka@suse.cz
