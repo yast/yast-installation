@@ -110,7 +110,7 @@ the configuration will be aborted.</p>
     Wizard::SetContents(caption, contents, help,
 	false, back);
 
-    Wizard::SetTitleIcon ("yast-addon");
+    Wizard::SetTitleIcon ("yast-license");
     Wizard::SetFocusToNextButton();
 }
 
