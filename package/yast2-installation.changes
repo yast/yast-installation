@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Sep  6 12:47:51 CEST 2006 - locilka@suse.cz
+
+- No such headline "Mode" in the Installation Settings dialog.
+  Help fixed (#203811).
+
+-------------------------------------------------------------------
 Mon Sep  4 15:59:47 CEST 2006 - locilka@suse.cz
 
 - Running Installation in Wizard Window (#203510).
