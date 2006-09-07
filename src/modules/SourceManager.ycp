@@ -120,6 +120,7 @@ global string AddSourceTypeSLP () {
     UI::OpenDialog (`Label (_("Scanning network...")) );
     list<map> services = SLP::FindSrvs ("install.suse", "");
     UI::CloseDialog ();
+
     // FIXME: unify between here and inst_source handling
     /* No SLP servers found */
     if (services == nil || size(services) == 0)
@@ -152,10 +153,31 @@ which probably blocks the network scanning."));
 	    map parsed_url = URL::Parse (url);
 	    return `item (`id (url), toupper ( parsed_url["scheme"]:"http" ), url);
 	});
+
+	term filter_dialog = `Empty();
+	boolean show_filter = false;
+
+	// provide filter for higher number of services
+	if (size(items) > 15) {
+	    filter_dialog = `MarginBox (0.5, 0.5, `Frame (
+		// frame label
+		_("Filter Form"),
+		`HBox (
+		    // Only some characters are valid 'A-Z a-z 0-9 .*-'
+		    `HSquash(`TextEntry (`id (`filter_text), "")),
+		    // push button
+		    `PushButton(`id(`filter), _("&Filter")),
+		    `HStretch()
+		)
+	    ));
+	    show_filter = true;
+	}
+
 	UI::OpenDialog (
 	    `VBox(
 		// translators: popup heading
 		`Heading (_("Choose SLP Catalog")),
+		filter_dialog,
 		// bugzilla #168718
 		`MinSize( 76, 19,
 		    // translators: table header
@@ -173,15 +195,51 @@ which probably blocks the network scanning."));
 		)
 	    )
 	);
-	symbol ret = (symbol)UI::UserInput ();
-	if (ret == `ok)
-	{
-	    string service = (string) UI::QueryWidget (`services, `CurrentItem);
-	    UI::CloseDialog ();
-	    return service;
+	if (show_filter) {
+	    UI::ChangeWidget(`id(`filter_text), `ValidChars,
+		"abcdefghijklmnopqrstuvwxyz" +
+		toupper("abcdefghijklmnopqrstuvwxyz") +
+		"0123456789" +
+		" .*-"
+	    );
 	}
+
+	symbol ret = nil;
+	string selected_service = nil;
+
+	while (true) {
+	    ret = (symbol)UI::UserInput ();
+
+	    // Choosing one service
+	    if (ret == `ok) {
+		selected_service = (string) UI::QueryWidget (`services, `CurrentItem);
+		break;
+	    // Cancel
+	    } else if (ret == `cancel) {
+		selected_service = nil;
+		break;
+	    } else if (ret == `filter) {
+		string filter_text = (string) UI::QueryWidget (`id(`filter_text), `Value);
+		if (filter_text == "" || filter_text == nil) {
+		    UI::ChangeWidget (`id (`services), `Items, items);
+		} else {
+		    list <term> items_filtered = [];
+		    integer counter = -1;
+		    foreach (term service, items, {
+			if (regexpmatch (service[2]:"", filter_text) || regexpmatch (service[1]:"", filter_text)) {
+			    counter = counter + 1;
+			    items_filtered[counter] = service;
+			}
+		    });
+		    UI::ChangeWidget (`id (`services), `Items, items_filtered);
+		}
+	    }
+	}
+	
+	UI::CloseDialog ();
+	return selected_service;
     }
-    UI::CloseDialog ();
+
     return nil;
 }
 

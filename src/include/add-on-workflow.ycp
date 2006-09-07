@@ -60,15 +60,18 @@ symbol createResult = `again;
  */
 symbol AddSourceTypeSLP () {
     string service = SourceManager::AddSourceTypeSLP ();
-    y2milestone ("Trying to add source '%1'", service);
-    if (service != nil)
-    {
-	// add the installation source
-	symbol createResult = SourceManager::createSource(service);
-	y2milestone ("Adding source result: %1", createResult);
-	return `next;
+    if (service == nil) {
+	y2milestone("No service selected, returning back...");
+
+	return `back;
     }
-    return `back;
+
+    y2milestone ("Trying to add source '%1'", service);
+    // add the installation source
+    symbol createResult = SourceManager::createSource(service);
+    y2milestone ("Adding source result: %1", createResult);
+
+    return `next;
 }
 
 /**
@@ -247,6 +250,7 @@ symbol MediaSelect () {
 		    ret = `back;
 		    break;
 		}
+		
 		createResult = SourceManager::createSource( url);
 	    }
 	    else
@@ -254,6 +258,7 @@ symbol MediaSelect () {
 	      do {
 		url = editUrl( url );
 		if ( size( url ) == 0 ) { ret = `back; break; }
+
 		createResult = SourceManager::createSource( url);
               } while ( createResult == `again );
 	    }
@@ -293,6 +298,9 @@ symbol CatalogSelect () {
 	    Pkg::SourceDelete(sources[0]:0);
 	    return AddOnProduct::last_ret;
 	}
+
+	// busy message
+	UI::OpenDialog(`Label(_("Initializing new source...")));
 	integer src_id = SourceManager::newSources[0]:0;
 	map data = Pkg::SourceGeneralData (src_id);
 	y2milestone("Adding product: %1", data);
@@ -302,6 +310,8 @@ symbol CatalogSelect () {
 	Pkg::SourceDelete (src_id);
 	src_id = Pkg::SourceCreate (url, product_dir);
 	SourceManager::newSources = [src_id];
+	UI::CloseDialog();
+
 	if (src_id == -1)
 	{
 	    // error report

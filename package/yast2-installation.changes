@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Thu Sep  7 15:13:54 CEST 2006 - locilka@suse.cz
+
+- Added dialog content and help into the initial dialog of add-on
+  client. Progress will be even better.
+- Temporarily disabled buttons that don't work there.
+- Added more "busy messages" into the add-on dialogs.
+- Added new functionality for filtering services in SLP services
+  table. Allowed characters are "a-zA-Z0-9 .*-".
+
+-------------------------------------------------------------------
 Wed Sep  6 17:41:07 CEST 2006 - mvidner@suse.cz
 
 - To allow adding unsigned sources, temporarily "rug set-pref

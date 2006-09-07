@@ -20,8 +20,25 @@ import "Pkg";
 include "installation/add-on-workflow.ycp";
 
 Wizard::CreateDialog();
+
+Wizard::SetContents (
+    // dialog caption
+    _("Add-On Product Media"),
+    // busy message (dialog)
+    `VBox(`Label(_("Initializing..."))),
+    // help
+    _("Please wait while add-on products are being initialized..."),
+    false,
+    true
+);
+
 Wizard::SetDesktopIcon("vendor");
 Wizard::HideBackButton();
+
+Wizard::DisableAbortButton();
+Wizard::DisableNextButton();
+
+// --> Initialization start
 
 // check whether running as root
 // and having the packager for ourselves
@@ -39,6 +56,11 @@ PackageCallbacksInit::InitPackageCallbacks ();
 // Initialize current sources
 Read();
 symbol ret = nil;
+
+// <-- Initialization finish
+
+Wizard::EnableAbortButton();
+Wizard::EnableNextButton();
 
 if (size (WFM::Args()) == 0)
 {
