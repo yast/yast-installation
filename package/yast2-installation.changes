@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Mon Sep 11 09:59:15 CEST 2006 - locilka@suse.cz
+
+- Added 'inst_pre_install' and 'copy_systemfiles_finish' clients,
+  and module 'SystemFilesCopy' as a solution for FATE requests
+  #300421 and #120103, which means that SSH keys are, by now,
+  copied from another already installed system (if such exists).
+  If there are more installed systems, the best ones are selected
+  considering the newest access-time.
+
+-------------------------------------------------------------------
 Thu Sep  7 15:13:54 CEST 2006 - locilka@suse.cz
 
 - Added dialog content and help into the initial dialog of add-on

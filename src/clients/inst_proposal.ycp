@@ -4,6 +4,8 @@
  * Summary:	Create and display proposal
  * Authors:	Stefan Hundhammer <sh@suse.de>
  *		Arvin Schnell <arvin@suse.de>
+ *		Jiri Srain <jsrain@suse.cz>
+ *		Lukas Ocilka <locilka@suse.cz>
  *
  * $Id$
  *
@@ -395,6 +397,12 @@
      * i.e. the settings effective.
      **/
     define void write_settings() ``{
+
+	if (Mode::installation ()) {
+	    // FATE #300421: Import ssh keys from previous installations
+	    // FATE #120103: Import Users From Existing Partition
+	    WFM::CallFunction ("inst_pre_install");
+	}
 
 	boolean success = true;
 
