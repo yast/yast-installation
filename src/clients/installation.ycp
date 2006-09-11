@@ -141,8 +141,16 @@
 	Wizard::OpenNextBackStepsDialog();
 //    }
 
-    // dialog caption
-    Wizard::SetContents(_("Initializing..."), `Empty (), "", false, false);
+    Wizard::SetContents(
+	// dialog caption
+	_("Initializing..."),
+	// dialog content - busy message
+	`Label(_("Initializing the installation environment...")),
+	// help for the dialog - busy message
+	_("<p>Please wait, while the installation inicialization is in progress.</p>"),
+	false, false
+    );
+    Wizard::SetTitleIcon("yast-inst-mode");
 
     // --------------------------------------------------------------
     //                   Mouse

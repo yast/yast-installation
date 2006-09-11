@@ -7,6 +7,7 @@ Mon Sep 11 09:59:15 CEST 2006 - locilka@suse.cz
   copied from another already installed system (if such exists).
   If there are more installed systems, the best ones are selected
   considering the newest access-time.
+- More verbose dialog when initializing the installation (+icon).
 
 -------------------------------------------------------------------
 Thu Sep  7 15:13:54 CEST 2006 - locilka@suse.cz
