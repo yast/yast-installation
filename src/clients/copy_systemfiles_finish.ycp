@@ -1,0 +1,58 @@
+/**
+ * File:    copy_systemfiles_finish.ycp
+ *
+ * Module:  Step of base installation finish (FATE #300421, #120103)
+ *
+ * Authors: Lukas Ocilka <lukas.ocilka@suse.cz>
+ *
+ * $Id:$
+ *
+ */
+
+{
+
+textdomain "installation";
+
+import "SystemFilesCopy";
+
+any ret = nil;
+string func = "";
+map param = $[];
+
+/* Check arguments */
+if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
+    func = (string)WFM::Args(0);
+    if(size(WFM::Args()) > 1 && is(WFM::Args(1), map))
+	param = (map)WFM::Args(1);
+}
+
+y2milestone ("starting copy_systemfiles_finish");
+y2debug("func=%1", func);
+y2debug("param=%1", param);
+
+if (func == "Info")
+{
+    return (any)$[
+	"steps" : 1,
+	// progress step title
+	"title" : _("Copying system files to installed system..."),
+	// not in case of update
+	"when" : [ `installation, `autoinst ],
+    ];
+}
+else if (func == "Write")
+{
+    SystemFilesCopy::CopyFilesToSystem();
+}
+else
+{
+    y2error ("unknown function: %1", func);
+    ret = nil;
+}
+
+y2debug("ret=%1", ret);
+y2milestone("copy_systemfiles_finish finished");
+return ret;
+
+
+} /* EOF */

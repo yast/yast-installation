@@ -1,0 +1,220 @@
+{
+    import "Storage";
+    import "FileUtils";
+    import "Directory";
+    import "SystemFilesCopy";
+
+    // --> Functions
+
+    define void Initialize ();
+    
+    define map <string, map <string, integer> > FindTheBestFiles (map <string, map <string, integer> > files_found);
+    
+    define void FindAndCopyNewestFiles (string copy_to, list <string> wanted_files);
+
+    // --> Variables
+
+    // all partitions that can be used as a 
+    list <map <string, any> > useful_partitions = [];
+
+    list <symbol> possible_root_fs = [ `ext2, `ext3, `reiser, `xfs, `jfs ];
+
+    /* ******************************************************************************* */
+    // --> main()
+
+    Initialize();
+
+    // FATE #300421: Import ssh keys from previous installations
+    FindAndCopyNewestFiles("/", ["/etc/ssh/ssh_host_key", "/etc/ssh/ssh_host_key.pub"]);
+    
+    // FATE #120103: Import Users From Existing Partition
+    // FIXME: please, correct the 'copy_to' destination
+    FindAndCopyNewestFiles("/root/yast2_tmp-users", ["/etc/shadow", "/etc/passwd", "/etc/login.defs", "/etc/group"]);
+
+    // free the memory
+    useful_partitions = nil;
+    
+    // at least some return
+    return `a_glass_of_milk_please;
+
+    // <-- main()
+    /* ******************************************************************************* */
+
+    // --> Functions
+
+    /**
+     * Finds the newest files in the map
+     *
+     * @struct [
+     *     "/dev/hda3" : $[
+     *         "/etc/xyz" : 8445577887,
+     *         "/etc/xzz" : 8445577888,
+     *     ]
+     * ]
+     */
+    define map <string, map <string, integer> > FindTheBestFiles (map <string, map <string, integer> > files_found) {
+	map <string, map <string, integer> > ret = $[];
+	integer max = 0;
+	
+	// going through all partitions
+	foreach (string partition_name, map <string, integer> files_on_it, files_found, {
+	    integer counter = 0;
+	    integer filetimes = 0;
+	    foreach (string filename, integer filetime, files_on_it, {
+		filetimes = filetimes + filetime;
+		counter = counter + 1;
+	    });
+
+	    // if there were some files on in
+	    if (counter > 0) {
+		// average filetime (if more files were there)
+		filetimes = filetimes / counter;
+		
+		// the current time is bigger (newer file) then the maximum found
+		if (filetimes > max) {
+		    max = filetimes;
+		    ret = $[];
+		    ret[partition_name] = files_on_it;
+		}
+	    }
+	});
+	
+	return ret;
+    }
+
+    define void FindAndCopyNewestFiles (string copy_to, list <string> wanted_files) {
+	y2milestone("Searching for files: %1", wanted_files);
+	string mnt_tmpdir = Directory::tmpdir + "/tmp_mnt_for_check";
+
+	mnt_tmpdir = SystemFilesCopy::CreateDirectoryIfMissing (mnt_tmpdir);
+
+	// CreateDirectory failed
+	if (mnt_tmpdir == nil) {
+	    return nil;
+	}
+
+	map <string, map <string, integer> > files_found_on_partitions = $[];
+
+	foreach (map <string, any> partition, useful_partitions, {
+	    string partition_device = (string) partition["device"]:"";
+	    y2milestone("Mounting %1 to %2", partition_device, mnt_tmpdir);
+
+	    // mounting read-only
+	    if (! (boolean) SCR::Execute(.target.mount, [partition_device, mnt_tmpdir], "-o ro")) {
+		y2error("Mounting falied!");
+		return;
+	    }
+
+	    boolean files_found = true;
+	    map <string, integer> one_partition_files_found = $[];
+
+	    foreach (string wanted_file, wanted_files, {
+		string filename_to_seek = mnt_tmpdir + wanted_file;
+
+		if (! FileUtils::Exists (filename_to_seek)) {
+		    files_found = false;
+		    return;
+		}
+		if (FileUtils::IsLink (filename_to_seek)) {
+		    files_found = false;
+		    return;
+		}
+		map file_attribs = (map) SCR::Read (.target.lstat, filename_to_seek);
+		if (file_attribs == nil || file_attribs == $[]) {
+		    files_found = false;
+		    return;
+		}
+		// checking for the acces-time
+		integer file_time = (integer) file_attribs["atime"]:nil;
+		if (file_time == nil || file_time == 0) {
+		    files_found = false;
+		    return;
+		}
+		// doesn't make sense to copy files with zero size
+		integer file_size = (integer) file_attribs["atime"]:nil;
+		if (file_size == nil || file_size == 0) {
+		    files_found = false;
+		    return;
+		}
+		
+		one_partition_files_found[wanted_file] = file_time;
+	    });
+	    
+	    if (files_found) {
+		files_found_on_partitions[partition_device] = one_partition_files_found;
+	    }
+
+	    // umounting
+	    y2milestone("Umounting %1", partition_device);
+	    if (! (boolean) SCR::Execute(.target.umount, mnt_tmpdir)) {
+		y2error("Umount failed!");
+	    }
+	});
+
+	y2milestone("Files found: %1", files_found_on_partitions);
+
+	map <string, map <string, integer> > ic_winner = $[];
+
+	// nothing found
+	if (size(files_found_on_partitions) == 0) {
+	    y2milestone("No such files found");
+	// only one (easy)
+	} else if (size(files_found_on_partitions) == 1) {
+	    ic_winner = files_found_on_partitions;
+	// more than one (getting the best ones)
+	} else {
+	    ic_winner = FindTheBestFiles (files_found_on_partitions);
+	}
+	files_found_on_partitions = nil;
+	
+	y2milestone("Selected files: %1", ic_winner);
+	
+	// should be only one entry
+	foreach (string partition, map <string, integer> files, ic_winner, {
+	    SystemFilesCopy::CopyFilesToTemp (
+		partition,
+		maplist (string filename, integer filetime, files, { return filename; }),
+		copy_to
+	    );
+	});
+    }
+    
+    /**
+     * Goes through disks and searches for usable partitions.
+     * Sets them to the 'useful_partitions' variable
+     */
+    define void Initialize () {
+	y2milestone("Evaluating all current partitions");
+	map <string, map> target_map = (map <string, map>) Storage::GetTargetMap();
+	integer counter = -1;
+	foreach (string device_name, map device_descr, target_map, {
+	    list <map <string, any> > partitons = (list <map <string, any> >) device_descr["partitions"]:[];
+	    symbol filesystem = nil;
+	    string devicename = nil;
+
+	    foreach (map <string, any> partition, partitons, {
+		filesystem = (symbol) partition["used_fs"]:partition["detected_fs"]:nil;
+		devicename = (string) partition["device"]:nil;
+
+		if (filesystem == nil) {
+		    y2milestone("Skipping partition %1, no FS detected", devicename);
+		    return;
+		}
+
+		if (! contains(possible_root_fs, filesystem)) {
+		    y2milestone("Skipping partition %1, %2 is not a root filesystem", devicename, filesystem);
+		    return;
+		}
+
+		// adding the partition into the list of possible ones
+		counter = counter + 1;
+		useful_partitions[counter] = $[
+		    "device" : partition["device"]:nil,
+		    "fs"     : filesystem,
+		];
+	    });
+	});
+
+	y2milestone("Possible partitons: %1", useful_partitions);
+    }
+}
