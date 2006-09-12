@@ -8,6 +8,9 @@ Tue Sep 12 17:07:19 CEST 2006 - locilka@suse.cz
   pre-selected as a language for a license (if such exists).
 - Fixed initializing the known languages via WFM::call("languages")
   (#204791).
+- Another icon for Installation Mode dialog, it was the same as for
+  Initialization and Analyzing the Computer dialogs.
+- 2.13.150
 
 -------------------------------------------------------------------
 Mon Sep 11 09:59:15 CEST 2006 - locilka@suse.cz
