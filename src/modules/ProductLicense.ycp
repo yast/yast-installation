@@ -36,14 +36,25 @@ void DisplayLicenseDialog (list<string> languages, boolean back) {
     string caption = _("License Agreement");
 
     map<string,list> lang_names_orig = (map<string,list>)
-	WFM::CallFunction ("languages");
+	WFM::call ("languages");
+    // bug #204791, languages might be missing
+    if (lang_names_orig == nil) {
+	y2error("Client 'languages' is missing!");
+	lang_names_orig = $[];
+    }
+
+    // $[ "en" : "English", "de" : "Deutsch" ]
     map<string,string> lang_names = mapmap (string code, list descr,
 	lang_names_orig,
     {
 	return $[ code : descr[4]:"" ];
     });
+
+    /* for the default fallback */
+
     // language name
     lang_names[""] = _("English");
+    // language name
     lang_names["en"] = _("English");
 
     list<list<string> > lang_pairs = maplist (string l, languages, {
@@ -62,6 +73,17 @@ void DisplayLicenseDialog (list<string> languages, boolean back) {
 	}
 	return [ l, name ];
     });
+
+    // filter-out languages that don't have any name
+    lang_pairs = filter (list<string> lang_pair, lang_pairs, {
+	if (lang_pair[1]:"" == "") {
+	    y2warning("Unknown license language '%1', filtering out...", lang_pair);
+	    return false;
+	} else {
+	    return true;
+	}
+    });
+
     lang_pairs = sort (list<string> l1, list<string> l2, lang_pairs, {
 	return l1[1]:"" < l2[1]:"";
     });
@@ -75,7 +97,7 @@ void DisplayLicenseDialog (list<string> languages, boolean back) {
 	    `HSpacing (2*space),
 	    `VBox (
 		// combo box
-		`Left (`ComboBox (`id (`lang), `opt (`notify), _("Language"),
+		`Left (`ComboBox (`id (`lang), `opt (`notify), _("&Language"),
 		    langs)),
 		`ReplacePoint (`id (`license_rp), rt)
 	    ),
@@ -135,7 +157,8 @@ void CleanUpLicense (string tmpdir) {
 map<string,string> LicenseFiles (string dir, list<string> patterns) {
     map<string,string> ret = $[];
     list<string> files = (list<string>)SCR::Read (.target.dir, dir);
-    y2internal ("All files in license directory: %1", files);
+    y2milestone ("All files in license directory: %1", files);
+
     foreach (string p, patterns, {
 	if (! issubstring (p, "%"))
 	{
@@ -190,9 +213,8 @@ global symbol AskLicenseAgreement (integer src_id, string dir,
 	{
 	    license_dir = dir;
 	}
-	info_file = (integer)SCR::Read (.target.size, "/info.txt") > 0
-	    ? "/info.txt"
-	    : nil;
+	if ((integer) SCR::Read (.target.size, "/info.txt") > 0)
+	    info_file = "/info.txt";
     }
     else
     {
@@ -228,20 +250,31 @@ unzip -qqo '%2'
 	["license.txt", "license\\.%1\\.txt"]);
     if (info_file == nil && size (licenses) == 0)
 	return `auto;
+
+    // Preferencies how the client selects from available languages
     list<string> langs = [
 	Language::language,
-	substring (Language::language, 0, 2),
+	substring (Language::language, 0, 2), // "it_IT" -> "it"
 	"en_US",
 	"en_EN",
 	"en",
-	"" // license.txt
+	"" // license.txt fallback
     ];
     available_langs = maplist (string lang, string fn,
 	licenses,
     {
 	return lang;
     });
-y2internal ("Preffered lang: %1", Language::language);
+
+    // "en" is the same as "", we don't need to have them both
+    if (contains(available_langs, "en") && contains(available_langs, "")) {
+	y2milestone("Removing license fallback '' as we already have 'en'...");
+	available_langs = filter (string one_lang, available_langs, {
+	    return one_lang != "en";
+	});
+    }
+
+    y2milestone ("Preffered lang: %1", Language::language);
     if (size (available_langs) == 0)
 	return `auto; // no license available
     lic_lang = find (string l, langs, {
@@ -249,7 +282,8 @@ y2internal ("Preffered lang: %1", Language::language);
     });
     if (lic_lang == nil)
 	lic_lang = available_langs[0]:"";
-y2internal ("Preselected language: %1", lic_lang);
+
+    y2milestone ("Preselected language: '%1'", lic_lang);
     DisplayLicenseDialog (available_langs, true);
     // Display info as a popup if exists
     if (info_file != nil)
@@ -261,18 +295,20 @@ y2internal ("Preselected language: %1", lic_lang);
 	return `auto;
     }
 
-    symbol ret = `lang;
+    // initial loop
+    UI::ChangeWidget(`id(`lang), `Value, lic_lang);
+    symbol ret = `first;
+
     while (true)
     {
-y2internal ("Event: %1", ret);
-	if (ret == `lang)
+	if (ret == `lang || ret == `first)
 	{
-	    lic_lang = (string)UI::QueryWidget (`id (`lang), `Value);
+	    // read the selected language if not in the initial loop
+	    if (ret != `first) lic_lang = (string) UI::QueryWidget (`id (`lang), `Value);
 	    string license_file = licenses[lic_lang]:"";
-y2internal ("File: %1", license_file);
+	    y2milestone ("Using license file: %1", license_file);
 	    string license_text = (string)
 		SCR::Read(.target.string, license_file);
-y2internal ("Text: %1", substring (license_text, 0, 100));
 	    if (license_text == nil)
 	    {
 		license_text = "";
@@ -285,7 +321,9 @@ y2internal ("Text: %1", substring (license_text, 0, 100));
 		rt = `RichText(`id( `welcome_text), `opt(`plainText), license_text);
 	    UI::ReplaceWidget (`id (`license_rp), rt);
 	}
-	ret = (symbol)UI::UserInput();
+
+	ret = (symbol) UI::UserInput();
+
 	symbol accept = (symbol) UI::QueryWidget(`id(`eula), `CurrentButton);
 	// Aborting the license dialog
 	if (ret == `abort) {
