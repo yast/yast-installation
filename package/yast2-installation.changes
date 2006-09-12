@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Tue Sep 12 18:40:34 CEST 2006 - locilka@suse.cz
+
+- Found a better place for calling 'inst_pre_install' client, by
+  now it is really called...
+- Enhanced logging.
+- Disabling the License Language combo-box in case of less than
+  two languages in it (#203543).
+
+-------------------------------------------------------------------
 Tue Sep 12 17:07:19 CEST 2006 - locilka@suse.cz
 
 - Fixed displaying license: Language name should always be either

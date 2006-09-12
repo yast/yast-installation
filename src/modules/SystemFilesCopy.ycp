@@ -207,7 +207,7 @@
 	    );
 
 	    if (where_to_extract == "/") {
-		y2warning("Extracting files to the ");
+		y2warning("Extracting files to the '%1'", where_to_extract);
 	    }
 
 	    map cmd_run = (map) SCR::Execute(.target.bash_output, command);

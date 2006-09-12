@@ -131,6 +131,10 @@ the configuration will be aborted.</p>
 
     Wizard::SetContents(caption, contents, help,
 	false, back);
+    // bugzilla #203543
+    if (size(langs) <= 1) {
+	UI::ChangeWidget (`id(`lang), `Enabled, false);
+    }
 
     Wizard::SetTitleIcon ("yast-license");
     Wizard::SetFocusToNextButton();
