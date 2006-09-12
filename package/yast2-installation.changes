@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Tue Sep 12 17:07:19 CEST 2006 - locilka@suse.cz
+
+- Fixed displaying license: Language name should always be either
+  shown or the license is disabled as invalid; If there are both
+  license.en.txt and license.txt, one of them is hidden because
+  they have the very same content; An installation language is also
+  pre-selected as a language for a license (if such exists).
+- Fixed initializing the known languages via WFM::call("languages")
+  (#204791).
+
+-------------------------------------------------------------------
 Mon Sep 11 09:59:15 CEST 2006 - locilka@suse.cz
 
 - Added 'inst_pre_install' and 'copy_systemfiles_finish' clients,
