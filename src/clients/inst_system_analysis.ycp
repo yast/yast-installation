@@ -248,7 +248,7 @@ Wizard::SetContents (
     // dialog caption
     _("Installation Mode"), InstModeDialogContent(`install), help_text, true, true
 );
-Wizard::SetTitleIcon ("yast-inst-mode");
+Wizard::SetTitleIcon ("yast-sw_source");
 
 symbol ret = nil;
 symbol new_mode = Mode::update () ? `update : `install;
