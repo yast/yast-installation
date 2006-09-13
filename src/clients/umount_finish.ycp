@@ -61,6 +61,9 @@ else if (func == "Write")
 	}
     });
 
+    // call it before SCR is closed
+    integer max_loop_dev = Storage::NumLoopDevices();
+
     // now unmount all mountpoints in reverse order !
 
     // remove [Installation::destdir]/etc/mtab which was faked for %post
@@ -113,7 +116,6 @@ else if (func == "Write")
     }
 
     // disable loop device of crypto fs
-    integer max_loop_dev = Storage::NumLoopDevices();
     boolean unload_crypto = false;
 
     while (max_loop_dev > 0)
