@@ -61,9 +61,6 @@ else if (func == "Write")
 	}
     });
 
-    // call it before SCR is closed
-    integer max_loop_dev = Storage::NumLoopDevices();
-
     // now unmount all mountpoints in reverse order !
 
     // remove [Installation::destdir]/etc/mtab which was faked for %post
@@ -114,6 +111,9 @@ else if (func == "Write")
         y2milestone("umount target: %1", tmp);
         WFM::Execute(.local.umount, tmp);
     }
+
+    // must call .local.bash_output !
+    integer max_loop_dev = Storage::NumLoopDevices();
 
     // disable loop device of crypto fs
     boolean unload_crypto = false;

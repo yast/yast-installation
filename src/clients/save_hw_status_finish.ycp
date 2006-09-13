@@ -69,6 +69,12 @@ MODULE='psmouse'
 EOF
 fi
 ");
+    if ((integer) out["exit"]:0 != 0) {
+	y2error ("Error saving PS/2 mouse: %1", out);
+    } else {
+	y2milestone ("PS/2 mouse saving process returnes: %1", out);
+    }
+
     y2milestone ("PS/2 mouse saving process returnes: %1", out);
     if (Mode::update ())
     {
