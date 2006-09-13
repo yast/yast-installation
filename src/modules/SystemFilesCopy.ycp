@@ -146,7 +146,9 @@
 	boolean ret = true;
 	string archive_files = "";
 	foreach (string filename, filenames, {
-	    archive_files = archive_files + " " + String::Quote (filename);
+	    // removing the leading slash
+	    if (substring(filename, 0, 1) == "/") filename = substring(filename, 1);
+	    archive_files = archive_files + " '" + String::Quote (filename) + "'";
 	});
 
 	// archive files were already quoted
@@ -198,17 +200,13 @@
 		ret = false;
 	    }
 
+	    where_to_extract = sformat("%1%2", Installation::destdir, where_to_extract);
+
 	    string command = sformat (
 		"mkdir -p '%1'; cd '%1'; tar --preserve -xvzf '%2'",
-		String::Quote (
-		    sformat("%1%2", Installation::destdir, where_to_extract)
-		),
+		String::Quote (where_to_extract),
 		String::Quote (archive_name)
 	    );
-
-	    if (where_to_extract == "/") {
-		y2warning("Extracting files to the '%1'", where_to_extract);
-	    }
 
 	    map cmd_run = (map) SCR::Execute(.target.bash_output, command);
 	    if ((integer) cmd_run["exit"]:nil != 0) {

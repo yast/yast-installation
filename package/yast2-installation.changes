@@ -4,10 +4,15 @@ Wed Sep 13 09:27:51 CEST 2006 - locilka@suse.cz
 - Calling languages.ycp client has been changed to a function call
   Language::GetLanguagesMap (#204791).
 - Added new Requirement: yast2-country >= 2.13.35
-- Calling copy_systemfiles_finish from inst_finish (FATE #300421)
+- Calling copy_systemfiles_finish from inst_finish (FATE #300421).
 - New icon for Finishing Basic Installation dialog.
 - Calling new pre_umount_finish client before umount_finish,
   umount_finish closes SCR (#205389).
+- Correctly quote files that are added into the temporary archive
+  (FATE #300421).
+- Removing the leading slashes from filenames when archiving them.
+- Reporting error (into log) if save_hw_status_finish.ycp goes
+  wrong (partly fixed #205408).
 
 -------------------------------------------------------------------
 Tue Sep 12 18:40:34 CEST 2006 - locilka@suse.cz
