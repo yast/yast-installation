@@ -6,21 +6,28 @@ BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-ske
 # remove yast2-slp and yast2-firewall once SourceManager is moved back to yast2-packager
 Requires:	yast2-slp yast2-firewall
 Requires:	yast2-update
-Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
+Requires:	yast2-storage yast2-mouse yast2-bootloader
+
 # SignatureCheckDialogs::CheckSignaturesInYaST
 Requires:	yast2-packager >= 2.13.135
 # Pkg::ResolvableCountPatches
 Requires:	yast2-pkg-bindings >= 2.13.92
 # Linuxrc::display_ip
 Requires:	yast2 >= 2.13.67
+# Languages:GetLanguagesMap, bugzilla #204791
+Requires:	yast2-country >= 2.13.35
+
 Requires:	yast2-network yast2-users
 Requires:	curl release-notes
-Recommends:	suseRegister
+
 Requires:       autoyast2-installation yast2-online-update
 # unzipping license file
 Requires:	unzip
 # tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
 Requires:	tar gzip
+
+Recommends:	suseRegister
+
 PreReq:		%fillup_prereq
 
 Provides:	yast

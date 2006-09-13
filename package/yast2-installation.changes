@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Sep 13 09:27:51 CEST 2006 - locilka@suse.cz
+
+- Calling languages.ycp client has been changed to a function call
+  Language::GetLanguagesMap (#204791).
+- Added new Requirement: yast2-country >= 2.13.35
+
+-------------------------------------------------------------------
 Tue Sep 12 18:40:34 CEST 2006 - locilka@suse.cz
 
 - Found a better place for calling 'inst_pre_install' client, by
