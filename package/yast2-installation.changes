@@ -13,6 +13,7 @@ Wed Sep 13 09:27:51 CEST 2006 - locilka@suse.cz
 - Removing the leading slashes from filenames when archiving them.
 - Reporting error (into log) if save_hw_status_finish.ycp goes
   wrong (partly fixed #205408).
+- 2.13.151
 
 -------------------------------------------------------------------
 Tue Sep 12 18:40:34 CEST 2006 - locilka@suse.cz
