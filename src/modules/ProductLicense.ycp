@@ -35,11 +35,10 @@ void DisplayLicenseDialog (list<string> languages, boolean back) {
     // dialog caption
     string caption = _("License Agreement");
 
-    map<string,list> lang_names_orig = (map<string,list>)
-	WFM::call ("languages");
-    // bug #204791, languages might be missing
+    // bug #204791, no more "languages.ycp" client
+    map<string,list> lang_names_orig = Language::GetLanguagesMap (false);
     if (lang_names_orig == nil) {
-	y2error("Client 'languages' is missing!");
+	y2error("Wrong definition of languages");
 	lang_names_orig = $[];
     }
 
