@@ -28,8 +28,10 @@
     FindAndCopyNewestFiles("/", ["/etc/ssh/ssh_host_key", "/etc/ssh/ssh_host_key.pub"]);
     
     // FATE #120103: Import Users From Existing Partition
-    // FIXME: please, correct the 'copy_to' destination
-    FindAndCopyNewestFiles("/root/yast2_tmp-users", ["/etc/shadow", "/etc/passwd", "/etc/login.defs", "/etc/group"]);
+    FindAndCopyNewestFiles(
+	sformat ("%1/imported_userdata", Directory::vardir),
+	["/etc/shadow", "/etc/passwd", "/etc/login.defs", "/etc/group"]
+    );
 
     // free the memory
     useful_partitions = nil;

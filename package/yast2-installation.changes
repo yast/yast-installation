@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Sep 14 14:45:54 CEST 2006 - locilka@suse.cz
+
+- Finally! Corrected path for importing user-related data to the
+  just installed system (FATE #120103, comments #17, #18).
+
+-------------------------------------------------------------------
 Thu Sep 14 00:46:19 CEST 2006 - ro@suse.de
 
 - added yast2-core-devel to BuildRequires
