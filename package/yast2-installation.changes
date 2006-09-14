@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Sep 14 00:46:19 CEST 2006 - ro@suse.de
+
+- added yast2-core-devel to BuildRequires
+
+-------------------------------------------------------------------
 Wed Sep 13 09:27:51 CEST 2006 - locilka@suse.cz
 
 - Calling languages.ycp client has been changed to a function call
