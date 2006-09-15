@@ -29,7 +29,7 @@
     
     // FATE #120103: Import Users From Existing Partition
     FindAndCopyNewestFiles(
-	sformat ("%1/imported_userdata", Directory::vardir),
+	sformat ("%1/imported/userdata", Directory::vardir),
 	["/etc/shadow", "/etc/passwd", "/etc/login.defs", "/etc/group"]
     );
 
