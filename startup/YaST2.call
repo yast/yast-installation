@@ -6,8 +6,9 @@
 # COPYRIGHT     : (c) 2004 SUSE Linux AG, Germany. All rights reserved
 #               :
 # AUTHORS       : Steffen Winterfeldt <snwint@suse.de>
-#               . Arvin Schnell <arvin@suse.de>
+#               : Arvin Schnell <arvin@suse.de>
 #               : Marcus Schaefer <ms@suse.de>
+#               : Lukas Ocilka <locilka@suse.cz>
 #               :
 # BELONGS TO    : System installation and Administration
 #               :
@@ -126,9 +127,6 @@ function count_qt_geometry () {
 	WINDOW_SIZE_Y=600
     # reasonable
     else
-	# FIXME: recount background image
-	BACKGROUND_IMAGE="/usr/lib/YaST2/startup/bkg.png"
-
 	# must be bigger or equal to 1400x1050
 	if [ "$(expr $XRES_X \>= 1400)" == "1" ] && [ "$(expr $XRES_Y \>= 1050)" == "1" ]; then
 	    WINDOW_SIZE_X=1024
@@ -138,6 +136,9 @@ function count_qt_geometry () {
 	    WINDOW_SIZE_X=800
 	    WINDOW_SIZE_Y=600
 	fi
+
+	# Conversion from jpg to png is done later
+	BACKGROUND_IMAGE="/usr/lib/YaST2/startup/InstallImages/"$XRES_X"x"$XRES_Y".jpg"
 
 	# X and Y offsets
 	OFFSET_X=$(expr ${XRES_X} - ${WINDOW_SIZE_X})
@@ -395,8 +396,28 @@ function start_yast () {
 
 	# set up a background if any needed
 	if [ "${BACKGROUND_IMAGE}" != "" ]; then
-	    log "\tUsing background: ${BACKGROUND_IMAGE}"
-	    fvwm-root --dither ${BACKGROUND_IMAGE}
+	    # selected image doesn't exist, usign fallback
+	    if ! [ -e "${BACKGROUND_IMAGE}" ]; then
+		BACKGROUND_IMAGE="/usr/lib/YaST2/startup/InstallImages/fallback.jpg"
+		log "Not a supported resolution, using fallback image"
+	    # convert stored JPG to PNG
+	    else
+		TMPDIR="/tmp/installimg"
+		log "\tUsing background: ${BACKGROUND_IMAGE}"
+		mkdir -p ${TMPDIR}
+		# convert JPG to PNM
+		jpegtopnm ${BACKGROUND_IMAGE} > ${TMPDIR}/img.pnm
+		# convert PNM to PNG
+		pnmtopng ${TMPDIR}/img.pnm > ${TMPDIR}/img.png
+		# remove PNM
+		rm -rf ${TMPDIR}/img.pnm
+	    fi
+
+	    # set the background
+	    fvwm-root --dither ${TMPDIR}/img.png
+
+	    # remove PNG if exists
+	    rm -rf ${TMPDIR}/img.png
 	fi
 
 	log "\tStarting YaST2:"

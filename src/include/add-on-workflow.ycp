@@ -746,7 +746,9 @@ select it and click <b>Delete</b>.</p>");
 	    data["url"]:_("Unknown"), dir);
 	return `item (`id (index),
 	    media,
-	    sformat (_("Product %1"), product["product"]:""));
+	    // sformat (_("Product %1"), product["product"]:"")
+	    product["product"]:""
+	);
     });
     term contents = `VBox (
 	`Table (`id (`summary), `header (

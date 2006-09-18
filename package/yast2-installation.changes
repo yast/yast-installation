@@ -1,4 +1,18 @@
 -------------------------------------------------------------------
+Mon Sep 18 09:53:18 CEST 2006 - locilka@suse.cz
+
+- Icon for release notes (inst_release_notes).
+- List of available SLP sources based on Product Name (SLP label),
+  also with filter when more than 15 sources are listed
+  (FATE #300619).
+- Added background images for installation (thanks to jimmac)
+  [1024x768, 1280x1024, 1400x1050, 1600x800, 1600x1200] (Bugzilla
+  #203510).
+- Replacing "Product %1" with "%1" for list of selected Add-On
+  products - the column is already called "Product".
+- 2.13.152
+
+-------------------------------------------------------------------
 Thu Sep 14 14:45:54 CEST 2006 - locilka@suse.cz
 
 - Finally! Corrected path for importing user-related data to the

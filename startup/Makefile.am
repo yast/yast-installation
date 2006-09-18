@@ -9,8 +9,7 @@ ystartupbin_SCRIPTS = 	\
 	YaST2.Second-Stage	\
 	YaST2.call			\
 	YaST2.ssh			\
-	requires	\
-	bkg.png
+	requires
 
 EXTRA_DIST = $(ystartupbin_SCRIPTS)
-SUBDIRS = First-Stage Second-Stage arch common hooks
+SUBDIRS = First-Stage Second-Stage arch common hooks InstallImages

@@ -17,7 +17,8 @@ module_DATA =			\
 	CheckMedia.ycp		\
 	ProductLicense.ycp	\
 	AddOnProduct.ycp	\
-	SystemFilesCopy.ycp
+	SystemFilesCopy.ycp	\
+	SourceManagerSLP.ycp
 
 EXTRA_DIST = $(module_DATA)
 
