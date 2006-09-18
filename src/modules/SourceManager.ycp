@@ -31,8 +31,8 @@ import "Stage";
 import "URL";
 import "InstURL";
 import "String";
-import "SLP";
 import "SuSEFirewall";
+import "SourceManagerSLP";
 
 
 global list<integer> newSources = [];
@@ -115,151 +115,11 @@ global boolean ReadSources()
  * @returns symbol one of `back, `next
  */
 global string AddSourceTypeSLP () {
-    /* Scanning network for SLP servers */
-    // translators: popup busy message
-    UI::OpenDialog (`Label (_("Scanning network...")) );
-    list<map> services = SLP::FindSrvs ("install.suse", "");
-    UI::CloseDialog ();
+    string url = SourceManagerSLP::SelectOneSLPService();
+    y2milestone("Selected URL: %1", url);
 
-    // FIXME: unify between here and inst_source handling
-    /* No SLP servers found */
-    if (services == nil || size(services) == 0)
-    {
-	y2warning("No SLP catalogs");
-	if ((! Stage::initial ()) && SuSEFirewall::IsStarted ())
-	{
-	     Report::Message(
-// error popup
-_("No SLP catalogs have been found on your network.
-This could be caused by a running SuSEfirewall2,
-which probably blocks the network scanning."));
-	}
-	else
-	{
-	    Report::Message (
-		// error popup
-		_("No SLP catalogs have been found on your network."));
-	}
-	return nil;
-
-    /* Some serves were found */
-    }
-    else {
-	// show the dialog to pick the source
-	list<term> items = maplist (map service, services, ``{
-	    string url = service["srvurl"]:"";
-	    url = substring (url, 21);
-	    // split the URL
-	    map parsed_url = URL::Parse (url);
-	    return `item (`id (url), toupper ( parsed_url["scheme"]:"http" ), url);
-	});
-
-	term filter_dialog = `Empty();
-	boolean show_filter = false;
-
-	// provide filter for higher number of services
-	if (size(items) > 15) {
-	    filter_dialog = `MarginBox (0.5, 0.5, `Frame (
-		// frame label
-		_("Filter Form"),
-		`HBox (
-		    // Only some characters are valid 'A-Z a-z 0-9 .*-'
-		    `HSquash(`TextEntry (`id (`filter_text), "")),
-		    // push button
-		    `PushButton(`id(`filter), _("&Filter")),
-		    `HStretch()
-		)
-	    ));
-	    show_filter = true;
-	}
-
-	UI::OpenDialog (
-	    `VBox(
-		// translators: popup heading
-		`Heading (_("Choose SLP Catalog")),
-		filter_dialog,
-		// bugzilla #168718
-		`MinSize( 76, 19,
-		    // translators: table header
-		    `Table (`id(`services), `header(
-			    // table header
-			    _("Type"),
-			    // table header
-			    _("URL")),
-			items)
-		),
-		`HBox (
-		    `PushButton (`id (`ok), `opt(`default), Label::SelectButton ()),
-		    `VSpacing (1),
-		    `PushButton (`id (`cancel), Label::CancelButton ())
-		)
-	    )
-	);
-	if (show_filter) {
-	    UI::ChangeWidget(`id(`filter_text), `ValidChars,
-		"abcdefghijklmnopqrstuvwxyz" +
-		toupper("abcdefghijklmnopqrstuvwxyz") +
-		"0123456789" +
-		" .*-"
-	    );
-	}
-
-	symbol ret = nil;
-	string selected_service = nil;
-
-	while (true) {
-	    ret = (symbol)UI::UserInput ();
-
-	    // Choosing one service
-	    if (ret == `ok) {
-		selected_service = (string) UI::QueryWidget (`services, `CurrentItem);
-		break;
-	    // Cancel
-	    } else if (ret == `cancel) {
-		selected_service = nil;
-		break;
-	    } else if (ret == `filter) {
-		string filter_text = (string) UI::QueryWidget (`id(`filter_text), `Value);
-		if (filter_text == "" || filter_text == nil) {
-		    UI::ChangeWidget (`id (`services), `Items, items);
-		} else {
-		    list <term> items_filtered = [];
-		    integer counter = -1;
-		    foreach (term service, items, {
-			if (regexpmatch (service[2]:"", filter_text) || regexpmatch (service[1]:"", filter_text)) {
-			    counter = counter + 1;
-			    items_filtered[counter] = service;
-			}
-		    });
-		    UI::ChangeWidget (`id (`services), `Items, items_filtered);
-		}
-	    }
-	}
-	
-	UI::CloseDialog ();
-	return selected_service;
-    }
-
-    return nil;
+    return url;
 }
-
-
-/*
- * Disabled for now
-global list<map> ReadSLPSources() {
-    import "SLP";
-    list<map> _slp_sources = SLP::FindSrvs("service:install.suse", "");
-    _slp_sources = maplist (map s, _slp_sources, ``{
-               s["attr"] = SLP::GetAttrMap(s["srvurl"]:"");
-               return s;
-            });
-
-    _slp_sources = filter(map s , _slp_sources, 
-            ``(issubstring(s["attr","machine"]:"", Arch::architecture())));
-
-    return _slp_sources;
-}
-*/
 
 /**
  * Read all source-manager settings
