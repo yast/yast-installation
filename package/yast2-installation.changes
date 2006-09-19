@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Sep 19 17:14:28 CEST 2006 - locilka@suse.cz
+
+- Removed Installation background 1600x800 px.
+- Added installation background 1280x800 px.
+
+-------------------------------------------------------------------
 Mon Sep 18 09:53:18 CEST 2006 - locilka@suse.cz
 
 - Icon for release notes (inst_release_notes).
