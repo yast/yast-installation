@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Sep 21 16:36:42 CEST 2006 - ms@suse.de
+
+- added patch from Olaf Hering to remove the DefaultColorDepth
+  for special fb devices which are not VESA VGA (#207338)
+
+-------------------------------------------------------------------
 Tue Sep 19 17:14:28 CEST 2006 - locilka@suse.cz
 
 - Removed Installation background 1600x800 px.

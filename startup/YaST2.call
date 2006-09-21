@@ -163,6 +163,7 @@ function prepare_for_qt () {
 #------------------------------------------------------
 # prepare Qt installation 
 # ---
+	local fbdevname
 	#=============================================
 	# Setup Qt environment
 	#---------------------------------------------
@@ -204,6 +205,20 @@ function prepare_for_qt () {
 			sed -e "s#ChangeMe#$XServer#" /etc/X11/xorg.conf \
 			> /etc/X11/xorg.conf.new
 			mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
+		fi
+		# check DefaultColorDepth setup
+		# /.../
+		# The DefaultColorDepth 16 will not work if the card does not
+		# have enough video ram, or if 15bit has to be used
+		# Let the X11 fbdev driver use whatever the kernel driver uses
+		# ----
+		if [ -f /sys/class/graphics/fb0/name ];then
+			read fbdevname < /sys/class/graphics/fb0/name
+			case "$fbdevname" in
+				platinum|control|valkyrie|OFfb)
+				sed -i -e "/DefaultColorDepth/d" /etc/X11/xorg.conf
+				;;
+			esac
 		fi
 	fi
 	fi
