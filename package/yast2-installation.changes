@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Sep 22 16:01:25 CEST 2006 - jsuchome@suse.cz
+
+- Remember the selected language for update and use it also in the
+  second stage (FATE #300572).
+- 2.13.153
+
+-------------------------------------------------------------------
 Fri Sep 22 14:14:44 CEST 2006 - lslezak@suse.cz
 
 - x11_finish.ycp - removed workaround for #201121

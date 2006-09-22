@@ -16,6 +16,7 @@
 
 textdomain "installation";
 
+import "Directory";
 import "Mode";
 import "Mouse";
 import "Timezone";
@@ -67,6 +68,14 @@ else if (func == "Write")
 	Progress::Title (_("Saving language..."));
 	Language::Save();
 	Progress::NextStep ();
+    }
+    // save the update language for the second stage (F300572)
+    else
+    {
+	string lang	= Language::language;
+	string file     = Directory::vardir + "/language.ycp";
+	y2milestone ("saving %1 to %2 for 2nd stage of update", lang, file);
+	SCR::Write (.target.ycp, file, $[ "second_stage_language" : lang ]);
     }
     // progress step title
     Progress::Title (_("Saving keyboard configuration..."));
