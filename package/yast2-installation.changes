@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Fri Sep 22 09:35:36 CEST 2006 - locilka@suse.cz
+
+- Fixed starting Installation in window: Exception for PPC, 832x624
+  still runs in fullscreen. Fixed using a fallback image when
+  the current resolution is not supported (#207321).
+- Fixed counting offset for installation in window. Exceptions are
+  now handled correctly (#207310).
+- Changed fallback background image - a pure black suits better.
+
+-------------------------------------------------------------------
 Thu Sep 21 16:36:42 CEST 2006 - ms@suse.de
 
 - added patch from Olaf Hering to remove the DefaultColorDepth

@@ -106,39 +106,55 @@ function count_qt_geometry () {
     log "\t===Qt Geometry==="
     log "\tResolution: ${XRES}"
 
+    # failed to get display info
+    if [ "$?" != "0" ]; then
+	X_GEOMETRY=""
+	return
+    fi
+
     # current X and Y resolution
-    XRES_X=$(echo $XRES | sed 's|[0123456789]\+ \([0123456789]\+\)x[0123456789]\+|\1|') #'
-    XRES_Y=$(echo $XRES | sed 's|[0123456789]\+ [0123456789]\+x\([0123456789]\+\)|\1|') #'
+    XRES_X=$(echo $XRES | sed '
+	s|[0123456789]\+ \([0123456789]\+\)x[0123456789]\+|\1|
+	s|[^0123456789]||g')
+    XRES_Y=$(echo $XRES | sed '
+	s|[0123456789]\+ [0123456789]\+x\([0123456789]\+\)|\1|
+	s|[^0123456789]||g')
 
     log "\tX: ${XRES_X}"
     log "\tY: ${XRES_Y}"
 
-    # default values, minimal window 640x480
-    WINDOW_SIZE_X=640
-    WINDOW_SIZE_Y=480
+    # default values
     OFFSET_X=0
     OFFSET_Y=0
     BACKGROUND_IMAGE=""
 
-    # cannot get any X-resolution
-    if [ "${XRES}" == "" ]; then
-	# cannot find out X resolution
-	WINDOW_SIZE_X=800
-	WINDOW_SIZE_Y=600
-    # reasonable
+    # wrong X and/or Y resolution
+    if [ "${XRES_X}" == "" ] || [ "${XRES_Y}" == "" ]; then
+	X_GEOMETRY=""
+	log "\tError: Cannot get X and/or Y from given resolution"
+	return
+    # reasonable sizes
     else
 	# must be bigger or equal to 1400x1050
 	if [ "$(expr $XRES_X \>= 1400)" == "1" ] && [ "$(expr $XRES_Y \>= 1050)" == "1" ]; then
 	    WINDOW_SIZE_X=1024
 	    WINDOW_SIZE_Y=786
+	# exception for PPC: 832x624, see bugzilla #207321
+	elif [ "${XRES_X}" == "832" ] && [ "${XRES_Y}" == "624" ]; then
+	    WINDOW_SIZE_X=${XRES_X}
+	    WINDOW_SIZE_Y=${XRES_Y}
 	# must be bigger or equal to 800x600
 	elif [ "$(expr $XRES_X \>= 800)" == "1" ] && [ "$(expr $XRES_Y \>= 600)" == "1" ]; then
 	    WINDOW_SIZE_X=800
 	    WINDOW_SIZE_Y=600
+	# or fullscreen
+	else
+	    WINDOW_SIZE_X=${XRES_X}
+	    WINDOW_SIZE_Y=${XRES_Y}
 	fi
 
 	# Conversion from jpg to png is done later
-	BACKGROUND_IMAGE="/usr/lib/YaST2/startup/InstallImages/"$XRES_X"x"$XRES_Y".jpg"
+	BACKGROUND_IMAGE="/usr/lib/YaST2/startup/InstallImages/${XRES_X}x${XRES_Y}.jpg"
 
 	# X and Y offsets
 	OFFSET_X=$(expr ${XRES_X} - ${WINDOW_SIZE_X})
@@ -148,12 +164,17 @@ function count_qt_geometry () {
     fi
 
     log "\tWindow size X: ${WINDOW_SIZE_X}"
-    log "\tWindow size X: ${WINDOW_SIZE_Y}"
+    log "\tWindow size Y: ${WINDOW_SIZE_Y}"
     log "\tOffset X: ${OFFSET_X}"
-    log "\tOffset X: ${OFFSET_Y}"
+    log "\tOffset Y: ${OFFSET_Y}"
 
-    # final window geometry, 'Window_XxWindow_Y+Offset_X+Offset_Y'
-    X_GEOMETRY="${WINDOW_SIZE_X}x${WINDOW_SIZE_Y}+${OFFSET_X}+${OFFSET_Y}"
+    if [ "${OFFSET_X}" == "0" ] || [ "${OFFSET_Y}" == "0" ] || [ "${OFFSET_X}" == "" ] || [ "${OFFSET_Y}" == "" ]; then
+	# will run in fullscreen mode
+	X_GEOMETRY=""
+    else
+	# final window geometry, 'Window_XxWindow_Y+Offset_X+Offset_Y'
+	X_GEOMETRY="${WINDOW_SIZE_X}x${WINDOW_SIZE_Y}+${OFFSET_X}+${OFFSET_Y}"
+    fi
 
     log "\tUsed geometry: ${X_GEOMETRY}"
 }
@@ -241,7 +262,11 @@ function prepare_for_qt () {
 	if [ ! -z "$NEED_XSERVER" ];then
 		Y2_UI_ARGS="--noborder --auto-fonts"
 		count_qt_geometry
-		if [ "${X_GEOMETRY}" != "" ]; then
+		if [ "${X_GEOMETRY}" == "" ]; then
+		    log "\tUI_args: Running in fullscreen mode"
+		    Y2_UI_ARGS="${Y2_UI_ARGS} --fullscreen"
+		else
+		    log "\tUI_args: Running in window"
 		    Y2_UI_ARGS="${Y2_UI_ARGS} -geometry ${X_GEOMETRY}"
 		fi
 	fi
@@ -411,13 +436,14 @@ function start_yast () {
 
 	# set up a background if any needed
 	if [ "${BACKGROUND_IMAGE}" != "" ]; then
+	    TMPDIR="/tmp/installimg"
+
 	    # selected image doesn't exist, usign fallback
 	    if ! [ -e "${BACKGROUND_IMAGE}" ]; then
-		BACKGROUND_IMAGE="/usr/lib/YaST2/startup/InstallImages/fallback.jpg"
-		log "Not a supported resolution, using fallback image"
+		BACKGROUND_IMAGE="/usr/lib/YaST2/startup/InstallImages/fallback.png"
+		log "\tNot a supported resolution, using fallback image"
 	    # convert stored JPG to PNG
 	    else
-		TMPDIR="/tmp/installimg"
 		log "\tUsing background: ${BACKGROUND_IMAGE}"
 		mkdir -p ${TMPDIR}
 		# convert JPG to PNM
@@ -426,12 +452,14 @@ function start_yast () {
 		pnmtopng ${TMPDIR}/img.pnm > ${TMPDIR}/img.png
 		# remove PNM
 		rm -rf ${TMPDIR}/img.pnm
+		# set the BACKGROUND_IMAGE to the converted one
+		BACKGROUND_IMAGE=${TMPDIR}/img.png
 	    fi
 
 	    # set the background
-	    fvwm-root --dither ${TMPDIR}/img.png
+	    fvwm-root --dither ${BACKGROUND_IMAGE}
 
-	    # remove PNG if exists
+	    # remove PNG silently if exists
 	    rm -rf ${TMPDIR}/img.png
 	fi
 
