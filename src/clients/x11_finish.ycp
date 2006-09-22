@@ -62,10 +62,6 @@ else if (func == "Write")
 
     y2milestone ("x11_installed: <%1>", x11_installed );
 
-// FIXME this is temporary fix, as both builtins above seem to return false
-// even though xorg-x11 was installed
-x11_installed =true;
-
     if (x11_installed)
     {
 	if ( Mode::update () )
