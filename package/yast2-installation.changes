@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Sep 22 14:14:44 CEST 2006 - lslezak@suse.cz
+
+- x11_finish.ycp - removed workaround for #201121
+
+-------------------------------------------------------------------
 Fri Sep 22 09:35:36 CEST 2006 - locilka@suse.cz
 
 - Fixed starting Installation in window: Exception for PPC, 832x624
