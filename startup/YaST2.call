@@ -447,9 +447,9 @@ function start_yast () {
 		log "\tUsing background: ${BACKGROUND_IMAGE}"
 		mkdir -p ${TMPDIR}
 		# convert JPG to PNM
-		jpegtopnm ${BACKGROUND_IMAGE} > ${TMPDIR}/img.pnm
+		jpegtopnm ${BACKGROUND_IMAGE} > ${TMPDIR}/img.pnm 2>${TMPDIR}/jpegtopnm.log
 		# convert PNM to PNG
-		pnmtopng ${TMPDIR}/img.pnm > ${TMPDIR}/img.png
+		pnmtopng ${TMPDIR}/img.pnm > ${TMPDIR}/img.png 2>${TMPDIR}/pnmtopng.log
 		# remove PNM
 		rm -rf ${TMPDIR}/img.pnm
 		# set the BACKGROUND_IMAGE to the converted one
