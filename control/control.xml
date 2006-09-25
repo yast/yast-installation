@@ -587,13 +587,13 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		    <label>Configuration</label>
 		</module>
                 <module>
-	            <label>Hostname</label>
-                    <name>hostname</name>
-                    <enable_back>no</enable_back>
+	            <label>Root Password</label>
+		    <enable_back>no</enable_back>
+                    <name>root</name>
                 </module>
                 <module>
-	            <label>Root Password</label>
-                    <name>root</name>
+	            <label>Hostname</label>
+                    <name>hostname</name>
                 </module>
                 <module>
 	            <label>Network</label>

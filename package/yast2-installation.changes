@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Sep 25 17:45:54 CEST 2006 - locilka@suse.cz
+
+- New icon for Hardware Proposal.
+- Root Password dialog moved before Hostname and Domain Name
+  (#208032).
+
+-------------------------------------------------------------------
 Mon Sep 25 13:21:35 CEST 2006 - locilka@suse.cz
 
 - A bit rewritten code for language selected for second stage of
