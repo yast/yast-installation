@@ -4,6 +4,8 @@ Mon Sep 25 13:21:35 CEST 2006 - locilka@suse.cz
 - A bit rewritten code for language selected for second stage of
   update (FATE #300572). Mode::Set is now called before Mode::Get.
 - New installation images from jimmac (#203510).
+- Timeout and accept the license dialog when installing using
+  AutoYaST. By defualt, it's 8 seconds (#206706).
 
 -------------------------------------------------------------------
 Mon Sep 25 10:59:16 CEST 2006 - jsrain@suse.cz
