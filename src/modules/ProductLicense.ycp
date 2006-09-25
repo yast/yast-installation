@@ -19,6 +19,7 @@ import "Popup";
 import "Report";
 import "Stage";
 import "Wizard";
+import "Mode";
 
 textdomain "installation";
 
@@ -302,6 +303,17 @@ unzip -qqo '%2'
     UI::ChangeWidget(`id(`lang), `Value, lic_lang);
     symbol ret = `first;
 
+    // the default timeout is disabled
+    integer timeout = nil;
+    // wait for UI to do something (in ms)
+    integer wait_for_ui = 100;
+
+    // set timeout for autoinstallation, express it in number of loops
+    // bugzilla #206706
+    if (Mode::autoinst()) {
+	timeout = 1000 / wait_for_ui * 8;
+    }
+
     while (true)
     {
 	if (ret == `lang || ret == `first)
@@ -325,7 +337,24 @@ unzip -qqo '%2'
 	    UI::ReplaceWidget (`id (`license_rp), rt);
 	}
 
-	ret = (symbol) UI::UserInput();
+	ret = (symbol) UI::TimeoutUserInput (wait_for_ui);
+
+	// just a timeout
+	if (ret == `timeout) {
+	    // normal behavior
+	    if (timeout == nil) {
+		continue;
+	    // autoyast behavior, bugzilla #206706
+	    } else if (timeout <= 0) {
+		// select "yes"
+		UI::ChangeWidget(`id (`eula), `CurrentButton, `yes);
+		y2milestone("AutoYaST: License has been accepted after timeout...");
+		return `accepted;
+	    } else {
+		timeout = timeout - 1;
+		continue;
+	    }
+	}
 
 	symbol accept = (symbol) UI::QueryWidget(`id(`eula), `CurrentButton);
 	// Aborting the license dialog
