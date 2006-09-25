@@ -518,7 +518,7 @@ or selected for installation."));
 	{
 	    Pkg::ResolvableRemove (prod["name"]:"", `product);
 	    // message popup
-	    Popup::Message (_("Dependencies of the add-on product cannot be fullfilled."));
+	    Popup::Message (_("Dependencies of the add-on product cannot be fulfilled."));
 	    AddOnProduct::last_ret = `back;
 	    return `back;
 	}
@@ -631,7 +631,7 @@ to install.</p>
 		    Pkg::ResolvableRemove (product, `product);
 		});
 		// message popup
-		Popup::Message (_("Dependencies of the selected add-on products cannot be fullfilled."));
+		Popup::Message (_("Dependencies of the selected add-on products cannot be fulfilled."));
 		ret = nil;
 		continue;
 	    }

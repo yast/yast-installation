@@ -164,7 +164,7 @@ global boolean Read() {
 
 
     /* Error message */
-    if(false) Report::Error(_("Cannot detect availabe catalogs."));
+    if(false) Report::Error(_("Cannot detect available catalogs."));
 
     if(Abort()) return false;
     /* Progress finished */

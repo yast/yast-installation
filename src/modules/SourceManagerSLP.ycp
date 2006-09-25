@@ -254,11 +254,11 @@ This product has more installation sources available."));
 
 	    if (service_url == nil || service_url == "") {
 		y2error(
-		    "An internal error occured, service ID %1, %2 has no URL!",
+		    "An internal error occurred, service ID %1, %2 has no URL!",
 		    current, services[current]:$[]
 		);
 		// popup error
-		Report::Error (_("An internal error occured.
+		Report::Error (_("An internal error occurred.
 The selected source has no URL."));
 		return nil;
 	    } else {
