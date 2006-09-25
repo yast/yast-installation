@@ -93,47 +93,43 @@
 	UI::RecordMacro( Directory::logdir + "/macro_inst_initial.ycp" );
     }
 
-    // Properly setup timezone for continue mode.
-    //
-    if ( Stage::cont () )
+    // Second stage
+    // Detect mode early to be able to setup steps correctly
+    if (Stage::cont () && FileUtils::Exists (Installation::destdir + "/var/lib/YaST2/update_mode"))
     {
-	// during update, set the 'update language' for the 2nd stage
-	// FATE #300572
-	if (Mode::update ())
+	    Mode::SetMode ("update");
+    }
+
+    // during update, set the 'update language' for the 2nd stage
+    // FATE #300572
+    if (Stage::cont () && Mode::update ())
+    {
+	string var_file = Directory::vardir + "/language.ycp";
+	if (FileUtils::Exists (var_file))
 	{
-	    string var_file     = Directory::vardir + "/language.ycp";
-	    if (FileUtils::Exists (var_file))
+	    map var_map = (map) SCR::Read (.target.ycp, var_file);
+	    string lang	= (string) var_map["second_stage_language"]:nil;
+	    if (lang != nil)
 	    {
-		map var_map     = (map) SCR::Read (.target.ycp, var_file);
-		string lang	= (string) var_map["second_stage_language"]:nil;
-		if (lang != nil)
-		{
-		    y2milestone("Setting language to: %1", lang);
-		    Language::QuickSet (lang);
-		    y2milestone ("using %1 for second stage", lang);
-		}
-		else
-		{
-		    y2error("Cannot set language, tmp-file contains: %1", var_map);
-		}
-		SCR::Execute (.target.remove, var_file);
+		y2milestone("Setting language to: %1", lang);
+		Language::QuickSet (lang);
+		y2milestone ("using %1 for second stage", lang);
 	    }
+	    else
+	    {
+		y2error("Cannot set language, tmp-file contains: %1", var_map);
+	    }
+	    SCR::Execute (.target.remove, var_file);
 	}
+    }
+
+    // Properly setup timezone for continue mode
+    if (Stage::cont ())
+    {
 	import "Timezone";
 	Timezone::Set( Timezone::timezone, true );
 	Pkg::SetLocale (Language::language);
 	UI::RecordMacro( Directory::logdir + "/macro_inst_cont.ycp" );
-    }
-
-
-
-    // Detect mode early to be able to setup steps correctly
-    if (Stage::cont ())
-    {
-	if (SCR::Read(.target.size, Installation::destdir + "/var/lib/YaST2/update_mode") > 0)
-	{
-	    Mode::SetMode ("update");
-	}
     }
 
     // Merge control files of add-on products

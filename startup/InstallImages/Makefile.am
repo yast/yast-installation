@@ -3,6 +3,6 @@
 #
 ystartupbindir = $(ystartupdir)/startup/InstallImages
 
-ystartupbin_SCRIPTS = $(wildcard *.jpg)
+ystartupbin_SCRIPTS = $(wildcard *.jpg *.png)
 
 EXTRA_DIST = $(ystartupbin_SCRIPTS)
