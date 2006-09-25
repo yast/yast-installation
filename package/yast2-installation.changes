@@ -6,6 +6,8 @@ Mon Sep 25 13:21:35 CEST 2006 - locilka@suse.cz
 - New installation images from jimmac (#203510).
 - Timeout and accept the license dialog when installing using
   AutoYaST. By defualt, it's 8 seconds (#206706).
+- New busy message when finishing the installation (closing
+  sources, etc.).
 
 -------------------------------------------------------------------
 Mon Sep 25 10:59:16 CEST 2006 - jsrain@suse.cz

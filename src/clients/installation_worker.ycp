@@ -442,9 +442,12 @@ but something went wrong, that's why it is only in the log");
 	    WFM::CallFunction ("product_post", [Mode::update ()]);
     }
 
+    // TRANSLATORS: busy message
+    UI::OpenDialog (`Label(_("Finishing the installation..."))); // #2
     // disable all sources and finish target
     Pkg::SourceFinishAll();	// but see also inst_congratulate, #165860
     Pkg::TargetFinish();
+    UI::CloseDialog();						 // #2
 
     UI::CloseDialog();
     return ret;
