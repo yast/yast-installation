@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Sep 25 10:59:16 CEST 2006 - jsrain@suse.cz
+
+- check properly for existing files in /proc (#205408)
+
+-------------------------------------------------------------------
 Fri Sep 22 16:01:25 CEST 2006 - jsuchome@suse.cz
 
 - Remember the selected language for update and use it also in the

@@ -61,12 +61,15 @@ if test -f /etc/sysconfig/hardware/hwcfg-static-psmouse
 then
  exit 0
 fi
+if test -d /proc/device-tree
+then
 cd /proc/device-tree
 if find * -name name -print0 | xargs -0 grep -qw 8042
 then
 cat > /etc/sysconfig/hardware/hwcfg-static-psmouse <<EOF
 MODULE='psmouse'
 EOF
+fi
 fi
 ");
     if ((integer) out["exit"]:0 != 0) {
