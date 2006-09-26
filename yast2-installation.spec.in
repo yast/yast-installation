@@ -30,7 +30,7 @@ Requires:	tar gzip
 Requires:	/usr/bin/jpegtopnm
 Requires:	/usr/bin/pnmtopng
 
-Recommends:	suseRegister
+Recommends:	yast2-registration
 
 PreReq:		%fillup_prereq
 
@@ -56,17 +56,10 @@ This controls the system installation.
 @BUILD@
 
 @INSTALL@
-%if %sles_version
-    rm $RPM_BUILD_ROOT/%{prefix}/share/applications/YaST2/suse_register.desktop
-%else
-    rm $RPM_BUILD_ROOT/%{prefix}/share/applications/YaST2/customer_center.desktop
-%endif
 
 @CLEAN@
 
 %pre
-/usr/sbin/groupadd -r suse-ncc 2> /dev/null || :
-/usr/sbin/useradd -r -s /bin/bash -c "Novell Customer Center User" -d /var/lib/YaST2/suse-ncc-fakehome -g suse-ncc suse-ncc 2> /dev/null || :
 
 %post
 %{fillup_only -ns security checksig}
@@ -84,7 +77,6 @@ This controls the system installation.
 @desktopdir@/*.desktop
 %dir @yncludedir@/installation
 @yncludedir@/installation/*
-/usr/share/YaST2/yastbrowser
 
 # agents
 @scrconfdir@/etc_passwd.scr
@@ -97,7 +89,6 @@ This controls the system installation.
 @scrconfdir@/run_get_suseconfig_modules.scr
 @scrconfdir@/proc_modules.scr
 @scrconfdir@/run_df.scr
-@scrconfdir@/cfg_suse_register.scr
 # fillup
 @fillupdir@/sysconfig.security-checksig
 
