@@ -11,7 +11,6 @@ module_DATA =			\
 	Hotplug.ycp		\
 	HwStatus.ycp		\
 	X11Version.ycp		\
-	Register.ycp		\
 	SourceManager.ycp	\
 	InstURL.ycp		\
 	CheckMedia.ycp		\
