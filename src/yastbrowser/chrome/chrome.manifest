@@ -1,3 +1,0 @@
-content yastbrowser jar:yastbrowser.jar!/content/yastbrowser/
-locale yastbrowser en-US jar:en-US.jar!/locale/en-US/yastbrowser/
-skin browser classic/1.0 jar:classic-browser.jar!/skin/classic/browser/
