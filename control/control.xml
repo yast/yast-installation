@@ -628,6 +628,10 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	            <label>Online Update</label>
                     <name>you</name>
                 </module>
+                <module>
+                    <label>Online Update</label>
+                    <name>extrasources</name>
+                </module>
 		<module>
 		    <label>Online Update</label>
 		    <name>restore_settings</name>
