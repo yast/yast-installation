@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Sep 27 09:58:53 CEST 2006 - locilka@suse.cz
+
+- YCP modules that originated at yast2-packager were moved back.
+- Usage of dgettext replaced with standard gettext strings.
+- Removed yast2-slp and yast2-firewall from build-requirements.
+- 2.13.155
+
+-------------------------------------------------------------------
 Mon Sep 25 17:45:54 CEST 2006 - locilka@suse.cz
 
 - New icon for Hardware Proposal.

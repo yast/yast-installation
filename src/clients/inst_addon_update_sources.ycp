@@ -72,28 +72,31 @@ if (addUrls != [])
     list<integer> added_ids = [];
     foreach (string u, addUrls, {
 	boolean again = true;
-	while (again)
-	{
+
+	while (again) {
 	    integer srcid = Pkg::SourceCreate (u, "/");
 	    y2milestone ("got %1 from creating %2", srcid, u);
-	    if (srcid == -1)
-	    {
-		// FIXME add better error message
-		// FIXME do not use dgettext
-		if (Popup::YesNo (_("An error occurred while connecting to the server.") + "\n"
-+ dgettext ("packager", "Details:") + "\n"
-+ Pkg::LastError() + "\n"
-+ dgettext ("packager", "Try again?")))
-		{
+
+	    // wrong srcid, must have failed
+	    if (srcid == -1) {
+		// popup error message
+		// %1 represents the the error message details
+		if (Popup::YesNo ( sformat(
+		    _("An error occurred while connecting to the server.
+Details: %1
+
+Try again?"),
+		    Pkg::LastError()
+		))) {
+		    // try again
 		    u = editUrl (u);
-		}
-		else
-		{
+		} else {
+		    // abort
 		    again = false;
 		}
-	    }
-	    else
-	    {
+
+	    // everything is ok
+	    } else {
 		added_ids = add (added_ids, srcid);
 		again = false;
 	    }

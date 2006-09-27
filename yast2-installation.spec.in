@@ -2,14 +2,14 @@
 
 
 @HEADER@
-BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2 yast2-core-devel yast2-devtools yast2-testsuite yast2-country yast2-slp yast2-firewall
-# remove yast2-slp and yast2-firewall once SourceManager is moved back to yast2-packager
+BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2 yast2-core-devel yast2-devtools yast2-testsuite yast2-country
+
 Requires:	yast2-slp yast2-firewall
 Requires:	yast2-update
 Requires:	yast2-storage yast2-mouse yast2-bootloader
 
-# SignatureCheckDialogs::CheckSignaturesInYaST
-Requires:	yast2-packager >= 2.13.135
+# YCP modules were moved back to the yast2-packager (see log for yast2-installation-2.13.155)
+Requires:	yast2-packager >= 2.13.152
 # Pkg::ResolvableCountPatches
 Requires:	yast2-pkg-bindings >= 2.13.92
 # Linuxrc::display_ip
