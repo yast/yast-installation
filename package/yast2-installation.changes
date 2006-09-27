@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Sep 27 15:22:15 CEST 2006 - lslezak@suse.cz
+
+- new inst_extrasources.ycp client - add extra installation sources
+  during installation (in 2nd stage, after online update)
+  (fate #100168, #300910)
+- 2.13.156
+
+-------------------------------------------------------------------
 Wed Sep 27 09:58:53 CEST 2006 - locilka@suse.cz
 
 - YCP modules that originated at yast2-packager were moved back.
