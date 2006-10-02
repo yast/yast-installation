@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Oct  2 11:06:29 CEST 2006 - lslezak@suse.cz
+
+- inst_extrasources.ycp - fixed name of the text domain
+- 2.13.157
+
+-------------------------------------------------------------------
 Wed Sep 27 15:22:15 CEST 2006 - lslezak@suse.cz
 
 - new inst_extrasources.ycp client - add extra installation sources
