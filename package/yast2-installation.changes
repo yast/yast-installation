@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Oct  2 16:44:25 CEST 2006 - locilka@suse.cz
+
+- Merged proofread texts
+- 2.13.158
+
+-------------------------------------------------------------------
 Mon Oct  2 11:06:29 CEST 2006 - lslezak@suse.cz
 
 - inst_extrasources.ycp - fixed name of the text domain

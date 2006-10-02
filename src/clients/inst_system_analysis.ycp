@@ -118,9 +118,9 @@ To install an add-on product from separate media together with &product;, select
 ");
 
 // help text for installation method
-help_text = help_text + _("<p>Select <b>Other Options</b> then 
+help_text = help_text + _("<p>Select <b>Other Options</b> then
 select <b>Repair Installed System</b> if you have a damaged Linux system on
-your hard disk. With this option, try to fix problems automatically.
+your hard disk. This option can try to fix problems automatically.
 </p>");
 
 // help text for installation method
