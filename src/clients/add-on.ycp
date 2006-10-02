@@ -27,7 +27,7 @@ Wizard::SetContents (
     // busy message (dialog)
     `VBox(`Label(_("Initializing..."))),
     // help
-    _("Please wait while add-on products are being initialized..."),
+    _("<p>Initializing add-on products...</p>"),
     false,
     true
 );

@@ -38,10 +38,9 @@ void ErrorDuringSCRSwitch (string chroot_dir) {
 	// popup error headline
 	_("Installation Error"),
 	// popup question
-	_("An Error has occurred during switching to the installed system
+	_("An error occurred while switching to the installed system
 and no recovery is possible.
-
-Would you like to run the automatic debugger to find out why it has failed?")
+Run the automatic debugger to find out why it has failed?")
     )) {
 	y2milestone("User decided to debug the current problem");
 	

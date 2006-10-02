@@ -728,8 +728,8 @@ void Redraw (boolean enable_back, boolean enable_next) {
 
     // Help for add-on products
     string help = _("<p><big><b>Add-On Product Installation</b></big></br>
-Here you can see all add-on products that are selected for installation.
-To add a new product click <b>Add</b>, to remove already added one,
+Here see all add-on products that are selected for installation.
+To add a new product, click <b>Add</b>. To remove an already added one,
 select it and click <b>Delete</b>.</p>");
 
     integer index = -1;

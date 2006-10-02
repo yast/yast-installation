@@ -35,7 +35,7 @@ if (func == "Info")
     return (any)$[
 	"steps" : 1,
 	// progress step title
-	"title" : _("Copying system files to installed system..."),
+	"title" : _("Copying system files to the installed system..."),
 	// not in case of update
 	"when" : [ `installation, `autoinst ],
     ];

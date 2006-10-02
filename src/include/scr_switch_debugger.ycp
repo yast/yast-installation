@@ -128,7 +128,7 @@
 
 	ReportTest (
 	    // Test progress
-	    sformat (_("Checking for '%1' binary..."), test_chroot_binary),
+	    sformat (_("Checking for %1 binary..."), test_chroot_binary),
 	    test_result
 	);
 
@@ -141,7 +141,7 @@
 
 	ReportTest (
 	    // Test progress
-	    sformat (_("Checking for chroot directory '%1' ..."), chroot_path),
+	    sformat (_("Checking for chroot directory %1..."), chroot_path),
 	    test_result
 	);
 
@@ -178,7 +178,7 @@
 
 	ReportTest (
 	    // Test progress
-	    sformat (_("Checking for '%1' in '%2' ..."), test_y2base, chroot_path),
+	    sformat (_("Checking for %1 in %2..."), test_y2base, chroot_path),
 	    test_result
 	);
 
@@ -226,7 +226,7 @@
 
 	ReportTest (
 	    // Test progress
-	    sformat(_("Checking whether RPM package '%1' is installed..."), package_name),
+	    sformat(_("Checking whether RPM package %1 is installed..."), package_name),
 	    test_result
 	);
 	y2milestone("Debug: %1", test);
@@ -251,7 +251,7 @@
 	
 	ReportTest (
 	    // Test progress
-	    sformat(_("Checking what requires RPM package '%1'..."), package_name),
+	    sformat(_("Checking what requires RPM package %1..."), package_name),
 	    test_result
 	);
 	
@@ -311,7 +311,7 @@
 	// check whether all needed packages are installed
 	foreach (string package_name, sort (needed_rpm_packages), {
 	    // Test progress
-	    ReportProgress (sformat (_("Complex checking of package '%1'"), package_name));
+	    ReportProgress (sformat (_("Running complex check on package %1..."), package_name));
 	    // is the package installed?
 	    if (! RunSCRSwitchTest_CheckWhetherInstalled (package_name)) {
 		ret = false;
@@ -372,7 +372,7 @@
 	if (failed_chroot_path == nil) {
 	    y2error("Chroot path not defined!");
 	    // popup error
-	    Popup::Error(_("Unknown chroot path, debugger cannot continue."));
+	    Popup::Error(_("Unknown chroot path. The debugger cannot continue."));
 	    return;
 	}
 	// will be used for all chroot calls later
