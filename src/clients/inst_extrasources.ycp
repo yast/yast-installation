@@ -14,7 +14,7 @@
 
 {
 
-textdomain "packager";
+textdomain "installation";
 
 import "GetInstArgs";
 import "Popup";
