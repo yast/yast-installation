@@ -62,7 +62,7 @@ textdomain="control"
       <congratulate>
 	<label>
 &lt;p&gt;&lt;b&gt;Congratulations!&lt;/b&gt;&lt;/p&gt;
-&lt;p&gt;The installation of SUSE Linux on your machine is complete.
+&lt;p&gt;The installation of openSUSE on your machine is complete.
 After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt;
 &lt;p&gt;Visit us at %1.&lt;/p&gt;
 &lt;p&gt;Have a lot of fun!&lt;br&gt;Your SUSE Development Team&lt;/p&gt;
@@ -94,7 +94,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <proposal_modules config:type="list">
                         <proposal_module>partitions</proposal_module>
                         <proposal_module>software_simple</proposal_module>
-                        <proposal_module>language_simple</proposal_module>
+			<proposal_module>country_simple</proposal_module>
                     </proposal_modules>
                 </proposal_tab>
                 <proposal_tab>
@@ -587,13 +587,13 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		    <label>Configuration</label>
 		</module>
                 <module>
-	            <label>Hostname</label>
-                    <name>hostname</name>
-                    <enable_back>no</enable_back>
-                </module>
-                <module>
 	            <label>Root Password</label>
                     <name>root</name>
+		    <enable_back>no</enable_back>
+                </module>
+                <module>
+	            <label>Hostname</label>
+                    <name>hostname</name>
                 </module>
                 <module>
 	            <label>Network</label>
@@ -631,6 +631,10 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <module>
 	            <label>Online Update</label>
                     <name>you</name>
+                </module>
+                <module>
+                    <label>Online Update</label>
+                    <name>extrasources</name>
                 </module>
 		<module>
 		    <label>Online Update</label>

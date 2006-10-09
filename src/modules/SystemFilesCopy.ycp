@@ -1,0 +1,227 @@
+/**
+ * File:	modules/SystemFilesCopy.ycp
+ * Package:	Installation
+ * Summary:	Functionality for copying files from another systems
+ * Authors:	Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id:$
+ *
+ * Functionality for copying files from any not-mounted systems
+ * to inst-sys and from inst-sys to just-installed system.
+ */
+
+{
+
+    textdomain "installation";
+    module "SystemFilesCopy";
+
+    import "Directory";
+    import "FileUtils";
+    import "String";
+    import "Installation";
+
+
+
+    // --> Variables
+    
+    /**
+     * @struct [
+     *     [ archive_name, copy_to ],
+     *     [ "/tmp/archive_001.tgz", "/etc" ],
+     * ]
+     */
+    list <list <string> > copy_files_to_installed_system = [];
+
+    boolean already_initialized = false;
+    
+    string inst_sys_tmp_directory = nil;
+    
+    string tmp_mount_directory = nil;
+    
+    // max tries when creating a temporary mount-directory
+    integer counter_max = 10;
+    
+    integer tmp_archive_counter = 0;
+    
+
+
+    // --> Functions
+
+    global define string CreateDirectoryIfMissing (string mnt_tmpdir);
+
+    /**
+     * Checks whether the directory exists and creates it if it is missing
+     * If the path exists but it is not a directory, it tries to create another
+     * directory and returns its name. 'nil' is returned when everythig fails.
+     *
+     * @param string mnt_tmpdir
+     * #return string mnt_tmpdir (maybe changed)
+     */
+    global define string CreateDirectoryIfMissing (string create_directory) {
+	// path already exists
+	if (FileUtils::Exists(create_directory)) {
+	    // exists as a directory
+	    if (FileUtils::IsDirectory(create_directory)) {
+		y2milestone("Directory %1 already exists", create_directory);
+		return create_directory;
+	    // exists but it's not a directory
+	    } else {
+		y2warning("Path %1 is not a directory", create_directory);
+		string new_dir = nil;
+
+		while (new_dir == nil && counter_max > 0) {
+		    counter_max = counter_max - 1;
+		    create_directory = create_directory + "x";
+		    new_dir = CreateDirectoryIfMissing (create_directory);
+		}
+		
+		return new_dir;
+	    }
+
+	// path doesn't exist
+	} else {
+	    SCR::Execute(.target.mkdir, create_directory);
+	    // created successfully
+	    if (FileUtils::Exists (create_directory)) {
+		y2milestone("Directory %1 created", create_directory);
+		return create_directory;
+	    // cannot create
+	    } else {
+		y2error("Cannot create path %1", create_directory);
+		return nil;
+	    }
+	}
+    }
+    
+    /**
+     * Sets and creates a temporary directory for files to lay
+     * in inst-sys until they're copied to the installed system.
+     * Sets and creates a temporary directory that is used for
+     * mounting partitions when copying files from them.
+     */
+    boolean Initialize () {
+	if (already_initialized) return true;
+
+	inst_sys_tmp_directory = CreateDirectoryIfMissing("/tmp/tmp_dir_for_SystemFilesCopy_files");
+	tmp_mount_directory    = CreateDirectoryIfMissing("/tmp/tmp_dir_for_SystemFilesCopy_mount");
+
+	if (inst_sys_tmp_directory == nil || tmp_mount_directory == nil) {
+	    y2error("Cannot create one of needed directories");
+	    return false;
+	}
+
+	// everything is fine
+	already_initialized = true;
+	return true;
+    }
+
+    /**
+     * Mounts the partition and proceeds the copying files from that partition
+     * to the inst-sys.
+     *
+     * @struct partiton  == "/dev/sdb4"
+     * @struct filenames == [ "/etc/123", "/etc/456" ]
+     * @struct copy_to   == "/root/" (where to copy it to the installed system)
+     */
+    global boolean CopyFilesToTemp (string partition, list <string> filenames, string copy_to) {
+	if (! Initialize ()) {
+	    y2error("Cannot initialize!");
+	    return false;
+	}
+	
+	// creating full archive name (path)
+	tmp_archive_counter = tmp_archive_counter + 1;
+	string archive_name = sformat("%1/_inst_archive_%2.tgz", inst_sys_tmp_directory, tmp_archive_counter);
+
+	y2milestone("Copying from '%1' files %2 to '%3'. Files will appear in '%4'",
+	    partition, filenames, archive_name, copy_to
+	);
+
+	y2milestone("Mounting %1 to %2", partition, tmp_mount_directory);
+	if (! (boolean) SCR::Execute(.target.mount, [partition, tmp_mount_directory], "-o ro")) {
+	    y2error("Mounting failed!");
+	    return false;
+	}
+
+	boolean ret = true;
+	string archive_files = "";
+	foreach (string filename, filenames, {
+	    // removing the leading slash
+	    if (substring(filename, 0, 1) == "/") filename = substring(filename, 1);
+	    archive_files = archive_files + " '" + String::Quote (filename) + "'";
+	});
+
+	// archive files were already quoted
+	string command = sformat (
+	    "cd '%1'; tar -zcvf '%2' %3",
+	    tmp_mount_directory, String::Quote(archive_name), archive_files
+	);
+	map cmd_run = (map) SCR::Execute(.target.bash_output, command);
+	if ((integer) cmd_run["exit"]:nil != 0) {
+	    y2error(
+		"Problem during archivation: %1, command >%2<",
+		cmd_run, command
+	    );
+	    ret = false;
+	} else {
+	    y2milestone("Archived: %1", cmd_run);
+	}
+
+	y2milestone("Umounting %1", partition);
+	if (! (boolean) SCR::Execute(.target.umount, tmp_mount_directory)) {
+	    y2warning("Umounting failed!");
+	}
+	
+	// add a new entry into the list of archives
+	copy_files_to_installed_system = add (copy_files_to_installed_system, [archive_name, copy_to]);
+
+	return ret;
+    }
+
+    /**
+     * Proceeds the copying of all files in inst-sys (that were copied from
+     * another partition before) to the directory.
+     */
+    global boolean CopyFilesToSystem () {
+	if (! already_initialized) {
+	    y2error("CopyFilesToTemp() needs to be called first...");
+	    return false;
+	}
+	
+	boolean ret = true;
+
+	// this should run before the SCR root is changed
+	foreach (list <string> archive_to_extract, copy_files_to_installed_system, {
+	    string archive_name     = archive_to_extract[0]:nil;
+	    string where_to_extract = archive_to_extract[1]:nil;
+
+	    if (archive_name == nil || where_to_extract == nil) {
+		y2error("Something is wrong with the archive: %1", archive_to_extract);
+		ret = false;
+	    }
+
+	    where_to_extract = sformat("%1%2", Installation::destdir, where_to_extract);
+
+	    string command = sformat (
+		"mkdir -p '%1'; cd '%1'; tar --preserve -xvzf '%2'",
+		String::Quote (where_to_extract),
+		String::Quote (archive_name)
+	    );
+
+	    map cmd_run = (map) SCR::Execute(.target.bash_output, command);
+	    if ((integer) cmd_run["exit"]:nil != 0) {
+		y2error(
+		    "Problem during extracting an archive: %1, command >%2<",
+		    cmd_run, command
+		);
+		ret = false;
+	    } else {
+		y2milestone("Extracted: %1 into %2", cmd_run, where_to_extract);
+	    }
+	});
+
+	return true;
+    }
+
+/* EOF */
+}

@@ -28,6 +28,7 @@ import "Report";
 import "SLP";
 import "Sequencer";
 import "SourceManager";
+import "SuSEFirewall";
 import "Stage";
 import "Wizard";
 
@@ -58,82 +59,19 @@ symbol createResult = `again;
  * @returns symbol one of `back, `next
  */
 symbol AddSourceTypeSLP () {
-    // Return value (`back as a fall`back)
-    symbol ret = `back;
+    string service = SourceManager::AddSourceTypeSLP ();
+    if (service == nil) {
+	y2milestone("No service selected, returning back...");
 
-	    /* Scanning network for SLP servers */
-	    // translators: popup busy message
-	    UI::OpenDialog (`Label (_("Scanning network...")) );
-	    list<map> services = SLP::FindSrvs ("install.suse", "");
-	    UI::CloseDialog ();
+	return `back;
+    }
 
-	    /* No SLP servers found */
-	    if ( size(services) == 0 )
-	    {
-		y2warning("No SLP catalogs");
-		// error popup
-		Report::Message ( _("No SLP catalogs found.") );
-		ret = `back;
+    y2milestone ("Trying to add source '%1'", service);
+    // add the installation source
+    symbol createResult = SourceManager::createSource(service);
+    y2milestone ("Adding source result: %1", createResult);
 
-	    /* Some serves were found */
-	    }
-	    else {
-		// show the dialog to pick the source
-		list<term> items = maplist (map service, services, ``{
-		    string url = service["srvurl"]:"";
-		    url = substring (url, 21);
-		    // split the URL
-		    map parsed_url = URL::Parse (url);
-		    return `item (`id (url), toupper ( parsed_url["scheme"]:"http" ), url);
-		});
-		UI::OpenDialog (
-		    `VBox(
-			// translators: popup heading
-			`Heading (_("Choose SLP Catalog")),
-			// bugzilla #168718
-			`MinSize( 76, 19,
-			    // translators: table header
-			    `Table (`id(`services), `header(
-				    // table header
-				    _("Type"),
-				    // table header
-				    _("URL")),
-				items)
-			),
-			`HBox (
-			    `PushButton (`id (`ok), `opt(`default), Label::SelectButton ()),
-			    `VSpacing (1),
-			    `PushButton (`id (`cancel), Label::CancelButton ())
-			)
-		    )
-		);
-		ret = (symbol)UI::UserInput ();
-		if (ret == `ok)
-		{
-		    string service = (string) UI::QueryWidget (`services, `CurrentItem);
-		    y2milestone ("Trying to add source '%1'", service);
-		    if (service != nil)
-		    {
-			// add the installation source
-			createResult = SourceManager::createSource(service);
-			y2milestone ("Adding source result: %1", createResult);
-			if (createResult == `ok) createResult = `next;
-		    }
-		    else
-		    {
-			y2warning("No source selected, returning back...");
-			ret = `back;
-		    }
-		}
-		else
-		{
-		    y2milestone("Adding SLP source cancelled");
-		    ret = `back;
-		}
-		UI::CloseDialog ();
-	    }
-
-    return ret;
+    return `next;
 }
 
 /**
@@ -285,70 +223,51 @@ symbol MediaSelect () {
 	    // moved to another function
 	    ret = AddSourceTypeSLP();
 	    y2milestone("SLP-Add returned: %1", ret);
-	    if (ret == `ok) ret = `next;
+	    if (ret == `next)
+		createResult = `ok;
 	    else ret = nil;
 	}
-
-	else if ( input == `ftp || input == `http || input == `https || input == `samba )
+	else if (contains ([`ftp, `http, `https, `samba, `nfs, `cd, `dvd,
+	    `local_dir, `specify_url], input))
 	{
 	    if ( input == `ftp ) url = "ftp://";
 	    else if ( input == `http ) url = "http://";
 	    else if ( input == `https ) url = "https://";
 	    else if ( input == `samba ) url = "smb://";
+	    else if ( input == `nfs ) url = "nfs://";
+	    else if ( input == `cd ) url = "cd:///";
+	    else if ( input == `dvd ) url = "dvd:///";
+	    else if ( input == `local_dir ) url = "dir://";
 	    else url = "";
-	    boolean refresh = true;
-	    do {
+	    if (input == `cd || input == `dvd)
+	    {
+		Pkg::SourceReleaseAll();
+		string msg = input == `cd
+		    ? _("Insert the add-on product CD")
+		    : _("Insert the add-on product DVD");
+		if (! SourceManager::AskForCD (msg))
+		{
+		    ret = `back;
+		    break;
+		}
+		
+		createResult = SourceManager::createSource( url);
+	    }
+	    else
+	    {
+	      do {
 		url = editUrl( url );
 		if ( size( url ) == 0 ) { ret = `back; break; }
+
 		createResult = SourceManager::createSource( url);
-            } while ( createResult == `again );
+              } while ( createResult == `again );
+	    }
         }
-        else if ( input == `nfs )
-        {
-            url = "nfs://";
-	    boolean refresh = true;
-            do {
-                url = editUrl( url );
-                if ( size( url ) == 0 ) { ret = `back; break; }
-		createResult = SourceManager::createSource( url);
-            } while ( createResult == `again );
-        }
-        else if ( input == `cd )
-        {
-	    Pkg::SourceReleaseAll();
-	    if (Popup::ContinueCancel (_("Insert the add-on product CD")))
-		createResult = SourceManager::createSource( "cd:///" );
-	    else
-		ret = `back;
-        }
-        else if ( input == `dvd )
-        {
-	    Pkg::SourceReleaseAll();
-	    if (Popup::ContinueCancel (_("Insert the add-on product DVD")))
-		createResult = SourceManager::createSource( "dvd:///" );
-	    else
-		ret = `back;
-        }
-	else if ( input == `local_dir )
-	{
-            url = "dir://";
-            do {
-                url = editUrl( url );
-                if ( size( url ) == 0 ) { ret = `back; break; }
-		createResult = SourceManager::createSource( url);
-            } while ( createResult == `again );
-	}
-	else if (input == `specify_url)
-	{
-            url = "";
-	    do {
-                url = editRawUrl( url );
-                if ( size( url ) == 0 ) { ret = `back; break; }
-		createResult = SourceManager::createSource( url);
-	    } while (createResult == `again);
-	}
 	if (createResult != `ok)
+	{
+	    ret = nil;
 	    continue;
+	}
     }
 
     AddOnProduct::last_ret = ret;
@@ -379,6 +298,9 @@ symbol CatalogSelect () {
 	    Pkg::SourceDelete(sources[0]:0);
 	    return AddOnProduct::last_ret;
 	}
+
+	// busy message
+	UI::OpenDialog(`Label(_("Initializing new source...")));
 	integer src_id = SourceManager::newSources[0]:0;
 	map data = Pkg::SourceGeneralData (src_id);
 	y2milestone("Adding product: %1", data);
@@ -388,6 +310,8 @@ symbol CatalogSelect () {
 	Pkg::SourceDelete (src_id);
 	src_id = Pkg::SourceCreate (url, product_dir);
 	SourceManager::newSources = [src_id];
+	UI::CloseDialog();
+
 	if (src_id == -1)
 	{
 	    // error report
@@ -430,11 +354,11 @@ There were multiple catalogs found on the selected medium.
 Select the catalog to use.</p>
 ");
 
-    term contents = `HBox (`HStretch(), `VBox (
-	`VStretch (),
-	`SelectionBox (`id (`catalogs), catalogs, sources[0]:0),
-	`VStretch()
-    ), `HStretch ());
+    term contents = `HBox (`HSpacing(4), `VBox (
+	`VSpacing (2),
+	`SelectionBox (`id (`catalogs), _("&Found Catalogs"), catalogs),
+	`VSpacing (2)
+    ), `HSpacing (4));
     Wizard::SetContents (title, contents, help_text, true, true);
     symbol ret = nil;
     integer selected = nil;
@@ -530,7 +454,7 @@ symbol ProductSelect () {
 	if (license_ret != true) {
 	    y2milestone("Removing the current source ID %1", AddOnProduct::src_id);
 	    Pkg::SourceDelete(AddOnProduct::src_id);
-	    return `finish;
+	    return `abort;
 	}
 
         map data = Pkg::SourceGeneralData (AddOnProduct::src_id);
@@ -584,7 +508,7 @@ or selected for installation."));
     if (license_ret != true) {
 	    y2milestone("Removing the current source ID %1", AddOnProduct::src_id);
 	    Pkg::SourceDelete(AddOnProduct::src_id);
-	    return `finish;
+	    return `abort;
     }
     if (size (products) == 1)
     {
@@ -594,7 +518,7 @@ or selected for installation."));
 	{
 	    Pkg::ResolvableRemove (prod["name"]:"", `product);
 	    // message popup
-	    Popup::Message (_("Dependencies of the add-on product cannot be fullfilled."));
+	    Popup::Message (_("Dependencies of the add-on product cannot be fulfilled."));
 	    AddOnProduct::last_ret = `back;
 	    return `back;
 	}
@@ -707,7 +631,7 @@ to install.</p>
 		    Pkg::ResolvableRemove (product, `product);
 		});
 		// message popup
-		Popup::Message (_("Dependencies of the selected add-on products cannot be fullfilled."));
+		Popup::Message (_("Dependencies of the selected add-on products cannot be fulfilled."));
 		ret = nil;
 		continue;
 	    }
@@ -801,7 +725,13 @@ symbol RunAutorunWizard() {
 void Redraw (boolean enable_back, boolean enable_next) {
     // main screen heading
     string title = _("Add-On Product Installation");
-    string help = "";
+
+    // Help for add-on products
+    string help = _("<p><big><b>Add-On Product Installation</b></big></br>
+Here see all add-on products that are selected for installation.
+To add a new product, click <b>Add</b>. To remove an already added one,
+select it and click <b>Delete</b>.</p>");
+
     integer index = -1;
     list items = maplist (map<string,any> product, AddOnProduct::add_on_products, {
 	index = index + 1;
@@ -816,7 +746,9 @@ void Redraw (boolean enable_back, boolean enable_next) {
 	    data["url"]:_("Unknown"), dir);
 	return `item (`id (index),
 	    media,
-	    sformat (_("Product %1"), product["product"]:""));
+	    // sformat (_("Product %1"), product["product"]:"")
+	    product["product"]:""
+	);
     });
     term contents = `VBox (
 	`Table (`id (`summary), `header (
@@ -825,14 +757,23 @@ void Redraw (boolean enable_back, boolean enable_next) {
 		// table header
 		_("Product")),
 	    items),
-	`HBox (
-	    `PushButton (`id (`add), Label::AddButton ()),
-	    `PushButton (`id (`delete), Label::DeleteButton ())
+	`Left(
+	    `HBox (
+		`PushButton (`id (`add), Label::AddButton ()),
+		`PushButton (`id (`delete), Label::DeleteButton ()),
+		`HStretch ()
+	    )
 	)
     );
 
     Wizard::SetContents (title, contents, help, enable_back, enable_next);
     Wizard::SetDesktopIcon("vendor");
+
+    // disable delete button if no items listed
+    // bug #203809
+    if (size(items) == 0) {
+	UI::ChangeWidget(`id (`delete), `Enabled, false);
+    }
 }
 
 symbol RunAddOnMainDialog(boolean enable_back, boolean enable_next) {

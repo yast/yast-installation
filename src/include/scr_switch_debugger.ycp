@@ -1,0 +1,413 @@
+/**
+ * File:
+ *      include/installation/scr_switch_debugger.ycp
+ *
+ * Module:
+ *      System installation
+ *
+ * Summary:
+ *      Debugs SCR switch failure
+ *
+ * Authors:
+ *      Lukas Ocilka <locilka@suse.cz>
+ *
+ */
+
+{
+    textdomain "installation";
+
+    /*
+     * ATTENTION: This functionality is called when SCR switch fails.
+     *            It means that there is (probably) no other SCR running
+     *            and we have to create one first.
+     */
+
+    import "FileUtils";
+    import "Popup";
+    import "Label";
+
+    // test result (Checking for xyz... Passed)
+    string result_ok = _("Passed");
+    // test result (Checking for xyz... Failed)
+    string result_failed = _("Failed");
+
+    /* ********************************************************************* */
+
+    // --> Configuration
+
+    // path of of the failed chroot (SCROpen)
+    // assigned in main function RunSCRSwitchDebugger()
+    string chroot_path = nil;
+    
+    // SCR of the inst-sys
+    string new_SCR_path = "/";
+    
+    // chroot binary
+    string test_chroot_binary = "/usr/bin/chroot";
+    
+    // any command for the chroot command
+    string test_do_chroot = "ls -1 /";
+
+    // y2base path
+    string test_y2base = "/usr/lib/YaST2/bin/y2base";
+    
+    // get all installed rpm packages
+    string test_rpm = "rpm -qa";
+
+    // all needed rpm packages
+    list <string> needed_rpm_packages = [
+	"yast2", "yast2-installation", "yast2-core", "yast2-bootloader", "yast2-packager"
+    ];
+
+    // is the package %1 installed?
+    string test_one_rpm = "rpm -q %1";
+
+    // what requires the %1 package?
+    string test_requires = "rpm -q --requires %1";
+    
+    // what provides the %1 object (can contain "()"s)
+    string test_whatprovides = "rpm -q --whatprovides '%1'";
+    
+    // where logs are stored
+    string yast_logs = "/var/log/YaST2/";
+    
+    // <-- Configuration
+
+    /* ********************************************************************* */
+
+    // --> Helper Functions
+
+    // UI dialog
+    term SCRSwitchDialog () {
+	return `MarginBox (
+	    1, 1, `VBox (
+		`MinWidth (70,
+		    // used for progress
+		    `LogView (
+			`id (`log_view),
+			// log-view label
+			_("&Checking the Installed System..."),
+			18, 500
+		    )
+		),
+		`ReplacePoint(`id(`dialog_rp), `Empty())
+	    )
+	);
+    }
+
+    // reports a progress with reslt
+    void ReportTest (string test_description, boolean test_result) {
+	if (! test_result) y2error("-- I.C. Winner --");
+
+	// report it to the log
+	y2milestone("%1 %2", test_description, test_result);
+
+	// report it to the UI
+	UI::ChangeWidget (`id(`log_view), `LastLine,
+	    sformat ("%1 %2\n", test_description, (test_result ? result_ok : result_failed))
+	);
+    }
+
+    // report just some progress
+    void ReportProgress (string progress_s) {
+	progress_s = sformat ("=== %1 ===", progress_s);
+	
+	y2milestone("%1", progress_s);
+	UI::ChangeWidget (`id(`log_view), `LastLine, "\n" + progress_s + "\n");
+    }
+
+    // <-- Helper Functions
+
+    /* ********************************************************************* */
+
+    // --> Tests
+
+    // checks whether the chroot binary exists
+    boolean RunSCRSwitchTest_ChrootBinary () {
+	boolean test_result = FileUtils::Exists (test_chroot_binary);
+
+	ReportTest (
+	    // Test progress
+	    sformat (_("Checking for %1 binary..."), test_chroot_binary),
+	    test_result
+	);
+
+	return test_result;
+    }
+
+    // checks whether the new SCR path exists
+    boolean RunSCRSwitchTest_ChrootPath () {
+	boolean test_result = FileUtils::IsDirectory (chroot_path);
+
+	ReportTest (
+	    // Test progress
+	    sformat (_("Checking for chroot directory %1..."), chroot_path),
+	    test_result
+	);
+
+	return test_result;
+    }
+
+    // tries to chroot
+    boolean RunSCRSwitchTest_DoChroot () {
+	map <string, any> test = (map <string, any>) SCR::Execute (.target.bash_output,
+	    sformat ("%1 %2 %3",
+		test_chroot_binary,	// chroot command
+		chroot_path,		// where to chroot
+		test_do_chroot		// what to execute
+	    )
+	);
+	boolean test_result = ((integer) test["exit"]:42 == 0);
+
+	ReportTest (
+	    // Test progress
+	    _("Trying to chroot..."),
+	    test_result
+	);
+	y2milestone("Debug: exit>%1<\nstdout>\n%2<\nstderr>%3<",
+	    test["exit"]:0, test["stdout"]:"", test["stderr"]:""
+	);
+
+	return test_result;
+    }
+
+    // checks whether the y2base binary exists
+    boolean RunSCRSwitchTest_Y2BASE () {
+	string y2basefile = sformat("%1%2", chroot_path, test_y2base);
+	boolean test_result = FileUtils::Exists (y2basefile);
+
+	ReportTest (
+	    // Test progress
+	    sformat (_("Checking for %1 in %2..."), test_y2base, chroot_path),
+	    test_result
+	);
+
+	return test_result;
+    }
+
+    // tries to get all installed packages from new SCR
+    boolean RunSCRSwitchTest_DoRPMCheck () {
+	map <string, any> test = (map <string, any>) SCR::Execute (.target.bash_output,
+	    sformat ("%1 %2 %3",
+		test_chroot_binary,	// chroot command
+		chroot_path,		// where to chroot
+		test_rpm		// what to execute
+	    )
+	);
+	boolean test_result = ((integer) test["exit"]:42 == 0);
+
+	ReportTest (
+	    // Test progress
+	    _("Checking for installed RPM packages..."),
+	    test_result
+	);
+	y2milestone("Debug: exit>%1<\nstdout>\n%2<\nstderr>%3<",
+	    test["exit"]:0, test["stdout"]:"", test["stderr"]:""
+	);
+
+	return test_result;
+    }
+
+    // checks whether the RPM is installed in SCR
+    boolean RunSCRSwitchTest_CheckWhetherInstalled (string package_name) {
+	boolean test_result = nil;
+	boolean ret = true;
+	string one_rpm_installed = nil;
+
+	one_rpm_installed = sformat ("%1 %2 %3",
+	    test_chroot_binary,
+	    chroot_path,
+	    sformat (test_one_rpm, package_name)
+	);
+	    
+	map <string, any> test = (map <string, any>) SCR::Execute (.target.bash_output, one_rpm_installed);
+	test_result = ((integer) test["exit"]:42 == 0);
+	if (! test_result) ret = false;
+
+	ReportTest (
+	    // Test progress
+	    sformat(_("Checking whether RPM package %1 is installed..."), package_name),
+	    test_result
+	);
+	y2milestone("Debug: %1", test);
+	
+	return ret;
+    }
+
+    // check which packages are required by needed packages
+    boolean RunSCRSwitchTest_DoNeededRPMsRequire (string package_name) {
+	boolean test_result = nil;
+	boolean ret = true;
+
+	map <string, any> required_packages = (map <string, any>) SCR::Execute (.target.bash_output,
+	    sformat ("%1 %2 %3",
+		test_chroot_binary,
+		chroot_path,
+		sformat (test_requires, package_name)
+	    )
+	);
+	test_result = ((integer) required_packages["exit"]:42 == 0);
+	if (! test_result) ret = false;
+	
+	ReportTest (
+	    // Test progress
+	    sformat(_("Checking what requires RPM package %1..."), package_name),
+	    test_result
+	);
+	
+	// we have required objects
+	if (test_result) {
+	    string required_packages_s = required_packages["stdout"]:"";
+
+	    // check all required objects (sorted and only once)
+	    foreach (string one_require, toset (splitstring (required_packages_s, "\n")), {
+		if (one_require == "") continue;
+		if (regexpmatch (one_require, "[ \t]")) {
+		    one_require = regexpsub (one_require, "^([^ \t]*)[ \t]", "\\1");
+		}
+
+		map <string, any> what_provides = (map <string, any>) SCR::Execute (.target.bash_output,
+		    sformat ("%1 %2 %3",
+			test_chroot_binary,
+			chroot_path,
+			sformat (test_whatprovides, one_require)
+		    )
+		);
+
+		test_result = ((integer) what_provides["exit"]:42 == 0);
+		if (! test_result) {
+		    // do not check whether required objects are installed
+		    // if we don't have which they are
+		    break;
+		    ret = false;
+		}
+
+		string what_provides_s = what_provides["stdout"]:"";
+		boolean at_least_one = false;
+		// checks whether objects that provides something are installed
+		foreach (string one_provides, toset (splitstring (what_provides_s, "\n")), {
+		    if (one_provides == "") continue;
+		    if (RunSCRSwitchTest_CheckWhetherInstalled (one_provides)) {
+			at_least_one = true;
+			break;
+		    } else {
+			ret = false;
+		    }
+		});
+		// none of what_provides is installed
+		// or nothing provides the requierd object
+		if (! at_least_one) ret = false;
+	    });
+	}
+
+	return ret;
+    }
+
+    // checks a package, whether it is installed
+    // if it is installed, whether is has installed requires
+    boolean RunSCRSwitchTest_DoNeededRPMsCheck () {
+	boolean ret = true;
+
+	// check whether all needed packages are installed
+	foreach (string package_name, sort (needed_rpm_packages), {
+	    // Test progress
+	    ReportProgress (sformat (_("Running complex check on package %1..."), package_name));
+	    // is the package installed?
+	    if (! RunSCRSwitchTest_CheckWhetherInstalled (package_name)) {
+		ret = false;
+	    }
+	    // if it is installed, check whetheris has all dependencies
+	    else if (! RunSCRSwitchTest_DoNeededRPMsRequire (package_name)) {
+		ret = false;
+	    }
+	});
+
+	return ret;
+    }
+
+    // main test
+    boolean RunSCRSwitchTests () {
+	// Test progress
+	ReportProgress (_("System Checking"));
+	if (! RunSCRSwitchTest_ChrootBinary())		return false;
+	if (! RunSCRSwitchTest_ChrootPath())		return false;
+	if (! RunSCRSwitchTest_DoChroot())		return false;
+	if (! RunSCRSwitchTest_Y2BASE())		return false;
+	if (! RunSCRSwitchTest_DoRPMCheck())		return false;
+
+	// checking all mandatory packages
+	if (! RunSCRSwitchTest_DoNeededRPMsCheck())	return false;
+
+	// Add new checks here...
+	
+	return true;
+    }
+
+    // <-- Tests
+
+    /* ********************************************************************* */
+    
+    // --> Special Functions
+
+    void CopyY2logsFromSCRToInstSys () {
+	string scr_logs_directory = sformat ("%1%2", chroot_path, yast_logs);
+	string command = sformat ("cp -avr '%1' '%2InstalledSystemLogs'", scr_logs_directory, yast_logs);
+	
+	y2milestone("Running command: %1 -> %2", command,
+	    SCR::Execute (.target.bash_output, command)
+	);
+    }
+    
+    // <-- Special Functions
+    
+    /* ********************************************************************* */
+
+    /**
+     * Function debugs why the SCR switch failed and reports
+     * it to user.
+     *
+     * @param string failed_chroot_chroot
+     */
+    void RunSCRSwitchDebugger (string failed_chroot_path) {
+	if (failed_chroot_path == nil) {
+	    y2error("Chroot path not defined!");
+	    // popup error
+	    Popup::Error(_("Unknown chroot path. The debugger cannot continue."));
+	    return;
+	}
+	// will be used for all chroot calls later
+	chroot_path = failed_chroot_path;
+
+	// if any SCR exists
+	integer old_SCR = WFM::SCRGetDefault ();
+	integer new_SCR = WFM::SCROpen ("chroot=" + new_SCR_path + ":scr", false);
+	if (new_SCR < 0) {
+	    y2error("Cannot conenct to SCR %1", new_SCR_path);
+	    Popup::Error(_("Connecting to the inst-sys failed, debugger cannot continue."));
+	    return;
+	}
+	// Set the new SCR as a defalt one
+	WFM::SCRSetDefault (new_SCR);
+
+	// Copy all YaST log files from SCR to Inst-Sys
+	CopyY2logsFromSCRToInstSys();
+	
+	y2milestone("* ---------- Debugger Start ---------- *");
+	
+	UI::OpenDialog (SCRSwitchDialog());
+	RunSCRSwitchTests();
+	UI::ReplaceWidget (`id (`dialog_rp), `PushButton (`id(`ok), Label::OKButton()));
+	any ret = nil;
+	while (ret != `ok) {
+	    ret = UI::UserInput();
+	}
+	UI::CloseDialog ();
+	
+	y2milestone("* ---------- Debugger Finish ---------- *");
+
+	// Close the SCR created for testing
+	WFM::SCRClose (new_SCR);
+	// Set the previous one as the default
+	WFM::SCRSetDefault (old_SCR);
+    }
+}
