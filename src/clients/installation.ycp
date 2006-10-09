@@ -1,0 +1,42 @@
+/**
+ * Module:	installation.ycp
+ *
+ * Authors:	Lukas Ocilka <locilka@suse.cz>
+ *
+ * Purpose:	Visual speeding-up the installation.
+ *		This client only initializes the UI
+ *		and calls the real installation.
+ *
+ * $Id:$
+ */
+
+{
+    import "Wizard";
+    
+    // Initialize the UI
+    Wizard::CreateDialog ();
+    Wizard::SetContents (
+	// title
+	"",
+	// contents
+	`Empty(),
+	// help
+	"",
+	// has back
+	false,
+	// has next
+	false
+    );
+    Wizard::SetTitleIcon ("yast-inst-mode");
+    Wizard::DisableAbortButton ();
+
+    // Call the real installation
+    y2milestone("=== installation ===");
+    any ret = WFM::CallFunction("installation_worker", WFM::Args());
+    y2milestone("=== installation ===");
+
+    // Shutdown the UI
+    Wizard::CloseDialog();
+
+    return ret;
+}
