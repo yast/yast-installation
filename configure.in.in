@@ -23,5 +23,24 @@ find control -name \*.glade | LC_ALL=C sort > POTFILES
 
 AX_CHECK_DOCBOOK
 
+AC_MSG_CHECKING([fvwm directory])
+coresysconfdir=`pkg-config --print-errors --variable=sysconfdir yast2-core`
+if test -z "$coresysconfdir"; then
+   AC_MSG_ERROR([yast2-core.rpm does not specify sysconfdir, get a newer one])
+fi
+#argh hack
+if test "$coresysconfdir" = /usr/etc; then
+   coresysconfdir=/etc
+fi
+XVersion=$coresysconfdir/YaST2/XVersion
+
+Xsharedir=`. $XVersion; echo $Xsharedir`
+if test -z "$Xsharedir"; then
+   AC_MSG_ERROR([$XVersion not found, get a newer yast2.rpm])
+fi
+fvwmdir=$Xsharedir/fvwm
+AC_MSG_RESULT([$fvwmdir])
+AC_SUBST(fvwmdir)
+
 ## and generate the output...
 @YAST2-OUTPUT@
