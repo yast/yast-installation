@@ -4,6 +4,8 @@
  * Summary:	Create and display proposal
  * Authors:	Stefan Hundhammer <sh@suse.de>
  *		Arvin Schnell <arvin@suse.de>
+ *		Jiri Srain <jsrain@suse.cz>
+ *		Lukas Ocilka <locilka@suse.cz>
  *
  * $Id$
  *
@@ -17,16 +19,13 @@
 {
     textdomain "installation";
 
-    import "Arch";
     import "Label";
     import "Mode";
     import "Stage";
-    import "Installation";
     import "AutoinstConfig";
     import "Wizard";
     import "HTML";
     import "Popup";
-    import "ProductControl";
     import "Language";
     import "GetInstArgs";
 
@@ -196,10 +195,15 @@
 
     	    if (!contains(locked_modules, submod))
             {
+		string heading = issubstring (
+			titles[no]:"",
+			"<a")
+		    ? titles[no]:_("ERROR: Missing Title")
+		    : HTML::Link( titles[no]:_("ERROR: Missing Title"), submod2id[submod]:"");
+
 		// heading in proposal, in case the module doesn't create one
-		prop = prop + HTML::Heading( HTML::Link( titles[no]:_("ERROR: Missing Title") ,
-	    						 submod2id[submod]:"" ) );
-    	    } else {
+		prop = prop + HTML::Heading( heading);
+	    } else {
 		prop = prop + HTML::Heading(
 		   // heading in proposal, in case the module doesn't create one
                     titles[no]:_("ERROR: Missing Title"));
@@ -222,9 +226,14 @@
 	    {
     		if (!contains(locked_modules, submod))
         	{
-		   // heading in proposal, in case the module doesn't create one
-		    prop = prop + HTML::Heading( HTML::Link( titles[no]:_("ERROR: Missing Title") ,
-	    						 submod2id[submod]:"" ) );
+		    string heading = issubstring (
+			    titles[no]:"",
+			    "<a")
+			? titles[no]:_("ERROR: Missing Title")
+			: HTML::Link( titles[no]:_("ERROR: Missing Title"), submod2id[submod]:"");
+
+		    // heading in proposal, in case the module doesn't create one
+		    prop = prop + HTML::Heading( heading);
     		} else {
 		    prop = prop + HTML::Heading(
                 	titles[no]:_("ERROR: Missing Title"));
@@ -379,6 +388,17 @@
 	return result["success"]:true;
     };
 
+    define void PreInstallFunctions () {
+	y2milestone("PreInstallFunctions, Installation: %1, Stage: %2",
+	    Mode::installation(), Stage::stage());
+	if (Mode::installation () && Stage::stage () == "initial") {
+	    // FATE #300421: Import ssh keys from previous installations
+	    // FATE #120103: Import Users From Existing Partition
+	    y2milestone("PreInstallFunctions -- start --");
+	    WFM::CallFunction ("inst_pre_install", []);
+	    y2milestone("PreInstallFunctions -- end --");
+	}
+    }
 
     /**
      * Call each submodule's "Write()" function to let it write its settings,
@@ -773,7 +793,7 @@
 		    description["no"] = no;
 		    descriptions[submod] = description;
 		    new_submodules = add( new_submodules, submod );
-		    string title      = description["rich_text_title"]:submod;
+		    string title      = description["rich_text_title"]:description["rich_text_raw_title"]:submod;
 		    string id         = description["id"             ]:sformat( "module_%1", no );
 
 		    titles            = add( titles,  title );
@@ -795,9 +815,28 @@
 	    {
 		integer no = descr["no"]:0;
 		string id = descr["id"]:sformat( "module_%1", no);
-		string menu_title = descr["menu_title"]:descr["rich_text_title"]:submod;
-		menu_list = add( menu_list,
-		    `item(`id( id ), menu_title + "..." ));
+		if (haskey (descr, "menu_titles"))
+		{
+		    foreach (map<string,string> i, descr["menu_titles"]:[], {
+			string id = i["id"]:"";
+			string title = i["title"]:"";
+			if (id != "" && title != "")
+			{
+			    menu_list = add (menu_list, `item (`id (id),
+				title + "..."));
+			}
+			else
+			{
+			    y2error ("Invalid menu item: %1", i);
+			}
+		    });
+		}
+		else
+		{
+		    string menu_title = descr["menu_title"]:descr["rich_text_title"]:submod;
+		    menu_list = add( menu_list,
+			`item(`id( id ), menu_title + "..." ));
+		}
 	    }
 	});
 
@@ -824,7 +863,7 @@
 	if ( proposal_mode == "network"	)
 	    icon = "yast-network";
 	else if ( proposal_mode == "hardware" )
-	    icon = "yast-printer";
+	    icon = "yast-controller";
 	else if ( proposal_properties["icon"]:"" != "" )
 	    icon =  proposal_properties["icon"]:"";
 
@@ -861,13 +900,15 @@ Use <b>Accept</b> to perform a new installation with the values displayed.
 </p>
 ") + how_to_change;
 
-	    // Help text for installation proposal, continued
-	    help_text_string = help_text_string + _("<p>
-To update an existing &product; system instead of doing a new install,
-click the <b>Mode</b> headline or select <b>Mode</b> in the
-<b>Change...</b> menu.
-</p>
-");
+// kicking out, bug #203811
+// no such headline
+//	    // Help text for installation proposal, continued
+//	    help_text_string = help_text_string + _("<p>
+//To update an existing &product; system instead of doing a new install,
+//click the <b>Mode</b> headline or select <b>Mode</b> in the
+//<b>Change...</b> menu.
+//</p>
+//");
 	    /**
 	     * Deliberately omitting "boot installed system" here to avoid
 	     * confusion: The user will be prompted for that if Linux
@@ -1155,6 +1196,10 @@ resolved before continuing.
 
             if ( input == `next )
             {
+		// anything that needs to be done before
+		// real installation starts
+		PreInstallFunctions();
+
                 if ( ! skip )
                 {
                     write_settings();

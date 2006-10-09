@@ -8,6 +8,7 @@
 
 {
 
+import "Mode";
 import "Stage";
 import "Wizard";
 
@@ -27,6 +28,8 @@ if (find (client, "inst_") != 0)
 }
 
 Stage::Set ("continue");
+Mode::SetMode ("installation");
+
 Wizard::CreateDialog ();
 WFM::call (client, []);
 Wizard::CloseDialog ();

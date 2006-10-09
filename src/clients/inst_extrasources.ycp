@@ -1,0 +1,400 @@
+/**
+ * File:	clients/inst_extrasources.ycp
+ * Package:	yast2-installation
+ * Summary:	Add extra installation sources from content file
+ * Authors:	Ladislav Slezák <lslezak@suse.cz>
+ *
+ * Assumptions:
+ * - the sources have been initialized
+ * - the sources will be saved afterwards
+ * (this means that running this client alone will not work)
+ *
+ * $Id$
+ */
+
+{
+
+textdomain "installation";
+
+import "GetInstArgs";
+import "Popup";
+import "SourceManager";
+import "Label";
+import "Mode";
+import "String";
+import "Internet";
+
+// editUrl()
+include "inst_source_dialogs.ycp";
+
+// the tag providing location of the additional sources in content file
+string content_file_tag = "EXTRAURLS";
+string optional_tag = "OPTIONALURLS";
+
+/**
+ * Show a confirmation dialog with list of the extra sources.
+ * @param urls list of URLs
+ * @return boolean true if the user wants to register the sources
+ */
+list<string> ConfirmExtraSources(map<string,boolean> urls)
+{
+    list<term> items = [];
+
+    // display the enabled sources at the beginning of the list
+    foreach(string url, boolean deflt, urls,
+	{
+	    if (deflt)
+	    {
+		items = add(items, `item(`id(url), url, deflt));
+	    }
+	}
+    );
+
+    foreach(string url, boolean deflt, urls,
+	{
+	    if (!deflt)
+	    {
+		items = add(items, `item(`id(url), url, deflt));
+	    }
+	}
+    );
+
+    integer width = 56;
+    integer height = 8;
+
+    term popup = `HBox(
+	`HSpacing(1),
+	`VBox(
+	    `VSpacing(0.2),
+	    // heading in a popup window
+	    `Heading(_("Additional Installation Sources")),
+	    `VSpacing(0.2),
+	    `VBox(
+		`HSpacing(width),
+		`HBox(
+		    `VSpacing(height),
+		    // label
+		    `MultiSelectionBox(`id(`multi), _("Sources to Register"), items)
+		)
+	    ),
+	    `VSpacing(0.2),
+	    // label - use more lines for the translated message (no more than about 60 characters per line)
+	    `Label(_("Later you can install additional software from these external sources.\nRegister the sources now?")),
+	    `VSpacing(0.5),
+	    `HBox(
+		`HStretch(),
+		`PushButton(`id(`yes), `opt(`default, `key_F10), Label::YesButton()),
+		`HSpacing(2),
+		`PushButton(`id(`no), `opt(`key_F9), Label::NoButton()),
+		`HStretch()
+	    ),
+	    `VSpacing(0.5)
+	    ),
+	`HSpacing(1)
+    );
+
+    UI::OpenDialog(`opt(`decorated), popup);
+
+    symbol ui = (symbol)UI::UserInput();
+    y2milestone("Extra sources confirmed: %1", ui);
+
+    list<string> selected_items = (list<string>) UI::QueryWidget(`id(`multi), `SelectedItems);
+    y2milestone("Selected items: %1", selected_items);
+
+    UI::CloseDialog();
+
+    return (ui == `yes) ? selected_items : [];
+}
+
+/**
+ * Temporarily start the network
+ * @return map The network status before starting
+ */
+define map<string,boolean> NetworkStart()
+{
+    // network connection status
+    boolean already_up = false;
+
+    // flag: demand has been changed
+    boolean i_set_demand = false;
+
+    if (!Mode::test())
+        already_up = Internet::Status();
+
+    if (!already_up)
+    {
+	// label - text in a popup window, progress indicator
+	UI::OpenDialog(`opt(`decorated), `Label(_("Testing the Internet Connection...")));
+
+	// this code is from inst_you.ycp
+	if (!Internet::demand)
+	{
+	    Internet::SetDemand (true);
+	    i_set_demand = true;
+	}
+
+	Internet::Start ("");
+
+	integer i = 150;
+	while (i > 0)
+	{
+	    if (!Internet::Status ())
+		break;
+
+	    if (Internet::Connected ())
+		break;
+
+	    // ping anything (www.suse.com) to trigger dod connections
+	    SCR::Execute (.target.bash_background,
+			  "/bin/ping -c 1 -w 1 213.95.15.200");
+
+	    sleep (1000);
+	}
+
+	UI::CloseDialog();
+    }
+
+    return $["already_up" : already_up, "i_set_demand" : i_set_demand];
+}
+
+/**
+ * Restore the network status
+ * @param original_status original status before starting the network
+ */
+define void NetworkStop(map<string,boolean> original_status)
+{
+    if (!original_status["already_up"]:false)
+    {
+	Internet::Stop("");
+
+	if (original_status["i_set_demand"]:false)
+	{
+	    Internet::SetDemand(false);
+	}
+    }
+}
+
+/**
+ * Dowload and parse content files from current installation sources
+ * @return map Extra URLs for each source:  $[ string source_url : list<string> extra_urls ]
+ */
+define map<string,map<string,boolean> > GetExtraURLs()
+{
+    // $[ string source_url : list<string> extra_urls ]
+    map<string,map<string,boolean> > extra_urls = $[];
+
+    // get all IDs
+    list<integer> current_ids = Pkg::SourceGetCurrent(false);
+
+    // get extra urls for each registered installation source
+    foreach(integer src, current_ids,
+	{
+	    map info = Pkg::SourceGeneralData(src);
+	    string url = info["url"]:"";
+	    y2milestone("Configured source: %1", url);
+
+	    if (url != nil && url != "")
+	    {
+		// get the content file
+		string media_content = Pkg::SourceProvideOptionalFile(src, 1, "/content");
+		y2milestone("downloaded content file: %1", media_content);
+
+		map<string,boolean> extra_sources = $[];
+		if (media_content != nil && media_content != "")
+		{
+		    string content = (string)SCR::Read (.target.string, media_content);
+		    list<string> lines = splitstring(content, "\n");
+
+		    // parse the content file here
+		    foreach(string line, lines,
+			{
+			    if (substring(line, 0, size(content_file_tag)) == content_file_tag)
+			    {
+				// remove the tag
+				string parsed_url = substring(line, size(content_file_tag));
+
+				list<string> url_list = splitstring(parsed_url, " ");
+
+				foreach(string extra_url, url_list,
+				    {
+					// remove surrounding white spaces
+					extra_url = String::CutBlanks(extra_url);
+
+					if (extra_url != nil && extra_url != "")
+					{
+					    // add the url to the target list
+					    extra_sources = add(extra_sources, extra_url, true);
+					}
+				    }
+				);
+			    }
+			    else if (substring(line, 0, size(optional_tag)) == optional_tag)
+			    {
+				// remove the tag
+				string parsed_url = substring(line, size(optional_tag));
+
+				list<string> url_list = splitstring(parsed_url, " ");
+
+				foreach(string extra_url, url_list,
+				    {
+					// remove surrounding white spaces
+					extra_url = String::CutBlanks(extra_url);
+
+					if (extra_url != nil && extra_url != "")
+					{
+					    // add the url to the target list
+					    extra_sources = add(extra_sources, extra_url, false);
+					}
+				    }
+				);
+			    }
+			}
+		    );
+		}
+
+		extra_urls = add(extra_urls, url, extra_sources);
+	    }
+	}
+    );
+
+    return extra_urls;
+}
+
+/**
+ * Process map with extra URLs and return source which can be registered
+ * @param url_map input map
+ * @return list<string> list of URLs to register
+ */
+define map<string,boolean> URLtoRegister(map<string,map<string,boolean> > url_map)
+{
+    // unregistered sources
+    map<string,boolean> register_url = $[];
+
+    if (url_map != nil)
+    {
+	foreach (string source_url, map<string,boolean> urls, url_map,
+	    {
+		foreach(string u, boolean deflt, urls,
+		    {
+			// has been the URL already registered?
+			if (!haskey(url_map, u))
+			{
+			    register_url = add(register_url, u, deflt);
+			}
+		    }
+		);
+	    }
+	);
+    }
+
+    return register_url;
+}
+
+
+/**
+ * Register the installation sources
+ * @param url_list list of the sources to register
+ * @return list<integer> list of created source IDs
+ */
+define list<integer> RegisterSources(list<string> url_list)
+{
+    list<integer> ret = [];
+
+    foreach(string new_url, url_list,
+	{
+	    boolean again = true;
+	    while (again)
+	    {
+		integer srcid = Pkg::SourceCreate(new_url, "/");
+		y2milestone ("Created source %1: %2", srcid, new_url);
+
+		if (srcid == -1)
+		{
+		    // popup message
+		    if (Popup::YesNo (_("An error occurred while creating the installation source.") + "\n"
+			// popup message
+			+ _("Details:") + "\n" + Pkg::LastError() + "\n" + _("Try again?")))
+		    {
+			new_url = editUrl (new_url);
+		    }
+		    else
+		    {
+			again = false;
+		    }
+		}
+		else
+		{
+		    // disable the source
+		    Pkg::SourceSetEnabled(srcid, false);
+
+		    // remember the ID
+		    ret = add (ret, srcid);
+		    again = false;
+		}
+	    }
+	}
+    );
+
+    return ret;
+}
+
+//////////////////////////////////////////
+
+if ( GetInstArgs::going_back())     // going backwards?
+{
+    return `auto;                   // don't execute this once more
+}
+
+// autoyast mode, user cannot be asked
+if (Mode::autoinst())
+{
+    y2milestone("Skipping extra source configuration in autoyast mode");
+    return `auto;
+}
+
+// remember the original network status
+map<string,boolean> net_config = NetworkStart();
+
+if (!Internet::Connected())
+{
+    y2warning("Cannot connect to the internet, skipping extra source configuration");
+    NetworkStop(net_config);
+    return `auto;
+}
+
+
+// $[ string source_url : list<map<string url, boolean default>> extra_urls ]
+map<string,map<string,boolean> > extra_urls = GetExtraURLs();
+y2milestone("extra URLs: %1", extra_urls);
+
+map<string,boolean> register_url = URLtoRegister(extra_urls);
+y2milestone("Offered extra installation sources: %1", register_url);
+
+// any confirmed source to register?
+if (size(register_url) > 0)
+{
+    list<string> confirmed_sources = ConfirmExtraSources(register_url);
+    {
+	// register (create) the sources
+	list<integer> added_ids = RegisterSources(confirmed_sources);
+
+	// synchronize the sources if any source has been added
+	if (size(added_ids) > 0)
+	{
+	    // reload (disable) the resolvables
+	    Pkg::SourceLoad();
+
+	    y2milestone ("syncing to zmd");
+	    boolean synced = SourceManager::SyncAddedAndDeleted (added_ids, []);
+	    y2milestone ("sync status: %1", synced);
+	}
+    }
+}
+
+// restore the network status
+NetworkStop(net_config);
+
+return `auto;
+
+/* EOF */
+}

@@ -42,7 +42,8 @@ list<map<string,any> > stages = [
 	"steps" : [
 	    "autoinst_scripts1",
 	    "copy_files",
-	    "switch_scr"
+	    "copy_systemfiles",
+	    "switch_scr",
 	],
     ],
     $[
@@ -88,6 +89,7 @@ list<map<string,any> > stages = [
 	    "vm",
 	    "copy_logs",
 	    "driver_update2",
+	    "pre_umount",
 	    "umount",
 	],
     ],
@@ -157,6 +159,8 @@ Progress::New(
 Wizard::DisableBackButton ();
 Wizard::DisableNextButton ();
 
+Wizard::SetTitleIcon ("yast-sysconfig");
+
 boolean aborted = false;
 
 foreach (map<string,any> stage, stages, {
@@ -197,6 +201,7 @@ Progress::Title (_("Finished."));
 // Check if there is a message left to display
 // and display it, if necessary
 
+// Do not call any SCR, it's already closed!
 if (size (Misc::boot_msg) > 0 && !Mode::autoinst ())
 {
     if (Linuxrc::usessh ())
