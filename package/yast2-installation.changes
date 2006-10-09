@@ -1,6 +1,411 @@
 Do not modify this package in trunk without communicating to the maintainer first. SLE10SP1 development is being performed in the SuSE-SLE-10-SP1-Branch branch.
 
 -------------------------------------------------------------------
+Mon Oct  9 09:33:31 CEST 2006 - locilka@suse.cz
+
+- Remove old eula.txt and then copy new one if exists (#208908).
+- Using the fullscreen mode again, background images temporarily
+  removed from the RPM build (#208307).
+- The default "Other Option" is Repair, not Boot (#208841).
+- Removed some unneeded imports from inst_clients.
+- 2.13.159
+
+-------------------------------------------------------------------
+Mon Oct  2 16:44:25 CEST 2006 - locilka@suse.cz
+
+- Merged proofread texts
+- 2.13.158
+
+-------------------------------------------------------------------
+Mon Oct  2 11:06:29 CEST 2006 - lslezak@suse.cz
+
+- inst_extrasources.ycp - fixed name of the text domain
+- 2.13.157
+
+-------------------------------------------------------------------
+Wed Sep 27 15:22:15 CEST 2006 - lslezak@suse.cz
+
+- new inst_extrasources.ycp client - add extra installation sources
+  during installation (in 2nd stage, after online update)
+  (fate #100168, #300910)
+- 2.13.156
+
+-------------------------------------------------------------------
+Wed Sep 27 09:58:53 CEST 2006 - locilka@suse.cz
+
+- YCP modules that originated at yast2-packager were moved back.
+- Usage of dgettext replaced with standard gettext strings.
+- Removed yast2-slp and yast2-firewall from build-requirements.
+- 2.13.155
+
+-------------------------------------------------------------------
+Mon Sep 25 17:45:54 CEST 2006 - locilka@suse.cz
+
+- New icon for Hardware Proposal.
+- Root Password dialog moved before Hostname and Domain Name
+  (#208032).
+
+-------------------------------------------------------------------
+Mon Sep 25 13:21:35 CEST 2006 - locilka@suse.cz
+
+- A bit rewritten code for language selected for second stage of
+  update (FATE #300572). Mode::Set is now called before Mode::Get.
+- New installation images from jimmac (#203510).
+- Timeout and accept the license dialog when installing using
+  AutoYaST. By defualt, it's 8 seconds (#206706).
+- New busy message when finishing the installation (closing
+  sources, etc.).
+- 2.13.154
+
+-------------------------------------------------------------------
+Mon Sep 25 10:59:16 CEST 2006 - jsrain@suse.cz
+
+- check properly for existing files in /proc (#205408)
+
+-------------------------------------------------------------------
+Fri Sep 22 16:01:25 CEST 2006 - jsuchome@suse.cz
+
+- Remember the selected language for update and use it also in the
+  second stage (FATE #300572).
+- 2.13.153
+
+-------------------------------------------------------------------
+Fri Sep 22 14:14:44 CEST 2006 - lslezak@suse.cz
+
+- x11_finish.ycp - removed workaround for #201121
+
+-------------------------------------------------------------------
+Fri Sep 22 09:35:36 CEST 2006 - locilka@suse.cz
+
+- Fixed starting Installation in window: Exception for PPC, 832x624
+  still runs in fullscreen. Fixed using a fallback image when
+  the current resolution is not supported (#207321).
+- Fixed counting offset for installation in window. Exceptions are
+  now handled correctly (#207310).
+- Changed fallback background image - a pure black suits better.
+- Visual speeding-up initializing the installation - adding
+  a wrapper installation.ycp around installation_worker.ycp client
+  to provide UI ASAP.
+
+-------------------------------------------------------------------
+Thu Sep 21 16:36:42 CEST 2006 - ms@suse.de
+
+- added patch from Olaf Hering to remove the DefaultColorDepth
+  for special fb devices which are not VESA VGA (#207338)
+
+-------------------------------------------------------------------
+Tue Sep 19 17:14:28 CEST 2006 - locilka@suse.cz
+
+- Removed Installation background 1600x800 px.
+- Added installation background 1280x800 px.
+
+-------------------------------------------------------------------
+Mon Sep 18 09:53:18 CEST 2006 - locilka@suse.cz
+
+- Icon for release notes (inst_release_notes).
+- List of available SLP sources based on Product Name (SLP label),
+  also with filter when more than 15 sources are listed
+  (FATE #300619).
+- Added background images for installation (thanks to jimmac)
+  [1024x768, 1280x1024, 1400x1050, 1600x800, 1600x1200] (Bugzilla
+  #203510).
+- Replacing "Product %1" with "%1" for list of selected Add-On
+  products - the column is already called "Product".
+- 2.13.152
+
+-------------------------------------------------------------------
+Thu Sep 14 14:45:54 CEST 2006 - locilka@suse.cz
+
+- Finally! Corrected path for importing user-related data to the
+  just installed system (FATE #120103, comments #17, #18).
+
+-------------------------------------------------------------------
+Thu Sep 14 00:46:19 CEST 2006 - ro@suse.de
+
+- added yast2-core-devel to BuildRequires
+
+-------------------------------------------------------------------
+Wed Sep 13 09:27:51 CEST 2006 - locilka@suse.cz
+
+- Calling languages.ycp client has been changed to a function call
+  Language::GetLanguagesMap (#204791).
+- Added new Requirement: yast2-country >= 2.13.35
+- Calling copy_systemfiles_finish from inst_finish (FATE #300421).
+- New icon for Finishing Basic Installation dialog.
+- Calling new pre_umount_finish client before umount_finish,
+  umount_finish closes SCR (#205389).
+- Correctly quote files that are added into the temporary archive
+  (FATE #300421).
+- Removing the leading slashes from filenames when archiving them.
+- Reporting error (into log) if save_hw_status_finish.ycp goes
+  wrong (partly fixed #205408).
+- 2.13.151
+
+-------------------------------------------------------------------
+Tue Sep 12 18:40:34 CEST 2006 - locilka@suse.cz
+
+- Found a better place for calling 'inst_pre_install' client, by
+  now it is really called...
+- Enhanced logging.
+- Disabling the License Language combo-box in case of less than
+  two languages in it (#203543).
+
+-------------------------------------------------------------------
+Tue Sep 12 17:07:19 CEST 2006 - locilka@suse.cz
+
+- Fixed displaying license: Language name should always be either
+  shown or the license is disabled as invalid; If there are both
+  license.en.txt and license.txt, one of them is hidden because
+  they have the very same content; An installation language is also
+  pre-selected as a language for a license (if such exists).
+- Fixed initializing the known languages via WFM::call("languages")
+  (#204791).
+- Another icon for Installation Mode dialog, it was the same as for
+  Initialization and Analyzing the Computer dialogs.
+- 2.13.150
+
+-------------------------------------------------------------------
+Mon Sep 11 09:59:15 CEST 2006 - locilka@suse.cz
+
+- Added 'inst_pre_install' and 'copy_systemfiles_finish' clients,
+  and module 'SystemFilesCopy' as a solution for FATE requests
+  #300421 and #120103, which means that SSH keys are, by now,
+  copied from another already installed system (if such exists).
+  If there are more installed systems, the best ones are selected
+  considering the newest access-time.
+- More verbose dialog when initializing the installation (+icon).
+
+-------------------------------------------------------------------
+Thu Sep  7 15:13:54 CEST 2006 - locilka@suse.cz
+
+- Added dialog content and help into the initial dialog of add-on
+  client. Progress will be even better.
+- Temporarily disabled buttons that don't work there.
+- Added more "busy messages" into the add-on dialogs.
+- Added new functionality for filtering services in SLP services
+  table. Allowed characters are "a-zA-Z0-9 .*-".
+
+-------------------------------------------------------------------
+Wed Sep  6 17:41:07 CEST 2006 - mvidner@suse.cz
+
+- To allow adding unsigned sources, temporarily "rug set-pref
+  security-level none" when syncing in inst_source (#190403).
+- 2.13.149
+
+-------------------------------------------------------------------
+Wed Sep  6 12:47:51 CEST 2006 - locilka@suse.cz
+
+- No such headline "Mode" in the Installation Settings dialog.
+  Help fixed (#203811).
+- Added help into the Add-On Product Installation dialog.
+- Add and Delete buttons in the same dialog were moved to the left
+  side according the YaST style guide.
+- Disabling Delete button in case of no Products listed
+  (all filed as bug #203809).
+- Used a correct (another) icon in License Agreement dialog
+  (#203808).
+
+-------------------------------------------------------------------
+Mon Sep  4 15:59:47 CEST 2006 - locilka@suse.cz
+
+- Running Installation in Wizard Window (#203510).
+- Needed binaries in inst-sys: xquery and fvwm-root.
+- Initially, a plain colored image is used as a background.
+- 2.13.148
+
+-------------------------------------------------------------------
+Mon Sep  4 15:49:40 CEST 2006 - ms@suse.de
+
+- fixed -fp setup of Xvnc (#203531)
+
+-------------------------------------------------------------------
+Fri Sep  1 08:48:50 CEST 2006 - locilka@suse.cz
+
+- Fixed Installation Mode dialog to redraw itself only when needed.
+
+-------------------------------------------------------------------
+Wed Aug 23 16:59:03 CEST 2006 - locilka@suse.cz
+
+- Added a new debugger tool scr_switch_debugger.ycp that is called
+  when switching to the installed system in switch_scr_finish.ycp
+  fails (#201058).
+- Additionally, YaST logs from installed system are stored under
+  the /var/log/YaST2/InstalledSystemLogs/ directory.
+- 2.13.147
+
+-------------------------------------------------------------------
+Wed Aug 23 16:44:18 CEST 2006 - jsrain@suse.cz
+
+- use version specific Xvnc parameters
+- 2.13.146
+
+-------------------------------------------------------------------
+Wed Aug 23 13:05:35 CEST 2006 - jsrain@suse.cz
+
+- temporary fix to copy /etc/X11/xorg.conf to the system during
+  installation (#201121)
+- 2.13.145
+
+-------------------------------------------------------------------
+Tue Aug 22 19:26:28 CEST 2006 - mvidner@suse.cz
+
+- test_proposal and test_inst_client: also call
+  Mode::SetMode ("installation");
+
+-------------------------------------------------------------------
+Tue Aug 22 14:27:53 CEST 2006 - locilka@suse.cz
+
+- New Installation Mode dialog (#156529)
+- 2.13.144
+
+-------------------------------------------------------------------
+Tue Aug 22 13:41:54 CEST 2006 - jsrain@suse.cz
+
+- weaken dependency on suseRegister (#183656)
+
+-------------------------------------------------------------------
+Fri Aug 18 09:49:41 CEST 2006 - jsrain@suse.cz
+
+- fixed building documentation
+- 2.13.143
+
+-------------------------------------------------------------------
+Thu Aug 10 11:18:24 CEST 2006 - jsrain@suse.cz
+
+- fixed congratulation text for openSUSE (#198252)
+- 2.13.142
+
+-------------------------------------------------------------------
+Wed Aug  9 15:30:57 CEST 2006 - jsrain@suse.cz
+
+- read info about products from package manager without parsing all
+  metadata and reading RPM database (#66046)
+- added unzip to Requires (#195911)
+
+-------------------------------------------------------------------
+Tue Aug  8 09:54:38 CEST 2006 - jsrain@suse.cz
+
+- fixed 'Requires'
+- 2.13.141
+
+-------------------------------------------------------------------
+Fri Aug  4 16:33:11 CEST 2006 - jsrain@suse.cz
+
+- updated for X.Org 7
+- 2.13.140
+
+-------------------------------------------------------------------
+Fri Aug  4 09:21:28 CEST 2006 - jsrain@suse.cz
+
+- moved SLP source scanning to SourceManager.ycp
+
+-------------------------------------------------------------------
+Wed Aug  2 14:10:41 CEST 2006 - mvidner@suse.cz
+
+- Added a configure-time check for fvwm directory
+
+-------------------------------------------------------------------
+Fri Jul 28 09:42:00 CEST 2006 - jsrain@suse.cz
+
+- offer to eject the CD drive when asking for add-on CD (#181992)
+
+-------------------------------------------------------------------
+Thu Jul 27 14:18:01 CEST 2006 - jsrain@suse.cz
+
+- added support for merging multiple proposal items as one proposal
+  item (eg. to group langage and keyboard)
+- 2.13.139
+
+-------------------------------------------------------------------
+Wed Jul 26 09:18:36 CEST 2006 - jsrain@suse.cz
+
+- get version from installed product proper way (#157924)
+
+-------------------------------------------------------------------
+Tue Jul 25 14:32:18 CEST 2006 - jsrain@suse.cz
+
+- beep before rebooting the machine during installation (#144614)
+
+-------------------------------------------------------------------
+Mon Jul 24 13:56:22 CEST 2006 - jsrain@suse.cz
+
+- fixed error reporting when creating a source (#159695)
+- abort installation if package manager initialization fails
+  (#167674)
+- report proper message if no catalog found via SLP and firewall
+  is running (#156444)
+
+-------------------------------------------------------------------
+Tue Jul 18 16:57:08 CEST 2006 - jsrain@suse.cz
+
+- fixed displaying catalog selection dialog if multiple catalogs
+  found on add-on media (#192761)
+
+-------------------------------------------------------------------
+Tue Jul 18 16:14:17 CEST 2006 - jsrain@suse.cz
+
+- fixed vendor URL in congratulate dialog (#187358)
+- 2.13.138
+
+-------------------------------------------------------------------
+Mon Jul 17 10:12:58 CEST 2006 - jsrain@suse.cz
+
+- check if there are any patches available before offering online
+  update (jsuchome)
+- merged inst_default_desktop.ycp to desktop_finish.ycp
+
+-------------------------------------------------------------------
+Sun Jul 16 08:54:55 CEST 2006 - olh@suse.de
+
+- introduce a Linuxrc::display_ip and use it instead of Arch::s390
+- 2.13.137
+
+-------------------------------------------------------------------
+Fri Jul 14 15:16:00 CEST 2006 - jsrain@suse.cz
+
+- adapted to changes in yast2-packager
+- use only one implementation of product license handling (#191523)
+- 2.13.136
+
+-------------------------------------------------------------------
+Fri Jul 14 14:51:37 CEST 2006 - olh@suse.de
+
+- move /tmp/vncserver.log to /var/log/YaST2/vncserver.log
+
+-------------------------------------------------------------------
+Mon Jul 10 10:47:57 CEST 2006 - jsrain@suse.cz
+
+- correctly import add-on product control file even if no
+  additional YaST modules are present on the media (#185768)
+- 2.13.135
+
+-------------------------------------------------------------------
+Mon Jul 10 09:23:29 CEST 2006 - mvidner@suse.cz
+
+- When running Novell Customer Center Configuration the second time,
+  do not add duplicate update sources for graphic card drivers
+  (#188572).
+- 2.13.134
+
+-------------------------------------------------------------------
+Fri Jun 30 11:42:11 CEST 2006 - ug@suse.de
+
+- during autoinstall, timeout early warning popups
+
+-------------------------------------------------------------------
+Tue Jun 27 14:02:45 CEST 2006 - mvidner@suse.cz
+
+- Don't show the URL passwords in registration success popup (#186978).
+- Include the password in URLs passed to ZMD (#186842).
+- Don't log the URL passwords.
+- 2.13.133
+
+-------------------------------------------------------------------
+Mon Jun 26 08:54:43 CEST 2006 - jsrain@suse.cz
+
+- preselect patterns according to selected desktop (#183944)
+
+-------------------------------------------------------------------
 Wed Jun 21 11:03:58 CEST 2006 - jsrain@suse.cz
 
 - display the source URL dialog if adding add-on product update

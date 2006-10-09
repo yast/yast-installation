@@ -6,8 +6,9 @@
 # COPYRIGHT     : (c) 2004 SUSE Linux AG, Germany. All rights reserved
 #               :
 # AUTHORS       : Steffen Winterfeldt <snwint@suse.de>
-#               . Arvin Schnell <arvin@suse.de>
+#               : Arvin Schnell <arvin@suse.de>
 #               : Marcus Schaefer <ms@suse.de>
+#               : Lukas Ocilka <locilka@suse.cz>
 #               :
 # BELONGS TO    : System installation and Administration
 #               :
@@ -25,6 +26,9 @@
 #----------------
 #
 #set -x
+
+. /etc/YaST2/XVersion
+
 #=============================================
 # Functions...
 #---------------------------------------------
@@ -94,11 +98,93 @@ function get_bus_id () {
 	done
 }
 
+#----[ count_qt_geometry ]----#
+function count_qt_geometry () {
+    # current X-resolution, display 0
+    XRES=$(/usr/sbin/xquery -d :0 -r)
+
+    log "\t===Qt Geometry==="
+    log "\tResolution: ${XRES}"
+
+    # failed to get display info
+    if [ "$?" != "0" ]; then
+	X_GEOMETRY=""
+	return
+    fi
+
+    # current X and Y resolution
+    XRES_X=$(echo $XRES | sed '
+	s|[0123456789]\+ \([0123456789]\+\)x[0123456789]\+|\1|
+	s|[^0123456789]||g')
+    XRES_Y=$(echo $XRES | sed '
+	s|[0123456789]\+ [0123456789]\+x\([0123456789]\+\)|\1|
+	s|[^0123456789]||g')
+
+    log "\tX: ${XRES_X}"
+    log "\tY: ${XRES_Y}"
+
+    # default values
+    OFFSET_X=0
+    OFFSET_Y=0
+    BACKGROUND_IMAGE=""
+
+    # wrong X and/or Y resolution
+    if [ "${XRES_X}" == "" ] || [ "${XRES_Y}" == "" ]; then
+	X_GEOMETRY=""
+	log "\tError: Cannot get X and/or Y from given resolution"
+	return
+    # reasonable sizes
+    else
+	# must be bigger or equal to 1400x1050
+	if [ "$(expr $XRES_X \>= 1400)" == "1" ] && [ "$(expr $XRES_Y \>= 1050)" == "1" ]; then
+	    WINDOW_SIZE_X=1024
+	    WINDOW_SIZE_Y=786
+	# exception for PPC: 832x624, see bugzilla #207321
+	elif [ "${XRES_X}" == "832" ] && [ "${XRES_Y}" == "624" ]; then
+	    WINDOW_SIZE_X=${XRES_X}
+	    WINDOW_SIZE_Y=${XRES_Y}
+	# must be bigger or equal to 800x600
+	elif [ "$(expr $XRES_X \>= 800)" == "1" ] && [ "$(expr $XRES_Y \>= 600)" == "1" ]; then
+	    WINDOW_SIZE_X=800
+	    WINDOW_SIZE_Y=600
+	# or fullscreen
+	else
+	    WINDOW_SIZE_X=${XRES_X}
+	    WINDOW_SIZE_Y=${XRES_Y}
+	fi
+
+	# Conversion from jpg to png is done later
+	BACKGROUND_IMAGE="/usr/lib/YaST2/startup/InstallImages/${XRES_X}x${XRES_Y}.jpg"
+
+	# X and Y offsets
+	OFFSET_X=$(expr ${XRES_X} - ${WINDOW_SIZE_X})
+	OFFSET_X=$(expr ${OFFSET_X} / 2)
+	OFFSET_Y=$(expr ${XRES_Y} - ${WINDOW_SIZE_Y})
+	OFFSET_Y=$(expr ${OFFSET_Y} / 2)
+    fi
+
+    log "\tWindow size X: ${WINDOW_SIZE_X}"
+    log "\tWindow size Y: ${WINDOW_SIZE_Y}"
+    log "\tOffset X: ${OFFSET_X}"
+    log "\tOffset Y: ${OFFSET_Y}"
+
+    if [ "${OFFSET_X}" == "0" ] || [ "${OFFSET_Y}" == "0" ] || [ "${OFFSET_X}" == "" ] || [ "${OFFSET_Y}" == "" ]; then
+	# will run in fullscreen mode
+	X_GEOMETRY=""
+    else
+	# final window geometry, 'Window_XxWindow_Y+Offset_X+Offset_Y'
+	X_GEOMETRY="${WINDOW_SIZE_X}x${WINDOW_SIZE_Y}+${OFFSET_X}+${OFFSET_Y}"
+    fi
+
+    log "\tUsed geometry: ${X_GEOMETRY}"
+}
+
 #----[ prepare_for_qt ]----#
 function prepare_for_qt () {
 #------------------------------------------------------
 # prepare Qt installation 
 # ---
+	local fbdevname
 	#=============================================
 	# Setup Qt environment
 	#---------------------------------------------
@@ -141,6 +227,20 @@ function prepare_for_qt () {
 			> /etc/X11/xorg.conf.new
 			mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
 		fi
+		# check DefaultColorDepth setup
+		# /.../
+		# The DefaultColorDepth 16 will not work if the card does not
+		# have enough video ram, or if 15bit has to be used
+		# Let the X11 fbdev driver use whatever the kernel driver uses
+		# ----
+		if [ -f /sys/class/graphics/fb0/name ];then
+			read fbdevname < /sys/class/graphics/fb0/name
+			case "$fbdevname" in
+				platinum|control|valkyrie|OFfb)
+				sed -i -e "/DefaultColorDepth/d" /etc/X11/xorg.conf
+				;;
+			esac
+		fi
 	fi
 	fi
 	#=============================================
@@ -148,8 +248,8 @@ function prepare_for_qt () {
 	#---------------------------------------------
 	if [ ! -z "$NEED_XSERVER" ];then
 		export DISPLAY=:0
-		ln -snf /usr/X11R6/bin/XFree86 /var/X11R6/bin/X
-		X -deferglyphs 16 2>/dev/tty8 1>&2 vt07 &
+		[ -z $Xstartpath ] || ln -snf $Xbindir/XFree86 /var/X11R6/bin/X
+		$Xexecutable -deferglyphs 16 2>/dev/tty8 1>&2 vt07 &
 		xserver_pid=$!
 		wait_for_x11
 		if [ "$server_running" = 1 ];then
@@ -160,7 +260,16 @@ function prepare_for_qt () {
 	# set YaST2 Qt options for local displays
 	#---------------------------------------------
 	if [ ! -z "$NEED_XSERVER" ];then
-		Y2_UI_ARGS="--fullscreen --noborder --auto-fonts"
+		Y2_UI_ARGS="--noborder --auto-fonts"
+##* Bugzilla #208307 Use only the fullscreen mode
+##*		count_qt_geometry # currently not used
+##*		if [ "${X_GEOMETRY}" == "" ]; then
+		    log "\tUI_args: Running in fullscreen mode"
+		    Y2_UI_ARGS="${Y2_UI_ARGS} --fullscreen"
+##*		else
+##*		    log "\tUI_args: Running in window"
+##*		    Y2_UI_ARGS="${Y2_UI_ARGS} -geometry ${X_GEOMETRY}"
+##*		fi
 	fi
 }
 
@@ -212,7 +321,9 @@ function prepare_for_vnc () {
 	#=============================================
 	# Setup y2base options
 	#---------------------------------------------
-	Y2_UI_ARGS="--fullscreen --noborder --auto-fonts"
+	# xxx
+	#Y2_UI_ARGS="--fullscreen --noborder --auto-fonts"
+	Y2_UI_ARGS="--noborder --auto-fonts"
 
 	#=============================================
 	# Setup VNC server and start it
@@ -302,6 +413,38 @@ function check_vnc () {
 	fi
 }
 
+#----[ set background image for yast ]----#
+function set_yast_background () {
+	# set up a background if any needed
+	if [ "${BACKGROUND_IMAGE}" != "" ]; then
+	    TMPDIR="/tmp/installimg"
+
+	    # selected image doesn't exist, usign fallback
+	    if ! [ -e "${BACKGROUND_IMAGE}" ]; then
+		BACKGROUND_IMAGE="/usr/lib/YaST2/startup/InstallImages/fallback.png"
+		log "\tNot a supported resolution, using fallback image"
+	    # convert stored JPG to PNG
+	    else
+		log "\tUsing background: ${BACKGROUND_IMAGE}"
+		mkdir -p ${TMPDIR}
+		# convert JPG to PNM
+		jpegtopnm ${BACKGROUND_IMAGE} > ${TMPDIR}/img.pnm 2>${TMPDIR}/jpegtopnm.log
+		# convert PNM to PNG
+		pnmtopng ${TMPDIR}/img.pnm > ${TMPDIR}/img.png 2>${TMPDIR}/pnmtopng.log
+		# remove PNM
+		rm -rf ${TMPDIR}/img.pnm
+		# set the BACKGROUND_IMAGE to the converted one
+		BACKGROUND_IMAGE=${TMPDIR}/img.png
+	    fi
+
+	    # set the background
+	    fvwm-root --dither ${BACKGROUND_IMAGE}
+
+	    # remove PNG silently if exists
+	    rm -rf ${TMPDIR}/img.png
+	fi
+}
+
 #----[ start_yast ]----#
 function start_yast () {
 #------------------------------------------------------
@@ -318,6 +461,15 @@ function start_yast () {
 	fi
 	export QT_IM_MODULE=xim
 
+	if [ "$RUN_FBITERM" = "1" ]; then
+	    OPT_FBITERM=/usr/bin/fbiterm
+	else
+	    OPT_FBITERM=
+	fi
+
+##*	# bugzilla #208307
+##*	set_yast_background # currently not used
+
 	log "\tStarting YaST2:"
 	log "\tMODULE_NAME: $Y2_MODULE_NAME"
 	log "\tMODE_FLAGS:  $Y2_MODE_FLAGS"
@@ -325,12 +477,6 @@ function start_yast () {
 	log "\tMODE:        $Y2_MODE"
 	log "\tUI_ARGS:     $Y2_UI_ARGS"
 	log "\tQT_IM_MODULE:$QT_IM_MODULE"
-
-	if [ "$RUN_FBITERM" = "1" ]; then
-	    OPT_FBITERM=/usr/bin/fbiterm
-	else
-	    OPT_FBITERM=
-	fi
 	$OPT_FBITERM y2base \
 			"$Y2_MODULE_NAME"   \
 			$Y2_MODE_FLAGS      \
@@ -422,13 +568,14 @@ set_syslog ; set_proxy
 # 2) Initialize...
 #---------------------------------------------
 # 2.1) setup PATH
-PATH=/var/X11R6/bin:$ybindir:$PATH
+PATH=$ybindir:$PATH
+[ -z Xstartpath ] || PATH=/var/X11R6/bin:$PATH
 #=============================================
 # 2.2) get X11 driver directory
 #---------------------------------------------
-X11_DRIVER_DIR=/usr/X11R6/lib/modules/drivers
-if [ -d /usr/X11R6/lib64/modules/drivers ];then
-	X11_DRIVER_DIR=/usr/X11R6/lib64/modules/drivers
+X11_DRIVER_DIR=$Xdriverpath
+if [ -d $Xdriver64path ];then
+	X11_DRIVER_DIR=$Xdriver64path
 fi
 #=============================================
 # 2.3) obtain RAM size in Kb
@@ -526,15 +673,15 @@ if [ -z "$DISPLAY" ];then
 fi
 # 3.1.5) Check for xorg.conf...
 if [ ! -f /etc/X11/xorg.conf ];then
-if [ ! -f /usr/X11R6/lib/X11/xorg.conf ];then
+if [ ! -f $Xorgconftempl ];then
 	log "\tNo X11 configuration template found -> Medium Qt disabled"
 	MEDIUM[0]=0
 else
-	cp /usr/X11R6/lib/X11/xorg.conf /etc/X11/xorg.conf
+	cp $Xorgconftempl /etc/X11/xorg.conf
 fi
 fi 
 # 3.1.6) Check for WindowManager configuration
-if [ ! -f /usr/X11R6/share/fvwm/fvwmrc.yast2 ];then
+if [ ! -f $Xsharedir/fvwm/fvwmrc.yast2 ];then
 	log "\tNo Windowmanager configuration found -> Medium Qt disabled"
 	MEDIUM[0]=0
 fi
@@ -562,12 +709,12 @@ fi
 # 3.3) prequalification checks for VNC
 #---------------------------------------------
 # 3.3.1) Check for WindowManager configuration
-if [ ! -f /usr/X11R6/share/fvwm/fvwmrc.yast2 ];then
+if [ ! -f $Xsharedir/fvwm/fvwmrc.yast2 ];then
 	log "\tNo Windowmanager configuration found -> Medium VNC disabled"
 	MEDIUM[2]=0
 fi
 # 3.3.2) Check for VNC X-Server binary
-if [ ! -x /usr/X11R6/bin/Xvnc ] ; then
+if [ ! -x $Xbindir/Xvnc ] ; then
 	log "\tNo Xvnc server installed -> Medium VNC disabled"
 	MEDIUM[2]=0
 fi
@@ -691,3 +838,5 @@ fi
 # 10) exit with YaST2 exit code
 #---------------------------------------------
 exit $Y2_EXIT_CODE
+
+

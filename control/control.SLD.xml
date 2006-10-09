@@ -596,13 +596,13 @@ Please visit us at http://www.novell.com/linux/.
 		    <label>Configuration</label>
 		</module>
                 <module>
-	            <label>Hostname</label>
-                    <name>hostname</name>
-                    <enable_back>no</enable_back>
-                </module>
-                <module>
 	            <label>Root Password</label>
                     <name>root</name>
+		    <enable_back>no</enable_back>
+                </module>
+                <module>
+	            <label>Hostname</label>
+                    <name>hostname</name>
                 </module>
                 <module>
 	            <label>Network</label>
@@ -640,6 +640,10 @@ Please visit us at http://www.novell.com/linux/.
                 <module>
 	            <label>Online Update</label>
                     <name>you</name>
+                </module>
+                <module>
+                    <label>Online Update</label>
+                    <name>extrasources</name>
                 </module>
 		<module>
 		    <label>Online Update</label>

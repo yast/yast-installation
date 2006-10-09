@@ -15,7 +15,9 @@
 #               :
 # STATUS        : $Id$
 #----------------
-#
+
+. /etc/YaST2/XVersion
+
 #----[ setupVNCAuthentication ]------#
 function setupVNCAuthentication () {
 #---------------------------------------------------
@@ -23,7 +25,7 @@ function setupVNCAuthentication () {
 # password file.
 #
 	VNCPASS_EXCEPTION=0
-	VNCPASS=/usr/X11R6/bin/vncpasswd.arg
+	VNCPASS=$Xbindir/vncpasswd.arg
 	if [ ! -e /root/.vnc/passwd ]; then
 		rm -rf /root/.vnc && mkdir -p /root/.vnc
 		$VNCPASS /root/.vnc/passwd "$VNCPassword"
@@ -53,7 +55,7 @@ function startVNCServer () {
 
 	echo
 	echo starting VNC server...
-	echo A log file will be written to: /tmp/vncserver.log ...
+	echo A log file will be written to: /var/log/YaST2/vncserver.log ...
 	cat <<-EOF
 	
 	***
@@ -73,7 +75,7 @@ function startVNCServer () {
 	#==========================================
 	# Start Xvnc...
 	#------------------------------------------
-	/usr/X11R6/bin/Xvnc :0 \
+	$Xbindir/Xvnc $Xvncparam :0 \
 		-rfbauth /root/.vnc/passwd \
 		-desktop Installation \
 		-geometry 800x600 \
@@ -82,8 +84,8 @@ function startVNCServer () {
 		-httpd /usr/share/vnc/classes \
 		-rfbport 5901 \
 		-httpport 5801 \
-		-fp /usr/X11R6/lib/X11/fonts/misc/,/usr/X11R6/lib/X11/fonts/uni/,/usr/X11R6/lib/X11/fonts/truetype/ \
-	&> /tmp/vncserver.log &
+		-fp $Xfontdir/misc/,$Xfontdir/uni/,$Xfontdir/truetype/ \
+	&> /var/log/YaST2/vncserver.log &
 	xserver_pid=$!
 	export DISPLAY=:0
 	export XCURSOR_CORE=1

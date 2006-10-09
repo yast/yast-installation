@@ -72,7 +72,9 @@
 
 global list<map<string,any> > FindBaseProducts() {
     y2milestone ("Looking for base products");
-    list<map<string,any> > products = Pkg::ResolvableProperties ("", `product, "");
+    list<map<string,any> > products = (list<map<string,any> >)
+	Pkg::TargetProducts ();
+y2internal ("Prods: %1", products);
     products = filter (map<string,any> p, products, {
 	// bug 165314, relnotes_url needn't be defined (or empty string)
 	if (p["relnotes_url"]:"" != "") {
@@ -81,8 +83,7 @@ global list<map<string,any> > FindBaseProducts() {
 	    // bug 180581, relnotes should be identified by name
 	    product_of_relnotes[rn_url] = p["display_name"]:"";
 	}
-	return p["category"]:"" == "base"
-	    && (p["status"]:nil == `selected || p["status"]:nil == `installed);
+	return p["category"]:"" == "base";
     });
     y2milestone ("Found base products: %1", products);
     if (size (products) == 0)
@@ -134,7 +135,7 @@ global list<map<string,any> > FindBaseProducts() {
 	}
 	else if (!Mode::config ())
 	{
-	    Pkg::TargetInit ("/", false);
+	    Pkg::TargetInitialize ("/");
 //	    list all_products = Pkg::TargetProducts();		// get all products
 
 //	    map last_product = all_products[0]:$[];		// get last installed product
@@ -169,6 +170,8 @@ global list<map<string,any> > FindBaseProducts() {
 
 	// set the product name for UI
         import "Wizard";
+
+y2internal ("Name: %1", name);
 
         Wizard::SetProductName(name);
     }
