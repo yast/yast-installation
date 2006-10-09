@@ -27,8 +27,10 @@ Requires:	unzip
 Requires:	tar gzip
 
 # for the first/second stage of installation
-Requires:	/usr/bin/jpegtopnm
-Requires:	/usr/bin/pnmtopng
+# currently not used
+# bugzilla #208307
+#Requires:	/usr/bin/jpegtopnm
+#Requires:	/usr/bin/pnmtopng
 
 Recommends:	yast2-registration
 

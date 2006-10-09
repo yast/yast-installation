@@ -20,18 +20,12 @@
     textdomain "installation";
 
     import "Arch";
-    import "Mode";
-    import "Linuxrc";
     import "Installation";
 
     import "Hotplug";
-    import "Mouse";
-    import "ModuleLoading";
-    import "Storage";
     import "StorageControllers";
     import "StorageDevices";
     import "Kernel";		// call constructor, extract cmdline
-    import "Wizard";
     import "Report";
 
     y2milestone("inst_startup START");

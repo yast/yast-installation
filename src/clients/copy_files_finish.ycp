@@ -21,6 +21,7 @@ import "Linuxrc";
 import "Installation";
 import "Directory";
 import "ProductControl";
+import "FileUtils";
 
 any ret = nil;
 string func = "";
@@ -84,11 +85,17 @@ else if (func == "Write")
 	    Installation::destdir + Directory::etcdir + "/control_files/order.ycp");
     }
 
-    // Copy info.txt so it can be used in firstboot
-    if (SCR::Read(.target.size, "/info.txt") > 0)
+    // Remove old eula.txt
+    // bugzilla #208908
+    string eula_txt = sformat ("%1%2/eula.txt", Installation::destdir, Directory::etcdir);
+    if (FileUtils::Exists (eula_txt)) {
+	SCR::Execute (.target.remove, eula_txt);
+    }
+
+    // Copy info.txt so it can be used in firstboot (new eula.txt)
+    if (FileUtils::Exists ("/info.txt"))
     {
-	SCR::Execute (.target.bash, "/bin/cp /info.txt " +
-	    Installation::destdir + Directory::etcdir + "/eula.txt");
+	SCR::Execute (.target.bash, sformat("/bin/cp /info.txt %1", eula_txt));
     }
 }
 else

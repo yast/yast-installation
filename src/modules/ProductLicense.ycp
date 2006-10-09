@@ -20,6 +20,7 @@ import "Report";
 import "Stage";
 import "Wizard";
 import "Mode";
+import "FileUtils";
 
 textdomain "installation";
 
@@ -217,7 +218,7 @@ global symbol AskLicenseAgreement (integer src_id, string dir,
 	{
 	    license_dir = dir;
 	}
-	if ((integer) SCR::Read (.target.size, "/info.txt") > 0)
+	if (FileUtils::Exists ("/info.txt"))
 	    info_file = "/info.txt";
     }
     else

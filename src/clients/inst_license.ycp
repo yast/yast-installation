@@ -12,15 +12,9 @@
 
 textdomain "installation";
 
-import "CustomDialogs";
 import "Directory";
 import "GetInstArgs";
-import "Installation";
-import "Language";
-import "Popup";
 import "Stage";
-import "Wizard";
-import "InstShowInfo";
 import "ProductLicense";
 
 map display = UI::GetDisplayInfo();
@@ -64,6 +58,8 @@ else if (ask_ret == `halt)
     SCR::Execute(.target.bash, "/sbin/halt");
 }
 else if (ask_ret == `next)
+    return `next;
+else if (ask_ret == `accepted)
     return `next;
 else
 {

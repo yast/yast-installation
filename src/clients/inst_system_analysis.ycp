@@ -129,6 +129,8 @@ select <b>Boot Installed System</b> if you have a Linux system on your hard
 disk that will not boot. With this option, try to fix problems manually.
 </p>");
 
+symbol current_expert_mode = `repair;
+
 // see bugzilla #156529
 term InstModeDialogContent (symbol pre_selected) {
     term other_options_layout_fix = `Empty();
@@ -143,10 +145,10 @@ term InstModeDialogContent (symbol pre_selected) {
 		`VBox (
 		    `Left (`RadioButton (`id (`repair), `opt (`notify),
 			// radio button
-			_("Re&pair Installed System"), true)),
+			_("Re&pair Installed System"), (current_expert_mode == `repair))),
 		    `Left (`RadioButton (`id (`boot), `opt (`notify),
 			// radio button
-			_("Boot Installed &System")))
+			_("Boot Installed &System"), (current_expert_mode == `boot)))
 		)
 	    )
 	);
@@ -270,7 +272,6 @@ if (other_options_disabled) {
 boolean add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
 // Probably buggy UI, in case of two radio button groups, the second one
 // doesn't work (RadioButtonGroup (`id (`expert_options)))
-symbol current_expert_mode = `boot;
 repeat {
     ret = (symbol) UI::UserInput();
     y2milestone("ret: %1", ret);
