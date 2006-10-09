@@ -19,16 +19,13 @@
 {
     textdomain "installation";
 
-    import "Arch";
     import "Label";
     import "Mode";
     import "Stage";
-    import "Installation";
     import "AutoinstConfig";
     import "Wizard";
     import "HTML";
     import "Popup";
-    import "ProductControl";
     import "Language";
     import "GetInstArgs";
 

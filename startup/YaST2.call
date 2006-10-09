@@ -261,14 +261,15 @@ function prepare_for_qt () {
 	#---------------------------------------------
 	if [ ! -z "$NEED_XSERVER" ];then
 		Y2_UI_ARGS="--noborder --auto-fonts"
-		count_qt_geometry
-		if [ "${X_GEOMETRY}" == "" ]; then
+##* Bugzilla #208307 Use only the fullscreen mode
+##*		count_qt_geometry # currently not used
+##*		if [ "${X_GEOMETRY}" == "" ]; then
 		    log "\tUI_args: Running in fullscreen mode"
 		    Y2_UI_ARGS="${Y2_UI_ARGS} --fullscreen"
-		else
-		    log "\tUI_args: Running in window"
-		    Y2_UI_ARGS="${Y2_UI_ARGS} -geometry ${X_GEOMETRY}"
-		fi
+##*		else
+##*		    log "\tUI_args: Running in window"
+##*		    Y2_UI_ARGS="${Y2_UI_ARGS} -geometry ${X_GEOMETRY}"
+##*		fi
 	fi
 }
 
@@ -412,28 +413,8 @@ function check_vnc () {
 	fi
 }
 
-#----[ start_yast ]----#
-function start_yast () {
-#------------------------------------------------------
-# Start YaST2 refering to the contents of the Y2_*
-# startup variables
-# ---
-	local overcommit
-	read  overcommit < /proc/sys/vm/overcommit_memory
-	echo "*** Starting YaST2 ***"
-	log "\tAllow big memory allocation: overcommit_memory=1"
-	echo 1 > /proc/sys/vm/overcommit_memory
-	if [ "$SPLASH" = yes -a -x /sbin/splash -a -n "$SPLASHCFG" ];then
-		/sbin/splash -t "YaST running"
-	fi
-	export QT_IM_MODULE=xim
-
-	if [ "$RUN_FBITERM" = "1" ]; then
-	    OPT_FBITERM=/usr/bin/fbiterm
-	else
-	    OPT_FBITERM=
-	fi
-
+#----[ set background image for yast ]----#
+function set_yast_background () {
 	# set up a background if any needed
 	if [ "${BACKGROUND_IMAGE}" != "" ]; then
 	    TMPDIR="/tmp/installimg"
@@ -462,6 +443,32 @@ function start_yast () {
 	    # remove PNG silently if exists
 	    rm -rf ${TMPDIR}/img.png
 	fi
+}
+
+#----[ start_yast ]----#
+function start_yast () {
+#------------------------------------------------------
+# Start YaST2 refering to the contents of the Y2_*
+# startup variables
+# ---
+	local overcommit
+	read  overcommit < /proc/sys/vm/overcommit_memory
+	echo "*** Starting YaST2 ***"
+	log "\tAllow big memory allocation: overcommit_memory=1"
+	echo 1 > /proc/sys/vm/overcommit_memory
+	if [ "$SPLASH" = yes -a -x /sbin/splash -a -n "$SPLASHCFG" ];then
+		/sbin/splash -t "YaST running"
+	fi
+	export QT_IM_MODULE=xim
+
+	if [ "$RUN_FBITERM" = "1" ]; then
+	    OPT_FBITERM=/usr/bin/fbiterm
+	else
+	    OPT_FBITERM=
+	fi
+
+##*	# bugzilla #208307
+##*	set_yast_background # currently not used
 
 	log "\tStarting YaST2:"
 	log "\tMODULE_NAME: $Y2_MODULE_NAME"

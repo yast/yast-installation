@@ -12,4 +12,7 @@ ystartupbin_SCRIPTS = 	\
 	requires
 
 EXTRA_DIST = $(ystartupbin_SCRIPTS)
-SUBDIRS = First-Stage Second-Stage arch common hooks InstallImages
+# bugzilla #208307
+# InstallImages currently not used
+# SUBDIRS = First-Stage Second-Stage arch common hooks InstallImages
+SUBDIRS = First-Stage Second-Stage arch common hooks

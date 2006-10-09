@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Mon Oct  9 09:33:31 CEST 2006 - locilka@suse.cz
+
+- Remove old eula.txt and then copy new one if exists (#208908).
+- Using the fullscreen mode again, background images temporarily
+  removed from the RPM build (#208307).
+- The default "Other Option" is Repair, not Boot (#208841).
+- Removed some unneeded imports from inst_clients.
+- 2.13.159
+
+-------------------------------------------------------------------
 Mon Oct  2 16:44:25 CEST 2006 - locilka@suse.cz
 
 - Merged proofread texts
