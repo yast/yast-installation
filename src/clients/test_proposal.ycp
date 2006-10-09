@@ -13,6 +13,7 @@ import "Stage";
 import "Wizard";
 
 Stage::Set ("continue");
+Mode::SetMode ("installation");
 // Linuxrc::manual () = true;
 
 Wizard::CreateDialog ();

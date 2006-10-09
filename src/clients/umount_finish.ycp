@@ -112,8 +112,10 @@ else if (func == "Write")
         WFM::Execute(.local.umount, tmp);
     }
 
-    // disable loop device of crypto fs
+    // must call .local.bash_output !
     integer max_loop_dev = Storage::NumLoopDevices();
+
+    // disable loop device of crypto fs
     boolean unload_crypto = false;
 
     while (max_loop_dev > 0)

@@ -74,7 +74,7 @@
     // caption for dialog "Congratulation Dialog"
     string caption = _("Installation Completed");
 
-    string text = ProductControl::texts["congratulate"]:"";
+    string text = ProductControl::GetTranslatedText ("congratulate");
 
     if (text == "") {
 	// congratulation text 1/4
@@ -93,8 +93,7 @@ After clicking <b>Finish</b>, you can log in to the system.</p>
     }
     else
     {
-	string text_domain = ProductControl::productControl["textdomain"]:"control";
-	text = dgettext (text_domain, text);
+	text = sformat (text, vendor_url);
     }
 
 
