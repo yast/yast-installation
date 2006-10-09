@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Oct  9 16:52:14 CEST 2006 - locilka@suse.cz
+
+- Merged SLES10 SP1 branch to openSUSE 10.2.
+- 2.14.0
+
+-------------------------------------------------------------------
 Mon Oct  9 09:33:31 CEST 2006 - locilka@suse.cz
 
 - Remove old eula.txt and then copy new one if exists (#208908).
