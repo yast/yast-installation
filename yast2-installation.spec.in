@@ -2,15 +2,38 @@
 
 
 @HEADER@
-BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2 yast2-devtools yast2-testsuite yast2-country
-Requires:	yast2 yast2-update
-Requires:	yast2-storage yast2-mouse yast2-country yast2-bootloader
-# SignatureCheckDialogs::CheckSignaturesInYaST
-Requires:	yast2-packager >= 2.13.135
+BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2 yast2-core-devel yast2-devtools yast2-testsuite yast2-country
+
+Requires:	yast2-slp yast2-firewall
+Requires:	yast2-update
+Requires:	yast2-storage yast2-mouse yast2-bootloader
+
+# YCP modules were moved back to the yast2-packager (see log for yast2-installation-2.13.155)
+Requires:	yast2-packager >= 2.13.152
+# Pkg::ResolvableCountPatches
+Requires:	yast2-pkg-bindings >= 2.13.92
+# Linuxrc::display_ip
+Requires:	yast2 >= 2.13.67
+# Languages:GetLanguagesMap, bugzilla #204791
+Requires:	yast2-country >= 2.13.35
+
 Requires:	yast2-network yast2-users
 Requires:	curl release-notes
-Requires:	suseRegister
+
 Requires:       autoyast2-installation yast2-online-update
+# unzipping license file
+Requires:	unzip
+# tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
+Requires:	tar gzip
+
+# for the first/second stage of installation
+# currently not used
+# bugzilla #208307
+#Requires:	/usr/bin/jpegtopnm
+#Requires:	/usr/bin/pnmtopng
+
+Recommends:	yast2-registration
+
 PreReq:		%fillup_prereq
 
 Provides:	yast
@@ -35,17 +58,10 @@ This controls the system installation.
 @BUILD@
 
 @INSTALL@
-%if %sles_version
-    rm $RPM_BUILD_ROOT/%{prefix}/share/applications/YaST2/suse_register.desktop
-%else
-    rm $RPM_BUILD_ROOT/%{prefix}/share/applications/YaST2/customer_center.desktop
-%endif
 
 @CLEAN@
 
 %pre
-/usr/sbin/groupadd -r suse-ncc 2> /dev/null || :
-/usr/sbin/useradd -r -s /bin/bash -c "Novell Customer Center User" -d /var/lib/YaST2/suse-ncc-fakehome -g suse-ncc suse-ncc 2> /dev/null || :
 
 %post
 %{fillup_only -ns security checksig}
@@ -63,7 +79,6 @@ This controls the system installation.
 @desktopdir@/*.desktop
 %dir @yncludedir@/installation
 @yncludedir@/installation/*
-/usr/share/YaST2/yastbrowser
 
 # agents
 @scrconfdir@/etc_passwd.scr
@@ -76,7 +91,6 @@ This controls the system installation.
 @scrconfdir@/run_get_suseconfig_modules.scr
 @scrconfdir@/proc_modules.scr
 @scrconfdir@/run_df.scr
-@scrconfdir@/cfg_suse_register.scr
 # fillup
 @fillupdir@/sysconfig.security-checksig
 
@@ -84,4 +98,8 @@ This controls the system installation.
 @ystartupdir@/startup
 
 # fvwmrc
-/usr/X11R6/share/fvwm/
+%if 0%{?suse_version} <= 1010
+%{prefix}/X11R6/share/fvwm/
+%else
+%{prefix}/share/fvwm/
+%endif
