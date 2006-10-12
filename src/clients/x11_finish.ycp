@@ -19,6 +19,7 @@ textdomain "installation";
 import "X11Version";
 import "Mode";
 import "Installation";
+import "String";
 
 include "installation/misc.ycp";
 
@@ -79,8 +80,8 @@ else if (func == "Write")
 			      "echo -e '\n#3x' >> " + filename
 			      );
 		SCR::Execute (.target.bash,"/bin/ln -sf " +
-			      Installation::destdir + "/usr/X11R6/bin/XFree86 " +
-			      Installation::destdir + "/var/X11R6/bin/X"
+			      "'" + String::Quote (Installation::destdir) + "/usr/X11R6/bin/XFree86' " +
+			      "'" + String::Quote (Installation::destdir) + "/var/X11R6/bin/X'"
 			      );
 		y2milestone ("Update: Include X11 config [3.x] to installed system");
 		y2milestone ("Update: X11 config [3.x] prepared for migration to [4.x]");
@@ -98,7 +99,7 @@ else if (func == "Write")
 	    y2milestone ("Include X11 config [instsys] to installed system: xorg.conf");
 	    string filename = "/etc/X11/xorg.conf";
 	    WFM::Execute (.local.bash, "/bin/cp " + filename + " " +
-			  Installation::destdir + "/etc/X11/xorg.conf"
+			  "'" + String::Quote (Installation::destdir) + "/etc/X11/xorg.conf'"
 			  );
 	}
     }
@@ -112,7 +113,7 @@ else if (func == "Write")
 	y2milestone ("Include X11 config [instsys] to installed system: xorg.conf.install");
 	string filename = "/etc/X11/xorg.conf";
 	WFM::Execute (.local.bash, "/bin/cp " + filename + " " +
-		      Installation::destdir + "/etc/X11/xorg.conf" + ".install"
+		      "'" + String::Quote (Installation::destdir) + "/etc/X11/xorg.conf" + ".install'"
 		      );
     }
 }
