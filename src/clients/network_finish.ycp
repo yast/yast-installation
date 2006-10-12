@@ -20,6 +20,7 @@ import "Installation";
 import "ModulesConf";
 import "Arch";
 import "Linuxrc";
+import "String";
 
 any ret = nil;
 string func = "";
@@ -51,15 +52,15 @@ else if (func == "Write")
     {
 	y2milestone("Creating network interface");
 	WFM::Execute (.local.bash,
-	    "/sbin/create_interface " + Installation::destdir);
+	    "/sbin/create_interface '" + String::Quote (Installation::destdir) + "'");
 	ModulesConf::RunDepmod (false);
     }
     // --------------------------------------------------------------
     // Copy DHCP client cache so that we can request the same IP (#43974).
     WFM::Execute (.local.bash, sformat (
-	"mkdir -p %2%1; /bin/cp -p %1/dhcpcd-*.cache %2%1",
+	"mkdir -p '%2%1'; /bin/cp -p %1/dhcpcd-*.cache '%2%1'",
 	"/var/lib/dhcpcd",
-	Installation::destdir));
+	String::Quote (Installation::destdir)));
 }
 else
 {

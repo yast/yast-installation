@@ -19,6 +19,7 @@
 
     import "Installation";
     import "Directory";
+    import "String";
 
     // --------------------------------------------------------------
     // driver update ?!
@@ -39,10 +40,12 @@
 	SCR::Execute(.target.bash, "/bin/rm -rf /tmp/update");
 
 	// copy log file
-	WFM::Execute(.local.bash, "l=/var/log/driverupdate.log ; [ -f $l ] && /bin/cat $l >>" + Installation::destdir + "$l");
+	WFM::Execute(.local.bash, "l=/var/log/driverupdate.log ; [ -f $l ] && /bin/cat $l " +
+	    ">> '" + String::Quote (Installation::destdir) + "$l'");
 
 	// copy all update files
-	WFM::Execute(.local.bash, "/bin/cp -a /update " + Installation::destdir + "/tmp/update");
+	WFM::Execute(.local.bash, "/bin/cp -a /update " +
+	    "'" + String::Quote (Installation::destdir) + "/tmp/update'");
 
 	// unpack update files and run update.post scripts
 	SCR::Execute(.target.bash,

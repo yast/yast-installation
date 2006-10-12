@@ -22,6 +22,7 @@ import "Installation";
 import "Directory";
 import "ProductControl";
 import "FileUtils";
+import "String";
 
 any ret = nil;
 string func = "";
@@ -50,12 +51,14 @@ if (func == "Info")
 else if (func == "Write")
 {
     // copy hardware status to installed system
-    SCR::Execute (.target.bash,"/bin/cp -a /var/lib/hardware " + Installation::destdir + "/var/lib");
+    SCR::Execute (.target.bash,"/bin/cp -a '/var/lib/hardware' " +
+	"'" + String::Quote (Installation::destdir) + "/var/lib'");
 
     // if VNC, copy setup data
     if (Linuxrc::vnc ())
     {
-	WFM::Execute (.local.bash, "/bin/cp -a /root/.vnc " + Installation::destdir + "/root");
+	WFM::Execute (.local.bash, "/bin/cp -a '/root/.vnc' " +
+	    "'" + String::Quote (Installation::destdir) + "/root'");
     }
 
 
@@ -66,23 +69,24 @@ else if (func == "Write")
 
     // Copy control.xml so it can be read once again during continue mode
     SCR::Execute (.target.bash, "/bin/cp " + ProductControl::current_control_file  + " " +
-	Installation::destdir + Directory::etcdir + "/control.xml");
+	"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control.xml'");
     SCR::Execute (.target.bash, "/bin/chmod 0644 " +
-	Installation::destdir + Directory::etcdir + "/control.xml");
+	"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control.xml'");
     // Copy also control files of add-on products
     string cf_dir = (string)SCR::Read (.target.tmpdir) + "/control_files";
     if (size (AddOnProduct::control_files_to_add) > 0)
     {
-	SCR::Execute (.target.bash, "/bin/mkdir " + Installation::destdir + Directory::etcdir + "/control_files");
+	SCR::Execute (.target.bash, "/bin/mkdir '" +
+	    String::Quote (Installation::destdir) + Directory::etcdir + "/control_files'");
 	foreach (string file, AddOnProduct::control_files_to_add, {
-	    SCR::Execute (.target.bash, "/bin/cp " + cf_dir + "/" + file + " "
-		+ Installation::destdir + Directory::etcdir + "/control_files");
+	    SCR::Execute (.target.bash, "/bin/cp " + cf_dir + "/" + file + " " +
+		"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files'");
 	    SCR::Execute (.target.bash, "/bin/chmod 0644 " +
-		Installation::destdir + Directory::etcdir + "/control_files/" + file);
+		"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/" + file + "'");
 	});
 	SCR::Write (.target.ycp, Installation::destdir + Directory::etcdir + "/control_files/order.ycp", AddOnProduct::control_files_to_add);
 	SCR::Execute (.target.bash, "/bin/chmod 0644 " +
-	    Installation::destdir + Directory::etcdir + "/control_files/order.ycp");
+	    "'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/order.ycp'");
     }
 
     // Remove old eula.txt

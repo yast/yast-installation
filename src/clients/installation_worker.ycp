@@ -78,8 +78,6 @@
 
     if (Stage::initial ())
     {
-	Pkg::InstSysMode();
-
 	Installation::encoding = Console::SelectFont( Language::language );
 
 	if (UI::GetDisplayInfo()["HasFullUtf8Support"]:true)

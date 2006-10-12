@@ -145,6 +145,10 @@ define map<string,boolean> NetworkStart()
 		break;
 
 	    // ping anything (www.suse.com) to trigger dod connections
+	    //
+	    // This ping should only set the network up,
+	    // The IP now is different to the current www.suse.com's IP
+	    // but it doesn't matter, what we need is just a network traffic.
 	    SCR::Execute (.target.bash_background,
 			  "/bin/ping -c 1 -w 1 213.95.15.200");
 

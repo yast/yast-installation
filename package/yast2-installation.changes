@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Oct 12 16:28:07 CEST 2006 - locilka@suse.cz
+
+- Handle Installation::destdir in *.bash properly (#211576).
+- 2.14.1
+
+-------------------------------------------------------------------
 Mon Oct  9 16:52:14 CEST 2006 - locilka@suse.cz
 
 - Merged SLES10 SP1 branch to openSUSE 10.2.
