@@ -58,7 +58,7 @@ function wait_for_x11() {
 				server_running=0
 				break;
 			fi
-			# server is running, set high priority for oom killer
+			# server is running, detach oom-killer from it
 			echo -n '-17' > /proc/$xserver_pid/oom_adj
 			server_running=1
 			break
