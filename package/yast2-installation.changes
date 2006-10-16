@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Oct 16 13:18:43 CEST 2006 - locilka@suse.cz
+
+- Timeout license in AutoYaST after 2 seconds (#206706). 
+  This solution doesn't break ncurses.
+- 2.14.2
+
+-------------------------------------------------------------------
 Mon Oct 16 12:24:10 CEST 2006 - fehr@suse.de
 
 - added new configurable values for LVM/EVMS based proposals 
