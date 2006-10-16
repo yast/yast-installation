@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Oct 16 11:12:51 CEST 2006 - ms@suse.de
+ 
+- disable oom-killing for X-Server process (#211860)
+
+-------------------------------------------------------------------
 Thu Oct 12 16:28:07 CEST 2006 - locilka@suse.cz
 
 - Handle Installation::destdir in *.bash properly (#211576).
