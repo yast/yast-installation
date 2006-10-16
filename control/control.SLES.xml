@@ -37,6 +37,11 @@ textdomain="control"
         <root_space_percent>40</root_space_percent>
         <root_base_size>3G</root_base_size>
         <root_max_size>10G</root_max_size>
+	<proposal_lvm>false</proposal_lvm>
+	<proposal_evms>false</proposal_evms>
+	<vm_desired_size>15G</vm_desired_size>
+	<vm_home_max_size>25G</vm_home_max_size>
+	<boot_evms>false</boot_evms>
     </partitioning>
     <network>
         <force_static_ip config:type="boolean">false</force_static_ip>
