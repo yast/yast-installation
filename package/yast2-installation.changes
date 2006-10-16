@@ -10,6 +10,7 @@ Mon Oct 16 12:24:10 CEST 2006 - fehr@suse.de
 
 - added new configurable values for LVM/EVMS based proposals 
   (feature 300169)
+- change evms_config to true
 
 -------------------------------------------------------------------
 Mon Oct 16 11:12:51 CEST 2006 - ms@suse.de
