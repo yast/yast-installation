@@ -12,8 +12,8 @@ Requires:	yast2-storage yast2-mouse yast2-bootloader
 Requires:	yast2-packager >= 2.13.152
 # Pkg::ResolvableCountPatches
 Requires:	yast2-pkg-bindings >= 2.13.92
-# Linuxrc::display_ip
-Requires:	yast2 >= 2.13.67
+# ProductControl::Run returning `abort (FATE #300422)
+Requires:	yast2 >= 2.13.85
 # Languages:GetLanguagesMap, bugzilla #204791
 Requires:	yast2-country >= 2.13.35
 
