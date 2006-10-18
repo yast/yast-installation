@@ -1,4 +1,23 @@
 -------------------------------------------------------------------
+Wed Oct 18 16:13:12 CEST 2006 - locilka@suse.cz
+
+- Added a life-belt into the second stage installation. It can be
+  restarted under these circumstances:
+
+  1.) User aborts the installation
+  2.) Installation process is killed during the installation
+  3.) Computer is restarted during the installation (reset)
+
+  The very next time the system is restarted. YaST starts and
+  informs user that the previous installation was aborted/failed.
+  Then users are asked whether they want to rerun the second stage
+  installation (FATE #300422).
+  
+- Fixed setting own Y2MAXLOGSIZE up in order to save memory
+  requirements during the first stage installation.
+- 2.14.3
+
+-------------------------------------------------------------------
 Mon Oct 16 13:18:43 CEST 2006 - locilka@suse.cz
 
 - Timeout license in AutoYaST after 2 seconds (#206706). 
