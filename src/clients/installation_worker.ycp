@@ -91,6 +91,50 @@
 	UI::RecordMacro( Directory::logdir + "/macro_inst_initial.ycp" );
     }
 
+    string file_inst_aborted = "/var/lib/YaST2/second_stage_aborted";
+    string file_inst_failed  = "/var/lib/YaST2/second_stage_failed";
+    string run_yast_at_boot  = "/var/lib/YaST2/runme_at_boot";
+    string current_step      = "/var/lib/YaST2/step";
+
+    // Second stage
+    // FATE #300422
+    if (Stage::cont ()) {
+	// Second stage installation bas been aborted or has failed
+	if (FileUtils::Exists (file_inst_aborted) || FileUtils::Exists (file_inst_failed)) {
+	    // popup question (#x1)
+	    string show_error = _("The previous installation has failed.\nWould you like to start it again?");
+	    if (FileUtils::Exists (file_inst_aborted)) {
+		// popup question (#x1)
+		show_error = _("The previous installation has been aborted.\nWould you like to start it again?");
+		y2milestone("Case: aborted");
+	    } else {
+		y2milestone("Case: failed");
+	    }
+
+	    if (! Popup::YesNoHeadline (
+		// popup headline (#x1)
+		_("Starting Installation..."),
+		show_error
+	    )) {
+		y2warning ("User didn't want to restart the second stage installation...");
+		if (FileUtils::Exists (file_inst_aborted)) SCR::Execute (.target.remove, file_inst_aborted);
+		if (FileUtils::Exists (file_inst_failed))  SCR::Execute (.target.remove, file_inst_failed);
+		if (FileUtils::Exists (run_yast_at_boot))  SCR::Execute (.target.remove, run_yast_at_boot);
+
+		// skipping the second stage
+		return `skipped;
+	    }
+	}
+
+	// Second stage installation is starting just here
+
+	// creating files in case the installation fails
+	// they are removed at the end if everything works well
+	y2milestone ("Creating files for case if installation fails (reset button)");
+	SCR::Execute (.target.bash, sformat ("touch %1", file_inst_failed));
+	SCR::Execute (.target.bash, sformat ("touch %1", run_yast_at_boot));
+    }
+
     // Second stage
     // Detect mode early to be able to setup steps correctly
     if (Stage::cont () && FileUtils::Exists (Installation::destdir + "/var/lib/YaST2/update_mode"))
@@ -385,6 +429,8 @@ but something went wrong, that's why it is only in the log");
 	ret = ProductControl::Run();
     }
 
+    y2milestone ("ProductControl::Run() returned %1", ret);
+
     if (Stage::cont () && (ret == `reboot || ret == `restart_yast || ret == `restart_same_step))
     {
 	integer last_step = ProductControl::CurrentStep ();
@@ -419,7 +465,8 @@ but something went wrong, that's why it is only in the log");
     if (!Mode::test ())
         WFM::Execute (.local.bash, "/bin/echo \"/sbin/modprobe\" >/proc/sys/kernel/modprobe");
 
-    if (Stage::cont () && ret != `reboot && ret != `restart_yast)
+    // when the installation is not aborted
+    if (Stage::cont () && ret != `reboot && ret != `restart_yast && ret != `abort)
     {
 	// remove /etc/install.inf, not needed any more
 	SCR::Execute (.target.remove, "/etc/install.inf");
@@ -428,16 +475,53 @@ but something went wrong, that's why it is only in the log");
 	    SCR::Execute(.target.remove, "/var/lib/YaST2/update_mode");
 	    SCR::Execute(.target.bash, "/bin/rm -rf /var/adm/current_package_descr");
 	}
-        y2milestone("Removing /var/lib/YaST2/runme_at_boot");
-	SCR::Execute(.target.remove, "/var/lib/YaST2/runme_at_boot");
+	
+	if (FileUtils::Exists (run_yast_at_boot)) {
+    	    y2milestone("Removing %1", run_yast_at_boot);
+	    SCR::Execute(.target.remove, run_yast_at_boot);
+	}
+
+	// This file says that the configuration has failed
+	// we don't need it anymore
+	// FATE #300422
+	if (FileUtils::Exists (file_inst_failed)) {
+	    y2milestone ("Removing file %1", file_inst_failed);
+	    SCR::Execute (.target.remove, file_inst_failed);
+	}
 
         // This file has the current step of the workflow to be used
         // for crash recovery during installation. It can be deleted when
         // the installation has been completed.
-	SCR::Execute(.target.remove, "/var/lib/YaST2/step");
+	if (FileUtils::Exists (current_step)) {
+	    y2milestone ("Removing file %1", current_step);
+	    SCR::Execute (.target.remove, current_step);
+	}
 
 	if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_post.ycp") > 0)
 	    WFM::CallFunction ("product_post", [Mode::update ()]);
+
+    // installation (second stage) has been aborted
+    // FATE #300422
+    } else if (Stage::cont() && (ret == `abort || ret == `cancel)) {
+	// removing the current step information
+	// installation will be started from the very begining
+	if (FileUtils::Exists (current_step)) {
+	    y2milestone ("Removing file %1", current_step);
+	    SCR::Execute (.target.remove, current_step);
+	}
+
+	// not to be identified as failed but aborted
+	if (FileUtils::Exists (file_inst_failed)) {
+	    y2milestone ("Removing file %1", file_inst_failed);
+	    SCR::Execute (.target.remove, file_inst_failed);
+	}
+
+	// creating files saying that YaST will be started after reboot
+	// if they don't exist
+	y2warning ("Second Stage Installation has been aborted, creating files %1 and %2",
+	    run_yast_at_boot, file_inst_aborted);
+	SCR::Execute (.target.bash, sformat ("touch %1", run_yast_at_boot));
+	SCR::Execute (.target.bash, sformat ("touch %1", file_inst_aborted));
     }
 
     // TRANSLATORS: busy message
@@ -448,5 +532,6 @@ but something went wrong, that's why it is only in the log");
     UI::CloseDialog();						 // #2
 
     UI::CloseDialog();
+
     return ret;
 }
