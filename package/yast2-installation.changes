@@ -7,6 +7,8 @@ Mon Oct 23 16:04:30 CEST 2006 - locilka@suse.cz
   the Add-On Product is added by the add-on client (FATE #301239).
 - Adding add-on client to list of clients that are enabled for
   AutoYaST cloning (bugzilla #198927).
+- Added summary of the Release Notes client for the Control Center
+  (bugzilla #213878).
 - 2.14.4
 
 -------------------------------------------------------------------
