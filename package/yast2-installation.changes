@@ -3,6 +3,9 @@ Mon Oct 23 16:25:36 CEST 2006 - locilka@suse.cz
 
 - Adding add-on client to list of clients that are enabled for
   AutoYaST cloning (bugzilla #198927).
+- Added summary of the Release Notes client for the Control Center
+  (bugzilla #213878).
+- 2.13.163
 
 -------------------------------------------------------------------
 Wed Oct 18 16:13:12 CEST 2006 - locilka@suse.cz
