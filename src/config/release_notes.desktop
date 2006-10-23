@@ -11,4 +11,4 @@ Icon=yast-release-notes
 Exec=/sbin/yast2 inst_release_notes
 
 Name=Release Notes
-GenericName=release_notes
+GenericName=Show Release Notes
