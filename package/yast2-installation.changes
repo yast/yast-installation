@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Mon Oct 23 16:04:30 CEST 2006 - locilka@suse.cz
+
+- Added special installation client for Language Add-Ons
+  inst_language_add-on and it's XML workflow
+  add-on-template_installation.xml for calling this client after
+  the Add-On Product is added by the add-on client (FATE #301239).
+- Adding add-on client to list of clients that are enabled for
+  AutoYaST cloning (bugzilla #198927).
+- 2.14.4
+
+-------------------------------------------------------------------
 Wed Oct 18 16:13:12 CEST 2006 - locilka@suse.cz
 
 - Added a life-belt into the second stage installation. It can be

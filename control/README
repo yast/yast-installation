@@ -1,3 +1,5 @@
+Products:
+---------
     For the various products starting from SuSE Linux 9.1, several product
     control  packages have been created and more will follow for future
     products. Those special package are used when creating the CDs and they
@@ -11,3 +13,16 @@
     - skelcd-control-SLES
     - skelcd-control-SUSELinux-Prof
     - skelcd-control-SUSELinux-Pers
+
+Add-On Products:
+----------------
+    - add-on-template_installation
+    
+    This file is a template for adding a workflow to the
+    Language Add-On Product. It should be saved under the root directory
+    of the add-on product as 'installation.xml'.
+
+    Currently it uses these clients
+	* inst_language_add-on
+	* inst_rpmcopy (inside inst_language_add-on)
+	* inst_suseconfig (inside inst_language_add-on)
