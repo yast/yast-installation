@@ -11,8 +11,7 @@ Products:
 
     - skelcd-control-SLD
     - skelcd-control-SLES
-    - skelcd-control-SUSELinux-Prof
-    - skelcd-control-SUSELinux-Pers
+    - skelcd-control-openSUSE
 
 Add-On Products:
 ----------------
