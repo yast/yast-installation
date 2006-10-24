@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Oct 24 10:58:18 CEST 2006 - ms@suse.de
+
+- fixed nic detection (#213870)
+
+-------------------------------------------------------------------
 Mon Oct 23 16:04:30 CEST 2006 - locilka@suse.cz
 
 - Added special installation client for Language Add-Ons

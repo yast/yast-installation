@@ -32,7 +32,7 @@ function found_iface () {
 #--------------------------------------------------
 # search for a queued network interface
 #
-	for i in `ip link show | grep -v link | grep -v noqueue | cut -f2 -d:`;do
+	for i in `ip -o link show | cut -f2 -d:`;do
 		iface=`echo $i | tr -d " "`
 		if is_iface_up "$iface" ; then
 			return 0
