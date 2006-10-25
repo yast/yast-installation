@@ -395,6 +395,8 @@ but something went wrong, that's why it is only in the log");
     string restart_data_file = "/var/lib/YaST2/continue_installation";
     string reboot_file = "/var/lib/YaST2/reboot";
     string restart_file = "/var/lib/YaST2/restart_yast";
+
+    // Continue the second stage installation
     if (Stage::cont ()
 	&& (integer)SCR::Read (.target.size, restart_data_file) > 0)
     {
@@ -409,27 +411,37 @@ but something went wrong, that's why it is only in the log");
 	    ProductControl::first_step = 0;
 	    ProductControl::restarting_step = nil;
 	    ret = ProductControl::Run();
+	    y2milestone ("ProductControl::Run() returned %1", ret);
 	}
 	else
 	{
 	    ProductControl::first_step = next_step;
 	    ProductControl::restarting_step = restarting_step;
 	    ret = ProductControl::RunFrom (next_step, false);
+	    y2milestone ("ProductControl::RunFrom(%1) returned %2", next_step, ret);
 	}
-	SCR::Execute (.target.bash, sformat (
-	    "test -f %1 && /bin/rm -f %1", reboot_file));
-	SCR::Execute (.target.bash, sformat (
-	    "test -f %1 && /bin/rm -f %1", restart_file));
-	SCR::Execute (.target.bash, sformat (
-	    "test -f %1 && /bin/rm -f %1", restart_data_file));
+	
+	if (FileUtils::Exists (reboot_file)) {
+	    y2milestone ("Removing file %1", reboot_file);
+	    SCR::Execute (.target.remove, reboot_file);
+	}
+	if (FileUtils::Exists (restart_file)) {
+	    y2milestone ("Removing file %1", restart_file);
+	    SCR::Execute(.target.remove, restart_file);
+	}
+	if (FileUtils::Exists (restart_data_file)) {
+	    y2milestone ("Removing file %1", restart_data_file);
+	    SCR::Execute(.target.remove, restart_data_file);
+	}
     }
     else
     {
 	// Run the installation workflow
 	ret = ProductControl::Run();
+	y2milestone ("ProductControl::Run() returned %1", ret);
     }
 
-    y2milestone ("ProductControl::Run() returned %1", ret);
+    y2milestone("Evaluating ret: %1", ret);
 
     if (Stage::cont () && (ret == `reboot || ret == `restart_yast || ret == `restart_same_step))
     {
@@ -455,6 +467,7 @@ but something went wrong, that's why it is only in the log");
 	}
     }
 
+    // Installation has been aborted
     if (ret == `abort)
     {
 	// tell linuxrc that we aborted
@@ -523,6 +536,8 @@ but something went wrong, that's why it is only in the log");
 	SCR::Execute (.target.bash, sformat ("touch %1", run_yast_at_boot));
 	SCR::Execute (.target.bash, sformat ("touch %1", file_inst_aborted));
     }
+
+    y2milestone("Finishing the installation...");
 
     // TRANSLATORS: busy message
     UI::OpenDialog (`Label(_("Finishing the installation..."))); // #2

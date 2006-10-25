@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Oct 25 16:28:14 CEST 2006 - locilka@suse.cz
+
+- Adding more debugging messages in order to fix random crashing
+  of the second stage installation (#214886).
+
+-------------------------------------------------------------------
 Tue Oct 24 13:57:57 CEST 2006 - locilka@suse.cz
 
 - Renamed control file control.PROF.xml to control.openSUSE.xml
