@@ -1,0 +1,20 @@
+default namespace = "http://www.suse.com/1.0/yast2ns"
+namespace a = "http://relaxng.org/ns/compatibility/annotations/1.0"
+namespace config = "http://www.suse.com/1.0/configns"
+
+add-on =
+  element add-on { add_on_products* }
+listentry =
+  element listentry {
+     media_url? &
+     product? &
+     product_dir?
+  }
+media_url = element media_url { text }
+product = element product { text }
+product_dir = element product_dir { text }
+add_on_products =
+  element add_on_products {
+     attribute config:type { text }?,
+     listentry*
+  }

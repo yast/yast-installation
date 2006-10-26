@@ -16,6 +16,7 @@ X-SuSE-YaST-Geometry=
 X-SuSE-YaST-SortKey=
 X-SuSE-YaST-AutoInstResource=
 X-SuSE-YaST-AutoInstPath=install
+X-SuSE-YaST-AutoInstSchema=add-on.rnc
 
 Icon=yast-addon
 Exec=/sbin/yast2 add-on
