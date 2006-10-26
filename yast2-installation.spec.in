@@ -77,6 +77,7 @@ This controls the system installation.
 @moduledir@/*.ycp
 @moduledir@/*.ybc
 @desktopdir@/*.desktop
+@schemadir@/autoyast/rnc/add-on.rnc
 %dir @yncludedir@/installation
 @yncludedir@/installation/*
 
