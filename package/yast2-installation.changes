@@ -2,6 +2,7 @@
 Thu Oct 26 14:51:12 CEST 2006 - locilka@suse.cz
 
 - Enabling back button in the License Agreement dialog (#215236).
+- Adding add-on.rnc for AutoYaST profile validation (#215248).
 - Providing an easier switch to disable IPv6 by a new ipv6 client
   in the network proposal (FATE #300604) (mzugec).
 
