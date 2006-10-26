@@ -131,7 +131,7 @@ the configuration will be aborted.</p>
 ");
 
     Wizard::SetContents(caption, contents, help,
-	false, back);
+	back, true);
     // bugzilla #203543
     if (size(langs) <= 1) {
 	UI::ChangeWidget (`id(`lang), `Enabled, false);
@@ -197,9 +197,10 @@ map<string,string> LicenseFiles (string dir, list<string> patterns) {
  *   and not 1st stage installation
  * @param patterns a list of patterns for the files, regular expressions
  *   with %1 for the language
+ * @param enable_back sets the back_button status
  */
 global symbol AskLicenseAgreement (integer src_id, string dir,
-    list<string> patterns, string action)
+    list<string> patterns, string action, boolean enable_back)
 {
     string tmpdir = nil;
     string info_file = nil;
@@ -289,7 +290,7 @@ unzip -qqo '%2'
 	lic_lang = available_langs[0]:"";
 
     y2milestone ("Preselected language: '%1'", lic_lang);
-    DisplayLicenseDialog (available_langs, true);
+    DisplayLicenseDialog (available_langs, enable_back);
     // Display info as a popup if exists
     if (info_file != nil)
 	InstShowInfo::show_info_txt(info_file);
@@ -415,19 +416,23 @@ unzip -qqo '%2'
 global symbol AskAddOnLicenseAgreement (integer src_id) {
     return AskLicenseAgreement (src_id, "",
 	[ "license\\.txt", "license\\.%1\\.txt" ],
-	"abort");
+	"abort",
+	// back button is disabled
+	false);
 }
 
 global symbol AskFirstStageLicenseAgreement (string action) {
     return AskLicenseAgreement (nil, "",
 	[ "license\\.txt", "license\\.%1\\.txt" ],
-	action);
+	action,
+	// back button is enabled
+	true);
 }
 
 global symbol AskInstalledLicenseAgreement (string directory,
     list<string> patterns, string action)
 {
-    return AskLicenseAgreement (nil, directory, patterns, action);
+    return AskLicenseAgreement (nil, directory, patterns, action, false);
 
 }
 
