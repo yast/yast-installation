@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Oct 26 08:35:05 CEST 2006 - locilka@suse.cz
+
+- Adding more debugging messages in order to fix random crashing
+  of the second stage installation (#214886).
+
+-------------------------------------------------------------------
 Mon Oct 23 16:25:36 CEST 2006 - locilka@suse.cz
 
 - Adding add-on client to list of clients that are enabled for
