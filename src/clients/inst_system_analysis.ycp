@@ -31,6 +31,7 @@ import "Update";
 import "Wizard";
 
 include "installation/misc.ycp";
+include "packager/storage_include.ycp";
 
 string start_mode = Mode::mode ();
 
@@ -243,8 +244,15 @@ if (! (have_linux && offer_update))
     // return `auto;
     other_options_disabled = true;
 }
-if (Mode::autoinst ())
+
+// bugzilla #208222
+// Release disk used as the installation source
+ReleaseHDDUsedAsInstallationSource();
+
+if (Mode::autoinst ()) {
+    y2milestone ("Autoinst -> returning `auto");
     return `auto;
+}
 
 Wizard::SetContents (
     // dialog caption

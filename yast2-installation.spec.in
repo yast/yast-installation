@@ -8,8 +8,8 @@ Requires:	yast2-slp yast2-firewall
 Requires:	yast2-update
 Requires:	yast2-storage yast2-mouse yast2-bootloader
 
-# YCP modules were moved back to the yast2-packager (see log for yast2-installation-2.13.155)
-Requires:	yast2-packager >= 2.13.152
+# SourceManager::InstallationSourceOnPartition 2.14.0, bugzilla #208222
+Requires:	yast2-packager >= 2.14.0
 # extra sources in ResolvableProperties()
 Requires:	yast2-pkg-bindings >= 2.13.101
 # ProductControl::Run returning `abort (FATE #300422)
