@@ -13,6 +13,7 @@ Mon Oct 30 13:01:37 CET 2006 - locilka@suse.cz
   switched to the running system (#209119).
 - Calling Storage::RemoveDmMapsTo (device) in after the disks are
   probed in inst_system_analysis (#208222).
+- Fixed including packager.
 
 -------------------------------------------------------------------
 Thu Oct 26 14:51:12 CEST 2006 - locilka@suse.cz
