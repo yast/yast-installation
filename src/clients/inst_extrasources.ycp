@@ -180,120 +180,62 @@ define void NetworkStop(map<string,boolean> original_status)
 
 /**
  * Dowload and parse content files from current installation sources
+ * @param registered
  * @return map Extra URLs for each source:  $[ string source_url : list<string> extra_urls ]
  */
-define map<string,map<string,boolean> > GetExtraURLs()
+define map<string,boolean> GetExtraURLs(list<string> registered)
 {
-    // $[ string source_url : list<string> extra_urls ]
-    map<string,map<string,boolean> > extra_urls = $[];
+    map<string,boolean> extra_urls = $[];
 
-    // get all IDs
-    list<integer> current_ids = Pkg::SourceGetCurrent(false);
+    list<map> products = Pkg::ResolvableProperties("", `product, "");
+    y2milestone("Products: %1", products);
 
-    // get extra urls for each registered installation source
-    foreach(integer src, current_ids,
+    foreach(map product, products,
 	{
-	    map info = Pkg::SourceGeneralData(src);
-	    string url = info["url"]:"";
-	    y2milestone("Configured source: %1", url);
+	    // get the extra sources
+	    list<string> extra = (list<string>)product["extra_urls"]:[];
+	    list<string> optional = (list<string>)product["optional_urls"]:[];
 
-	    if (url != nil && url != "")
+	    if (size(extra) > 0)
 	    {
-		// get the content file
-		string media_content = Pkg::SourceProvideOptionalFile(src, 1, "/content");
-		y2milestone("downloaded content file: %1", media_content);
-
-		map<string,boolean> extra_sources = $[];
-		if (media_content != nil && media_content != "")
-		{
-		    string content = (string)SCR::Read (.target.string, media_content);
-		    list<string> lines = splitstring(content, "\n");
-
-		    // parse the content file here
-		    foreach(string line, lines,
-			{
-			    if (substring(line, 0, size(content_file_tag)) == content_file_tag)
-			    {
-				// remove the tag
-				string parsed_url = substring(line, size(content_file_tag));
-
-				list<string> url_list = splitstring(parsed_url, " ");
-
-				foreach(string extra_url, url_list,
-				    {
-					// remove surrounding white spaces
-					extra_url = String::CutBlanks(extra_url);
-
-					if (extra_url != nil && extra_url != "")
-					{
-					    // add the url to the target list
-					    extra_sources = add(extra_sources, extra_url, true);
-					}
-				    }
-				);
-			    }
-			    else if (substring(line, 0, size(optional_tag)) == optional_tag)
-			    {
-				// remove the tag
-				string parsed_url = substring(line, size(optional_tag));
-
-				list<string> url_list = splitstring(parsed_url, " ");
-
-				foreach(string extra_url, url_list,
-				    {
-					// remove surrounding white spaces
-					extra_url = String::CutBlanks(extra_url);
-
-					if (extra_url != nil && extra_url != "")
-					{
-					    // add the url to the target list
-					    extra_sources = add(extra_sources, extra_url, false);
-					}
-				    }
-				);
-			    }
-			}
-		    );
-		}
-
-		extra_urls = add(extra_urls, url, extra_sources);
-	    }
-	}
-    );
-
-    return extra_urls;
-}
-
-/**
- * Process map with extra URLs and return source which can be registered
- * @param url_map input map
- * @return list<string> list of URLs to register
- */
-define map<string,boolean> URLtoRegister(map<string,map<string,boolean> > url_map)
-{
-    // unregistered sources
-    map<string,boolean> register_url = $[];
-
-    if (url_map != nil)
-    {
-	foreach (string source_url, map<string,boolean> urls, url_map,
-	    {
-		foreach(string u, boolean deflt, urls,
+		foreach(string url, extra,
 		    {
-			// has been the URL already registered?
-			if (!haskey(url_map, u))
+			// is the URL already registered?
+			if (!contains(registered, url))
 			{
-			    register_url = add(register_url, u, deflt);
+			    extra_urls = add(extra_urls, url, true);
+			}
+			else
+			{
+			    y2milestone("Source %1 is already registered", url);
 			}
 		    }
 		);
 	    }
-	);
-    }
 
-    return register_url;
+	    if (size(optional) > 0)
+	    {
+		foreach(string url, optional,
+		    {
+			// is the URL already registered?
+			if (!contains(registered, url))
+			{
+			    extra_urls = add(extra_urls, url, false);
+			}
+			else
+			{
+			    y2milestone("Source %1 is already registered", url);
+			}
+		    }
+		);
+
+	    }
+	}
+    );
+
+    y2milestone("Extra sources: %1", extra_urls);
+    return extra_urls;
 }
-
 
 /**
  * Register the installation sources
@@ -342,6 +284,33 @@ define list<integer> RegisterSources(list<string> url_list)
     return ret;
 }
 
+list<string> RegisteredUrls()
+{
+    list<string> ret = [];
+    // get all registered installation sources
+    list<integer> srcs = Pkg::SourceGetCurrent(false);
+
+    foreach(integer src, srcs,
+	{
+	    map general = Pkg::SourceGeneralData(src);
+
+	    string url = general["url"]:"";
+
+	    if (url != nil && url != "")
+	    {
+		ret = add(ret, url);
+	    }
+	}
+    );
+
+    // remove duplicates
+    ret = toset(ret);
+
+    y2milestone("Registered sources: %1", ret);
+
+    return ret;
+}
+
 //////////////////////////////////////////
 
 if ( GetInstArgs::going_back())     // going backwards?
@@ -366,13 +335,11 @@ if (!Internet::Connected())
     return `auto;
 }
 
+list<string> already_registered = RegisteredUrls();
 
-// $[ string source_url : list<map<string url, boolean default>> extra_urls ]
-map<string,map<string,boolean> > extra_urls = GetExtraURLs();
-y2milestone("extra URLs: %1", extra_urls);
+// $[ string url : boolean default ]
+map<string,boolean> register_url = GetExtraURLs(already_registered);
 
-map<string,boolean> register_url = URLtoRegister(extra_urls);
-y2milestone("Offered extra installation sources: %1", register_url);
 
 // any confirmed source to register?
 if (size(register_url) > 0)
