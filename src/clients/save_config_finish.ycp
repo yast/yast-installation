@@ -22,13 +22,13 @@ import "Mouse";
 import "Timezone";
 import "Language";
 import "Keyboard";
-//import "Display";
 import "ProductFeatures";
 import "AutoInstall";
 import "Console";
 import "Product";
 import "Progress";
 import "SignatureCheckDialogs";
+import "Stage";
 
 any ret = nil;
 string func = "";
@@ -54,6 +54,16 @@ if (func == "Info")
 }
 else if (func == "Write")
 {
+    // Bugzilla #209119
+    // ProductFeatures::Save() moved here from inst_kickoff.ycp
+    // (After the SCR is switched)
+    if (Stage::initial ()) {
+	y2milestone ("Saving ProductFeatures...");
+	SCR::Execute (.target.bash, "/bin/mkdir -p '/etc/YaST2'");
+	SCR::Execute (.target.bash, "touch '/etc/YaST2/ProductFeatures'");
+	ProductFeatures::Save();
+    }
+
     // progress step title
     Progress::Title (_("Saving mouse configuration..."));
     Mouse::Save();
