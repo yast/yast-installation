@@ -4,6 +4,7 @@ Mon Oct 30 15:10:07 CET 2006 - lslezak@suse.cz
 - updated inst_extrasources client to not download files from the
   installation sources (#213031)
 - requires yast2-pkg-bindings >= 2.13.101
+- 2.14.6
 
 -------------------------------------------------------------------
 Mon Oct 30 12:59:31 CET 2006 - locilka@suse.cz
@@ -13,6 +14,7 @@ Mon Oct 30 12:59:31 CET 2006 - locilka@suse.cz
   switched to the running system (#209119).
 - Calling Storage::RemoveDmMapsTo (device) in after the disks are
   probed in inst_system_analysis (#208222).
+- Fixed including packager.
 
 -------------------------------------------------------------------
 Thu Oct 26 14:51:12 CEST 2006 - locilka@suse.cz
