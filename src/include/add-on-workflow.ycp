@@ -32,7 +32,7 @@ import "SuSEFirewall";
 import "Stage";
 import "Wizard";
 
-include "inst_source_dialogs.ycp";
+include "packager/inst_source_dialogs.ycp";
 
 /**
  * Initialize current inst. sources
