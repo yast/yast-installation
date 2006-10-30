@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Oct 30 13:01:37 CET 2006 - locilka@suse.cz
+
+- Moving ProductFeatures::Save() from inst_kickoff client to
+  save_config_finish - client that is called after the SCR is
+  switched to the running system (#209119).
+
+-------------------------------------------------------------------
 Thu Oct 26 14:51:12 CEST 2006 - locilka@suse.cz
 
 - Enabling back button in the License Agreement dialog (#215236).
