@@ -25,7 +25,7 @@ import "String";
 import "Internet";
 
 // editUrl()
-include "inst_source_dialogs.ycp";
+include "packager/inst_source_dialogs.ycp";
 
 // the tag providing location of the additional sources in content file
 string content_file_tag = "EXTRAURLS";
