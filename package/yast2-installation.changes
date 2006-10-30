@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Oct 30 15:10:07 CET 2006 - lslezak@suse.cz
+
+- updated inst_extrasources client to not download files from the
+  installation sources (#213031)
+- requires yast2-pkg-bindings >= 2.13.101
+
+-------------------------------------------------------------------
 Mon Oct 30 13:01:37 CET 2006 - locilka@suse.cz
 
 - Moving ProductFeatures::Save() from inst_kickoff client to

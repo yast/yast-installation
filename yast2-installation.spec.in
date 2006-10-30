@@ -10,8 +10,8 @@ Requires:	yast2-storage yast2-mouse yast2-bootloader
 
 # YCP modules were moved back to the yast2-packager (see log for yast2-installation-2.13.155)
 Requires:	yast2-packager >= 2.13.152
-# Pkg::ResolvableCountPatches
-Requires:	yast2-pkg-bindings >= 2.13.92
+# extra sources in ResolvableProperties()
+Requires:	yast2-pkg-bindings >= 2.13.101
 # ProductControl::Run returning `abort (FATE #300422)
 Requires:	yast2 >= 2.13.85
 # Languages:GetLanguagesMap, bugzilla #204791
