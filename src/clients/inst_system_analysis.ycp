@@ -287,17 +287,20 @@ repeat {
     // Use-Add-On-Product status changed
     if (ret == `add_on) {
 	add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
+	ret = nil;
 	continue;
     }
     // Other Options - Boot
     else if (ret == `boot) {
 	current_expert_mode = `boot;
 
+	ret = nil;
 	continue;
     // Other Options - Repair
     } else if (ret == `repair) {
 	current_expert_mode = `repair;
 
+	ret = nil;
 	continue;
     }
     // Adjusting current UI - Other Options
@@ -315,6 +318,7 @@ repeat {
 	UI::ChangeWidget (`id(`add_on), `Enabled, false);
 	UI::ChangeWidget (`id(`inst_mode), `CurrentButton, `expert);
 	
+	ret = nil;
 	continue;
     }
     // Adjusting current UI - Hide Other Options
@@ -343,6 +347,7 @@ repeat {
 	{
 	    // this is a label of a message box
 	    Popup::Message(_("Choose one of the\noptions to continue."));
+	    ret = nil;
 	    continue;
 	}
 	
@@ -357,9 +362,9 @@ repeat {
 	    
 	    // Boot was selected
 	    if (new_mode == `boot) {
-		Mode::SetMode ("");
 		if (handle_boot() != `finish) {
 		    y2milestone("Not booting any OS");
+		    ret = nil;
 		    continue;
 		}
 	    }
@@ -369,6 +374,7 @@ repeat {
     {
 	if (Popup::ConfirmAbort (Stage::initial () ? `painless : `incomplete))
 	    return `abort;
+	ret = nil;
 	continue;
     }
 } until (ret == `back || ret == `next);
