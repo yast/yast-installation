@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Wed Nov  1 17:47:00 CET 2006 - locilka@suse.cz
+
+- "Installation->Other->Boot Installed System->Cancel" now doesn't
+  abort the installation but returns to the Installation Mode
+  dialog (#216887).
+- Correct handling of pressing Cancel or Abort buttons in pop-up
+  windows in Add-On installation (#216910).
+
+-------------------------------------------------------------------
 Mon Oct 30 15:10:07 CET 2006 - lslezak@suse.cz
 
 - updated inst_extrasources client to not download files from the
