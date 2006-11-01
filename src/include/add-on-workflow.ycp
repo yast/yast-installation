@@ -190,34 +190,42 @@ the first CD are located, such as /data1/CD1.</p>
  * @return symbol for wizard sequencer
  */
 symbol MediaSelect () {
+    // FIXME: this function is ugly
+    //        rewrite especially handling `back (see #216910)
     y2milestone ("Running media select dialog");
     CreateMediaSelectDialog();
 
     symbol ret = nil;
     string url = "";
     while (ret == nil) {
-	ret = (symbol)UI::UserInput ();
-	if (ret == `back)
-	    break;
+	ret = (symbol) UI::UserInput ();
+	if (ret == `back) {
+	    // bugzilla #216910
+	    // `back means - return to the previous dialog
+	    // in Mode::normal, there is no previous dialog
+	    if (Mode::normal()) {
+		ret = nil;
+		continue;
+	    } else {
+		break;
+	    }
+	}
 	else if (ret == `abort || ret == `cancel)
 	{
 	    ret = `abort;
-/*	    if (Stage::initial())
-	    {
-	        if (Popup::ConfirmAbort (`painless))
-		    break;
-	    }
-	    else
-	    {*/
-		// yes-no popup
-		if (Popup::YesNo (_("Really abort add-on product installation?")))
-		    break;
-//	    }
+	    // yes-no popup
+	    if (Popup::YesNo (_("Really abort add-on product installation?")))
+		break;
+
+	    ret = nil;
 	    continue;
 	}
 	else if (ret != `next)
 	    continue;
+
+
 	symbol input = (symbol)UI::QueryWidget (`id (`type), `CurrentButton);
+	y2milestone ("Current: %1", input);
 	if ( input == `slp )
 	{
 	    // moved to another function
@@ -225,7 +233,9 @@ symbol MediaSelect () {
 	    y2milestone("SLP-Add returned: %1", ret);
 	    if (ret == `next)
 		createResult = `ok;
-	    else ret = nil;
+	    else
+		ret = nil;
+		continue;
 	}
 	else if (contains ([`ftp, `http, `https, `samba, `nfs, `cd, `dvd,
 	    `local_dir, `specify_url], input))
@@ -239,6 +249,7 @@ symbol MediaSelect () {
 	    else if ( input == `dvd ) url = "dvd:///";
 	    else if ( input == `local_dir ) url = "dir://";
 	    else url = "";
+
 	    if (input == `cd || input == `dvd)
 	    {
 		Pkg::SourceReleaseAll();
@@ -247,8 +258,15 @@ symbol MediaSelect () {
 		    : _("Insert the add-on product DVD");
 		if (! SourceManager::AskForCD (msg))
 		{
-		    ret = `back;
-		    break;
+		    // bugzilla #216910
+		    // `back means - return to the previous dialog
+		    // in Mode::normal, there is no previous dialog
+		    if (Mode::normal()) {
+			ret = nil;
+			continue;
+		    } else {
+			break;
+		    }
 		}
 		
 		createResult = SourceManager::createSource( url);
@@ -257,7 +275,10 @@ symbol MediaSelect () {
 	    {
 	      do {
 		url = editUrl( url );
-		if ( size( url ) == 0 ) { ret = `back; break; }
+		y2milestone ("New url: '%1'", url);
+		if ( size( url ) == 0 ) {
+		    break;
+		}
 
 		createResult = SourceManager::createSource( url);
               } while ( createResult == `again );
