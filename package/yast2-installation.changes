@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Nov  3 10:17:37 CET 2006 - locilka@suse.cz
+
+- Changed text of question asking whether the second stage
+  installation should start again (FATE #300422) in case of
+  previous failure or user-abort (#215697).
+
+-------------------------------------------------------------------
 Wed Nov  1 17:43:41 CET 2006 - locilka@suse.cz
 
 - "Installation->Other->Boot Installed System->Cancel" now doesn't
