@@ -126,17 +126,43 @@
 	Wizard::DisableNextButton();
     }
 
-    list <string> Dialog_SelectLanguagesUI (map <string, string> & known_languages) {
+    list <string> Dialog_SelectLanguagesUI (
+	map <string, string> & known_languages,
+	list <string> & already_installed_languages
+    ) {
 	list <term> items = [];
+	boolean pre_selected = nil;
+
+	// for each language supported on the medium
 	foreach (string short, string long, known_languages, {
-	    items = add (items, `item (`id (short), long));
+	    // installed is 'de' or 'cs' or 'zh'
+	    if (contains (already_installed_languages, short)) {
+		pre_selected = true;
+	    // installed is 'de_XY' or 'cs_AB' or 'zh_CD'
+	    // but not on the medium, find similar
+	    } else if (size (short) > 2) {
+		string language_substring = substring (short, 0, 2);
+		if (contains (already_installed_languages, language_substring)) {
+		    y2milestone ("Language %1 installed but not supported by the new Add-On, preselecting %2",
+			short, language_substring
+		    );
+		    pre_selected = true;
+		} else {
+		    y2warning ("Language %1 installed but not supported by the new Add-On, nothing to presect",
+			short
+		    );
+		    pre_selected = false;
+		}
+	    } else {
+		pre_selected = false;
+	    }
+	    items = add (items, `item (`id (short), long, pre_selected));
 	});
 	
 	items = sort (term x, term y, items, ``(x[1]:"" < y[1]:""));
 	Wizard::SetContentsButtons(
 	    // TRANSLATORS: dialog caption
 	    _("Add-On Product Installation"),
-	    // TRANSLATORS: dialog content - a very simple label
 	    `VBox (
 		`HBox (
 		    `HStretch (),
@@ -192,7 +218,10 @@ Are you sure you want to abort the installation?")
 	return selected_languages;
     }
     
-    list <string> Dialog_SelectLanguages (list <string> available_languages) {
+    list <string> Dialog_SelectLanguages (
+	list <string> available_languages,
+	list <string> & already_installed_languages
+    ) {
 	if (available_languages == nil || available_languages == []) {
 	    y2error ("No availabel languages");
 	    return nil;
@@ -227,7 +256,7 @@ Are you sure you want to abort the installation?")
 	    });
 
 	    y2milestone("%1", short_to_lang);
-	    list <string> selected_languages = Dialog_SelectLanguagesUI (short_to_lang);
+	    list <string> selected_languages = Dialog_SelectLanguagesUI (short_to_lang, already_installed_languages);
 	    
 	    return selected_languages;
 	}
@@ -255,8 +284,23 @@ Are you sure you want to abort the installation?")
 	    y2error ("No languages available!");
 	    return 10;
 	}
+	
+	// bugzilla #217052
+	// some languages should be pre-selected (already installed, at least partly)
+	list <map <string, any> > installed_languages = Pkg::ResolvableProperties("", `language, "");
+	list <string> already_installed_languages = [];
+	foreach (map <string, any> language, installed_languages, {
+	    if (language["status"]:nil == `installed) {
+		if (language["name"]:nil != nil) {
+		    already_installed_languages = add (already_installed_languages, language["name"]:"");
+		} else {
+		    y2error ("Language %1 has no 'name'", language);
+		}
+	    }
+	});
 
-	list <string> selected_languages = Dialog_SelectLanguages (available_languages);
+	y2milestone ("Already installed languages: %1", already_installed_languages);
+	list <string> selected_languages = Dialog_SelectLanguages (available_languages, already_installed_languages);
 	if (selected_languages == nil || selected_languages == []) {
 	    y2warning("User did not select any language, finishing...");
 	    return 15;
