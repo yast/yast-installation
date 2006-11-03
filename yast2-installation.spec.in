@@ -11,6 +11,7 @@ Requires:	yast2-storage yast2-mouse yast2-bootloader
 # SourceManager::InstallationSourceOnPartition 2.14.0, bugzilla #208222
 Requires:	yast2-packager >= 2.14.0
 # extra sources in ResolvableProperties()
+# "", `language", "" in ResolvableProperties()
 Requires:	yast2-pkg-bindings >= 2.13.101
 # ProductControl::Run returning `abort (FATE #300422)
 Requires:	yast2 >= 2.14.6

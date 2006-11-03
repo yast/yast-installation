@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Nov  3 14:39:53 CET 2006 - locilka@suse.cz
+
+- Preselecting already installed languages in the Language Add-On
+  script (FATE #301239) (#217052).
+
+-------------------------------------------------------------------
 Fri Nov  3 10:17:37 CET 2006 - locilka@suse.cz
 
 - Changed text of question asking whether the second stage
