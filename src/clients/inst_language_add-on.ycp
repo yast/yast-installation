@@ -131,6 +131,7 @@
 	list <string> & already_installed_languages
     ) {
 	list <term> items = [];
+	list <string> pre_selected_languages = [];
 	boolean pre_selected = nil;
 
 	// for each language supported on the medium
@@ -143,21 +144,19 @@
 	    } else if (size (short) > 2) {
 		string language_substring = substring (short, 0, 2);
 		if (contains (already_installed_languages, language_substring)) {
-		    y2milestone ("Language %1 installed but not supported by the new Add-On, preselecting %2",
-			short, language_substring
-		    );
 		    pre_selected = true;
 		} else {
-		    y2warning ("Language %1 installed but not supported by the new Add-On, nothing to presect",
-			short
-		    );
 		    pre_selected = false;
 		}
 	    } else {
 		pre_selected = false;
 	    }
+	    if (pre_selected) pre_selected_languages = add (pre_selected_languages,
+		sformat ("%1 (%2)", short, long)
+	    );
 	    items = add (items, `item (`id (short), long, pre_selected));
 	});
+	y2milestone ("Preselected languages: %1", pre_selected_languages);
 	
 	items = sort (term x, term y, items, ``(x[1]:"" < y[1]:""));
 	Wizard::SetContentsButtons(
