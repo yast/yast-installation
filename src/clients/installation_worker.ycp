@@ -102,10 +102,17 @@
 	// Second stage installation bas been aborted or has failed
 	if (FileUtils::Exists (file_inst_aborted) || FileUtils::Exists (file_inst_failed)) {
 	    // popup question (#x1)
-	    string show_error = _("The previous installation has failed.\nWould you like to start it again?");
+	    string show_error = _("The previous installation has failed.
+Would you like it to continue?
+
+Note: You may have to enter some information again.");
 	    if (FileUtils::Exists (file_inst_aborted)) {
 		// popup question (#x1)
-		show_error = _("The previous installation has been aborted.\nWould you like to start it again?");
+		show_error = _("The previous installation has been aborted.
+Would you like it to continue?
+
+Note: You may have to enter some information again.");
+
 		y2milestone("Case: aborted");
 	    } else {
 		y2milestone("Case: failed");
