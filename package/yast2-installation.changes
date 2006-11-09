@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Thu Nov  9 10:32:32 CET 2006 - locilka@suse.cz
+
+- Added confirmation dialog into the update workflow on the running
+  system before the update really proceeds (#219097).
+- confirmInstallation function moved from inst_doit to misc to make
+  confirmation dialog possible (#219097).
+- Set Product Name only when any Product Name found (#218720).
+- 2.13.167 
+
+-------------------------------------------------------------------
 Fri Nov  3 10:19:41 CET 2006 - locilka@suse.cz
 
 - Changed text of question asking whether the second stage
