@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Thu Nov  9 10:22:00 CET 2006 - locilka@suse.cz
+
+- Added confirmation dialog into the update workflow on the running
+  system before the update really proceeds (#219097).
+- confirmInstallation function moved from inst_doit to misc to make
+  confirmation dialog possible (#219097).
+- Set Product Name only when any Product Name found (#218720).
+- 2.14.8
+
+-------------------------------------------------------------------
 Fri Nov  3 14:39:53 CET 2006 - locilka@suse.cz
 
 - Preselecting already installed languages in the Language Add-On
