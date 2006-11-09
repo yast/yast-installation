@@ -16,6 +16,8 @@
 
 textdomain "installation";
 
+import "FileUtils";
+
 any ret = nil;
 string func = "";
 map param = $[];
@@ -37,15 +39,20 @@ if (func == "Info")
 	"steps" : 1,
 	// progress step title
 	"title" : _("Initializing fonts..."),
-	"when" : SCR::Read (.target.size, "/sbin/conf.d/SuSEconfig.fonts") != -1
-	    ? [ `installation, `update, `autoinst ]
-	    : [],
+	"when" : [ `installation, `update, `autoinst ],
     ];
 }
 else if (func == "Write")
 {
-    if (SCR::Execute (.target.bash, "/sbin/SuSEconfig --module fonts") != 0)
-	y2error ("SuSEconfig --module fonts failed");
+    // Always run fonts_finish::Write
+    // skip it if SuSEconfig.fonts doesn't exist
+    // bugzilla #216079
+    if (FileUtils::Exists ("/sbin/conf.d/SuSEconfig.fonts")) {
+	if (SCR::Execute (.target.bash, "/sbin/SuSEconfig --module fonts") != 0)
+	    y2error ("SuSEconfig --module fonts failed");
+    } else {
+	y2warning ("Script /sbin/conf.d/SuSEconfig.fonts doesn't exist, skipping...");
+    }
 }
 else
 {

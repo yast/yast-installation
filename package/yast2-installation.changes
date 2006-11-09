@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Nov  9 15:21:14 CET 2006 - locilka@suse.cz
+
+- Always run the fonts_finish's Write() function. Skip running
+  "SuSEconfig --module fonts" if script SuSEconfig.fonts does not
+  exist (#216079).
+
+-------------------------------------------------------------------
 Thu Nov  9 10:22:00 CET 2006 - locilka@suse.cz
 
 - Added confirmation dialog into the update workflow on the running
