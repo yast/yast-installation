@@ -1193,6 +1193,14 @@ resolved before continuing.
 	    {
 		input = WFM::CallFunction("inst_doit", [] );
 	    }
+	    // bugzilla #219097, yast2-update on running system
+	    else if ( Stage::stage () == "normal" )
+	    {
+		if (! confirmInstallation()) {
+		    y2milestone ("Update not confirmed, returning back...");
+		    input = nil;
+		}
+	    }
 
             if ( input == `next )
             {
