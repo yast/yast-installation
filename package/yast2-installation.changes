@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Nov 14 13:20:24 CET 2006 - locilka@suse.cz
+
+- Changes in openSUSE control file (#219878):
+  * limit_try_home: 5 GB -> 7 GB
+  * root_base_size: 3 GB -> 5 GB
+
+-------------------------------------------------------------------
 Thu Nov  9 15:21:14 CET 2006 - locilka@suse.cz
 
 - Always run the fonts_finish's Write() function. Skip running
