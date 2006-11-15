@@ -188,3 +188,11 @@ function have_pid () {
 # ---
 	kill -0 $1 2>/dev/null
 }
+
+#----[ load_module ]----#
+function load_module () {
+#------------------------------------------------------
+# load a module using modprobe
+# ---
+	/sbin/modprobe $1
+}
