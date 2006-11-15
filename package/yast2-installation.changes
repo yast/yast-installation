@@ -4,6 +4,7 @@ Wed Nov 15 14:44:23 CET 2006 - locilka@suse.cz
 - Defining the minimal size for release_notes pop-up to have the
   minimal size 76x22 or 3/4x2/3 in text mode and 100x30 in graphic
   mode (#221222).
+- 2.13.169
 
 -------------------------------------------------------------------
 Wed Nov 15 11:41:48 CET 2006 - locilka@suse.cz
