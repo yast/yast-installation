@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Nov 15 14:38:21 CET 2006 - locilka@suse.cz
+
+- Defining the minimal size for release_notes pop-up to have the
+  minimal size 76x22 or 3/4x2/3 in text mode and 100x30 in graphic
+  mode (#221222).
+
+-------------------------------------------------------------------
 Wed Nov 15 11:40:48 CET 2006 - locilka@suse.cz
 
 - Restoring the [ Next ] button in the inst_congratlate client when
