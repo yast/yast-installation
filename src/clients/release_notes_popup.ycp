@@ -65,6 +65,8 @@
 	return false;
     };
 
+    y2milestone ("Calling: Release Notes Popup");
+
     if (! load_release_notes ())
     {
 	// error report
@@ -79,10 +81,29 @@ part of the installation media. During installation, if a connection
 to the Internet is available, you can download updated release notes
 from the SUSE Linux Web server.</b></p>") + text;
 
-    term contents = `HBox (
-	`VSpacing (22),
+    // bugzilla #221222, #213239
+    map display_info = UI::GetDisplayInfo();
+    integer min_size_x = 76;
+    integer min_size_y = 22;
+    
+    // textmode
+    if (display_info["TextMode"]:true) {
+	min_size_x = tointeger(display_info["Width"]:80)  * 3 / 4;
+	min_size_y = tointeger(display_info["Height"]:25) * 2 / 3;
+	if (min_size_x < 76) min_size_x = 76;
+	if (min_size_y < 22) min_size_y = 22;
+	y2milestone("X/x Y/y %1/%2 %3/%4",
+	    display_info["Width"]:80, min_size_x,
+	    display_info["Height"]:25, min_size_y);
+    // GUI
+    } else {
+	min_size_x = 100;
+	min_size_y = 30;
+    }
+
+    term contents = `MinSize (
+	min_size_x, min_size_y,
 	`VBox (
-	    `HSpacing (70),
 	    `VSpacing (0.5),
 	    `Left (`Heading (_("Release Notes"))),
 	    `RichText (`id (`text), text),
@@ -93,6 +114,7 @@ from the SUSE Linux Web server.</b></p>") + text;
     );
 
     UI::OpenDialog (contents);
+    contents = nil;
     UI::SetFocus (`close);
 
     // FIXME: richtext eats return key, but only in NCurses and we want to
@@ -105,5 +127,8 @@ from the SUSE Linux Web server.</b></p>") + text;
 	ret = UI::UserInput();
     } until ( ret == `close || ret == `back );
     UI::CloseDialog ();
+
+    y2milestone ("Finishing: Release Notes Popup");
+
     return ret;
 }
