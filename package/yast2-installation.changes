@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Nov 15 15:30:03 CET 2006 - ms@suse.de
+
+- fixed i810 based installation (#220403)
+
+-------------------------------------------------------------------
 Wed Nov 15 14:38:21 CET 2006 - locilka@suse.cz
 
 - Defining the minimal size for release_notes pop-up to have the

@@ -659,6 +659,10 @@ if [ "$acceleratedx" = "1" ];then
 		log "\t$XServerAccel driver not installed -> X11 acceleration disabled"
 	else
 		log "\tUsing accelerated driver -> $XServerAccel"
+		if [ $XServerAccel = "i810" ];then
+			log "\tIntel driver requested: loading intel agp module"
+			load_module intel-agp
+		fi
 		MEDIUM[0]=1
 		XServer=$XServerAccel
 		X11_CONFIG_ID=0
