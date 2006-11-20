@@ -229,17 +229,28 @@ function prepare_for_qt () {
 			> /etc/X11/xorg.conf.new
 			mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
 		fi
-		# check DefaultColorDepth setup
-		# /.../
-		# The DefaultColorDepth 16 will not work if the card does not
-		# have enough video ram, or if 15bit has to be used
-		# Let the X11 fbdev driver use whatever the kernel driver uses
-		# ----
+		# check DefaultDepth setup
 		if [ -f /sys/class/graphics/fb0/name ];then
 			read fbdevname < /sys/class/graphics/fb0/name
 			case "$fbdevname" in
+				# The DefaultDepth 16 will not work if the card does not
+				# have enough video ram, or if 15bit has to be used
+				# Let the X11 fbdev driver use whatever the kernel driver uses
 				platinum|control|valkyrie|OFfb)
-				sed -i -e "/DefaultColorDepth/d" /etc/X11/xorg.conf
+				;;
+				# Force DefaultDepth 16, or QT will not look nice
+				# nvidiafb uses 'NV%x'
+				# rivafb uses 'NV%x'
+				# aty128fb uses 'ATY Rage128'
+				# radeonfb uses 'ATI Radeon XX '
+				NV*|*Rage128|*Radeon*)
+				sed -i -e "/@DefaultDepth@/s/^.*/DefaultDepth 16/" /etc/X11/xorg.conf
+				;;
+				# drivers that are not yet tested
+				# atyfb uses 'ATY Mach64', may not have enough video ram
+				MATROX|*Mach64)
+				;;
+				*)
 				;;
 			esac
 		fi

@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Nov 20 11:49:53 CET 2006 - ms@suse.de
+
+- fixed framebuffer color depth setup (#221139)
+- 2.14.11
+
+-------------------------------------------------------------------
 Mon Nov 20 08:55:16 CET 2006 - locilka@suse.cz
 
 - Show update-confirmation dialog in Mode::update() only (#221571).
