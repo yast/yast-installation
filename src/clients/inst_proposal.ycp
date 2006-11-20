@@ -1193,8 +1193,8 @@ resolved before continuing.
 	    {
 		input = WFM::CallFunction("inst_doit", [] );
 	    }
-	    // bugzilla #219097, yast2-update on running system
-	    else if ( Stage::stage () == "normal" )
+	    // bugzilla #219097, #221571, yast2-update on running system
+	    else if ( Stage::stage () == "normal" && Mode::update () )
 	    {
 		if (! confirmInstallation()) {
 		    y2milestone ("Update not confirmed, returning back...");
