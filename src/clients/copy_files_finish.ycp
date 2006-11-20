@@ -24,6 +24,8 @@ import "ProductControl";
 import "FileUtils";
 import "String";
 
+include "installation/misc.ycp";
+
 any ret = nil;
 string func = "";
 map param = $[];
@@ -50,6 +52,11 @@ if (func == "Info")
 }
 else if (func == "Write")
 {
+    // bugzilla #221815
+    // Adding blacklisted modules into the /etc/modprobe.d/blacklist
+    // This should run before the SCR::switch function
+    AdjustModprobeBlacklist();
+
     // copy hardware status to installed system
     SCR::Execute (.target.bash,"/bin/cp -a '/var/lib/hardware' " +
 	"'" + String::Quote (Installation::destdir) + "/var/lib'");
