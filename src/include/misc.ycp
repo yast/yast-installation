@@ -25,6 +25,58 @@ import "Installation";
 import "Mode";
 import "ProductControl";
 import "Label";
+import "FileUtils";
+import "Linuxrc";
+
+/**
+ * Function appends blacklisted modules to the /etc/modprobe.d/blacklist
+ * file. 
+ *
+ * More information in bugzilla #221815
+ */
+void AdjustModprobeBlacklist () {
+    // check whether we need to run it
+    string brokenmodules = Linuxrc::InstallInf("BrokenModules");
+    if (brokenmodules == "" || brokenmodules == nil) {
+	y2milestone ("No BrokenModules in install.inf, skipping...");
+	return;
+    }
+
+    // comma-separated list of modules
+    list <string> blacklisted_modules = splitstring (brokenmodules, ", ");
+
+    // run before SCR switch
+    string blacklist_file = Installation::destdir + "/etc/modprobe.d/blacklist";
+
+    // read the content
+    string content = "";
+    if (FileUtils::Exists (blacklist_file)) {
+	content = (string) SCR::Read (.target.string, blacklist_file);
+	if (content == nil) {
+	    y2error ("Cannot read %1 file", blacklist_file);
+	    content = "";
+	}
+    } else {
+	y2warning ("File %1 does not exist, installation will create new one", blacklist_file);
+    }
+
+    // creating new entries with comment
+    string blacklist_file_added = "# Note: Entries added during installation/update (Bug 221815)\n";
+    foreach (string blacklisted_module, blacklisted_modules, {
+	blacklist_file_added = blacklist_file_added +
+	    sformat ("blacklist %1\n", blacklisted_module);
+    });
+
+    // newline if the file is not empty
+    content = content + (content != "" ? "\n\n" : "") + blacklist_file_added;
+
+    y2milestone ("Blacklisting modules: %1 in %2", blacklisted_modules, blacklist_file);
+    if (! SCR::Write (.target.string, blacklist_file, content)) {
+	y2error ("Cannot write into %1 file", blacklist_file);
+    } else {
+	y2milestone ("Changes into file %1 were written successfully", blacklist_file);
+    }
+}
 
 void InjectFile (string filename) {
     y2milestone("InjectFile: <%1>", filename );

@@ -59,7 +59,7 @@ list<string> ConfirmExtraSources(map<string,boolean> urls)
 	}
     );
 
-    integer width = 56;
+    integer width = 76;
     integer height = 8;
 
     term popup = `HBox(
