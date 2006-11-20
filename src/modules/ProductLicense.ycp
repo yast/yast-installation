@@ -197,10 +197,13 @@ map<string,string> LicenseFiles (string dir, list<string> patterns) {
  *   and not 1st stage installation
  * @param patterns a list of patterns for the files, regular expressions
  *   with %1 for the language
- * @param enable_back sets the back_button status
+ * @param boolean enable_back sets the back_button status
+ * @param boolean base_product defines whether it is a base or add-on product
+ *   true means base product, false add-on product
  */
 global symbol AskLicenseAgreement (integer src_id, string dir,
-    list<string> patterns, string action, boolean enable_back)
+    list<string> patterns, string action, boolean enable_back,
+    boolean base_product)
 {
     string tmpdir = nil;
     string info_file = nil;
@@ -347,11 +350,18 @@ unzip -qqo '%2'
 	symbol accept = (symbol) UI::QueryWidget(`id(`eula), `CurrentButton);
 	// Aborting the license dialog
 	if (ret == `abort) {
-	    // popup question
-	    if (Popup::ContinueCancel(_("Really abort add-on product installation?")))
-	    {
-		y2milestone("Aborting...");
-		return `abort;
+	    // bugzilla #218677
+	    if (base_product) {
+		if (Popup::ConfirmAbort (`painless)) {
+		    y2milestone("Aborting...");
+		    return `abort;
+		}
+	    } else {
+		// popup question
+		if (Popup::ContinueCancel(_("Really abort add-on product installation?"))) {
+		    y2milestone("Aborting...");
+		    return `abort;
+		}
 	    }
 	}
 	else if (ret == `next)
@@ -418,7 +428,7 @@ global symbol AskAddOnLicenseAgreement (integer src_id) {
 	[ "license\\.txt", "license\\.%1\\.txt" ],
 	"abort",
 	// back button is disabled
-	false);
+	false, false);
 }
 
 global symbol AskFirstStageLicenseAgreement (string action) {
@@ -426,13 +436,13 @@ global symbol AskFirstStageLicenseAgreement (string action) {
 	[ "license\\.txt", "license\\.%1\\.txt" ],
 	action,
 	// back button is enabled
-	true);
+	true, true);
 }
 
 global symbol AskInstalledLicenseAgreement (string directory,
     list<string> patterns, string action)
 {
-    return AskLicenseAgreement (nil, directory, patterns, action, false);
+    return AskLicenseAgreement (nil, directory, patterns, action, false, true);
 
 }
 
