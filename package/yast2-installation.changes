@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Tue Nov 21 14:42:50 CET 2006 - locilka@suse.cz
+
+- Reporting the failed or aborted installation only when it has
+  been really aborted or when it really failed. YaST or system
+  restarts on purpose (online update) are now handled correctly -
+  there is no question whether user wants to continue with
+  the installation (#222896).
+- 2.14.13
+
+-------------------------------------------------------------------
 Mon Nov 20 15:25:11 CET 2006 - locilka@suse.cz
 
 - Wider list of extra-sources 56->76 characters (#221984).
