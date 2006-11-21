@@ -138,6 +138,8 @@ Note: You may have to enter some information again.");
 	// creating files in case the installation fails
 	// they are removed at the end if everything works well
 	y2milestone ("Creating files for case if installation fails (reset button)");
+	// might be left from the previous run
+	if (FileUtils::Exists (file_inst_aborted)) SCR::Execute (.target.remove, file_inst_aborted);
 	SCR::Execute (.target.bash, sformat ("touch %1", file_inst_failed));
 	SCR::Execute (.target.bash, sformat ("touch %1", run_yast_at_boot));
     }
@@ -452,6 +454,12 @@ but something went wrong, that's why it is only in the log");
 
     if (Stage::cont () && (ret == `reboot || ret == `restart_yast || ret == `restart_same_step))
     {
+	// restarting yast, removing files that identify the user-abort or installation-crash
+	// bugzilla #222896
+	if (FileUtils::Exists (file_inst_aborted)) SCR::Execute (.target.remove, file_inst_aborted);
+	if (FileUtils::Exists (file_inst_failed))  SCR::Execute (.target.remove, file_inst_failed);
+
+	// creating new files to identify restart
 	integer last_step = ProductControl::CurrentStep ();
 	integer restarting_step = last_step;
 	if (ret == `restart_same_step)
@@ -485,8 +493,8 @@ but something went wrong, that's why it is only in the log");
     if (!Mode::test ())
         WFM::Execute (.local.bash, "/bin/echo \"/sbin/modprobe\" >/proc/sys/kernel/modprobe");
 
-    // when the installation is not aborted
-    if (Stage::cont () && ret != `reboot && ret != `restart_yast && ret != `abort)
+    // when the installation is not aborted or YaST is not restarted on purpose
+    if (Stage::cont () && ret != `reboot && ret != `restart_yast && ret != `restart_same_step && ret != `abort)
     {
 	// remove /etc/install.inf, not needed any more
 	SCR::Execute (.target.remove, "/etc/install.inf");
