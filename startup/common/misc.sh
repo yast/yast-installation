@@ -196,3 +196,11 @@ function load_module () {
 # ---
 	/sbin/modprobe $1
 }
+
+#----[ skip_initvicons ]----#
+function skip_initvicons () {
+#------------------------------------------------------
+# check if the call to initvicons must be skipped
+# ---
+	grep -qw TERM /proc/cmdline && return 0 || return 1
+}

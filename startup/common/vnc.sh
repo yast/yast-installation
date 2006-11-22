@@ -73,11 +73,15 @@ function startVNCServer () {
 		hostname $IP
 	fi
 	#==========================================
+	# store hostname for use in desktop option
+	#------------------------------------------
+	VNC_HOSTNAME=`hostname`
+	#==========================================
 	# Start Xvnc...
 	#------------------------------------------
 	$Xbindir/Xvnc $Xvncparam :0 \
 		-rfbauth /root/.vnc/passwd \
-		-desktop Installation \
+		-desktop "Installation at: $VNC_HOSTNAME" \
 		-geometry 800x600 \
 		-depth 16 \
 		-rfbwait 120000 \
