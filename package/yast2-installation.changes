@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Nov 22 18:51:10 CET 2006 - ms@suse.de
+
+- added hostname/IP information to Xvnc setup (#223266)
+- fixed call of initvicons, deactivate s390 exception (#192052)
+- 2.14.14
+
+-------------------------------------------------------------------
 Tue Nov 21 14:42:50 CET 2006 - locilka@suse.cz
 
 - Reporting the failed or aborted installation only when it has

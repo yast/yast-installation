@@ -10,11 +10,13 @@ log "\tNo configuration files needs to be provided..."
 #=============================================
 # 8.1) setup virtual console
 #---------------------------------------------
-. /usr/lib/YaST2/startup/arch/s390/console.sh
+# ---- DISABLED: S390 console check ----
+# . /usr/lib/YaST2/startup/arch/s390/console.sh
 # BEG S390: check if initvicons needs to be called
-s390_check_need_initvicons
+# s390_check_need_initvicons
 # END S390:
-if [ $NEED_INITVICONS = "yes" ];then
+
+if ! skip_initvicons;then
 	eval `initviocons -e`
 	export LINES COLUMNS TERM
 	log "\tSetup virtual console:"
