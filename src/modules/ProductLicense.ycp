@@ -21,6 +21,7 @@ import "Stage";
 import "Wizard";
 import "Mode";
 import "FileUtils";
+import "ProductFeatures";
 
 textdomain "installation";
 
@@ -432,11 +433,22 @@ global symbol AskAddOnLicenseAgreement (integer src_id) {
 }
 
 global symbol AskFirstStageLicenseAgreement (string action) {
+    // bug #223258
+    // disabling back button when the select-language dialog is skipped
+    //
+    // FIXME: hotfix for 10.2, solve better for 10.3
+    //
+    boolean enable_back = true;
+    if (Stage::initial () &&
+	ProductFeatures::GetBooleanFeature ("globals", "skip_language_dialog") &&
+	Language::preselected != "en_US"
+    ) enable_back = false;
+
     return AskLicenseAgreement (nil, "",
 	[ "license\\.txt", "license\\.%1\\.txt" ],
 	action,
 	// back button is enabled
-	true, true);
+	enable_back, true);
 }
 
 global symbol AskInstalledLicenseAgreement (string directory,

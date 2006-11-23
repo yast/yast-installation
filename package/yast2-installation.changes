@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Nov 23 11:10:14 CET 2006 - locilka@suse.cz
+
+- Disabling [Back] button in License Agreement dialog when the
+  previous (Language) dialog has been skipped (223258).
+- 2.14.15
+
+-------------------------------------------------------------------
 Wed Nov 22 18:51:10 CET 2006 - ms@suse.de
 
 - added hostname/IP information to Xvnc setup (#223266)
