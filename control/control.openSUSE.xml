@@ -30,7 +30,7 @@ textdomain="control"
         <selection_type config:type="symbol">auto</selection_type>
     </software>
     <partitioning>
-        <evms_config config:type="boolean">true</evms_config>
+        <evms_config config:type="boolean">false</evms_config>
         <try_separate_home config:type="boolean">true</try_separate_home>
         <limit_try_home>7G</limit_try_home>
         <root_space_percent>40</root_space_percent>

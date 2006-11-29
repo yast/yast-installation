@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Nov 29 14:15:07 CET 2006 - locilka@suse.cz
+
+- Disabling EVMS (#224462).
+
+-------------------------------------------------------------------
 Thu Nov 23 11:10:14 CET 2006 - locilka@suse.cz
 
 - Disabling [Back] button in License Agreement dialog when the
