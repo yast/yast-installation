@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Dec  4 17:34:41 CET 2006 - locilka@suse.cz
+
+- Adding root_password_ca_check item into the globals of control
+  file set to true for SLES and false otherwise (FATE #300438).
+
+-------------------------------------------------------------------
 Mon Nov 20 08:59:32 CET 2006 - locilka@suse.cz
 
 - Show update-confirmation dialog in Mode::update() only (#221571).
