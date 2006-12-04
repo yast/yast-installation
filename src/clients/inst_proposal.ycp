@@ -59,6 +59,9 @@
     boolean	have_blocker = false;
     string	proposal_mode = "";
 
+    // FATE #301151: Allow YaST proposals to have help texts
+    map <string, string> submodule_helps = $[];
+
     symbol proposal_result = nil;
 
     // skip if not interactive mode.
@@ -218,6 +221,8 @@
 	Wizard::DisableNextButton ();
 	UI::BusyCursor();
 
+	submodule_helps = $[];
+
         y2debug("Submodules list before execution: %1", submodules );
 	foreach ( string submod, submodules,
 	``{
@@ -240,6 +245,21 @@
         	}
 
 		prop_map = submod_make_proposal( submod, force_reset, language_changed );
+		
+		if (haskey (prop_map, "help"))
+		{
+		    y2milestone("Submodule '%1' has it's own help", submod);
+		    string own_help = prop_map["help"]:"";
+		    
+		    if (own_help == nil) {
+			y2error ("Help text cannot be 'nil'");
+		    } else if (own_help == "") {
+			y2milestone ("Skipping empty help");
+		    } else {
+			submodule_helps[submod] = prop_map["help"]:"";
+		    }
+		}
+
 
 		// check if it is needed to switch to another tab
 		// because of an error
@@ -301,6 +321,12 @@
 		skip_the_rest = true;
 	    }
 	});
+
+	// FATE #301151: Allow YaST proposals to have help texts
+	if (size(submodule_helps) > 0) {
+	    Wizard::SetHelpText (help_text ());
+	}
+
 	if (has_tab && tab_to_switch < 999 && ! current_tab_affected)
 	{
 	    // FIXME copy-paste from event loop (but for last 2 lines)
@@ -1004,6 +1030,12 @@ To use the settings as displayed, press <b>Next</b>.
 locked by the system administrator, so cannot be changed. To change
 a proposal that is locked, ask your system administrator.</p>");
         }
+	
+	foreach (string submod, submodules_presentation, {
+	    if (submodule_helps[submod]:"" != "") {
+		help_text_string = help_text_string + submodule_helps[submod]:"";
+	    }
+	});
 
 	return help_text_string;
     };

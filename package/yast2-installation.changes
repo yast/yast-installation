@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Dec  4 16:27:21 CET 2006 - locilka@suse.cz
+
+- Adding support for own help texts for particular submodules in
+  installation proposal (FATE #301151). Use key "help" in
+  "MakeProposal"'s function result.
+
+-------------------------------------------------------------------
 Mon Dec  4 08:34:02 CET 2006 - lslezak@suse.cz
 
 - "en_EN" -> "en_GB" in list of the preferred languages for EULA

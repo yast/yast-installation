@@ -213,7 +213,11 @@ map MakeProposal( boolean force_reset, boolean language_changed );
 
 			This module just caused a change of the root partition.
 			This is only relevant for the "root part" module.
-
+		
+		string help
+		
+			Helptext for this module which appears in the standard dialog
+			help (particular helps for modules sorted by presentation order).
 
 
 map AskUser( boolean has_next )
