@@ -15,8 +15,8 @@ Requires:	yast2-packager >= 2.14.0
 Requires:	yast2-pkg-bindings >= 2.13.101
 # ProductControl::Run returning `abort (FATE #300422)
 Requires:	yast2 >= 2.14.6
-# Languages:GetLanguagesMap, bugzilla #204791
-Requires:	yast2-country >= 2.13.35
+# Language::selection_skipped, bugzilla #223258
+Requires:	yast2-country >= 2.15.0
 
 Requires:	yast2-network yast2-users
 Requires:	curl release-notes
