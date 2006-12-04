@@ -25,6 +25,7 @@ textdomain="control"
         <display_register_forcereg config:type="boolean">false</display_register_forcereg>
         <disable_register_w3m config:type="boolean">false</disable_register_w3m>
 	<manual_online_update config:type="boolean">true</manual_online_update>
+	<root_password_ca_check config:type="boolean">false</root_password_ca_check>
     </globals>
     <software>
         <delete_old_packages config:type="boolean">true</delete_old_packages>
