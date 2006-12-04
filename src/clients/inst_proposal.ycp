@@ -248,15 +248,29 @@
 		
 		if (haskey (prop_map, "help"))
 		{
-		    y2milestone("Submodule '%1' has it's own help", submod);
-		    string own_help = prop_map["help"]:"";
-		    
-		    if (own_help == nil) {
-			y2error ("Help text cannot be 'nil'");
-		    } else if (own_help == "") {
-			y2milestone ("Skipping empty help");
+		    boolean use_this_help = false;
+		    // using tabs
+		    if (haskey (mod2tab, submod)) {
+			// visible in the current tab
+			if (mod2tab[submod]:999 == current_tab) {
+			    use_this_help = true;
+			}
+		    // not using tabs
 		    } else {
-			submodule_helps[submod] = prop_map["help"]:"";
+			use_this_help = true;
+		    }
+
+		    if (use_this_help) {
+			y2milestone("Submodule '%1' has it's own help", submod);
+			string own_help = prop_map["help"]:"";
+		    
+			if (own_help == nil) {
+			    y2error ("Help text cannot be 'nil'");
+			} else if (own_help == "") {
+			    y2milestone ("Skipping empty help");
+			} else {
+			    submodule_helps[submod] = prop_map["help"]:"";
+			}
 		    }
 		}
 
