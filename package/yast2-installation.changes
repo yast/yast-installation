@@ -4,6 +4,8 @@ Mon Dec  4 16:27:21 CET 2006 - locilka@suse.cz
 - Adding support for own help texts for particular submodules in
   installation proposal (FATE #301151). Use key "help" in
   "MakeProposal"'s function result.
+- Adding root_password_ca_check item into the globals of control
+  file set to true for SLES and false otherwise.
 - 2.15.0
 
 -------------------------------------------------------------------
