@@ -186,6 +186,17 @@
      </para>
     </listitem>
 
+    <listitem>
+     <para>
+      <emphasis>string</emphasis> <literal>help</literal>
+      (optional)
+     </para>
+       Helptext for this module which appears in the standard dialog
+       help (particular helps for modules sorted by presentation order).
+     <para>
+     </para>
+    </listitem>    
+
    </itemizedlist>
   </section>
  </section>

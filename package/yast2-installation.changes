@@ -5,7 +5,7 @@ Mon Dec  4 16:27:21 CET 2006 - locilka@suse.cz
   installation proposal (FATE #301151). Use key "help" in
   "MakeProposal"'s function result.
 - Adding root_password_ca_check item into the globals of control
-  file set to true for SLES and false otherwise.
+  file set to true for SLES and false otherwise (FATE #300438).
 - 2.15.0
 
 -------------------------------------------------------------------
