@@ -266,7 +266,7 @@ unzip -qqo '%2'
 	Language::language,
 	substring (Language::language, 0, 2), // "it_IT" -> "it"
 	"en_US",
-	"en_EN",
+	"en_GB",
 	"en",
 	"" // license.txt fallback
     ];

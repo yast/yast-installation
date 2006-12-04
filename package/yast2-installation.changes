@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Dec  4 08:34:02 CET 2006 - lslezak@suse.cz
+
+- "en_EN" -> "en_GB" in list of the preferred languages for EULA
+
+-------------------------------------------------------------------
 Thu Nov 23 11:10:14 CET 2006 - locilka@suse.cz
 
 - Disabling [Back] button in License Agreement dialog when the
