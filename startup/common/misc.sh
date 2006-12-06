@@ -188,3 +188,11 @@ function have_pid () {
 # ---
 	kill -0 $1 2>/dev/null
 }
+
+#----[ skip_initvicons ]----#
+function skip_initvicons () {
+#------------------------------------------------------
+# check if the call to initvicons must be skipped
+# ---
+	grep -qw TERM /proc/cmdline && return 0 || return 1
+}
