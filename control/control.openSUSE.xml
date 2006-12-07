@@ -72,7 +72,7 @@ textdomain="control"
 &lt;p&gt;The installation of openSUSE on your machine is complete.
 After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt;
 &lt;p&gt;Visit us at %1.&lt;/p&gt;
-&lt;p&gt;Have a lot of fun!&lt;br&gt;Your SUSE Development Team&lt;/p&gt;
+&lt;p&gt;Have a lot of fun!&lt;br&gt;Your openSUSE Development Team&lt;/p&gt;
 	</label>
       </congratulate>
     </texts>
