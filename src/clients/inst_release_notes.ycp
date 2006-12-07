@@ -23,46 +23,135 @@
 
     map argmap = GetInstArgs::argmap();
 
+    integer minwidtprodsel = 0;
     list<string> relnotesproducts = [];
-    list<string> readproducts = [];
+
     map<string, string> relnotesmap = $[];
-    list<string> default_patterns = ["RELEASE-NOTES.%1.rtf"];
-    list<string> patterns = argmap["patterns"]:default_patterns;
-    string basedirectory = argmap["directory"]:"/usr/share/doc/release-notes";
+    string basedirectory = "/usr/share/doc/release-notes";
     string directory="";
     integer prodnamelen=0;
+
+    map <string, string> CreateLanguagesTranslations () {
+	map <string, string> ret = $[];
+	map <string, list> all_languages =  Language::GetLanguagesMap(false);
+	foreach (string short, list translations, all_languages, {
+	    string translation = nil;
+	    if (translations[4]:"" != "")      translation = translations[4]:"";
+	    else if (translations[1]:"" != "") translation = translations[1]:"";
+	    else if (translations[0]:"" != "") translation = translations[0]:"";
+	    
+	    ret[short] = translation;
+
+	    // fallback for short names without xx_YY
+	    if (regexpmatch(short, "_")) {
+		short = regexpsub(short, "^(.*)_.*$", "\\1");
+		if (ret[short]:nil == nil) ret[short] = translation;
+	    }
+	});
+	
+	// exceptions
+	if (ret["en"]:nil != nil && ret["en_US"]:nil != nil) ret["en"] = ret["en_US"]:"";
+	if (ret["zh"]:nil != nil && ret["zh_CN"]:nil != nil) ret["zh"] = ret["zh_CN"]:"";
+	if (ret["pt"]:nil != nil && ret["pt_PT"]:nil != nil) ret["pt"] = ret["pt_PT"]:"";
+	
+	return ret;
+    }
+
+    // --- //
 
     if (argmap["directory"]:"" != "")
             basedirectory = Directory::custom_workflow_dir + basedirectory;
 
+    list<string> readproducts = [];
     readproducts = (list<string>) SCR::Read(.target.dir, basedirectory);
 
-    foreach ( string product, readproducts ,
-    {
+    map <string, string> languages_translations = CreateLanguagesTranslations();
+    map <string, list <term> > languages_of_relnotes = $[];
+
+    list <string> preferred_langs = [
+	Language::language,
+	substring (Language::language, 0, 2),
+	"en_US",
+	"en_GB",
+	"en"
+    ];
+
+    map <string, integer> minwidthlang = $[];
+
+    map <string, string> cleanproduct_product = $[];
+    // Creating term `ComboBox with languages for every single product
+    foreach ( string product, readproducts, {
         // beautify product string
         string cleanproduct = mergestring(splitstring(product, "_"), " ");
-        relnotesproducts = add (relnotesproducts, cleanproduct );
+        relnotesproducts = add (relnotesproducts, cleanproduct);
+	if (minwidtprodsel < size (cleanproduct))
+	    minwidtprodsel = size (cleanproduct);
+	cleanproduct_product[cleanproduct] = product;
+
         prodnamelen=prodnamelen + size(cleanproduct);
 
         // read release notes
-        string directory = basedirectory + "/" + product;
-        map relnotes = CustomDialogs::load_file_locale(patterns, directory, Language::language);
+        string directory = basedirectory + "/" + product + "/";
 
-        // add release notes to map
-        relnotesmap[cleanproduct] = (string) relnotes["text"]:"";
+	list <string> relnotest_list = (list <string>) SCR::Read (.target.dir, directory);
+	relnotest_list = filter (string one_relnotes, relnotest_list, {
+	    return regexpmatch (one_relnotes, "^RELEASE-NOTES\..*\.rtf$");
+	});
+	
+	list <term> combobox_items = [];
+	foreach (string one_relnotes, relnotest_list, {
+	    string relnotes_lang = regexpsub (one_relnotes, "^RELEASE-NOTES\.(.*)\.rtf$", "\\1");
+	    string lang_name = languages_translations[relnotes_lang]:"";
+	    // combobox item
+	    if (lang_name == nil || lang_name == "") lang_name = sformat (_("Language: %1"), relnotes_lang);
 
-        /* filename of release notes */
-        //string file = relnotes["file"]:"";
-        /* release notes */
-        // string text = relnotes["text"]:"";
+	    // set minimal width (maximal length of language name)
+	    if (minwidthlang[product]:0 < size (lang_name))
+		minwidthlang[product] = size (lang_name);
+
+	    combobox_items = add (combobox_items,
+		`item (`id (sformat ("%1%2", directory, one_relnotes)), lang_name)
+	    );
+	});
+
+	// Selecting default language
+	string item_id = nil;
+	boolean preferred_found = false;
+	foreach (string preffered_lang, preferred_langs, {
+	    integer conter = -1;
+	    foreach (term one_item, combobox_items, {
+		conter = conter + 1;
+		string item_id = one_item[0,0]:"";
+
+		if (regexpmatch (item_id, sformat ("RELEASE-NOTES\.%1\.rtf$", preffered_lang))) {
+		    preferred_found = true;
+		    break;
+		}
+	    });
+	    
+	    if (preferred_found) {
+		combobox_items[conter] = add (combobox_items[conter]:`item(`id(nil), nil), true);
+		break;
+	    }
+	});
+	
+	languages_of_relnotes[product] = sort (term a, term b, combobox_items, ``( a[1]:"" < b[1]:"" ));
     });
-
+    
     /* caption for dialog "Release Notes" */
     string caption = _("Release Notes");
 
-    term relnoteslayout=nil;
-    term relnotesrichtext=`RichText(`id(`relnotescontent),
-                                     relnotesmap[relnotesproducts[0]:""]:"Select product"  );
+    term relnoteslayout = nil;
+    term relnotesscreen = `VBox (
+	// combobox
+	`Left (
+	    `ReplacePoint (
+		`id(`lang_rp),
+		`ComboBox (`id (`lang), `opt (`notify), _("&Language"), [])
+	    )
+	),
+	`RichText (`id (`relnotescontent), "")
+    );
 
     // use DumpTab or ComboBox layout
     if (  UI::HasSpecialWidget(`DumbTab ) && (
@@ -70,15 +159,23 @@
            ( size(relnotesproducts)>3  &&  prodnamelen<70 )    )
        )
     {
-        relnoteslayout= `DumbTab ( relnotesproducts , relnotesrichtext );
+        relnoteslayout = `DumbTab (relnotesproducts, relnotesscreen);
     }
     else
     {
-        relnoteslayout=`VBox( `Left( `ComboBox(`id(`productsel), `opt(`notify), _("&Product"), relnotesproducts)),
-                                      relnotesrichtext );
+        relnoteslayout = `VBox (
+	    `Left (
+		`MinWidth (
+		    // +2 thingies on the right
+		    minwidtprodsel + 2,
+		    `ComboBox (`id(`productsel), `opt(`notify), _("&Product"), relnotesproducts)
+		)
+	    ),
+	    relnotesscreen
+	);
     }
 
-    term contents = `VBox ( `VSpacing (0.5), relnoteslayout, `VSpacing (0.5));
+    term contents = `VBox (`VSpacing (0.5), relnoteslayout, `VSpacing (0.5));
 
     /* help text for dialog "Release Notes" */
     string help = _("<p>Here are the <b>release notes</b> for the installed
@@ -91,13 +188,48 @@ Linux system. They provide a brief summary of new features and changes.</p>");
            GetInstArgs::enable_next());
     Wizard::SetTitleIcon("yast-release-notes");
 
-    // FIXME: richtext eats return key, but only in NCurses and we want to
-    // make users read release notes (and make PgDn work). For Next, F10 is
-    // availbale
-    UI::SetFocus (`id (`relnotescontent));
+    // Default settings
+    UI::ChangeWidget (`id(`lang), `Enabled, false);
+    if (UI::WidgetExists(`productsel) && (size(relnotesproducts) < 2))
+	UI::ChangeWidget (`id(`productsel), `Enabled, false);
+
+    void RedrawRelnotesLang (string use_file) {
+	string contents = (string) SCR::Read (.target.string, use_file);
+	if (contents == nil || contents == "") {
+	    y2error ("Wrong relnotesfile: %1", use_file);
+	} else {
+	    UI::ChangeWidget (`id(`relnotescontent), `Value, contents);
+	}
+	
+	UI::SetFocus (`id (`relnotescontent));
+    }
+
+    void RedrawRelnotesProduct (symbol redraw_type, any current_ret) {
+	if (redraw_type == `tab) {
+	    string product = cleanproduct_product[tostring(current_ret)]:"";
+
+	    UI::ReplaceWidget (
+		`id (`lang_rp),
+		`MinWidth (
+		    // +2 for thingies on the right
+		    minwidthlang[product]:16 + 2,
+		    `ComboBox (`id (`lang), `opt (`notify), _("&Language"), languages_of_relnotes[product]:[])
+		)
+	    );
+	    if (size(languages_of_relnotes[product]:[]) > 1)
+		UI::ChangeWidget (`id (`lang), `Enabled, true);
+	    else
+		UI::ChangeWidget (`id (`lang), `Enabled, false);
+	}
+	
+	RedrawRelnotesLang ((string) UI::QueryWidget (`id (`lang), `Value));
+    }
 
     // for debugging
     // UI::DumpWidgetTree();
+
+    // Init the first product
+    RedrawRelnotesProduct (`tab, relnotesproducts[0]:"");
 
     any ret = nil;
 
@@ -105,25 +237,20 @@ Linux system. They provide a brief summary of new features and changes.</p>");
 
 	ret = Wizard::UserInput();
 
-	if (ret == `abort)
-	{
+	if (ret == `abort) {
 	    if (Mode::normal()) break;
 	    if (Popup::ConfirmAbort (`incomplete))
 		break;
-	}
-	else if (ret == `help)
-	{
+	} else if (ret == `help) {
 	    Wizard::ShowHelp (help);
-	}
-        else if ( ret == `productsel )
-        {
-                UI::ChangeWidget(`relnotescontent, `Value, relnotesmap[ (string) UI::QueryWidget(`id(`productsel), `Value)   ]:"" );
-                UI::SetFocus (`id (`relnotescontent));
-        }
-	else if ( is( ret, string ) )
-	{
-		UI::ChangeWidget(`relnotescontent, `Value, relnotesmap[(string) ret]:"");
-                UI::SetFocus (`id (`relnotescontent));
+	// using combobox for products
+	} else if (ret == `productsel) {
+	    RedrawRelnotesProduct (`tab, (string) UI::QueryWidget (`id (`productsel), `Value));
+	} else if (ret == `lang) {
+	    RedrawRelnotesLang ((string) UI::QueryWidget (`id (`lang), `Value));
+	// using tabs for products
+        } else if (is (ret, string)) {
+	    RedrawRelnotesProduct (`tab, ret);
 	}
 
     } until ( ret == `next || ret == `back );
