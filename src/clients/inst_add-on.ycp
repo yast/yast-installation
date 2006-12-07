@@ -30,9 +30,6 @@ symbol ret = RunAddOnMainDialog (GetInstArgs::enable_back(), GetInstArgs::enable
 
 if (ret == `next)
 {
-    foreach (map<string,any> prod, AddOnProduct::add_on_products, {
-	AddOnProduct::Integrate (prod["media"]:0);
-    });
     ret = ProductControl::RunFrom (
 	ProductControl::CurrentStep () + 1,
 	true);

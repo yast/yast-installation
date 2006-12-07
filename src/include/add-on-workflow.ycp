@@ -186,6 +186,27 @@ the first CD are located, such as /data1/CD1.</p>
 }
 
 /**
+ * Returns begining string for source type
+ *
+ * @param symbol source_type
+ * @return string url begins with...
+ */
+string GetURLBeginsWith (symbol source_type) {
+    string url = "";
+
+    if      ( source_type == `ftp ) url = "ftp://";
+    else if ( source_type == `http ) url = "http://";
+    else if ( source_type == `https ) url = "https://";
+    else if ( source_type == `samba ) url = "smb://";
+    else if ( source_type == `nfs ) url = "nfs://";
+    else if ( source_type == `cd ) url = "cd:///";
+    else if ( source_type == `dvd ) url = "dvd:///";
+    else if ( source_type == `local_dir ) url = "dir://";
+
+    return url;
+}
+
+/**
  * Run dialog for selecting the media
  * @return symbol for wizard sequencer
  */
@@ -224,6 +245,7 @@ symbol MediaSelect () {
 	    continue;
 
 
+	createResult = nil;
 	symbol input = (symbol)UI::QueryWidget (`id (`type), `CurrentButton);
 	y2milestone ("Current: %1", input);
 	if ( input == `slp )
@@ -240,15 +262,7 @@ symbol MediaSelect () {
 	else if (contains ([`ftp, `http, `https, `samba, `nfs, `cd, `dvd,
 	    `local_dir, `specify_url], input))
 	{
-	    if ( input == `ftp ) url = "ftp://";
-	    else if ( input == `http ) url = "http://";
-	    else if ( input == `https ) url = "https://";
-	    else if ( input == `samba ) url = "smb://";
-	    else if ( input == `nfs ) url = "nfs://";
-	    else if ( input == `cd ) url = "cd:///";
-	    else if ( input == `dvd ) url = "dvd:///";
-	    else if ( input == `local_dir ) url = "dir://";
-	    else url = "";
+	    url = GetURLBeginsWith (input);
 
 	    if (input == `cd || input == `dvd)
 	    {
@@ -276,12 +290,14 @@ symbol MediaSelect () {
 	      do {
 		url = editUrl( url );
 		y2milestone ("New url: '%1'", url);
-		if ( size( url ) == 0 ) {
-		    break;
+		if (url == nil || url == "") {
+		    continue;
+		} else {
+		    y2milestone ("Adding source");
+		    createResult = SourceManager::createSource( url);
 		}
-
-		createResult = SourceManager::createSource( url);
               } while ( createResult == `again );
+	      y2milestone ("New Add-On: finished");
 	    }
         }
 	if (createResult != `ok)
@@ -566,7 +582,7 @@ or selected for installation."));
         string product_dir = data["product_dir"]:"";
 	AddOnProduct::add_on_products = add (AddOnProduct::add_on_products, $[
 	    "media" : AddOnProduct::src_id,
-	    "product" : prod["name"]:"",
+	    "product" : prod["display_name"]:prod["short_name"]:prod["name"]:"",
 	    "media_url" : url,
 	    "product_dir" : product_dir,
 	]);
@@ -744,6 +760,7 @@ symbol RunAutorunWizard() {
 
 
 void Redraw (boolean enable_back, boolean enable_next) {
+    y2milestone ("Called Redraw()");
     // main screen heading
     string title = _("Add-On Product Installation");
 
@@ -797,53 +814,82 @@ select it and click <b>Delete</b>.</p>");
     }
 }
 
+// bugzilla #221377
+// the original control file is stored as /control.xml
+// the other (added) control files are under the
+// /tmp/$yast_tmp/control_files/ directory
+// as $srcid.xml files
+//
 symbol RunAddOnMainDialog(boolean enable_back, boolean enable_next) {
     Redraw (enable_back, enable_next);
     symbol ret = nil;
 
+    // added / removed
+    boolean some_addon_changed = false;
+
+    // store the initial settings, only once
+    AddOnProduct::StoreInitialSettings();
+
     repeat {
-        ret = (symbol)Wizard::UserInput();
-        if (ret == `abort || ret == `cancel)
-        {
+        ret = (symbol) Wizard::UserInput();
+
+	// aborting
+        if (ret == `abort || ret == `cancel) {
             if (Popup::ConfirmAbort (`incomplete))
                 break;
-        }
-        else if (ret == `delete)
-        {
-            integer selected = (integer)UI::QueryWidget (`id (`summary), `CurrentItem);
-            if (selected == nil)
-            {
+
+	// removing add-on
+        } else if (ret == `delete) {
+            integer selected = (integer) UI::QueryWidget (`id (`summary), `CurrentItem);
+            if (selected == nil) {
                 // message report
                 Report::Message (_("Select a product to delete."));
                 continue;
             }
-            // remove whole media if the product is the onle one on the media
+
+            // remove whole media if the product is the only one on the media
             integer media = AddOnProduct::add_on_products[selected, "media"]:-1;
             integer med_count = size (filter (map<string,any> prod,
                 AddOnProduct::add_on_products,
             {
                 return prod["media"]:-1 == media;
             }));
-            if (med_count == 1)
-	    {
+            if (med_count == 1) {
 		y2milestone ("Deleting source %1", media);
                 Pkg::SourceDelete (media);
 	    }
+
             // remove the selected record
             AddOnProduct::add_on_products[selected] = nil;
             AddOnProduct::add_on_products = filter (map<string,any> prod,
-                AddOnProduct::add_on_products,
-            {
+		AddOnProduct::add_on_products,
+	    {
                 return prod != nil;
             });
+	    
+	    // remove a temporary file, not needed anymore
+	    AddOnProduct::RemoveAddOnControlFile (selected);
+	    some_addon_changed = true;
+	    
             Redraw (enable_back, enable_next);
-        }
-        else if (ret == `add)
-        {
+
+	// adding new add-on
+        } else if (ret == `add) {
             symbol ret = RunWizard ();
+	    if (ret == `next) some_addon_changed = true;
             Redraw (enable_back, enable_next);
         }
+
     } until ( ret == `next || ret == `back );
+    y2milestone ("Ret: %1, Some Add-on Added/Removed: %2", ret, some_addon_changed);
+
+    if (Mode::installation() && Stage::initial()) {
+	// bugzilla #221377
+	if (some_addon_changed) {
+	    AddOnProduct::ReIntegrateFromScratch();
+	}
+    }
+
     return ret;
 }
 
