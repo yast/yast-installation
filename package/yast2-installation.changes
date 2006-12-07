@@ -10,6 +10,7 @@ Thu Dec  7 10:46:00 CET 2006 - locilka@suse.cz
   after kernel-patch correctly (#224251).
 - Fixed Add-On handling when cancelling adding an Add-On product,
   before that return value from the previous adding was evaluated.
+- Fixing some texts (#223880)
 - 2.15.1
 
 -------------------------------------------------------------------
