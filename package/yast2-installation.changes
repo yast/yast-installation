@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Dec  7 18:28:21 CET 2006 - locilka@suse.cz
+
+- Release Notes dialog in the second stage installation now offers
+  to select a different language for release notes than the default
+  one (#224875).
+
+-------------------------------------------------------------------
 Thu Dec  7 10:46:00 CET 2006 - locilka@suse.cz
 
 - Reworked adding and removing Add-Ons during the first stage
