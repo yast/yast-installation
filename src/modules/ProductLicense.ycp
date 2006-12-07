@@ -213,6 +213,7 @@ global symbol AskLicenseAgreement (integer src_id, string dir,
     list<string> available_langs = [];
     string license_dir = nil;
 
+    // Base-product license
     if (src_id == nil)
     {
 	if (Stage::initial ())
@@ -226,10 +227,12 @@ global symbol AskLicenseAgreement (integer src_id, string dir,
 	if (FileUtils::Exists ("/info.txt"))
 	    info_file = "/info.txt";
     }
+    // Add-on-product license
     else
     {
 	y2milestone ("Getting license info from source %1", src_id);
-	tmpdir = (string) SCR::Read(.target.tmpdir) + "/product-license/";
+	// using a separate license directory for all products
+	tmpdir = sformat("%1/product-license/%2/", (string) SCR::Read(.target.tmpdir), src_id);
 	license_dir = tmpdir;
 	string license_file = Pkg::SourceProvideOptionalFile (src_id, 1,
 	    "/media.1/license.zip");
