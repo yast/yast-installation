@@ -29,6 +29,7 @@ import "Language";
 import "Popup";
 import "InstShowInfo";
 import "ProductLicense";
+import "FileUtils";
 
 // variables for installation with product
 /**
@@ -86,7 +87,7 @@ global boolean modified = false;
 
 global list<integer> mode_config_sources = [];
 
-
+boolean RedrawWizardSteps ();
 
 /**
  * Adapts the inst-sys from the tarball
@@ -211,6 +212,50 @@ void PrepareSystemWorkflows() {
 	return;
     ProductControl::workflows = PrepareWorkflows(ProductControl::workflows);
     system_workflows_prepared = true;
+}
+
+list <map> AddOnProduct::initial_workflows = [];
+list <map> AddOnProduct::initial_proposals = [];
+list <map<string,any> > AddOnProduct::initial_inst_finish = [];
+list <string> AddOnProduct::initial_clone_modules = [];
+
+boolean initial_settings_stored = false;
+
+/**
+ * Stores the initial settings for workflows, proposals, inst_finish, clone_modules
+ * to be able to start from scratch when some part of the workflow modified by add-on
+ * is removed.
+ */
+global void StoreInitialSettings () {
+    // store it only once
+    if (initial_settings_stored) return;
+
+    y2milestone ("Storing initial settings");
+    AddOnProduct::initial_workflows     = ProductControl::workflows;
+    AddOnProduct::initial_proposals     = ProductControl::proposals;
+    AddOnProduct::initial_inst_finish   = ProductControl::inst_finish;
+    AddOnProduct::initial_clone_modules = ProductControl::clone_modules;
+
+    initial_settings_stored = true;
+}
+
+/**
+ * Reset all the workflow and proposals modifications done
+ * by Add-on products.
+ * @see StoreInitialSettings()
+ */
+void ResetSystemWorkflowsAndProposals () {
+    y2milestone ("Restoring initial settings");
+    ProductControl::workflows     = AddOnProduct::initial_workflows;
+    ProductControl::proposals     = AddOnProduct::initial_proposals;
+    ProductControl::inst_finish   = AddOnProduct::initial_inst_finish;
+    ProductControl::clone_modules = AddOnProduct::initial_clone_modules;
+
+    system_proposals_prepared = false;
+    PrepareSystemProposals();
+
+    system_workflows_prepared = false;
+    PrepareSystemWorkflows();
 }
 
 /**
@@ -773,41 +818,54 @@ ln -s all/usr/lib/YaST2/* .;
  * @return boolean true on success
  */
 global boolean WFIntegrate (string filename) {
+    y2milestone ("WFIntegrate %1", filename);
+
     map update_file = XML::XMLToYCPFile (filename);
     string name = update_file["display_name"]:"";
     boolean ret = UpdateInstallation (update_file["update"]:$[], name,
         update_file["textdomain"]:"control");
+
     if (! ret)
     {
 	y2error ("Failed to udpate installation workflow");
 	return false;
     }
+
     if (! UpdateProductInfo (update_file))
     {
 	y2error ("Failed to set product options");
 	return false;
     }
+
     if (! AddNewProposals (update_file["proposals"]:[]))
     {
 	y2error ("Failed to add new proposals");
 	return false;
     }
+
     if (! Replaceworkflows (update_file["workflows"]:[]))
     {
 	y2error ("Failed to replace workflows");
 	return false;
     }
+
     if (! RedrawWizardSteps ())
     {
 	y2error ("Redrawing the wizard steps failed");
 	return false;
     }
+
     if (! UpdateInstFinish (update_file["update", "inst_finish"]:$[]))
     {
 	y2error ("Adding inst_finish steps failed");
 	return false;
     }
+
     return true;
+}
+
+string TmpdirForControlFiles () {
+    return (string) SCR::Read (.target.tmpdir) + "/control_files";
 }
 
 /**
@@ -819,38 +877,108 @@ global boolean WFIntegrate (string filename) {
 global boolean Integrate (integer srcid) {
     y2milestone ("Integrating source %1", srcid);
 
-    string filename = Pkg::SourceProvideOptionalFile (srcid, 1, "/installation.xml");
-    if (filename == nil)
-    {
-	y2milestone ("Add-on product control file not found, not touching the workglow");
+    // Updating workflow or proposals
+
+    // Trying to use a cached file, bugzilla #221377
+    string cached_filename = sformat ("%1/%2.xml", TmpdirForControlFiles(), srcid);
+    string source_filename = nil;
+
+    // A cached copy exists
+    if (FileUtils::Exists (cached_filename)) {
+	y2milestone ("Using cached file %1", cached_filename);
+	source_filename = cached_filename;
+    // Trying file from source
+    } else {
+	y2milestone ("File %1 not cached", cached_filename);
+	// using a file from source
+	source_filename = Pkg::SourceProvideOptionalFile (srcid, 1, "/installation.xml");
     }
-    else
-    {
-	if (! WFIntegrate (filename))
-	{
+
+    if (source_filename == nil) {
+	y2milestone ("Add-on product control file not found, not touching the work-flow");
+    // either cached or file from source exists
+    } else {
+	// already cached
+	if (source_filename != cached_filename) {
+	    y2milestone ("Copying %1 to %2", source_filename, cached_filename);
+	    string tmpdir = TmpdirForControlFiles ();
+	    map out = (map) SCR::Execute (.target.bash_output, sformat ("
+test -d '%1' || /bin/mkdir -p '%1';
+/bin/cp -v '%2' '%3';
+", tmpdir, source_filename, cached_filename));
+
+	    if (out["exit"]:-1 != 0) {
+		y2error ("Error occurred while copying control file: %1", out);
+	    
+		// cannot copy, using the non-cached file (fallback)
+		cached_filename = source_filename;
+	    }
+	}
+
+	// always use cached file
+	if (! WFIntegrate (cached_filename)) {
 	    y2error ("Workflow update failed");
 	    return false;
 	}
-	string tmpdir = (string)SCR::Read (.target.tmpdir) + "/control_files";
-	map out = (map)SCR::Execute (.target.bash_output, sformat ("
-test -d %1 || /bin/mkdir %1;
-/bin/cp %2 %1/%3.xml;
-", tmpdir, filename, srcid));
-	if (out["exit"]:-1 != 0)
-	{
-	    y2error ("Error occurred while copying control file: %1", out);
-	}
+
 	control_files_to_add = add (control_files_to_add, sformat ("%1.xml", srcid));
     }
+
+    // Updating inst-sys
     string y2update = Pkg::SourceProvideOptionalFile (srcid, 1, "/y2update.tgz");
-    if (y2update == nil)
-    {
+    if (y2update == nil) {
 	y2milestone ("No YaST update found on the media");
-    }
-    else
-    {
+    } else {
 	UpdateInstSys (y2update);
     }
+
+    return true;
+}
+
+/**
+ * Removes (from disk cache) a control file which was included in
+ * the add-on product.
+ */
+global boolean RemoveAddOnControlFile (integer srcid) {
+    string filename = sformat("%1/%2.xml", TmpdirForControlFiles(), srcid);
+
+    if (FileUtils::Exists (filename)) {
+	y2milestone ("Removing: %1", filename);
+	if ((boolean) SCR::Execute (.target.remove, filename)) {
+	    return true;
+	} else {
+	    y2error ("Cannot remove file %1", filename);
+	    return false;
+	}
+    } else {
+	y2milestone("File %1 does not exist, no need to remove it", filename);
+	return true;
+    }
+}
+
+/**
+ * Some product(s) were removed, reintegrating their control files from scratch.
+ */
+global boolean ReIntegrateFromScratch () {
+    y2milestone ("Reintegration workflows from scratch...");
+    ResetSystemWorkflowsAndProposals ();
+
+    foreach (map<string,any> prod, AddOnProduct::add_on_products, {
+	integer srcid = (integer) prod["media"]:nil;
+	
+	if (srcid == nil) {
+	    y2error ("Wrong definition of Add-on product: %1, cannot reintegrate", srcid);
+	    return;
+	} else {
+	    y2milestone ("Reintegrating product %1", prod);
+	    Integrate (srcid);
+	}
+    });
+
+    // steps might be changed, forcing redraw
+    y2milestone ("Forcing RedrawWizardSteps()");
+    RedrawWizardSteps ();
+
     return true;
 }
 
@@ -871,6 +999,8 @@ global boolean AddPreselectedAddOnProducts(string filelist) {
 	return true;
     }
     list<string> products = splitstring ((string)SCR::Read (.target.string, filelist), "\r\n");
+
+    y2milestone ("Adding products: %1", products);
     foreach (string p, products, {
 	if (p == "")
 	    return;

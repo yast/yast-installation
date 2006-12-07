@@ -91,10 +91,11 @@
 	UI::RecordMacro( Directory::logdir + "/macro_inst_initial.ycp" );
     }
 
-    string file_inst_aborted = "/var/lib/YaST2/second_stage_aborted";
-    string file_inst_failed  = "/var/lib/YaST2/second_stage_failed";
-    string run_yast_at_boot  = "/var/lib/YaST2/runme_at_boot";
-    string current_step      = "/var/lib/YaST2/step";
+    string file_inst_aborted = Directory::vardir + "/second_stage_aborted";
+    string file_inst_failed  = Directory::vardir + "/second_stage_failed";
+    string run_yast_at_boot  = Directory::vardir + "/runme_at_boot";
+    string current_step      = Directory::vardir + "/step";
+    string file_update_mode  = Directory::vardir + "/update_mode";
 
     // Second stage
     // FATE #300422
@@ -144,7 +145,7 @@ Note: You may have to enter some information again.");
 
     // Second stage
     // Detect mode early to be able to setup steps correctly
-    if (Stage::cont () && FileUtils::Exists (Installation::destdir + "/var/lib/YaST2/update_mode"))
+    if (Stage::cont () && FileUtils::Exists (Installation::destdir + file_update_mode))
     {
 	    Mode::SetMode ("update");
     }
@@ -190,6 +191,7 @@ Note: You may have to enter some information again.");
 	    list<string> files = (list<string>)SCR::Read (.target.ycp, listname);
 	    foreach (string f, files, {
 		f = Installation::destdir + Directory::etcdir + "/control_files/" + f;
+		y2milestone ("Calling WFIntegrate()");
 		AddOnProduct::WFIntegrate (f);
 	    });
 	}
@@ -399,9 +401,9 @@ but something went wrong, that's why it is only in the log");
     retranslateWizardDialog();
 
     symbol ret = nil;
-    string restart_data_file = "/var/lib/YaST2/continue_installation";
-    string reboot_file = "/var/lib/YaST2/reboot";
-    string restart_file = "/var/lib/YaST2/restart_yast";
+    string restart_data_file = Directory::vardir + "/continue_installation";
+    string reboot_file       = Directory::vardir + "/reboot";
+    string restart_file      = Directory::vardir + "/restart_yast";
 
     // Continue the second stage installation
     if (Stage::cont ()
@@ -450,49 +452,52 @@ but something went wrong, that's why it is only in the log");
 
     y2milestone("Evaluating ret: %1", ret);
 
-    if (Stage::cont () && (ret == `reboot || ret == `restart_yast || ret == `restart_same_step))
-    {
+    if (Stage::cont () && (ret == `reboot || ret == `restart_yast || ret == `restart_same_step)) {
 	integer last_step = ProductControl::CurrentStep ();
 	integer restarting_step = last_step;
-	if (ret == `restart_same_step)
-	{
+
+	if (ret == `restart_same_step) {
 	    last_step = last_step - 1;
 	    ret = `restart_yast;
 	}
+
 	integer next_step = last_step + 1;
+	y2milestone ("Creating %1 file with values %2",
+	    restart_data_file, [next_step, restarting_step]);
 	SCR::Write (.target.string, restart_data_file,
 	    sformat ("%1\n%2", next_step, restarting_step));
-	if (ret == `reboot)
-	{
+
+	if (ret == `reboot) {
+	    y2milestone ("Creating %1 file", reboot_file);
 	    SCR::Execute (.target.bash, sformat (
 		"touch %1", reboot_file));
-	}
-	else if (ret == `restart_yast)
-	{
+
+	} else if (ret == `restart_yast) {
+	    y2milestone ("Creating %1 file", restart_file);
 	    SCR::Execute (.target.bash, sformat (
 		"touch %1", restart_file));
 	}
     }
 
     // Installation has been aborted
-    if (ret == `abort)
-    {
+    if (ret == `abort) {
 	// tell linuxrc that we aborted
 	Linuxrc::WriteYaSTInf($["Aborted" : "1"]);
     }
 
     // re-enable automatic probing
-    if (!Mode::test ())
+    if (!Mode::test ()) {
         WFM::Execute (.local.bash, "/bin/echo \"/sbin/modprobe\" >/proc/sys/kernel/modprobe");
+    }
 
     // when the installation is not aborted
-    if (Stage::cont () && ret != `reboot && ret != `restart_yast && ret != `abort)
-    {
+    if (Stage::cont () && ret != `reboot && ret != `restart_yast && ret != `abort) {
 	// remove /etc/install.inf, not needed any more
 	SCR::Execute (.target.remove, "/etc/install.inf");
 	if (Mode::update ())
 	{
-	    SCR::Execute(.target.remove, "/var/lib/YaST2/update_mode");
+	    y2milestone("Removing %1", file_update_mode);
+	    SCR::Execute(.target.remove, file_update_mode);
 	    SCR::Execute(.target.bash, "/bin/rm -rf /var/adm/current_package_descr");
 	}
 	

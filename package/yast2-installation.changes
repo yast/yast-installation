@@ -1,4 +1,18 @@
 -------------------------------------------------------------------
+Thu Dec  7 10:58:26 CET 2006 - locilka@suse.cz
+
+- Reworked adding and removing Add-Ons during the first stage
+  installation. If some Add-Ons are added or removed, the entire
+  workflow is created from scratch (#221377).
+- Using a separate temporary directory for Add-On licenses not to
+  be confused by the previous Add-On.
+- Fixed Second Stage Installation script to handle rebooting
+  after kernel-patch correctly (#224251).
+- Fixed Add-On handling when cancelling adding an Add-On product,
+  before that return value from the previous adding was evaluated.
+- 2.13.171
+
+-------------------------------------------------------------------
 Wed Dec  6 15:38:29 CET 2006 - ms@suse.de
 
 - fixed call of initvicons, deactivate s390 exception (#192052)

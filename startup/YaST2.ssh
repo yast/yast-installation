@@ -18,28 +18,60 @@
 #               :
 # STATUS        : $Id$
 #----------------
-#
-#========================================
-# call YaST2 if flag file exists
-#----------------------------------------
-if [ -f /var/lib/YaST2/runme_at_boot ];then
-	/usr/lib/YaST2/startup/YaST2.call installation continue
-	rm -fv /var/lib/YaST2/runme_at_boot
-else
-	exit 1
-fi
 
 #========================================
 # boot into system
 #----------------------------------------
+function continue_after_second_stage () {
 cat <<-EOF
-	continue with booting ...
+
+	Continue with booting ...
 
 	You can login with the (new?) root password or the
 	new created user account in a few seconds ...
+
 EOF
+}
+
+function reboot_during_second_stage () {
+cat <<-EOF
+
+	Your system has been updated and needs to reboot ...
+	
+	Reconnect to the system after it reboots and call
+	/usr/lib/YaST2/startup/YaST2.ssh again to continue
+	the installation ...
+
+EOF
+}
+
+function not_running_yast () {
+cat <<-EOF
+
+    File /var/lib/YaST2/runme_at_boot does not exist ...
+    
+    Not running YaST ...
+
+EOF
+}
 
 #========================================
-# remove flag file
+# call YaST2 if flag file exists
 #----------------------------------------
-rm -f /var/lib/YaST2/runme_at_boot
+if [ -f /var/lib/YaST2/runme_at_boot ];then
+
+	# running the second stage installation
+	/usr/lib/YaST2/startup/YaST2.call installation continue
+
+	# second stage installation needs to reboot
+	if [ -f /var/lib/YaST2/reboot ]; then
+	    reboot_during_second_stage
+	# second stage has just finished
+	else
+	    continue_after_second_stage
+	fi
+else
+	not_running_yast
+
+	exit 1
+fi
