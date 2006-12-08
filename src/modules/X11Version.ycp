@@ -117,7 +117,7 @@ global define string GetX11Link() ``{
 	count = count + 1;
     }
 
-    if(file != nil && find(file, "XFree86") == -1) ret = "3";
+    if (file != nil && ! regexpmatch(file, "XFree86")) ret = "3";
     y2milestone("X link: %1", ret);
     return ret;
 }
