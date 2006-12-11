@@ -165,6 +165,9 @@ map<string,string> LicenseFiles (string dir, list<string> patterns) {
     list<string> files = (list<string>)SCR::Read (.target.dir, dir);
     y2milestone ("All files in license directory: %1", files);
 
+    // no license
+    if (files == nil) return $[];
+
     foreach (string p, patterns, {
 	if (! issubstring (p, "%"))
 	{

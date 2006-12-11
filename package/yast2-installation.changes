@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Mon Dec 11 16:11:21 CET 2006 - locilka@suse.cz
+
+- Handling new flag REGISTERPRODUCT from add-on product content
+  file. This flag demands running the registration client after
+  an add-on product is installed (on a running system) and demands
+  running the registration client even if it is disabled in
+  the base-product's control file (during installation)
+  (FATE #301312).
+- 2.15.2
+
+-------------------------------------------------------------------
 Thu Dec  7 18:28:21 CET 2006 - locilka@suse.cz
 
 - Release Notes dialog in the second stage installation now offers
