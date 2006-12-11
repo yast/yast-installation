@@ -353,6 +353,7 @@ symbol CatalogSelect () {
 	{
 	    // error report
 	    Report::Error (_("Failed to initialize the catalog."));
+	    AddOnProduct::ClearRegistrationRequest (src_id);
 	    return `finish;
 	}
 /*
@@ -461,6 +462,7 @@ Select the catalog to use.</p>
 	{
 	    // error report
 	    Report::Error (_("Failed to initialize the catalog."));
+	    AddOnProduct::ClearRegistrationRequest (selected);
 	    return `finish;
 	}
 
@@ -536,6 +538,7 @@ symbol ProductSelect () {
 or selected for installation."));
 	y2milestone ("Deleting installatino source %1", AddOnProduct::src_id);
 	Pkg::SourceDelete (AddOnProduct::src_id);
+	AddOnProduct::ClearRegistrationRequest (AddOnProduct::src_id);
 	return `finish;
     }
     // Display /media.1/info.txt if such file exists
@@ -870,18 +873,25 @@ symbol RunAddOnMainDialog(boolean enable_back, boolean enable_next) {
 	    // remove a temporary file, not needed anymore
 	    AddOnProduct::RemoveAddOnControlFile (selected);
 	    some_addon_changed = true;
+	    // remove product from list of product to register (FATE #301312)
+	    AddOnProduct::RemoveRegistrationFlag (media);
 	    
             Redraw (enable_back, enable_next);
 
 	// adding new add-on
         } else if (ret == `add) {
             symbol ret = RunWizard ();
-	    if (ret == `next) some_addon_changed = true;
+	    if (ret == `next) {
+		// check whether it requests registration (FATE #301312)
+		AddOnProduct::PrepareForRegistration (AddOnProduct::src_id);
+		some_addon_changed = true;
+	    }
             Redraw (enable_back, enable_next);
         }
 
     } until ( ret == `next || ret == `back );
     y2milestone ("Ret: %1, Some Add-on Added/Removed: %2", ret, some_addon_changed);
+    y2milestone ("Registration will be requested: %1", AddOnProduct::ProcessRegistration());
 
     if (Mode::installation() && Stage::initial()) {
 	// bugzilla #221377
@@ -889,7 +899,7 @@ symbol RunAddOnMainDialog(boolean enable_back, boolean enable_next) {
 	    AddOnProduct::ReIntegrateFromScratch();
 	}
     }
-
+    
     return ret;
 }
 

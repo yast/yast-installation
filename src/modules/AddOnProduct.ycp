@@ -723,37 +723,15 @@ global boolean AcceptedLicenseAndInfoFile (integer src_id) {
     return true;
 }
 
-/**
- * Do installation of the add-on product within an installed system
- * srcid is got via AddOnProduct::src_id
- *
- * @param string src_id
- * @return symbol the result symbol from wizard sequencer
- */
-global symbol DoInstall() {
-    // Display /media.1/info.txt if such file exists
-    // Display license and wait for agreement
-    // Not needed here, license already shown in the workflow
-    /*
-    boolean license_ret = AcceptedLicenseAndInfoFile(src_id);
-    if (license_ret != true) {
-	y2milestone("Removing the current source ID %1", src_id);
-	Pkg::SourceDelete(src_id);
-	return nil;
-    }
-    */
+symbol DoInstall_NoControlFile () {
+    y2milestone("File /installation.xml not found, running sw_single for this source");
+    WFM::CallFunction ("sw_single", []);
 
-    string control = Pkg::SourceProvideOptionalFile (src_id, 1, "/installation.xml");
-    // Fallback -- Source didn't provide needed controll file
-    // Handling as it was an installation source
-    if (control == nil)
-    {
-	y2milestone("File /installation.xml not found, running sw_single for this source");
-	WFM::CallFunction ("sw_single", []);
+    return `register;
+}
 
-	return nil;
-    }
-
+symbol DoInstall_WithControlFile (string control) {
+    y2milestone ("File /installation.xml was found, running own workflow...");
     // copy the control file to local filesystem - in case of media release
     string tmp = (string)SCR::Read (.target.tmpdir);
     tmp = tmp + "/installation.xml";
@@ -799,6 +777,7 @@ ln -s all/usr/lib/YaST2/* .;
 	CleanY2Update();
 	return nil;
     }
+
     // start workflow
     Wizard::OpenNextBackStepsDialog();
     // dialog caption
@@ -809,6 +788,181 @@ ln -s all/usr/lib/YaST2/* .;
     symbol ret = ProductControl::Run();
     UI::CloseDialog();
     CleanY2Update();
+
+    return ret;
+}
+
+/**
+ * Contains list of source IDs that request registration
+ */
+list <integer> addons_requesting_registration = [];
+
+global void ClearRegistrationRequest (integer src_id) {
+    y2milestone ("Clearing registration flag for source ID %1", src_id);
+    if (src_id != nil) {
+	addons_requesting_registration = filter (integer one_source, addons_requesting_registration, {
+	    return one_source != src_id;
+	});
+    }
+}
+
+/**
+ * Returns whether registration is requested by at least one of
+ * used Add-On products.
+ *
+ * @return boolean if requested
+ */
+global boolean ProcessRegistration () {
+    boolean force_registration = false;
+
+    // checking add-on products one by one
+    foreach (map<string,any> prod, AddOnProduct::add_on_products, {
+	integer srcid = (integer) prod["media"]:nil;
+
+	if (srcid != nil && contains (addons_requesting_registration, srcid)) {
+	    force_registration = true;
+	    break;
+	}
+    });
+    
+    y2milestone ("Requesting registration: %1", force_registration);
+    return force_registration;
+}
+
+/**
+ * Add-On product might have been added into products requesting
+ * registration. This pruduct has been removed (during configuring
+ * list of add-on products).
+ */
+global void RemoveRegistrationFlag (integer src_id) {
+    // filtering out src_id
+    addons_requesting_registration = filter (integer one_id, addons_requesting_registration, {
+	return one_id != src_id;
+    });
+    
+    // removing cached file
+    string tmpdir = (string) SCR::Read (.target.tmpdir) + "/add-on-content-files/";
+    string cachedfile = sformat ("%1content-%2", tmpdir, src_id);
+    if (FileUtils::Exists (cachedfile)) {
+	y2milestone ("Removing cached file %1", cachedfile);
+	SCR::Execute (.target.remove, cachedfile);
+    }
+}
+
+/**
+ * Checks whether the content file of the add-on has a flag REGISTERPRODUCT
+ * set to "true" or "yes". If it has, product is added into list of pruducts
+ * that need registration. Cached content file is used if possible.
+ *
+ * @param integer source id
+ */
+global void PrepareForRegistration (integer src_id) {
+    string tmpdir = (string) SCR::Read (.target.tmpdir) + "/add-on-content-files/";
+
+    // create directory if doesn't exist
+    if (! FileUtils::Exists (tmpdir)) {
+	integer run = (integer) SCR::Execute (.target.bash, sformat("/bin/mkdir -p '%1'", tmpdir));
+	if (run != 0) {
+	    y2error ("Cannot create directory %1", tmpdir);
+	    return nil;
+	}
+    }
+
+    // use cached file if possible
+    string contentfile = sformat ("%1content-%2", tmpdir, src_id);
+    if (FileUtils::Exists (contentfile)) {
+	y2milestone ("Using cached contentfile %1", contentfile);
+    } else {
+	y2milestone ("Checking contentfile from source");
+	string sourcefile = Pkg::SourceProvideOptionalFile (src_id, 1, "/content");
+	if (sourcefile == nil) {
+	    y2warning ("Cannot obtain content file!");
+	    return nil;
+	}
+	// copying content file
+	integer run = (integer) SCR::Execute (.target.bash,
+	    sformat ("/bin/cp '%1' '%2'", sourcefile, contentfile)
+	);
+	if (run != 0) {
+	    y2error ("Cannot copy %1 to %2", sourcefile, contentfile);
+	    return nil;
+	}
+    }
+
+    // registering agent for the current content file
+    SCR::RegisterAgent (.addon.content, `ag_ini (
+	`IniAgent( contentfile, $[
+	    "options" : [ "read_only", "global_values", "flat" ],
+	    "comments" : [ "^#.*", "^[ \t]*$", ],
+	    "params" : [
+		$[ "match" : [ "^[ \t]*([a-zA-Z0-9_\.]+)[ \t]*(.*)[ \t]*$", "%s %s" ] ]
+	    ]
+	]
+    )));
+    string register_product = (string) SCR::Read (.addon.content.REGISTERPRODUCT);
+    SCR::UnregisterAgent (.addon.content);
+
+    // evaluating REGISTERPRODUCT flag, default (nil == false)
+    y2milestone ("RegisterProduct flag for source %1 is %2", src_id, register_product);
+    if (register_product == "yes" || register_product == "true") {
+	addons_requesting_registration = add (addons_requesting_registration, src_id);
+    }
+}
+
+/**
+ * Calls registration client if needed.
+ *
+ * @param integer source id
+ */
+global void RegisterAddOnProduct (integer src_id) {
+    if (contains (addons_requesting_registration, src_id)) {
+	y2milestone ("Source ID %1 requests registration", src_id);
+	WFM::CallFunction ("suse_register", []);
+    } else {
+	y2milestone ("Source ID %1 doesn't need registration", src_id);
+    }
+}
+
+/**
+ * Do installation of the add-on product within an installed system
+ * srcid is got via AddOnProduct::src_id
+ *
+ * @param string src_id
+ * @return symbol the result symbol from wizard sequencer
+ */
+global symbol DoInstall() {
+    // Display /media.1/info.txt if such file exists
+    // Display license and wait for agreement
+    // Not needed here, license already shown in the workflow
+    /*
+    boolean license_ret = AcceptedLicenseAndInfoFile(src_id);
+    if (license_ret != true) {
+	y2milestone("Removing the current source ID %1", src_id);
+	Pkg::SourceDelete(src_id);
+	return nil;
+    }
+    */
+
+    // FATE #301312
+    PrepareForRegistration (src_id);
+
+    symbol ret = nil;
+
+    string control = Pkg::SourceProvideOptionalFile (src_id, 1, "/installation.xml");
+    // Fallback -- Source didn't provide needed controll file
+    // Handling as it was an installation source
+    if (control == nil) {
+	ret = DoInstall_NoControlFile();
+    } else {
+	ret = DoInstall_WithControlFile (control);
+    }
+
+    if (ret != nil) {
+	// registers Add-On product if requested
+	RegisterAddOnProduct (src_id);
+    }
+    
+    y2milestone ("Returning: %1", ret);
     return ret;
 }
 
