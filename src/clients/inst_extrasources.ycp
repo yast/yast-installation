@@ -321,7 +321,7 @@ if ( GetInstArgs::going_back())     // going backwards?
 // autoyast mode, user cannot be asked
 if (Mode::autoinst())
 {
-    y2milestone("Skipping extra source configuration in autoyast mode");
+    y2milestone("Skipping extra source configuration in AutoYaST mode");
     return `auto;
 }
 

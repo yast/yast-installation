@@ -71,9 +71,9 @@
     if (show_clone_checkbox)
     {
         check_box_do_clone = `CheckBox (`id(`do_clone),
-        // Check box: start the clone process and store the autoyast
+        // Check box: start the clone process and store the AutoYaST
         // profile in /root/autoinst.xml
-                                           _("&Clone This System for Autoyast"), clone_checkbox_active);
+                                           _("&Clone This System for AutoYaST"), clone_checkbox_active);
     }
 
     // caption for dialog "Congratulation Dialog"
