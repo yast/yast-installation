@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Dec 12 10:57:21 CET 2006 - locilka@suse.cz
+
+- Consistent spelling of 'AutoYaST' (#221275).
+
+-------------------------------------------------------------------
 Mon Dec 11 16:11:21 CET 2006 - locilka@suse.cz
 
 - Handling new flag REGISTERPRODUCT from add-on product content
