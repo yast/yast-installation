@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Tue Jan  2 13:02:32 CET 2007 - locilka@suse.cz
+
+- Allowing to add the very same product that has been already
+  installed or selected for installation in case the url is
+  different than any of the current urls. There can be more sources
+  for the product because product urls can be removed and added
+  also by inst_source module (#227605).
+- 2.13.173
+
+-------------------------------------------------------------------
 Mon Dec 11 16:16:44 CET 2006 - locilka@suse.cz
 
 - Handling new flag REGISTERPRODUCT from add-on product content
