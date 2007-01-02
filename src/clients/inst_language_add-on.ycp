@@ -192,7 +192,7 @@
 	    if (ret == `cancel || ret == `abort) {
 		if (Popup::YesNo(
 		    // TRANSLATORS: popup question
-		    _("Are you sure you want to abort the Add-On product installation?")
+		    _("Are you sure you want to abort the add-on product installation?")
 		)) {
 		    selected_languages = [];
 		    break;

@@ -6,6 +6,8 @@ Tue Jan  2 13:07:24 CET 2007 - locilka@suse.cz
   different than any of the current urls. There can be more sources
   for the product because product urls can be removed and added
   also by inst_source module (#227605).
+- Consistent spelling of "Add-On" and "add-on" (#229934).
+- 2.15.3
 
 -------------------------------------------------------------------
 Tue Dec 12 10:57:21 CET 2006 - locilka@suse.cz
