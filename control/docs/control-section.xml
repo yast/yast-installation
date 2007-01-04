@@ -102,7 +102,7 @@
             </listitem>           
         </itemizedlist>
     </section>
-    <section>
+    <section id="implementation">
         <title>Implementation</title>
         <para>
             The control file is implemented in  simple structured XML syntax which so far
@@ -411,17 +411,132 @@ default
             <para>Additionally, you can configure how updating of packages should be
                 performed. The following options are available:</para>
             <itemizedlist>
+
                 <listitem>
-                    <para>delete_old_packages</para>
+                    <para><emphasis>delete_old_packages</emphasis></para>
                     <para>Do not delete old RPMs when updating.</para>
                 </listitem>
+		
+		<!-- FATE #301844 -->
+		<listitem>
+		    <para><emphasis>delete_old_packages_reverse_list</emphasis></para>
+		    <para>Inverts the <emphasis>delete_old_packages</emphasis> rule
+		    for products defined as list of regular expressions matching installed
+		    product name (SuSE-release).</para>
+		    
+		    <programlisting>
+
+    &lt;!-- Delete old packages of all products but OES, SLES 9, SLE 10 and SLD 10 --&gt;
+    &lt;software&gt;
+	&lt;delete_old_packages config:type="boolean"&gt;true&lt;/delete_old_packages&gt;
+	&lt;delete_old_packages_reverse_list config:type="list"&gt;
+	    &lt;regexp_item&gt;^UnitedLinux .*$&lt;/regexp_item&gt;
+	    &lt;regexp_item&gt;^Novell Open Enterprise Server Linux.*&lt;/regexp_item&gt;
+	    &lt;regexp_item&gt;^SUSE (LINUX|Linux) Enterprise Server 9$&lt;/regexp_item&gt;
+	    &lt;regexp_item&gt;^SUSE (LINUX|Linux) Enterprise Server 9 .*$&lt;/regexp_item&gt;
+	    &lt;regexp_item&gt;^SUSE (LINUX|Linux) Enterprise Server 10.*$&lt;/regexp_item&gt;
+	    &lt;regexp_item&gt;^SUSE (LINUX|Linux) Enterprise Desktop 10.*$&lt;/regexp_item&gt;
+	    &lt;!-- Don't forget to define product itself (Service Pack) --&gt;
+	    &lt;regexp_item&gt;^SUSE (LINUX|Linux) Enterprise Server 10 SP.*$&lt;/regexp_item&gt;
+	    &lt;regexp_item&gt;^SUSE (LINUX|Linux) Enterprise Desktop 10 SP.*$&lt;/regexp_item&gt;
+	&lt;/delete_old_packages_reverse_list&gt;
+    &lt;/software&gt;
+
+		    </programlisting>
+		</listitem>
+		
+
                 <listitem>
-                    <para>only_update_selected</para>
+                    <para><emphasis>only_update_selected</emphasis></para>
                     <para>One can update (only update packages already installed) or
                         upgrade (also install new packages with new functionality). For
                         example, SLES should do "update", not "upgrade" by default</para>
                 </listitem>
+
+		<!-- FATE #301844 -->
+		<listitem>
+		    <para><emphasis>only_update_selected_reverse_list</emphasis></para>
+		    <para>Inverts the <emphasis>only_update_selected</emphasis>
+		    for products defined as list of regular expressions matching installed
+		    product name (SuSE-release).</para>
+
+		    <programlisting>
+
+    &lt;!--
+	Only update packages but install new packages
+	when upgrading any SUSE Linux or openSUSE
+    --&gt;
+    &lt;software&gt;
+	&lt;only_update_selected config:type="boolean"&gt;true&lt;/only_update_selected&gt;
+	&lt;only_update_selected_reverse_list config:type="list"&gt;
+	    &lt;regexp_item&gt;^SUSE Linux [0-9].*&lt;/regexp_item&gt;
+	    &lt;regexp_item&gt;^openSUSE [0-9].*&lt;/regexp_item&gt;
+	&lt;/only_update_selected_reverse_list&gt;
+    &lt;/software&gt;
+
+		    </programlisting>
+		</listitem>
+
+	    </itemizedlist>
+
+	    <para>The other option defines how product upgrading in general is defined.</para>
+
+	    <itemizedlist>
+		<!-- FATE #301844 -->
+		<listitem>
+		    <para><emphasis>products_supported_for_upgrade</emphasis></para>
+		    <para>List of known products supported for upgrade (SuSE-release).
+		    Old releases or other distributions will report warning.</para>
+		    
+		    <programlisting>
+    &lt;software&gt;
+	&lt;products_supported_for_upgrade config:type="list"&gt;
+	    &lt;regexp_item&gt;^Novell LINUX Desktop 9.*&lt;/regexp_item&gt;
+	    &lt;regexp_item&gt;^SUSE LINUX Enterprise Server 10.*&lt;/regexp_item&gt;
+	    &lt;regexp_item&gt;^SUSE LINUX Enterprise Desktop 10.*&lt;/regexp_item&gt;
+	    &lt;regexp_item&gt;^openSUSE .*&lt;/regexp_item&gt;
+	&lt;/products_supported_for_upgrade&gt;
+    &lt;/software&gt;
+		    </programlisting>
+		</listitem>
+
             </itemizedlist>
+	    
+	    <para>All products (regular expressions) are matching the string which
+	    can be found in <emphasis>/etc/*-release</emphasis> file.</para>
+
+	    <para>Regular expressions in &lt;regexp_item&gt;s can contain standard regular
+	    expressions, such as</para>
+
+	    <itemizedlist>
+		<listitem><para>The circumflex <emphasis>^</emphasis> and
+		  the dollar sign <emphasis>$</emphasis> as boundary characters
+		  for strings</para></listitem>
+		<listitem><para>asterisk <emphasis>*</emphasis>, plus <emphasis>+</emphasis>
+		  and question mark <emphasis>?</emphasis> for repeating
+		  or existency</para></listitem>
+		<listitem><para>dot <emphasis>.</emphasis> for wild-card
+		  character</para></listitem>
+		<listitem><para>square brackets <emphasis>[]</emphasis> for list of
+		  possible characters</para></listitem>
+		<listitem><para>circle brackets <emphasis>()</emphasis> for listing
+		  possibilities</para></listitem>
+		<listitem><para>special all-locale class-expressions
+		  <emphasis>[:alnum:]</emphasis>,
+		  <emphasis>[:alpha:]</emphasis>,
+		  <emphasis>[:blank:]</emphasis>,
+		  <emphasis>[:cntrl:]</emphasis>,
+		  <emphasis>[:digit:]</emphasis>,
+		  <emphasis>[:graph:]</emphasis>,
+		  <emphasis>[:lower:]</emphasis>,
+		  <emphasis>[:print:]</emphasis>,
+		  <emphasis>[:punct:]</emphasis>,
+		  <emphasis>[:space:]</emphasis>,
+		  <emphasis>[:upper:]</emphasis>,
+		  <emphasis>[:xdigit:]</emphasis></para></listitem>
+	    </itemizedlist>
+	    
+	    <para>These regular expressions are evaluated as <emphasis>YCP</emphasis>.</para>
 
         </section>
         <section id="control_partitioning">
@@ -916,7 +1031,7 @@ default
                     </varlistentry>
                 </variablelist>
 
-                <example>
+                <example id="flexible_partitioning_example">
                     <title>Flexible Partitioning</title>
                     <para>If in the example below the machine has three disks then each of the
                         partition groups gets on a separate disk. So one disk will hold
