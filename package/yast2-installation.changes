@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Thu Jan  4 14:19:05 CET 2007 - locilka@suse.cz
+
+- Added documentation for new features in control file:
+  * boolean delete_old_packages and list of products for which this
+    rule is inverted.
+  * boolean only_update_selected and list of products for which
+    this rule is inverted.
+  * list of products supported for upgrade
+  (All described in FATE #301844)
+- 2.13.174
+
+-------------------------------------------------------------------
 Tue Jan  2 13:02:32 CET 2007 - locilka@suse.cz
 
 - Allowing to add the very same product that has been already
