@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Sat Jan  6 19:32:23 CET 2007 - ms@suse.de
+
+- fixed usage of fbiterm (#225229)
+
+-------------------------------------------------------------------
 Thu Jan  4 14:27:12 CET 2007 - locilka@suse.cz
 
 - Added documentation for new features in control file:

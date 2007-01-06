@@ -475,7 +475,7 @@ function start_yast () {
 	export QT_IM_MODULE=xim
 
 	if [ "$RUN_FBITERM" = "1" ]; then
-	    OPT_FBITERM=/usr/bin/fbiterm
+	    OPT_FBITERM="/usr/bin/fbiterm --"
 	else
 	    OPT_FBITERM=
 	fi
