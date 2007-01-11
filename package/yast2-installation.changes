@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Thu Jan 11 10:59:40 CET 2007 - locilka@suse.cz
+
+- Changed SLD and SLE control files to reflect demands described in
+  bugzilla bug #233156:
+  * Old packages are removed by default, only for upgrading from
+    SLD 10 or SLE 10, packages are not removed by default.
+  * New packages are selected for installation by default, only for
+    upgrading from SLD 10 or SLE 10, packages are only updated.
+  * Upgrading to new SLE 10 from is only supported from SLES9 and
+    SLE 10, upgrading from another product will display warning.
+
+-------------------------------------------------------------------
 Sat Jan  6 19:32:23 CET 2007 - ms@suse.de
 
 - fixed usage of fbiterm (#225229)
