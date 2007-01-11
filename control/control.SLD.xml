@@ -27,7 +27,20 @@ textdomain="control"
 	<root_password_ca_check config:type="boolean">false</root_password_ca_check>
     </globals>
     <software>
-        <delete_old_packages config:type="boolean">true</delete_old_packages>
+	<!-- By default, old packages are removed -->
+	<delete_old_packages config:type="boolean">true</delete_old_packages>
+	<!-- For SLD10, old packages are not removed by default, FATE #301844, bugzilla #233156 -->
+	<delete_old_packages_reverse_list config:type="list">
+	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Desktop 10.*$</regexp_item>
+	</delete_old_packages_reverse_list>
+
+	<!-- By default, select new packages for installation -->
+	<only_update_selected config:type="boolean">false</only_update_selected>
+	<!-- For SLD10, do not install new packages by default, FATE #301844, bugzilla #233156 -->
+	<only_update_selected_reverse_list config:type="list">
+	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Desktop 10.*$</regexp_item>
+	</only_update_selected_reverse_list>
+
         <selection_type config:type="symbol">auto</selection_type>
         <base_selection>default-Gnome</base_selection>
     </software>

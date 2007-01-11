@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Thu Jan 11 11:09:42 CET 2007 - locilka@suse.cz
+
+- Changed SLD and SLE control files to reflect demands described in
+  bugzilla bug #233156:
+  * Old packages are removed by default, only for upgrading from
+    SLD 10 or SLE 10, packages are not removed by default.
+  * New packages are selected for installation by default, only for
+    upgrading from SLD 10 or SLE 10, packages are only updated.
+  * Upgrading to new SLE 10 from is only supported from SLES9 and
+    SLE 10, upgrading from another product will display warning.
+
+-------------------------------------------------------------------
 Thu Jan  4 14:19:05 CET 2007 - locilka@suse.cz
 
 - Added documentation for new features in control file:
