@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Fri Jan 12 19:05:56 CET 2007 - ms@suse.de
+
+- fixed TERM type setup in case of ssh based installations.
+  if the installation is ssh based, TERM is not allowed to
+  be overwritten by the value of install.inf. The TERM value
+  of install.inf points to the console and not to the remote
+  terminal type (#234032)
+
+-------------------------------------------------------------------
 Fri Jan 12 16:06:56 CET 2007 - jdsn@suse.de
 
 - control file variable for monthly suse_register run (F#301822)

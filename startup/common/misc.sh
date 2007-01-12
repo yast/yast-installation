@@ -40,6 +40,7 @@ function import_install_inf () {
 # import install.inf information as environment
 # variables to the current environment
 # ---
+	TERM_SAVE=$TERM
 	if [ -f /etc/install.inf ];then
 	#eval $(
 	#	grep ': ' /etc/install.inf |\
@@ -55,6 +56,16 @@ IFS="
 		export $varname=$varvals
 	done
 	IFS=$IFS_SAVE
+	# /.../
+	# if the installation is ssh based, TERM is not allowed to
+	# be overwritten by the value of install.inf. The TERM value
+	# of install.inf points to the console and not to the remote
+	# terminal type. Therefore the previosly set terminal type
+	# from the remote terminal is restored
+	# ----
+	if [ "$UseSSH" = 1 ];then
+		export TERM=$TERM_SAVE
+	fi
 	fi
 }
 
