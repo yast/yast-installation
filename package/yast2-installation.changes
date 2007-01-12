@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jan 12 14:37:56 CET 2007 - jdsn@suse.de
+
+- enabled "force registration" checkbox for SLE (#233659)(F#301273)
+- 2.13.175 
+
+-------------------------------------------------------------------
 Thu Jan 11 11:09:42 CET 2007 - locilka@suse.cz
 
 - Changed SLD and SLE control files to reflect demands described in
