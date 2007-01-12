@@ -23,6 +23,7 @@ textdomain="control"
         <enable_register_optional config:type="boolean">true</enable_register_optional>
         <display_register_forcereg config:type="boolean">true</display_register_forcereg>
         <disable_register_w3m config:type="boolean">true</disable_register_w3m>
+        <register_monthly config:type="boolean">false</register_monthly>
 	<manual_online_update config:type="boolean">true</manual_online_update>
 	<root_password_ca_check config:type="boolean">false</root_password_ca_check>
     </globals>

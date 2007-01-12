@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jan 12 16:06:56 CET 2007 - jdsn@suse.de
+
+- control file variable for monthly suse_register run (F#301822)
+- 2.13.176 
+
+-------------------------------------------------------------------
 Fri Jan 12 14:37:56 CET 2007 - jdsn@suse.de
 
 - enabled "force registration" checkbox for SLE (#233659)(F#301273)
