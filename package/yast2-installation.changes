@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jan 12 17:41:05 CET 2007 - locilka@suse.cz
+
+- control file variable for monthly suse_register run (F#301822)
+  (change made by jdsn)
+
+-------------------------------------------------------------------
 Thu Jan 11 10:59:40 CET 2007 - locilka@suse.cz
 
 - Changed SLD and SLE control files to reflect demands described in

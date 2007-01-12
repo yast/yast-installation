@@ -22,8 +22,9 @@ textdomain="control"
         <enable_clone config:type="boolean">true</enable_clone>
         <enable_register_hwdata   config:type="boolean">true</enable_register_hwdata>
         <enable_register_optional config:type="boolean">true</enable_register_optional>
-        <display_register_forcereg config:type="boolean">false</display_register_forcereg>
+        <display_register_forcereg config:type="boolean">true</display_register_forcereg>
         <disable_register_w3m config:type="boolean">false</disable_register_w3m>
+        <register_monthly config:type="boolean">true</register_monthly>
 	<manual_online_update config:type="boolean">true</manual_online_update>
 	<root_password_ca_check config:type="boolean">true</root_password_ca_check>
     </globals>
