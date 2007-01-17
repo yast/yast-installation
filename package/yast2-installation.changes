@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jan 17 10:47:42 CET 2007 - locilka@suse.cz
+
+- Changed control file documentation for Flexible Partitioning 
+  (bugzilla #229651 comment #15).
+
+-------------------------------------------------------------------
 Fri Sep  1 15:49:08 CEST 2006 - jsrain@suse.cz
 
 - added unzip to dependencies (#195911)
