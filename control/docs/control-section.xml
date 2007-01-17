@@ -1046,8 +1046,11 @@ default
                         <filename>/opt</filename> and <filename>/var</filename> will share the other disk.
                     </para>
                     <para>
-                        If there is only one disk in the system of course all partitions 
-                        will be on that disk.
+                        If there is only one disk in the system of course all partitions
+                        will be on that disk. To make the flexible partitioning possible,
+                        <emphasis>use_flexible_partitioning</emphasis> option must be se to
+                        <emphasis>false</emphasis> and <emphasis>partitions</emphasis>
+                        must be surrounded with <emphasis>flexible_partitioning</emphasis> tag.
                     </para>
                     <programlisting><xi:include href="examples/partitions.xml" parse="text"
                         xmlns:xi="http://www.w3.org/2001/XInclude"/>
