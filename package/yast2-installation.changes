@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jan 17 10:48:43 CET 2007 - locilka@suse.cz
+
+- Changed control file documentation for Flexible Partitioning 
+  (bugzilla #229651 comment #15).
+
+-------------------------------------------------------------------
 Fri Jan 12 19:05:56 CET 2007 - ms@suse.de
 
 - fixed TERM type setup in case of ssh based installations.

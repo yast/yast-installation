@@ -1,5 +1,7 @@
+<partitioning>        
+    <use_flexible_partitioning config:type="boolean">false</use_flexible_partitioning>
 
-    <partitioning>        
+    <flexible_partitioning>
         <partitions config:type="list">
             <partition>
                 <disk config:type="integer">2</disk>
@@ -24,6 +26,8 @@
                 <size>2gb</size>
             </partition>
         </partitions>
-        <prefer_remove config:type="boolean">true</prefer_remove>
-        <remove_special_partitions config:type="boolean">false</remove_special_partitions>
-    </partitioning>
+    </flexible_partitioning>
+
+    <prefer_remove config:type="boolean">true</prefer_remove>
+    <remove_special_partitions config:type="boolean">false</remove_special_partitions>
+</partitioning>
