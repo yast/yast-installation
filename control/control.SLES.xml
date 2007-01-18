@@ -168,6 +168,8 @@ Please visit us at http://www.novell.com/linux/.
                 <proposal_module>timezone</proposal_module>
                 <proposal_module>language</proposal_module>
                 <proposal_module>runlevel</proposal_module>
+                <proposal_module>dasd</proposal_module>
+                <proposal_module>zfcp</proposal_module>
             </proposal_modules>
             <proposal_tabs config:type="list">
                 <proposal_tab>
@@ -190,6 +192,8 @@ Please visit us at http://www.novell.com/linux/.
                         <proposal_module>timezone</proposal_module>
                         <proposal_module>language</proposal_module>
                         <proposal_module>runlevel</proposal_module>
+                        <proposal_module>dasd</proposal_module>
+                        <proposal_module>zfcp</proposal_module>
                     </proposal_modules>
                 </proposal_tab>
             </proposal_tabs>
@@ -245,6 +249,8 @@ Please visit us at http://www.novell.com/linux/.
                 <proposal_module>packages</proposal_module>
                 <proposal_module>backup</proposal_module>
                 <proposal_module>language</proposal_module>
+                <proposal_module>dasd</proposal_module>
+                <proposal_module>zfcp</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>
