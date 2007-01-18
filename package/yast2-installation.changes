@@ -3,6 +3,7 @@ Wed Jan 17 10:48:43 CET 2007 - locilka@suse.cz
 
 - Changed control file documentation for Flexible Partitioning 
   (bugzilla #229651 comment #15).
+- Changed option <clone_module> "lan" to "networking" (#235457).
 - 2.13.178
 
 -------------------------------------------------------------------

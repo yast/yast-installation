@@ -50,7 +50,7 @@ textdomain="control"
 	<clone_module>keyboard</clone_module>
 	<clone_module>timezone</clone_module>
 	<clone_module>users</clone_module>
-	<clone_module>lan</clone_module>
+	<clone_module>networking</clone_module>
 	<clone_module>firewall</clone_module>
 	<clone_module>host</clone_module>
 	<clone_module>routing</clone_module>
