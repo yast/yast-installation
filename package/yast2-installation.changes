@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Jan 19 16:25:44 CET 2007 - locilka@suse.cz
+
+- Fixed cancelling of entering a new Add-On (#236315).
+
+-------------------------------------------------------------------
 Wed Jan 17 10:50:02 CET 2007 - locilka@suse.cz
 
 - Changed control file documentation for Flexible Partitioning
