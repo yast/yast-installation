@@ -291,7 +291,7 @@ symbol MediaSelect () {
 		url = editUrl( url );
 		y2milestone ("New url: '%1'", url);
 		if (url == nil || url == "") {
-		    continue;
+		    break;
 		} else {
 		    y2milestone ("Adding source");
 		    createResult = SourceManager::createSource( url);
