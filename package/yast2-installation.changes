@@ -2,6 +2,8 @@
 Fri Jan 19 16:25:44 CET 2007 - locilka@suse.cz
 
 - Fixed cancelling of entering a new Add-On (#236315).
+- Added zFCP and DASD to installation/update proposal on S/390
+  (jsrain) (#160399)
 - 2.15.4
 
 -------------------------------------------------------------------
