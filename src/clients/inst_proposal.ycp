@@ -251,7 +251,9 @@
 			warn_level = `ok;
 		    if (contains ([`blocker, `fatal, `error], warn_level))
 		    {
-			if (mod2tab[submod]:999 < tab_to_switch)
+			// bugzilla #237291
+			// always switch to more detailed tab only
+			if (mod2tab[submod]:999 > tab_to_switch)
 			{
 			    tab_to_switch = mod2tab[submod]:999;
 			}
@@ -313,8 +315,13 @@
 	    display_proposal( proposal );
 	    get_submod_descriptions_and_build_menu ();
 	    y2milestone("Switching to tab '%1'", current_tab);
-	    if (UI::HasSpecialWidget (`DumbTab))
-		UI::ChangeWidget (`id (`_cwm_tab), `CurrentItem, current_tab);
+	    if (UI::HasSpecialWidget (`DumbTab)) {
+		if (UI::WidgetExists(`_cwm_tab)) {
+		    UI::ChangeWidget (`id (`_cwm_tab), `CurrentItem, current_tab);
+		} else {
+		    y2warning ("Widget with id %1 does not exist!", `_cwm_tab);
+		}
+	    }
 	}
 
 	// now do the display-only proposals
@@ -756,8 +763,13 @@
 			    false			// have_next_button
 			    );
 	set_icon();
-	if (UI::HasSpecialWidget (`DumbTab))
-	    UI::ChangeWidget (`id (`_cwm_tab), `CurrentItem, current_tab);
+	if (UI::HasSpecialWidget (`DumbTab)) {
+	    if (UI::WidgetExists(`_cwm_tab)) {
+		UI::ChangeWidget (`id (`_cwm_tab), `CurrentItem, current_tab);
+	    } else {
+		y2warning ("Widget with id %1 does not exist!", `_cwm_tab);
+	    }
+	}
 	if ( Stage::stage () == "initial" )
 	    // push button
 	    Wizard::ShowReleaseNotesButton (_("&Show Release Notes"), `rel_notes);

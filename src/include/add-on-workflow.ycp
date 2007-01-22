@@ -270,20 +270,17 @@ symbol MediaSelect () {
 		string msg = input == `cd
 		    ? _("Insert the add-on product CD")
 		    : _("Insert the add-on product DVD");
-		if (! SourceManager::AskForCD (msg))
-		{
-		    // bugzilla #216910
-		    // `back means - return to the previous dialog
-		    // in Mode::normal, there is no previous dialog
-		    if (Mode::normal()) {
-			ret = nil;
-			continue;
-		    } else {
-			break;
-		    }
+
+		// bugzilla #237264
+		boolean ask_for_media = SourceManager::AskForCD (msg);
+		y2milestone ("SourceManager::AskForCD returned: %1", ask_for_media);
+		if (ask_for_media == true) {
+		    createResult = SourceManager::createSource( url);
+		} else {
+		    createResult = nil;
+		    ret = nil;
+		    continue;
 		}
-		
-		createResult = SourceManager::createSource( url);
 	    }
 	    else
 	    {
