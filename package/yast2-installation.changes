@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Jan 22 13:46:20 CET 2007 - locilka@suse.cz
+
+- Correct handling of CD/DVD Add-Ons in installation (#237264)
+- Fixed switching between Installation Settings tabs in case of
+  error in proposal. Every time, only the more-detailed tab is
+  selected (#237291).
+
+-------------------------------------------------------------------
 Fri Jan 19 16:25:44 CET 2007 - locilka@suse.cz
 
 - Fixed cancelling of entering a new Add-On (#236315).
