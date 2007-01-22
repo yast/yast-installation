@@ -24,6 +24,7 @@ import "AddOnProduct";
 import "Progress";
 import "AutoinstSoftware";
 import "PackageCallbacksInit";
+import "Label";
 
 include "installation/add-on-workflow.ycp";
 
@@ -94,7 +95,7 @@ else if (func == "Change") {
     Wizard::CreateDialog ();
     AutoinstSoftware::pmInit ();
     PackageCallbacksInit::InitPackageCallbacks ();
-    ret = RunAddOnMainDialog (true, true);
+    ret = RunAddOnMainDialog (true, true, Label::BackButton(), Label::NextButton());
     UI::CloseDialog ();
     return ret;
 }

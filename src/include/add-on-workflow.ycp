@@ -821,7 +821,7 @@ symbol RunAutorunWizard() {
 }
 
 
-void Redraw (boolean enable_back, boolean enable_next) {
+void Redraw (boolean enable_back, boolean enable_next, string back_button, string next_button) {
     y2milestone ("Called Redraw()");
     // main screen heading
     string title = _("Add-On Product Installation");
@@ -866,7 +866,10 @@ select it and click <b>Delete</b>.</p>");
 	)
     );
 
-    Wizard::SetContents (title, contents, help, enable_back, enable_next);
+    Wizard::SetContentsButtons (title, contents, help, back_button, next_button);
+    if (! enable_back) Wizard::DisableBackButton();
+    if (! enable_next) Wizard::DisableNextButton();
+
     Wizard::SetDesktopIcon("vendor");
 
     // disable delete button if no items listed
@@ -882,8 +885,12 @@ select it and click <b>Delete</b>.</p>");
 // /tmp/$yast_tmp/control_files/ directory
 // as $srcid.xml files
 //
-symbol RunAddOnMainDialog(boolean enable_back, boolean enable_next) {
-    Redraw (enable_back, enable_next);
+// bugzilla #237297
+// in the installation workflow - back/ next buttons
+// in the installation proposal - cancel / accept buttons
+//
+symbol RunAddOnMainDialog (boolean enable_back, boolean enable_next, string back_button, string next_button) {
+    Redraw (enable_back, enable_next, back_button, next_button);
     symbol ret = nil;
 
     // added / removed
@@ -935,7 +942,7 @@ symbol RunAddOnMainDialog(boolean enable_back, boolean enable_next) {
 	    // remove product from list of product to register (FATE #301312)
 	    AddOnProduct::RemoveRegistrationFlag (media);
 	    
-            Redraw (enable_back, enable_next);
+            Redraw (enable_back, enable_next, back_button, next_button);
 
 	// adding new add-on
         } else if (ret == `add) {
@@ -945,7 +952,7 @@ symbol RunAddOnMainDialog(boolean enable_back, boolean enable_next) {
 		AddOnProduct::PrepareForRegistration (AddOnProduct::src_id);
 		some_addon_changed = true;
 	    }
-            Redraw (enable_back, enable_next);
+            Redraw (enable_back, enable_next, back_button, next_button);
         }
 
     } until ( ret == `next || ret == `back );
