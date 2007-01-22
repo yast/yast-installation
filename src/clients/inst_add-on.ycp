@@ -17,6 +17,7 @@ import "Popup";
 import "ProductControl";
 import "Report";
 import "Wizard";
+import "Label";
 
 include "installation/add-on-workflow.ycp";
 
@@ -26,7 +27,10 @@ Packages::SelectProduct ();
 
 PackageCallbacksInit::SetMediaCallbacks();
 
-symbol ret = RunAddOnMainDialog (GetInstArgs::enable_back(), GetInstArgs::enable_next());
+symbol ret = RunAddOnMainDialog (
+    GetInstArgs::enable_back(), GetInstArgs::enable_next(),
+    Label::BackButton(), Label::NextButton()
+);
 
 if (ret == `next)
 {

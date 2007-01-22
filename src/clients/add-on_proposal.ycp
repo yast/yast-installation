@@ -10,6 +10,8 @@
 {
 textdomain "installation";
 
+import "Label";
+
 include "installation/add-on-workflow.ycp";
 
 string func  = (string) WFM::Args(0);
@@ -42,7 +44,7 @@ if ( func == "MakeProposal" )
 else if ( func == "AskUser" )
 {
     Wizard::CreateDialog();
-    symbol result = RunAddOnMainDialog (true, true);
+    symbol result = RunAddOnMainDialog (true, true, Label::CancelButton(), Label::AcceptButton());
     UI::CloseDialog();
 
     // Fill return map
