@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Sun Jan 28 22:27:48 CET 2007 - locilka@suse.cz
+
+- Removed tv and bluetooth hardware proposals from SLES control
+  file. There are no such modules in that product (#238759).
+
+-------------------------------------------------------------------
 Mon Jan 22 13:46:20 CET 2007 - locilka@suse.cz
 
 - Correct handling of CD/DVD Add-Ons in installation (#237264).
