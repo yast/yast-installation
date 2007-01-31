@@ -95,7 +95,7 @@ boolean IsAnyNetworkAvailable () {
                 ret = true;
             }
         // some devices are listed
-        } else if (cmd_run["stdout"]:"" != nil && cmd_run["stdout"]:"" != "") {
+        } else if (cmd_run["stdout"]:"" != nil && cmd_run["stdout"]:"" != "" && cmd_run["stdout"]:"" != "\n") {
             ret = true;
         }
         
