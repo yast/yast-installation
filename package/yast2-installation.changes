@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jan 31 09:34:11 CET 2007 - locilka@suse.cz
+
+- Rereading all SCR Agents in case of installation workflow changed
+  by Add-On product (#239055).
+
+-------------------------------------------------------------------
 Sun Jan 28 22:27:48 CET 2007 - locilka@suse.cz
 
 - Removed tv and bluetooth hardware proposals from SLES control

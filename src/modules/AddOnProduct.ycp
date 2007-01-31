@@ -698,6 +698,25 @@ boolean UpdateProductInfo(map update_file) {
 }
 
 /**
+ * New add-on product might add also new agents.
+ * Functions Rereads all available agents.
+ *
+ * @see bugzilla #239055
+ */
+global void RereadAllSCRAgents () {
+    y2milestone ("Rereading SCR Agents...");
+    integer handle = WFM::SCRGetDefault ();
+    WFM::SCRClose (handle);
+    integer new_scr = WFM::SCROpen ("scr", true);
+
+    if (new_scr < 1) {
+	y2error("Rereading SCR failed!");
+    } else {
+	y2milestone("Rereading SCR succeeded.");
+    }
+}
+
+/**
  * Remove the /y2update directory from the system
  */
 void CleanY2Update() {
@@ -760,6 +779,9 @@ ln -s all/usr/lib/YaST2/* .;
 	    Report::Error (_("An error occurred while preparing the installation system."));
 	    CleanY2Update();
 	    return nil;
+	} else {
+	    // bugzilla #239055
+	    RereadAllSCRAgents();
 	}
     }
     else
@@ -1116,6 +1138,8 @@ global boolean RemoveAddOnControlFile (integer srcid) {
 global boolean ReIntegrateFromScratch () {
     y2milestone ("Reintegration workflows from scratch...");
     ResetSystemWorkflowsAndProposals ();
+    // bugzilla #239055
+    RereadAllSCRAgents();
 
     foreach (map<string,any> prod, AddOnProduct::add_on_products, {
 	integer srcid = (integer) prod["media"]:nil;
