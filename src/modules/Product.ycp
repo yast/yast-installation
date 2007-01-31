@@ -12,6 +12,7 @@
 
     import "Mode";
     import "Stage";
+    import "PackageLock";
 
     /**
      * General product name and version
@@ -71,6 +72,12 @@
     global string shortlabel	= "";
 
 global list<map<string,any> > FindBaseProducts() {
+    // bugzilla #238556
+    if (! PackageLock::Check()) {
+	y2error ("Locked!");
+	return [];
+    }
+
     y2milestone ("Looking for base products");
     list<map<string,any> > products = (list<map<string,any> >)
 	Pkg::TargetProducts ();
@@ -137,6 +144,11 @@ global list<map<string,any> > FindBaseProducts() {
 	}
 	else if (!Mode::config ())
 	{
+	    // bugzilla #238556
+	    if (! PackageLock::Check()) {
+		y2error ("Locked!");
+		return;
+	    }
 	    Pkg::TargetInitialize ("/");
 //	    list all_products = Pkg::TargetProducts();		// get all products
 
