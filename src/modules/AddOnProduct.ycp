@@ -1118,6 +1118,14 @@ test -d '%1' || /bin/mkdir -p '%1';
 global boolean RemoveAddOnControlFile (integer srcid) {
     string filename = sformat("%1/%2.xml", TmpdirForControlFiles(), srcid);
 
+    // remove also from list of control files
+    // #238307
+    string this_control_file = sformat ("%1.xml", srcid);
+    control_files_to_add = filter (string one_control_file, control_files_to_add, {
+	return one_control_file != this_control_file;
+    });
+    y2milestone ("Control files in use now: %1", control_files_to_add);
+
     if (FileUtils::Exists (filename)) {
 	y2milestone ("Removing: %1", filename);
 	if ((boolean) SCR::Execute (.target.remove, filename)) {
