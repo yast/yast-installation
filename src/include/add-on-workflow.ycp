@@ -937,7 +937,8 @@ symbol RunAddOnMainDialog (boolean enable_back, boolean enable_next, string back
             });
 	    
 	    // remove a temporary file, not needed anymore
-	    AddOnProduct::RemoveAddOnControlFile (selected);
+	    // bugzilla #238307
+	    AddOnProduct::RemoveAddOnControlFile (media);
 	    some_addon_changed = true;
 	    // remove product from list of product to register (FATE #301312)
 	    AddOnProduct::RemoveRegistrationFlag (media);
