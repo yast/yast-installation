@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Feb  2 15:25:04 CET 2007 - locilka@suse.cz
+
+- Removing dependency on yast2-slp package.
+- Moving all SLP-related functionality to yast2-packager-2.15.7.
+- Handling not installed yast2-slp package in Add-Ons (#238680).
+
+-------------------------------------------------------------------
 Thu Feb  1 12:41:36 CET 2007 - locilka@suse.cz
 
 - When an Add-On product is added and removed later, correctly
