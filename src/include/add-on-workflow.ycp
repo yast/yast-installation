@@ -25,9 +25,9 @@ import "Linuxrc";
 import "Mode";
 import "Popup";
 import "Report";
-import "SLP";
 import "Sequencer";
 import "SourceManager";
+import "PackageSystem";
 import "SuSEFirewall";
 import "Stage";
 import "Wizard";
@@ -52,27 +52,6 @@ symbol Write () {
 
 // Used for adding sources
 symbol createResult = `again;
-
-/**
- * Function scans for SLP installation servers on the network
- *
- * @returns symbol one of `back, `next
- */
-symbol AddSourceTypeSLP () {
-    string service = SourceManager::AddSourceTypeSLP ();
-    if (service == nil) {
-	y2milestone("No service selected, returning back...");
-
-	return `back;
-    }
-
-    y2milestone ("Trying to add source '%1'", service);
-    // add the installation source
-    symbol createResult = SourceManager::createSource(service);
-    y2milestone ("Adding source result: %1", createResult);
-
-    return `next;
-}
 
 /**
  * Checks whether some network is available in the current moment,
@@ -250,8 +229,33 @@ symbol MediaSelect () {
 	y2milestone ("Current: %1", input);
 	if ( input == `slp )
 	{
+	    string required_package = "yast2-slp";
+	    boolean installed_before = PackageSystem::Installed (required_package);
+
+	    if (! Mode::installation () && ! installed_before) {
+		// Tries to Check and Install packages
+		if (
+		    ! PackageSystem::CheckAndInstallPackagesInteractive ([required_package]) ||
+		    ! PackageSystem::Installed (required_package)
+		) {
+		    Report::Error (sformat (
+			// popup error message, %1 is the package name
+			_("Cannot search for SLP installation sources
+without having %1 package installed"),
+			required_package
+		    ));
+		    y2warning ("Not searching for SLP sources");
+		    ret = nil;
+		    continue;
+		// New .slp agent has been added
+		// FIXME: lazy loading of agents will make this obsolete
+		} else {
+		    SCR::RegisterAgent(.slp, `ag_slp(`SlpAgent()));
+		}
+	    }
+
 	    // moved to another function
-	    ret = AddSourceTypeSLP();
+	    ret = (symbol) WFM::call("add_inst_source_slptype");
 	    y2milestone("SLP-Add returned: %1", ret);
 	    if (ret == `next)
 		createResult = `ok;

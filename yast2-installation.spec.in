@@ -4,12 +4,12 @@
 @HEADER@
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2 yast2-core-devel yast2-devtools yast2-testsuite yast2-country
 
-Requires:	yast2-slp yast2-firewall
+Requires:	yast2-firewall
 Requires:	yast2-update
 Requires:	yast2-storage yast2-mouse yast2-bootloader
 
-# SourceManager::InstallationSourceOnPartition 2.14.0, bugzilla #208222
-Requires:	yast2-packager >= 2.14.0
+# add_inst_source_slptype.ycp client, bugzilla #238680
+Requires:	yast2-packager >= 2.15.7
 # extra sources in ResolvableProperties()
 # "", `language", "" in ResolvableProperties()
 Requires:	yast2-pkg-bindings >= 2.13.101
