@@ -4,6 +4,8 @@ Mon Feb  5 11:31:52 CET 2007 - locilka@suse.cz
 - Store Add-Ons at the end of first stage installation and restore
   them before AutoYaST cloning at the end of the second stage
   installation (bugzilla #187558).
+- Set license content before it is displayed for the first time,
+  select license language before it is displayed (#220847).
 - 2.15.7
 
 -------------------------------------------------------------------

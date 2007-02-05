@@ -25,15 +25,33 @@ import "ProductFeatures";
 
 textdomain "installation";
 
+term GetLicenseContent (string lic_lang, map <string, string> & licenses) {
+	    string license_file = licenses[lic_lang]:"";
+	    y2milestone ("Using license file: %1", license_file);
+	    string license_text = (string) SCR::Read(.target.string, license_file);
+	    if (license_text == nil)
+	    {
+		Report::Error (sformat(_("Cannot read license file %1"), license_file));
+		license_text = "";
+	    }
+	    term rt = `Empty();
+	    if (regexpmatch(license_text, "</.*>"))
+		rt = `RichText(`id( `welcome_text), license_text);
+	    else
+		rt = `RichText(`id( `welcome_text), `opt(`plainText), license_text);
+
+	    return rt;
+}
+
 /**
  * Displays License with Help and ( ) Yes / ( ) No radio buttons
  * @param string file with the license
  */
-void DisplayLicenseDialog (list<string> languages, boolean back) {
+void DisplayLicenseDialog (list<string> languages, boolean back, string license_language, map <string, string> & licenses) {
     string license_text = "";
     map display = UI::GetDisplayInfo();
     integer space = display["TextMode"]:true ? 1 : 3;
-    term rt = `RichText(`id( `welcome_text), "");
+    term rt = GetLicenseContent (license_language, licenses);
 
     // dialog caption
     string caption = _("License Agreement");
@@ -90,7 +108,7 @@ void DisplayLicenseDialog (list<string> languages, boolean back) {
 	return l1[1]:"" < l2[1]:"";
     });
     list langs = maplist (list<string> descr, lang_pairs, {
-	return `item (`id (descr[0]:""), descr[1]:"");
+	return `item (`id (descr[0]:""), descr[1]:"", (descr[0]:"" == license_language));
     });
 
     term contents = `VBox (
@@ -193,6 +211,8 @@ map<string,string> LicenseFiles (string dir, list<string> patterns) {
     y2milestone ("Files containing license: %1", ret);
     return ret;
 }
+
+
 
 /**
  * Ask user to confirm license agreement
@@ -300,7 +320,7 @@ unzip -qqo '%2'
 	lic_lang = available_langs[0]:"";
 
     y2milestone ("Preselected language: '%1'", lic_lang);
-    DisplayLicenseDialog (available_langs, enable_back);
+    DisplayLicenseDialog (available_langs, enable_back, lic_lang, licenses);
     // Display info as a popup if exists
     if (info_file != nil)
 	InstShowInfo::show_info_txt(info_file);
@@ -312,7 +332,6 @@ unzip -qqo '%2'
     }
 
     // initial loop
-    UI::ChangeWidget(`id(`lang), `Value, lic_lang);
     symbol ret = `first;
 
     // set timeout for autoinstallation
@@ -324,27 +343,6 @@ unzip -qqo '%2'
 
     while (true)
     {
-	if (ret == `lang || ret == `first)
-	{
-	    // read the selected language if not in the initial loop
-	    if (ret != `first) lic_lang = (string) UI::QueryWidget (`id (`lang), `Value);
-	    string license_file = licenses[lic_lang]:"";
-	    y2milestone ("Using license file: %1", license_file);
-	    string license_text = (string)
-		SCR::Read(.target.string, license_file);
-	    if (license_text == nil)
-	    {
-		license_text = "";
-// TODO error message
-	    }
-	    term rt = `Empty();
-	    if (regexpmatch(license_text, "</.*>"))
-		rt = `RichText(`id( `welcome_text), license_text);
-	    else
-		rt = `RichText(`id( `welcome_text), `opt(`plainText), license_text);
-	    UI::ReplaceWidget (`id (`license_rp), rt);
-	}
-
 	// bugzilla #206706
 	if (timeout) {
 	    sleep (2000);
@@ -353,6 +351,14 @@ unzip -qqo '%2'
 	}
 
 	ret = (symbol) UI::UserInput();
+
+	if (ret == `lang)
+	{
+	    // read the selected language
+	    lic_lang = (string) UI::QueryWidget (`id (`lang), `Value);
+
+	    UI::ReplaceWidget (`id (`license_rp), GetLicenseContent (lic_lang, licenses));
+	}
 
 	symbol accept = (symbol) UI::QueryWidget(`id(`eula), `CurrentButton);
 	// Aborting the license dialog
