@@ -29,6 +29,8 @@ import "Product";
 import "Progress";
 import "SignatureCheckDialogs";
 import "Stage";
+import "AddOnProduct";
+import "FileUtils";
 
 any ret = nil;
 string func = "";
@@ -62,6 +64,28 @@ else if (func == "Write")
 	SCR::Execute (.target.bash, "/bin/mkdir -p '/etc/YaST2'");
 	SCR::Execute (.target.bash, "touch '/etc/YaST2/ProductFeatures'");
 	ProductFeatures::Save();
+    }
+
+    // Bugzilla #187558
+    // Save Add-On products configuration
+    // to be able to restore the settings
+    string save_to = AddOnProduct::TmpExportFilename();
+    if (FileUtils::Exists (save_to)) {
+	SCR::Execute (.target.remove, save_to);
+    }
+    if (Stage::initial ()) {
+	y2milestone ("Saving Add-On configuration...");
+	map exported_add_ons = AddOnProduct::Export();
+	if (exported_add_ons == nil) {
+	    y2error ("Error, Add-Ons returned 'nil'");
+	} else {
+	    boolean saved = (boolean) SCR::Write (.target.ycp, save_to, exported_add_ons);
+	    if (saved) {
+		y2milestone ("Add-Ons configuration saved successfuly");
+	    } else {
+		y2error ("Error occured when storing Add-Ons configuration!");
+	    }
+	}
     }
 
     // progress step title

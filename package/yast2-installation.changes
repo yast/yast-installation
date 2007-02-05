@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Feb  5 11:29:18 CET 2007 - locilka@suse.cz
+
+- Store Add-Ons at the end of first stage installation and restore
+  them before AutoYaST cloning at the end of the second stage
+  installation (bugzilla #187558).
+- 2.13.182
+
+-------------------------------------------------------------------
 Thu Feb  1 12:38:55 CET 2007 - locilka@suse.cz
 
 - When an Add-On product is added and removed later, correctly
