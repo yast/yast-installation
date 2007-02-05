@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Feb  5 11:31:52 CET 2007 - locilka@suse.cz
+
+- Store Add-Ons at the end of first stage installation and restore
+  them before AutoYaST cloning at the end of the second stage
+  installation (bugzilla #187558).
+- 2.15.7
+
+-------------------------------------------------------------------
 Fri Feb  2 15:25:04 CET 2007 - locilka@suse.cz
 
 - Removing dependency on yast2-slp package.

@@ -30,6 +30,7 @@ import "Popup";
 import "InstShowInfo";
 import "ProductLicense";
 import "FileUtils";
+import "Directory";
 
 // variables for installation with product
 /**
@@ -49,6 +50,15 @@ boolean system_workflows_prepared = false;
 
 /**
  * List of all selected sources
+ *
+ * @struct add_on_products = [
+ *   $[
+ *     "media" : 4, // ID of the source
+ *     "product_dir" : "/",
+ *     "product" : "openSUSE version XX.Y",
+ *   ],
+ *   ...
+ * ]
  */
 global list<map<string,any> > add_on_products = [];
 
@@ -1256,5 +1266,47 @@ global void CleanModeConfigSources () {
     mode_config_sources = [];
 }
 
+/**
+ * Returns the path where Add-Ons configuration is stored during the fist stage installation.
+ * This path reffers to the installed system.
+ *
+ * @see bugzilla #187558
+ */
+global string TmpExportFilename () {
+    return Directory::vardir + "/exported_add_ons_configuration";
+}
+
+/**
+ * Reads the Add-Ons configuration stored on disk during the first stage installation.
+ *
+ * @see bugzilla #187558
+ */
+global boolean ReadTmpExportFilename () {
+    string tmp_filename = TmpExportFilename();
+    modified = true;
+
+    if (FileUtils::Exists(tmp_filename)) {
+	y2milestone ("Reading %1 content", tmp_filename);
+
+	// there might be something already set, store the current configuration
+	list <map <string,any> > already_in_configuration = add_on_products;
+	map configuration_from_disk  = (map) SCR::Read (.target.ycp, tmp_filename);
+	y2milestone ("Configuration from disk: %1", configuration_from_disk);
+
+	if (configuration_from_disk != nil) {
+	    Import (configuration_from_disk);
+	    if (already_in_configuration != [] && already_in_configuration != nil) {
+		add_on_products = (list <map <string,any> >) union (add_on_products, already_in_configuration);
+	    }
+	    return true;
+	} else {
+	    y2error ("Reading %1 file returned nil result!", tmp_filename);
+	    return false;
+	}
+    } else {
+	y2warning ("File %1 doesn't exists, skipping...", tmp_filename);
+	return true;
+    }
+}
 
 } // module end
