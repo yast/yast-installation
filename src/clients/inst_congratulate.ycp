@@ -22,6 +22,7 @@
     import "Package";
     import "ProductControl";
     import "Stage";
+    import "AddOnProduct";
 
     /**
      * Function returns true when the default windowmanager is KDE
@@ -168,6 +169,10 @@ selected, a profile of the current system is stored in /root/autoyast.xml.</p>
     } until ( ret == `next || ret == `back );
 
     if (UI::WidgetExists(`id(`do_clone)) && ret == `next && (boolean)UI::QueryWidget (`id(`do_clone), `Value)) {
+	// #187558
+	// Load Add-On products configured in the fist stage
+	AddOnProduct::ReadTmpExportFilename();
+
 	// #165860
 	// Save sources now because cloning garbles the target
 	// Cloning reinitializes sources when it needs them
