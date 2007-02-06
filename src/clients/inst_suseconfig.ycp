@@ -27,7 +27,8 @@
     import "Wizard";
     import "Kernel";
     import "GetInstArgs";
-    import "Product"; // ugly, because of initializing the &product; macro
+    // bugzilla #241553 comment #7
+    // import "Product"; // ugly, because of initializing the &product; macro
 
     if ( GetInstArgs::going_back())	// going backwards?
 	return `auto;			// don't execute this once more
@@ -107,7 +108,8 @@ this process can take some time.</p>
 			  `ProgressBar(`id(`progress), _("Progress"), max_steps, 0 )
 			  );
 
-    UI::SetProductName (Product::name); // really ugly, bot works
+    // bugzilla #241553 comment #7
+    UI::SetProductName ("");
     Wizard::SetContents(
 			  // Dialog title for SuSEconfig dialog
 			  _("Writing the system configuration"),
