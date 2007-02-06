@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Feb  6 16:29:55 CET 2007 - locilka@suse.cz
+
+- Hide &product; in inst_suseconfig call to remove dependency on
+  Product.ycp and not to be so ugly (#241553).
+
+-------------------------------------------------------------------
 Mon Feb  5 11:31:52 CET 2007 - locilka@suse.cz
 
 - Store Add-Ons at the end of first stage installation and restore
