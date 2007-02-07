@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Feb  7 11:01:02 CET 2007 - locilka@suse.cz
+
+- Correct Installation::destdir quoting in .local or .target bash
+  commands.
+
+-------------------------------------------------------------------
 Tue Feb  6 16:29:55 CET 2007 - locilka@suse.cz
 
 - Hide &product; in inst_suseconfig call to remove dependency on

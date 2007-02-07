@@ -18,6 +18,7 @@ textdomain "installation";
 
 import "Linuxrc";
 import "Installation";
+import "String";
 
 any ret = nil;
 string func = "";
@@ -46,9 +47,9 @@ if (func == "Info")
 else if (func == "Write")
 {
     WFM::Execute (.local.bash, "umask 077 ; awk  -F : ' /^root:/ { print $1\":\"$2 }' < /etc/shadow > "
-                + Installation::destdir + "/tmp/rootpwd.txt");
+                + "'" + String::Quote (Installation::destdir) + "/tmp/rootpwd.txt'");
     SCR::Execute (.target.bash, "/bin/cat /tmp/rootpwd.txt | /usr/sbin/chpasswd -e ; rm -fv /tmp/rootpwd.txt");
-    WFM::Execute (.local.bash, "/bin/cp -a /etc/ssh/*key* " + Installation::destdir + "/etc/ssh/");
+    WFM::Execute (.local.bash, "/bin/cp -a /etc/ssh/*key* '" + String::Quote (Installation::destdir) + "/etc/ssh/'");
 }
 else
 {
