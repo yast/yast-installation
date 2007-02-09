@@ -3,6 +3,7 @@ Wed Feb  7 11:01:02 CET 2007 - locilka@suse.cz
 
 - Correct Installation::destdir quoting in .local or .target bash
   commands.
+- 2.15.8
 
 -------------------------------------------------------------------
 Tue Feb  6 16:29:55 CET 2007 - locilka@suse.cz
