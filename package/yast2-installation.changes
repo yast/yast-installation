@@ -3,6 +3,7 @@ Tue Feb  6 16:25:04 CET 2007 - locilka@suse.cz
 
 - Hide &product; in inst_suseconfig call to remove dependency on
   Product.ycp and not to be so ugly (#241553).
+- 2.13.183
 
 -------------------------------------------------------------------
 Mon Feb  5 11:29:18 CET 2007 - locilka@suse.cz
