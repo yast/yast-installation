@@ -150,11 +150,7 @@
      * usbfs to /proc/bus/usb
      */
 
-    global define void StartUSB ()
-    ``{
-	if (Arch::sparc ())	// why this and why here ???
-	    return;
-
+    global define void StartUSB () {
 	list<map> usb_controllers = (list<map>) SCR::Read(.probe.usbctrl);
 
 	foreach (map controller, usb_controllers,
@@ -165,21 +161,6 @@
 	});
 
 	y2milestone ("haveUSB = %1", haveUSB);
-
-	if (haveUSB)
-	{
-	    // prevent multiple mounts for /proc/bus/usb
-	    list<map> mtab = (list<map>) SCR::Read(.etc.mtab);
-	    if (mtab == nil) mtab = [];
-	    boolean usb_mounted = false;
-	    foreach (map mpoint, mtab,
-	    ``{
-		if (mpoint["file"]:"" == "/proc/bus/usb")
-		    usb_mounted = true;
-	    });
-	    if (!usb_mounted)
-		SCR::Execute (.target.mount, ["usbfs", "/proc/bus/usb"], "-t usbfs");
-	}
     }
 
     /**

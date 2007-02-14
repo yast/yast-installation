@@ -4,24 +4,25 @@
 @HEADER@
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2 yast2-core-devel yast2-devtools yast2-testsuite yast2-country
 
-Requires:	yast2-firewall
-Requires:	yast2-update
-Requires:	yast2-storage yast2-mouse yast2-bootloader
-
-# add_inst_source_slptype.ycp client, bugzilla #238680
-Requires:	yast2-packager >= 2.15.7
-# extra sources in ResolvableProperties()
-# "", `language", "" in ResolvableProperties()
-Requires:	yast2-pkg-bindings >= 2.13.101
-# ProductControl::Run returning `abort (FATE #300422)
+Requires:       autoyast2-installation
 Requires:	yast2 >= 2.14.6
 # Language::selection_skipped, bugzilla #223258
 Requires:	yast2-country >= 2.15.0
+Requires:	yast2-network
+# add_inst_source_slptype.ycp client, bugzilla #238680
+Requires:	yast2-packager >= 2.15.7
 
-Requires:	yast2-network yast2-users
-Requires:	curl release-notes
+# Only in inst-sys
+# Requires:	yast2-bootloader
+# Requires:	yast2-mouse
+# Requires:	yast2-storage
+# Requires:	yast2-update
 
-Requires:       autoyast2-installation yast2-online-update
+# extra sources in ResolvableProperties()
+# "", `language", "" in ResolvableProperties()
+# pkg-bindings are not directly required
+Conflicts:	yast2-pkg-bindings < 2.13.101
+
 # unzipping license file
 Requires:	unzip
 # tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
@@ -34,6 +35,12 @@ Requires:	tar gzip
 #Requires:	/usr/bin/pnmtopng
 
 Recommends:	yast2-registration
+Recommends:	yast2-online-update
+Recommends:	yast2-users
+Recommends:	yast2-firewall
+Recommends:	release-notes
+Recommends:	curl
+Recommends:	yast2-update
 
 PreReq:		%fillup_prereq
 

@@ -1,17 +1,17 @@
 /**
  * File:
- *      bootloader_auto.ycp
+ *      add-on_auto.ycp
  *
  * Module:
- *      Bootloader installation and configuration
+ *      Add-On autoinstallation and configuration
  *
  * Summary:
- *      Bootloader autoinstallation preparation
+ *      Add-On autoinstallation preparation
  *
  * Authors:
  *      Jiri Srain <jsrain@suse.cz>
  *
- * $Id: bootloader_auto.ycp 24249 2005-07-22 08:18:24Z jsrain $
+ * $Id:$
  *
  */
 {
