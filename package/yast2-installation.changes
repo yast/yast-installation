@@ -1,4 +1,17 @@
 -------------------------------------------------------------------
+Mon Feb 12 13:40:41 CET 2007 - locilka@suse.cz
+
+- Making release_notes modular.
+- Rewriting RPM dependencies.
+- Moving parts of installation_worker client into functions.
+- Moving Mouse-init functions into inst_init_mouse client.
+- Moving Storage-related functions (autoinstall) into
+  inst_check_autoinst_mode client.
+- Moving vendor client and desktop file to the yast2-update to
+  minimize yast2-installation dependencies.
+- Remove obsolete /proc/bus/usb mounting (#244950).
+
+-------------------------------------------------------------------
 Wed Feb  7 11:01:02 CET 2007 - locilka@suse.cz
 
 - Correct Installation::destdir quoting in .local or .target bash

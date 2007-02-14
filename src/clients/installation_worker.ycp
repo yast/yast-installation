@@ -6,6 +6,8 @@
  *			Michael Hager <mike@suse.de>
  *			Stefan Hundhammer <sh@suse.de>
  *			Arvin Schnell <arvin@suse.de>
+ *			Jiri Srain <jsrain@suse.cz>
+ *			Lukas Ocilka <locilka@suse.cz>
  *
  * Purpose:		Set up the UI and define macros for the
  *			installation dialog, general framework, ...
@@ -17,49 +19,42 @@
 {
     textdomain "installation";
 
-    // this is installation, so start SCR always locally (as plugin) !
-
-    integer scr_handle = WFM::SCROpen ("scr", false);
-    WFM::SCRSetDefault (scr_handle);
-
     import "AddOnProduct";
     import "Arch";
-    import "FileUtils";
-    import "Mode";
+    import "Console";
     import "Directory";
-    import "Stage";
+    import "FileUtils";
     import "Installation";
+    import "Keyboard";
+    import "Label";
+    import "Language";
+    import "Linuxrc";
+    import "Mode";
+    import "Popup";
     import "ProductControl";
     import "ProductFeatures";
-    import "Language";
-    Installation::scr_handle = scr_handle;
-
-    import "Mouse";
-    import "Console";
-    import "StorageDevices";
-    import "Keyboard";
-
-    import "Wizard";
-    import "Label";
-    import "Popup";
     import "Report";
-
-
-    import "Linuxrc";
-
-    if( Mode::autoinst() ) {
-        map reportMap = $[ "errors":$[ "timeout":0 ], "warnings":$[ "timeout":10 ], "yesno_messages":$[ "timeout":10 ] ];
-        Report::Import( reportMap );
-    }
+    import "Stage";
+    import "Wizard";
 
     include "installation/misc.ycp";
+
+    string file_inst_aborted = Directory::vardir + "/second_stage_aborted";
+    string file_inst_failed  = Directory::vardir + "/second_stage_failed";
+    string run_yast_at_boot  = Directory::vardir + "/runme_at_boot";
+    string current_step      = Directory::vardir + "/step";
+    string file_update_mode  = Directory::vardir + "/update_mode";
+    string restart_data_file = Directory::vardir + "/continue_installation";
+    string reboot_file       = Directory::vardir + "/reboot";
+    string restart_file      = Directory::vardir + "/restart_yast";
+
+    // --> Functions
 
     /**
      * Re-translate static part of wizard dialog and other predefined messages
      * after language change
      */
-    void retranslateWizardDialog()
-	{
+    void retranslateWizardDialog() {
 	    y2milestone( "Retranslating messages" );
 
 	    // Make sure the labels for default function keys are retranslated, too.
@@ -67,21 +62,20 @@
 	    UI::SetFunctionKeys( Label::DefaultFunctionKeyMap() );
 
 	    // Activate language changes on static part of wizard dialog
-
 	    ProductControl::RetranslateWizardSteps();
 	    Wizard::RetranslateButtons();
 	    Wizard::SetFocusToNextButton();
 	    return;
-	}
+    }
 
-    // properly set up initial language
-
-    if (Stage::initial ())
-    {
+    /**
+     * Sets inital language and other settings.
+     */
+    void SetInitialInstallation () {
+	// properly set up initial language
 	Installation::encoding = Console::SelectFont( Language::language );
 
-	if (UI::GetDisplayInfo()["HasFullUtf8Support"]:true)
-	{
+	if (UI::GetDisplayInfo()["HasFullUtf8Support"]:true) {
 	    Installation::encoding = "UTF-8";
 	}
 
@@ -91,15 +85,29 @@
 	UI::RecordMacro( Directory::logdir + "/macro_inst_initial.ycp" );
     }
 
-    string file_inst_aborted = Directory::vardir + "/second_stage_aborted";
-    string file_inst_failed  = Directory::vardir + "/second_stage_failed";
-    string run_yast_at_boot  = Directory::vardir + "/runme_at_boot";
-    string current_step      = Directory::vardir + "/step";
-    string file_update_mode  = Directory::vardir + "/update_mode";
+    /**
+     * Sets autoinstallation behavior.
+     */
+    void SetAutoinstHandling () {
+        map reportMap = $[
+	    "errors":$[ "timeout":0 ],
+	    "warnings":$[ "timeout":10 ],
+	    "yesno_messages":$[ "timeout":10 ]
+	];
+        Report::Import( reportMap );
 
-    // Second stage
-    // FATE #300422
-    if (Stage::cont ()) {
+	Report::DisplayErrors  (true, 0);
+	Report::DisplayWarnings(true, 10);
+	Report::DisplayMessages(true, 10);
+    }
+
+    /**
+     * Checks whether the second stage installation hasn't been aborted or whether
+     * it hasn't failed before. FATE #300422.
+     *
+     * @return symbol what to do, `next means continue
+     */
+    symbol RerunInstallationIfAborted () {
 	// Second stage installation bas been aborted or has failed
 	if (FileUtils::Exists (file_inst_aborted) || FileUtils::Exists (file_inst_failed)) {
 	    // popup question (#x1)
@@ -143,22 +151,13 @@ Note: You may have to enter some information again.");
 	if (FileUtils::Exists (file_inst_aborted)) SCR::Execute (.target.remove, file_inst_aborted);
 	SCR::Execute (.target.bash, sformat ("touch %1", file_inst_failed));
 	SCR::Execute (.target.bash, sformat ("touch %1", run_yast_at_boot));
+	
+	return `next;
     }
 
-    // Second stage
-    // Detect mode early to be able to setup steps correctly
-    if (Stage::cont () && FileUtils::Exists (Installation::destdir + file_update_mode))
-    {
-	    Mode::SetMode ("update");
-    }
-
-    // during update, set the 'update language' for the 2nd stage
-    // FATE #300572
-    if (Stage::cont () && Mode::update ())
-    {
+    void SetUpdateLanguage () {
 	string var_file = Directory::vardir + "/language.ycp";
-	if (FileUtils::Exists (var_file))
-	{
+	if (FileUtils::Exists (var_file)) {
 	    map var_map = (map) SCR::Read (.target.ycp, var_file);
 	    string lang	= (string) var_map["second_stage_language"]:nil;
 	    if (lang != nil)
@@ -175,93 +174,30 @@ Note: You may have to enter some information again.");
 	}
     }
 
-    // Properly setup timezone for continue mode
-    if (Stage::cont ())
-    {
-	import "Timezone";
-	Timezone::Set( Timezone::timezone, true );
-	Pkg::SetLocale (Language::language);
-	UI::RecordMacro( Directory::logdir + "/macro_inst_cont.ycp" );
-    }
-
-    // Merge control files of add-on products
-    if (Stage::cont ())
-    {
-	string listname = Installation::destdir + Directory::etcdir + "/control_files/order.ycp";
-	if (SCR::Read (.target.size, listname) > 0)
-	{
-	    list<string> files = (list<string>)SCR::Read (.target.ycp, listname);
-	    foreach (string f, files, {
-		f = Installation::destdir + Directory::etcdir + "/control_files/" + f;
-		y2milestone ("Calling WFIntegrate()");
-		AddOnProduct::WFIntegrate (f);
-	    });
-	}
-	else
-	{
-	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "add-on");
-	}
-    }
-
-/* It should be possible to go back even in first stage
-    if ( Stage::initial () && ! Mode::repair () )
-    {
-	Wizard::OpenAcceptAbortStepsDialog();
-    }
-    else
-    {*/
+    void CreateUI () {
 	Wizard::OpenNextBackStepsDialog();
-//    }
 
-    Wizard::SetContents(
-	// dialog caption
-	_("Initializing..."),
-	// dialog content - busy message
-	`Label(_("Initializing the installation environment...")),
-	// help for the dialog - busy message
-	_("<p>Initializing the installation...</p>"),
-	false, false
-    );
-    Wizard::SetTitleIcon("yast-inst-mode");
-
-    // --------------------------------------------------------------
-    //                   Mouse
-    // --------------------------------------------------------------
-    if (Stage::initial () && (!Arch::s390 () || Arch::board_iseries ()))
-    {
-	UI::BusyCursor();
-	/* Busy popup label */
-	UI::OpenDialog(`VBox(`Label(_("Probing mouse..."))));
-	y2milestone("Call Mouse probing...");
-	Mouse::Set (Mouse::Probe ());
-	UI::CloseDialog();
+	Wizard::SetContents(
+	    // dialog caption
+	    _("Initializing..."),
+	    // dialog content - busy message
+	    `Label(_("Initializing the installation environment...")),
+	    // help for the dialog - busy message
+	    _("<p>Initializing the installation...</p>"),
+	    false, false
+	);
+	Wizard::SetTitleIcon("yast-inst-mode");
     }
 
-    UpdateWizardSteps ();
-
-    // classified_user_settings contain secrets, like passwords ...
-    // they should not be logged !
-    map classified_user_settings = $[ "crypt_nb":0 ];
-
-    if (Mode::autoinst ())
-    {
-	Report::DisplayErrors(true, 0);
-	Report::DisplayMessages(true, 10);
-	Report::DisplayWarnings(true, 10);
+    void InitMouse () {
+	if (!Arch::s390 () || Arch::board_iseries ()) {
+	    // in another client because of dependencies
+	    // used in inst-sys only
+	    WFM::CallFunction ("inst_init_mouse", []);
+	}
     }
 
-    /*
-     * The Stage::cont () flag decides, if the installation
-     * should be _started_ or _continued_.
-     */
-
-    ///////////////////////////////////////////////////////////////////
-    // Settings for:
-    // Installation: CONTINUE INSTALLATION
-    ///////////////////////////////////////////////////////////////////
-
-    if (Stage::cont ())
-    {
+    void SetLanguageAndEncoding () {
 	Installation::encoding = Console::Restore();
 	Console::Init ();
 	if (UI::GetDisplayInfo()["HasFullUtf8Support"]:true)
@@ -296,57 +232,18 @@ Note: You may have to enter some information again.");
 
 	retranslateWizardDialog();
     }
-    else if (!Mode::screen_shot ()
-             && !Stage::firstboot ()
-             )
-    {
 
-        ///////////////////////////////////////////////////////////////////
-        // Settings for:
-        // Installation: INITIAL INSTALLATION
-        ///////////////////////////////////////////////////////////////////
-
-	// do we have a floppy drive attached ?
-
-	if (StorageDevices::FloppyReady())
-	{
-	    // Try to load settings from disk, if a floppy is present
-
-	    SCR::Execute(.target.mount, [StorageDevices::FloppyDevice, "/media/floppy"], "-t auto");
-
-	    // Check for autoinst.xml. if available
-	    // set mode to autoinst. Later, the file is parsed and installation
-	    // is performed automatically.
-
-	    if (SCR::Read(.target.size,"/media/floppy/autoinst.xml")>0)
-	    {
-		y2milestone("Found control file, switching to autoinst mode");
-		Mode::SetMode ("autoinstallation");
-		// initialize Report behavior
-		// Default in autoinst mode is showing messages and warnings with timeout of 10 sec.
-		// Errors are shown without timeout.
-
-		Report::DisplayErrors(true, 0);
-		Report::DisplayMessages(true, 10);
-		Report::DisplayWarnings(true, 10);
-	    }
-	    SCR::Execute(.target.umount, "/media/floppy");
-	}
-    }
-
-    /////////////////////////////////////////
-    // show message if text_fallback
-    /////////////////////////////////////////
-    if ((Installation::text_fallback () || Installation::no_x11 ())
-	&& (Installation::x11_setup_needed () && Arch::x11_setup_needed ())
-	&& !Installation::shown_text_mode_warning)
-    {
-	string x11_msg = "";
-	if ((Installation::no_x11 () || Installation::text_fallback ()) && Stage::initial ())
-	{
-	    // Somehow the graphical frontend failed and we're running in
-	    // text mode. Inform the user about this fact.
-	    x11_msg = sformat(_("Your computer does not fulfill all requirements for
+    void ShowTextFallbackMessage () {
+	if (
+	    (Installation::text_fallback () || Installation::no_x11 ())
+	    && (Installation::x11_setup_needed () && Arch::x11_setup_needed ())
+	    && !Installation::shown_text_mode_warning
+	) {
+	    string x11_msg = "";
+	    if ((Installation::no_x11 () || Installation::text_fallback ()) && Stage::initial ()) {
+		// Somehow the graphical frontend failed and we're running in
+	        // text mode. Inform the user about this fact.
+		x11_msg = sformat(_("Your computer does not fulfill all requirements for
 a graphical installation. There is less than %1 MB
 memory or the X server could not be started.
 
@@ -356,16 +253,16 @@ same functionality as the graphical one, but the screens
 differ from those in the manual.
 "), "96");
 
-	}
-	else if ((Installation::no_x11 () || Installation::text_fallback ()) && Stage::cont ())
-	{
-	    // The script YaST2 wants to inform about a problem with the
-	    // option no_x11 but it's broken.
-	    // else if (Installation::no_x11 ())
+	    } else if (
+		(Installation::no_x11 () || Installation::text_fallback ()) && Stage::cont ()
+	    ) {
+		// The script YaST2 wants to inform about a problem with the
+		// option no_x11 but it's broken.
+		// else if (Installation::no_x11 ())
 
-	    // Somehow the graphical frontend failed and we're running in
-	    // text mode. Inform the user about this fact.
-	    x11_msg = _("The graphical interface could not be started.
+		// Somehow the graphical frontend failed and we're running in
+		// text mode. Inform the user about this fact.
+		x11_msg = _("The graphical interface could not be started.
 
 The required packages were not installed (minimal installation) or
 the graphics card is not properly supported.
@@ -375,86 +272,33 @@ through the installation. This front-end offers the
 same functionality as the graphical one, but the screens
 differ from those in the manual.
 ");
-	}
+	    }
 
-	if (x11_msg != "")
-	{
-	    Report::Message(x11_msg);
-	}
-	else
-	{
-	    y2error ("There should be a more detailed message displayed here,\
+	    if (x11_msg != "") {
+		Report::Message(x11_msg);
+	    } else {
+		y2error ("There should be a more detailed message displayed here,
 but something went wrong, that's why it is only in the log");
-	}
+	    }
 
-	// show this warning only once
-	Installation::shown_text_mode_warning = true;
-    }
-
-    // update the workflow according to current situation
-    // disable disks activation if not needed
-    boolean iscsi = Linuxrc::InstallInf("WithiSCSI") == "1";
-    if (! (Arch::s390() || iscsi))
-    {
-	y2milestone ("Disabling disk activation module");
-	ProductControl::DisabledModules = add (ProductControl::DisabledModules,
-	    "disks_activate");
-    }
-    retranslateWizardDialog();
-
-    symbol ret = nil;
-    string restart_data_file = Directory::vardir + "/continue_installation";
-    string reboot_file       = Directory::vardir + "/reboot";
-    string restart_file      = Directory::vardir + "/restart_yast";
-
-    // Continue the second stage installation
-    if (Stage::cont ()
-	&& (integer)SCR::Read (.target.size, restart_data_file) > 0)
-    {
-	string contents = (string)
-	    SCR::Read (.target.string, restart_data_file);
-	list<string> contents_lines = splitstring (contents, "\n");
-	integer next_step = tointeger ((string)(contents_lines[0]:nil));
-	integer restarting_step = tointeger ((string)(contents_lines[1]:nil));
-	if (next_step == nil)
-	{
-	    y2error ("Data file specifying step to continue corrupted");
-	    ProductControl::first_step = 0;
-	    ProductControl::restarting_step = nil;
-	    ret = ProductControl::Run();
-	    y2milestone ("ProductControl::Run() returned %1", ret);
-	}
-	else
-	{
-	    ProductControl::first_step = next_step;
-	    ProductControl::restarting_step = restarting_step;
-	    ret = ProductControl::RunFrom (next_step, false);
-	    y2milestone ("ProductControl::RunFrom(%1) returned %2", next_step, ret);
-	}
-	
-	if (FileUtils::Exists (reboot_file)) {
-	    y2milestone ("Removing file %1", reboot_file);
-	    SCR::Execute (.target.remove, reboot_file);
-	}
-	if (FileUtils::Exists (restart_file)) {
-	    y2milestone ("Removing file %1", restart_file);
-	    SCR::Execute(.target.remove, restart_file);
-	}
-	if (FileUtils::Exists (restart_data_file)) {
-	    y2milestone ("Removing file %1", restart_data_file);
-	    SCR::Execute(.target.remove, restart_data_file);
+	    // show this warning only once
+	    Installation::shown_text_mode_warning = true;
 	}
     }
-    else
-    {
-	// Run the installation workflow
-	ret = ProductControl::Run();
-	y2milestone ("ProductControl::Run() returned %1", ret);
+
+    void SetDiskActivationModule () {
+	// update the workflow according to current situation
+	// disable disks activation if not needed
+	boolean iscsi = Linuxrc::InstallInf("WithiSCSI") == "1";
+	if (! (Arch::s390() || iscsi)) {
+	    y2milestone ("Disabling disk activation module");
+	    ProductControl::DisabledModules = add (ProductControl::DisabledModules,
+		"disks_activate");
+	}
+	retranslateWizardDialog();
     }
 
-    y2milestone("Evaluating ret: %1", ret);
-
-    if (Stage::cont () && (ret == `reboot || ret == `restart_yast || ret == `restart_same_step)) {
+    symbol PrepareYaSTforRestart (symbol ret) {
 	// restarting yast, removing files that identify the user-abort or installation-crash
 	// bugzilla #222896
 	if (FileUtils::Exists (file_inst_aborted)) SCR::Execute (.target.remove, file_inst_aborted);
@@ -485,28 +329,40 @@ but something went wrong, that's why it is only in the log");
 	    SCR::Execute (.target.bash, sformat (
 		"touch %1", restart_file));
 	}
+	
+	return ret;
     }
 
-    // Installation has been aborted
-    if (ret == `abort) {
-	// tell linuxrc that we aborted
-	Linuxrc::WriteYaSTInf($["Aborted" : "1"]);
+    void HandleSecondStageAborted () {
+	// removing the current step information
+	// installation will be started from the very begining
+	if (FileUtils::Exists (current_step)) {
+	    y2milestone ("Removing file %1", current_step);
+	    SCR::Execute (.target.remove, current_step);
+	}
+
+	// not to be identified as failed but aborted
+	if (FileUtils::Exists (file_inst_failed)) {
+	    y2milestone ("Removing file %1", file_inst_failed);
+	    SCR::Execute (.target.remove, file_inst_failed);
+	}
+
+	// creating files saying that YaST will be started after reboot
+	// if they don't exist
+	y2warning ("Second Stage Installation has been aborted, creating files %1 and %2",
+	    run_yast_at_boot, file_inst_aborted);
+	SCR::Execute (.target.bash, sformat ("touch %1", run_yast_at_boot));
+	SCR::Execute (.target.bash, sformat ("touch %1", file_inst_aborted));
     }
 
-    // re-enable automatic probing
-    if (!Mode::test ()) {
-        WFM::Execute (.local.bash, "/bin/echo \"/sbin/modprobe\" >/proc/sys/kernel/modprobe");
-    }
-
-    // when the installation is not aborted or YaST is not restarted on purpose
-    if (Stage::cont () && ret != `reboot && ret != `restart_yast && ret != `restart_same_step && ret != `abort) {
+    void HandleSecondStageFinishedCorrectly () {
 	// remove /etc/install.inf, not needed any more
 	SCR::Execute (.target.remove, "/etc/install.inf");
 	if (Mode::update ())
 	{
 	    y2milestone("Removing %1", file_update_mode);
 	    SCR::Execute(.target.remove, file_update_mode);
-	    SCR::Execute(.target.bash, "/bin/rm -rf /var/adm/current_package_descr");
+	    SCR::Execute(.target.remove, "/var/adm/current_package_descr");
 	}
 	
 	if (FileUtils::Exists (run_yast_at_boot)) {
@@ -532,39 +388,192 @@ but something went wrong, that's why it is only in the log");
 
 	if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_post.ycp") > 0)
 	    WFM::CallFunction ("product_post", [Mode::update ()]);
+    }
 
+    void FinishInstallation () {
+	// TRANSLATORS: busy message
+	UI::OpenDialog (`Label(_("Finishing the installation...")));	// #2
+	// disable all sources and finish target
+	Pkg::SourceFinishAll();	// but see also inst_congratulate, #165860
+	Pkg::TargetFinish();
+	UI::CloseDialog();						// #2
+    }
+
+    void CleanUpRestartFiles () {
+	if (FileUtils::Exists (reboot_file)) {
+	    y2milestone ("Removing file %1", reboot_file);
+	    SCR::Execute (.target.remove, reboot_file);
+	}
+	if (FileUtils::Exists (restart_file)) {
+	    y2milestone ("Removing file %1", restart_file);
+	    SCR::Execute(.target.remove, restart_file);
+	}
+	if (FileUtils::Exists (restart_data_file)) {
+	    y2milestone ("Removing file %1", restart_data_file);
+	    SCR::Execute(.target.remove, restart_data_file);
+	}
+    }
+
+    void SetSecondStageInstallation () {
+	// Detect mode early to be able to setup steps correctly
+	if (FileUtils::Exists (Installation::destdir + file_update_mode)) {
+	    Mode::SetMode ("update");
+	}
+	
+	// during update, set the 'update language' for the 2nd stage
+	// FATE #300572
+	if (Mode::update ()) {
+	    SetUpdateLanguage ();
+	}
+
+	// Properly setup timezone for continue mode
+	import "Timezone";
+	Timezone::Set( Timezone::timezone, true );
+	Pkg::SetLocale (Language::language);
+
+	UI::RecordMacro( Directory::logdir + "/macro_inst_cont.ycp" );
+
+	// Merge control files of add-on products
+	string listname = Installation::destdir + Directory::etcdir + "/control_files/order.ycp";
+	if (SCR::Read (.target.size, listname) > 0) {
+	    list<string> files = (list<string>)SCR::Read (.target.ycp, listname);
+	    foreach (string f, files, {
+		f = Installation::destdir + Directory::etcdir + "/control_files/" + f;
+		y2milestone ("Calling WFIntegrate()");
+		AddOnProduct::WFIntegrate (f);
+	    });
+	} else {
+	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "add-on");
+	}
+    }
+
+    // <-- Functions
+
+    // this is installation, so start SCR always locally (as plugin) !
+    integer scr_handle = WFM::SCROpen ("scr", false);
+    WFM::SCRSetDefault (scr_handle);
+
+    Installation::scr_handle = scr_handle;
+
+    if (Mode::autoinst()) {
+	SetAutoinstHandling ();
+    }
+
+    // Initial stage
+    if (Stage::initial ()) {
+	SetInitialInstallation ();
+    // Second stage
+    } else if (Stage::cont ()) {
+	// FATE #300422
+	symbol ret = RerunInstallationIfAborted ();
+	if (ret != `next) return ret;
+
+	SetSecondStageInstallation();
+    }
+
+    CreateUI();
+
+    if (Stage::initial ()) {
+	InitMouse();
+    }
+
+    UpdateWizardSteps ();
+
+    /*
+     * The Stage::cont () flag decides, if the installation
+     * should be _started_ or _continued_.
+     */
+
+    ///////////////////////////////////////////////////////////////////
+    // Settings for:
+    // Installation: CONTINUE INSTALLATION
+    ///////////////////////////////////////////////////////////////////
+
+    if (Stage::cont ()) {
+	SetLanguageAndEncoding();
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    // Settings for:
+    // Installation: INITIAL INSTALLATION
+    ///////////////////////////////////////////////////////////////////
+    else if (!Mode::screen_shot() && !Stage::firstboot()) {
+	WFM::CallFunction ("inst_check_autoinst_mode", []);
+    }
+
+    /////////////////////////////////////////
+    // show message if text_fallback
+    /////////////////////////////////////////
+    ShowTextFallbackMessage();
+
+    SetDiskActivationModule();
+
+    symbol ret = nil;
+
+    // Continue the second stage installation
+    if (Stage::cont ()
+	&& (integer)SCR::Read (.target.size, restart_data_file) > 0)
+    {
+	string contents = (string)
+	    SCR::Read (.target.string, restart_data_file);
+	list<string> contents_lines = splitstring (contents, "\n");
+	integer next_step = tointeger ((string)(contents_lines[0]:nil));
+	integer restarting_step = tointeger ((string)(contents_lines[1]:nil));
+
+	if (next_step == nil)
+	{
+	    y2error ("Data file specifying step to continue corrupted");
+	    ProductControl::first_step = 0;
+	    ProductControl::restarting_step = nil;
+	    ret = ProductControl::Run();
+	    y2milestone ("ProductControl::Run() returned %1", ret);
+	}
+	else
+	{
+	    ProductControl::first_step = next_step;
+	    ProductControl::restarting_step = restarting_step;
+	    ret = ProductControl::RunFrom (next_step, false);
+	    y2milestone ("ProductControl::RunFrom(%1) returned %2", next_step, ret);
+	}
+
+	CleanUpRestartFiles();
+    }
+    else
+    {
+	// Run the installation workflow
+	ret = ProductControl::Run();
+	y2milestone ("ProductControl::Run() returned %1", ret);
+    }
+
+    // re-enable automatic probing
+    if (!Mode::test ()) {
+        WFM::Execute (.local.bash, "/bin/echo \"/sbin/modprobe\" >/proc/sys/kernel/modprobe");
+    }
+
+    y2milestone("Evaluating ret: %1", ret);
+
+    if (Stage::cont () && (ret == `reboot || ret == `restart_yast || ret == `restart_same_step)) {
+	ret = PrepareYaSTforRestart (ret);
+    }
+
+    // Installation has been aborted
+    if (ret == `abort) {
+	// tell linuxrc that we aborted
+	Linuxrc::WriteYaSTInf($["Aborted" : "1"]);
+    }
+
+    // when the installation is not aborted or YaST is not restarted on purpose
+    if (Stage::cont () && ret != `reboot && ret != `restart_yast && ret != `restart_same_step && ret != `abort) {
+	HandleSecondStageFinishedCorrectly();
     // installation (second stage) has been aborted
     // FATE #300422
     } else if (Stage::cont() && (ret == `abort || ret == `cancel)) {
-	// removing the current step information
-	// installation will be started from the very begining
-	if (FileUtils::Exists (current_step)) {
-	    y2milestone ("Removing file %1", current_step);
-	    SCR::Execute (.target.remove, current_step);
-	}
-
-	// not to be identified as failed but aborted
-	if (FileUtils::Exists (file_inst_failed)) {
-	    y2milestone ("Removing file %1", file_inst_failed);
-	    SCR::Execute (.target.remove, file_inst_failed);
-	}
-
-	// creating files saying that YaST will be started after reboot
-	// if they don't exist
-	y2warning ("Second Stage Installation has been aborted, creating files %1 and %2",
-	    run_yast_at_boot, file_inst_aborted);
-	SCR::Execute (.target.bash, sformat ("touch %1", run_yast_at_boot));
-	SCR::Execute (.target.bash, sformat ("touch %1", file_inst_aborted));
+	HandleSecondStageAborted();
     }
 
     y2milestone("Finishing the installation...");
 
-    // TRANSLATORS: busy message
-    UI::OpenDialog (`Label(_("Finishing the installation..."))); // #2
-    // disable all sources and finish target
-    Pkg::SourceFinishAll();	// but see also inst_congratulate, #165860
-    Pkg::TargetFinish();
-    UI::CloseDialog();						 // #2
+    FinishInstallation();
 
     UI::CloseDialog();
 

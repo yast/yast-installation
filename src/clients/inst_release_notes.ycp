@@ -20,13 +20,13 @@
     import "Directory";
     import "Language";
     import "Mode";
+    import "FileUtils";
 
     map argmap = GetInstArgs::argmap();
 
     integer minwidtprodsel = 0;
     list<string> relnotesproducts = [];
 
-    map<string, string> relnotesmap = $[];
     string basedirectory = "/usr/share/doc/release-notes";
     string directory="";
     integer prodnamelen=0;
@@ -63,7 +63,10 @@
             basedirectory = Directory::custom_workflow_dir + basedirectory;
 
     list<string> readproducts = [];
-    readproducts = (list<string>) SCR::Read(.target.dir, basedirectory);
+    // Release notes might be missing
+    if (FileUtils::Exists(basedirectory) && FileUtils::IsDirectory(basedirectory)) {
+	readproducts = (list<string>) SCR::Read(.target.dir, basedirectory);
+    }
 
     map <string, string> languages_translations = CreateLanguagesTranslations();
     map <string, list <term> > languages_of_relnotes = $[];
@@ -225,11 +228,22 @@ Linux system. They provide a brief summary of new features and changes.</p>");
 	RedrawRelnotesLang ((string) UI::QueryWidget (`id (`lang), `Value));
     }
 
+    void SetNoReleaseNotesInfo () {
+	// informative message in RichText widget
+	UI::ChangeWidget (`id(`relnotescontent), `Value,
+	    _("<p>No release notes have been installed.</p>")
+	);
+    }
+
     // for debugging
     // UI::DumpWidgetTree();
 
     // Init the first product
-    RedrawRelnotesProduct (`tab, relnotesproducts[0]:"");
+    if (size(relnotesproducts) > 0) {
+	RedrawRelnotesProduct (`tab, relnotesproducts[0]:"");
+    } else {
+	SetNoReleaseNotesInfo();
+    }
 
     any ret = nil;
 
