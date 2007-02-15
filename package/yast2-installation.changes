@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Feb 15 12:09:34 CET 2007 - locilka@suse.cz
+
+- New entries silently_downgrade_packages, plus reverse list, and
+  keep_installed_patches, plus reverse list, were added into SLES
+  and SLED control files (FATE #301990, Bugzilla #238488).
+
+-------------------------------------------------------------------
 Tue Feb  6 16:25:04 CET 2007 - locilka@suse.cz
 
 - Hide &product; in inst_suseconfig call to remove dependency on
