@@ -9,7 +9,7 @@ Thu Feb 15 12:21:46 CET 2007 - locilka@suse.cz
 Mon Feb 12 13:40:41 CET 2007 - locilka@suse.cz
 
 - Making release_notes modular.
-- Rewriting RPM dependencies.
+- Rewriting RPM dependencies (#238679).
 - Moving parts of installation_worker client into functions.
 - Moving Mouse-init functions into inst_init_mouse client.
 - Moving Storage-related functions (autoinstall) into
