@@ -29,21 +29,35 @@ textdomain="control"
 	<root_password_ca_check config:type="boolean">true</root_password_ca_check>
     </globals>
     <software>
-	<!-- By default, old packages are removed -->
+	<!-- By default, unmaintained (old) packages are removed -->
 	<delete_old_packages config:type="boolean">true</delete_old_packages>
-	<!-- For SLE10, old packages are not removed by default, FATE #301844, bugzilla #233156 -->
+	<!-- For SLES10, unmaintained (old) packages are not removed by default, FATE #301844, bugzilla #233156 -->
 	<delete_old_packages_reverse_list config:type="list">
 	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10.*$</regexp_item>
 	</delete_old_packages_reverse_list>
 
+	<!-- By default, packages can be downgraded -->
+	<silently_downgrade_packages config:type="boolean">true</silently_downgrade_packages>
+	<!-- For SLES10, packages are not downgraded, FATE #301990, bugzilla #238488 -->
+	<silently_downgrade_packages_reverse_list config:type="list">
+	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10.*$</regexp_item>
+	</silently_downgrade_packages_reverse_list>
+
+	<!-- By default, do not keep installed patches -->
+	<keep_installed_patches config:type="boolean">false</keep_installed_patches>
+	<!-- For SLES10, keep them, FATE #301990, bugzilla #238488 -->
+	<keep_installed_patches_reverse_list config:type="list">
+	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10.*$</regexp_item>
+	</keep_installed_patches_reverse_list>
+
 	<!-- By default, select new packages for installation -->
 	<only_update_selected config:type="boolean">false</only_update_selected>
-	<!-- For SLE10, do not install new packages by default, FATE #301844, bugzilla #233156 -->
+	<!-- For SLES10, do not install new packages by default, FATE #301844, bugzilla #233156 -->
 	<only_update_selected_reverse_list config:type="list">
 	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10.*$</regexp_item>
 	</only_update_selected_reverse_list>
 
-	<!-- Only upgrading from SLES9 or SLE10 is supported, otherwise warning is displayed -->
+	<!-- Only upgrading from SLES9 or SLES10 is supported, otherwise warning is displayed -->
 	<products_supported_for_upgrade config:type="list">
 	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 9.*$</regexp_item>
 	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10.*$</regexp_item>
