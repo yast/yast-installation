@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb 16 16:18:28 CET 2007 - locilka@suse.cz
+
+- Add-Ons moved to a new package yast2-add-on-2.15.0 (#238673)
+
+-------------------------------------------------------------------
 Thu Feb 15 12:21:46 CET 2007 - locilka@suse.cz
 
 - New entries silently_downgrade_packages, plus reverse list, and
