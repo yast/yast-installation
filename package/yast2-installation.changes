@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Feb 16 17:56:58 CET 2007 - locilka@suse.cz
+
+- Registering new agents when y2update is part of the Add-On media,
+  some agents might have been added (#245508).
+- 2.13.185
+
+-------------------------------------------------------------------
 Thu Feb 15 12:09:34 CET 2007 - locilka@suse.cz
 
 - New entries silently_downgrade_packages, plus reverse list, and

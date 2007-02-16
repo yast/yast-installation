@@ -711,18 +711,17 @@ boolean UpdateProductInfo(map update_file) {
  * New add-on product might add also new agents.
  * Functions Rereads all available agents.
  *
- * @see bugzilla #239055
+ * @see bugzilla #239055, #245508
  */
 global void RereadAllSCRAgents () {
-    y2milestone ("Rereading SCR Agents...");
-    integer handle = WFM::SCRGetDefault ();
-    WFM::SCRClose (handle);
-    integer new_scr = WFM::SCROpen ("scr", true);
+    y2milestone ("Registering new agents...");
+    boolean ret = (boolean) SCR::RegisterNewAgents();
 
-    if (new_scr < 1) {
-	y2error("Rereading SCR failed!");
+    if (ret) {
+	y2milestone ("Successful");
     } else {
-	y2milestone("Rereading SCR succeeded.");
+	y2error ("Error occured during registering new agents!");
+	Report::Error (_("An error occurred while preparing the installation system."));
     }
 }
 
