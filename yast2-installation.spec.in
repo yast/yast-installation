@@ -32,6 +32,9 @@ Requires:	tar gzip
 #Requires:	/usr/bin/jpegtopnm
 #Requires:	/usr/bin/pnmtopng
 
+# SCR::RegisterNewAgents, bugzilla #245508
+Conflicts:	yast2-core < 2.13.37
+
 Recommends:	yast2-registration
 
 PreReq:		%fillup_prereq
