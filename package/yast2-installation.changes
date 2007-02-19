@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Mon Feb 19 15:54:27 CET 2007 - locilka@suse.cz
+
+- More concrete fix of bug #160301: Displaying information about
+  how to continue the second stage installation if SSH is the only
+  installation method. This informational pop-up has disabled
+  time-out (#245742).
+- 2.13.186
+
+-------------------------------------------------------------------
 Fri Feb 16 17:56:58 CET 2007 - locilka@suse.cz
 
 - Registering new agents when y2update is part of the Add-On media,
