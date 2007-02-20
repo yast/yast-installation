@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Mon Feb 19 16:00:23 CET 2007 - locilka@suse.cz
+
+- More concrete fix of bug #160301: Displaying information about
+  how to continue the second stage installation if SSH is the only
+  installation method. This informational pop-up has disabled
+  time-out (#245742).
+- Moving parts of installation_worker script to includes based on
+  in which installation stage they are used.
+
+-------------------------------------------------------------------
 Fri Feb 16 16:18:28 CET 2007 - locilka@suse.cz
 
 - Add-Ons moved to a new package yast2-add-on-2.15.0 (#238673)

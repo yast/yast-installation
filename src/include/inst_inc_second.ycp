@@ -1,0 +1,276 @@
+/**
+ * File: include/installation/inst_inc_second.ycp
+ * Module: System installation
+ * Summary: Functions for second stage
+ * Authors: Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id:$
+ *
+ */
+{
+
+    textdomain "installation";
+
+    import "FileUtils";
+    import "Popup";
+    import "Installation";
+    import "Mode";
+    import "Language";
+    import "Directory";
+    import "AddOnProduct";
+    import "ProductControl";
+    import "Console";
+    import "Keyboard";
+
+    void SetUpdateLanguage () {
+        string var_file = Directory::vardir + "/language.ycp";
+        if (FileUtils::Exists (var_file)) {
+            map var_map = (map) SCR::Read (.target.ycp, var_file);
+            string lang = (string) var_map["second_stage_language"]:nil;
+            if (lang != nil)
+            {
+                y2milestone("Setting language to: %1", lang);
+                Language::QuickSet (lang);
+                y2milestone ("using %1 for second stage", lang);
+            }
+            else
+            {
+                y2error("Cannot set language, tmp-file contains: %1", var_map);
+            }
+            SCR::Execute (.target.remove, var_file);
+        }
+    }
+
+    /**
+     * Checks whether the second stage installation hasn't been aborted or whether
+     * it hasn't failed before. FATE #300422.
+     *
+     * @return symbol what to do, `next means continue
+     */
+    symbol RerunInstallationIfAborted () {
+        // Second stage installation bas been aborted or has failed
+        if (FileUtils::Exists (Installation::file_inst_aborted) || FileUtils::Exists (Installation::file_inst_failed)) {
+            // popup question (#x1)
+            string show_error = _("The previous installation has failed.
+Would you like it to continue?
+
+Note: You may have to enter some information again.");
+            if (FileUtils::Exists (Installation::file_inst_aborted)) {
+                // popup question (#x1)
+                show_error = _("The previous installation has been aborted.
+Would you like it to continue?
+
+Note: You may have to enter some information again.");
+
+                y2milestone("Case: aborted");
+            } else {
+                y2milestone("Case: failed");
+            }
+
+            if (! Popup::YesNoHeadline (
+                // popup headline (#x1)
+                _("Starting Installation..."),
+                show_error
+            )) {
+                y2warning ("User didn't want to restart the second stage installation...");
+                if (FileUtils::Exists (Installation::file_inst_aborted)) SCR::Execute (.target.remove, Installation::file_inst_aborted);
+                if (FileUtils::Exists (Installation::file_inst_failed))  SCR::Execute (.target.remove, Installation::file_inst_failed);
+                if (FileUtils::Exists (Installation::run_yast_at_boot))  SCR::Execute (.target.remove, Installation::run_yast_at_boot);
+
+                // skipping the second stage
+                return `skipped;
+            }
+        }
+
+        // Second stage installation is starting just here
+
+        // creating files in case the installation fails
+        // they are removed at the end if everything works well
+        y2milestone ("Creating files for case if installation fails (reset button)");
+        // might be left from the previous run
+        if (FileUtils::Exists (Installation::file_inst_aborted)) SCR::Execute (.target.remove, Installation::file_inst_aborted);
+        SCR::Execute (.target.bash, sformat ("touch %1", Installation::file_inst_failed));
+        SCR::Execute (.target.bash, sformat ("touch %1", Installation::run_yast_at_boot));
+        
+        return `next;
+    }
+
+    void CleanUpRestartFiles () {
+        if (FileUtils::Exists (Installation::reboot_file)) {
+            y2milestone ("Removing file %1", Installation::reboot_file);
+            SCR::Execute (.target.remove, Installation::reboot_file);
+        }
+        if (FileUtils::Exists (Installation::restart_file)) {
+            y2milestone ("Removing file %1", Installation::restart_file);
+            SCR::Execute(.target.remove, Installation::restart_file);
+        }
+        if (FileUtils::Exists (Installation::restart_data_file)) {
+            y2milestone ("Removing file %1", Installation::restart_data_file);
+            SCR::Execute(.target.remove, Installation::restart_data_file);
+        }
+    }
+
+    void EnableAutomaticModuleProbing () {
+	WFM::Execute (.local.bash, "/bin/echo \"/sbin/modprobe\" >/proc/sys/kernel/modprobe");
+    }
+
+    void HandleSecondStageFinishedCorrectly () {
+        // remove /etc/install.inf, not needed any more
+        SCR::Execute (.target.remove, "/etc/install.inf");
+        if (Mode::update ())
+        {
+            y2milestone("Removing %1", Installation::file_update_mode);
+            SCR::Execute(.target.remove, Installation::file_update_mode);
+            SCR::Execute(.target.remove, "/var/adm/current_package_descr");
+        }
+        
+        if (FileUtils::Exists (Installation::run_yast_at_boot)) {
+            y2milestone("Removing %1", Installation::run_yast_at_boot);
+            SCR::Execute(.target.remove, Installation::run_yast_at_boot);
+        }
+
+        // This file says that the configuration has failed
+        // we don't need it anymore
+        // FATE #300422
+        if (FileUtils::Exists (Installation::file_inst_failed)) {
+            y2milestone ("Removing file %1", Installation::file_inst_failed);
+            SCR::Execute (.target.remove, Installation::file_inst_failed);
+        }
+
+        // This file has the current step of the workflow to be used
+        // for crash recovery during installation. It can be deleted when
+        // the installation has been completed.
+        if (FileUtils::Exists (Installation::current_step)) {
+            y2milestone ("Removing file %1", Installation::current_step);
+            SCR::Execute (.target.remove, Installation::current_step);
+        }
+
+        if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_post.ycp") > 0)
+            WFM::CallFunction ("product_post", [Mode::update ()]);
+    }
+
+    void HandleSecondStageAborted () {
+        // removing the current step information
+        // installation will be started from the very begining
+        if (FileUtils::Exists (Installation::current_step)) {
+            y2milestone ("Removing file %1", Installation::current_step);
+            SCR::Execute (.target.remove, Installation::current_step);
+        }
+
+        // not to be identified as failed but aborted
+        if (FileUtils::Exists (Installation::file_inst_failed)) {
+            y2milestone ("Removing file %1", Installation::file_inst_failed);
+            SCR::Execute (.target.remove, Installation::file_inst_failed);
+        }
+
+        // creating files saying that YaST will be started after reboot
+        // if they don't exist
+        y2warning ("Second Stage Installation has been aborted, creating files %1 and %2",
+            Installation::run_yast_at_boot, Installation::file_inst_aborted);
+        SCR::Execute (.target.bash, sformat ("touch %1", Installation::run_yast_at_boot));
+        SCR::Execute (.target.bash, sformat ("touch %1", Installation::file_inst_aborted));
+    }
+
+    symbol PrepareYaSTforRestart (symbol ret) {
+        // restarting yast, removing files that identify the user-abort or installation-crash
+        // bugzilla #222896
+        if (FileUtils::Exists (Installation::file_inst_aborted)) SCR::Execute (.target.remove, Installation::file_inst_aborted);
+        if (FileUtils::Exists (Installation::file_inst_failed))  SCR::Execute (.target.remove, Installation::file_inst_failed);
+
+        // creating new files to identify restart
+        integer last_step = ProductControl::CurrentStep ();
+        integer restarting_step = last_step;
+
+        if (ret == `restart_same_step) {
+            last_step = last_step - 1;
+            ret = `restart_yast;
+        }
+
+        integer next_step = last_step + 1;
+        y2milestone ("Creating %1 file with values %2",
+            Installation::restart_data_file, [next_step, restarting_step]);
+        SCR::Write (.target.string, Installation::restart_data_file,
+            sformat ("%1\n%2", next_step, restarting_step));
+
+        if (ret == `reboot) {
+            y2milestone ("Creating %1 file", Installation::reboot_file);
+            SCR::Execute (.target.bash, sformat (
+                "touch %1", Installation::reboot_file));
+
+        } else if (ret == `restart_yast) {
+            y2milestone ("Creating %1 file", Installation::restart_file);
+            SCR::Execute (.target.bash, sformat (
+                "touch %1", Installation::restart_file));
+        }
+        
+        return ret;
+    }
+
+    void SetSecondStageInstallation () {
+        // Detect mode early to be able to setup steps correctly
+        if (FileUtils::Exists (Installation::destdir + Installation::file_update_mode)) {
+            Mode::SetMode ("update");
+        }
+        
+        // during update, set the 'update language' for the 2nd stage
+        // FATE #300572
+        if (Mode::update ()) {
+            SetUpdateLanguage ();
+        }
+
+        // Properly setup timezone for continue mode
+        import "Timezone";
+        Timezone::Set( Timezone::timezone, true );
+        Pkg::SetLocale (Language::language);
+
+        UI::RecordMacro( Directory::logdir + "/macro_inst_cont.ycp" );
+
+        // Merge control files of add-on products
+        string listname = Installation::destdir + Directory::etcdir + "/control_files/order.ycp";
+        if (SCR::Read (.target.size, listname) > 0) {
+            list<string> files = (list<string>)SCR::Read (.target.ycp, listname);
+            foreach (string f, files, {
+                f = Installation::destdir + Directory::etcdir + "/control_files/" + f;
+                y2milestone ("Calling WFIntegrate()");
+                AddOnProduct::WFIntegrate (f);
+            });
+        } else {
+            ProductControl::DisabledModules = add (ProductControl::DisabledModules, "add-on");
+        }
+    }
+
+    void SetLanguageAndEncoding () {
+        Installation::encoding = Console::Restore();
+        Console::Init ();
+        if (UI::GetDisplayInfo()["HasFullUtf8Support"]:true)
+        {
+            Installation::encoding = "UTF-8";
+        }
+
+        ////////////////////////////////////////////////////////////
+        // activate language settings and console font
+
+        string language = Language::language;
+
+        UI::SetLanguage (language, Installation::encoding);
+        WFM::SetLanguage (language, "UTF-8");
+
+        string ckb_cmd = Keyboard::ckb_cmd;
+        string xkb_cmd = Keyboard::xkb_cmd;
+
+
+        if ( ! Mode::test () )
+        {
+            if (ckb_cmd != "")
+                SCR::Execute (.target.bash, ckb_cmd );
+            if (xkb_cmd != "")
+                SCR::Execute (.target.bash, xkb_cmd );
+
+            // ncurses calls 'dumpkeys | loadkeys --unicode' in UTF-8 locale
+            UI::SetKeyboard();
+            y2milestone ("lang: %1, encoding %2, ckb_cmd: %3 xkb: %4", language,
+                         Installation::encoding, ckb_cmd, xkb_cmd);
+        }
+    }
+
+} //end of include

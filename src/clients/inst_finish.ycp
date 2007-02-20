@@ -204,7 +204,9 @@ Progress::Title (_("Finished."));
 // Do not call any SCR, it's already closed!
 if (size (Misc::boot_msg) > 0 && !Mode::autoinst ())
 {
-    if (Linuxrc::usessh ())
+    // bugzilla #245742, #160301
+    if (Linuxrc::usessh () && !Linuxrc::vnc())
+	// Display the message and wait for user to accept it
 	Report::DisplayMessages (true, 0);
     else
 	Report::DisplayMessages (true, 10);
