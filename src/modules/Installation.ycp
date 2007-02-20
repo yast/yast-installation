@@ -53,6 +53,17 @@
     boolean _text_fallback = nil;
     boolean _no_x11 = nil;
 
+    // --> configuration from installation_worker.ycp
+    global string Installation::file_inst_aborted = Directory::vardir + "/second_stage_aborted";
+    global string Installation::file_inst_failed  = Directory::vardir + "/second_stage_failed";
+    global string Installation::run_yast_at_boot  = Directory::vardir + "/runme_at_boot";
+    global string Installation::current_step      = Directory::vardir + "/step";
+    global string Installation::file_update_mode  = Directory::vardir + "/update_mode";
+    global string Installation::restart_data_file = Directory::vardir + "/continue_installation";
+    global string Installation::reboot_file       = Directory::vardir + "/reboot";
+    global string Installation::restart_file      = Directory::vardir + "/restart_yast";
+    // <-- configuration from installation_worker.ycp
+
 //
 // variables to store data of the installation clients
 //

@@ -1,0 +1,150 @@
+/**
+ * File: include/installation/inst_inc_all.ycp
+ * Module: System installation
+ * Summary: Miscelaneous functions
+ * Authors: Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id:$
+ *
+ */
+{
+
+    textdomain "installation";
+
+    import "ProductControl";
+    import "Label";
+    import "Linuxrc";
+    import "Wizard";
+    import "Arch";
+    import "Report";
+    import "Installation";
+    import "Stage";
+
+    void CreateUI () {
+        Wizard::OpenNextBackStepsDialog();
+
+        Wizard::SetContents(
+            // dialog caption
+            _("Initializing..."),
+            // dialog content - busy message
+            `Label(_("Initializing the installation environment...")),
+            // help for the dialog - busy message
+            _("<p>Initializing the installation...</p>"),
+            false, false
+        );
+        Wizard::SetTitleIcon("yast-inst-mode");
+    }
+
+    void FinishInstallation () {
+        y2milestone("Finishing the installation...");
+        // TRANSLATORS: busy message
+        UI::OpenDialog (`Label(_("Finishing the installation...")));    // #2
+        // disable all sources and finish target
+        Pkg::SourceFinishAll(); // but see also inst_congratulate, #165860
+        Pkg::TargetFinish();
+        UI::CloseDialog();                                              // #2
+    }
+
+    /**
+     * Sets autoinstallation behavior.
+     */
+    void SetAutoinstHandling () {
+	if (! Mode::autoinst())
+	    return;
+
+    	map reportMap = $[
+	    "errors":$[ "timeout":0 ],
+	    "warnings":$[ "timeout":10 ],
+    	    "yesno_messages":$[ "timeout":10 ]
+    	];
+    	Report::Import( reportMap );
+
+    	Report::DisplayErrors  (true, 0);
+    	Report::DisplayWarnings(true, 10);
+    	Report::DisplayMessages(true, 10);
+    }
+
+    void ShowTextFallbackMessage () {
+        if (
+            (Installation::text_fallback () || Installation::no_x11 ())
+            && (Installation::x11_setup_needed () && Arch::x11_setup_needed ())
+            && !Installation::shown_text_mode_warning
+        ) {
+            string x11_msg = "";
+            if ((Installation::no_x11 () || Installation::text_fallback ()) && Stage::initial ()) {
+                // Somehow the graphical frontend failed and we're running in
+                // text mode. Inform the user about this fact.
+                x11_msg = sformat(_("Your computer does not fulfill all requirements for
+a graphical installation. There is less than %1 MB
+memory or the X server could not be started.
+
+As a fallback, the text front-end of YaST2 will guide you
+through the installation. This front-end offers the
+same functionality as the graphical one, but the screens
+differ from those in the manual.
+"), "96");
+
+            } else if (
+                (Installation::no_x11 () || Installation::text_fallback ()) && Stage::cont ()
+            ) {
+                // The script YaST2 wants to inform about a problem with the
+                // option no_x11 but it's broken.
+                // else if (Installation::no_x11 ())
+
+                // Somehow the graphical frontend failed and we're running in
+                // text mode. Inform the user about this fact.
+                x11_msg = _("The graphical interface could not be started.
+
+The required packages were not installed (minimal installation) or
+the graphics card is not properly supported.
+
+As a fallback, the text front-end of YaST2 will guide you
+through the installation. This front-end offers the
+same functionality as the graphical one, but the screens
+differ from those in the manual.
+");
+            }
+
+            if (x11_msg != "") {
+                Report::Message(x11_msg);
+            } else {
+                y2error ("There should be a more detailed message displayed here,
+but something went wrong, that's why it is only in the log");
+            }
+
+            // show this warning only once
+            Installation::shown_text_mode_warning = true;
+        }
+    }
+
+    /**
+     * Re-translate static part of wizard dialog and other predefined messages
+     * after language change
+     */
+    void retranslateWizardDialog() {
+            y2milestone( "Retranslating messages" );
+
+            // Make sure the labels for default function keys are retranslated, too.
+            // Using Label::DefaultFunctionKeyMap() from Label module.
+            UI::SetFunctionKeys( Label::DefaultFunctionKeyMap() );
+
+            // Activate language changes on static part of wizard dialog
+            ProductControl::RetranslateWizardSteps();
+            Wizard::RetranslateButtons();
+            Wizard::SetFocusToNextButton();
+            return;
+    }
+
+    void SetDiskActivationModule () {
+        // update the workflow according to current situation
+        // disable disks activation if not needed
+        boolean iscsi = Linuxrc::InstallInf("WithiSCSI") == "1";
+        if (! (Arch::s390() || iscsi)) {
+            y2milestone ("Disabling disk activation module");
+            ProductControl::DisabledModules = add (ProductControl::DisabledModules,
+                "disks_activate");
+        }
+        retranslateWizardDialog();
+    }
+
+} //end of include
