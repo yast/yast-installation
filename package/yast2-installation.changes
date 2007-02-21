@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Feb 21 17:22:36 CET 2007 - locilka@suse.cz
+
+- Added documentation for silently_downgrade_packages and
+  keep_installed_patches control file entries (plus their reverse
+  lists) (FATE #301990, Bugzilla #238488).
+
+-------------------------------------------------------------------
 Mon Feb 19 15:54:27 CET 2007 - locilka@suse.cz
 
 - More concrete fix of bug #160301: Displaying information about
