@@ -1,5 +1,5 @@
 /**
- * File:		installation_worker.ycp
+ * File:		inst_worker_continue.ycp
  *
  * Authors:		Klaus Kaempf <kkaempf@suse.de>
  *			Mathias Kettner <kettner@suse.de>
@@ -11,10 +11,10 @@
  *
  * Purpose:		Set up the UI and define macros for the
  *			installation dialog, general framework, ...
- *			Describing and calling all submodules, depending on
- *			the installation should be started or continued.
+ *			Describing and calling all submodules.
+ *			(For continuing installation only).
  *
- * $Id: installation_worker.ycp 33233 2006-10-02 15:07:05Z locilka $
+ * $Id:$
  */
 {
     textdomain "installation";
@@ -29,8 +29,6 @@
     include "installation/misc.ycp";
     // Both First & Second stage-related functions
     include "installation/inst_inc_all.ycp";
-    // First-stage-related functions only
-    include "installation/inst_inc_first.ycp";
     // Second-stage-related functions only
     include "installation/inst_inc_second.ycp";
 
@@ -47,52 +45,33 @@
     // All stages
     SetAutoinstHandling ();
 
-    // Initial stage
-    if (Stage::initial ()) {
-	SetInitialInstallation ();
-    // Second stage
-    } else if (Stage::cont ()) {
-	// FATE #300422
-	symbol ret = RerunInstallationIfAborted ();
-	if (ret != `next) return ret;
+    // FATE #300422
+    symbol ret = RerunInstallationIfAborted ();
+    if (ret != `next) return ret;
 
-	SetSecondStageInstallation();
-    }
+    SetSecondStageInstallation();
 
     // All stages
     CreateUI();
 
-    // Initial stage
-    if (Stage::initial ()) {
-	InitMouse();
-    }
-
     UpdateWizardSteps ();
 
     // Second stage
-    if (Stage::cont ()) {
-	SetLanguageAndEncoding();
-	retranslateWizardDialog();
-    }
+    SetLanguageAndEncoding();
+    retranslateWizardDialog();
 
     // All stages
     // Shows fallback message if running in textmode (if used as fallback)
     ShowTextFallbackMessage();
 
-    // First stage
-    if (Stage::initial ()) {
-	if (!Mode::screen_shot() && !Stage::firstboot())
-	    WFM::CallFunction ("inst_check_autoinst_mode", []);
-    }
-
     SetDiskActivationModule();
 
-    symbol ret = nil;
+    ret = nil;
 
     /* --- Runing the installation workflow --- */
 
     // Continue the second stage installation
-    if (Stage::cont () && FileUtils::Exists (Installation::restart_data_file)) {
+    if (FileUtils::Exists (Installation::restart_data_file)) {
 	string contents = (string)
 	    SCR::Read (.target.string, Installation::restart_data_file);
 	list<string> contents_lines = splitstring (contents, "\n");
@@ -116,7 +95,7 @@
 	}
 
 	CleanUpRestartFiles();
-    // First or second stage installation
+    // Starting the second stage installation
     } else {
 	// Run the installation workflow
 	ret = ProductControl::Run();
@@ -127,30 +106,26 @@
 
     y2milestone("Evaluating ret: %1", ret);
 
-    if (Stage::cont () && (ret == `reboot || ret == `restart_yast || ret == `restart_same_step)) {
+    if (ret == `reboot || ret == `restart_yast || ret == `restart_same_step) {
 	ret = PrepareYaSTforRestart (ret);
-    }
-
     // Installation has been aborted
-    if (ret == `abort) {
+    } else if (ret == `abort) {
 	// tell linuxrc that we aborted
 	Linuxrc::WriteYaSTInf($["Aborted" : "1"]);
     }
 
-    if (Stage::cont ()) {
-	// when the installation is not aborted or YaST is not restarted on purpose
-	// ret == `next -> (ret != `reboot && ret != `restart_yast && ret != `restart_same_step && ret != `abort)
-	if (ret == `next) {
-	    HandleSecondStageFinishedCorrectly();
-	// installation (second stage) has been aborted
-	// FATE #300422
-	} else if (ret == `abort || ret == `cancel) {
-	    HandleSecondStageAborted();
-	}
+    // when the installation is not aborted or YaST is not restarted on purpose
+    // ret == `next -> (ret != `reboot && ret != `restart_yast && ret != `restart_same_step && ret != `abort)
+    if (ret == `next) {
+	HandleSecondStageFinishedCorrectly();
+    // installation (second stage) has been aborted
+    // FATE #300422
+    } else if (ret == `abort || ret == `cancel) {
+	HandleSecondStageAborted();
+    }
 
-	if (ret == `next || ret == `abort || ret == `cancel) {
-	    EnableAutomaticModuleProbing();
-	}
+    if (ret == `next || ret == `abort || ret == `cancel) {
+	EnableAutomaticModuleProbing();
     }
 
     // All Sources and Target need to be released...

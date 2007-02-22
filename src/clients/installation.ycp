@@ -11,7 +11,11 @@
  */
 
 {
+    textdomain "installation";
+
     import "Wizard";
+    import "Stage";
+    import "Report";
     
     // Initialize the UI
     Wizard::CreateDialog ();
@@ -30,9 +34,27 @@
     Wizard::SetTitleIcon ("yast-inst-mode");
     Wizard::DisableAbortButton ();
 
+    any ret = nil;
+
     // Call the real installation
     y2milestone("=== installation ===");
-    any ret = WFM::CallFunction("installation_worker", WFM::Args());
+
+    // First-stage (initial installation)
+    if (Stage::initial()) {
+	y2milestone ("Stage::initial -> running inst_worker_initial client");
+	ret = WFM::CallFunction("inst_worker_initial", WFM::Args());
+
+    // Second-stage (initial installation)
+    } else if (Stage::cont()) {
+	y2milestone ("Stage::cont -> running inst_worker_continue client");
+	ret = WFM::CallFunction("inst_worker_continue", WFM::Args());
+
+    } else {
+	// TRANSLATORS: error message
+	Report::Error(_("No workflow defined for this kind of installation."));
+    }
+
+    y2milestone ("Installation ret: %1", ret);
     y2milestone("=== installation ===");
 
     // Shutdown the UI
