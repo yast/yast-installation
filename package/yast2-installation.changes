@@ -3,6 +3,7 @@ Thu Feb 22 13:52:12 CET 2007 - locilka@suse.cz
 
 - Splitting installation_worker (main installation script) into
   inst_worker_initial and inst_worker_continue.
+- Testsuites related to Add-Ons moved to yast2-add-on package.
 - 2.15.9
 
 -------------------------------------------------------------------

@@ -1,3 +1,0 @@
-Return	true
-Dump	[$["defaults":$["archs":"i386"], "label":"Preparation", "mode":"installation", "modules":[$["label":"Perform Installation", "name":"r1_language", "textdomain":"textdomain"], $["label":"Perform Installation", "name":"i1_netprobe", "textdomain":"textdomain"], $["label":"Perform Installation", "name":"perform"], $["heading":"yes", "label":"OES configuration", "textdomain":"textdomain"], $["label":"Perform Installation", "name":"a1_netsetup", "textdomain":"textdomain"], $["label":"Perform Installation", "name":"a2_netprobe", "textdomain":"textdomain"]], "stage":"initial"]]
-Dump	======================================================
