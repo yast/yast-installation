@@ -13,6 +13,7 @@ Requires:	yast2-network
 Requires:	yast2-packager >= 2.15.7
 
 # Only in inst-sys
+# Requires:	yast2-add-on
 # Requires:	yast2-bootloader
 # Requires:	yast2-mouse
 # Requires:	yast2-storage
