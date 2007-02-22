@@ -3,6 +3,7 @@ Thu Feb 22 13:52:12 CET 2007 - locilka@suse.cz
 
 - Splitting installation_worker (main installation script) into
   inst_worker_initial and inst_worker_continue.
+- 2.15.9
 
 -------------------------------------------------------------------
 Wed Feb 21 17:24:30 CET 2007 - locilka@suse.cz
