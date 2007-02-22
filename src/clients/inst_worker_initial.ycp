@@ -1,0 +1,93 @@
+/**
+ * File:		inst_worker_initial.ycp
+ *
+ * Authors:		Klaus Kaempf <kkaempf@suse.de>
+ *			Mathias Kettner <kettner@suse.de>
+ *			Michael Hager <mike@suse.de>
+ *			Stefan Hundhammer <sh@suse.de>
+ *			Arvin Schnell <arvin@suse.de>
+ *			Jiri Srain <jsrain@suse.cz>
+ *			Lukas Ocilka <locilka@suse.cz>
+ *
+ * Purpose:		Set up the UI and define macros for the
+ *			installation dialog, general framework, ...
+ *			Describing and calling all submodules.
+ *			(For initial installation only).
+ *
+ * $Id:$
+ */
+{
+    textdomain "installation";
+
+    import "Installation";
+    import "Linuxrc";
+    import "Mode";
+    import "ProductControl";
+    import "Stage";
+
+    // General installation functions
+    include "installation/misc.ycp";
+    // Both First & Second stage-related functions
+    include "installation/inst_inc_all.ycp";
+    // First-stage-related functions only
+    include "installation/inst_inc_first.ycp";
+
+    /* --- First, connect to the system via SCR --- */
+
+    // this is installation, so start SCR always locally (as plugin) !
+    integer scr_handle = WFM::SCROpen ("scr", false);
+    WFM::SCRSetDefault (scr_handle);
+
+    Installation::scr_handle = scr_handle;
+
+    /* --- Global settings --- */
+
+    // All stages
+    SetAutoinstHandling ();
+
+    // Initial stage
+    SetInitialInstallation ();
+
+    // All stages
+    CreateUI();
+
+    // Initial stage
+    InitMouse();
+
+    UpdateWizardSteps ();
+
+    // All stages
+    // Shows fallback message if running in textmode (if used as fallback)
+    ShowTextFallbackMessage();
+
+    // First stage
+    if (!Mode::screen_shot() && !Stage::firstboot())
+	WFM::CallFunction ("inst_check_autoinst_mode", []);
+
+    SetDiskActivationModule();
+
+    symbol ret = nil;
+
+    /* --- Runing the installation workflow --- */
+
+    ret = ProductControl::Run();
+    y2milestone ("ProductControl::Run() returned %1", ret);
+
+    /* --- Handling finished installation workflow --- */
+
+    y2milestone("Evaluating ret: %1", ret);
+
+    // Installation has been aborted
+    if (ret == `abort) {
+	// tell linuxrc that we aborted
+	Linuxrc::WriteYaSTInf($["Aborted" : "1"]);
+    }
+
+    // All Sources and Target need to be released...
+    FinishInstallation();
+
+    // Created UI needs to be destroyed
+    UI::CloseDialog();
+
+    return ret;
+}
