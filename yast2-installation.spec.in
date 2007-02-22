@@ -42,7 +42,7 @@ Recommends:	yast2-firewall
 Recommends:	release-notes
 Recommends:	curl
 Recommends:	yast2-update
-Reccomends:	yast2-add-on
+Recommends:	yast2-add-on
 
 PreReq:		%fillup_prereq
 
