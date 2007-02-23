@@ -960,7 +960,9 @@ symbol RunAddOnMainDialog (boolean enable_back, boolean enable_next, string back
     y2milestone ("Ret: %1, Some Add-on Added/Removed: %2", ret, some_addon_changed);
     y2milestone ("Registration will be requested: %1", AddOnProduct::ProcessRegistration());
 
-    if (Mode::installation() && Stage::initial()) {
+    // First stage installation, #247892
+    // installation, update or autoinstallation
+    if (Stage::initial()) {
 	// bugzilla #221377
 	if (some_addon_changed) {
 	    AddOnProduct::ReIntegrateFromScratch();

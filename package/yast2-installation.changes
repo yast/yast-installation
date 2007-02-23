@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Feb 23 09:52:12 CET 2007 - locilka@suse.cz
+
+- Fixed registering new agents when y2update is part of the Add-On
+  media (#245508) also for mode "update" and "autoinstallation"
+  by using Stage::initial only (#247892).
+- 2.13.187
+
+-------------------------------------------------------------------
 Wed Feb 21 17:22:36 CET 2007 - locilka@suse.cz
 
 - Added documentation for silently_downgrade_packages and
