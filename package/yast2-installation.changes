@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Feb 26 16:03:42 CET 2007 - jsrain@suse.cz
+
+- updated popup in case of license is not accepted (#162499)
+
+-------------------------------------------------------------------
 Thu Feb 22 13:52:12 CET 2007 - locilka@suse.cz
 
 - Splitting installation_worker (main installation script) into

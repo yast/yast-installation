@@ -382,7 +382,21 @@ unzip -qqo '%2'
 	    // License declined
 	    if (accept == `no)
 	    {
-		if (Popup::YesNo(_("Reread or reconsider the license agreement?")))
+		// message is void in case not accepting license doesn't stop the installation
+		if (action == "continue")
+		{
+		    y2milestone ("action in case of license refusal is continue, not asking user");
+		    return `accepted;
+		}
+		// text changed due to bug #162499
+		string refuse_popup_text = base_product
+		    // text asking whether to refuse a license (Yes-No popup)
+		    ? _("Refusing the license agreement cancels installation.
+Really refuse the agreement?")
+		    // text asking whether to refuse a license (Yes-No popup)
+		    : _("Refusing the license agreement cancels the add-on
+product installation. Really refuse the agreement?");
+		if (! Popup::YesNo(refuse_popup_text))
 		{
 		    continue;
 		}
