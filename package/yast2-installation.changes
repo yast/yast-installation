@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Feb 28 14:11:16 CET 2007 - jsrain@suse.cz
+
+- added more logging to umount_finish (#247594)
+
+-------------------------------------------------------------------
 Mon Feb 26 16:03:42 CET 2007 - jsrain@suse.cz
 
 - updated popup in case of license is not accepted (#162499)
