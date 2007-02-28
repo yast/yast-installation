@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Feb 28 14:11:16 CET 2007 - jsrain@suse.cz
+
+- added more logging to umount_finish (#247594)
+- 2.13.188
+
+-------------------------------------------------------------------
 Fri Feb 23 09:52:12 CET 2007 - locilka@suse.cz
 
 - Fixed registering new agents when y2update is part of the Add-On
