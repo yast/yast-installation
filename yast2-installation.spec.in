@@ -6,6 +6,9 @@ BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-ske
 
 Requires:       autoyast2-installation
 Requires:	yast2 >= 2.14.6
+# Required in in the first stage, after
+# switching to the installed system, bugzilla #249679
+Requires:	yast2-bootloader
 # Language::selection_skipped, bugzilla #223258
 Requires:	yast2-country >= 2.15.0
 Requires:	yast2-network
@@ -14,7 +17,6 @@ Requires:	yast2-packager >= 2.15.7
 
 # Only in inst-sys
 # Requires:	yast2-add-on
-# Requires:	yast2-bootloader
 # Requires:	yast2-mouse
 # Requires:	yast2-storage
 # Requires:	yast2-update
