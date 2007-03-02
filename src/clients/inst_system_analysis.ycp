@@ -62,15 +62,18 @@ string start_mode = Mode::mode ();
 
 	if (RootPart::numberOfValidRootPartitions == 1)
 	{
+	    y2milestone ("Only one partition with system...");
 	    RootPart::SetSelectedToValid ();
 	}
 	else
 	{
+	    y2milestone ("More partitions with system...");
 	    if (WFM::CallFunction ("inst_rootpart", [true, true, `boot_popup]) != `next)
 		return `cancel;
 	}
 
 	string root_part = RootPart::selectedRootPartition;
+	y2milestone ("Trying to boot from %1 partitions", root_part);
 
 	UI::OpenDialog( `opt(`decorated),
 			// Information popup: Inform user what partition
@@ -362,7 +365,10 @@ repeat {
 	    
 	    // Boot was selected
 	    if (new_mode == `boot) {
-		if (handle_boot() != `finish) {
+		symbol ret = handle_boot();
+		y2milestone ("handle_boot() returned '%1'", ret);
+
+		if (ret != `finish) {
 		    y2milestone("Not booting any OS");
 		    ret = nil;
 		    continue;
