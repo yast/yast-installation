@@ -23,7 +23,13 @@ if(GetInstArgs::going_back())
 foreach (string service, ["network"], {
     if (Service::Enabled (service) && Service::Status (service) != 0)
     {
-	Service::Start (service);
+	// TRANSLATORS: busy message
+	UI::OpenDialog (`Label(_("Starting network services..."), service));
+
+	// This might take a lot of time if case of DHCP, for instance
+	Service::RunInitScriptWithTimeOut (service, "start");
+
+	UI::CloseDialog();
     }
 });
 
