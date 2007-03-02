@@ -6,6 +6,8 @@ Fri Mar  2 15:27:14 CET 2007 - locilka@suse.cz
 - Adding yast2-bootloader into required packages because it is
   needed after the SCR is switched into the installed system just
   before reboot (#249679).
+- Added more logging into inst_system_analysis (booting installed
+  system).
 - 2.15.10
 
 -------------------------------------------------------------------
