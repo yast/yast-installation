@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Fri Mar  2 15:27:14 CET 2007 - locilka@suse.cz
+
+- Providing feedback (busy message) in inst_restore_settings.
+  Starting network by calling 'network start' with timeout.
+- Adding yast2-bootloader into required packages because it is
+  needed after the SCR is switched into the installed system just
+  before reboot (#249679).
+
+-------------------------------------------------------------------
 Wed Feb 28 14:11:16 CET 2007 - jsrain@suse.cz
 
 - added more logging to umount_finish (#247594)
