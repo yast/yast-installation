@@ -1,0 +1,110 @@
+/**
+ * File:
+ *  mouse_finish.ycp
+ *
+ * Module:
+ *  Step of base installation finish
+ *
+ * Authors:
+ *  Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id:$
+ *
+ */
+
+{
+
+// This client exists because yast2-installation package
+// needn't installed yast2-mouse anymore
+//
+// SCR::Write is called before SCR is switched to the installed system
+
+textdomain "installation";
+
+import "Progress";
+import "Installation";
+import "Mouse";
+import "FileUtils";
+import "String";
+
+any ret = nil;
+string func = "";
+map param = $[];
+
+/* Check arguments */
+if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
+    func = (string)WFM::Args(0);
+    if(size(WFM::Args()) > 1 && is(WFM::Args(1), map))
+	param = (map)WFM::Args(1);
+}
+
+y2milestone ("starting mouse_finish");
+y2debug("func=%1", func);
+y2debug("param=%1", param);
+
+if (func == "Info")
+{
+    return (any)$[
+	"steps" : 1,
+	"when" : [ `installation, `update, `autoinst ],
+    ];
+}
+else if (func == "Write")
+{
+    string sysconfigdir  = "/etc/sysconfig/";
+    string sysconfigfile = "/etc/sysconfig/mouse";
+
+    // Create local sysconfig directory
+    SCR::Execute (.target.mkdir, sysconfigdir);
+    if (! FileUtils::Exists (sysconfigdir)) {
+	y2error ("Directory %1 does not exist!", sysconfigdir);
+    }
+
+    // Copy file from installed system if already exists
+    if (FileUtils::Exists (Installation::destdir + sysconfigfile)) {
+	y2milestone ("copy %1 -> %2", Installation::destdir + sysconfigfile, sysconfigfile);
+	SCR::Execute (.target.bash, sformat ("cp '%1' '%2'",
+	    String::Quote (Installation::destdir + sysconfigfile),
+	    String::Quote (sysconfigfile)
+	));
+    }
+
+    // Create mouse sysconfig file if does not exist
+    if (! FileUtils::Exists (sysconfigfile)) {
+	y2milestone ("Create %1", sysconfigfile);
+	SCR::Execute (.target.bash, sformat ("touch '%1'", String::Quote (sysconfigfile)));
+    }
+
+    // progress step title
+    Progress::Title (_("Saving mouse configuration..."));
+    // Save the configuration
+    ret = Mouse::Save();
+    Progress::NextStep ();
+
+    // Copy to the installed system
+    y2milestone ("Copy %1 -> %2", sysconfigfile, Installation::destdir + sysconfigfile);
+    map cmd = (map) SCR::Execute (.target.bash_output, sformat (
+	"cp '%1' '%2'",
+	String::Quote (sysconfigfile),
+	String::Quote (Installation::destdir + sysconfigfile)
+    ));
+
+    if (cmd["exit"]:-1 != 0) {
+	y2error ("Cannot copy '%1' to '%2': %3", sysconfigfile, Installation::destdir + sysconfigfile, cmd);
+	ret = false;
+    } else {
+	ret = true;
+    }
+}
+else
+{
+    y2error ("unknown function: %1", func);
+    ret = nil;
+}
+
+y2debug("ret=%1", ret);
+y2milestone("mouse_finish finished");
+return ret;
+
+
+} /* EOF */

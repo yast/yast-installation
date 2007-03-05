@@ -41,6 +41,7 @@ list<map<string,any> > stages = [
 	"label" : _("Copy files to installed system"),
 	"steps" : [
 	    "autoinst_scripts1",
+	    "mouse",
 	    "copy_files",
 	    "copy_systemfiles",
 	    "switch_scr",
@@ -87,9 +88,11 @@ list<map<string,any> > stages = [
 	"label" : _("Prepare system for initial boot"),
 	"steps" : [
 	    "vm",
-	    "copy_logs",
 	    "driver_update2",
 	    "pre_umount",
+	    // copy logs just before 'umount'
+	    // keeps maximum logs available after reboot
+	    "copy_logs",
 	    "umount",
 	],
     ],

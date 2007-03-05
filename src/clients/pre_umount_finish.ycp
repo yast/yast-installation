@@ -43,6 +43,7 @@ if (func == "Info")
 else if (func == "Write")
 {
     if (size (Misc::boot_msg) > 0) {
+	// just a beep
 	SCR::Execute (.target.bash, "/bin/echo -e '\a'");
     }
 }

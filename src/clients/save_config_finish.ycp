@@ -18,7 +18,6 @@ textdomain "installation";
 
 import "Directory";
 import "Mode";
-import "Mouse";
 import "Timezone";
 import "Language";
 import "Keyboard";
@@ -50,7 +49,7 @@ y2debug("param=%1", param);
 if (func == "Info")
 {
     return (any)$[
-	"steps" : Mode::autoinst () ? 8 : (Mode::update() ? 6 : 7),
+	"steps" : Mode::autoinst () ? 7 : (Mode::update() ? 5 : 6),
 	"when" : [ `installation, `update, `autoinst ],
     ];
 }
@@ -88,10 +87,6 @@ else if (func == "Write")
 	}
     }
 
-    // progress step title
-    Progress::Title (_("Saving mouse configuration..."));
-    Mouse::Save();
-    Progress::NextStep ();
     // progress step title
     Progress::Title (_("Saving time zone..."));
     Timezone::Save();
