@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Mar  5 12:58:21 CET 2007 - locilka@suse.cz
+
+- Adding new installation client mouse_finish which is called
+  before SCR is switched. This removes the dependency of
+  yast2-installation on yast2-mouse.
+- 2.15.11
+
+-------------------------------------------------------------------
 Fri Mar  2 15:27:14 CET 2007 - locilka@suse.cz
 
 - Providing feedback (busy message) in inst_restore_settings.
