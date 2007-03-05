@@ -3,6 +3,7 @@ Mon Mar  5 17:14:58 CET 2007 - locilka@suse.cz
 
 - Moving AddOnProduct module back to yast2-installation because
   this module is needed in the second-stage installation.
+- AddOnProduct-related testsuites moved back to yast2-installation.
 - 2.15.12
 
 -------------------------------------------------------------------
