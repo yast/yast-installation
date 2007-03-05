@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Mar  5 17:14:58 CET 2007 - locilka@suse.cz
+
+- Moving AddOnProduct module back to yast2-installation because
+  this module is needed in the second-stage installation.
+- 2.15.12
+
+-------------------------------------------------------------------
 Mon Mar  5 12:58:21 CET 2007 - locilka@suse.cz
 
 - Adding new installation client mouse_finish which is called
