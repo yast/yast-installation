@@ -6,6 +6,12 @@ Tue Mar  6 16:44:48 CET 2007 - locilka@suse.cz
 - 2.15.13
 
 -------------------------------------------------------------------
+Tue Mar  6 13:01:17 CET 2007 - kmachalkova@suse.cz
+
+- Do not export LINES and COLUMNS variables, so that terminal 
+  resize event is handled correctly (#184179)
+
+-------------------------------------------------------------------
 Mon Mar  5 17:14:58 CET 2007 - locilka@suse.cz
 
 - Moving AddOnProduct module back to yast2-installation because
