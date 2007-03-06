@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Mar  6 13:01:17 CET 2007 - kmachalkova@suse.cz
+
+- Do not export LINES and COLUMNS variables, so that terminal 
+  resize event is handled correctly (#184179)
+- 2.13.189
+
+-------------------------------------------------------------------
 Wed Feb 28 14:11:16 CET 2007 - jsrain@suse.cz
 
 - added more logging to umount_finish (#247594)

@@ -13,7 +13,10 @@ log "========================"
 
 if ! skip_initvicons;then
 	eval `initviocons -e`
-	export LINES COLUMNS TERM
+
+	#export TERM only, initviocons takes care about
+	#LINES and COLUMNS automatically (#184179)
+	export TERM
 	log "\tSetup virtual console:"
 	log "\tLines:   $LINES"
 	log "\tColumns: $COLUMNS"
