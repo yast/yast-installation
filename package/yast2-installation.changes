@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Mar  6 16:44:48 CET 2007 - locilka@suse.cz
+
+- AddOnProduct and ProductLicense finally moved to yast2-packager
+  from yast2-installation to avoid build cycles.
+- 2.15.13
+
+-------------------------------------------------------------------
 Mon Mar  5 17:14:58 CET 2007 - locilka@suse.cz
 
 - Moving AddOnProduct module back to yast2-installation because

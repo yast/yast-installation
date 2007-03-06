@@ -12,8 +12,8 @@ Requires:	yast2-bootloader
 # Language::selection_skipped, bugzilla #223258
 Requires:	yast2-country >= 2.15.0
 Requires:	yast2-network
-# add_inst_source_slptype.ycp client, bugzilla #238680
-Requires:	yast2-packager >= 2.15.7
+# License and AddOn modules moved to packager
+Requires:	yast2-packager >= 2.15.20
 
 # Only in inst-sys
 # Requires:	yast2-add-on
