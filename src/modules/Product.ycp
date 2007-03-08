@@ -140,7 +140,16 @@ global list<map<string,any> > FindBaseProducts() {
 	    if (tmp1 != nil)
 		patterns	= splitstring ((string) tmp1, " ");
 
-	    y2milestone("***PATTERNS: %1", patterns );
+	    // bugzilla #252122, since openSUSE 10.3
+	    // deprecated:
+	    // 		content.PATTERNS: abc cba bac
+	    // should re replaced with (and/or)
+	    // 		content.REQUIRES: pattern:abc pattern:cba pattern:bac
+	    //		content.RECOMMENDS: pattern:abc pattern:cba pattern:bac
+	    if (patterns != []) {
+		y2warning ("Product content file contains deprecated PATTERNS tag, use REQUIRES and/or RECOMMENDS instead");
+		y2milestone("PATTERNS: %1", patterns );
+	    }
 	}
 	else if (!Mode::config ())
 	{
