@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar  8 16:59:35 CET 2007 - locilka@suse.cz
+
+- Module GetInstArgs moved from yast2-installation to yast2, many
+  clients required yast2-installation only because of this module.
+
+-------------------------------------------------------------------
 Thu Mar  8 14:45:39 CET 2007 - locilka@suse.cz
 
 - Tag 'PATTERNS' in product content file is depracated by
