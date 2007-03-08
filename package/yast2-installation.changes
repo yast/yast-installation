@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar  8 14:45:39 CET 2007 - locilka@suse.cz
+
+- Tag 'PATTERNS' in product content file is depracated by
+  'REQUIRES' and/or 'RECOMMENDS' tag (#252122).
+
+-------------------------------------------------------------------
 Tue Mar  6 16:44:49 CET 2007 - kmachalkova@suse.cz
 
 - Do not export LINES and COLUMNS variables, so that terminal
