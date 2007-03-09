@@ -4,6 +4,8 @@ Fri Mar  9 10:05:20 CET 2007 - locilka@suse.cz
 - Module InstShowInfo has been moved from yast2-installation to
   yast2-packager because this module is used by Add-Ons and
   installation sources only.
+- Adjusted RPM Requires (yast2-packager >= 2.15.22).
+- 2.15.14
 
 -------------------------------------------------------------------
 Thu Mar  8 16:59:35 CET 2007 - locilka@suse.cz
