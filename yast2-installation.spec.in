@@ -13,7 +13,8 @@ Requires:	yast2-bootloader
 Requires:	yast2-country >= 2.15.0
 Requires:	yast2-network
 # License and AddOn modules moved to packager
-Requires:	yast2-packager >= 2.15.20
+# InstShowInfo module moved to packager
+Requires:	yast2-packager >= 2.15.22
 
 # Only in inst-sys
 # Requires:	yast2-add-on
