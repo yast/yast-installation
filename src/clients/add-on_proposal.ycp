@@ -11,6 +11,8 @@
 textdomain "installation";
 
 import "Label";
+import "AddOnProduct";
+import "Wizard";
 
 include "installation/add-on-workflow.ycp";
 
@@ -46,6 +48,8 @@ else if ( func == "AskUser" )
     Wizard::CreateDialog();
     symbol result = RunAddOnMainDialog (true, true, Label::CancelButton(), Label::AcceptButton());
     UI::CloseDialog();
+
+    AddOnProduct::RedrawWizardSteps();
 
     // Fill return map
 

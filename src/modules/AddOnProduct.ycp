@@ -97,7 +97,7 @@ global boolean modified = false;
 
 global list<integer> mode_config_sources = [];
 
-boolean RedrawWizardSteps ();
+global boolean RedrawWizardSteps ();
 
 /**
  * Adapts the inst-sys from the tarball
@@ -582,7 +582,7 @@ boolean UpdateWorkflows(list<map> workflows, string prod_name, string domain) {
  * Redraw the wizard steps bar
  * @return boolean true on success
  */
-boolean RedrawWizardSteps () {
+global boolean RedrawWizardSteps () {
 // FIXME following code copy-pasted from clients/installation.ycp
     y2milestone( "Retranslating messages" );
 

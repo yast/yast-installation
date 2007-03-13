@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Mar 13 15:12:30 CET 2007 - locilka@suse.cz
+
+- Redraw Wizard steps when Add-Ons are changed in the installation
+  proposal. This change allows to reflect the current workflow look
+  just after the workflow change is made (#254035).
+- 2.13.190
+
+-------------------------------------------------------------------
 Tue Mar  6 13:01:17 CET 2007 - kmachalkova@suse.cz
 
 - Do not export LINES and COLUMNS variables, so that terminal 
