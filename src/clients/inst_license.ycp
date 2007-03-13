@@ -26,7 +26,9 @@ map argmap = GetInstArgs::argmap();
 
 // Action if license is not accepted
 // abort|continue|halt
-string action = argmap["action"]:"abort";
+// halt is the default
+// bugzilla #252132
+string action = argmap["action"]:"halt";
 
 symbol ask_ret = nil;
 

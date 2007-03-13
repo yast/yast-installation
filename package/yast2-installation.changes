@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Mar 13 13:43:42 CET 2007 - locilka@suse.cz
+
+- Reboot in case of the declined license during the initial
+  installation (#252132).
+
+-------------------------------------------------------------------
 Mon Mar 12 08:44:19 CET 2007 - locilka@suse.cz
 
 - Modules 'Product' and 'Installation' (installation settings) were
