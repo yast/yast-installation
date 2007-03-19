@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Mar 19 13:09:57 CET 2007 - locilka@suse.cz
+
+- Creating an empty /etc/sysconfig/displaymanager in desktop_finish
+  if the sysconfing doesn't exist (minimal installation).
+
+-------------------------------------------------------------------
 Tue Mar 13 13:43:42 CET 2007 - locilka@suse.cz
 
 - Reboot in case of the declined license during the initial

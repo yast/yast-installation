@@ -20,6 +20,7 @@ import "DefaultDesktop";
 import "Directory";
 import "Mode";
 import "ProductFeatures";
+import "FileUtils";
 
 any ret = nil;
 string func = "";
@@ -185,6 +186,16 @@ else if (func == "Write")
 	SCR::Write (.sysconfig.windowmanager.DEFAULT_WM, default_wm);
 	SCR::Write (.sysconfig.windowmanager.X_MOUSE_CURSOR, default_cursor);
 	SCR::Write (.sysconfig.windowmanager, nil);
+
+	string dpmng_file = "/etc/sysconfig/displaymanager";
+	// Creates an empty sysconfig file if it doesn't exist
+	if (! FileUtils::Exists (dpmng_file) && FileUtils::Exists ("/usr/bin/touch")) {
+	    y2milestone ("Creating file %1: %2",
+		dpmng_file,
+		SCR::Execute (.target.bash, sformat ("/usr/bin/touch '%1'", dpmng_file))
+	    );
+	}
+
 	string dm_shutdown = ProductFeatures::GetStringFeature ("globals",
 	    "displaymanager_shutdown");
 	y2milestone ("Logon manager shutdown: %1", dm_shutdown);
