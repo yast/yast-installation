@@ -19,6 +19,7 @@ textdomain "installation";
 import "Mode";
 import "HwStatus";
 import "HWConfig";
+import "Package";
 
 any ret = nil;
 string func = "";
@@ -46,13 +47,17 @@ if (func == "Info")
 }
 else if (func == "Write")
 {
-    // FIXME this agent needn't be installed
-    list<string> parports = (list<string>)SCR::Read (.proc.parport.devices);
-    if (parports != nil && size (parports) > 0)
-    {
-	HWConfig::SetValue ("static-printer", "STARTMODE", "auto");
-	HWConfig::SetValue ("static-printer", "MODULE", "lp");
+    // Package yast2-printer needs to be installed
+    if (Package::Installed ("yast2-printer")) {
+	list<string> parports = (list<string>) SCR::Read (.proc.parport.devices);
+	if (parports != nil && size (parports) > 0) {
+	    HWConfig::SetValue ("static-printer", "STARTMODE", "auto");
+	    HWConfig::SetValue ("static-printer", "MODULE", "lp");
+	}
+    } else {
+	y2warning ("Package yast2-printer is not installed, skipping static-printer write...");
     }
+
     // PS/2 mouse on PPC
     map out = (map)SCR::Execute (.target.bash_output,
 "#!/bin/sh
