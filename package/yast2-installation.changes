@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Mar 21 16:47:14 CET 2007 - locilka@suse.cz
+
+- Handling CloneSystem functionality when the client for cloning is
+  not installed (checkbox is disabled).
+
+-------------------------------------------------------------------
 Mon Mar 19 13:09:57 CET 2007 - locilka@suse.cz
 
 - Creating an empty /etc/sysconfig/displaymanager in desktop_finish
