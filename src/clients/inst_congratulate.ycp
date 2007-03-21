@@ -46,12 +46,16 @@
     boolean show_clone_checkbox = ! Stage::firstboot ();
     boolean clone_checkbox_active = ProductFeatures::GetBooleanFeature("globals", "enable_clone");
     boolean clone_enabled = false;
-    if( Package::AvailableAny(["autoyast2"]) &&
-        size(ProductControl::clone_modules) > 0 ) {
+
+    // Cloning client is installed and there is something to be cloned
+    if (Package::Installed("autoyast2") && size(ProductControl::clone_modules) > 0) {
         clone_enabled = true;
     } else {
         clone_checkbox_active = false;
     }
+    y2milestone ("Cloning Checkbox visible: %1, enabled: %2, pre-selected: %3",
+	show_clone_checkbox, clone_enabled, clone_checkbox_active
+    );
 
     map display = UI::GetDisplayInfo();
     integer space = display["TextMode"]:true ? 1 : 3;
