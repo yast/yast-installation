@@ -194,6 +194,7 @@ function prepare_for_qt () {
 	#=============================================
 	# patch X11 conf. if not update/continue mode
 	#---------------------------------------------
+	if [ ! -f /etc/reconfig_system ];then
 	if [ ! -f /var/lib/YaST2/runme_at_boot ];then
 	if [ ! -f /etc/X11/xorg.conf.instorig ];then
 		# create backup copy...
@@ -241,6 +242,7 @@ function prepare_for_qt () {
 				;;
 			esac
 		fi
+	fi
 	fi
 	fi
 	#=============================================
