@@ -17,6 +17,7 @@
     textdomain "installation";
 
     import "AddOnProduct";
+    import "WorkflowManager";
     import "Installation";
     import "Linuxrc";
     import "Misc";
@@ -109,9 +110,18 @@ else
 }
 
 // merge steps from add-on products
-stages[0, "steps"] = merge (AddOnProduct::finish_steps_before_chroot, stages[0, "steps"]:[]);
-stages[1, "steps"] = merge (AddOnProduct::finish_steps_after_chroot, stages[1, "steps"]:[]);
-stages[3, "steps"] = merge (stages[3, "steps"]:[], AddOnProduct::finish_steps_before_umount);
+stages[0, "steps"] = merge (
+    WorkflowManager::GetAdditionalFinishSteps("before_chroot"),
+    stages[0, "steps"]:[]
+);
+stages[1, "steps"] = merge (
+    WorkflowManager::GetAdditionalFinishSteps("after_chroot"),
+    stages[1, "steps"]:[]
+);
+stages[3, "steps"] = merge (
+    stages[3, "steps"]:[],
+    WorkflowManager::GetAdditionalFinishSteps("before_umount")
+);
 
 symbol run_type = `installation;
 if (Mode::update ())
