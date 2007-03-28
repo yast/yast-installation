@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Wed Mar 28 16:17:37 CEST 2007 - locilka@suse.cz
+
+- Adjusted to use WorkflowManager instead AddOnProduct module
+  in some cases to make Pattern-based installation and
+  configuration workflow (FATE #129).
+- Adjusted RPM dependencies and BuildRequires.
+- 2.15.16
+
+-------------------------------------------------------------------
 Tue Mar 27 14:22:46 CEST 2007 - ms@suse.de
 
 - fixed X11 preparation by checking /etc/reconfig_system (#252763)

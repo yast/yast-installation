@@ -17,7 +17,7 @@
     import "Mode";
     import "Language";
     import "Directory";
-    import "AddOnProduct";
+    import "WorkflowManager";
     import "ProductControl";
     import "Console";
     import "Keyboard";
@@ -225,15 +225,20 @@ Note: You may have to enter some information again.");
 
         UI::RecordMacro( Directory::logdir + "/macro_inst_cont.ycp" );
 
-        // Merge control files of add-on products
+        // Merge control files of additional products and patterns
         string listname = Installation::destdir + Directory::etcdir + "/control_files/order.ycp";
-        if (SCR::Read (.target.size, listname) > 0) {
-            list<string> files = (list<string>)SCR::Read (.target.ycp, listname);
-            foreach (string f, files, {
-                f = Installation::destdir + Directory::etcdir + "/control_files/" + f;
-                y2milestone ("Calling WFIntegrate()");
-                AddOnProduct::WFIntegrate (f);
-            });
+        if (FileUtils::Exists (listname)) {
+            list <string> files = (list<string>) SCR::Read (.target.ycp, listname);
+
+	    string basedir = Installation::destdir + Directory::etcdir + "/control_files/";
+	    files = maplist (string one_file, files, {
+		return basedir + one_file;
+	    });
+
+	    WorkflowManager::SetAllUsedControlFiles (files);
+	    WorkflowManager::SetBaseWorkflow (false);
+	    WorkflowManager::MergeWorkflows();
+	    WorkflowManager::RedrawWizardSteps();
         } else {
             ProductControl::DisabledModules = add (ProductControl::DisabledModules, "add-on");
         }

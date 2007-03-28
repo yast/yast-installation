@@ -23,6 +23,7 @@ import "Directory";
 import "ProductControl";
 import "FileUtils";
 import "String";
+import "WorkflowManager";
 
 include "installation/misc.ycp";
 
@@ -81,17 +82,33 @@ else if (func == "Write")
 	"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control.xml'");
     // Copy also control files of add-on products
     string cf_dir = (string)SCR::Read (.target.tmpdir) + "/control_files";
-    if (size (AddOnProduct::control_files_to_add) > 0)
-    {
-	SCR::Execute (.target.bash, "/bin/mkdir '" +
-	    String::Quote (Installation::destdir) + Directory::etcdir + "/control_files'");
-	foreach (string file, AddOnProduct::control_files_to_add, {
-	    SCR::Execute (.target.bash, "/bin/cp " + cf_dir + "/" + file + " " +
-		"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files'");
-	    SCR::Execute (.target.bash, "/bin/chmod 0644 " +
-		"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/" + file + "'");
+
+    // List of files used as additional workflow definitions
+    if (size (WorkflowManager::GetAllUsedControlFiles()) > 0) {
+	list <string> workflows_list =  [];
+
+	foreach (string one_filename, WorkflowManager::GetAllUsedControlFiles(), {
+	    if (regexpmatch (one_filename, "/")) {
+		one_filename = regexpsub (one_filename, "^.*/(.*)", "\\1");
+	    }
+
+	    workflows_list = add (workflows_list, one_filename);
 	});
-	SCR::Write (.target.ycp, Installation::destdir + Directory::etcdir + "/control_files/order.ycp", AddOnProduct::control_files_to_add);
+
+	// They need to follow the exact order
+	SCR::Write (.target.ycp, Installation::destdir + Directory::etcdir + "/control_files/order.ycp",
+	    workflows_list);
+
+	SCR::Execute (.target.bash, "/bin/mkdir -p " +
+	    "'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files'");
+
+	foreach (string file, WorkflowManager::GetAllUsedControlFiles(), {
+	    SCR::Execute (.target.bash, "/bin/cp '" + String::Quote (file) + "' " +
+		"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/'");
+	    SCR::Execute (.target.bash, "/bin/chmod 0644 " +
+		"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/" + String::Quote (file) + "'");
+	});
+
 	SCR::Execute (.target.bash, "/bin/chmod 0644 " +
 	    "'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/order.ycp'");
     }
