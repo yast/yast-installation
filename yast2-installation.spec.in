@@ -3,11 +3,11 @@
 
 @HEADER@
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2-core-devel yast2-devtools yast2-testsuite yast2-country
-BuildRequires:	yast2 >= 2.15.21
+BuildRequires:	yast2 >= 2.15.22
 
 Requires:       autoyast2-installation
 # WorkflowManager module
-Requires:	yast2 >= 2.15.21
+Requires:	yast2 >= 2.15.22
 # Required in in the first stage, after
 # switching to the installed system, bugzilla #249679
 Requires:	yast2-bootloader
