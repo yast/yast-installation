@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Apr  4 10:35:55 CEST 2007 - locilka@suse.cz
+
+- Removed IPv6 proposal from installation control file. IPv6
+  proposal has been merged into Network Mode proposal (#260261).
+
+-------------------------------------------------------------------
 Wed Mar 28 16:17:37 CEST 2007 - locilka@suse.cz
 
 - Adjusted to use WorkflowManager instead AddOnProduct module

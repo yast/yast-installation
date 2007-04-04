@@ -168,10 +168,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		    <name>networkmanager</name>
 		    <presentation_order>5</presentation_order>
 		</proposal_module>
-                <proposal_module>
-		    <name>ipv6</name>
-		    <presentation_order>15</presentation_order>
-		</proposal_module>
 		<proposal_module>
 		    <name>dsl</name>
 		    <presentation_order>30</presentation_order>
