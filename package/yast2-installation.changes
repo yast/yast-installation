@@ -8,6 +8,7 @@ Thu Apr  5 13:34:48 CEST 2007 - locilka@suse.cz
   sequence of busy pop-ups.
 - Unified inst_system_analysis UI to use the Progress library
   instead of empty dialog.
+- 2.15.17
 
 -------------------------------------------------------------------
 Wed Apr  4 10:35:55 CEST 2007 - locilka@suse.cz
