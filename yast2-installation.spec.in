@@ -14,9 +14,8 @@ Requires:	yast2-bootloader
 # Language::selection_skipped, bugzilla #223258
 Requires:	yast2-country >= 2.15.0
 Requires:	yast2-network
-# License and AddOn modules moved to packager
-# InstShowInfo module moved to packager
-Requires:	yast2-packager >= 2.15.22
+# PackagesUI::ConfirmLicenses, bugzilla #256627
+Requires:	yast2-packager >= 2.15.24
 
 # Only in inst-sys
 # Requires:	yast2-add-on
