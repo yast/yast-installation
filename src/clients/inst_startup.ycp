@@ -197,7 +197,6 @@ Check your hardware.
     });
     
     Progress::NextStage();
-    sleep (5000);
     
     Wizard::CloseDialog();
 
