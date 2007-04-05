@@ -14,6 +14,7 @@
     import "Wizard";
     import "Mode";
     import "AutoinstConfig";
+    import "PackagesUI";
 
     import "Label";
 
@@ -22,110 +23,10 @@
     if (Mode::autoinst () && !AutoinstConfig::Confirm)
         return `next;
 
+    // old functionality replaced with this function-call
+    // bugzilla #256627
+    PackagesUI::ConfirmLicenses();
 
-    define void ConfirmLicenses () {
-	if (Mode::autoinst ())
-	{
-	    return;
-	}
-	list<string> to_install = Pkg::GetPackages (`selected, true);
-	map<string,string> licenses = Pkg::PkgGetLicensesToConfirm (to_install);
-
-	// FIXME: Remove deny_all (bug #163001)
-	boolean deny_all = false;
-	foreach (string package,  string license, licenses, {
-	    if (deny_all)
-	    {
-		Pkg::PkgTaboo (package);
-	    }
-	    else
-	    {
-		term popup = `VBox (
-		    `HSpacing (80),
-		    // dialog heading, %1 is package name
-		    `Heading (sformat (_("Confirm Package License: %1"),
-			package)),
-		    `HBox (
-			`VSpacing (20),
-			`RichText (`id (`lic), license)
-		    ),
-		    `HBox (
-			`PushButton (`id (`help), Label::HelpButton ()),
-			`HStretch (),
-			// push button
-			`PushButton (`id (`accept), _("I &Agree")),
-			// push button
-			`PushButton (`id (`deny), _("I &Disagree"))
-		    )
-		);
-		UI::OpenDialog (popup);
-		symbol ret = nil;
-		while (ret == nil)
-		{
-		    ret = (symbol)UI::UserInput ();
-		    if (ret == `help)
-		    {
-			ret = nil;
-			// help text
-
-			
-// FIXME
-// FIXME
-// Remove reference to "Disagree with all" button (bug #163001) in help text
-// --sh 2006-04-24			
-// FIXME
-// FIXME
-			
-			
-			string help = _("<p><b><big>License Confirmation</big></b><br>
-The package in the headline of the dialog requires an explicit confirmation
-of acceptance of its license.
-If you reject the license of the package, the package will not be installed.
-<br>
-To accept the license of the package, click <b>I Agree</b>.
-To reject the license of the package, click <b>I Disagree</b>.
-<br>
-To reject installation of all packages requiring confirmation of
-their licenses, click <b>I Disagree with All</b>.</p>");
-			UI::OpenDialog (`HBox (
-			    `VSpacing (18),
-			    `VBox (
-				`HSpacing (70),
-				`RichText (help),
-				`HBox (
-				    `HStretch (),
-				    // push button
-				    `PushButton (`id (`close), Label::CloseButton ()),
-				    `HStretch ()
-				)
-			    )
-			));
-			UI::UserInput ();
-			UI::CloseDialog ();
-		    }
-		}
-		UI::CloseDialog ();
-		if (ret != `accept)
-		{
-		    if (ret == `deny_all)
-		    {
-			deny_all = true;
-		    }
-		    Pkg::PkgTaboo (package);
-		}
-		else
-		{
-		    Pkg::PkgMarkLicenseConfirmed (package);
-		}
-	    }
-	});
-    }
-
-    //
-    // main()
-    //
-
-    ConfirmLicenses ();
     // function in installation/misc.ycp
     // bugzilla #219097
     boolean confirmed = confirmInstallation();
