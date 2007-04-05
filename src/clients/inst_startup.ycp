@@ -2,16 +2,14 @@
  * Module:		inst_startup.ycp
  *
  * Authors:		Mathias Kettner <kettner@suse.de>
- *			Klaus Kaempf <kkaempf@suse.de> (initial)
- *			Stefan Hundhammer <sh@suse.de> (UI)
+ *			Klaus Kaempf <kkaempf@suse.de>
+ *			Stefan Hundhammer <sh@suse.de>
+ *			Lukas Ocilka <locilka@suse.cz>
  *
  * Purpose:
  * This module does the startup:
- * - Set hostname and domainname
- * - Determine architecture and boot mode
  * - Find controllers and status enabled/disabled
  * - Probe all controllers for disks
- * - Probe all disks for partition data
  *
  * $Id$
  */
@@ -27,135 +25,167 @@
     import "StorageDevices";
     import "Kernel";		// call constructor, extract cmdline
     import "Report";
+    import "Progress";
+    import "Wizard";
 
-    y2milestone("inst_startup START");
+    y2milestone ("inst_startup START");
 
-
-
-    boolean popup_open = false;
-    /**
-     * Show feedback message in a simple dialog.
-     * @param msg message to show
-     **/
-    define void showFeedback( string msg ) ``{
-	if ( popup_open )
-	{
-	    UI::CloseDialog();
-	}
-
-	/**
-	 * The UI normally changes the X cursor to a busy cursor anyway if the
-	 * YCP application isn't ready to process user input (i.e. outside
-	 * UI::UserInput()), but some hardware probings seem to interfere with
-	 * the X cursor. Thus, let's make sure we really have a busy cursor
-	 * while the probings are performed. Setting the busy cursor once more
-	 * doesn't hurt in any case.
-	 **/
-	UI::BusyCursor();
-
-	UI::OpenDialog( `VBox( `Label( msg ) ) );
-	y2milestone( msg );
-	popup_open = true;
-    };
-
-
-    /**
-     * Close feedback dialog if it is open
-     **/
-    define void clearFeedback() ``{
-	if ( popup_open )
-	    UI::CloseDialog();
-    };
-
+    // Function definitions -->
 
     // --------------------------------------------------------------
     //				      USB
     // --------------------------------------------------------------
-
-    if (!(Arch::s390 () || Arch::board_iseries ()))
-    {
-        // give user feedback what's happening
-	showFeedback( _("Probing USB devices") );
+    boolean ActionUSB () {
 	Hotplug::StartUSB ();
-    }
 
+	return true;
+    }
+    
     // --------------------------------------------------------------
     //				FireWire (ieee1394)
     // --------------------------------------------------------------
-
-    if (!(Arch::s390 () || Arch::board_iseries ()))
-    {
-        // give user feedback what's happening
-	showFeedback( _("Probing FireWire devices...") );
+    boolean ActionFireWire () {
 	Hotplug::StartFireWire ();
-    }
 
+	return true;
+    }
+    
     // --------------------------------------------------------------
     //				    Floppy
     // --------------------------------------------------------------
-
-    if (!(Arch::s390 () || Arch::board_iseries ()))
-    {
-        // give user feedback what's happening
-	showFeedback( _("Probing floppy disk devices") );
+    boolean ActionFloppyDisks () {
 	StorageDevices::FloppyReady ();
+
+	return true;
     }
 
+    boolean found_controllers = true;
+    
     // --------------------------------------------------------------
     //			     Hard disk controllers
     // 1. Probe
     // 2. Initialize (module loading)
     // --------------------------------------------------------------
-
     // In live_eval mode, all modules have been loaded by linuxrc. But
     // they are loaded by StorageControllers::Initialize(). Well, there
     // also was another reason for skipping StorageControllers::Probe ()
-    // but nobody seems to remembers.
+    // but nobody seems to remember more.
+    // --------------------------------------------------------------
+    boolean ActionHHDControllers () {
+	found_controllers = (StorageControllers::Probe () > 0);
 
-    boolean found_controllers = true;
-
-    // give user feedback what's happening
-    showFeedback( _("Probing hard disk controllers") );
-    found_controllers = StorageControllers::Probe () > 0;
-
+	return true;
+    }
+    
+    // --------------------------------------------------------------
     // Don't abort or even warn if no storage controllers can be
     // found.  Disks might be detected even without proper knowledge
     // about the controller.  There's a warning below if no disks were
     // found.
-
-    // give user feedback what's happening
-    showFeedback( _("Loading kernel modules for hard disk controllers") );
-    StorageControllers::Initialize ();
-
+    // --------------------------------------------------------------
+    boolean ActionLoadModules () {
+	StorageControllers::Initialize ();
+	
+	return true;
+    }
+    
     // --------------------------------------------------------------
     //				  Hard disks
     // --------------------------------------------------------------
+    boolean ActionHDDProbe () {
+	map targetMap = StorageDevices::Probe (true);
 
-    // give user feedback what's happening
-    showFeedback( _("Probing hard disks") );
-    map targetMap = StorageDevices::Probe (true);
-    if (size (targetMap) == 0)
-    {
-	if (found_controllers)
-	{
-	    // error report
-	    Report::Error(_("No hard disks were found for the installation.
+	if (size (targetMap) == 0) {
+	    if (found_controllers) {
+		// error report
+		Report::Error(_("No hard disks were found for the installation.
 Please check your hardware!
 "));
-	}
-	else
-	{
-	    // error report
-	    Report::Error(_("No hard disks and no hard disk controllers were
+	    } else {
+		// error report
+		Report::Error(_("No hard disks and no hard disk controllers were
 found for the installation.
 Check your hardware.
 "));
-	}
+	    }
 
-	clearFeedback();
-	return `cancel;
+	    return false;
+	}
+	
+	return true;
     }
 
-    clearFeedback();
-    return `next;
+    // <-- Function definitions
+
+    list <string> actions_todo      = [];
+    list <string> actions_doing     = [];
+    list          actions_functions = [];
+
+    if (!(Arch::s390 () || Arch::board_iseries ())) {
+	actions_todo = add (actions_todo, _("Probe USB devices"));
+	actions_doing = add (actions_doing, _("Probing USB devices..."));
+	actions_functions = add (actions_functions, ActionUSB);
+	
+	actions_todo = add (actions_todo, _("Probe FireWire devices"));
+	actions_doing = add (actions_doing, _("Probing FireWire devices..."));
+	actions_functions = add (actions_functions, ActionFireWire);
+
+	actions_todo = add (actions_todo, _("Probe floppy disks devices"));
+	actions_doing = add (actions_doing, _("Probing floppy disks devices..."));
+	actions_functions = add (actions_functions, ActionFloppyDisks);
+    }
+
+    actions_todo = add (actions_todo, _("Probe hard disk controllers"));
+    actions_doing = add (actions_doing, _("Probing hard disk controllers..."));
+    actions_functions = add (actions_functions, ActionHHDControllers);
+
+    actions_todo = add (actions_todo, _("Load kernel modules for hard disk controllers"));
+    actions_doing = add (actions_doing, _("Loading kernel modules for hard disk controllers..."));
+    actions_functions = add (actions_functions, ActionLoadModules);
+
+    actions_todo = add (actions_todo, _("Probe hard disks"));
+    actions_doing = add (actions_doing, _("Probing hard disks"));
+    actions_functions = add (actions_functions, ActionHDDProbe);
+
+    // Dialog definition -->
+
+    symbol script_return = `next;
+
+    Wizard::CreateDialog ();
+    Wizard::SetTitleIcon ("yast-controller");
+
+    Progress::New (
+	_("Hardware Probing"),
+	" ",
+	size (actions_todo),
+	actions_todo,
+	actions_doing,
+	_("Please wait while computer hardware is being probed...")
+    );
+
+    // <-- Dialog definition
+
+    foreach (any run_function, actions_functions, {
+	Progress::NextStage();
+
+	y2milestone ("Running function: %1", run_function);
+
+	boolean () run_this = (boolean()) (run_function);
+	boolean ret = run_this();
+
+	y2milestone ("Function %1 returned %2", run_function, ret);
+
+	// Failed
+	if (ret != true) {
+	    script_return = `cancel;
+	    break;
+	}
+    });
+    
+    Progress::NextStage();
+    sleep (5000);
+    
+    Wizard::CloseDialog();
+
+    return script_return;
 }
