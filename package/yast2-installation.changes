@@ -6,6 +6,8 @@ Thu Apr  5 13:34:48 CEST 2007 - locilka@suse.cz
 - Adjusted RPM dependencies
 - Unified inst_startup UI to use the Progress library instead of
   sequence of busy pop-ups.
+- Unified inst_system_analysis UI to use the Progress library
+  instead of empty dialog.
 
 -------------------------------------------------------------------
 Wed Apr  4 10:35:55 CEST 2007 - locilka@suse.cz

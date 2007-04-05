@@ -196,7 +196,7 @@ Check your hardware.
 	}
     });
     
-    Progress::NextStage();
+    Progress::Finish();
     
     Wizard::CloseDialog();
 
