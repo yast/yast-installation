@@ -97,12 +97,12 @@
 
 	if (size (targetMap) == 0) {
 	    if (found_controllers) {
-		// error report
+		// pop-up error report
 		Report::Error(_("No hard disks were found for the installation.
 Please check your hardware!
 "));
 	    } else {
-		// error report
+		// pop-up error report
 		Report::Error(_("No hard disks and no hard disk controllers were
 found for the installation.
 Check your hardware.
@@ -122,28 +122,40 @@ Check your hardware.
     list          actions_functions = [];
 
     if (!(Arch::s390 () || Arch::board_iseries ())) {
+	// TRANSLATORS: progress step
 	actions_todo = add (actions_todo, _("Probe USB devices"));
+	// TRANSLATORS: progress step
 	actions_doing = add (actions_doing, _("Probing USB devices..."));
 	actions_functions = add (actions_functions, ActionUSB);
-	
+
+	// TRANSLATORS: progress step
 	actions_todo = add (actions_todo, _("Probe FireWire devices"));
+	// TRANSLATORS: progress step
 	actions_doing = add (actions_doing, _("Probing FireWire devices..."));
 	actions_functions = add (actions_functions, ActionFireWire);
 
+	// TRANSLATORS: progress step
 	actions_todo = add (actions_todo, _("Probe floppy disks devices"));
+	// TRANSLATORS: progress step
 	actions_doing = add (actions_doing, _("Probing floppy disks devices..."));
 	actions_functions = add (actions_functions, ActionFloppyDisks);
     }
 
+    // TRANSLATORS: progress step
     actions_todo = add (actions_todo, _("Probe hard disk controllers"));
+    // TRANSLATORS: progress step
     actions_doing = add (actions_doing, _("Probing hard disk controllers..."));
     actions_functions = add (actions_functions, ActionHHDControllers);
 
+    // TRANSLATORS: progress step
     actions_todo = add (actions_todo, _("Load kernel modules for hard disk controllers"));
+    // TRANSLATORS: progress step
     actions_doing = add (actions_doing, _("Loading kernel modules for hard disk controllers..."));
     actions_functions = add (actions_functions, ActionLoadModules);
 
+    // TRANSLATORS: progress step
     actions_todo = add (actions_todo, _("Probe hard disks"));
+    // TRANSLATORS: progress step
     actions_doing = add (actions_doing, _("Probing hard disks"));
     actions_functions = add (actions_functions, ActionHDDProbe);
 
@@ -155,11 +167,13 @@ Check your hardware.
     Wizard::SetTitleIcon ("yast-controller");
 
     Progress::New (
+	// TRANSLATORS: dialog caption
 	_("Hardware Probing"),
 	" ",
 	size (actions_todo),
 	actions_todo,
 	actions_doing,
+	// TRANSLATORS: dialog help
 	_("Please wait while computer hardware is being probed...")
     );
 
