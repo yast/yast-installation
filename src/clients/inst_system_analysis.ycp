@@ -29,6 +29,7 @@ import "Stage";
 import "Storage";
 import "Update";
 import "Wizard";
+import "Progress";
 
 include "installation/misc.ycp";
 include "packager/storage_include.ycp";
@@ -222,22 +223,48 @@ if (! Installation::probing_done)
     }
 }
 
-// FIXME copy-paste from inst_mode
+Progress::New (
+    // TRANSLATORS: dialog caption
+    _("System Probing"),
+    " ",
+    2,
+    [
+	// TRANSLATORS: progress step
+	_("Evaluate update"),
+	// TRANSLATORS: progress step
+	_("Search for Linux partitions")
+    ],
+    [
+	// TRANSLATORS: progress step
+	_("Evaluating update..."),
+	// TRANSLATORS: progress step
+	_("Searching for Linux partitions...")
+    ],
+    // TRANSLATORS: dialog help
+    _("Please wait while installed systems are being probed...")
+);
+Wizard::SetTitleIcon ("yast-software");
+
+Progress::NextStage ();
+y2milestone ("Step: Evaluate update");
+
     boolean offer_update = false;
     y2milestone ("Product flags: %1", Product::flags);
-    if (contains (Product::flags, "update") || Kernel::GetSuSEUpdate ())
-    {
+    if (contains (Product::flags, "update") || Kernel::GetSuSEUpdate ()) {
 	offer_update = true;
     }
 
-// FIXME copy-paste from inst_mode
+Progress::NextStage ();
+y2milestone ("Step: Has Linux partitions");
+
     boolean have_linux = false;
-    if (Storage::HaveLinuxPartitions ())
-    {
+    if (Storage::HaveLinuxPartitions ()) {
 	have_linux = true;
     }
 
 y2milestone ("Have Linux: %1, Offer Update: %2", have_linux, offer_update);
+
+Progress::Finish ();
 
 boolean other_options_disabled = false;
 if (! (have_linux && offer_update))
