@@ -6,8 +6,8 @@ BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-ske
 BuildRequires:	yast2 >= 2.15.22
 
 Requires:       autoyast2-installation
-# WorkflowManager module
-Requires:	yast2 >= 2.15.22
+# WorkflowManager module, Installation::reboot_net_settings
+Requires:	yast2 >= 2.15.25
 # Required in in the first stage, after
 # switching to the installed system, bugzilla #249679
 Requires:	yast2-bootloader

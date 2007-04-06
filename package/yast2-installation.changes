@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Fri Apr  6 16:48:58 CEST 2007 - locilka@suse.cz
+
+- In case of reboot during installation, network services status
+  is stored to a reboot_network_settings file and their status
+  is restored again when starting the installation after reboot.
+  Restoring the status uses Progress library for user feedback
+  (#258742).
+- Adjusted RPM dependencies.
+- 2.15.18
+
+-------------------------------------------------------------------
 Thu Apr  5 13:34:48 CEST 2007 - locilka@suse.cz
 
 - Using function PackagesUI::ConfirmLicenses() instead of

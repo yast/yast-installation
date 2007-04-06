@@ -56,6 +56,13 @@
 
     UpdateWizardSteps ();
 
+    // Adjusts network services to the state in which they were
+    // before rebooting the installation (e.g., inst_you)
+    // bugzilla #258742
+    InitNetworkServices();
+    // Set "Initializing..." UI again
+    SetInitializingUI();
+
     // Second stage
     SetLanguageAndEncoding();
     retranslateWizardDialog();
@@ -113,6 +120,11 @@
 	// tell linuxrc that we aborted
 	Linuxrc::WriteYaSTInf($["Aborted" : "1"]);
     }
+    
+    // Store network services to the state in which they are
+    // before rebooting the installation (e.g., inst_you)
+    // bugzilla #258742
+    StoreNetworkServices (ret);
 
     // when the installation is not aborted or YaST is not restarted on purpose
     // ret == `next -> (ret != `reboot && ret != `restart_yast && ret != `restart_same_step && ret != `abort)
