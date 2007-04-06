@@ -19,10 +19,9 @@
     import "Report";
     import "Installation";
     import "Stage";
+    import "Mode";
 
-    void CreateUI () {
-        Wizard::OpenNextBackStepsDialog();
-
+    void SetInitializingUI () {
         Wizard::SetContents(
             // dialog caption
             _("Initializing..."),
@@ -33,6 +32,11 @@
             false, false
         );
         Wizard::SetTitleIcon("yast-inst-mode");
+    }
+
+    void CreateUI () {
+        Wizard::OpenNextBackStepsDialog();
+	SetInitializingUI ();
     }
 
     void FinishInstallation () {

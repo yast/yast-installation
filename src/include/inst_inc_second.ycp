@@ -21,6 +21,125 @@
     import "ProductControl";
     import "Console";
     import "Keyboard";
+    import "Service";
+    import "Progress";
+    import "Wizard";
+
+    // The order of services is important
+    // especially for starting them
+    list <string> inst_network_services = ["network", "portmap", "SuSEfirewall2_setup"];
+
+    /**
+     * Stores the current status of network services into
+     * Installation::reboot_net_settings file
+     *
+     * @param symbol ret containing either `reboot or anything else
+     * @see inst_network_services for list of network services
+     */
+    void StoreNetworkServices (symbol ret) {
+	// Store the current status of services
+	// bugzilla #258742
+	if (ret == `reboot) {
+	    map <string, boolean> network_settings = $[];
+	    foreach (string one_service, inst_network_services, {
+		network_settings[one_service] = (Service::Status (one_service) == 0);
+	    });
+	    y2milestone ("Storing services status: %1 into %2",
+		network_settings, Installation::reboot_net_settings
+	    );
+	    SCR::Write (.target.ycp, Installation::reboot_net_settings, network_settings);
+	} else {
+	    if (FileUtils::Exists (Installation::reboot_net_settings))
+		SCR::Execute (.target.remove, Installation::reboot_net_settings);
+	}
+    }
+
+    void InitNetworkServices () {
+	y2milestone ("Initializing network services...");
+
+	// no settings stored
+	if (! FileUtils::Exists (Installation::reboot_net_settings)) {
+	    y2milestone ("File %1 doesn't exist, skipping InitNetworkServices",
+		Installation::reboot_net_settings
+	    );
+	    return;
+	}
+
+	map <string, boolean> network_settings =
+	    (map <string, boolean>) SCR::Read (.target.ycp, Installation::reboot_net_settings);
+	y2milestone ("Adjusting services: %1", network_settings);
+
+	// wrong syntax, wrong settings
+	if (network_settings == nil) {
+	    y2error ("Cannot read stored network services %1",
+		SCR::Read (.target.string, Installation::reboot_net_settings)
+	    );
+	    return;
+	}
+
+	list <string> start_service = [];
+	list <string> starting_service = [];
+
+	// leave just services to be enabled
+	// that are not running yet and that also exist
+	network_settings = filter (string one_service, boolean new_status, network_settings, {
+	    if (new_status != true) {
+		y2milestone ("Service %1 needn't be started", one_service);
+		return false;
+	    }
+
+	    integer service_status = Service::Status (one_service);
+
+	    // 0 means running
+	    if (service_status == 0) {
+		y2milestone ("Service %1 is already running", one_service);
+		return false;
+	    }
+
+	    // -1 means unknown (which might be correct, package needn't be installed)
+	    if (service_status == -1) {
+		y2warning ("Service %1 is unknown", one_service);
+		return false;
+	    }
+
+	    // TRANSLATORS: progress stage, %1 stands for service name
+	    start_service = add (start_service, sformat(_("Start service %1"), one_service));
+	    // TRANSLATORS: progress stage, %1 stands for service name
+	    starting_service = add (starting_service, sformat (_("Starting service %1..."), one_service));
+
+	    return true;
+	});
+
+	if (size (network_settings) == 0 || network_settings == nil) {
+	    y2milestone ("Nothing to adjust, leaving... %1", network_settings);
+	    return;
+	}
+
+	Progress::New (
+	    // TRANSLATORS: dialog caption
+	    _("Adjusting Network Settings"),
+	    " ",
+	    size (network_settings),
+	    start_service,
+	    starting_service,
+	    // TRANSLATORS: dialog help
+	    _("Please wait while network settings are being adjusted...")
+	);
+	Wizard::SetTitleIcon ("yast-network");
+	
+	Progress::NextStage ();
+
+	// Adjusting services
+	foreach (string one_service, boolean new_status, network_settings, {
+	    boolean ret = Service::Start (one_service);
+	    y2milestone ("Starting service %1 returned %2", one_service, ret);
+
+	    Progress::NextStage ();
+	});
+	
+	Progress::Finish ();
+	y2milestone ("All network services have been adjusted");
+    }
 
     void SetUpdateLanguage () {
         string var_file = Directory::vardir + "/language.ycp";
@@ -202,7 +321,7 @@ Note: You may have to enter some information again.");
             SCR::Execute (.target.bash, sformat (
                 "touch %1", Installation::restart_file));
         }
-        
+
         return ret;
     }
 
