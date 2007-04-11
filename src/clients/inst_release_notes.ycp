@@ -21,6 +21,7 @@
     import "Language";
     import "Mode";
     import "FileUtils";
+    import "Label";
 
     map argmap = GetInstArgs::argmap();
 
@@ -185,10 +186,23 @@
 Linux system. They provide a brief summary of new features and changes.</p>");
 
     // in normal mode no BackAbortNext-button layout
-    if (Mode::normal()) Wizard::OpenAcceptDialog();
+    // bugzilla #262440
+    if (Mode::normal()) {
+	Wizard::OpenNextBackDialog();
+	Wizard::HideBackButton();
+	Wizard::DisableAbortButton();
+	Wizard::SetNextButton(`next, Label::CloseButton());
+	Wizard::EnableNextButton();
 
-    Wizard::SetContents (caption, contents, help, GetInstArgs::enable_back(),
-           GetInstArgs::enable_next());
+	Wizard::SetContents (caption, contents, help,
+	    false, true);
+
+    // installation
+    } else {
+	Wizard::SetContents (caption, contents, help,
+	    GetInstArgs::enable_back(), GetInstArgs::enable_next());
+    }
+
     Wizard::SetTitleIcon("yast-release-notes");
 
     // Default settings

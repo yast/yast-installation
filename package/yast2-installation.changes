@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Apr 11 10:21:24 CEST 2007 - locilka@suse.cz
+
+- Release Notes dialog is using a [Close] button if not running in
+  installation (#262440).
+
+-------------------------------------------------------------------
 Fri Apr  6 16:48:58 CEST 2007 - locilka@suse.cz
 
 - In case of reboot during installation, network services status
