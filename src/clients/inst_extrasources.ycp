@@ -5,9 +5,10 @@
  * Authors:	Ladislav Slezák <lslezak@suse.cz>
  *
  * Assumptions:
- * - the sources have been initialized
+ * - the sources and target must be initialized in this script
+ *   (bugzilla #263289)
  * - the sources will be saved afterwards
- * (this means that running this client alone will not work)
+ *   (which means that running this client alone will not work)
  *
  * $Id$
  */
@@ -23,6 +24,8 @@ import "Label";
 import "Mode";
 import "String";
 import "Internet";
+import "PackageLock";
+import "Installation";
 
 // editUrl()
 include "packager/inst_source_dialogs.ycp";
@@ -286,10 +289,10 @@ define list<integer> RegisterSources(list<string> url_list)
 
 list<string> RegisteredUrls()
 {
-    list<string> ret = [];
     // get all registered installation sources
-    list<integer> srcs = Pkg::SourceGetCurrent(false);
+    list <integer> srcs = Pkg::SourceGetCurrent (false);
 
+    list<string> ret = [];
     foreach(integer src, srcs,
 	{
 	    map general = Pkg::SourceGeneralData(src);
@@ -310,6 +313,19 @@ list<string> RegisteredUrls()
 
     return ret;
 }
+
+// Initialize the package manager
+// needed for registered sources and products
+boolean InitializePackager () {
+    if (!PackageLock::Check()) return false;
+
+    // to find out which sources have been already registered
+    Pkg::SourceStartManager (false);
+
+    // to initialize target because of installed products
+    return (Pkg::TargetInit ("/", false) == true);
+}
+
 
 //////////////////////////////////////////
 
@@ -335,7 +351,13 @@ if (!Internet::Connected())
     return `auto;
 }
 
-list<string> already_registered = RegisteredUrls();
+// bugzilla #263289
+if (! InitializePackager()) {
+    y2error ("Cannot connect to the Packager");
+    return `auto;
+}
+
+list <string> already_registered = RegisteredUrls();
 
 // $[ string url : boolean default ]
 map<string,boolean> register_url = GetExtraURLs(already_registered);

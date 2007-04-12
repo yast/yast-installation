@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Apr 12 11:57:03 CEST 2007 - locilka@suse.cz
+
+- Initialize the target and sources before adding extra sources.
+  They needn't be initialized after YaST is restarted during the
+  online update (#263289).
+
+-------------------------------------------------------------------
 Wed Apr 11 10:21:24 CEST 2007 - locilka@suse.cz
 
 - Release Notes dialog is using a [Close] button if not running in
