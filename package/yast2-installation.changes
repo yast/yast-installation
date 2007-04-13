@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Apr 13 09:45:10 CEST 2007 - locilka@suse.cz
+
+- Replacing networkmanager_proposal with general_proposal (network)
+  that includes also IPv6 settings (#263337, #260261).
+
+-------------------------------------------------------------------
 Thu Apr 12 11:57:03 CEST 2007 - locilka@suse.cz
 
 - Initialize the target and sources before adding extra sources.
