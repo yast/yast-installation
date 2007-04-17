@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Apr 17 11:11:37 CEST 2007 - locilka@suse.cz
+
+- Fixed Add-On template to use generic 'control' textdomain
+- 2.15.19
+
+-------------------------------------------------------------------
 Fri Apr 13 09:45:10 CEST 2007 - locilka@suse.cz
 
 - Replacing networkmanager_proposal with general_proposal (network)
