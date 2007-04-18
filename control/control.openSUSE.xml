@@ -531,20 +531,14 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <module>
                     <label>Online Update</label>
                     <name>suse_register</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                 </module>
                 <module>
                     <label>Online Update</label>
                     <name>ask_online_update</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                 </module>
                 <module>
 	            <label>Online Update</label>
                     <name>you</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                 </module>
 		<module>
 		    <label>Online Update</label>
@@ -557,13 +551,9 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <module>
 	            <label>Release Notes</label>
                     <name>release_notes</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                 </module>
                 <module>
                     <name>congratulate</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                 </module>
             </modules>
         </workflow>
@@ -576,28 +566,38 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <archs>all</archs>
             </defaults>
             <modules  config:type="list">
-                <module>
-	            <label>Perform Installation</label>
-                    <name>netsetup</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>netprobe</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>rpmcopy</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
 		<module>
 		    <heading>yes</heading>
 		    <label>Configuration</label>
 		</module>
                 <module>
-	            <label>Root Password</label>
+	            <label>Superuser Password</label>
                     <name>root</name>
-		    <enable_back>no</enable_back>
+                    <enable_back>no</enable_back>
+                </module>
+                <module>
+	            <label>Check Installation</label>
+                    <name>initialization</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
+                </module>
+                <module>
+	            <label>Check Installation</label>
+                    <name>netsetup</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
+                </module>
+                <module>
+	            <label>Check Installation</label>
+                    <name>netprobe</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
+                </module>
+                <module>
+	            <label>Check Installation</label>
+                    <name>rpmcopy</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
                 </module>
                 <module>
 	            <label>Hostname</label>
@@ -627,14 +627,10 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <module>
                     <label>Online Update</label>
                     <name>suse_register</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                 </module>
                 <module>
                     <label>Online Update</label>
                     <name>ask_online_update</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                 </module>
                 <module>
 	            <label>Online Update</label>
