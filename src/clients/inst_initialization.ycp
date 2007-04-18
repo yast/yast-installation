@@ -1,0 +1,44 @@
+/**
+ * File:	clients/inst_initialize.ycp
+ * Package:	Installation (Second Stage)
+ * Summary:	Installation mode selection, initialize installation system
+ * Authors:	Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id:$
+ *
+ */
+
+{
+
+// This client should be called in the secong stage installation
+// before netprobe, netsetup ...
+// At least to create UI
+
+textdomain "installation";
+
+import "Wizard";
+
+// TRANSLATORS: dialog help
+string helptext = _("Please wait while the installation is being initialized.");
+
+term content = `VBox (
+    // TRANSLATORS: dialog progress message
+    `Label (_("Initializing the installation..."))
+);
+
+// TRANSLATORS: dialog caption
+string caption = _("Initializing");
+
+Wizard::SetContents (
+    caption,
+    content,
+    helptext,
+    false,
+    false
+);
+Wizard::SetTitleIcon ("yast-software");
+
+return `auto;
+
+/* EOF */
+}

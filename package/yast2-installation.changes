@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Wed Apr 18 09:13:10 CEST 2007 - locilka@suse.cz
+
+- Root password dialog has been moved to be the first dialog of the
+  second stage installation workflow (FATE #301924).
+- Created new 'Check Installation' entry to the 'Configuration'
+  part of the workflow. This section contains setting up network
+  if needed, initializing target if needed, and installing
+  remaining software (needed by FATE #301924).
+- Added new client inst_initialization that creates initialization
+  progress UI instead of blank screen.
+
+-------------------------------------------------------------------
 Tue Apr 17 11:11:37 CEST 2007 - locilka@suse.cz
 
 - Fixed Add-On template to use generic 'control' textdomain

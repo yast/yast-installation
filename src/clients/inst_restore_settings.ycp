@@ -24,7 +24,7 @@ foreach (string service, ["network"], {
     if (Service::Enabled (service) && Service::Status (service) != 0)
     {
 	// TRANSLATORS: busy message
-	UI::OpenDialog (`Label(_("Starting network services..."), service));
+	UI::OpenDialog (`Label (sformat (_("Starting service %1..."), service)));
 
 	// This might take a lot of time if case of DHCP, for instance
 	Service::RunInitScriptWithTimeOut (service, "start");

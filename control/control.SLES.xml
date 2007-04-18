@@ -735,28 +735,38 @@ Please visit us at http://www.novell.com/linux/.
                 <archs>all</archs>
             </defaults>
             <modules  config:type="list">
-                <module>
-	            <label>Perform Installation</label>
-                    <name>netsetup</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>netprobe</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>rpmcopy</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
 		<module>
 		    <heading>yes</heading>
 		    <label>Configuration</label>
 		</module>
                 <module>
-	            <label>Root Password</label>
+	            <label>Superuser Password</label>
                     <name>root</name>
-		    <enable_back>no</enable_back>
+                    <enable_back>no</enable_back>
+                </module>
+                <module>
+	            <label>Check Installation</label>
+                    <name>initialization</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
+                </module>
+                <module>
+	            <label>Check Installation</label>
+                    <name>netsetup</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
+                </module>
+                <module>
+	            <label>Check Installation</label>
+                    <name>netprobe</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
+                </module>
+                <module>
+	            <label>Check Installation</label>
+                    <name>rpmcopy</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
                 </module>
                 <module>
 	            <label>Hostname</label>
