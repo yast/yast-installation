@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon May  7 13:43:54 CEST 2007 - ms@suse.de
+
+- don't clobber existing /root/.vnc/passwd file (#271734)
+
+-------------------------------------------------------------------
 Wed Apr 18 09:13:10 CEST 2007 - locilka@suse.cz
 
 - Root password dialog has been moved to be the first dialog of the

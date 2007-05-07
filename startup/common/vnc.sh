@@ -26,11 +26,11 @@ function setupVNCAuthentication () {
 #
 	VNCPASS_EXCEPTION=0
 	VNCPASS=$Xbindir/vncpasswd.arg
-	if [ ! -e /root/.vnc/passwd ]; then
+	if [ ! -e /root/.vnc/passwd.yast ]; then
 		rm -rf /root/.vnc && mkdir -p /root/.vnc
-		$VNCPASS /root/.vnc/passwd "$VNCPassword"
+		$VNCPASS /root/.vnc/passwd.yast "$VNCPassword"
 		if [ $? = 0 ];then
-			chmod 600 /root/.vnc/passwd
+			chmod 600 /root/.vnc/passwd.yast
 		else
 			log "\tcouldn't create VNC password file..."
 			VNCPASS_EXCEPTION=1
@@ -80,7 +80,7 @@ function startVNCServer () {
 	# Start Xvnc...
 	#------------------------------------------
 	$Xbindir/Xvnc $Xvncparam :0 \
-		-rfbauth /root/.vnc/passwd \
+		-rfbauth /root/.vnc/passwd.yast \
 		-desktop "Installation at: $VNC_HOSTNAME" \
 		-geometry 800x600 \
 		-depth 16 \
