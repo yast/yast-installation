@@ -14,7 +14,7 @@ fi
 if [ ! -z "$VNC" ] && [ "$VNC" -eq 1 ] ; then
 	log "\tkill all VNC sessions..."
 	killall Xvnc &>/dev/null
-	rm -fv /root/.vnc/passwd
+	rm -fv /root/.vnc/passwd.yast
 fi
 # 13.3) stop network and sshd
 if test ! -z "$Y2_NETWORK_ACTIVE" ; then
