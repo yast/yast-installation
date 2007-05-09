@@ -3,7 +3,8 @@
  * Module:	Installation
  * Summary:	Display release notes
  * Authors:	Arvin Schnell <arvin@suse.de>
- *          Jens Daniel Schmidt <jdsn@suse.de>
+ *		Lukas Ocilka <locilka@suse.de>
+ *		Jens Daniel Schmidt <jdsn@suse.de>
  *
  * Display release notes.
  *
@@ -22,8 +23,20 @@
     import "Mode";
     import "FileUtils";
     import "Label";
+    import "CommandLine";
+    import "Mode";
 
     map argmap = GetInstArgs::argmap();
+
+    // Bugzilla #269914, CommanLine "support"
+    // argmap is only a map, CommandLine uses string parameters
+    if (size (argmap) == 0 && size (WFM::Args()) > 0) {
+	Mode::SetUI ("commandline");
+	y2milestone ("Mode CommandLine not supported, exiting...");
+	// TRANSLATORS: error message - the module does not provide command line interface
+	CommandLine::Print(_("There is no user interface available for this module."));
+	return `auto;
+    }
 
     integer minwidtprodsel = 0;
     list<string> relnotesproducts = [];
@@ -284,5 +297,5 @@ Linux system. They provide a brief summary of new features and changes.</p>");
     } until ( ret == `next || ret == `back );
     if (Mode::normal()) Wizard::CloseDialog();
 
-    return ret;
+    return (symbol) ret;
 }
