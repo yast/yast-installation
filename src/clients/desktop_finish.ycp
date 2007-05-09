@@ -21,6 +21,7 @@ import "Directory";
 import "Mode";
 import "ProductFeatures";
 import "FileUtils";
+import "String";
 
 any ret = nil;
 string func = "";
@@ -192,7 +193,8 @@ else if (func == "Write")
 	if (! FileUtils::Exists (dpmng_file) && FileUtils::Exists ("/usr/bin/touch")) {
 	    y2milestone ("Creating file %1: %2",
 		dpmng_file,
-		SCR::Execute (.target.bash, sformat ("/usr/bin/touch '%1'", dpmng_file))
+		SCR::Execute (.target.bash, sformat ("/usr/bin/touch '%1'",
+		    String::Quote (dpmng_file)))
 	    );
 	}
 
