@@ -27,10 +27,12 @@ textdomain="control"
 	<manual_online_update config:type="boolean">true</manual_online_update>
 	<root_password_ca_check config:type="boolean">false</root_password_ca_check>
     </globals>
+
     <software>
         <delete_old_packages config:type="boolean">true</delete_old_packages>
         <selection_type config:type="symbol">auto</selection_type>
     </software>
+
     <partitioning>
         <evms_config config:type="boolean">true</evms_config>
         <try_separate_home config:type="boolean">true</try_separate_home>
@@ -44,11 +46,13 @@ textdomain="control"
 	<vm_home_max_size>25G</vm_home_max_size>
 	<boot_evms>false</boot_evms>
     </partitioning>
+
     <network>
         <force_static_ip config:type="boolean">false</force_static_ip>
         <network_manager>laptop</network_manager>
 	<startmode>ifplugd</startmode>
     </network>
+
     <clone_modules config:type="list">
 	<clone_module>language</clone_module>
 	<clone_module>keyboard</clone_module>
@@ -66,6 +70,7 @@ textdomain="control"
 	<clone_module>printer</clone_module>
 	<clone_module>add-on</clone_module>
     </clone_modules>
+
     <texts>
       <congratulate>
 	<label>
@@ -121,6 +126,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </proposal_tab>
             </proposal_tabs>
         </proposal>
+
         <proposal>
             <label>Update Settings</label>
             <mode>update</mode>
@@ -154,6 +160,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <proposal_module>keyboard</proposal_module>
             </proposal_modules>
         </proposal>
+
         <proposal>
             <label>Network Configuration</label>
             <name>network</name>
@@ -194,6 +201,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		</proposal_module>
             </proposal_modules>
         </proposal>
+
         <proposal>
             <label>Hardware Configuration</label>
             <name>hardware</name>
@@ -209,10 +217,13 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
         </proposal>
     </proposals>
 
+    <!-- Stage: Initial, Mode: Installation -->
     <workflows config:type="list">
         <workflow>
             <defaults>
                 <archs>all</archs>
+		<enable_back>yes</enable_back>
+		<enable_next>yes</enable_next>
             </defaults>
 	    <label>Preparation</label>
             <mode>installation</mode>
@@ -231,38 +242,28 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <module>
 	            <label>Language</label>
                     <name>checkmedia</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                 </module>
                 <module>
 	            <label>License Agreement</label>
                     <name>license</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                 </module>
 		<module>
 	            <label>Disk Activation</label>
                     <name>disks_activate</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
 		</module>
                 <module>
 	            <label>System Analysis</label>
                     <name>system_analysis</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                 </module>
+		<!-- Here, user selects whether to perform New Installation or Upgrade -->
 		<module>
 		    <label>Add-On Products</label>
 		    <name>add-on</name>
                     <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
 		</module>
                 <module>
 	            <label>Time Zone</label>
                     <name>timezone</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                     <arguments>
                         <first_run>yes</first_run>
                     </arguments>
@@ -270,8 +271,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <module>
 	            <label>Desktop Selection</label>
                     <name>desktop</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                 </module>
 		<module>
 		    <heading>yes</heading>
@@ -299,16 +298,23 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <module>
 	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
+		    <enable_next>no</enable_next>
+		    <enable_back>no</enable_back>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>finish</name>
+		    <enable_back>no</enable_back>
                 </module>
             </modules>
         </workflow>
+
+	<!-- Stage: Initial, Mode: Update -->
         <workflow>
             <defaults>
                 <archs>all</archs>
+		<enable_back>yes</enable_back>
+		<enable_next>yes</enable_next>
             </defaults>
 	    <label>Preparation</label>
             <mode>update</mode>
@@ -318,7 +324,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <name>language</name>
 	            <label>Language</label>
                     <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
                     <arguments>
                         <first_run>yes</first_run>
                     </arguments>
@@ -327,38 +332,27 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <module>
 	            <label>Language</label>
                     <name>checkmedia</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                 </module>
                 <module>
 	            <label>License Agreement</label>
                     <name>license</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                 </module>
 		<module>
 	            <label>Disk Activation</label>
                     <name>disks_activate</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
 		</module>
                 <module>
 	            <label>System Analysis</label>
                     <name>system_analysis</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                 </module>
                 <module>
 	            <label>System for Update</label>
                     <name>update_partition</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                 </module>
 		<module>
 		    <label>Add-On Products</label>
 		    <name>add-on</name>
                     <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
 		</module>
 		<module>
 		    <heading>yes</heading>
@@ -386,10 +380,13 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <module>
 	            <label>Perform Update</label>
                     <name>rpmcopy</name>
+		    <enable_back>no</enable_back>
+		    <enable_next>no</enable_next>
                 </module>
                 <module>
 	            <label>Perform Update</label>
                     <name>finish</name>
+		    <enable_back>no</enable_back>
                 </module>
             </modules>
         </workflow>
@@ -411,9 +408,13 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
             </modules>
         </workflow>
+
+	<!-- Stage: Initial, Mode: ScreeShot -->
         <workflow>
             <defaults>
                 <archs>all</archs>
+		<enable_back>yes</enable_back>
+		<enable_next>yes</enable_next>
             </defaults>
             <stage>initial</stage>
 	    <label>Base Installation</label>
@@ -448,12 +449,18 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <module>
 	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
+		    <enable_back>no</enable_back>
+		    <enable_next>yes</enable_next>
                 </module>
             </modules>
         </workflow>
+
+	<!-- Stage: Initial, Mode: Demo -->
         <workflow>
             <defaults>
                 <archs>all</archs>
+		<enable_back>yes</enable_back>
+		<enable_next>yes</enable_next>
             </defaults>
             <stage>initial</stage>
 	    <label>Base Installation</label>
@@ -461,7 +468,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             <modules  config:type="list">
                 <module>
                     <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
 	            <label>Language</label>
                     <name>language</name>
                     <retranslate config:type="boolean">true</retranslate>
@@ -488,25 +494,33 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <module>
 	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
+		    <enable_back>no</enable_back>
+		    <enable_next>no</enable_next>
                 </module>
             </modules>
         </workflow>
+
+	<!-- Stage: Continue, Mode: Update -->
         <workflow>
             <stage>continue</stage>
             <mode>update</mode>
             <defaults>
                 <archs>all</archs>
-                <enable_back>no</enable_back>
-                <enable_next>no</enable_next>
+                <enable_back>yes</enable_back>
+                <enable_next>yes</enable_next>
             </defaults>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
 	            <label>Perform Update</label>
                     <name>netsetup</name>
+		    <enable_back>no</enable_back>
+		    <enable_next>no</enable_next>
                 </module>
                 <module>
 	            <label>Perform Update</label>
                     <name>rpmcopy</name>
+		    <enable_back>no</enable_back>
+		    <enable_next>no</enable_next>
                 </module>
 		<module>
 		    <heading>yes</heading>
@@ -515,14 +529,11 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <module>
 	            <label>Network</label>
                     <name>ask_net_test</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
+		    <enable_back>no</enable_back>
                 </module>
                 <module>
 	            <label>Network</label>
                     <name>do_net_test</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
                 </module>
                 <module>
                     <label>Online Update</label>
@@ -557,6 +568,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
             </modules>
         </workflow>
+
+	<!-- Stage: Continue, Mode: Installation -->
         <workflow>
             <stage>continue</stage>
             <mode>installation</mode>
@@ -677,6 +690,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
             </modules>
         </workflow>
+
+	<!-- Stage: Initial, Mode: AutoInstallation -->
         <workflow>
             <stage>initial</stage>
             <label>Base Installation</label>
@@ -726,6 +741,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
             </modules>
         </workflow>
+
+	<!-- Stage: Continue, Mode: AutoInstallation -->
         <workflow>
             <defaults>
                 <archs>all</archs>

@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Thu May 10 17:16:49 CEST 2007 - locilka@suse.cz
+
+- Merged hardware probing (inst_startup) and system probing
+  (inst_system_analysis) into one script to have only one progress
+  dialog instead of two (#271291).
+- openSUSE control file clean-up: The default value for enable_next
+  and enable_back is 'yes'. Only few steps do not allow to go back
+  (#270893).
+- 2.15.22
+
+-------------------------------------------------------------------
 Wed May  9 10:25:37 CEST 2007 - locilka@suse.cz
 
 - Safe qouting of bash command in desktop_finish.
