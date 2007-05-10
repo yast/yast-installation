@@ -14,29 +14,141 @@
 textdomain "installation";
 
 import "AddOnProduct";
+import "Arch";
 import "GetInstArgs";
+import "Hotplug";
 import "Installation";
 import "Kernel";
 import "Label";
 import "Linuxrc";
 import "Mode";
+import "PackageCallbacksInit";
 import "Packages";
 import "Popup";
-import "PackageCallbacksInit";
 import "Product";
 import "ProductControl";
+import "Progress";
+import "Report";
 import "RootPart";
 import "Stage";
 import "Storage";
+import "StorageControllers";
+import "StorageDevices";
 import "Update";
 import "Wizard";
-import "Progress";
 
 include "installation/misc.ycp";
 include "packager/storage_include.ycp";
 
 string start_mode = Mode::mode ();
 
+    // Function definitions -->
+
+    // --------------------------------------------------------------
+    //				      USB
+    // --------------------------------------------------------------
+    boolean ActionUSB () {
+	Hotplug::StartUSB ();
+
+	return true;
+    }
+    
+    // --------------------------------------------------------------
+    //				FireWire (ieee1394)
+    // --------------------------------------------------------------
+    boolean ActionFireWire () {
+	Hotplug::StartFireWire ();
+
+	return true;
+    }
+    
+    // --------------------------------------------------------------
+    //				    Floppy
+    // --------------------------------------------------------------
+    boolean ActionFloppyDisks () {
+	StorageDevices::FloppyReady ();
+
+	return true;
+    }
+
+    boolean found_controllers = true;
+    
+    // --------------------------------------------------------------
+    //			     Hard disk controllers
+    // 1. Probe
+    // 2. Initialize (module loading)
+    // --------------------------------------------------------------
+    // In live_eval mode, all modules have been loaded by linuxrc. But
+    // they are loaded by StorageControllers::Initialize(). Well, there
+    // also was another reason for skipping StorageControllers::Probe ()
+    // but nobody seems to remember more.
+    // --------------------------------------------------------------
+    boolean ActionHHDControllers () {
+	found_controllers = (StorageControllers::Probe () > 0);
+
+	return true;
+    }
+    
+    // --------------------------------------------------------------
+    // Don't abort or even warn if no storage controllers can be
+    // found.  Disks might be detected even without proper knowledge
+    // about the controller.  There's a warning below if no disks were
+    // found.
+    // --------------------------------------------------------------
+    boolean ActionLoadModules () {
+	StorageControllers::Initialize ();
+	
+	return true;
+    }
+    
+    // --------------------------------------------------------------
+    //				  Hard disks
+    // --------------------------------------------------------------
+    boolean ActionHDDProbe () {
+	map targetMap = StorageDevices::Probe (true);
+
+	if (size (targetMap) == 0) {
+	    if (found_controllers) {
+		// pop-up error report
+		Report::Error(_("No hard disks were found for the installation.
+Please check your hardware!
+"));
+	    } else {
+		// pop-up error report
+		Report::Error(_("No hard disks and no hard disk controllers were
+found for the installation.
+Check your hardware.
+"));
+	    }
+
+	    return false;
+	}
+	
+	return true;
+    }
+
+    boolean offer_update = false;
+
+    boolean EvaluateUpdatePossibilities () {
+	y2milestone ("Product flags: %1", Product::flags);
+	if (contains (Product::flags, "update") || Kernel::GetSuSEUpdate ()) {
+	    offer_update = true;
+	}
+
+	return true;
+    }
+
+    boolean have_linux = false;
+
+    boolean SearchForLinuxPartitions () {
+	if (Storage::HaveLinuxPartitions ()) {
+	    have_linux = true;
+	}
+	
+	return true;
+    }
+
+    // <-- Function definitions
 
 // FIXME copy-paste from inst_mode
     define symbol handle_boot ()
@@ -98,42 +210,6 @@ string start_mode = Mode::mode ();
 
 	return `finish;
     }
-
-// help text for installation method
-string help_text = _("<p><big><b>Installation Mode</b></big><br>
-Select what to do:</p>");
-
-// help text for installation method
-help_text = help_text + _("<p>
-Select <b>New Installation</b> if there is no existing Linux system on your
-machine or if you want to replace an existing Linux system completely,
-abandoning all its configuration data.
-</p>");
-
-// help text for installation method
-help_text = help_text + _("<p>
-Select <b>Update an Existing System</b> to update a Linux system already
-installed on your machine. This option preserves configuration settings
-from your existing system whenever possible.
-</p>");
-
-// help text for installation method
-help_text = help_text + _("<p>
-To install an add-on product from separate media together with &product;, select
-<b>Include Add-On Products from Separate Media</b>.</p>
-");
-
-// help text for installation method
-help_text = help_text + _("<p>Select <b>Other Options</b> then
-select <b>Repair Installed System</b> if you have a damaged Linux system on
-your hard disk. This option can try to fix problems automatically.
-</p>");
-
-// help text for installation method
-help_text = help_text + _("<p>Select <b>Other Options</b> then
-select <b>Boot Installed System</b> if you have a Linux system on your hard
-disk that will not boot. With this option, try to fix problems manually.
-</p>");
 
 symbol current_expert_mode = `repair;
 
@@ -213,61 +289,100 @@ Wizard::SetTitleIcon ("yast-inst-mode");
 // constructors might depend on it.
 // In autoinst mode, this has been called already.
 
+list <string> actions_todo      = [];
+list <string> actions_doing     = [];
+list          actions_functions = [];
+
 y2milestone ("Probing done: %1", Installation::probing_done);
 if (! Installation::probing_done)
 {
-    if (!Mode::autoinst ())
-    {
-	WFM::CallFunction("inst_startup", []);
+    if (!Mode::autoinst ()) {
+	if (!(Arch::s390 () || Arch::board_iseries ())) {
+	    // TRANSLATORS: progress step
+	    actions_todo = add (actions_todo, _("Probe USB devices"));
+	    // TRANSLATORS: progress step
+	    actions_doing = add (actions_doing, _("Probing USB devices..."));
+	    actions_functions = add (actions_functions, ActionUSB);
+
+	    // TRANSLATORS: progress step
+	    actions_todo = add (actions_todo, _("Probe FireWire devices"));
+	    // TRANSLATORS: progress step
+	    actions_doing = add (actions_doing, _("Probing FireWire devices..."));
+	    actions_functions = add (actions_functions, ActionFireWire);
+
+	    // TRANSLATORS: progress step
+	    actions_todo = add (actions_todo, _("Probe floppy disks devices"));
+	    // TRANSLATORS: progress step
+	    actions_doing = add (actions_doing, _("Probing floppy disks devices..."));
+	    actions_functions = add (actions_functions, ActionFloppyDisks);
+        }
+
+        // TRANSLATORS: progress step
+        actions_todo = add (actions_todo, _("Probe hard disk controllers"));
+        // TRANSLATORS: progress step
+        actions_doing = add (actions_doing, _("Probing hard disk controllers..."));
+        actions_functions = add (actions_functions, ActionHHDControllers);
+
+        // TRANSLATORS: progress step
+        actions_todo = add (actions_todo, _("Load kernel modules for hard disk controllers"));
+        // TRANSLATORS: progress step
+        actions_doing = add (actions_doing, _("Loading kernel modules for hard disk controllers..."));
+        actions_functions = add (actions_functions, ActionLoadModules);
+
+        // TRANSLATORS: progress step
+        actions_todo = add (actions_todo, _("Probe hard disks"));
+        // TRANSLATORS: progress step
+        actions_doing = add (actions_doing, _("Probing hard disks..."));
+	actions_functions = add (actions_functions, ActionHDDProbe);
+
 	WFM::CallFunction("inst_features", []);
 	Installation::probing_done = true;
     }
 }
 
+// TRANSLATORS: progress step
+actions_todo = add (actions_todo, _("Search for Linux partitions"));
+// TRANSLATORS: progress step
+actions_doing = add (actions_doing, _("Searching for Linux partitions..."));
+actions_functions = add (actions_functions, SearchForLinuxPartitions);
+
+// TRANSLATORS: progress step
+actions_todo = add (actions_todo, _("Evaluate update possibility"));
+// TRANSLATORS: progress step
+actions_doing = add (actions_doing, _("Evaluating update possibility..."));
+actions_functions = add (actions_functions, EvaluateUpdatePossibilities);
+
+Wizard::CreateDialog ();
+Wizard::SetTitleIcon ("yast-controller");
+
 Progress::New (
     // TRANSLATORS: dialog caption
     _("System Probing"),
     " ",
-    2,
-    [
-	// TRANSLATORS: progress step
-	_("Evaluate update"),
-	// TRANSLATORS: progress step
-	_("Search for Linux partitions")
-    ],
-    [
-	// TRANSLATORS: progress step
-	_("Evaluating update..."),
-	// TRANSLATORS: progress step
-	_("Searching for Linux partitions...")
-    ],
+    size (actions_todo),
+    actions_todo,
+    actions_doing,
     // TRANSLATORS: dialog help
-    _("Please wait while installed systems are being probed...")
+    _("Please wait while computer hardware and installed systems are being probed...")
 );
-Wizard::SetTitleIcon ("yast-software");
 
-Progress::NextStage ();
-y2milestone ("Step: Evaluate update");
+foreach (any run_function, actions_functions, {
+    Progress::NextStage();
 
-    boolean offer_update = false;
-    y2milestone ("Product flags: %1", Product::flags);
-    if (contains (Product::flags, "update") || Kernel::GetSuSEUpdate ()) {
-	offer_update = true;
-    }
+    y2milestone ("Running function: %1", run_function);
 
-Progress::NextStage ();
-y2milestone ("Step: Has Linux partitions");
+    boolean () run_this = (boolean()) (run_function);
+    boolean ret = run_this();
 
-    boolean have_linux = false;
-    if (Storage::HaveLinuxPartitions ()) {
-	have_linux = true;
-    }
+    y2milestone ("Function %1 returned %2", run_function, ret);
+});
+    
+Progress::Finish();
 
 y2milestone ("Have Linux: %1, Offer Update: %2", have_linux, offer_update);
 
-Progress::Finish ();
-
 boolean other_options_disabled = false;
+
 if (! (have_linux && offer_update))
 {
     // to offer add-on products
@@ -284,6 +399,42 @@ if (Mode::autoinst ()) {
     y2milestone ("Autoinst -> returning `auto");
     return `auto;
 }
+
+// help text for installation method
+string help_text = _("<p><big><b>Installation Mode</b></big><br>
+Select what to do:</p>") +
+
+// help text for installation method
+_("<p>
+Select <b>New Installation</b> if there is no existing Linux system on your
+machine or if you want to replace an existing Linux system completely,
+abandoning all its configuration data.
+</p>") +
+
+// help text for installation method
+_("<p>
+Select <b>Update an Existing System</b> to update a Linux system already
+installed on your machine. This option preserves configuration settings
+from your existing system whenever possible.
+</p>") +
+
+// help text for installation method
+_("<p>
+To install an add-on product from separate media together with &product;, select
+<b>Include Add-On Products from Separate Media</b>.</p>
+") +
+
+// help text for installation method
+_("<p>Select <b>Other Options</b> then
+select <b>Repair Installed System</b> if you have a damaged Linux system on
+your hard disk. This option can try to fix problems automatically.
+</p>") +
+
+// help text for installation method
+_("<p>Select <b>Other Options</b> then
+select <b>Boot Installed System</b> if you have a Linux system on your hard
+disk that will not boot. With this option, try to fix problems manually.
+</p>");
 
 Wizard::SetContents (
     // dialog caption
