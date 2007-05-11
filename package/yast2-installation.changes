@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri May 11 16:30:06 CEST 2007 - locilka@suse.cz
+
+- Removing directories '/var/lib/zypp/cache' and '/var/lib/zypp/db'
+  if they exist at the beginning of the installation (#267763).
+- 2.15.23
+
+-------------------------------------------------------------------
 Thu May 10 17:16:49 CEST 2007 - locilka@suse.cz
 
 - Merged hardware probing (inst_startup) and system probing

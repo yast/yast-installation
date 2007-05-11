@@ -17,6 +17,9 @@
     import "Language";
     import "ProductControl";
     import "Directory";
+    import "Stage";
+    import "FileUtils";
+    import "String";
 
     void InitMouse () {
         if (!Arch::s390 () || Arch::board_iseries ()) {
@@ -40,6 +43,23 @@
 	UI::SetLanguage (Language::language, Installation::encoding);
 	WFM::SetLanguage (Language::language, "UTF-8");
 	UI::RecordMacro (Directory::logdir + "/macro_inst_initial.ycp");
+    }
+
+    void InitFirstStageInstallationSystem () {
+	// in the initial stage, there might be some ZYPP data from the
+	// previously failed installation
+	// @see bugzilla #267763
+	if (Stage::initial()) {
+	    list <string> zypp_data = [ "/var/lib/zypp/cache", "/var/lib/zypp/db" ];
+
+	    foreach (string zypp_data_item, zypp_data, {
+		if (FileUtils::Exists (zypp_data_item)) {
+		    y2warning ("Directory '%1' exists, removing...", String::Quote(zypp_data_item));
+		    string bashcmd = sformat ("/bin/rm -rf '%1'", zypp_data_item);
+		    y2milestone ("Result: %1", WFM::Execute (.local.bash_output, bashcmd));
+		}
+	    });
+	}
     }
 
 } //end of include

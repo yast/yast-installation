@@ -51,6 +51,9 @@
     // All stages
     CreateUI();
 
+    // Cleanup and other settings
+    InitFirstStageInstallationSystem();
+
     // Initial stage
     InitMouse();
 

@@ -352,7 +352,6 @@ actions_todo = add (actions_todo, _("Evaluate update possibility"));
 actions_doing = add (actions_doing, _("Evaluating update possibility..."));
 actions_functions = add (actions_functions, EvaluateUpdatePossibilities);
 
-Wizard::CreateDialog ();
 Wizard::SetTitleIcon ("yast-controller");
 
 Progress::New (
@@ -378,6 +377,7 @@ foreach (any run_function, actions_functions, {
 });
     
 Progress::Finish();
+sleep (500);
 
 y2milestone ("Have Linux: %1, Offer Update: %2", have_linux, offer_update);
 
