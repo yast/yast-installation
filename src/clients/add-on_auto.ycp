@@ -123,6 +123,9 @@ else if (func == "Write") {
 		// error report
 		Report::Error (_("Failed to add add-on product."));
 	    sources[media, pth] = srcid;
+	    // bugzilla #260613
+	    if (srcid != -1)
+		AddOnProduct::Integrate (srcid);
 	}
 	prod["media"] = sources[media, pth]:-1;
 	Pkg::ResolvableInstall (prod["product"]:"", `product);

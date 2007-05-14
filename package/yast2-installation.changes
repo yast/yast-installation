@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon May 14 09:05:34 CEST 2007 - jsrain@suse.cz
+
+- Fixed Add-Ons in AutoYaST Write function to Integrate all Add-Ons
+  via AddOnProduct::Integrate (#260613).
+- 2.13.192
+
+-------------------------------------------------------------------
 Tue Mar 27 17:05:09 CEST 2007 - ms@suse.de
 
 - fixed X11 preparation by checking /etc/reconfig_system (#252763)
