@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue May 15 14:14:13 CEST 2007 - locilka@suse.cz
+
+- Changed control file in partitioning/evms_config section from
+  'true' to 'false' (#274702).
+
+-------------------------------------------------------------------
 Fri May 11 16:30:06 CEST 2007 - locilka@suse.cz
 
 - Removing directories '/var/lib/zypp/cache' and '/var/lib/zypp/db'
