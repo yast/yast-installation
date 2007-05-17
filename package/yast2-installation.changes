@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu May 17 22:18:29 CEST 2007 - locilka@suse.cz
+
+- Progress dialog for initializing installation sources.
+
+-------------------------------------------------------------------
 Tue May 15 14:14:13 CEST 2007 - locilka@suse.cz
 
 - Changed control file in partitioning/evms_config section from
