@@ -616,6 +616,15 @@ if (Mode::repair ())
     return `finish;
 }
 
+Wizard::SetContents (
+    _("Initializing Installation Catalogs"),
+    // TRANSLATORS: progress message
+    `Label (_("Initializing installation catalogs...")),
+    "",
+    false, false
+);
+Wizard::SetTitleIcon ("yast-software");
+
 Packages::InitializeCatalogs ();
 if (Packages::InitFailed ())
 {
