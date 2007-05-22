@@ -296,7 +296,7 @@ list          actions_functions = [];
 y2milestone ("Probing done: %1", Installation::probing_done);
 if (! Installation::probing_done)
 {
-    if (!Mode::autoinst ()) {
+//    if (!Mode::autoinst ()) {
 	if (!(Arch::s390 () || Arch::board_iseries ())) {
 	    // TRANSLATORS: progress step
 	    actions_todo = add (actions_todo, _("Probe USB devices"));
@@ -337,7 +337,7 @@ if (! Installation::probing_done)
 
 	WFM::CallFunction("inst_features", []);
 	Installation::probing_done = true;
-    }
+//    }
 }
 
 // TRANSLATORS: progress step
