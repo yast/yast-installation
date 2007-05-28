@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon May 28 13:33:08 CEST 2007 - mzugec@suse.cz
+
+- removed inst_netsetup item from control files 
+
+-------------------------------------------------------------------
 Sun May 27 14:49:37 CEST 2007 - mzugec@suse.de
 
 - installation network changes:

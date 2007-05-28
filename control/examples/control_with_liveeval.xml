@@ -186,10 +186,6 @@
                         <name>continue</name>
                         <modules  config:type="list">
                             <module>
-                                <name>inst_netsetup</name>	     
-                                <arguments>false,false,`up</arguments>
-                            </module>
-                            <module>
                                 <name>inst_netprobe</name>	     
                             </module>
                             <module>
@@ -282,9 +278,6 @@
                         <name>continue</name>
                         <modules  config:type="list">
                             <module>
-                                <name>inst_netsetup</name>	     
-                            </module>
-                            <module>
                                 <name>inst_netprobe</name>	     
                             </module>
                             <module>
@@ -329,9 +322,6 @@
                             <module>
                                 <name>inst_finish</name>	
                             </module>	   
-                            <module>
-                                <name>inst_netsetup</name>	     
-                            </module>
                             <module>
                                 <name>inst_netprobe</name>	     
                             </module>
