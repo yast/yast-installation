@@ -538,10 +538,6 @@ Please visit us at http://www.novell.com/linux/.
             <modules  config:type="list">
                 <module>
 	            <label>Perform Update</label>
-                    <name>netsetup</name>
-                </module>
-                <module>
-	            <label>Perform Update</label>
                     <name>rpmcopy</name>
                 </module>
 		<module>
@@ -624,12 +620,6 @@ Please visit us at http://www.novell.com/linux/.
                 <module>
 	            <label>Check Installation</label>
                     <name>initialization</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Check Installation</label>
-                    <name>netsetup</name>
                     <enable_back>no</enable_back>
                     <enable_next>no</enable_next>
                 </module>
@@ -785,10 +775,6 @@ Please visit us at http://www.novell.com/linux/.
             <stage>continue</stage>
             <mode>autoinstallation</mode>
             <modules  config:type="list">
-                <module>
-	            <label>Perform Installation</label>
-                    <name>netsetup</name>
-                </module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>netprobe</name>

@@ -378,16 +378,7 @@ echo test > /tmp/test
             </defaults>
             <modules  config:type="list">
                 <module>
-                    <name>netsetup</name>
-                    <arguments>false,false,`up</arguments>
-                </module>
-                <module>
                     <name>rpmcopy</name>
-                </module>
-                <module>
-	            <label>Network</label>
-                    <name>netsetup</name>
-                    <arguments>false,false,`dn</arguments>
                 </module>
                 <module>
 	            <label>Network</label>
@@ -434,10 +425,6 @@ echo test > /tmp/test
                 <archs>all</archs>
             </defaults>
             <modules  config:type="list">
-                <module>
-                    <name>netsetup</name>
-                    <arguments>false,false,`up</arguments>
-                </module>
                 <module>
                     <name>netprobe</name>
                 </module>
@@ -560,10 +547,6 @@ echo test > /tmp/test
             <label>Configuration</label>
             <mode>autoinst</mode>
             <modules  config:type="list">
-                <module>
-                    <name>netsetup</name>
-                    <arguments>false,false,`up</arguments>
-                </module>
                 <module>
                     <name>netprobe</name>
                 </module>
