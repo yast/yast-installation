@@ -316,9 +316,6 @@ textdomain="control"
             </defaults>
             <modules  config:type="list">
                 <module>
-                    <name>netsetup</name>
-                </module>
-                <module>
                     <name>rpmcopy</name>
                 </module>
                 <module>
@@ -366,10 +363,6 @@ textdomain="control"
                 <archs>all</archs>
             </defaults>
             <modules  config:type="list">
-                <module>
-	            <label>Perform Installation</label>
-                    <name>netsetup</name>
-                </module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>netprobe</name>
@@ -496,9 +489,6 @@ textdomain="control"
             <label>Configuration</label>
             <mode>autoinstallation</mode>
             <modules  config:type="list">
-                <module>
-                    <name>netsetup</name>
-                </module>
                 <module>
                     <name>netprobe</name>
                 </module>

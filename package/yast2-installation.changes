@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon May 28 16:02:38 CEST 2007 - mzugec@suse.cz
+
+- removed netsetup item from control files 
+
+-------------------------------------------------------------------
 Mon May 28 13:33:08 CEST 2007 - mzugec@suse.cz
 
 - removed inst_netsetup item from control files 
