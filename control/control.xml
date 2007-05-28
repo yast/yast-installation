@@ -501,10 +501,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             <modules  config:type="list">
                 <module>
 	            <label>Perform Update</label>
-                    <name>netsetup</name>
-                </module>
-                <module>
-	            <label>Perform Update</label>
                     <name>rpmcopy</name>
                 </module>
 		<module>
@@ -571,10 +567,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <archs>all</archs>
             </defaults>
             <modules  config:type="list">
-                <module>
-	            <label>Perform Installation</label>
-                    <name>netsetup</name>
-                </module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>netprobe</name>
@@ -730,10 +722,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             <stage>continue</stage>
             <mode>autoinstallation</mode>
             <modules  config:type="list">
-                <module>
-	            <label>Perform Installation</label>
-                    <name>netsetup</name>
-                </module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>netprobe</name>

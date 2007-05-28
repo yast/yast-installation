@@ -512,12 +512,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             <modules config:type="list">
                 <module>
 	            <label>Perform Update</label>
-                    <name>netsetup</name>
-		    <enable_back>no</enable_back>
-		    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Perform Update</label>
                     <name>rpmcopy</name>
 		    <enable_back>no</enable_back>
 		    <enable_next>no</enable_next>
@@ -591,12 +585,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <module>
 	            <label>Check Installation</label>
                     <name>initialization</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Check Installation</label>
-                    <name>netsetup</name>
                     <enable_back>no</enable_back>
                     <enable_next>no</enable_next>
                 </module>
@@ -752,10 +740,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             <stage>continue</stage>
             <mode>autoinstallation</mode>
             <modules  config:type="list">
-                <module>
-	            <label>Perform Installation</label>
-                    <name>netsetup</name>
-                </module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>netprobe</name>
