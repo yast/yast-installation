@@ -48,19 +48,18 @@ if (func == "Info")
 }
 else if (func == "Write")
 {
-    if (Linuxrc::display_ip () || Linuxrc::vnc () || Linuxrc::usessh ())
+
+ // if network running, write network configuration
+ map output = (map)SCR::Execute(.target.bash_output,
+                "([ $(ip addr|grep -v '127.0.0.1'|grep -c inet) != '0' ] && echo 'network') || echo 'no net'");
+ if (issubstring(output["stdout"]:"", "network"))
     {
-	y2milestone("Creating network interface");
-	WFM::Execute (.local.bash,
-	    "/sbin/create_interface '" + String::Quote (Installation::destdir) + "'");
+	y2milestone("Save network configuration");
+     WFM::CallFunction ("save_network");
 	ModulesConf::RunDepmod (false);
+
+
     }
-    // --------------------------------------------------------------
-    // Copy DHCP client cache so that we can request the same IP (#43974).
-    WFM::Execute (.local.bash, sformat (
-	"mkdir -p '%2%1'; /bin/cp -p %1/dhcpcd-*.cache '%2%1'",
-	"/var/lib/dhcpcd",
-	String::Quote (Installation::destdir)));
 }
 else
 {

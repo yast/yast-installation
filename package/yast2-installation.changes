@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Sun May 27 14:49:37 CEST 2007 - mzugec@suse.de
+
+- installation network changes:
+http://lists.opensuse.org/yast-devel/2007-05/msg00025.html
+- 2.15.27 
+
+-------------------------------------------------------------------
 Tue May 22 10:51:57 CEST 2007 - ug@suse.de
 
 - reactivate hardware detection during autoinstall
