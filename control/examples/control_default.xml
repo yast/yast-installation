@@ -173,10 +173,6 @@
             </defaults>
             <modules  config:type="list">
                 <module>
-                    <name>inst_netsetup</name>	     
-                    <arguments>false,false,`up</arguments>
-                </module>
-                <module>
                     <name>inst_netprobe</name>	     
                 </module>
                 <module>
@@ -265,9 +261,6 @@
             <stage>continue</stage>
             <mode>autoinst</mode>
             <modules  config:type="list">
-                <module>
-                    <name>inst_netsetup</name>	     
-                </module>
                 <module>
                     <name>inst_netprobe</name>	     
                 </module>
