@@ -13,7 +13,7 @@ Requires:	yast2 >= 2.15.25
 Requires:	yast2-bootloader
 # Language::selection_skipped, bugzilla #223258
 Requires:	yast2-country >= 2.15.0
-Requires:	yast2-network
+Requires:	yast2-network >= 2.15.37
 # PackagesUI::ConfirmLicenses, bugzilla #256627
 Requires:	yast2-packager >= 2.15.24
 
