@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed May 30 11:33:52 CEST 2007 - mzugec@suse.cz
+
+- fixed spec requirements 
+
+-------------------------------------------------------------------
 Mon May 28 16:02:38 CEST 2007 - mzugec@suse.cz
 
 - removed netsetup item from control files 
