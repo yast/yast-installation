@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jun  1 12:41:10 CEST 2007 - mzugec@suse.cz
+
+- use shared isNetworkRunning() function in network_finish
+- 2.15.28 
+
+-------------------------------------------------------------------
 Wed May 30 11:33:52 CEST 2007 - mzugec@suse.cz
 
 - fixed spec requirements 
