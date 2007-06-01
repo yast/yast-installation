@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Jun  1 11:05:30 CEST 2007 - locilka@suse.cz
+
+- Fixed Add-Ons for AutoYaST Export function to write PRODUCT
+  content tag file into the "product" tag in AutoYaST profile
+  (#276309).
+- 2.13.193
+
+-------------------------------------------------------------------
 Mon May 14 09:05:34 CEST 2007 - jsrain@suse.cz
 
 - Fixed Add-Ons in AutoYaST Write function to Integrate all Add-Ons

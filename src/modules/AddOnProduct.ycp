@@ -31,6 +31,7 @@ import "InstShowInfo";
 import "ProductLicense";
 import "FileUtils";
 import "Directory";
+import "Installation";
 
 // variables for installation with product
 /**
@@ -1232,11 +1233,55 @@ global boolean AddPreselectedAddOnProducts(string filelist) {
 }
 
 global map Export () {
-    list<map<string,any> > exp = maplist (map<string,any> p, add_on_products, {
+    // See bugzilla #276309
+
+    /*
+     * Returns map like this one
+     *
+     * <add-on>
+     *   <add_on_products config:type="list">
+     *     <listentry>
+     *       <media_url>ftp://server.name/.../</media_url>
+     *       <product>NEEDS_TO_MATCH_"PRODUCT"_TAG_FROM_content_FILE!</product>
+     *       <product_dir>/</product_dir>
+     *     </listentry>
+     *     ...
+     *   </add_on_products>
+     * </add-on>
+     */
+
+    // Just to make sure everything is initialized properly
+    Pkg::TargetInitialize (Installation::destdir);
+    Pkg::TargetLoad();
+
+    // Get list of currently installed products
+    list <map <string, any> > products = Pkg::ResolvableProperties ("", `product, "");
+
+    list <map <string, any> > exp = maplist (map<string,any> p, add_on_products, {
 	if (haskey (p, "media"))
 	    p = remove (p, "media");
+
+        y2milestone ("Fixing product: %1", p);
+
+	// Try to match the product "display_name" or "short_name"
+	// with "product" of the exported Add-On
+        foreach (map<string,any> prod, products, {
+            y2milestone ("Trying... Product resolvable: %1", prod);
+            if (prod["display_name"]:"" == p["product"]:"___no_product_name_"
+                || prod["short_name"]:"" == p["product"]:"___no_product_name_")
+            {
+                y2milestone ("Passed");
+                p["product"] = prod["name"]:"";
+		// We do not need further testing for this product
+		break;
+            }
+        });
+
+        y2milestone ("Product to save: %1", p);
+
 	return p;
     });
+
     return $[
 	"add_on_products" : exp,
     ];
