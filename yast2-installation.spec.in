@@ -3,7 +3,7 @@
 
 @HEADER@
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2-core-devel yast2-devtools yast2-testsuite yast2-country
-BuildRequires:	yast2 >= 2.15.22
+BuildRequires:	yast2 >= 2.15.35
 
 Requires:       autoyast2-installation
 # WorkflowManager module, Installation::reboot_net_settings
@@ -29,7 +29,8 @@ Requires:	yast2-packager >= 2.15.24
 Conflicts:	yast2-pkg-bindings < 2.13.101
 
 # 'Product' and 'Installation' moved to 'yast2'
-Conflicts:	yast2 < 2.15.18
+# needs NetworkService::isNetworkRunning() from yast2
+Conflicts:	yast2 < 2.15.35
 
 # tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
 Requires:	tar gzip

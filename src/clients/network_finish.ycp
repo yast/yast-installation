@@ -21,6 +21,7 @@ import "ModulesConf";
 import "Arch";
 import "Linuxrc";
 import "String";
+import "NetworkService";
 
 any ret = nil;
 string func = "";
@@ -50,9 +51,7 @@ else if (func == "Write")
 {
 
  // if network running, write network configuration
- map output = (map)SCR::Execute(.target.bash_output,
-                "([ $(ip addr|grep -v '127.0.0.1'|grep -c inet) != '0' ] && echo 'network') || echo 'no net'");
- if (issubstring(output["stdout"]:"", "network"))
+ if (NetworkService::isNetworkRunning())
     {
 	y2milestone("Save network configuration");
      WFM::CallFunction ("save_network");
