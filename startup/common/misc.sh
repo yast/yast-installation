@@ -60,7 +60,7 @@ IFS="
 	# if the installation is ssh based, TERM is not allowed to
 	# be overwritten by the value of install.inf. The TERM value
 	# of install.inf points to the console and not to the remote
-	# terminal type. Therefore the previosly set terminal type
+	# terminal type. Therefore the previously set terminal type
 	# from the remote terminal is restored
 	# ----
 	if [ "$UseSSH" = 1 ];then
@@ -186,7 +186,7 @@ function set_splash () {
 #----[ disable_splash ]-----#
 function disable_splash () {
 #--------------------------------------------------
-# disable splash sceen. This means be verbose and
+# disable splash screen. This means be verbose and
 # show the kernel messages
 # ---
 	[ -f /proc/splash ] && echo "verbose" > /proc/splash

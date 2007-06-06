@@ -17,7 +17,7 @@ if ! got_install_param '^NoShell:.*1' ; then
 fi
 
 #=============================================
-# 11.1) activate network if counfiguration found
+# 11.1) activate network if configuration found
 #---------------------------------------------
 if [ ! -z $(ls /etc/sysconfig/network/ifcfg-* |grep  -v 'ifcfg-lo') ] ;then
 	log "\tnetwork configuration found -> activate network"
