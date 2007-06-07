@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun  7 16:19:49 CEST 2007 - locilka@suse.cz
+
+- Do not report failed installation in case of restarting YaST or
+  restarting system because of YaST online update (#281818).
+- 2.13.194
+
+-------------------------------------------------------------------
 Fri Jun  1 11:05:30 CEST 2007 - locilka@suse.cz
 
 - Fixed Add-Ons for AutoYaST Export function to write PRODUCT

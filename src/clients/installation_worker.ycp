@@ -97,9 +97,18 @@
     string current_step      = Directory::vardir + "/step";
     string file_update_mode  = Directory::vardir + "/update_mode";
 
+    string reboot_file       = Directory::vardir + "/reboot";
+    string restart_file      = Directory::vardir + "/restart_yast";
+    string restart_data_file = Directory::vardir + "/continue_installation";
+
+    // bugzilla #281818
+    boolean yast_or_system_was_restarted = (FileUtils::Exists (restart_data_file));
+    y2milestone ("YaST was restarted on purpose: %1", yast_or_system_was_restarted);
+
     // Second stage
     // FATE #300422
-    if (Stage::cont ()) {
+    // Do not ask in case of restarted installation
+    if (Stage::cont () && yast_or_system_was_restarted != true) {
 	// Second stage installation bas been aborted or has failed
 	if (FileUtils::Exists (file_inst_aborted) || FileUtils::Exists (file_inst_failed)) {
 	    // popup question (#x1)
@@ -133,7 +142,9 @@ Note: You may have to enter some information again.");
 		return `skipped;
 	    }
 	}
+    }
 
+    if (Stage::cont ()) {
 	// Second stage installation is starting just here
 
 	// creating files in case the installation fails
@@ -401,16 +412,16 @@ but something went wrong, that's why it is only in the log");
     retranslateWizardDialog();
 
     symbol ret = nil;
-    string restart_data_file = Directory::vardir + "/continue_installation";
-    string reboot_file       = Directory::vardir + "/reboot";
-    string restart_file      = Directory::vardir + "/restart_yast";
 
     // Continue the second stage installation
-    if (Stage::cont ()
-	&& (integer)SCR::Read (.target.size, restart_data_file) > 0)
+    if (Stage::cont () && FileUtils::Exists (restart_data_file))
     {
 	string contents = (string)
 	    SCR::Read (.target.string, restart_data_file);
+	// file will be created if it is needed
+	y2milestone ("Removing %1 file containing %2", restart_data_file, contents);
+	SCR::Execute(.target.remove, restart_data_file);
+
 	list<string> contents_lines = splitstring (contents, "\n");
 	integer next_step = tointeger ((string)(contents_lines[0]:nil));
 	integer restarting_step = tointeger ((string)(contents_lines[1]:nil));
@@ -459,6 +470,7 @@ but something went wrong, that's why it is only in the log");
 	if (ret == `restart_same_step) {
 	    last_step = last_step - 1;
 	    ret = `restart_yast;
+	    y2milestone ("From now, ret = %1", ret);
 	}
 
 	integer next_step = last_step + 1;
@@ -549,10 +561,29 @@ but something went wrong, that's why it is only in the log");
 	SCR::Execute (.target.bash, sformat ("touch %1", file_inst_aborted));
     }
 
+    if (Stage::cont() && (ret == `reboot || ret == `restart_yast || ret == `restart_same_step)) {
+	// bugzilla #281818
+	if (FileUtils::Exists (file_inst_aborted)) {
+	    y2milestone ("Removing file %1", file_inst_aborted);
+	    SCR::Execute (.target.remove, file_inst_aborted);
+	}
+
+	if (FileUtils::Exists (file_inst_failed)) {
+	    y2milestone ("Removing file %1", file_inst_failed);
+	    SCR::Execute (.target.remove, file_inst_failed);
+	}
+    }
+
     y2milestone("Finishing the installation...");
 
-    // TRANSLATORS: busy message
-    UI::OpenDialog (`Label(_("Finishing the installation..."))); // #2
+    if (ret != `reboot && ret != `restart_yast && ret != `restart_same_step) {
+	// TRANSLATORS: busy message
+	UI::OpenDialog (`Label(_("Finishing the installation..."))); // #2
+    } else {
+	// TRANSLATORS: busy message
+	UI::OpenDialog (`Label(_("Writing YaST Configuration..."))); // #2
+    }
+
     // disable all sources and finish target
     Pkg::SourceFinishAll();	// but see also inst_congratulate, #165860
     Pkg::TargetFinish();
