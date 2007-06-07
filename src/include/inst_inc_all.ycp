@@ -39,11 +39,18 @@
 	SetInitializingUI ();
     }
 
-    void FinishInstallation () {
+    void FinishInstallation (symbol ret) {
         y2milestone("Finishing the installation...");
-        // TRANSLATORS: busy message
-        UI::OpenDialog (`Label(_("Finishing the installation...")));    // #2
-        // disable all sources and finish target
+
+	if (ret == `reboot || ret == `restart_yast || ret == `restart_same_step) {
+    	    // TRANSLATORS: busy message
+    	    UI::OpenDialog (`Label(_("Finishing the installation...")));    // #2
+	} else {
+	    // TRANSLATORS: busy message
+	    UI::OpenDialog (`Label(_("Writing YaST Configuration...")));    // #2
+	}
+	
+	// disable all sources and finish target
         Pkg::SourceFinishAll(); // but see also inst_congratulate, #165860
         Pkg::TargetFinish();
         UI::CloseDialog();                                              // #2

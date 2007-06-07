@@ -81,6 +81,9 @@
     if (FileUtils::Exists (Installation::restart_data_file)) {
 	string contents = (string)
 	    SCR::Read (.target.string, Installation::restart_data_file);
+	// file will be created if it is needed
+	y2milestone ("Removing %1 file containing %2", Installation::restart_data_file, contents);
+
 	list<string> contents_lines = splitstring (contents, "\n");
 	integer next_step = tointeger ((string)(contents_lines[0]:nil));
 	integer restarting_step = tointeger ((string)(contents_lines[1]:nil));
@@ -141,7 +144,7 @@
     }
 
     // All Sources and Target need to be released...
-    FinishInstallation();
+    FinishInstallation (ret);
 
     // Created UI needs to be destroyed
     UI::CloseDialog();
