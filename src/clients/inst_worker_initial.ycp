@@ -87,7 +87,7 @@
     }
 
     // All Sources and Target need to be released...
-    FinishInstallation();
+    FinishInstallation (ret);
 
     // Created UI needs to be destroyed
     UI::CloseDialog();

@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jun  7 15:08:08 CEST 2007 - locilka@suse.cz
+
+- A new label "Writing YaST Configuration..." used in case of
+  restarting system or installation.
+
+-------------------------------------------------------------------
 Fri Jun  1 12:41:10 CEST 2007 - mzugec@suse.cz
 
 - use shared isNetworkRunning() function in network_finish
