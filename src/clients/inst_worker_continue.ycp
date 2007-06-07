@@ -83,6 +83,7 @@
 	    SCR::Read (.target.string, Installation::restart_data_file);
 	// file will be created if it is needed
 	y2milestone ("Removing %1 file containing %2", Installation::restart_data_file, contents);
+	SCR::Execute(.target.remove, restart_data_file);
 
 	list<string> contents_lines = splitstring (contents, "\n");
 	integer next_step = tointeger ((string)(contents_lines[0]:nil));
