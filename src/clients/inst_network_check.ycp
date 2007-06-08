@@ -22,6 +22,10 @@
      * We don't need to run this script to setup the network
      * If some network is already running...
      */
+    if (NetworkService::isNetworkRunning()) {
+	y2milestone ("Network is already running, skipping...");
+	return `next;
+    }
 
     Wizard::SetContents (
 	_("Network Setup"),
