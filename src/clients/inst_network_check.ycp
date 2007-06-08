@@ -1,0 +1,79 @@
+{
+/**
+ *
+ * Authors:	Lukas Ocilka <locilka@suse.cz>
+ *
+ * Purpose:	This script detects whether there is no active network.
+ *		In such case, user can configure network manually.
+ *		This should be used in the first stage installation.
+ *
+ * See More:	FATE #301967
+ *
+ * $Id:$
+ *
+ */
+
+    textdomain "installation";
+
+    import "NetworkService";
+    import "Wizard";
+
+    /*
+     * We don't need to run this script to setup the network
+     * If some network is already running...
+     */
+
+    Wizard::SetContents (
+	_("Network Setup"),
+	`VBox (
+	    `VStretch(),
+	    `RadioButtonGroup (
+		`id ("to_do_a_network_setup_or_not_to_do"),
+		`HBox (
+		    `HStretch (),
+		    `VBox (
+			`Left(`Label (_("No network setup has been found.
+Would you like to configure your network card now?"))),
+			`Left(`RadioButton (`id ("yes_do_run_setup"), _("&Yes, Run the Network Setup"), true)),
+			`Left(`RadioButton (`id ("no_do_not_run_setup"), _("&No, Skip the Network Setup")))
+		    ),
+		    `HStretch ()
+		)
+	    ),
+	    `VStretch()
+	),
+	_("FIXME: help"),
+	false,
+	true
+    );
+    Wizard::SetTitleIcon ("yast-network");
+    Wizard::DisableAbortButton ();
+    
+    any ret = nil;
+
+    boolean run_setup = nil;
+
+    while (true) {
+	ret = UI::UserInput();
+
+	if (ret == `next) {
+	    string option_selected = (string) UI::QueryWidget (
+		`id ("to_do_a_network_setup_or_not_to_do"), `CurrentButton
+	    );
+	    y2milestone ("Network setup? %1", option_selected);
+	    run_setup = (option_selected == "yes_do_run_setup");
+	    break;
+	} else {
+	    y2error ("Unknown ret: %1", ret);
+	}
+    }
+
+    if (run_setup) {
+	y2milestone ("Running inst_network_setup");
+	WFM::CallFunction ("inst_network_setup", []);
+    }
+
+    return `next;
+
+    /* EOF */
+}
