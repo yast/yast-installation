@@ -616,6 +616,8 @@ if (Mode::repair ())
     return `finish;
 }
 
+WFM::CallFunction("inst_network_check", []);
+
 Wizard::SetContents (
     _("Initializing Installation Catalogs"),
     // TRANSLATORS: progress message

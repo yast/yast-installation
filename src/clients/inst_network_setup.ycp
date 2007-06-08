@@ -1,0 +1,984 @@
+{
+/**
+ *
+ * Authors:	Lukas Ocilka <locilka@suse.cz>
+ *
+ * Purpose:	This script allows to setup network in first
+ *		stage of installation.
+ *
+ * See More:	FATE #301967
+ *
+ * $Id:$
+ *
+ */
+
+    textdomain "installation";
+
+    import "Wizard";
+    import "String";
+    import "GetInstArgs";
+    import "IP";
+    import "Label";
+    import "Netmask";
+    import "NetworkService";
+    import "Popup";
+    import "Report";
+    import "Hostname";
+    import "Sequencer";
+    import "Progress";
+    import "FileUtils";
+    import "Mode";
+    import "Stage";
+    import "Progress";
+    import "Proxy";
+
+    /* Variables --> */
+
+    symbol default_ret = GetInstArgs::going_back() ? `back : `next;
+
+    boolean enable_back = GetInstArgs::enable_back();
+    boolean enable_next = GetInstArgs::enable_next();
+
+    boolean enable_back_in_netsetup = true;
+
+    /* Currently probed network cards */
+    list <map <string, any> > lan_cards = nil;
+
+    /* Currently available network cards prepared for table representation */
+    list <term> table_items = [];
+
+    /* Flag that network configuration is not needed */
+    boolean some_card_has_ip = false;
+
+    /* Network card selected to be configured */
+    string selected_netcard = nil;
+
+    /* Map of pairs ["interface_name":"HTML Summary"] about network devices */
+    map <string, string> hardware_information = $[];
+
+    /* Map of pairs ["interface_name":boolean] whether the link is active or not */
+    map <string, boolean> link_status = $[];
+
+    /* Netork setting used in Write function */
+    map <string, any> network_settings = $[];
+    map <string, any> default_network_settings = $["setup_type":"dhcp"];
+
+    /* <-- Variables */
+
+    /* Functions --> */
+
+    string CreateRichTextHWSummary (map <string, any> & device_map) {
+	string ret = "";
+
+	if (device_map["device"]:"" != "") {
+	    ret = ret + (ret != "" ? "<br>":"") +
+		// TRANSLATORS: hardware information - HTML summary text
+		// %1 is replaced with a variable network_device
+		sformat(_("Network Device: %1"), device_map["device"]:"");
+	}
+
+	if (device_map["model"]:"" != "") {
+	    ret = ret + (ret != "" ? "<br>":"") +
+		// TRANSLATORS: hardware information - HTML summary text
+		// %1 is replaced with a variable device_model
+		sformat(_("Model: %1"), device_map["model"]:"");
+	}
+
+	if (device_map["resource","hwaddr",0,"addr"]:"" != "") {
+	    ret = ret + (ret != "" ? "<br>":"") +
+		// TRANSLATORS: hardware information - HTML summary text
+		// %1 is replaced with a variable mac_address
+		sformat(_("MAC Address: %1"), device_map["resource","hwaddr",0,"addr"]:"");
+	}
+
+	if (device_map["vendor"]:"" != "") {
+	    ret = ret + (ret != "" ? "<br>":"") +
+		// TRANSLATORS: hardware information - HTML summary text
+		// %1 is replaced with a variable hardware_vendor
+		sformat(_("Hardware Vendor: %1"), device_map["vendor"]:"");
+	}
+
+	string device_name = device_map["dev_name"]:"";
+	if (link_status[device_name]:nil != nil) {
+	    ret = ret + (ret != "" ? "<br>":"") +
+		sformat(
+		    // TRANSLATORS: hardware information - HTML summary text
+		    // %1 is either "Connected" or "Disconnected" (*1)
+		    _("Link is: %1"),
+		    (link_status[device_name]:nil == true ?
+			// TRANSLATORS: hardware information, see *1
+			_("Connected")
+			:
+			// TRANSLATORS: hardware information, see *1
+			_("Disconnected")
+		    )
+		);
+	}
+	
+	return ret;
+    }
+
+    void ReadProxySettingsFromSystem () {
+	// Read proxy settings and adjust the default settings
+	boolean progress_orig = Progress::set (false);
+	Proxy::Read();
+	Progress::set (progress_orig);
+
+	map default_proxy_settings = Proxy::Export();
+	
+	map log_settings = default_proxy_settings;
+	if (log_settings["proxy_user"]:"" != "") log_settings["proxy_user"] = "***hidden***";
+	if (log_settings["proxy_password"]:"" != "") log_settings["proxy_password"] = "***hidden***";
+	y2milestone ("Default proxy settings: %1", log_settings);
+
+	default_network_settings["use_proxy"] = default_proxy_settings["enabled"]:false;
+
+	// Examle: "http://cache.example.com:3128/"
+	string http_proxy = default_proxy_settings["http_proxy"]:"";
+	if (regexpmatch (http_proxy, "/$"))
+	    http_proxy = regexpsub (http_proxy, "(.*)/$", "\\1");
+	if (regexpmatch (http_proxy, "^[hH][tT][tT][pP]:/+"))
+	    http_proxy = regexpsub (http_proxy, "^[hH][tT][tT][pP]:/+(.*)", "\\1");
+	list <string> http_proxy_settings  = splitstring (http_proxy, ":");
+	y2milestone ("Using proxy values: %1", http_proxy_settings);
+
+	default_network_settings["proxy_server"]   = http_proxy_settings[0]:"";
+	default_network_settings["proxy_port"]     = http_proxy_settings[1]:"";
+
+	default_network_settings["proxy_user"]     = default_proxy_settings["proxy_user"]:"";
+	default_network_settings["proxy_password"] = default_proxy_settings["proxy_password"]:"";
+    }
+
+    symbol ProbeAndGetNetworkCards () {
+	Wizard::SetContents (
+	    // TRANSLATORS: dialog caption
+	    _("Network Setup Wizard: Probing Hardware..."),
+	    `VBox (
+		// TRANSLATORS: dialog busy message
+		`Label ("Probing network cards...")
+	    ),
+	    // TRANSLATORS: dialog help
+	    _("Please wait while installation is probing the network cards..."),
+	    false,
+	    false
+	);
+	Wizard::SetTitleIcon ("yast-controller");
+
+	some_card_has_ip = false;
+	lan_cards = (list <map <string, any> >) SCR::Read (.probe.netcard);
+	table_items = [];
+
+	foreach (map <string, any> one_netcard, lan_cards, {
+	    y2milestone ("Found netcard: %1", one_netcard);
+	    string card_name = one_netcard["model"]:one_netcard["device"]:_("Unknown Network Card");
+	    if (size (card_name) > 43) card_name = substring (card_name, 0, 40) + "...";
+
+	    string device_name = (string) one_netcard["dev_name"]:nil;
+	    if (device_name == nil) {
+		y2error ("Cannot obtain \"dev_name\" from %1. Netcard will not be used.", one_netcard);
+		return;
+	    }
+	    
+	    string active_status_file = sformat ("/sys/class/net/%1/carrier", device_name);
+	    if (FileUtils::Exists (active_status_file)) {
+		string dev_status = (string) SCR::Read (.target.string, active_status_file);
+		link_status[device_name] = (regexpmatch (dev_status, "^1"));
+	    }
+	
+	    table_items = add (
+		table_items,
+		`item (`id (device_name), card_name, device_name)
+	    );
+	    
+	    // hardware information later used in UI
+	    string hwinfo_richtext = CreateRichTextHWSummary (one_netcard);
+	    if (hwinfo_richtext != nil && hwinfo_richtext != "")
+		hardware_information[device_name] = hwinfo_richtext;
+	    
+	    y2milestone ("Using network device: '%1' %2", device_name, card_name);
+	});
+
+	ReadProxySettingsFromSystem();
+
+	if (size (table_items) == 0) return `abort;
+	return `next;
+    }
+
+    void FillUpHardwareInformationWidget () {
+	string current_netcard =
+	    (string) UI::QueryWidget (`id ("netcard_selection"), `CurrentItem);
+
+	UI::ChangeWidget (
+	    `id ("hardware_information"),
+	    // TRANSLATORS: hardware information widget content (a fallback)
+	    `Value, hardware_information[current_netcard]:_("No additional information")
+	);
+    }
+
+    void MarkAlreadySelectedDevice () {
+	if (selected_netcard == nil) return;
+
+	UI::ChangeWidget (`id ("netcard_selection"), `CurrentItem, selected_netcard);
+    }
+
+    boolean CheckSelectedNetworkCard (string selected_netcard) {
+	// Checking whether any netcard is selected
+	if (selected_netcard == nil || selected_netcard == "") {
+	    // TRANSLATORS: pop-up error message
+	    Report::Error (_("No network card has been selected.
+
+First, you need to select one network card
+to configure it later."));
+		    return false;
+
+	// Checking whether the netcard link is active
+	} else if (link_status[selected_netcard]:nil == false) {
+	    if (! Report::AnyQuestion (
+		// TRANSLATORS: popup dialog caption
+		_("Warning"),
+		sformat (
+		    // TRANSLATORS: popup dialog question
+		    // %1 is replaced with a network device string
+		    _("Link of the selected interface %1 is disconnecetd.
+It needs to be connected for a proper network configuration.
+
+Are you sure you want to use it despite the given fact?"),
+		    selected_netcard
+		),
+		// TRANSLATORS: popup dialog button
+		_("&Yes, Use It"),
+		Label::NoButton(),
+		`no_button
+	    )) {
+		y2milestone ("User decided not to use disconnected '%1'", selected_netcard);
+		return false;
+	    } else {
+		y2warning ("User decided to use '%1' despite reported as inactive", selected_netcard);
+	    }
+	}
+
+	return true;
+    }
+
+    symbol NetworkCardDialog () {
+	enable_back_in_netsetup = true;
+
+	if (size (table_items) == 1) {
+	    selected_netcard = tostring (table_items[0,0,0]:"");
+	    y2milestone ("Only one network inteface, selecting %1", selected_netcard);
+	    enable_back_in_netsetup = false;
+	    return `next;
+	}
+	
+	Wizard::SetContentsButtons (
+	    // TRANSLATORS: dialog caption
+	    _("Network Setup Wizard: Step 1/2"),
+	    `VBox (
+		`Left (`Label (_("Please, select a network card to be configured"))),
+		`VWeight (3, `Table (
+		    `id ("netcard_selection"),
+		    `opt (`notify, `immediate),
+		    `header (
+			_("Network Card"),
+			_("Device")
+		    ),
+		    table_items
+		)),
+		`VSpacing (1),
+		// TRANSLATORS: Rich text widget label
+		`Left (`Label (_("Hardware Information of the Selected Network Card"))),
+		`VWeight (2, `RichText (
+		    `id ("hardware_information"),
+		    ""
+		))
+	    ),
+	    // TRANSLATORS: dialog help
+	    _("FIXME: help"),
+	    Label::BackButton(),
+	    Label::NextButton()
+	);
+	
+	Wizard::DisableBackButton();
+	Wizard::EnableAbortButton();
+	Wizard::EnableNextButton();
+
+	Wizard::SetAbortButton(`abort, Label::CancelButton());
+	Wizard::SetTitleIcon ("yast-controller");
+
+	MarkAlreadySelectedDevice();
+	FillUpHardwareInformationWidget();
+
+	any user_input = nil;
+
+	symbol dialog_ret = `next;
+
+	while (true) {
+	    user_input = UI::UserInput();
+	    
+	    if (user_input == "netcard_selection") {
+		FillUpHardwareInformationWidget();
+		continue;
+	    } else if (user_input == `next) {
+		selected_netcard = (string) UI::QueryWidget (`id ("netcard_selection"), `CurrentItem);
+
+		if (! CheckSelectedNetworkCard (selected_netcard))
+		    continue;
+
+		dialog_ret = `next;
+		break;
+	    } else if (user_input == `abort) {
+		dialog_ret = `abort;
+		break;
+	    } else if (user_input == `back) {
+		dialog_ret = `back;
+		break;
+	    } else {
+		y2milestone ("Uknown user input: %1", user_input);
+	    }
+	}
+	
+	return dialog_ret;
+    }
+
+    void AdjustNetworkWidgets (string default_button) {
+	UI::ChangeWidget (`id ("network_type"), `CurrentButton, default_button);
+	UI::ChangeWidget (`id ("static_addr_frame"), `Enabled, (default_button != "dhcp"));
+    }
+
+    void SetValidCharsForNetworkWidgets () {
+	foreach (string id, ["ip_address", "netmask", "gateway", "dns_server"], {
+	    UI::ChangeWidget (`id(id), `ValidChars, IP::ValidChars4);
+	});
+    }
+
+    boolean ValidateStaticSetupSettings () {
+	// ["ip_address", "netmask", "gateway", "dns_server"]
+
+	string ip_address = (string) UI::QueryWidget (`id ("ip_address"), `Value);
+	if (ip_address == "" || regexpmatch (ip_address, "^[ \t\n]+$")) {
+	    UI::SetFocus (`id ("ip_address"));
+	    // TRANSLATORS: error message
+	    Report::Error (_("IP address cannot be empty."));
+	    return false;
+	} else if (! IP::Check4 (ip_address)) {
+	    UI::SetFocus (`id ("ip_address"));
+	    Report::Error (sformat (
+		// TRANSLATORS: Error message, %1 is replaced with invalid IP address
+		_("'%1' is an invalid IP address."),
+		ip_address
+	    ) + "\n\n" + IP::Valid4());
+	    return false;
+	}
+
+	string netmask = (string) UI::QueryWidget (`id ("netmask"), `Value);
+	if (netmask == "" || regexpmatch (netmask, "^[ \t\n]+$")) {
+	    UI::SetFocus (`id ("netmask"));
+	    // TRANSLATORS: error message
+	    Report::Error (_("Netmask cannot be empty."));
+	    return false;
+	} else if (! Netmask::Check4 (netmask)) {
+	    UI::SetFocus (`id ("netmask"));
+	    Report::Error (sformat (
+		// TRANSLATORS: Error message, %1 is replaced with invalid netmask
+		_("'%1' is an invalid netmask."),
+		netmask
+	    ));
+	    return false;
+	}
+
+	string gateway = (string) UI::QueryWidget (`id ("gateway"), `Value);
+	if (gateway == "" || regexpmatch (gateway, "^[ \t\n]+$")) {
+	    UI::SetFocus (`id ("gateway"));
+	    // TRANSLATORS: error message
+	    Report::Error (_("Gateway IP address cannot be empty."));
+	    return false;
+	} else if (! IP::Check4 (gateway)) {
+	    UI::SetFocus (`id ("gateway"));
+	    Report::Error (sformat (
+		// TRANSLATORS: Error message, %1 is replaced with invalid IP address
+		_("'%1' is an invalid IP address of the gateway."),
+		gateway
+	    ) + "\n\n" + IP::Valid4());
+	    return false;
+	}
+
+	string dns_server = (string) UI::QueryWidget (`id ("dns_server"), `Value);
+	if (dns_server == "" || regexpmatch (dns_server, "^[ \t\n]+$")) {
+	    UI::SetFocus (`id ("dns_server"));
+	    // TRANSLATORS: error message
+	    Report::Error (_("DNS server IP address cannot be empty."));
+	    return false;
+	} else if (! IP::Check4 (dns_server)) {
+	    UI::SetFocus (`id ("dns_server"));
+	    Report::Error (sformat (
+		// TRANSLATORS: Error message, %1 is replaced with invalid IP address
+		_("'%1' is an invalid IP address of the DNS server."),
+		dns_server
+	    ) + "\n\n" + IP::Valid4());
+	    return false;
+	}
+
+	return true;
+    }
+
+    string GetProxyServerFromURL (string proxy_server) {
+	y2milestone ("Entered proxy server: %1", proxy_server);
+
+	if (regexpmatch (proxy_server, ".*[hH][tT][tT][pP]://"))
+	    proxy_server = regexpsub (proxy_server, ".*[hH][tT][tT][pP]://(.*)", "\\1");
+
+	if (regexpmatch (proxy_server, "/+$"))
+	    proxy_server = regexpsub (proxy_server, "(.*)/+", "\\1");
+
+	y2milestone ("Tested proxy server: %1", proxy_server);
+
+	return proxy_server;
+    }
+
+    boolean ValidateProxySettings () {
+	// ["proxy_server", "proxy_port"]
+
+	string proxy_server = (string) UI::QueryWidget (`id ("proxy_server"), `Value);
+	proxy_server = GetProxyServerFromURL (proxy_server);
+
+	if (proxy_server == "" || regexpmatch (proxy_server, "^[ \t\n]+$")) {
+	    UI::SetFocus (`id ("proxy_server"));
+	    // TRANSLATORS: error message
+	    Report::Error (_("Proxy server name or IP address must be set."));
+	    return false;
+	} else if (! IP::Check4 (proxy_server) && ! Hostname::CheckFQ (proxy_server)) {
+	    UI::SetFocus (`id ("proxy_server"));
+	    Report::Error (sformat (
+		// TRANSLATORS: Error message, %1 is replaced with invalid IP address
+		_("'%1' is an invalid IP address or invalid hostname
+of a proxy server."),
+		proxy_server
+	    ) + "\n\n" + IP::Valid4());
+	    return false;
+	}
+
+	string proxy_port = (string) UI::QueryWidget (`id ("proxy_port"), `Value);
+
+	// empty
+	if (proxy_port == "" || regexpmatch (proxy_port, "^[ \t\n]+$")) {
+	    UI::SetFocus (`id ("proxy_port"));
+	    // TRANSLATORS: error message
+	    Report::Error (_("Proxy port must be set."));
+	    return false;
+	// not matching 'number' format
+	} else if (! regexpmatch (proxy_port, "^[0123456789]+$")) {
+	    UI::SetFocus (`id ("proxy_port"));
+	    Report::Error (sformat (
+		// TRANSLATORS: Error message, %1 is replaced with invalid IP address
+		_("'%1' is an invalid proxy port number.
+
+Port number must be between 1 and 65535 inclusive."),
+		proxy_port
+	    ));
+	    return false;
+	// a number
+	} else {
+	    integer port_nr = tointeger (proxy_port);
+
+	    // but wrong number
+	    if (port_nr < 1 || port_nr > 65535) {
+		UI::SetFocus (`id ("proxy_port"));
+		Report::Error (sformat (
+		    // TRANSLATORS: Error message, %1 is replaced with invalid IP address
+		    _("'%1' is an invalid proxy port number.
+
+Port number must be between 1 and 65535 inclusive."),
+		    proxy_port
+		));
+		return false;
+	    }
+	}
+	
+
+	return true;
+    }
+
+    boolean ValidateNetworkSettings () {
+	// only static setup needs to check these settings
+	string network_setup_type = (string) UI::QueryWidget (`id ("network_type"), `CurrentButton);
+	if (network_setup_type == "static" && ! ValidateStaticSetupSettings ()) {
+	    return false;
+	}
+
+	boolean use_proxy = (boolean) UI::QueryWidget (`id ("use_proxy"), `Value);
+	if (use_proxy && ! ValidateProxySettings ()) {
+	    return false;
+	}
+
+	return true;
+    }
+
+    void StoreNetworkSettingsMap () {
+	network_settings = default_network_settings;
+
+	network_settings["network_device"] = selected_netcard;
+
+	// Network settings
+	string network_setup_type = (string) UI::QueryWidget (`id ("network_type"), `CurrentButton);
+
+	if (network_setup_type == "static") {
+	    network_settings["setup_type"] = "static";
+	} else if (network_setup_type == "dhcp") {
+	    network_settings["setup_type"] = "dhcp";
+	} else {
+	    y2error ("Unknown network setup '%1'", network_setup_type);
+	}
+
+	foreach (string widget_id, ["ip_address", "netmask", "gateway", "dns_server"], {
+	    network_settings[widget_id] = (string) UI::QueryWidget (`id (widget_id), `Value);
+	});
+	
+	// Proxy settings
+	boolean use_proxy = (boolean) UI::QueryWidget (`id ("use_proxy"), `Value);
+
+	if (use_proxy) {
+	    network_settings["use_proxy"] = true;
+	    
+	    foreach (string widget_id, ["proxy_server", "proxy_port", "proxy_user", "proxy_password"], {
+		network_settings[widget_id] = (string) UI::QueryWidget (`id (widget_id), `Value);
+	    });
+	    
+	    network_settings["proxy_server"] = GetProxyServerFromURL (network_settings["proxy_server"]:"");
+	}
+    }
+
+    void FillUpNetworkSettings () {
+	AdjustNetworkWidgets (network_settings["setup_type"]:"");
+
+	foreach (string widget_id, [
+	    "ip_address", "netmask", "gateway", "dns_server",
+	    "proxy_server", "proxy_port", "proxy_user", "proxy_password"
+	], {
+	    if (network_settings[widget_id]:nil != nil)
+		UI::ChangeWidget (`id (widget_id), `Value, network_settings[widget_id]:"");
+	});
+
+	UI::ChangeWidget (`id ("use_proxy"), `Value, (network_settings["use_proxy"]:false == true));
+    }
+
+    symbol NetworkSetupDialog () {
+	Wizard::SetContentsButtons (
+	    (enable_back_in_netsetup ?
+		// TRANSLATORS: dialog caption
+		_("Network Setup Wizard: Step 2/2")
+		:
+		// TRANSLATORS: dialog caption
+		_("Network Setup")
+	    ),
+	    `VBox (
+		// TRANSLATORS: dialog label, %1 is replaced with a selected network device name, e.g, eth3
+		`Left (`Label (sformat(_("Please, select your network setup type for %1"), selected_netcard))),
+		`RadioButtonGroup (
+		    `id ("network_type"),
+		    `VBox (
+			`Left (`RadioButton (`id ("dhcp"), `opt(`notify), _("Automatic Address Setup (via &DHCP)"))),
+			`Left (`RadioButton (`id ("static"), `opt(`notify), _("&Static Address Setup")))
+		    )
+		),
+		`VSpacing (1),
+		`Left (`HBox (
+		    `HSpacing (4),
+		    `HSquash (`Frame (
+			`id ("static_addr_frame"),
+			_("Static Address Settings"),
+			`VBox (
+			    `Left(`HBox (
+				`HSquash (`MinWidth (15, `TextEntry (`id ("ip_address"), _("&IP Address")))),
+				`HSpacing (0.5),
+				`HSquash (`MinWidth (15, `TextEntry (`id ("netmask"), _("Net&mask"))))
+			    )),
+			    `Left(`HBox (
+				`HSquash (`MinWidth (15, `TextEntry (`id ("gateway"), _("Default &Gateway IP")))),
+				`HSpacing (0.5),
+				`HSquash (`MinWidth (15, `TextEntry (`id ("dns_server"), _("D&NS Server IP"))))
+			    ))
+			)
+		    ))
+		)),
+		`VSpacing (2),
+		`VSquash (`Left (
+		    `CheckBoxFrame (
+			`id ("use_proxy"),
+			_("&Use Proxy for Accessing the Internet"),
+			false,
+			`VBox (
+			    `Left (`HBox (
+				`HSquash (`MinWidth (42, `TextEntry (`id ("proxy_server"), _("&HTTP Proxy Server"), "http://"))),
+				`HSpacing (0.5),
+				`HSquash (`MinWidth (6, `ComboBox (`id ("proxy_port"), `opt (`editable), _("&Port"), [ "", "3128", "8080" ])))
+			    )),
+			    `Left (`HBox (
+				`HSquash (`MinWidth (14, `TextEntry (`id ("proxy_user"), _("Us&er (Optional)")))),
+				`HSpacing (0.5),
+				`HSquash (`MinWidth (14, `Password (`id ("proxy_password"), _("Pass&word (Optional)"))))
+			    ))
+			)
+		    )
+		)),
+		`VStretch()
+	    ),
+	    // TRANSLATORS: dialog help
+	    _("FIXME: help"),
+	    Label::BackButton(),
+	    Label::AcceptButton()
+	);
+
+	if (enable_back_in_netsetup) {
+	    Wizard::EnableBackButton();
+	} else {
+	    Wizard::DisableBackButton();
+	}
+	Wizard::EnableAbortButton();
+	Wizard::EnableNextButton();
+
+	Wizard::SetAbortButton(`cancel, Label::CancelButton());
+	Wizard::SetTitleIcon ("yast-network");
+
+	SetValidCharsForNetworkWidgets ();
+	
+	// use the default settings when not yet set
+	if (network_settings == $[] || network_settings == nil) {
+	    network_settings = default_network_settings;
+	}
+	FillUpNetworkSettings();
+
+	any user_input = nil;
+
+	symbol dialog_ret = `next;
+	while (true) {
+	    user_input = UI::UserInput();
+	    if (user_input == `cancel) {
+		dialog_ret = `abort;
+		break;
+	    } else if (user_input == `back) {
+		dialog_ret = `back;
+		break;
+	    } else if (user_input == "dhcp") {
+		AdjustNetworkWidgets ("dhcp");
+	    } else if (user_input == "static") {
+		AdjustNetworkWidgets ("static");
+	    } else if (user_input == `next) {
+		if (ValidateNetworkSettings()) {
+		    StoreNetworkSettingsMap();
+		    break;
+		}
+	    } else {
+		y2error ("Unknown ret: %1", user_input);
+	    }
+	}
+	
+	return dialog_ret;
+    }
+
+    boolean Action_AdjustDHCPNetworkSetup () {
+	string cmd = sformat ("/sbin/dhcpcd '%1'", String::Quote (network_settings["network_device"]:""));
+	map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
+	y2milestone ("Running %1 returned %2", cmd, run_cmd);
+
+	if (run_cmd["exit"]:-1 != 0) {
+	    return false;
+	}
+
+	return true;
+    }
+
+    void ReportMoreErrorInformationIfPossible (string command, map command_run) {
+	string errors = "";
+
+	if (command_run["stdout"]:"" != "") {
+	    errors = (errors != "" ? "\n":"") + errors + command_run["stdout"]:"";
+	}
+
+	if (command_run["stderr"]:"" != "") {
+	    errors = (errors != "" ? "\n":"") + errors + command_run["stderr"]:"";
+	}
+
+	if (errors != "") {
+	    Popup::LongText (
+		// TRANSLATORS: error popup headline
+		_("Error"),
+		`MinSize (65,7, `RichText (sformat (
+		    // TRANSLATORS: error popup content (HTML)
+		    // %1 is replaced with a bash command
+		    // %2 is replaced with (possibly multiline) error output of the command
+		    _("<p>Command: <tt>%1</tt> has failed.</p>
+<p>The output of the command was:
+<pre>%2</pre></p>"),
+		    command,
+		    errors
+		))),
+		30, 7
+	    );
+	}
+    }
+    
+    boolean Action_AdjustStaticNetworkSetup () {
+	// ["ip_address", "netmask", "gateway", "dns_server"]
+
+	string network_device  = network_settings["network_device"]:"";
+	string ip_address      = network_settings["ip_address"]:"";
+	string netmask         = network_settings["netmask"]:"";
+	// convert "255.255.240.0" type to bits
+	if (! regexpmatch (netmask, "^[0123456789]+$")) {
+	    netmask = tostring (Netmask::ToBits (netmask));
+	}
+	string default_gateway = network_settings["gateway"]:"";
+	string dns_server      = network_settings["dns_server"]:"";
+
+	// Wake up the link
+	string cmd = sformat (
+	    "/sbin/ip link set '%1' up",
+	    String::Quote (network_device)
+	);
+	map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
+	y2milestone ("Running %1 returned %2", cmd, run_cmd);
+	if (run_cmd["exit"]:-1 != 0) {
+	    ReportMoreErrorInformationIfPossible (cmd, run_cmd);
+	    return false;
+	}
+
+	// Set the IP
+	cmd = sformat (
+	    "/sbin/ip address add '%1/%2' brd + dev '%3'",
+	    String::Quote (ip_address),
+	    String::Quote (netmask),
+	    String::Quote (network_device)
+	);
+	run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
+	y2milestone ("Running %1 returned %2", cmd, run_cmd);
+	if (run_cmd["exit"]:-1 != 0) {
+	    ReportMoreErrorInformationIfPossible (cmd, run_cmd);
+	    return false;
+	}
+
+	// Set the default gateway
+	cmd = sformat (
+	    "/sbin/ip route add default via '%1'",
+	    String::Quote (default_gateway)
+	);
+	run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
+	y2milestone ("Running %1 returned %2", cmd, run_cmd);
+	if (run_cmd["exit"]:-1 != 0) {
+	    ReportMoreErrorInformationIfPossible (cmd, run_cmd);
+	    return false;
+	}
+
+	// Write resolv conf
+	if (! Mode::normal()) {
+	    string resolv_file = "/etc/resolv.conf";
+	    string resolv_conf = sformat ("nameserver %1\n", dns_server);
+
+	    boolean success = (boolean) SCR::Write (.target.string, resolv_file, resolv_conf);
+
+	    if (! success) {
+		y2error ("Cannot write into %1 file", resolv_file);
+		return false;
+	    }
+	}
+	
+	return true;
+    }
+    
+    boolean Action_ProxySetup () {
+	string tmp_sysconfig_dir = "/tmp/first_stage_network_setup/sysconfig/";
+	string sysconfig_file = "/etc/sysconfig/proxy";
+
+	if (Stage::initial()) {
+	    // Creates temporary directory
+	    // Cerates 'proxy' file there
+	    // Merges the 'proxy' file to the current inst-sys
+	    string cmd = sformat ("mkdir -p '%1' &&
+touch '%1proxy' &&
+/sbin/adddir '%1' '/etc/sysconfig/'", String::Quote (tmp_sysconfig_dir));
+	    map cmd_run = (map) SCR::Execute (.target.bash_output, cmd);
+	    if (cmd_run["exit"]:-1 != 0) {
+		y2error ("Command %1 failed with %2", cmd, cmd_run);
+		// TRANSLATORS: popup error message
+		Report::Error (_("A failure occurred during preparing
+the installation system for writing the proxy configuration."));
+		return false;
+	    }
+	}
+
+	string proxy_server = sformat (
+	    "http://%1:%2/",
+	    network_settings["proxy_server"]:"",
+	    network_settings["proxy_port"]:""
+	);
+	string proxy_user = network_settings["proxy_user"]:"";
+	string proxy_pass = network_settings["proxy_password"]:"";
+	
+	if (network_settings["use_proxy"]:nil == true) {
+	    Proxy::Import ($[
+		"enabled" : true,
+		"http" : proxy_server,
+		"https" : proxy_server,
+		"ftp" : proxy_server,
+		"user" : proxy_user,
+		"pass" : proxy_pass,
+	    ]);
+	} else {
+	    Proxy::Import ($[
+		"enabled" : false,
+		"http" : proxy_server,
+		"https" : proxy_server,
+		"ftp" : proxy_server,
+		"user" : proxy_user,
+		"pass" : proxy_pass,
+	    ]);
+	}
+
+	boolean progress_orig = Progress::set (false);
+	Proxy::Write();
+	Progress::set (progress_orig);
+
+	return true;
+    }
+
+    symbol WriteNetworkSetupDialog () {
+	/*
+	* $[
+	*	"dns_server":"192.168.0.3",
+	*	"gateway":"192.168.0.1",
+	*	"ip_address":"192.168.1.100",
+	*	"netmask":"255.255.255.0",
+	*	"network_device":"eth2",
+	*	"proxy_password":"pass",
+	*	"proxy_port":"3128",
+	*	"proxy_server":"cache.suse.cz",
+	*	"proxy_user":"user",
+	*	"setup_type":"static",
+	*	"use_proxy":true
+	* ]
+	*/
+
+	list <string> actions_todo      = [];
+	list <string> actions_doing     = [];
+	list          actions_functions = [];
+	
+	if (network_settings["setup_type"]:"" == "dhcp") {
+	    // TRANSLATORS: progress step
+	    actions_todo = add (actions_todo, _("Adjust automatic network setup (via DHCP)"));
+	    // TRANSLATORS: progress step
+	    actions_doing = add (actions_doing, _("Adjusting automatic network setup (via DHCP)..."));
+	    actions_functions = add (actions_functions, Action_AdjustDHCPNetworkSetup);
+	} else if (network_settings["setup_type"]:"" == "static") {
+	    // TRANSLATORS: progress step
+	    actions_todo = add (actions_todo, _("Adjust static network setup"));
+	    // TRANSLATORS: progress step
+	    actions_doing = add (actions_doing, _("Adjusting static network setup..."));
+	    actions_functions = add (actions_functions, Action_AdjustStaticNetworkSetup);
+	} else {
+	    y2error ("Unknown network setup type: '%1'", network_settings["setup_type"]:"");
+	    // TRANSLATORS: pop-up error message
+	    Report::Error (_("Unknown network setup.
+
+Please, go back and provide a valid network setup."));
+	    return `back;
+	}
+
+	// Always write settings, might be already in use
+	// and we might want to disable it
+	// if (network_settings["use_proxy"]:false == true) {
+	    // TRANSLATORS: progress step
+	    actions_todo = add (actions_todo, _("Write proxy settings"));
+	    // TRANSLATORS: progress step
+	    actions_doing = add (actions_doing, _("Writing proxy settings..."));
+	    actions_functions = add (actions_functions, Action_ProxySetup);
+	// }
+	
+	Progress::New (
+	    // TRANSLATORS: dialog caption
+	    _("Writing Network Setup"),
+	    " ",
+	    size (actions_todo),
+	    actions_todo,
+	    actions_doing,
+	    // TRANSLATORS: dialog help
+	    _("FIXME: help")
+	);
+	
+	Wizard::SetBackButton (`back, Label::BackButton());
+	Wizard::SetNextButton (`next, Label::NextButton());
+	Wizard::SetAbortButton(`abort, Label::CancelButton());
+	Wizard::SetTitleIcon ("yast-network");
+
+	boolean all_ok = true;
+	foreach (any run_function, actions_functions, {
+	    Progress::NextStage();
+	    y2milestone ("Running function: %1", run_function);
+	    
+	    boolean () run_this = (boolean()) (run_function);
+	    boolean ret = run_this();
+	    y2milestone ("Function %1 returned %2", run_function, ret);
+	    
+	    if (ret != true) {
+		all_ok = false;
+		break;
+	    }
+	});
+
+	// If writing failed, return `back
+	if (all_ok != true) {
+	    y2warning ("Writing has failed, returning to the previous dialog");
+	    Report::Error (_("Writing the network settings failed.
+
+You will be returned to the previous dialog either
+to change the settings or to cancel the network setup."));
+	    return `back;
+	}
+	
+	Progress::Finish();
+	sleep (500);
+	
+	return `next;
+    }
+
+    /* <-- Functions */
+
+    /* Script itself --> */
+
+    Wizard::CreateDialog();
+
+    ProbeAndGetNetworkCards();
+
+    if (table_items == nil || size (table_items) == 0) {
+	y2milestone ("No network cards found");
+	return default_ret;
+    }
+
+    map aliases = $[
+	"netcard"	: ``( NetworkCardDialog() ),
+	"netsetup"	: ``( NetworkSetupDialog() ),
+	"write"		: ``( WriteNetworkSetupDialog() ),
+    ];
+
+    map sequence = $[
+	"ws_start" : "netcard",
+	"netcard" : $[
+	    `abort	: `abort,
+	    `next	: "netsetup",
+	],
+	"netsetup" : $[
+	    `abort	: `abort,
+	    `next	: "write",
+	],
+	"write" : $[
+	    `abort	: `abort,
+	    `next	: `next,
+	],
+    ];
+    
+    any ret = Sequencer::Run (aliases, sequence);
+
+    Wizard::CloseDialog();
+
+    return default_ret;
+
+    /* EOF */
+}
