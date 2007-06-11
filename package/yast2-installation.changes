@@ -6,7 +6,7 @@ Mon Jun 11 17:55:23 CEST 2007 - locilka@suse.cz
   the initial stage.
 - Changed internal data structure for NetworkSetup in the initial
   stage.
-- Added Internet to the end of the NetworkSetup in the initial
+- Added Internet test to the end of the NetworkSetup in the initial
   stage.
 - 2.15.29
 
