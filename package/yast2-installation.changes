@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Jun 11 18:30:48 CEST 2007 - locilka@suse.cz
+
+- Added lost fix from Andreas Schwab for startup scripts. The patch
+  fixes evaluation of bash expressions.
+- 2.15.30
+
+-------------------------------------------------------------------
 Mon Jun 11 17:55:23 CEST 2007 - locilka@suse.cz
 
 - Adjusted SCR for install.inf to provide read/write access.
