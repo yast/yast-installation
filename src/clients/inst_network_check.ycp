@@ -17,6 +17,7 @@
 
     import "NetworkService";
     import "Wizard";
+    import "Popup";
 
     /*
      * We don't need to run this script to setup the network
@@ -26,6 +27,8 @@
 	y2milestone ("Network is already running, skipping...");
 	return `next;
     }
+
+    y2milestone ("No network configuration found, offering to set it up...");
 
     Wizard::SetContents (
 	_("Network Setup"),
@@ -38,8 +41,14 @@
 		    `VBox (
 			`Left(`Label (_("No network setup has been found.
 Would you like to configure your network card now?"))),
-			`Left(`RadioButton (`id ("yes_do_run_setup"), _("&Yes, Run the Network Setup"), true)),
-			`Left(`RadioButton (`id ("no_do_not_run_setup"), _("&No, Skip the Network Setup")))
+			`VSpacing (1),
+			`Frame (
+			    _("Select"),
+			    `MarginBox ( 1.5, 1, `VBox (
+				`Left(`RadioButton (`id ("yes_do_run_setup"), _("&Yes, Run the Network Setup"), true)),
+				`Left(`RadioButton (`id ("no_do_not_run_setup"), _("No, &Skip the Network Setup")))
+			    ))
+			)
 		    ),
 		    `HStretch ()
 		)
@@ -51,11 +60,12 @@ Would you like to configure your network card now?"))),
 	true
     );
     Wizard::SetTitleIcon ("yast-network");
-    Wizard::DisableAbortButton ();
     
     any ret = nil;
 
     boolean run_setup = nil;
+
+    symbol return_this = `next;
 
     while (true) {
 	ret = UI::UserInput();
@@ -66,7 +76,14 @@ Would you like to configure your network card now?"))),
 	    );
 	    y2milestone ("Network setup? %1", option_selected);
 	    run_setup = (option_selected == "yes_do_run_setup");
+	    return_this = `next;
 	    break;
+
+	} else if (ret == `abort) {
+	    if (Popup::ConfirmAbort (`painless)) {
+		break;
+	    }
+
 	} else {
 	    y2error ("Unknown ret: %1", ret);
 	}
