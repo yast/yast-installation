@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Mon Jun 11 17:55:23 CEST 2007 - locilka@suse.cz
+
+- Adjusted SCR for install.inf to provide read/write access.
+- Writing install.inf for save_network script at the end of
+  the initial stage.
+- Changed internal data structure for NetworkSetup in the initial
+  stage.
+- Added Internet to the end of the NetworkSetup in the initial
+  stage.
+- 2.15.29
+
+-------------------------------------------------------------------
 Fri Jun  8 17:52:57 CEST 2007 - locilka@suse.cz
 
 - Added initial implementation of possibility to setup network
