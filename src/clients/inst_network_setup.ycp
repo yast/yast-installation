@@ -31,6 +31,7 @@
     import "Stage";
     import "Progress";
     import "Proxy";
+    import "Linuxrc";
 
     /* Variables --> */
 
@@ -50,14 +51,11 @@
     /* Flag that network configuration is not needed */
     boolean some_card_has_ip = false;
 
-    /* Network card selected to be configured */
-    string selected_netcard = nil;
-
-    /* Map of pairs ["interface_name":"HTML Summary"] about network devices */
-    map <string, string> hardware_information = $[];
-
-    /* Map of pairs ["interface_name":boolean] whether the link is active or not */
-    map <string, boolean> link_status = $[];
+    /*
+     * Map of maps for each network device $["eth0" : $["interface_name":"HTML Summary"]]
+     * containing the hardware information.
+     */
+    map <string, map <string, string> > hardware_information = $[];
 
     /* Netork setting used in Write function */
     map <string, any> network_settings = $[];
@@ -99,13 +97,13 @@
 	}
 
 	string device_name = device_map["dev_name"]:"";
-	if (link_status[device_name]:nil != nil) {
+	if (hardware_information[device_name,"link_status"]:nil != nil) {
 	    ret = ret + (ret != "" ? "<br>":"") +
 		sformat(
 		    // TRANSLATORS: hardware information - HTML summary text
 		    // %1 is either "Connected" or "Disconnected" (*1)
 		    _("Link is: %1"),
-		    (link_status[device_name]:nil == true ?
+		    (hardware_information[device_name,"link_status"]:nil == "1" ?
 			// TRANSLATORS: hardware information, see *1
 			_("Connected")
 			:
@@ -179,26 +177,37 @@
 		return;
 	    }
 	    
-	    string active_status_file = sformat ("/sys/class/net/%1/carrier", device_name);
-	    if (FileUtils::Exists (active_status_file)) {
-		string dev_status = (string) SCR::Read (.target.string, active_status_file);
-		link_status[device_name] = (regexpmatch (dev_status, "^1"));
-	    }
-	
 	    table_items = add (
 		table_items,
 		`item (`id (device_name), card_name, device_name)
 	    );
 	    
+	    // empty map
+	    hardware_information[device_name] = $[];
+
+	    // Link status
+	    if (one_netcard["resource","link",0,"state"]:nil != nil) {
+		hardware_information[device_name,"link_status"] = (one_netcard["resource","link",0,"state"]:false ? "1":"0");
+	    }
+
 	    // hardware information later used in UI
 	    string hwinfo_richtext = CreateRichTextHWSummary (one_netcard);
 	    if (hwinfo_richtext != nil && hwinfo_richtext != "")
-		hardware_information[device_name] = hwinfo_richtext;
+		hardware_information[device_name,"richtext"] = hwinfo_richtext;
+
+	    hardware_information[device_name,"module"]     = one_netcard["driver_module"]:"";
+	    hardware_information[device_name,"unique_key"] = one_netcard["unique_key"]:"";
+	    hardware_information[device_name,"hward"]      = one_netcard["resource","hwaddr",0,"addr"]:"";
 	    
-	    y2milestone ("Using network device: '%1' %2", device_name, card_name);
+	    y2milestone ("Found network device: '%1' %2", device_name, card_name);
 	});
 
 	ReadProxySettingsFromSystem();
+
+	// Use the default values
+	if (network_settings == nil || network_settings == $[]) {
+	    network_settings = default_network_settings;
+	}
 
 	if (size (table_items) == 0) return `abort;
 	return `next;
@@ -211,14 +220,18 @@
 	UI::ChangeWidget (
 	    `id ("hardware_information"),
 	    // TRANSLATORS: hardware information widget content (a fallback)
-	    `Value, hardware_information[current_netcard]:_("No additional information")
+	    `Value, hardware_information[current_netcard,"richtext"]:_("No additional information")
 	);
     }
 
     void MarkAlreadySelectedDevice () {
-	if (selected_netcard == nil) return;
+	if (network_settings["network_device"]:nil == nil) return;
 
-	UI::ChangeWidget (`id ("netcard_selection"), `CurrentItem, selected_netcard);
+	UI::ChangeWidget (
+	    `id ("netcard_selection"),
+	    `CurrentItem,
+	    network_settings["network_device"]:""
+	);
     }
 
     boolean CheckSelectedNetworkCard (string selected_netcard) {
@@ -232,14 +245,14 @@ to configure it later."));
 		    return false;
 
 	// Checking whether the netcard link is active
-	} else if (link_status[selected_netcard]:nil == false) {
+	} else if (hardware_information[selected_netcard,"link_status"]:nil == "0") {
 	    if (! Report::AnyQuestion (
 		// TRANSLATORS: popup dialog caption
 		_("Warning"),
 		sformat (
 		    // TRANSLATORS: popup dialog question
 		    // %1 is replaced with a network device string
-		    _("Link of the selected interface %1 is disconnecetd.
+		    _("Link of the selected interface %1 is disconnected.
 It needs to be connected for a proper network configuration.
 
 Are you sure you want to use it despite the given fact?"),
@@ -264,15 +277,15 @@ Are you sure you want to use it despite the given fact?"),
 	enable_back_in_netsetup = true;
 
 	if (size (table_items) == 1) {
-	    selected_netcard = tostring (table_items[0,0,0]:"");
-	    y2milestone ("Only one network inteface, selecting %1", selected_netcard);
+	    network_settings["network_device"] = tostring (table_items[0,0,0]:"");
+	    y2milestone ("Only one network inteface, selecting %1", network_settings["network_device"]:nil);
 	    enable_back_in_netsetup = false;
 	    return `next;
 	}
 	
 	Wizard::SetContentsButtons (
 	    // TRANSLATORS: dialog caption
-	    _("Network Setup Wizard: Step 1/2"),
+	    _("Network Setup"),
 	    `VBox (
 		`Left (`Label (_("Please, select a network card to be configured"))),
 		`VWeight (3, `Table (
@@ -293,7 +306,7 @@ Are you sure you want to use it despite the given fact?"),
 		))
 	    ),
 	    // TRANSLATORS: dialog help
-	    _("FIXME: help"),
+	    _("<p>FIXME: help will be added later...</p>"),
 	    Label::BackButton(),
 	    Label::NextButton()
 	);
@@ -319,9 +332,12 @@ Are you sure you want to use it despite the given fact?"),
 		FillUpHardwareInformationWidget();
 		continue;
 	    } else if (user_input == `next) {
-		selected_netcard = (string) UI::QueryWidget (`id ("netcard_selection"), `CurrentItem);
+		network_settings["network_device"] = (string) UI::QueryWidget (
+		    `id ("netcard_selection"),
+		    `CurrentItem
+		);
 
-		if (! CheckSelectedNetworkCard (selected_netcard))
+		if (! CheckSelectedNetworkCard (network_settings["network_device"]:""))
 		    continue;
 
 		dialog_ret = `next;
@@ -514,10 +530,6 @@ Port number must be between 1 and 65535 inclusive."),
     }
 
     void StoreNetworkSettingsMap () {
-	network_settings = default_network_settings;
-
-	network_settings["network_device"] = selected_netcard;
-
 	// Network settings
 	string network_setup_type = (string) UI::QueryWidget (`id ("network_type"), `CurrentButton);
 
@@ -563,16 +575,16 @@ Port number must be between 1 and 65535 inclusive."),
 
     symbol NetworkSetupDialog () {
 	Wizard::SetContentsButtons (
-	    (enable_back_in_netsetup ?
-		// TRANSLATORS: dialog caption
-		_("Network Setup Wizard: Step 2/2")
-		:
-		// TRANSLATORS: dialog caption
-		_("Network Setup")
-	    ),
+	    // TRANSLATORS: dialog caption
+	    _("Network Setup"),
 	    `VBox (
-		// TRANSLATORS: dialog label, %1 is replaced with a selected network device name, e.g, eth3
-		`Left (`Label (sformat(_("Please, select your network setup type for %1"), selected_netcard))),
+		`Left (`Label (sformat(
+		    // TRANSLATORS: dialog label, %1 is replaced with a selected network device name, e.g, eth3
+		    // See *2
+		    _("Please, select your network setup type for %1"),
+		    // TRANSLATORS: a fallback card name for *2
+		    network_settings["network_device"]:_("Unknown Network Card")
+		))),
 		`RadioButtonGroup (
 		    `id ("network_type"),
 		    `VBox (
@@ -623,7 +635,7 @@ Port number must be between 1 and 65535 inclusive."),
 		`VStretch()
 	    ),
 	    // TRANSLATORS: dialog help
-	    _("FIXME: help"),
+	    _("<p>FIXME: help will be added later...</p>"),
 	    Label::BackButton(),
 	    Label::AcceptButton()
 	);
@@ -687,7 +699,7 @@ Port number must be between 1 and 65535 inclusive."),
 	return true;
     }
 
-    void ReportMoreErrorInformationIfPossible (string command, map command_run) {
+    void ReportMoreErrorInformationIfPossible (string command, map command_run, string popup_headline) {
 	string errors = "";
 
 	if (command_run["stdout"]:"" != "") {
@@ -701,7 +713,7 @@ Port number must be between 1 and 65535 inclusive."),
 	if (errors != "") {
 	    Popup::LongText (
 		// TRANSLATORS: error popup headline
-		_("Error"),
+		popup_headline,
 		`MinSize (65,7, `RichText (sformat (
 		    // TRANSLATORS: error popup content (HTML)
 		    // %1 is replaced with a bash command
@@ -715,6 +727,16 @@ Port number must be between 1 and 65535 inclusive."),
 		30, 7
 	    );
 	}
+    }
+
+    boolean FlushAllIPSettings () {
+	foreach (string netdevice, map hwi, hardware_information, {
+	    string cmd = sformat ("/sbin/ip address flush '%1'", netdevice);
+	    map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
+	    y2milestone ("Running %1 returned %2", cmd, run_cmd);
+	});
+	
+	return true;
     }
     
     boolean Action_AdjustStaticNetworkSetup () {
@@ -738,9 +760,12 @@ Port number must be between 1 and 65535 inclusive."),
 	map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
 	y2milestone ("Running %1 returned %2", cmd, run_cmd);
 	if (run_cmd["exit"]:-1 != 0) {
-	    ReportMoreErrorInformationIfPossible (cmd, run_cmd);
+	    // TRANSLATORS: popup hedline
+	    ReportMoreErrorInformationIfPossible (cmd, run_cmd, _("Setting up Network Failed"));
 	    return false;
 	}
+
+	FlushAllIPSettings();
 
 	// Set the IP
 	cmd = sformat (
@@ -752,7 +777,8 @@ Port number must be between 1 and 65535 inclusive."),
 	run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
 	y2milestone ("Running %1 returned %2", cmd, run_cmd);
 	if (run_cmd["exit"]:-1 != 0) {
-	    ReportMoreErrorInformationIfPossible (cmd, run_cmd);
+	    // TRANSLATORS: popup headline
+	    ReportMoreErrorInformationIfPossible (cmd, run_cmd, _("Setting up Network Failed"));
 	    return false;
 	}
 
@@ -764,7 +790,8 @@ Port number must be between 1 and 65535 inclusive."),
 	run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
 	y2milestone ("Running %1 returned %2", cmd, run_cmd);
 	if (run_cmd["exit"]:-1 != 0) {
-	    ReportMoreErrorInformationIfPossible (cmd, run_cmd);
+	    // TRANSLATORS: popup headline
+	    ReportMoreErrorInformationIfPossible (cmd, run_cmd, _("Setting up Network Failed"));
 	    return false;
 	}
 
@@ -789,6 +816,10 @@ Port number must be between 1 and 65535 inclusive."),
 	string sysconfig_file = "/etc/sysconfig/proxy";
 
 	if (Stage::initial()) {
+	    // Flush the cache if needed
+	    // file will be changed
+	    SCR::Write (.sysconfig.proxy, nil);
+
 	    // Creates temporary directory
 	    // Cerates 'proxy' file there
 	    // Merges the 'proxy' file to the current inst-sys
@@ -833,6 +864,15 @@ the installation system for writing the proxy configuration."));
 	    ]);
 	}
 
+	string curlrc_file = "/root/.curlrc";
+	if (! FileUtils::Exists (curlrc_file)) {
+	    y2milestone (
+		"Creating file %1 returned: %2",
+		curlrc_file,
+		SCR::Execute (.target.bash, sformat ("touch '%1'", String::Quote (curlrc_file)))
+	    );
+	}
+
 	boolean progress_orig = Progress::set (false);
 	Proxy::Write();
 	Progress::set (progress_orig);
@@ -840,39 +880,199 @@ the installation system for writing the proxy configuration."));
 	return true;
     }
 
+    boolean WriteInstallInfEntry (string inst_inf_entry, string value) {
+	// Entry name must be set
+	if (inst_inf_entry == "" || inst_inf_entry == nil) {
+	    y2error ("No entry name defined");
+	    return false;
+	}
+	
+	// Value must be set
+	if (value == "" || value == nil) {
+	    y2warning ("Value for '%1' is '%2'", inst_inf_entry, value);
+	// Can be removed later
+	} else {
+	    y2milestone ("Writing %1=%2", inst_inf_entry, value);
+	}
+
+	return SCR::Write (add (.etc.install_inf, inst_inf_entry), value);
+    }
+
+    /**
+     * Writes network setings to the install.inf file.
+     */
+    boolean Action_WriteInstallInf () {
+	string inf_filename = "/etc/install.inf";
+
+	if (! Stage::initial()) {
+	    y2milestone ("Not an inst-sys, skipping writing %1", inf_filename);
+	    return true;
+	}
+
+	if (! FileUtils::Exists (inf_filename)) {
+	    y2error ("File %1 is missing!", inf_filename);
+	    return false;
+	}
+
+	// These variables are already present in the install.inf
+	list <string> already_used_variables = SCR::Dir (.etc.install_inf);
+
+	list <string> network_variables = [
+	    "NetConfig", "IP", "Netmask", "Netdevice", "Gateway", "Nameserver",
+	    "HWAddr", "Alias", "NetUniqueID", "Broadcast", "Hostname",
+	];
+
+	// Remove all network-related settings
+	foreach (string inf_var, network_variables, {
+	    if (contains (already_used_variables, inf_var)) {
+		y2milestone ("Removing %1 from install.inf", inf_var);
+		SCR::Write (add(.etc.install_inf, inf_var), nil);
+	    }
+	});
+
+	// Write settings into the install.inf
+	string netdevice = network_settings["network_device"]:"";
+	WriteInstallInfEntry ("Netdevice", netdevice);
+
+	// DHCP setup type
+	if (network_settings["setup_type"]:nil == "dhcp") {
+	    WriteInstallInfEntry ("NetConfig", "dhcp");
+
+	// Static setup type
+	} else if (network_settings["setup_type"]:nil == "static") {
+	    WriteInstallInfEntry ("NetConfig", "static");
+	    WriteInstallInfEntry ("IP", network_settings["ip_address"]:"");
+	    WriteInstallInfEntry ("Hostname", network_settings["ip_address"]:"");
+
+	    string netmask = network_settings["netmask"]:"";
+	    // If netmask is defined as a number of bits, convert it
+	    if (regexpmatch (netmask, "^[0123456789]+$")) {
+		netmask = IP::ToString (tointeger (netmask));
+		y2milestone ("Converted netmask from %1 to %2", network_settings["netmask"]:"", netmask);
+	    }
+	    WriteInstallInfEntry ("Netmask", netmask);
+
+
+	    WriteInstallInfEntry (
+		"Broadcast",
+		IP::ComputeBroadcast (network_settings["ip_address"]:"", network_settings["netmask"]:"")
+	    );
+	    WriteInstallInfEntry ("Gateway", network_settings["gateway"]:"");
+	    WriteInstallInfEntry ("Nameserver", network_settings["dns_server"]:"");
+
+	// Unknown setup type
+	} else {
+	    y2error ("Unknown netsetup type %1, using 'dhcp'", network_settings["setup_type"]:nil);
+	    WriteInstallInfEntry ("NetConfig", "dhcp");
+	}
+
+	// Write also hardware information
+	WriteInstallInfEntry ("Alias",		hardware_information[netdevice,"module"]:"");
+	WriteInstallInfEntry ("NetUniqueID",	hardware_information[netdevice,"unique_key"]:"");
+	WriteInstallInfEntry ("HWAddr",		hardware_information[netdevice,"hward"]:"");
+
+	// Flush the SCR agent cache to the disk
+	SCR::Write (.etc.install_inf, nil);
+
+	// Reset cached install.inf
+	Linuxrc::ResetInstallInf();
+
+	return true;
+    }
+
+    // Internet test failed but user might want to accept it
+    // true -> skip
+    // false -> do not skip
+    boolean SkipFailedInetTest () {
+	if (Popup::AnyQuestion (
+	    _("Internet Test Failed"),
+	    _("Because the Internet connection test failed, you should be
+redirected to the previous dialog to change the configuration.
+
+Would you like to go back to change it?"),
+	    _("Go Back"),
+	    _("Skip It"),
+	    `yes
+	)) {
+	    return false;
+	}
+    }
+
+    // FIXME: should be unified with Network YaST module
+    boolean Action_TestInternetConnection () {
+	// Test the DNS plus routing
+	string cmd = ("/bin/ping -q -n -c1 novell.com");
+	map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
+	y2milestone ("Running %1 returned %2", cmd, run_cmd);
+
+	if (run_cmd["exit"]:-1 != 0) {
+	    // TRANSLATORS: popup headline
+	    ReportMoreErrorInformationIfPossible (cmd, run_cmd, _("Internet Test Failed"));
+
+	    if (SkipFailedInetTest()) {
+		y2warning ("Internet test failed, but skipping the rest on user's request...");
+		return true;
+	    }
+	    return false;
+	}
+
+	cmd = "curl www.novell.com 1>/dev/null";
+	run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
+	y2milestone ("Running %1 returned %2", cmd, run_cmd);
+
+	if (run_cmd["exit"]:-1 != 0) {
+	    // TRANSLATORS: popup headline
+	    ReportMoreErrorInformationIfPossible (cmd, run_cmd, _("Internet Test Failed"));
+
+	    if (SkipFailedInetTest()) {
+		y2warning ("Internet test failed, but skipping the rest on user's request...");
+		return true;
+	    }
+	    return false;
+	}
+	
+	return true;
+    }
+
     symbol WriteNetworkSetupDialog () {
-	/*
-	* $[
-	*	"dns_server":"192.168.0.3",
-	*	"gateway":"192.168.0.1",
-	*	"ip_address":"192.168.1.100",
-	*	"netmask":"255.255.255.0",
-	*	"network_device":"eth2",
-	*	"proxy_password":"pass",
-	*	"proxy_port":"3128",
-	*	"proxy_server":"cache.suse.cz",
-	*	"proxy_user":"user",
-	*	"setup_type":"static",
-	*	"use_proxy":true
-	* ]
-	*/
+	/**
+	 * Example:
+	 * network_settings =~ $[
+	 *	"dns_server":"192.168.0.3",
+	 *	"gateway":"192.168.0.1",
+	 *	"ip_address":"192.168.1.100",
+	 *	"netmask":"255.255.255.0",
+	 *	"network_device":"eth2",
+	 *	"proxy_password":"pass",
+	 *	"proxy_port":"3128",
+	 *	"proxy_server":"cache.suse.cz",
+	 *	"proxy_user":"user",
+	 *	"setup_type":"static",
+	 *	"use_proxy":true
+	 * ]
+	 */
 
 	list <string> actions_todo      = [];
 	list <string> actions_doing     = [];
 	list          actions_functions = [];
 	
+	// Dynamic network setup
 	if (network_settings["setup_type"]:"" == "dhcp") {
 	    // TRANSLATORS: progress step
 	    actions_todo = add (actions_todo, _("Adjust automatic network setup (via DHCP)"));
 	    // TRANSLATORS: progress step
 	    actions_doing = add (actions_doing, _("Adjusting automatic network setup (via DHCP)..."));
 	    actions_functions = add (actions_functions, Action_AdjustDHCPNetworkSetup);
+
+	// Static network setup
 	} else if (network_settings["setup_type"]:"" == "static") {
 	    // TRANSLATORS: progress step
 	    actions_todo = add (actions_todo, _("Adjust static network setup"));
 	    // TRANSLATORS: progress step
 	    actions_doing = add (actions_doing, _("Adjusting static network setup..."));
 	    actions_functions = add (actions_functions, Action_AdjustStaticNetworkSetup);
+
+	// Error
 	} else {
 	    y2error ("Unknown network setup type: '%1'", network_settings["setup_type"]:"");
 	    // TRANSLATORS: pop-up error message
@@ -884,13 +1084,26 @@ Please, go back and provide a valid network setup."));
 
 	// Always write settings, might be already in use
 	// and we might want to disable it
-	// if (network_settings["use_proxy"]:false == true) {
+	// TRANSLATORS: progress step
+	actions_todo = add (actions_todo, _("Write proxy settings"));
+	// TRANSLATORS: progress step
+	actions_doing = add (actions_doing, _("Writing proxy settings..."));
+	actions_functions = add (actions_functions, Action_ProxySetup);
+
+	// Write install.inf only in inst-sys
+	if (Stage::initial()) {
 	    // TRANSLATORS: progress step
-	    actions_todo = add (actions_todo, _("Write proxy settings"));
+	    actions_todo = add (actions_todo, _("Adjust installation system"));
 	    // TRANSLATORS: progress step
-	    actions_doing = add (actions_doing, _("Writing proxy settings..."));
-	    actions_functions = add (actions_functions, Action_ProxySetup);
-	// }
+	    actions_doing = add (actions_doing, _("Adjusting installation system..."));
+	    actions_functions = add (actions_functions, Action_WriteInstallInf);
+	}
+
+	// TRANSLATORS: progress step
+	actions_todo = add (actions_todo, _("Test Internet connection"));
+	// TRANSLATORS: progress step
+	actions_doing = add (actions_doing, _("Testing Internet connection..."));
+	actions_functions = add (actions_functions, Action_TestInternetConnection);
 	
 	Progress::New (
 	    // TRANSLATORS: dialog caption
@@ -900,7 +1113,7 @@ Please, go back and provide a valid network setup."));
 	    actions_todo,
 	    actions_doing,
 	    // TRANSLATORS: dialog help
-	    _("FIXME: help")
+	    _("<p>FIXME: help will be added later...</p>")
 	);
 	
 	Wizard::SetBackButton (`back, Label::BackButton());

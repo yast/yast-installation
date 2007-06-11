@@ -1106,6 +1106,7 @@ a proposal that is locked, ask your system administrator.</p>");
 
     // The "next" button is disabled via Wizard::SetContents() until everything is set up allright
     Wizard::EnableNextButton();
+    Wizard::EnableAbortButton();
 
     if (!get_submod_descriptions_and_build_menu ())
     {
