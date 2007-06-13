@@ -35,9 +35,11 @@ foreach (string service, ["network"], {
 
 NetworkDevices::Read ();
 
-if (SuSEFirewall::IsEnabled () && ! SuSEFirewall::IsStarted ())
-{
-    SuSEFirewall::StartServices ();
+// bugzilla #282871
+// If firewall is enabled, only the initial script is started.
+// Start also the final firewall phase.
+if (SuSEFirewall::IsEnabled()) {
+    Service::Start ("SuSEfirewall2_setup");
 }
 
 

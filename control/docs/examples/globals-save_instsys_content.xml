@@ -1,0 +1,11 @@
+
+    <globals>
+    ...
+    <save_instsys_content config:type="list">
+	<save_instsys_item>
+	    <instsys_directory>/root/</instsys_directory>
+	    <system_directory>/root/inst-sys/</system_directory>
+	</save_instsys_item>
+    </save_instsys_content>
+    ...
+    </globals>

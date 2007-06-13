@@ -349,8 +349,34 @@
                 xmlns:xi="http://www.w3.org/2001/XInclude"/>
 
             </programlisting>
+	</section>
+	    
+	<!-- FATE #301937, Save /root content from the installation system to the installed system -->
+	<section id="control_globals_save_instsys">
+	    <title>Installation helpers</title>
 
-        </section>
+	    <para>In the <emphasis>globals</emphasis> section, there are also
+	    helper variables for the installation and debugging:</para>
+
+	    <itemizedlist>
+		<listitem>
+		    <para><emphasis>save_instsys_content</emphasis> - is a list
+		    of entries that should be copied from the installation system
+		    to the just installed system before first stage is finished
+		    and system reboots to the second stage.</para>
+
+		    <para>This example shows how content of the <emphasis>/root/</emphasis>
+		    directory is copied to the <emphasis>/root/inst-sys/</emphasis>
+		    directory on the installed system:</para>
+
+		    <programlisting>
+		    <xi:include href="examples/globals-save_instsys_content.xml" parse="text"
+            		xmlns:xi="http://www.w3.org/2001/XInclude"/>
+		    </programlisting>
+		</listitem>
+	    </itemizedlist>
+	</section>
+
         <section id="control_software">
             <title>Software</title>
             <para>

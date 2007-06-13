@@ -26,6 +26,15 @@ textdomain="control"
         <register_monthly config:type="boolean">true</register_monthly>
 	<manual_online_update config:type="boolean">false</manual_online_update>
 	<root_password_ca_check config:type="boolean">false</root_password_ca_check>
+
+	<!-- FATE #301937, Save /root content from the installation system to the installed system -->
+	<save_instsys_content config:type="list">
+	<save_instsys_item>
+	    <instsys_directory>/root/</instsys_directory>
+	    <system_directory>/root/inst-sys/</system_directory>
+	</save_instsys_item>
+    </save_instsys_content>
+
     </globals>
     <software>
 	<!-- By default, unmaintained (old) packages are removed -->

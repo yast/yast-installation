@@ -24,6 +24,7 @@ import "ProductControl";
 import "FileUtils";
 import "String";
 import "WorkflowManager";
+import "SystemFilesCopy";
 
 include "installation/misc.ycp";
 
@@ -112,6 +113,10 @@ else if (func == "Write")
 	SCR::Execute (.target.bash, "/bin/chmod 0644 " +
 	    "'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/order.ycp'");
     }
+
+    // Copy files from inst-sys to the just installed system
+    // FATE #301937, items are defined in the control file
+    SystemFilesCopy::SaveInstSysContent();
 
     // Remove old eula.txt
     // bugzilla #208908

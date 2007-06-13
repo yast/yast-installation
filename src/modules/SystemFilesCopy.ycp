@@ -19,6 +19,8 @@
     import "FileUtils";
     import "String";
     import "Installation";
+    import "ProductFeatures";
+    import "Stage";
 
 
 
@@ -218,6 +220,118 @@
 	    } else {
 		y2milestone("Extracted: %1 into %2", cmd_run, where_to_extract);
 	    }
+	});
+
+	return true;
+    }
+
+    // internal functions for SaveInstSysContent -->
+
+    string AdjustDirectoryPath (string directory_path) {
+	list <string> dir_path_list = splitstring (directory_path, "/");
+
+	dir_path_list = filter (string one_dir, dir_path_list, {
+	    return (one_dir != "");
+	});
+
+	directory_path = mergestring (dir_path_list, "/");
+	directory_path = sformat ("/%1/", directory_path);
+
+	return directory_path;
+    }
+
+    boolean CopyFilesFromDirToDir (string dir_from, string dir_to) {
+	string cmd = sformat (
+	    "mkdir -p '%2' && cp -ar '%1.' '%2'",
+	    String::Quote (dir_from),
+	    String::Quote (dir_to)
+	);
+	map cmd_run = (map) WFM::Execute (.local.bash_output, cmd);
+
+	if (cmd_run["exit"]:-1 != 0) {
+	    y2error ("Command %1 failed %2", cmd, cmd_run);
+	    return false;
+	} else {
+	    y2milestone ("Command >%1< succeeded", cmd);
+	    return true;
+	}
+    }
+
+    // <-- internal functions for SaveInstSysContent
+
+    /**
+     * Function reads <globals><save_instsys_content /></globals>
+     * from control file and copies all content from inst-sys to
+     * the just installed system.
+     *
+     * This function needs to be called in the inst-sys (first stage)
+     * just before the disk is unmounted.
+     *
+     * FATE #301937
+     * 
+     * @struct
+     * <globals>
+     *     <save_instsys_content config:type="list">
+     *         <save_instsys_item>
+     *             <instsys_directory>/root/</instsys_directory>
+     *             <system_directory>/root/inst-sys/</system_directory>
+     *         </save_instsys_item>
+     *     </save_instsys_content>
+     * </globals>
+     */
+    global boolean SaveInstSysContent () {
+	if (! Stage::initial()) {
+	    y2error ("This function can be called in the initial stage only!");
+	    return false;
+	}
+
+	map <string, any> globals_features = ProductFeatures::GetSection ("globals");
+
+	if (globals_features == nil) {
+	    y2warning ("No <globals> defined");
+	    return false;
+	} else if (globals_features["save_instsys_content"]:[] == []) {
+	    y2milestone ("No items to copy from inst-sys");
+	    return true;
+	}
+	
+	list <map <string, string> > save_content =
+	    (list <map <string, string> >) globals_features["save_instsys_content"]:nil;
+	if (save_content == nil) {
+	    y2error ("Cannot save inst-sys content: %1", globals_features["save_instsys_content"]:nil);
+	    return false;
+	}
+
+	y2milestone ("Save inst-sys content: %1", save_content);
+	foreach (map <string, string> copy_item, save_content, {
+	    if (copy_item["instsys_directory"]:"" == "") {
+		y2error ("Error: %1 is not defined", "instsys_directory");
+		return;
+	    } else if (copy_item["system_directory"]:"" == "") {
+		y2error ("Error: %1 is not defined", "system_directory");
+		return;
+	    }
+
+	    string dir_from = sformat ("/%1/", copy_item["instsys_directory"]:"");
+	    string dir_to   = sformat ("/%1/%2/", Installation::destdir, copy_item["system_directory"]:"");
+	    
+	    dir_from = AdjustDirectoryPath (dir_from);
+	    dir_to   = AdjustDirectoryPath (dir_to);
+
+	    if (dir_from == dir_to) {
+		y2error ("Dir 'from (%1)' and 'to (%2)' mustn't be the same", dir_from, dir_to);
+		return;
+	    }
+	    // search ("/a", "/b") -> nil
+	    // search ("/a/b", "/a") -> 0
+	    // search ("/a/b/", "/b/") -> 2
+	    integer position_str_in_str = search (dir_to, dir_from);
+	    if (position_str_in_str != nil && position_str_in_str == 0) {
+		y2error ("Cannot copy a directory content to itself (%1 -> %2)", dir_from, dir_to);
+		return;
+	    }
+
+	    CopyFilesFromDirToDir (dir_from, dir_to);
 	});
 
 	return true;
