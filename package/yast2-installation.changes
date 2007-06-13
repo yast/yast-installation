@@ -1,4 +1,18 @@
 -------------------------------------------------------------------
+Wed Jun 13 15:44:05 CEST 2007 - locilka@suse.cz
+
+- Implemented new feature that saves the content defined in control
+  file from the installation system to the just installed system.
+  Function, that does it, is SaveInstSysContent in SystemFilesCopy
+  module (FATE #301937).
+- Added new entry into the control file that defines what and where
+  to save it, initially /root/ -> /root/inst-sys/.
+- Adjusted control-file documentation.
+- Fixed inst_restore_settings to start SuSEfirewall2_setup if it is
+  enabled in the system init scripts to prevent from having
+  half-started firewall after YOU kernel-update (#282871).
+
+-------------------------------------------------------------------
 Mon Jun 11 18:30:48 CEST 2007 - locilka@suse.cz
 
 - Added lost fix from Andreas Schwab for startup scripts. The patch
