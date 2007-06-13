@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Wed Jun 13 09:53:39 CEST 2007 - locilka@suse.cz
+
+- Start SuSEfirewall2_setup after system is rebooted during
+  a second stage installation and firewall service is enabled in
+  the system init scripts. Start network and firewall services as
+  soon as possible if needed (#282871).
+- 2.13.195
+
+-------------------------------------------------------------------
 Thu Jun  7 16:19:49 CEST 2007 - locilka@suse.cz
 
 - Do not report failed installation in case of restarting YaST or
