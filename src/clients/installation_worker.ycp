@@ -416,6 +416,10 @@ but something went wrong, that's why it is only in the log");
     // Continue the second stage installation
     if (Stage::cont () && FileUtils::Exists (restart_data_file))
     {
+	// System was rebooted during the second stage.
+	// Restore network and firewall settings.
+	WFM::call ("inst_restore_settings");
+
 	string contents = (string)
 	    SCR::Read (.target.string, restart_data_file);
 	// file will be created if it is needed
