@@ -1045,7 +1045,7 @@ Would you like to go back to change it?"),
 
 	// Testing more addresses, at least one should succeed
 	foreach (string one_address, ["novell.com", "www.opensuse.org", "www.suse.com"], {
-	    string cmd = sformat ("/bin/ping -q -n -c1 %1", one_address);
+	    string cmd = sformat ("/bin/ping -q -n -c1 '%1'", String::Quote (one_address));
 	    map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
 	    y2milestone ("Running %1 returned %2", cmd, run_cmd);
 
@@ -1077,20 +1077,44 @@ Would you like to go back to change it?"),
 	    return false;
 	}
 
-	string cmd = "curl www.novell.com 1>/dev/null";
-	map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
-	y2milestone ("Running %1 returned %2", cmd, run_cmd);
+	boolean www_result = false;
+	map www_failed = $[];
+	string cmd_failed_www = "";
 
-	if (run_cmd["exit"]:-1 != 0) {
+	foreach (string www_address, [
+	    "http://www.novell.com",
+	    "http://www.opensuse.org",
+	    "http://www.suse.com"
+	], {
+	    string cmd = sformat ("curl '%1' 1>/dev/null", String::Quote (www_address));
+	    map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
+	    y2milestone ("Running %1 returned %2", cmd, run_cmd);
+
+	    // Comand failed
+	    if (run_cmd["exit"]:-1 != 0) {
+		// Store the last failed command output
+		www_failed = run_cmd;
+		cmd_failed_www = cmd;
+	    // Success
+	    } else {
+		// A successfull ping means we do not need to test more of them
+		www_result = true;
+		break;
+	    }
+	});
+
+	// All curl-commands failed
+	if (www_result != true) {
 	    LogDebugInformation();
 
 	    // TRANSLATORS: popup headline
-	    ReportMoreErrorInformationIfPossible (cmd, run_cmd, _("Internet Test Failed"));
+	    ReportMoreErrorInformationIfPossible (cmd_failed_www, www_failed, _("Internet Test Failed"));
 
 	    if (SkipFailedInetTest()) {
 		y2warning ("Internet test failed, but skipping the rest on user's request...");
 		return true;
 	    }
+
 	    return false;
 	}
 	
