@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Jun 14 11:28:26 CEST 2007 - locilka@suse.cz
+
+- Enhanced network-test in the fist stage installation, three
+  different servers are tested with 'ping' instead of only one.
+- Current network settings are logged in case of failed network
+  test (both #283841).
+
+-------------------------------------------------------------------
 Wed Jun 13 15:44:05 CEST 2007 - locilka@suse.cz
 
 - Implemented new feature that saves the content defined in control

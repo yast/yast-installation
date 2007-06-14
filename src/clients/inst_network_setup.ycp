@@ -687,7 +687,19 @@ Port number must be between 1 and 65535 inclusive."),
 	return dialog_ret;
     }
 
+    boolean FlushAllIPSettings () {
+	foreach (string netdevice, map hwi, hardware_information, {
+	    string cmd = sformat ("/sbin/ip address flush '%1'", netdevice);
+	    map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
+	    y2milestone ("Running %1 returned %2", cmd, run_cmd);
+	});
+	
+	return true;
+    }
+
     boolean Action_AdjustDHCPNetworkSetup () {
+	FlushAllIPSettings();
+
 	string cmd = sformat ("/sbin/dhcpcd '%1'", String::Quote (network_settings["network_device"]:""));
 	map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
 	y2milestone ("Running %1 returned %2", cmd, run_cmd);
@@ -729,16 +741,6 @@ Port number must be between 1 and 65535 inclusive."),
 	}
     }
 
-    boolean FlushAllIPSettings () {
-	foreach (string netdevice, map hwi, hardware_information, {
-	    string cmd = sformat ("/sbin/ip address flush '%1'", netdevice);
-	    map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
-	    y2milestone ("Running %1 returned %2", cmd, run_cmd);
-	});
-	
-	return true;
-    }
-    
     boolean Action_AdjustStaticNetworkSetup () {
 	// ["ip_address", "netmask", "gateway", "dns_server"]
 
@@ -815,6 +817,24 @@ Port number must be between 1 and 65535 inclusive."),
 	string tmp_sysconfig_dir = "/tmp/first_stage_network_setup/sysconfig/";
 	string sysconfig_file = "/etc/sysconfig/proxy";
 
+	string curlrc_file = "/root/.curlrc";
+	if (! FileUtils::Exists (curlrc_file)) {
+	    y2milestone (
+		"Creating file %1 returned: %2",
+		curlrc_file,
+		SCR::Execute (.target.bash, sformat ("touch '%1'", String::Quote (curlrc_file)))
+	    );
+	}
+
+	string wgetrc_file = "/root/.wgetrc";
+	if (! FileUtils::Exists (wgetrc_file)) {
+	    y2milestone (
+		"Creating file %1 returned: %2",
+		wgetrc_file,
+		SCR::Execute (.target.bash, sformat ("touch '%1'", String::Quote (wgetrc_file)))
+	    );
+	}
+
 	if (Stage::initial()) {
 	    // Flush the cache if needed
 	    // file will be changed
@@ -834,6 +854,11 @@ touch '%1proxy' &&
 the installation system for writing the proxy configuration."));
 		return false;
 	    }
+
+	    // File has been changed, reread proxy settings
+	    boolean progress_orig = Progress::set (false);
+	    Proxy::Read();
+	    Progress::set (progress_orig);
 	}
 
 	string proxy_server = sformat (
@@ -862,15 +887,6 @@ the installation system for writing the proxy configuration."));
 		"user" : proxy_user,
 		"pass" : proxy_pass,
 	    ]);
-	}
-
-	string curlrc_file = "/root/.curlrc";
-	if (! FileUtils::Exists (curlrc_file)) {
-	    y2milestone (
-		"Creating file %1 returned: %2",
-		curlrc_file,
-		SCR::Execute (.target.bash, sformat ("touch '%1'", String::Quote (curlrc_file)))
-	    );
 	}
 
 	boolean progress_orig = Progress::set (false);
@@ -985,42 +1001,89 @@ the installation system for writing the proxy configuration."));
     // false -> do not skip
     boolean SkipFailedInetTest () {
 	if (Popup::AnyQuestion (
+	    // TRANSLATORS: a pop-up dialog headline
 	    _("Internet Test Failed"),
+	    // TRANSLATORS: a pop-up dialog question, see buttons *3
 	    _("Because the Internet connection test failed, you should be
 redirected to the previous dialog to change the configuration.
 
 Would you like to go back to change it?"),
+	    // TRANSLATORS: popup dialog button (*3)
 	    _("Go Back"),
+	    // TRANSLATORS: popup dialog button (*3)
 	    _("Skip It"),
 	    `yes
 	)) {
 	    return false;
 	}
+
+	return true;
+    }
+
+    void LogDebugInformation () {
+	y2milestone ("--- logging network settings ---");
+	foreach (string one_command, [
+	    "/sbin/ip addr show",
+	    "/sbin/ip route show",
+	    "/bin/cat /etc/resolv.conf"
+	], {
+	    y2milestone (
+		"Command: %1 returned %2",
+		one_command,
+		SCR::Execute (.target.bash_output, one_command)
+	    );
+	});
+	y2milestone ("--- logging network settings ---");
     }
 
     // FIXME: should be unified with Network YaST module
     boolean Action_TestInternetConnection () {
 	// Test the DNS plus routing
-	string cmd = ("/bin/ping -q -n -c1 novell.com");
-	map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
-	y2milestone ("Running %1 returned %2", cmd, run_cmd);
+	boolean ping_result = false;
+	map cmd_failed = $[];
+	string cmd_failed_cmd = "";
 
-	if (run_cmd["exit"]:-1 != 0) {
+	// Testing more addresses, at least one should succeed
+	foreach (string one_address, ["novell.com", "www.opensuse.org", "www.suse.com"], {
+	    string cmd = sformat ("/bin/ping -q -n -c1 %1", one_address);
+	    map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
+	    y2milestone ("Running %1 returned %2", cmd, run_cmd);
+
+	    // Comand failed
+	    if (run_cmd["exit"]:-1 != 0) {
+		// Store the last failed command output
+		cmd_failed_cmd = cmd;
+		cmd_failed = run_cmd;
+	    // Success
+	    } else {
+		// A successfull ping means we do not need to test more of them
+		ping_result = true;
+		break;
+	    }
+	});
+	
+	// All ping-commands failed
+	if (ping_result != true) {
+	    LogDebugInformation();
+
 	    // TRANSLATORS: popup headline
-	    ReportMoreErrorInformationIfPossible (cmd, run_cmd, _("Internet Test Failed"));
-
+	    ReportMoreErrorInformationIfPossible (cmd_failed_cmd, cmd_failed, _("Internet Test Failed"));
+	    
 	    if (SkipFailedInetTest()) {
 		y2warning ("Internet test failed, but skipping the rest on user's request...");
 		return true;
 	    }
+	    
 	    return false;
 	}
 
-	cmd = "curl www.novell.com 1>/dev/null";
-	run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
+	string cmd = "curl www.novell.com 1>/dev/null";
+	map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
 	y2milestone ("Running %1 returned %2", cmd, run_cmd);
 
 	if (run_cmd["exit"]:-1 != 0) {
+	    LogDebugInformation();
+
 	    // TRANSLATORS: popup headline
 	    ReportMoreErrorInformationIfPossible (cmd, run_cmd, _("Internet Test Failed"));
 
