@@ -5,7 +5,6 @@
  * Authors:	Martin Vidner <mvidner@suse.cz>
  *
  * Assumptions:
- * - the sources have been initialized
  * - the sources will be saved afterwards
  * (this means that running this client alone will not work)
  */
@@ -56,6 +55,7 @@ string heading = _("Add-On Product Installation");
 // feedback message
 string message = _("Reading packages available on the installation sources...");
 
+// bugzilla #270899#c29
 Pkg::TargetInitialize (Installation::destdir);
 Pkg::TargetLoad();
 Pkg::SourceStartManager (true);
