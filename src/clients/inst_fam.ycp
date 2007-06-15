@@ -16,6 +16,7 @@
     import "Mode";
     import "Service";
     import "GetInstArgs";
+    import "Installation";
 
     /**
      * Is GNOME installed?
@@ -39,6 +40,11 @@
 
     if ( !Mode::update () )
     {
+	// bugzilla #270899#c29
+	Pkg::TargetInitialize (Installation::destdir);
+	Pkg::TargetLoad();
+	Pkg::SourceStartManager (true);
+
 	string default_wm = (string)
 	    SCR::Read (.sysconfig.windowmanager.DEFAULT_WM);
 	if (SCR::Read (.target.size, ("/etc/sysconfig/fam")) != -1)
