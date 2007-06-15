@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jun 15 14:34:01 CEST 2007 - locilka@suse.cz
+
+- Fixing inst_addon_update_sources to initialize the target
+  and sources before using Pkg:: builtins (#270899#c29).
+
+-------------------------------------------------------------------
 Thu Jun 14 11:28:26 CEST 2007 - locilka@suse.cz
 
 - Enhanced network-test in the fist stage installation, three
