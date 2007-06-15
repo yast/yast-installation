@@ -32,6 +32,7 @@
     import "ProductControl";
     import "ProductFeatures";
     import "Language";
+    import "Internet";
     Installation::scr_handle = scr_handle;
 
     import "Mouse";
@@ -416,13 +417,25 @@ but something went wrong, that's why it is only in the log");
     // Continue the second stage installation
     if (Stage::cont () && FileUtils::Exists (restart_data_file))
     {
+	// restart_data_file indicates that YaST has been restarted during
+	// online update, continuing with online_update...
+	// bugzilla #281818 comment #22, #26
+	y2milestone ("Installation has been restarted because of online update, adjusting Internet::do_you=true");
+	Internet::do_you = true;
+
+	// creating special flag for online update
+	// see 'inst_you' client
+	// that script uses either restart_data_file or this hack-file to determine
+	// YaST or system restart during online update just to initialize sources and pkg-manager
+	SCR::Execute (.target.bash, "touch '/tmp/hack-init-target-and-sources'");
+
 	// System was rebooted during the second stage.
 	// Restore network and firewall settings.
 	WFM::call ("inst_restore_settings");
 
 	string contents = (string)
 	    SCR::Read (.target.string, restart_data_file);
-	// file will be created if it is needed
+	// file will be created only if it is needed
 	y2milestone ("Removing %1 file containing %2", restart_data_file, contents);
 	SCR::Execute(.target.remove, restart_data_file);
 

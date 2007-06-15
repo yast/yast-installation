@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Jun 15 09:41:19 CEST 2007 - locilka@suse.cz
+
+- Make sure that online update is called again after restarting
+  YaST or system during online update (#281818).
+- 2.13.196
+
+-------------------------------------------------------------------
 Wed Jun 13 09:53:39 CEST 2007 - locilka@suse.cz
 
 - Start SuSEfirewall2_setup after system is rebooted during
