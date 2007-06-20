@@ -225,7 +225,25 @@
     }
 
     void MarkAlreadySelectedDevice () {
-	if (network_settings["network_device"]:nil == nil) return;
+	// Pre-select the fist connected device
+	// if no device is already selected
+	if (network_settings["network_device"]:nil == nil) {
+	    foreach (map <string, any> one_netcard, lan_cards, {
+		string device_name = one_netcard["dev_name"]:"";
+
+		// First connected device
+		if (hardware_information[device_name,"link_status"]:"X" == "1") {
+		    UI::ChangeWidget (
+			`id ("netcard_selection"),
+			`CurrentItem,
+			device_name
+		    );
+		    break;
+		}
+	    });
+
+	    return;
+	}
 
 	UI::ChangeWidget (
 	    `id ("netcard_selection"),
@@ -839,6 +857,8 @@ Port number must be between 1 and 65535 inclusive."),
 	    // Flush the cache if needed
 	    // file will be changed
 	    SCR::Write (.sysconfig.proxy, nil);
+	    SCR::Write (.root.curlrc, nil);
+	    SCR::Write (.root.wgetrc, nil);
 
 	    // Creates temporary directory
 	    // Cerates 'proxy' file there
@@ -866,28 +886,24 @@ the installation system for writing the proxy configuration."));
 	    network_settings["proxy_server"]:"",
 	    network_settings["proxy_port"]:""
 	);
+
 	string proxy_user = network_settings["proxy_user"]:"";
 	string proxy_pass = network_settings["proxy_password"]:"";
+
+	map <string, any> import_proxy = $[
+	    "http_proxy"	: proxy_server,
+	    "https_proxy"	: proxy_server,
+	    "ftp_proxy"		: proxy_server,
+	    "proxy_user"	: proxy_user,
+	    "proxy_password"	: proxy_pass,
+	];
 	
 	if (network_settings["use_proxy"]:nil == true) {
-	    Proxy::Import ($[
-		"enabled" : true,
-		"http" : proxy_server,
-		"https" : proxy_server,
-		"ftp" : proxy_server,
-		"user" : proxy_user,
-		"pass" : proxy_pass,
-	    ]);
+	    import_proxy["enabled"] = true;
 	} else {
-	    Proxy::Import ($[
-		"enabled" : false,
-		"http" : proxy_server,
-		"https" : proxy_server,
-		"ftp" : proxy_server,
-		"user" : proxy_user,
-		"pass" : proxy_pass,
-	    ]);
+	    import_proxy["enabled"] = false;
 	}
+	Proxy::Import (import_proxy);
 
 	boolean progress_orig = Progress::set (false);
 	Proxy::Write();
@@ -1261,15 +1277,15 @@ to change the settings or to cancel the network setup."));
     map sequence = $[
 	"ws_start" : "netcard",
 	"netcard" : $[
-	    `abort	: `abort,
+	    `abort	: `next,
 	    `next	: "netsetup",
 	],
 	"netsetup" : $[
-	    `abort	: `abort,
+	    `abort	: `next,
 	    `next	: "write",
 	],
 	"write" : $[
-	    `abort	: `abort,
+	    `abort	: `next,
 	    `next	: `next,
 	],
     ];
