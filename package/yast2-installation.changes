@@ -3,6 +3,12 @@ Wed Jun 20 13:12:10 CEST 2007 - locilka@suse.cz
 
 - Fixed inst_license to really halt the system when license is
   declined (#282958).
+- Fixed writing proxy settings during First-Stage Installation,
+  Network Setup. Wrong Proxy::Import keys were used).
+- Pre-selecting first connected network card in Network Card dialog
+  in First-Stage Installation, Network Setup to avoid confusions.
+- Fixed canceled Network Setup not to abort the entire
+  installation.
 
 -------------------------------------------------------------------
 Fri Jun 15 14:34:01 CEST 2007 - locilka@suse.cz
