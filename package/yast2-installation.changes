@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jun 20 13:12:10 CEST 2007 - locilka@suse.cz
+
+- Fixed inst_license to really halt the system when license is
+  declined (#282958).
+
+-------------------------------------------------------------------
 Fri Jun 15 14:34:01 CEST 2007 - locilka@suse.cz
 
 - Fixing inst_addon_update_sources to initialize the target
