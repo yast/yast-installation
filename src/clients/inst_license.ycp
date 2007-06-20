@@ -50,14 +50,17 @@ else
 	patterns, action);
 }
 
-if (ask_ret == `nil || ask_ret == `auto)
+if (ask_ret == nil || ask_ret == `auto)
     return `auto;
 else if (ask_ret == `abort || ask_ret == `back)
     return ask_ret;
 else if (ask_ret == `halt)
 {
     UI::CloseDialog();
-    SCR::Execute(.target.bash, "/sbin/halt");
+    // License has been aborted
+    // bugzilla #282958
+    SCR::Execute(.target.bash, "/sbin/halt -f -n -p");
+    return `abort;
 }
 else if (ask_ret == `next)
     return `next;
