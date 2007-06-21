@@ -213,6 +213,44 @@ Check your hardware.
 
 symbol current_expert_mode = `repair;
 
+string InstModeDialogHelp () {
+    // help text for installation method
+    return _("<p><big><b>Installation Mode</b></big><br>
+Select what to do:</p>") +
+
+    // help text for installation method
+    _("<p>
+Select <b>New Installation</b> if there is no existing Linux system on your
+machine or if you want to replace an existing Linux system completely,
+abandoning all its configuration data.
+</p>") +
+
+    // help text for installation method
+    _("<p>
+Select <b>Update an Existing System</b> to update a Linux system already
+installed on your machine. This option preserves configuration settings
+from your existing system whenever possible.
+</p>") +
+
+    // help text for installation method
+    _("<p>
+To install an add-on product from separate media together with &product;, select
+<b>Include Add-On Products from Separate Media</b>.</p>
+") +
+
+    // help text for installation method
+    _("<p>Select <b>Other Options</b> then
+select <b>Repair Installed System</b> if you have a damaged Linux system on
+your hard disk. This option can try to fix problems automatically.
+</p>") +
+
+    // help text for installation method
+    _("<p>Select <b>Other Options</b> then
+select <b>Boot Installed System</b> if you have a Linux system on your hard
+disk that will not boot. With this option, try to fix problems manually.
+</p>");
+}
+
 // see bugzilla #156529
 term InstModeDialogContent (symbol pre_selected) {
     term other_options_layout_fix = `Empty();
@@ -269,10 +307,18 @@ term InstModeDialogContent (symbol pre_selected) {
 		    )
 		),
 		`VSpacing (2),
-		`Left (`CheckBox (`id (`add_on), `opt(`notify),
+		`Left (`CheckBox (
+		    `id (`productsources), `opt(`notify),
 		    // check box
-		    _("In&clude Add-On Products from Separate Media"))
-		)
+		    _("Include &Suggested Installation Sources"),
+		    Installation::productsources_selected
+		)),
+		`Left (`CheckBox (
+		    `id (`add_on), `opt(`notify),
+		    // check box
+		    _("In&clude Add-On Products from Separate Media"),
+		    Installation::add_on_selected
+		))
 	    )
 	)
 	)),
@@ -395,50 +441,19 @@ if (! (have_linux && offer_update))
 // Release disk used as the installation source
 ReleaseHDDUsedAsInstallationSource();
 
+// In case of going back from Update/New Installation
+Pkg::TargetFinish();
+
 if (Mode::autoinst ()) {
     y2milestone ("Autoinst -> returning `auto");
     return `auto;
 }
 
-// help text for installation method
-string help_text = _("<p><big><b>Installation Mode</b></big><br>
-Select what to do:</p>") +
 
-// help text for installation method
-_("<p>
-Select <b>New Installation</b> if there is no existing Linux system on your
-machine or if you want to replace an existing Linux system completely,
-abandoning all its configuration data.
-</p>") +
-
-// help text for installation method
-_("<p>
-Select <b>Update an Existing System</b> to update a Linux system already
-installed on your machine. This option preserves configuration settings
-from your existing system whenever possible.
-</p>") +
-
-// help text for installation method
-_("<p>
-To install an add-on product from separate media together with &product;, select
-<b>Include Add-On Products from Separate Media</b>.</p>
-") +
-
-// help text for installation method
-_("<p>Select <b>Other Options</b> then
-select <b>Repair Installed System</b> if you have a damaged Linux system on
-your hard disk. This option can try to fix problems automatically.
-</p>") +
-
-// help text for installation method
-_("<p>Select <b>Other Options</b> then
-select <b>Boot Installed System</b> if you have a Linux system on your hard
-disk that will not boot. With this option, try to fix problems manually.
-</p>");
 
 Wizard::SetContents (
     // dialog caption
-    _("Installation Mode"), InstModeDialogContent(`install), help_text, true, true
+    _("Installation Mode"), InstModeDialogContent(`install), InstModeDialogHelp(), true, true
 );
 Wizard::SetTitleIcon ("yast-software");
 
@@ -448,8 +463,10 @@ symbol new_mode = Mode::update () ? `update : `install;
 string umount_result = Linuxrc::InstallInf ("umount_result");
 string media = Linuxrc::InstallInf ("InstMode");
 y2milestone ("Umont result: %1, inst mode: %2", umount_result, media);
-if (umount_result != "0" && (media == "cd" || media == "dvd"))
-    UI::ChangeWidget (`id (`add_on), `Enabled, false);
+
+// there are not only CD and DVD Add-On sources
+//if (umount_result != "0" && (media == "cd" || media == "dvd"))
+//    UI::ChangeWidget (`id (`add_on), `Enabled, false);
 
 // only installation (and addon products) enabled
 if (other_options_disabled) {
@@ -459,7 +476,12 @@ if (other_options_disabled) {
 
 // --> Handling User Input in Installation Mode
 
-boolean add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
+ProductControl::DisabledModules = add (ProductControl::DisabledModules, "add-on");
+ProductControl::DisabledModules = add (ProductControl::DisabledModules, "inst_add-on");
+ProductControl::DisabledModules = add (ProductControl::DisabledModules, "productsources");
+ProductControl::DisabledModules = add (ProductControl::DisabledModules, "inst_productsources");
+UpdateWizardSteps();
+
 // Probably buggy UI, in case of two radio button groups, the second one
 // doesn't work (RadioButtonGroup (`id (`expert_options)))
 repeat {
@@ -468,7 +490,13 @@ repeat {
 
     // Use-Add-On-Product status changed
     if (ret == `add_on) {
-	add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
+	Installation::add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
+	ret = nil;
+	continue;
+    }
+    // Use Sources defined by product
+    else if (ret == `productsources) {
+	Installation::productsources_selected = (boolean) UI::QueryWidget (`id (`productsources), `Value);
 	ret = nil;
 	continue;
     }
@@ -488,16 +516,19 @@ repeat {
     // Adjusting current UI - Other Options
     else if (ret == `expert) {
 	// Remembering add-on state, switching off and disabling
-	add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
+	Installation::add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
 
 	// Show other options
 	Wizard::SetContents (
 	    // dialog caption
-	    _("Installation Mode"), InstModeDialogContent(`expert), help_text, true, true
+	    _("Installation Mode"), InstModeDialogContent(`expert), InstModeDialogHelp(), true, true
 	);
 	
 	UI::ChangeWidget (`id(`add_on), `Value, false);
 	UI::ChangeWidget (`id(`add_on), `Enabled, false);
+	UI::ChangeWidget (`id(`productsources), `Value, false);
+	UI::ChangeWidget (`id(`productsources), `Enabled, false);
+
 	UI::ChangeWidget (`id(`inst_mode), `CurrentButton, `expert);
 	
 	ret = nil;
@@ -511,12 +542,15 @@ repeat {
 	// Hide other options
 	Wizard::SetContents (
 	    // dialog caption
-	    _("Installation Mode"), InstModeDialogContent(`install), help_text, true, true
+	    _("Installation Mode"), InstModeDialogContent(`install), InstModeDialogHelp(), true, true
 	);
 
 	// Enabling add-on, adjusting previous state (selected)
 	UI::ChangeWidget  (`id(`add_on), `Enabled, true);
-	UI::ChangeWidget  (`id(`add_on), `Value, add_on_selected);
+	UI::ChangeWidget  (`id(`add_on), `Value, Installation::add_on_selected);
+	UI::ChangeWidget  (`id(`productsources), `Enabled, true);
+	UI::ChangeWidget  (`id(`productsources), `Value, Installation::productsources_selected);
+
 	// Can be either `install or `update
 	UI::ChangeWidget  (`id(`inst_mode), `CurrentButton, selected_mode);
     }
@@ -592,15 +626,27 @@ if (ret == `next)
 
     if (new_mode == `install || new_mode == `update)
     {
-	boolean add_on = (boolean)UI::QueryWidget (`id (`add_on), `Value);
+	Installation::add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
 	ProductControl::DisabledModules = filter (string m, ProductControl::DisabledModules, {
 	    return m != "add-on" && m != "inst_add-on";
 	});
-	if (! add_on)
+	if (! Installation::add_on_selected)
 	{
 	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "add-on");
 	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "inst_add-on");
 	}
+
+	Installation::productsources_selected = (boolean) UI::QueryWidget (`id (`productsources), `Value);
+	ProductControl::DisabledModules = filter (string m, ProductControl::DisabledModules, {
+	    return m != "productsources" && m != "inst_productsources";
+	});
+	if (! Installation::productsources_selected)
+	{
+	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "productsources");
+	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "inst_productsources");
+	}
+
+	y2milestone ("Disabled: %1", ProductControl::DisabledModules);
     }
 }
 
@@ -616,7 +662,12 @@ if (Mode::repair ())
     return `finish;
 }
 
-WFM::CallFunction("inst_network_check", []);
+// Check and setup network
+symbol inc_ret = (symbol) WFM::CallFunction ("inst_network_check", []);
+y2milestone ("inst_network_check ret: %1", inc_ret);
+if (contains ([`back, `abort], inc_ret)) {
+    return inc_ret;
+}
 
 Wizard::SetContents (
     _("Initializing Installation Catalogs"),

@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jun 21 10:34:10 CEST 2007 - locilka@suse.cz
+
+- Added handling for "Suggested Installation Sources" during the
+  first stage installation, initial evrsion (FATE #300898).
+
+-------------------------------------------------------------------
 Wed Jun 20 13:12:10 CEST 2007 - locilka@suse.cz
 
 - Fixed inst_license to really halt the system when license is

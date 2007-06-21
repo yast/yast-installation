@@ -74,7 +74,7 @@ to have configured network.</p>") +
 	// TRANSLATORS: help text, part 2/2
 	_("<p>A configured network is needed for adding remote installation sources
 or Add-On products. You do not need to set it up in case you do not want
-to use any remote instalation source and you can skip the configuration now.</p>"),
+to use any remote instalation source and you can skip the configuration then.</p>"),
 	enable_next,
 	enable_back
     );

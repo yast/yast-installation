@@ -1,0 +1,616 @@
+{
+    textdomain "installation";
+    
+    import "Wizard";
+    import "Sequencer";
+
+    import "NetworkService";
+    import "Mode";
+    import "Popup";
+    import "Label";
+    import "Installation";
+    import "PackageLock";
+    import "ProductFeatures";
+    import "Directory";
+    import "Progress";
+    import "Stage";
+    import "Report";
+
+    import "FileUtils";
+    import "HTTP";
+    import "FTP";
+    import "XML";
+    import "ProductControl";
+    import "AddOnProduct";
+    import "GetInstArgs";
+
+    include "installation/misc.ycp";
+
+    string main_link = "";
+
+    map <string, map> list_of_repos = $[];
+
+    // List of IDs of URLs to be added
+    list <string> repos_to_be_used = [];
+    // Map of already used suggested repositories
+    // $[ "($url|$path)" : src_id ]
+    map <string, integer> repos_already_used = $[];
+
+    string CreateRepoId (string s_url, string s_path) {
+	return sformat ("(%1|%2)", s_url, s_path);
+    }
+
+    boolean NetworkRunning () {
+	boolean ret = false;
+
+	while (true) {
+	    if (NetworkService::isNetworkRunning()) {
+		ret = true;
+		break;
+	    }
+
+	    // Network is not running
+	    if (! Popup::AnyQuestion (
+		_("Network is not Configured"),
+		_("Additional sources defined by product require an Internet connection.
+
+Would you like to configure it?"),
+		Label::YesButton(),
+		Label::NoButton(),
+		`yes
+	    )) {
+		y2milestone ("User decided not to setup the network");
+		ret = false;
+		break;
+	    }
+	    
+	    y2milestone ("User wants to setup the network");
+	    // Call network-setup client
+	    WFM::call("inst_network_setup");
+	}
+
+	return ret;
+    }
+
+    boolean InitializeSources () {
+	if (Mode::installation()) {
+	    y2milestone ("Sources already initialized");
+	    return true;
+	}
+
+	y2milestone ("Initializing...");
+	if (!PackageLock::Check()) return false;
+
+// // FIXME: ... // //
+//	Pkg::TargetInitialize (Installation::destdir);
+	// not necessary
+	// Pkg::TargetLoad();
+//	Pkg::SourceStartManager (true);
+
+	return true;
+    }
+
+    boolean ReadControlFile () {
+	if (! Stage::initial())
+	    ProductControl::ReadControlFile ("/etc/YaST2/control.xml");
+
+	map <string, any> software_features = ProductFeatures::GetSection ("software");
+	if (software_features != nil) {
+	    main_link = software_features["external_sources_link"]:"";
+	} else {
+	    main_link = "";
+	}
+	y2milestone ("Got link: %1", main_link);
+
+	if (main_link == nil || main_link == "") {
+	    main_link = "";
+	    y2warning ("No link");
+	    return false;
+	}
+
+	y2milestone ("Using link: %1", main_link);
+
+	return (main_link != nil && main_link != "");
+    }
+
+    string UseDownloadFile () {
+	return sformat ("%1/productsources_download_tmpfile", Directory::tmpdir);
+    }
+
+    boolean RemoveFileIfExists (string file) {
+	if (FileUtils::Exists (file)) {
+	    y2milestone ("Removing file: %1", file);
+	    return (boolean) SCR::Execute (.target.remove, file);
+	}
+	
+	return true;
+    }
+
+    boolean DownloadListOfSources () {
+	string download_file = UseDownloadFile();
+	RemoveFileIfExists (download_file);
+	map server_response = $[];
+
+	if (regexpmatch (main_link, "^[hH][tT][tT][pP]://")) {
+	    main_link = regexpsub (main_link, "^[hH][tT][tT][pP]://(.*)", "http://\\1");
+
+	    server_response = HTTP::Get (main_link, download_file);
+
+	} else if (regexpmatch (main_link, "^[fF][tT][pP]://")) {
+	    main_link = regexpsub (main_link, "^[fF][tT][pP]://(.*)", "ftp://\\1");
+
+	    server_response = FTP::Get (main_link, download_file);
+
+	} else {
+	    y2error ("Not a supported type: %1", main_link);
+	    return false;
+	}
+
+	y2milestone ("Server response: %1", server_response);
+
+	return true;
+    }
+
+    boolean ParseListOfSources () {
+	list_of_repos = $[];
+
+	string download_file = UseDownloadFile();
+
+	if (! FileUtils::Exists (download_file)) {
+	    y2error ("File %1 does not exist", download_file);
+	    return false;
+	}
+
+	map xml_file_content = XML::XMLToYCPFile (download_file);
+
+	if (xml_file_content == nil) {
+	    y2error ("Reading file %1 failed", download_file);
+	    return false;
+	}
+
+	if (xml_file_content == $[]) {
+	    y2milestone ("XML file is empty");
+	    return false;
+	}
+
+	if (xml_file_content["repos"]:[] == []) {
+	    y2milestone ("List of repos is empty");
+	    return false;
+	}
+	
+	list_of_repos = $[];
+	foreach (map one_repo, (list <map>) xml_file_content["repos"]:[], {
+	    string repo_id = CreateRepoId (one_repo["url"]:"", one_repo["path"]:"/");
+	    list_of_repos[repo_id] = one_repo;
+	});
+
+	return true;
+    }
+
+    symbol ReadDialog () {
+	list <string> actions_todo = [
+		// TRANSLATORS: progress step
+		_("Check network configuration"),
+		// TRANSLATORS: progress step
+		_("Download list of external installation sources"),
+		// TRANSLATORS: progress step
+	];
+
+	list <string> actions_doing = [
+		// TRANSLATORS: progress step
+		_("Checking network configuration..."),
+		// TRANSLATORS: progress step
+		_("Downloading list of external installation sources..."),
+	];
+
+	if (! Stage::initial()) {
+	    // TRANSLATORS: progress step
+	    actions_todo = add (actions_todo, _("Initialize the source manager"));
+	    // TRANSLATORS: progress step
+	    actions_doing = add (actions_doing, _("Initializing the source manager..."));
+	}
+
+	Progress::New (
+	    // TRANSLATORS: dialog caption
+	    _("Reading List of External Installation Sources"),
+	    " ",
+	    size (actions_todo),
+	    actions_todo,
+	    actions_doing,
+	    // TRANSLATORS: dialog help
+	    _("<p>FIXME: help will be added later...</p>")
+	);
+	Wizard::SetTitleIcon ("yast-network");
+
+	Progress::NextStage();
+
+	if (! NetworkRunning()) {
+	    y2warning ("Cannot proceed, no network configured...");
+	    return `abort;
+	}
+	
+	Progress::NextStage();
+
+	if (! ReadControlFile()) {
+	    y2milestone ("Feature not supported by the product");
+	    return `abort;
+	}
+	
+	if (! DownloadListOfSources()) {
+	    y2error ("Unable to download list of external sources");
+	    return `abort;
+	}
+	
+	if (! ParseListOfSources()) {
+	    y2error ("Unable to parse list of sources");
+	    return `abort;
+	}
+
+	if (! Stage::initial()) {
+	    Progress::NextStage();
+	    InitializeSources();
+	}
+	
+	Progress::Finish();
+	sleep (600);
+	
+	return `next;
+    }
+
+    void PrintRepositoryDescription () {
+	string current_id = (string) UI::QueryWidget (`id ("addon_repos"), `CurrentItem);
+	if (current_id == nil || current_id == "") return;
+
+	string description = sformat (
+	    _("<p><b>URL:</b> %1<br>
+<b>Summary:</b> %2<br>
+<b>Description:</b> %3</p>"),
+	    list_of_repos[current_id, "url"]:"",
+	    list_of_repos[current_id, "summary"]:"",
+	    list_of_repos[current_id, "description"]:""
+	);
+
+	UI::ChangeWidget (`id ("addon_description"), `Value, description);
+    }
+
+    /**
+     * Returns whether this URL/Path is already added as a source
+     * -1 == not added
+     * 0 or 1 or 2 ... or 'n' means 'added as source $id'
+     */
+    integer IsAddOnAlreadySelected (string s_url, string s_path) {
+	//    AddOnProduct::add_on_products, $[
+	//	"media" : src_id,
+	//	"product" : prod["label"]:prod["productname"]:prod["productversion"]:list_of_repos[url,"name"]:"",
+	//	"autoyast_product" : prod["productname"]:"",
+	//	"media_url" : url,
+	//	"product_dir" : pth,
+	//    ];
+
+	integer ret = -1;
+
+	foreach (map one_add_on, AddOnProduct::add_on_products, {
+	    if (one_add_on["media_url"]:nil == s_url && one_add_on["product_dir"]:nil == s_path) {
+		ret = one_add_on["media"]:-1;
+		break;
+	    }
+	});
+
+	return ret;
+    }
+
+    void InitRopositoriesWidget () {
+	list <term> items = [];
+	repos_already_used = $[];
+
+	integer counter = -1;
+	foreach (string url, map one_repo, list_of_repos, {
+	    counter = counter + 1;
+	    if (url == "") {
+		y2error ("InstSource %1 has no 'url'", one_repo);
+		return;
+	    }
+
+	    string repo_id = CreateRepoId (one_repo["url"]:"", one_repo["path"]:"/");
+	    integer src_id = IsAddOnAlreadySelected (one_repo["url"]:"", one_repo["path"]:"/");
+	    boolean already_used = false;
+
+	    // source has been already initialized
+	    if (src_id > -1) {
+		repos_already_used[repo_id] = src_id;
+		already_used = true;
+	    }
+
+	    items[counter] = `item (
+		`id (repo_id),
+		one_repo["name"]:one_repo["url"]:"",
+		already_used
+	    );
+	});
+
+	// FIXME: use lsort instead
+	items = sort (term one_item_a, term one_item_b, items, ``(one_item_a[1]:"" < one_item_b[1]:""));
+
+	UI::ChangeWidget (`id ("addon_repos"), `Items, items);
+
+	PrintRepositoryDescription();
+    }
+
+    boolean HandleSelectedSources () {
+	repos_to_be_used = (list <string>) UI::QueryWidget (`id ("addon_repos"), `SelectedItems);
+
+	// FIXME: handle no sources selected (warning)
+
+	// FIXME: a lot of sources selected (warning)
+
+	return true;
+    }
+
+    symbol SourcesDialog () {
+	// FIXME: filter
+
+	Wizard::SetContents (
+	    // TRANSLATORS: dialog caption
+	    _("List of External Installation Sources"),
+	    `VBox (
+		`VWeight (
+		    2,
+		    `MultiSelectionBox(
+			`id ("addon_repos"), `opt (`notify, `hstretch),
+			// TRANSLATORS: multi-selection box
+			_("&List of Installation Sources"), []
+		    )
+		),
+		// TRANSLATORS: Rich-text widget (HTML)
+		`Left (`Label (_("Installation Source Description"))),
+		`VWeight (
+		    1,
+		    `RichText (`id ("addon_description"), "")
+		)
+	    ),
+	    // TRANSLATORS: dialog help
+	    _("<p>FIXME: help will be added later...</p>"),
+	    GetInstArgs::enable_back(),
+	    GetInstArgs::enable_next()
+	);
+	Wizard::SetTitleIcon ("yast-sw_source");
+	if (! Stage::initial()) Wizard::DisableBackButton();
+	
+	InitRopositoriesWidget();
+
+	any dialog_ret = nil;
+
+	while (true) {
+	    dialog_ret = UI::UserInput();
+
+	    if (dialog_ret == `back) {
+		y2milestone ("Going back");
+		dialog_ret = `special_go_back;
+		break;
+	    } else if (dialog_ret == `next) {
+		if (HandleSelectedSources()) {
+		    break;
+		} else {
+		    continue;
+		}
+	    } else if (dialog_ret == `abort || dialog_ret == `cancel) {
+		dialog_ret = `abort;
+		if (Stage::initial()) {
+		    if (Popup::ConfirmAbort (`painless)) break;
+		} else {
+		    if (Popup::ContinueCancelHeadline (
+			_("Aborting Configuration of External Installation Source"),
+			_("Are you sure you want to abort the configuration?")
+		    )) break;
+		}
+	    } else if (dialog_ret == "addon_repos") {
+		PrintRepositoryDescription();
+	    } else {
+		y2error ("Unknown ret: %1", dialog_ret);
+	    }
+	}
+
+	Wizard::EnableBackButton();
+
+	return (symbol) dialog_ret;
+    }
+
+    boolean CreateSource (string url, string pth) {
+	integer src_id = Pkg::SourceCreate (url, pth);
+	if (src_id == nil) {
+	    Report::Error (sformat (
+		// TRANSLATORS: pop-up error message
+		// %1 is replaced with an installation source name or URL
+		_("Adding source %1 failed"),
+		list_of_repos[CreateRepoId(url,pth), "name"]:url
+	    ));
+	    // FIXME: retry ?
+	    return false;
+	}
+
+	if (! AddOnProduct::AcceptedLicenseAndInfoFile (src_id)) {
+	    Pkg::SourceDelete (src_id);
+	    return false;
+	}
+
+	if (Stage::initial()) {
+	    AddOnProduct::Integrate (src_id);
+
+	    map <string, string> prod = (map <string, string>) Pkg::SourceProductData (src_id);
+	    y2milestone ("Product Data: %1", prod);
+
+	    string repo_id = CreateRepoId (url, pth);
+	    y2milestone ("UUU: %1", repo_id);
+	    y2milestone ("%1", list_of_repos);
+
+	    AddOnProduct::add_on_products = add (AddOnProduct::add_on_products, $[
+		"media" : src_id,
+		"product" : prod["label"]:prod["productname"]:prod["productversion"]:list_of_repos[repo_id,"name"]:"",
+		"autoyast_product" : prod["productname"]:"",
+		"media_url" : url,
+		"product_dir" : pth,
+	    ]);
+	}
+    }
+
+    symbol WriteDialog () {
+	list <string> actions_todo = [];
+	list <string> actions_doing = [];
+	boolean at_once = nil;
+
+	list <integer> repos_to_be_deleted = [];
+
+	// repos_to_be_used
+	// repos_already_used
+
+	//y2milestone ("ToBeDeleted: %1", repos_to_be_deleted);
+	//y2milestone ("ReposAlreadyUsed: %1", repos_already_used);
+	//y2milestone ("ReposToBeUsed: %1", repos_to_be_used);
+
+	// go through all already initialized sources
+	// add unselected repository to 'repos_to_be_deleted'
+	// remove already selected repository from 'repos_to_be_used'
+
+	foreach (string id_used, integer src_id, repos_already_used, {
+	    // was used, but isn't anymore
+	    if (! contains (repos_to_be_used, id_used)) {
+		repos_to_be_deleted = add (repos_to_be_deleted, src_id);
+
+	    // was used and remains used
+	    } else {
+		y2milestone ("NotUsingAgain: %1", id_used);
+		repos_to_be_used = filter (string id_already_used, repos_to_be_used, {
+		    return (id_used != id_already_used);
+		});
+	    }
+	});
+
+	//y2milestone ("WillBeDeleted: %1", repos_to_be_deleted);
+	//y2milestone ("WillBeUsed: %1", repos_to_be_used);
+
+	if (repos_to_be_deleted != []) {
+	    y2milestone ("Repos to be deleted: %1", repos_to_be_deleted);
+
+	    // TRANSLATORS: progress step
+	    actions_todo = [_("Delete unselected external installation sources")];
+	    // TRANSLATORS: progress step
+	    actions_doing = [_("Deleting unselected external installation sources...")];
+	}
+
+	if (size (repos_to_be_used) > 7) {
+	    at_once = true;
+	    // TRANSLATORS: progress step
+	    actions_todo = add (actions_todo, _("Add all selected external installation sources"));
+	    // TRANSLATORS: progress step
+	    actions_doing = add (actions_doing, _("Adding all selected external installation sources..."));
+	} else {
+	    foreach (string repo_id, repos_to_be_used, {
+		actions_todo = add (actions_todo, sformat (
+		    // TRANSLATORS: progress step
+		    // %1 is replaced with installation source name or URL
+		    _("Add installation source: %1"),
+		    list_of_repos[repo_id, "name"]:repo_id
+		));
+		actions_doing = add (actions_doing, sformat (
+		    // TRANSLATORS: progress step,
+		    // %1 is replaced with installation source name or URL
+		    _("Adding installation source: %1 ..."),
+		    list_of_repos[repo_id, "name"]:repo_id
+		));
+	    });
+	}
+
+	Progress::New (
+	    // TRANSLATORS: dialog caption
+	    _("Writing List of External Installation Sources"),
+	    " ",
+	    size (actions_todo),
+	    actions_todo,
+	    actions_doing,
+	    // TRANSLATORS: dialog help
+	    _("<p>FIXME: help will be added later...</p>")
+	);
+	Wizard::SetTitleIcon ("yast-sw_source");
+
+	if (repos_to_be_deleted != []) {
+	    Progress::NextStage();
+	    foreach (integer src_id, repos_to_be_deleted, {
+		boolean success = Pkg::SourceDelete (src_id);
+		if (! success) y2error ("Couldn't delete source %1", src_id);
+
+		AddOnProduct::Disintegrate (src_id);
+		// filter it also from the list of Add-Ons
+		AddOnProduct::add_on_products = filter (map <string, any> one_addon, AddOnProduct::add_on_products, {
+		    return (one_addon["media"]:-1 != src_id);
+		});
+	    });
+	}
+
+	// One progress stage for all repositories
+	if (at_once) Progress::NextStage();
+
+	foreach (string repo_id, repos_to_be_used, {
+	    // If not at once, call one stage per repository
+	    if (! at_once) Progress::NextStage();
+	    CreateSource (list_of_repos[repo_id, "url"]:"", list_of_repos[repo_id, "path"]:"/");
+	});
+	
+	// Redraw installation wizard
+	if (Stage::initial()) {
+	    UpdateWizardSteps();
+	// Store sources
+	} else {
+	    Pkg::SourceFinishAll();
+	}
+
+	Progress::Finish();
+	sleep (600);
+
+	return `next;
+    }
+
+    symbol RunMain () {
+	map aliases = $[
+	    "read"	: ``( ReadDialog() ),
+	    "sources"	: ``( SourcesDialog() ),
+	    "write"	: ``( WriteDialog() ),
+	];
+
+	map sequence = $[
+	    "ws_start"	: "read",
+	    "read"	: $[
+		`next	: "sources",
+		`abort	: `abort,
+	    ],
+	    "sources"	: $[
+		`special_go_back : `back,
+		`next	: "write",
+		`abort	: `abort,
+	    ],
+	    "write"	: $[
+		`next	: `next,
+		`abort	: `abort,
+	    ],
+	];
+
+	any ret = Sequencer::Run (aliases, sequence);
+	y2milestone ("Sequencer::Run %1", ret);
+
+	return (symbol) ret;
+    }
+
+
+    /***********************/
+    if (Mode::normal()) {
+	Wizard::CreateDialog();
+    }
+
+    symbol client_ret = RunMain();
+
+    if (Mode::normal()) {
+	Wizard::CloseDialog();
+    }
+    /***********************/
+
+    return client_ret;
+}
