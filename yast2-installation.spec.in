@@ -3,7 +3,8 @@
 
 @HEADER@
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2-core-devel yast2-devtools yast2-testsuite yast2-country
-BuildRequires:	yast2 >= 2.15.35
+# Installation::add_on_selected, Installation::productsources_selected
+BuildRequires:	yast2 >= 2.15.38
 
 Requires:       autoyast2-installation
 # WorkflowManager module, Installation::reboot_net_settings

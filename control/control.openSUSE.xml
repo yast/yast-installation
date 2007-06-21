@@ -39,6 +39,9 @@ textdomain="control"
     <software>
         <delete_old_packages config:type="boolean">true</delete_old_packages>
         <selection_type config:type="symbol">auto</selection_type>
+
+	<!-- FATE #300898, List of external sources accesible during the installaion time -->
+	<external_sources_link>http://seven-swords.net/Repos/openSUSE_10.3/testing_list_of_repositories.xml</external_sources_link>
     </software>
 
     <partitioning>
@@ -265,9 +268,14 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
 		<!-- Here, user selects whether to perform New Installation or Upgrade -->
 		<module>
+		    <label>Additional Product Sources</label>
+		    <name>productsources</name>
+		    <enable_back>yes</enable_back>
+		</module>
+		<module>
 		    <label>Add-On Products</label>
 		    <name>add-on</name>
-                    <enable_back>no</enable_back>
+		    <enable_back>yes</enable_back>
 		</module>
                 <module>
 	            <label>Time Zone</label>
@@ -275,6 +283,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <arguments>
                         <first_run>yes</first_run>
                     </arguments>
+		    <enable_back>yes</enable_back>
                 </module>
                 <module>
 	            <label>Desktop Selection</label>
@@ -358,9 +367,14 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <name>update_partition</name>
                 </module>
 		<module>
+		    <label>Additional Product Sources</label>
+		    <name>productsources</name>
+		    <enable_back>yes</enable_back>
+		</module>
+		<module>
 		    <label>Add-On Products</label>
 		    <name>add-on</name>
-                    <enable_back>no</enable_back>
+		    <enable_back>yes</enable_back>
 		</module>
 		<module>
 		    <heading>yes</heading>
