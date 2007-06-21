@@ -44,9 +44,12 @@
     
     // chroot binary
     string test_chroot_binary = "/usr/bin/chroot";
+
+    // binary for 'any' command exists
+    string test_binary_exists = "/bin/ls";
     
     // any command for the chroot command
-    string test_do_chroot = "ls -1 /";
+    string test_do_chroot = "/bin/ls -1 /";
 
     // y2base path
     string test_y2base = "/usr/lib/YaST2/bin/y2base";
@@ -142,6 +145,20 @@
 	ReportTest (
 	    // Test progress
 	    sformat (_("Checking for chroot directory %1..."), chroot_path),
+	    test_result
+	);
+
+	return test_result;
+    }
+
+    // checks whether the new SCR path exists
+    boolean RunSCRSwitchTest_BinaryExists () {
+	string exec_file = sformat ("%1%2", chroot_path, test_binary_exists);
+	boolean test_result = FileUtils::Exists (exec_file);
+
+	ReportTest (
+	    // Test progress
+	    sformat (_("Checking for binary %1..."), exec_file),
 	    test_result
 	);
 
@@ -331,6 +348,7 @@
 	ReportProgress (_("System Checking"));
 	if (! RunSCRSwitchTest_ChrootBinary())		return false;
 	if (! RunSCRSwitchTest_ChrootPath())		return false;
+	if (! RunSCRSwitchTest_BinaryExists())		return false;
 	if (! RunSCRSwitchTest_DoChroot())		return false;
 	if (! RunSCRSwitchTest_Y2BASE())		return false;
 	if (! RunSCRSwitchTest_DoRPMCheck())		return false;

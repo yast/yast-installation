@@ -3,6 +3,7 @@ Thu Jun 21 10:34:10 CEST 2007 - locilka@suse.cz
 
 - Added handling for "Suggested Installation Sources" during the
   first stage installation, initial evrsion (FATE #300898).
+- Enhanced SCR-Switch installation-debugger.
 
 -------------------------------------------------------------------
 Wed Jun 20 13:12:10 CEST 2007 - locilka@suse.cz
