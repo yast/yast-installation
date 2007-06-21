@@ -259,14 +259,19 @@ Would you like to configure it?"),
 
     void PrintRepositoryDescription () {
 	string current_id = (string) UI::QueryWidget (`id ("addon_repos"), `CurrentItem);
-	if (current_id == nil || current_id == "") return;
+
+	// Nothing selected, no description
+	if (current_id == nil || current_id == "") {
+	    UI::ChangeWidget (`id ("addon_description"), `Value, "");
+	    return;
+	}
 
 	string description = sformat (
 	    _("<p><b>URL:</b> %1<br>
 <b>Summary:</b> %2<br>
 <b>Description:</b> %3</p>"),
 	    list_of_repos[current_id, "url"]:"",
-	    list_of_repos[current_id, "summary"]:"",
+	    list_of_repos[current_id, "summary"]:list_of_repos[current_id, "name"]:"",
 	    list_of_repos[current_id, "description"]:""
 	);
 
@@ -299,12 +304,33 @@ Would you like to configure it?"),
 	return ret;
     }
 
-    void InitRopositoriesWidget () {
+    list <string> repos_visible_now = [];
+
+    list <string> already_selected_in_dialog = [];
+
+    boolean IsSelectedInDialog (string repo_id) {
+	return contains (already_selected_in_dialog, repo_id);
+    }
+
+    void InitRopositoriesWidget (string filter_string) {
 	list <term> items = [];
-	repos_already_used = $[];
+	
+	repos_visible_now = [];
 
 	integer counter = -1;
 	foreach (string url, map one_repo, list_of_repos, {
+	    // do filter
+	    if (filter_string != "") {
+		// neither "url" nor "name" matching
+		if (
+		    ! regexpmatch (one_repo["url"]:"", filter_string)
+		    &&
+		    ! regexpmatch (one_repo["name"]:"", filter_string)
+		) {
+		    return;
+		}
+	    }
+
 	    counter = counter + 1;
 	    if (url == "") {
 		y2error ("InstSource %1 has no 'url'", one_repo);
@@ -319,6 +345,9 @@ Would you like to configure it?"),
 	    if (src_id > -1) {
 		repos_already_used[repo_id] = src_id;
 		already_used = true;
+	    // source has been already selected
+	    } else if (IsSelectedInDialog (repo_id)) {
+		already_used = true;
 	    }
 
 	    items[counter] = `item (
@@ -326,6 +355,8 @@ Would you like to configure it?"),
 		one_repo["name"]:one_repo["url"]:"",
 		already_used
 	    );
+	    
+	    repos_visible_now[counter] = repo_id;
 	});
 
 	// FIXME: use lsort instead
@@ -336,8 +367,37 @@ Would you like to configure it?"),
 	PrintRepositoryDescription();
     }
 
+    void StoreSelectedInDialog () {
+	// remember already selected items before filtering
+	list <string> currently_selected = (list <string>) UI::QueryWidget (`id ("addon_repos"), `SelectedItems);
+
+	// all visible repos - just now
+	foreach (string one_repo, repos_visible_now, {
+
+	    // visible repository is not selected
+	    if (! contains (currently_selected, one_repo)) {
+		// was already selected
+		if (contains (already_selected_in_dialog, one_repo)) {
+		    already_selected_in_dialog = filter (string o_r, already_selected_in_dialog, {
+			return o_r != one_repo;
+		    });
+		}
+
+	    // visible repository is selected now
+	    } else {
+		// wasn't selected
+		if (! contains (already_selected_in_dialog, one_repo)) {
+		    // add it
+		    already_selected_in_dialog = add (already_selected_in_dialog, one_repo);
+		}
+	    }
+
+	});
+    }
+
     boolean HandleSelectedSources () {
-	repos_to_be_used = (list <string>) UI::QueryWidget (`id ("addon_repos"), `SelectedItems);
+	StoreSelectedInDialog();
+	repos_to_be_used = already_selected_in_dialog;
 
 	// FIXME: handle no sources selected (warning)
 
@@ -346,13 +406,78 @@ Would you like to configure it?"),
 	return true;
     }
 
-    symbol SourcesDialog () {
-	// FIXME: filter
+    string EscapeChars (string input) {
+	if (input == "" || input == nil) return input;
 
+	// \ must be the first character!
+	string escape = "\\(){}[]+^$|";
+	string ret = input;
+	
+	integer i = 0;
+	integer sz = size (escape);
+	    
+	while (i < sz) {
+	    string ch = substring (escape, i, 1);
+	    y2debug ("Escaping %1", ch);
+	    ret = mergestring (splitstring (ret, ch), "\\" + ch);
+	    i = i + 1;
+	}
+	
+	return ret;
+    }
+
+    string casesenschars = "^[abcdefghijklmnopqrstuvwyxzABCDEFGHIJKLMNOPQRSTUVWXYZ]$";
+
+    // Example:
+    // <- "aBc/iop"
+    // -> "[Aa][Bb][Cc]/[Ii][Oo][Pp]"
+    string MakeCaseInsensitiveRegexp (string input) {
+	if (input == nil || input == "") return input;
+
+	list <string> characters = [];
+	integer counter = 0;
+	integer input_size = size (input);
+
+	while (counter < input_size) {
+	    characters[counter] = substring (input, counter, 1);
+	    counter = counter + 1;
+	}
+	input = "";
+
+	foreach (string onechar, characters, {
+	    if (regexpmatch (onechar, casesenschars)) {
+		onechar = sformat ("[%1%2]", toupper (onechar), tolower (onechar));
+	    }
+	    input = input + onechar;
+	});
+
+	return input;
+    }
+
+    void HandleFilterButton () {
+	StoreSelectedInDialog();
+
+	string filter_string = (string) UI::QueryWidget (`id ("filter_text"), `Value);
+	filter_string = EscapeChars (filter_string);
+	filter_string = MakeCaseInsensitiveRegexp (filter_string);
+
+	InitRopositoriesWidget (filter_string);
+
+	UI::SetFocus (`id ("filter_text"));
+    }
+
+    symbol SourcesDialog () {
 	Wizard::SetContents (
 	    // TRANSLATORS: dialog caption
 	    _("List of External Installation Sources"),
 	    `VBox (
+		`HBox (
+		    `HVSquash(`MinWidth(20, `TextEntry (`id ("filter_text"), ""))),
+		    // TRANSLATORS: push button
+		    `Bottom(`PushButton (`id ("do_filter"), `opt(`default), _("&Filter"))),
+		    `HStretch()
+		),
+		`VSpacing (0.5),
 		`VWeight (
 		    2,
 		    `MultiSelectionBox(
@@ -361,6 +486,7 @@ Would you like to configure it?"),
 			_("&List of Installation Sources"), []
 		    )
 		),
+		`VSpacing (0.5),
 		// TRANSLATORS: Rich-text widget (HTML)
 		`Left (`Label (_("Installation Source Description"))),
 		`VWeight (
@@ -376,7 +502,8 @@ Would you like to configure it?"),
 	Wizard::SetTitleIcon ("yast-sw_source");
 	if (! Stage::initial()) Wizard::DisableBackButton();
 	
-	InitRopositoriesWidget();
+	repos_already_used = $[];
+	InitRopositoriesWidget ("");
 
 	any dialog_ret = nil;
 
@@ -405,6 +532,8 @@ Would you like to configure it?"),
 		}
 	    } else if (dialog_ret == "addon_repos") {
 		PrintRepositoryDescription();
+	    } else if (dialog_ret == "do_filter") {
+		HandleFilterButton();
 	    } else {
 		y2error ("Unknown ret: %1", dialog_ret);
 	    }
@@ -497,7 +626,7 @@ Would you like to configure it?"),
 	    actions_doing = [_("Deleting unselected external installation sources...")];
 	}
 
-	if (size (repos_to_be_used) > 7) {
+	if (size (repos_to_be_used) > 12) {
 	    at_once = true;
 	    // TRANSLATORS: progress step
 	    actions_todo = add (actions_todo, _("Add all selected external installation sources"));

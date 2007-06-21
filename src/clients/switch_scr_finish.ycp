@@ -19,6 +19,8 @@ textdomain "installation";
 import "Directory";
 import "Installation";
 
+include "installation/scr_switch_debugger.ycp";
+
 any ret = nil;
 string func = "";
 map param = $[];
@@ -43,9 +45,7 @@ and no recovery is possible.
 Run the automatic debugger to find out why it has failed?")
     )) {
 	y2milestone("User decided to debug the current problem");
-	
-	// include the file once it is needed
-	include "installation/scr_switch_debugger.ycp";
+
 	RunSCRSwitchDebugger(chroot_dir);
     } else {
 	y2warning("User decided not to debug the current problem");
