@@ -8,7 +8,8 @@ BuildRequires:	yast2 >= 2.15.38
 
 Requires:       autoyast2-installation
 # WorkflowManager module, Installation::reboot_net_settings
-Requires:	yast2 >= 2.15.25
+# Installation::add_on_selected, Installation::productsources_selected
+Requires:	yast2 >= 2.15.38
 # Required in in the first stage, after
 # switching to the installed system, bugzilla #249679
 Requires:	yast2-bootloader
