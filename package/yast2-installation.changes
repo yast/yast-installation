@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Jun 28 21:34:19 CEST 2007 - jsrain@suse.cz
+
+- updated for live CD installation
+
+-------------------------------------------------------------------
 Thu Jun 21 10:34:10 CEST 2007 - locilka@suse.cz
 
 - Added handling for "Suggested Installation Sources" during the
