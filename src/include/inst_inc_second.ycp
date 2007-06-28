@@ -242,6 +242,11 @@ Note: You may have to enter some information again.");
             SCR::Execute(.target.remove, Installation::file_update_mode);
             SCR::Execute(.target.remove, "/var/adm/current_package_descr");
         }
+        else if (Mode::live_installation ())
+        {
+            y2milestone("Removing %1", Installation::file_live_install_mode);
+            SCR::Execute(.target.remove, Installation::file_live_install_mode);
+        }
         
         if (FileUtils::Exists (Installation::run_yast_at_boot)) {
             y2milestone("Removing %1", Installation::run_yast_at_boot);
@@ -329,6 +334,9 @@ Note: You may have to enter some information again.");
         // Detect mode early to be able to setup steps correctly
         if (FileUtils::Exists (Installation::destdir + Installation::file_update_mode)) {
             Mode::SetMode ("update");
+        }
+        else if (FileUtils::Exists (Installation::destdir + Installation::file_live_install_mode)) {
+            Mode::SetMode ("live_installation");
         }
         
         // during update, set the 'update language' for the 2nd stage
