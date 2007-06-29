@@ -41,7 +41,7 @@ textdomain="control"
         <selection_type config:type="symbol">auto</selection_type>
 
 	<!-- FATE #300898, List of external sources accesible during the installaion time -->
-	<external_sources_link>http://seven-swords.net/Repos/openSUSE_10.3/testing_list_of_repositories.xml</external_sources_link>
+	<external_sources_link>http://seven-swords.net/Servers/list_of_servers.xml</external_sources_link>
     </software>
 
     <partitioning>
