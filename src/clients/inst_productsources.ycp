@@ -1,4 +1,48 @@
 {
+    /***
+     * This is a stand-alone YaST client that allows you to add suggested
+     * installation sources (repositories) to the libzypp.
+     *
+     * How it works:
+     * - First a list of servers/links is extracted from the YaST control file
+     *   (/etc/YaST2/control.xml)
+     * - Then servers/links are asked one by one to provide the suggested sources
+     *
+     * Format of the initial list of servers:
+     * <?xml version="1.0"?>
+     * <productDefines xmlns="http://www.suse.com/1.0/yast2ns" xmlns:config="http://www.suse.com/1.0/configns">
+     *   <servers config:type="list">
+     *     <item>
+     *       <link>http://some.server/some_link.xml</link>
+     *     </item>
+     *     <item>
+     *       <link>ftp://some.other.server/some_link.xml</link>
+     *     </item>
+     *   </servers>
+     * </productDefines>
+     *
+     * Format of Suggested sources:
+     * <?xml version="1.0"?>
+     * <productDefines xmlns="http://www.suse.com/1.0/yast2ns" xmlns:config="http://www.suse.com/1.0/configns">
+     *   <servers config:type="list">
+     *     <repo>
+     *       <name>Some name</name>
+     *       <summary>Summary...</summary>
+     *       <description>Description...</description>
+     *       <recommended config:type="boolean">false</recommended>
+     *       <url>http://some.server/some.dir/10.3/</url>
+     *     </repo>
+     *     <repo>
+     *       <name>Another name</name>
+     *       <summary>Summary...</summary>
+     *       <description>Description...</description>
+     *       <recommended config:type="boolean">false</recommended>
+     *       <url>http://another.server/another.dir/10.3/</url>
+     *     </repo>
+     *   </servers>
+     * </productDefines>     
+     */
+
     textdomain "installation";
     
     import "Wizard";
@@ -30,8 +74,11 @@
 
     map <string, map> list_of_repos = $[];
 
+    list <map> list_of_servers = [];
+
     // List of IDs of URLs to be added
     list <string> repos_to_be_used = [];
+
     // Map of already used suggested repositories
     // $[ "($url|$path)" : src_id ]
     map <string, integer> repos_already_used = $[];
@@ -51,7 +98,9 @@
 
 	    // Network is not running
 	    if (! Popup::AnyQuestion (
+		// TRANSLATORS: popup header
 		_("Network is not Configured"),
+		// TRANSLATORS: popup question
 		_("Additional sources defined by product require an Internet connection.
 
 Would you like to configure it?"),
@@ -72,20 +121,66 @@ Would you like to configure it?"),
 	return ret;
     }
 
+    /**
+     * Returns whether this URL/Path is already added as a source
+     * -1 == not added
+     * 0 or 1 or 2 ... or 'n' means 'added as source $id'
+     */
+    integer IsAddOnAlreadySelected (string s_url, string s_path) {
+	//    AddOnProduct::add_on_products, $[
+	//	"media" : src_id,
+	//	"product" : prod["label"]:prod["productname"]:prod["productversion"]:list_of_repos[url,"name"]:"",
+	//	"autoyast_product" : prod["productname"]:"",
+	//	"media_url" : url,
+	//	"product_dir" : pth,
+	//    ];
+
+	integer ret = -1;
+
+	foreach (map one_add_on, AddOnProduct::add_on_products, {
+	    if (one_add_on["media_url"]:nil == s_url && one_add_on["product_dir"]:nil == s_path) {
+		ret = one_add_on["media"]:-1;
+		break;
+	    }
+	});
+
+	return ret;
+    }
+
     boolean InitializeSources () {
-	if (Mode::installation()) {
-	    y2milestone ("Sources already initialized");
-	    return true;
-	}
+//	if (Mode::installation()) {
+//	    y2milestone ("Sources already initialized");
+//	    return true;
+//	}
 
 	y2milestone ("Initializing...");
 	if (!PackageLock::Check()) return false;
 
-// // FIXME: ... // //
-//	Pkg::TargetInitialize (Installation::destdir);
+	Pkg::TargetInitialize (Installation::destdir);
 	// not necessary
 	// Pkg::TargetLoad();
-//	Pkg::SourceStartManager (true);
+	Pkg::SourceStartManager (true);
+
+	if (! Mode::installation()) {
+	    // repos_already_used
+	    foreach (integer one_id, Pkg::SourceGetCurrent (true), {
+		map source_data = Pkg::SourceGeneralData (one_id);
+
+		if (IsAddOnAlreadySelected (source_data["url"]:"", source_data["product_dir"]:"") >= -1) {
+		    AddOnProduct::add_on_products = add (
+			AddOnProduct::add_on_products,
+			$[
+			    "media" : one_id,
+			    "media_url" : source_data["url"]:"",
+			    "product_dir" : source_data["product_dir"]:"",
+			    "product" : "",
+			    "autoyast_product" : "",
+			]
+		    );
+		}
+
+	    });
+	}
 
 	return true;
     }
@@ -114,7 +209,7 @@ Would you like to configure it?"),
     }
 
     string UseDownloadFile () {
-	return sformat ("%1/productsources_download_tmpfile", Directory::tmpdir);
+	return sformat ("%1/list_of_productsources_servers", Directory::tmpdir);
     }
 
     boolean RemoveFileIfExists (string file) {
@@ -126,23 +221,22 @@ Would you like to configure it?"),
 	return true;
     }
 
-    boolean DownloadListOfSources () {
-	string download_file = UseDownloadFile();
-	RemoveFileIfExists (download_file);
+    boolean DownloadFile (string from, string to) {
+	RemoveFileIfExists (to);
 	map server_response = $[];
 
-	if (regexpmatch (main_link, "^[hH][tT][tT][pP]://")) {
-	    main_link = regexpsub (main_link, "^[hH][tT][tT][pP]://(.*)", "http://\\1");
+	if (regexpmatch (from, "^[hH][tT][tT][pP]://")) {
+	    from = regexpsub (from, "^[hH][tT][tT][pP]://(.*)", "http://\\1");
 
-	    server_response = HTTP::Get (main_link, download_file);
+	    server_response = HTTP::Get (from, to);
 
-	} else if (regexpmatch (main_link, "^[fF][tT][pP]://")) {
-	    main_link = regexpsub (main_link, "^[fF][tT][pP]://(.*)", "ftp://\\1");
+	} else if (regexpmatch (from, "^[fF][tT][pP]://")) {
+	    from = regexpsub (from, "^[fF][tT][pP]://(.*)", "ftp://\\1");
 
-	    server_response = FTP::Get (main_link, download_file);
+	    server_response = FTP::Get (from, to);
 
 	} else {
-	    y2error ("Not a supported type: %1", main_link);
+	    y2error ("Not a supported type: %1", from);
 	    return false;
 	}
 
@@ -151,11 +245,35 @@ Would you like to configure it?"),
 	return true;
     }
 
-    boolean ParseListOfSources () {
-	list_of_repos = $[];
+    boolean ParseListOfServers (string download_file) {
+	if (! FileUtils::Exists (download_file)) {
+	    y2error ("File %1 does not exist", download_file);
+	    return false;
+	}
 
-	string download_file = UseDownloadFile();
+	map xml_file_content = XML::XMLToYCPFile (download_file);
 
+	if (xml_file_content == nil) {
+	    y2error ("Reading file %1 failed", download_file);
+	    return false;
+	}
+
+	if (xml_file_content == $[]) {
+	    y2milestone ("XML file is empty");
+	    return false;
+	}
+
+	if (xml_file_content["servers"]:[] == []) {
+	    y2milestone ("List of servers is empty");
+	    return false;
+	}
+
+	list_of_servers = xml_file_content["servers"]:[];
+
+	return true;
+    }
+
+    boolean ParseListOfSources (string download_file, string url_from) {
 	if (! FileUtils::Exists (download_file)) {
 	    y2error ("File %1 does not exist", download_file);
 	    return false;
@@ -177,11 +295,47 @@ Would you like to configure it?"),
 	    y2milestone ("List of repos is empty");
 	    return false;
 	}
-	
-	list_of_repos = $[];
+
 	foreach (map one_repo, (list <map>) xml_file_content["repos"]:[], {
+	    one_repo["url_from"] = url_from;
 	    string repo_id = CreateRepoId (one_repo["url"]:"", one_repo["path"]:"/");
-	    list_of_repos[repo_id] = one_repo;
+
+	    // do not redefine already added one
+	    if (! haskey (list_of_repos, repo_id)) {
+		list_of_repos[repo_id] = one_repo;
+	    }
+	});
+
+	return true;
+    }
+
+    boolean DownloadAndParseSources () {
+	list_of_repos = $[];
+	list_of_servers = [];
+
+	if (! DownloadFile (main_link, UseDownloadFile())) {
+	    y2error ("Unable to download list of external sources");
+	    return false;
+	}
+	
+	if (! ParseListOfServers (UseDownloadFile())) {
+	    y2error ("Unable to parse list of servers");
+	    return false;
+	}
+
+	foreach (map one_server, list_of_servers, {
+	    if (one_server["link"]:"" != "") {
+		y2milestone ("Downloading list of repos from %1", one_server["link"]:"");
+
+		if (! DownloadFile (one_server["link"]:"", UseDownloadFile())) {
+		    y2error ("Unable to download list of external sources");
+		    return;
+		}
+		if (! ParseListOfSources (UseDownloadFile(), one_server["link"]:"")) {
+		    y2error ("Unable to parse list of sources");
+		    return;
+		}
+	    }
 	});
 
 	return true;
@@ -236,13 +390,8 @@ Would you like to configure it?"),
 	    return `abort;
 	}
 	
-	if (! DownloadListOfSources()) {
-	    y2error ("Unable to download list of external sources");
-	    return `abort;
-	}
-	
-	if (! ParseListOfSources()) {
-	    y2error ("Unable to parse list of sources");
+	if (! DownloadAndParseSources()) {
+	    y2error ("Cannot downoload or parse sources");
 	    return `abort;
 	}
 
@@ -267,10 +416,20 @@ Would you like to configure it?"),
 	}
 
 	string description = sformat (
-	    _("<p><b>URL:</b> %1<br>
-<b>Summary:</b> %2<br>
-<b>Description:</b> %3</p>"),
+	    // TRANSLATORS: This is a complex HTML-formatted information about selecetd external repository
+	    // It contains "key: value" pair, one per line, separated by <br> tags
+	    // %1 is replaced with an URL of the selected repository
+	    // %2 is replaced with an URL from which we've got this repository information
+	    // %3 is replaced with a summary text for the selected repository
+	    // %4 is replaced with a description text for the selected repository
+	    _("<p>
+<b>URL:</b> %1<br>
+<b>Linked from:</b> %2<br>
+<b>Summary:</b> %3<br>
+<b>Description:</b> %4
+</p>"),
 	    list_of_repos[current_id, "url"]:"",
+	    list_of_repos[current_id, "url_from"]:"",
 	    list_of_repos[current_id, "summary"]:list_of_repos[current_id, "name"]:"",
 	    list_of_repos[current_id, "description"]:""
 	);
@@ -278,31 +437,7 @@ Would you like to configure it?"),
 	UI::ChangeWidget (`id ("addon_description"), `Value, description);
     }
 
-    /**
-     * Returns whether this URL/Path is already added as a source
-     * -1 == not added
-     * 0 or 1 or 2 ... or 'n' means 'added as source $id'
-     */
-    integer IsAddOnAlreadySelected (string s_url, string s_path) {
-	//    AddOnProduct::add_on_products, $[
-	//	"media" : src_id,
-	//	"product" : prod["label"]:prod["productname"]:prod["productversion"]:list_of_repos[url,"name"]:"",
-	//	"autoyast_product" : prod["productname"]:"",
-	//	"media_url" : url,
-	//	"product_dir" : pth,
-	//    ];
 
-	integer ret = -1;
-
-	foreach (map one_add_on, AddOnProduct::add_on_products, {
-	    if (one_add_on["media_url"]:nil == s_url && one_add_on["product_dir"]:nil == s_path) {
-		ret = one_add_on["media"]:-1;
-		break;
-	    }
-	});
-
-	return ret;
-    }
 
     list <string> repos_visible_now = [];
 
@@ -496,8 +631,8 @@ Would you like to configure it?"),
 	    ),
 	    // TRANSLATORS: dialog help
 	    _("<p>FIXME: help will be added later...</p>"),
-	    GetInstArgs::enable_back(),
-	    GetInstArgs::enable_next()
+	    (Mode::installation() ? GetInstArgs::enable_back():false),
+	    (Mode::installation() ? GetInstArgs::enable_next():true)
 	);
 	Wizard::SetTitleIcon ("yast-sw_source");
 	if (! Stage::initial()) Wizard::DisableBackButton();
@@ -526,7 +661,9 @@ Would you like to configure it?"),
 		    if (Popup::ConfirmAbort (`painless)) break;
 		} else {
 		    if (Popup::ContinueCancelHeadline (
+			// TRANSLATORS: popup header
 			_("Aborting Configuration of External Installation Source"),
+			// TRANSLATORS: popup question
 			_("Are you sure you want to abort the configuration?")
 		    )) break;
 		}

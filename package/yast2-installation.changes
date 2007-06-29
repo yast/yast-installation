@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Jun 29 11:50:47 CEST 2007 - locilka@suse.cz
+
+- Extended "Suggested Installation Sources" to support two levels
+  of linking. First link contains list of links to be downloaded
+  in order to get lists of suggested repositories.
+
+-------------------------------------------------------------------
 Thu Jun 28 21:34:19 CEST 2007 - jsrain@suse.cz
 
 - updated for live CD installation
