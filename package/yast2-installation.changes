@@ -55,6 +55,11 @@ Wed Jun 13 15:44:05 CEST 2007 - locilka@suse.cz
   half-started firewall after YOU kernel-update (#282871).
 
 -------------------------------------------------------------------
+Thu Jun 21 17:38:09 CEST 2007 - adrian@suse.de
+
+- fix changelog entry order
+
+-------------------------------------------------------------------
 Mon Jun 11 18:30:48 CEST 2007 - locilka@suse.cz
 
 - Added lost fix from Andreas Schwab for startup scripts. The patch
@@ -1218,15 +1223,15 @@ Wed Jun 21 11:03:58 CEST 2006 - jsrain@suse.cz
   source fails in order to allow to enter password (#186804)
 
 -------------------------------------------------------------------
-Tue Jun 20 14:35:15 CEST 2006 - jsrain@suse.cz
-
-- translate the congratulate string (#186567)
-
--------------------------------------------------------------------
 Tue Jun 20 14:50:48 CEST 2006 - mvidner@suse.cz
 
 - When registration succeeds, display only the actually added sources
 (#180820#c26).
+
+-------------------------------------------------------------------
+Tue Jun 20 14:35:15 CEST 2006 - jsrain@suse.cz
+
+- translate the congratulate string (#186567)
 
 -------------------------------------------------------------------
 Mon Jun 19 14:05:21 CEST 2006 - jsrain@suse.cz
@@ -1873,12 +1878,6 @@ Fri Mar 31 17:32:03 CEST 2006 - mvidner@suse.cz
 - 2.13.55
 
 -------------------------------------------------------------------
-Wed Mar 29 17:57:35 CEST 2006 - jsrain@suse.de
-
-- prevent from installing one product multiple times (#159662)
-- 2.13.54
-
--------------------------------------------------------------------
 Thu Mar 30 13:42:35 CEST 2006 - mvidner@suse.cz
 
 - Reset zypp and release its lock before suse_register (#160319).
@@ -1890,6 +1889,12 @@ Thu Mar 30 13:42:35 CEST 2006 - mvidner@suse.cz
 Thu Mar 30 12:31:49 CEST 2006 - jdsn@suse.de
 
 - included new desktop file in Makefile (162112) 
+
+-------------------------------------------------------------------
+Wed Mar 29 17:57:35 CEST 2006 - jsrain@suse.de
+
+- prevent from installing one product multiple times (#159662)
+- 2.13.54
 
 -------------------------------------------------------------------
 Wed Mar 29 16:43:02 CEST 2006 - locilka@suse.cz
@@ -2126,16 +2131,16 @@ Fri Mar 10 12:17:56 CET 2006 - ms@suse.de
 - forcing using xim for Qt Input (#156962)
 
 -------------------------------------------------------------------
-Thu Mar  9 17:35:30 CET 2006 - jsrain@suse.de
-
-- fixed asking for add-on product CD (#156469)
-
--------------------------------------------------------------------
 Thu Mar  9 17:36:39 CET 2006 - mvidner@suse.cz
 
 - Control files: added network/startmode, being ifplugd for SL and
   SLED, auto for SLES (#156388).
 - 2.13.30
+
+-------------------------------------------------------------------
+Thu Mar  9 17:35:30 CET 2006 - jsrain@suse.de
+
+- fixed asking for add-on product CD (#156469)
 
 -------------------------------------------------------------------
 Thu Mar  9 12:01:07 CET 2006 - ms@suse.de
@@ -3248,16 +3253,16 @@ Tue Oct 19 10:46:15 CEST 2004 - lslezak@suse.cz
 - version 2.11.1
 
 -------------------------------------------------------------------
+Mon Oct 11 15:04:26 CEST 2004 - jsrain@suse.cz
+
+- adapted to functional interface of Arch.ycp
+
+-------------------------------------------------------------------
 Mon Oct 11 10:43:25 CEST 2004 - jsrain@suse.cz
 
 - moved default logon/window manager setting to extra client,
   setting it according to the base package selection (#46619)
 - 2.11.0
-
--------------------------------------------------------------------
-Mon Oct 11 15:04:26 CEST 2004 - jsrain@suse.cz
-
-- adapted to functional interface of Arch.ycp
 
 -------------------------------------------------------------------
 Thu Sep 30 15:12:09 CEST 2004 - sh@suse.de
@@ -3576,18 +3581,18 @@ Fri Apr 30 16:30:13 CEST 2004 - arvin@suse.de
 - readded vnc remote proposal to SLES workflow (bug #31023)
 
 -------------------------------------------------------------------
+Wed Apr 28 15:38:45 CEST 2004 - arvin@suse.de
+
+- quick implementation of execution of update.post2 scripts
+  (bug #38677)
+
+-------------------------------------------------------------------
 Wed Apr 28 15:26:30 CEST 2004 - lslezak@suse.cz
 
 - set Ctrl+Alt+Del handler in /etc/inittab to halt (instead of
   reboot) in UML system (safe shutdown from host system using
   uml_mconsole)
 - version 2.9.73
-
--------------------------------------------------------------------
-Wed Apr 28 15:38:45 CEST 2004 - arvin@suse.de
-
-- quick implementation of execution of update.post2 scripts
-  (bug #38677)
 
 -------------------------------------------------------------------
 Tue Apr 27 18:25:25 CEST 2004 - gs@suse.de
@@ -3869,14 +3874,14 @@ Wed Mar 17 05:46:03 CET 2004 - nashif@suse.de
   to installation mode
 
 -------------------------------------------------------------------
-Tue Mar 16 16:02:52 CET 2004 - msvec@suse.cz
-
-- added icons to network and hardware proposals
-
--------------------------------------------------------------------
 Tue Mar 16 21:18:06 CET 2004 - kkaempf@suse.de
 
 - run cleanup script for GNOME (#36196)
+
+-------------------------------------------------------------------
+Tue Mar 16 16:02:52 CET 2004 - msvec@suse.cz
+
+- added icons to network and hardware proposals
 
 -------------------------------------------------------------------
 Tue Mar 16 14:26:03 CET 2004 - fehr@suse.de
