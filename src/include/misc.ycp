@@ -168,15 +168,26 @@ according to the settings in the previous dialogs.</p>")
 		     heading_bg_color, heading, body )
 	    : ( heading + body );
 
+        integer size_x = tointeger(display_info["Width"]:800);
+        integer size_y = tointeger(display_info["Height"]:600);
 
+	// 576x384 support for for ps3
+	// bugzilla #273147
+        if (size_x >= 800 && size_y >= 600) {
+                size_x = 70;
+               size_y = 18;
+        } else {
+                size_x = 54;
+                size_y = 15;
+        }
 
 	UI::OpenDialog(
 		       `VBox(
 			     `VSpacing( 0.4 ),
-			     `HSpacing( 70 ),		// force width
+			     `HSpacing( size_x ),	// force width
 			     `HBox(
 				   `HSpacing( 0.7 ),
-				   `VSpacing( 18 ),	// force height
+				   `VSpacing( size_y ),	// force height
 				   `RichText( text ),
 				   `HSpacing( 0.7 )
 				   ),

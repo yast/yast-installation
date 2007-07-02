@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jul  2 15:38:27 CEST 2007 - locilka@suse.cz
+
+- Applied patch from sassmann@novell.com for PS3 support with
+  576x384 resolution (#273147).
+
+-------------------------------------------------------------------
 Fri Jun 29 11:50:47 CEST 2007 - locilka@suse.cz
 
 - Extended "Suggested Installation Sources" to support two levels
