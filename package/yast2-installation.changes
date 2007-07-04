@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jul  4 16:16:37 CEST 2007 - locilka@suse.cz
+
+- Fixed workflow when user selects to Boot the installed system and
+  then cancels that decision.
+- 2.15.31
+
+-------------------------------------------------------------------
 Mon Jul  2 15:38:27 CEST 2007 - locilka@suse.cz
 
 - Applied patch from sassmann@novell.com for PS3 support with

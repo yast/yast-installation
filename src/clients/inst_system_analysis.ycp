@@ -578,13 +578,15 @@ repeat {
 	    
 	    // Boot was selected
 	    if (new_mode == `boot) {
-		symbol ret = handle_boot();
+		symbol hb_ret = handle_boot();
 		y2milestone ("handle_boot() returned '%1'", ret);
 
-		if (ret != `finish) {
+		if (hb_ret != `finish) {
 		    y2milestone("Not booting any OS");
 		    ret = nil;
 		    continue;
+		} else {
+		    y2milestone ("Booting...");
 		}
 	    }
 	}
