@@ -3,12 +3,11 @@
 
 @HEADER@
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2-core-devel yast2-devtools yast2-testsuite yast2-country
-# Installation::add_on_selected, Installation::productsources_selected
+# Mode::live_installation
 BuildRequires:	yast2 >= 2.15.38
 
 Requires:       autoyast2-installation
-# WorkflowManager module, Installation::reboot_net_settings
-# Installation::add_on_selected, Installation::productsources_selected
+# Mode::live_installation
 Requires:	yast2 >= 2.15.38
 # Required in in the first stage, after
 # switching to the installed system, bugzilla #249679
