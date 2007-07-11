@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Jul 11 09:09:58 CEST 2007 - locilka@suse.cz
+
+- Changed default delete_old_packages to 'false'.
+
+-------------------------------------------------------------------
 Wed Jul  4 16:16:37 CEST 2007 - locilka@suse.cz
 
 - Fixed workflow when user selects to Boot the installed system and
