@@ -70,19 +70,19 @@ list<string> ConfirmExtraSources(map<string,boolean> urls)
 	`VBox(
 	    `VSpacing(0.2),
 	    // heading in a popup window
-	    `Heading(_("Additional Installation Sources")),
+	    `Heading(_("Additional Repositories")),
 	    `VSpacing(0.2),
 	    `VBox(
 		`HSpacing(width),
 		`HBox(
 		    `VSpacing(height),
 		    // label
-		    `MultiSelectionBox(`id(`multi), _("Sources to Register"), items)
+		    `MultiSelectionBox(`id(`multi), _("Repository to Register"), items)
 		)
 	    ),
 	    `VSpacing(0.2),
 	    // label - use more lines for the translated message (no more than about 60 characters per line)
-	    `Label(_("Later you can install additional software from these external sources.\nRegister the sources now?")),
+	    `Label(_("Later you can install additional software from these external repositories.\nRegister the repository now?")),
 	    `VSpacing(0.5),
 	    `HBox(
 		`HStretch(),

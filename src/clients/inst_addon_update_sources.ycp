@@ -53,7 +53,7 @@ list<string> UpdateUrls () {
 // feedback heading
 string heading = _("Add-On Product Installation");
 // feedback message
-string message = _("Reading packages available on the installation sources...");
+string message = _("Reading packages available in the repositories...");
 
 // bugzilla #270899#c29
 Pkg::TargetInitialize (Installation::destdir);
