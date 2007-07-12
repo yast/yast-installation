@@ -3,6 +3,7 @@ Thu Jul 12 12:59:32 CEST 2007 - locilka@suse.cz
 
 - Client inst_productsources.ycp moved to yast2-packager.
 - Changed link to list of servers in control file.
+- Adjusted RPM dependencies.
 - 2.15.32
 
 -------------------------------------------------------------------
