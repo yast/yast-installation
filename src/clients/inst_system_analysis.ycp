@@ -310,7 +310,7 @@ term InstModeDialogContent (symbol pre_selected) {
 		`Left (`CheckBox (
 		    `id (`productsources), `opt(`notify),
 		    // check box
-		    _("Include &Suggested Installation Sources"),
+		    _("Include &Default Repositories"),
 		    Installation::productsources_selected
 		)),
 		`Left (`CheckBox (
