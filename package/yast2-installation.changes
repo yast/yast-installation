@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jul 12 12:59:32 CEST 2007 - locilka@suse.cz
+
+- Client inst_productsources.ycp moved to yast2-packager.
+- Changed link to list of servers in control file.
+- 2.15.32
+
+-------------------------------------------------------------------
 Wed Jul 11 09:09:58 CEST 2007 - locilka@suse.cz
 
 - Changed default delete_old_packages to 'false'.
