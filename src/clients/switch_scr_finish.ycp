@@ -89,9 +89,11 @@ else if (func == "Write")
     y2milestone ("Re-starting SCR on %1", Installation::destdir);
     Installation::scr_handle = WFM::SCROpen ("chroot="+Installation::destdir+":scr", false);
 
+    y2milestone ("new scr_handle: %1", Installation::scr_handle);
+
     // bugzilla #201058
     // WFM::SCROpen returns negative integer in case of failure
-    if (Installation::scr_handle < 0) {
+    if (Installation::scr_handle == nil || Installation::scr_handle < 0) {
 	ErrorDuringSCRSwitch (Installation::destdir);
 	return false;
     }
