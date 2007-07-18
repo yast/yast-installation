@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jul 18 10:54:26 CEST 2007 - locilka@suse.cz
+
+- New progress and help messages when initializing the second
+  stage (#292617).
+- More debugging in switch_scr_finish.
+
+-------------------------------------------------------------------
 Thu Jul 12 12:59:32 CEST 2007 - locilka@suse.cz
 
 - Client inst_productsources.ycp moved to yast2-packager.

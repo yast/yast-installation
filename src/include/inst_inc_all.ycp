@@ -22,13 +22,24 @@
     import "Mode";
 
     void SetInitializingUI () {
+	// dialog content - busy message
+	string ui_message = _("Initializing the installation environment...");
+	// help for the dialog - busy message
+	string ui_help = _("<p>Initializing the installation...</p>");
+
+	// another texts for second stage
+	if (Stage::cont()) {
+	    // dialog content - busy message
+	    ui_message = _("Preparing the 1st system configuration...");
+	    // help for the dialog - busy message
+	    ui_help = _("<p>Please wait...</p>");
+	}
+
         Wizard::SetContents(
             // dialog caption
             _("Initializing..."),
-            // dialog content - busy message
-            `Label(_("Initializing the installation environment...")),
-            // help for the dialog - busy message
-            _("<p>Initializing the installation...</p>"),
+	    `Label(ui_message),
+	    ui_help,
             false, false
         );
         Wizard::SetTitleIcon("yast-inst-mode");
