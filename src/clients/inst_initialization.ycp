@@ -17,13 +17,22 @@
 textdomain "installation";
 
 import "Wizard";
+import "Stage";
 
 // TRANSLATORS: dialog help
 string helptext = _("Please wait while the installation is being initialized.");
+// TRANSLATORS: dialog progress message
+string label = _("Initializing the installation...");
+
+if (Stage::cont()) {
+    // TRANSLATORS: dialog help
+    helptext = _("<p>Please wait...</p>");
+    // TRANSLATORS: dialog progress message
+    label = _("Preparing the 1st system configuration...");
+}
 
 term content = `VBox (
-    // TRANSLATORS: dialog progress message
-    `Label (_("Initializing the installation..."))
+    `Label (label)
 );
 
 // TRANSLATORS: dialog caption
