@@ -4,6 +4,7 @@ Thu Jul 19 16:36:19 CEST 2007 - locilka@suse.cz
 - If network setup in the first-stage installation is cancelled,
   return to the previous dialog (network check).
 - Several minor updates of the network setup workflow (#292379).
+- 2.15.33
 
 -------------------------------------------------------------------
 Wed Jul 18 10:54:26 CEST 2007 - locilka@suse.cz
