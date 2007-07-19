@@ -94,9 +94,29 @@ to use any remote repository and you can skip the configuration then.</p>"),
 		`id ("to_do_a_network_setup_or_not_to_do"), `CurrentButton
 	    );
 	    y2milestone ("Network setup? %1", option_selected);
-	    run_setup = (option_selected == "yes_do_run_setup");
-	    return_this = `next;
-	    break;
+
+	    // run net setup
+	    if (option_selected == "yes_do_run_setup") {
+		y2milestone ("Running inst_network_setup");
+		any ret = WFM::CallFunction ("inst_network_setup", []);
+		y2milestone ("inst_network_setup ret: %1", ret);
+
+		// everything went fine
+		if (ret == `next) {
+		    return_this = `next;
+		    break;
+		// something wrong or aborted
+		} else {
+		    UI::ChangeWidget (`id ("to_do_a_network_setup_or_not_to_do"), `CurrentButton, "no_do_not_run_setup");
+		    continue;
+		}
+
+	    // skip net setup
+	    } else {
+		y2milestone ("Skipping network setup");
+		return_this = `next;
+		break;
+	    }
 	} else if (ret == `back) {
 	    y2milestone ("Going back");
 	    return_this = `back;
@@ -104,18 +124,13 @@ to use any remote repository and you can skip the configuration then.</p>"),
 
 	} else if (ret == `abort) {
 	    if (Popup::ConfirmAbort (`painless)) {
+		return_this = `abort;
 		break;
 	    }
 
 	} else {
 	    y2error ("Unknown ret: %1", ret);
 	}
-    }
-
-    if (run_setup) {
-	y2milestone ("Running inst_network_setup");
-	any ret = WFM::CallFunction ("inst_network_setup", []);
-	y2milestone ("inst_network_setup ret: %1", ret);
     }
 
     return return_this;
