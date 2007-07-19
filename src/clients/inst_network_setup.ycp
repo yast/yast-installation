@@ -360,6 +360,9 @@ Are you sure you want to use it despite the given fact?"),
 
 		dialog_ret = `next;
 		break;
+	    } else if (user_input == `cancel) {
+		dialog_ret = `abort;
+		break;
 	    } else if (user_input == `abort) {
 		dialog_ret = `abort;
 		break;
@@ -370,7 +373,7 @@ Are you sure you want to use it despite the given fact?"),
 		y2milestone ("Uknown user input: %1", user_input);
 	    }
 	}
-	
+
 	return dialog_ret;
     }
 
@@ -680,8 +683,10 @@ Port number must be between 1 and 65535 inclusive."),
 	any user_input = nil;
 
 	symbol dialog_ret = `next;
+
 	while (true) {
 	    user_input = UI::UserInput();
+
 	    if (user_input == `cancel) {
 		dialog_ret = `abort;
 		break;
@@ -694,6 +699,7 @@ Port number must be between 1 and 65535 inclusive."),
 		AdjustNetworkWidgets ("static");
 	    } else if (user_input == `next) {
 		if (ValidateNetworkSettings()) {
+		    dialog_ret = `next;
 		    StoreNetworkSettingsMap();
 		    break;
 		}
@@ -1277,15 +1283,15 @@ to change the settings or to cancel the network setup."));
     map sequence = $[
 	"ws_start" : "netcard",
 	"netcard" : $[
-	    `abort	: `next,
+	    `abort	: `abort,
 	    `next	: "netsetup",
 	],
 	"netsetup" : $[
-	    `abort	: `next,
+	    `abort	: `abort,
 	    `next	: "write",
 	],
 	"write" : $[
-	    `abort	: `next,
+	    `abort	: `abort,
 	    `next	: `next,
 	],
     ];
@@ -1294,7 +1300,11 @@ to change the settings or to cancel the network setup."));
 
     Wizard::CloseDialog();
 
-    return default_ret;
+    if (ret == `abort) {
+	return `abort;
+    } else {
+	return default_ret;
+    }
 
     /* EOF */
 }
