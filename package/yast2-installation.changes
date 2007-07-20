@@ -3,6 +3,11 @@ Fri Jul 20 13:53:21 CEST 2007 - locilka@suse.cz
 
 - Added support for relative URLs in the add_on_products file by
   handling a new URL type: relurl://... (FATE #302123).
+- Fixed behavior when Add-On products are automatically added by
+  list of products defined in add_on_products file. UI layer knowns
+  about the products and during installation, we can remove them or
+  add them again. Wizard steps are redrawn immediately after adding
+  these Add-Ons (#269625 - backported from openSUSE 10.3).
 
 -------------------------------------------------------------------
 Fri Jun 15 09:41:19 CEST 2007 - locilka@suse.cz
