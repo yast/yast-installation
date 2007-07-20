@@ -100,6 +100,96 @@ global list<integer> mode_config_sources = [];
 
 global boolean RedrawWizardSteps ();
 
+// --> FATE #302123: Allow relative paths in "add_on_products" file
+string base_product_url = nil;
+
+global void SetBaseProductURL (string url) {
+    if (url == "" || url == nil)
+	y2warning ("Empty base url");
+
+    base_product_url = url;
+    y2milestone ("New base URL: %1", base_product_url);
+}
+
+global string GetBaseProductURL () {
+    return base_product_url;
+}
+
+/**
+ * Returns an absolute URL from base + relative url.
+ * Relative URL needs to start with 'reulrl://' othewise
+ * it is not considered being relative and it's returned
+ * as it is (just the relative_url parameter).
+ *
+ * @param string base_url
+ * @param string relative_url
+ * @return string absolute_url
+ *
+ * @example
+ *   AddOnProduct::GetAbsoluteURL (
+ *     "http://www.example.org/some%20dir/another%20dir",
+ *     "relurl://../AnotherProduct/"
+ *   ) -> "http://www.example.org/some%20dir/AnotherProduct/"
+ *   AddOnProduct::GetAbsoluteURL (
+ *     "username:password@ftp://www.example.org/dir/",
+ *     "relurl://./Product_CD1/"
+ *   ) -> "username:password@ftp://www.example.org/dir/Product_CD1/"
+ */
+global string GetAbsoluteURL (string base_url, string url) {
+    if (! regexpmatch (url, "^relurl://")) {
+	y2debug ("Not a relative URL: %1", url);
+	return url;
+    }
+
+    if (base_url == nil || base_url == "") {
+	y2error ("No base_url defined");
+	return url;
+    }
+
+    if (! regexpmatch (base_url, "/$")) {
+	base_url = base_url + "/";
+    }
+
+    y2milestone ("Merging '%1' to '%2'", url, base_url);
+    url = regexpsub (url, "^relurl://(.*)$", "\\1");
+
+    url = sformat ("%1%2", base_url, url);
+
+    // merge /something/../
+    integer max_count = 100;
+
+    while (max_count > 0 && regexpmatch (url, "(.*/)[^/]+/+\\.\\./")) {
+	max_count = max_count - 1;
+	list <integer> str_offset_l = (list <integer>) regexppos (url, "/\\.\\./");
+	integer str_offset = str_offset_l[0]:nil;
+
+	if (str_offset != nil && str_offset > 0) {
+	    string stringfirst = substring (url, 0, str_offset);
+	    string stringsecond = substring (url, str_offset);
+
+	    y2debug ("Pos: %1 First: >%2< Second: >%3<", str_offset, stringfirst, stringsecond);
+
+	    stringfirst = regexpsub (stringfirst, "^(.*/)[^/]+/*$", "\\1");
+	    stringsecond = regexpsub (stringsecond, "^/\\.\\./(.*)$", "\\1");
+	    
+	    url = stringfirst + stringsecond;
+	}
+    }
+
+    // remove /./
+    max_count = 100;
+
+    while (max_count > 0 && regexpmatch (url, "/\\./")) {
+	max_count = max_count - 1;
+	url = regexpsub (url, "^(.*)/\\./(.*)", "\\1/\\2");
+    }
+
+    y2milestone ("Final URL: '%1'", url);
+    return url;
+}
+// <--
+
+
 /**
  * Adapts the inst-sys from the tarball
  * @param filename string the filename with the tarball to use to the update
@@ -1196,16 +1286,27 @@ global boolean AddPreselectedAddOnProducts(string filelist) {
     }
     list<string> products = splitstring ((string)SCR::Read (.target.string, filelist), "\r\n");
 
+    string base_url = GetBaseProductURL();
+    y2milestone ("Base URL: %1", base_url);
+
     y2milestone ("Adding products: %1", products);
     foreach (string p, products, {
 	if (p == "")
 	    return;
+
 	list<string> elements = splitstring (p, " \t");
 	elements = filter (string e, elements, { return e != ""; });
 	string url = elements[0]:"";
 	string pth = elements[1]:"/";
-	elements = remove (elements, 0);
-	elements = remove (elements, 0);
+	if (elements[0]:nil != nil) elements = remove (elements, 0);
+	if (elements[0]:nil != nil) elements = remove (elements, 0);
+
+	// FATE #302123
+	if (base_url != nil && base_url != "") {
+	    url = GetAbsoluteURL (base_url, url);
+	}
+	y2milestone ("Adding Repository: %1 %2", url, pth);
+
 	integer src = Pkg::SourceCreate (url, pth);
 	if (! AcceptedLicenseAndInfoFile(src))
 	{
@@ -1213,6 +1314,19 @@ global boolean AddPreselectedAddOnProducts(string filelist) {
 	    return;
 	}
 	Integrate (src);
+
+	// adding the product to the list of products
+	// bugzilla #269625
+	map <string, string> prod = (map <string, string>) Pkg::SourceProductData (src);
+
+	AddOnProduct::add_on_products = add (AddOnProduct::add_on_products, $[
+	    "media" : src,
+	    "product" : prod["label"]:prod["productname"]:prod["productversion"]:"",
+	    "autoyast_product" : prod["productname"]:"",
+	    "media_url" : url,
+	    "product_dir" : pth,
+	]);
+
 	if (size (elements) > 0)
 	{
 	    foreach (string e, elements, {

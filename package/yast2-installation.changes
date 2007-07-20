@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jul 20 13:53:21 CEST 2007 - locilka@suse.cz
+
+- Added support for relative URLs in the add_on_products file by
+  handling a new URL type: relurl://... (FATE #302123).
+
+-------------------------------------------------------------------
 Fri Jun 15 09:41:19 CEST 2007 - locilka@suse.cz
 
 - Make sure that online update is called again after restarting
