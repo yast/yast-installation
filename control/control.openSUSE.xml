@@ -41,7 +41,7 @@ textdomain="control"
         <selection_type config:type="symbol">auto</selection_type>
 
 	<!-- FATE #300898, List of external sources accesible during the installation time -->
-	<external_sources_link>http://seven-swords.net/Servers/list_of_servers_oci.xml</external_sources_link>
+	<external_sources_link>http://seven-swords.net/Servers/list_of_servers_oci_Bare.xml</external_sources_link>
     </software>
 
     <partitioning>
