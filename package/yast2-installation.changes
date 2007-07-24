@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jul 24 13:20:36 CEST 2007 - locilka@suse.cz
+
+- Control file: Unified wizard step names with dialogs, removed
+  Clean Up step part of the Online Update is now Registration
+  (#293095).
+
+-------------------------------------------------------------------
 Tue Jul 24 10:48:02 CEST 2007 - locilka@suse.cz
 
 - Splitting auto-generated documentation into separate package
