@@ -294,7 +294,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		    <label>Installation</label>
 		</module>
                 <module>
-	            <label>Installation Summary</label>
+	            <label>Installation Settings</label>
                     <name>proposal</name>
                     <proposal>initial</proposal>
                 </module>
@@ -381,7 +381,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		    <label>Update</label>
 		</module>
                 <module>
-	            <label>Update Summary</label>
+	            <label>Update Settings</label>
                     <name>proposal</name>
                     <proposal>initial</proposal>
                 </module>
@@ -431,7 +431,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             </modules>
         </workflow>
 
-	<!-- Stage: Initial, Mode: ScreeShot -->
+	<!-- Stage: Initial, Mode: ScreenShot -->
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -552,11 +552,11 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <name>do_net_test</name>
                 </module>
                 <module>
-                    <label>Online Update</label>
+                    <label>Registration</label>
                     <name>addon_update_sources</name>
                 </module>
                 <module>
-                    <label>Online Update</label>
+                    <label>Registration</label>
                     <name>suse_register</name>
                 </module>
                 <module>
@@ -572,8 +572,9 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		    <name>restore_settings</name>
 		</module>
                 <module>
-	            <label>Clean Up</label>
                     <name>suseconfig</name>
+		    <enable_back>no</enable_back>
+		    <enable_next>no</enable_next>
                 </module>
                 <module>
 	            <label>Release Notes</label>
@@ -644,11 +645,11 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <name>do_net_test</name>
                 </module>
                 <module>
-                    <label>Online Update</label>
+                    <label>Registration</label>
                     <name>addon_update_sources</name>
                 </module>
                 <module>
-                    <label>Online Update</label>
+                    <label>Registration</label>
                     <name>suse_register</name>
                 </module>
                 <module>
@@ -676,7 +677,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <name>user</name>
                 </module>
                 <module>
-	            <label>Clean Up</label>
                     <name>suseconfig</name>
                     <enable_back>no</enable_back>
                     <enable_next>no</enable_next>
@@ -695,7 +695,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		    <name>save_hardware_status</name>
                 </module>
                 <module>
-	            <label>Hardware Configuration</label>
                     <name>congratulate</name>
                 </module>
             </modules>
@@ -783,7 +782,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <name>autoconfigure</name>
                 </module>
                 <module>
-	            <label>Clean Up</label>
                     <name>suseconfig</name>
                 </module>
             </modules>
