@@ -67,8 +67,23 @@ BuildArchitectures: noarch
 
 Summary:	Installation workflow
 
+%package doc
+@HEADER@
+
+Requires:	yast2-installation >= 2.15.34
+
+PreReq:		%fillup_prereq
+
+Provides:	yast
+Obsoletes:	yast
+
+Summary:	Auto-generated documentation for yast2-installation
+
 %description
 This controls the system installation.
+
+%description doc
+YaST Installation - auto-generated documentation.
 
 @PREP@
 
@@ -85,7 +100,6 @@ This controls the system installation.
 
 %files
 %defattr(-,root,root)
-%doc @docdir@
 %dir /usr/share/YaST2/control
 /usr/share/YaST2/control/*.xml
 /usr/share/YaST2/control/*.dtd
@@ -120,3 +134,15 @@ This controls the system installation.
 %else
 %{prefix}/share/fvwm/
 %endif
+
+%dir @docdir@
+@docdir@/COPYING
+@docdir@/COPYRIGHT.english
+%readme @docdir@/README
+
+%files doc
+%defattr(-,root,root)
+%doc @docdir@
+%exclude @docdir@/COPYING
+%exclude @docdir@/COPYRIGHT.english
+%exclude @docdir@/README

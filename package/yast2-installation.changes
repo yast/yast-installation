@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jul 24 10:48:02 CEST 2007 - locilka@suse.cz
+
+- Splitting auto-generated documentation into separate package
+  yast2-installation-doc (FATE #302461).
+- 2.15.34
+
+-------------------------------------------------------------------
 Thu Jul 19 16:36:19 CEST 2007 - locilka@suse.cz
 
 - If network setup in the first-stage installation is cancelled,
