@@ -664,11 +664,15 @@ if (Mode::repair ())
     return `finish;
 }
 
-// Check and setup network
-symbol inc_ret = (symbol) WFM::CallFunction ("inst_network_check", []);
-y2milestone ("inst_network_check ret: %1", inc_ret);
-if (contains ([`back, `abort], inc_ret)) {
-    return inc_ret;
+// bugzilla #293808
+// Check (and setup) the network only when needed
+if (Installation::add_on_selected || Installation::productsources_selected) {
+    // Check and setup network
+    symbol inc_ret = (symbol) WFM::CallFunction ("inst_network_check", []);
+    y2milestone ("inst_network_check ret: %1", inc_ret);
+    if (contains ([`back, `abort], inc_ret)) {
+	return inc_ret;
+    }
 }
 
 Wizard::SetContents (

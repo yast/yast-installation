@@ -1,9 +1,18 @@
 -------------------------------------------------------------------
+Wed Jul 25 10:58:29 CEST 2007 - locilka@suse.cz
+
+- Renamed yast2-installation-doc to yast2-installation-devel-doc
+  (FATE #302461).
+
+-------------------------------------------------------------------
 Tue Jul 24 13:20:36 CEST 2007 - locilka@suse.cz
 
 - Control file: Unified wizard step names with dialogs, removed
   Clean Up step part of the Online Update is now Registration
   (#293095).
+- Call inst_network_check (and setup) only in Add-On products
+  and/or Additional Product Sources were requested to be used
+  (#293808).
 
 -------------------------------------------------------------------
 Tue Jul 24 10:48:02 CEST 2007 - locilka@suse.cz
