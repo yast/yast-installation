@@ -38,7 +38,8 @@ Xsharedir=`. $XVersion; echo $Xsharedir`
 if test -z "$Xsharedir"; then
    AC_MSG_ERROR([$XVersion not found, get a newer yast2.rpm])
 fi
-fvwmdir=$Xsharedir/fvwm
+# make overridable for prefix builds
+: ${fvwmdir=$Xsharedir/fvwm}
 AC_MSG_RESULT([$fvwmdir])
 AC_SUBST(fvwmdir)
 
