@@ -67,7 +67,7 @@ BuildArchitectures: noarch
 
 Summary:	Installation workflow
 
-%package doc
+%package devel-doc
 @HEADER@
 
 Requires:	yast2-installation >= 2.15.34
@@ -82,7 +82,7 @@ Summary:	Auto-generated documentation for yast2-installation
 %description
 This controls the system installation.
 
-%description doc
+%description devel-doc
 YaST Installation - auto-generated documentation.
 
 @PREP@
@@ -140,7 +140,7 @@ YaST Installation - auto-generated documentation.
 @docdir@/COPYRIGHT.english
 %readme @docdir@/README
 
-%files doc
+%files devel-doc
 %defattr(-,root,root)
 %doc @docdir@
 %exclude @docdir@/COPYING
