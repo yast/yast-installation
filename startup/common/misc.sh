@@ -213,5 +213,7 @@ function skip_initvicons () {
 #------------------------------------------------------
 # check if the call to initvicons must be skipped
 # ---
+	# #173426#c17: it is missing on single-CD repos
+	test -x /bin/initviocons || return 1
 	grep -qw TERM /proc/cmdline && return 0 || return 1
 }

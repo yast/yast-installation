@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Jul 25 12:48:50 CEST 2007 - mvidner@suse.cz
+
+- startup scripts: Call initviocons only if it exists (#173426).
+
+-------------------------------------------------------------------
 Wed Jul 25 10:58:29 CEST 2007 - locilka@suse.cz
 
 - Renamed yast2-installation-doc to yast2-installation-devel-doc
