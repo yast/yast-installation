@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jul 26 17:51:29 CEST 2007 - mzugec@suse.cz
+
+- set variables VNC and USE_SSH in S07-medium (#294485)
+- 2.15.36 
+
+-------------------------------------------------------------------
 Wed Jul 25 12:48:50 CEST 2007 - mvidner@suse.cz
 
 - startup scripts: Call initviocons only if it exists (#173426).
