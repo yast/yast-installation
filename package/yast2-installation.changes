@@ -8,7 +8,7 @@ Thu Jul 26 17:51:29 CEST 2007 - mzugec@suse.cz
 Wed Jul 25 12:48:50 CEST 2007 - mvidner@suse.cz
 
 - startup scripts: Call initviocons only if it exists (#173426).
-- 2.13.35
+- 2.15.35
 
 -------------------------------------------------------------------
 Wed Jul 25 10:58:29 CEST 2007 - locilka@suse.cz
