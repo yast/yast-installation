@@ -1127,7 +1127,7 @@ Would you like to go back to change it?"),
 	    "http://www.opensuse.org",
 	    "http://www.suse.com"
 	], {
-	    string cmd = sformat ("curl --header --max-time 45 --connect-timeout 30 '%1' 1>/dev/null", String::Quote (www_address));
+	    string cmd = sformat ("curl --header --max-time=45 --connect-timeout 30 '%1' 1>/dev/null", String::Quote (www_address));
 	    map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
 	    y2milestone ("Running %1 returned %2", cmd, run_cmd);
 
