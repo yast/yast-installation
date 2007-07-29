@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Sun Jul 29 22:39:31 CEST 2007 - locilka@suse.cz
+
+- Fixed curl parameters for network test in first stage (#295484).
+
+-------------------------------------------------------------------
 Thu Jul 26 17:51:29 CEST 2007 - mzugec@suse.cz
 
 - set variables VNC and USE_SSH in S07-medium (#294485)
