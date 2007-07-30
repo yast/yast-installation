@@ -2,8 +2,9 @@
 Mon Jul 30 12:38:31 CEST 2007 - locilka@suse.cz
 
 - Added inst_upgrade_urls client which offers URLs used on the
-  system to be used during the upgrade as well.
+  system to be used during the upgrade as well (FATE #301785).
 - Calling the client from control file.
+- Adjusted RPM dependencies (.anyxml SCR agent).
 - 2.15.37
 
 -------------------------------------------------------------------
