@@ -25,6 +25,8 @@
     string text = "";
 
 
+// FIXME similar function in packager/include/load_release_notes.ycp
+
     /* function to load release notes */
     define boolean load_release_notes ()
     {
