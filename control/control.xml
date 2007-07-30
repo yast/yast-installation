@@ -354,7 +354,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <enable_next>yes</enable_next>
                 </module>
 		<module>
-		    <name>upgrade_url</name>
+		    <name>upgrade_urls</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
 		</module>
