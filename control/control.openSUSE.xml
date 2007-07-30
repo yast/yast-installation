@@ -367,6 +367,9 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <name>update_partition</name>
                 </module>
 		<module>
+		    <name>upgrade_url</name>
+		</module>
+		<module>
 		    <label>Additional Product Sources</label>
 		    <name>productsources</name>
 		    <enable_back>yes</enable_back>
