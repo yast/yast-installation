@@ -3,6 +3,7 @@ Mon Jul 30 12:38:31 CEST 2007 - locilka@suse.cz
 
 - Added inst_upgrade_urls client which offers URLs used on the
   system to be used during the upgrade as well.
+- Calling the client from control file.
 - 2.15.37
 
 -------------------------------------------------------------------
