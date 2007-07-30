@@ -15,8 +15,8 @@ Requires:	yast2-bootloader
 # Language::selection_skipped, bugzilla #223258
 Requires:	yast2-country >= 2.15.0
 Requires:	yast2-network >= 2.15.37
-# inst_productsources client moved to...
-Requires:	yast2-packager >= 2.15.45
+# .anyxml SCR agent
+Requires:	yast2-packager >= 2.15.51
 
 # Only in inst-sys
 # Requires:	yast2-add-on
