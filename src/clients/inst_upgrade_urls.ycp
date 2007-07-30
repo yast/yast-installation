@@ -1,0 +1,510 @@
+{
+    // FATE #301785: Distribution upgrade should offer
+    // existing extra installation sources as Add-On
+
+    import "Installation";
+    import "FileUtils";
+    import "Stage";
+    import "GetInstArgs";
+    import "FileUtils";
+    import "Mode";
+    import "Wizard";
+    import "Progress";
+    import "Label";
+    import "NetworkService";
+    import "Popup";
+    import "AddOnProduct";
+
+    textdomain "installation";
+
+    symbol ret = `next;
+    if (GetInstArgs::going_back()) ret = `back;
+
+    // --> Comment this out in case of testing on a running system
+    if (! Stage::initial()) {
+	y2milestone ("Not an initial stage");
+	return ret;
+    }
+    if (! Mode::update()) {
+	y2milestone ("Not an udpate mode");
+	return ret;
+    }
+    // <--
+
+    string dir_old = sformat ("%1/var/lib/zypp/db/sources/", Installation::destdir);
+    list <map <string, any> > old_urls = [];
+
+    string dir_new = sformat ("%1/etc/zypp/repos.d/", Installation::destdir);
+    list <map> new_urls = [];
+
+    list <map> already_registered_repos = [];
+
+    void ReadOldTypeURLs () {
+	// Old-type URLs
+	list <string> all_source_files = (list <string>) SCR::Read (.target.dir, dir_old);
+
+	if (all_source_files == nil || all_source_files == []) {
+	    y2milestone ("No old zypp sources on the target");
+	} else {
+	    integer counter = -1;
+
+	    foreach (string one_source_file, all_source_files, {
+		one_source_file = sformat ("%1/%2", dir_old, one_source_file);
+
+		if (! FileUtils::Exists (one_source_file)) {
+		    y2error ("File doesn't exist: %1", one_source_file);
+		    return;
+		}
+
+		map xmlcontent = (map) SCR::Read (.anyxml, one_source_file);
+
+		counter = counter + 1;
+		map <string, any> one_old_url = $[
+		    "url" :	xmlcontent["source","url","value"]:nil,
+		    "enabled" :	xmlcontent["source","enabled","value"]:false,
+		    "name" :	xmlcontent["source","alias","value"]:nil,
+		];
+
+		old_urls[counter] = one_old_url;
+	    });
+
+	    y2milestone ("URLs: %1", old_urls);
+	}
+    }
+
+    void ReadNewTypeURLs () {
+	// New-type URLs
+	new_urls = (list <map>) SCR::Read (.zypp_repos, dir_new);
+
+	if (new_urls == nil || new_urls == []) {
+	    y2milestone ("No new zypp sources on the target");
+	} else {
+	    y2milestone ("URLs: %1", new_urls);
+	}
+    }
+
+    void CreateListTableUI () {
+	Wizard::SetContents (
+	    // TRANSLATORS: dialog caption
+	    _("Previously Used Repositories"),
+	    `VBox (
+		// TRANSLATORS: dialog text, possibly multiline,
+		// Please, do not use more than 50 characters per line.
+		`Left (`Label (_("These repositories were found on the system
+you are just upgrading:"))),
+		`Table (
+		    `id ("table_of_repos"),
+		    `opt (`notify),
+		    `header (
+			// TRANSLATORS: Table header item
+			_("Current Status"),
+			// TRANSLATORS: Table header item
+			_("Repository"),
+			// TRANSLATORS: Table header item
+			_("URL")
+		    ),
+		    []
+		),
+		`HBox (
+		    // TRANSLATORS: Push button
+		    `PushButton (`id (`edit), _("&Change...")),
+		    `HSpacing (1),
+		    // TRANSLATORS: Push button
+		    `PushButton (`id (`toggle), _("&Toggle Status")),
+		    `HStretch()
+		)
+	    ),
+	    // TRANSLATORS: help text 1/3
+	    _("<p>Here you can see all software repositories that were found
+on the system you are just upgrading. You have better enable
+those you want to include in the upgrade process.</p>") +
+	    // TRANSLATORS: help text 2/3
+	    _("<p>To enable or disable an URL, click on the
+<b>Toggle Status</b> button or double-click on the respective table item.</p>") +
+	    // TRANSLATORS: help text 3/3
+	    _("<p>To change the URL, click on the <b>Change...</b> button.</p>"),
+	    true,
+	    true
+	);
+	Wizard::SetTitleIcon ("yast-sw_source");
+    }
+
+    list <map> urls = [];
+
+    void RedrawListTableUI () {
+	integer currentitem = (integer) UI::QueryWidget (`id ("table_of_repos"), `CurrentItem);
+
+	integer counter = -1;
+	list <term> items = maplist (map one_url, urls, {
+	    counter = counter + 1;
+	    return `item (
+		`id (counter),
+		(one_url["url_will_be_enabled"]:false ?
+		    // TRANSLATORS: Table item status (repository)
+		    _("Enabled")
+		    :
+		    // TRANSLATORS: Table item status (repository)
+		    _("Disabled")
+		),
+		// TRANSLATORS: Fallback name for a repository
+		one_url["name"]:_("Unknown"),
+		one_url["url"]:""
+	    );
+	});
+
+	UI::ChangeWidget (`id ("table_of_repos"), `Items, items);
+
+	if (currentitem != nil) {
+	    UI::ChangeWidget (`id ("table_of_repos"), `CurrentItem, currentitem);
+	}
+    }
+
+    boolean FindCurrentURLStatus (string baseurl) {
+	if (baseurl == "" || baseurl == nil) {
+	    y2error ("Base URL not defined!");
+	    return false;
+	}
+
+	boolean ret = false;
+
+	foreach (map one_url, already_registered_repos, {
+	    if (baseurl == one_url["media_url"]:"-A-") {
+		ret = true;
+		break;
+	    }
+	});
+
+	return ret;
+    }
+
+    integer FindURLMediaNr (string baseurl) {
+	if (baseurl == "" || baseurl == nil) {
+	    y2error ("Base URL not defined!");
+	    return nil;
+	}
+
+	integer ret = nil;
+
+	foreach (map one_url, already_registered_repos, {
+	    if (baseurl == one_url["media_url"]:"-A-") {
+		ret = one_url["media"]:-1;
+		break;
+	    }
+	});
+
+	return ret;
+    }
+
+    string FindURLName (string baseurl) {
+	if (baseurl == "" || baseurl == nil) {
+	    y2error ("Base URL not defined!");
+	    return nil;
+	}
+
+	string ret = nil;
+
+	foreach (map one_url, already_registered_repos, {
+	    if (baseurl == one_url["media_url"]:"-A-") {
+		ret = one_url["name"]:"";
+		break;
+	    }
+	});
+
+	return ret;
+    }
+
+    void EditItem (integer currentitem) {
+	if (currentitem == nil || currentitem < 0) {
+	    y2error ("Cannot edit item: %1", currentitem);
+	    return;
+	}
+
+	string url = urls[currentitem, "url"]:"";
+	integer min_width = size (url);
+
+	UI::OpenDialog (
+	    `VBox (
+		// TRANSLATORS: textentry
+		`MinWidth (min_width, `TextEntry (`id (`url), _("&Repository URL"), url)),
+		`VSpacing (1),
+		`HBox (
+		    `PushButton (`id (`ok), Label::OKButton()),
+		    `HSpacing (2),
+		    `PushButton (`id (`cancel), Label::CancelButton())
+		)
+	    )
+	);
+	
+	any ret = UI::UserInput ();
+	url = (string) UI::QueryWidget (`id (`url), `Value);
+	UI::CloseDialog();
+
+	if (ret == `cancel) {
+	    return;
+	}
+	
+	urls[currentitem, "url"] = url;
+    }
+
+    symbol HandleOldSources () {
+	urls = [];
+
+	// If some new (since 10.3 Alpha?) URLs found, use only them
+	if (new_urls != nil && new_urls != []) {
+	    foreach (map one_url_map, new_urls, {
+		urls = add (urls, $[
+		    "url" : one_url_map["baseurl"]:nil,
+		    "name" : (one_url_map["name"]:"" == "" ? one_url_map["id"]:"" : one_url_map["name"]:""),
+		    "enabled" : one_url_map["enabled"]:false,
+		]);
+	    });
+	// Fallback, old URLs found
+	// 10.1, 10.2, 10.3 ...
+	} else if (old_urls != nil && old_urls != []) {
+	    urls = old_urls;
+	}
+
+	urls = maplist (map one_url, urls, {
+	    one_url["url_will_be_enabled"] = FindCurrentURLStatus (tostring (one_url["url"]:""));
+	    one_url["initial_url_status"]  = one_url["url_will_be_enabled"]:false;
+	    return one_url;
+	});
+
+	y2milestone ("Offering: %1", urls);
+	y2milestone ("Already registered: %1", already_registered_repos);
+
+	CreateListTableUI();
+	RedrawListTableUI();
+
+	symbol ret = `next;
+	any ui_ret = nil;
+
+	while (true) {
+	    ui_ret = UI::UserInput();
+
+	    if (ui_ret == "table_of_repos") ui_ret = `toggle;
+
+	    if (ui_ret == `toggle) {
+		integer currentitem = (integer) UI::QueryWidget (`id ("table_of_repos"), `CurrentItem);
+		if (currentitem != nil) {
+		    urls[currentitem, "url_will_be_enabled"] = (! urls[currentitem,"url_will_be_enabled"]:false);
+		    RedrawListTableUI();
+		}
+		continue;
+	    } else if (ui_ret == `next) {
+		ret = `next;
+		break;
+	    } else if (ui_ret == `back) {
+		ret = `back;
+		break;
+	    } else if (ui_ret == `abort) {
+		ret = `abort;
+		break;
+	    } else if (ui_ret == `edit) {
+		integer currentitem = (integer) UI::QueryWidget (`id ("table_of_repos"), `CurrentItem);
+		EditItem (currentitem);
+		RedrawListTableUI();
+	    } else {
+		y2error ("Unknown UI input: %1", ui_ret);
+	    }
+	}
+
+	return ret;
+    }
+
+    boolean NetworkRunning () {
+	boolean ret = false;
+	
+	while (true) {
+	    if (NetworkService::isNetworkRunning()) {
+		ret = true;
+		break;
+	    }
+	
+	    // Network is not running
+	    if (! Popup::AnyQuestion (
+		// TRANSLATORS: popup header
+		_("Network is not Configured"),
+		// TRANSLATORS: popup question
+		_("Remote repositories require the Internet connection.
+
+Would you like to configure it?"),
+		Label::YesButton(),
+		Label::NoButton(),
+		`yes
+	    )) {
+		y2milestone ("User decided not to setup the network");
+		ret = false;
+		break;
+	    }
+
+	    y2milestone ("User wants to setup the network");
+	    // Call network-setup client
+	    any netret = WFM::call("inst_network_setup");
+
+	    if (netret == `abort) {
+		y2milestone ("Aborting the network setup");
+		break;
+	    }
+	}
+
+	return ret;
+    }
+
+    void SetAddRemoveSourcesUI () {
+	Wizard::SetContents (
+	    // TRANSLATORS: dialog caption
+	    _("Previously Used Repositories"),
+	    `VBox (
+		// TRANSLATORS: Progress text
+		`Label (_("Adding and removing repositories..."))
+	    ),
+	    // TRANSLATORS: help text
+	    _("<p>Please wait while repositories are being added and removed.</p>"),
+	    false,
+	    false
+	);
+	Wizard::SetTitleIcon ("yast-sw_source");
+    }
+
+    symbol AddOrRemoveSources () {
+	list <integer> sources_to_remove = [];
+	list <string>  sources_to_add    = [];
+
+
+
+	foreach (map one_source, urls, {
+	    string url = one_source["url"]:"";
+	    integer current_medianr = FindURLMediaNr (url);
+
+	    // Source should be enabled at the end
+	    if (one_source["url_will_be_enabled"]:nil == true) {
+		if (current_medianr == nil) {
+		    sources_to_add = add (sources_to_add, url);
+		}
+	    // Source should be disabled at the end
+	    } else if (one_source["url_will_be_enabled"]:nil == false) {
+		if (current_medianr != nil) {
+		    sources_to_remove = add (sources_to_remove, current_medianr);
+		}
+	    }
+	});
+
+	if (size(sources_to_remove) > 0 || size (sources_to_add) > 0) {
+	    SetAddRemoveSourcesUI();
+	}
+
+	y2milestone ("Deleting repos: %1", sources_to_remove);
+	foreach (integer one_id, sources_to_remove, {
+	    Pkg::SourceDelete (one_id);
+
+	     AddOnProduct::add_on_products = (list <map <string, any> >) filter (
+	        map one_addon, AddOnProduct::add_on_products, {
+		    return one_addon["media"]:-42 != one_id;
+		}
+	    );
+	     
+	});
+
+	// Remote repositories need network
+	if ((size(sources_to_add) > 0) && NetworkRunning()) {
+	    y2milestone ("Adding repos: %1", sources_to_add);
+	    foreach (string one_url, sources_to_add, {
+		integer new_id = Pkg::SourceCreate (one_url, "/");
+		if (new_id > -1) {
+		    AddOnProduct::add_on_products = add (
+			AddOnProduct::add_on_products,
+			$[
+			    "media" : new_id,
+			    "media_url" : one_url,
+			    "product_dir" : "/",
+			    "product" : FindURLName (one_url),
+			    "autoyast_product" : "",
+			]
+		    );
+		}
+	    });
+	}
+
+	return `next;
+    }
+
+    void SetProgressUI () {
+	Progress::New (
+	    // TRANSLATORS: dialog caption
+	    _("Reading Repositories Used on the System"),
+	    " ",
+	    2,
+	    [
+		// TRANSLATORS: progress step
+		_("Read previously used repositories"),
+		_("Initialize package manager"),
+	    ],
+	    [
+		// TRANSLATORS: progress step
+		_("Reading previously used repositories..."),
+		_("Initializing package manager..."),
+	    ],
+	    // TRANSLATORS: dialog help
+	    _("<p>Please wait, while repositories are being read...</p>")
+	);
+	Wizard::SetTitleIcon ("yast-sw_source");
+    }
+
+    // for testing purpose
+    if (Mode::normal()) Wizard::CreateDialog();
+
+    SetProgressUI();
+    Progress::NextStage();
+
+    // Read the old repos (old type)
+    if (FileUtils::Exists (dir_old))
+	ReadOldTypeURLs ();
+    else
+	y2milestone ("Skipping ReadOldTypeURLs()");
+
+    // Read the old repos (new type)
+    if (FileUtils::Exists (dir_new))
+	ReadNewTypeURLs ();
+    else
+	y2milestone ("Skipping ReadNewTypeURLs()");
+    Progress::NextStage();
+
+    boolean continue_processing = false;
+    if ((old_urls != nil && old_urls != []) || (new_urls != nil && new_urls != [])) {
+	continue_processing = true;
+	// initialize zypp
+	Pkg::TargetInitialize (Installation::destdir);
+	Pkg::SourceStartManager (false);
+
+	foreach (integer one_id, Pkg::SourceGetCurrent (true), {
+	    map source_data = Pkg::SourceGeneralData (one_id);
+	    
+	    already_registered_repos = add (already_registered_repos, $[
+		"media_url" : source_data["url"]:"",
+		"product_dir" : source_data["product_dir"]:"",
+		"media" : one_id,
+	    ]);
+	});
+    }
+
+    Progress::NextStage();
+    Progress::Finish();
+
+    if (! continue_processing) {
+	y2milestone ("No sources found");
+	return ret;
+    }
+
+    ret = HandleOldSources();
+    if (ret == `next) ret = AddOrRemoveSources();
+
+    // for testing purpose
+    if (Mode::normal()) {
+	if (ret == `next) Pkg::SourceSaveAll();
+	Wizard::CloseDialog();
+    }
+
+    y2milestone ("Returning %1", ret);
+    return ret;
+}

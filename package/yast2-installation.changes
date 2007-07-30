@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Jul 30 12:38:31 CEST 2007 - locilka@suse.cz
+
+- Added inst_upgrade_urls client which offers URLs used on the
+  system to be used during the upgrade as well.
+- 2.15.37
+
+-------------------------------------------------------------------
 Sun Jul 29 22:39:31 CEST 2007 - locilka@suse.cz
 
 - Fixed curl parameters for network test in first stage (#295484).
