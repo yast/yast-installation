@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Jul 31 11:29:53 CEST 2007 - lslezak@suse.cz
+
+- inst_extrasources - register the extra repositories in content
+  file automatically without asking user (#290040), do not download
+  metadata from the extra sources (offline registration) (#290040,
+  #288640)
+
+-------------------------------------------------------------------
 Mon Jul 30 12:38:31 CEST 2007 - locilka@suse.cz
 
 - Added inst_upgrade_urls client which offers URLs used on the
