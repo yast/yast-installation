@@ -53,16 +53,6 @@ Recommends:	yast2-add-on
 
 PreReq:		%fillup_prereq
 
-Provides:	yast
-Obsoletes:	yast
-
-Provides:	yast2-trans-inst-proposal y2t_inst
-Obsoletes:	yast2-trans-inst-proposal y2t_inst
-Provides:	yast2-trans-inst-general y2t_inst-general
-Obsoletes:	yast2-trans-inst-general y2t_inst-general
-Provides:	yast2-instsys
-Obsoletes:	yast2-instsys
-
 BuildArchitectures: noarch
 
 Summary:	Installation workflow
@@ -73,9 +63,6 @@ Summary:	Installation workflow
 Requires:	yast2-installation >= 2.15.34
 
 PreReq:		%fillup_prereq
-
-Provides:	yast
-Obsoletes:	yast
 
 Summary:	Auto-generated documentation for yast2-installation
 

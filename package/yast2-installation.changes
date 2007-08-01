@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Aug  1 10:33:45 CEST 2007 - mvidner@suse.cz
+
+- Removed Provides/Obsoletes for ancient yast package names,
+  with the devel-doc subpackage they broke yast2-schema build.
+- 2.15.38
+
+-------------------------------------------------------------------
 Tue Jul 31 11:29:53 CEST 2007 - lslezak@suse.cz
 
 - inst_extrasources - register the extra repositories in content
