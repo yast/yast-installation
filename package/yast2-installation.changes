@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Aug  1 11:00:15 CEST 2007 - locilka@suse.cz
+
+- Changing remote repositories link to http://download.opensuse.org
+
+-------------------------------------------------------------------
 Wed Aug  1 10:33:45 CEST 2007 - mvidner@suse.cz
 
 - Removed Provides/Obsoletes for ancient yast package names,
