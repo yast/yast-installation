@@ -43,7 +43,7 @@
     map argmap = GetInstArgs::argmap();
 
     // show button "clone system"?
-    boolean show_clone_checkbox = ! Stage::firstboot ();
+    boolean show_clone_checkbox = ! (Stage::firstboot () || Mode::live_installation ());
     boolean clone_checkbox_active = ProductFeatures::GetBooleanFeature("globals", "enable_clone");
     boolean clone_enabled = false;
 
