@@ -602,10 +602,11 @@ Port number must be between 1 and 65535 inclusive."),
     }
 
     symbol NetworkSetupDialog () {
-	Wizard::SetContentsButtons (
-	    // TRANSLATORS: dialog caption
-	    _("Network Setup"),
+	// centered & aligned dialog
+	// see bugzilla #295043
+	term netsetup_dialog =
 	    `VBox (
+		`VStretch(),
 		`Left (`Label (sformat(
 		    // TRANSLATORS: dialog label, %1 is replaced with a selected network device name, e.g, eth3
 		    // See *2
@@ -641,26 +642,38 @@ Port number must be between 1 and 65535 inclusive."),
 		    ))
 		)),
 		`VSpacing (2),
-		`VSquash (`Left (
-		    `CheckBoxFrame (
-			`id ("use_proxy"),
-			_("&Use Proxy for Accessing the Internet"),
-			false,
-			`VBox (
-			    `Left (`HBox (
-				`HSquash (`MinWidth (42, `TextEntry (`id ("proxy_server"), _("&HTTP Proxy Server"), "http://"))),
-				`HSpacing (0.5),
-				`HSquash (`MinWidth (6, `ComboBox (`id ("proxy_port"), `opt (`editable), _("&Port"), [ "", "3128", "8080" ])))
-			    )),
-			    `Left (`HBox (
-				`HSquash (`MinWidth (14, `TextEntry (`id ("proxy_user"), _("Us&er (Optional)")))),
-				`HSpacing (0.5),
-				`HSquash (`MinWidth (14, `Password (`id ("proxy_password"), _("Pass&word (Optional)"))))
-			    ))
-			)
+		`VSquash (
+		    `HBox (
+			`HSpacing (4),
+			`Left (`CheckBoxFrame (
+			    `id ("use_proxy"),
+			    _("&Use Proxy for Accessing the Internet"),
+			    false,
+			    `VBox (
+				`Left (`HBox (
+				    `HSquash (`MinWidth (42, `TextEntry (`id ("proxy_server"), _("&HTTP Proxy Server"), "http://"))),
+				    `HSpacing (0.5),
+				    `HSquash (`MinWidth (6, `ComboBox (`id ("proxy_port"), `opt (`editable), _("&Port"), [ "", "3128", "8080" ])))
+				)),
+				`Left (`HBox (
+				    `HSquash (`MinWidth (14, `TextEntry (`id ("proxy_user"), _("Us&er (Optional)")))),
+				    `HSpacing (0.5),
+				    `HSquash (`MinWidth (14, `Password (`id ("proxy_password"), _("Pass&word (Optional)"))))
+				))
+			    )
+			))
 		    )
-		)),
+		),
 		`VStretch()
+	    );
+
+	Wizard::SetContentsButtons (
+	    // TRANSLATORS: dialog caption
+	    _("Network Setup"),
+	    `HBox (
+		`HStretch(),
+		netsetup_dialog,
+		`HStretch()
 	    ),
 	    // TRANSLATORS: dialog help 1/2
 	    _("<p><big><b>Network Setup</b></big>
