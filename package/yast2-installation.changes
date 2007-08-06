@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Aug  6 08:58:02 CEST 2007 - locilka@suse.cz
+
+- Renamed product/default repositories check-box to "Add Internet
+  Repositories Before Installation" (#297580).
+- Added help for that check-box (#296810).
+
+-------------------------------------------------------------------
 Thu Aug  2 08:53:56 CEST 2007 - jsrain@suse.cz
 
 - do not show "Clone" check box in live installation

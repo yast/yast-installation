@@ -232,6 +232,12 @@ installed on your machine. This option preserves configuration settings
 from your existing system whenever possible.
 </p>") +
 
+    // help text for installation option
+    _("<p>
+To use suggested remote repositories during installation or update, select
+<b>Add Internet Repositories Before Installation</b>.</p>
+") +
+
     // help text for installation method
     _("<p>
 To install an add-on product from separate media together with &product;, select
@@ -243,6 +249,8 @@ To install an add-on product from separate media together with &product;, select
 select <b>Repair Installed System</b> if you have a damaged Linux system on
 your hard disk. This option can try to fix problems automatically.
 </p>") +
+
+
 
     // help text for installation method
     _("<p>Select <b>Other Options</b> then
@@ -310,7 +318,7 @@ term InstModeDialogContent (symbol pre_selected) {
 		`Left (`CheckBox (
 		    `id (`productsources), `opt(`notify),
 		    // check box
-		    _("Include &Default Repositories"),
+		    _("&Add Internet Repositories Before Installation"),
 		    Installation::productsources_selected
 		)),
 		`Left (`CheckBox (
