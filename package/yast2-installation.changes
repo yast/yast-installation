@@ -6,6 +6,8 @@ Mon Aug  6 08:58:02 CEST 2007 - locilka@suse.cz
 - Added help for that check-box (#296810).
 - First stage network setup dialog - changes in dialog alignment
   (#295043).
+- Initialize mouse after installation steps are displayed (#296406)
+- 2.15.40
 
 -------------------------------------------------------------------
 Thu Aug  2 08:53:56 CEST 2007 - jsrain@suse.cz
