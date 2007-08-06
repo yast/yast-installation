@@ -54,10 +54,12 @@
     // Cleanup and other settings
     InitFirstStageInstallationSystem();
 
+    // Redraw steps before mouse is initialized
+    // Bugzilla #296406
+    UpdateWizardSteps ();
+
     // Initial stage
     InitMouse();
-
-    UpdateWizardSteps ();
 
     // All stages
     // Shows fallback message if running in textmode (if used as fallback)
