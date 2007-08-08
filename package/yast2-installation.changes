@@ -3,6 +3,7 @@ Wed Aug  8 12:35:28 CEST 2007 - jsrain@suse.cz
 
 - show reboot message within live installation without timeout
   (#297691)
+- 2.15.41
 
 -------------------------------------------------------------------
 Mon Aug  6 08:58:02 CEST 2007 - locilka@suse.cz
