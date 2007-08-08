@@ -219,6 +219,7 @@ if (size (Misc::boot_msg) > 0 && !Mode::autoinst ())
 {
     // bugzilla #245742, #160301
     if ((Linuxrc::usessh () && !Linuxrc::vnc())
+	// also live installation - bzilla #297691
 	|| Mode::live_installation ())
     {
 	// Display the message and wait for user to accept it
