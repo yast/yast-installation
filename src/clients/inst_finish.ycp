@@ -218,9 +218,12 @@ Progress::Title (_("Finished."));
 if (size (Misc::boot_msg) > 0 && !Mode::autoinst ())
 {
     // bugzilla #245742, #160301
-    if (Linuxrc::usessh () && !Linuxrc::vnc())
+    if ((Linuxrc::usessh () && !Linuxrc::vnc())
+	|| Mode::live_installation ())
+    {
 	// Display the message and wait for user to accept it
 	Report::DisplayMessages (true, 0);
+    }
     else
 	Report::DisplayMessages (true, 10);
     Report::Message (Misc::boot_msg);
