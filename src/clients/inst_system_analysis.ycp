@@ -235,7 +235,7 @@ from your existing system whenever possible.
     // help text for installation option
     _("<p>
 To use suggested remote repositories during installation or update, select
-<b>Add Internet Repositories Before Installation</b>.</p>
+<b>Add Online Repositories Before Installation</b>.</p>
 ") +
 
     // help text for installation method
@@ -318,7 +318,7 @@ term InstModeDialogContent (symbol pre_selected) {
 		`Left (`CheckBox (
 		    `id (`productsources), `opt(`notify),
 		    // check box
-		    _("&Add Internet Repositories Before Installation"),
+		    _("&Add Online Repositories Before Installation"),
 		    Installation::productsources_selected
 		)),
 		`Left (`CheckBox (

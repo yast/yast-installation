@@ -268,7 +268,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
 		<!-- Here, user selects whether to perform New Installation or Upgrade -->
 		<module>
-		    <label>Additional Product Sources</label>
+		    <label>Online Repositories</label>
 		    <name>productsources</name>
 		    <enable_back>yes</enable_back>
 		</module>
@@ -370,7 +370,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		    <name>upgrade_urls</name>
 		</module>
 		<module>
-		    <label>Additional Product Sources</label>
+		    <label>Online Repositories</label>
 		    <name>productsources</name>
 		    <enable_back>yes</enable_back>
 		</module>
