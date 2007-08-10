@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Aug 10 11:19:36 CEST 2007 - locilka@suse.cz
+
+- Using "Online Repositories" for Internet/Web-based/Additional/...
+  repositories downloaded from web during the first stage
+  installation (#296407).
+- 2.15.42
+
+-------------------------------------------------------------------
 Wed Aug  8 12:35:28 CEST 2007 - jsrain@suse.cz
 
 - show reboot message within live installation without timeout
