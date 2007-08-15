@@ -153,7 +153,7 @@
 	    _("Network Setup Wizard: Probing Hardware..."),
 	    `VBox (
 		// TRANSLATORS: dialog busy message
-		`Label ("Probing network cards...")
+		`Label (_("Probing network cards..."))
 	    ),
 	    // TRANSLATORS: dialog help
 	    _("Please wait while installation is probing the network cards..."),
