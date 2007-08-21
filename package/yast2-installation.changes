@@ -3,6 +3,9 @@ Tue Aug 21 16:10:16 CEST 2007 - locilka@suse.cz
 
 - Fixed evaluating of "enabled" tag in map of repositories in
   inst_upgrade_urls (#300901).
+- Added ssh_host_dsa_key ssh_host_dsa_key.pub ssh_host_rsa_key
+  ssh_host_rsa_key.pub to be optionally copied as well as the SSH1
+  keys (#298798).
 - 2.15.43
 
 -------------------------------------------------------------------

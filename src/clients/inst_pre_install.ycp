@@ -10,7 +10,7 @@
     
     define map <string, map <string, integer> > FindTheBestFiles (map <string, map <string, integer> > files_found);
     
-    define void FindAndCopyNewestFiles (string copy_to, list <string> wanted_files);
+    define void FindAndCopyNewestFiles (string copy_to, list <string> wanted_files, list <string> optional_files);
 
     // --> Variables
 
@@ -25,12 +25,19 @@
     Initialize();
 
     // FATE #300421: Import ssh keys from previous installations
-    FindAndCopyNewestFiles("/", ["/etc/ssh/ssh_host_key", "/etc/ssh/ssh_host_key.pub"]);
+    FindAndCopyNewestFiles (
+	"/",
+	// required
+	["/etc/ssh/ssh_host_key", "/etc/ssh/ssh_host_key.pub"],
+	// optional
+	["/etc/ssh/ssh_host_dsa_key", "/etc/ssh/ssh_host_dsa_key.pub", "/etc/ssh/ssh_host_rsa_key", "/etc/ssh/ssh_host_rsa_key.pub"]
+    );
     
     // FATE #120103: Import Users From Existing Partition
-    FindAndCopyNewestFiles(
+    FindAndCopyNewestFiles (
 	sformat ("%1/imported/userdata", Directory::vardir),
-	["/etc/shadow", "/etc/passwd", "/etc/login.defs", "/etc/group"]
+	["/etc/shadow", "/etc/passwd", "/etc/login.defs", "/etc/group"],
+	[]
     );
 
     // free the memory
@@ -84,7 +91,7 @@
 	return ret;
     }
 
-    define void FindAndCopyNewestFiles (string copy_to, list <string> wanted_files) {
+    define void FindAndCopyNewestFiles (string copy_to, list <string> wanted_files, list <string> optional_files) {
 	y2milestone("Searching for files: %1", wanted_files);
 	string mnt_tmpdir = Directory::tmpdir + "/tmp_mnt_for_check";
 
@@ -175,7 +182,10 @@
 	foreach (string partition, map <string, integer> files, ic_winner, {
 	    SystemFilesCopy::CopyFilesToTemp (
 		partition,
-		maplist (string filename, integer filetime, files, { return filename; }),
+		(list <string>) union (
+		    maplist (string filename, integer filetime, files, { return filename; }),
+		    optional_files
+		),
 		copy_to
 	    );
 	});
