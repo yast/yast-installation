@@ -6,6 +6,7 @@ Tue Aug 21 16:10:16 CEST 2007 - locilka@suse.cz
 - Added ssh_host_dsa_key ssh_host_dsa_key.pub ssh_host_rsa_key
   ssh_host_rsa_key.pub to be optionally copied as well as the SSH1
   keys (#298798).
+- Allowing to abort the "System Probing" dialog (#298049).
 - 2.15.43
 
 -------------------------------------------------------------------

@@ -422,6 +422,19 @@ Progress::New (
 foreach (any run_function, actions_functions, {
     Progress::NextStage();
 
+    // Bugzilla #298049
+    // Allow to abort the probing
+    any ui_ret = UI::PollInput();
+
+    if (ui_ret == `abort) {
+	y2milestone ("Abort pressed");
+
+	if (Popup::ConfirmAbort (`painless)) {
+	    y2warning ("User decided to abort the installation");
+	    return `abort;
+	}
+    }
+
     y2milestone ("Running function: %1", run_function);
 
     boolean () run_this = (boolean()) (run_function);
