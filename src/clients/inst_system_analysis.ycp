@@ -696,10 +696,11 @@ if (Installation::add_on_selected || Installation::productsources_selected) {
     }
 }
 
+// bug #302384
 Wizard::SetContents (
-    _("Initializing Installation Catalogs"),
+    _("Initializing"),
     // TRANSLATORS: progress message
-    `Label (_("Initializing installation catalogs...")),
+    `Label (_("Initializing package manager...")),
     "",
     false, false
 );
