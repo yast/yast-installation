@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Aug 31 16:26:07 CEST 2007 - locilka@suse.cz
+
+- Calling ntp_client_finish client at the end of the installation
+  (#299238#c9).
+- 2.15.45
+
+-------------------------------------------------------------------
 Fri Aug 24 09:25:53 CEST 2007 - locilka@suse.cz
 
 - Changing forgotten "catalogs" to "initializing..." (#302384).
