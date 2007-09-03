@@ -865,6 +865,22 @@ it doesn't need to be used.</p>"),
 	
 	return true;
     }
+
+    // Adjusts environment variables via new builtin 'setenv'
+    void SetEnvironmentVariables (map <string, any> env_proxy_variables) {
+//	map <string, any> env_proxy_variables = $[
+//	    "http_proxy"	: proxy_server,
+//	    "https_proxy"	: proxy_server,
+//	    "ftp_proxy"		: proxy_server,
+//	    "proxy_user"	: proxy_user,
+//	    "proxy_password"	: proxy_pass,
+//	];
+
+	setenv ("http_proxy",	env_proxy_variables["http_proxy"]:"");
+	setenv ("HTTPS_PROXY",	env_proxy_variables["https_proxy"]:"");
+	setenv ("FTP_PROXY",	env_proxy_variables["ftp_proxy"]:"");
+	setenv ("NO_PROXY",	"localhost, 127.0.0.1");
+    }
     
     boolean Action_ProxySetup () {
 	string tmp_sysconfig_dir = "/tmp/first_stage_network_setup/sysconfig/";
@@ -877,6 +893,12 @@ it doesn't need to be used.</p>"),
 		curlrc_file,
 		SCR::Execute (.target.bash, sformat ("touch '%1'", String::Quote (curlrc_file)))
 	    );
+	    // symlink the correct location of the conf-file
+	    // $HOME directory might be '/' in inst-sys
+	    y2milestone (
+		"Creating .curlrc symlink returned: %1",
+		SCR::Execute (.target.bash, sformat ("ln --symbolic --force '%1' '/.curlrc'", String::Quote (curlrc_file)))
+	    );
 	}
 
 	string wgetrc_file = "/root/.wgetrc";
@@ -885,6 +907,12 @@ it doesn't need to be used.</p>"),
 		"Creating file %1 returned: %2",
 		wgetrc_file,
 		SCR::Execute (.target.bash, sformat ("touch '%1'", String::Quote (wgetrc_file)))
+	    );
+	    // symlink the correct location of the conf-file
+	    // $HOME directory might be '/' in inst-sys
+	    y2milestone (
+		"Creating .wgetrc symlink returned: %1",
+		SCR::Execute (.target.bash, sformat ("ln --symbolic --force '%1' '/.wgetrc'", String::Quote (wgetrc_file)))
 	    );
 	}
 
@@ -944,6 +972,9 @@ the installation system for writing the proxy configuration."));
 	Proxy::Write();
 	Progress::set (progress_orig);
 
+	// Bugzilla #305163
+	SetEnvironmentVariables (import_proxy);
+
 	return true;
     }
 
@@ -957,9 +988,9 @@ the installation system for writing the proxy configuration."));
 	// Value must be set
 	if (value == "" || value == nil) {
 	    y2warning ("Value for '%1' is '%2'", inst_inf_entry, value);
-	// Can be removed later
+	// Can contain username/passowrd
 	} else {
-	    y2milestone ("Writing %1=%2", inst_inf_entry, value);
+	    y2debug ("Writing %1=%2", inst_inf_entry, value);
 	}
 
 	return SCR::Write (add (.etc.install_inf, inst_inf_entry), value);
@@ -1037,6 +1068,42 @@ the installation system for writing the proxy configuration."));
 	WriteInstallInfEntry ("Alias",		hardware_information[netdevice,"module"]:"");
 	WriteInstallInfEntry ("NetUniqueID",	hardware_information[netdevice,"unique_key"]:"");
 	WriteInstallInfEntry ("HWAddr",		hardware_information[netdevice,"hward"]:"");
+
+	if (network_settings["use_proxy"]:nil == true) {
+	    string proxy_auth = "";
+
+	    if (network_settings["proxy_user"]:"" != "" && network_settings["proxy_password"]:"" != "") {
+		proxy_auth = sformat ("%1:%2",
+		    // escaping ":"s in username
+		    mergestring (splitstring (network_settings["proxy_user"]:"", ":"), "\\:"),
+		    // escaping ":"s in password
+		    mergestring (splitstring (network_settings["proxy_password"]:"", ":"), "\\:")
+		);
+	    }
+
+	    string proxy_server = nil;
+
+	    // no proxy auth
+	    if (proxy_auth == "") {
+		proxy_server = sformat (
+		    "http://%1:%2/",
+		    network_settings["proxy_server"]:"",
+		    network_settings["proxy_port"]:""
+		);
+	    // write proxy auth as well
+	    } else {
+		proxy_server = sformat (
+		    "http://%1@%2:%3/",
+		    proxy_auth,
+		    network_settings["proxy_server"]:"",
+		    network_settings["proxy_port"]:""
+		);
+	    }
+
+	    WriteInstallInfEntry ("Proxy", proxy_server);
+	} else {
+	    WriteInstallInfEntry ("Proxy", nil);
+	}
 
 	// Flush the SCR agent cache to the disk
 	SCR::Write (.etc.install_inf, nil);

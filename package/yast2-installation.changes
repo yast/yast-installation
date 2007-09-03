@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Mon Sep  3 12:45:41 CEST 2007 - locilka@suse.cz
+
+- Creating symlinks to .curlrc and .wgetrc files from the root.
+- Adjusting RPM dependencies (yast2-core, new builtin 'setenv').
+- Adjusting ENV variables with proxy settings (all three #305163).
+- Writing also proxy setting into Install.inf (#298001#c5).
+- 2.15.46
+
+-------------------------------------------------------------------
 Fri Aug 31 16:26:07 CEST 2007 - locilka@suse.cz
 
 - Calling ntp_client_finish client at the end of the installation
