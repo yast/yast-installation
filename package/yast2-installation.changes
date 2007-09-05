@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Sep  5 14:48:33 CEST 2007 - locilka@suse.cz
+
+- Reinitializing variable for skipping add-on-related clients with
+  its default value in inst_system_analysis (#305554).
+- 2.15.47
+
+-------------------------------------------------------------------
 Wed Sep  5 13:24:32 CEST 2007 - jsrain@suse.cz
 
 - removed inst_fam.ycp (also from control files) (#307378)
