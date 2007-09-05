@@ -13,7 +13,6 @@ textdomain="control"
         <enable_autologin config:type="boolean">true</enable_autologin>
         <inform_about_suboptimal_distribution config:type="boolean">true</inform_about_suboptimal_distribution>
         <ui_mode>simple</ui_mode>
-        <fam_local_only>gnome</fam_local_only>
 	<enable_firewall config:type="boolean">true</enable_firewall>
 	<firewall_enable_ssh config:type="boolean">false</firewall_enable_ssh>
         <io_scheduler>cfq</io_scheduler>
@@ -383,9 +382,6 @@ textdomain="control"
                     <name>proposal</name>
                     <proposal>network</proposal>
                 </module>
-		<module>
-                    <name>fam</name>
-		</module>
                 <module>
 	            <label>Network</label>
                     <name>ask_net_test</name>

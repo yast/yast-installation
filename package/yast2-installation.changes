@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Sep  5 13:24:32 CEST 2007 - jsrain@suse.cz
+
+- removed inst_fam.ycp (also from control files) (#307378)
+
+-------------------------------------------------------------------
 Mon Sep  3 12:45:41 CEST 2007 - locilka@suse.cz
 
 - Creating symlinks to .curlrc and .wgetrc files from the root.

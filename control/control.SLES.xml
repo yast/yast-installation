@@ -13,7 +13,6 @@ textdomain="control"
         <enable_autologin config:type="boolean">false</enable_autologin>
 	<enable_firewall config:type="boolean">true</enable_firewall>
 	<firewall_enable_ssh config:type="boolean">false</firewall_enable_ssh>
-	<fam_local_only>never</fam_local_only>
         <incomplete_translation_treshold>95</incomplete_translation_treshold>
         <inform_about_suboptimal_distribution config:type="boolean">true</inform_about_suboptimal_distribution>
         <skip_language_dialog config:type="boolean">true</skip_language_dialog>
@@ -779,10 +778,6 @@ Please visit us at http://www.novell.com/linux/.
                     <name>proposal</name>
                     <proposal>network</proposal>
                 </module>
-		<module>
-	            <label>Network</label>
-                    <name>fam</name>
-		</module>
                 <module>
 	            <label>Network</label>
                     <name>ask_net_test</name>
