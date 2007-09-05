@@ -42,6 +42,9 @@ include "packager/storage_include.ycp";
 
 string start_mode = Mode::mode ();
 
+// always check whether user wants to continue
+AddOnProduct::skip_add_ons = false;
+
     // Function definitions -->
 
     // --------------------------------------------------------------
