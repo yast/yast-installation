@@ -79,7 +79,7 @@ list<map<string,any> > stages = [
 	"label" : _("Save installation settings"),
 	"steps" : [
 	    "network",
-	    "ntp_client",
+	    "ntp-client",
 	    "ssh_settings",
 	    "save_hw_status",
 	    "autoinst_scripts2",

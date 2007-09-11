@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Sep 11 11:07:20 CEST 2007 - locilka@suse.cz
+
+- Calling ntp-client_finish instead of ntp_client_finish in the
+  inst_finish script (#309430).
+
+-------------------------------------------------------------------
 Wed Sep  5 14:48:33 CEST 2007 - locilka@suse.cz
 
 - Reinitializing variable for skipping add-on-related clients with
