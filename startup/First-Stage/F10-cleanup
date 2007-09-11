@@ -5,11 +5,11 @@ log "======================="
 #=============================================
 # 10) first stage done, cleanup and save level
 #---------------------------------------------
+
 # 10.1) reverse umount file systems...
 awk '/ \/mnt/{ print $2 }' /proc/mounts | sort -r | xargs --no-run-if-empty umount
-# 10.2) turn off swap space (files and partitions)
-swapoff -a
-# 10.3) unmount update filesystem
+
+# 10.2) unmount update filesystem
 if [ "$UPDATE_MOUNTED" = true ];then
 	umount /y2update
 fi
