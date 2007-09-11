@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Sep 11 20:03:02 CEST 2007 - aschnell@suse.de
+
+- don't swapoff after 1st stage installation (bug #308121)
+
+-------------------------------------------------------------------
 Tue Sep 11 11:07:20 CEST 2007 - locilka@suse.cz
 
 - Calling ntp-client_finish instead of ntp_client_finish in the
@@ -52,7 +57,7 @@ Tue Aug 21 16:10:16 CEST 2007 - locilka@suse.cz
 -------------------------------------------------------------------
 Wed Aug 15 17:30:06 CEST 2007 - mzugec@suse.cz
 
-- mark string for translation (#300268) 
+- mark string for translation (#300268)
 
 -------------------------------------------------------------------
 Fri Aug 10 11:19:36 CEST 2007 - locilka@suse.cz
@@ -125,7 +130,7 @@ Sun Jul 29 22:39:31 CEST 2007 - locilka@suse.cz
 Thu Jul 26 17:51:29 CEST 2007 - mzugec@suse.cz
 
 - set variables VNC and USE_SSH in S07-medium (#294485)
-- 2.15.36 
+- 2.15.36
 
 -------------------------------------------------------------------
 Wed Jul 25 12:48:50 CEST 2007 - mvidner@suse.cz
@@ -309,29 +314,29 @@ Thu Jun  7 15:08:08 CEST 2007 - locilka@suse.cz
 Fri Jun  1 12:41:10 CEST 2007 - mzugec@suse.cz
 
 - use shared isNetworkRunning() function in network_finish
-- 2.15.28 
+- 2.15.28
 
 -------------------------------------------------------------------
 Wed May 30 11:33:52 CEST 2007 - mzugec@suse.cz
 
-- fixed spec requirements 
+- fixed spec requirements
 
 -------------------------------------------------------------------
 Mon May 28 16:02:38 CEST 2007 - mzugec@suse.cz
 
-- removed netsetup item from control files 
+- removed netsetup item from control files
 
 -------------------------------------------------------------------
 Mon May 28 13:33:08 CEST 2007 - mzugec@suse.cz
 
-- removed inst_netsetup item from control files 
+- removed inst_netsetup item from control files
 
 -------------------------------------------------------------------
 Sun May 27 14:49:37 CEST 2007 - mzugec@suse.de
 
 - installation network changes:
 http://lists.opensuse.org/yast-devel/2007-05/msg00025.html
-- 2.15.27 
+- 2.15.27
 
 -------------------------------------------------------------------
 Tue May 22 10:51:57 CEST 2007 - ug@suse.de
@@ -987,7 +992,7 @@ Wed Oct 18 16:13:12 CEST 2006 - locilka@suse.cz
   informs user that the previous installation was aborted/failed.
   Then users are asked whether they want to rerun the second stage
   installation (FATE #300422).
-  
+
 - Fixed setting own Y2MAXLOGSIZE up in order to save memory
   requirements during the first stage installation.
 - 2.14.3
@@ -995,20 +1000,20 @@ Wed Oct 18 16:13:12 CEST 2006 - locilka@suse.cz
 -------------------------------------------------------------------
 Mon Oct 16 13:18:43 CEST 2006 - locilka@suse.cz
 
-- Timeout license in AutoYaST after 2 seconds (#206706). 
+- Timeout license in AutoYaST after 2 seconds (#206706).
   This solution doesn't break ncurses.
 - 2.14.2
 
 -------------------------------------------------------------------
 Mon Oct 16 12:24:10 CEST 2006 - fehr@suse.de
 
-- added new configurable values for LVM/EVMS based proposals 
+- added new configurable values for LVM/EVMS based proposals
   (feature 300169)
 - change evms_config to true
 
 -------------------------------------------------------------------
 Mon Oct 16 11:12:51 CEST 2006 - ms@suse.de
- 
+
 - disable oom-killing for X-Server process (#211860)
 
 -------------------------------------------------------------------
@@ -1484,7 +1489,7 @@ Thu Jun 15 10:20:39 CEST 2006 - visnov@suse.cz
 -------------------------------------------------------------------
 Wed Jun 14 15:07:04 CEST 2006 - jdsn@suse.de
 
-- added a please-wait string in registration (already translated) 
+- added a please-wait string in registration (already translated)
 - 2.13.128
 
 -------------------------------------------------------------------
@@ -1499,7 +1504,7 @@ Mon Jun 12 13:22:08 CEST 2006 - jdsn@suse.de
 
 - run pango module creation as root (#165891)
 - fixed SLE desktop file of suse_register for autoyast (mc, ug)
-- 2.13.126 
+- 2.13.126
 
 -------------------------------------------------------------------
 Fri Jun  9 11:02:57 CEST 2006 - locilka@suse.cz
@@ -1514,7 +1519,7 @@ Thu Jun  8 11:49:04 CEST 2006 - jdsn@suse.de
 
 - create pango modules for registration browser (#165891)
 - sync zypp update sources in autoyast mode as well (#181183)
-- 2.13.124 
+- 2.13.124
 
 -------------------------------------------------------------------
 Wed Jun  7 16:15:36 CEST 2006 - jsrain@suse.cz
@@ -1597,7 +1602,7 @@ Wed May 24 12:52:21 CEST 2006 - jsrain@suse.cz
 Tue May 23 18:58:20 CEST 2006 - jdsn@suse.de
 
 - gray out checkboxes in inst_suse_register when skipping (#178042)
-- 2.13.112 
+- 2.13.112
 
 -------------------------------------------------------------------
 Tue May 23 15:07:42 CEST 2006 - jsrain@suse.cz
@@ -1608,12 +1613,12 @@ Tue May 23 15:07:42 CEST 2006 - jsrain@suse.cz
 -------------------------------------------------------------------
 Tue May 23 13:20:03 CEST 2006 - jdsn@suse.de
 
-- fixed layouting in inst_ask_online_update (#177559) 
+- fixed layouting in inst_ask_online_update (#177559)
 
 -------------------------------------------------------------------
 Fri May 19 17:57:10 CEST 2006 - jdsn@suse.de
 
-- let inst_suse_register ask to install mozilla-xulrunner if 
+- let inst_suse_register ask to install mozilla-xulrunner if
   missing (#175166)
 - prevent non-root user to run inst_suse_register (#170736)
 - 2.13.110
@@ -1676,7 +1681,7 @@ Thu May 11 09:55:08 CEST 2006 - ms@suse.de
 Wed May 10 13:40:16 CEST 2006 - jdsn@suse.de
 
 - removed search bar from registration browser (#169092)
-- 2.13.104 
+- 2.13.104
 
 -------------------------------------------------------------------
 Tue May  9 19:35:47 CEST 2006 - jdsl@suse.de
@@ -1738,7 +1743,7 @@ Tue May  2 15:25:35 CEST 2006 - locilka@suse.cz
 
 - Display KDE-related help in the Congratulations dialog only
   in case of KDE as the default windowmanager (#170880).
-- 2.13.96 
+- 2.13.96
 
 -------------------------------------------------------------------
 Fri Apr 28 14:10:50 CEST 2006 - locilka@suse.cz
@@ -1771,7 +1776,7 @@ Thu Apr 27 16:03:39 CEST 2006 - jsrain@suse.de
 Thu Apr 27 14:57:23 CEST 2006 - fehr@suse.de
 
 - set limit for separate /home to 14G for SLED (#169232)
- 
+
 -------------------------------------------------------------------
 Thu Apr 27 11:16:56 CEST 2006 - ms@suse.de
 
@@ -1788,7 +1793,7 @@ Thu Apr 27 10:52:08 CEST 2006 - mvidner@suse.cz
 -------------------------------------------------------------------
 Thu Apr 27 08:34:33 CEST 2006 - locilka@suse.cz
 
-- Making "SLP Catalog" selection bigger (maximum ncurses size) 
+- Making "SLP Catalog" selection bigger (maximum ncurses size)
   (#168718)
 - 2.13.90
 
@@ -1813,7 +1818,7 @@ Mon Apr 24 16:22:14 CEST 2006 - jsrain@suse.de
 Mon Apr 24 13:30:50 CEST 2006 - sh@suse.de
 
 - V 2.13.87
-- Removed "Disagree with all" button (bug #163001)  
+- Removed "Disagree with all" button (bug #163001)
 
 -------------------------------------------------------------------
 Mon Apr 24 12:35:52 CEST 2006 - ug@suse.de
@@ -1842,7 +1847,7 @@ Fri Apr 21 23:26:26 CEST 2006 - jsrain@suse.de
 -------------------------------------------------------------------
 Fri Apr 21 17:26:15 CEST 2006 - jdsn@suse.de
 
-- added proxy support for registration browser (#165891) 
+- added proxy support for registration browser (#165891)
 - 2.13.83
 
 -------------------------------------------------------------------
@@ -1856,7 +1861,7 @@ Thu Apr 20 18:51:55 CEST 2006 - jdsn@suse.de
 
 - proxy support for registration process (#165891)
 - disable w3m registration by control variable (aj)
-- 2.13.81 
+- 2.13.81
 
 -------------------------------------------------------------------
 Thu Apr 20 16:09:23 CEST 2006 - mvidner@suse.cz
@@ -1874,7 +1879,7 @@ Wed Apr 19 19:55:47 CEST 2006 - jsrain@suse.de
 Wed Apr 19 15:04:03 CEST 2006 - locilka@suse.cz
 
 - Added more debugging messages to the inst_proposal (#162831)
-- 2.13.78 
+- 2.13.78
 
 -------------------------------------------------------------------
 Tue Apr 18 22:58:41 CEST 2006 - jsrain@suse.de
@@ -1942,7 +1947,7 @@ Fri Apr 14 13:19:52 CEST 2006 - lslezak@suse.cz
 -------------------------------------------------------------------
 Thu Apr 13 18:17:52 CEST 2006 - jdsn@suse.de
 
-- changed control files according to (#165509) 
+- changed control files according to (#165509)
 
 -------------------------------------------------------------------
 Thu Apr 13 10:35:42 CEST 2006 - mvidner@suse.cz
@@ -1954,14 +1959,14 @@ Thu Apr 13 10:35:42 CEST 2006 - mvidner@suse.cz
 -------------------------------------------------------------------
 Wed Apr 12 16:24:48 CEST 2006 - jdsn@suse.de
 
-- added missing autoyast entries in suse_register.desktop 
+- added missing autoyast entries in suse_register.desktop
 - 2.13.69
 
 -------------------------------------------------------------------
 Wed Apr 12 12:57:53 CEST 2006 - jsuchome@suse.cz
 
 - control files updated for manual online update run (#165503)
-- 2.13.68 
+- 2.13.68
 
 -------------------------------------------------------------------
 Wed Apr 12 11:39:08 CEST 2006 - ms@suse.de
@@ -1994,12 +1999,12 @@ Tue Apr 11 16:01:40 CEST 2006 - jdsn@suse.de
   - resized popups (hmuelle)
   - new info pupop showing new update server (aj)
   - removed cancel button (#164801, shorn)
-- 2.13.64 
+- 2.13.64
 
 -------------------------------------------------------------------
 Tue Apr 11 11:28:23 CEST 2006 - fehr@suse.de
 
-- flag for evms in control.SLES.xml needs to be true 
+- flag for evms in control.SLES.xml needs to be true
 
 -------------------------------------------------------------------
 Mon Apr 10 17:08:10 CEST 2006 - mvidner@suse.cz
@@ -2100,7 +2105,7 @@ Thu Mar 30 13:42:35 CEST 2006 - mvidner@suse.cz
 -------------------------------------------------------------------
 Thu Mar 30 12:31:49 CEST 2006 - jdsn@suse.de
 
-- included new desktop file in Makefile (162112) 
+- included new desktop file in Makefile (162112)
 
 -------------------------------------------------------------------
 Wed Mar 29 17:57:35 CEST 2006 - jsrain@suse.de
@@ -2120,7 +2125,7 @@ Wed Mar 29 16:43:02 CEST 2006 - locilka@suse.cz
 -------------------------------------------------------------------
 Tue Mar 29 16:06:23 CEST 2006 - jdsn@suse.de
 
-- late feature "force registration" for suse_register (aj, shorn) 
+- late feature "force registration" for suse_register (aj, shorn)
 
 -------------------------------------------------------------------
 Tue Mar 28 21:29:07 CEST 2006 - jdsn@suse.de
@@ -2128,7 +2133,7 @@ Tue Mar 28 21:29:07 CEST 2006 - jdsn@suse.de
 - added 'rm -f /var/lib/zypp/zmd_updated_the_sources'
   flag file to be deleted if suse_register runs during installation
   file checked by online update - deletion requested by mvidner
-- 2.13.51 
+- 2.13.51
 
 -------------------------------------------------------------------
 Tue Mar 28 20:53:13 CEST 2006 - jdsn@suse.de
@@ -2136,7 +2141,7 @@ Tue Mar 28 20:53:13 CEST 2006 - jdsn@suse.de
 - added autoyast part of suse_register
 - icon for product registration (#160293)
 - fixes for inst_suse_register
-- 2.13.50 
+- 2.13.50
 
 -------------------------------------------------------------------
 Mon Mar 27 23:47:38 CEST 2006 - jsrain@suse.de
@@ -2148,7 +2153,7 @@ Fri Mar 24 15:15:30 CET 2006 - locilka@suse.cz
 
 - Filling up list of release_notes urls for all installed products
   in the Product.ycp. Needed for internet_test (#160563).
-- 2.13.49 
+- 2.13.49
 
 -------------------------------------------------------------------
 Fri Mar 24 11:00:06 CET 2006 - ms@suse.de
@@ -2158,12 +2163,12 @@ Fri Mar 24 11:00:06 CET 2006 - ms@suse.de
 -------------------------------------------------------------------
 Thu Mar 23 18:34:18 CET 2006 - jdsn@suse.de
 
-- fixed security issue: suse-ncc dummy user got his own group 
+- fixed security issue: suse-ncc dummy user got his own group
 
 -------------------------------------------------------------------
 Thu Mar 23 18:33:25 CET 2006 - jdsn@suse.de
 
-- added controlfile configured default settings for suse_register 
+- added controlfile configured default settings for suse_register
 - 2.13.47
 
 -------------------------------------------------------------------
@@ -2178,7 +2183,7 @@ Thu Mar 23 14:16:46 CET 2006 - jdsn@suse.de
 
 - final texts for suse_register
 - nonroot - warning for suse_register
-- 2.13.45 
+- 2.13.45
 
 -------------------------------------------------------------------
 Thu Mar 23 13:19:03 CET 2006 - locilka@suse.cz
@@ -2193,7 +2198,7 @@ Thu Mar 23 13:19:03 CET 2006 - locilka@suse.cz
 Mon Mar 22 19:04:55 CET 2006 - jdsn@suse.de
 
 - fixed missing module in makefile
-- 2.13.43 
+- 2.13.43
 
 -------------------------------------------------------------------
 Wed Mar 22 19:03:57 CET 2006 - locilka@suse.cz
@@ -2209,7 +2214,7 @@ Mon Mar 22 18:45:17 CET 2006 - jdsn@suse.de
 - fixed ssh bug in suse_register
 - suse_register reads and writes configuration to sysconfig
 - final texts in suse_register
-- 2.13.41 
+- 2.13.41
 
 -------------------------------------------------------------------
 Wed Mar 22 13:43:12 CET 2006 - mvidner@suse.cz
@@ -2220,7 +2225,7 @@ Wed Mar 22 13:43:12 CET 2006 - mvidner@suse.cz
 Wed Mar 22 11:40:18 CET 2006 - jdsn@suse.de
 
 - changed help text in suse_register
-- patch to make the ComboBox appear longer in release_notes 
+- patch to make the ComboBox appear longer in release_notes
 
 -------------------------------------------------------------------
 Tue Mar 21 16:33:32 CET 2006 - locilka@suse.cz
@@ -2239,7 +2244,7 @@ Tue Mar 21 08:57:51 CET 2006 - jsuchome@suse.cz
 Tue Mar 21 07:57:37 CET 2006 - visnov@suse.cz
 
 - try to get add-on product control files only optionally (#159116)
-- 2.13.40 
+- 2.13.40
 
 -------------------------------------------------------------------
 Mon Mar 20 10:08:13 CET 2006 - locilka@suse.cz
@@ -2298,18 +2303,18 @@ Wed Mar 15 18:21:54 CET 2006 - jsrain@suse.de
 Tue Mar 14 18:16:32 CET 2006 - jdsn@suse.de
 
 - corrected titles in control file
-- 2.13.35 
+- 2.13.35
 
 -------------------------------------------------------------------
 Tue Mar 14 18:11:53 CET 2006 - jdsn@suse.de
 
-- 2.13.34 
+- 2.13.34
 
 -------------------------------------------------------------------
 Tue Mar 14 18:09:58 CET 2006 - jdsn@suse.de
 
 - new browser for registration
-- new texts for registration module 
+- new texts for registration module
 
 -------------------------------------------------------------------
 Mon Mar 13 16:26:00 CET 2006 - jsrain@suse.de
@@ -2380,7 +2385,7 @@ Wed Mar  8 14:25:02 CET 2006 - lrupp@suse.de
 -------------------------------------------------------------------
 Tue Mar  7 22:27:45 CET 2006 - jdsn@suse.de
 
-- added functionality to skip suse register and/or online update 
+- added functionality to skip suse register and/or online update
 - 2.13.28
 
 -------------------------------------------------------------------
@@ -2396,7 +2401,7 @@ Tue Mar  7 00:26:26 CET 2006 - jsrain@suse.de
 -------------------------------------------------------------------
 Mon Mar  6 10:47:31 CET 2006 - visnov@suse.cz
 
-- enable media callbacks in the add-on product handling 
+- enable media callbacks in the add-on product handling
 
 -------------------------------------------------------------------
 Fri Mar  3 23:30:36 CET 2006 - jsrain@suse.de
@@ -2408,7 +2413,7 @@ Fri Mar  3 23:30:36 CET 2006 - jsrain@suse.de
 -------------------------------------------------------------------
 Fri Mar  3 10:43:12 CET 2006 - visnov@suse.cz
 
-- reset package manager before installing patches 
+- reset package manager before installing patches
 
 -------------------------------------------------------------------
 Wed Mar  1 23:19:47 CET 2006 - jsrain@suse.de
@@ -2457,7 +2462,7 @@ Wed Feb 22 12:45:54 CET 2006 - ms@suse.de
 Wed Feb 22 10:28:42 CET 2006 - visnov@suse.cz
 
 - adapt BuildRequires
-- 2.13.21 
+- 2.13.21
 
 -------------------------------------------------------------------
 Wed Feb 22 01:20:18 CET 2006 - jsrain@suse.de
@@ -2507,7 +2512,7 @@ Tue Feb 14 23:40:31 CET 2006 - jsrain@suse.de
 -------------------------------------------------------------------
 Tue Feb 14 18:32:18 CET 2006 - jdsn@suse.de
 
-- new release notes module (multiple release notes) FATE: 120129 
+- new release notes module (multiple release notes) FATE: 120129
 - 2.13.16
 
 -------------------------------------------------------------------
@@ -2524,7 +2529,7 @@ Mon Feb 13 22:33:37 CET 2006 - jsrain@suse.de
 -------------------------------------------------------------------
 Mon Feb 13 10:09:58 CET 2006 - visnov@suse.cz
 
-- save zypp.log from instsys 
+- save zypp.log from instsys
 
 -------------------------------------------------------------------
 Sun Feb 12 20:41:09 CET 2006 - olh@suse.de
@@ -2698,7 +2703,7 @@ Wed Dec 21 11:30:11 CET 2005 - ms@suse.de
 -------------------------------------------------------------------
 Wed Dec 21 10:36:13 CET 2005 - visnov@suse.cz
 
-- merged proofread texts 
+- merged proofread texts
 
 -------------------------------------------------------------------
 Tue Dec 20 13:14:02 CET 2005 - ms@suse.de
@@ -2710,7 +2715,7 @@ Mon Dec 19 18:10:00 CET 2005 - sh@suse.de
 
 - Implemented feature #300359: Show Beta notice during installation
   Now showing /info.txt in a popup (with a simple "OK" button)
-  over the license agreement 
+  over the license agreement
 - V 2.13.6
 
 -------------------------------------------------------------------
@@ -2820,7 +2825,7 @@ Wed Sep  7 16:00:24 CEST 2005 - jsrain@suse.cz
 -------------------------------------------------------------------
 Wed Sep  7 09:16:44 CEST 2005 - jsuchome@suse.cz
 
-- 2.12.27 
+- 2.12.27
 
 -------------------------------------------------------------------
 Tue Sep  6 17:01:51 CEST 2005 - jsrain@suse.cz
