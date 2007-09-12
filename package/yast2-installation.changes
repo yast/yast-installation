@@ -2,6 +2,7 @@
 Tue Sep 11 20:03:02 CEST 2007 - aschnell@suse.de
 
 - don't swapoff after 1st stage installation (bug #308121)
+- 2.15.48
 
 -------------------------------------------------------------------
 Tue Sep 11 11:07:20 CEST 2007 - locilka@suse.cz
