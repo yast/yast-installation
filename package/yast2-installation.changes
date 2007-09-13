@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Sep 13 16:18:30 CEST 2007 - locilka@suse.cz
+
+- Fixed inst_upgrade_urls to re-register sources with their
+  repository names taken from the upgraded system (#310209).
+- 2.15.49
+
+-------------------------------------------------------------------
 Tue Sep 11 20:03:02 CEST 2007 - aschnell@suse.de
 
 - don't swapoff after 1st stage installation (bug #308121)

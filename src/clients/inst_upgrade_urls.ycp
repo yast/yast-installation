@@ -205,6 +205,8 @@ those you want to include in the upgrade process.</p>") +
 	return ret;
     }
 
+    // FIXME: collision when two different products with two different name
+    //        use the very same URL (fix in 11.0)
     string FindURLName (string baseurl) {
 	if (baseurl == "" || baseurl == nil) {
 	    y2error ("Base URL not defined!");
@@ -213,8 +215,8 @@ those you want to include in the upgrade process.</p>") +
 
 	string ret = nil;
 
-	foreach (map one_url, already_registered_repos, {
-	    if (baseurl == one_url["media_url"]:"-A-") {
+	foreach (map one_url, urls, {
+	    if (baseurl == one_url["url"]:"-A-" && one_url["name"]:"" != "") {
 		ret = one_url["name"]:"";
 		break;
 	    }
@@ -389,6 +391,34 @@ Would you like to configure it?"),
 	Wizard::SetTitleIcon ("yast-sw_source");
     }
 
+    // See bugzilla #309317
+    string GetUniqueAlias (string alias_orig) {
+        if (alias_orig == nil) alias_orig = "";
+
+        // all current aliases
+        list <string> aliases = maplist (integer i, Pkg::SourceGetCurrent(false), {
+            map info = Pkg::SourceGeneralData (i);
+            return info["alias"]:"";
+        });
+
+        // default
+        string alias = alias_orig;
+
+        // repository alias must be unique
+        // if it already exists add "_<number>" suffix to it
+        integer idx = 1;
+        while (contains (aliases, alias)) {
+            alias = sformat("%1_%2", alias_orig, idx);
+            idx = idx + 1;
+        }
+
+        if (alias_orig != alias) {
+            y2milestone ("Alias '%1' changed to '%2'", alias_orig, alias);
+        }
+
+        return alias;
+    }
+
     symbol AddOrRemoveSources () {
 	list <integer> sources_to_remove = [];
 	list <string>  sources_to_add    = [];
@@ -431,19 +461,56 @@ Would you like to configure it?"),
 	// Remote repositories need network
 	if ((size(sources_to_add) > 0) && NetworkRunning()) {
 	    y2milestone ("Adding repos: %1", sources_to_add);
+
 	    foreach (string one_url, sources_to_add, {
-		integer new_id = Pkg::SourceCreate (one_url, "/");
+		string repo_type = Pkg::RepositoryProbe (one_url, "/");
+		y2milestone ("Probed repository: %1 type: %2", one_url, repo_type);
+		
+		if (repo_type == nil || repo_type == "NONE") {
+		    y2error ("Cannot add repository");
+		    return;
+		}
+
+		string repo_name = FindURLName (one_url);
+		// fallback
+		if (repo_name == nil) repo_name = "";
+		string pth = "/";
+
+		// see bugzilla #310209
+		// Adding repositories with their correct names
+		map <string, any> repoadd = $[
+		    "enabled" : false,
+		    "name" : repo_name,
+		    "base_urls" : [one_url],
+		    "prod_dir" : pth,
+		    // alias needs to be unique
+		    // bugzilla #309317
+		    "alias" : GetUniqueAlias (one_url),
+		    "type" : repo_type,
+		];
+		y2milestone ("Adding: %1", repoadd);
+
+		integer new_id = Pkg::RepositoryAdd (repoadd);
+
 		if (new_id > -1) {
-		    AddOnProduct::add_on_products = add (
-			AddOnProduct::add_on_products,
-			$[
-			    "media" : new_id,
-			    "media_url" : one_url,
-			    "product_dir" : "/",
-			    "product" : FindURLName (one_url),
-			    "autoyast_product" : "",
-			]
-		    );
+		    boolean repo_refresh = Pkg::SourceRefreshNow (new_id);
+		    y2milestone ("Repository refreshed: %1", repo_refresh);
+
+		    boolean repo_enable = Pkg::SourceSetEnabled (new_id, true);
+		    y2milestone ("Repository enabled: %1", repo_enable);
+
+		    AddOnProduct::Integrate (new_id);
+
+		    map <string, string> prod = (map <string, string>) Pkg::SourceProductData (new_id);
+		    y2milestone ("Product Data: %1", prod);
+
+		    AddOnProduct::add_on_products = add (AddOnProduct::add_on_products, $[
+			"media" : new_id,
+			"media_url" : one_url,
+			"product_dir" : pth,
+			"product" : repo_name,
+			"autoyast_product" : "",
+		    ]);
 		}
 	    });
 	}
