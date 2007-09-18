@@ -156,7 +156,9 @@
 	// archive files were already quoted
 	string command = sformat (
 	    // 'ignore failed read' is for optional files
-	    "cd '%1'; tar -zcvf --ignore-failed-read '%2' %3",
+	    // but needs to be entered after the archive name
+	    // bugzilla #326055
+	    "cd '%1'; tar -zcvf '%2' --ignore-failed-read %3",
 	    tmp_mount_directory, String::Quote(archive_name), archive_files
 	);
 	map cmd_run = (map) SCR::Execute(.target.bash_output, command);
