@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Sep 18 19:50:52 CEST 2007 - locilka@suse.cz
+
+- Fixed tar syntax: --ignore-failed-read param. position (#326055).
+- 2.15.50
+
+-------------------------------------------------------------------
 Thu Sep 13 16:18:30 CEST 2007 - locilka@suse.cz
 
 - Fixed inst_upgrade_urls to re-register sources with their
