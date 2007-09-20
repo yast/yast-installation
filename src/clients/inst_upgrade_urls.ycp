@@ -294,11 +294,18 @@ those you want to include in the upgrade process.</p>") +
 		    enabled = one_url_map["enabled"]:false;
 		}
 
-		urls = add (urls, $[
+		map <string, any> new_url_map = $[
 		    "url" : one_url_map["baseurl"]:nil,
 		    "name" : (one_url_map["name"]:"" == "" ? one_url_map["id"]:"" : one_url_map["name"]:""),
 		    "enabled" : enabled,
-		]);
+		];
+
+		// store the repo-type as well
+		if (one_url_map["type"]:"" != "") {
+		    new_url_map["type"] = one_url_map["type"]:"";
+		}
+
+		urls = add (urls, new_url_map);
 	    });
 	// Fallback, old URLs found
 	// 10.1, 10.2, 10.3 ...
