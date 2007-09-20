@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Sep 20 12:23:01 CEST 2007 - locilka@suse.cz
+
+- Changed inst_upgrade_urls to add sources not enabled during the
+  upgrade in a disabled state instead of ignoring them (#326342).
+- 2.15.51
+
+-------------------------------------------------------------------
 Tue Sep 18 19:50:52 CEST 2007 - locilka@suse.cz
 
 - Fixed tar syntax: --ignore-failed-read param. position (#326055).

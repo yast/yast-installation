@@ -423,7 +423,8 @@ Would you like to configure it?"),
 	list <integer> sources_to_remove = [];
 	list <string>  sources_to_add    = [];
 
-
+	// bugzilla #308763
+	list <string> sources_to_add_disabled = [];
 
 	foreach (map one_source, urls, {
 	    string url = one_source["url"]:"";
@@ -434,11 +435,16 @@ Would you like to configure it?"),
 		if (current_medianr == nil) {
 		    sources_to_add = add (sources_to_add, url);
 		}
+
 	    // Source should be disabled at the end
 	    } else if (one_source["url_will_be_enabled"]:nil == false) {
+		// already registered
 		if (current_medianr != nil) {
 		    sources_to_remove = add (sources_to_remove, current_medianr);
 		}
+
+		// will be added
+		sources_to_add_disabled = add (sources_to_add_disabled, url);
 	    }
 	});
 
@@ -459,8 +465,10 @@ Would you like to configure it?"),
 	});
 
 	// Remote repositories need network
-	if ((size(sources_to_add) > 0) && NetworkRunning()) {
-	    y2milestone ("Adding repos: %1", sources_to_add);
+	// Adding sources in a disabled state, then enable them
+	// for the system upgrade
+	if ((size (sources_to_add) > 0) && NetworkRunning()) {
+	    y2milestone ("Adding ENABLED repos: %1", sources_to_add);
 
 	    foreach (string one_url, sources_to_add, {
 		string repo_type = Pkg::RepositoryProbe (one_url, "/");
@@ -488,7 +496,7 @@ Would you like to configure it?"),
 		    "alias" : GetUniqueAlias (one_url),
 		    "type" : repo_type,
 		];
-		y2milestone ("Adding: %1", repoadd);
+		y2milestone ("Adding repo (enabled): %1", repoadd);
 
 		integer new_id = Pkg::RepositoryAdd (repoadd);
 
@@ -512,6 +520,34 @@ Would you like to configure it?"),
 			"autoyast_product" : "",
 		    ]);
 		}
+	    });
+	}
+
+	// Adding the rest of sources in a disabled state
+	// bugzilla #326342
+	if (size (sources_to_add_disabled) > 0) {
+	    y2milestone ("Adding DISABLED repos: %1", sources_to_add_disabled);
+
+	    foreach (string one_url, sources_to_add_disabled, {
+		string repo_name = FindURLName (one_url);
+		// fallback
+		if (repo_name == nil) repo_name = "";
+		string pth = "/";
+
+		// see bugzilla #310209
+		// Adding repositories with their correct names
+		map <string, any> repoadd = $[
+		    "enabled" : false,
+		    "name" : repo_name,
+		    "base_urls" : [one_url],
+		    "prod_dir" : pth,
+		    // alias needs to be unique
+		    // bugzilla #309317
+		    "alias" : GetUniqueAlias (one_url),
+		];
+		y2milestone ("Adding repo (disabled): %1", repoadd);
+
+		integer new_id = Pkg::RepositoryAdd (repoadd);
 	    });
 	}
 
