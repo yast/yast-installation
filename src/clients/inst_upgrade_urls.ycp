@@ -225,6 +225,24 @@ those you want to include in the upgrade process.</p>") +
 	return ret;
     }
 
+    string FindURLType (string baseurl) {
+	if (baseurl == "" || baseurl == nil) {
+	    y2error ("Base URL not defined!");
+	    return "";
+	}
+
+	string ret = "";
+
+	foreach (map one_url, urls, {
+	    if (baseurl == one_url["url"]:"-A-" && one_url["type"]:"" != "") {
+		ret = one_url["type"]:"";
+		break;
+	    }
+	});
+
+	return ret;
+    }
+
     void EditItem (integer currentitem) {
 	if (currentitem == nil || currentitem < 0) {
 	    y2error ("Cannot edit item: %1", currentitem);
@@ -545,6 +563,13 @@ Would you like to configure it?"),
 		    // bugzilla #309317
 		    "alias" : GetUniqueAlias (one_url),
 		];
+
+		// do not probe! adding as disabled!
+		string repo_type = FindURLType (one_url);
+		if (repo_type != nil && repo_type != "") {
+		    repoadd["type"] = repo_type;
+		}
+		
 		y2milestone ("Adding repo (disabled): %1", repoadd);
 
 		integer new_id = Pkg::RepositoryAdd (repoadd);
