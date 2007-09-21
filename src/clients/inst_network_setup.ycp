@@ -754,7 +754,7 @@ it doesn't need to be used.</p>"),
 	FlushAllIPSettings();
 
 	string cmd = sformat ("/sbin/dhcpcd '%1'", String::Quote (network_settings["network_device"]:""));
-	map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
+	map run_cmd = (map) WFM::Execute (.local.bash_output, cmd);
 	y2milestone ("Running %1 returned %2", cmd, run_cmd);
 
 	if (run_cmd["exit"]:-1 != 0) {
