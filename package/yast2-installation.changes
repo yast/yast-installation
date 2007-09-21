@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Fri Sep 21 09:53:37 CEST 2007 - locilka@suse.cz
+
+- When normal umount at the end of the installation fails, try
+  at least: sync, remount read-only, umount --force.
+- Report all services running in the installation directory
+  (both #326478).
+- 2.15.52
+
+-------------------------------------------------------------------
 Thu Sep 20 12:23:01 CEST 2007 - locilka@suse.cz
 
 - Changed inst_upgrade_urls to add sources not enabled during the

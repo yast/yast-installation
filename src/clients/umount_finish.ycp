@@ -20,6 +20,7 @@ import "Installation";
 import "Storage";
 import "Hotplug";
 import "Vendor";
+import "String";
 
 any ret = nil;
 string func = "";
@@ -78,14 +79,21 @@ else if (func == "Write")
     // /proc/bus/usb
     // /proc
 
-    if (Hotplug::haveUSB)
-    {
-        WFM::Execute(.local.umount, Installation::destdir + "/proc/bus/usb");
+    list <string> umount_these = [ "/proc", "/sys", "/dev" ];
+    if (Hotplug::haveUSB) {
+	umount_these = (list <string>) union (["/proc/bus/usb"], umount_these);
     }
-    // inst_prepdisk mounts them unconditionally, they keep destdir busy
-    WFM::Execute(.local.umount, Installation::destdir + "/proc");
-    WFM::Execute(.local.umount, Installation::destdir + "/sys");
-    WFM::Execute(.local.umount, Installation::destdir + "/dev");
+
+    foreach (string umount_this, umount_these, {
+	umount_this = sformat ("%1%2", Installation::destdir, umount_this);
+	boolean umount_result = (boolean) WFM::Execute (.local.umount, umount_this);
+
+	if (umount_result != true) {
+	    y2warning ("Umount failed, trying to remount read only...");
+	    string cmd = sformat ("sync; mount -o remount,ro '%1'; umount --force '%1';", String::Quote (umount_this));
+	    y2milestone ("Cmd: '%1' Ret: %2", cmd, WFM::Execute (.local.bash_output, cmd));
+	}
+    });
 
     map<string,map> targetMap = Storage::GetTargetMap();
 
@@ -113,8 +121,23 @@ else if (func == "Write")
         umountLength = umountLength - 1;
         string tmp = Installation::destdir + (string) (umountList[umountLength]:"");
         y2milestone("umount target: %1", tmp);
-        WFM::Execute(.local.umount, tmp);
+
+        boolean umount_status = (boolean) WFM::Execute (.local.umount, tmp);
+
+	// fallback
+	// bugzilla #326478
+	if (umount_status != true) {
+	    y2warning ("Umount failed, trying to remount read only...");
+	    string cmd = sformat ("mount -o remount,ro '%1'; umount --force '%1';", String::Quote (tmp));
+	    y2milestone ("Cmd: '%1' Ret: %2", cmd, WFM::Execute (.local.bash_output, cmd));
+	}
     }
+
+    // bugzilla #326478
+    y2milestone ("Currently mounted partitions: %1", WFM::Execute (.local.bash_output, "mount"));
+
+    string cmd = sformat ("fuser -v '%1' 2>&1", String::Quote (Installation::destdir));
+    map cmd_run = (map) WFM::Execute (.local.bash_output, cmd);
 
     // must call .local.bash_output !
     integer max_loop_dev = Storage::NumLoopDevices();
