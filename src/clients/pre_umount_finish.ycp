@@ -12,6 +12,8 @@
 {
 
 import "Misc";
+import "Installation";
+import "String";
 
 textdomain "installation";
 
@@ -42,6 +44,13 @@ if (func == "Info")
 }
 else if (func == "Write")
 {
+    // bugzilla #326478
+    // some processes might be still running...
+    string cmd = sformat ("fuser -v '%1' 2>&1", String::Quote (Installation::destdir));
+    map cmd_run = (map) WFM::Execute (.local.bash_output, cmd);
+
+    y2milestone ("These processes are still running at %1 -> %2", Installation::destdir, cmd_run);
+
     if (size (Misc::boot_msg) > 0) {
 	// just a beep
 	SCR::Execute (.target.bash, "/bin/echo -e '\a'");
