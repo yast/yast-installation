@@ -127,6 +127,8 @@ else if (func == "Write")
 	// fallback
 	// bugzilla #326478
 	if (umount_status != true) {
+	    WFM::Execute (.local.bash_output, "killall dhcpcd");
+
 	    y2warning ("Umount failed, trying to remount read only...");
 	    string cmd = sformat ("mount -o remount,ro '%1'; umount --force '%1';", String::Quote (tmp));
 	    y2milestone ("Cmd: '%1' Ret: %2", cmd, WFM::Execute (.local.bash_output, cmd));

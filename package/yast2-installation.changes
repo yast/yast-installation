@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Sep 21 16:35:18 CEST 2007 - locilka@suse.cz
+
+- Start dhcpcd using WFM instead of SCR.
+- Kill dhcpcd at the end of the installation (both #326342).
+- 2.15.53
+
+-------------------------------------------------------------------
 Fri Sep 21 09:53:37 CEST 2007 - locilka@suse.cz
 
 - When normal umount at the end of the installation fails, try
