@@ -51,5 +51,23 @@
         Language::WfmSetLanguage();
     }
 
+    // Bugzilla #327791
+    // Online Repositories - default status
+
+    // Feature is not defined
+    if (ProductFeatures::GetFeature ("software", "online_repos_preselected") == "") {
+	Installation::productsources_selected = false;
+    // Defined
+    } else {
+	boolean default_status_or = ProductFeatures::GetBooleanFeature ("software", "online_repos_preselected");
+
+	// if not set, default is "true"
+	if (default_status_or == nil) default_status_or = true;
+	Installation::productsources_selected = default_status_or;
+    }
+
+    y2milestone ("Use Online Repositories (default): %1", Installation::productsources_selected);
+
+
     return `auto;
 }

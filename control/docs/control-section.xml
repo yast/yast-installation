@@ -576,7 +576,6 @@ default
     &lt;/software&gt;
 		    </programlisting>
 		</listitem>
-
             </itemizedlist>
 	    
 	    <para>All products (regular expressions) are matching the string which
@@ -614,6 +613,14 @@ default
 	    </itemizedlist>
 	    
 	    <para>These regular expressions are evaluated as <emphasis>YCP</emphasis>.</para>
+
+	    <itemizedlist>
+                <listitem>
+                    <para><emphasis>online_repos_preselected</emphasis></para>
+                    <para>Online Repositories are pre-selected by default to be used.
+		    This item can change the default behavior.</para>
+                </listitem>
+	    </itemizedlist>
 
         </section>
         <section id="control_partitioning">

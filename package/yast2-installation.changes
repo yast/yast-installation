@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Mon Sep 24 16:43:11 CEST 2007 - locilka@suse.cz
+
+- Changed default delete_old_packages back to 'true' after finding
+  and fixing all remaining issues with 'false' (changed by coolo)
+- Added new option 'online_repos_preselected' into the control file
+  to make default status of Online Repositories easily configurable
+  (#327791).
+- Initializing the default behavior of Online Repositories in
+  inst_features according to the control file (#327791).
+- 2.15.54
+
+-------------------------------------------------------------------
 Fri Sep 21 16:35:18 CEST 2007 - locilka@suse.cz
 
 - Start dhcpcd using WFM instead of SCR (#326342).
