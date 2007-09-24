@@ -56,7 +56,8 @@
 
     // Feature is not defined
     if (ProductFeatures::GetFeature ("software", "online_repos_preselected") == "") {
-	Installation::productsources_selected = false;
+	// Default is true - selected
+	Installation::productsources_selected = true;
     // Defined
     } else {
 	boolean default_status_or = ProductFeatures::GetBooleanFeature ("software", "online_repos_preselected");
