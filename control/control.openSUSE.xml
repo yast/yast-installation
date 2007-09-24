@@ -36,8 +36,11 @@ textdomain="control"
     </globals>
 
     <software>
-        <delete_old_packages config:type="boolean">false</delete_old_packages>
+        <delete_old_packages config:type="boolean">true</delete_old_packages>
         <selection_type config:type="symbol">auto</selection_type>
+
+	<!-- Bugzilla #327791, if not set, default is true -->
+	<online_repos_preselected config:type="boolean">true</online_repos_preselected>
 
 	<!-- FATE #300898, List of external sources accesible during the installation time -->
 	<external_sources_link>http://download.opensuse.org/YaST/Repos/openSUSE_103_Servers.xml</external_sources_link>
