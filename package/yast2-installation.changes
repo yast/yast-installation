@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Oct  2 16:04:55 CEST 2007 - ug@suse.de
+
+- typo fixed (#328172)
+
+-------------------------------------------------------------------
 Mon Sep 24 16:43:11 CEST 2007 - locilka@suse.cz
 
 - Changed default delete_old_packages back to 'true' after finding
