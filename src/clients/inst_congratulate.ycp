@@ -141,7 +141,7 @@ our SUSE Welcome Dialog.</p>
         help = help + _("<p>Use <b>Clone</b> if you want to create an AutoYaST profile.
 AutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST
 needs a profile to know what the installed system should look like. If this option is
-selected, a profile of the current system is stored in /root/autoyast.xml.</p>
+selected, a profile of the current system is stored in /root/autoinst.xml.</p>
 ");
     }
 
