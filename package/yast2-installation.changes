@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Oct  3 09:53:55 CEST 2007 - mvidner@suse.cz
+
+- Do not try to package COPYRIGHT.english, it is gone from
+  devtools (#299144).
+- 2.16.0
+
+-------------------------------------------------------------------
 Tue Oct  2 16:04:55 CEST 2007 - ug@suse.de
 
 - typo fixed (#328172)

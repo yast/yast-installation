@@ -128,12 +128,10 @@ YaST Installation - auto-generated documentation.
 
 %dir @docdir@
 @docdir@/COPYING
-@docdir@/COPYRIGHT.english
 %readme @docdir@/README
 
 %files devel-doc
 %defattr(-,root,root)
 %doc @docdir@
 %exclude @docdir@/COPYING
-%exclude @docdir@/COPYRIGHT.english
 %exclude @docdir@/README
