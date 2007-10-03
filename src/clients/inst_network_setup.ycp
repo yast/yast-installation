@@ -75,6 +75,22 @@
 		sformat(_("Network Device: %1"), device_map["device"]:"");
 	}
 
+	ret = ret + (ret != "" ? "<br>":"") +
+	    // TRANSLATORS: hardware information - HTML summary text
+	    // %1 is replaced with "Wireless" or "Wired"
+	    // See #nt1 below
+	    sformat(_("Network type: %1"),
+		((boolean) device_map["wlan"]:false != true ?
+		    // TRANSLATORS: Describes a "Network type"
+		    // see #nt1 above
+		    _("Wireless")
+		    :
+		    // TRANSLATORS: Describes a "Network type"
+		    // see #nt1 above
+		    _("Wired")
+		)
+	    );
+
 	if (device_map["model"]:"" != "") {
 	    ret = ret + (ret != "" ? "<br>":"") +
 		// TRANSLATORS: hardware information - HTML summary text
