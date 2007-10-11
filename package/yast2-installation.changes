@@ -3,6 +3,8 @@ Thu Oct 11 09:26:48 CEST 2007 - locilka@suse.cz
 
 - Unpacking y2update.tgz before merging installation.xml when using
   a new Add-On.
+- Correctly evaluating relurl:// parameters, such as
+  relurl://.../?device=sda5 (#307196, #306670).
 - 2.13.197
 
 -------------------------------------------------------------------

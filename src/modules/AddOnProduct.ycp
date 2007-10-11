@@ -116,6 +116,47 @@ global string GetBaseProductURL () {
 }
 
 /**
+ * Reads list of HTTP params and returns them as map
+ *
+ * @params string params
+ * @return map <string, string> params
+ *
+ * @example
+ *      MakeMapFromParams ("device=sda3&login=aaa&password=bbb") -> $[
+ *              "device"   : "sda3",
+ *              "login"    : "aaa",
+ *              "password" : "bbb"
+ *      ]
+ */
+map <string, string> MakeMapFromParams (string params) {
+    list <string> params_list = splitstring (params, "&");
+
+    params_list = filter (string one_param, params_list, {
+        return (one_param != "" && one_param != nil);
+    });
+
+    map <string, string> ret = $[];
+    integer eq_pos = nil;
+    string opt = "";
+    string val = "";
+
+    foreach (string one_param, params_list, {
+        eq_pos = search (one_param, "=");
+
+        if (eq_pos == nil) {
+            ret[one_param] = "";
+        } else {
+            opt = substring (one_param, 0, eq_pos);
+            val = substring (one_param, (eq_pos + 1));
+
+            ret[opt] = val;
+        }
+    });
+
+    return ret;
+}
+
+/**
  * Returns an absolute URL from base + relative url.
  * Relative URL needs to start with 'reulrl://' othewise
  * it is not considered being relative and it's returned
@@ -137,20 +178,37 @@ global string GetBaseProductURL () {
  */
 global string GetAbsoluteURL (string base_url, string url) {
     if (! regexpmatch (url, "^relurl://")) {
-	y2debug ("Not a relative URL: %1", url);
-	return url;
+        y2debug ("Not a relative URL: %1", url);
+        return url;
     }
 
     if (base_url == nil || base_url == "") {
-	y2error ("No base_url defined");
-	return url;
+        y2error ("No base_url defined");
+        return url;
+    }
+
+    // bugzilla #306670
+    integer base_params_pos = search (base_url, "?");
+    string base_params = "";
+
+    if (base_params_pos != nil && base_params_pos >= 0) {
+        base_params = substring (base_url, (base_params_pos + 1));
+        base_url = substring (base_url, 0, base_params_pos);
+    }
+
+    integer added_params_pos = search (url, "?");
+    string added_params = "";
+
+    if (added_params_pos != nil && added_params_pos >= 0) {
+        added_params = substring (url, (added_params_pos + 1));
+        url = substring (url, 0, added_params_pos);
     }
 
     if (! regexpmatch (base_url, "/$")) {
-	base_url = base_url + "/";
+        base_url = base_url + "/";
     }
 
-    y2milestone ("Merging '%1' to '%2'", url, base_url);
+    y2milestone ("Merging '%1' (params '%2') to '%3' (params '%4')", url, added_params, base_url, base_params);
     url = regexpsub (url, "^relurl://(.*)$", "\\1");
 
     url = sformat ("%1%2", base_url, url);
@@ -159,33 +217,57 @@ global string GetAbsoluteURL (string base_url, string url) {
     integer max_count = 100;
 
     while (max_count > 0 && regexpmatch (url, "(.*/)[^/]+/+\\.\\./")) {
-	max_count = max_count - 1;
-	list <integer> str_offset_l = (list <integer>) regexppos (url, "/\\.\\./");
-	integer str_offset = str_offset_l[0]:nil;
+        max_count = max_count - 1;
+        list <integer> str_offset_l = (list <integer>) regexppos (url, "/\\.\\./");
+        integer str_offset = str_offset_l[0]:nil;
 
-	if (str_offset != nil && str_offset > 0) {
-	    string stringfirst = substring (url, 0, str_offset);
-	    string stringsecond = substring (url, str_offset);
+        if (str_offset != nil && str_offset > 0) {
+            string stringfirst = substring (url, 0, str_offset);
+            string stringsecond = substring (url, str_offset);
 
-	    y2debug ("Pos: %1 First: >%2< Second: >%3<", str_offset, stringfirst, stringsecond);
+            y2debug ("Pos: %1 First: >%2< Second: >%3<", str_offset, stringfirst, stringsecond);
 
-	    stringfirst = regexpsub (stringfirst, "^(.*/)[^/]+/*$", "\\1");
-	    stringsecond = regexpsub (stringsecond, "^/\\.\\./(.*)$", "\\1");
-	    
-	    url = stringfirst + stringsecond;
-	}
+            stringfirst = regexpsub (stringfirst, "^(.*/)[^/]+/*$", "\\1");
+            stringsecond = regexpsub (stringsecond, "^/\\.\\./(.*)$", "\\1");
+            
+            url = stringfirst + stringsecond;
+        }
     }
 
     // remove /./
     max_count = 100;
 
     while (max_count > 0 && regexpmatch (url, "/\\./")) {
-	max_count = max_count - 1;
-	url = regexpsub (url, "^(.*)/\\./(.*)", "\\1/\\2");
+        max_count = max_count - 1;
+        url = regexpsub (url, "^(.*)/\\./(.*)", "\\1/\\2");
+    }
+
+    map <string, string> base_params_map  = MakeMapFromParams (base_params);
+    map <string, string> added_params_map = MakeMapFromParams (added_params);
+    map <string, string> final_params_map = (map <string, string>) union (base_params_map, added_params_map);
+
+    if (size (final_params_map) > 0) {
+        y2milestone ("%1 merge %2 -> %3", base_params_map, added_params_map, final_params_map);
+
+        string url_add = "";
+
+        foreach (string opt, string val, final_params_map, {
+            url_add =
+                url_add +
+                // add '&' if needed
+                (size (url_add) > 0 ? "&" : "") +
+                opt +
+                // define 'opt=val' if val is set
+                // otherwise don't use '=val' at all
+                (size (val) > 0 ? "=" + val : "");
+        });
+
+        url = url + "?" + url_add;
     }
 
     y2milestone ("Final URL: '%1'", url);
     return url;
+
 }
 // <--
 
