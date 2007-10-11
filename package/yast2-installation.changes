@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Oct 11 15:00:03 CEST 2007 - jsrain@suse.cz
+
+- show release notes properly in live installation (#332862)
+
+-------------------------------------------------------------------
 Wed Oct  3 17:50:11 CEST 2007 - locilka@suse.cz
 
 - Added "Network Type" information to the First Stage Network Setup
