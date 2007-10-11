@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Oct 11 15:00:03 CEST 2007 - jsrain@suse.cz
+
+- show release notes properly in live installation (#332862)
+- 2.15.55
+
+-------------------------------------------------------------------
 Mon Sep 24 16:43:11 CEST 2007 - locilka@suse.cz
 
 - Changed default delete_old_packages back to 'true' after finding

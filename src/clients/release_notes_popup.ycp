@@ -17,6 +17,7 @@
     import "Label";
     import "Stage";
     import "Packages";
+    import "Mode";
 
     /* filename of release notes */
     string file = "";
@@ -67,9 +68,42 @@
 	return false;
     };
 
+    // in live installation, the release notes are in the /usr/doc directory, find right file there (bug 332862)
+    define boolean find_release_notes ()
+    {
+	y2milestone ("Finding release notes in local filesystem");
+	// FIXME hardcoded product name
+        string path_to_relnotes = "/usr/share/doc/release-notes/openSUSE/";
+	string path_templ = path_to_relnotes + "/RELEASE-NOTES.%1.rtf";
+	y2debug ("Path template: %1", path_templ);
+	string tmp = sformat (path_templ, Language::language);
+	y2debug ("Trying to get %1", tmp);
+	if (0 >= (integer)SCR::Read (.target.size, tmp))
+	{
+	    tmp = sformat (path_templ, substring (Language::language, 0, 2));
+	    y2debug ("Trying to get %1", tmp);
+	}
+	if (0 >= (integer)SCR::Read (.target.size, tmp))
+	{
+	    tmp = sformat (path_templ, "en");
+	    y2debug ("Trying to get %1", tmp);
+	}
+	if (0 >= (integer)SCR::Read (.target.size, tmp))
+	    return false;
+
+	y2milestone ("Reading file %1", tmp);
+	text = (string)SCR::Read (.target.string, [tmp, ""]);
+	if (text != "" && text != nil)
+	    return true;
+	return false;
+    }
+
     y2milestone ("Calling: Release Notes Popup");
 
-    if (! load_release_notes ())
+    if (! (Mode::live_installation ()
+	? find_release_notes ()
+	: load_release_notes ()
+    ))
     {
 	// error report
 	Report::Error (_("Cannot load release notes."));
