@@ -1153,6 +1153,17 @@ string TmpdirForControlFiles () {
 global boolean Integrate (integer srcid) {
     y2milestone ("Integrating source %1", srcid);
 
+    // bugzilla #297752
+    // Update inst-sys before merging the control file
+
+    // Updating inst-sys
+    string y2update = Pkg::SourceProvideOptionalFile (srcid, 1, "/y2update.tgz");
+    if (y2update == nil) {
+	y2milestone ("No YaST update found on the media");
+    } else {
+	UpdateInstSys (y2update);
+    }
+
     // Updating workflow or proposals
 
     // Trying to use a cached file, bugzilla #221377
@@ -1198,14 +1209,6 @@ test -d '%1' || /bin/mkdir -p '%1';
 	}
 
 	control_files_to_add = add (control_files_to_add, sformat ("%1.xml", srcid));
-    }
-
-    // Updating inst-sys
-    string y2update = Pkg::SourceProvideOptionalFile (srcid, 1, "/y2update.tgz");
-    if (y2update == nil) {
-	y2milestone ("No YaST update found on the media");
-    } else {
-	UpdateInstSys (y2update);
     }
 
     return true;

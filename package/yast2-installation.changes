@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Oct 11 09:26:48 CEST 2007 - locilka@suse.cz
+
+- Unpacking y2update.tgz before merging installation.xml when using
+  a new Add-On.
+- 2.13.197
+
+-------------------------------------------------------------------
 Fri Jul 20 13:53:21 CEST 2007 - locilka@suse.cz
 
 - Added support for relative URLs in the add_on_products file by
