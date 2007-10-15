@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Oct 15 16:00:06 CEST 2007 - locilka@suse.cz
+
+- Abort the installation instead of halting the system in case of
+  declining the license when installing from LiveCD (#330730).
+
+-------------------------------------------------------------------
 Thu Oct 11 15:00:03 CEST 2007 - jsrain@suse.cz
 
 - show release notes properly in live installation (#332862)
