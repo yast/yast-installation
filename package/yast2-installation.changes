@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Oct 22 09:30:30 CEST 2007 - locilka@suse.cz
+
+- Calling inst_suse_register instead of suse_register client in
+  AddOnProduct module (#297264).
+
+-------------------------------------------------------------------
 Thu Oct 11 09:26:48 CEST 2007 - locilka@suse.cz
 
 - Unpacking y2update.tgz before merging installation.xml when using
