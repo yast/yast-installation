@@ -19,7 +19,7 @@
     // do we have a floppy drive attached ?
     if (StorageDevices::FloppyReady()) {
         // Try to load settings from disk, if a floppy is present
-        SCR::Execute(.target.mount, [StorageDevices::FloppyDevice, "/media/floppy"], "-t auto");
+        SCR::Execute(.target.mount, [StorageDevices::FloppyDevice (), "/media/floppy"], "-t auto");
 
         // Check for autoinst.xml. if available
         // set mode to autoinst. Later, the file is parsed and installation
