@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Oct 25 12:53:59 CEST 2007 - locilka@suse.cz
+
+- Added fonctionality for merging texts from different control
+  files (including different textdomains) (#271608).
+
+-------------------------------------------------------------------
 Mon Oct 22 09:30:30 CEST 2007 - locilka@suse.cz
 
 - Calling inst_suse_register instead of suse_register client in

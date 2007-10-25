@@ -851,6 +851,7 @@ boolean Replaceworkflows (list<map> workflows) {
 	sm[w["stage"]:"", w["mode"]:""] = true;
 	return [w["stage"]:"", w["mode"]:""];
     });
+
     y2milestone ("Existing replace workflows: %1", sm);
     y2milestone ("Workflows before filtering: %1", size (ProductControl::workflows));
     ProductControl::workflows = filter (map w, ProductControl::workflows, {
@@ -858,6 +859,7 @@ boolean Replaceworkflows (list<map> workflows) {
     });
     y2milestone ("Workflows after filtering: %1", size (ProductControl::workflows));
     ProductControl::workflows = (list<map>)merge (ProductControl::workflows, workflows);
+
     return true;
 }
 
@@ -867,16 +869,49 @@ boolean Replaceworkflows (list<map> workflows) {
  * @return boolean true on success
  */
 boolean UpdateProductInfo(map update_file) {
-    foreach (string section, ["globals", "software", "partitioning", "network"],
+    foreach (string section, ["globals", "software", "partitioning", "network", "texts"],
     {
 	map<string,any> sect = ProductFeatures::GetSection(section);
 	map<string,any> addon = update_file[section]:$[];
 	sect = (map<string,any>)union (sect, addon);
 	ProductFeatures::SetSection(section, sect);
     });
+
+    // merging 'clone_modules'
     list<string> addon_clone = update_file["clone_modules"]:[];
     ProductControl::clone_modules
 	= (list<string>)merge (ProductControl::clone_modules, addon_clone);
+
+    // merging texts
+
+    /**
+     * @struct $[
+     *   "congratulate" : $[
+     *     "label" : "some text",
+     *   ],
+     *   "congratulate2" : $[
+     *     "label" : "some other text",
+     *     "textdomain" : "control-2", // (optionally)
+     *   ],
+     * ];
+     */
+    map <string, any> controlfile_texts = ProductFeatures::GetSection ("texts");
+    map <string, map <string, string> > update_file_texts = update_file["texts"]:$[];
+    string update_file_textdomain = update_file["textdomain"]:"";
+
+    // if textdomain is different to the base one
+    // we have to put it into the map
+    if (update_file_textdomain != nil && update_file_textdomain != "") {
+        update_file_texts = mapmap (string text_ident, map <string, string> text_def, update_file_texts, {
+            text_def["textdomain"] = update_file_textdomain;
+
+            return $[ text_ident : text_def ];
+	});
+    }
+
+    controlfile_texts = (map <string, any>) union (controlfile_texts, update_file_texts);
+    ProductFeatures::SetSection ("texts", controlfile_texts);
+
     return true;
 }
 
