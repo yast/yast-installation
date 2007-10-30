@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Oct 30 16:04:51 CET 2007 - aschnell@suse.de
+
+- fixed usage of fbiterm (#274603)
+
+-------------------------------------------------------------------
 Thu Oct 25 12:53:59 CEST 2007 - locilka@suse.cz
 
 - Added fonctionality for merging texts from different control
