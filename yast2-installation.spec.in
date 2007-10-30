@@ -8,7 +8,7 @@ BuildRequires:	yast2 >= 2.15.38
 
 Requires:       autoyast2-installation
 # Mode::live_installation
-Requires:	yast2 >= 2.15.38
+Requires:	yast2 >= 2.16.3
 # Required in in the first stage, after
 # switching to the installed system, bugzilla #249679
 Requires:	yast2-bootloader
