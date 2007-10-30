@@ -15,8 +15,6 @@
 {
     module "HwStatus";
 
-    textdomain "installation";
-
     // status map for devices, key is "unique id", value is symbol (`yes, `no)
 
     map<string, symbol> statusmap = $[];
