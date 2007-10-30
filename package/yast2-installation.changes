@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Oct 30 17:26:51 CET 2007 - locilka@suse.cz
+
+- Modules Hotplug and HwStatus moved to yast2.rpm to remove
+  dependency of storage on installation.
+- 2.16.2
+
+-------------------------------------------------------------------
 Wed Oct 24 16:32:41 CEST 2007 - locilka@suse.cz
 
 - Changes in StorageDevice module API (#335582).
