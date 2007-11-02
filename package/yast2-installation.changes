@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Nov  2 16:31:06 CET 2007 - locilka@suse.cz
+
+- Adjusted RPM dependencies (Internet module has been moved from
+  yast2-network to yast2).
+
+-------------------------------------------------------------------
 Tue Oct 30 17:26:51 CET 2007 - locilka@suse.cz
 
 - Modules Hotplug and HwStatus moved to yast2.rpm to remove
