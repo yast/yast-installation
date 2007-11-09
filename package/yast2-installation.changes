@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Fri Nov  9 13:30:34 CET 2007 - locilka@suse.cz
+
+- Boot Installed System option has been removed (#327505).
+- Installation Mode dialog has been redesigned using
+  self-descriptive icons for all options.
+- Return value from inst_repair is evaluated, error is reported in
+  case of failure.
+- 2.16.3
+
+-------------------------------------------------------------------
 Fri Nov  2 16:31:06 CET 2007 - locilka@suse.cz
 
 - Adjusted RPM dependencies (Internet module has been moved from
