@@ -214,8 +214,6 @@ Check your hardware.
 	return `finish;
     }
 
-symbol current_expert_mode = `repair;
-
 string InstModeDialogHelp () {
     // help text for installation method
     return _("<p><big><b>Installation Mode</b></big><br>
@@ -248,43 +246,52 @@ To install an add-on product from separate media together with &product;, select
 ") +
 
     // help text for installation method
-    _("<p>Select <b>Other Options</b> then
-select <b>Repair Installed System</b> if you have a damaged Linux system on
+    _("<p>Select <b>Repair Installed System</b> if you have a damaged Linux system on
 your hard disk. This option can try to fix problems automatically.
-</p>") +
-
-
-
-    // help text for installation method
-    _("<p>Select <b>Other Options</b> then
-select <b>Boot Installed System</b> if you have a Linux system on your hard
-disk that will not boot. With this option, try to fix problems manually.
 </p>");
+}
+
+map display_info = UI::GetDisplayInfo();
+boolean in_textmode = display_info["TextMode"]:false;
+
+/**
+ * Function creates term containing radio button and icon
+ * based on current display (graphical/textual)
+ *
+ * @param string radio button label
+ * @param symbol radio button id
+ * @param string path to an image
+ * @boolean whether selected (more than one buttons selected don't make sense!)
+ */
+ term CreateRadioButtonTerm (string button_label, symbol button_id, string icon_file, boolean selected) {
+    return `HBox (
+	(in_textmode ?
+	    `Empty()
+	    :
+	    `HWeight (
+		    1,
+		    (icon_file == "" ? `Empty() : `Image (icon_file, ""))
+	    )
+	),
+	(in_textmode ?
+	    `Empty()
+	    :
+	    `HSpacing (4)
+	),
+	`HWeight(
+	    5,
+	    `Left (`RadioButton (
+		`id (button_id),
+		`opt(`notify),
+		button_label,
+		selected
+	    ))
+	)
+    );
 }
 
 // see bugzilla #156529
 term InstModeDialogContent (symbol pre_selected) {
-    term other_options_layout_fix = `Empty();
-    term other_options            = `Empty();
-
-    if (pre_selected == `expert) {
-	other_options_layout_fix = `VSpacing(2.1);
-	other_options = `RadioButtonGroup (
-	    `id (`expert_options),
-	    `HBox (
-		`HSpacing (6),
-		`VBox (
-		    `Left (`RadioButton (`id (`repair), `opt (`notify),
-			// radio button
-			_("Re&pair Installed System"), (current_expert_mode == `repair))),
-		    `Left (`RadioButton (`id (`boot), `opt (`notify),
-			// radio button
-			_("Boot Installed &System"), (current_expert_mode == `boot)))
-		)
-	    )
-	);
-    }
-
     return `VBox (
 	`VWeight (60, `HVCenter (
 	    `MarginBox (
@@ -293,7 +300,6 @@ term InstModeDialogContent (symbol pre_selected) {
 	    `topMargin (0.5),
 	    `bottomMargin (0.5),
 	    `VBox (
-		other_options_layout_fix,
 		`Frame (
 		    // frame
 		    _("Select Mode"),
@@ -301,20 +307,35 @@ term InstModeDialogContent (symbol pre_selected) {
 			// Basis RadioButtonGroup
 			`RadioButtonGroup (
 			    `id (`inst_mode),
-			    `VBox (
-				// radio button
-				`Left (`RadioButton (`id (`install), `opt(`notify), _("New &Installation"),
-				    ! Mode::update ())),
-				`VSpacing( 0.3 ),
-				// radio button
-				`Left (`RadioButton (`id (`update), `opt(`notify), _("&Update"),
-				    Mode::update ())),
-				`VSpacing( 1.3 ),
-				`Left (`RadioButton (`id (`expert), `opt(`notify), _("&Other Options")))
+			    `MarginBox (
+				2, 1.3,
+				`VBox (
+				    // radio button
+				    CreateRadioButtonTerm (
+					_("New &Installation"),
+					`install,
+					"/usr/share/icons/hicolor/32x32/apps/yast-dirinstall.png",
+					!Mode::update ()
+				    ),
+				    `VSpacing( 0.3 ),
+				    // radio button
+				    CreateRadioButtonTerm (
+					_("&Update"),
+					`update,
+					"/usr/share/icons/hicolor/32x32/apps/yast-update.png",
+					Mode::update ()
+				    ),
+				    `VSpacing( 1.8 ),
+				    // radio button
+				    CreateRadioButtonTerm (
+					_("Re&pair Installed System"),
+					`repair,
+					"/usr/share/icons/hicolor/32x32/apps/yast.png",
+					false
+				    )
+				)
 			    )
-			),
-			// Other RadioButtonGroup
-			other_options
+			)
 		    )
 		),
 		`VSpacing (2),
@@ -495,7 +516,7 @@ y2milestone ("Umont result: %1, inst mode: %2", umount_result, media);
 // only installation (and addon products) enabled
 if (other_options_disabled) {
     UI::ChangeWidget (`id (`update), `Enabled, false);
-    UI::ChangeWidget (`id (`expert), `Enabled, false);
+    UI::ChangeWidget (`id (`repair), `Enabled, false);
 }
 
 // --> Handling User Input in Installation Mode
@@ -524,37 +545,16 @@ repeat {
 	ret = nil;
 	continue;
     }
-    // Other Options - Boot
-    else if (ret == `boot) {
-	current_expert_mode = `boot;
-
-	ret = nil;
-	continue;
-    // Other Options - Repair
-    } else if (ret == `repair) {
-	current_expert_mode = `repair;
-
-	ret = nil;
-	continue;
-    }
     // Adjusting current UI - Other Options
-    else if (ret == `expert) {
+    else if (ret == `repair) {
 	// Remembering add-on state, switching off and disabling
 	Installation::add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
 
-	// Show other options
-	Wizard::SetContents (
-	    // dialog caption
-	    _("Installation Mode"), InstModeDialogContent(`expert), InstModeDialogHelp(), true, true
-	);
-	
 	UI::ChangeWidget (`id(`add_on), `Value, false);
 	UI::ChangeWidget (`id(`add_on), `Enabled, false);
 	UI::ChangeWidget (`id(`productsources), `Value, false);
 	UI::ChangeWidget (`id(`productsources), `Enabled, false);
 
-	UI::ChangeWidget (`id(`inst_mode), `CurrentButton, `expert);
-	
 	ret = nil;
 	continue;
     }
@@ -562,12 +562,6 @@ repeat {
     // in case of `install or `update clicked
     else if (contains([`install, `update], ret)) {
 	symbol selected_mode = (symbol)  UI::QueryWidget (`id (`inst_mode), `CurrentButton);
-
-	// Hide other options
-	Wizard::SetContents (
-	    // dialog caption
-	    _("Installation Mode"), InstModeDialogContent(`install), InstModeDialogHelp(), true, true
-	);
 
 	// Enabling add-on, adjusting previous state (selected)
 	UI::ChangeWidget  (`id(`add_on), `Enabled, true);
@@ -590,30 +584,6 @@ repeat {
 	    ret = nil;
 	    continue;
 	}
-	
-	// Repair or Boot
-	if (new_mode == `expert) {
-	    if (! contains([`boot, `repair], current_expert_mode)) {
-		y2error("Internal error: Widget `expert_mode selected item: %1", current_expert_mode);
-		ret = nil;
-		continue;
-	    }
-	    new_mode = current_expert_mode;
-	    
-	    // Boot was selected
-	    if (new_mode == `boot) {
-		symbol hb_ret = handle_boot();
-		y2milestone ("handle_boot() returned '%1'", ret);
-
-		if (hb_ret != `finish) {
-		    y2milestone("Not booting any OS");
-		    ret = nil;
-		    continue;
-		} else {
-		    y2milestone ("Booting...");
-		}
-	    }
-	}
     }
     else if (ret == `abort)
     {
@@ -627,8 +597,8 @@ repeat {
 // <-- Handling User Input in Installation Mode
 
 y2milestone("Selected mode: %1, Return: %2", new_mode, ret);
-if (ret == `next)
-{
+
+if (ret == `next) {
     if (new_mode == `install)
     {
 	Mode::SetMode ("installation");
@@ -642,12 +612,6 @@ if (ret == `next)
     if (new_mode == `repair)
     {
 	Mode::SetMode ("repair");
-    }
-
-    if (new_mode == `boot)
-    {
-	Mode::SetMode ("");
-	ret = `finish;
     }
 
     if (new_mode == `install || new_mode == `update)
@@ -674,9 +638,8 @@ if (ret == `next)
 
 	y2milestone ("Disabled: %1", ProductControl::DisabledModules);
     }
-}
 
-if (ret == `back || ret == `finish) {
+} else if (ret == `back || ret == `finish) {
     y2milestone("Returning: %1", ret);
     return ret;
 }
@@ -684,7 +647,28 @@ if (ret == `back || ret == `finish) {
 if (Mode::repair ())
 {
     y2milestone("Calling inst_repair");
-    WFM::CallFunction ("inst_repair");
+    any ret = WFM::CallFunction ("inst_repair");
+
+    if (ret == nil) {
+	Report::Error (
+	    // TRANSLATORS: an error message (the same is in base.pot)
+	    // this should not happen, but life is cruel...
+	    // %1 - (failed) module name
+	    // %2 - logfile, possibly with errors
+	    // %3 - link to our bugzilla
+	    // %4 - directory where YaST logs are stored
+	    sformat (_("Calling the YaST module %1 has failed.
+More information can be found near the end of the '%2' file.
+
+This is worth reporting a bug at %3.
+Please, attach also all YaST logs stored in the '%4' directory."),
+	    "inst_repair",
+	    "/var/log/YaST2/y2log",
+	    "http://bugzilla.novell.com/",
+	    "/var/log/YaST2/")
+	);
+    }
+
     return `finish;
 }
 
@@ -719,8 +703,7 @@ Aborting the installation."));
 }
 Packages::InitializeAddOnProducts ();
 
-if (Mode::mode () != start_mode)
-{
+if (Mode::mode () != start_mode) {
     y2milestone ("Switching Steps from %1 to %2 ", start_mode, Mode::mode ());
     UpdateWizardSteps ();
     y2milestone ("Resetting disk target to read values");
@@ -732,24 +715,16 @@ if (Mode::mode () != start_mode)
     Pkg::PkgReset ();
     Packages::Init( true );
 
-    if (! Mode::repair ())
-    {
-	ret = ProductControl::RunFrom (
-	    ProductControl::CurrentStep () + 1,
-	    false);
-	if (ret == `next)
-	    ret = `finish;
-    }
-}
-else if (! Mode::repair())
-{
-    UpdateWizardSteps ();
-    ret = ProductControl::RunFrom (
-	ProductControl::CurrentStep () + 1,
-	false);
+    ret = ProductControl::RunFrom (ProductControl::CurrentStep () + 1, false);
+
     if (ret == `next)
 	ret = `finish;
+} else {
+    UpdateWizardSteps ();
+    ret = ProductControl::RunFrom (ProductControl::CurrentStep () + 1, false);
 
+    if (ret == `next)
+	ret = `finish;
 }
 
 return ret;
