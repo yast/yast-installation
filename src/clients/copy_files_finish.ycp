@@ -60,14 +60,23 @@ else if (func == "Write")
     AdjustModprobeBlacklist();
 
     // copy hardware status to installed system
-    SCR::Execute (.target.bash,"/bin/cp -a '/var/lib/hardware' " +
-	"'" + String::Quote (Installation::destdir) + "/var/lib'");
+    y2milestone ("Copying hardware information");
+    WFM::Execute (.local.bash,
+	sformat (
+	    "mkdir -p '%1/var/lib/'; /bin/cp -a '/var/lib/hardware' '%1/var/lib/'",
+	    String::Quote (Installation::destdir)
+	)
+    );
 
     // if VNC, copy setup data
-    if (Linuxrc::vnc ())
-    {
-	WFM::Execute (.local.bash, "/bin/cp -a '/root/.vnc' " +
-	    "'" + String::Quote (Installation::destdir) + "/root'");
+    if (Linuxrc::vnc ()) {
+	y2milestone ("Copying VNC settings");
+	WFM::Execute (.local.bash,
+	    sformat (
+		"/bin/cp -a '/root/.vnc' '%1/root/'",
+		String::Quote (Installation::destdir)
+	    )
+	);
     }
 
 
@@ -77,15 +86,19 @@ else if (func == "Write")
     Linuxrc::SaveInstallInf (Installation::destdir);
 
     // Copy control.xml so it can be read once again during continue mode
-    SCR::Execute (.target.bash, "/bin/cp " + ProductControl::current_control_file  + " " +
-	"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control.xml'");
-    SCR::Execute (.target.bash, "/bin/chmod 0644 " +
-	"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control.xml'");
-    // Copy also control files of add-on products
-    string cf_dir = (string)SCR::Read (.target.tmpdir) + "/control_files";
+    y2milestone ("Copying YaST control file");
+    WFM::Execute (.local.bash,
+	sformat (
+	    "/bin/cp '%1' '%2%3/control.xml' && /bin/chmod 0644 '%2%3/control.xml'",
+	    String::Quote (ProductControl::current_control_file),
+	    String::Quote (Installation::destdir),
+	    String::Quote (Directory::etcdir)
+	)
+    );
 
     // List of files used as additional workflow definitions
     if (size (WorkflowManager::GetAllUsedControlFiles()) > 0) {
+	y2milestone ("Coping additional control files %1", WorkflowManager::GetAllUsedControlFiles());
 	list <string> workflows_list =  [];
 
 	foreach (string one_filename, WorkflowManager::GetAllUsedControlFiles(), {
