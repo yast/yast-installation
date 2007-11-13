@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Nov 13 13:54:13 CET 2007 - locilka@suse.cz
+
+- Script copy_files_finish.ycp cleaned up.
+
+-------------------------------------------------------------------
 Fri Nov  9 13:30:34 CET 2007 - locilka@suse.cz
 
 - Boot Installed System option has been removed (#327505).
