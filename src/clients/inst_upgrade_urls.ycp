@@ -14,6 +14,7 @@
     import "NetworkService";
     import "Popup";
     import "AddOnProduct";
+    import "Report";
 
     textdomain "installation";
 
@@ -529,8 +530,34 @@ Would you like to configure it?"),
 		    boolean repo_refresh = Pkg::SourceRefreshNow (new_id);
 		    y2milestone ("Repository refreshed: %1", repo_refresh);
 
+		    if (repo_refresh != true) {
+			Report::Error (sformat (
+			    // TRANSLATORS: error report
+			    // %1 is replaced with repo-name, %2 with repo-URL
+			    _("An error ocured when refreshing repository
+Name: %1
+URL: %2"),
+			    repo_name,
+			    one_url
+			));
+			return;
+		    }
+
 		    boolean repo_enable = Pkg::SourceSetEnabled (new_id, true);
 		    y2milestone ("Repository enabled: %1", repo_enable);
+
+		    if (repo_enable != true) {
+			Report::Error (sformat (
+			    // TRANSLATORS: error report
+			    // %1 is replaced with repo-name, %2 with repo-URL
+			    _("An error ocured when enabling repository
+Name: %1
+URL: %2"),
+			    repo_name,
+			    one_url
+			));
+			return;
+		    }
 
 		    AddOnProduct::Integrate (new_id);
 
