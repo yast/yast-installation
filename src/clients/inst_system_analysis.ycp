@@ -697,7 +697,7 @@ Packages::InitializeCatalogs ();
 if (Packages::InitFailed ())
 {
     // popup message
-    Popup::Message (_("Failed to initialize catalogs.
+    Popup::Message (_("Failed to initialize the software repositories.
 Aborting the installation."));
     return `abort;
 }
