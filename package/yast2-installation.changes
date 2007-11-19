@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Nov 19 15:35:10 CET 2007 - locilka@suse.cz
+
+- Fixed busy texts for restarting YaST vs. finishing the instal.
+
+-------------------------------------------------------------------
 Tue Nov 13 13:54:13 CET 2007 - locilka@suse.cz
 
 - Script copy_files_finish.ycp cleaned up.
