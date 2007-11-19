@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Nov 19 15:43:34 CET 2007 - locilka@suse.cz
+
+- Do not show 'The previous installation has failed' when YaST has
+  been restarted on purpose (#333288).
+- 2.13.199
+
+-------------------------------------------------------------------
 Tue Oct 30 16:04:51 CET 2007 - aschnell@suse.de
 
 - fixed usage of fbiterm (#274603)

@@ -102,14 +102,11 @@
     string restart_file      = Directory::vardir + "/restart_yast";
     string restart_data_file = Directory::vardir + "/continue_installation";
 
-    // bugzilla #281818
-    boolean yast_or_system_was_restarted = (FileUtils::Exists (restart_data_file));
-    y2milestone ("YaST was restarted on purpose: %1", yast_or_system_was_restarted);
-
     // Second stage
     // FATE #300422
     // Do not ask in case of restarted installation
-    if (Stage::cont () && yast_or_system_was_restarted != true) {
+    // Second stage installation bas been aborted or has failed
+    if (Stage::cont()) {
 	// Second stage installation bas been aborted or has failed
 	if (FileUtils::Exists (file_inst_aborted) || FileUtils::Exists (file_inst_failed)) {
 	    // popup question (#x1)
@@ -520,7 +517,8 @@ but something went wrong, that's why it is only in the log");
     }
 
     // when the installation is not aborted
-    if (Stage::cont () && ret != `reboot && ret != `restart_yast && ret != `abort) {
+    // and not rebooted on purpose
+    if (Stage::cont () && ret != `reboot && ret != `restart_yast && ret != `abort && ret != `cancel) {
 	// remove /etc/install.inf, not needed any more
 	SCR::Execute (.target.remove, "/etc/install.inf");
 	if (Mode::update ())
@@ -541,6 +539,14 @@ but something went wrong, that's why it is only in the log");
 	if (FileUtils::Exists (file_inst_failed)) {
 	    y2milestone ("Removing file %1", file_inst_failed);
 	    SCR::Execute (.target.remove, file_inst_failed);
+	}
+
+	// This file says that the configuration has been aborted
+	// we don't need it anymore
+	// FATE #300422
+	if (FileUtils::Exists (file_inst_aborted)) {
+	    y2milestone ("Removing file %1", file_inst_aborted);
+	    SCR::Execute (.target.remove, file_inst_aborted);
 	}
 
         // This file has the current step of the workflow to be used
@@ -578,6 +584,7 @@ but something went wrong, that's why it is only in the log");
 	SCR::Execute (.target.bash, sformat ("touch %1", file_inst_aborted));
     }
 
+    // installation has been rebooted on purpose
     if (Stage::cont() && (ret == `reboot || ret == `restart_yast || ret == `restart_same_step)) {
 	// bugzilla #281818
 	if (FileUtils::Exists (file_inst_aborted)) {
@@ -591,14 +598,21 @@ but something went wrong, that's why it is only in the log");
 	}
     }
 
+    if (Stage::cont() && (ret == `reboot || ret == `cancel || ret == `abort)) {
+	y2milestone ("Creating file %1", run_yast_at_boot);
+	SCR::Execute (.target.bash, sformat ("touch %1", run_yast_at_boot));
+    }
+
     y2milestone("Finishing the installation...");
 
-    if (ret != `reboot && ret != `restart_yast && ret != `restart_same_step) {
-	// TRANSLATORS: busy message
-	UI::OpenDialog (`Label(_("Finishing the installation..."))); // #2
-    } else {
+    // reboot, restart, abort
+    if (ret == `reboot || ret == `restart_yast || ret == `restart_same_step || ret == `abort) {
 	// TRANSLATORS: busy message
 	UI::OpenDialog (`Label(_("Writing YaST Configuration..."))); // #2
+    // finish
+    } else {
+	// TRANSLATORS: busy message
+	UI::OpenDialog (`Label(_("Finishing the installation..."))); // #2
     }
 
     // disable all sources and finish target
