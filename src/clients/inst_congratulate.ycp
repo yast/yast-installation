@@ -150,6 +150,7 @@ selected, a profile of the current system is stored in /root/autoinst.xml.</p>
     Wizard::SetTitleIcon ("SuSEmenu");
 
     Wizard::SetNextButton(`next, Label::FinishButton() );
+    Wizard::RestoreAbortButton();
     Wizard::SetFocusToNextButton();
     if( UI::WidgetExists(`id(`do_clone)) )
         UI::ChangeWidget (`id(`do_clone), `Enabled, clone_enabled);
