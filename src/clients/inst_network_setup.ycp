@@ -32,6 +32,7 @@
     import "Progress";
     import "Proxy";
     import "Linuxrc";
+    import "Internet";
 
     /* Variables --> */
 
@@ -762,6 +763,10 @@ it doesn't need to be used.</p>"),
 	    map run_cmd = (map) SCR::Execute (.target.bash_output, cmd);
 	    y2milestone ("Running %1 returned %2", cmd, run_cmd);
 	});
+
+	// Bugzilla #308577
+	// All local dhcpcd clients are shut down
+	Internet::ShutdownAllLocalDHCPClients();
 	
 	return true;
     }

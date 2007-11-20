@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Nov 20 11:08:23 CET 2007 - locilka@suse.cz
+
+- Shutting down all dhcpcd clients when reconfiguring network in
+  the first stage and when finishing the installation (#308577).
+
+-------------------------------------------------------------------
 Mon Nov 19 15:35:10 CET 2007 - locilka@suse.cz
 
 - Fixed busy texts for restarting YaST vs. finishing the instal.

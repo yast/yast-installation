@@ -21,6 +21,7 @@ import "Storage";
 import "Hotplug";
 import "Vendor";
 import "String";
+import "Internet";
 
 any ret = nil;
 string func = "";
@@ -116,6 +117,13 @@ else if (func == "Write")
     // now umount in reverse order (guarantees "/" as last umount)
 
     integer umountLength = size (umountList);
+
+    // all dhcpcd clients are shut down
+    // - this should release /var/run/ directory
+    if (umountLength > 0) {
+	Internet::ShutdownAllLocalDHCPClients();
+    }
+
     while (umountLength > 0)
     {
         umountLength = umountLength - 1;
