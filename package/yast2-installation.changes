@@ -3,6 +3,8 @@ Tue Nov 20 11:08:23 CET 2007 - locilka@suse.cz
 
 - Shutting down all dhcpcd clients when reconfiguring network in
   the first stage and when finishing the installation (#308577).
+- 'Copy 70-persistent-cd.rules' functionality has been moved here
+  from yast2-network (#328126).
 
 -------------------------------------------------------------------
 Mon Nov 19 15:35:10 CET 2007 - locilka@suse.cz

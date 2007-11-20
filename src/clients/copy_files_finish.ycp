@@ -43,6 +43,73 @@ y2milestone ("starting copy_files_finish");
 y2debug("func=%1", func);
 y2debug("param=%1", param);
 
+void CopyAllWorkflowFiles () {
+    if (size (WorkflowManager::GetAllUsedControlFiles()) == 0) {
+	y2milestone ("No additional workflows");
+	return;
+    }
+
+    y2milestone ("Coping additional control files %1", WorkflowManager::GetAllUsedControlFiles());
+    list <string> workflows_list =  [];
+
+    foreach (string one_filename, WorkflowManager::GetAllUsedControlFiles(), {
+	if (regexpmatch (one_filename, "/")) {
+	    one_filename = regexpsub (one_filename, "^.*/(.*)", "\\1");
+	}
+
+	workflows_list = add (workflows_list, one_filename);
+    });
+
+    // They need to follow the exact order
+    SCR::Write (.target.ycp, Installation::destdir + Directory::etcdir + "/control_files/order.ycp",
+	workflows_list);
+
+    SCR::Execute (.target.bash, "/bin/mkdir -p " +
+	"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files'");
+
+    foreach (string file, WorkflowManager::GetAllUsedControlFiles(), {
+	SCR::Execute (.target.bash, "/bin/cp '" + String::Quote (file) + "' " +
+	    "'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/'");
+	SCR::Execute (.target.bash, "/bin/chmod 0644 " +
+	    "'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/" + String::Quote (file) + "'");
+    });
+
+    SCR::Execute (.target.bash, "/bin/chmod 0644 " +
+	"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/order.ycp'");
+}
+
+// see bugzilla #328126
+void CopyHardwareUdevRules () {
+    string udev_rules_srcdir = "/etc/udev/rules.d/";
+    string udev_rules_destdir = sformat ("%1%2", Installation::destdir, udev_rules_srcdir);
+
+    if (! FileUtils::Exists (udev_rules_destdir)) {
+	y2milestone("%1 does not exist yet, creating it", udev_rules_destdir);
+	WFM::Execute (.local.bash, sformat ("mkdir -p '%1'", udev_rules_destdir));
+    }
+
+    // udev files that should be copied
+    list <string> files_to_copy = [ "70-persistent-cd.rules" ];
+
+    foreach (string one_file, files_to_copy, {
+	string one_file_from = sformat ("%1%2", udev_rules_srcdir, one_file);
+	string one_file_to = sformat ("%1%2", udev_rules_destdir, one_file);
+
+	if (! FileUtils::Exists (one_file_from)) {
+	    y2error ("Cannot copy non-existent file: %1", one_file_from);
+	} else if (FileUtils::Exists (one_file_to)) {
+	    y2milestone ("File %1 exists, skipping", one_file_to);
+	} else {
+	    string cmd = sformat ("cp -a '%1' '%2'", String::Quote (one_file_from), String::Quote (udev_rules_destdir));
+	    map cmd_out = (map) WFM::Execute (.local.bash_output, cmd);
+
+	    if (cmd_out["exit"]:-1 != 0) {
+		y2error ("Command failed '%1': %2", cmd, cmd_out);
+	    }
+	}
+    });
+}
+
 if (func == "Info")
 {
     return (any)$[
@@ -97,35 +164,7 @@ else if (func == "Write")
     );
 
     // List of files used as additional workflow definitions
-    if (size (WorkflowManager::GetAllUsedControlFiles()) > 0) {
-	y2milestone ("Coping additional control files %1", WorkflowManager::GetAllUsedControlFiles());
-	list <string> workflows_list =  [];
-
-	foreach (string one_filename, WorkflowManager::GetAllUsedControlFiles(), {
-	    if (regexpmatch (one_filename, "/")) {
-		one_filename = regexpsub (one_filename, "^.*/(.*)", "\\1");
-	    }
-
-	    workflows_list = add (workflows_list, one_filename);
-	});
-
-	// They need to follow the exact order
-	SCR::Write (.target.ycp, Installation::destdir + Directory::etcdir + "/control_files/order.ycp",
-	    workflows_list);
-
-	SCR::Execute (.target.bash, "/bin/mkdir -p " +
-	    "'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files'");
-
-	foreach (string file, WorkflowManager::GetAllUsedControlFiles(), {
-	    SCR::Execute (.target.bash, "/bin/cp '" + String::Quote (file) + "' " +
-		"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/'");
-	    SCR::Execute (.target.bash, "/bin/chmod 0644 " +
-		"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/" + String::Quote (file) + "'");
-	});
-
-	SCR::Execute (.target.bash, "/bin/chmod 0644 " +
-	    "'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/order.ycp'");
-    }
+    CopyAllWorkflowFiles();
 
     // Copy files from inst-sys to the just installed system
     // FATE #301937, items are defined in the control file
@@ -143,6 +182,10 @@ else if (func == "Write")
     {
 	SCR::Execute (.target.bash, sformat("/bin/cp /info.txt %1", eula_txt));
     }
+
+    // bugzila #328126
+    // Copy 70-persistent-cd.rules ... if not updating
+    if (! Mode::update()) CopyHardwareUdevRules();
 }
 else
 {
