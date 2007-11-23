@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Nov 23 13:16:22 CET 2007 - locilka@suse.cz
+
+- Using translations for inst_finish steps (#343783).
+- 2.13.200
+
+-------------------------------------------------------------------
 Mon Nov 19 15:43:34 CET 2007 - locilka@suse.cz
 
 - Do not show 'The previous installation has failed' when YaST has

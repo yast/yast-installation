@@ -99,6 +99,29 @@ if (size (ProductControl::inst_finish) > 0)
 {
     y2milestone ("Using inst_finish steps definition from control file");
     stages = ProductControl::inst_finish;
+
+    // Inst-finish need to be translated (#343783)
+    string textdom = ProductControl::productControl["textdomain"]:"control";
+    list <map<string,any> > stages_copy = stages;
+
+    y2milestone ("Inst finish stages before: %1", stages);
+
+    integer counter = -1;
+    // going through copy, the original is going to be changed in the loop
+    foreach (map<string,any> one_stage, stages_copy, {
+	counter = counter + 1;
+	string label = one_stage["label"]:"";
+
+	if (label == nil || label == "") return;
+
+	string loc_label = dgettext (textdom, label);
+	// if translated
+	if (loc_label != nil && loc_label != "" && loc_label != label) {
+	    stages[counter, "label"] = loc_label;
+	}
+    });
+
+    y2milestone ("Inst finish stages after: %1", stages);
 }
 else
 {
