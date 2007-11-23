@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Nov 23 12:56:52 CET 2007 - locilka@suse.cz
+
+- Using translations for inst_finish steps (#343783).
+- 2.15.56
+
+-------------------------------------------------------------------
 Thu Oct 11 15:00:03 CEST 2007 - jsrain@suse.cz
 
 - show release notes properly in live installation (#332862)
