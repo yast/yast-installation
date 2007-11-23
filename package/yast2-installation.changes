@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Nov 23 13:36:54 CET 2007 - locilka@suse.cz
+
+- Using translations for inst_finish steps (#343783).
+- 2.16.4
+
+-------------------------------------------------------------------
 Tue Nov 20 11:08:23 CET 2007 - locilka@suse.cz
 
 - Shutting down all dhcpcd clients when reconfiguring network in
