@@ -9,7 +9,7 @@ BuildRequires:	yast2 >= 2.15.38
 Requires:       autoyast2-installation
 # Mode::live_installation
 # Internet::ShutdownAllLocalDHCPClients
-Requires:	yast2 >= 2.16.12
+Requires:	yast2 >= 2.16.14
 # Required in in the first stage, after
 # switching to the installed system, bugzilla #249679
 Requires:	yast2-bootloader
