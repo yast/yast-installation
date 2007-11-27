@@ -812,7 +812,7 @@
 	}
 	if ( Stage::stage () == "initial" )
 	    // push button
-	    Wizard::ShowReleaseNotesButton (_("&Show Release Notes"), `rel_notes);
+	    Wizard::ShowReleaseNotesButton (_("&Show Release Notes"), "rel_notes");
     }
 
 
@@ -1186,7 +1186,7 @@ a proposal that is locked, ask your system administrator.</p>");
 		    return `finish;
 	    }
 	}
-	else if (input == `rel_notes)
+	else if (input == "rel_notes")
 	{
 	    WFM::CallFunction("release_notes_popup", [] );
 	}
