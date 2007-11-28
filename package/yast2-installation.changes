@@ -3,7 +3,7 @@ Tue Nov 27 19:14:15 CET 2007 - sh@suse.de
 
 - Use string ID "contents" rather than YCPSymbol `contents
   for Wizard ReplacePoint 
-- V 2.16.5
+- 2.16.5
 
 -------------------------------------------------------------------
 Fri Nov 23 13:36:54 CET 2007 - locilka@suse.cz
