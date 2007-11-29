@@ -370,6 +370,8 @@ Wizard::SetTitleIcon ("yast-inst-mode");
 list <string> actions_todo      = [];
 list <string> actions_doing     = [];
 list          actions_functions = [];
+list <string> visible_icons     = [];
+list <string> invisible_icons   = [];
 
 y2milestone ("Probing done: %1", Installation::probing_done);
 if (! Installation::probing_done)
@@ -381,18 +383,24 @@ if (! Installation::probing_done)
 	    // TRANSLATORS: progress step
 	    actions_doing = add (actions_doing, _("Probing USB devices..."));
 	    actions_functions = add (actions_functions, ActionUSB);
+	    visible_icons = add (visible_icons, "32x32/apps/yast-misc.png");
+	    invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
 
 	    // TRANSLATORS: progress step
 	    actions_todo = add (actions_todo, _("Probe FireWire devices"));
 	    // TRANSLATORS: progress step
 	    actions_doing = add (actions_doing, _("Probing FireWire devices..."));
 	    actions_functions = add (actions_functions, ActionFireWire);
+	    visible_icons = add (visible_icons, "32x32/apps/yast-system.png");
+	    invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
 
 	    // TRANSLATORS: progress step
 	    actions_todo = add (actions_todo, _("Probe floppy disks devices"));
 	    // TRANSLATORS: progress step
 	    actions_doing = add (actions_doing, _("Probing floppy disks devices..."));
 	    actions_functions = add (actions_functions, ActionFloppyDisks);
+	    visible_icons = add (visible_icons, "32x32/apps/yast-bootfloppy.png");
+	    invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
         }
 
         // TRANSLATORS: progress step
@@ -400,18 +408,25 @@ if (! Installation::probing_done)
         // TRANSLATORS: progress step
         actions_doing = add (actions_doing, _("Probing hard disk controllers..."));
         actions_functions = add (actions_functions, ActionHHDControllers);
+	visible_icons = add (visible_icons, "32x32/apps/yast-controller.png");
+	invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
+	
 
         // TRANSLATORS: progress step
         actions_todo = add (actions_todo, _("Load kernel modules for hard disk controllers"));
         // TRANSLATORS: progress step
         actions_doing = add (actions_doing, _("Loading kernel modules for hard disk controllers..."));
         actions_functions = add (actions_functions, ActionLoadModules);
+	visible_icons = add (visible_icons, "32x32/apps/yast-kdump.png");
+	invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
 
         // TRANSLATORS: progress step
         actions_todo = add (actions_todo, _("Probe hard disks"));
         // TRANSLATORS: progress step
         actions_doing = add (actions_doing, _("Probing hard disks..."));
 	actions_functions = add (actions_functions, ActionHDDProbe);
+	visible_icons = add (visible_icons, "32x32/apps/yast-disk.png");
+	invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
 
 	WFM::CallFunction("inst_features", []);
 	Installation::probing_done = true;
@@ -423,16 +438,20 @@ actions_todo = add (actions_todo, _("Search for Linux partitions"));
 // TRANSLATORS: progress step
 actions_doing = add (actions_doing, _("Searching for Linux partitions..."));
 actions_functions = add (actions_functions, SearchForLinuxPartitions);
+visible_icons = add (visible_icons, "32x32/apps/yast-inst-mode.png");
+invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
 
 // TRANSLATORS: progress step
 actions_todo = add (actions_todo, _("Evaluate update possibility"));
 // TRANSLATORS: progress step
 actions_doing = add (actions_doing, _("Evaluating update possibility..."));
 actions_functions = add (actions_functions, EvaluateUpdatePossibilities);
+visible_icons = add (visible_icons, "32x32/apps/msg_info.png");
+invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
 
 Wizard::SetTitleIcon ("yast-controller");
 
-Progress::New (
+Progress::NewProgressIcons (
     // TRANSLATORS: dialog caption
     _("System Probing"),
     " ",
@@ -440,7 +459,8 @@ Progress::New (
     actions_todo,
     actions_doing,
     // TRANSLATORS: dialog help
-    _("Please wait while computer hardware and installed systems are being probed...")
+    _("Please wait while computer hardware and installed systems are being probed..."),
+    [invisible_icons, visible_icons]
 );
 
 foreach (any run_function, actions_functions, {

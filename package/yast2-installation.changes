@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Nov 29 16:27:59 CET 2007 - locilka@suse.cz
+
+- Using Progress::NewProgressIcons to show icons during the network
+  setup in first stage and during system probing.
+
+-------------------------------------------------------------------
 Tue Nov 27 19:14:15 CET 2007 - sh@suse.de
 
 - Use string ID "contents" rather than YCPSymbol `contents
