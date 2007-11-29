@@ -1287,6 +1287,8 @@ Would you like to go back to change it?"),
 	list <string> actions_todo      = [];
 	list <string> actions_doing     = [];
 	list          actions_functions = [];
+	list <string> visible_icons     = [];
+	list <string> invisible_icons   = [];
 	
 	// Dynamic network setup
 	if (network_settings["setup_type"]:"" == "dhcp") {
@@ -1295,6 +1297,8 @@ Would you like to go back to change it?"),
 	    // TRANSLATORS: progress step
 	    actions_doing = add (actions_doing, _("Adjusting automatic network setup (via DHCP)..."));
 	    actions_functions = add (actions_functions, Action_AdjustDHCPNetworkSetup);
+	    invisible_icons = add (invisible_icons, "32x32/apps/yast-network.png");
+	    visible_icons = add (visible_icons, "32x32/apps/yast-dns.png");
 
 	// Static network setup
 	} else if (network_settings["setup_type"]:"" == "static") {
@@ -1303,6 +1307,8 @@ Would you like to go back to change it?"),
 	    // TRANSLATORS: progress step
 	    actions_doing = add (actions_doing, _("Adjusting static network setup..."));
 	    actions_functions = add (actions_functions, Action_AdjustStaticNetworkSetup);
+	    invisible_icons = add (invisible_icons, "32x32/apps/yast-network.png");
+	    visible_icons = add (visible_icons, "32x32/apps/yast-dns.png");
 
 	// Error
 	} else {
@@ -1321,6 +1327,8 @@ Please, go back and provide a valid network setup."));
 	// TRANSLATORS: progress step
 	actions_doing = add (actions_doing, _("Writing proxy settings..."));
 	actions_functions = add (actions_functions, Action_ProxySetup);
+	invisible_icons = add (invisible_icons, "32x32/apps/yast-network.png");
+	visible_icons = add (visible_icons, "32x32/apps/yast-proxy.png");
 
 	// Write install.inf only in inst-sys
 	if (Stage::initial()) {
@@ -1329,6 +1337,8 @@ Please, go back and provide a valid network setup."));
 	    // TRANSLATORS: progress step
 	    actions_doing = add (actions_doing, _("Adjusting installation system..."));
 	    actions_functions = add (actions_functions, Action_WriteInstallInf);
+	    invisible_icons = add (invisible_icons, "32x32/apps/yast-network.png");
+	    visible_icons = add (visible_icons, "32x32/apps/yast.png");
 	}
 
 	// TRANSLATORS: progress step
@@ -1336,8 +1346,10 @@ Please, go back and provide a valid network setup."));
 	// TRANSLATORS: progress step
 	actions_doing = add (actions_doing, _("Testing Internet connection..."));
 	actions_functions = add (actions_functions, Action_TestInternetConnection);
+	invisible_icons = add (invisible_icons, "32x32/apps/yast-network.png");
+	visible_icons = add (visible_icons, "32x32/apps/yast-isns.png");
 	
-	Progress::New (
+	Progress::NewProgressIcons (
 	    // TRANSLATORS: dialog caption
 	    _("Writing Network Setup"),
 	    " ",
@@ -1345,7 +1357,8 @@ Please, go back and provide a valid network setup."));
 	    actions_todo,
 	    actions_doing,
 	    // TRANSLATORS: dialog help
-	    _("<p>Please, wait while network configuration is being written and tested...</p>")
+	    _("<p>Please, wait while network configuration is being written and tested...</p>"),
+	    []
 	);
 	
 	Wizard::SetBackButton (`back, Label::BackButton());
