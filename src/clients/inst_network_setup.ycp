@@ -1358,7 +1358,7 @@ Please, go back and provide a valid network setup."));
 	    actions_doing,
 	    // TRANSLATORS: dialog help
 	    _("<p>Please, wait while network configuration is being written and tested...</p>"),
-	    []
+	    [visible_icons, invisible_icons]
 	);
 	
 	Wizard::SetBackButton (`back, Label::BackButton());

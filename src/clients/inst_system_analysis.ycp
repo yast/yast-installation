@@ -460,7 +460,7 @@ Progress::NewProgressIcons (
     actions_doing,
     // TRANSLATORS: dialog help
     _("Please wait while computer hardware and installed systems are being probed..."),
-    [invisible_icons, visible_icons]
+    [visible_icons, invisible_icons]
 );
 
 foreach (any run_function, actions_functions, {
