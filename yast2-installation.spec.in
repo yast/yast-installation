@@ -8,6 +8,7 @@ BuildRequires:	yast2 >= 2.15.38
 
 Requires:       autoyast2-installation
 # Progress::NewProgressIcons
+# Icon YCP module
 Requires:	yast2 >= 2.16.16
 # Required in in the first stage, after
 # switching to the installed system, bugzilla #249679
