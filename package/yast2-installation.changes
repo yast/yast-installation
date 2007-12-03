@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Dec  3 14:34:38 CET 2007 - locilka@suse.cz
+
+- Installation Mode dialog adapted to new mod-UI and to new
+  Image-Dimming support in UI.
+
+-------------------------------------------------------------------
 Thu Nov 29 16:27:59 CET 2007 - locilka@suse.cz
 
 - Using Progress::NewProgressIcons to show icons during the network
