@@ -248,11 +248,21 @@ To install an add-on product from separate media together with &product;, select
     // help text for installation method
     _("<p>Select <b>Repair Installed System</b> if you have a damaged Linux system on
 your hard disk. This option can try to fix problems automatically.
+</p>") +
+
+    // help text for installation method
+    _("<p>Features <b>Update</b> and <b>Repair Installed System</b> are only
+available if some Linux system has been detected.
 </p>");
 }
 
 map display_info = UI::GetDisplayInfo();
 boolean in_textmode = display_info["TextMode"]:false;
+boolean has_image_dimm_support = display_info["HasDimmImageSupport"]:false;
+
+string GenerateIconID (any icon_whatever) {
+    return sformat ("icon_%1", tostring (icon_whatever));
+}
 
 /**
  * Function creates term containing radio button and icon
@@ -269,14 +279,13 @@ boolean in_textmode = display_info["TextMode"]:false;
 	    `Empty()
 	    :
 	    `HWeight (
-		    1,
-		    (icon_file == "" ? `Empty() : `Image (icon_file, ""))
+		1,
+		(icon_file == "" ?
+		    `Empty()
+		    :
+		    `Image (`id (GenerateIconID (button_id)), icon_file, "")
+		)
 	    )
-	),
-	(in_textmode ?
-	    `Empty()
-	    :
-	    `HSpacing (4)
 	),
 	`HWeight(
 	    5,
@@ -292,13 +301,8 @@ boolean in_textmode = display_info["TextMode"]:false;
 
 // see bugzilla #156529
 term InstModeDialogContent (symbol pre_selected) {
-    return `VBox (
-	`VWeight (60, `HVCenter (
-	    `MarginBox (
-	    `leftMargin (1),
-	    `rightMargin (1.5),
-	    `topMargin (0.5),
-	    `bottomMargin (0.5),
+    return `HBox (
+	    `HStretch(),
 	    `VBox (
 		`Frame (
 		    // frame
@@ -351,11 +355,9 @@ term InstModeDialogContent (symbol pre_selected) {
 		    _("In&clude Add-On Products from Separate Media"),
 		    Installation::add_on_selected
 		))
-	    )
-	)
-	)),
-	`VWeight (20, `Empty ())
-    );
+	    ),
+	    `HStretch()
+	);
 }
 
 Wizard::SetContents (_("Analyzing the Computer"), `Empty (), "", false, false);
@@ -537,6 +539,17 @@ y2milestone ("Umont result: %1, inst mode: %2", umount_result, media);
 if (other_options_disabled) {
     UI::ChangeWidget (`id (`update), `Enabled, false);
     UI::ChangeWidget (`id (`repair), `Enabled, false);
+
+    // disable also icons related to options if supported by UI
+    if (has_image_dimm_support) {
+	foreach (symbol image_id, [`update, `repair], {
+	    string icon_id = GenerateIconID (image_id);
+
+	    if (UI::WidgetExists (`id(icon_id))) {
+		UI::ChangeWidget (`id (icon_id), `Enabled, false);
+	    }
+	});
+    }
 }
 
 // --> Handling User Input in Installation Mode
