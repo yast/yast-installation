@@ -19,20 +19,39 @@
     import "Wizard";
     import "Popup";
     import "GetInstArgs";
-    
+    import "Directory";
+    import "Icon";
+
     boolean enable_next = true;
     boolean enable_back = true;
+
+    /**
+     * Script can be called with some arguments
+     *
+     * @struct [$[
+     *   "dontskip" : true, // do not skipt the dialog even if network is configured
+     * ]]
+     */
+    map argmap = GetInstArgs::argmap();
+    y2milestone ("Script args: %1", argmap);
 
     /*
      * We don't need to run this script to setup the network
      * If some network is already running...
      */
     if (NetworkService::isNetworkRunning()) {
-	y2milestone ("Network is already running, skipping...");
-	return `next;
+	if (argmap["dontskip"]:false == true) {
+	    y2milestone ("Network is already running, not skipping (forced)...");
+	} else {
+	    y2milestone ("Network is already running, skipping...");
+	    return `next;
+	}
+    } else {
+	y2milestone ("No network configuration found, offering to set it up...");
     }
 
-    y2milestone ("No network configuration found, offering to set it up...");
+    map displayinfo = UI::GetDisplayInfo();
+    boolean supports_images = displayinfo["HasImageSupport"]:false;
 
     Wizard::SetContents (
 	// TRANSLATORS: dialog caption
@@ -45,9 +64,19 @@
 		    `HStretch (),
 		    `VBox (
 			// TRANSLATORS: dialog label
-			`Left(`Label (_("No network setup has been found.
+			`HBox (
+			    (supports_images ?
+				`HBox (
+				    Icon::Simple ("warning"),
+				    `HSpacing (2)
+				)
+				:
+				`Empty()
+			    ),
+			    `Left (`Label (_("No network setup has been found.
 It is vitally important for using remote repositories
-otherwise you can safely skip it."))),
+otherwise you can safely skip it.")))
+			),
 			`VSpacing (2),
 			// TRANSLATORS: dialog label
 			`Left(`Label (_("Would you like to configure your network card now?"))),

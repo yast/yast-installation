@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Dec  3 16:49:46 CET 2007 - locilka@suse.cz
+
+- Installation Mode dialog adapted to new bright and better mod_UI.
+- Using informative icon in some inst_network_check script.
+- 2.16.6
+
+-------------------------------------------------------------------
 Mon Dec  3 14:34:38 CET 2007 - locilka@suse.cz
 
 - Installation Mode dialog adapted to new mod-UI and to new
