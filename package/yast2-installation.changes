@@ -377,6 +377,11 @@ Thu Jun 28 21:34:19 CEST 2007 - jsrain@suse.cz
 - updated for live CD installation
 
 -------------------------------------------------------------------
+Thu Jun 21 17:38:09 CEST 2007 - adrian@suse.de
+
+- fix changelog entry order
+
+-------------------------------------------------------------------
 Thu Jun 21 10:34:10 CEST 2007 - locilka@suse.cz
 
 - Added handling for "Suggested Installation Sources" during the
@@ -426,11 +431,6 @@ Wed Jun 13 15:44:05 CEST 2007 - locilka@suse.cz
 - Fixed inst_restore_settings to start SuSEfirewall2_setup if it is
   enabled in the system init scripts to prevent from having
   half-started firewall after YOU kernel-update (#282871).
-
--------------------------------------------------------------------
-Thu Jun 21 17:38:09 CEST 2007 - adrian@suse.de
-
-- fix changelog entry order
 
 -------------------------------------------------------------------
 Mon Jun 11 18:30:48 CEST 2007 - locilka@suse.cz
