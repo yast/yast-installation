@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Dec  5 11:13:05 CET 2007 - mzugec@suse.cz
+
+- description says network cards are wireless (#346133) 
+
+-------------------------------------------------------------------
 Mon Dec  3 16:49:46 CET 2007 - locilka@suse.cz
 
 - Installation Mode dialog adapted to new bright and better mod_UI.
