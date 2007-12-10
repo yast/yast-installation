@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Dec 10 12:13:14 CET 2007 - locilka@suse.cz
+
+- Removed dependency on yast2-country, added dependency on
+  yast2-country-data.
+
+-------------------------------------------------------------------
 Wed Dec  5 11:13:05 CET 2007 - mzugec@suse.cz
 
 - description says network cards are wireless (#346133) 
