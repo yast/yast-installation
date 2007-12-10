@@ -32,6 +32,7 @@ import "ProductLicense";
 import "FileUtils";
 import "Directory";
 import "Installation";
+import "String";
 
 // variables for installation with product
 /**
