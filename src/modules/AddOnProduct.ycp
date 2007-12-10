@@ -1162,6 +1162,9 @@ global void RegisterAddOnProduct (integer src_id) {
     }
 }
 
+// function content defined later
+void HandleProductPATTERNS (integer srcid);
+
 /**
  * Do installation of the add-on product within an installed system
  * srcid is got via AddOnProduct::src_id
@@ -1184,6 +1187,9 @@ global symbol DoInstall() {
 
     // FATE #301312
     PrepareForRegistration (src_id);
+
+    // FATE #302398: PATTERNS keyword in content file
+    HandleProductPATTERNS (src_id);
 
     symbol ret = nil;
 
@@ -1262,6 +1268,116 @@ string TmpdirForControlFiles () {
 }
 
 /**
+ * Every Add-On can preselect some patterns.
+ * Only patterns that are not selected/installed yet will be used.
+ *
+ * @struct $[
+ *   src_id : [
+ *     "pattern_1", "pattern_2", "pattern_6"
+ *   ]
+ * ]
+ */
+map <integer, list <string> > patterns_preselected_by_addon = $[];
+
+boolean SelectProductPatterns (string content_file, integer src_id) {
+    string cmd = sformat (
+	"grep '^PATTERNS[\t ]\+' '%1' | sed 's/^PATTERNS[\t ]\+//'",
+	String::Quote (content_file)
+    );
+
+    map cmd_out = (map) SCR::Execute (.target.bash_output, cmd);
+
+    if (cmd_out["exit"]:-1 != 0) {
+	y2error ("Command: >%1< returned: %2", cmd, cmd_out);
+
+	return false;
+    }
+
+    list <string> patterns_to_select = splitstring (cmd_out["stdout"]:"", "\t ");
+    patterns_to_select = filter (string one_pattern, patterns_to_select, {
+	return (one_pattern != nil && one_pattern != "");
+    });
+
+    if (size (patterns_to_select) == 0) {
+	y2milestone ("Add-On doesn't have any required patterns (PATTERNS in content)");
+	return true;
+    }
+
+    y2milestone ("Add-On requires these PATTERNS: %1", patterns_to_select);
+    // clear/set
+    patterns_preselected_by_addon[src_id] = [];
+
+    boolean ret = true;
+
+    foreach (string one_pattern, patterns_to_select, {
+	list <map <string,any> > pattern_properties = Pkg::ResolvableProperties (one_pattern, `pattern, "");
+
+	boolean already_selected = false;
+
+	foreach (map <string,any> one_pattern_found, pattern_properties, {
+	    symbol patt_status = one_pattern_found["status"]:`unknown;
+	    // patern is already selected
+	    if (patt_status == `installed || patt_status == `selected) {
+		already_selected = true;
+		break;
+	    }
+	});
+
+	if (already_selected) {
+	    y2milestone ("Pattern %1 is already installed/selected", one_pattern);
+	    return;
+	}
+
+	if (! Pkg::ResolvableInstall (one_pattern, `pattern)) {
+	    y2error ("Cannot select pattern: %1, reason: %2", one_pattern, Pkg::LastError());
+	    ret = false;
+	} else {
+	    patterns_preselected_by_addon[src_id] = add (patterns_preselected_by_addon[src_id]:[], one_pattern);
+	}
+    });
+
+    return ret;
+}
+
+
+boolean DeselectProductPatterns (integer src_id) {
+    list <string> patterns_to_deselect = patterns_preselected_by_addon[src_id]:[];
+
+    if (size (patterns_to_deselect) == 0) {
+	y2milestone ("There's no pattern to be deselected");
+	return true;
+    }
+
+    boolean ret = true;
+
+    foreach (string one_pattern, patterns_to_deselect, {
+	if (! Pkg::ResolvableNeutral (one_pattern, `pattern, true)) {
+	    y2error ("Cannot deselect pattern: %1, reason: %2", one_pattern, Pkg::LastError());
+	    ret = false;
+	}
+    });
+
+    return ret;
+}
+
+/**
+ * Function checks whether the product content file contains
+ * PATTERNS tag and pre-selects patterns listed there.
+ *
+ * @param integer source ID
+ */
+void HandleProductPATTERNS (integer srcid) {
+    // FATE #302398: PATTERNS keyword in content file
+    string content_file = Pkg::SourceProvideOptionalFile (srcid, 1, "/content");
+
+    if (content_file == nil) {
+	y2warning ("Add-On %1 doesn't have a content file", srcid);
+    } else {
+	SelectProductPatterns (content_file, srcid);
+    }
+}
+
+/**
  * Integrate the add-on product to the installation workflow, including
  * preparations for 2nd stage and inst-sys update
  * @param srcid integer the source ID of the installation source
@@ -1280,6 +1396,9 @@ global boolean Integrate (integer srcid) {
     } else {
 	UpdateInstSys (y2update);
     }
+
+    // FATE #302398: PATTERNS keyword in content file
+    HandleProductPATTERNS (srcid);
 
     // Updating workflow or proposals
 
@@ -1585,6 +1704,10 @@ global boolean ReadTmpExportFilename () {
 	y2warning ("File %1 doesn't exists, skipping...", tmp_filename);
 	return true;
     }
+}
+
+global void Disintegrate (integer srcid) {
+    DeselectProductPatterns (srcid);
 }
 
 } // module end

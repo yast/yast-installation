@@ -942,6 +942,8 @@ symbol RunAddOnMainDialog (boolean enable_back, boolean enable_next, string back
 	    some_addon_changed = true;
 	    // remove product from list of product to register (FATE #301312)
 	    AddOnProduct::RemoveRegistrationFlag (media);
+
+	    AddOnProduct::Disintegrate (media);
 	    
             Redraw (enable_back, enable_next, back_button, next_button);
 

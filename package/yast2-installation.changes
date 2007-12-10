@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Dec 10 17:03:52 CET 2007 - locilka@suse.cz
+
+- PATTERNS tag in Add-On control file can contain list of patterns
+  that are automatically pre-selected by adding the Add-On source
+  (FATE #302398).
+- 2.13.201
+
+-------------------------------------------------------------------
 Fri Nov 23 13:16:22 CET 2007 - locilka@suse.cz
 
 - Using translations for inst_finish steps (#343783).
