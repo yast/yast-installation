@@ -363,6 +363,11 @@ term InstModeDialogContent (symbol pre_selected) {
 Wizard::SetContents (_("Analyzing the Computer"), `Empty (), "", false, false);
 Wizard::SetTitleIcon ("yast-inst-mode");
 
+// In case of going back from Update/New Installation
+if (GetInstArgs::going_back()) {
+    Pkg::TargetFinish();
+}
+
 // Do hardware probing
 //
 // This must happen before submodule descriptions are initialized; module
@@ -508,15 +513,10 @@ if (! (have_linux && offer_update))
 // Release disk used as the installation source
 ReleaseHDDUsedAsInstallationSource();
 
-// In case of going back from Update/New Installation
-Pkg::TargetFinish();
-
 if (Mode::autoinst ()) {
     y2milestone ("Autoinst -> returning `auto");
     return `auto;
 }
-
-
 
 Wizard::SetContents (
     // dialog caption
