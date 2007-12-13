@@ -253,10 +253,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
                 <module>
-	            <label>Language</label>
-                    <name>checkmedia</name>
-                </module>
-                <module>
 	            <label>License Agreement</label>
                     <name>license</name>
                 </module>
@@ -347,10 +343,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                         <first_run>yes</first_run>
                     </arguments>
                     <retranslate config:type="boolean">true</retranslate>
-                </module>
-                <module>
-	            <label>Language</label>
-                    <name>checkmedia</name>
                 </module>
                 <module>
 	            <label>License Agreement</label>
