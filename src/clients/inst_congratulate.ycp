@@ -23,6 +23,7 @@
     import "ProductControl";
     import "Stage";
     import "AddOnProduct";
+    import "Service";
 
     /**
      * Function returns true when the default windowmanager is KDE
@@ -46,6 +47,43 @@
     boolean show_clone_checkbox = ! (Stage::firstboot () || Mode::live_installation ());
     boolean clone_checkbox_active = ProductFeatures::GetBooleanFeature("globals", "enable_clone");
     boolean clone_enabled = false;
+
+    // #302495: Switching ZMD off
+    // by default, the checkbox is not visible
+    string zmd_service_name = "novell_zmd";
+    string zmd_package_name = "zmd";
+    term check_box_turnoff_zmd = `Empty();
+    string turnoff_zmd_help= "";
+
+    // See FATE #302495
+    // Param 'show_zmd_turnoff_checkbox' says whether the checkbox for stopping and
+    // disabling ZMD should be shown
+    boolean show_zmd_turnoff_checkbox = (boolean) argmap["show_zmd_turnoff_checkbox"]:false;
+    // Param 'zmd_turnoff_default_state' says whether the checkbox is selected or
+    // not by default
+    boolean turnoff_zmd_default_state = (boolean) argmap["zmd_turnoff_default_state"]:false;
+
+    // + 'show_zmd_turnoff_checkbox'
+    // + ZMD package needs to be installed
+    // + ZMD service needs to be enabled or running
+    if (
+	show_zmd_turnoff_checkbox == true &&
+	Package::Installed (zmd_package_name) &&
+	(Service::Enabled (zmd_service_name) || Service::Status (zmd_service_name) == 0)
+    ) {
+	check_box_turnoff_zmd = `CheckBox (
+	    `id (`turnoff_zmd),
+	    // TRANSLATORS: check box, see #ZMD
+	    _("&Disable ZMD Service"),
+	    turnoff_zmd_default_state
+	);
+
+	// TRANSLATORS: help text, see #ZMD
+	turnoff_zmd_help = _("<p>Select <b>Disable ZMD Service</b> to stop and disable
+the ZMD service during the system start.</p>");
+    }
+
+    y2milestone ("Show TurnOffZMD checkbox: %1, default state: %2", show_zmd_turnoff_checkbox, turnoff_zmd_default_state);
 
     // Cloning client is installed and there is something to be cloned
     if (Package::Installed("autoyast2") && size(ProductControl::clone_modules) > 0) {
@@ -114,7 +152,8 @@ After clicking <b>Finish</b>, you can log in to the system.</p>
                                   `VBox(
 			         	  `RichText (`id (`text), text),
                                           `VSpacing (space/2),
-                                          `Left(check_box_do_clone)
+					  `Left (check_box_turnoff_zmd),
+                                          `Left (check_box_do_clone)
                                           ),
 				  `HSpacing (2*space)
 				  ),
@@ -137,17 +176,36 @@ adjust some KDE settings to your hardware. Also notice
 our SUSE Welcome Dialog.</p>
 ") : ""); // Show this help only in case of KDE as the default windowmanager
 
-    if( show_clone_checkbox ) {
+    if (show_clone_checkbox)
         help = help + _("<p>Use <b>Clone</b> if you want to create an AutoYaST profile.
 AutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST
 needs a profile to know what the installed system should look like. If this option is
 selected, a profile of the current system is stored in /root/autoinst.xml.</p>
 ");
+    if (show_zmd_turnoff_checkbox)
+	help = help + turnoff_zmd_help;
+
+    void CallCloning () {
+	// #187558
+	// Load Add-On products configured in the fist stage
+	AddOnProduct::ReadTmpExportFilename();
+
+	// #165860
+	// Save sources now because cloning garbles the target
+	// Cloning reinitializes sources when it needs them
+	Pkg::SourceFinishAll ();
+
+    	Call::Function("clone_system" , ["doClone"]);
+    }
+
+    void StopAndDisableZMD () {
+	y2milestone ("Stopping service: %1 -> %2", zmd_service_name, Service::Stop (zmd_service_name));
+	y2milestone ("Disabling service: %1 -> %2", zmd_service_name, Service::Disable (zmd_service_name));
     }
 
     Wizard::SetContents (caption, contents, help, 
             GetInstArgs::enable_back(), GetInstArgs::enable_next());
-    Wizard::SetTitleIcon ("SuSEmenu");
+    Wizard::SetTitleIcon ("yast-license");
 
     Wizard::SetNextButton(`next, Label::FinishButton() );
     Wizard::RestoreAbortButton();
@@ -173,22 +231,17 @@ selected, a profile of the current system is stored in /root/autoinst.xml.</p>
 
     } until ( ret == `next || ret == `back );
 
-    if (UI::WidgetExists(`id(`do_clone)) && ret == `next && (boolean)UI::QueryWidget (`id(`do_clone), `Value)) {
-	// #187558
-	// Load Add-On products configured in the fist stage
-	AddOnProduct::ReadTmpExportFilename();
-
-	// #165860
-	// Save sources now because cloning garbles the target
-	// Cloning reinitializes sources when it needs them
-	Pkg::SourceFinishAll ();
-
-        Call::Function("clone_system" , ["doClone"]);
-    }
-    
     // bugzilla #221190
-    if (ret == `back)
+    if (ret == `back) {
 	Wizard::RestoreNextButton ();
+    } else if (ret == `next) {
+
+	if (UI::WidgetExists (`id (`turnoff_zmd)) && (boolean) UI::QueryWidget (`id (`turnoff_zmd), `Value))
+	    StopAndDisableZMD();
+
+	if (UI::WidgetExists (`id (`do_clone)) && (boolean) UI::QueryWidget (`id (`do_clone), `Value))
+	    CallCloning();
+    }
 
     return ret;
 }
