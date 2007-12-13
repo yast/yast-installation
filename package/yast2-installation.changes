@@ -4,7 +4,7 @@ Thu Dec 13 14:25:30 CET 2007 - locilka@suse.cz
 - Added a possibility to stop and disable the ZMD service in the
   last (congratulate) dialog of installation (FATE #302495).
 - Adjusted the SLES control file: module arguments
-  'show_zmd_turnoff_checkbox' and '/show_zmd_turnoff_checkbox'.
+  'show_zmd_turnoff_checkbox' and 'zmd_turnoff_default_state'.
 
 -------------------------------------------------------------------
 Mon Dec 10 12:13:14 CET 2007 - locilka@suse.cz
