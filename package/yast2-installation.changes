@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Dec 13 14:28:03 CET 2007 - locilka@suse.cz
+
+- Added a possibility to stop and disable the ZMD service in the
+  last (congratulate) dialog of installation (FATE #302495).
+
+-------------------------------------------------------------------
 Mon Dec 10 17:03:52 CET 2007 - locilka@suse.cz
 
 - PATTERNS tag in Add-On content file can contain list of patterns
