@@ -726,11 +726,30 @@ Please visit us at http://www.novell.com/linux/.
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
+
+		<!-- FATE #302495: New possibility to stop and disable ZMD -->
                 <module>
                     <name>congratulate</name>
+		    <archs>i386,x86_64,ia64,ppc,ppc64</archs>
+		    <arguments>
+			<show_zmd_turnoff_checkbox>yes</show_zmd_turnoff_checkbox>
+			<zmd_turnoff_default_state>no</zmd_turnoff_default_state>
+		    </arguments>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
+		<!-- S/390 and S/390x pre-selected by default -->
+                <module>
+                    <name>congratulate</name>
+		    <archs>s390,s390x</archs>
+		    <arguments>
+			<show_zmd_turnoff_checkbox>yes</show_zmd_turnoff_checkbox>
+			<zmd_turnoff_default_state>yes</zmd_turnoff_default_state>
+		    </arguments>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+
             </modules>
         </workflow>
         <workflow>
@@ -846,10 +865,32 @@ Please visit us at http://www.novell.com/linux/.
 	            <label>Hardware Configuration</label>
 		    <name>save_hardware_status</name>
                 </module>
+
+		<!-- FATE #302495: New possibility to stop and disable ZMD -->
                 <module>
-	            <label>Hardware Configuration</label>
+		    <label>Hardware Configuration</label>
                     <name>congratulate</name>
+		    <archs>i386,x86_64,ia64,ppc,ppc64</archs>
+		    <arguments>
+			<show_zmd_turnoff_checkbox>yes</show_zmd_turnoff_checkbox>
+			<zmd_turnoff_default_state>no</zmd_turnoff_default_state>
+		    </arguments>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
                 </module>
+		<!-- S/390 and S/390x pre-selected by default -->
+                <module>
+		    <label>Hardware Configuration</label>
+                    <name>congratulate</name>
+		    <archs>s390,s390x</archs>
+		    <arguments>
+			<show_zmd_turnoff_checkbox>yes</show_zmd_turnoff_checkbox>
+			<zmd_turnoff_default_state>yes</zmd_turnoff_default_state>
+		    </arguments>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+
             </modules>
         </workflow>
         <workflow>
