@@ -264,6 +264,10 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	            <label>System Analysis</label>
                     <name>system_analysis</name>
                 </module>
+                <module>
+	            <label>System Analysis</label>
+                    <name>mode</name>
+                </module>
 		<!-- Here, user selects whether to perform New Installation or Upgrade -->
 		<module>
 		    <label>Online Repositories</label>
@@ -355,6 +359,10 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <module>
 	            <label>System Analysis</label>
                     <name>system_analysis</name>
+                </module>
+                <module>
+	            <label>System Analysis</label>
+                    <name>mode</name>
                 </module>
                 <module>
 	            <label>System for Update</label>
