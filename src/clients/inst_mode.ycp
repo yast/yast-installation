@@ -1,394 +1,446 @@
 /**
- *
- * Authors:	Klaus Kämpf <kkaempf@suse.de>
- *		Arvin Schnell <arvin@suse.de>
- *
- * Purpose:	Ask for the installation method:
- *		- New installation
- *		- Update
- *		- Repair
- *		- Boot installed system
- *
- *		Arguments:
- *
- *		Args(0): symbol `AskUser if this is called by the proposal
- *			 AskUser() function
- *
- *		Returns automatically if no Linux partition is found or an
- *		update is not supported.
+ * File:	clients/inst_system_analysis.ycp
+ * Package:	Installation
+ * Summary:	Installation mode selection, system analysis
+ * Authors:	Jiri Srain <jsrain@suse.cz>
+ *		Lukas Ocilka <locilka@suse.cz>
  *
  * $Id$
  *
  */
+
 {
-    import "Mode";
-    import "Product";
-    import "Wizard";
-    import "Popup";
-    import "Label";
-    import "ProductControl";
-    import "FileSystems";
-    import "Storage";
-    import "Kernel";
-    import "RootPart";
-    import "Update";
-    import "Linuxrc";
 
-    textdomain "installation";
+textdomain "installation";
 
-    string start_mode = Mode::mode ();
+import "AddOnProduct";
+import "GetInstArgs";
+import "Installation";
+import "InstData";
+import "Kernel";
+import "Linuxrc";
+import "Mode";
+import "PackageCallbacksInit";
+import "Packages";
+import "Popup";
+import "ProductControl";
+import "Report";
+import "Stage";
+import "Storage";
+import "Wizard";
 
-    define symbol handle_boot ()
-    {
-	y2milestone( "User wishes to boot installed system" );
+include "packager/storage_include.ycp";
+include "installation/misc.ycp";
 
-	if (!RootPart::didSearchForRootPartitions)
-	{
-	    UI::OpenDialog (`opt(`decorated ),
-			    // label
-			    `Label(_("Evaluating root partition. One moment please...")));
-	    RootPart::FindRootPartitions ();
-	    UI::CloseDialog ();
-	}
+InstData::start_mode = Mode::mode();
 
-	if (RootPart::numberOfValidRootPartitions == 0)
-	{
-	    // a popup
-	    Popup::Message(_("No Linux root partition found."));
-	    return `cancel;
-	}
+// always check whether user wants to continue
+AddOnProduct::skip_add_ons = false;
 
-	// We must only change RootPart::selectedRootPartition if booting
-	// is inevitable.
+map display_info = UI::GetDisplayInfo();
+boolean in_textmode = display_info["TextMode"]:false;
 
-	if (RootPart::numberOfValidRootPartitions == 1)
-	{
-	    RootPart::SetSelectedToValid ();
-	}
-	else
-	{
-	    if (WFM::CallFunction ("inst_rootpart", [true, true, `boot_popup]) != `next)
-		return `cancel;
-	}
+string GenerateIconID (any icon_whatever) {
+    return sformat ("icon_%1", tostring (icon_whatever));
+}
 
-	string root_part = RootPart::selectedRootPartition;
+/**
+ * Function creates term containing radio button and icon
+ * based on current display (graphical/textual)
+ *
+ * @param string radio button label
+ * @param symbol radio button id
+ * @param string path to an image
+ * @boolean whether selected (more than one buttons selected don't make sense!)
+ */
+ term CreateRadioButtonTerm (string button_label, symbol button_id, string icon_file, boolean selected) {
+    return `HBox (
+	(in_textmode ?
+	    `Empty()
+	    :
+	    `HWeight (
+		1,
+		(icon_file == "" ?
+		    `Empty()
+		    :
+		    `Image (`id (GenerateIconID (button_id)), icon_file, "")
+		)
+	    )
+	),
+	`HWeight(
+	    5,
+	    `Left (`RadioButton (
+		`id (button_id),
+		`opt(`notify),
+		button_label,
+		selected
+	    ))
+	)
+    );
+}
 
-	UI::OpenDialog( `opt(`decorated),
-			// Information popup: Inform user what partition
-			// will be booted from after user selected
-			// "Boot installed system"
-			`Label( sformat(_("Booting from %1"), root_part ) ) );
+Wizard::SetTitleIcon ("yast-inst-mode");
 
-	Update::Detach ();
-	RootPart::UnmountPartitions (false);
+// In case of going back from Update/New Installation
+if (GetInstArgs::going_back()) {
+    Pkg::TargetFinish();
+}
 
-	sleep (1000);
+boolean other_options_disabled = false;
 
-	if ( ! Mode::test () )
-	{
-	    Linuxrc::WriteYaSTInf ($["Root" : root_part]);
-	    Storage::ActivateHld(true);
-	}
+if (! (InstData::have_linux && InstData::offer_update))
+{
+    // to offer add-on products
+    // Mode::SetMode ("installation");
+    // return `auto;
+    other_options_disabled = true;
+}
 
-	UI::CloseDialog ();
+// bugzilla #208222
+// Release disk used as the installation source
+ReleaseHDDUsedAsInstallationSource();
 
-	return `finish;
-    }
+if (Mode::autoinst ()) {
+    y2milestone ("Autoinst -> returning `auto");
+    return `auto;
+}
 
+// see bugzilla #156529
+term InstModeDialogContent (symbol pre_selected) {
+    return `HBox (
+	    `HStretch(),
+	    `VBox (
+		`Frame (
+		    // frame
+		    _("Select Mode"),
+		    `VBox (
+			// Basis RadioButtonGroup
+			`RadioButtonGroup (
+			    `id (`inst_mode),
+			    `MarginBox (
+				2, 1.3,
+				`VBox (
+				    // radio button
+				    CreateRadioButtonTerm (
+					_("New &Installation"),
+					`install,
+					"/usr/share/icons/hicolor/32x32/apps/yast-dirinstall.png",
+					!Mode::update ()
+				    ),
+				    `VSpacing( 0.3 ),
+				    // radio button
+				    CreateRadioButtonTerm (
+					_("&Update"),
+					`update,
+					"/usr/share/icons/hicolor/32x32/apps/yast-update.png",
+					Mode::update ()
+				    ),
+				    `VSpacing( 1.8 ),
+				    // radio button
+				    CreateRadioButtonTerm (
+					_("Re&pair Installed System"),
+					`repair,
+					"/usr/share/icons/hicolor/32x32/apps/yast.png",
+					false
+				    )
+				)
+			    )
+			)
+		    )
+		),
+		`VSpacing (2),
+		`Left (`CheckBox (
+		    `id (`productsources), `opt(`notify),
+		    // check box
+		    _("&Add Online Repositories Before Installation"),
+		    Installation::productsources_selected
+		)),
+		`Left (`CheckBox (
+		    `id (`add_on), `opt(`notify),
+		    // check box
+		    _("In&clude Add-On Products from Separate Media"),
+		    Installation::add_on_selected
+		))
+	    ),
+	    `HStretch()
+	);
+}
 
-    boolean called_from_ask_user = false;
-    if ( size( WFM::Args() ) > 0
-	 && is( WFM::Args(0), symbol )
-	 && WFM::Args(0) == `AskUser )
-    {
-	called_from_ask_user = true;
-    }
-
-
-    boolean offer_update = false;
-    if (contains (Product::flags, "update") || Kernel::GetSuSEUpdate ())
-    {
-	offer_update = true;
-    }
-
-
-    boolean have_linux = false;
-    if (Storage::HaveLinuxPartitions ())
-    {
-	have_linux = true;
-    }
-
-    if (Mode::autoinst ())
-    {
-	return `auto;
-    }
-
-    if (!called_from_ask_user && (!offer_update || !have_linux))
-    {
-	// Initially force new installation , no update possible
-	Mode::SetMode ("installation");
-	return `auto;
-    }
-
-
-    //---------------------------------------------------------------
-
-
-    string help_text = "";
-
-    if (have_linux)
-    {
-	// help text for installation method
-	help_text = help_text + _("\
-<p>
-It appears that your machine has a Linux system installed.
-</p>");
-    }
-    else
-    {
-	// help text for installation method
-	help_text = help_text + _("<p>
-It appears that your machine does not have a Linux system installed.  
-Only a new installation is possible.
-</p>");
-    }
-
+string InstModeDialogHelp () {
+    // help text for installation method
+    return _("<p><big><b>Installation Mode</b></big><br>
+Select what to do:</p>") +
 
     // help text for installation method
-    help_text = help_text + _("\
-<p>
-Please choose what to do:
-</p>");
-
-    // help text for installation method
-    help_text = help_text + _("<p>
+    _("<p>
 Select <b>New Installation</b> if there is no existing Linux system on your
 machine or if you want to replace an existing Linux system completely,
 abandoning all its configuration data.
-</p>");
+</p>") +
 
-    if (have_linux)
-    {
-	if (offer_update)
-	{
-	    // help text for installation method
-	    help_text = help_text + _("<p>
+    // help text for installation method
+    _("<p>
 Select <b>Update an Existing System</b> to update a Linux system already
 installed on your machine. This option preserves configuration settings
 from your existing system whenever possible.
+</p>") +
+
+    // help text for installation option
+    _("<p>
+To use suggested remote repositories during installation or update, select
+<b>Add Online Repositories Before Installation</b>.</p>
+") +
+
+    // help text for installation method
+    _("<p>
+To install an add-on product from separate media together with &product;, select
+<b>Include Add-On Products from Separate Media</b>.</p>
+") +
+
+    // help text for installation method
+    _("<p>Select <b>Repair Installed System</b> if you have a damaged Linux system on
+your hard disk. This option can try to fix problems automatically.
+</p>") +
+
+    // help text for installation method
+    _("<p>Features <b>Update</b> and <b>Repair Installed System</b> are only
+available if some Linux system has been detected.
 </p>");
-	}
-	else
+}
+
+Wizard::SetContents (
+    // dialog caption
+    _("Installation Mode"), InstModeDialogContent(`install), InstModeDialogHelp(), true, true
+);
+Wizard::SetTitleIcon ("yast-software");
+
+symbol ret = nil;
+symbol new_mode = Mode::update () ? `update : `install;
+
+string umount_result = Linuxrc::InstallInf ("umount_result");
+string media = Linuxrc::InstallInf ("InstMode");
+y2milestone ("Umont result: %1, inst mode: %2", umount_result, media);
+
+// there are not only CD and DVD Add-On sources
+//if (umount_result != "0" && (media == "cd" || media == "dvd"))
+//    UI::ChangeWidget (`id (`add_on), `Enabled, false);
+
+// only installation (and addon products) enabled
+if (other_options_disabled) {
+    UI::ChangeWidget (`id (`update), `Enabled, false);
+    UI::ChangeWidget (`id (`repair), `Enabled, false);
+
+    // disable also icons related to options if supported by UI
+    if (! in_textmode) {
+	foreach (symbol image_id, [`update, `repair], {
+	    string icon_id = GenerateIconID (image_id);
+
+	    if (UI::WidgetExists (`id(icon_id))) {
+		UI::ChangeWidget (`id (icon_id), `Enabled, false);
+	    }
+	});
+    }
+}
+
+// --> Handling User Input in Installation Mode
+
+ProductControl::DisabledModules = add (ProductControl::DisabledModules, "add-on");
+ProductControl::DisabledModules = add (ProductControl::DisabledModules, "inst_add-on");
+ProductControl::DisabledModules = add (ProductControl::DisabledModules, "productsources");
+ProductControl::DisabledModules = add (ProductControl::DisabledModules, "inst_productsources");
+UpdateWizardSteps();
+
+// Probably buggy UI, in case of two radio button groups, the second one
+// doesn't work (RadioButtonGroup (`id (`expert_options)))
+repeat {
+    ret = (symbol) UI::UserInput();
+    y2milestone("ret: %1", ret);
+
+    // Use-Add-On-Product status changed
+    if (ret == `add_on) {
+	Installation::add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
+	ret = nil;
+	continue;
+    }
+    // Use Sources defined by product
+    else if (ret == `productsources) {
+	Installation::productsources_selected = (boolean) UI::QueryWidget (`id (`productsources), `Value);
+	ret = nil;
+	continue;
+    }
+    // Adjusting current UI - Other Options
+    else if (ret == `repair) {
+	// Remembering add-on state, switching off and disabling
+	Installation::add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
+
+	UI::ChangeWidget (`id(`add_on), `Value, false);
+	UI::ChangeWidget (`id(`add_on), `Enabled, false);
+	UI::ChangeWidget (`id(`productsources), `Value, false);
+	UI::ChangeWidget (`id(`productsources), `Enabled, false);
+
+	ret = nil;
+	continue;
+    }
+    // Adjusting current UI - Hide Other Options
+    // in case of `install or `update clicked
+    else if (contains([`install, `update], ret)) {
+	symbol selected_mode = (symbol)  UI::QueryWidget (`id (`inst_mode), `CurrentButton);
+
+	// Enabling add-on, adjusting previous state (selected)
+	UI::ChangeWidget  (`id(`add_on), `Enabled, true);
+	UI::ChangeWidget  (`id(`add_on), `Value, Installation::add_on_selected);
+	UI::ChangeWidget  (`id(`productsources), `Enabled, true);
+	UI::ChangeWidget  (`id(`productsources), `Value, Installation::productsources_selected);
+
+	// Can be either `install or `update
+	UI::ChangeWidget  (`id(`inst_mode), `CurrentButton, selected_mode);
+    }
+
+    // Next button
+    if (ret == `next)
+    {
+	new_mode = (symbol) UI::QueryWidget (`id (`inst_mode), `CurrentButton);
+	if (new_mode == nil)
 	{
-	    // help text for installation method
-	    help_text = help_text + _("<p>
-This product does not offer an update.</p>");
+	    // this is a label of a message box
+	    Popup::Message(_("Choose one of the\noptions to continue."));
+	    ret = nil;
+	    continue;
 	}
     }
-
-    if (have_linux)
+    else if (ret == `abort)
     {
-	// help text for installation method
-	help_text = help_text + _("<p>
-Select <b>Repair Installed System</b> if you have a damaged Linux system on
-your hard disk. With this option, try to fix problems automatically.
-</p>");
+	if (Popup::ConfirmAbort (Stage::initial () ? `painless : `incomplete))
+	    return `abort;
+	ret = nil;
+	continue;
+    }
+} until (ret == `back || ret == `next);
+
+// <-- Handling User Input in Installation Mode
+
+y2milestone("Selected mode: %1, Return: %2", new_mode, ret);
+
+if (ret == `next) {
+    if (new_mode == `install)
+    {
+	Mode::SetMode ("installation");
     }
 
-    if (have_linux)
+    if (new_mode == `update)
     {
-	// help text for installation method
-	help_text = help_text + _("<p>
-Select <b>Boot Installed System</b> if you have a Linux system on your hard
-disk that will not boot. With this option, try to fix problems manually.
-</p>");
+	Mode::SetMode ("update");
     }
 
-
-    term radio_buttons = `VBox (`VSpacing (0.4));
-
-    if (true)
+    if (new_mode == `repair)
     {
-	radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`install),
-				// label for radio button 1, New installation
-				_("New &installation"), Mode::installation ())));
+	Mode::SetMode ("repair");
     }
 
-    if (have_linux && offer_update)
+    if (new_mode == `install || new_mode == `update)
     {
-	radio_buttons = add (radio_buttons, `VSpacing(0.2));
-	radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`update),
-				// label for radio button 2, update
-				_("&Update an existing system"), Mode::update ())));
-    }
-
-    if (have_linux)
-    {
-	radio_buttons = add (radio_buttons, `VSpacing(0.2));
-	radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`repair),
-				// label for radio button 3: Start repair system
-				_("&Repair Installed System"), false)));
-    }
-
-    if (have_linux)
-    {
-	radio_buttons = add (radio_buttons, `VSpacing(0.2));
-	radio_buttons = add (radio_buttons, `Left(`RadioButton(`id(`boot),
-				// label for radio button 4: Boot installed system
-				_("&Boot installed system"), false)));
-    }
-
-    if ( ! called_from_ask_user )
-    {
-	// If this is _not_ called from the proposal's ask_user function but
-	// initially, the user _must_ make a decision, but there should clearly
-	// be a safe exit - so let's give him an "abort installation" option.
-
-	radio_buttons = add( radio_buttons, `VSpacing(1.2) );
-	radio_buttons = add( radio_buttons,
-			     `Left(`RadioButton(`id(`abort), Label::AbortInstallationButton ()))
-			     );
-    }
-
-    term radio_box = `RadioButtonGroup( `id( `options ),
-					`HSquash(
-						 `Frame (
-							 // message above radiobuttons (installation/update)
-							 _("Please select"),
-							 `HBox(
-							       `HSpacing(1),
-							       radio_buttons
-							       )
-							 )
-						 )
-					);
-
-    term buttons = `PushButton(`id(`ok), `opt(`default), Label::OKButton() );
-
-    if ( called_from_ask_user )
-    {
-	// If we were called from the proposal's ask_user function, there must
-	// be a cancel button as a safe exit.
-
-	buttons = `HBox(
-			`HWeight( 1, `PushButton(`id(`ok), `opt(`default), Label::OKButton() ) ),
-			`HSpacing( 1 ),
-			`HWeight( 1, `PushButton(`id(`cancel), Label::CancelButton() ) )
-			);
-
-    }
-
-    term ask_mode_dialog = `HBox(`id(`ask_mode_dialog ),
-				 `VSpacing( 15 ),		// force dialog height
-				 `VBox(
-				       `HSpacing( 30 ),	// force help text width
-				       `RichText( help_text )
-				       ),
-				 `HSpacing( 3 ),
-				 `VBox(
-				       `VSpacing( 1 ),
-				       `Top( radio_box ),
-				       buttons
-				       ),
-				 `HSpacing( 3 )
-				 );
-
-
-
-    // Event handling
-
-    UI::OpenDialog( ask_mode_dialog );
-
-    any ret = nil;
-
-    while ( true )
-    {
-	if (!Mode::autoinst ())
+	Installation::add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
+	ProductControl::DisabledModules = filter (string m, ProductControl::DisabledModules, {
+	    return m != "add-on" && m != "inst_add-on";
+	});
+	if (! Installation::add_on_selected)
 	{
-	    ret = UI::UserInput();
+	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "add-on");
+	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "inst_add-on");
 	}
-	else
+
+	Installation::productsources_selected = (boolean) UI::QueryWidget (`id (`productsources), `Value);
+	ProductControl::DisabledModules = filter (string m, ProductControl::DisabledModules, {
+	    return m != "productsources" && m != "inst_productsources";
+	});
+	if (! Installation::productsources_selected)
 	{
-	    ret = `ok;
+	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "productsources");
+	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "inst_productsources");
 	}
 
-	if ( ret == `abort )	// the abort button (not check box!)
-	{
-	    if (Popup::ConfirmAbort (`painless))
-		break;
-	}
-
-	if ( ret == `cancel )
-	    break;
-
-	if (ret == `ok || ret == `next || ret == `accept)
-	{
-	    ret = `next;
-
-	    any newmode = UI::QueryWidget(`id(`options), `CurrentButton);
-
-	    if (newmode == nil)
-	    {
-		// this is a label of a message box
-		Popup::Message(_("Choose one of the\noptions to continue."));
-		continue;
-	    }
-
-	    if (newmode == `abort) // the abort check box (not button!)
-	    {
-		if (Popup::ConfirmAbort (`painless))
-		{
-		    ret = `abort;
-		    break;
-		}
-
-		continue;
-	    }
-
-	    if (newmode == `install)
-	    {
-		Mode::SetMode ("installation");
-		break;
-	    }
-
-	    if (newmode == `update)
-	    {
-		Mode::SetMode ("update");
-		break;
-	    }
-
-	    if (newmode == `repair)
-	    {
-		Mode::SetMode ("repair");
-		ret = `finish;
-		break;
-	    }
-
-	    if (newmode == `boot)
-	    {
-		if (handle_boot () == `finish)
-		{
-		    Mode::SetMode ("");
-		    ret = `finish;
-		    break;
-		}
-	    }
-	}
+	y2milestone ("Disabled: %1", ProductControl::DisabledModules);
     }
 
-    UI::CloseDialog();
+} else if (ret == `back || ret == `finish) {
+    y2milestone("Returning: %1", ret);
+    return ret;
+}
 
-    if (Mode::mode () != start_mode)
-    {
-	ProductControl::UpdateWizardSteps ([$["stage":"initial", "mode":Mode::mode ()],
-					    $["stage":"continue", "mode":Mode::mode ()]]);
-	y2milestone ("Switching Steps from %1 to %2 ", start_mode, Mode::mode ());
+if (Mode::repair ())
+{
+    y2milestone("Calling inst_repair");
+    any ret = WFM::CallFunction ("inst_repair");
+
+    if (ret == nil) {
+	Report::Error (
+	    // TRANSLATORS: an error message (the same is in base.pot)
+	    // this should not happen, but life is cruel...
+	    // %1 - (failed) module name
+	    // %2 - logfile, possibly with errors
+	    // %3 - link to our bugzilla
+	    // %4 - directory where YaST logs are stored
+	    sformat (_("Calling the YaST module %1 has failed.
+More information can be found near the end of the '%2' file.
+
+This is worth reporting a bug at %3.
+Please, attach also all YaST logs stored in the '%4' directory."),
+	    "inst_repair",
+	    "/var/log/YaST2/y2log",
+	    "http://bugzilla.novell.com/",
+	    "/var/log/YaST2/")
+	);
     }
 
-    if (Mode::repair ())
-    {
-	WFM::CallFunction ("inst_repair");
-    }
+    return `finish;
+}
 
-    return (symbol)ret;
+// bugzilla #293808
+// Check (and setup) the network only when needed
+if (Installation::add_on_selected || Installation::productsources_selected) {
+    // Check and setup network
+    symbol inc_ret = (symbol) WFM::CallFunction ("inst_network_check", []);
+    y2milestone ("inst_network_check ret: %1", inc_ret);
+    if (contains ([`back, `abort], inc_ret)) {
+	return inc_ret;
+    }
+}
+
+// bug #302384
+Wizard::SetContents (
+    _("Initializing"),
+    // TRANSLATORS: progress message
+    `Label (_("Initializing...")),
+    "",
+    false, false
+);
+Wizard::SetTitleIcon ("yast-software");
+
+if (Mode::mode () != InstData::start_mode) {
+    y2milestone ("Switching Steps from %1 to %2 ", InstData::start_mode, Mode::mode ());
+    UpdateWizardSteps ();
+    y2milestone ("Resetting disk target to read values");
+    Storage::ResetOndiskTarget ();
+    y2debug ("Original target map (from disk): %1", Storage::GetTargetMap ());
+    y2milestone ("Resetting package manager");
+    Kernel::ProbeKernel();
+    Pkg::TargetFinish ();
+    Pkg::PkgReset ();
+    Packages::Init( true );
+
+    ret = ProductControl::RunFrom (ProductControl::CurrentStep () + 1, false);
+
+    if (ret == `next)
+	ret = `finish;
+} else {
+    UpdateWizardSteps ();
+    ret = ProductControl::RunFrom (ProductControl::CurrentStep () + 1, false);
+
+    if (ret == `next)
+	ret = `finish;
+}
+
+return ret;
+
+/* EOF */
 }

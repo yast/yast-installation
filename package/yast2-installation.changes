@@ -6,6 +6,9 @@ Mon Dec 17 11:08:42 CET 2007 - locilka@suse.cz
   be shared among the installation clients.
 - Installation repository initialization moved to the unified
   progress when probing the system.
+- System analysis has been split into two scripts: inst_mode and
+  inst_system_analysis to make the maintenance easier.
+- 2.16.7
 
 -------------------------------------------------------------------
 Thu Dec 13 14:25:30 CET 2007 - locilka@suse.cz

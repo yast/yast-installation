@@ -13,38 +13,29 @@
 
 textdomain "installation";
 
-import "AddOnProduct";
 import "Arch";
 import "GetInstArgs";
 import "Hotplug";
-import "Installation";
 import "InstData";
 import "Kernel";
-import "Label";
-import "Linuxrc";
-import "Mode";
-import "PackageCallbacksInit";
 import "Packages";
 import "Popup";
 import "Product";
-import "ProductControl";
 import "Progress";
 import "Report";
-import "RootPart";
-import "Stage";
 import "Storage";
 import "StorageControllers";
 import "StorageDevices";
-import "Update";
 import "Wizard";
 
 include "installation/misc.ycp";
 include "packager/storage_include.ycp";
 
-InstData::start_mode = Mode::mode();
-
-// always check whether user wants to continue
-AddOnProduct::skip_add_ons = false;
+    // This dialog in not interactive
+    // always return `back when came from the previous dialog
+    if (GetInstArgs::going_back()) {
+	return `back;
+    }
 
     // Function definitions -->
 
@@ -150,7 +141,7 @@ Check your hardware.
 
     boolean packager_initialized = false;
 
-    boolean InitInstallationRepositories () {
+    boolean InitInstallationRepositoriesReal () {
 	Packages::InitializeCatalogs ();
 	if (Packages::InitFailed ()) {
 	    // popup message
@@ -165,114 +156,24 @@ Aborting the installation."));
 	return true;
     }
 
-    // <-- Function definitions
+    boolean InitInstallationRepositories () {
+	//boolean progress_orig = Progress::set (false);
+	//y2milestone ("Pregress was: %1", progress_orig);
 
-// FIXME copy-paste from inst_mode
-    define symbol handle_boot ()
-    {
-	y2milestone( "User wishes to boot installed system" );
+	boolean ret = InitInstallationRepositoriesReal();
 
-	if (!RootPart::didSearchForRootPartitions)
-	{
-	    UI::OpenDialog (`opt(`decorated ),
-			    // label
-			    `Label(_("Evaluating root partition. One moment please...")));
-	    RootPart::FindRootPartitions ();
-	    UI::CloseDialog ();
-	}
+	//y2milestone ("Adjusting progress: %1", progress_orig);
+	//Progress::set (progress_orig);
 
-	if (RootPart::numberOfValidRootPartitions == 0)
-	{
-	    // a popup
-	    Popup::Message(_("No Linux root partition found."));
-	    return `cancel;
-	}
-
-	// We must only change RootPart::selectedRootPartition if booting
-	// is inevitable.
-
-	if (RootPart::numberOfValidRootPartitions == 1)
-	{
-	    y2milestone ("Only one partition with system...");
-	    RootPart::SetSelectedToValid ();
-	}
-	else
-	{
-	    y2milestone ("More partitions with system...");
-	    if (WFM::CallFunction ("inst_rootpart", [true, true, `boot_popup]) != `next)
-		return `cancel;
-	}
-
-	string root_part = RootPart::selectedRootPartition;
-	y2milestone ("Trying to boot from %1 partitions", root_part);
-
-	UI::OpenDialog( `opt(`decorated),
-			// Information popup: Inform user what partition
-			// will be booted from after user selected
-			// "Boot installed system"
-			`Label( sformat(_("Booting from %1"), root_part ) ) );
-
-	Update::Detach ();
-	RootPart::UnmountPartitions (false);
-
-	sleep (1000);
-
-	if ( ! Mode::test () )
-	{
-	    Linuxrc::WriteYaSTInf ($["Root" : root_part]);
-	    Storage::ActivateHld(true);
-	}
-
-	UI::CloseDialog ();
-
-	return `finish;
+	return ret;
     }
 
-string InstModeDialogHelp () {
-    // help text for installation method
-    return _("<p><big><b>Installation Mode</b></big><br>
-Select what to do:</p>") +
+    // <-- Function definitions
 
-    // help text for installation method
-    _("<p>
-Select <b>New Installation</b> if there is no existing Linux system on your
-machine or if you want to replace an existing Linux system completely,
-abandoning all its configuration data.
-</p>") +
 
-    // help text for installation method
-    _("<p>
-Select <b>Update an Existing System</b> to update a Linux system already
-installed on your machine. This option preserves configuration settings
-from your existing system whenever possible.
-</p>") +
-
-    // help text for installation option
-    _("<p>
-To use suggested remote repositories during installation or update, select
-<b>Add Online Repositories Before Installation</b>.</p>
-") +
-
-    // help text for installation method
-    _("<p>
-To install an add-on product from separate media together with &product;, select
-<b>Include Add-On Products from Separate Media</b>.</p>
-") +
-
-    // help text for installation method
-    _("<p>Select <b>Repair Installed System</b> if you have a damaged Linux system on
-your hard disk. This option can try to fix problems automatically.
-</p>") +
-
-    // help text for installation method
-    _("<p>Features <b>Update</b> and <b>Repair Installed System</b> are only
-available if some Linux system has been detected.
-</p>");
-}
 
 map display_info = UI::GetDisplayInfo();
 boolean in_textmode = display_info["TextMode"]:false;
-boolean has_image_dimm_support = display_info["HasDimmImageSupport"]:false;
 
 string GenerateIconID (any icon_whatever) {
     return sformat ("icon_%1", tostring (icon_whatever));
@@ -313,74 +214,10 @@ string GenerateIconID (any icon_whatever) {
     );
 }
 
-// see bugzilla #156529
-term InstModeDialogContent (symbol pre_selected) {
-    return `HBox (
-	    `HStretch(),
-	    `VBox (
-		`Frame (
-		    // frame
-		    _("Select Mode"),
-		    `VBox (
-			// Basis RadioButtonGroup
-			`RadioButtonGroup (
-			    `id (`inst_mode),
-			    `MarginBox (
-				2, 1.3,
-				`VBox (
-				    // radio button
-				    CreateRadioButtonTerm (
-					_("New &Installation"),
-					`install,
-					"/usr/share/icons/hicolor/32x32/apps/yast-dirinstall.png",
-					!Mode::update ()
-				    ),
-				    `VSpacing( 0.3 ),
-				    // radio button
-				    CreateRadioButtonTerm (
-					_("&Update"),
-					`update,
-					"/usr/share/icons/hicolor/32x32/apps/yast-update.png",
-					Mode::update ()
-				    ),
-				    `VSpacing( 1.8 ),
-				    // radio button
-				    CreateRadioButtonTerm (
-					_("Re&pair Installed System"),
-					`repair,
-					"/usr/share/icons/hicolor/32x32/apps/yast.png",
-					false
-				    )
-				)
-			    )
-			)
-		    )
-		),
-		`VSpacing (2),
-		`Left (`CheckBox (
-		    `id (`productsources), `opt(`notify),
-		    // check box
-		    _("&Add Online Repositories Before Installation"),
-		    Installation::productsources_selected
-		)),
-		`Left (`CheckBox (
-		    `id (`add_on), `opt(`notify),
-		    // check box
-		    _("In&clude Add-On Products from Separate Media"),
-		    Installation::add_on_selected
-		))
-	    ),
-	    `HStretch()
-	);
-}
+
 
 Wizard::SetContents (_("Analyzing the Computer"), `Empty (), "", false, false);
-Wizard::SetTitleIcon ("yast-inst-mode");
-
-// In case of going back from Update/New Installation
-if (GetInstArgs::going_back()) {
-    Pkg::TargetFinish();
-}
+Wizard::SetTitleIcon ("yast-controller");
 
 // Do hardware probing
 //
@@ -397,7 +234,6 @@ list <string> invisible_icons   = [];
 y2milestone ("Probing done: %1", Installation::probing_done);
 if (! Installation::probing_done)
 {
-//    if (!Mode::autoinst ()) {
 	if (!(Arch::s390 () || Arch::board_iseries ())) {
 	    // TRANSLATORS: progress step
 	    actions_todo = add (actions_todo, _("Probe USB devices"));
@@ -450,8 +286,6 @@ if (! Installation::probing_done)
 	invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
 
 	WFM::CallFunction("inst_features", []);
-	Installation::probing_done = true;
-//    }
 }
 
 // TRANSLATORS: progress step
@@ -478,7 +312,7 @@ actions_functions = add (actions_functions, InitInstallationRepositories);
 visible_icons = add (visible_icons, "32x32/apps/yast-sw_source.png");
 invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
 
-Wizard::SetTitleIcon ("yast-controller");
+
 
 Progress::NewProgressIcons (
     // TRANSLATORS: dialog caption
@@ -515,6 +349,7 @@ foreach (any run_function, actions_functions, {
 
     y2milestone ("Function %1 returned %2", run_function, ret);
 });
+Installation::probing_done = true;
 
 Progress::Finish();
 sleep (500);
@@ -525,260 +360,7 @@ if (! packager_initialized) {
 
 y2milestone ("Have Linux: %1, Offer Update: %2", InstData::have_linux, InstData::offer_update);
 
-boolean other_options_disabled = false;
-
-if (! (InstData::have_linux && InstData::offer_update))
-{
-    // to offer add-on products
-    // Mode::SetMode ("installation");
-    // return `auto;
-    other_options_disabled = true;
-}
-
-// bugzilla #208222
-// Release disk used as the installation source
-ReleaseHDDUsedAsInstallationSource();
-
-if (Mode::autoinst ()) {
-    y2milestone ("Autoinst -> returning `auto");
-    return `auto;
-}
-
-Wizard::SetContents (
-    // dialog caption
-    _("Installation Mode"), InstModeDialogContent(`install), InstModeDialogHelp(), true, true
-);
-Wizard::SetTitleIcon ("yast-software");
-
-symbol ret = nil;
-symbol new_mode = Mode::update () ? `update : `install;
-
-string umount_result = Linuxrc::InstallInf ("umount_result");
-string media = Linuxrc::InstallInf ("InstMode");
-y2milestone ("Umont result: %1, inst mode: %2", umount_result, media);
-
-// there are not only CD and DVD Add-On sources
-//if (umount_result != "0" && (media == "cd" || media == "dvd"))
-//    UI::ChangeWidget (`id (`add_on), `Enabled, false);
-
-// only installation (and addon products) enabled
-if (other_options_disabled) {
-    UI::ChangeWidget (`id (`update), `Enabled, false);
-    UI::ChangeWidget (`id (`repair), `Enabled, false);
-
-    // disable also icons related to options if supported by UI
-    if (has_image_dimm_support) {
-	foreach (symbol image_id, [`update, `repair], {
-	    string icon_id = GenerateIconID (image_id);
-
-	    if (UI::WidgetExists (`id(icon_id))) {
-		UI::ChangeWidget (`id (icon_id), `Enabled, false);
-	    }
-	});
-    }
-}
-
-// --> Handling User Input in Installation Mode
-
-ProductControl::DisabledModules = add (ProductControl::DisabledModules, "add-on");
-ProductControl::DisabledModules = add (ProductControl::DisabledModules, "inst_add-on");
-ProductControl::DisabledModules = add (ProductControl::DisabledModules, "productsources");
-ProductControl::DisabledModules = add (ProductControl::DisabledModules, "inst_productsources");
-UpdateWizardSteps();
-
-// Probably buggy UI, in case of two radio button groups, the second one
-// doesn't work (RadioButtonGroup (`id (`expert_options)))
-repeat {
-    ret = (symbol) UI::UserInput();
-    y2milestone("ret: %1", ret);
-
-    // Use-Add-On-Product status changed
-    if (ret == `add_on) {
-	Installation::add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
-	ret = nil;
-	continue;
-    }
-    // Use Sources defined by product
-    else if (ret == `productsources) {
-	Installation::productsources_selected = (boolean) UI::QueryWidget (`id (`productsources), `Value);
-	ret = nil;
-	continue;
-    }
-    // Adjusting current UI - Other Options
-    else if (ret == `repair) {
-	// Remembering add-on state, switching off and disabling
-	Installation::add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
-
-	UI::ChangeWidget (`id(`add_on), `Value, false);
-	UI::ChangeWidget (`id(`add_on), `Enabled, false);
-	UI::ChangeWidget (`id(`productsources), `Value, false);
-	UI::ChangeWidget (`id(`productsources), `Enabled, false);
-
-	ret = nil;
-	continue;
-    }
-    // Adjusting current UI - Hide Other Options
-    // in case of `install or `update clicked
-    else if (contains([`install, `update], ret)) {
-	symbol selected_mode = (symbol)  UI::QueryWidget (`id (`inst_mode), `CurrentButton);
-
-	// Enabling add-on, adjusting previous state (selected)
-	UI::ChangeWidget  (`id(`add_on), `Enabled, true);
-	UI::ChangeWidget  (`id(`add_on), `Value, Installation::add_on_selected);
-	UI::ChangeWidget  (`id(`productsources), `Enabled, true);
-	UI::ChangeWidget  (`id(`productsources), `Value, Installation::productsources_selected);
-
-	// Can be either `install or `update
-	UI::ChangeWidget  (`id(`inst_mode), `CurrentButton, selected_mode);
-    }
-
-    // Next button
-    if (ret == `next)
-    {
-	new_mode = (symbol) UI::QueryWidget (`id (`inst_mode), `CurrentButton);
-	if (new_mode == nil)
-	{
-	    // this is a label of a message box
-	    Popup::Message(_("Choose one of the\noptions to continue."));
-	    ret = nil;
-	    continue;
-	}
-    }
-    else if (ret == `abort)
-    {
-	if (Popup::ConfirmAbort (Stage::initial () ? `painless : `incomplete))
-	    return `abort;
-	ret = nil;
-	continue;
-    }
-} until (ret == `back || ret == `next);
-
-// <-- Handling User Input in Installation Mode
-
-y2milestone("Selected mode: %1, Return: %2", new_mode, ret);
-
-if (ret == `next) {
-    if (new_mode == `install)
-    {
-	Mode::SetMode ("installation");
-    }
-
-    if (new_mode == `update)
-    {
-	Mode::SetMode ("update");
-    }
-
-    if (new_mode == `repair)
-    {
-	Mode::SetMode ("repair");
-    }
-
-    if (new_mode == `install || new_mode == `update)
-    {
-	Installation::add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
-	ProductControl::DisabledModules = filter (string m, ProductControl::DisabledModules, {
-	    return m != "add-on" && m != "inst_add-on";
-	});
-	if (! Installation::add_on_selected)
-	{
-	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "add-on");
-	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "inst_add-on");
-	}
-
-	Installation::productsources_selected = (boolean) UI::QueryWidget (`id (`productsources), `Value);
-	ProductControl::DisabledModules = filter (string m, ProductControl::DisabledModules, {
-	    return m != "productsources" && m != "inst_productsources";
-	});
-	if (! Installation::productsources_selected)
-	{
-	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "productsources");
-	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "inst_productsources");
-	}
-
-	y2milestone ("Disabled: %1", ProductControl::DisabledModules);
-    }
-
-} else if (ret == `back || ret == `finish) {
-    y2milestone("Returning: %1", ret);
-    return ret;
-}
-
-if (Mode::repair ())
-{
-    y2milestone("Calling inst_repair");
-    any ret = WFM::CallFunction ("inst_repair");
-
-    if (ret == nil) {
-	Report::Error (
-	    // TRANSLATORS: an error message (the same is in base.pot)
-	    // this should not happen, but life is cruel...
-	    // %1 - (failed) module name
-	    // %2 - logfile, possibly with errors
-	    // %3 - link to our bugzilla
-	    // %4 - directory where YaST logs are stored
-	    sformat (_("Calling the YaST module %1 has failed.
-More information can be found near the end of the '%2' file.
-
-This is worth reporting a bug at %3.
-Please, attach also all YaST logs stored in the '%4' directory."),
-	    "inst_repair",
-	    "/var/log/YaST2/y2log",
-	    "http://bugzilla.novell.com/",
-	    "/var/log/YaST2/")
-	);
-    }
-
-    return `finish;
-}
-
-// bugzilla #293808
-// Check (and setup) the network only when needed
-if (Installation::add_on_selected || Installation::productsources_selected) {
-    // Check and setup network
-    symbol inc_ret = (symbol) WFM::CallFunction ("inst_network_check", []);
-    y2milestone ("inst_network_check ret: %1", inc_ret);
-    if (contains ([`back, `abort], inc_ret)) {
-	return inc_ret;
-    }
-}
-
-// bug #302384
-Wizard::SetContents (
-    _("Initializing"),
-    // TRANSLATORS: progress message
-    `Label (_("Initializing package manager...")),
-    "",
-    false, false
-);
-Wizard::SetTitleIcon ("yast-software");
-
-
-
-if (Mode::mode () != InstData::start_mode) {
-    y2milestone ("Switching Steps from %1 to %2 ", InstData::start_mode, Mode::mode ());
-    UpdateWizardSteps ();
-    y2milestone ("Resetting disk target to read values");
-    Storage::ResetOndiskTarget ();
-    y2debug ("Original target map (from disk): %1", Storage::GetTargetMap ());
-    y2milestone ("Resetting package manager");
-    Kernel::ProbeKernel();
-    Pkg::TargetFinish ();
-    Pkg::PkgReset ();
-    Packages::Init( true );
-
-    ret = ProductControl::RunFrom (ProductControl::CurrentStep () + 1, false);
-
-    if (ret == `next)
-	ret = `finish;
-} else {
-    UpdateWizardSteps ();
-    ret = ProductControl::RunFrom (ProductControl::CurrentStep () + 1, false);
-
-    if (ret == `next)
-	ret = `finish;
-}
-
-return ret;
+return `next;
 
 /* EOF */
 }
