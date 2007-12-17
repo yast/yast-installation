@@ -14,11 +14,9 @@
     import "Mouse";
 
     UI::BusyCursor();
-    /* Busy popup label */
-    UI::OpenDialog(`VBox(`Label(_("Probing mouse..."))));
-    y2milestone("Call Mouse probing...");
+    y2milestone ("Call Mouse probing...");
     Mouse::Set (Mouse::Probe ());
-    UI::CloseDialog();
+    UI::NormalCursor();
     
     return true;
 
