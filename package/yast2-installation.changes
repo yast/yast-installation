@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Dec 17 11:08:42 CET 2007 - locilka@suse.cz
+
+- Hidden Mouse-probing busy popup.
+
+-------------------------------------------------------------------
 Thu Dec 13 14:25:30 CET 2007 - locilka@suse.cz
 
 - Added a possibility to stop and disable the ZMD service in the
