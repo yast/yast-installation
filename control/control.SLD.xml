@@ -294,6 +294,12 @@ Please visit us at http://www.novell.com/linux/.
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
+                <module>
+	            <label>System Analysis</label>
+                    <name>mode</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
 		<module>
 		    <label>Add-On Products</label>
 		    <name>add-on</name>
@@ -389,6 +395,12 @@ Please visit us at http://www.novell.com/linux/.
                 <module>
 	            <label>System Analysis</label>
                     <name>system_analysis</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+	            <label>System Analysis</label>
+                    <name>mode</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
