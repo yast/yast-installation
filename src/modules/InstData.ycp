@@ -1,0 +1,29 @@
+/**
+ * File:	modules/InstData.ycp
+ * Package:	Installation
+ * Summary:	Installation Data (variables, maps, probed info)
+ * Authors:	Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id: $
+ *
+ * This module provides an access to the installation data, e.g.,
+ * probed Linux partitions.
+ */
+
+{
+
+    textdomain "installation";
+    module "InstData";
+
+    // --> system analysis
+
+    global string start_mode = nil;
+
+    global boolean offer_update = false;
+
+    global boolean have_linux = false;
+
+    // <-- system analysis
+
+/* EOF */
+}
