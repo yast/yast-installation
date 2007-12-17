@@ -18,6 +18,7 @@ import "Arch";
 import "GetInstArgs";
 import "Hotplug";
 import "Installation";
+import "InstData";
 import "Kernel";
 import "Label";
 import "Linuxrc";
@@ -40,7 +41,7 @@ import "Wizard";
 include "installation/misc.ycp";
 include "packager/storage_include.ycp";
 
-string start_mode = Mode::mode ();
+InstData::start_mode = Mode::mode();
 
 // always check whether user wants to continue
 AddOnProduct::skip_add_ons = false;
@@ -130,24 +131,37 @@ Check your hardware.
 	return true;
     }
 
-    boolean offer_update = false;
-
     boolean EvaluateUpdatePossibilities () {
 	y2milestone ("Product flags: %1", Product::flags);
 	if (contains (Product::flags, "update") || Kernel::GetSuSEUpdate ()) {
-	    offer_update = true;
+	    InstData::offer_update = true;
 	}
 
 	return true;
     }
 
-    boolean have_linux = false;
-
     boolean SearchForLinuxPartitions () {
 	if (Storage::HaveLinuxPartitions ()) {
-	    have_linux = true;
+	    InstData::have_linux = true;
 	}
 	
+	return true;
+    }
+
+    boolean packager_initialized = false;
+
+    boolean InitInstallationRepositories () {
+	Packages::InitializeCatalogs ();
+	if (Packages::InitFailed ()) {
+	    // popup message
+	    Popup::Message (_("Failed to initialize the software repositories.
+Aborting the installation."));
+	    return false;
+	}
+
+	packager_initialized = true;
+	Packages::InitializeAddOnProducts ();
+
 	return true;
     }
 
@@ -456,6 +470,14 @@ actions_functions = add (actions_functions, EvaluateUpdatePossibilities);
 visible_icons = add (visible_icons, "32x32/apps/msg_info.png");
 invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
 
+// TRANSLATORS: progress step
+actions_todo = add (actions_todo, _("Initialize package manager"));
+// TRANSLATORS: progress step
+actions_doing = add (actions_doing, _("Initializing package manager..."));
+actions_functions = add (actions_functions, InitInstallationRepositories);
+visible_icons = add (visible_icons, "32x32/apps/yast-sw_source.png");
+invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
+
 Wizard::SetTitleIcon ("yast-controller");
 
 Progress::NewProgressIcons (
@@ -493,15 +515,19 @@ foreach (any run_function, actions_functions, {
 
     y2milestone ("Function %1 returned %2", run_function, ret);
 });
-    
+
 Progress::Finish();
 sleep (500);
 
-y2milestone ("Have Linux: %1, Offer Update: %2", have_linux, offer_update);
+if (! packager_initialized) {
+    return `abort;
+}
+
+y2milestone ("Have Linux: %1, Offer Update: %2", InstData::have_linux, InstData::offer_update);
 
 boolean other_options_disabled = false;
 
-if (! (have_linux && offer_update))
+if (! (InstData::have_linux && InstData::offer_update))
 {
     // to offer add-on products
     // Mode::SetMode ("installation");
@@ -726,18 +752,10 @@ Wizard::SetContents (
 );
 Wizard::SetTitleIcon ("yast-software");
 
-Packages::InitializeCatalogs ();
-if (Packages::InitFailed ())
-{
-    // popup message
-    Popup::Message (_("Failed to initialize the software repositories.
-Aborting the installation."));
-    return `abort;
-}
-Packages::InitializeAddOnProducts ();
 
-if (Mode::mode () != start_mode) {
-    y2milestone ("Switching Steps from %1 to %2 ", start_mode, Mode::mode ());
+
+if (Mode::mode () != InstData::start_mode) {
+    y2milestone ("Switching Steps from %1 to %2 ", InstData::start_mode, Mode::mode ());
     UpdateWizardSteps ();
     y2milestone ("Resetting disk target to read values");
     Storage::ResetOndiskTarget ();
