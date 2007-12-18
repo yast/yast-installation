@@ -25,5 +25,11 @@
 
     // <-- system analysis
 
+    // --> software selection
+
+    global string selected_desktop = nil;
+
+    // <-- software selection
+
 /* EOF */
 }
