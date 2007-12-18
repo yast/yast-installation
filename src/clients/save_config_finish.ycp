@@ -82,7 +82,7 @@ else if (func == "Write")
 	    if (saved) {
 		y2milestone ("Add-Ons configuration saved successfuly");
 	    } else {
-		y2error ("Error occured when storing Add-Ons configuration!");
+		y2error ("Error occurred when storing Add-Ons configuration!");
 	    }
 	}
     }
