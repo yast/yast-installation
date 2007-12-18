@@ -1,0 +1,277 @@
+/**
+ * File:	clients/inst_software_selection.ycp
+ * Package:	Installation
+ * Summary:	Replacement for Desktop Selection and Simple Pattern Selector
+ * Authors:	Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id: $
+ *
+ */
+
+{
+
+textdomain "installation";
+
+import "ProductFeatures";
+import "InstData";
+import "GetInstArgs";
+import "DefaultDesktop";
+import "Wizard";
+import "Packages";
+import "Popup";
+import "Stage";
+import "Directory";
+
+// do not offer the dialog if base selection is fixed
+if (ProductFeatures::GetFeature ("software", "selection_type") == `fixed)
+    return `auto;
+
+boolean text_mode = UI::GetDisplayInfo()["TextMode"]:false;
+
+DefaultDesktop::Init();
+string default_desktop = DefaultDesktop::Desktop ();
+
+// TRANSLATORS: help text
+string help = _("<p>FIXME: ....</p>");
+
+/**
+ * @struct $[
+ *     "desktop ID" : $[
+ *         "order" : integer,
+ *         "label" : _("Desktop Name Visible in Dialog"),
+ *         "description" : _("Description text of the desktop"),
+ *         "patterns" : ["list", "of", "related", "patterns"],
+ *         "icon" : "some-icon.png", // from the 22x22 directory of the current theme
+ *     ],
+ * ]
+ */
+// Could be defined in control file
+map <string, map> all_desktops = $[
+    "gnome" :  $[
+	"order" : 1,
+	"label" : _("GNOME Desktop"),
+	"description" : "FIXME...",
+	"patterns" : ["gnome", "x11", "base"],
+	"icon" : "pattern-gnome.png",
+    ],
+    "kde" : $[
+	"order" : 1,
+	"label" : _("KDE Desktop"),
+	"description" : "FIXME...",
+	"patterns" : ["kde", "x11", "base"],
+	"icon" : "pattern-kde.png",
+    ],
+    "xfce" : $[
+	"order" : 4,
+	"label" : _("XFCE Desktop"),
+	"description" : "FIXME...",
+	"patterns" : ["xfce", "x11", "base"],
+	"icon" : "yast-tv.png",
+    ],
+    "min_x" : $[
+	"order" : 6,
+	"label" : _("Minimal X"),
+	"description" : "FIXME...",
+	"patterns" : ["x11", "base"],
+	"icon" : "yast-x11.png",
+    ],
+    "textmode" : $[
+	"order" : 8,
+	"label" : _("Text Mode"),
+	"description" : "FIXME...",
+	"patterns" : ["base"],
+	"icon" : "yast-sshd.png",
+    ],
+    "base" : $[
+	"order" : 9,
+	"label" : _("Base (Minimal) Selection"),
+	"description" : "FIXME...",
+	"patterns" : ["base"],
+	"icon" : "yast.png",
+    ]
+];
+
+// Could be defined in control file
+map <string, map> system_tasks = $[
+    "office" : $[
+	"order" : 5,
+	"label" : _("Open and modify documents from my mother"),
+	"patterns" : ["office"],
+	"icon" : "yast-messages.png",
+	// FIXME: ...
+	// "default" : boolean
+    ],
+    "imaging" : $[
+	"order" : 6,
+	"label" : _("Do some graphics"),
+	"patterns" : ["imaging"],
+	"icon" : "yast-autofs.png",
+    ],
+    "multimedia" : $[
+	"order" : 9,
+	"label" : _("Use multimedia"),
+	"patterns" : ["multimedia"],
+	"icon" : "yast-sound.png",
+    ],
+    "network_admin" : $[
+	"order" : 10,
+	"label" : _("Administer and debug network"),
+	"patterns" : ["network_admin"],
+	"icon" : "yast-network.png",
+    ],
+];
+
+string SystemTaskID (string task_name) {
+    return sformat ("systemtask:%1", task_name);
+}
+
+void SelectSoftwareNow () {
+    y2milestone ("Selected desktop: %1", InstData::selected_desktop);
+
+    Packages::ForceFullRepropose();
+    Packages::Reset ([`product]);
+
+    foreach (string one_pattern, (list <string>) all_desktops[InstData::selected_desktop, "patterns"]:[], {
+	y2milestone ("Marking desktop pattern to be installed: %1", one_pattern);
+	Pkg::ResolvableInstall (one_pattern, `pattern);
+    });
+
+    foreach (string one_task_name, map one_system_task, system_tasks, {
+	if ((boolean) UI::QueryWidget (`id (SystemTaskID (one_task_name)), `Value) == true) {
+	    foreach (string one_pattern, (list <string>) system_tasks[one_task_name, "patterns"]:[], {
+		y2milestone ("Marking system-task pattern to be installed: %1", one_pattern);
+		Pkg::ResolvableInstall (one_pattern, `pattern);
+	    });
+	}
+    });
+}
+
+list <term> GetListOfDesktops () {
+    list <string> sort_order = maplist (string desktop_name, map one_desktop, all_desktops, {
+	return desktop_name;
+    });
+
+    sort_order = sort (string x, string y, sort_order, ``(all_desktops[x,"order"]:99 < all_desktops[y,"order"]:99));
+
+    list <term> ret = [
+	`item (
+	    `id ("-none-"),
+	    // TRANSLATORS: Combo box item
+	    _("Please, chose one...")
+	)
+    ];
+
+    integer counter = 0;
+
+    foreach (string desktop_name, sort_order, {
+	counter = counter + 1;
+
+	ret[counter] = `item (
+	    `id (desktop_name),
+	    `icon (all_desktops[desktop_name,"icon"]:"yast.png"),
+	    all_desktops[desktop_name,"label"]:""
+	);
+    });
+
+    return ret;
+}
+
+term GetListOfTasks () {
+    term ret = `VBox();
+
+    list <string> sort_order = maplist (string task_name, map one_task, system_tasks, {
+	return task_name;
+    });
+
+    sort_order = sort (string x, string y, sort_order, ``(system_tasks[x,"order"]:99 < system_tasks[y,"order"]:99));
+
+    integer counter = -1;
+
+    foreach (string task_name, sort_order, {
+	counter = counter + 1;
+
+	ret[counter] = `HBox (
+	    (text_mode ? `Empty():`Image (Directory::themedir + "/current/icons/22x22/apps/" + system_tasks[task_name,"icon"]:"yast.png", "")),
+	    (text_mode ? `Empty():`HSpacing (1)),
+	    `Left(`CheckBox (
+		`id (SystemTaskID (task_name)),
+		system_tasks[task_name,"label"]:""
+	    ))
+	);
+    });
+
+    return ret;
+}
+
+term contents = `HBox (
+    `HStretch(),
+    `HSquash (
+	`MinWidth (30, `VBox (
+	    `VStretch(),
+	    `ComboBox (
+		`id ("selected_desktop"),
+		`opt (`hstretch),
+		// TRANSLATORS: Combo box
+		_("Preferred &Desktop"),
+		GetListOfDesktops()
+	    ),
+	    `VStretch(),
+	    `Left (`Label (_("I would like to use this system to..."))),
+	    GetListOfTasks(),
+	    `VStretch()
+	))
+    ),
+    `HStretch()
+);
+
+// TRANSLATORS: dialog caption
+string caption = _("Desktop and Software Selection");
+
+// Set UI
+Wizard::SetContents (caption, contents, help,
+    Stage::initial() ? GetInstArgs::enable_back():true,
+    Stage::initial() ? GetInstArgs::enable_next():true
+);
+Wizard::SetTitleIcon ("yast-desktop-select");
+
+// Adjust default values
+if (InstData::selected_desktop != nil && InstData::selected_desktop != "") {
+    y2milestone ("Already selected desktop: %1", InstData::selected_desktop);
+    UI::ChangeWidget (`id ("selected_desktop"), `Value, InstData::selected_desktop);
+} else if (default_desktop != nil && default_desktop != "") {
+    y2milestone ("Pre-selected desktop: %1", default_desktop);
+    UI::ChangeWidget (`id ("selected_desktop"), `Value, default_desktop);
+}
+
+// UI wait loop
+any ret = nil;
+while (true) {
+    ret = UI::UserInput();
+
+    if (ret == `next) {
+	InstData::selected_desktop = (string) UI::QueryWidget (`id ("selected_desktop"), `Value);
+
+	if (InstData::selected_desktop != nil && haskey (all_desktops, InstData::selected_desktop)) {
+	    SelectSoftwareNow ();
+	    break;
+	}
+	Popup::Message (_("No desktop was selected.
+Select the desktop to install, please."));
+	continue;
+    } else if (ret == `abort || ret == `cancel) {
+	if (Popup::ConfirmAbort (Stage::initial () ? `painless : `incomplete)) {
+	    ret = `abort;
+	    break;
+	}
+	continue;
+    } else if (ret == `back) {
+	break;
+    } else {
+	y2error ("Input %1 not handled", ret);
+    }
+}
+
+return (symbol) ret;
+
+/* EOF */
+}
