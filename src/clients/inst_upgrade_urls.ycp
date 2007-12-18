@@ -534,7 +534,7 @@ Would you like to configure it?"),
 			Report::Error (sformat (
 			    // TRANSLATORS: error report
 			    // %1 is replaced with repo-name, %2 with repo-URL
-			    _("An error ocured when refreshing repository
+			    _("An error occurred when refreshing repository
 Name: %1
 URL: %2"),
 			    repo_name,
@@ -550,7 +550,7 @@ URL: %2"),
 			Report::Error (sformat (
 			    // TRANSLATORS: error report
 			    // %1 is replaced with repo-name, %2 with repo-URL
-			    _("An error ocured when enabling repository
+			    _("An error occurred when enabling repository
 Name: %1
 URL: %2"),
 			    repo_name,
