@@ -1,0 +1,46 @@
+{
+import "Installation";
+import "ImageInstallation";
+import "Progress";
+import "Wizard";
+
+textdomain "installation";
+
+y2milestone ("Deploying image");
+
+// TODO non-static list of images
+list<string> images = ["root", "zypp", "opt", "home"];
+
+integer last_image = nil;
+
+/**
+ * Set the progress
+ * @param image integer the number of image
+ * @param percent integer the percentage of the particular image
+ */
+void SetProgress (integer image, integer percent) {
+    if (percent >= 100)
+	image = image + 1;
+    if (image != last_image)
+    {
+	last_image = image;
+	if (image < size (images))
+	    Progress::Title (sformat (_("Deploying Image \"%1\""), images[image]:""));
+    }
+    Progress::Step (image);
+}
+
+Wizard::SetContents (_("Deploying Installation Images"), `Empty (), "", false, false);
+Wizard::SetTitleIcon ("yast-inst-mode");
+
+// TODO help
+Progress::Simple (_("Deploying Installation Images"), _("Deploying Installation Images"), size (images), "help");
+
+Pkg::TargetFinish ();
+ImageInstallation::DeployImages (images, Installation::destdir, SetProgress);
+
+y2milestone ("Target image for package selector prepared");
+
+return `next;
+
+}
