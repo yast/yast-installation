@@ -1,0 +1,251 @@
+/**
+ * File:
+ *	ImageInstallation.ycp
+ *
+ * Module:
+ *	ImageInstallation
+ *
+ * Summary:
+ *	Support functions for installation via image
+ *
+ * Author:
+ *	Jiri Srain <jsrain@suse.cz>
+ *
+ */
+{
+
+module "ImageInstallation";
+
+/**
+ * Repository holding all images
+ */
+integer _repo = nil;
+
+/**
+ * Description of all available images
+ */
+map<string,map<string,any> > _images = $[];
+
+/**
+ * Template for the path for an image on the media
+ */
+string _image_path = "/images/%1";
+
+/**
+ * List of already mounted images
+ */
+list<string> _mounted_images = [];
+
+/**
+ * Set the repository to get images from
+ * @param repo integer the repository identification
+ */
+global void SetRepo (integer repo) {
+    _repo = repo;
+}
+
+
+/**
+ * Add information about new image
+ * @param id string the id of the image
+ * @param file string the file name of the image
+ * @param type string the type of the image, one of "tar" and "fs"
+ */
+global void AddImage (string id, string file, string type) {
+    _images[id] = $[
+	"file" : file,
+	"type" : type,
+    ];
+}
+
+/**
+ * Deploy an image of the filesystem type
+ * @param id string the id of the image
+ * @param target string the directory to deploy the image to
+ * @return boolean true on success
+ */
+boolean DeployTarImage (string id, string target) {
+    string file = _images[id, "file"]:"";
+    y2milestone ("Untarring image %1 (%2) to %3", id, file, target);
+    file = sformat (_image_path, file);
+    string image = Pkg::SourceProvideFile (_repo, 1, file);
+    if (image == nil)
+    {
+	y2error ("File %1 not found on media", file);
+	return false;
+    }
+
+    y2milestone ("Creating target directory");
+    string cmd = sformat ("test -d %1 || mkdir -p %1", target);
+    map out = (map)SCR::Execute (.target.bash_output, cmd);
+    y2milestone ("Executing %1 returned %2", cmd, out);
+
+    y2milestone ("Untarring the image");
+    cmd = sformat ("tar -xf %1 -C %2", image, target);
+    out = (map)SCR::Execute (.target.bash_output, cmd);
+    y2milestone ("Executing %1 returned %2", cmd, out);
+    return out["exit"]:-1 == 0;
+}
+
+/**
+ * Deploy an image of the filesystem type
+ * @param id string the id of the image
+ * @param target string the directory to deploy the image to
+ * @return boolean true on success
+ */
+boolean DeployFsImage (string id, string target) {
+    string file = _images[id, "file"]:"";
+    y2milestone ("Deploying FS image %1 (%2) on %3", id, file, target);
+    file = sformat (_image_path, file);
+    string image = Pkg::SourceProvideFile (_repo, 1, file);
+    if (image == nil)
+    {
+	y2error ("File %1 not found on media", file);
+	return false;
+    }
+
+    y2milestone ("Creating temporary directory");
+    string tmpdir = (string)SCR::Read (.target.tmpdir) + sformat ("/images/%1", id);
+    string cmd = sformat ("test -d %1 || mkdir -p %1", tmpdir);
+    map out = (map)SCR::Execute (.target.bash_output, cmd);
+    y2milestone ("Executing %1 returned %2", cmd, out);
+
+    y2milestone ("Mounting the image");
+    cmd = sformat ("mount -o loop %1 %2", image, tmpdir);
+    out = (map)SCR::Execute (.target.bash_output, cmd);
+    y2milestone ("Executing %1 returned %2", cmd, out);
+
+    y2milestone ("Creating target directory");
+    cmd = sformat ("test -d %1 || mkdir -p %1", target);
+    out = (map)SCR::Execute (.target.bash_output, cmd);
+    y2milestone ("Executing %1 returned %2", cmd, out);
+
+    y2milestone ("Copying contents of the image");
+    cmd = sformat ("cp -a %1/* %2", tmpdir, target);
+    out = (map)SCR::Execute (.target.bash_output, cmd);
+    y2milestone ("Executing %1 returned %2", cmd, out);
+
+    y2milestone ("Unmounting image from temporary directory");
+    cmd = sformat ("umount %1", tmpdir);
+    out = (map)SCR::Execute (.target.bash_output, cmd);
+    y2milestone ("Executing %1 returned %2", cmd, out);
+    return out["exit"]:-1 == 0;
+    // FIXME error checking
+}
+
+/**
+ * Mount an image of the filesystem type
+ * Does not integrate to the system, mounts on target
+ * @param id string the id of the image
+ * @param target string the directory to deploy the image to
+ * @return boolean true on success
+ */
+boolean MountFsImage (string id, string target) {
+    string file = _images[id, "file"]:"";
+    y2milestone ("Mounting image %1 (%2) on %3", id, file, target);
+    file = sformat (_image_path, file);
+    string image = Pkg::SourceProvideFile (_repo, 1, file);
+    if (image == nil)
+    {
+	y2error ("File %1 not found on media", file);
+	return false;
+    }
+    string cmd = sformat ("test -d %1 || mkdir -p %1", target);
+    map out = (map)SCR::Execute (.target.bash_output, cmd);
+    y2milestone ("Executing %1 returned %2", cmd, out);
+    cmd = sformat ("mount -o loop %1 %2", image, target);
+    out = (map)SCR::Execute (.target.bash_output, cmd);
+    y2milestone ("Executing %1 returned %2", cmd, out);
+    return out["exit"]:-1 == 0;
+    // FIXME error checking
+    // FIXME unmounting
+}
+
+/**
+ * Deploy an image (internal implementation)
+ * @param id string the id of the image
+ * @param target string the directory to deploy the image to
+ * @param temporary boolean true to only mount if possible (no copy)
+ * @return boolean true on success
+ */
+boolean _DeployImage (string id, string target, boolean temporary) {
+    map<string,any> img = _images[id]:$[];
+    if (img == $[])
+    {
+	y2error ("Image %1 does not exist", id);
+    }
+    string type = img["type"]:"";
+    if (type == "fs")
+	return temporary
+	    ? MountFsImage (id, target)
+	    : DeployFsImage (id, target);
+    else if (type == "tar")
+	return DeployTarImage (id, target);
+    y2error ("Unknown type of image: %1", type);
+    return false;
+
+}
+
+/**
+ * Deploy an image
+ * @param id string the id of the image
+ * @param target string the directory to deploy the image to
+ * @return boolean true on success
+ */
+global boolean DeployImage (string id, string target) {
+    y2milestone ("Delploying image %1 to %2", id, target);
+    return _DeployImage (id, target, false);
+}
+
+/**
+ * Deploy an image temporarily (just mount if possible)
+ * @param id string the id of the image
+ * @param target string the directory to deploy the image to,
+ * @return boolean true on success
+ */
+global boolean DeployImageTemporarily (string id, string target) {
+    y2milestone ("Temporarily delploying image %1 to %2", id, target);
+    return _DeployImage (id, target, true);
+}
+
+/**
+ * UnDeploy an image temporarily (if possible, only for the FS images)
+ * @param id string the id of the image
+ * @param target string the directory to deploy the image to,
+ * @return boolean true on success
+ */
+global boolean CleanTemporaryImage (string id, string target) {
+    y2milestone ("UnDelploying temporary image %1 from %2", id, target);
+    if (_images[id, "type"]:"" == "fs")
+    {
+	string cmd = sformat ("umount %1", target);
+	map out = (map)SCR::Execute (.target.bash_output, cmd);
+	y2milestone ("Executing %1 returned %2", cmd, out);
+	return out["exit"]:-1 == 0;
+    }
+    y2milestone ("Cannot undeploy image of type %1", _images[id, "type"]:"");
+    return true;
+}
+
+/**
+ * Deploy all images
+ * @param images a list of images to deploy
+ * @param target string directory where to deploy the images
+ * @param progress a function to report overal progress
+ */
+global boolean DeployImages (list<string> images, string target, void(integer,integer) progress) {
+    integer num = -1;
+    foreach (string img, images, {
+	num = num + 1;
+	progress (num, 0);
+	DeployImage (img, target);
+    });
+    progress (num, 100);
+
+    Pkg::TargetInitialize (target);
+    Pkg::TargetLoad ();
+    return true;
+// TODO error checking
+}
+
+}
