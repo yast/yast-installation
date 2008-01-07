@@ -43,7 +43,7 @@ textdomain="control"
 	<online_repos_preselected config:type="boolean">false</online_repos_preselected>
 
 	<!-- FATE #300898, List of external sources accesible during the installation time -->
-	<external_sources_link>http://download.opensuse.org/YaST/Repos/openSUSE_103_Servers.xml</external_sources_link>
+	<external_sources_link>http://download.opensuse.org/YaST/Repos/openSUSE_110_Servers.xml</external_sources_link>
     </software>
 
     <partitioning>
