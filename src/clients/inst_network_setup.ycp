@@ -646,14 +646,14 @@ Port number must be between 1 and 65535 inclusive."),
 			_("Static Address Settings"),
 			`VBox (
 			    `Left(`HBox (
-				`HSquash (`MinWidth (15, `TextEntry (`id ("ip_address"), _("&IP Address")))),
+				`HSquash (`MinWidth (15, `InputField (`id ("ip_address"), _("&IP Address")))),
 				`HSpacing (0.5),
-				`HSquash (`MinWidth (15, `TextEntry (`id ("netmask"), _("Net&mask"))))
+				`HSquash (`MinWidth (15, `InputField (`id ("netmask"), _("Net&mask"))))
 			    )),
 			    `Left(`HBox (
-				`HSquash (`MinWidth (15, `TextEntry (`id ("gateway"), _("Default &Gateway IP")))),
+				`HSquash (`MinWidth (15, `InputField (`id ("gateway"), _("Default &Gateway IP")))),
 				`HSpacing (0.5),
-				`HSquash (`MinWidth (15, `TextEntry (`id ("dns_server"), _("D&NS Server IP"))))
+				`HSquash (`MinWidth (15, `InputField (`id ("dns_server"), _("D&NS Server IP"))))
 			    ))
 			)
 		    ))
@@ -668,12 +668,12 @@ Port number must be between 1 and 65535 inclusive."),
 			    false,
 			    `VBox (
 				`Left (`HBox (
-				    `HSquash (`MinWidth (42, `TextEntry (`id ("proxy_server"), _("&HTTP Proxy Server"), "http://"))),
+				    `HSquash (`MinWidth (42, `InputField (`id ("proxy_server"), _("&HTTP Proxy Server"), "http://"))),
 				    `HSpacing (0.5),
 				    `HSquash (`MinWidth (6, `ComboBox (`id ("proxy_port"), `opt (`editable), _("&Port"), [ "", "3128", "8080" ])))
 				)),
 				`Left (`HBox (
-				    `HSquash (`MinWidth (14, `TextEntry (`id ("proxy_user"), _("Us&er (Optional)")))),
+				    `HSquash (`MinWidth (14, `InputField (`id ("proxy_user"), _("Us&er (Optional)")))),
 				    `HSpacing (0.5),
 				    `HSquash (`MinWidth (14, `Password (`id ("proxy_password"), _("Pass&word (Optional)"))))
 				))
