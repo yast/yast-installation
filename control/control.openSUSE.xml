@@ -26,6 +26,9 @@ textdomain="control"
 	<manual_online_update config:type="boolean">true</manual_online_update>
 	<root_password_ca_check config:type="boolean">false</root_password_ca_check>
 
+	<!-- Offer online repositories feature in the installation -->
+	<show_online_repositories config:type="boolean">false</show_online_repositories>
+
 	<!-- FATE #301937, Save /root content from the installation system to the installed system -->
 	<save_instsys_content config:type="list">
 	    <save_instsys_item>

@@ -28,6 +28,7 @@ import "Report";
 import "Stage";
 import "Storage";
 import "Wizard";
+import "ProductFeatures";
 
 include "packager/storage_include.ycp";
 include "installation/misc.ycp";
@@ -105,6 +106,12 @@ if (Mode::autoinst ()) {
     return `auto;
 }
 
+boolean show_online_repositories = ProductFeatures::GetBooleanFeature ("globals", "show_online_repositories");
+// if not visible, internally disabled as well
+if (show_online_repositories != true) {
+    Installation::productsources_selected = false;
+}
+
 // see bugzilla #156529
 term InstModeDialogContent (symbol pre_selected) {
     return `HBox (
@@ -149,12 +156,16 @@ term InstModeDialogContent (symbol pre_selected) {
 		    )
 		),
 		`VSpacing (2),
-		`Left (`CheckBox (
-		    `id (`productsources), `opt(`notify),
-		    // check box
-		    _("&Add Online Repositories Before Installation"),
-		    Installation::productsources_selected
-		)),
+		(show_online_repositories == true ?
+		    `Left (`CheckBox (
+			`id (`productsources), `opt(`notify),
+			// check box
+			_("&Add Online Repositories Before Installation"),
+			Installation::productsources_selected
+		    ))
+		    :
+		    `Empty()
+		),
 		`Left (`CheckBox (
 		    `id (`add_on), `opt(`notify),
 		    // check box
@@ -186,10 +197,10 @@ from your existing system whenever possible.
 </p>") +
 
     // help text for installation option
-    _("<p>
+    (show_online_repositories == true ? _("<p>
 To use suggested remote repositories during installation or update, select
 <b>Add Online Repositories Before Installation</b>.</p>
-") +
+"):"") +
 
     // help text for installation method
     _("<p>
@@ -258,25 +269,32 @@ repeat {
 
     // Use-Add-On-Product status changed
     if (ret == `add_on) {
-	Installation::add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
+	if (UI::WidgetExists (`id (`add_on)))
+	    Installation::add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
 	ret = nil;
 	continue;
     }
     // Use Sources defined by product
     else if (ret == `productsources) {
-	Installation::productsources_selected = (boolean) UI::QueryWidget (`id (`productsources), `Value);
+	if (UI::WidgetExists (`id (`productsources)))
+	    Installation::productsources_selected = (boolean) UI::QueryWidget (`id (`productsources), `Value);
 	ret = nil;
 	continue;
     }
     // Adjusting current UI - Other Options
     else if (ret == `repair) {
 	// Remembering add-on state, switching off and disabling
-	Installation::add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
+	if (UI::WidgetExists (`id (`add_on))) {
+	    Installation::add_on_selected = (boolean) UI::QueryWidget (`id (`add_on), `Value);
 
-	UI::ChangeWidget (`id(`add_on), `Value, false);
-	UI::ChangeWidget (`id(`add_on), `Enabled, false);
-	UI::ChangeWidget (`id(`productsources), `Value, false);
-	UI::ChangeWidget (`id(`productsources), `Enabled, false);
+	    UI::ChangeWidget (`id(`add_on), `Value, false);
+	    UI::ChangeWidget (`id(`add_on), `Enabled, false);
+	}
+
+	if (UI::WidgetExists (`id (`productsources))) {
+	    UI::ChangeWidget (`id(`productsources), `Value, false);
+	    UI::ChangeWidget (`id(`productsources), `Enabled, false);
+	}
 
 	ret = nil;
 	continue;
@@ -287,10 +305,15 @@ repeat {
 	symbol selected_mode = (symbol)  UI::QueryWidget (`id (`inst_mode), `CurrentButton);
 
 	// Enabling add-on, adjusting previous state (selected)
-	UI::ChangeWidget  (`id(`add_on), `Enabled, true);
-	UI::ChangeWidget  (`id(`add_on), `Value, Installation::add_on_selected);
-	UI::ChangeWidget  (`id(`productsources), `Enabled, true);
-	UI::ChangeWidget  (`id(`productsources), `Value, Installation::productsources_selected);
+	if (UI::WidgetExists (`id (`add_on))) {
+	    UI::ChangeWidget  (`id(`add_on), `Enabled, true);
+	    UI::ChangeWidget  (`id(`add_on), `Value, Installation::add_on_selected);
+	}
+
+	if (UI::WidgetExists (`id (`productsources))) {
+	    UI::ChangeWidget  (`id(`productsources), `Enabled, true);
+	    UI::ChangeWidget  (`id(`productsources), `Value, Installation::productsources_selected);
+	}
 
 	// Can be either `install or `update
 	UI::ChangeWidget  (`id(`inst_mode), `CurrentButton, selected_mode);
