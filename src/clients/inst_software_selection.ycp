@@ -31,8 +31,17 @@ boolean text_mode = UI::GetDisplayInfo()["TextMode"]:false;
 DefaultDesktop::Init();
 string default_desktop = DefaultDesktop::Desktop ();
 
-// TRANSLATORS: help text
-string help = _("<p>FIXME: ....</p>");
+// TRANSLATORS: help text 1/3
+string help = _("<p>This is a base selection where you can decide which common
+parts of the system will by installed.</p>") +
+
+// TRANSLATORS: help text 2/3
+_("<p>First, select a <b>Type of System</b> that allows you to choose
+the base task of the system.</p>") +
+
+// TRANSLATORS: help text 3/3
+_("<p>Then, choose secondary system tasks - what do you want to do with
+this system.</p>");
 
 /**
  * @struct $[
@@ -50,42 +59,36 @@ map <string, map> all_desktops = $[
     "gnome" :  $[
 	"order" : 1,
 	"label" : _("GNOME Desktop"),
-	"description" : "FIXME...",
 	"patterns" : ["gnome", "x11", "base"],
 	"icon" : "pattern-gnome.png",
     ],
     "kde" : $[
 	"order" : 1,
 	"label" : _("KDE Desktop"),
-	"description" : "FIXME...",
 	"patterns" : ["kde", "x11", "base"],
 	"icon" : "pattern-kde.png",
     ],
     "xfce" : $[
 	"order" : 4,
 	"label" : _("XFCE Desktop"),
-	"description" : "FIXME...",
 	"patterns" : ["xfce", "x11", "base"],
 	"icon" : "yast-tv.png",
     ],
     "min_x" : $[
 	"order" : 6,
 	"label" : _("Minimal X"),
-	"description" : "FIXME...",
 	"patterns" : ["x11", "base"],
 	"icon" : "yast-x11.png",
     ],
     "textmode" : $[
 	"order" : 8,
 	"label" : _("Text Mode"),
-	"description" : "FIXME...",
 	"patterns" : ["base"],
 	"icon" : "yast-sshd.png",
     ],
     "base" : $[
 	"order" : 9,
 	"label" : _("Base (Minimal) Selection"),
-	"description" : "FIXME...",
 	"patterns" : ["base"],
 	"icon" : "yast.png",
     ]
@@ -98,28 +101,44 @@ map <string, map> system_tasks = $[
 	"label" : _("Open and modify documents from my mother"),
 	"patterns" : ["office"],
 	"icon" : "yast-messages.png",
-	// FIXME: ...
-	// "default" : boolean
-    ],
-    "imaging" : $[
-	"order" : 6,
-	"label" : _("Do some graphics"),
-	"patterns" : ["imaging"],
-	"icon" : "yast-autofs.png",
+	"default" : true,
     ],
     "multimedia" : $[
-	"order" : 9,
+	"order" : 6,
 	"label" : _("Use multimedia"),
 	"patterns" : ["multimedia"],
 	"icon" : "yast-sound.png",
+	"default" : true,
+    ],
+    "imaging" : $[
+	"order" : 7,
+	"label" : _("Do some graphics"),
+	"patterns" : ["imaging"],
+	"icon" : "yast-autofs.png",
+	"default" : false,
+    ],
+    "games" : $[
+	"order" : 8,
+	"label" : _("Play games"),
+	"patterns" : ["games"],
+	"icon" : "yast-joystick.png",
+	"default" : false,
     ],
     "network_admin" : $[
 	"order" : 10,
 	"label" : _("Administer and debug network"),
 	"patterns" : ["network_admin"],
 	"icon" : "yast-network.png",
+	"default" : false,
     ],
 ];
+
+foreach (string task_name, map one_task, system_tasks, {
+    // if not yet defined, assign a boolean value for particular
+    if (! haskey (InstData::current_systasks_status, task_name)) {
+	InstData::current_systasks_status[task_name] = one_task["default"]:false;
+    }
+});
 
 string SystemTaskID (string task_name) {
     return sformat ("systemtask:%1", task_name);
@@ -136,12 +155,20 @@ void SelectSoftwareNow () {
 	Pkg::ResolvableInstall (one_pattern, `pattern);
     });
 
+    // go through all known system tasks
     foreach (string one_task_name, map one_system_task, system_tasks, {
+	// when a task is selected
 	if ((boolean) UI::QueryWidget (`id (SystemTaskID (one_task_name)), `Value) == true) {
+	    // pre-select all patterns listed in it
 	    foreach (string one_pattern, (list <string>) system_tasks[one_task_name, "patterns"]:[], {
 		y2milestone ("Marking system-task pattern to be installed: %1", one_pattern);
 		Pkg::ResolvableInstall (one_pattern, `pattern);
 	    });
+
+	    // and store its state for the next run
+	    InstData::current_systasks_status[one_task_name] = true;
+	} else {
+	    InstData::current_systasks_status[one_task_name] = false;
 	}
     });
 }
@@ -157,7 +184,7 @@ list <term> GetListOfDesktops () {
 	`item (
 	    `id ("-none-"),
 	    // TRANSLATORS: Combo box item
-	    _("Please, chose one...")
+	    _("Choose one...")
 	)
     ];
 
@@ -193,9 +220,11 @@ term GetListOfTasks () {
 	ret[counter] = `HBox (
 	    (text_mode ? `Empty():`Image (Directory::themedir + "/current/icons/22x22/apps/" + system_tasks[task_name,"icon"]:"yast.png", "")),
 	    (text_mode ? `Empty():`HSpacing (1)),
-	    `Left(`CheckBox (
+	    `Left (`CheckBox (
 		`id (SystemTaskID (task_name)),
-		system_tasks[task_name,"label"]:""
+		system_tasks[task_name,"label"]:"",
+		// default values, need to be read on exit
+		InstData::current_systasks_status[task_name]:false
 	    ))
 	);
     });
@@ -203,29 +232,45 @@ term GetListOfTasks () {
     return ret;
 }
 
+void RedrawSelDesktopInfo (string currently_selected) {
+    list <string> desktop_patterns = all_desktops[currently_selected,"patterns"]:[];
+    list <map <string, any> > res_properties = Pkg::ResolvableProperties (currently_selected, `pattern, "");
+
+    // TRANSLATORS: rich-text content
+    string description = res_properties[0,"description"]:_("No description available...");
+    UI::ChangeWidget (`id ("desktop_description"), `Value, description);
+}
+
 term contents = `HBox (
     `HStretch(),
     `HSquash (
-	`MinWidth (30, `VBox (
-	    `VStretch(),
+	`MinWidth (33, `VBox (
+	    `VWeight (5, `VStretch()),
 	    `ComboBox (
 		`id ("selected_desktop"),
-		`opt (`hstretch),
+		`opt (`notify, `hstretch),
 		// TRANSLATORS: Combo box
-		_("Preferred &Desktop"),
+		_("&Type of System"),
 		GetListOfDesktops()
 	    ),
-	    `VStretch(),
+	    `VSquash (`Frame (
+		_("Description"),
+		`MinHeight (5, `RichText (
+		    `id ("desktop_description"),
+		    ""
+		))
+	    )),
+	    `VWeight (2, `VStretch()),
 	    `Left (`Label (_("I would like to use this system to..."))),
 	    GetListOfTasks(),
-	    `VStretch()
+	    `VWeight (5, `VStretch())
 	))
     ),
     `HStretch()
 );
 
 // TRANSLATORS: dialog caption
-string caption = _("Desktop and Software Selection");
+string caption = _("System Type and Software Selection");
 
 // Set UI
 Wizard::SetContents (caption, contents, help,
@@ -243,20 +288,28 @@ if (InstData::selected_desktop != nil && InstData::selected_desktop != "") {
     UI::ChangeWidget (`id ("selected_desktop"), `Value, default_desktop);
 }
 
+RedrawSelDesktopInfo (InstData::selected_desktop);
+
 // UI wait loop
 any ret = nil;
 while (true) {
     ret = UI::UserInput();
 
-    if (ret == `next) {
+    if (ret == "selected_desktop") {
+	string currently_selected = (string) UI::QueryWidget (`id ("selected_desktop"), `Value);
+
+	if (currently_selected != nil && currently_selected != "")
+	    RedrawSelDesktopInfo (currently_selected);
+    } else if (ret == `next) {
 	InstData::selected_desktop = (string) UI::QueryWidget (`id ("selected_desktop"), `Value);
 
 	if (InstData::selected_desktop != nil && haskey (all_desktops, InstData::selected_desktop)) {
 	    SelectSoftwareNow ();
 	    break;
 	}
-	Popup::Message (_("No desktop was selected.
-Select the desktop to install, please."));
+	Popup::Message (_("No system type was selected.
+
+Select the default one, please."));
 	continue;
     } else if (ret == `abort || ret == `cancel) {
 	if (Popup::ConfirmAbort (Stage::initial () ? `painless : `incomplete)) {

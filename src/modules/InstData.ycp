@@ -29,6 +29,8 @@
 
     global string selected_desktop = nil;
 
+    global map <string, boolean> current_systasks_status = $[];
+
     // <-- software selection
 
 /* EOF */
