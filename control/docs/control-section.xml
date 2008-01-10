@@ -321,7 +321,7 @@
             <para>The following variables can be set:</para>
             <itemizedlist>
                 <listitem>
-                    <para>Timzeone</para>
+                    <para>Timezone</para>
                 </listitem>
                 <listitem>
                     <para>Language</para>
@@ -349,6 +349,22 @@
                 xmlns:xi="http://www.w3.org/2001/XInclude"/>
 
             </programlisting>
+	</section>
+
+	<section id="special_globals">
+	    <title>Special Installation and Product Variables</title>
+	    <para>These options usually enable or disable some installation feature.</para>
+
+	    <itemizedlist>
+		<listitem><para>(boolean) <emphasis>enable_firewall</emphasis> - firewall will proposed as
+		    either enabled or disabled in the network proposal.</para></listitem>
+		<listitem><para>(boolean) <emphasis>enable_clone</emphasis> - clonning feature
+		    will be either enabled or disabled.</para></listitem>
+		<listitem><para>(boolean) <emphasis>skip_language_dialog</emphasis> - the language
+		    dialog might be skipped (if language already selected).</para></listitem>
+		<listitem><para>(boolean) <emphasis>show_online_repositories</emphasis> - either shows
+		    or hides the "online repositories" feature check-box.</para></listitem>
+	    </itemizedlist>
 	</section>
 	    
 	<!-- FATE #301937, Save /root content from the installation system to the installed system -->

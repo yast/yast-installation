@@ -4,6 +4,9 @@ Thu Jan 10 14:08:17 CET 2008 - locilka@suse.cz
 - Extended system type and software selection dialog. Added base
   pattern (selected desktop) description, helps, default status
   for secondary selections, ...
+- Added possibility to control visibility of Online Repositories
+  via the installation control file (hidden by default).
+- Added more control-file documentation.
 
 -------------------------------------------------------------------
 Tue Dec 18 16:54:39 CET 2007 - locilka@suse.cz
