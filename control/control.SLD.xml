@@ -261,8 +261,8 @@ Please visit us at http://www.novell.com/linux/.
             <stage>initial</stage>
             <modules  config:type="list">
                 <module>
-                    <name>language</name>
-	            <label>Language</label>
+                    <name>complex_welcome</name>
+	            <label>Welcome</label>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
                     <arguments>
@@ -271,14 +271,8 @@ Please visit us at http://www.novell.com/linux/.
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
                 <module>
-	            <label>Language</label>
+	            <label>Welcome</label>
                     <name>checkmedia</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
-                </module>
-                <module>
-	            <label>License Agreement</label>
-                    <name>license</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
@@ -365,8 +359,8 @@ Please visit us at http://www.novell.com/linux/.
             <stage>initial</stage>
             <modules  config:type="list">
                 <module>
-                    <name>language</name>
-	            <label>Language</label>
+                    <name>complex_welcome</name>
+	            <label>Welcome</label>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
                     <arguments>
@@ -375,14 +369,8 @@ Please visit us at http://www.novell.com/linux/.
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
                 <module>
-	            <label>Language</label>
+	            <label>Welcome</label>
                     <name>checkmedia</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
-                </module>
-                <module>
-	            <label>License Agreement</label>
-                    <name>license</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
