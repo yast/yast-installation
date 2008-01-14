@@ -246,18 +246,14 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             <stage>initial</stage>
             <modules  config:type="list">
                 <module>
-                    <name>language</name>
-	            <label>Language</label>
+		    <label>Welcome</label>
+                    <name>complex_welcome</name>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
                     <arguments>
                         <first_run>yes</first_run>
                     </arguments>
                     <retranslate config:type="boolean">true</retranslate>
-                </module>
-                <module>
-	            <label>License Agreement</label>
-                    <name>license</name>
                 </module>
 		<module>
 	            <label>Disk Activation</label>
@@ -343,17 +339,13 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             <stage>initial</stage>
             <modules  config:type="list">
                 <module>
-                    <name>language</name>
-	            <label>Language</label>
+                    <name>complex_welcome</name>
+	            <label>Welcome</label>
                     <enable_back>no</enable_back>
                     <arguments>
                         <first_run>yes</first_run>
                     </arguments>
                     <retranslate config:type="boolean">true</retranslate>
-                </module>
-                <module>
-	            <label>License Agreement</label>
-                    <name>license</name>
                 </module>
 		<module>
 	            <label>Disk Activation</label>
@@ -453,8 +445,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <module>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
- 	            <label>Language</label>
-                    <name>language</name>
+ 	            <label>Welcome</label>
+                    <name>complex_welcome</name>
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
                 <module>
@@ -498,8 +490,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             <modules  config:type="list">
                 <module>
                     <enable_back>no</enable_back>
-	            <label>Language</label>
-                    <name>language</name>
+	            <label>Welcome</label>
+                    <name>complex_welcome</name>
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
                 <module>

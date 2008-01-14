@@ -217,8 +217,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             <stage>initial</stage>
             <modules  config:type="list">
                 <module>
-                    <name>language</name>
-	            <label>Language</label>
+                    <name>complex_welcome</name>
+	            <label>Welcome</label>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
                     <arguments>
@@ -227,14 +227,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
                 <module>
-	            <label>Language</label>
+	            <label>Welcome</label>
                     <name>checkmedia</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
-                </module>
-                <module>
-	            <label>License Agreement</label>
-                    <name>license</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
@@ -319,8 +313,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             <stage>initial</stage>
             <modules  config:type="list">
                 <module>
-                    <name>language</name>
-	            <label>Language</label>
+                    <name>complex_welcome</name>
+	            <label>Welcome</label>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
                     <arguments>
@@ -329,14 +323,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
                 <module>
-	            <label>Language</label>
+	            <label>Welcome</label>
                     <name>checkmedia</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
-                </module>
-                <module>
-	            <label>License Agreement</label>
-                    <name>license</name>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
