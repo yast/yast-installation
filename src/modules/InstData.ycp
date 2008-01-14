@@ -33,5 +33,11 @@
 
     // <-- software selection
 
+    // --> other
+
+    global boolean product_license_accepted = false;
+
+    // <-- other
+
 /* EOF */
 }

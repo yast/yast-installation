@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jan 14 13:39:00 CET 2008 - locilka@suse.cz
+
+- Added new Language/Keyboard/License dialog (FATE #302957).
+- 2.16.9
+
+-------------------------------------------------------------------
 Thu Jan 10 14:08:17 CET 2008 - locilka@suse.cz
 
 - Extended system type and software selection dialog. Added base
