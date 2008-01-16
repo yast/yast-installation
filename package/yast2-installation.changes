@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jan 16 15:49:59 CET 2008 - locilka@suse.cz
+
+- Calling SetPackageLocale and SetTextLocale in the initial
+  installation dialog (selecting language) (#354133).
+
+-------------------------------------------------------------------
 Mon Jan 14 13:39:00 CET 2008 - locilka@suse.cz
 
 - Added new Language/Keyboard/License dialog (FATE #302957).

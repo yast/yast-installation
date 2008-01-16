@@ -320,7 +320,8 @@ Choose the new <b>Language</b> for your system.
 	if (ret == `abort && Popup::ConfirmAbort (`painless))
 	{
 	    Wizard::RestoreNextButton();
-	    return `abort;
+	    ret = `abort;
+	    break;
 	}
 	else if (ret == `keyboard)
 	{
@@ -403,6 +404,10 @@ installation, but the selected language will be used for the new system."));
 		Wizard::SetFocusToNextButton();
 		return `again;
 	    }
+
+	    // Bugzilla #354133
+	    Pkg::SetPackageLocale (language);
+	    Pkg::SetTextLocale (language);
 
 	    if (ret == `next)
 	    {
