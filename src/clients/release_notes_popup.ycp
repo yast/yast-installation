@@ -57,7 +57,7 @@
 	{
 	    tmp = sformat (path_templ, "en");
 	    y2debug ("Trying to get %1", tmp);
-	    tmp = Pkg::SourceProvideFile (source_id, 1, tmp);
+	    tmp = Pkg::SourceProvideOptionalFile (source_id, 1, tmp);
 	}
 	if (tmp == nil)
 	    return false;
