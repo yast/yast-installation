@@ -117,9 +117,10 @@ Note: You may have to enter some information again.");
 	    if (FileUtils::Exists (file_inst_aborted)) {
 		// popup question (#x1)
 		show_error = _("The previous installation has been aborted.
-Would you like it to continue?
+Would you like to continue?
 
-Note: You may have to enter some information again.");
+Note: You may have to enter some information again.
+");
 
 		y2milestone("Case: aborted");
 	    } else {
