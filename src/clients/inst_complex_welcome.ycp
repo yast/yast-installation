@@ -312,138 +312,144 @@ Choose the new <b>Language</b> for your system.
     string keyboard = "";
     boolean license_acc = nil;
 
-    while (true)
-    {
-	ret = UI::UserInput();
-	y2milestone ("UserInput() returned %1", ret);
+    boolean LicenseAccepted () {
+	if (license_acc == true) {
+	    return true;
+	} else {
+	    UI::SetFocus (`id (`license_agreement));
+	    Report::Message (_("License needs to be accepted"));
+	    return false;
+	}    
+    }
 
-	if (ret == `abort && Popup::ConfirmAbort (`painless))
-	{
-	    Wizard::RestoreNextButton();
-	    ret = `abort;
-	    break;
-	}
-	else if (ret == `keyboard)
-	{
-	    Keyboard::user_decision = true;
-	}
-	else if (ret == `license_agreement)
-	{
-	    InstData::product_license_accepted = (boolean) UI::QueryWidget (`id (`license_agreement), `Value);
-	}
-	else if (ret == `next || (ret == `language && ! Mode::config ()))
-	{
-	    language = (string) UI::QueryWidget (`id (`language), `Value);
-	    keyboard = (string) UI::QueryWidget (`id (`keyboard), `Value);
-	    license_acc = (boolean) UI::QueryWidget (`id (`license_agreement), `Value);
-
-	    if (ret == `next && license_acc != true) {
-		UI::SetFocus (`id (`license_agreement));
-		Report::Message (_("License needs to be accepted"));
-		ret = `not_next;
-		continue;
-	    }
-
-	    if (ret == `next && Language::IncompleteTranslation (language))
-	    {
-		// continue/cancel message
-		if (!Popup::ContinueCancel (_("Translation of the primary language is not complete.
+    boolean CheckIncompleteTranslation () {
+	if (Language::IncompleteTranslation (language)) {
+	    // continue/cancel message
+	    return Popup::ContinueCancel (_("Translation of the primary language is not complete.
 Some texts may be displayed in English.
-")))
-		{
-		    ret = `not_next;
-		    continue;
-		}
+"));
+	} else {
+	    return true;
+	}
+    }
+
+    void ReadCurrentUIState () {
+	language = (string) UI::QueryWidget (`id (`language), `Value);
+	keyboard = (string) UI::QueryWidget (`id (`keyboard), `Value);
+	license_acc = (boolean) UI::QueryWidget (`id (`license_agreement), `Value);
+    }
+
+    // Returns true if the dialog needs redrawing
+    boolean SetLanguageIfChanged (any ret) {
+	if (language != Language::language) {
+	    y2milestone ("Language changed from %1 to %2", Language::language, language);
+
+	    if (set_default) {
+		Timezone::ResetZonemap ();
 	    }
 
-	    if (ret == `next && Stage::initial ())
-	    {
-		check_languages_support (language);
-	    }
+	    // Set it in the Language module.
+	    Language::Set (language);
+	}
 
-	    if (language != Language::language)
-	    {
-		y2milestone ("Language changed from %1 to %2", Language::language, language);
-
-		if (set_default)
-		{
-		    Timezone::ResetZonemap ();
-		}
-
-		// Set it in the Language module.
-		//
-		Language::Set (language);
-	    }
-
-	    if (Stage::initial () || Stage::firstboot ())
-	    {
-		if ((set_default && ret == `language ||
-			(!set_default && ret == `next)) &&
-		    Language::CJKLanguage (language) &&
-		    !Language::CJKLanguage (preselected) &&
-		    Language::GetTextMode ())
-		{
-		    // popup message (user selected CJK language in text mode)
-		    Popup::Message (_("The selected language cannot be used in text mode. English is used for
+	// Check and set CJK languages
+	if (Stage::initial () || Stage::firstboot ()) {
+	    if ((set_default && ret == `language ||
+		(!set_default && ret == `next)) &&
+		Language::CJKLanguage (language) &&
+		!Language::CJKLanguage (preselected) &&
+		Language::GetTextMode ()) {
+		// popup message (user selected CJK language in text mode)
+		Popup::Message (_("The selected language cannot be used in text mode. English is used for
 installation, but the selected language will be used for the new system."));
 
 		    Language::WfmSetGivenLanguage ("en_US");
-		}
-		else if (ret == `next || (set_default && ret == `language))
-		{
-		    Console::SelectFont (language);
-		    Language::WfmSetLanguage ();
-		}
-	    }
-
-	    Keyboard::SetLanguage (keyboard);
-
-	    if (ret == `language && set_default)
-	    {
-		// Display newly translated dialog.
-		Wizard::SetFocusToNextButton();
-		return `again;
-	    }
-
-	    // Bugzilla #354133
-	    Pkg::SetPackageLocale (language);
-	    Pkg::SetTextLocale (language);
-
-	    if (ret == `next)
-	    {
-		// Language has been set already.
-		// On first run store users decision as default.
-		//
-		if (set_default)
-		{
-		    y2milestone("Resetting to default language");
-		    Language::SetDefault();
-		}
-
-		if (tmz_adapt)
-		{
-		    Timezone::SetTimezoneForLanguage (language);
-		}
-		else
-		{
-		    Timezone::user_decision = true;
-		}
-
-		if (!Stage::initial () && !Mode::update ())
-		{
-		    // save settings (rest is saved in LanguageWrite)
-		    if (kbd_adapt)
-			Keyboard::Save (true);
-		    if (tmz_adapt)
-			Timezone::Save ();
-		}
-		y2milestone ("Language: '%1', system encoding '%2'", language,
-		             WFM::GetEncoding());
-
+	    } else if (ret == `next || (set_default && ret == `language)) {
+		Console::SelectFont (language);
+		Language::WfmSetLanguage ();
 	    }
 	}
 
-	if (ret == `next || ret == `back) break;
+	if (ret == `language && set_default) {
+	    // Display newly translated dialog.
+	    Wizard::SetFocusToNextButton();
+	    return true;
+	}
+
+	if (ret == `next) {
+	    Keyboard::SetLanguage (keyboard);
+
+	    // Language has been set already.
+	    // On first run store users decision as default.
+	    if (set_default) {
+		y2milestone("Resetting to default language");
+		Language::SetDefault();
+	    }
+
+	    if (tmz_adapt) {
+		Timezone::SetTimezoneForLanguage (language);
+	    } else {
+		Timezone::user_decision = true;
+	    }
+
+	    if (!Stage::initial () && !Mode::update ()) {
+		// save settings (rest is saved in LanguageWrite)
+		if (kbd_adapt)
+		    Keyboard::Save (true);
+		if (tmz_adapt)
+		    Timezone::Save ();
+	    }
+
+	    // Bugzilla #354133
+	    y2milestone ("Adjustign package and text locale to %1", language);
+	    Pkg::SetPackageLocale (language);
+	    Pkg::SetTextLocale (language);
+
+	    y2milestone ("Language: '%1', system encoding '%2'", language, WFM::GetEncoding());
+	}
+
+	return false;
+    }
+
+    while (true) {
+	ret = UI::UserInput();
+	y2milestone ("UserInput() returned %1", ret);
+
+	if (ret == `back) {
+	    break;
+
+	} else if (ret == `abort && Popup::ConfirmAbort (`painless)) {
+	    Wizard::RestoreNextButton();
+	    ret = `abort;
+	    break;
+
+	} else if (ret == `keyboard) {
+	    Keyboard::user_decision = true;
+
+	} else if (ret == `license_agreement) {
+	    InstData::product_license_accepted = (boolean) UI::QueryWidget (`id (`license_agreement), `Value);
+
+	} else if (ret == `next || (ret == `language && ! Mode::config ())) {
+	    ReadCurrentUIState();
+
+	    if (ret == `next ) {
+		if (! LicenseAccepted ())
+		    continue;
+
+		if (! CheckIncompleteTranslation())
+		    continue;
+
+		if (Stage::initial())
+		    check_languages_support (language);
+	    }
+
+	    if (SetLanguageIfChanged (ret)) {
+		ret = `again;
+		break;
+	    }
+
+	    if (ret == `next) break;
+	}
     }
 
     return (symbol) ret;

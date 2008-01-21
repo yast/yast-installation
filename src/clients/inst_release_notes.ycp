@@ -202,7 +202,7 @@ Linux system. They provide a brief summary of new features and changes.</p>");
     // bugzilla #262440
     if (Mode::normal()) {
 	Wizard::OpenNextBackDialog();
-	Wizard::HideBackButton();
+	Wizard::DisableBackButton();
 	Wizard::DisableAbortButton();
 	Wizard::SetNextButton(`next, Label::CloseButton());
 	Wizard::EnableNextButton();
@@ -243,7 +243,10 @@ Linux system. They provide a brief summary of new features and changes.</p>");
 		`MinWidth (
 		    // +2 for thingies on the right
 		    minwidthlang[product]:16 + 2,
-		    `ComboBox (`id (`lang), `opt (`notify), _("&Language"), languages_of_relnotes[product]:[])
+		    `HSquash (
+			// TRANSLATORS: Combo box
+			`ComboBox (`id (`lang), `opt (`notify), _("&Language"), languages_of_relnotes[product]:[])
+		    )
 		)
 	    );
 	    if (size(languages_of_relnotes[product]:[]) > 1)
