@@ -827,10 +827,11 @@ esac
 
 # The prepare_for_ncurses in step 6 is kinda useless if step 7 can
 # change Y2MODE to ncurses in several ways
-# Anyway, #150799
-if [ "$Y2_MODE" = "ncurses" ]; then
-    Y2_UI_ARGS=--nothreads
-fi
+
+#running with threads (#164999, FaTE #301899)
+#if [ "$Y2_MODE" = "ncurses" ]; then
+#    Y2_UI_ARGS=--nothreads
+#fi
 
 #=============================================
 # 8) Call YaST2
