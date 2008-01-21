@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jan 21 11:05:16 CET 2008 - kmachalkova@suse.cz
+
+- Re-enabled thread support for ncurses UI in YaST2.call
+  (bug #164999, FaTE #301899) 
+
+-------------------------------------------------------------------
 Mon Jan 21 10:53:50 CET 2008 - locilka@suse.cz
 
 - Release Notes UI facelifting.
