@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jan 21 10:53:50 CET 2008 - locilka@suse.cz
+
+- Release Notes UI facelifting.
+- Splitting Welcome script dialog single-loop into functions.
+
+-------------------------------------------------------------------
 Wed Jan 16 15:49:59 CET 2008 - locilka@suse.cz
 
 - Calling SetPackageLocale and SetTextLocale in the initial
