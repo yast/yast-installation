@@ -2,6 +2,7 @@
 Thu Jan 24 15:21:39 CET 2008 - aschnell@suse.de
 
 - start service brld before suse-blinux (bug #354769)
+- 2.16.10
 
 -------------------------------------------------------------------
 Mon Jan 21 11:05:16 CET 2008 - kmachalkova@suse.cz
