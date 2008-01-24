@@ -1,8 +1,13 @@
 -------------------------------------------------------------------
+Thu Jan 24 15:21:39 CET 2008 - aschnell@suse.de
+
+- start service brld before suse-blinux (bug #354769)
+
+-------------------------------------------------------------------
 Mon Jan 21 11:05:16 CET 2008 - kmachalkova@suse.cz
 
 - Re-enabled thread support for ncurses UI in YaST2.call
-  (bug #164999, FaTE #301899) 
+  (bug #164999, FaTE #301899)
 
 -------------------------------------------------------------------
 Mon Jan 21 10:53:50 CET 2008 - locilka@suse.cz
@@ -69,7 +74,7 @@ Mon Dec 10 12:13:14 CET 2007 - locilka@suse.cz
 -------------------------------------------------------------------
 Wed Dec  5 11:13:05 CET 2007 - mzugec@suse.cz
 
-- description says network cards are wireless (#346133) 
+- description says network cards are wireless (#346133)
 
 -------------------------------------------------------------------
 Mon Dec  3 16:49:46 CET 2007 - locilka@suse.cz
@@ -94,7 +99,7 @@ Thu Nov 29 16:27:59 CET 2007 - locilka@suse.cz
 Tue Nov 27 19:14:15 CET 2007 - sh@suse.de
 
 - Use string ID "contents" rather than YCPSymbol `contents
-  for Wizard ReplacePoint 
+  for Wizard ReplacePoint
 - 2.16.5
 
 -------------------------------------------------------------------

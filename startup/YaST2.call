@@ -20,7 +20,7 @@
 #               : - Via serial line ttyS0/115200 baud, 8N1, RTS/CTS
 #               :   which is the same as the NCURSES mode
 #               : - VNC Installation via browser
-#               : 
+#               :
 #               :
 # STATUS        : $Id$
 #----------------
@@ -184,7 +184,7 @@ function count_qt_geometry () {
 #----[ prepare_for_qt ]----#
 function prepare_for_qt () {
 #------------------------------------------------------
-# prepare Qt installation 
+# prepare Qt installation
 # ---
 	local fbdevname
 	#=============================================
@@ -206,7 +206,7 @@ function prepare_for_qt () {
 		sed -e "s#Screen.*Screen\[.*\]#Screen   "\""Screen[$X11_CONFIG_ID]#" \
 			/etc/X11/xorg.conf >/etc/X11/xorg.conf.new
 		mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
-		
+
 		# update core pointer input device section...
 		if [ -f "/usr/sbin/xupdate" ];then
 			cat /etc/X11/xorg.conf | \
@@ -303,6 +303,7 @@ function prepare_for_ncurses () {
 			-e "s#brlport=.*#brlport=$Brailledevice#" /etc/suse-blinux.conf \
 		>/tmp/suse-blinux.conf
 		mv -f /tmp/suse-blinux.conf /etc
+		/etc/init.d/brld start
 		/etc/init.d/suse-blinux start
 	fi
 	fi
@@ -316,7 +317,7 @@ function prepare_for_ncurses () {
 #----[ prepare_for_ssh ]----#
 function prepare_for_ssh () {
 #------------------------------------------------------
-# prepare SSH installation 
+# prepare SSH installation
 # ---
 #
 	:
@@ -325,7 +326,7 @@ function prepare_for_ssh () {
 #----[ prepare_for_vnc ]----#
 function prepare_for_vnc () {
 #------------------------------------------------------
-# prepare VNC installation 
+# prepare VNC installation
 # ---
 #
 	#=============================================
@@ -548,7 +549,7 @@ function start_yast_and_reboot () {
 function start_yast_again () {
 #------------------------------------------------------
 # This function will restart yast again with the same
-# options as used before. The function is triggered by 
+# options as used before. The function is triggered by
 # the file /var/lib/YaST2/restart_yast
 # ---
 	if [ -f /var/lib/YaST2/restart_yast ];then
@@ -698,7 +699,7 @@ if [ ! -f $Xorgconftempl ];then
 else
 	cp $Xorgconftempl /etc/X11/xorg.conf
 fi
-fi 
+fi
 # 3.1.6) Check for WindowManager configuration
 if [ ! -f $Xsharedir/fvwm/fvwmrc.yast2 ];then
 	log "\tNo Windowmanager configuration found -> Medium Qt disabled"
