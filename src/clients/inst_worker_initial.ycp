@@ -92,7 +92,7 @@
     FinishInstallation (ret);
 
     // Created UI needs to be destroyed
-    UI::CloseDialog();
+    // UI::CloseDialog();
 
     return ret;
 }
