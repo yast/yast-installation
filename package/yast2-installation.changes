@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Jan 25 13:35:13 CET 2008 - locilka@suse.cz
+
+- Reduced Wizard redrawing in the installation workflow.
+
+-------------------------------------------------------------------
 Thu Jan 24 15:21:39 CET 2008 - aschnell@suse.de
 
 - start service brld before suse-blinux (bug #354769)
