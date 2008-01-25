@@ -45,7 +45,7 @@
         Wizard::SetTitleIcon("yast-inst-mode");
     }
 
-    void CreateUI () {
+    void SetUIContent () {
         // Wizard::OpenNextBackStepsDialog();
 	SetInitializingUI ();
     }
@@ -166,7 +166,6 @@ but something went wrong, that's why it is only in the log");
             ProductControl::DisabledModules = add (ProductControl::DisabledModules,
                 "disks_activate");
         }
-        retranslateWizardDialog();
     }
 
 } //end of include
