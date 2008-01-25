@@ -52,7 +52,9 @@
     SetSecondStageInstallation();
 
     // All stages
-    CreateUI();
+    SetUIContent();
+
+    SetDiskActivationModule();
 
     UpdateWizardSteps ();
 
@@ -70,8 +72,6 @@
     // All stages
     // Shows fallback message if running in textmode (if used as fallback)
     ShowTextFallbackMessage();
-
-    SetDiskActivationModule();
 
     ret = nil;
 
@@ -146,9 +146,6 @@
 
     // All Sources and Target need to be released...
     FinishInstallation (ret);
-
-    // Created UI needs to be destroyed
-    UI::CloseDialog();
 
     return ret;
 }
