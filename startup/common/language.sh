@@ -4,7 +4,7 @@
 # PROJECT       : YaST (Yet another Setup Tool v2)
 # COPYRIGHT     : (c) 2004 SUSE Linux AG, Germany. All rights reserved
 #               :
-# AUTHORS       : Marcus Schaefer <ms@suse.de> 
+# AUTHORS       : Marcus Schaefer <ms@suse.de>
 #               :
 #               :
 # BELONGS TO    : System installation and Administration
@@ -22,7 +22,7 @@ function check_run_fbiterm () {
 # handle the CJK language mangle on linux console
 # set flag value in RUN_FBITERM
 # ---
-	RUN_FBITERM=0 
+	RUN_FBITERM=0
 	if test "$MEM_TOTAL" -lt "57344" ; then
 		return
 	fi
