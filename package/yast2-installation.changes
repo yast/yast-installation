@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jan 28 13:00:19 CET 2008 - aschnell@suse.de
+
+- support Qt and Gtk frontend in startup scripts
+- 2.16.11
+
+-------------------------------------------------------------------
 Fri Jan 25 13:35:13 CET 2008 - locilka@suse.cz
 
 - Reduced Wizard redrawing in the installation workflow.
