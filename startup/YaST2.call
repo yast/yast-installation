@@ -16,11 +16,10 @@
 #               : according to the possible installation environments
 #               : These are:
 #               : ---
-#               : - Standard Installation Qt/X11 or text based
+#               : - Standard Installation X11 or text based
 #               : - Via serial line ttyS0/115200 baud, 8N1, RTS/CTS
 #               :   which is the same as the NCURSES mode
 #               : - VNC Installation via browser
-#               :
 #               :
 # STATUS        : $Id$
 #----------------
@@ -100,12 +99,12 @@ function get_bus_id () {
 	done
 }
 
-#----[ count_qt_geometry ]----#
-function count_qt_geometry () {
+#----[ count_x11_geometry ]----#
+function count_x11_geometry () {
     # current X-resolution, display 0
     XRES=$(/usr/sbin/xquery -d :0 -r)
 
-    log "\t===Qt Geometry==="
+    log "\t===X11 Geometry==="
     log "\tResolution: ${XRES}"
 
     # failed to get display info
@@ -181,16 +180,12 @@ function count_qt_geometry () {
     log "\tUsed geometry: ${X_GEOMETRY}"
 }
 
-#----[ prepare_for_qt ]----#
-function prepare_for_qt () {
+#----[ prepare_for_x11 ]----#
+function prepare_for_x11 () {
 #------------------------------------------------------
-# prepare Qt installation
+# prepare X11 installation
 # ---
 	local fbdevname
-	#=============================================
-	# Setup Qt environment
-	#---------------------------------------------
-	set_inst_qt_env
 	set_splash 100
 
 	#=============================================
@@ -239,7 +234,7 @@ function prepare_for_qt () {
 				# Let the X11 fbdev driver use whatever the kernel driver uses
 				platinum|control|valkyrie|OFfb)
 				;;
-				# Force DefaultDepth 16, or QT will not look nice
+				# Force DefaultDepth 16, or Qt/Gtk will not look nice
 				# nvidiafb uses 'NV%x'
 				# rivafb uses 'NV%x'
 				# aty128fb uses 'ATY Rage128'
@@ -272,12 +267,12 @@ function prepare_for_qt () {
 		fi
 	fi
 	#=============================================
-	# set YaST2 Qt options for local displays
+	# set YaST2 Qt/Gtk options for local displays
 	#---------------------------------------------
 	if [ ! -z "$NEED_XSERVER" ];then
 		Y2_UI_ARGS="--noborder --auto-fonts"
 ##* Bugzilla #208307 Use only the fullscreen mode
-##*		count_qt_geometry # currently not used
+##*		count_x11_geometry # currently not used
 ##*		if [ "${X_GEOMETRY}" == "" ]; then
 		    log "\tUI_args: Running in fullscreen mode"
 		    Y2_UI_ARGS="${Y2_UI_ARGS} --fullscreen"
@@ -287,6 +282,20 @@ function prepare_for_qt () {
 ##*		fi
 	fi
 }
+
+
+#----[ prepare_for_qt ]----#
+function prepare_for_qt () {
+    set_inst_qt_env
+    prepare_for_x11
+}
+
+
+#----[ prepare_for_gtk ]----#
+function prepare_for_gtk () {
+    prepare_for_x11
+}
+
 
 #----[ prepare_for_ncurses ]----#
 function prepare_for_ncurses () {
@@ -355,10 +364,10 @@ function prepare_for_vnc () {
 	fi
 }
 
-#----[ check_Qt ]----#
-function check_Qt () {
+#----[ check_x11 ]----#
+function check_x11 () {
 #------------------------------------------------------
-# check if the prepared medium Qt is valid
+# check if the prepared medium X11 (Qt/Gtk) is valid
 # ---
 	if [ ! -z "$NEED_XSERVER" ];then
 		if [ "$server_running" = 0 ];then
@@ -403,8 +412,12 @@ function check_network () {
 		Y2_MODE=qt
 	fi
 	if ! check_qt ; then
-		log "\tQt plugin check failed falling back to ncurses"
+	    log "\tQt plugin check failed falling back to Gtk"
+	    Y2_MODE=gtk
+	    if ! check_gtk ; then
+		log "\tGtk plugin check failed falling back to ncurses"
 		Y2_MODE=ncurses
+	    fi
 	fi
 }
 
@@ -628,22 +641,26 @@ LOG_PREFIX="Stage [call]"
 # 3) Medium prequalification
 #---------------------------------------------
 # Check which installation mediums can be used. There are
-# four mediums available: Qt(0) SSH(1), VNC(2) and NCURSES(3).
+# four mediums available: Qt(0) SSH(1), VNC(2), NCURSES(3) and Gtk(4).
 # The following checks will create an array which contains
 # the possible mediums. An index of 1 indicates "can be used"
 # an index of 0 indicated "cannot be used"
 # ---
-MEDIUM=(1 1 1 1)
+MEDIUM=(1 1 1 1 1)
 
 #=============================================
 # 3.1) prequalification checks for Qt
 #---------------------------------------------
 log "Starting prequalification checks..."
 log "==================================="
-# 3.1.1) Qt plugin check...
+# 3.1.1) Qt and Gtk plugin check...
 if ! check_qt ; then
 	log "\tQt plugin check failed -> Medium Qt disabled"
 	MEDIUM[0]=0
+fi
+if ! check_gtk ; then
+	log "\tGtk plugin check failed -> Medium Gtk disabled"
+	MEDIUM[4]=0
 fi
 # 3.1.2) X-Server module check...
 # BEG IA64: use accelerated X11 driver
@@ -652,8 +669,9 @@ ia64_check_x11
 XServerAccel=$XServer
 if [ "$XServer" = "vmware" ];then
 	if [ ! -f "$X11_DRIVER_DIR/${XServer}_drv.so" ];then
-		log "\t$XServer driver not installed -> Medium Qt disabled"
+		log "\t$XServer driver not installed -> Medium Qt and Gtk disabled"
 		MEDIUM[0]=0
+		MEDIUM[4]=0
 	fi
 	X11_CONFIG_ID=vmware
 else
@@ -663,8 +681,9 @@ else
 		XServer=vesa
 	fi
 	if [ ! -f "$X11_DRIVER_DIR/${XServer}_drv.so" ];then
-		log "\t$XServer driver not installed -> Medium Qt disabled"
+		log "\t$XServer driver not installed -> Medium Qt and Gtk disabled"
 		MEDIUM[0]=0
+		MEDIUM[4]=0
 	fi
 	X11_CONFIG_ID=$XServer
 fi
@@ -678,14 +697,16 @@ if [ "$acceleratedx" = "1" ];then
 			load_module intel-agp
 		fi
 		MEDIUM[0]=1
+		MEDIUM[4]=1
 		XServer=$XServerAccel
 		X11_CONFIG_ID=0
 	fi
 fi
 # 3.1.3) Memory check >= 90MB for Qt/X11...
 if [ $MEM_TOTAL -lt "$MEM_NEEDED" ];then
-	log "\tMemory requirement > 90MB not fulfilled -> Medium Qt disabled"
+	log "\tMemory requirement > 90MB not fulfilled -> Medium Qt and Gtk disabled"
 	MEDIUM[0]=0
+	MEDIUM[4]=0
 fi
 # 3.1.4) Check if we need to start our own X11 server...
 if [ -z "$DISPLAY" ];then
@@ -694,24 +715,27 @@ fi
 # 3.1.5) Check for xorg.conf...
 if [ ! -f /etc/X11/xorg.conf ];then
 if [ ! -f $Xorgconftempl ];then
-	log "\tNo X11 configuration template found -> Medium Qt disabled"
+	log "\tNo X11 configuration template found -> Medium Qt and Gtk disabled"
 	MEDIUM[0]=0
+	MEDIUM[4]=0
 else
 	cp $Xorgconftempl /etc/X11/xorg.conf
 fi
 fi
 # 3.1.6) Check for WindowManager configuration
 if [ ! -f $Xsharedir/fvwm/fvwmrc.yast2 ];then
-	log "\tNo Windowmanager configuration found -> Medium Qt disabled"
+	log "\tNo Windowmanager configuration found -> Medium Qt and Gtk disabled"
 	MEDIUM[0]=0
+	MEDIUM[4]=0
 fi
 # 3.1.7) Check for remote display usage
 if [ ! -z $Display_IP ];then
-	log "\tRemote Display usage -> Medium Qt enabled"
+	log "\tRemote Display usage -> Medium Qt and Gtk enabled"
 	log "\tExporting DISPLAY to host: $Display_IP:0.0"
 	export DISPLAY="$Display_IP:0.0"
 	NEED_XSERVER=""
 	MEDIUM[0]=1
+	MEDIUM[4]=1
 fi
 
 #=============================================
@@ -788,8 +812,22 @@ log "\tWished medium is: $SELECTED_MEDIUM"
 case $SELECTED_MEDIUM in
 	QT)  {
 		if [ ${MEDIUM[0]} -eq 0 ];then
-			log "\tMedium Qt not available, falling back to ncurses"
-			SELECTED_MEDIUM="NCURSES"
+			log "\tMedium Qt not available, falling back to Gtk"
+			SELECTED_MEDIUM="GTK"
+			if [ ${MEDIUM[4]} -eq 0 ];then
+				log "\tMedium Gtk not available, falling back to ncurses"
+				SELECTED_MEDIUM="NCURSES"
+			fi
+		fi
+	} ;;
+	GTK) {
+		if [ ${MEDIUM[4]} -eq 0 ];then
+			log "\tMedium Gtk not available, falling back to Qt"
+			SELECTED_MEDIUM="QT"
+			if [ ${MEDIUM[0]} -eq 0 ];then
+				log "\tMedium Qt not available, falling back to ncurses"
+				SELECTED_MEDIUM="NCURSES"
+			fi
 		fi
 	} ;;
 	SSH) {
@@ -812,6 +850,7 @@ log "\tSelected medium is: $SELECTED_MEDIUM"
 #---------------------------------------------
 case $SELECTED_MEDIUM in
 	QT)      prepare_for_qt      ; Y2_MODE=qt      ;;
+	GTK)     prepare_for_gtk     ; Y2_MODE=gtk     ;;
 	SSH)     prepare_for_ssh     ; Y2_MODE=ncurses ;;
 	VNC)     prepare_for_vnc     ; Y2_MODE=qt      ;;
 	NCURSES) prepare_for_ncurses ; Y2_MODE=ncurses ;;
@@ -821,7 +860,8 @@ esac
 # 7) Check prepared medium
 #---------------------------------------------
 case $SELECTED_MEDIUM in
-	QT)  check_Qt      ;;
+	QT)  check_x11     ;;
+	GTK) check_x11     ;;
 	SSH) check_network ;;
 	VNC) check_vnc     ;;
 esac
@@ -859,5 +899,4 @@ fi
 # 10) exit with YaST2 exit code
 #---------------------------------------------
 exit $Y2_EXIT_CODE
-
 
