@@ -286,6 +286,7 @@ Choose the new <b>Language</b> for your system.
 
     Wizard::SetContents (heading_text, contents, help_text,
 	argmap["enable_back"]:true , argmap["enable_next"]:true);
+    Wizard::EnableAbortButton ();
 
     UI::ChangeWidget (`id (`language), `Value, language);
 
