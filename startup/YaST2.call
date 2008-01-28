@@ -60,6 +60,8 @@ function wait_for_x11() {
 			# server is running, detach oom-killer from it
 			echo -n '-17' > /proc/$xserver_pid/oom_adj
 			server_running=1
+			# tweak server (see bnc #345186)
+			xset r on
 			break
 		fi
 	done
