@@ -76,7 +76,11 @@
      **/
 
     define void display_proposal( string proposal ) ``{
-	UI::ChangeWidget(`id(`proposal), `Value, proposal );
+	if (UI::WidgetExists (`id(`proposal))) {
+	    UI::ChangeWidget(`id(`proposal), `Value, proposal );
+	} else {
+	    y2error (-1, "Widget `proposal does not exist");
+	}
     };
 
 

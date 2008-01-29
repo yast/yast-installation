@@ -276,8 +276,9 @@ repeat {
     }
     // Use Sources defined by product
     else if (ret == `productsources) {
-	if (UI::WidgetExists (`id (`productsources)))
+	if (UI::WidgetExists (`id (`productsources))) {
 	    Installation::productsources_selected = (boolean) UI::QueryWidget (`id (`productsources), `Value);
+	}
 	ret = nil;
 	continue;
     }
@@ -372,7 +373,9 @@ if (ret == `next) {
 	    ProductControl::DisabledModules = add (ProductControl::DisabledModules, "inst_add-on");
 	}
 
-	Installation::productsources_selected = (boolean) UI::QueryWidget (`id (`productsources), `Value);
+	if (UI::WidgetExists (`id (`productsources))) {
+	    Installation::productsources_selected = (boolean) UI::QueryWidget (`id (`productsources), `Value);
+	}
 	ProductControl::DisabledModules = filter (string m, ProductControl::DisabledModules, {
 	    return m != "productsources" && m != "inst_productsources";
 	});
