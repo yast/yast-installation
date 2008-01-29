@@ -230,7 +230,7 @@ for this language."));
 		`Left (`Label (`opt(`boldFont), _("License Agreement"))),
 		`Left (`Label (_("License agreement is missing here.
 It will be added soon."))),
-		`Left (`CheckBox (`id (`license_agreement), `opt (`notify), _("I Do Agree to the License Terms."), InstData::product_license_accepted))
+		`Left (`CheckBox (`id (`license_agreement), `opt (`notify), _("I Do &Agree to the License Terms."), InstData::product_license_accepted))
 	    )
 	),
 	`VWeight (3, `VStretch())
