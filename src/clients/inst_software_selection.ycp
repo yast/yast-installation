@@ -4,7 +4,7 @@
  * Summary:	Replacement for Desktop Selection and Simple Pattern Selector
  * Authors:	Lukas Ocilka <locilka@suse.cz>
  *
- * $Id: $
+ * $Id:$
  *
  */
 
@@ -29,70 +29,28 @@ if (ProductFeatures::GetFeature ("software", "selection_type") == `fixed)
 
 boolean text_mode = UI::GetDisplayInfo()["TextMode"]:false;
 
-DefaultDesktop::Init();
-string default_desktop = DefaultDesktop::Desktop();
+if (DefaultDesktop::Desktop() == nil || DefaultDesktop::Desktop() == "") {
+    DefaultDesktop::Init();
+}
 
 // TRANSLATORS: help text 1/2
 string help = _("<p>This is a base selection where you can decide which common
 parts of the system will by installed.</p>") +
 
 // TRANSLATORS: help text 2/2
-_("<p>Select a <b>Type of System</b> that allows you to choose
+_("<p>Select a <b>System Type</b> that allows you to choose
 the base task of the system.</p>");
 
-/**
- * @struct $[
- *     "desktop ID" : $[
- *         "order" : integer,
- *         "label" : _("Desktop Name Visible in Dialog"),
- *         "description" : _("Description text of the desktop"),
- *         "patterns" : ["list", "of", "related", "patterns"],
- *         "icon" : "some-icon.png", // from the 22x22 directory of the current theme
- *     ],
- * ]
- */
-// Could be defined in control file
-map <string, map> all_desktops = $[
-    "gnome" :  $[
-	"order" : 1,
-	"label" : _("GNOME Desktop"),
-	"patterns" : ["gnome", "x11", "base"],
-	"icon" : "pattern-gnome",
-    ],
-    "kde" : $[
-	"order" : 1,
-	"label" : _("KDE Desktop"),
-	"patterns" : ["kde", "x11", "base"],
-	"icon" : "pattern-kde",
-    ],
-    "xfce" : $[
-	"order" : 4,
-	"label" : _("XFCE Desktop"),
-	"patterns" : ["xfce", "x11", "base"],
-	"icon" : "yast-tv",
-    ],
-    "min_x" : $[
-	"order" : 6,
-	"label" : _("Minimal X-Windows"),
-	"patterns" : ["x11", "base"],
-	"icon" : "yast-x11",
-    ],
-    "textmode" : $[
-	"order" : 8,
-	"label" : _("Minimal Server Selection (Text Mode)"),
-	"patterns" : ["base"],
-	"icon" : "yast-sshd",
-    ],
-];
-
+map <string, map> all_desktops = DefaultDesktop::GetAllDesktopsMap();
 
 void SelectSoftwareNow () {
-    y2milestone ("Selected desktop: %1", InstData::selected_desktop);
+    y2milestone ("Selected desktop: %1", DefaultDesktop::Desktop());
+    DefaultDesktop::SetDesktop (DefaultDesktop::Desktop());
 
     Packages::ForceFullRepropose();
     Packages::Reset ([`product]);
 
-    foreach (string one_pattern, (list <string>) all_desktops[InstData::selected_desktop, "patterns"]:[], {
+    foreach (string one_pattern, (list <string>) all_desktops[DefaultDesktop::Desktop(), "patterns"]:[], {
 	y2milestone ("Marking desktop pattern to be installed: %1", one_pattern);
 	Pkg::ResolvableInstall (one_pattern, `pattern);
     });
@@ -160,7 +118,7 @@ term contents = `HBox (
 	`MinWidth (38, `VBox (
 	    `VWeight (5, `VStretch()),
 	    // TRANSLATORS: Label (of a Radio button group)
-	    `Left (`Label (`opt(`boldFont), _("Type of System"))),
+	    `Left (`Label (`opt(`boldFont), _("Select a System Type"))),
 	    `RadioButtonGroup (
 		`id ("selected_desktop"),
 		`opt (`hstretch),
@@ -194,15 +152,12 @@ Wizard::SetTitleIcon ("yast-desktop-select");
 // Adjust default values
 if (! UI::WidgetExists (`id ("selected_desktop"))) {
     y2error (-1, "Widget selected_desktop does not exist");
-} else if (InstData::selected_desktop != nil && InstData::selected_desktop != "") {
-    y2milestone ("Already selected desktop: %1", InstData::selected_desktop);
-    UI::ChangeWidget (`id ("selected_desktop"), `Value, GetDesktopRadioButtonId (InstData::selected_desktop));
-} else if (default_desktop != nil && default_desktop != "") {
-    y2milestone ("Pre-selected desktop: %1", default_desktop);
-    UI::ChangeWidget (`id ("selected_desktop"), `Value, GetDesktopRadioButtonId (default_desktop));
+} else if (DefaultDesktop::Desktop() != nil && DefaultDesktop::Desktop() != "") {
+    y2milestone ("Already selected desktop: %1", DefaultDesktop::Desktop());
+    UI::ChangeWidget (`id ("selected_desktop"), `Value, GetDesktopRadioButtonId (DefaultDesktop::Desktop()));
 }
 
-RedrawSelDesktopInfo (InstData::selected_desktop);
+RedrawSelDesktopInfo (DefaultDesktop::Desktop());
 
 // UI wait loop
 any ret = nil;
@@ -216,9 +171,9 @@ while (true) {
 	    RedrawSelDesktopInfo (currently_selected);
     } else if (ret == `next) {
 	string currently_selected = (string) UI::QueryWidget (`id ("selected_desktop"), `Value);
-	InstData::selected_desktop = regexpsub (tostring (currently_selected), "^selected_desktop_(.*)", "\\1");
+	DefaultDesktop::SetDesktop (regexpsub (tostring (currently_selected), "^selected_desktop_(.*)", "\\1"));
 
-	if (InstData::selected_desktop != nil && haskey (all_desktops, InstData::selected_desktop)) {
+	if (DefaultDesktop::Desktop() != nil && haskey (all_desktops, DefaultDesktop::Desktop())) {
 	    SelectSoftwareNow ();
 	    break;
 	}

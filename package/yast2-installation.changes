@@ -4,6 +4,8 @@ Tue Jan 29 17:34:03 CET 2008 - locilka@suse.cz
 - New desktop selection dialog without system task combo-boxes.
   System selection with icons (bnc #356926).
 - More UI checking in dialogs.
+- Unified DefaultDesktop module and software/desktop selection
+  dialog in installation.
 
 -------------------------------------------------------------------
 Mon Jan 28 13:00:19 CET 2008 - aschnell@suse.de
