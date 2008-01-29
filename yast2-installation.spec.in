@@ -15,8 +15,8 @@ Requires:	yast2 >= 2.16.16
 Requires:	yast2-bootloader
 # Newly created RPM
 Requires:	yast2-country-data >= 2.16.3
-# AddOnProduct::skip_add_ons
-Requires:	yast2-packager >= 2.15.75
+# New System-selection data and API DefaultDesktop module
+Requires:	yast2-packager >= 2.16.17
 
 # Only in inst-sys
 # Requires:	yast2-runlevel
