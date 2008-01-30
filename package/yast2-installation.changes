@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Jan 30 09:51:42 CET 2008 - locilka@suse.cz
+
+- Added -noreset option to the VNC startup script (BNC #351338).
+
+-------------------------------------------------------------------
 Tue Jan 29 17:34:03 CET 2008 - locilka@suse.cz
 
 - New desktop selection dialog without system task combo-boxes.
