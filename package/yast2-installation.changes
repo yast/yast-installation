@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jan 30 14:15:50 CET 2008 - fehr@suse.de
+
+- Add installation step for disk partitioning between time zone
+  and software selection
+- put user config after disk partitioning
+
+-------------------------------------------------------------------
 Wed Jan 30 09:51:42 CET 2008 - locilka@suse.cz
 
 - Added -noreset option to the VNC startup script (bnc #351338).
