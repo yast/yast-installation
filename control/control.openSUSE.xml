@@ -286,9 +286,13 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     </arguments>
 		    <enable_back>yes</enable_back>
                 </module>
-                <module>
-	            <label>Software Selection</label>
-                    <name>software_selection</name>
+		<module>
+		    <label>User Settings</label>
+		    <name>user_first</name>
+                </module>
+		<module>
+		    <label>Software Selection</label>
+		    <name>software_selection</name>
                 </module>
 		<module>
 		    <heading>yes</heading>
