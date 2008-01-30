@@ -122,12 +122,8 @@ YaST Installation - auto-generated documentation.
 # programs and scripts
 @ystartupdir@/startup
 
-# fvwmrc
-%if 0%{?suse_version} <= 1010
-%{prefix}/X11R6/share/fvwm/
-%else
-%{prefix}/share/fvwm/
-%endif
+# icewm
+/etc/icewm
 
 %dir @docdir@
 @docdir@/COPYING

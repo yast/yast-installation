@@ -1,12 +1,11 @@
-# Makefile.am for installation/vendor
+# Makefile.am for installation/src/config
 
 desktop_DATA = release_notes.desktop
 
-fvwm_DATA = fvwmrc.yast2
+# FIXME
+icewmdir= /etc/icewm
+icewm_DATA = preferences.yast2
 
-rncdir =  $(schemadir)/autoyast/rnc
-rnc_DATA = 
-
-EXTRA_DIST = $(desktop_DATA) $(fvwm_DATA) $(rnc_DATA)
+EXTRA_DIST = $(desktop_DATA) $(icewm_DATA)
 
 include $(top_srcdir)/Makefile.am.common
