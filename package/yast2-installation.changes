@@ -1,9 +1,10 @@
 -------------------------------------------------------------------
 Wed Jan 30 09:51:42 CET 2008 - locilka@suse.cz
 
-- Added -noreset option to the VNC startup script (BNC #351338).
+- Added -noreset option to the VNC startup script (bnc #351338).
 - Added inst_user_first.ycp call to the control file right before
   the installation proposal.
+- Fixed visibility of ZMD Turnoff checkbox (bnc #356655).
 
 -------------------------------------------------------------------
 Tue Jan 29 17:34:03 CET 2008 - locilka@suse.cz
