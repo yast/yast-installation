@@ -56,8 +56,8 @@ textdomain="control"
         <root_space_percent>40</root_space_percent>
         <root_base_size>5G</root_base_size>
         <root_max_size>20G</root_max_size>
-	<proposal_lvm>false</proposal_lvm>
-	<proposal_evms>false</proposal_evms>
+	<proposal_lvm config:type="boolean">false</proposal_lvm>
+	<proposal_evms config:type="boolean">false</proposal_evms>
 	<vm_desired_size>15G</vm_desired_size>
 	<vm_home_max_size>25G</vm_home_max_size>
 	<boot_evms>false</boot_evms>
@@ -287,12 +287,18 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		    <enable_back>yes</enable_back>
                 </module>
 		<module>
-		    <label>User Settings</label>
-		    <name>user_first</name>
-                </module>
-		<module>
 		    <label>Software Selection</label>
 		    <name>software_selection</name>
+                </module>
+	        <module>
+		    <label>Disk</label>
+		    <name>disk_proposal</name>
+		    <enable_back>yes</enable_back>
+		    <enable_next>yes</enable_next>
+		</module>
+		<module>
+		    <label>User Settings</label>
+		    <name>user_first</name>
                 </module>
 		<module>
 		    <heading>yes</heading>
