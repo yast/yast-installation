@@ -78,8 +78,10 @@ function startVNCServer () {
 	VNC_HOSTNAME=`hostname`
 	#==========================================
 	# Start Xvnc...
+	# For -noreset see BNC #351338
 	#------------------------------------------
 	$Xbindir/Xvnc $Xvncparam :0 \
+		-noreset \
 		-rfbauth /root/.vnc/passwd.yast \
 		-desktop "Installation at: $VNC_HOSTNAME" \
 		-geometry 800x600 \
