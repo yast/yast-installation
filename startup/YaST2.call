@@ -469,7 +469,7 @@ function set_yast_background () {
 	    fi
 
 	    # set the background
-	    fvwm-root --dither ${BACKGROUND_IMAGE}
+	    # FIXME
 
 	    # remove PNG silently if exists
 	    rm -rf ${TMPDIR}/img.png
@@ -725,7 +725,7 @@ else
 fi
 fi
 # 3.1.6) Check for WindowManager configuration
-if [ ! -f $Xsharedir/fvwm/fvwmrc.yast2 ];then
+if [ ! -f /etc/icewm/preferences.yast2 ];then
 	log "\tNo Windowmanager configuration found -> Medium Qt and Gtk disabled"
 	MEDIUM[0]=0
 	MEDIUM[4]=0
@@ -755,7 +755,7 @@ fi
 # 3.3) prequalification checks for VNC
 #---------------------------------------------
 # 3.3.1) Check for WindowManager configuration
-if [ ! -f $Xsharedir/fvwm/fvwmrc.yast2 ];then
+if [ ! -f /etc/icewm/preferences.yast2 ];then
 	log "\tNo Windowmanager configuration found -> Medium VNC disabled"
 	MEDIUM[2]=0
 fi
