@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Wed Jan 30 12:19:35 CET 2008 - locilka@suse.cz
 
-- Fixed visibility of ZMD Turnoff checkbox (#356655).
+- Fixed visibility of ZMD Turnoff checkbox (bnc #356655).
 - 2.13.203
 
 -------------------------------------------------------------------
