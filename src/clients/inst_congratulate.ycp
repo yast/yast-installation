@@ -64,37 +64,37 @@
     // See FATE #302495
     // Param 'show_zmd_turnoff_checkbox' says whether the checkbox for stopping and
     // disabling ZMD should be shown
-    boolean show_zmd_turnoff_checkbox = (boolean) argmap["show_zmd_turnoff_checkbox"]:false;
+    boolean show_zmd_turnoff_checkbox = (argmap["show_zmd_turnoff_checkbox"]:"no" == "yes");
+
     // Param 'zmd_turnoff_default_state' says whether the checkbox is selected or
     // not by default
-    boolean turnoff_zmd_default_state = (boolean) argmap["zmd_turnoff_default_state"]:false;
+    boolean turnoff_zmd_default_state = (argmap["zmd_turnoff_default_state"]:"no" == "yes");
+
+    boolean zmd_installed = Package::Installed (zmd_package_name);
+    // don't check for state a service that is not installed
+    boolean zmd_enabled_or_running = (zmd_installed && (Service::Enabled (zmd_service_name) || Service::Status (zmd_service_name) == 0));
+    y2milestone ("ZMD Installed: %1, Enabled/Running: %2", zmd_installed, zmd_enabled_or_running);
+    y2milestone ("Show TurnOffZMD checkbox: %1, default state: %2", show_zmd_turnoff_checkbox, turnoff_zmd_default_state);
 
     // + 'show_zmd_turnoff_checkbox'
     // + ZMD package needs to be installed
     // + ZMD service needs to be enabled
-    if (
-	show_zmd_turnoff_checkbox == true &&
-	Package::Installed (zmd_package_name) &&
-	(Service::Enabled (zmd_service_name) || Service::Status (zmd_service_name) == 0)
-    ) {
-	show_zmd_turnoff_checkbox = true;
-	turnoff_zmd_default_state = (ProductFeatures::GetBooleanFeature ("software", "zmd_turnoff_default_state") == true);
-
+    if (show_zmd_turnoff_checkbox && zmd_installed && zmd_enabled_or_running) {
 	check_box_turnoff_zmd = `CheckBox (
 	    `id (`turnoff_zmd),
 	    // TRANSLATORS: check box, see #ZMD
 	    _("&Disable ZMD Service"),
-	    // (boolean) control_file->software->zmd_turnoff_default_state
-	    //           says whether the checkbox is selected or not by default
+	    // control_file->software->zmd_turnoff_default_state
+	    // says whether the checkbox is selected or not by default
 	    turnoff_zmd_default_state
 	);
 
 	// TRANSLATORS: help text, see #ZMD
 	turnoff_zmd_help = _("<p>Select <b>Disable ZMD Service</b> to stop and disable
 the ZMD service during the system start.</p>");
+    } else {
+	y2milestone ("ZMD Turnoff check-box will be invisible");
     }
-
-    y2milestone ("Show TurnOffZMD checkbox: %1, default state: %2", show_zmd_turnoff_checkbox, turnoff_zmd_default_state);
 
     map display = UI::GetDisplayInfo();
     integer space = display["TextMode"]:true ? 1 : 3;

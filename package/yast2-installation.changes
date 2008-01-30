@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jan 30 12:19:35 CET 2008 - locilka@suse.cz
+
+- Fixed visibility of ZMD Turnoff checkbox (#356655).
+- 2.13.203
+
+-------------------------------------------------------------------
 Thu Jan 17 12:56:30 CET 2008 - jsrain@suse.cz
 
 - merged texts from proofread
