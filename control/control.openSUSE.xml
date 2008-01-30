@@ -305,7 +305,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		    <label>Installation</label>
 		</module>
                 <module>
-	            <label>Installation Settings</label>
+	            <label>Installation Overview</label>
                     <name>proposal</name>
                     <proposal>initial</proposal>
                 </module>
