@@ -16,7 +16,8 @@ Requires:	yast2-bootloader
 # Newly created RPM
 Requires:	yast2-country-data >= 2.16.3
 # New System-selection data and API DefaultDesktop module
-Requires:	yast2-packager >= 2.16.17
+# New API in ProductLicense
+Requires:	yast2-packager >= 2.16.18
 
 # Only in inst-sys
 # Requires:	yast2-runlevel

@@ -40,8 +40,9 @@
     import "Wizard";
     import "Icon";
     import "InstData";
+    import "ProductLicense";
 
-    string language		= Language::language;
+    string language = Language::language;
 
     /**
      * check if selected language has support on media (F301238)
@@ -69,30 +70,6 @@ for this language."));
 	}
     }
 
-
-/*
-    define void update_adapt_term () {
-
-	string kb = Keyboard::GetKeyboardForLanguage (language, "english-us");
-	string tz = Timezone::GetTimezoneForLanguage (language, "US/Mountain");
-
-	string kbd_name	= Keyboard::Selection ()[kb]:"";
-	string tmz_name	= Timezone::GetTimezoneCountry (tz);
-
-	UI::ReplaceWidget (`id(`rpadapt), `VBox (
-	    `Left (`CheckBox (`id (`adapt_kbd),
-		// check box label (%1 is keyboard layout name)
-		sformat(_("Adapt &Keyboard Layout to %1"),kbd_name))),
-	    `Left (`CheckBox (`id (`adapt_tmz),
-		// check box label (%1 is country name)
-		sformat (_("Adapt &Time Zone to %1"), tmz_name)))
-	));
-
-	UI::ChangeWidget(`id(`adapt_kbd),`Enabled, kb != Keyboard::current_kbd);
-	UI::ChangeWidget(`id(`adapt_tmz),`Enabled, tz != Timezone::timezone);
-    }
-*/
-
     // ------------------------------------- main part of the client -----------
 
     map argmap = GetInstArgs::argmap();
@@ -105,17 +82,6 @@ for this language."));
     y2milestone("set_default: %1", set_default );
 
     string preselected = Language::preselected;
-
-    if (preselected != "en_US" && set_default)
-    {
-	if (ProductFeatures::GetBooleanFeature ("globals", "skip_language_dialog"))
-	{
-	    y2milestone("Skipping language dialog, Language changed to %1",preselected);
-	    check_languages_support (preselected);
-	    Language::selection_skipped	= true;
-	    return `auto;
-	}
-    }
 
     list<string>languages	= splitstring (Language::languages, ",");
 
@@ -130,7 +96,7 @@ for this language."));
 
     // set up selection list with default item
 
-    boolean use_ascii	= Language::GetTextMode ();
+    boolean text_mode	= Language::GetTextMode ();
 
    /* ----------------------------------------------------------------------
     * Build dialog
@@ -149,7 +115,7 @@ for this language."));
 	    string key	= lang_info [1]:lang_code;
 	    return $[
 		key		: [
-		    lang_info[use_ascii ? 1 : 0]:"",
+		    lang_info[text_mode ? 1 : 0]:"",
 		    lang_code,
 		    lang_info[2]:key
 		]
@@ -228,13 +194,42 @@ for this language."));
 	`HSquash (
 	    `VBox (
 		`Left (`Label (`opt(`boldFont), _("License Agreement"))),
-		`Left (`Label (_("License agreement is missing here.
-It will be added soon."))),
-		`Left (`CheckBox (`id (`license_agreement), `opt (`notify), _("I Do &Agree to the License Terms."), InstData::product_license_accepted))
+		`HSquash(`MinSize (
+		    60,
+		    (text_mode ? 9:13),
+		    `Left (`ReplacePoint (`id (`base_license_rp), `Empty()))
+		)),
+		`VSpacing (text_mode ? 0.1 : 0.5),
+		`HBox (
+		    `Left (`CheckBox (
+			// TRANSLATORS: check-box
+			`id (`license_agreement), `opt (`notify), _("I Do &Agree to the License Terms."), InstData::product_license_accepted
+		    )),
+		    `VStretch (),
+		    // TRANSLATORS: button label
+		    `Right (`PushButton (`id (`show_fulscreen_license), _("Show In Full-Screen...")))
+		)
 	    )
 	),
 	`VWeight (3, `VStretch())
     );
+
+    term FullScreenLicenseDialog () {
+	return `VBox (
+	    `Left (`HBox (
+		Icon::Simple ("yast-license"),
+		// TRANSLATORS: dialog caption
+		`Heading (_("License Agreement"))
+	    )),
+	    `VSpacing (text_mode ? 0.1 : 0.5),
+	    `HSpacing (60),
+	    `MinHeight (
+		(text_mode ? 20 : 25),
+		`ReplacePoint (`id (`full_screen_license_rp), `Empty())
+	    ),
+	    `PushButton (`id (`close), Label::OKButton())
+	);
+    }
 
     string help_text		= "";
     // help text (language dependent packages) - at the end of help
@@ -412,6 +407,13 @@ installation, but the selected language will be used for the new system."));
 	return false;
     }
 
+    ProductLicense::ShowLicenseInInstallation (`base_license_rp);
+
+    // bugzilla #206706
+    if (Mode::autoinst()) {
+	return `auto;
+    }
+
     while (true) {
 	ret = UI::UserInput();
 	y2milestone ("UserInput() returned %1", ret);
@@ -450,6 +452,10 @@ installation, but the selected language will be used for the new system."));
 	    }
 
 	    if (ret == `next) break;
+	} else if (ret == `show_fulscreen_license) {
+	    UI::OpenDialog (FullScreenLicenseDialog());
+	    ProductLicense::ShowFullScreenLicenseInInstallation (`full_screen_license_rp);
+	    UI::CloseDialog();
 	}
     }
 

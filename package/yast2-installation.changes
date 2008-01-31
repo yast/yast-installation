@@ -1,7 +1,16 @@
 -------------------------------------------------------------------
+Thu Jan 31 11:14:46 CET 2008 - locilka@suse.cz
+
+- Added docu. for *_finish scripts (needed for FATE #302980).
+- Welcome dialog can newly show the license according to the just
+  selected language and also show other lozalizations if needed.
+- 2.16.13
+
+-------------------------------------------------------------------
 Wed Jan 30 15:22:29 CET 2008 - aschnell@suse.de
 
 - Use icewm instead of fvwm during installation (bnc #357240)
+- 2.16.12
 
 -------------------------------------------------------------------
 Wed Jan 30 14:15:50 CET 2008 - fehr@suse.de
