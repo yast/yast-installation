@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Jan 31 15:02:56 CET 2008 - jsuchome@suse.cz
+
+- call users_finish.ycp from inst_finish.ycp (FATE #302980)
+
+-------------------------------------------------------------------
 Thu Jan 31 12:58:42 CET 2008 - locilka@suse.cz
 
 - Fixed inst_restore_settings client: NetworkDevices are now
