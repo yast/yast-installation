@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jan 31 12:58:42 CET 2008 - locilka@suse.cz
+
+- Fixed inst_restore_settings client: NetworkDevices are now
+  NetworkInterfaces.
+- 2.16.14
+
+-------------------------------------------------------------------
 Thu Jan 31 11:14:46 CET 2008 - locilka@suse.cz
 
 - Added docu. for *_finish scripts (needed for FATE #302980).

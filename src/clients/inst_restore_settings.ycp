@@ -14,7 +14,7 @@ textdomain "installation";
 
 import "GetInstArgs";
 import "Service";
-import "NetworkDevices";
+import "NetworkInterfaces";
 import "SuSEFirewall";
 
 if(GetInstArgs::going_back())
@@ -33,7 +33,7 @@ foreach (string service, ["network"], {
     }
 });
 
-NetworkDevices::Read ();
+NetworkInterfaces::Read ();
 
 // bugzilla #282871
 // If firewall is enabled, only the initial script is started.
