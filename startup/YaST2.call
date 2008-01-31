@@ -315,7 +315,7 @@ function prepare_for_ncurses () {
 		>/tmp/suse-blinux.conf
 		mv -f /tmp/suse-blinux.conf /etc
 		/etc/init.d/brld start
-		/etc/init.d/suse-blinux start
+		/etc/init.d/sbl start
 	fi
 	fi
 	#=============================================
