@@ -10,8 +10,10 @@ TitleButtonsRight=""
 # Show only Move, Size and Close in the window menu
 WinMenuItems="msc"
 
-# Disable Alt+Tab
-QuickSwitch=0
+# Enable Alt+Tab
+QuickSwitch=1
+KeySysSwitchNext="Alt+Tab"
+KeySysSwitchLast="Alt+Shift+Tab"
 
 # Colors
 ColorActiveTitleBar="rgb:4e/6f/9f"
@@ -24,7 +26,7 @@ DlgBorderSizeX=3
 DlgBorderSizeY=3
 
 # Disable most shortcuts
-# :r !grep -o '\<Key[^=]*' /etc/icewm/preferences  | sed 's/$/=""/'
+# :r !grep -o '\<Key[^=]*' /etc/icewm/preferences | grep -v Switch | sed 's/$/=""/'
 KeyWinRaise=""
 KeyWinOccupyAll=""
 KeyWinLower=""
@@ -51,8 +53,6 @@ KeyWinArrangeSW=""
 KeyWinArrangeW=""
 KeyWinArrangeNW=""
 KeyWinArrangeC=""
-KeySysSwitchNext=""
-KeySysSwitchLast=""
 KeySysWinNext=""
 KeySysWinPrev=""
 KeySysWinMenu=""
