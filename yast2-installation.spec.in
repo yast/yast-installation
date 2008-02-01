@@ -3,18 +3,23 @@
 
 @HEADER@
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2-core-devel yast2-devtools yast2-testsuite
-# Mode::live_installation
-BuildRequires:	yast2 >= 2.15.38
+
+# URL::MakeParamsFromMap and URL::MakeMapFromParams
+BuildRequires:	yast2 >= 2.16.25
 
 Requires:       autoyast2-installation
-# Progress::NewProgressIcons
-# Icon YCP module
-Requires:	yast2 >= 2.16.16
+
+# URL::MakeParamsFromMap and URL::MakeMapFromParams
+Requires:	yast2 >= 2.16.25
+
 # Required in in the first stage, after
 # switching to the installed system, bugzilla #249679
+
 Requires:	yast2-bootloader
 # Newly created RPM
+
 Requires:	yast2-country-data >= 2.16.3
+
 # New System-selection data and API DefaultDesktop module
 # New API in ProductLicense
 Requires:	yast2-packager >= 2.16.18
