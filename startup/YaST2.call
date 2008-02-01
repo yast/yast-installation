@@ -261,7 +261,7 @@ function prepare_for_x11 () {
 	if [ ! -z "$NEED_XSERVER" ];then
 		export DISPLAY=:0
 		[ -z $Xstartpath ] || ln -snf $Xbindir/XFree86 /var/X11R6/bin/X
-		$Xexecutable -deferglyphs 16 2>/dev/tty8 1>&2 vt07 &
+		$Xexecutable -br -deferglyphs 16 2>/dev/tty8 1>&2 vt07 &
 		xserver_pid=$!
 		wait_for_x11
 		if [ "$server_running" = 1 ];then
