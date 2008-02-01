@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Feb  1 16:08:26 CET 2008 - locilka@suse.cz
+
+- Added new InstExtensionImage module for integration of modular
+  inst-sys images on-the-fly (FATE #302955).
+
+-------------------------------------------------------------------
 Thu Jan 31 19:05:49 CET 2008 - aschnell@suse.de
 
 - reflect init-script rename from suse-blinux to sbl
