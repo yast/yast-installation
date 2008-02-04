@@ -11,6 +11,7 @@
  * (localization, fonts, ...) and merge them to the current int-sys.
  * This enables inst-sys to be modular even for running YaST.
  * See FATE #302955: 'Split translations out of installation system'.
+ * This module is strictly installation-only!
  */
 
 {
@@ -20,6 +21,9 @@
 
     import "Linuxrc";
     import "URL";
+    import "String";
+    import "Directory";
+    import "FileUtils";
 
     /***
      *
@@ -69,6 +73,18 @@
      * This module remembers downloading a file so it does not
      * download any file twice.
      *
+     * Additional comments on the "Installation Workflow":
+     *
+     *   * When Linuxrc starts loading an initial translation
+     *     might already been selected. Linuxrc will download
+     *     and merge the pre-selected translation itself.
+     *   * Then Linuxrc starts YaST. YaST initializes itself
+     *     including translations and displays the language
+     *     dialog translated.
+     *   * After a different language is selected, YaST downloads
+     *     a localization inst-sys extension and merges it.
+     *   * Then a different locale is selected and YaST redraws
+     *     reruns the current YCP client.
      */
 
     // nfs://.../, cd:/, http://.../any/
@@ -78,6 +94,11 @@
     // if there are any params $url?param1=xx&param2=...
     // always only params
     string base_url_params = "";
+
+    // Directory used for storing images
+    string base_tmpdir = sformat ("%1/%2/", Directory::tmpdir, "instsys_extensions");
+    // Directory used for mounting images
+    string base_mounts = sformat ("%1/%2/", Directory::tmpdir, "instsys_extmounts");
 
     boolean initialized = false;
 
@@ -244,14 +265,101 @@
 	// final params
 	base_url_params = MergeURLsParams (repo_url, inst_sys_url);
 	y2milestone ("Base URL params: %1", base_url_params);
+
+	map run = (map) WFM::Execute (.local.bash_output,
+	    sformat ("/bin/mkdir -p '%1'", String::Quote (base_tmpdir))
+	);
+	if (run["exit"]:-1 != 0) {
+	    y2error ("Cannot create temporary directory: %1: %2", base_tmpdir, run);
+	}
+
+	run = (map) WFM::Execute (.local.bash_output,
+	    sformat ("/bin/mkdir -p '%1'", String::Quote (base_mounts))
+	);
+	if (run["exit"]:-1 != 0) {
+	    y2error ("Cannot create mounts directory: %1: %2", base_mounts, run);
+	}
     }
 
     // Already downloaded (and mounted and merged) files
     list <string> already_downloaded_files = [];
 
-    // Just for testing
-    global void RemoveThisFunction () {
+    /**
+     * Downloads extension archive (file system image) and integrates
+     * it to the current system.
+     *
+     * @param string extension name
+     * @return boolean if successful
+     */
+    global boolean DownloadAndIntegrateExtension (string extension) {
+	if (extension == nil || extension == "") {
+	    y2error ("Such extension name can't work: %1", extension);
+	}
+
+	// Every single GLOBAL function has to use LazyInit!
 	LazyInit();
+
+	// download from
+	// extension='aaa' -> http://inst_base_url/aaa/?base_url_params
+	string extension_url = sformat ("%1%2?%3", base_url, extension, base_url_params);
+
+	// download to extension='aaa' -> /tmp/YaST.SomeMoreLetters/special/dir/aaa
+	string extension_localfile = sformat ("%1%2", base_tmpdir, extension);
+
+	if (contains (already_downloaded_files, extension_url)) {
+	    y2milestone ("File %1 has already been downloaded", extension_url);
+	    return true;
+	}
+
+	// Downloading the extension
+	string cmd = sformat ("/lbin/wget -v '%1' '%2'", String::Quote (extension_url), String::Quote (extension_localfile));
+	map cmd_run = (map) WFM::Execute (.local.bash_output, cmd);
+
+	if (cmd_run["exit"]:-1 != 0 || ! FileUtils::Exists (extension_localfile)) {
+	    y2error ("Cannot download extension '%1': %2", cmd, cmd_run);
+	    return false;
+	} else {
+	    already_downloaded_files = add (already_downloaded_files, extension_url);
+	    y2milestone ("Downloaded: %1 -> %2 (size: %3)", extension_url, extension_localfile, FileUtils::GetSize (extension_localfile));
+	}
+
+	// FIXME: Check SHA1sum against /content file
+
+	// Creating subdir for extension to be mounted
+	string extension_mount = sformat ("%1%2/", base_mounts, extension);
+	cmd_run = (map) WFM::Execute (.local.bash_output,
+	    sformat ("/bin/mkdir -p '%1'", String::Quote (extension_mount))
+	);
+
+	if (cmd_run["exit"]:-1 != 0) {
+	    y2error ("Cannot create mounts directory: %1: %2", base_mounts, cmd_run);
+	    return false;
+	}
+
+	// Mounting the extension
+	cmd = sformat ("/bin/mount '%1' '%2'", String::Quote (extension_localfile), String::Quote (extension_mount));
+	cmd_run = (map) WFM::Execute (.local.bash_output, cmd);
+
+	if (cmd_run["exit"]:-1 != 0) {
+	    y2error ("Cannot mount extension '%1': %2", cmd, cmd_run);
+	    return false;
+	} else {
+	    y2milestone ("Mounted: %1 -> %2", extension_localfile, extension_mount);
+	}
+
+	// Link items in the mounted directory to inst-sys
+	string where_to_lndir = "/";
+	cmd = sformat ("/lbin/lndir '%1' '%2'", String::Quote (extension_mount), String::Quote (where_to_lndir));
+	cmd_run = (map) WFM::Execute (.local.bash_output, cmd);
+
+	if (cmd_run["exit"]:-1 != 0) {
+	    y2error ("Cannot >lndir '%1': %2", cmd, cmd_run);
+	    return false;
+	} else {
+	    y2milestone ("Lndir successful: %1 to %2", extension_mount, where_to_lndir);
+	}
+
+	return true;
     }
 /* EOF */
 }

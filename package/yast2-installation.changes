@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Feb  4 19:04:29 CET 2008 - locilka@suse.cz
+
+- Modular inst-sys used for localizations (FATE #302955).
+- Tabs have been removed from installation proposal.
+- 2.16.16
+
+-------------------------------------------------------------------
 Fri Feb  1 16:08:26 CET 2008 - locilka@suse.cz
 
 - Added new InstExtensionImage module for integration of modular

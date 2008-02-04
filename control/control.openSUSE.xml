@@ -117,6 +117,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <proposal_module>language</proposal_module>
                 <proposal_module>runlevel</proposal_module>
             </proposal_modules>
+<!--
             <proposal_tabs config:type="list">
                 <proposal_tab>
                     <label>Overview</label>
@@ -141,6 +142,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     </proposal_modules>
                 </proposal_tab>
             </proposal_tabs>
+-->
         </proposal>
 
         <proposal>
