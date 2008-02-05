@@ -409,8 +409,11 @@ Some texts may be displayed in English.
     // Returns true if the dialog needs redrawing
     boolean SetLanguageIfChanged (any ret) {
 	if (Stage::initial()) {
+	    // TRANSLATORS: busy message
+	    UI::OpenDialog (`Label (_("Downloading installation system language extension...")));
 	    // FATE #302955: Split translations out of installation system
 	    InstExtensionImage::DownloadAndIntegrateExtension (GetLanguageExtensionFilename (language));
+	    UI::CloseDialog();
 	}
 
 	if (language != Language::language) {

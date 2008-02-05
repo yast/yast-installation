@@ -337,7 +337,7 @@
 	}
 
 	// Mounting the extension
-	cmd = sformat ("/bin/mount '%1' '%2'", String::Quote (extension_localfile), String::Quote (extension_mount));
+	cmd = sformat ("/bin/mount -o loop '%1' '%2'", String::Quote (extension_localfile), String::Quote (extension_mount));
 	cmd_run = (map) WFM::Execute (.local.bash_output, cmd);
 
 	if (cmd_run["exit"]:-1 != 0) {
