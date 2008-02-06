@@ -271,15 +271,15 @@ for this language."));
 		    `Left (`ReplacePoint (`id (`base_license_rp), `Empty()))
 		)),
 		`VSpacing (text_mode ? 0.1 : 0.5),
-		`HBox (
+		`MinHeight (1, `HBox (
 		    `Left (`CheckBox (
 			// TRANSLATORS: check-box
 			`id (`license_agreement), `opt (`notify), _("I Do &Agree to the License Terms."), InstData::product_license_accepted
 		    )),
 		    `VStretch (),
 		    // TRANSLATORS: button label
-		    `Right (`PushButton (`id (`show_fulscreen_license), _("Show In Full-Screen...")))
-		)
+		    `Right (`PushButton (`id (`show_fulscreen_license), _("&Show In Full-Screen...")))
+		))
 	    )
 	),
 	`VWeight (3, `VStretch())
@@ -408,12 +408,18 @@ Some texts may be displayed in English.
 
     // Returns true if the dialog needs redrawing
     boolean SetLanguageIfChanged (any ret) {
-	if (Stage::initial()) {
-	    // TRANSLATORS: busy message
-	    UI::OpenDialog (`Label (_("Downloading installation system language extension...")));
-	    // FATE #302955: Split translations out of installation system
-	    InstExtensionImage::DownloadAndIntegrateExtension (GetLanguageExtensionFilename (language));
-	    UI::CloseDialog();
+	// Only inst-sys and only if a language has been changed right now
+	// and the new language is not the initial one (that one is already downloaded by Linuxrc)
+	if (Stage::initial() && ret == `language) {
+	    if (InstData::initial_installation_language != language) {
+		// TRANSLATORS: busy message
+		UI::OpenDialog (`Label (_("Downloading installation system language extension...")));
+		// FATE #302955: Split translations out of installation system
+		InstExtensionImage::DownloadAndIntegrateExtension (GetLanguageExtensionFilename (language));
+		UI::CloseDialog();
+	    } else {
+		y2milestone ("Skipping downloading %1 extension again (initial language)", InstData::initial_installation_language);
+	    }
 	}
 
 	if (language != Language::language) {
@@ -496,8 +502,15 @@ installation, but the selected language will be used for the new system."));
     // FATE #302955: Split translations out of installation system
     // [ "en_US", "en_GB", "de", "cs" ]
     // they are in content.SUPPLANGS or as files in /usr/lib/YaST2/trans
-    available_lang_filenames = GetListOfSupportedLangExtensions();
-    y2milestone ("Supported languages are: %1", available_lang_filenames);
+    if (available_lang_filenames == nil || available_lang_filenames == []) {
+	available_lang_filenames = GetListOfSupportedLangExtensions();
+	y2milestone ("Supported languages are: %1", available_lang_filenames);
+    }
+
+    // Store the initial language
+    if (InstData::initial_installation_language == nil) {
+	InstData::initial_installation_language = Language::language;
+    }
 
     while (true) {
 	ret = UI::UserInput();

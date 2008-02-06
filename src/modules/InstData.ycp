@@ -37,6 +37,10 @@
 
     global boolean product_license_accepted = false;
 
+    // when Linuxrc starts the installation, the first language is already selected
+    // and language extension already merged
+    global string initial_installation_language = nil;
+
     // <-- other
 
 /* EOF */
