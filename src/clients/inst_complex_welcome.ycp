@@ -286,7 +286,7 @@ for this language."));
     );
 
     term FullScreenLicenseDialog () {
-	return `VBox (
+	return `MinHeight ((text_mode ? 20 : 25), `VBox (
 	    `Left (`HBox (
 		Icon::Simple ("yast-license"),
 		// TRANSLATORS: dialog caption
@@ -294,12 +294,9 @@ for this language."));
 	    )),
 	    `VSpacing (text_mode ? 0.1 : 0.5),
 	    `HSpacing (60),
-	    `MinHeight (
-		(text_mode ? 20 : 25),
-		`ReplacePoint (`id (`full_screen_license_rp), `Empty())
-	    ),
+	    `ReplacePoint (`id (`full_screen_license_rp), `Empty()),
 	    `PushButton (`id (`close), Label::OKButton())
-	);
+	));
     }
 
     string help_text		= "";
