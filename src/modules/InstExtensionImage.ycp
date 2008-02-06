@@ -311,9 +311,20 @@
 	    return true;
 	}
 
+	string wget_logging_file = sformat ("%1/wget_logging_file", Directory::tmpdir);
+
 	// Downloading the extension
-	string cmd = sformat ("/lbin/wget -v '%1' '%2'", String::Quote (extension_url), String::Quote (extension_localfile));
+	string cmd = sformat (
+	    "echo -n > '%3'; /lbin/wget -v '%1' '%2' 1>>'%3' 2>>'%3'",
+	    String::Quote (extension_url),
+	    String::Quote (extension_localfile),
+	    String::Quote (wget_logging_file)
+	);
 	map cmd_run = (map) WFM::Execute (.local.bash_output, cmd);
+	y2milestone (
+	    "Downloading extension image:\n--- downloading ---\n%1--- downloading ---",
+	    (string) WFM::Read (.local.string, wget_logging_file)
+	);
 
 	if (cmd_run["exit"]:-1 != 0 || ! FileUtils::Exists (extension_localfile)) {
 	    y2error ("Cannot download extension '%1': %2", cmd, cmd_run);

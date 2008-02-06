@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Feb  6 13:23:35 CET 2008 - locilka@suse.cz
+
+- Better /lbin/wget handling in InstExtensionImage.
+
+-------------------------------------------------------------------
 Tue Feb  5 16:04:15 CET 2008 - locilka@suse.cz
 
 - Squashfs image needs to be mounted using '-o loop'.
