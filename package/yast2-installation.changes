@@ -2,6 +2,8 @@
 Wed Feb  6 13:23:35 CET 2008 - locilka@suse.cz
 
 - Better /lbin/wget handling in InstExtensionImage.
+- Speed-up inst_complex_welcome optimalizations (e.g., skipping
+  downloading extension already by Linuxrc)
 
 -------------------------------------------------------------------
 Tue Feb  5 16:04:15 CET 2008 - locilka@suse.cz
