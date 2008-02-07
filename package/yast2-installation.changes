@@ -7,6 +7,10 @@ Thu Feb  7 14:19:11 CET 2008 - locilka@suse.cz
 - New label for "Show in Fullscreen" button to better match what
   it really does (bnc #359527).
 - Module InstExtensionImage moved to yast2.
+- Added new disintegrate_all_extensions client that is called at
+  the end of the initial installation to umount and remove all
+  integrated inst-sys extensions.
+- 2.16.18
 
 -------------------------------------------------------------------
 Wed Feb  6 13:23:35 CET 2008 - locilka@suse.cz

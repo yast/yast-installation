@@ -60,5 +60,9 @@
     // Shutdown the UI
     Wizard::CloseDialog();
 
+    if (Stage::initial()) {
+	WFM::CallFunction ("disintegrate_all_extensions");
+    }
+
     return ret;
 }
