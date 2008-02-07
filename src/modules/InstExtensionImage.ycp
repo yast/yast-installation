@@ -9,7 +9,7 @@
  *
  * This module provides functions that download inst-sys extension images
  * (localization, fonts, ...) and merge them to the current int-sys.
- * This enables inst-sys to be modular even for running YaST.
+ * This enables inst-sys to be modular even for already running YaST.
  * See FATE #302955: 'Split translations out of installation system'.
  * This module is strictly installation-only!
  */
@@ -24,6 +24,7 @@
     import "String";
     import "Directory";
     import "FileUtils";
+    import "Stage";
 
     /***
      *
@@ -286,12 +287,34 @@
 
     /**
      * Downloads extension archive (file system image) and integrates
-     * it to the current system.
+     * it to the current system. Extension name (param) is relative to the
+     * 'InstsysURL' defined in '/etc/install.inf', but no "../" are processed/merged.
+     * See the example.
+     *
+     * Attention: This modue is 'silent', it doesn't open up any progress dialog
+     * when downloading the image. Keep in mind that downloading might take some time
+     * and that user should be informed by a busy pop-up.
+     *
+     * @example
+     *   // Let's assume that:
+     *   // InstsysURL: http://example.org/SUSE/boot/ppc/root
+     *   //
+     *   UI::OpenDialog (`Label (_("Downloading ABC extension...")));
+     *   DownloadAndIntegrateExtension ("some_dir/filename.squashfs");
+     *   UI::CloseDialog();
+     *   //
+     *   // Downloads and integrates
+     *   // http://example.org/SUSE/boot/ppc/some_dir/filename.squashfs
+     *   
      *
      * @param string extension name
      * @return boolean if successful
      */
     global boolean DownloadAndIntegrateExtension (string extension) {
+	if (!Stage::initial()) {
+	    y2error ("This module should be used in Stage::initial only!");
+	}
+
 	if (extension == nil || extension == "") {
 	    y2error ("Such extension name can't work: %1", extension);
 	}

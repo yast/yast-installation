@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Thu Feb  7 14:19:11 CET 2008 - locilka@suse.cz
+
+- Functionality that integrates the just-selected language
+  translation has been moved to integrate_translation_extension
+  client to make it available for other modules.
+- New label for "Show in Fullscreen" button to better match what
+  it really does (bnc #359527).
+
+-------------------------------------------------------------------
 Wed Feb  6 13:23:35 CET 2008 - locilka@suse.cz
 
 - Better /lbin/wget handling in InstExtensionImage.

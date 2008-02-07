@@ -1,0 +1,118 @@
+/**
+ * File:
+ *	integrate_translation_extension.ycp
+ *
+ * Module:
+ *	Installation
+ *
+ * Authors:
+ *	Lukas Ocilka <locilka@suse.cz>
+ *
+ * Summary:
+ *	This client downloads and integrates a translation
+ *	extension for the current language.
+ *	This module needs to be called this way:
+ *	WFM::call ("integrate_translation_extension", [$["requested_language":"de_DE"]])
+ *
+ * $Id:$
+ *
+ */
+{
+    textdomain "installation";
+
+    import "InstExtensionImage";
+    import "InstData";
+    import "GetInstArgs";
+
+    /**
+     * Finds out the list of supported languages
+     */
+    list <string> GetListOfSupportedLangExtensions () {
+	list <string> ret = [];
+
+	// SUPPLANGS in content file
+	string supplangs = (string) SCR::Read (.content.SUPPLANGS);
+
+	if (supplangs != nil) {
+	    ret = splitstring (supplangs, " ");
+
+	    ret = filter (string one_supplang, ret, {
+		return (one_supplang != nil && one_supplang != "");
+	    });
+
+	    return ret;
+	}
+
+	// Fallback: using list of trans-stats
+	y2milestone ("No SUPPLANGS defined, using a fallback");
+	map cmd = (map) WFM::Execute (.local.bash_output, "ls -1 /usr/lib/YaST2/trans/ | sed 's/\.status//'");
+
+	if (cmd["exit"]:-1 != 0) {
+	    y2error ("Cannot find out list of languages: %1", cmd);
+	    return [];
+	}
+
+	// Empty list of trans stats
+	string langs_s = cmd["stdout"]:"";
+	if (langs_s == nil || langs_s == "") {
+	    y2milestone ("Empty list: %1", langs_s);
+
+	    return [];
+	}
+
+	// Newline-separated langs
+	ret = splitstring (langs_s, "\n");
+
+	ret = filter (string one_supplang, ret, {
+	    return (one_supplang != nil && one_supplang != "");
+	});
+
+	return ret;
+    }
+
+    string GetLanguageExtensionFilename (string language) {
+	// FATE #302955: Split translations out of installation system
+	// this is lazy init
+	if (InstData::available_lang_filenames == nil || InstData::available_lang_filenames == []) {
+	    InstData::available_lang_filenames = GetListOfSupportedLangExtensions();
+	    y2milestone ("Supported languages are: %1", InstData::available_lang_filenames);
+	}
+
+	list <string> check_for_languages = [language];
+
+	// 'en_US' ? add also 'en'
+	if (size (language) > 2) {
+	    check_for_languages = add (check_for_languages, substring (language, 0, 2));
+	}
+
+	// Default fallback
+	string filename = "root.en_US";
+
+	foreach (string one_language, check_for_languages, {
+	    if (contains (InstData::available_lang_filenames, one_language)) {
+		filename = sformat ("root.%1", one_language);
+		break;
+	    }
+	});
+
+	y2milestone ("Using %1 for %2", filename, language);
+
+	return filename;
+    }
+
+    y2milestone ("Starting: integrate_translation");
+
+    map argmap = GetInstArgs::argmap();
+    y2milestone ("Args: %1", argmap);
+    string language = argmap["requested_language"]:"en_US";
+
+    // TRANSLATORS: busy message
+    UI::OpenDialog (`Label (_("Downloading installation system language extension...")));
+    // FATE #302955: Split translations out of installation system
+    InstExtensionImage::DownloadAndIntegrateExtension (GetLanguageExtensionFilename (language));
+    UI::CloseDialog();
+
+    y2milestone ("Finished: integrate_translation");
+
+    return `next;
+}
