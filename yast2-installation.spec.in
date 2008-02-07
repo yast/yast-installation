@@ -9,8 +9,8 @@ BuildRequires:	yast2 >= 2.16.25
 
 Requires:       autoyast2-installation
 
-# URL::MakeParamsFromMap and URL::MakeMapFromParams
-Requires:	yast2 >= 2.16.25
+# InstExtensionImage module moved to installation
+Requires:	yast2 >= 2.16.26
 
 # Required in in the first stage, after
 # switching to the installed system, bugzilla #249679
