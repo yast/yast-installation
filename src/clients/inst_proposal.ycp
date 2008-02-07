@@ -688,7 +688,7 @@
         if ( headline == "")
         {
 	    // dialog headline
-            headline =  _("Installation Settings");
+            headline =  _("Installation Overview");
         }
         else
         {
