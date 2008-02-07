@@ -41,7 +41,6 @@
     import "Icon";
     import "InstData";
     import "ProductLicense";
-    import "InstExtensionImage";
 
     string language = Language::language;
 
@@ -69,76 +68,6 @@
 Add the Language Add-On CD as an additional repository to get better support
 for this language."));
 	}
-    }
-
-    list <string> available_lang_filenames = [];
-
-    string GetLanguageExtensionFilename (string language) {
-	list <string> check_for_languages = [language];
-
-	// 'en_US' ? add also 'en'
-	if (size (language) > 2) {
-	    check_for_languages = add (check_for_languages, substring (language, 0, 2));
-	}
-
-	// Default fallback
-	string filename = "root.en_US";
-
-	foreach (string one_language, check_for_languages, {
-	    if (contains (available_lang_filenames, one_language)) {
-		filename = sformat ("root.%1", one_language);
-		y2milestone ("Using %1 for %2", filename, language);
-		break;
-	    }
-	});
-
-	return filename;
-    }
-
-    /**
-     * Finds out the list of supported languages
-     */
-    list <string> GetListOfSupportedLangExtensions () {
-	list <string> ret = [];
-
-	// SUPPLANGS in content file
-	string supplangs = (string) SCR::Read (.content.SUPPLANGS);
-
-	if (supplangs != nil) {
-	    ret = splitstring (supplangs, " ");
-
-	    ret = filter (string one_supplang, ret, {
-		return (one_supplang != nil && one_supplang != "");
-	    });
-
-	    return ret;
-	}
-
-	// Fallback: using list of trans-stats
-	y2milestone ("No SUPPLANGS defined, using a fallback");
-	map cmd = (map) WFM::Execute (.local.bash_output, "ls -1 /usr/lib/YaST2/trans/ | sed 's/\.status//'");
-
-	if (cmd["exit"]:-1 != 0) {
-	    y2error ("Cannot find out list of languages: %1", cmd);
-	    return [];
-	}
-
-	// Empty list of trans stats
-	string langs_s = cmd["stdout"]:"";
-	if (langs_s == nil || langs_s == "") {
-	    y2milestone ("Empty list: %1", langs_s);
-
-	    return [];
-	}
-
-	// Newline-separated langs
-	ret = splitstring (langs_s, "\n");
-
-	ret = filter (string one_supplang, ret, {
-	    return (one_supplang != nil && one_supplang != "");
-	});
-
-	return ret;
     }
 
     // ------------------------------------- main part of the client -----------
@@ -278,14 +207,14 @@ for this language."));
 		    )),
 		    `VStretch (),
 		    // TRANSLATORS: button label
-		    `Right (`PushButton (`id (`show_fulscreen_license), _("&Show In Full-Screen...")))
+		    `Right (`PushButton (`id (`show_fulscreen_license), _("&Show License...")))
 		))
 	    )
 	),
 	`VWeight (3, `VStretch())
     );
 
-    term FullScreenLicenseDialog () {
+    term AllLicensesDialog () {
 	return `MinHeight ((text_mode ? 20 : 25), `VBox (
 	    `Left (`HBox (
 		Icon::Simple ("yast-license"),
@@ -409,11 +338,7 @@ Some texts may be displayed in English.
 	// and the new language is not the initial one (that one is already downloaded by Linuxrc)
 	if (Stage::initial() && ret == `language) {
 	    if (InstData::initial_installation_language != language) {
-		// TRANSLATORS: busy message
-		UI::OpenDialog (`Label (_("Downloading installation system language extension...")));
-		// FATE #302955: Split translations out of installation system
-		InstExtensionImage::DownloadAndIntegrateExtension (GetLanguageExtensionFilename (language));
-		UI::CloseDialog();
+		WFM::call ("integrate_translation_extension", [$["requested_language":language]]);
 	    } else {
 		y2milestone ("Skipping downloading %1 extension again (initial language)", InstData::initial_installation_language);
 	    }
@@ -496,14 +421,6 @@ installation, but the selected language will be used for the new system."));
 	return `auto;
     }
 
-    // FATE #302955: Split translations out of installation system
-    // [ "en_US", "en_GB", "de", "cs" ]
-    // they are in content.SUPPLANGS or as files in /usr/lib/YaST2/trans
-    if (available_lang_filenames == nil || available_lang_filenames == []) {
-	available_lang_filenames = GetListOfSupportedLangExtensions();
-	y2milestone ("Supported languages are: %1", available_lang_filenames);
-    }
-
     // Store the initial language
     if (InstData::initial_installation_language == nil) {
 	InstData::initial_installation_language = Language::language;
@@ -548,7 +465,7 @@ installation, but the selected language will be used for the new system."));
 
 	    if (ret == `next) break;
 	} else if (ret == `show_fulscreen_license) {
-	    UI::OpenDialog (FullScreenLicenseDialog());
+	    UI::OpenDialog (AllLicensesDialog());
 	    ProductLicense::ShowFullScreenLicenseInInstallation (`full_screen_license_rp);
 	    UI::CloseDialog();
 	}
