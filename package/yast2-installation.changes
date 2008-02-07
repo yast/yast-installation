@@ -6,6 +6,7 @@ Thu Feb  7 14:19:11 CET 2008 - locilka@suse.cz
   client to make it available for other modules.
 - New label for "Show in Fullscreen" button to better match what
   it really does (bnc #359527).
+- Module InstExtensionImage moved to yast2.
 
 -------------------------------------------------------------------
 Wed Feb  6 13:23:35 CET 2008 - locilka@suse.cz
