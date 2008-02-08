@@ -502,19 +502,37 @@ function start_yast () {
 ##*	set_yast_background # currently not used
 
 	log "\tStarting YaST2:"
-	log "\tMODULE_NAME: $Y2_MODULE_NAME"
-	log "\tMODE_FLAGS:  $Y2_MODE_FLAGS"
-	log "\tMODULE_ARGS: $Y2_MODULE_ARGS"
-	log "\tMODE:        $Y2_MODE"
-	log "\tUI_ARGS:     $Y2_UI_ARGS"
-	log "\tQT_IM_MODULE:$QT_IM_MODULE"
-	$OPT_FBITERM y2base \
-			"$Y2_MODULE_NAME"   \
-			$Y2_MODE_FLAGS      \
-			$Y2_MODULE_ARGS     \
-			$Y2_MODE            \
-			$Y2_UI_ARGS
-	Y2_EXIT_CODE=$?
+	log "\tMODULE_NAME:  $Y2_MODULE_NAME"
+	log "\tMODE_FLAGS:   $Y2_MODE_FLAGS"
+	log "\tMODULE_ARGS:  $Y2_MODULE_ARGS"
+	log "\tMODE:         $Y2_MODE"
+	log "\tUI_ARGS:      $Y2_UI_ARGS"
+	log "\tQT_IM_MODULE: $QT_IM_MODULE"
+
+	Y2GDB=1
+
+	if [ -z "$Y2GDB" ]; then
+	    $OPT_FBITERM y2base		\
+		"$Y2_MODULE_NAME"	\
+		$Y2_MODE_FLAGS		\
+		$Y2_MODULE_ARGS		\
+		$Y2_MODE		\
+		$Y2_UI_ARGS
+	    Y2_EXIT_CODE=$?
+	else
+	    GDBCMDS=/var/lib/YaST2/gdb-cmds
+	    echo tty /dev/tty10 > $GDBCMDS
+	    echo set args "$Y2_MODULE_NAME"	\
+			$Y2_MODE_FLAGS		\
+			"'"$Y2_MODULE_ARGS"'"	\
+			$Y2_MODE		\
+			$Y2_UI_ARGS >> $GDBCMDS
+	    echo set pagination off >> $GDBCMDS
+	    /usr/bin/gdb -x $GDBCMDS /usr/lib/YaST2/bin/y2base | \
+		tee /var/log/YaST2/gdb-log
+	    Y2_EXIT_CODE=$?
+	fi
+
 	Y2_ABORT_MESSAGE="YaST seems to be aborted abnormally !"
 	Y2_OK_MESSAGE="YaST procedure ended successfully"
 	if [ -s /etc/yast.inf ];then

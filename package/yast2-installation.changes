@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb 08 13:06:19 CET 2008 - aschnell@suse.de
+
+- allow yast to be started from gdb (fate #302346)
+
+-------------------------------------------------------------------
 Fri Feb  8 10:37:02 CET 2008 - locilka@suse.cz
 
 - Umount(s) used with -l and -f params.
