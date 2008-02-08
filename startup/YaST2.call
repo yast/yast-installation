@@ -509,8 +509,6 @@ function start_yast () {
 	log "\tUI_ARGS:      $Y2_UI_ARGS"
 	log "\tQT_IM_MODULE: $QT_IM_MODULE"
 
-	Y2GDB=1
-
 	if [ -z "$Y2GDB" ]; then
 	    $OPT_FBITERM y2base		\
 		"$Y2_MODULE_NAME"	\
