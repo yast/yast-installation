@@ -91,7 +91,7 @@ else if (func == "Write")
 
 	if (umount_result != true) {
 	    y2warning ("Umount failed, trying to remount read only...");
-	    string cmd = sformat ("sync; mount -o remount,ro '%1'; umount --force '%1';", String::Quote (umount_this));
+	    string cmd = sformat ("sync; mount -o remount,ro '%1'; umount -l -f '%1';", String::Quote (umount_this));
 	    y2milestone ("Cmd: '%1' Ret: %2", cmd, WFM::Execute (.local.bash_output, cmd));
 	}
     });
@@ -136,7 +136,7 @@ else if (func == "Write")
 	// bugzilla #326478
 	if (umount_status != true) {
 	    y2warning ("Umount failed, trying to remount read only...");
-	    string cmd = sformat ("mount -o remount,ro '%1'; umount --force '%1';", String::Quote (tmp));
+	    string cmd = sformat ("mount -o remount,ro '%1'; umount -l -f '%1';", String::Quote (tmp));
 	    y2milestone ("Cmd: '%1' Ret: %2", cmd, WFM::Execute (.local.bash_output, cmd));
 	}
     }

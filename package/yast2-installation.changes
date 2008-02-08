@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb  8 10:37:02 CET 2008 - locilka@suse.cz
+
+- Umount(s) used with -l and -f params.
+
+-------------------------------------------------------------------
 Thu Feb  7 14:19:11 CET 2008 - locilka@suse.cz
 
 - Functionality that integrates the just-selected language
