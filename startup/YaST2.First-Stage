@@ -59,7 +59,7 @@ for i in \
 	Framebuffer Netdevice IP Netmask Gateway Nameserver  \
 	Server Serverdir X11i LANG TIMEZONE MEDIA XServer    \
 	XVersion XBusID XkbRules XkbModel XkbLayout USB      \
-	HasPCMCIA VNC VNCpassword UseSSH
+	HasPCMCIA VNC VNCpassword UseSSH Y2GDB
 do
 	if [ "${!i}" ] ; then
 		export $i
