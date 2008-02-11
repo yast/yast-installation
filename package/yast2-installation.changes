@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Feb 11 18:28:00 CET 2008 - locilka@suse.cz
+
+- Installation clients 'auth', 'user', and 'root' have been
+  disabled by default. First-stage users will enable them only
+  if needed.
+
+-------------------------------------------------------------------
 Fri Feb 08 13:06:19 CET 2008 - aschnell@suse.de
 
 - during installation allow yast to be started from gdb with
