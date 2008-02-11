@@ -42,6 +42,11 @@
 	ProductControl::DisabledModules = add (ProductControl::DisabledModules, "add-on");
 	ProductControl::DisabledModules = add (ProductControl::DisabledModules, "productsources");
 
+	// First-stage users module will enable them again only if needed
+	ProductControl::DisabledModules = add (ProductControl::DisabledModules, "root");
+	ProductControl::DisabledModules = add (ProductControl::DisabledModules, "user");
+	ProductControl::DisabledModules = add (ProductControl::DisabledModules, "auth");
+
 	UI::SetLanguage (Language::language, Installation::encoding);
 	WFM::SetLanguage (Language::language, "UTF-8");
 	UI::RecordMacro (Directory::logdir + "/macro_inst_initial.ycp");
