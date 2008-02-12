@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Feb 12 10:26:15 CET 2008 - locilka@suse.cz
+
+- Added new update_wizard_steps YCP client for easy updating or
+  redrawing installation wizard steps from other modules.
+
+-------------------------------------------------------------------
 Mon Feb 11 18:28:00 CET 2008 - locilka@suse.cz
 
 - Installation clients 'auth', 'user', and 'root' have been
