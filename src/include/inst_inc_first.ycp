@@ -69,4 +69,23 @@
 	}
     }
 
+    /**
+     * Handle starting distro upgrade from running system
+     */
+    void SetSystemUpdate () {
+	if (FileUtils::Exists (Installation::run_update_file)) {
+	    Mode::SetMode ("update");
+	    foreach (string m, [
+		"language", // language already selected
+		"disks_activate", // disks activated before running upgrade
+		"mode", // always doing update, is already preselected
+		"update_partition", // no mounting
+		"do_resize", // why is this included in upgrade at all? it is empty anyway
+		"prepdisk", // disks already mounted, it is dummy in update anyway
+	    ], {
+		ProductControl::DisabledModules = add (ProductControl::DisabledModules, m);
+	    });
+	}
+    }
+
 } //end of include
