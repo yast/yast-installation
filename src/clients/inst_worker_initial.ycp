@@ -48,6 +48,9 @@
     // Initial stage
     SetInitialInstallation ();
 
+    // Update initiated from running system
+    SetSystemUpdate ();
+
     // All stages
     SetUIContent();
 

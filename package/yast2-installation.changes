@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Feb 13 14:18:16 CET 2008 - jsrain@suse.cz
+
+- added handling of update initiated from running system
+
+-------------------------------------------------------------------
 Tue Feb 12 10:26:15 CET 2008 - locilka@suse.cz
 
 - Added new update_wizard_steps YCP client for easy updating or
