@@ -280,9 +280,10 @@ global boolean FileSystemCopy (string from, string to,
 	 jobs -l >&2;
 	 tar -C %2 -xSf %4",
 	from, to, tmp_pipe1, tmp_pipe2);
-    y2milestone ("Executing %1", cmd);
+    y2debug ("Executing %1", cmd);
     SCR::Execute(.background.run_output_err, cmd);
     string pid = "";
+
     while((boolean)SCR::Read(.background.output_open_err) || (boolean)(SCR::Read(.background.newlines_err) > 0))
     {
 	string done = nil;
@@ -308,7 +309,7 @@ global boolean FileSystemCopy (string from, string to,
 		if (regexpmatch (l, "^[0-9]+ "))
 		    done = regexpsub (l, "^([0-9]+) ", "\\1");
 	    });
-	    y2internal ("Done: %1", done);
+	    y2debug ("Done: %1", done);
 	}
 	if (pid != "")
 	{
@@ -316,7 +317,7 @@ global boolean FileSystemCopy (string from, string to,
 	    y2milestone ("Executing %1", cmd);
 	    SCR::Execute (.target.bash, cmd);
 	}
-	sleep (100);
+	sleep (300);
 	if (done != nil)
 	{
 	    integer progress = progress_start + (progress_finish - progress_start) * tointeger (done) / total_mb / 1024 / 1024;
@@ -324,6 +325,7 @@ global boolean FileSystemCopy (string from, string to,
 	    y2debug ("Setting progress to %1", progress);
 	}
     }
+
     y2milestone ("Result: %1", SCR::Read (.background.status));
     SCR::Execute (.target.remove, tmp_pipe1);
     SCR::Execute (.target.remove, tmp_pipe2);
