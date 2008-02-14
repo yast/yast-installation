@@ -280,7 +280,7 @@ global boolean FileSystemCopy (string from, string to,
 	 jobs -l >&2;
 	 tar -C %2 -xSf %4",
 	from, to, tmp_pipe1, tmp_pipe2);
-    y2debug ("Executing %1", cmd);
+    y2milestone ("Executing %1", cmd);
     SCR::Execute(.background.run_output_err, cmd);
     string pid = "";
 
@@ -314,7 +314,7 @@ global boolean FileSystemCopy (string from, string to,
 	if (pid != "")
 	{
 	    cmd = sformat ("/bin/kill -USR1 %1", pid);
-	    y2milestone ("Executing %1", cmd);
+	    y2debug ("Executing %1", cmd);
 	    SCR::Execute (.target.bash, cmd);
 	}
 	sleep (300);
