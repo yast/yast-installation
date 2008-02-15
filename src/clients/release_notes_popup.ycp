@@ -49,7 +49,7 @@
 	tmp = Pkg::SourceProvideOptionalFile (source_id, 1, tmp);
 	if (tmp == nil)
 	{
-	    tmp = sformat (path_templ, substring (Language::language, 0, 2));
+	    tmp = sformat (path_templ, splitstring (Language::language, "_")[0]:"");
 	    y2debug ("Trying to get %1", tmp);
 	    tmp = Pkg::SourceProvideOptionalFile (source_id, 1, tmp);
 	}
@@ -80,7 +80,7 @@
 	y2debug ("Trying to get %1", tmp);
 	if (0 >= (integer)SCR::Read (.target.size, tmp))
 	{
-	    tmp = sformat (path_templ, substring (Language::language, 0, 2));
+	    tmp = sformat (path_templ, splitstring (Language::language, "_")[0]:"");
 	    y2debug ("Trying to get %1", tmp);
 	}
 	if (0 >= (integer)SCR::Read (.target.size, tmp))

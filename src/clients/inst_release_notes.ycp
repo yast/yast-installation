@@ -87,7 +87,7 @@
 
     list <string> preferred_langs = [
 	Language::language,
-	substring (Language::language, 0, 2),
+	splitstring (Language::language, "_")[0]:"",
 	"en_US",
 	"en_GB",
 	"en"
