@@ -3,6 +3,7 @@ Thu Feb 14 11:20:04 CET 2008 - locilka@suse.cz
 
 - Function FileSystemCopy from live-installer has been moved
   to ImageInstallation module (installation).
+- Adjusted RPM dependencies (Installation module in yast2).
 
 -------------------------------------------------------------------
 Wed Feb 13 14:18:16 CET 2008 - jsrain@suse.cz
