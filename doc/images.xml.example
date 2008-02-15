@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!--
+copy this file to the 1st CD/DVD as /images/images.xml
+copy all images mentioned in the file to the same directory
+-->
+<!DOCTYPE images>
+<image_installation xmlns="http://www.suse.com/1.0/yast2ns" xmlns:config="http://www.suse.com/1.0/configns">
+<image_sets config:type="list" >
+  <image_set>
+    <images config:type="list">
+      <image>
+	<name>root</name>
+	<type>tar</type>
+	<file>root.tar.bz2</file>
+      </image>
+      <image>
+	<name>opt</name>
+	<type>tar</type>
+	<file>opt.tar.bz2</file>
+      </image>
+<!--
+      <image>
+	<name>usr</name>
+	<type>tar</type>
+	<file>usr.tar.bz2</file>
+      </image>
+-->
+    </images>
+  </image_set>
+<!--
+  <image_set>
+    <pkg_image>gnome-pkg</pkg_image>
+    <images config:type="list">
+      <image>
+	<name>base</name>
+	<type>fs</type>
+	<file>base.ext2</file>
+      </image>
+      <image>
+	<name>gnome-system</name>
+	<type>tar</type>
+	<file>gnome-system.tar.gz</file>
+      </image>
+      <image>
+	<name>gnome-pkg</name>
+	<type>tar</type>
+	<file>gnome-pkg.tar.gz</file>
+      </image>
+    </images>
+  </image_set>
+  <image_set>
+    <pattern>kde</pattern>
+    <pkg_image>kde-pkg.tar.gz</pkg_image>
+    <images config:type="list">
+      <image>
+	<type>fs</type>
+	<file>base.ext2</file>
+      </image>
+      <image>
+	<type>tar</type>
+	<file>kde-system.tar.gz</file>
+      </image>
+      <image>
+	<type>tar</type>
+	<file>kde-pkg.tar.gz</file>
+      </image>
+    </images>
+  </image_set>
+-->
+</image_sets>
+</image_installation>
