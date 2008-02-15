@@ -11,6 +11,7 @@ import "Packages";
 import "ImageInstallation";
 import "GetInstArgs";
 import "Wizard";
+import "Installation";
 
 textdomain "installation";
 
@@ -23,23 +24,31 @@ y2milestone ("Preparing image for package selector");
 Wizard::SetContents (_("Analyzing Installation Images"), `Empty (), "", false, false);
 Wizard::SetTitleIcon ("yast-inst-mode");
 
+// set repo to get images from
 ImageInstallation::SetRepo (Packages::theSources[0]:0);
-// TODO: read the list of images from the media
-ImageInstallation::AddImage ("root", "base.tgz", "tar");
-ImageInstallation::AddImage ("home", "home.tgz", "tar");
-ImageInstallation::AddImage ("zypp", "zypp.tgz", "tar");
-ImageInstallation::AddImage ("opt", "opt.tgz", "tar");
 
-string sw_db_root = (string)SCR::Read (.target.tmpdir) + "/sw_db_root";
-ImageInstallation::DeployImageTemporarily ("zypp", sw_db_root);
+// list images for currently selected patterns
+// TODO: Pass selected pattern(s)
+ImageInstallation::FindImageSet ([]);
 
-// TODO: redefine pkg callbacks for RPM database reading, which is the most time-consuming part
-Pkg::TargetInitialize (sw_db_root);
-Pkg::TargetLoad ();
+// also set an RPM database
+if (! Installation::image_only)
+{
+    string sw_db_root = (string)SCR::Read (.target.tmpdir) + "/sw_db_root";
+    ImageInstallation::DeployImageTemporarily (ImageInstallation::SwMgmtImage (), sw_db_root);
 
-ImageInstallation::CleanTemporaryImage ("zypp", sw_db_root);
+    // TODO: redefine pkg callbacks for RPM database reading, which is the most time-consuming part
+    Pkg::TargetInitialize (sw_db_root);
+    Pkg::TargetLoad ();
 
-y2milestone ("Target image for package selector prepared");
+    ImageInstallation::CleanTemporaryImage (ImageInstallation::SwMgmtImage (), sw_db_root);
+
+    y2milestone ("Target image for package selector prepared");
+}
+else
+{
+    y2milestone ("Skipping preparing image for package selector");
+}
 
 return `next;
 }

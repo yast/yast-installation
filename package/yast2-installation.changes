@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Feb 15 14:28:45 CET 2008 - jsrain@suse.cz
+
+- updated image-based installatoin not to use any hardcoded
+  image names
+
+-------------------------------------------------------------------
 Thu Feb 14 11:20:04 CET 2008 - locilka@suse.cz
 
 - Function FileSystemCopy from live-installer has been moved

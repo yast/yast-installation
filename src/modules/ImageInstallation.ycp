@@ -16,7 +16,12 @@
 
 module "ImageInstallation";
 
+import "Installation";
+import "XML";
 import "Progress";
+import "Report";
+
+textdomain "installation";
 
 /**
  * Repository holding all images
@@ -27,6 +32,16 @@ integer _repo = nil;
  * Description of all available images
  */
 map<string,map<string,any> > _images = $[];
+
+/**
+ * Order of images
+ */
+list<string> _image_order = [];
+
+/**
+ * Image with software management metadata
+ */
+string _metadata_image = "";
 
 /**
  * Template for the path for an image on the media
@@ -46,6 +61,21 @@ global void SetRepo (integer repo) {
     _repo = repo;
 }
 
+/**
+ * Name of image containing software management metadata (if exists)
+ * @return string image with sw mgmt metadata
+ */
+global string SwMgmtImage () {
+    return _metadata_image;
+}
+
+/**
+ * Order of images to be deployed
+ * @return a list of images definint the order
+ */
+global list<string> ImageOrder () {
+    return _image_order;
+}
 
 /**
  * Add information about new image
@@ -53,7 +83,7 @@ global void SetRepo (integer repo) {
  * @param file string the file name of the image
  * @param type string the type of the image, one of "tar" and "fs"
  */
-global void AddImage (string id, string file, string type) {
+void AddImage (string id, string file, string type) {
     _images[id] = $[
 	"file" : file,
 	"type" : type,
@@ -251,6 +281,67 @@ global boolean DeployImages (list<string> images, string target, void(integer,in
 }
 
 /**
+ * Find a set of images which suites selected patterns
+ * @param patterns a list of patterns which are selected
+ * @return boolean true on success or when media does not contain any images
+ */
+global boolean FindImageSet (list<string> patterns) {
+    // reset all data
+    _images = $[];
+    _image_order = [];
+    _metadata_image = "";
+
+    string filename = Pkg::SourceProvideOptionalFile (_repo, 1, "/images/images.xml");
+    if (filename == nil)
+    {
+	Installation::image_installation = false;
+	Installation::image_only= false;
+	y2milestone ("Image list for installation not found");
+	return true;
+    }
+    map<string,any> image_descr = XML::XMLToYCPFile (filename);
+    if (image_descr == nil)
+    {
+	Installation::image_installation = false;
+	Installation::image_only= false;
+	Report::Error (_("Failed to read information about installation images"));
+	return false;
+    }
+    list<map<string,any> > image_sets = image_descr["image_sets"]:[];
+    y2milestone ("Image set descriptions: %1", image_sets);
+    map<string,any> result = $[];
+    foreach (map<string,any> image, image_sets, {
+	string pattern = image["pattern"]:"";
+	if (pattern == "" && result == $[])
+	    result = image;
+	else if (contains (patterns, pattern))
+	    result = image;
+    });
+    if (result == $[])
+    {
+	Installation::image_installation = false;
+	Installation::image_only= false;
+	y2milestone ("No image for installation found");
+	return true;
+    }
+    Installation::image_installation = true;
+    if (haskey (result, "pkg_image"))
+	_metadata_image = result["pkg_image"]:"";
+    else
+	Installation::image_only= true;
+    foreach (map<string,string> img, result["images"]:[], {
+	_image_order = add (_image_order, img["name"]:"");
+	AddImage (img["name"]:"", img["file"]:"", img["type"]:"");
+    });
+    y2milestone ("Image-only installation: %1", Installation::image_only);
+    y2milestone ("Images: %1", _images);
+    y2milestone ("Image installation order: %1", _image_order);
+    if (! Installation::image_only)
+	y2milestone ("Image with software management metadata: %1", _metadata_image);
+    return true;
+}
+
+/**
  * Copy a subtree, limit to a single filesystem
  * @param from string source directory
  * @param to string target directory
@@ -336,5 +427,6 @@ global boolean FileSystemCopy (string from, string to,
     y2milestone ("Result: %1", out);
     return out["exit"]:-1 == 0;
 }
+
 
 }

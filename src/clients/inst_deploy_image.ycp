@@ -8,8 +8,7 @@ textdomain "installation";
 
 y2milestone ("Deploying image");
 
-// TODO non-static list of images
-list<string> images = ["root", "zypp", "opt", "home"];
+list<string> images = ImageInstallation::ImageOrder ();
 
 integer last_image = nil;
 
@@ -30,14 +29,36 @@ void SetProgress (integer image, integer percent) {
     Progress::Step (image);
 }
 
+if (! Installation::image_installation)
+    return `auto;
+
 Wizard::SetContents (_("Deploying Installation Images"), `Empty (), "", false, false);
 Wizard::SetTitleIcon ("yast-inst-mode");
 
 // TODO help
 Progress::Simple (_("Deploying Installation Images"), _("Deploying Installation Images"), size (images), "help");
 
-Pkg::TargetFinish ();
+// finish target if it was initialized
+if (! Installation::image_only)
+{
+// TODO save the status of all packages
+    Pkg::TargetFinish ();
+}
+
+/*
+// FIXME the images usually do not fit in RAMDISK
+// move download area to hard disk (for HTTP/FTP media)
+// TODO select according to partitioning
+string download_dir = "/img_tmp";
+download_dir = Installation::destdir + download_dir;
+SCR::Execute (.target.bash, sformat ("test -d %1 || mkdir -p %1", download_dir));
+Pkg::SourceMoveDownloadArea (download_dir);
+// don't know why it didn't work :-(
+*/
+
 ImageInstallation::DeployImages (images, Installation::destdir, SetProgress);
+
+//SCR::Execute (.target.bash, sformat ("rmdir %1", download_dir));
 
 y2milestone ("Target image for package selector prepared");
 
