@@ -82,7 +82,7 @@
 
 	// 'en_US' ? add also 'en'
 	if (size (language) > 2) {
-	    check_for_languages = add (check_for_languages, substring (language, 0, 2));
+	    check_for_languages = add (check_for_languages, splitstring (language, "_")[0]:"");
 	}
 
 	// Default fallback

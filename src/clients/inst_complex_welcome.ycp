@@ -59,7 +59,7 @@
 
 	y2milestone ("content LINGUAS %1", linguas);
 	list <string> all_linguas = splitstring (linguas, " ");
-	string language_short = substring (selected_language, 0, 2);
+	string language_short = splitstring (selected_language, "_")[0]:"";
 
 	if (!contains (all_linguas, selected_language) && !contains (all_linguas, language_short)) {
 	    y2milestone ("Language %1 is not fully supported", selected_language);
