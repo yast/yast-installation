@@ -42,59 +42,14 @@
     import "InstData";
     import "ProductLicense";
 
-    string language = Language::language;
-
-    /**
-     * check if selected language has support on media (F301238)
-     * show a warning when not
-     */
-    define void check_languages_support (string selected_language) {
-
-	string linguas = (string) SCR::Read (.content.LINGUAS);
-
-	if (linguas == nil) {
-	    y2warning ("No LINGUAS tag defined in content file");
-	    return;
-	}
-
-	y2milestone ("content LINGUAS %1", linguas);
-	list <string> all_linguas = splitstring (linguas, " ");
-	string language_short = splitstring (selected_language, "_")[0]:"";
-
-	if (!contains (all_linguas, selected_language) && !contains (all_linguas, language_short)) {
-	    y2milestone ("Language %1 is not fully supported", selected_language);
-	    // popup message
-	    Popup::Message (_("Only minimal support for the selected language is included on the media.
-Add the Language Add-On CD as an additional repository to get better support
-for this language."));
-	}
-    }
-
     // ------------------------------------- main part of the client -----------
 
     map argmap = GetInstArgs::argmap();
 
-    // Check if the current call should be treated as the first run (3rd param).
-    // In this case if the user exits with next the the current setting
-    // will be made the default that is restored with "Reset to defaults".
-    //
-    boolean set_default = argmap["first_run"]:"no" == "yes";
-    y2milestone("set_default: %1", set_default );
+    string language = Language::language;
 
+    // language preselected in /etc/install.inf
     string preselected = Language::preselected;
-
-    list<string>languages	= splitstring (Language::languages, ",");
-
-    // filter the primary language from the list of secondary ones:
-    languages	= filter (string l, languages, ``(l != language));
-
-
-    // Build the contents of the dialog.
-
-    // build up language selection box
-    // with the default selection according to Language::language
-
-    // set up selection list with default item
 
     boolean text_mode	= Language::GetTextMode ();
 
@@ -104,75 +59,22 @@ for this language."));
     // heading text
     string heading_text = _("Languages");
 
-    // sort language by ASCII with help of a map
-    // $[ "ascii-name" : [ "user-readable-string", "code" ], ...]
-    // the "user-readable-string" is either ascii or utf8, depending
-    // on textmode probed above (workaround because there isn't any
-    // usable console font for all languages).
-
-    map<string,list> languageselsort = mapmap (
-	string lang_code, list lang_info, Language::Selection(), {
-	    string key	= lang_info [1]:lang_code;
-	    return $[
-		key		: [
-		    lang_info[text_mode ? 1 : 0]:"",
-		    lang_code,
-		    lang_info[2]:key
-		]
-	    ];
-	}
-    );
-
-    // mapping of language name (translated) to language code
-    map lang2code		= $[];
-    // list of language names (translated)
-    list<string> lang_list	= [];
-    foreach (any name, list codelist, languageselsort, {
-	lang2code [codelist[2]:""]	= codelist[1]:"";
-	lang_list	= add (lang_list, codelist[2]:"");
-    });
-
     term languagesel = `ComboBox (
 	`id (`language),
 	`opt (`notify),
-	_("&Language"),
-	maplist (any name, list codelist, languageselsort, {
-		return `item (
-		    `id (codelist[1]:""),
-		    codelist[0]:""//,
-		    //(language == codelist[1]:"")
-		);
-	})
+	_("&Language"), Language::GetLanguageItems (`first_screen)
     );
-
-    map<string, string> keyb_selection = Keyboard::Selection();
-    string keyb = "";
-
-    list <term> keyb_items = maplist (any name, list codelist, languageselsort, {
-	keyb = Keyboard::GetKeyboardForLanguage (codelist[1]:"", "english-us");
-
-	return `item (
-	    `id (keyb),
-	    keyb_selection[keyb]:""
-	);
-    });
-    keyb_items = toset (keyb_items);
-    
 
     term keyboardsel = `ComboBox (
 	`id (`keyboard),
 	`opt (`notify),
 	_("&Keyboard Layout"),
-	keyb_items
+	// all keyboard layouts should be available
+	maplist (string id, string label, Keyboard::Selection (),
+	    ``(`item (`id (id), label))
+	)
     );
 
-    if (Stage::firstboot ())
-	languagesel = `ComboBox (`id(`language), `opt(`notify), _("&Language"),
-	    maplist (string trans_lang, lsort (lang_list), {
-		string code	= lang2code [trans_lang]:"";
-		return `item (`id (code), trans_lang, language == code);
-	    })
-	);
 
     // this type of contents will be shown only for initial installation dialog
     term contents = `VBox (
@@ -255,15 +157,12 @@ Nothing will happen to your computer until you confirm
 all your settings in the last installation dialog.
 </p>
 ");
-	if (set_default)
-	{
-	    // help text, continued
-	    help_text = help_text + _("<p>
+	// help text, continued
+	help_text = help_text + _("<p>
 You can select <b>Abort Installation</b> at any time to abort the
 installation process.
 </p>
 ");
-	}
     }
     else
     {
@@ -298,9 +197,9 @@ Choose the new <b>Language</b> for your system.
     UI::SetFocus(`id(`language));
 
     // adapt keyboard for language?
-    boolean kbd_adapt = (set_default && !Mode::config ());
+    boolean kbd_adapt = true;
     // adapt timezone for language?
-    boolean tmz_adapt = (set_default && !Mode::config ());
+    boolean tmz_adapt = true;
 
     string keyboard = "";
     boolean license_acc = nil;
@@ -315,16 +214,6 @@ Choose the new <b>Language</b> for your system.
 	}    
     }
 
-    boolean CheckIncompleteTranslation () {
-	if (Language::IncompleteTranslation (language)) {
-	    // continue/cancel message
-	    return Popup::ContinueCancel (_("Translation of the primary language is not complete.
-Some texts may be displayed in English.
-"));
-	} else {
-	    return true;
-	}
-    }
 
     void ReadCurrentUIState () {
 	language = (string) UI::QueryWidget (`id (`language), `Value);
@@ -346,10 +235,7 @@ Some texts may be displayed in English.
 
 	if (language != Language::language) {
 	    y2milestone ("Language changed from %1 to %2", Language::language, language);
-
-	    if (set_default) {
-		Timezone::ResetZonemap ();
-	    }
+	    Timezone::ResetZonemap ();
 
 	    // Set it in the Language module.
 	    Language::Set (language);
@@ -357,8 +243,7 @@ Some texts may be displayed in English.
 
 	// Check and set CJK languages
 	if (Stage::initial () || Stage::firstboot ()) {
-	    if ((set_default && ret == `language ||
-		(!set_default && ret == `next)) &&
+	    if (ret == `language &&
 		Language::CJKLanguage (language) &&
 		!Language::CJKLanguage (preselected) &&
 		Language::GetTextMode ()) {
@@ -367,13 +252,13 @@ Some texts may be displayed in English.
 installation, but the selected language will be used for the new system."));
 
 		    Language::WfmSetGivenLanguage ("en_US");
-	    } else if (ret == `next || (set_default && ret == `language)) {
+	    } else if (ret == `language) {
 		Console::SelectFont (language);
 		Language::WfmSetLanguage ();
 	    }
 	}
 
-	if (ret == `language && set_default) {
+	if (ret == `language) {
 	    // Display newly translated dialog.
 	    Wizard::SetFocusToNextButton();
 	    return true;
@@ -384,10 +269,8 @@ installation, but the selected language will be used for the new system."));
 
 	    // Language has been set already.
 	    // On first run store users decision as default.
-	    if (set_default) {
-		y2milestone("Resetting to default language");
-		Language::SetDefault();
-	    }
+	    y2milestone("Resetting to default language");
+	    Language::SetDefault();
 
 	    if (tmz_adapt) {
 		Timezone::SetTimezoneForLanguage (language);
@@ -404,7 +287,7 @@ installation, but the selected language will be used for the new system."));
 	    }
 
 	    // Bugzilla #354133
-	    y2milestone ("Adjustign package and text locale to %1", language);
+	    y2milestone ("Adjusting package and text locale to %1", language);
 	    Pkg::SetPackageLocale (language);
 	    Pkg::SetTextLocale (language);
 
@@ -451,11 +334,11 @@ installation, but the selected language will be used for the new system."));
 		if (! LicenseAccepted ())
 		    continue;
 
-		if (! CheckIncompleteTranslation())
+		if (!Language::CheckIncompleteTranslation (language))
 		    continue;
 
 		if (Stage::initial())
-		    check_languages_support (language);
+		    Language::CheckLanguagesSupport (language);
 	    }
 
 	    if (SetLanguageIfChanged (ret)) {
@@ -472,4 +355,4 @@ installation, but the selected language will be used for the new system."));
     }
 
     return (symbol) ret;
-}
+
