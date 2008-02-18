@@ -69,25 +69,25 @@ else if (func == "Write")
 		"package" : "gdm",
 		"wm" : "gnome",
 		"dm" : "gdm",
-		"cursor" : "Industrial",
+		"cursor" : "DMZ",
 	    ],
 	    "kde" : $[
-		"package" : "kdebase3-kdm",
+		"package" : "kde4-kdm",
 		"wm" : "kde",
 		"dm" : "kdm",
-		"cursor" : "crystalwhite",
+		"cursor" : "DMZ",
 	    ],
 	    "twm" : $[
 		"package" : "xorg-x11",
 		"wm" : "",
 		"dm" : "xdm",
-		"cursor" : "crystalwhite",
+		"cursor" : "DMZ",
 	    ],
 	];
 
 	string default_wm = "gnome";
 	string default_dm = "gdm";
-	string default_cursor = "Industrial";
+	string default_cursor = "DMZ";
 
 	string selected_desktop = DefaultDesktop::Desktop ();
 	if (selected_desktop != "" && selected_desktop != nil)
