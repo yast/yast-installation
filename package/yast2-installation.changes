@@ -3,11 +3,14 @@ Wed Feb 20 10:35:04 CET 2008 - locilka@suse.cz
 
 - Showing release notes in tabs only if more than one product is
   installed (bnc #359137).
+- Added better text for the complex welcome dialog (bnc #359528).
+- Adjusted RPM dependencies (new Language API, see below).
+- 2.16.19
 
 -------------------------------------------------------------------
 Wed Feb 20 10:24:26 CET 2008 - jsuchome@suse.cz
 
-- inst_complex_welcome: save keyboard settings (#360559),
+- inst_complex_welcome: save keyboard settings (bnc #360559),
   use the API from Language.ycp for generating items
 
 -------------------------------------------------------------------
