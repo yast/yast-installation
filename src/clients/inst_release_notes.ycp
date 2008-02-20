@@ -170,24 +170,24 @@
 	`RichText (`id (`relnotescontent), "")
     );
 
-    // use DumpTab or ComboBox layout
-    if (  UI::HasSpecialWidget(`DumbTab ) && (
-           ( size(relnotesproducts)<4  &&  prodnamelen<90 ) ||
-           ( size(relnotesproducts)>3  &&  prodnamelen<70 )    )
-       )
-    {
-        relnoteslayout = `DumbTab (relnotesproducts, relnotesscreen);
-    }
-    else
-    {
-        relnoteslayout = `VBox (
-	    `Left (
-		`MinWidth (
-		    // +2 thingies on the right
-		    minwidtprodsel + 2,
-		    `ComboBox (`id(`productsel), `opt(`notify), _("&Product"), relnotesproducts)
-		)
-	    ),
+    // if there are more products installed, show them in tabs or with
+    // combo box, bnc #359137 (do not show tab for one product)
+    if (size (relnotesproducts) <= 1) {
+	relnoteslayout = relnotesscreen;
+	// use DumpTab or ComboBox layout
+    } else if (UI::HasSpecialWidget(`DumbTab) && (
+	(size(relnotesproducts)<4  &&  prodnamelen<90) ||
+	(size(relnotesproducts)>3  &&  prodnamelen<70)
+    )) {
+	relnoteslayout = `DumbTab (relnotesproducts, relnotesscreen);
+    // doesn't have DumpTab or too many products
+    } else {
+	relnoteslayout = `VBox (
+	    `Left (`MinWidth (
+		// +2 thingies on the right
+		minwidtprodsel + 2,
+		`ComboBox (`id(`productsel), `opt(`notify), _("&Product"), relnotesproducts)
+	    )),
 	    relnotesscreen
 	);
     }
