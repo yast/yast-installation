@@ -57,7 +57,7 @@
     * Build dialog
     * ----------------------------------------------------------------------*/
     // heading text
-    string heading_text = _("Languages");
+    string heading_text = _("Welcome");
 
     term languagesel = `ComboBox (
 	`id (`language),
@@ -104,8 +104,9 @@
 		`VSpacing (text_mode ? 0.1 : 0.5),
 		`MinHeight (1, `HBox (
 		    `Left (`CheckBox (
+			// bnc #359456
 			// TRANSLATORS: check-box
-			`id (`license_agreement), `opt (`notify), _("I Do &Agree to the License Terms."), InstData::product_license_accepted
+			`id (`license_agreement), `opt (`notify), _("I &Agree to the License Terms."), InstData::product_license_accepted
 		    )),
 		    `VStretch (),
 		    // TRANSLATORS: button label
@@ -130,48 +131,38 @@
 	));
     }
 
-    string help_text		= "";
-    // help text (language dependent packages) - at the end of help
-    string packages_help	= _("<p>
-Additional packages with support for the selected primary and secondary languages will be installed. Packages no longer needed will be removed.
-</p>");
-
-    if (Stage::initial ())
-    {
-	// help text for initial (first time) language screen
-	help_text = _("<p>
-Choose the <b>Language</b> to use during installation and for
-the installed system.
+    // help text for initial (first time) language screen
+    string help_text = _("<p>
+Choose the <b>Language</b> and the <b>Keyborad layout</b> to be used during
+installation and for the installed system.
 </p>
-");
+") +
 
-	// help text, continued
-	help_text = help_text + _("<p>
+    // help text, continued
+    _("<p>
+License has to be accepted before continuing the installation.
+Use <b>Show License</b> to show the license in all available translations.
+</p>") +
+
+    // help text, continued
+    _("<p>
 Click <b>Next</b> to proceed to the next dialog.
 </p>
-");
+") +
 
-	// help text, continued
-	help_text = help_text + _("<p>
+    // help text, continued
+    _("<p>
 Nothing will happen to your computer until you confirm
 all your settings in the last installation dialog.
 </p>
-");
-	// help text, continued
-	help_text = help_text + _("<p>
-You can select <b>Abort Installation</b> at any time to abort the
+") +
+
+    // help text, continued
+    _("<p>
+You can select <b>Abort</b> installation at any time to abort the
 installation process.
 </p>
 ");
-    }
-    else
-    {
-	// different help text when called after installation
-	// in an installed system
-	help_text = _("<p>
-Choose the new <b>Language</b> for your system.
-</p>\n");
-    }
 
     // Screen title for the first interactive dialog
 
