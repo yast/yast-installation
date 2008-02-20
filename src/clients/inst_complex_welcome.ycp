@@ -196,11 +196,6 @@ Choose the new <b>Language</b> for your system.
 
     UI::SetFocus(`id(`language));
 
-    // adapt keyboard for language?
-    boolean kbd_adapt = true;
-    // adapt timezone for language?
-    boolean tmz_adapt = true;
-
     string keyboard = "";
     boolean license_acc = nil;
 
@@ -265,25 +260,19 @@ installation, but the selected language will be used for the new system."));
 	}
 
 	if (ret == `next) {
-	    Keyboard::SetLanguage (keyboard);
+	    Keyboard::Set (keyboard);
 
 	    // Language has been set already.
 	    // On first run store users decision as default.
 	    y2milestone("Resetting to default language");
 	    Language::SetDefault();
 
-	    if (tmz_adapt) {
-		Timezone::SetTimezoneForLanguage (language);
-	    } else {
-		Timezone::user_decision = true;
-	    }
+	    Timezone::SetTimezoneForLanguage (language);
 
 	    if (!Stage::initial () && !Mode::update ()) {
 		// save settings (rest is saved in LanguageWrite)
-		if (kbd_adapt)
-		    Keyboard::Save (true);
-		if (tmz_adapt)
-		    Timezone::Save ();
+		Keyboard::Save (true);
+		Timezone::Save ();
 	    }
 
 	    // Bugzilla #354133
