@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Feb 20 10:24:26 CET 2008 - jsuchome@suse.cz
+
+- inst_complex_welcome: save keyboard settings (#360559),
+  use the API from Language.ycp for generating items
+
+-------------------------------------------------------------------
 Fri Feb 15 14:28:45 CET 2008 - jsrain@suse.cz
 
 - updated image-based installatoin not to use any hardcoded
