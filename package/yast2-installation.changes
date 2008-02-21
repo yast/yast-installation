@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Feb 21 06:26:22 CET 2008 - coolo@suse.de
+
+- don't repeat the header
+
+-------------------------------------------------------------------
 Wed Feb 20 10:35:04 CET 2008 - locilka@suse.cz
 
 - Showing release notes in tabs only if more than one product is
