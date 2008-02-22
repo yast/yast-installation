@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb 22 11:31:15 CET 2008 - locilka@suse.cz
+
+- "iscsi-client" added into modules to clone (bnc #363229 c#1).
+
+-------------------------------------------------------------------
 Wed Jan 30 12:19:35 CET 2008 - locilka@suse.cz
 
 - Fixed visibility of ZMD Turnoff checkbox (bnc #356655).
