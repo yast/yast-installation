@@ -101,6 +101,7 @@ textdomain="control"
 	<clone_module>ldap</clone_module>
 	<clone_module>printer</clone_module>
 	<clone_module>add-on</clone_module>
+	<clone_module>iscsi-client</clone_module>
     </clone_modules>
     <texts>
       <congratulate>

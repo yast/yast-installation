@@ -110,6 +110,7 @@ textdomain="control"
         <clone_module>ldap-server</clone_module>
         <clone_module>ca_mgm</clone_module>
 	<clone_module>add-on</clone_module>
+	<clone_module>iscsi-client</clone_module>
     </clone_modules>
     <texts>
       <congratulate>
