@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Feb 22 11:27:13 CET 2008 - locilka@suse.cz
+
+- "iscsi-client" added into modules to clone (bnc #363229 c#1).
+
+-------------------------------------------------------------------
 Thu Feb 21 06:26:22 CET 2008 - coolo@suse.de
 
 - don't repeat the header
