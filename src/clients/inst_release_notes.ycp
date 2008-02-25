@@ -230,8 +230,6 @@ Linux system. They provide a brief summary of new features and changes.</p>");
 	} else {
 	    UI::ChangeWidget (`id(`relnotescontent), `Value, contents);
 	}
-	
-	UI::SetFocus (`id (`relnotescontent));
     }
 
     void RedrawRelnotesProduct (symbol redraw_type, any current_ret) {

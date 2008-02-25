@@ -105,6 +105,8 @@
     define map submod_make_proposal( string submodule, boolean force_reset,
 				     boolean language_changed )
     ``{
+	UI::BusyCursor();
+
 	map proposal = (map) WFM::CallFunction ( submodule, [ "MakeProposal",
 							$[ "force_reset" : force_reset,
 							   "language_changed" : language_changed ] ] );
@@ -113,6 +115,8 @@
 	// There might be some UI layers left
 	// we need to close them
 	CheckAndCloseWindowsLeft();
+
+	UI::NormalCursor();
 
 	return proposal;
     };
@@ -188,11 +192,15 @@
 
     define map submod_description (string submodule)
     ``{
+	UI::BusyCursor();
+
 	map description = (map) WFM::CallFunction( submodule, [ "Description", $[] ] );
 
 	// There might be some UI layers left
 	// we need to close them
 	CheckAndCloseWindowsLeft();
+
+	UI::NormalCursor();
 
 	return description;
     };

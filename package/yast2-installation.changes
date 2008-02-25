@@ -2,6 +2,8 @@
 Fri Feb 22 11:27:13 CET 2008 - locilka@suse.cz
 
 - "iscsi-client" added into modules to clone (bnc #363229 c#1).
+- Removing focus from release notes content to make the default
+  button focussed instead (bnc #363976).
 
 -------------------------------------------------------------------
 Thu Feb 21 06:26:22 CET 2008 - coolo@suse.de
