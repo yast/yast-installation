@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Feb 26 17:08:19 CET 2008 - locilka@suse.cz
+
+- Catching an exception when calling the inst_repair fails and
+  reporting the error message containing suggestions what to do
+  (bnc #359719).
+- 2.13.205
+
+-------------------------------------------------------------------
 Fri Feb 22 11:31:15 CET 2008 - locilka@suse.cz
 
 - "iscsi-client" added into modules to clone (bnc #363229 c#1).

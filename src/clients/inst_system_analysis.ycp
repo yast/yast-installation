@@ -427,7 +427,24 @@ if (ret == `back || ret == `finish) {
 if (Mode::repair ())
 {
     y2milestone("Calling inst_repair");
-    WFM::CallFunction ("inst_repair");
+    any repair_ret = WFM::CallFunction ("inst_repair");
+
+    // bnc #359719
+    // something went wrong with repair
+    if (repair_ret == nil) {
+	Popup::ModuleError (sformat (
+	    _("Calling the YaST module %1 has failed.
+More information can be found near the end of the '%2' file.
+
+This is worth reporting a bug at %3.
+Please, attach also all YaST logs stored in the '%4' directory."),
+	    "inst_repair",
+	    "/var/log/YaST2/y2log",
+	    "http://bugzilla.novell.com/",
+	    "/var/log/YaST2/"
+	));
+    }
+
     return `finish;
 }
 
