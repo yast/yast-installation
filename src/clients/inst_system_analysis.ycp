@@ -432,6 +432,12 @@ if (Mode::repair ())
     // bnc #359719
     // something went wrong with repair
     if (repair_ret == nil) {
+	// TRANSLATORS: an error message (the same is in base.pot)
+	// this should not happen, but life is cruel...
+	// %1 - (failed) module name
+	// %2 - logfile, possibly with errors
+	// %3 - link to our bugzilla
+	// %4 - directory where YaST logs are stored
 	Popup::ModuleError (sformat (
 	    _("Calling the YaST module %1 has failed.
 More information can be found near the end of the '%2' file.
