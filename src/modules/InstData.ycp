@@ -37,15 +37,6 @@
 
     global boolean product_license_accepted = false;
 
-    // when Linuxrc starts the installation, the first language is already selected
-    // and language extension already merged
-    global string initial_installation_language = nil;
-
-    // FATE #302955: Split translations out of installation system
-    // [ "en_US", "en_GB", "de", "cs" ]
-    // they are in content.SUPPLANGS or as files in /usr/lib/YaST2/trans
-    global list <string> available_lang_filenames = [];
-
     // <-- other
 
 /* EOF */

@@ -209,15 +209,6 @@ installation process.
 
     // Returns true if the dialog needs redrawing
     boolean SetLanguageIfChanged (any ret) {
-	// Only inst-sys and only if a language has been changed right now
-	// and the new language is not the initial one (that one is already downloaded by Linuxrc)
-	if (Stage::initial() && ret == `language) {
-	    if (InstData::initial_installation_language != language) {
-		WFM::call ("integrate_translation_extension", [$["requested_language":language]]);
-	    } else {
-		y2milestone ("Skipping downloading %1 extension again (initial language)", InstData::initial_installation_language);
-	    }
-	}
 
 	if (language != Language::language) {
 	    y2milestone ("Language changed from %1 to %2", Language::language, language);
@@ -282,11 +273,6 @@ installation, but the selected language will be used for the new system."));
     // bugzilla #206706
     if (Mode::autoinst()) {
 	return `auto;
-    }
-
-    // Store the initial language
-    if (InstData::initial_installation_language == nil) {
-	InstData::initial_installation_language = Language::language;
     }
 
     while (true) {
