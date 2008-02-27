@@ -61,13 +61,15 @@
 
     term languagesel = `ComboBox (
 	`id (`language),
-	`opt (`notify),
+	`opt (`notify, `hstretch),
+	// combo box label
 	_("&Language"), Language::GetLanguageItems (`first_screen)
     );
 
     term keyboardsel = `ComboBox (
 	`id (`keyboard),
-	`opt (`notify),
+	`opt (`notify, `hstretch),
+	// combo box label
 	_("&Keyboard Layout"),
 	// all keyboard layouts should be available
 	maplist (string id, string label, Keyboard::Selection (),
