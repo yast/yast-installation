@@ -20,6 +20,7 @@ import "Installation";
 import "Storage";
 import "Hotplug";
 import "Vendor";
+import "String";
 
 any ret = nil;
 string func = "";
@@ -113,7 +114,7 @@ else if (func == "Write")
         umountLength = umountLength - 1;
         string tmp = Installation::destdir + (string) (umountList[umountLength]:"");
         y2milestone("umount target: %1", tmp);
-        WFM::Execute(.local.umount, tmp);
+        WFM::Execute (.target.bash, sformat ("umount -l -f '%1'", String::Quote (tmp)));
     }
 
     // must call .local.bash_output !

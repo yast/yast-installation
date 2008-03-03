@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Mar  3 13:28:56 CET 2008 - locilka@suse.cz
+
+- Umount mounted file-systems -l -f (lazy umount) at the end of the
+  first stage installation (bnc #366544).
+- 2.13.206
+
+-------------------------------------------------------------------
 Tue Feb 26 17:08:19 CET 2008 - locilka@suse.cz
 
 - Catching an exception when calling the inst_repair fails and
