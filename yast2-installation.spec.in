@@ -18,7 +18,8 @@ Requires:	yast2 >= 2.16.27
 Requires:	yast2-bootloader
 
 # Language::GetLanguageItems and other API
-Requires:	yast2-country-data >= 2.16.9
+# Language::Set (handles downloading the translation extensions)
+Requires:	yast2-country-data >= 2.16.11
 
 # New System-selection data and API DefaultDesktop module
 # New API in ProductLicense
