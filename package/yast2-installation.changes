@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Mar  3 15:17:23 CET 2008 - locilka@suse.cz
+
+- Requiring the latest Language::Set functionality by RPM deps.
+
+-------------------------------------------------------------------
 Tue Feb 26 12:39:37 CET 2008 - jsuchome@suse.cz
 
 - functionality of integrate_translation_extension.ycp moved into
