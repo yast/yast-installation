@@ -84,6 +84,7 @@ list<map<string,any> > stages = [
 	    "save_hw_status",
 	    "users",
 	    "autoinst_scripts2",
+	    "installation_settings",
 	],
     ],
     $[

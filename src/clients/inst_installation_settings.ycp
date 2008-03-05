@@ -1,0 +1,42 @@
+/**
+ * File:	clients/inst_installation_settings.ycp
+ * Package:	Installation
+ * Summary:	Installation - save settings (used later in second stage, or ...).
+ *		See bnc #364066.
+ * Authors:	Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id:$
+ *
+ */
+
+{
+    textdomain "installation";
+
+    import "ProductControl";
+    import "InstData";
+
+    if (ProductControl::DisabledModules == nil) {
+	y2error ("Wrong definition of DisabledModules");
+	return true;
+    }
+
+    if (InstData::wizardsteps_disabled_modules == nil) {
+	y2error ("Path to write disabled modules is not defined!");
+	return true;
+    }
+
+    y2milestone (
+	"Writing disabled modules %1 into %2",
+	ProductControl::DisabledModules,
+	InstData::wizardsteps_disabled_modules
+    );
+
+    if ((boolean) SCR::Write (.target.ycp, InstData::wizardsteps_disabled_modules, ProductControl::DisabledModules) != true) {
+	y2error ("Cannot write disabled modules");
+	return true;
+    }
+
+    y2milestone ("Successful");
+
+    return true;
+}

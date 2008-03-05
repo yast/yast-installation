@@ -54,6 +54,8 @@
     // All stages
     SetUIContent();
 
+    AdjustDisabledModules();
+
     SetDiskActivationModule();
 
     UpdateWizardSteps ();
