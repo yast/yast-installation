@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Wed Mar  5 16:30:22 CET 2008 - locilka@suse.cz
+
+- Using client country_simple instead of timezone and language in
+  the installation overview (FATE #302980).
+- Using new users client in that overview too (FATE #302980).
+- Do not remove already registered installation repositories during
+  upgrade if they match the old repositories on system
+  (bnc #360109).
+
+-------------------------------------------------------------------
 Mon Mar  3 21:12:25 CET 2008 - coolo@suse.de
 
 - trying to change defaults for running gdb (arvin's patch)

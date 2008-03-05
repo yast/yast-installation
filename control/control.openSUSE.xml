@@ -114,8 +114,9 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <proposal_module>partitions</proposal_module>
                 <proposal_module>software</proposal_module>
                 <proposal_module>bootloader</proposal_module>
-                <proposal_module>timezone</proposal_module>
-                <proposal_module>language</proposal_module>
+                <!-- both FATE #302980 -->
+                <proposal_module>country_simple</proposal_module>
+                <proposal_module>users</proposal_module>
                 <proposal_module>runlevel</proposal_module>
             </proposal_modules>
 <!--
@@ -139,6 +140,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                         <proposal_module>bootloader</proposal_module>
                         <proposal_module>timezone</proposal_module>
                         <proposal_module>language</proposal_module>
+                        <proposal_module>users</proposal_module>
                         <proposal_module>runlevel</proposal_module>
                     </proposal_modules>
                 </proposal_tab>

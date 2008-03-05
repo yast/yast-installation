@@ -179,7 +179,7 @@ those you want to include in the upgrade process.</p>") +
 	boolean ret = false;
 
 	foreach (map one_url, already_registered_repos, {
-	    if (baseurl == one_url["media_url"]:"-A-") {
+	    if (baseurl == one_url["url"]:"-A-") {
 		ret = true;
 		break;
 	    }
@@ -197,7 +197,7 @@ those you want to include in the upgrade process.</p>") +
 	integer ret = nil;
 
 	foreach (map one_url, already_registered_repos, {
-	    if (baseurl == one_url["media_url"]:"-A-") {
+	    if (baseurl == one_url["url"]:"-A-") {
 		ret = one_url["media"]:-1;
 		break;
 	    }
@@ -277,7 +277,7 @@ those you want to include in the upgrade process.</p>") +
 	urls[currentitem, "url"] = url;
     }
 
-    symbol HandleOldSources () {
+    void UseOldOrNewURLs () {
 	urls = [];
 
 	// If some new (since 10.3 Alpha?) URLs found, use only them
@@ -287,6 +287,7 @@ those you want to include in the upgrade process.</p>") +
 		// bugzilla #300901
 		boolean enabled = nil;
 
+		// mapping url (zypp-based) keys to keys used in pkg-bindings
 		if (is (one_url_map["enabled"]:0, integer)) {
 		    enabled = (one_url_map["enabled"]:0 == 1);
 		} else if (is (one_url_map["enabled"]:"0", string)) {
@@ -319,7 +320,42 @@ those you want to include in the upgrade process.</p>") +
 	    one_url["initial_url_status"]  = one_url["url_will_be_enabled"]:false;
 	    return one_url;
 	});
+    }
 
+    /**
+     * Function removes repositories already registered by the installation
+     * from list of urls found on the system.
+     */
+    void RemoveInstallationReposFromUpgrededSystemOnes () {
+	// All already registered repos
+	foreach (map one_registered_repo, already_registered_repos, {
+	    // if an installation repository is enabled, skip it
+	    if (one_registered_repo["enabled"]:true == false)
+		return;
+
+	    string registered_url  = one_registered_repo["url"]:"-A-";
+	    string registered_name = one_registered_repo["name"]:"-A-";
+	    string registered_dir  = one_registered_repo["product_dir"]:"-A-";
+
+	    // Remove them from repos being offered to user to enable/disable them
+	    // Don't handle them at all, they have to stay untouched
+	    // See bnc #360109
+	    urls = filter (map one_from_urls, urls, {
+		string one_url  = one_from_urls["url"]:"-B-";
+		string one_name = one_from_urls["name"]:"-B-";
+		string one_dir  = one_from_urls["product_dir"]:"-B-";
+
+		if (registered_url == one_url && registered_name == one_name && registered_dir == one_dir) {
+		    y2milestone ("The same product (url) already in use, not handling it %1", one_registered_repo);
+		    return true;
+		} else {
+		    return false;
+		}
+	    });
+	});
+    }
+
+    symbol HandleOldSources () {
 	y2milestone ("Offering: %1", urls);
 	y2milestone ("Already registered: %1", already_registered_repos);
 
@@ -655,6 +691,7 @@ URL: %2"),
     Progress::NextStage();
 
     boolean continue_processing = false;
+
     if ((old_urls != nil && old_urls != []) || (new_urls != nil && new_urls != [])) {
 	continue_processing = true;
 	// initialize zypp
@@ -663,17 +700,21 @@ URL: %2"),
 
 	foreach (integer one_id, Pkg::SourceGetCurrent (true), {
 	    map source_data = Pkg::SourceGeneralData (one_id);
+	    source_data["media"] = one_id;
 	    
-	    already_registered_repos = add (already_registered_repos, $[
-		"media_url" : source_data["url"]:"",
-		"product_dir" : source_data["product_dir"]:"",
-		"media" : one_id,
-	    ]);
+	    already_registered_repos = add (already_registered_repos, source_data);
 	});
     }
 
+    UseOldOrNewURLs();
+    RemoveInstallationReposFromUpgrededSystemOnes();
+
     Progress::NextStage();
     Progress::Finish();
+
+    if (size (already_registered_repos) < 1) {
+	continue_processing = false;
+    }
 
     if (! continue_processing) {
 	y2milestone ("No sources found");
