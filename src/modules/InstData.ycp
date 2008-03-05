@@ -15,6 +15,8 @@
     textdomain "installation";
     module "InstData";
 
+    import "Directory";
+
     // --> system analysis
 
     global string start_mode = nil;
@@ -36,6 +38,10 @@
     // --> other
 
     global boolean product_license_accepted = false;
+
+    // keep steps disabled in first stage also disabled in second stage
+    // see bnc #364066
+    global string wizardsteps_disabled_modules = Directory::vardir + "/installation_disabled_steps";
 
     // <-- other
 

@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Mar  5 18:52:30 CET 2008 - locilka@suse.cz
+
+- Remember (first stage) and restore (second stage) DisabledModules
+  (bnc #364066).
+- 2.16.20
+
+-------------------------------------------------------------------
 Wed Mar  5 16:30:22 CET 2008 - locilka@suse.cz
 
 - Using client country_simple instead of timezone and language in
