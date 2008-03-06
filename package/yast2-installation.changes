@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar 06 10:57:42 CET 2008 - aschnell@suse.de
+
+- call rcnetwork with option onboot during start of second stage
+  (bnc #363423)
+
+-------------------------------------------------------------------
 Wed Mar  5 18:52:30 CET 2008 - locilka@suse.cz
 
 - Remember (first stage) and restore (second stage) DisabledModules
