@@ -3,6 +3,7 @@ Thu Mar 06 10:57:42 CET 2008 - aschnell@suse.de
 
 - call rcnetwork with option onboot during start of second stage
   (bnc #363423)
+- 2.13.207
 
 -------------------------------------------------------------------
 Mon Mar  3 13:28:56 CET 2008 - locilka@suse.cz
