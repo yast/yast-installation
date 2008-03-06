@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar 06 10:57:42 CET 2008 - aschnell@suse.de
+
+- call rcnetwork with option onboot during start of second stage
+  (bnc #363423)
+
+-------------------------------------------------------------------
 Mon Mar  3 13:28:56 CET 2008 - locilka@suse.cz
 
 - Umount mounted file-systems -l -f (lazy umount) at the end of the

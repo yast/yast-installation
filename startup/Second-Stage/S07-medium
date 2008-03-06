@@ -36,7 +36,7 @@ fi
 #---------------------------------------------
 if [ $VNC -eq 1 ] || [ $USE_SSH -eq 1 ] || [ -n "$Display_IP" ] ;then
 	log "\tVNC/SSH/remote X11 installation used -> activate network"
-	rcnetwork start && Y2_NETWORK_ACTIVE=1
+	rcnetwork start -o onboot && Y2_NETWORK_ACTIVE=1
 	rcSuSEfirewall2 reload
 fi
 if [ $USE_SSH -eq 1 ];then
