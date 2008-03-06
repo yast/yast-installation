@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Mar 06 10:57:42 CET 2008 - aschnell@suse.de
+
+- call rcnetwork with option onboot during start of second stage
+  (bnc #363423)
+- 2.13.197
+
+-------------------------------------------------------------------
 Fri Jun 15 09:41:19 CEST 2007 - locilka@suse.cz
 
 - Make sure that online update is called again after restarting
