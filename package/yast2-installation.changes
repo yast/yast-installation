@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Mar 10 11:25:57 CET 2008 - locilka@suse.cz
+
+- Disabling the window menu in IceWM preferences to make the
+  inst-sys 600 kB smaller (*.mo files). Thanks to mmarek.
+
+-------------------------------------------------------------------
 Fri Mar  7 11:35:29 CET 2008 - jsuchome@suse.cz
 
 - control.openSUSE.xml: country_simple is for keyboard and language,

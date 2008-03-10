@@ -3,12 +3,10 @@
 # Hide taskbar
 ShowTaskBar=0
 
-# Hide titlebar buttons
+# Hide titlebar buttons and window menu
 TitleButtonsLeft=""
 TitleButtonsRight=""
-
-# Show only Move, Size and Close in the window menu
-WinMenuItems="msc"
+WinMenuItems=""
 
 # Enable Alt+Tab
 QuickSwitch=1
