@@ -4,7 +4,6 @@ Fri Mar  7 11:35:29 CET 2008 - jsuchome@suse.cz
 - control.openSUSE.xml: country_simple is for keyboard and language,
   not for timezone
 - added 1st stage step for root password dialog (fate#302980)
-- 2.16.22
 
 -------------------------------------------------------------------
 Thu Mar 06 10:57:42 CET 2008 - aschnell@suse.de
