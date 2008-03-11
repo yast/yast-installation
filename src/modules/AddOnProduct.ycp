@@ -949,7 +949,7 @@ global void PrepareForRegistration (integer src_id) {
 global void RegisterAddOnProduct (integer src_id) {
     if (contains (addons_requesting_registration, src_id)) {
 	y2milestone ("Source ID %1 requests registration", src_id);
-	WFM::CallFunction ("suse_register", []);
+	WFM::CallFunction ("inst_suse_register", []);
     } else {
 	y2milestone ("Source ID %1 doesn't need registration", src_id);
     }

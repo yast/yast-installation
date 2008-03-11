@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Mar 11 15:59:36 CET 2008 - locilka@suse.cz
+
+- Calling inst_suse_register instead of suse_register client in
+  AddOnProduct module (#369046).
+- 2.13.197.1
+
+-------------------------------------------------------------------
 Thu Mar 06 10:57:42 CET 2008 - aschnell@suse.de
 
 - call rcnetwork with option onboot during start of second stage
