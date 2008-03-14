@@ -1,0 +1,130 @@
+/**
+ * File:	clients/inst_automatic_configuration.ycp
+ * Package:	installation
+ * Summary:	Automatic configuration instead of the second stage (Preview)
+ * Authors:	Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id:$
+ *
+ * @see http://visnov.blogspot.com/2008/02/getting-rid-of-2nd-stage-of.html
+ */
+
+{
+    import "Mode";
+    import "Stage";
+    import "FileUtils";
+    import "Directory";
+
+    textdomain "installation";
+
+    y2milestone ("automatic_configuration started");
+
+    Mode::SetMode ("installation");
+    Stage::Set ("continue");
+
+    list <map <string, any> > proposal_scripts_to_call = [
+	// probably needed
+	$[ "type":"scripts",   "items":["netprobe"] ],
+	// network proposal
+	$[ "type":"proposals", "items":["lan", "general", "dsl", "isdn", "modem", "remote", "firewall"] ],
+	// hardware proposal
+	$[ "type":"proposals", "items":["x11", "printer", "sound", "tv"] ],
+	// probably needed
+	$[ "type":"scripts",   "items":["suseconfig", "save_hardware_status"] ],
+    ];
+
+    // weird exception for users
+    if (FileUtils::Exists (Directory::vardir + "/users_first_stage.ycp")) {
+	y2milestone ("Users will be called");
+	proposal_scripts_to_call = add (proposal_scripts_to_call, $[ "type":"scripts", "items":["user"] ]);
+    }
+
+    /**
+     * Prepares the list of installation scripts to be executed.
+     * This comes from control file where scripts are mentioned without the leading
+     * "inst_" but they are actually named that way ("inst_something").
+     *
+     * @example ["aa", "inst_bb"] -> ["inst_aa", "inst_bb"]
+     */
+    list <string> NormalizeScriptNames (list <string> names) {
+	list <string> ret_names = [];
+
+	foreach (string one_name, names, {
+	    if (regexpmatch (one_name, "^inst_")) {
+		ret_names = add (ret_names, one_name);
+	    } else {
+		ret_names = add (ret_names, "inst_" + one_name);
+	    }
+	});
+
+	return ret_names;
+    }
+
+    /**
+     * Similar to NormalizeScriptNames but it add "_proposal" instead if "inst_".
+     *
+     * @example ["aa", "bb_proposal"] -> ["aa_proposal", "bb_proposal"]
+     */
+    list <string> NormalizeProposalNames (list <string> names) {
+	list <string> ret_names = [];
+
+	foreach (string one_name, names, {
+	    if (regexpmatch (one_name, "_proposal$")) {
+		ret_names = add (ret_names, one_name);
+	    } else {
+		ret_names = add (ret_names, one_name + "_proposal");
+	    }
+	});
+
+	return ret_names;
+    }
+
+    void CallScripts (list <string> scripts_to_call) {
+	y2milestone ("Scripts to call: %1", scripts_to_call);
+
+	scripts_to_call = NormalizeScriptNames (scripts_to_call);
+
+	foreach (string one_script, scripts_to_call, {
+	    y2milestone ("Calling script %1", one_script);
+	    any result = WFM::CallFunction (one_script, [ $["WriteOnly":true, "AutomaticConfiguration":true] ]);
+	    y2milestone ("Script %1 returned %2", one_script, result);
+	});
+    }
+
+    void CallProposals (list <string> proposals_to_call) {
+	y2milestone ("Scripts to call: %1", proposals_to_call);
+
+	proposals_to_call = NormalizeProposalNames (proposals_to_call);
+
+	// $[ "WriteOnly":true ] used to determine that we just want to write the proposed
+	// configuration, we don't want to (re)start anything (network, cups, firewall, ...)
+
+	foreach (string one_proposal, proposals_to_call, {
+	    y2milestone ("Calling script %1 MakeProposal", one_proposal);
+	    any result = WFM::CallFunction (one_proposal, ["MakeProposal", $[ "WriteOnly":true, "AutomaticConfiguration":true ]]);
+	    y2milestone ("Script %1 returned %2", one_proposal, result);
+	});
+
+	foreach (string one_proposal, proposals_to_call, {
+	    y2milestone ("Calling script %1 Write", one_proposal);
+	    any result = WFM::CallFunction (one_proposal, ["Write", $[ "WriteOnly":true, "AutomaticConfiguration":true ]]);
+	    y2milestone ("Script %1 returned %2", one_proposal, result);
+	});
+    }
+
+    foreach (map one_autoconf_call, proposal_scripts_to_call, {
+	string type = one_autoconf_call["type"]:"";
+
+	switch (type) {
+	    case "scripts":
+		CallScripts (one_autoconf_call["items"]:[]);
+		break;
+	    case "proposals":
+		CallProposals (one_autoconf_call["items"]:[]);
+		break;
+	    y2error ("Unknown script type '%1'", type);
+	}
+    });
+
+    y2milestone ("automatic_configuration finished");
+}

@@ -93,10 +93,13 @@ list<map<string,any> > stages = [
 	"steps" : [
 	    "vm",
 	    "driver_update2",
+	    // no second stage if possible
 	    "pre_umount",
 	    // copy logs just before 'umount'
 	    // keeps maximum logs available after reboot
 	    "copy_logs",
+	    // runs a separate process in SCR (chrooted)
+	    "automatic_configuration",
 	    "umount",
 	],
     ],

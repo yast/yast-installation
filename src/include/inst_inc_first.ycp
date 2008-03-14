@@ -20,6 +20,7 @@
     import "Stage";
     import "FileUtils";
     import "String";
+    import "Mode";
 
     void InitMouse () {
         if (!Arch::s390 () || Arch::board_iseries ()) {
@@ -39,13 +40,13 @@
 	    Installation::encoding = "UTF-8";
 	}
 	
-	ProductControl::DisabledModules = add (ProductControl::DisabledModules, "add-on");
-	ProductControl::DisabledModules = add (ProductControl::DisabledModules, "productsources");
+	ProductControl::DisableModule ("add-on");
+	ProductControl::DisableModule  ("productsources");
 
 	// First-stage users module will enable them again only if needed
-	ProductControl::DisabledModules = add (ProductControl::DisabledModules, "root");
-	ProductControl::DisabledModules = add (ProductControl::DisabledModules, "user");
-	ProductControl::DisabledModules = add (ProductControl::DisabledModules, "auth");
+	ProductControl::DisableModule ("root");
+	ProductControl::DisableModule ("user");
+	ProductControl::DisableModule ("auth");
 
 	UI::SetLanguage (Language::language, Installation::encoding);
 	WFM::SetLanguage (Language::language, "UTF-8");
@@ -75,6 +76,7 @@
     void SetSystemUpdate () {
 	if (FileUtils::Exists (Installation::run_update_file)) {
 	    Mode::SetMode ("update");
+
 	    foreach (string m, [
 		"language", // language already selected
 		"disks_activate", // disks activated before running upgrade
@@ -83,8 +85,22 @@
 		"do_resize", // why is this included in upgrade at all? it is empty anyway
 		"prepdisk", // disks already mounted, it is dummy in update anyway
 	    ], {
-		ProductControl::DisabledModules = add (ProductControl::DisabledModules, m);
+		ProductControl::DisableModule (m);
 	    });
+	}
+    }
+
+    void HandleSecondStageRequired () {
+	if (Mode::installation() && Stage::initial()) {
+	    string run_yast_at_boot = sformat ("%1/%2", Installation::destdir, Installation::run_yast_at_boot);
+
+	    if (ProductControl::RunRequired ("continue", "installation")) {
+		y2milestone ("Running the second stage is required");
+		WFM::Write (.local.string, run_yast_at_boot, "");
+	    } else {
+		y2milestone ("It is not required to run the second stage");
+		WFM::Execute (.local.remove, run_yast_at_boot);
+	    }
 	}
     }
 
