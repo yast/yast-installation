@@ -27,6 +27,7 @@ import "ProductControl";
 import "Label";
 import "FileUtils";
 import "Linuxrc";
+import "InstData";
 
 /**
  * Function appends blacklisted modules to the /etc/modprobe.d/blacklist
@@ -206,5 +207,31 @@ according to the settings in the previous dialogs.</p>")
 
 	return ( button == `confirm );
     }
+
+    void AdjustStepsAccordingToInstallationSettings () {
+        if (ProductControl::GetUseAutomaticConfiguration()) {
+            ProductControl::DisableAllModulesAndProposals ("installation", "continue");
+	} else {
+	    ProductControl::UnDisableAllModulesAndProposals ("installation", "continue");
+	}
+
+	if (Installation::add_on_selected == true) {
+	    ProductControl::EnableModule ("add-on");
+	} else {
+	    ProductControl::DisableModule ("add-on");
+	}
+
+	if (Installation::productsources_selected == true) {
+	    ProductControl::EnableModule ("productsources");
+	} else {
+	    ProductControl::DisableModule ("productsources");
+	}
+
+	y2milestone ("Disabled Modules: %1, Proposals: %2",
+	    ProductControl::GetDisabledModules(), ProductControl::GetDisabledProposals());
+
+        UpdateWizardSteps();
+    }
+
 
 } //end of include

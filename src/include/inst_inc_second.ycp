@@ -47,8 +47,40 @@
 	    return;
 	}
 
-	ProductControl::DisabledModules = disabled_modules;
-	y2milestone ("Disabled modules set to %1", ProductControl::DisabledModules);
+	foreach (string one_module, disabled_modules, {
+	    ProductControl::DisableModule (one_module);
+	});
+
+	y2milestone ("Disabled modules set to %1", ProductControl::GetDisabledModules());
+    }
+
+    void AdjustDisabledProposals () {
+	if (InstData::wizardsteps_disabled_proposals == nil) {
+	    y2error ("Disabled proposals file not defined");
+	    return;
+	}
+
+	if (! FileUtils::Exists (InstData::wizardsteps_disabled_proposals)) {
+	    y2milestone ("File %1 doesn't exist, skipping...", InstData::wizardsteps_disabled_proposals);
+	    return;
+	}
+
+	list <string> disabled_proposals = (list <string>) SCR::Read (.target.ycp, InstData::wizardsteps_disabled_proposals);
+	if (disabled_proposals == nil) {
+	    y2error ("Error reading %1", InstData::wizardsteps_disabled_proposals);
+	    return;
+	}
+
+	foreach (string one_proposal, disabled_proposals, {
+	    ProductControl::DisableProposal (one_proposal);
+	});
+
+	y2milestone ("Disabled proposals set to %1", ProductControl::GetDisabledProposals());
+    }
+
+    void AdjustDisabledItems () {
+	AdjustDisabledModules();
+	AdjustDisabledProposals();
     }
 
     /**
@@ -388,8 +420,6 @@ Note: You may have to enter some information again.");
 	    WorkflowManager::SetBaseWorkflow (false);
 	    WorkflowManager::MergeWorkflows();
 	    WorkflowManager::RedrawWizardSteps();
-        } else {
-            ProductControl::DisabledModules = add (ProductControl::DisabledModules, "add-on");
         }
     }
 

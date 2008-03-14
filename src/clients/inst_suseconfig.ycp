@@ -33,6 +33,17 @@
     if ( GetInstArgs::going_back())	// going backwards?
 	return `auto;			// don't execute this once more
 
+    map param = $[];
+    if (size (WFM::Args()) > 0 && is (WFM::Args (0), map))
+	param = (map) WFM::Args (0);
+
+    boolean automatic_configuration = false;
+    if (param["AutomaticConfiguration"]:false == true) {
+	automatic_configuration = true;
+    }
+
+    y2milestone ("Script params: %1, AutoConf: %2", param, automatic_configuration);
+
     boolean reread_inittab = false;
 
     integer	current_step	= 0;	// Required by logStep()
@@ -52,8 +63,11 @@
      */
     define void logStep( string step_descr ) ``{
 	current_step = current_step + 1;
-	UI::ChangeWidget( `id(`progress), `Value, current_step );
-	UI::ChangeWidget( `id(`log), `LastLine, step_descr + "\n" );
+
+	if (! automatic_configuration) {
+	    UI::ChangeWidget( `id(`progress), `Value, current_step );
+	    UI::ChangeWidget( `id(`log), `LastLine, step_descr + "\n" );
+	}
     };
 
 
@@ -68,7 +82,9 @@
 	string command = sformat( "HOME=%1 %2 %3 2>&1", Directory::tmpdir, step, log_destination );
 	// Setting $HOME to Directory::tmpdir to avoid cluttering '/' with spurious files - bug #13204
 
-	if ( Mode::test () )
+	// automatic configuration doesn't have UI
+	// the very same approach uses testsuite
+	if (Mode::test () && ! automatic_configuration)
 	{
 	    y2milestone( "Test mode - NOT executing '%1'", command );
 	    sleep( 300 );
@@ -110,11 +126,13 @@ this process can take some time.</p>
 
     // bugzilla #241553 comment #7
     UI::SetProductName ("");
-    Wizard::SetContents(
+    if (! automatic_configuration) {
+	Wizard::SetContents(
 			  // Dialog title for SuSEconfig dialog
 			  _("Writing the system configuration"),
 			  contents, help, GetInstArgs::enable_back(), GetInstArgs::enable_next());
-    Wizard::DisableAbortButton();
+	Wizard::DisableAbortButton();
+    }
 
 
     // --------------------------------------------------------------
@@ -153,7 +171,7 @@ this process can take some time.</p>
 	    runStep( "/sbin/SuSEconfig --verbose --module "   + mod );
 	});
 
-	if ( ! Mode::test () )
+	if (! Mode::test () && ! automatic_configuration)
 	{
 	    SCR::Execute (.target.remove, "/var/lib/YaST2/run_suseconfig");
 	}
@@ -190,7 +208,7 @@ this process can take some time.</p>
     UI::ChangeWidget( `id(`log), `LastLine, "\n" + _("Done.") + "\n" );
 
 
-    if ( Mode::test () )
+    if (Mode::test () && ! automatic_configuration)
     {
 	UI::MakeScreenShot();	// doesn't work manually - not widget with keyboard focus!
 	sleep( 5*1000 );

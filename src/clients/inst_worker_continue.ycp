@@ -54,7 +54,7 @@
     // All stages
     SetUIContent();
 
-    AdjustDisabledModules();
+    AdjustDisabledItems();
 
     SetDiskActivationModule();
 

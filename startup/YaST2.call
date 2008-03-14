@@ -571,7 +571,6 @@ function start_yast_and_reboot () {
 # ---
 	if [ -f /var/lib/YaST2/reboot ];then
 		rm -f /var/lib/YaST2/reboot
-		touch /var/lib/YaST2/runme_at_boot
 		/sbin/shutdown -r now
 	fi
 }

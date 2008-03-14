@@ -15,7 +15,7 @@
     import "ProductControl";
     import "InstData";
 
-    if (ProductControl::DisabledModules == nil) {
+    if (ProductControl::GetDisabledModules() == nil) {
 	y2error ("Wrong definition of DisabledModules");
 	return true;
     }
@@ -27,16 +27,25 @@
 
     y2milestone (
 	"Writing disabled modules %1 into %2",
-	ProductControl::DisabledModules,
+	ProductControl::GetDisabledModules(),
 	InstData::wizardsteps_disabled_modules
     );
 
-    if ((boolean) SCR::Write (.target.ycp, InstData::wizardsteps_disabled_modules, ProductControl::DisabledModules) != true) {
+    if ((boolean) SCR::Write (.target.ycp, InstData::wizardsteps_disabled_modules, ProductControl::GetDisabledModules()) != true) {
 	y2error ("Cannot write disabled modules");
-	return true;
     }
 
-    y2milestone ("Successful");
+    y2milestone (
+	"Writing disabled proposals %1 into %2",
+	ProductControl::GetDisabledProposals(),
+	InstData::wizardsteps_disabled_proposals
+    );
+
+    if ((boolean) SCR::Write (.target.ycp, InstData::wizardsteps_disabled_proposals, ProductControl::GetDisabledProposals()) != true) {
+	y2error ("Cannot write disabled proposals");
+    }
+
+    y2milestone ("Anyway, successful");
 
     return true;
 }

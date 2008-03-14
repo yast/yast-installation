@@ -42,6 +42,11 @@
     // keep steps disabled in first stage also disabled in second stage
     // see bnc #364066
     global string wizardsteps_disabled_modules = Directory::vardir + "/installation_disabled_steps";
+    global string wizardsteps_disabled_proposals = Directory::vardir + "/installation_disabled_proposals";
+
+    // temporary variables for disabling and enabling steps
+    global list <string> localDisabledModules = [];
+    global list <string> localDisabledProposals = [];
 
     // <-- other
 

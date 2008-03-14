@@ -58,6 +58,7 @@
     InitFirstStageInstallationSystem();
 
     SetDiskActivationModule();
+    AdjustStepsAccordingToInstallationSettings();
 
     // Redraw steps before mouse is initialized
     // Bugzilla #296406
@@ -93,6 +94,8 @@
 
     // All Sources and Target need to be released...
     FinishInstallation (ret);
+
+    HandleSecondStageRequired();
 
     return ret;
 }

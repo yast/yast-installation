@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Fri Mar 14 15:02:27 CET 2008 - locilka@suse.cz
+
+- Added possibility to run automatic configuration instead of the
+  whole second stage installation (fate #303396).
+- Adjusted RPM dependencies.
+- Creating and removing the file runme_at_boot is currently handled
+  by YaST (YCP) installation scripts.
+
+-------------------------------------------------------------------
 Mon Mar 10 11:25:57 CET 2008 - locilka@suse.cz
 
 - Disabling the window menu in IceWM preferences to make the

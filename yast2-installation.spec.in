@@ -10,7 +10,7 @@ BuildRequires:	yast2 >= 2.16.25
 Requires:       autoyast2-installation
 
 # Installation::run_update_file
-Requires:	yast2 >= 2.16.27
+Requires:	yast2 >= 2.16.36
 
 # Required in in the first stage, after
 # switching to the installed system, bugzilla #249679
