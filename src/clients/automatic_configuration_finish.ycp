@@ -70,8 +70,8 @@
 
 	RemoveZyppLockIfExists();
 	y2milestone ("Running autoconf - a separate YaST process");
-	// FIXME: Y2DEBUG is used just for debugging purpose
-	string cmd = "Y2DEBUG=1 /usr/lib/YaST2/bin/y2base /usr/share/YaST2/clients/inst_automatic_configuration.ycp UI";
+	// FIXME: solve Y2DEBUG somehow
+	string cmd = "/usr/lib/YaST2/bin/y2base /usr/share/YaST2/clients/inst_automatic_configuration.ycp UI";
 	// FIXME: use process agent
 	//        and use lome logging to file and `tail -F` from here
 	map cmd_ret = (map) SCR::Execute (.target.bash_output, cmd);

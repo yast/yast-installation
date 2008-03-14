@@ -95,7 +95,5 @@
     // All Sources and Target need to be released...
     FinishInstallation (ret);
 
-    HandleSecondStageRequired();
-
     return ret;
 }
