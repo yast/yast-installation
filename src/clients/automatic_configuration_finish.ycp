@@ -57,11 +57,6 @@
 	    WFM::Execute (.local.bash, "cp /etc/install.inf /mnt/etc/install.inf");
 	}
 
-	// FIXME: just for testing
-	if (! FileUtils::Exists ("/mnt/share/YaST2/clients/inst_automatic_configuration.ycp")) {
-	    Report::Message ("Copy all clients to the just installed system");
-	}
-
 	y2milestone ("~~~ MAGIC! -----------------------------------------------------------------");
 
 	integer old_SCR = WFM::SCRGetDefault();
