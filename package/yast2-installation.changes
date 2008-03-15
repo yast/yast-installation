@@ -6,6 +6,11 @@ Fri Mar 14 15:02:27 CET 2008 - locilka@suse.cz
 - Adjusted RPM dependencies.
 - Creating and removing the file runme_at_boot is currently handled
   by YaST (YCP) installation scripts.
+- Added new client inst_rpmcopy_secondstage that calls inst_rpmcopy
+  because of DisabledModules disabling both first and second stage
+  occurency of that script.
+- Changed control file to call the new script in second stage.
+- 2.16.22
 
 -------------------------------------------------------------------
 Mon Mar 10 11:25:57 CET 2008 - locilka@suse.cz
