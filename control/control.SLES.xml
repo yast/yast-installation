@@ -673,7 +673,7 @@ Please visit us at http://www.novell.com/linux/.
             <modules  config:type="list">
                 <module>
 	            <label>Perform Update</label>
-                    <name>rpmcopy</name>
+                    <name>rpmcopy_secondstage</name>
                 </module>
 		<module>
 		    <heading>yes</heading>
@@ -785,7 +785,7 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
                 <module>
 	            <label>Check Installation</label>
-                    <name>rpmcopy</name>
+                    <name>rpmcopy_secondstage</name>
                     <enable_back>no</enable_back>
                     <enable_next>no</enable_next>
                 </module>
@@ -962,7 +962,7 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
                 <module>
 	            <label>Perform Installation</label>
-                    <name>rpmcopy</name>
+                    <name>rpmcopy_secondstage</name>
                 </module>
 		<module>
 		    <heading>yes</heading>

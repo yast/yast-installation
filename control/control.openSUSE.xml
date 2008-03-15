@@ -553,7 +553,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             <modules config:type="list">
                 <module>
 	            <label>Perform Update</label>
-                    <name>rpmcopy</name>
+                    <name>rpmcopy_secondstage</name>
 		    <enable_back>no</enable_back>
 		    <enable_next>no</enable_next>
                 </module>
@@ -638,7 +638,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
                 <module>
 	            <label>Check Installation</label>
-                    <name>rpmcopy</name>
+                    <name>rpmcopy_secondstage</name>
                     <enable_back>no</enable_back>
                     <enable_next>no</enable_next>
                 </module>
@@ -786,7 +786,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
                 <module>
 	            <label>Perform Installation</label>
-                    <name>rpmcopy</name>
+                    <name>rpmcopy_secondstage</name>
                 </module>
 		<module>
 		    <heading>yes</heading>
