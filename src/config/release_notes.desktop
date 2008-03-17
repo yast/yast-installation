@@ -11,3 +11,4 @@ Exec=/sbin/yast2 inst_release_notes
 
 Name=Release Notes
 GenericName=Show Release Notes
+StartupNotify=true

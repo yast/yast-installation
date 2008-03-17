@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Mar 17 12:43:32 CET 2008 - jsrain@suse.cz
+
+- added 'StartupNotify=true' to the desktop file (bnc #304964)
+
+-------------------------------------------------------------------
 Mon Mar 17 11:04:38 CET 2008 - locilka@suse.cz
 
 - Automatic configuration is now disabled for mode update.
