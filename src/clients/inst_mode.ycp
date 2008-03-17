@@ -175,7 +175,7 @@ term InstModeDialogContent (symbol pre_selected) {
 		`Left (`CheckBox (
 		    `id (`use_automatic_configuration), `opt(`notify),
 		    // check box
-		    _("Use Automatic Configuration"),
+		    _("&Use Automatic Configuration"),
 		    ProductControl::GetUseAutomaticConfiguration()
 		))
 	    ),
@@ -212,6 +212,14 @@ To use suggested remote repositories during installation or update, select
     _("<p>
 To install an add-on product from separate media together with &product;, select
 <b>Include Add-On Products from Separate Media</b>.</p>
+") +
+
+    // help text for installation method
+    _("<p>
+To let new installation create an automatic configuration, select
+<b>Use Automatic Configuration</b>. Otherwise second stage installation
+with configuration proposals will be called instead. Update mode does not
+support automatic configuration.</p>
 ") +
 
     // help text for installation method
@@ -311,24 +319,23 @@ repeat {
 	ret = nil;
 	continue;
     }
+
     // Adjusting current UI - Hide Other Options
     // in case of `install or `update clicked
     else if (contains([`install, `update], ret)) {
 	symbol selected_mode = (symbol)  UI::QueryWidget (`id (`inst_mode), `CurrentButton);
 
 	foreach (list one_item, [
-	    [`add_on, Installation::add_on_selected],
-	    [`productsources, Installation::add_on_selected],
-	    [`use_automatic_configuration, ProductControl::GetUseAutomaticConfiguration()],
+	    [`add_on, Installation::add_on_selected, true],
+	    [`productsources, Installation::add_on_selected, true],
+	    // automatic installation works only for new installation
+	    [`use_automatic_configuration, (ret == `install ? ProductControl::GetUseAutomaticConfiguration():false), (ret == `install)],
 	], {
-	    if (UI::WidgetExists (`id (one_item[0]:`_item_not_defined))) {
-		UI::ChangeWidget  (`id (one_item[0]:`_item_not_defined), `Enabled, true);
-		UI::ChangeWidget  (`id (one_item[0]:`_item_not_defined), `Value, (boolean) one_item[1]:false);
+	    if (UI::WidgetExists (`id (one_item[0]:`_inotdef_))) {
+		UI::ChangeWidget  (`id (one_item[0]:`_inotdef_), `Enabled, one_item[2]:false);
+		UI::ChangeWidget  (`id (one_item[0]:`_inotdef_), `Value, one_item[1]:false);
 	    }
 	});
-
-	// Can be either `install or `update
-	UI::ChangeWidget  (`id(`inst_mode), `CurrentButton, selected_mode);
     }
 
     // Next button
@@ -365,6 +372,9 @@ if (ret == `next) {
     if (new_mode == `update)
     {
 	Mode::SetMode ("update");
+
+	// update mode doesn't support automatic configuration
+	ProductControl::SetUseAutomaticConfiguration (false);
     }
 
     if (new_mode == `repair)

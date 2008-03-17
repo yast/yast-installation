@@ -542,6 +542,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
         </workflow>
 
 	<!-- Stage: Continue, Mode: Update -->
+	<!--
+	Second stage for update has been disabled by FATE #303396
         <workflow>
             <stage>continue</stage>
             <mode>update</mode>
@@ -604,6 +606,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
             </modules>
         </workflow>
+	-->
 
 	<!-- Stage: Continue, Mode: Installation -->
         <workflow>
