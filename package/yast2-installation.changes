@@ -3,6 +3,7 @@ Tue Mar 18 18:19:00 CET 2008 - locilka@suse.cz
 
 - Fixed writing disabled modules and proposals during the
   inst_finish run.
+- Calling pre_umount_finish also in AutoYaST.
 
 -------------------------------------------------------------------
 Mon Mar 17 12:43:32 CET 2008 - jsrain@suse.cz
