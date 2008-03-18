@@ -41,7 +41,7 @@ if (func == "Info")
 	// progress step title
 	"title" : _("Checking the installed system..."),
 	// !Mode::autoinst
-	"when" : [ `installation, `update ],
+	"when" : [ `installation, `update, `autoinst ],
     ];
 }
 else if (func == "Write")
