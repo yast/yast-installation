@@ -91,10 +91,25 @@
     }
 
     void HandleSecondStageRequired () {
-	if (Mode::installation() && Stage::initial()) {
+	if (Stage::initial()) {
+	    // the current one is 'initial'
+	    string stage_to_check = "continue";
+
+	    // matching the control file
+	    string mode_to_check = "unknown";
+
+	    if (Mode::installation()) {
+		mode_to_check = "installation";
+	    } else if (Mode::autoinst()) {
+		mode_to_check = "autoinstallation";
+	    }
+
+	    // file name
 	    string run_yast_at_boot = sformat ("%1/%2", Installation::destdir, Installation::run_yast_at_boot);
 
-	    if (ProductControl::RunRequired ("continue", "installation")) {
+	    y2milestone ("Checking RunRequired (%1, %2)", stage_to_check, mode_to_check);
+
+	    if (ProductControl::RunRequired (stage_to_check, mode_to_check)) {
 		y2milestone ("Running the second stage is required");
 		WFM::Write (.local.string, run_yast_at_boot, "");
 	    } else {
