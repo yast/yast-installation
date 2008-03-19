@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Mar 19 17:27:30 CET 2008 - locilka@suse.cz
+
+- Agent anyxml has been renamed to barexml as it can't really read
+  all possible XML files (bnc #366867)
+
+-------------------------------------------------------------------
 Wed Mar 19 13:53:05 CET 2008 - locilka@suse.cz
 
 - When checking whether to run the second stage, considering also
