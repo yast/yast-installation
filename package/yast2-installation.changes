@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Mar 19 13:53:05 CET 2008 - locilka@suse.cz
+
+- When checking whether to run the second stage, considering also
+  autoinstallation, not only installation.
+
+-------------------------------------------------------------------
 Tue Mar 18 18:19:00 CET 2008 - locilka@suse.cz
 
 - Fixed writing disabled modules and proposals during the
