@@ -164,13 +164,16 @@ stages = maplist (map<string,any> stage, stages, {
     list<map> steps = maplist (string s, stage["steps"]:[], {
 	s = s + "_finish";
 	map info = (map)WFM::CallFunction (s, ["Info"]);
-	if (info == nil)
-	{
+
+	if (info == nil) {
 	    y2error ("Client %1 returned invalid data", s);
 	    return nil;
 	}
+
 	if (info["when"]:nil != nil && ! contains (info["when"]:[], run_type))
 	    return nil;
+
+	y2milestone ("inst_finish client %1 will be called", s);
 	info["client"] = s;
 	steps_count = steps_count + info["steps"]:1;
 	return info;
