@@ -3,6 +3,7 @@ Wed Mar 19 13:53:05 CET 2008 - locilka@suse.cz
 
 - When checking whether to run the second stage, considering also
   autoinstallation, not only installation (bnc #372322).
+- 2.16.26
 
 -------------------------------------------------------------------
 Tue Mar 18 18:19:00 CET 2008 - locilka@suse.cz
