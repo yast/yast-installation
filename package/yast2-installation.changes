@@ -2,14 +2,14 @@
 Wed Mar 19 13:53:05 CET 2008 - locilka@suse.cz
 
 - When checking whether to run the second stage, considering also
-  autoinstallation, not only installation.
+  autoinstallation, not only installation (bnc #372322).
 
 -------------------------------------------------------------------
 Tue Mar 18 18:19:00 CET 2008 - locilka@suse.cz
 
 - Fixed writing disabled modules and proposals during the
   inst_finish run (bnc #364066).
-- Calling pre_umount_finish also in AutoYaST.
+- Calling pre_umount_finish also in AutoYaST (bnc #372322).
 - 2.16.25
 
 -------------------------------------------------------------------
