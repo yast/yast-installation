@@ -4,8 +4,8 @@
 @HEADER@
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2-core-devel yast2-devtools yast2-testsuite
 
-# URL::MakeParamsFromMap and URL::MakeMapFromParams
-BuildRequires:	yast2 >= 2.16.25
+# anyxml -> barexml (bnc #366867)
+BuildRequires:	yast2 >= 2.16.39
 
 Requires:       autoyast2-installation
 

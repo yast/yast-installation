@@ -57,7 +57,7 @@
 		    return;
 		}
 
-		map xmlcontent = (map) SCR::Read (.anyxml, one_source_file);
+		map xmlcontent = (map) SCR::Read (.barexml, one_source_file);
 
 		counter = counter + 1;
 
