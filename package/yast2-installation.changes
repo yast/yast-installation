@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Mar 20 10:37:49 CET 2008 - locilka@suse.cz
+
+- Added system_settings_finish call to the inst_finish
+  (bnc #340733).
+- 2.13.208
+
+-------------------------------------------------------------------
 Thu Mar 06 10:57:42 CET 2008 - aschnell@suse.de
 
 - call rcnetwork with option onboot during start of second stage
