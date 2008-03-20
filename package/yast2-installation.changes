@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar 20 10:27:09 CET 2008 - locilka@suse.cz
+
+- Added system_settings_finish call to the inst_finish
+  (bnc #340733).
+
+-------------------------------------------------------------------
 Wed Mar 19 17:27:30 CET 2008 - locilka@suse.cz
 
 - Agent anyxml has been renamed to barexml as it can't really read
