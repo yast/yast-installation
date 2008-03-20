@@ -65,6 +65,8 @@ list<map<string,any> > stages = [
 	    "pkg",
 	    "driver_update1",
 	    "yast_inf",
+	    // bnc #340733
+	    "system_settings",
 	],
     ],
     $[
