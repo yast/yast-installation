@@ -514,32 +514,6 @@ default
 		</listitem>
 
                 <listitem>
-                    <para><emphasis>keep_installed_patches</emphasis></para>
-                    <para>Sets the default how installed patches should be handled during upgrade.
-		      If true, patches are kept.</para>
-                </listitem>
-
-		<!-- FATE #301990, bugzilla #238488 -->
-		<listitem>
-		    <para><emphasis>keep_installed_patches_reverse_list</emphasis></para>
-		    <para>Inverts the <emphasis>keep_installed_patches</emphasis> rule
-		    for products defined as list of regular expressions matching installed
-		    product name (SuSE-release).</para>
-		    
-		    <programlisting>
-
-    &lt;!-- For SLES10, keep installed patches --&gt;
-    &lt;software&gt;
-	&lt;keep_installed_patches config:type="boolean"&gt;true&lt;/keep_installed_patches&gt;
-	&lt;keep_installed_patches_reverse_list config:type="list"&gt;
-	    &lt;regexp_item&gt;^SUSE (LINUX|Linux) Enterprise Server 10.*$&lt;/regexp_item&gt;
-	&lt;/keep_installed_patches_reverse_list&gt;
-    &lt;/software&gt;
-
-		    </programlisting>
-		</listitem>
-
-                <listitem>
                     <para><emphasis>only_update_selected</emphasis></para>
                     <para>One can update (only update packages already installed) or
                         upgrade (also install new packages with new functionality). For

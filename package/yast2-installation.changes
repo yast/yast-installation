@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Mar 21 10:48:20 CET 2008 - locilka@suse.cz
+
+- Dropping keep_installed_patches support from control file as it
+  is currently handled by libzypp itself (bnc #349533).
+
+-------------------------------------------------------------------
 Thu Mar 20 10:27:09 CET 2008 - locilka@suse.cz
 
 - Added system_settings_finish call to the inst_finish
