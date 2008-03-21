@@ -50,13 +50,6 @@ textdomain="control"
 	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10.*$</regexp_item>
 	</silently_downgrade_packages_reverse_list>
 
-	<!-- By default, do not keep installed patches -->
-	<keep_installed_patches config:type="boolean">false</keep_installed_patches>
-	<!-- For SLES10, keep them, FATE #301990, bugzilla #238488 -->
-	<keep_installed_patches_reverse_list config:type="list">
-	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10.*$</regexp_item>
-	</keep_installed_patches_reverse_list>
-
 	<!-- By default, select new packages for installation -->
 	<only_update_selected config:type="boolean">false</only_update_selected>
 	<!-- For SLES10, do not install new packages by default, FATE #301844, bugzilla #233156 -->
