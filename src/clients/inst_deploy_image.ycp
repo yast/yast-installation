@@ -6,6 +6,12 @@ import "Wizard";
 
 textdomain "installation";
 
+// There is nothing to do
+if (! Installation::image_installation) {
+    y2milestone ("No images have been selected");
+    return `auto;
+}
+
 y2milestone ("Deploying image");
 
 list<string> images = ImageInstallation::ImageOrder ();
@@ -29,21 +35,15 @@ void SetProgress (integer image, integer percent) {
     Progress::Step (image);
 }
 
-if (! Installation::image_installation)
-    return `auto;
-
 Wizard::SetContents (_("Deploying Installation Images"), `Empty (), "", false, false);
 Wizard::SetTitleIcon ("yast-inst-mode");
 
-// TODO help
+// FIXME: help (if needed)
 Progress::Simple (_("Deploying Installation Images"), _("Deploying Installation Images"), size (images), "help");
 
-// finish target if it was initialized
-if (! Installation::image_only)
-{
-// TODO save the status of all packages
-    Pkg::TargetFinish ();
-}
+ImageInstallation::StoreAllChanges();
+
+Pkg::TargetFinish ();
 
 /*
 // FIXME the images usually do not fit in RAMDISK
@@ -61,6 +61,10 @@ ImageInstallation::DeployImages (images, Installation::destdir, SetProgress);
 //SCR::Execute (.target.bash, sformat ("rmdir %1", download_dir));
 
 y2milestone ("Target image for package selector prepared");
+
+Pkg::TargetInitialize (Installation::destdir);
+
+ImageInstallation::RestoreAllChanges();
 
 return `next;
 

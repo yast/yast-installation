@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Mar 25 13:12:39 CET 2008 - locilka@suse.cz
+
+- Using Image-Installation clients (done by jsrain).
+- Store/Restore resolvable-state functions added into
+  ImageInstallation module.
+
+-------------------------------------------------------------------
 Fri Mar 21 10:48:20 CET 2008 - locilka@suse.cz
 
 - Dropping keep_installed_patches support from control file as it

@@ -78,6 +78,23 @@ global list<string> ImageOrder () {
 }
 
 /**
+ * Returns list of currently selected images.
+ *
+ * @return map <string,map <string,any> > images
+ * @see AddImage
+ *
+ * @struct $[
+ *   "image_id":$[
+ *     "file":filename,
+ *     "type":type
+ *   ], ...
+ * ]
+ */
+map <string,map <string,any> > GetCurrentImages () {
+    return _images;
+}
+
+/**
  * Add information about new image
  * @param id string the id of the image
  * @param file string the file name of the image
@@ -428,5 +445,161 @@ global boolean FileSystemCopy (string from, string to,
     return out["exit"]:-1 == 0;
 }
 
+    // --> Storing and restoring states
+
+    /**
+     * List of all handled types.
+     */
+    list <symbol> all_supported_types = [`product, `pattern, `selection, `language, `package, `patch];
+
+    /**
+     * Map that stores all the requested states of all handled/supported types.
+     */
+    map <symbol, map <string, list <map> > > objects_state = $[];
+
+    /**
+     * Function stores all new/requested states of all handled/supported types.
+     *
+     * @see all_supported_types
+     * @see objects_state
+     */
+    global void StoreAllChanges () {
+        Progress::Simple (
+            _("Installation Magic"),
+            _("Storing magic values..."),
+            4 * size (all_supported_types),
+            _("<p>MOOOooo...</p>")
+        );
+
+        // Query for changed state of all knwon types
+        // 'changed' means that they were 'installed' and 'not locked' before
+        foreach (symbol one_type, all_supported_types, {
+            // list of $[ "name":string, "version":string, "arch":string, "source":integer, "status":symbol, "locked":boolean ]
+            // status is `installed, `removed, `selected or `available, source is source ID or -1 if the resolvable is installed in the target
+            // if status is `available and locked is true then the object is set to taboo
+            // if status is `installed and locked is true then the object locked
+            list <map <string, any> > resolvable_properties = Pkg::ResolvableProperties ("", one_type, "");
+
+            objects_state[one_type] = $[];
+
+            list <map <string, any> > remove_resolvables = filter (map <string, any> one_object, resolvable_properties, {
+                return (one_object["status"]:`unknown == `removed);
+            });
+            objects_state[one_type, "remove"] = remove_resolvables;
+            Progress::NextStep();
+
+            list <map <string, any> > install_resolvables = filter (map <string, any> one_object, resolvable_properties, {
+                return (one_object["status"]:`unknown == `selected);
+            });
+            objects_state[one_type, "install"] = install_resolvables;
+            Progress::NextStep();
+
+            list <map <string, any> > taboo_resolvables = filter (map <string, any> one_object, resolvable_properties, {
+                return (one_object["status"]:`unknown == `available && one_object["locked"]:false == true);
+            });
+            objects_state[one_type, "taboo"] = taboo_resolvables;
+            Progress::NextStep();
+
+            list <map <string, any> > lock_resolvables = filter (map <string, any> one_object, resolvable_properties, {
+                return (one_object["status"]:`unknown == `installed && one_object["locked"]:false == true);
+            });
+            objects_state[one_type, "lock"] = lock_resolvables;
+            Progress::NextStep();
+        });
+
+        Progress::Finish();
+    }
+
+    /**
+     * @return boolean whether the package should be additionally installed
+     */
+    boolean ProceedWithSelected (map <string, any> & one_object, symbol & one_type) {
+	// This package has been selected to be installed
+
+	string arch = one_object["arch"]:"";
+	// Query for all packages of the same version
+	list <map <string, any> > resolvable_properties = Pkg::ResolvableProperties (
+	    one_object["name"]:"-x-", one_type, one_object["version"]:"-x-"
+	);
+
+	// Leave only already installed (and matching the same architecture)
+	resolvable_properties = filter (map <string, any> one_resolvable, resolvable_properties, {
+	    return (one_resolvable["status"]:`unknown == `installed && one_resolvable["arch"]:"" == arch);
+	});
+
+	boolean ret = nil;
+
+	// There are some installed
+	if (size (resolvable_properties) > 0) {
+	    y2milestone ("Resolvable type: %1, name: %2 already installed", one_type, one_object["name"]:"-x-");
+	    // Let's keep the installed version
+	    Pkg::ResolvableNeutral (one_object["name"]:"-x-", one_type, true);
+	    // is already installed
+	    ret = false;
+	// They are not installed
+	} else {
+	    y2milestone ("Installing type: %1, details: %2,%3,%4", one_type, one_object["name"]:"", one_object["arch"]:"", one_object["version"]:"");
+	    // Confirm we want to install them (they might have been added as dependencies)
+	    Pkg::ResolvableInstallArchVersion (one_object["name"]:"", one_type, one_object["arch"]:"", one_object["version"]:"");
+	    // should be installed
+	    ret = true;
+	}
+
+	return ret;
+    }
+
+    global void RestoreAllChanges () {
+        Progress::Simple (
+            _("Installation Magic"),
+            _("Restoring magic values..."),
+            4 * size (all_supported_types),
+            _("<p>MOOOooo...</p>")
+        );
+
+        foreach (symbol one_type, all_supported_types, {
+            list <map <string, any> > resolvable_properties = Pkg::ResolvableProperties ("", one_type, "");
+
+	    // All packages selected for installation
+	    // both `to-install and `to-upgrade (already) installed
+            list <map <string, any> > to_install = filter (map <string, any> one_resolvable, resolvable_properties, {
+                return (one_resolvable["status"]:`unknown == `selected);
+            });
+            Progress::NextStep();
+
+	    foreach (map <string, any> one_to_install, to_install, {
+		ProceedWithSelected (one_to_install, one_type);
+	    });
+	    Progress::NextStep();
+
+	    // All packages selected to be installed
+	    // [ $[ "arch" : ... , "name" : ... , "version" : ... ], ... ]
+	    list <map <string, any> > selected_for_installation = maplist (map one_resolvable, objects_state[one_type, "install"]:[], {
+		return $[ "arch":one_resolvable["arch"]:"", "name":one_resolvable["name"]:"", "version":one_resolvable["version"]:"" ];
+	    });
+	    Progress::NextStep();
+
+	    map <string, string> one_installed_resolvable = $[];
+            foreach (map <string, any> one_resolvable, resolvable_properties, {
+        	// We are interested in the already installed resolvables only
+                if (one_resolvable["status"]:`unknown != `installed)
+		    return;
+
+                one_installed_resolvable =  $[
+		    "arch":one_resolvable["arch"]:"", "name":one_resolvable["name"]:"", "version":one_resolvable["version"]:""
+            	];
+
+		// Already installed resolvable but not in list of resolvables to be installed
+		if (! contains (selected_for_installation, one_installed_resolvable)) {
+		    y2milestone ("Removing type: %1, name: %2", one_type, one_resolvable["name"]:"-x-");
+		    Pkg::ResolvableRemove (one_resolvable["name"]:"-x-", one_type);
+		}
+            });
+            Progress::NextStep();
+        });
+
+        Progress::Finish();
+    }
+
+    // <-- Storing and restoring states
 
 }
