@@ -332,6 +332,16 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	            <label>Perform Installation</label>
                     <name>kickoff</name>
                 </module>
+		<!-- Installation from images -->
+                <module>
+	            <label>Perform Installation</label>
+                    <name>prepare_image</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>deploy_image</name>
+                </module>
+		<!-- Installation from image -->
                 <module>
 	            <label>Perform Installation</label>
                     <name>rpmcopy</name>

@@ -1,7 +1,7 @@
 /**
  * File:	clients/inst_prepare_images.ycp
  * Package:	Installation
- * Summary:	Installation done from image
+ * Summary:	Installation done (also) from image
  * Authors:	Jiri Srain <jsrain@suse.cz>
  *
  */
@@ -20,35 +20,30 @@ if (GetInstArgs::going_back())
 
 y2milestone ("Preparing image for package selector");
 
-// TODO help
+// FIXME: help (but is it needed?)
 Wizard::SetContents (_("Analyzing Installation Images"), `Empty (), "", false, false);
 Wizard::SetTitleIcon ("yast-inst-mode");
 
 // set repo to get images from
 ImageInstallation::SetRepo (Packages::theSources[0]:0);
 
+list <map <string, any> > all_patterns = Pkg::ResolvableProperties ("", `pattern, "");
+
+list <string> patterns_to_install = maplist (map <string, any> one_patern, all_patterns, {
+    if (one_patern["status"]:`unknown == `selected || one_patern["status"]:`unknown == `installed) {
+	return one_patern["status"]:"";
+    } else {
+	return "";
+    }
+});
+
+patterns_to_install = filter (string one_pattern, patterns_to_install, {
+    return (one_pattern != "" && one_pattern != nil);
+});
+
 // list images for currently selected patterns
-// TODO: Pass selected pattern(s)
-ImageInstallation::FindImageSet ([]);
-
-// also set an RPM database
-if (! Installation::image_only)
-{
-    string sw_db_root = (string)SCR::Read (.target.tmpdir) + "/sw_db_root";
-    ImageInstallation::DeployImageTemporarily (ImageInstallation::SwMgmtImage (), sw_db_root);
-
-    // TODO: redefine pkg callbacks for RPM database reading, which is the most time-consuming part
-    Pkg::TargetInitialize (sw_db_root);
-    Pkg::TargetLoad ();
-
-    ImageInstallation::CleanTemporaryImage (ImageInstallation::SwMgmtImage (), sw_db_root);
-
-    y2milestone ("Target image for package selector prepared");
-}
-else
-{
-    y2milestone ("Skipping preparing image for package selector");
-}
+y2milestone ("Currently selected patterns: %1", patterns_to_install);
+ImageInstallation::FindImageSet (patterns_to_install);
 
 return `next;
 }
