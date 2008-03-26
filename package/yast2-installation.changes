@@ -3,6 +3,7 @@ Wed Mar 26 11:21:18 CET 2008 - locilka@suse.cz
 
 - Added new entry to control file root_password_as_first_user to
   make it configurable (bnc #359115 comment #14).
+- Control file modified to call installation-from-images clients.
 
 -------------------------------------------------------------------
 Tue Mar 25 13:12:39 CET 2008 - locilka@suse.cz
