@@ -364,6 +364,11 @@
 		    dialog might be skipped (if language already selected).</para></listitem>
 		<listitem><para>(boolean) <emphasis>show_online_repositories</emphasis> - either shows
 		    or hides the "online repositories" feature check-box.</para></listitem>
+		<!-- bnc #359115 comment #14 -->
+		<listitem><para>(boolean) <emphasis>root_password_as_first_user</emphasis> - automatically
+		    selects or deselects the checkbox that makes Users configuration to set the password
+		    entered for a first user also for the user root. If not defined, default is
+		    <emphasis>false</emphasis></para></listitem>
 	    </itemizedlist>
 	</section>
 	    
