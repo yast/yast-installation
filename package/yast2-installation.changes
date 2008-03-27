@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar 27 13:37:02 CET 2008 - locilka@suse.cz
+
+- Fixed ZMD service handling, the correct name is novell-zmd
+  (bnc #356655).
+
+-------------------------------------------------------------------
 Wed Mar 26 11:21:18 CET 2008 - locilka@suse.cz
 
 - Added new entry to control file root_password_as_first_user to
