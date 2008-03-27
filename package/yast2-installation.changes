@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Mar 27 13:35:09 CET 2008 - locilka@suse.cz
+
+- Fixed ZMD service handling, the correct name is novell-zmd
+  (bnc #356655).
+- 2.13.209
+
+-------------------------------------------------------------------
 Thu Mar 20 10:37:49 CET 2008 - locilka@suse.cz
 
 - Added system_settings_finish call to the inst_finish
