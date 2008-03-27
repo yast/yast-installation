@@ -50,7 +50,7 @@
 
     // #302495: Switching ZMD off
     // by default, the checkbox is not visible
-    string zmd_service_name = "novell_zmd";
+    string zmd_service_name = "novell-zmd";
     string zmd_package_name = "zmd";
     term check_box_turnoff_zmd = `Empty();
     string turnoff_zmd_help= "";
