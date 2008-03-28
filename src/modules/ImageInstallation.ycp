@@ -96,14 +96,15 @@ map <string,map <string,any> > GetCurrentImages () {
 
 /**
  * Add information about new image
- * @param id string the id of the image
+ * @param name string the name/id of the image
  * @param file string the file name of the image
  * @param type string the type of the image, one of "tar" and "fs"
  */
-void AddImage (string id, string file, string type) {
-    _images[id] = $[
+void AddImage (string name, string file, string type) {
+    _images[file] = $[
 	"file" : file,
 	"type" : type,
+	"name" : name,
     ];
 }
 
@@ -130,7 +131,8 @@ boolean DeployTarImage (string id, string target) {
     y2milestone ("Executing %1 returned %2", cmd, out);
 
     y2milestone ("Untarring the image");
-    cmd = sformat ("tar -xf %1 -C %2", image, target);
+    // FIXME: Progress `tar --checkpoint`
+    cmd = sformat ("tar --totals -xf %1 -C %2", image, target);
     out = (map)SCR::Execute (.target.bash_output, cmd);
     y2milestone ("Executing %1 returned %2", cmd, out);
     return out["exit"]:-1 == 0;
@@ -175,7 +177,7 @@ boolean DeployFsImage (string id, string target) {
     y2milestone ("Executing %1 returned %2", cmd, out);
 
     y2milestone ("Unmounting image from temporary directory");
-    cmd = sformat ("umount %1", tmpdir);
+    cmd = sformat ("umount -d -f -l %1", tmpdir);
     out = (map)SCR::Execute (.target.bash_output, cmd);
     y2milestone ("Executing %1 returned %2", cmd, out);
     return out["exit"]:-1 == 0;
@@ -223,16 +225,18 @@ boolean _DeployImage (string id, string target, boolean temporary) {
     {
 	y2error ("Image %1 does not exist", id);
     }
+
     string type = img["type"]:"";
+
     if (type == "fs")
 	return temporary
 	    ? MountFsImage (id, target)
 	    : DeployFsImage (id, target);
     else if (type == "tar")
 	return DeployTarImage (id, target);
+
     y2error ("Unknown type of image: %1", type);
     return false;
-
 }
 
 /**
@@ -242,7 +246,7 @@ boolean _DeployImage (string id, string target, boolean temporary) {
  * @return boolean true on success
  */
 global boolean DeployImage (string id, string target) {
-    y2milestone ("Delploying image %1 to %2", id, target);
+    y2milestone ("Deploying image %1 to %2", id, target);
     return _DeployImage (id, target, false);
 }
 
@@ -284,6 +288,7 @@ global boolean CleanTemporaryImage (string id, string target) {
  */
 global boolean DeployImages (list<string> images, string target, void(integer,integer) progress) {
     integer num = -1;
+
     foreach (string img, images, {
 	num = num + 1;
 	progress (num, 0);
@@ -291,8 +296,6 @@ global boolean DeployImages (list<string> images, string target, void(integer,in
     });
     progress (num, 100);
 
-    Pkg::TargetInitialize (target);
-    Pkg::TargetLoad ();
     return true;
 // TODO error checking
 }
@@ -316,6 +319,7 @@ global boolean FindImageSet (list<string> patterns) {
 	y2milestone ("Image list for installation not found");
 	return true;
     }
+
     map<string,any> image_descr = XML::XMLToYCPFile (filename);
     if (image_descr == nil)
     {
@@ -324,16 +328,21 @@ global boolean FindImageSet (list<string> patterns) {
 	Report::Error (_("Failed to read information about installation images"));
 	return false;
     }
+
     list<map<string,any> > image_sets = image_descr["image_sets"]:[];
     y2milestone ("Image set descriptions: %1", image_sets);
     map<string,any> result = $[];
+
     foreach (map<string,any> image, image_sets, {
 	string pattern = image["pattern"]:"";
-	if (pattern == "" && result == $[])
+
+	if (pattern == "" && result == $[]) {
 	    result = image;
-	else if (contains (patterns, pattern))
+	} else if (contains (patterns, pattern)) {
 	    result = image;
+	}
     });
+
     if (result == $[])
     {
 	Installation::image_installation = false;
@@ -341,20 +350,33 @@ global boolean FindImageSet (list<string> patterns) {
 	y2milestone ("No image for installation found");
 	return true;
     }
+
     Installation::image_installation = true;
-    if (haskey (result, "pkg_image"))
+
+    if (haskey (result, "pkg_image")) {
 	_metadata_image = result["pkg_image"]:"";
-    else
+    } else {
 	Installation::image_only= true;
+    }
+
     foreach (map<string,string> img, result["images"]:[], {
-	_image_order = add (_image_order, img["name"]:"");
+	// image must have unique <name>...</name> defined
+	if (img["file"]:"" == "") {
+	    y2error ("No file defined for %1", img);
+	    return;
+	}
+
+	_image_order = add (_image_order, img["file"]:"");
 	AddImage (img["name"]:"", img["file"]:"", img["type"]:"");
     });
+
     y2milestone ("Image-only installation: %1", Installation::image_only);
     y2milestone ("Images: %1", _images);
     y2milestone ("Image installation order: %1", _image_order);
+
     if (! Installation::image_only)
 	y2milestone ("Image with software management metadata: %1", _metadata_image);
+
     return true;
 }
 
@@ -450,7 +472,9 @@ global boolean FileSystemCopy (string from, string to,
     /**
      * List of all handled types.
      */
-    list <symbol> all_supported_types = [`product, `pattern, `selection, `language, `package, `patch];
+    // list <symbol> all_supported_types = [`product, `pattern, `selection, `language, `package, `patch];
+    // Zypp currently counts [ `product, `pattern, `selection, `language ]
+    list <symbol> all_supported_types = [`package, `patch];
 
     /**
      * Map that stores all the requested states of all handled/supported types.
@@ -538,7 +562,8 @@ global boolean FileSystemCopy (string from, string to,
 	    ret = false;
 	// They are not installed
 	} else {
-	    y2milestone ("Installing type: %1, details: %2,%3,%4", one_type, one_object["name"]:"", one_object["arch"]:"", one_object["version"]:"");
+	    y2milestone ("Installing type: %1, details: %2,%3,%4",
+		one_type, one_object["name"]:"", one_object["arch"]:"", one_object["version"]:"");
 	    // Confirm we want to install them (they might have been added as dependencies)
 	    Pkg::ResolvableInstallArchVersion (one_object["name"]:"", one_type, one_object["arch"]:"", one_object["version"]:"");
 	    // should be installed
@@ -564,37 +589,45 @@ global boolean FileSystemCopy (string from, string to,
             list <map <string, any> > to_install = filter (map <string, any> one_resolvable, resolvable_properties, {
                 return (one_resolvable["status"]:`unknown == `selected);
             });
-            Progress::NextStep();
 
-	    foreach (map <string, any> one_to_install, to_install, {
-		ProceedWithSelected (one_to_install, one_type);
-	    });
-	    Progress::NextStep();
+            Progress::NextStep();
 
 	    // All packages selected to be installed
 	    // [ $[ "arch" : ... , "name" : ... , "version" : ... ], ... ]
-	    list <map <string, any> > selected_for_installation = maplist (map one_resolvable, objects_state[one_type, "install"]:[], {
+	    list <map <string, string> > selected_for_installation = maplist (map one_resolvable, objects_state[one_type, "install"]:[], {
 		return $[ "arch":one_resolvable["arch"]:"", "name":one_resolvable["name"]:"", "version":one_resolvable["version"]:"" ];
 	    });
+
 	    Progress::NextStep();
 
-	    map <string, string> one_installed_resolvable = $[];
+	    // Delete all packages that are installed but should not be
+	    map <string, string> one_already_installed_resolvable = $[];
             foreach (map <string, any> one_resolvable, resolvable_properties, {
         	// We are interested in the already installed resolvables only
-                if (one_resolvable["status"]:`unknown != `installed)
+                if (one_resolvable["status"]:`unknown != `installed && one_resolvable["status"]:`unknown != `selected) {
 		    return;
+		}
 
-                one_installed_resolvable =  $[
+                one_already_installed_resolvable =  $[
 		    "arch":one_resolvable["arch"]:"", "name":one_resolvable["name"]:"", "version":one_resolvable["version"]:""
             	];
 
 		// Already installed resolvable but not in list of resolvables to be installed
-		if (! contains (selected_for_installation, one_installed_resolvable)) {
-		    y2milestone ("Removing type: %1, name: %2", one_type, one_resolvable["name"]:"-x-");
+		if (! contains (selected_for_installation, one_already_installed_resolvable)) {
+		    y2milestone ("Removing type: %1, name: %2 version: %3",
+			one_type, one_resolvable["name"]:"-x-", one_resolvable["version"]:"-x-");
 		    Pkg::ResolvableRemove (one_resolvable["name"]:"-x-", one_type);
 		}
             });
+
             Progress::NextStep();
+
+	    // Install all packages that aren't yet
+	    foreach (map <string, any> one_to_install, to_install, {
+		ProceedWithSelected (one_to_install, one_type);
+	    });
+
+	    Progress::NextStep();
         });
 
         Progress::Finish();

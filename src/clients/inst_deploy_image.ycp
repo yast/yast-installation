@@ -30,7 +30,7 @@ void SetProgress (integer image, integer percent) {
     {
 	last_image = image;
 	if (image < size (images))
-	    Progress::Title (sformat (_("Deploying Image \"%1\""), images[image]:""));
+	    Progress::Title (sformat (_("Deploying Image (%1/%2)..."), (image + 1), size (images)));
     }
     Progress::Step (image);
 }
@@ -38,31 +38,30 @@ void SetProgress (integer image, integer percent) {
 Wizard::SetContents (_("Deploying Installation Images"), `Empty (), "", false, false);
 Wizard::SetTitleIcon ("yast-inst-mode");
 
-// FIXME: help (if needed)
-Progress::Simple (_("Deploying Installation Images"), _("Deploying Installation Images"), size (images), "help");
-
 ImageInstallation::StoreAllChanges();
 
 Pkg::TargetFinish ();
 
-/*
-// FIXME the images usually do not fit in RAMDISK
+// TODO: help (if needed)
+Progress::Simple (_("Deploying Installation Images"), _("Deploying Installation Images"), size (images), "help");
+
+// Images usually do not fit into RAMDISK
 // move download area to hard disk (for HTTP/FTP media)
 // TODO select according to partitioning
-string download_dir = "/img_tmp";
-download_dir = Installation::destdir + download_dir;
+string download_dir = Installation::destdir + "/img_tmp";
 SCR::Execute (.target.bash, sformat ("test -d %1 || mkdir -p %1", download_dir));
 Pkg::SourceMoveDownloadArea (download_dir);
-// don't know why it didn't work :-(
-*/
 
 ImageInstallation::DeployImages (images, Installation::destdir, SetProgress);
 
-//SCR::Execute (.target.bash, sformat ("rmdir %1", download_dir));
+SCR::Execute (.target.bash, sformat ("rmdir '%1'", download_dir));
 
 y2milestone ("Target image for package selector prepared");
 
+Progress::Finish();
+
 Pkg::TargetInitialize (Installation::destdir);
+Pkg::TargetLoad ();
 
 ImageInstallation::RestoreAllChanges();
 

@@ -634,6 +634,17 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		    <heading>yes</heading>
 		    <label>Configuration</label>
 		</module>
+		<!--
+		    Automatic configuration: disabled in manual configuration,
+		    FATE #303396
+		    Non-interactive second stage
+		-->
+		<module>
+		    <label>Automatic Configuration</label>
+		    <name>automatic_configuration</name>
+		    <enable_back>no</enable_back>
+		    <enable_next>no</enable_next>
+		</module>
                 <module>
 	            <label>root Password</label>
                     <name>root</name>

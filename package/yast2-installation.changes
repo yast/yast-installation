@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Mar 28 13:33:31 CET 2008 - locilka@suse.cz
+
+- Automatic configuration has been moved from the end of the first
+  stage to the second stage. It's non-interactive (FATE #303396).
+- Fixed installation from images (FATE #303554).
+- 2.16.27
+
+-------------------------------------------------------------------
 Thu Mar 27 13:37:02 CET 2008 - locilka@suse.cz
 
 - Fixed ZMD service handling, the correct name is novell-zmd

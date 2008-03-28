@@ -1,7 +1,7 @@
 /**
  * File:	clients/inst_automatic_configuration.ycp
  * Package:	installation
- * Summary:	Automatic configuration instead of the second stage (Preview)
+ * Summary:	Automatic configuration instead of the second stage
  * Authors:	Lukas Ocilka <locilka@suse.cz>
  *
  * $Id:$
@@ -17,27 +17,34 @@
 
     textdomain "installation";
 
+    if (GetInstArgs::going_back()) {
+	y2milestone ("Going back, nothing to do here...");
+	return `auto;
+    }
+
     y2milestone ("automatic_configuration started");
 
     Mode::SetMode ("installation");
     Stage::Set ("continue");
 
+// TODO: read this from control file
+// (at least the list of modules in proposals)
     list <map <string, any> > proposal_scripts_to_call = [
 	// probably needed
-	$[ "type":"scripts",   "items":["netprobe"] ],
+	$[ "type":"scripts",   "items":["initialization", "netprobe", "rpmcopy_secondstage"] ],
 	// network proposal
 	$[ "type":"proposals", "items":["lan", "general", "dsl", "isdn", "modem", "remote", "firewall"] ],
 	// hardware proposal
 	$[ "type":"proposals", "items":["x11", "printer", "sound", "tv"] ],
 	// probably needed
-	$[ "type":"scripts",   "items":["suseconfig", "save_hardware_status"] ],
+	$[ "type":"scripts",   "items":["addon_update_sources", "inst_extrasources", "suseconfig", "save_hardware_status"] ],
     ];
 
-    // weird exception for users
-    if (FileUtils::Exists (Directory::vardir + "/users_first_stage.ycp")) {
-	y2milestone ("Users will be called");
-	proposal_scripts_to_call = add (proposal_scripts_to_call, $[ "type":"scripts", "items":["user"] ]);
-    }
+// users will be called if there is anything to write
+//    if (FileUtils::Exists (Directory::vardir + "/users_first_stage.ycp")) {
+//	y2milestone ("Users will be called");
+//	proposal_scripts_to_call = add (proposal_scripts_to_call, $[ "type":"scripts", "items":["user"] ]);
+//    }
 
     /**
      * Prepares the list of installation scripts to be executed.
@@ -101,13 +108,20 @@
 
 	foreach (string one_proposal, proposals_to_call, {
 	    y2milestone ("Calling script %1 MakeProposal", one_proposal);
-	    any result = WFM::CallFunction (one_proposal, ["MakeProposal", $[ "WriteOnly":true, "AutomaticConfiguration":true ]]);
+	    any result = WFM::CallFunction (one_proposal, ["MakeProposal", $[ "AutomaticConfiguration":true ]]);
 	    y2milestone ("Script %1 returned %2", one_proposal, result);
 	});
 
+	// TODO: handle errors, warnings ...
+	// foreach (string one_proposal, proposals_to_call, {
+	//    y2milestone ("Calling script %1 MakeProposal", one_proposal);
+	//    any result = WFM::CallFunction (one_proposal, ["Description", $[ "AutomaticConfiguration":true ]]);
+	//    y2milestone ("Script %1 returned %2", one_proposal, result);
+	//});
+
 	foreach (string one_proposal, proposals_to_call, {
 	    y2milestone ("Calling script %1 Write", one_proposal);
-	    any result = WFM::CallFunction (one_proposal, ["Write", $[ "WriteOnly":true, "AutomaticConfiguration":true ]]);
+	    any result = WFM::CallFunction (one_proposal, ["Write", $[ "AutomaticConfiguration":true ]]);
 	    y2milestone ("Script %1 returned %2", one_proposal, result);
 	});
     }
@@ -127,4 +141,6 @@
     });
 
     y2milestone ("automatic_configuration finished");
+
+    return `auto;
 }

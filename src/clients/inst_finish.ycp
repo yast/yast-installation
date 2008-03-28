@@ -100,8 +100,6 @@ list<map<string,any> > stages = [
 	    // copy logs just before 'umount'
 	    // keeps maximum logs available after reboot
 	    "copy_logs",
-	    // runs a separate process in SCR (chrooted)
-	    "automatic_configuration",
 	    "umount",
 	],
     ],

@@ -115,7 +115,8 @@ void RedrawSelDesktopInfo (string currently_selected) {
 term contents = `HBox (
     `HStretch(),
     `HSquash (
-	`MinWidth (38, `VBox (
+	`VBox (
+	    `HSpacing (50),
 	    `VWeight (5, `VStretch()),
 	    // TRANSLATORS: Label (of a Radio button group)
 	    `Left (`Label (`opt(`boldFont), _("Select a System Type"))),
@@ -128,13 +129,13 @@ term contents = `HBox (
 	    `VSpacing (1),
 	    `VSquash (`Frame (
 		_("Description"),
-		`MinHeight (5, `RichText (
+		`MinHeight (7, `RichText (
 		    `id ("desktop_description"),
 		    ""
 		))
 	    )),
 	    `VWeight (5, `VStretch())
-	))
+	)
     ),
     `HStretch()
 );
