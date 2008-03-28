@@ -211,8 +211,10 @@ according to the settings in the previous dialogs.</p>")
     void AdjustStepsAccordingToInstallationSettings () {
         if (ProductControl::GetUseAutomaticConfiguration()) {
             ProductControl::DisableAllModulesAndProposals ("installation", "continue");
+            ProductControl::EnableModule ("automatic_configuration");
 	} else {
 	    ProductControl::UnDisableAllModulesAndProposals ("installation", "continue");
+	    ProductControl::DisableModule ("automatic_configuration");
 	}
 
 	if (Installation::add_on_selected == true) {

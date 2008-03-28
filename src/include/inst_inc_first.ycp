@@ -41,7 +41,10 @@
 	}
 	
 	ProductControl::DisableModule ("add-on");
-	ProductControl::DisableModule  ("productsources");
+	ProductControl::DisableModule ("productsources");
+
+	// Enabled only when AC is selected
+	ProductControl::DisableModule ("automatic_configuration");
 
 	// First-stage users module will enable them again only if needed
 	ProductControl::DisableModule ("root");

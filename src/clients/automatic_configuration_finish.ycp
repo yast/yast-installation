@@ -1,7 +1,8 @@
 /**
  * File:	clients/automatic_configuration_finish.ycp
  * Package:	installation
- * Summary:	Automatic configuration instead of the second stage (Preview)
+ * Summary:	Automatic configuration instead of the second stage.
+ *		DO NOT USE THIS CLIENT ANYMORE.
  * Authors:	Lukas Ocilka <locilka@suse.cz>
  * ThanksTo:	Martin Vidner <mvidner@suse.cz>
  *		Ladislav Slezak <lslezak@suse.cz>
@@ -18,6 +19,9 @@
     import "ProductControl";
 
     textdomain "installation";
+
+    y2error ("DO NOT USE THIS CLIENT ANYMORE!");
+    return `auto;
 
     any ret = nil;
     string func = "";
