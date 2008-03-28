@@ -145,7 +145,7 @@ boolean DeployTarImage (string id, string target) {
     y2milestone ("Calling: %1", cmd);
 
     out = (map)SCR::Execute (.target.bash_output, cmd);
-    y2milestone ("Returned %2", out);
+    y2milestone ("Returned %1", out);
 
     return out["exit"]:-1 == 0;
 }
