@@ -17,11 +17,12 @@
     import "FileUtils";
     import "Installation";
     import "ProductControl";
+    import "GetInstArgs";
 
     textdomain "installation";
 
     y2error ("DO NOT USE THIS CLIENT ANYMORE!");
-    return `auto;
+    return nil;
 
     any ret = nil;
     string func = "";
