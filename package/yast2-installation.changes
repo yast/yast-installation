@@ -4,6 +4,7 @@ Fri Mar 28 13:33:31 CET 2008 - locilka@suse.cz
 - Automatic configuration has been moved from the end of the first
   stage to the second stage. It's non-interactive (FATE #303396).
 - Fixed installation from images (FATE #303554).
+- ImageInstallation can newly handle .lzma images.
 - 2.16.27
 
 -------------------------------------------------------------------
