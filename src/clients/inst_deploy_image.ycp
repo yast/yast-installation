@@ -48,13 +48,17 @@ Progress::Simple (_("Deploying Installation Images"), _("Deploying Installation 
 // Images usually do not fit into RAMDISK
 // move download area to hard disk (for HTTP/FTP media)
 // TODO select according to partitioning
+/*
 string download_dir = Installation::destdir + "/img_tmp";
 SCR::Execute (.target.bash, sformat ("test -d %1 || mkdir -p %1", download_dir));
 Pkg::SourceMoveDownloadArea (download_dir);
+*/
 
 ImageInstallation::DeployImages (images, Installation::destdir, SetProgress);
 
+/*
 SCR::Execute (.target.bash, sformat ("rmdir '%1'", download_dir));
+*/
 
 y2milestone ("Target image for package selector prepared");
 
