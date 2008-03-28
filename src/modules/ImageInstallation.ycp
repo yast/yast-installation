@@ -20,6 +20,7 @@ import "Installation";
 import "XML";
 import "Progress";
 import "Report";
+import "String";
 
 textdomain "installation";
 
@@ -131,10 +132,21 @@ boolean DeployTarImage (string id, string target) {
     y2milestone ("Executing %1 returned %2", cmd, out);
 
     y2milestone ("Untarring the image");
-    // FIXME: Progress `tar --checkpoint`
-    cmd = sformat ("tar --totals -xf %1 -C %2", image, target);
+
+    // TODO: Progress `tar --checkpoint`
+
+    // lzma
+    if (regexpmatch (image, "\.lzma$")) {
+	cmd = sformat ("lzmadec < '%1' | tar --totals -C '%2' -xf -", String::Quote (image), String::Quote (target));
+    // bzip2, gzip
+    } else {
+	cmd = sformat ("tar --totals -xf '%1' -C -xf '%2'", String::Quote (image), String::Quote (target));
+    }
+    y2milestone ("Calling: %1", cmd);
+
     out = (map)SCR::Execute (.target.bash_output, cmd);
-    y2milestone ("Executing %1 returned %2", cmd, out);
+    y2milestone ("Returned %2", out);
+
     return out["exit"]:-1 == 0;
 }
 
