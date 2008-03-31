@@ -135,7 +135,7 @@
 
     // help text for initial (first time) language screen
     string help_text = _("<p>
-Choose the <b>Language</b> and the <b>Keyborad layout</b> to be used during
+Choose the <b>Language</b> and the <b>Keyboard layout</b> to be used during
 installation and for the installed system.
 </p>
 ") +
