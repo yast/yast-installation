@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Mar 31 16:42:40 CEST 2008 - locilka@suse.cz
+
+- There are currently two possible patterns/desktops that can use
+  kdm: kde4-kdm and kdebase3-kdm (bnc #372506).
+
+-------------------------------------------------------------------
 Fri Mar 28 13:33:31 CET 2008 - locilka@suse.cz
 
 - Automatic configuration has been moved from the end of the first
