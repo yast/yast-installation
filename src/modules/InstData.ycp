@@ -48,6 +48,10 @@
     global list <string> localDisabledModules = [];
     global list <string> localDisabledProposals = [];
 
+    // FATE #303396, Non-interactive second stage
+    // this variable enables a check box in dialog
+    global boolean enable_autoconfiguration = false;
+
     // <-- other
 
 /* EOF */

@@ -172,12 +172,16 @@ term InstModeDialogContent (symbol pre_selected) {
 		    _("In&clude Add-On Products from Separate Media"),
 		    Installation::add_on_selected
 		)),
-		`Left (`CheckBox (
-		    `id (`use_automatic_configuration), `opt(`notify),
-		    // check box
-		    _("&Use Automatic Configuration"),
-		    ProductControl::GetUseAutomaticConfiguration()
-		))
+		(InstData::enable_autoconfiguration == true ?
+		    `Left (`CheckBox (
+			`id (`use_automatic_configuration), `opt(`notify),
+			// check box
+			_("&Use Automatic Configuration"),
+			ProductControl::GetUseAutomaticConfiguration()
+		    ))
+		    :
+		    `Empty()
+		)
 	    ),
 	    `HStretch()
 	);

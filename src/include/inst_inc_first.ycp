@@ -21,6 +21,9 @@
     import "FileUtils";
     import "String";
     import "Mode";
+    import "ProductFeatures";
+
+    include "installation/misc.ycp";
 
     void InitMouse () {
         if (!Arch::s390 () || Arch::board_iseries ()) {
@@ -43,8 +46,16 @@
 	ProductControl::DisableModule ("add-on");
 	ProductControl::DisableModule ("productsources");
 
+	// FATE #303396, Make second stage non-interactive
+	boolean enable_autoconfiguration =  ProductFeatures::GetBooleanFeature ("globals", "enable_autoconfiguration");
+	boolean autoconfiguration_default = ProductFeatures::GetBooleanFeature ("globals", "autoconfiguration_default");
+
 	// Enabled only when AC is selected
-	ProductControl::DisableModule ("automatic_configuration");
+	InstData::enable_autoconfiguration = (enable_autoconfiguration == true);
+	// Default state
+	ProductControl::SetUseAutomaticConfiguration (autoconfiguration_default == true);
+	// Enables or disables some modules, etc.
+	AdjustAutomaticInstallation();
 
 	// First-stage users module will enable them again only if needed
 	ProductControl::DisableModule ("root");

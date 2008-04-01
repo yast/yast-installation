@@ -358,17 +358,31 @@
 	    <itemizedlist>
 		<listitem><para>(boolean) <emphasis>enable_firewall</emphasis> - firewall will proposed as
 		    either enabled or disabled in the network proposal.</para></listitem>
+
 		<listitem><para>(boolean) <emphasis>enable_clone</emphasis> - clonning feature
 		    will be either enabled or disabled.</para></listitem>
+
 		<listitem><para>(boolean) <emphasis>skip_language_dialog</emphasis> - the language
 		    dialog might be skipped (if language already selected).</para></listitem>
+
 		<listitem><para>(boolean) <emphasis>show_online_repositories</emphasis> - either shows
 		    or hides the "online repositories" feature check-box.</para></listitem>
+
 		<!-- bnc #359115 comment #14 -->
 		<listitem><para>(boolean) <emphasis>root_password_as_first_user</emphasis> - automatically
 		    selects or deselects the checkbox that makes Users configuration to set the password
 		    entered for a first user also for the user root. If not defined, default is
 		    <emphasis>false</emphasis></para></listitem>
+
+		<!-- FATE #303396: Make second stage non-interactive -->
+		<listitem><para>(boolean) <emphasis>enable_autoconfiguration</emphasis> - enables a check box
+		    in dialog that offers to switch the automatic configuration either on or off.
+		    Default is false.</para></listitem>
+
+		<listitem><para>(boolean) <emphasis>autoconfiguration_default</emphasis> - defines a default
+		    value whether to use the automatic configuration. It works even if
+		    <emphasis>enable_autoconfiguration</emphasis> is turned off, but user would not be able
+		    to change it. Default is false.</para></listitem>
 	    </itemizedlist>
 	</section>
 	    
