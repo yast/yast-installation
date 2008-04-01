@@ -37,7 +37,7 @@ if (func == "Info")
 	"steps" : 1,
 	// progress step title
 	"title" : _("Setting up linker cache"),
-	"when" : [ `installation, `update, `autoinst ],
+	"when" : [ `installation, `live_installation, `update, `autoinst ],
     ];
 }
 else if (func == "Write")
