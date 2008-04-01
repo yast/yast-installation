@@ -6,6 +6,7 @@ Tue Apr  1 13:12:00 CEST 2008 - locilka@suse.cz
   autoconfiguration_default.
 - New functionality to select the best-matching image for image
   installation if more than one fit.
+- 2.16.28
 
 -------------------------------------------------------------------
 Tue Apr  1 12:36:52 CEST 2008 - jsrain@suse.cz
