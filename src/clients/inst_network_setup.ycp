@@ -173,7 +173,7 @@
 		`Label (_("Probing network cards..."))
 	    ),
 	    // TRANSLATORS: dialog help
-	    _("Please wait while installation is probing the network cards..."),
+	    _("Please wait while the installation is probing the network cards..."),
 	    false,
 	    false
 	);
@@ -275,8 +275,7 @@
 	    // TRANSLATORS: pop-up error message
 	    Report::Error (_("No network card has been selected.
 
-First, you need to select one network card
-to configure it later."));
+Please select a network card to configure it later."));
 		    return false;
 
 	// Checking whether the netcard link is active
@@ -287,10 +286,9 @@ to configure it later."));
 		sformat (
 		    // TRANSLATORS: popup dialog question
 		    // %1 is replaced with a network device string
-		    _("Link of the selected interface %1 is disconnected.
+		    _("The link of the selected interface %1 is disconnected.
 It needs to be connected for a proper network configuration.
-
-Are you sure you want to use it despite the given fact?"),
+Are you sure you want to use it?"),
 		    selected_netcard
 		),
 		// TRANSLATORS: popup dialog button
@@ -343,12 +341,12 @@ Are you sure you want to use it despite the given fact?"),
 	    // TRANSLATORS: dialog help 1/3
 	    _("<p>Here you can configure your network cards to be used immediately.</p>") +
 	    // TRANSLATORS: dialog help 2/3
-	    _("<p>If you don't need a network connection now,
+	    _("<p>If you do not need a network connection now,
 you can safely skip the configuration.</p>") +
 	    // TRANSLATORS: dialog help 3/3
-	    _("<p>To configure a network card, select it from list
-and click on the <b>Next</b> button,
-otherwise click on the <b>Cancel</b> button.</p>"),
+	    _("<p>To configure a network card, select it from the list
+and click the <b>Next</b> button.
+Otherwise,click<b>Cancel</b>.</p>"),
 	    Label::BackButton(),
 	    Label::NextButton()
 	);
@@ -1143,14 +1141,13 @@ the installation system for writing the proxy configuration."));
 	    // TRANSLATORS: a pop-up dialog headline
 	    _("Internet Test Failed"),
 	    // TRANSLATORS: a pop-up dialog question, see buttons *3
-	    _("Because the Internet connection test failed, you should be
+	    _("The Internet connection test failed. You should be
 redirected to the previous dialog to change the configuration.
-
-Would you like to go back to change it?"),
+Go back and change it?"),
 	    // TRANSLATORS: popup dialog button (*3)
 	    _("Go Back"),
 	    // TRANSLATORS: popup dialog button (*3)
-	    _("Skip It"),
+	    _("Skip"),
 	    `yes
 	)) {
 	    return false;
@@ -1385,9 +1382,8 @@ Please, go back and provide a valid network setup."));
 	if (all_ok != true) {
 	    y2warning ("Writing has failed, returning to the previous dialog");
 	    Report::Error (_("Writing the network settings failed.
-
-You will be returned to the previous dialog either
-to change the settings or to cancel the network setup."));
+You will be returned to the previous dialog to either
+change the settings, or cancel the network setup."));
 	    return `back;
 	}
 	

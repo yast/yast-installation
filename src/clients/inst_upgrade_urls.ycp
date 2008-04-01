@@ -102,7 +102,7 @@
 		// TRANSLATORS: dialog text, possibly multiline,
 		// Please, do not use more than 50 characters per line.
 		`Left (`Label (_("These repositories were found on the system
-you are just upgrading:"))),
+you are upgrading:"))),
 		`Table (
 		    `id ("table_of_repos"),
 		    `opt (`notify),
@@ -126,9 +126,8 @@ you are just upgrading:"))),
 		)
 	    ),
 	    // TRANSLATORS: help text 1/3
-	    _("<p>Here you can see all software repositories that were found
-on the system you are just upgrading. You have better enable
-those you want to include in the upgrade process.</p>") +
+	    _("<p>Here you see all software repositories found
+on the system you are upgrading. Enable the ones you want to include in the upgrade process.</p>") +
 	    // TRANSLATORS: help text 2/3
 	    _("<p>To enable or disable an URL, click on the
 <b>Toggle Status</b> button or double-click on the respective table item.</p>") +
@@ -412,9 +411,8 @@ those you want to include in the upgrade process.</p>") +
 		// TRANSLATORS: popup header
 		_("Network is not Configured"),
 		// TRANSLATORS: popup question
-		_("Remote repositories require the Internet connection.
-
-Would you like to configure it?"),
+		_("Remote repositories require an Internet connection.
+Configure it?"),
 		Label::YesButton(),
 		Label::NoButton(),
 		`yes
@@ -570,7 +568,7 @@ Would you like to configure it?"),
 			Report::Error (sformat (
 			    // TRANSLATORS: error report
 			    // %1 is replaced with repo-name, %2 with repo-URL
-			    _("An error occurred when refreshing repository
+			    _("An error occurred while refreshing repository
 Name: %1
 URL: %2"),
 			    repo_name,
@@ -666,7 +664,7 @@ URL: %2"),
 		_("Initializing package manager..."),
 	    ],
 	    // TRANSLATORS: dialog help
-	    _("<p>Please wait, while repositories are being read...</p>")
+	    _("<p>Please wait while repositories are being read...</p>")
 	);
 	Wizard::SetTitleIcon ("yast-sw_source");
     }

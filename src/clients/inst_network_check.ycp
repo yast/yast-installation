@@ -74,12 +74,13 @@
 				`Empty()
 			    ),
 			    `Left (`Label (_("No network setup has been found.
-It is vitally important for using remote repositories
-otherwise you can safely skip it.")))
+It is important if using remote repositories,
+otherwise you can safely skip it.
+")))
 			),
 			`VSpacing (2),
 			// TRANSLATORS: dialog label
-			`Left(`Label (_("Would you like to configure your network card now?"))),
+			`Left(`Label (_("Configure your network card now?"))),
 			`VSpacing (1),
 			`Frame (
 			    // TRANSLATORS: frame label
@@ -98,12 +99,13 @@ otherwise you can safely skip it.")))
 	    `VStretch()
 	),
 	// TRANSLATORS: help text, part 1/2
-	_("<p>The current installation system does not seem
-to have configured network.</p>") +
+	_("<p>The current installation system does not
+have a configured network.</p>
+") +
 	// TRANSLATORS: help text, part 2/2
 	_("<p>A configured network is needed for using remote repositories
-or Add-On products. You do not need to set it up in case you do not want
-to use any remote repository and you can skip the configuration then.</p>"),
+or add-on products. If you do not use remote repositories, skip the configuratio.</p>
+"),
 	enable_next,
 	enable_back
     );
