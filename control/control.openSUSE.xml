@@ -38,6 +38,10 @@ textdomain="control"
 		<system_directory>/root/inst-sys/</system_directory>
 	    </save_instsys_item>
 	</save_instsys_content>
+
+	<!-- FATE #303396, Make second stage non-interactive -->
+	<enable_autoconfiguration config:type="boolean">true</enable_autoconfiguration>
+	<autoconfiguration_default config:type="boolean">true</autoconfiguration_default>
     </globals>
 
     <software>

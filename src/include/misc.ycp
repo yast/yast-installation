@@ -208,7 +208,7 @@ according to the settings in the previous dialogs.</p>")
 	return ( button == `confirm );
     }
 
-    void AdjustStepsAccordingToInstallationSettings () {
+    void AdjustAutomaticInstallation () {
         if (ProductControl::GetUseAutomaticConfiguration()) {
             ProductControl::DisableAllModulesAndProposals ("installation", "continue");
             ProductControl::EnableModule ("automatic_configuration");
@@ -216,6 +216,10 @@ according to the settings in the previous dialogs.</p>")
 	    ProductControl::UnDisableAllModulesAndProposals ("installation", "continue");
 	    ProductControl::DisableModule ("automatic_configuration");
 	}
+    }
+
+    void AdjustStepsAccordingToInstallationSettings () {
+	AdjustAutomaticInstallation();
 
 	if (Installation::add_on_selected == true) {
 	    ProductControl::EnableModule ("add-on");
