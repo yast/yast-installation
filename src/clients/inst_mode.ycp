@@ -205,22 +205,19 @@ from your existing system whenever possible.
     // help text for installation option
     (show_online_repositories == true ? _("<p>
 To use suggested remote repositories during installation or update, select
-<b>Add Online Repositories Before Installation</b>.</p>
-"):"") +
+<b>Add Online Repositories Before Installation</b>.</p>"):"") +
 
     // help text for installation method
     _("<p>
 To install an add-on product from separate media together with &product;, select
-<b>Include Add-On Products from Separate Media</b>.</p>
-") +
+<b>Include Add-On Products from Separate Media</b>.</p>") +
 
     // help text for installation method
     _("<p>
-To let new installation create an automatic configuration, select
-<b>Use Automatic Configuration</b>. Otherwise second stage installation
-with configuration proposals will be called instead. Update mode does not
-support automatic configuration.</p>
-") +
+To let the new installation to create an automatic configuration, select
+<b>Use Automatic Configuration</b>. Otherwise, second stage installation
+with configuration proposals will be used. Update mode does not
+support automatic configuration.</p>") +
 
     // help text for installation method
     _("<p>Select <b>Repair Installed System</b> if you have a damaged Linux system on
@@ -228,7 +225,7 @@ your hard disk. This option can try to fix problems automatically.
 </p>") +
 
     // help text for installation method
-    _("<p>Features <b>Update</b> and <b>Repair Installed System</b> are only
+    _("<p>The features <b>Update</b> and <b>Repair Installed System</b> are only
 available if some Linux system has been detected.
 </p>");
 }
@@ -405,11 +402,9 @@ if (Mode::repair ())
 	    // %2 - logfile, possibly with errors
 	    // %3 - link to our bugzilla
 	    // %4 - directory where YaST logs are stored
-	    sformat (_("Calling the YaST module %1 has failed.
-More information can be found near the end of the '%2' file.
-
-This is worth reporting a bug at %3.
-Please, attach also all YaST logs stored in the '%4' directory."),
+	    sformat (_("Accessing the YaST module %1 has failed.
+More information can be found in the '%2' file.
+Please report this bug at %3 and attach the YaST logs stored in the '%4' directory."),
 	    "inst_repair",
 	    "/var/log/YaST2/y2log",
 	    "http://bugzilla.novell.com/",

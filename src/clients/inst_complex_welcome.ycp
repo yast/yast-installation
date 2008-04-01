@@ -161,8 +161,8 @@ all your settings in the last installation dialog.
 
     // help text, continued
     _("<p>
-You can select <b>Abort</b> installation at any time to abort the
-installation process.
+Select <b>Abort</b> to abort the
+installation process any time.
 </p>
 ");
 

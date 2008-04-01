@@ -179,8 +179,7 @@ while (true) {
 	    break;
 	}
 	Popup::Message (_("No system type was selected.
-
-Select the default one, please."));
+Select the default type."));
 	continue;
     } else if (ret == `abort || ret == `cancel) {
 	if (Popup::ConfirmAbort (Stage::initial () ? `painless : `incomplete)) {
