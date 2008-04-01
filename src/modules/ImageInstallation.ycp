@@ -312,6 +312,42 @@ global boolean DeployImages (list<string> images, string target, void(integer,in
 // TODO error checking
 }
 
+// TODO: extract the weight from control file
+list <string> patterns_priority = ["^kde", "^gnome", "^xfce", "^x11", "^base", "^enhanced_base"];
+
+/**
+ * Function finds a pattern weight
+ * The return value is 0 to 9999. The smaller the number the bigger the weight.
+ *
+ * @param string pattern
+ * @return integer pattern weight
+ */
+integer GetPatternWeight (string pattern) {
+    integer weight = 9999;
+
+    integer counter = -1;
+    foreach (string one_pattern_regexp, patterns_priority, {
+	counter = counter + 1;
+	if (regexpmatch (pattern, one_pattern_regexp)) {
+	    weight = counter;
+	    break;
+	}
+    });
+
+    return weight;
+}
+
+/**
+ * Patterns have an internal weight. It says which one of two is better
+ * to use for image installation. The size does matter.
+ */
+boolean DoesPatternFitBetter (string last_pattern, string new_pattern) {
+    integer last_pattern_weight = GetPatternWeight (last_pattern);
+    integer new_pattern_weight = GetPatternWeight (new_pattern);
+
+    return (new_pattern_weight < last_pattern_weight);
+}
+
 /**
  * Find a set of images which suites selected patterns
  * @param patterns a list of patterns which are selected
@@ -345,15 +381,51 @@ global boolean FindImageSet (list<string> patterns) {
     y2milestone ("Image set descriptions: %1", image_sets);
     map<string,any> result = $[];
 
+    // more patterns could match at once
+    // as we can't merge the meta image, only one can be selected
+    map <string, map <string, any> > possible_patterns = $[];
+    map <string, integer> matching_pattern_sizes = $[];
+
+    // trying to find all matching patterns
     foreach (map<string,any> image, image_sets, {
 	string pattern = image["pattern"]:"";
 
+	// no image-pattern defined, matches all patterns
 	if (pattern == "" && result == $[]) {
-	    result = image;
+	    possible_patterns[pattern] = image;
+	// image-patterns matches to patterns got as parameter
 	} else if (contains (patterns, pattern)) {
-	    result = image;
+	    possible_patterns[pattern] = image;
 	}
+
+	matching_pattern_sizes[pattern] = size (image);
     });
+
+    y2milestone ("Matching patterns: %1, sizes: %2", possible_patterns, matching_pattern_sizes);
+
+    string last_pattern = "";
+
+    // one result
+    if (size (possible_patterns) == 1) {
+	foreach (string pattern, map <string, any> image, possible_patterns, {
+	    result = image;
+	    last_pattern = pattern;
+	});
+    // more possible results
+    } else if (size (possible_patterns) > 1) {
+	integer last_size = -1;
+	last_pattern = "";
+
+	foreach (string pattern, map <string, any> image, possible_patterns, {
+	    if (matching_pattern_sizes[pattern]:0 > last_size && DoesPatternFitBetter (last_pattern, pattern)) {
+		last_size = matching_pattern_sizes[pattern]:0;
+		result = image;
+		last_pattern = pattern;
+	    }
+	});
+    }
+
+    y2milestone ("Result: %1/%2", last_pattern, result);
 
     if (result == $[])
     {
