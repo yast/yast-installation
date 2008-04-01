@@ -45,6 +45,7 @@ list<map<string,any> > stages = [
 	    "mouse",
 	    "copy_files",
 	    "copy_systemfiles",
+	    "live_copy_files",
 	    "switch_scr",
 	],
     ],
@@ -54,6 +55,7 @@ list<map<string,any> > stages = [
 	"steps" : [
 	    "ldconfig",
 	    "save_config",
+	    "live_save_config",
 	    "runlevel",
 	    "desktop",
 	    "fonts",
@@ -93,6 +95,7 @@ list<map<string,any> > stages = [
 	// progress stage
 	"label" : _("Prepare system for initial boot"),
 	"steps" : [
+	    "live_runme_at_boot",
 	    "vm",
 	    "driver_update2",
 	    // no second stage if possible
@@ -157,12 +160,16 @@ if (Mode::update ())
     run_type = `update;
 else if (Mode::autoinst ())
     run_type = `autoinst;
+else if (Mode::live_installation ())
+    run_type = `live_installation;
 
 integer steps_count = 0;
 
 stages = maplist (map<string,any> stage, stages, {
     list<map> steps = maplist (string s, stage["steps"]:[], {
 	s = s + "_finish";
+
+// TODO: check if client exists
 	map info = (map)WFM::CallFunction (s, ["Info"]);
 
 	if (info == nil) {

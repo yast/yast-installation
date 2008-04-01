@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Apr  1 12:36:52 CEST 2008 - jsrain@suse.cz
+
+- added live installation workflow to default control file
+- updated inst_finish clients handling for live installation
+
+-------------------------------------------------------------------
 Tue Apr  1 10:15:34 CEST 2008 - jsrain@suse.cz
 
 - merged texts from proofread

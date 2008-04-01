@@ -151,6 +151,21 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
         </proposal>
 
         <proposal>
+            <label>Live Installation Settings</label>
+            <mode>live_installation</mode>
+            <stage>initial</stage>
+            <name>initial</name>
+            <enable_skip>no</enable_skip>
+            <proposal_modules config:type="list">
+                <proposal_module>hwinfo</proposal_module>
+                <proposal_module>partitions</proposal_module>
+                <proposal_module>bootloader</proposal_module>
+                <proposal_module>keyboard</proposal_module>
+                <proposal_module>timezone</proposal_module>
+            </proposal_modules>
+        </proposal>
+
+        <proposal>
             <label>Update Settings</label>
             <mode>update</mode>
             <name>initial</name>
@@ -354,6 +369,74 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	            <label>Perform Installation</label>
                     <name>finish</name>
 		    <enable_back>no</enable_back>
+                </module>
+            </modules>
+        </workflow>
+
+	<!-- Stage: Initial, Mode: Live Installation -->
+        <workflow>
+            <defaults>
+                <archs>all</archs>
+                <enable_back>yes</enable_back>
+                <enable_next>yes</enable_next>
+            </defaults>
+            <label>Installation</label>
+            <mode>live_installation</mode>
+            <stage>initial</stage>
+            <modules config:type="list">
+                <module>
+                    <label>Welcome</label>
+                    <name>inst_live_welcome</name>
+                </module>
+                 <module>
+                    <label>License Agreement</label>
+                    <name>inst_license</name>
+                </module>
+<!--
+                <module>
+                    <label>Installation Settings</label>
+                    <name>inst_live_simple_proposal</name>
+                    <proposal>initial</proposal>
+                </module>
+                <module>
+                    <label>Installation Settings</label>
+                    <name>inst_live_full_proposal</name>
+                    <proposal>initial</proposal>
+                </module>
+-->
+                <module>
+                    <label>Installation Settings</label>
+                    <name>inst_live_pre-proposal</name>
+                </module>
+                <module>
+                    <label>Installation Settings</label>
+                    <name>inst_proposal</name>
+                    <proposal>initial</proposal>
+                </module>
+                <module>
+                    <label>Perform Installation</label>
+                    <name>inst_do_resize</name>
+                    <update config:type="boolean">false</update>
+                    <archs>i386,x86_64,ia64</archs>
+                </module>
+                <module>
+                    <label>Perform Installation</label>
+                    <name>inst_prepdisk</name>
+                </module>
+                <module>
+                    <label>Perform Installation</label>
+                    <name>inst_kickoff</name>
+                </module>
+                <module>
+                    <label>Perform Installation</label>
+                    <name>inst_live_doit</name>
+                    <enable_next>no</enable_next>
+                    <enable_back>no</enable_back>
+                </module>
+                <module>
+                    <label>Perform Installation</label>
+                    <name>inst_finish</name>
+                    <enable_back>no</enable_back>
                 </module>
             </modules>
         </workflow>
