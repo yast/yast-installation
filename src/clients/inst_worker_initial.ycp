@@ -54,11 +54,10 @@
     // All stages
     SetUIContent();
 
+    SetDiskActivationModule();
+
     // Cleanup and other settings
     InitFirstStageInstallationSystem();
-
-    SetDiskActivationModule();
-    AdjustStepsAccordingToInstallationSettings();
 
     // Redraw steps before mouse is initialized
     // Bugzilla #296406

@@ -169,7 +169,9 @@ stages = maplist (map<string,any> stage, stages, {
     list<map> steps = maplist (string s, stage["steps"]:[], {
 	s = s + "_finish";
 
+	y2milestone ("Calling inst_finish script: %1 (Info)", s);
 // TODO: check if client exists
+// client doesn't need to exist on purpose
 	map info = (map)WFM::CallFunction (s, ["Info"]);
 
 	if (info == nil) {
@@ -185,10 +187,17 @@ stages = maplist (map<string,any> stage, stages, {
 	steps_count = steps_count + info["steps"]:1;
 	return info;
     });
+
     stage["steps"] = filter (map s, steps, {
 	return s != nil;
     });
+
     return stage;
+});
+
+y2milestone ("These inst_finish stages will be called:");
+foreach (map<string,any> stage, stages, {
+    y2milestone ("Stage: %1", stage);
 });
 
 stages = filter (map<string,any> s, stages, {

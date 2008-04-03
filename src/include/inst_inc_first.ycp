@@ -37,15 +37,55 @@
      * Sets inital language and other settings.
      */
     void SetInitialInstallation () {
+	y2milestone ("Adjusting language settings");
+	UI::SetLanguage (Language::language, Installation::encoding);
+	WFM::SetLanguage (Language::language, "UTF-8");
+	UI::RecordMacro (Directory::logdir + "/macro_inst_initial.ycp");
+
 	// properly set up initial language
 	Installation::encoding = Console::SelectFont (Language::language);
 	if (UI::GetDisplayInfo()["HasFullUtf8Support"]:true) {
 	    Installation::encoding = "UTF-8";
 	}
-	
-	ProductControl::DisableModule ("add-on");
-	ProductControl::DisableModule ("productsources");
+	y2milestone ("Adjusting first stage modules");
 
+	boolean show_addons = ProductFeatures::GetBooleanFeature ("globals", "show_addons");
+	boolean addons_default = ProductFeatures::GetBooleanFeature ("globals", "addons_default");
+	// default fallback
+	if (show_addons == nil) show_addons = true;
+	if (addons_default == nil) addons_default = false;
+
+	y2milestone ("Control file definition for add-on, visible: %1, selected: %2",
+	    show_addons, addons_default);
+	if (show_addons) {
+	    ProductControl::DisableModule ("add-on");
+	} else {
+	    ProductControl::EnableModule ("add-on");
+	}
+	Installation::add_on_selected = addons_default;
+
+	boolean show_online_repositories = ProductFeatures::GetBooleanFeature ("globals", "show_online_repositories");
+	boolean online_repositories_default = ProductFeatures::GetBooleanFeature ("globals", "online_repositories_default");
+	// default fallback
+	if (show_online_repositories == nil) show_online_repositories = false;
+	if (online_repositories_default == nil) online_repositories_default = true;
+
+	y2milestone ("Control file definition for productsources, visible: %1, selected: %2",
+	    show_online_repositories, online_repositories_default);
+	if (show_online_repositories) {
+	    ProductControl::EnableModule ("productsources");
+	} else {
+	    ProductControl::DisableModule ("productsources");
+	}
+	Installation::productsources_selected = online_repositories_default;
+
+	y2milestone ("Disabling second stage modules");
+	// First-stage users module will enable them again only if needed
+	ProductControl::DisableModule ("root");
+	ProductControl::DisableModule ("user");
+	ProductControl::DisableModule ("auth");
+
+	y2milestone ("Adjusting automatic configuration");
 	// FATE #303396, Make second stage non-interactive
 	boolean enable_autoconfiguration =  ProductFeatures::GetBooleanFeature ("globals", "enable_autoconfiguration");
 	boolean autoconfiguration_default = ProductFeatures::GetBooleanFeature ("globals", "autoconfiguration_default");
@@ -56,15 +96,6 @@
 	ProductControl::SetUseAutomaticConfiguration (autoconfiguration_default == true);
 	// Enables or disables some modules, etc.
 	AdjustAutomaticInstallation();
-
-	// First-stage users module will enable them again only if needed
-	ProductControl::DisableModule ("root");
-	ProductControl::DisableModule ("user");
-	ProductControl::DisableModule ("auth");
-
-	UI::SetLanguage (Language::language, Installation::encoding);
-	WFM::SetLanguage (Language::language, "UTF-8");
-	UI::RecordMacro (Directory::logdir + "/macro_inst_initial.ycp");
     }
 
     void InitFirstStageInstallationSystem () {
