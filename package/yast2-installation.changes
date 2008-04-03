@@ -10,6 +10,7 @@ Wed Apr  3 16:40:16 CEST 2008 - locilka@suse.cz
 - Fixed untarring bzip2 or gzip-based images.
 - Changed instalation from images to count the best image-set
   from patterns (list of patterns in image-set) in images.xml.
+- 2.16.29
 
 -------------------------------------------------------------------
 Tue Apr  1 13:12:00 CEST 2008 - locilka@suse.cz
