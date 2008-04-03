@@ -13,6 +13,9 @@ QuickSwitch=1
 KeySysSwitchNext="Alt+Tab"
 KeySysSwitchLast="Alt+Shift+Tab"
 
+# Disable Windows key
+Win95Keys=0
+
 # Colors
 ColorActiveTitleBar="rgb:4e/6f/9f"
 ColorNormalTitleBar="rgb:c3/c3/c3"

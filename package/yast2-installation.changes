@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Wed Apr  3 16:40:16 CEST 2008 - locilka@suse.cz
+
+- Removed Winkeys support during installation (bnc 376248).
+- Fixed the decision-making process which images fits the best.
+- Added new control file entries to adjust the Community
+  Repositories and Add-Ons during installation.
+- Cosmetic changes when initializing the wizard steps according to
+  control file.
+- Fixed untarring bzip2 or gzip-based images.
+
+-------------------------------------------------------------------
 Tue Apr  1 13:12:00 CEST 2008 - locilka@suse.cz
 
 - Automatic configuration can be newly defined by control file. Two

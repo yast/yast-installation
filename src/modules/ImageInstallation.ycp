@@ -140,7 +140,7 @@ boolean DeployTarImage (string id, string target) {
 	cmd = sformat ("lzmadec < '%1' | tar --totals -C '%2' -xf -", String::Quote (image), String::Quote (target));
     // bzip2, gzip
     } else {
-	cmd = sformat ("tar --totals -xf '%1' -C -xf '%2'", String::Quote (image), String::Quote (target));
+	cmd = sformat ("tar --totals -C '%2' -xf '%1'", String::Quote (image), String::Quote (target));
     }
     y2milestone ("Calling: %1", cmd);
 
@@ -398,7 +398,7 @@ global boolean FindImageSet (list<string> patterns) {
 	    possible_patterns[pattern] = image;
 	}
 
-	matching_pattern_sizes[pattern] = size (image);
+	matching_pattern_sizes[pattern] = size (image["images"]:[]);
     });
 
     y2milestone ("Matching patterns: %1, sizes: %2", possible_patterns, matching_pattern_sizes);
@@ -417,7 +417,7 @@ global boolean FindImageSet (list<string> patterns) {
 	last_pattern = "";
 
 	foreach (string pattern, map <string, any> image, possible_patterns, {
-	    if (matching_pattern_sizes[pattern]:0 > last_size && DoesPatternFitBetter (last_pattern, pattern)) {
+	    if (matching_pattern_sizes[pattern]:0 >= last_size && DoesPatternFitBetter (last_pattern, pattern)) {
 		last_size = matching_pattern_sizes[pattern]:0;
 		result = image;
 		last_pattern = pattern;

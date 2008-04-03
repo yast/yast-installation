@@ -24,12 +24,18 @@ textdomain="control"
         <disable_register_w3m config:type="boolean">true</disable_register_w3m>
         <register_monthly config:type="boolean">false</register_monthly>
 	<manual_online_update config:type="boolean">true</manual_online_update>
+
 	<!-- bnc #359115 comment #14 -->
 	<root_password_as_first_user config:type="boolean">true</root_password_as_first_user>
 	<root_password_ca_check config:type="boolean">false</root_password_ca_check>
 
 	<!-- Offer online repositories feature in the installation -->
 	<show_online_repositories config:type="boolean">false</show_online_repositories>
+	<online_repositories_default config:type="boolean">true</online_repositories_default>
+
+	<!-- Offer add-ons in the installation -->
+	<show_addons config:type="boolean">true</show_addons>
+	<addons_default config:type="boolean">false</addons_default>
 
 	<!-- FATE #301937, Save /root content from the installation system to the installed system -->
 	<save_instsys_content config:type="list">
