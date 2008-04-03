@@ -31,8 +31,23 @@
     // bugzilla #219097
     boolean confirmed = confirmInstallation();
 
-    if ( confirmed )
-	y2milestone( "User confirmed %1", Mode::update () ? "update" : "installation" );
+    if (confirmed) {
+	y2milestone ("User confirmed %1",
+	    Mode::update () ? "update" : "installation");
+
+	Wizard::SetContents (
+	    // TRANSLATORS: dialog caption
+	    _("Installation - Warming Up"),
+	    `VBox (
+		// FIXME: invent something better :>>> zzz
+		`Label (_("Drzte si klobouky, jedeme z kopceeee...."))
+	    ),
+	    // TRANSLATORS: dialog help
+	    _("<p>Installation is just about to start!</p>"),
+	    false,
+	    false
+	);
+    }
 
     return confirmed ? `next : `back;
 }
