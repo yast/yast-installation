@@ -27,22 +27,17 @@
     import "Wizard";
     import "Kernel";
     import "GetInstArgs";
+
     // bugzilla #241553 comment #7
     // import "Product"; // ugly, because of initializing the &product; macro
 
     if ( GetInstArgs::going_back())	// going backwards?
 	return `auto;			// don't execute this once more
 
-    map param = $[];
-    if (size (WFM::Args()) > 0 && is (WFM::Args (0), map))
-	param = (map) WFM::Args (0);
-
-    boolean automatic_configuration = false;
-    if (param["AutomaticConfiguration"]:false == true) {
-	automatic_configuration = true;
-    }
-
-    y2milestone ("Script params: %1, AutoConf: %2", param, automatic_configuration);
+    // automatic configuration has its own progress
+    // do not set an UI if possible
+    boolean automatic_configuration = GetInstArgs::automatic_configuration();
+    y2milestone ("Script AutoConf: %1", automatic_configuration);
 
     boolean reread_inittab = false;
 

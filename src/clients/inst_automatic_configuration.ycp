@@ -15,6 +15,8 @@
     import "FileUtils";
     import "Directory";
     import "GetInstArgs";
+    import "Progress";
+    import "Wizard";
 
     textdomain "installation";
 
@@ -32,20 +34,33 @@
 // (at least the list of modules in proposals)
     list <map <string, any> > proposal_scripts_to_call = [
 	// probably needed
-	$[ "type":"scripts",   "items":["initialization", "netprobe", "rpmcopy_secondstage"] ],
-	// network proposal
-	$[ "type":"proposals", "items":["lan", "general", "dsl", "isdn", "modem", "remote", "firewall"] ],
-	// hardware proposal
-	$[ "type":"proposals", "items":["x11", "printer", "sound", "tv"] ],
-	// probably needed
-	$[ "type":"scripts",   "items":["addon_update_sources", "inst_extrasources", "suseconfig", "save_hardware_status"] ],
-    ];
+	$[
+	    "label":_("Initialization..."),
+	    "type":"scripts",
+	    "items":["initialization", "netprobe", "rpmcopy_secondstage"]
+	],
 
-// users will be called if there is anything to write
-//    if (FileUtils::Exists (Directory::vardir + "/users_first_stage.ycp")) {
-//	y2milestone ("Users will be called");
-//	proposal_scripts_to_call = add (proposal_scripts_to_call, $[ "type":"scripts", "items":["user"] ]);
-//    }
+	// network proposal
+	$[
+	    "label":_("Configuring network..."),
+	    "type":"proposals",
+	    "items":["lan", "general", "dsl", "isdn", "modem", "remote", "firewall"]
+	],
+
+	// hardware proposal
+	$[
+	    "label":_("Configuring hardware..."),
+	    "type":"proposals",
+	    "items":["x11", "printer", "sound", "tv"]
+	],
+
+	// probably needed
+	$[
+	    "label":_("Finishing configuration..."),
+	    "type":"scripts",
+	    "items":["addon_update_sources", "inst_extrasources", "suseconfig", "save_hardware_status"]
+	],
+    ];
 
     /**
      * Prepares the list of installation scripts to be executed.
@@ -87,29 +102,93 @@
 	return ret_names;
     }
 
-    void CallScripts (list <string> scripts_to_call) {
+    void HandleExceptions (string proposal_name) {
+	if (proposal_name == "x11_proposal" || proposal_name == "x11") {
+	    if (! UI::TextMode()) {
+		y2milestone ("Printing >don't panic<!");
+		SCR::Write (.dev.tty.stderr,
+		    _("
+
+***********************************************************
+
+Do not panic!
+
+X11 Configuration must have switched to console for a while
+to do detect your videocard properly...
+
+***********************************************************
+")
+		);
+	    }
+	}
+    }
+
+    integer current_step = 0;
+    integer current_sub_step = 0;
+    integer nr_of_sub_steps = 0;
+
+    void ResetSubSteps (integer substeps) {
+	nr_of_sub_steps = substeps;
+	current_sub_step = 0;
+    }
+
+    void NextStep (string progress_title) {
+	current_step = current_step + 1;
+	current_sub_step = current_sub_step + 1;
+
+	if (nr_of_sub_steps > 0 && current_sub_step > 0 && nr_of_sub_steps >= current_sub_step) {
+	    progress_title = sformat (
+		// TRANSLATORS: Progress step label
+		//	%1 - text defined by script, e.g., "Configuring hardware..."
+		//	%2 - number of the current step
+		//	%3 - number of all steps
+		//	Finally, it might look like this "Configuring hardware... (2/5)"
+		_("%1 (%2/%3)"),
+		progress_title,
+		current_sub_step,
+		nr_of_sub_steps
+	    );
+	}
+
+	Progress::Title (progress_title);
+	Progress::Step (current_step);
+    }
+
+    void CallScripts (list <string> scripts_to_call, string progress_title) {
 	y2milestone ("Scripts to call: %1", scripts_to_call);
 
 	scripts_to_call = NormalizeScriptNames (scripts_to_call);
+	// every single script has one step
+	ResetSubSteps (size (scripts_to_call));
 
 	foreach (string one_script, scripts_to_call, {
 	    y2milestone ("Calling script %1", one_script);
-	    any result = WFM::CallFunction (one_script, [ $["WriteOnly":true, "AutomaticConfiguration":true] ]);
+	    NextStep (progress_title);
+	    boolean progress_before = Progress::set (false);
+
+	    any result = WFM::CallFunction (one_script, [ $["AutomaticConfiguration":true] ]);
+
+	    Progress::set (progress_before);
 	    y2milestone ("Script %1 returned %2", one_script, result);
 	});
     }
 
-    void CallProposals (list <string> proposals_to_call) {
+    void CallProposals (list <string> proposals_to_call, string progress_title) {
 	y2milestone ("Scripts to call: %1", proposals_to_call);
 
 	proposals_to_call = NormalizeProposalNames (proposals_to_call);
-
-	// $[ "WriteOnly":true ] used to determine that we just want to write the proposed
-	// configuration, we don't want to (re)start anything (network, cups, firewall, ...)
+	// every single proposal has two steps
+	ResetSubSteps (2 * size (proposals_to_call));
 
 	foreach (string one_proposal, proposals_to_call, {
 	    y2milestone ("Calling script %1 MakeProposal", one_proposal);
+	    NextStep (progress_title);
+	    boolean progress_before = Progress::set (false);
+
+	    HandleExceptions (one_proposal);
 	    any result = WFM::CallFunction (one_proposal, ["MakeProposal", $[ "AutomaticConfiguration":true ]]);
+
+	    Progress::set (progress_before);
 	    y2milestone ("Script %1 returned %2", one_proposal, result);
 	});
 
@@ -122,26 +201,57 @@
 
 	foreach (string one_proposal, proposals_to_call, {
 	    y2milestone ("Calling script %1 Write", one_proposal);
+	    NextStep (progress_title);
+	    boolean progress_before = Progress::set (false);
+
 	    any result = WFM::CallFunction (one_proposal, ["Write", $[ "AutomaticConfiguration":true ]]);
+
+	    Progress::set (progress_before);
 	    y2milestone ("Script %1 returned %2", one_proposal, result);
 	});
     }
 
+    integer nr_of_steps = 0;
+
+    foreach (map one_autoconf_call, proposal_scripts_to_call, {
+	nr_of_steps = nr_of_steps +
+	    // Proposals have two steps, scripts only one
+	    ((one_autoconf_call["type"]:"" == "proposals" ? 2:1) * size (one_autoconf_call["items"]:[]));
+    });
+
+    Progress::Simple(
+	_("Automatic Configuration"),
+	"",
+	nr_of_steps,
+	_("<p>Installation is currently writing the automatic configuration. Please wait...</p>")
+    );
+
     foreach (map one_autoconf_call, proposal_scripts_to_call, {
 	string type = one_autoconf_call["type"]:"";
 
+	string progress_title = one_autoconf_call["label"]:_("Automatic configuration...");
+
 	switch (type) {
 	    case "scripts":
-		CallScripts (one_autoconf_call["items"]:[]);
+		CallScripts (one_autoconf_call["items"]:[], progress_title);
 		break;
 	    case "proposals":
-		CallProposals (one_autoconf_call["items"]:[]);
+		CallProposals (one_autoconf_call["items"]:[], progress_title);
 		break;
 	    y2error ("Unknown script type '%1'", type);
 	}
     });
 
+    Progress::Finish();
+
     y2milestone ("automatic_configuration finished");
+
+    Wizard::SetContents (
+	_("Automatic Configuration"),
+	`Label (_("Finishing configuration...")),
+	"",
+	false, false
+    );
 
     return `auto;
 }

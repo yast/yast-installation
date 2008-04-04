@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Apr  4 17:02:23 CEST 2008 - locilka@suse.cz
+
+- Improved user-feedback during automatic configuration.
+- 2.16.30
+
+-------------------------------------------------------------------
 Fri Apr  4 14:06:22 CEST 2008 - jsrain@suse.cz
 
 - added restart handling for live installation
