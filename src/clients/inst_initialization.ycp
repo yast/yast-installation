@@ -18,6 +18,12 @@ textdomain "installation";
 
 import "Wizard";
 import "Stage";
+import "GetInstArgs";
+
+if (GetInstArgs::automatic_configuration()) {
+    y2milestone ("Automatic configuration...");
+    return `auto;
+}
 
 // TRANSLATORS: dialog help
 string helptext = _("Please wait while the installation is being initialized.");

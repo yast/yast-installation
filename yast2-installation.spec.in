@@ -9,8 +9,8 @@ BuildRequires:	yast2 >= 2.16.39
 
 Requires:       autoyast2-installation
 
-# Installation::run_update_file
-Requires:	yast2 >= 2.16.36
+# GetInstArgs::automatic_configuration
+Requires:	yast2 >= 2.16.46
 
 # Required in in the first stage, after
 # switching to the installed system, bugzilla #249679
