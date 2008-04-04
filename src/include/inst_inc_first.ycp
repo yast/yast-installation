@@ -144,7 +144,7 @@
 	    string mode_to_check = "unknown";
 
 	    if (Mode::live_installation()) {
-		mode_to_check = "live_installation"
+		mode_to_check = "live_installation";
 	    } else if (Mode::installation()) {
 		mode_to_check = "installation";
 	    } else if (Mode::autoinst()) {
