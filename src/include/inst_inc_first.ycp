@@ -143,7 +143,9 @@
 	    // matching the control file
 	    string mode_to_check = "unknown";
 
-	    if (Mode::installation()) {
+	    if (Mode::live_installation()) {
+		mode_to_check = "live_installation"
+	    } else if (Mode::installation()) {
 		mode_to_check = "installation";
 	    } else if (Mode::autoinst()) {
 		mode_to_check = "autoinstallation";
