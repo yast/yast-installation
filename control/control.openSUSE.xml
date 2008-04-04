@@ -355,10 +355,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	            <label>Perform Installation</label>
                     <name>prepdisk</name>
                 </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>kickoff</name>
-                </module>
 		<!-- Installation from images -->
                 <module>
 	            <label>Perform Installation</label>
@@ -369,6 +365,12 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <name>deploy_image</name>
                 </module>
 		<!-- Installation from image -->
+		<!-- kickoff moved here in order not to replace files it writes
+		     with files from the image -->
+                <module>
+	            <label>Perform Installation</label>
+                    <name>kickoff</name>
+                </module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
@@ -395,12 +397,46 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             <stage>initial</stage>
             <modules config:type="list">
                 <module>
+		    <label>Welcome</label>
+                    <name>complex_welcome</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+                    <arguments>
+                        <first_run>yes</first_run>
+                    </arguments>
+                    <retranslate config:type="boolean">true</retranslate>
+                </module>
+<!--
+                <module>
                     <label>Welcome</label>
                     <name>inst_live_welcome</name>
                 </module>
                  <module>
                     <label>License Agreement</label>
                     <name>inst_license</name>
+                </module>
+-->
+                <module>
+                    <label>Time Zone</label>
+                    <name>timezone</name>
+                    <arguments>
+                        <first_run>yes</first_run>
+                    </arguments>
+                    <enable_back>yes</enable_back>
+                </module>
+                <module>
+                    <label>Disk</label>
+                    <name>disk_proposal</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+                    <label>User Settings</label>
+                    <name>user_first</name>
+                </module>
+                <module>
+                    <label>User Settings</label>
+                    <name>root_first</name>
                 </module>
 <!--
                 <module>
@@ -716,7 +752,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	<!-- Stage: Continue, Mode: Installation -->
         <workflow>
             <stage>continue</stage>
-            <mode>installation</mode>
+            <mode>installation,live_installation</mode>
             <defaults>
                 <enable_back>yes</enable_back>
                 <enable_next>yes</enable_next>
