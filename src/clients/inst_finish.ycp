@@ -28,11 +28,15 @@
     import "Progress";
     import "Report";
     import "Wizard";
+    import "String";
+    import "GetInstArgs";
 
     // added for fate# 303395
     import "Directory";
 
 
+    if (GetInstArgs::going_back())
+	return `auto;
 
 // Help text for last dialog of base installation
 string help_text = _("<p>
@@ -287,7 +291,7 @@ if (size (Misc::boot_msg) > 0 && !Mode::autoinst ())
 // run new kernel via kexec instead of reboot
 
 // command for reading kernel_params
-string cmd = sformat("ls %1 | grep kernel_params |tr -d '\n'", Directory::vardir);
+string cmd = sformat("ls '%1/kernel_params'", String::Quote (Directory::vardir));
 y2milestone("Checking existing file kernel_params via command %1", cmd);
 
 map out = (map)WFM::Execute(.local.bash_output, cmd);
@@ -299,7 +303,7 @@ if (out["stdout"]:"" != "kernel_params")
 }
 
 // command for reading kernel_params
-cmd = sformat("cat %1/kernel_params |tr -d '\n'", Directory::vardir);
+cmd = sformat("cat '%1/kernel_params' |tr -d '\n'", String::Quote (Directory::vardir));
 y2milestone("Reading kernel arguments via command %1", cmd);
 // read data from /var/lib/YaST2/kernel_params
 out = (map)WFM::Execute(.local.bash_output, cmd);
@@ -339,7 +343,7 @@ if (size(initrd) <2)
 }
  
 // command for finding vmlinuz file
-cmd = sformat ("ls %1 |grep vmlinuz- |tr -d '\n'", Directory::vardir);
+cmd = sformat ("ls %1/vmlinuz-* |tr -d '\n'", Directory::vardir);
 y2milestone("Finding vmlinuz file via command: %1", cmd);
 // find inird file
 out = (map)WFM::Execute(.local.bash_output, cmd);
@@ -358,10 +362,10 @@ if (size(vmlinuz) <2)
     return `next;
 }
 
-// hack for using kexec switch to console 2
-cmd = sformat ("chvt 2");
-y2milestone("Switch to console 2 via command: %1", cmd);
-// switch to console 2
+// hack for using kexec switch to console 1
+cmd = sformat ("chvt 1");
+y2milestone("Switch to console 1 via command: %1", cmd);
+// switch to console 1
 out = (map)WFM::Execute(.local.bash_output, cmd);
 // check output
 if (out["exit"]:nil != 0)
@@ -374,8 +378,8 @@ if (out["exit"]:nil != 0)
 sleep(2000);
 
 // command for calling kexec
-cmd = sformat("kexec -l --command-line=\"%1\" --initrd=%2/%3 %2/%4",
-	kernel_args, Directory::vardir, initrd, vmlinuz);
+cmd = sformat("kexec -l --command-line='%1' --initrd='%2/%3' '%2/%4'",
+	String::Quote (kernel_args), String::Quote (Directory::vardir), String::Quote (initrd), String::Quote (vmlinuz));
 y2milestone("Calling kexec via command: %1", cmd);
 
 // call kexec
