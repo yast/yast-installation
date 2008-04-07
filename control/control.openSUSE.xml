@@ -48,6 +48,9 @@ textdomain="control"
 	<!-- FATE #303396, Make second stage non-interactive -->
 	<enable_autoconfiguration config:type="boolean">true</enable_autoconfiguration>
 	<autoconfiguration_default config:type="boolean">true</autoconfiguration_default>
+
+	<!-- FATE #303395, Kexec instead of reboot (default 'false') -->
+	<kexec_reboot config:type="boolean">true</kexec_reboot>
     </globals>
 
     <software>
