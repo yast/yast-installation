@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Apr  7 15:20:14 CEST 2008 - locilka@suse.cz
+
+- Added new control file entry kexec_reboot that defines whether
+  kexec should be used instead of reboot at the end of the first
+  stage installation (FATE #303395).
+
+-------------------------------------------------------------------
 Fri Apr  4 17:02:23 CEST 2008 - locilka@suse.cz
 
 - Improved user-feedback during automatic configuration.
