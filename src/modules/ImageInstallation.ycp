@@ -327,6 +327,17 @@ integer CountMatchingPatterns (list <string> imageset_patterns, list <string> in
     return ret;
 }
 
+boolean EnoughPatternsMatching (integer matching_patterns, integer patterns_in_imagesets) {
+    if (matching_patterns == nil || matching_patterns < 0)
+	return false;
+
+    if (patterns_in_imagesets == nil || patterns_in_imagesets < 0)
+	return false;
+
+    // it's actually matching_patterns = patterns_in_imagesets
+    return (matching_patterns >= patterns_in_imagesets);
+}
+
 /**
  * Find a set of images which suites selected patterns
  * @param patterns a list of patterns which are selected
@@ -357,19 +368,21 @@ global boolean FindImageSet (list<string> patterns) {
     }
 
     list<map<string,any> > image_sets = image_descr["image_sets"]:[];
-    y2milestone ("Image set descriptions: %1", image_sets);
+    y2debug ("Image set descriptions: %1", image_sets);
     map<string,any> result = $[];
 
     // more patterns could match at once
     // as we can't merge the meta image, only one can be selected
     map <string, map <string, any> > possible_patterns = $[];
     map <string, integer> matching_patterns = $[];
+    map <string, integer> patterns_in_imagesets = $[];
 
     // trying to find all matching patterns
     foreach (map<string,any> image, image_sets, {
 	string pattern = image["patterns"]:"";
 
 	list <string> imageset_patterns = splitstring (pattern, ", ");
+	patterns_in_imagesets[pattern] = size (imageset_patterns);
 
 	// no image-pattern defined, matches all patterns
 	if (size (imageset_patterns) == 0) {
@@ -384,7 +397,7 @@ global boolean FindImageSet (list<string> patterns) {
 	}
     });
 
-    y2milestone ("Matching patterns: %1, sizes: %2", possible_patterns, matching_patterns);
+    y2debug ("Matching patterns: %1, sizes: %2", possible_patterns, matching_patterns);
 
     string last_pattern = "";
 
@@ -393,7 +406,13 @@ global boolean FindImageSet (list<string> patterns) {
 	last_pattern = "";
 
 	foreach (string pattern, map <string, any> image, possible_patterns, {
-	    if (matching_patterns[pattern]:0 > last_number_of_matching_patterns) {
+	    if (
+		// imageset matches more patterns than the currently best-one
+		matching_patterns[pattern]:0 > last_number_of_matching_patterns
+		&&
+		// enough patterns matches the selected imageset
+		EnoughPatternsMatching (matching_patterns[pattern]:0, patterns_in_imagesets[pattern]:0)
+	    ) {
 		last_number_of_matching_patterns = matching_patterns[pattern]:0;
 		result = image;
 		last_pattern = pattern;

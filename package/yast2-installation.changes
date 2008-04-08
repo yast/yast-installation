@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Tue Apr  8 19:40:58 CEST 2008 - locilka@suse.cz
+
+- Adjusted control file to sort installation overview via
+  presentation_order and propose it via the real appearance.
+- Fixed selecting the right imageset - the rule is currently that
+  all patterns in imageset must be selected for installation
+  (bnc #378032).
+
+-------------------------------------------------------------------
 Mon Apr  7 15:20:14 CEST 2008 - locilka@suse.cz
 
 - Added new control file entry kexec_reboot that defines whether
