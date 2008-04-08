@@ -123,16 +123,16 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             <name>initial</name>
             <enable_skip>no</enable_skip>
             <proposal_modules config:type="list">
-                <proposal_module>hwinfo</proposal_module>
                 <proposal_module>mouse</proposal_module>
                 <proposal_module>partitions</proposal_module>
-                <proposal_module>software</proposal_module>
                 <proposal_module>bootloader</proposal_module>
+                <proposal_module>software</proposal_module>
                 <proposal_module>country_simple</proposal_module>
                 <proposal_module>timezone</proposal_module>
                 <!-- FATE #302980 -->
                 <proposal_module>users</proposal_module>
                 <proposal_module>runlevel</proposal_module>
+                <proposal_module>hwinfo</proposal_module>
             </proposal_modules>
 <!--
             <proposal_tabs config:type="list">
