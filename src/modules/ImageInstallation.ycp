@@ -6,10 +6,11 @@
  *	ImageInstallation
  *
  * Summary:
- *	Support functions for installation via image
+ *	Support functions for installation via images
  *
- * Author:
+ * Authors:
  *	Jiri Srain <jsrain@suse.cz>
+ *	Lukas Ocilka <locilka@suse.cz>
  *
  */
 {
