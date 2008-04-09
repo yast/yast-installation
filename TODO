@@ -1,0 +1,33 @@
+Deploying Images
+================
+
+* Improve deploying user-feedback
+    - Untar images using .process agent with along with tar option --checkpoint
+    - Add <size> tag to images to predict a better progress layout
+    - Enable [Abort] functionality
+
+* Improve deploying speed and memory consumption
+    - Try to optimize the tar archive
+    - In case of low memory, use disk instead of memory to download an image
+
+* Bugs?
+    - Fix metadata image (seems not to be used anymore or ignored?)
+    - Important: filter imagesets according to current architecture
+      tag <archs>
+
+* Missig documentation
+    - Some new tags in control file
+    - Document images.xml format
+
+Automatic Configuration
+=======================
+
+* Progress
+    - Currently uses only one progress for all actions. Use that one progress
+      plus use one another with 0-100% for every single proposal or
+      set of scripts.
+
+General
+=======
+
+* Have a lot of fun! :) ;)
