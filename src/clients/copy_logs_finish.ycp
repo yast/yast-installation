@@ -49,7 +49,7 @@ else if (func == "Write")
 
     foreach ( string file, log_files,
     {
-	if ( file == "y2log" || regexpmatch( file, "y2log-[0-9]+" ) )
+	if ( file == "y2log" || regexpmatch( file, "^y2log-[0-9]+$" ) )
 	{
 	    // Prepare y2log, y2log-* for log rotation
 
@@ -59,6 +59,11 @@ else if (func == "Write")
 		target_no = 1 + tointeger( substring( file, size( "y2log-" ), 5 ) );
 
 	   InjectRenamedFile( Directory::logdir, file, sformat( "y2log-%1", target_no ) );
+	}
+	else if ( regexpmatch (file, "^y2log-[0-9]+\\.gz$"))
+	{
+	    integer target_no = 1 + tointeger (regexpsub (file, "y2log-([0-9]+)\\.gz", "\\1"));
+	    InjectRenamedFile( Directory::logdir, file, sformat( "y2log-%1.gz", target_no ) );
 	}
 	else if ( file == "zypp.log" )
 	{
