@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Apr  9 16:39:36 CEST 2008 - jsrain@suse.cz
+
+- handle compressed logs properly at the end of first stage
+  installation (fate #300637)
+
+-------------------------------------------------------------------
 Tue Apr  8 19:40:58 CEST 2008 - locilka@suse.cz
 
 - Adjusted control file to sort installation overview via
