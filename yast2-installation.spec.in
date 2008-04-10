@@ -8,7 +8,7 @@ BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-ske
 BuildRequires:	yast2 >= 2.16.39
 
 # SourceManager::InstInitSourceMoveDownloadArea
-BuildRequiers:	yast2-packager >= 2.16.32
+BuildRequires:	yast2-packager >= 2.16.32
 
 Requires:       autoyast2-installation
 
