@@ -19,6 +19,10 @@ Deploying Images
     - Some new tags in control file
     - Document images.xml format
 
+* Installation proposal/overview
+    - Provide a possibility to select another imageset or to ignore
+      images completely
+
 Automatic Configuration
 =======================
 
