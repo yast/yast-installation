@@ -27,44 +27,46 @@ integer last_image = nil;
 void SetProgress (integer image, integer percent) {
     if (percent >= 100)
 	image = image + 1;
-    if (image != last_image)
-    {
-	last_image = image;
-	if (image < size (images))
-	    Progress::Title (sformat (_("Deploying Image (%1/%2)..."), (image + 1), size (images)));
-    }
-    Progress::Step (image);
-}
 
-Wizard::SetContents (_("Deploying Installation Images"), `Empty (), "", false, false);
-Wizard::SetTitleIcon ("yast-inst-mode");
+    if (image != last_image) {
+	last_image = image;
+	if (image < size (images)) {
+	    UI::ChangeWidget (
+		`id ("deploying_progress"),
+		`Label,
+		sformat (_("Deploying Image (%1/%2)..."), (image + 1), size (images))
+	    );
+	}
+    }
+
+    UI::ChangeWidget (
+	`id ("deploying_progress"),
+	`Value,
+	image
+    );
+}
 
 ImageInstallation::StoreAllChanges();
 
 Pkg::TargetFinish ();
 
-// TODO: help (if needed)
-Progress::Simple (_("Deploying Installation Images"), _("Deploying Installation Images"), size (images), "help");
-
-// Images usually do not fit into RAMDISK
-// move download area to hard disk (for HTTP/FTP media)
-// TODO select according to partitioning
-/*
-string download_dir = Installation::destdir + "/img_tmp";
-SCR::Execute (.target.bash, sformat ("test -d %1 || mkdir -p %1", download_dir));
-Pkg::SourceMoveDownloadArea (download_dir);
-*/
+Wizard::SetContents (
+    _("Deploying Installation Images"),
+    `ProgressBar (
+	`id ("deploying_progress"),
+	_("Deploying Images..."),
+	size(images),
+	0
+    ),
+    "",
+    false, false
+);
+Wizard::SetTitleIcon ("yast-inst-mode");
 
 SourceManager::InstInitSourceMoveDownloadArea();
 ImageInstallation::DeployImages (images, Installation::destdir, SetProgress);
 
-/*
-SCR::Execute (.target.bash, sformat ("rmdir '%1'", download_dir));
-*/
-
 y2milestone ("Target image for package selector prepared");
-
-Progress::Finish();
 
 Pkg::TargetInitialize (Installation::destdir);
 Pkg::TargetLoad ();
