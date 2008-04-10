@@ -8,7 +8,6 @@ Deploying Images
 
 * Improve deploying speed and memory consumption
     - Try to optimize the tar archive
-    - In case of low memory, use disk instead of memory to download an image
 
 * Bugs?
     - Fix metadata image (seems not to be used anymore or ignored?)
