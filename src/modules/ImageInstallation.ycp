@@ -22,6 +22,7 @@ import "XML";
 import "Progress";
 import "Report";
 import "String";
+import "Arch";
 
 textdomain "installation";
 
@@ -350,6 +351,7 @@ global boolean FindImageSet (list<string> patterns) {
     _image_order = [];
     _metadata_image = "";
 
+    // checking whether images are supported
     string filename = Pkg::SourceProvideOptionalFile (_repo, 1, "/images/images.xml");
     if (filename == nil)
     {
@@ -368,6 +370,7 @@ global boolean FindImageSet (list<string> patterns) {
 	return false;
     }
 
+    // images are supported
     list<map<string,any> > image_sets = image_descr["image_sets"]:[];
     y2debug ("Image set descriptions: %1", image_sets);
     map<string,any> result = $[];
@@ -377,6 +380,23 @@ global boolean FindImageSet (list<string> patterns) {
     map <string, map <string, any> > possible_patterns = $[];
     map <string, integer> matching_patterns = $[];
     map <string, integer> patterns_in_imagesets = $[];
+
+    // ppc (covers also ppc64), i386, x86_64 ...
+    string arch_short = Arch::arch_short();
+    y2milestone ("Current architecture is: %1", arch_short);
+
+    // filter out imagesets for another architecture
+    image_sets = filter (map<string,any> image, image_sets, {
+	list <string> imageset_archs = splitstring (image["archs"]:"", " ,");
+
+	// no architecture defined == noarch
+	if (size (imageset_archs) == 0) {
+	    return true;
+	// does architecture match?
+	} else {
+	    return (contains (imageset_archs, arch_short));
+	}
+    });
 
     // trying to find all matching patterns
     foreach (map<string,any> image, image_sets, {
@@ -400,6 +420,7 @@ global boolean FindImageSet (list<string> patterns) {
 
     y2debug ("Matching patterns: %1, sizes: %2", possible_patterns, matching_patterns);
 
+    // selecting the best imageset
     string last_pattern = "";
 
     if (size (possible_patterns) > 0) {
@@ -423,14 +444,15 @@ global boolean FindImageSet (list<string> patterns) {
 
     y2milestone ("Result: %1/%2", last_pattern, result);
 
-    if (result == $[])
-    {
+    // No matching pattern
+    if (result == $[]) {
 	Installation::image_installation = false;
 	Installation::image_only= false;
 	y2milestone ("No image for installation found");
 	return true;
     }
 
+    // We've selected one
     Installation::image_installation = true;
 
     if (haskey (result, "pkg_image")) {
@@ -439,8 +461,9 @@ global boolean FindImageSet (list<string> patterns) {
 	Installation::image_only= true;
     }
 
+    // Adding images one by one into the pool
     foreach (map<string,string> img, result["images"]:[], {
-	// image must have unique <name>...</name> defined
+	// image must have unique <file>...</file> defined
 	if (img["file"]:"" == "") {
 	    y2error ("No file defined for %1", img);
 	    return;

@@ -12,8 +12,6 @@ Deploying Images
 
 * Bugs?
     - Fix metadata image (seems not to be used anymore or ignored?)
-    - Important: filter imagesets according to current architecture
-      tag <archs>
 
 * Missig documentation
     - Some new tags in control file

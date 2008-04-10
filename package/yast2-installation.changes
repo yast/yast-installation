@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Apr 10 12:02:07 CEST 2008 - locilka@suse.cz
+
+- Filtering installation imagesets using the default architecture.
+
+-------------------------------------------------------------------
 Wed Apr  9 16:39:36 CEST 2008 - jsrain@suse.cz
 
 - handle compressed logs properly at the end of first stage
