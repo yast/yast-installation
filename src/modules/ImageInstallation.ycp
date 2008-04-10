@@ -129,6 +129,13 @@ void RemoveTemporaryImage (string image) {
     }
 }
 
+void (integer) tar_image_progress = nil;
+
+global void SetDeployTarImageProgress (void (integer) tip) {
+    tar_image_progress = tip;
+    y2milestone ("New tar_image_progress: %1", tar_image_progress);
+}
+
 /**
  * Deploy an image of the filesystem type
  * @param id string the id of the image
