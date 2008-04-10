@@ -3,6 +3,7 @@ import "Installation";
 import "ImageInstallation";
 import "Progress";
 import "Wizard";
+import "SourceManager";
 
 textdomain "installation";
 
@@ -54,6 +55,7 @@ SCR::Execute (.target.bash, sformat ("test -d %1 || mkdir -p %1", download_dir))
 Pkg::SourceMoveDownloadArea (download_dir);
 */
 
+SourceManager::InstInitSourceMoveDownloadArea();
 ImageInstallation::DeployImages (images, Installation::destdir, SetProgress);
 
 /*

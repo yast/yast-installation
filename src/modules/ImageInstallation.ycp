@@ -112,6 +112,24 @@ void AddImage (string name, string file, string type) {
 }
 
 /**
+ * Removes the downloaded image. If the file is writable, releases
+ * all sources because only libzypp knows which files are copies
+ * and which are just symlinks to sources (e.g., nfs://, smb://).
+ */
+void RemoveTemporaryImage (string image) {
+    map out = (map) SCR::Execute (
+	.target.bash_ouptut,
+	sformat ("test -w '%1' && echo -n writable", String::Quote (image))
+    );
+
+    // Command has either failed or file is writable (non-empty stdout)
+    if (out["exit"]:-1 != 0 || out["stdout"]:"" != "") {
+	y2milestone ("Releasing sources to remove temporary files");
+	Pkg::SourceReleaseAll();
+    }
+}
+
+/**
  * Deploy an image of the filesystem type
  * @param id string the id of the image
  * @param target string the directory to deploy the image to
@@ -148,6 +166,8 @@ boolean DeployTarImage (string id, string target) {
 
     out = (map)SCR::Execute (.target.bash_output, cmd);
     y2milestone ("Returned %1", out);
+
+    RemoveTemporaryImage (image);
 
     return out["exit"]:-1 == 0;
 }
@@ -194,6 +214,9 @@ boolean DeployFsImage (string id, string target) {
     cmd = sformat ("umount -d -f -l %1", tmpdir);
     out = (map)SCR::Execute (.target.bash_output, cmd);
     y2milestone ("Executing %1 returned %2", cmd, out);
+
+    RemoveTemporaryImage (image);
+
     return out["exit"]:-1 == 0;
     // FIXME error checking
 }

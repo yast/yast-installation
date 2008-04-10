@@ -7,6 +7,9 @@ BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-ske
 # anyxml -> barexml (bnc #366867)
 BuildRequires:	yast2 >= 2.16.39
 
+# SourceManager::InstInitSourceMoveDownloadArea
+BuildRequiers:	>yast2-packager >= 2.16.32
+
 Requires:       autoyast2-installation
 
 # GetInstArgs::automatic_configuration
@@ -21,9 +24,8 @@ Requires:	yast2-bootloader
 # Language::Set (handles downloading the translation extensions)
 Requires:	yast2-country-data >= 2.16.11
 
-# New System-selection data and API DefaultDesktop module
-# New API in ProductLicense
-Requires:	yast2-packager >= 2.16.18
+# SourceManager::InstInitSourceMoveDownloadArea
+Requires:	yast2-packager >= 2.16.32
 
 # Only in inst-sys
 # Requires:	yast2-runlevel
