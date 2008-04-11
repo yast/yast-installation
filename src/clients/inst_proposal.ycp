@@ -981,7 +981,7 @@ or by using the <b>Change...</b> menu.
 	    // Help text for installation proposal
 	    // General part ("You can change values...") is added as the next paragraph.
 	    help_text_string = _("<p>
-Use <b>Accept</b> to perform a new installation with the values displayed.
+Use <b>Install</b> to perform a new installation with the values displayed.
 </p>
 ") + how_to_change;
 
@@ -1012,7 +1012,7 @@ Your hard disk has not been modified in any way, so you can still safely abort.
 	    // Help text for update proposal
 	    // General part ("You can change values...") is added as the next paragraph.
 	    help_text_string = _("<p>
-Use <b>Accept</b> to perform an update with the values displayed.
+Use <b>Update</b> to perform an update with the values displayed.
 </p>
 ") + how_to_change;
 
@@ -1152,10 +1152,16 @@ a proposal that is locked, ask your system administrator.</p>");
     //
     make_proposal( false, false );
 
-    // Set keyboard focus to the [Accept] or [Next] button
+    // Set keyboard focus to the [Install] / [Update] or [Next] button
     Wizard::SetFocusToNextButton();
     if (Stage::initial ())
-	Wizard::SetNextButton (`next, Label::AcceptButton ());
+	Wizard::SetNextButton (`next, (
+	    // FATE #120373
+	    Mode::update() ?
+		_("Update")
+		:
+		_("Install")
+	));
 
     //
     // Input loop

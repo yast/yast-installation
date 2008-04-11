@@ -702,7 +702,7 @@ administrator.</p>") +
 In most cases, if you have a direct connection to the Internet,
 it doesn't need to be used.</p>"),
 	    Label::BackButton(),
-	    Label::AcceptButton()
+	    Label::OKButton()
 	);
 
 	if (enable_back_in_netsetup) {

@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Apr 11 18:21:53 CEST 2008 - locilka@suse.cz
+
+- Changing Accept buttons to Install, Update and OK (FATE #120373).
+
+-------------------------------------------------------------------
 Fri Apr 11 17:55:32 CEST 2008 - locilka@suse.cz
 
 - Added another per-image progress into the Installation images
