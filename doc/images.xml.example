@@ -7,65 +7,148 @@ copy all images mentioned in the file to the same directory
 <image_installation xmlns="http://www.suse.com/1.0/yast2ns" xmlns:config="http://www.suse.com/1.0/configns">
 <image_sets config:type="list" >
   <image_set>
+    <patterns>kde,x11,enhanced_base</patterns>
+    <archs>i386,ixxx,iyyy</archs>
+    <pkg_image>kde-meta.tar.bz2</pkg_image>
     <images config:type="list">
       <image>
-	<name>root</name>
-	<type>tar</type>
-	<file>root.tar.bz2</file>
+        <name>KDE [base]</name>
+        <type>tar</type>
+        <file>common-base-root.tar.lzma</file>
       </image>
       <image>
-	<name>opt</name>
-	<type>tar</type>
-	<file>opt.tar.bz2</file>
-      </image>
-<!--
-      <image>
-	<name>usr</name>
-	<type>tar</type>
-	<file>usr.tar.bz2</file>
-      </image>
--->
-    </images>
-  </image_set>
-<!--
-  <image_set>
-    <pkg_image>gnome-pkg</pkg_image>
-    <images config:type="list">
-      <image>
-	<name>base</name>
-	<type>fs</type>
-	<file>base.ext2</file>
+        <name>KDE [xorg]</name>
+        <type>tar</type>
+        <file>common-xorg-root.tar.lzma</file>
       </image>
       <image>
-	<name>gnome-system</name>
-	<type>tar</type>
-	<file>gnome-system.tar.gz</file>
+        <name>KDE [qt3]</name>
+        <type>tar</type>
+        <file>common-qt.tar.lzma</file>
       </image>
       <image>
-	<name>gnome-pkg</name>
+        <name>KDE [desktop]</name>
 	<type>tar</type>
-	<file>gnome-pkg.tar.gz</file>
+	<file>common-desktop-root.tar.lzma</file>
+      </image>
+      <image>
+        <name>KDE</name>
+	<type>tar</type>
+	<file>kde_cd-root.tar.lzma</file>
+      </image>
+      <image>
+        <name>KDE [meta]</name>
+	<type>tar</type>
+	<file>kde_cd-root-meta.tar.lzma</file>
       </image>
     </images>
   </image_set>
   <image_set>
-    <pattern>kde</pattern>
-    <pkg_image>kde-pkg.tar.gz</pkg_image>
+    <patterns>gnome,x11,enhanced_base</patterns>
+    <archs>i386,ixxx,iyyy</archs>
+    <pkg_image>gnome-meta.tar.bz2</pkg_image>
     <images config:type="list">
       <image>
-	<type>fs</type>
-	<file>base.ext2</file>
+        <name>GNOME [1]</name>
+        <type>tar</type>
+        <file>common-base-root</file>
       </image>
       <image>
-	<type>tar</type>
-	<file>kde-system.tar.gz</file>
+        <name>GNOME [2]</name>
+        <type>tar</type>
+        <file>common-xorg-root</file>
       </image>
       <image>
+        <name>GNOME [3]</name>
+        <type>tar</type>
+        <file>x11-gnome</file>
+      </image>
+      <image>
+        <name>GNOME [4]</name>
 	<type>tar</type>
-	<file>kde-pkg.tar.gz</file>
+	<file>common-desktop-root.tar.lzma</file>
+      </image>
+      <image>
+        <name>GNOME</name>
+	<type>tar</type>
+	<file>gnome_cd-root.tar.lzma</file>
+      </image>
+      <image>
+        <name>GNOME [meta]</name>
+	<type>tar</type>
+	<file>gnome_cd-root-meta.tar.lzma</file>
       </image>
     </images>
   </image_set>
--->
+  <image_set>
+    <patterns>enhanced_base</patterns>
+    <archs>i386,ixxx,iyyy</archs>
+    <pkg_image>kde_cd-base-root-meta.tar.lzma</pkg_image>
+    <images config:type="list">
+      <image>
+        <name>BASE [1]</name>
+        <type>tar</type>
+        <file>kde_cd-base-root-meta.tar.lzma</file>
+      </image>
+      <image>
+        <name>BASE [2]</name>
+        <type>tar</type>
+        <file>kde_cd-base-root.tar.lzma</file>
+      </image>
+      <image>
+        <name>BASE [3]</name>
+        <type>tar</type>
+        <file>common-base-root.tar.lzma</file>
+      </image>
+      <image>
+        <name>BASE [4]</name>
+	<type>tar</type>
+	<file>common-dvd-root.tar.lzma</file>
+      </image>
+      <image>
+        <name>BASE [5]</name>
+	<type>tar</type>
+	<file>common-qt.tar.lzma</file>
+      </image>
+    </images>
+  </image_set>
+  <image_set>
+    <patterns>x11,enhanced_base</patterns>
+    <archs>i386,ixxx,iyyy</archs>
+    <pkg_image>gnome_cd-x11-root-meta.tar.lzma</pkg_image>
+    <images config:type="list">
+      <image>
+        <name>X11 [1]</name>
+        <type>tar</type>
+        <file>gnome_cd-x11-root-meta.tar.lzma</file>
+      </image>
+      <image>
+        <name>X11 [2]</name>
+        <type>tar</type>
+        <file>gnome_cd-x11-root.tar.lzma</file>
+      </image>
+      <image>
+        <name>X11 [3]</name>
+        <type>tar</type>
+        <file>common-xorg-root.tar.lzma</file>
+      </image>
+      <image>
+        <name>X11 [4]</name>
+	<type>tar</type>
+	<file>common-dvd-root.tar.lzma</file>
+      </image>
+      <image>
+        <name>X11 [5]</name>
+	<type>tar</type>
+	<file>common-qt.tar.lzma</file>
+      </image>
+      <image>
+        <name>X11 [6]</name>
+	<type>tar</type>
+	<file>x11-gnome.tar.lzma</file>
+      </image>
+    </images>
+  </image_set>
+
 </image_sets>
 </image_installation>

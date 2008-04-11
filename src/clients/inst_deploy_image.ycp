@@ -34,7 +34,7 @@ void SetProgress (integer image, integer percent) {
 	    UI::ChangeWidget (
 		`id ("deploying_progress"),
 		`Label,
-		sformat (_("Deploying Image (%1/%2)..."), (image + 1), size (images))
+		sformat (_("Deploying Images (%1/%2)..."), (image + 1), size (images))
 	    );
 	}
     }
@@ -46,17 +46,54 @@ void SetProgress (integer image, integer percent) {
     );
 }
 
+integer _last_progress = -1;
+string _last_image_id = nil;
+
+void SetOneImageProgress (integer current_progress) {
+    map <string, any> current_image = ImageInstallation::GetCurrentImageDetails();
+    integer max_progress = current_image["max_progress"]:0;
+
+    // another file
+    if (current_image["file"]:"" != _last_image_id) {
+	_last_image_id = current_image["file"]:"";
+	_last_progress = -1;
+    }
+
+    if (max_progress == nil || max_progress == 0) {
+	y2milestone ("Can't find max_progress: %1", current_image);
+	return;
+    }
+
+    integer x_progress = (100 * current_progress / max_progress);
+    if (x_progress > 100) x_progress = 100;
+
+    if (x_progress > _last_progress) {
+	 UI::ChangeWidget (`id ("deploying_image"), `Value, x_progress);
+	_last_progress = x_progress;
+    }
+}
+
+ImageInstallation::SetDeployTarImageProgress (SetOneImageProgress);
+
 ImageInstallation::StoreAllChanges();
 
 Pkg::TargetFinish ();
 
 Wizard::SetContents (
     _("Deploying Installation Images"),
-    `ProgressBar (
-	`id ("deploying_progress"),
-	_("Deploying Images..."),
-	size(images),
-	0
+    `VBox (
+	`ProgressBar (
+	    `id ("deploying_image"),
+	    _("Deploying image..."),
+	    100,
+	    0
+	),
+	`ProgressBar (
+	    `id ("deploying_progress"),
+	    _("Deploying Images..."),
+	    size(images),
+	    0
+	)
     ),
     "",
     false, false
