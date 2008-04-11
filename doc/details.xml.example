@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE details>
+<image_installation_details xmlns="http://www.suse.com/1.0/yast2ns" xmlns:config="http://www.suse.com/1.0/configns">
+    <details config:type="list">
+	<image>
+	    <file>common-base-root.tar.lzma</file>
+	    <files>28004</files>
+	    <!-- Read checkpoint 49500 -->
+	    <size>509624320</size>
+	</image>
+	<image>
+	    <file>common-xorg-root.tar.lzma</file>
+	    <files>10437</files>
+	    <!-- Read checkpoint 21500 -->
+	    <size>220549120</size>
+	</image>
+	<image>
+	    <file>common-qt.tar.lzma</file>
+	    <files>6</files>
+	    <size>10240</size>
+	</image>
+	<image>
+	    <file>common-desktop-root.tar.lzma</file>
+	    <files>6742</files>
+	    <!-- Read checkpoint 7500 -->
+	    <size>79964160</size>
+	</image>
+	<image>
+	    <file>kde_cd-root.tar.lzma</file>
+	    <files>32010</files>
+	    <!-- Read checkpoint 39000 -->
+	    <size>403128320</size>
+	</image>
+	<image>
+	    <file>kde_cd-root-meta.tar.lzma</file>
+	    <files>30</files>
+	    <!-- Read checkpoint 2000 -->
+	    <size>21442560</size>
+	</image>
+    </details>
+</image_installation_details>

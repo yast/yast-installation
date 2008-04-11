@@ -57,6 +57,33 @@ string _image_path = "/images/%1";
 list<string> _mounted_images = [];
 
 /**
+ * @struct $[
+ *   "image_filaname" : $[
+ *     // size of an unpacked image in bytes
+ *     "size" : integer,
+ *     // number of files and directories in an image
+ *     "files" : integer,
+ *   ]
+ * ]
+ */
+map <string, map <string, integer> > images_details = $[];
+
+/**
+ * Image currently being deployed
+ */
+map <string, any> _current_image = $[];
+
+/**
+ * display progress messages every NUMBERth record
+ */
+integer _checkpoint = 400;
+
+/**
+ * NUMBER of bytes per record, multiple of 512
+ */
+integer _record_size = 10240;
+
+/**
  * Set the repository to get images from
  * @param repo integer the repository identification
  */
@@ -118,7 +145,7 @@ void AddImage (string name, string file, string type) {
  */
 void RemoveTemporaryImage (string image) {
     map out = (map) SCR::Execute (
-	.target.bash_ouptut,
+	.target.bash_output,
 	sformat ("test -w '%1' && echo -n writable", String::Quote (image))
     );
 
@@ -153,6 +180,9 @@ boolean DeployTarImage (string id, string target) {
 	return false;
     }
 
+    if (tar_image_progress != nil)
+	tar_image_progress (0);
+
     y2milestone ("Creating target directory");
     string cmd = sformat ("test -d %1 || mkdir -p %1", target);
     map out = (map)SCR::Execute (.target.bash_output, cmd);
@@ -160,19 +190,55 @@ boolean DeployTarImage (string id, string target) {
 
     y2milestone ("Untarring the image");
 
-    // TODO: Progress `tar --checkpoint`
-
     // lzma
     if (regexpmatch (image, "\.lzma$")) {
-	cmd = sformat ("lzmadec < '%1' | tar --totals -C '%2' -xf -", String::Quote (image), String::Quote (target));
+	cmd = sformat (
+	    "lzmadec < '%1' | tar --totals --checkpoint=%3 --record-size=%4 -C '%2' -xf -",
+	    String::Quote (image), String::Quote (target), _checkpoint, _record_size
+	);
     // bzip2, gzip
     } else {
-	cmd = sformat ("tar --totals -C '%2' -xf '%1'", String::Quote (image), String::Quote (target));
+	cmd = sformat (
+	    "tar --checkpoint=%3 --record-size=%4 --totals -C '%2' -xf '%1'",
+	    String::Quote (image), String::Quote (target), _checkpoint, _record_size
+	);
     }
     y2milestone ("Calling: %1", cmd);
 
-    out = (map)SCR::Execute (.target.bash_output, cmd);
-    y2milestone ("Returned %1", out);
+    integer pid = (integer) SCR::Execute(.process.start_shell, cmd);
+
+    string newline = "";
+
+    string read_checkpoint_str = "^tar: Read checkpoint ([0123456789]+)$";
+
+    // Otherwise it will never make 100%
+    integer better_feeling_constant = _checkpoint;
+
+    while (SCR::Read (.process.running, pid) == true) {
+	newline = (string) SCR::Read (.process.read_line_stderr, pid);
+
+	if (newline != nil) {
+	    if (! regexpmatch (newline, read_checkpoint_str)) {
+		y2milestone ("Deploying image: %1", newline);
+		continue;
+	    }
+
+	    newline = regexpsub (newline, read_checkpoint_str, "\\1");
+
+	    if (newline == nil || newline == "")
+		continue;
+
+	    if (tar_image_progress != nil)
+		tar_image_progress (tointeger (newline) + better_feeling_constant);
+	} else {
+	    // FIXME: UI::PollInput
+	    sleep (200);
+	}
+    }
+    y2milestone ("Finished");
+
+    if (tar_image_progress != nil)
+	tar_image_progress (100);
 
     RemoveTemporaryImage (image);
 
@@ -256,6 +322,25 @@ boolean MountFsImage (string id, string target) {
     // FIXME unmounting
 }
 
+void SetCurrentImageDetails (map <string,any> img) {
+    if (size (images_details) == 0) {
+	y2warning ("Images details are empty");
+    }
+
+    _current_image = $[
+	"file" : img["file"]:"",
+	"name" : img["name"]:"",
+	"size" : images_details[img["file"]:"","size"]:0,
+	"files" : images_details[img["file"]:"","files"]:0,
+	// 100% progress
+	"max_progress" : tointeger (images_details[img["file"]:"","size"]:0 / _record_size),
+    ];
+}
+
+global map <string, any> GetCurrentImageDetails () {
+    return _current_image;
+}
+
 /**
  * Deploy an image (internal implementation)
  * @param id string the id of the image
@@ -271,6 +356,8 @@ boolean _DeployImage (string id, string target, boolean temporary) {
     }
 
     string type = img["type"]:"";
+
+    SetCurrentImageDetails (img);
 
     if (type == "fs")
 	return temporary
@@ -325,12 +412,56 @@ global boolean CleanTemporaryImage (string id, string target) {
 }
 
 /**
+ * Loads non-mandatory details for every single selected image.
+ */
+global boolean FillUpImagesDetails () {
+    string filename = Pkg::SourceProvideOptionalFile (_repo, 1, sformat (_image_path, "details.xml"));
+    if (filename == nil) {
+	y2milestone ("No image installation details found");
+	return false;
+    }
+
+    map <string,any> read_details = XML::XMLToYCPFile (filename);
+    if (read_details == nil) {
+	y2error ("Cannot parse imagesets details");
+	return false;
+    }
+
+    if (! haskey (read_details, "details")) {
+	y2warning ("No images details in details.xml");
+	return false;
+    }
+
+    images_details = $[];
+
+    foreach (map image_detail, read_details["details"]:[], {
+	string file = image_detail["file"]:"";
+
+	if (file == nil || file == "") return;
+
+	integer files = tointeger (image_detail["files"]:"0");
+	integer isize = tointeger (image_detail["size"]:"0");
+
+	images_details[file] = $[
+	    "files" : files,
+	    "size" : isize,
+	];
+    });
+
+    // FIXME: y2debug
+    y2milestone ("Details: %1", images_details);
+    return true;
+}
+
+/**
  * Deploy all images
  * @param images a list of images to deploy
  * @param target string directory where to deploy the images
  * @param progress a function to report overal progress
  */
 global boolean DeployImages (list<string> images, string target, void(integer,integer) progress) {
+    FillUpImagesDetails();
+
     integer num = -1;
 
     foreach (string img, images, {
@@ -382,7 +513,7 @@ global boolean FindImageSet (list<string> patterns) {
     _metadata_image = "";
 
     // checking whether images are supported
-    string filename = Pkg::SourceProvideOptionalFile (_repo, 1, "/images/images.xml");
+    string filename = Pkg::SourceProvideOptionalFile (_repo, 1, sformat (_image_path, "images.xml"));
     if (filename == nil)
     {
 	Installation::image_installation = false;
