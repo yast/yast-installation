@@ -1158,9 +1158,9 @@ a proposal that is locked, ask your system administrator.</p>");
 	Wizard::SetNextButton (`next, (
 	    // FATE #120373
 	    Mode::update() ?
-		_("Update")
+		_("&Update")
 		:
-		_("Install")
+		_("&Install")
 	));
 
     //
