@@ -73,7 +73,6 @@ list<map<string,any> > stages = [
 	    "proxy",
 	    "pkg",
 	    "driver_update1",
-	    "yast_inf",
 	    // bnc #340733
 	    "system_settings",
 	],
@@ -89,6 +88,7 @@ list<map<string,any> > stages = [
 	// progress stage
 	"label" : _("Save installation settings"),
 	"steps" : [
+	    "yast_inf",
 	    "network",
 	    "ntp-client",
 	    "ssh_settings",
@@ -291,74 +291,17 @@ if (size (Misc::boot_msg) > 0 && !Mode::autoinst ())
 // run new kernel via kexec instead of reboot
 
 // command for reading kernel_params
-string cmd = sformat("ls '%1/kernel_params'", String::Quote (Directory::vardir));
-y2milestone("Checking existing file kernel_params via command %1", cmd);
+string cmd = sformat("ls '%1/kexec_done' |tr -d '\n'", String::Quote (Directory::vardir));
+y2milestone("Checking flag of successful loading kernel via command %1", cmd);
 
 map out = (map)WFM::Execute(.local.bash_output, cmd);
-// check output
-if (out["stdout"]:"" != "kernel_params")
-{
-    y2milestone ("File kernel_params was not found, output: %1", out);
-    return `next;
-}
 
-// command for reading kernel_params
-cmd = sformat("cat '%1/kernel_params' |tr -d '\n'", String::Quote (Directory::vardir));
-y2milestone("Reading kernel arguments via command %1", cmd);
-// read data from /var/lib/YaST2/kernel_params
-out = (map)WFM::Execute(.local.bash_output, cmd);
-// check output
-if (out["exit"]:nil != 0)
-{
-    y2error ("Reading kernel arguments failed, output: %1", out);
-    return `next;
-}
+cmd = sformat("%1/kexec_done",Directory::vardir);
 
-string kernel_args = out["stdout"]:"";
-// check if kernel_params contains any data
-if (size(kernel_args) <2)
-{
-    y2error ("%1/kernel_params is empty, kernel_params=%2 ", Directory::vardir, kernel_args);
-    return `next;
-}
-
-// command for finding initrd file
-cmd = sformat ("ls %1 |grep initrd- |tr -d '\n'", Directory::vardir);
-y2milestone("Finding initrd file via command: %1", cmd);
-// find inird file
-out = (map)WFM::Execute(.local.bash_output, cmd);
 // check output
-if (out["exit"]:nil != 0)
+if (out["stdout"]:"" != cmd)
 {
-    y2error ("Finding initrd file failed, output: %1", out);
-    return `next;
-}
- 
-string initrd = out["stdout"]:"";
-// check if initrd (string) contains any data
-if (size(initrd) <2)
-{
-    y2error ("initrd was not found: %1", initrd);
-    return `next;
-}
- 
-// command for finding vmlinuz file
-cmd = sformat ("ls %1/vmlinuz-* |tr -d '\n'", Directory::vardir);
-y2milestone("Finding vmlinuz file via command: %1", cmd);
-// find inird file
-out = (map)WFM::Execute(.local.bash_output, cmd);
-// check output
-if (out["exit"]:nil != 0)
-{
-    y2error ("Finding vmlinuz file failed, output: %1", out);
-    return `next;
-}
- 
-string vmlinuz = out["stdout"]:"";
-// check if initrd (string) contains any data
-if (size(vmlinuz) <2)
-{
-    y2error ("vmlinuz was not found: %1", vmlinuz);
+    y2milestone ("File kexec_done was not found, output: %1", out);
     return `next;
 }
 
@@ -374,27 +317,8 @@ if (out["exit"]:nil != 0)
     return `next;
 }
 
-// waiting 2s for switching...
-sleep(2000);
-
-// command for calling kexec
-cmd = sformat("kexec -l --command-line='%1' --initrd='%2/%3' '%2/%4'",
-	String::Quote (kernel_args), String::Quote (Directory::vardir), String::Quote (initrd), String::Quote (vmlinuz));
-y2milestone("Calling kexec via command: %1", cmd);
-
-// call kexec
-out = (map)WFM::Execute(.local.bash_output, cmd);
-// check output
-if (out["exit"]:nil != 0)
-{
-    y2error ("Calling kexec failed, output: %1", out);
-    return `next;
-}
-// command for loading kernel
-cmd = sformat("kexec -e");
-y2milestone("Loading new kernel via command: %1", cmd);
-// call loading kernel via kexec
-out = (map) WFM::Execute(.local.bash_output, cmd);
+// waiting s for switching...
+sleep(1000);
 
 return `next;
 

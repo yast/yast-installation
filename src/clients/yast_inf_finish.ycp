@@ -23,12 +23,113 @@ import "Bootloader";
 import "Language";
 import "Keyboard";
 import "Directory";
+import "String";
 
 include "installation/misc.ycp";
 
 any ret = nil;
 string func = "";
 map param = $[];
+
+// fate #303395: Use kexec to avoid booting between first and second stage
+// run new kernel via kexec instead of reboot
+
+define boolean LoadKexec()
+{
+
+    // command for reading kernel_params
+    string cmd = sformat("ls '%1/kernel_params' |tr -d '\n'", String::Quote (Directory::vardir));
+    y2milestone("Checking existing file kernel_params via command %1", cmd);
+
+    map out = (map)WFM::Execute(.local.bash_output, cmd);
+
+    cmd = sformat("%1/kernel_params",Directory::vardir);
+    // check output
+    if (out["stdout"]:"" != cmd)
+    {
+	y2milestone ("File kernel_params was not found, output: %1", out);
+	return false;
+    }
+
+    // command for reading kernel_params
+    cmd = sformat("cat '%1/kernel_params' |tr -d '\n'", String::Quote (Directory::vardir));
+    y2milestone("Reading kernel arguments via command %1", cmd);
+    // read data from /var/lib/YaST2/kernel_params
+    out = (map)WFM::Execute(.local.bash_output, cmd);
+    // check output
+    if (out["exit"]:nil != 0)
+    {
+	y2error ("Reading kernel arguments failed, output: %1", out);
+	return false;
+    }
+
+    string kernel_args = out["stdout"]:"";
+    // check if kernel_params contains any data
+    if (size(kernel_args) <2)
+    {
+	y2error ("%1/kernel_params is empty, kernel_params=%2 ", Directory::vardir, kernel_args);
+	return false;
+    }
+
+    // command for finding initrd file
+    cmd = sformat ("ls %1/initrd-* |tr -d '\n'", Directory::vardir);
+    y2milestone("Finding initrd file via command: %1", cmd);
+    // find inird file
+    out = (map)WFM::Execute(.local.bash_output, cmd);
+    // check output
+    if (out["exit"]:nil != 0)
+    {
+	y2error ("Finding initrd file failed, output: %1", out);
+	return false;
+    }
+ 
+    string initrd = out["stdout"]:"";
+    // check if initrd (string) contains any data
+    if (size(initrd) <2)
+    {
+	y2error ("initrd was not found: %1", initrd);
+	return false;
+    }
+ 
+    // command for finding vmlinuz file
+    cmd = sformat ("ls %1/vmlinuz-* |tr -d '\n'", Directory::vardir);
+    y2milestone("Finding vmlinuz file via command: %1", cmd);
+    // find inird file
+    out = (map)WFM::Execute(.local.bash_output, cmd);
+    // check output
+    if (out["exit"]:nil != 0)
+    {
+	y2error ("Finding vmlinuz file failed, output: %1", out);
+	return false;
+    }
+ 
+    string vmlinuz = out["stdout"]:"";
+    // check if initrd (string) contains any data
+    if (size(vmlinuz) <2)
+    {
+	y2error ("vmlinuz was not found: %1", vmlinuz);
+	return false;
+    }
+
+    // command for calling kexec
+    cmd = sformat("kexec -l --command-line='%1' --initrd='%2' '%3'",
+	String::Quote (kernel_args), String::Quote (initrd), String::Quote (vmlinuz));
+    y2milestone("Calling kexec via command: %1", cmd);
+
+    // call kexec
+    out = (map)WFM::Execute(.local.bash_output, cmd);
+    // check output
+    if (out["exit"]:nil != 0)
+    {
+	y2error ("Calling kexec failed, output: %1", out);
+	return false;
+    }
+
+    y2milestone("Loading new kernel was succesful");
+    return true;
+
+}
+
 
 /* Check arguments */
 if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
@@ -60,6 +161,10 @@ else if (func == "Write")
     // correctly. but no reboot message form linuxrc.
     linuxrc["Root"] = "reboot";
     linuxrc["RebootMsg"] = "0";
+
+    if (LoadKexec())
+	linuxrc["Root"] = "kexec";
+
     // Override linuxrc settings in autoinst mode
     if ( Mode::autoinst () )
     {
@@ -75,6 +180,14 @@ else if (func == "Write")
         {
             linuxrc["Root"] = "halt";
         }
+    }
+
+    if (linuxrc["Root"]:"" == "kexec")
+    {
+    	// flag for inst_finish -> kerel was successful loaded by kexec
+    	string cmd = sformat ("touch \"%1/kexec_done\"", Directory::vardir);
+    	// call command
+    	WFM::Execute(.local.bash_output, cmd);
     }
 
     linuxrc["Language"] = Language::language;
