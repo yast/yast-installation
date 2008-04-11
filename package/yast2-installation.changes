@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Apr 11 15:33:17 CEST 2008 - juhliarik@suse.cz
+
+- Added loading kernel via kexec (fate #303395) 
+- 2.16.33
+
+-------------------------------------------------------------------
 Thu Apr 10 12:02:07 CEST 2008 - locilka@suse.cz
 
 - Filtering installation imagesets using the default architecture.
