@@ -39,8 +39,9 @@
 	    // TRANSLATORS: dialog caption
 	    _("Installation - Warming Up"),
 	    `VBox (
-		// FIXME: invent something better :>>> zzz
-		`Label (_("Drzte si klobouky, jedeme z kopceeee...."))
+		// TRANSLATORS: starting the installation process
+		`Label (_("Fasten your seatbelts, please,
+we're taking off in a few seconds..."))
 	    ),
 	    // TRANSLATORS: dialog help
 	    _("<p>Installation is just about to start!</p>"),
