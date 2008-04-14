@@ -104,7 +104,7 @@ have a configured network.</p>
 ") +
 	// TRANSLATORS: help text, part 2/2
 	_("<p>A configured network is needed for using remote repositories
-or add-on products. If you do not use remote repositories, skip the configuratio.</p>
+or add-on products. If you do not use remote repositories, skip the configuration.</p>
 "),
 	enable_next,
 	enable_back

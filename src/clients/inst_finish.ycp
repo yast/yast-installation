@@ -55,6 +55,7 @@ list<map<string,any> > stages = [
 	    "live_copy_files",
 	    "switch_scr",
 	],
+	"icon" : "32x32/apps/pattern-basis.png",
     ],
     $[
 	// progress stage
@@ -76,6 +77,7 @@ list<map<string,any> > stages = [
 	    // bnc #340733
 	    "system_settings",
 	],
+	"icon" : "32x32/apps/yast-misc.png",
     ],
     $[
 	// progress stage
@@ -83,6 +85,7 @@ list<map<string,any> > stages = [
 	"steps" : [
 	    "bootloader",
 	],
+	"icon" : "32x32/apps/yast-bootloader.png",
     ],
     $[
 	// progress stage
@@ -97,6 +100,7 @@ list<map<string,any> > stages = [
 	    "autoinst_scripts2",
 	    "installation_settings",
 	],
+	"icon" : "32x32/apps/yast-dirinstall.png",
     ],
     $[
 	// progress stage
@@ -112,8 +116,11 @@ list<map<string,any> > stages = [
 	    "copy_logs",
 	    "umount",
 	],
+	"icon" : "32x32/apps/yast.png",
     ],
 ];
+
+list <string> progress_icons = [];
 
 if (size (ProductControl::inst_finish) > 0)
 {
@@ -172,6 +179,10 @@ else if (Mode::live_installation ())
 
 integer steps_count = 0;
 
+progress_icons = maplist (map<string,any> stage, stages, {
+    return stage["icon"]:"32x32/apps/yast.png";
+});
+
 stages = maplist (map<string,any> stage, stages, {
     list<map> steps = maplist (string s, stage["steps"]:[], {
 	s = s + "_finish";
@@ -215,14 +226,16 @@ list<string> stage_names = maplist (map<string,any> s, stages, {
     return s["label"]:"";
 });
 
-Progress::New(
+Progress::NewProgressIcons (
     // Headline for last dialog of base installation: Install LILO etc.
     _("Finishing Basic Installation"),
     "",	// Initial progress bar label - not empty (reserve space!)
     steps_count,
     stage_names,
     [],
-    help_text);
+    help_text,
+    [progress_icons]
+);
 
 Wizard::DisableBackButton ();
 Wizard::DisableNextButton ();
