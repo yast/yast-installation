@@ -753,10 +753,13 @@ global boolean FileSystemCopy (string from, string to,
      */
     global void StoreAllChanges () {
         Progress::Simple (
-            _("Installation Magic"),
-            _("Storing magic values..."),
+    	    // TRANSLATORS: Dialog caption
+            _("Installation from Images"),
+            // TRANSLATORS: Dialog progress
+            _("Storing user preferences..."),
             4 * size (all_supported_types),
-            _("<p>MOOOooo...</p>")
+            // TRANSLATORS: help text
+            _("<p>Installation process is just storing the user-defined selection of packages</p>")
         );
 
         // Query for changed state of all knwon types
@@ -839,10 +842,13 @@ global boolean FileSystemCopy (string from, string to,
 
     global void RestoreAllChanges () {
         Progress::Simple (
-            _("Installation Magic"),
-            _("Restoring magic values..."),
+    	    // TRANSLATORS: Dialog caption
+            _("Installation from Images"),
+            // TRANSLATORS: Dialog progress
+            _("Restoring user preferences..."),
             4 * size (all_supported_types),
-            _("<p>MOOOooo...</p>")
+            // TRANSLATORS: Dialog help
+            _("<p>Installaton is restoring the user preferences to install the rest of packages.</p>")
         );
 
         foreach (symbol one_type, all_supported_types, {
@@ -893,6 +899,9 @@ global boolean FileSystemCopy (string from, string to,
 
 	    Progress::NextStep();
         });
+
+	// Free the memory
+	objects_state = $[];
 
         Progress::Finish();
     }
