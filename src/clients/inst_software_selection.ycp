@@ -33,13 +33,19 @@ if (DefaultDesktop::Desktop() == nil || DefaultDesktop::Desktop() == "") {
     DefaultDesktop::Init();
 }
 
-// TRANSLATORS: help text 1/2
-string help = _("<p>This is a base selection where you can decide which common
-parts of the system will by installed.</p>") +
+// TRANSLATORS: help text, part 1
+string help = _("<p>At Linux <b>choice</b> is a top priority. <i>openSUSE</i> offers a number
+of different desktop environments. Below you see a list of the 2 major ones
+<b>GNOME</b> and <b>KDE</b>. Both provide an easy to use desktop with a large number
+of desktop applications such as email, file browser, games and many others.</p>") +
 
-// TRANSLATORS: help text 2/2
-_("<p>Select a <b>System Type</b> that allows you to choose
-the base task of the system.</p>");
+// TRANSLATORS: help text, part 2
+_("<p>As desktop selection is a matter of taste a clear <i>recommendation can't be
+given</i>.</p>") +
+
+// TRANSLATORS: help text, part 3
+_("Additionally, not only desktop but you can also chose a minimalistic
+installation that could fit your needs better.");
 
 map <string, map> all_desktops = DefaultDesktop::GetAllDesktopsMap();
 
@@ -75,11 +81,19 @@ term GetDesktops () {
     term ret = `VBox ();
 
     integer counter = -1;
+    integer last_desktop_order = -1;
 
     foreach (string desktop_name, sort_order, {
 	counter = counter + 1;
+	integer desktop_order = all_desktops[desktop_name,"order"]:99;
 
-	// boolean text_mode
+	y2milestone ("L: %1, C: %2", last_desktop_order, desktop_order);
+	// bnc #379157
+	// some space between 'Base' and 'Other' desktops
+	if (last_desktop_order == 1 && desktop_order > 1) {
+	    ret[counter] = `VSpacing (1);
+	    counter = counter + 1;
+	}
 
 	ret[counter] =
 	    `Left (`HBox (
@@ -91,24 +105,31 @@ term GetDesktops () {
 		    all_desktops[desktop_name,"label"]:""
 		)
 	    ));
+
+	last_desktop_order = desktop_order;
     });
 
     return ret;
 }
 
 void RedrawSelDesktopInfo (string currently_selected) {
+    string description = "";
+
     if (currently_selected == nil || currently_selected == "") {
 	y2milestone ("No desktop is currently selected");
-	return;
+
+	// TRANSLATORS: dialog hint
+	description = _("Select a system to get its description.");
     } else {
 	y2milestone ("Selected desktop: %1", currently_selected);
+
+	list <string> desktop_patterns = all_desktops[currently_selected,"patterns"]:[];
+	list <map <string, any> > res_properties = Pkg::ResolvableProperties (currently_selected, `pattern, "");
+
+	// TRANSLATORS: rich-text content
+	description = res_properties[0,"description"]:_("No description available...");
     }
 
-    list <string> desktop_patterns = all_desktops[currently_selected,"patterns"]:[];
-    list <map <string, any> > res_properties = Pkg::ResolvableProperties (currently_selected, `pattern, "");
-
-    // TRANSLATORS: rich-text content
-    string description = res_properties[0,"description"]:_("No description available...");
     UI::ChangeWidget (`id ("desktop_description"), `Value, description);
 }
 
