@@ -468,18 +468,6 @@
 	return result["success"]:true;
     };
 
-    define void PreInstallFunctions () {
-	y2milestone("PreInstallFunctions, Installation: %1, Stage: %2",
-	    Mode::installation(), Stage::stage());
-	if (Mode::installation () && Stage::stage () == "initial") {
-	    // FATE #300421: Import ssh keys from previous installations
-	    // FATE #120103: Import Users From Existing Partition
-	    y2milestone("PreInstallFunctions -- start --");
-	    WFM::CallFunction ("inst_pre_install", []);
-	    y2milestone("PreInstallFunctions -- end --");
-	}
-    }
-
     /**
      * Call each submodule's "Write()" function to let it write its settings,
      * i.e. the settings effective.
@@ -1304,7 +1292,6 @@ resolved before continuing.
             {
 		// anything that needs to be done before
 		// real installation starts
-		PreInstallFunctions();
 
                 if ( ! skip )
                 {

@@ -14,6 +14,7 @@
 textdomain "installation";
 
 import "SystemFilesCopy";
+import "Installation";
 
 any ret = nil;
 string func = "";
@@ -42,7 +43,7 @@ if (func == "Info")
 }
 else if (func == "Write")
 {
-    if (SystemFilesCopy::CopyFilesToSystem()) {
+    if (SystemFilesCopy::CopyFilesToSystem (Installation::destdir)) {
 	ret = `ok;
     } else {
 	ret = `something_was_wrong;
