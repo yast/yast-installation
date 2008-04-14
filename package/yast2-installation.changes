@@ -1,9 +1,8 @@
 -------------------------------------------------------------------
 Mon Apr 14 16:44:09 CEST 2008 - locilka@suse.cz
 
-- Icons in inst_finish.
 - Fixed typo in inst_network_check (bnc #379491).
-- 2.13.35
+- Fixed help for inst_mode (bnc #374360).
 
 -------------------------------------------------------------------
 Mon Apr 14 13:54:42 CEST 2008 - locilka@suse.cz

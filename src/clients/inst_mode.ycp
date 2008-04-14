@@ -219,9 +219,8 @@ To install an add-on product from separate media together with &product;, select
     // help text for installation method
     _("<p>
 To let the new installation to create an automatic configuration, select
-<b>Use Automatic Configuration</b>. Otherwise, second stage installation
-with configuration proposals will be used. Update mode does not
-support automatic configuration.</p>") +
+<b>Use Automatic Configuration</b>. Otherwise, manual configuration will be used.
+Update mode does not support automatic configuration.</p>") +
 
     // help text for installation method
     _("<p>Select <b>Repair Installed System</b> if you have a damaged Linux system on
