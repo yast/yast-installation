@@ -226,15 +226,14 @@ list<string> stage_names = maplist (map<string,any> s, stages, {
     return s["label"]:"";
 });
 
-Progress::NewProgressIcons (
+Progress::New (
     // Headline for last dialog of base installation: Install LILO etc.
     _("Finishing Basic Installation"),
     "",	// Initial progress bar label - not empty (reserve space!)
     steps_count,
     stage_names,
     [],
-    help_text,
-    [progress_icons]
+    help_text
 );
 
 Wizard::DisableBackButton ();
