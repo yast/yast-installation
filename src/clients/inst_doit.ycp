@@ -41,7 +41,7 @@
 	    `VBox (
 		// TRANSLATORS: starting the installation process
 		`Label (_("Fasten your seatbelts, please,
-we're taking off in a few seconds..."))
+we are taking off in a few seconds..."))
 	    ),
 	    // TRANSLATORS: dialog help
 	    _("<p>Installation is just about to start!</p>"),
