@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Mon Apr 14 13:54:42 CEST 2008 - locilka@suse.cz
+
+- Modifying SystemFilesCopy::CopyFilesToSystem to newly accept
+  a parameter which defines where to extract cached files
+  (fate #302980).
+- Caching system files in the System Analysis dialog.
+- 2.13.34
+
+-------------------------------------------------------------------
 Fri Apr 11 18:21:53 CEST 2008 - locilka@suse.cz
 
 - Changing Accept buttons to Install, Update and OK (FATE #120373).

@@ -186,8 +186,10 @@
     /**
      * Proceeds the copying of all files in inst-sys (that were copied from
      * another partition before) to the directory.
+     *
+     * @param extract_to_dir (Installation::destdir for initial stage of installation)
      */
-    global boolean CopyFilesToSystem () {
+    global boolean CopyFilesToSystem (string extract_to_dir) {
 	if (! already_initialized) {
 	    y2error("CopyFilesToTemp() needs to be called first...");
 	    return false;
@@ -205,7 +207,7 @@
 		ret = false;
 	    }
 
-	    where_to_extract = sformat("%1%2", Installation::destdir, where_to_extract);
+	    where_to_extract = sformat("%1%2", extract_to_dir, where_to_extract);
 
 	    string command = sformat (
 		"mkdir -p '%1'; cd '%1'; tar --preserve -xvzf '%2'",

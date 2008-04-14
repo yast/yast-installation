@@ -168,6 +168,18 @@ Aborting the installation."));
 	return ret;
     }
 
+    boolean FilesFromOldedSystems () {
+	// FATE #300421: Import ssh keys from previous installations
+	// FATE #120103: Import Users From Existing Partition
+	// FATE #302980: Simplified user config during installation
+	//	All needs to be known before configuring users
+	y2milestone ("PreInstallFunctions -- start --");
+	WFM::CallFunction ("inst_pre_install", []);
+	y2milestone ("PreInstallFunctions -- end --");
+
+	return true;
+    }
+
     // <-- Function definitions
 
 
@@ -295,6 +307,15 @@ actions_doing = add (actions_doing, _("Searching for Linux partitions..."));
 actions_functions = add (actions_functions, SearchForLinuxPartitions);
 visible_icons = add (visible_icons, "32x32/apps/yast-inst-mode.png");
 invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
+
+// TRANSLATORS: progress step
+actions_todo = add (actions_todo, _("Search for system files"));
+// TRANSLATORS: progress step
+actions_doing = add (actions_doing, _("Searching for system files..."));
+// FATE #302980: Simplified user config during installation
+actions_functions = add (actions_functions, FilesFromOldedSystems);
+visible_icons = add (visible_icons, "32x32/apps/yast-report.png");
+invisible_icons = add (invisible_icons, "32x32/apps/yast-report.png");
 
 // TRANSLATORS: progress step
 actions_todo = add (actions_todo, _("Evaluate update possibility"));
