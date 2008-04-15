@@ -12,6 +12,10 @@ fi
 #=============================================
 # 3.1) set debug and logging options
 #---------------------------------------------
+
+# fate#302166: store y2debug messages and log them on crash
+export Y2DEBUGONCRASH=1
+
 if got_kernel_param "debug" ; then
 	export Y2MAXLOGSIZE=50000
 	export Y2MAXLOGNUM=5
