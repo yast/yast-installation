@@ -24,6 +24,9 @@ if [ "$Y2MAXLOGSIZE_INITIAL" == "" ]; then
     fi
 fi
 
+# fate#302166: store y2debug messages and log them on crash
+export Y2DEBUGONCRASH=1
+
 #=============================================
 # 8.2) report used logfile size and lognum
 #---------------------------------------------

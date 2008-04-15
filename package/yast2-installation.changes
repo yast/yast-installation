@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Apr 15 10:22:04 CEST 2008 - mvidner@suse.cz
+
+- Enable printing the last few debugging log messages in the crash
+  handler, even if Y2DEBUG is not set (fate#302166).
+- 2.16.35
+
+-------------------------------------------------------------------
 Mon Apr 14 16:44:09 CEST 2008 - locilka@suse.cz
 
 - Fixed typo in inst_network_check (bnc #379491).
