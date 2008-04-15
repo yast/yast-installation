@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Apr 15 11:45:18 CEST 2008 - locilka@suse.cz
+
+- ImageInstallation tries to find details-<arch>.xml, then
+  details.xml to provide useful progress while deploying images.
+- 2.16.36
+
+-------------------------------------------------------------------
 Tue Apr 15 10:22:04 CEST 2008 - mvidner@suse.cz
 
 - Enable printing the last few debugging log messages in the crash
@@ -20,7 +27,7 @@ Mon Apr 14 13:54:42 CEST 2008 - locilka@suse.cz
 - Caching system files in the System Analysis dialog.
 - Some better texts (bnc #377959).
 - Better text for Software Selection dialog (bnc #379157).
-- 2.13.34
+- 2.16.34
 
 -------------------------------------------------------------------
 Fri Apr 11 18:21:53 CEST 2008 - locilka@suse.cz
@@ -32,7 +39,7 @@ Fri Apr 11 17:55:32 CEST 2008 - locilka@suse.cz
 
 - Added another per-image progress into the Installation images
   deployment (it requires details.xml).
-- 2.13.33
+- 2.16.33
 
 -------------------------------------------------------------------
 Fri Apr 11 15:33:17 CEST 2008 - juhliarik@suse.cz
