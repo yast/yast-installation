@@ -27,6 +27,7 @@ import "Storage";
 import "StorageControllers";
 import "StorageDevices";
 import "Wizard";
+import "PackageCallbacks";
 
 include "installation/misc.ycp";
 include "packager/storage_include.ycp";
@@ -142,18 +143,27 @@ Check your hardware.
     boolean packager_initialized = false;
 
     boolean InitInstallationRepositoriesReal () {
+	// disable callbacks
+	PackageCallbacks::RegisterEmptyProgressCallbacks();
+
+	boolean ret = true;
+
 	Packages::InitializeCatalogs ();
+
 	if (Packages::InitFailed ()) {
 	    // popup message
 	    Popup::Message (_("Failed to initialize the software repositories.
 Aborting the installation."));
-	    return false;
+	    ret = false;
+	} else {
+	    packager_initialized = true;
+	    Packages::InitializeAddOnProducts ();
 	}
 
-	packager_initialized = true;
-	Packages::InitializeAddOnProducts ();
+	// reregister callbacks
+	PackageCallbacks::RestorePreviousProgressCallbacks();
 
-	return true;
+	return ret;
     }
 
     boolean InitInstallationRepositories () {
