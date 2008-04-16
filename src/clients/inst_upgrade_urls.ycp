@@ -19,18 +19,29 @@
     textdomain "installation";
 
     symbol ret = `next;
-    if (GetInstArgs::going_back()) ret = `back;
+    if (GetInstArgs::going_back())
+	ret = `back;
 
-    // --> Comment this out in case of testing on a running system
-    if (! Stage::initial()) {
-	y2milestone ("Not an initial stage");
-	return ret;
+    boolean test_mode = false;
+
+    if (size (WFM::Args()) > 0 && is (WFM::Args(0), string)) {
+	y2milestone ("Args: %1", WFM::Args());
+	if (WFM::Args(0) == "test")
+	    test_mode = true;
     }
-    if (! Mode::update()) {
-	y2milestone ("Not an udpate mode");
-	return ret;
+
+    if (test_mode) {
+	y2milestone ("Test mode");
+    } else {
+	if (! Stage::initial()) {
+	    y2milestone ("Not an initial stage");
+	    return ret;
+	}
+	if (! Mode::update()) {
+	    y2milestone ("Not an udpate mode");
+	    return ret;
+	}
     }
-    // <--
 
     string dir_old = sformat ("%1/var/lib/zypp/db/sources/", Installation::destdir);
     list <map <string, any> > old_urls = [];
