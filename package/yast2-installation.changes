@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Apr 16 14:20:06 CEST 2008 - locilka@suse.cz
+
+- Running runlevel proposal after software proposal (bnc #380141).
+
+-------------------------------------------------------------------
 Tue Apr 15 11:45:18 CEST 2008 - locilka@suse.cz
 
 - ImageInstallation tries to find details-<arch>.xml, then

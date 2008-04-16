@@ -145,10 +145,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		    <presentation_order>60</presentation_order>
 		</proposal_module>
 		<proposal_module>
-		    <name>runlevel</name>
-		    <presentation_order>70</presentation_order>
-		</proposal_module>
-		<proposal_module>
 		    <name>hwinfo</name>
 		    <presentation_order>80</presentation_order>
 		</proposal_module>
@@ -156,10 +152,15 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		    <name>mouse</name>
 		    <presentation_order>90</presentation_order>
 		</proposal_module>
-		<!-- software proposal should be computed at the end -->
+		<!-- software proposal should be computed almost at the end -->
 		<proposal_module>
 		    <name>software</name>
 		    <presentation_order>30</presentation_order>
+		</proposal_module>
+		<!-- propose the default runlevel after software is selected, bnc #380141 -->
+		<proposal_module>
+		    <name>runlevel</name>
+		    <presentation_order>70</presentation_order>
 		</proposal_module>
             </proposal_modules>
 <!--
