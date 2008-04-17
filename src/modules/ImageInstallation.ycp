@@ -593,7 +593,13 @@ global boolean FindImageSet (list<string> patterns) {
 	    return true;
 	// does architecture match?
 	} else {
-	    return (contains (imageset_archs, arch_short));
+	    if (contains (imageset_archs, arch_short)) {
+		return true;
+	    } else {
+		// For debugging purpose
+		y2milestone ("Filtered-out, Patterns: %1, Archs: %2", image["patterns"]:"", image["archs"]:"");
+		return false;
+	    }
 	}
     });
 
@@ -613,6 +619,10 @@ global boolean FindImageSet (list<string> patterns) {
 
 	    if (matching_patterns[pattern]:0 > 0) {
 		possible_patterns[pattern] = image;
+	    } else {
+		// For debugging purpose
+		y2milestone ("Filtered-out, Patterns: %1, Matching: %2",
+		    image["patterns"]:"", matching_patterns[pattern]:-1);
 	    }
 	}
     });
