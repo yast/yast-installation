@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Apr 17 17:15:02 CEST 2008 - locilka@suse.cz
+
+- Added more debugging messages into ImageInstallation module.
+
+-------------------------------------------------------------------
 Thu Apr 17 14:01:46 CEST 2008 - locilka@suse.cz
 
 - Added image-downloading progress (reusing existent progress bar).
