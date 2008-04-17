@@ -4,6 +4,7 @@ import "ImageInstallation";
 import "Progress";
 import "Wizard";
 import "SourceManager";
+import "String";
 
 textdomain "installation";
 
@@ -46,6 +47,25 @@ void SetProgress (integer image, integer percent) {
     );
 }
 
+integer _last_download_progress = -1;
+
+boolean MyProgressDownloadHandler (integer percent, integer bps_avg, integer bps_current) {
+    // FIXME: remove this line
+    y2milestone ("PerCent: %1, AVG: %2, Spd: %3", percent, bps_avg, bps_current);
+
+    if (_last_download_progress < percent) {
+	UI::ChangeWidget (
+	    `id ("one_image"), `Label,
+	    sformat (_("Downloading image at speed %1/s"), String::FormatSize (bps_current))
+	);
+	UI::ChangeWidget (`id ("one_image"), `Value, percent);
+    }
+
+    _last_download_progress = percent;
+
+    return true;
+}
+
 integer _last_progress = -1;
 string _last_image_id = nil;
 
@@ -53,9 +73,10 @@ void SetOneImageProgress (integer current_progress) {
     map <string, any> current_image = ImageInstallation::GetCurrentImageDetails();
     integer max_progress = current_image["max_progress"]:0;
 
-    // another file
+    // another file than the previous one
     if (current_image["file"]:"" != _last_image_id) {
 	_last_image_id = current_image["file"]:"";
+	_last_download_progress = -1;
 	_last_progress = -1;
     }
 
@@ -64,16 +85,27 @@ void SetOneImageProgress (integer current_progress) {
 	return;
     }
 
+    // current progress 0 - 100
     integer x_progress = (100 * current_progress / max_progress);
     if (x_progress > 100) x_progress = 100;
 
+    // reset the label
+    if (x_progress == 0) {
+	UI::ChangeWidget (`id ("one_image"), `Label, _("Deploying image..."));
+    // one image done
+    } else if (x_progress == 100) {
+	UI::ChangeWidget (`id ("one_image"), `Label, _("Image deployed"));
+    }
+
+    // set current step
     if (x_progress > _last_progress) {
-	 UI::ChangeWidget (`id ("deploying_image"), `Value, x_progress);
+	 UI::ChangeWidget (`id ("one_image"), `Value, x_progress);
 	_last_progress = x_progress;
     }
 }
 
 ImageInstallation::SetDeployTarImageProgress (SetOneImageProgress);
+ImageInstallation::SetDownloadTarImageProgress (MyProgressDownloadHandler);
 
 ImageInstallation::StoreAllChanges();
 
@@ -83,7 +115,7 @@ Wizard::SetContents (
     _("Deploying Installation Images"),
     `VBox (
 	`ProgressBar (
-	    `id ("deploying_image"),
+	    `id ("one_image"),
 	    _("Deploying image..."),
 	    100,
 	    0
@@ -101,6 +133,7 @@ Wizard::SetContents (
 Wizard::SetTitleIcon ("yast-inst-mode");
 
 SourceManager::InstInitSourceMoveDownloadArea();
+
 ImageInstallation::DeployImages (images, Installation::destdir, SetProgress);
 
 y2milestone ("Target image for package selector prepared");

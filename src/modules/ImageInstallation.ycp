@@ -164,6 +164,13 @@ global void SetDeployTarImageProgress (void (integer) tip) {
     y2milestone ("New tar_image_progress: %1", tar_image_progress);
 }
 
+boolean (integer, integer, integer) download_image_progress = nil;
+
+global void SetDownloadTarImageProgress (boolean (integer, integer, integer) tip) {
+    download_image_progress = tip;
+    y2milestone ("New download_image_progress: %1", download_image_progress);
+}
+
 /**
  * Deploy an image of the filesystem type
  * @param id string the id of the image
@@ -479,7 +486,12 @@ global boolean DeployImages (list<string> images, string target, void(integer,in
     // unregister callbacks
     PackageCallbacks::RegisterEmptyProgressCallbacks();
 
+    // downloads details*.xml file
     FillUpImagesDetails();
+
+    // register own callback for downloading
+    if (download_image_progress != nil)
+	Pkg::CallbackProgressDownload (download_image_progress);
 
     integer num = -1;
 
@@ -489,6 +501,10 @@ global boolean DeployImages (list<string> images, string target, void(integer,in
 	DeployImage (img, target);
 	progress (num, 100);
     });
+
+    // unregister downloading progress
+    if (download_image_progress != nil)
+	Pkg::CallbackProgressDownload (nil);
 
     // reregister callbacks
     PackageCallbacks::RestorePreviousProgressCallbacks();
