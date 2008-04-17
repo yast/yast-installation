@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Apr 17 14:01:46 CEST 2008 - locilka@suse.cz
+
+- Added image-downloading progress (reusing existent progress bar).
+- 2.16.37
+
+-------------------------------------------------------------------
 Wed Apr 16 14:20:06 CEST 2008 - locilka@suse.cz
 
 - Running runlevel proposal after software proposal (bnc #380141).
