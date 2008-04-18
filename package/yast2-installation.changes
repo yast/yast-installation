@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Apr 18 16:01:13 CEST 2008 - juhliarik@suse.cz
+
+- Added text for using kexec (yast_inf_finish.ycp) 
+
+-------------------------------------------------------------------
 Thu Apr 17 17:15:02 CEST 2008 - locilka@suse.cz
 
 - Added more debugging messages into ImageInstallation module.
