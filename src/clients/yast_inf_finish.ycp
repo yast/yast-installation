@@ -188,6 +188,22 @@ else if (func == "Write")
     	string cmd = sformat ("touch \"%1/kexec_done\"", Directory::vardir);
     	// call command
     	WFM::Execute(.local.bash_output, cmd);
+	if (! UI::TextMode()) 
+	{
+	    y2milestone ("Printing message about loading kernel via kexec");
+	    SCR::Write (.dev.tty.stderr,
+		_("
+***********************************************************
+
+Loading installed kernel using kexec.
+
+Trying to load installed kernel via kexec instead of rebooting
+Please, wait.
+
+***********************************************************
+		")
+	    );
+	}
     }
 
     linuxrc["Language"] = Language::language;
