@@ -196,4 +196,11 @@ according to the settings in the previous dialogs.</p>")
 	return ( button == `confirm );
     }
 
+    void SetXENExceptions() {
+	if ((UI::GetDisplayInfo()["TextMode"]:true == false) && SCR::Read (.probe.xen) == true) {
+	    y2milestone ("XEN in X detected: running xset -r off");
+	    WFM::Execute (.local.bash, "xset -r off");
+	}
+    }
+
 } //end of include

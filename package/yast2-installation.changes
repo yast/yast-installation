@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Apr 18 16:16:24 CEST 2008 - locilka@suse.cz
+
+- Calling 'xset -r off' at the beginning of installation (both
+  first and second stage) in X on XEN (bnc #376945).
+- 2.13.210
+
+-------------------------------------------------------------------
 Thu Mar 27 13:35:09 CET 2008 - locilka@suse.cz
 
 - Fixed ZMD service handling, the correct name is novell-zmd

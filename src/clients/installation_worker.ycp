@@ -75,8 +75,9 @@
 	    return;
 	}
 
-    // properly set up initial language
+    SetXENExceptions();
 
+    // properly set up initial language
     if (Stage::initial ())
     {
 	Installation::encoding = Console::SelectFont( Language::language );
