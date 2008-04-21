@@ -38,15 +38,17 @@
      */
     void SetInitialInstallation () {
 	y2milestone ("Adjusting language settings");
-	UI::SetLanguage (Language::language, Installation::encoding);
-	WFM::SetLanguage (Language::language, "UTF-8");
-	UI::RecordMacro (Directory::logdir + "/macro_inst_initial.ycp");
 
 	// properly set up initial language
 	Installation::encoding = Console::SelectFont (Language::language);
 	if (UI::GetDisplayInfo()["HasFullUtf8Support"]:true) {
 	    Installation::encoding = "UTF-8";
 	}
+
+	UI::SetLanguage (Language::language, Installation::encoding);
+	WFM::SetLanguage (Language::language, "UTF-8");
+	UI::RecordMacro (Directory::logdir + "/macro_inst_initial.ycp");
+
 	y2milestone ("Adjusting first stage modules");
 
 	boolean show_addons = ProductFeatures::GetBooleanFeature ("globals", "show_addons");
