@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Apr 21 15:32:49 CEST 2008 - locilka@suse.cz
+
+- Calling also 'xset m 1' (bnc #376945).
+- 2.13.211
+
+-------------------------------------------------------------------
 Fri Apr 18 16:16:24 CEST 2008 - locilka@suse.cz
 
 - Calling 'xset -r off' at the beginning of installation (both
