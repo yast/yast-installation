@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Apr 21 14:48:58 CEST 2008 - locilka@suse.cz
+
+- Using new DefaultDesktop::SelectedDesktops for writing the
+  display manager configuration.
+
+-------------------------------------------------------------------
 Fri Apr 18 16:17:54 CEST 2008 - locilka@suse.cz
 
 - Calling 'xset -r off' at the beginning of installation (both
