@@ -217,6 +217,7 @@ Linux system. They provide a brief summary of new features and changes.</p>");
     }
 
     Wizard::SetTitleIcon("yast-release-notes");
+    Wizard::SetFocusToNextButton();
 
     // Default settings
     UI::ChangeWidget (`id(`lang), `Enabled, false);

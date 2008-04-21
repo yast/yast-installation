@@ -218,9 +218,14 @@ To install an add-on product from separate media together with &product;, select
 
     // help text for installation method
     _("<p>
-To let the new installation to create an automatic configuration, select
-<b>Use Automatic Configuration</b>. Otherwise, manual configuration will be used.
-Update mode does not support automatic configuration.</p>") +
+Select <b>Use Automatic Configuration</b> to let the installation program
+configure your network and hardware automatically. Otherwise you will
+be offered a configuration proposal with possibility to tune all the
+settings manually. Unexperienced users had better use automatic
+configuration.</p>") +
+
+    // help text for installation method
+    _("<p>Update mode does not support automatic configuration.</p>") +
 
     // help text for installation method
     _("<p>Select <b>Repair Installed System</b> if you have a damaged Linux system on
