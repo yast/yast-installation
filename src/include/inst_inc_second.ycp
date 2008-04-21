@@ -26,6 +26,8 @@
     import "Wizard";
     import "InstData";
 
+    include "installation/misc.ycp";
+
     // The order of services is important
     // especially for starting them
     list <string> inst_network_services = ["network", "portmap", "SuSEfirewall2_setup"];
@@ -392,7 +394,9 @@ Note: You may have to enter some information again.");
         else if (FileUtils::Exists (Installation::destdir + Installation::file_live_install_mode)) {
             Mode::SetMode ("live_installation");
         }
-        
+
+	SetXENExceptions();
+
         // during update, set the 'update language' for the 2nd stage
         // FATE #300572
         if (Mode::update ()) {
