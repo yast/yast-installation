@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Apr 21 15:28:24 CEST 2008 - locilka@suse.cz
+
+- Calling 'xset r off' & 'xset m 1' (bnc #376945).
+
+-------------------------------------------------------------------
 Mon Apr 21 14:48:58 CEST 2008 - locilka@suse.cz
 
 - Using new DefaultDesktop::SelectedDesktops for writing the
