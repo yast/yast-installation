@@ -37,6 +37,8 @@
      * Sets inital language and other settings.
      */
     void SetInitialInstallation () {
+	SetXENExceptions();
+
 	y2milestone ("Adjusting language settings");
 
 	// properly set up initial language

@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Apr 18 16:17:54 CEST 2008 - locilka@suse.cz
+
+- Calling 'xset -r off' at the beginning of installation (both
+  first and second stage) in X on XEN (bnc #376945).
+
+-------------------------------------------------------------------
 Fri Apr 18 16:01:13 CEST 2008 - juhliarik@suse.cz
 
 - Added text for using kexec (yast_inf_finish.ycp) 
