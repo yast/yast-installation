@@ -244,8 +244,8 @@ according to the settings in the previous dialogs.</p>")
     void SetXENExceptions () {
 	// not in text-mode
 	if (! UI::TextMode() && SCR::Read (.probe.xen) == true) {
-	    y2milestone ("XEN in X detected: running xset -r off");
-	    WFM::Execute (.local.bash, "xset -r off");
+	    y2milestone ("XEN in X detected: running xset");
+	    WFM::Execute (.local.bash, "xset r off; xset m 1");
 	}
     }
 
