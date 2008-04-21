@@ -76,7 +76,13 @@ else if (func == "Write")
 		"cursor" : "DMZ",
 	    ],
 	    "kde" : $[
-		"package" : ["kde4-kdm", "kdebase3-kdm"],
+		"package" : ["kde4-kdm"],
+		"wm" : "kde",
+		"dm" : "kdm",
+		"cursor" : "DMZ",
+	    ],
+	    "kde3" : $[
+		"package" : ["kdebase3-kdm"],
 		"wm" : "kde",
 		"dm" : "kdm",
 		"cursor" : "DMZ",
@@ -95,44 +101,9 @@ else if (func == "Write")
 
 	string selected_desktop = DefaultDesktop::Desktop ();
 
-	// DefaultDesktop has been set
-	if (selected_desktop != "" && selected_desktop != nil) {
-	    y2milestone ("Desktop was set to %1", selected_desktop);
-	    default_wm = desktop_data[selected_desktop, "wm"]:"";
-	    default_dm = desktop_data[selected_desktop, "dm"]:"";
-	    default_cursor = desktop_data[selected_desktop, "cursor"]:"";
+	    list <string> selected_desktops = DefaultDesktop::SelectedDesktops();
 
-	// KDE, GNOME CD ... or desktop just not set at all
-	} else {
-	    list<map<string,any> > patterns
-		= Pkg::ResolvableDependencies ("", `pattern, "");
-
-	    patterns = filter (map<string,any> p, patterns, {
-		return p["status"]:nil == `installed
-		    || p["status"]:nil == `selected;
-	    });
-
-	    list<list<string> > packages2 = [];
-
-	    foreach (map<string,any> p, patterns, {
-		y2internal ("P: %1", p);
-		list<map<string,any> > deps = p["dependencies"]:[];
-		y2internal ("Deps: %1", deps);
-		deps = filter (map<string,any> d, deps, {
-		    return d["res_kind"]:"" == "package"
-			&& contains (["recommends", "suggests", "requires"],
-			    d["dep_kind"]:"");
-		});
-		packages2 = add (packages2, maplist (map<string,any> d, deps, {
-		    return d["name"]:"";
-		}));
-		y2internal ("Packages2: %1", packages2);
-	    });
-
-	    list<string> packages = (list<string>)toset (flatten (packages2));
-	    y2debug ("All packages in selected patterns: %1", packages);
-
-	    list <string> desktop_order = ["gnome", "kde"];
+	    list <string> desktop_order = ["gnome", "kde", "kde3"];
 
 	    boolean desktop_found = false;
 	    string pattern_desktop = "gnome";
@@ -140,15 +111,12 @@ else if (func == "Write")
 	    // check what packages are in the patterns
 	    // and adjust logon and window manager according to it
 	    foreach (string d, desktop_order, {
-		if (desktop_found) break;
-		foreach (string one_package, desktop_data[d, "package"]:[], {
-		    if (desktop_found) break;
-		    if (contains (packages, one_package)) {
-			desktop_found = true;
-			pattern_desktop = d;
-			y2milestone ("Setting desktop according to pattern to %1", pattern_desktop);
-		    }
-		});
+		if (contains (selected_desktops, d)) {
+		    pattern_desktop = d;
+		    desktop_found = true;
+		    y2milestone ("Setting desktop according to pattern to %1", pattern_desktop);
+		    break;
+		}
 	    });
 
 	    // if no desktop was found according to pattern, try
@@ -166,9 +134,9 @@ else if (func == "Write")
 			y2milestone ("package %1 selected or installed", package);
 			desktop_found = true;
 			default_dm = desktop_data[d, "dm"]:"";
-			y2milestone ("Setting logon manager %1 - package selecteed", default_dm);
+			y2milestone ("Setting logon manager %1 - package selected", default_dm);
 			default_wm = desktop_data[d, "wm"]:"";
-			y2milestone ("Setting window manager %1 - package selecteed", default_wm);
+			y2milestone ("Setting window manager %1 - package selected", default_wm);
 			default_cursor = desktop_data[d, "cursor"]:default_cursor;
 			y2milestone ("Setting cursor theme %1 - package selected", default_cursor);
 		    }
@@ -178,7 +146,7 @@ else if (func == "Write")
 
 		return desktop_found;
 	    });
-	}
+
 	y2milestone ("Default desktop: %1", default_wm);
 	y2milestone ("Default logon manager: %1", default_dm);
 	y2milestone ("Default cursor theme: %1", default_cursor);

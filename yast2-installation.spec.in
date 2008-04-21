@@ -24,8 +24,8 @@ Requires:	yast2-bootloader
 # Language::Set (handles downloading the translation extensions)
 Requires:	yast2-country-data >= 2.16.11
 
-# SourceManager::InstInitSourceMoveDownloadArea
-Requires:	yast2-packager >= 2.16.32
+# DefaultDesktop::SelectedDesktops
+Requires:	yast2-packager >= 2.16.37
 
 # Only in inst-sys
 # Requires:	yast2-runlevel
