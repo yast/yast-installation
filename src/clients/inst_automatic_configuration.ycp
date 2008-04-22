@@ -15,8 +15,8 @@
     import "FileUtils";
     import "Directory";
     import "GetInstArgs";
-    import "Progress";
     import "Wizard";
+    import "Progress";
 
     textdomain "installation";
 
@@ -25,10 +25,17 @@
 	return `auto;
     }
 
-    y2milestone ("automatic_configuration started");
+    boolean test_mode = false;
 
-    Mode::SetMode ("installation");
-    Stage::Set ("continue");
+    if (size (WFM::Args()) > 0 && is (WFM::Args(0), string)) {
+	y2milestone ("Args: %1", WFM::Args());
+	if (WFM::Args(0) == "test")
+	    test_mode = true;
+    }
+
+    if (test_mode) Wizard::CreateDialog();
+
+    y2milestone ("automatic_configuration started");
 
 // TODO: read this from control file
 // (at least the list of modules in proposals)
@@ -107,6 +114,9 @@
 	    if (! UI::TextMode()) {
 		y2milestone ("Printing >don't panic<!");
 		SCR::Write (.dev.tty.stderr,
+		    // TRANSLATORS: this message is displayed on console when X11 configuration
+		    // switches from running X to console. Sometimes it looks like
+		    // the installation has failed.
 		    _("
 
 ***********************************************************
@@ -123,70 +133,60 @@ to do detect your videocard properly...
 	}
     }
 
-    integer current_step = 0;
     integer current_sub_step = 0;
-    integer nr_of_sub_steps = 0;
+    integer current_step = 0;
 
-    void ResetSubSteps (integer substeps) {
-	nr_of_sub_steps = substeps;
-	current_sub_step = 0;
-    }
-
-    void NextStep (string progress_title) {
-	current_step = current_step + 1;
+    void NextStep () {
 	current_sub_step = current_sub_step + 1;
+	current_step = current_step + 1;
 
-	if (nr_of_sub_steps > 0 && current_sub_step > 0 && nr_of_sub_steps >= current_sub_step) {
-	    progress_title = sformat (
-		// TRANSLATORS: Progress step label
-		//	%1 - text defined by script, e.g., "Configuring hardware..."
-		//	%2 - number of the current step
-		//	%3 - number of all steps
-		//	Finally, it might look like this "Configuring hardware... (2/5)"
-		_("%1 (%2/%3)"),
-		progress_title,
-		current_sub_step,
-		nr_of_sub_steps
-	    );
-	}
-
-	Progress::Title (progress_title);
-	Progress::Step (current_step);
+	UI::ChangeWidget (`id ("one_set_progress"), `Value, current_sub_step);
+	UI::ChangeWidget (`id ("autoconf_progress"), `Value, current_step);
     }
 
-    void CallScripts (list <string> scripts_to_call, string progress_title) {
+    void DummyFunction () {
+	sleep (random (1600));
+    }
+
+    void CallScripts (list <string> scripts_to_call) {
 	y2milestone ("Scripts to call: %1", scripts_to_call);
 
 	scripts_to_call = NormalizeScriptNames (scripts_to_call);
-	// every single script has one step
-	ResetSubSteps (size (scripts_to_call));
 
 	foreach (string one_script, scripts_to_call, {
 	    y2milestone ("Calling script %1", one_script);
-	    NextStep (progress_title);
+	    NextStep();
 	    boolean progress_before = Progress::set (false);
 
-	    any result = WFM::CallFunction (one_script, [ $["AutomaticConfiguration":true] ]);
+	    any result = (
+		test_mode ?
+		    DummyFunction()
+		    :
+		    WFM::CallFunction (one_script, [ $["AutomaticConfiguration":true] ])
+	    );
 
 	    Progress::set (progress_before);
 	    y2milestone ("Script %1 returned %2", one_script, result);
 	});
     }
 
-    void CallProposals (list <string> proposals_to_call, string progress_title) {
+    void CallProposals (list <string> proposals_to_call) {
 	y2milestone ("Scripts to call: %1", proposals_to_call);
 
 	proposals_to_call = NormalizeProposalNames (proposals_to_call);
-	// every single proposal has two steps
-	ResetSubSteps (2 * size (proposals_to_call));
 
 	foreach (string one_proposal, proposals_to_call, {
 	    y2milestone ("Calling script %1 MakeProposal", one_proposal);
-	    NextStep (progress_title);
+	    NextStep();
 	    boolean progress_before = Progress::set (false);
 
 	    HandleExceptions (one_proposal);
-	    any result = WFM::CallFunction (one_proposal, ["MakeProposal", $[ "AutomaticConfiguration":true ]]);
+	    any result = (
+		test_mode ?
+		    DummyFunction()
+		    :
+		    WFM::CallFunction (one_proposal, ["MakeProposal", $[ "AutomaticConfiguration":true ]])
+	    );
 
 	    Progress::set (progress_before);
 	    y2milestone ("Script %1 returned %2", one_proposal, result);
@@ -201,12 +201,16 @@ to do detect your videocard properly...
 
 	foreach (string one_proposal, proposals_to_call, {
 	    y2milestone ("Calling script %1 Write", one_proposal);
-	    NextStep (progress_title);
+	    NextStep();
 	    boolean progress_before = Progress::set (false);
 
-	    any result = WFM::CallFunction (one_proposal, ["Write", $[ "AutomaticConfiguration":true ]]);
+	    any result = (
+		test_mode ?
+		    DummyFunction()
+		    :
+		    WFM::CallFunction (one_proposal, ["Write", $[ "AutomaticConfiguration":true ]])
+	    );
 
-	    Progress::set (progress_before);
 	    y2milestone ("Script %1 returned %2", one_proposal, result);
 	});
     }
@@ -219,39 +223,68 @@ to do detect your videocard properly...
 	    ((one_autoconf_call["type"]:"" == "proposals" ? 2:1) * size (one_autoconf_call["items"]:[]));
     });
 
-    Progress::Simple(
+    Wizard::SetContents (
 	_("Automatic Configuration"),
-	"",
-	nr_of_steps,
-	_("<p>Installation is currently writing the automatic configuration. Please wait...</p>")
+	`VBox (
+	    // faster progress
+	    `ReplacePoint(
+		`id ("rp_one_set_progress"),
+		`ProgressBar (
+		    `id ("one_set_progress"),
+		    _("Preparing configuration..."),
+		    100,
+		    0
+		)
+	    ),
+	    // overall-autoconf progress
+	    `ProgressBar (
+		`id ("autoconf_progress"),
+		_("Creating automatic configuration..."),
+		nr_of_steps,
+		0
+	    )
+	),
+	_("<p>Installation is currently writing the automatic configuration. Please wait...</p>"),
+	false, false
     );
 
     foreach (map one_autoconf_call, proposal_scripts_to_call, {
 	string type = one_autoconf_call["type"]:"";
 
-	string progress_title = one_autoconf_call["label"]:_("Automatic configuration...");
+	// reset the faster prgress
+	current_sub_step = 0;
+	UI::ReplaceWidget (`id ("rp_one_set_progress"),
+	    `ProgressBar (
+		`id ("one_set_progress"),
+		one_autoconf_call["label"]:_("Automatic configuration..."),
+		((one_autoconf_call["type"]:"" == "proposals" ? 2:1) * size (one_autoconf_call["items"]:[])),
+		0
+	    )
+	);
+	y2milestone ("Steps: %1", ((one_autoconf_call["type"]:"" == "proposals" ? 2:1) * size (one_autoconf_call["items"]:[])));
+	y2milestone ("Label: %1", one_autoconf_call["label"]:_("Automatic configuration..."));
 
 	switch (type) {
 	    case "scripts":
-		CallScripts (one_autoconf_call["items"]:[], progress_title);
+		CallScripts (one_autoconf_call["items"]:[]);
 		break;
 	    case "proposals":
-		CallProposals (one_autoconf_call["items"]:[], progress_title);
+		CallProposals (one_autoconf_call["items"]:[]);
 		break;
 	    y2error ("Unknown script type '%1'", type);
 	}
     });
 
-    Progress::Finish();
-
     y2milestone ("automatic_configuration finished");
 
-    Wizard::SetContents (
-	_("Automatic Configuration"),
-	`Label (_("Finishing configuration...")),
-	"",
-	false, false
-    );
+//    Wizard::SetContents (
+//	_("Automatic Configuration"),
+//	`Label (_("Finishing configuration...")),
+//	"",
+//	false, false
+//    );
+
+    if (test_mode) Wizard::CloseDialog();
 
     return `auto;
 }
