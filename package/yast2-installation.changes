@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Apr 22 12:26:52 CEST 2008 - locilka@suse.cz
+
+- Fixed filtering-out already registered repos (bnc #379051).
+
+-------------------------------------------------------------------
 Mon Apr 21 15:28:24 CEST 2008 - locilka@suse.cz
 
 - Calling 'xset r off' & 'xset m 1' (bnc #376945).
