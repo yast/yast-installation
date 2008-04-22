@@ -84,12 +84,11 @@
     };
 
     void CheckAndCloseWindowsLeft () {
-	while (! UI::WidgetExists (`id(`proposal))) {
-	    y2error (-1, "Widget `proposal is not active!!! Closing one UI layer...");
+	if (! UI::WidgetExists (`id (`proposal))) {
+	    y2error (-1, "Widget `proposal is not active!!!");
 	    y2milestone ("--- Current widget tree ---");
 	    UI::DumpWidgetTree();
 	    y2milestone ("--- Current widget tree ---");
-	    UI::CloseDialog();
 	}
     }
 

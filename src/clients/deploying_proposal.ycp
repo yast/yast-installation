@@ -1,0 +1,137 @@
+/**
+ * Module:	deploying_proposal.ycp
+ *
+ * Authors:	Lukas Ocilka <locilka@suse.cz>
+ *
+ * Purpose:	Proposal function dispatcher - deploying images
+ *
+ *		See also file proposal-API.txt for details.
+ * $Id$
+ */
+{
+    textdomain "installation";
+
+    import "Mode";
+    import "ImageInstallation";
+    import "Progress";
+    import "Installation";
+    import "Report";
+
+    string func  = (string) WFM::Args(0);
+    map    param = (map) WFM::Args(1);
+    map    ret   = $[];
+
+    string im_do_enable = "deploying_enable";
+    string im_do_disable = "deploying_disable";
+
+    string GenerateProposalText () {
+	map im_conf = ImageInstallation::ImagesToUse();
+
+	string ret = "<ul>\n";
+
+	if (im_conf["deploying_enabled"]:false == true) {
+	    ret = ret + "<li>" + sformat (
+		// TRANSLATORS: Installation overview
+		// IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
+		_("Installation from images is enabled (<a href=\"%1\">disable</a>)"),
+		im_do_disable
+	    ) + "</li>";
+	} else {
+	    ret = ret + "<li>" + sformat (
+		// TRANSLATORS: Installation overview
+		// IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
+		_("Installation from images is disabled (<a href=\"%1\">enable</a>)"),
+		im_do_enable
+	    ) + "</li>";
+	}
+
+	ret = ret + "</ul>\n";
+
+	return ret;
+    }
+
+    void CallProposalScript () {
+	boolean progress_orig = Progress::set (false);
+	WFM::CallFunction ("inst_prepare_image", []);
+	Progress::set (progress_orig);
+    }
+
+    if (func == "MakeProposal") {
+	boolean force_reset = param["force_reset"]:false;
+	boolean language_changed = param["language_changed"]:false;
+
+	if (force_reset) {
+	    ImageInstallation::last_patterns_selected = [ nil ];
+	    ImageInstallation::changed_by_user = false;
+	}
+
+	if (ImageInstallation::changed_by_user == true && Installation::image_installation == false) {
+	    y2milestone ("ImageInstallation already disabled by user");
+	} else {
+	    CallProposalScript();
+	}
+
+	if (Mode::installation()) {
+	    y2error ("FIXME: HELP!");
+	    ret = $[
+		"preformatted_proposal" : GenerateProposalText(),
+		"links" : [ im_do_enable, im_do_disable ],
+		// TRANSLATORS: help text
+		"help" : _("<p><b>Installation from Images</b> is used to speed the installation up.
+Images contain compressed snapshots of installed system matching your selection
+of patterns. The rest of packages which are not in images will be installed from
+packages the standard way.</p>") +
+		// TRANSLATORS: help text
+		_("<p>Installation from images is disabled by default if the current
+pattern selection does not fit any set of images.</p>"),
+	    ];
+	} else {
+	    y2error ("Installation from images should be used for new installation only!");
+	    ret = $[
+		"preformatted_proposal" : sformat (_("Error: Images should not be used for mode: %1"), Mode::mode()),
+		"warning_level" : `error,
+	    ];
+	}
+    }
+
+    else if (func == "AskUser") {
+	any chosen_id = param["chosen_id"]:nil;
+	y2milestone("Images proposal change requested, id %1", chosen_id);
+
+	boolean old_status = Installation::image_installation;
+
+	if (chosen_id == im_do_disable) {
+	    Installation::image_installation = false;
+	} else if (chosen_id == im_do_enable) {
+	    Installation::image_installation = true;
+	} else {
+	    Installation::image_installation = (! Installation::image_installation);
+	}
+
+	// changed to true
+	if (Installation::image_installation)
+	    CallProposalScript();
+
+	if (old_status == false && old_status == Installation::image_installation) {
+	    Report::Message (_("Unable to enable installation from images.
+
+Currently selected patterns do not fit the images
+stored on installation media."));
+	}
+
+	ImageInstallation::changed_by_user = true;
+	ret = $[ "workflow_sequence" : `next ];
+    }
+
+    else if ( func == "Description" ) {
+	ret = $[
+	    // this is a heading
+	    "rich_text_title"	:	_("Installation from Images"),
+	    // this is a menu entry
+	    "menu_title"	:	_("Installation from &Images"),
+	    "id"		:	"deploying"
+	];
+    }
+
+    return ret;
+}

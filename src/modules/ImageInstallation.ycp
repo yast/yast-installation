@@ -84,6 +84,10 @@ integer _checkpoint = 400;
  */
 integer _record_size = 10240;
 
+global list <string> last_patterns_selected = [];
+
+global boolean changed_by_user = false;
+
 /**
  * Set the repository to get images from
  * @param repo integer the repository identification
@@ -690,6 +694,33 @@ global boolean FindImageSet (list<string> patterns) {
 	y2milestone ("Image with software management metadata: %1", _metadata_image);
 
     return true;
+}
+
+/**
+ * Returns map with description which images will be used
+ *
+ * @return map with description
+ *
+ * @struct $[
+ *   "deploying_enabled" : boolean,
+ *   "images" : returned by GetCurrentImages()
+ * ]
+ *
+ * @see GetCurrentImages()
+ */
+global map ImagesToUse () {
+    map ret = $[];
+
+    if (Installation::image_installation == true) {
+	ret = $[
+	    "deploying_enabled" : true,
+	    "images" : GetCurrentImages(),
+	];
+    } else {
+	ret["deploying_enabled"] = false;
+    }
+
+    return ret;
 }
 
 /**
