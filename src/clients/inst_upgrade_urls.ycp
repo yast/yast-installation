@@ -127,14 +127,14 @@ you are upgrading:"))),
 		    ),
 		    []
 		),
-		`HBox (
+		`Left (`HBox (
 		    // TRANSLATORS: Push button
 		    `PushButton (`id (`edit), _("&Change...")),
 		    `HSpacing (1),
 		    // TRANSLATORS: Push button
 		    `PushButton (`id (`toggle), _("&Toggle Status")),
 		    `HStretch()
-		)
+		))
 	    ),
 	    // TRANSLATORS: help text 1/3
 	    _("<p>Here you see all software repositories found
@@ -178,6 +178,10 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	if (currentitem != nil) {
 	    UI::ChangeWidget (`id ("table_of_repos"), `CurrentItem, currentitem);
 	}
+
+	boolean enable_buttons = (size (items) > 0);
+	UI::ChangeWidget (`id (`edit), `Enabled, enable_buttons);
+	UI::ChangeWidget (`id (`toggle), `Enabled, enable_buttons);
     }
 
     boolean FindCurrentURLStatus (string baseurl) {
@@ -340,12 +344,14 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	// All already registered repos
 	foreach (map one_registered_repo, already_registered_repos, {
 	    // if an installation repository is enabled, skip it
-	    if (one_registered_repo["enabled"]:true == false)
+	    if (one_registered_repo["enabled"]:true == false) {
+		y2milestone ("Repo %1 is not enabled, skipping", one_registered_repo["url"]:one_registered_repo["media"]:nil);
 		return;
+	    }
 
 	    string registered_url  = one_registered_repo["url"]:"-A-";
 	    string registered_name = one_registered_repo["name"]:"-A-";
-	    string registered_dir  = one_registered_repo["product_dir"]:"-A-";
+	    string registered_dir  = one_registered_repo["path"]:"/";
 
 	    // Remove them from repos being offered to user to enable/disable them
 	    // Don't handle them at all, they have to stay untouched
@@ -353,13 +359,13 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	    urls = filter (map one_from_urls, urls, {
 		string one_url  = one_from_urls["url"]:"-B-";
 		string one_name = one_from_urls["name"]:"-B-";
-		string one_dir  = one_from_urls["product_dir"]:"-B-";
+		string one_dir  = one_from_urls["path"]:"/";
 
 		if (registered_url == one_url && registered_name == one_name && registered_dir == one_dir) {
 		    y2milestone ("The same product (url) already in use, not handling it %1", one_registered_repo);
-		    return true;
-		} else {
 		    return false;
+		} else {
+		    return true;
 		}
 	    });
 	});
@@ -614,7 +620,7 @@ URL: %2"),
 			"media_url" : one_url,
 			"product_dir" : pth,
 			"product" : repo_name,
-			"autoyast_product" : "",
+			"autoyast_product" : repo_name,
 		    ]);
 		}
 	    });
@@ -721,17 +727,19 @@ URL: %2"),
     Progress::NextStage();
     Progress::Finish();
 
-    if (size (already_registered_repos) < 1) {
+    if (already_registered_repos == nil || size (already_registered_repos) < 1) {
+	y2milestone ("No sources found");
+	continue_processing = false;
+    } else if (urls == nil || size (urls) < 1) {
+	y2milestone ("No sources to offer");
 	continue_processing = false;
     }
 
-    if (! continue_processing) {
-	y2milestone ("No sources found");
-	return ret;
+    if (continue_processing) {
+	ret = HandleOldSources();
+	if (ret == `next)
+	    ret = AddOrRemoveSources();
     }
-
-    ret = HandleOldSources();
-    if (ret == `next) ret = AddOrRemoveSources();
 
     // for testing purpose
     if (Mode::normal()) {
