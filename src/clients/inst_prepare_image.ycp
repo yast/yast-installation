@@ -3,7 +3,9 @@
  * Package:	Installation
  * Summary:	Installation done (also) from image
  * Authors:	Jiri Srain <jsrain@suse.cz>
+ *		Lukas Ocilka <locilka@suse.cz>
  *
+ * $Id$
  */
 
 {
@@ -19,10 +21,6 @@ if (GetInstArgs::going_back())
     return `back;
 
 y2milestone ("Preparing image for package selector");
-
-// FIXME: help (but is it needed?)
-Wizard::SetContents (_("Analyzing Installation Images"), `Empty (), "", false, false);
-Wizard::SetTitleIcon ("yast-inst-mode");
 
 // set repo to get images from
 ImageInstallation::SetRepo (Packages::theSources[0]:0);
@@ -40,6 +38,12 @@ list <string> patterns_to_install = maplist (map <string, any> one_patern, all_p
 patterns_to_install = filter (string one_pattern, patterns_to_install, {
     return (one_pattern != "" && one_pattern != nil);
 });
+
+if (patterns_to_install == ImageInstallation::last_patterns_selected) {
+    y2milestone ("List of selected patterns hasn't changed...");
+    return `auto;
+}
+ImageInstallation::last_patterns_selected = patterns_to_install;
 
 // list images for currently selected patterns
 y2milestone ("Currently selected patterns: %1", patterns_to_install);
