@@ -45,7 +45,7 @@
 
 `ag_anyagent(
   `Description (
-      (`Run("/bin/df -P")),		// real file name
+      (`Run("/bin/df -P 2>/dev/null")),		// real file name
       "\n",			// Comment
       true,			// read-only
       (`List (
