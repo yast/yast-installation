@@ -212,6 +212,8 @@ according to the settings in the previous dialogs.</p>")
         if (ProductControl::GetUseAutomaticConfiguration()) {
             ProductControl::DisableAllModulesAndProposals ("installation", "continue");
             ProductControl::EnableModule ("automatic_configuration");
+	    // Enable SuSEConfig, bnc #381751
+            ProductControl::EnableModule ("suseconfig");
 	} else {
 	    ProductControl::UnDisableAllModulesAndProposals ("installation", "continue");
 	    ProductControl::DisableModule ("automatic_configuration");
