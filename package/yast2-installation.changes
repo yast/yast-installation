@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Apr 23 15:10:24 CEST 2008 - locilka@suse.cz
+
+- Enabling inst_suseconfig in Automatic configuration (bnc #381751)
+
+-------------------------------------------------------------------
 Tue Apr 22 18:46:51 CEST 2008 - locilka@suse.cz
 
 - Adjusting automatic configuration UI to use two progress bars
