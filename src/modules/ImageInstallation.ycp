@@ -175,6 +175,13 @@ global void SetDownloadTarImageProgress (boolean (integer, integer, integer) tip
     y2milestone ("New download_image_progress: %1", download_image_progress);
 }
 
+void (string, integer) generic_set_progress = nil;
+
+global void SetOverallDeployingProgress (void (string, integer) odp) {
+    generic_set_progress = odp;
+    y2milestone ("New generic_set_progress: %1", generic_set_progress);
+}
+
 /**
  * Deploy an image of the filesystem type
  * @param id string the id of the image
@@ -192,6 +199,7 @@ boolean DeployTarImage (string id, string target) {
 	return false;
     }
 
+    // reset, adjust labels, etc.
     if (tar_image_progress != nil)
 	tar_image_progress (0);
 
@@ -249,6 +257,7 @@ boolean DeployTarImage (string id, string target) {
     }
     y2milestone ("Finished");
 
+    // adjust labels etc.
     if (tar_image_progress != nil)
 	tar_image_progress (100);
 
@@ -334,7 +343,11 @@ boolean MountFsImage (string id, string target) {
     // FIXME unmounting
 }
 
+integer _current_image_from_imageset = -1;
+
 void SetCurrentImageDetails (map <string,any> img) {
+    _current_image_from_imageset = _current_image_from_imageset + 1;
+
     if (size (images_details) == 0) {
 	y2warning ("Images details are empty");
     }
@@ -346,6 +359,7 @@ void SetCurrentImageDetails (map <string,any> img) {
 	"files" : images_details[img["file"]:"","files"]:0,
 	// 100% progress
 	"max_progress" : tointeger (images_details[img["file"]:"","size"]:0 / _record_size),
+	"image_nr" : _current_image_from_imageset,
     ];
 }
 
@@ -498,12 +512,15 @@ global boolean DeployImages (list<string> images, string target, void(integer,in
 	Pkg::CallbackProgressDownload (download_image_progress);
 
     integer num = -1;
+    _current_image_from_imageset = -1;
 
     foreach (string img, images, {
 	num = num + 1;
-	progress (num, 0);
+	if (progress != nil)
+	    progress (num, 0);
 	DeployImage (img, target);
-	progress (num, 100);
+	if (progress != nil)
+	    progress (num, 100);
     });
 
     // unregister downloading progress
@@ -824,6 +841,40 @@ global boolean FileSystemCopy (string from, string to,
      */
     map <symbol, map <string, list <map> > > objects_state = $[];
 
+    map progress_layout = $[ 
+	"storing_user_prefs" : $[
+	    "steps_start_at" :  0,
+	    "steps_reserved" :  6,
+	],
+	"deploying_images" : $[
+	    "steps_start_at" :  6,
+	    "steps_reserved" : 84,
+	    
+	],
+	"restoring_user_prefs" : $[
+	    "steps_start_at" : 90,
+	    "steps_reserved" : 10,
+	],
+    ];
+
+    global integer GetProgressLayoutDetails (string id, string details) {
+	return progress_layout[id, details]:0;
+    }
+
+    global string GetProgressLayoutLabel (string id) {
+	return progress_layout[id, "label"]:_("Deploying...");
+    }
+
+    global void AdjustProgressLayout (string id, integer steps_total, string label) {
+	if (! haskey (progress_layout, id)) {
+	    y2error ("Unknown key: %1", id);
+	    return;
+	}
+
+	progress_layout[id, "label"] = label;
+	progress_layout[id, "steps_total"] = steps_total;
+    }
+
     /**
      * Function stores all new/requested states of all handled/supported types.
      *
@@ -831,15 +882,13 @@ global boolean FileSystemCopy (string from, string to,
      * @see objects_state
      */
     global void StoreAllChanges () {
-        Progress::Simple (
-    	    // TRANSLATORS: Dialog caption
-            _("Installation from Images"),
-            // TRANSLATORS: Dialog progress
-            _("Storing user preferences..."),
-            4 * size (all_supported_types),
-            // TRANSLATORS: help text
-            _("<p>Installation process is just storing the user-defined selection of packages</p>")
-        );
+	integer nr_steps = 4 * size (all_supported_types);
+	string id = "storing_user_prefs";
+
+	AdjustProgressLayout (id, nr_steps, _("Storing user preferences..."));
+
+	if (generic_set_progress != nil)
+	    generic_set_progress (id, 0);
 
         // Query for changed state of all knwon types
         // 'changed' means that they were 'installed' and 'not locked' before
@@ -856,28 +905,34 @@ global boolean FileSystemCopy (string from, string to,
                 return (one_object["status"]:`unknown == `removed);
             });
             objects_state[one_type, "remove"] = remove_resolvables;
-            Progress::NextStep();
+
+	    if (generic_set_progress != nil)
+		generic_set_progress (id, nil);
 
             list <map <string, any> > install_resolvables = filter (map <string, any> one_object, resolvable_properties, {
                 return (one_object["status"]:`unknown == `selected);
             });
             objects_state[one_type, "install"] = install_resolvables;
-            Progress::NextStep();
+
+	    if (generic_set_progress != nil)
+		generic_set_progress (id, nil);
 
             list <map <string, any> > taboo_resolvables = filter (map <string, any> one_object, resolvable_properties, {
                 return (one_object["status"]:`unknown == `available && one_object["locked"]:false == true);
             });
             objects_state[one_type, "taboo"] = taboo_resolvables;
-            Progress::NextStep();
+
+	    if (generic_set_progress != nil)
+		generic_set_progress (id, nil);
 
             list <map <string, any> > lock_resolvables = filter (map <string, any> one_object, resolvable_properties, {
                 return (one_object["status"]:`unknown == `installed && one_object["locked"]:false == true);
             });
             objects_state[one_type, "lock"] = lock_resolvables;
-            Progress::NextStep();
-        });
 
-        Progress::Finish();
+	    if (generic_set_progress != nil)
+		generic_set_progress (id, nil);
+        });
     }
 
     /**
@@ -920,15 +975,13 @@ global boolean FileSystemCopy (string from, string to,
     }
 
     global void RestoreAllChanges () {
-        Progress::Simple (
-    	    // TRANSLATORS: Dialog caption
-            _("Installation from Images"),
-            // TRANSLATORS: Dialog progress
-            _("Restoring user preferences..."),
-            4 * size (all_supported_types),
-            // TRANSLATORS: Dialog help
-            _("<p>Installaton is restoring the user preferences to install the rest of packages.</p>")
-        );
+	integer nr_steps = 4 * size (all_supported_types);
+	string id = "restoring_user_prefs";
+
+	AdjustProgressLayout (id, nr_steps, _("Restoring user preferences..."));
+
+	if (generic_set_progress != nil)
+	    generic_set_progress (id, 0);
 
         foreach (symbol one_type, all_supported_types, {
             list <map <string, any> > resolvable_properties = Pkg::ResolvableProperties ("", one_type, "");
@@ -939,7 +992,8 @@ global boolean FileSystemCopy (string from, string to,
                 return (one_resolvable["status"]:`unknown == `selected);
             });
 
-            Progress::NextStep();
+	    if (generic_set_progress != nil)
+		generic_set_progress (id, nil);
 
 	    // All packages selected to be installed
 	    // [ $[ "arch" : ... , "name" : ... , "version" : ... ], ... ]
@@ -947,7 +1001,8 @@ global boolean FileSystemCopy (string from, string to,
 		return $[ "arch":one_resolvable["arch"]:"", "name":one_resolvable["name"]:"", "version":one_resolvable["version"]:"" ];
 	    });
 
-	    Progress::NextStep();
+	    if (generic_set_progress != nil)
+		generic_set_progress (id, nil);
 
 	    // Delete all packages that are installed but should not be
 	    map <string, string> one_already_installed_resolvable = $[];
@@ -969,20 +1024,20 @@ global boolean FileSystemCopy (string from, string to,
 		}
             });
 
-            Progress::NextStep();
+	    if (generic_set_progress != nil)
+		generic_set_progress (id, nil);
 
 	    // Install all packages that aren't yet
 	    foreach (map <string, any> one_to_install, to_install, {
 		ProceedWithSelected (one_to_install, one_type);
 	    });
 
-	    Progress::NextStep();
+	    if (generic_set_progress != nil)
+		generic_set_progress (id, nil);
         });
 
 	// Free the memory
 	objects_state = $[];
-
-        Progress::Finish();
     }
 
     // <-- Storing and restoring states
