@@ -5,6 +5,7 @@ import "Progress";
 import "Wizard";
 import "SourceManager";
 import "String";
+import "PackageCallbacks";
 
 textdomain "installation";
 
@@ -14,51 +15,124 @@ if (! Installation::image_installation) {
     return `auto;
 }
 
-y2milestone ("Deploying image");
+y2milestone ("Deploying images");
 
 list<string> images = ImageInstallation::ImageOrder ();
 
 integer last_image = nil;
 
-/**
- * Set the progress
- * @param image integer the number of image
- * @param percent integer the percentage of the particular image
- */
-void SetProgress (integer image, integer percent) {
-    if (percent >= 100)
-	image = image + 1;
-
-    if (image != last_image) {
-	last_image = image;
-	if (image < size (images)) {
-	    UI::ChangeWidget (
-		`id ("deploying_progress"),
-		`Label,
-		sformat (_("Deploying Images (%1/%2)..."), (image + 1), size (images))
-	    );
-	}
-    }
-
-    UI::ChangeWidget (
-	`id ("deploying_progress"),
-	`Value,
-	image
-    );
-}
-
 integer _last_download_progress = -1;
 
+integer _current_overall_progress = 0;
+integer _last_overall_progress = -1;
+
+integer _current_subprogress_start = 0;
+integer _current_subprogress_steps = 0;
+integer _current_subprogress_total = 0;
+
+integer _current_step_in_subprogress = 0;
+
+string _previous_id = nil;
+
+void SetProgress () {
+    integer percent = 100 * _current_step_in_subprogress / _current_subprogress_total;
+    UI::ChangeWidget (`id ("one_image"), `Value, percent);
+}
+
+void OverallProgressHandler (string id, integer current_step) {
+    // new set of steps
+    if (_previous_id != id) {
+	// reset steps in subprogress
+	_current_step_in_subprogress = 0;
+
+	// new settings for new step
+	_current_subprogress_start = ImageInstallation::GetProgressLayoutDetails (id, "steps_start_at");
+	_current_subprogress_steps = ImageInstallation::GetProgressLayoutDetails (id, "steps_reserved");
+	_current_subprogress_total = ImageInstallation::GetProgressLayoutDetails (id, "steps_total");
+
+	// div by zero!
+	if (_current_subprogress_total == 0) {
+	    y2error ("steps_total=0");
+	    _current_subprogress_total = 100;
+	}
+
+	y2milestone (
+	    "New overall progress ID: %1 (steps_start_at: %2, steps_reserved: %3, steps_total: %4)",
+	    id, _current_subprogress_start, _current_subprogress_steps, _current_subprogress_total
+	);
+
+	// when deploying images, label is handled separately
+	if (id != "deploying_images") {
+	    string new_label = ImageInstallation::GetProgressLayoutLabel (id);
+	    UI::ChangeWidget (`id ("one_image"), `Label, new_label);
+	}
+
+	_previous_id = id;
+    }
+
+    // incremental
+    if (current_step == nil) {
+	_current_step_in_subprogress = _current_step_in_subprogress + 1;
+    // set to exact number
+    } else {
+	_current_step_in_subprogress = current_step;
+    }
+
+    if (id == "storing_user_prefs" || id == "restoring_user_prefs") {
+	SetProgress();
+    }
+
+    _current_overall_progress = _current_subprogress_start +
+	(_current_subprogress_steps * _current_step_in_subprogress / _current_subprogress_total);
+
+    // update UI only if nr% has changed
+    if (_current_overall_progress > _last_overall_progress) {
+	_last_overall_progress = _current_overall_progress;
+	UI::ChangeWidget (`id ("deploying_progress"), `Value, _current_overall_progress);
+    }
+}
+
+integer _steps_for_one_image = 100;
+boolean download_handler_hit = false;
+
 boolean MyProgressDownloadHandler (integer percent, integer bps_avg, integer bps_current) {
-    // FIXME: remove this line
-    y2milestone ("PerCent: %1, AVG: %2, Spd: %3", percent, bps_avg, bps_current);
+    // changing settings on the fly
+    // ... first when download handler is hit
+    if (! download_handler_hit) {
+	y2milestone ("DownloadHandler - first hit");
+	// twice more steps
+	ImageInstallation::AdjustProgressLayout ("deploying_images", (2 * _steps_for_one_image * size (images)), _("Deploying mages..."));
+	download_handler_hit = true;
+    }
+
+    map <string, any> current_image = ImageInstallation::GetCurrentImageDetails();
 
     if (_last_download_progress < percent) {
-	UI::ChangeWidget (
-	    `id ("one_image"), `Label,
-	    sformat (_("Downloading image at speed %1/s"), String::FormatSize (bps_current))
-	);
+	string current_image_name = current_image["name"]:"";
+	if (current_image_name == "") {
+	    UI::ChangeWidget (
+		`id ("one_image"), `Label,
+		sformat (_("Downloading image at speed %1/s"), String::FormatSize (bps_current))
+	    );
+	} else {
+	    UI::ChangeWidget (
+		`id ("one_image"), `Label,
+		sformat (_("Downloading image %1 at speed %2/s"), current_image_name, String::FormatSize (bps_current))
+	    );
+	}
+
 	UI::ChangeWidget (`id ("one_image"), `Value, percent);
+
+	integer current_image_nr = current_image["image_nr"]:0;
+	integer current_steps = 0;
+
+	if (download_handler_hit) {
+	    current_steps = (current_image_nr * 2 * _steps_for_one_image) + percent;
+	} else {
+	    current_steps = (current_image_nr * _steps_for_one_image) + percent;
+	}
+
+	OverallProgressHandler ("deploying_images", current_steps);
     }
 
     _last_download_progress = percent;
@@ -91,7 +165,12 @@ void SetOneImageProgress (integer current_progress) {
 
     // reset the label
     if (x_progress == 0) {
-	UI::ChangeWidget (`id ("one_image"), `Label, _("Deploying image..."));
+	string current_image_name = current_image["name"]:"";
+	if (current_image_name == "") {
+	    UI::ChangeWidget (`id ("one_image"), `Label, _("Deploying image..."));
+	} else {
+	    UI::ChangeWidget (`id ("one_image"), `Label, sformat (_("Deploying image %1..."), current_image_name));
+	}
     // one image done
     } else if (x_progress == 100) {
 	UI::ChangeWidget (`id ("one_image"), `Label, _("Image deployed"));
@@ -101,45 +180,61 @@ void SetOneImageProgress (integer current_progress) {
     if (x_progress > _last_progress) {
 	 UI::ChangeWidget (`id ("one_image"), `Value, x_progress);
 	_last_progress = x_progress;
+	integer current_image_nr = current_image["image_nr"]:0;
+	integer current_steps = 0;
+
+	if (download_handler_hit) {
+	    current_steps = ((current_image_nr * 2 + 1) * _steps_for_one_image) + x_progress;
+	} else {
+	    current_steps = (current_image_nr * _steps_for_one_image) + x_progress;
+	}
+
+	OverallProgressHandler ("deploying_images", current_steps);
     }
 }
 
 ImageInstallation::SetDeployTarImageProgress (SetOneImageProgress);
 ImageInstallation::SetDownloadTarImageProgress (MyProgressDownloadHandler);
+ImageInstallation::SetOverallDeployingProgress (OverallProgressHandler);
 
-ImageInstallation::StoreAllChanges();
-
-Pkg::TargetFinish ();
+ImageInstallation::AdjustProgressLayout ("deploying_images", (_steps_for_one_image * size (images)), _("Deploying mages..."));
 
 Wizard::SetContents (
     _("Deploying Installation Images"),
     `VBox (
 	`ProgressBar (
 	    `id ("one_image"),
-	    _("Deploying image..."),
+	    _("Initializing..."),
 	    100,
 	    0
 	),
 	`ProgressBar (
 	    `id ("deploying_progress"),
 	    _("Deploying Images..."),
-	    size(images),
+	    100,
 	    0
 	)
     ),
     "",
     false, false
 );
+
+ImageInstallation::StoreAllChanges();
+
+Pkg::TargetFinish ();
+
 Wizard::SetTitleIcon ("yast-inst-mode");
 
 SourceManager::InstInitSourceMoveDownloadArea();
 
-ImageInstallation::DeployImages (images, Installation::destdir, SetProgress);
+ImageInstallation::DeployImages (images, Installation::destdir, nil);
 
 y2milestone ("Target image for package selector prepared");
 
+PackageCallbacks::RegisterEmptyProgressCallbacks();
 Pkg::TargetInitialize (Installation::destdir);
 Pkg::TargetLoad ();
+PackageCallbacks::RestorePreviousProgressCallbacks();
 
 ImageInstallation::RestoreAllChanges();
 
