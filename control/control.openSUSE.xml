@@ -356,8 +356,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		    <enable_back>yes</enable_back>
                 </module>
 		<module>
-		    <label>Software Selection</label>
-		    <name>software_selection</name>
+		    <label>Desktop Selection</label>
+		    <name>new_desktop</name>
                 </module>
 	        <module>
 		    <label>Disk</label>
