@@ -3,14 +3,11 @@
  * Package:	yast2-installation
  * Summary:	Automatically register software repositories from content file
  * Authors:	Ladislav Slezák <lslezak@suse.cz>
+ *		Lukas Ocilka <locilka@suse.cz>
  *
  * Assumptions:
- * - the sources and target must be initialized in this script
- *   (bugzilla #263289)
  * - the sources will be saved afterwards
  *   (which means that running this client alone will not work)
- * - the added sources are disabled by default and they are added
- *   in offline mode (no metadata is dowloaded)
  *
  * $Id$
  */
@@ -23,105 +20,74 @@ import "GetInstArgs";
 import "SourceManager";
 import "Mode";
 import "PackageLock";
-
-// the tag providing location of the additional sources in content file
-string content_file_tag = "EXTRAURLS";
-string optional_tag = "OPTIONALURLS";
+import "ProductFeatures";
+// We need the constructor
+import "ProductControl";
 
 /**
- * Dowload and parse content files from current installation sources
+ * Returns list of maps of repositories to register. See bnc #381360.
+ *
  * @param registered URLs of already registered repositories (they will be ignored to not register the same repository one more)
- * @return list<string> Extra URLs to register
+ * @return list <map> of URLs to register
  */
-define list<string> GetExtraURLs(list<string> registered)
+define list <map> GetURLsToRegister (list <string> registered)
 {
-    list<string> extra_urls = [];
+    list <map> urls_from_control_file = (list <map>) ProductFeatures::GetFeature ("software", "extra_urls");
 
-    list<map> products = Pkg::ResolvableProperties("", `product, "");
-    y2milestone("Products: %1", products);
+    if (urls_from_control_file == nil) {
+	y2milestone ("Empty or errorneous software/extra_urls: %1", urls_from_control_file);
+	return [];
+    }
 
-    foreach(map product, products,
-	{
-	    // get the extra sources
-	    list<string> extra = (list<string>)product["extra_urls"]:[];
-	    list<string> optional = (list<string>)product["optional_urls"]:[];
-
-	    if (size(extra) > 0)
-	    {
-		foreach(string url, extra,
-		    {
-			// is the URL already registered?
-			if (!contains(registered, url))
-			{
-			    extra_urls = add(extra_urls, url);
-			}
-			else
-			{
-			    y2milestone("Source %1 is already registered", url);
-			}
-		    }
-		);
-	    }
-
-	    if (size(optional) > 0)
-	    {
-		foreach(string url, optional,
-		    {
-			// is the URL already registered?
-			if (!contains(registered, url))
-			{
-			    extra_urls = add(extra_urls, url);
-			}
-			else
-			{
-			    y2milestone("Source %1 is already registered", url);
-			}
-		    }
-		);
-
-	    }
+    urls_from_control_file = filter (map one_url, urls_from_control_file, {
+	if (contains (registered, one_url["baseurl"]:"")) {
+	    y2milestone ("Already registered: %1", one_url["baseurl"]:"");
+	    return false;
 	}
-    );
+	return true;
+    });
 
-    y2milestone("Extra sources: %1", extra_urls);
-    return extra_urls;
+    y2milestone ("Repositories to register: %1", urls_from_control_file);
+    return urls_from_control_file;
 }
 
 /**
  * Register the installation sources in offline mode (no network connection required).
  * The repository metadata will be downloaded by sw_single (or another yast module) when the repostory is enabled
- * @param url_list list of the sources to register
+ *
+ * @param list <map> list of the sources to register
  * @return list<integer> list of created source IDs
  */
-define list<integer> RegisterRepos(list<string> url_list)
+define list <integer> RegisterRepos (list <map> url_list)
 {
-    list<integer> ret = [];
-    y2milestone("Repositories to register: %1", url_list);
+    list <integer> ret = [];
 
-    foreach(string new_url, url_list,
-	{
-	    // map with repository parameters: $[ "enabled" : boolean,
-	    // "autorefresh" : boolean, "name" : string, "alias" : string,
-	    // "base_urls" : list<string>, "prod_dir" : string, "type" : string ]
-	    map<string,any> repo_prop = $[];
+    foreach (map new_url, url_list, {
+	    map <string,any> repo_prop = $[];
 
 	    // extra repos are disabled by default
-	    repo_prop["enabled"] = false;
-	    repo_prop["autorefresh"] = true;
-	    repo_prop["name"] = new_url;
-	    repo_prop["alias"] = new_url;
-	    repo_prop["base_urls"] = [ new_url ];
+	    repo_prop["enabled"]	= new_url["enabled"]:false;
+	    repo_prop["autorefresh"]	= new_url["autorefresh"]:true;
 
-	    integer new_repo_id = Pkg::RepositoryAdd(repo_prop);
+	    repo_prop["name"]		= new_url["baseurl"]:"";
+	    repo_prop["alias"]		= new_url["baseurl"]:"";
 
-	    if (new_repo_id >= 0)
-	    {
-		y2milestone("Registered extra repository: %1: %2", new_repo_id, repo_prop);
+	    repo_prop["base_urls"]	= [new_url["baseurl"]:""];
 
-		ret = add(ret, new_repo_id);
+	    if (haskey (new_url, "prod_dir")) {
+		repo_prop["prod_dir"]	= new_url["prod_dir"]:"/";
 	    }
-	    else
-	    {
+
+	    if (haskey (new_url, "priority")) {
+		repo_prop["priority"]	= new_url["priority"]:99;
+	    }
+
+	    integer new_repo_id = Pkg::RepositoryAdd (repo_prop);
+
+	    if (new_repo_id != nil && new_repo_id >= 0) {
+		y2milestone ("Registered extra repository: %1: %2", new_repo_id, repo_prop);
+		ret = add (ret, new_repo_id);
+	    } else {
 		y2error("Cannot register: %1", repo_prop);
 	    }
 	}
@@ -130,6 +96,11 @@ define list<integer> RegisterRepos(list<string> url_list)
     return ret;
 }
 
+/**
+ * Returns list of already registered repositories.
+ *
+ * @return list <string> of registered repositories
+ */
 list<string> RegisteredUrls()
 {
     // get all registered installation sources
@@ -192,18 +163,15 @@ if (! InitializePackager()) {
 
 list <string> already_registered = RegisteredUrls();
 
-// $[ string url : boolean default ]
-list<string> register_url = GetExtraURLs(already_registered);
+list <map> register_url = GetURLsToRegister (already_registered);
 
 // any confirmed source to register?
-if (size(register_url) > 0)
-{
+if (size (register_url) > 0) {
     // register (create) the sources
-    list<integer> added_ids = RegisterRepos(register_url);
+    list <integer> added_ids = RegisterRepos (register_url);
 
     // synchronize the sources if any source has been added
-    if (size(added_ids) > 0)
-    {
+    if (size (added_ids) > 0) {
 	y2milestone ("syncing to zmd");
 	boolean synced = SourceManager::SyncAddedAndDeleted (added_ids, []);
 	y2milestone ("sync status: %1", synced);
