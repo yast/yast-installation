@@ -204,6 +204,36 @@
 	return description;
     };
 
+    void SubmoduleHelp (map & prop_map, string & submod) {
+		if (haskey (prop_map, "help"))
+		{
+		    boolean use_this_help = false;
+		    // using tabs
+		    if (haskey (mod2tab, submod)) {
+			// visible in the current tab
+			if (mod2tab[submod]:999 == current_tab) {
+			    use_this_help = true;
+			}
+		    // not using tabs
+		    } else {
+			use_this_help = true;
+		    }
+
+		    if (use_this_help) {
+			y2milestone("Submodule '%1' has it's own help", submod);
+			string own_help = prop_map["help"]:"";
+		    
+			if (own_help == nil) {
+			    y2error ("Help text cannot be 'nil'");
+			} else if (own_help == "") {
+			    y2milestone ("Skipping empty help");
+			} else {
+			    submodule_helps[submod] = prop_map["help"]:"";
+			}
+		    }
+		}
+    }
+
 
     /**
      * Call each submodule's MakeProposal() function in turn and display the
@@ -223,6 +253,9 @@
 	have_blocker = false;
 
 	link2submod = $[];
+
+	UI::ReplaceWidget (`id ("inst_proposal_progress"), `ProgressBar (`id ("pb_ip"), "", 2 * size (submodules), 0));
+	integer submodule_nr = 0;
 
 	html = $[];
 	foreach ( string submod, submodules, ``{
@@ -258,6 +291,9 @@
         y2debug("Submodules list before execution: %1", submodules );
 	foreach ( string submod, submodules,
 	``{
+	    submodule_nr = submodule_nr + 1;
+	    UI::ChangeWidget (`id ("pb_ip"), `Value, submodule_nr);
+
 	    string prop = "";
 	    if ( ! skip_the_rest )
 	    {
@@ -276,36 +312,8 @@
                 	titles[no]:_("ERROR: Missing Title"));
         	}
 
-		prop_map = submod_make_proposal( submod, force_reset, language_changed );
-		
-		if (haskey (prop_map, "help"))
-		{
-		    boolean use_this_help = false;
-		    // using tabs
-		    if (haskey (mod2tab, submod)) {
-			// visible in the current tab
-			if (mod2tab[submod]:999 == current_tab) {
-			    use_this_help = true;
-			}
-		    // not using tabs
-		    } else {
-			use_this_help = true;
-		    }
-
-		    if (use_this_help) {
-			y2milestone("Submodule '%1' has it's own help", submod);
-			string own_help = prop_map["help"]:"";
-		    
-			if (own_help == nil) {
-			    y2error ("Help text cannot be 'nil'");
-			} else if (own_help == "") {
-			    y2milestone ("Skipping empty help");
-			} else {
-			    submodule_helps[submod] = prop_map["help"]:"";
-			}
-		    }
-		}
-
+		prop_map = submod_make_proposal (submod, force_reset, language_changed);
+		SubmoduleHelp (prop_map, submod);
 
 		// check if it is needed to switch to another tab
 		// because of an error
@@ -368,6 +376,9 @@
 	    {
 		skip_the_rest = true;
 	    }
+
+	    submodule_nr = submodule_nr + 1;
+	    UI::ChangeWidget (`id ("pb_ip"), `Value, submodule_nr);
 	});
 
 	// FATE #301151: Allow YaST proposals to have help texts
@@ -398,6 +409,7 @@
 
 	// now do the display-only proposals
 
+	UI::ReplaceWidget (`id ("inst_proposal_progress"), `Empty());
 	Wizard::EnableNextButton ();
 	UI::NormalCursor();
     };
@@ -542,38 +554,6 @@
 	Wizard::RetranslateButtons();
 	get_submod_descriptions_and_build_menu();
     };
-
-
-    /**
-     * Load a list of submodules. Try loading it from a file named 'file_name'
-     * from one of several predefined directories. If there is no such list,
-     * use 'fallback_list'.
-     *
-     * @param  file_name	YCP file name to load from
-     * @param  fallback_list	fallback list of submodule names (strings)
-     * @return submodules_list	list of submodule names (strings)
-     **/
-
-    /* OBSOLETE CODE
-    define list load_submodules_list( string file_name, list fallback_list ) ``{
-
-	list submodules = (list) SCR::Read(.target.ycp, [ file_name, [] ] );
-
-	if ( submodules == [] )
-	{
-	    submodules = (list) SCR::Read(.target.yast2, [ file_name, [] ] );
-	}
-
-	if ( submodules == [] )
-	{
-	    submodules = fallback_list;
-	}
-
-	return submodules;
-    };
-
-    */
-
 
     /**
      * Load a list of submodules matching the current internal states
@@ -735,7 +715,7 @@
 			       );
 
 	/* change menu */
-	term menu_box =
+	term menu_box = `VBox (
 	    `HBox (
 		   `HStretch (),
 		   `ReplacePoint(`id(`rep_menu),
@@ -743,7 +723,9 @@
 				 `MenuButton(`id(`menu_dummy), _("&Change..."), [`item(`id(`dummy), "" ) ] )
 				 ),
 		   `HStretch ()
-		   );
+	    ),
+	    `ReplacePoint (`id ("inst_proposal_progress"), `Empty())
+	);
 
 	term vbox = nil;
 

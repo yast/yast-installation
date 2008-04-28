@@ -227,7 +227,11 @@ Wizard::SetTitleIcon ("yast-inst-mode");
 
 SourceManager::InstInitSourceMoveDownloadArea();
 
-ImageInstallation::DeployImages (images, Installation::destdir, nil);
+boolean dep_ret = ImageInstallation::DeployImages (images, Installation::destdir, nil);
+if (dep_ret == nil) {
+    y2milestone ("Aborting...");
+    return `abort;
+}
 
 y2milestone ("Target image for package selector prepared");
 

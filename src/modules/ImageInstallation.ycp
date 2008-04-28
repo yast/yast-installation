@@ -24,6 +24,7 @@ import "Report";
 import "String";
 import "Arch";
 import "PackageCallbacks";
+import "Popup";
 
 textdomain "installation";
 
@@ -234,6 +235,9 @@ boolean DeployTarImage (string id, string target) {
     // Otherwise it will never make 100%
     integer better_feeling_constant = _checkpoint;
 
+    any ret = nil;
+    boolean aborted = false;
+
     while (SCR::Read (.process.running, pid) == true) {
 	newline = (string) SCR::Read (.process.read_line_stderr, pid);
 
@@ -251,11 +255,22 @@ boolean DeployTarImage (string id, string target) {
 	    if (tar_image_progress != nil)
 		tar_image_progress (tointeger (newline) + better_feeling_constant);
 	} else {
-	    // FIXME: UI::PollInput
-	    sleep (200);
+	    ret = UI::PollInput();
+	    if (ret == `abort || ret == `cancel) {
+		if (Popup::ConfirmAbort (`unusable)) {
+		    y2warning ("Aborted!");
+		    aborted = true;
+		    break;
+		}
+	    } else {
+		sleep (200);
+	    }
 	}
     }
     y2milestone ("Finished");
+
+    if (aborted)
+	return nil;
 
     // adjust labels etc.
     if (tar_image_progress != nil)
@@ -513,15 +528,26 @@ global boolean DeployImages (list<string> images, string target, void(integer,in
 
     integer num = -1;
     _current_image_from_imageset = -1;
+    boolean aborted = nil;
 
     foreach (string img, images, {
 	num = num + 1;
 	if (progress != nil)
 	    progress (num, 0);
-	DeployImage (img, target);
+
+	if (DeployImage (img, target) == nil) {
+	    aborted = true;
+	    y2milestone ("Aborting...");
+	    break;
+	}
+
 	if (progress != nil)
 	    progress (num, 100);
     });
+
+    if (aborted) {
+	return nil;
+    }
 
     // unregister downloading progress
     if (download_image_progress != nil)
