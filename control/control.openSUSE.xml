@@ -67,29 +67,33 @@ textdomain="control"
 	    <!-- Default update repository, bnc #381360 -->
 	    <extra_url>
 		<baseurl>http://download.opensuse.org/update/11.0/</baseurl>
-		<path>/</path>
+		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
+		<priority config:type="integer">120</priority>
 	    </extra_url>
 
 	    <!-- Replacement for EXTRAURLS and OPTIONALURLS -->
 	    <extra_url>
 		<baseurl>http://download.opensuse.org/distribution/SL-OSS-factory/inst-source/</baseurl>
-		<path>/</path>
+		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">false</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
+		<priority config:type="integer">20</priority>
 	    </extra_url>
 	    <extra_url>
 		<baseurl>http://download.opensuse.org/distribution/SL-Factory-non-oss/inst-source-extra/</baseurl>
-		<path>/</path>
+		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">false</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
+		<priority config:type="integer">20</priority>
 	    </extra_url>
 	    <extra_url>
 		<baseurl>http://download.opensuse.org/distribution/SL-OSS-factory-debug/inst-source-debug/</baseurl>
-		<path>/</path>
+		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">false</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
+		<priority config:type="integer">20</priority>
 	    </extra_url>
 	</extra_urls>
     </software>

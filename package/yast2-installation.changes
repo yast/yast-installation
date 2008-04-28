@@ -5,6 +5,7 @@ Mon Apr 28 11:42:21 CEST 2008 - locilka@suse.cz
   (bnc #381821).
 - Optional and extra URLs moved to control file as well as default
   update repository (bnc #381360).
+- 2.16.41
 
 -------------------------------------------------------------------
 Fri Apr 25 18:15:09 CEST 2008 - locilka@suse.cz
