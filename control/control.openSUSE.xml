@@ -209,6 +209,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <proposal_module>bootloader</proposal_module>
                 <proposal_module>keyboard</proposal_module>
                 <proposal_module>timezone</proposal_module>
+                <proposal_module>runlevel</proposal_module>
             </proposal_modules>
         </proposal>
 
