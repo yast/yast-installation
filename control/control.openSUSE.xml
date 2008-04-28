@@ -62,6 +62,36 @@ textdomain="control"
 
 	<!-- FATE #300898, List of external sources accesible during the installation time -->
 	<external_sources_link>http://download.opensuse.org/YaST/Repos/openSUSE_110_Servers.xml</external_sources_link>
+
+	<extra_urls config:type="list">
+	    <!-- Default update repository, bnc #381360 -->
+	    <extra_url>
+		<baseurl>http://download.opensuse.org/update/11.0/</baseurl>
+		<path>/</path>
+		<enabled config:type="boolean">true</enabled>
+		<autorefresh config:type="boolean">true</autorefresh>
+	    </extra_url>
+
+	    <!-- Replacement for EXTRAURLS and OPTIONALURLS -->
+	    <extra_url>
+		<baseurl>http://download.opensuse.org/distribution/SL-OSS-factory/inst-source/</baseurl>
+		<path>/</path>
+		<enabled config:type="boolean">false</enabled>
+		<autorefresh config:type="boolean">true</autorefresh>
+	    </extra_url>
+	    <extra_url>
+		<baseurl>http://download.opensuse.org/distribution/SL-Factory-non-oss/inst-source-extra/</baseurl>
+		<path>/</path>
+		<enabled config:type="boolean">false</enabled>
+		<autorefresh config:type="boolean">true</autorefresh>
+	    </extra_url>
+	    <extra_url>
+		<baseurl>http://download.opensuse.org/distribution/SL-OSS-factory-debug/inst-source-debug/</baseurl>
+		<path>/</path>
+		<enabled config:type="boolean">false</enabled>
+		<autorefresh config:type="boolean">true</autorefresh>
+	    </extra_url>
+	</extra_urls>
     </software>
 
     <partitioning>
