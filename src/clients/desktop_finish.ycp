@@ -71,35 +71,32 @@ else if (func == "Write")
 	map <string,map <string, any> > desktop_data = $[
 	    "gnome" : $[
 		"package" : ["gdm"],
-		"wm" : "gnome",
-		"dm" : "gdm",
-		"cursor" : "DMZ",
 	    ],
 	    "kde" : $[
 		"package" : ["kde4-kdm"],
-		"wm" : "kde",
-		"dm" : "kdm",
-		"cursor" : "DMZ",
 	    ],
 	    "kde3" : $[
 		"package" : ["kdebase3-kdm"],
-		"wm" : "kde",
-		"dm" : "kdm",
-		"cursor" : "DMZ",
+
+	    ],
+	    "xfce" : $[
+		"package" : ["xfce"],
+
 	    ],
 	    "twm" : $[
 		"package" : ["xorg-x11"],
-		"wm" : "",
-		"dm" : "xdm",
-		"cursor" : "DMZ",
 	    ],
 	];
 
-	string default_wm = "gnome";
-	string default_dm = "gdm";
-	string default_cursor = "DMZ";
+	map dd_map = DefaultDesktop::GetAllDesktopsMap ();
 
-	string selected_desktop = DefaultDesktop::Desktop ();
+	string selected_desktop = DefaultDesktop::Desktop();
+	if (selected_desktop == nil || selected_desktop == "")
+	    selected_desktop = "gnome";
+
+	string default_dm	= dd_map[selected_desktop, "logon"]:"";
+	string default_wm	= dd_map[selected_desktop, "desktop"]:"";
+	string default_cursor	= dd_map[selected_desktop, "cursor"]:"";
 
 	    list <string> selected_desktops = DefaultDesktop::SelectedDesktops();
 
@@ -133,11 +130,14 @@ else if (func == "Write")
 		    if (Pkg::IsProvided (package) && (Pkg::PkgInstalled (package) || Pkg::IsSelected (package))) {
 			y2milestone ("package %1 selected or installed", package);
 			desktop_found = true;
-			default_dm = desktop_data[d, "dm"]:"";
+
+			default_dm = dd_map[d, "logon"]:"";
 			y2milestone ("Setting logon manager %1 - package selected", default_dm);
-			default_wm = desktop_data[d, "wm"]:"";
+
+			default_wm = dd_map[d, "desktop"]:"";
 			y2milestone ("Setting window manager %1 - package selected", default_wm);
-			default_cursor = desktop_data[d, "cursor"]:default_cursor;
+
+			default_cursor = dd_map[d, "cursor"]:default_cursor;
 			y2milestone ("Setting cursor theme %1 - package selected", default_cursor);
 		    }
 		    

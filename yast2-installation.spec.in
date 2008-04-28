@@ -25,7 +25,8 @@ Requires:	yast2-bootloader
 Requires:	yast2-country-data >= 2.16.11
 
 # DefaultDesktop::SelectedDesktops
-Requires:	yast2-packager >= 2.16.37
+# ... + newly added data into desktops map
+Requires:	yast2-packager >= 2.16.41
 
 # Only in inst-sys
 # Requires:	yast2-runlevel
