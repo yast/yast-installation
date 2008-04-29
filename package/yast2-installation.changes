@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Apr 29 12:59:49 CEST 2008 - locilka@suse.cz
+
+- Disabling Progress when calling inst_finish scripts.
+
+-------------------------------------------------------------------
 Mon Apr 28 11:42:21 CEST 2008 - locilka@suse.cz
 
 - Handling KDE3 vs KDE4 in default logon and window managers

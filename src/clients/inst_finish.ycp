@@ -190,7 +190,9 @@ stages = maplist (map<string,any> stage, stages, {
 	y2milestone ("Calling inst_finish script: %1 (Info)", s);
 // TODO: check if client exists
 // client doesn't need to exist on purpose
+	boolean orig = Progress::set (false);
 	map info = (map)WFM::CallFunction (s, ["Info"]);
+	Progress::set (orig);
 
 	if (info == nil) {
 	    y2error ("Client %1 returned invalid data", s);
@@ -257,7 +259,11 @@ foreach (map<string,any> stage, stages, {
 	}
 	if (haskey (step, "title"))
 	    Progress::Title (step["title"]:"");
+
+	boolean orig = Progress::set (false);
 	WFM::CallFunction (step["client"]:"", ["Write"]);
+	Progress::set (orig);
+
 	if (UI::PollInput () == `abort && Popup::ConfirmAbort (`incomplete))
 	{
 	    aborted = true;
