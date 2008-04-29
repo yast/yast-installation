@@ -23,6 +23,7 @@ import "PackageLock";
 import "ProductFeatures";
 // We need the constructor
 import "ProductControl";
+import "Installation";
 
 /**
  * Returns list of maps of repositories to register. See bnc #381360.
@@ -137,7 +138,7 @@ boolean InitializePackager () {
     Pkg::SourceStartManager (false);
 
     // to initialize target because of installed products
-    return (Pkg::TargetInit ("/", false) == true);
+    return (Pkg::TargetInit (Installation::destdir, false) == true);
 }
 
 
