@@ -140,8 +140,15 @@ to do detect your videocard properly...
 	current_sub_step = current_sub_step + 1;
 	current_step = current_step + 1;
 
-	UI::ChangeWidget (`id ("one_set_progress"), `Value, current_sub_step);
-	UI::ChangeWidget (`id ("autoconf_progress"), `Value, current_step);
+	if (UI::WidgetExists (`id ("one_set_progress")))
+	    UI::ChangeWidget (`id ("one_set_progress"), `Value, current_sub_step);
+	else
+	    y2error ("Widget one_set_progress doesn't exist");
+
+	if (UI::WidgetExists (`id ("autoconf_progress")))
+	    UI::ChangeWidget (`id ("autoconf_progress"), `Value, current_step);
+	else
+	    y2error ("Widget autoconf_progress doesn't exist");
     }
 
     void DummyFunction () {
@@ -251,18 +258,28 @@ to do detect your videocard properly...
     foreach (map one_autoconf_call, proposal_scripts_to_call, {
 	string type = one_autoconf_call["type"]:"";
 
+	integer nr_of_steps = ((one_autoconf_call["type"]:"" == "proposals" ? 2:1) * size (one_autoconf_call["items"]:[]));
+	string label = one_autoconf_call["label"]:_("Automatic configuration...");
+
+	y2milestone ("Steps: %1, Label: %2", nr_of_steps, label);
+
 	// reset the faster prgress
 	current_sub_step = 0;
-	UI::ReplaceWidget (`id ("rp_one_set_progress"),
-	    `ProgressBar (
-		`id ("one_set_progress"),
-		one_autoconf_call["label"]:_("Automatic configuration..."),
-		((one_autoconf_call["type"]:"" == "proposals" ? 2:1) * size (one_autoconf_call["items"]:[])),
-		0
-	    )
-	);
-	y2milestone ("Steps: %1", ((one_autoconf_call["type"]:"" == "proposals" ? 2:1) * size (one_autoconf_call["items"]:[])));
-	y2milestone ("Label: %1", one_autoconf_call["label"]:_("Automatic configuration..."));
+	if (UI::WidgetExists (`id ("rp_one_set_progress"))) {
+	    UI::ReplaceWidget (`id ("rp_one_set_progress"),
+		`ProgressBar (
+		    `id ("one_set_progress"),
+		    label,
+		    nr_of_steps,
+		    0
+		)
+	    );
+	} else {
+	    y2error ("Widget rp_one_set_progress doesn't exist! Cannot provide useful progress...");
+	    y2warning ("---------------------- UI DUMP ----------------------");
+	    UI::DumpWidgetTree();
+	    y2warning ("---------------------- UI DUMP ----------------------");
+	}
 
 	switch (type) {
 	    case "scripts":
