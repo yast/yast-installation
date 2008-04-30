@@ -95,7 +95,7 @@ textdomain="control"
 	    <extra_url>
 		<baseurl>http://download.opensuse.org/distribution/SL-OSS-factory-debug/inst-source-debug/</baseurl>
                 <alias>factory-debug</alias>
-                <name>Main Repository (Debug)<name>
+                <name>Main Repository (Debug)</name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">false</enabled>
 		<autorefresh config:type="boolean">false</autorefresh>
