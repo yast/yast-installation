@@ -64,14 +64,22 @@ define list <integer> RegisterRepos (list <map> url_list)
     list <integer> ret = [];
 
     foreach (map new_url, url_list, {
+	    if (new_url["baseurl"]:"" == nil || new_url["baseurl"]:"" == "") {
+		y2error ("Cannot use repository: %1, no 'baseurl' defined", new_url);
+		return;
+	    }
+
 	    map <string,any> repo_prop = $[];
 
 	    // extra repos are disabled by default
 	    repo_prop["enabled"]	= new_url["enabled"]:false;
 	    repo_prop["autorefresh"]	= new_url["autorefresh"]:true;
 
-	    repo_prop["name"]		= new_url["baseurl"]:"";
-	    repo_prop["alias"]		= new_url["baseurl"]:"";
+	    // repository name (try) name, alias, (fallback) baseurl
+	    repo_prop["name"]		= new_url["name"]:new_url["alias"]:new_url["baseurl"]:"";
+
+	    // repository alias (trye)
+	    repo_prop["alias"]		= new_url["alias"]:new_url["baseurl"]:"";
 
 	    repo_prop["base_urls"]	= [new_url["baseurl"]:""];
 
@@ -80,7 +88,7 @@ define list <integer> RegisterRepos (list <map> url_list)
 	    }
 
 	    if (haskey (new_url, "priority")) {
-		repo_prop["priority"]	= new_url["priority"]:99;
+		repo_prop["priority"]	= tointeger (new_url["priority"]:99);
 	    }
 
 	    integer new_repo_id = Pkg::RepositoryAdd (repo_prop);
