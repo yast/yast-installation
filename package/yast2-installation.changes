@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Apr 30 12:07:45 CEST 2008 - locilka@suse.cz
+
+- Adding name and alias tags to extrasources (irc #yast/today).
+- 2.16.43
+
+-------------------------------------------------------------------
 Wed Apr 30 10:24:19 CEST 2008 - locilka@suse.cz
 
 - Making automatic installation more robust (bnc #384972).
