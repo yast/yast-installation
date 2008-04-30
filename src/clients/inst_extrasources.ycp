@@ -78,7 +78,7 @@ define list <integer> RegisterRepos (list <map> url_list)
 	    // repository name (try) name, alias, (fallback) baseurl
 	    repo_prop["name"]		= new_url["name"]:new_url["alias"]:new_url["baseurl"]:"";
 
-	    // repository alias (trye)
+	    // repository alias (try) alias, (fallback) baseurl
 	    repo_prop["alias"]		= new_url["alias"]:new_url["baseurl"]:"";
 
 	    repo_prop["base_urls"]	= [new_url["baseurl"]:""];
