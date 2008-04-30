@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Apr 30 10:24:19 CEST 2008 - locilka@suse.cz
+
+- Making automatic installation more robust (bnc #384972).
+- 2.16.42
+
+-------------------------------------------------------------------
 Tue Apr 29 12:59:49 CEST 2008 - locilka@suse.cz
 
 - Disabling Progress when calling inst_finish scripts.
