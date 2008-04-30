@@ -67,6 +67,8 @@ textdomain="control"
 	    <!-- Default update repository, bnc #381360 -->
 	    <extra_url>
 		<baseurl>http://download.opensuse.org/update/11.0/</baseurl>
+                <name>Updates for 11.0</name>
+                <alias>updates</alias>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
