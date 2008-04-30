@@ -76,6 +76,7 @@ textdomain="control"
 	    <!-- Replacement for EXTRAURLS and OPTIONALURLS -->
 	    <extra_url>
 		<baseurl>http://download.opensuse.org/distribution/SL-OSS-factory/inst-source/</baseurl>
+                <name>Main Repository (OSS)</name>
                 <alias>factory</alias>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
@@ -85,6 +86,7 @@ textdomain="control"
 	    <extra_url>
 		<baseurl>http://download.opensuse.org/distribution/SL-Factory-non-oss/inst-source-extra/</baseurl>
                 <alias>factory-non-oss</alias>
+                <name>Main Repository (NON-OSS)</name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">false</autorefresh>
@@ -93,6 +95,7 @@ textdomain="control"
 	    <extra_url>
 		<baseurl>http://download.opensuse.org/distribution/SL-OSS-factory-debug/inst-source-debug/</baseurl>
                 <alias>factory-debug</alias>
+                <name>Main Repository (Debug)<name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">false</enabled>
 		<autorefresh config:type="boolean">false</autorefresh>
