@@ -76,23 +76,26 @@ textdomain="control"
 	    <!-- Replacement for EXTRAURLS and OPTIONALURLS -->
 	    <extra_url>
 		<baseurl>http://download.opensuse.org/distribution/SL-OSS-factory/inst-source/</baseurl>
+                <alias>factory</alias>
 		<prod_dir>/</prod_dir>
-		<enabled config:type="boolean">false</enabled>
-		<autorefresh config:type="boolean">true</autorefresh>
+		<enabled config:type="boolean">true</enabled>
+		<autorefresh config:type="boolean">false</autorefresh>
 		<priority config:type="integer">20</priority>
 	    </extra_url>
 	    <extra_url>
 		<baseurl>http://download.opensuse.org/distribution/SL-Factory-non-oss/inst-source-extra/</baseurl>
+                <alias>factory-non-oss</alias>
 		<prod_dir>/</prod_dir>
-		<enabled config:type="boolean">false</enabled>
-		<autorefresh config:type="boolean">true</autorefresh>
+		<enabled config:type="boolean">true</enabled>
+		<autorefresh config:type="boolean">false</autorefresh>
 		<priority config:type="integer">20</priority>
 	    </extra_url>
 	    <extra_url>
 		<baseurl>http://download.opensuse.org/distribution/SL-OSS-factory-debug/inst-source-debug/</baseurl>
+                <alias>factory-debug</alias>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">false</enabled>
-		<autorefresh config:type="boolean">true</autorefresh>
+		<autorefresh config:type="boolean">false</autorefresh>
 		<priority config:type="integer">20</priority>
 	    </extra_url>
 	</extra_urls>
