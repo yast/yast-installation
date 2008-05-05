@@ -101,7 +101,7 @@ boolean MyProgressDownloadHandler (integer percent, integer bps_avg, integer bps
     if (! download_handler_hit) {
 	y2milestone ("DownloadHandler - first hit");
 	// twice more steps
-	ImageInstallation::AdjustProgressLayout ("deploying_images", (2 * _steps_for_one_image * size (images)), _("Deploying mages..."));
+	ImageInstallation::AdjustProgressLayout ("deploying_images", (2 * _steps_for_one_image * size (images)), _("Deploying Images..."));
 	download_handler_hit = true;
     }
 
@@ -197,7 +197,7 @@ ImageInstallation::SetDeployTarImageProgress (SetOneImageProgress);
 ImageInstallation::SetDownloadTarImageProgress (MyProgressDownloadHandler);
 ImageInstallation::SetOverallDeployingProgress (OverallProgressHandler);
 
-ImageInstallation::AdjustProgressLayout ("deploying_images", (_steps_for_one_image * size (images)), _("Deploying mages..."));
+ImageInstallation::AdjustProgressLayout ("deploying_images", (_steps_for_one_image * size (images)), _("Deploying Images..."));
 
 Wizard::SetContents (
     _("Deploying Installation Images"),
