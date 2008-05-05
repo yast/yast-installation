@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri May  2 22:27:21 CEST 2008 - mzugec@suse.cz
+
+- don't stop network (by kill dhcpcd) at the end of 1.st stage 
+(bnc#386588)
+
+-------------------------------------------------------------------
 Mon May  5 13:26:27 CEST 2008 - locilka@suse.cz
 
 - Typofix (bnc #386606).

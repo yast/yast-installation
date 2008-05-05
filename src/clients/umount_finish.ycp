@@ -120,10 +120,12 @@ else if (func == "Write")
 
     // all dhcpcd clients are shut down
     // - this should release /var/run/ directory
+   // don't stop network, not necessairly when unmount with "-l" option (bnc#386588)
+/*
     if (umountLength > 0) {
 	Internet::ShutdownAllLocalDHCPClients();
     }
-
+*/
     while (umountLength > 0)
     {
         umountLength = umountLength - 1;
