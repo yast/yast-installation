@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon May  5 13:26:27 CEST 2008 - locilka@suse.cz
+
+- Typofix (bnc #386606).
+
+-------------------------------------------------------------------
 Wed Apr 30 12:07:45 CEST 2008 - locilka@suse.cz
 
 - Adding name and alias tags to extrasources (irc #yast/today).
