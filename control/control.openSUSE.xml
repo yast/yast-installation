@@ -828,7 +828,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	<!-- Stage: Continue, Mode: Installation -->
         <workflow>
             <stage>continue</stage>
-            <mode>installation,live_installation</mode>
+            <mode>installation</mode>
             <defaults>
                 <enable_back>yes</enable_back>
                 <enable_next>yes</enable_next>
@@ -945,6 +945,34 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
             </modules>
         </workflow>
+
+	<!-- Stage: Continue, Mode: Live Installation -->
+        <workflow>
+            <stage>continue</stage>
+            <mode>live_installation</mode>
+            <defaults>
+                <enable_back>yes</enable_back>
+                <enable_next>yes</enable_next>
+                <archs>all</archs>
+            </defaults>
+            <modules  config:type="list">
+		<module>
+		    <heading>yes</heading>
+		    <label>Configuration</label>
+		</module>
+		<module>
+		    <label>Automatic Configuration</label>
+		    <name>automatic_configuration</name>
+		    <enable_back>no</enable_back>
+		    <enable_next>no</enable_next>
+		</module>
+                <module>
+		    <label>Automatic Configuration</label>
+                    <name>live_cleanup</name>
+                    <enable_back>no</enable_back>
+                </module>
+	    </modules>
+	</workflow>
 
 	<!-- Stage: Initial, Mode: AutoInstallation -->
         <workflow>
