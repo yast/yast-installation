@@ -64,7 +64,7 @@ textdomain="control"
 	<external_sources_link>http://download.opensuse.org/YaST/Repos/openSUSE_110_Servers.xml</external_sources_link>
 
 	<!-- Dropped packages, bnc #300540 -->
-	<dropped_packages>gcc42 liboldlib kernel-default</dropped_packages>
+	<dropped_packages>ant-jai art-sharp asterisk asterisk-alsa asterisk-capi asterisk-spandsp asterisk-zaptel avmailgate cpp41 cpp42 dockutils gcc41 gcc41-c++ gcc41-gij gcc41-java gcc41-objc gcc41-obj-c++ gcc42 gcc42-32bit gcc42-c++ gcc42-fortran gcc42-fortran-32bit gcc42-gij gcc42-info gcc42-java gcc42-objc gcc42-objc-32bit gconf-sharp gecko-sharp glade-sharp glib-sharp gnome-sharp gtk-sharp gtk-sharp-complete gtk-sharp-gapi ipw3945d jai java-1_4_2-cacao java-1_4_2-cacao-devel libexiv2 libgcc41 libgcj41 libgcj41-devel libgcj42 libgcj42-devel libgfortran42 libgfortran42-32bit libgmime-2_0-2 libgpod2 libkdcraw1 libkexiv2 libMagick10 libmudflap41 libpri libqtpod libsoprano3 libstdc++41 libstdc++41-devel libstdc++42-devel libWand10 libzypp-zmd-backend limal-bootloader ncurses rsaref rug samba-pdb smartlink-softmodem sqlite-zmd tomcat5 tomcat55 tomcat55-common-lib tomcat55-jasper tomcat55-jsp-2_0-api tomcat55-server-lib tomcat55-servlet-2_4-api vte-sharp wlan-kmp-xen yast2-bluetooth yast2-bootfloppy yast2-power-management yast2-powertweak zaptel zaptel-kmp-default zen-updater zmd</dropped_packages>
 
 	<extra_urls config:type="list">
 	    <!-- Default update repository, bnc #381360 -->
