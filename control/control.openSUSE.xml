@@ -63,6 +63,9 @@ textdomain="control"
 	<!-- FATE #300898, List of external sources accesible during the installation time -->
 	<external_sources_link>http://download.opensuse.org/YaST/Repos/openSUSE_110_Servers.xml</external_sources_link>
 
+	<!-- Dropped packages, bnc #300540 -->
+	<dropped_packages>gcc42 liboldlib kernel-default</dropped_packages>
+
 	<extra_urls config:type="list">
 	    <!-- Default update repository, bnc #381360 -->
 	    <extra_url>
