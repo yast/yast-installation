@@ -72,7 +72,7 @@
 
 		counter = counter + 1;
 
-		// bugzilla #300901
+		// bnc #300901
 		boolean enabled = nil;
 
 		if (is (xmlcontent["source","enabled","value"]:nil, boolean)) {
@@ -298,7 +298,7 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	if (new_urls != nil && new_urls != []) {
 	    foreach (map one_url_map, new_urls, {
 
-		// bugzilla #300901
+		// bnc #300901
 		boolean enabled = nil;
 
 		// mapping url (zypp-based) keys to keys used in pkg-bindings
@@ -310,7 +310,21 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 		    enabled = one_url_map["enabled"]:false;
 		}
 
+		// bnc #387261
+		boolean autorefresh = true;
+
+		// mapping url (zypp-based) keys to keys used in pkg-bindings
+		if (is (one_url_map["autorefresh"]:0, integer)) {
+		    autorefresh = (one_url_map["autorefresh"]:0 == 1);
+		} else if (is (one_url_map["autorefresh"]:"0", string)) {
+		    autorefresh = (one_url_map["autorefresh"]:"0" == "1");
+		} else if (is (one_url_map["autorefresh"]:false, boolean)) {
+		    autorefresh = one_url_map["autorefresh"]:false;
+		}
+
 		map <string, any> new_url_map = $[
+		    "autorefresh" : autorefresh,
+		    "alias" : one_url_map["id"]:one_url_map["baseurl"]:"",
 		    "url" : one_url_map["baseurl"]:nil,
 		    "name" : (one_url_map["name"]:"" == "" ? one_url_map["id"]:"" : one_url_map["name"]:""),
 		    "enabled" : enabled,
@@ -468,7 +482,7 @@ Configure it?"),
 	Wizard::SetTitleIcon ("yast-sw_source");
     }
 
-    // See bugzilla #309317
+    // See bnc #309317
     string GetUniqueAlias (string alias_orig) {
         if (alias_orig == nil) alias_orig = "";
 
@@ -496,11 +510,45 @@ Configure it?"),
         return alias;
     }
 
+    string GetOriginalAlias (string url) {
+	if (url == nil || url == "") {
+	    y2error ("Undefined URL: %1", url);
+	    return url;
+	}
+
+	foreach (map one_url, urls, {
+	    if (one_url["url"]:"" == url) {
+		url = one_url["alias"]:url;
+		break;
+	    }
+	});
+
+	return url;
+    }
+
+    boolean GetOriginalAutorefresh (string url) {
+	boolean ret = true;
+
+	if (url == nil || url == "") {
+	    y2error ("Undefined URL: %1", url);
+	    return ret;
+	}
+
+	foreach (map one_url, urls, {
+	    if (one_url["url"]:"" == url) {
+		ret = one_url["autorefresh"]:true;
+		break;
+	    }
+	});
+
+	return ret;
+    }
+
     symbol AddOrRemoveSources () {
 	list <integer> sources_to_remove = [];
 	list <string>  sources_to_add    = [];
 
-	// bugzilla #308763
+	// bnc #308763
 	list <string> sources_to_add_disabled = [];
 
 	foreach (map one_source, urls, {
@@ -561,7 +609,7 @@ Configure it?"),
 		if (repo_name == nil) repo_name = "";
 		string pth = "/";
 
-		// see bugzilla #310209
+		// see bnc #310209
 		// Adding repositories with their correct names
 		map <string, any> repoadd = $[
 		    "enabled" : false,
@@ -569,8 +617,13 @@ Configure it?"),
 		    "base_urls" : [one_url],
 		    "prod_dir" : pth,
 		    // alias needs to be unique
-		    // bugzilla #309317
-		    "alias" : GetUniqueAlias (one_url),
+		    // bnc #309317
+		    //
+		    // alias is taken from the system first
+		    // bnc #387261
+		    //
+		    "alias" : GetUniqueAlias (GetOriginalAlias (one_url)),
+		    "autorefresh" : GetOriginalAutorefresh (one_url),
 		    "type" : repo_type,
 		];
 		y2milestone ("Adding repo (enabled): %1", repoadd);
@@ -627,7 +680,7 @@ URL: %2"),
 	}
 
 	// Adding the rest of sources in a disabled state
-	// bugzilla #326342
+	// bnc #326342
 	if (size (sources_to_add_disabled) > 0) {
 	    y2milestone ("Adding DISABLED repos: %1", sources_to_add_disabled);
 
@@ -637,7 +690,7 @@ URL: %2"),
 		if (repo_name == nil) repo_name = "";
 		string pth = "/";
 
-		// see bugzilla #310209
+		// see bnc #310209
 		// Adding repositories with their correct names
 		map <string, any> repoadd = $[
 		    "enabled" : false,
@@ -645,8 +698,13 @@ URL: %2"),
 		    "base_urls" : [one_url],
 		    "prod_dir" : pth,
 		    // alias needs to be unique
-		    // bugzilla #309317
-		    "alias" : GetUniqueAlias (one_url),
+		    // bnc #309317
+		    //
+		    // alias is taken from the system first
+		    // bnc #387261
+		    //
+		    "alias" : GetUniqueAlias (GetOriginalAlias (one_url)),
+		    "autorefresh" : GetOriginalAutorefresh (one_url),
 		];
 
 		// do not probe! adding as disabled!
