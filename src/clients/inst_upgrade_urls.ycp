@@ -220,10 +220,8 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	return ret;
     }
 
-    // FIXME: collision when two different products with two different name
-    //        use the very same URL (fix in 11.0)
-    string FindURLName (string baseurl) {
-	if (baseurl == "" || baseurl == nil) {
+    string FindURLName (string id) {
+	if (id == "" || id == nil) {
 	    y2error ("Base URL not defined!");
 	    return nil;
 	}
@@ -231,7 +229,7 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	string ret = nil;
 
 	foreach (map one_url, urls, {
-	    if (baseurl == one_url["url"]:"-A-" && one_url["name"]:"" != "") {
+	    if (id == one_url["id"]:"-A-" && one_url["name"]:"" != "") {
 		ret = one_url["name"]:"";
 		break;
 	    }
@@ -240,8 +238,8 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	return ret;
     }
 
-    string FindURLType (string baseurl) {
-	if (baseurl == "" || baseurl == nil) {
+    string FindURLType (string id) {
+	if (id == "" || id == nil) {
 	    y2error ("Base URL not defined!");
 	    return "";
 	}
@@ -249,7 +247,7 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	string ret = "";
 
 	foreach (map one_url, urls, {
-	    if (baseurl == one_url["url"]:"-A-" && one_url["type"]:"" != "") {
+	    if (id == one_url["id"]:"-A-" && one_url["type"]:"" != "") {
 		ret = one_url["type"]:"";
 		break;
 	    }
@@ -322,13 +320,29 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 		    autorefresh = one_url_map["autorefresh"]:false;
 		}
 
+		boolean keeppackages = true;
+
+		// mapping url (zypp-based) keys to keys used in pkg-bindings
+		if (is (one_url_map["keeppackages"]:0, integer)) {
+		    keeppackages = (one_url_map["keeppackages"]:0 == 1);
+		} else if (is (one_url_map["keeppackages"]:"0", string)) {
+		    keeppackages = (one_url_map["keeppackages"]:"0" == "1");
+		} else if (is (one_url_map["keeppackages"]:false, boolean)) {
+		    keeppackages = one_url_map["keeppackages"]:false;
+		}
+
 		map <string, any> new_url_map = $[
 		    "autorefresh" : autorefresh,
 		    "alias" : one_url_map["id"]:one_url_map["baseurl"]:"",
 		    "url" : one_url_map["baseurl"]:nil,
 		    "name" : (one_url_map["name"]:"" == "" ? one_url_map["id"]:"" : one_url_map["name"]:""),
 		    "enabled" : enabled,
+		    "keeppackages" : keeppackages,
 		];
+
+		if (haskey (one_url_map, "priority")) {
+		    new_url_map["priority"] = one_url_map["priority"]:99;
+		}
 
 		// store the repo-type as well
 		if (one_url_map["type"]:"" != "") {
@@ -338,12 +352,15 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 		urls = add (urls, new_url_map);
 	    });
 	// Fallback, old URLs found
-	// 10.1, 10.2, 10.3 ...
+	// ... 10.1, 10.2
 	} else if (old_urls != nil && old_urls != []) {
 	    urls = old_urls;
 	}
 
 	urls = maplist (map one_url, urls, {
+	    // unique ID
+	    one_url["id"] = one_url["id"]:one_url["url"]:"";
+
 	    one_url["url_will_be_enabled"] = FindCurrentURLStatus (tostring (one_url["url"]:""));
 	    one_url["initial_url_status"]  = one_url["url_will_be_enabled"]:false;
 	    return one_url;
@@ -510,55 +527,58 @@ Configure it?"),
         return alias;
     }
 
-    string GetOriginalAlias (string url) {
-	if (url == nil || url == "") {
-	    y2error ("Undefined URL: %1", url);
-	    return url;
+    void AdjustRepoSettings (map & new_repo, string id) {
+	if (id == nil || id == "") {
+	    y2error ("Undefined ID: %1", id);
+	    return;
 	}
 
 	foreach (map one_url, urls, {
-	    if (one_url["url"]:"" == url) {
-		url = one_url["alias"]:url;
+	    if (one_url["id"]:"" == id) {
+		y2milestone ("Matching: %1", one_url);
+
+		// alias needs to be unique
+		// bnc #309317
+		//
+		// alias is taken from the system first
+		// bnc #387261
+		//
+		new_repo["alias"] = GetUniqueAlias (one_url["alias"]:"");
+
+		foreach (string key, ["autorefresh", "gpgcheck", "keeppackages"], {
+		    if (haskey (one_url, key))
+			new_repo[key] = one_url[key]:true;
+		});
+
+		if (haskey (one_url, "priority"))
+		    new_repo["priority"] = one_url["priority"]:99;
+
 		break;
 	    }
 	});
-
-	return url;
-    }
-
-    boolean GetOriginalAutorefresh (string url) {
-	boolean ret = true;
-
-	if (url == nil || url == "") {
-	    y2error ("Undefined URL: %1", url);
-	    return ret;
-	}
-
-	foreach (map one_url, urls, {
-	    if (one_url["url"]:"" == url) {
-		ret = one_url["autorefresh"]:true;
-		break;
-	    }
-	});
-
-	return ret;
     }
 
     symbol AddOrRemoveSources () {
 	list <integer> sources_to_remove = [];
 	list <string>  sources_to_add    = [];
 
+	map <string, string> id_to_url = $[];
+
 	// bnc #308763
 	list <string> sources_to_add_disabled = [];
 
 	foreach (map one_source, urls, {
 	    string url = one_source["url"]:"";
+	    string id = one_source["id"]:"";
+
+	    id_to_url[id] = url;
+
 	    integer current_medianr = FindURLMediaNr (url);
 
 	    // Source should be enabled at the end
 	    if (one_source["url_will_be_enabled"]:nil == true) {
 		if (current_medianr == nil) {
-		    sources_to_add = add (sources_to_add, url);
+		    sources_to_add = add (sources_to_add, id);
 		}
 
 	    // Source should be disabled at the end
@@ -569,7 +589,7 @@ Configure it?"),
 		}
 
 		// will be added
-		sources_to_add_disabled = add (sources_to_add_disabled, url);
+		sources_to_add_disabled = add (sources_to_add_disabled, id);
 	    }
 	});
 
@@ -595,7 +615,9 @@ Configure it?"),
 	if ((size (sources_to_add) > 0) && NetworkRunning()) {
 	    y2milestone ("Adding ENABLED repos: %1", sources_to_add);
 
-	    foreach (string one_url, sources_to_add, {
+	    foreach (string one_id, sources_to_add, {
+		string one_url = id_to_url[one_id]:"";
+
 		string repo_type = Pkg::RepositoryProbe (one_url, "/");
 		y2milestone ("Probed repository: %1 type: %2", one_url, repo_type);
 		
@@ -616,16 +638,9 @@ Configure it?"),
 		    "name" : repo_name,
 		    "base_urls" : [one_url],
 		    "prod_dir" : pth,
-		    // alias needs to be unique
-		    // bnc #309317
-		    //
-		    // alias is taken from the system first
-		    // bnc #387261
-		    //
-		    "alias" : GetUniqueAlias (GetOriginalAlias (one_url)),
-		    "autorefresh" : GetOriginalAutorefresh (one_url),
 		    "type" : repo_type,
 		];
+		AdjustRepoSettings (repoadd, one_id);
 		y2milestone ("Adding repo (enabled): %1", repoadd);
 
 		integer new_id = Pkg::RepositoryAdd (repoadd);
@@ -684,7 +699,9 @@ URL: %2"),
 	if (size (sources_to_add_disabled) > 0) {
 	    y2milestone ("Adding DISABLED repos: %1", sources_to_add_disabled);
 
-	    foreach (string one_url, sources_to_add_disabled, {
+	    foreach (string one_id, sources_to_add_disabled, {
+		string one_url = id_to_url[one_id]:"";
+
 		string repo_name = FindURLName (one_url);
 		// fallback
 		if (repo_name == nil) repo_name = "";
@@ -697,15 +714,8 @@ URL: %2"),
 		    "name" : repo_name,
 		    "base_urls" : [one_url],
 		    "prod_dir" : pth,
-		    // alias needs to be unique
-		    // bnc #309317
-		    //
-		    // alias is taken from the system first
-		    // bnc #387261
-		    //
-		    "alias" : GetUniqueAlias (GetOriginalAlias (one_url)),
-		    "autorefresh" : GetOriginalAutorefresh (one_url),
 		];
+		AdjustRepoSettings (repoadd, one_id);
 
 		// do not probe! adding as disabled!
 		string repo_type = FindURLType (one_url);
