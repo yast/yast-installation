@@ -5,6 +5,7 @@ Tue May  6 17:37:22 CEST 2008 - locilka@suse.cz
   'autorefresh' and 'alias' (bnc #387261).
 - Added software->dropped_packages into the control file to replace
   'delete old packages' (bnc #300540).
+- 2.16.44
 
 -------------------------------------------------------------------
 Fri May  2 22:27:21 CEST 2008 - mzugec@suse.cz
