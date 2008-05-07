@@ -8,15 +8,15 @@ Tue May  6 17:37:22 CEST 2008 - locilka@suse.cz
 - 2.16.44
 
 -------------------------------------------------------------------
+Mon May  5 13:26:27 CEST 2008 - locilka@suse.cz
+
+- Typofix (bnc #386606).
+
+-------------------------------------------------------------------
 Fri May  2 22:27:21 CEST 2008 - mzugec@suse.cz
 
 - Don't stop network (by killing dhcpcd) at the end of 1.st stage 
   (bnc #386588)
-
--------------------------------------------------------------------
-Mon May  5 13:26:27 CEST 2008 - locilka@suse.cz
-
-- Typofix (bnc #386606).
 
 -------------------------------------------------------------------
 Wed Apr 30 12:07:45 CEST 2008 - locilka@suse.cz
