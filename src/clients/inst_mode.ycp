@@ -249,7 +249,7 @@ symbol new_mode = Mode::update () ? `update : `install;
 
 string umount_result = Linuxrc::InstallInf ("umount_result");
 string media = Linuxrc::InstallInf ("InstMode");
-y2milestone ("Umont result: %1, inst mode: %2", umount_result, media);
+y2milestone ("Umount result: %1, inst mode: %2", umount_result, media);
 
 other_options_disabled = false;
 
