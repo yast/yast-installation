@@ -970,10 +970,19 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		    <enable_next>no</enable_next>
 		</module>
                 <module>
-		    <label>Automatic Configuration</label>
+	            <label>Users</label>
+                    <name>auth</name>
+                </module>
+                <module>
+	            <label>Users</label>
+                    <name>user</name>
+                </module>
+                <module>
+		    <label>Users</label>
                     <name>live_cleanup</name>
                     <enable_back>no</enable_back>
                 </module>
+
 	    </modules>
 	</workflow>
 
