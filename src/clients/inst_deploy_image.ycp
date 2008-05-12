@@ -215,7 +215,20 @@ Wizard::SetContents (
 	    0
 	)
     ),
-    "",
+    // TRANSLATORS: help idi#1
+    _("<p>Please wait, while system images are just being deployed...</p>") +
+
+    // TRANSLATORS: help idi#2
+    _("<p>Installation images are part of the installation media.</p>") +
+
+    // TRANSLATORS: help idi#3
+    _("<p>Installation from images is faster than installation from RPM packages
+because it does not need to handle with with RPM database, locks etc.
+One of the images also contains the joint RPM database and other metadata.</p>") +
+
+    // TRANSLATORS: help idi#4
+    _("<p>If there is no direct access to installation images,
+installation program has to download them first before they are deployed.</p>"),
     false, false
 );
 
