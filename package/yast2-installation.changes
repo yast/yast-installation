@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon May 12 15:10:50 CEST 2008 - locilka@suse.cz
+
+- Added help to "Image Deployment" (bnc #388665).
+
+-------------------------------------------------------------------
 Tue May  6 17:37:22 CEST 2008 - locilka@suse.cz
 
 - When reusing the old repositories during upgrade, copying also
