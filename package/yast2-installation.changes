@@ -3,7 +3,7 @@ Wed May 14 15:22:50 CEST 2008 - kmachalkova@suse.cz
 
 - inst_hostname client added to automatic configuration scripts -
   needed to generate random hostname and 127.0.0.2 line in 
-  /etc/hosts (#383336)
+  /etc/hosts (bnc#383336)
 
 -------------------------------------------------------------------
 Wed May 14 14:29:21 CEST 2008 - jsrain@suse.cz
