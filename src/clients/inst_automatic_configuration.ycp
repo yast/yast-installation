@@ -41,10 +41,14 @@
 // (at least the list of modules in proposals)
     list <map <string, any> > proposal_scripts_to_call = [
 	// probably needed
+	// Adding inst_hostname client here, needed to generate random
+	// hostname in automatic config (and for 127.0.0.2 hack) (#383336)
+	// Must be called before inst_netprobe however, it cannot override it
+	// later on
 	$[
 	    "label":_("Initialization..."),
 	    "type":"scripts",
-	    "items":["initialization", "netprobe", "rpmcopy_secondstage"]
+	    "items":["initialization", "hostname", "netprobe", "rpmcopy_secondstage"]
 	],
 
 	// network proposal
