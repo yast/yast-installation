@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed May 14 14:29:21 CEST 2008 - jsrain@suse.cz
+
+- use process agent instead of background agent when installing
+  live image (bnc #384960)
+- 2.16.45
+
+-------------------------------------------------------------------
 Mon May 12 15:10:50 CEST 2008 - locilka@suse.cz
 
 - Added help to "Image Deployment" (bnc #388665).
