@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu May 15 13:13:13 CEST 2008 - locilka@suse.cz
+
+- Changed dialog content for starting the installation (bnc #390614)
+
+-------------------------------------------------------------------
 Thu May 15 10:32:09 CEST 2008 - jsuchome@suse.cz
 
 - sort keyboard list according to translated items (bnc#390610)
