@@ -1,19 +1,23 @@
 -------------------------------------------------------------------
 Thu May 15 13:13:13 CEST 2008 - locilka@suse.cz
 
-- Changed dialog content for starting the installation (bnc #390614)
+- Changed dialog content for starting the installation
+  (bnc #390614).
+- Fixed sorting of repositories offered during upgrade to sort by
+  repository name (bnc #390612).
+- 2.16.46
 
 -------------------------------------------------------------------
 Thu May 15 10:32:09 CEST 2008 - jsuchome@suse.cz
 
-- sort keyboard list according to translated items (bnc#390610)
+- sort keyboard list according to translated items (bnc #390610)
 
 -------------------------------------------------------------------
 Wed May 14 15:22:50 CEST 2008 - kmachalkova@suse.cz
 
 - inst_hostname client added to automatic configuration scripts -
   needed to generate random hostname and 127.0.0.2 line in 
-  /etc/hosts (bnc#383336)
+  /etc/hosts (bnc #383336)
 
 -------------------------------------------------------------------
 Wed May 14 14:29:21 CEST 2008 - jsrain@suse.cz

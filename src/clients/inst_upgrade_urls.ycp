@@ -116,7 +116,7 @@
 you are upgrading:"))),
 		`Table (
 		    `id ("table_of_repos"),
-		    `opt (`notify),
+		    `opt (`notify, `keepSorting),
 		    `header (
 			// TRANSLATORS: Table header item
 			_("Current Status"),
@@ -172,6 +172,9 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 		one_url["url"]:""
 	    );
 	});
+
+	// bnc #390612
+	items = sort (term a, term b, items, ``(a[2]:"" < b[2]:""));
 
 	UI::ChangeWidget (`id ("table_of_repos"), `Items, items);
 
