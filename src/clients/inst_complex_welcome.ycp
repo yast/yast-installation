@@ -71,10 +71,7 @@
 	`opt (`notify, `hstretch),
 	// combo box label
 	_("&Keyboard Layout"),
-	// all keyboard layouts should be available
-	maplist (string id, string label, Keyboard::Selection (),
-	    ``(`item (`id (id), label))
-	)
+	Keyboard::GetKeyboardItems ()
     );
 
 
@@ -219,7 +216,6 @@ installation process any time.
 	    // Set it in the Language module.
 	    Language::Set (language);
 	}
-
 	// Check and set CJK languages
 	if (Stage::initial () || Stage::firstboot ()) {
 	    if (ret == `language &&
