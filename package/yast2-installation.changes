@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri May 16 16:40:22 CEST 2008 - jsrain@suse.cz
+
+- added categories Settings and System into desktop file
+  (bnc #382778)
+
+-------------------------------------------------------------------
 Thu May 15 13:13:13 CEST 2008 - locilka@suse.cz
 
 - Changed dialog content for starting the installation
