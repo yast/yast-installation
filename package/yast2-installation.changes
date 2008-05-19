@@ -8,6 +8,7 @@ Mon May 19 09:29:15 CEST 2008 - locilka@suse.cz
   dialog (bnc #385257).
 - Adding FACTORY repositories with priority 120, update source with
   priority 20 (bnc #392039).
+- 2.16.47
 
 -------------------------------------------------------------------
 Fri May 16 16:40:22 CEST 2008 - jsrain@suse.cz
