@@ -117,17 +117,25 @@
     );
 
     term AllLicensesDialog () {
-	return `MinHeight ((text_mode ? 20 : 25), `VBox (
-	    `Left (`HBox (
-		Icon::Simple ("yast-license"),
-		// TRANSLATORS: dialog caption
-		`Heading (_("License Agreement"))
-	    )),
-	    `VSpacing (text_mode ? 0.1 : 0.5),
-	    `HSpacing (60),
-	    `ReplacePoint (`id (`full_screen_license_rp), `Empty()),
-	    `PushButton (`id (`close), Label::OKButton())
-	));
+	// As long as possible
+	// bnc #385257
+	return `HBox (
+	    `VSpacing (text_mode ? 21 : 25),
+	    `VBox (
+		`Left (`HBox (
+		    Icon::Simple ("yast-license"),
+		    // TRANSLATORS: dialog caption
+		    `Heading (_("License Agreement"))
+		)),
+		`VSpacing (text_mode ? 0.1 : 0.5),
+		`HSpacing (82),
+		`HBox (
+		    `VStretch (),
+		    `ReplacePoint (`id (`full_screen_license_rp), `opt (`vstretch), `Empty())
+		),
+		`PushButton (`id (`close), Label::OKButton())
+	    )
+	);
     }
 
     // help text for initial (first time) language screen
