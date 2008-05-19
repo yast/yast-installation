@@ -52,6 +52,10 @@
     // this variable enables a check box in dialog
     global boolean enable_autoconfiguration = false;
 
+    // file that forces suseconfig run on boot
+    // bnc #390930
+    global string suseconfig_hookfile =  Directory::vardir + "/run_suseconfig";
+
     // <-- other
 
 /* EOF */
