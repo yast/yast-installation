@@ -2,7 +2,7 @@
  * File:	clients/installation_settings_finish.ycp
  * Package:	Installation
  * Summary:	Installation - save settings (used later in second stage, or ...).
- *		See bnc #364066.
+ *		See bnc #364066, #390930.
  * Authors:	Lukas Ocilka <locilka@suse.cz>
  *
  * $Id:$
@@ -14,6 +14,7 @@
 
     import "ProductControl";
     import "InstData";
+    import "Mode";
 
     any ret = nil;
     string func = "";
@@ -58,6 +59,16 @@
 
 	if ((boolean) SCR::Write (.target.ycp, InstData::wizardsteps_disabled_proposals, ProductControl::GetDisabledProposals()) != true) {
 	    y2error ("Cannot write disabled proposals");
+	}
+
+	// bnc #390930
+	// Since there is no second stage during upgrade, SuSEConfig has to be run
+	// by hooks
+	if (Mode::update()) {
+	    y2milestone ("Creating hook-file %1", InstData::suseconfig_hookfile);
+	    if ((boolean) SCR::Write (.target.string, InstData::suseconfig_hookfile, "")) {
+		y2error ("Cannot write suseconfig hook-file");
+	    }
 	}
 
 	y2milestone ("Anyway, successful");

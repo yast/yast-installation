@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon May 19 09:29:15 CEST 2008 - locilka@suse.cz
+
+- Creating SuSEConfig hook file at installation_settings_finish
+  in case of update. The file has to be created to force the
+  SuSEConfig run on first boot (bnc #390930).
+
+-------------------------------------------------------------------
 Fri May 16 16:40:22 CEST 2008 - jsrain@suse.cz
 
 - added categories Settings and System into desktop file
