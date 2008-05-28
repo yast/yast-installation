@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed May 28 16:23:22 CEST 2008 - ug@suse.de
+
+- timeout in case of hardware probing problems 
+  when autoyast is in use (especially for harddisk Reports)
+
+-------------------------------------------------------------------
 Mon May 19 09:29:15 CEST 2008 - locilka@suse.cz
 
 - Creating SuSEConfig hook file at installation_settings_finish
