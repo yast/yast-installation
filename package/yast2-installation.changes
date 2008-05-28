@@ -3,6 +3,8 @@ Wed May 28 16:23:22 CEST 2008 - ug@suse.de
 
 - timeout in case of hardware probing problems 
   when autoyast is in use (especially for harddisk Reports)
+  bnc#395099
+- 2.16.48
 
 -------------------------------------------------------------------
 Mon May 19 09:29:15 CEST 2008 - locilka@suse.cz
