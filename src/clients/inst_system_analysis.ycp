@@ -198,52 +198,6 @@ Aborting the installation."));
 
     // <-- Function definitions
 
-
-
-map display_info = UI::GetDisplayInfo();
-boolean in_textmode = display_info["TextMode"]:false;
-
-string GenerateIconID (any icon_whatever) {
-    return sformat ("icon_%1", tostring (icon_whatever));
-}
-
-/**
- * Function creates term containing radio button and icon
- * based on current display (graphical/textual)
- *
- * @param string radio button label
- * @param symbol radio button id
- * @param string path to an image
- * @boolean whether selected (more than one buttons selected don't make sense!)
- */
- term CreateRadioButtonTerm (string button_label, symbol button_id, string icon_file, boolean selected) {
-    return `HBox (
-	(in_textmode ?
-	    `Empty()
-	    :
-	    `HWeight (
-		1,
-		(icon_file == "" ?
-		    `Empty()
-		    :
-		    `Image (`id (GenerateIconID (button_id)), icon_file, "")
-		)
-	    )
-	),
-	`HWeight(
-	    5,
-	    `Left (`RadioButton (
-		`id (button_id),
-		`opt(`notify),
-		button_label,
-		selected
-	    ))
-	)
-    );
-}
-
-
-
 Wizard::SetContents (_("Analyzing the Computer"), `Empty (), "", false, false);
 Wizard::SetTitleIcon ("yast-controller");
 
