@@ -21,8 +21,11 @@
     textdomain "installation";
 
     if (GetInstArgs::going_back()) {
-	y2milestone ("Going back, nothing to do here...");
-	return `auto;
+	// bnc #395098
+	// There is no reason to go back as AC is non-interactive
+	// and additionally there is nothing before AC to run
+	y2milestone ("Returning `next, no reason to go back");
+	return `next;
     }
 
     boolean test_mode = false;
