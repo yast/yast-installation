@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Jun  2 12:33:57 CEST 2008 - locilka@suse.cz
+
+- Return `next when going back to the automatic configuration
+  dialog instead of returning `auto that would finish YaST and
+  never start it again (bnc #395098).
+- 2.16.49
+
+-------------------------------------------------------------------
 Wed May 28 16:23:22 CEST 2008 - ug@suse.de
 
 - timeout in case of hardware probing problems 
