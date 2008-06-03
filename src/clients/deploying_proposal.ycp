@@ -72,7 +72,6 @@
 	}
 
 	if (Mode::installation()) {
-	    y2error ("FIXME: HELP!");
 	    ret = $[
 		"preformatted_proposal" : GenerateProposalText(),
 		"links" : [ im_do_enable, im_do_disable ],
