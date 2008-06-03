@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jun  3 15:11:15 CEST 2008 - locilka@suse.cz
+
+- Always use --numeric-owner (always use numbers for user/group
+  names) when deploying images (bnc #396689).
+- 2.16.50
+
+-------------------------------------------------------------------
 Mon Jun  2 12:33:57 CEST 2008 - locilka@suse.cz
 
 - Return `next when going back to the automatic configuration
