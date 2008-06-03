@@ -108,6 +108,17 @@
 	    string partition_device = (string) partition["device"]:"";
 	    y2milestone("Mounting %1 to %2", partition_device, mnt_tmpdir);
 
+	    string already_mounted = sformat ("grep '[\\t ]%1[\\t ]' /proc/mounts", mnt_tmpdir);
+	    integer am_exit = (integer) SCR::Execute (.target.bash, already_mounted);
+
+	    if (am_exit != 0) {
+		y2warning ("%1 is already mounted, trying to umount...", mnt_tmpdir);
+		integer umount = (integer) SCR::Execute (.target.umount, mnt_tmpdir);
+		if (umount != 0) {
+		    y2error ("Cannot umount %1", mnt_tmpdir);
+		}
+	    }
+
 	    // mounting read-only
 	    if (! (boolean) SCR::Execute(.target.mount, [partition_device, mnt_tmpdir], "-o ro")) {
 		y2error("Mounting falied!");
