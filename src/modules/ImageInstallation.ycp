@@ -214,13 +214,13 @@ boolean DeployTarImage (string id, string target) {
     // lzma
     if (regexpmatch (image, "\.lzma$")) {
 	cmd = sformat (
-	    "lzmadec < '%1' | tar --totals --checkpoint=%3 --record-size=%4 -C '%2' -xf -",
+	    "lzmadec < '%1' | tar --numeric-owner --totals --checkpoint=%3 --record-size=%4 -C '%2' -xf -",
 	    String::Quote (image), String::Quote (target), _checkpoint, _record_size
 	);
     // bzip2, gzip
     } else {
 	cmd = sformat (
-	    "tar --checkpoint=%3 --record-size=%4 --totals -C '%2' -xf '%1'",
+	    "tar --numeric-owner --checkpoint=%3 --record-size=%4 --totals -C '%2' -xf '%1'",
 	    String::Quote (image), String::Quote (target), _checkpoint, _record_size
 	);
     }
@@ -791,10 +791,10 @@ global boolean FileSystemCopy (string from, string to,
     cmd = sformat (
 	"mkfifo %3 ;
 	 mkfifo %4 ;
-	 tar -C %1 -cSf %3 --one-file-system . &
+	 tar -C %1 --numeric-owner -cSf %3 --one-file-system . &
 	 dd bs=1048576 if=%3 of=%4 >&2 &
 	 jobs -l >&2;
-	 tar -C %2 -xSf %4",
+	 tar -C %2 --numeric-owner -xSf %4",
 	from, to, tmp_pipe1, tmp_pipe2);
     y2milestone ("Executing %1", cmd);
     integer process = (integer)SCR::Execute(.process.start_shell, cmd, $[]);
