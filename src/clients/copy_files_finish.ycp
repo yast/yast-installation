@@ -177,10 +177,21 @@ else if (func == "Write")
 	SCR::Execute (.target.remove, eula_txt);
     }
 
-    // Copy info.txt so it can be used in firstboot (new eula.txt)
-    if (FileUtils::Exists ("/info.txt"))
-    {
-	SCR::Execute (.target.bash, sformat("/bin/cp /info.txt %1", eula_txt));
+    string license_dir = sformat ("%1%2/license/", Installation::destdir, Directory::etcdir);
+    string license_file = "/license.tar.gz";
+    // Copy licenses so it can be used in firstboot later
+    // bnc #396976
+    map cmd = (map) WFM::Execute (.target.bash_output,
+	sformat (
+	    "mkdir -p '%1' && cd '%1' && rm -rf license*.txt; tar -xf '%2'",
+	    String::Quote (license_dir),
+	    String::Quote (license_file)
+	)
+    );
+    if (cmd["exit"]:-1 == 0) {
+	y2milestone ("Copying %1 to %2 was successful", license_file, license_dir);
+    } else {
+	y2error ("Copying %1 to %2 has failed: %3", license_file, license_dir, cmd);
     }
 
     // bugzila #328126
