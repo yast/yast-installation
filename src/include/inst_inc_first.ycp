@@ -26,11 +26,13 @@
     include "installation/misc.ycp";
 
     void InitMouse () {
-        if (!Arch::s390 () || Arch::board_iseries ()) {
-            // in another client because of dependencies
-            // used in inst-sys only
-            WFM::CallFunction ("inst_init_mouse", []);
-        }
+// disabled
+// bnc #395426
+//        if (!Arch::s390 () || Arch::board_iseries ()) {
+//            // in another client because of dependencies
+//            // used in inst-sys only
+//            WFM::CallFunction ("inst_init_mouse", []);
+//        }
     }
 
     /**
