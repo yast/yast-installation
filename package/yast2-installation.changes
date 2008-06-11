@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jun 11 15:59:06 CEST 2008 - locilka@suse.cz
+
+- Lslezak's patch for AddOnProducts to open up pattern selector
+  intead of search mode (bnc #377154).
+
+-------------------------------------------------------------------
 Mon Apr 21 15:32:49 CEST 2008 - locilka@suse.cz
 
 - Calling also 'xset m 1' (bnc #376945).

@@ -960,9 +960,39 @@ global boolean AcceptedLicenseAndInfoFile (integer src_id) {
     return true;
 }
 
+boolean AnyPatternInRepo()
+{
+    list<map> patterns = Pkg::ResolvableProperties("", `pattern, "");
+
+    y2internal("Total number of patterns: %1", size(patterns));
+
+    patterns = filter(map pat, patterns,
+	{
+	    return (pat["source"]:nil == src_id);
+	}
+    );
+
+    y2milestone("Found %1 add-on patterns", size(patterns));
+    y2debug("Found add-on patterns: %1", patterns);
+
+    return size(patterns) > 0;
+}
+
 symbol DoInstall_NoControlFile () {
-    y2milestone("File /installation.xml not found, running sw_single for this source");
-    WFM::CallFunction ("sw_single", []);
+    y2milestone("File /installation.xml not found, running sw_single for this repository");
+
+    // display pattern the dialog when there is a pattern provided by the addon
+    // otherwise use search mode
+    symbol mode = AnyPatternInRepo() ? `patternSelector : `searchMode;
+
+    map args = $[ "dialog_type" : mode, "ask_again" : false ];
+    y2internal("Arguments for sw_single: %1", args);
+
+    any ret = WFM::CallFunction ("sw_single", [args]);
+    y2milestone("sw_single returned: %1", ret);
+
+    if (ret == `abort || ret == `cancel || ret == `close)
+	return `abort;
 
     return `register;
 }
@@ -1203,7 +1233,9 @@ global symbol DoInstall() {
 	ret = DoInstall_WithControlFile (control);
     }
 
-    if (ret != nil) {
+    y2milestone("Result of the add-on installation: %1", ret);
+
+    if (ret != nil && ret != `abort) {
 	// registers Add-On product if requested
 	RegisterAddOnProduct (src_id);
     }
