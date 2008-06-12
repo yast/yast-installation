@@ -15,6 +15,7 @@
     import "Popup";
     import "AddOnProduct";
     import "Report";
+    import "PackageCallbacks";
 
     textdomain "installation";
 
@@ -502,6 +503,45 @@ Configure it?"),
 	Wizard::SetTitleIcon ("yast-sw_source");
     }
 
+    void SetAddRemoveSourcesProgress (
+	list <integer> & sources_to_remove, list <string> & sources_to_add,
+	list <string> & sources_to_add_disabled
+    ) {
+	list <string> actions_todo  = [];
+	list <string> actions_doing = [];
+
+	integer steps_nr = 0;
+
+	if (size (sources_to_remove) > 0) {
+	    actions_todo	= add (actions_todo,  _("Remove unused repositories"));
+	    actions_doing	= add (actions_doing, _("Removing unused repositories..."));
+	    steps_nr		= steps_nr + size (sources_to_remove);
+	}
+
+	if (size (sources_to_add) > 0) {
+	    actions_todo	= add (actions_todo,  _("Add enabled repositories"));
+	    actions_doing	= add (actions_doing, _("Adding enabled repositories..."));
+	    steps_nr		= steps_nr + size (sources_to_add);
+	}
+
+	if (size (sources_to_add_disabled) > 0) {
+	    actions_todo	= add (actions_todo,  _("Add disabled repositories"));
+	    actions_doing	= add (actions_doing, _("Adding disabled repositories..."));
+	    steps_nr		= steps_nr + size (sources_to_add_disabled);
+	}
+
+	Progress::New (
+	    // TRANSLATORS: dialog caption
+	    _("Previously Used Repositories"),
+	    _("Adding and removing repositories..."),
+	    steps_nr,
+	    actions_todo,
+	    actions_doing,
+	    // TRANSLATORS: help text
+	    _("<p>Please wait while repositories are being added and removed.</p>")
+	);
+    }
+
     // See bnc #309317
     string GetUniqueAlias (string alias_orig) {
         if (alias_orig == nil) alias_orig = "";
@@ -561,47 +601,20 @@ Configure it?"),
 	});
     }
 
-    symbol AddOrRemoveSources () {
-	list <integer> sources_to_remove = [];
-	list <string>  sources_to_add    = [];
-
-	map <string, string> id_to_url = $[];
-
-	// bnc #308763
-	list <string> sources_to_add_disabled = [];
-
-	foreach (map one_source, urls, {
-	    string url = one_source["url"]:"";
-	    string id = one_source["id"]:"";
-
-	    id_to_url[id] = url;
-
-	    integer current_medianr = FindURLMediaNr (url);
-
-	    // Source should be enabled at the end
-	    if (one_source["url_will_be_enabled"]:nil == true) {
-		if (current_medianr == nil) {
-		    sources_to_add = add (sources_to_add, id);
-		}
-
-	    // Source should be disabled at the end
-	    } else if (one_source["url_will_be_enabled"]:nil == false) {
-		// already registered
-		if (current_medianr != nil) {
-		    sources_to_remove = add (sources_to_remove, current_medianr);
-		}
-
-		// will be added
-		sources_to_add_disabled = add (sources_to_add_disabled, id);
-	    }
-	});
-
-	if (size(sources_to_remove) > 0 || size (sources_to_add) > 0) {
-	    SetAddRemoveSourcesUI();
+    void IUU_RemoveRepositories (list <integer> sources_to_remove) {
+	if (size (sources_to_remove) == 0) {
+	    return;
 	}
+
+	Progress::Title (_("Removing unused repositories..."));
+	Progress::NextStage ();
 
 	y2milestone ("Deleting repos: %1", sources_to_remove);
 	foreach (integer one_id, sources_to_remove, {
+y2milestone ("Removing repository: %1", one_id);
+sleep (3200);
+
+	    Progress::NextStep ();
 	    Pkg::SourceDelete (one_id);
 
 	     AddOnProduct::add_on_products = (list <map <string, any> >) filter (
@@ -611,14 +624,24 @@ Configure it?"),
 	    );
 	     
 	});
+    }
 
-	// Remote repositories need network
+    void IUU_AddEnabledRepositories (list <string> sources_to_add, map <string, string> & id_to_url) {
+	if (size (sources_to_add) == 0) {
+	    return;
+	}
+
+	Progress::Title (_("Adding enabled repositories..."));
+	Progress::NextStage ();
+
 	// Adding sources in a disabled state, then enable them
 	// for the system upgrade
-	if ((size (sources_to_add) > 0) && NetworkRunning()) {
-	    y2milestone ("Adding ENABLED repos: %1", sources_to_add);
+y2milestone ("Adding ENABLED repos: %1", sources_to_add);
+sleep (3200);
 
 	    foreach (string one_id, sources_to_add, {
+		y2milestone ("Adding repository: %1", one_id);
+		Progress::NextStep ();
 		string one_url = id_to_url[one_id]:"";
 
 		string repo_type = Pkg::RepositoryProbe (one_url, "/");
@@ -695,14 +718,24 @@ URL: %2"),
 		    ]);
 		}
 	    });
+    }
+
+    void IUU_AddDisabledRepositories (list <string> sources_to_add_disabled, map <string, string> & id_to_url) {
+	if (size (sources_to_add_disabled) == 0) {
+	    return;
 	}
+
+	Progress::Title (_("Adding disabled repositories..."));
+	Progress::NextStage ();
 
 	// Adding the rest of sources in a disabled state
 	// bnc #326342
-	if (size (sources_to_add_disabled) > 0) {
 	    y2milestone ("Adding DISABLED repos: %1", sources_to_add_disabled);
 
 	    foreach (string one_id, sources_to_add_disabled, {
+y2milestone ("Adding repository (D): %1", one_id);
+sleep (3200);
+		Progress::NextStep ();
 		string one_url = id_to_url[one_id]:"";
 
 		string repo_name = FindURLName (one_url);
@@ -730,7 +763,67 @@ URL: %2"),
 
 		integer new_id = Pkg::RepositoryAdd (repoadd);
 	    });
+    }
+
+    symbol AddOrRemoveSources () {
+	list <integer> sources_to_remove = [];
+	list <string>  sources_to_add    = [];
+
+	map <string, string> id_to_url = $[];
+
+	// bnc #308763
+	list <string> sources_to_add_disabled = [];
+
+	foreach (map one_source, urls, {
+	    string url = one_source["url"]:"";
+	    string id = one_source["id"]:"";
+
+	    id_to_url[id] = url;
+
+	    integer current_medianr = FindURLMediaNr (url);
+
+	    // Source should be enabled at the end
+	    if (one_source["url_will_be_enabled"]:nil == true) {
+		if (current_medianr == nil) {
+		    sources_to_add = add (sources_to_add, id);
+		}
+
+	    // Source should be disabled at the end
+	    } else if (one_source["url_will_be_enabled"]:nil == false) {
+		// already registered
+		if (current_medianr != nil) {
+		    sources_to_remove = add (sources_to_remove, current_medianr);
+		}
+
+		// will be added
+		sources_to_add_disabled = add (sources_to_add_disabled, id);
+	    }
+	});
+
+	if (size(sources_to_remove) > 0 || size (sources_to_add) > 0) {
+	    SetAddRemoveSourcesUI();
 	}
+
+	// Remote repositories need network
+	if ((size (sources_to_add) > 0) && ! NetworkRunning()) {
+	    y2warning ("Network is not running, sources will be added in DISABLED state");
+	    sources_to_add_disabled = (list <string>) union (sources_to_add_disabled, sources_to_add);
+	    sources_to_add = [];
+	}
+
+	SetAddRemoveSourcesProgress (sources_to_remove, sources_to_add, sources_to_add_disabled);
+
+	PackageCallbacks::RegisterEmptyProgressCallbacks();
+
+	IUU_RemoveRepositories (sources_to_remove);
+
+	IUU_AddEnabledRepositories (sources_to_add, id_to_url);
+
+	IUU_AddDisabledRepositories (sources_to_add_disabled, id_to_url);
+
+	Progress::Finish();
+
+	PackageCallbacks::RestorePreviousProgressCallbacks();
 
 	return `next;
     }
