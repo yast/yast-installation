@@ -611,9 +611,6 @@ Configure it?"),
 
 	y2milestone ("Deleting repos: %1", sources_to_remove);
 	foreach (integer one_id, sources_to_remove, {
-y2milestone ("Removing repository: %1", one_id);
-sleep (3200);
-
 	    Progress::NextStep ();
 	    Pkg::SourceDelete (one_id);
 
@@ -636,9 +633,6 @@ sleep (3200);
 
 	// Adding sources in a disabled state, then enable them
 	// for the system upgrade
-y2milestone ("Adding ENABLED repos: %1", sources_to_add);
-sleep (3200);
-
 	    foreach (string one_id, sources_to_add, {
 		y2milestone ("Adding repository: %1", one_id);
 		Progress::NextStep ();
@@ -733,8 +727,6 @@ URL: %2"),
 	    y2milestone ("Adding DISABLED repos: %1", sources_to_add_disabled);
 
 	    foreach (string one_id, sources_to_add_disabled, {
-y2milestone ("Adding repository (D): %1", one_id);
-sleep (3200);
 		Progress::NextStep ();
 		string one_url = id_to_url[one_id]:"";
 
