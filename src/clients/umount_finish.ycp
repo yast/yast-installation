@@ -49,6 +49,9 @@ if (func == "Info")
 }
 else if (func == "Write")
 {
+    // Release all sources, they might be still mounted
+    Pkg::SourceReleaseAll();
+
     // loop over all filesystems
     map<string,list> mountPoints = (map<string,list>)Storage::GetMountPoints();
     y2milestone ("Known mount points: %1", mountPoints);
@@ -61,13 +64,10 @@ else if (func == "Write")
     // *** umountList is lexically ordered !
 
     foreach (string mountpoint, list mountval, mountPoints, {
-	if (mountpoint != "swap")		// dont umount / on target
-	{
+	if (mountpoint != "swap") {
 	    umountList = add (umountList, mountpoint);
 	}
     });
-
-    // now unmount all mountpoints in reverse order !
 
     // remove [Installation::destdir]/etc/mtab which was faked for %post
     // scripts in inst_rpmcopy
@@ -80,19 +80,28 @@ else if (func == "Write")
     // /proc/bus/usb
     // /proc
 
-    list <string> umount_these = [ "/proc", "/sys", "/dev" ];
+    list <string> umount_these = ["/proc", "/sys", "/dev"];
     if (Hotplug::haveUSB) {
 	umount_these = (list <string>) union (["/proc/bus/usb"], umount_these);
     }
 
-    foreach (string umount_this, umount_these, {
-	umount_this = sformat ("%1%2", Installation::destdir, umount_this);
+    foreach (string umount_dir, umount_these, {
+	string umount_this = sformat ("%1%2", Installation::destdir, umount_dir);
+	y2milestone ("Umounting: %1", umount_this);
 	boolean umount_result = (boolean) WFM::Execute (.local.umount, umount_this);
 
 	if (umount_result != true) {
-	    y2warning ("Umount failed, trying to remount read only...");
-	    string cmd = sformat ("sync; mount -o remount,ro '%1'; umount -l -f '%1';", String::Quote (umount_this));
-	    y2milestone ("Cmd: '%1' Ret: %2", cmd, WFM::Execute (.local.bash_output, cmd));
+	    // bnc #395034
+	    // Don't remount them read-only!
+	    if (contains (["/proc", "/sys", "/dev", "/proc/bus/usb"], umount_dir)) {
+		y2warning ("Umount failed, trying lazy umount...");
+		string cmd = sformat ("sync; umount -l -f '%1';", String::Quote (umount_this));
+		y2milestone ("Cmd: '%1' Ret: %2", cmd, WFM::Execute (.local.bash_output, cmd));
+	    } else {
+		y2warning ("Umount failed, trying to remount read only...");
+		string cmd = sformat ("sync; mount -o remount,ro '%1'; umount -l -f '%1';", String::Quote (umount_this));
+		y2milestone ("Cmd: '%1' Ret: %2", cmd, WFM::Execute (.local.bash_output, cmd));
+	    }
 	}
     });
 
@@ -102,44 +111,39 @@ else if (func == "Write")
     // could mess up umounting of normale filesystems if the crypt
     // file is not on the root fs
     y2milestone( "umount list %1", umountList );
-    foreach( map e,  targetMap["/dev/loop","partitions"]:[],
-            {
-            if( size(e["mount"]:"")>0 )
-            {
-	    Storage::Umount( e["device"]:"" );
+    foreach (map e,  targetMap["/dev/loop","partitions"]:[], {
+	if (size(e["mount"]:"")>0) {
+	    Storage::Umount (e["device"]:"");
             umountList = filter (string m, umountList, ``(m!=e["mount"]:""));
-            y2milestone( "loop umount %1 new list %2", e["mount"]:"",
-                umountList );
-            }
-            });
+            y2milestone ("loop umount %1 new list %2", e["mount"]:"", umountList);
+        }
+    });
 
     // *** umountList is lexically ordered !
     // now umount in reverse order (guarantees "/" as last umount)
 
     integer umountLength = size (umountList);
 
-    // all dhcpcd clients are shut down
-    // - this should release /var/run/ directory
-   // don't stop network, not necessairly when unmount with "-l" option (bnc#386588)
-/*
-    if (umountLength > 0) {
-	Internet::ShutdownAllLocalDHCPClients();
-    }
-*/
     while (umountLength > 0)
     {
         umountLength = umountLength - 1;
         string tmp = Installation::destdir + (string) (umountList[umountLength]:"");
-        y2milestone("umount target: %1", tmp);
+        y2milestone ("umount target: %1", tmp);
 
         boolean umount_status = (boolean) WFM::Execute (.local.umount, tmp);
 
-	// fallback
-	// bugzilla #326478
+	// bnc #395034
+	// Don't remount them read-only!
 	if (umount_status != true) {
-	    y2warning ("Umount failed, trying to remount read only...");
-	    string cmd = sformat ("mount -o remount,ro '%1'; umount -l -f '%1';", String::Quote (tmp));
-	    y2milestone ("Cmd: '%1' Ret: %2", cmd, WFM::Execute (.local.bash_output, cmd));
+	    if (contains (["/proc", "/sys", "/dev", "/proc/bus/usb"], tmp)) {
+		y2warning ("Umount failed, trying lazy umount...");
+		string cmd = sformat ("sync; umount -l -f '%1';", String::Quote (tmp));
+		y2milestone ("Cmd: '%1' Ret: %2", cmd, WFM::Execute (.local.bash_output, cmd));
+	    } else {
+		y2warning ("Umount failed, trying to remount read only...");
+		string cmd = sformat ("mount -o remount,ro '%1'; umount -l -f '%1';", String::Quote (tmp));
+		y2milestone ("Cmd: '%1' Ret: %2", cmd, WFM::Execute (.local.bash_output, cmd));
+	    }
 	}
     }
 

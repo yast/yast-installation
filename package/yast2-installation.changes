@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jun 12 16:33:24 CEST 2008 - locilka@suse.cz
+
+- Special mounts (such as /proc) are never remounted read-only
+  in umount_finish anymore (bnc #395034)
+
+-------------------------------------------------------------------
 Wed Jun  4 11:57:07 CEST 2008 - locilka@suse.cz
 
 - Copying /license.tar.gz to /etc/YaST2/license/ (bnc #396444).
