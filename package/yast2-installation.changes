@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Jun 13 15:37:24 CEST 2008 - locilka@suse.cz
+
+- Removing Pkg//Source and Target finish from inst_inc_all that
+  had been saving sources also in case of aborting the installation
+  and moving it to inst_congratulate and umount_finish
+  (bnc #398315).
+
+-------------------------------------------------------------------
 Thu Jun 12 16:33:24 CEST 2008 - locilka@suse.cz
 
 - Special mounts (such as /proc) are never remounted read-only

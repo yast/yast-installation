@@ -52,6 +52,11 @@ else if (func == "Write")
     // Release all sources, they might be still mounted
     Pkg::SourceReleaseAll();
 
+    // save all sources and finish target
+    // bnc #398315
+    Pkg::SourceSaveAll();
+    Pkg::TargetFinish();
+
     // loop over all filesystems
     map<string,list> mountPoints = (map<string,list>)Storage::GetMountPoints();
     y2milestone ("Known mount points: %1", mountPoints);

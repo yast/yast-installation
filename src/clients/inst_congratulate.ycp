@@ -247,5 +247,10 @@ selected, a profile of the current system is stored in <tt>/root/autoinst.xml</t
 	    CallCloning();
     }
 
+    // save all sources and finish target
+    // bnc #398315
+    Pkg::SourceSaveAll();
+    Pkg::TargetFinish();
+
     return ret;
 }
