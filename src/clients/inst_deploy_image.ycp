@@ -12,6 +12,9 @@ textdomain "installation";
 // There is nothing to do
 if (! Installation::image_installation) {
     y2milestone ("No images have been selected");
+    // bnc #395030
+    // Use less memory
+    ImageInstallation::FreeInternalVariables();
     return `auto;
 }
 
