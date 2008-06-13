@@ -1064,4 +1064,11 @@ global boolean FileSystemCopy (string from, string to,
 
     // <-- Storing and restoring states
 
+    global void FreeInternalVariables () {
+	last_patterns_selected = [];
+	_images = $[];
+	_image_order = [];
+	images_details = $[];
+	_mounted_images = [];
+    }
 }

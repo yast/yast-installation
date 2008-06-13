@@ -5,6 +5,8 @@ Fri Jun 13 15:37:24 CEST 2008 - locilka@suse.cz
   had been saving sources also in case of aborting the installation
   and moving it to inst_congratulate and umount_finish
   (bnc #398315).
+- Freeing internal variables in ImageInstallation module after
+  images are deployed (bnc #395030).
 
 -------------------------------------------------------------------
 Thu Jun 12 16:33:24 CEST 2008 - locilka@suse.cz

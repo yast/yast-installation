@@ -255,6 +255,10 @@ PackageCallbacks::RestorePreviousProgressCallbacks();
 
 ImageInstallation::RestoreAllChanges();
 
+// bnc #395030
+// Use less memory
+ImageInstallation::FreeInternalVariables();
+
 return `next;
 
 }
