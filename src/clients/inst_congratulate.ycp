@@ -197,7 +197,7 @@ selected, a profile of the current system is stored in <tt>/root/autoinst.xml</t
 	// #165860
 	// Save sources now because cloning garbles the target
 	// Cloning reinitializes sources when it needs them
-	Pkg::SourceFinishAll ();
+	Pkg::SourceSaveAll ();
 
     	Call::Function("clone_system" , ["doClone"]);
     }
