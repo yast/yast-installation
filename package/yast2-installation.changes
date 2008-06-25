@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Jun 25 16:44:33 CEST 2008 - ug@suse.de
+
+- proposal selection possible via autoyast profile (fate#302946)
+
+-------------------------------------------------------------------
 Tue Jun 17 14:23:04 CEST 2008 - lslezak@suse.cz
 
 - use Pkg::SourceSaveAll() instead of Pkg::SourceFinishAll()
