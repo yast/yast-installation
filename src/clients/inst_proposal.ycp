@@ -635,6 +635,10 @@
 		return ! contains (submodules, m);
 	    });
 	    submodules = (list<string>)merge (submodules, display_only_modules);
+	    list <string> p = AutoinstConfig::getProposalList();
+	    submodules_presentation = filter (string v, submodules_presentation, {
+		return ( contains( p, v ) || p == [] );
+            });
 	}
 	else
 	{
@@ -646,6 +650,10 @@
 
 	    // setup the list
 	    submodules_presentation = maplist (list mod, modules, ``(mod[0]:"") );
+	    list <string> p = AutoinstConfig::getProposalList();
+	    submodules_presentation = filter (string v, submodules_presentation, {
+		return ( contains( p, v ) || p == [] );
+            });
 	}
 
 	y2milestone ("Presentation order: %1", submodules_presentation);
