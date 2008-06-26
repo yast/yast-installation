@@ -2,6 +2,7 @@
 Thu Jun 26 16:43:32 CEST 2008 - locilka@suse.cz
 
 - Fixed help text for deploying images (bnc #391086).
+- Fixed 'Do not panic!' text (bnc #388251).
 
 -------------------------------------------------------------------
 Wed Jun 25 16:44:33 CEST 2008 - ug@suse.de
