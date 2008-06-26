@@ -126,14 +126,14 @@
 		    // the installation has failed.
 		    _("
 
-***********************************************************
+******************************************************
 
-Do not panic!
+ Do not panic!
 
-X11 Configuration must have switched to console for a while
-to do detect your videocard properly...
+ X11 Configuration must switch to console for a while
+ to do detect your videocard properly...
 
-***********************************************************
+******************************************************
 ")
 		);
 	    }
