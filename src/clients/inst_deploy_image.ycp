@@ -226,7 +226,7 @@ Wizard::SetContents (
 
     // TRANSLATORS: help idi#3
     _("<p>Installation from images is faster than installation from RPM packages
-because it does not need to handle with with RPM database, locks etc.
+because it does not need to handle with RPM database, locks etc.
 One of the images also contains the joint RPM database and other metadata.</p>") +
 
     // TRANSLATORS: help idi#4

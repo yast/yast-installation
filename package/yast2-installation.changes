@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Jun 26 16:43:32 CEST 2008 - locilka@suse.cz
+
+- Fixed help text for deploying images (bnc #391086).
+
+-------------------------------------------------------------------
 Wed Jun 25 16:44:33 CEST 2008 - ug@suse.de
 
 - proposal selection possible via autoyast profile (fate#302946)
