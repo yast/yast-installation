@@ -23,6 +23,12 @@ find control -name \*.glade | LC_ALL=C sort > POTFILES
 
 AX_CHECK_DOCBOOK
 
+# If we change the default here instead of in Makefile.am
+# then it can be overriden at configure time
+if test "${sysconfdir}" = '${prefix}/etc'; then
+    sysconfdir=/etc
+fi
+
 AC_MSG_CHECKING([fvwm directory])
 coresysconfdir=`pkg-config --print-errors --variable=sysconfdir yast2-core`
 if test -z "$coresysconfdir"; then
