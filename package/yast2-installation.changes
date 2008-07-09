@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Jul  9 17:09:15 CEST 2008 - mvidner@suse.cz
+
+- Fixed building in a prefix (/etc).
+
+-------------------------------------------------------------------
 Wed Jul  9 15:12:53 CEST 2008 - locilka@suse.cz
 
 - Initializing the 'use_automatic_configuration' in first-stage
