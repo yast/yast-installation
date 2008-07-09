@@ -1,11 +1,14 @@
 /**
  * This client just calls inst_rpmcopy and returns the result.
- * If automatic installation is used, inst_rpmcopy is disabled,
+ *
+ * If automatic configuration is used, inst_rpmcopy is disabled,
  * which not only diables it in second stage (wanted) but also
  * disables it in first stage.
+ *
  * This client is used in second stage.
  */
 
 {
+    y2milestone ("inst_rpmcopy_secondstage calling inst_rpmcopy");
     return WFM::CallFunction ("inst_rpmcopy", WFM::Args());
 }

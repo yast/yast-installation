@@ -208,20 +208,22 @@ according to the settings in the previous dialogs.</p>")
 	return ( button == `confirm );
     }
 
-    void AdjustAutomaticInstallation () {
+    void AdjustAutomaticConfiguration () {
         if (ProductControl::GetUseAutomaticConfiguration()) {
+	    y2milestone ("Using AC...");
             ProductControl::DisableAllModulesAndProposals ("installation", "continue");
             ProductControl::EnableModule ("automatic_configuration");
 	    // Enable SuSEConfig, bnc #381751
             ProductControl::EnableModule ("suseconfig");
 	} else {
+	    y2milestone ("Not using AC...");
 	    ProductControl::UnDisableAllModulesAndProposals ("installation", "continue");
 	    ProductControl::DisableModule ("automatic_configuration");
 	}
     }
 
     void AdjustStepsAccordingToInstallationSettings () {
-	AdjustAutomaticInstallation();
+	AdjustAutomaticConfiguration();
 
 	if (Installation::add_on_selected == true) {
 	    ProductControl::EnableModule ("add-on");

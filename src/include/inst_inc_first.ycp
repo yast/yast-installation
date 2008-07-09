@@ -119,6 +119,11 @@
 		}
 	    });
 	}
+
+	// Initializing the default values for AC
+	// @see bnc #404122
+	// 
+	ProductControl::InitAutomaticConfiguration();
     }
 
     /**
