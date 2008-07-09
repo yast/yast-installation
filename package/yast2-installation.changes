@@ -3,6 +3,8 @@ Wed Jul  9 15:12:53 CEST 2008 - locilka@suse.cz
 
 - Initializing the 'use_automatic_configuration' in first-stage
   installation worker (bnc #404122).
+- Adjusted dependency on autoyast2-installation bacause of new
+  function AutoinstConfig::getProposalList().
 
 -------------------------------------------------------------------
 Thu Jun 26 16:43:32 CEST 2008 - locilka@suse.cz

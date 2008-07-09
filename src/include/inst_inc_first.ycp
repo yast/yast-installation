@@ -101,7 +101,7 @@
 	// Default state
 	ProductControl::SetUseAutomaticConfiguration (autoconfiguration_default == true);
 	// Enables or disables some modules, etc.
-	AdjustAutomaticInstallation();
+	AdjustAutomaticConfiguration();
     }
 
     void InitFirstStageInstallationSystem () {
@@ -122,7 +122,6 @@
 
 	// Initializing the default values for AC
 	// @see bnc #404122
-	// 
 	ProductControl::InitAutomaticConfiguration();
     }
 
