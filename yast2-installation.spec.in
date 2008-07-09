@@ -12,8 +12,8 @@ BuildRequires:	yast2-packager >= 2.16.32
 
 Requires:       autoyast2-installation
 
-# PackageCallbacks::RegisterEmptyProgressCallbacks()
-Requires:	yast2 >= 2.16.52
+# (public) ProductControl::InitAutomaticConfiguration
+Requires:	yast2 >= 2.17.7
 
 # Required in in the first stage, after
 # switching to the installed system, bugzilla #249679

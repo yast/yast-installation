@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jul  9 15:12:53 CEST 2008 - locilka@suse.cz
+
+- Initializing the 'use_automatic_configuration' in first-stage
+  installation worker (bnc #404122).
+
+-------------------------------------------------------------------
 Thu Jun 26 16:43:32 CEST 2008 - locilka@suse.cz
 
 - Fixed help text for deploying images (bnc #391086).
