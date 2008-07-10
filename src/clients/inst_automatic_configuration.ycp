@@ -17,6 +17,8 @@
     import "GetInstArgs";
     import "Wizard";
     import "Progress";
+    import "ProductFeatures";
+    import "ProductControl";
 
     textdomain "installation";
 
@@ -40,41 +42,44 @@
 
     y2milestone ("automatic_configuration started");
 
-// TODO: read this from control file
-// (at least the list of modules in proposals)
-    list <map <string, any> > proposal_scripts_to_call = [
-	// probably needed
-	// Adding inst_hostname client here, needed to generate random
-	// hostname in automatic config (and for 127.0.0.2 hack) (#383336)
-	// Must be called before inst_netprobe however, it cannot override it
-	// later on
-	$[
-	    "label":_("Initialization..."),
-	    "type":"scripts",
-	    "items":["initialization", "hostname", "netprobe", "rpmcopy_secondstage"]
-	],
+//    list <map <string, any> > proposal_scripts_to_call = [
+//	$[
+//	    "label":_("Finishing configuration..."),
+//	    "type":"scripts",
+//	    "items":["addon_update_sources", "inst_extrasources", "suseconfig", "save_hardware_status"]
+//	],
+//    ];
 
-	// network proposal
-	$[
-	    "label":_("Configuring network..."),
-	    "type":"proposals",
-	    "items":["lan", "general", "dsl", "isdn", "modem", "remote", "firewall"]
-	],
+    list <map <string, any> > proposal_scripts_to_call = [];
 
-	// hardware proposal
-	$[
-	    "label":_("Configuring hardware..."),
-	    "type":"proposals",
-	    "items":["x11", "printer", "sound", "tv"]
-	],
+    list <map> acc = (list <map>) ProductFeatures::GetFeature ("globals", "automatic_configuration");
 
-	// probably needed
-	$[
-	    "label":_("Finishing configuration..."),
-	    "type":"scripts",
-	    "items":["addon_update_sources", "inst_extrasources", "suseconfig", "save_hardware_status"]
-	],
-    ];
+    foreach (map one_step, acc, {
+	map new_step = $[
+	    "label"	: one_step["text_id"]:"",
+	    "type"	: one_step["type"]:"scripts",
+	    "items"	: maplist (string one_ic_item, (list <string>) one_step["ac_items"]:[], {
+		return one_ic_item;
+	    }),
+	];
+
+	// filter out the wrong ones
+	new_step["items"] = filter (string one_item, new_step["items"]:[], {
+	    if (one_item == nil || one_item == "") {
+		y2error ("Wrong item '%1' came from %2", one_item, one_step);
+		return false;
+	    }
+
+	    return true;
+	});
+
+	new_step["label"] = ProductControl::GetTranslatedText (new_step["label"]:"");
+
+	if (new_step["label"]:"" == "" || new_step["label"]:nil == nil) {
+	    y2error ("Unknown label text ID '%1', using fallback", new_step["label"]:"");
+	    new_step["label"] = _("Creating automatic configuration...");
+	}
+    });
 
     /**
      * Prepares the list of installation scripts to be executed.
