@@ -80,6 +80,19 @@
     // Release notes might be missing
     if (FileUtils::Exists(basedirectory) && FileUtils::IsDirectory(basedirectory)) {
 	readproducts = (list<string>) SCR::Read(.target.dir, basedirectory);
+
+	// bnc #407922
+	// not all objects need to be directories
+	boolean is_directory = nil;
+	readproducts = filter (string one_prod, readproducts, {
+	    is_directory = FileUtils::IsDirectory (sformat ("%1/%2", basedirectory, one_prod));
+
+	    if (is_directory != true) {
+		y2warning ("'%1' in '%2' is not a directory", one_prod, basedirectory);
+	    }
+
+	    return is_directory;
+	});
     }
 
     map <string, string> languages_translations = CreateLanguagesTranslations();

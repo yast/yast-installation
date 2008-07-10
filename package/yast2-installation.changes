@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jul 10 13:31:00 CEST 2008 - locilka@suse.cz
+
+- Only directories in release-notes directory are considered to be
+  real release notes (bnc #407922).
+- 2.17.0
+
+-------------------------------------------------------------------
 Wed Jul  9 17:09:15 CEST 2008 - mvidner@suse.cz
 
 - Fixed building in a prefix (/etc).
