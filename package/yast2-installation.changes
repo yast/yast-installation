@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jul 10 17:48:59 CEST 2008 - locilka@suse.cz
+
+- Settings for Automatic Configuration moved to control file
+  because of code reuse for different AC in first boot
+  (FATE #303939).
+
+-------------------------------------------------------------------
 Thu Jul 10 13:31:00 CEST 2008 - locilka@suse.cz
 
 - Only directories in release-notes directory are considered to be

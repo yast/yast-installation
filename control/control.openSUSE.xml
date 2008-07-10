@@ -51,6 +51,61 @@ textdomain="control"
 
 	<!-- FATE #303395, Kexec instead of reboot (default 'false') -->
 	<kexec_reboot config:type="boolean">true</kexec_reboot>
+
+	<!-- Configuration for inst_automatic_configuration script -->
+	<automatic_configuration config:type="list">
+	    <!--
+		Adding inst_hostname client here, needed to generate random
+		hostname in automatic config (and for 127.0.0.2 hack) (#383336)
+		Must be called before inst_netprobe however, it cannot override it later on
+	    -->
+	    <ac_step>
+		<text_id>ac_1</text_id>
+		<type>scripts</type>
+		<ac_items config:type="list">
+		    <ac_item>initialization</ac_item>
+		    <ac_item>hostname</ac_item>
+		    <ac_item>netprobe</ac_item>
+		    <ac_item>rpmcopy_secondstage</ac_item>
+		</ac_items>
+	    </ac_step>
+	    <!-- network proposal -->
+	    <ac_step>
+		<text_id>ac_2</text_id>
+		<type>proposals</type>
+		<ac_items config:type="list">
+		    <ac_item>lan</ac_item>
+		    <ac_item>general</ac_item>
+		    <ac_item>dsl</ac_item>
+		    <ac_item>isdn</ac_item>
+		    <ac_item>modem</ac_item>
+		    <ac_item>remote</ac_item>
+		    <ac_item>firewall</ac_item>
+		</ac_items>
+	    </ac_step>
+	    <!-- hardware proposal -->
+	    <ac_step>
+		<text_id>ac_3</text_id>
+		<type>proposals</type>
+		<ac_items config:type="list">
+		    <ac_item>x11</ac_item>
+		    <ac_item>printer</ac_item>
+		    <ac_item>sound</ac_item>
+		    <ac_item>tv</ac_item>
+		</ac_items>
+	    </ac_step>
+	    <!-- finishing configuration -->
+	    <ac_step>
+		<text_id>ac_4</text_id>
+		<type>scripts</type>
+		<ac_items config:type="list">
+		    <ac_item>addon_update_sources</ac_item>
+		    <ac_item>inst_extrasources</ac_item>
+		    <ac_item>suseconfig</ac_item>
+		    <ac_item>save_hardware_status</ac_item>
+		</ac_items>
+	    </ac_step>
+	</automatic_configuration>
     </globals>
 
     <software>
@@ -148,15 +203,20 @@ textdomain="control"
     </clone_modules>
 
     <texts>
-      <congratulate>
-	<label>
+	<congratulate>
+	    <label>
 &lt;p&gt;&lt;b&gt;Congratulations!&lt;/b&gt;&lt;/p&gt;
 &lt;p&gt;The installation of openSUSE on your machine is complete.
 After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt;
 &lt;p&gt;Visit us at %1.&lt;/p&gt;
 &lt;p&gt;Have a lot of fun!&lt;br&gt;Your openSUSE Development Team&lt;/p&gt;
-	</label>
-      </congratulate>
+	    </label>
+	</congratulate>
+
+	<ac_1><label>Initialization...</label><ac_1>
+	<ac_2><label>Configuring network...</label><ac_2>
+	<ac_3><label>Configuring hardware...</label><ac_3>
+	<ac_4><label>Finishing configuration...</label><ac_4>
     </texts>
 
     <proposals config:type="list">
