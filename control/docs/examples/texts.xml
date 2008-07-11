@@ -1,0 +1,11 @@
+
+<texts>
+    <!-- Unique tag that identifies the text -->
+    <some_text_id>
+	<label>Some XML-escaped text: &lt;b&gt;bold &lt;/b&gt;.</label>
+    </some_text_id>
+
+    <congratulate>
+	<label>&lt;p&gt;&lt;b&gt;Congratulations!&lt;/b&gt;&lt;/p&gt;</label>
+    </congratulate>
+</texts>

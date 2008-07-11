@@ -14,25 +14,24 @@
         <firstname>Anas</firstname>
         <surname>Nashif</surname>
            <affiliation>
-          <orgname> SUSE Linux AG</orgname>
+          <orgname>SUSE Linux AG</orgname>
+        </affiliation>
+      </author>
+      <author>
+        <firstname>Jiri</firstname>
+        <surname>Srain</surname>
+           <affiliation>
+          <orgname>SUSE Linux, s.r.o.</orgname>
+        </affiliation>
+      </author>
+      <author>
+        <firstname>Lukas</firstname>
+        <surname>Ocilka</surname>
+           <affiliation>
+          <orgname>SUSE Linux, s.r.o.</orgname>
         </affiliation>
       </author>
     </authorgroup>
-    <copyright>
-      <year>2004</year>
-      <holder> SUSE  Linux AG</holder>
-    </copyright>
-    <revhistory>
-        <revision>
-            <revnumber>
-                0.1
-            </revnumber>
-            <date>
-                $Date$
-            </date>
-            <revremark>Initial Release as PDF</revremark>
-        </revision>
-    </revhistory>
   </articleinfo>
 
 

@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Jul 11 11:11:11 CEST 2008 - locilka@suse.cz
+
+- Added documentation for AC Setup and for texts in control file.
+
+-------------------------------------------------------------------
 Thu Jul 10 17:48:59 CEST 2008 - locilka@suse.cz
 
 - Settings for Automatic Configuration moved to control file

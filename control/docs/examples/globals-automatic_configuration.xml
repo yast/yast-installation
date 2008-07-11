@@ -1,0 +1,49 @@
+
+<globals>
+    ...
+
+    <!-- List of steps in AC -->
+    <automatic_configuration config:type="list">
+
+	<!-- One step definition -->
+        <ac_step>
+            <text_id>ac_1</text_id>
+            <type>scripts</type>
+            <ac_items config:type="list">
+                <ac_item>initialization</ac_item>
+                <ac_item>hostname</ac_item>
+                <ac_item>netprobe</ac_item>
+                <ac_item>rpmcopy_secondstage</ac_item>
+            </ac_items>
+        </ac_step>
+
+	...
+
+        <ac_step>
+            <text_id>ac_3</text_id>
+            <type>proposals</type>
+            <ac_items config:type="list">
+                <ac_item>x11</ac_item>
+                <ac_item>printer</ac_item>
+                <ac_item>sound</ac_item>
+                <ac_item>tv</ac_item>
+            </ac_items>
+        </ac_step>
+
+	...
+
+    </automatic_configuration>
+    ...
+</globals>
+
+<texts>
+
+    ...
+
+    <!-- Label used during AC, uses "text_id" from "ac_step" -->
+    <ac_1><label>Initialization...</label><ac_1>
+    <ac_3><label>Configuring hardware...</label><ac_3>
+
+    ...
+
+</texts>
