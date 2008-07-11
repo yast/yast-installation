@@ -100,7 +100,7 @@ textdomain="control"
 		<type>scripts</type>
 		<ac_items config:type="list">
 		    <ac_item>addon_update_sources</ac_item>
-		    <ac_item>inst_extrasources</ac_item>
+		    <ac_item>extrasources</ac_item>
 		    <ac_item>suseconfig</ac_item>
 		    <ac_item>save_hardware_status</ac_item>
 		</ac_items>
