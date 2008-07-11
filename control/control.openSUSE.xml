@@ -213,10 +213,10 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	    </label>
 	</congratulate>
 
-	<ac_1><label>Initialization...</label><ac_1>
-	<ac_2><label>Configuring network...</label><ac_2>
-	<ac_3><label>Configuring hardware...</label><ac_3>
-	<ac_4><label>Finishing configuration...</label><ac_4>
+	<ac_1><label>Initialization...</label></ac_1>
+	<ac_2><label>Configuring network...</label></ac_2>
+	<ac_3><label>Configuring hardware...</label></ac_3>
+	<ac_4><label>Finishing configuration...</label></ac_4>
     </texts>
 
     <proposals config:type="list">
