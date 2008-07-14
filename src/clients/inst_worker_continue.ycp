@@ -44,6 +44,7 @@
 
     // All stages
     SetAutoinstHandling ();
+    SetGlobalInstallationFeatures();
 
     // FATE #300422
     symbol ret = RerunInstallationIfAborted ();
