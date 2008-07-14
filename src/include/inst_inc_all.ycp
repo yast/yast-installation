@@ -54,7 +54,7 @@
 	// FATE #304395: Disabling (or handling) screensaver during installation
 	// Disabling screen-saver on startup
 	y2milestone ("Disabling Energy Star (DPMS) features");
-	WFM::Execute (.local.bash, "xset -dpms");
+	WFM::Execute (.local.bash, "xset dpms 0 0 0; xset -dpms");
     }
 
     void FinishInstallation (symbol ret) {
@@ -67,7 +67,7 @@
 	    // FATE #304395: Disabling (or handling) screensaver during installation
 	    // Enabling screen-saver on exit
 	    y2milestone ("Enabling Energy Star (DPMS) features");
-	    WFM::Execute (.local.bash, "xset +dpms");
+	    WFM::Execute (.local.bash, "xset dpms 1200 1800 2400; xset +dpms");
 
 	    // TRANSLATORS: busy message
 	    UI::OpenDialog (`Label(_("Finishing the installation...")));	// #2
