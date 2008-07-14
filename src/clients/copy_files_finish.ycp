@@ -177,7 +177,16 @@ else if (func == "Write")
 	SCR::Execute (.target.remove, eula_txt);
     }
 
-    string license_dir = sformat ("%1%2/license/", Installation::destdir, Directory::etcdir);
+    // FATE #304865: Enhance YaST Modules to cooperate better handling the product licenses
+    string license_dir = ProductFeatures::GetStringFeature ("globals", "base_product_license_directory");
+    if (license_dir == nil || license_dir == "") {
+	license_dir = sformat ("%1%2/licenses/base/", Installation::destdir, Directory::etcdir);
+	y2warning ("No 'base_product_license_directory' set, using %1", license_dir);
+    } else {
+	license_dir = sformat ("%1/%2", Installation::destdir, license_dir);
+	y2milestone ("Using license dir: %1", license_dir);
+    }
+
     string license_file = "/license.tar.gz";
     // Copy licenses so it can be used in firstboot later
     // bnc #396976

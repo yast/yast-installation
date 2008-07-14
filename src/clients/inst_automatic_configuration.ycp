@@ -17,8 +17,10 @@
     import "GetInstArgs";
     import "Wizard";
     import "Progress";
-    import "ProductFeatures";
+    // reads the control file
+    // and sets sections of ProductFeatures
     import "ProductControl";
+    import "ProductFeatures";
 
     textdomain "installation";
 
@@ -52,7 +54,13 @@
 
     list <map <string, any> > proposal_scripts_to_call = [];
 
-    list <map> acc = (list <map>) ProductFeatures::GetFeature ("globals", "automatic_configuration");
+    map <string, any> globals_features = ProductFeatures::GetSection ("globals");
+    list <map> acc = (list <map>) globals_features["automatic_configuration"]:[];
+
+    if (acc == nil || acc == []) {
+	y2warning ("No AC defined (%1), skipping...", acc);
+	return `next;
+    }
 
     foreach (map one_step, acc, {
 	map new_step = $[

@@ -19,6 +19,7 @@ import "GetInstArgs";
 import "Stage";
 import "ProductLicense";
 import "Mode";
+import "ProductFeatures";
 
 // all the arguments
 map argmap = GetInstArgs::argmap();
@@ -44,8 +45,27 @@ if (Stage::initial ())
 }
 else
 {
-    string directory = argmap["directory"]:Directory::etcdir + "/license/";
-    if (argmap["directory"]:"" != "")
+    // #304865: Enhance YaST Modules to cooperate better handling the product licenses
+    string directory = argmap["directory"]:""
+
+    // Priority 1: Script args
+    if (directory != nil && directory != "") {
+	y2milestone ("Using directory: %1", directory);
+    // Priority 2: Fallback - Control file
+    } else {
+	directory = ProductFeatures::GetStringFeature ("globals", "base_product_license_directory");
+
+	// control file
+	if (directory != nil && directory != "") {
+	    y2milestone ("Using directory (from control file): %1", directory);
+	// fallback - hard-coded
+	} else {
+	    directory = "/etc/YaST2/licenses/base/";
+	    y2warning ("No 'base_product_license_directory' set, using %1", directory);
+	}
+    }
+
+    if (directory != "")
 	directory = Directory::custom_workflow_dir + directory;
 
     // patterns are hardcoded
