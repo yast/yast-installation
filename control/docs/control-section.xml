@@ -463,6 +463,10 @@
 		    of YaST proposal without <emphasis>_proposal</emphasis> suffix, e.g.,
 		    <emphasis>firewall</emphasis> would call <emphasis>firewall_proposal</emphasis>.</para>
 		</listitem>
+		<listitem>
+		    <para><emphasis>icon</emphasis> - plain icon filename (from 22x22 directory) without suffix
+		    and without any explicit directory name, e.g., <emphasis>yast-network</emphasis>.</para>
+		</listitem>
 	    </itemizedlist>
 	</section>
 
