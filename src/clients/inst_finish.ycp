@@ -34,9 +34,18 @@
     // added for fate# 303395
     import "Directory";
 
-
     if (GetInstArgs::going_back())
 	return `auto;
+
+    boolean test_mode = false;
+
+    if (size (WFM::Args()) > 0 && is (WFM::Args(0), string)) {
+	y2milestone ("Args: %1", WFM::Args());
+	if (WFM::Args(0) == "test")
+	    test_mode = true;
+    }
+
+    if (test_mode) Wizard::CreateDialog();
 
 // Help text for last dialog of base installation
 string help_text = _("<p>
@@ -55,7 +64,7 @@ list<map<string,any> > stages = [
 	    "live_copy_files",
 	    "switch_scr",
 	],
-	"icon" : "32x32/apps/pattern-basis.png",
+	"icon" : "pattern-basis",
     ],
     $[
 	// progress stage
@@ -77,7 +86,7 @@ list<map<string,any> > stages = [
 	    // bnc #340733
 	    "system_settings",
 	],
-	"icon" : "32x32/apps/yast-misc.png",
+	"icon" : "yast-desktop-select",
     ],
     $[
 	// progress stage
@@ -85,7 +94,7 @@ list<map<string,any> > stages = [
 	"steps" : [
 	    "bootloader",
 	],
-	"icon" : "32x32/apps/yast-bootloader.png",
+	"icon" : "yast-bootloader",
     ],
     $[
 	// progress stage
@@ -100,7 +109,7 @@ list<map<string,any> > stages = [
 	    "autoinst_scripts2",
 	    "installation_settings",
 	],
-	"icon" : "32x32/apps/yast-dirinstall.png",
+	"icon" : "yast-network",
     ],
     $[
 	// progress stage
@@ -116,11 +125,9 @@ list<map<string,any> > stages = [
 	    "copy_logs",
 	    "umount",
 	],
-	"icon" : "32x32/apps/yast.png",
+	"icon" : "yast-scripts",
     ],
 ];
-
-list <string> progress_icons = [];
 
 if (size (ProductControl::inst_finish) > 0)
 {
@@ -179,10 +186,6 @@ else if (Mode::live_installation ())
 
 integer steps_count = 0;
 
-progress_icons = maplist (map<string,any> stage, stages, {
-    return stage["icon"]:"32x32/apps/yast.png";
-});
-
 stages = maplist (map<string,any> stage, stages, {
     list<map> steps = maplist (string s, stage["steps"]:[], {
 	s = s + "_finish";
@@ -191,7 +194,13 @@ stages = maplist (map<string,any> stage, stages, {
 // TODO: check if client exists
 // client doesn't need to exist on purpose
 	boolean orig = Progress::set (false);
-	map info = (map)WFM::CallFunction (s, ["Info"]);
+	map info = (map) WFM::CallFunction (s, ["Info"]);
+
+	if (test_mode == true) {
+	    y2milestone ("Test mode, forcing run");
+	    info["when"] = [`installation, `update, `autoinst];
+	}
+
 	Progress::set (orig);
 
 	if (info == nil) {
@@ -246,8 +255,12 @@ Wizard::SetTitleIcon ("yast-sysconfig");
 boolean aborted = false;
 
 foreach (map<string,any> stage, stages, {
+    if (stage["icon"]:"" != "")
+	Wizard::SetTitleIcon (stage["icon"]:"");
+
     Progress::NextStage ();
     boolean first = true;
+
     foreach (map step, stage["steps"]:[], {
 	integer scount = step["steps"]:1;
 	if (scount != 0)
@@ -261,7 +274,12 @@ foreach (map<string,any> stage, stages, {
 	    Progress::Title (step["title"]:"");
 
 	boolean orig = Progress::set (false);
-	WFM::CallFunction (step["client"]:"", ["Write"]);
+	if (test_mode == true) {
+	    y2milestone ("Test-mode, skipping  WFM::CallFunction (%1, ['Write'])", step["client"]:"");
+	    sleep (500);
+	} else {
+	    WFM::CallFunction (step["client"]:"", ["Write"]);
+	}
 	Progress::set (orig);
 
 	if (UI::PollInput () == `abort && Popup::ConfirmAbort (`incomplete))
@@ -304,6 +322,10 @@ if (size (Misc::boot_msg) > 0 && !Mode::autoinst ())
     Misc::boot_msg = "";
 }
 
+if (test_mode) {
+    Wizard::CloseDialog();
+    return `auto;
+}
 
 // fate #303395: Use kexec to avoid booting between first and second stage
 // run new kernel via kexec instead of reboot
