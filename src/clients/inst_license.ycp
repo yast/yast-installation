@@ -20,6 +20,7 @@ import "Stage";
 import "ProductLicense";
 import "Mode";
 import "ProductFeatures";
+import "Wizard";
 
 // all the arguments
 map argmap = GetInstArgs::argmap();
@@ -37,6 +38,17 @@ if (Mode::live_installation()) {
     action = "abort";
 }
 
+boolean test_mode = false;
+
+if (size (WFM::Args()) > 0 && is (WFM::Args(0), string)) {
+    y2milestone ("Args: %1", WFM::Args());
+
+    if (WFM::Args(0) == "test")
+	test_mode = true;
+}
+
+if (test_mode) Wizard::CreateDialog();
+
 symbol ask_ret = nil;
 
 if (Stage::initial ())
@@ -46,7 +58,7 @@ if (Stage::initial ())
 else
 {
     // #304865: Enhance YaST Modules to cooperate better handling the product licenses
-    string directory = argmap["directory"]:""
+    string directory = argmap["directory"]:"";
 
     // Priority 1: Script args
     if (directory != nil && directory != "") {
@@ -72,6 +84,8 @@ else
     ask_ret = ProductLicense::AskInstalledLicenseAgreement (directory, [], action);
 }
 
+if (test_mode) Wizard::CloseDialog();
+
 if (ask_ret == nil || ask_ret == `auto)
     return `auto;
 else if (ask_ret == `abort || ask_ret == `back)
@@ -81,7 +95,8 @@ else if (ask_ret == `halt)
     UI::CloseDialog();
     // License has been aborted
     // bugzilla #282958
-    SCR::Execute(.target.bash, "/sbin/halt -f -n -p");
+    if (test_mode != true)
+	SCR::Execute(.target.bash, "/sbin/halt -f -n -p");
     return `abort;
 }
 else if (ask_ret == `next)
