@@ -33,7 +33,6 @@ Requires:	yast2-packager >= 2.16.41
 # Requires:	yast2-runlevel
 # Requires:	yast2-network
 # Requires:	yast2-add-on
-# Requires:	yast2-mouse
 # Requires:	yast2-storage
 # Requires:	yast2-update
 
