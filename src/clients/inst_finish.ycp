@@ -52,6 +52,14 @@ string help_text = _("<p>
 Please wait while the base system is being installed.
 </p>");
 
+    Wizard::SetContents (
+	_("Finishing Basic Installation"),
+	`Label (_("Preparing installation finish-scripts...")),
+	help_text,
+	false,
+	false
+    );
+
 list<map<string,any> > stages = [
     $[
 	// progress stage
