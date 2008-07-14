@@ -50,6 +50,13 @@
 	SetInitializingUI ();
     }
 
+    void SetGlobalInstallationFeatures () {
+	// FATE #304395: Disabling (or handling) screensaver during installation
+	// Disabling screen-saver on startup
+	y2milestone ("Disabling Energy Star (DPMS) features");
+	WFM::Execute (.local.bash, "xset -dpms");
+    }
+
     void FinishInstallation (symbol ret) {
         y2milestone("Finishing the installation...");
 
@@ -57,6 +64,11 @@
     	    // TRANSLATORS: busy message
     	    UI::OpenDialog (`Label(_("Writing YaST Configuration...")));	// #2
 	} else {
+	    // FATE #304395: Disabling (or handling) screensaver during installation
+	    // Enabling screen-saver on exit
+	    y2milestone ("Enabling Energy Star (DPMS) features");
+	    WFM::Execute (.local.bash, "xset +dpms");
+
 	    // TRANSLATORS: busy message
 	    UI::OpenDialog (`Label(_("Finishing the installation...")));	// #2
 	}
