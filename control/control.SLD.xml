@@ -8,6 +8,7 @@ textdomain="control"
 -->
 
     <textdomain>control</textdomain>
+
     <globals>
 	<additional_kernel_parameters></additional_kernel_parameters>
         <enable_autologin config:type="boolean">false</enable_autologin>
@@ -28,13 +29,16 @@ textdomain="control"
 
 	<!-- FATE #301937, Save /root content from the installation system to the installed system -->
 	<save_instsys_content config:type="list">
-	<save_instsys_item>
-	    <instsys_directory>/root/</instsys_directory>
-	    <system_directory>/root/inst-sys/</system_directory>
-	</save_instsys_item>
-    </save_instsys_content>
+	    <save_instsys_item>
+		<instsys_directory>/root/</instsys_directory>
+		<system_directory>/root/inst-sys/</system_directory>
+	    </save_instsys_item>
+	</save_instsys_content>
 
+	<!-- FATE: #304865: Enhance YaST Modules to cooperate better handling the product licenses -->
+	<base_product_license_directory>/etc/YaST2/licenses/base/</base_product_license_directory>
     </globals>
+
     <software>
 	<!-- By default, unmaintained (old) packages are removed -->
 	<delete_old_packages config:type="boolean">true</delete_old_packages>
