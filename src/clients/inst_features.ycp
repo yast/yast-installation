@@ -10,6 +10,7 @@
 {
     textdomain "installation";
 
+    import "ProductControl";
     import "ProductFeatures";
     import "Timezone";
     import "Keyboard";
