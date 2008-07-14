@@ -383,6 +383,11 @@
 		    value whether to use the automatic configuration. It works even if
 		    <emphasis>enable_autoconfiguration</emphasis> is turned off, but user would not be able
 		    to change it. Default is false.</para></listitem>
+
+		<!-- FATE: #304865: Enhance YaST Modules to cooperate better handling the product licenses -->
+		<listitem><para>(string) <emphasis>base_product_license_directory</emphasis> - directory
+		    where the base-product licenses are stored (license.txt, license.de_DE.txt,
+		    ...).</para></listitem>
 	    </itemizedlist>
 	</section>
 	    
