@@ -9,6 +9,7 @@ Mon Jul 14 15:15:15 CEST 2008 - locilka@suse.cz
 - Adjusting DPMS 'off' when installation starts, DPMS 'on' when
   finishes (FATE #304395).
 - Icons for inst_finish.
+- 2.17.1
 
 -------------------------------------------------------------------
 Fri Jul 11 11:11:11 CEST 2008 - locilka@suse.cz
