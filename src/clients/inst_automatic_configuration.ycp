@@ -65,6 +65,7 @@
     foreach (map one_step, acc, {
 	map new_step = $[
 	    "label"	: one_step["text_id"]:"",
+	    "icon"	: one_step["icon"]:"yast",
 	    "type"	: one_step["type"]:"scripts",
 	    "items"	: maplist (string one_ic_item, (list <string>) one_step["ac_items"]:[], {
 		return one_ic_item;
@@ -87,6 +88,8 @@
 	    y2error ("Unknown label text ID '%1', using fallback", new_step["label"]:"");
 	    new_step["label"] = _("Creating automatic configuration...");
 	}
+
+	proposal_scripts_to_call = add (proposal_scripts_to_call, (map <string, any>) new_step);
     });
 
     /**
@@ -276,6 +279,13 @@
     );
 
     foreach (map one_autoconf_call, proposal_scripts_to_call, {
+	if (one_autoconf_call["icon"]:"" != "") {
+	    Wizard::SetTitleIcon (one_autoconf_call["icon"]:"");
+	} else {
+	    // generic YaST icon fallback
+	    Wizard::SetTitleIcon ("yast");
+	}
+
 	string type = one_autoconf_call["type"]:"";
 
 	integer nr_of_steps = ((one_autoconf_call["type"]:"" == "proposals" ? 2:1) * size (one_autoconf_call["items"]:[]));

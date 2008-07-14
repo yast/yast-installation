@@ -15,6 +15,7 @@
                 <ac_item>netprobe</ac_item>
                 <ac_item>rpmcopy_secondstage</ac_item>
             </ac_items>
+            <icon>yast-lan</icon>
         </ac_step>
 
 	...
@@ -28,6 +29,7 @@
                 <ac_item>sound</ac_item>
                 <ac_item>tv</ac_item>
             </ac_items>
+            <icon>yast-hwinfo</icon>
         </ac_step>
 
 	...

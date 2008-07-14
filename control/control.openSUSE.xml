@@ -62,6 +62,7 @@ textdomain="control"
 	    -->
 	    <ac_step>
 		<text_id>ac_1</text_id>
+		<icon>yast-sw_single</icon>
 		<type>scripts</type>
 		<ac_items config:type="list">
 		    <ac_item>initialization</ac_item>
@@ -73,6 +74,7 @@ textdomain="control"
 	    <!-- network proposal -->
 	    <ac_step>
 		<text_id>ac_2</text_id>
+		<icon>yast-network</icon>
 		<type>proposals</type>
 		<ac_items config:type="list">
 		    <ac_item>lan</ac_item>
@@ -87,6 +89,7 @@ textdomain="control"
 	    <!-- hardware proposal -->
 	    <ac_step>
 		<text_id>ac_3</text_id>
+		<icon>yast-hwinfo</icon>
 		<type>proposals</type>
 		<ac_items config:type="list">
 		    <ac_item>x11</ac_item>
@@ -98,6 +101,7 @@ textdomain="control"
 	    <!-- finishing configuration -->
 	    <ac_step>
 		<text_id>ac_4</text_id>
+		<icon>yast-sysconfig</icon>
 		<type>scripts</type>
 		<ac_items config:type="list">
 		    <ac_item>addon_update_sources</ac_item>
