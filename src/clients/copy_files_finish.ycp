@@ -25,6 +25,7 @@ import "FileUtils";
 import "String";
 import "WorkflowManager";
 import "SystemFilesCopy";
+import "ProductFeatures";
 
 include "installation/misc.ycp";
 
