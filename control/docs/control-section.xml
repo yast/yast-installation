@@ -388,6 +388,11 @@
 		<listitem><para>(string) <emphasis>base_product_license_directory</emphasis> - directory
 		    where the base-product licenses are stored (license.txt, license.de_DE.txt,
 		    ...).</para></listitem>
+
+		<!-- FATE #303798: YaST2 runlevel editor: offer easy enablement and configuration of runlevel 4 -->
+		<listitem><para>(boolean) <emphasis>rle_offer_rulevel_4</emphasis> - defines whether
+		    runlevel 4 should be offered in Runlevel Editor. Defaul value is <emphasis>false</emphasis>
+		    if not set.</para></listitem>
 	    </itemizedlist>
 	</section>
 	    

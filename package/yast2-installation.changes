@@ -3,7 +3,7 @@ Tue Jul 15 09:54:48 CEST 2008 - locilka@suse.cz
 
 - Not only DPMS->off, but also screen-saver->off (FATE #304395).
 - Added new control file feature globals->rle_offer_rulevel_4
-  (FATE #303798).
+  plus control file documentation (FATE #303798).
 
 -------------------------------------------------------------------
 Mon Jul 14 15:15:15 CEST 2008 - locilka@suse.cz
