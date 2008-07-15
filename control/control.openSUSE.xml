@@ -114,6 +114,9 @@ textdomain="control"
 
 	<!-- FATE: #304865: Enhance YaST Modules to cooperate better handling the product licenses -->
 	<base_product_license_directory>/etc/YaST2/licenses/base/</base_product_license_directory>
+
+	<!-- #303798: YaST2 runlevel editor: offer easy enablement and configuration of runlevel 4 -->
+	<rle_offer_rulevel_4 config:type="boolean">false</rle_offer_rulevel_4>
     </globals>
 
     <software>
