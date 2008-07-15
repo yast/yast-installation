@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Jul 15 09:54:48 CEST 2008 - locilka@suse.cz
+
+- Not only DPMS->off, but also screen-saver->off (FATE #304395).
+
+-------------------------------------------------------------------
 Mon Jul 14 15:15:15 CEST 2008 - locilka@suse.cz
 
 - Base-product license directory moved to control file
