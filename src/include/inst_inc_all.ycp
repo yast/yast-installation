@@ -53,9 +53,11 @@
     void SetGlobalInstallationFeatures () {
 	// FATE #304395: Disabling (or handling) screensaver during installation
 	// Disabling screen-saver on startup
-	y2milestone ("Disabling Energy Star (DPMS) features");
-	// DPMS off values, disable DPMS, disable screen-saver
-	WFM::Execute (.local.bash, "/usr/bin/xset dpms 0 0 0; /usr/bin/xset -dpms; /usr/bin/xset s 0 0");
+	if (WFM::Read (.local.size, "/usr/bin/xset") != -1) {
+	    y2milestone ("Disabling Energy Star (DPMS) features");
+	    // DPMS off values, disable DPMS, disable screen-saver
+	    WFM::Execute (.local.bash, "/usr/bin/xset dpms 0 0 0; /usr/bin/xset -dpms; /usr/bin/xset s 0 0");
+	}
     }
 
     void FinishInstallation (symbol ret) {
@@ -67,9 +69,11 @@
 	} else {
 	    // FATE #304395: Disabling (or handling) screensaver during installation
 	    // Enabling screen-saver on exit
-	    y2milestone ("Enabling Energy Star (DPMS) features");
-	    // default DPMS values, enable DPMS, enable screen-saver
-	    WFM::Execute (.local.bash, "/usr/bin/xset dpms 1200 1800 2400; /usr/bin/xset +dpms; /usr/bin/xset s default");
+	    if (WFM::Read (.local.size, "/usr/bin/xset") != -1) {
+		y2milestone ("Enabling Energy Star (DPMS) features");
+		// default DPMS values, enable DPMS, enable screen-saver
+		WFM::Execute (.local.bash, "/usr/bin/xset dpms 1200 1800 2400; /usr/bin/xset +dpms; /usr/bin/xset s default");
+	    }
 
 	    // TRANSLATORS: busy message
 	    UI::OpenDialog (`Label(_("Finishing the installation...")));	// #2
