@@ -51,7 +51,7 @@ function startVNCServer () {
 	#      skip if not found; otherwise print and exit
 	# ----
 	IP=`ip addr list | sed -n \
-		-e '/127.0.0.1/b;s/^[[:space:]]*inet[[:space:]]\([^/]*\).*/\1/;T;p;q'`
+		-e '/127.0.0.[[:digit:]]/b;s/^[[:space:]]*inet[[:space:]]\([^/]*\).*/\1/;T;p;q'`
 
 	echo
 	echo starting VNC server...
