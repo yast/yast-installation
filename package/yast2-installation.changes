@@ -2,6 +2,7 @@
 Tue Jul 15 16:59:38 CEST 2008 - aschnell@suse.de
 
 - fixed vnc connect message during installation (bnc #395834)
+- 2.17.2
 
 -------------------------------------------------------------------
 Tue Jul 15 09:54:48 CEST 2008 - locilka@suse.cz
