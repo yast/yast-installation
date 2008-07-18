@@ -1,4 +1,5 @@
-<partitioning>        
+
+<partitioning>
     <use_flexible_partitioning config:type="boolean">true</use_flexible_partitioning>
 
     <flexible_partitioning>
