@@ -3,6 +3,8 @@ Thu Jul 24 13:21:14 CEST 2008 - locilka@suse.cz
 
 - Using button label "License Translations..." in complex welcome
   dialog (bnc #400616).
+- SLES and SLED control files adapted to features added in 11.0.
+- Added Automatic Configuration support into SLED (FATE #303396).
 
 -------------------------------------------------------------------
 Tue Jul 15 16:59:38 CEST 2008 - aschnell@suse.de

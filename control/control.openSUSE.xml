@@ -721,6 +721,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -1142,5 +1143,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
             </modules>
         </workflow>
+
     </workflows>
 </productDefines>

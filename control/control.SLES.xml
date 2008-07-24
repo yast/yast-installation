@@ -28,6 +28,10 @@ textdomain="control"
 	<manual_online_update config:type="boolean">true</manual_online_update>
 	<root_password_ca_check config:type="boolean">true</root_password_ca_check>
 
+	<!-- Offer add-ons in the installation -->
+	<show_addons config:type="boolean">true</show_addons>
+	<addons_default config:type="boolean">false</addons_default>
+
 	<!-- FATE #301937, Save /root content from the installation system to the installed system -->
 	<save_instsys_content config:type="list">
 	    <save_instsys_item>
@@ -35,6 +39,9 @@ textdomain="control"
 		<system_directory>/root/inst-sys/</system_directory>
 	    </save_instsys_item>
 	</save_instsys_content>
+
+	<!-- FATE #303396, Make second is still interactive -->
+	<enable_autoconfiguration config:type="boolean">false</enable_autoconfiguration>
 
 	<!-- FATE: #304865: Enhance YaST Modules to cooperate better handling the product licenses -->
 	<base_product_license_directory>/etc/YaST2/licenses/base/</base_product_license_directory>
@@ -48,14 +55,14 @@ textdomain="control"
 	<delete_old_packages config:type="boolean">true</delete_old_packages>
 	<!-- For SLES10, unmaintained (old) packages are not removed by default, FATE #301844, bugzilla #233156 -->
 	<delete_old_packages_reverse_list config:type="list">
-	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10.*$</regexp_item>
+	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 11.*$</regexp_item>
 	</delete_old_packages_reverse_list>
 
 	<!-- By default, packages can be downgraded -->
 	<silently_downgrade_packages config:type="boolean">true</silently_downgrade_packages>
 	<!-- For SLES10, packages are not downgraded, FATE #301990, bugzilla #238488 -->
 	<silently_downgrade_packages_reverse_list config:type="list">
-	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10.*$</regexp_item>
+	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 11.*$</regexp_item>
 	</silently_downgrade_packages_reverse_list>
 
 	<!-- By default, select new packages for installation -->
@@ -65,14 +72,15 @@ textdomain="control"
 	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10.*$</regexp_item>
 	</only_update_selected_reverse_list>
 
-	<!-- Only upgrading from SLES9 or SLES10 is supported, otherwise warning is displayed -->
+	<!-- Only upgrading from SLES10 or SLES11 is supported, otherwise warning is displayed -->
 	<products_supported_for_upgrade config:type="list">
-	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 9.*$</regexp_item>
 	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10.*$</regexp_item>
+	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 11.*$</regexp_item>
 	</products_supported_for_upgrade>
 
         <selection_type config:type="symbol">auto</selection_type>
     </software>
+
     <partitioning>
         <evms_config config:type="boolean">true</evms_config>
 	<try_separate_home config:type="boolean">false</try_separate_home>
@@ -86,11 +94,13 @@ textdomain="control"
 	<vm_home_max_size>25G</vm_home_max_size>
 	<boot_evms config:type="boolean">false</boot_evms>
     </partitioning>
+
     <network>
         <force_static_ip config:type="boolean">false</force_static_ip>
         <network_manager>never</network_manager>
 	<startmode>auto</startmode>
     </network>
+
     <clone_modules config:type="list">
 	<clone_module>language</clone_module>
 	<clone_module>keyboard</clone_module>
@@ -113,6 +123,7 @@ textdomain="control"
 	<clone_module>add-on</clone_module>
 	<clone_module>iscsi-client</clone_module>
     </clone_modules>
+
     <texts>
       <congratulate>
 	<label>
@@ -255,6 +266,7 @@ Please visit us at http://www.novell.com/linux/.
                 <proposal_module>keyboard</proposal_module>
             </proposal_modules>
         </proposal>
+
         <proposal>
             <archs>s390</archs>
             <label>Installation Settings</label>
@@ -276,6 +288,7 @@ Please visit us at http://www.novell.com/linux/.
                 <proposal_module>zfcp</proposal_module>
             </proposal_modules>
         </proposal>
+
         <proposal>
             <label>Network Configuration</label>
             <name>network</name>
@@ -316,6 +329,7 @@ Please visit us at http://www.novell.com/linux/.
 		</proposal_module>
             </proposal_modules>
 	</proposal>
+
         <proposal>
 	    <archs>s390,ppc64</archs>
             <label>Network Configuration</label>
@@ -341,6 +355,7 @@ Please visit us at http://www.novell.com/linux/.
 		</proposal_module>
             </proposal_modules>
         </proposal>
+
         <proposal>
             <name>service</name>
             <stage>continue,normal</stage>
@@ -349,6 +364,7 @@ Please visit us at http://www.novell.com/linux/.
                 <proposal_module>ldap-server</proposal_module>
             </proposal_modules>
         </proposal>
+
         <proposal>
             <archs>ppc64</archs>
             <label>Hardware Configuration</label>
@@ -360,6 +376,7 @@ Please visit us at http://www.novell.com/linux/.
                 <proposal_module>printer</proposal_module>
             </proposal_modules>
         </proposal>
+
         <proposal>
             <archs>s390</archs>
             <label>Hardware Configuration</label>
@@ -370,6 +387,7 @@ Please visit us at http://www.novell.com/linux/.
                 <proposal_module>printer</proposal_module>
             </proposal_modules>
         </proposal>
+
         <proposal>
             <label>Hardware Configuration</label>
             <name>hardware</name>
@@ -474,6 +492,7 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -565,6 +584,7 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -583,6 +603,7 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -623,6 +644,7 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -663,6 +685,7 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <stage>continue</stage>
             <mode>update</mode>
@@ -754,6 +777,7 @@ Please visit us at http://www.novell.com/linux/.
 
             </modules>
         </workflow>
+
         <workflow>
             <stage>continue</stage>
             <mode>installation</mode>
@@ -895,6 +919,7 @@ Please visit us at http://www.novell.com/linux/.
 
             </modules>
         </workflow>
+
         <workflow>
             <stage>initial</stage>
             <label>Base Installation</label>
@@ -944,6 +969,7 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -979,5 +1005,6 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
             </modules>
         </workflow>
+
     </workflows>
 </productDefines>
