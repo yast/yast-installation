@@ -109,7 +109,7 @@
 		    )),
 		    `VStretch (),
 		    // TRANSLATORS: button label
-		    `Right (`PushButton (`id (`show_fulscreen_license), _("&Show License...")))
+		    `Right (`PushButton (`id (`show_fulscreen_license), _("License &Translations...")))
 		))
 	    )
 	),
