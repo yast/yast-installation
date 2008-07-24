@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jul 24 13:21:14 CEST 2008 - locilka@suse.cz
+
+- Using button label "License Translations..." in complex welcome
+  dialog (bnc #400616).
+
+-------------------------------------------------------------------
 Tue Jul 15 16:59:38 CEST 2008 - aschnell@suse.de
 
 - fixed vnc connect message during installation (bnc #395834)
