@@ -27,6 +27,14 @@ textdomain="control"
 	<manual_online_update config:type="boolean">false</manual_online_update>
 	<root_password_ca_check config:type="boolean">false</root_password_ca_check>
 
+	<!-- bnc #359115 -->
+	<root_password_as_first_user config:type="boolean">false</root_password_as_first_user>
+	<root_password_ca_check config:type="boolean">false</root_password_ca_check>
+
+	<!-- Offer add-ons in the installation -->
+	<show_addons config:type="boolean">true</show_addons>
+	<addons_default config:type="boolean">false</addons_default>
+
 	<!-- FATE #301937, Save /root content from the installation system to the installed system -->
 	<save_instsys_content config:type="list">
 	    <save_instsys_item>
@@ -34,6 +42,69 @@ textdomain="control"
 		<system_directory>/root/inst-sys/</system_directory>
 	    </save_instsys_item>
 	</save_instsys_content>
+
+	<!-- FATE #303396, Make second stage non-interactive -->
+	<enable_autoconfiguration config:type="boolean">true</enable_autoconfiguration>
+	<autoconfiguration_default config:type="boolean">true</autoconfiguration_default>
+
+        <!-- Configuration for inst_automatic_configuration script -->
+        <automatic_configuration config:type="list">
+            <!--
+                Adding inst_hostname client here, needed to generate random
+                hostname in automatic config (and for 127.0.0.2 hack) (#383336)
+                Must be called before inst_netprobe however, it cannot override it later on
+            -->
+            <ac_step>
+                <text_id>ac_1</text_id>
+                <icon>yast-sw_single</icon>
+                <type>scripts</type>
+                <ac_items config:type="list">
+                    <ac_item>initialization</ac_item>
+                    <ac_item>hostname</ac_item>
+                    <ac_item>netprobe</ac_item>
+                    <ac_item>rpmcopy_secondstage</ac_item>
+                </ac_items>
+            </ac_step>
+            <!-- network proposal -->
+            <ac_step>
+                <text_id>ac_2</text_id>
+                <icon>yast-network</icon>
+                <type>proposals</type>
+                <ac_items config:type="list">
+                    <ac_item>lan</ac_item>
+                    <ac_item>general</ac_item>
+                    <ac_item>dsl</ac_item>
+                    <ac_item>isdn</ac_item>
+                    <ac_item>modem</ac_item>
+                    <ac_item>remote</ac_item>
+                    <ac_item>firewall</ac_item>
+                </ac_items>
+            </ac_step>
+            <!-- hardware proposal -->
+            <ac_step>
+                <text_id>ac_3</text_id>
+                <icon>yast-hwinfo</icon>
+                <type>proposals</type>
+                <ac_items config:type="list">
+                    <ac_item>x11</ac_item>
+                    <ac_item>printer</ac_item>
+                    <ac_item>sound</ac_item>
+                    <ac_item>tv</ac_item>
+                </ac_items>
+            </ac_step>
+            <!-- finishing configuration -->
+            <ac_step>
+                <text_id>ac_4</text_id>
+                <icon>yast-sysconfig</icon>
+                <type>scripts</type>
+                <ac_items config:type="list">
+                    <ac_item>addon_update_sources</ac_item>
+                    <ac_item>extrasources</ac_item>
+                    <ac_item>suseconfig</ac_item>
+                    <ac_item>save_hardware_status</ac_item>
+                </ac_items>
+            </ac_step>
+        </automatic_configuration>
 
 	<!-- FATE: #304865: Enhance YaST Modules to cooperate better handling the product licenses -->
 	<base_product_license_directory>/etc/YaST2/licenses/base/</base_product_license_directory>
@@ -47,26 +118,27 @@ textdomain="control"
 	<delete_old_packages config:type="boolean">true</delete_old_packages>
 	<!-- For SLED10, unmaintained (old) packages are not removed by default, FATE #301844, bugzilla #233156 -->
 	<delete_old_packages_reverse_list config:type="list">
-	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Desktop 10.*$</regexp_item>
+	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Desktop 11.*$</regexp_item>
 	</delete_old_packages_reverse_list>
 
         <!-- By default, packages can be downgraded -->
         <silently_downgrade_packages config:type="boolean">true</silently_downgrade_packages>
         <!-- For SLED10, packages are not downgraded, FATE #301990, bugzilla #238488 -->
         <silently_downgrade_packages_reverse_list config:type="list">
-            <regexp_item>^SUSE (LINUX|Linux) Enterprise Desktop 10.*$</regexp_item>
+            <regexp_item>^SUSE (LINUX|Linux) Enterprise Desktop 11.*$</regexp_item>
         </silently_downgrade_packages_reverse_list>
 
 	<!-- By default, select new packages for installation -->
 	<only_update_selected config:type="boolean">false</only_update_selected>
 	<!-- For SLED10, do not install new packages by default, FATE #301844, bugzilla #233156 -->
 	<only_update_selected_reverse_list config:type="list">
-	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Desktop 10.*$</regexp_item>
+	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Desktop 11.*$</regexp_item>
 	</only_update_selected_reverse_list>
 
         <selection_type config:type="symbol">auto</selection_type>
         <base_selection>default-Gnome</base_selection>
     </software>
+
     <partitioning>
         <evms_config config:type="boolean">false</evms_config>
         <try_separate_home config:type="boolean">true</try_separate_home>
@@ -80,6 +152,7 @@ textdomain="control"
 	<vm_home_max_size>25G</vm_home_max_size>
 	<boot_evms config:type="boolean">false</boot_evms>
     </partitioning>
+
     <network>
         <force_static_ip config:type="boolean">false</force_static_ip>
         <network_manager>always</network_manager>
@@ -104,7 +177,7 @@ textdomain="control"
 	<clone_module>iscsi-client</clone_module>
     </clone_modules>
     <texts>
-      <congratulate>
+	<congratulate>
 	<label>
 &lt;p&gt;
 The installation has completed successfully.
@@ -115,7 +188,12 @@ Click &lt;b&gt;Finish&lt;/b&gt; to log in to the system.
 Please visit us at http://www.novell.com/linux/.
 &lt;/p&gt;
 	</label>
-      </congratulate>
+	</congratulate>
+
+	<ac_1><label>Initialization...</label></ac_1>
+	<ac_2><label>Configuring network...</label></ac_2>
+	<ac_3><label>Configuring hardware...</label></ac_3>
+	<ac_4><label>Finishing configuration...</label></ac_4>
     </texts>
 
     <proposals config:type="list">
@@ -163,6 +241,7 @@ Please visit us at http://www.novell.com/linux/.
                 </proposal_tab>
             </proposal_tabs>
         </proposal>
+
         <proposal>
             <label>Update Settings</label>
             <mode>update</mode>
@@ -197,6 +276,7 @@ Please visit us at http://www.novell.com/linux/.
                 <proposal_module>keyboard</proposal_module>
             </proposal_modules>
         </proposal>
+
         <proposal>
             <label>Network Configuration</label>
             <name>network</name>
@@ -237,6 +317,7 @@ Please visit us at http://www.novell.com/linux/.
 		</proposal_module>
             </proposal_modules>
         </proposal>
+
         <proposal>
             <label>Hardware Configuration</label>
             <name>hardware</name>
@@ -319,11 +400,15 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
 -->
 		<module>
-		    <heading>yes</heading>
-		    <label>Installation</label>
+		    <label>User Settings</label>
+		    <name>user_first</name>
+		</module>
+		<module>
+		    <label>User Settings</label>
+		    <name>root_first</name>
 		</module>
                 <module>
-	            <label>Installation Summary</label>
+	            <label>Installation Overview</label>
                     <name>proposal</name>
                     <proposal>initial</proposal>
                 </module>
@@ -348,9 +433,11 @@ Please visit us at http://www.novell.com/linux/.
                 <module>
 	            <label>Perform Installation</label>
                     <name>finish</name>
+                    <enable_back>no</enable_back>
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -442,6 +529,7 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -460,6 +548,7 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -500,6 +589,7 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -540,6 +630,7 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <stage>continue</stage>
             <mode>update</mode>
@@ -612,6 +703,7 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <stage>continue</stage>
             <mode>installation</mode>
@@ -624,6 +716,12 @@ Please visit us at http://www.novell.com/linux/.
 		<module>
 		    <heading>yes</heading>
 		    <label>Configuration</label>
+		</module>
+		<module>
+		    <label>Automatic Configuration</label>
+		    <name>automatic_configuration</name>
+		    <enable_back>no</enable_back>
+		    <enable_next>no</enable_next>
 		</module>
                 <module>
 	            <label>root Password</label>
@@ -726,6 +824,7 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <stage>initial</stage>
             <label>Base Installation</label>
@@ -775,6 +874,7 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -810,5 +910,6 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
             </modules>
         </workflow>
+
     </workflows>
 </productDefines>
