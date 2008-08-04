@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Aug 04 16:22:55 CEST 2008 - aschnell@suse.de
+
+- improved text during ssh installation (bnc #411079)
+
+-------------------------------------------------------------------
 Mon Aug  4 10:39:41 CEST 2008 - locilka@suse.cz
 
 - Added kdump proposal to SLES control file (FATE #303893).
