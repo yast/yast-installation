@@ -157,7 +157,9 @@ Please visit us at http://www.novell.com/linux/.
                 <proposal_module>timezone</proposal_module>
                 <proposal_module>language</proposal_module>
                 <proposal_module>runlevel</proposal_module>
+		<proposal_module>kdump</proposal_module>
             </proposal_modules>
+
             <proposal_tabs config:type="list">
                 <proposal_tab>
                     <label>Overview</label>
@@ -168,6 +170,7 @@ Please visit us at http://www.novell.com/linux/.
                         <proposal_module>language_simple</proposal_module>
                     </proposal_modules>
                 </proposal_tab>
+
                 <proposal_tab>
                     <label>Expert</label>
                     <proposal_modules config:type="list">
@@ -181,6 +184,7 @@ Please visit us at http://www.novell.com/linux/.
                         <proposal_module>timezone</proposal_module>
                         <proposal_module>language</proposal_module>
                         <proposal_module>runlevel</proposal_module>
+                        <proposal_module>kdump</proposal_module>
                     </proposal_modules>
                 </proposal_tab>
             </proposal_tabs>
