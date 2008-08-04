@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Aug  4 10:39:41 CEST 2008 - locilka@suse.cz
+
+- Added kdump proposal to SLES control file (FATE #303893).
+
+-------------------------------------------------------------------
 Thu Jul 24 13:21:14 CEST 2008 - locilka@suse.cz
 
 - Using button label "License Translations..." in complex welcome
