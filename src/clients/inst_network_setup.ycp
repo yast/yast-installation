@@ -419,7 +419,7 @@ Otherwise,click<b>Cancel</b>.</p>"),
 	    // TRANSLATORS: error message
 	    Report::Error (_("IP address cannot be empty."));
 	    return false;
-	} else if (! IP::Check4 (ip_address)) {
+	} else if (! IP::Check4 (ip_address) && ! IP::Check6 (ip_address)) {
 	    UI::SetFocus (`id ("ip_address"));
 	    Report::Error (sformat (
 		// TRANSLATORS: Error message, %1 is replaced with invalid IP address
@@ -451,7 +451,7 @@ Otherwise,click<b>Cancel</b>.</p>"),
 	    // TRANSLATORS: error message
 	    Report::Error (_("Gateway IP address cannot be empty."));
 	    return false;
-	} else if (! IP::Check4 (gateway)) {
+	} else if (! IP::Check4 (gateway) && ! IP::Check6 (gateway)) {
 	    UI::SetFocus (`id ("gateway"));
 	    Report::Error (sformat (
 		// TRANSLATORS: Error message, %1 is replaced with invalid IP address
@@ -467,7 +467,7 @@ Otherwise,click<b>Cancel</b>.</p>"),
 	    // TRANSLATORS: error message
 	    Report::Error (_("DNS server IP address cannot be empty."));
 	    return false;
-	} else if (! IP::Check4 (dns_server)) {
+	} else if (! IP::Check4 (dns_server) && ! IP::Check6 (dns_server)) {
 	    UI::SetFocus (`id ("dns_server"));
 	    Report::Error (sformat (
 		// TRANSLATORS: Error message, %1 is replaced with invalid IP address
@@ -505,7 +505,7 @@ Otherwise,click<b>Cancel</b>.</p>"),
 	    // TRANSLATORS: error message
 	    Report::Error (_("Proxy server name or IP address must be set."));
 	    return false;
-	} else if (! IP::Check4 (proxy_server) && ! Hostname::CheckFQ (proxy_server)) {
+	} else if (! IP::Check4 (proxy_server) && ! IP::Check6 (proxy_server) && ! Hostname::CheckFQ (proxy_server)) {
 	    UI::SetFocus (`id ("proxy_server"));
 	    Report::Error (sformat (
 		// TRANSLATORS: Error message, %1 is replaced with invalid IP address
