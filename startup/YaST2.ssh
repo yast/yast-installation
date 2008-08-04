@@ -27,8 +27,8 @@ cat <<-EOF
 
 	Continue with booting ...
 
-	You can login with the (new?) root password or the
-	new created user account in a few seconds ...
+	You can login with the (new) root password or the
+	newly created user account in a few seconds ...
 
 EOF
 }
