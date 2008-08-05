@@ -490,6 +490,12 @@ Please visit us at http://www.novell.com/linux/.
 	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
                 </module>
+		<!-- FATE #304940: s390 reIPL -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>reiplauto</name>
+		    <archs>s390</archs>
+		</module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>finish</name>
@@ -582,6 +588,12 @@ Please visit us at http://www.novell.com/linux/.
 	            <label>Perform Update</label>
                     <name>rpmcopy</name>
                 </module>
+		<module>
+		    <!-- FATE #304940: s390 reIPL -->
+		    <label>Perform Update</label>
+		    <name>reiplauto</name>
+		    <archs>s390</archs>
+		</module>
                 <module>
 	            <label>Perform Update</label>
                     <name>finish</name>
@@ -967,6 +979,12 @@ Please visit us at http://www.novell.com/linux/.
 	            <label>Perform Installation</label>
                     <name>rpmcopy</name>
                 </module>
+		<!-- FATE #304940: s390 reIPL -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>reiplauto</name>
+		    <archs>s390</archs>
+		</module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>finish</name>
