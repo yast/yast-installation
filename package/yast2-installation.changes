@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Aug  5 11:48:44 CEST 2008 - locilka@suse.cz
+
+- Calling reiplauto client in SLES control file before reboot
+  (FATE #304940).
+
+-------------------------------------------------------------------
 Mon Aug 04 16:22:55 CEST 2008 - aschnell@suse.de
 
 - improved text during ssh installation (bnc #411079)
