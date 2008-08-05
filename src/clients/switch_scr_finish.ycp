@@ -27,29 +27,13 @@ map param = $[];
 
 /**
  * SCR Switch failed. Reporting error, collecting data.
- * bugzilla #201058
+ * We don't ask whether to run the debugger, just run it.
+ *
+ * bnc #201058, #411832
  */
 void ErrorDuringSCRSwitch (string chroot_dir) {
-    // import the library once it is needed
-    import "Popup";
-
-    y2error("Cannot switch to SCR '%1'", chroot_dir);
-    
-    // Ask users whether they want to debug the problem
-    if (Popup::YesNoHeadline (
-	// popup error headline
-	_("Installation Error"),
-	// popup question
-	_("An error occurred while switching to the installed system
-and no recovery is possible.
-Run the automatic debugger to find out why it has failed?")
-    )) {
-	y2milestone("User decided to debug the current problem");
-
-	RunSCRSwitchDebugger(chroot_dir);
-    } else {
-	y2warning("User decided not to debug the current problem");
-    }
+    y2error("Cannot switch to SCR '%1', running debugger", chroot_dir);
+    RunSCRSwitchDebugger(chroot_dir);
 }
 
 /* Check arguments */

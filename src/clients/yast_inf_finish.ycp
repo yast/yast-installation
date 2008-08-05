@@ -24,6 +24,10 @@ import "Language";
 import "Keyboard";
 import "Directory";
 import "String";
+/*
+import "Arch";
+import "Reipl";
+*/
 
 include "installation/misc.ycp";
 
@@ -193,18 +197,52 @@ else if (func == "Write")
 	    y2milestone ("Printing message about loading kernel via kexec");
 	    SCR::Write (.dev.tty.stderr,
 		_("
-***********************************************************
+**************************************************************
 
 Loading installed kernel using kexec.
 
 Trying to load installed kernel via kexec instead of rebooting
 Please, wait.
 
-***********************************************************
+**************************************************************
 		")
 	    );
 	}
     }
+
+/*
+    // FATE #304940: Change YaST2-Module for s390 Disk adaptors from
+    // hwconfig scheme to udev-scheme
+    if (Arch::s390 ()) {
+	boolean different = true;
+	map <string, any> oldConfiguration = Reipl::ReadState ();
+	map <string, any> newConfiguration = Reipl::ReadState ();
+
+	if (oldConfiguration != nil) {
+	    y2milestone ("Calling Reipl::ModifyReiplWithBootPartition");
+	    Reipl::ModifyReiplWithBootPartition (newConfiguration);
+
+	    map oldCcwMap = (map)oldConfiguration["ccw"]:nil;
+	    map newCcwMap = (map)newConfiguration["ccw"]:nil;
+	    map oldFcpMap = (map)oldConfiguration["fcp"]:nil;
+	    map newFcpMap = (map)newConfiguration["fcp"]:nil;
+
+	    different =  oldConfiguration["method"]:"a" != newConfiguration["method"]:"b"
+			&& oldCcwMap["device"]:"a" != newCcwMap["device"]:"b"
+			&& oldCcwMap["loadparm"]:"a" != newCcwMap["loadparm"]:"b"
+			&& oldFcpMap["device"]:"a" != newFcpMap["device"]:"b"
+			&& oldFcpMap["wwpn"]:"a" != newFcpMap["wwpn"]:"b"
+			&& oldFcpMap["lun"]:"a" != newFcpMap["lun"]:"b"
+			&& oldFcpMap["bootprog"]:"a" != newFcpMap["bootprog"]:"b"
+			&& oldFcpMap["br_lba"]:"a" != newFcpMap["br_lba"]:"b";
+	}
+
+	y2milestone ("Reipl changed: %1", different);
+	if (different) {
+	    linuxrc["Root"] = "halt";
+	}
+    }
+*/
 
     linuxrc["Language"] = Language::language;
     linuxrc["Keytable"] = Keyboard::keymap;

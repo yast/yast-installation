@@ -82,18 +82,24 @@
 
     // UI dialog
     term SCRSwitchDialog () {
-	return `MarginBox (
-	    1, 1, `VBox (
-		`MinWidth (70,
-		    // used for progress
-		    `LogView (
-			`id (`log_view),
-			// log-view label
-			_("&Checking the Installed System..."),
-			18, 500
-		    )
-		),
-		`ReplacePoint(`id(`dialog_rp), `Empty())
+	return `VBox (
+	    // heading
+	    `Heading (_("Switching to the Installed System Failed")),
+	    // informative text
+	    `Label (_("Running the debugger...")),
+	    `MarginBox (
+		1, 1, `VBox (
+		    `MinWidth (70,
+			// used for progress
+			`LogView (
+			    `id (`log_view),
+			    // log-view label
+			    _("&Checking the Installed System..."),
+			    18, 500
+			)
+		    ),
+		    `ReplacePoint(`id(`dialog_rp), `Empty())
+		)
 	    )
 	);
     }
@@ -108,6 +114,21 @@
 	// report it to the UI
 	UI::ChangeWidget (`id(`log_view), `LastLine,
 	    sformat ("%1 %2\n", test_description, (test_result ? result_ok : result_failed))
+	);
+
+	UI::ChangeWidget (
+	    `id(`log_view), `LastLine,
+	    "\n" +
+	    sformat (
+		// TRANSLATORS: an error message
+		// %1 - link to our bugzilla
+		// %2 - directory where YaST logs are stored
+		_("This is worth reporting a bug at %1.
+Please, attach also all YaST logs stored in the '%2' directory."),
+		"http://bugzilla.novell.com/",
+		"/var/log/YaST2/"
+	    ) +
+	    "\n"
 	);
     }
 
