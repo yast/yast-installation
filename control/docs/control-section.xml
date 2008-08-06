@@ -393,6 +393,13 @@
 		<listitem><para>(boolean) <emphasis>rle_offer_rulevel_4</emphasis> - defines whether
 		    runlevel 4 should be offered in Runlevel Editor. Defaul value is <emphasis>false</emphasis>
 		    if not set.</para></listitem>
+
+		<!-- FATE #303893: [FSC] default to enabled kdump -->
+		<listitem><para>(boolean) <emphasis>enable_kdump</emphasis> - defines whether
+		    kdump is proposed as <emphasis>enabled</emphasis> in installation proposal.
+		    <emphasis>kdump_proposal</emphasis> client call has to be added into
+		    <link linkend="control_proposals">proposal</link> otherwise this variable
+		    does not have any effect.</para></listitem>
 	    </itemizedlist>
 	</section>
 	    
