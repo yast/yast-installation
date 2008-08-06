@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Aug  6 13:54:07 CEST 2008 - locilka@suse.cz
+
+- New control file entry globals->enable_kdump (default value)
+  (FATE #303893).
+
+-------------------------------------------------------------------
 Tue Aug  5 11:48:44 CEST 2008 - locilka@suse.cz
 
 - Calling reiplauto client in SLES control file before reboot
