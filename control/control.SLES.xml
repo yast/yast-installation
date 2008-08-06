@@ -48,6 +48,9 @@ textdomain="control"
 
 	<!-- #303798: YaST2 runlevel editor: offer easy enablement and configuration of runlevel 4 -->
 	<rle_offer_rulevel_4 config:type="boolean">true</rle_offer_rulevel_4>
+
+	<!-- FATE: #303893: Default to enabled kdump -->
+	<enable_kdump config:type="boolean">true</enable_kdump>
     </globals>
 
     <software>
