@@ -707,6 +707,57 @@ default
 	    </itemizedlist>
 
         </section>
+
+	<section id="control_software_scenarios">
+	    <title>System Scenarios</title>
+
+	    <para>System scenarios contain definition of dialog <emphasis>inst_scenarios</emphasis>
+	    in the first stage installation. It offeres several base-scenarios but only one of them
+	    can be selected as the selected one.</para>
+
+	    <para>Example of configured scenarios:</para>
+            <programlisting>
+
+            <xi:include href="examples/software_scenarios.xml" parse="text"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+            </programlisting>
+
+	    <para>System scenarios are defined inside the <emphasis>software</emphasis> section.
+	    Section <emphasis>system_scenarios</emphasis> consists of several
+	    <emphasis>system_scenario</emphasis> definitions. Every single
+	    <emphasis>system_scenario</emphasis> consists of:</para>
+
+	    <itemizedlist>
+		<listitem><para><emphasis>id</emphasis> - unique identificator of
+		    a selection.</para></listitem>
+		<listitem><para><emphasis>patterns</emphasis> - space-separated list of patterns
+		    covering the software scenario.</para></listitem>
+		<listitem><para><emphasis>icon</emphasis> - plain icon filename (from 32x32 theme
+		    directory) without suffix.</para></listitem>
+	    </itemizedlist>
+
+	    <para>Selection labels must be defined in <link linkend="control_texts">texts</link> section.
+	    Scenarios <emphasis>id</emphasis>s are used as link identificators.</para>
+
+	    <programlisting>
+
+    &lt;software&gt;
+	&lt;system_scenario&gt;
+	    &lt;id&gt;<emphasis>scenario_id</emphasis>&lt;/id&gt;
+	&lt;/system_scenario&gt;
+    &lt;/software&gt;
+
+    &lt;texts&gt;
+	&lt;<emphasis>scenario_id</emphasis>&gt;&lt;label&gt;Some Label&lt;/label&gt;&lt;/<emphasis>scenario_id</emphasis>&gt;
+    &lt;/texts&gt;
+
+	    </programlisting>
+
+	    <para>Section <emphasis>software</emphasis> also contains optional
+	    <emphasis>default_system_scenario</emphasis> that defines id of the default scenario.</para>
+
+	</section>
+
         <section id="control_partitioning">
             <title>Partitioning</title>
             <para>

@@ -1,0 +1,228 @@
+/**
+ * File:	clients/inst_scenarios.ycp
+ * Package:	Installation (First Stage)
+ * Summary:	Server/Desktop Scenarios
+ * Authors:	Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id:$
+ */
+
+{
+    // See FATE: #304373: Align installation process to use scenarios for Server in early stage
+
+    textdomain "installation";
+
+    import "ProductControl";
+    import "ProductFeatures";
+    import "Wizard";
+    import "Icon";
+    import "Installation";
+    import "Popup";
+    import "PackageCallbacks";
+    import "Report";
+
+    boolean test_mode = false;
+
+    if (size (WFM::Args()) > 0 && is (WFM::Args(0), string)) {
+	y2milestone ("Args: %1", WFM::Args());
+	if (WFM::Args(0) == "test") test_mode = true;
+    }
+
+    // load supported scenarios from control file
+    list <map <string, string> > system_scenarios =
+	(list <map <string, string> >) ProductFeatures::GetFeature ("software", "system_scenarios");
+
+    if (system_scenarios == nil || system_scenarios == []) {
+	y2error ("Undefined software->system_scenarios");
+	return `auto;
+    }
+
+    /**
+     * Adjusts UI - selected radio button
+     */
+    void SelectAppropriateRadioButton () {
+	list <map <string, any> > patterns = Pkg::ResolvableProperties ("", `pattern, "");
+
+	string selected_id = nil;
+
+	// check all scenarios
+	foreach (map <string, string> one_scenario, system_scenarios, {
+	    list <string> patterns_required = splitstring (one_scenario["patterns"]:"", " \t");
+
+	    integer matching_patterns = 0;
+
+	    foreach (map <string, any> one_pattern, patterns, {
+		if (
+		    contains (patterns_required, one_pattern["name"]:"") &&
+		    (one_pattern["status"]:`a == `installed || one_pattern["status"]:`a == `selected)
+		) {
+		    matching_patterns = matching_patterns + 1;
+		}
+	    });
+
+	    // there are some matching patterns
+	    // they match required patterns
+	    if (matching_patterns > 0 && matching_patterns >= size (patterns_required)) {
+		y2milestone ("Matching: %1 (%2)", one_scenario["id"]:"", one_scenario["patterns"]:"");
+		if (selected_id == nil) {
+		    selected_id = one_scenario["id"]:"";
+		} else {
+		    y2warning ("Scenario %1 already selected", selected_id);
+		}
+	    }
+	});
+
+	// matching patterns found
+	if (selected_id != nil) {
+	    UI::ChangeWidget (`id (`scenarios), `CurrentButton, selected_id);
+
+	// using fallback from control file
+	} else {
+	    string default_selection = ProductFeatures::GetStringFeature ("software", "default_system_scenario");
+
+	    if (default_selection == nil || default_selection == "") {
+		y2warning ("No default selection defined");
+	    } else {
+		y2milestone ("Pre-selecting default selection");
+		if (UI::WidgetExists (`id (default_selection)))
+		    UI::ChangeWidget (`id (`scenarios), `CurrentButton, default_selection);
+		else
+		    y2error ("No such selection: %1", default_selection);
+	    }
+	}
+    }
+
+    void SelectPatterns (string chosen_selection) {
+	y2milestone ("User selected: %1", chosen_selection);
+
+	// neutralize 'the other' patterns selected by application
+	foreach (map <string, string> one_scenario, system_scenarios, {
+	    if (one_scenario["id"]:"---" != chosen_selection) {
+		foreach (string one_pattern, splitstring (one_scenario["patterns"]:"", " \t"), {
+		    y2milestone ("Neutralizing pattern: %1", one_pattern);
+		    // false -- only patterns in `selected stage APPL_HIGH will be neutralized
+		    Pkg::ResolvableNeutral (one_pattern, `pattern, false);
+		});
+	    }
+	});
+
+	// select newly selected patterns for installation
+	foreach (map <string, string> one_scenario, system_scenarios, {
+	    if (one_scenario["id"]:"---" == chosen_selection) {
+		foreach (string one_pattern, splitstring (one_scenario["patterns"]:"", " \t"), {
+		    y2milestone ("Selecting pattern: %1", one_pattern);
+		    Pkg::ResolvableInstall (one_pattern, `pattern);
+		});
+	    }
+	});
+    }
+
+    // adjusting test mode - not used in installation
+    if (test_mode) {
+	Wizard::CreateDialog();
+	Pkg::TargetInit (Installation::destdir, true);
+	Pkg::SourceStartManager (true);
+	// pre-select
+//	foreach (string one_pattern, splitstring (system_scenarios[0,"patterns"]:"", " \t"), {
+//	    Pkg::ResolvableInstall (one_pattern, `pattern);
+//	});
+	Pkg::PkgSolve (true);
+    }
+
+    y2milestone ("Supported scenarios: %1", system_scenarios);
+
+    term GetDialogContents () {
+	term dialog_content = `VBox();
+
+	foreach (map <string, string> one_scenario, system_scenarios, {
+	    dialog_content = add (dialog_content, `HBox (
+		`HWeight (
+		    1,
+		    (one_scenario["icon"]:"" == "" ?
+			`Empty ()
+			:
+			`HBox (`Image (Icon::IconPath (one_scenario["icon"]:""), ""), `HSpacing (2))
+		    )
+		),
+		`HWeight (
+		    4,
+		    `Left (`RadioButton (
+			`id (one_scenario["id"]:""),
+			ProductControl::GetTranslatedText (one_scenario["id"]:"")
+		    ))
+		)
+	    ));
+
+	    dialog_content = add (dialog_content, `VSpacing (0.8));
+	});
+
+	dialog_content = `VBox (
+	    `Label (ProductControl::GetTranslatedText ("scenarios_text")),
+	    `VSpacing (2),
+	    `HSquash (`Frame (
+		// TRANSLATORS: frame label
+		_("Choose Scenario"),
+		`RadioButtonGroup (
+		    `id (`scenarios),
+		    `MarginBox (2, 1.3, dialog_content)
+		)
+	    ))
+	);
+
+	return dialog_content;
+    }
+
+    // TRANSLATORS: help text
+    string dialog_help = _("<p>Select a scenario that matches your needs the best.
+Additional software can be selected later in software proposal.</p>");
+
+    // Adjust dialog
+    Wizard::SetContents (
+	ProductControl::GetTranslatedText ("scenarios_caption"),
+	GetDialogContents(),
+	dialog_help,
+	true,
+	true
+    );
+    Wizard::SetTitleIcon ("yast-software");
+
+    SelectAppropriateRadioButton();
+
+    any user_input = nil;
+    symbol ret = `auto;
+
+    // Handle user input
+    while (true) {
+	user_input = UI::UserInput();
+
+	if (user_input == `next) {
+	    string chosen_selection = (string) UI::QueryWidget (`id (`scenarios), `CurrentButton);
+
+	    if (chosen_selection == nil || chosen_selection == "") {
+		// TRANSLATORS: pop-up message
+		Report::Message (_("Choose one scenario, please."));
+	    } else {
+		SelectPatterns (chosen_selection);
+		ret = `next;
+		break;
+	    }
+	} else if (user_input == `back) {
+	    ret = `back;
+	    break;
+	} else if (user_input == `abort || user_input == `cancel) {
+	    if (Popup::ConfirmAbort (`painless)) {
+		ret = `abort;
+		break;
+	    }
+	} else {
+	    y2error ("Unexpected ret: %1", user_input);
+	}
+    }
+
+    // test mode - not used in installation
+    if (test_mode) Wizard::CloseDialog();
+
+    y2milestone ("Returning: %1", ret);
+    return ret;
+/* EOF */
+}

@@ -82,6 +82,28 @@ textdomain="control"
 	</products_supported_for_upgrade>
 
         <selection_type config:type="symbol">auto</selection_type>
+
+	<!-- FATE #304373: Server scenarios, labels are defined in 'texts' using the scenario 'id' -->
+	<system_scenarios config:type="list">
+	    <system_scenario>
+		<id>scenario_physical_machine</id>
+		<patterns>physical_machine-pattern</patterns>
+		<icon>yast-system</icon>
+	    </system_scenario>
+	    <system_scenario>
+		<id>scenario_virtual_machine</id>
+		<patterns>virtual_machine-pattern</patterns>
+		<icon>yast-vm-install</icon>
+	    </system_scenario>
+	    <system_scenario>
+		<id>scenario_virtualization_host</id>
+		<patterns>virtualization_host-pattern</patterns>
+		<icon>yast-vm-management</icon>
+	    </system_scenario>
+	</system_scenarios>
+
+	<!-- default selection for 'system_scenarios' (matches one 'id') -->
+	<default_system_scenario>scenario_physical_machine</default_system_scenario>
     </software>
 
     <partitioning>
@@ -140,6 +162,15 @@ Please visit us at http://www.novell.com/linux/.
 &lt;/p&gt;
 	</label>
       </congratulate>
+
+	<!-- FATE #304373: Server scenarios -->
+	<scenarios_caption><label>Server Base Scenario</label></scenarios_caption>
+	<scenarios_text><label>SUSE Linux Enterprise Server offers several base scenarios.
+Choose the one that matches your server the best.</label></scenarios_text>
+	<!-- Labels to be easily defined by PM, see 'software' section -->
+	<scenario_physical_machine><label>Physical Machine</label></scenario_physical_machine>
+	<scenario_virtual_machine><label>Virtual Machine</label></scenario_virtual_machine>
+	<scenario_virtualization_host><label>Virtualization Host</label></scenario_virtualization_host>
     </texts>
 
     <proposals config:type="list">
@@ -469,6 +500,11 @@ Please visit us at http://www.novell.com/linux/.
 		<module>
 		    <heading>yes</heading>
 		    <label>Installation</label>
+		</module>
+		<!-- FATE #304373: Server scenarios -->
+		<module>
+		    <label>Server Scenario</label>
+		    <name>scenarios</name>
 		</module>
                 <module>
 	            <label>Installation Summary</label>

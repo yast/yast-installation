@@ -1,0 +1,52 @@
+
+<productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
+    xmlns:config="http://www.suse.com/1.0/configns">
+    <software>
+
+	<!-- list of supported scenarios -->
+	<system_scenarios config:type="list">
+
+	    <!-- one scenario -->
+	    <system_scenario>
+		<!-- 'id' matches the text 'scenario_game_server' -->
+		<id>scenario_game_server</id>
+		<!-- space-separated list of patterns -->
+		<patterns>game_server-pattern high-load-server</patterns>
+		<!--  plain icon filename (from 32x32 directory) without suffix -->
+		<icon>yast-system</icon>
+	    </system_scenario>
+
+	    <system_scenario>
+		<id>scenario_web_server</id>
+		<patterns>web_server-pattern</patterns>
+		<icon>yast-http-server</icon>
+	    </system_scenario>
+
+	    <system_scenario>
+		<id>scenario_nfs_server</id>
+		<patterns>nfs_server-pattern</patterns>
+		<icon>yast-nfs-server</icon>
+	    </system_scenario>
+
+	</system_scenarios>
+
+	<!-- this scenario (id) is selected by default -->
+	<default_system_scenario>scenario_nfs_server</default_system_scenario>
+
+    </software>
+
+    <texts>
+
+	<!-- dialog caption -->
+	<scenarios_caption><label>Server Base Scenario</label></scenarios_caption>
+	<!-- informative text between caption and listed scenarios -->
+	<scenarios_text><label>SUSE Linux Enterprise Server offers several base scenarios.
+Choose the one that matches your server the best.</label></scenarios_text>
+
+	<!-- matches the 'id' of one 'system_scenario' -->
+	<scenario_game_server><label>Game Server</label></scenario_game_server>
+	<scenario_web_server><label>Web Server</label></scenario_web_server>
+	<scenario_nfs_server><label>NFS Server</label></scenario_nfs_server>
+
+    </texts>
+</productDefines>
