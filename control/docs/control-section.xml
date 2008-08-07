@@ -756,6 +756,15 @@ default
 	    <para>Section <emphasis>software</emphasis> also contains optional
 	    <emphasis>default_system_scenario</emphasis> that defines id of the default scenario.</para>
 
+	    <para>There are some important texts that has to be defined for the dialog layout</para>
+
+	    <itemizedlist>
+		<listitem><para><emphasis>scenarios_caption</emphasis> - used as a dialog caption
+		    for the Scenarios dialog.</para></listitem>
+		<listitem><para><emphasis>scenarios_text</emphasis> - used as an informative text
+		    describing the available selections below.</para></listitem>
+	    </itemizedlist>
+
 	</section>
 
         <section id="control_partitioning">
