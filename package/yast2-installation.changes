@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Aug  8 14:53:59 CEST 2008 - coolo@suse.de
+
+- fix path to reconfig_system
+
+-------------------------------------------------------------------
 Tue Jun  3 15:11:15 CEST 2008 - locilka@suse.cz
 
 - Always use --numeric-owner (always use numbers for user/group
