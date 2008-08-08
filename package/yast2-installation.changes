@@ -6,6 +6,7 @@ Thu Aug  7 16:40:32 CEST 2008 - locilka@suse.cz
 - Configuration for inst_scenarios is defined in control file (Only
   SLES so far), client added into SLES workflow.
 - Extended control file documentation (All FATE #304373).
+- 2.17.3
 
 -------------------------------------------------------------------
 Wed Aug  6 13:54:07 CEST 2008 - locilka@suse.cz
