@@ -58,5 +58,14 @@
 
     // <-- other
 
+    // --> copy files -- config
+    // FATE #305019: configure the files to copy from a previous installation
+
+    global boolean copy_files_use_control_file = true;
+
+    global list <map> additional_copy_files = [];
+
+    // <-- copy files -- config
+
 /* EOF */
 }

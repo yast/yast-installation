@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Aug 11 17:35:47 CEST 2008 - locilka@suse.cz
+
+- List of files to be copied from the previous installation moved
+  to control file, added new API to define own list (module
+  SystemFilesCopy) (FATE #305019).
+- Adapted control files.
+
+-------------------------------------------------------------------
 Mon Aug 11 10:06:02 CEST 2008 - locilka@suse.cz
 
 - Fixed WFM::Execute to use .local instead of .target in
