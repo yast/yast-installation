@@ -191,7 +191,7 @@ else if (func == "Write")
     string license_file = "/license.tar.gz";
     // Copy licenses so it can be used in firstboot later
     // bnc #396976
-    map cmd = (map) WFM::Execute (.target.bash_output,
+    map cmd = (map) WFM::Execute (.local.bash_output,
 	sformat (
 	    "mkdir -p '%1' && cd '%1' && rm -rf license*.txt; tar -xf '%2'",
 	    String::Quote (license_dir),

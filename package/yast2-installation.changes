@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Aug 11 10:06:02 CEST 2008 - locilka@suse.cz
+
+- Fixed WFM::Execute to use .local instead of .target in
+  copy_files_finish script.
+
+-------------------------------------------------------------------
 Thu Aug  7 16:40:32 CEST 2008 - locilka@suse.cz
 
 - Added new client inst_scenarios to offer main scenarios of the
