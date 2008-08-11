@@ -21,7 +21,7 @@
     import "Installation";
     import "ProductFeatures";
     import "Stage";
-
+    import "InstData";
 
 
     // --> Variables
@@ -158,7 +158,7 @@
 	    // 'ignore failed read' is for optional files
 	    // but needs to be entered after the archive name
 	    // bugzilla #326055
-	    "cd '%1'; tar -zcvf '%2' --ignore-failed-read %3",
+	    "cd '%1'; tar --recursion -zcvf '%2' --ignore-failed-read %3",
 	    tmp_mount_directory, String::Quote(archive_name), archive_files
 	);
 	map cmd_run = (map) SCR::Execute(.target.bash_output, command);
@@ -341,6 +341,94 @@
 
 	return true;
     }
+
+    // FATE #305019: configure the files to copy from a previous installation
+    // -->
+
+    /**
+     * Sets whether copy_files from control file should be used
+     *
+     * @returns boolean whether to use them
+     * @see SetUseControlFileDef
+     */
+    global boolean GetUseControlFileDef () {
+	return (InstData::copy_files_use_control_file == true);
+    }
+
+    /**
+     * Sets whether to use copy_files from control file
+     *
+     * @param boolean whether to use them
+     * @see GetUseControlFileDef
+     */
+    global void SetUseControlFileDef (boolean new_value) {
+	if (new_value == nil) {
+	    y2error ("Wrong value: %1", new_value);
+	    return;
+	}
+
+	InstData::copy_files_use_control_file = new_value;
+	y2milestone ("Using copy_to_system from control file set to: %1", new_value);
+    }
+
+    /**
+     * Returns list of copy_files definitions
+     * @see SetCopySystemFiles for more info
+     */
+    global list <map> GetCopySystemFiles () {
+	return InstData::additional_copy_files;
+    }
+
+    /**
+     * Sets new rules which files will be copied during installation.
+     *
+     * @see FATE #305019: configure the files to copy from a previous installation
+     * @param list <map> of new definitions
+     *
+     * @struct
+     *    [
+     *        "copy_to_dir" : (string) "system_directory_to_copy_to",
+     *        "mandatory_files" : (list <string>) [ list of mandatory files ],
+     *        "optional_files" : (list <string>) [ list of optional files ],
+     *    ]
+     *
+     * @example
+     *    SetCopySystemFiles ([
+     *        $["copy_to_dir":"/root/backup", "mandatory_files":["/etc/passwd", "/etc/shadow"]]
+     *        $["copy_to_dir":"/root/backup", "mandatory_files":["/etc/ssh/ssh_host_dsa_key"], "optional_files":["/etc/ssh/ssh_host_rsa_key.pub"]]
+     *    ])
+     */
+    global void SetCopySystemFiles (list <map> new_copy_files) {
+	InstData::additional_copy_files = [];
+
+	boolean use_item = true;
+
+	foreach (map one_copy_item, new_copy_files, {
+	    string copy_to_dir = tostring (one_copy_item["copy_to_dir"]:Directory::vardir);
+	    if (copy_to_dir == nil || copy_to_dir == "") {
+		y2error ("(string) 'copy_to_dir' must be defined");
+		use_item = false;
+	    }
+
+	    list <string> mandatory_files = (list <string>) one_copy_item["mandatory_files"]:[];
+	    if (mandatory_files == nil || mandatory_files == []) {
+		y2error ("(list <string>) 'mandatory_files' must be defined");
+		use_item = false;
+	    }
+
+	    list <string> optional_files = (list <string>) one_copy_item["optional_files"]:[];
+	    if (optional_files == nil) {
+		y2error ("(list <string>) 'optional_files' wrong definition");
+		use_item = false;
+	    }
+
+	    if (use_item) {
+		InstData::additional_copy_files = add (InstData::additional_copy_files, one_copy_item);
+	    }
+	});
+    }
+
+    // <--
 
 /* EOF */
 }

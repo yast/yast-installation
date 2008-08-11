@@ -3,6 +3,9 @@
     import "FileUtils";
     import "Directory";
     import "SystemFilesCopy";
+    import "ProductFeatures";
+    import "ProductControl";
+    import "InstData";
 
     // --> Functions
 
@@ -17,34 +20,46 @@
     // all partitions that can be used as a 
     list <map <string, any> > useful_partitions = [];
 
-    list <symbol> possible_root_fs = [ `ext2, `ext3, `reiser, `xfs, `jfs ];
+    list <symbol> possible_root_fs = [ `ext2, `ext3, `ext4, `reiser, `xfs, `jfs ];
 
     /* ******************************************************************************* */
     // --> main()
 
     Initialize();
 
-    // FATE #300421: Import ssh keys from previous installations
-    FindAndCopyNewestFiles (
-	"/",
-	// required
-	["/etc/ssh/ssh_host_key", "/etc/ssh/ssh_host_key.pub"],
-	// optional
-	["/etc/ssh/ssh_host_dsa_key", "/etc/ssh/ssh_host_dsa_key.pub", "/etc/ssh/ssh_host_rsa_key", "/etc/ssh/ssh_host_rsa_key.pub"]
-    );
-    
-    // FATE #120103: Import Users From Existing Partition
-    FindAndCopyNewestFiles (
-	sformat ("%1/imported/userdata", Directory::vardir),
-	["/etc/shadow", "/etc/passwd", "/etc/login.defs", "/etc/group"],
-	[]
-    );
+    if (InstData::copy_files_use_control_file == true) {
+	y2milestone ("Using copy_to_system from control file");
+
+	// FATE #305019: configure the files to copy from a previous installation
+	// -> configuration moved to control file
+	list <map> copy_items = (list <map>) ProductFeatures::GetFeature ("globals", "copy_to_system");
+
+	foreach (map one_copy_item, copy_items, {
+	    string copy_to_dir = tostring (one_copy_item["copy_to_dir"]:Directory::vardir);
+	    list <string> mandatory_files = (list <string>) one_copy_item["mandatory_files"]:[];
+	    list <string> optional_files = (list <string>) one_copy_item["optional_files"]:[];
+
+	    FindAndCopyNewestFiles (copy_to_dir, mandatory_files, optional_files);
+	});
+    }
+
+    if (SystemFilesCopy::GetUseControlFileDef()) {
+	y2milestone ("Using additional copy_to_system");
+
+	foreach (map one_copy_item, SystemFilesCopy::GetCopySystemFiles(), {
+	    string copy_to_dir = tostring (one_copy_item["copy_to_dir"]:Directory::vardir);
+	    list <string> mandatory_files = (list <string>) one_copy_item["mandatory_files"]:[];
+	    list <string> optional_files = (list <string>) one_copy_item["optional_files"]:[];
+
+	    FindAndCopyNewestFiles (copy_to_dir, mandatory_files, optional_files);
+	});
+    }
 
     // free the memory
     useful_partitions = nil;
     
     // at least some return
-    return `a_glass_of_milk_please;
+    return `auto;
 
     // <-- main()
     /* ******************************************************************************* */
@@ -113,8 +128,8 @@
 
 	    if (am_exit != 0) {
 		y2warning ("%1 is already mounted, trying to umount...", mnt_tmpdir);
-		integer umount = (integer) SCR::Execute (.target.umount, mnt_tmpdir);
-		if (umount != 0) {
+		boolean umount = (boolean) SCR::Execute (.target.umount, mnt_tmpdir);
+		if (umount != true) {
 		    y2error ("Cannot umount %1", mnt_tmpdir);
 		}
 	    }
