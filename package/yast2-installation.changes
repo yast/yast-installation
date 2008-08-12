@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Aug 12 10:28:24 CEST 2008 - locilka@suse.cz
+
+- Added documentation and example for list of files to be copied
+  from the previous installation.
+
+-------------------------------------------------------------------
 Mon Aug 11 17:35:47 CEST 2008 - locilka@suse.cz
 
 - List of files to be copied from the previous installation moved

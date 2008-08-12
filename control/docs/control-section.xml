@@ -429,6 +429,54 @@
 	    </itemizedlist>
 	</section>
 
+	<!-- FATE #305019: configure the files to copy from a previous installation -->
+	<!-- FATE #300421: Import ssh keys from previous installations -->
+	<!-- FATE #120103: Import Users From Existing Partition -->
+	<section id="control_globals_copy_to_system">
+	    <title>Importing Files from Previous Installation</title>
+
+	    <para>Even if users are performing new reinstallation of their system, installation
+	    process can backup some files or directories before their disks are formatted and
+	    restore them after the installation. For instance, SSH keys are reused.</para>
+
+	    <para>Typically, there is only one system previously installed, if there are more
+	    systems, the one with the newest access time to required files is chosen.</para>
+
+	    <para>See the example:</para>
+	    <programlisting>
+		<xi:include href="examples/globals-copy_to_system.xml" parse="text"
+            	    xmlns:xi="http://www.w3.org/2001/XInclude"/>
+	    </programlisting>
+
+	    <para>In the <emphasis>globals</emphasis> section, there is a
+	    <emphasis>copy_to_system</emphasis> list of <emphasis>copy_to_system_item</emphasis>
+	    entries.</para>
+
+	    <para>Every <emphasis>copy_to_system_item</emphasis> entry consists of:</para>
+
+	    <itemizedlist>
+		<listitem>
+		    <para>(string) <emphasis>copy_to_dir</emphasis> - files are finally
+			stored into the mentioned directory, they additionally keep their
+			path in the previous filesystem, e.g., file <emphasis>/etc/file</emphasis>
+			copied to directory <emphasis>/var/lib/YaST2/</emphasis> will be finally
+			stored as <emphasis>/var/lib/YaST2/etc/file</emphasis></para>
+		</listitem>
+		<listitem>
+		    <para>(list) <emphasis>mandatory_files</emphasis> - list of (string)
+			<emphasis>file_item</emphasis> entries, one entry for one file or
+			directory; these files are mandatory and must all exist on the source
+			system; if any of the files are missing, such system is skipped</para>
+		</listitem>
+		<listitem>
+		    <para>(list) <emphasis>optional_files</emphasis> - list of (string)
+			<emphasis>file_item</emphasis> entries, one entry for one file or
+			directory; files are optional and are copied if they exist; missing
+			files are skipped</para>
+		</listitem>
+	    </itemizedlist>
+	</section>
+
 	<!-- FATE #303939: Enable redetection of hardware at customer first boot -->
 	<section id="control_globals_automatic_configuration">
 	    <title>Automatic Configuration</title>
