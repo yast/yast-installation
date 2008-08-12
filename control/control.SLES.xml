@@ -40,37 +40,37 @@ textdomain="control"
 	    </save_instsys_item>
 	</save_instsys_content>
 
-        <!-- FATE #305019: configure the files to copy from a previous installation -->
-        <copy_to_system config:type="list">
-            <!-- FATE #300421: Import ssh keys from previous installations -->
-            <copy_to_system_item>
-                <copy_to_dir>/</copy_to_dir>
-                <!-- Files that must be all present on the previous system -->
-                <mandatory_files config:type="list">
-                    <file_item>/etc/ssh/ssh_host_key</file_item>
-                    <file_item>/etc/ssh/ssh_host_key.pub</file_item>
-                </mandatory_files>
-                <!-- Files thay may be present -->
-                <optional_files config:type="list">
-                    <file_item>/etc/ssh/ssh_host_dsa_key</file_item>
-                    <file_item>/etc/ssh/ssh_host_dsa_key.pub</file_item>
-                    <file_item>/etc/ssh/ssh_host_rsa_key</file_item>
-                    <file_item>/etc/ssh/ssh_host_rsa_key.pub</file_item>
-                </optional_files>
-            </copy_to_system_item>
+	<!-- FATE #305019: configure the files to copy from a previous installation -->
+	<copy_to_system config:type="list">
+	    <!-- FATE #300421: Import ssh keys from previous installations -->
+	    <copy_to_system_item>
+		<copy_to_dir>/</copy_to_dir>
+		<!-- Files that must be all present on the previous system -->
+		<mandatory_files config:type="list">
+		    <file_item>/etc/ssh/ssh_host_key</file_item>
+		    <file_item>/etc/ssh/ssh_host_key.pub</file_item>
+		</mandatory_files>
+		<!-- Files thay may be present -->
+		<optional_files config:type="list">
+		    <file_item>/etc/ssh/ssh_host_dsa_key</file_item>
+		    <file_item>/etc/ssh/ssh_host_dsa_key.pub</file_item>
+		    <file_item>/etc/ssh/ssh_host_rsa_key</file_item>
+		    <file_item>/etc/ssh/ssh_host_rsa_key.pub</file_item>
+		</optional_files>
+	    </copy_to_system_item>
 
-            <!-- FATE #120103: Import Users From Existing Partition -->
-            <copy_to_system_item>
-                <copy_to_dir>/var/lib/YaST2/imported/userdata/</copy_to_dir>
-                <!-- Files that must be all present on the previous system -->
-                <mandatory_files config:type="list">
-                    <file_item>/etc/shadow</file_item>
-                    <file_item>/etc/passwd</file_item>
-                    <file_item>/etc/login.defs</file_item>
-                    <file_item>/etc/group</file_item>
-                </mandatory_files>
-            </copy_to_system_item>
-        </copy_to_system>
+	    <!-- FATE #120103: Import Users From Existing Partition -->
+	    <copy_to_system_item>
+		<copy_to_dir>/var/lib/YaST2/imported/userdata/</copy_to_dir>
+		<!-- Files that must be all present on the previous system -->
+		<mandatory_files config:type="list">
+		    <file_item>/etc/shadow</file_item>
+		    <file_item>/etc/passwd</file_item>
+		    <file_item>/etc/login.defs</file_item>
+		    <file_item>/etc/group</file_item>
+		</mandatory_files>
+	    </copy_to_system_item>
+	</copy_to_system>
 
 	<!-- FATE #303396, Make second is still interactive -->
 	<enable_autoconfiguration config:type="boolean">false</enable_autoconfiguration>
