@@ -43,7 +43,7 @@ textdomain="control"
 	    </save_instsys_item>
 	</save_instsys_content>
 
-        <!-- #305019: configure the files to copy from a previous installation -->
+        <!-- FATE #305019: configure the files to copy from a previous installation -->
         <copy_to_system config:type="list">
             <!-- FATE #300421: Import ssh keys from previous installations -->
             <copy_to_system_item>

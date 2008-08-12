@@ -27,7 +27,7 @@
 
     Initialize();
 
-    if (InstData::copy_files_use_control_file == true) {
+    if (SystemFilesCopy::GetUseControlFileDef()) {
 	y2milestone ("Using copy_to_system from control file");
 
 	// FATE #305019: configure the files to copy from a previous installation
@@ -43,7 +43,7 @@
 	});
     }
 
-    if (SystemFilesCopy::GetUseControlFileDef()) {
+    if (SystemFilesCopy::GetCopySystemFiles() != []) {
 	y2milestone ("Using additional copy_to_system");
 
 	foreach (map one_copy_item, SystemFilesCopy::GetCopySystemFiles(), {

@@ -1,0 +1,43 @@
+
+    <globals>
+        <copy_to_system config:type="list">
+            <copy_to_system_item>
+		<!-- Files are restored directly to "/" after installation -->
+                <copy_to_dir>/</copy_to_dir>
+
+                <!-- Files that must be all present on the previous system -->
+                <mandatory_files config:type="list">
+                    <file_item>/etc/ssh/ssh_host_key</file_item>
+                    <file_item>/etc/ssh/ssh_host_key.pub</file_item>
+                </mandatory_files>
+
+                <!-- Files thay may be present and are used if exist -->
+                <optional_files config:type="list">
+                    <file_item>/etc/ssh/ssh_host_dsa_key</file_item>
+                    <file_item>/etc/ssh/ssh_host_dsa_key.pub</file_item>
+                    <file_item>/etc/ssh/ssh_host_rsa_key</file_item>
+                    <file_item>/etc/ssh/ssh_host_rsa_key.pub</file_item>
+                </optional_files>
+            </copy_to_system_item>
+
+            <copy_to_system_item>
+		<!--
+		    Files are restored to a special directory
+		    (and used by YaST later)
+		-->
+                <copy_to_dir>/var/lib/YaST2/imported/userdata/</copy_to_dir>
+
+		<!--
+		    They finally appear as
+			"/var/lib/YaST2/imported/userdata/etc/shadow"
+			"/var/lib/YaST2/imported/userdata/etc/passwd" ...
+		-->
+                <mandatory_files config:type="list">
+                    <file_item>/etc/shadow</file_item>
+                    <file_item>/etc/passwd</file_item>
+                    <file_item>/etc/login.defs</file_item>
+                    <file_item>/etc/group</file_item>
+                </mandatory_files>
+            </copy_to_system_item>
+        </copy_to_system>
+    </globals>
