@@ -177,27 +177,27 @@ textdomain="control"
 
 	    <!-- Replacement for EXTRAURLS and OPTIONALURLS -->
 	    <extra_url>
-		<baseurl>http://download.opensuse.org/distribution/SL-OSS-factory/inst-source/</baseurl>
-                <name>Main Repository (OSS)</name>
-                <alias>factory</alias>
+		<baseurl>http://download.opensuse.org/distribution/11.0/repo/oss/</baseurl>
+                <name>openSUSE-11.0-Oss</name>
+                <alias>repo-oss</alias>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">false</autorefresh>
 		<priority config:type="integer">120</priority>
 	    </extra_url>
 	    <extra_url>
-		<baseurl>http://download.opensuse.org/distribution/SL-Factory-non-oss/inst-source-extra/</baseurl>
-                <alias>factory-non-oss</alias>
-                <name>Main Repository (NON-OSS)</name>
+		<baseurl>http://download.opensuse.org/distribution/11.0/repo/non-oss/</baseurl>
+                <alias>repo-non-oss</alias>
+                <name>openSUSE-11.0-Non-Oss</name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">false</autorefresh>
 		<priority config:type="integer">120</priority>
 	    </extra_url>
 	    <extra_url>
-		<baseurl>http://download.opensuse.org/distribution/SL-OSS-factory-debug/inst-source-debug/</baseurl>
-                <alias>factory-debug</alias>
-                <name>Main Repository (Debug)</name>
+		<baseurl>http://download.opensuse.org/distribution/11.0/repo/debug/</baseurl>
+                <alias>repo-debug</alias>
+                <name>openSUSE-11.0-Debug</name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">false</enabled>
 		<autorefresh config:type="boolean">false</autorefresh>
