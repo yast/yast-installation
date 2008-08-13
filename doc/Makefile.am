@@ -1,4 +1,4 @@
-SUBDIRS = autodocs proposal
+SUBDIRS = autodocs proposal features
 
 doc_DATA = *.html
 

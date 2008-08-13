@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Aug 13 18:23:57 CEST 2008 - locilka@suse.cz
+
+- Dropped some obsolete documentation.
+- Started installation-features documentation (FATE #303675).
+- Fixed building documentation for proposal-API.
+
+-------------------------------------------------------------------
 Tue Aug 12 10:28:24 CEST 2008 - locilka@suse.cz
 
 - Added documentation and example for list of files to be copied

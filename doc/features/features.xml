@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="installation_features">
+    <title>Installation Features</title>
+
+    <para>This section contains description of several installation
+    features.</para>
+
+    <!-- FIXME: describe add_on_products.xml file format, placement, and usage -->
+    <!-- FIXME: describe add_on_products file format, placement, and usage -->
+</section>
