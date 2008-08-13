@@ -1,3 +1,4 @@
+SUBDIRS = examples
 
 xml_files =  $(wildcard *.xml)
 
@@ -5,7 +6,7 @@ html_DATA = $(wildcard html/*.html) \
 	    html/index.html \
 	    html/yast2docs.css
 
-html/index.html: proposal-API-doc.xml
+html/index.html: features-doc.xml
 	XML_CATALOG_FILES=@XML_CATALOG@ \
 	@XSLTPROC@ @XSLTPROC_FLAGS@ --xinclude \
 	@STYLESHEET_HTML@ $<

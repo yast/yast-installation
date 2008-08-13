@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-"/usr/share/xml/docbook/schema/dtd/4.2/docbookx.dtd">
-
 <section id="proposal_api">
   <title>
     API for YaST2 installation proposal
@@ -163,6 +160,5 @@
 
     </programlisting>
   </section>
-  
 
 </section>
