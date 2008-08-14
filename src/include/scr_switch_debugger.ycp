@@ -106,8 +106,6 @@
 
     // reports a progress with reslt
     void ReportTest (string test_description, boolean test_result) {
-	if (! test_result) y2error("-- I.C. Winner --");
-
 	// report it to the log
 	y2milestone("%1 %2", test_description, test_result);
 
@@ -115,6 +113,13 @@
 	UI::ChangeWidget (`id(`log_view), `LastLine,
 	    sformat ("%1 %2\n", test_description, (test_result ? result_ok : result_failed))
 	);
+
+	if (test_result) {
+	    // passed
+	    return;
+	}
+
+	y2error("-- I.C. Winner --");
 
 	UI::ChangeWidget (
 	    `id(`log_view), `LastLine,
