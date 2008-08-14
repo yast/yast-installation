@@ -25,6 +25,7 @@
     import "FileUtils";
     import "Popup";
     import "Label";
+    import "Icon";
 
     // test result (Checking for xyz... Passed)
     string result_ok = _("Passed");
@@ -83,10 +84,14 @@
     // UI dialog
     term SCRSwitchDialog () {
 	return `VBox (
-	    // heading
-	    `Heading (_("Switching to the Installed System Failed")),
+	    `Left (`HBox (
+		`HSquash (`MarginBox (0.5, 0.2, Icon::Error())),
+		// heading
+		`Heading (_("Switching to the Installed System Failed"))
+	    )),
+	    `VSpacing (0.5),
 	    // informative text
-	    `Label (_("Running the debugger...")),
+	    `Left (`Label (_("Running the debugger..."))),
 	    `MarginBox (
 		1, 1, `VBox (
 		    `MinWidth (70,
@@ -175,6 +180,18 @@ Please, attach also all YaST logs stored in the '%2' directory."),
 	);
 
 	return test_result;
+    }
+
+    boolean RunSCRSwitchTest_ListFilesInChroot () {
+	map ret = (map) WFM::Execute (.local.bash_output, sformat ("ls -1 '%1'", chroot_path));
+
+	ReportTest (
+	    // Test progress
+	    sformat (_("Checking for chroot directory content (%1)..."), ret["stdout"]:""),
+	    true
+	);
+
+	return true;
     }
 
     // checks whether the new SCR path exists
@@ -374,6 +391,7 @@ Please, attach also all YaST logs stored in the '%2' directory."),
 	ReportProgress (_("System Checking"));
 	if (! RunSCRSwitchTest_ChrootBinary())		return false;
 	if (! RunSCRSwitchTest_ChrootPath())		return false;
+	if (! RunSCRSwitchTest_ListFilesInChroot())	return false;
 	if (! RunSCRSwitchTest_BinaryExists())		return false;
 	if (! RunSCRSwitchTest_DoChroot())		return false;
 	if (! RunSCRSwitchTest_Y2BASE())		return false;
