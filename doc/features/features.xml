@@ -5,6 +5,129 @@
     <para>This section contains description of several installation
     features.</para>
 
-    <!-- FIXME: describe add_on_products.xml file format, placement, and usage -->
-    <!-- FIXME: describe add_on_products file format, placement, and usage -->
+    <section id="add_on_products_general">
+	<title>Additional Products Automatically Added with Installation Repository</title>
+
+	<para>You can easily add several additional products automatically just by using
+	a modified installation repository or media.</para>
+
+	<para>During installation or upgrade from media (CD, DVD, HTTP server, ...)
+	installation adds a primary installation repository, this repository can contain
+	special configuration file with list of additional repositories that would be
+	automatically added by YaST.</para>
+
+	<para>The configuration is written in XML - which means extending the format
+	(adding new features) is easier comparing to the old plain-file format.</para>
+
+	<section id="installation_features_add_on_products.xml">
+	    <title>Configuration file <emphasis>add_on_products.xml</emphasis></title>
+	    <!-- FIXME: describe add_on_products.xml file format, placement, and usage -->
+
+	    <para>File <emphasis>add_on_products.xml</emphasis> is placed in the
+	    media root.</para>
+
+	    <para>Commented example:</para>
+	    <programlisting><xi:include href="examples/add_on_products.xml" parse="text"
+		xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
+
+	    <itemizedlist>
+		<title>Mandatory items:</title>
+		<listitem>
+		    <para>(string) <emphasis>url</emphasis> - repository URL; absolute or relative
+		    to the base installation repository; relative URL is useful when the same
+		    repository is used via several access methods (e.g., NFS+HTTP+FTP).</para>
+
+		    <para>Absolute:</para>
+		    <programlisting>&lt;url&gt;http://example.com/SUSE_5.0/&lt;url&gt;</programlisting>
+
+		    <para>Relative:</para>
+		    <programlisting>&lt;url&gt;../SUSE_5.0/&lt;url&gt;</programlisting>
+		</listitem>
+	    </itemizedlist>
+
+	    <itemizedlist>
+		<title>Optional items:</title>
+
+		<listitem>
+		    <para>(string) <emphasis>name</emphasis> - Product name used when repositories
+		    are offered to user in UI before adding them, see <emphasis>ask_user</emphasis>
+		    for more; if not set, product URL and/or other items are used instead.</para>
+		</listitem>
+
+		<listitem>
+		    <para>(string) <emphasis>path</emphasis> - Additional product path in the
+		    repository, useful when there are more product at one URL; the default is
+		    <emphasis>/</emphasis> if not set.</para>
+		</listitem>
+
+		<listitem>
+		    <para>(boolean) <emphasis>ask_user</emphasis> - Users are asked whether to
+		    add such a product; products without this parameter are added automatically;
+		    default is <emphasis>false</emphasis></para>
+		</listitem>
+
+		<listitem>
+		    <para>(boolean) <emphasis>selected</emphasis> - Defines the default state of
+		    <emphasis>pre-selected</emphasis> state in case of <emphasis>ask_user</emphasis>
+		    used; default is <emphasis>false</emphasis></para>
+		</listitem>
+
+		<listitem>
+		    <para>(list &lt;string&gt;) <emphasis>install_products/product</emphasis> - List of
+		    products to add if there are more than one products at the repository URL;
+		    if not defined, all products are installed.</para>
+		</listitem>
+	    </itemizedlist>
+	</section>
+
+	<section id="installation_features_add_on_products">
+	    <title>Configuration file <emphasis>add_on_products</emphasis></title>
+
+	    <para>File <emphasis>add_on_products</emphasis> is an obsolete format of
+	    <emphasis><link linkend="installation_features_add_on_products.xml">add_on_products.xml</link></emphasis>
+	    described above. It does not have additional features of the newer format and it is almost
+	    impossible to extend it.</para>
+
+	    <para>Repositories listed in this file are added automatically with the primary installation
+	    repository.</para>
+
+	    <para>Example:</para>
+	    <programlisting><xi:include href="examples/add_on_products" parse="text"
+		xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
+
+	    <para>Repository entries are newline-separated, repository items are white-space-separated
+	    (<emphasis>tab</emphasis> or <emphasis>space</emphasis>).</para>
+
+	    <itemizedlist>
+		<title>Mandatory items:</title>
+		<listitem>
+		    <para>First item: (string) <emphasis>url</emphasis> - repository URL; absolute or relative
+		    to the base installation repository; relative URL is useful when the same
+		    repository is used via several access methods (e.g., NFS+HTTP+FTP).</para>
+
+		    <para>Absolute:</para>
+		    <programlisting>&lt;url&gt;http://example.com/SUSE_5.0/&lt;url&gt;</programlisting>
+
+		    <para>Relative:</para>
+		    <programlisting>&lt;url&gt;../SUSE_5.0/&lt;url&gt;</programlisting>
+		</listitem>
+	    </itemizedlist>
+
+	    <itemizedlist>
+		<title>Optional items:</title>
+
+		<listitem>
+		    <para>Second item: (string) <emphasis>path</emphasis> - Additional product path in the
+		    repository, useful when there are more product at one URL; the default is
+		    <emphasis>/</emphasis> if not set.</para>
+		</listitem>
+
+		<listitem>
+		    <para>Third .. <emphasis>n</emphasis> item: (string) <emphasis></emphasis> - products
+		    to add if there are more than one products at the repository URL; if not defined,
+		    all products are installed.</para>
+		</listitem>
+	    </itemizedlist>
+	</section>
+    </section>
 </section>
