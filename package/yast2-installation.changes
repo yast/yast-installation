@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Aug 14 14:28:33 CEST 2008 - locilka@suse.cz
+
+- Added documentation for add_on_products and its new format
+  add_on_products.xml (FATE #303675).
+
+-------------------------------------------------------------------
 Wed Aug 13 18:23:57 CEST 2008 - locilka@suse.cz
 
 - Dropped some obsolete documentation.
