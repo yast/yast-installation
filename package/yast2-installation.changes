@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Aug 15 10:41:24 CEST 2008 - locilka@suse.cz
+
+- Added new globals->write_hostname_to_hosts control file option
+  to configure the default for 127.0.0.2 issue (FATE #303875).
+
+-------------------------------------------------------------------
 Thu Aug 14 14:28:33 CEST 2008 - locilka@suse.cz
 
 - Added documentation for add_on_products and its new format
