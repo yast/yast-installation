@@ -159,16 +159,16 @@ textdomain="control"
 	<online_repos_preselected config:type="boolean">false</online_repos_preselected>
 
 	<!-- FATE #300898, List of external sources accesible during the installation time -->
-	<external_sources_link>http://download.opensuse.org/YaST/Repos/openSUSE_110_Servers.xml</external_sources_link>
+	<external_sources_link>http://download.opensuse.org/YaST/Repos/openSUSE_111_Servers.xml</external_sources_link>
 
 	<!-- Dropped packages, bnc #300540 -->
 	<dropped_packages>ant-jai art-sharp asterisk asterisk-alsa asterisk-capi asterisk-spandsp asterisk-zaptel astools avalon-framework avalon-framework-manual avalon-logkit avalon-logkit-javadoc avmailgate bbtools bitchx blackbox colorgcc compat-curl2 cpp41 cpp42 cups-SUSE-ppds-dat db42 dbus-1-gtk devs dockutils dragonegg ejb-javadoc gal2 gcc41 gcc41-32bit gcc41-ada gcc41-c++ gcc41-fortran gcc41-fortran-32bit gcc41-gij gcc41-gij-32bit gcc41-java gcc41-locale gcc41-objc gcc41-obj-c++ gcc41-objc-32bit gcc42 gcc42-32bit gcc42-c++ gcc42-fortran gcc42-fortran-32bit gcc42-gij gcc42-info gcc42-java gcc42-objc gcc42-objc-32bit gconf-sharp gecko-sharp glade-sharp glib-sharp gnome-keyring-manager gnome-sharp gtk-engines gtkglarea gtkhtml-sharp2 gtk-qt-engine gtk-sharp gtk-sharp-complete gtk-sharp-gapi hermes ial indeview ipgrab ipw3945d ircd jaf-demo jaf-javadoc jaf-manual jai java-1_4_2-cacao java-1_4_2-cacao-devel java-1_4_2-sun java-1_4_2-sun-devel java-1_4_2-sun-plugin javamail-manual jms-javadoc jmx jmx-javadoc jta jta-javadoc kbilliards kfs kino knx kssh libcurl2 libexiv2 libgcc41 libgcc41-32bit libgcj41 libgcj41-32bit libgcj41-devel libgcj42 libgcj42-devel libgfortran42 libgfortran42-32bit libgmime-2_0-2 libgpod libgpod2 libipoddevice libkdcraw1 libkexiv2 libMagick10 libmudflap41 libmudflap41-32bit libpri libqtpod libsoprano3 libsoprano3-32bit libstdc++41 libstdc++41-32bit libstdc++41-devel libstdc++42-devel libWand10 libzypp-zmd-backend limal-bootloader openbox perl-Xmms planmaker qjackconnect radiusclient rsaref rsvg-sharp2 rug samba-pdb sax2-libsax-csharp simutrans sqlite-zmd synce synce-kde tei_3 textmaker tomcat5 tomcat55 tomcat55-common-lib tomcat55-jasper tomcat55-jsp-2_0-api tomcat55-server-lib tomcat55-servlet-2_4-api tpb varmon vte-sharp vte-sharp2 websh wlan-kmp-xen xen-doc-ps xmms xmms-jack xmms-lib yast2-bluetooth yast2-bootfloppy yast2-power-management yast2-powertweak zaptel zaptel-kmp-default zen-updater zmd zope</dropped_packages>
 	<extra_urls config:type="list">
 	    <!-- Default update repository, bnc #381360 -->
 	    <extra_url>
-		<baseurl>http://download.opensuse.org/update/11.0/</baseurl>
-                <name>Updates for 11.0</name>
-                <alias>openSUSE-11.0-Updates</alias>
+		<baseurl>http://download.opensuse.org/update/11.1/</baseurl>
+                <name>Updates for 11.1</name>
+                <alias>openSUSE-11.1-Updates</alias>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
@@ -177,31 +177,31 @@ textdomain="control"
 
 	    <!-- Replacement for EXTRAURLS and OPTIONALURLS -->
 	    <extra_url>
-		<baseurl>http://download.opensuse.org/distribution/11.0/repo/oss/</baseurl>
-                <name>openSUSE-11.0-Oss</name>
+		<baseurl>http://download.opensuse.org/distribution/11.1/repo/oss/</baseurl>
+                <name>openSUSE-11.1-Oss</name>
                 <alias>repo-oss</alias>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
-		<autorefresh config:type="boolean">false</autorefresh>
-		<priority config:type="integer">120</priority>
+		<autorefresh config:type="boolean">true</autorefresh>
+		<priority config:type="integer">100</priority>
 	    </extra_url>
 	    <extra_url>
-		<baseurl>http://download.opensuse.org/distribution/11.0/repo/non-oss/</baseurl>
+		<baseurl>http://download.opensuse.org/distribution/11.1/repo/non-oss/</baseurl>
                 <alias>repo-non-oss</alias>
-                <name>openSUSE-11.0-Non-Oss</name>
+                <name>openSUSE-11.1-Non-Oss</name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
-		<autorefresh config:type="boolean">false</autorefresh>
-		<priority config:type="integer">120</priority>
+		<autorefresh config:type="boolean">true</autorefresh>
+		<priority config:type="integer">100</priority>
 	    </extra_url>
 	    <extra_url>
-		<baseurl>http://download.opensuse.org/distribution/11.0/repo/debug/</baseurl>
+		<baseurl>http://download.opensuse.org/distribution/11.1/repo/debug/</baseurl>
                 <alias>repo-debug</alias>
-                <name>openSUSE-11.0-Debug</name>
+                <name>openSUSE-11.1-Debug</name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">false</enabled>
-		<autorefresh config:type="boolean">false</autorefresh>
-		<priority config:type="integer">120</priority>
+		<autorefresh config:type="boolean">true</autorefresh>
+		<priority config:type="integer">100</priority>
 	    </extra_url>
 	</extra_urls>
     </software>
