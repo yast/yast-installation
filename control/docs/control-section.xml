@@ -400,6 +400,11 @@
 		    <emphasis>kdump_proposal</emphasis> client call has to be added into
 		    <link linkend="control_proposals">proposal</link> otherwise this variable
 		    does not have any effect.</para></listitem>
+
+		<!-- FATE #303875: Introduce a switch regarding 127.0.0.2 entry in /etc/hosts -->
+		<listitem><para>(boolean) <emphasis>write_hostname_to_hosts</emphasis> - defines whether
+		    the currently assigned hostname is written to /etc/hosts with IPv4 address 127.0.0.2.
+		    Defaul value is <emphasis>false</emphasis> if not set.</para></listitem>
 	    </itemizedlist>
 	</section>
 	    
