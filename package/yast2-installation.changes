@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Aug 21 13:01:40 CEST 2008 - jsuchome@suse.cz
+
+- check for command line mode in inst_suseconfig (bnc#419132) 
+
+-------------------------------------------------------------------
 Tue Aug 19 15:45:07 CEST 2008 - jsrain@suse.cz
 
 - properly detect firstboot and do not destroy xorg.conf

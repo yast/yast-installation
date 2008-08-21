@@ -59,7 +59,7 @@
     define void logStep( string step_descr ) ``{
 	current_step = current_step + 1;
 
-	if (! automatic_configuration) {
+	if (! automatic_configuration && !Mode::commandline ()) {
 	    UI::ChangeWidget( `id(`progress), `Value, current_step );
 	    UI::ChangeWidget( `id(`log), `LastLine, step_descr + "\n" );
 	}
@@ -120,8 +120,9 @@ this process can take some time.</p>
 			  );
 
     // bugzilla #241553 comment #7
-    UI::SetProductName ("");
-    if (! automatic_configuration) {
+    if (!Mode::commandline ())
+	UI::SetProductName ("");
+    if (! automatic_configuration && !Mode::commandline ()) {
 	Wizard::SetContents(
 			  // Dialog title for SuSEconfig dialog
 			  _("Writing the system configuration"),
@@ -200,10 +201,11 @@ this process can take some time.</p>
 
 
     // The final LogView line to be displayed after SuSEconfig etc. is done.
-    UI::ChangeWidget( `id(`log), `LastLine, "\n" + _("Done.") + "\n" );
+    if (!Mode::commandline ())
+	UI::ChangeWidget( `id(`log), `LastLine, "\n" + _("Done.") + "\n" );
 
 
-    if (Mode::test () && ! automatic_configuration)
+    if (Mode::test () && ! automatic_configuration && !Mode::commandline ())
     {
 	UI::MakeScreenShot();	// doesn't work manually - not widget with keyboard focus!
 	sleep( 5*1000 );
