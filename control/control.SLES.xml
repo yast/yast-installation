@@ -123,17 +123,17 @@ textdomain="control"
 	<system_scenarios config:type="list">
 	    <system_scenario>
 		<id>scenario_physical_machine</id>
-		<patterns>physical_machine-pattern</patterns>
+		<patterns>base x11 gnome apparmor print_server 32bit 64bit x86 Documentation</patterns>
 		<icon>yast-system</icon>
 	    </system_scenario>
 	    <system_scenario>
 		<id>scenario_virtual_machine</id>
-		<patterns>virtual_machine-pattern</patterns>
+		<patterns>Minimal xen_server</patterns>
 		<icon>yast-vm-install</icon>
 	    </system_scenario>
 	    <system_scenario>
 		<id>scenario_virtualization_host</id>
-		<patterns>virtualization_host-pattern</patterns>
+		<patterns>base x11 gnome apparmor print_server 32bit 64bit x86 Documentation xen_server</patterns>
 		<icon>yast-vm-management</icon>
 	    </system_scenario>
 	</system_scenarios>
