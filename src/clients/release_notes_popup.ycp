@@ -144,7 +144,9 @@ from the SUSE Linux Web server.</b></p>") + text;
 	    `Left (`Heading (_("Release Notes"))),
 	    `RichText (`id (`text), text),
 	    `VSpacing (0.5),
-	    `PushButton (`id (`close), Label::CloseButton ()),
+	    `ButtonBox (
+		`PushButton (`id (`close), `opt (`okButton, `key_F9), Label::CloseButton ())
+	    ),
 	    `VSpacing (0.5)
 	)
     );
