@@ -133,7 +133,9 @@
 		    `VStretch (),
 		    `ReplacePoint (`id (`full_screen_license_rp), `opt (`vstretch), `Empty())
 		),
-		`PushButton (`id (`close), Label::OKButton())
+		`ButtonBox (
+		    `PushButton (`id (`close), `opt (`okButton, `default, `key_F10), Label::OKButton())
+		)
 	    )
 	);
     }

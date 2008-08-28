@@ -49,6 +49,9 @@ Conflicts:	yast2 < 2.15.35
 # Bugzilla #305163
 Conflicts:	yast2-core <= 2.15.9
 
+# ButtonBox widget
+Conflicts:	yast2-ycp-ui-bindings < 2.17.3
+
 # tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
 Requires:	tar gzip
 Requires:	coreutils

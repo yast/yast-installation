@@ -192,12 +192,9 @@ according to the settings in the previous dialogs.</p>")
 				   `RichText( text ),
 				   `HSpacing( 0.7 )
 				   ),
-			     `HBox(
-				   `HStretch(),
-				   `PushButton(`id(`back), `opt(`default), Label::BackButton() ),
-				   `HStretch(),
-				   `PushButton(`id(`confirm), confirm_button_label ),
-				   `HStretch()
+			     `ButtonBox (
+				   `PushButton (`id (`back), `opt(`default, `okButton, `key_F10), Label::BackButton()),
+				   `PushButton (`id (`confirm), `opt (`cancelButton, `key_F9), confirm_button_label)
 				   )
 			     )
 		       );

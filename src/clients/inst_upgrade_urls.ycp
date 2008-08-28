@@ -274,10 +274,9 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 		// TRANSLATORS: textentry
 		`MinWidth (min_width, `TextEntry (`id (`url), _("&Repository URL"), url)),
 		`VSpacing (1),
-		`HBox (
-		    `PushButton (`id (`ok), Label::OKButton()),
-		    `HSpacing (2),
-		    `PushButton (`id (`cancel), Label::CancelButton())
+		`ButtonBox (
+		    `PushButton (`id (`ok), `opt (`default, `okButton, `key_F10), Label::OKButton()),
+		    `PushButton (`id (`cancel), `opt (`cancelButton, `key_F9), Label::CancelButton())
 		)
 	    )
 	);
