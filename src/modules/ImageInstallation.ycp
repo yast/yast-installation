@@ -25,6 +25,7 @@ import "String";
 import "Arch";
 import "PackageCallbacks";
 import "Popup";
+import "SlideShow";
 
 textdomain "installation";
 
@@ -263,6 +264,7 @@ boolean DeployTarImage (string id, string target) {
 		    break;
 		}
 	    } else {
+		SlideShow::HandleInput( ret );
 		sleep (200);
 	    }
 	}
@@ -359,6 +361,19 @@ boolean MountFsImage (string id, string target) {
 }
 
 integer _current_image_from_imageset = -1;
+
+global integer TotalSize()
+{
+    integer sum = 0;
+    
+    y2milestone( "Computing total images size from [%1], data %2", _image_order, images_details );
+    foreach( string image, _image_order, {
+	sum = sum + images_details[image,"size"]:0;
+    });
+    
+    y2milestone( "Total images size: %1", sum );
+    return sum;
+}
 
 void SetCurrentImageDetails (map <string,any> img) {
     _current_image_from_imageset = _current_image_from_imageset + 1;

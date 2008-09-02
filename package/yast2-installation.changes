@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Sep  2 11:10:01 CEST 2008 - visnov@suse.cz
+
+- Use unified progressbar during installation (FATE #303860)
+
+-------------------------------------------------------------------
 Thu Aug 28 15:19:57 CEST 2008 - locilka@suse.cz
 
 - Using new ButtonBox widget.
