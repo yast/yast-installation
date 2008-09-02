@@ -1032,6 +1032,12 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	            <label>Users</label>
                     <name>user</name>
                 </module>
+		<module>
+		    <label>Users</label>
+		    <name>user_non_interactive</name>
+		    <!-- BNC #401319, define client to call explicitly -->
+		    <execute>inst_user</execute>
+		</module>
                 <module>
                     <name>suseconfig</name>
                     <enable_back>no</enable_back>
@@ -1084,6 +1090,12 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	            <label>Users</label>
                     <name>user</name>
                 </module>
+		<module>
+		    <label>Users</label>
+		    <name>user_non_interactive</name>
+		    <!-- BNC #401319, define client to call explicitly -->
+		    <execute>inst_user</execute>
+		</module>
                 <module>
 		    <label>Users</label>
                     <name>live_cleanup</name>
