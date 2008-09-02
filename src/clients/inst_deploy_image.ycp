@@ -6,6 +6,7 @@ import "Wizard";
 import "SourceManager";
 import "String";
 import "PackageCallbacks";
+import "SlideShow";
 
 textdomain "installation";
 
@@ -19,6 +20,8 @@ if (! Installation::image_installation) {
 }
 
 y2milestone ("Deploying images");
+
+SlideShow::MoveToStage( "images" );
 
 list<string> images = ImageInstallation::ImageOrder ();
 
@@ -39,7 +42,7 @@ string _previous_id = nil;
 
 void SetProgress () {
     integer percent = 100 * _current_step_in_subprogress / _current_subprogress_total;
-    UI::ChangeWidget (`id ("one_image"), `Value, percent);
+    SlideShow::SubProgress( percent, nil );
 }
 
 void OverallProgressHandler (string id, integer current_step) {
@@ -67,7 +70,8 @@ void OverallProgressHandler (string id, integer current_step) {
 	// when deploying images, label is handled separately
 	if (id != "deploying_images") {
 	    string new_label = ImageInstallation::GetProgressLayoutLabel (id);
-	    UI::ChangeWidget (`id ("one_image"), `Label, new_label);
+	    SlideShow::SubProgressStart( new_label );
+	    SlideShow::AppendMessageToInstLog( new_label );
 	}
 
 	_previous_id = id;
@@ -91,7 +95,7 @@ void OverallProgressHandler (string id, integer current_step) {
     // update UI only if nr% has changed
     if (_current_overall_progress > _last_overall_progress) {
 	_last_overall_progress = _current_overall_progress;
-	UI::ChangeWidget (`id ("deploying_progress"), `Value, _current_overall_progress);
+	SlideShow::StageProgress(_current_overall_progress, nil);
     }
 }
 
@@ -111,20 +115,14 @@ boolean MyProgressDownloadHandler (integer percent, integer bps_avg, integer bps
     map <string, any> current_image = ImageInstallation::GetCurrentImageDetails();
 
     if (_last_download_progress < percent) {
-	string current_image_name = current_image["name"]:"";
-	if (current_image_name == "") {
-	    UI::ChangeWidget (
-		`id ("one_image"), `Label,
-		sformat (_("Downloading image at speed %1/s"), String::FormatSize (bps_current))
-	    );
+	string image_info = current_image["name"]:"";
+	if (image_info == "") {
+	    image_info = sformat (_("Downloading image at speed %1/s"), String::FormatSize (bps_current));
 	} else {
-	    UI::ChangeWidget (
-		`id ("one_image"), `Label,
-		sformat (_("Downloading image %1 at speed %2/s"), current_image_name, String::FormatSize (bps_current))
-	    );
+	    image_info = sformat (_("Downloading image %1 at speed %2/s"), image_info, String::FormatSize (bps_current));
 	}
-
-	UI::ChangeWidget (`id ("one_image"), `Value, percent);
+	
+	SlideShow::SubProgress( percent, image_info );
 
 	integer current_image_nr = current_image["image_nr"]:0;
 	integer current_steps = 0;
@@ -170,18 +168,18 @@ void SetOneImageProgress (integer current_progress) {
     if (x_progress == 0) {
 	string current_image_name = current_image["name"]:"";
 	if (current_image_name == "") {
-	    UI::ChangeWidget (`id ("one_image"), `Label, _("Deploying image..."));
+	    current_image_name = _("Deploying image...");
 	} else {
-	    UI::ChangeWidget (`id ("one_image"), `Label, sformat (_("Deploying image %1..."), current_image_name));
+	    current_image_name = sformat (_("Deploying image %1..."), current_image_name);
 	}
-    // one image done
-    } else if (x_progress == 100) {
-	UI::ChangeWidget (`id ("one_image"), `Label, _("Image deployed"));
+	// one image done
+	SlideShow::SubProgressStart( current_image_name );
+	SlideShow::AppendMessageToInstLog( current_image_name );
     }
 
     // set current step
     if (x_progress > _last_progress) {
-	 UI::ChangeWidget (`id ("one_image"), `Value, x_progress);
+	SlideShow::SubProgress( x_progress, nil );
 	_last_progress = x_progress;
 	integer current_image_nr = current_image["image_nr"]:0;
 	integer current_steps = 0;
@@ -202,6 +200,7 @@ ImageInstallation::SetOverallDeployingProgress (OverallProgressHandler);
 
 ImageInstallation::AdjustProgressLayout ("deploying_images", (_steps_for_one_image * size (images)), _("Deploying Images..."));
 
+/*
 Wizard::SetContents (
     _("Deploying Installation Images"),
     `VBox (
@@ -234,6 +233,7 @@ One of the images also contains the joint RPM database and other metadata.</p>")
 installation program has to download them first before they are deployed.</p>"),
     false, false
 );
+*/
 
 ImageInstallation::StoreAllChanges();
 
