@@ -835,8 +835,14 @@ Please visit us at http://www.novell.com/linux/.
 	            <label>Users</label>
                     <name>user</name>
                 </module>
+		<module>
+		    <label>Users</label>
+		    <name>user_non_interactive</name>
+		    <!-- BNC #401319, define client to call explicitly -->
+		    <execute>inst_user</execute>
+		</module>
                 <module>
-	            <label>Clean Up</label>
+	            <label>Release Notes</label>
                     <name>suseconfig</name>
                     <enable_back>no</enable_back>
                     <enable_next>no</enable_next>

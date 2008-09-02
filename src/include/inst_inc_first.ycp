@@ -89,6 +89,8 @@
 	// First-stage users module will enable them again only if needed
 	ProductControl::DisableModule ("root");
 	ProductControl::DisableModule ("user");
+	// bnc #401319
+	ProductControl::DisableModule ("user_non_interactive");
 	ProductControl::DisableModule ("auth");
 
 	y2milestone ("Adjusting automatic configuration");
