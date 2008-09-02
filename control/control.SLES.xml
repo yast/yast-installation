@@ -547,6 +547,11 @@ Choose the one that matches your server the best.</label></scenarios_text>
                     <name>proposal</name>
                     <proposal>initial</proposal>
                 </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>do_resize</name>
@@ -715,6 +720,11 @@ Choose the one that matches your server the best.</label></scenarios_text>
                     <name>proposal</name>
                     <proposal>initial</proposal>
                 </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>do_resize</name>
@@ -756,6 +766,11 @@ Choose the one that matches your server the best.</label></scenarios_text>
                     <name>proposal</name>
                     <proposal>initial</proposal>
                 </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>do_resize</name>
@@ -1038,6 +1053,11 @@ Choose the one that matches your server the best.</label></scenarios_text>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>prepdisk</name>

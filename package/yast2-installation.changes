@@ -4,6 +4,8 @@ Tue Sep  2 15:20:09 CEST 2008 - locilka@suse.cz
 - Using new <execute/> tag in control file to explicitly define
   a client to be called instead of guessing it from <name/> tag
   (openSUSE, SLED control files) (bnc #401319).
+- Updated control files to call inst_prepareprogress to
+  "Provide consistent progress during installation" (FATE #303860).
 
 -------------------------------------------------------------------
 Tue Sep  2 11:10:01 CEST 2008 - visnov@suse.cz

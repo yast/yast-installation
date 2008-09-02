@@ -448,6 +448,11 @@ Please visit us at http://www.novell.com/linux/.
                     <name>proposal</name>
                     <proposal>initial</proposal>
                 </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>do_resize</name>
@@ -605,6 +610,11 @@ Please visit us at http://www.novell.com/linux/.
                     <name>proposal</name>
                     <proposal>initial</proposal>
                 </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>do_resize</name>
@@ -646,6 +656,11 @@ Please visit us at http://www.novell.com/linux/.
                     <name>proposal</name>
                     <proposal>initial</proposal>
                 </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>do_resize</name>
@@ -894,6 +909,11 @@ Please visit us at http://www.novell.com/linux/.
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>prepdisk</name>
