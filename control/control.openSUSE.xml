@@ -534,6 +534,11 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <name>proposal</name>
                     <proposal>initial</proposal>
                 </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>do_resize</name>
@@ -644,6 +649,11 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <name>inst_proposal</name>
                     <proposal>initial</proposal>
                 </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
                 <module>
                     <label>Perform Installation</label>
                     <name>inst_do_resize</name>
@@ -800,6 +810,11 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <name>proposal</name>
                     <proposal>initial</proposal>
                 </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>do_resize</name>
@@ -845,6 +860,11 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <name>proposal</name>
                     <proposal>initial</proposal>
                 </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>do_resize</name>
@@ -1133,6 +1153,11 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>prepdisk</name>
