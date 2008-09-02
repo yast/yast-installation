@@ -544,7 +544,8 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		</module>
                 <module>
 	            <label>Installation Summary</label>
-                    <name>proposal</name>
+                    <name>initial_installation_proposal</name>
+                    <execute>proposal</execute>
                     <proposal>initial</proposal>
                 </module>
 		<!-- FATE #303860: Provide consistent progress during installation -->
@@ -647,7 +648,8 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		</module>
                 <module>
 	            <label>Update Summary</label>
-                    <name>proposal</name>
+                    <name>initial_update_proposal</name>
+                    <execute>proposal</execute>
                     <proposal>initial</proposal>
                 </module>
                 <module>
@@ -717,7 +719,8 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 </module>
                 <module>
 	            <label>Installation Settings</label>
-                    <name>proposal</name>
+                    <name>initial_screenshot_proposal</name>
+                    <execute>proposal</execute>
                     <proposal>initial</proposal>
                 </module>
 		<!-- FATE #303860: Provide consistent progress during installation -->
@@ -763,7 +766,8 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 </module>
                 <module>
 	            <label>Installation Settings</label>
-                    <name>proposal</name>
+                    <name>initial_demo_proposal</name>
+                    <execute>proposal</execute>
                     <proposal>initial</proposal>
                 </module>
 		<!-- FATE #303860: Provide consistent progress during installation -->
@@ -860,7 +864,9 @@ Choose the one that matches your server the best.</label></scenarios_text>
 
 		<!-- FATE #302495: New possibility to stop and disable ZMD -->
                 <module>
-                    <name>congratulate</name>
+		    <!-- 'name' is used as ID only, see 'execute' -->
+                    <name>congratulate_all_archs</name>
+                    <execute>congratulate</execute>
 		    <archs>i386,x86_64,ia64,ppc,ppc64</archs>
 		    <arguments>
 			<show_zmd_turnoff_checkbox>yes</show_zmd_turnoff_checkbox>
@@ -871,7 +877,9 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 </module>
 		<!-- S/390 and S/390x pre-selected by default -->
                 <module>
-                    <name>congratulate</name>
+		    <!-- 'name' is used as ID only, see 'execute' -->
+                    <name>congratulate_s390_archs</name>
+                    <execute>congratulate</execute>
 		    <archs>s390,s390x</archs>
 		    <arguments>
 			<show_zmd_turnoff_checkbox>yes</show_zmd_turnoff_checkbox>
@@ -926,7 +934,8 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 </module>
                 <module>
 	            <label>Network</label>
-                    <name>proposal</name>
+                    <name>continue_network_proposal</name>
+                    <execute>proposal</execute>
                     <proposal>network</proposal>
                 </module>
                 <module>
@@ -967,7 +976,8 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		</module>
                 <module>
                     <label>Service</label>
-                    <name>proposal</name>
+                    <name>continue_service_proposal</name>
+                    <execute>proposal</execute>
                     <proposal>service</proposal>
                 </module>
                 <module>
@@ -990,7 +1000,8 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 </module>
                 <module>
 	            <label>Hardware Configuration</label>
-                    <name>proposal</name>
+                    <name>continue_hardware_proposal</name>
+                    <execute>proposal</execute>
                     <proposal>hardware</proposal>
                 </module>
                 <module>
@@ -1048,7 +1059,8 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 </module>
                 <module>
 	            <label>AutoYaST Settings</label>
-                    <name>proposal</name>
+                    <name>initial_autoinstallation_proposal</name>
+                    <execute>proposal</execute>
                     <proposal>initial</proposal>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
