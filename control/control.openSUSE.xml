@@ -531,7 +531,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		</module>
                 <module>
 	            <label>Installation Overview</label>
-                    <name>proposal</name>
+                    <name>initial_installation_proposal</name>
+                    <execute>proposal</execute>
                     <proposal>initial</proposal>
                 </module>
 		<!-- FATE #303860: Provide consistent progress during installation -->
@@ -737,7 +738,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 		</module>
                 <module>
 	            <label>Update Settings</label>
-                    <name>proposal</name>
+                    <name>initial_update_proposal</name>
+                    <execute>proposal</execute>
                     <proposal>initial</proposal>
                 </module>
                 <module>
@@ -807,7 +809,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
                 <module>
 	            <label>Installation Settings</label>
-                    <name>proposal</name>
+                    <name>initial_screenshot_proposal</name>
+                    <execute>proposal</execute>
                     <proposal>initial</proposal>
                 </module>
 		<!-- FATE #303860: Provide consistent progress during installation -->
@@ -857,7 +860,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
                 <module>
 	            <label>Installation Settings</label>
-                    <name>proposal</name>
+                    <name>initial_demo_proposal</name>
+                    <execute>proposal</execute>
                     <proposal>initial</proposal>
                 </module>
 		<!-- FATE #303860: Provide consistent progress during installation -->
@@ -1009,7 +1013,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
                 <module>
 	            <label>Network</label>
-                    <name>proposal</name>
+                    <name>continue_network_proposal</name>
+                    <execute>proposal</execute>
                     <proposal>network</proposal>
                 </module>
                 <module>
@@ -1069,7 +1074,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
                 <module>
 	            <label>Hardware Configuration</label>
-                    <name>proposal</name>
+                    <name>continue_hardware_proposal</name>
+                    <execute>proposal</execute>
                     <proposal>hardware</proposal>
                 </module>
                 <module>
@@ -1148,7 +1154,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
                 <module>
 	            <label>AutoYaST Settings</label>
-                    <name>proposal</name>
+                    <name>initial_autoinstallation_proposal</name>
+                    <execute>proposal</execute>
                     <proposal>initial</proposal>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>

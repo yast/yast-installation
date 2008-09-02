@@ -6,6 +6,9 @@ Tue Sep  2 15:20:09 CEST 2008 - locilka@suse.cz
   (openSUSE, SLED control files) (bnc #401319).
 - Updated control files to call inst_prepareprogress to
   "Provide consistent progress during installation" (FATE #303860).
+- All 'inst_proposal' calls changed to use the new 'execute'
+  feature to have unique 'name's (needed for merging add-on control
+  files).
 
 -------------------------------------------------------------------
 Tue Sep  2 11:10:01 CEST 2008 - visnov@suse.cz
