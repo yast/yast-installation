@@ -7,8 +7,8 @@ BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-ske
 # PackageCallbacks::RegisterEmptyProgressCallbacks()
 BuildRequires:	yast2 >= 2.16.52
 
-# SourceManager::InstInitSourceMoveDownloadArea
-BuildRequires:	yast2-packager >= 2.16.32
+# Unified progress bar (done by visnov)
+BuildRequires:	yast2-packager >= 2.17.9
 
 # AutoinstConfig::getProposalList
 Requires:       autoyast2-installation >= 2.17.1
