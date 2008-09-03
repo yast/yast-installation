@@ -25,9 +25,8 @@ Requires:	yast2-bootloader
 # Language::Set (handles downloading the translation extensions)
 Requires:	yast2-country-data >= 2.16.11
 
-# DefaultDesktop::SelectedDesktops
-# ... + newly added data into desktops map
-Requires:	yast2-packager >= 2.16.41
+# Unified progress bar (done by visnov)
+Requires:	yast2-packager >= 2.17.9
 
 # Only in inst-sys
 # Requires:	yast2-runlevel
