@@ -178,14 +178,14 @@ textdomain="control"
     <partitioning>
         <evms_config config:type="boolean">false</evms_config>
         <try_separate_home config:type="boolean">true</try_separate_home>
-        <limit_try_home>14G</limit_try_home>
+        <limit_try_home>14GB</limit_try_home>
         <root_space_percent>40</root_space_percent>
-        <root_base_size>3G</root_base_size>
-        <root_max_size>10G</root_max_size>
+        <root_base_size>3GB</root_base_size>
+        <root_max_size>10GB</root_max_size>
 	<proposal_lvm config:type="boolean">false</proposal_lvm>
 	<proposal_evms config:type="boolean">false</proposal_evms>
-	<vm_desired_size>15G</vm_desired_size>
-	<vm_home_max_size>25G</vm_home_max_size>
+	<vm_desired_size>15GB</vm_desired_size>
+	<vm_home_max_size>25GB</vm_home_max_size>
 	<boot_evms config:type="boolean">false</boot_evms>
     </partitioning>
 
