@@ -213,7 +213,7 @@ textdomain="control"
 	<clone_module>iscsi-client</clone_module>
 	<clone_module>software</clone_module>
 	<clone_module>partitioning</clone_module>
-	<clone_module>booloader</clone_module>
+	<clone_module>bootloader</clone_module>
     </clone_modules>
     <texts>
 	<congratulate>
