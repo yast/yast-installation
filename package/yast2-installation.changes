@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Sep  4 15:02:01 CEST 2008 - sschober@suse.de
+
+- cloning section in control.xml changed.
+
+-------------------------------------------------------------------
 Wed Sep 03 14:49:19 CEST 2008 - aschnell@suse.de
 
 - adapted size values in control files to stricter parser in
