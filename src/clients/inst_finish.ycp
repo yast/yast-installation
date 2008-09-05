@@ -69,7 +69,8 @@ list<map<string,any> > stages = [
 	    "mouse",
 	    "copy_files",
 	    "copy_systemfiles",
-	    "live_copy_files",
+	    // For live installer only
+	    (Mode::live_installation() ? "live_copy_files":""),
 	    "switch_scr",
 	],
 	"icon" : "pattern-basis",
@@ -80,7 +81,8 @@ list<map<string,any> > stages = [
 	"steps" : [
 	    "ldconfig",
 	    "save_config",
-	    "live_save_config",
+	    // For live installer only
+	    (Mode::live_installation() ? "live_save_config":""),
 	    "runlevel",
 	    "desktop",
 	    "fonts",
@@ -123,7 +125,8 @@ list<map<string,any> > stages = [
 	// progress stage
 	"label" : _("Prepare system for initial boot"),
 	"steps" : [
-	    "live_runme_at_boot",
+	    // For live installer only
+	    (Mode::live_installation() ? "live_runme_at_boot":""),
 	    "vm",
 	    "driver_update2",
 	    // no second stage if possible
@@ -196,6 +199,11 @@ integer steps_count = 0;
 
 stages = maplist (map<string,any> stage, stages, {
     list<map> steps = maplist (string s, stage["steps"]:[], {
+	// some steps are called in live installer only
+	if (s == "" || s == nil) {
+	    return nil;
+	}
+
 	s = s + "_finish";
 
 	y2milestone ("Calling inst_finish script: %1 (Info)", s);

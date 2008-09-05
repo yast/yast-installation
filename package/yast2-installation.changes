@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Sep  5 12:45:00 CEST 2008 - locilka@suse.cz
+
+- Some inst_finish steps are called in live installer only.
+
+-------------------------------------------------------------------
 Thu Sep  4 15:02:01 CEST 2008 - sschober@suse.de
 
 - cloning section in control.xml changed.
