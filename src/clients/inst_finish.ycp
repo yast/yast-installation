@@ -60,6 +60,9 @@ Please wait while the base system is being installed.
 	false
     );
 
+    // Used later in 'stages' definition
+    Pkg::TargetInit (Installation::destdir, true);
+
 list<map<string,any> > stages = [
     $[
 	// progress stage
@@ -127,7 +130,10 @@ list<map<string,any> > stages = [
 	"steps" : [
 	    // For live installer only
 	    (Mode::live_installation() ? "live_runme_at_boot":""),
-	    "vm",
+	    // vm_finish called only if yast2-vm is installed
+	    // Can't use PackageSystem::Installed as the current SCR is attached to inst-sys
+	    // instead of the installed system
+	    (Pkg::PkgInstalled ("yast2-vm") ? "vm":""),
 	    "driver_update2",
 	    // no second stage if possible
 	    "pre_umount",
