@@ -5,6 +5,7 @@ Fri Sep  5 12:45:00 CEST 2008 - locilka@suse.cz
 - Client vm_finish called only if yast2-vm is installed.
 - Using WFM::ClientExists (new in yast2-core-2.17.10).
 - Adjusted RPM dependencies.
+- 2.17.8
 
 -------------------------------------------------------------------
 Thu Sep  4 15:02:01 CEST 2008 - sschober@suse.de
