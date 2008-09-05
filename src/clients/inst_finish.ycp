@@ -212,9 +212,13 @@ stages = maplist (map<string,any> stage, stages, {
 
 	s = s + "_finish";
 
+	if (! WFM::ClientExists (s)) {
+	    y2error ("Missing YCP client: %1", s);
+	    return nil;
+	}
+
 	y2milestone ("Calling inst_finish script: %1 (Info)", s);
-// TODO: check if client exists
-// client doesn't need to exist on purpose
+
 	boolean orig = Progress::set (false);
 	map info = (map) WFM::CallFunction (s, ["Info"]);
 
