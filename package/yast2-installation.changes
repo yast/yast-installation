@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Sep  8 15:57:09 CEST 2008 - locilka@suse.cz
+
+- Added new AutoYaST client deploy_images_auto to support
+  installation from images also in AutoYaST (FATE #301321).
+- 2.17.9
+
+-------------------------------------------------------------------
 Fri Sep  5 12:45:00 CEST 2008 - locilka@suse.cz
 
 - Some inst_finish steps are called in live installer only.
