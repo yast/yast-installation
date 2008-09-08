@@ -1,0 +1,180 @@
+/**
+ * File: deploy_image_auto.ycp
+ * Module: Installation, FATE #301321: autoyast imaging
+ * Summary: Image deployment for AutoYaST
+ * Authors: Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id:$
+ *
+ */
+{
+textdomain "installation";
+
+import "Label";
+import "Wizard";
+import "Progress";
+import "Installation";
+import "ImageInstallation";
+
+y2milestone("----------------------------------------");
+y2milestone("Starting deploy_image_auto");
+
+boolean progress_orig = Progress::set (false);
+
+any ret = nil;
+string func = "";
+map param = $[];
+
+/* Check arguments */
+if(size((list)WFM::Args()) > 0 && is(WFM::Args(0), string)) {
+    func = (string)WFM::Args(0);
+    if(size((list)WFM::Args()) > 1 && is(WFM::Args(1), map))
+	param = (map)WFM::Args(1);
+}
+y2debug("func=%1", func);
+y2debug("param=%1", param);
+
+if(func == "Import")
+{
+    if (haskey (param, "image_installation")) {
+	Installation::image_installation = param["image_installation"]:false;
+	y2milestone ("Using image_installation: %1", Installation::image_installation);
+	ret = true;
+    } else {
+	ret = false;
+	y2warning ("Key image_installation not defined");
+    }
+}
+/**
+ * Create a summary
+ * return string
+ */
+else if(func == "Summary") {
+    ret = "<ul><li>" + (Installation::image_installation == true ?
+	_("Installation from images is: <b>enabled</b>")
+	:
+	_("Installation from images is: <b>disabled</b>")
+    ) + "</li></ul>";
+}
+/**
+ * did configuration changed
+ * return boolean
+*/
+else if (func == "GetModified") {
+    ret = true;
+}
+/**
+ * set configuration as changed
+ * return boolean
+ */
+else if (func == "SetModified") {
+    ret = true;
+}
+/**
+ * Reset configuration
+ * return map or list
+ */
+else if (func == "Reset") {
+    ImageInstallation::FreeInternalVariables();
+    Installation::image_installation = false;
+}
+
+/**
+ * Change configuration
+ * return symbol (i.e. `finish || `accept || `next || `cancel || `abort)
+ */
+else if (func == "Change") {
+    Wizard::CreateDialog();
+    Wizard::SetContentsButtons (
+	// TRANSLATORS: dialog caption
+	_("Installation from Images"),
+	`HBox (
+	    `HStretch (),
+	    `Frame (
+		_("Installation from Images"),
+		`RadioButtonGroup (
+		    `id (`images_rbg),
+		    `MarginBox (2, 1, `VBox (
+			`Left(`RadioButton (
+			    `id (`inst_from_images),
+			    _("&Install from Images"),
+			    (Installation::image_installation == true)
+			)),
+			`VSpacing (0.5),
+			`Left(`RadioButton (
+			    `id (`dont_inst_from_images),
+			    _("&Do Not Install from Images"),
+			    (Installation::image_installation != true)
+			))
+		    ))
+		)
+	    ),
+	    `HStretch ()
+	),
+	// TRANSLATORS: help text
+	_("<p><b>Installation from Images</b> is used to speed the installation up. 
+Images contain compressed snapshots of installed system matching your selection 
+of patterns. The rest of packages which are not in images will be installed from 
+packages the standard way.</p>"),
+	Label::BackButton(),
+	Label::OKButton()
+    );
+    Wizard::SetAbortButton (`abort, Label::CancelButton());
+    Wizard::DisableBackButton();
+
+    ret = UI::UserInput();
+
+    if (ret == `ok || ret == `next) {
+	any selected = UI::QueryWidget (`images_rbg, `CurrentButton);
+	if (selected == `inst_from_images) {
+	    Installation::image_installation = true;
+	} else {
+	    Installation::image_installation = false;
+	}
+
+	y2milestone ("Changed by user, Installation from images will be used: %1", Installation::image_installation);
+    }
+
+    Wizard::CloseDialog ();
+    return ret;
+}
+/**
+ * Return configuration data
+ * return map or list
+ */
+else if (func == "Export") {
+    ret = $["image_installation" : Installation::image_installation];
+}
+
+/**
+ * Write the configuration (prepare images, deploy images)
+ */
+else if (func == "Write") {
+    WFM::call ("inst_prepare_image");
+    WFM::call ("inst_deploy_image");
+    ret = true;
+}
+/**
+ * Read configuration data
+ * return boolean
+ */
+else if (func == "Read") {
+    y2milestone ("Read not supported");
+    ret = true;
+}
+/* unknown function */
+else {
+    y2error("unknown function: %1", func);
+    ret =  false;
+}
+Progress::set (progress_orig);
+
+y2debug("ret=%1", ret);
+y2milestone("deploy_image_auto finished");
+y2milestone("----------------------------------------");
+
+return ret;
+
+/* EOF */
+
+}
