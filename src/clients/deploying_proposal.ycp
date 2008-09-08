@@ -77,9 +77,10 @@
 		"links" : [ im_do_enable, im_do_disable ],
 		// TRANSLATORS: help text
 		"help" : _("<p><b>Installation from Images</b> is used to speed the installation up.
-Images contain compressed snapshots of installed system matching your selection
+Images contain compressed snapshots of an installed system matching your selection
 of patterns. The rest of packages which are not in images will be installed from
-packages the standard way.</p>") +
+packages the standard way.</p>
+") +
 		// TRANSLATORS: help text
 		_("<p>Installation from images is disabled by default if the current
 pattern selection does not fit any set of images.</p>"),
@@ -115,7 +116,8 @@ pattern selection does not fit any set of images.</p>"),
 	    Report::Message (_("Unable to enable installation from images.
 
 Currently selected patterns do not fit the images
-stored on installation media."));
+stored on the installation media.
+"));
 	}
 
 	ImageInstallation::changed_by_user = true;

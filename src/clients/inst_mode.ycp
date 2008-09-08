@@ -220,9 +220,10 @@ To install an add-on product from separate media together with &product;, select
     _("<p>
 Select <b>Use Automatic Configuration</b> to let the installation program
 configure your network and hardware automatically. Otherwise you will
-be offered a configuration proposal with possibility to tune all the
-settings manually. Unexperienced users had better use automatic
-configuration.</p>") +
+be offered a configuration proposal with the possibility to tune all the
+settings manually. Inexperienced users are advised to use automatic
+configuration.</p>
+") +
 
     // help text for installation method
     _("<p>Update mode does not support automatic configuration.</p>") +
@@ -234,8 +235,9 @@ your hard disk. This option can try to fix problems automatically.
 
     // help text for installation method
     _("<p>The features <b>Update</b> and <b>Repair Installed System</b> are only
-available if some Linux system has been detected.
-</p>");
+available if an existing Linux system has been detected.
+</p>
+");
 }
 
 Wizard::SetContents (
