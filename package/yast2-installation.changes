@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Sep  9 16:02:03 CEST 2008 - locilka@suse.cz
+
+- Replacing usage of barexml with anyxml SCR  agent (bnc #424263).
+
+-------------------------------------------------------------------
 Mon Sep  8 17:49:11 CEST 2008 - locilka@suse.cz
 
 - merged texts from proofread

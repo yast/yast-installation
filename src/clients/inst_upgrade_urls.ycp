@@ -69,24 +69,46 @@
 		    return;
 		}
 
-		map xmlcontent = (map) SCR::Read (.barexml, one_source_file);
+		map xmlcontent = (map) SCR::Read (.anyxml, $[
+		    "file" : one_source_file,
+		    "args" : $[
+			"ForceArray" : 0,
+			"ForceContent" : 0,
+			"KeepRoot" : 0,
+		    ]
+		]);
 
 		counter = counter + 1;
 
 		// bnc #300901
 		boolean enabled = nil;
 
-		if (is (xmlcontent["source","enabled","value"]:nil, boolean)) {
-		    enabled = xmlcontent["source","enabled","value"]:false;
-		} else if (is (xmlcontent["source","enabled","value"]:nil, string)) {
-		    enabled = (xmlcontent["source","enabled","value"]:"false" == "true");
+		if (is (xmlcontent["enabled"]:nil, boolean)) {
+		    enabled = xmlcontent["enabled"]:false;
+		} else if (is (xmlcontent["enabled"]:nil, string)) {
+		    enabled = (xmlcontent["enabled"]:"false" == "true");
+		}
+
+		boolean auto_refresh = nil;
+
+		if (is (xmlcontent["auto-refresh"]:nil, boolean)) {
+		    auto_refresh = xmlcontent["auto-refresh"]:false;
+		} else if (is (xmlcontent["auto-refresh"]:nil, string)) {
+		    auto_refresh = (xmlcontent["auto-refresh"]:"false" == "true");
 		}
 
 		map <string, any> one_old_url = $[
-		    "url" :	xmlcontent["source","url","value"]:nil,
+		    "url" :	xmlcontent["url"]:nil,
 		    "enabled" :	enabled,
-		    "name" :	xmlcontent["source","alias","value"]:nil,
+		    "auto-refresh" : auto_refresh,
+		    "name" :	xmlcontent["alias"]:nil,
 		];
+
+		foreach (string key, ["alias", "product-dir", "type"], {
+		    if (haskey (xmlcontent, key)) {
+			one_old_url[key] = xmlcontent[key]:"";
+		    }
+		});
 
 		old_urls[counter] = one_old_url;
 	    });
