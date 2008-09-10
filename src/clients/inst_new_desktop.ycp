@@ -23,6 +23,7 @@ import "Popup";
 import "Stage";
 import "Directory";
 import "Icon";
+import "ProductControl";
 
 // do not offer the dialog if base selection is fixed
 if (ProductFeatures::GetFeature ("software", "selection_type") == `fixed)
@@ -33,7 +34,7 @@ boolean text_mode = UI::GetDisplayInfo()["TextMode"]:false;
 // TRANSLATORS: help text, part 1
 string help = _("<p>At Linux <b>choice</b> is a top priority. <i>openSUSE</i> offers a number 
 of different desktop environments. Below you see a list of the 2 major ones 
-<b>GNOME</b> and <b>KDE</b> (in two different versions). Both provide an easy to use desktop
+<b>GNOME</b> and <b>KDE</b>. Both provide an easy to use desktop
 with a large number of desktop applications such as email, file browser, games and many others.</p>") +
 
 // TRANSLATORS: help text, part 3
@@ -205,11 +206,7 @@ if (default_desktop != nil && default_desktop != "" && contains (other_desktops,
 term contents = `Left (`HBox (
     `HSquash (
 	`VBox (
-	    `Label (_("openSUSE offers you a choice of user interfaces. The two major complete 
-desktops are KDE and GNOME. Both provide an easy-to-use desktop with a full 
-suite of applications including email, a file manager, games and utilities.
-
-As desktop selection is a matter of taste, we do not give a recommendation.")),
+	    `Label (ProductControl::GetTranslatedText ("desktop_dialog")),
 	    `VWeight (3, `VStretch()),
 	    `RadioButtonGroup (
 		`id ("selected_desktop"),

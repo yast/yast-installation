@@ -208,6 +208,88 @@ textdomain="control"
 		<priority config:type="integer">100</priority>
 	    </extra_url>
 	</extra_urls>
+
+	<!-- BNC #424678, Definition of supported desktops -->
+	<supported_desktops config:type="list">
+
+	    <one_supported_desktop>
+		<name>gnome</name>
+		<desktop>gnome</desktop>
+		<label_id>desktop_gnome</label_id>
+		<logon>gdm</logon>
+		<cursor>DMZ</cursor>
+		<packages>gdm</packages>
+		<order config:type="integer">1</order>
+		<patterns>gnome x11 base</patterns>
+		<icon>pattern-gnome</icon>
+		<description_id>description_gnome</description_id>
+	    </one_supported_desktop>
+
+	    <one_supported_desktop>
+		<name>kde</name>
+		<!-- BNC #381821 -->
+		<desktop>startkde4</desktop>
+		<label_id>desktop_kde</label_id>
+		<logon>kdm4</logon>
+		<cursor>DMZ</cursor>
+		<packages>kde4-kdm</packages>
+		<order config:type="integer">1</order>
+		<patterns>kde x11 base</patterns>
+		<icon>pattern-kde4</icon>
+		<description_id>description_kde</description_id>
+	    </one_supported_desktop>
+
+	    <one_supported_desktop>
+		<name>kde3</name>
+		<!-- BNC #381821 -->
+		<desktop>startkde3</desktop>
+		<label_id>desktop_kde3</label_id>
+		<logon>kdm3</logon>
+		<cursor>DMZ</cursor>
+		<packages>kdebase3-kdm</packages>
+		<order config:type="integer">1</order>
+		<patterns>kde3 x11 base</patterns>
+		<icon>pattern-kde</icon>
+		<description_id>description_kde3</description_id>
+	    </one_supported_desktop>
+
+	    <one_supported_desktop>
+		<name>xfce</name>
+		<desktop>startxfce4</desktop>
+		<label_id>desktop_xfce</label_id>
+		<logon>xdm</logon>
+		<cursor>DMZ</cursor>
+		<packages>xfce4-desktop</packages>
+		<order config:type="integer">4</order>
+		<patterns>xfce x11 base</patterns>
+		<icon>pattern-xfce</icon>
+	    </one_supported_desktop>
+
+	    <one_supported_desktop>
+		<name>min_x</name>
+		<desktop>twm</desktop>
+		<label_id>desktop_min_x</label_id>
+		<logon>xdm</logon>
+		<cursor>DMZ</cursor>
+		<packages>xorg-x11</packages>
+		<order config:type="integer">6</order>
+		<patterns>x11 base</patterns>
+		<icon>yast-x11</icon>
+	    </one_supported_desktop>
+
+	    <one_supported_desktop>
+		<name>textmode</name>
+		<desktop>twm</desktop>
+		<label_id>desktop_textmode</label_id>
+		<logon>xdm</logon>
+		<cursor>DMZ</cursor>
+		<packages>xorg-x11</packages>
+		<order config:type="integer">8</order>
+		<patterns>enhanced_base</patterns>
+		<icon>yast-sshd</icon>
+	    </one_supported_desktop>
+
+	</supported_desktops>
     </software>
 
     <partitioning>
@@ -267,6 +349,30 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	<ac_2><label>Configuring network...</label></ac_2>
 	<ac_3><label>Configuring hardware...</label></ac_3>
 	<ac_4><label>Finishing configuration...</label></ac_4>
+
+	<!-- Desktop dialog label -->
+	<desktop_dialog><label>openSUSE offers you a choice of user interfaces. The two major complete. 
+desktops are KDE and GNOME. Both provide an easy-to-use desktop with a full. 
+suite of applications including email, a file manager, games and utilities. 
+ 
+As desktop selection is a matter of taste, we do not give a recommendation.</label></desktop_dialog>
+
+	<!-- Desktop dialog: desktop names -->
+	<desktop_gnome><label>GNOME</label></desktop_gnome>
+	<desktop_kde><label>KDE 4.1</label></desktop_kde>
+	<desktop_kde3><label>KDE 3.5</label></desktop_kde3>
+	<desktop_xfce><label>XFCE Desktop</label></desktop_xfce>
+	<desktop_min_x><label>Minimal X Window</label></desktop_min_x>
+	<desktop_textmode><label>Minimal Server Selection (Text Mode)</label></desktop_textmode>
+
+	<!-- Desktop dialog: desktop descriptions -->
+	<description_gnome><label>GNOME 2.22 is the latest desktop from the GNOME Project. 
+It combines stability and maturity with incremental innovations.</label></description_gnome>
+	<description_kde><label>KDE 4.1 is the most recent evolution of KDE. It comes with many 
+new KDE technologies, but it is less mature than the other desktops.</label></description_kde>
+	<description_kde3><label>KDE 3.5 is the previous generation of the K Desktop Environment. 
+It is mature and stable.</label></description_kde3>
+
     </texts>
 
     <proposals config:type="list">
