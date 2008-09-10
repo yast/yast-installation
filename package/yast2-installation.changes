@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Sep 10 17:15:22 CEST 2008 - locilka@suse.cz
+
+- Fixing control files to call 'inst_proposal' instead of
+  'proposal' (bnc #425198).
+
+-------------------------------------------------------------------
 Wed Sep 10 15:53:44 CEST 2008 - locilka@suse.cz
 
 - Desktop selection dialog definitions have been moved to control

@@ -548,7 +548,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <module>
 	            <label>Installation Summary</label>
                     <name>initial_installation_proposal</name>
-                    <execute>proposal</execute>
+                    <execute>inst_proposal</execute>
                     <proposal>initial</proposal>
                 </module>
 		<!-- FATE #303860: Provide consistent progress during installation -->
@@ -652,7 +652,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <module>
 	            <label>Update Summary</label>
                     <name>initial_update_proposal</name>
-                    <execute>proposal</execute>
+                    <execute>inst_proposal</execute>
                     <proposal>initial</proposal>
                 </module>
                 <module>
@@ -723,7 +723,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <module>
 	            <label>Installation Settings</label>
                     <name>initial_screenshot_proposal</name>
-                    <execute>proposal</execute>
+                    <execute>inst_proposal</execute>
                     <proposal>initial</proposal>
                 </module>
 		<!-- FATE #303860: Provide consistent progress during installation -->
@@ -770,7 +770,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <module>
 	            <label>Installation Settings</label>
                     <name>initial_demo_proposal</name>
-                    <execute>proposal</execute>
+                    <execute>inst_proposal</execute>
                     <proposal>initial</proposal>
                 </module>
 		<!-- FATE #303860: Provide consistent progress during installation -->
@@ -938,7 +938,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <module>
 	            <label>Network</label>
                     <name>continue_network_proposal</name>
-                    <execute>proposal</execute>
+                    <execute>inst_proposal</execute>
                     <proposal>network</proposal>
                 </module>
                 <module>
@@ -980,7 +980,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <module>
                     <label>Service</label>
                     <name>continue_service_proposal</name>
-                    <execute>proposal</execute>
+                    <execute>inst_proposal</execute>
                     <proposal>service</proposal>
                 </module>
                 <module>
@@ -1004,7 +1004,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <module>
 	            <label>Hardware Configuration</label>
                     <name>continue_hardware_proposal</name>
-                    <execute>proposal</execute>
+                    <execute>inst_proposal</execute>
                     <proposal>hardware</proposal>
                 </module>
                 <module>
@@ -1063,7 +1063,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <module>
 	            <label>AutoYaST Settings</label>
                     <name>initial_autoinstallation_proposal</name>
-                    <execute>proposal</execute>
+                    <execute>inst_proposal</execute>
                     <proposal>initial</proposal>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>

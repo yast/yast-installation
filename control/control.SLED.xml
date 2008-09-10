@@ -449,7 +449,7 @@ Please visit us at http://www.novell.com/linux/.
                 <module>
 	            <label>Installation Overview</label>
                     <name>initial_installation_proposal</name>
-                    <execute>proposal</execute>
+                    <execute>int_proposal</execute>
                     <proposal>initial</proposal>
                 </module>
 		<!-- FATE #303860: Provide consistent progress during installation -->
@@ -548,7 +548,7 @@ Please visit us at http://www.novell.com/linux/.
                 <module>
 	            <label>Update Summary</label>
                     <name>inital_update_proposal</name>
-                    <execute>proposal</execute>
+                    <execute>inst_proposal</execute>
                     <proposal>initial</proposal>
                 </module>
                 <module>
@@ -613,7 +613,7 @@ Please visit us at http://www.novell.com/linux/.
                 <module>
 	            <label>Installation Settings</label>
                     <name>initial_screenshot_proposal</name>
-                    <execute>proposal</execute>
+                    <execute>inst_proposal</execute>
                     <proposal>initial</proposal>
                 </module>
 		<!-- FATE #303860: Provide consistent progress during installation -->
@@ -660,7 +660,7 @@ Please visit us at http://www.novell.com/linux/.
                 <module>
 	            <label>Installation Settings</label>
                     <name>initial_demo_proposal</name>
-                    <execute>proposal</execute>
+                    <execute>inst_proposal</execute>
                     <proposal>initial</proposal>
                 </module>
 		<!-- FATE #303860: Provide consistent progress during installation -->
@@ -811,7 +811,7 @@ Please visit us at http://www.novell.com/linux/.
                 <module>
 	            <label>Network</label>
                     <name>continue_network_proposal</name>
-                    <execute>proposal</execute>
+                    <execute>inst_proposal</execute>
                     <proposal>network</proposal>
                 </module>
                 <module>
@@ -877,7 +877,7 @@ Please visit us at http://www.novell.com/linux/.
                 <module>
 	            <label>Hardware Configuration</label>
                     <name>continue_hardware_proposal</name>
-                    <execute>proposal</execute>
+                    <execute>inst_proposal</execute>
                     <proposal>hardware</proposal>
                 </module>
                 <module>
@@ -914,7 +914,7 @@ Please visit us at http://www.novell.com/linux/.
                 <module>
 	            <label>AutoYaST Settings</label>
                     <name>initial_autoyast_proposal</name>
-                    <execute>proposal</execute>
+                    <execute>inst_proposal</execute>
                     <proposal>initial</proposal>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
