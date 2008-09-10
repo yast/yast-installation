@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Sep 10 15:53:44 CEST 2008 - locilka@suse.cz
+
+- Desktop selection dialog definitions have been moved to control
+  file (bnc #424678).
+
+-------------------------------------------------------------------
 Tue Sep  9 16:02:03 CEST 2008 - locilka@suse.cz
 
 - Replacing usage of barexml with anyxml SCR  agent (bnc #424263).
