@@ -449,7 +449,7 @@ Please visit us at http://www.novell.com/linux/.
                 <module>
 	            <label>Installation Overview</label>
                     <name>initial_installation_proposal</name>
-                    <execute>int_proposal</execute>
+                    <execute>inst_proposal</execute>
                     <proposal>initial</proposal>
                 </module>
 		<!-- FATE #303860: Provide consistent progress during installation -->
