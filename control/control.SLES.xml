@@ -869,7 +869,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <module>
 		    <!-- 'name' is used as ID only, see 'execute' -->
                     <name>congratulate_all_archs</name>
-                    <execute>congratulate</execute>
+                    <execute>inst_congratulate</execute>
 		    <archs>i386,x86_64,ia64,ppc,ppc64</archs>
 		    <arguments>
 			<show_zmd_turnoff_checkbox>yes</show_zmd_turnoff_checkbox>
@@ -882,7 +882,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <module>
 		    <!-- 'name' is used as ID only, see 'execute' -->
                     <name>congratulate_s390_archs</name>
-                    <execute>congratulate</execute>
+                    <execute>inst_congratulate</execute>
 		    <archs>s390,s390x</archs>
 		    <arguments>
 			<show_zmd_turnoff_checkbox>yes</show_zmd_turnoff_checkbox>
