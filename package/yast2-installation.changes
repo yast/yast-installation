@@ -3,12 +3,13 @@ Thu Sep 11 14:52:25 CEST 2008 - ug@suse.de
 
 - deploy_image.desktop added (Fate #301321)
 - deploy_image.rnc added
+- 2.17.11
 
 -------------------------------------------------------------------
 Thu Sep 11 13:40:10 CEST 2008 - locilka@suse.cz
 
 - Calling new client reipl_finish from yast2_inf_finish on s390
-  (FATE #304488).
+  (FATE #304960).
 
 -------------------------------------------------------------------
 Wed Sep 10 17:15:22 CEST 2008 - locilka@suse.cz
