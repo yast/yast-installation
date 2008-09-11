@@ -214,7 +214,7 @@ Please, wait.
 
 	if (WFM::ClientExists (reipl_client)) {
 	    boolean changed = (boolean) WFM::call (reipl_client);
-	    if (changed) {
+	    if (changed == true) {
 		linuxrc["Root"] = "halt";
 	    }
 	} else {
