@@ -2,6 +2,7 @@
 Thu Sep 11 14:52:25 CEST 2008 - ug@suse.de
 
 - deploy_image.desktop added (Fate #301321)
+- deploy_image.rnc added
 
 -------------------------------------------------------------------
 Thu Sep 11 13:40:10 CEST 2008 - locilka@suse.cz
