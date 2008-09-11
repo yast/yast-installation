@@ -112,6 +112,7 @@ YaST Installation - auto-generated documentation.
 @moduledir@/*.ycp
 @moduledir@/*.ybc
 @desktopdir@/*.desktop
+/usr/share/autoinstall/modules/deploy_image.desktop
 %dir @yncludedir@/installation
 @yncludedir@/installation/*
 

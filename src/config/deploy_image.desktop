@@ -1,0 +1,28 @@
+[Desktop Entry]
+Type=Application
+Categories=Settings;System;Qt;X-SuSE-YaST;X-SuSE-YaST-Misc;
+
+X-KDE-ModuleType=Library
+X-KDE-RootOnly=true
+X-KDE-HasReadOnlyMode=false
+X-KDE-Library=yast2
+X-SuSE-YaST-Call=deploy_image
+
+X-SuSE-YaST-Group=Software
+X-SuSE-YaST-Argument=
+X-SuSE-YaST-RootOnly=true
+X-SuSE-YaST-AutoInst=configure
+X-SuSE-YaST-Geometry=
+X-SuSE-YaST-SortKey=
+X-SuSE-YaST-AutoInstResource=
+X-SuSE-YaST-AutoInstPath=install
+X-SuSE-YaST-AutoInstSchema=deploy_image.rnc
+X-SuSE-YaST-AutoInstClonable=false
+
+Icon=yast-deploy_image
+Exec=
+
+Name=Image deployment
+GenericName=Configure image deployment
+X-KDE-SubstituteUID=true
+StartupNotify=true
