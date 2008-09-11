@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Sep 11 13:40:10 CEST 2008 - locilka@suse.cz
+
+- Calling new client reipl_finish from yast2_inf_finish on s390
+  (FATE #304488).
+
+-------------------------------------------------------------------
 Wed Sep 10 17:15:22 CEST 2008 - locilka@suse.cz
 
 - Fixing control files to call 'inst_proposal' instead of
