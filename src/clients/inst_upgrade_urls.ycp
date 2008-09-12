@@ -228,24 +228,6 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	return ret;
     }
 
-    integer FindURLMediaNr (string baseurl) {
-	if (baseurl == "" || baseurl == nil) {
-	    y2error ("Base URL not defined!");
-	    return nil;
-	}
-
-	integer ret = nil;
-
-	foreach (map one_url, already_registered_repos, {
-	    if (baseurl == one_url["url"]:"-A-") {
-		ret = one_url["media"]:-1;
-		break;
-	    }
-	});
-
-	return ret;
-    }
-
     string FindURLName (string id) {
 	if (id == "" || id == nil) {
 	    y2error ("Base URL not defined!");
@@ -320,7 +302,6 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	// If some new (since 10.3 Alpha?) URLs found, use only them
 	if (new_urls != nil && new_urls != []) {
 	    foreach (map one_url_map, new_urls, {
-
 		// bnc #300901
 		boolean enabled = nil;
 
@@ -382,9 +363,13 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	    urls = old_urls;
 	}
 
+	integer id = -1;
+
 	urls = maplist (map one_url, urls, {
+	    id = id + 1;
+
 	    // unique ID
-	    one_url["id"] = one_url["id"]:one_url["url"]:"";
+	    one_url["id"] = sformat ("ID: %1", id);
 
 	    one_url["url_will_be_enabled"] = FindCurrentURLStatus (tostring (one_url["url"]:""));
 	    one_url["initial_url_status"]  = one_url["url_will_be_enabled"]:false;
@@ -635,7 +620,7 @@ Configure it?"),
 	    Progress::NextStep ();
 	    Pkg::SourceDelete (one_id);
 
-	     AddOnProduct::add_on_products = (list <map <string, any> >) filter (
+	    AddOnProduct::add_on_products = (list <map <string, any> >) filter (
 	        map one_addon, AddOnProduct::add_on_products, {
 		    return one_addon["media"]:-42 != one_id;
 		}
@@ -787,13 +772,21 @@ URL: %2"),
 	// bnc #308763
 	list <string> sources_to_add_disabled = [];
 
+	// bnc #400823
+	integer do_not_remove = Pkg::SourceGetCurrent(false)[0]:0;
+
 	foreach (map one_source, urls, {
 	    string url = one_source["url"]:"";
 	    string id = one_source["id"]:"";
 
 	    id_to_url[id] = url;
 
-	    integer current_medianr = FindURLMediaNr (url);
+	    // bnc #400823
+	    integer current_medianr = tointeger (regexpsub (id, "ID: (.*)", "\\1"));
+
+	    if (do_not_remove == current_medianr) {
+		y2milestone ("Skipping source: %1 (installation repository)", do_not_remove);
+	    }
 
 	    // Source should be enabled at the end
 	    if (one_source["url_will_be_enabled"]:nil == true) {
