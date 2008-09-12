@@ -1,9 +1,15 @@
 -------------------------------------------------------------------
+Fri Sep 12 10:32:11 CEST 2008 - locilka@suse.cz
+
+- Do not remove installation repository with the same URL as URL
+  just being removed by inst_upgrade_urls (bnc #400823).
+- 2.17.11
+
+-------------------------------------------------------------------
 Thu Sep 11 14:52:25 CEST 2008 - ug@suse.de
 
 - deploy_image.desktop added (Fate #301321)
 - deploy_image.rnc added
-- 2.17.11
 
 -------------------------------------------------------------------
 Thu Sep 11 13:40:10 CEST 2008 - locilka@suse.cz
