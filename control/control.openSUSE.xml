@@ -1033,7 +1033,7 @@ It is mature and stable.</label></description_kde3>
                     <name>do_net_test</name>
                 </module>
                 <module>
-                    <label>Registration</label>
+                    <label>Online Update</label>
                     <name>addon_update_sources</name>
                 </module>
                 <module>
