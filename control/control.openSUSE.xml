@@ -1037,10 +1037,6 @@ It is mature and stable.</label></description_kde3>
                     <name>addon_update_sources</name>
                 </module>
                 <module>
-                    <label>Registration</label>
-                    <name>suse_register</name>
-                </module>
-                <module>
                     <label>Online Update</label>
                     <name>ask_online_update</name>
                 </module>
@@ -1135,12 +1131,8 @@ It is mature and stable.</label></description_kde3>
                     <name>do_net_test</name>
                 </module>
                 <module>
-                    <label>Registration</label>
+                    <label>Online Update</label>
                     <name>addon_update_sources</name>
-                </module>
-                <module>
-                    <label>Registration</label>
-                    <name>suse_register</name>
                 </module>
                 <module>
                     <label>Online Update</label>

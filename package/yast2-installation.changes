@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Sep 12 15:01:46 CEST 2008 - locilka@suse.cz
+
+- Disabling inst_suse_register in openSUSE control file
+  (FATE #303458).
+
+-------------------------------------------------------------------
 Fri Sep 12 10:32:11 CEST 2008 - locilka@suse.cz
 
 - Do not remove installation repository with the same URL as URL
