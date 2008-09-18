@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Sep 18 10:35:32 CEST 2008 - locilka@suse.cz
+
+- Definition of supported desktops added into SLES and SLED control
+  files, added also default_desktop definition (bnc #427061).
+- Added control file documentation for supported_desktops section.
+
+-------------------------------------------------------------------
 Fri Sep 12 15:01:46 CEST 2008 - locilka@suse.cz
 
 - Disabling inst_suse_register in openSUSE control file

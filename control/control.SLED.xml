@@ -173,6 +173,24 @@ textdomain="control"
 
         <selection_type config:type="symbol">auto</selection_type>
         <base_selection>default-Gnome</base_selection>
+
+	<!-- BNC #424678 Definition of supported desktops -->
+	<!-- BNC #427061 The default desktop has to be set here -->
+	<supported_desktops config:type="list">
+	    <one_supported_desktop>
+		<name>gnome</name>
+		<desktop>gnome</desktop>
+		<label_id>desktop_gnome</label_id>
+		<logon>gdm</logon>
+		<cursor>DMZ</cursor>
+		<packages>gdm</packages>
+		<order config:type="integer">1</order>
+		<patterns>gnome x11 base</patterns>
+		<icon>pattern-gnome</icon>
+	    </one_supported_desktop>
+	</supported_desktops>
+
+	<default_desktop>gnome</default_desktop>
     </software>
 
     <partitioning>
@@ -228,6 +246,8 @@ Please visit us at http://www.novell.com/linux/.
 &lt;/p&gt;
 	</label>
 	</congratulate>
+
+	<desktop_gnome><label>GNOME</label></desktop_gnome>
 
 	<ac_1><label>Initialization...</label></ac_1>
 	<ac_2><label>Configuring network...</label></ac_2>

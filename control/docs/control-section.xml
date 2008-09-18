@@ -542,6 +542,9 @@
 
         <section id="control_software">
             <title>Software</title>
+<!--
+	    FIXME: Obsolete, check and document the current behavior
+
             <para>
                 Using this section in the control file you can change the software
                 proposal during installation.
@@ -597,6 +600,21 @@ default
             <para>
                 which matches the base selections in <emphasis>SLES 9</emphasis>.
             </para>
+-->
+	    <para>In the <emphasis>software</emphasis> section you can define how is the selection
+	    of software handled during installation or update.</para>
+
+	    <para>This is a list of supported entries in <emphasis>software</emphasis>:</para>
+
+	    <itemizedlist>
+
+		<listitem id="software_default_desktop">
+		    <para><emphasis>default_desktop</emphasis> - defines a desktop selected by
+		    default by the installation.</para>
+		</listitem>
+
+	    </itemizedlist>
+
             <para>Additionally, you can configure how updating of packages should be
                 performed. The following options are available:</para>
             <itemizedlist>
@@ -760,6 +778,86 @@ default
 	    </itemizedlist>
 
         </section>
+
+	<section id="control_software_supported_desktops">
+	    <title>Supported Desktops</title>
+
+	    <!-- BNC #427061 -->
+	    <para>This part defines not only all the desktops for Desktop Selection dialog
+	    during installation but also the <link linkend="software_default_desktop">default_desktop</link>
+	    must be defined</para>
+
+	    <para>Example of supported desktops:</para>
+	    <programlisting>
+
+	    <xi:include href="examples/supported_desktops.xml" parse="text"
+		xmlns:xi="http://www.w3.org/2001/XInclude"/>
+	    </programlisting>
+
+	    <para>Section <emphasis>supported_desktops</emphasis> contains list of
+	    one or more <emphasis>one_supported_desktop</emphasis> sections.</para>
+
+	    <itemizedlist>
+		<title>Keys sypported in one_supported_desktop</title>
+
+		<listitem>
+		    <para>(string) <emphasis>name</emphasis></para>
+		    <para>Unique ID.</para>
+		</listitem>
+
+		<listitem>
+		    <para>(string) <emphasis>desktop</emphasis></para>
+		    <para>Desktop to start (gnome, startkde4, startkde3, startxfce4, ...).</para>
+		</listitem>
+
+		<listitem>
+		    <para>(string) <emphasis>label_id</emphasis></para>
+		    <para>Text ID used for desktop selection label.</para>
+		</listitem>
+
+		<listitem>
+		    <para>(string) <emphasis>logon</emphasis></para>
+		    <para>Logon manager to start (gdm, kdm4, kdm3, xdm, ...).</para>
+		</listitem>
+
+		<listitem>
+		    <para>(string) <emphasis>cursor</emphasis></para>
+		    <para>Cursor theme.</para>
+		</listitem>
+
+		<listitem>
+		    <para>(string) <emphasis>packages</emphasis></para>
+		    <para>(whitespace-separated).</para>
+		</listitem>
+
+		<listitem>
+		    <para>(integer) <emphasis>order</emphasis></para>
+		    <para>Numeric order or the desktop in Desktop Selection dialog.
+		    Number <emphasis>1</emphasis> is reserved for major desktops
+		    that are displayed with description (<emphasis>description_id</emphasis>
+		    is required). If the very same <emphasis>order</emphasis> is used
+		    for more than one desktops, they are sorted alphabetically.</para>
+		</listitem>
+
+		<listitem>
+		    <para>(string) <emphasis>patterns</emphasis></para>
+		    <para>Patterns to select for the desktop (whitespace-separated).</para>
+		</listitem>
+
+		<listitem>
+		    <para>(string) <emphasis>icon</emphasis></para>
+		    <para>Icon used in Desktop Selection dialog, just a name of an icon from
+		    $current_theme/icons/64x64/apps/ directory, without <emphasis>.png</emphasis>
+		    suffix.</para>
+		</listitem>
+
+		<listitem>
+		    <para>(string) <emphasis>description_id</emphasis></para>
+		    <para>Text ID used for desktop selection label.</para>
+		</listitem>
+
+	    </itemizedlist>
+	</section>
 
 	<section id="control_software_scenarios">
 	    <title>System Scenarios</title>
