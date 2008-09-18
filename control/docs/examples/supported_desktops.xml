@@ -1,0 +1,51 @@
+
+<productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
+    xmlns:config="http://www.suse.com/1.0/configns">
+    <software>
+
+	<supported_desktops config:type="list">
+
+	    <one_supported_desktop>
+		<name>gnome</name>
+		<desktop>gnome</desktop>
+		<label_id>desktop_gnome</label_id>
+		<logon>gdm</logon>
+		<cursor>DMZ</cursor>
+		<packages>gdm</packages>
+		<order config:type="integer">1</order>
+		<patterns>gnome x11 base</patterns>
+		<icon>pattern-gnome</icon>
+		<description_id>description_gnome</description_id>
+	    </one_supported_desktop>
+
+	    <one_supported_desktop>
+		<name>kde</name>
+		<desktop>startkde4</desktop>
+		<!-- Generic ID used in texts below -->
+		<label_id>desktop_kde</label_id>
+		<logon>kdm4</logon>
+		<cursor>DMZ</cursor>
+		<packages>kde4-kdm</packages>
+		<order config:type="integer">1</order>
+		<patterns>kde x11 base</patterns>
+		<icon>pattern-kde4</icon>
+		<!-- Generic ID used in texts below -->
+		<description_id>description_kde</description_id>
+	    </one_supported_desktop>
+
+	</supported_desktops>
+
+    </software>
+
+    <texts>
+
+	<desktop_gnome><label>GNOME</label></desktop_gnome>
+	<!-- See 'desktop_kde' in 'supported_desktops' -->
+	<desktop_kde><label>KDE 4.1</label></desktop_kde>
+
+	<description_gnome><label>Some description</label></description_gnome>
+	<!-- See 'description_kde' in 'supported_desktops' -->
+	<description_kde><label>Some description</label></description_kde>
+
+    </texts>
+</productDefines>

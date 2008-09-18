@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Categories=Settings;System;Qt;X-SuSE-YaST;X-SuSE-YaST-Misc;
+Categories=Settings;System;Qt;X-SuSE-YaST;X-SuSE-YaST-Support;
 
 X-SuSE-YaST-Call=inst_release_notes
 X-SuSE-YaST-RootOnly=false
