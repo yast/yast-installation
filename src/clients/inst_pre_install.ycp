@@ -124,12 +124,11 @@
 	    y2milestone("Mounting %1 to %2", partition_device, mnt_tmpdir);
 
 	    string already_mounted = sformat ("grep '[\\t ]%1[\\t ]' /proc/mounts", mnt_tmpdir);
-	    integer am_exit = (integer) SCR::Execute (.target.bash, already_mounted);
+	    map am = (map) SCR::Execute (.target.bash_output, already_mounted);
 
-	    if (am_exit != 0) {
+	    if (am["exit"]:-1 == 0 && size (am["stdout"]:"") > 0) {
 		y2warning ("%1 is already mounted, trying to umount...", mnt_tmpdir);
-		boolean umount = (boolean) SCR::Execute (.target.umount, mnt_tmpdir);
-		if (umount != true) {
+		if ((boolean) SCR::Execute (.target.umount, mnt_tmpdir) != true) {
 		    y2error ("Cannot umount %1", mnt_tmpdir);
 		}
 	    }
