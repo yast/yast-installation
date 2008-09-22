@@ -58,7 +58,10 @@ else if (func == "Write")
     // Write list of modules to load after system gets up
     Kernel::SaveModulesToLoad ();
 
-    SCR::Execute (.target.bash, "/sbin/udevtrigger ; /sbin/udevsettle --timeout=60");
+    // BNC #427705, formerly added as BNC #163073
+    // after the chroot into the installed system has been performed.
+    // This will recreate all missing links.
+    SCR::Execute (.target.bash, "/sbin/udevadm trigger; /sbin/udevadm settle --timeout=60");
 }
 else
 {

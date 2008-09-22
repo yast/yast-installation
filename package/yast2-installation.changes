@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Sep 22 10:45:44 CEST 2008 - locilka@suse.cz
+
+- Changing /sbin/udevtrigger & /sbin/udevsettle to /sbin/udevadm
+  trigger & settle (bnc #427705).
+- 2.17.12
+
+-------------------------------------------------------------------
 Thu Sep 18 10:35:32 CEST 2008 - locilka@suse.cz
 
 - Definition of supported desktops added into SLES and SLED control
