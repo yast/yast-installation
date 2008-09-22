@@ -22,7 +22,6 @@ import "Packages";
 import "Popup";
 import "Stage";
 import "Directory";
-import "Icon";
 import "ProductControl";
 
 // do not offer the dialog if base selection is fixed

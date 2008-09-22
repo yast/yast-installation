@@ -29,6 +29,7 @@ import "Stage";
 import "Storage";
 import "Wizard";
 import "ProductFeatures";
+import "Directory";
 
 include "packager/storage_include.ycp";
 include "installation/misc.ycp";
@@ -131,7 +132,7 @@ term InstModeDialogContent (symbol pre_selected) {
 				    CreateRadioButtonTerm (
 					_("New &Installation"),
 					`install,
-					"/usr/share/icons/hicolor/32x32/apps/yast-dirinstall.png",
+					Directory::themedir + "/current/icons/48x48/apps/yast-dirinstall.png",
 					!Mode::update ()
 				    ),
 				    `VSpacing( 0.3 ),
@@ -139,7 +140,7 @@ term InstModeDialogContent (symbol pre_selected) {
 				    CreateRadioButtonTerm (
 					_("&Update"),
 					`update,
-					"/usr/share/icons/hicolor/32x32/apps/yast-update.png",
+					Directory::themedir + "/current/icons/48x48/apps/yast-update.png",
 					Mode::update ()
 				    ),
 				    `VSpacing( 1.8 ),
@@ -147,7 +148,7 @@ term InstModeDialogContent (symbol pre_selected) {
 				    CreateRadioButtonTerm (
 					_("Re&pair Installed System"),
 					`repair,
-					"/usr/share/icons/hicolor/32x32/apps/yast.png",
+					Directory::themedir + "/current/icons/48x48/apps/yast.png",
 					false
 				    )
 				)

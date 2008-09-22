@@ -3,6 +3,7 @@ Mon Sep 22 13:59:50 CEST 2008 - locilka@suse.cz
 
 - KDE 3.5 moved to 'Others', removed KDE 3.5 description text.
 - GNOME 2.22 changed to 2.24.
+- Fixed Installation Mode dialog to show icons again (bnc #427344).
 
 -------------------------------------------------------------------
 Mon Sep 22 10:45:44 CEST 2008 - locilka@suse.cz
