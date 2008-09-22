@@ -247,10 +247,9 @@ textdomain="control"
 		<logon>kdm3</logon>
 		<cursor>DMZ</cursor>
 		<packages>kdebase3-kdm</packages>
-		<order config:type="integer">1</order>
+		<order config:type="integer">2</order>
 		<patterns>kde3 x11 base</patterns>
 		<icon>pattern-kde</icon>
-		<description_id>description_kde3</description_id>
 	    </one_supported_desktop>
 
 	    <one_supported_desktop>
@@ -365,13 +364,11 @@ As desktop selection is a matter of taste, we do not give a recommendation.</lab
 	<desktop_min_x><label>Minimal X Window</label></desktop_min_x>
 	<desktop_textmode><label>Minimal Server Selection (Text Mode)</label></desktop_textmode>
 
-	<!-- Desktop dialog: desktop descriptions -->
-	<description_gnome><label>GNOME 2.22 is the latest desktop from the GNOME Project. 
+	<!-- Desktop dialog: desktop descriptions (with 'description_id' defined) -->
+	<description_gnome><label>GNOME 2.24 is the latest desktop from the GNOME Project. 
 It combines stability and maturity with incremental innovations.</label></description_gnome>
 	<description_kde><label>KDE 4.1 is the most recent evolution of KDE. It comes with many 
 new KDE technologies, but it is less mature than the other desktops.</label></description_kde>
-	<description_kde3><label>KDE 3.5 is the previous generation of the K Desktop Environment. 
-It is mature and stable.</label></description_kde3>
 
     </texts>
 
