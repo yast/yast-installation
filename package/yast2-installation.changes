@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Sep 23 16:17:27 CEST 2008 - locilka@suse.cz
+
+- Buggy SCR Agent run.get.suseconfig.modules replaced with
+  .target.dir (bnc #429146).
+- Added functionality to recover from failed read of previously
+  used repositories in inst_upgrade_urls (bnc #429059).
+
+-------------------------------------------------------------------
 Mon Sep 22 16:14:54 CEST 2008 - locilka@suse.cz
 
 - Fixed checking whether directory is mounted already (bnc #428368)

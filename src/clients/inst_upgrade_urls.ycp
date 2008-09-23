@@ -78,7 +78,10 @@
 		    ]
 		]);
 
-		counter = counter + 1;
+		if (xmlcontent == nil || xmlcontent == $[]) {
+		    y2error ("Can't read %1, SCR returned erroneous data: %2", one_source_file, xmlcontent);
+		    return;
+		}
 
 		// bnc #300901
 		boolean enabled = nil;
@@ -110,6 +113,7 @@
 		    }
 		});
 
+		counter = counter + 1;
 		old_urls[counter] = one_old_url;
 	    });
 
@@ -183,7 +187,7 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	    counter = counter + 1;
 	    return `item (
 		`id (counter),
-		(one_url["url_will_be_enabled"]:false ?
+		(one_url["url_will_be_enabled"]:false == true ?
 		    // TRANSLATORS: Table item status (repository)
 		    _("Enabled")
 		    :
@@ -364,6 +368,7 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	}
 
 	integer id = -1;
+	string url_url = "";
 
 	urls = maplist (map one_url, urls, {
 	    id = id + 1;
@@ -371,7 +376,15 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	    // unique ID
 	    one_url["id"] = sformat ("ID: %1", id);
 
-	    one_url["url_will_be_enabled"] = FindCurrentURLStatus (tostring (one_url["url"]:""));
+	    // BNC #429059
+	    if (haskey (one_url, "url") && one_url["url"]:nil != nil) {
+		url_url = sformat ("%1", one_url["url"]:"");
+		one_url["url_will_be_enabled"] = FindCurrentURLStatus (url_url);
+	    } else {
+		y2warning ("No 'url' defined: %1", one_url);
+		one_url["url_will_be_enabled"] = false;
+	    }
+
 	    one_url["initial_url_status"]  = one_url["url_will_be_enabled"]:false;
 	    return one_url;
 	});

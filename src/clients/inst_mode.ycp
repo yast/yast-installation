@@ -20,7 +20,7 @@ import "InstData";
 import "Kernel";
 import "Linuxrc";
 import "Mode";
-import "PackageCallbacksInit";
+import "PackageCallbacks";
 import "Packages";
 import "Popup";
 import "ProductControl";
