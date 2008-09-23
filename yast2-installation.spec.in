@@ -127,7 +127,6 @@ YaST Installation - auto-generated documentation.
 @scrconfdir@/etc_install_inf.scr
 @scrconfdir@/etc_install_inf_alias.scr
 @scrconfdir@/etc_install_inf_options.scr
-@scrconfdir@/run_get_suseconfig_modules.scr
 @scrconfdir@/proc_modules.scr
 @scrconfdir@/run_df.scr
 # fillup

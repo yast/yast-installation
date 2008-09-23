@@ -817,7 +817,7 @@
 	    if (UI::WidgetExists(`_cwm_tab)) {
 		UI::ChangeWidget (`id (`_cwm_tab), `CurrentItem, current_tab);
 	    } else {
-		y2warning ("Widget with id %1 does not exist!", `_cwm_tab);
+		y2milestone ("Not using CWM tabs...");
 	    }
 	}
 	if ( Stage::stage () == "initial" )

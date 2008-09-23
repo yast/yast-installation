@@ -103,8 +103,25 @@ of your &product; system. Depending on the CPU and the amount of memory,
 this process can take some time.</p>
 ");
 
+    // BNC #429146
+    list <string> tmp_modules = (list<string>) SCR::Read (.target.dir, "/sbin/conf.d/");
+    list <string> modules = [];
+    integer counter = -1;
 
-    list<string> modules = (list<string>) SCR::Read( .run.get.suseconfig.modules );
+    foreach (string one_module, tmp_modules, {
+	if (! regexpmatch (one_module, "^SuSEconfig\\."))
+	    return;
+
+	if (regexpmatch (one_module, "\\.(swp|bak|sav|save|orig|rpmorig|rpmsave|rpmnew)$"))
+	    return;
+
+	one_module = regexpsub (one_module, "^SuSEconfig\\.(.*)", "\\1");
+	counter = counter + 1;
+	modules[counter] = one_module;
+    });
+
+    y2milestone ("SuSEconfig scripts to call: %1", modules);
+
     integer max_steps = size( modules ) + 1; // + ldconfig
 
     if ( reread_inittab )

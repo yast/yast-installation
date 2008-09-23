@@ -13,7 +13,7 @@
 textdomain "installation";
 
 import "GetInstArgs";
-import "PackageCallbacksInit";
+import "PackageCallbacks";
 import "Popup";
 import "SourceManager";
 import "Report";
