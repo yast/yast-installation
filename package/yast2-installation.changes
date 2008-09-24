@@ -5,6 +5,7 @@ Tue Sep 23 16:17:27 CEST 2008 - locilka@suse.cz
   .target.dir (bnc #429146).
 - Added functionality to recover from failed read of previously
   used repositories in inst_upgrade_urls (bnc #429059).
+- 2.17.14
 
 -------------------------------------------------------------------
 Mon Sep 22 16:14:54 CEST 2008 - locilka@suse.cz
