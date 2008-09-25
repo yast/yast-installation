@@ -30,6 +30,7 @@
     import "Wizard";
     import "String";
     import "GetInstArgs";
+    import "ProductFeatures";
 
     // added for fate# 303395
     import "Directory";
@@ -106,6 +107,7 @@ list<map<string,any> > stages = [
 	"label" : _("Install boot manager"),
 	"steps" : [
 	    "bootloader",
+	    ((ProductFeatures::GetBooleanFeature ("globals", "enable_kdump") == true) ? "kdump" : "")
 	],
 	"icon" : "yast-bootloader",
     ],
