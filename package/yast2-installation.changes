@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Sep 25 14:33:36 CEST 2008 - juhliarik@suse.cz
+
+- added calling kdump_finish to inst_finish.ycp (bnc #427732) 
+
+-------------------------------------------------------------------
 Tue Sep 23 16:17:27 CEST 2008 - locilka@suse.cz
 
 - Buggy SCR Agent run.get.suseconfig.modules replaced with
