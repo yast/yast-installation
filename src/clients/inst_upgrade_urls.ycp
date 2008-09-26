@@ -25,6 +25,8 @@
 
     boolean test_mode = false;
 
+    integer do_not_remove = 0;
+
     if (size (WFM::Args()) > 0 && is (WFM::Args(0), string)) {
 	y2milestone ("Args: %1", WFM::Args());
 	if (WFM::Args(0) == "test")
@@ -786,7 +788,7 @@ URL: %2"),
 	list <string> sources_to_add_disabled = [];
 
 	// bnc #400823
-	integer do_not_remove = Pkg::SourceGetCurrent(false)[0]:0;
+	do_not_remove = Pkg::SourceGetCurrent(false)[0]:0;
 
 	foreach (map one_source, urls, {
 	    string url = one_source["url"]:"";
@@ -829,6 +831,14 @@ URL: %2"),
 	    sources_to_add_disabled = (list <string>) union (sources_to_add_disabled, sources_to_add);
 	    sources_to_add = [];
 	}
+
+	sources_to_remove = filter (integer one_source, sources_to_remove, {
+	    return (one_source != do_not_remove);
+	});
+
+	sources_to_add_disabled = filter (string one_source, sources_to_add_disabled, {
+	    return (one_source != sformat ("ID: %1", do_not_remove));
+	});
 
 	SetAddRemoveSourcesProgress (sources_to_remove, sources_to_add, sources_to_add_disabled);
 
@@ -903,6 +913,9 @@ URL: %2"),
 	    already_registered_repos = add (already_registered_repos, source_data);
 	});
     }
+
+    // bnc #400823 
+    do_not_remove = Pkg::SourceGetCurrent(false)[0]:0;
 
     UseOldOrNewURLs();
     RemoveInstallationReposFromUpgrededSystemOnes();
