@@ -5,6 +5,7 @@ Fri Sep 26 12:27:55 CEST 2008 - locilka@suse.cz
 - Better text for installation initialization (bnc #428103).
 - Better protection from removing the initial repository
   (bnc #429920).
+- 2.17.15
 
 -------------------------------------------------------------------
 Thu Sep 25 14:33:36 CEST 2008 - juhliarik@suse.cz
