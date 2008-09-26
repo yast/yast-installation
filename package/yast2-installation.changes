@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Sep 26 12:27:55 CEST 2008 - locilka@suse.cz
+
+- Optimizing server_selections dialog layout (bnc #429977).
+
+-------------------------------------------------------------------
 Thu Sep 25 14:33:36 CEST 2008 - juhliarik@suse.cz
 
 - added calling kdump_finish to inst_finish.ycp (bnc #427732) 
