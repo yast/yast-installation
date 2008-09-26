@@ -34,7 +34,7 @@ if (Stage::cont()) {
     // TRANSLATORS: dialog help
     helptext = _("<p>Please wait...</p>");
     // TRANSLATORS: dialog progress message
-    label = _("Preparing the 1st system configuration...");
+    label = _("Preparing the initial system configuration...");
 }
 
 term content = `VBox (
