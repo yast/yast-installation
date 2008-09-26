@@ -29,13 +29,14 @@
     }
 
     // load supported scenarios from control file
-    list <map <string, string> > system_scenarios =
-	(list <map <string, string> >) ProductFeatures::GetFeature ("software", "system_scenarios");
+    any any_scenarios = ProductFeatures::GetFeature ("software", "system_scenarios");
 
-    if (system_scenarios == nil || system_scenarios == []) {
+    if (any_scenarios == nil || any_scenarios == "" || any_scenarios == []) {
 	y2error ("Undefined software->system_scenarios");
 	return `auto;
     }
+
+    list <map <string, string> > system_scenarios = (list <map <string, string> >) any_scenarios;
 
     /**
      * Adjusts UI - selected radio button
@@ -144,13 +145,11 @@
 			`HBox (`Image (Icon::IconPath (one_scenario["icon"]:""), ""), `HSpacing (2))
 		    )
 		),
-		`HWeight (
-		    4,
-		    `Left (`RadioButton (
-			`id (one_scenario["id"]:""),
-			ProductControl::GetTranslatedText (one_scenario["id"]:"")
-		    ))
-		)
+		`Left (`RadioButton (
+		    `id (one_scenario["id"]:""),
+		    ProductControl::GetTranslatedText (one_scenario["id"]:"")
+		)),
+		`HStretch()
 	    ));
 
 	    dialog_content = add (dialog_content, `VSpacing (0.8));
