@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Sep 29 13:38:13 CEST 2008 - locilka@suse.cz
+
+- Adding inst_lilo_convert to the update workflow (bnc #430579).
+
+-------------------------------------------------------------------
 Fri Sep 26 12:27:55 CEST 2008 - locilka@suse.cz
 
 - Optimizing server_selections dialog layout (bnc #429977).

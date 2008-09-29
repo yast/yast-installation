@@ -566,6 +566,11 @@ Please visit us at http://www.novell.com/linux/.
 		    <label>Update</label>
 		</module>
                 <module>
+                    <label>Update Summary</label>
+                    <name>lilo_convert</name>
+                    <execute>inst_lilo_convert</execute>
+                </module>
+                <module>
 	            <label>Update Summary</label>
                     <name>inital_update_proposal</name>
                     <execute>inst_proposal</execute>

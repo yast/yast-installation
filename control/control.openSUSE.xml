@@ -843,6 +843,11 @@ with a modern look and feel.</label></description_kde>
 		    <heading>yes</heading>
 		    <label>Update</label>
 		</module>
+		<module>
+		    <label>Update Settings</label>
+		    <name>lilo_convert</name>
+		    <execute>inst_lilo_convert</execute>
+		</module>
                 <module>
 	            <label>Update Settings</label>
                     <name>initial_update_proposal</name>

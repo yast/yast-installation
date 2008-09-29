@@ -670,6 +670,11 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		    <label>Update</label>
 		</module>
                 <module>
+                    <label>Update Summary</label>
+                    <name>lilo_convert</name>
+                    <execute>inst_lilo_convert</execute>
+                </module>
+                <module>
 	            <label>Update Summary</label>
                     <name>initial_update_proposal</name>
                     <execute>inst_proposal</execute>
