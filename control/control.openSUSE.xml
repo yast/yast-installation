@@ -367,8 +367,9 @@ As desktop selection is a matter of taste, we do not give a recommendation.</lab
 	<!-- Desktop dialog: desktop descriptions (with 'description_id' defined) -->
 	<description_gnome><label>GNOME 2.24 is the latest desktop from the GNOME Project. 
 It combines stability and maturity with incremental innovations.</label></description_gnome>
-	<description_kde><label>KDE 4.1 is the most recent evolution of KDE. It comes with many 
-new KDE technologies, but it is less mature than the other desktops.</label></description_kde>
+	<description_kde><label>KDE 4.1 is the latest stable desktop released by the KDE Project.
+It delivers an innovative, highly integrated desktop environment
+with a modern look and feel.</label></description_kde>
 
     </texts>
 
