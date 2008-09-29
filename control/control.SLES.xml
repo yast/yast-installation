@@ -128,12 +128,12 @@ textdomain="control"
 	    </system_scenario>
 	    <system_scenario>
 		<id>scenario_virtual_machine</id>
-		<patterns>Minimal xen_server</patterns>
+		<patterns>Dom0</patterns>
 		<icon>yast-vm-install</icon>
 	    </system_scenario>
 	    <system_scenario>
 		<id>scenario_virtualization_host</id>
-		<patterns>base x11 gnome apparmor print_server 32bit 64bit x86 Documentation xen_server</patterns>
+		<patterns>base x11 gnome apparmor print_server 32bit 64bit x86 Documentation</patterns>
 		<icon>yast-vm-management</icon>
 	    </system_scenario>
 	</system_scenarios>
@@ -229,7 +229,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
 	<!-- Labels to be easily defined by PM, see 'software' section -->
 	<scenario_physical_machine><label>Physical Machine</label></scenario_physical_machine>
 	<scenario_virtual_machine><label>Virtual Machine</label></scenario_virtual_machine>
-	<scenario_virtualization_host><label>Virtualization Host</label></scenario_virtualization_host>
+	<scenario_virtualization_host><label>XEN Virtualization Host</label></scenario_virtualization_host>
     </texts>
 
     <proposals config:type="list">
@@ -564,6 +564,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		<module>
 		    <label>Server Scenario</label>
 		    <name>scenarios</name>
+		    <archs>i386,x86_64</archs>
 		</module>
                 <module>
 	            <label>Installation Summary</label>

@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Mon Sep 29 15:11:33 CEST 2008 - locilka@suse.cz
+
+- Server scenarios work for i386, x86_64 archs only (bnc #430612).
+
+-------------------------------------------------------------------
+Mon Sep 29 14:56:45 CEST 2008 - kukuk@suse.de
+
+- Replaced Minimal+Xen with Dom0.
+- Removed xen_server from virtualization machine (bnc #429061).
+- Added "XEN" suffix to Virtualization Host.
+
+-------------------------------------------------------------------
 Mon Sep 29 13:38:13 CEST 2008 - locilka@suse.cz
 
 - Adding inst_lilo_convert to the update workflow (bnc #430579).
