@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Sep 30 13:20:09 CEST 2008 - locilka@suse.cz
+
+- Replacing "networkmanager" proposal call with "general"
+  (bnc #430704).
+
+-------------------------------------------------------------------
 Mon Sep 29 15:11:33 CEST 2008 - locilka@suse.cz
 
 - Server scenarios work for i386, x86_64 archs only (bnc #430612).

@@ -347,7 +347,7 @@ Please visit us at http://www.novell.com/linux/.
 		    <presentation_order>20</presentation_order>
 		</proposal_module>
                 <proposal_module>
-		    <name>networkmanager</name>
+		    <name>general</name>
 		    <presentation_order>5</presentation_order>
 		</proposal_module>
                 <proposal_module>
