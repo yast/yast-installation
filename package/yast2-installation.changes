@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Oct  1 15:41:12 CEST 2008 - jsuchome@suse.cz
+
+- if nn_NO language is selected, use nb_NO in YaST (bnc#426124) 
+
+-------------------------------------------------------------------
 Wed Oct  1 13:42:18 CEST 2008 - locilka@suse.cz
 
 - Changing pattern "Documentation" to "documentation" (bnc #431218)

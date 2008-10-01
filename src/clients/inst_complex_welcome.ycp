@@ -239,7 +239,14 @@ installation, but the selected language will be used for the new system."));
 		    Language::WfmSetGivenLanguage ("en_US");
 	    } else if (ret == `language) {
 		Console::SelectFont (language);
-		Language::WfmSetLanguage ();
+		// no yast translation for nn_NO, use nb_NO as a backup
+		if (language == "nn_NO")
+		{
+		    y2milestone ("Nynorsk not translated, using Bokmål");
+		    Language::WfmSetGivenLanguage ("nb_NO");
+		}
+		else
+		    Language::WfmSetLanguage ();
 	    }
 	}
 
