@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Oct  1 13:42:18 CEST 2008 - locilka@suse.cz
+
+- Changing pattern "Documentation" to "documentation" (bnc #431218)
+
+-------------------------------------------------------------------
 Tue Sep 30 13:20:09 CEST 2008 - locilka@suse.cz
 
 - Replacing "networkmanager" proposal call with "general"

@@ -123,7 +123,7 @@ textdomain="control"
 	<system_scenarios config:type="list">
 	    <system_scenario>
 		<id>scenario_physical_machine</id>
-		<patterns>base x11 gnome apparmor print_server 32bit 64bit x86 Documentation</patterns>
+		<patterns>base x11 gnome apparmor print_server 32bit 64bit x86 documentation</patterns>
 		<icon>yast-system</icon>
 	    </system_scenario>
 	    <system_scenario>
@@ -133,7 +133,7 @@ textdomain="control"
 	    </system_scenario>
 	    <system_scenario>
 		<id>scenario_virtualization_host</id>
-		<patterns>base x11 gnome apparmor print_server 32bit 64bit x86 Documentation</patterns>
+		<patterns>base x11 gnome apparmor print_server 32bit 64bit x86 documentation</patterns>
 		<icon>yast-vm-management</icon>
 	    </system_scenario>
 	</system_scenarios>
