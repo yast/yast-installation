@@ -25,7 +25,7 @@ fi
 if [ ! -z "$(ls /etc/sysconfig/network/ifcfg-* |grep  -v 'ifcfg-lo')" ]; then
 	log "\tnetwork configuration found -> activate network"
 	rcnetwork start -o onboot && Y2_NETWORK_ACTIVE=1
-	[ -f /var/lib/YaST2/network_install_portmap ] && rcportmap start
+	[ -f /var/lib/YaST2/network_install_rpcbind ] && rcrpcbind start
 fi
 
 #=============================================
