@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Oct  1 16:03:32 CEST 2008 - mzugec@suse.de
+
+- use rpcbind instead of portmap for nfs installation (bnc#423026)
+- 2.17.16
+
+-------------------------------------------------------------------
 Wed Oct  1 15:41:12 CEST 2008 - jsuchome@suse.cz
 
 - if nn_NO language is selected, use nb_NO in YaST (bnc#426124) 
