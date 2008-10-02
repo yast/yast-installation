@@ -1,10 +1,12 @@
 -------------------------------------------------------------------
 Thu Oct  2 11:39:48 CEST 2008 - locilka@suse.cz
 
-- No patterns listed in SLES default desktop, package proposal
-  will not add them (bnc #431503).
+- Using two default desktops, one for inst_scenarios, another
+  one (default) while inst_scenarios not used (bnc #431251,
+  bnc #431503).
 - Switching scenario_virtual_machine and
   scenario_virtualization_host in SLES control file (bnc #431251).
+- 2.17.17
 
 -------------------------------------------------------------------
 Wed Oct  1 16:03:32 CEST 2008 - mzugec@suse.de

@@ -20,6 +20,8 @@
     import "Popup";
     import "PackageCallbacks";
     import "Report";
+    import "Packages";
+    import "DefaultDesktop";
 
     boolean test_mode = false;
 
@@ -110,12 +112,21 @@
 	// select newly selected patterns for installation
 	foreach (map <string, string> one_scenario, system_scenarios, {
 	    if (one_scenario["id"]:"---" == chosen_selection) {
-		foreach (string one_pattern, splitstring (one_scenario["patterns"]:"", " \t"), {
+		list <string> patterns_to_install = splitstring (one_scenario["patterns"]:"", " \t");
+
+		foreach (string one_pattern, patterns_to_install, {
 		    y2milestone ("Selecting pattern: %1", one_pattern);
 		    Pkg::ResolvableInstall (one_pattern, `pattern);
 		});
+
+		Packages::required_patterns = patterns_to_install;
+		y2milestone ("Packages::required_patterns: %1", Packages::required_patterns);
 	    }
 	});
+
+	string desktop = ProductFeatures::GetStringFeature ("software", "scenarios_desktop");
+	y2milestone ("Using default desktop: %1", desktop);
+	DefaultDesktop::SetDesktop (desktop);
     }
 
     // adjusting test mode - not used in installation

@@ -25,8 +25,8 @@ Requires:	yast2-bootloader
 # Language::Set (handles downloading the translation extensions)
 Requires:	yast2-country-data >= 2.16.11
 
-# Unified progress bar (done by visnov)
-Requires:	yast2-packager >= 2.17.9
+# Packages::required_patterns
+Requires:	yast2-packager >= 2.17.23
 
 # Only in inst-sys
 # Requires:	yast2-runlevel
