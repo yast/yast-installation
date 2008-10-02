@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Oct  2 14:00:49 CEST 2008 - locilka@suse.cz
+
+- Added 'default_ntp_setup' into control files (SLES/D: false,
+  openSUSE: true) (bnc #431259).
+
+-------------------------------------------------------------------
 Thu Oct  2 11:39:48 CEST 2008 - locilka@suse.cz
 
 - Using two default desktops, one for inst_scenarios, another

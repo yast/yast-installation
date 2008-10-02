@@ -87,6 +87,9 @@ textdomain="control"
 
 	<!-- FATE: #303893: Default to enabled kdump -->
 	<enable_kdump config:type="boolean">true</enable_kdump>
+
+	<!-- bnc #431259 -->
+	<default_ntp_setup config:type="boolean">false</default_ntp_setup>
     </globals>
 
     <software>

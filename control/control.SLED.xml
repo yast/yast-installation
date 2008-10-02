@@ -147,6 +147,9 @@ textdomain="control"
 
 	<!-- #303798: YaST2 runlevel editor: offer easy enablement and configuration of runlevel 4 -->
 	<rle_offer_rulevel_4 config:type="boolean">true</rle_offer_rulevel_4>
+
+	<!-- bnc #431259 -->
+	<default_ntp_setup config:type="boolean">false</default_ntp_setup>
     </globals>
 
     <software>
