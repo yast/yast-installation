@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Oct  2 19:13:07 CEST 2008 - locilka@suse.cz
+
+- Adjusted presentation_order for SLES and SLED installation
+  proposals - software has to be proposed as almost the last one
+  (bnc #431580).
+
+-------------------------------------------------------------------
 Thu Oct  2 14:00:49 CEST 2008 - locilka@suse.cz
 
 - Added 'default_ntp_setup' into control files (SLES/D: false,
