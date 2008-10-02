@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Oct  2 11:39:48 CEST 2008 - locilka@suse.cz
+
+- No patterns listed in SLES default desktop, package proposal
+  will not add them (bnc #431503).
+- Switching scenario_virtual_machine and
+  scenario_virtualization_host in SLES control file (bnc #431251).
+
+-------------------------------------------------------------------
 Wed Oct  1 16:03:32 CEST 2008 - mzugec@suse.de
 
 - use rpcbind instead of portmap for nfs installation (bnc#423026)
