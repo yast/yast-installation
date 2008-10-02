@@ -121,19 +121,21 @@ textdomain="control"
 
 	<!-- FATE #304373: Server scenarios, labels are defined in 'texts' using the scenario 'id' -->
 	<system_scenarios config:type="list">
+	    <!-- bnc #431251 -->
 	    <system_scenario>
 		<id>scenario_physical_machine</id>
 		<patterns>base x11 gnome apparmor print_server 32bit 64bit x86 documentation</patterns>
 		<icon>yast-system</icon>
 	    </system_scenario>
+	    <!-- bnc #429061, bnc #431251 -->
 	    <system_scenario>
 		<id>scenario_virtual_machine</id>
-		<patterns>Dom0</patterns>
+		<patterns>base x11 gnome apparmor print_server 32bit 64bit x86 documentation</patterns>
 		<icon>yast-vm-install</icon>
 	    </system_scenario>
 	    <system_scenario>
 		<id>scenario_virtualization_host</id>
-		<patterns>base x11 gnome apparmor print_server 32bit 64bit x86 documentation</patterns>
+		<patterns>Dom0</patterns>
 		<icon>yast-vm-management</icon>
 	    </system_scenario>
 	</system_scenarios>
@@ -145,19 +147,20 @@ textdomain="control"
 	<!-- BNC #427061 The default desktop has to be set here -->
 	<supported_desktops config:type="list">
 	    <one_supported_desktop>
-		<name>gnome</name>
+		<name>default_desktop</name>
 		<desktop>gnome</desktop>
-		<label_id>desktop_gnome</label_id>
+		<label_id>default_desktop</label_id>
 		<logon>gdm</logon>
 		<cursor>DMZ</cursor>
 		<packages>gdm</packages>
 		<order config:type="integer">1</order>
-		<patterns>gnome x11 base</patterns>
+		<!-- No patterns to install or delete -->
+		<patterns></patterns>
 		<icon>pattern-gnome</icon>
 	    </one_supported_desktop>
 	</supported_desktops>
 
-	<default_desktop>gnome</default_desktop>
+	<default_desktop>default_desktop</default_desktop>
     </software>
 
     <partitioning>
@@ -220,7 +223,8 @@ Please visit us at http://www.novell.com/linux/.
 	</label>
       </congratulate>
 
-	<desktop_gnome><label>GNOME</label></desktop_gnome>
+	<!-- Empty string is intentional, bnc #431251, there needn't be any desktop -->
+	<default_desktop><label></label></default_desktop>
 
 	<!-- FATE #304373: Server scenarios -->
 	<scenarios_caption><label>Server Base Scenario</label></scenarios_caption>
