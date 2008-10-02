@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Oct  2 22:00:46 CEST 2008 - mzugec@suse.de
+
+- changed Release Notes into Support group (bnc#430005) 
+
+-------------------------------------------------------------------
 Thu Oct  2 19:13:07 CEST 2008 - locilka@suse.cz
 
 - Adjusted presentation_order for SLES and SLED installation
