@@ -497,9 +497,6 @@ with a modern look and feel.</label></description_kde>
             <proposal_modules config:type="list">
 		<proposal_module>hwinfo</proposal_module>
 		<proposal_module>media</proposal_module>
-<!-- disabled due to bug 165832
-                <proposal_module>rootpart</proposal_module>
--->
                 <proposal_module>update</proposal_module>
                 <proposal_module>packages</proposal_module>
                 <proposal_module>backup</proposal_module>

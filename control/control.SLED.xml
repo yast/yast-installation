@@ -265,18 +265,52 @@ Please visit us at http://www.novell.com/linux/.
             <stage>initial</stage>
             <name>initial</name>
             <enable_skip>no</enable_skip>
+
             <proposal_modules config:type="list">
-                <proposal_module>hwinfo</proposal_module>
-                <proposal_module>keyboard</proposal_module>
-                <proposal_module>mouse</proposal_module>
-                <proposal_module>partitions</proposal_module>
-		<proposal_module>add-on</proposal_module>
-                <proposal_module>software</proposal_module>
-                <proposal_module>bootloader</proposal_module>
-                <proposal_module>timezone</proposal_module>
-                <proposal_module>language</proposal_module>
-                <proposal_module>runlevel</proposal_module>
+		<proposal_module>
+		    <name>hwinfo</name>
+		    <presentation_order>10</presentation_order>
+		</proposal_module>
+		<proposal_module>
+		    <name>keyboard</name>
+		    <presentation_order>15</presentation_order>
+		</proposal_module>
+		<proposal_module>
+		    <name>mouse</name>
+		    <presentation_order>20</presentation_order>
+		</proposal_module>
+		<proposal_module>
+		    <name>partitions</name>
+		    <presentation_order>25</presentation_order>
+		</proposal_module>
+		<proposal_module>
+		    <name>add-on</name>
+		    <presentation_order>30</presentation_order>
+		</proposal_module>
+		<proposal_module>
+		    <name>bootloader</name>
+		    <presentation_order>40</presentation_order>
+		</proposal_module>
+		<proposal_module>
+		    <name>language</name>
+		    <presentation_order>50</presentation_order>
+		</proposal_module>
+		<proposal_module>
+		    <name>timezone</name>
+		    <presentation_order>45</presentation_order>
+		</proposal_module>
+		<!-- software proposal should be computed almost at the end -->
+		<proposal_module>
+		    <name>software</name>
+		    <presentation_order>35</presentation_order>
+		</proposal_module>
+		<!-- propose the default runlevel after software is selected, bnc #380141 -->
+		<proposal_module>
+		    <name>runlevel</name>
+		    <presentation_order>55</presentation_order>
+		</proposal_module>
             </proposal_modules>
+
             <proposal_tabs config:type="list">
                 <proposal_tab>
                     <label>Overview</label>
@@ -327,9 +361,6 @@ Please visit us at http://www.novell.com/linux/.
             <proposal_modules config:type="list">
 		<proposal_module>hwinfo</proposal_module>
 		<proposal_module>media</proposal_module>
-<!-- disabled due to bug 165832
-                <proposal_module>rootpart</proposal_module>
--->
                 <proposal_module>update</proposal_module>
 		<proposal_module>add-on</proposal_module>
                 <proposal_module>packages</proposal_module>
