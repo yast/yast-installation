@@ -83,6 +83,12 @@ textdomain="control"
 	<enable_autoconfiguration config:type="boolean">true</enable_autoconfiguration>
 	<autoconfiguration_default config:type="boolean">true</autoconfiguration_default>
 
+	<!-- BNC #428190, Some clients should be called even with AC -->
+	<autoconfiguration_enabled_modules config:type="list">
+	    <module>cont_suse_register</module>
+	    <module>cont_suseconfig</module>
+	</autoconfiguration_enabled_modules>
+
         <!-- Configuration for inst_automatic_configuration script -->
         <automatic_configuration config:type="list">
             <!--
@@ -887,7 +893,8 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
                 <module>
                     <label>Customer Center</label>
-                    <name>suse_register</name>
+                    <name>cont_suse_register</name>
+                    <execute>inst_suse_register</execute>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
@@ -924,8 +931,8 @@ Please visit us at http://www.novell.com/linux/.
 		    <execute>inst_user</execute>
 		</module>
                 <module>
-	            <label>Release Notes</label>
-                    <name>suseconfig</name>
+                    <name>cont_suseconfig</name>
+                    <execute>inst_suseconfig</execute>
                     <enable_back>no</enable_back>
                     <enable_next>no</enable_next>
                 </module>

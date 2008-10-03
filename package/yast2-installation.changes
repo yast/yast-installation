@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Oct  3 16:31:10 CEST 2008 - locilka@suse.cz
+
+- Enabling some steps in second stage even if Automatic
+  Configuration is in use.
+- Feature added into openSUSE and SLED control files
+  (both bnc #428190).
+
+-------------------------------------------------------------------
 Thu Oct  2 22:00:46 CEST 2008 - mzugec@suse.de
 
 - changed Release Notes into Support group (bnc#430005) 

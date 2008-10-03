@@ -24,6 +24,7 @@ textdomain "installation";
 import "Installation";
 import "Mode";
 import "ProductControl";
+import "ProductFeatures";
 import "Label";
 import "FileUtils";
 import "Linuxrc";
@@ -205,15 +206,42 @@ according to the settings in the previous dialogs.</p>")
 	return ( button == `confirm );
     }
 
+    list <string> modules_to_enable_with_AC_on = nil;
+
+    // Some client calls have to be called even if using AC
+    void EnableRequiredModules () {
+	// Lazy init
+	if (modules_to_enable_with_AC_on == nil) {
+	    any feature = ProductFeatures::GetFeature ("globals", "autoconfiguration_enabled_modules");
+
+	    if (feature == "" || feature == nil || feature == []) {
+		modules_to_enable_with_AC_on = [];
+	    } else {
+		modules_to_enable_with_AC_on = (list <string>) feature;
+	    }
+
+	    y2milestone ("Steps to enable with AC in use: %1", modules_to_enable_with_AC_on);
+	}
+
+	if (modules_to_enable_with_AC_on != nil) {
+	    foreach (string one_module, modules_to_enable_with_AC_on, {
+		ProductControl::EnableModule (one_module);
+	    });
+	}
+    }
+
     void AdjustAutomaticConfiguration () {
         if (ProductControl::GetUseAutomaticConfiguration()) {
 	    y2milestone ("Using AC...");
-            ProductControl::DisableAllModulesAndProposals ("installation", "continue");
-            ProductControl::EnableModule ("automatic_configuration");
-	    // Enable SuSEConfig, bnc #381751
-            ProductControl::EnableModule ("suseconfig");
+
+	    ProductControl::DisableAllModulesAndProposals ("installation", "continue");
+	    ProductControl::EnableModule ("automatic_configuration");
+
+	    // Enable Modules that are required to run even if using AC, bnc #428190
+	    EnableRequiredModules();
 	} else {
 	    y2milestone ("Not using AC...");
+
 	    ProductControl::UnDisableAllModulesAndProposals ("installation", "continue");
 	    ProductControl::DisableModule ("automatic_configuration");
 	}
