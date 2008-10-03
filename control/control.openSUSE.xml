@@ -86,6 +86,12 @@ textdomain="control"
 	<enable_autoconfiguration config:type="boolean">true</enable_autoconfiguration>
 	<autoconfiguration_default config:type="boolean">true</autoconfiguration_default>
 
+	<!-- BNC #428190, Some clients should be called even with AC -->
+	<autoconfiguration_enabled_modules config:type="list">
+	    <module>cont_suse_register</module>
+	    <module>cont_suseconfig</module>
+	</autoconfiguration_enabled_modules>
+
 	<!-- FATE #303395, Kexec instead of reboot (default 'false') -->
 	<kexec_reboot config:type="boolean">true</kexec_reboot>
 
@@ -1168,7 +1174,8 @@ with a modern look and feel.</label></description_kde>
 		    <execute>inst_user</execute>
 		</module>
                 <module>
-                    <name>suseconfig</name>
+                    <name>cont_suseconfig</name>
+                    <execute>inst_suseconfig</execute>
                     <enable_back>no</enable_back>
                     <enable_next>no</enable_next>
                 </module>
