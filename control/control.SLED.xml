@@ -87,6 +87,7 @@ textdomain="control"
 	<autoconfiguration_enabled_modules config:type="list">
 	    <module>cont_suse_register</module>
 	    <module>cont_suseconfig</module>
+	    <module>cont_congratulate</module>
 	</autoconfiguration_enabled_modules>
 
         <!-- Configuration for inst_automatic_configuration script -->
@@ -952,7 +953,8 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
                 <module>
 	            <label>Hardware Configuration</label>
-                    <name>congratulate</name>
+                    <name>cont_congratulate</name>
+                    <execute>inst_congratulate</execute>
                 </module>
             </modules>
         </workflow>
