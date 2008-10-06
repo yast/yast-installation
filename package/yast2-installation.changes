@@ -8,6 +8,8 @@ Mon Oct  6 15:30:53 CEST 2008 - locilka@suse.cz
   #432572)
 - Dropping obsolete inst_software_selection client instead of
   convwerting it - not in use anymore (bnc #432572).
+- Always change initial proposal [Next] button to [Install],
+  resp. [Update] (bnc #431567).
 - 2.17.18
 
 -------------------------------------------------------------------
