@@ -23,6 +23,7 @@ import "Popup";
 import "Stage";
 import "Directory";
 import "ProductControl";
+import "PackagesProposal";
 
 // do not offer the dialog if base selection is fixed
 if (ProductFeatures::GetFeature ("software", "selection_type") == `fixed)
@@ -46,17 +47,22 @@ if (DefaultDesktop::Desktop() == nil || DefaultDesktop::Desktop() == "") {
 
 map <string, map> all_desktops = DefaultDesktop::GetAllDesktopsMap();
 
+string packages_proposal_ID = "inst_new_desktop";
+
 void SelectSoftwareNow () {
     y2milestone ("Selected desktop: %1", DefaultDesktop::Desktop());
     DefaultDesktop::SetDesktop (DefaultDesktop::Desktop());
 
     Packages::ForceFullRepropose();
-    Packages::Reset ([`product]);
 
-    foreach (string one_pattern, (list <string>) all_desktops[DefaultDesktop::Desktop(), "patterns"]:[], {
-	y2milestone ("Marking desktop pattern to be installed: %1", one_pattern);
-	Pkg::ResolvableInstall (one_pattern, `pattern);
-    });
+    // Remove all already selected patterns
+    PackagesProposal::RemoveResolvables (packages_proposal_ID, `pattern,
+	PackagesProposal::GetResolvables (packages_proposal_ID, `pattern)
+    );
+
+    PackagesProposal::AddResolvables (
+	packages_proposal_ID, `pattern, all_desktops[DefaultDesktop::Desktop(), "patterns"]:[]
+    );
 }
 
 string GetDesktopRadioButtonId (string desktop_name) {
@@ -255,12 +261,17 @@ while (true) {
 Select the default type."));
 	    continue;
 	}
-	DefaultDesktop::SetDesktop (regexpsub (tostring (currently_selected), "^selected_desktop_(.*)", "\\1"));
 
-	if (DefaultDesktop::Desktop() != nil && haskey (all_desktops, DefaultDesktop::Desktop())) {
-	    SelectSoftwareNow ();
-	    break;
+	if (currently_selected != nil && currently_selected != "") {
+	    DefaultDesktop::SetDesktop (regexpsub (tostring (currently_selected), "^selected_desktop_(.*)", "\\1"));
+	    Packages::ForceFullRepropose();
+
+	    if (DefaultDesktop::Desktop() != nil && haskey (all_desktops, DefaultDesktop::Desktop())) {
+		SelectSoftwareNow ();
+		break;
+	    }
 	}
+
 	Popup::Message (_("No system type was selected.
 Select the default type."));
 	continue;

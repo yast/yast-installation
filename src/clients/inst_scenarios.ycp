@@ -22,6 +22,7 @@
     import "Report";
     import "Packages";
     import "DefaultDesktop";
+    import "PackagesProposal";
 
     boolean test_mode = false;
 
@@ -95,38 +96,32 @@
 	}
     }
 
+    string packages_proposal_ID = "inst_scenarios";
+
     void SelectPatterns (string chosen_selection) {
 	y2milestone ("User selected: %1", chosen_selection);
 
-	// neutralize 'the other' patterns selected by application
-	foreach (map <string, string> one_scenario, system_scenarios, {
-	    if (one_scenario["id"]:"---" != chosen_selection) {
-		foreach (string one_pattern, splitstring (one_scenario["patterns"]:"", " \t"), {
-		    y2milestone ("Neutralizing pattern: %1", one_pattern);
-		    // false -- only patterns in `selected stage APPL_HIGH will be neutralized
-		    Pkg::ResolvableNeutral (one_pattern, `pattern, false);
-		});
-	    }
-	});
+	Packages::ForceFullRepropose();
+
+	// Remove all already selected patterns
+	PackagesProposal::RemoveResolvables (packages_proposal_ID, `pattern,
+	    PackagesProposal::GetResolvables (packages_proposal_ID, `pattern)
+	);
 
 	// select newly selected patterns for installation
 	foreach (map <string, string> one_scenario, system_scenarios, {
 	    if (one_scenario["id"]:"---" == chosen_selection) {
 		list <string> patterns_to_install = splitstring (one_scenario["patterns"]:"", " \t");
-
-		foreach (string one_pattern, patterns_to_install, {
-		    y2milestone ("Selecting pattern: %1", one_pattern);
-		    Pkg::ResolvableInstall (one_pattern, `pattern);
-		});
-
-		Packages::required_patterns = patterns_to_install;
-		y2milestone ("Packages::required_patterns: %1", Packages::required_patterns);
+		// Select new list of patterns
+		PackagesProposal::AddResolvables (packages_proposal_ID, `pattern, patterns_to_install);
+		break;
 	    }
 	});
 
 	string desktop = ProductFeatures::GetStringFeature ("software", "scenarios_desktop");
 	y2milestone ("Using default desktop: %1", desktop);
 	DefaultDesktop::SetDesktop (desktop);
+	Packages::ForceFullRepropose();
     }
 
     // adjusting test mode - not used in installation
@@ -135,9 +130,9 @@
 	Pkg::TargetInit (Installation::destdir, true);
 	Pkg::SourceStartManager (true);
 	// pre-select
-//	foreach (string one_pattern, splitstring (system_scenarios[0,"patterns"]:"", " \t"), {
-//	    Pkg::ResolvableInstall (one_pattern, `pattern);
-//	});
+	foreach (string one_pattern, splitstring (system_scenarios[0,"patterns"]:"", " \t"), {
+	    Pkg::ResolvableInstall (one_pattern, `pattern);
+	});
 	Pkg::PkgSolve (true);
     }
 
