@@ -1129,16 +1129,16 @@ a proposal that is locked, ask your system administrator.</p>");
     //
     make_proposal( false, false );
 
-    // Set keyboard focus to the [Install] / [Update] or [Next] button
-    Wizard::SetFocusToNextButton();
-    if (Stage::initial ())
-	Wizard::SetNextButton (`next, (
-	    // FATE #120373
-	    Mode::update() ?
-		_("&Update")
-		:
-		_("&Install")
-	));
+    void SetNextButton () {
+	if (Stage::initial () && proposal_mode == "initial")
+	    Wizard::SetNextButton (`next, (
+		// FATE #120373
+		Mode::update() ?
+		    _("&Update")
+		    :
+		    _("&Install")
+	    ));
+    }
 
     //
     // Input loop
@@ -1146,9 +1146,16 @@ a proposal that is locked, ask your system administrator.</p>");
 
     any input = nil;
 
+    // Set keyboard focus to the [Install] / [Update] or [Next] button
+    Wizard::SetFocusToNextButton();
+
     while ( true )
     {
 	richtext_normal_cursor(`id(`proposal ) );
+	// bnc #431567
+	// Some proposal module can change it while called
+	SetNextButton();
+
 	input = Wizard::UserInput();
 	y2milestone("Proposal - UserInput: '%1'", input);
 	richtext_busy_cursor(`id(`proposal ) );
