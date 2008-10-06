@@ -195,7 +195,6 @@ textdomain="control"
 		<packages>gdm</packages>
 		<order config:type="integer">1</order>
 		<patterns>gnome x11 base</patterns>
-		<icon>pattern-gnome</icon>
 	    </one_supported_desktop>
 	</supported_desktops>
 
@@ -256,7 +255,8 @@ Please visit us at http://www.novell.com/linux/.
 	</label>
 	</congratulate>
 
-	<desktop_gnome><label>GNOME</label></desktop_gnome>
+	<!-- BNC #431336, Do not display any system type -->
+	<desktop_gnome><label></label></desktop_gnome>
 
 	<ac_1><label>Initialization...</label></ac_1>
 	<ac_2><label>Configuring network...</label></ac_2>

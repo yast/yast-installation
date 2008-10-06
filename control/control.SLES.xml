@@ -153,7 +153,7 @@ textdomain="control"
 	    <one_supported_desktop>
 		<name>desktop_for_scenarios</name>
 		<desktop>gnome</desktop>
-		<label_id>desktop_for_scenarios</label_id>
+		<label_id>dummy_desktop</label_id>
 		<logon>gdm</logon>
 		<cursor>DMZ</cursor>
 		<order config:type="integer">1</order>
@@ -167,7 +167,7 @@ textdomain="control"
 	    <one_supported_desktop>
 		<name>desktop_gnome</name>
 		<desktop>gnome</desktop>
-		<label_id>desktop_gnome</label_id>
+		<label_id>dummy_desktop</label_id>
 		<logon>gdm</logon>
 		<cursor>DMZ</cursor>
 		<packages>gdm</packages>
@@ -243,10 +243,8 @@ Please visit us at http://www.novell.com/linux/.
 	</label>
       </congratulate>
 
-	<!-- Empty string is intentional, bnc #431251, there needn't be any desktop -->
-	<desktop_for_scenarios><label></label></desktop_for_scenarios>
-	<!-- Default desktop for non-i386/non-x86_64 machines -->
-	<desktop_gnome><label>GNOME</label></desktop_gnome>
+	<!-- Empty string is intentional, bnc #431251, bnc #431336 -->
+	<dummy_desktop><label></label></dummy_desktop>
 
 	<!-- FATE #304373: Server scenarios -->
 	<scenarios_caption><label>Server Base Scenario</label></scenarios_caption>

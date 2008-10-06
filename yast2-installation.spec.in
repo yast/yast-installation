@@ -13,8 +13,8 @@ BuildRequires:	yast2-packager >= 2.17.9
 # AutoinstConfig::getProposalList
 Requires:       autoyast2-installation >= 2.17.1
 
-# (public) ProductControl::InitAutomaticConfiguration
-Requires:	yast2 >= 2.17.7
+# PackagesProposal with `pattern(s)
+Requires:	yast2 >= 2.17.38
 
 # Required in in the first stage, after
 # switching to the installed system, bugzilla #249679

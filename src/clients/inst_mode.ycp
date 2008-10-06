@@ -30,6 +30,7 @@ import "Storage";
 import "Wizard";
 import "ProductFeatures";
 import "Directory";
+import "PackagesProposal";
 
 include "packager/storage_include.ycp";
 include "installation/misc.ycp";
@@ -457,6 +458,7 @@ if (Mode::mode () != InstData::start_mode) {
     Kernel::ProbeKernel();
     Pkg::TargetFinish ();
     Pkg::PkgReset ();
+    PackagesProposal::ResetAll();
     Packages::Init( true );
 
     ret = ProductControl::RunFrom (ProductControl::CurrentStep () + 1, false);
