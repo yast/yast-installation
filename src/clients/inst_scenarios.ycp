@@ -111,11 +111,10 @@
 	    }
 	});
 
-	string desktop = ProductFeatures::GetStringFeature ("software", "scenarios_desktop");
-	y2milestone ("Using default desktop: %1", desktop);
-
-	DefaultDesktop::SetDesktop (desktop);
-	Packages::ForceFullRepropose();
+	// conflicts with the default desktop feature, thus it removes
+	// the resolvables that the DefaultDesktop could require
+	y2warning ("Removing all default_desktop related resolvables...");
+	DefaultDesktop::SetDesktop (nil);
     }
 
     // adjusting test mode - not used in installation

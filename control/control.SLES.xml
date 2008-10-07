@@ -149,20 +149,6 @@ textdomain="control"
 	<!-- BNC #424678 Definition of supported desktops -->
 	<!-- BNC #427061 The default desktop has to be set here -->
 	<supported_desktops config:type="list">
-	    <!-- Minimal 'desktop' used when inst_scenarios are called -->
-	    <one_supported_desktop>
-		<name>desktop_for_scenarios</name>
-		<desktop>gnome</desktop>
-		<label_id>dummy_desktop</label_id>
-		<logon>gdm</logon>
-		<cursor>DMZ</cursor>
-		<order config:type="integer">1</order>
-		<!-- No patterns, not packages to install or delete -->
-		<patterns></patterns>
-		<packages></packages>
-		<do_not_deselect_patterns config:type="boolean">true</do_not_deselect_patterns>
-	    </one_supported_desktop>
-
 	    <!-- Used for non-i386/non-x86_64 machines -->
 	    <one_supported_desktop>
 		<name>desktop_gnome</name>
@@ -176,9 +162,6 @@ textdomain="control"
 		<icon>pattern-gnome</icon>
 	    </one_supported_desktop>
 	</supported_desktops>
-
-	<!-- inst_scenarios have to set a different desktop -->
-	<scenarios_desktop>desktop_for_scenarios</scenarios_desktop>
 
 	<default_desktop>desktop_gnome</default_desktop>
     </software>
