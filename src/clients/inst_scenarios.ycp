@@ -101,25 +101,19 @@
     void SelectPatterns (string chosen_selection) {
 	y2milestone ("User selected: %1", chosen_selection);
 
-	Packages::ForceFullRepropose();
-
-	// Remove all already selected patterns
-	PackagesProposal::RemoveResolvables (packages_proposal_ID, `pattern,
-	    PackagesProposal::GetResolvables (packages_proposal_ID, `pattern)
-	);
-
 	// select newly selected patterns for installation
 	foreach (map <string, string> one_scenario, system_scenarios, {
 	    if (one_scenario["id"]:"---" == chosen_selection) {
 		list <string> patterns_to_install = splitstring (one_scenario["patterns"]:"", " \t");
 		// Select new list of patterns
-		PackagesProposal::AddResolvables (packages_proposal_ID, `pattern, patterns_to_install);
+		PackagesProposal::SetResolvables (packages_proposal_ID, `pattern, patterns_to_install);
 		break;
 	    }
 	});
 
 	string desktop = ProductFeatures::GetStringFeature ("software", "scenarios_desktop");
 	y2milestone ("Using default desktop: %1", desktop);
+
 	DefaultDesktop::SetDesktop (desktop);
 	Packages::ForceFullRepropose();
     }
