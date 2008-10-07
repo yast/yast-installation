@@ -10,6 +10,9 @@ Mon Oct  6 15:30:53 CEST 2008 - locilka@suse.cz
   convwerting it - not in use anymore (bnc #432572).
 - Always change initial proposal [Next] button to [Install],
   resp. [Update] (bnc #431567).
+- Removing desktop definitions and default_desktop from SLED
+  control file, the required patterns are selected by PATTERNS
+  in content file already (bnc #431902).
 - 2.17.18
 
 -------------------------------------------------------------------
