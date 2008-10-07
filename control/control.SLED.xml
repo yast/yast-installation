@@ -935,7 +935,6 @@ Please visit us at http://www.novell.com/linux/.
 		    <name>save_hardware_status</name>
                 </module>
                 <module>
-	            <label>Hardware Configuration</label>
                     <name>cont_congratulate</name>
                     <execute>inst_congratulate</execute>
                 </module>
