@@ -88,7 +88,6 @@ textdomain="control"
 
 	<!-- BNC #428190, Some clients should be called even with AC -->
 	<autoconfiguration_enabled_modules config:type="list">
-	    <module>cont_suse_register</module>
 	    <module>cont_suseconfig</module>
 	</autoconfiguration_enabled_modules>
 
