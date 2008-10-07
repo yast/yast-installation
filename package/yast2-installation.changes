@@ -13,6 +13,9 @@ Mon Oct  6 15:30:53 CEST 2008 - locilka@suse.cz
 - Removing desktop definitions and default_desktop from SLED
   control file, the required patterns are selected by PATTERNS
   in content file already (bnc #431902).
+- Adding lnussel's patch for desktop_finish to write
+  POLKIT_DEFAULT_PRIVS if defined in globals->polkit_default_privs
+  (bnc #431158).
 - 2.17.18
 
 -------------------------------------------------------------------

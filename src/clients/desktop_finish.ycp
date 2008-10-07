@@ -125,6 +125,7 @@ else if (func == "Write")
 	    );
 	}
 
+	// this one should be obsolete nowadays but maybe KDE still uses it
 	string dm_shutdown = ProductFeatures::GetStringFeature ("globals",
 	    "displaymanager_shutdown");
 	y2milestone ("Logon manager shutdown: %1", dm_shutdown);
@@ -133,6 +134,16 @@ else if (func == "Write")
 	    SCR::Write (.sysconfig.displaymanager.DISPLAYMANAGER_SHUTDOWN,
 		dm_shutdown);
 	}
+
+	// bnc #431158, patch done by lnussel
+	string polkit_default_privs = ProductFeatures::GetStringFeature ("globals",
+	    "polkit_default_privs");
+	if (polkit_default_privs != nil && polkit_default_privs != "")
+	{
+	    SCR::Write (.sysconfig.security.POLKIT_DEFAULT_PRIVS,
+		polkit_default_privs);
+	}
+
 
 	y2milestone ("sysconfig/displaymanager/DISPLAYMANAGER=%1", default_dm);
 	SCR::Write (.sysconfig.displaymanager.DISPLAYMANAGER, default_dm);
