@@ -90,6 +90,9 @@ textdomain="control"
 
 	<!-- bnc #431259 -->
 	<default_ntp_setup config:type="boolean">false</default_ntp_setup>
+
+	<!-- bnc #431158: Adjusts /etc/sysconfig/security/POLKIT_DEFAULT_PRIVS if set -->
+	<polkit_default_privs>restrictive</polkit_default_privs>
     </globals>
 
     <software>
