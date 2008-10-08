@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Oct 08 12:51:01 CEST 2008 - aschnell@suse.de
+
+- removed cp of proc/mounts to /etc/mtab (bnc #425464)
+- 2.17.19
+
+-------------------------------------------------------------------
 Mon Oct  6 15:30:53 CEST 2008 - locilka@suse.cz
 
 - Do not display any system type for SLES/SLED in installation
