@@ -405,6 +405,16 @@
 		<listitem><para>(boolean) <emphasis>write_hostname_to_hosts</emphasis> - defines whether
 		    the currently assigned hostname is written to /etc/hosts with IPv4 address 127.0.0.2.
 		    Defaul value is <emphasis>false</emphasis> if not set.</para></listitem>
+
+		<!-- BNC #431259 -->
+		<listitem><para>(boolean) <emphasis>default_ntp_setup</emphasis> - NTP configuration
+		    proposes a default ntp server if set to <emphasis>true</emphasis>. Default value
+		    is <emphasis>false</emphasis>.</para></listitem>
+
+		<!-- BNC #431158 -->
+		<listitem><para>(string) <emphasis>polkit_default_privs</emphasis> - Adjusts
+		    <emphasis>/etc/sysconfig/security/POLKIT_DEFAULT_PRIVS</emphasis> to the defined value.
+		    If not set or empty, sysconfig is untouched.</para></listitem>
 	    </itemizedlist>
 	</section>
 	    

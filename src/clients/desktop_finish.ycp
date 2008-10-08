@@ -140,6 +140,7 @@ else if (func == "Write")
 	    "polkit_default_privs");
 	if (polkit_default_privs != nil && polkit_default_privs != "")
 	{
+	    y2milestone ("Writing %1 to POLKIT_DEFAULT_PRIVS", polkit_default_privs);
 	    SCR::Write (.sysconfig.security.POLKIT_DEFAULT_PRIVS,
 		polkit_default_privs);
 	}
