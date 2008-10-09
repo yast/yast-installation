@@ -904,6 +904,8 @@ URL: %2"),
 	continue_processing = true;
 	// initialize zypp
 	Pkg::TargetInitialize (Installation::destdir);
+	// bnc #429080
+	Pkg::TargetLoad();
 	Pkg::SourceStartManager (false);
 
 	foreach (integer one_id, Pkg::SourceGetCurrent (true), {

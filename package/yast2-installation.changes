@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Oct  9 18:59:06 CEST 2008 - locilka@suse.cz
+
+- Loading the Target while initializing libzypp in
+  inst_upgrade_urls (bnc #429080).
+
+-------------------------------------------------------------------
 Wed Oct 08 12:51:01 CEST 2008 - aschnell@suse.de
 
 - removed cp of proc/mounts to /etc/mtab (bnc #425464)
