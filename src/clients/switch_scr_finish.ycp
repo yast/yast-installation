@@ -36,6 +36,42 @@ void ErrorDuringSCRSwitch (string chroot_dir) {
     RunSCRSwitchDebugger(chroot_dir);
 }
 
+/**
+ * Check the new SCR, bnc #433057
+ *
+ * @return boolean whether successful
+ */
+boolean TestTheNewSCR () {
+    y2milestone ("Running some tests on the new SCR");
+
+    map ret_exec = (map) SCR::Execute (.target.bash_output, "TEST=OK; echo ${TEST}");
+
+    if (ret_exec["exit"]:-1 != 0) {
+	y2milestone ("SCR::Execute: %1", ret_exec);
+	y2error ("SCR Error");
+	return false;
+    }
+
+    list ret_dir = (list) SCR::Read(.target.dir, "/");
+
+    if (ret_dir == nil || ret_dir == []) {
+	y2milestone ("SCR::Read/dir: %1", ret_dir);
+	y2error ("SCR Error");
+	return false;
+    }
+
+    list scr_dir = (list) SCR::Dir(.sysconfig);
+
+    if (scr_dir == nil || scr_dir == []) {
+	y2milestone ("SCR::Dir: %1", scr_dir);
+	y2error ("SCR Error");
+	return false;
+    }
+
+    y2milestone ("SCR seems to be OK");
+    return true;
+}
+
 /* Check arguments */
 if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
     func = (string)WFM::Args(0);
@@ -78,6 +114,7 @@ else if (func == "Write")
     // bugzilla #201058
     // WFM::SCROpen returns negative integer in case of failure
     if (Installation::scr_handle == nil || Installation::scr_handle < 0) {
+	y2error ("Cannot switch to the system");
 	ErrorDuringSCRSwitch (Installation::destdir);
 	return false;
     }
@@ -87,6 +124,14 @@ else if (func == "Write")
 
     // re-init tmpdir from new SCR !
     Directory::ResetTmpDir();
+
+    // bnc #433057
+    // Even if SCR switch worked, run a set of some simple tests
+    if (TestTheNewSCR () != true) {
+	y2error ("Cannot switch to the system");
+	ErrorDuringSCRSwitch (Installation::destdir);
+	return false;
+    }
 }
 else
 {

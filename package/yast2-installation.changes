@@ -1,8 +1,11 @@
 -------------------------------------------------------------------
-Thu Oct  9 18:59:06 CEST 2008 - locilka@suse.cz
+Thu Oct  9 21:00:01 CEST 2008 - locilka@suse.cz
 
 - Loading the Target while initializing libzypp in
   inst_upgrade_urls (bnc #429080).
+- Running a simple SCR Test after chrooting to the installed system
+  in scr_switch_finish, full-test is called in case of simple test
+  failure (bnc #433057).
 
 -------------------------------------------------------------------
 Wed Oct 08 12:51:01 CEST 2008 - aschnell@suse.de
