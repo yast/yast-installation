@@ -6,6 +6,7 @@
     import "ProductFeatures";
     import "ProductControl";
     import "InstData";
+    import "String";
 
     // --> Functions
 
@@ -176,6 +177,14 @@
 	    
 	    if (files_found) {
 		files_found_on_partitions[partition_device] = one_partition_files_found;
+	    }
+
+	    // bnc #427879
+	    map exec = (map) SCR::Execute (.target.bash_output,
+		sformat ("fuser -v '%1' 2>&1", String::Quote (mnt_tmpdir))
+	    );
+	    if (exec["stdout"]:"" != "") {
+		y2error ("Processes in %1: %2", mnt_tmpdir, exec);
 	    }
 
 	    // umounting

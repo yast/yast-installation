@@ -6,6 +6,7 @@ Thu Oct  9 21:00:01 CEST 2008 - locilka@suse.cz
 - Running a simple SCR Test after chrooting to the installed system
   in scr_switch_finish, full-test is called in case of simple test
   failure (bnc #433057).
+- Added more checking around 'searching for files' (bnc #427879).
 
 -------------------------------------------------------------------
 Wed Oct 08 12:51:01 CEST 2008 - aschnell@suse.de
