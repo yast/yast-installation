@@ -29,6 +29,7 @@ import "Label";
 import "FileUtils";
 import "Linuxrc";
 import "InstData";
+import "HTML";
 
 /**
  * Function appends blacklisted modules to the /etc/modprobe.d/blacklist
@@ -126,7 +127,7 @@ void UpdateWizardSteps () {
     boolean confirmInstallation()
     {
 	// Heading for confirmation popup before the installation really starts
-	string heading = "<h3>" + _("Confirm Installation") + "</h3>";
+	string heading = HTML::Heading (_("Confirm Installation"));
 
 	string body =
 	// Text for confirmation popup before the installation really starts 1/3
@@ -194,8 +195,8 @@ according to the settings in the previous dialogs.</p>")
 				   `HSpacing( 0.7 )
 				   ),
 			     `ButtonBox (
-				   `PushButton (`id (`back), `opt(`default, `okButton, `key_F10), Label::BackButton()),
-				   `PushButton (`id (`confirm), `opt (`cancelButton, `key_F9), confirm_button_label)
+				   `PushButton (`id (`cancel), `opt(`cancelButton, `key_F10, `default), Label::BackButton()),
+				   `PushButton (`id (`ok), `opt (`okButton, `key_F9), confirm_button_label)
 				   )
 			     )
 		       );
@@ -203,7 +204,7 @@ according to the settings in the previous dialogs.</p>")
 	symbol button = (symbol) UI::UserInput();
 	UI::CloseDialog();
 
-	return ( button == `confirm );
+	return (button == `ok);
     }
 
     list <string> modules_to_enable_with_AC_on = nil;
