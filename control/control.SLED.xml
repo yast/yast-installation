@@ -462,7 +462,7 @@ Please visit us at http://www.novell.com/linux/.
 		<module>
 		    <label>Add-On Products</label>
 		    <name>add-on</name>
-                    <enable_back>no</enable_back>
+                    <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
 		</module>
                 <module>
@@ -582,7 +582,7 @@ Please visit us at http://www.novell.com/linux/.
 		<module>
 		    <label>Add-On Products</label>
 		    <name>add-on</name>
-                    <enable_back>no</enable_back>
+                    <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
 		</module>
 		<module>
