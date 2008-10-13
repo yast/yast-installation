@@ -358,8 +358,8 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	<ac_4><label>Finishing configuration...</label></ac_4>
 
 	<!-- Desktop dialog label -->
-	<desktop_dialog><label>openSUSE offers you a choice of user interfaces. The two major complete. 
-desktops are KDE and GNOME. Both provide an easy-to-use desktop with a full. 
+	<desktop_dialog><label>openSUSE offers you a choice of user interfaces. The two major complete 
+desktops are KDE and GNOME. Both provide an easy-to-use desktop with a full 
 suite of applications including email, a file manager, games and utilities. 
  
 As desktop selection is a matter of taste, we do not give a recommendation.</label></desktop_dialog>
