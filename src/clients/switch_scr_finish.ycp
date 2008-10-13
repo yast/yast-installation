@@ -72,6 +72,22 @@ boolean TestTheNewSCR () {
     return true;
 }
 
+boolean TestTheNewSCRHandler () {
+    integer SCR_PID = FindSCRPID();
+
+// bnc #434253
+// this kills SCR
+//    if (SCR_PID > 0) SwitchY2Debug (SCR_PID);
+
+    boolean ret = TestTheNewSCR();
+
+// bnc #434253
+// this kills SCR
+//    if (SCR_PID > 0) SwitchY2Debug (SCR_PID);
+
+    return ret;
+}
+
 /* Check arguments */
 if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
     func = (string)WFM::Args(0);
@@ -127,7 +143,7 @@ else if (func == "Write")
 
     // bnc #433057
     // Even if SCR switch worked, run a set of some simple tests
-    if (TestTheNewSCR () != true) {
+    if (TestTheNewSCRHandler() != true) {
 	y2error ("Cannot switch to the system");
 	ErrorDuringSCRSwitch (Installation::destdir);
 	return false;
