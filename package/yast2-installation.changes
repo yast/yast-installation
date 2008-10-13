@@ -3,6 +3,7 @@ Mon Oct 13 09:45:23 CEST 2008 - locilka@suse.cz
 
 - Fixed install/update confirmation dialog (bnc #433249).
 - Fixed text in openSUSE control file (bnc #432911).
+- Fixed typo (bnc #433794).
 
 -------------------------------------------------------------------
 Fri Oct 10 14:49:58 CEST 2008 - locilka@suse.cz

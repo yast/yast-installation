@@ -874,7 +874,7 @@ URL: %2"),
 		_("Initializing package manager..."),
 	    ],
 	    // TRANSLATORS: dialog help
-	    _("<p>Reading repositories. Please wait..</p>")
+	    _("<p>Reading repositories. Please wait...</p>")
 	);
 	Wizard::SetTitleIcon ("yast-sw_source");
     }
