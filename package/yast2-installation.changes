@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Oct 10 14:49:58 CEST 2008 - locilka@suse.cz
+
+- Enhanced scr_switch_debugger (bnc #433057).
+- Enabling key-repeating if not running in XEN (bnc #433338).
+
+-------------------------------------------------------------------
 Thu Oct  9 21:00:01 CEST 2008 - locilka@suse.cz
 
 - Loading the Target while initializing libzypp in

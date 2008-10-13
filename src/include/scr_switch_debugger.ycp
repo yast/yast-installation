@@ -26,11 +26,13 @@
     import "Popup";
     import "Label";
     import "Icon";
+    import "Installation";
+    import "HTML";
 
     // test result (Checking for xyz... Passed)
     string result_ok = _("Passed");
     // test result (Checking for xyz... Failed)
-    string result_failed = _("Failed");
+    string result_failed = ("Failed");
 
     /* ********************************************************************* */
 
@@ -74,6 +76,9 @@
     
     // where logs are stored
     string yast_logs = "/var/log/YaST2/";
+
+    // YaST log file
+    string yast_logfile = "y2log";
     
     // <-- Configuration
 
@@ -91,7 +96,30 @@
 	    )),
 	    `VSpacing (0.5),
 	    // informative text
-	    `Left (`Label (_("Running the debugger..."))),
+	    `MarginBox (
+		1, 1, `VBox (
+		    `Left (`Label (sformat (
+			// TRANSLATORS: an error message
+			// %1 - logfile, possibly with errors
+			// %2 - link to our bugzilla
+			// %3 - directory where YaST logs are stored
+			// %4 - link to the Yast Bug Reporting HOWTO Web page
+			_("Switching to the installes system has failed
+More information can be found near the end of the '%1' file.
+
+This is worth reporting a bug at %2.
+Please, attach also all YaST logs stored in the '%3' directory.
+See %4 for more information about YaST logs."),
+			"/var/log/YaST2/y2log",
+			"http://bugzilla.novell.com/",
+			"/var/log/YaST2/",
+			// link to the Yast Bug Reporting HOWT
+			// for translators: use the localized page for your language if it exists,
+			// check the combo box "In other laguages" on top of the page
+			_("http://en.opensuse.org/Bugs/YaST")
+		    )))
+		)
+	    ),
 	    `MarginBox (
 		1, 1, `VBox (
 		    `MinWidth (70,
@@ -148,6 +176,12 @@ Please, attach also all YaST logs stored in the '%2' directory."),
 	
 	y2milestone("%1", progress_s);
 	UI::ChangeWidget (`id(`log_view), `LastLine, "\n" + progress_s + "\n");
+    }
+
+    // report just a line, no modifications
+    void ReportLine (string line) {
+	y2milestone("%1", line);
+	UI::ChangeWidget (`id(`log_view), `LastLine, line + "\n");
     }
 
     // <-- Helper Functions
@@ -281,8 +315,8 @@ Please, attach also all YaST logs stored in the '%2' directory."),
 	);
 	    
 	map <string, any> test = (map <string, any>) SCR::Execute (.target.bash_output, one_rpm_installed);
-	test_result = ((integer) test["exit"]:42 == 0);
-	if (! test_result) ret = false;
+	test_result = (test["exit"]:-1 == 0);
+	if (test_result != true) ret = false;
 
 	ReportTest (
 	    // Test progress
@@ -319,9 +353,17 @@ Please, attach also all YaST logs stored in the '%2' directory."),
 	if (test_result) {
 	    string required_packages_s = required_packages["stdout"]:"";
 
+	    list <string> already_checked = [];
+
 	    // check all required objects (sorted and only once)
 	    foreach (string one_require, toset (splitstring (required_packages_s, "\n")), {
-		if (one_require == "") continue;
+		if (one_require == nil || one_require == "") continue;
+
+		// already checked
+		if (contains (already_checked, one_require)) continue;
+		// do not check again
+		already_checked = add (already_checked, one_require);
+
 		if (regexpmatch (one_require, "[ \t]")) {
 		    one_require = regexpsub (one_require, "^([^ \t]*)[ \t]", "\\1");
 		}
@@ -375,12 +417,79 @@ Please, attach also all YaST logs stored in the '%2' directory."),
 	    // is the package installed?
 	    if (! RunSCRSwitchTest_CheckWhetherInstalled (package_name)) {
 		ret = false;
+		break;
 	    }
 	    // if it is installed, check whetheris has all dependencies
 	    else if (! RunSCRSwitchTest_DoNeededRPMsRequire (package_name)) {
 		ret = false;
+		break;
 	    }
 	});
+
+	return ret;
+    }
+
+    list <string> YaST_log_lines = [];
+
+    void PrintLinesFromTo (integer from_line, integer to_line) {
+	// start with the first line or further
+	if (from_line < 0) from_line = 0;
+
+	// print all lines
+	y2milestone ("Logging from: %1 to: %2", from_line, to_line);
+
+	while (from_line <= to_line) {
+	    ReportLine (YaST_log_lines[from_line]:"");
+	    from_line = from_line + 1;
+	}
+    }
+
+    // checks the YaST log on the installed system
+    boolean RunSCRSwitchTest_SCRChrootYaSTLog () {
+	boolean ret = true;
+
+	string logfile = sformat ("%1/%2/%3", Installation::destdir, yast_logs, yast_logfile);
+	y2milestone ("Checking file %1", logfile);
+
+	ReportProgress (sformat (_("Checking YaS log file %1..."), logfile));
+
+	string YaST_log = (string) WFM::Read (.local.string, logfile);
+
+	integer current_line = -1;
+
+	// cannot open YaST log
+	if (YaST_log == nil) {
+	    ret = false;
+	    ReportTest (_("Opening file..."), ret);
+	// checking YaST log
+	} else {
+	    YaST_log_lines = splitstring (YaST_log, "\n");
+
+	    foreach (string one_line, YaST_log_lines, {
+		 current_line = current_line + 1;
+
+		// SCR has died, printing the last 15 lines
+		if (regexpmatch (one_line, " Finished YaST2 component ")) {
+		    ReportLine (_("SCR process has died, printing the last log lines..."));
+		    integer start_line = current_line - 15;
+		    PrintLinesFromTo (start_line, current_line);
+
+		    ret = false;
+		    break;
+		// YaST got killed
+		} else if (regexpmatch (one_line, " got signal ")) {
+		    // Print just the last line
+		    ReportLine (_("YaST process got killed"));
+		    PrintLinesFromTo (current_line, current_line);
+		    ret = false;
+		    break;
+		}
+	    });
+
+	    YaST_log_lines = [];
+
+	    ReportTest (_("Checking YaST log..."), ret);
+	}
 
 	return ret;
     }
@@ -389,6 +498,7 @@ Please, attach also all YaST logs stored in the '%2' directory."),
     boolean RunSCRSwitchTests () {
 	// Test progress
 	ReportProgress (_("System Checking"));
+
 	if (! RunSCRSwitchTest_ChrootBinary())		return false;
 	if (! RunSCRSwitchTest_ChrootPath())		return false;
 	if (! RunSCRSwitchTest_ListFilesInChroot())	return false;
@@ -400,6 +510,8 @@ Please, attach also all YaST logs stored in the '%2' directory."),
 	// checking all mandatory packages
 	if (! RunSCRSwitchTest_DoNeededRPMsCheck())	return false;
 
+	if (! RunSCRSwitchTest_SCRChrootYaSTLog())	return false;
+
 	// Add new checks here...
 	
 	return true;
@@ -408,20 +520,71 @@ Please, attach also all YaST logs stored in the '%2' directory."),
     // <-- Tests
 
     /* ********************************************************************* */
-    
+
     // --> Special Functions
 
+    /**
+     * Copy YaST logs from the just installed system to inst-sys
+     */
     void CopyY2logsFromSCRToInstSys () {
+	// where SCR logs are stored now
 	string scr_logs_directory = sformat ("%1%2", chroot_path, yast_logs);
-	string command = sformat ("cp -avr '%1' '%2InstalledSystemLogs'", scr_logs_directory, yast_logs);
+	// where to copy them
+	string copy_to_directory = sformat ("%1InstalledSystemLogs", yast_logs);
+
+	string command = sformat (
+	    "cp -avr '%1' '%2'",
+	    scr_logs_directory, copy_to_directory
+	);
 	
-	y2milestone("Running command: %1 -> %2", command,
-	    SCR::Execute (.target.bash_output, command)
+	y2milestone ("Copying YaST logs from the system to inst-sys: %1 -> %2", command,
+	    WFM::Execute (.local.bash_output, command)
 	);
     }
-    
+
+    integer FindSCRPID () {
+	map cmd = (map) WFM::Execute (
+	    .local.bash_output,
+	    "LC_ALL=C /bin/ps a | grep 'scr stdio' | grep -v 'grep'"
+	);
+
+	if (cmd["exit"]:-1 != 0) {
+	    y2error ("Cannot find scr process");
+	    return -1;
+	}
+
+	list <string> outlines = filter (string one_outline, splitstring (cmd["stdout"]:"", "\n"), {
+	    return one_outline != "";
+	});
+	string outline = outlines[size (outlines) - 1]:"";
+
+	if (! regexpmatch (outline, "^[[:digit:]]+")) {
+	    y2error ("No PID in %1", outline);
+	    return -1;
+	}
+
+	outline = regexpsub (outline, "^([[:digit:]]+)[[:space:]].*", "\\1");
+
+	integer ret = tointeger (outline);
+	y2milestone ("SCR PID: %1", ret);
+
+	return ret;
+    }
+
+    // This is potentially insecure
+    void SwitchY2Debug (integer PID) {
+	if (PID == nil) {
+	    y2error ("PID cannot be: %1", PID);
+	    return;
+	}
+
+	string cmd = sformat ("kill -s USR1 %1", PID);
+
+	y2milestone ("Adjusting Y2DEBUG >%1<: %2", cmd, WFM::Execute (.local.bash_output, cmd));
+    }
+
     // <-- Special Functions
-    
+
     /* ********************************************************************* */
 
     /**
@@ -452,6 +615,7 @@ Please, attach also all YaST logs stored in the '%2' directory."),
 	WFM::SCRSetDefault (new_SCR);
 
 	// Copy all YaST log files from SCR to Inst-Sys
+	// before SCR test
 	CopyY2logsFromSCRToInstSys();
 	
 	y2milestone("* ---------- Debugger Start ---------- *");
@@ -471,5 +635,9 @@ Please, attach also all YaST logs stored in the '%2' directory."),
 	WFM::SCRClose (new_SCR);
 	// Set the previous one as the default
 	WFM::SCRSetDefault (old_SCR);
+
+	// Copy all YaST log files from SCR to Inst-Sys
+	// after SCR tests
+	CopyY2logsFromSCRToInstSys();
     }
 }

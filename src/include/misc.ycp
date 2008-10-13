@@ -268,13 +268,20 @@ according to the settings in the previous dialogs.</p>")
         UpdateWizardSteps();
     }
 
-    // bnc #376945
-    // problems with keyboard in xen
     void SetXENExceptions () {
 	// not in text-mode
-	if (! UI::TextMode() && SCR::Read (.probe.xen) == true) {
-	    y2milestone ("XEN in X detected: running xset");
-	    WFM::Execute (.local.bash, "xset r off; xset m 1");
+	if (! UI::TextMode()) {
+	    // bnc #376945
+	    // problems with keyboard in xen
+	    if (SCR::Read (.probe.xen) == true) {
+		y2milestone ("XEN in X detected: running xset");
+		WFM::Execute (.local.bash, "xset r off; xset m 1");
+	    // bnc #433338
+	    // enabling key-repeating
+	    } else {
+		y2milestone ("Enabling key-repeating");
+		WFM::Execute (.local.bash, "xset r on");
+	    }
 	}
     }
 
