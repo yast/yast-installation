@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Oct 13 09:45:23 CEST 2008 - locilka@suse.cz
+
+- Fixed install/update confirmation dialog (bnc #433249).
+
+-------------------------------------------------------------------
 Fri Oct 10 14:49:58 CEST 2008 - locilka@suse.cz
 
 - Enhanced scr_switch_debugger (bnc #433057).
