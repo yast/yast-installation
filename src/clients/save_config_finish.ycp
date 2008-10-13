@@ -30,6 +30,9 @@ import "SignatureCheckDialogs";
 import "Stage";
 import "AddOnProduct";
 import "FileUtils";
+import "Installation";
+import "String";
+
 
 any ret = nil;
 string func = "";
@@ -136,6 +139,20 @@ else if (func == "Write")
     SCR::Write (.sysconfig.security.CHECK_SIGNATURES,
 		SignatureCheckDialogs::CheckSignatures ());
     SCR::Write (.sysconfig.security, nil);
+
+    // save supportconfig
+     if(SCR::Read(.target.size,"/etc/install.inf") > 0) {
+	string url = (string)SCR::Read(.etc.install_inf.supporturl);
+	y2milestone("URL value from /etc/install.inf : %1", url);
+	if( url!=nil && size(url)>0){
+	    string config_path=sformat("%1%2", String::Quote(Installation::destdir), "/etc/supportconfig.conf");
+	    y2milestone("URL from install.inf readed, test if %1 exists", config_path);
+            if (FileUtils::Exists(config_path)){
+		y2milestone("Insert value into supportconfig.conf: %1",
+			SCR::Execute(.target.bash_output, sformat("echo 'VAR_OPTION_UPLOAD_TARGET=%1'>> %2", url, config_path)));
+	    }
+	}
+     } else y2warning("/etc/install.inf not found");
 
 }
 else

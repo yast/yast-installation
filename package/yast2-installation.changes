@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Oct 13 13:10:58 CEST 2008 - mzugec@suse.de
+
+- configure supportconfig in installation (fate#305180)
+- 2.17.20 
+
+-------------------------------------------------------------------
 Mon Oct 13 09:45:23 CEST 2008 - locilka@suse.cz
 
 - Fixed install/update confirmation dialog (bnc #433249).
