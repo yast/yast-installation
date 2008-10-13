@@ -623,7 +623,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		<module>
 		    <label>Add-On Products</label>
 		    <name>add-on</name>
-                    <enable_back>no</enable_back>
+                    <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
 		</module>
                 <module>
@@ -742,7 +742,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		<module>
 		    <label>Add-On Products</label>
 		    <name>add-on</name>
-                    <enable_back>no</enable_back>
+                    <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
 		</module>
 		<module>
