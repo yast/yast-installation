@@ -75,15 +75,11 @@ boolean TestTheNewSCR () {
 boolean TestTheNewSCRHandler () {
     integer SCR_PID = FindSCRPID();
 
-// bnc #434253
-// this kills SCR
-//    if (SCR_PID > 0) SwitchY2Debug (SCR_PID);
+    if (SCR_PID > 0) SwitchY2Debug (SCR_PID);
 
     boolean ret = TestTheNewSCR();
 
-// bnc #434253
-// this kills SCR
-//    if (SCR_PID > 0) SwitchY2Debug (SCR_PID);
+    if (SCR_PID > 0) SwitchY2Debug (SCR_PID);
 
     return ret;
 }
