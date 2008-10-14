@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Oct 14 14:15:11 CEST 2008 - locilka@suse.cz
+
+- Changed YaST icons while probing the system (bnc #404809).
+- 2.17.21
+
+-------------------------------------------------------------------
 Mon Oct 13 13:29:04 CEST 2008 - locilka@suse.cz
 
 - Enabled going_back in Add-Ons during installation (bnc #434735).
