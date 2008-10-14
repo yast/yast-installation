@@ -211,7 +211,6 @@ list <string> actions_todo      = [];
 list <string> actions_doing     = [];
 list          actions_functions = [];
 list <string> visible_icons     = [];
-list <string> invisible_icons   = [];
 
 y2milestone ("Probing done: %1", Installation::probing_done);
 if (! Installation::probing_done)
@@ -222,24 +221,21 @@ if (! Installation::probing_done)
 	    // TRANSLATORS: progress step
 	    actions_doing = add (actions_doing, _("Probing USB devices..."));
 	    actions_functions = add (actions_functions, ActionUSB);
-	    visible_icons = add (visible_icons, "32x32/apps/yast-misc.png");
-	    invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
+	    visible_icons = add (visible_icons, "32x32/apps/yast-usb.png");
 
 	    // TRANSLATORS: progress step
 	    actions_todo = add (actions_todo, _("Probe FireWire devices"));
 	    // TRANSLATORS: progress step
 	    actions_doing = add (actions_doing, _("Probing FireWire devices..."));
 	    actions_functions = add (actions_functions, ActionFireWire);
-	    visible_icons = add (visible_icons, "32x32/apps/yast-system.png");
-	    invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
+	    visible_icons = add (visible_icons, "32x32/apps/yast-firewire.png");
 
 	    // TRANSLATORS: progress step
 	    actions_todo = add (actions_todo, _("Probe floppy disks devices"));
 	    // TRANSLATORS: progress step
 	    actions_doing = add (actions_doing, _("Probing floppy disks devices..."));
 	    actions_functions = add (actions_functions, ActionFloppyDisks);
-	    visible_icons = add (visible_icons, "32x32/apps/yast-bootfloppy.png");
-	    invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
+	    visible_icons = add (visible_icons, "32x32/apps/yast-floppy.png");
         }
 
         // TRANSLATORS: progress step
@@ -247,25 +243,21 @@ if (! Installation::probing_done)
         // TRANSLATORS: progress step
         actions_doing = add (actions_doing, _("Probing hard disk controllers..."));
         actions_functions = add (actions_functions, ActionHHDControllers);
-	visible_icons = add (visible_icons, "32x32/apps/yast-controller.png");
-	invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
-	
+	visible_icons = add (visible_icons, "32x32/apps/yast-hdd-controller.png");
 
         // TRANSLATORS: progress step
         actions_todo = add (actions_todo, _("Load kernel modules for hard disk controllers"));
         // TRANSLATORS: progress step
         actions_doing = add (actions_doing, _("Loading kernel modules for hard disk controllers..."));
         actions_functions = add (actions_functions, ActionLoadModules);
-	visible_icons = add (visible_icons, "32x32/apps/yast-kdump.png");
-	invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
+	visible_icons = add (visible_icons, "32x32/apps/yast-hdd-controller-kernel-module.png");
 
         // TRANSLATORS: progress step
         actions_todo = add (actions_todo, _("Probe hard disks"));
         // TRANSLATORS: progress step
         actions_doing = add (actions_doing, _("Probing hard disks..."));
 	actions_functions = add (actions_functions, ActionHDDProbe);
-	visible_icons = add (visible_icons, "32x32/apps/yast-disk.png");
-	invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
+	visible_icons = add (visible_icons, "32x32/apps/yast-hdd.png");
 
 	WFM::CallFunction("inst_features", []);
 }
@@ -275,8 +267,7 @@ actions_todo = add (actions_todo, _("Search for Linux partitions"));
 // TRANSLATORS: progress step
 actions_doing = add (actions_doing, _("Searching for Linux partitions..."));
 actions_functions = add (actions_functions, SearchForLinuxPartitions);
-visible_icons = add (visible_icons, "32x32/apps/yast-inst-mode.png");
-invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
+visible_icons = add (visible_icons, "32x32/apps/yast-search-linux-partition.png");
 
 // TRANSLATORS: progress step
 actions_todo = add (actions_todo, _("Search for system files"));
@@ -284,26 +275,21 @@ actions_todo = add (actions_todo, _("Search for system files"));
 actions_doing = add (actions_doing, _("Searching for system files..."));
 // FATE #302980: Simplified user config during installation
 actions_functions = add (actions_functions, FilesFromOldedSystems);
-visible_icons = add (visible_icons, "32x32/apps/yast-report.png");
-invisible_icons = add (invisible_icons, "32x32/apps/yast-report.png");
+visible_icons = add (visible_icons, "32x32/apps/yast-system-files.png");
 
 // TRANSLATORS: progress step
 actions_todo = add (actions_todo, _("Evaluate update possibility"));
 // TRANSLATORS: progress step
 actions_doing = add (actions_doing, _("Evaluating update possibility..."));
 actions_functions = add (actions_functions, EvaluateUpdatePossibilities);
-visible_icons = add (visible_icons, "32x32/apps/msg_info.png");
-invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
+visible_icons = add (visible_icons, "32x32/apps/yast-update-possibility.png");
 
 // TRANSLATORS: progress step
 actions_todo = add (actions_todo, _("Initialize package manager"));
 // TRANSLATORS: progress step
 actions_doing = add (actions_doing, _("Initializing package manager..."));
 actions_functions = add (actions_functions, InitInstallationRepositories);
-visible_icons = add (visible_icons, "32x32/apps/yast-sw_source.png");
-invisible_icons = add (invisible_icons, "32x32/apps/yast-vendor.png");
-
-
+visible_icons = add (visible_icons, "32x32/apps/yast-package-manager.png");
 
 Progress::NewProgressIcons (
     // TRANSLATORS: dialog caption
@@ -314,7 +300,7 @@ Progress::NewProgressIcons (
     actions_doing,
     // TRANSLATORS: dialog help
     _("Please wait while computer hardware and installed systems are being probed..."),
-    [visible_icons, invisible_icons]
+    [visible_icons]
 );
 
 foreach (any run_function, actions_functions, {
