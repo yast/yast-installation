@@ -167,6 +167,9 @@ textdomain="control"
 	</supported_desktops>
 
 	<default_desktop>gnome</default_desktop>
+
+	<!-- BNC #435479: Show support status in package details -->
+	<display_support_status config:type="boolean">true</display_support_status>
     </software>
 
     <partitioning>
