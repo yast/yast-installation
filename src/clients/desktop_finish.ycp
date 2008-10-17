@@ -80,6 +80,7 @@ else if (func == "Write")
 	string default_wm	= "";
 	string default_cursor	= "";
 
+	// FIXME: list is not static anymore
 	list <string> desktop_order = [DefaultDesktop::Desktop(), "gnome", "kde", "kde3", "xfce", "min_x", "textmode"];
 
 	boolean desktop_found = false;
