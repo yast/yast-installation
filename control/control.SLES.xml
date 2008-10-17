@@ -154,7 +154,7 @@ textdomain="control"
 	<supported_desktops config:type="list">
 	    <!-- Used for non-i386/non-x86_64 machines -->
 	    <one_supported_desktop>
-		<name>desktop_gnome</name>
+		<name>gnome</name>
 		<desktop>gnome</desktop>
 		<label_id>dummy_desktop</label_id>
 		<logon>gdm</logon>
@@ -166,7 +166,7 @@ textdomain="control"
 	    </one_supported_desktop>
 	</supported_desktops>
 
-	<default_desktop>desktop_gnome</default_desktop>
+	<default_desktop>gnome</default_desktop>
     </software>
 
     <partitioning>

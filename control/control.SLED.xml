@@ -183,6 +183,25 @@ textdomain="control"
 
         <selection_type config:type="symbol">auto</selection_type>
         <base_selection>default-Gnome</base_selection>
+
+	<!-- BNC #436094: default desktop, DISPLAYMANAGER, ... -->
+	<supported_desktops config:type="list">
+	    <one_supported_desktop>
+		<name>desktop_gnome</name>
+		<desktop>gnome</desktop>
+		<label_id>desktop_gnome</label_id>
+		<logon>gdm</logon>
+		<cursor>DMZ</cursor>
+		<!-- package has to be installed or selected -->
+		<packages>gdm</packages>
+		<order config:type="integer">1</order>
+		<!-- Patterns are selected by the product itself -->
+		<patterns></patterns>
+		<icon>pattern-gnome</icon>
+	    </one_supported_desktop>
+	</supported_desktops>
+
+        <default_desktop>desktop_gnome</default_desktop>
     </software>
 
     <partitioning>
