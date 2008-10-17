@@ -3,6 +3,8 @@ Fri Oct 17 10:51:05 CEST 2008 - locilka@suse.cz
 
 - Adapted SLES and SLED control files to write default desktop
   settings (bnc #436094).
+- Added software->display_support_status flag to SLES/SLED
+  (bnc #435479).
 
 -------------------------------------------------------------------
 Tue Oct 14 14:15:11 CEST 2008 - locilka@suse.cz
