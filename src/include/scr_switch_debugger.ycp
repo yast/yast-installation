@@ -104,7 +104,7 @@
 			// %2 - link to our bugzilla
 			// %3 - directory where YaST logs are stored
 			// %4 - link to the Yast Bug Reporting HOWTO Web page
-			_("Switching to the installes system has failed
+			_("Switching to the installed system has failed
 More information can be found near the end of the '%1' file.
 
 This is worth reporting a bug at %2.
@@ -451,7 +451,7 @@ Please, attach also all YaST logs stored in the '%2' directory."),
 	string logfile = sformat ("%1/%2/%3", Installation::destdir, yast_logs, yast_logfile);
 	y2milestone ("Checking file %1", logfile);
 
-	ReportProgress (sformat (_("Checking YaS log file %1..."), logfile));
+	ReportProgress (sformat (_("Checking YaST log file %1..."), logfile));
 
 	string YaST_log = (string) WFM::Read (.local.string, logfile);
 

@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Oct 20 12:56:32 CEST 2008 - locilka@suse.cz
+
+- Fixed a typo (bnc #436471).
+
+-------------------------------------------------------------------
 Fri Oct 17 10:51:05 CEST 2008 - locilka@suse.cz
 
 - Adapted SLES and SLED control files to write default desktop
