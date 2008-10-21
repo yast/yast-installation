@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Oct 21 16:46:00 CEST 2008 - locilka@suse.cz
+
+- Added handling for globals->debug_deploying (bnc #436842).
+
+-------------------------------------------------------------------
 Mon Oct 20 12:56:32 CEST 2008 - locilka@suse.cz
 
 - Fixed a typo (bnc #436471).
