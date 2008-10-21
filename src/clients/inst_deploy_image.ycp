@@ -237,14 +237,18 @@ the installation program has to download them first before they are deployed.</p
 );
 */
 
+// Stores all states of resolvables
 ImageInstallation::StoreAllChanges();
 
+// Reset libzypp
 Pkg::TargetFinish ();
 
 Wizard::SetTitleIcon ("yast-inst-mode");
 
+// Set where the images will be downloaded
 SourceManager::InstInitSourceMoveDownloadArea();
 
+// Deploy the images
 boolean dep_ret = ImageInstallation::DeployImages (images, Installation::destdir, nil);
 if (dep_ret == nil) {
     y2milestone ("Aborting...");
@@ -253,11 +257,13 @@ if (dep_ret == nil) {
 
 y2milestone ("Target image for package selector prepared");
 
+// Load the libzypp state from the system (with images deployed)
 PackageCallbacks::RegisterEmptyProgressCallbacks();
 Pkg::TargetInitialize (Installation::destdir);
 Pkg::TargetLoad ();
 PackageCallbacks::RestorePreviousProgressCallbacks();
 
+// Restore the states stored by StoreAllChanges()
 ImageInstallation::RestoreAllChanges();
 
 // bnc #395030
