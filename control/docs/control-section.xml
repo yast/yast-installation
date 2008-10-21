@@ -441,6 +441,18 @@
             		xmlns:xi="http://www.w3.org/2001/XInclude"/>
 		    </programlisting>
 		</listitem>
+
+		<listitem><para>(boolean) <emphasis>debug_workflow</emphasis> - defines whether steps
+		    with the very same name in workflow should not be collapsed. If <emphasis>true</emphasis>
+		    steps are not collapsed and a step ID is added after the step name. The default
+		    is <emphasis>false</emphasis>. This feature should be off in the production phase.</para>
+		</listitem>
+
+		<listitem><para>(boolean) <emphasis>debug_deploying</emphasis> - defines whether deploying
+		    should write more debug logs and some more debugging features in the workflow.
+		    The default is <emphasis>false</emphasis>.
+		    This feature should be off in the production phase.</para>
+		</listitem>
 	    </itemizedlist>
 	</section>
 

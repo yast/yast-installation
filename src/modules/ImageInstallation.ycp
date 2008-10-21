@@ -26,6 +26,8 @@ import "Arch";
 import "PackageCallbacks";
 import "Popup";
 import "SlideShow";
+import "ProductControl";
+import "ProductFeatures";
 
 textdomain "installation";
 
@@ -89,6 +91,17 @@ integer _record_size = 10240;
 global list <string> last_patterns_selected = [];
 
 global boolean changed_by_user = false;
+
+boolean debug_mode = nil;
+
+boolean ThisIsADebugMode () {
+    if (debug_mode == nil) {
+	debug_mode = (ProductFeatures::GetBooleanFeature("globals", "debug_deploying") == true);
+	y2milestone ("ImageInstallation debug mode: %1", debug_mode);
+    }
+
+    return debug_mode;
+}
 
 /**
  * Set the repository to get images from
@@ -936,6 +949,8 @@ global boolean FileSystemCopy (string from, string to,
             // if status is `installed and locked is true then the object locked
             list <map <string, any> > resolvable_properties = Pkg::ResolvableProperties ("", one_type, "");
 
+	    // FIXME: Store only those keys we need (arch, name, version?)
+
             objects_state[one_type] = $[];
 
             list <map <string, any> > remove_resolvables = filter (map <string, any> one_object, resolvable_properties, {
@@ -970,6 +985,15 @@ global boolean FileSystemCopy (string from, string to,
 	    if (generic_set_progress != nil)
 		generic_set_progress (id, nil);
         });
+
+	if (ThisIsADebugMode()) {
+	    // map <symbol, map <string, list <map> > > objects_state = $[];
+	    foreach (symbol object_type, map <string, list <map> > objects_status, objects_state, {
+		foreach (string one_status, list <map> list_of_objects, objects_status, {
+		    y2milestone ("Object type: %1, New status: %2, List of objects: %3", object_type, one_status, list_of_objects);
+		});
+	    });
+	}
     }
 
     /**
@@ -984,10 +1008,16 @@ global boolean FileSystemCopy (string from, string to,
 	    one_object["name"]:"-x-", one_type, one_object["version"]:"-x-"
 	);
 
+	if (ThisIsADebugMode())
+	    y2milestone ("Looking for %1 returned %2", one_object, resolvable_properties);
+
 	// Leave only already installed (and matching the same architecture)
 	resolvable_properties = filter (map <string, any> one_resolvable, resolvable_properties, {
 	    return (one_resolvable["status"]:`unknown == `installed && one_resolvable["arch"]:"" == arch);
 	});
+
+	if (ThisIsADebugMode())
+	    y2milestone ("Resolvables installed: %1", resolvable_properties);
 
 	boolean ret = nil;
 
