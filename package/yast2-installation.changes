@@ -10,6 +10,7 @@ Mon Oct 27 10:18:47 CET 2008 - locilka@suse.cz
 - Removing label for user_non_interactive (bnc #401319).
 - Desktop 'startkde4' replaced with 'startkde' (bnc #438212).
 - Added 'kdump' to 'clone_modules' (SLES) (bnc #436365).
+- 2.17.22
 
 -------------------------------------------------------------------
 Tue Oct 21 16:46:00 CEST 2008 - locilka@suse.cz
