@@ -622,6 +622,15 @@ Please visit us at http://www.novell.com/linux/.
                     <execute>inst_proposal</execute>
                     <proposal>initial</proposal>
                 </module>
+		<!--
+		    FATE #303860: Provide consistent progress during installation
+		    BNC  #438848: Also during upgrade
+		-->
+		<module>
+		    <label>Perform Update</label>
+		    <name>prepareprogress</name>
+		</module>
+
                 <module>
 	            <label>Perform Update</label>
                     <name>do_resize</name>

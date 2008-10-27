@@ -859,6 +859,14 @@ with a modern look and feel.</label></description_kde>
                     <execute>inst_proposal</execute>
                     <proposal>initial</proposal>
                 </module>
+		<!--
+		    FATE #303860: Provide consistent progress during installation
+		    BNC  #438848: Also during upgrade
+		-->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
                 <module>
 	            <label>Perform Update</label>
                     <name>do_resize</name>
