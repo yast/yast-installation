@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Oct 27 10:18:47 CET 2008 - locilka@suse.cz
+
+- Added lnussel's patch to run set_polkit_default_privs at
+  desktop_finish script (bnc #438698).
+
+-------------------------------------------------------------------
 Tue Oct 21 16:46:00 CEST 2008 - locilka@suse.cz
 
 - Added handling for globals->debug_deploying (bnc #436842).
