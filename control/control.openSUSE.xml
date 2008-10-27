@@ -235,8 +235,8 @@ textdomain="control"
 
 	    <one_supported_desktop>
 		<name>kde</name>
-		<!-- BNC #381821 -->
-		<desktop>startkde4</desktop>
+		<!-- BNC #381821, BNC #438212 -->
+		<desktop>startkde</desktop>
 		<label_id>desktop_kde</label_id>
 		<logon>kdm4</logon>
 		<cursor>DMZ</cursor>
