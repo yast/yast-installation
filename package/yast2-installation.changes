@@ -7,6 +7,7 @@ Mon Oct 27 10:18:47 CET 2008 - locilka@suse.cz
 - Calling inst_prepareprogress also during Upgrade, all control
   files changed (bnc #438848).
 - Disabling users and auth in LiveCD second stage (bnc #435965).
+- Removing label for user_non_interactive (bnc #401319).
 
 -------------------------------------------------------------------
 Tue Oct 21 16:46:00 CEST 2008 - locilka@suse.cz
