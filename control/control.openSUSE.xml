@@ -1226,6 +1226,8 @@ with a modern look and feel.</label></description_kde>
 		    <enable_back>no</enable_back>
 		    <enable_next>no</enable_next>
 		</module>
+<!--
+    BNC #435965 comment #20: No auth and users are needed anymore
                 <module>
 	            <label>Users</label>
                     <name>auth</name>
@@ -1234,6 +1236,7 @@ with a modern look and feel.</label></description_kde>
 	            <label>Users</label>
                     <name>user</name>
                 </module>
+-->
 		<module>
 		    <label>Users</label>
 		    <name>user_non_interactive</name>

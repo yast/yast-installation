@@ -6,6 +6,7 @@ Mon Oct 27 10:18:47 CET 2008 - locilka@suse.cz
 - Bigger license window (bnc #438100).
 - Calling inst_prepareprogress also during Upgrade, all control
   files changed (bnc #438848).
+- Disabling users and auth in LiveCD second stage (bnc #435965).
 
 -------------------------------------------------------------------
 Tue Oct 21 16:46:00 CEST 2008 - locilka@suse.cz
