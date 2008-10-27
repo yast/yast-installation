@@ -95,9 +95,10 @@
 	`HSquash (
 	    `VBox (
 		`Left (`Label (`opt(`boldFont), _("License Agreement"))),
+		// bnc #438100
 		`HSquash(`MinSize (
-		    80,
-		    (text_mode ? 9:13),
+		    85,
+		    (text_mode ? 10:20),
 		    `Left (`ReplacePoint (`id (`base_license_rp), `Empty()))
 		)),
 		`VSpacing (text_mode ? 0.1 : 0.5),
