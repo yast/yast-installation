@@ -1175,7 +1175,6 @@ with a modern look and feel.</label></description_kde>
                     <name>user</name>
                 </module>
 		<module>
-		    <label>Users</label>
 		    <name>user_non_interactive</name>
 		    <!-- BNC #401319, define client to call explicitly -->
 		    <execute>inst_user</execute>
@@ -1238,13 +1237,11 @@ with a modern look and feel.</label></description_kde>
                 </module>
 -->
 		<module>
-		    <label>Users</label>
 		    <name>user_non_interactive</name>
 		    <!-- BNC #401319, define client to call explicitly -->
 		    <execute>inst_user</execute>
 		</module>
                 <module>
-		    <label>Users</label>
                     <name>live_cleanup</name>
                     <enable_back>no</enable_back>
                 </module>
