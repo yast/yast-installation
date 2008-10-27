@@ -66,6 +66,7 @@ Please wait while the base system is being installed.
 
 list<map<string,any> > stages = [
     $[
+	"id" : "copy_files",
 	// progress stage
 	"label" : _("Copy files to installed system"),
 	"steps" : [
@@ -80,6 +81,7 @@ list<map<string,any> > stages = [
 	"icon" : "pattern-basis",
     ],
     $[
+	"id" : "save_config",
 	// progress stage
 	"label" : _("Save configuration"),
 	"steps" : [
@@ -103,6 +105,7 @@ list<map<string,any> > stages = [
 	"icon" : "yast-desktop-select",
     ],
     $[
+	"id" : "install_bootloader",
 	// progress stage
 	"label" : _("Install boot manager"),
 	"steps" : [
@@ -112,6 +115,7 @@ list<map<string,any> > stages = [
 	"icon" : "yast-bootloader",
     ],
     $[
+	"id" : "save_settings",
 	// progress stage
 	"label" : _("Save installation settings"),
 	"steps" : [
@@ -127,6 +131,7 @@ list<map<string,any> > stages = [
 	"icon" : "yast-network",
     ],
     $[
+	"id" : "prepare_for_reboot",
 	// progress stage
 	"label" : _("Prepare system for initial boot"),
 	"steps" : [
@@ -182,6 +187,7 @@ else
 }
 
 // merge steps from add-on products
+// bnc #438678
 stages[0, "steps"] = merge (
     WorkflowManager::GetAdditionalFinishSteps("before_chroot"),
     stages[0, "steps"]:[]
