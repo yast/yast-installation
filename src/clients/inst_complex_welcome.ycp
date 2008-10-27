@@ -98,7 +98,7 @@
 		// bnc #438100
 		`HSquash(`MinSize (
 		    85,
-		    (text_mode ? 10:20),
+		    (text_mode ? 9:13),
 		    `Left (`ReplacePoint (`id (`base_license_rp), `Empty()))
 		)),
 		`VSpacing (text_mode ? 0.1 : 0.5),
