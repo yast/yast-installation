@@ -5,9 +5,9 @@
  * Authors:	Ladislav Slezák <lslezak@suse.cz>
  *		Lukas Ocilka <locilka@suse.cz>
  *
- * Assumptions:
- * - the sources will be saved afterwards
- *   (which means that running this client alone will not work)
+ * This client loads the target and initializes the package manager.
+ * Adds all sources defined in control file (software->extra_urls)
+ * and stores them at the end.
  *
  * $Id$
  */
@@ -24,6 +24,7 @@ import "ProductFeatures";
 // We need the constructor
 import "ProductControl";
 import "Installation";
+import "PackageCallbacks";
 
 /**
  * Returns list of maps of repositories to register. See bnc #381360.
@@ -184,6 +185,11 @@ if (size (register_url) > 0) {
 	y2milestone ("syncing to zmd");
 	boolean synced = SourceManager::SyncAddedAndDeleted (added_ids, []);
 	y2milestone ("sync status: %1", synced);
+
+	// If any source has been added, store the sources
+	// bnc #440184
+	y2milestone ("Some (%1) sources have been added, storing them...", added_ids);
+	Pkg::SourceSaveAll();
     }
 }
 
