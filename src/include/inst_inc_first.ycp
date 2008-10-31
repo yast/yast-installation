@@ -147,21 +147,33 @@
 	}
     }
 
+    /**
+     * Writes to /etc/install.inf whether running the second stage is required
+     * This is written to inst-sys and not copied to the installed system
+     * (which is already umounted in that time).
+     *
+     * @see BNC #439572
+     */
+    void WriteSecondStageRequired (boolean scst_required) {
+	// writes 'SecondStageRequired' '1' or '0'
+	// if such tag exists, it is removed before
+	WFM::Execute (.local.bash, sformat (
+	    "sed --in-place 's/^%1: .*//' %3; echo '%1: %2' >> %3",
+	    "SecondStageRequired",
+	    (scst_required == false ? "0":"1"),
+	    "/etc/install.inf"
+	));
+	Linuxrc::ResetInstallInf();
+    }
+
     void HandleSecondStageRequired () {
 	if (Stage::initial()) {
 	    // the current one is 'initial'
+	    // after reboot/kexec it would be 'continue'
 	    string stage_to_check = "continue";
 
-	    // matching the control file
-	    string mode_to_check = "unknown";
-
-	    if (Mode::live_installation()) {
-		mode_to_check = "live_installation";
-	    } else if (Mode::installation()) {
-		mode_to_check = "installation";
-	    } else if (Mode::autoinst()) {
-		mode_to_check = "autoinstallation";
-	    }
+	    // for matching the control file
+	    string mode_to_check = Mode::mode();
 
 	    // file name
 	    string run_yast_at_boot = sformat ("%1/%2", Installation::destdir, Installation::run_yast_at_boot);
@@ -171,9 +183,11 @@
 	    if (ProductControl::RunRequired (stage_to_check, mode_to_check)) {
 		y2milestone ("Running the second stage is required");
 		WFM::Write (.local.string, run_yast_at_boot, "");
+		WriteSecondStageRequired (true);
 	    } else {
 		y2milestone ("It is not required to run the second stage");
 		WFM::Execute (.local.remove, run_yast_at_boot);
+		WriteSecondStageRequired (false);
 	    }
 	}
     }
