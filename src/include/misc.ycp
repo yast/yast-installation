@@ -297,7 +297,7 @@ according to the settings in the previous dialogs.</p>")
 	// writes 'SecondStageRequired' '1' or '0'
 	// if such tag exists, it is removed before
 	WFM::Execute (.local.bash, sformat (
-	    "sed --in-place 's/^%1: .*//' %3; echo '%1: %2' >> %3",
+	    "sed --in-place '/^%1: .*/D' %3; echo '%1: %2' >> %3",
 	    "SecondStageRequired",
 	    (scst_required == false ? "0":"1"),
 	    "/etc/install.inf"
