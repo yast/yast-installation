@@ -37,7 +37,7 @@ function reboot_during_second_stage () {
 cat <<-EOF
 
 	Your system has been updated and needs to reboot ...
-	
+
 	Reconnect to the system after it reboots and call
 	/usr/lib/YaST2/startup/YaST2.ssh again to continue
 	the installation ...
@@ -49,7 +49,7 @@ function not_running_yast () {
 cat <<-EOF
 
     File /var/lib/YaST2/runme_at_boot does not exist ...
-    
+
     Not running YaST ...
 
 EOF
