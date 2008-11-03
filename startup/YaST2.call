@@ -479,15 +479,20 @@ function set_yast_background () {
 
 function ssh_reboot_message()
 {
-	echo "*** Preparing SSH installation for reboot ***"
+	# SecondStageRequired can be set:
+	# 1. after 1st stage (note 2nd stage is not always required)
+	# 2. after 2nd stage (when another YaST run is required due to e.g. 
+	#    kernel update)
 
 	if [ -f /etc/install.inf ] ; then
 		SecondStageRequired=$(awk ' /^SecondStageRequired:/ { print $2 }' < /etc/install.inf)
 	fi
 
 	if [ -n "$SecondStageRequired" -a "$SecondStageRequired" = "1" ] ; then
+		echo "*** Preparing SSH installation for reboot ***"
 		echo "*** NOTE: after reboot, you have to reconnect and call ***"
 		echo "*** /usr/lib/YaST2/startup/YaST2.ssh ***"
+		log "\tPreparing SSH installation for reboot"
 	fi
 }
 
@@ -565,7 +570,6 @@ function start_yast () {
 	fi
 	if [ $SELECTED_MEDIUM = "SSH" ] && [ ! "$VNC" = 1 ];then
 		ssh_reboot_message
-		log "\tPreparing SSH installation for reboot"
 		echo $Y2_EXIT_CODE > /tmp/YaST2_ssh_installation_finished
 	fi
 	if [ $Y2_EXIT_CODE -eq 0 ];then
