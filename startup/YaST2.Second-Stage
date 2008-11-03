@@ -7,7 +7,6 @@
 #               :
 # AUTHORS       : Marcus Schaefer <ms@suse.de>
 #               :
-#               :
 # BELONGS TO    : System installation and Administration
 #               :
 # DESCRIPTION   : This is the second stage YaST2 startup level after

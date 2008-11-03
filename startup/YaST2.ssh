@@ -15,7 +15,6 @@
 #               : if we are within a ssh installation environment
 #               : This script is called manually
 #               :
-#               :
 # STATUS        : $Id$
 #----------------
 
