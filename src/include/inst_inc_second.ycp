@@ -352,6 +352,10 @@ Note: You may have to enter some information again.");
     }
 
     symbol PrepareYaSTforRestart (symbol ret) {
+	// bnc #432005
+	// After reboot, YaST will be started (inform user what to do if needed)
+	boolean yast_needs_rebooting = false;
+
         // restarting yast, removing files that identify the user-abort or installation-crash
         // bugzilla #222896
         if (FileUtils::Exists (Installation::file_inst_aborted)) SCR::Execute (.target.remove, Installation::file_inst_aborted);
@@ -376,12 +380,17 @@ Note: You may have to enter some information again.");
             y2milestone ("Creating %1 file", Installation::reboot_file);
             SCR::Execute (.target.bash, sformat (
                 "touch %1", Installation::reboot_file));
+	    // bnc #432005
+	    y2milestone ("YaST needs rebooting");
+	    yast_needs_rebooting = true;
 
         } else if (ret == `restart_yast) {
             y2milestone ("Creating %1 file", Installation::restart_file);
             SCR::Execute (.target.bash, sformat (
                 "touch %1", Installation::restart_file));
         }
+
+	WriteSecondStageRequired (yast_needs_rebooting);
 
         return ret;
     }

@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Nov  3 18:34:30 CET 2008 - locilka@suse.cz
+
+- Writing 'SecondStageRequired' 0/1 to /etc/install.inf even while
+  rebooting during second stage (bnc #432005).
+- 2.17.26
+
+-------------------------------------------------------------------
 Mon Nov 03 14:28:14 CET 2008 - aschnell@suse.de
 
 - better reboot message during ssh installation (bnc #439572 and
