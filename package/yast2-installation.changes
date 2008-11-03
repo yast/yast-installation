@@ -1,7 +1,8 @@
 -------------------------------------------------------------------
 Mon Nov 03 14:28:14 CET 2008 - aschnell@suse.de
 
-- better reboot message during ssh installation (bnc #439572)
+- better reboot message during ssh installation (bnc #439572 and
+  bnc #432005)
 - 2.17.25
 
 -------------------------------------------------------------------
