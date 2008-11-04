@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Nov 04 13:14:10 CET 2008 - aschnell@suse.de
+
+- improved warning about partitioning (fate #302857)
+- 2.17.27
+
+-------------------------------------------------------------------
 Mon Nov  3 18:34:30 CET 2008 - locilka@suse.cz
 
 - Writing 'SecondStageRequired' 0/1 to /etc/install.inf even while
@@ -76,7 +82,7 @@ Mon Oct 13 13:29:04 CEST 2008 - locilka@suse.cz
 Mon Oct 13 13:10:58 CEST 2008 - mzugec@suse.de
 
 - configure supportconfig in installation (fate#305180)
-- 2.17.20 
+- 2.17.20
 
 -------------------------------------------------------------------
 Mon Oct 13 09:45:23 CEST 2008 - locilka@suse.cz
@@ -139,7 +145,7 @@ Fri Oct  3 16:31:10 CEST 2008 - locilka@suse.cz
 -------------------------------------------------------------------
 Thu Oct  2 22:00:46 CEST 2008 - mzugec@suse.de
 
-- changed Release Notes into Support group (bnc#430005) 
+- changed Release Notes into Support group (bnc#430005)
 
 -------------------------------------------------------------------
 Thu Oct  2 19:13:07 CEST 2008 - locilka@suse.cz
@@ -173,7 +179,7 @@ Wed Oct  1 16:03:32 CEST 2008 - mzugec@suse.de
 -------------------------------------------------------------------
 Wed Oct  1 15:41:12 CEST 2008 - jsuchome@suse.cz
 
-- if nn_NO language is selected, use nb_NO in YaST (bnc#426124) 
+- if nn_NO language is selected, use nb_NO in YaST (bnc#426124)
 
 -------------------------------------------------------------------
 Wed Oct  1 13:42:18 CEST 2008 - locilka@suse.cz
@@ -215,7 +221,7 @@ Fri Sep 26 12:27:55 CEST 2008 - locilka@suse.cz
 -------------------------------------------------------------------
 Thu Sep 25 14:33:36 CEST 2008 - juhliarik@suse.cz
 
-- added calling kdump_finish to inst_finish.ycp (bnc #427732) 
+- added calling kdump_finish to inst_finish.ycp (bnc #427732)
 
 -------------------------------------------------------------------
 Tue Sep 23 16:17:27 CEST 2008 - locilka@suse.cz
@@ -356,7 +362,7 @@ Thu Aug 28 15:19:57 CEST 2008 - locilka@suse.cz
 -------------------------------------------------------------------
 Thu Aug 21 13:01:40 CEST 2008 - jsuchome@suse.cz
 
-- check for command line mode in inst_suseconfig (bnc#419132) 
+- check for command line mode in inst_suseconfig (bnc#419132)
 
 -------------------------------------------------------------------
 Tue Aug 19 15:45:07 CEST 2008 - jsrain@suse.cz
@@ -568,7 +574,7 @@ Mon Jun  2 12:33:57 CEST 2008 - locilka@suse.cz
 -------------------------------------------------------------------
 Wed May 28 16:23:22 CEST 2008 - ug@suse.de
 
-- timeout in case of hardware probing problems 
+- timeout in case of hardware probing problems
   when autoyast is in use (especially for harddisk Reports)
   bnc#395099
 - 2.16.48
@@ -609,7 +615,7 @@ Thu May 15 10:32:09 CEST 2008 - jsuchome@suse.cz
 Wed May 14 15:22:50 CEST 2008 - kmachalkova@suse.cz
 
 - inst_hostname client added to automatic configuration scripts -
-  needed to generate random hostname and 127.0.0.2 line in 
+  needed to generate random hostname and 127.0.0.2 line in
   /etc/hosts (bnc #383336)
 
 -------------------------------------------------------------------
@@ -641,7 +647,7 @@ Mon May  5 13:26:27 CEST 2008 - locilka@suse.cz
 -------------------------------------------------------------------
 Fri May  2 22:27:21 CEST 2008 - mzugec@suse.cz
 
-- Don't stop network (by killing dhcpcd) at the end of 1.st stage 
+- Don't stop network (by killing dhcpcd) at the end of 1.st stage
   (bnc #386588)
 
 -------------------------------------------------------------------
@@ -727,7 +733,7 @@ Fri Apr 18 16:17:54 CEST 2008 - locilka@suse.cz
 -------------------------------------------------------------------
 Fri Apr 18 16:01:13 CEST 2008 - juhliarik@suse.cz
 
-- Added text for using kexec (yast_inf_finish.ycp) 
+- Added text for using kexec (yast_inf_finish.ycp)
 
 -------------------------------------------------------------------
 Thu Apr 17 17:15:02 CEST 2008 - locilka@suse.cz
@@ -793,7 +799,7 @@ Fri Apr 11 17:55:32 CEST 2008 - locilka@suse.cz
 -------------------------------------------------------------------
 Fri Apr 11 15:33:17 CEST 2008 - juhliarik@suse.cz
 
-- Added loading kernel via kexec (fate #303395) 
+- Added loading kernel via kexec (fate #303395)
 
 -------------------------------------------------------------------
 Thu Apr 10 12:02:07 CEST 2008 - locilka@suse.cz
