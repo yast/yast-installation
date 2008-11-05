@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Nov  5 17:25:01 CET 2008 - locilka@suse.cz
+
+- Calling set_polkit_default_privs without checking for it using
+  FileUtils, checking by 'test -x' instead (bnc #440182).
+- 2.17.29
+
+-------------------------------------------------------------------
 Wed Nov  5 13:09:04 CET 2008 - locilka@suse.cz
 
 - Added yast2-storage >= 2.17.47 because of the previous fix

@@ -145,9 +145,19 @@ else if (func == "Write")
 	    SCR::Write (.sysconfig.security.POLKIT_DEFAULT_PRIVS,
 		polkit_default_privs);
 
-	    if (FileUtils::Exists ("/sbin/set_polkit_default_privs")) {
-		SCR::Execute (.target.bash, "/sbin/set_polkit_default_privs");
-	    }
+// BNC #440182
+//	    if (FileUtils::Exists ("/sbin/set_polkit_default_privs")) {
+	    map ret = (map) SCR::Execute (
+		.target.bash_output,
+		// check whether it exists
+		"test -x /sbin/set_polkit_default_privs && " +
+		// give some feedback
+		"echo 'calling set_polkit_default_privs' && " +
+		// hide the output (many lines...)
+		"/sbin/set_polkit_default_privs >/dev/null"
+	    );
+	    y2milestone ("Command returned: %1", ret);
+//	    }
 	}
 
 	y2milestone ("sysconfig/displaymanager/DISPLAYMANAGER=%1", default_dm);
