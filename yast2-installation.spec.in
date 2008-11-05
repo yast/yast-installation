@@ -28,11 +28,13 @@ Requires:	yast2-country-data >= 2.16.11
 # Packages::required_patterns
 Requires:	yast2-packager >= 2.17.23
 
+# Storage::GetCommitInfo() call in include/misc.ycp
+Requires:	yast2-storage >= 2.17.47
+
 # Only in inst-sys
 # Requires:	yast2-runlevel
 # Requires:	yast2-network
 # Requires:	yast2-add-on
-# Requires:	yast2-storage
 # Requires:	yast2-update
 
 # extra sources in ResolvableProperties()
