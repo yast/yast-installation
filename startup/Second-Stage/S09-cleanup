@@ -31,4 +31,12 @@ if rcpcmcia status ; then
 fi
 fi
 
+# 13.5) restart other services if necessary (bnc#395402)
+if [ -f /var/lib/YaST2/restart_services ] ; then
+    cat /var/lib/YaST2/restart_services | while read service; do
+	log "\tRestart $service service..."
+	test -f /etc/init.d/$service  && /etc/init.d/$service restart
+    done
+    rm -f /var/lib/YaST2/restart_services
+fi
 stop_unicode

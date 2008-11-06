@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Nov  6 16:19:59 CET 2008 - jsuchome@suse.cz
+
+- S09-cleanup: check for additional services requiring restart
+  (bnc#395402)
+
+-------------------------------------------------------------------
 Wed Nov  5 17:25:01 CET 2008 - locilka@suse.cz
 
 - Calling set_polkit_default_privs without checking for it using
