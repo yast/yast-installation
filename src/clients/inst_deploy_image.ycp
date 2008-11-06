@@ -73,7 +73,6 @@ void OverallProgressHandler (string id, integer current_step) {
 	if (id != "deploying_images") {
 	    string new_label = ImageInstallation::GetProgressLayoutLabel (id);
 	    SlideShow::SubProgressStart( new_label );
-	    SlideShow::AppendMessageToInstLog( new_label );
 	}
 
 	_previous_id = id;
@@ -103,6 +102,7 @@ void OverallProgressHandler (string id, integer current_step) {
 
 integer _steps_for_one_image = 100;
 boolean download_handler_hit = false;
+string _last_image_downloading = nil;
 
 boolean MyProgressDownloadHandler (integer percent, integer bps_avg, integer bps_current) {
     // changing settings on the fly
@@ -118,6 +118,14 @@ boolean MyProgressDownloadHandler (integer percent, integer bps_avg, integer bps
 
     if (_last_download_progress < percent) {
 	string image_info = current_image["name"]:"";
+
+	// BNC 442286, new image
+	// Sometimes it happens that the same image is logged twice
+	if (_last_image_downloading != image_info) {
+	    y2milestone ("Downloading image: %1", image_info);
+	    _last_image_downloading = image_info;
+	}
+
 	if (image_info == "") {
 	    image_info = sformat (_("Downloading image at speed %1/s"), String::FormatSize (bps_current));
 	} else {
@@ -150,8 +158,11 @@ void SetOneImageProgress (integer current_progress) {
     map <string, any> current_image = ImageInstallation::GetCurrentImageDetails();
     integer max_progress = current_image["max_progress"]:0;
 
+    boolean another_image = false;
+
     // another file than the previous one
     if (current_image["file"]:"" != _last_image_id) {
+	another_image = true;
 	_last_image_id = current_image["file"]:"";
 	_last_download_progress = -1;
 	_last_progress = -1;
@@ -169,14 +180,21 @@ void SetOneImageProgress (integer current_progress) {
     // reset the label
     if (x_progress == 0) {
 	string current_image_name = current_image["name"]:"";
+
 	if (current_image_name == "") {
 	    current_image_name = _("Deploying image...");
 	} else {
 	    current_image_name = sformat (_("Deploying image %1..."), current_image_name);
 	}
-	// one image done
-	SlideShow::SubProgressStart( current_image_name );
-	SlideShow::AppendMessageToInstLog( current_image_name );
+
+	if (another_image == true) {
+	    // one image done (another than the previous one)
+	    // BNC #442286
+	    SlideShow::SubProgressStart( current_image_name );
+	    SlideShow::AppendMessageToInstLog( current_image_name );
+	} else {
+	    y2warning ("The same image name again: %1 (100 * %2 / %3)", current_image_name, current_progress, max_progress);
+	}
     }
 
     // set current step

@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Nov  6 16:35:10 CET 2008 - locilka@suse.cz
+
+- Fixed progress (SlideShow) information about images being
+  deployed (bnc #442286).
+- 2.17.30
+
+-------------------------------------------------------------------
 Thu Nov  6 16:19:59 CET 2008 - jsuchome@suse.cz
 
 - S09-cleanup: check for additional services requiring restart
