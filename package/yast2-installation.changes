@@ -3,6 +3,8 @@ Fri Nov  7 16:32:28 CET 2008 - locilka@suse.cz
 
 - Fixed deploy_image_auto to handle AutoYaST settings correctly
   (bnc #442691).
+- Removing the congrats dialog content before cloning, storing
+  the sources, finishing (bnc #441452).
 - 2.17.30
 
 -------------------------------------------------------------------
