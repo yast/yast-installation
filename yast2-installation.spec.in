@@ -37,10 +37,9 @@ Requires:	yast2-storage >= 2.17.47
 # Requires:	yast2-add-on
 # Requires:	yast2-update
 
-# extra sources in ResolvableProperties()
-# "", `language", "" in ResolvableProperties()
+# Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
 # pkg-bindings are not directly required
-Conflicts:	yast2-pkg-bindings < 2.13.101
+Conflicts:	yast2-pkg-bindings < 2.17.25
 
 # 'Product' and 'Installation' moved to 'yast2'
 # needs NetworkService::isNetworkRunning() from yast2
