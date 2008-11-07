@@ -3,6 +3,8 @@ Thu Nov  6 16:35:10 CET 2008 - locilka@suse.cz
 
 - Fixed progress (SlideShow) information about images being
   deployed (bnc #442286).
+- Changing inst_deploy_images to use PackagesUI for opening a
+  package selector while debugging mode is turned on (bnc #435479).
 - 2.17.30
 
 -------------------------------------------------------------------
