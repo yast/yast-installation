@@ -42,7 +42,9 @@ if(func == "Import")
 	ret = true;
     } else {
 	ret = false;
-	y2warning ("Key image_installation not defined");
+	Installation::image_installation = true;
+	y2warning ("Key image_installation not defined, using image_installation: %1",
+	    Installation::image_installation);
     }
 }
 /**
@@ -150,8 +152,15 @@ else if (func == "Export") {
  * Write the configuration (prepare images, deploy images)
  */
 else if (func == "Write") {
-    WFM::call ("inst_prepare_image");
-    WFM::call ("inst_deploy_image");
+    y2milestone ("Using images: %1", Installation::image_installation);
+
+    // BNC #442691
+    // Calling image_installation only if set to do so...
+    if (Installation::image_installation == true) {
+	WFM::call ("inst_prepare_image");
+	WFM::call ("inst_deploy_image");
+    }
+
     ret = true;
 }
 /**
