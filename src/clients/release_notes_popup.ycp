@@ -46,18 +46,18 @@
 	y2debug ("Path template: %1", path_templ);
 	string tmp = sformat (path_templ, Language::language);
 	y2debug ("Trying to get %1", tmp);
-	tmp = Pkg::SourceProvideOptionalFile (source_id, 1, tmp);
+	tmp = Pkg::SourceProvideDigestedFile (source_id, 1, tmp, false);
 	if (tmp == nil)
 	{
 	    tmp = sformat (path_templ, splitstring (Language::language, "_")[0]:"");
 	    y2debug ("Trying to get %1", tmp);
-	    tmp = Pkg::SourceProvideOptionalFile (source_id, 1, tmp);
+	    tmp = Pkg::SourceProvideDigestedFile (source_id, 1, tmp, false);
 	}
 	if (tmp == nil)
 	{
 	    tmp = sformat (path_templ, "en");
 	    y2debug ("Trying to get %1", tmp);
-	    tmp = Pkg::SourceProvideOptionalFile (source_id, 1, tmp);
+	    tmp = Pkg::SourceProvideDigestedFile (source_id, 1, tmp, false);
 	}
 	if (tmp == nil)
 	    return false;
