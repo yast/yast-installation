@@ -240,6 +240,13 @@ selected, a profile of the current system is stored in <tt>/root/autoinst.xml</t
 	Wizard::RestoreNextButton ();
     } else if (ret == `next) {
 
+	// BNC #441452
+	// Remove the congrats dialog
+
+	// Dialog busy message
+	Wizard::SetContents (caption, `Label(_("Finishing the installation...")), help,
+	    GetInstArgs::enable_back(), GetInstArgs::enable_next());
+
 	if (UI::WidgetExists (`id (`turnoff_zmd)) && (boolean) UI::QueryWidget (`id (`turnoff_zmd), `Value))
 	    StopAndDisableZMD();
 
