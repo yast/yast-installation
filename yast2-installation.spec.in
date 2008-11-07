@@ -7,8 +7,11 @@ BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-ske
 # PackageCallbacks::RegisterEmptyProgressCallbacks()
 BuildRequires:	yast2 >= 2.16.52
 
-# Pkg::SourceProvideDigestedFile()
-BuildRequires:	yast2-packager >= 2.17.25
+# Pkg::SourceProvideDigestedFile() 
+BuildRequires:	yast2-pkg-bindings >= 2.17.25
+
+# Unified progress bar (done by visnov) 
+BuildRequires:	yast2-packager >= 2.17.9
 
 # AutoinstConfig::getProposalList
 Requires:       autoyast2-installation >= 2.17.1
@@ -25,8 +28,11 @@ Requires:	yast2-bootloader
 # Language::Set (handles downloading the translation extensions)
 Requires:	yast2-country-data >= 2.16.11
 
-# Pkg::SourceProvideDigestedFile()
-Requires:	yast2-packager >= 2.17.25
+# Pkg::SourceProvideDigestedFile() 
+Conflicts:	yast2-pkg-bindings < 2.17.25
+
+# Packages::required_patterns 
+Requires:	yast2-packager >= 2.17.23
 
 # Storage::GetCommitInfo() call in include/misc.ycp
 Requires:	yast2-storage >= 2.17.47
