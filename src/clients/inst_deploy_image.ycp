@@ -9,6 +9,7 @@ import "PackageCallbacks";
 import "SlideShow";
 import "Report";
 import "ProductFeatures";
+import "PackagesUI";
 
 textdomain "installation";
 
@@ -216,9 +217,7 @@ void SetOneImageProgress (integer current_progress) {
 
 void RunPackageManager () {
     y2milestone ("--- running the package manager ---");
-    UI::OpenDialog (`opt(`defaultsize), `PackageSelector(`id (`packages), `opt (`summaryMode)));
-    UI::RunPkgSelection (`id(`packages));
-    UI::CloseDialog();
+    PackagesUI::RunPackageSelector ($["mode":`summaryMode]);
     y2milestone ("--- running the package manager ---");
 }
 
