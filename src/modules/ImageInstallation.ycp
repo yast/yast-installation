@@ -207,7 +207,10 @@ boolean DeployTarImage (string id, string target) {
     string file = _images[id, "file"]:"";
     y2milestone ("Untarring image %1 (%2) to %3", id, file, target);
     file = sformat ("%1/%2", _image_path, file);
-    string image = Pkg::SourceProvideFile (_repo, 1, file);
+    // BNC #409927
+    // Checking files for signatures
+    string image = Pkg::SourceProvideDigestedFile (_repo, 1, file, false);
+
     if (image == nil)
     {
 	y2error ("File %1 not found on media", file);
@@ -306,7 +309,10 @@ boolean DeployFsImage (string id, string target) {
     string file = _images[id, "file"]:"";
     y2milestone ("Deploying FS image %1 (%2) on %3", id, file, target);
     file = sformat ("%1/%2", _image_path, file);
-    string image = Pkg::SourceProvideFile (_repo, 1, file);
+    // BNC #409927
+    // Checking files for signatures
+    string image = Pkg::SourceProvideDigestedFile (_repo, 1, file, false);
+
     if (image == nil)
     {
 	y2error ("File %1 not found on media", file);
@@ -356,7 +362,10 @@ boolean MountFsImage (string id, string target) {
     string file = _images[id, "file"]:"";
     y2milestone ("Mounting image %1 (%2) on %3", id, file, target);
     file = sformat ("%1/%2", _image_path, file);
-    string image = Pkg::SourceProvideFile (_repo, 1, file);
+    // BNC #409927
+    // Checking files for signatures
+    string image = Pkg::SourceProvideDigestedFile (_repo, 1, file, false);
+
     if (image == nil)
     {
 	y2error ("File %1 not found on media", file);
@@ -493,7 +502,10 @@ global boolean FillUpImagesDetails () {
     ];
 
     foreach (string try_file, possible_files, {
-	filename = Pkg::SourceProvideOptionalFile (_repo, 1, try_file);
+	// BNC #409927
+	// Checking files for signatures
+	filename = Pkg::SourceProvideDigestedFile (_repo, 1, try_file, true);
+
 	if (filename != nil && filename != "") {
 	    y2milestone ("Using file: %1 (%2)", filename, try_file);
 	    break;
@@ -626,7 +638,10 @@ global boolean FindImageSet (list<string> patterns) {
     _metadata_image = "";
 
     // checking whether images are supported
-    string filename = Pkg::SourceProvideOptionalFile (_repo, 1, sformat ("%1/images.xml", _image_path));
+    // BNC #409927
+    // Checking files for signatures
+    string filename = Pkg::SourceProvideDigestedFile (_repo, 1, sformat ("%1/images.xml", _image_path), false);
+
     if (filename == nil)
     {
 	Installation::image_installation = false;
