@@ -1288,6 +1288,10 @@ with a modern look and feel.</label></description_kde>
                     <name>prepdisk</name>
                 </module>
                 <module>
+                <label>Perform Installation</label>
+                    <name>deploy_image</name>
+                </module>
+                <module>
 	            <label>Perform Installation</label>
                     <name>kickoff</name>
                 </module>

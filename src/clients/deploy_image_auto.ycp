@@ -158,7 +158,9 @@ else if (func == "Write") {
     // Calling image_installation only if set to do so...
     if (Installation::image_installation == true) {
 	WFM::call ("inst_prepare_image");
-	WFM::call ("inst_deploy_image");
+
+/* moved to control.xml */
+//	WFM::call ("inst_deploy_image");
     }
 
     ret = true;
