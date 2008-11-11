@@ -405,9 +405,9 @@ Choose the one that matches your server the best.</label></scenarios_text>
                         <proposal_module>hwinfo</proposal_module>
                         <proposal_module>mouse</proposal_module>
                         <proposal_module>partitions</proposal_module>
+                        <proposal_module>bootloader</proposal_module>
 			<proposal_module>add-on</proposal_module>
                         <proposal_module>software</proposal_module>
-                        <proposal_module>bootloader</proposal_module>
                         <proposal_module>timezone</proposal_module>
                         <proposal_module>language</proposal_module>
                         <proposal_module>runlevel</proposal_module>
