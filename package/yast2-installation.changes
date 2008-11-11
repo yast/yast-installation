@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Nov 11 10:48:03 CET 2008 - aschnell@suse.de
+
+- use accelerated xserver during installation for certain Intel
+  cards (bnc #442413)
+- 2.17.31
+
+-------------------------------------------------------------------
 Fri Nov  7 16:32:28 CET 2008 - locilka@suse.cz
 
 - Fixed deploy_image_auto to handle AutoYaST settings correctly
