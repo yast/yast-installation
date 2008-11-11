@@ -327,7 +327,9 @@
 		    {
 			// bugzilla #237291
 			// always switch to more detailed tab only
-			if (mod2tab[submod]:999 > tab_to_switch)
+			// value 999 means to keep current tab, in case of error,
+			// tab must be switched (bnc #441434)
+			if (mod2tab[submod]:999 > tab_to_switch || tab_to_switch == 999)
 			{
 			    tab_to_switch = mod2tab[submod]:999;
 			}
