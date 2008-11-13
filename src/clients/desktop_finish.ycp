@@ -136,6 +136,10 @@ else if (func == "Write")
 		dm_shutdown);
 	}
 
+	y2milestone ("sysconfig/displaymanager/DISPLAYMANAGER=%1", default_dm);
+	SCR::Write (.sysconfig.displaymanager.DISPLAYMANAGER, default_dm);
+	SCR::Write (.sysconfig.displaymanager, nil);
+
 	// bnc #431158, patch done by lnussel
 	string polkit_default_privs = ProductFeatures::GetStringFeature ("globals",
 	    "polkit_default_privs");
@@ -144,25 +148,22 @@ else if (func == "Write")
 	    y2milestone ("Writing %1 to POLKIT_DEFAULT_PRIVS", polkit_default_privs);
 	    SCR::Write (.sysconfig.security.POLKIT_DEFAULT_PRIVS,
 		polkit_default_privs);
+	    // BNC #440182
+	    // Flush the SCR cache before calling the script
+	    SCR::Write (.sysconfig.security, nil);
 
-// BNC #440182
-//	    if (FileUtils::Exists ("/sbin/set_polkit_default_privs")) {
 	    map ret = (map) SCR::Execute (
 		.target.bash_output,
 		// check whether it exists
 		"test -x /sbin/set_polkit_default_privs && " +
 		// give some feedback
-		"echo 'calling set_polkit_default_privs' && " +
-		// hide the output (many lines...)
-		"/sbin/set_polkit_default_privs >/dev/null"
+		"echo /sbin/set_polkit_default_privs && " +
+		// It's dozens of lines...
+		"/sbin/set_polkit_default_privs | wc -l && " +
+		"echo 'Done'"
 	    );
 	    y2milestone ("Command returned: %1", ret);
-//	    }
 	}
-
-	y2milestone ("sysconfig/displaymanager/DISPLAYMANAGER=%1", default_dm);
-	SCR::Write (.sysconfig.displaymanager.DISPLAYMANAGER, default_dm);
-	SCR::Write (.sysconfig.displaymanager, nil);
     }
 
 
