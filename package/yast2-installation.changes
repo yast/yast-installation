@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Nov 13 10:21:13 CET 2008 - ug@suse.de
+
+- checkboxes in the congratulations dialog did not work anymore
+  (bnc#444214)
+
+-------------------------------------------------------------------
 Tue Nov 11 13:58:17 CET 2008 - ug@suse.de
 
 - fix for image deployment during autoinstallation
