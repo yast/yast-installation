@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Nov 13 17:36:53 CET 2008 - locilka@suse.cz
+
+- Flushing the cache before calling a set_polkit_default_privs that
+  uses the written data (bnc #440182).
+- 2.17.34
+
+-------------------------------------------------------------------
 Thu Nov 13 11:21:11 CET 2008 - locilka@suse.cz
 
 - Handling errors while deploying images, installation will abort
