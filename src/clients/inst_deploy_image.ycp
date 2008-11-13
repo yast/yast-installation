@@ -277,7 +277,17 @@ SourceManager::InstInitSourceMoveDownloadArea();
 
 // Deploy the images
 boolean dep_ret = ImageInstallation::DeployImages (images, Installation::destdir, nil);
-if (dep_ret == nil) {
+y2milestone ("DeployImages returned: %1", dep_ret);
+
+// BNC #444209
+// false == error
+if (dep_ret == false) {
+    Report::Error (_("Deploying from images has failed.
+Aborting the installation..."));
+    y2milestone ("Aborting...");
+    return `abort;
+// nil   == aborted
+} else if (dep_ret != nil) {
     y2milestone ("Aborting...");
     return `abort;
 }
