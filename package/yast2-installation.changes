@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Nov 14 12:17:47 CET 2008 - aschnell@suse.de
+
+- don't start iscsid in second stage start scripts (bnc #444976)
+- 2.17.35
+
+-------------------------------------------------------------------
 Thu Nov 13 17:36:53 CET 2008 - locilka@suse.cz
 
 - Flushing the cache before calling a set_polkit_default_privs that
