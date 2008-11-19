@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Nov 19 16:01:53 CET 2008 - locilka@suse.cz
+
+- Added pciutils to Requires, lspci was called but not required
+  (bnc #446533).
+- 2.17.37
+
+-------------------------------------------------------------------
 Wed Nov 19 13:23:10 CET 2008 - locilka@suse.cz
 
 - Added inst_fallback_controlfile client reporting about using

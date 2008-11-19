@@ -67,6 +67,9 @@ Requires:	coreutils
 #Requires:	/usr/bin/jpegtopnm
 #Requires:	/usr/bin/pnmtopng
 
+# BNC 446533, /sbin/lspci called but not installed
+Requires:	pciutils
+
 Recommends:	yast2-registration
 Recommends:	yast2-online-update
 Recommends:	yast2-users
