@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Wed Nov 19 13:23:10 CET 2008 - locilka@suse.cz
+
+- Added inst_fallback_controlfile client reporting about using
+  a fallback control file.
+- Calling inst_fallback_controlfile in the fallback control file
+  (both bnc #440982).
+- 2.17.36
+
+-------------------------------------------------------------------
 Fri Nov 14 12:17:47 CET 2008 - aschnell@suse.de
 
 - don't start iscsid in second stage start scripts (bnc #444976)
