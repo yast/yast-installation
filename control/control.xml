@@ -219,6 +219,15 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             <mode>installation</mode>
             <stage>initial</stage>
             <modules  config:type="list">
+		<!-- BNC #446406: Using a fallback control file must be reported -->
+		<module>
+		    <label>Welcome</label>
+		    <enable_back>no</enable_back>
+		    <enable_next>yes</enable_next>
+		    <name>fallback_controlfile</name>
+		    <execute>inst_fallback_controlfile</execute>
+		</module>
+
                 <module>
                     <name>complex_welcome</name>
 	            <label>Welcome</label>
@@ -307,6 +316,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -315,6 +325,15 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             <mode>update</mode>
             <stage>initial</stage>
             <modules  config:type="list">
+		<!-- BNC #446406: Using a fallback control file must be reported -->
+		<module>
+		    <label>Welcome</label>
+		    <enable_back>no</enable_back>
+		    <enable_next>yes</enable_next>
+		    <name>fallback_controlfile</name>
+		    <execute>inst_fallback_controlfile</execute>
+		</module>
+
                 <module>
                     <name>complex_welcome</name>
 	            <label>Welcome</label>
@@ -399,6 +418,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -407,6 +427,15 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	    <label>Preparation</label>
             <mode>repair</mode>
             <modules  config:type="list">
+		<!-- BNC #446406: Using a fallback control file must be reported -->
+		<module>
+		    <label>System Information</label>
+		    <enable_back>no</enable_back>
+		    <enable_next>yes</enable_next>
+		    <name>fallback_controlfile</name>
+		    <execute>inst_fallback_controlfile</execute>
+		</module>
+
                 <module>
 	            <label>System Information</label>
                     <name>info</name>
@@ -417,6 +446,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -425,6 +455,15 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	    <label>Base Installation</label>
             <mode>screen_shot</mode>
             <modules  config:type="list">
+		<!-- BNC #446406: Using a fallback control file must be reported -->
+		<module>
+		    <label>Welcome</label>
+		    <enable_back>no</enable_back>
+		    <enable_next>yes</enable_next>
+		    <name>fallback_controlfile</name>
+		    <execute>inst_fallback_controlfile</execute>
+		</module>
+
                 <module>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
@@ -457,6 +496,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -465,6 +505,15 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	    <label>Base Installation</label>
             <mode>demo</mode>
             <modules  config:type="list">
+		<!-- BNC #446406: Using a fallback control file must be reported -->
+		<module>
+		    <label>Welcome</label>
+		    <enable_back>no</enable_back>
+		    <enable_next>yes</enable_next>
+		    <name>fallback_controlfile</name>
+		    <execute>inst_fallback_controlfile</execute>
+		</module>
+
                 <module>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
@@ -497,6 +546,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <stage>continue</stage>
             <mode>update</mode>
@@ -506,6 +556,15 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <enable_next>no</enable_next>
             </defaults>
             <modules  config:type="list">
+		<!-- BNC #446406: Using a fallback control file must be reported -->
+		<module>
+		    <label>Perform Update</label>
+		    <enable_back>no</enable_back>
+		    <enable_next>yes</enable_next>
+		    <name>fallback_controlfile</name>
+		    <execute>inst_fallback_controlfile</execute>
+		</module>
+
                 <module>
 	            <label>Perform Update</label>
                     <name>rpmcopy_secondstage</name>
@@ -565,6 +624,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <stage>continue</stage>
             <mode>installation</mode>
@@ -574,6 +634,15 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <archs>all</archs>
             </defaults>
             <modules  config:type="list">
+		<!-- BNC #446406: Using a fallback control file must be reported -->
+		<module>
+		    <label>Perform Installation</label>
+		    <enable_back>no</enable_back>
+		    <enable_next>yes</enable_next>
+		    <name>fallback_controlfile</name>
+		    <execute>inst_fallback_controlfile</execute>
+		</module>
+
                 <module>
 	            <label>Perform Installation</label>
                     <name>netprobe</name>
@@ -667,6 +736,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <stage>initial</stage>
             <label>Base Installation</label>
@@ -677,6 +747,15 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 <enable_next>no</enable_next>
             </defaults>
             <modules  config:type="list">
+		<!-- BNC #446406: Using a fallback control file must be reported -->
+		<module>
+		    <label>AutoYaST Settings</label>
+		    <enable_back>no</enable_back>
+		    <enable_next>yes</enable_next>
+		    <name>fallback_controlfile</name>
+		    <execute>inst_fallback_controlfile</execute>
+		</module>
+
                 <module>
 	            <label>AutoYaST Settings</label>
                     <name>autoinit</name>
@@ -716,6 +795,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
                 </module>
             </modules>
         </workflow>
+
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -725,6 +805,15 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
             <stage>continue</stage>
             <mode>autoinstallation</mode>
             <modules  config:type="list">
+		<!-- BNC #446406: Using a fallback control file must be reported -->
+		<module>
+		    <label>Perform Installation</label>
+		    <enable_back>no</enable_back>
+		    <enable_next>yes</enable_next>
+		    <name>fallback_controlfile</name>
+		    <execute>inst_fallback_controlfile</execute>
+		</module>
+
                 <module>
 	            <label>Perform Installation</label>
                     <name>netprobe</name>
