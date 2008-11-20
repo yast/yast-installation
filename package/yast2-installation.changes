@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Thu Nov 20 18:21:32 CET 2008 - locilka@suse.cz
+
+- Pkg::SourceStartManager in inst_ask_online_update to replace
+  obsolete Pkg::PkgEstablish (bnc #447080).
+- Reading all supported desktops to define the order of desktops
+  in desktop_finish (bnc #446640).
+- Added shadow desktops to SLES and SLED desktop files to have
+  a fallback if user selects some other desktop than the default
+  one (bnc #446640).
+- 2.17.38
+
+-------------------------------------------------------------------
 Wed Nov 19 16:01:53 CET 2008 - locilka@suse.cz
 
 - Added pciutils to Requires, lspci was called but not required

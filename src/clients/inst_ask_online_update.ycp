@@ -1,5 +1,5 @@
 /**
- * File:        installation/general/inst_ask_online_update.ycp
+ * File:        clients/inst_ask_online_update.ycp
  * Module:      Installation
  * Summary:     Ask if the user wants to run an online update during installation
  * Authors:     J. Daniel Schmidt <jdsn@suse.de>
@@ -11,6 +11,8 @@
 
 {
     textdomain "installation";
+
+    // FIXME: move to yast2-registration later, it doesn't belog here
 
     import "Wizard";
     import "Popup";
@@ -60,7 +62,8 @@ You may skip this step and run an online update later.
 
     // check if there are some patches available
 
-    Pkg::PkgEstablish ();
+    // BNC #447080
+    Pkg::SourceStartManager (true);
     integer selected = Pkg::ResolvableCountPatches (`affects_pkg_manager);
     y2milestone ("Available patches for pkg management: %1", selected);
     if (selected < 1)

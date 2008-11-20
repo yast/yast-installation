@@ -199,6 +199,69 @@ textdomain="control"
 		<patterns></patterns>
 		<icon>pattern-gnome</icon>
 	    </one_supported_desktop>
+
+	    <!-- BNC 446640: The other desktops should be defined too as a fallback -->
+	    <one_supported_desktop>
+		<name>kde</name>
+		<!-- BNC #381821, BNC #438212 -->
+		<desktop>startkde</desktop>
+		<label_id>dummy_desktop</label_id>
+		<logon>kdm4</logon>
+		<cursor>DMZ</cursor>
+		<packages>kde4-kdm</packages>
+		<order config:type="integer">1</order>
+		<patterns>kde x11 base</patterns>
+		<icon>pattern-kde4</icon>
+	    </one_supported_desktop>
+
+	    <one_supported_desktop>
+		<name>kde3</name>
+		<!-- BNC #381821 -->
+		<desktop>startkde3</desktop>
+		<label_id>dummy_desktop</label_id>
+		<logon>kdm3</logon>
+		<cursor>DMZ</cursor>
+		<packages>kdebase3-kdm</packages>
+		<order config:type="integer">2</order>
+		<patterns>kde3 x11 base</patterns>
+		<icon>pattern-kde</icon>
+	    </one_supported_desktop>
+
+	    <one_supported_desktop>
+		<name>xfce</name>
+		<desktop>startxfce4</desktop>
+		<label_id>dummy_desktop</label_id>
+		<logon>xdm</logon>
+		<cursor>DMZ</cursor>
+		<packages>xfce4-desktop</packages>
+		<order config:type="integer">4</order>
+		<patterns>xfce x11 base</patterns>
+		<icon>pattern-xfce</icon>
+	    </one_supported_desktop>
+
+	    <one_supported_desktop>
+		<name>min_x</name>
+		<desktop>twm</desktop>
+		<label_id>dummy_desktop</label_id>
+		<logon>xdm</logon>
+		<cursor>DMZ</cursor>
+		<packages>xorg-x11</packages>
+		<order config:type="integer">6</order>
+		<patterns>x11 base</patterns>
+		<icon>yast-x11</icon>
+	    </one_supported_desktop>
+
+	    <one_supported_desktop>
+		<name>textmode</name>
+		<desktop>twm</desktop>
+		<label_id>dummy_desktop</label_id>
+		<logon>xdm</logon>
+		<cursor>DMZ</cursor>
+		<packages>xorg-x11</packages>
+		<order config:type="integer">8</order>
+		<patterns>enhanced_base</patterns>
+		<icon>yast-sshd</icon>
+	    </one_supported_desktop>
 	</supported_desktops>
 
         <default_desktop>desktop_gnome</default_desktop>
@@ -263,6 +326,7 @@ Please visit us at http://www.novell.com/linux/.
 
 	<!-- BNC #431336, Do not display any system type -->
 	<desktop_gnome><label></label></desktop_gnome>
+	<dummy_desktop><label></label></dummy_desktop>
 
 	<ac_1><label>Initialization...</label></ac_1>
 	<ac_2><label>Configuring network...</label></ac_2>

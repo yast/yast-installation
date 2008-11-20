@@ -49,26 +49,11 @@ if (func == "Info")
 }
 else if (func == "Write")
 {
-    boolean doc_server = false;
-    // check who provides suse_help_viewer
-    // if kdebase3-SuSE isn't installed by apache or apache2, set /etc/sysconfig/apache:DOC_SERVER
-
-    if (
-	(!(Pkg::IsProvided ("kdebase3-SuSE") || Pkg::IsSelected ("kdebase3-SuSE")))
-	&&
-	(!(Pkg::IsProvided ("kdebase4-openSUSE") || Pkg::IsSelected ("kdebase4-openSUSE")))
-	&&
-	    (Pkg::IsProvided ("apache2") || Pkg::IsSelected ("apache2")
-	    || Pkg::IsProvided ("apache") || Pkg::IsSelected ("apache")))
-    {
-	doc_server = true;
-    }
-
     // this detects WM and DM according to selected patterns and
     // installed packages
     if ( !Mode::update () )
     {
-	map dd_map = DefaultDesktop::GetAllDesktopsMap ();
+	map <string, map> dd_map = DefaultDesktop::GetAllDesktopsMap ();
 
 	string selected_desktop = DefaultDesktop::Desktop();
 	y2milestone ("Selected desktop: %1", selected_desktop);
@@ -80,8 +65,28 @@ else if (func == "Write")
 	string default_wm	= "";
 	string default_cursor	= "";
 
-	// FIXME: list is not static anymore
-	list <string> desktop_order = [DefaultDesktop::Desktop(), "gnome", "kde", "kde3", "xfce", "min_x", "textmode"];
+	list <string> desktop_order = [];
+	map <string, integer> dorder_map = $[];
+
+	// build a map $[desktop_id -> desktop_order]
+	foreach (string desktop_id, map desktop_def, dd_map, {
+	    desktop_order = add (desktop_order, desktop_id);
+
+	    dorder_map[desktop_id] = (desktop_def["order"]:nil != nil ?
+		desktop_def["order"]:9999
+		:
+		9999
+	    );
+	});
+
+	// sort the desktops according to their order
+	desktop_order = sort (string desktop_x, string desktop_y, desktop_order,
+	    ``(dorder_map[desktop_x]:9999 < dorder_map[desktop_y]:9999)
+	);
+
+	// the default one is always the first one
+	desktop_order = prepend (desktop_order, DefaultDesktop::Desktop());
+	y2milestone ("Desktop order: %1", desktop_order);
 
 	boolean desktop_found = false;
 
@@ -89,9 +94,11 @@ else if (func == "Write")
 		if (desktop_found)
 		    break;
 
+		y2milestone ("Checking desktop: %1", d);
+
 		foreach (string package, dd_map[d, "packages"]:[], {
 		    if (Pkg::IsProvided (package) && (Pkg::PkgInstalled (package) || Pkg::IsSelected (package))) {
-			y2milestone ("package %1 selected or installed", package);
+			y2milestone ("Package %1 selected or installed, desktop %2 matches", package, d);
 			desktop_found = true;
 
 			default_dm = dd_map[d, "logon"]:"";
@@ -103,7 +110,7 @@ else if (func == "Write")
 			default_cursor = dd_map[d, "cursor"]:default_cursor;
 			y2milestone ("Setting cursor theme %1 - package selected", default_cursor);
 		    } else {
-			y2milestone ("Package %1 for desktop %2 not selected or installed, trying next desktop...", package, d);
+			y2milestone ("Package %1 for desktop %2 neither selected nor installed, trying next desktop...", package, d);
 		    }
 		});
 	});
@@ -164,13 +171,6 @@ else if (func == "Write")
 	    );
 	    y2milestone ("Command returned: %1", ret);
 	}
-    }
-
-
-    if (doc_server)
-    {
-	SCR::Write (.sysconfig.apache.DOC_SERVER, doc_server);
-	SCR::Write (.sysconfig.apache, nil);
     }
 }
 else
