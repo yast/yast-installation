@@ -68,6 +68,9 @@ You may skip this step and run an online update later.
     Pkg::TargetLoad();
     Pkg::SourceStartManager (true);
 
+    // Patches need solver run to be selected
+    Pkg::PkgSolve (true);
+
     integer selected = Pkg::ResolvableCountPatches (`affects_pkg_manager);
     y2milestone ("Available patches for pkg management: %1", selected);
     if (selected < 1)
