@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Nov 24 12:51:48 CET 2008 - locilka@suse.cz
+
+- Completely initializing the target and sources before checking
+  for available patches and offering online update (bnc #447080).
+- 2.17.39
+
+-------------------------------------------------------------------
 Thu Nov 20 18:21:32 CET 2008 - locilka@suse.cz
 
 - Pkg::SourceStartManager in inst_ask_online_update to replace
