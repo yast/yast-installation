@@ -24,6 +24,7 @@
     import "String";
     import "Label";
     import "Internet";
+    import "Installation";
 
     if (!Internet::do_you) return `auto;
 
@@ -63,7 +64,10 @@ You may skip this step and run an online update later.
     // check if there are some patches available
 
     // BNC #447080
+    Pkg::TargetInitialize (Installation::destdir);
+    Pkg::TargetLoad();
     Pkg::SourceStartManager (true);
+
     integer selected = Pkg::ResolvableCountPatches (`affects_pkg_manager);
     y2milestone ("Available patches for pkg management: %1", selected);
     if (selected < 1)
