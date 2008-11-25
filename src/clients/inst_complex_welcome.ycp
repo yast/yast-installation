@@ -74,6 +74,13 @@
 	Keyboard::GetKeyboardItems ()
     );
 
+    // BNC #448598
+    // License sometimes doesn't need to be manually accepted
+    term license_agreement_checkbox = `Left (`CheckBox (
+	// bnc #359456
+	// TRANSLATORS: check-box
+	`id (`license_agreement), `opt (`notify), _("I &Agree to the License Terms."), InstData::product_license_accepted
+    ));
 
     // this type of contents will be shown only for initial installation dialog
     term contents = `VBox (
@@ -103,11 +110,8 @@
 		)),
 		`VSpacing (text_mode ? 0.1 : 0.5),
 		`MinHeight (1, `HBox (
-		    `Left (`CheckBox (
-			// bnc #359456
-			// TRANSLATORS: check-box
-			`id (`license_agreement), `opt (`notify), _("I &Agree to the License Terms."), InstData::product_license_accepted
-		    )),
+		    // Will be replaced with license checkbox if required
+		    `ReplacePoint (`id (`license_checkbox_rp), `Empty()),
 		    `VStretch (),
 		    // TRANSLATORS: button label
 		    `Right (`PushButton (`id (`show_fulscreen_license), _("License &Translations...")))
@@ -291,6 +295,11 @@ installation, but the selected language will be used for the new system."));
 	return `auto;
     }
 
+    // If accepting the license is required, show the check-box
+    if (ProductLicense::AcceptanceNeeded()) {
+	UI::ReplaceWidget (`license_checkbox_rp, license_agreement_checkbox);
+    }
+
     while (true) {
 	ret = UI::UserInput();
 	y2milestone ("UserInput() returned %1", ret);
@@ -313,7 +322,9 @@ installation, but the selected language will be used for the new system."));
 	    ReadCurrentUIState();
 
 	    if (ret == `next ) {
-		if (! LicenseAccepted ())
+		// BNC #448598
+		// Check whether the license has been accepted only if required
+		if (ProductLicense::AcceptanceNeeded() && ! LicenseAccepted ())
 		    continue;
 
 		if (!Language::CheckIncompleteTranslation (language))
