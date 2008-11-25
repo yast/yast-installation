@@ -31,8 +31,8 @@ Requires:	yast2-country-data >= 2.16.11
 # Pkg::SourceProvideDigestedFile() 
 Conflicts:	yast2-pkg-bindings < 2.17.25
 
-# Packages::required_patterns 
-Requires:	yast2-packager >= 2.17.23
+# ProductLicense::AcceptanceNeeded, BNC #448598
+Requires:	yast2-packager >= 2.17.46
 
 # Storage::GetCommitInfo() call in include/misc.ycp
 Requires:	yast2-storage >= 2.17.47
