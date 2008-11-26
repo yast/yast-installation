@@ -179,8 +179,8 @@ textdomain="control"
 	    <!-- Default update repository, bnc #381360 -->
 	    <extra_url>
 		<baseurl>http://download.opensuse.org/update/11.1/</baseurl>
-                <name>Updates for 11.1</name>
-                <alias>openSUSE-11.1-Updates</alias>
+                <alias>repo-update</alias>
+                <name>openSUSE-11.1-Update</name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
@@ -190,8 +190,8 @@ textdomain="control"
 	    <!-- Replacement for EXTRAURLS and OPTIONALURLS -->
 	    <extra_url>
 		<baseurl>http://download.opensuse.org/distribution/11.1/repo/oss/</baseurl>
-                <name>openSUSE-11.1-Oss</name>
                 <alias>repo-oss</alias>
+                <name>openSUSE-11.1-Oss</name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
@@ -207,7 +207,7 @@ textdomain="control"
 		<priority config:type="integer">100</priority>
 	    </extra_url>
 	    <extra_url>
-		<baseurl>http://download.opensuse.org/distribution/11.1/repo/debug/</baseurl>
+		<baseurl>http://download.opensuse.org/debug/distribution/11.1/repo/oss</baseurl>
                 <alias>repo-debug</alias>
                 <name>openSUSE-11.1-Debug</name>
 		<prod_dir>/</prod_dir>
@@ -215,6 +215,15 @@ textdomain="control"
 		<autorefresh config:type="boolean">true</autorefresh>
 		<priority config:type="integer">100</priority>
 	    </extra_url>
+            <extra_url>
+                <baseurl>http://download.opensuse.org/source/distribution/11.1/repo/oss</baseurl>
+                <alias>repo-source</alias>
+                <name>openSUSE-11.1-Source</name>
+                <prod_dir>/</prod_dir>
+                <enabled config:type="boolean">false</enabled>
+                <autorefresh config:type="boolean">true</autorefresh>
+                <priority config:type="integer">100</priority>
+            </extra_url>
 	</extra_urls>
 
 	<!-- BNC #424678, Definition of supported desktops -->
