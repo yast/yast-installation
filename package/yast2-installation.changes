@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Thu Nov 27 16:49:11 CET 2008 - locilka@suse.cz
+
+- Using yast-live-install-finish icon when finishing LiveCD
+  installation/inst_finish (bnc #438154).
+- Fixed ImageInstallation SlideShow - download progress is shown
+  only when downloading the images, not the other helper files
+  (bnc #449792).
+- Adjusting ImageInstallation-related SlideShow only if
+  ImageInstallation is in use (bnc #439104).
+
+-------------------------------------------------------------------
 Thu Nov 27 15:05:11 CET 2008 - ug@suse.de
 
 - the real fix for #442691

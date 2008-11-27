@@ -149,7 +149,8 @@ list<map<string,any> > stages = [
 	    "copy_logs",
 	    "umount",
 	],
-	"icon" : "yast-scripts",
+	// bnc #438154
+	"icon" : (Mode::live_installation() ? "yast-live-install-finish":"yast-scripts"),
     ],
 ];
 

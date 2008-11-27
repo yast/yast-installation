@@ -218,7 +218,12 @@ installation process at any time.
     void ReadCurrentUIState () {
 	language = (string) UI::QueryWidget (`id (`language), `Value);
 	keyboard = (string) UI::QueryWidget (`id (`keyboard), `Value);
-	license_acc = (boolean) UI::QueryWidget (`id (`license_agreement), `Value);
+
+	if (ProductLicense::AcceptanceNeeded()) {
+	    license_acc = (boolean) UI::QueryWidget (`id (`license_agreement), `Value);
+	} else {
+	    license_acc = true;
+	}
     }
 
     // Returns true if the dialog needs redrawing

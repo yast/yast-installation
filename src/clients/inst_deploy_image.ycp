@@ -62,7 +62,7 @@ void OverallProgressHandler (string id, integer current_step) {
 	// div by zero!
 	if (_current_subprogress_total == 0) {
 	    y2error ("steps_total=0");
-	    _current_subprogress_total = 100;
+	    _current_subprogress_total = 1;
 	}
 
 	y2milestone (
@@ -91,6 +91,7 @@ void OverallProgressHandler (string id, integer current_step) {
 	SetProgress();
     }
 
+    // Should be 0 - 100%
     _current_overall_progress = _current_subprogress_start +
 	(_current_subprogress_steps * _current_step_in_subprogress / _current_subprogress_total);
 
@@ -104,15 +105,49 @@ void OverallProgressHandler (string id, integer current_step) {
 integer _steps_for_one_image = 100;
 boolean download_handler_hit = false;
 string _last_image_downloading = nil;
+boolean report_image_downloading = false;
+
+// Not only images but also some helper files are downloaded
+// Image installation should report only images
+// BNC #449792
+void MyStartDownloadHandler (string url, string localfile) {
+    map <string, any> current_image = ImageInstallation::GetCurrentImageDetails();
+    string current_image_file = current_image["file"]:"";
+
+    // Fetches is (additionally) downloading some other file
+    if (current_image_file == nil || current_image_file == "") {
+	y2warning ("Uknown image being downloaded: %1", current_image);
+	report_image_downloading = false;
+	return;
+    }
+
+    integer image_filename_length = size (current_image_file);
+    // 'http://some.url/directory/image.name' vs. 'directory/image.name'
+    string image_url_download = substring (url, size (url) - image_filename_length, image_filename_length);
+
+    // downloading progress is reported only if 
+    report_image_downloading = (image_url_download == current_image_file);
+
+    y2milestone ("Downloading started %1, showing progress %2", url, report_image_downloading);
+}
 
 boolean MyProgressDownloadHandler (integer percent, integer bps_avg, integer bps_current) {
     // changing settings on the fly
     // ... first when download handler is hit
+    //
+    // if a repository is remote, there are twice more steps to do (download, deploy)
+    // local (or NFS, SMB, ...) access do not use downloader
     if (! download_handler_hit) {
 	y2milestone ("DownloadHandler - first hit");
 	// twice more steps
 	ImageInstallation::AdjustProgressLayout ("deploying_images", (2 * _steps_for_one_image * size (images)), _("Deploying Images..."));
 	download_handler_hit = true;
+    }
+
+    // See MyStartDownloadHandler
+    // BNC #449792
+    if (report_image_downloading != true) {
+	return true;
     }
 
     map <string, any> current_image = ImageInstallation::GetCurrentImageDetails();
@@ -127,6 +162,7 @@ boolean MyProgressDownloadHandler (integer percent, integer bps_avg, integer bps
 	    _last_image_downloading = image_info;
 	}
 
+	// unknown image
 	if (image_info == "") {
 	    image_info = sformat (_("Downloading image at speed %1/s"), String::FormatSize (bps_current));
 	} else {
@@ -223,6 +259,7 @@ void RunPackageManager () {
 
 ImageInstallation::SetDeployTarImageProgress (SetOneImageProgress);
 ImageInstallation::SetDownloadTarImageProgress (MyProgressDownloadHandler);
+ImageInstallation::SetStartDownloadImageProgress (MyStartDownloadHandler);
 ImageInstallation::SetOverallDeployingProgress (OverallProgressHandler);
 
 ImageInstallation::AdjustProgressLayout ("deploying_images", (_steps_for_one_image * size (images)), _("Deploying Images..."));

@@ -27,7 +27,11 @@
   SlideShow::OpenDialog();
   PackageSlideShow::InitPkgData(true); // FIXME: this is odd!
 
-  ImageInstallation::FillUpImagesDetails();
+  // Details (such as images sizes) have to known before initializing the SlideShow
+  // but only if Installation from Images is in use
+  if (Installation::image_installation) {
+    ImageInstallation::FillUpImagesDetails();
+  }
 
   list< map<string,any> > stages = [
     $[
@@ -39,7 +43,9 @@
     $[
     "name" : "images",
     "description": _("Deploying Images..."),
-    "value" : ImageInstallation::TotalSize() / 1024, // kilobytes
+    // Use 'zero' if image installation is not used
+    // BNC #439104
+    "value" : (Installation::image_installation ? ImageInstallation::TotalSize() / 1024 : 0), // kilobytes
     "units" : `kb,
     ],
     $[
