@@ -37,6 +37,7 @@ y2debug("param=%1", param);
 if(func == "Import")
 {
     if (haskey (param, "image_installation")) {
+        ImageInstallation::changed_by_user = true;
 	Installation::image_installation = param["image_installation"]:false;
 	y2milestone ("Using image_installation: %1", Installation::image_installation);
 	ret = true;

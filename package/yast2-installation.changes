@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Nov 27 15:05:11 CET 2008 - ug@suse.de
+
+- the real fix for #442691
+  deploy_image_auto doesn't use the boolean variable 
+  image_installation
+
+-------------------------------------------------------------------
 Tue Nov 25 14:42:31 CET 2008 - locilka@suse.cz
 
 - Handling new feature of licenses ProductLicense::AcceptanceNeeded
