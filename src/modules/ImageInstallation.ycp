@@ -28,6 +28,7 @@ import "Popup";
 import "SlideShow";
 import "ProductControl";
 import "ProductFeatures";
+import "Packages";
 
 textdomain "installation";
 
@@ -35,6 +36,25 @@ textdomain "installation";
  * Repository holding all images
  */
 integer _repo = nil;
+
+/**
+ * Set the repository to get images from
+ * @param repo integer the repository identification
+ */
+global void SetRepo (integer repo) {
+    _repo = repo;
+    y2milestone ("New images repo: %1", _repo);
+}
+
+/**
+ * Adjusts the repository for images
+ */
+void InitRepo () {
+    if (_repo != nil)
+	return;
+
+    SetRepo (Packages::theSources[0]:0);
+}
 
 /**
  * Description of all available images
@@ -101,14 +121,6 @@ boolean ThisIsADebugMode () {
     }
 
     return debug_mode;
-}
-
-/**
- * Set the repository to get images from
- * @param repo integer the repository identification
- */
-global void SetRepo (integer repo) {
-    _repo = repo;
 }
 
 /**
@@ -190,6 +202,14 @@ global void SetDownloadTarImageProgress (boolean (integer, integer, integer) tip
     y2milestone ("New download_image_progress: %1", download_image_progress);
 }
 
+void (string, string) start_download_handler = nil;
+
+// BNC #449792
+global void SetStartDownloadImageProgress (void (string, string) sdi) {
+    start_download_handler = sdi;
+    y2milestone ("New start_download_handler: %1", start_download_handler);
+}
+
 void (string, integer) generic_set_progress = nil;
 
 global void SetOverallDeployingProgress (void (string, integer) odp) {
@@ -204,6 +224,8 @@ global void SetOverallDeployingProgress (void (string, integer) odp) {
  * @return boolean true on success
  */
 boolean DeployTarImage (string id, string target) {
+    InitRepo();
+
     string file = _images[id, "file"]:"";
     y2milestone ("Untarring image %1 (%2) to %3", id, file, target);
     file = sformat ("%1/%2", _image_path, file);
@@ -306,6 +328,8 @@ boolean DeployTarImage (string id, string target) {
  * @return boolean true on success
  */
 boolean DeployFsImage (string id, string target) {
+    InitRepo();
+
     string file = _images[id, "file"]:"";
     y2milestone ("Deploying FS image %1 (%2) on %3", id, file, target);
     file = sformat ("%1/%2", _image_path, file);
@@ -359,6 +383,8 @@ boolean DeployFsImage (string id, string target) {
  * @return boolean true on success
  */
 boolean MountFsImage (string id, string target) {
+    InitRepo();
+
     string file = _images[id, "file"]:"";
     y2milestone ("Mounting image %1 (%2) on %3", id, file, target);
     file = sformat ("%1/%2", _image_path, file);
@@ -390,7 +416,9 @@ global integer TotalSize()
     
     y2milestone( "Computing total images size from [%1], data %2", _image_order, images_details );
     foreach( string image, _image_order, {
-	sum = sum + images_details[image,"size"]:0;
+	// 128 MB as a fallback size
+	// otherwise progress would not move at all
+	sum = sum + images_details[image,"size"]:134217728;
     });
     
     y2milestone( "Total images size: %1", sum );
@@ -493,6 +521,14 @@ global boolean CleanTemporaryImage (string id, string target) {
  * Loads non-mandatory details for every single selected image.
  */
 global boolean FillUpImagesDetails () {
+    InitRepo();
+
+    // bnc #439104
+    if (_repo == nil) {
+	y2warning ("No images-repository defined");
+	return true;
+    }
+
     // ppc (covers also ppc64), i386, x86_64 ...
     string filename = nil;
 
@@ -507,7 +543,7 @@ global boolean FillUpImagesDetails () {
 	filename = Pkg::SourceProvideDigestedFile (_repo, 1, try_file, true);
 
 	if (filename != nil && filename != "") {
-	    y2milestone ("Using file: %1 (%2)", filename, try_file);
+	    y2milestone ("Using details file: %1 (%2)", filename, try_file);
 	    break;
 	}
     });
@@ -565,6 +601,10 @@ global boolean DeployImages (list<string> images, string target, void(integer,in
     // register own callback for downloading
     if (download_image_progress != nil)
 	Pkg::CallbackProgressDownload (download_image_progress);
+
+    // register own callback for start downloading
+    if (start_download_handler != nil)
+	Pkg::CallbackStartDownload (start_download_handler);
 
     integer num = -1;
     _current_image_from_imageset = -1;
@@ -632,6 +672,8 @@ boolean EnoughPatternsMatching (integer matching_patterns, integer patterns_in_i
  * @return boolean true on success or when media does not contain any images
  */
 global boolean FindImageSet (list<string> patterns) {
+    InitRepo();
+
     // reset all data
     _images = $[];
     _image_order = [];
