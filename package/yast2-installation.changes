@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Nov 28 12:16:03 CET 2008 - locilka@suse.cz
+
+- Fixed behavior of inst_new_desktop when user switched to another
+  language later (bnc #449818).
+- 2.17.42
+
+-------------------------------------------------------------------
 Thu Nov 27 16:49:11 CET 2008 - locilka@suse.cz
 
 - Using yast-live-install-finish icon when finishing LiveCD
