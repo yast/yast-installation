@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Nov 28 15:05:02 CET 2008 - locilka@suse.cz
+
+- Updated labels of Installation Scenarios for SLES (bnc #428202).
+
+-------------------------------------------------------------------
 Fri Nov 28 12:16:03 CET 2008 - locilka@suse.cz
 
 - Fixed behavior of inst_new_desktop when user switched to another
