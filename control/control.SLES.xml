@@ -303,10 +303,13 @@ Please visit us at http://www.novell.com/linux/.
 	<scenarios_caption><label>Server Base Scenario</label></scenarios_caption>
 	<scenarios_text><label>SUSE Linux Enterprise Server offers several base scenarios.
 Choose the one that matches your server the best.</label></scenarios_text>
-	<!-- Labels to be easily defined by PM, see 'software' section -->
-	<scenario_physical_machine><label>Physical Machine</label></scenario_physical_machine>
-	<scenario_virtual_machine><label>Virtual Machine</label></scenario_virtual_machine>
-	<scenario_virtualization_host><label>XEN Virtualization Host</label></scenario_virtualization_host>
+	<!--
+	    Labels to be easily defined by PM, see 'software' section.
+	    Labels defined in BNC #428202.
+	-->
+	<scenario_physical_machine><label>Physical Machine (Also for Fully Virtualized Guests)</label></scenario_physical_machine>
+	<scenario_virtual_machine><label>Virtual Machine (For Paravirtualized Environments Like Xen)</label></scenario_virtual_machine>
+	<scenario_virtualization_host><label>Xen Virtualization Host (Local X11 Not Configured by Default)</label></scenario_virtualization_host>
     </texts>
 
     <proposals config:type="list">
