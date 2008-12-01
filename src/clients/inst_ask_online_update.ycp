@@ -25,8 +25,14 @@
     import "Label";
     import "Internet";
     import "Installation";
+    import "NetworkService";
 
-    if (!Internet::do_you) return `auto;
+    // BNC #450229
+    // There used to be >if (!Internet::do_you)<
+    if (NetworkService::isNetworkRunning() != true) {
+	y2milestone ("No network running, skipping online update...");
+	return `auto;
+    }
 
     map ui = UI::GetDisplayInfo();
 
@@ -106,17 +112,17 @@ You may skip this step and run an online update later.
         }
         else if ( ret == `next )
         {
-            if ( (boolean) UI::QueryWidget(`id(`noupdate), `Value) )
-                ret = `skip;
+	    // Skipping online update
+            if ((boolean) UI::QueryWidget(`id(`noupdate), `Value)) {
+        	Internet::do_you = false;
+	    } else {
+		// needed later
+		// BNC #450229
+		Internet::do_you = true;
+	    }
         }
 
-    } until ( ret == `next || ret == `back || ret == `skip);
-
-    if ( ret == `skip )
-    {
-        Internet::do_you = false;
-        ret = `next;
-    }
+    } until ( ret == `next || ret == `back );
 
     return (symbol)ret;
 }
