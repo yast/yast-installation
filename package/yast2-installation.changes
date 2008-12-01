@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Dec  1 16:59:14 CET 2008 - locilka@suse.cz
+
+- Fixed proposing the online update depending on the fact whether
+  network is running (bnc #450229).
+- 2.17.43
+
+-------------------------------------------------------------------
 Fri Nov 28 15:05:02 CET 2008 - locilka@suse.cz
 
 - Updated labels of Installation Scenarios for SLES (bnc #428202).
