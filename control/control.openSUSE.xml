@@ -1161,15 +1161,15 @@ with a modern look and feel.</label></description_kde>
                 </module>
                 <module>
                     <label>Online Update</label>
+                    <name>extrasources</name>
+                </module>
+                <module>
+                    <label>Online Update</label>
                     <name>ask_online_update</name>
                 </module>
                 <module>
 	            <label>Online Update</label>
                     <name>you</name>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>extrasources</name>
                 </module>
 		<module>
 		    <label>Online Update</label>

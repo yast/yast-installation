@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Dec  3 18:33:59 CET 2008 - locilka@suse.cz
+
+- inst_extrasources moved before inst_ask_online_update to register
+  the online update repository before checking for patches
+  (bnc #450229).
+
+-------------------------------------------------------------------
 Mon Dec  1 16:59:14 CET 2008 - locilka@suse.cz
 
 - Fixed proposing the online update depending on the fact whether
