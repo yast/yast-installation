@@ -6,7 +6,7 @@ controldir = $(yast2dir)/control
 
 control_DATA = \
 	control.xml \
-	control.dtd
+	control.rng
 
 
 # Note: The control.glade -> control.xml symlink is required to make xgettext
@@ -21,8 +21,9 @@ EXTRA_DIST =  $(control_DATA) $(product_DATA)
 
 include $(top_srcdir)/Makefile.am.common
 
+install-data-local:
+	trang -I rnc -O rng control.rnc control.rng
 
 validate:
 	trang -I rnc -O rng control.rnc control.rng
-	xmllint --relaxng control.rng control.openSUSE.xml --noout
-
+	for file in `ls *.xml`; do xmllint --relaxng control.rng --noout ${file}; done
