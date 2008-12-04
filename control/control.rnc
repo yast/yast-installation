@@ -1,0 +1,173 @@
+default namespace = "http://www.suse.com/1.0/yast2ns"
+namespace a = "http://relaxng.org/ns/compatibility/annotations/1.0"
+namespace config = "http://www.suse.com/1.0/configns"
+
+# types
+
+BOOLEAN =
+  (
+    attribute config:type { "boolean" },
+    ( "true" | "false" )
+  )
+
+INTEGER =
+  (
+    attribute config:type { "integer" },
+    xsd:integer
+  )
+
+SYMBOL =
+  (
+    attribute config:type { "symbol" },
+    text
+  )
+
+LIST =
+  attribute config:type { "list" }
+
+# types
+
+textdomain = element textdomain { text }
+
+# globals
+
+globals_elements =
+    incomplete_translation_treshold
+    | additional_kernel_parameters
+    | ui_mode
+    | base_product_license_directory
+    | enable_autologin
+    | enable_firewall
+    | firewall_enable_ssh
+    | firewall_enable_ssh
+    | write_hostname_to_hosts
+    | inform_about_suboptimal_distribution
+    | skip_language_dialog
+    | enable_clone
+    | enable_register_hwdata
+    | enable_register_optional
+    | display_register_forcereg
+    | disable_register_w3m
+    | register_monthly
+    | manual_online_update
+    | root_password_as_first_user
+    | root_password_ca_check
+    | show_online_repositories
+    | online_repositories_default
+    | show_addons
+    | addons_default
+    | enable_autoconfiguration
+    | autoconfiguration_default
+    | kexec_reboot
+    | rle_offer_rulevel_4
+    | default_ntp_setup
+    | save_instsys_content
+    | copy_to_system
+    | autoconfiguration_enabled_modules
+    | automatic_configuration
+    | displaymanager_shutdown
+    | enable_kdump
+    | polkit_default_privs
+
+additional_kernel_parameters = element additional_kernel_parameters { text }
+incomplete_translation_treshold = element incomplete_translation_treshold { text }
+base_product_license_directory = element base_product_license_directory { text }
+ui_mode = element ui_mode { text }
+displaymanager_shutdown = element displaymanager_shutdown { text }
+polkit_default_privs = element polkit_default_privs { text }
+
+enable_autologin = element enable_autologin { BOOLEAN }
+enable_firewall = element enable_firewall { BOOLEAN }
+firewall_enable_ssh = element firewall_enable_ssh { BOOLEAN }
+write_hostname_to_hosts = element write_hostname_to_hosts { BOOLEAN }
+inform_about_suboptimal_distribution = element inform_about_suboptimal_distribution { BOOLEAN }
+skip_language_dialog = element skip_language_dialog { BOOLEAN }
+enable_clone = element enable_clone { BOOLEAN }
+enable_register_hwdata = element enable_register_hwdata { BOOLEAN }
+enable_register_optional = element enable_register_optional { BOOLEAN }
+display_register_forcereg = element display_register_forcereg { BOOLEAN }
+disable_register_w3m = element disable_register_w3m { BOOLEAN }
+register_monthly = element register_monthly { BOOLEAN }
+manual_online_update = element manual_online_update { BOOLEAN }
+root_password_as_first_user = element root_password_as_first_user { BOOLEAN }
+root_password_ca_check = element root_password_ca_check { BOOLEAN }
+show_online_repositories = element show_online_repositories { BOOLEAN }
+online_repositories_default = element online_repositories_default { BOOLEAN }
+show_addons = element show_addons { BOOLEAN }
+addons_default = element addons_default { BOOLEAN }
+enable_autoconfiguration = element enable_autoconfiguration { BOOLEAN }
+autoconfiguration_default = element autoconfiguration_default { BOOLEAN }
+kexec_reboot = element kexec_reboot { BOOLEAN }
+rle_offer_rulevel_4 = element rle_offer_rulevel_4 { BOOLEAN }
+default_ntp_setup = element default_ntp_setup { BOOLEAN }
+enable_kdump = element enable_kdump { BOOLEAN }
+
+save_instsys_content = element save_instsys_content {
+    LIST,
+    element save_instsys_item {
+	element system_directory { text } &
+	element instsys_directory { text }
+    }*
+}
+
+copy_to_system = element copy_to_system {
+    LIST,
+    element copy_to_system_item {
+	element copy_to_dir { text } &
+	element mandatory_files {
+	    LIST,
+	    element file_item { text }+
+	}+ &
+	element optional_files {
+	    LIST,
+	    element file_item { text }+
+	}*
+    }*
+}
+
+autoconfiguration_enabled_modules = element autoconfiguration_enabled_modules {
+    LIST,
+    element module { text }+
+}
+
+automatic_configuration = element automatic_configuration {
+    LIST,
+    element ac_step {
+	element text_id { text }? &
+	element icon { text }? &
+	element type { "scripts" | "proposals" }? &
+	element ac_items {
+	    LIST,
+	    element ac_item { text }+
+	}?
+    }+
+}
+
+globals = element globals {
+    globals_elements*
+}
+
+# globals
+
+software = element software { text }
+
+partitioning = element partitioning { text }
+
+network = element network { text }
+
+proposals = element proposals { text }
+
+workflows = element workflows { text }
+
+productDefines_elements =
+    textdomain
+    | globals
+    | software
+    | partitioning
+    | network
+    | proposals
+    | workflows
+
+start = element productDefines {
+    productDefines_elements*
+}

@@ -25,3 +25,7 @@ Add-On Products:
 	* inst_language_add-on
 	* inst_rpmcopy (inside inst_language_add-on)
 	* inst_suseconfig (inside inst_language_add-on)
+
+Control file validation:
+------------------------
+trang control.rnc control.rng && xmllint --noout --relaxng control.rng ${XML_FILE}
