@@ -149,7 +149,101 @@ globals = element globals {
 
 # globals
 
-software = element software { text }
+# software
+
+software_elements =
+    delete_old_packages
+    | delete_old_packages_reverse_list
+    | silently_downgrade_packages
+    | silently_downgrade_packages_reverse_list
+    | only_update_selected
+    | only_update_selected_reverse_list
+    | products_supported_for_upgrade
+    | selection_type
+    | system_scenarios
+    | default_system_scenario
+    | supported_desktops
+    | default_desktop
+    | display_support_status
+    | online_repos_preselected
+    | external_sources_link
+    | dropped_packages
+    | extra_urls
+
+delete_old_packages = element delete_old_packages { BOOLEAN }
+selection_type = element selection_type { SYMBOL }
+default_system_scenario = element default_system_scenario { text }
+default_desktop = element default_desktop { text }
+display_support_status = element display_support_status { BOOLEAN }
+silently_downgrade_packages = element silently_downgrade_packages { BOOLEAN }
+only_update_selected = element only_update_selected { BOOLEAN }
+online_repos_preselected = element online_repos_preselected { BOOLEAN }
+external_sources_link = element external_sources_link { text }
+dropped_packages = element dropped_packages { text }
+
+delete_old_packages_reverse_list = element delete_old_packages_reverse_list {
+    LIST,
+    element regexp_item { text }+
+}
+
+system_scenarios = element system_scenarios {
+    LIST,
+    element system_scenario {
+	element id { text } &
+	element patterns { text } &
+	element icon { text }
+    }+
+}
+
+supported_desktops = element supported_desktops {
+    LIST,
+    element one_supported_desktop {
+	element name { text } &
+	element desktop { text } &
+	element label_id { text }? &
+	element logon { text } &
+	element cursor { text } &
+	element packages { text } &
+	element order { INTEGER }? &
+	element patterns { text } &
+	element icon { text }? &
+	element description_id { text }?
+    }+
+}
+
+only_update_selected_reverse_list = element only_update_selected_reverse_list {
+    LIST,
+    element regexp_item { text }+
+}
+
+products_supported_for_upgrade = element products_supported_for_upgrade {
+    LIST,
+    element regexp_item { text }+
+}
+
+silently_downgrade_packages_reverse_list = element silently_downgrade_packages_reverse_list {
+    LIST,
+    element regexp_item { text }+
+}
+
+extra_urls = element extra_urls {
+    LIST,
+    element extra_url {
+	element baseurl { text } &
+	element name { text }? &
+	element alias { text }? &
+	element prod_dir { text }? &
+	element enabled { BOOLEAN }? &
+	element autorefresh { BOOLEAN }? &
+	element priority { INTEGER }?
+    }+
+}
+
+software = element software {
+    software_elements*
+}
+
+# software
 
 partitioning = element partitioning { text }
 
