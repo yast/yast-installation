@@ -107,7 +107,7 @@ save_instsys_content = element save_instsys_content {
     element save_instsys_item {
 	element system_directory { text } &
 	element instsys_directory { text }
-    }*
+    }+
 }
 
 copy_to_system = element copy_to_system {
@@ -122,7 +122,7 @@ copy_to_system = element copy_to_system {
 	    LIST,
 	    element file_item { text }+
 	}*
-    }*
+    }+
 }
 
 autoconfiguration_enabled_modules = element autoconfiguration_enabled_modules {
@@ -373,7 +373,8 @@ module = element module {
 	| element * { text }*
     }? &
     element retranslate { BOOLEAN }? &
-    element update { BOOLEAN }?
+    element update { BOOLEAN }? &
+    element enabled { BOOLEAN }?
 }
 
 workflow = element workflow {
