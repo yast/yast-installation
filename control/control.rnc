@@ -357,7 +357,46 @@ proposals = element proposals {
 
 # proposals
 
-workflows = element workflows { text }
+# workflows
+
+module = element module {
+    element name { text }? &
+    element execute { text }? &
+    element label { text }? &
+    element heading { text }? &
+    element archs { text }? &
+    element proposal { text }? &
+    element enable_back { "yes" | "no" }? &
+    element enable_next { "yes" | "no" }? &
+    element arguments {
+	element first_run { "yes" | "no" }?
+	| element * { text }*
+    }? &
+    element retranslate { BOOLEAN }? &
+    element update { BOOLEAN }?
+}
+
+workflow = element workflow {
+    element defaults {
+	element archs { text }? &
+	element enable_back { "yes" | "no" }? &
+	element enable_next { "yes" | "no" }?
+    }? &
+    element label { text }? &
+    element mode { text } &
+    element stage { text } &
+    element modules {
+	LIST,
+	module+
+    }
+}
+
+workflows = element workflows {
+    LIST,
+    workflow+
+}
+
+# workflows
 
 productDefines_elements =
     textdomain
