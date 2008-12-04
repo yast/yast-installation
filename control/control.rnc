@@ -280,7 +280,22 @@ partitioning = element partitioning {
 
 # partitioning
 
-network = element network { text }
+# network
+
+network_elements =
+    force_static_ip
+    | network_manager
+    | startmode
+
+force_static_ip = element force_static_ip { BOOLEAN }
+network_manager = element network_manager { text }
+startmode = element startmode { text }
+
+network = element network {
+    network_elements*
+}
+
+# network
 
 proposals = element proposals { text }
 
