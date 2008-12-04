@@ -297,7 +297,57 @@ network = element network {
 
 # network
 
-proposals = element proposals { text }
+# clone_modules
+
+clone_modules = element clone_modules {
+    LIST,
+    element clone_module { text }+
+}
+
+# clone_modules
+
+# texts
+
+texts = element texts {
+    empty
+}
+
+# texts
+
+# proposals
+
+proposal = element proposal {
+    element label { text } &
+    element archs { text }? &
+    element mode { text } &
+    element stage { text } &
+    element name { text } &
+    element enable_skip { text }? &
+    element proposal_modules {
+	LIST,
+	element proposal_module {
+	    element name { text } &
+	    element presentation_order { text }?
+	}+
+    } &
+    element proposal_tabs {
+	LIST,
+	element proposal_tab {
+	    element label { text } &
+	    element proposal_modules {
+		LIST,
+		element proposal_module { text }+
+	    }
+	}+
+    }?
+}
+
+proposals = element proposals {
+    LIST,
+    proposal+
+}
+
+# proposals
 
 workflows = element workflows { text }
 
@@ -309,6 +359,8 @@ productDefines_elements =
     | network
     | proposals
     | workflows
+    | clone_modules
+    | texts
 
 start = element productDefines {
     productDefines_elements*
