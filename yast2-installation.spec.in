@@ -116,7 +116,7 @@ YaST Installation - auto-generated documentation.
 %defattr(-,root,root)
 %dir /usr/share/YaST2/control
 /usr/share/YaST2/control/*.xml
-/usr/share/YaST2/control/*.dtd
+/usr/share/YaST2/control/*.rng
 
 @clientdir@/*.ycp
 @moduledir@/*.ycp
