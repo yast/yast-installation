@@ -169,6 +169,7 @@ software_elements =
     | external_sources_link
     | dropped_packages
     | extra_urls
+    | base_selection
 
 delete_old_packages = element delete_old_packages { BOOLEAN }
 selection_type = element selection_type { SYMBOL }
@@ -180,6 +181,7 @@ only_update_selected = element only_update_selected { BOOLEAN }
 online_repos_preselected = element online_repos_preselected { BOOLEAN }
 external_sources_link = element external_sources_link { text }
 dropped_packages = element dropped_packages { text }
+base_selection = element base_selection { text }
 
 delete_old_packages_reverse_list = element delete_old_packages_reverse_list {
     LIST,
@@ -245,7 +247,38 @@ software = element software {
 
 # software
 
-partitioning = element partitioning { text }
+# partitioning
+
+partitioning_elements =
+    evms_config
+    | try_separate_home
+    | limit_try_home
+    | root_space_percent
+    | root_base_size
+    | root_max_size
+    | proposal_lvm
+    | proposal_evms
+    | vm_desired_size
+    | vm_home_max_size
+    | boot_evms
+
+evms_config = element evms_config { BOOLEAN }
+try_separate_home = element try_separate_home { BOOLEAN }
+limit_try_home = element limit_try_home { text }
+root_space_percent = element root_space_percent { text }
+root_base_size = element root_base_size { text }
+root_max_size = element root_max_size { text }
+proposal_lvm = element proposal_lvm { BOOLEAN }
+proposal_evms = element proposal_evms { BOOLEAN }
+vm_desired_size = element vm_desired_size { text }
+vm_home_max_size = element vm_home_max_size { text }
+boot_evms = element boot_evms { BOOLEAN }
+
+partitioning = element partitioning {
+    partitioning_elements*
+}
+
+# partitioning
 
 network = element network { text }
 
