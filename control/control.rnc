@@ -309,26 +309,34 @@ clone_modules = element clone_modules {
 # texts
 
 texts = element texts {
-    empty
+    element * {
+	element label { text }
+    }+
 }
 
 # texts
 
 # proposals
 
+# There are two types of element 'proposal_modules'
+# 1.) proposal_modules { name { text }, presentation_order { text } }
+# 2.) proposal_modules { text }
+proposal_module = element proposal_module {
+    element name { text }? &
+    element presentation_order { text }? &
+    text?
+}
+
 proposal = element proposal {
-    element label { text } &
+    element label { text }? &
     element archs { text }? &
-    element mode { text } &
+    element mode { text }? &
     element stage { text } &
     element name { text } &
-    element enable_skip { text }? &
+    element enable_skip { "yes" | "no" }? &
     element proposal_modules {
 	LIST,
-	element proposal_module {
-	    element name { text } &
-	    element presentation_order { text }?
-	}+
+	proposal_module+
     } &
     element proposal_tabs {
 	LIST,
@@ -336,7 +344,7 @@ proposal = element proposal {
 	    element label { text } &
 	    element proposal_modules {
 		LIST,
-		element proposal_module { text }+
+		proposal_module+
 	    }
 	}+
     }?
