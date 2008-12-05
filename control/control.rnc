@@ -287,6 +287,7 @@ partitioning_elements =
     | vm_desired_size
     | vm_home_max_size
     | boot_evms
+    | use_separate_multipath_module
 
 evms_config = element evms_config { BOOLEAN }
 try_separate_home = element try_separate_home { BOOLEAN }
@@ -299,6 +300,8 @@ proposal_evms = element proposal_evms { BOOLEAN }
 vm_desired_size = element vm_desired_size { text }
 vm_home_max_size = element vm_home_max_size { text }
 boot_evms = element boot_evms { BOOLEAN }
+# used by HASI Add-On
+use_separate_multipath_module = element use_separate_multipath_module { BOOLEAN }
 
 partitioning = element partitioning {
     partitioning_elements*
