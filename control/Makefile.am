@@ -6,8 +6,8 @@ controldir = $(yast2dir)/control
 
 control_DATA = \
 	control.xml \
-	control.rng \
-	control.rnc
+	control.rnc \
+	control.rng
 
 
 # Note: The control.glade -> control.xml symlink is required to make xgettext
@@ -19,6 +19,8 @@ control_DATA = \
 
 
 EXTRA_DIST =  $(control_DATA) $(product_DATA)
+
+CLEANFILES = control.rng
 
 include $(top_srcdir)/Makefile.am.common
 

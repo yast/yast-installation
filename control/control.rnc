@@ -68,6 +68,9 @@ globals_elements =
     | displaymanager_shutdown
     | enable_kdump
     | polkit_default_privs
+    | debug_workflow
+    | subworkflows
+    | default_subworkflow
 
 additional_kernel_parameters = element additional_kernel_parameters { text }
 incomplete_translation_treshold = element incomplete_translation_treshold { text }
@@ -75,7 +78,9 @@ base_product_license_directory = element base_product_license_directory { text }
 ui_mode = element ui_mode { text }
 displaymanager_shutdown = element displaymanager_shutdown { text }
 polkit_default_privs = element polkit_default_privs { text }
+default_subworkflow = element default_subworkflow { text }
 
+debug_workflow = element debug_workflow { BOOLEAN }
 enable_autologin = element enable_autologin { BOOLEAN }
 enable_firewall = element enable_firewall { BOOLEAN }
 firewall_enable_ssh = element firewall_enable_ssh { BOOLEAN }
@@ -143,6 +148,21 @@ automatic_configuration = element automatic_configuration {
     }+
 }
 
+subworkflows = element subworkflows {
+    LIST,
+    element subworkflow {
+	element name { text } &
+	element modules {
+	    LIST,
+	    element module { text }+
+	}? &
+	element proposals {
+	    LIST,
+	    element proposal { text }+
+	}?
+    }+
+}
+
 globals = element globals {
     globals_elements*
 }
@@ -170,6 +190,7 @@ software_elements =
     | dropped_packages
     | extra_urls
     | base_selection
+    | packages_affecting_pkg_manager
 
 delete_old_packages = element delete_old_packages { BOOLEAN }
 selection_type = element selection_type { SYMBOL }
@@ -239,6 +260,11 @@ extra_urls = element extra_urls {
 	element autorefresh { BOOLEAN }? &
 	element priority { INTEGER }?
     }+
+}
+
+packages_affecting_pkg_manager = element packages_affecting_pkg_manager {
+    LIST,
+    element package { text }+
 }
 
 software = element software {
@@ -371,15 +397,23 @@ module = element module {
     element arguments {
 	element first_run { "yes" | "no" }?
 	| element * { text }*
+	# used in autoyast
+	| text
     }? &
     element retranslate { BOOLEAN }? &
     element update { BOOLEAN }? &
-    element enabled { BOOLEAN }?
+    element enabled { BOOLEAN }? &
+    element postscript {
+	element interpreter { text } &
+	element source { text }
+    }?
 }
 
 workflow = element workflow {
     element defaults {
 	element archs { text }? &
+	# used in autoyast
+	element arguments { text }? &
 	element enable_back { "yes" | "no" }? &
 	element enable_next { "yes" | "no" }?
     }? &
@@ -399,6 +433,21 @@ workflows = element workflows {
 
 # workflows
 
+# inst_finish_stages
+
+inst_finish_stages = element inst_finish_stages {
+    LIST,
+    element inst_finish_stage {
+	element label { text } &
+	element steps {
+	    LIST,
+	    element step { text }+
+	}
+    }+
+}
+
+# inst_finish_stages
+
 productDefines_elements =
     textdomain
     | globals
@@ -409,6 +458,7 @@ productDefines_elements =
     | workflows
     | clone_modules
     | texts
+    | inst_finish_stages
 
 start = element productDefines {
     productDefines_elements*
