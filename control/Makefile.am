@@ -6,7 +6,8 @@ controldir = $(yast2dir)/control
 
 control_DATA = \
 	control.xml \
-	control.rng
+	control.rng \
+	control.rnc
 
 
 # Note: The control.glade -> control.xml symlink is required to make xgettext
