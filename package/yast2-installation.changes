@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Dec  5 10:38:41 CET 2008 - locilka@suse.cz
+
+- New control.rnc/rng for control file validation (bnc #455994).
+- 2.17.44
+
+-------------------------------------------------------------------
 Wed Dec  3 18:33:59 CET 2008 - locilka@suse.cz
 
 - inst_extrasources moved before inst_ask_online_update to register
