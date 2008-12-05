@@ -412,14 +412,16 @@ module = element module {
     }?
 }
 
+workflow_defaults = element defaults {
+    element archs { text }? &
+    # used in autoyast
+    element arguments { text }? &
+    element enable_back { "yes" | "no" }? &
+    element enable_next { "yes" | "no" }?
+}
+
 workflow = element workflow {
-    element defaults {
-	element archs { text }? &
-	# used in autoyast
-	element arguments { text }? &
-	element enable_back { "yes" | "no" }? &
-	element enable_next { "yes" | "no" }?
-    }? &
+    workflow_defaults? &
     element label { text }? &
     element mode { text } &
     element stage { text } &
@@ -451,6 +453,42 @@ inst_finish_stages = element inst_finish_stages {
 
 # inst_finish_stages
 
+# update
+
+update_workflow_items =
+    element insert_modules {
+	LIST,
+	element insert_module {
+	    element before { text } &
+	    module+
+	}+
+    }
+    |
+    element replace_modules {
+	"fixme"
+    }
+    |
+    element append_modules {
+	"fixme"
+    }
+
+update_workflow = element workflow {
+    workflow_defaults? &
+    element label { text }? &
+    element mode { text } &
+    element stage { text } &
+    update_workflow_items+
+}
+
+update = element update {
+    element workflows {
+	LIST,
+	update_workflow+
+    }
+}
+
+# update
+
 productDefines_elements =
     textdomain
     | globals
@@ -462,6 +500,7 @@ productDefines_elements =
     | clone_modules
     | texts
     | inst_finish_stages
+    | update
 
 start = element productDefines {
     productDefines_elements*
