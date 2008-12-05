@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!DOCTYPE productDefines SYSTEM "/usr/share/YaST2/control/control.dtd">
 <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
     xmlns:config="http://www.suse.com/1.0/configns">
 	<textdomain>control</textdomain>
