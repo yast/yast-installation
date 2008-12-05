@@ -4,6 +4,9 @@
 @HEADER@
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2-core-devel yast2-devtools yast2-testsuite
 
+# xmllint
+BuildRequies:	libxml2
+
 # to convert control.rnc o control.rng
 BuildRequires:	trang
 
@@ -119,6 +122,7 @@ YaST Installation - auto-generated documentation.
 %defattr(-,root,root)
 %dir /usr/share/YaST2/control
 /usr/share/YaST2/control/*.xml
+# Fixme: move to another package (to make build of other packages faster)
 /usr/share/YaST2/control/*.rng
 /usr/share/YaST2/control/*.rnc
 

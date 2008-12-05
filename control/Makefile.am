@@ -25,6 +25,7 @@ include $(top_srcdir)/Makefile.am.common
 control.rng: control.rnc
 	trang -I rnc -O rng control.rnc control.rng
 
-validate:
+# checks only those control files that belong to this package
+check-local:
 	trang -I rnc -O rng control.rnc control.rng
-	for file in `ls *.xml`; do xmllint --relaxng control.rng --noout ${file}; done
+	xmllint --relaxng control.rng --noout add-on-template_installation.xml control.xml
