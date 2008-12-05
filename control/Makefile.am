@@ -20,11 +20,9 @@ control_DATA = \
 
 EXTRA_DIST =  $(control_DATA) $(product_DATA)
 
-CLEANFILES = control.rng
-
 include $(top_srcdir)/Makefile.am.common
 
-control.rng:
+control.rng: control.rnc
 	trang -I rnc -O rng control.rnc control.rng
 
 validate:
