@@ -28,4 +28,4 @@ control.rng: control.rnc
 # checks only those control files that belong to this package
 check-local:
 	trang -I rnc -O rng control.rnc control.rng
-	xmllint --relaxng control.rng --noout add-on-template_installation.xml control.xml
+	xmllint --relaxng control.rng --noout control.xml
