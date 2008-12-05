@@ -22,7 +22,7 @@ EXTRA_DIST =  $(control_DATA) $(product_DATA)
 
 include $(top_srcdir)/Makefile.am.common
 
-install-data-local:
+control.rng:
 	trang -I rnc -O rng control.rnc control.rng
 
 validate:
