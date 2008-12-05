@@ -5,7 +5,7 @@
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2-core-devel yast2-devtools yast2-testsuite
 
 # xmllint
-BuildRequies:	libxml2
+BuildRequires:	libxml2
 
 # to convert control.rnc o control.rng
 BuildRequires:	trang

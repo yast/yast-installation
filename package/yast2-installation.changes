@@ -2,6 +2,7 @@
 Fri Dec  5 10:38:41 CET 2008 - locilka@suse.cz
 
 - New control.rnc/rng for control file validation (bnc #455994).
+- Added build-time control file validation.
 - 2.17.44
 
 -------------------------------------------------------------------
