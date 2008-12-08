@@ -25,6 +25,11 @@ SYMBOL =
 LIST =
   attribute config:type { "list" }
 
+ANY =
+  (
+    BOOLEAN | INTEGER | SYMBOL | LIST | text
+  )
+
 # types
 
 textdomain = element textdomain { text }
@@ -71,6 +76,9 @@ globals_elements =
     | debug_workflow
     | subworkflows
     | default_subworkflow
+    | language
+    | timezone
+    | enable_autologin
 
 additional_kernel_parameters = element additional_kernel_parameters { text }
 incomplete_translation_treshold = element incomplete_translation_treshold { text }
@@ -79,6 +87,8 @@ ui_mode = element ui_mode { text }
 displaymanager_shutdown = element displaymanager_shutdown { text }
 polkit_default_privs = element polkit_default_privs { text }
 default_subworkflow = element default_subworkflow { text }
+language = element language { text }
+timezone = element timezone { text }
 
 debug_workflow = element debug_workflow { BOOLEAN }
 enable_autologin = element enable_autologin { BOOLEAN }
@@ -191,6 +201,19 @@ software_elements =
     | extra_urls
     | base_selection
     | packages_affecting_pkg_manager
+    # autoyast-related:
+    | autoyast_software
+
+autoyast_software =
+    element base { text }
+    | element addons {
+	LIST,
+	element addon { text }?
+      }
+    | element packages {
+	LIST,
+	element package { text }?
+      }
 
 delete_old_packages = element delete_old_packages { BOOLEAN }
 selection_type = element selection_type { SYMBOL }
@@ -288,6 +311,9 @@ partitioning_elements =
     | vm_home_max_size
     | boot_evms
     | use_separate_multipath_module
+    | prefer_remove
+    | remove_special_partitions
+    | partitions
 
 evms_config = element evms_config { BOOLEAN }
 try_separate_home = element try_separate_home { BOOLEAN }
@@ -300,8 +326,21 @@ proposal_evms = element proposal_evms { BOOLEAN }
 vm_desired_size = element vm_desired_size { text }
 vm_home_max_size = element vm_home_max_size { text }
 boot_evms = element boot_evms { BOOLEAN }
+prefer_remove = element prefer_remove { BOOLEAN }
+remove_special_partitions = element remove_special_partitions { BOOLEAN }
 # used by HASI Add-On
 use_separate_multipath_module = element use_separate_multipath_module { BOOLEAN }
+
+# these have to be defined by Storage
+partitions = element partitions {
+    LIST,
+    element listentry {
+	element * { ANY }*
+    }*,
+    element partition {
+	element * { ANY }*
+    }*
+}
 
 partitioning = element partitioning {
     partitioning_elements*
@@ -361,12 +400,13 @@ proposal = element proposal {
     element archs { text }? &
     element mode { text }? &
     element stage { text } &
-    element name { text } &
+    element name { text }? &
+    element type { text }? &
     element enable_skip { "yes" | "no" }? &
     element proposal_modules {
 	LIST,
 	proposal_module+
-    } &
+    }? &
     element proposal_tabs {
 	LIST,
 	element proposal_tab {
@@ -406,6 +446,16 @@ module = element module {
     element retranslate { BOOLEAN }? &
     element update { BOOLEAN }? &
     element enabled { BOOLEAN }? &
+    element prescript {
+	# @example
+	# shell
+	element interpreter { text } &
+	# @example
+	# <![CDATA[#!/bin/sh
+	# echo test > /tmp/test
+	# ]]>
+	element source { text }
+    }? &
     element postscript {
 	element interpreter { text } &
 	element source { text }
@@ -455,36 +505,90 @@ inst_finish_stages = element inst_finish_stages {
 
 # update
 
-update_workflow_items =
+update_workflow = element workflow {
+    workflow_defaults? &
+    element label { text }? &
+    element stage { text } &
+    element mode { text } &
     element insert_modules {
 	LIST,
 	element insert_module {
 	    element before { text } &
-	    module+
+	    element modules {
+		LIST,
+		module+
+	    }
 	}+
-    }
-    |
-    element replace_modules {
-	"fixme"
-    }
-    |
+    }? &
     element append_modules {
-	"fixme"
-    }
+	LIST,
+	module+
+    }? &
+    element remove_modules {
+	LIST,
+	element remove_module { text }+
+    }? &
+    element replace_modules {
+	LIST,
+	element replace_module {
+	    element replace { text } &
+	    element modules {
+		LIST,
+		module+
+	    }
+	}+
+    }?
+}
 
-update_workflow = element workflow {
-    workflow_defaults? &
-    element label { text }? &
-    element mode { text } &
+update_proposal = element proposal {
     element stage { text } &
-    update_workflow_items+
+    element mode { text } &
+    element label { text }? &
+    element name { text } &
+    element enable_skip { "yes" | "no" }? &
+    element append_modules {
+	LIST,
+	element append_module { text }+
+    }? &
+    element remove_modules {
+	LIST,
+	element remove_module { text }+
+    }? &
+    element replace_modules {
+	LIST,
+	element replace_module {
+	    element replace { text } &
+	    element new_modules {
+		LIST,
+		element new_module { text }+
+	    }
+	}
+    }?
 }
 
 update = element update {
+    element proposals {
+	LIST,
+	update_proposal+
+    }? &
     element workflows {
 	LIST,
 	update_workflow+
-    }
+    }? &
+    element inst_finish {
+	element before_chroot {
+	    LIST,
+	    element module { text }+
+	}? &
+	element after_chroot {
+	    LIST,
+	    element module { text }+
+	}? &
+	element before_umount {
+	    LIST,
+	    element module { text }+
+	}?
+    }?
 }
 
 # update

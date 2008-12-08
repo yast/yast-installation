@@ -2,10 +2,6 @@
 <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
     xmlns:config="http://www.suse.com/1.0/configns">
 
-    <globals>
-        <test/>
-    </globals>
-
     <software>
         <selection_type config:type="symbol">fixed</selection_type>
         <base>Minimal</base>
@@ -22,107 +18,107 @@
             <mode>installation</mode>
             <stage>initial</stage>
             <type>initial</type>
-            <modules config:type="list">
-                <module>proposal_hwinfo</module> 
-                <module>proposal_mode</module>
-                <module>proposal_keyboard</module>
-                <module>proposal_mouse</module>
-                <module>proposal_partitions</module> 
-                <module>proposal_software</module>
-                <module>bootloader_proposal</module>
-                <module>proposal_timezone</module>
-                <module>proposal_language</module>
-            </modules>
+            <proposal_modules config:type="list">
+                <proposal_module>proposal_hwinfo</proposal_module> 
+                <proposal_module>proposal_mode</proposal_module>
+                <proposal_module>proposal_keyboard</proposal_module>
+                <proposal_module>proposal_mouse</proposal_module>
+                <proposal_module>proposal_partitions</proposal_module> 
+                <proposal_module>proposal_software</proposal_module>
+                <proposal_module>bootloader_proposal</proposal_module>
+                <proposal_module>proposal_timezone</proposal_module>
+                <proposal_module>proposal_language</proposal_module>
+            </proposal_modules>
         </proposal>
         <proposal>
             <mode>update</mode>
             <stage>initial</stage>
             <type>initial</type>
-            <modules config:type="list">
-                <module>proposal_mode</module>
-                <module>proposal_rootpart</module>
-                <module>proposal_update</module>
-                <module>proposal_packages</module>
-                <module>proposal_backup</module>
-                <module>proposal_language</module>
-                <module>proposal_keyboard</module>
-            </modules>
+            <proposal_modules config:type="list">
+                <proposal_module>proposal_mode</proposal_module>
+                <proposal_module>proposal_rootpart</proposal_module>
+                <proposal_module>proposal_update</proposal_module>
+                <proposal_module>proposal_packages</proposal_module>
+                <proposal_module>proposal_backup</proposal_module>
+                <proposal_module>proposal_language</proposal_module>
+                <proposal_module>proposal_keyboard</proposal_module>
+            </proposal_modules>
         </proposal>
         <proposal>
             <archs>s390</archs>
             <mode>installation</mode>
             <stage>initial</stage>
             <type>initial</type>
-            <modules config:type="list">
-                <module>proposal_mode</module>
-                <module>proposal_partitions</module>
-                <module>proposal_software</module>
-                <module>proposal_timezone</module>
-                <module>proposal_language</module>
-            </modules>
+            <proposal_modules config:type="list">
+                <proposal_module>proposal_mode</proposal_module>
+                <proposal_module>proposal_partitions</proposal_module>
+                <proposal_module>proposal_software</proposal_module>
+                <proposal_module>proposal_timezone</proposal_module>
+                <proposal_module>proposal_language</proposal_module>
+            </proposal_modules>
         </proposal>
         <proposal>
             <archs>s390</archs>
             <mode>update</mode>
             <stage>initial</stage>
             <type>initial</type>
-            <modules config:type="list">
-                <module>proposal_mode</module>
-                <module>proposal_rootpart</module>
-                <module>proposal_update</module>
-                <module>proposal_packages</module>
-                <module>proposal_backup</module>
-                <module>proposal_language</module>
-            </modules>
+            <proposal_modules config:type="list">
+                <proposal_module>proposal_mode</proposal_module>
+                <proposal_module>proposal_rootpart</proposal_module>
+                <proposal_module>proposal_update</proposal_module>
+                <proposal_module>proposal_packages</proposal_module>
+                <proposal_module>proposal_backup</proposal_module>
+                <proposal_module>proposal_language</proposal_module>
+            </proposal_modules>
         </proposal>
         <proposal>
             <type>network</type>
             <stage>continue</stage>
-            <modules config:type="list">
-                <module>lan_proposal</module>
-                <module>dsl_proposal</module>
-                <module>isdn_proposal</module>
-                <module>modem_proposal</module>
-                <module>proxy_proposal</module>
-                <module>remote_proposal</module>
-            </modules>
+            <proposal_modules config:type="list">
+                <proposal_module>lan_proposal</proposal_module>
+                <proposal_module>dsl_proposal</proposal_module>
+                <proposal_module>isdn_proposal</proposal_module>
+                <proposal_module>modem_proposal</proposal_module>
+                <proposal_module>proxy_proposal</proposal_module>
+                <proposal_module>remote_proposal</proposal_module>
+            </proposal_modules>
         </proposal>
         <proposal>
             <type>hardware</type>
             <stage>continue</stage>
-            <modules config:type="list">
-                <module>x11_proposal</module>
-                <module>printer_proposal</module>
-                <module>sound_proposal</module>
-                <module>tv_proposal</module>
-            </modules>
+            <proposal_modules config:type="list">
+                <proposal_module>x11_proposal</proposal_module>
+                <proposal_module>printer_proposal</proposal_module>
+                <proposal_module>sound_proposal</proposal_module>
+                <proposal_module>tv_proposal</proposal_module>
+            </proposal_modules>
         </proposal>
         <proposal>
             <archs>s390,ppc64</archs>
             <type>network</type>
             <stage>continue</stage>
-            <modules config:type="list">
-                <module>lan_proposal</module>
-                <module>proxy_proposal</module>
-                <module>remote_proposal</module>
-            </modules>
+            <proposal_modules config:type="list">
+                <proposal_module>lan_proposal</proposal_module>
+                <proposal_module>proxy_proposal</proposal_module>
+                <proposal_module>remote_proposal</proposal_module>
+            </proposal_modules>
         </proposal>
         <proposal>
             <archs>ppc64</archs>
             <type>hardware</type>
             <stage>continue</stage>
-            <modules config:type="list">
-                <module>x11_proposal</module>
-                <module>printer_proposal</module>
-            </modules>
+            <proposal_modules config:type="list">
+                <proposal_module>x11_proposal</proposal_module>
+                <proposal_module>printer_proposal</proposal_module>
+            </proposal_modules>
         </proposal>
         <proposal>
             <archs>s390</archs>
             <type>hardware</type>
             <stage>continue</stage>
-            <modules config:type="list">
-                <module>printer_proposal</module>
-            </modules>
+            <proposal_modules config:type="list">
+                <proposal_module>printer_proposal</proposal_module>
+            </proposal_modules>
         </proposal>
     </proposals>
 
