@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<productDefines xmlns="http://www.suse.com/1.0/yast2ns"
+    xmlns:config="http://www.suse.com/1.0/configns">
+    <textdomain>control-domain</textdomain>
+
+    <workflows config:type="list">
+	<!-- Installation on a running system -->
+	<workflow>
+	    <stage>normal</stage>
+	    <mode>installation,normal</mode>
+
+	    <defaults>
+		<enable_back>no</enable_back>
+		<enable_next>no</enable_next>
+	    </defaults>
+
+	    <modules config:type="list">
+		<module>
+		    <label>XYZ Installation</label>
+		    <name>sw_single</name>
+		    <enable_back>yes</enable_back>
+		    <enable_next>yes</enable_next>
+		</module>
+		<module>
+		    <label>XYZ Configuration</label>
+		    <name>inst_XYZ</name>
+		    <enable_back>yes</enable_back>
+		    <enable_next>yes</enable_next>
+		</module>
+		<module>
+		    <label>Registration</label>
+		    <name>inst_suse_register</name>
+		    <enable_back>yes</enable_back>
+		    <enable_next>yes</enable_next>
+		</module>
+	    </modules>
+	</workflow>
+    </workflows>
+
+    <update>
+	<workflows config:type="list">
+	    <workflow>
+		<defaults>
+		    <enable_back>yes</enable_back>
+		    <enable_next>yes</enable_next>
+		</defaults>
+
+		<!-- Second Stage Installation -->
+		<stage>continue</stage>
+		<mode>installation</mode>
+
+		<!-- Installation: Insert -->
+		<insert_modules config:type="list">
+		    <insert_module>
+			<before>suseconfig</before>
+			<modules config:type="list">
+			    <module>
+				<label>XYZ Configuration</label>
+				<name>XYZ</name>
+			    </module>
+			</modules>
+		    </insert_module>
+		</insert_modules>
+
+	    </workflow>
+	</workflows>
+    </update>
+
+</productDefines>
