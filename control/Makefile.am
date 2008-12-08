@@ -1,6 +1,6 @@
 # Makefile.am for installation/general
 #
-SUBDIRS = docs tests
+SUBDIRS = docs tests examples
 
 controldir = $(yast2dir)/control
 
@@ -9,6 +9,11 @@ control_DATA = \
 	control.rnc \
 	control.rng
 
+xml_files = \
+	control.SLED.xml \
+	control.SLES.xml \
+	control.openSUSE.xml \
+	add-on-template_installation.xml
 
 # Note: The control.glade -> control.xml symlink is required to make xgettext
 # auto-detect the type of this file (glade) so it will extract all
@@ -18,7 +23,7 @@ control_DATA = \
 # the file. 
 
 
-EXTRA_DIST =  $(control_DATA) $(product_DATA)
+EXTRA_DIST =  $(control_DATA) $(product_DATA) $(xml_files)
 
 include $(top_srcdir)/Makefile.am.common
 
@@ -29,3 +34,4 @@ control.rng: control.rnc
 check-local:
 	trang -I rnc -O rng control.rnc control.rng
 	xmllint --relaxng control.rng --noout control.xml
+	xmllint --relaxng control.rng --noout $(xml_files)
