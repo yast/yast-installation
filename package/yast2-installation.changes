@@ -3,7 +3,8 @@ Mon Dec  8 13:16:33 CET 2008 - locilka@suse.cz
 
 - Updated control.rnc
 - Added two more control-file examples.
-- Adjusted control-file examples (bnc #438678).
+- Checking all control files during build.
+- Adjusted control-file examples (all bnc #438678).
 - 2.17.45
 
 -------------------------------------------------------------------
