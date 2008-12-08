@@ -307,6 +307,19 @@ boolean DeployTarImage (string id, string target) {
 	    }
 	}
     }
+
+    // BNC #456337
+    // Checking the exit code (0 = OK, nil = still running, 'else' = error)
+    integer exitcode = (integer) SCR::Read (.process.status, pid);
+
+    if (exitcode != nil && exitcode != 0) {
+	y2milestone (
+	    "Deploying has failed, exit code was: %1, stderr: %2",
+	    exitcode, SCR::Read (.process.read_stderr, pid)
+	);
+	aborted = true;
+    }
+
     y2milestone ("Finished");
 
     if (aborted)
