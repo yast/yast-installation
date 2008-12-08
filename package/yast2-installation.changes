@@ -5,6 +5,8 @@ Mon Dec  8 13:16:33 CET 2008 - locilka@suse.cz
 - Added two more control-file examples.
 - Checking all control files during build.
 - Adjusted control-file examples (all bnc #438678).
+- Checking the process exit status returned after deploying an
+  image (bnc #456337).
 - 2.17.45
 
 -------------------------------------------------------------------
