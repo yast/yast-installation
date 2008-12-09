@@ -79,6 +79,7 @@ globals_elements =
     | language
     | timezone
     | enable_autologin
+    | runlevel
 
 additional_kernel_parameters = element additional_kernel_parameters { text }
 incomplete_translation_treshold = element incomplete_translation_treshold { text }
@@ -89,6 +90,7 @@ polkit_default_privs = element polkit_default_privs { text }
 default_subworkflow = element default_subworkflow { text }
 language = element language { text }
 timezone = element timezone { text }
+runlevel = element runlevel { text }
 
 debug_workflow = element debug_workflow { BOOLEAN }
 enable_autologin = element enable_autologin { BOOLEAN }
@@ -201,19 +203,11 @@ software_elements =
     | extra_urls
     | base_selection
     | packages_affecting_pkg_manager
-    # autoyast-related:
-    | autoyast_software
-
-autoyast_software =
-    element base { text }
-    | element addons {
-	LIST,
-	element addon { text }?
-      }
-    | element packages {
-	LIST,
-	element package { text }?
-      }
+    | software_base
+    | software_addons
+    | software_packages
+    | kernel_packages
+    | packages_transmogrify
 
 delete_old_packages = element delete_old_packages { BOOLEAN }
 selection_type = element selection_type { SYMBOL }
@@ -226,6 +220,25 @@ online_repos_preselected = element online_repos_preselected { BOOLEAN }
 external_sources_link = element external_sources_link { text }
 dropped_packages = element dropped_packages { text }
 base_selection = element base_selection { text }
+software_base = element base { text }
+
+# a client that is called to modifiy the list of selected kernel packages
+packages_transmogrify = element packages_transmogrify { text }
+
+software_addons = element addons {
+    LIST,
+    element addon { text }+
+}
+
+software_packages = element packages {
+    LIST,
+    element package { text }+
+}
+
+kernel_packages = element kernel_packages {
+    LIST,
+    element package { text }+
+}
 
 delete_old_packages_reverse_list = element delete_old_packages_reverse_list {
     LIST,

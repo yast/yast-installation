@@ -13,6 +13,7 @@ textdomain="control"
         <enable_autologin config:type="boolean">true</enable_autologin>
         <language>de_DE</language>
         <timezone>Canada/Eastern</timezone>
+        <runlevel>5</runlevel>
     </globals>
 
     <!-- Force a selection (`fixed) to be used instead of automatically
