@@ -43,6 +43,9 @@ Requires:	yast2-packager >= 2.17.49
 # Storage::GetCommitInfo() call in include/misc.ycp
 Requires:	yast2-storage >= 2.17.47
 
+# use in startup scripts
+Requires:	initviocons
+
 # Only in inst-sys
 # Requires:	yast2-runlevel
 # Requires:	yast2-network
