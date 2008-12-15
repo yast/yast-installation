@@ -589,12 +589,6 @@ Please visit us at http://www.novell.com/linux/.
 		</module>
                 <module>
 	            <label>Perform Installation</label>
-                    <name>do_resize</name>
-                    <update config:type="boolean">false</update>
-                    <archs>i386,x86_64,ia64</archs>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
                     <name>prepdisk</name>
                 </module>
                 <module>
@@ -694,13 +688,6 @@ Please visit us at http://www.novell.com/linux/.
 		    <label>Perform Update</label>
 		    <name>prepareprogress</name>
 		</module>
-
-                <module>
-	            <label>Perform Update</label>
-                    <name>do_resize</name>
-                    <update config:type="boolean">false</update>
-                    <archs>i386,x86_64,ia64</archs>
-                </module>
                 <module>
 	            <label>Perform Update</label>
                     <name>prepdisk</name>
@@ -767,12 +754,6 @@ Please visit us at http://www.novell.com/linux/.
 		</module>
                 <module>
 	            <label>Perform Installation</label>
-                    <name>do_resize</name>
-                    <update config:type="boolean">false</update>
-                    <archs>i386,x86_64,ia64</archs>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
                     <name>prepdisk</name>
                 </module>
                 <module>
@@ -812,12 +793,6 @@ Please visit us at http://www.novell.com/linux/.
 		    <label>Perform Installation</label>
 		    <name>prepareprogress</name>
 		</module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>do_resize</name>
-                    <update config:type="boolean">false</update>
-                    <archs>i386,x86_64,ia64</archs>
-                </module>
                 <module>
  	            <label>Perform Installation</label>
                    <name>prepdisk</name>

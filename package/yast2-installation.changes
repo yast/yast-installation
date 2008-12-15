@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Dec 15 14:32:27 CET 2008 - locilka@suse.cz
+
+- Removed all (inst_)do_rezise calls from all control files on
+  aschnell's request.
+
+-------------------------------------------------------------------
 Fri Dec 12 16:36:28 CET 2008 - aschnell@suse.de
 
 - require initviocons (bnc #173426)
