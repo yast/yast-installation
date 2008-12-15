@@ -663,12 +663,6 @@ with a modern look and feel.</label></description_kde>
 		</module>
                 <module>
 	            <label>Perform Installation</label>
-                    <name>do_resize</name>
-                    <update config:type="boolean">false</update>
-                    <archs>i386,x86_64,ia64</archs>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
                     <name>prepdisk</name>
                 </module>
 		<!-- Installation from images -->
@@ -778,12 +772,6 @@ with a modern look and feel.</label></description_kde>
 		</module>
                 <module>
                     <label>Perform Installation</label>
-                    <name>inst_do_resize</name>
-                    <update config:type="boolean">false</update>
-                    <archs>i386,x86_64,ia64</archs>
-                </module>
-                <module>
-                    <label>Perform Installation</label>
                     <name>inst_prepdisk</name>
                 </module>
                 <module>
@@ -878,12 +866,6 @@ with a modern look and feel.</label></description_kde>
 		</module>
                 <module>
 	            <label>Perform Update</label>
-                    <name>do_resize</name>
-                    <update config:type="boolean">false</update>
-                    <archs>i386,x86_64,ia64</archs>
-                </module>
-                <module>
-	            <label>Perform Update</label>
                     <name>prepdisk</name>
                 </module>
                 <module>
@@ -954,12 +936,6 @@ with a modern look and feel.</label></description_kde>
 		</module>
                 <module>
 	            <label>Perform Installation</label>
-                    <name>do_resize</name>
-                    <update config:type="boolean">false</update>
-                    <archs>i386,x86_64,ia64</archs>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
                     <name>prepdisk</name>
                 </module>
                 <module>
@@ -1003,12 +979,6 @@ with a modern look and feel.</label></description_kde>
 		    <label>Perform Installation</label>
 		    <name>prepareprogress</name>
 		</module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>do_resize</name>
-                    <update config:type="boolean">false</update>
-                    <archs>i386,x86_64,ia64</archs>
-                </module>
                 <module>
  	            <label>Perform Installation</label>
                    <name>prepdisk</name>
