@@ -139,8 +139,11 @@ void UpdateWizardSteps () {
 	    // Text for confirmation popup before the installation really starts 1/3
 	    body = _("<p>All information required for the base installation is now complete.</p>");
 
-	    map<symbol, any> commit_info = Storage::GetCommitInfo();
-	    if (commit_info[`destructive]:false)
+	    boolean some_destructive = find(map info, Storage::GetCommitInfos(), {
+		return info[`destructive]:false;
+	    }) != nil;
+
+	    if (some_destructive)
 	    {
 		// Text for confirmation popup before the installation really starts 2/3
 		body = body + _("<p>If you continue now, <b>existing
