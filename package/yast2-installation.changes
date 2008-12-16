@@ -9,6 +9,7 @@ Tue Dec 16 12:29:27 CET 2008 - locilka@suse.cz
 
 - Removed SLED control file labels that should be hidden
   (bnc #459080).
+- Using a better help text for inst_new_desktop (bnc #432912).
 
 -------------------------------------------------------------------
 Mon Dec 15 14:32:27 CET 2008 - locilka@suse.cz
