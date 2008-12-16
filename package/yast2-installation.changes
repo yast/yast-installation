@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Dec 16 12:29:27 CET 2008 - locilka@suse.cz
+
+- Removed SLED control file labels that should be hidden
+  (bnc #459080).
+
+-------------------------------------------------------------------
 Mon Dec 15 14:32:27 CET 2008 - locilka@suse.cz
 
 - Removed all (inst_)do_rezise calls from all control files on
