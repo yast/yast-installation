@@ -37,8 +37,8 @@ of different desktop environments. Below you see a list of the 2 major ones
 with a large number of desktop applications such as email, file browser, games and many others.</p>") +
 
 // TRANSLATORS: help text, part 3
-_("Additionally, not only desktop but you can also chose a minimalistic 
-installation that could fit your needs better.");
+_("<p>Selecting <b>Other</b>, you can chose a minimal installation that
+could fit your needs better.</p>");
 
 if (DefaultDesktop::Desktop() == nil || DefaultDesktop::Desktop() == "") {
     DefaultDesktop::Init();
