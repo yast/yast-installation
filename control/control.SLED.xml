@@ -864,7 +864,6 @@ Please visit us at http://www.novell.com/linux/.
 		    <name>restore_settings</name>
 		</module>
                 <module>
-	            <label>Clean Up</label>
                     <name>suseconfig</name>
                 </module>
                 <module>
@@ -979,7 +978,7 @@ Please visit us at http://www.novell.com/linux/.
                     <name>user</name>
                 </module>
 		<module>
-		    <label>Users</label>
+		    <!-- BNC #459080, no label is intentional -->
 		    <name>user_non_interactive</name>
 		    <!-- BNC #401319, define client to call explicitly -->
 		    <execute>inst_user</execute>
@@ -1097,7 +1096,6 @@ Please visit us at http://www.novell.com/linux/.
                     <name>autoconfigure</name>
                 </module>
                 <module>
-	            <label>Clean Up</label>
                     <name>suseconfig</name>
                 </module>
             </modules>
