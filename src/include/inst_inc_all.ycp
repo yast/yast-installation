@@ -56,7 +56,7 @@
 	if (WFM::Read (.local.size, "/usr/bin/xset") != -1) {
 	    y2milestone ("Disabling Energy Star (DPMS) features");
 	    // DPMS off values, disable DPMS, disable screen-saver
-	    WFM::Execute (.local.bash, "/usr/bin/xset dpms 0 0 0; /usr/bin/xset -dpms; /usr/bin/xset s 0 0");
+	    WFM::Execute (.local.bash, "/usr/bin/xset dpms 0 0 0; /usr/bin/xset -dpms; /usr/bin/xset s 0 0; /usr/bin/xset s off");
 	}
     }
 
@@ -72,7 +72,7 @@
 	    if (WFM::Read (.local.size, "/usr/bin/xset") != -1) {
 		y2milestone ("Enabling Energy Star (DPMS) features");
 		// default DPMS values, enable DPMS, enable screen-saver
-		WFM::Execute (.local.bash, "/usr/bin/xset dpms 1200 1800 2400; /usr/bin/xset +dpms; /usr/bin/xset s default");
+		WFM::Execute (.local.bash, "/usr/bin/xset dpms 1200 1800 2400; /usr/bin/xset +dpms; /usr/bin/xset s on; /usr/bin/xset s default;");
 	    }
 
 	    // TRANSLATORS: busy message
