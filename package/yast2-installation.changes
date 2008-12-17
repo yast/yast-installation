@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Dec 17 14:42:22 CET 2008 - locilka@suse.cz
+
+- Added yet another xset call (bnc #455771 comment #40)
+- 2.17.48
+
+-------------------------------------------------------------------
 Tue Dec 16 12:29:27 CET 2008 - locilka@suse.cz
 
 - Removed SLED control file labels that should be hidden
