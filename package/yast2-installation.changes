@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Dec 18 18:04:47 CET 2008 - locilka@suse.cz
+
+- Updated control file documentation (bnc #438678).
+
+-------------------------------------------------------------------
 Wed Dec 17 14:42:22 CET 2008 - locilka@suse.cz
 
 - Added yet another xset call (bnc #455771 comment #40)

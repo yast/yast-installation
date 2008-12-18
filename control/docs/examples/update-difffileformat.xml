@@ -1,0 +1,142 @@
+
+<?xml version="1.0"?>
+<productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
+    xmlns:config="http://www.suse.com/1.0/configns">
+  <!-- .mo-file must be in installation tarball -->
+  <textdomain>OES</textdomain>
+  <!-- these options override base product's ones -->
+  <globals>
+    <additional_kernel_parameters></additional_kernel_parameters>
+  </globals>
+  <software>
+    <selection_type config:type="symbol">auto</selection_type>
+  </software>
+  <partitioning>
+    <evms_config config:type="boolean">false</evms_config>
+    <root_max_size>10G</root_max_size>
+  </partitioning>
+  <network>
+    <force_static_ip config:type="boolean">false</force_static_ip>
+    <network_manager>laptop</network_manager>
+  </network>
+  <!-- base product's list is preserved, these are appended -->
+  <clone_modules config:type="list">
+    <clone_module>printer</clone_module>
+  </clone_modules>
+  <proposals config:type="list">
+<!-- put proposals for standalone product installation here -->
+  </proposals>
+<!-- workflow for standalone product installation -->
+  <workflows config:type="list">
+    <workflow>
+      <defaults>
+        <archs>all</archs>
+      </defaults>
+      <label>Preparation</label>
+      <!-- mode and stage must be set this way -->
+      <mode>installation</mode>
+      <stage>normal</stage>
+      <modules config:type="list">
+        <module>
+           <label>License Agreement</label>
+           <name>license</name>
+           <enable_back>no</enable_back>
+           <enable_next>yes</enable_next>
+        </module>
+      </modules>
+    </workflow>
+  </workflows>
+  <!-- stuff for installation together with base products -->
+  <update>
+    <proposals config:type="list">
+      <proposal>
+        <label>OES Installation Settings</label>
+        <mode>installation,demo,autoinstallation</mode>
+        <stage>initial</stage>
+        <name>initial</name>
+        <enable_skip>no</enable_skip>
+        <append_modules config:type="list">
+          <append_module>module_1</append_module>
+          <append_module>module_2</append_module>
+        </append_modules>
+        <remove_modules config:type="list">
+          <remove_module>module_3</remove_module>
+          <remove_module>module_4</remove_module>
+        </remove_modules>
+        <replace_modules config:type="list">
+          <replace_module>
+            <replace>old_module</replace>
+            <new_modules config:type="list">
+              <new_module>module_5</new_module>
+              <new_module>module_6</new_module>
+            </new_modules>
+          </replace_module>
+        </replace_modules>
+      </proposal>
+    </proposals>
+    <workflows config:type="list">
+      <workflow>
+        <defaults>
+          <archs>all</archs>
+          <enable_back>no</enable_back>
+          <enable_next>no</enable_next>
+        </defaults>
+        <mode>installation</mode>
+        <stage>initial</stage>
+        <append_modules config:type="list">
+          <module>
+            <heading>yes</heading>
+            <label>OES configuration</label>
+          </module>
+          <module>
+            <label>Perform Installation</label>
+            <name>a1_netsetup</name>
+          </module>
+          <module>
+            <label>Perform Installation</label>
+            <name>a2_netprobe</name>
+          </module>
+        </append_modules>
+        <remove_modules config:type="list">
+          <remove_module>finish</remove_module>
+        </remove_modules>
+        <insert_modules config:type="list">
+          <insert_module>
+            <before>perform</before>
+            <modules config:type="list">
+               <module>
+               <label>Perform Installation</label>
+                <name>i1_netprobe</name>
+              </module>
+            </modules>
+          </insert_module>
+        </insert_modules>
+        <replace_modules config:type="list">
+          <replace_module>
+            <replace>language</replace>
+            <modules config:type="list">
+               <module>
+               <label>Perform Installation</label>
+                <name>r1_language</name>
+              </module>
+            </modules>
+          </replace_module>
+        </replace_modules>
+      </workflow>
+    </workflows>
+    <inst_finish>
+      <before_chroot config:type=”list”>
+        <module>before_chroot_1</module>
+        <module>before_chroot_2</module>
+      </before_chroot>
+      <after_chroot config:type=”list”>
+        <module>after_chroot_1</module>
+        <module>after_chroot_2</module>
+      </after_chroot>
+      <before_umount config:type=”list”>
+        <module>before_umount_1</module>
+        <module>before_umount_2</module>
+      </before_umount>
+    </inst_finish>
+  </update>
+</productDefines>
