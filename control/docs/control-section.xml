@@ -1519,4 +1519,7 @@ default
 	    <emphasis>ProductControl::GetTranslatedText (text_id)</emphasis> call.</para>
 	</section>
     </section>
+
+    <xi:include href="update-section.xml" parse="xml"
+	xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </section>

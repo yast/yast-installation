@@ -1,0 +1,122 @@
+
+<?xml version="1.0"?>
+<productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
+    xmlns:config="http://www.suse.com/1.0/configns">
+<textdomain>OES</textdomain>
+<network>
+  <force_static_ip config:type="boolean">true</force_static_ip>
+  <network_manager_is_default config:type="boolean">false</network_manager_is_default>
+</network>
+<proposals config:type="list">
+  <proposal>
+    <name>oes</name>
+    <stage>continue,normal</stage>
+    <mode>installation</mode>
+    <proposal_modules config:type="list">
+      <proposal_module>oes-ldap</proposal_module>
+      <proposal_module>imanager</proposal_module>
+      <proposal_module>lifeconsole</proposal_module>
+      <proposal_module>linux-user-mgmt</proposal_module>
+      <proposal_module>eguide</proposal_module>
+      <proposal_module>novell-samba</proposal_module>
+      <proposal_module>ifolder2</proposal_module>
+      <proposal_module>ifolder</proposal_module>
+      <proposal_module>ifolderwebaccess</proposal_module>
+      <proposal_module>iprint</proposal_module>
+      <proposal_module>nss</proposal_module>
+      <proposal_module>netstorage</proposal_module>
+      <proposal_module>novell-quickfinder</proposal_module>
+      <proposal_module>novell-vo</proposal_module>
+      <proposal_module>ncs</proposal_module>
+      <proposal_module>ncpserver</proposal_module>
+      <proposal_module>sms</proposal_module>
+    </proposal_modules>
+  </proposal>
+</proposals>
+<workflows config:type="list">
+  <workflow>
+    <label>Preparation</label>
+    <defaults>
+      <archs>all</archs>
+    </defaults>
+    <mode>installation</mode>
+    <stage>normal</stage>
+    <modules config:type="list">
+      <module>
+        <label>License Agreement</label>
+        <name>inst_license</name>
+        <enable_back>no</enable_back>
+        <enable_next>yes</enable_next>
+      </module>
+      <module>
+        <label>OES Configuration</label>
+        <name>inst_check_cert</name>
+        <enable_back>no</enable_back>
+        <enable_next>yes</enable_next>
+      </module>
+      <module>
+        <label>OES Configuration</label>
+        <name>inst_proposal</name>
+        <arguments>false,false,`product</arguments>
+        <enable_back>no</enable_back>
+        <enable_next>yes</enable_next>
+      </module>
+      <module>
+        <label>OES Configuration</label>
+        <name>inst_oes</name>
+        <enable_back>yes</enable_back>
+        <enable_next>yes</enable_next>
+      </module>
+      <module>
+        <label>OES Configuration</label>
+        <name>inst_oes_congratulate</name>
+        <enable_back>no</enable_back>
+        <enable_next>yes</enable_next>
+      </module>
+    </modules>
+  </workflow>
+</workflows>
+<update>
+  <workflows config:type="list">
+    <workflow>
+      <defaults>
+        <archs>all</archs>
+        <enable_back>no</enable_back>
+        <enable_next>no</enable_next>
+      </defaults>
+      <stage>continue</stage>
+        <mode>installation</mode>
+        <append_modules config:type="list">
+          <module>
+            <label>OES Configuration</label>
+            <name>inst_oes_congratulate</name>
+          </module>
+        </append_modules>
+        <insert_modules config:type="list">
+          <insert_module>
+            <before>suseconfig</before>
+            <modules config:type="list">
+              <module>
+                <label>OES Configuration</label>
+                <name>inst_check_cert</name>
+              </module>
+              <module>
+                <label>OES Configuration</label>
+                <name>inst_edirectory</name>
+              </module>
+              <module>
+                <label>OES Configuration</label>
+                <name>inst_proposal</name>
+                <arguments>false,true,`product</arguments>
+              </module>
+              <module>
+                <label>OES Configuration</label>
+                <name>inst_oes</name>
+              </module>
+            </modules>
+          </insert_module>
+        </insert_modules>
+      </workflow>
+    </workflows>
+  </update>
+</productDefines>
