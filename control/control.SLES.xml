@@ -127,16 +127,16 @@ textdomain="control"
 
 	<!-- FATE #304373: Server scenarios, labels are defined in 'texts' using the scenario 'id' -->
 	<system_scenarios config:type="list">
-	    <!-- bnc #431251 -->
+	    <!-- bnc #431251, bnc #458332 -->
 	    <system_scenario>
 		<id>scenario_physical_machine</id>
-		<patterns>base x11 gnome apparmor print_server 32bit 64bit x86 documentation</patterns>
+		<patterns>base x11 gnome apparmor print_server 32bit 64bit x86 documentation WBEM</patterns>
 		<icon>yast-system</icon>
 	    </system_scenario>
-	    <!-- bnc #429061, bnc #431251 -->
+	    <!-- bnc #429061, bnc #431251, bnc #458332 -->
 	    <system_scenario>
 		<id>scenario_virtual_machine</id>
-		<patterns>base x11 gnome apparmor print_server 32bit 64bit x86 documentation</patterns>
+		<patterns>base x11 gnome apparmor print_server 32bit 64bit x86 documentation WBEM</patterns>
 		<icon>yast-vm-install</icon>
 	    </system_scenario>
 	    <system_scenario>

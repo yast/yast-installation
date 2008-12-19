@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Dec 19 13:07:49 CET 2008 - locilka@suse.cz
+
+- Pattern WBEM added into two server scenarios (bnc #458332).
+
+-------------------------------------------------------------------
 Thu Dec 18 18:04:47 CET 2008 - locilka@suse.cz
 
 - Updated control file documentation (bnc #438678).
