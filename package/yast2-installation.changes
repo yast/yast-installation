@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jan 13 12:15:42 CET 2009 - locilka@suse.cz
+
+- Adapted the inst_proposal to better reflect the current situation
+  'analyzing...' vs. 'adapting the proposal...' (bnc #463567).
+
+-------------------------------------------------------------------
 Fri Dec 19 13:07:49 CET 2008 - locilka@suse.cz
 
 - Pattern WBEM added into two server scenarios (bnc #458332).

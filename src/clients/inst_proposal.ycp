@@ -234,6 +234,8 @@
 		}
     }
 
+    // BNC #463567
+    list <string> submods_already_called = [];
 
     /**
      * Call each submodule's MakeProposal() function in turn and display the
@@ -277,7 +279,22 @@
                     titles[no]:_("ERROR: Missing Title"));
             }
 
-	    html[submod] = prop + HTML::Para( _("Analyzing your system..."));
+	    // busy message
+	    string message = "";
+
+	    // BNC #463567
+	    // Submod already called
+	    if (contains (submods_already_called, submod)) {
+		// busy message
+		message = _("Adapting the proposal to the current settings...");
+	    // First run
+	    } else {
+		// busy message;
+		message = _("Analyzing your system...");
+		submods_already_called = add (submods_already_called, submod);
+	    }
+
+	    html[submod] = prop + HTML::Para (message);
 	    no = no + 1;
 	});
 
