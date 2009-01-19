@@ -273,7 +273,7 @@ textdomain="control"
 		<name>xfce</name>
 		<desktop>startxfce4</desktop>
 		<label_id>desktop_xfce</label_id>
-		<logon>xdm</logon>
+		<logon>gdm</logon>
 		<cursor>DMZ</cursor>
 		<packages>xfce4-desktop</packages>
 		<order config:type="integer">4</order>
