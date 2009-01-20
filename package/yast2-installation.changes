@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jan 20 13:37:03 CET 2009 - locilka@suse.cz
+
+- Possibility to move the base installation window has been
+  disabled (bnc #466827)
+- 2.18.1
+
+-------------------------------------------------------------------
 Tue Jan 13 12:15:42 CET 2009 - locilka@suse.cz
 
 - Adapted the inst_proposal to better reflect the current situation
