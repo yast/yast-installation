@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jan 20 13:37:03 CET 2009 - locilka@suse.cz
+
+- Possibility to move the base installation window has been
+  disabled (bnc #466827)
+- 2.17.50
+
+-------------------------------------------------------------------
 Fri Dec 19 13:07:49 CET 2008 - locilka@suse.cz
 
 - Pattern WBEM added into two server scenarios (bnc #458332).

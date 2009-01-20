@@ -113,3 +113,5 @@ DesktopMenuButton=0
 TitleBarMaximizeButton=0
 TitleBarRollupButton=0
 
+# Disable possibility to move the base window, BNC 466827
+ClientWindowMouseActions=0
