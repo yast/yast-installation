@@ -56,6 +56,13 @@
     "value" : (PackageSlideShow::total_size_to_install - ImageInstallation::TotalSize()) / 1024 , // kilobytes
     "units" : `kb,
     ],
+    $[
+    "name" : "finish",
+    "description" : _("Finishing Basic Installation"),
+    // fixed value
+    "value" : 100,
+    "units" : `sec,
+    ],
   ];
 
   SlideShow::Setup( stages );
