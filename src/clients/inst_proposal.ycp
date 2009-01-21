@@ -150,14 +150,6 @@
 		Pkg::SetAdditionalLocales ([Language::language]);
 	    }
 
-	    /*
-	    if (mode_changed || rootpart_changed ||
-		workflow_sequence == `finish)
-	    {
-		RootPart::UnmountPartitions (false);
-	    }
-	    */
-
 	    if (mode_changed)
 	    {
 		Wizard::SetHelpText (help_text ());
