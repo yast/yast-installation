@@ -37,6 +37,9 @@ Requires:	yast2-country-data >= 2.16.11
 # Pkg::SourceProvideDigestedFile() 
 Conflicts:	yast2-pkg-bindings < 2.17.25
 
+# Mouse-related scripts moved to yast2-mouse
+Conflicts:	yast2-mouse < 2.18.0
+
 # BNC #449818: "description_id" in DefaultDesktop
 Requires:	yast2-packager >= 2.17.49
 

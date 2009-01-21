@@ -31,7 +31,8 @@
 //        if (!Arch::s390 () || Arch::board_iseries ()) {
 //            // in another client because of dependencies
 //            // used in inst-sys only
-//            WFM::CallFunction ("inst_init_mouse", []);
+//		if (WFM::ClientExists ("inst_init_mouse"))
+//			WFM::CallFunction ("inst_init_mouse", []);
 //        }
     }
 
