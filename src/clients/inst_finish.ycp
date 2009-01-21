@@ -7,10 +7,6 @@
  *              Jiri Srain <jsrain@suse.de>
  *
  * $Id$
- *
- * Writes:
- * [target] /var/lib/YaST2/runme_at_boot	run yast2 after initial boot
- * SCR::Write (.etc.shadow.root,
  */
 
 {
