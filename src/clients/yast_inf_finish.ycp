@@ -19,7 +19,6 @@ textdomain "installation";
 import "Mode";
 import "Linuxrc";
 import "AutoinstConfig";
-import "Bootloader";
 import "Language";
 import "Keyboard";
 import "Directory";
@@ -171,7 +170,7 @@ else if (func == "Write")
     {
         if (AutoinstConfig::ForceBoot )
         {
-            linuxrc["Root"] = Bootloader::getRootDevice ();
+            linuxrc["Root"] = "reboot";
         }
         else if (AutoinstConfig::RebootMsg)
         {

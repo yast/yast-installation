@@ -5,6 +5,7 @@ Wed Jan 21 13:09:33 CET 2009 - locilka@suse.cz
   proposal).
 - Removing dependency on yast2-mouse by moving the mouse-related
   scripts to yast2-mouse-2.18.0.
+- Removing dependency on yast2-bootloader.
 
 -------------------------------------------------------------------
 Tue Jan 20 13:37:03 CET 2009 - locilka@suse.cz
