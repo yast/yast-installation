@@ -17,7 +17,6 @@
     import "Language";
     import "Installation";
     import "Console";
-    import "RunlevelEd";
 
     // Timezone
     if (ProductFeatures::GetStringFeature ("globals", "timezone") != "")
@@ -31,12 +30,6 @@
         Keyboard::default_kbd = ProductFeatures::GetStringFeature ("globals", "keyboard");
         Keyboard::SetConsole( ProductFeatures::GetStringFeature ("globals", "keyboard"));
         Keyboard::SetX11( ProductFeatures::GetStringFeature ("globals", "keyboard") );
-    }
-
-    // Runlevel
-    if (ProductFeatures::GetStringFeature ("globals", "runlevel") != "")
-    {
-        RunlevelEd::default_runlevel = ProductFeatures::GetStringFeature ("globals", "runlevel");
     }
 
     if (ProductFeatures::GetStringFeature ("globals", "language") != "")
