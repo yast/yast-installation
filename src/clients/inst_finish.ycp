@@ -27,6 +27,7 @@
     import "String";
     import "GetInstArgs";
     import "ProductFeatures";
+    import "SlideShow";
 
     // added for fate# 303395
     import "Directory";
@@ -268,41 +269,61 @@ list<string> stage_names = maplist (map<string,any> s, stages, {
     return s["label"]:"";
 });
 
-Progress::New (
-    // Headline for last dialog of base installation: Install LILO etc.
-    _("Finishing Basic Installation"),
-    "",	// Initial progress bar label - not empty (reserve space!)
-    steps_count,
-    stage_names,
-    [],
-    help_text
-);
-
 Wizard::DisableBackButton ();
 Wizard::DisableNextButton ();
 
+boolean aborted = false;
+
+map <string, map <string,any> > get_setup = SlideShow::GetSetup();
+if (get_setup == nil || get_setup == $[]) {
+    y2milestone ("No SlideShow setup has been set, adjusting");
+    SlideShow::Setup([$[
+	"name" : "finish",
+	"description" : _("Finishing Basic Installation"),
+	// fixed value
+	"value" : 100,
+	"units" : `sec,
+    ]]);
+}
+get_setup = nil;
+
 Wizard::SetTitleIcon ("yast-sysconfig");
 
-boolean aborted = false;
+// Do not open a new SlideShow widget, reuse the old one instead
+boolean required_to_open_sl_dialog = (! SlideShow::HaveSlideWidget());
+
+if (required_to_open_sl_dialog) {
+    y2milestone ("SlideShow dialog not yet created");
+    SlideShow::OpenDialog();
+}
+
+SlideShow::MoveToStage("finish");
+
+integer stages_nr = size (stages);
+integer current_stage = -1;
+integer current_stage_percent = 0;
 
 foreach (map<string,any> stage, stages, {
     if (stage["icon"]:"" != "")
 	Wizard::SetTitleIcon (stage["icon"]:"");
 
-    Progress::NextStage ();
-    boolean first = true;
+    current_stage = current_stage + 1;
+
+    current_stage_percent = (100 * current_stage / stages_nr);
+    SlideShow::StageProgress (current_stage_percent, stage["label"]:"");
+    SlideShow::AppendMessageToInstLog (stage["label"]:"");
+
+    integer steps_nr = size (stage["steps"]:[]);
+    integer current_step = -1;
 
     foreach (map step, stage["steps"]:[], {
-	integer scount = step["steps"]:1;
-	if (scount != 0)
-	{
-	    if (first)
-		first = false;
-	    else
-		Progress::NextStep ();
+	current_step = current_step + 1;
+
+	SlideShow::StageProgress (current_stage_percent + (100 / stages_nr * current_step / steps_nr), nil);
+	if (haskey (step, "title")) {
+	    // use as ' * %1' -> ' * One of the finish steps...' in the SlideShow log
+	    SlideShow::AppendMessageToInstLog (sformat (_(" * %1"), step["title"]:""));
 	}
-	if (haskey (step, "title"))
-	    Progress::Title (step["title"]:"");
 
 	boolean orig = Progress::set (false);
 	if (test_mode == true) {
@@ -323,14 +344,19 @@ foreach (map<string,any> stage, stages, {
 	break;
 });
 
+SlideShow::StageProgress (100, _("Finished"));
+SlideShow::AppendMessageToInstLog (_("Finished"));
+
 if (aborted)
 {
     y2milestone ("inst_finish aborted");
     return `abort;
 }
 
-Progress::Finish();
-Progress::Title (_("Finished."));
+if (required_to_open_sl_dialog) {
+    y2milestone ("Closing previously opened SlideShow dialog");
+    SlideShow::CloseDialog();
+}
 
 // --------------------------------------------------------------
 // Check if there is a message left to display
