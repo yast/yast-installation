@@ -47,7 +47,6 @@ Requires:	yast2-storage >= 2.18.0
 Requires:	initviocons
 
 # Only in inst-sys
-# Requires:	yast2-runlevel
 # Requires:	yast2-network
 # Requires:	yast2-add-on
 # Requires:	yast2-update
