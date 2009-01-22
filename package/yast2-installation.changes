@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Jan 22 12:50:38 CET 2009 - locilka@suse.cz
+
+- Dropping mode_proposal client - not in use anymore.
+
+-------------------------------------------------------------------
 Wed Jan 21 13:09:33 CET 2009 - locilka@suse.cz
 
 - Removing dependency on yast2-runlevel (duplicate code in runlevel
