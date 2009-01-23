@@ -366,7 +366,10 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	<ac_3><label>Configuring hardware...</label></ac_3>
 	<ac_4><label>Finishing configuration...</label></ac_4>
 
-	<!-- Desktop dialog label -->
+	<!--
+	    Desktop dialog label. It hould not be wider than 75 characters
+	    but it can take more lines then the original one.
+	-->
 	<desktop_dialog><label>openSUSE offers you a choice of user interfaces. The two major complete 
 desktops are KDE and GNOME. Both provide an easy-to-use desktop with a full 
 suite of applications including email, a file manager, games and utilities. 
@@ -382,8 +385,16 @@ As desktop selection is a matter of taste, we do not give a recommendation.</lab
 	<desktop_textmode><label>Minimal Server Selection (Text Mode)</label></desktop_textmode>
 
 	<!-- Desktop dialog: desktop descriptions (with 'description_id' defined) -->
+	<!--
+	    GNOME desktop description - It hould not be wider than 75 characters
+	    but it can take more lines then the original one.
+	-->
 	<description_gnome><label>GNOME 2.24 is the latest desktop from the GNOME Project. 
 It combines stability and maturity with incremental innovations.</label></description_gnome>
+	<!--
+	    KDE desktop description - It hould not be wider than 75 characters
+	    but it can take more lines then the original one.
+	-->
 	<description_kde><label>KDE 4.1 is the latest stable desktop released by the KDE Project.
 It delivers an innovative, highly integrated desktop environment
 with a modern look and feel.</label></description_kde>
