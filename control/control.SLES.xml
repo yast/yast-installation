@@ -1003,7 +1003,8 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <module>
 	            <label>Network</label>
                     <name>ask_net_test</name>
-                    <enable_back>yes</enable_back>
+		    <!-- The very first interactive dialog -->
+                    <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
                 <module>
@@ -1118,6 +1119,8 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <module>
 	            <label>Hostname</label>
                     <name>hostname</name>
+		    <!-- The very first interactive dialog -->
+                    <enable_back>no</enable_back>
                 </module>
                 <module>
 	            <label>Network</label>
