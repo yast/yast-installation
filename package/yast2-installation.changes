@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jan 26 13:58:00 CET 2009 - locilka@suse.cz
+
+- Disabling [Back] buttons in the very first interactive dialogs
+  in second stage, SLES and SLED control files (bnc #468677).
+
+-------------------------------------------------------------------
 Thu Jan 22 12:50:38 CET 2009 - locilka@suse.cz
 
 - Dropping mode_proposal client - not in use anymore.
