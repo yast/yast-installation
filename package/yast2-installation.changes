@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jan 27 17:13:57 CET 2009 - locilka@suse.cz
+
+- Added test for checking free space when SCR switch fails
+  (bnc #460477).
+
+-------------------------------------------------------------------
 Mon Jan 26 13:58:00 CET 2009 - locilka@suse.cz
 
 - Disabling [Back] buttons in the very first interactive dialogs

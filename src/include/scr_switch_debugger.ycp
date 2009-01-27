@@ -28,6 +28,7 @@
     import "Icon";
     import "Installation";
     import "HTML";
+    import "String";
 
     // test result (Checking for xyz... Passed)
     string result_ok = _("Passed");
@@ -279,6 +280,66 @@ Please, attach also all YaST logs stored in the '%2' directory."),
 	return test_result;
     }
 
+    boolean RunSCRSwitchTest_FreeSpace () {
+	ReportProgress (_("Checking free space"));
+
+	// Local command
+	map parts_cmd = (map) WFM::Execute (.local.bash_output,
+	    "mount " +
+	    "| grep -v '^\\(/proc\\) on' " +
+	    "| sed 's/\\/.* on \\(.*\\) type .*/\\1/'"
+	);
+
+	map <string, integer> partitions = $[];
+
+	if (parts_cmd["exit"]:-1 != 0) {
+	    y2error ("Cannot find out current partitions");
+	    // even if it is an error, we should check more
+	    return true;
+	} else {
+	    // Spash at the end or not
+	    string inst_dir = Installation::destdir + (regexpmatch (Installation::destdir, "/$") ? "" : "/");
+	    integer inst_dir_length = size (inst_dir);
+	    y2milestone ("InstDir: '%1'", inst_dir);
+
+	    foreach (string one_partition, splitstring (parts_cmd["stdout"]:"", "\n"), {
+		// begin of the one_partition matches the inst_dir
+		if (substring (one_partition, 0, inst_dir_length) == inst_dir) {
+		    // chrooted to the Installation::destdir
+		    partitions[substring (one_partition, inst_dir_length - 1)] =
+			(integer) SCR::Read (.system.freespace, one_partition);
+		}
+	    });
+	}
+
+	y2milestone ("Partitions: %1", partitions);
+
+	boolean test_result = true;
+
+	foreach (string partition, integer free_space, partitions, {
+	    boolean this_test = true;
+
+	    if (free_space <= 0) {
+		test_result = false;
+		this_test = false;
+	    }
+
+	    ReportTest (
+		sformat (
+		    // test result, %1 is replaced with the directory, e.g., /var
+		    // %2 is replaced with the free space in that partition, e.g., 2.8 GB
+		    _("Checking for free space in the %1 directory: %2"),
+		    partition,
+		    // linked to the text above (sometimes replaces the '%2')
+		    (free_space < 0 ? _("Unable to find out"):String::FormatSize (free_space)),
+		),
+		this_test
+	    );
+	});
+
+	return test_result;
+    }
+
     // tries to get all installed packages from new SCR
     boolean RunSCRSwitchTest_DoRPMCheck () {
 	map <string, any> test = (map <string, any>) SCR::Execute (.target.bash_output,
@@ -505,6 +566,7 @@ Please, attach also all YaST logs stored in the '%2' directory."),
 	if (! RunSCRSwitchTest_BinaryExists())		return false;
 	if (! RunSCRSwitchTest_DoChroot())		return false;
 	if (! RunSCRSwitchTest_Y2BASE())		return false;
+	if (! RunSCRSwitchTest_FreeSpace())		return false;
 	if (! RunSCRSwitchTest_DoRPMCheck())		return false;
 
 	// checking all mandatory packages

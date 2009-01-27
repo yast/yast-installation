@@ -72,6 +72,16 @@ boolean TestTheNewSCR () {
     return true;
 }
 
+void CheckFreeSpaceNow () {
+    map ret_exec = (map) SCR::Execute (.target.bash_output, "/bin/df -h");
+
+    if (ret_exec["exit"]:-1 != 0) {
+	y2error ("Cannot find out free space: %1", ret_exec);
+    } else {
+	y2milestone ("Free space: \n%1", mergestring (splitstring (ret_exec["stdout"]:"", "\\n"), "\n"));
+    }
+}
+
 boolean TestTheNewSCRHandler () {
     integer SCR_PID = FindSCRPID();
 
@@ -80,6 +90,9 @@ boolean TestTheNewSCRHandler () {
     boolean ret = TestTheNewSCR();
 
     if (SCR_PID > 0) SwitchY2Debug (SCR_PID);
+
+    // BNC #460477
+    CheckFreeSpaceNow();
 
     return ret;
 }
