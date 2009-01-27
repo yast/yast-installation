@@ -22,8 +22,8 @@ BuildRequires:	yast2-packager >= 2.17.9
 # AutoinstConfig::getProposalList
 Requires:       autoyast2-installation >= 2.17.1
 
-# PackagesUI::RunPackageSelector
-Requires:	yast2 >= 2.17.40
+# ag_freespace
+Requires:	yast2 >= 2.18.4
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
