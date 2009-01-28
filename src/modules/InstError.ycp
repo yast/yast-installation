@@ -35,7 +35,7 @@
 			    "/var/log/YaST2/y2log"
 			))
 			:
-			`MinHeight (8, `RichText (`opt(`plainText), details))
+			`MinSize (80, 10, `RichText (`opt(`plainText, `hstretch), details))
 		    ),
 		    //`VSpacing (1),
 		    `Left (`Label (sformat (

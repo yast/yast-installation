@@ -29,6 +29,7 @@
     import "ProductFeatures";
     import "SlideShow";
     import "InstError";
+    import "PackageCallbacks";
 
     // added for fate# 303395
     import "Directory";
@@ -36,11 +37,11 @@
     if (GetInstArgs::going_back())
 	return `auto;
 
-    boolean test_mode = false;
+    // --> Functions
 
     void ReportClientError (string client_error_text) {
 	// get the latest errors
-	map cmd = (map) WFM::Execute (.local.bash_output, "tail -n 200 /var/log/YaST2/y2log | grep ' <\(3\|5\)> '");
+	map cmd = (map) WFM::Execute (.local.bash_output, "tail -n 200 /var/log/YaST2/y2log | grep ' <\\(3\\|5\\)> '");
 
 	InstError::ShowErrorPopUp (
 	    _("Installation Error"),
@@ -48,6 +49,10 @@
 	    (cmd["exit"]:-1 == 0 && cmd["stdout"]:"" != "" ? cmd["stdout"]:"" : nil)
 	);
     }
+
+    // <-- Functions
+
+    boolean test_mode = false;
 
     if (size (WFM::Args()) > 0 && is (WFM::Args(0), string)) {
 	y2milestone ("Args: %1", WFM::Args());
@@ -57,21 +62,46 @@
 
     if (test_mode) Wizard::CreateDialog();
 
-// Help text for last dialog of base installation
-string help_text = _("<p>
-Please wait while the base system is being installed.
-</p>");
+    Wizard::DisableBackButton ();
+    Wizard::DisableNextButton ();
 
-    Wizard::SetContents (
-	_("Finishing Basic Installation"),
-	`Label (_("Preparing installation finish-scripts...")),
-	help_text,
-	false,
-	false
-    );
+    // Adjust a SlideShow dialog if not configured
+    map <string, map <string,any> > get_setup = SlideShow::GetSetup();
+    if (get_setup == nil || get_setup == $[]) {
+	y2milestone ("No SlideShow setup has been set, adjusting");
+	SlideShow::Setup([$[
+	    "name" : "finish",
+	    "description" : _("Finishing Basic Installation"),
+	    // fixed value
+	    "value" : 100,
+	    "units" : `sec,
+	]]);
+    }
+    get_setup = nil;
+
+    Wizard::SetTitleIcon ("yast-sysconfig");
+
+    // Do not open a new SlideShow widget, reuse the old one instead
+    // variable used later to close that dialog (if needed)
+    boolean required_to_open_sl_dialog = (! SlideShow::HaveSlideWidget());
+
+    if (required_to_open_sl_dialog) {
+	y2milestone ("SlideShow dialog not yet created");
+	SlideShow::OpenDialog();
+    }
+
+    SlideShow::MoveToStage("finish");
+
+    string log = _("Creating list of finish scripts to call...");
+    SlideShow::StageProgress (0, log);
+    SlideShow::AppendMessageToInstLog (log);
 
     // Used later in 'stages' definition
-    Pkg::TargetInit (Installation::destdir, true);
+    // Using empty callbacks that don't break the UI
+    PackageCallbacks::RegisterEmptyProgressCallbacks();
+    Pkg::TargetInitialize (Installation::destdir);
+    Pkg::TargetLoad();
+    PackageCallbacks::RestorePreviousProgressCallbacks();
 
 list<map<string,any> > stages = [
     $[
@@ -241,6 +271,7 @@ stages = maplist (map<string,any> stage, stages, {
 	map info = (map) WFM::CallFunction (s, ["Info"]);
 
 	if (test_mode == true) {
+	    if (info == nil) info = $[];
 	    y2milestone ("Test mode, forcing run");
 	    info["when"] = [`installation, `update, `autoinst];
 	}
@@ -282,35 +313,9 @@ list<string> stage_names = maplist (map<string,any> s, stages, {
     return s["label"]:"";
 });
 
-Wizard::DisableBackButton ();
-Wizard::DisableNextButton ();
+
 
 boolean aborted = false;
-
-map <string, map <string,any> > get_setup = SlideShow::GetSetup();
-if (get_setup == nil || get_setup == $[]) {
-    y2milestone ("No SlideShow setup has been set, adjusting");
-    SlideShow::Setup([$[
-	"name" : "finish",
-	"description" : _("Finishing Basic Installation"),
-	// fixed value
-	"value" : 100,
-	"units" : `sec,
-    ]]);
-}
-get_setup = nil;
-
-Wizard::SetTitleIcon ("yast-sysconfig");
-
-// Do not open a new SlideShow widget, reuse the old one instead
-boolean required_to_open_sl_dialog = (! SlideShow::HaveSlideWidget());
-
-if (required_to_open_sl_dialog) {
-    y2milestone ("SlideShow dialog not yet created");
-    SlideShow::OpenDialog();
-}
-
-SlideShow::MoveToStage("finish");
 
 integer stages_nr = size (stages);
 integer current_stage = -1;
