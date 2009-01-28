@@ -90,9 +90,13 @@
 	SlideShow::OpenDialog();
     }
 
+    // Might be left from the previous stage
+    SlideShow::HideTable();
+
     SlideShow::MoveToStage("finish");
 
     string log = _("Creating list of finish scripts to call...");
+    SlideShow::SubProgress (0, "");
     SlideShow::StageProgress (0, log);
     SlideShow::AppendMessageToInstLog (log);
 
@@ -251,7 +255,14 @@ else if (Mode::live_installation ())
 
 integer steps_count = 0;
 
+integer stages_to_check = size (stages);
+integer currently_checking = 0;
+
 stages = maplist (map<string,any> stage, stages, {
+    currently_checking = currently_checking + 1;
+    SlideShow::SubProgress (100 * currently_checking / stages_to_check,
+	sformat (_("Checking stage: %1..."), stage["label"]:stage["id"]:""));
+
     list<map> steps = maplist (string s, stage["steps"]:[], {
 	// some steps are called in live installer only
 	if (s == "" || s == nil) {
@@ -320,6 +331,7 @@ boolean aborted = false;
 integer stages_nr = size (stages);
 integer current_stage = -1;
 integer current_stage_percent = 0;
+string fallback_msg = nil;
 
 foreach (map<string,any> stage, stages, {
     if (stage["icon"]:"" != "")
@@ -337,13 +349,13 @@ foreach (map<string,any> stage, stages, {
     foreach (map step, stage["steps"]:[], {
 	current_step = current_step + 1;
 
-	SlideShow::SubProgress (100 * current_step / steps_nr, nil);
-	SlideShow::StageProgress (current_stage_percent + (100 / stages_nr * current_step / steps_nr), nil);
+	// a fallback busy message
+	fallback_msg = sformat (_("Calling step %1..."), step["client"]:"");
 
-	if (haskey (step, "title")) {
-	    // use as ' * %1' -> ' * One of the finish steps...' in the SlideShow log
-	    SlideShow::AppendMessageToInstLog (sformat (_(" * %1"), step["title"]:""));
-	}
+	SlideShow::SubProgress (100 * current_step / steps_nr, step["title"]:fallback_msg);
+	SlideShow::StageProgress (current_stage_percent + (100 / stages_nr * current_step / steps_nr), nil);
+	// use as ' * %1' -> ' * One of the finish steps...' in the SlideShow log
+	SlideShow::AppendMessageToInstLog (sformat (_(" * %1"), step["title"]:fallback_msg));
 
 	boolean orig = Progress::set (false);
 	if (test_mode == true) {
@@ -375,7 +387,7 @@ foreach (map<string,any> stage, stages, {
     SlideShow::SubProgress (100, nil);
 });
 
-SlideShow::StageProgress (100, _("Finished"));
+SlideShow::StageProgress (100, nil);
 SlideShow::AppendMessageToInstLog (_("Finished"));
 
 if (aborted)
