@@ -40,7 +40,7 @@
 
     void ReportClientError (string client_error_text) {
 	// get the latest errors
-	map cmd = (map) SCR::Execute (.local.bash_output, "tail -n 200 /var/log/YaST2/y2log | grep ' <\(3\|5\)> '");
+	map cmd = (map) WFM::Execute (.local.bash_output, "tail -n 200 /var/log/YaST2/y2log | grep ' <\(3\|5\)> '");
 
 	InstError::ShowErrorPopUp (
 	    _("Installation Error"),
