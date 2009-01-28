@@ -1,9 +1,15 @@
 -------------------------------------------------------------------
+Wed Jan 28 14:33:09 CET 2009 - locilka@suse.cz
+
+- Added new InstError module for unified reporting of errors
+  during installation.
+- 2.18.3
+
+-------------------------------------------------------------------
 Tue Jan 27 17:13:57 CET 2009 - locilka@suse.cz
 
 - Added test for checking free space when SCR switch fails
   (bnc #460477).
-- 2.18.3
 
 -------------------------------------------------------------------
 Mon Jan 26 13:58:00 CET 2009 - locilka@suse.cz
