@@ -352,10 +352,18 @@ foreach (map<string,any> stage, stages, {
 	}
 	Progress::set (orig);
 
-	if (UI::PollInput () == `abort && Popup::ConfirmAbort (`incomplete))
-	{
-	    aborted = true;
-	    break;
+	// Handle user input during client run
+	any user_ret = UI::PollInput ();
+
+	// Aborting...?
+	if (user_ret == `abort) {
+	    if (Popup::ConfirmAbort (`incomplete)) {
+		aborted = true;
+		break;
+	    }
+	// Anything else
+	} else {
+	    SlideShow::HandleInput (user_ret);
 	}
     });
     if (aborted)
