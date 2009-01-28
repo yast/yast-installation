@@ -3,6 +3,8 @@ Wed Jan 28 14:33:09 CET 2009 - locilka@suse.cz
 
 - Added new InstError module for unified reporting of errors
   during installation.
+- Better SlideShow support in inst_finish.
+- Reporting more errors in inst_finish.
 - 2.18.3
 
 -------------------------------------------------------------------
