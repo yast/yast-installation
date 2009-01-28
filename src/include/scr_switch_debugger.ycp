@@ -114,7 +114,7 @@ See %4 for more information about YaST logs."),
 			"/var/log/YaST2/y2log",
 			"http://bugzilla.novell.com/",
 			"/var/log/YaST2/",
-			// link to the Yast Bug Reporting HOWT
+			// link to the Yast Bug Reporting HOWTO
 			// for translators: use the localized page for your language if it exists,
 			// check the combo box "In other laguages" on top of the page
 			_("http://en.opensuse.org/Bugs/YaST")
@@ -331,7 +331,7 @@ Please, attach also all YaST logs stored in the '%2' directory."),
 		    _("Checking for free space in the %1 directory: %2"),
 		    partition,
 		    // linked to the text above (sometimes replaces the '%2')
-		    (free_space < 0 ? _("Unable to find out"):String::FormatSize (free_space)),
+		    (free_space < 0 ? _("Unable to find out"):String::FormatSize (free_space))
 		),
 		this_test
 	    );

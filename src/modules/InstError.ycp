@@ -1,0 +1,72 @@
+/**
+ * File:	modules/InstError.ycp
+ * Package:	Installation
+ * Summary:	Module for reporting installation errors
+ * Authors:	Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id$
+ *
+ * This module provides unified interface for reporting
+ * installation errors.
+ */
+
+{
+    textdomain "installation";
+    module "InstError";
+
+    import "Icon";
+    import "Label";
+
+    global void ShowErrorPopUp (string heading, string error_text, string details) {
+	boolean success = UI::OpenDialog (`VBox (
+	    `Left (`HBox (
+		`HSquash (`MarginBox (0.5, 0.2, Icon::Error())),
+		`Heading (heading)
+	    )),
+	    `MarginBox (
+		1, 0.5, `VBox (
+		    `Left (`Label (error_text)),
+		    //`VSpacing (1),
+		    `Left (details == nil ?
+			`Label (sformat (
+			    // TRANSLATORS: part of an error message
+			    // // %1 - logfile, possibly with errors
+			    _("More information can be found near the end of the '%1' file."),
+			    "/var/log/YaST2/y2log"
+			))
+			:
+			`MinHeight (8, `RichText (`opt(`plainText), details))
+		    ),
+		    //`VSpacing (1),
+		    `Left (`Label (sformat (
+			// TRANSLATORS: part of an error message
+			// %1 - link to our bugzilla
+			// %2 - directory where YaST logs are stored
+			// %3 - link to the Yast Bug Reporting HOWTO Web page
+			_("This is worth reporting a bug at %1.
+Please, attach also all YaST logs stored in the '%2' directory.
+See %3 for more information about YaST logs."),
+			"http://bugzilla.novell.com/",
+			"/var/log/YaST2/",
+			// link to the Yast Bug Reporting HOWTO
+			// for translators: use the localized page for your language if it exists,
+			// check the combo box "In other laguages" on top of the page
+			_("http://en.opensuse.org/Bugs/YaST")
+		    )))
+		)
+	    ),
+	    `ButtonBox (`PushButton (`id(`ok), Label::OKButton()))
+	));
+
+	if (success != true) {
+	    y2error ("Cannot open a dialog: %1/%2/%3", heading, error_text, details);
+	    return;
+	}
+
+	UI::UserInput();
+
+	UI::CloseDialog();
+    }
+
+/* EOF */
+}

@@ -28,6 +28,7 @@
     import "GetInstArgs";
     import "ProductFeatures";
     import "SlideShow";
+    import "InstError";
 
     // added for fate# 303395
     import "Directory";
@@ -36,6 +37,17 @@
 	return `auto;
 
     boolean test_mode = false;
+
+    void ReportClientError (string client_error_text) {
+	// get the latest errors
+	map cmd = (map) SCR::Execute (.local.bash_output, "tail -n 200 /var/log/YaST2/y2log | grep ' <\(3\|5\)> '");
+
+	InstError::ShowErrorPopUp (
+	    _("Installation Error"),
+	    client_error_text,
+	    (cmd["exit"]:-1 == 0 && cmd["stdout"]:"" != "" ? cmd["stdout"]:"" : nil)
+	);
+    }
 
     if (size (WFM::Args()) > 0 && is (WFM::Args(0), string)) {
 	y2milestone ("Args: %1", WFM::Args());
@@ -237,6 +249,7 @@ stages = maplist (map<string,any> stage, stages, {
 
 	if (info == nil) {
 	    y2error ("Client %1 returned invalid data", s);
+	    ReportClientError (sformat ("Client %1 returned invalid data.", s));
 	    return nil;
 	}
 
