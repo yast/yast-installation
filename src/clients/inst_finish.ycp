@@ -337,7 +337,9 @@ foreach (map<string,any> stage, stages, {
     foreach (map step, stage["steps"]:[], {
 	current_step = current_step + 1;
 
+	SlideShow::SubProgress (100 * current_step / steps_nr, nil);
 	SlideShow::StageProgress (current_stage_percent + (100 / stages_nr * current_step / steps_nr), nil);
+
 	if (haskey (step, "title")) {
 	    // use as ' * %1' -> ' * One of the finish steps...' in the SlideShow log
 	    SlideShow::AppendMessageToInstLog (sformat (_(" * %1"), step["title"]:""));
@@ -366,8 +368,11 @@ foreach (map<string,any> stage, stages, {
 	    SlideShow::HandleInput (user_ret);
 	}
     });
+
     if (aborted)
 	break;
+
+    SlideShow::SubProgress (100, nil);
 });
 
 SlideShow::StageProgress (100, _("Finished"));
