@@ -3,6 +3,7 @@ Mon Feb  2 13:09:08 CET 2009 - locilka@suse.cz
 
 - Erasing all old additional control files in the final step of
   upgrade before rebooting to the second stage (bnc #471454).
+- InstError can now save YaST logs on user request.
 - 2.18.4
 
 -------------------------------------------------------------------
