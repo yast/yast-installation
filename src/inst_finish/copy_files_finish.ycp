@@ -65,9 +65,12 @@ void CopyAllWorkflowFiles () {
     SCR::Write (.target.ycp, Installation::destdir + Directory::etcdir + "/control_files/order.ycp",
 	workflows_list);
 
-    SCR::Execute (.target.bash, "/bin/mkdir -p " +
-	"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files'");
+    // Remove the directory with all additional control files (if exists)
+    // and create it again (empty). BNC #471454
+    SCR::Execute (.target.bash, sformat ("rm -rf '%1'; /bin/mkdir -p '%1'",
+	String::Quote (Installation::destdir + Directory::etcdir + "/control_files")));
 
+    // Now copy all the additional control files to the just installed system
     foreach (string file, WorkflowManager::GetAllUsedControlFiles(), {
 	SCR::Execute (.target.bash, "/bin/cp '" + String::Quote (file) + "' " +
 	    "'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/'");
