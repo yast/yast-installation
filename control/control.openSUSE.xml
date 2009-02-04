@@ -643,6 +643,14 @@ with a modern look and feel.</label></description_kde>
 		    <label>Desktop Selection</label>
 		    <name>new_desktop</name>
                 </module>
+<!--
+	        <module>
+		    <label>Disk</label>
+		    <name>resize_dialog</name>
+		    <enable_back>yes</enable_back>
+		    <enable_next>yes</enable_next>
+		</module>
+-->
 	        <module>
 		    <label>Disk</label>
 		    <name>disk_proposal</name>
