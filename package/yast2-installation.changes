@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Feb  4 12:30:40 CET 2009 - locilka@suse.cz
+
+- Removing old additional control files during update. Writing new
+  ones according to the current list of add-ons (bnc #471929).
+- 2.13.212
+
+-------------------------------------------------------------------
 Wed Jun 11 15:59:06 CEST 2008 - locilka@suse.cz
 
 - Lslezak's patch for AddOnProducts to open up pattern selector

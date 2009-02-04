@@ -79,21 +79,33 @@ else if (func == "Write")
 	"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control.xml'");
     SCR::Execute (.target.bash, "/bin/chmod 0644 " +
 	"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control.xml'");
+
     // Copy also control files of add-on products
     string cf_dir = (string)SCR::Read (.target.tmpdir) + "/control_files";
+    string system_cf_dir = Installation::destdir + Directory::etcdir + "/control_files";
+
+    // BNC #471929
+    // Removing previously used control files (and order.ycp)
+    y2milestone (
+	"Removing %1 -> %2",
+	system_cf_dir,
+	SCR::Execute (.target.bash, sformat ("rm -rf '%1'", String::Quote (system_cf_dir)))
+    );
+
     if (size (AddOnProduct::control_files_to_add) > 0)
     {
-	SCR::Execute (.target.bash, "/bin/mkdir '" +
-	    String::Quote (Installation::destdir) + Directory::etcdir + "/control_files'");
+	SCR::Execute (.target.bash, "/bin/mkdir -p '" + String::Quote (system_cf_dir) + "'");
+
 	foreach (string file, AddOnProduct::control_files_to_add, {
 	    SCR::Execute (.target.bash, "/bin/cp " + cf_dir + "/" + file + " " +
-		"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files'");
+		"'" + String::Quote (system_cf_dir) + "'");
 	    SCR::Execute (.target.bash, "/bin/chmod 0644 " +
-		"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/" + file + "'");
+		"'" + String::Quote (system_cf_dir) + file + "'");
 	});
-	SCR::Write (.target.ycp, Installation::destdir + Directory::etcdir + "/control_files/order.ycp", AddOnProduct::control_files_to_add);
-	SCR::Execute (.target.bash, "/bin/chmod 0644 " +
-	    "'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/order.ycp'");
+
+	SCR::Write (.target.ycp, system_cf_dir + "/order.ycp", AddOnProduct::control_files_to_add);
+
+	SCR::Execute (.target.bash, "/bin/chmod 0644 " + "'" + String::Quote (system_cf_dir) + "/order.ycp'");
     }
 
     // Remove old eula.txt
