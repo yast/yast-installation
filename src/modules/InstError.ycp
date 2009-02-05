@@ -4,7 +4,7 @@
  * Summary:	Module for reporting installation errors
  * Authors:	Lukas Ocilka <locilka@suse.cz>
  *
- * $Id$
+ * $Id:$
  *
  * This module provides unified interface for reporting
  * installation errors.
@@ -70,6 +70,15 @@
 	return dialog_ret;
     }
 
+    /**
+     * Function opens a pop-up error message (defined by the parameters).
+     * Reports where to report a bug and which logs to attach.
+     * It additionally offers to save logs directly from the dialog.
+     *
+     * @param string heading
+     * @param string error_text
+     * @param string details (displayed as a plain text, can contain multiple lines)
+     */
     global void ShowErrorPopUp (string heading, string error_text, string details) {
 	boolean success = (boolean) UI::OpenDialog (`VBox (
 	    `Left (`HBox (
@@ -133,6 +142,22 @@ See %3 for more information about YaST logs."),
 	}
 
 	UI::CloseDialog();
+    }
+
+    /**
+     * Function is similar to ShowErrorPopUp but the error details are grabbed automatically
+     * from YaST logs.
+     *
+     * @param string error_text (e.g., "Client inst_abc returned invalid data.")
+     */
+    global void ShowErrorPopupWithLogs (string error_text) {
+	map cmd = (map) WFM::Execute (.local.bash_output, "tail -n 200 /var/log/YaST2/y2log | grep ' <\\(3\\|5\\)> '");
+
+	ShowErrorPopUp (
+	    _("Installation Error"),
+	    error_text,
+	    (cmd["exit"]:-1 == 0 && cmd["stdout"]:"" != "" ? cmd["stdout"]:"" : nil)
+	);
     }
 
 /* EOF */
