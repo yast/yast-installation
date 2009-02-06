@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Feb  6 10:39:20 CET 2009 - locilka@suse.cz
+
+- InstError has been moved to yast2-2.18.6
+- 2.18.5
+
+-------------------------------------------------------------------
 Thu Feb  5 18:16:17 CET 2009 - locilka@suse.cz
 
 - InstError extended and documented.
