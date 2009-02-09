@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Feb  9 13:21:50 CET 2009 - locilka@suse.cz
+
+- Enabling online update in (SLED) Automatic Configuration
+  (bnc #449128).
+
+-------------------------------------------------------------------
 Fri Feb  6 10:39:20 CET 2009 - locilka@suse.cz
 
 - InstError has been moved to yast2-2.18.6
