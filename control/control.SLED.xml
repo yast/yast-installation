@@ -88,6 +88,9 @@ textdomain="control"
 	    <module>cont_suse_register</module>
 	    <module>cont_suseconfig</module>
 	    <module>cont_congratulate</module>
+	    <!-- #449128, Run online-update during AC -->
+	    <module>you</module>
+	    <module>restore_settings</module>
 	</autoconfiguration_enabled_modules>
 
         <!-- Configuration for inst_automatic_configuration script -->
