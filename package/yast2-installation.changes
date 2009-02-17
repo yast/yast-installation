@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Feb 17 16:56:09 CET 2009 - locilka@suse.cz
+
+- Writing additional-control-files index file after removing and
+  recreating the directory where it is stored (bnc #475516).
+- 2.18.6
+
+-------------------------------------------------------------------
 Mon Feb  9 13:21:50 CET 2009 - locilka@suse.cz
 
 - Enabling online update in (SLED) Automatic Configuration
