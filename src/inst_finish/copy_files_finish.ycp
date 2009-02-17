@@ -61,14 +61,17 @@ void CopyAllWorkflowFiles () {
 	workflows_list = add (workflows_list, one_filename);
     });
 
-    // They need to follow the exact order
-    SCR::Write (.target.ycp, Installation::destdir + Directory::etcdir + "/control_files/order.ycp",
-	workflows_list);
-
     // Remove the directory with all additional control files (if exists)
     // and create it again (empty). BNC #471454
     SCR::Execute (.target.bash, sformat ("rm -rf '%1'; /bin/mkdir -p '%1'",
 	String::Quote (Installation::destdir + Directory::etcdir + "/control_files")));
+
+    // BNC #475516: Writing the control-files-order index 'after' removing the directory
+    // Control files need to follow the exact order, only those liseted here are used
+    SCR::Write (.target.ycp, Installation::destdir + Directory::etcdir + "/control_files/order.ycp",
+	workflows_list);
+    SCR::Execute (.target.bash, "/bin/chmod 0644 " +
+	"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/order.ycp'");
 
     // Now copy all the additional control files to the just installed system
     foreach (string file, WorkflowManager::GetAllUsedControlFiles(), {
@@ -77,9 +80,6 @@ void CopyAllWorkflowFiles () {
 	SCR::Execute (.target.bash, "/bin/chmod 0644 " +
 	    "'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/" + String::Quote (file) + "'");
     });
-
-    SCR::Execute (.target.bash, "/bin/chmod 0644 " +
-	"'" + String::Quote (Installation::destdir) + Directory::etcdir + "/control_files/order.ycp'");
 }
 
 // see bugzilla #328126
