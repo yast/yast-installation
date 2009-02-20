@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Feb 20 20:40:09 CET 2009 - locilka@suse.cz
+
+- save network configuration also for IPv6 only (bnc#477917)
+- 2.17.53
+
+-------------------------------------------------------------------
 Tue Feb 17 16:56:09 CET 2009 - locilka@suse.cz
 
 - Writing additional-control-files index file after removing and
