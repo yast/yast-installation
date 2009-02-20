@@ -51,7 +51,8 @@ else if (func == "Write")
 {
 
  // if network running, write network configuration
- if (NetworkService::isNetworkRunning())
+ // also in case of IPv6 (bnc#477917)
+ if (NetworkService::isNetworkRunning() || NetworkService::isNetworkv6Running())
     {
 	y2milestone("Save network configuration");
      WFM::CallFunction ("save_network");
