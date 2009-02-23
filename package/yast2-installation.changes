@@ -1,9 +1,17 @@
--------------------------------------------------------------------                                                          
-Fri Feb 20 20:40:09 CET 2009 - locilka@suse.cz                                                                               
-                                                                                                                             
-- save network configuration also for IPv6 only (bnc#477917)                                                                 
-- 2.18.7                                                                                                                    
-               
+-------------------------------------------------------------------
+Mon Feb 23 16:36:56 CET 2009 - locilka@suse.cz
+
+- Offering to configure network if remote repositories are used
+  during upgrade (inst_upgrade_urls). Setup can be safely skipped
+  and comes from the Online Repositopries (bnc #478024).
+- 2.18.8
+
+-------------------------------------------------------------------
+Fri Feb 20 20:40:09 CET 2009 - locilka@suse.cz
+
+- save network configuration also for IPv6 only (bnc#477917)
+- 2.18.7
+
 -------------------------------------------------------------------
 Tue Feb 17 16:56:09 CET 2009 - locilka@suse.cz
 
