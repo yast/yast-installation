@@ -534,18 +534,21 @@ Configure it?"),
 	integer steps_nr = 0;
 
 	if (size (sources_to_remove) > 0) {
+	    y2milestone ("Remove %1 repos", sources_to_remove);
 	    actions_todo	= add (actions_todo,  _("Remove unused repositories"));
 	    actions_doing	= add (actions_doing, _("Removing unused repositories..."));
 	    steps_nr		= steps_nr + size (sources_to_remove);
 	}
 
 	if (size (sources_to_add) > 0) {
+	    y2milestone ("Add %1 enabled repos", sources_to_add);
 	    actions_todo	= add (actions_todo,  _("Add enabled repositories"));
 	    actions_doing	= add (actions_doing, _("Adding enabled repositories..."));
 	    steps_nr		= steps_nr + size (sources_to_add);
 	}
 
 	if (size (sources_to_add_disabled) > 0) {
+	    y2milestone ("Add %1 disabled repos", sources_to_add_disabled);
 	    actions_todo	= add (actions_todo,  _("Add disabled repositories"));
 	    actions_doing	= add (actions_doing, _("Adding disabled repositories..."));
 	    steps_nr		= steps_nr + size (sources_to_add_disabled);
@@ -815,23 +818,29 @@ URL: %2"),
 
 	    if (do_not_remove == current_medianr) {
 		y2milestone ("Skipping source: %1 (installation repository)", do_not_remove);
+		return;
 	    }
+
+	    y2milestone ("Checking repo: %1", one_source);
 
 	    // Source should be enabled at the end
 	    if (one_source["url_will_be_enabled"]:nil == true) {
-		if (current_medianr == nil) {
+		//if (current_medianr == nil) {
 		    sources_to_add = add (sources_to_add, id);
-		}
+		    y2milestone ("Source to add: %1", id);
+		//}
 
 	    // Source should be disabled at the end
 	    } else if (one_source["url_will_be_enabled"]:nil == false) {
 		// already registered
 		if (current_medianr != nil) {
 		    sources_to_remove = add (sources_to_remove, current_medianr);
+		    y2milestone ("Source to remove: %1", current_medianr);
 		}
 
 		// will be added
 		sources_to_add_disabled = add (sources_to_add_disabled, id);
+		y2milestone ("Source to add disabled: %1", id);
 	    }
 	});
 
