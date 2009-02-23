@@ -778,6 +778,14 @@ URL: %2"),
 	    });
     }
 
+    boolean SourceIsRemote (string url) {
+	if (regexpmatch (url, "^cd://"))	return false;
+	if (regexpmatch (url, "^dvd://"))	return false;
+	if (regexpmatch (url, "^disk://"))	return false;
+
+	return true;
+    }
+
     symbol AddOrRemoveSources () {
 	list <integer> sources_to_remove = [];
 	list <string>  sources_to_add    = [];
@@ -790,9 +798,15 @@ URL: %2"),
 	// bnc #400823
 	do_not_remove = Pkg::SourceGetCurrent(false)[0]:0;
 
+	boolean some_sources_are_remote = false;
+
 	foreach (map one_source, urls, {
 	    string url = one_source["url"]:"";
 	    string id = one_source["id"]:"";
+
+	    if (SourceIsRemote (url)) {
+		some_sources_are_remote = true;
+	    }
 
 	    id_to_url[id] = url;
 
@@ -825,7 +839,15 @@ URL: %2"),
 	    SetAddRemoveSourcesUI();
 	}
 
-	// Remote repositories need network
+	// BNC #478024: Remote repositories need a running network
+	if ((size (sources_to_add) > 0) && ! NetworkRunning()) {
+	    y2milestone ("No network is running, trying inst_network_check fallback");
+	    any ret = WFM::CallFunction ("inst_network_check", []);
+	    y2milestone ("Called inst_network_check returned: %1", ret);
+	}
+
+	// Remote repositories without running network are registered
+	// as disabled
 	if ((size (sources_to_add) > 0) && ! NetworkRunning()) {
 	    y2warning ("Network is not running, sources will be added in DISABLED state");
 	    sources_to_add_disabled = (list <string>) union (sources_to_add_disabled, sources_to_add);
