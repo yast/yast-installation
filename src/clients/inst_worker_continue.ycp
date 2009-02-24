@@ -120,7 +120,7 @@
 
     y2milestone("Evaluating ret: %1", ret);
 
-    if (ret == `reboot || ret == `restart_yast || ret == `restart_same_step) {
+    if (ret == `reboot || ret == `restart_yast || ret == `restart_same_step || ret == `rebot_same_step) {
 	ret = PrepareYaSTforRestart (ret);
     // Installation has been aborted
     } else if (ret == `abort) {
@@ -134,7 +134,7 @@
     StoreNetworkServices (ret);
 
     // when the installation is not aborted or YaST is not restarted on purpose
-    // ret == `next -> (ret != `reboot && ret != `restart_yast && ret != `restart_same_step && ret != `abort)
+    // ret == `next -> (ret != `reboot && ret != `restart_yast && ret != `restart_same_step && ret != `abort && ret != `rebot_same_step)
     if (ret == `next) {
 	HandleSecondStageFinishedCorrectly();
     // installation (second stage) has been aborted

@@ -370,6 +370,11 @@ Note: You may have to enter some information again.");
             ret = `restart_yast;
         }
 
+	if (ret == `reboot_same_step) {
+	    last_step = last_step - 1;
+	    ret = `reboot;
+	}
+
         integer next_step = last_step + 1;
         y2milestone ("Creating %1 file with values %2",
             Installation::restart_data_file, [next_step, restarting_step]);
