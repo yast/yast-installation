@@ -2,6 +2,7 @@
 Tue Feb 24 13:30:15 CET 2009 - locilka@suse.cz
 
 - Added support for .xz images deployment (bnc #476079).
+- Added support for `reboot_same_step (bnc #475650).
 - 2.18.9
 
 -------------------------------------------------------------------
