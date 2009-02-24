@@ -256,6 +256,13 @@ boolean DeployTarImage (string id, string target) {
 	    "lzmadec < '%1' | tar --numeric-owner --totals --checkpoint=%3 --record-size=%4 -C '%2' -xf -",
 	    String::Quote (image), String::Quote (target), _checkpoint, _record_size
 	);
+    // xzdec
+    // BNC #476079
+    } else if (regexpmatch (image, "\.xz$")) {
+	cmd = sformat (
+	    "xzdec < '%1' | tar --numeric-owner --totals --checkpoint=%3 --record-size=%4 -C '%2' -xf -",
+	    String::Quote (image), String::Quote (target), _checkpoint, _record_size
+	);
     // bzip2, gzip
     } else {
 	cmd = sformat (

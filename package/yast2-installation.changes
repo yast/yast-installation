@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Feb 24 13:30:15 CET 2009 - locilka@suse.cz
+
+- Added support for .xz images deployment (bnc #476079).
+- 2.18.9
+
+-------------------------------------------------------------------
 Mon Feb 23 16:36:56 CET 2009 - locilka@suse.cz
 
 - Offering to configure network if remote repositories are used
