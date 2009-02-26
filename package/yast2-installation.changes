@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Feb 26 16:00:44 CET 2009 - ug@suse.de
+
+- RPMs via driverupdate were not possible
+
+-------------------------------------------------------------------
 Tue Feb 24 13:30:15 CET 2009 - locilka@suse.cz
 
 - Added support for .xz images deployment (bnc #476079).
