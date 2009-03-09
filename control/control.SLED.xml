@@ -91,6 +91,17 @@ textdomain="control"
 	    <!-- #449128, Run online-update during AC -->
 	    <module>you</module>
 	    <module>restore_settings</module>
+	    <!-- #469273, Second stage of Upgrade: Some steps are disabled due to AC enabled -->
+	    <module>upgrade_ask_net_test</module>
+	    <module>upgrade_do_net_test</module>
+	    <module>upgrade_addon_update_sources</module>
+	    <module>upgrade_suse_register</module>
+	    <module>upgrade_ask_online_update</module>
+	    <module>upgrade_you</module>
+	    <module>upgrade_restore_settings</module>
+	    <module>upgrade_suseconfig</module>
+	    <module>upgrade_release_notes</module>
+	    <module>upgrade_congratulate</module>
 	</autoconfiguration_enabled_modules>
 
         <!-- Configuration for inst_automatic_configuration script -->
@@ -855,54 +866,64 @@ Please visit us at http://www.novell.com/linux/.
 		</module>
                 <module>
 	            <label>Network</label>
-                    <name>ask_net_test</name>
+	            <name>upgrade_ask_net_test</name>
+                    <execute>inst_ask_net_test</execute>
 		    <!-- The very first interactive dialog -->
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
                 <module>
 	            <label>Network</label>
-                    <name>do_net_test</name>
+	            <name>upgrade_do_net_test</name>
+                    <execute>inst_do_net_test</execute>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
                 <module>
                     <label>Customer Center</label>
-                    <name>addon_update_sources</name>
+                    <name>upgrade_addon_update_sources</name>
+                    <execute>inst_addon_update_sources</execute>
                 </module>
                 <module>
                     <label>Customer Center</label>
-                    <name>suse_register</name>
+                    <name>upgrade_suse_register</name>
+                    <execute>inst_suse_register</execute>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
                 <module>
                     <label>Online Update</label>
-                    <name>ask_online_update</name>
+                    <name>upgrade_ask_online_update</name>
+                    <execute>inst_ask_online_update</execute>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
                 <module>
 	            <label>Online Update</label>
-                    <name>you</name>
+                    <name>upgrade_you</name>
+                    <execute>inst_you</execute>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
 		<module>
 		    <label>Online Update</label>
-		    <name>restore_settings</name>
+		    <name>upgrade_restore_settings</name>
+		    <execute>inst_restore_settings</execute>
 		</module>
                 <module>
-                    <name>suseconfig</name>
+                    <name>upgrade_suseconfig</name>
+                    <execute>inst_suseconfig</execute>
                 </module>
                 <module>
 	            <label>Release Notes</label>
-                    <name>release_notes</name>
+                    <name>upgrade_release_notes</name>
+                    <execute>inst_release_notes</execute>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>
                 <module>
-                    <name>congratulate</name>
+                    <name>upgrade_congratulate</name>
+                    <execute>inst_congratulate</execute>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
                 </module>

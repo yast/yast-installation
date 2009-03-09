@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Mar  9 19:59:12 CET 2009 - locilka@suse.cz
+
+- Adjusting second stage of update steps to be enabled even if AC
+  has been left selected when switching to update (bnc #469273).
+
+-------------------------------------------------------------------
 Mon Feb 23 16:36:56 CET 2009 - locilka@suse.cz
 
 - Offering to configure network if remote repositories are used
