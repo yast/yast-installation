@@ -3,6 +3,8 @@ Tue Mar 10 10:26:02 CET 2009 - locilka@suse.cz
 
 - Obsolete 'tar --preserve' replaced with
   'tar --preserve-permissions --preserve-order' (bnc #483791).
+- Added recovery support for AC (dialogs) possibly called by AC
+  scripts (bnc #483211).
 
 -------------------------------------------------------------------
 Thu Feb 26 16:00:44 CET 2009 - ug@suse.de

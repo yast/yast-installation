@@ -21,6 +21,7 @@
     // and sets sections of ProductFeatures
     import "ProductControl";
     import "ProductFeatures";
+    import "InstError";
 
     textdomain "installation";
 
@@ -156,12 +157,60 @@
 	}
     }
 
+    integer nr_of_steps = 0;
+
+    void SetWizardContents () {
+	Wizard::SetContents (
+	    _("Automatic Configuration"),
+	    `VBox (
+		// faster progress
+		`ReplacePoint(
+		    `id ("rp_one_set_progress"),
+		    `ProgressBar (
+			`id ("one_set_progress"),
+			_("Preparing configuration..."),
+			100,
+			0
+		    )
+		),
+		// overall-autoconf progress
+		`ProgressBar (
+		    `id ("autoconf_progress"),
+		    _("Creating automatic configuration..."),
+		    nr_of_steps,
+		    0
+		)
+	    ),
+	    _("<p>Installation is currently writing the automatic configuration. Please wait...</p>"),
+	    false, false
+	);
+    }
+
     integer current_sub_step = 0;
     integer current_step = 0;
+    string current_client = "";
 
     void NextStep () {
 	current_sub_step = current_sub_step + 1;
 	current_step = current_step + 1;
+
+	// BNC #483211: It might happen that some client close the dialog
+	if (! UI::WidgetExists (`id (`next)) && ! UI::WidgetExists (`id (`back)) && ! UI::WidgetExists (`id (`abort))) {
+	    y2error ("There is no Wizard dialog open! Creating one...");
+	    Wizard::OpenNextBackStepsDialog();
+	    InstError::ShowErrorPopupWithLogs (
+		sformat (_("An error has occured while calling '%1' AC script."), current_client)
+	    );
+	}
+
+	// BNC #483211: It might happen that some client changes the dialog
+	if (! UI::WidgetExists (`id ("one_set_progress")) || ! UI::WidgetExists (`id ("autoconf_progress"))) {
+	    y2error ("There is no Automatic Configuration dialog, adjusting the current one...");
+	    SetWizardContents();
+	    InstError::ShowErrorPopupWithLogs (
+		sformat (_("An error has occured while calling '%1' AC script."), current_client)
+	    );
+	}
 
 	if (UI::WidgetExists (`id ("one_set_progress")))
 	    UI::ChangeWidget (`id ("one_set_progress"), `Value, current_sub_step);
@@ -185,6 +234,7 @@
 
 	foreach (string one_script, scripts_to_call, {
 	    y2milestone ("Calling script %1", one_script);
+	    current_client = one_script;
 	    NextStep();
 	    boolean progress_before = Progress::set (false);
 
@@ -207,6 +257,7 @@
 
 	foreach (string one_proposal, proposals_to_call, {
 	    y2milestone ("Calling script %1 MakeProposal", one_proposal);
+	    current_client = one_proposal;
 	    NextStep();
 	    boolean progress_before = Progress::set (false);
 
@@ -231,6 +282,7 @@
 
 	foreach (string one_proposal, proposals_to_call, {
 	    y2milestone ("Calling script %1 Write", one_proposal);
+	    current_client = one_proposal;
 	    NextStep();
 	    boolean progress_before = Progress::set (false);
 
@@ -245,38 +297,13 @@
 	});
     }
 
-    integer nr_of_steps = 0;
-
     foreach (map one_autoconf_call, proposal_scripts_to_call, {
 	nr_of_steps = nr_of_steps +
 	    // Proposals have two steps, scripts only one
 	    ((one_autoconf_call["type"]:"" == "proposals" ? 2:1) * size (one_autoconf_call["items"]:[]));
     });
 
-    Wizard::SetContents (
-	_("Automatic Configuration"),
-	`VBox (
-	    // faster progress
-	    `ReplacePoint(
-		`id ("rp_one_set_progress"),
-		`ProgressBar (
-		    `id ("one_set_progress"),
-		    _("Preparing configuration..."),
-		    100,
-		    0
-		)
-	    ),
-	    // overall-autoconf progress
-	    `ProgressBar (
-		`id ("autoconf_progress"),
-		_("Creating automatic configuration..."),
-		nr_of_steps,
-		0
-	    )
-	),
-	_("<p>Installation is currently writing the automatic configuration. Please wait...</p>"),
-	false, false
-    );
+    SetWizardContents();
 
     foreach (map one_autoconf_call, proposal_scripts_to_call, {
 	if (one_autoconf_call["icon"]:"" != "") {
