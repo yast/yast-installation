@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Mar 16 14:47:46 CET 2009 - locilka@suse.cz
+
+- Fixed help for "License Translations..." button (bnc #481113).
+
+-------------------------------------------------------------------
 Tue Mar 10 10:26:02 CET 2009 - locilka@suse.cz
 
 - Obsolete 'tar --preserve' replaced with
