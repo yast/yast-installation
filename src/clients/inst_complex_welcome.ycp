@@ -114,6 +114,7 @@
 		    `ReplacePoint (`id (`license_checkbox_rp), `Empty()),
 		    `VStretch (),
 		    // TRANSLATORS: button label
+		    // ID: #ICW_B1 button
 		    `Right (`PushButton (`id (`show_fulscreen_license), _("License &Translations...")))
 		))
 	    )
@@ -153,9 +154,10 @@ installation and for the installed system.
 ") +
 
     // help text, continued
+    // Describes the #ICW_B1 button
     _("<p>
 License has to be accepted before continuing the installation.
-Use <b>Show License</b> to show the license in all available translations.
+Use <b>License Translations...</b> to show the license in all available translations.
 </p>") +
 
     // help text, continued
