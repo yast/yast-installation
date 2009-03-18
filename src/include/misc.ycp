@@ -216,8 +216,8 @@ according to the settings in the previous dialogs.</p>")
 				   `HSpacing( 0.7 )
 				   ),
 			     `ButtonBox (
-				   `PushButton (`id (`cancel), `opt(`cancelButton, `key_F9, `default), Label::BackButton()),
-				   `PushButton (`id (`ok), `opt (`okButton, `key_F10), confirm_button_label)
+				   `PushButton (`id (`cancel), `opt(`cancelButton, `key_F10, `default), Label::BackButton()),
+				   `PushButton (`id (`ok), `opt (`okButton, `key_F9), confirm_button_label)
 				   )
 			     )
 		       );
