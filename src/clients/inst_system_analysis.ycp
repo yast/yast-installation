@@ -133,6 +133,8 @@ Check your hardware.
 	y2milestone ("Product flags: %1", Product::flags);
 	if (contains (Product::flags, "update") || Kernel::GetSuSEUpdate ()) {
 	    InstData::offer_update = true;
+	} else {
+	    InstData::offer_update = false;
 	}
 
 	return true;
@@ -141,6 +143,8 @@ Check your hardware.
     boolean SearchForLinuxPartitions () {
 	if (Storage::HaveLinuxPartitions ()) {
 	    InstData::have_linux = true;
+	} else {
+	    InstData::have_linux = false;
 	}
 	
 	return true;
