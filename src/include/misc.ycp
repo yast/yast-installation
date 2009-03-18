@@ -33,10 +33,10 @@ import "HTML";
 import "Storage";
 
 /**
- * Function appends blacklisted modules to the /etc/modprobe.d/blacklist
+ * Function appends blacklisted modules to the /etc/modprobe.d/50-blacklist.conf
  * file.
  *
- * More information in bugzilla #221815
+ * More information in bugzilla #221815 and #485980
  */
 void AdjustModprobeBlacklist () {
     // check whether we need to run it
@@ -50,7 +50,7 @@ void AdjustModprobeBlacklist () {
     list <string> blacklisted_modules = splitstring (brokenmodules, ", ");
 
     // run before SCR switch
-    string blacklist_file = Installation::destdir + "/etc/modprobe.d/blacklist";
+    string blacklist_file = Installation::destdir + "/etc/modprobe.d/50-blacklist.conf";
 
     // read the content
     string content = "";
@@ -105,7 +105,7 @@ void InjectRenamedFile( string dir, string src_name, string target_name ) {
 }
 
 void UpdateWizardSteps () {
-    string wizard_mode = Mode::test () ? "installation" : Mode::mode ();
+    string wizard_mode = Mode::mode();
     y2milestone ("Switching Steps to %1 ", wizard_mode);
 
     list<map> stage_mode = [
@@ -114,7 +114,7 @@ void UpdateWizardSteps () {
     ];
     y2milestone ("Updating wizard steps: %1", stage_mode);
 
-    ProductControl::UpdateWizardSteps(stage_mode);
+    ProductControl::UpdateWizardSteps (stage_mode);
 }
 
 
@@ -253,7 +253,8 @@ according to the settings in the previous dialogs.</p>")
     }
 
     void AdjustAutomaticConfiguration () {
-        if (ProductControl::GetUseAutomaticConfiguration()) {
+	// AC is supported in Mode::installation only
+        if (Mode::installation() && ProductControl::GetUseAutomaticConfiguration()) {
 	    y2milestone ("Using AC...");
 
 	    ProductControl::DisableAllModulesAndProposals ("installation", "continue");
@@ -261,6 +262,8 @@ according to the settings in the previous dialogs.</p>")
 
 	    // Enable Modules that are required to run even if using AC, bnc #428190
 	    EnableRequiredModules();
+
+	// Otherwise it is always disabled
 	} else {
 	    y2milestone ("Not using AC...");
 

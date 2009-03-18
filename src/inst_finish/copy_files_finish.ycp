@@ -125,8 +125,8 @@ if (func == "Info")
 }
 else if (func == "Write")
 {
-    // bugzilla #221815
-    // Adding blacklisted modules into the /etc/modprobe.d/blacklist
+    // bugzilla #221815 and #485980
+    // Adding blacklisted modules into the /etc/modprobe.d/50-blacklist.conf
     // This should run before the SCR::switch function
     AdjustModprobeBlacklist();
 

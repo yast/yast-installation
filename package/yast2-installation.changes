@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Wed Mar 18 13:17:58 CET 2009 - locilka@suse.cz
+
+- Location /etc/modprobe.d/blacklist has been renamed to
+  /etc/modprobe.d/50-blacklist.conf (bnc #485980).
+- Unified inst_mode handling, especially correct handling of
+  Automatic Configuration together with switching to Update mode
+  (originally reported as bnc #469273).
+- Repair workflow unified with the rest of installation.
+- 2.18.10
+
+-------------------------------------------------------------------
 Mon Mar 16 14:47:46 CET 2009 - locilka@suse.cz
 
 - Fixed help for "License Translations..." button (bnc #481113).

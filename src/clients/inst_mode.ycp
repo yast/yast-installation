@@ -31,6 +31,7 @@ import "Wizard";
 import "ProductFeatures";
 import "Directory";
 import "PackagesProposal";
+import "InstError";
 
 include "packager/storage_include.ycp";
 include "installation/misc.ycp";
@@ -89,15 +90,7 @@ if (GetInstArgs::going_back()) {
     Pkg::TargetFinish();
 }
 
-boolean other_options_disabled = false;
-
-if (! (InstData::have_linux && InstData::offer_update))
-{
-    // to offer add-on products
-    // Mode::SetMode ("installation");
-    // return `auto;
-    other_options_disabled = true;
-}
+boolean other_options_enabled = (InstData::have_linux && InstData::offer_update);
 
 // bugzilla #208222
 // Release disk used as the installation source
@@ -255,10 +248,8 @@ string umount_result = Linuxrc::InstallInf ("umount_result");
 string media = Linuxrc::InstallInf ("InstMode");
 y2milestone ("Umount result: %1, inst mode: %2", umount_result, media);
 
-other_options_disabled = false;
-
 // only installation (and addon products) enabled
-if (other_options_disabled) {
+if (other_options_enabled != true) {
     UI::ChangeWidget (`id (`update), `Enabled, false);
     UI::ChangeWidget (`id (`repair), `Enabled, false);
 
@@ -274,6 +265,7 @@ if (other_options_disabled) {
     }
 }
 
+y2milestone ("Initial Mode: %1, AC: %2", Mode::mode(), ProductControl::GetUseAutomaticConfiguration());
 AdjustStepsAccordingToInstallationSettings();
 
 repeat {
@@ -316,40 +308,40 @@ repeat {
 	continue;
     }
 
-    // Adjusting current UI - Other Options
-    else if (ret == `repair) {
-	// disable all helper/options widgets 
-	foreach (any one_item, [`add_on, `productsources, `use_automatic_configuration], {
-	    if (UI::WidgetExists (`id (one_item))) {
-		UI::ChangeWidget (`id (one_item), `Enabled, false);
-	    }
-	});
-
-	ret = nil;
-	continue;
-    }
-
     // Adjusting current UI - Hide Other Options
-    // in case of `install or `update clicked
-    else if (contains([`install, `update], ret)) {
+    // in case of `install, `update, or `repair clicked
+    else if (contains([`install, `update, `repair], ret)) {
 	symbol selected_mode = (symbol)  UI::QueryWidget (`id (`inst_mode), `CurrentButton);
 
+	// [(any) `check_box_id, (boolean) selected, (boolean) enabled]
 	foreach (list one_item, [
-	    [`add_on, Installation::add_on_selected, true],
-	    [`productsources, Installation::add_on_selected, true],
+	    [`add_on, Installation::add_on_selected, (ret != `repair)],
+	    [`productsources, Installation::productsources_selected, (show_online_repositories && ret != `repair)],
 	    // automatic installation works only for new installation
-	    [`use_automatic_configuration, (ret == `install ? ProductControl::GetUseAutomaticConfiguration():false), (ret == `install)],
+	    [`use_automatic_configuration, ProductControl::GetUseAutomaticConfiguration(), (ret == `install)],
 	], {
 	    if (UI::WidgetExists (`id (one_item[0]:`_inotdef_))) {
 		UI::ChangeWidget  (`id (one_item[0]:`_inotdef_), `Enabled, one_item[2]:false);
 		UI::ChangeWidget  (`id (one_item[0]:`_inotdef_), `Value, one_item[1]:false);
 	    }
 	});
-    }
+
+	// Switch the mode and steps ASAP
+	if (selected_mode == `install) {
+	    Mode::SetMode ("installation");
+	} else if (selected_mode == `update) {
+	    Mode::SetMode ("update");
+	} else if (selected_mode == `repair) {
+	    Mode::SetMode ("repair");
+	}
+
+	y2milestone ("New mode has been selected: %1", Mode::mode());
+	AdjustStepsAccordingToInstallationSettings();
+
+	continue;
 
     // Next button
-    if (ret == `next)
-    {
+    } else if (ret == `next) {
 	new_mode = (symbol) UI::QueryWidget (`id (`inst_mode), `CurrentButton);
 	if (new_mode == nil)
 	{
@@ -358,9 +350,11 @@ repeat {
 	    ret = nil;
 	    continue;
 	}
-    }
-    else if (ret == `abort)
-    {
+
+	continue;
+
+    // Abort button
+    } else if (ret == `abort) {
 	if (Popup::ConfirmAbort (Stage::initial () ? `painless : `incomplete))
 	    return `abort;
 	ret = nil;
@@ -373,59 +367,18 @@ repeat {
 y2milestone("Selected mode: %1, Return: %2", new_mode, ret);
 
 if (ret == `next) {
-    if (new_mode == `install)
-    {
-	Mode::SetMode ("installation");
-    }
-
-    if (new_mode == `update)
-    {
-	Mode::SetMode ("update");
-
-	// update mode doesn't support automatic configuration
-	ProductControl::SetUseAutomaticConfiguration (false);
-    }
-
-    if (new_mode == `repair)
-    {
-	Mode::SetMode ("repair");
-    }
-
-    if (new_mode == `install || new_mode == `update)
-    {
-	y2milestone ("Disabled modules: %1", ProductControl::GetDisabledModules());
-    }
-
+    y2milestone ("Disabled modules: %1", ProductControl::GetDisabledModules());
 } else if (ret == `back || ret == `finish) {
     y2milestone("Returning: %1", ret);
     return ret;
 }
 
+// Repair mode exception -->
 if (Mode::repair ())
 {
-    y2milestone("Calling inst_repair");
-    any ret = WFM::CallFunction ("inst_repair");
-
-    if (ret == nil) {
-	Report::Error (
-	    // TRANSLATORS: an error message (the same is in base.pot)
-	    // this should not happen, but life is cruel...
-	    // %1 - (failed) module name
-	    // %2 - logfile, possibly with errors
-	    // %3 - link to our bugzilla
-	    // %4 - directory where YaST logs are stored
-	    sformat (_("Accessing the YaST module %1 has failed.
-More information can be found in the '%2' file.
-Please report this bug at %3 and attach the YaST logs stored in the '%4' directory."),
-	    "inst_repair",
-	    "/var/log/YaST2/y2log",
-	    "http://bugzilla.novell.com/",
-	    "/var/log/YaST2/")
-	);
-    }
-
-    return `finish;
+    return `next;
 }
+// <-- Repair mode exception
 
 // bugzilla #293808
 // Check (and setup) the network only when needed
