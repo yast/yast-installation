@@ -373,16 +373,9 @@ if (ret == `next) {
     return ret;
 }
 
-// Repair mode exception -->
-if (Mode::repair ())
-{
-    return `next;
-}
-// <-- Repair mode exception
-
 // bugzilla #293808
 // Check (and setup) the network only when needed
-if (Installation::add_on_selected || Installation::productsources_selected) {
+if (new_mode != `repair && (Installation::add_on_selected || Installation::productsources_selected)) {
     // Check and setup network
     symbol inc_ret = (symbol) WFM::CallFunction ("inst_network_check", []);
     y2milestone ("inst_network_check ret: %1", inc_ret);

@@ -131,7 +131,10 @@ Check your hardware.
 
     boolean EvaluateUpdatePossibilities () {
 	y2milestone ("Product flags: %1", Product::flags);
-	if (contains (Product::flags, "update") || Kernel::GetSuSEUpdate ()) {
+	if (Product::flags == nil || size (Product::flags) == 0) {
+	    y2warning ("No product flags defined!");
+	    InstData::offer_update = true;
+	} else if (contains (Product::flags, "update") || Kernel::GetSuSEUpdate ()) {
 	    InstData::offer_update = true;
 	} else {
 	    InstData::offer_update = false;
