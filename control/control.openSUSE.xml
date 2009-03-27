@@ -195,7 +195,7 @@ textdomain="control"
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
-		<priority config:type="integer">100</priority>
+		<priority config:type="integer">99</priority>
 	    </extra_url>
 	    <extra_url>
 		<baseurl>http://download.opensuse.org/distribution/11.2/repo/non-oss/</baseurl>
@@ -204,7 +204,7 @@ textdomain="control"
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
-		<priority config:type="integer">100</priority>
+		<priority config:type="integer">99</priority>
 	    </extra_url>
 	    <extra_url>
 		<baseurl>http://download.opensuse.org/debug/distribution/11.2/repo/oss/</baseurl>
@@ -213,7 +213,7 @@ textdomain="control"
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">false</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
-		<priority config:type="integer">100</priority>
+		<priority config:type="integer">99</priority>
 	    </extra_url>
             <extra_url>
                 <baseurl>http://download.opensuse.org/source/distribution/11.2/repo/oss/</baseurl>
@@ -222,7 +222,7 @@ textdomain="control"
                 <prod_dir>/</prod_dir>
                 <enabled config:type="boolean">false</enabled>
                 <autorefresh config:type="boolean">true</autorefresh>
-                <priority config:type="integer">100</priority>
+                <priority config:type="integer">99</priority>
             </extra_url>
 	</extra_urls>
 
