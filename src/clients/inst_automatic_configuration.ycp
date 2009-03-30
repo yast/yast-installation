@@ -57,6 +57,7 @@
 
     map <string, any> globals_features = ProductFeatures::GetSection ("globals");
     list <map> acc = (list <map>) globals_features["automatic_configuration"]:[];
+    list <string> acc_ignore = (list <string>) globals_features["ac_redraw_and_ignore"]:[];
 
     if (acc == nil || acc == []) {
 	y2warning ("No AC defined (%1), skipping...", acc);
@@ -189,8 +190,22 @@
     integer current_sub_step = 0;
     integer current_step = 0;
     string current_client = "";
+    boolean ac_redraw_and_ignore = nil;
+
+    void DumpACUIError () {
+	y2error ("AC progress widgets missing");
+	y2warning ("---------------------- UI DUMP ----------------------");
+	UI::DumpWidgetTree();
+	y2warning ("---------------------- UI DUMP ----------------------");
+    }
+
+    string last_client = nil;
 
     void NextStep () {
+	// If a Progress is missing, it's recreated and an error is reported
+	if (last_client == nil) last_client = current_client;
+	ac_redraw_and_ignore = (last_client == nil ? false : contains (acc_ignore, last_client));
+
 	current_sub_step = current_sub_step + 1;
 	current_step = current_step + 1;
 
@@ -198,18 +213,26 @@
 	if (! UI::WidgetExists (`id (`next)) && ! UI::WidgetExists (`id (`back)) && ! UI::WidgetExists (`id (`abort))) {
 	    y2error ("There is no Wizard dialog open! Creating one...");
 	    Wizard::OpenNextBackStepsDialog();
+	    DumpACUIError();
 	    InstError::ShowErrorPopupWithLogs (
-		sformat (_("An error has occured while calling '%1' AC script."), current_client)
+		sformat (_("An error has occured while calling '%1' AC script."), last_client)
 	    );
 	}
 
 	// BNC #483211: It might happen that some client changes the dialog
 	if (! UI::WidgetExists (`id ("one_set_progress")) || ! UI::WidgetExists (`id ("autoconf_progress"))) {
-	    y2error ("There is no Automatic Configuration dialog, adjusting the current one...");
+	    if (ac_redraw_and_ignore == true) {
+		y2warning ("There is no Automatic Configuration dialog, adjusting the current one... (ignored)");
+	    } else {
+		DumpACUIError();
+		y2error ("There is no Automatic Configuration dialog, adjusting the current one...");
+		InstError::ShowErrorPopupWithLogs (
+		    sformat (_("An error has occured while calling '%1' AC script."), last_client)
+		);
+	    }
+
+	    // Redraw after showing an error
 	    SetWizardContents();
-	    InstError::ShowErrorPopupWithLogs (
-		sformat (_("An error has occured while calling '%1' AC script."), current_client)
-	    );
 	}
 
 	if (UI::WidgetExists (`id ("one_set_progress")))
@@ -247,6 +270,7 @@
 
 	    Progress::set (progress_before);
 	    y2milestone ("Script %1 returned %2", one_script, result);
+	    last_client = one_script;
 	});
     }
 
@@ -271,14 +295,8 @@
 
 	    Progress::set (progress_before);
 	    y2milestone ("Script %1 returned %2", one_proposal, result);
+	    last_client = one_proposal;
 	});
-
-	// TODO: handle errors, warnings ...
-	// foreach (string one_proposal, proposals_to_call, {
-	//    y2milestone ("Calling script %1 MakeProposal", one_proposal);
-	//    any result = WFM::CallFunction (one_proposal, ["Description", $[ "AutomaticConfiguration":true ]]);
-	//    y2milestone ("Script %1 returned %2", one_proposal, result);
-	//});
 
 	foreach (string one_proposal, proposals_to_call, {
 	    y2milestone ("Calling script %1 Write", one_proposal);
@@ -294,6 +312,7 @@
 	    );
 
 	    y2milestone ("Script %1 returned %2", one_proposal, result);
+	    last_client = one_proposal;
 	});
     }
 
@@ -305,6 +324,9 @@
 
     SetWizardContents();
 
+    // items per step
+    integer nr_of_items = 0;
+
     foreach (map one_autoconf_call, proposal_scripts_to_call, {
 	if (one_autoconf_call["icon"]:"" != "") {
 	    Wizard::SetTitleIcon (one_autoconf_call["icon"]:"");
@@ -315,28 +337,10 @@
 
 	string type = one_autoconf_call["type"]:"";
 
-	integer nr_of_steps = ((one_autoconf_call["type"]:"" == "proposals" ? 2:1) * size (one_autoconf_call["items"]:[]));
+	nr_of_items = ((one_autoconf_call["type"]:"" == "proposals" ? 2:1) * size (one_autoconf_call["items"]:[]));
 	string label = one_autoconf_call["label"]:_("Automatic configuration...");
 
 	y2milestone ("Steps: %1, Label: %2", nr_of_steps, label);
-
-	// reset the faster prgress
-	current_sub_step = 0;
-	if (UI::WidgetExists (`id ("rp_one_set_progress"))) {
-	    UI::ReplaceWidget (`id ("rp_one_set_progress"),
-		`ProgressBar (
-		    `id ("one_set_progress"),
-		    label,
-		    nr_of_steps,
-		    0
-		)
-	    );
-	} else {
-	    y2error ("Widget rp_one_set_progress doesn't exist! Cannot provide useful progress...");
-	    y2warning ("---------------------- UI DUMP ----------------------");
-	    UI::DumpWidgetTree();
-	    y2warning ("---------------------- UI DUMP ----------------------");
-	}
 
 	switch (type) {
 	    case "scripts":
@@ -351,12 +355,9 @@
 
     y2milestone ("automatic_configuration finished");
 
-//    Wizard::SetContents (
-//	_("Automatic Configuration"),
-//	`Label (_("Finishing configuration...")),
-//	"",
-//	false, false
-//    );
+    // Set to 100%
+    UI::ChangeWidget (`id ("one_set_progress"), `Value, nr_of_items);
+    UI::ChangeWidget (`id ("autoconf_progress"), `Value, nr_of_steps);
 
     if (test_mode) Wizard::CloseDialog();
 

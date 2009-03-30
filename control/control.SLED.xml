@@ -93,6 +93,15 @@ textdomain="control"
 	    <module>restore_settings</module>
 	</autoconfiguration_enabled_modules>
 
+	<!--
+	    BNC #487565, Some AC steps might create their own UI (rpmcopy, for instance)
+	    and AC should just recreate its UI without reporting an error.
+	    Each ac_item here matches inst_* resp. *_proposal from automatic_configuration->ac_item
+	-->
+	<ac_redraw_and_ignore config:type="list">
+	    <ac_item>inst_rpmcopy_secondstage</ac_item>
+	</ac_redraw_and_ignore>
+
         <!-- Configuration for inst_automatic_configuration script -->
         <automatic_configuration config:type="list">
             <!--
