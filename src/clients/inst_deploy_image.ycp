@@ -338,7 +338,10 @@ Pkg::TargetLoad ();
 PackageCallbacks::RestorePreviousProgressCallbacks();
 
 // Restore the states stored by StoreAllChanges()
-ImageInstallation::RestoreAllChanges();
+if (ImageInstallation::RestoreAllChanges() != true) {
+    y2warning ("Aborting...");
+    return `abort;
+}
 
 // BNC #436842 - debug feature in control file
 if (ProductFeatures::GetBooleanFeature("globals", "debug_deploying") == true) {

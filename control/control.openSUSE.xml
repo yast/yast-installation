@@ -170,6 +170,9 @@ textdomain="control"
 
 	<!-- bnc #431259 -->
 	<default_ntp_setup config:type="boolean">true</default_ntp_setup>
+
+	<!-- to debug deploying, set to 'true' -->
+	<debug_deploying config:type="boolean">false</debug_deploying>
     </globals>
 
     <software>

@@ -29,6 +29,7 @@ import "SlideShow";
 import "ProductControl";
 import "ProductFeatures";
 import "Packages";
+import "PackagesUI";
 
 textdomain "installation";
 
@@ -1098,7 +1099,7 @@ global boolean FileSystemCopy (string from, string to,
 
 	boolean ret = nil;
 
-	// There are some installed
+	// There are some installed (matching the same arch, version, and name)
 	if (size (resolvable_properties) > 0) {
 	    y2milestone ("Resolvable type: %1, name: %2 already installed", one_type, one_object["name"]:"-x-");
 	    // Let's keep the installed version
@@ -1118,7 +1119,12 @@ global boolean FileSystemCopy (string from, string to,
 	return ret;
     }
 
-    global void RestoreAllChanges () {
+    /**
+     * Restores packages statuses from 'objects_state': Selects packages for removal, installation, upgrade.
+     *
+     * @return boolean if successful
+     */
+    global boolean RestoreAllChanges () {
 	integer nr_steps = 4 * size (all_supported_types);
 	string id = "restoring_user_prefs";
 
@@ -1138,6 +1144,11 @@ global boolean FileSystemCopy (string from, string to,
 
 	    if (generic_set_progress != nil)
 		generic_set_progress (id, nil);
+
+	    // List of all packages selected for installation (just names)
+	    list <string> selected_for_installation_pkgnames = maplist (map one_resolvable, objects_state[one_type, "install"]:[], {
+		return one_resolvable["name"]:"";
+	    });
 
 	    // All packages selected to be installed
 	    // [ $[ "arch" : ... , "name" : ... , "version" : ... ], ... ]
@@ -1162,9 +1173,17 @@ global boolean FileSystemCopy (string from, string to,
 
 		// Already installed resolvable but not in list of resolvables to be installed
 		if (! contains (selected_for_installation, one_already_installed_resolvable)) {
-		    y2milestone ("Removing type: %1, name: %2 version: %3",
-			one_type, one_resolvable["name"]:"-x-", one_resolvable["version"]:"-x-");
-		    Pkg::ResolvableRemove (one_resolvable["name"]:"-x-", one_type);
+		    // BNC #489448: Do not remove package which is installed in different version and/or arch
+		    // It will be upgraded later
+		    if (contains (selected_for_installation_pkgnames, one_resolvable["name"]:"-x-")) {
+			y2milestone ("Not Removing type: %1, name: %2 version: %3",
+			    one_type, one_resolvable["name"]:"-x-", one_resolvable["version"]:"-x-");
+		    // Package is installed or selected but should not be, remove it
+		    } else {
+			y2milestone ("Removing type: %1, name: %2 version: %3",
+			    one_type, one_resolvable["name"]:"-x-", one_resolvable["version"]:"-x-");
+			Pkg::ResolvableRemove (one_resolvable["name"]:"-x-", one_type);
+		    }
 		}
             });
 
@@ -1182,6 +1201,43 @@ global boolean FileSystemCopy (string from, string to,
 
 	// Free the memory
 	objects_state = $[];
+
+	// Return 'true' if YaST can solve deps. automatically
+	if (Pkg::PkgSolve (true) == true) {
+	    y2milestone ("Dependencies solved atomatically");
+	    return true;
+	}
+
+	// Error message
+	Report::Error (_("Installation was unable to solve package dependecies automatically.
+Package manager will be opened for you to solve them manually."));
+
+	boolean ret = false;
+
+	// BNC #Trying to solve deps. manually
+	while (true) {
+	    y2warning ("Cannot solve dependecies automatically, opening Packages UI");
+	    symbol diaret = PackagesUI::RunPackageSelector ($["enable_repo_mgr":false, "mode":`summaryMode]);
+	    y2milestone ("RunPackageSelector returned %1", diaret);
+
+	    // User didn't solve the deps manually
+	    if (diaret == `cancel) {
+		ret = false;
+		if (Popup::ConfirmAbort (`unusable)) {
+		    y2warning ("User abort...");
+		    break;
+		}
+		// Aborting not confirmed, next round
+		continue;
+	    // Solved! (somehow)
+	    } else {
+		ret = true;
+		break;
+	    }
+	}
+
+	y2milestone ("Dependencies solved: %1", ret);
+	return ret;
     }
 
     // <-- Storing and restoring states
