@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Mar 30 14:20:57 CEST 2009 - locilka@suse.cz
+
+- Fixing reevaluation of packages to remove, install and/or upgrade
+  after images are deployed during first stage (bnc #489448).
+- 2.18.12
+
+-------------------------------------------------------------------
 Fri Mar 27 18:15:15 CET 2009 - locilka@suse.cz
 
 - Added new globals->ac_redraw_and_ignore control file item
