@@ -70,6 +70,7 @@ globals_elements =
     | copy_to_system
     | autoconfiguration_enabled_modules
     | automatic_configuration
+    | ac_redraw_and_ignore
     | displaymanager_shutdown
     | enable_kdump
     | polkit_default_privs
@@ -145,6 +146,11 @@ copy_to_system = element copy_to_system {
 autoconfiguration_enabled_modules = element autoconfiguration_enabled_modules {
     LIST,
     element module { text }+
+}
+
+ac_redraw_and_ignore = element ac_redraw_and_ignore {
+    LIST,
+    element ac_item { text }+
 }
 
 automatic_configuration = element automatic_configuration {
