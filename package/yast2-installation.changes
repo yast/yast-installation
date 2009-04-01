@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Apr  1 11:41:24 CEST 2009 - lslezak@suse.cz
+
+- do not log password in URL into y2log (bnc#441944)
+
+-------------------------------------------------------------------
 Wed Feb  4 12:30:40 CET 2009 - locilka@suse.cz
 
 - Removing old additional control files during update. Writing new

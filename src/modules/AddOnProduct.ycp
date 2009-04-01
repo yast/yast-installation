@@ -33,6 +33,7 @@ import "FileUtils";
 import "Directory";
 import "Installation";
 import "String";
+import "InstURL";
 
 // variables for installation with product
 /**
@@ -109,7 +110,7 @@ global void SetBaseProductURL (string url) {
 	y2warning ("Empty base url");
 
     base_product_url = url;
-    y2milestone ("New base URL: %1", base_product_url);
+    y2milestone ("New base URL: %1", InstURL::HidePassword(base_product_url));
 }
 
 global string GetBaseProductURL () {
