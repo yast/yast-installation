@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Apr  2 14:19:38 CEST 2009 - locilka@suse.cz
+
+- Removing a work around that broke the possibility to use several
+  add-ons with the same URL (especially physical media-based ones)
+  (bnc #475352).
+- 2.13.214
+
+-------------------------------------------------------------------
 Wed Apr  1 11:41:24 CEST 2009 - lslezak@suse.cz
 
 - do not log password in URL into y2log (bnc#441944)
