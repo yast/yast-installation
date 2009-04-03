@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Apr  3 15:54:35 CEST 2009 - locilka@suse.cz
+
+- Adjusted BuildRequires, yast2-packager is newly required for not
+  logging passwords in URLs.
+
+-------------------------------------------------------------------
 Thu Apr  2 14:19:38 CEST 2009 - locilka@suse.cz
 
 - Removing a work around that broke the possibility to use several
