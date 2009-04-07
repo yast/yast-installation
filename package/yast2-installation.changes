@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Apr  7 13:02:39 CEST 2009 - ug@suse.de
+
+- changed the error message of missing hard disks during
+  autoinstallation. Might confuse s390/iSCSI users. (bnc#476147)
+
+-------------------------------------------------------------------
 Mon Mar 30 14:20:57 CEST 2009 - locilka@suse.cz
 
 - Fixing reevaluation of packages to remove, install and/or upgrade
