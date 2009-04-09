@@ -390,7 +390,7 @@ As desktop selection is a matter of taste, we do not give a recommendation.</lab
 
 	<!-- Desktop dialog: desktop names -->
 	<desktop_gnome><label>GNOME</label></desktop_gnome>
-	<desktop_kde><label>KDE 4.1</label></desktop_kde>
+	<desktop_kde><label>KDE</label></desktop_kde>
 	<desktop_kde3><label>KDE 3.5</label></desktop_kde3>
 	<desktop_xfce><label>XFCE Desktop</label></desktop_xfce>
 	<desktop_min_x><label>Minimal X Window</label></desktop_min_x>
@@ -401,13 +401,13 @@ As desktop selection is a matter of taste, we do not give a recommendation.</lab
 	    GNOME desktop description - It hould not be wider than 75 characters
 	    but it can take more lines then the original one.
 	-->
-	<description_gnome><label>GNOME 2.24 is the latest desktop from the GNOME Project. 
+	<description_gnome><label>GNOME 2.26 is the latest desktop from the GNOME Project. 
 It combines stability and maturity with incremental innovations.</label></description_gnome>
 	<!--
 	    KDE desktop description - It hould not be wider than 75 characters
 	    but it can take more lines then the original one.
 	-->
-	<description_kde><label>KDE 4.1 is the latest stable desktop released by the KDE Project.
+	<description_kde><label>KDE 4.2 is the latest stable desktop released by the KDE Project.
 It delivers an innovative, highly integrated desktop environment
 with a modern look and feel.</label></description_kde>
 
