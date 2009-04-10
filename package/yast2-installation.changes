@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Apr 10 14:11:46 CEST 2009 - locilka@suse.cz
+
+- KDE 3.x dropped from openSUSE control file (bnc #493547).
+
+-------------------------------------------------------------------
 Tue Apr  7 13:02:39 CEST 2009 - ug@suse.de
 
 - changed the error message of missing hard disks during
