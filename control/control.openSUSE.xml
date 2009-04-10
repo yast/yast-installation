@@ -269,19 +269,6 @@ textdomain="control"
 	    </one_supported_desktop>
 
 	    <one_supported_desktop>
-		<name>kde3</name>
-		<!-- BNC #381821 -->
-		<desktop>startkde3</desktop>
-		<label_id>desktop_kde3</label_id>
-		<logon>kdm3</logon>
-		<cursor>DMZ</cursor>
-		<packages>kdebase3-kdm</packages>
-		<order config:type="integer">2</order>
-		<patterns>kde3 x11 base</patterns>
-		<icon>pattern-kde</icon>
-	    </one_supported_desktop>
-
-	    <one_supported_desktop>
 		<name>xfce</name>
 		<desktop>startxfce4</desktop>
 		<label_id>desktop_xfce</label_id>
@@ -391,7 +378,6 @@ As desktop selection is a matter of taste, we do not give a recommendation.</lab
 	<!-- Desktop dialog: desktop names -->
 	<desktop_gnome><label>GNOME</label></desktop_gnome>
 	<desktop_kde><label>KDE</label></desktop_kde>
-	<desktop_kde3><label>KDE 3.5</label></desktop_kde3>
 	<desktop_xfce><label>XFCE Desktop</label></desktop_xfce>
 	<desktop_min_x><label>Minimal X Window</label></desktop_min_x>
 	<desktop_textmode><label>Minimal Server Selection (Text Mode)</label></desktop_textmode>
