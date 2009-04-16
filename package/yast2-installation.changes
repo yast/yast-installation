@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Apr 16 16:58:07 CEST 2009 - locilka@suse.cz
+
+- Added documentation for installation images.
+
+-------------------------------------------------------------------
 Fri Apr 10 14:11:46 CEST 2009 - locilka@suse.cz
 
 - KDE 3.x dropped from openSUSE control file (bnc #493547).
