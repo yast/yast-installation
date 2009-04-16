@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE images>
+<image_installation xmlns="http://www.suse.com/1.0/yast2ns" xmlns:config="http://www.suse.com/1.0/configns">
+    <image_sets config:type="list" >
+
+	<image_set>
+	    <!--
+		Comma-separated list of patterns included in
+		a particular imageset
+	    -->
+	    <patterns>kde,x11,enhanced_base</patterns>
+	    <archs>i386,ixxx,iyyy</archs>
+	    <!--
+		Matches the image->file of image that contains
+		a particular imageset metadata
+	    -->
+	    <pkg_image>kde-meta.tar.lzma</pkg_image>
+
+	    <!--
+		Each imageset can contain one or more images that
+		can be combined among all imagesets...
+	    -->
+	    <images config:type="list">
+		<image>
+		    <name>KDE [base]</name>
+		    <type>tar</type>
+		    <file>common-base-root.tar.xz</file>
+		</image>
+		<image>
+		    <name>KDE [xorg]</name>
+		    <type>tar</type>
+		    <file>common-xorg-root.tar.bzip2</file>
+		</image>
+
+		<!-- More 'image' items can be added here -->
+
+		<image>
+		    <name>KDE [meta]</name>
+		    <type>tar</type>
+		    <file>kde-meta.tar.lzma</file>
+		</image>
+	    </images>
+	</image_set>
+
+	<!-- More 'image_set' items are usually added here -->
+
+    </image_sets>
+</image_installation>

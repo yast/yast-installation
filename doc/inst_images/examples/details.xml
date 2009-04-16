@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE details>
+<image_installation_details
+    xmlns="http://www.suse.com/1.0/yast2ns"
+    xmlns:config="http://www.suse.com/1.0/configns">
+    <details config:type="list">
+	<image>
+	    <file>common-base-root.tar.lzma</file>
+	    <!-- optional: number of files in archive -->
+	    <files>28004</files>
+	    <!-- optional: list of RPMs in archive -->
+	    <rpms config:type="list">
+		<rpm>ConsoleKit</rpm>
+		<rpm>DirectFB</rpm>
+		<rpm>DirectFB</rpm>
+		<rpm>PolicyKit</rpm>
+		<rpm>...</rpm>
+	    </rpms>
+	    <size>509624320</size>
+	</image>
+	<image>
+	    <file>common-xorg-root.tar.lzma</file>
+	    <size>220549120</size>
+	</image>
+	<image>
+	    <file>common-qt.tar.lzma</file>
+	    <size>10240</size>
+	</image>
+	<!-- one description for one image -->
+    </details>
+</image_installation_details>

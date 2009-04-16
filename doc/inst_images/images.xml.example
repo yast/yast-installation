@@ -6,6 +6,10 @@ copy all images mentioned in the file to the same directory
 <!DOCTYPE images>
 <image_installation xmlns="http://www.suse.com/1.0/yast2ns" xmlns:config="http://www.suse.com/1.0/configns">
 <image_sets config:type="list" >
+  <!--
+    Each imageset can contain one or more images that can be combined
+    among all imagesets...
+  -->
   <image_set>
     <patterns>kde,x11,enhanced_base</patterns>
     <archs>i386,ixxx,iyyy</archs>
@@ -43,6 +47,7 @@ copy all images mentioned in the file to the same directory
       </image>
     </images>
   </image_set>
+
   <image_set>
     <patterns>gnome,x11,enhanced_base</patterns>
     <archs>i386,ixxx,iyyy</archs>
@@ -80,6 +85,7 @@ copy all images mentioned in the file to the same directory
       </image>
     </images>
   </image_set>
+
   <image_set>
     <patterns>enhanced_base</patterns>
     <archs>i386,ixxx,iyyy</archs>
