@@ -57,7 +57,10 @@
     // #302495: Switching ZMD off
     // by default, the checkbox is not visible
     string zmd_service_name = "novell-zmd";
-    string zmd_package_name = "zmd";
+    // FATE #303671: Disable Updater Applet If ZENworks is Disabled During Installation
+    list <string> zmd_package_names = ["zmd", "zen-updater"];
+    list <string> zmd_remove_packages = ["zen-updater"];
+
     term check_box_turnoff_zmd = `Empty();
     string turnoff_zmd_help= "";
 
@@ -70,7 +73,14 @@
     // not by default
     boolean turnoff_zmd_default_state = (argmap["zmd_turnoff_default_state"]:"no" == "yes");
 
-    boolean zmd_installed = Package::Installed (zmd_package_name);
+    boolean zmd_installed = false;
+
+    foreach (string one_package, zmd_package_names, {
+	if (Package::Installed (one_package)) {
+	    zmd_installed = true;
+	    break;
+	}
+    });
     // don't check for state a service that is not installed
     boolean zmd_enabled_or_running = (zmd_installed && (Service::Enabled (zmd_service_name) || Service::Status (zmd_service_name) == 0));
     y2milestone ("ZMD Installed: %1, Enabled/Running: %2", zmd_installed, zmd_enabled_or_running);
@@ -198,6 +208,16 @@ selected, a profile of the current system is stored in /root/autoyast.xml.</p>
     void StopAndDisableZMD () {
 	y2milestone ("Stopping service: %1 -> %2", zmd_service_name, Service::Stop (zmd_service_name));
 	y2milestone ("Disabling service: %1 -> %2", zmd_service_name, Service::Disable (zmd_service_name));
+
+	// Choose only the currently installed packages
+	list <string> packages_to_remove = filter (string one_package, zmd_remove_packages, {
+	    return Package::Installed (one_package);
+	});
+
+	// FATE #303671: Disable Updater Applet If ZENworks is Disabled During Installation
+	if (size (packages_to_remove) > 0) {
+	    y2milestone ("Removing packages %1: %2", packages_to_remove, Package::DoRemove (packages_to_remove));
+	}
     }
 
     Wizard::SetContents (caption, contents, help, 
