@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Apr 20 13:59:31 CEST 2009 - locilka@suse.cz
+
+- Fixed Vendor module to use zypp history file instead of using
+  y2logRPM (bnc #456446).
+
+-------------------------------------------------------------------
 Thu Apr 16 16:58:07 CEST 2009 - locilka@suse.cz
 
 - Added documentation for installation images.
