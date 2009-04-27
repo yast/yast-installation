@@ -142,7 +142,8 @@ term InstModeDialogContent (symbol pre_selected) {
 				    CreateRadioButtonTerm (
 					_("Re&pair Installed System"),
 					`repair,
-					Directory::themedir + "/current/icons/48x48/apps/yast.png",
+					// yast2-theme-2.18.3
+					Directory::themedir + "/current/icons/48x48/apps/yast-spanner.png",
 					false
 				    )
 				)

@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Apr 27 10:22:24 CEST 2009 - locilka@suse.cz
+
+- Using a new yast-spanner (old yast icon) for Repair.
+
+-------------------------------------------------------------------
 Mon Apr 20 13:59:31 CEST 2009 - locilka@suse.cz
 
 - Fixed Vendor module to use zypp history file instead of using
