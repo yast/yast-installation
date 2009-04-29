@@ -13,7 +13,7 @@
  *	language and other inst-sys extensions.
  *	See FATE #302955: 'Split translations out of installation system'.
  *
- * $Id:$
+ * $Id$
  *
  */
 {

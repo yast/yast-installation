@@ -4,7 +4,7 @@
  * Summary:	Functionality for copying files from another systems
  * Authors:	Lukas Ocilka <locilka@suse.cz>
  *
- * $Id:$
+ * $Id$
  *
  * Functionality for copying files from any not-mounted systems
  * to inst-sys and from inst-sys to just-installed system.
