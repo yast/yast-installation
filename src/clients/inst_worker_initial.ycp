@@ -14,7 +14,7 @@
  *			Describing and calling all submodules.
  *			(For initial installation only).
  *
- * $Id:$
+ * $Id$
  */
 {
     textdomain "installation";

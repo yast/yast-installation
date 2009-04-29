@@ -7,7 +7,7 @@
  *		This client only initializes the UI
  *		and calls the real installation.
  *
- * $Id:$
+ * $Id$
  */
 
 {
