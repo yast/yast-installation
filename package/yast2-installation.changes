@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu May 14 13:45:08 CEST 2009 - locilka@suse.cz
+
+- Installation/Upgrade newly require some packages essential for
+  them to succeed (bnc #469730).
+
+-------------------------------------------------------------------
 Mon Apr 27 10:22:24 CEST 2009 - locilka@suse.cz
 
 - Using a new yast-spanner (old yast icon) for Repair.
