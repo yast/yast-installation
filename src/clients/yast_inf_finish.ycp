@@ -23,6 +23,7 @@ import "Bootloader";
 import "Language";
 import "Keyboard";
 import "Directory";
+import "Arch";
 
 include "installation/misc.ycp";
 
@@ -77,10 +78,26 @@ else if (func == "Write")
         }
     }
 
+    // FATE #304940 #305938: Change YaST2-Module for s390 Disk adaptors from
+    // hwconfig scheme to udev-scheme
+    if (Arch::s390 ()) {
+	string reipl_client = "reipl_finish";
+
+	if (WFM::ClientExists (reipl_client)) {
+	    boolean changed = (boolean) WFM::call (reipl_client);
+	    if (changed == true) {
+		linuxrc["Root"] = "halt";
+	    }
+	} else {
+	    y2error ("No such client: %1", reipl_client);
+	}
+    }
+
     linuxrc["Language"] = Language::language;
     linuxrc["Keytable"] = Keyboard::keymap;
 
     Linuxrc::WriteYaSTInf (linuxrc);
+
 
     // --------------------------------------------------------------
     // Copy blinux configuration

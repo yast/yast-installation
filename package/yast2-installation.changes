@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri May 15 12:33:51 CEST 2009 - juhliarik@suse.cz
+
+- added support for reipl (FATE#305938)
+- 2.13.216 
+
+-------------------------------------------------------------------
 Mon Apr 20 16:29:40 CEST 2009 - locilka@suse.cz
 
 - Removing zen-updater package when disabling ZMD during
