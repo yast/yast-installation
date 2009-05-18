@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon May 18 16:46:03 CEST 2009 - juhliarik@suse.cz
+
+- added kdump support for autoyast installation (FATE#305588) 
+
+-------------------------------------------------------------------
 Thu May 14 13:45:08 CEST 2009 - locilka@suse.cz
 
 - Installation/Upgrade newly require some packages essential for
