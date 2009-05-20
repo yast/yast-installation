@@ -22,8 +22,8 @@ BuildRequires:	yast2-packager >= 2.17.9
 # AutoinstConfig::getProposalList
 Requires:       autoyast2-installation >= 2.17.1
 
-# `reboot_same_step
-Requires:	yast2 >= 2.18.11
+# `reboot_same_step, .proc.mounts
+Requires:	yast2 >= 2.18.16
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
