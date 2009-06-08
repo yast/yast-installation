@@ -68,120 +68,6 @@ function wait_for_x11() {
 	done
 }
 
-#----[ get_bus_id ]----#
-function get_bus_id () {
-#------------------------------------------------------
-# ask the PCi bus for the location of the first
-# graphics card.
-# ---
-	for line in $(/sbin/lspci -n | grep "Class 0300" | cut -f 1 -d " ");do
-		echo $line |\
-			grep -q -E "^[0-9a-f]{2}:[0-9a-f]{2}\.[0-9a-f]"
-		if [ $? = 0 ];then
-			PCIBus=$(echo $line | cut -f1 -d:);
-			PCISlot=$(echo $line | cut -f2 -d: | cut -f 1 -d.);
-			PCIFunc=$(echo $line | cut -f2 -d.);
-			log "\tFound standard BusID: $PCIBus:$PCISlot:$PCIFunc"
-			printf "PCI:%d@0:%d:%d" \
-				0x$PCIBus 0x$PCISlot 0x$PCIFunc
-			break
-		else
-			echo $line |\
-				grep -q -E "^[0-9a-f]{4}:[0-9a-f]{2}:[0-9a-f]{2}\.[0-9a-f]"
-			if [ $? = 0 ];then
-				PCIDomain=$(echo $line | cut -f1 -d:);
-				PCIBus=$(echo $line | cut -f2 -d:);
-				PCISlot=$(echo $line | cut -f3 -d: | cut -f 1 -d.);
-				PCIFunc=$(echo $line | cut -f2 -d.);
-				log "\tFound domain BusID: $PCIBus@$PCIDomain:$PCISlot $PCIFunc"
-				printf "PCI:%d@%d:%d:%d" \
-					0x$PCIBus 0x$PCIDomain 0x$PCISlot 0x$PCIFunc
-				break
-			fi
-		fi
-	done
-}
-
-#----[ count_x11_geometry ]----#
-function count_x11_geometry () {
-    # current X-resolution, display 0
-    XRES=$(/usr/sbin/xquery -d :0 -r)
-
-    log "\t===X11 Geometry==="
-    log "\tResolution: ${XRES}"
-
-    # failed to get display info
-    if [ "$?" != "0" ]; then
-	X_GEOMETRY=""
-	return
-    fi
-
-    # current X and Y resolution
-    XRES_X=$(echo $XRES | sed '
-	s|[0123456789]\+ \([0123456789]\+\)x[0123456789]\+|\1|
-	s|[^0123456789]||g')
-    XRES_Y=$(echo $XRES | sed '
-	s|[0123456789]\+ [0123456789]\+x\([0123456789]\+\)|\1|
-	s|[^0123456789]||g')
-
-    log "\tX: ${XRES_X}"
-    log "\tY: ${XRES_Y}"
-
-    # default values
-    OFFSET_X=0
-    OFFSET_Y=0
-    BACKGROUND_IMAGE=""
-
-    # wrong X and/or Y resolution
-    if [ "${XRES_X}" == "" ] || [ "${XRES_Y}" == "" ]; then
-	X_GEOMETRY=""
-	log "\tError: Cannot get X and/or Y from given resolution"
-	return
-    # reasonable sizes
-    else
-	# must be bigger or equal to 1400x1050
-	if [ "$(expr $XRES_X \>= 1400)" == "1" ] && [ "$(expr $XRES_Y \>= 1050)" == "1" ]; then
-	    WINDOW_SIZE_X=1024
-	    WINDOW_SIZE_Y=786
-	# exception for PPC: 832x624, see bugzilla #207321
-	elif [ "${XRES_X}" == "832" ] && [ "${XRES_Y}" == "624" ]; then
-	    WINDOW_SIZE_X=${XRES_X}
-	    WINDOW_SIZE_Y=${XRES_Y}
-	# must be bigger or equal to 800x600
-	elif [ "$(expr $XRES_X \>= 800)" == "1" ] && [ "$(expr $XRES_Y \>= 600)" == "1" ]; then
-	    WINDOW_SIZE_X=800
-	    WINDOW_SIZE_Y=600
-	# or fullscreen
-	else
-	    WINDOW_SIZE_X=${XRES_X}
-	    WINDOW_SIZE_Y=${XRES_Y}
-	fi
-
-	# Conversion from jpg to png is done later
-	BACKGROUND_IMAGE="/usr/lib/YaST2/startup/InstallImages/${XRES_X}x${XRES_Y}.jpg"
-
-	# X and Y offsets
-	OFFSET_X=$(expr ${XRES_X} - ${WINDOW_SIZE_X})
-	OFFSET_X=$(expr ${OFFSET_X} / 2)
-	OFFSET_Y=$(expr ${XRES_Y} - ${WINDOW_SIZE_Y})
-	OFFSET_Y=$(expr ${OFFSET_Y} / 2)
-    fi
-
-    log "\tWindow size X: ${WINDOW_SIZE_X}"
-    log "\tWindow size Y: ${WINDOW_SIZE_Y}"
-    log "\tOffset X: ${OFFSET_X}"
-    log "\tOffset Y: ${OFFSET_Y}"
-
-    if [ "${OFFSET_X}" == "0" ] || [ "${OFFSET_Y}" == "0" ] || [ "${OFFSET_X}" == "" ] || [ "${OFFSET_Y}" == "" ]; then
-	# will run in fullscreen mode
-	X_GEOMETRY=""
-    else
-	# final window geometry, 'Window_XxWindow_Y+Offset_X+Offset_Y'
-	X_GEOMETRY="${WINDOW_SIZE_X}x${WINDOW_SIZE_Y}+${OFFSET_X}+${OFFSET_Y}"
-    fi
-
-    log "\tUsed geometry: ${X_GEOMETRY}"
-}
 
 #----[ prepare_for_x11 ]----#
 function prepare_for_x11 () {
@@ -191,71 +77,6 @@ function prepare_for_x11 () {
 	local fbdevname
 	set_splash 100
 
-	#=============================================
-	# patch X11 conf. if not update/continue mode
-	#---------------------------------------------
-	if [ ! -f /var/lib/YaST2/reconfig_system ];then
-	if [ ! -f /var/lib/YaST2/runme_at_boot ];then
-	if [ ! -f /etc/X11/xorg.conf.instorig ];then
-		# create backup copy...
-		cp /etc/X11/xorg.conf /etc/X11/xorg.conf.instorig
-
-		# Activate correct device/screen section...
-		sed -e "s#Screen.*Screen\[.*\]#Screen   "\""Screen[$X11_CONFIG_ID]#" \
-			/etc/X11/xorg.conf >/etc/X11/xorg.conf.new
-		mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
-
-		# update core pointer input device section...
-		if [ -f "/usr/sbin/xupdate" ];then
-			cat /etc/X11/xorg.conf | \
-				/usr/sbin/xupdate > /etc/X11/xorg.conf.new
-			mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
-		fi
-
-		# update driver and busID if accelerated driver should be used...
-		if [ "$X11_CONFIG_ID" = 0 ];then
-			# replace BusID placeholder with real busID
-			XBusID=$(get_bus_id)
-			if [ ! -z "$XBusID" ];then
-				sed -e 's/#BusID/BusID/' \
-					-e "s#1:0:0#$XBusID#" /etc/X11/xorg.conf \
-				> /etc/X11/xorg.conf.new
-				mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
-			fi
-
-			# replace driver placeholder with real name
-			sed -e "s#ChangeMe#$XServer#" /etc/X11/xorg.conf \
-			> /etc/X11/xorg.conf.new
-			mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
-		fi
-		# check DefaultDepth setup
-		if [ -f /sys/class/graphics/fb0/name ];then
-			read fbdevname < /sys/class/graphics/fb0/name
-			case "$fbdevname" in
-				# The DefaultDepth 16 will not work if the card does not
-				# have enough video ram, or if 15bit has to be used
-				# Let the X11 fbdev driver use whatever the kernel driver uses
-				platinum|control|valkyrie|OFfb)
-				;;
-				# Force DefaultDepth 16, or Qt/Gtk will not look nice
-				# nvidiafb uses 'NV%x'
-				# rivafb uses 'NV%x'
-				# aty128fb uses 'ATY Rage128'
-				# radeonfb uses 'ATI Radeon XX '
-				NV*|*Rage128|*Radeon*)
-				sed -i -e "/@DefaultDepth@/s/^.*/DefaultDepth 16/" /etc/X11/xorg.conf
-				;;
-				# drivers that are not yet tested
-				# atyfb uses 'ATY Mach64', may not have enough video ram
-				MATROX|*Mach64)
-				;;
-				*)
-				;;
-			esac
-		fi
-	fi
-	fi
-	fi
 	#=============================================
 	# start X-Server and wait until ready
 	#---------------------------------------------
@@ -269,20 +90,12 @@ function prepare_for_x11 () {
 			log "\tX-Server is ready: $xserver_pid"
 		fi
 	fi
+
 	#=============================================
 	# set YaST2 Qt/Gtk options for local displays
 	#---------------------------------------------
 	if [ ! -z "$NEED_XSERVER" ];then
-		Y2_UI_ARGS="--noborder --auto-fonts"
-##* Bugzilla #208307 Use only the fullscreen mode
-##*		count_x11_geometry # currently not used
-##*		if [ "${X_GEOMETRY}" == "" ]; then
-		    log "\tUI_args: Running in fullscreen mode"
-		    Y2_UI_ARGS="${Y2_UI_ARGS} --fullscreen"
-##*		else
-##*		    log "\tUI_args: Running in window"
-##*		    Y2_UI_ARGS="${Y2_UI_ARGS} -geometry ${X_GEOMETRY}"
-##*		fi
+		Y2_UI_ARGS="--noborder --auto-fonts --fullscreen"
 	fi
 }
 
@@ -445,38 +258,6 @@ function check_vnc () {
 	fi
 }
 
-#----[ set background image for yast ]----#
-function set_yast_background () {
-	# set up a background if any needed
-	if [ "${BACKGROUND_IMAGE}" != "" ]; then
-	    TMPDIR="/tmp/installimg"
-
-	    # selected image doesn't exist, usign fallback
-	    if ! [ -e "${BACKGROUND_IMAGE}" ]; then
-		BACKGROUND_IMAGE="/usr/lib/YaST2/startup/InstallImages/fallback.png"
-		log "\tNot a supported resolution, using fallback image"
-	    # convert stored JPG to PNG
-	    else
-		log "\tUsing background: ${BACKGROUND_IMAGE}"
-		mkdir -p ${TMPDIR}
-		# convert JPG to PNM
-		jpegtopnm ${BACKGROUND_IMAGE} > ${TMPDIR}/img.pnm 2>${TMPDIR}/jpegtopnm.log
-		# convert PNM to PNG
-		pnmtopng ${TMPDIR}/img.pnm > ${TMPDIR}/img.png 2>${TMPDIR}/pnmtopng.log
-		# remove PNM
-		rm -rf ${TMPDIR}/img.pnm
-		# set the BACKGROUND_IMAGE to the converted one
-		BACKGROUND_IMAGE=${TMPDIR}/img.png
-	    fi
-
-	    # set the background
-	    # FIXME
-
-	    # remove PNG silently if exists
-	    rm -rf ${TMPDIR}/img.png
-	fi
-}
-
 
 function ssh_reboot_message()
 {
@@ -519,9 +300,6 @@ function start_yast () {
 	else
 	    OPT_FBITERM=
 	fi
-
-##*	# bugzilla #208307
-##*	set_yast_background # currently not used
 
 	log "\tStarting YaST2:"
 	log "\tMODULE_NAME:  $Y2_MODULE_NAME"
@@ -614,8 +392,6 @@ function start_yast_again () {
 #---------------------------------------------
 . /usr/lib/YaST2/startup/common/functions.sh
 . /usr/lib/YaST2/startup/requires
-. /usr/lib/YaST2/startup/arch/ia64/x11.sh
-. /usr/lib/YaST2/startup/arch/i386/x11.sh
 
 #=============================================
 # 1.1) set splash progress bar to 90%
@@ -636,13 +412,7 @@ set_syslog ; set_proxy
 # 2.1) setup PATH
 PATH=$ybindir:$PATH
 [ -z Xstartpath ] || PATH=/var/X11R6/bin:$PATH
-#=============================================
-# 2.2) get X11 driver directory
-#---------------------------------------------
-X11_DRIVER_DIR=$Xdriverpath
-if [ -d $Xdriver64path ];then
-	X11_DRIVER_DIR=$Xdriver64path
-fi
+
 #=============================================
 # 2.3) obtain RAM size in Kb
 #---------------------------------------------
@@ -650,13 +420,7 @@ MEM_TOTAL=`awk '/^MemTotal:/{ print $2 }' /proc/meminfo`
 if [ ${#MEM_TOTAL} -gt 9 ];then
 	MEM_TOTAL=1000000000
 fi
-#=============================================
-# 2.4) check for valid framebuffer
-#---------------------------------------------
-FBDEV_OK=0
-if (: < /dev/fb0) 2>/dev/null ; then
-	FBDEV_OK=1
-fi
+
 #=============================================
 # 2.5) setup installation mode (update y/n)
 #---------------------------------------------
@@ -699,48 +463,9 @@ if ! check_gtk ; then
 	log "\tGtk plugin check failed -> Medium Gtk disabled"
 	MEDIUM[4]=0
 fi
-# 3.1.2) X-Server module check...
-ia64_check_x11
-i386_check_x11
-XServerAccel=$XServer
-if [ "$XServer" = "vmware" ];then
-	if [ ! -f "$X11_DRIVER_DIR/${XServer}_drv.so" ];then
-		log "\t$XServer driver not installed -> Medium Qt and Gtk disabled"
-		MEDIUM[0]=0
-		MEDIUM[4]=0
-	fi
-	X11_CONFIG_ID=vmware
-else
-	XServer=fbdev
-	if [ $FBDEV_OK -eq 0 ];then
-		log "\tNo Framebuffer available: Using vesa driver"
-		XServer=vesa
-	fi
-	if [ ! -f "$X11_DRIVER_DIR/${XServer}_drv.so" ];then
-		log "\t$XServer driver not installed -> Medium Qt and Gtk disabled"
-		MEDIUM[0]=0
-		MEDIUM[4]=0
-	fi
-	X11_CONFIG_ID=$XServer
-fi
-if [ "$acceleratedx" = "1" ];then
-	if [ ! -f "$X11_DRIVER_DIR/${XServerAccel}_drv.so" ];then
-		log "\t$XServerAccel driver not installed -> X11 acceleration disabled"
-	else
-		log "\tUsing accelerated driver -> $XServerAccel"
-		if [ $XServerAccel = "intel" ];then
-			log "\tIntel driver requested: loading intel agp module"
-			load_module intel-agp
-		fi
-		MEDIUM[0]=1
-		MEDIUM[4]=1
-		XServer=$XServerAccel
-		X11_CONFIG_ID=0
-	fi
-fi
-# 3.1.3) Memory check >= 90MB for Qt/X11...
+# 3.1.3) Memory check >= $MEM_NEEDED for Qt/Gtk/X11...
 if [ $MEM_TOTAL -lt "$MEM_NEEDED" ];then
-	log "\tMemory requirement > 90MB not fulfilled -> Medium Qt and Gtk disabled"
+	log "\tMemory requirement > $MEM_NEEDED not fulfilled -> Medium Qt and Gtk disabled"
 	MEDIUM[0]=0
 	MEDIUM[4]=0
 fi
