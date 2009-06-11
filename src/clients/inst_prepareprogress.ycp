@@ -33,6 +33,19 @@
     ImageInstallation::FillUpImagesDetails();
   }
 
+  integer live_size = 0;
+  if (Mode::live_installation())
+  {
+    string cmd = sformat ("du -x -B 1024 -s %1", "/");
+    y2milestone ("Executing %1", cmd);
+    map out = (map)SCR::Execute (.target.bash_output, cmd);
+    y2milestone ("Output: %1", out);
+    string total_str = out["stdout"]:"";
+    live_size = tointeger (total_str);
+    if (live_size == 0)
+      live_size = 1024*1024; // 1 GB is a good approximation
+  }
+
   list< map<string,any> > stages = [
     $[
     "name" : "disk",
@@ -45,7 +58,7 @@
     "description": _("Deploying Images..."),
     // Use 'zero' if image installation is not used
     // BNC #439104
-    "value" : (Installation::image_installation ? ImageInstallation::TotalSize() / 1024 : 0), // kilobytes
+    "value" : live_size > 0 ? live_size : (Installation::image_installation ? ImageInstallation::TotalSize() / 1024 : 0), // kilobytes
     "units" : `kb,
     ],
     $[

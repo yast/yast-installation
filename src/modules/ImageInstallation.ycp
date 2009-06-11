@@ -939,8 +939,9 @@ global boolean FileSystemCopy (string from, string to,
 	if (done != nil)
 	{
 	    integer progress = progress_start + (progress_finish - progress_start) * tointeger (done) / total_mb / 1024 / 1024;
-	    Progress::Step (progress);
 	    y2debug ("Setting progress to %1", progress);
+	    SlideShow::StageProgress( progress, nil);
+	    SlideShow::SubProgress( (progress_finish - progress_start) * tointeger (done) / total_mb / 1024 / 1024, nil);
 	}
     }
 
