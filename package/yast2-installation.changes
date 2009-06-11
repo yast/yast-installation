@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun 11 12:57:14 CEST 2009 - jsrain@suse.cz
+
+- adapted for unified progress during live installation
+  (bnc#435680)
+- 2.18.17
+
+-------------------------------------------------------------------
 Mon Jun 08 14:03:30 CEST 2009 - aschnell@suse.de
 
 - use minimalistic xorg.conf during installation (bnc #510015)
