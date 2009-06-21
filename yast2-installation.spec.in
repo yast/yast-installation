@@ -99,10 +99,10 @@ PreReq:		%fillup_prereq
 Summary:	YaST2 - Installation Parts
 
 %description
-This controls the system installation.
+System installation code as present on installation media.
 
 %description devel-doc
-YaST Installation - auto-generated documentation.
+System installation code as present on installation media.
 
 @PREP@
 
