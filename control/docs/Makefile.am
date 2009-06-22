@@ -8,8 +8,9 @@ htmldir = $(docdir)/control-doc
 xml_files =  $(wildcard *.xml) 
 
 html_DATA = $(wildcard html/*.html) \
-	    html/index.html \
 	    html/yast2docs.css
+
+all-local: html/index.html
 
 pdf: control-doc.pdf
 

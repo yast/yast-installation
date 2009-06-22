@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jun 22 20:20:18 CEST 2009 - coolo@novell.com
+
+- fix build with automake 1.11
+- 2.18.18
+
+-------------------------------------------------------------------
 Thu Jun 11 12:57:14 CEST 2009 - jsrain@suse.cz
 
 - adapted for unified progress during live installation
