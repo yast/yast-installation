@@ -114,8 +114,6 @@ System installation code as present on installation media.
 
 @CLEAN@
 
-%pre
-
 %post
 %{fillup_only -ns security checksig}
 
