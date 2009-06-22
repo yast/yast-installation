@@ -2,8 +2,9 @@
 xml_files =  $(wildcard *.xml)
 
 html_DATA = $(wildcard html/*.html) \
-	    html/index.html \
 	    html/yast2docs.css
+
+all-local: html/index.html
 
 html/index.html: proposal-API-doc.xml
 	XML_CATALOG_FILES=@XML_CATALOG@ \
