@@ -29,7 +29,10 @@
 
 	string ret = "<ul>\n";
 
-	if (im_conf["deploying_enabled"]:false == true) {
+	if (ImageInstallation::image_installation_available == false) {
+	    // TRANSLATORS: Installation overview
+	    ret = ret + "<li>" + _("No installation images are available") + "</li>";
+	} else if (im_conf["deploying_enabled"]:false == true) {
 	    ret = ret + "<li>" + sformat (
 		// TRANSLATORS: Installation overview
 		// IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text

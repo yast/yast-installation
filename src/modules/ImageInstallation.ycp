@@ -113,6 +113,11 @@ global list <string> last_patterns_selected = [];
 
 global boolean changed_by_user = false;
 
+/**
+ * Defines whether some installation images are available
+ */
+global boolean image_installation_available = nil;
+
 boolean debug_mode = nil;
 
 boolean ThisIsADebugMode () {
@@ -707,8 +712,9 @@ global boolean FindImageSet (list<string> patterns) {
 
     if (filename == nil)
     {
+	image_installation_available = false;
 	Installation::image_installation = false;
-	Installation::image_only= false;
+	Installation::image_only = false;
 	y2milestone ("Image list for installation not found");
 	return true;
     }
@@ -716,13 +722,17 @@ global boolean FindImageSet (list<string> patterns) {
     map<string,any> image_descr = XML::XMLToYCPFile (filename);
     if (image_descr == nil)
     {
+	image_installation_available = false;
 	Installation::image_installation = false;
-	Installation::image_only= false;
+	Installation::image_only = false;
 	Report::Error (_("Failed to read information about installation images"));
 	return false;
     }
 
     // images are supported
+    // bnc #492745: Do not offer images if there are none
+    image_installation_available = true;
+
     list<map<string,any> > image_sets = image_descr["image_sets"]:[];
     y2debug ("Image set descriptions: %1", image_sets);
     map<string,any> result = $[];

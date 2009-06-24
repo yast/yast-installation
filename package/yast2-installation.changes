@@ -3,6 +3,7 @@ Wed Jun 24 10:02:20 CEST 2009 - locilka@suse.cz
 
 - Fixed Welcome dialog layout to have more license content visible
   and to align language and keyboard widgets with it.
+- Not offering installation images if there are none (bnc #492745).
 
 -------------------------------------------------------------------
 Mon Jun 22 20:20:18 CEST 2009 - coolo@novell.com
