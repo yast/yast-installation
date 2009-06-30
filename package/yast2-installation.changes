@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jun 30 18:12:09 CEST 2009 - jdsn@suse.de
+
+- prevent regular zmd wakeup if zmd is disabled (bnc#386433)
+- 2.13.217
+
+-------------------------------------------------------------------
 Fri May 15 12:33:51 CEST 2009 - juhliarik@suse.cz
 
 - added support for reipl (FATE#305938)

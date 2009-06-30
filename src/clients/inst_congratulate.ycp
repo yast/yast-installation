@@ -253,7 +253,12 @@ selected, a profile of the current system is stored in /root/autoyast.xml.</p>
     } else if (ret == `next) {
 
 	if (UI::WidgetExists (`id (`turnoff_zmd)) && (boolean) UI::QueryWidget (`id (`turnoff_zmd), `Value))
-	    StopAndDisableZMD();
+        {
+            StopAndDisableZMD();
+            // disable regular suse register call as well, otherwise it would wake up zmd regularly (bnc#386433)
+            y2milestone("Disabling regular suseRegister run by touching /var/lib/suseRegister/neverRegisterOnBoot.");
+            SCR::Execute(.target.bash, "touch /var/lib/suseRegister/neverRegisterOnBoot");
+        }
 
 	if (UI::WidgetExists (`id (`do_clone)) && (boolean) UI::QueryWidget (`id (`do_clone), `Value))
 	    CallCloning();
