@@ -3,7 +3,7 @@ Tue Jun 30 23:42:15 CEST 2009 - locilka@suse.cz
 
 - Fixed getting the IP address to reconnect to after reboot during
   installation using VNC (bnc #516430).
-- 2.13.217
+- 2.13.218
 
 -------------------------------------------------------------------
 Tue Jun 30 18:12:09 CEST 2009 - jdsn@suse.de
