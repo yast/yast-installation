@@ -49,9 +49,11 @@ function startVNCServer () {
 	# gave us a different lease in the meantime (#43974).
 	# sed: don't print; if it's localhost, skip; try locating IPv4;
 	#      skip if not found; otherwise print and exit
+	# Not only 127.0.0.1 but all 127.0.0.* addresses are internal
+	# (see bnc #516430).
 	# ----
 	IP=`ip addr list | sed -n \
-		-e '/127.0.0.1/b;s/^[[:space:]]*inet[[:space:]]\([^/]*\).*/\1/;T;p;q'`
+		-e '/127.0.0.[[:digit:]]/b;s/^[[:space:]]*inet[[:space:]]\([^/]*\).*/\1/;T;p;q'`
 
 	echo
 	echo starting VNC server...
