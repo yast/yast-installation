@@ -1,0 +1,49 @@
+/**
+ * File:	clients/inst_restore_settings
+ * Package:	Installation
+ * Summary:	Restore settings after restart during 2nd-stage installation
+ * Authors:	Anas Nashif <nashif@suse.de>
+ *
+ * $Id$
+ *
+ */
+
+{
+
+textdomain "installation";
+
+import "GetInstArgs";
+import "Service";
+import "NetworkInterfaces";
+import "SuSEFirewall";
+
+if(GetInstArgs::going_back())
+    return `back;
+
+foreach (string service, ["network"], {
+    if (Service::Enabled (service) && Service::Status (service) != 0)
+    {
+	// TRANSLATORS: busy message
+	UI::OpenDialog (`Label (sformat (_("Starting service %1..."), service)));
+
+	// This might take a lot of time if case of DHCP, for instance
+	Service::RunInitScriptWithTimeOut (service, "start");
+
+	UI::CloseDialog();
+    }
+});
+
+NetworkInterfaces::Read ();
+
+// bugzilla #282871
+// If firewall is enabled, only the initial script is started.
+// Start also the final firewall phase.
+if (SuSEFirewall::IsEnabled()) {
+    Service::Start ("SuSEfirewall2_setup");
+}
+
+
+return `auto;
+
+/* EOF */
+}

@@ -1,0 +1,73 @@
+/**
+ * File:
+ *   etc_passwd.scr
+ * Summary:
+ *   SCR Agent for reading /etc/passwd
+ * Access:
+ *   read-only
+ * Authors:
+ *   Unknown <yast2-hacker@suse.de>
+ * See:
+ *   anyagent
+ *   libscr
+ *   man passwd(5)
+ * Example:
+ *   Read(.etc.passwd)
+ *   ([$["fullname":"root", "gid":0, "home":"/root", "password":"x",
+ *       "shell":"/bin/bash", "uid":0, "username":"root"], 
+ *     $["fullname":"bin", "gid":1, "home":"/bin", "password":"x",
+ *       "shell":"/bin/bash", "uid":1, "username":"bin"],
+ *     $["fullname":"daemon", "gid":2,"home":"/sbin", "password":"x",
+ *     ... 
+ *   ])
+ * 
+ * $Id$
+ *
+ * Returns a <b>list of maps</b>. Each map (list-entry) corresponds 
+ * with one user. 
+ * Keys for the maps are: "username", "password", "uid", "gid", "fullname", "home" and "shell". 
+ */
+.etc.passwd
+
+`ag_anyagent(
+  `Description (
+      (`File("/etc/passwd")),	// real filename
+      "#",			// Comment
+      true,
+      (`List (
+	`Or (
+	  `Tuple (
+	  `username (`String("+")),
+	  ":",
+	  `password (`String ("")),
+	  ":",
+	  `uid (`String ("")),
+	  ":",
+	  `gid (`String ("")),
+	  ":",
+	  `fullname (`String ("")),
+	  ":",
+	  `home (`String ("")),
+	  ":",
+	  `shell (`String (""))
+	),
+
+	`Tuple (
+	  `username (`String ("^:")),
+	  ":",
+	  `password (`Or (`String ("^:"), "")),
+	  ":",
+	  `uid (`Number ()),
+	  ":",
+	  `gid (`Number ()),
+	  ":",
+	  `fullname (`Or (`String ("^:"), "")),
+	  ":",
+	  `home (`String ("^:")),
+	  ":",
+	  `shell (`String ("^\n"))
+	)),
+	"\n"
+      ))
+    )
+)

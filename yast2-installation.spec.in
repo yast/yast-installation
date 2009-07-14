@@ -1,0 +1,170 @@
+@HEADER-COMMENT@
+
+
+@HEADER@
+BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2-core-devel yast2-devtools yast2-testsuite
+
+# xmllint
+BuildRequires:	libxml2
+
+# to convert control.rnc o control.rng
+BuildRequires:	trang
+
+# PackageCallbacks::RegisterEmptyProgressCallbacks()
+BuildRequires:	yast2 >= 2.16.52
+
+# Pkg::SourceProvideDigestedFile() 
+BuildRequires:	yast2-pkg-bindings >= 2.17.25
+
+# Unified progress bar (done by visnov) 
+BuildRequires:	yast2-packager >= 2.17.9
+
+# AutoinstConfig::getProposalList
+Requires:       autoyast2-installation >= 2.17.1
+
+# PackagesUI::RunPackageSelector
+Requires:	yast2 >= 2.17.40
+
+# Required in in the first stage, after
+# switching to the installed system, bugzilla #249679
+
+Requires:	yast2-bootloader
+
+# Language::GetLanguageItems and other API
+# Language::Set (handles downloading the translation extensions)
+Requires:	yast2-country-data >= 2.16.11
+
+# Pkg::SourceProvideDigestedFile() 
+Conflicts:	yast2-pkg-bindings < 2.17.25
+
+# BNC #449818: "description_id" in DefaultDesktop
+Requires:	yast2-packager >= 2.17.49
+
+# Storage::GetCommitInfo() call in include/misc.ycp
+Requires:	yast2-storage >= 2.17.47
+
+# use in startup scripts
+Requires:	initviocons
+
+# Only in inst-sys
+# Requires:	yast2-runlevel
+# Requires:	yast2-network
+# Requires:	yast2-add-on
+# Requires:	yast2-update
+
+# Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
+# pkg-bindings are not directly required
+Conflicts:	yast2-pkg-bindings < 2.17.25
+
+# 'Product' and 'Installation' moved to 'yast2'
+# needs NetworkService::isNetworkRunning() from yast2
+Conflicts:	yast2 < 2.15.35
+
+# Added new function WFM::ClientExists
+Conflicts:	yast2-core < 2.17.10
+
+# ButtonBox widget
+Conflicts:	yast2-ycp-ui-bindings < 2.17.3
+
+# tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
+Requires:	tar gzip
+Requires:	coreutils
+
+# for the first/second stage of installation
+# currently not used
+# bugzilla #208307
+#Requires:	/usr/bin/jpegtopnm
+#Requires:	/usr/bin/pnmtopng
+
+# BNC 446533, /sbin/lspci called but not installed
+Requires:	pciutils
+
+Recommends:	yast2-registration
+Recommends:	yast2-online-update
+Recommends:	yast2-users
+Recommends:	yast2-firewall
+Recommends:	release-notes
+Recommends:	curl
+Recommends:	yast2-update
+Recommends:	yast2-add-on
+
+PreReq:		%fillup_prereq
+
+BuildArchitectures: noarch
+
+Summary:	Installation workflow
+
+%package devel-doc
+Group:          System/YaST
+Requires:	yast2-installation >= 2.15.34
+
+PreReq:		%fillup_prereq
+
+Summary:	Auto-generated documentation for yast2-installation
+
+%description
+This controls the system installation.
+
+%description devel-doc
+YaST Installation - auto-generated documentation.
+
+@PREP@
+
+@BUILD@
+
+@INSTALL@
+
+@CLEAN@
+
+%pre
+
+%post
+%{fillup_only -ns security checksig}
+
+%files
+%defattr(-,root,root)
+%dir /usr/share/YaST2/control
+/usr/share/YaST2/control/*.xml
+# Fixme: move to another package (to make build of other packages faster)
+/usr/share/YaST2/control/*.rng
+/usr/share/YaST2/control/*.rnc
+
+@clientdir@/*.ycp
+@moduledir@/*.ycp
+@moduledir@/*.ybc
+@desktopdir@/*.desktop
+/usr/share/autoinstall/modules/deploy_image.desktop
+/usr/share/YaST2/schema/autoyast/rnc/deploy_image.rnc
+%dir /usr/share/autoinstall
+%dir /usr/share/autoinstall/modules
+%dir @yncludedir@/installation
+@yncludedir@/installation/*
+
+# agents
+@scrconfdir@/etc_passwd.scr
+@scrconfdir@/proc_mounts.scr
+@scrconfdir@/cfg_windowmanager.scr
+@scrconfdir@/cfg_fam.scr
+@scrconfdir@/etc_install_inf.scr
+@scrconfdir@/etc_install_inf_alias.scr
+@scrconfdir@/etc_install_inf_options.scr
+@scrconfdir@/proc_modules.scr
+@scrconfdir@/run_df.scr
+# fillup
+@fillupdir@/sysconfig.security-checksig
+
+# programs and scripts
+@ystartupdir@/startup
+
+# icewm
+/etc/icewm
+
+%dir @docdir@
+@docdir@/COPYING
+%readme @docdir@/README
+
+%files devel-doc
+%defattr(-,root,root)
+%doc @docdir@
+%exclude @docdir@/COPYING
+%exclude @docdir@/README

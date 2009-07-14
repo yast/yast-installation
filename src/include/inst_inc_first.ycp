@@ -1,0 +1,176 @@
+/**
+ * File: include/installation/inst_inc_first.ycp
+ * Module: System installation
+ * Summary: Functions for first stage
+ * Authors: Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id:$
+ *
+ */
+{
+
+    textdomain "installation";
+
+    import "Arch";
+    import "Installation";
+    import "Console";
+    import "Language";
+    import "ProductControl";
+    import "Directory";
+    import "Stage";
+    import "FileUtils";
+    import "String";
+    import "Mode";
+    import "ProductFeatures";
+
+    include "installation/misc.ycp";
+
+    void InitMouse () {
+// disabled
+// bnc #395426
+//        if (!Arch::s390 () || Arch::board_iseries ()) {
+//            // in another client because of dependencies
+//            // used in inst-sys only
+//            WFM::CallFunction ("inst_init_mouse", []);
+//        }
+    }
+
+    /**
+     * Sets inital language and other settings.
+     */
+    void SetInitialInstallation () {
+	SetXENExceptions();
+
+	y2milestone ("Adjusting language settings");
+
+	// properly set up initial language
+	Installation::encoding = Console::SelectFont (Language::language);
+	if (UI::GetDisplayInfo()["HasFullUtf8Support"]:true) {
+	    Installation::encoding = "UTF-8";
+	}
+
+	UI::SetLanguage (Language::language, Installation::encoding);
+	WFM::SetLanguage (Language::language, "UTF-8");
+	UI::RecordMacro (Directory::logdir + "/macro_inst_initial.ycp");
+
+	y2milestone ("Adjusting first stage modules");
+
+	boolean show_addons = ProductFeatures::GetBooleanFeature ("globals", "show_addons");
+	boolean addons_default = ProductFeatures::GetBooleanFeature ("globals", "addons_default");
+	// default fallback
+	if (show_addons == nil) show_addons = true;
+	if (addons_default == nil) addons_default = false;
+
+	y2milestone ("Control file definition for add-on, visible: %1, selected: %2",
+	    show_addons, addons_default);
+	if (show_addons) {
+	    ProductControl::DisableModule ("add-on");
+	} else {
+	    ProductControl::EnableModule ("add-on");
+	}
+	Installation::add_on_selected = addons_default;
+
+	boolean show_online_repositories = ProductFeatures::GetBooleanFeature ("globals", "show_online_repositories");
+	boolean online_repositories_default = ProductFeatures::GetBooleanFeature ("globals", "online_repositories_default");
+	// default fallback
+	if (show_online_repositories == nil) show_online_repositories = false;
+	if (online_repositories_default == nil) online_repositories_default = true;
+
+	y2milestone ("Control file definition for productsources, visible: %1, selected: %2",
+	    show_online_repositories, online_repositories_default);
+	if (show_online_repositories) {
+	    ProductControl::EnableModule ("productsources");
+	} else {
+	    ProductControl::DisableModule ("productsources");
+	}
+	Installation::productsources_selected = online_repositories_default;
+
+	y2milestone ("Disabling second stage modules");
+	// First-stage users module will enable them again only if needed
+	ProductControl::DisableModule ("root");
+	ProductControl::DisableModule ("user");
+	// bnc #401319
+	ProductControl::DisableModule ("user_non_interactive");
+	ProductControl::DisableModule ("auth");
+
+	y2milestone ("Adjusting automatic configuration");
+	// FATE #303396, Make second stage non-interactive
+	boolean enable_autoconfiguration =  ProductFeatures::GetBooleanFeature ("globals", "enable_autoconfiguration");
+	boolean autoconfiguration_default = ProductFeatures::GetBooleanFeature ("globals", "autoconfiguration_default");
+
+	// Enabled only when AC is selected
+	InstData::enable_autoconfiguration = (enable_autoconfiguration == true);
+	// Default state
+	ProductControl::SetUseAutomaticConfiguration (autoconfiguration_default == true);
+	// Enables or disables some modules, etc.
+	AdjustAutomaticConfiguration();
+    }
+
+    void InitFirstStageInstallationSystem () {
+	// in the initial stage, there might be some ZYPP data from the
+	// previously failed installation
+	// @see bugzilla #267763
+	if (Stage::initial()) {
+	    list <string> zypp_data = [ "/var/lib/zypp/cache", "/var/lib/zypp/db" ];
+
+	    foreach (string zypp_data_item, zypp_data, {
+		if (FileUtils::Exists (zypp_data_item)) {
+		    y2warning ("Directory '%1' exists, removing...", String::Quote(zypp_data_item));
+		    string bashcmd = sformat ("/bin/rm -rf '%1'", zypp_data_item);
+		    y2milestone ("Result: %1", WFM::Execute (.local.bash_output, bashcmd));
+		}
+	    });
+	}
+
+	// Initializing the default values for AC
+	// @see bnc #404122
+	ProductControl::InitAutomaticConfiguration();
+    }
+
+    /**
+     * Handle starting distro upgrade from running system
+     */
+    void SetSystemUpdate () {
+	if (FileUtils::Exists (Installation::run_update_file)) {
+	    Mode::SetMode ("update");
+
+	    foreach (string m, [
+		"language", // language already selected
+		"disks_activate", // disks activated before running upgrade
+		"mode", // always doing update, is already preselected
+		"update_partition", // no mounting
+		"do_resize", // why is this included in upgrade at all? it is empty anyway
+		"prepdisk", // disks already mounted, it is dummy in update anyway
+	    ], {
+		ProductControl::DisableModule (m);
+	    });
+	}
+    }
+
+    void HandleSecondStageRequired () {
+	if (Stage::initial()) {
+	    // the current one is 'initial'
+	    // after reboot/kexec it would be 'continue'
+	    string stage_to_check = "continue";
+
+	    // for matching the control file
+	    string mode_to_check = Mode::mode();
+
+	    // file name
+	    string run_yast_at_boot = sformat ("%1/%2", Installation::destdir, Installation::run_yast_at_boot);
+
+	    y2milestone ("Checking RunRequired (%1, %2)", stage_to_check, mode_to_check);
+
+	    if (ProductControl::RunRequired (stage_to_check, mode_to_check)) {
+		y2milestone ("Running the second stage is required");
+		WFM::Write (.local.string, run_yast_at_boot, "");
+		WriteSecondStageRequired (true);
+	    } else {
+		y2milestone ("It is not required to run the second stage");
+		WFM::Execute (.local.remove, run_yast_at_boot);
+		WriteSecondStageRequired (false);
+	    }
+	}
+    }
+
+} //end of include

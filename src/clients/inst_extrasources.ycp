@@ -1,0 +1,199 @@
+/**
+ * File:	clients/inst_extrasources.ycp
+ * Package:	yast2-installation
+ * Summary:	Automatically register software repositories from content file
+ * Authors:	Ladislav Slezák <lslezak@suse.cz>
+ *		Lukas Ocilka <locilka@suse.cz>
+ *
+ * This client loads the target and initializes the package manager.
+ * Adds all sources defined in control file (software->extra_urls)
+ * and stores them at the end.
+ *
+ * $Id$
+ */
+
+{
+
+textdomain "installation";
+
+import "GetInstArgs";
+import "SourceManager";
+import "Mode";
+import "PackageLock";
+import "ProductFeatures";
+// We need the constructor
+import "ProductControl";
+import "Installation";
+import "PackageCallbacks";
+
+/**
+ * Returns list of maps of repositories to register. See bnc #381360.
+ *
+ * @param registered URLs of already registered repositories (they will be ignored to not register the same repository one more)
+ * @return list <map> of URLs to register
+ */
+define list <map> GetURLsToRegister (list <string> registered)
+{
+    list <map> urls_from_control_file = (list <map>) ProductFeatures::GetFeature ("software", "extra_urls");
+
+    if (urls_from_control_file == nil) {
+	y2milestone ("Empty or errorneous software/extra_urls: %1", urls_from_control_file);
+	return [];
+    }
+
+    urls_from_control_file = filter (map one_url, urls_from_control_file, {
+	if (contains (registered, one_url["baseurl"]:"")) {
+	    y2milestone ("Already registered: %1", one_url["baseurl"]:"");
+	    return false;
+	}
+	return true;
+    });
+
+    y2milestone ("Repositories to register: %1", urls_from_control_file);
+    return urls_from_control_file;
+}
+
+/**
+ * Register the installation sources in offline mode (no network connection required).
+ * The repository metadata will be downloaded by sw_single (or another yast module) when the repostory is enabled
+ *
+ * @param list <map> list of the sources to register
+ * @return list<integer> list of created source IDs
+ */
+define list <integer> RegisterRepos (list <map> url_list)
+{
+    list <integer> ret = [];
+
+    foreach (map new_url, url_list, {
+	    if (new_url["baseurl"]:"" == nil || new_url["baseurl"]:"" == "") {
+		y2error ("Cannot use repository: %1, no 'baseurl' defined", new_url);
+		return;
+	    }
+
+	    map <string,any> repo_prop = $[];
+
+	    // extra repos are disabled by default
+	    repo_prop["enabled"]	= new_url["enabled"]:false;
+	    repo_prop["autorefresh"]	= new_url["autorefresh"]:true;
+
+	    // repository name (try) name, alias, (fallback) baseurl
+	    repo_prop["name"]		= new_url["name"]:new_url["alias"]:new_url["baseurl"]:"";
+
+	    // repository alias (try) alias, (fallback) baseurl
+	    repo_prop["alias"]		= new_url["alias"]:new_url["baseurl"]:"";
+
+	    repo_prop["base_urls"]	= [new_url["baseurl"]:""];
+
+	    if (haskey (new_url, "prod_dir")) {
+		repo_prop["prod_dir"]	= new_url["prod_dir"]:"/";
+	    }
+
+	    if (haskey (new_url, "priority")) {
+		repo_prop["priority"]	= tointeger (new_url["priority"]:99);
+	    }
+
+	    integer new_repo_id = Pkg::RepositoryAdd (repo_prop);
+
+	    if (new_repo_id != nil && new_repo_id >= 0) {
+		y2milestone ("Registered extra repository: %1: %2", new_repo_id, repo_prop);
+		ret = add (ret, new_repo_id);
+	    } else {
+		y2error("Cannot register: %1", repo_prop);
+	    }
+	}
+    );
+
+    return ret;
+}
+
+/**
+ * Returns list of already registered repositories.
+ *
+ * @return list <string> of registered repositories
+ */
+list<string> RegisteredUrls()
+{
+    // get all registered installation sources
+    list <integer> srcs = Pkg::SourceGetCurrent (false);
+
+    list<string> ret = [];
+    foreach(integer src, srcs,
+	{
+	    map general = Pkg::SourceGeneralData(src);
+
+	    string url = general["url"]:"";
+
+	    if (url != nil && url != "")
+	    {
+		ret = add(ret, url);
+	    }
+	}
+    );
+
+    // remove duplicates
+    ret = toset(ret);
+
+    y2milestone("Registered sources: %1", ret);
+
+    return ret;
+}
+
+// Initialize the package manager
+// needed for registered sources and products
+boolean InitializePackager () {
+    if (!PackageLock::Check()) return false;
+
+    // to find out which sources have been already registered
+    Pkg::SourceStartManager (false);
+
+    // to initialize target because of installed products
+    return (Pkg::TargetInit (Installation::destdir, false) == true);
+}
+
+
+//////////////////////////////////////////
+
+if ( GetInstArgs::going_back())     // going backwards?
+{
+    return `auto;                   // don't execute this once more
+}
+
+// autoyast mode, user cannot be asked
+if (Mode::autoinst())
+{
+    y2milestone("Skipping extra source configuration in AutoYaST mode");
+    return `auto;
+}
+
+// bugzilla #263289
+if (! InitializePackager()) {
+    y2error ("Cannot connect to the Packager");
+    return `auto;
+}
+
+list <string> already_registered = RegisteredUrls();
+
+list <map> register_url = GetURLsToRegister (already_registered);
+
+// any confirmed source to register?
+if (size (register_url) > 0) {
+    // register (create) the sources
+    list <integer> added_ids = RegisterRepos (register_url);
+
+    // synchronize the sources if any source has been added
+    if (size (added_ids) > 0) {
+	y2milestone ("syncing to zmd");
+	boolean synced = SourceManager::SyncAddedAndDeleted (added_ids, []);
+	y2milestone ("sync status: %1", synced);
+
+	// If any source has been added, store the sources
+	// bnc #440184
+	y2milestone ("Some (%1) sources have been added, storing them...", added_ids);
+	Pkg::SourceSaveAll();
+    }
+}
+
+return `auto;
+
+/* EOF */
+}

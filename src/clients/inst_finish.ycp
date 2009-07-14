@@ -1,0 +1,400 @@
+/**
+ * File:	clients/inst_finish.ycp
+ * Package:	installation
+ * Summary:	Finish installation
+ * Authors:	Klaus Kämpf <kkaempf@suse.de>
+ *		Arvin Schnell <arvin@suse.de>
+ *              Jiri Srain <jsrain@suse.de>
+ *
+ * $Id$
+ *
+ * Writes:
+ * [target] /var/lib/YaST2/runme_at_boot	run yast2 after initial boot
+ * SCR::Write (.etc.shadow.root,
+ */
+
+{
+    textdomain "installation";
+
+    import "AddOnProduct";
+    import "WorkflowManager";
+    import "Installation";
+    import "Linuxrc";
+    import "Misc";
+    import "Mode";
+    import "Stage";
+    import "Popup";
+    import "ProductControl";
+    import "Progress";
+    import "Report";
+    import "Wizard";
+    import "String";
+    import "GetInstArgs";
+    import "ProductFeatures";
+
+    // added for fate# 303395
+    import "Directory";
+
+    if (GetInstArgs::going_back())
+	return `auto;
+
+    boolean test_mode = false;
+
+    if (size (WFM::Args()) > 0 && is (WFM::Args(0), string)) {
+	y2milestone ("Args: %1", WFM::Args());
+	if (WFM::Args(0) == "test")
+	    test_mode = true;
+    }
+
+    if (test_mode) Wizard::CreateDialog();
+
+// Help text for last dialog of base installation
+string help_text = _("<p>
+Please wait while the base system is being installed.
+</p>");
+
+    Wizard::SetContents (
+	_("Finishing Basic Installation"),
+	`Label (_("Preparing installation finish-scripts...")),
+	help_text,
+	false,
+	false
+    );
+
+    // Used later in 'stages' definition
+    Pkg::TargetInit (Installation::destdir, true);
+
+list<map<string,any> > stages = [
+    $[
+	"id" : "copy_files",
+	// progress stage
+	"label" : _("Copy files to installed system"),
+	"steps" : [
+	    "autoinst_scripts1",
+	    "mouse",
+	    "copy_files",
+	    "copy_systemfiles",
+	    // For live installer only
+	    (Mode::live_installation() ? "live_copy_files":""),
+	    "switch_scr",
+	],
+	"icon" : "pattern-basis",
+    ],
+    $[
+	"id" : "save_config",
+	// progress stage
+	"label" : _("Save configuration"),
+	"steps" : [
+	    "ldconfig",
+	    "save_config",
+	    // For live installer only
+	    (Mode::live_installation() ? "live_save_config":""),
+	    "runlevel",
+	    "desktop",
+	    "fonts",
+	    "storage",
+	    "iscsi-client",
+	    "kernel",
+	    "x11",
+	    "proxy",
+	    "pkg",
+	    "driver_update1",
+	    // bnc #340733
+	    "system_settings",
+	],
+	"icon" : "yast-desktop-select",
+    ],
+    $[
+	"id" : "install_bootloader",
+	// progress stage
+	"label" : _("Install boot manager"),
+	"steps" : [
+	    "bootloader",
+	    ((ProductFeatures::GetBooleanFeature ("globals", "enable_kdump") == true) ? "kdump" : "")
+	],
+	"icon" : "yast-bootloader",
+    ],
+    $[
+	"id" : "save_settings",
+	// progress stage
+	"label" : _("Save installation settings"),
+	"steps" : [
+	    "yast_inf",
+	    "network",
+	    "ntp-client",
+	    "ssh_settings",
+	    "save_hw_status",
+	    "users",
+	    "autoinst_scripts2",
+	    "installation_settings",
+	],
+	"icon" : "yast-network",
+    ],
+    $[
+	"id" : "prepare_for_reboot",
+	// progress stage
+	"label" : _("Prepare system for initial boot"),
+	"steps" : [
+	    // For live installer only
+	    (Mode::live_installation() ? "live_runme_at_boot":""),
+	    // vm_finish called only if yast2-vm is installed
+	    // Can't use PackageSystem::Installed as the current SCR is attached to inst-sys
+	    // instead of the installed system
+	    (Pkg::PkgInstalled ("yast2-vm") ? "vm":""),
+	    "driver_update2",
+	    // no second stage if possible
+	    "pre_umount",
+	    // copy logs just before 'umount'
+	    // keeps maximum logs available after reboot
+	    "copy_logs",
+	    "umount",
+	],
+	// bnc #438154
+	"icon" : (Mode::live_installation() ? "yast-live-install-finish":"yast-scripts"),
+    ],
+];
+
+if (size (ProductControl::inst_finish) > 0)
+{
+    y2milestone ("Using inst_finish steps definition from control file");
+    stages = ProductControl::inst_finish;
+
+    // Inst-finish need to be translated (#343783)
+    string textdom = ProductControl::productControl["textdomain"]:"control";
+    list <map<string,any> > stages_copy = stages;
+
+    y2milestone ("Inst finish stages before: %1", stages);
+
+    integer counter = -1;
+    // going through copy, the original is going to be changed in the loop
+    foreach (map<string,any> one_stage, stages_copy, {
+	counter = counter + 1;
+	string label = one_stage["label"]:"";
+
+	if (label == nil || label == "") return;
+
+	string loc_label = dgettext (textdom, label);
+	// if translated
+	if (loc_label != nil && loc_label != "" && loc_label != label) {
+	    stages[counter, "label"] = loc_label;
+	}
+    });
+
+    y2milestone ("Inst finish stages after: %1", stages);
+}
+else
+{
+    y2milestone ("inst_finish steps definition not found in control file");
+}
+
+// merge steps from add-on products
+// bnc #438678
+stages[0, "steps"] = merge (
+    WorkflowManager::GetAdditionalFinishSteps("before_chroot"),
+    stages[0, "steps"]:[]
+);
+stages[1, "steps"] = merge (
+    WorkflowManager::GetAdditionalFinishSteps("after_chroot"),
+    stages[1, "steps"]:[]
+);
+stages[3, "steps"] = merge (
+    stages[3, "steps"]:[],
+    WorkflowManager::GetAdditionalFinishSteps("before_umount")
+);
+
+symbol run_type = `installation;
+if (Mode::update ())
+    run_type = `update;
+else if (Mode::autoinst ())
+    run_type = `autoinst;
+else if (Mode::live_installation ())
+    run_type = `live_installation;
+
+integer steps_count = 0;
+
+stages = maplist (map<string,any> stage, stages, {
+    list<map> steps = maplist (string s, stage["steps"]:[], {
+	// some steps are called in live installer only
+	if (s == "" || s == nil) {
+	    return nil;
+	}
+
+	s = s + "_finish";
+
+	if (! WFM::ClientExists (s)) {
+	    y2error ("Missing YCP client: %1", s);
+	    return nil;
+	}
+
+	y2milestone ("Calling inst_finish script: %1 (Info)", s);
+
+	boolean orig = Progress::set (false);
+	map info = (map) WFM::CallFunction (s, ["Info"]);
+
+	if (test_mode == true) {
+	    y2milestone ("Test mode, forcing run");
+	    info["when"] = [`installation, `update, `autoinst];
+	}
+
+	Progress::set (orig);
+
+	if (info == nil) {
+	    y2error ("Client %1 returned invalid data", s);
+	    return nil;
+	}
+
+	if (info["when"]:nil != nil && ! contains (info["when"]:[], run_type))
+	    return nil;
+
+	y2milestone ("inst_finish client %1 will be called", s);
+	info["client"] = s;
+	steps_count = steps_count + info["steps"]:1;
+	return info;
+    });
+
+    stage["steps"] = filter (map s, steps, {
+	return s != nil;
+    });
+
+    return stage;
+});
+
+y2milestone ("These inst_finish stages will be called:");
+foreach (map<string,any> stage, stages, {
+    y2milestone ("Stage: %1", stage);
+});
+
+stages = filter (map<string,any> s, stages, {
+    return size (s["steps"]:[]) > 0;
+});
+
+list<string> stage_names = maplist (map<string,any> s, stages, {
+    return s["label"]:"";
+});
+
+Progress::New (
+    // Headline for last dialog of base installation: Install LILO etc.
+    _("Finishing Basic Installation"),
+    "",	// Initial progress bar label - not empty (reserve space!)
+    steps_count,
+    stage_names,
+    [],
+    help_text
+);
+
+Wizard::DisableBackButton ();
+Wizard::DisableNextButton ();
+
+Wizard::SetTitleIcon ("yast-sysconfig");
+
+boolean aborted = false;
+
+foreach (map<string,any> stage, stages, {
+    if (stage["icon"]:"" != "")
+	Wizard::SetTitleIcon (stage["icon"]:"");
+
+    Progress::NextStage ();
+    boolean first = true;
+
+    foreach (map step, stage["steps"]:[], {
+	integer scount = step["steps"]:1;
+	if (scount != 0)
+	{
+	    if (first)
+		first = false;
+	    else
+		Progress::NextStep ();
+	}
+	if (haskey (step, "title"))
+	    Progress::Title (step["title"]:"");
+
+	boolean orig = Progress::set (false);
+	if (test_mode == true) {
+	    y2milestone ("Test-mode, skipping  WFM::CallFunction (%1, ['Write'])", step["client"]:"");
+	    sleep (500);
+	} else {
+	    WFM::CallFunction (step["client"]:"", ["Write"]);
+	}
+	Progress::set (orig);
+
+	if (UI::PollInput () == `abort && Popup::ConfirmAbort (`incomplete))
+	{
+	    aborted = true;
+	    break;
+	}
+    });
+    if (aborted)
+	break;
+});
+
+if (aborted)
+{
+    y2milestone ("inst_finish aborted");
+    return `abort;
+}
+
+Progress::Finish();
+Progress::Title (_("Finished."));
+
+// --------------------------------------------------------------
+// Check if there is a message left to display
+// and display it, if necessary
+
+// Do not call any SCR, it's already closed!
+if (size (Misc::boot_msg) > 0 && !Mode::autoinst ())
+{
+    // bugzilla #245742, #160301
+    if ((Linuxrc::usessh () && !Linuxrc::vnc())
+	// also live installation - bzilla #297691
+	|| Mode::live_installation ())
+    {
+	// Display the message and wait for user to accept it
+	Report::DisplayMessages (true, 0);
+    }
+    else
+	Report::DisplayMessages (true, 10);
+    Report::Message (Misc::boot_msg);
+    Misc::boot_msg = "";
+}
+
+if (test_mode) {
+    Wizard::CloseDialog();
+    return `auto;
+}
+
+// fate #303395: Use kexec to avoid booting between first and second stage
+// run new kernel via kexec instead of reboot
+
+// command for reading kernel_params
+string cmd = sformat("ls '%1/kexec_done' |tr -d '\n'", String::Quote (Directory::vardir));
+y2milestone("Checking flag of successful loading kernel via command %1", cmd);
+
+map out = (map)WFM::Execute(.local.bash_output, cmd);
+
+cmd = sformat("%1/kexec_done",Directory::vardir);
+
+// check output
+if (out["stdout"]:"" != cmd)
+{
+    y2milestone ("File kexec_done was not found, output: %1", out);
+    return `next;
+}
+
+// hack for using kexec switch to console 1
+cmd = sformat ("chvt 1");
+y2milestone("Switch to console 1 via command: %1", cmd);
+// switch to console 1
+out = (map)WFM::Execute(.local.bash_output, cmd);
+// check output
+if (out["exit"]:nil != 0)
+{
+    y2error ("Switching failed, output: %1", out);
+    return `next;
+}
+
+// waiting s for switching...
+sleep(1000);
+
+return `next;
+
+} // EOF

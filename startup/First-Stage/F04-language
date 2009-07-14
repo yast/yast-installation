@@ -1,0 +1,24 @@
+#!/bin/sh
+log "Starting F04-language..."
+log "========================"
+
+#=============================================
+# 4) set language environment
+#---------------------------------------------
+LANGUAGE=en_US
+infofile=/content
+if [ -f $infofile ];then
+	LANGUAGE=`sed -n 's/^LANGUAGE \([^ ]*\)/\1/p' $infofile`
+fi
+if [ ! "$Locale" = "" ];then
+	LANGUAGE=$Locale
+fi
+set_language_init
+unset LC_CTYPE
+log "\tLanguage set to: $LANG"
+
+#=============================================
+# 4.1) start unicode mode
+#---------------------------------------------
+export LANG
+start_unicode

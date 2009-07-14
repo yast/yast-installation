@@ -1,0 +1,3 @@
+Within the installed system each script stored in the postSecondStage
+directory is called directly after the YaST2.Second-Stage script has
+been finished

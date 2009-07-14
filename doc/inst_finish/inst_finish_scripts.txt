@@ -1,0 +1,72 @@
+Inst-Finish Scripts
+===================
+
+About
+-----
+They are called by the inst_finish.ycp installation client at the end of the
+first stage installation.
+
+Part of these clients are called with SCR connected to inst-sys, the others
+are called after SCR gets switched to the installed system (chrooted).
+
+Script inst_finish.ycp contains several stages, every has
+  * label - visible in the writing progress
+  * steps - list of additional inst_finish scripts that are called
+            ("bingo" -> "bingo_finish.ycp")
+
+Important script is "switch_scr", after that call, SCR is connected to the
+just installed system.
+
+Finish Scripts
+--------------
+Every single finish script is a non-interactive script (write-only). It's
+basically called twice:
+
+  * At first "Info" returns in which modes "Write" should be called
+  * Then "Write" should be called to do the job
+
+Simple Example
+--------------
+
+{
+    textdomain "$job";
+
+    any ret = nil;
+    string func = "";
+    map param = $[];
+
+    if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
+	func = (string)WFM::Args(0);
+	if(size(WFM::Args()) > 1 && is(WFM::Args(1), map))
+	param = (map)WFM::Args(1);
+    }
+
+    // nice to have
+    y2milestone ("starting job_finish");
+    y2debug("func=%1", func);
+    y2debug("param=%1", param);
+
+    if (func == "Info") {
+	return (any)$[
+	    "steps" : 1,
+	    "title" : _("Doing the job..."),
+
+	    // list contains only those steps when the client should be called
+	    // it can be even empty or dynamically considering the current status
+	    // "when" : (is_it_needed ? [`installation, `update]:[])
+	    "when" : [ `installation, `update, `autoinst ],
+	];
+    } else if (func == "Write") {
+	// Write will be called in case we run it in
+	// `installation, `update or `autoinst (defined in "Info")
+	... do the job ...
+    } else {
+	y2error ("unknown function: %1", func);
+    }
+
+    // nice to have
+    y2debug("ret=%1", ret);
+    y2milestone("job_finish finished");
+
+    return ret;
+}

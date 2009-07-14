@@ -1,0 +1,194 @@
+/**
+ * File:
+ *  umount_finish.ycp
+ *
+ * Module:
+ *  Step of base installation finish
+ *
+ * Authors:
+ *  Jiri Srain <jsrain@suse.cz>
+ *
+ * $Id$
+ *
+ */
+
+{
+
+textdomain "installation";
+
+import "Installation";
+import "Storage";
+import "Hotplug";
+import "Vendor";
+import "String";
+import "Internet";
+
+any ret = nil;
+string func = "";
+map param = $[];
+
+/* Check arguments */
+if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
+    func = (string)WFM::Args(0);
+    if(size(WFM::Args()) > 1 && is(WFM::Args(1), map))
+	param = (map)WFM::Args(1);
+}
+
+y2milestone ("starting umount_finish");
+y2debug("func=%1", func);
+y2debug("param=%1", param);
+
+if (func == "Info")
+{
+    return (any)$[
+	"steps" : 1,
+	// progress step title
+	"title" : _("Unmounting all mounted devices..."),
+	"when" : [ `installation, `live_installation, `update, `autoinst ],
+    ];
+}
+else if (func == "Write")
+{
+    // Release all sources, they might be still mounted
+    Pkg::SourceReleaseAll();
+
+    // save all sources and finish target
+    // bnc #398315
+    Pkg::SourceSaveAll();
+    Pkg::TargetFinish();
+
+    // loop over all filesystems
+    map<string,list> mountPoints = (map<string,list>)Storage::GetMountPoints();
+    y2milestone ("Known mount points: %1", mountPoints);
+    y2milestone ("/proc/mounts:\n%1", WFM::Read (.local.string, "/proc/mounts"));
+    y2milestone ("/proc/partitions:\n%1", WFM::Read (.local.string, "/proc/partitions"));
+
+    list<string> umountList = [];
+
+    // go through mountPoints collecting paths in umountList
+    // *** umountList is lexically ordered !
+
+    foreach (string mountpoint, list mountval, mountPoints, {
+	if (mountpoint != "swap") {
+	    umountList = add (umountList, mountpoint);
+	}
+    });
+
+    // remove [Installation::destdir]/etc/mtab which was faked for %post
+    // scripts in inst_rpmcopy
+    SCR::Execute(.target.remove, "/etc/mtab");
+
+    // Stop SCR on target
+    WFM::SCRClose (Installation::scr_handle);
+
+    // first, umount everthing mounted *in* the target.
+    // /proc/bus/usb
+    // /proc
+
+    list <string> umount_these = ["/proc", "/sys", "/dev"];
+    if (Hotplug::haveUSB) {
+	umount_these = (list <string>) union (["/proc/bus/usb"], umount_these);
+    }
+
+    foreach (string umount_dir, umount_these, {
+	string umount_this = sformat ("%1%2", Installation::destdir, umount_dir);
+	y2milestone ("Umounting: %1", umount_this);
+	boolean umount_result = (boolean) WFM::Execute (.local.umount, umount_this);
+
+	if (umount_result != true) {
+	    // bnc #395034
+	    // Don't remount them read-only!
+	    if (contains (["/proc", "/sys", "/dev", "/proc/bus/usb"], umount_dir)) {
+		y2warning ("Umount failed, trying lazy umount...");
+		string cmd = sformat ("sync; umount -l -f '%1';", String::Quote (umount_this));
+		y2milestone ("Cmd: '%1' Ret: %2", cmd, WFM::Execute (.local.bash_output, cmd));
+	    } else {
+		y2warning ("Umount failed, trying to remount read only...");
+		string cmd = sformat ("sync; mount -o remount,ro '%1'; umount -l -f '%1';", String::Quote (umount_this));
+		y2milestone ("Cmd: '%1' Ret: %2", cmd, WFM::Execute (.local.bash_output, cmd));
+	    }
+	}
+    });
+
+    map<string,map> targetMap = Storage::GetTargetMap();
+
+    // first umount all file based crypto fs since they potentially
+    // could mess up umounting of normale filesystems if the crypt
+    // file is not on the root fs
+    y2milestone( "umount list %1", umountList );
+    foreach (map e,  targetMap["/dev/loop","partitions"]:[], {
+	if (size(e["mount"]:"")>0) {
+	    Storage::Umount (e["device"]:"");
+            umountList = filter (string m, umountList, ``(m!=e["mount"]:""));
+            y2milestone ("loop umount %1 new list %2", e["mount"]:"", umountList);
+        }
+    });
+
+    // *** umountList is lexically ordered !
+    // now umount in reverse order (guarantees "/" as last umount)
+
+    integer umountLength = size (umountList);
+
+    while (umountLength > 0)
+    {
+        umountLength = umountLength - 1;
+        string tmp = Installation::destdir + (string) (umountList[umountLength]:"");
+        y2milestone ("umount target: %1", tmp);
+
+        boolean umount_status = (boolean) WFM::Execute (.local.umount, tmp);
+
+	// bnc #395034
+	// Don't remount them read-only!
+	if (umount_status != true) {
+	    if (contains (["/proc", "/sys", "/dev", "/proc/bus/usb"], tmp)) {
+		y2warning ("Umount failed, trying lazy umount...");
+		string cmd = sformat ("sync; umount -l -f '%1';", String::Quote (tmp));
+		y2milestone ("Cmd: '%1' Ret: %2", cmd, WFM::Execute (.local.bash_output, cmd));
+	    } else {
+		y2warning ("Umount failed, trying to remount read only...");
+		string cmd = sformat ("mount -o remount,ro '%1'; umount -l -f '%1';", String::Quote (tmp));
+		y2milestone ("Cmd: '%1' Ret: %2", cmd, WFM::Execute (.local.bash_output, cmd));
+	    }
+	}
+    }
+
+    // bugzilla #326478
+    y2milestone ("Currently mounted partitions: %1", WFM::Execute (.local.bash_output, "mount"));
+
+    string cmd = sformat ("fuser -v '%1' 2>&1", String::Quote (Installation::destdir));
+    map cmd_run = (map) WFM::Execute (.local.bash_output, cmd);
+
+    // must call .local.bash_output !
+    integer max_loop_dev = Storage::NumLoopDevices();
+
+    // disable loop device of crypto fs
+    boolean unload_crypto = false;
+
+    while (max_loop_dev > 0)
+    {
+        unload_crypto   = true;
+        string exec_str = sformat( "/sbin/losetup -d /dev/loop%1", max_loop_dev-1 );
+        y2milestone( "loopdev: %1", exec_str);
+        WFM::Execute(.local.bash, exec_str);
+        max_loop_dev = max_loop_dev -1;
+    }
+
+    if( size(filter(string k, map v, targetMap, ``(v["type"]:`CT_UNKNOWN==`CT_LVM))) >0 )
+    {
+        y2milestone( "shutting down LVM" );
+        WFM::Execute(.local.bash, "/sbin/vgchange -a n" );
+    }
+
+}
+else
+{
+    y2error ("unknown function: %1", func);
+    ret = nil;
+}
+
+y2debug("ret=%1", ret);
+y2milestone("umount_finish finished");
+return ret;
+
+
+} /* EOF */

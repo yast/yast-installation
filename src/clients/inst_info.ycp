@@ -1,0 +1,93 @@
+/**
+ * Module:	inst_info.ycp
+ *
+ * Authors:	Arvin Schnell <arvin@suse.de>
+ *
+ * Purpose:	Show info in existent.
+ *
+ * $Id$
+ */
+
+{
+
+    textdomain "installation";
+
+    import "Label";
+    import "Linuxrc";
+    import "Report";
+
+    string infofile = "/info.txt";		// copied there by linuxrc
+    string infotext = (string)SCR::Read (.target.string, [infofile, ""]);
+
+    if (infotext != "")
+    {
+	map tmp1 = Report::Export ();
+	map tmp2 = tmp1["messages"]:$[];
+	integer timeout_seconds = tmp2["timeout"]:0;
+
+	UI::OpenDialog(
+		       `HBox(
+			     `VSpacing(22),		// force height to 22/25 of screen height
+			     `VBox(
+				   `HSpacing(78),	// force width to 78/80 of screen width
+				   `VSpacing(0.2),
+				   `RichText(`opt(`plainText), infotext ),
+				   `ReplacePoint (`id(`rp1), `Empty () ),
+				   `HBox(
+					 `HStretch(),
+					 // Button to accept a license agreement
+					 `HWeight(1, `PushButton(`id(`accept), `opt(`default), _("I &Agree") ) ),
+					 `HStretch(),
+					 // Button to reject a license agreement
+					 `HWeight(1, `PushButton(`id(`donotaccept), _("I Do &Not Agree") ) ),
+					 `HStretch(),
+					 `ReplacePoint(`id(`rp2), `Empty ())
+					 )
+				   )
+			     )
+		       );
+
+	UI::SetFocus (`id(`accept));
+
+	symbol info_ret = `empty;
+
+	if (timeout_seconds == 0)
+	{
+	    info_ret = (symbol)UI::UserInput ();
+	}
+	else
+	{
+	    UI::ReplaceWidget (`id(`rp1), `Label (`id(`remaining_time), "" + timeout_seconds));
+	    UI::ReplaceWidget (`id(`rp2), `PushButton (`id(`stop), Label::StopButton()));
+
+	    while (timeout_seconds > 0)
+	    {
+		sleep (1000);
+		info_ret = (symbol)UI::PollInput ();
+		if (info_ret == `accept || info_ret == `donotaccept)
+		    break;
+		if (info_ret == `stop) {
+		    while (info_ret == `stop)
+			info_ret = (symbol)UI::UserInput ();
+		    break;
+		}
+		info_ret = `accept;
+		timeout_seconds = timeout_seconds - 1;
+		UI::ChangeWidget (`id(`remaining_time), `Value, "" + timeout_seconds);
+	    }
+	}
+
+	UI::CloseDialog ();
+
+	if (info_ret != `accept)
+	{
+	    y2milestone ("user didn't accept info.txt");
+
+	    // tell linuxrc that we aborted
+	    Linuxrc::WriteYaSTInf ($["Aborted" : "1"]);
+	    return `abort;
+	}
+    }
+
+    return `auto;
+}

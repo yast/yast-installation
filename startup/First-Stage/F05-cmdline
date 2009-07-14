@@ -1,0 +1,12 @@
+#!/bin/sh
+log "Starting F05-cmdline..."
+log "======================="
+
+#=============================================
+# 5) check proc/cmdline parameters
+#---------------------------------------------
+# 5.1) check for repair parameter...
+if got_kernel_param "repair" ; then
+	log "\tGot kernel parameter: <repair> -> saving to install.inf"
+	echo "Repair: true" >> /etc/install.inf
+fi

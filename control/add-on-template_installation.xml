@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
+    xmlns:config="http://www.suse.com/1.0/configns">
+	<textdomain>control</textdomain>
+	<workflows config:type="list">
+		<workflow>
+			<label>Add-On Product Installation</label>
+			<defaults>
+				<archs>all</archs>
+			</defaults>
+			<mode>installation</mode>
+			<stage>normal</stage>
+			<modules config:type="list">
+				<module>
+					<label>Language Installation</label>
+					<name>inst_language_add-on</name>
+					<enable_back>no</enable_back>
+					<enable_next>yes</enable_next>
+				</module>
+			</modules>
+		</workflow>
+	</workflows>
+</productDefines>

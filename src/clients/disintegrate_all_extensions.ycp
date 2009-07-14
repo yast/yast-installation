@@ -1,0 +1,27 @@
+/**
+ * File:
+ *	disintegrate_all_extensions.ycp
+ *
+ * Module:
+ *	Installation
+ *
+ * Authors:
+ *	Lukas Ocilka <locilka@suse.cz>
+ *
+ * Summary:
+ *	Special client for unloading all downloaded and integrated
+ *	language and other inst-sys extensions.
+ *	See FATE #302955: 'Split translations out of installation system'.
+ *
+ * $Id:$
+ *
+ */
+{
+    textdomain "installation";
+
+    import "InstExtensionImage";
+
+    InstExtensionImage::DisintegrateAllExtensions();
+
+    return `next;
+}

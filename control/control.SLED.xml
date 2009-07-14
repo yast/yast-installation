@@ -1,0 +1,1146 @@
+<?xml version="1.0"?>
+<productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
+    xmlns:config="http://www.suse.com/1.0/configns">
+
+<!--
+Work around for the text domain
+textdomain="control"
+-->
+
+    <textdomain>control</textdomain>
+
+    <globals>
+	<additional_kernel_parameters></additional_kernel_parameters>
+        <enable_autologin config:type="boolean">false</enable_autologin>
+	<enable_firewall config:type="boolean">true</enable_firewall>
+	<firewall_enable_ssh config:type="boolean">false</firewall_enable_ssh>
+
+	<!-- FATE #303875, see /etc/sysconfig/network/dhcp:WRITE_HOSTNAME_TO_HOSTS -->
+	<write_hostname_to_hosts config:type="boolean">true</write_hostname_to_hosts>
+
+        <incomplete_translation_treshold>95</incomplete_translation_treshold>
+        <inform_about_suboptimal_distribution config:type="boolean">true</inform_about_suboptimal_distribution>
+        <skip_language_dialog config:type="boolean">true</skip_language_dialog>
+        <ui_mode>simple</ui_mode>
+        <enable_clone config:type="boolean">false</enable_clone>
+        <enable_register_hwdata   config:type="boolean">true</enable_register_hwdata>
+        <enable_register_optional config:type="boolean">true</enable_register_optional>
+        <display_register_forcereg config:type="boolean">true</display_register_forcereg>
+        <disable_register_w3m config:type="boolean">false</disable_register_w3m>
+        <register_monthly config:type="boolean">true</register_monthly>
+	<manual_online_update config:type="boolean">false</manual_online_update>
+	<root_password_ca_check config:type="boolean">false</root_password_ca_check>
+
+	<!-- bnc #359115 -->
+	<root_password_as_first_user config:type="boolean">false</root_password_as_first_user>
+	<root_password_ca_check config:type="boolean">false</root_password_ca_check>
+
+	<!-- Offer add-ons in the installation -->
+	<show_addons config:type="boolean">true</show_addons>
+	<addons_default config:type="boolean">false</addons_default>
+
+	<!-- FATE #301937, Save /root content from the installation system to the installed system -->
+	<save_instsys_content config:type="list">
+	    <save_instsys_item>
+		<instsys_directory>/root/</instsys_directory>
+		<system_directory>/root/inst-sys/</system_directory>
+	    </save_instsys_item>
+	</save_instsys_content>
+
+	<!-- FATE #305019: configure the files to copy from a previous installation -->
+	<copy_to_system config:type="list">
+	    <!-- FATE #300421: Import ssh keys from previous installations -->
+	    <copy_to_system_item>
+		<copy_to_dir>/</copy_to_dir>
+		<!-- Files that must be all present on the previous system -->
+		<mandatory_files config:type="list">
+		    <file_item>/etc/ssh/ssh_host_key</file_item>
+		    <file_item>/etc/ssh/ssh_host_key.pub</file_item>
+		</mandatory_files>
+		<!-- Files thay may be present -->
+		<optional_files config:type="list">
+		    <file_item>/etc/ssh/ssh_host_dsa_key</file_item>
+		    <file_item>/etc/ssh/ssh_host_dsa_key.pub</file_item>
+		    <file_item>/etc/ssh/ssh_host_rsa_key</file_item>
+		    <file_item>/etc/ssh/ssh_host_rsa_key.pub</file_item>
+		</optional_files>
+	    </copy_to_system_item>
+
+	    <!-- FATE #120103: Import Users From Existing Partition -->
+	    <copy_to_system_item>
+		<copy_to_dir>/var/lib/YaST2/imported/userdata/</copy_to_dir>
+		<!-- Files that must be all present on the previous system -->
+		<mandatory_files config:type="list">
+		    <file_item>/etc/shadow</file_item>
+		    <file_item>/etc/passwd</file_item>
+		    <file_item>/etc/login.defs</file_item>
+		    <file_item>/etc/group</file_item>
+		</mandatory_files>
+	    </copy_to_system_item>
+	</copy_to_system>
+
+	<!-- FATE #303396, Make second stage non-interactive -->
+	<enable_autoconfiguration config:type="boolean">true</enable_autoconfiguration>
+	<autoconfiguration_default config:type="boolean">true</autoconfiguration_default>
+
+	<!-- BNC #428190, Some clients should be called even with AC -->
+	<autoconfiguration_enabled_modules config:type="list">
+	    <module>cont_suse_register</module>
+	    <module>cont_suseconfig</module>
+	    <module>cont_congratulate</module>
+	    <!-- #449128, Run online-update during AC -->
+	    <module>you</module>
+	    <module>restore_settings</module>
+	</autoconfiguration_enabled_modules>
+
+        <!-- Configuration for inst_automatic_configuration script -->
+        <automatic_configuration config:type="list">
+            <!--
+                Adding inst_hostname client here, needed to generate random
+                hostname in automatic config (and for 127.0.0.2 hack) (#383336)
+                Must be called before inst_netprobe however, it cannot override it later on
+            -->
+            <ac_step>
+                <text_id>ac_1</text_id>
+                <icon>yast-sw_single</icon>
+                <type>scripts</type>
+                <ac_items config:type="list">
+                    <ac_item>initialization</ac_item>
+                    <ac_item>hostname</ac_item>
+                    <ac_item>netprobe</ac_item>
+                    <ac_item>rpmcopy_secondstage</ac_item>
+                </ac_items>
+            </ac_step>
+            <!-- network proposal -->
+            <ac_step>
+                <text_id>ac_2</text_id>
+                <icon>yast-network</icon>
+                <type>proposals</type>
+                <ac_items config:type="list">
+                    <ac_item>lan</ac_item>
+                    <ac_item>general</ac_item>
+                    <ac_item>dsl</ac_item>
+                    <ac_item>isdn</ac_item>
+                    <ac_item>modem</ac_item>
+                    <ac_item>remote</ac_item>
+                    <ac_item>firewall</ac_item>
+                </ac_items>
+            </ac_step>
+            <!-- hardware proposal -->
+            <ac_step>
+                <text_id>ac_3</text_id>
+                <icon>yast-hwinfo</icon>
+                <type>proposals</type>
+                <ac_items config:type="list">
+                    <ac_item>x11</ac_item>
+                    <ac_item>printer</ac_item>
+                    <ac_item>sound</ac_item>
+                    <ac_item>tv</ac_item>
+                </ac_items>
+            </ac_step>
+            <!-- finishing configuration -->
+            <ac_step>
+                <text_id>ac_4</text_id>
+                <icon>yast-sysconfig</icon>
+                <type>scripts</type>
+                <ac_items config:type="list">
+                    <ac_item>addon_update_sources</ac_item>
+                    <ac_item>extrasources</ac_item>
+                    <ac_item>suseconfig</ac_item>
+                    <ac_item>save_hardware_status</ac_item>
+                </ac_items>
+            </ac_step>
+        </automatic_configuration>
+
+	<!-- FATE: #304865: Enhance YaST Modules to cooperate better handling the product licenses -->
+	<base_product_license_directory>/etc/YaST2/licenses/base/</base_product_license_directory>
+
+	<!-- #303798: YaST2 runlevel editor: offer easy enablement and configuration of runlevel 4 -->
+	<rle_offer_rulevel_4 config:type="boolean">true</rle_offer_rulevel_4>
+
+	<!-- bnc #431259 -->
+	<default_ntp_setup config:type="boolean">false</default_ntp_setup>
+    </globals>
+
+    <software>
+	<!-- By default, unmaintained (old) packages are removed -->
+	<delete_old_packages config:type="boolean">true</delete_old_packages>
+	<!-- For SLED11, unmaintained (old) packages are not removed by default, FATE #301844, bugzilla #233156 -->
+	<delete_old_packages_reverse_list config:type="list">
+	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Desktop 11.*$</regexp_item>
+	</delete_old_packages_reverse_list>
+
+        <!-- By default, packages can be downgraded -->
+        <silently_downgrade_packages config:type="boolean">true</silently_downgrade_packages>
+        <!-- For SLED11, packages are not downgraded, FATE #301990, bugzilla #238488 -->
+        <silently_downgrade_packages_reverse_list config:type="list">
+            <regexp_item>^SUSE (LINUX|Linux) Enterprise Desktop 11.*$</regexp_item>
+        </silently_downgrade_packages_reverse_list>
+
+	<!-- By default, select new packages for installation -->
+	<only_update_selected config:type="boolean">false</only_update_selected>
+	<!-- For SLED11, do not install new packages by default, FATE #301844, bugzilla #233156 -->
+	<only_update_selected_reverse_list config:type="list">
+	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Desktop 11.*$</regexp_item>
+	</only_update_selected_reverse_list>
+
+        <selection_type config:type="symbol">auto</selection_type>
+        <base_selection>default-Gnome</base_selection>
+
+	<!-- BNC #436094: default desktop, DISPLAYMANAGER, ... -->
+	<supported_desktops config:type="list">
+	    <one_supported_desktop>
+		<name>desktop_gnome</name>
+		<desktop>gnome</desktop>
+		<label_id>desktop_gnome</label_id>
+		<logon>gdm</logon>
+		<cursor>DMZ</cursor>
+		<!-- package has to be installed or selected -->
+		<packages>gdm</packages>
+		<order config:type="integer">1</order>
+		<!-- Patterns are selected by the product itself -->
+		<patterns></patterns>
+		<icon>pattern-gnome</icon>
+	    </one_supported_desktop>
+
+	    <!-- BNC 446640: The other desktops should be defined too as a fallback -->
+	    <one_supported_desktop>
+		<name>kde</name>
+		<!-- BNC #381821, BNC #438212 -->
+		<desktop>startkde</desktop>
+		<label_id>dummy_desktop</label_id>
+		<logon>kdm4</logon>
+		<cursor>DMZ</cursor>
+		<packages>kde4-kdm</packages>
+		<order config:type="integer">1</order>
+		<patterns>kde x11 base</patterns>
+		<icon>pattern-kde4</icon>
+	    </one_supported_desktop>
+
+	    <one_supported_desktop>
+		<name>kde3</name>
+		<!-- BNC #381821 -->
+		<desktop>startkde3</desktop>
+		<label_id>dummy_desktop</label_id>
+		<logon>kdm3</logon>
+		<cursor>DMZ</cursor>
+		<packages>kdebase3-kdm</packages>
+		<order config:type="integer">2</order>
+		<patterns>kde3 x11 base</patterns>
+		<icon>pattern-kde</icon>
+	    </one_supported_desktop>
+
+	    <one_supported_desktop>
+		<name>xfce</name>
+		<desktop>startxfce4</desktop>
+		<label_id>dummy_desktop</label_id>
+		<logon>xdm</logon>
+		<cursor>DMZ</cursor>
+		<packages>xfce4-desktop</packages>
+		<order config:type="integer">4</order>
+		<patterns>xfce x11 base</patterns>
+		<icon>pattern-xfce</icon>
+	    </one_supported_desktop>
+
+	    <one_supported_desktop>
+		<name>min_x</name>
+		<desktop>twm</desktop>
+		<label_id>dummy_desktop</label_id>
+		<logon>xdm</logon>
+		<cursor>DMZ</cursor>
+		<packages>xorg-x11</packages>
+		<order config:type="integer">6</order>
+		<patterns>x11 base</patterns>
+		<icon>yast-x11</icon>
+	    </one_supported_desktop>
+
+	    <one_supported_desktop>
+		<name>textmode</name>
+		<desktop>twm</desktop>
+		<label_id>dummy_desktop</label_id>
+		<logon>xdm</logon>
+		<cursor>DMZ</cursor>
+		<packages>xorg-x11</packages>
+		<order config:type="integer">8</order>
+		<patterns>enhanced_base</patterns>
+		<icon>yast-sshd</icon>
+	    </one_supported_desktop>
+	</supported_desktops>
+
+        <default_desktop>desktop_gnome</default_desktop>
+
+	<!-- BNC #435479: Show support status in package details -->
+	<display_support_status config:type="boolean">true</display_support_status>
+    </software>
+
+    <partitioning>
+        <evms_config config:type="boolean">false</evms_config>
+        <try_separate_home config:type="boolean">true</try_separate_home>
+        <limit_try_home>14GB</limit_try_home>
+        <root_space_percent>40</root_space_percent>
+        <root_base_size>3GB</root_base_size>
+        <root_max_size>10GB</root_max_size>
+	<proposal_lvm config:type="boolean">false</proposal_lvm>
+	<proposal_evms config:type="boolean">false</proposal_evms>
+	<vm_desired_size>15GB</vm_desired_size>
+	<vm_home_max_size>25GB</vm_home_max_size>
+	<boot_evms config:type="boolean">false</boot_evms>
+    </partitioning>
+
+    <network>
+        <force_static_ip config:type="boolean">false</force_static_ip>
+        <network_manager>always</network_manager>
+	<startmode>ifplugd</startmode>
+    </network>
+    <clone_modules config:type="list">
+	<clone_module>language</clone_module>
+	<clone_module>keyboard</clone_module>
+	<clone_module>timezone</clone_module>
+	<clone_module>users</clone_module>
+	<clone_module>networking</clone_module>
+	<clone_module>firewall</clone_module>
+	<clone_module>host</clone_module>
+	<clone_module>routing</clone_module>
+	<clone_module>proxy</clone_module>
+	<clone_module>runlevel</clone_module>
+	<clone_module>x11</clone_module>
+	<clone_module>nis</clone_module>
+	<clone_module>ldap</clone_module>
+	<clone_module>printer</clone_module>
+	<clone_module>add-on</clone_module>
+	<clone_module>iscsi-client</clone_module>
+	<clone_module>software</clone_module>
+	<clone_module>partitioning</clone_module>
+	<clone_module>bootloader</clone_module>
+    </clone_modules>
+    <texts>
+	<congratulate>
+	<label>
+&lt;p&gt;
+The installation has completed successfully.
+Your system is ready for use.
+Click &lt;b&gt;Finish&lt;/b&gt; to log in to the system.
+&lt;/p&gt;
+&lt;p&gt;
+Please visit us at http://www.novell.com/linux/.
+&lt;/p&gt;
+	</label>
+	</congratulate>
+
+	<!-- BNC #431336, Do not display any system type -->
+	<desktop_gnome><label></label></desktop_gnome>
+	<dummy_desktop><label></label></dummy_desktop>
+
+	<ac_1><label>Initialization...</label></ac_1>
+	<ac_2><label>Configuring network...</label></ac_2>
+	<ac_3><label>Configuring hardware...</label></ac_3>
+	<ac_4><label>Finishing configuration...</label></ac_4>
+    </texts>
+
+    <proposals config:type="list">
+        <proposal>
+            <label>Installation Settings</label>
+            <mode>installation,demo,autoinstallation</mode>
+            <stage>initial</stage>
+            <name>initial</name>
+            <enable_skip>no</enable_skip>
+
+            <proposal_modules config:type="list">
+		<proposal_module>
+		    <name>hwinfo</name>
+		    <presentation_order>10</presentation_order>
+		</proposal_module>
+		<proposal_module>
+		    <name>keyboard</name>
+		    <presentation_order>15</presentation_order>
+		</proposal_module>
+		<proposal_module>
+		    <name>mouse</name>
+		    <presentation_order>20</presentation_order>
+		</proposal_module>
+		<proposal_module>
+		    <name>partitions</name>
+		    <presentation_order>25</presentation_order>
+		</proposal_module>
+		<proposal_module>
+		    <name>add-on</name>
+		    <presentation_order>30</presentation_order>
+		</proposal_module>
+		<proposal_module>
+		    <name>bootloader</name>
+		    <presentation_order>40</presentation_order>
+		</proposal_module>
+		<proposal_module>
+		    <name>language</name>
+		    <presentation_order>50</presentation_order>
+		</proposal_module>
+		<proposal_module>
+		    <name>timezone</name>
+		    <presentation_order>45</presentation_order>
+		</proposal_module>
+		<!-- software proposal should be computed almost at the end -->
+		<proposal_module>
+		    <name>software</name>
+		    <presentation_order>35</presentation_order>
+		</proposal_module>
+		<!-- propose the default runlevel after software is selected, bnc #380141 -->
+		<proposal_module>
+		    <name>runlevel</name>
+		    <presentation_order>55</presentation_order>
+		</proposal_module>
+            </proposal_modules>
+
+            <proposal_tabs config:type="list">
+                <proposal_tab>
+                    <label>Overview</label>
+                    <proposal_modules config:type="list">
+                        <proposal_module>partitions</proposal_module>
+                        <proposal_module>software</proposal_module>
+                        <proposal_module>language_simple</proposal_module>
+                    </proposal_modules>
+                </proposal_tab>
+                <proposal_tab>
+                    <label>Expert</label>
+                    <proposal_modules config:type="list">
+                        <proposal_module>hwinfo</proposal_module>
+                        <proposal_module>keyboard</proposal_module>
+                        <proposal_module>mouse</proposal_module>
+                        <proposal_module>partitions</proposal_module>
+                        <proposal_module>bootloader</proposal_module>
+			<proposal_module>add-on</proposal_module>
+                        <proposal_module>software</proposal_module>
+                        <proposal_module>timezone</proposal_module>
+                        <proposal_module>language</proposal_module>
+                        <proposal_module>runlevel</proposal_module>
+                    </proposal_modules>
+                </proposal_tab>
+            </proposal_tabs>
+        </proposal>
+
+        <proposal>
+            <label>Update Settings</label>
+            <mode>update</mode>
+            <name>initial</name>
+            <stage>normal</stage>
+            <enable_skip>no</enable_skip>
+            <proposal_modules config:type="list">
+                <proposal_module>update</proposal_module>
+                <proposal_module>packages</proposal_module>
+                <proposal_module>backup</proposal_module>
+                <proposal_module>language</proposal_module>
+            </proposal_modules>
+        </proposal>
+
+        <proposal>
+            <label>Installation Settings</label>
+            <mode>update</mode>
+            <stage>initial</stage>
+            <name>initial</name>
+            <enable_skip>no</enable_skip>
+            <proposal_modules config:type="list">
+		<proposal_module>hwinfo</proposal_module>
+		<proposal_module>media</proposal_module>
+                <proposal_module>update</proposal_module>
+		<proposal_module>add-on</proposal_module>
+                <proposal_module>packages</proposal_module>
+                <proposal_module>backup</proposal_module>
+                <proposal_module>language</proposal_module>
+                <proposal_module>keyboard</proposal_module>
+            </proposal_modules>
+        </proposal>
+
+        <proposal>
+            <label>Network Configuration</label>
+            <name>network</name>
+            <stage>continue,normal</stage>
+            <enable_skip>yes</enable_skip>
+            <proposal_modules config:type="list">
+                <proposal_module>
+		    <name>lan</name>
+		    <presentation_order>20</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>general</name>
+		    <presentation_order>5</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>dsl</name>
+		    <presentation_order>30</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>isdn</name>
+		    <presentation_order>40</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>modem</name>
+		    <presentation_order>50</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>remote</name>
+		    <presentation_order>60</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>firewall</name>
+		    <presentation_order>10</presentation_order>
+		</proposal_module>
+                <proposal_module>
+		    <name>proxy</name>
+		    <presentation_order>70</presentation_order>
+		</proposal_module>
+            </proposal_modules>
+        </proposal>
+
+        <proposal>
+            <label>Hardware Configuration</label>
+            <name>hardware</name>
+            <stage>continue</stage>
+            <enable_skip>yes</enable_skip>
+            <proposal_modules config:type="list">
+                <proposal_module>x11</proposal_module>
+                <proposal_module>printer</proposal_module>
+                <proposal_module>sound</proposal_module>
+                <proposal_module>tv</proposal_module>
+                <proposal_module>bluetooth</proposal_module>
+            </proposal_modules>
+        </proposal>
+    </proposals>
+
+    <workflows config:type="list">
+        <workflow>
+            <defaults>
+                <archs>all</archs>
+            </defaults>
+	    <label>Preparation</label>
+            <mode>installation</mode>
+            <stage>initial</stage>
+            <modules  config:type="list">
+                <module>
+                    <name>complex_welcome</name>
+	            <label>Welcome</label>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+                    <arguments>
+                        <first_run>yes</first_run>
+                    </arguments>
+                    <retranslate config:type="boolean">true</retranslate>
+                </module>
+                <module>
+	            <label>Welcome</label>
+                    <name>checkmedia</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+		<module>
+	            <label>Disk Activation</label>
+                    <name>disks_activate</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+		</module>
+                <module>
+	            <label>System Analysis</label>
+                    <name>system_analysis</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+	            <label>System Analysis</label>
+                    <name>mode</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+		<module>
+		    <label>Add-On Products</label>
+		    <name>add-on</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+		</module>
+                <module>
+	            <label>Time Zone</label>
+                    <name>timezone</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                    <arguments>
+                        <first_run>yes</first_run>
+                    </arguments>
+                </module>
+<!--
+                <module>
+	            <label>Desktop Selection</label>
+                    <name>desktop</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+-->
+		<module>
+		    <label>User Settings</label>
+		    <name>user_first</name>
+		</module>
+		<module>
+		    <label>User Settings</label>
+		    <name>root_first</name>
+		</module>
+                <module>
+	            <label>Installation Overview</label>
+                    <name>initial_installation_proposal</name>
+                    <execute>inst_proposal</execute>
+                    <proposal>initial</proposal>
+                </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>do_resize</name>
+                    <update config:type="boolean">false</update>
+                    <archs>i386,x86_64,ia64</archs>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>prepdisk</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>kickoff</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>rpmcopy</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>finish</name>
+                    <enable_back>no</enable_back>
+                </module>
+            </modules>
+        </workflow>
+
+        <workflow>
+            <defaults>
+                <archs>all</archs>
+            </defaults>
+	    <label>Preparation</label>
+            <mode>update</mode>
+            <stage>initial</stage>
+            <modules  config:type="list">
+                <module>
+                    <name>complex_welcome</name>
+	            <label>Welcome</label>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+                    <arguments>
+                        <first_run>yes</first_run>
+                    </arguments>
+                    <retranslate config:type="boolean">true</retranslate>
+                </module>
+                <module>
+	            <label>Welcome</label>
+                    <name>checkmedia</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+		<module>
+	            <label>Disk Activation</label>
+                    <name>disks_activate</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+		</module>
+                <module>
+	            <label>System Analysis</label>
+                    <name>system_analysis</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+	            <label>System Analysis</label>
+                    <name>mode</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+	            <label>System for Update</label>
+                    <name>update_partition</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+		<module>
+		    <name>upgrade_urls</name>
+		    <enable_back>yes</enable_back>
+		</module>
+		<module>
+		    <label>Add-On Products</label>
+		    <name>add-on</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+		</module>
+		<module>
+		    <heading>yes</heading>
+		    <label>Update</label>
+		</module>
+                <module>
+                    <label>Update Summary</label>
+                    <name>lilo_convert</name>
+                    <execute>inst_lilo_convert</execute>
+                </module>
+                <module>
+	            <label>Update Summary</label>
+                    <name>inital_update_proposal</name>
+                    <execute>inst_proposal</execute>
+                    <proposal>initial</proposal>
+                </module>
+		<!--
+		    FATE #303860: Provide consistent progress during installation
+		    BNC  #438848: Also during upgrade
+		-->
+		<module>
+		    <label>Perform Update</label>
+		    <name>prepareprogress</name>
+		</module>
+
+                <module>
+	            <label>Perform Update</label>
+                    <name>do_resize</name>
+                    <update config:type="boolean">false</update>
+                    <archs>i386,x86_64,ia64</archs>
+                </module>
+                <module>
+	            <label>Perform Update</label>
+                    <name>prepdisk</name>
+                </module>
+                <module>
+	            <label>Perform Update</label>
+                    <name>kickoff</name>
+                </module>
+                <module>
+	            <label>Perform Update</label>
+                    <name>rpmcopy</name>
+                </module>
+                <module>
+	            <label>Perform Update</label>
+                    <name>finish</name>
+                </module>
+            </modules>
+        </workflow>
+
+        <workflow>
+            <defaults>
+                <archs>all</archs>
+            </defaults>
+            <stage>initial</stage>
+	    <label>Preparation</label>
+            <mode>repair</mode>
+            <modules  config:type="list">
+                <module>
+	            <label>System Information</label>
+                    <name>info</name>
+                </module>
+                <module>
+	            <label>Perform Repair</label>
+                    <name>repair</name>
+                </module>
+            </modules>
+        </workflow>
+
+        <workflow>
+            <defaults>
+                <archs>all</archs>
+            </defaults>
+            <stage>initial</stage>
+	    <label>Base Installation</label>
+            <mode>screen_shot</mode>
+            <modules  config:type="list">
+                <module>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+ 	            <label>Language</label>
+                    <name>language</name>
+                    <retranslate config:type="boolean">true</retranslate>
+                </module>
+                <module>
+	            <label>Installation Settings</label>
+                    <name>initial_screenshot_proposal</name>
+                    <execute>inst_proposal</execute>
+                    <proposal>initial</proposal>
+                </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>do_resize</name>
+                    <update config:type="boolean">false</update>
+                    <archs>i386,x86_64,ia64</archs>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>prepdisk</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>kickoff</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>rpmcopy</name>
+                </module>
+            </modules>
+        </workflow>
+
+        <workflow>
+            <defaults>
+                <archs>all</archs>
+            </defaults>
+            <stage>initial</stage>
+	    <label>Base Installation</label>
+            <mode>demo</mode>
+            <modules  config:type="list">
+                <module>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+	            <label>Language</label>
+                    <name>language</name>
+                    <retranslate config:type="boolean">true</retranslate>
+                </module>
+                <module>
+	            <label>Installation Settings</label>
+                    <name>initial_demo_proposal</name>
+                    <execute>inst_proposal</execute>
+                    <proposal>initial</proposal>
+                </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>do_resize</name>
+                    <update config:type="boolean">false</update>
+                    <archs>i386,x86_64,ia64</archs>
+                </module>
+                <module>
+ 	            <label>Perform Installation</label>
+                   <name>prepdisk</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>kickoff</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>rpmcopy</name>
+                </module>
+            </modules>
+        </workflow>
+
+        <workflow>
+            <stage>continue</stage>
+            <mode>update</mode>
+            <defaults>
+                <archs>all</archs>
+                <enable_back>no</enable_back>
+                <enable_next>no</enable_next>
+            </defaults>
+            <modules  config:type="list">
+                <module>
+	            <label>Perform Update</label>
+                    <name>rpmcopy_secondstage</name>
+                </module>
+		<module>
+		    <heading>yes</heading>
+		    <label>Configuration</label>
+		</module>
+                <module>
+	            <label>Network</label>
+	            <name>upgrade_ask_net_test</name>
+                    <execute>inst_ask_net_test</execute>
+		    <!-- The very first interactive dialog -->
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+	            <label>Network</label>
+	            <name>upgrade_do_net_test</name>
+                    <execute>inst_do_net_test</execute>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+                    <label>Customer Center</label>
+                    <name>upgrade_addon_update_sources</name>
+                    <execute>inst_addon_update_sources</execute>
+                </module>
+                <module>
+                    <label>Customer Center</label>
+                    <name>upgrade_suse_register</name>
+                    <execute>inst_suse_register</execute>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+                    <label>Online Update</label>
+                    <name>upgrade_ask_online_update</name>
+                    <execute>inst_ask_online_update</execute>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+	            <label>Online Update</label>
+                    <name>upgrade_you</name>
+                    <execute>inst_you</execute>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+		<module>
+		    <label>Online Update</label>
+		    <name>upgrade_restore_settings</name>
+		    <execute>inst_restore_settings</execute>
+		</module>
+                <module>
+                    <name>upgrade_suseconfig</name>
+                    <execute>inst_suseconfig</execute>
+                </module>
+                <module>
+	            <label>Release Notes</label>
+                    <name>upgrade_release_notes</name>
+                    <execute>inst_release_notes</execute>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+                    <name>upgrade_congratulate</name>
+                    <execute>inst_congratulate</execute>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+            </modules>
+        </workflow>
+
+        <workflow>
+            <stage>continue</stage>
+            <mode>installation</mode>
+            <defaults>
+                <enable_back>yes</enable_back>
+                <enable_next>yes</enable_next>
+                <archs>all</archs>
+            </defaults>
+            <modules  config:type="list">
+		<module>
+		    <heading>yes</heading>
+		    <label>Configuration</label>
+		</module>
+		<module>
+		    <label>Automatic Configuration</label>
+		    <name>automatic_configuration</name>
+		    <enable_back>no</enable_back>
+		    <enable_next>no</enable_next>
+		</module>
+                <module>
+	            <label>root Password</label>
+                    <name>root</name>
+                    <enable_back>no</enable_back>
+                </module>
+                <module>
+	            <label>Check Installation</label>
+                    <name>initialization</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
+                </module>
+                <module>
+	            <label>Check Installation</label>
+                    <name>netprobe</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
+                </module>
+                <module>
+	            <label>Check Installation</label>
+                    <name>rpmcopy_secondstage</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
+                </module>
+                <module>
+	            <label>Hostname</label>
+                    <name>hostname</name>
+		    <!-- The very first interactive dialog -->
+                    <enable_back>no</enable_back>
+                </module>
+                <module>
+	            <label>Network</label>
+                    <name>continue_network_proposal</name>
+                    <execute>inst_proposal</execute>
+                    <proposal>network</proposal>
+                </module>
+                <module>
+	            <label>Network</label>
+                    <name>ask_net_test</name>
+                </module>
+                <module>
+	            <label>Network</label>
+                    <name>do_net_test</name>
+                </module>
+                <module>
+                    <label>Customer Center</label>
+                    <name>addon_update_sources</name>
+                </module>
+                <module>
+                    <label>Customer Center</label>
+                    <name>cont_suse_register</name>
+                    <execute>inst_suse_register</execute>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+                    <label>Online Update</label>
+                    <name>ask_online_update</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+	            <label>Online Update</label>
+                    <name>you</name>
+                </module>
+                <module>
+                    <label>Online Update</label>
+                    <name>extrasources</name>
+                </module>
+		<module>
+		    <label>Online Update</label>
+		    <name>restore_settings</name>
+		</module>
+                <module>
+	            <label>Users</label>
+                    <name>auth</name>
+                </module>
+                <module>
+	            <label>Users</label>
+                    <name>user</name>
+                </module>
+		<module>
+		    <!-- BNC #459080, no label is intentional -->
+		    <name>user_non_interactive</name>
+		    <!-- BNC #401319, define client to call explicitly -->
+		    <execute>inst_user</execute>
+		</module>
+                <module>
+                    <name>cont_suseconfig</name>
+                    <execute>inst_suseconfig</execute>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
+                </module>
+                <module>
+	            <label>Release Notes</label>
+                    <name>release_notes</name>
+                </module>
+                <module>
+	            <label>Hardware Configuration</label>
+                    <name>continue_hardware_proposal</name>
+                    <execute>inst_proposal</execute>
+                    <proposal>hardware</proposal>
+                </module>
+                <module>
+	            <label>Hardware Configuration</label>
+		    <name>save_hardware_status</name>
+                </module>
+                <module>
+                    <name>cont_congratulate</name>
+                    <execute>inst_congratulate</execute>
+                </module>
+            </modules>
+        </workflow>
+
+        <workflow>
+            <stage>initial</stage>
+            <label>Base Installation</label>
+            <mode>autoinstallation</mode>
+            <defaults>
+                <archs>all</archs>
+                <enable_back>no</enable_back>
+                <enable_next>no</enable_next>
+            </defaults>
+            <modules  config:type="list">
+                <module>
+	            <label>AutoYaST Settings</label>
+                    <name>autoinit</name>
+                    <archs>all</archs>
+                    <retranslate config:type="boolean">true</retranslate>
+                </module>
+                <module>
+	            <label>AutoYaST Settings</label>
+                    <name>autosetup</name>
+                </module>
+                <module>
+	            <label>AutoYaST Settings</label>
+                    <name>initial_autoyast_proposal</name>
+                    <execute>inst_proposal</execute>
+                    <proposal>initial</proposal>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>prepdisk</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>kickoff</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>autoimage</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>rpmcopy</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>finish</name>
+                </module>
+            </modules>
+        </workflow>
+
+        <workflow>
+            <defaults>
+                <archs>all</archs>
+                <enable_back>no</enable_back>
+                <enable_next>no</enable_next>
+            </defaults>
+            <stage>continue</stage>
+            <mode>autoinstallation</mode>
+            <modules  config:type="list">
+                <module>
+	            <label>Perform Installation</label>
+                    <name>netprobe</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>autopost</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>rpmcopy_secondstage</name>
+                </module>
+		<module>
+		    <heading>yes</heading>
+		    <label>Configuration</label>
+		</module>
+                <module>
+	            <label>System Configuration</label>
+                    <name>autoconfigure</name>
+                </module>
+                <module>
+                    <name>suseconfig</name>
+                </module>
+            </modules>
+        </workflow>
+
+    </workflows>
+</productDefines>

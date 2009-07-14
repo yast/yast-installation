@@ -1,0 +1,71 @@
+/**
+ * File:	modules/InstData.ycp
+ * Package:	Installation
+ * Summary:	Installation Data (variables, maps, probed info)
+ * Authors:	Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id: $
+ *
+ * This module provides an access to the installation data, e.g.,
+ * probed Linux partitions.
+ */
+
+{
+
+    textdomain "installation";
+    module "InstData";
+
+    import "Directory";
+
+    // --> system analysis
+
+    global string start_mode = nil;
+
+    global boolean offer_update = false;
+
+    global boolean have_linux = false;
+
+    // <-- system analysis
+
+    // --> software selection
+
+    global string selected_desktop = nil;
+
+    global map <string, boolean> current_systasks_status = $[];
+
+    // <-- software selection
+
+    // --> other
+
+    global boolean product_license_accepted = false;
+
+    // keep steps disabled in first stage also disabled in second stage
+    // see bnc #364066
+    global string wizardsteps_disabled_modules = Directory::vardir + "/installation_disabled_steps";
+    global string wizardsteps_disabled_proposals = Directory::vardir + "/installation_disabled_proposals";
+
+    // temporary variables for disabling and enabling steps
+    global list <string> localDisabledModules = [];
+    global list <string> localDisabledProposals = [];
+
+    // FATE #303396, Non-interactive second stage
+    // this variable enables a check box in dialog
+    global boolean enable_autoconfiguration = false;
+
+    // file that forces suseconfig run on boot
+    // bnc #390930
+    global string suseconfig_hookfile =  Directory::vardir + "/run_suseconfig";
+
+    // <-- other
+
+    // --> copy files -- config
+    // FATE #305019: configure the files to copy from a previous installation
+
+    global boolean copy_files_use_control_file = true;
+
+    global list <map> additional_copy_files = [];
+
+    // <-- copy files -- config
+
+/* EOF */
+}

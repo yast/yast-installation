@@ -1,0 +1,68 @@
+/**
+ * Module:		inst_prepareprogress.ycp
+ *
+ * Authors:		Stanislav Visnovsky (visnov@suse.cz)
+ *
+ * Purpose:
+ * Set up the global progress for the installation.
+ *
+ * possible return values: `back, `abort `next
+ */
+
+{
+  textdomain "installation";
+  import "Installation";
+  import "Mode";
+  import "Packages";
+  import "Language";
+  import "SlideShow";
+  import "ImageInstallation";
+  import "StorageClients";
+  import "PackageSlideShow";
+
+  y2milestone("BEGIN of inst_prepareprogress.ycp");
+
+  Packages::SlideShowSetUp (Language::language);
+
+  SlideShow::OpenDialog();
+  PackageSlideShow::InitPkgData(true); // FIXME: this is odd!
+
+  // Details (such as images sizes) have to known before initializing the SlideShow
+  // but only if Installation from Images is in use
+  if (Installation::image_installation) {
+    ImageInstallation::FillUpImagesDetails();
+  }
+
+  list< map<string,any> > stages = [
+    $[
+    "name" : "disk",
+    "description": _("Preparing disks..."),
+    "value" : Mode::update() ? 0 : 120, // FIXME: 2 minutes 
+    "units" : `sec,
+    ],
+    $[
+    "name" : "images",
+    "description": _("Deploying Images..."),
+    // Use 'zero' if image installation is not used
+    // BNC #439104
+    "value" : (Installation::image_installation ? ImageInstallation::TotalSize() / 1024 : 0), // kilobytes
+    "units" : `kb,
+    ],
+    $[
+    "name" : "packages",
+    "description": _("Installing Packages..."),
+    // here, we do a hack, because until images are deployed, we cannot determine how many 
+    // packages will be really installed additionally
+    "value" : (PackageSlideShow::total_size_to_install - ImageInstallation::TotalSize()) / 1024 , // kilobytes
+    "units" : `kb,
+    ],
+  ];
+
+  SlideShow::Setup( stages );
+
+  symbol ret_val = `auto;
+
+  y2milestone("END of inst_prepareprogress.ycp");
+
+  return ret_val;
+}

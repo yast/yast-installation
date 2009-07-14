@@ -1,0 +1,76 @@
+/**
+ * File:
+ *	inst_fallback_controlfile.ycp
+ *
+ * Module:
+ *	Installation
+ *
+ * Authors:
+ *	Lukas Ocilka <locilka@suse.cz>
+ *
+ * Summary:
+ *	This client is used as the very first dialog when the fallback
+ *	control file is used. See BNC #440982
+ *
+ * $Id$
+ *
+ */
+{
+    textdomain "installation";
+
+    import "Wizard";
+    import "Label";
+    import "GetInstArgs";
+    import "Popup";
+
+    y2error ("-------------------------------------");
+    y2error ("--- USING A FALLBACK CONTROL FILE ---");
+    y2error ("-------------------------------------");
+
+    // heading text
+    string heading_text = Label::WarningMsg();
+
+    term contents = `Frame (
+	Label::WarningMsg(),
+	`MarginBox (2,1,
+	    // error description
+	    `Label (_("YaST was unable to find the correct control file.
+We are using a fall-back one. This should not happen
+and it is worth reporting a bug."))
+	)
+    );
+
+    // help text
+    string help_text = _("<p>A fallback control file contains installation and update
+workflows unified for all products.</p>");
+
+    Wizard::SetContents (heading_text, contents, help_text,
+	GetInstArgs::enable_back(), GetInstArgs::enable_next());
+    Wizard::EnableAbortButton ();
+
+    Wizard::SetTitleIcon ("yast-misc");
+
+    any ret = nil;
+
+    while (true) {
+	ret = UI::UserInput();
+	y2milestone ("UserInput() returned %1", ret);
+
+	if (ret == `back) {
+	    break;
+
+	} else if ((ret == `abort || ret == `cancel) && Popup::ConfirmAbort (`painless)) {
+	    Wizard::RestoreNextButton();
+	    ret = `abort;
+	    break;
+
+	} else if (ret == `next) {
+	    break;
+
+	} else {
+	    y2error ("Uknown ret: %1", ret);
+	}
+    }
+
+    return (symbol) ret;
+}

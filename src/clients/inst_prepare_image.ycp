@@ -1,0 +1,59 @@
+/**
+ * File:	clients/inst_prepare_images.ycp
+ * Package:	Installation
+ * Summary:	Installation done (also) from image
+ * Authors:	Jiri Srain <jsrain@suse.cz>
+ *		Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id$
+ */
+
+{
+import "Packages";
+import "ImageInstallation";
+import "GetInstArgs";
+import "Wizard";
+import "Installation";
+
+textdomain "installation";
+
+if (GetInstArgs::going_back())
+    return `back;
+
+y2milestone ("Preparing image for package selector");
+
+// set repo to get images from
+ImageInstallation::SetRepo (Packages::theSources[0]:0);
+
+list <map <string, any> > all_patterns = Pkg::ResolvableProperties ("", `pattern, "");
+
+list <string> patterns_to_install = maplist (map <string, any> one_patern, all_patterns, {
+    if (one_patern["status"]:`unknown == `selected || one_patern["status"]:`unknown == `installed) {
+	return one_patern["name"]:"";
+    } else {
+	return "";
+    }
+});
+
+patterns_to_install = filter (string one_pattern, patterns_to_install, {
+    return (one_pattern != "" && one_pattern != nil);
+});
+
+if (patterns_to_install == ImageInstallation::last_patterns_selected) {
+    y2milestone ("List of selected patterns hasn't changed...");
+    return `auto;
+}
+ImageInstallation::last_patterns_selected = patterns_to_install;
+
+// list images for currently selected patterns
+y2milestone ("Currently selected patterns: %1", patterns_to_install);
+
+// avoid useles calls
+if (size (patterns_to_install) > 0) {
+    ImageInstallation::FindImageSet (patterns_to_install);
+}
+
+y2milestone ("Images for installation ready");
+
+return `auto;
+}

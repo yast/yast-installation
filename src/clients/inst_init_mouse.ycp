@@ -1,0 +1,24 @@
+/**
+ * File:	clients/inst_init_mouse.ycp
+ * Package:	Installation
+ * Summary:	Installation mode selection, initializing mouse
+ * Authors:	Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id:$
+ *
+ */
+
+{
+    textdomain "installation";
+
+    import "Mouse";
+
+    UI::BusyCursor();
+    y2milestone ("Call Mouse probing...");
+    Mouse::Set (Mouse::Probe ());
+    UI::NormalCursor();
+    
+    return true;
+
+/* EOF */
+}

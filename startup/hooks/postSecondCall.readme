@@ -1,0 +1,3 @@
+Within the installed system each script stored in the postSecondCall
+directory is called directly after the YaST2.call script has been
+finished

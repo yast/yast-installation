@@ -1,0 +1,68 @@
+/**
+ * Module:	installation.ycp
+ *
+ * Authors:	Lukas Ocilka <locilka@suse.cz>
+ *
+ * Purpose:	Visual speeding-up the installation.
+ *		This client only initializes the UI
+ *		and calls the real installation.
+ *
+ * $Id:$
+ */
+
+{
+    textdomain "installation";
+
+    import "Wizard";
+    import "Stage";
+    import "Report";
+    
+    // Initialize the UI
+    Wizard::OpenNextBackStepsDialog();
+    Wizard::SetContents (
+	// title
+	"",
+	// contents
+	`Empty(),
+	// help
+	"",
+	// has back
+	false,
+	// has next
+	false
+    );
+    Wizard::SetTitleIcon ("yast-inst-mode");
+    Wizard::DisableAbortButton ();
+
+    any ret = nil;
+
+    // Call the real installation
+    y2milestone("=== installation ===");
+
+    // First-stage (initial installation)
+    if (Stage::initial()) {
+	y2milestone ("Stage::initial -> running inst_worker_initial client");
+	ret = WFM::CallFunction("inst_worker_initial", WFM::Args());
+
+    // Second-stage (initial installation)
+    } else if (Stage::cont()) {
+	y2milestone ("Stage::cont -> running inst_worker_continue client");
+	ret = WFM::CallFunction("inst_worker_continue", WFM::Args());
+
+    } else {
+	// TRANSLATORS: error message
+	Report::Error(_("No workflow defined for this kind of installation."));
+    }
+
+    y2milestone ("Installation ret: %1", ret);
+    y2milestone("=== installation ===");
+
+    // Shutdown the UI
+    Wizard::CloseDialog();
+
+    if (Stage::initial()) {
+	WFM::CallFunction ("disintegrate_all_extensions");
+    }
+
+    return ret;
+}

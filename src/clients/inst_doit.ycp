@@ -1,0 +1,54 @@
+/**
+ *
+ * Authors:	Klaus Kämpf <kkaempf@suse.de>
+ *		Stefan Hundhammer <sh@suse.de>
+ *		Arvin Schnell <arvin@suse.de>
+ *
+ * Purpose:	Asks user to really do the installation/update.
+ *
+ * $Id$
+ */
+{
+    textdomain "installation";
+
+    import "Wizard";
+    import "Mode";
+    import "AutoinstConfig";
+    import "PackagesUI";
+
+    import "Label";
+
+    include "installation/misc.ycp";
+
+    if (Mode::autoinst () && !AutoinstConfig::Confirm)
+        return `next;
+
+    // old functionality replaced with this function-call
+    // bugzilla #256627
+    PackagesUI::ConfirmLicenses();
+
+    // function in installation/misc.ycp
+    // bugzilla #219097
+    boolean confirmed = confirmInstallation();
+
+    if (confirmed) {
+	y2milestone ("User confirmed %1",
+	    Mode::update () ? "update" : "installation");
+
+	Wizard::SetContents (
+	    // TRANSLATORS: dialog caption
+	    _("Installation - Warming Up"),
+	    `VBox (
+		// TRANSLATORS: starting the installation process
+		// dialog cotent (progress information)
+		`Label (_("Starting Installation..."))
+	    ),
+	    // TRANSLATORS: dialog help
+	    _("<p>Installation is just about to start!</p>"),
+	    false,
+	    false
+	);
+    }
+
+    return confirmed ? `next : `back;
+}

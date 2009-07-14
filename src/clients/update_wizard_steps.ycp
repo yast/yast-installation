@@ -1,0 +1,29 @@
+/**
+ * File:
+ *	update_wizard_steps.ycp
+ *
+ * Module:
+ *	Installation
+ *
+ * Authors:
+ *	Lukas Ocilka <locilka@suse.cz>
+ *
+ * Summary:
+ *	Script can be called from another installation modules.
+ *	It has been designed just to redraw the installation
+ *	steps. Call it only if needed.
+ *	WFM::call ("update_wizard_steps")
+ *
+ * $Id:$
+ *
+ */
+{
+    textdomain "installation";
+
+    include "installation/misc.ycp";
+
+    y2milestone ("Updating/redrawing wizard steps...");
+    UpdateWizardSteps();
+
+    return `auto;
+}

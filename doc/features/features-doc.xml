@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+    "/usr/share/xml/docbook/schema/dtd/4.2/docbookx.dtd"[
+
+<!ENTITY  features  SYSTEM "features.xml">
+
+]>
+
+<book>
+    <bookinfo>
+        <title>Installation Features</title>
+        <subtitle>Summary of installation features</subtitle>
+        <authorgroup>
+            <author>
+                <firstname>Lukas</firstname>
+                <surname>Ocilka</surname>
+                <affiliation>
+                    <orgname>Novell, Inc.</orgname>
+                </affiliation>
+            </author>
+        </authorgroup>
+        <corpauthor>Novell, Inc.</corpauthor>
+        <copyright>
+            <year>2008</year>
+            <holder>Novell, Inc.</holder>
+        </copyright>
+    </bookinfo>
+
+    &features;
+</book>

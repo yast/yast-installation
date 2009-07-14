@@ -1,0 +1,316 @@
+/**
+ * File:	installation/general/inst_relase_notes.ycp
+ * Module:	Installation
+ * Summary:	Display release notes
+ * Authors:	Arvin Schnell <arvin@suse.de>
+ *		Lukas Ocilka <locilka@suse.de>
+ *		Jens Daniel Schmidt <jdsn@suse.de>
+ *
+ * Display release notes.
+ *
+ * $Id$
+ */
+
+{
+    textdomain "installation";
+
+    import "Wizard";
+    import "Popup";
+    import "GetInstArgs";
+    import "CustomDialogs";
+    import "Directory";
+    import "Language";
+    import "Mode";
+    import "FileUtils";
+    import "Label";
+    import "CommandLine";
+    import "Mode";
+
+    map argmap = GetInstArgs::argmap();
+
+    // Bugzilla #269914, CommanLine "support"
+    // argmap is only a map, CommandLine uses string parameters
+    if (size (argmap) == 0 && size (WFM::Args()) > 0) {
+	Mode::SetUI ("commandline");
+	y2milestone ("Mode CommandLine not supported, exiting...");
+	// TRANSLATORS: error message - the module does not provide command line interface
+	CommandLine::Print(_("There is no user interface available for this module."));
+	return `auto;
+    }
+
+    integer minwidtprodsel = 0;
+    list<string> relnotesproducts = [];
+
+    string basedirectory = "/usr/share/doc/release-notes";
+    string directory="";
+    integer prodnamelen=0;
+
+    map <string, string> CreateLanguagesTranslations () {
+	map <string, string> ret = $[];
+	map <string, list> all_languages =  Language::GetLanguagesMap(false);
+	foreach (string short, list translations, all_languages, {
+	    string translation = nil;
+	    if (translations[4]:"" != "")      translation = translations[4]:"";
+	    else if (translations[1]:"" != "") translation = translations[1]:"";
+	    else if (translations[0]:"" != "") translation = translations[0]:"";
+	    
+	    ret[short] = translation;
+
+	    // fallback for short names without xx_YY
+	    if (regexpmatch(short, "_")) {
+		short = regexpsub(short, "^(.*)_.*$", "\\1");
+		if (ret[short]:nil == nil) ret[short] = translation;
+	    }
+	});
+	
+	// exceptions
+	if (ret["en"]:nil != nil && ret["en_US"]:nil != nil) ret["en"] = ret["en_US"]:"";
+	if (ret["zh"]:nil != nil && ret["zh_CN"]:nil != nil) ret["zh"] = ret["zh_CN"]:"";
+	if (ret["pt"]:nil != nil && ret["pt_PT"]:nil != nil) ret["pt"] = ret["pt_PT"]:"";
+	
+	return ret;
+    }
+
+    // --- //
+
+    if (argmap["directory"]:"" != "")
+            basedirectory = Directory::custom_workflow_dir + basedirectory;
+
+    list<string> readproducts = [];
+    // Release notes might be missing
+    if (FileUtils::Exists(basedirectory) && FileUtils::IsDirectory(basedirectory)) {
+	readproducts = (list<string>) SCR::Read(.target.dir, basedirectory);
+
+	// bnc #407922
+	// not all objects need to be directories
+	boolean is_directory = nil;
+	readproducts = filter (string one_prod, readproducts, {
+	    is_directory = FileUtils::IsDirectory (sformat ("%1/%2", basedirectory, one_prod));
+
+	    if (is_directory != true) {
+		y2warning ("'%1' in '%2' is not a directory", one_prod, basedirectory);
+	    }
+
+	    return is_directory;
+	});
+    }
+
+    map <string, string> languages_translations = CreateLanguagesTranslations();
+    map <string, list <term> > languages_of_relnotes = $[];
+
+    list <string> preferred_langs = [
+	Language::language,
+	splitstring (Language::language, "_")[0]:"",
+	"en_US",
+	"en_GB",
+	"en"
+    ];
+
+    map <string, integer> minwidthlang = $[];
+
+    map <string, string> cleanproduct_product = $[];
+    // Creating term `ComboBox with languages for every single product
+    foreach ( string product, readproducts, {
+        // beautify product string
+        string cleanproduct = mergestring(splitstring(product, "_"), " ");
+        relnotesproducts = add (relnotesproducts, cleanproduct);
+	if (minwidtprodsel < size (cleanproduct))
+	    minwidtprodsel = size (cleanproduct);
+	cleanproduct_product[cleanproduct] = product;
+
+        prodnamelen=prodnamelen + size(cleanproduct);
+
+        // read release notes
+        string directory = basedirectory + "/" + product + "/";
+
+	list <string> relnotest_list = (list <string>) SCR::Read (.target.dir, directory);
+	relnotest_list = filter (string one_relnotes, relnotest_list, {
+	    return regexpmatch (one_relnotes, "^RELEASE-NOTES\..*\.rtf$");
+	});
+	
+	list <term> combobox_items = [];
+	foreach (string one_relnotes, relnotest_list, {
+	    string relnotes_lang = regexpsub (one_relnotes, "^RELEASE-NOTES\.(.*)\.rtf$", "\\1");
+	    string lang_name = languages_translations[relnotes_lang]:"";
+	    // combobox item
+	    if (lang_name == nil || lang_name == "") lang_name = sformat (_("Language: %1"), relnotes_lang);
+
+	    // set minimal width (maximal length of language name)
+	    if (minwidthlang[product]:0 < size (lang_name))
+		minwidthlang[product] = size (lang_name);
+
+	    combobox_items = add (combobox_items,
+		`item (`id (sformat ("%1%2", directory, one_relnotes)), lang_name)
+	    );
+	});
+
+	// Selecting default language
+	string item_id = nil;
+	boolean preferred_found = false;
+	foreach (string preffered_lang, preferred_langs, {
+	    integer conter = -1;
+	    foreach (term one_item, combobox_items, {
+		conter = conter + 1;
+		string item_id = one_item[0,0]:"";
+
+		if (regexpmatch (item_id, sformat ("RELEASE-NOTES\.%1\.rtf$", preffered_lang))) {
+		    preferred_found = true;
+		    break;
+		}
+	    });
+	    
+	    if (preferred_found) {
+		combobox_items[conter] = add (combobox_items[conter]:`item(`id(nil), nil), true);
+		break;
+	    }
+	});
+	
+	languages_of_relnotes[product] = sort (term a, term b, combobox_items, ``( a[1]:"" < b[1]:"" ));
+    });
+    
+    /* caption for dialog "Release Notes" */
+    string caption = _("Release Notes");
+
+    term relnoteslayout = nil;
+    term relnotesscreen = `VBox (
+	// combobox
+	`Left (
+	    `ReplacePoint (
+		`id(`lang_rp),
+		`ComboBox (`id (`lang), `opt (`notify), _("&Language"), [])
+	    )
+	),
+	`RichText (`id (`relnotescontent), "")
+    );
+
+    // if there are more products installed, show them in tabs or with
+    // combo box, bnc #359137 (do not show tab for one product)
+    if (size (relnotesproducts) <= 1) {
+	relnoteslayout = relnotesscreen;
+	// use DumpTab or ComboBox layout
+    } else if (UI::HasSpecialWidget(`DumbTab) && (
+	(size(relnotesproducts)<4  &&  prodnamelen<90) ||
+	(size(relnotesproducts)>3  &&  prodnamelen<70)
+    )) {
+	relnoteslayout = `DumbTab (relnotesproducts, relnotesscreen);
+    // doesn't have DumpTab or too many products
+    } else {
+	relnoteslayout = `VBox (
+	    `Left (`MinWidth (
+		// +2 thingies on the right
+		minwidtprodsel + 2,
+		`ComboBox (`id(`productsel), `opt(`notify), _("&Product"), relnotesproducts)
+	    )),
+	    relnotesscreen
+	);
+    }
+
+    term contents = `VBox (`VSpacing (0.5), relnoteslayout, `VSpacing (0.5));
+
+    /* help text for dialog "Release Notes" */
+    string help = _("<p>Here are the <b>release notes</b> for the installed
+Linux system. They provide a brief summary of new features and changes.</p>");
+
+    // in normal mode no BackAbortNext-button layout
+    // bugzilla #262440
+    if (Mode::normal()) {
+	Wizard::OpenNextBackDialog();
+	Wizard::DisableBackButton();
+	Wizard::DisableAbortButton();
+	Wizard::SetNextButton(`next, Label::CloseButton());
+	Wizard::EnableNextButton();
+
+	Wizard::SetContents (caption, contents, help,
+	    false, true);
+
+    // installation
+    } else {
+	Wizard::SetContents (caption, contents, help,
+	    GetInstArgs::enable_back(), GetInstArgs::enable_next());
+    }
+
+    Wizard::SetTitleIcon("yast-release-notes");
+    Wizard::SetFocusToNextButton();
+
+    // Default settings
+    UI::ChangeWidget (`id(`lang), `Enabled, false);
+    if (UI::WidgetExists(`productsel) && (size(relnotesproducts) < 2))
+	UI::ChangeWidget (`id(`productsel), `Enabled, false);
+
+    void RedrawRelnotesLang (string use_file) {
+	string contents = (string) SCR::Read (.target.string, use_file);
+	if (contents == nil || contents == "") {
+	    y2error ("Wrong relnotesfile: %1", use_file);
+	} else {
+	    UI::ChangeWidget (`id(`relnotescontent), `Value, contents);
+	}
+    }
+
+    void RedrawRelnotesProduct (symbol redraw_type, any current_ret) {
+	if (redraw_type == `tab) {
+	    string product = cleanproduct_product[tostring(current_ret)]:"";
+
+	    UI::ReplaceWidget (
+		`id (`lang_rp),
+		`MinWidth (
+		    // +2 for thingies on the right
+		    minwidthlang[product]:16 + 2,
+		    `HSquash (
+			// TRANSLATORS: Combo box
+			`ComboBox (`id (`lang), `opt (`notify), _("&Language"), languages_of_relnotes[product]:[])
+		    )
+		)
+	    );
+	    if (size(languages_of_relnotes[product]:[]) > 1)
+		UI::ChangeWidget (`id (`lang), `Enabled, true);
+	    else
+		UI::ChangeWidget (`id (`lang), `Enabled, false);
+	}
+	
+	RedrawRelnotesLang ((string) UI::QueryWidget (`id (`lang), `Value));
+    }
+
+    void SetNoReleaseNotesInfo () {
+	// informative message in RichText widget
+	UI::ChangeWidget (`id(`relnotescontent), `Value,
+	    _("<p>No release notes have been installed.</p>")
+	);
+    }
+
+    // for debugging
+    // UI::DumpWidgetTree();
+
+    // Init the first product
+    if (size(relnotesproducts) > 0) {
+	RedrawRelnotesProduct (`tab, relnotesproducts[0]:"");
+    } else {
+	SetNoReleaseNotesInfo();
+    }
+
+    any ret = nil;
+
+    repeat {
+
+	ret = Wizard::UserInput();
+
+	if (ret == `abort) {
+	    if (Mode::normal()) break;
+	    if (Popup::ConfirmAbort (`incomplete))
+		break;
+	} else if (ret == `help) {
+	    Wizard::ShowHelp (help);
+	// using combobox for products
+	} else if (ret == `productsel) {
+	    RedrawRelnotesProduct (`tab, (string) UI::QueryWidget (`id (`productsel), `Value));
+	} else if (ret == `lang) {
+	    RedrawRelnotesLang ((string) UI::QueryWidget (`id (`lang), `Value));
+	// using tabs for products
+        } else if (is (ret, string)) {
+	    RedrawRelnotesProduct (`tab, ret);
+	}
+
+    } until ( ret == `next || ret == `back );
+    if (Mode::normal()) Wizard::CloseDialog();
+
+    return (symbol) ret;
+}
