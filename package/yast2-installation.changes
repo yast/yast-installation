@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jul  8 16:04:00 CEST 2009 - mzugec@suse.de
+
+- correctly write supporturl (bnc#520169)
+- 2.17.55 
+
+-------------------------------------------------------------------
 Mon Mar  9 19:59:12 CET 2009 - locilka@suse.cz
 
 - Adjusting second stage of update steps to be enabled even if AC
