@@ -264,7 +264,7 @@ textdomain="control"
 		<label_id>desktop_kde</label_id>
 		<logon>kdm4</logon>
 		<cursor>DMZ</cursor>
-		<packages>kde4-kdm</packages>
+		<packages>kdm</packages>
 		<order config:type="integer">1</order>
 		<patterns>kde x11 base</patterns>
 		<icon>pattern-kde4</icon>
