@@ -111,7 +111,7 @@ else if (func == "Write")
     }
     // progress step title
     Progress::Title (_("Saving keyboard configuration..."));
-    Keyboard::Save(true);
+    Keyboard::Save();
     Progress::NextStep ();
     // progress step title
     Progress::Title (_("Saving product information..."));

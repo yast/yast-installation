@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jul 30 15:32:37 CEST 2009 - jsuchome@suse.cz
+
+- adapted to changes in yast2-country: no saving of xorg.conf
+  (bnc#441404) 
+- 2.18.20
+
+-------------------------------------------------------------------
 Wed Jun 24 10:02:20 CEST 2009 - locilka@suse.cz
 
 - Fixed Welcome dialog layout to have more license content visible
