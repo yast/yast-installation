@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jul 30 20:26:30 CEST 2009 - jdsn@suse.de
+
+- disable yast2-x11 during installation (bnc#441404) 
+- 2.18.21
+
+-------------------------------------------------------------------
 Thu Jul 30 15:32:37 CEST 2009 - jsuchome@suse.cz
 
 - adapted to changes in yast2-country: no saving of xorg.conf

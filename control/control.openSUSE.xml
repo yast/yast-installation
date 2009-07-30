@@ -142,7 +142,7 @@ textdomain="control"
 		<icon>yast-hwinfo</icon>
 		<type>proposals</type>
 		<ac_items config:type="list">
-		    <ac_item>x11</ac_item>
+		   <!-- <ac_item>x11</ac_item>  (bnc#441404) -->
 		    <ac_item>printer</ac_item>
 		    <ac_item>sound</ac_item>
 		    <ac_item>tv</ac_item>
@@ -341,7 +341,7 @@ textdomain="control"
 	<clone_module>routing</clone_module>
 	<clone_module>proxy</clone_module>
 	<clone_module>runlevel</clone_module>
-	<clone_module>x11</clone_module>
+	<!--  <clone_module>x11</clone_module>  (bnc#441404)  -->
 	<clone_module>nis</clone_module>
 	<clone_module>ldap</clone_module>
 	<clone_module>printer</clone_module>
@@ -579,7 +579,7 @@ with a modern look and feel.</label></description_kde>
             <stage>continue</stage>
             <enable_skip>yes</enable_skip>
             <proposal_modules config:type="list">
-                <proposal_module>x11</proposal_module>
+              <!--  <proposal_module>x11</proposal_module>  (bnc#441404)  -->
                 <proposal_module>printer</proposal_module>
                 <proposal_module>sound</proposal_module>
                 <proposal_module>tv</proposal_module>
