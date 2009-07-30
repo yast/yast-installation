@@ -280,7 +280,7 @@ installation, but the selected language will be used for the new system."));
 
 	    if (!Stage::initial () && !Mode::update ()) {
 		// save settings (rest is saved in LanguageWrite)
-		Keyboard::Save (true);
+		Keyboard::Save ();
 		Timezone::Save ();
 	    }
 
