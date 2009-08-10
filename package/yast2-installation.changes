@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Aug 10 14:18:11 CEST 2009 - locilka@suse.cz
+
+- added calling bootloader client bootloader_preupdate to control
+  file to fix multiple grub entries (bnc #414490, bnc #477778).
+
+-------------------------------------------------------------------
 Thu Jul 30 20:26:30 CEST 2009 - jdsn@suse.de
 
 - disable yast2-x11 during installation (bnc#441404) 
