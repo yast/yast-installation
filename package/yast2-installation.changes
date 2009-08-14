@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Aug 14 18:26:49 CEST 2009 - kmachalkova@suse.cz
+
+- Simple network (firewall) configuration in 1st stage (FaTE #303859) 
+
+-------------------------------------------------------------------
 Mon Aug 10 14:18:11 CEST 2009 - locilka@suse.cz
 
 - added calling bootloader client bootloader_preupdate to control
