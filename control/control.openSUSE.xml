@@ -455,6 +455,11 @@ with a modern look and feel.</label></description_kde>
 		    <name>deploying</name>
 		    <presentation_order>95</presentation_order>
 		</proposal_module>
+		<!-- FaTE #303859 - simple network (in fact firewall) cfg in 1st stage -->
+		<proposal_module>
+		    <name>firewall_stage1</name>
+		    <presentation_order>99</presentation_order>
+		</proposal_module>
             </proposal_modules>
 <!--
             <proposal_tabs config:type="list">
