@@ -473,16 +473,15 @@ fi
 if [ -z "$DISPLAY" ];then
 	NEED_XSERVER=1
 fi
+
 # 3.1.5) Check for xorg.conf...
-if [ ! -f /etc/X11/xorg.conf ];then
-if [ ! -f $Xorgconftempl ];then
-	log "\tNo X11 configuration template found -> Medium Qt and Gtk disabled"
-	MEDIUM[0]=0
-	MEDIUM[4]=0
-else
+if [ ! -f /etc/X11/xorg.conf ] ; then
+    if [ -f $Xorgconftempl ] ; then
+	log "\tCopying $Xorgconftempl to /etc/X11/xorg.conf"
 	cp $Xorgconftempl /etc/X11/xorg.conf
+    fi
 fi
-fi
+
 # 3.1.6) Check for WindowManager configuration
 if [ ! -f /etc/icewm/preferences.yast2 ];then
 	log "\tNo Windowmanager configuration found -> Medium Qt and Gtk disabled"
