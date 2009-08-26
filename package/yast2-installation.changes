@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Aug 26 15:33:51 CEST 2009 - locilka@suse.cz
+
+- Do not copy xorg.conf to installed system anymore (bnc #441404).
+- 2.18.23
+
+-------------------------------------------------------------------
 Fri Aug 21 12:38:42 CEST 2009 - aschnell@suse.de
 
 - do not disable qt/gtk frontends if xorg.conf is missing (bnc
