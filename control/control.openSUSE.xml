@@ -308,6 +308,10 @@ textdomain="control"
 	    </one_supported_desktop>
 
 	</supported_desktops>
+
+	<!-- FaTE #306967 KDE is the default desktop -->
+	<default_desktop>kde</default_desktop>
+
     </software>
 
     <partitioning>
@@ -375,9 +379,7 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 	-->
 	<desktop_dialog><label>openSUSE offers you a choice of user interfaces. The two major complete 
 desktops are KDE and GNOME. Both provide an easy-to-use desktop with a full 
-suite of applications including email, a file manager, games and utilities. 
- 
-As desktop selection is a matter of taste, we do not give a recommendation.</label></desktop_dialog>
+suite of applications including email, a file manager, games and utilities.</label></desktop_dialog>
 
 	<!-- Desktop dialog: desktop names -->
 	<desktop_gnome><label>GNOME</label></desktop_gnome>
