@@ -309,7 +309,7 @@ textdomain="control"
 
 	</supported_desktops>
 
-	<!-- FaTE #306967 KDE is the default desktop -->
+	<!-- FaTE #306967 KDE is preselected desktop -->
 	<default_desktop>kde</default_desktop>
 
     </software>
