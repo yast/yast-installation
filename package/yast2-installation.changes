@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Fri Sep  4 19:00:27 CEST 2009 - kmachalkova@suse.cz
+
+- Introducing unique IDs to unambiguously identify AC steps and 
+  sub-proposals
+- Writing disabled AC steps and subproposals at the end of 1st 
+  stage, reading them back at the end of 2nd stage
+- Filtering out disabled AC steps from AC workflow (FaTE #303859 and 
+  bnc#534862)
+- 2.18.24
+
+-------------------------------------------------------------------
 Fri Sep  4 09:07:42 CEST 2009 - locilka@suse.cz
 
 - Dropped unnecessary fallback text from the fallback control file
