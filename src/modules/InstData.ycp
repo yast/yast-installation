@@ -43,6 +43,7 @@
     // see bnc #364066
     global string wizardsteps_disabled_modules = Directory::vardir + "/installation_disabled_steps";
     global string wizardsteps_disabled_proposals = Directory::vardir + "/installation_disabled_proposals";
+    global string wizardsteps_disabled_subproposals = Directory::vardir + "/installation_disabled_subproposals";
     global string wizardsteps_disabled_ac_items = Directory::vardir + "/installation_disabled_acs";
 
     // temporary variables for disabling and enabling steps

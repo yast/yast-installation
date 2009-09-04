@@ -62,6 +62,16 @@
 	}
 
 	y2milestone (
+	    "Writing disabled subproposals %1 into %2",
+	    ProductControl::GetDisabledSubProposals(),
+	    InstData::wizardsteps_disabled_subproposals
+	);
+
+	if ((boolean) SCR::Write (.target.ycp, InstData::wizardsteps_disabled_subproposals, ProductControl::GetDisabledSubProposals()) != true) {
+	    y2error ("Cannot write disabled subproposals");
+	}
+
+	y2milestone (
 	    "Writing disabled AC items %1 into %2",
 	    ProductControl::GetDisabledACItems(),
 	    InstData::wizardsteps_disabled_ac_items
