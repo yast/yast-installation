@@ -110,6 +110,7 @@ textdomain="control"
                 Must be called before inst_netprobe however, it cannot override it later on
             -->
             <ac_step>
+                <unique_id>ac_1</unique_id>
                 <text_id>ac_1</text_id>
                 <icon>yast-sw_single</icon>
                 <type>scripts</type>
@@ -122,6 +123,7 @@ textdomain="control"
             </ac_step>
             <!-- network proposal -->
             <ac_step>
+                <unique_id>ac_2</unique_id>
                 <text_id>ac_2</text_id>
                 <icon>yast-network</icon>
                 <type>proposals</type>
@@ -137,6 +139,7 @@ textdomain="control"
             </ac_step>
             <!-- hardware proposal -->
             <ac_step>
+                <unique_id>ac_3</unique_id>
                 <text_id>ac_3</text_id>
                 <icon>yast-hwinfo</icon>
                 <type>proposals</type>
@@ -149,6 +152,7 @@ textdomain="control"
             </ac_step>
             <!-- finishing configuration -->
             <ac_step>
+                <unique_id>ac_4</unique_id>
                 <text_id>ac_4</text_id>
                 <icon>yast-sysconfig</icon>
                 <type>scripts</type>
@@ -352,6 +356,7 @@ Please visit us at http://www.novell.com/linux/.
             <mode>installation,demo,autoinstallation</mode>
             <stage>initial</stage>
             <name>initial</name>
+	    <unique_id>inst_initial</unique_id>
             <enable_skip>no</enable_skip>
 
             <proposal_modules config:type="list">
@@ -431,6 +436,7 @@ Please visit us at http://www.novell.com/linux/.
             <mode>update</mode>
             <name>initial</name>
             <stage>normal</stage>
+	    <unique_id>update_settings_initial</unique_id>
             <enable_skip>no</enable_skip>
             <proposal_modules config:type="list">
                 <proposal_module>update</proposal_module>
@@ -445,6 +451,7 @@ Please visit us at http://www.novell.com/linux/.
             <mode>update</mode>
             <stage>initial</stage>
             <name>initial</name>
+	    <unique_id>update_initial</unique_id>
             <enable_skip>no</enable_skip>
             <proposal_modules config:type="list">
 		<proposal_module>hwinfo</proposal_module>
@@ -462,6 +469,7 @@ Please visit us at http://www.novell.com/linux/.
             <label>Network Configuration</label>
             <name>network</name>
             <stage>continue,normal</stage>
+	    <unique_id>network_continue</unique_id>
             <enable_skip>yes</enable_skip>
             <proposal_modules config:type="list">
                 <proposal_module>
@@ -503,6 +511,7 @@ Please visit us at http://www.novell.com/linux/.
             <label>Hardware Configuration</label>
             <name>hardware</name>
             <stage>continue</stage>
+	    <unique_id>hardware_continue</unique_id>
             <enable_skip>yes</enable_skip>
             <proposal_modules config:type="list">
                 <proposal_module>x11</proposal_module>
