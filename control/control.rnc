@@ -158,6 +158,7 @@ ac_redraw_and_ignore = element ac_redraw_and_ignore {
 automatic_configuration = element automatic_configuration {
     LIST,
     element ac_step {
+	element unique_id {text} &
 	element text_id { text }? &
 	element icon { text }? &
 	element type { "scripts" | "proposals" }? &
@@ -423,6 +424,7 @@ proposal = element proposal {
     element stage { text } &
     element name { text }? &
     element type { text }? &
+    element unique_id { text} &
     element enable_skip { "yes" | "no" }? &
     element proposal_modules {
 	LIST,

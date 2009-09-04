@@ -318,6 +318,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
             <mode>installation,demo,autoinstallation</mode>
             <stage>initial</stage>
             <name>initial</name>
+	    <unique_id>inst_initial</unique_id>
             <enable_skip>no</enable_skip>
 
             <proposal_modules config:type="list">
@@ -405,6 +406,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
             <mode>installation,demo,autoinstallation</mode>
             <stage>initial</stage>
             <name>initial</name>
+	    <unique_id>inst_s390_initial</unique_id>
             <enable_skip>no</enable_skip>
 
             <proposal_modules config:type="list">
@@ -488,6 +490,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
             <mode>update</mode>
             <name>initial</name>
             <stage>normal</stage>
+	    <unique_id>update_settings_initial</unique_id>
             <enable_skip>no</enable_skip>
             <proposal_modules config:type="list">
                 <proposal_module>update</proposal_module>
@@ -502,6 +505,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
             <mode>update</mode>
             <stage>initial</stage>
             <name>initial</name>
+	    <unique_id>update_initial</unique_id>
             <enable_skip>no</enable_skip>
 
             <proposal_modules config:type="list">
@@ -522,6 +526,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
             <mode>update</mode>
             <stage>initial</stage>
             <name>initial</name>
+	    <unique_id>update_S390_initial</unique_id>
             <enable_skip>no</enable_skip>
             <proposal_modules config:type="list">
 		<proposal_module>hwinfo</proposal_module>
@@ -539,6 +544,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
             <label>Network Configuration</label>
             <name>network</name>
             <stage>continue,normal</stage>
+	    <unique_id>network_continue</unique_id>
             <enable_skip>yes</enable_skip>
             <proposal_modules config:type="list">
                 <proposal_module>
@@ -581,6 +587,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
             <label>Network Configuration</label>
             <name>network</name>
             <stage>continue,normal</stage>
+	    <unique_id>network_s390_continue</unique_id>
             <enable_skip>yes</enable_skip>
             <proposal_modules config:type="list">
                 <proposal_module>
@@ -605,6 +612,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
         <proposal>
             <name>service</name>
             <stage>continue,normal</stage>
+	    <unique_id>service_continue</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>ca_mgm</proposal_module>
                 <proposal_module>ldap-server</proposal_module>
@@ -616,6 +624,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
             <label>Hardware Configuration</label>
             <name>hardware</name>
             <stage>continue</stage>
+	    <unique_id>hardware_ppc64_continue</unique_id>
             <enable_skip>yes</enable_skip>
             <proposal_modules config:type="list">
                 <proposal_module>x11</proposal_module>
@@ -628,6 +637,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
             <label>Hardware Configuration</label>
             <name>hardware</name>
             <stage>continue</stage>
+	    <unique_id>hardware_s390_continue</unique_id>
             <enable_skip>yes</enable_skip>
             <proposal_modules config:type="list">
                 <proposal_module>printer</proposal_module>
@@ -638,6 +648,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
             <label>Hardware Configuration</label>
             <name>hardware</name>
             <stage>continue</stage>
+	    <unique_id>hardware_continue</unique_id>
             <enable_skip>yes</enable_skip>
             <proposal_modules config:type="list">
                 <proposal_module>x11</proposal_module>
