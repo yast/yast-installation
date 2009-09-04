@@ -47,6 +47,7 @@
             <mode>installation</mode>
             <stage>initial</stage>
             <type>initial</type>
+	    <unique_id>inst_initial</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>proposal_hwinfo</proposal_module> 
                 <proposal_module>proposal_mode</proposal_module>
@@ -63,6 +64,7 @@
             <mode>update</mode>
             <stage>initial</stage>
             <type>initial</type>
+	    <unique_id>update_initial</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>proposal_mode</proposal_module>
                 <proposal_module>proposal_rootpart</proposal_module>
@@ -78,6 +80,7 @@
             <mode>installation</mode>
             <stage>initial</stage>
             <type>initial</type>
+	    <unique_id>inst_s390_initial</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>proposal_mode</proposal_module>
                 <proposal_module>proposal_partitions</proposal_module>
@@ -91,6 +94,7 @@
             <mode>update</mode>
             <stage>initial</stage>
             <type>initial</type>
+	    <unique_id>update_s390_initial</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>proposal_mode</proposal_module>
                 <proposal_module>proposal_rootpart</proposal_module>
@@ -103,6 +107,7 @@
         <proposal>
             <type>network</type>
             <stage>continue</stage>
+	    <unique_id>network_continue</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>lan_proposal</proposal_module>
                 <proposal_module>dsl_proposal</proposal_module>
@@ -115,6 +120,7 @@
         <proposal>
             <type>hardware</type>
             <stage>continue</stage>
+	    <unique_id>hardware_continue</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>x11_proposal</proposal_module>
                 <proposal_module>printer_proposal</proposal_module>
@@ -126,6 +132,7 @@
             <archs>s390,ppc64</archs>
             <type>network</type>
             <stage>continue</stage>
+	    <unique_id>network_s390_ppc64_continue</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>lan_proposal</proposal_module>
                 <proposal_module>proxy_proposal</proposal_module>
@@ -136,6 +143,7 @@
             <archs>ppc64</archs>
             <type>hardware</type>
             <stage>continue</stage>
+	    <unique_id>hardware_ppc64_continue</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>x11_proposal</proposal_module>
                 <proposal_module>printer_proposal</proposal_module>
@@ -145,6 +153,7 @@
             <archs>s390</archs>
             <type>hardware</type>
             <stage>continue</stage>
+	    <unique_id>hardware_s390_continue</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>printer_proposal</proposal_module>
             </proposal_modules>

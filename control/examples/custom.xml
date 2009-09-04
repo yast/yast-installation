@@ -63,6 +63,7 @@ textdomain="control"
             <!-- Type of proposal, initial, hardware, network -->
             <type>initial</type>
 
+	    <unique_id>inst_initial</unique_id>
             <!-- Proposal modules, order matters -->
             <proposal_modules config:type="list">
                 <proposal_module>hwinfo</proposal_module>
@@ -81,6 +82,7 @@ textdomain="control"
             <mode>installation</mode>
             <type>dirinstall</type>
             <stage>normal</stage>
+	    <unique_id>inst_dirinstal</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>dirinstall_options</proposal_module>
                 <proposal_module>software</proposal_module>
@@ -90,6 +92,7 @@ textdomain="control"
             <mode>installation</mode>
             <type>uml</type>
             <stage>normal</stage>
+	    <unique_id>inst_uml_normal</unique_id>
             <proposal_modules config:type="list">
 		<proposal_module>uml_source</proposal_module>
                 <proposal_module>uml_user</proposal_module>
@@ -102,6 +105,7 @@ textdomain="control"
             <mode>update</mode>
             <type>initial</type>
             <stage>normal</stage>
+	    <unique_id>update_initial_normal</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>mode</proposal_module>
                 <proposal_module>rootpart</proposal_module>
@@ -116,6 +120,7 @@ textdomain="control"
             <mode>update</mode>
             <stage>initial</stage>
             <type>initial</type>
+	    <unique_id>update_initial</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>mode</proposal_module>
                 <proposal_module>rootpart</proposal_module>
@@ -131,6 +136,7 @@ textdomain="control"
             <mode>installation</mode>
             <stage>initial</stage>
             <type>initial</type>
+	    <unique_id>inst_s390_initial</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>mode</proposal_module>
                 <proposal_module>partitions</proposal_module>
@@ -145,6 +151,7 @@ textdomain="control"
             <mode>update</mode>
             <stage>initial</stage>
             <type>initial</type>
+	    <unique_id>update_s390_initial</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>mode</proposal_module>
                 <proposal_module>rootpart</proposal_module>
@@ -157,6 +164,7 @@ textdomain="control"
         <proposal>
             <type>network</type>
             <stage>continue,normal</stage>
+	    <unique_id>network_continue</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>lan</proposal_module>
                 <proposal_module>dsl</proposal_module>
@@ -169,6 +177,7 @@ textdomain="control"
         <proposal>
             <type>hardware</type>
             <stage>continue</stage>
+	    <unique_id>hardware_continue</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>x11</proposal_module>
                 <proposal_module>printer</proposal_module>
@@ -180,6 +189,7 @@ textdomain="control"
             <archs>s390,ppc64</archs>
             <type>network</type>
             <stage>continue</stage>
+	    <unique_id>network_s390_ppc64_continue</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>lan</proposal_module>
                 <proposal_module>proxy</proposal_module>
@@ -190,6 +200,7 @@ textdomain="control"
             <archs>ppc64</archs>
             <type>hardware</type>
             <stage>continue</stage>
+	    <unique_id>hardware_ppc64_continue</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>x11</proposal_module>
                 <proposal_module>printer</proposal_module>
@@ -199,6 +210,7 @@ textdomain="control"
             <archs>s390</archs>
             <type>hardware</type>
             <stage>continue</stage>
+	    <unique_id>hardware_s390_continue</unique_id>
             <proposal_modules config:type="list">
                 <proposal_module>printer</proposal_module>
             </proposal_modules>
