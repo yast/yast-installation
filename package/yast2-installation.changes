@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Sep  4 09:07:42 CEST 2009 - locilka@suse.cz
+
+- Dropped unnecessary fallback text from the fallback control file
+  (BNC #536288).
+
+-------------------------------------------------------------------
 Wed Aug 26 15:33:51 CEST 2009 - locilka@suse.cz
 
 - Do not copy xorg.conf to installed system anymore (bnc #441404).
