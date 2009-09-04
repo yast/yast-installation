@@ -80,9 +80,36 @@
 	y2milestone ("Disabled proposals set to %1", ProductControl::GetDisabledProposals());
     }
 
+    void AdjustDisabledACItems () {
+	if (InstData::wizardsteps_disabled_ac_items == nil) {
+	    y2error ("Disabled AC items file not defined");
+	    return;
+	}
+
+	if (! FileUtils::Exists (InstData::wizardsteps_disabled_ac_items)) {
+	    y2milestone ("File %1 doesn't exist, skipping...", InstData::wizardsteps_disabled_ac_items);
+	    return;
+	}
+
+	map <string, list <string> > disabled_ac_items = (map <string, list <string> >) SCR::Read (.target.ycp, InstData::wizardsteps_disabled_ac_items);
+	if (disabled_ac_items == nil) {
+	    y2error ("Error reading %1", InstData::wizardsteps_disabled_ac_items);
+	    return;
+	}
+
+	foreach (string unique_id, list<string> ac_steps, disabled_ac_items, {
+	    foreach (string one_ac_step,  ac_steps, {
+	        ProductControl::DisableACItem (unique_id, one_ac_step);
+	    });
+	});
+
+	y2milestone ("Disabled AC items set to %1", ProductControl::GetDisabledACItems());
+    }
+
     void AdjustDisabledItems () {
 	AdjustDisabledModules();
 	AdjustDisabledProposals();
+	AdjustDisabledACItems();
     }
 
     /**
