@@ -64,8 +64,10 @@
 	return `next;
     }
 
+    map< string, list <string> > disabled_ac_items =  ProductControl::GetDisabledACItems();
     foreach (map one_step, acc, {
 	map new_step = $[
+	    "unique"	: one_step["unique_id"]:"",
 	    "label"	: one_step["text_id"]:"",
 	    "icon"	: one_step["icon"]:"yast",
 	    "type"	: one_step["type"]:"scripts",
@@ -80,6 +82,12 @@
 		y2error ("Wrong item '%1' came from %2", one_item, one_step);
 		return false;
 	    }
+
+	    if ( haskey( disabled_ac_items, new_step["unique"]:"") &&
+		 contains(disabled_ac_items[ new_step["unique"]:"" ]:[], one_item ) ) {
+		y2milestone("Item %1 found among disabled items", one_item);
+		return false;
+	   } 
 
 	    return true;
 	});
