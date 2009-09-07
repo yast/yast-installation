@@ -273,7 +273,7 @@ textdomain="control"
 		<order config:type="integer">1</order>
 		<patterns>kde x11 base</patterns>
 		<icon>pattern-kde4</icon>
-		<!-- No descriptions 
+		<!-- No descriptions now
 		<description_id>description_kde</description_id> -->
 	    </one_supported_desktop>
 
@@ -401,8 +401,8 @@ can change or add additional desktop environments. This screen allows
 you to set the default.</label></desktop_dialog>
 
 	<!-- Desktop dialog: desktop names -->
-	<desktop_gnome><label>GNOME</label></desktop_gnome>
-	<desktop_kde><label>KDE</label></desktop_kde>
+	<desktop_gnome><label>GNOME Desktop</label></desktop_gnome>
+	<desktop_kde><label>KDE Desktop</label></desktop_kde>
 	<desktop_xfce><label>XFCE Desktop</label></desktop_xfce>
 	<desktop_min_x><label>Minimal X Window</label></desktop_min_x>
 	<desktop_textmode><label>Minimal Server Selection (Text Mode)</label></desktop_textmode>
@@ -411,17 +411,14 @@ you to set the default.</label></desktop_dialog>
 	<!--
 	    GNOME desktop description - It hould not be wider than 75 characters
 	    but it can take more lines then the original one.
-	-->
 	<description_gnome><label>GNOME 2.28 is the latest desktop from the GNOME Project. 
 It combines stability and maturity with incremental innovations.</label></description_gnome>
-	<!--
 	    KDE desktop description - It hould not be wider than 75 characters
 	    but it can take more lines then the original one.
-	-->
 	<description_kde><label>KDE 4.3 is the latest stable desktop released by the KDE Project.
 It delivers an innovative, highly integrated desktop environment
 with a modern look and feel.</label></description_kde>
-
+	-->
     </texts>
 
     <proposals config:type="list">
