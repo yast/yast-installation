@@ -258,7 +258,8 @@ textdomain="control"
 		<order config:type="integer">1</order>
 		<patterns>gnome x11 base</patterns>
 		<icon>pattern-gnome</icon>
-		<description_id>description_gnome</description_id>
+		<!-- No descriptions now
+		<description_id>description_gnome</description_id> -->
 	    </one_supported_desktop>
 
 	    <one_supported_desktop>
@@ -272,7 +273,8 @@ textdomain="control"
 		<order config:type="integer">1</order>
 		<patterns>kde x11 base</patterns>
 		<icon>pattern-kde4</icon>
-		<description_id>description_kde</description_id>
+		<!-- No descriptions 
+		<description_id>description_kde</description_id> -->
 	    </one_supported_desktop>
 
 	    <one_supported_desktop>
