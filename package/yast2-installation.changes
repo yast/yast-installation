@@ -7,6 +7,7 @@ Fri Sep  4 19:00:27 CEST 2009 - kmachalkova@suse.cz
   stage, reading them back at the end of 2nd stage
 - Filtering out disabled AC steps from AC workflow (FaTE #303859 and 
   bnc#534862)
+- Require new yast2 base 
 - 2.18.24
 
 -------------------------------------------------------------------
