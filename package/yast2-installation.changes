@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Sep  9 14:33:14 CEST 2009 - jsrain@suse.cz
+
+- better error handling for image installation (bnc#533601)
+- 2.18.25
+
+-------------------------------------------------------------------
 Fri Sep  4 19:00:27 CEST 2009 - kmachalkova@suse.cz
 
 - Introducing unique IDs to unambiguously identify AC steps and 

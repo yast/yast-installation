@@ -955,7 +955,8 @@ global boolean FileSystemCopy (string from, string to,
 	}
     }
 
-    y2milestone ("Result: %1", SCR::Read (.process.status, process));
+    integer copy_result = (integer)SCR::Read (.process.status, process);
+    y2milestone ("Result: %1", copy_result);
     SCR::Execute (.target.remove, tmp_pipe1);
     SCR::Execute (.target.remove, tmp_pipe2);
     cmd = sformat ("chown --reference=%1 %2; chmod --reference=%1 %2",
@@ -963,7 +964,7 @@ global boolean FileSystemCopy (string from, string to,
     y2milestone ("Executing %1", cmd);
     out = (map)SCR::Execute (.target.bash_output, cmd);
     y2milestone ("Result: %1", out);
-    return out["exit"]:-1 == 0;
+    return out["exit"]:-1 == 0 && copy_result == 0;
 }
 
     // --> Storing and restoring states
