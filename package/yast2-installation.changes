@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Sep 14 15:27:19 CEST 2009 - jsrain@suse.cz
+
+- enhanced display of release notes (fate#306237)
+- 2.18.26
+
+-------------------------------------------------------------------
 Wed Sep  9 14:33:14 CEST 2009 - jsrain@suse.cz
 
 - better error handling for image installation (bnc#533601)

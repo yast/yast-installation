@@ -173,15 +173,21 @@
 
     term relnoteslayout = nil;
     term relnotesscreen = `VBox (
-	// combobox
-	`Left (
-	    `ReplacePoint (
-		`id(`lang_rp),
-		`ComboBox (`id (`lang), `opt (`notify), _("&Language"), [])
-	    )
-	),
-	`RichText (`id (`relnotescontent), "")
-    );
+				 `HBox(
+				       `HWeight( 20, `Empty() ), 
+				       // combobox
+				       `HWeight( 60, `VBox(`Left (
+						    `ReplacePoint (
+								   `id(`lang_rp),
+								   `ComboBox (`id (`lang), `opt (`notify), _("&Language"), [])
+								   )
+						    ),
+					     `RichText (`id (`relnotescontent), "")
+							   )
+						 ),
+				       `HWeight( 20,`Empty() )
+				       )
+				 );
 
     // if there are more products installed, show them in tabs or with
     // combo box, bnc #359137 (do not show tab for one product)
