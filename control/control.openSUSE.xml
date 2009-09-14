@@ -393,12 +393,7 @@ used desktop environments are GNOME and KDE, and they are equally
 supported under openSUSE. Both desktop environments are easy to use,
 highly integrated, and have an attractive look and feel. Each desktop
 environment has a distinct style, so personal taste determines which
-is the most appropriate desktop for you.
-
-You may select alternative desktop environments using the Other
-option.  Later in the software selection or after installation, you
-can change or add additional desktop environments. This screen allows
-you to set the default.</label></desktop_dialog>
+is the most appropriate desktop for you.</label></desktop_dialog>
 
 	<!-- Desktop dialog: desktop names -->
 	<desktop_gnome><label>GNOME Desktop</label></desktop_gnome>

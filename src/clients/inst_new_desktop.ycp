@@ -33,12 +33,13 @@ boolean text_mode = UI::GetDisplayInfo()["TextMode"]:false;
 // TRANSLATORS: help text, part 1
 string help = _("<p>At Linux <b>choice</b> is a top priority. <i>openSUSE</i> offers a number 
 of different desktop environments. Below you see a list of the 2 major ones 
-<b>GNOME</b> and <b>KDE</b>. Both provide an easy to use desktop
-with a large number of desktop applications such as email, file browser, games and many others.</p>") +
+<b>GNOME</b> and <b>KDE</b>.") +
 
 // TRANSLATORS: help text, part 3
-_("<p>Selecting <b>Other</b>, you can chose a minimal installation that
-could fit your needs better.</p>");
+_("<p>You may select alternative desktop environments (or one of minimal installation patterns)
+that could fit your needs better using the <b>Other</b> option . Later in the software 
+selection or after installation, you can change your selection or add additional desktop 
+environments. This screen allows you to set the default.</p>");
 
 if (DefaultDesktop::Desktop() == nil || DefaultDesktop::Desktop() == "") {
     DefaultDesktop::Init();
