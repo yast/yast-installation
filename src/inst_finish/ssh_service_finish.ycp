@@ -1,6 +1,6 @@
 /**
  * File:
- *  ssh_settings_service.ycp
+ *  ssh_service_finish.ycp
  *
  * Module:
  *  Step of base installation finish
@@ -31,7 +31,7 @@ if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
 	param = (map)WFM::Args(1);
 }
 
-y2milestone ("starting ssh_settings_finish");
+y2milestone ("starting ssh_service_finish");
 y2debug("func=%1", func);
 y2debug("param=%1", param);
 
