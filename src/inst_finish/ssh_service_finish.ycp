@@ -1,0 +1,63 @@
+/**
+ * File:
+ *  ssh_settings_service.ycp
+ *
+ * Module:
+ *  Step of base installation finish
+ *
+ * Author:
+ *  Bubli <kmachalkova@suse.cz>
+ *
+ * $Id: ssh_service_finish.ycp 54888 2009-01-22 11:47:19Z locilka $
+ *
+ */
+
+{
+
+textdomain "installation";
+
+import "Linuxrc";
+import "Service";
+
+
+any ret = nil;
+string func = "";
+map param = $[];
+
+/* Check arguments */
+if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
+    func = (string)WFM::Args(0);
+    if(size(WFM::Args()) > 1 && is(WFM::Args(1), map))
+	param = (map)WFM::Args(1);
+}
+
+y2milestone ("starting ssh_settings_finish");
+y2debug("func=%1", func);
+y2debug("param=%1", param);
+
+if (func == "Info")
+{
+    return (any)$[
+	"steps" : 1,
+	// progress step title
+	"title" : _("Enabling SSH service on installed system..."),
+	"when" : (Linuxrc::usessh () || Linuxrc::vnc()) ? [ `installation, `autoinst ] : [],
+    ];
+}
+else if (func == "Write")
+{
+    y2milestone("SSH service will be enabled, this is SSH/VNC installation");
+    Service::Enable("sshd");
+}
+else
+{
+    y2error ("unknown function: %1", func);
+    ret = nil;
+}
+
+y2debug("ret=%1", ret);
+y2milestone("ssh_service_finish finished");
+return ret;
+
+
+} /* EOF */
