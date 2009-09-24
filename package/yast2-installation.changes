@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Sep 24 15:51:15 CEST 2009 - kmachalkova@suse.cz
+
+- Enable SSH service after reboot if this is SSH or VNC installation 
+  (new ssh_service_finish client) (bnc#535206)
+- 2.18.27 
+
+-------------------------------------------------------------------
 Mon Sep 14 15:27:19 CEST 2009 - jsrain@suse.cz
 
 - enhanced display of release notes (fate#306237)
