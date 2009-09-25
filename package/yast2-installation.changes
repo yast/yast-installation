@@ -1,8 +1,46 @@
 -------------------------------------------------------------------
-Wed Jul  8 16:04:00 CEST 2009 - mzugec@suse.de
+Mon Aug 10 14:18:11 CEST 2009 - locilka@suse.cz
+
+- added calling bootloader client bootloader_preupdate to control
+  file to fix multiple grub entries (bnc #414490, bnc #477778).
+
+-------------------------------------------------------------------
+Tue Jul 14 13:46:11 CEST 2009 - mzugec@suse.cz
 
 - correctly write supporturl (bnc#520169)
 - 2.17.55 
+
+-------------------------------------------------------------------
+Wed Jun 24 10:02:20 CEST 2009 - locilka@suse.cz
+
+- Fixed Welcome dialog layout to have more license content visible
+  and to align language and keyboard widgets with it.
+
+-------------------------------------------------------------------
+Mon Apr 20 13:59:31 CEST 2009 - locilka@suse.cz
+
+- Fixed Vendor module to use zypp history file instead of using
+  y2logRPM (bnc #456446).
+- Installation/Upgrade newly require some packages essential for
+  them to succeed (bnc #469730).
+
+-------------------------------------------------------------------
+Tue Apr  7 13:04:20 CEST 2009 - ug@suse.de
+
+- changed the error message of missing hard disks during
+  autoinstallation. Might confuse s390/iSCSI users. (bnc#476147)
+
+-------------------------------------------------------------------
+Tue Mar 17 14:24:21 CET 2009 - locilka@suse.cz
+
+- Adjusting workflow steps according to selected installation mode
+  if AC has been left selected while switching to update (SP1 fix
+  for bnc #469273).
+
+-------------------------------------------------------------------
+Mon Mar 16 14:47:46 CET 2009 - locilka@suse.cz
+
+- Fixed help for "License Translations..." button (bnc #481113).
 
 -------------------------------------------------------------------
 Mon Mar  9 19:59:12 CET 2009 - locilka@suse.cz

@@ -33,8 +33,12 @@
     global define void DriverUpdate1 ()
     {
 	list<string> updatefiles = (list<string>)WFM::Read (.local.dir, ["/update", []]);
-	if (size (updatefiles) <= 0)
+	if (size (updatefiles) <= 0) {
+	    y2milestone ("No files in /update, skipping driver update...");
 	    return;
+	}
+
+	y2milestone ("Extracting driver update...");
 
 	// clean up, just in case
 	SCR::Execute(.target.bash, "/bin/rm -rf /tmp/update");
@@ -43,19 +47,40 @@
 	WFM::Execute(.local.bash, "l=/var/log/driverupdate.log ; [ -f $l ] && /bin/cat $l " +
 	    ">> '" + String::Quote (Installation::destdir) + "$l'");
 
-	// copy all update files
+	// copy all update files from inst-sys to installed system
 	WFM::Execute(.local.bash, "/bin/cp -a /update " +
 	    "'" + String::Quote (Installation::destdir) + "/tmp/update'");
 
+	string logfile = "/var/log/zypp/history";
+
+	string runcmd =
+	    "cd /; \n" +
+	    "for i in /tmp/update/[0-9]*/install ; do \n" +
+	    // Logging extracting the driver update
+	    "    echo # Installing Driver Update from $i >>" + logfile + "; \n" +
+	    "    TMPFILE=${i}rpm_install_tmpfile; \n" +
+	    "    [ -x \"/bin/mktemp\" ] && TMPFILE=`/bin/mktemp`; \n" +
+	    // Extracting the driver update archives
+	    "    cd $i; \n" +
+	    "    [ -f \"update.tar.gz\" ] && /bin/tar -zxf \"update.tar.gz\"; \n" +
+	    "    [ -f \"update.tgz\" ] && /bin/tar -zxf \"update.tgz\"; \n" +
+	    // Installing all extracted RPMs
+	    "    rpm -Uv --force *.rpm 1>>$TMPFILE 2>>$TMPFILE; \n" +
+	    // Logging errors
+	    "    [ -s \"$TMPFILE\" ] && echo \"# Additional rpm output:\">>" + logfile + " && sed 's/^\\(.*\\)/# \\1/' $TMPFILE>>" + logfile + "; \n" +
+	    "    rm -rf $TMPFILE; \n" +
+	    // Running update.post script
+	    "    [ -f \"update.post\" ] && /bin/chmod +x \"update.post\" && \"update.post\" \"$i\"; \n" +
+	    "done;";
+
+	    y2milestone ("Calling:
+---------------------------------------------------------
+%1
+---------------------------------------------------------", runcmd);
+
 	// unpack update files and run update.post scripts
-	SCR::Execute(.target.bash,
-		     "cd / ; " +
-		     "echo \"Installing driver update\" >> " + Directory::logdir + "/y2logRPM ; " +
-		     "for i in /tmp/update/[0-9]*/install ; do " +
-		     "    [ -f \"$i/update.tar.gz\" ] && /bin/tar -zxf \"$i/update.tar.gz\" ; " +
-		     "    rpm -Uv $i/*.rpm 2 >> " + Directory::logdir + "/y2logRPM ; " +
-		     "    [ -f \"$i/update.post\" ] && /bin/chmod +x \"$i/update.post\" && \"$i/update.post\" \"$i\" ; " +
-		     "done");
+	// via SCR chrooted into the installed system
+	integer cmd = (integer) SCR::Execute (.target.bash, runcmd);
     }
 
     global define void DriverUpdate2 ()

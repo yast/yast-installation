@@ -111,10 +111,17 @@ include "packager/storage_include.ycp";
 
 	if (size (targetMap) == 0) {
 	    if (found_controllers) {
-		// pop-up error report
-		Report::Error(_("No hard disks were found for the installation.
+                if( !Mode::autoinst() ) {
+                        // pop-up error report
+                        Report::Error(_("No hard disks were found for the installation.
 Please check your hardware!
 "));
+                } else {
+                        Report::Warning(_("No hard disks were found for the installation.
+During an automatic installation, they might be detected later.
+(especially on s390 or iSCSI systems)
+"));
+                }
 	    } else {
 		// pop-up error report
 		Report::Error(_("No hard disks and no hard disk controllers were

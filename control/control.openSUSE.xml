@@ -869,11 +869,20 @@ with a modern look and feel.</label></description_kde>
                     <proposal>initial</proposal>
                 </module>
 		<!--
+		    BNC #414490, #477778:  Updating SLES 10 (hdX) to SLES 11 (sdX)
+		    produces multiple identical grub boot menu entries
+		-->
+		<module>
+		    <label>Perform Update</label>
+		    <name>bl_preupdate</name>
+		    <execute>bootloader_preupdate</execute>
+		</module>
+		<!--
 		    FATE #303860: Provide consistent progress during installation
 		    BNC  #438848: Also during upgrade
 		-->
 		<module>
-		    <label>Perform Installation</label>
+		    <label>Perform Update</label>
 		    <name>prepareprogress</name>
 		</module>
                 <module>

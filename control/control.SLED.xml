@@ -91,17 +91,6 @@ textdomain="control"
 	    <!-- #449128, Run online-update during AC -->
 	    <module>you</module>
 	    <module>restore_settings</module>
-	    <!-- #469273, Second stage of Upgrade: Some steps are disabled due to AC enabled -->
-	    <module>upgrade_ask_net_test</module>
-	    <module>upgrade_do_net_test</module>
-	    <module>upgrade_addon_update_sources</module>
-	    <module>upgrade_suse_register</module>
-	    <module>upgrade_ask_online_update</module>
-	    <module>upgrade_you</module>
-	    <module>upgrade_restore_settings</module>
-	    <module>upgrade_suseconfig</module>
-	    <module>upgrade_release_notes</module>
-	    <module>upgrade_congratulate</module>
 	</autoconfiguration_enabled_modules>
 
         <!-- Configuration for inst_automatic_configuration script -->
@@ -700,6 +689,15 @@ Please visit us at http://www.novell.com/linux/.
                     <execute>inst_proposal</execute>
                     <proposal>initial</proposal>
                 </module>
+		<!--
+		    BNC #414490, #477778:  Updating SLES 10 (hdX) to SLES 11 (sdX)
+		    produces multiple identical grub boot menu entries
+		-->
+		<module>
+		    <label>Perform Update</label>
+		    <name>bl_preupdate</name>
+		    <execute>bootloader_preupdate</execute>
+		</module>
 		<!--
 		    FATE #303860: Provide consistent progress during installation
 		    BNC  #438848: Also during upgrade

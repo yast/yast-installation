@@ -386,6 +386,8 @@ if (ret == `next) {
 	ProductControl::SetUseAutomaticConfiguration (false);
     }
 
+    AdjustStepsAccordingToInstallationSettings();
+
     if (new_mode == `repair)
     {
 	Mode::SetMode ("repair");
@@ -448,6 +450,17 @@ Wizard::SetContents (
 );
 Wizard::SetTitleIcon ("yast-software");
 
+// BNC #469730: Installation requires some packages
+void SetRequiredPackages () {
+    if (new_mode == `install) {
+	y2milestone ("Adding packages required for installation to succeed...");
+	PackagesProposal::AddResolvables ("YaST-Installation", `package, ["yast2-installation"]);
+    } else if (new_mode == `update) {
+	y2milestone ("Adding packages required for update to succeed...");
+	PackagesProposal::AddResolvables ("YaST-Update", `package, ["yast2-update"]);
+    }
+}
+
 if (Mode::mode () != InstData::start_mode) {
     y2milestone ("Switching Steps from %1 to %2 ", InstData::start_mode, Mode::mode ());
     UpdateWizardSteps ();
@@ -458,8 +471,11 @@ if (Mode::mode () != InstData::start_mode) {
     Kernel::ProbeKernel();
     Pkg::TargetFinish ();
     Pkg::PkgReset ();
+    // Resets all resolvables required by installation/update parts
+    // Particular modules will add them again when needed
     PackagesProposal::ResetAll();
     Packages::Init( true );
+    SetRequiredPackages ();
 
     ret = ProductControl::RunFrom (ProductControl::CurrentStep () + 1, false);
 
@@ -467,6 +483,7 @@ if (Mode::mode () != InstData::start_mode) {
 	ret = `finish;
 } else {
     UpdateWizardSteps ();
+    SetRequiredPackages ();
     ret = ProductControl::RunFrom (ProductControl::CurrentStep () + 1, false);
 
     if (ret == `next)

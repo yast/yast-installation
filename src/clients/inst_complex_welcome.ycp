@@ -84,41 +84,42 @@
 
     // this type of contents will be shown only for initial installation dialog
     term contents = `VBox (
-	`VWeight (3, `VStretch()),
-	`HSquash (`VBox (
+	`VWeight (1, `VStretch()),
+	`Left(`HSquash (`VBox (
 	    `HBox (
 		`HSquash (Icon::Simple ("yast-language")),
-		`HSpacing (2),
+		(text_mode == true ? `Empty() : `HSpacing (2)),
 		`Left (languagesel)
 	    ),
 	    `VSpacing (1),
 	    `HBox (
 		`HSquash (Icon::Simple ("yast-keyboard")),
-		`HSpacing (2),
+		(text_mode == true ? `Empty() : `HSpacing (2)),
 		`Left (keyboardsel)
-	    )
-	)),
+	    ),
+	    `VSpacing (1)
+	))),
 	`VWeight (1, `VStretch()),
-	`HSquash (
+	`VWeight (20, `Left (`HSquash (
 	    `VBox (
 		`Left (`Label (`opt(`boldFont), _("License Agreement"))),
 		// bnc #438100
-		`HSquash(`MinSize (
+		`HSquash(`MinWidth (
 		    85,
-		    (text_mode ? 9:13),
 		    `Left (`ReplacePoint (`id (`base_license_rp), `Empty()))
 		)),
 		`VSpacing (text_mode ? 0.1 : 0.5),
 		`MinHeight (1, `HBox (
 		    // Will be replaced with license checkbox if required
 		    `ReplacePoint (`id (`license_checkbox_rp), `Empty()),
-		    `VStretch (),
+		    `VSpacing (1),
 		    // TRANSLATORS: button label
+		    // ID: #ICW_B1 button
 		    `Right (`PushButton (`id (`show_fulscreen_license), _("License &Translations...")))
 		))
 	    )
-	),
-	`VWeight (3, `VStretch())
+	))),
+	`VWeight (1, `VStretch())
     );
 
     term AllLicensesDialog () {
@@ -153,9 +154,10 @@ installation and for the installed system.
 ") +
 
     // help text, continued
+    // Describes the #ICW_B1 button
     _("<p>
 License has to be accepted before continuing the installation.
-Use <b>Show License</b> to show the license in all available translations.
+Use <b>License Translations...</b> to show the license in all available translations.
 </p>") +
 
     // help text, continued
@@ -193,7 +195,7 @@ installation process at any time.
 	UI::ChangeWidget (`id (`keyboard), `Value, kbd);
     }
 
-    Wizard::SetTitleIcon ("yast-language");
+    Wizard::SetTitleIcon ("suse");
 
     // Get the user input.
     //
