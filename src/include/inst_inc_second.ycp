@@ -103,7 +103,7 @@
 	    });
 	});
 
-	y2milestone ("Disabled AC items set to %1", ProductControl::GetDisabledSubProposals());
+	y2milestone ("Disabled subproposals set to %1", ProductControl::GetDisabledSubProposals());
     }
 
     void AdjustDisabledACItems () {
