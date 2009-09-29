@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Sep 29 16:41:32 CEST 2009 - kmachalkova@suse.cz
+
+- Correct HTML format tags in helptext (bnc#540784)
+- Set firewall status according to user's choice also in non-automatic 
+  2nd stage (missing call for AdjustDisabledSubProposals) (bnc#534862)
+- 2.18.28 
+
+-------------------------------------------------------------------
 Thu Sep 24 15:51:15 CEST 2009 - kmachalkova@suse.cz
 
 - Enable SSH service after reboot if this is SSH or VNC installation 
