@@ -40,13 +40,23 @@ list<string> KnownUrls () {
 /**
  * @return the installation sources to be added
  */
-list<string> UpdateUrls () {
-    // get all available products
-    list<map<string,any> > products = Pkg::ResolvableProperties ("", `product, "");
-    list<list<string> > urls = maplist (map<string, any> p, products, {
-	return p["update_urls"]:[];
+map <string, string> UpdateUrls () {
+    map <string, string> urls = $[];
+    list <map <string,any> > products = Pkg::ResolvableProperties ("", `product, "");
+
+    foreach (map<string, any> p, products, {
+	foreach (string u,  p["update_urls"]:[], {
+	    // bnc #542792
+	    // Repository name must be generated from product details
+	    urls[u] = sformat (
+		_("Updates for %1 %2"),
+		p["display_name"]:p["name"]:p["summary"]:_("Unknown Product"),
+		p["version"]:""
+	    );
+	});
     });
-    return (list<string>)toset (flatten (urls));
+
+    return urls;
 }
 
 
@@ -64,23 +74,23 @@ list<string> knownUrls = KnownUrls ();
 y2milestone ("sources known: %1", knownUrls);
 map<string, boolean> is_known = listmap (string u, knownUrls, ``($[u: true]));
 
-list<string> updateUrls = UpdateUrls ();
+map <string, string> updateUrls = UpdateUrls ();
 y2milestone ("sources for updates: %1", updateUrls);
 
-list<string> addUrls = filter (string u, updateUrls, ``( ! is_known[u]:false ));
+map <string, string> addUrls = filter (string url, string name, updateUrls, ``( ! is_known[url]:false ));
 y2milestone ("sources to add: %1", addUrls);
 
-if (addUrls != [])
+if (addUrls != $[])
 {
     Popup::ShowFeedback (heading, message);
 
     list<integer> added_ids = [];
-    foreach (string u, addUrls, {
+    foreach (string url, string name, addUrls, {
 	boolean again = true;
 
 	while (again) {
-	    integer srcid = Pkg::SourceCreate (u, "/");
-	    y2milestone ("got %1 from creating %2", srcid, u);
+	    integer srcid = Pkg::SourceCreate (url, "/");
+	    y2milestone ("got %1 from creating %2", srcid, url);
 
 	    // wrong srcid, must have failed
 	    if (srcid == -1) {
@@ -94,7 +104,7 @@ Try again?"),
 		    Pkg::LastError()
 		))) {
 		    // try again
-		    u = editUrl (u);
+		    url = editUrl (url);
 		} else {
 		    // abort
 		    again = false;
@@ -102,6 +112,9 @@ Try again?"),
 
 	    // everything is ok
 	    } else {
+		// bnc #542792
+		// Repository name must be set
+		Pkg::SourceEditSet([ $["SrcId" : srcid, "name" : name] ]);
 		added_ids = add (added_ids, srcid);
 		again = false;
 	    }

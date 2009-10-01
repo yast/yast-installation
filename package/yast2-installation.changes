@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Oct  1 13:27:16 CEST 2009 - locilka@suse.cz
+
+- Adjusting understandable name for update URLs added during second
+  stage of installation (bnc #542792).
+- 2.18.29
+
+-------------------------------------------------------------------
 Tue Sep 29 16:41:32 CEST 2009 - kmachalkova@suse.cz
 
 - Correct HTML format tags in helptext (bnc#540784)
