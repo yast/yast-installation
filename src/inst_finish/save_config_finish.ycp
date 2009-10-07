@@ -92,7 +92,11 @@ else if (func == "Write")
 
     // progress step title
     Progress::Title (_("Saving time zone..."));
+
+    // clock must be set correctly in new chroot
+    Timezone::Set (Timezone::timezone, true);
     Timezone::Save();
+
     Progress::NextStep ();
     if (!Mode::update ())
     {
