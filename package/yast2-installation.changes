@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Oct  7 15:36:44 CEST 2009 - jsuchome@suse.cz
+
+- set the time after chroot (bnc#538357)
+- 2.18.31 
+
+-------------------------------------------------------------------
 Wed Oct  7 12:17:52 CEST 2009 - jsuchome@suse.cz
 
 - correctly set the keyboard layout in 2nd stage (bnc#542009)
