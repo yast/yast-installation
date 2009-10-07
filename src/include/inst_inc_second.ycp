@@ -511,21 +511,13 @@ Note: You may have to enter some information again.");
         UI::SetLanguage (language, Installation::encoding);
         WFM::SetLanguage (language, "UTF-8");
 
-        string ckb_cmd = Keyboard::ckb_cmd;
-        string xkb_cmd = Keyboard::xkb_cmd;
-
-
         if ( ! Mode::test () )
         {
-            if (ckb_cmd != "")
-                SCR::Execute (.target.bash, ckb_cmd );
-            if (xkb_cmd != "")
-                SCR::Execute (.target.bash, xkb_cmd );
+	    Keyboard::Set (Keyboard::current_kbd);
 
             // ncurses calls 'dumpkeys | loadkeys --unicode' in UTF-8 locale
             UI::SetKeyboard();
-            y2milestone ("lang: %1, encoding %2, ckb_cmd: %3 xkb: %4", language,
-                         Installation::encoding, ckb_cmd, xkb_cmd);
+            y2milestone ("lang: %1, encoding %2", language, Installation::encoding);
         }
     }
 
