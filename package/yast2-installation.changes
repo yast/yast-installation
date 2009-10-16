@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Oct 16 14:36:11 CEST 2009 - locilka@suse.cz
+
+- Fixed handling repositories during upgrade (bnc #543468).
+- 2.18.32
+
+-------------------------------------------------------------------
 Wed Oct  7 15:36:44 CEST 2009 - jsuchome@suse.cz
 
 - set the time after chroot (bnc#538357)
