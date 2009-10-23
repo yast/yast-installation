@@ -90,12 +90,14 @@ else if (func == "Write")
 	}
     }
 
-    // progress step title
-    Progress::Title (_("Saving time zone..."));
-
-    // clock must be set correctly in new chroot
-    Timezone::Set (Timezone::timezone, true);
-    Timezone::Save();
+    if (!Mode::update ())
+    {
+	// progress step title
+	Progress::Title (_("Saving time zone..."));
+	// clock must be set correctly in new chroot
+	Timezone::Set (Timezone::timezone, true);
+	Timezone::Save();
+    }
 
     Progress::NextStep ();
     if (!Mode::update ())
@@ -103,6 +105,11 @@ else if (func == "Write")
 	// progress step title
 	Progress::Title (_("Saving language..."));
 	Language::Save();
+	Progress::NextStep ();
+
+	// progress step title
+	Progress::Title (_("Saving console configuration..."));
+	Console::Save();
 	Progress::NextStep ();
     }
     // save the update language for the second stage (F300572)
@@ -127,11 +134,6 @@ else if (func == "Write")
 	Progress::Title (_("Saving automatical installation settings..."));
 	AutoInstall::Save();
     }
-    Progress::NextStep ();
-    // progress step title
-    Progress::Title (_("Saving console configuration..."));
-    Console::Save();
-
     Progress::NextStep ();
     // progress step title
     Progress::Title (_("Configuring the superuser's environment..."));
