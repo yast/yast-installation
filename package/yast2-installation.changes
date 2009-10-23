@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Oct 23 07:40:56 CEST 2009 - jsuchome@suse.cz
+
+- during update, do not save timezone and console settings
+  (bnc#547587)
+- 2.18.33 
+
+-------------------------------------------------------------------
 Fri Oct 16 14:36:11 CEST 2009 - locilka@suse.cz
 
 - Fixed handling repositories during upgrade (bnc #543468).
