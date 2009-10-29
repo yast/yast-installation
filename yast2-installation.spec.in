@@ -93,9 +93,10 @@ PreReq:		%fillup_prereq
 BuildArchitectures: noarch
 
 Summary:	Installation workflow
+Group:          System/YaST
 
 %package devel-doc
-Group:          System/YaST
+Group:          Documentation/HTML
 Requires:	yast2-installation >= 2.15.34
 
 PreReq:		%fillup_prereq

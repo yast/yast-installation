@@ -231,9 +231,40 @@
      */
     define void Initialize () {
 	y2milestone("Evaluating all current partitions");
+
+	// limit the number of the searched disks to 8 of each kind in order to avoid neverending
+	// mounting of all partitions (fate#305873, bnc#468922)
+	// FIXME: copy-pasted from partitioner, just different number of disks and added /dev/dasd
+	list<string> restrict_disk_names(list<string> disks)
+	{
+	    void helper(string s)
+	    {
+	        integer count = 0;
+	        disks = filter(string dist, disks, {
+	            if (search(dist, s) != 0)
+	                return true;
+	            count = count + 1;
+	            return count <= 8;
+	        });
+	    }
+
+	    helper("/dev/sd");
+	    helper("/dev/hd");
+	    helper("/dev/cciss/");
+	    helper("/dev/dasd");
+
+	    y2milestone("restrict_disk_names: ret %1", disks);
+	    return disks;
+	}
+
 	map <string, map> target_map = (map <string, map>) Storage::GetTargetMap();
 	integer counter = -1;
-	foreach (string device_name, map device_descr, target_map, {
+	list<string> device_names = maplist (string device_name, map device_descr, target_map, {
+	    return device_name;
+	});
+	device_names = restrict_disk_names (device_names);
+	foreach (string device_name, device_names, {
+	    map device_descr = target_map[device_name]:$[];
 	    list <map <string, any> > partitons = (list <map <string, any> >) device_descr["partitions"]:[];
 	    symbol filesystem = nil;
 	    string devicename = nil;
