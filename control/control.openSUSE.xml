@@ -620,6 +620,10 @@ is the most appropriate desktop for you.</label></desktop_dialog>
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
 		<module>
+	            <label>Network Activation</label>
+                    <name>lan</name>
+		</module>
+		<module>
 	            <label>Disk Activation</label>
                     <name>disks_activate</name>
 		</module>

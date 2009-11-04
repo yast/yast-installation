@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Nov  4 16:31:17 CET 2009 - mzugec@suse.cz
+
+- lan module in 1st stage (FaTE#303069)
+- 2.18.34 
+
+-------------------------------------------------------------------
 Fri Oct 23 07:40:56 CEST 2009 - jsuchome@suse.cz
 
 - during update, do not save timezone and console settings

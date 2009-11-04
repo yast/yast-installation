@@ -172,6 +172,16 @@ but something went wrong, that's why it is only in the log");
             return;
     }
 
+    void SetNetworkActivationModule () {
+        // update the workflow according to current situation
+        // disable lan activation if not needed
+
+        if (!(Linuxrc::InstallInf("ConfigureNetwork")=="1") ) {
+            y2milestone ("Disabling network activation module");
+            ProductControl::DisableModule ("lan");
+        }
+    }
+
     void SetDiskActivationModule () {
         // update the workflow according to current situation
         // disable disks activation if not needed

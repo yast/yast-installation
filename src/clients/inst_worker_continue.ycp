@@ -57,6 +57,8 @@
 
     AdjustDisabledItems();
 
+    SetNetworkActivationModule();
+
     SetDiskActivationModule();
 
     UpdateWizardSteps ();
