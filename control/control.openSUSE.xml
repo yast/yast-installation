@@ -598,6 +598,10 @@ with a modern look and feel.</label></description_kde>
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
 		<module>
+	            <label>Network Activation</label>
+                    <name>lan</name>
+		</module>
+		<module>
 	            <label>Disk Activation</label>
                     <name>disks_activate</name>
 		</module>
