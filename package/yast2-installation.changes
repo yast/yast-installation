@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Nov  5 18:34:10 CET 2009 - kmachalkova@suse.cz
+
+- In TUI (ncurses), use plain text (.txt) file with release notes, 
+  if found (FaTE#306167)
+
+-------------------------------------------------------------------
 Thu Nov  5 10:34:16 CET 2009 - mzugec@suse.de
 
 - lan module in 1st stage (FaTE#303069)

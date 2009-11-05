@@ -180,7 +180,9 @@
 		`ComboBox (`id (`lang), `opt (`notify), _("&Language"), [])
 	    )
 	),
-	`RichText (`id (`relnotescontent), "")
+	`ReplacePoint(`id(`content_rp), 
+	    `RichText (`id (`relnotescontent), "")
+	)
     );
 
     // if there are more products installed, show them in tabs or with
@@ -237,12 +239,31 @@ Linux system. They provide a brief summary of new features and changes.</p>");
     if (UI::WidgetExists(`productsel) && (size(relnotesproducts) < 2))
 	UI::ChangeWidget (`id(`productsel), `Enabled, false);
 
+    boolean UsePlainText ( string file ) {
+	boolean ret = UI::TextMode() && FileUtils::Exists(file);
+	if (ret)
+	    y2milestone("Found .txt file with release notes, will use it for TUI.");
+	return ret;
+    }
+
     void RedrawRelnotesLang (string use_file) {
-	string contents = (string) SCR::Read (.target.string, use_file);
+	string text_file = regexpsub(use_file, "^(.*)\.rtf$", "\\1") + ".txt";
+	boolean plain_text = UsePlainText( text_file );
+
+	string contents = (string) SCR::Read (.target.string, 
+			   plain_text ? text_file : use_file );
+
 	if (contents == nil || contents == "") {
 	    y2error ("Wrong relnotesfile: %1", use_file);
 	} else {
-	    UI::ChangeWidget (`id(`relnotescontent), `Value, contents);
+	    if (plain_text) {
+		UI::ReplaceWidget( `id(`content_rp),
+		    `RichText(`id(`relnotescontent),`opt(`plainText), contents) );
+	    }
+	    else {
+		UI::ReplaceWidget( `id(`content_rp),
+		    `RichText(`id(`relnotescontent), contents ) );
+	   }
 	}
     }
 
