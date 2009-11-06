@@ -203,7 +203,7 @@ textdomain="control"
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
-		<priority config:type="integer">100</priority>
+		<priority config:type="integer">99</priority>
 	    </extra_url>
 
 	    <!-- Replacement for EXTRAURLS and OPTIONALURLS -->
