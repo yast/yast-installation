@@ -46,6 +46,7 @@ globals_elements =
     | firewall_enable_ssh
     | firewall_enable_ssh
     | write_hostname_to_hosts
+    | run_init_scripts_in_parallel
     | inform_about_suboptimal_distribution
     | skip_language_dialog
     | enable_clone
