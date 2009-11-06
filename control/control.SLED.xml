@@ -430,7 +430,21 @@ Please visit us at http://www.novell.com/linux/.
                 </proposal_tab>
             </proposal_tabs>
         </proposal>
-
+        <proposal>
+            <label>Live Installation Settings</label>
+            <mode>live_installation</mode>
+            <stage>initial</stage>
+            <name>initial</name>
+            <enable_skip>no</enable_skip>
+            <proposal_modules config:type="list">
+                <proposal_module>hwinfo</proposal_module>
+                <proposal_module>partitions</proposal_module>
+                <proposal_module>bootloader</proposal_module>
+                <proposal_module>keyboard</proposal_module>
+                <proposal_module>timezone</proposal_module>
+                <proposal_module>runlevel</proposal_module>
+            </proposal_modules>
+        </proposal>
         <proposal>
             <label>Update Settings</label>
             <mode>update</mode>
@@ -673,6 +687,91 @@ Please visit us at http://www.novell.com/linux/.
 		    <name>repair</name>
 		    <enable_back>no</enable_back>
 		</module>
+            </modules>
+        </workflow>
+
+	<!-- Stage: Initial, Mode: Live Installation -->
+        <workflow>
+            <defaults>
+                <archs>all</archs>
+                <enable_back>yes</enable_back>
+                <enable_next>yes</enable_next>
+            </defaults>
+            <label>Installation</label>
+            <mode>live_installation</mode>
+            <stage>initial</stage>
+            <modules config:type="list">
+                <module>
+		    <label>Welcome</label>
+                    <name>complex_welcome</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+                    <arguments>
+                        <first_run>yes</first_run>
+                    </arguments>
+                    <retranslate config:type="boolean">true</retranslate>
+                </module>
+                <module>
+                    <label>Time Zone</label>
+                    <name>timezone</name>
+                    <arguments>
+                        <first_run>yes</first_run>
+                    </arguments>
+                    <enable_back>yes</enable_back>
+                </module>
+                <module>
+                    <label>Disk</label>
+                    <name>disk_proposal</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+                    <label>User Settings</label>
+                    <name>user_first</name>
+                </module>
+                <module>
+                    <label>User Settings</label>
+                    <name>root_first</name>
+                </module>
+                <module>
+                    <label>Installation Settings</label>
+                    <name>inst_live_pre-proposal</name>
+                </module>
+                <module>
+                    <label>Installation Settings</label>
+                    <name>inst_proposal</name>
+                    <proposal>initial</proposal>
+                </module>
+		<!-- FATE #303860: Provide consistent progress during installation -->
+		<module>
+		    <label>Perform Installation</label>
+		    <name>prepareprogress</name>
+		</module>
+                <module>
+                    <label>Perform Installation</label>
+                    <name>inst_do_resize</name>
+                    <update config:type="boolean">false</update>
+                    <archs>i386,x86_64,ia64</archs>
+                </module>
+                <module>
+                    <label>Perform Installation</label>
+                    <name>inst_prepdisk</name>
+                </module>
+                <module>
+                    <label>Perform Installation</label>
+                    <name>inst_kickoff</name>
+                </module>
+                <module>
+                    <label>Perform Installation</label>
+                    <name>inst_live_doit</name>
+                    <enable_next>no</enable_next>
+                    <enable_back>no</enable_back>
+                </module>
+                <module>
+                    <label>Perform Installation</label>
+                    <name>inst_finish</name>
+                    <enable_back>no</enable_back>
+                </module>
             </modules>
         </workflow>
 
@@ -1090,6 +1189,38 @@ Please visit us at http://www.novell.com/linux/.
                 </module>
             </modules>
         </workflow>
+
+        <workflow>
+            <stage>continue</stage>
+            <mode>live_installation</mode>
+            <defaults>
+                <enable_back>yes</enable_back>
+                <enable_next>yes</enable_next>
+                <archs>all</archs>
+            </defaults>
+            <modules  config:type="list">
+		<module>
+		    <heading>yes</heading>
+		    <label>Configuration</label>
+		</module>
+		<module>
+		    <label>Automatic Configuration</label>
+		    <name>automatic_configuration</name>
+		    <enable_back>no</enable_back>
+		    <enable_next>no</enable_next>
+		</module>
+		<module>
+		    <name>user_non_interactive</name>
+		    <!-- BNC #401319, define client to call explicitly -->
+		    <execute>inst_user</execute>
+		</module>
+                <module>
+                    <name>live_cleanup</name>
+                    <enable_back>no</enable_back>
+                </module>
+
+	    </modules>
+	</workflow>
 
         <workflow>
             <stage>initial</stage>
