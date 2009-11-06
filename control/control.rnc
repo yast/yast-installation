@@ -98,6 +98,7 @@ enable_autologin = element enable_autologin { BOOLEAN }
 enable_firewall = element enable_firewall { BOOLEAN }
 firewall_enable_ssh = element firewall_enable_ssh { BOOLEAN }
 write_hostname_to_hosts = element write_hostname_to_hosts { BOOLEAN }
+run_init_scripts_in_parallel = element run_init_scripts_in_parallel { BOOLEAN }
 inform_about_suboptimal_distribution = element inform_about_suboptimal_distribution { BOOLEAN }
 skip_language_dialog = element skip_language_dialog { BOOLEAN }
 enable_clone = element enable_clone { BOOLEAN }
