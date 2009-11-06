@@ -1,0 +1,15 @@
+/**
+ * File:
+ *   cfg_boot.scr
+ * Summary:
+ *   SCR Agent for reading/writing /etc/sysconfig/boot
+ *   using the sysconfig-agent
+ *
+ * Read/Sets the values defined in <tt>/etc/sysconfig/boot</tt>
+ * in an easy manner.
+ */
+.sysconfig.boot
+
+`ag_ini(
+    `SysConfigFile("/etc/sysconfig/boot")
+)

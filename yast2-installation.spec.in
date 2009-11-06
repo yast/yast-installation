@@ -144,6 +144,7 @@ YaST Installation - auto-generated documentation.
 # agents
 @scrconfdir@/etc_passwd.scr
 @scrconfdir@/proc_mounts.scr
+@scrconfdir@/cfg_boot.scr
 @scrconfdir@/cfg_windowmanager.scr
 @scrconfdir@/cfg_fam.scr
 @scrconfdir@/etc_install_inf.scr
