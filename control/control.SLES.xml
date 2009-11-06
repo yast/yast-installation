@@ -18,7 +18,7 @@ textdomain="control"
 	<!-- FATE #303875, see /etc/sysconfig/network/dhcp:WRITE_HOSTNAME_TO_HOSTS -->
 	<write_hostname_to_hosts config:type="boolean">false</write_hostname_to_hosts>
 	<!-- FATE #307555, see /etc/sysconfig/boot:RUN_PARALLEL -->
-	<run_init_scripts_in_parallel config:type="boolean">true</run_init_scripts_in_parallel>
+	<run_init_scripts_in_parallel config:type="boolean">false</run_init_scripts_in_parallel>
 
         <incomplete_translation_treshold>95</incomplete_translation_treshold>
         <inform_about_suboptimal_distribution config:type="boolean">true</inform_about_suboptimal_distribution>
