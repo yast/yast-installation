@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Nov  6 18:12:45 CET 2009 - kmachalkova@suse.cz
+
+- Set /etc/sysconfig/boot:RUN_PARALLEL according to corresponding
+  value in control file (FaTE#307555) 
+- 2.17.58
+
+-------------------------------------------------------------------
 Thu Nov  5 18:34:10 CET 2009 - kmachalkova@suse.cz
 
 - In TUI (ncurses), use plain text (.txt) file with release notes, 
