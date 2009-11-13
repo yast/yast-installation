@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Nov 13 13:36:11 CEST 2009 - locilka@suse.cz
+
+- Fixed handling repositories during upgrade (bnc #543468).
+
+-------------------------------------------------------------------
 Fri Nov  6 18:12:45 CET 2009 - kmachalkova@suse.cz
 
 - Set /etc/sysconfig/boot:RUN_PARALLEL according to corresponding
