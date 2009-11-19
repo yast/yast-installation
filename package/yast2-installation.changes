@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Nov 19 16:51:55 CET 2009 - locilka@suse.cz
+
+- Added control file configuration option require_registration
+  (FATE #305578).
+
+-------------------------------------------------------------------
 Wed Nov  4 16:31:17 CET 2009 - mzugec@suse.cz
 
 - lan module in 1st stage (FaTE#303069)
