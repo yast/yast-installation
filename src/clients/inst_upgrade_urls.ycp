@@ -683,11 +683,18 @@ Configure it?"),
 		    "base_urls" : [one_url],
 		    "prod_dir" : pth,
 		    "type" : repo_type,
+		    // bnc #543468, do not check aliases of repositories stored in Installation::destdir
+		    "check_alias" : false,
 		];
 		AdjustRepoSettings (repoadd, one_id);
 		y2milestone ("Adding repo (enabled): %1", repoadd);
 
 		integer new_id = Pkg::RepositoryAdd (repoadd);
+
+		if (new_id == nil) {
+		    y2error ("Error adding repository: %1", repoadd);
+		    return;
+		}
 
 		if (new_id > -1) {
 		    boolean repo_refresh = Pkg::SourceRefreshNow (new_id);

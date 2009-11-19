@@ -6,6 +6,8 @@
   <!-- these options override base product's ones -->
   <globals>
     <additional_kernel_parameters></additional_kernel_parameters>
+    <!-- Registration of this add-on will be required -->
+    <require_registration config:type="boolean">true</require_registration>
   </globals>
   <software>
     <selection_type config:type="symbol">auto</selection_type>

@@ -81,6 +81,7 @@ globals_elements =
     | timezone
     | enable_autologin
     | runlevel
+    | require_registration
 
 additional_kernel_parameters = element additional_kernel_parameters { text }
 incomplete_translation_treshold = element incomplete_translation_treshold { text }
@@ -120,6 +121,7 @@ kexec_reboot = element kexec_reboot { BOOLEAN }
 rle_offer_rulevel_4 = element rle_offer_rulevel_4 { BOOLEAN }
 default_ntp_setup = element default_ntp_setup { BOOLEAN }
 enable_kdump = element enable_kdump { BOOLEAN }
+require_registration = element require_registration { BOOLEAN }
 
 save_instsys_content = element save_instsys_content {
     LIST,

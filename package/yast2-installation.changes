@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Nov 19 16:51:55 CET 2009 - locilka@suse.cz
+
+- Added control file configuration option require_registration
+  (FATE #305578).
+
+-------------------------------------------------------------------
 Fri Nov 13 13:36:11 CEST 2009 - locilka@suse.cz
 
 - Fixed handling repositories during upgrade (bnc #543468).

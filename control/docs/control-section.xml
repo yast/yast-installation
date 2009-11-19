@@ -415,6 +415,10 @@
 		<listitem><para>(string) <emphasis>polkit_default_privs</emphasis> - Adjusts
 		    <emphasis>/etc/sysconfig/security/POLKIT_DEFAULT_PRIVS</emphasis> to the defined value.
 		    If not set or empty, sysconfig is untouched.</para></listitem>
+
+		<!-- FATE #305578: Add-On Product Requiring Registration -->
+		<listitem><para>(boolean) <emphasis>require_registration</emphasis> - Require registration
+		    of add-on product (ignored in the base product).</para></listitem>
 	    </itemizedlist>
 	</section>
 	    
