@@ -185,7 +185,7 @@
 						    `ReplacePoint(`id(`content_rp), 
 							`RichText (`id (`relnotescontent), "")
 						   )
-						 ),
+						 )),
 				       `HWeight( 20,`Empty() )
 				       )
 				 );
