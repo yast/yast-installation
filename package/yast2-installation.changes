@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Tue Nov 24 16:13:31 CET 2009 - kmachalkova@suse.cz
+
+Cumulative patch with SLE11 SP1 features:
+- In TUI (ncurses), use plain text (.txt) file with release notes, 
+  if found (FaTE#306167)
+- Set /etc/sysconfig/boot:RUN_PARALLEL according to corresponding
+  value in control file (FaTE#307555) 
+- 2.19.0
+
+-------------------------------------------------------------------
 Thu Nov 19 16:51:55 CET 2009 - locilka@suse.cz
 
 - Added control file configuration option require_registration
