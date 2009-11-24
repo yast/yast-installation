@@ -437,6 +437,7 @@ Please visit us at http://www.novell.com/linux/.
             <mode>live_installation</mode>
             <stage>initial</stage>
             <name>initial</name>
+	    <unique_id>live_inst_initial</unique_id>
             <enable_skip>no</enable_skip>
             <proposal_modules config:type="list">
                 <proposal_module>hwinfo</proposal_module>
