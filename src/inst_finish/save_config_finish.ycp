@@ -141,10 +141,19 @@ else if (func == "Write")
                 contains (Product::flags, "usercwd") ? "yes" : "no");
     SCR::Write (.sysconfig.suseconfig, nil);
 
-    // FIXME text freeze: progress (update count in Info too)
+    Progress::NextStep ();
+    // progress step title
+    Progress::Title (_("Saving security settings..."));
     SCR::Write (.sysconfig.security.CHECK_SIGNATURES,
 		SignatureCheckDialogs::CheckSignatures ());
     SCR::Write (.sysconfig.security, nil);
+
+    Progress::NextStep ();
+    // progress step title
+    Progress::Title (_("Saving boot scripts settings..."));
+    boolean run_in_parallel = ProductFeatures::GetBooleanFeature( "globals", "run_init_scripts_in_parallel");
+    SCR::Write (.sysconfig.boot.RUN_PARALLEL, run_in_parallel ? "yes" : "no" );
+    SCR::Write (.sysconfig.boot, nil);
 
     // save supportconfig
      if(SCR::Read(.target.size,"/etc/install.inf") > 0) {
