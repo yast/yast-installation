@@ -89,8 +89,20 @@ if (addUrls != $[])
 	boolean again = true;
 
 	while (again) {
-	    integer srcid = Pkg::SourceCreate (url, "/");
-	    y2milestone ("got %1 from creating %2", srcid, url);
+	    // BNC #557723: Repositories migh be created without access to network
+	    // Libzypp must not probe the repo
+	    map <string,any> repo_prop = $[
+		"enabled"	: true,
+		"autorefresh"	: true,
+		"name"		: (size(name) > 0 ? name : url),
+		"alias"		: (size(name) > 0 ? name : url),
+		"base_urls"	: [url],
+		"prod_dir"	: "/",
+		
+	    ];
+
+	    integer srcid = Pkg::RepositoryAdd (repo_prop);
+	    y2milestone ("got %1 from creating %2/%3", srcid, url, name);
 
 	    // wrong srcid, must have failed
 	    if (srcid == -1) {
@@ -112,9 +124,6 @@ Try again?"),
 
 	    // everything is ok
 	    } else {
-		// bnc #542792
-		// Repository name must be set
-		Pkg::SourceEditSet([ $["SrcId" : srcid, "name" : name] ]);
 		added_ids = add (added_ids, srcid);
 		again = false;
 	    }

@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Nov 30 14:38:26 CET 2009 - locilka@suse.cz
+
+- Repositories added by inst_addon_update_sources use
+  Pkg::RepositoryAdd that does not need access to network
+  (bnc #557723)
+
+-------------------------------------------------------------------
 Tue Nov 24 16:13:31 CET 2009 - kmachalkova@suse.cz
 
 Cumulative patch with SLE11 SP1 features:
