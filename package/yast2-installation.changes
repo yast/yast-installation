@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Dec  9 12:49:08 CET 2009 - jsrain@suse.cz
+
+- dereference hardlinks when deploying live CD so that it can
+  be also deployed on multiple separate partitions (bnc#549158)
+
+-------------------------------------------------------------------
 Mon Nov 30 14:38:26 CET 2009 - locilka@suse.cz
 
 - Repositories added by inst_addon_update_sources use
