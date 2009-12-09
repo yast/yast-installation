@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Dec  9 16:44:34 CET 2009 - locilka@suse.cz
+
+- Package kde4-kdm has been renamed to kdm (SLES, SLED control
+  files) (bnc #561627).
+
+-------------------------------------------------------------------
 Wed Dec  9 14:12:21 CET 2009 - locilka@suse.cz
 
 - Enabled CIM by default (SLES and SLED) (FATE #305583)

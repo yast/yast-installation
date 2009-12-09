@@ -226,9 +226,9 @@ textdomain="control"
 		<!-- BNC #381821, BNC #438212 -->
 		<desktop>startkde</desktop>
 		<label_id>dummy_desktop</label_id>
-		<logon>kdm4</logon>
+		<logon>kdm</logon>
 		<cursor>DMZ</cursor>
-		<packages>kde4-kdm</packages>
+		<packages>kdm</packages>
 		<order config:type="integer">1</order>
 		<patterns>kde x11 base</patterns>
 		<icon>pattern-kde4</icon>
