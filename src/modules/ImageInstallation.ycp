@@ -907,7 +907,7 @@ global boolean FileSystemCopy (string from, string to,
     cmd = sformat (
 	"mkfifo %3 ;
 	 mkfifo %4 ;
-	 tar -C %1 --numeric-owner -cSf %3 --one-file-system . &
+	 tar -C %1 --hard-dereference --numeric-owner -cSf %3 --one-file-system . &
 	 dd bs=1048576 if=%3 of=%4 >&2 &
 	 jobs -l >&2;
 	 tar -C %2 --numeric-owner -xSf %4",
