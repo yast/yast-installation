@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Dec  9 12:49:08 CET 2009 - jsrain@suse.cz
+
+- dereference hardlinks when deploying live CD so that it can
+  be also deployed on multiple separate partitions (bnc#549158)
+
+-------------------------------------------------------------------
 Fri Oct 23 07:40:56 CEST 2009 - jsuchome@suse.cz
 
 - during update, do not save timezone and console settings
