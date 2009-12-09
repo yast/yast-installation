@@ -267,7 +267,7 @@ textdomain="control"
 		<!-- BNC #381821, BNC #438212 -->
 		<desktop>startkde</desktop>
 		<label_id>desktop_kde</label_id>
-		<logon>kdm4</logon>
+		<logon>kdm</logon>
 		<cursor>DMZ</cursor>
 		<packages>kdm</packages>
 		<order config:type="integer">1</order>
