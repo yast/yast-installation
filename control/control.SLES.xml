@@ -95,6 +95,19 @@ textdomain="control"
 
 	<!-- bnc #431158: Adjusts /etc/sysconfig/security/POLKIT_DEFAULT_PRIVS if set -->
 	<polkit_default_privs>restrictive</polkit_default_privs>
+
+	<!-- Used in services proposal -->
+	<services_proposal config:type="list">
+	    <!-- FATE #305583: Start CIMOM by default -->
+	    <service>
+		<!-- see 'texts' -->
+		<label_id>service_sfcb</label_id>
+		<service_names>sfcb</service_names>
+		<firewall_plugins>sblim-sfcb</firewall_plugins>
+		<enabled_by_default config:type="boolean">true</enabled_by_default>
+		<packages>sblim-sfcb</packages>
+	    </service>
+	</services_proposal>
     </globals>
 
     <software>
@@ -312,6 +325,9 @@ Choose the one that matches your server the best.</label></scenarios_text>
 	<scenario_physical_machine><label>Physical Machine (Also for Fully Virtualized Guests)</label></scenario_physical_machine>
 	<scenario_virtual_machine><label>Virtual Machine (For Paravirtualized Environments Like Xen)</label></scenario_virtual_machine>
 	<scenario_virtualization_host><label>Xen Virtualization Host (Local X11 Not Configured by Default)</label></scenario_virtualization_host>
+
+	<!-- FATE #305583: Start CIMOM by default -->
+	<service_sfcb><label>CIM Server</label></service_sfcb>
     </texts>
 
     <proposals config:type="list">
@@ -627,6 +643,8 @@ Choose the one that matches your server the best.</label></scenarios_text>
             <proposal_modules config:type="list">
                 <proposal_module>ca_mgm</proposal_module>
                 <proposal_module>ldap-server</proposal_module>
+                <!-- FATE #305583 -->
+                <proposal_module>services</proposal_module>
             </proposal_modules>
         </proposal>
 

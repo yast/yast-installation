@@ -126,6 +126,8 @@ textdomain="control"
                     <ac_item>modem</ac_item>
                     <ac_item>remote</ac_item>
                     <ac_item>firewall</ac_item>
+                    <!-- FATE #305583: Start CIMOM by default -->
+                    <ac_item>services</ac_item>
                 </ac_items>
             </ac_step>
             <!-- hardware proposal -->
@@ -162,6 +164,19 @@ textdomain="control"
 
 	<!-- bnc #431259 -->
 	<default_ntp_setup config:type="boolean">false</default_ntp_setup>
+
+	<!-- Used in services proposal -->
+	<services_proposal config:type="list">
+	    <!-- FATE #305583: Start CIMOM by default -->
+	    <service>
+		<!-- see 'texts' -->
+		<label_id>service_sfcb</label_id>
+		<service_names>sfcb</service_names>
+		<firewall_plugins>sblim-sfcb</firewall_plugins>
+		<enabled_by_default config:type="boolean">true</enabled_by_default>
+		<packages>sblim-sfcb</packages>
+	    </service>
+	</services_proposal>
     </globals>
 
     <software>
@@ -337,6 +352,9 @@ Please visit us at http://www.novell.com/linux/.
 	<ac_2><label>Configuring network...</label></ac_2>
 	<ac_3><label>Configuring hardware...</label></ac_3>
 	<ac_4><label>Finishing configuration...</label></ac_4>
+
+	<!-- FATE #305583: Start CIMOM by default -->
+	<service_sfcb><label>CIM Server</label></service_sfcb>
     </texts>
 
     <proposals config:type="list">
@@ -502,6 +520,11 @@ Please visit us at http://www.novell.com/linux/.
                 <proposal_module>
 		    <name>proxy</name>
 		    <presentation_order>70</presentation_order>
+		</proposal_module>
+		<!-- FATE #305583: Start CIMOM by default -->
+                <proposal_module>
+		    <name>services</name>
+		    <presentation_order>15</presentation_order>
 		</proposal_module>
             </proposal_modules>
         </proposal>

@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Dec  9 14:12:21 CET 2009 - locilka@suse.cz
+
+- Enabled CIM by default (SLES and SLED) (FATE #305583)
+- Adapted RNC for control files
+- 2.17.61
+
+-------------------------------------------------------------------
 Wed Dec  9 12:49:08 CET 2009 - jsrain@suse.cz
 
 - dereference hardlinks when deploying live CD so that it can

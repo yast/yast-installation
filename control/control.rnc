@@ -82,6 +82,7 @@ globals_elements =
     | enable_autologin
     | runlevel
     | require_registration
+    | services_proposal
 
 additional_kernel_parameters = element additional_kernel_parameters { text }
 incomplete_translation_treshold = element incomplete_translation_treshold { text }
@@ -161,6 +162,17 @@ automatic_configuration = element automatic_configuration {
 	    LIST,
 	    element ac_item { text }+
 	}?
+    }+
+}
+
+services_proposal = element services_proposal {
+    LIST,
+    element service {
+	element label_id { text }? &
+	element service_names { text } &
+	element firewall_plugins { text }? &
+	element enabled_by_default { BOOLEAN }? &
+	element packages { text }?
     }+
 }
 
