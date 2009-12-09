@@ -319,7 +319,8 @@ repeat {
 	    [`add_on, Installation::add_on_selected, (ret != `repair)],
 	    [`productsources, Installation::productsources_selected, (show_online_repositories && ret != `repair)],
 	    // automatic installation works only for new installation
-	    [`use_automatic_configuration, ProductControl::GetUseAutomaticConfiguration(), (ret == `install)],
+	    [`use_automatic_configuration, (ProductControl::GetUseAutomaticConfiguration() && ret == `install), 
+	     (ret == `install)],
 	], {
 	    if (UI::WidgetExists (`id (one_item[0]:`_inotdef_))) {
 		UI::ChangeWidget  (`id (one_item[0]:`_inotdef_), `Enabled, one_item[2]:false);
