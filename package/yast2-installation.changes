@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Dec  9 14:58:38 CET 2009 - kmachalkova@suse.cz
+
+- Un-check automatic configuration box when user selects update
+  (bnc#537625)  
+
+-------------------------------------------------------------------
 Wed Dec  9 14:12:21 CET 2009 - locilka@suse.cz
 
 - Enabled CIM by default (SLES and SLED) (FATE #305583)
