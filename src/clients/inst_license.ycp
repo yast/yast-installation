@@ -53,7 +53,7 @@ symbol ask_ret = nil;
 
 if (Stage::initial ())
 {
-    ask_ret = ProductLicense::AskFirstStageLicenseAgreement (action);
+    ask_ret = ProductLicense::AskFirstStageLicenseAgreement (0, action);
 }
 else
 {
@@ -81,7 +81,7 @@ else
 	directory = Directory::custom_workflow_dir + directory;
 
     // patterns are hardcoded
-    ask_ret = ProductLicense::AskInstalledLicenseAgreement (directory, [], action);
+    ask_ret = ProductLicense::AskInstalledLicenseAgreement (directory, [], action, "0");
 }
 
 if (test_mode) Wizard::CloseDialog();
