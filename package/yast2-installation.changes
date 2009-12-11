@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Dec 11 16:48:58 CET 2009 - locilka@suse.cz
+
+- Adapted for new API to ProductLicense (FATE #306295).
+
+-------------------------------------------------------------------
 Wed Dec  9 16:44:34 CET 2009 - locilka@suse.cz
 
 - Package kde4-kdm has been renamed to kdm (SLES, SLED control
