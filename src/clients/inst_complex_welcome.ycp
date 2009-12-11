@@ -53,6 +53,8 @@
 
     boolean text_mode	= Language::GetTextMode ();
 
+    string license_ui_id = "base_license";
+
    /* ----------------------------------------------------------------------
     * Build dialog
     * ----------------------------------------------------------------------*/
@@ -221,7 +223,7 @@ installation process at any time.
 	language = (string) UI::QueryWidget (`id (`language), `Value);
 	keyboard = (string) UI::QueryWidget (`id (`keyboard), `Value);
 
-	if (ProductLicense::AcceptanceNeeded()) {
+	if (ProductLicense::AcceptanceNeeded (license_ui_id)) {
 	    license_acc = (boolean) UI::QueryWidget (`id (`license_agreement), `Value);
 	} else {
 	    license_acc = true;
@@ -295,7 +297,7 @@ installation, but the selected language will be used for the new system."));
 	return false;
     }
 
-    ProductLicense::ShowLicenseInInstallation (`base_license_rp);
+    ProductLicense::ShowLicenseInInstallation (`base_license_rp, Pkg::SourceGetCurrent(true)[0]:0);
 
     // bugzilla #206706
     if (Mode::autoinst()) {
@@ -303,7 +305,7 @@ installation, but the selected language will be used for the new system."));
     }
 
     // If accepting the license is required, show the check-box
-    if (ProductLicense::AcceptanceNeeded()) {
+    if (ProductLicense::AcceptanceNeeded (license_ui_id)) {
 	UI::ReplaceWidget (`license_checkbox_rp, license_agreement_checkbox);
     }
 
@@ -331,7 +333,7 @@ installation, but the selected language will be used for the new system."));
 	    if (ret == `next ) {
 		// BNC #448598
 		// Check whether the license has been accepted only if required
-		if (ProductLicense::AcceptanceNeeded() && ! LicenseAccepted ())
+		if (ProductLicense::AcceptanceNeeded (license_ui_id) && ! LicenseAccepted ())
 		    continue;
 
 		if (!Language::CheckIncompleteTranslation (language))
@@ -349,7 +351,7 @@ installation, but the selected language will be used for the new system."));
 	    if (ret == `next) break;
 	} else if (ret == `show_fulscreen_license) {
 	    UI::OpenDialog (AllLicensesDialog());
-	    ProductLicense::ShowFullScreenLicenseInInstallation (`full_screen_license_rp);
+	    ProductLicense::ShowFullScreenLicenseInInstallation (`full_screen_license_rp, Pkg::SourceGetCurrent(true)[0]:0);
 	    UI::CloseDialog();
 	}
     }
