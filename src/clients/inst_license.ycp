@@ -21,6 +21,7 @@ import "ProductLicense";
 import "Mode";
 import "ProductFeatures";
 import "Wizard";
+import "Report";
 
 // all the arguments
 map argmap = GetInstArgs::argmap();
@@ -60,9 +61,16 @@ else
     // #304865: Enhance YaST Modules to cooperate better handling the product licenses
     string directory = argmap["directory"]:"";
 
+    // FATE #306295: More licenses in one dialog
+    list <string> directories = argmap["directories"]:[];
+
+    // Priority 0: More directories
+    if (directories != nil && directories != []) {
+	y2milestone ("Using directories: %1", directories);
     // Priority 1: Script args
-    if (directory != nil && directory != "") {
+    } else if (directory != nil && directory != "") {
 	y2milestone ("Using directory: %1", directory);
+	directories = [directory];
     // Priority 2: Fallback - Control file
     } else {
 	directory = ProductFeatures::GetStringFeature ("globals", "base_product_license_directory");
@@ -75,13 +83,28 @@ else
 	    directory = "/etc/YaST2/licenses/base/";
 	    y2warning ("No 'base_product_license_directory' set, using %1", directory);
 	}
+
+	directories = [directory];
     }
 
-    if (directory != "")
-	directory = Directory::custom_workflow_dir + directory;
+    if (directories != nil) {
+	list <string> tmp_directories = maplist (string one_directory, directories, {
+	    return Directory::custom_workflow_dir + one_directory;
+	});
+	directories = tmp_directories;
+	y2milestone ("License directories after additional modifications: %1", directories);
+    }
 
-    // patterns are hardcoded
-    ask_ret = ProductLicense::AskInstalledLicenseAgreement (directory, [], action, "0");
+    if (directories == nil || directories == []) {
+	// Error message
+	Report::Error (_("Internal error: Missing license to show"));
+	y2error ("Nothing to do");
+	ask_ret = `auto;
+    } else if (size (directories) > 1) {
+	ask_ret = ProductLicense::AskInstalledLicensesAgreement (directories, action);
+    } else {
+	ask_ret = ProductLicense::AskInstalledLicenseAgreement (directories[0]:"", action);
+    }
 }
 
 if (test_mode) Wizard::CloseDialog();
