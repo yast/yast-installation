@@ -242,16 +242,12 @@ installation process at any time.
 	}
 	// Check and set CJK languages
 	if (Stage::initial () || Stage::firstboot ()) {
-	    if (ret == `language &&
-		Language::CJKLanguage (language) &&
-		!Language::CJKLanguage (preselected) &&
-		Language::GetTextMode ()) {
-		// popup message (user selected CJK language in text mode)
-		Popup::Message (_("The selected language cannot be used in text mode. English is used for
-installation, but the selected language will be used for the new system."));
-
-		    Language::WfmSetGivenLanguage ("en_US");
-	    } else if (ret == `language) {
+	    if (ret == `language && Language::SwitchToEnglishIfNeeded (true))
+	    {
+		y2debug ("UI switched to en_US");
+	    }
+	    else if (ret == `language)
+	    {
 		Console::SelectFont (language);
 		// no yast translation for nn_NO, use nb_NO as a backup
 		if (language == "nn_NO")
