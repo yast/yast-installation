@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jan 15 17:29:45 CET 2010 - aschnell@suse.de
+
+- updated control.rnc
+- 2.19.2
+
+-------------------------------------------------------------------
 Thu Jan  7 15:29:13 CET 2010 - jsuchome@suse.cz
 
 - inst_complex_welcome adapted to Language::SwitchToEnglishIfNeeded
