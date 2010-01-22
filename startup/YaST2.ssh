@@ -62,11 +62,15 @@ if [ -f /var/lib/YaST2/runme_at_boot ];then
 	# running the second stage installation
 	/usr/lib/YaST2/startup/YaST2.call installation continue
 
-	# second stage installation needs to reboot
-	if [ -f /var/lib/YaST2/reboot ]; then
+	if [ -f /etc/install.inf ] ; then
+		SecondStageRequired=$(awk ' /^SecondStageRequired:/ { print $2 }' < /etc/install.inf)
+	fi
+
+	if [ -n "$SecondStageRequired" -a "$SecondStageRequired" = "1" ] ; then
+	    # second stage installation needs to reboot
 	    reboot_during_second_stage
-	# second stage has just finished
 	else
+	    # second stage has just finished
 	    continue_after_second_stage
 	fi
 else

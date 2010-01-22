@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Jan 22 15:56:07 CET 2010 - aschnell@suse.de
+
+- fixed message during ssh installation (bnc #518616)
+
+-------------------------------------------------------------------
 Fri Jan 15 17:29:45 CET 2010 - aschnell@suse.de
 
 - updated control.rnc
