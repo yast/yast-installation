@@ -646,6 +646,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
         </proposal>
 
         <proposal>
+	    <label>Network Services Configuration</label>
             <name>service</name>
             <stage>continue,normal</stage>
 	    <unique_id>service_continue</unique_id>
