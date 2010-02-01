@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Feb  1 11:35:15 CET 2010 - locilka@suse.cz
+
+- Fixed 'going back' from services proposal #572734.
+
+-------------------------------------------------------------------
 Fri Jan 22 15:56:07 CET 2010 - aschnell@suse.de
 
 - fixed message during ssh installation (bnc #518616)
