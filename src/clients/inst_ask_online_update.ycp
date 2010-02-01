@@ -27,6 +27,12 @@
     import "Installation";
     import "NetworkService";
 
+    // BNC #572734
+    if (GetInstArgs::going_back()) {
+	y2milestone ("going_back -> returning `auto");
+	return `auto;
+    }
+
     // BNC #450229
     // There used to be >if (!Internet::do_you)<
     if (NetworkService::isNetworkRunning() != true) {

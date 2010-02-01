@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Feb  1 11:35:15 CET 2010 - locilka@suse.cz
+
+- Fixed 'going back' from services proposal #572734.
+- 2.17.63
+
+-------------------------------------------------------------------
 Thu Jan  7 15:28:48 CET 2010 - jsuchome@suse.cz
 
 - inst_complex_welcome adapted to Language::SwitchToEnglishIfNeeded
