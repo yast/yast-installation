@@ -1,7 +1,12 @@
 -------------------------------------------------------------------
+Tue Feb  2 11:03:04 CET 2010 - locilka@suse.cz
+
+- Added LXDE to openSUSE control file (FATE #307729).
+
+-------------------------------------------------------------------
 Mon Feb  1 11:35:15 CET 2010 - locilka@suse.cz
 
-- Fixed 'going back' from services proposal #572734.
+- Fixed 'going back' from services proposal BNC #572734.
 
 -------------------------------------------------------------------
 Fri Jan 22 15:56:07 CET 2010 - aschnell@suse.de

@@ -287,6 +287,19 @@ textdomain="control"
 		<icon>pattern-xfce</icon>
 	    </one_supported_desktop>
 
+	    <!-- FaTE #307729 LXDE -->
+	    <one_supported_desktop>
+		<name>lxde</name>
+		<desktop>startlxde</desktop>
+		<label_id>desktop_lxde</label_id>
+		<logon>lxdm</logon>
+		<cursor>DMZ</cursor>
+		<packages>lxde-common</packages>
+		<order config:type="integer">5</order>
+		<patterns>lxde x11 base</patterns>
+		<icon>pattern-lxde</icon>
+	    </one_supported_desktop>
+
 	    <one_supported_desktop>
 		<name>min_x</name>
 		<desktop>twm</desktop>
@@ -395,6 +408,7 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 	<desktop_gnome><label>GNOME Desktop</label></desktop_gnome>
 	<desktop_kde><label>KDE Desktop</label></desktop_kde>
 	<desktop_xfce><label>XFCE Desktop</label></desktop_xfce>
+	<desktop_lxde><label>LXDE Desktop</label></desktop_lxde>
 	<desktop_min_x><label>Minimal X Window</label></desktop_min_x>
 	<desktop_textmode><label>Minimal Server Selection (Text Mode)</label></desktop_textmode>
 
