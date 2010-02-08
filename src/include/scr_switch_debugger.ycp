@@ -530,7 +530,7 @@ Please, attach also all YaST logs stored in the '%2' directory."),
 		 current_line = current_line + 1;
 
 		// SCR has died, printing the last 15 lines
-		if (regexpmatch (one_line, " Finished YaST2 component ")) {
+		if (regexpmatch (one_line, " Finished YaST.* component ")) {
 		    ReportLine (_("SCR process has died, printing the last log lines..."));
 		    integer start_line = current_line - 15;
 		    PrintLinesFromTo (start_line, current_line);
