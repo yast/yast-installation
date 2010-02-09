@@ -1303,17 +1303,15 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 		    <enable_back>no</enable_back>
 		    <enable_next>no</enable_next>
 		</module>
-<!--
-    BNC #435965 comment #20: No auth and users are needed anymore
-                <module>
-	            <label>Users</label>
-                    <name>auth</name>
-                </module>
-                <module>
-	            <label>Users</label>
-                    <name>user</name>
-                </module>
--->
+		<!-- BNC #547931: Steps are enabled again -->
+		<module>
+		    <label>Users</label>
+		    <name>auth</name>
+		</module>
+		<module>
+		    <label>Users</label>
+		    <name>user</name>
+		</module>
 		<module>
 		    <name>user_non_interactive</name>
 		    <!-- BNC #401319, define client to call explicitly -->

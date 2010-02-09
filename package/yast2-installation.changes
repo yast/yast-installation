@@ -1,5 +1,10 @@
 -------------------------------------------------------------------
-Tue Feb  9 14:49:33 CET 2010 - locilka@ssue.cz
+Tue Feb  9 17:06:15 CET 2010 - locilka@suse.cz
+
+- Steps 'user' and 'auth' enabled again in Live mode (BNC #547931).
+
+-------------------------------------------------------------------
+Tue Feb  9 14:49:33 CET 2010 - locilka@suse.cz
 
 - Fixed license agreement check box visibility (BNC #571846).
 - 2.19.3
