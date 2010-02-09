@@ -53,7 +53,8 @@
 
     boolean text_mode	= Language::GetTextMode ();
 
-    string license_ui_id = "base_license";
+    integer license_id = Pkg::SourceGetCurrent(true)[0]:0;
+    string license_ui_id  = tostring (license_id);
 
    /* ----------------------------------------------------------------------
     * Build dialog
@@ -293,7 +294,7 @@ installation process at any time.
 	return false;
     }
 
-    ProductLicense::ShowLicenseInInstallation (`base_license_rp, Pkg::SourceGetCurrent(true)[0]:0);
+    ProductLicense::ShowLicenseInInstallation (`base_license_rp, license_id);
 
     // bugzilla #206706
     if (Mode::autoinst()) {
@@ -301,6 +302,7 @@ installation process at any time.
     }
 
     // If accepting the license is required, show the check-box
+    y2milestone ("Acceptance needed: %1 => %2", license_ui_id, ProductLicense::AcceptanceNeeded (license_ui_id));
     if (ProductLicense::AcceptanceNeeded (license_ui_id)) {
 	UI::ReplaceWidget (`license_checkbox_rp, license_agreement_checkbox);
     }
@@ -347,7 +349,7 @@ installation process at any time.
 	    if (ret == `next) break;
 	} else if (ret == `show_fulscreen_license) {
 	    UI::OpenDialog (AllLicensesDialog());
-	    ProductLicense::ShowFullScreenLicenseInInstallation (`full_screen_license_rp, Pkg::SourceGetCurrent(true)[0]:0);
+	    ProductLicense::ShowFullScreenLicenseInInstallation (`full_screen_license_rp, license_id);
 	    UI::CloseDialog();
 	}
     }
