@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Feb  9 14:49:33 CET 2010 - locilka@ssue.cz
+
+- Fixed license agreement check box visibility (BNC #571846).
+- 2.19.3
+
+-------------------------------------------------------------------
 Tue Feb  2 11:03:04 CET 2010 - locilka@suse.cz
 
 - Added LXDE to openSUSE control file (FATE #307729).
