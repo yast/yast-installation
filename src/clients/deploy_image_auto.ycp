@@ -15,6 +15,8 @@ import "Wizard";
 import "Progress";
 import "Installation";
 import "ImageInstallation";
+import "AutoinstSoftware";
+import "Popup";
 
 y2milestone("----------------------------------------");
 y2milestone("Starting deploy_image_auto");
@@ -93,50 +95,141 @@ else if (func == "Change") {
 	_("Installation from Images"),
 	`HBox (
 	    `HStretch (),
-	    `Frame (
-		_("Installation from Images"),
-		`RadioButtonGroup (
-		    `id (`images_rbg),
-		    `MarginBox (2, 1, `VBox (
-			`Left(`RadioButton (
-			    `id (`inst_from_images),
-			    _("&Install from Images"),
-			    (Installation::image_installation == true)
-			)),
-			`VSpacing (0.5),
-			`Left(`RadioButton (
-			    `id (`dont_inst_from_images),
-			    _("&Do Not Install from Images"),
-			    (Installation::image_installation != true)
-			))
-		    ))
-		)
-	    ),
+            `VBox(
+                `Frame (
+                    _("Installation from Images"),
+                    `VBox(
+                            `Label( _("Here you can choose to use Novell pre-defined images to speed up RPM installation.") ),
+                            `RadioButtonGroup (
+                            `id (`images_rbg),
+                            `MarginBox (2, 1, `VBox (
+                                `Left(`RadioButton (
+                                    `id (`inst_from_images), `opt(`notify),
+                                    _("&Install from Images"),
+                                    (Installation::image_installation == true)
+                                )),
+                                `VSpacing (0.5),
+                                `Left(`RadioButton (
+                                    `id (`dont_inst_from_images), `opt(`notify),
+                                    _("&Do Not Install from Images"),
+                                    (Installation::image_installation != true)
+                                ))
+                                ))
+                            ))
+                ),
+                `VSpacing (0.5),
+                `Frame(
+                    _("Custom images deployment - this needs a URL to be configured as installation source"),
+                    // Image name, Image location
+                    `MarginBox(2, 1,
+                        `VBox(
+                            `Label( _("Here you can create custom images.\n")+
+                                    _("You have to configure the software selection first before you can create an image here") ),
+                            `RadioButtonGroup ( `id (`own_images_rbg),
+                                    `MarginBox (2, 1,
+                                      `VBox (
+                                        `Frame( _("Create an image file (AutoYaST will fetch it from the given location during installation)"),
+                                          `VBox(
+                                            `RadioButton( `id(`create_image), `opt( `notify, `default, `hstretch ), _("Create Image") ),
+                                            `TextEntry(`id(`image_location), `opt(`notify),
+                                                       _("Where will AutoYaST find the image? (e.g. http://host/)"), AutoinstSoftware::image["image_location"]:""),
+                                            `TextEntry(`id(`image_name), `opt(`notify),
+                                                       _("What is the name of the image? (e.g. my_image)"), AutoinstSoftware::image["image_name"]:""),
+                                            `VSpacing (0.5),
+                                            `RadioButton( `id(`create_iso), `opt( `notify, `default, `hstretch ),
+                                                           _("Create ISO (image and autoinst.xml will be on the media)")
+                                            )
+                                          )
+                                        )
+                                      )
+                                    )
+                                  )
+                             )
+                        )
+                    )
+            ),
 	    `HStretch ()
-	),
+            ),
 	// TRANSLATORS: help text
 	_("<p><b>Installation from Images</b> is used to speed the installation up. 
 Images contain compressed snapshots of installed system matching your selection 
 of patterns. The rest of packages which are not in images will be installed from 
-packages the standard way.</p>"),
+packages the standard way.</p>") + _("<p><b>Creating own Images</b> is used if you
+want to skip the complete step of RPM installation. Instead AutoYaST will dump an
+image on the harddisk which is a lot faster and can be pre-configured already.
+Everything else than RPM installation is done like during a normal auto-installation.</p>"),
 	Label::BackButton(),
 	Label::OKButton()
     );
     Wizard::SetAbortButton (`abort, Label::CancelButton());
     Wizard::DisableBackButton();
+    any selected = UI::QueryWidget (`images_rbg, `CurrentButton);
+    UI::ChangeWidget(`id(`create_image),   `Enabled, selected == `dont_inst_from_images );
+    UI::ChangeWidget(`id(`create_iso),     `Enabled, selected == `dont_inst_from_images );
+    UI::ChangeWidget(`id(`image_location), `Enabled, selected == `dont_inst_from_images );
+    UI::ChangeWidget(`id(`image_name),     `Enabled, selected == `dont_inst_from_images );
 
-    ret = UI::UserInput();
+    do {
 
-    if (ret == `ok || ret == `next) {
-	any selected = UI::QueryWidget (`images_rbg, `CurrentButton);
-	if (selected == `inst_from_images) {
-	    Installation::image_installation = true;
-	} else {
-	    Installation::image_installation = false;
-	}
+        if( size( (string)UI::QueryWidget ( `image_location, `Value ) ) > 0 ||
+            size( (string)UI::QueryWidget ( `image_name,     `Value ) ) > 0 ) {
+                UI::ChangeWidget(`id(`inst_from_images),   `Enabled, false );
+        } else
+                UI::ChangeWidget(`id(`inst_from_images),   `Enabled, true );
 
-	y2milestone ("Changed by user, Installation from images will be used: %1", Installation::image_installation);
-    }
+        if( AutoinstSoftware::instsource == "" ) {
+                UI::ChangeWidget(`id(`create_image),   `Enabled, false );
+                UI::ChangeWidget(`id(`create_iso),     `Enabled, false );
+        }
+
+        ret = UI::UserInput();
+        y2milestone("ret=%1",ret);
+
+        if (ret == `ok || ret == `next) {
+            any selected = UI::QueryWidget (`images_rbg, `CurrentButton);
+            any image_type = UI::QueryWidget (`own_images_rbg, `CurrentButton);
+            AutoinstSoftware::image["run_kickoff"] = true;
+            if (selected == `inst_from_images) {
+                Installation::image_installation = true;
+                AutoinstSoftware::image = $[];
+            } else if( selected == `dont_inst_from_images ) {
+                Installation::image_installation = false;
+                if( image_type == `create_image ) {
+                    AutoinstSoftware::image["image_location"]  = (string)UI::QueryWidget ( `image_location, `Value );
+                    AutoinstSoftware::image["image_name"]      = (string)UI::QueryWidget ( `image_name, `Value );
+                    AutoinstSoftware::createImage("");
+                } else if( image_type == `create_iso ) {
+                    AutoinstSoftware::createISO();
+                }
+            }
+            y2milestone ("Changed by user, Installation from images will be used: %1", Installation::image_installation);
+        } else if( ret == `create_image ) {
+                UI::ChangeWidget(`id(`image_location), `Enabled, true );
+                UI::ChangeWidget(`id(`image_name),     `Enabled, true );
+                if( size(AutoinstSoftware::patterns) > 0 ) {
+                    AutoinstSoftware::image["image_location"] = (string)UI::QueryWidget ( `image_location, `Value );
+                    AutoinstSoftware::image["image_name"]     = (string)UI::QueryWidget ( `image_name, `Value );
+                } else {
+                    Popup::Warning( _("you need to do the software selection before creating an image") );
+                }
+        } else if( ret == `create_iso ) {
+                UI::ChangeWidget(`id(`image_location), `Enabled, false );
+                UI::ChangeWidget(`id(`image_name),     `Enabled, false );
+                AutoinstSoftware::image["image_name"] = "image";
+                if( size(AutoinstSoftware::patterns) <= 0 )
+                    Popup::Warning( _("you need to do the software selection before creating an image") );
+        } else if( ret == `inst_from_images || ret == `dont_inst_from_images ) {
+                any selected = UI::QueryWidget (`images_rbg, `CurrentButton);
+                UI::ChangeWidget(`id(`create_image),   `Enabled, selected == `dont_inst_from_images );
+                UI::ChangeWidget(`id(`create_iso),     `Enabled, selected == `dont_inst_from_images );
+                UI::ChangeWidget(`id(`image_location), `Enabled, selected == `dont_inst_from_images );
+                UI::ChangeWidget(`id(`image_name),     `Enabled, selected == `dont_inst_from_images );
+                if( ret == `inst_from_images ) {
+                        UI::ChangeWidget(`id(`create_image),   `Value,   false );
+                        UI::ChangeWidget(`id(`create_iso),     `Value,   false );
+                }
+        }
+    } while( ret != `ok && ret != `next && ret != `abort );
 
     Wizard::CloseDialog ();
     return ret;
@@ -190,3 +283,5 @@ return ret;
 /* EOF */
 
 }
+
+/* ex: set tabstop=8 expandtab: */ 
