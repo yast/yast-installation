@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Feb 17 11:05:12 CET 2010 - ug@suse.de
+
+- clone checkbox at the end of the installation is always
+  enabled now and can install the autoyast2 package if needed
+  (bnc#547486)
+
+-------------------------------------------------------------------
 Mon Feb 15 15:48:51 CET 2010 - ug@suse.de
 
 - UI for autoinstallation images added to deploy_image_auto
