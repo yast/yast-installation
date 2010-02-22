@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Feb 22 11:12:36 CET 2010 - kmachalkova@suse.cz
+
+- Process files in _datadir/autoinstall/modules with 
+  %suse_update_desktop_file. This passes their strings into 
+  translation (bnc#549944)
+- 2.17.65
+
+-------------------------------------------------------------------
 Tue Feb  9 14:49:33 CET 2010 - locilka@ssue.cz
 
 - Fixed license agreement check box visibility (BNC #571846).

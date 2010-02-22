@@ -114,6 +114,9 @@ YaST Installation - auto-generated documentation.
 @BUILD@
 
 @INSTALL@
+for f in `find %{buildroot}%{_datadir}/autoinstall/modules -name "*.desktop"`; do
+    %suse_update_desktop_file $f
+done 
 
 @CLEAN@
 
@@ -134,7 +137,7 @@ YaST Installation - auto-generated documentation.
 @moduledir@/*.ycp
 @moduledir@/*.ybc
 @desktopdir@/*.desktop
-/usr/share/autoinstall/modules/deploy_image.desktop
+/usr/share/autoinstall/modules/*.desktop
 /usr/share/YaST2/schema/autoyast/rnc/deploy_image.rnc
 %dir /usr/share/autoinstall
 %dir /usr/share/autoinstall/modules
