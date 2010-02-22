@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Feb 22 17:48:57 CET 2010 - locilka@suse.cz
+
+- Documented YaST RELAX NG schema (FATE #305551).
+- 2.17.66
+
+-------------------------------------------------------------------
 Mon Feb 22 11:12:36 CET 2010 - kmachalkova@suse.cz
 
 - Process files in _datadir/autoinstall/modules with 
