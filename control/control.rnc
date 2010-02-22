@@ -1,8 +1,9 @@
 default namespace = "http://www.suse.com/1.0/yast2ns"
 namespace a = "http://relaxng.org/ns/compatibility/annotations/1.0"
 namespace config = "http://www.suse.com/1.0/configns"
+datatypes xsd = "http://www.w3.org/2001/XMLSchema-datatypes"
 
-# types
+## Defined data-types
 
 BOOLEAN =
   (
@@ -28,6 +29,11 @@ LIST =
 ANY =
   (
     BOOLEAN | INTEGER | SYMBOL | LIST | text
+  )
+
+YES_NO =
+  (
+    "yes" | "no"
   )
 
 # types
@@ -71,7 +77,6 @@ globals_elements =
     | copy_to_system
     | autoconfiguration_enabled_modules
     | automatic_configuration
-    | ac_redraw_and_ignore
     | displaymanager_shutdown
     | enable_kdump
     | polkit_default_privs
@@ -82,55 +87,91 @@ globals_elements =
     | timezone
     | enable_autologin
     | runlevel
-    | debug_deploying
     | require_registration
     | services_proposal
 
-additional_kernel_parameters = element additional_kernel_parameters { text }
-incomplete_translation_treshold = element incomplete_translation_treshold { text }
-base_product_license_directory = element base_product_license_directory { text }
-ui_mode = element ui_mode { text }
-displaymanager_shutdown = element displaymanager_shutdown { text }
-polkit_default_privs = element polkit_default_privs { text }
-default_subworkflow = element default_subworkflow { text }
-language = element language { text }
-timezone = element timezone { text }
-runlevel = element runlevel { text }
+## Default kernel parameters proposed by bootloader
+additional_kernel_parameters =		element additional_kernel_parameters { text }
+## How much per cent is the minimum coverage of translations to consider
+## it being 'complete'. Less are reported if user tries to switch to such
+## language during installation / upgrade.
+incomplete_translation_treshold =	element incomplete_translation_treshold { text }
+## Directory where the base-product (e.g., SLES) license files are stored
+base_product_license_directory =	element base_product_license_directory { text }
+## Defines an UI mode used in some modules to differentiate between
+## 'simple' and 'expert' (obsolete).
+ui_mode =				element ui_mode { "expert" | "simple" }
+## Writes DISPLAYMANAGER_SHUTDOWN to /etc/sysconfig/displaymanager
+## if set
+displaymanager_shutdown =		element displaymanager_shutdown { text }
+## Writes POLKIT_DEFAULT_PRIVS to /etc/sysconfig/security
+## if set
+polkit_default_privs =			element polkit_default_privs { text }
+## Defines the default subworkflow name (smaller subworkflow
+## created from another workflow).
+## Used by Wagon.
+default_subworkflow =			element default_subworkflow { text }
+## Default language
+language =				element language { text }
+## Default timezone
+timezone =				element timezone { text }
+## Default runlevel
+runlevel =				element runlevel { text }
 
-debug_workflow = element debug_workflow { BOOLEAN }
-enable_autologin = element enable_autologin { BOOLEAN }
-enable_firewall = element enable_firewall { BOOLEAN }
-firewall_enable_ssh = element firewall_enable_ssh { BOOLEAN }
-write_hostname_to_hosts = element write_hostname_to_hosts { BOOLEAN }
-run_init_scripts_in_parallel = element run_init_scripts_in_parallel { BOOLEAN }
-inform_about_suboptimal_distribution = element inform_about_suboptimal_distribution { BOOLEAN }
-skip_language_dialog = element skip_language_dialog { BOOLEAN }
-enable_clone = element enable_clone { BOOLEAN }
-enable_register_hwdata = element enable_register_hwdata { BOOLEAN }
-enable_register_optional = element enable_register_optional { BOOLEAN }
-display_register_forcereg = element display_register_forcereg { BOOLEAN }
-disable_register_w3m = element disable_register_w3m { BOOLEAN }
-register_monthly = element register_monthly { BOOLEAN }
-manual_online_update = element manual_online_update { BOOLEAN }
-root_password_as_first_user = element root_password_as_first_user { BOOLEAN }
-root_password_ca_check = element root_password_ca_check { BOOLEAN }
-show_online_repositories = element show_online_repositories { BOOLEAN }
-online_repositories_default = element online_repositories_default { BOOLEAN }
-show_addons = element show_addons { BOOLEAN }
-addons_default = element addons_default { BOOLEAN }
-enable_autoconfiguration = element enable_autoconfiguration { BOOLEAN }
-autoconfiguration_default = element autoconfiguration_default { BOOLEAN }
-kexec_reboot = element kexec_reboot { BOOLEAN }
-rle_offer_rulevel_4 = element rle_offer_rulevel_4 { BOOLEAN }
-default_ntp_setup = element default_ntp_setup { BOOLEAN }
-enable_kdump = element enable_kdump { BOOLEAN }
-debug_deploying = element debug_deploying { BOOLEAN }
-require_registration = element require_registration { BOOLEAN }
+## Debugging feature, makes workflow manaher to write
+## more detailed log entries
+debug_workflow =			element debug_workflow { BOOLEAN }
+## Default value for autologin
+enable_autologin =			element enable_autologin { BOOLEAN }
+## Default value for firewall
+enable_firewall =			element enable_firewall { BOOLEAN }
+## Default value for SSHD in firewall (open port)
+firewall_enable_ssh =			element firewall_enable_ssh { BOOLEAN }
+## Default value whether to write a system hostname to /etc/hosts
+write_hostname_to_hosts =		element write_hostname_to_hosts { BOOLEAN }
+## Defines whether startup scripts should run in a parallel mode.
+## This speeds the starting up but it is worse for debugging.
+run_init_scripts_in_parallel =		element run_init_scripts_in_parallel { BOOLEAN }
+inform_about_suboptimal_distribution =	element inform_about_suboptimal_distribution { BOOLEAN }
+skip_language_dialog =			element skip_language_dialog { BOOLEAN }
+## Defines whether an AytoYaST cloning feature should be enabled
+enable_clone =				element enable_clone { BOOLEAN }
+## Default value for 'send hardware data' with registration
+enable_register_hwdata =		element enable_register_hwdata { BOOLEAN }
+## Default value for 'send optional system data' with registration
+enable_register_optional =		element enable_register_optional { BOOLEAN }
+display_register_forcereg =		element display_register_forcereg { BOOLEAN }
+disable_register_w3m =			element disable_register_w3m { BOOLEAN }
+register_monthly =			element register_monthly { BOOLEAN }
+manual_online_update =			element manual_online_update { BOOLEAN }
+root_password_as_first_user =		element root_password_as_first_user { BOOLEAN }
+root_password_ca_check =		element root_password_ca_check { BOOLEAN }
+show_online_repositories =		element show_online_repositories { BOOLEAN }
+online_repositories_default =		element online_repositories_default { BOOLEAN }
+show_addons =				element show_addons { BOOLEAN }
+addons_default =			element addons_default { BOOLEAN }
+enable_autoconfiguration =		element enable_autoconfiguration { BOOLEAN }
+autoconfiguration_default =		element autoconfiguration_default { BOOLEAN }
+## Defines whether kexec is the preferred mode instead of rebooting
+## between the first and the second stage of installation
+kexec_reboot =				element kexec_reboot { BOOLEAN }
+## Defines whether a special runlevel 4 should be offered
+rle_offer_rulevel_4 =			element rle_offer_rulevel_4 { BOOLEAN }
+default_ntp_setup =			element default_ntp_setup { BOOLEAN }
+## Defines whether kdump is enabled by default
+enable_kdump =				element enable_kdump { BOOLEAN }
+require_registration =			element require_registration { BOOLEAN }
 
+## Defines which pieces of installation system should be copied to
+## the installed system before rebooting to second stage.
 save_instsys_content = element save_instsys_content {
     LIST,
     element save_instsys_item {
+	## Where to copy the installation-system file or directory
+	## Absolut path is required.
 	element system_directory { text } &
+	## Which file or directory to copy to installed system
+	## Absolut path is required.
 	element instsys_directory { text }
     }+
 }
@@ -155,18 +196,22 @@ autoconfiguration_enabled_modules = element autoconfiguration_enabled_modules {
     element module { text }+
 }
 
-ac_redraw_and_ignore = element ac_redraw_and_ignore {
-    LIST,
-    element ac_item { text }+
-}
-
+## Describes the automatic configuration called in the second stage.
+## Proposed values are written to the system without asking user.
 automatic_configuration = element automatic_configuration {
     LIST,
+    ## One configuration step
     element ac_step {
-	element unique_id {text} &
+	element unique_id { text } &
+	## ID used in texts
 	element text_id { text }? &
+	## Name of the icon file (without suffix)
 	element icon { text }? &
+	## Type of a configuration step.
+	## Scripts are called directly.
+	## Proposals are all at first called with 'MakeProposal' and then 'Write' parameters.
 	element type { "scripts" | "proposals" }? &
+	element unique_id { text } &
 	element ac_items {
 	    LIST,
 	    element ac_item { text }+
@@ -200,6 +245,7 @@ subworkflows = element subworkflows {
     }+
 }
 
+## Global variables
 globals = element globals {
     globals_elements*
 }
@@ -234,20 +280,27 @@ software_elements =
     | kernel_packages
     | packages_transmogrify
 
+## Whether it is allowed to delete a package during upgrade
 delete_old_packages = element delete_old_packages { BOOLEAN }
 selection_type = element selection_type { SYMBOL }
+## System scenario selected by default.
+## Used in inst_scenarios client.
 default_system_scenario = element default_system_scenario { text }
+## Desktop selected by default
 default_desktop = element default_desktop { text }
 display_support_status = element display_support_status { BOOLEAN }
 silently_downgrade_packages = element silently_downgrade_packages { BOOLEAN }
 only_update_selected = element only_update_selected { BOOLEAN }
 online_repos_preselected = element online_repos_preselected { BOOLEAN }
 external_sources_link = element external_sources_link { text }
+## Packages that should be removed by the upgrade.
+## Comma and/or space-separated list of packages
 dropped_packages = element dropped_packages { text }
+
 base_selection = element base_selection { text }
 software_base = element base { text }
 
-# a client that is called to modifiy the list of selected kernel packages
+## a client that is called to modifiy the list of selected kernel packages
 packages_transmogrify = element packages_transmogrify { text }
 
 software_addons = element addons {
@@ -270,11 +323,16 @@ delete_old_packages_reverse_list = element delete_old_packages_reverse_list {
     element regexp_item { text }+
 }
 
+## Scenarios supported by inst_scenarios client
 system_scenarios = element system_scenarios {
     LIST,
+    ## One scenario item
     element system_scenario {
+	## Unique id that points to texts
 	element id { text } &
+	## Space or tab-separated list of patterns required by a particular scenario
 	element patterns { text } &
+	## Name of an icon file (without suffix)
 	element icon { text }
     }+
 }
@@ -300,8 +358,10 @@ only_update_selected_reverse_list = element only_update_selected_reverse_list {
     element regexp_item { text }+
 }
 
+## List of products supported to be upgraded by this product
 products_supported_for_upgrade = element products_supported_for_upgrade {
     LIST,
+    ## One regular expression to match a product to upgrade
     element regexp_item { text }+
 }
 
@@ -328,6 +388,7 @@ packages_affecting_pkg_manager = element packages_affecting_pkg_manager {
     element package { text }+
 }
 
+## Software / Package-manager related variables
 software = element software {
     software_elements*
 }
@@ -354,22 +415,22 @@ partitioning_elements =
     | remove_special_partitions
     | partitions
 
-evms_config = element evms_config { BOOLEAN }
-try_separate_home = element try_separate_home { BOOLEAN }
-limit_try_home = element limit_try_home { text }
-root_space_percent = element root_space_percent { text }
-root_base_size = element root_base_size { text }
-root_max_size = element root_max_size { text }
-proposal_lvm = element proposal_lvm { BOOLEAN }
-proposal_evms = element proposal_evms { BOOLEAN }
-vm_desired_size = element vm_desired_size { text }
-vm_home_max_size = element vm_home_max_size { text }
-boot_evms = element boot_evms { BOOLEAN }
-prefer_remove = element prefer_remove { BOOLEAN }
-remove_special_partitions = element remove_special_partitions { BOOLEAN }
-vm_keep_unpartitioned_region = element vm_keep_unpartitioned_region { BOOLEAN }
+evms_config =			element evms_config { BOOLEAN }
+try_separate_home =		element try_separate_home { BOOLEAN }
+limit_try_home =		element limit_try_home { text }
+root_space_percent =		element root_space_percent { text }
+root_base_size =		element root_base_size { text }
+root_max_size =			element root_max_size { text }
+proposal_lvm =			element proposal_lvm { BOOLEAN }
+proposal_evms =			element proposal_evms { BOOLEAN }
+vm_desired_size =		element vm_desired_size { text }
+vm_home_max_size =		element vm_home_max_size { text }
+boot_evms =			element boot_evms { BOOLEAN }
+prefer_remove =			element prefer_remove { BOOLEAN }
+remove_special_partitions =	element remove_special_partitions { BOOLEAN }
+vm_keep_unpartitioned_region =	element vm_keep_unpartitioned_region { BOOLEAN }
 # used by HASI Add-On
-use_separate_multipath_module = element use_separate_multipath_module { BOOLEAN }
+use_separate_multipath_module =	element use_separate_multipath_module { BOOLEAN }
 
 # these have to be defined by Storage
 partitions = element partitions {
@@ -382,6 +443,7 @@ partitions = element partitions {
     }*
 }
 
+## Partitioning-related variables
 partitioning = element partitioning {
     partitioning_elements*
 }
@@ -395,10 +457,11 @@ network_elements =
     | network_manager
     | startmode
 
-force_static_ip = element force_static_ip { BOOLEAN }
-network_manager = element network_manager { text }
-startmode = element startmode { text }
+force_static_ip =	element force_static_ip { BOOLEAN }
+network_manager =	element network_manager { text }
+startmode =		element startmode { text }
 
+## Network configuration-related variables
 network = element network {
     network_elements*
 }
@@ -407,6 +470,7 @@ network = element network {
 
 # clone_modules
 
+## List of modules used by AutoYaST for cloning the configuration
 clone_modules = element clone_modules {
     LIST,
     element clone_module { text }+
@@ -416,6 +480,7 @@ clone_modules = element clone_modules {
 
 # texts
 
+## Control-file texts marked for translation
 texts = element texts {
     element * {
 	element label { text }
@@ -426,32 +491,65 @@ texts = element texts {
 
 # proposals
 
-# There are two types of element 'proposal_modules'
-# 1.) proposal_modules { name { text }, presentation_order { text } }
-# 2.) proposal_modules { text }
+## There are two types of element 'proposal_modules'
+##  1.) proposal_modules with attributes 'name' and 'presentation_order'
+##  2.) proposal_modules with inexplicit 'name'
+
+## Proposal module with 'name' and 'presentation_order'
 proposal_module = element proposal_module {
+    ## Proposal name
     element name { text }? &
+    ## Presentation order in the current proposal (integer).
+    ## Lower numbers first.
     element presentation_order { text }? &
+    ## Inexplicit proposal name if not explicitely defined by 'name' and 'presentation_order'
     text?
 }
 
+## Proposal defines one configuration step with one or more proposal_modules
+## inside. Proposal modules usually depend on each other so the order does
+## matter. If you want to list proposal modules in a different order, use
+## 'presentation' order attribute.
 proposal = element proposal {
+    ## 
     element label { text }? &
+    ## Defines for which architectures is this proposal used.
+    ## Comma-separated list of architectures as seen in
+    ## /usr/share/YaST2/modules/Arch.ycp
+    ## Valid for all architectures if not explicitely defined.
+    ## See Arch::arch_short
     element archs { text }? &
+    ## Defines for which mode is this proposal used.
+    ## Comma-separated list of modes as seen in
+    ## /usr/share/YaST2/modules/Mode.ycp
+    ## Valid for all modes if not explicitely defined.
     element mode { text }? &
+    ## Defines for which stage is this proposal used.
+    ## Comma-separated list of stages as seen in
+    ## /usr/share/YaST2/modules/Stage.ycp
+    ## Valid for all stages if not explicitely defined.
     element stage { text } &
+    ## Proposal name used later to define which proposal to use
     element name { text }? &
     element type { text }? &
-    element unique_id { text} &
-    element enable_skip { "yes" | "no" }? &
+    ## Defines whether a proposal can be skipped
+    element enable_skip { YES_NO }? &
+    ## List of modules in proposal
     element proposal_modules {
 	LIST,
 	proposal_module+
     }? &
+    ## Defines how/whether tabs are used in proposal, e.g.,
+    ## Simple tab vs. Expert tab.
+    ## If tabs are used, do not define 'proposal_modules' directly
+    ## in 'proposal'
     element proposal_tabs {
 	LIST,
+	## Defines one tab in a proposal
 	element proposal_tab {
+	    ## Label on the tab
 	    element label { text } &
+	    ## List of proposal modules
 	    element proposal_modules {
 		LIST,
 		proposal_module+
@@ -460,6 +558,7 @@ proposal = element proposal {
     }?
 }
 
+# List of all proposals in control file
 proposals = element proposals {
     LIST,
     proposal+
@@ -469,59 +568,104 @@ proposals = element proposals {
 
 # workflows
 
+# Describes one step in a workflow
 module = element module {
+    ## Name of a step.
+    ## Used as an identification for updating, removing etc. of steps.
+    ## If 'execute' is not used, 'name' also defines name of a YCP script
+    ## called by YaST. In installation or upgrade, all script have to match
+    ## inst_(.*) regexp.
     element name { text }? &
+    ## Defines exact name of a YCP script (without .ycp suffix)
     element execute { text }? &
+    ## Defines a configuration step shown in workflow with steps.
+    ## If empty, a label defined in closes step before is used.
     element label { text }? &
+    ## Defines a heading step. Heading usually does not have any client
+    ## to run and defines only the major step in workflow.
     element heading { text }? &
+    ## Defines for which architectures is this module used.
+    ## Comma-separated list of architectures as seen in
+    ## /usr/share/YaST2/modules/Arch.ycp
+    ## Valid for all architectures if not explicitely defined.
+    ## See Arch::arch_short
     element archs { text }? &
+    ## Defines which proposal to call in this step.
+    ## Proposal 'name' is used.
     element proposal { text }? &
-    element enable_back { "yes" | "no" }? &
-    element enable_next { "yes" | "no" }? &
+    ## Defines whether the [Back] button is enabled by default in this step.
+    element enable_back { YES_NO }? &
+    ## Defines whether the [Next] button is enabled by default in this step.
+    element enable_next { YES_NO }? &
+    ## Additional module arguments
     element arguments {
-	element first_run { "yes" | "no" }?
+	element first_run { YES_NO }?
 	| element * { text }*
 	# used in autoyast
 	| text
     }? &
+    ## Should YaST retranslate the whole screen after this client is called?
+    ## Default is 'true'.
     element retranslate { BOOLEAN }? &
     element update { BOOLEAN }? &
+    ## Defines whether a module is enabled by default.
+    ## Default value is 'true'
     element enabled { BOOLEAN }? &
+    ## Script body called before the described step
     element prescript {
-	# @example
-	# shell
+	## @example
+	## shell
 	element interpreter { text } &
-	# @example
-	# <![CDATA[#!/bin/sh
-	# echo test > /tmp/test
-	# ]]>
+	## @example
+	## <![CDATA[#!/bin/sh
+	## echo test > /tmp/test
+	## ]]>
 	element source { text }
     }? &
+    ## Script body called after the described step
     element postscript {
 	element interpreter { text } &
 	element source { text }
     }?
 }
 
+## Defines the default workflow settings
 workflow_defaults = element defaults {
+    ## For which architectures is this default valid
     element archs { text }? &
-    # used in autoyast
+    ## Special patemeters used by AutoYaST
     element arguments { text }? &
-    element enable_back { "yes" | "no" }? &
-    element enable_next { "yes" | "no" }?
+    ## Is [Back] button enabled by default?
+    ## If not set, default values is 'yes'.
+    element enable_back { YES_NO }? &
+    ## Is [Next] button enabled by default?
+    ## If not set, default values is 'yes'.
+    element enable_next { YES_NO }?
 }
 
+## Workflow, defines for instance, 'second stage installation'
 workflow = element workflow {
     workflow_defaults? &
+    ## Superstep name visible in UI
     element label { text }? &
+    ## Defines for which mode is this proposal used.
+    ## Comma-separated list of modes as seen in
+    ## /usr/share/YaST2/modules/Mode.ycp
+    ## Valid for all modes if not explicitely defined.
     element mode { text } &
+    ## Defines for which stage is this workflow used.
+    ## Comma-separated list of stages as seen in
+    ## /usr/share/YaST2/modules/Stage.ycp
+    ## Valid for all stages if not explicitely defined.
     element stage { text } &
+    ## List of modules in workflow
     element modules {
 	LIST,
 	module+
     }
 }
 
+# List of all defined workflows
 workflows = element workflows {
     LIST,
     workflow+
@@ -586,7 +730,7 @@ update_proposal = element proposal {
     element mode { text } &
     element label { text }? &
     element name { text } &
-    element enable_skip { "yes" | "no" }? &
+    element enable_skip { YES_NO }? &
     element append_modules {
 	LIST,
 	element append_module { text }+

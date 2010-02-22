@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Feb 22 17:48:57 CET 2010 - locilka@suse.cz
+
+- Documented YaST RELAX NG schema (FATE #305551).
+
+-------------------------------------------------------------------
 Wed Feb 17 11:05:12 CET 2010 - ug@suse.de
 
 - clone checkbox at the end of the installation is always
