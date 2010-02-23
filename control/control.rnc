@@ -202,6 +202,7 @@ automatic_configuration = element automatic_configuration {
     LIST,
     ## One configuration step
     element ac_step {
+	## Unique ID of the automatic configuration step
 	element unique_id { text } &
 	## ID used in texts
 	element text_id { text }? &
@@ -211,7 +212,6 @@ automatic_configuration = element automatic_configuration {
 	## Scripts are called directly.
 	## Proposals are all at first called with 'MakeProposal' and then 'Write' parameters.
 	element type { "scripts" | "proposals" }? &
-	element unique_id { text } &
 	element ac_items {
 	    LIST,
 	    element ac_item { text }+
@@ -511,6 +511,8 @@ proposal_module = element proposal_module {
 ## matter. If you want to list proposal modules in a different order, use
 ## 'presentation' order attribute.
 proposal = element proposal {
+    ## Unique ID of the proposal
+    element unique_id { text } &
     ## 
     element label { text }? &
     ## Defines for which architectures is this proposal used.
