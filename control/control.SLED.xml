@@ -186,7 +186,7 @@ textdomain="control"
 		<label_id>service_sfcb</label_id>
 		<service_names>sfcb</service_names>
 		<firewall_plugins>sblim-sfcb</firewall_plugins>
-		<enabled_by_default config:type="boolean">true</enabled_by_default>
+		<enabled_by_default config:type="boolean">false</enabled_by_default>
 		<packages>sblim-sfcb</packages>
 	    </service>
 	</services_proposal>

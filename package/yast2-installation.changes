@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Mar  2 14:30:31 CET 2010 - locilka@suse.cz
+
+- CIM service is proposed as disabled by default (BNC #584524).
+
+-------------------------------------------------------------------
 Mon Feb 22 17:48:57 CET 2010 - locilka@suse.cz
 
 - Documented YaST RELAX NG schema (FATE #305551).
