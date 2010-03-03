@@ -31,5 +31,5 @@ export Y2DEBUGONCRASH=1
 # 8.2) report used logfile size and lognum
 #---------------------------------------------
 log "\tSet YaST2 LOG parameters:"
-log "\tMaximum log size:  $Y2MAXLOGSIZE Kb"
+log "\tMaximum log size:  $Y2MAXLOGSIZE kB"
 log "\tMaximum log count: $Y2MAXLOGNUM"
