@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar 04 17:20:39 CET 2010 - aschnell@suse.de
+
+- use accelerated driver for Intel GFX (bnc #583161)
+- 2.17.67
+
+-------------------------------------------------------------------
 Tue Mar  2 14:30:31 CET 2010 - locilka@suse.cz
 
 - CIM service is proposed as disabled by default (BNC #584524).
