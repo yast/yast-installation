@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Mar  9 15:35:48 CET 2010 - locilka@suse.cz
+
+- Fixed calling update.post from DUD (BNC #586609).
+- 2.17.68
+
+-------------------------------------------------------------------
 Thu Mar 04 17:20:39 CET 2010 - aschnell@suse.de
 
 - use accelerated driver for Intel GFX (bnc #583161)
