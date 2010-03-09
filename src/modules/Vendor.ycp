@@ -70,7 +70,7 @@
 	    "    [ -s \"$TMPFILE\" ] && echo \"# Additional rpm output:\">>" + logfile + " && sed 's/^\\(.*\\)/# \\1/' $TMPFILE>>" + logfile + "; \n" +
 	    "    rm -rf $TMPFILE; \n" +
 	    // Running update.post script
-	    "    [ -f \"update.post\" ] && /bin/chmod +x \"update.post\" && \"update.post\" \"$i\"; \n" +
+	    "    [ -f \"update.post\" ] && /bin/chmod +x \"update.post\" && \"./update.post\" \"$i\"; \n" +
 	    "done;";
 
 	    y2milestone ("Calling:
