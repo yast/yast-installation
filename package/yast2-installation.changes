@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar 11 16:10:00 CET 2010 - aschnell@suse.de
+
+- fixed generated xorg.conf for accelerated config (bnc #586533)
+- 2.17.69
+
+-------------------------------------------------------------------
 Tue Mar  9 15:35:48 CET 2010 - locilka@suse.cz
 
 - Fixed calling update.post from DUD (BNC #586609).

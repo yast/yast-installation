@@ -227,6 +227,15 @@ function prepare_for_x11 () {
 			sed -e "s#ChangeMe#$XServer#" /etc/X11/xorg.conf \
 			> /etc/X11/xorg.conf.new
 			mv /etc/X11/xorg.conf.new /etc/X11/xorg.conf
+			# change resolution to fb resolution
+			if [ -f /sys/class/graphics/fb0/virtual_size ]; then
+				resx=$((`sed 's/,.*//' </sys/class/graphics/fb0/virtual_size` + 0))
+				resy=$((`sed 's/.*,//' </sys/class/graphics/fb0/virtual_size` + 0))
+				if [ $resx -gt 800 -a $resy -ge 600 ]; then
+					sed -i -e 's/Modes[ 	]*"800x600"/Modes	"'${resx}x$resy'" "800x600"/' \
+					    /etc/X11/xorg.conf
+				fi
+			fi
 		fi
 		# check DefaultDepth setup
 		if [ -f /sys/class/graphics/fb0/name ];then
