@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Mar 12 13:19:15 CET 2010 - kmachalkova@suse.cz
+
+- Port from SLE11 SP1: process files in _datadir/autoinstall/modules 
+  with %suse_update_desktop_file. This passes their strings into
+  translation (bnc#549944)
+
+-------------------------------------------------------------------
 Fri Mar 12 10:53:55 CET 2010 - locilka@suse.cz
 
 - Unique identification in inst_upgrade_urls switched from URL to
