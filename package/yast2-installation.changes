@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Fri Mar 12 10:53:55 CET 2010 - locilka@suse.cz
 
-- Unique identification inst_upgrade_urls switched from URL to
+- Unique identification in inst_upgrade_urls switched from URL to
   ALIAS (BNC #587517).
 - In case of re-adding CD/DVD media, user is asked to insert
   correct media before adding it (BNC #587517).
