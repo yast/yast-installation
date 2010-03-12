@@ -7,6 +7,7 @@ Fri Mar 12 10:53:55 CET 2010 - locilka@suse.cz
   correct media before adding it (BNC #587517).
 - Only upgrade packages if upgrading from SLES 11, otherwise use
   patterns for upgrade (BNC #587544).
+- 2.17.70
 
 -------------------------------------------------------------------
 Thu Mar 11 16:10:00 CET 2010 - aschnell@suse.de
