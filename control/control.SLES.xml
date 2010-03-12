@@ -127,9 +127,9 @@ textdomain="control"
 
 	<!-- By default, select new packages for installation -->
 	<only_update_selected config:type="boolean">false</only_update_selected>
-	<!-- For SLES10, do not install new packages by default, FATE #301844, bugzilla #233156 -->
+	<!-- For SLES 11, do not install new packages by default, FATE #301844, bugzilla #587544 -->
 	<only_update_selected_reverse_list config:type="list">
-	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10.*$</regexp_item>
+	    <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 11.*$</regexp_item>
 	</only_update_selected_reverse_list>
 
 	<!-- Only upgrading from SLES10 or SLES11 is supported, otherwise warning is displayed -->
