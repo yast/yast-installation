@@ -181,12 +181,17 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 
     list <map> urls = [];
 
+    map <string, string> id_to_name = $[];
+
     void RedrawListTableUI () {
 	integer currentitem = (integer) UI::QueryWidget (`id ("table_of_repos"), `CurrentItem);
 
 	integer counter = -1;
 	list <term> items = maplist (map one_url, urls, {
 	    counter = counter + 1;
+
+	    id_to_name[sformat ("ID: %1", counter)] = one_url["name"]:_("Unknown");
+
 	    return `item (
 		`id (counter),
 		(one_url["url_will_be_enabled"]:false == true ?
@@ -216,16 +221,16 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	UI::ChangeWidget (`id (`toggle), `Enabled, enable_buttons);
     }
 
-    boolean FindCurrentURLStatus (string baseurl) {
-	if (baseurl == "" || baseurl == nil) {
-	    y2error ("Base URL not defined!");
+    boolean FindCurrentRepoStatus (string alias) {
+	if (alias == "" || alias == nil) {
+	    y2error ("alias URL not defined!");
 	    return false;
 	}
 
 	boolean ret = false;
 
 	foreach (map one_url, already_registered_repos, {
-	    if (baseurl == one_url["url"]:"-A-") {
+	    if (alias == one_url["alias"]:"-A-") {
 		ret = true;
 		break;
 	    }
@@ -370,7 +375,7 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	}
 
 	integer id = -1;
-	string url_url = "";
+	string url_alias = "";
 
 	urls = maplist (map one_url, urls, {
 	    id = id + 1;
@@ -379,11 +384,11 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	    one_url["id"] = sformat ("ID: %1", id);
 
 	    // BNC #429059
-	    if (haskey (one_url, "url") && one_url["url"]:nil != nil) {
-		url_url = sformat ("%1", one_url["url"]:"");
-		one_url["url_will_be_enabled"] = FindCurrentURLStatus (url_url);
+	    if (haskey (one_url, "alias") && one_url["alias"]:nil != nil) {
+		url_alias = sformat ("%1", one_url["alias"]:"");
+		one_url["url_will_be_enabled"] = FindCurrentRepoStatus (url_alias);
 	    } else {
-		y2warning ("No 'url' defined: %1", one_url);
+		y2warning ("No 'alias' defined: %1", one_url);
 		one_url["url_will_be_enabled"] = false;
 	    }
 
@@ -397,9 +402,17 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
      * from list of urls found on the system.
      */
     void RemoveInstallationReposFromUpgrededSystemOnes () {
+	// Works only for the very first registered (installation) repo
+	boolean found = false;
+
 	// All already registered repos
 	foreach (map one_registered_repo, already_registered_repos, {
-	    // if an installation repository is enabled, skip it
+	    if (found == true) {
+		break;
+	    }
+	    found = true;
+
+	    // if an installation repository is disabled, skip it
 	    if (one_registered_repo["enabled"]:true == false) {
 		y2milestone ("Repo %1 is not enabled, skipping", one_registered_repo["url"]:one_registered_repo["media"]:nil);
 		return;
@@ -647,6 +660,31 @@ Configure it?"),
 	});
     }
 
+    boolean InsertCorrectMediaHandler (string url, string name) {
+	if (! regexpmatch (url, "^cd:/") && ! regexpmatch (url, "^dvd:/")) {
+	    y2milestone ("URL is not a CD/DVD");
+	    return true;
+	}
+
+	// true - OK, continue
+	if (Popup::AnyQuestion (
+	    _("Correct Media Requested"),
+	    sformat(_("Make sure that media with label %1
+is in the CD/DVD drive.
+
+If you skip it, repository will not be added."), name),
+	    Label::OKButton(),
+	    Label::SkipButton(),
+	    `yes
+	) == true) {
+	    Pkg::SourceReleaseAll();
+	    return true;
+	}
+
+	// false - skip
+	return false;
+    }
+
     void IUU_AddEnabledRepositories (list <string> sources_to_add, map <string, string> & id_to_url) {
 	if (size (sources_to_add) == 0) {
 	    return;
@@ -661,19 +699,23 @@ Configure it?"),
 		y2milestone ("Adding repository: %1", one_id);
 		Progress::NextStep ();
 		string one_url = id_to_url[one_id]:"";
+		string repo_name = id_to_name[one_id]:"";
+		string pth = "/";
+
+		if (InsertCorrectMediaHandler (one_url, repo_name) != true) {
+		    y2warning ("Skipping source %1", one_id);
+		    return;
+		}
 
 		string repo_type = Pkg::RepositoryProbe (one_url, "/");
 		y2milestone ("Probed repository: %1 type: %2", one_url, repo_type);
 		
 		if (repo_type == nil || repo_type == "NONE") {
 		    y2error ("Cannot add repository");
+		    Report::Error (sformat(_("Cannot add repository %1
+URL: %2"), repo_name, one_url));
 		    return;
 		}
-
-		string repo_name = FindURLName (one_url);
-		// fallback
-		if (repo_name == nil) repo_name = "";
-		string pth = "/";
 
 		// see bnc #310209
 		// Adding repositories with their correct names
@@ -760,11 +802,13 @@ URL: %2"),
 	    foreach (string one_id, sources_to_add_disabled, {
 		Progress::NextStep ();
 		string one_url = id_to_url[one_id]:"";
-
-		string repo_name = FindURLName (one_url);
-		// fallback
-		if (repo_name == nil) repo_name = "";
+		string repo_name = id_to_name[one_id]:"";
 		string pth = "/";
+
+		if (InsertCorrectMediaHandler (one_url, repo_name) != true) {
+		    y2warning ("Skipping source %1", one_id);
+		    return;
+		}
 
 		// see bnc #310209
 		// Adding repositories with their correct names
