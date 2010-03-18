@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar 18 14:55:20 CET 2010 - locilka@suse.cz
+
+- Previously used repositories switched from enabled/disabled mode
+  to removed/enabled/disabled mode (BNC #588659).
+
+-------------------------------------------------------------------
 Fri Mar 12 13:19:15 CET 2010 - kmachalkova@suse.cz
 
 - Port from SLE11 SP1: process files in _datadir/autoinstall/modules 
