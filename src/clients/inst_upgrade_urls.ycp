@@ -169,7 +169,7 @@ you are upgrading:"))),
 	    _("<p>Here you see all software repositories found
 on the system you are upgrading. Enable the ones you want to include in the upgrade process.</p>") +
 	    // TRANSLATORS: help text 2/3
-	    _("<p>To enable or disable an URL, click on the
+	    _("<p>To enable, remove or disable an URL, click on the
 <b>Toggle Status</b> button or double-click on the respective table item.</p>") +
 	    // TRANSLATORS: help text 3/3
 	    _("<p>To change the URL, click on the <b>Change...</b> button.</p>"),
@@ -183,6 +183,15 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 
     map <string, string> id_to_name = $[];
 
+    map <string, string> status_map = $[
+	// TRANSLATORS: Table item status (repository)
+	"removed"	: _("Removed"),
+	// TRANSLATORS: Table item status (repository)
+	"enabled"	: _("Enabled"),
+	// TRANSLATORS: Table item status (repository)
+	"disabled"	: _("Disabled"),
+    ];
+
     void RedrawListTableUI () {
 	integer currentitem = (integer) UI::QueryWidget (`id ("table_of_repos"), `CurrentItem);
 
@@ -194,13 +203,7 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 
 	    return `item (
 		`id (counter),
-		(one_url["url_will_be_enabled"]:false == true ?
-		    // TRANSLATORS: Table item status (repository)
-		    _("Enabled")
-		    :
-		    // TRANSLATORS: Table item status (repository)
-		    _("Disabled")
-		),
+		status_map[one_url["new_status"]:"removed"]:_("Unknown"),
 		// TRANSLATORS: Fallback name for a repository
 		one_url["name"]:_("Unknown"),
 		one_url["url"]:""
@@ -221,17 +224,20 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	UI::ChangeWidget (`id (`toggle), `Enabled, enable_buttons);
     }
 
-    boolean FindCurrentRepoStatus (string alias) {
+    // 'removed'	-> currently not enabled
+    // 'enabled'	-> currently added as enabled
+    // 'disabled'	-> currently added as disabled
+    string FindCurrentRepoStatus (string alias) {
 	if (alias == "" || alias == nil) {
 	    y2error ("alias URL not defined!");
-	    return false;
+	    return "removed";
 	}
 
-	boolean ret = false;
+	string ret = "removed";
 
 	foreach (map one_url, already_registered_repos, {
 	    if (alias == one_url["alias"]:"-A-") {
-		ret = true;
+		ret = (one_url["enabled"]:false == true ? "enabled" : "disabled");
 		break;
 	    }
 	});
@@ -386,13 +392,13 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	    // BNC #429059
 	    if (haskey (one_url, "alias") && one_url["alias"]:nil != nil) {
 		url_alias = sformat ("%1", one_url["alias"]:"");
-		one_url["url_will_be_enabled"] = FindCurrentRepoStatus (url_alias);
+		one_url["new_status"] = FindCurrentRepoStatus (url_alias);
 	    } else {
 		y2warning ("No 'alias' defined: %1", one_url);
-		one_url["url_will_be_enabled"] = false;
+		one_url["new_status"] = "removed";
 	    }
 
-	    one_url["initial_url_status"]  = one_url["url_will_be_enabled"]:false;
+	    one_url["initial_url_status"]  = one_url["new_status"]:"removed";
 	    return one_url;
 	});
     }
@@ -407,6 +413,10 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 
 	// All already registered repos
 	foreach (map one_registered_repo, already_registered_repos, {
+	    if (one_registered_repo["enabled"]:true == false) {
+		return;
+	    }
+
 	    if (found == true) {
 		break;
 	    }
@@ -440,6 +450,23 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	});
     }
 
+    // BNC #583155: Removed/Enabled/Disabled
+    // Toggled this way: R/E/D/R/E/D/...
+    string ToggleStatus (map repo_map) {
+	string status = repo_map["new_status"]:"removed";
+
+	if (status == "removed") {
+	    status = "enabled";
+	} else if (status == "enabled") {
+	    status = "disabled";
+	// disabled
+	} else {
+	    status = "removed";
+	}
+
+	return status;
+    }
+
     symbol HandleOldSources () {
 	y2milestone ("Offering: %1", urls);
 	y2milestone ("Already registered: %1", already_registered_repos);
@@ -458,7 +485,8 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	    if (ui_ret == `toggle) {
 		integer currentitem = (integer) UI::QueryWidget (`id ("table_of_repos"), `CurrentItem);
 		if (currentitem != nil) {
-		    urls[currentitem, "url_will_be_enabled"] = (! urls[currentitem,"url_will_be_enabled"]:false);
+		    // BNC #583155: Removed/Enabled/Disabled
+		    urls[currentitem, "new_status"] = ToggleStatus (urls[currentitem]:$[]);
 		    RedrawListTableUI();
 		}
 		continue;
@@ -538,7 +566,8 @@ Configure it?"),
     }
 
     void SetAddRemoveSourcesProgress (
-	list <integer> & sources_to_remove, list <string> & sources_to_add,
+	list <integer> & sources_to_remove,
+	list <string> & sources_to_add,
 	list <string> & sources_to_add_disabled
     ) {
 	list <string> actions_todo  = [];
@@ -732,9 +761,15 @@ URL: %2"), repo_name, one_url));
 		y2milestone ("Adding repo (enabled): %1", repoadd);
 
 		integer new_id = Pkg::RepositoryAdd (repoadd);
-
-		if (new_id == nil) {
+		if (new_id == nil || new_id == -1) {
 		    y2error ("Error adding repository: %1", repoadd);
+		    Report::Error (sformat(
+			_("Cannot add enabled repository
+Name: %1
+URL: %2"),
+			repo_name,
+			one_url
+		    ));
 		    return;
 		}
 
@@ -817,6 +852,8 @@ URL: %2"),
 		    "name" : repo_name,
 		    "base_urls" : [one_url],
 		    "prod_dir" : pth,
+		    // bnc #543468, do not check aliases of repositories stored in Installation::destdir
+		    "check_alias" : false,
 		];
 		AdjustRepoSettings (repoadd, one_id);
 
@@ -829,6 +866,16 @@ URL: %2"),
 		y2milestone ("Adding repo (disabled): %1", repoadd);
 
 		integer new_id = Pkg::RepositoryAdd (repoadd);
+		if (new_id == nil || new_id == -1) {
+		    y2error ("Error adding repository: %1", repoadd);
+		    Report::Error (sformat(
+			_("Cannot add disabled repository
+Name: %1
+URL: %2"),
+			repo_name,
+			one_url
+		    ));
+		}
 	    });
     }
 
@@ -840,8 +887,32 @@ URL: %2"),
 	return true;
     }
 
+    integer FindMediaNr (string alias, string url) {
+	if (alias == "" || alias == nil) {
+	    y2error ("alias not defined!");
+	    return nil;
+	}
+
+	if (url == "" || url == nil) {
+	    y2error ("URL not defined!");
+	    return nil;
+	}
+
+	integer ret = nil;
+
+	foreach (map one_url, already_registered_repos, {
+	    if (alias == one_url["alias"]:"-A-" && url == one_url["url"]:"-A-") {
+		ret = one_url["media"]:-1;
+		break;
+	    }
+	});
+
+	return ret;
+    }
+
     symbol AddOrRemoveSources () {
 	list <integer> sources_to_remove = [];
+
 	list <string>  sources_to_add    = [];
 
 	map <string, string> id_to_url = $[];
@@ -865,7 +936,7 @@ URL: %2"),
 	    id_to_url[id] = url;
 
 	    // bnc #400823
-	    integer current_medianr = tointeger (regexpsub (id, "ID: (.*)", "\\1"));
+	    integer current_medianr = FindMediaNr (tostring(one_source["alias"]:nil), tostring(one_source["url"]:nil));
 
 	    if (do_not_remove == current_medianr) {
 		y2milestone ("Skipping source: %1 (installation repository)", do_not_remove);
@@ -875,21 +946,39 @@ URL: %2"),
 	    y2milestone ("Checking repo: %1", one_source);
 
 	    // Source should be enabled at the end
-	    if (one_source["url_will_be_enabled"]:nil == true) {
-		//if (current_medianr == nil) {
+	    if (one_source["new_status"]:"" == "enabled") {
+		if (one_source["initial_url_status"]:"" == "enabled") {
+		    y2milestone ("Source has been already enabled");
+		} else {
+		    // It's not yet enabled, add it
 		    sources_to_add = add (sources_to_add, id);
 		    y2milestone ("Source to add: %1", id);
-		//}
 
-	    // Source should be disabled at the end
-	    } else if (one_source["url_will_be_enabled"]:nil == false) {
-		// already registered
-		if (current_medianr != nil) {
+		    // It's been already added but in disabled state
+		    if (one_source["initial_url_status"]:"" == "disabled") {
+			sources_to_remove = add (sources_to_remove, current_medianr);
+			y2milestone ("Source to remove: %1", current_medianr);
+		    }
+		}
+
+	    // Source should be removed (not added)
+	    } else if (one_source["new_status"]:"" == "removed") {
+		if (one_source["initial_url_status"]:"" == "removed") {
+		    y2milestone ("Repository has been already removed");
+		} else {
 		    sources_to_remove = add (sources_to_remove, current_medianr);
 		    y2milestone ("Source to remove: %1", current_medianr);
 		}
 
-		// will be added
+	    // Source will be added in disabled state
+	    // BNC #583155
+	    } else if (one_source["new_status"]:"" == "disabled") {
+		// It's been already added in enabled state
+		if (one_source["initial_url_status"]:"" == "enabled") {
+		    sources_to_remove = add (sources_to_remove, current_medianr);
+		    y2milestone ("Source to remove: %1", current_medianr);
+		}
+
 		sources_to_add_disabled = add (sources_to_add_disabled, id);
 		y2milestone ("Source to add disabled: %1", id);
 	    }
@@ -928,8 +1017,10 @@ URL: %2"),
 
 	IUU_RemoveRepositories (sources_to_remove);
 
+	// Add repositories in enabled state
 	IUU_AddEnabledRepositories (sources_to_add, id_to_url);
 
+	// Add repositories in disabled state
 	IUU_AddDisabledRepositories (sources_to_add_disabled, id_to_url);
 
 	Progress::Finish();
@@ -990,10 +1081,13 @@ URL: %2"),
 	Pkg::TargetLoad();
 	Pkg::SourceStartManager (false);
 
-	foreach (integer one_id, Pkg::SourceGetCurrent (true), {
+	list <integer> current_repos_list = Pkg::SourceGetCurrent (false /* not only enabled */);
+	y2milestone ("Currently registered repos: %1", current_repos_list);
+
+	foreach (integer one_id, current_repos_list, {
 	    map source_data = Pkg::SourceGeneralData (one_id);
 	    source_data["media"] = one_id;
-	    
+
 	    already_registered_repos = add (already_registered_repos, source_data);
 	});
     }
