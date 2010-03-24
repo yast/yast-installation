@@ -136,9 +136,6 @@ this process can take some time.</p>
 			  `ProgressBar(`id(`progress), _("Progress"), max_steps, 0 )
 			  );
 
-    // bugzilla #241553 comment #7
-    if (!Mode::commandline ())
-	UI::SetProductName ("");
     if (! automatic_configuration && !Mode::commandline ()) {
 	Wizard::SetContents(
 			  // Dialog title for SuSEconfig dialog
