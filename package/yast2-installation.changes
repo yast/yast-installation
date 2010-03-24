@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Mar 24 07:40:55 UTC 2010 - lslezak@suse.cz
+
+- inst_suseconfig.ycp - do not reset UI product name
+  (&product; macro) (bnc#539906)
+
+-------------------------------------------------------------------
 Tue Jun 30 23:42:15 CEST 2009 - locilka@suse.cz
 
 - Fixed getting the IP address to reconnect to after reboot during
