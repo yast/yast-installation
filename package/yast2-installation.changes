@@ -3,6 +3,7 @@ Wed Mar 24 07:44:44 UTC 2010 - lslezak@suse.cz
 
 - inst_suseconfig.ycp - do not reset UI product name
   (&product; macro) (bnc#539906)
+- 2.17.72
 
 -------------------------------------------------------------------
 Thu Mar 18 14:55:20 CET 2010 - locilka@suse.cz
