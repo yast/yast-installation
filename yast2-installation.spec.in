@@ -112,7 +112,7 @@ System installation code as present on installation media.
 
 @INSTALL@
 for f in `find %{buildroot}%{_datadir}/autoinstall/modules -name "*.desktop"`; do
-    %suse_update_desktop_file f
+    %suse_update_desktop_file $f
 done 
 
 @CLEAN@

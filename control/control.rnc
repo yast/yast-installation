@@ -89,6 +89,8 @@ globals_elements =
     | runlevel
     | require_registration
     | services_proposal
+    | ac_redraw_and_ignore
+    | debug_deploying
 
 ## Default kernel parameters proposed by bootloader
 additional_kernel_parameters =		element additional_kernel_parameters { text }
@@ -796,3 +798,10 @@ productDefines_elements =
 start = element productDefines {
     productDefines_elements*
 }
+
+ac_redraw_and_ignore = element ac_redraw_and_ignore {
+    LIST,
+    element ac_item { text }+
+}
+
+debug_deploying = element debug_deploying { BOOLEAN }
