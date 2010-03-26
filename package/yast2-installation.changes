@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Mar 26 11:26:04 CET 2010 - ug@suse.de
+
+- fixed a broken yast2-installation.spec.in
+- fixed broken schema validation files for control.xml files
+- 2.19.4
+
+-------------------------------------------------------------------
 Wed Mar 24 07:42:19 UTC 2010 - lslezak@suse.cz
 
 - inst_suseconfig.ycp - do not reset UI product name
