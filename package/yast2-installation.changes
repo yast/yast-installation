@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Apr 09 17:09:27 CEST 2010 - aschnell@suse.de
+
+- disable Qt/Gtk frontend if testX is unavailable (bnc #585432)
+
+-------------------------------------------------------------------
 Tue Apr  6 17:44:25 CEST 2010 - locilka@suse.cz
 
 - Searching for LiveCD license in /usr/share/doc/licenses and /
