@@ -134,7 +134,8 @@ else if (func == "Write")
     y2milestone ("Copying hardware information");
     WFM::Execute (.local.bash,
 	sformat (
-	    "mkdir -p '%1/var/lib/'; /bin/cp -a '/var/lib/hardware' '%1/var/lib/'",
+	    // BNC #596938: Files / dirs might be symlinks
+	    "mkdir -p '%1/var/lib/'; /bin/cp -a --recursive --dereference '/var/lib/hardware' '%1/var/lib/'",
 	    String::Quote (Installation::destdir)
 	)
     );
