@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Apr 15 17:12:28 CEST 2010 - locilka@suse.cz
+
+- Script copy_files_finish copies files with --dereference to
+  prevent from copying symlinks instead of the files content
+  (BNC #596938).
+
+-------------------------------------------------------------------
 Fri Apr 09 17:09:27 CEST 2010 - aschnell@suse.de
 
 - disable Qt/Gtk frontend if testX is unavailable (bnc #585432)
