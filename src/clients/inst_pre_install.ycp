@@ -1,5 +1,6 @@
 {
     import "Storage";
+    import "FileSystems";
     import "FileUtils";
     import "Directory";
     import "SystemFilesCopy";
@@ -21,7 +22,6 @@
     // all partitions that can be used as a 
     list <map <string, any> > useful_partitions = [];
 
-    list <symbol> possible_root_fs = [ `ext2, `ext3, `ext4, `reiser, `xfs, `jfs ];
 
     /* ******************************************************************************* */
     // --> main()
@@ -247,7 +247,7 @@
 		    return;
 		}
 
-		if (! contains(possible_root_fs, filesystem)) {
+		if (!contains(FileSystems::possible_root_fs, filesystem)) {
 		    y2milestone("Skipping partition %1, %2 is not a root filesystem", devicename, filesystem);
 		    return;
 		}
