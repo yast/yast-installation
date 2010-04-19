@@ -6,6 +6,9 @@ Group:	System/YaST
 License: GPL v2 or later
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2-core-devel yast2-devtools yast2-testsuite
 
+# FileSystems::possible_root_fs
+BuildRequires:	yast2-storage >= 2.19.12
+
 # xmllint
 BuildRequires:	libxml2
 
@@ -40,8 +43,8 @@ Conflicts:	yast2-mouse < 2.18.0
 # New API for ProductLicense
 Requires:	yast2-packager >= 2.19.2
 
-# Storage::GetCommitInfos() call in include/misc.ycp
-Requires:	yast2-storage >= 2.18.0
+# FileSystems::possible_root_fs
+Requires:	yast2-storage >= 2.19.12
 
 # use in startup scripts
 Requires:	initviocons
