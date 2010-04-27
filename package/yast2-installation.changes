@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Apr 27 09:46:03 CEST 2010 - jsuchome@suse.cz
+
+- set the time in chroot, before mkinitrd (bnc#538357,bnc#597365) 
+- 2.17.75
+
+-------------------------------------------------------------------
 Thu Apr 15 17:12:28 CEST 2010 - locilka@suse.cz
 
 - Script copy_files_finish copies files with --dereference to
