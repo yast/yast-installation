@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed May 12 15:33:24 CEST 2010 - ug@suse.de
+
+- fixed the cloning at the end of a manual
+  installation (bnc#605132)
+
+-------------------------------------------------------------------
 Mon Apr 19 12:29:08 CEST 2010 - aschnell@suse.de
 
 - allow btrfs as root fs
