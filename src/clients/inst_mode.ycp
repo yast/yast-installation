@@ -136,15 +136,6 @@ term InstModeDialogContent (symbol pre_selected) {
 					`update,
 					Directory::themedir + "/current/icons/48x48/apps/yast-update.png",
 					Mode::update ()
-				    ),
-				    `VSpacing( 1.8 ),
-				    // radio button
-				    CreateRadioButtonTerm (
-					_("Re&pair Installed System"),
-					`repair,
-					// yast2-theme-2.18.3
-					Directory::themedir + "/current/icons/48x48/apps/yast-spanner.png",
-					false
 				    )
 				)
 			    )
@@ -225,12 +216,7 @@ configuration.</p>
     _("<p>Update mode does not support automatic configuration.</p>") +
 
     // help text for installation method
-    _("<p>Select <b>Repair Installed System</b> if you have a damaged Linux system on
-your hard disk. This option can try to fix problems automatically.
-</p>") +
-
-    // help text for installation method
-    _("<p>The features <b>Update</b> and <b>Repair Installed System</b> are only
+    _("<p>The feature <b>Update</b> is only
 available if an existing Linux system has been detected.
 </p>
 ");
@@ -252,11 +238,10 @@ y2milestone ("Umount result: %1, inst mode: %2", umount_result, media);
 // only installation (and addon products) enabled
 if (other_options_enabled != true) {
     UI::ChangeWidget (`id (`update), `Enabled, false);
-    UI::ChangeWidget (`id (`repair), `Enabled, false);
 
     // disable also icons related to options if supported by UI
     if (! in_textmode) {
-	foreach (symbol image_id, [`update, `repair], {
+	foreach (symbol image_id, [`update], {
 	    string icon_id = GenerateIconID (image_id);
 
 	    if (UI::WidgetExists (`id(icon_id))) {
@@ -311,7 +296,7 @@ repeat {
 
     // Adjusting current UI - Hide Other Options
     // in case of `install, `update, or `repair clicked
-    else if (contains([`install, `update, `repair], ret)) {
+    else if (contains([`install, `update], ret)) {
 	symbol selected_mode = (symbol)  UI::QueryWidget (`id (`inst_mode), `CurrentButton);
 
 	// [(any) `check_box_id, (boolean) selected, (boolean) enabled]
@@ -333,8 +318,6 @@ repeat {
 	    Mode::SetMode ("installation");
 	} else if (selected_mode == `update) {
 	    Mode::SetMode ("update");
-	} else if (selected_mode == `repair) {
-	    Mode::SetMode ("repair");
 	}
 
 	y2milestone ("New mode has been selected: %1", Mode::mode());
