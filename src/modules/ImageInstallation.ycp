@@ -376,7 +376,7 @@ boolean DeployFsImage (string id, string target) {
     y2milestone ("Executing %1 returned %2", cmd, out);
 
     y2milestone ("Mounting the image");
-    cmd = sformat ("mount -o loop %1 %2", image, tmpdir);
+    cmd = sformat ("mount -o noatime,loop %1 %2", image, tmpdir);
     out = (map)SCR::Execute (.target.bash_output, cmd);
     y2milestone ("Executing %1 returned %2", cmd, out);
 
@@ -426,7 +426,7 @@ boolean MountFsImage (string id, string target) {
     string cmd = sformat ("test -d %1 || mkdir -p %1", target);
     map out = (map)SCR::Execute (.target.bash_output, cmd);
     y2milestone ("Executing %1 returned %2", cmd, out);
-    cmd = sformat ("mount -o loop %1 %2", image, target);
+    cmd = sformat ("mount -o noatime,loop %1 %2", image, target);
     out = (map)SCR::Execute (.target.bash_output, cmd);
     y2milestone ("Executing %1 returned %2", cmd, out);
     return out["exit"]:-1 == 0;

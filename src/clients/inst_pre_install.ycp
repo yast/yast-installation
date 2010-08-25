@@ -135,7 +135,7 @@
 	    }
 
 	    // mounting read-only
-	    if (! (boolean) SCR::Execute(.target.mount, [partition_device, mnt_tmpdir], "-o ro")) {
+	    if (! (boolean) SCR::Execute(.target.mount, [partition_device, mnt_tmpdir], "-o ro,noatime")) {
 		y2error("Mounting falied!");
 		return;
 	    }
