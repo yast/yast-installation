@@ -140,7 +140,7 @@
 	);
 
 	y2milestone("Mounting %1 to %2", partition, tmp_mount_directory);
-	if (! (boolean) SCR::Execute(.target.mount, [partition, tmp_mount_directory], "-o ro")) {
+	if (! (boolean) SCR::Execute(.target.mount, [partition, tmp_mount_directory], "-o ro,noatime")) {
 	    y2error("Mounting failed!");
 	    return false;
 	}

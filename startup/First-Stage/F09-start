@@ -23,7 +23,7 @@ if [ "$YaST2update" = 1 ] ; then
 	if [ -r /update/y2update/y2update.gz ] ; then
 		gunzip -c /update/y2update/y2update.gz > /dev/ram5
 		mkdir -p /y2update
-		if mount /dev/ram5 /y2update ; then
+		if mount -o noatime /dev/ram5 /y2update ; then
 			log "\tPacked extension disk... OK"
 			UPDATE_MOUNTED=true
 		else
