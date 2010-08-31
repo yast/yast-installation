@@ -198,9 +198,9 @@ textdomain="control"
 	<extra_urls config:type="list">
 	    <!-- Default update repository, bnc #381360 -->
 	    <extra_url>
-		<baseurl>http://download.opensuse.org/update/11.3/</baseurl>
+		<baseurl>http://download.opensuse.org/update/11.4/</baseurl>
                 <alias>repo-update</alias>
-                <name>openSUSE-11.3-Update</name>
+                <name>openSUSE-11.4-Update</name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
@@ -209,36 +209,36 @@ textdomain="control"
 
 	    <!-- Replacement for EXTRAURLS and OPTIONALURLS -->
 	    <extra_url>
-		<baseurl>http://download.opensuse.org/distribution/11.3/repo/oss/</baseurl>
+		<baseurl>http://download.opensuse.org/distribution/11.4/repo/oss/</baseurl>
                 <alias>repo-oss</alias>
-                <name>openSUSE-11.3-Oss</name>
+                <name>openSUSE-11.4-Oss</name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
 		<priority config:type="integer">99</priority>
 	    </extra_url>
 	    <extra_url>
-		<baseurl>http://download.opensuse.org/distribution/11.3/repo/non-oss/</baseurl>
+		<baseurl>http://download.opensuse.org/distribution/11.4/repo/non-oss/</baseurl>
                 <alias>repo-non-oss</alias>
-                <name>openSUSE-11.3-Non-Oss</name>
+                <name>openSUSE-11.4-Non-Oss</name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
 		<priority config:type="integer">99</priority>
 	    </extra_url>
 	    <extra_url>
-		<baseurl>http://download.opensuse.org/debug/distribution/11.3/repo/oss/</baseurl>
+		<baseurl>http://download.opensuse.org/debug/distribution/11.4/repo/oss/</baseurl>
                 <alias>repo-debug</alias>
-                <name>openSUSE-11.3-Debug</name>
+                <name>openSUSE-11.4-Debug</name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">false</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
 		<priority config:type="integer">99</priority>
 	    </extra_url>
             <extra_url>
-                <baseurl>http://download.opensuse.org/source/distribution/11.3/repo/oss/</baseurl>
+                <baseurl>http://download.opensuse.org/source/distribution/11.4/repo/oss/</baseurl>
                 <alias>repo-source</alias>
-                <name>openSUSE-11.3-Source</name>
+                <name>openSUSE-11.4-Source</name>
                 <prod_dir>/</prod_dir>
                 <enabled config:type="boolean">false</enabled>
                 <autorefresh config:type="boolean">true</autorefresh>
