@@ -215,7 +215,7 @@ this process can take some time.</p>
 
 
     // The final LogView line to be displayed after SuSEconfig etc. is done.
-    if (!Mode::commandline ())
+    if (!automatic_configuration && !Mode::commandline ())
 	UI::ChangeWidget( `id(`log), `LastLine, "\n" + _("Done.") + "\n" );
 
 
