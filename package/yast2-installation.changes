@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Sep 30 17:33:48 UTC 2010 - lslezak@suse.cz
+
+- don't use spaces in repo alias (bnc#596950)
+- 2.20.0
+
+-------------------------------------------------------------------
 Wed Jun  2 13:52:02 CEST 2010 - jsrain@suse.cz
 
 - removed link to repairing the system
