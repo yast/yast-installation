@@ -18,6 +18,7 @@ import "Popup";
 import "SourceManager";
 import "Report";
 import "Installation";
+import "String";
 
 include "packager/inst_source_dialogs.ycp";
 
@@ -91,14 +92,17 @@ if (addUrls != $[])
 	while (again) {
 	    // BNC #557723: Repositories migh be created without access to network
 	    // Libzypp must not probe the repo
+
+	    // don't use spaces in alias (hard to use with zypper)
+	    string alias = String::Replace((size(name) > 0 ? name : url), " ", "-");
+
 	    map <string,any> repo_prop = $[
 		"enabled"	: true,
 		"autorefresh"	: true,
 		"name"		: (size(name) > 0 ? name : url),
-		"alias"		: (size(name) > 0 ? name : url),
+		"alias"		: alias,
 		"base_urls"	: [url],
 		"prod_dir"	: "/",
-		
 	    ];
 
 	    integer srcid = Pkg::RepositoryAdd (repo_prop);
