@@ -2,6 +2,7 @@
 Thu Sep 30 17:33:48 UTC 2010 - lslezak@suse.cz
 
 - don't use spaces in repo alias (bnc#596950)
+- inst_addon_update_sources.ycp - removed obsoleted ZMD sync call
 - 2.20.0
 
 -------------------------------------------------------------------
