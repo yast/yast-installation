@@ -85,7 +85,6 @@ if (addUrls != $[])
 {
     Popup::ShowFeedback (heading, message);
 
-    list<integer> added_ids = [];
     foreach (string url, string name, addUrls, {
 	boolean again = true;
 
@@ -128,15 +127,10 @@ Try again?"),
 
 	    // everything is ok
 	    } else {
-		added_ids = add (added_ids, srcid);
 		again = false;
 	    }
 	}
     });
-
-    y2milestone ("syncing to zmd");
-    boolean synced = SourceManager::SyncAddedAndDeleted (added_ids, []);
-    y2milestone ("sync status: %1", synced);
 
     Popup::ClearFeedback ();
 }
