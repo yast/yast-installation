@@ -892,12 +892,24 @@ global boolean FileSystemCopy (string from, string to,
     integer progress_start,
     integer progress_finish)
 {
+    string cmd = sformat ("df -P -k %1", from);
+    y2milestone ("Executing %1", cmd);
+    map out = (map)SCR::Execute (.target.bash_output, cmd);
+    y2milestone ("Output: %1", out);
+    string total_str = out["stdout"]:"";
+    total_str = splitstring(total_str, "\n")[1]:"";
+    integer total_mb = tointeger (filter (string s, splitstring (total_str, " "), {return s != "";})[2]:"0");
+
+/* Using df-based progress estimation, is rather faster
+   may be less precise
+   see bnc#555288
     string cmd = sformat ("du -x -B 1048576 -s %1", from);
     y2milestone ("Executing %1", cmd);
     map out = (map)SCR::Execute (.target.bash_output, cmd);
     y2milestone ("Output: %1", out);
     string total_str = out["stdout"]:"";
     integer total_mb = tointeger (total_str);
+*/
     if (total_mb == 0)
 	total_mb = 1024*1024*1024; // should be big enough
 

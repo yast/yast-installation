@@ -36,12 +36,25 @@
   integer live_size = 0;
   if (Mode::live_installation())
   {
+
+    string cmd = sformat ("df -P -k %1", "/");
+    y2milestone ("Executing %1", cmd);
+    map out = (map)SCR::Execute (.target.bash_output, cmd);
+    y2milestone ("Output: %1", out);
+    string total_str = out["stdout"]:"";
+    total_str = splitstring(total_str, "\n")[1]:"";
+    live_size = tointeger (filter (string s, splitstring (total_str, " "), {return s != "";})[2]:"0");
+
+/* Using df-based progress estimation, is rather faster
+   may be less precise
+   see bnc#555288
     string cmd = sformat ("du -x -B 1024 -s %1", "/");
     y2milestone ("Executing %1", cmd);
     map out = (map)SCR::Execute (.target.bash_output, cmd);
     y2milestone ("Output: %1", out);
     string total_str = out["stdout"]:"";
     live_size = tointeger (total_str);
+*/
     if (live_size == 0)
       live_size = 1024*1024; // 1 GB is a good approximation
   }
