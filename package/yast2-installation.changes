@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Nov 18 11:33:48 UTC 2010 - jsrain@suse.cz
+
+- fixed behavior of window closing in installation proposal
+  (bnc#636980)
+
+-------------------------------------------------------------------
 Thu Sep 30 17:33:48 UTC 2010 - lslezak@suse.cz
 
 - don't use spaces in repo alias (bnc#596950)
