@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Dec  2 14:00:21 UTC 2010 - lslezak@suse.cz
+
+- pass the selected CD/DVD device to the package manager in case
+  of multiple devices in the system (bnc#652134)
+- 2.13.219
+
+-------------------------------------------------------------------
 Wed Mar 24 07:40:55 UTC 2010 - lslezak@suse.cz
 
 - inst_suseconfig.ycp - do not reset UI product name

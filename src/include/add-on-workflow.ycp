@@ -272,10 +272,16 @@ symbol MediaSelect () {
 		    ? _("Insert the add-on product CD")
 		    : _("Insert the add-on product DVD");
 
-		// bugzilla #237264
-		boolean ask_for_media = SourceManager::AskForCD (msg);
-		y2milestone ("SourceManager::AskForCD returned: %1", ask_for_media);
-		if (ask_for_media == true) {
+		map<string,any> ui_result = SourceManager::AskForCD (msg);
+		y2milestone ("SourceManager::AskForCD returned: %1", ui_result);
+		if (ui_result["continue"]:false) {
+		    string cd_device = ui_result["device"]:"";
+		    if (cd_device != nil && cd_device != "")
+		    {
+			y2milestone("Selected CD/DVD device: %1", cd_device);
+			url = url + "?devices=" + URL::EscapeString(cd_device, URL::transform_map_query);
+		    }
+
 		    createResult = SourceManager::createSource( url);
 		} else {
 		    createResult = nil;

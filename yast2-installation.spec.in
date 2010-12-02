@@ -8,8 +8,8 @@ Requires:	yast2-slp yast2-firewall
 Requires:	yast2-update
 Requires:	yast2-storage yast2-mouse yast2-bootloader
 
-# SourceManager::InstallationSourceOnPartition 2.13.159, bugzilla #208222
-Requires:	yast2-packager >= 2.13.159
+# SourceManager::AskForCD (bnc#652134)
+Requires:	yast2-packager >= 2.13.194
 # extra sources in ResolvableProperties()
 Requires:	yast2-pkg-bindings >= 2.13.101
 # ProductControl::Run returning `abort (FATE #300422)
