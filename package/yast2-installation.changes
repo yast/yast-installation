@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jan  6 12:19:13 CET 2011 - locilka@suse.cz
+
+- Using wider space for licence displayed in non-textual interface
+  (BNC #607135).
+
+-------------------------------------------------------------------
 Thu Jan  6 10:47:00 CET 2011 - locilka@suse.cz
 
 - Fixed DUD deployment (BNC #626337)
