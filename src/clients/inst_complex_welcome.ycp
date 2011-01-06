@@ -108,7 +108,8 @@
 		`Left (`Label (`opt(`boldFont), _("License Agreement"))),
 		// bnc #438100
 		`HSquash(`MinWidth (
-		    85,
+		    // BNC #607135
+		    (text_mode ? 85 : 106),
 		    `Left (`ReplacePoint (`id (`base_license_rp), `Empty()))
 		)),
 		`VSpacing (text_mode ? 0.1 : 0.5),
