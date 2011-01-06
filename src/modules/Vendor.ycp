@@ -81,7 +81,7 @@
 	// unpack update files and run update.post scripts
 	// via SCR chrooted into the installed system
 	map cmd = (map) SCR::Execute (.target.bash_output, runcmd);
-	y2milestone ("Driver Update deployment returned: %1", cmd)
+	y2milestone ("Driver Update deployment returned: %1", cmd);
     }
 
     global define void DriverUpdate2 ()
