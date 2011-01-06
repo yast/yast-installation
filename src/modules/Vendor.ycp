@@ -57,8 +57,8 @@
 	    "cd /; \n" +
 	    "for i in /tmp/update/[0-9]*/install ; do \n" +
 	    // Logging extracting the driver update
-	    "    echo # Installing Driver Update from $i >>" + logfile + "; \n" +
-	    "    TMPFILE=${i}rpm_install_tmpfile; \n" +
+	    "    echo \"# Installing Driver Update from $i\">>" + logfile + "; \n" +
+	    "    TMPFILE=\"/tmp/update/${i}rpm_install_tmpfile\"; \n" +
 	    "    [ -x \"/bin/mktemp\" ] && TMPFILE=`/bin/mktemp`; \n" +
 	    // Extracting the driver update archives
 	    "    cd $i; \n" +
@@ -80,7 +80,8 @@
 
 	// unpack update files and run update.post scripts
 	// via SCR chrooted into the installed system
-	integer cmd = (integer) SCR::Execute (.target.bash, runcmd);
+	map cmd = (map) SCR::Execute (.target.bash_output, runcmd);
+	y2milestone ("Driver Update deployment returned: %1", cmd)
     }
 
     global define void DriverUpdate2 ()

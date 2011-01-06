@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jan  6 10:47:00 CET 2011 - locilka@suse.cz
+
+- Fixed DUD deployment (BNC #626337)
+- 2.17.76
+
+-------------------------------------------------------------------
 Tue Apr 27 09:46:03 CEST 2010 - jsuchome@suse.cz
 
 - set the time in chroot, before mkinitrd (bnc#538357,bnc#597365) 
