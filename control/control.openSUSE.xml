@@ -236,6 +236,16 @@ textdomain="control"
 		<priority config:type="integer">99</priority>
 	    </extra_url>
             <extra_url>
+                <baseurl>http://download.opensuse.org/debug/update/11.4/</baseurl>
+                <alias>repo-debug-update</alias>
+                <name>openSUSE-11.4-Update-Debug</name>
+                <prod_dir>/</prod_dir>
+                <enabled config:type="boolean">false</enabled>
+                <autorefresh config:type="boolean">true</autorefresh>
+                <priority config:type="integer">99</priority>
+            </extra_url>
+
+            <extra_url>
                 <baseurl>http://download.opensuse.org/source/distribution/11.4/repo/oss/</baseurl>
                 <alias>repo-source</alias>
                 <name>openSUSE-11.4-Source</name>
