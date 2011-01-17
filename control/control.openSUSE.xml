@@ -329,7 +329,7 @@ textdomain="control"
 		<cursor>DMZ</cursor>
 		<packages>xorg-x11</packages>
 		<order config:type="integer">8</order>
-		<patterns>enhanced_base</patterns>
+		<patterns>base</patterns>
 		<icon>yast-sshd</icon>
 	    </one_supported_desktop>
 
