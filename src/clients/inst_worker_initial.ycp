@@ -44,6 +44,7 @@
 
     // All stages
     SetAutoinstHandling ();
+    SetAutoupgHandling ();
     SetGlobalInstallationFeatures ();
 
     // Initial stage

@@ -243,7 +243,10 @@ stages = maplist (map<string,any> stage, stages, {
 	    return nil;
 	}
 
-	if (info["when"]:nil != nil && ! contains (info["when"]:[], run_type))
+	if (info["when"]:nil != nil && ! contains (info["when"]:[], run_type) &&
+	    // special hack for autoupgrade - should be as regular upgrade as possible, scripts are the only exception
+	    (!(Mode::autoupgrade() && contains (info["when"]:[], `autoupg)))
+	)
 	    return nil;
 
 	y2milestone ("inst_finish client %1 will be called", s);

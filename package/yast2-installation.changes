@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Jan 19 15:09:24 CET 2011 - jsrain@suse.cz
+
+- adaptations for unattended migration (fate#310481)
+
+-------------------------------------------------------------------
 Thu Jan  6 12:19:13 CET 2011 - locilka@suse.cz
 
 - Using wider space for licence displayed in non-textual interface
@@ -9,6 +14,12 @@ Thu Jan  6 10:47:00 CET 2011 - locilka@suse.cz
 
 - Fixed DUD deployment (BNC #626337)
 - 2.17.76
+
+-------------------------------------------------------------------
+Tue Dec  7 14:25:17 CET 2010 - jsrain@suse.cz
+
+- adaptations for unattended migration
+- 2.17.75.0.1
 
 -------------------------------------------------------------------
 Tue Apr 27 09:46:03 CEST 2010 - jsuchome@suse.cz
