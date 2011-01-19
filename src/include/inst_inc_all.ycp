@@ -101,6 +101,19 @@
     	Report::DisplayMessages(true, 10);
     }
 
+    /**
+     * Sets autoupgrade behavior
+     */
+    void SetAutoupgHandling () {
+	// if profile is defined, first read it, then probe hardware
+        any autoinstall = SCR::Read(.etc.install_inf.AutoYaST);
+        if (autoinstall != nil && is ( autoinstall , string ) && (string)autoinstall != "")
+	{
+	    ProductControl::DisableModule ("system_analysis");
+	    ProductControl::DisableModule ("update_partition_auto");
+	}
+    }
+
     void ShowTextFallbackMessage () {
         if (
             (Installation::text_fallback () || Installation::no_x11 ())
