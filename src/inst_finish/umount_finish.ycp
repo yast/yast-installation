@@ -22,6 +22,7 @@ import "Hotplug";
 import "Vendor";
 import "String";
 import "Internet";
+import "FileUtils";
 
 any ret = nil;
 string func = "";
@@ -74,9 +75,12 @@ else if (func == "Write")
 	}
     });
 
-    // remove [Installation::destdir]/etc/mtab which was faked for %post
-    // scripts in inst_rpmcopy
-    SCR::Execute(.target.remove, "/etc/mtab");
+    // symlink points to /proc, keep it (bnc#665437)
+    if (! FileUtils::IsLink ("/etc/mtab")) {
+	// remove [Installation::destdir]/etc/mtab which was faked for %post
+	// scripts in inst_rpmcopy
+	SCR::Execute(.target.remove, "/etc/mtab");
+    }
 
     // Stop SCR on target
     WFM::SCRClose (Installation::scr_handle);
