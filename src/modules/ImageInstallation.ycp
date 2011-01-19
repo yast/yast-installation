@@ -898,7 +898,7 @@ global boolean FileSystemCopy (string from, string to,
     y2milestone ("Output: %1", out);
     string total_str = out["stdout"]:"";
     total_str = splitstring(total_str, "\n")[1]:"";
-    integer total_mb = tointeger (filter (string s, splitstring (total_str, " "), {return s != "";})[2]:"0");
+    integer total_mb = tointeger (filter (string s, splitstring (total_str, " "), {return s != "";})[2]:"0") / 1024;
 
 /* Using df-based progress estimation, is rather faster
    may be less precise
@@ -911,7 +911,7 @@ global boolean FileSystemCopy (string from, string to,
     integer total_mb = tointeger (total_str);
 */
     if (total_mb == 0)
-	total_mb = 1024*1024*1024; // should be big enough
+	total_mb = 1024; // should be big enough
 
     string tmp_pipe1 = (string)SCR::Read (.target.tmpdir) + "/system_clone_fifo_1";
     string tmp_pipe2 = (string)SCR::Read (.target.tmpdir) + "/system_clone_fifo_2";
