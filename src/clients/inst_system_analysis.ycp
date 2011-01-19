@@ -32,7 +32,7 @@ import "PackageCallbacks";
 include "installation/misc.ycp";
 include "packager/storage_include.ycp";
 
-    if( Mode::autoinst() ) {
+    if( Mode::autoinst() || Mode::autoupgrade() ) {
         Report::Import( $[  "messages":$[ "timeout":10 ], 
                             "errors":$[ "timeout":10 ], 
                             "warnings":$[ "timeout":10 ]]);
@@ -111,7 +111,7 @@ include "packager/storage_include.ycp";
 
 	if (size (targetMap) == 0) {
 	    if (found_controllers) {
-                if( !Mode::autoinst() ) {
+                if( !(Mode::autoinst() || Mode::autoupgrade())) {
                         // pop-up error report
                         Report::Error(_("No hard disks were found for the installation.
 Please check your hardware!

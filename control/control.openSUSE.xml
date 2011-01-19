@@ -545,7 +545,7 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 
         <proposal>
             <label>Installation Settings</label>
-            <mode>update</mode>
+            <mode>update,autoupgrade</mode>
             <stage>initial</stage>
             <name>initial</name>
 	    <unique_id>update_initial</unique_id>
@@ -1399,6 +1399,94 @@ is the most appropriate desktop for you.</label></desktop_dialog>
         <workflow>
             <defaults>
                 <archs>all</archs>
+            </defaults>
+            <label>Preparation</label>
+            <mode>autoupgrade</mode>
+            <stage>initial</stage>
+            <modules  config:type="list">
+                <module>
+                    <label>System Analysis</label>
+                    <name>system_analysis</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+                    <label>System for Update</label>
+                    <name>update_partition_auto</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+                    <label>AutoYaST Settings</label>
+                    <name>autoinit</name>
+                    <archs>all</archs>
+                    <retranslate config:type="boolean">true</retranslate>
+                </module>
+               <module>
+                    <label>AutoYaST Settings</label>
+                    <name>autosetup_upgrade</name>
+                </module>
+                <module>
+                    <heading>yes</heading>
+                    <label>Update</label>
+                </module>
+                <module>
+                    <label>AutoYaST Settings</label>
+                    <name>initial_update_proposal</name>
+                    <execute>inst_proposal</execute>
+                    <proposal>initial</proposal>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+                    <label>Perform Update</label>
+                    <name>bl_preupdate</name>
+                    <execute>bootloader_preupdate</execute>
+                </module>
+                <module>
+                    <label>Perform Update</label>
+                    <name>prepareprogress</name>
+                </module>
+
+                <module>
+                    <label>Perform Update</label>
+                    <name>do_resize</name>
+                    <update config:type="boolean">false</update>
+                    <archs>i386,x86_64,ia64</archs>
+                </module>
+                <module>
+                    <label>Perform Update</label>
+                    <name>prepdisk</name>
+                </module>
+                <module>
+                    <label>Perform Update</label>
+                    <name>kickoff</name>
+                </module>
+                <module>
+                    <label>Perform Update</label>
+                    <name>store_upgrade_software</name>
+                </module>
+                <module>
+                    <label>Perform Update</label>
+                    <name>rpmcopy</name>
+                </module>
+                <module>
+                    <!-- FATE #304940: s390 reIPL -->
+                    <label>Perform Update</label>
+                    <name>reiplauto</name>
+                    <archs>s390</archs>
+                </module>
+                <module>
+                    <label>Perform Update</label>
+                    <name>finish</name>
+                </module>
+            </modules>
+        </workflow>
+
+
+        <workflow>
+            <defaults>
+                <archs>all</archs>
                 <enable_back>no</enable_back>
                 <enable_next>no</enable_next>
             </defaults>
@@ -1430,6 +1518,39 @@ is the most appropriate desktop for you.</label></desktop_dialog>
                 </module>
             </modules>
         </workflow>
+
+        <workflow>
+            <defaults>
+                <archs>all</archs>
+                <enable_back>no</enable_back>
+                <enable_next>no</enable_next>
+            </defaults>
+            <stage>continue</stage>
+            <mode>autoupgrade</mode>
+            <modules  config:type="list">
+                <module>
+                    <label>Perform Update</label>
+                    <name>autopost</name>
+                </module>
+                <module>
+                    <label>Perform Update</label>
+                    <name>rpmcopy_secondstage</name>
+                </module>
+                <module>
+                    <heading>yes</heading>
+                    <label>Configuration</label>
+                </module>
+                <module>
+                    <label>System Configuration</label>
+                    <name>autoconfigure</name>
+                </module>
+                <module>
+                    <label>Clean Up</label>
+                    <name>suseconfig</name>
+                </module>
+            </modules>
+        </workflow>
+
 
     </workflows>
 </productDefines>

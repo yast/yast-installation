@@ -65,7 +65,7 @@
     symbol proposal_result = nil;
 
     // skip if not interactive mode.
-    if (!AutoinstConfig::Confirm && Mode::autoinst ()) {
+    if (!AutoinstConfig::Confirm && (Mode::autoinst () || Mode::autoupgrade ())) {
 	return `auto;
     }
 

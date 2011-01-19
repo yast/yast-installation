@@ -127,7 +127,7 @@ else if (func == "Write")
     // progress step title
     Progress::Title (_("Saving product information..."));
     ProductFeatures::Save();
-    if (Mode::autoinst ())
+    if (Mode::autoinst () || Mode::autoupgrade())
     {
 	Progress::NextStep ();
 	// progress step title
