@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Jan 20 14:18:41 CET 2011 - jsrain@suse.cz
+
+- fix initialization of AutoUpgrade for 2nd stage
+
+-------------------------------------------------------------------
 Wed Jan 19 15:09:24 CET 2011 - jsrain@suse.cz
 
 - adaptations for unattended migration (fate#310481)
