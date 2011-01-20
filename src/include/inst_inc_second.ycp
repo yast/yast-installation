@@ -455,13 +455,15 @@ Note: You may have to enter some information again.");
     }
 
     void SetSecondStageInstallation () {
-        // Detect mode early to be able to setup steps correctly
-        if (FileUtils::Exists (Installation::destdir + Installation::file_update_mode)) {
-            Mode::SetMode ("update");
-        }
-        else if (FileUtils::Exists (Installation::destdir + Installation::file_live_install_mode)) {
-            Mode::SetMode ("live_installation");
-        }
+	if (! Mode::autoupgrade()) {
+            // Detect mode early to be able to setup steps correctly
+            if (FileUtils::Exists (Installation::destdir + Installation::file_update_mode)) {
+                Mode::SetMode ("update");
+            }
+            else if (FileUtils::Exists (Installation::destdir + Installation::file_live_install_mode)) {
+                Mode::SetMode ("live_installation");
+            }
+	}
 
 	SetXENExceptions();
 
