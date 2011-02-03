@@ -512,8 +512,9 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <proposal_module>hwinfo</proposal_module>
                 <proposal_module>partitions</proposal_module>
                 <proposal_module>bootloader</proposal_module>
-                <proposal_module>keyboard</proposal_module>
+                <proposal_module>country_simple</proposal_module>
                 <proposal_module>timezone</proposal_module>
+		<proposal_module>users</proposal_module>
                 <proposal_module>runlevel</proposal_module>
             </proposal_modules>
         </proposal>
