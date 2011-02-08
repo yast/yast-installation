@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Feb  8 15:10:25 CET 2011 - locilka@suse.cz
+
+- Adapted openSUSE control file to the current naming schema of
+  desktops (BNC #667408)
+
+-------------------------------------------------------------------
 Thu Jan 20 14:18:41 CET 2011 - jsrain@suse.cz
 
 - fix initialization of AutoUpgrade for 2nd stage

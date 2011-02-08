@@ -833,7 +833,7 @@ default
 
 		<listitem>
 		    <para>(string) <emphasis>desktop</emphasis></para>
-		    <para>Desktop to start (gnome, startkde4, startkde3, startxfce4, ...).</para>
+		    <para>Desktop to start (gnome, kde4, kde, xfce, ...).</para>
 		</listitem>
 
 		<listitem>
