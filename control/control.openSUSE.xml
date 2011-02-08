@@ -273,8 +273,8 @@ textdomain="control"
 
 	    <one_supported_desktop>
 		<name>kde</name>
-		<!-- BNC #381821, BNC #438212 -->
-		<desktop>startkde</desktop>
+		<!-- BNC #381821, BNC #438212, BNC #667408 -->
+		<desktop>kde4</desktop>
 		<label_id>desktop_kde</label_id>
 		<logon>kdm</logon>
 		<cursor>DMZ</cursor>
@@ -286,7 +286,8 @@ textdomain="control"
 
 	    <one_supported_desktop>
 		<name>xfce</name>
-		<desktop>startxfce4</desktop>
+		<!-- BNC #667408 -->
+		<desktop>xfce</desktop>
 		<label_id>desktop_xfce</label_id>
 		<logon>gdm</logon>
 		<cursor>DMZ</cursor>
@@ -299,7 +300,8 @@ textdomain="control"
 	    <!-- FaTE #307729 LXDE -->
 	    <one_supported_desktop>
 		<name>lxde</name>
-		<desktop>startlxde</desktop>
+		<!-- BNC #667408 -->
+		<desktop>lxde</desktop>
 		<label_id>desktop_lxde</label_id>
 		<logon>lxdm</logon>
 		<cursor>DMZ</cursor>

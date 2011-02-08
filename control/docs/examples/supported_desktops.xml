@@ -20,7 +20,7 @@
 
 	    <one_supported_desktop>
 		<name>kde</name>
-		<desktop>startkde4</desktop>
+		<desktop>kde4</desktop>
 		<!-- Generic ID used in texts below -->
 		<label_id>desktop_kde</label_id>
 		<logon>kdm4</logon>
