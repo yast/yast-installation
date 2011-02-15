@@ -89,16 +89,6 @@ if (GetInstArgs::going_back()) {
     Pkg::TargetFinish();
 }
 
-boolean other_options_disabled = false;
-
-if (! (InstData::have_linux && InstData::offer_update))
-{
-    // to offer add-on products
-    // Mode::SetMode ("installation");
-    // return `auto;
-    other_options_disabled = true;
-}
-
 // bugzilla #208222
 // Release disk used as the installation source
 ReleaseHDDUsedAsInstallationSource();
@@ -255,10 +245,10 @@ string umount_result = Linuxrc::InstallInf ("umount_result");
 string media = Linuxrc::InstallInf ("InstMode");
 y2milestone ("Umount result: %1, inst mode: %2", umount_result, media);
 
-other_options_disabled = false;
+boolean other_options_enabled = (InstData::have_linux && InstData::offer_update);
 
 // only installation (and addon products) enabled
-if (other_options_disabled) {
+if (other_options_enabled != true) {
     UI::ChangeWidget (`id (`update), `Enabled, false);
     UI::ChangeWidget (`id (`repair), `Enabled, false);
 

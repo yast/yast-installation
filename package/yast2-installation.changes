@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Feb 15 13:31:29 CET 2011 - locilka@suse.cz
+
+- Correctly disabling Update and Repair options if no previous
+  system is found by the system analysis (BNC #664907).
+- 2.17.77
+
+-------------------------------------------------------------------
 Thu Jan 20 14:18:41 CET 2011 - jsrain@suse.cz
 
 - fix initialization of AutoUpgrade for 2nd stage
