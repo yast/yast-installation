@@ -124,10 +124,11 @@ function prepare_for_ncurses () {
 	if [ $INST_MODE = "normal" ];then
 	if [ ! -z "$Braille" ];then
 		log "Braille config needed, setting up braille display"
-		sed -e "s#brlname=.*#brlname=$Braille#" \
-			-e "s#brlport=.*#brlport=$Brailledevice#" /etc/suse-blinux.conf \
+		# downcase $Braille so that brld will find the driver
+		sed -e "s#brlname=.*#brlname=${Braille,,}#" \
+			-e "s#brlport=.*#brlport=$Brailledevice#" /etc/sbl.conf \
 		>/tmp/suse-blinux.conf
-		mv -f /tmp/suse-blinux.conf /etc
+		mv -f /tmp/suse-blinux.conf /etc/sbl.conf
 		/etc/init.d/brld start
 		/etc/init.d/sbl start
 	fi

@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Feb 17 13:49:19 CET 2011 - aschnell@suse.de
+
+- fixed braille support during installation (bnc #672086)
+- 2.20.5
+
+-------------------------------------------------------------------
 Tue Feb  8 15:10:25 CET 2011 - locilka@suse.cz
 
 - Adapted openSUSE control file to the current naming schema of
