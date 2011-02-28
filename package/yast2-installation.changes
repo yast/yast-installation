@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Feb 28 14:52:26 CET 2011 - locilka@suse.cz
+
+- Handling disabled installation steps also in Live Installation
+  mode (BNC #675516)
+- 2.20.6
+
+-------------------------------------------------------------------
 Thu Feb 17 13:49:19 CET 2011 - aschnell@suse.de
 
 - fixed braille support during installation (bnc #672086)

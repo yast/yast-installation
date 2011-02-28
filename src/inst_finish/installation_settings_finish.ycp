@@ -100,7 +100,8 @@
 	    "steps" : 1,
 	    // progress step title
 	    "title" : _("Writing automatic configuration..."),
-	    "when" : [ `installation, `update, `autoinst ],
+	    // Live Installation has a second stage workflow now (BNC #675516)
+	    "when" : [ `installation, `live_installation, `update, `autoinst ],
 	];
     } else if (func == "Write") {
 	Write();
