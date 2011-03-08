@@ -117,7 +117,7 @@ See %4 for more information about YaST logs."),
 			// link to the Yast Bug Reporting HOWTO
 			// for translators: use the localized page for your language if it exists,
 			// check the combo box "In other laguages" on top of the page
-			_("http://en.opensuse.org/Bugs/YaST")
+			_("http://en.opensuse.org/openSUSE:Report_a_YaST_bug")
 		    )))
 		)
 	    ),
