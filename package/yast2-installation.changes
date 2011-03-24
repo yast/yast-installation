@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar 24 16:14:02 CET 2011 - jsuchome@suse.cz
+
+- do not start automatic configuration for autoYaST (bnc#679435)
+- 2.21.0
+
+-------------------------------------------------------------------
 Mon Feb 28 14:52:26 CET 2011 - locilka@suse.cz
 
 - Handling disabled installation steps also in Live Installation
