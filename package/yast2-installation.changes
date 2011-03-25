@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Mar 25 10:26:44 CET 2011 - jsuchome@suse.cz
+
+- show the 'before-reboot' message in RichText, so possible command
+  can be copy-pasted (bnc#383519)
+- 2.21.1
+
+-------------------------------------------------------------------
 Thu Mar 24 16:14:02 CET 2011 - jsuchome@suse.cz
 
 - do not start automatic configuration for autoYaST (bnc#679435)
