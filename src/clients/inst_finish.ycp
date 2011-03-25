@@ -423,7 +423,7 @@ if (size (Misc::boot_msg) > 0 && !Mode::autoinst ())
     }
     else
 	Report::DisplayMessages (true, 10);
-    Report::Message (Misc::boot_msg);
+    Report::LongMessage (Misc::boot_msg);
     Misc::boot_msg = "";
 }
 
