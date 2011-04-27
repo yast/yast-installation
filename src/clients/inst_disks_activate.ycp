@@ -23,6 +23,7 @@ y2milestone ("Disk activation module started");
 import "Arch";
 import "GetInstArgs";
 import "Label";
+import "Linuxrc";
 import "Popup";
 import "Storage";
 import "Wizard";
@@ -32,6 +33,7 @@ map argmap = GetInstArgs::argmap();
 
 boolean have_dasd = false;
 boolean have_zfcp = false;
+boolean want_fcoe = false;
 
 void RestoreButtons (boolean enable_back, boolean enable_next) {
     Wizard::RestoreAbortButton();
@@ -72,7 +74,9 @@ if (Arch::s390())
     UI::CloseDialog ();
 }
 
-if (have_dasd || have_zfcp)
+want_fcoe	= Linuxrc::InstallInf ("WithFCoE") == "1";
+
+if (have_dasd || have_zfcp || want_fcoe)
 {
     // dialog caption
     string caption = _("Disk Activation");
@@ -93,6 +97,12 @@ if (have_dasd || have_zfcp)
 		_("Configure &ZFCP Disks")))
 	    : `VSpacing (0),
 	`VSpacing (have_zfcp ? 2 : 0),
+	want_fcoe
+	    ? `HWeight (1, `PushButton (`id (`fcoe), `opt (`hstretch),
+		// push button
+		_("Configure &FCoE Interfaces")))
+	    : `VSpacing (0),
+	`VSpacing (want_fcoe? 2 : 0),
 	`HWeight (1, `PushButton (`id (`iscsi), `opt (`hstretch),
 	    // push button
 	    _("Configure &iSCSI Disks"))),
@@ -121,7 +131,12 @@ if (have_dasd || have_zfcp)
 	}
 	else if (ret == `iscsi)
 	{
-	    ret = WFM::call ("inst_iscsi-client");
+	    ret = WFM::call ("inst_iscsi-client", [argmap]);
+	    ret = `redraw;
+	}
+	else if (ret == `fcoe)
+	{
+	    ret = WFM::call ("inst_fcoe-client", [argmap]);
 	    ret = `redraw;
 	}
 	if (ret == `redraw)
