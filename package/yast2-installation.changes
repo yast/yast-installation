@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Apr 27 11:19:50 CEST 2011 - jsuchome@suse.cz
+
+- Copy /media.1/build to the installed system (fate#311377)
+- 2.21.2 
+
+-------------------------------------------------------------------
 Fri Mar 25 10:26:44 CET 2011 - jsuchome@suse.cz
 
 - show the 'before-reboot' message in RichText, so possible command
