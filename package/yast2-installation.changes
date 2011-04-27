@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Apr 27 15:09:25 CEST 2011 - jsuchome@suse.cz
+
+- added option to configure FCoE Interfaces when started with
+  WithFCoE=1 argument (fate#307445)
+- 2.17.79
+
+-------------------------------------------------------------------
 Wed Apr 27 11:24:45 CEST 2011 - jsuchome@suse.cz
 
 - Copy /media.1/build to the installed system (fate#311377)

@@ -199,8 +199,9 @@ but something went wrong, that's why it is only in the log");
         // update the workflow according to current situation
         // disable disks activation if not needed
         boolean iscsi = Linuxrc::InstallInf("WithiSCSI") == "1";
+	boolean fcoe = Linuxrc::InstallInf ("WithFCoE") == "1";
 
-        if (! (Arch::s390() || iscsi)) {
+        if (! (Arch::s390() || iscsi || fcoe)) {
             y2milestone ("Disabling disk activation module");
             ProductControl::DisableModule ("disks_activate");
         }
