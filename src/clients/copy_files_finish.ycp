@@ -20,6 +20,7 @@ import "AddOnProduct";
 import "Linuxrc";
 import "Installation";
 import "Directory";
+import "Packages";
 import "ProductControl";
 import "FileUtils";
 import "String";
@@ -167,6 +168,22 @@ else if (func == "Write")
 	    String::Quote (Directory::etcdir)
 	)
     );
+
+    // Copy /media.1/build to the installed system (fate#311377)
+    integer src_id	= Packages::GetBaseSourceID();
+    string build_file	= Pkg::SourceProvideOptionalFile (src_id, 1, "/media.1/build");
+    if (build_file != nil)
+    {
+	y2milestone ("Copying /media.1/build file");
+	WFM::Execute (.local.bash,
+	    sformat (
+		"/bin/cp '%1' '%2%3/' && /bin/chmod 0644 '%2%3/build'",
+		String::Quote (build_file),
+		String::Quote (Installation::destdir),
+		String::Quote (Directory::etcdir)
+	    )
+	);
+    }
 
     // List of files used as additional workflow definitions
     CopyAllWorkflowFiles();

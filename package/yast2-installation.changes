@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Apr 27 11:24:45 CEST 2011 - jsuchome@suse.cz
+
+- Copy /media.1/build to the installed system (fate#311377)
+- 2.17.78 
+
+-------------------------------------------------------------------
 Tue Feb 15 13:31:29 CET 2011 - locilka@suse.cz
 
 - Correctly disabling Update and Repair options if no previous
