@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue May 17 14:33:58 CEST 2011 - aschnell@suse.de
+
+- adapted to yast2-storage backport change
+- 2.17.80
+
+-------------------------------------------------------------------
 Wed Apr 27 15:09:25 CEST 2011 - jsuchome@suse.cz
 
 - added option to configure FCoE Interfaces when started with

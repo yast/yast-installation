@@ -40,8 +40,8 @@ Conflicts:	yast2-pkg-bindings < 2.17.25
 # New API to ProductLicense module
 Requires:	yast2-packager >= 2.17.64
 
-# Storage::GetCommitInfo() call in include/misc.ycp
-Requires:	yast2-storage >= 2.17.47
+# Storage::GetCommitInfos() call in include/misc.ycp
+Requires:	yast2-storage >= 2.17.101
 
 # use in startup scripts
 Requires:	initviocons
