@@ -348,13 +348,13 @@ function start_yast () {
 		#---------------------------------------------
 		log "\t$Y2_OK_MESSAGE"
 	fi
-	if [ $SELECTED_MEDIUM = "SSH" ] && [ ! "$VNC" = 1 ];then
-		ssh_reboot_message
-		echo $Y2_EXIT_CODE > /tmp/YaST2_ssh_installation_finished
-	fi
 	if [ $Y2_EXIT_CODE -eq 0 ];then
 		start_yast_and_reboot
 		start_yast_again
+	fi
+	if [ $SELECTED_MEDIUM = "SSH" ] && [ ! "$VNC" = 1 ];then
+		ssh_reboot_message
+		echo $Y2_EXIT_CODE > /tmp/YaST2_ssh_installation_finished
 	fi
 	log "\tReset memory allocation: overcommit_memory=$overcommit"
 	echo $overcommit > /proc/sys/vm/overcommit_memory
