@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu May 19 14:22:10 CEST 2011 - jsuchome@suse.cz
+
+- enable YaST restart in the 1st stage (bnc#694299)
+- 2.21.4 
+
+-------------------------------------------------------------------
 Wed Apr 27 15:08:04 CEST 2011 - jsuchome@suse.cz
 
 - added option to configure FCoE Interfaces when started with
