@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jun  1 11:56:08 CEST 2011 - fehr@suse.de
+
+- add btrfs_increase_percentage to to category "partitioning" in
+  config.xml files
+- 2.21.5 
+
+-------------------------------------------------------------------
 Thu May 19 14:22:10 CEST 2011 - jsuchome@suse.cz
 
 - enable YaST restart in the 1st stage (bnc#694299)

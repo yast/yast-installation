@@ -38,6 +38,7 @@ textdomain="control"
         <root_space_percent>40</root_space_percent>
         <root_base_size>3GB</root_base_size>
         <root_max_size>10GB</root_max_size>
+	<btrfs_increase_percentage>100</btrfs_increase_percentage>
     </partitioning>
     <network>
         <force_static_ip config:type="boolean">false</force_static_ip>
