@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jun  1 17:24:25 CEST 2011 - locilka@suse.cz
+
+- always loading 'pciehp' kernel module on Dell hardware
+  (FATE #311991)
+- 2.17.83
+
+-------------------------------------------------------------------
 Wed Jun  1 11:30:47 CEST 2011 - fehr@suse.de
 
 - add btrfs_increase_percentage to to category "partitioning" in
