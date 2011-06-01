@@ -34,6 +34,49 @@ y2milestone ("starting kernel_finish");
 y2debug("func=%1", func);
 y2debug("param=%1", param);
 
+    string manufacturer_regexp_dell = "^[dD][eE][lL][lL]";
+    string module_to_load_dell = "pciehp";
+
+    string manufacturer () {
+        // Workaround for bug in YaST (FATE #311991, comment #34)
+        SCR::Read(.probe.bios_video);
+        list <map> bios_infos = (list <map>) SCR::Read(.probe.bios);
+        list <map> bios_info = (list <map>) bios_infos[0, "smbios"]:[];
+        y2debug ("Bios Info: %1", bios_info);
+        map manufacturer_info = (map) find (map bios_item, bios_info, ``((bios_item["type"]:"" == "sysinfo") && (bios_item["manufacturer"]:"" != "")));
+        y2milestone ("Bios manufacturer found: %1", manufacturer_info);
+        return manufacturer_info["manufacturer"]:"";
+    }
+
+    boolean pciehp_needed () {
+        string manufacturer_s = manufacturer();
+        if (manufacturer_s == nil || manufacturer_s == "") {
+            y2warning ("Cannot find the BIOS manufacturer");
+            return false;
+        }
+
+        if (regexpmatch (manufacturer_s, manufacturer_regexp_dell))
+            return true;
+
+        return false;
+    }
+
+    boolean adjust_kernel_modules () {
+        string all_modules = (string) SCR::Read (.sysconfig.kernel.MODULES_LOADED_ON_BOOT);
+        if (all_modules == nil) all_modules = "";
+        list <string> modules = splitstring (all_modules, " \t\n");
+        y2milestone ("Modules: %1", modules);
+
+        // already there
+        if (contains (modules, module_to_load_dell))
+            return true;
+
+        y2milestone ("Adding '%1' module to sysconfig/kernel:MODULES_LOADED_ON_BOOT", module_to_load_dell);
+        modules = add (modules, module_to_load_dell);
+        SCR::Write (.sysconfig.kernel.MODULES_LOADED_ON_BOOT, mergestring (modules, " "));
+        return SCR::Write (.sysconfig.kernel, nil);
+    }
+
 if (func == "Info")
 {
     return (any)$[
@@ -54,6 +97,10 @@ else if (func == "Write")
 	Kernel::AddModuleToLoad ("fetchop");
 	Kernel::AddModuleToLoad ("mmtimer");
     }
+
+    // FATE #311991
+    if (pciehp_needed())
+        Kernel::AddModuleToLoad (module_to_load_dell);
 
     // Write list of modules to load after system gets up
     Kernel::SaveModulesToLoad ();
