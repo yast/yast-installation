@@ -352,7 +352,7 @@ textdomain="control"
 	<vm_keep_unpartitioned_region config:type="boolean">false</vm_keep_unpartitioned_region>
 	<vm_desired_size>15GB</vm_desired_size>
 	<vm_home_max_size>25GB</vm_home_max_size>
-	<btrfs_increase_percentage>100</btrfs_increase_percentage>
+	<btrfs_increase_percentage config:type="integer">100</btrfs_increase_percentage>
     </partitioning>
 
     <network>

@@ -416,6 +416,7 @@ partitioning_elements =
     | vm_keep_unpartitioned_region
     | remove_special_partitions
     | partitions
+    | btrfs_increase_percentage
 
 evms_config =			element evms_config { BOOLEAN }
 try_separate_home =		element try_separate_home { BOOLEAN }
@@ -433,6 +434,7 @@ remove_special_partitions =	element remove_special_partitions { BOOLEAN }
 vm_keep_unpartitioned_region =	element vm_keep_unpartitioned_region { BOOLEAN }
 # used by HASI Add-On
 use_separate_multipath_module =	element use_separate_multipath_module { BOOLEAN }
+btrfs_increase_percentage =	element btrfs_increase_percentage { INTEGER }
 
 # these have to be defined by Storage
 partitions = element partitions {
