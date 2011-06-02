@@ -3,6 +3,9 @@ Wed Jun  1 17:24:25 CEST 2011 - locilka@suse.cz
 
 - always loading 'pciehp' kernel module on Dell hardware
   (FATE #311991)
+- fixed control file validation
+- stricter btrfs_increase_percentage definition in all control
+  files (only 'integer' is allowed)
 - 2.17.83
 
 -------------------------------------------------------------------

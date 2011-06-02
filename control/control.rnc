@@ -411,6 +411,7 @@ partitioning_elements =
     | prefer_remove
     | remove_special_partitions
     | partitions
+    | btrfs_increase_percentage
 
 evms_config =			element evms_config { BOOLEAN }
 try_separate_home =		element try_separate_home { BOOLEAN }
@@ -427,6 +428,7 @@ prefer_remove =			element prefer_remove { BOOLEAN }
 remove_special_partitions =	element remove_special_partitions { BOOLEAN }
 # used by HASI Add-On
 use_separate_multipath_module =	element use_separate_multipath_module { BOOLEAN }
+btrfs_increase_percentage =	element btrfs_increase_percentage { INTEGER }
 
 # these have to be defined by Storage
 partitions = element partitions {

@@ -302,7 +302,7 @@ textdomain="control"
 	<vm_desired_size>15GB</vm_desired_size>
 	<vm_home_max_size>25GB</vm_home_max_size>
 	<boot_evms config:type="boolean">false</boot_evms>
-	<btrfs_increase_percentage>100</btrfs_increase_percentage>
+	<btrfs_increase_percentage config:type="integer">100</btrfs_increase_percentage>
     </partitioning>
 
     <network>
