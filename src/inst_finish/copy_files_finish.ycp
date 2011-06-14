@@ -22,6 +22,7 @@ import "Installation";
 import "Directory";
 import "Packages";
 import "ProductControl";
+import "ProductProfile";
 import "FileUtils";
 import "String";
 import "WorkflowManager";
