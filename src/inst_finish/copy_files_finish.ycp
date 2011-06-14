@@ -185,6 +185,23 @@ else if (func == "Write")
 	);
     }
 
+    // copy all product profiles to the installed system (fate#310730)
+    if (ProductProfile::all_profiles != [])
+    {
+	string target_dir	= sformat ("%1/etc/productprofiles.d", Installation::destdir);
+	if (!FileUtilis::Exists (target_dir))
+	{
+	    SCR::Execute (.target.mkdir, target_dir);
+	}
+	foreach (string profile, ProductProfile::all_profiles, {
+	    y2milestone ("Copying '%1' to %2", profile, target_dir);
+	    WFM::Execute (.local.bash,
+		sformat ("/bin/cp -a '%1' '%2/'", profile, target_dir);
+	    );
+	});
+    }
+
+
     // List of files used as additional workflow definitions
     CopyAllWorkflowFiles();
 
