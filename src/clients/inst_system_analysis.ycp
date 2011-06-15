@@ -22,7 +22,6 @@ import "Packages";
 import "Popup";
 import "Product";
 import "Progress";
-import "ProductProfile";
 import "Report";
 import "Storage";
 import "StorageControllers";
@@ -211,14 +210,6 @@ Aborting the installation."));
 	return true;
     }
 
-    boolean system_compliant	= true;
-
-    boolean CheckSystemCompliance () {
-
-	system_compliant	= ProductProfile::CheckCompliance (nil);
-	return system_compliant;
-    }
-
     // <-- Function definitions
 
 Wizard::SetContents (_("Analyzing the Computer"), `Empty (), "", false, false);
@@ -314,19 +305,6 @@ actions_doing = add (actions_doing, _("Initializing package manager..."));
 actions_functions = add (actions_functions, InitInstallationRepositories);
 visible_icons = add (visible_icons, "32x32/apps/yast-package-manager.png");
 
-// FIXME only show when profiles are available? or do as hidden action only?
-
-// ckeck for base product only once
-if (ProductProfile::all_profiles == [])
-{
-    // TRANSLATORS: progress step
-    actions_todo = add (actions_todo, _("Check System Compliance"));
-    // TRANSLATORS: progress step
-    actions_doing = add (actions_doing, _("Checking System Compliance..."));
-    actions_functions = add (actions_functions, CheckSystemCompliance);
-    visible_icons = add (visible_icons, "32x32/apps/apparmor_view_profile.png");
-}
-
 Progress::NewProgressIcons (
     // TRANSLATORS: dialog caption
     _("System Probing"),
@@ -368,10 +346,6 @@ Progress::Finish();
 sleep (500);
 
 if (! packager_initialized) {
-    return `abort;
-}
-
-if (!system_compliant) {
     return `abort;
 }
 
