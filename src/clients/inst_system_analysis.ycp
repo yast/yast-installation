@@ -21,6 +21,7 @@ import "Kernel";
 import "Packages";
 import "Popup";
 import "Product";
+import "ProductProfile";
 import "Progress";
 import "Report";
 import "Storage";
@@ -334,6 +335,13 @@ foreach (any run_function, actions_functions, {
     y2milestone ("Function %1 returned %2", run_function, ret);
 });
 Installation::probing_done = true;
+
+// the last step is hidden
+if (ProductProfile::CheckCompliance (nil) == false)
+{
+	return `abort;
+}
+
 
 Progress::Finish();
 sleep (500);
