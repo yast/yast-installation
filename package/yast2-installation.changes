@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jun 30 14:09:17 CEST 2011 - jsuchome@suse.cz
+
+- fixed typos (bnc#703119)
+- 2.21.6 
+
+-------------------------------------------------------------------
 Wed Jun  1 17:24:25 CEST 2011 - locilka@suse.cz
 
 - always loading 'pciehp' kernel module on Dell hardware

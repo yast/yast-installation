@@ -223,7 +223,7 @@
 	    Wizard::OpenNextBackStepsDialog();
 	    DumpACUIError();
 	    InstError::ShowErrorPopupWithLogs (
-		sformat (_("An error has occured while calling '%1' AC script."), last_client)
+		sformat (_("An error has occurred while calling '%1' AC script."), last_client)
 	    );
 	}
 
@@ -235,7 +235,7 @@
 		DumpACUIError();
 		y2error ("There is no Automatic Configuration dialog, adjusting the current one...");
 		InstError::ShowErrorPopupWithLogs (
-		    sformat (_("An error has occured while calling '%1' AC script."), last_client)
+		    sformat (_("An error has occurred while calling '%1' AC script."), last_client)
 		);
 	    }
 

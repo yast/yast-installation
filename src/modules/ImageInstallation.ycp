@@ -1233,14 +1233,14 @@ global boolean FileSystemCopy (string from, string to,
 	}
 
 	// Error message
-	Report::Error (_("Installation was unable to solve package dependecies automatically.
+	Report::Error (_("Installation was unable to solve package dependencies automatically.
 Package manager will be opened for you to solve them manually."));
 
 	boolean ret = false;
 
 	// BNC #Trying to solve deps. manually
 	while (true) {
-	    y2warning ("Cannot solve dependecies automatically, opening Packages UI");
+	    y2warning ("Cannot solve dependencies automatically, opening Packages UI");
 	    symbol diaret = PackagesUI::RunPackageSelector ($["enable_repo_mgr":false, "mode":`summaryMode]);
 	    y2milestone ("RunPackageSelector returned %1", diaret);
 
