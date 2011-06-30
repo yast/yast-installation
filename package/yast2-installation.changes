@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun 30 14:09:52 CEST 2011 - jsuchome@suse.cz
+
+- allow upgrade without FLAGS defined in content file (bnc#702634)
+- fixed typos (bnc#703119)
+- 2.17.85
+
+-------------------------------------------------------------------
 Fri Jun 17 10:22:24 CEST 2011 - jsuchome@suse.cz
 
 - check the product profiles during system analysis and

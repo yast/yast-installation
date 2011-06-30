@@ -126,7 +126,7 @@ else if (func == "Write")
     {
 	Progress::NextStep ();
 	// progress step title
-	Progress::Title (_("Saving automatical installation settings..."));
+	Progress::Title (_("Saving automatic installation settings..."));
 	AutoInstall::Save();
     }
     Progress::NextStep ();
