@@ -1158,7 +1158,7 @@ a proposal that is locked, ask your system administrator.</p>");
 	// Some proposal module can change it while called
 	SetNextButton();
 
-	input = Wizard::UserInput();
+	input = UI::UserInput();
 
 	if ( input == `accept ) return `next;
 	if ( input == `cancel ) return `abort;
