@@ -3,6 +3,7 @@ Fri Jul  1 15:40:04 CEST 2011 - locilka@suse.cz
 
 - backported fixes for user-input handling in inst_proposal
   (bnc#575125)
+- 2.17.86
 
 -------------------------------------------------------------------
 Thu Jun 30 14:09:52 CEST 2011 - jsuchome@suse.cz
