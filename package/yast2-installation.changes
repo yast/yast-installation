@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jul 12 13:50:06 CEST 2011 - jsuchome@suse.cz
+
+- Show Xen Virtualization Host Server Installation scenario
+  only for x86_64 architecture (bnc#702103)
+- 2.17.87
+
+-------------------------------------------------------------------
 Fri Jul  1 15:40:04 CEST 2011 - locilka@suse.cz
 
 - backported fixes for user-input handling in inst_proposal
