@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jul 12 15:34:38 CEST 2011 - jsuchome@suse.cz
+
+- Show Xen Virtualization Host Server Installation scenario
+  only for x86_64 architecture (bnc#702103)
+- 2.21.7
+
+-------------------------------------------------------------------
 Thu Jun 30 14:09:17 CEST 2011 - jsuchome@suse.cz
 
 - fixed typos (bnc#703119)

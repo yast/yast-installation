@@ -12,6 +12,7 @@
 
     textdomain "installation";
 
+    import "Arch";
     import "ProductControl";
     import "ProductFeatures";
     import "Wizard";
@@ -40,6 +41,16 @@
     }
 
     list <map <string, string> > system_scenarios = (list <map <string, string> >) any_scenarios;
+
+    // Remove Xen Virtualization Host Server Installation for non-x86_64 (bnc#702103)
+    system_scenarios	= filter (map <string, string> one_scenario, system_scenarios, {
+	if (one_scenario["id"]:"---" == "scenario_virtualization_host" && !Arch::x86_64 ())
+	{
+	    y2milestone ("removing Xen Virtualization Host Server option");
+	    return false;
+	}
+	return true;
+    });
 
     /**
      * Adjusts UI - selected radio button
