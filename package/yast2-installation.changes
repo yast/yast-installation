@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jul 14 12:48:54 CEST 2011 - gs@suse.de
+
+- Save fcoe-client configuration at the end of installation
+  (inst_finish.ycp), needed for feature #311802
+- 2.17.88
+
+-------------------------------------------------------------------
 Tue Jul 12 13:50:06 CEST 2011 - jsuchome@suse.cz
 
 - Show Xen Virtualization Host Server Installation scenario
