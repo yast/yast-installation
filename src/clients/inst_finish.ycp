@@ -94,6 +94,7 @@ list<map<string,any> > stages = [
 	    "fonts",
 	    "storage",
 	    "iscsi-client",
+	    "fcoe-client",
 	    "kernel",
 	    "x11",
 	    "proxy",
