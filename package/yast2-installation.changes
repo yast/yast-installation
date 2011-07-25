@@ -3,6 +3,7 @@ Fri Jul 22 15:00:30 CEST 2011 - locilka@suse.cz
 
 - Removed obsoleted X-KDE-SubstituteUID from deploy_image.desktop
   (bnc#540627)
+- 2.21.8
 
 -------------------------------------------------------------------
 Tue Jul 12 15:34:38 CEST 2011 - jsuchome@suse.cz
