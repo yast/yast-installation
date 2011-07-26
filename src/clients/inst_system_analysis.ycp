@@ -119,7 +119,7 @@ Please check your hardware!
                 } else {
                         Report::Warning(_("No hard disks were found for the installation.
 During an automatic installation, they might be detected later.
-(especially on s390 or iSCSI systems)
+(especially on S/390 or iSCSI systems)
 "));
                 }
 	    } else {
