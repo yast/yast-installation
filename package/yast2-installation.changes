@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Aug  1 15:38:32 CEST 2011 - locilka@suse.cz
+
+- Added control.SLES-for-VMware into the SVN
+
+-------------------------------------------------------------------
 Fri Jul 22 15:00:30 CEST 2011 - locilka@suse.cz
 
 - Removed obsoleted X-KDE-SubstituteUID from deploy_image.desktop
