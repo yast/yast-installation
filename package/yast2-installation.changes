@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Aug  1 11:46:22 CEST 2011 - locilka@suse.cz
+
+- Added control-SLES-for-VMware into the SVN
+
+-------------------------------------------------------------------
 Thu Jul 14 12:48:54 CEST 2011 - gs@suse.de
 
 - Save fcoe-client configuration at the end of installation
