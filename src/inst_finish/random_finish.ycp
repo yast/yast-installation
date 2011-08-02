@@ -1,0 +1,74 @@
+/**
+ * File: random_finish.ycp
+ *
+ * Module: Handle haveged service and preserve the current randomness state
+ *
+ * Authors: Lukas Ocilka <locilka@suse.cz>
+ *
+ * $Id$
+ */
+
+{
+    textdomain "installation";
+
+    import "FileUtils";
+    import "Service";
+
+    any ret = nil;
+    string func = "";
+    map param = $[];
+
+    /**
+     * Calls a local command and returns if successful
+     */
+    define boolean LocalCommand (string command) {
+	map cmd = (map) WFM::Execute (.local.bash_output, command);
+	y2milestone ("Command %1 returned: %2", command, cmd);
+
+	if (cmd["exit"]:-1 == 0) {
+	    return true;
+	} else {
+	    if (cmd["stderr"]:"" != "") y2error ("Error: %1", cmd["stderr"]:"");
+	    return false;
+	}
+    }
+
+    if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
+	func = (string)WFM::Args(0);
+	if(size(WFM::Args()) > 1 && is(WFM::Args(1), map))
+	    param = (map)WFM::Args(1);
+    }
+
+    y2milestone ("starting random_finish");
+    y2debug("func=%1", func);
+    y2debug("param=%1", param);
+
+    if (func == "Info") {
+	return (any) $[
+	    "steps" : 1,
+	    // progress step title
+	    "title" : _("Enabling random number generator..."),
+	    "when" : [ `installation, `live_installation, `update, `autoinst ],
+	];
+    } else if (func == "Write") {
+	string init_path	= "/etc/init.d/";
+	string init_service	= "haveged";
+
+	// The generator of randomness should be always enabled if possible
+	if (FileUtils::Exists (sformat ("%1/%2", init_path, init_service))) {
+	    y2milestone ("Enabling service %1", init_service);
+	    ret = Service::Enable (init_service);
+	} else {
+	    y2warning ("Cannot enable service %1, %2 is not installed",
+		init_service, sformat ("%1/%2", init_path, init_service));
+	}
+    } else {
+	y2error ("unknown function: %1", func);
+	ret = nil;
+    }
+
+    y2debug("ret=%1", ret);
+    y2milestone("random_finish finished");
+
+    return ret;
+} /* EOF */
