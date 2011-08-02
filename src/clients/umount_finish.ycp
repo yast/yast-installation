@@ -22,6 +22,7 @@ import "Hotplug";
 import "Vendor";
 import "String";
 import "Internet";
+import "Mode";
 
 any ret = nil;
 string func = "";
@@ -37,6 +38,43 @@ if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
 y2milestone ("starting umount_finish");
 y2debug("func=%1", func);
 y2debug("param=%1", param);
+
+/**
+ * Calls a local command and returns if successful
+ */
+define boolean LocalCommand (string command) {
+    map cmd = (map) WFM::Execute (.local.bash_output, command);
+    y2milestone ("Command %1 returned: %2", command, cmd);
+
+    if (cmd["exit"]:-1 == 0) {
+        return true;
+    } else {
+        if (cmd["stderr"]:"" != "") y2error ("Error: %1", cmd["stderr"]:"");
+        return false;
+    }
+}
+
+void preserve_randomness_state () {
+    string service_bin	= "/sbin/haveged";
+    string dev_path	= "/dev";
+    string random_path	= sformat ("%1/urandom", dev_path);
+
+    ret = true;
+
+    // Preserve the current randomness state
+    if (!Mode::update() && Installation::destdir != "/") {
+	// stop the random number generator service
+	LocalCommand (sformat ("killproc -TERM %1", service_bin));
+
+	// copy the current state of random number generator to the installed system
+	if (LocalCommand (sformat ("cp -av '%1' '%2/%1'", String::Quote (random_path), String::Quote (Installation::destdir)))) {
+	    y2milestone ("State of %1 has been successfully copied to %2", random_path, Installation::destdir);
+	} else {
+	    y2milestone ("Cannot copy %1 to %2/%1", random_path, Installation::destdir);
+	    ret = false;
+	}
+    }
+}
 
 if (func == "Info")
 {
@@ -133,6 +171,13 @@ else if (func == "Write")
     {
         umountLength = umountLength - 1;
         string tmp = Installation::destdir + (string) (umountList[umountLength]:"");
+
+	// This is the very last partition, actually "/"
+	if (umountLength == 0) {
+	    // BNC #692799: Preserve the randomness state before umounting
+	    preserve_randomness_state();
+	}
+
         y2milestone ("umount target: %1", tmp);
 
         boolean umount_status = (boolean) WFM::Execute (.local.umount, tmp);
