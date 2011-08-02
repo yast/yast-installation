@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Aug  2 13:37:03 CEST 2011 - locilka@suse.cz
+
+- Preserving the /dev/urandom state from inst-sys after the
+  installation (bnc#692799)
+- Automatically enabling haveged service if installed (bnc#692799)
+- 2.21.9
+
+-------------------------------------------------------------------
 Mon Aug  1 15:38:32 CEST 2011 - locilka@suse.cz
 
 - Added control.SLES-for-VMware into the SVN
