@@ -347,7 +347,7 @@ if (ImageInstallation::RestoreAllChanges() != true) {
 if (ProductFeatures::GetBooleanFeature("globals", "debug_deploying") == true) {
     // TRANSLATORS: pop-up message
     Report::Message (_("Debugging has been turned on.
-YaST will open a package manager for you to check the current status of packages."));
+YaST will open a software manager for you to check the current status of packages."));
     RunPackageManager();
 }
 

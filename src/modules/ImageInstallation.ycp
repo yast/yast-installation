@@ -1234,7 +1234,7 @@ global boolean FileSystemCopy (string from, string to,
 
 	// Error message
 	Report::Error (_("Installation was unable to solve package dependencies automatically.
-Package manager will be opened for you to solve them manually."));
+Software manager will be opened for you to solve them manually."));
 
 	boolean ret = false;
 

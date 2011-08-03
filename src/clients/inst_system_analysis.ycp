@@ -299,9 +299,9 @@ actions_functions = add (actions_functions, EvaluateUpdatePossibilities);
 visible_icons = add (visible_icons, "32x32/apps/yast-update-possibility.png");
 
 // TRANSLATORS: progress step
-actions_todo = add (actions_todo, _("Initialize package manager"));
+actions_todo = add (actions_todo, _("Initialize software manager"));
 // TRANSLATORS: progress step
-actions_doing = add (actions_doing, _("Initializing package manager..."));
+actions_doing = add (actions_doing, _("Initializing software manager..."));
 actions_functions = add (actions_functions, InitInstallationRepositories);
 visible_icons = add (visible_icons, "32x32/apps/yast-package-manager.png");
 
