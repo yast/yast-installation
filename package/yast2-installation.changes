@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Aug  3 08:53:14 UTC 2011 - lslezak@suse.cz
+
+- use term "Software manager" instead of "Package manager"
+  (bnc#585679)
+- 2.21.10
+
+-------------------------------------------------------------------
 Tue Aug  2 13:37:03 CEST 2011 - locilka@suse.cz
 
 - Preserving the /dev/urandom state from inst-sys after the

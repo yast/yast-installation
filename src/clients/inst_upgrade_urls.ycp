@@ -1039,12 +1039,12 @@ URL: %2"),
 	    [
 		// TRANSLATORS: progress step
 		_("Read previously used repositories"),
-		_("Initialize package manager"),
+		_("Initialize software manager"),
 	    ],
 	    [
 		// TRANSLATORS: progress step
 		_("Reading previously used repositories..."),
-		_("Initializing package manager..."),
+		_("Initializing software manager..."),
 	    ],
 	    // TRANSLATORS: dialog help
 	    _("<p>Reading repositories. Please wait...</p>")
