@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Aug  4 14:50:33 UTC 2011 - lslezak@suse.cz
+
+- 2.21.12
+
+-------------------------------------------------------------------
 Thu Aug  4 14:07:38 CEST 2011 - mvidner@suse.cz
 
 - Copy network interface naming rules early to get them to initrd (bnc#666079).
