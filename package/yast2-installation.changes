@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Aug  4 14:07:38 CEST 2011 - mvidner@suse.cz
+
+- Copy network interface naming rules early to get them to initrd (bnc#666079).
+- 2.17.90
+
+-------------------------------------------------------------------
 Tue Aug  2 13:37:03 CEST 2011 - locilka@suse.cz
 
 - Preserving the /dev/urandom state from inst-sys after the
