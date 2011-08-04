@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Aug  4 14:07:38 CEST 2011 - mvidner@suse.cz
+
+- Copy network interface naming rules early to get them to initrd (bnc#666079).
+- 2.17.76.1
+
+-------------------------------------------------------------------
 Thu Jan  6 12:19:13 CET 2011 - locilka@suse.cz
 
 - Using wider space for licence displayed in non-textual interface
