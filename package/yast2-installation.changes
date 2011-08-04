@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Thu Aug  4 11:37:02 UTC 2011 - lslezak@suse.cz
+
+- extraurls: check whether there is an update candidate in the
+  added extra repositories - openSUSE DVD does not contain all
+  packages, packages from OSS repository which are not on DVD
+  medium were not upgraded and were left in the old version even
+  after adding new OSS repository with updated version (bnc#693230)
+
+-------------------------------------------------------------------
 Wed Aug  3 13:19:50 UTC 2011 - lslezak@suse.cz
 
 - cleanup: removed obsoleted SourceManager::SyncAddedAndDeleted()

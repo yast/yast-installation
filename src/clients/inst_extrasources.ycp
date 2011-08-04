@@ -25,6 +25,9 @@ import "ProductFeatures";
 import "ProductControl";
 import "Installation";
 import "PackageCallbacks";
+import "NetworkService";
+import "PackagesUI";
+import "Popup";
 
 /**
  * Returns list of maps of repositories to register. See bnc #381360.
@@ -150,6 +153,87 @@ boolean InitializePackager () {
     return (Pkg::TargetInit (Installation::destdir, false) == true);
 }
 
+// refresh the requested repositories
+// returns true on success
+boolean RefreshRepositories(list<integer> repos)
+{
+    boolean ret = true;
+
+    y2milestone("Refreshing repositories %1", repos);
+    foreach(integer repo, repos, {
+	ret = ret && Pkg::SourceRefreshNow(repo);
+    });
+
+    y2milestone("Refresh succeeded: %1", ret);
+
+    return ret;
+}
+
+// is the repository an update repo?
+boolean IsUpdateRepo(integer repo)
+{
+    y2milestone("Checking whether repository %1 is an update repo...", repo);
+    boolean ret = false;
+
+    // check if there is a patch available in the repository
+    foreach (map patch, Pkg::ResolvableProperties ("", `patch, ""), {
+	if (patch["source"]:-1 == repo)
+	{
+	    y2milestone("Found patch %1 in the repository", patch["name"]:"");
+	    ret = true;
+	    break;
+	}
+    });
+
+    y2milestone("Repository %1 is update repo: %2", repo, ret);
+
+    return ret;
+}
+
+// mark the repositories for upgrade, run the solver
+void UpgradeFrom(list<integer> repos)
+{
+    foreach(integer repo, repos, {
+	y2milestone("Adding upgrade repo %1", repo);
+	Pkg::AddUpgradeRepo(repo);
+    });
+
+    Pkg::PkgSolve(true);
+}
+
+// revert the upgrading repos, reset package selection
+void RevertUpgradeFrom(list<integer> repos)
+{
+    foreach(integer repo, repos, {
+	y2milestone("Removing upgrade repo %1", repo);
+	Pkg::RemoveUpgradeRepo(repo);
+    });
+
+    Pkg::PkgApplReset();
+    Pkg::PkgReset();
+}
+
+// check if there is a selected package in the requested repositories
+// returns number of available updates
+integer UpgradesAvailable(list<integer> repos)
+{
+    integer ret = 0;
+
+    foreach (map pkg, Pkg::ResolvableProperties ("", `package, ""), {
+	integer source = pkg["source"]:-1;
+	if (pkg["status"]:`none == `selected && contains(repos, source))
+	{
+	    string package = sformat("%1-%2.%3", pkg["name"]:"", pkg["version"]:"", pkg["arch"]:"");
+	    y2milestone("Found upgrade to install: %1", package);
+
+	    ret = ret + 1;
+	}
+    });
+
+    y2milestone("Available upgrades: %1", ret);
+
+    return ret;
+}
 
 //////////////////////////////////////////
 
@@ -186,6 +270,77 @@ if (size (register_url) > 0) {
 	// bnc #440184
 	y2milestone ("Some (%1) sources have been added, storing them...", added_ids);
 	Pkg::SourceSaveAll();
+    }
+
+    // check during upgrade whether the added repositories provide an upgrade for installed package
+    // (openSUSE DVD does not contain all packages, packages from OSS repository might not have been upgraded,
+    // see bnc#693230 for details)
+    if (Mode::update() && size(added_ids) > 0 )
+    {
+	y2milestone("Checking whether there is and update provided by extra (non-update) repo...");
+
+	// network up?
+	if (NetworkService::isNetworkRunning())
+	{
+	    // refresh the added repositories and load them
+	    if (RefreshRepositories(added_ids) && Pkg::SourceStartManager(true))
+	    {
+		// ignore update repositories - the updates will be installed later by online update
+		list<integer> check_repos = filter(integer repo, added_ids, {return !IsUpdateRepo(repo);});
+
+		if (size(check_repos) > 0)
+		{
+		    UpgradeFrom(check_repos);
+
+		    integer upgrades_avail = UpgradesAvailable(check_repos);
+
+		    if (upgrades_avail > 0)
+		    {
+			// popup message, list of repositores is appended to the text
+			string message = _("Package updates have been detected in these additional repositories:\n");
+			foreach(integer repo, check_repos, {
+			    map repo_info = Pkg::SourceGeneralData(repo);
+			    message = message + sformat("%1 (%2)\n", repo_info["name"]:"", repo_info["url"]:"");
+			});
+
+			// yes/no popup question
+			message = message + "\n" + _("Start the software manager to check and install the updates?");
+
+			if (Popup::YesNo(message))
+			{
+			    // start the software manager
+			    symbol ui = PackagesUI::RunPackageSelector($["mode" : `summaryMode]);
+			    y2milestone("Package manager returned: %1", ui);
+
+			    if (ui == `accept)
+			    {
+				// install the packages
+				y2milestone("Installing packages");
+				WFM::call("inst_rpmcopy");
+			    }
+			}
+			else
+			{
+			    y2milestone("Skipping installation of the available updates");
+			}
+		    }
+		    else
+		    {
+			y2milestone("Everything OK, no available update found");
+		    }
+
+		    RevertUpgradeFrom(check_repos);
+		}
+	    }
+	    else
+	    {
+		y2warning("Could not load new repositories");
+	    }
+	}
+	else
+	{
+	    y2milestone("Network is not running, skipping available updates check");
+	}
     }
 }
 
