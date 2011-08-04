@@ -94,7 +94,8 @@ void CopyHardwareUdevRules () {
     }
 
     // udev files that should be copied
-    list <string> files_to_copy = [ "70-persistent-cd.rules" ];
+    // Copy network rules early to get them to initrd, bnc#666079
+    list <string> files_to_copy = [ "70-persistent-cd.rules", "70-persistent-net.rules" ];
 
     foreach (string one_file, files_to_copy, {
 	string one_file_from = sformat ("%1%2", udev_rules_srcdir, one_file);
@@ -111,6 +112,9 @@ void CopyHardwareUdevRules () {
 	    if (cmd_out["exit"]:-1 != 0) {
 		y2error ("Command failed '%1': %2", cmd, cmd_out);
 	    }
+            else {
+                y2milestone ("Copied to %1", one_file_to);
+            }
 	}
     });
 }

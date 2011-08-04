@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Aug  4 14:07:38 CEST 2011 - mvidner@suse.cz
+
+- Copy network interface naming rules early to get them to initrd (bnc#666079).
+
+-------------------------------------------------------------------
 Thu Aug  4 11:37:02 UTC 2011 - lslezak@suse.cz
 
 - extraurls: check whether there is an update candidate in the
