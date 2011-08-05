@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Fri Aug  5 12:13:13 UTC 2011 - lslezak@suse.cz
+
+- upgrade_urls.ycp - do not display reading and writing progress,
+  it is pretty quick and just causes screen flickering
+  (the write progress is displayed only when there is an enabled
+  repo to add, refreshing it can take long time) (bnc#692614)
+- 2.21.13
+
+-------------------------------------------------------------------
 Fri Aug  5 12:32:16 CEST 2011 - tgoettlicher@suse.de
 
 - fixed .desktop file (bnc #681249)

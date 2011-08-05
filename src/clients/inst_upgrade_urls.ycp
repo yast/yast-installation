@@ -1011,6 +1011,13 @@ URL: %2"),
 	    return (one_source != sformat ("ID: %1", do_not_remove));
 	});
 
+	boolean progress = Progress::status();
+
+	if (size(sources_to_add) == 0)
+	{
+	    Progress::set(false);
+	}
+
 	SetAddRemoveSourcesProgress (sources_to_remove, sources_to_add, sources_to_add_disabled);
 
 	PackageCallbacks::RegisterEmptyProgressCallbacks();
@@ -1027,35 +1034,17 @@ URL: %2"),
 
 	PackageCallbacks::RestorePreviousProgressCallbacks();
 
-	return `next;
-    }
+	if (size(sources_to_add) == 0)
+	{
+	    Progress::set(progress);
+	}
 
-    void SetProgressUI () {
-	Progress::New (
-	    // TRANSLATORS: dialog caption
-	    _("Reading Repositories Used on the System"),
-	    " ",
-	    2,
-	    [
-		// TRANSLATORS: progress step
-		_("Read previously used repositories"),
-		_("Initialize software manager"),
-	    ],
-	    [
-		// TRANSLATORS: progress step
-		_("Reading previously used repositories..."),
-		_("Initializing software manager..."),
-	    ],
-	    // TRANSLATORS: dialog help
-	    _("<p>Reading repositories. Please wait...</p>")
-	);
-	Wizard::SetTitleIcon ("yast-sw_source");
+	return `next;
     }
 
     // for testing purpose
     if (Mode::normal()) Wizard::CreateDialog();
 
-    SetProgressUI();
     Progress::NextStage();
 
     // Read the old repos (old type)
