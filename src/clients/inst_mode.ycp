@@ -127,9 +127,10 @@ term InstModeDialogContent (symbol pre_selected) {
 					!Mode::update ()
 				    ),
 				    `VSpacing( 0.3 ),
-				    // radio button
 				    CreateRadioButtonTerm (
-					_("&Update"),
+					// radio button
+					_("&Update an Existing System"),
+//					_("&Update"),
 					`update,
 					Directory::themedir + "/current/icons/48x48/apps/yast-update.png",
 					Mode::update ()
@@ -209,7 +210,7 @@ To install an add-on product from separate media together with &product;, select
 <b>Include Add-On Products from Separate Media</b>.</p>") +
 
     // help text for installation method
-    _("<p>
+    (InstData::enable_autoconfiguration == true ? _("<p>
 Select <b>Use Automatic Configuration</b> to let the installation program
 configure your network and hardware automatically. Otherwise you will
 be offered a configuration proposal with the possibility to tune all the
@@ -218,7 +219,7 @@ configuration.</p>
 ") +
 
     // help text for installation method
-    _("<p>Update mode does not support automatic configuration.</p>") +
+    _("<p>Update mode does not support automatic configuration.</p>") : "") +
 
     // help text for installation method
     _("<p>Select <b>Repair Installed System</b> if you have a damaged Linux system on

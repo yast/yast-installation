@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Fri Aug 12 13:53:47 CEST 2011 - jsuchome@suse.cz
+
+- expect there might me extra checks for disk controllers with 
+  s390 (bnc#706911)
+- adapted help text and label in installation mode selection
+  (bnc#711160)
+- 2.17.91
+
+-------------------------------------------------------------------
 Thu Aug  4 14:07:38 CEST 2011 - mvidner@suse.cz
 
 - Copy network interface naming rules early to get them to initrd (bnc#666079).
