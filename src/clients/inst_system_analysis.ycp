@@ -110,7 +110,7 @@ include "packager/storage_include.ycp";
 	map targetMap = StorageDevices::Probe (true);
 
 	if (size (targetMap) == 0) {
-	    if (found_controllers) {
+	    if (found_controllers || Arch::s390 ()) {
                 if( !(Mode::autoinst() || Mode::autoupgrade())) {
                         // pop-up error report
                         Report::Error(_("No hard disks were found for the installation.

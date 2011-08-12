@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Fri Aug 12 13:58:01 CEST 2011 - jsuchome@suse.cz
+
+- expect there might me extra checks for disk controllers with
+  s390 (bnc#706911)
+- adapted help text and label in installation mode selection
+  (bnc#711160)
+- 2.21.14 
+
+-------------------------------------------------------------------
 Fri Aug  5 12:13:13 UTC 2011 - lslezak@suse.cz
 
 - upgrade_urls.ycp - do not display reading and writing progress,
