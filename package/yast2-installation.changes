@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Aug 29 12:12:55 CEST 2011 - jsuchome@suse.cz
+
+- added systemd .service files for second stage and firstboot
+  (from fcrozat@suse.com, bnc#713760)
+- 2.21.15
+
+-------------------------------------------------------------------
 Fri Aug 12 13:58:01 CEST 2011 - jsuchome@suse.cz
 
 - expect there might me extra checks for disk controllers with
