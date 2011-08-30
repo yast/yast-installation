@@ -4,6 +4,15 @@
 @HEADER@
 Group:	System/YaST
 License: GPL v2 or later
+
+Source1:	YaST2-Second-Stage.service
+Source2:	YaST2-Firstboot.service
+
+%if 0%{?suse_version} >= 1210
+BuildRequires: systemd-devel
+%{systemd_requires}
+%endif
+
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2-core-devel yast2-devtools yast2-testsuite
 
 # FileSystems::possible_root_fs
@@ -121,10 +130,28 @@ for f in `find %{buildroot}%{_datadir}/autoinstall/modules -name "*.desktop"`; d
     %suse_update_desktop_file $f
 done 
 
+mkdir -p $RPM_BUILD_ROOT/%{_unitdir}
+install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/%{_unitdir}
+install -m 644 %{SOURCE2} $RPM_BUILD_ROOT/%{_unitdir}
+
 @CLEAN@
 
 %post
 %{fillup_only -ns security checksig}
+
+%service_add YaST2-Second-Stage.service YaST2-Firstboot.service
+
+/bin/systemctl enable YaST2-Second-Stage.service > /dev/null 2>&1 || :
+/bin/systemctl enable YaST2-Firstboot.service > /dev/null 2>&1 || :
+
+%preun
+if [ $1 -eq 0 ]; then
+  /bin/systemctl disable YaST2-Second-Stage.service YaST2-Firstboot.service > /dev/null 2>&1 || :
+fi
+%service_del_preun YaST2-Second-Stage.service YaST2-Firstboot.service
+
+%postun
+%service_del_postun YaST2-Second-Stage.service YaST2-Firstboot.service
 
 %files
 %defattr(-,root,root)
@@ -133,6 +160,10 @@ done
 # Fixme: move to another package (to make build of other packages faster)
 /usr/share/YaST2/control/*.rng
 /usr/share/YaST2/control/*.rnc
+
+# systemd service files
+%_unitdir/YaST2-Second-Stage.service
+%_unitdir/YaST2-Firstboot.service
 
 @clientdir@/*.ycp
 @moduledir@/*.ycp

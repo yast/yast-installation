@@ -1,0 +1,13 @@
+[Unit]
+Description=YaST2 Second Stage
+After=apparmor.service local-fs.target
+Before=getty@tty1.service xdm.service
+ConditionPathExists=/var/lib/YaST2/runme_at_boot
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/YaST2/startup/YaST2.Second-Stage
+ExecStartPost=/bin/rm -f /var/lib/YaST2/runme_at_boot
+
+[Install]
+WantedBy=default.target
