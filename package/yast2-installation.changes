@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Aug 31 14:33:50 CEST 2011 - jsuchome@suse.cz
+
+- fix build for older distributions
+- 2.21.16 
+
+-------------------------------------------------------------------
 Mon Aug 29 12:12:55 CEST 2011 - jsuchome@suse.cz
 
 - added systemd .service files for second stage and firstboot

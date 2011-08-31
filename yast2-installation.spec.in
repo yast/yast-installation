@@ -1,6 +1,5 @@
 @HEADER-COMMENT@
 
-
 @HEADER@
 Group:	System/YaST
 License: GPL v2 or later
@@ -130,14 +129,16 @@ for f in `find %{buildroot}%{_datadir}/autoinstall/modules -name "*.desktop"`; d
     %suse_update_desktop_file $f
 done 
 
-mkdir -p $RPM_BUILD_ROOT/%{_unitdir}
-install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/%{_unitdir}
-install -m 644 %{SOURCE2} $RPM_BUILD_ROOT/%{_unitdir}
+mkdir -p $RPM_BUILD_ROOT/lib/systemd/system/
+install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/lib/systemd/system/
+install -m 644 %{SOURCE2} $RPM_BUILD_ROOT/lib/systemd/system/
 
 @CLEAN@
 
 %post
 %{fillup_only -ns security checksig}
+
+%if 0%{suse_version} > 1140
 
 %service_add YaST2-Second-Stage.service YaST2-Firstboot.service
 
@@ -153,6 +154,8 @@ fi
 %postun
 %service_del_postun YaST2-Second-Stage.service YaST2-Firstboot.service
 
+%endif #suse_version
+
 %files
 %defattr(-,root,root)
 %dir /usr/share/YaST2/control
@@ -162,8 +165,8 @@ fi
 /usr/share/YaST2/control/*.rnc
 
 # systemd service files
-%_unitdir/YaST2-Second-Stage.service
-%_unitdir/YaST2-Firstboot.service
+/lib/systemd/system/YaST2-Second-Stage.service
+/lib/systemd/system/YaST2-Firstboot.service
 
 @clientdir@/*.ycp
 @moduledir@/*.ycp
