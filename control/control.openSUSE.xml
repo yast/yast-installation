@@ -331,7 +331,7 @@ textdomain="control"
 		<cursor>DMZ</cursor>
 		<packages>xorg-x11</packages>
 		<order config:type="integer">8</order>
-		<patterns>minimal_base</patterns>
+		<patterns>minimal_base minimal_base-conflicts</patterns>
 		<icon>yast-sshd</icon>
 	    </one_supported_desktop>
 
