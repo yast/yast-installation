@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Sep  6 10:05:00 CEST 2011 - jsuchome@suse.cz
+
+- enable system cloning only when autoyast2 is installed
+  (bnc#692790)
+- 2.21.17
+
+-------------------------------------------------------------------
 Wed Aug 31 14:33:50 CEST 2011 - jsuchome@suse.cz
 
 - fix build for older distributions
