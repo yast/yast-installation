@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Sep 15 12:16:49 UTC 2011 - lslezak@suse.cz
+
+- improved package update check - display only the repositories
+  with an update available, display package updates in details
+- 2.21.18
+
+-------------------------------------------------------------------
 Tue Sep  6 10:05:00 CEST 2011 - jsuchome@suse.cz
 
 - enable system cloning only when autoyast2 is installed

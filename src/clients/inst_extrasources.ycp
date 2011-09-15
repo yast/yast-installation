@@ -17,17 +17,16 @@
 textdomain "installation";
 
 import "GetInstArgs";
-import "SourceManager";
 import "Mode";
 import "PackageLock";
 import "ProductFeatures";
 // We need the constructor
 import "ProductControl";
 import "Installation";
-import "PackageCallbacks";
+import "Icon";
 import "NetworkService";
 import "PackagesUI";
-import "Popup";
+import "Label";
 
 /**
  * Returns list of maps of repositories to register. See bnc #381360.
@@ -214,10 +213,11 @@ void RevertUpgradeFrom(list<integer> repos)
 }
 
 // check if there is a selected package in the requested repositories
-// returns number of available updates
-integer UpgradesAvailable(list<integer> repos)
+// returns list of repositories providing an update (repo IDs)
+map<string, any> UpgradesAvailable(list<integer> repos)
 {
-    integer ret = 0;
+    list<integer> ret = [];
+    list<string> packages = [];
 
     foreach (map pkg, Pkg::ResolvableProperties ("", `package, ""), {
 	integer source = pkg["source"]:-1;
@@ -225,14 +225,73 @@ integer UpgradesAvailable(list<integer> repos)
 	{
 	    string package = sformat("%1-%2.%3", pkg["name"]:"", pkg["version"]:"", pkg["arch"]:"");
 	    y2milestone("Found upgrade to install: %1", package);
+	    packages = add(packages, package);
 
-	    ret = ret + 1;
+	    if (!contains(ret, source))
+	    {
+		ret = add(ret, source);
+	    }
 	}
     });
 
-    y2milestone("Available upgrades: %1", ret);
+    y2milestone("Upgrades found in repositories: %1", ret);
 
-    return ret;
+    return $["repositories" : ret, "packages" : packages ];
+}
+
+// ask user whether to install available package updates
+// returns true after confirming
+boolean InstallPackages(string msg, string details)
+{
+    term button_box = `ButtonBox
+    (
+	`PushButton (`id (`yes), `opt (`default, `okButton, `key_F10), Label::YesButton()),
+	`PushButton (`id (`no), `opt (`cancelButton, `key_F9), Label::NoButton())
+    );
+
+    term dialog = `HBox(
+	`HSpacing(0.5),
+	`Top(
+	    `MarginBox(1, 1,
+		Icon::Image("question", $[])
+	    )
+	),
+	`VBox(
+	    `Left(`Label(msg)),
+	    `VSpacing(0.5),
+	    // check box
+	    `Left(`CheckBox(`id(`show), `opt(`notify), _("Show &package updates"), false)),
+	    `ReplacePoint(`id(`info), `Empty()),
+	     button_box
+	),
+	`HSpacing(2)
+    );
+
+    UI::OpenDialog(`opt(`decorated), dialog);
+
+    any r = nil;
+    while (r != `yes && r != `no && r != `cancel)
+    {
+	r = UI::UserInput();
+
+	if (r == `show)
+	{
+	    if (UI::QueryWidget(`id(`show), `Value ) == true)
+	    {
+		UI::ReplaceWidget(`id(`info), `RichText(`opt(`plainText), details));
+	    }
+	    else
+	    {
+		UI::ReplaceWidget(`id(`info), `Empty() );
+	    }
+	}
+    }
+
+    UI::CloseDialog();
+
+    y2milestone("User input: %1", r);
+
+    return r == `yes;
 }
 
 //////////////////////////////////////////
@@ -292,21 +351,24 @@ if (size (register_url) > 0) {
 		{
 		    UpgradeFrom(check_repos);
 
-		    integer upgrades_avail = UpgradesAvailable(check_repos);
+		    map<string, any> upgrade_info = UpgradesAvailable(check_repos);
+		    list<integer> upgrade_repos = upgrade_info["repositories"]:[];
 
-		    if (upgrades_avail > 0)
+		    if (size(upgrade_repos) > 0)
 		    {
 			// popup message, list of repositores is appended to the text
-			string message = _("Package updates have been detected in these additional repositories:\n");
-			foreach(integer repo, check_repos, {
+			string message = _("Package updates have been found in these additional repositories:") + "\n\n";
+			foreach(integer repo, upgrade_repos, {
 			    map repo_info = Pkg::SourceGeneralData(repo);
 			    message = message + sformat("%1 (%2)\n", repo_info["name"]:"", repo_info["url"]:"");
 			});
 
 			// yes/no popup question
-			message = message + "\n" + _("Start the software manager to check and install the updates?");
+			message = message + "\n\n" + _("Start the software manager to check and install the updates?");
 
-			if (Popup::YesNo(message))
+			string package_list = mergestring(upgrade_info["packages"]:[], "\n");
+
+			if (InstallPackages(message, package_list))
 			{
 			    // start the software manager
 			    symbol ui = PackagesUI::RunPackageSelector($["mode" : `summaryMode]);
