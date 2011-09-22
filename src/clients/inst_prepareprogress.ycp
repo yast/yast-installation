@@ -45,7 +45,8 @@
     "description": _("Deploying Images..."),
     // Use 'zero' if image installation is not used
     // BNC #439104
-    "value" : (Installation::image_installation ? ImageInstallation::TotalSize() / 1024 : 0), // kilobytes
+    // FIXME live image size (need to set something because of bnc#717818), disk preparation is also just a guess
+    "value" : (Mode::live_installation() ? 2000000 : (Installation::image_installation ? ImageInstallation::TotalSize() / 1024 : 0)), // kilobytes
     "units" : `kb,
     ],
     $[
