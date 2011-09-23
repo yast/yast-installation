@@ -2,12 +2,17 @@
 Description=YaST2 Second Stage
 After=apparmor.service local-fs.target
 Before=getty@tty1.service xdm.service
-ConditionPathExists=/var/lib/YaST2/runme_at_boot
+ConditionPathExists=|/var/lib/YaST2/runme_at_boot
+ConditionPathExists=|/run/systemd/keep_running
 
 [Service]
 Type=oneshot
+ExecStart=/bin/touch /run/systemd/keep_running
 ExecStart=/usr/lib/YaST2/startup/YaST2.Second-Stage
+RemainAfterExit=yes
+TimeoutSec=0
 ExecStartPost=/bin/rm -f /var/lib/YaST2/runme_at_boot
+ExecStartPost=/bin/rm -f /run/systemd/keep_running
 
 [Install]
 WantedBy=default.target
