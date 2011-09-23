@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Sep 23 14:27:36 CEST 2011 - jsuchome@suse.cz
+
+- unmount previously mounted /run (bnc#717321)
+- 2.21.19
+
+-------------------------------------------------------------------
 Thu Sep 15 12:16:49 UTC 2011 - lslezak@suse.cz
 
 - improved package update check - display only the repositories

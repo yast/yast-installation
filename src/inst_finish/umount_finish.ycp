@@ -127,7 +127,7 @@ else if (func == "Write")
     // /proc/bus/usb
     // /proc
 
-    list <string> umount_these = ["/proc", "/sys", "/dev"];
+    list <string> umount_these = ["/proc", "/sys", "/dev", "/run"];
     if (Hotplug::haveUSB) {
 	umount_these = (list <string>) union (["/proc/bus/usb"], umount_these);
     }
