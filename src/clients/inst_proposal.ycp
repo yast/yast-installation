@@ -146,7 +146,8 @@
 	    if ( language_changed )
 	    {
 		retranslate_proposal_dialog();
-		Pkg::SetLocale (Language::language);
+		Pkg::SetTextLocale (Language::language);
+		Pkg::SetPackageLocale (Language::language);
 		Pkg::SetAdditionalLocales ([Language::language]);
 	    }
 

@@ -476,7 +476,8 @@ Note: You may have to enter some information again.");
         // Properly setup timezone for continue mode
         import "Timezone";
         Timezone::Set( Timezone::timezone, true );
-        Pkg::SetLocale (Language::language);
+	// set only text locale
+        Pkg::SetTextLocale(Language::language);
 
         UI::RecordMacro( Directory::logdir + "/macro_inst_cont.ycp" );
 
