@@ -289,9 +289,9 @@ textdomain="control"
 		<!-- BNC #667408 -->
 		<desktop>xfce</desktop>
 		<label_id>desktop_xfce</label_id>
-		<logon>gdm</logon>
+		<logon>lightdm</logon>
 		<cursor>DMZ</cursor>
-		<packages>xfce4-session</packages>
+		<packages>lightdm</packages>
 		<order config:type="integer">4</order>
 		<patterns>xfce x11 base</patterns>
 		<icon>pattern-xfce</icon>
