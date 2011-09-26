@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Sep 26 10:41:38 CEST 2011 - jsuchome@suse.cz
+
+- control.openSUSE: use lightdm as default DM for Xfce 
+- 2.21.21
+
+-------------------------------------------------------------------
 Fri Sep 23 15:36:11 CEST 2011 - jsuchome@suse.cz
 
 - updated systemd service files (bnc#719221)
