@@ -2,7 +2,7 @@
 
 @HEADER@
 Group:	System/YaST
-License: GPL v2 or later
+License: GPL-2.0+
 
 Source1:	YaST2-Second-Stage.service
 Source2:	YaST2-Firstboot.service
