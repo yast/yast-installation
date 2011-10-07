@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Oct  7 11:38:39 UTC 2011 - fcrozat@suse.com
+
+- Use latest macros for systemd
+- Drop workaround for bnc#719221, systemd is fixed now.
+
+-------------------------------------------------------------------
 Fri Oct  7 11:30:21 UTC 2011 - jsrain@suse.cz
 
 - change the URL for congratulation dialog (bnc#720481)

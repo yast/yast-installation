@@ -140,15 +140,12 @@ install -m 644 %{SOURCE2} $RPM_BUILD_ROOT/lib/systemd/system/
 
 %if 0%{suse_version} > 1140
 
-%service_add YaST2-Second-Stage.service YaST2-Firstboot.service
+%service_add_post YaST2-Second-Stage.service YaST2-Firstboot.service
 
-/bin/systemctl enable YaST2-Second-Stage.service > /dev/null 2>&1 || :
-/bin/systemctl enable YaST2-Firstboot.service > /dev/null 2>&1 || :
+%pre
+%service_add_pre YaST2-Second-Stage.service YaST2-Firstboot.service
 
 %preun
-if [ $1 -eq 0 ]; then
-  /bin/systemctl disable YaST2-Second-Stage.service YaST2-Firstboot.service > /dev/null 2>&1 || :
-fi
 %service_del_preun YaST2-Second-Stage.service YaST2-Firstboot.service
 
 %postun

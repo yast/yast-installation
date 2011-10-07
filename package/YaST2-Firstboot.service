@@ -2,15 +2,12 @@
 Description=YaST2 Firstboot
 After=apparmor.service local-fs.target YaST2-Second-Stage.service
 Before=getty@tty1.service xdm.service
-ConditionPathExists=|/var/lib/YaST2/reconfig_system
-ConditionPathExists=|/run/systemd/keep_running
+ConditionPathExists=/var/lib/YaST2/reconfig_system
 
 [Service]
 Type=oneshot
-ExecStartPre=/bin/touch /run/systemd/keep_running
 ExecStart=/usr/lib/YaST2/startup/YaST2.Firstboot
 ExecStartPost=/bin/rm -f /var/lib/YaST2/reconfig_system
-ExecStartPost=/bin/rm -f /run/systemd/keep_running
 TimeoutSec=0
 RemainAfterExit=true
 
