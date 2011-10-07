@@ -95,7 +95,7 @@ the ZMD service during the system start.</p>");
     string vendor_url_tmp = ProductFeatures::GetStringFeature("globals", "vendor_url");
     
     // fallback
-    string vendor_url = "http://www.novell.com/linux/";
+    string vendor_url = "http://www.suse.com/";
     if (ProductFeatures::GetStringFeature("globals", "ui_mode") == "simple") {
 	vendor_url = "http://www.openSUSE.org";
     }
