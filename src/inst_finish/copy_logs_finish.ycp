@@ -61,7 +61,7 @@ else if (func == "Write")
            string target_basename = sformat( "y2log-%1", target_no );
 	   InjectRenamedFile( Directory::logdir, file, target_basename );
 
-           string compress_cmd = sformat("gzip %1/%2/%3", Installation::destdir, Directory::logdir, target_basename));
+           string compress_cmd = sformat("gzip %1/%2/%3", Installation::destdir, Directory::logdir, target_basename);
            WFM::Execute (.local.bash, compress_cmd);
 	}
 	else if ( regexpmatch (file, "^y2log-[0-9]+\\.gz$"))
