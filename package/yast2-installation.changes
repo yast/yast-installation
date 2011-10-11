@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Oct 11 08:52:43 CEST 2011 - jsuchome@suse.cz
+
+- compress the log file from 1st stage of installation (bnc#716938)
+- 2.21.23
+
+-------------------------------------------------------------------
 Fri Oct  7 11:38:39 UTC 2011 - fcrozat@suse.com
 
 - Use latest macros for systemd
