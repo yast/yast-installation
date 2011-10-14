@@ -3,14 +3,10 @@
 @HEADER@
 Group:	System/YaST
 License: GPL-2.0+
+Summary:        YaST2 - Installation Parts
 
 Source1:	YaST2-Second-Stage.service
 Source2:	YaST2-Firstboot.service
-
-%if 0%{?suse_version} >= 1210
-BuildRequires: systemd-devel
-%{systemd_requires}
-%endif
 
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2-core-devel yast2-devtools yast2-testsuite
 
@@ -82,6 +78,11 @@ Conflicts:	yast2-ycp-ui-bindings < 2.17.3
 Requires:	tar gzip
 Requires:	coreutils
 
+%if 0%{?suse_version} >= 1210
+BuildRequires: systemd-devel
+%{systemd_requires}
+%endif
+
 # for the first/second stage of installation
 # currently not used
 # bugzilla #208307
@@ -102,9 +103,7 @@ Recommends:	yast2-add-on
 
 PreReq:		%fillup_prereq
 
-BuildArchitectures: noarch
-
-Summary:	YaST2 - Installation Parts
+BuildArch: noarch
 
 %package devel-doc
 Group:          Documentation/HTML
