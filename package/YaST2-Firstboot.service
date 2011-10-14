@@ -10,6 +10,7 @@ ExecStart=/usr/lib/YaST2/startup/YaST2.Firstboot
 ExecStartPost=/bin/rm -f /var/lib/YaST2/reconfig_system
 TimeoutSec=0
 RemainAfterExit=true
+StandardInput=tty
 
 [Install]
 WantedBy=default.target
