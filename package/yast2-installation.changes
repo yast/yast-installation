@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Oct 14 11:27:58 CEST 2011 - fcrozat@suse.com
+
+- Fix text mode handled in systemd (bnc#724115)
+- 2.21.24
+
+-------------------------------------------------------------------
 Tue Oct 11 08:52:43 CEST 2011 - jsuchome@suse.cz
 
 - compress the log file from 1st stage of installation (bnc#716938)
