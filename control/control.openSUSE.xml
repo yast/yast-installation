@@ -265,7 +265,7 @@ textdomain="control"
 		<label_id>desktop_gnome</label_id>
 		<logon>gdm</logon>
 		<cursor>DMZ</cursor>
-		<packages>gdm</packages>
+		<packages>gdm branding-openSUSE</packages>
 		<order config:type="integer">1</order>
 		<patterns>gnome x11 base</patterns>
 		<icon>pattern-gnome</icon>
@@ -278,7 +278,7 @@ textdomain="control"
 		<label_id>desktop_kde</label_id>
 		<logon>kdm</logon>
 		<cursor>DMZ</cursor>
-		<packages>kdm</packages>
+		<packages>kdm branding-openSUSE</packages>
 		<order config:type="integer">1</order>
 		<patterns>kde x11 base</patterns>
 		<icon>pattern-kde4</icon>
@@ -291,7 +291,7 @@ textdomain="control"
 		<label_id>desktop_xfce</label_id>
 		<logon>lightdm</logon>
 		<cursor>DMZ</cursor>
-		<packages>lightdm</packages>
+		<packages>lightdm branding-openSUSE</packages>
 		<order config:type="integer">4</order>
 		<patterns>xfce x11 base</patterns>
 		<icon>pattern-xfce</icon>
@@ -305,7 +305,7 @@ textdomain="control"
 		<label_id>desktop_lxde</label_id>
 		<logon>lxdm</logon>
 		<cursor>DMZ</cursor>
-		<packages>lxde-common</packages>
+		<packages>lxde-common branding-openSUSE</packages>
 		<order config:type="integer">5</order>
 		<patterns>lxde x11 base</patterns>
 		<icon>pattern-lxde</icon>
@@ -317,7 +317,7 @@ textdomain="control"
 		<label_id>desktop_min_x</label_id>
 		<logon>xdm</logon>
 		<cursor>DMZ</cursor>
-		<packages>xorg-x11</packages>
+		<packages>xorg-x11 branding-openSUSE</packages>
 		<order config:type="integer">6</order>
 		<patterns>x11 base</patterns>
 		<icon>yast-x11</icon>
@@ -329,7 +329,7 @@ textdomain="control"
 		<label_id>desktop_textmode</label_id>
 		<logon>xdm</logon>
 		<cursor>DMZ</cursor>
-		<packages>xorg-x11</packages>
+		<packages>branding-openSUSE</packages>
 		<order config:type="integer">8</order>
 		<patterns>minimal_base minimal_base-conflicts</patterns>
 		<icon>yast-sshd</icon>
