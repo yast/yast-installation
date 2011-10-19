@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Oct 19 16:25:41 CEST 2011 - locilka@suse.cz
+
+- Creating /etc/mtab linking to /proc/self/mounts in umount_finish
+  (bnc#725166)
+- 2.21.25
+
+-------------------------------------------------------------------
 Fri Oct 14 11:27:58 CEST 2011 - fcrozat@suse.com
 
 - Fix text mode handled in systemd (bnc#724115)
