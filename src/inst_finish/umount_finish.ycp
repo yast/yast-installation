@@ -118,6 +118,9 @@ else if (func == "Write")
 	// remove [Installation::destdir]/etc/mtab which was faked for %post
 	// scripts in inst_rpmcopy
 	SCR::Execute(.target.remove, "/etc/mtab");
+
+	// hotfix: recreating /etc/mtab as symlink (bnc#725166)
+	SCR::Execute(.target.bash, "ln -s /proc/self/mounts /etc/mtab");
     }
 
     // Stop SCR on target
