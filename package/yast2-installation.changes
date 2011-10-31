@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Oct 31 09:18:46 CET 2011 - jsuchome@suse.cz
+
+- control files: save ecdsa keys (bnc#726468)
+- 2.21.26 
+
+-------------------------------------------------------------------
 Wed Oct 19 16:25:41 CEST 2011 - locilka@suse.cz
 
 - Creating /etc/mtab linking to /proc/self/mounts in umount_finish
