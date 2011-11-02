@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Nov  2 17:14:51 CET 2011 - fcrozat@suse.com
+
+- Ensure network is not started by systemd before Firstboot /
+  SecondStage (bnc#726823)
+- 2.21.27
+
+-------------------------------------------------------------------
 Mon Oct 31 09:18:46 CET 2011 - jsuchome@suse.cz
 
 - control files: save ecdsa keys (bnc#726468)

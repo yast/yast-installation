@@ -1,7 +1,7 @@
 [Unit]
 Description=YaST2 Firstboot
 After=apparmor.service local-fs.target YaST2-Second-Stage.service
-Before=getty@tty1.service xdm.service
+Before=getty@tty1.service xdm.service network.service NetworkManager.service
 ConditionPathExists=/var/lib/YaST2/reconfig_system
 
 [Service]
