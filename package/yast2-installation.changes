@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Nov 03 11:52:08 CET 2011 - aschnell@suse.de
+
+- use same code to display ip addresses during vnc and ssh
+  installation (bnc#727802)
+- 2.21.28
+
+-------------------------------------------------------------------
 Wed Nov  2 17:14:51 CET 2011 - fcrozat@suse.com
 
 - Ensure network is not started by systemd before Firstboot /

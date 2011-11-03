@@ -392,6 +392,7 @@ function start_yast_again () {
 # 1) Source common script functions
 #---------------------------------------------
 . /usr/lib/YaST2/startup/common/functions.sh
+. /usr/lib/YaST2/startup/common/network.sh
 . /usr/lib/YaST2/startup/requires
 
 #=============================================
