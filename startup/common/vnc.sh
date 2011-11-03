@@ -44,38 +44,27 @@ function startVNCServer () {
 # start Xvnc server and write a log file from the
 # VNC server process
 #
-	# .../
 	# The IP set in install.inf may not be valid if the DHCP server
 	# gave us a different lease in the meantime (#43974).
-	# sed: don't print; if it's localhost, skip; try locating IPv4;
-	#      skip if not found; otherwise print and exit
-	# ----
-	IP=`ip addr list | sed -n \
-		-e '/127.0.0.[[:digit:]]/b;s/^[[:space:]]*inet[[:space:]]\([^/]*\).*/\1/;T;p;q'`
 
 	echo
 	echo starting VNC server...
 	echo A log file will be written to: /var/log/YaST2/vncserver.log ...
 	cat <<-EOF
-	
+
 	***
-	***           You can connect to $IP, display :1 now with vncviewer
-	***           Or use a Java capable browser on  http://$IP:5801/
+	***           You can connect to <host>, display :1 now with vncviewer
+	***           Or use a Java capable browser on http://<host>:5801/
 	***
-	
+
 	(When YaST2 is finished, close your VNC viewer and return to this window.)
-	
+
+	Active interfaces:
+
 	EOF
-	#==========================================
-	# Fake hostname to make VNC screen pretty
-	#------------------------------------------
-	if [ "$(hostname)" = "(none)" ] ; then
-		hostname $IP
-	fi
-	#==========================================
-	# store hostname for use in desktop option
-	#------------------------------------------
-	VNC_HOSTNAME=`hostname`
+	list_ifaces
+	echo
+
 	#==========================================
 	# Start Xvnc...
 	# For -noreset see BNC #351338
@@ -83,7 +72,7 @@ function startVNCServer () {
 	$Xbindir/Xvnc $Xvncparam :0 \
 		-noreset \
 		-rfbauth /root/.vnc/passwd.yast \
-		-desktop "Installation at: $VNC_HOSTNAME" \
+		-desktop "Installation" \
 		-geometry 800x600 \
 		-depth 16 \
 		-rfbwait 120000 \
