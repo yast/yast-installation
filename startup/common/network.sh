@@ -41,6 +41,13 @@ function found_iface () {
 	return 1
 }
 
+
+function list_ifaces()
+{
+    /sbin/ifconfig | grep -A1 "^[a-z]"
+}
+
+
 #----[ vnc_message ]-----#
 function vnc_message () {
 #--------------------------------------------------
@@ -70,7 +77,6 @@ function ssh_message () {
 	active interfaces:
 	
 	EOF
-	/sbin/ifconfig | grep -A1 "^[a-z]"
+	list_ifaces
 	echo
 }
-
