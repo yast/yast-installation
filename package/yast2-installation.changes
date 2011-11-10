@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Nov 10 14:27:55 UTC 2011 - fcrozat@suse.com
+
+- Disable routing initscript commands through systemd, prevent
+  lockups.
+
+-------------------------------------------------------------------
 Thu Nov 03 11:52:08 CET 2011 - aschnell@suse.de
 
 - use same code to display ip addresses during vnc and ssh

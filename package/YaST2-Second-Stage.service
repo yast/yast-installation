@@ -6,6 +6,7 @@ ConditionPathExists=/var/lib/YaST2/runme_at_boot
 
 [Service]
 Type=oneshot
+Environment=SYSTEMD_NO_WRAP=1
 ExecStart=/usr/lib/YaST2/startup/YaST2.Second-Stage
 RemainAfterExit=yes
 TimeoutSec=0
