@@ -803,7 +803,7 @@
 	    vbox = `VBox(
 			 // Help message between headline and installation proposal / settings summary.
 			 // May contain newlines, but don't make it very much longer than the original.
-			 `Left( `Label( _("Click any headline to make changes or use the \"Change...\" menu below.") ) ),
+			 `Left( `Label( _("Click a headline to make changes or use the \"Change...\" menu below.") ) ),
 			 rt,
 			 menu_box
 			 );
@@ -992,7 +992,7 @@ Select <b>Install</b> to perform a new installation with the values displayed.
 
 	    // Help text for installation proposal, continued
 	    help_text_string = help_text_string + _("<p>
-Your hard disk has not been modified in any way, so you can still safely abort.
+Your hard disk has not been modified yet. You can still safely abort.
 </p>
 ");
 	}
@@ -1014,7 +1014,7 @@ Select <b>Update</b> to perform an update with the values displayed.
 
 	    // Help text for installation proposal, continued
 	    help_text_string = help_text_string + _("<p>
-Your hard disk has not been modified in any way, so you can still safely abort.
+Your hard disk has not been modified yet. You can still safely abort.
 </p>
 ");
 	}
@@ -1075,8 +1075,9 @@ To use the settings as displayed, press <b>Next</b>.
 	{
 	    // help text
             help_text_string = help_text_string + _("<p>Some proposals might be
-locked by the system administrator, so cannot be changed. To change
-a proposal that is locked, ask your system administrator.</p>");
+locked by the system administrator and therefore cannot be changed. If a
+locked proposal needs to be changed, ask your system administrator.</p>
+");
         }
 	
 	foreach (string submod, submodules_presentation, {

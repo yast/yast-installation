@@ -36,14 +36,14 @@
 	    ret = ret + "<li>" + sformat (
 		// TRANSLATORS: Installation overview
 		// IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
-		_("Installation from images is enabled (<a href=\"%1\">disable</a>)"),
+		_("Installation from images is enabled (<a href=\"%1\">disable</a>)."),
 		im_do_disable
 	    ) + "</li>";
 	} else {
 	    ret = ret + "<li>" + sformat (
 		// TRANSLATORS: Installation overview
 		// IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
-		_("Installation from images is disabled (<a href=\"%1\">enable</a>)"),
+		_("Installation from images is disabled (<a href=\"%1\">enable</a>)."),
 		im_do_enable
 	    ) + "</li>";
 	}
@@ -80,9 +80,9 @@
 		"links" : [ im_do_enable, im_do_disable ],
 		// TRANSLATORS: help text
 		"help" : _("<p><b>Installation from Images</b> is used to speed the installation up.
-Images contain compressed snapshots of an installed system matching your selection
-of patterns. The rest of packages which are not in images will be installed from
-packages the standard way.</p>
+Images contain compressed snapshots of an installed system matching your
+selection of patterns. The rest of the packages which are not contained in the
+images will be installed from packages the standard way.</p>
 ") +
 		// TRANSLATORS: help text
 		_("<p>Installation from images is disabled by default if the current
@@ -91,7 +91,7 @@ pattern selection does not fit any set of images.</p>"),
 	} else {
 	    y2error ("Installation from images should be used for new installation only!");
 	    ret = $[
-		"preformatted_proposal" : sformat (_("Error: Images should not be used for mode: %1"), Mode::mode()),
+		"preformatted_proposal" : sformat (_("Error: Images should not be used for mode: %1."), Mode::mode()),
 		"warning_level" : `error,
 	    ];
 	}
@@ -116,7 +116,7 @@ pattern selection does not fit any set of images.</p>"),
 	    CallProposalScript();
 
 	if (old_status == false && old_status == Installation::image_installation) {
-	    Report::Message (_("Unable to enable installation from images.
+	    Report::Message (_("Cannot enable installation from images.
 
 Currently selected patterns do not fit the images
 stored on the installation media.

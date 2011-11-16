@@ -105,12 +105,13 @@
 			// %2 - link to our bugzilla
 			// %3 - directory where YaST logs are stored
 			// %4 - link to the Yast Bug Reporting HOWTO Web page
-			_("Switching to the installed system has failed
-More information can be found near the end of the '%1' file.
+			_("Switching to the installed system has failed.
+Find more information near the end of the '%1' file.
 
 This is worth reporting a bug at %2.
-Please, attach also all YaST logs stored in the '%3' directory.
-See %4 for more information about YaST logs."),
+Please, attach all YaST logs stored in the '%3' directory.
+See %4 for more information about YaST logs.
+"),
 			"/var/log/YaST2/y2log",
 			"http://bugzilla.novell.com/",
 			"/var/log/YaST2/",
@@ -163,7 +164,8 @@ See %4 for more information about YaST logs."),
 		// %1 - link to our bugzilla
 		// %2 - directory where YaST logs are stored
 		_("This is worth reporting a bug at %1.
-Please, attach also all YaST logs stored in the '%2' directory."),
+Please, attach all YaST logs stored in the '%2' directory.
+"),
 		"http://bugzilla.novell.com/",
 		"/var/log/YaST2/"
 	    ) +
@@ -540,7 +542,7 @@ Please, attach also all YaST logs stored in the '%2' directory."),
 		// YaST got killed
 		} else if (regexpmatch (one_line, " got signal ")) {
 		    // Print just the last line
-		    ReportLine (_("YaST process got killed"));
+		    ReportLine (_("YaST process got killed."));
 		    PrintLinesFromTo (current_line, current_line);
 		    ret = false;
 		    break;
@@ -670,7 +672,7 @@ Please, attach also all YaST logs stored in the '%2' directory."),
 	integer new_SCR = WFM::SCROpen ("chroot=" + new_SCR_path + ":scr", false);
 	if (new_SCR < 0) {
 	    y2error("Cannot conenct to SCR %1", new_SCR_path);
-	    Popup::Error(_("Connecting to the inst-sys failed, debugger cannot continue."));
+	    Popup::Error(_("Connecting to the inst-sys failed. Debugger cannot continue."));
 	    return;
 	}
 	// Set the new SCR as a defalt one

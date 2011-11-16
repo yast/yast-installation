@@ -319,8 +319,9 @@ y2milestone ("DeployImages returned: %1", dep_ret);
 // BNC #444209
 // false == error
 if (dep_ret == false) {
-    Report::Error (_("Deploying from images has failed.
-Aborting the installation..."));
+    Report::Error (_("Deploying images has failed.
+Aborting the installation...
+"));
     y2milestone ("Aborting...");
     return `abort;
 // nil   == aborted

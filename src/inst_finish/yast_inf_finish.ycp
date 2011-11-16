@@ -147,7 +147,7 @@ if (func == "Info")
     return (any)$[
 	"steps" : 1,
 	// progress step title
-	"title" : _("Writing YaST Configuration..."),
+	"title" : _("Writing YaST configuration..."),
 	"when" : [ `installation, `update, `autoinst ],
     ];
 }

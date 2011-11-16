@@ -160,9 +160,10 @@ installation and for the installed system.
     // help text, continued
     // Describes the #ICW_B1 button
     _("<p>
-License has to be accepted before continuing the installation.
+The license must be accepted before the installation continues.
 Use <b>License Translations...</b> to show the license in all available translations.
-</p>") +
+</p>
+") +
 
     // help text, continued
     _("<p>

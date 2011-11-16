@@ -36,7 +36,7 @@ if (func == "Info")
     return (any)$[
 	"steps" : 1,
 	// progress step title
-	"title" : _("Setting up linker cache"),
+	"title" : _("Setting up linker cache..."),
 	"when" : [ `installation, `live_installation, `update, `autoinst ],
     ];
 }

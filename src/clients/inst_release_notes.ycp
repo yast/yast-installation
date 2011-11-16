@@ -215,8 +215,9 @@
     term contents = `VBox (`VSpacing (0.5), relnoteslayout, `VSpacing (0.5));
 
     /* help text for dialog "Release Notes" */
-    string help = _("<p>Here are the <b>release notes</b> for the installed
-Linux system. They provide a brief summary of new features and changes.</p>");
+    string help = _("<p>The <b>release notes</b> for the installed Linux system provide a brief
+summary of new features and changes.</p>
+");
 
     // in normal mode no BackAbortNext-button layout
     // bugzilla #262440

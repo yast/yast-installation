@@ -65,7 +65,7 @@
 
 	if (ret == `reboot || ret == `restart_yast || ret == `restart_same_step || ret == `abort) {
     	    // TRANSLATORS: busy message
-    	    UI::OpenDialog (`Label(_("Writing YaST Configuration...")));	// #2
+    	    UI::OpenDialog (`Label(_("Writing YaST configuration...")));	// #2
 	} else {
 	    // FATE #304395: Disabling (or handling) screensaver during installation
 	    // Enabling screen-saver on exit
@@ -125,10 +125,10 @@
                 // Somehow the graphical frontend failed and we're running in
                 // text mode. Inform the user about this fact.
                 x11_msg = sformat(_("Your computer does not fulfill all requirements for
-a graphical installation. There is less than %1 MB
+a graphical installation. There is either less than %1 MB
 memory or the X server could not be started.
 
-As a fallback, the text front-end of YaST2 will guide you
+As fallback, the text front-end of YaST2 will guide you
 through the installation. This front-end offers the
 same functionality as the graphical one, but the screens
 differ from those in the manual.
@@ -145,10 +145,10 @@ differ from those in the manual.
                 // text mode. Inform the user about this fact.
                 x11_msg = _("The graphical interface could not be started.
 
-The required packages were not installed (minimal installation) or
-the graphics card is not properly supported.
+Either the required packages were not installed (minimal installation) 
+or the graphics card is not properly supported.
 
-As a fallback, the text front-end of YaST2 will guide you
+As fallback, the text front-end of YaST2 will guide you
 through the installation. This front-end offers the
 same functionality as the graphical one, but the screens
 differ from those in the manual.

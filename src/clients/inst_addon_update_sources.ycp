@@ -62,7 +62,7 @@ map <string, string> UpdateUrls () {
 
 
 // feedback heading
-string heading = _("Add-On Product Installation");
+string heading = _("Add-on Product Installation");
 // feedback message
 string message = _("Reading packages available in the repositories...");
 
