@@ -112,10 +112,11 @@
 
     text =
 // beginning of the rich text with the release notes
-_("<p><b>These are the release notes made for the first initial release. They are
+_("<p><b>These are the release notes for the initial release. They are
 part of the installation media. During installation, if a connection
 to the Internet is available, you can download updated release notes
-from the SUSE Linux Web server.</b></p>") + text;
+from the SUSE Linux Web server.</b></p>
+") + text;
 
     // bugzilla #221222, #213239
     map display_info = UI::GetDisplayInfo();

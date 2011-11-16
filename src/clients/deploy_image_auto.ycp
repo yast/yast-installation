@@ -111,7 +111,7 @@ else if (func == "Change") {
                                 `VSpacing (0.5),
                                 `Left(`RadioButton (
                                     `id (`dont_inst_from_images), `opt(`notify),
-                                    _("&Do Not Install from Images"),
+                                    _("&Do not Install from Images"),
                                     (Installation::image_installation != true)
                                 ))
                                 ))
@@ -151,10 +151,11 @@ else if (func == "Change") {
 	    `HStretch ()
             ),
 	// TRANSLATORS: help text
-	_("<p><b>Installation from Images</b> is used to speed the installation up. 
-Images contain compressed snapshots of installed system matching your selection 
-of patterns. The rest of packages which are not in images will be installed from 
-packages the standard way.</p>") + _("<p><b>Creating own Images</b> is used if you
+	_("<p><b>Installation from Images</b> is used to speed the installation up.
+Images contain compressed snapshots of an installed system matching your
+selection of patterns. The rest of the packages which are not contained in the
+images will be installed from packages the standard way.</p>
+") + _("<p><b>Creating own Images</b> is used if you
 want to skip the complete step of RPM installation. Instead AutoYaST will dump an
 image on the harddisk which is a lot faster and can be pre-configured already.
 Everything else than RPM installation is done like during a normal auto-installation.</p>"),

@@ -85,7 +85,8 @@
 
         // TRANSLATORS: help text, see #ZMD
         turnoff_zmd_help = _("<p>Select <b>Disable ZMD Service</b> to stop and disable
-the ZMD service during the system start.</p>");
+the ZMD service during system start.</p>
+");
     } else {
         y2milestone ("ZMD Turnoff check-box will be invisible");
     }
@@ -161,7 +162,7 @@ After clicking <b>Finish</b>, you can log in to the system.</p>
     string help = _("<p>Your system is ready for use.</p>") +
 
     // help 2/4 for dialog "Congratulation Dialog"
-	_("<p><b>Finish</b> will close the YaST installation and continue
+	_("<p><b>Finish</b> will close the YaST installation and take you
 to the login screen.</p>
 ") +
 

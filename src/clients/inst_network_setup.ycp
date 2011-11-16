@@ -173,7 +173,7 @@
 		`Label (_("Probing network cards..."))
 	    ),
 	    // TRANSLATORS: dialog help
-	    _("Please wait while the installation is probing the network cards..."),
+	    _("Network cards are being probed now."),
 	    false,
 	    false
 	);
@@ -275,7 +275,8 @@
 	    // TRANSLATORS: pop-up error message
 	    Report::Error (_("No network card has been selected.
 
-Please select a network card to configure it later."));
+Select a network card to configure it later.
+"));
 		    return false;
 
 	// Checking whether the netcard link is active
@@ -292,7 +293,7 @@ Are you sure you want to use it?"),
 		    selected_netcard
 		),
 		// TRANSLATORS: popup dialog button
-		_("&Yes, Use It"),
+		_("&Yes, Use it"),
 		Label::NoButton(),
 		`no_button
 	    )) {
@@ -320,7 +321,7 @@ Are you sure you want to use it?"),
 	    // TRANSLATORS: dialog caption
 	    _("Network Setup"),
 	    `VBox (
-		`Left (`Label (_("Please, select a network card to be configured"))),
+		`Left (`Label (_("Select a network card to be configured."))),
 		`VWeight (3, `Table (
 		    `id ("netcard_selection"),
 		    `opt (`notify, `immediate),
@@ -346,7 +347,8 @@ you can safely skip the configuration.</p>") +
 	    // TRANSLATORS: dialog help 3/3
 	    _("<p>To configure a network card, select it from the list
 and click the <b>Next</b> button.
-Otherwise,click<b>Cancel</b>.</p>"),
+Otherwise, click <b>Cancel</b>.</p>
+"),
 	    Label::BackButton(),
 	    Label::NextButton()
 	);
@@ -625,7 +627,7 @@ Port number must be between 1 and 65535 inclusive."),
 		`Left (`Label (sformat(
 		    // TRANSLATORS: dialog label, %1 is replaced with a selected network device name, e.g, eth3
 		    // See *2
-		    _("Please, select your network setup type for %1"),
+		    _("Select your network setup type for %1"),
 		    // TRANSLATORS: a fallback card name for *2
 		    network_settings["network_device"]:_("Unknown Network Card")
 		))),
@@ -671,9 +673,9 @@ Port number must be between 1 and 65535 inclusive."),
 				    `HSquash (`MinWidth (6, `ComboBox (`id ("proxy_port"), `opt (`editable), _("&Port"), [ "", "3128", "8080" ])))
 				)),
 				`Left (`HBox (
-				    `HSquash (`MinWidth (14, `InputField (`id ("proxy_user"), _("Us&er (Optional)")))),
+				    `HSquash (`MinWidth (14, `InputField (`id ("proxy_user"), _("Us&er (optional)")))),
 				    `HSpacing (0.5),
-				    `HSquash (`MinWidth (14, `Password (`id ("proxy_password"), _("Pass&word (Optional)"))))
+				    `HSquash (`MinWidth (14, `Password (`id ("proxy_password"), _("Pass&word (optional)"))))
 				))
 			    )
 			))
@@ -692,15 +694,17 @@ Port number must be between 1 and 65535 inclusive."),
 	    ),
 	    // TRANSLATORS: dialog help 1/2
 	    _("<p><big><b>Network Setup</b></big>
-<br>Here you can configure your network card.
+<br>Configure your network card.
 Select either DHCP or static setup. DHCP fits for most cases.
 For details contact your Internet provider or your network
-administrator.</p>") +
+administrator.</p>
+") +
 	    // TRANSLATORS: dialog help 2/2
 	    _("<p><big><b>Proxy</b></big>
 <br>Proxy is a server-based cache for accessing the web.
 In most cases, if you have a direct connection to the Internet,
-it doesn't need to be used.</p>"),
+you do not need to use one.</p>
+"),
 	    Label::BackButton(),
 	    Label::OKButton()
 	);
@@ -1348,7 +1352,7 @@ Please, go back and provide a valid network setup."));
 	
 	Progress::NewProgressIcons (
 	    // TRANSLATORS: dialog caption
-	    _("Writing Network Setup"),
+	    _("Writing Network Setup..."),
 	    " ",
 	    size (actions_todo),
 	    actions_todo,
@@ -1383,7 +1387,8 @@ Please, go back and provide a valid network setup."));
 	    y2warning ("Writing has failed, returning to the previous dialog");
 	    Report::Error (_("Writing the network settings failed.
 You will be returned to the previous dialog to either
-change the settings, or cancel the network setup."));
+change the settings or cancel the network setup.
+"));
 	    return `back;
 	}
 	

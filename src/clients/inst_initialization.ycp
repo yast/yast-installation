@@ -26,7 +26,7 @@ if (GetInstArgs::automatic_configuration()) {
 }
 
 // TRANSLATORS: dialog help
-string helptext = _("Please wait while the installation is being initialized.");
+string helptext = _("Installation is being initialized.");
 // TRANSLATORS: dialog progress message
 string label = _("Initializing the installation...");
 

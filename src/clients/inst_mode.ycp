@@ -156,7 +156,7 @@ term InstModeDialogContent (symbol pre_selected) {
 		`Left (`CheckBox (
 		    `id (`add_on), `opt(`notify),
 		    // check box
-		    _("In&clude Add-On Products from Separate Media"),
+		    _("In&clude Add-on Products from Separate Media"),
 		    Installation::add_on_selected
 		)),
 		(InstData::enable_autoconfiguration == true ?
@@ -183,8 +183,9 @@ Select what to do:</p>") +
     _("<p>
 Select <b>New Installation</b> if there is no existing Linux system on your
 machine or if you want to replace an existing Linux system completely,
-abandoning all its configuration data.
-</p>") +
+discarding all its configuration data.
+</p>
+") +
 
     // help text for installation method
     _("<p>
@@ -201,7 +202,8 @@ To use suggested remote repositories during installation or update, select
     // help text for installation method
     _("<p>
 To install an add-on product from separate media together with &product;, select
-<b>Include Add-On Products from Separate Media</b>.</p>") +
+<b>Include Add-on Products from Separate Media</b>.</p>
+") +
 
     // help text for installation method
     (InstData::enable_autoconfiguration == true ? _("<p>

@@ -233,7 +233,7 @@
 	    start_service,
 	    starting_service,
 	    // TRANSLATORS: dialog help
-	    _("Please wait while network settings are being adjusted...")
+	    _("Network settings are being adjusted.")
 	);
 	Wizard::SetTitleIcon ("yast-network");
 	

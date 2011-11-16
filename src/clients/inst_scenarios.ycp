@@ -182,8 +182,9 @@
     }
 
     // TRANSLATORS: help text
-    string dialog_help = _("<p>Select a scenario that matches your needs the best.
-Additional software can be selected later in software proposal.</p>");
+    string dialog_help = _("<p>Select the scenario that meets your needs best.
+Additional software can be selected later in software proposal.</p>
+");
 
     // Adjust dialog
     Wizard::SetContents (

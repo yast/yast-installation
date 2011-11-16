@@ -190,7 +190,7 @@
 		    0
 		)
 	    ),
-	    _("<p>Installation is currently writing the automatic configuration. Please wait...</p>"),
+	    _("<p>Writing automatic configuration...</p>"),
 	    false, false
 	);
     }

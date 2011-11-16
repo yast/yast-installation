@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Nov 16 13:18:40 CET 2011 - jsuchome@suse.cz
+
+- merged texts from proofreading
+- 2.22.0 
+
+-------------------------------------------------------------------
 Thu Nov 10 14:27:55 UTC 2011 - fcrozat@suse.com
 
 - Disable routing initscript commands through systemd, prevent

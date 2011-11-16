@@ -53,7 +53,7 @@ string welcome_text = welcome["text"]:"" != "" ? welcome["text"]:"" : text;
 
 
 // help ttext
-string help =  _("<p>Click <b>Next</b> to go through the
+string help =  _("<p>Click <b>Next</b> to perform the
 basic configuration of the system.</p>
 ");
 
