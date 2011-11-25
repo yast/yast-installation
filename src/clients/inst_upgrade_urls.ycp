@@ -496,7 +496,7 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	    } else if (ui_ret == `back) {
 		ret = `back;
 		break;
-	    } else if (ui_ret == `abort) {
+	    } else if (ui_ret == `abort && Popup::ConfirmAbort (`painless)) {
 		ret = `abort;
 		break;
 	    } else if (ui_ret == `edit) {

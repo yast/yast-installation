@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Nov 25 11:35:04 CET 2011 - jsuchome@suse.cz
+
+- ask for Abort confirmation in Update URLs step (bnc#728907)
+
+-------------------------------------------------------------------
 Wed Nov 16 13:18:40 CET 2011 - jsuchome@suse.cz
 
 - merged texts from proofreading
