@@ -56,7 +56,7 @@ define boolean LocalCommand (string command) {
 }
 
 /**
- * Preserves the current randomness state
+ * Preserves the current randomness state, BNC #692799
  */
 void preserve_randomness_state () {
     if (Mode::update()) {
@@ -73,7 +73,8 @@ void preserve_randomness_state () {
     ret = true;
 
     // Copy the current state of random number generator to the installed system
-    if (LocalCommand (sformat ("dd if='%1' bs=1024 count=1 of='%2'",
+    // 4*1024 bytes as stated in BNC #692799, comment #71
+    if (LocalCommand (sformat ("dd if='%1' bs=1024 count=4 of='%2'",
         String::Quote (random_path), String::Quote (store_to)
     ))) {
         y2milestone ("State of %1 has been successfully copied to %2", random_path, store_to);
@@ -165,6 +166,9 @@ else if (func == "Write")
 	}
     });
 
+    // BNC #692799: Preserve the randomness state before umounting
+    preserve_randomness_state();
+
     map<string,map> targetMap = Storage::GetTargetMap();
 
     // first umount all file based crypto fs since they potentially
@@ -188,12 +192,6 @@ else if (func == "Write")
     {
         umountLength = umountLength - 1;
         string tmp = Installation::destdir + (string) (umountList[umountLength]:"");
-
-	// This is the very last partition, actually "/"
-	if (umountLength == 0) {
-	    // BNC #692799: Preserve the randomness state before umounting
-	    preserve_randomness_state();
-	}
 
         y2milestone ("umount target: %1, %2 more to go..", tmp, umountLength);
 
