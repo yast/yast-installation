@@ -56,6 +56,26 @@ define boolean LocalCommand (string command) {
 }
 
 /**
+ * Reads and returns the current poolsize from /proc.
+ * Returns integer size as a string.
+ */
+string read_poolsize () {
+    string poolsize_path = "/proc/sys/kernel/random/poolsize";
+
+    string poolsize = (string) WFM::Read(.local.string, poolsize_path);
+
+    if (poolsize == nil || poolsize == "") {
+	y2warning ("Cannot read poolsize from %1, using the default", poolsize_path);
+	poolsize = "4096";
+    } else {
+	poolsize = regexpsub(poolsize, "^([[:digit:]]+).*", "\\1");
+    }
+
+    y2milestone ("Using random/poolsize: '%1'", poolsize);
+    return poolsize;
+}
+
+/**
  * Preserves the current randomness state, BNC #692799
  */
 void preserve_randomness_state () {
@@ -73,9 +93,8 @@ void preserve_randomness_state () {
     ret = true;
 
     // Copy the current state of random number generator to the installed system
-    // 4*1024 bytes as stated in BNC #692799, comment #71
-    if (LocalCommand (sformat ("dd if='%1' bs=1024 count=4 of='%2'",
-        String::Quote (random_path), String::Quote (store_to)
+    if (LocalCommand (sformat ("dd if='%1' bs=%2 count=1 of='%3'",
+        String::Quote (random_path), read_poolsize(), String::Quote (store_to)
     ))) {
         y2milestone ("State of %1 has been successfully copied to %2", random_path, store_to);
     } else {
