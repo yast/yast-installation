@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jan  4 15:21:30 CET 2012 - locilka@suse.cz
+
+- Reading the current random/poolsize from /proc to store the exact
+  number of bytes (bnc#692799).
+- 2.17.98
+
+-------------------------------------------------------------------
 Tue Jan  3 16:21:42 CET 2012 - locilka@suse.cz
 
 - Modified saving state of the current randomness (bnc#692799).
