@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Jan  9 14:29:34 CET 2012 - locilka@suse.cz
+
+- save ecdsa keys as well (bnc#726468) (added where missing)
+
+-------------------------------------------------------------------
 Mon Jan  9 13:39:10 CET 2012 - locilka@suse.cz
 
 - Added ntp-client into list of cloned modules in control file
