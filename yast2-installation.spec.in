@@ -1,8 +1,8 @@
 @HEADER-COMMENT@
 
 @HEADER@
-Group:	System/YaST
-License: GPL-2.0+
+Group:          System/YaST
+License:        GPL-2.0
 Summary:        YaST2 - Installation Parts
 
 Source1:	YaST2-Second-Stage.service
