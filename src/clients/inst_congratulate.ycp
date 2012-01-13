@@ -35,7 +35,7 @@
 	string default_wm = (string) SCR::Read(.sysconfig.windowmanager."DEFAULT_WM");
 	y2debug("Default WM: %1", default_wm);
 	
-	if (default_wm != nil && tolower(default_wm) == "kde") {
+	if (default_wm != nil && issubstring (tolower (default_wm), "kde")) {
 	    return true;
 	}
 	return false;
