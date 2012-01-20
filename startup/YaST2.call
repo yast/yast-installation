@@ -664,9 +664,14 @@ fi
 # 2.4) check for valid framebuffer
 #---------------------------------------------
 FBDEV_OK=0
-if (: < /dev/fb0) 2>/dev/null ; then
-	FBDEV_OK=1
+# Prefer fbdev over vesa with *any* framebuffer (bnc#740517)
+if [ -r /proc/fb ]; then
+	fb="$(cat /proc/fb)"
+	if [ ! -z "${fb}" ]; then
+		FBDEV_OK=1
+	fi
 fi
+echo $FBDEV_OK
 #=============================================
 # 2.5) setup installation mode (update y/n)
 #---------------------------------------------
