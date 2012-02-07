@@ -59,6 +59,8 @@ EOF
 #----------------------------------------
 if [ -f /var/lib/YaST2/runme_at_boot ];then
 
+        export Y2STYLE="installation_slim" 
+
 	# running the second stage installation
 	/usr/lib/YaST2/startup/YaST2.call installation continue
 
