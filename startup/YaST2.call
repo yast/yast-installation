@@ -156,7 +156,6 @@ function prepare_for_vnc () {
 # prepare VNC installation
 # ---
 #
-        export Y2STYLE="installation_slim" 
 	#=============================================
 	# Setup splash screen
 	#---------------------------------------------
