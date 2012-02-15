@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Feb 15 11:46:45 CET 2012 - gs@suse.de
+
+- Improve layout of the release notes dialog (bnc #550610)
+- 2.22.4 
+
+-------------------------------------------------------------------
 Thu Feb  9 10:53:01 CET 2012 - jsuchome@suse.cz
 
 - adapt the style only for ssh installation, not vnc (bnc#742777)
