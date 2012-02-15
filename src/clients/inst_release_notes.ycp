@@ -192,23 +192,19 @@
     string caption = _("Release Notes");
 
     term relnoteslayout = nil;
-    term relnotesscreen = `VBox (
-				 `HBox(
-				       `HWeight( 20, `Empty() ), 
-				       // combobox
-				       `HWeight( 60, `VBox(`Left (
-						    `ReplacePoint (
-								   `id(`lang_rp),
-								   `ComboBox (`id (`lang), `opt (`notify), _("&Language"), [])
-								   )
-						    ),
-						    `ReplacePoint(`id(`content_rp), 
-							`RichText (`id (`relnotescontent), "")
-						   )
-						 )),
-				       `HWeight( 20,`Empty() )
-				       )
-				 );
+    term relnotesscreen = `MarginBox ( 2.0, 0.2,
+				      // combobox
+				      `VBox(`Left (
+						   `ReplacePoint (
+								  `id(`lang_rp),
+								  `ComboBox (`id (`lang), `opt (`notify), _("&Language"), [])
+								  )
+						   ),
+					    `ReplacePoint(`id(`content_rp), 
+							  `RichText (`id (`relnotescontent), "")
+							  )
+					    )
+				      );
 
     // if there are more products installed, show them in tabs or with
     // combo box, bnc #359137 (do not show tab for one product)
@@ -268,7 +264,7 @@ summary of new features and changes.</p>
     boolean UsePlainText ( string file ) {
 	boolean ret = UI::TextMode() && FileUtils::Exists(file);
 	if (ret)
-	    y2milestone("Found .txt file with release notes, will use it for TUI.");
+	    y2milestone("Found .txt file \"%1\" with release notes, will use it for TUI.", file);
 	return ret;
     }
 
