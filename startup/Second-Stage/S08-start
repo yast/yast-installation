@@ -31,10 +31,12 @@ else
 	#==================================================
 	# We are going to start a SSH based remote session
 	#--------------------------------------------------
+	ln -sf /usr/lib/YaST2/startup/YaST2.ssh /sbin/yast2.ssh
 	ssh_message
 	while [ -f /var/lib/YaST2/runme_at_boot ]; do
 		sleep 3
 	done
+	rm /sbin/yast2.ssh
 fi
 
 #=============================================
