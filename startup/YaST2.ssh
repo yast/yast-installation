@@ -38,8 +38,7 @@ cat <<-EOF
 	Your system has been updated and needs to reboot ...
 
 	Reconnect to the system after it reboots and call
-	/usr/lib/YaST2/startup/YaST2.ssh again to continue
-	the installation ...
+	yast2.ssh again to continue the installation ...
 
 EOF
 }
