@@ -72,7 +72,7 @@ function ssh_message () {
 	***  sshd has been started  ***
 	
 	you can login now and proceed with the installation
-	run the command 'yast2.ssh'
+	run the command 'yast.ssh'
 	
 	active interfaces:
 	

@@ -274,7 +274,7 @@ function ssh_reboot_message()
 
 	if [ -n "$SecondStageRequired" -a "$SecondStageRequired" = "1" ] ; then
 		echo "*** Preparing SSH installation for reboot ***"
-		echo "*** NOTE: after reboot, you have to reconnect and call yast2.ssh ***"
+		echo "*** NOTE: after reboot, you have to reconnect and call yast.ssh ***"
 		log "\tPreparing SSH installation for reboot"
 	fi
 }
