@@ -2,6 +2,7 @@
 Wed Mar 14 15:42:19 CET 2012 - aschnell@suse.de
 
 - create link yast.ssh for 2nd stage ssh installation (bnc#745340)
+- 2.22.5
 
 -------------------------------------------------------------------
 Wed Feb 15 11:46:45 CET 2012 - gs@suse.de
