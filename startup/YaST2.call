@@ -39,7 +39,7 @@ function wait_for_x11() {
 # the server is ready for requests using this function
 # ---
 	server_running=0
-	TESTX=/usr/sbin/testX
+	TESTX=/usr/lib/YaST2/bin/testX
 	while kill -0 $xserver_pid 2>/dev/null ; do
 		sleep 1
 		if test -e /tmp/.X11-unix/X0 && test -x $TESTX ; then
@@ -50,13 +50,6 @@ function wait_for_x11() {
 				log "\tTestX: XOpenDisplay failed"
 				server_running=0
 				continue
-			fi
-			# exit code 2 -> color or dimensions doesn't fit...
-			if test $err = 2;then
-				log "\tTestX: color or dimensions doesn't fit"
-				kill $xserver_pid
-				server_running=0
-				break;
 			fi
 			# server is running, detach oom-killer from it
 			echo -n '-17' > /proc/$xserver_pid/oom_adj
@@ -200,7 +193,7 @@ function check_x11 () {
 			Y2_MODE=ncurses
 		fi
 	else
-		/usr/sbin/testX --fast 2>/dev/null
+		/usr/lib/YaST2/bin/testX --fast 2>/dev/null
 		if test $? = 1;then
 			log "\tCannot access Display: $DISPLAY, falling back to ncurses"
 			SELECTED_MEDIUM="NCURSES"
@@ -501,7 +494,7 @@ if [ ! -z $Display_IP ];then
 fi
 
 # 3.1.8) Check for testX binary
-if [ ! -x /usr/sbin/testX ] ; then
+if [ ! -x /usr/lib/YaST2/bin/testX ] ; then
 	log "\tNo testX binary installed -> Medium Qt and Gtk disabled"
 	MEDIUM[0]=0
 	MEDIUM[4]=0
@@ -532,7 +525,7 @@ if [ ! -x $Xbindir/Xvnc ] ; then
 	MEDIUM[2]=0
 fi
 # 3.3.3) Check for testX binary
-if [ ! -x /usr/sbin/testX ] ; then
+if [ ! -x /usr/lib/YaST2/bin/testX ] ; then
 	log "\tNo testX binary installed -> Medium VNC disabled"
 	MEDIUM[2]=0
 fi

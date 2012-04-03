@@ -191,9 +191,6 @@ install -m 644 %{SOURCE2} $RPM_BUILD_ROOT/lib/systemd/system/
 # programs and scripts
 @ystartupdir@/startup
 
-# icewm
-/etc/icewm
-
 %dir @docdir@
 @docdir@/COPYING
 %readme @docdir@/README
