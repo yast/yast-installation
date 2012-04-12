@@ -1,7 +1,8 @@
 -------------------------------------------------------------------
 Tue Apr 03 14:56:55 CEST 2012 - aschnell@suse.de
 
-- adapted to move of testX
+- adapted to move of testX (see bnc#749184)
+- 2.22.6
 
 -------------------------------------------------------------------
 Wed Mar 14 15:42:19 CET 2012 - aschnell@suse.de
