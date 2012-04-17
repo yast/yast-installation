@@ -104,6 +104,11 @@ Images contain compressed snapshots of an installed system matching your
 selection of patterns. The rest of the packages which are not contained in the
 images will be installed from packages the standard way.</p>
 ") +
+
+		// TRANSLATORS: help text
+                _("<p>Note that when installing from images, the time stamps of all packages originating from the images will
+not match the installation date but rather the date the image was created.</p>") +
+
 		// TRANSLATORS: help text
 		_("<p>Installation from images is disabled by default if the current
 pattern selection does not fit any set of images.</p>"),
