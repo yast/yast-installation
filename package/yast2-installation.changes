@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Apr 17 16:03:55 CEST 2012 - jsuchome@suse.cz
+
+- enhanced image installation help text (bnc#732914)
+
+-------------------------------------------------------------------
 Tue Apr 03 14:56:55 CEST 2012 - aschnell@suse.de
 
 - adapted to move of testX (see bnc#749184)
