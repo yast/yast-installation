@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jun  6 11:27:02 CEST 2012 - jsuchome@suse.cz
+
+- require yast2-proxy for 2nd stage (bnc#764951)
+- show a message if network config has failed (bnc#765129)
+- 2.22.7
+
+-------------------------------------------------------------------
 Tue Apr 17 16:03:55 CEST 2012 - jsuchome@suse.cz
 
 - enhanced image installation help text (bnc#732914)
