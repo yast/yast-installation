@@ -56,6 +56,9 @@ Requires:	yast2-storage >= 2.19.12
 # use in startup scripts
 Requires:	initviocons
 
+# Proxy settings for 2nd stage (bnc#764951)
+Requires:       yast2-proxy
+
 # Only in inst-sys
 # Requires:	yast2-network
 # Requires:	yast2-add-on
