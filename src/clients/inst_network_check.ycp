@@ -158,6 +158,11 @@ or add-on products. If you do not use remote repositories, skip the configuratio
 		    break;
 		// something wrong or aborted
 		} else {
+                    if (ret == nil) {
+                      // error popup
+                      Popup::Message (sformat (_("Network configuration has failed.
+Check the log file %1 for details."), Directory::logdir + "/y2log"));
+                    }
 		    UI::ChangeWidget (`id ("to_do_a_network_setup_or_not_to_do"), `CurrentButton, "no_do_not_run_setup");
 		    continue;
 		}
