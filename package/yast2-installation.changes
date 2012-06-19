@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Jun 19 14:49:52 CEST 2012 - aschnell@suse.de
+
+- kill console before reboot (bnc#759627)
+
+-------------------------------------------------------------------
 Wed Jun  6 11:27:02 CEST 2012 - jsuchome@suse.cz
 
 - require yast2-proxy for 2nd stage (bnc#764951)
