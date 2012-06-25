@@ -361,6 +361,11 @@ function start_yast_and_reboot () {
 # The function is triggered by the file /var/lib/YaST2/reboot
 # ---
 	if [ -f /var/lib/YaST2/reboot ];then
+		# kill shell on second virtual console
+		if test ! -z "$SPID" ; then
+			log "\tkill shell with PID: $SPID"
+			kill -KILL $SPID &>/dev/null
+		fi
 		rm -f /var/lib/YaST2/reboot
 		/sbin/shutdown -r now
 	fi

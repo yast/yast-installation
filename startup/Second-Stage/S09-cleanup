@@ -7,7 +7,7 @@ log "======================="
 #---------------------------------------------
 # 13.1) kill shell on second virtual console
 if test ! -z "$SPID" ; then
-	log "\tkill X-Server with PID: $SPID"
+	log "\tkill console with PID: $SPID"
 	kill -KILL $SPID &>/dev/null
 fi
 # 13.2) kill VNC server and remove VNC passwd
