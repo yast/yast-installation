@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jun 25 10:56:58 CEST 2012 - jsuchome@suse.cz
+
+- ensure 2nd stage is started after SuSEFirewall (bnc#733361)
+- 2.22.8
+
+-------------------------------------------------------------------
 Wed Jun  6 11:27:02 CEST 2012 - jsuchome@suse.cz
 
 - require yast2-proxy for 2nd stage (bnc#764951)
