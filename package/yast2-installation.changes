@@ -1,7 +1,15 @@
 -------------------------------------------------------------------
+Mon Jun 25 11:06:48 CEST 2012 - jsuchome@suse.cz
+
+- ensure 2nd stage is started after SuSEFirewall, so SSH port
+  can be correctly opened during SSH install (bnc#733361)
+- 2.22.8
+
+-------------------------------------------------------------------
 Tue Jun 19 14:49:52 CEST 2012 - aschnell@suse.de
 
 - kill console before reboot (bnc#759627)
+  (otherwise systemd will not proceed with system shutdown)
 
 -------------------------------------------------------------------
 Wed Jun  6 11:27:02 CEST 2012 - jsuchome@suse.cz
