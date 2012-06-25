@@ -1,7 +1,7 @@
 [Unit]
 Description=YaST2 Second Stage
 After=apparmor.service local-fs.target
-Before=getty@tty1.service xdm.service network.service NetworkManager.service
+Before=getty@tty1.service xdm.service network.service NetworkManager.service SuSEfirewall2_init.service
 ConditionPathExists=/var/lib/YaST2/runme_at_boot
 
 [Service]
