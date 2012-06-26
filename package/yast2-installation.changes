@@ -1,8 +1,9 @@
 -------------------------------------------------------------------
-Mon Jun 25 11:06:48 CEST 2012 - jsuchome@suse.cz
+Mon Jun 25 15:43:43 CEST 2012 - jsuchome@suse.cz
 
-- ensure 2nd stage is started after SuSEFirewall, so SSH port
-  can be correctly opened during SSH install (bnc#733361)
+- ensure Plymouth is hiddent before 2nd start, to prevent system
+  freeze (bnc#768185)
+- ensure 2nd stage is started before SuSEfirewall2_init (bnc#733361)
 - 2.22.8
 
 -------------------------------------------------------------------
