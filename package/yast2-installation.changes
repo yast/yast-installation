@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun 28 14:36:08 CEST 2012 - jsuchome@suse.cz
+
+- set TERM=linux for 2nd stage services, to keep ncurses nice
+  (bnc#768356)
+- 2.22.9
+
+-------------------------------------------------------------------
 Mon Jun 25 15:43:43 CEST 2012 - jsuchome@suse.cz
 
 - ensure Plymouth is hiddent before 2nd start, to prevent system
