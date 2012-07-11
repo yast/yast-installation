@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jul 11 15:56:38 CEST 2012 - jsuchome@suse.cz
+
+- create simpler and non translated aliases for update sources 
+  (bnc#768624)
+- 2.22.10
+
+-------------------------------------------------------------------
 Thu Jun 28 14:36:08 CEST 2012 - jsuchome@suse.cz
 
 - set TERM=linux for 2nd stage services, to keep ncurses nice
