@@ -45,6 +45,7 @@ include "packager/inst_source_dialogs.ycp";
 if ( GetInstArgs::going_back())     // going backwards?
     return `auto;                   // don't execute this once more
 
+map <string,string> aliases     = $[];
 
 /**
  * @return the urls of known installation sources
@@ -74,6 +75,8 @@ map <string, string> UpdateUrls () {
 		p["display_name"]:p["name"]:p["summary"]:_("Unknown Product"),
 		p["version"]:""
 	    );
+	    // alias should be simple (bnc#768624)
+	    aliases[u]  = String::Replace ("update-" + p["display_name"]:p["name"]:"repo", " ", "-");
 	});
     });
 
@@ -112,8 +115,12 @@ if (addUrls != $[])
 	    // BNC #557723: Repositories migh be created without access to network
 	    // Libzypp must not probe the repo
 
-	    // don't use spaces in alias (hard to use with zypper)
-	    string alias = String::Replace((size(name) > 0 ? name : url), " ", "-");
+	    string alias = aliases[url]:"";
+	    if (alias == "")
+	    {
+	        // don't use spaces in alias (hard to use with zypper)
+	        alias   = String::Replace((size(name) > 0 ? name : url), " ", "-");
+	    }
 
 	    map <string,any> repo_prop = $[
 		"enabled"	: true,
