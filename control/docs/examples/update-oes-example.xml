@@ -94,7 +94,7 @@
         </append_modules>
         <insert_modules config:type="list">
           <insert_module>
-            <before>suseconfig</before>
+            <before>release_notes</before>
             <modules config:type="list">
               <module>
                 <label>OES Configuration</label>

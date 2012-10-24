@@ -413,11 +413,6 @@ echo test > /tmp/test
                     <arguments>true,true</arguments>
                 </module>
                 <module>
-	            <label>Clean Up</label>
-                    <name>suseconfig</name>
-                    <arguments>false,false</arguments>
-                </module>
-                <module>
 	            <label>Release Notes</label>
                     <name>release_notes</name>
                     <arguments>true,true</arguments>
@@ -479,11 +474,6 @@ echo test > /tmp/test
                     <arguments>true,true</arguments>
                 </module>
 
-                <module>
-	            <label>Clean Up</label>
-                    <name>suseconfig</name>
-                    <arguments>false,false</arguments>
-                </module>
                 <module>
 	            <label>Release Notes</label>
                     <name>release_notes</name>
@@ -572,10 +562,6 @@ echo test > /tmp/test
                 <module>
 	            <label>System Configuration</label>
                     <name>autoconfigure</name>
-                </module>
-                <module>
-	            <label>Clean Up</label>
-                    <name>suseconfig</name>
                 </module>
             </modules>
         </workflow>

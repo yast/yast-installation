@@ -52,7 +52,7 @@
 		<!-- Installation: Insert -->
 		<insert_modules config:type="list">
 		    <insert_module>
-			<before>suseconfig</before>
+			<before>congratulate</before>
 			<modules config:type="list">
 			    <module>
 				<label>XYZ Configuration</label>

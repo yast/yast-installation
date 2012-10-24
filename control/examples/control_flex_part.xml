@@ -241,10 +241,6 @@
                 </module>
 
                 <module>
-                    <name>inst_suseconfig</name>
-                    <arguments>false,false</arguments>
-                </module>
-                <module>
                     <name>inst_release_notes</name>
                     <arguments>true,true</arguments>
                 </module>
@@ -309,9 +305,6 @@
                 </module>
                 <module>
                     <name>autoinst_configure</name>
-                </module>
-                <module>
-                    <name>inst_suseconfig</name>
                 </module>
             </modules>
         </workflow>

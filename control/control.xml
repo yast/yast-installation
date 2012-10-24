@@ -586,10 +586,6 @@ textdomain="control"
 		    <name>restore_settings</name>
 		</module>
                 <module>
-	            <label>Clean Up</label>
-                    <name>suseconfig</name>
-                </module>
-                <module>
 	            <label>Release Notes</label>
                     <name>release_notes</name>
                     <enable_back>yes</enable_back>
@@ -688,12 +684,6 @@ textdomain="control"
                 <module>
 	            <label>Users</label>
                     <name>user</name>
-                </module>
-                <module>
-	            <label>Clean Up</label>
-                    <name>suseconfig</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
                 </module>
                 <module>
 	            <label>Release Notes</label>
@@ -811,10 +801,6 @@ textdomain="control"
                 <module>
 	            <label>System Configuration</label>
                     <name>autoconfigure</name>
-                </module>
-                <module>
-	            <label>Clean Up</label>
-                    <name>suseconfig</name>
                 </module>
             </modules>
         </workflow>
