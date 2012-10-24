@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Oct 24 08:12:59 CEST 2012 - jsuchome@suse.cz
+
+- removed suseconfig step from installation sequence 
+
+-------------------------------------------------------------------
 Wed Jul 11 15:56:38 CEST 2012 - jsuchome@suse.cz
 
 - create simpler and non translated aliases for update sources 

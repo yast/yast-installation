@@ -90,7 +90,6 @@ textdomain="control"
 	<!-- BNC #428190, Some clients should be called even with AC -->
 	<autoconfiguration_enabled_modules config:type="list">
 	    <module>cont_suse_register</module>
-	    <module>cont_suseconfig</module>
 	    <module>cont_congratulate</module>
 	    <!-- #449128, Run online-update during AC -->
 	    <module>you</module>
@@ -165,7 +164,6 @@ textdomain="control"
                 <ac_items config:type="list">
                     <ac_item>addon_update_sources</ac_item>
                     <ac_item>extrasources</ac_item>
-                    <ac_item>suseconfig</ac_item>
                     <ac_item>save_hardware_status</ac_item>
                 </ac_items>
             </ac_step>
@@ -1073,9 +1071,6 @@ Please visit us at http://www.suse.com/.
 		    <name>restore_settings</name>
 		</module>
                 <module>
-                    <name>suseconfig</name>
-                </module>
-                <module>
 	            <label>Release Notes</label>
                     <name>release_notes</name>
                     <enable_back>yes</enable_back>
@@ -1194,12 +1189,6 @@ Please visit us at http://www.suse.com/.
 		    <!-- BNC #401319, define client to call explicitly -->
 		    <execute>inst_user</execute>
 		</module>
-                <module>
-                    <name>cont_suseconfig</name>
-                    <execute>inst_suseconfig</execute>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
                 <module>
 	            <label>Release Notes</label>
                     <name>release_notes</name>
@@ -1426,9 +1415,6 @@ Please visit us at http://www.suse.com/.
 	            <label>System Configuration</label>
                     <name>autoconfigure</name>
                 </module>
-                <module>
-                    <name>suseconfig</name>
-                </module>
             </modules>
         </workflow>
 
@@ -1456,10 +1442,6 @@ Please visit us at http://www.suse.com/.
                 <module>
                     <label>System Configuration</label>
                     <name>autoconfigure</name>
-                </module>
-                <module>
-                    <label>Clean Up</label>
-                    <name>suseconfig</name>
                 </module>
             </modules>
         </workflow>
