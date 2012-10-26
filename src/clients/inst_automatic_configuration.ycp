@@ -65,14 +65,6 @@
 
     y2milestone ("automatic_configuration started");
 
-//    list <map <string, any> > proposal_scripts_to_call = [
-//	$[
-//	    "label":_("Finishing configuration..."),
-//	    "type":"scripts",
-//	    "items":["addon_update_sources", "inst_extrasources", "suseconfig", "save_hardware_status"]
-//	],
-//    ];
-
     list <map <string, any> > proposal_scripts_to_call = [];
 
     map <string, any> globals_features = ProductFeatures::GetSection ("globals");
