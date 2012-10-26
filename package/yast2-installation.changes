@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Oct 26 08:44:43 CEST 2012 - jsuchome@suse.cz
+
+- do not allow to go next without desktop selected (bnc#786507)
+- 2.23.1
+
+-------------------------------------------------------------------
 Wed Oct 24 11:12:55 CEST 2012 - jsuchome@suse.cz
 
 - removed suseconfig step from installation sequence (fate#100011)
