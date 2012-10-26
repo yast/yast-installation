@@ -264,17 +264,13 @@ while (true) {
     ret = UI::UserInput();
 
     if (is (ret, string) && regexpmatch (tostring (ret), "^selected_desktop_.*")) {
+	Wizard::EnableNextButton ();
 	string currently_selected = regexpsub (tostring (ret), "^selected_desktop_(.*)", "\\1");
 	if (! contains (other_desktops, currently_selected)) {
 	    ShowHideOther (false);
 	}
     } else if (ret == `next) {
 	string currently_selected = (string) UI::QueryWidget (`id ("selected_desktop"), `Value);
-	if (currently_selected == "__other__") {
-	    Popup::Message (_("No system type was selected.
-Select the default type."));
-	    continue;
-	}
 
 	if (currently_selected != nil && currently_selected != "") {
 	    DefaultDesktop::SetDesktop (regexpsub (tostring (currently_selected), "^selected_desktop_(.*)", "\\1"));
@@ -286,8 +282,8 @@ Select the default type."));
 	    }
 	}
 
-	Popup::Message (_("No system type was selected.
-Select the default type."));
+	Popup::Message (_("No desktop type was selected.
+Select the desired desktop environment.")); // should not happen at all, Next is disabled
 	continue;
     } else if (ret == `abort || ret == `cancel) {
 	if (Popup::ConfirmAbort (Stage::initial () ? `painless : `incomplete)) {
@@ -299,6 +295,7 @@ Select the default type."));
 	break;
     } else if (ret == "__other__") {
 	ShowHideOther (true);
+	Wizard::DisableNextButton ();
     } else {
 	y2error ("Input %1 not handled", ret);
     }
