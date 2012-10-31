@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Oct 31 08:16:46 CET 2012 - jsuchome@suse.cz
+
+- removed fonts_finish, its only action was to call obsolete
+  SuSEconfig script
+- 2.23.3
+
+-------------------------------------------------------------------
 Mon Oct 29 15:21:48 CET 2012 - jsuchome@suse.cz
 
 - removed inst_suseconfig client (fate#100011)
