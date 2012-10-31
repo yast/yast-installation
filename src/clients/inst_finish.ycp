@@ -154,7 +154,6 @@ list<map<string,any> > stages = [
 	    (Mode::live_installation() ? "live_save_config":""),
 	    "runlevel",
 	    "desktop",
-	    "fonts",
 	    "storage",
 	    "iscsi-client",
 	    "kernel",
