@@ -102,16 +102,6 @@
 	}
 
 
-	// bnc #390930
-	// Since there is no second stage during upgrade, SuSEConfig has to be run
-	// by hooks
-	if (Mode::update()) {
-	    y2milestone ("Creating hook-file %1", InstData::suseconfig_hookfile);
-	    if ((boolean) SCR::Write (.target.string, InstData::suseconfig_hookfile, "")) {
-		y2error ("Cannot write suseconfig hook-file");
-	    }
-	}
-
 	y2milestone ("Anyway, successful");
     }
 
