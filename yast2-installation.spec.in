@@ -131,9 +131,9 @@ for f in `find %{buildroot}%{_datadir}/autoinstall/modules -name "*.desktop"`; d
     %suse_update_desktop_file $f
 done 
 
-mkdir -p $RPM_BUILD_ROOT/lib/systemd/system/
-install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/lib/systemd/system/
-install -m 644 %{SOURCE2} $RPM_BUILD_ROOT/lib/systemd/system/
+mkdir -p %{buildroot}%{_unitdir}
+install -m 644 %{SOURCE1} %{buildroot}%{_unitdir}
+install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 
 @CLEAN@
 
@@ -164,8 +164,8 @@ install -m 644 %{SOURCE2} $RPM_BUILD_ROOT/lib/systemd/system/
 /usr/share/YaST2/control/*.rnc
 
 # systemd service files
-/lib/systemd/system/YaST2-Second-Stage.service
-/lib/systemd/system/YaST2-Firstboot.service
+%{_unitdir}/YaST2-Second-Stage.service
+%{_unitdir}/YaST2-Firstboot.service
 
 @clientdir@/*.ycp
 @moduledir@/*.ycp
