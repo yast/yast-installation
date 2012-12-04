@@ -48,6 +48,9 @@ import "NetworkService";
 import "PackagesUI";
 import "Label";
 
+// local sources that have been attached under /mnt during upgrade
+map<integer,string> local_urls  = $[];
+
 /**
  * Returns list of maps of repositories to register. See bnc #381360.
  *
@@ -149,6 +152,11 @@ list<string> RegisteredUrls()
 	    {
 		ret = add(ret, url);
 	    }
+
+            if (Mode::update() && regexpmatch (url, "^dir:[/]+mnt[/]+"))
+            {
+                local_urls[src] = url;
+            }
 	}
     );
 
@@ -156,6 +164,8 @@ list<string> RegisteredUrls()
     ret = toset(ret);
 
     y2milestone("Registered sources: %1", ret);
+
+    y2milestone("Registered local sources under /mnt: %1", local_urls);
 
     return ret;
 }
@@ -337,6 +347,18 @@ if (! InitializePackager()) {
 list <string> already_registered = RegisteredUrls();
 
 list <map> register_url = GetURLsToRegister (already_registered);
+
+// fix local sources temporary attached under /mnt
+if (size (local_urls) > 0) {
+
+    foreach (integer srcid, string url, local_urls, {
+        string new_url   = "dir:" + substring (url, find (url, "/mnt") + 4);
+        y2milestone ("changing temporary url '%1' to '%2'", url, new_url);
+        Pkg::SourceChangeUrl (srcid, new_url);
+    });
+    Pkg::SourceSaveAll();
+}
+
 
 // any confirmed source to register?
 if (size (register_url) > 0) {
