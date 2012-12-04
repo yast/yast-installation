@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Dec  4 16:54:56 CET 2012 - jsuchome@suse.cz
+
+- allow using local repositories during update (bnc#779397)
+- 2.23.4
+
+-------------------------------------------------------------------
 Mon Nov  5 08:21:41 CET 2012 - jsuchome@suse.cz
 
 - fixed installation of systemd units (crrodriguez)
