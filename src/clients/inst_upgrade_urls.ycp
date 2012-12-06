@@ -219,7 +219,9 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	list <term> items = maplist (map one_url, urls, {
 	    counter = counter + 1;
 
-	    id_to_name[sformat ("ID: %1", counter)] = one_url["name"]:_("Unknown");
+            // one_url already has "id" and some items might be deleted
+            // looking to id_to_name is done via the original key
+            id_to_name[one_url["id"]:sformat ("ID: %1", counter)] = one_url["name"]:_("Unknown");
 
 	    return `item (
 		`id (counter),
@@ -759,6 +761,14 @@ If you skip it, the repository will not be added.
 
 		string repo_type = Pkg::RepositoryProbe (one_url, "/");
 		y2milestone ("Probed repository: %1 type: %2", one_url, repo_type);
+
+		if ((repo_type == nil || repo_type == "NONE") &&
+                    substring (one_url, 0, 4) == "dir:")
+                {
+                    one_url   = "dir:/mnt" + substring (one_url, 4);
+                    repo_type = Pkg::RepositoryProbe (one_url, "/");
+                    y2milestone ("Probed possible local repository again: %1 type: %2", one_url, repo_type);
+                }
 		
 		if (repo_type == nil || repo_type == "NONE") {
 		    y2error ("Cannot add repository");
