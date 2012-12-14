@@ -54,9 +54,6 @@ map<integer,string> local_urls  = $[];
 // USB sources that were used during installation should be disabled (bnc#793709)
 map<integer,string> usb_sources = $[];
 
-// if adapted sources should be saved
-boolean save_sources            = false;
-
 /**
  * Returns list of maps of repositories to register. See bnc #381360.
  *
@@ -370,7 +367,7 @@ if (size (local_urls) > 0) {
         y2milestone ("changing temporary url '%1' to '%2'", url, new_url);
         Pkg::SourceChangeUrl (srcid, new_url);
     });
-    save_sources        = true;
+    Pkg::SourceSaveAll();
 }
 
 // disable USB sources
@@ -379,7 +376,7 @@ if (size (usb_sources) > 0) {
         y2milestone ("disabling USB source %1", url);
         Pkg::SourceSetEnabled (srcid, false)
     });
-    save_sources        = true;
+    Pkg::SourceSaveAll();
 }
 
 // any confirmed source to register?
@@ -393,10 +390,6 @@ if (size (register_url) > 0) {
 	// bnc #440184
 	y2milestone ("Some (%1) sources have been added, storing them...", added_ids);
 	save_sources    = true;
-    }
-
-    if (save_sources)
-    {
 	Pkg::SourceSaveAll();
     }
 
@@ -473,10 +466,6 @@ if (size (register_url) > 0) {
 	    y2milestone("Network is not running, skipping available updates check");
 	}
     }
-}
-else if (save_sources)
-{
-  Pkg::SourceSaveAll();
 }
 
 
