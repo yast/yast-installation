@@ -165,7 +165,7 @@ list<string> RegisteredUrls()
             }
 
             // check for USB sources which should be disabled
-            if (regexpmatch (url, "device=/dev/disk/by-id/usb-"))
+            if (issubstring (url, "device=/dev/disk/by-id/usb-"))
             {
                 usb_sources[src]        = url;
             }
