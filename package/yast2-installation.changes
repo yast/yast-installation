@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Dec 14 15:16:52 CET 2012 - jsuchome@suse.cz
+
+- disable USB sources after installation (bnc#793709) 
+- 2.23.5
+
+-------------------------------------------------------------------
 Tue Dec  4 16:54:56 CET 2012 - jsuchome@suse.cz
 
 - allow using local repositories during update (bnc#779397)
