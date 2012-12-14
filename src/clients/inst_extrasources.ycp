@@ -51,6 +51,9 @@ import "Label";
 // local sources that have been attached under /mnt during upgrade
 map<integer,string> local_urls  = $[];
 
+// USB sources that were used during installation should be disabled (bnc#793709)
+map<integer,string> usb_sources = $[];
+
 /**
  * Returns list of maps of repositories to register. See bnc #381360.
  *
@@ -157,6 +160,12 @@ list<string> RegisteredUrls()
             {
                 local_urls[src] = url;
             }
+
+            // check for USB sources which should be disabled
+            if (issubstring (url, "device=/dev/disk/by-id/usb-"))
+            {
+                usb_sources[src]        = url;
+            }
 	}
     );
 
@@ -166,6 +175,8 @@ list<string> RegisteredUrls()
     y2milestone("Registered sources: %1", ret);
 
     y2milestone("Registered local sources under /mnt: %1", local_urls);
+
+    y2milestone("Registered USB sources: %1", usb_sources);
 
     return ret;
 }
@@ -359,6 +370,14 @@ if (size (local_urls) > 0) {
     Pkg::SourceSaveAll();
 }
 
+// disable USB sources
+if (size (usb_sources) > 0) {
+    foreach (integer srcid, string url, usb_sources, {
+        y2milestone ("disabling USB source %1", url);
+        Pkg::SourceSetEnabled (srcid, false);
+    });
+    Pkg::SourceSaveAll();
+}
 
 // any confirmed source to register?
 if (size (register_url) > 0) {
@@ -447,6 +466,7 @@ if (size (register_url) > 0) {
 	}
     }
 }
+
 
 return `auto;
 
