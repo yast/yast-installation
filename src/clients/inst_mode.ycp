@@ -241,7 +241,10 @@ configuration.</p>
     _("<p>The feature <b>Update</b> is only
 available if an existing Linux system has been detected.
 </p>
-");
+") +
+
+  // help text: additional help for installation
+  _("<p>If you need specific hardware drivers for installation, see <i>http://drivers.suse.com</i> site.</p>");
 }
 
 Wizard::SetContents (
