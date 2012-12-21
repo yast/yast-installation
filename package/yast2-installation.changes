@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Dec 21 09:01:04 CET 2012 - jsuchome@suse.cz
+
+- show the info about possibility to download drivers
+  from drivers.suse.com (fate#312875) 
+- added KVM installation scenario (bnc#795067) 
+- 2.17.100
+
+-------------------------------------------------------------------
 Fri Jan 20 15:53:12 CET 2012 - locilka@suse.cz
 
 - Not using native driver on Intel graphics hardware during
