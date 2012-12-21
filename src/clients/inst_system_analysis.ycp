@@ -116,6 +116,8 @@ include "packager/storage_include.ycp";
                         // pop-up error report
                         Report::Error(_("No hard disks were found for the installation.
 Please check your hardware!
+
+Check 'drivers.suse.com' if you need specific hardware drivers for installation.
 "));
                 } else {
                         Report::Warning(_("No hard disks were found for the installation.
@@ -128,6 +130,8 @@ During an automatic installation, they might be detected later.
 		Report::Error(_("No hard disks and no hard disk controllers were
 found for the installation.
 Check your hardware.
+
+Check 'drivers.suse.com' if you need specific hardware drivers for installation.
 "));
 	    }
 

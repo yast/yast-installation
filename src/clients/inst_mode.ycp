@@ -230,7 +230,10 @@ your hard disk. This option can try to fix problems automatically.
     _("<p>The features <b>Update</b> and <b>Repair Installed System</b> are only
 available if an existing Linux system has been detected.
 </p>
-");
+") +
+
+  // help text: additional help for installation
+  _("<p>If you need specific hardware drivers for installation, see <i>http://drivers.suse.com</i>.</p>");
 }
 
 Wizard::SetContents (
