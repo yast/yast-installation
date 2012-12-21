@@ -161,6 +161,11 @@ textdomain="control"
 		<patterns>Dom0</patterns>
 		<icon>yast-vm-management</icon>
 	    </system_scenario>
+            <system_scenario>
+                <id>scenario_kvm_virtualization_host</id>
+                <patterns>Dom0_KVM</patterns>
+                <icon>yast-vm-management</icon>
+            </system_scenario>
 	</system_scenarios>
 
 	<!-- default selection for 'system_scenarios' (matches one 'id') -->
@@ -329,6 +334,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
 	<scenario_physical_machine><label>Physical Machine (Also for Fully Virtualized Guests)</label></scenario_physical_machine>
 	<scenario_virtual_machine><label>Virtual Machine (For Paravirtualized Environments Like Xen)</label></scenario_virtual_machine>
 	<scenario_virtualization_host><label>Xen Virtualization Host (Local X11 Not Configured by Default)</label></scenario_virtualization_host>
+        <scenario_kvm_virtualization_host><label>KVM Virtualization Host (Local X11 Not Configured by Default)</label></scenario_kvm_virtualization_host>
 
 	<!-- FATE #305583: Start CIMOM by default -->
 	<service_sfcb><label>CIM Server</label></service_sfcb>
