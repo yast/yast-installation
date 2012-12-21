@@ -62,9 +62,9 @@
 
     list <map <string, string> > system_scenarios = (list <map <string, string> >) any_scenarios;
 
-    // Remove Xen Virtualization Host Server Installation for non-x86_64 (bnc#702103)
+    // Remove Xen/KVM Virtualization Host Server Installation for non-x86_64 (bnc#702103, bnc#795067)
     system_scenarios	= filter (map <string, string> one_scenario, system_scenarios, {
-	if (one_scenario["id"]:"---" == "scenario_virtualization_host" && !Arch::x86_64 ())
+	if (issubstring (one_scenario["id"]:"---", "virtualization_host") && !Arch::x86_64 ())
 	{
 	    y2milestone ("removing Xen Virtualization Host Server option");
 	    return false;
