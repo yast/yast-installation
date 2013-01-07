@@ -342,6 +342,8 @@ installation process at any time.
 	    break;
 
 	} else if (ret == `keyboard) {
+	    ReadCurrentUIState();
+	    Keyboard::Set (keyboard);
 	    Keyboard::user_decision = true;
 
 	} else if (ret == `license_agreement) {

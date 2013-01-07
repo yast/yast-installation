@@ -1,6 +1,6 @@
 SUBDIRS = 
 
-xml_files =  $(wildcard *.xml)
+xml_files =  $(wildcard *.xml) $(wildcard examples/*.xml)
 
 html_DATA = $(wildcard html/*.html) \
 	    html/yast2docs.css
