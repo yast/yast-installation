@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Jan  7 13:06:32 CET 2013 - jsuchome@suse.cz
+
+- set new keyboard layout right after selecting (bnc#796589)
+- added SYSTEMCTL_OPTIONS to Firstboot/Second Stage services
+  (bnc#791076)
+- 2.23.7
+
+-------------------------------------------------------------------
 Fri Dec 21 08:23:47 CET 2012 - jsuchome@suse.cz
 
 - show the info about possibility to download drivers
