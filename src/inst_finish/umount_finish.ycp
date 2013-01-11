@@ -216,7 +216,7 @@ else if (func == "Write")
     y2milestone( "umount list %1", umountList );
     foreach (map e,  targetMap["/dev/loop","partitions"]:[], {
 	if (size(e["mount"]:"")>0) {
-	    Storage::Umount (e["device"]:"");
+	    Storage::Umount (e["device"]:"", true);
             umountList = filter (string m, umountList, ``(m!=e["mount"]:""));
             y2milestone ("loop umount %1 new list %2", e["mount"]:"", umountList);
         }

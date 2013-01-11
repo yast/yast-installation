@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jan 11 10:47:11 CET 2013 - jsuchome@suse.cz
+
+- adapted to changes in Storage.ycp API (bnc#797245)
+- 2.23.8
+
+-------------------------------------------------------------------
 Mon Jan  7 13:06:32 CET 2013 - jsuchome@suse.cz
 
 - set new keyboard layout right after selecting (bnc#796589)
