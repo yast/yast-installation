@@ -737,6 +737,12 @@ If you skip it, the repository will not be added.
 	return false;
     }
 
+    /**
+     * Adds given repositories as <tt>enabled</tt>
+     *
+     * @param list <string> list of repository IDs to add
+     * @param map <string, string> mapping $[repository_id : repository_url]
+     */
     void IUU_AddEnabledRepositories (list <string> sources_to_add, map <string, string> & id_to_url) {
 	if (size (sources_to_add) == 0) {
 	    return;
@@ -854,6 +860,12 @@ URL: %2
 	    });
     }
 
+    /**
+     * Adds given repositories as <tt>disabled</tt>
+     *
+     * @param list <string> list of repository IDs to add
+     * @param map <string, string> mapping $[repository_id : repository_url]
+     */
     void IUU_AddDisabledRepositories (list <string> sources_to_add_disabled, map <string, string> & id_to_url) {
 	if (size (sources_to_add_disabled) == 0) {
 	    return;
