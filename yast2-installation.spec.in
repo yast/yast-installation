@@ -10,8 +10,8 @@ Source2:	YaST2-Firstboot.service
 
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2-core-devel yast2-devtools yast2-testsuite
 
-# FileSystems::possible_root_fs
-BuildRequires:	yast2-storage >= 2.19.12
+# Storage::Umount
+BuildRequires:	yast2-storage >= 2.23.3
 
 # xmllint
 BuildRequires:	libxml2
