@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jan 11 11:04:04 CET 2013 - jsuchome@suse.cz
+
+- adapted to changes in Storage.ycp API (bnc#797245)
+- 2.17.101
+
+-------------------------------------------------------------------
 Fri Dec 21 09:01:04 CET 2012 - jsuchome@suse.cz
 
 - show the info about possibility to download drivers
