@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Jan 14 13:45:23 UTC 2013 - locilka@suse.com
+
+- Adding repositories that cannot be (re)added as enabled in
+  a disabled state (bnc#779396).
+- 2.23.9
+
+-------------------------------------------------------------------
 Fri Jan 11 10:47:11 CET 2013 - jsuchome@suse.cz
 
 - adapted to changes in Storage.ycp API (bnc#797245)
