@@ -20,7 +20,7 @@
 
 {
     // FATE #301785: Distribution upgrade should offer
-    // existing extra installation sources as Add-On
+    // existing extra installation repository as Add-On
 
     import "Installation";
     import "FileUtils";
@@ -81,7 +81,7 @@
 	system_urls = (list <map>) SCR::Read (.zypp_repos, dir_new);
 
 	if (system_urls == nil || system_urls == []) {
-	    y2milestone ("No new zypp sources on the target");
+	    y2milestone ("No zypp repositories on the target");
 	} else {
 	    y2milestone ("URLs: %1", system_urls);
 	}
@@ -268,7 +268,7 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	urls[currentitem, "url"] = url;
     }
 
-    void UseOldOrNewURLs () {
+    void FillUpURLs () {
 	urls = [];
 
 	// If some new (since 10.3 Alpha?) URLs found, use only them
@@ -517,34 +517,34 @@ Configure it?"),
     }
 
     void SetAddRemoveSourcesProgress (
-	list <integer> & sources_to_remove,
-	list <string> & sources_to_add,
-	list <string> & sources_to_add_disabled
+	list <integer> & repos_to_remove,
+	list <string> & repos_to_add,
+	list <string> & repos_to_add_disabled
     ) {
 	list <string> actions_todo  = [];
 	list <string> actions_doing = [];
 
 	integer steps_nr = 0;
 
-	if (size (sources_to_remove) > 0) {
-	    y2milestone ("Remove %1 repos", sources_to_remove);
+	if (size (repos_to_remove) > 0) {
+	    y2milestone ("Remove %1 repos", repos_to_remove);
 	    actions_todo	= add (actions_todo,  _("Remove unused repositories"));
 	    actions_doing	= add (actions_doing, _("Removing unused repositories..."));
-	    steps_nr		= steps_nr + size (sources_to_remove);
+	    steps_nr		= steps_nr + size (repos_to_remove);
 	}
 
-	if (size (sources_to_add) > 0) {
-	    y2milestone ("Add %1 enabled repos", sources_to_add);
+	if (size (repos_to_add) > 0) {
+	    y2milestone ("Add %1 enabled repos", repos_to_add);
 	    actions_todo	= add (actions_todo,  _("Add enabled repositories"));
 	    actions_doing	= add (actions_doing, _("Adding enabled repositories..."));
-	    steps_nr		= steps_nr + size (sources_to_add);
+	    steps_nr		= steps_nr + size (repos_to_add);
 	}
 
-	if (size (sources_to_add_disabled) > 0) {
-	    y2milestone ("Add %1 disabled repos", sources_to_add_disabled);
+	if (size (repos_to_add_disabled) > 0) {
+	    y2milestone ("Add %1 disabled repos", repos_to_add_disabled);
 	    actions_todo	= add (actions_todo,  _("Add disabled repositories"));
 	    actions_doing	= add (actions_doing, _("Adding disabled repositories..."));
-	    steps_nr		= steps_nr + size (sources_to_add_disabled);
+	    steps_nr		= steps_nr + size (repos_to_add_disabled);
 	}
 
 	Progress::New (
@@ -618,16 +618,16 @@ Configure it?"),
 	});
     }
 
-    void IUU_RemoveRepositories (list <integer> sources_to_remove) {
-	if (size (sources_to_remove) == 0) {
+    void IUU_RemoveRepositories (list <integer> repos_to_remove) {
+	if (size (repos_to_remove) == 0) {
 	    return;
 	}
 
 	Progress::Title (_("Removing unused repositories..."));
 	Progress::NextStage ();
 
-	y2milestone ("Deleting repos: %1", sources_to_remove);
-	foreach (integer one_id, sources_to_remove, {
+	y2milestone ("Deleting repos: %1", repos_to_remove);
+	foreach (integer one_id, repos_to_remove, {
 	    Progress::NextStep ();
 	    Pkg::SourceDelete (one_id);
 
@@ -672,17 +672,17 @@ If you skip it, the repository will not be added.
      * @param list <string> list of repository IDs to add
      * @param map <string, string> mapping $[repository_id : repository_url]
      */
-    void IUU_AddEnabledRepositories (list <string> sources_to_add, map <string, string> & id_to_url) {
-	if (size (sources_to_add) == 0) {
+    void IUU_AddEnabledRepositories (list <string> repos_to_add, map <string, string> & id_to_url) {
+	if (size (repos_to_add) == 0) {
 	    return;
 	}
 
 	Progress::Title (_("Adding enabled repositories..."));
 	Progress::NextStage ();
 
-	// Adding sources in a disabled state, then enable them
+	// Adding repositories in a disabled state, then enable them
 	// for the system upgrade
-	    foreach (string one_id, sources_to_add, {
+	    foreach (string one_id, repos_to_add, {
 		y2milestone ("Adding repository: %1", one_id);
 		Progress::NextStep ();
 		string one_url = id_to_url[one_id]:"";
@@ -690,7 +690,7 @@ If you skip it, the repository will not be added.
 		string pth = "/";
 
 		if (InsertCorrectMediaHandler (one_url, repo_name) != true) {
-		    y2warning ("Skipping source %1", one_id);
+		    y2warning ("Skipping repository %1", one_id);
 		    return;
 		}
 
@@ -795,26 +795,26 @@ URL: %2
      * @param list <string> list of repository IDs to add
      * @param map <string, string> mapping $[repository_id : repository_url]
      */
-    void IUU_AddDisabledRepositories (list <string> sources_to_add_disabled, map <string, string> & id_to_url) {
-	if (size (sources_to_add_disabled) == 0) {
+    void IUU_AddDisabledRepositories (list <string> repos_to_add_disabled, map <string, string> & id_to_url) {
+	if (size (repos_to_add_disabled) == 0) {
 	    return;
 	}
 
 	Progress::Title (_("Adding disabled repositories..."));
 	Progress::NextStage ();
 
-	// Adding the rest of sources in a disabled state
+	// Adding the rest of repositories in a disabled state
 	// bnc #326342
-	    y2milestone ("Adding DISABLED repos: %1", sources_to_add_disabled);
+	    y2milestone ("Adding DISABLED repos: %1", repos_to_add_disabled);
 
-	    foreach (string one_id, sources_to_add_disabled, {
+	    foreach (string one_id, repos_to_add_disabled, {
 		Progress::NextStep ();
 		string one_url = id_to_url[one_id]:"";
 		string repo_name = id_to_name[one_id]:"";
 		string pth = "/";
 
 		if (InsertCorrectMediaHandler (one_url, repo_name) != true) {
-		    y2warning ("Skipping source %1", one_id);
+		    y2warning ("Skipping repository %1", one_id);
 		    return;
 		}
 
@@ -883,15 +883,15 @@ URL: %2"),
 	return ret;
     }
 
-    symbol AddOrRemoveSources () {
-	list <integer> sources_to_remove = [];
+    symbol AddOrRemoveRepositories () {
+	list <integer> repos_to_remove = [];
 
-	list <string>  sources_to_add    = [];
+	list <string>  repos_to_add    = [];
 
 	map <string, string> id_to_url = $[];
 
 	// bnc #308763
-	list <string> sources_to_add_disabled = [];
+	list <string> repos_to_add_disabled = [];
 
 	// bnc #400823
 	do_not_remove = Pkg::SourceGetCurrent(false)[0]:0;
@@ -912,7 +912,7 @@ URL: %2"),
 	    integer current_medianr = FindMediaNr (tostring(one_source["alias"]:nil), tostring(one_source["url"]:nil));
 
 	    if (do_not_remove == current_medianr) {
-		y2milestone ("Skipping source: %1 (installation repository)", do_not_remove);
+		y2milestone ("Skipping installation repository: %1", do_not_remove);
 		return;
 	    }
 
@@ -921,48 +921,48 @@ URL: %2"),
 	    // Source should be enabled at the end
 	    if (one_source["new_status"]:"" == REPO_ENABLED) {
 		if (one_source["initial_url_status"]:"" == REPO_ENABLED) {
-		    y2milestone ("Source has been already enabled");
+		    y2milestone ("Repository has been already enabled");
 		} else {
 		    // It's not yet enabled, add it
-		    sources_to_add = add (sources_to_add, id);
-		    y2milestone ("Source to add: %1", id);
+		    repos_to_add = add (repos_to_add, id);
+		    y2milestone ("Repository to add: %1", id);
 
 		    // It's been already added but in disabled state
 		    if (one_source["initial_url_status"]:"" == REPO_DISABLED) {
-			sources_to_remove = add (sources_to_remove, current_medianr);
-			y2milestone ("Source to remove: %1", current_medianr);
+			repos_to_remove = add (repos_to_remove, current_medianr);
+			y2milestone ("Repository to remove: %1", current_medianr);
 		    }
 		}
 
-	    // Source should be removed (not added)
+	    // Repository should be removed (not added)
 	    } else if (one_source["new_status"]:"" == REPO_REMOVED) {
 		if (one_source["initial_url_status"]:"" == REPO_REMOVED) {
 		    y2milestone ("Repository has been already removed");
 		} else {
-		    sources_to_remove = add (sources_to_remove, current_medianr);
-		    y2milestone ("Source to remove: %1", current_medianr);
+		    repos_to_remove = add (repos_to_remove, current_medianr);
+		    y2milestone ("Repository to remove: %1", current_medianr);
 		}
 
-	    // Source will be added in disabled state
+	    // Repositry will be added in disabled state
 	    // BNC #583155
 	    } else if (one_source["new_status"]:"" == REPO_DISABLED) {
 		// It's been already added in enabled state
 		if (one_source["initial_url_status"]:"" == REPO_ENABLED) {
-		    sources_to_remove = add (sources_to_remove, current_medianr);
-		    y2milestone ("Source to remove: %1", current_medianr);
+		    repos_to_remove = add (repos_to_remove, current_medianr);
+		    y2milestone ("Repository to remove: %1", current_medianr);
 		}
 
-		sources_to_add_disabled = add (sources_to_add_disabled, id);
-		y2milestone ("Source to add disabled: %1", id);
+		repos_to_add_disabled = add (repos_to_add_disabled, id);
+		y2milestone ("Repository to add disabled: %1", id);
 	    }
 	});
 
-	if (size(sources_to_remove) > 0 || size (sources_to_add) > 0) {
+	if (size(repos_to_remove) > 0 || size (repos_to_add) > 0) {
 	    SetAddRemoveSourcesUI();
 	}
 
 	// BNC #478024: Remote repositories need a running network
-	if ((size (sources_to_add) > 0) && ! NetworkRunning()) {
+	if ((size (repos_to_add) > 0) && ! NetworkRunning()) {
 	    y2milestone ("No network is running, trying inst_network_check fallback");
 	    any ret = WFM::CallFunction ("inst_network_check", []);
 	    y2milestone ("Called inst_network_check returned: %1", ret);
@@ -970,44 +970,44 @@ URL: %2"),
 
 	// Remote repositories without running network are registered
 	// as disabled
-	if ((size (sources_to_add) > 0) && ! NetworkRunning()) {
-	    y2warning ("Network is not running, sources will be added in DISABLED state");
-	    sources_to_add_disabled = (list <string>) union (sources_to_add_disabled, sources_to_add);
-	    sources_to_add = [];
+	if ((size (repos_to_add) > 0) && ! NetworkRunning()) {
+	    y2warning ("Network is not running, repositories will be added in DISABLED state");
+	    repos_to_add_disabled = (list <string>) union (repos_to_add_disabled, repos_to_add);
+	    repos_to_add = [];
 	}
 
-	sources_to_remove = filter (integer one_source, sources_to_remove, {
+	repos_to_remove = filter (integer one_source, repos_to_remove, {
 	    return (one_source != do_not_remove);
 	});
 
-	sources_to_add_disabled = filter (string one_source, sources_to_add_disabled, {
+	repos_to_add_disabled = filter (string one_source, repos_to_add_disabled, {
 	    return (one_source != sformat ("ID: %1", do_not_remove));
 	});
 
 	boolean progress = Progress::status();
 
-	if (size(sources_to_add) == 0)
+	if (size(repos_to_add) == 0)
 	{
 	    Progress::set(false);
 	}
 
-	SetAddRemoveSourcesProgress (sources_to_remove, sources_to_add, sources_to_add_disabled);
+	SetAddRemoveSourcesProgress (repos_to_remove, repos_to_add, repos_to_add_disabled);
 
 	PackageCallbacks::RegisterEmptyProgressCallbacks();
 
-	IUU_RemoveRepositories (sources_to_remove);
+	IUU_RemoveRepositories (repos_to_remove);
 
 	// Add repositories in enabled state
-	IUU_AddEnabledRepositories (sources_to_add, id_to_url);
+	IUU_AddEnabledRepositories (repos_to_add, id_to_url);
 
 	// Add repositories in disabled state
-	IUU_AddDisabledRepositories (sources_to_add_disabled, id_to_url);
+	IUU_AddDisabledRepositories (repos_to_add_disabled, id_to_url);
 
 	Progress::Finish();
 
 	PackageCallbacks::RestorePreviousProgressCallbacks();
 
-	if (size(sources_to_add) == 0)
+	if (size(repos_to_add) == 0)
 	{
 	    Progress::set(progress);
 	}
@@ -1048,24 +1048,24 @@ URL: %2"),
     // bnc #400823 
     do_not_remove = Pkg::SourceGetCurrent(false)[0]:0;
 
-    UseOldOrNewURLs();
+    FillUpURLs();
     RemoveInstallationReposFromUpgrededSystemOnes();
 
     Progress::NextStage();
     Progress::Finish();
 
     if (already_registered_repos == nil || size (already_registered_repos) < 1) {
-	y2milestone ("No sources found");
+	y2milestone ("No repositories found");
 	continue_processing = false;
     } else if (urls == nil || size (urls) < 1) {
-	y2milestone ("No sources to offer");
+	y2milestone ("No repositories to offer");
 	continue_processing = false;
     }
 
     if (continue_processing) {
 	ret = HandleOldSources();
 	if (ret == `next)
-	    ret = AddOrRemoveSources();
+	    ret = AddOrRemoveRepositories();
     }
 
     // for testing purpose
