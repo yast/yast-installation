@@ -694,6 +694,11 @@ If you skip it, the repository will not be added.
 		string repo_name = id_to_name[one_id]:"";
 		string pth = "/";
 
+		if (one_url == nil || one_url == "") {
+		    y2error ("Repository id %1 has no URL", one_id);
+		    return;
+		}
+
 		if (InsertCorrectMediaHandler (one_url, repo_name) != true) {
 		    y2warning ("Skipping repository %1", one_id);
 		    return;
@@ -711,9 +716,16 @@ If you skip it, the repository will not be added.
                 }
 		
 		if (repo_type == nil || repo_type == "NONE") {
-		    y2error ("Cannot add repository");
+		    y2error ("Cannot probe repository %1", one_id);
 		    Report::Error (sformat(_("Cannot add repository %1
-URL: %2"), repo_name, one_url));
+URL: %2
+
+
+Repository will be added in disabled state."), repo_name, one_url));
+
+		    // see bnc#779396
+		    // Repository cannot be probed, it has to be added in disabled state
+		    repos_to_add_disabled = add(repos_to_add_disabled, one_id);
 		    return;
 		}
 
