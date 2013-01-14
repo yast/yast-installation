@@ -76,6 +76,15 @@
     const string REPO_ENABLED = "enabled";
     const string REPO_DISABLED = "disabled";
 
+    list <integer> repos_to_remove = [];
+
+    list <string>  repos_to_add    = [];
+
+    map <string, string> id_to_url = $[];
+
+    // bnc #308763
+    list <string> repos_to_add_disabled = [];
+
     void ReadZyppRepositories () {
 	// New-type URLs
 	system_urls = (list <map>) SCR::Read (.zypp_repos, dir_new);
@@ -516,11 +525,7 @@ Configure it?"),
 	Wizard::SetTitleIcon ("yast-sw_source");
     }
 
-    void SetAddRemoveSourcesProgress (
-	list <integer> & repos_to_remove,
-	list <string> & repos_to_add,
-	list <string> & repos_to_add_disabled
-    ) {
+    void SetAddRemoveSourcesProgress () {
 	list <string> actions_todo  = [];
 	list <string> actions_doing = [];
 
@@ -618,7 +623,10 @@ Configure it?"),
 	});
     }
 
-    void IUU_RemoveRepositories (list <integer> repos_to_remove) {
+    /**
+     * Removes selected repositories
+     */
+    void IUU_RemoveRepositories () {
 	if (size (repos_to_remove) == 0) {
 	    return;
 	}
@@ -667,12 +675,9 @@ If you skip it, the repository will not be added.
     }
 
     /**
-     * Adds given repositories as <tt>enabled</tt>
-     *
-     * @param list <string> list of repository IDs to add
-     * @param map <string, string> mapping $[repository_id : repository_url]
+     * Adds selected repositories as <tt>enabled</tt>
      */
-    void IUU_AddEnabledRepositories (list <string> repos_to_add, map <string, string> & id_to_url) {
+    void IUU_AddEnabledRepositories () {
 	if (size (repos_to_add) == 0) {
 	    return;
 	}
@@ -790,12 +795,9 @@ URL: %2
     }
 
     /**
-     * Adds given repositories as <tt>disabled</tt>
-     *
-     * @param list <string> list of repository IDs to add
-     * @param map <string, string> mapping $[repository_id : repository_url]
+     * Adds selected repositories as <tt>disabled</tt>
      */
-    void IUU_AddDisabledRepositories (list <string> repos_to_add_disabled, map <string, string> & id_to_url) {
+    void IUU_AddDisabledRepositories () {
 	if (size (repos_to_add_disabled) == 0) {
 	    return;
 	}
@@ -884,14 +886,10 @@ URL: %2"),
     }
 
     symbol AddOrRemoveRepositories () {
-	list <integer> repos_to_remove = [];
-
-	list <string>  repos_to_add    = [];
-
-	map <string, string> id_to_url = $[];
-
-	// bnc #308763
-	list <string> repos_to_add_disabled = [];
+	repos_to_remove       = [];
+	repos_to_add          = [];
+	id_to_url             = $[];
+	repos_to_add_disabled = [];
 
 	// bnc #400823
 	do_not_remove = Pkg::SourceGetCurrent(false)[0]:0;
@@ -991,17 +989,17 @@ URL: %2"),
 	    Progress::set(false);
 	}
 
-	SetAddRemoveSourcesProgress (repos_to_remove, repos_to_add, repos_to_add_disabled);
+	SetAddRemoveSourcesProgress();
 
 	PackageCallbacks::RegisterEmptyProgressCallbacks();
 
-	IUU_RemoveRepositories (repos_to_remove);
+	IUU_RemoveRepositories();
 
 	// Add repositories in enabled state
-	IUU_AddEnabledRepositories (repos_to_add, id_to_url);
+	IUU_AddEnabledRepositories();
 
 	// Add repositories in disabled state
-	IUU_AddDisabledRepositories (repos_to_add_disabled, id_to_url);
+	IUU_AddDisabledRepositories();
 
 	Progress::Finish();
 
