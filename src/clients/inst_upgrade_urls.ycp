@@ -66,91 +66,20 @@
 	}
     }
 
-    string dir_old = sformat ("%1/var/lib/zypp/db/sources/", Installation::destdir);
-    list <map <string, any> > old_urls = [];
-
     string dir_new = sformat ("%1/etc/zypp/repos.d/", Installation::destdir);
-    list <map> new_urls = [];
+
+    list <map> system_urls = [];
 
     list <map> already_registered_repos = [];
 
-    void ReadOldTypeURLs () {
-	// Old-type URLs
-	list <string> all_source_files = (list <string>) SCR::Read (.target.dir, dir_old);
-
-	if (all_source_files == nil || all_source_files == []) {
-	    y2milestone ("No old zypp sources on the target");
-	} else {
-	    integer counter = -1;
-
-	    foreach (string one_source_file, all_source_files, {
-		one_source_file = sformat ("%1/%2", dir_old, one_source_file);
-
-		if (! FileUtils::Exists (one_source_file)) {
-		    y2error ("File doesn't exist: %1", one_source_file);
-		    return;
-		}
-
-		map xmlcontent = (map) SCR::Read (.anyxml, $[
-		    "file" : one_source_file,
-		    "args" : $[
-			"ForceArray" : 0,
-			"ForceContent" : 0,
-			"KeepRoot" : 0,
-		    ]
-		]);
-
-		if (xmlcontent == nil || xmlcontent == $[]) {
-		    y2error ("Can't read %1, SCR returned erroneous data: %2", one_source_file, xmlcontent);
-		    return;
-		}
-
-		// bnc #300901
-		boolean enabled = nil;
-
-		if (is (xmlcontent["enabled"]:nil, boolean)) {
-		    enabled = xmlcontent["enabled"]:false;
-		} else if (is (xmlcontent["enabled"]:nil, string)) {
-		    enabled = (xmlcontent["enabled"]:"false" == "true");
-		}
-
-		boolean auto_refresh = nil;
-
-		if (is (xmlcontent["auto-refresh"]:nil, boolean)) {
-		    auto_refresh = xmlcontent["auto-refresh"]:false;
-		} else if (is (xmlcontent["auto-refresh"]:nil, string)) {
-		    auto_refresh = (xmlcontent["auto-refresh"]:"false" == "true");
-		}
-
-		map <string, any> one_old_url = $[
-		    "url" :	xmlcontent["url"]:nil,
-		    "enabled" :	enabled,
-		    "auto-refresh" : auto_refresh,
-		    "name" :	xmlcontent["alias"]:nil,
-		];
-
-		foreach (string key, ["alias", "product-dir", "type"], {
-		    if (haskey (xmlcontent, key)) {
-			one_old_url[key] = xmlcontent[key]:"";
-		    }
-		});
-
-		counter = counter + 1;
-		old_urls[counter] = one_old_url;
-	    });
-
-	    y2milestone ("URLs: %1", old_urls);
-	}
-    }
-
-    void ReadNewTypeURLs () {
+    void ReadZyppRepositories () {
 	// New-type URLs
-	new_urls = (list <map>) SCR::Read (.zypp_repos, dir_new);
+	system_urls = (list <map>) SCR::Read (.zypp_repos, dir_new);
 
-	if (new_urls == nil || new_urls == []) {
+	if (system_urls == nil || system_urls == []) {
 	    y2milestone ("No new zypp sources on the target");
 	} else {
-	    y2milestone ("URLs: %1", new_urls);
+	    y2milestone ("URLs: %1", system_urls);
 	}
     }
 
@@ -339,8 +268,8 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 	urls = [];
 
 	// If some new (since 10.3 Alpha?) URLs found, use only them
-	if (new_urls != nil && new_urls != []) {
-	    foreach (map one_url_map, new_urls, {
+	if (system_urls != nil && system_urls != []) {
+	    foreach (map one_url_map, system_urls, {
 		// bnc #300901
 		boolean enabled = nil;
 
@@ -396,10 +325,6 @@ on the system you are upgrading. Enable the ones you want to include in the upgr
 
 		urls = add (urls, new_url_map);
 	    });
-	// Fallback, old URLs found
-	// ... 10.1, 10.2
-	} else if (old_urls != nil && old_urls != []) {
-	    urls = old_urls;
 	}
 
 	integer id = -1;
@@ -1091,22 +1016,13 @@ URL: %2"),
 
     Progress::NextStage();
 
-    // Read the old repos (old type)
-    if (FileUtils::Exists (dir_old))
-	ReadOldTypeURLs ();
-    else
-	y2milestone ("Skipping ReadOldTypeURLs()");
+    ReadZyppRepositories ();
 
-    // Read the old repos (new type)
-    if (FileUtils::Exists (dir_new))
-	ReadNewTypeURLs ();
-    else
-	y2milestone ("Skipping ReadNewTypeURLs()");
     Progress::NextStage();
 
     boolean continue_processing = false;
 
-    if ((old_urls != nil && old_urls != []) || (new_urls != nil && new_urls != [])) {
+    if (system_urls != nil && system_urls != []) {
 	continue_processing = true;
 	// initialize zypp
 	Pkg::TargetInitialize (Installation::destdir);
