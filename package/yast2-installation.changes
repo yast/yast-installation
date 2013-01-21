@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Sun Jan 20 15:27:33 UTC 2013 - lslezak@suse.cz
+
+- start the add-on module also when "addon" boot parameter is
+  present (fate#314318)
+- 2.17.102
+
+-------------------------------------------------------------------
 Fri Jan 11 11:04:04 CET 2013 - jsuchome@suse.cz
 
 - adapted to changes in Storage.ycp API (bnc#797245)

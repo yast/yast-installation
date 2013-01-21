@@ -272,7 +272,7 @@ according to the settings in the previous dialogs.</p>")
     void AdjustStepsAccordingToInstallationSettings () {
 	AdjustAutomaticConfiguration();
 
-	if (Installation::add_on_selected == true) {
+	if (Installation::add_on_selected == true || Linuxrc::InstallInf("addon") != nil) {
 	    ProductControl::EnableModule ("add-on");
 	} else {
 	    ProductControl::DisableModule ("add-on");
