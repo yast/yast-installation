@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Sun Jan 20 15:27:33 UTC 2013 - lslezak@suse.cz
+
+- start the add-on module also when "addon" boot parameter is
+  present (fate#314318)
+- 2.23.10
+
+-------------------------------------------------------------------
 Mon Jan 14 13:45:23 UTC 2013 - locilka@suse.com
 
 - Adding repositories that cannot be (re)added as enabled in
