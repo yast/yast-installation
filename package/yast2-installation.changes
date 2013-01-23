@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jan 23 16:00:21 CET 2013 - jsuchome@suse.cz
+
+- prevent systemctl hang in 2nd stage (from fcrozat@suse.com,
+  bnc#798620)
+- 2.23.11
+
+-------------------------------------------------------------------
 Sun Jan 20 15:27:33 UTC 2013 - lslezak@suse.cz
 
 - start the add-on module also when "addon" boot parameter is
