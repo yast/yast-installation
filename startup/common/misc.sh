@@ -159,7 +159,7 @@ function got_kernel_param () {
 #--------------------------------------------------
 # check for kernel parameter in /proc/cmdline
 # ---
-	grep -qi $1 < /proc/cmdline
+	tr " " "\n" </proc/cmdline | grep -qi "^$1$"
 }
 
 #----[ got_install_param ]----#
