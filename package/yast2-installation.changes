@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Feb 14 17:06:53 CET 2013 - fehr@suse.de
+
+- fix got_kernel_param in mish.sh to not match substrings (so far 
+  kernel parameters like systemd.log_level=debug activated Y2DEBUG)
+- 2.23.12
+ 
+-------------------------------------------------------------------
 Wed Jan 23 16:00:21 CET 2013 - jsuchome@suse.cz
 
 - prevent systemctl hang in 2nd stage (from fcrozat@suse.com,
