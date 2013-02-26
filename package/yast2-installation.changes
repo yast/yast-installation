@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Feb 26 08:11:58 CET 2013 - jsuchome@suse.cz
+
+- always return boolean from DeployTarImage (bnc#804293)
+- 2.23.13 
+
+-------------------------------------------------------------------
 Thu Feb 14 17:06:53 CET 2013 - fehr@suse.de
 
 - fix got_kernel_param in misc.sh to not match substrings (so far 

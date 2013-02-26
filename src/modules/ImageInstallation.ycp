@@ -356,7 +356,7 @@ boolean DeployTarImage (string id, string target) {
     y2milestone ("Finished");
 
     if (aborted)
-	return nil;
+	return false;
 
     // adjust labels etc.
     if (tar_image_progress != nil)
@@ -661,7 +661,7 @@ global boolean DeployImages (list<string> images, string target, void(integer,in
 	if (progress != nil)
 	    progress (num, 0);
 
-	if (DeployImage (img, target) == nil) {
+	if (!DeployImage (img, target)) {
 	    aborted = true;
 	    y2milestone ("Aborting...");
 	    break;
