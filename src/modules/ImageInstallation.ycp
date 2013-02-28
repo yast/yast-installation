@@ -248,6 +248,12 @@ boolean DeployTarImage (string id, string target) {
     map out = (map)SCR::Execute (.target.bash_output, cmd);
     y2milestone ("Executing %1 returned %2", cmd, out);
 
+    if (out["exit"]:-1 != 0)
+    {
+      y2error ("no directory to extract into, aborting");
+      return false;
+    }
+
     y2milestone ("Untarring the image");
 
     // lzma
@@ -323,7 +329,7 @@ boolean DeployTarImage (string id, string target) {
     y2milestone ("Finished");
 
     if (aborted)
-	return nil;
+	return false;
 
     // adjust labels etc.
     if (tar_image_progress != nil)
@@ -331,7 +337,7 @@ boolean DeployTarImage (string id, string target) {
 
     RemoveTemporaryImage (image);
 
-    return out["exit"]:-1 == 0;
+    return true;
 }
 
 /**
@@ -628,7 +634,7 @@ global boolean DeployImages (list<string> images, string target, void(integer,in
 	if (progress != nil)
 	    progress (num, 0);
 
-	if (DeployImage (img, target) == nil) {
+	if (!DeployImage (img, target)) {
 	    aborted = true;
 	    y2milestone ("Aborting...");
 	    break;
