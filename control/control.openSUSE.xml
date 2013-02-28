@@ -40,6 +40,9 @@ textdomain="control"
 	<show_online_repositories config:type="boolean">false</show_online_repositories>
 	<online_repositories_default config:type="boolean">true</online_repositories_default>
 
+	<!-- Guide user to drivers.suse.com if HW was not found (FATE#312875)-->
+	<show_drivers_info config:type="boolean">false</show_drivers_info>
+
 	<!-- Offer add-ons in the installation -->
 	<show_addons config:type="boolean">true</show_addons>
 	<addons_default config:type="boolean">false</addons_default>

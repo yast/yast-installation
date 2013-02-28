@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Feb 28 18:47:44 CET 2013 - jsuchome@suse.cz
+
+- always return boolean from DeployTarImage (bnc#804293)
+- make the "Check drivers" error message depend on control.xml
+  variable (fate#312875, bnc#805251)
+- 2.17.103 
+
+-------------------------------------------------------------------
 Sun Jan 20 15:27:33 UTC 2013 - lslezak@suse.cz
 
 - start the add-on module also when "addon" boot parameter is
