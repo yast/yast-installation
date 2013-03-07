@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar  7 14:17:51 CET 2013 - jsuchome@suse.cz
+
+- show dialog for all available disk controlers (bnc#807026)
+- 2.17.105 
+
+-------------------------------------------------------------------
 Mon Mar 04 14:42:03 CET 2013 - aschnell@suse.de
 
 - deactivate RAID before going back to "Disk Activation" during
