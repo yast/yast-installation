@@ -61,6 +61,7 @@ include "packager/storage_include.ycp";
     // This dialog in not interactive
     // always return `back when came from the previous dialog
     if (GetInstArgs::going_back()) {
+	Storage::ActivateHld(false);
 	return `back;
     }
 
@@ -175,6 +176,7 @@ Check 'drivers.suse.com' if you need specific hardware drivers for installation.
     }
 
     boolean SearchForLinuxPartitions () {
+	Storage::ReReadTargetMap();
 	if (Storage::HaveLinuxPartitions ()) {
 	    InstData::have_linux = true;
 	} else {

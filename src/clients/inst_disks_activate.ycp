@@ -19,7 +19,7 @@
  */
 
 /**
- * File:	clients/inst_disk_activate.ycp
+ * File:	clients/inst_disks_activate.ycp
  * Package:	Activation of disks (DASD, zFCP, iSCSI) during installation
  * Summary:	Main file
  * Authors:	Jiri Srain <jsrain@suse.cz>

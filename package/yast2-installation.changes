@@ -2,8 +2,21 @@
 Wed Mar 13 12:35:54 UTC 2013 - mfilka@suse.com
 
 - NetworkManager is enabled and active after second stage (bnc#808039)
-- 2.23.12 
+- 2.23.13 
 
+-------------------------------------------------------------------
+Mon Mar 04 14:42:03 CET 2013 - aschnell@suse.de
+
+- deactivate RAID before going back to "Disk Activation" during
+  installation (bnc#806454)
+
+-------------------------------------------------------------------
+Thu Feb 14 17:06:53 CET 2013 - fehr@suse.de
+
+- fix got_kernel_param in misc.sh to not match substrings (so far 
+  kernel parameters like systemd.log_level=debug activated Y2DEBUG)
+- 2.23.12
+ 
 -------------------------------------------------------------------
 Wed Jan 23 16:00:21 CET 2013 - jsuchome@suse.cz
 
