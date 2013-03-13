@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Mar 13 12:35:54 UTC 2013 - mfilka@suse.com
+
+- NetworkManager is enabled and active after second stage (bnc#808039)
+- 2.23.12 
+
+-------------------------------------------------------------------
 Wed Jan 23 16:00:21 CET 2013 - jsuchome@suse.cz
 
 - prevent systemctl hang in 2nd stage (from fcrozat@suse.com,
