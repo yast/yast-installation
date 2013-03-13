@@ -17,10 +17,17 @@ if [ ! -z "$VNC" ] && [ "$VNC" -eq 1 ] ; then
 	rm -fv /root/.vnc/passwd.yast
 fi
 # 13.3) stop network and sshd
-if test ! -z "$Y2_NETWORK_ACTIVE" ; then
+if [ "$Y2_NETWORK_ACTIVE" -ne 0 ] ; then
 	log "\tShutdown SSH daemon and network interfaces..."
 	test -z "$Y2_SSH_ACTIVE" && rcsshd stop
-	rcnetwork stop
+
+#
+#	network mustn't be stopped when using systemd - systemd ignores
+#	network service startup in such case.
+#	restart is used to force reconfiguration of network - first stage
+#	config is used up to now.
+#
+	rcnetwork restart
 fi
 # 13.4) stop pcmcia service
 if [ -x /sbin/rcpcmcia ] ; then
