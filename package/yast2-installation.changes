@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Mar 13 12:35:54 UTC 2013 - mfilka@suse.com
+
+- NetworkManager is enabled and active after second stage (bnc#808039)
+- 2.23.13 
+
+-------------------------------------------------------------------
 Mon Mar 04 14:42:03 CET 2013 - aschnell@suse.de
 
 - deactivate RAID before going back to "Disk Activation" during
