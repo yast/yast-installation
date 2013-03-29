@@ -41,6 +41,7 @@ import "Kernel";
 import "Packages";
 import "Popup";
 import "Product";
+import "ProductFeatures";
 import "Progress";
 import "Report";
 import "Storage";
@@ -130,15 +131,23 @@ include "packager/storage_include.ycp";
     boolean ActionHDDProbe () {
 	map targetMap = StorageDevices::Probe (true);
 
+        // additonal error when HW was not found
+        string drivers_info     = _("
+Check 'drivers.suse.com' if you need specific hardware drivers for installation.");
+
+        if (!ProductFeatures::GetBooleanFeature ("globals", "show_drivers_info"))
+        {
+          drivers_info  = "";
+        }
+
 	if (size (targetMap) == 0) {
 	    if (found_controllers || Arch::s390 ()) {
                 if( !(Mode::autoinst() || Mode::autoupgrade())) {
                         // pop-up error report
-                        Report::Error(_("No hard disks were found for the installation.
+                        Report::Error(sformat (_("No hard disks were found for the installation.
 Please check your hardware!
-
-Check 'drivers.suse.com' if you need specific hardware drivers for installation.
-"));
+%1
+"), drivers_info));
                 } else {
                         Report::Warning(_("No hard disks were found for the installation.
 During an automatic installation, they might be detected later.
@@ -147,12 +156,11 @@ During an automatic installation, they might be detected later.
                 }
 	    } else {
 		// pop-up error report
-		Report::Error(_("No hard disks and no hard disk controllers were
+		Report::Error (sformat (_("No hard disks and no hard disk controllers were
 found for the installation.
 Check your hardware.
-
-Check 'drivers.suse.com' if you need specific hardware drivers for installation.
-"));
+%1
+"), drivers_info));
 	    }
 
 	    return false;
