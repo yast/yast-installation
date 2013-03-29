@@ -91,6 +91,7 @@ globals_elements =
     | services_proposal
     | ac_redraw_and_ignore
     | debug_deploying
+    | show_drivers_info
 
 ## Default kernel parameters proposed by bootloader
 additional_kernel_parameters =		element additional_kernel_parameters { text }
@@ -163,6 +164,7 @@ default_ntp_setup =			element default_ntp_setup { BOOLEAN }
 ## Defines whether kdump is enabled by default
 enable_kdump =				element enable_kdump { BOOLEAN }
 require_registration =			element require_registration { BOOLEAN }
+show_drivers_info =			element show_drivers_info { BOOLEAN }
 
 ## Defines which pieces of installation system should be copied to
 ## the installed system before rebooting to second stage.
