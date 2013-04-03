@@ -3,6 +3,7 @@ Description=YaST2 Second Stage
 After=apparmor.service local-fs.target plymouth-start.service
 Before=getty@tty1.service xdm.service network.service NetworkManager.service SuSEfirewall2_init.service SuSEfirewall2.service
 ConditionPathExists=/var/lib/YaST2/runme_at_boot
+RefuseManualStart=true
 
 [Service]
 Type=oneshot
