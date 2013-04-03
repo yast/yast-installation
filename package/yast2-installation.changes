@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Apr  3 18:28:46 CEST 2013 - jsuchome@suse.cz
+
+- tell systemd not to restart Second Stage service on upgrade
+  (bnc#812630)
+- 2.23.14
+
+-------------------------------------------------------------------
 Wed Mar 13 12:35:54 UTC 2013 - mfilka@suse.com
 
 - NetworkManager is enabled and active after second stage (bnc#808039)
