@@ -626,6 +626,7 @@ function start_yast_again () {
 . /usr/lib/YaST2/startup/requires
 . /usr/lib/YaST2/startup/arch/ia64/x11.sh
 . /usr/lib/YaST2/startup/arch/i386/x11.sh
+. /usr/lib/YaST2/startup/arch/x86_64/x11.sh
 
 #=============================================
 # 1.1) set splash progress bar to 90%
@@ -717,6 +718,7 @@ fi
 # 3.1.2) X-Server module check...
 ia64_check_x11
 i386_check_x11
+x86_64_check_x11
 XServerAccel=$XServer
 if [ "$XServer" = "vmware" ];then
 	if [ ! -f "$X11_DRIVER_DIR/${XServer}_drv.so" ];then
