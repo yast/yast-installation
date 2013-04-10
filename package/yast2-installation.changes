@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Wed Apr 10 14:54:25 CEST 2013 - sndirsch@suse.de
+
+- Use modesetting driver for installation on Matrox in secure boot
+  mode.
+  * fbdev driver doesn't work on top of mgag200 KMS driver (fbdev
+    assumes 32bpp in 24bit color depth, but mga uses 24bpp instead).
+    As workaround use modesetting driver already during
+    installation. (bnc#814587)
+- 2.17.106
+
+-------------------------------------------------------------------
 Thu Mar  7 14:17:51 CET 2013 - jsuchome@suse.cz
 
 - show dialog for all available disk controlers (bnc#807026)
