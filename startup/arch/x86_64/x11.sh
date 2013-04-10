@@ -5,7 +5,7 @@ function x86_64_check_x11 () {
     if [ -r /proc/fb ]; then
 	if cat /proc/fb | grep -q mgadrmfb; then
 	    log "\t Use modesetting driver on Matrox hardware"
-	    export XServerAccel=modesetting
+	    export XServer=modesetting
 	    export acceleratedx=1
 	fi
     fi
