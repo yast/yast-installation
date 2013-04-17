@@ -10,8 +10,8 @@ Source2:	YaST2-Firstboot.service
 
 BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2-core-devel yast2-devtools yast2-testsuite
 
-# Storage::Umount
-BuildRequires:	yast2-storage >= 2.23.3
+# Storage::GetDetectedDiskPaths
+BuildRequires:	yast2-storage >= 2.24.1
 
 # xmllint
 BuildRequires:	libxml2
@@ -50,8 +50,8 @@ Conflicts:	yast2-mouse < 2.18.0
 # New API for ProductLicense
 Requires:	yast2-packager >= 2.19.2
 
-# FileSystems::possible_root_fs
-Requires:	yast2-storage >= 2.19.12
+# Storage::GetDetectedDiskPaths
+Requires:	yast2-storage >= 2.24.1
 
 # use in startup scripts
 Requires:	initviocons
