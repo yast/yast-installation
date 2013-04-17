@@ -40,6 +40,7 @@
     import "Installation";
     import "Stage";
     import "Mode";
+    import "Storage";
 
     void SetInitializingUI () {
 	// dialog content - busy message
@@ -220,8 +221,9 @@ but something went wrong, that's why it is only in the log");
         // disable disks activation if not needed
         boolean iscsi = Linuxrc::InstallInf("WithiSCSI") == "1";
 	boolean fcoe = Linuxrc::InstallInf ("WithFCoE") == "1";
+	boolean no_disk = isempty(Storage::GetDetectedDiskPaths());
 
-        if (! (Arch::s390() || iscsi || fcoe)) {
+        if (! (Arch::s390() || iscsi || fcoe || no_disk)) {
             y2milestone ("Disabling disk activation module");
             ProductControl::DisableModule ("disks_activate");
         }
