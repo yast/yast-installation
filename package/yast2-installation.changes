@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Apr 22 14:59:35 CEST 2013 - jsuchome@suse.cz
+
+- show dialog for all available disk controlers (bnc#807026)
+- 2.24.2 
+
+-------------------------------------------------------------------
 Wed Apr 17 14:50:48 CEST 2013 - jsuchome@suse.cz
 
 - force disk activation when Storage reports no disk was found
