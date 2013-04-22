@@ -96,8 +96,7 @@ if (Arch::s390())
 
 want_fcoe	= Linuxrc::InstallInf ("WithFCoE") == "1";
 
-if (have_dasd || have_zfcp || want_fcoe)
-{
+
     // dialog caption
     string caption = _("Disk Activation");
 
@@ -190,14 +189,6 @@ if (have_dasd || have_zfcp || want_fcoe)
     y2milestone("----------------------------------------");
 
     return ret;
-}
-else
-{
-    y2milestone ("Redirecting disk activation module to iSCSI module");
-    any ret = WFM::call ("inst_iscsi-client", [argmap]);
-    Storage::ReReadTargetMap();
-    return (symbol)ret;
-}
 
 
 /* EOF */
