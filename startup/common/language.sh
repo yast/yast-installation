@@ -105,11 +105,19 @@ function start_unicode () {
 #--------------------------------------------------
 # start unicode mode if LANG is a UTF-8 locale
 # ---
-	if [ -x /bin/unicode_start ];then
-	if echo $LANG | grep -q '\.UTF-8$'; then
+	if [ ! -x /bin/unicode_start ] ; then
+		return
+	fi
+
+	# unicode_starts/stop should only be called on consoles, see bnc #800790
+	TTY=`/usr/bin/tty`
+	if [ "$TTY" != "/dev/console" -a "$TTY" == "${TTY#/dev/tty[0-9]}" ] ; then
+		return
+	fi
+
+	if echo $LANG | grep -q '\.UTF-8$' ; then
 		log "\tStarting UTF-8 mode..."
 		unicode_start
-	fi
 	fi
 }
 
@@ -118,11 +126,18 @@ function stop_unicode () {
 #--------------------------------------------------
 # stop unicode mode if LANG is a UTF-8 locale
 # ---
-	if [ -x /bin/unicode_stop ];then
-	if echo $LANG | grep -q '\.UTF-8$'; then
+	if [ ! -x /bin/unicode_stop ] ; then
+		return
+	fi
+
+	# unicode_start/stop should only be called on consoles, see bnc #800790
+	TTY=`/usr/bin/tty`
+	if [ "$TTY" != "/dev/console" -a "$TTY" == "${TTY#/dev/tty[0-9]}" ] ; then
+		return
+	fi
+
+	if echo $LANG | grep -q '\.UTF-8$' ; then
 		log "\tStopping UTF-8 mode..."
 		unicode_stop
 	fi
-	fi
 }
-

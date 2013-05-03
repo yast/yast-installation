@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri May 03 12:18:43 CEST 2013 - aschnell@suse.de
+
+- call unicode_start/stop and initviocons only on consoles
+  (bnc#800790)
+- fixed check for missing initviocons
+
+-------------------------------------------------------------------
 Mon Apr 22 14:59:35 CEST 2013 - jsuchome@suse.cz
 
 - show dialog for all available disk controlers (bnc#807026)
