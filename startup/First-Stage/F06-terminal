@@ -7,12 +7,12 @@ log "========================"
 #---------------------------------------------
 # ---- DISABLED: S390 console check ----
 # . /usr/lib/YaST2/startup/arch/s390/console.sh
-# BEG S390: check if initvicons needs to be called
-# s390_check_need_initvicons
+# BEG S390: check if initviocons needs to be called
+# s390_check_need_initviocons
 # END S390:
 
-if ! skip_initvicons;then
-	eval `initviocons -e`
+if ! skip_initviocons ; then
+	eval `/bin/initviocons -e`
 
 	#export TERM only, initviocons takes care about
 	#LINES and COLUMNS automatically (#184179)
