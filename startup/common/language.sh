@@ -83,6 +83,10 @@ function set_language_cont () {
 # returns an appropriate exit code. This code only
 # works in second stage (continue)
 # ---
+	if [ -z "$RC_LANG" ]; then
+		log "\tRC_LANG not set, using en_US as default..."
+		export RC_LANG=en_US
+	fi
 	if [ ! -x /bin/testutf8 ];then
 		return
 	fi
