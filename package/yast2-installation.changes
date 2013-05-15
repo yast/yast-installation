@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed May 15 08:57:27 CEST 2013 - jsuchome@suse.cz
+
+- startup scripts: if RC_LANG is not set, use en_US as default
+  (bnc#815265)
+- 2.17.108 
+
+-------------------------------------------------------------------
 Wed Apr 17 12:58:12 CEST 2013 - jsuchome@suse.cz
 
 - force disk activation when Storage reports no disk was found
