@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu May 16 13:18:33 CEST 2013 - jsuchome@suse.cz
+
+- startup scripts: if RC_LANG is not set, use en_US as default
+  (bnc#815265)
+- 2.23.15   
+
+-------------------------------------------------------------------
 Wed Apr  3 18:28:46 CEST 2013 - jsuchome@suse.cz
 
 - tell systemd not to restart Second Stage service on upgrade
