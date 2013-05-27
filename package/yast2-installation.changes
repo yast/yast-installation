@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon May 27 15:27:12 CEST 2013 - locilka@suse.com
+
+- Using unique IDs while calling rpmcopy_secondstage to prevent
+  from disabling this step in AutoYaST or Upgrade while it should
+  be disabled only in Installation (bnc#813072).
+
+-------------------------------------------------------------------
 Wed May 15 08:57:27 CEST 2013 - jsuchome@suse.cz
 
 - startup scripts: if RC_LANG is not set, use en_US as default
