@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon May 27 15:27:12 CEST 2013 - locilka@suse.com
+
+- Using unique IDs while calling rpmcopy_secondstage to prevent
+  from disabling this step in AutoYaST or Upgrade while it should
+  be disabled only in Installation (bnc#813072).
+
+-------------------------------------------------------------------
 Mon Apr 22 14:59:35 CEST 2013 - jsuchome@suse.cz
 
 - show dialog for all available disk controlers (bnc#807026)
