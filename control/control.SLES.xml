@@ -1137,7 +1137,8 @@ Choose the one that matches your server the best.</label></scenarios_text>
             <modules  config:type="list">
                 <module>
 	            <label>Perform Update</label>
-                    <name>rpmcopy_secondstage</name>
+                    <name>rpmcopy_secondstage_update</name>
+                    <execute>inst_rpmcopy_secondstage</execute>
                 </module>
 		<module>
 		    <heading>yes</heading>
@@ -1571,7 +1572,8 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
-                    <name>rpmcopy_secondstage</name>
+                    <name>rpmcopy_secondstage_autoinstall</name>
+                    <execute>inst_rpmcopy_secondstage</execute>
                 </module>
 		<module>
 		    <heading>yes</heading>
@@ -1603,7 +1605,8 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 </module>
                 <module>
                     <label>Perform Update</label>
-                    <name>rpmcopy_secondstage</name>
+                    <name>rpmcopy_secondstage_autoupgrade</name>
+                    <execute>inst_rpmcopy_secondstage</execute>
                 </module>
                 <module>
                     <heading>yes</heading>

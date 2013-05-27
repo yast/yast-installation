@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon May 27 15:27:12 CEST 2013 - locilka@suse.com
+
+- Using unique IDs while calling rpmcopy_secondstage to prevent
+  from disabling this step in AutoYaST or Upgrade while it should
+  be disabled only in Installation (bnc#813072).
+
+-------------------------------------------------------------------
 Fri Jan 20 15:53:12 CET 2012 - locilka@suse.cz
 
 - Not using native driver on Intel graphics hardware during
