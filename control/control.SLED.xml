@@ -994,7 +994,8 @@ Please visit us at http://www.suse.com/.
             <modules  config:type="list">
                 <module>
 	            <label>Perform Update</label>
-                    <name>rpmcopy_secondstage</name>
+                    <name>rpmcopy_secondstage_update</name>
+                    <execute>inst_rpmcopy_secondstage</execute>
                 </module>
 		<module>
 		    <heading>yes</heading>
@@ -1393,7 +1394,8 @@ Please visit us at http://www.suse.com/.
                 </module>
                 <module>
 	            <label>Perform Installation</label>
-                    <name>rpmcopy_secondstage</name>
+                    <name>rpmcopy_secondstage_autoinstall</name>
+                    <execute>inst_rpmcopy_secondstage</execute>
                 </module>
 		<module>
 		    <heading>yes</heading>
@@ -1424,7 +1426,8 @@ Please visit us at http://www.suse.com/.
                 </module>
                 <module>
                     <label>Perform Update</label>
-                    <name>rpmcopy_secondstage</name>
+                    <name>rpmcopy_secondstage_autoupgrade</name>
+                    <execute>inst_rpmcopy_secondstage</execute>
                 </module>
                 <module>
                     <heading>yes</heading>
