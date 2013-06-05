@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jun  5 13:02:06 UTC 2013 - lslezak@suse.cz
+
+- use WFM::ClientExists() call instead of checking *.ycp file
+  presence (works also with non-YCP clients and checks also e.g.
+  /y2update/clients path)
+
+-------------------------------------------------------------------
 Mon May 27 15:27:12 CEST 2013 - locilka@suse.com
 
 - Using unique IDs while calling rpmcopy_secondstage to prevent
