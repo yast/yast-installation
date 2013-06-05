@@ -399,7 +399,7 @@ Note: You may have to enter some information again.");
             SCR::Execute (.target.remove, Installation::current_step);
         }
 
-        if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_post.ycp") > 0)
+        if (WFM::ClientExists("product_post"))
             WFM::CallFunction ("product_post", [Mode::update ()]);
     }
 

@@ -64,8 +64,9 @@ if (func == "Info")
 else if (func == "Write")
 {
     Vendor::DriverUpdate2 ();
-    if (WFM::Read (.local.size, "/usr/share/YaST2/clients/product_finish.ycp") > 0)
-	WFM::CallFunction ("product_finish", [Mode::update ()]);
+
+    if (WFM::ClientExists("product_finish"))
+        WFM::CallFunction ("product_finish", [Mode::update ()]);
 }
 else
 {
