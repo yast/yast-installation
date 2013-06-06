@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun  6 08:29:44 UTC 2013 - mfilka@suse.com
+
+- bnc#774301
+    - fixed udev events handling in kernel_finish 
+- 2.17.109
+
+-------------------------------------------------------------------
 Mon May 27 15:27:12 CEST 2013 - locilka@suse.com
 
 - Using unique IDs while calling rpmcopy_secondstage to prevent

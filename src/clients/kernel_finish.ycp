@@ -108,7 +108,9 @@ else if (func == "Write")
     // BNC #427705, formerly added as BNC #163073
     // after the chroot into the installed system has been performed.
     // This will recreate all missing links.
-    SCR::Execute (.target.bash, "/sbin/udevadm trigger; /sbin/udevadm settle --timeout=60");
+    // bnc#774301 - without --action=change at least when installing
+    // over lcs device on s390 emulated eth device get lost
+    SCR::Execute (.target.bash, "/sbin/udevadm trigger --action=change; /sbin/udevadm settle --timeout=60");
 }
 else
 {
