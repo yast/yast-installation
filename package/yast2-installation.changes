@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun  6 08:29:44 UTC 2013 - mfilka@suse.com
+
+- bnc#774301
+    - fixed udev events handling in kernel_finish 
+- 2.24.5
+
+-------------------------------------------------------------------
 Wed Jun  5 13:02:06 UTC 2013 - lslezak@suse.cz
 
 - use WFM::ClientExists() call instead of checking *.ycp file
