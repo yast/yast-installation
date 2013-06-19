@@ -509,9 +509,7 @@ fi
 # 3.2) prequalification checks for SSH
 #---------------------------------------------
 # 3.2.1) Check for SSH daemon
-if [ -f /var/run/sshd.*pid ];then
-	ps `cat /var/run/sshd.*pid` >/dev/null || MEDIUM[2]=0
-else
+if ! systemctl --quiet is-active sshd ; then
 	log "\tNo SSH daemon running -> Medium SSH disabled"
 	MEDIUM[1]=0
 fi
