@@ -95,6 +95,21 @@ string GetDesktopDescriptionId (string desktop_name) {
     return sformat ("desktop_description_%1", desktop_name);
 }
 
+/**
+ * Check if given list of patterns is available for installation
+ */
+boolean PatternsAvailable (list<string> patterns) {
+    boolean all_available       = true;
+    foreach (string pattern, patterns, {
+      if (size (Pkg::ResolvableProperties (pattern, `pattern, "")) < 1)
+      {
+        y2warning ("pattern '%1' not found", pattern);
+        all_available   = false;
+      }
+    });
+    return all_available;
+}
+
 list <string> other_desktops = [];
 
 term GetDesktops (string desktops, boolean show_descr) {
@@ -190,6 +205,11 @@ term GetDesktops (string desktops, boolean show_descr) {
 
     return ret;
 }
+
+// filter out those desktops with unavailable patterns
+all_desktops    = filter (string desktop_name, map one_desktop, all_desktops, {
+    return PatternsAvailable (one_desktop["patterns"]:[]);
+});
 
 term major_desktops = GetDesktops ("major", true);
 term major_no_descr = GetDesktops ("major", false);
