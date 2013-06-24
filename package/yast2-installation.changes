@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jun 24 15:41:03 CEST 2013 - fehr@suse.de
+
+- ignore SIGHUP in YaST2.Second-Stage to make autoyast installs
+  with serial console succeed again (bnc#825728, bnc#823224)
+
+-------------------------------------------------------------------
 Fri Jun 21 16:55:50 CEST 2013 - jsuchome@suse.cz
 
 - only show desktops for which their defined patterns are known
