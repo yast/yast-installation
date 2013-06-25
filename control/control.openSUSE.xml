@@ -37,7 +37,7 @@ textdomain="control"
 	<root_password_ca_check config:type="boolean">false</root_password_ca_check>
 
 	<!-- Offer online repositories feature in the installation -->
-	<show_online_repositories config:type="boolean">false</show_online_repositories>
+	<show_online_repositories config:type="boolean">true</show_online_repositories>
 	<online_repositories_default config:type="boolean">true</online_repositories_default>
 
 	<!-- Guide user to drivers.suse.com if HW was not found (FATE#312875)-->
@@ -323,6 +323,18 @@ textdomain="control"
 	    </one_supported_desktop>
 
 	    <one_supported_desktop>
+		<name>e17</name>
+		<desktop>e17</desktop>
+		<label_id>desktop_e17</label_id>
+		<logon>lightdm</logon>
+		<cursor>DMZ</cursor>
+		<packages>lightdm branding-openSUSE</packages>
+		<order config:type="integer">7</order>
+		<patterns>e17 x11 base</patterns>
+		<icon>pattern-e17</icon>
+	    </one_supported_desktop>
+
+	    <one_supported_desktop>
 		<name>textmode</name>
 		<desktop>twm</desktop>
 		<label_id>desktop_textmode</label_id>
@@ -422,6 +434,7 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 	<desktop_xfce><label>XFCE Desktop</label></desktop_xfce>
 	<desktop_lxde><label>LXDE Desktop</label></desktop_lxde>
 	<desktop_min_x><label>Minimal X Window</label></desktop_min_x>
+	<desktop_e17><label>Enlightenment Desktop</label></desktop_e17>
 	<desktop_textmode><label>Minimal Server Selection (Text Mode)</label></desktop_textmode>
 
     </texts>
