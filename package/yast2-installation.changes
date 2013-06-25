@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jun 25 10:17:46 CEST 2013 - jsuchome@suse.cz
+
+- adapt control.xml to offical Factory one:
+  added e17 desktop, enabled online repositories
+- 2.24.8
+
+-------------------------------------------------------------------
 Fri Jun 21 16:55:50 CEST 2013 - jsuchome@suse.cz
 
 - only show desktops for which their defined patterns are known
