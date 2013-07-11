@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jul 11 12:23:36 CEST 2013 - aschnell@suse.de
+
+- fixed sshd check (bnc#825160)
+- 2.24.10
+
+-------------------------------------------------------------------
 Thu Jul  4 13:56:19 CEST 2013 - jsuchome@suse.cz
 
 - show release notes of newest product first (bnc#827590)
