@@ -1,8 +1,27 @@
 -------------------------------------------------------------------
-Mon Jun 24 15:41:03 CEST 2013 - fehr@suse.de
+Mon Jul 29 13:43:13 CEST 2013 - fehr@suse.de
 
 - ignore SIGHUP in YaST2.Second-Stage to make autoyast installs
   with serial console succeed again (bnc#825728, bnc#823224)
+
+-------------------------------------------------------------------
+Thu Jul 11 12:23:36 CEST 2013 - aschnell@suse.de
+
+- fixed sshd check (bnc#825160)
+- 2.24.10
+
+-------------------------------------------------------------------
+Thu Jul  4 13:56:19 CEST 2013 - jsuchome@suse.cz
+
+- show release notes of newest product first (bnc#827590)
+- 2.24.9
+
+-------------------------------------------------------------------
+Tue Jun 25 10:17:46 CEST 2013 - jsuchome@suse.cz
+
+- adapt control.xml to offical Factory one:
+  added e17 desktop, enabled online repositories
+- 2.24.8
 
 -------------------------------------------------------------------
 Fri Jun 21 16:55:50 CEST 2013 - jsuchome@suse.cz

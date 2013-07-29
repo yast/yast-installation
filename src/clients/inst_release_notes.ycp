@@ -99,12 +99,16 @@
     list<string> readproducts = [];
     // Release notes might be missing
     if (FileUtils::Exists(basedirectory) && FileUtils::IsDirectory(basedirectory)) {
-	readproducts = (list<string>) SCR::Read(.target.dir, basedirectory);
-
+	// sort release notes according to time (newest first),
+	// so the latest product is selected in the default tab (bnc#827590)
+	map out = (map)SCR::Execute (.target.bash_output, sformat ("ls -t1 '%1'", basedirectory));
+	readproducts = splitstring (out["stdout"]:"", "\n");
 	// bnc #407922
 	// not all objects need to be directories
 	boolean is_directory = nil;
 	readproducts = filter (string one_prod, readproducts, {
+	    if (one_prod == "") return false; // there's empty line at the end of ls output
+
 	    is_directory = FileUtils::IsDirectory (sformat ("%1/%2", basedirectory, one_prod));
 
 	    if (is_directory != true) {

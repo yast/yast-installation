@@ -37,11 +37,11 @@ textdomain="control"
 	<root_password_ca_check config:type="boolean">false</root_password_ca_check>
 
 	<!-- Offer online repositories feature in the installation -->
-	<show_online_repositories config:type="boolean">false</show_online_repositories>
+	<show_online_repositories config:type="boolean">true</show_online_repositories>
 	<online_repositories_default config:type="boolean">true</online_repositories_default>
 
-	<!-- Guide user to drivers.suse.com if HW was not found (FATE#312875)-->
-	<show_drivers_info config:type="boolean">false</show_drivers_info>
+        <!-- Guide user to drivers.suse.com if HW was not found (FATE#312875)-->
+        <show_drivers_info config:type="boolean">false</show_drivers_info>
 
 	<!-- Offer add-ons in the installation -->
 	<show_addons config:type="boolean">true</show_addons>
@@ -191,15 +191,24 @@ textdomain="control"
 	<online_repos_preselected config:type="boolean">false</online_repos_preselected>
 
 	<!-- FATE #300898, List of external sources accesible during the installation time -->
-	<external_sources_link>http://download.opensuse.org/YaST/Repos/openSUSE_121_Servers.xml</external_sources_link>
+	<external_sources_link>http://download.opensuse.org/YaST/Repos/openSUSE_131_Servers.xml</external_sources_link>
 
 	<dropped_packages></dropped_packages>
 	<extra_urls config:type="list">
 	    <!-- Default update repository, bnc #381360 -->
 	    <extra_url>
-		<baseurl>http://download.opensuse.org/update/12.2/</baseurl>
+		<baseurl>http://download.opensuse.org/update/13.1/</baseurl>
                 <alias>repo-update</alias>
-                <name>openSUSE-12.2-Update</name>
+                <name>openSUSE-13.1-Update</name>
+		<prod_dir>/</prod_dir>
+		<enabled config:type="boolean">true</enabled>
+		<autorefresh config:type="boolean">true</autorefresh>
+		<priority config:type="integer">99</priority>
+	    </extra_url>
+	    <extra_url>
+		<baseurl>http://download.opensuse.org/update/13.1-non-oss/</baseurl>
+                <alias>repo-update-non-oss</alias>
+                <name>openSUSE-13.1-Update-Non-Oss</name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
@@ -208,46 +217,56 @@ textdomain="control"
 
 	    <!-- Replacement for EXTRAURLS and OPTIONALURLS -->
 	    <extra_url>
-		<baseurl>http://download.opensuse.org/distribution/12.2/repo/oss/</baseurl>
+		<baseurl>http://download.opensuse.org/distribution/13.1/repo/oss/</baseurl>
                 <alias>repo-oss</alias>
-                <name>openSUSE-12.2-Oss</name>
+                <name>openSUSE-13.1-Oss</name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
 		<priority config:type="integer">99</priority>
 	    </extra_url>
 	    <extra_url>
-		<baseurl>http://download.opensuse.org/distribution/12.2/repo/non-oss/</baseurl>
+		<baseurl>http://download.opensuse.org/distribution/13.1/repo/non-oss/</baseurl>
                 <alias>repo-non-oss</alias>
-                <name>openSUSE-12.2-Non-Oss</name>
+                <name>openSUSE-13.1-Non-Oss</name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">true</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
 		<priority config:type="integer">99</priority>
 	    </extra_url>
 	    <extra_url>
-		<baseurl>http://download.opensuse.org/debug/distribution/12.2/repo/oss/</baseurl>
+		<baseurl>http://download.opensuse.org/debug/distribution/13.1/repo/oss/</baseurl>
                 <alias>repo-debug</alias>
-                <name>openSUSE-12.2-Debug</name>
+                <name>openSUSE-13.1-Debug</name>
 		<prod_dir>/</prod_dir>
 		<enabled config:type="boolean">false</enabled>
 		<autorefresh config:type="boolean">true</autorefresh>
 		<priority config:type="integer">99</priority>
 	    </extra_url>
             <extra_url>
-                <baseurl>http://download.opensuse.org/debug/update/12.2/</baseurl>
+                <baseurl>http://download.opensuse.org/debug/update/13.1/</baseurl>
                 <alias>repo-debug-update</alias>
-                <name>openSUSE-12.2-Update-Debug</name>
+                <name>openSUSE-13.1-Update-Debug</name>
+                <prod_dir>/</prod_dir>
+                <enabled config:type="boolean">false</enabled>
+                <autorefresh config:type="boolean">true</autorefresh>
+                <priority config:type="integer">99</priority>
+            </extra_url>
+            <extra_url>
+                <baseurl>http://download.opensuse.org/debug/update/13.1-non-oss/</baseurl>
+                <alias>repo-debug-update-non-oss</alias>
+                <name>openSUSE-13.1-Update-Debug-Non-Oss</name>
                 <prod_dir>/</prod_dir>
                 <enabled config:type="boolean">false</enabled>
                 <autorefresh config:type="boolean">true</autorefresh>
                 <priority config:type="integer">99</priority>
             </extra_url>
 
+
             <extra_url>
-                <baseurl>http://download.opensuse.org/source/distribution/12.2/repo/oss/</baseurl>
+                <baseurl>http://download.opensuse.org/source/distribution/13.1/repo/oss/</baseurl>
                 <alias>repo-source</alias>
-                <name>openSUSE-12.2-Source</name>
+                <name>openSUSE-13.1-Source</name>
                 <prod_dir>/</prod_dir>
                 <enabled config:type="boolean">false</enabled>
                 <autorefresh config:type="boolean">true</autorefresh>
@@ -272,8 +291,8 @@ textdomain="control"
 
 	    <one_supported_desktop>
 		<name>kde</name>
-		<!-- BNC #381821, BNC #438212, BNC #667408 -->
-		<desktop>kde4</desktop>
+		<!-- BNC #381821, BNC #438212, BNC #667408, BNC #763142 -->
+		<desktop>kde-plasma</desktop>
 		<label_id>desktop_kde</label_id>
 		<logon>kdm</logon>
 		<cursor>DMZ</cursor>
@@ -320,6 +339,18 @@ textdomain="control"
 		<order config:type="integer">6</order>
 		<patterns>x11 base</patterns>
 		<icon>yast-x11</icon>
+	    </one_supported_desktop>
+
+	    <one_supported_desktop>
+		<name>e17</name>
+		<desktop>e17</desktop>
+		<label_id>desktop_e17</label_id>
+		<logon>lightdm</logon>
+		<cursor>DMZ</cursor>
+		<packages>lightdm branding-openSUSE</packages>
+		<order config:type="integer">7</order>
+		<patterns>e17 x11 base</patterns>
+		<icon>pattern-e17</icon>
 	    </one_supported_desktop>
 
 	    <one_supported_desktop>
@@ -422,6 +453,7 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 	<desktop_xfce><label>XFCE Desktop</label></desktop_xfce>
 	<desktop_lxde><label>LXDE Desktop</label></desktop_lxde>
 	<desktop_min_x><label>Minimal X Window</label></desktop_min_x>
+	<desktop_e17><label>Enlightenment Desktop</label></desktop_e17>
 	<desktop_textmode><label>Minimal Server Selection (Text Mode)</label></desktop_textmode>
 
     </texts>
