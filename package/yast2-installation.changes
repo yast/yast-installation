@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jul 29 13:43:13 CEST 2013 - fehr@suse.de
+
+- ignore SIGHUP in YaST2.Second-Stage to make autoyast installs
+  with serial console succeed again (bnc#825728, bnc#823224)
+
+-------------------------------------------------------------------
 Thu Jul 11 12:23:36 CEST 2013 - aschnell@suse.de
 
 - fixed sshd check (bnc#825160)
