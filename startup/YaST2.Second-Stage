@@ -18,6 +18,13 @@
 #----------------
 #set -x
 
+# when installing over serial console, something sents SIGHUP to 
+# YaST2.Second-Stage which causes second stage of install to not
+# be executed which in turn leads to broken autoyast installs
+# (e.g. bnc#825728, bnc#823224). 
+# Ignoring SIGHUP seems easiest workaround here
+trap "" SIGHUP
+
 . /etc/YaST2/XVersion
 
 #=============================================
