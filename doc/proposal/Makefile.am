@@ -15,7 +15,7 @@ html/yast2docs.css: html/index.html
 	cp @STYLESHEET_CSS@ html
 	cp -a `pkg-config --variable=yast2dir yast2-devtools`/data/docbook/images html
 
-EXTRA_DIST =  $(xml_files) dummy_proposal.ycp
+EXTRA_DIST =  $(xml_files) dummy_proposal.rb
 
 CLEANFILES =  $(html_DATA)
 

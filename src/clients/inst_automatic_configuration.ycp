@@ -369,7 +369,9 @@
 	    case "proposals":
 		CallProposals (one_autoconf_call["items"]:[]);
 		break;
-	    y2error ("Unknown script type '%1'", type);
+            default:
+                y2error ("Unknown script type '%1'", type);
+                break;
 	}
     });
 

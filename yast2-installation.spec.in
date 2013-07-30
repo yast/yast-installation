@@ -3,6 +3,8 @@
 @HEADER@
 Group:          System/YaST
 License:        GPL-2.0
+Requires:       yast2-ruby-bindings >= 1.0.0
+
 Summary:        YaST2 - Installation Parts
 
 Source1:	YaST2-Second-Stage.service
@@ -167,9 +169,8 @@ install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 %{_unitdir}/YaST2-Second-Stage.service
 %{_unitdir}/YaST2-Firstboot.service
 
-@clientdir@/*.ycp
-@moduledir@/*.ycp
-@moduledir@/*.ybc
+@clientdir@/*.rb
+@moduledir@/*.rb
 @desktopdir@/*.desktop
 /usr/share/autoinstall/modules/*.desktop
 /usr/share/YaST2/schema/autoyast/rnc/deploy_image.rnc

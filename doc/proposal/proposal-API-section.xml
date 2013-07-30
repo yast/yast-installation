@@ -155,7 +155,7 @@
     <title>Dummy Proposal</title>
     <programlisting>
 
-      <xi:include href="dummy_proposal.ycp" parse="text"
+      <xi:include href="dummy_proposal.rb" parse="text"
 	xmlns:xi="http://www.w3.org/2001/XInclude"/>
 
     </programlisting>
