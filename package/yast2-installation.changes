@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jul 31 08:30:58 UTC 2013 - yast-devel@opensuse.org
+
+- converted from YCP to Ruby by YCP Killer
+  (https://github.com/yast/ycp-killer)
+- version 3.0.0
+
+-------------------------------------------------------------------
 Mon Jul 29 13:43:13 CEST 2013 - fehr@suse.de
 
 - ignore SIGHUP in YaST2.Second-Stage to make autoyast installs
