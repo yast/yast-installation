@@ -2,7 +2,7 @@
 Thu Aug  1 08:35:31 CEST 2013 - jsuchome@suse.cz
 
 - limit the number of the searched disks to 8 of each kind to
-  shorted time needed for finding SSH keys (port of fate#305873)
+  shorten time needed for finding SSH keys (port of fate#305873)
 
 -------------------------------------------------------------------
 Wed Jul 31 08:30:58 UTC 2013 - yast-devel@opensuse.org
