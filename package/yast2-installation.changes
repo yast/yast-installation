@@ -1,6 +1,7 @@
 -------------------------------------------------------------------
-Thu Aug  1 08:35:31 CEST 2013 - jsuchome@suse.cz
+Thu Aug  1 09:18:47 CEST 2013 - jsuchome@suse.cz
 
+- correctly write supporturl (port of bnc#520169) 
 - limit the number of the searched disks to 8 of each kind to
   shorten time needed for finding SSH keys (port of fate#305873)
 
