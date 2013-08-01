@@ -250,9 +250,40 @@ module Yast
     end
     def Initialize
       Builtins.y2milestone("Evaluating all current partitions")
+
+      # limit the number of the searched disks to 8 of each kind in order to avoid neverending
+      # mounting of all partitions (fate#305873, bnc#468922)
+      # FIXME: copy-pasted from partitioner, just different number of disks and added /dev/dasd
+      restrict_disk_names = lambda do |disks|
+        disks = deep_copy(disks)
+        helper = lambda do |s|
+          count = 0
+          disks = Builtins.filter(disks) do |dist|
+            next true if Builtins.search(dist, s) != 0
+            count = Ops.add(count, 1)
+            Ops.less_or_equal(count, 8)
+          end
+
+          nil
+        end
+
+        helper.call("/dev/sd")
+        helper.call("/dev/hd")
+        helper.call("/dev/cciss/")
+        helper.call("/dev/dasd")
+
+        Builtins.y2milestone("restrict_disk_names: ret %1", disks)
+        deep_copy(disks)
+      end
+
       target_map = Storage.GetTargetMap
       counter = -1
-      Builtins.foreach(target_map) do |device_name, device_descr|
+      device_names = Builtins.maplist(target_map) do |device_name, device_descr|
+        device_name
+      end
+      device_names = restrict_disk_names.call(device_names)
+      Builtins.foreach(device_names) do |device_name|
+        device_descr = Ops.get(target_map, device_name, {})
         partitons = Ops.get_list(device_descr, "partitions", [])
         filesystem = nil
         devicename = nil
