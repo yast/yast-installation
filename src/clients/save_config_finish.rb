@@ -214,15 +214,25 @@ module Yast
             if FileUtils.Exists(@config_path)
               Builtins.y2milestone(
                 "Insert value into supportconfig.conf: %1",
-                SCR.Execute(
-                  path(".target.bash_output"),
-                  Builtins.sformat(
-                    "echo 'VAR_OPTION_UPLOAD_TARGET=%1'>> %2",
-                    @url,
-                    @config_path
-                  )
+                @url
+              )
+              SCR.Execute(
+                path(".target.bash_output"),
+                Builtins.sformat(
+                  "sed -i '/VAR_OPTION_UPLOAD_TARGET=.*/d;/^$/d' %1",
+                  @config_path
                 )
               )
+              SCR.Execute(
+                path(".target.bash_output"),
+                Builtins.sformat(
+                  "echo \"VAR_OPTION_UPLOAD_TARGET='%1'\">> %2",
+                  @url,
+                  @config_path
+                )
+              )
+            else
+              Builtins.y2error("filename %1 was not found", @config_path)
             end
           end
         else
