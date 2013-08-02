@@ -22,7 +22,15 @@ xml_files = \
 # Unfortunately, CVS doesn't support checking in symlinks - it would duplicate
 # the file. 
 
-
+# Distribute also the generated control.rng file, the reason is that "trang"
+# is a Java tool which adds huge dependency in OBS.
+#
+# The conversion happens during "make package" when building the tarball.
+# The RNG file gets automatically updated after any change by the "control.rng"
+# rule below.
+#
+# At build time the RNG file from tarball will have a newer time stamp
+# and thus it will not need rebuild/update making "trang" unnecessary.
 EXTRA_DIST =  $(control_DATA) $(product_DATA) $(xml_files) control.rng
 
 include $(top_srcdir)/Makefile.am.common
@@ -33,5 +41,4 @@ control.rng: control.rnc
 # checks only those control files that belong to this package
 check-local:
 	trang -I rnc -O rng control.rnc control.rng
-	xmllint --relaxng control.rng --noout control.xml
-	xmllint --relaxng control.rng --noout $(xml_files)
+	xmllint --relaxng control.rng --noout $(xml_files) control.xml
