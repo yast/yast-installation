@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Aug  2 14:25:07 CEST 2013 - jsuchome@suse.cz
+
+- remove trang from BuildRequires: rng can be created during
+  packaging, not needed during build
+
+-------------------------------------------------------------------
 Thu Aug  1 11:21:35 CEST 2013 - jsuchome@suse.cz
 
 - correctly write supporturl (port of bnc#520169) 

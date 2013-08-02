@@ -23,7 +23,7 @@ xml_files = \
 # the file. 
 
 
-EXTRA_DIST =  $(control_DATA) $(product_DATA) $(xml_files)
+EXTRA_DIST =  $(control_DATA) $(product_DATA) $(xml_files) control.rng
 
 include $(top_srcdir)/Makefile.am.common
 
