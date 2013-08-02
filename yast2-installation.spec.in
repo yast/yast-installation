@@ -18,9 +18,6 @@ BuildRequires:	yast2-storage >= 2.24.1
 # xmllint
 BuildRequires:	libxml2
 
-# to convert control.rnc o control.rng
-BuildRequires:	trang
-
 # PackageCallbacks::RegisterEmptyProgressCallbacks()
 BuildRequires:	yast2 >= 2.16.52
 
