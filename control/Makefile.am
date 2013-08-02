@@ -1,6 +1,10 @@
 # Makefile.am for installation/general
 #
-SUBDIRS = docs tests examples
+
+# process the current directory first
+# (to ensure control.rng file is generated before it is
+# used in the examples subdirectory)
+SUBDIRS = . docs tests examples
 
 controldir = $(yast2dir)/control
 
@@ -39,6 +43,5 @@ control.rng: control.rnc
 	trang -I rnc -O rng control.rnc control.rng
 
 # checks only those control files that belong to this package
-check-local:
-	trang -I rnc -O rng control.rnc control.rng
-	xmllint --relaxng control.rng --noout $(xml_files) control.xml
+check-local: control.rng
+	xmllint --relaxng control.rng --noout $(filter %.xml, $(xml_files) $(control_DATA))
