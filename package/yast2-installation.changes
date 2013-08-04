@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Sun Aug  4 11:48:21 UTC 2013 - lslezak@suse.cz
+
+- removed empty agents/Makefile.am and unused testsuite/Makefile.am
+- removed obsolete BuildRequires: doxygen perl-XML-Writer sgml-skel
+  yast2-testsuite yast2-storage yast2-pkg-bindings yast2-packager
+
+-------------------------------------------------------------------
 Fri Aug  2 14:25:07 CEST 2013 - jsuchome@suse.cz
 
 - remove trang from BuildRequires: rng can be created during
