@@ -10,7 +10,6 @@
 ## some common checks
 @YAST2-CHECKS-COMMON@
 @YAST2-CHECKS-YCP@
-@YAST2-CHECKS-TESTSUITE@
 
 ## Nasty hack: xgettext doesn't work for XML files, so let's symlink it
 ( cd control; 
