@@ -10,22 +10,13 @@ Summary:        YaST2 - Installation Parts
 Source1:	YaST2-Second-Stage.service
 Source2:	YaST2-Firstboot.service
 
-BuildRequires:  docbook-xsl-stylesheets doxygen libxslt perl-XML-Writer sgml-skel update-desktop-files yast2-core-devel yast2-devtools yast2-testsuite
-
-# Storage::GetDetectedDiskPaths
-BuildRequires:	yast2-storage >= 2.24.1
+BuildRequires:  docbook-xsl-stylesheets libxslt update-desktop-files yast2-core-devel yast2-devtools
 
 # xmllint
-BuildRequires:	libxml2
+BuildRequires:  libxml2-tools
 
-# PackageCallbacks::RegisterEmptyProgressCallbacks()
-BuildRequires:	yast2 >= 2.16.52
-
-# Pkg::Add/RemoveUpgradeRepo()
-BuildRequires:	yast2-pkg-bindings >= 2.21.2
-
-# Unified progress bar (done by visnov) 
-BuildRequires:	yast2-packager >= 2.17.9
+# /etc/YaST2/XVersion
+BuildRequires: yast2 >= 2.16.52
 
 # AutoinstConfig::getProposalList
 Requires:       autoyast2-installation >= 2.17.1
