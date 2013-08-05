@@ -42,6 +42,7 @@ module Yast
       Yast.import "Packages"
       Yast.import "Popup"
       Yast.import "Product"
+      Yast.import "ProductProfile"
       Yast.import "ProductFeatures"
       Yast.import "Progress"
       Yast.import "Report"
@@ -312,6 +313,9 @@ module Yast
         Builtins.y2milestone("Function %1 returned %2", run_function, ret)
       end
       Installation.probing_done = true
+
+      # the last step is hidden
+      return :abort if ProductProfile.CheckCompliance(nil) == false
 
       Progress.Finish
       Builtins.sleep(500)
