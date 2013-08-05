@@ -166,8 +166,8 @@ module Yast
               path(".local.bash"),
               Builtins.sformat(
                 "/bin/cp -a '%1' '%2/'",
-                profile_path,
-                @target_dir
+                String.Quote(profile_path),
+                String.Quote(@target_dir)
               )
             )
           end
