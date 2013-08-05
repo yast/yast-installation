@@ -44,6 +44,7 @@ module Yast
       Yast.import "Directory"
       Yast.import "Packages"
       Yast.import "ProductControl"
+      Yast.import "ProductProfile"
       Yast.import "FileUtils"
       Yast.import "String"
       Yast.import "WorkflowManager"
@@ -144,6 +145,32 @@ module Yast
               String.Quote(Directory.etcdir)
             )
           )
+        end
+
+        # copy all product profiles to the installed system (fate#310730)
+        if ProductProfile.all_profiles != []
+          @target_dir = Builtins.sformat(
+            "%1/etc/productprofiles.d",
+            Installation.destdir
+          )
+          if !FileUtils.Exists(@target_dir)
+            SCR.Execute(path(".target.mkdir"), @target_dir)
+          end
+          Builtins.foreach(ProductProfile.all_profiles) do |profile_path|
+            Builtins.y2milestone(
+              "Copying '%1' to %2/",
+              profile_path,
+              @target_dir
+            )
+            WFM.Execute(
+              path(".local.bash"),
+              Builtins.sformat(
+                "/bin/cp -a '%1' '%2/'",
+                profile_path,
+                @target_dir
+              )
+            )
+          end
         end
 
         # List of files used as additional workflow definitions

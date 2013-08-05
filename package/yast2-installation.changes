@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Aug  5 13:16:04 CEST 2013 - jsuchome@suse.cz
+
+- check the product profiles during system analysis and
+  copy them to installed system (backport of fate#310730)
+- 3.0.2
+
+-------------------------------------------------------------------
 Sun Aug  4 11:48:21 UTC 2013 - lslezak@suse.cz
 
 - removed empty agents/Makefile.am and unused testsuite/Makefile.am
