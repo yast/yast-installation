@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Aug  6 12:05:59 UTC 2013 - tchvatal@suse.com
+
+- Require yast2-x11 so the install actually starts when run localy.
+
+-------------------------------------------------------------------
 Tue Aug  6 11:30:53 CEST 2013 - jsuchome@suse.cz
 
 - use pure ruby solution when sorting destkop items, so major desktop
