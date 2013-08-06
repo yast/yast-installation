@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Aug  6 11:30:53 CEST 2013 - jsuchome@suse.cz
+
+- use pure ruby solution when sorting destkop items, so major desktop
+  (with same order number) won't get resorted
+- 3.0.3
+
+-------------------------------------------------------------------
 Mon Aug  5 13:16:04 CEST 2013 - jsuchome@suse.cz
 
 - check the product profiles during system analysis and
