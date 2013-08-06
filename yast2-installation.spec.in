@@ -49,6 +49,9 @@ Requires:	initviocons
 # Proxy settings for 2nd stage (bnc#764951)
 Requires:       yast2-proxy
 
+# X11 startup when running local install
+Requires:       yast2-x11
+
 # Only in inst-sys
 # Requires:	yast2-network
 # Requires:	yast2-add-on
