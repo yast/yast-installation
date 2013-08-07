@@ -892,12 +892,7 @@ module Yast
       else
         Builtins.y2milestone("Proposal doesn't use tabs")
         # sort modules according to presentation ordering
-        modules = Builtins.sort(modules) do |mod1, mod2|
-          Ops.less_than(
-            Ops.get_integer(mod1, 1, 50),
-            Ops.get_integer(mod2, 1, 50)
-          )
-        end
+        modules.sort!{|mod1,mod2| (mod1[1] || 50) <=> (mod2[1] || 50) }
 
         # setup the list
         @submodules_presentation = Builtins.maplist(modules) do |mod|
