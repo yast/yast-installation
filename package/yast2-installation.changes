@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Aug  7 12:57:05 CEST 2013 - jsuchome@suse.cz
+
+- use pure ruby solution when sorting proposal items
+
+-------------------------------------------------------------------
 Tue Aug  6 11:30:53 CEST 2013 - jsuchome@suse.cz
 
 - use pure ruby solution when sorting destkop items, so major desktop
