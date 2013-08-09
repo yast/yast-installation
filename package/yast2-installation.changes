@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Fri Aug  9 06:36:31 UTC 2013 - mfilka@suse.com
+
+- bnc#798620
+    - removed proposed hotfix for the bug. The hotfix could block 
+    starting firewall under some circunstances.
+    - (re)starting firewall is handled in yast2.rpm since 3.0.2
+- 3.0.4 
+
+-------------------------------------------------------------------
 Wed Aug  7 12:57:05 CEST 2013 - jsuchome@suse.cz
 
 - use pure ruby solution when sorting proposal items
