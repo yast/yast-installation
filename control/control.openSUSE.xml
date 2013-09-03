@@ -335,7 +335,7 @@ textdomain="control"
 		<label_id>desktop_min_x</label_id>
 		<logon>xdm</logon>
 		<cursor>DMZ</cursor>
-		<packages>xorg-x11 branding-openSUSE</packages>
+		<packages>xorg-x11-server branding-openSUSE</packages>
 		<order config:type="integer">6</order>
 		<patterns>x11 base</patterns>
 		<icon>yast-x11</icon>
