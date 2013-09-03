@@ -1,7 +1,6 @@
 # Sources for installation
 
 module_DATA = \
-  modules/X11Version.rb \
   modules/ImageInstallation.rb \
   modules/InstData.rb \
   modules/Vendor.rb \
@@ -71,8 +70,7 @@ client_DATA = \
   clients/inst_deploy_image.rb \
   clients/ldconfig_finish.rb \
   clients/inst_complex_welcome.rb \
-  clients/inst_mode.rb \
-  clients/inst_x11.rb
+  clients/inst_mode.rb
 
 yncludedir = @yncludedir@/installation
 ynclude_DATA = \
