@@ -212,7 +212,7 @@ textdomain="control"
 		<label_id>dummy_desktop</label_id>
 		<logon>xdm</logon>
 		<cursor>DMZ</cursor>
-		<packages>xorg-x11</packages>
+		<packages>xorg-x11-server</packages>
 		<order config:type="integer">6</order>
 		<patterns>x11 base</patterns>
 		<icon>yast-x11</icon>
@@ -224,7 +224,7 @@ textdomain="control"
 		<label_id>dummy_desktop</label_id>
 		<logon>xdm</logon>
 		<cursor>DMZ</cursor>
-		<packages>xorg-x11</packages>
+		<packages></packages>
 		<order config:type="integer">8</order>
 		<patterns>enhanced_base</patterns>
 		<icon>yast-sshd</icon>

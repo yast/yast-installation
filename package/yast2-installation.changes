@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Sep  3 11:55:45 CEST 2013 - jsuchome@suse.cz
+
+- do not mention xorg-x11 in the control files (bnc#837450) 
+- remove obsoleted part of X11 related code
+- 3.0.5
+
+-------------------------------------------------------------------
 Fri Aug  9 06:36:31 UTC 2013 - mfilka@suse.com
 
 - bnc#798620
