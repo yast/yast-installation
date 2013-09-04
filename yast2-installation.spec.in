@@ -7,7 +7,6 @@ Requires:       yast2-ruby-bindings >= 1.0.0
 
 Summary:        YaST2 - Installation Parts
 
-Source1:	YaST2-Second-Stage.service
 Source2:	YaST2-Firstboot.service
 
 BuildRequires:  docbook-xsl-stylesheets libxslt update-desktop-files yast2-core-devel yast2-devtools
@@ -132,16 +131,16 @@ install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 
 %if 0%{suse_version} > 1140
 
-%service_add_post YaST2-Second-Stage.service YaST2-Firstboot.service
+%service_add_post YaST2-Firstboot.service
 
 %pre
-%service_add_pre YaST2-Second-Stage.service YaST2-Firstboot.service
+%service_add_pre YaST2-Firstboot.service
 
 %preun
-%service_del_preun YaST2-Second-Stage.service YaST2-Firstboot.service
+%service_del_preun YaST2-Firstboot.service
 
 %postun
-%service_del_postun YaST2-Second-Stage.service YaST2-Firstboot.service
+%service_del_postun YaST2-Firstboot.service
 
 %endif #suse_version
 
@@ -154,7 +153,6 @@ install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 /usr/share/YaST2/control/*.rnc
 
 # systemd service files
-%{_unitdir}/YaST2-Second-Stage.service
 %{_unitdir}/YaST2-Firstboot.service
 
 @clientdir@/*.rb
