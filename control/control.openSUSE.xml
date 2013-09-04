@@ -89,10 +89,6 @@ textdomain="control"
 	    </copy_to_system_item>
 	</copy_to_system>
 
-	<!-- FATE #303396, Make second stage non-interactive -->
-	<enable_autoconfiguration config:type="boolean">true</enable_autoconfiguration>
-	<autoconfiguration_default config:type="boolean">true</autoconfiguration_default>
-
 	<!-- FATE #303395, Kexec instead of reboot (default 'false') -->
 	<kexec_reboot config:type="boolean">true</kexec_reboot>
 
@@ -781,50 +777,17 @@ is the most appropriate desktop for you.</label></desktop_dialog>
                     <name>finish</name>
 		    <enable_back>no</enable_back>
                 </module>
+                <module>
+                   <label>Release Notes</label>
+                    <name>release_notes</name>
+                </module>
+                <module>
+                    <name>congratulate</name>
+                </module>
+
             </modules>
         </workflow>
 
-	<!-- Stage: Initial, Mode: Repair -->
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-		<enable_back>yes</enable_back>
-		<enable_next>yes</enable_next>
-            </defaults>
-	    <label>Preparation</label>
-            <mode>repair</mode>
-            <stage>initial</stage>
-            <modules  config:type="list">
-                <module>
-		    <label>Welcome</label>
-                    <name>complex_welcome</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
-                    <arguments>
-                        <first_run>yes</first_run>
-                    </arguments>
-                    <retranslate config:type="boolean">true</retranslate>
-                </module>
-		<module>
-	            <label>Disk Activation</label>
-                    <name>disks_activate</name>
-		</module>
-                <module>
-	            <label>System Analysis</label>
-                    <name>system_analysis</name>
-                </module>
-                <module>
-	            <label>System Analysis</label>
-                    <name>mode</name>
-                </module>
-		<!-- Here, user selects whether to perform New Installation, Upgrade, or Repair -->
-		<module>
-		    <label>Repair</label>
-		    <name>repair</name>
-		    <enable_back>no</enable_back>
-		</module>
-            </modules>
-        </workflow>
 
 	<!-- Stage: Initial, Mode: Live Installation -->
         <workflow>
@@ -1030,25 +993,6 @@ is the most appropriate desktop for you.</label></desktop_dialog>
             </modules>
         </workflow>
 
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-            </defaults>
-            <stage>initial</stage>
-	    <label>Preparation</label>
-            <mode>repair</mode>
-            <modules  config:type="list">
-                <module>
-	            <label>System Information</label>
-                    <name>info</name>
-                </module>
-                <module>
-	            <label>Perform Repair</label>
-                    <name>repair</name>
-                </module>
-            </modules>
-        </workflow>
-
 	<!-- Stage: Initial, Mode: ScreenShot -->
         <workflow>
             <defaults>
@@ -1140,225 +1084,6 @@ is the most appropriate desktop for you.</label></desktop_dialog>
             </modules>
         </workflow>
 
-	<!-- Stage: Continue, Mode: Update -->
-	<!--
-	Second stage for update has been disabled by FATE #303396
-        <workflow>
-            <stage>continue</stage>
-            <mode>update</mode>
-            <defaults>
-                <archs>all</archs>
-                <enable_back>yes</enable_back>
-                <enable_next>yes</enable_next>
-            </defaults>
-            <modules config:type="list">
-                <module>
-	            <label>Perform Update</label>
-                    <name>rpmcopy_secondstage</name>
-		    <enable_back>no</enable_back>
-		    <enable_next>no</enable_next>
-                </module>
-		<module>
-		    <heading>yes</heading>
-		    <label>Configuration</label>
-		</module>
-                <module>
-	            <label>Network</label>
-                    <name>ask_net_test</name>
-		    <enable_back>no</enable_back>
-                </module>
-                <module>
-	            <label>Network</label>
-                    <name>do_net_test</name>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>addon_update_sources</name>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>ask_online_update</name>
-                </module>
-                <module>
-	            <label>Online Update</label>
-                    <name>you</name>
-                </module>
-		<module>
-		    <label>Online Update</label>
-		    <name>restore_settings</name>
-		</module>
-                <module>
-	            <label>Release Notes</label>
-                    <name>release_notes</name>
-                </module>
-                <module>
-                    <name>congratulate</name>
-                </module>
-            </modules>
-        </workflow>
-	-->
-
-	<!-- Stage: Continue, Mode: Installation -->
-        <workflow>
-            <stage>continue</stage>
-            <mode>installation</mode>
-            <defaults>
-                <enable_back>yes</enable_back>
-                <enable_next>yes</enable_next>
-                <archs>all</archs>
-            </defaults>
-            <modules  config:type="list">
-		<module>
-		    <heading>yes</heading>
-		    <label>Configuration</label>
-		</module>
-		<!--
-		    Automatic configuration: disabled in manual configuration,
-		    FATE #303396
-		    Non-interactive second stage
-		-->
-		<module>
-		    <label>Automatic Configuration</label>
-		    <name>automatic_configuration</name>
-		    <enable_back>no</enable_back>
-		    <enable_next>no</enable_next>
-		</module>
-                <module>
-	            <label>root Password</label>
-                    <name>root</name>
-                    <enable_back>no</enable_back>
-                </module>
-                <module>
-	            <label>Check Installation</label>
-                    <name>initialization</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Check Installation</label>
-                    <name>netprobe</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Check Installation</label>
-                    <name>rpmcopy_secondstage</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Hostname</label>
-                    <name>hostname</name>
-                </module>
-                <module>
-	            <label>Network</label>
-                    <name>continue_network_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>network</proposal>
-                </module>
-                <module>
-	            <label>Network</label>
-                    <name>ask_net_test</name>
-                </module>
-                <module>
-	            <label>Network</label>
-                    <name>do_net_test</name>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>addon_update_sources</name>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>extrasources</name>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>ask_online_update</name>
-                </module>
-                <module>
-	            <label>Online Update</label>
-                    <name>you</name>
-                </module>
-		<module>
-		    <label>Online Update</label>
-		    <name>restore_settings</name>
-		</module>
-                <module>
-	            <label>Users</label>
-                    <name>auth</name>
-                </module>
-                <module>
-	            <label>Users</label>
-                    <name>user</name>
-                </module>
-		<module>
-		    <name>user_non_interactive</name>
-		    <!-- BNC #401319, define client to call explicitly -->
-		    <execute>inst_user</execute>
-		</module>
-                <module>
-	            <label>Release Notes</label>
-                    <name>release_notes</name>
-                </module>
-                <module>
-	            <label>Hardware Configuration</label>
-                    <name>continue_hardware_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>hardware</proposal>
-                </module>
-                <module>
-	            <label>Hardware Configuration</label>
-		    <name>save_hardware_status</name>
-                </module>
-                <module>
-                    <name>congratulate</name>
-                </module>
-            </modules>
-        </workflow>
-
-	<!-- Stage: Continue, Mode: Live Installation -->
-        <workflow>
-            <stage>continue</stage>
-            <mode>live_installation</mode>
-            <defaults>
-                <enable_back>yes</enable_back>
-                <enable_next>yes</enable_next>
-                <archs>all</archs>
-            </defaults>
-            <modules  config:type="list">
-		<module>
-		    <heading>yes</heading>
-		    <label>Configuration</label>
-		</module>
-		<module>
-		    <label>Automatic Configuration</label>
-		    <name>automatic_configuration</name>
-		    <enable_back>no</enable_back>
-		    <enable_next>no</enable_next>
-		</module>
-		<!-- BNC #547931: Steps are enabled again -->
-		<module>
-		    <label>Users</label>
-		    <name>auth</name>
-		</module>
-		<module>
-		    <label>Users</label>
-		    <name>user</name>
-		</module>
-		<module>
-		    <name>user_non_interactive</name>
-		    <!-- BNC #401319, define client to call explicitly -->
-		    <execute>inst_user</execute>
-		</module>
-                <module>
-                    <name>live_cleanup</name>
-                    <enable_back>no</enable_back>
-                </module>
-
-	    </modules>
-	</workflow>
-
 	<!-- Stage: Initial, Mode: AutoInstallation -->
         <workflow>
             <stage>initial</stage>
@@ -1420,7 +1145,7 @@ is the most appropriate desktop for you.</label></desktop_dialog>
             </modules>
         </workflow>
 
-	<!-- Stage: Continue, Mode: AutoInstallation -->
+	<!-- Stage: Initial, Mode: AutoUpgrade -->
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -1507,70 +1232,6 @@ is the most appropriate desktop for you.</label></desktop_dialog>
                 </module>
             </modules>
         </workflow>
-
-
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-                <enable_back>no</enable_back>
-                <enable_next>no</enable_next>
-            </defaults>
-            <stage>continue</stage>
-            <mode>autoinstallation</mode>
-            <modules  config:type="list">
-                <module>
-	            <label>Perform Installation</label>
-                    <name>netprobe</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>autopost</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>rpmcopy_secondstage_autoinstall</name>
-                    <execute>inst_rpmcopy_secondstage</execute>
-                </module>
-		<module>
-		    <heading>yes</heading>
-		    <label>Configuration</label>
-		</module>
-                <module>
-	            <label>System Configuration</label>
-                    <name>autoconfigure</name>
-                </module>
-            </modules>
-        </workflow>
-
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-                <enable_back>no</enable_back>
-                <enable_next>no</enable_next>
-            </defaults>
-            <stage>continue</stage>
-            <mode>autoupgrade</mode>
-            <modules  config:type="list">
-                <module>
-                    <label>Perform Update</label>
-                    <name>autopost</name>
-                </module>
-                <module>
-                    <label>Perform Update</label>
-                    <name>rpmcopy_secondstage_autoupgrade</name>
-                    <execute>inst_rpmcopy_secondstage</execute>
-                </module>
-                <module>
-                    <heading>yes</heading>
-                    <label>Configuration</label>
-                </module>
-                <module>
-                    <label>System Configuration</label>
-                    <name>autoconfigure</name>
-                </module>
-            </modules>
-        </workflow>
-
 
     </workflows>
 </productDefines>
