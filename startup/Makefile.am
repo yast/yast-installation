@@ -12,4 +12,4 @@ ystartupbin_SCRIPTS = 	\
 	requires
 
 EXTRA_DIST = $(ystartupbin_SCRIPTS)
-SUBDIRS = First-Stage Second-Stage arch common hooks
+SUBDIRS = First-Stage arch common hooks
