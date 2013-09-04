@@ -7,5 +7,4 @@ install-data-local:
 	-install -d -m 755 $(DESTDIR)/$(ystartupbindir)
 
 SUBDIRS = \
-	postFirstCall postFirstStage postSecondCall postSecondStage \
-	preFirstCall preFirstStage preSecondCall preSecondStage
+	postFirstCall postFirstStage preFirstCall preFirstStage
