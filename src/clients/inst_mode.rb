@@ -503,6 +503,9 @@ module Yast
     end
 
     # BNC #469730: Installation requires some packages
+
+    # TODO FIXME: remove this later, for now we still need at least yast2-core
+    # and perl-bootloader packages
     def SetRequiredPackages
       if @new_mode == :install
         Builtins.y2milestone(
@@ -511,7 +514,7 @@ module Yast
         PackagesProposal.AddResolvables(
           "YaST-Installation",
           :package,
-          ["yast2-installation"]
+          ["yast2-core", "perl-bootloader"]
         )
       elsif @new_mode == :update
         Builtins.y2milestone(
