@@ -898,9 +898,12 @@ module Yast
         @submodules_presentation = Builtins.maplist(modules) do |mod|
           Ops.get_string(mod, 0, "")
         end
+
         p = AutoinstConfig.getProposalList
-        @submodules_presentation = Builtins.filter(@submodules_presentation) do |v|
-          Builtins.contains(p, v) || p == []
+
+        if p != nil && p != []
+          # array intersection
+          @submodules_presentation = @submodules_presentation & v
         end
       end
 
