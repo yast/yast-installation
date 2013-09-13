@@ -502,7 +502,6 @@ module Yast
         )
     end
 
-    # BNC #469730: Installation requires some packages
     def SetRequiredPackages
       if @new_mode == :install
         Builtins.y2milestone(
@@ -511,16 +510,7 @@ module Yast
         PackagesProposal.AddResolvables(
           "YaST-Installation",
           :package,
-          ["yast2-installation"]
-        )
-      elsif @new_mode == :update
-        Builtins.y2milestone(
-          "Adding packages required for update to succeed..."
-        )
-        PackagesProposal.AddResolvables(
-          "YaST-Update",
-          :package,
-          ["yast2-update"]
+          ["perl-YAML-LibYAML", "perl-bootloader"]
         )
       end
 
