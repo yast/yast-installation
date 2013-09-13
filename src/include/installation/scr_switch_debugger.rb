@@ -52,7 +52,7 @@ module Yast
       # test result (Checking for xyz... Passed)
       @result_ok = _("Passed")
       # test result (Checking for xyz... Failed)
-      @result_failed = "Failed"
+      @result_failed = _("Failed")
 
       # *********************************************************************
 
@@ -74,20 +74,12 @@ module Yast
       # any command for the chroot command
       @test_do_chroot = "/bin/ls -1 /"
 
-      # y2base path
-      @test_y2base = "/usr/lib/YaST2/bin/y2base"
-
       # get all installed rpm packages
       @test_rpm = "rpm -qa"
 
-      # all needed rpm packages
-      @needed_rpm_packages = [
-        "yast2",
-        "yast2-installation",
-        "yast2-core",
-        "yast2-bootloader",
-        "yast2-packager"
-      ]
+      # all needed rpm packages, Yast might not be installed at the target system,
+      # so only glibc seems to be really needed...
+      @needed_rpm_packages = ["glibc"]
 
       # is the package %1 installed?
       @test_one_rpm = "rpm -q %1"
@@ -345,24 +337,6 @@ module Yast
       test_result
     end
 
-    # checks whether the y2base binary exists
-    def RunSCRSwitchTest_Y2BASE
-      y2basefile = Builtins.sformat("%1%2", @chroot_path, @test_y2base)
-      test_result = FileUtils.Exists(y2basefile)
-
-      ReportTest(
-        # Test progress
-        Builtins.sformat(
-          _("Checking for %1 in %2..."),
-          @test_y2base,
-          @chroot_path
-        ),
-        test_result
-      )
-
-      test_result
-    end
-
     def RunSCRSwitchTest_FreeSpace
       ReportProgress(_("Checking free space"))
 
@@ -602,10 +576,9 @@ module Yast
     # checks a package, whether it is installed
     # if it is installed, whether is has installed requires
     def RunSCRSwitchTest_DoNeededRPMsCheck
-      ret = true
 
       # check whether all needed packages are installed
-      Builtins.foreach(Builtins.sort(@needed_rpm_packages)) do |package_name|
+      @needed_rpm_packages.sort.all? do |package_name|
         # Test progress
         ReportProgress(
           Builtins.sformat(
@@ -613,18 +586,10 @@ module Yast
             package_name
           )
         )
-        # is the package installed?
-        if !RunSCRSwitchTest_CheckWhetherInstalled(package_name)
-          ret = false
-          raise Break
-        # if it is installed, check whetheris has all dependencies
-        elsif !RunSCRSwitchTest_DoNeededRPMsRequire(package_name)
-          ret = false
-          raise Break
-        end
-      end
 
-      ret
+        # is the package installed? all dependencies Ok?
+        RunSCRSwitchTest_CheckWhetherInstalled(package_name) && RunSCRSwitchTest_DoNeededRPMsRequire(package_name)
+      end
     end
 
     def PrintLinesFromTo(from_line, to_line)
@@ -710,7 +675,6 @@ module Yast
       return false if !RunSCRSwitchTest_ListFilesInChroot()
       return false if !RunSCRSwitchTest_BinaryExists()
       return false if !RunSCRSwitchTest_DoChroot()
-      return false if !RunSCRSwitchTest_Y2BASE()
       return false if !RunSCRSwitchTest_FreeSpace()
       return false if !RunSCRSwitchTest_DoRPMCheck()
 
