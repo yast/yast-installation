@@ -1,0 +1,18 @@
+[Unit]
+Description=YaST2 Second Stage
+After=apparmor.service local-fs.target plymouth-start.service
+Before=getty@tty1.service xdm.service network.service NetworkManager.service SuSEfirewall2_init.service SuSEfirewall2.service
+ConditionPathExists=/var/lib/YaST2/runme_at_boot
+
+[Service]
+Type=oneshot
+Environment=SYSTEMCTL_OPTIONS=--ignore-dependencies TERM=linux
+ExecStartPre=-/usr/bin/plymouth --hide-splash
+ExecStart=/usr/lib/YaST2/startup/YaST2.Second-Stage
+RemainAfterExit=yes
+TimeoutSec=0
+ExecStartPost=/bin/rm -f /var/lib/YaST2/runme_at_boot
+StandardInput=tty
+
+[Install]
+WantedBy=default.target
