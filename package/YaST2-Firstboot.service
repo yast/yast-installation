@@ -10,6 +10,7 @@ Environment=SYSTEMCTL_OPTIONS=--ignore-dependencies TERM=linux
 ExecStartPre=-/usr/bin/plymouth --hide-splash
 ExecStart=/usr/lib/YaST2/startup/YaST2.Firstboot
 ExecStartPost=/bin/rm -f /var/lib/YaST2/reconfig_system
+ExecStartPost=/usr/bin/systemctl restart systemd-vconsole-setup.service
 TimeoutSec=0
 RemainAfterExit=true
 StandardInput=tty
