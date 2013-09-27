@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Sep 27 13:52:26 CEST 2013 - jsuchome@suse.cz
+
+- yast2-mouse was dropped, do not call its components (bnc#841960)
+- 3.0.7 
+
+-------------------------------------------------------------------
 Thu Sep 26 10:47:32 CEST 2013 - jsuchome@suse.cz
 
 - fix console status after the installation (bnc#750326)
