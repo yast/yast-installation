@@ -41,6 +41,9 @@ BuildRequires:  libxml2-tools
 # /etc/YaST2/XVersion
 BuildRequires: yast2 >= 2.16.52
 
+# to convert rng to rnc
+BuildRequires: trang
+
 # AutoinstConfig::getProposalList
 Requires:       autoyast2-installation >= 2.17.1
 
