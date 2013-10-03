@@ -1,6 +1,28 @@
-@HEADER-COMMENT@
+#
+# spec file for package yast2-installation
+#
+# Copyright (c) 2013 SUSE LINUX Products GmbH, Nuernberg, Germany.
+#
+# All modifications and additions to the file contributed by third parties
+# remain the property of their copyright owners, unless otherwise agreed
+# upon. The license for this file, and modifications and additions to the
+# file, is the same license as for the pristine package itself (unless the
+# license for the pristine package is not an Open Source License, in which
+# case the license is the MIT License). An "Open Source License" is a
+# license that conforms to the Open Source Definition (Version 1.9)
+# published by the Open Source Initiative.
 
-@HEADER@
+# Please submit bugfixes or comments via http://bugs.opensuse.org/
+#
+
+
+Name:           yast2-installation
+Version:        3.1.0
+Release:        0
+
+BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+Source0:        %{name}-%{version}.tar.bz2
+
 Group:          System/YaST
 License:        GPL-2.0
 Requires:       yast2-ruby-bindings >= 1.0.0
@@ -10,7 +32,8 @@ Summary:        YaST2 - Installation Parts
 Source1:	YaST2-Second-Stage.service
 Source2:	YaST2-Firstboot.service
 
-BuildRequires:  docbook-xsl-stylesheets libxslt update-desktop-files yast2-core-devel yast2-devtools
+BuildRequires:  docbook-xsl-stylesheets libxslt update-desktop-files yast2-core-devel
+BuildRequires:  yast2-devtools >= 3.0.6
 
 # xmllint
 BuildRequires:  libxml2-tools
@@ -112,11 +135,15 @@ System installation code as present on installation media.
 %description devel-doc
 System installation code as present on installation media.
 
-@PREP@
+%prep
+%setup -n %{name}-%{version}
 
-@BUILD@
+%build
+%yast_build
 
-@INSTALL@
+%install
+%yast_install
+
 for f in `find %{buildroot}%{_datadir}/autoinstall/modules -name "*.desktop"`; do
     %suse_update_desktop_file $f
 done 
@@ -125,7 +152,6 @@ mkdir -p %{buildroot}%{_unitdir}
 install -m 644 %{SOURCE1} %{buildroot}%{_unitdir}
 install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 
-@CLEAN@
 
 %post
 %{fillup_only -ns security checksig}
@@ -157,38 +183,38 @@ install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 %{_unitdir}/YaST2-Second-Stage.service
 %{_unitdir}/YaST2-Firstboot.service
 
-@clientdir@/*.rb
-@moduledir@/*.rb
-@desktopdir@/*.desktop
+%{yast_clientdir}/*.rb
+%{yast_moduledir}/*.rb
+%{yast_desktopdir}/*.desktop
 /usr/share/autoinstall/modules/*.desktop
 /usr/share/YaST2/schema/autoyast/rnc/deploy_image.rnc
 %dir /usr/share/autoinstall
 %dir /usr/share/autoinstall/modules
-%dir @yncludedir@/installation
-@yncludedir@/installation/*
+%dir %{yast_yncludedir}/installation
+%{yast_yncludedir}/installation/*
 
 # agents
-@scrconfdir@/etc_passwd.scr
-@scrconfdir@/cfg_boot.scr
-@scrconfdir@/cfg_windowmanager.scr
-@scrconfdir@/cfg_fam.scr
-@scrconfdir@/etc_install_inf.scr
-@scrconfdir@/etc_install_inf_alias.scr
-@scrconfdir@/etc_install_inf_options.scr
-@scrconfdir@/proc_modules.scr
-@scrconfdir@/run_df.scr
+%{yast_scrconfdir}/etc_passwd.scr
+%{yast_scrconfdir}/cfg_boot.scr
+%{yast_scrconfdir}/cfg_windowmanager.scr
+%{yast_scrconfdir}/cfg_fam.scr
+%{yast_scrconfdir}/etc_install_inf.scr
+%{yast_scrconfdir}/etc_install_inf_alias.scr
+%{yast_scrconfdir}/etc_install_inf_options.scr
+%{yast_scrconfdir}/proc_modules.scr
+%{yast_scrconfdir}/run_df.scr
 # fillup
-@fillupdir@/sysconfig.security-checksig
+/var/adm/fillup-templates/sysconfig.security-checksig
 
 # programs and scripts
-@ystartupdir@/startup
+%{yast_ystartupdir}/startup
 
-%dir @docdir@
-@docdir@/COPYING
-%readme @docdir@/README
+%dir %{yast_docdir}
+%{yast_docdir}/COPYING
+%readme %{yast_docdir}/README
 
 %files devel-doc
 %defattr(-,root,root)
-%doc @docdir@
-%exclude @docdir@/COPYING
-%exclude @docdir@/README
+%doc %{yast_docdir}
+%exclude %{yast_docdir}/COPYING
+%exclude %{yast_docdir}/README
