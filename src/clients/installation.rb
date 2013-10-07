@@ -38,7 +38,7 @@ module Yast
       Yast.import "Report"
 
       # Initialize the UI
-      Wizard.OpenNextBackStepsDialog
+      Wizard.OpenNextBackDialog
       Wizard.SetContents(
         # title
         "",
