@@ -11,7 +11,7 @@ config.log
 config.status
 config.sub
 configure
-configure.in
+configure.ac
 depcomp
 install-sh
 *.pot
@@ -24,7 +24,6 @@ stamp-h*
 Makefile.am.common
 *.ami
 *.bz2
-*.spec
 .dep
 tmp.*
 *.log

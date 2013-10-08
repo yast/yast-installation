@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Sep 27 16:34:11 UTC 2013 - lslezak@suse.cz
+
+- do not use *.spec.in template, use *.spec file with RPM macros
+  instead
+- 3.1.0
+
+-------------------------------------------------------------------
 Fri Sep 27 14:17:54 CEST 2013 - jsuchome@suse.cz
 
 - yast2-mouse was dropped, do not call its components (bnc#841960)
