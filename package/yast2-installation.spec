@@ -34,6 +34,8 @@ Source2:	YaST2-Firstboot.service
 
 BuildRequires:  docbook-xsl-stylesheets libxslt update-desktop-files yast2-core-devel
 BuildRequires:  yast2-devtools >= 3.0.6
+# trang to convert rnc to rng
+BuildRequires:  trang
 
 # xmllint
 BuildRequires:  libxml2-tools
