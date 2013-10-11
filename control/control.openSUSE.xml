@@ -133,9 +133,7 @@ textdomain="control"
 		<ac_items config:type="list">
 		    <ac_item>lan</ac_item>
 		    <ac_item>general</ac_item>
-		    <ac_item>dsl</ac_item>
 		    <ac_item>isdn</ac_item>
-		    <ac_item>modem</ac_item>
 		    <ac_item>remote</ac_item>
 		    <ac_item>firewall</ac_item>
 		</ac_items>
@@ -607,17 +605,9 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 		    <name>general</name>
 		    <presentation_order>5</presentation_order>
 		</proposal_module>
-		<proposal_module>
-		    <name>dsl</name>
-		    <presentation_order>30</presentation_order>
-		</proposal_module>
                 <proposal_module>
 		    <name>isdn</name>
 		    <presentation_order>40</presentation_order>
-		</proposal_module>
-                <proposal_module>
-		    <name>modem</name>
-		    <presentation_order>50</presentation_order>
 		</proposal_module>
                 <proposal_module>
 		    <name>remote</name>
