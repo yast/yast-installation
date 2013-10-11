@@ -30,6 +30,7 @@ module Yast
       Yast.import "ProductControl"
       Yast.import "InstData"
       Yast.import "String"
+      Yast.import "Linuxrc"
 
       # --> Variables
 
@@ -251,6 +252,19 @@ module Yast
 
       nil
     end
+
+    # Returns list of ignored features defined via Linuxrc commandline
+    #
+    # - Allowed formats are ignore[d][_]feature[s]=$feature1[,$feature2,[...]]
+    # - command and features are case-insensitive
+    #
+    def IgnoredFeatures
+      cmdline = Linuxrc.InstallInf("Cmdline").split
+      ignored_features = cmdline.select{ |cmd| cmd =~ /^ignored?_?features?=/i }
+      ignored_features.collect! { |feature| feature.gsub(/^ignored?_?features?=(.*)/i).downcase }
+      features.map!{ |f| f.split(',') }.flatten!.uniq!
+    end
+
     def Initialize
       Builtins.y2milestone("Evaluating all current partitions")
 
@@ -323,6 +337,8 @@ module Yast
       end
 
       Builtins.y2milestone("Possible partitons: %1", @useful_partitions)
+
+      @ignored_features = IgnoredFeatures()
 
       nil
     end
