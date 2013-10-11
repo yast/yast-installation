@@ -53,7 +53,7 @@ textdomain="control"
 	<copy_to_system config:type="list">
 	    <!-- FATE #300421: Import ssh keys from previous installations -->
 	    <copy_to_system_item>
-	        <id>ssh_keys</id>
+	        <id>import_ssh_keys</id>
 		<copy_to_dir>/</copy_to_dir>
 		<!-- Files that must be all present on the previous system -->
 		<mandatory_files config:type="list">
@@ -73,7 +73,7 @@ textdomain="control"
 
 	    <!-- FATE #120103: Import Users From Existing Partition -->
 	    <copy_to_system_item>
-	        <id>users</id>
+	        <id>import_users</id>
 		<copy_to_dir>/var/lib/YaST2/imported/userdata/</copy_to_dir>
 		<!-- Files that must be all present on the previous system -->
 		<mandatory_files config:type="list">
