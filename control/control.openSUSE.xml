@@ -677,10 +677,36 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 	            <label>System Analysis</label>
                     <name>system_analysis</name>
                 </module>
+	        <module>
+		    <label>Disk</label>
+		    <name>disk_proposal</name>
+		    <enable_back>yes</enable_back>
+		    <enable_next>yes</enable_next>
+		</module>
+<!--
+                <module>
+	            <label>Disk</label>
+                    <name>prepdisk</name>
+                </module>
+inst_start_deploy_image does not exist yet
+		<module>
+		    <name>start_deploy_image</name>
+		</module>
+-->
+                <module>
+	            <label>Time Zone</label>
+                    <name>timezone</name>
+                    <arguments>
+                        <first_run>yes</first_run>
+                    </arguments>
+		    <enable_back>yes</enable_back>
+                </module>
+
+<!--
                 <module>
 	            <label>System Analysis</label>
                     <name>mode</name>
-                </module>
+                </module> -->
 		<!-- Here, user selects whether to perform New Installation, Upgrade, or Repair -->
 		<module>
 		    <label>Online Repositories</label>
@@ -692,14 +718,6 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 		    <name>add-on</name>
 		    <enable_back>yes</enable_back>
 		</module>
-                <module>
-	            <label>Time Zone</label>
-                    <name>timezone</name>
-                    <arguments>
-                        <first_run>yes</first_run>
-                    </arguments>
-		    <enable_back>yes</enable_back>
-                </module>
 		<module>
 		    <label>Desktop Selection</label>
 		    <name>new_desktop</name>
@@ -712,12 +730,6 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 		    <enable_next>yes</enable_next>
 		</module>
 -->
-	        <module>
-		    <label>Disk</label>
-		    <name>disk_proposal</name>
-		    <enable_back>yes</enable_back>
-		    <enable_next>yes</enable_next>
-		</module>
 		<module>
 		    <label>User Settings</label>
 		    <name>user_first</name>
@@ -742,7 +754,7 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 		    <name>prepareprogress</name>
 		</module>
                 <module>
-	            <label>Perform Installation</label>
+		    <label>Perform Installation</label>
                     <name>prepdisk</name>
                 </module>
 		<!-- Installation from images -->
