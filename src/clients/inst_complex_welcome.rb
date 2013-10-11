@@ -83,7 +83,7 @@ module Yast
       # Build dialog
       # ----------------------------------------------------------------------
       # heading text
-      @heading_text = _("Welcome")
+      @heading_text = _("Language, Keyboard and License Agreement")
 
       @languagesel = ComboBox(
         Id(:language),
@@ -119,29 +119,35 @@ module Yast
         VWeight(1, VStretch()),
         Left(
           HSquash(
-            VBox(
-              HBox(
-                HSquash(Icon.Simple("yast-language")),
-                @text_mode == true ? Empty() : HSpacing(2),
-                Left(@languagesel)
-              ),
-              VSpacing(1),
-              HBox(
-                HSquash(Icon.Simple("yast-keyboard")),
-                @text_mode == true ? Empty() : HSpacing(2),
-                Left(@keyboardsel)
-              ),
-              VSpacing(1)
+            HBox(
+              HSquash(Icon.Simple("yast-language")),
+              @text_mode == true ? Empty() : HSpacing(2),
+              Left(@languagesel),
+              HSpacing(1),
+              HSquash(Icon.Simple("yast-keyboard")),
+              @text_mode == true ? Empty() : HSpacing(2),
+              Left(@keyboardsel),
+              HSpacing(10)
             )
           )
         ),
+        VSpacing(1),
         VWeight(1, VStretch()),
         VWeight(
           20,
           Left(
             HSquash(
               VBox(
-                Left(Label(Opt(:boldFont), _("License Agreement"))),
+                HBox(
+                  Label(Opt(:boldFont), _("License Agreement")),
+                  HStretch(),
+                  # ID: #ICW_B1 button
+                  PushButton(
+                    Id(:show_fulscreen_license),
+                    # TRANSLATORS: button label
+                    _("License &Translations...")
+                  )
+                ),
                 # bnc #438100
                 HSquash(
                   MinWidth(
@@ -154,17 +160,10 @@ module Yast
                 MinHeight(
                   1,
                   HBox(
+                    HStretch(),
                     # Will be replaced with license checkbox if required
                     ReplacePoint(Id(:license_checkbox_rp), Empty()),
-                    VSpacing(1),
-                    # TRANSLATORS: button label
-                    # ID: #ICW_B1 button
-                    Right(
-                      PushButton(
-                        Id(:show_fulscreen_license),
-                        _("License &Translations...")
-                      )
-                    )
+                    HStretch()
                   )
                 )
               )
