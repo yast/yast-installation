@@ -33,7 +33,7 @@ module Yast
 
       # --> Variables
 
-      # all partitions that can be used as a
+      # all partitions that can be used as a source of data
       @useful_partitions = []
 
 
@@ -54,11 +54,14 @@ module Yast
         )
 
         Builtins.foreach(@copy_items) do |one_copy_item|
-          copy_to_dir = Builtins.tostring(
-            Ops.get_string(one_copy_item, "copy_to_dir", Directory.vardir)
-          )
-          mandatory_files = Ops.get_list(one_copy_item, "mandatory_files", [])
-          optional_files = Ops.get_list(one_copy_item, "optional_files", [])
+          item_id         = one_copy_item["id"]
+
+          # TODO: next if ID matches ignored entries defined by user
+
+          copy_to_dir     = one_copy_item.fetch("copy_to_dir", Directory.vardir)
+          mandatory_files = one_copy_item.fetch("mandatory_files", [])
+          optional_files  = one_copy_item.fetch("optional_files", [])
+
           FindAndCopyNewestFiles(copy_to_dir, mandatory_files, optional_files)
         end
       end
