@@ -55,9 +55,12 @@ module Yast
         )
 
         Builtins.foreach(@copy_items) do |one_copy_item|
-          item_id         = one_copy_item["id"]
+          item_id = one_copy_item.fetch("id", "").tr("-_", "")
 
-          # TODO: next if ID matches ignored entries defined by user
+          if @ignored_features.include?(item_id)
+            Bultins.y2milestone("Feature #{item_id} skipped on user request")
+            next
+          end
 
           copy_to_dir     = one_copy_item.fetch("copy_to_dir", Directory.vardir)
           mandatory_files = one_copy_item.fetch("mandatory_files", [])
