@@ -256,12 +256,16 @@ module Yast
     # Returns list of ignored features defined via Linuxrc commandline
     #
     # - Allowed formats are ignore[d][_]feature[s]=$feature1[,$feature2,[...]]
+    # - Multiple ignored_features are allowed on one command line
     # - command and features are case-insensitive
     #
     def IgnoredFeatures
       cmdline = Linuxrc.InstallInf("Cmdline").split
       ignored_features = cmdline.select{ |cmd| cmd =~ /^ignored?_?features?=/i }
-      ignored_features.collect! { |feature| feature.gsub(/^ignored?_?features?=(.*)/i).downcase }
+      ignored_features.collect! {
+        |feature|
+        feature.gsub(/^ignored?_?features?=(.*)/i).downcase.tr("-_", "")
+      }
       features.map!{ |f| f.split(',') }.flatten!.uniq!
     end
 
