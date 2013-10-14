@@ -58,7 +58,7 @@ module Yast
           item_id = one_copy_item.fetch("id", "").tr("-_", "")
 
           if @ignored_features.include?(item_id)
-            Bultins.y2milestone("Feature #{item_id} skipped on user request")
+            Builtins.y2milestone("Feature #{item_id} skipped on user request")
             next
           end
 
@@ -267,9 +267,9 @@ module Yast
       ignored_features = cmdline.select{ |cmd| cmd =~ /^ignored?_?features?=/i }
       ignored_features.collect! {
         |feature|
-        feature.gsub(/^ignored?_?features?=(.*)/i).downcase.tr("-_", "")
+        feature.gsub(/^ignored?_?features?=(.*)/i, '\1').downcase.tr("-_", "")
       }
-      features.map!{ |f| f.split(',') }.flatten!.uniq!
+      ignored_features.map{ |f| f.split(',') }.flatten.uniq
     end
 
     def Initialize
@@ -346,6 +346,7 @@ module Yast
       Builtins.y2milestone("Possible partitons: %1", @useful_partitions)
 
       @ignored_features = IgnoredFeatures()
+      Builtins.y2milestone("Ignored features defined by user: #{@ignored_features.inspect}")
 
       nil
     end
