@@ -711,12 +711,6 @@ TODO: inst_start_deploy_image does not exist yet
                     </arguments>
 		    <enable_back>yes</enable_back>
                 </module>
-
-<!--
-                <module>
-	            <label>System Analysis</label>
-                    <name>mode</name>
-                </module> -->
 		<!-- Here, user selects whether to perform New Installation, Upgrade, or Repair -->
 		<module>
 		    <label>Online Repositories</label>
