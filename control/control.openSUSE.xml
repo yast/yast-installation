@@ -684,11 +684,12 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 		    <enable_next>yes</enable_next>
 		</module>
 <!--
+TODO: prepare disk here when it does not break space calculation (and remove below)
                 <module>
 	            <label>Disk</label>
                     <name>prepdisk</name>
                 </module>
-inst_start_deploy_image does not exist yet
+TODO: inst_start_deploy_image does not exist yet
 		<module>
 		    <name>start_deploy_image</name>
 		</module>

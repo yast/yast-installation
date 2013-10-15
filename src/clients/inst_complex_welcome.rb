@@ -121,11 +121,11 @@ module Yast
           HSquash(
             HBox(
               HSquash(Icon.Simple("yast-language")),
-              @text_mode == true ? Empty() : HSpacing(2),
+              @text_mode ? Empty() : HSpacing(2),
               Left(@languagesel),
               HSpacing(1),
               HSquash(Icon.Simple("yast-keyboard")),
-              @text_mode == true ? Empty() : HSpacing(2),
+              @text_mode ? Empty() : HSpacing(2),
               Left(@keyboardsel),
               HSpacing(10)
             )
