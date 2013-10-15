@@ -30,10 +30,12 @@ module Yast
       Yast.import "ProductControl"
       Yast.import "InstData"
       Yast.import "String"
+      Yast.import "Linuxrc"
+      Yast.import "InstFunctions"
 
       # --> Variables
 
-      # all partitions that can be used as a
+      # all partitions that can be used as a source of data
       @useful_partitions = []
 
 
@@ -54,11 +56,17 @@ module Yast
         )
 
         Builtins.foreach(@copy_items) do |one_copy_item|
-          copy_to_dir = Builtins.tostring(
-            Ops.get_string(one_copy_item, "copy_to_dir", Directory.vardir)
-          )
-          mandatory_files = Ops.get_list(one_copy_item, "mandatory_files", [])
-          optional_files = Ops.get_list(one_copy_item, "optional_files", [])
+          item_id = one_copy_item.fetch("id", "").tr("-_", "")
+
+          if @ignored_features.include?(item_id)
+            Builtins.y2milestone("Feature #{item_id} skipped on user request")
+            next
+          end
+
+          copy_to_dir     = one_copy_item.fetch("copy_to_dir", Directory.vardir)
+          mandatory_files = one_copy_item.fetch("mandatory_files", [])
+          optional_files  = one_copy_item.fetch("optional_files", [])
+
           FindAndCopyNewestFiles(copy_to_dir, mandatory_files, optional_files)
         end
       end
@@ -248,6 +256,7 @@ module Yast
 
       nil
     end
+
     def Initialize
       Builtins.y2milestone("Evaluating all current partitions")
 
@@ -320,6 +329,9 @@ module Yast
       end
 
       Builtins.y2milestone("Possible partitons: %1", @useful_partitions)
+
+      @ignored_features = InstFunctions.IgnoredFeatures()
+      Builtins.y2milestone("Ignored features defined by user: #{@ignored_features.inspect}")
 
       nil
     end
