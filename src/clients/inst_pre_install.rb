@@ -55,10 +55,10 @@ module Yast
           :to   => "list <map>"
         )
 
-        Builtins.foreach(@copy_items) do |one_copy_item|
-          item_id = one_copy_item.fetch("id", "").tr("-_", "")
+        @copy_items.each do |one_copy_item|
+          item_id = one_copy_item["id"]
 
-          if @ignored_features.include?(item_id)
+          if (InstFunctions.feature_ignored?(item_id))
             Builtins.y2milestone("Feature #{item_id} skipped on user request")
             next
           end
@@ -329,9 +329,6 @@ module Yast
       end
 
       Builtins.y2milestone("Possible partitons: %1", @useful_partitions)
-
-      @ignored_features = InstFunctions.IgnoredFeatures()
-      Builtins.y2milestone("Ignored features defined by user: #{@ignored_features.inspect}")
 
       nil
     end

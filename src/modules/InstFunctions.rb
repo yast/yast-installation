@@ -38,21 +38,46 @@ module Yast
 
     # Returns list of ignored features defined via Linuxrc commandline
     #
-    # - Allowed formats are ignore[d][_]feature[s]=$feature1[,$feature2,[...]]
+    # - Allowed format is ignore[d][_]feature[s]=$feature1[,$feature2,[...]]
     # - Multiple ignored_features are allowed on one command line
-    # - Command and features are case-insensitive
+    # - Command and features are case-insensitive and all dashes
+    #   and underscores are ignored
     #
-    def IgnoredFeatures
-      cmdline = Linuxrc.InstallInf("Cmdline").split
-      ignored_features = cmdline.select{ |cmd| cmd =~ /^ignored?_?features?=/i }
-      ignored_features.collect! {
-        |feature|
-        feature.gsub(/^ignored?_?features?=(.*)/i, '\1').downcase.tr("-_", "")
-      }
-      ignored_features.map{ |f| f.split(',') }.flatten.uniq
+    # @return [Array] ignored features
+    def ignored_features
+      return @ignored_features if @ignored_features
+
+      cmdline = Linuxrc.InstallInf("Cmdline").downcase.tr("-_", "").split
+      ignored_features = cmdline.select do |cmd|
+        cmd =~ /^ignored?features?=/i
+      end
+
+      ignored_features.collect! do |feature|
+        feature.gsub(/^ignored?features?=(.*)/i, '\1')
+      end
+
+      @ignored_features = ignored_features.map{ |f| f.split(',') }.flatten.uniq
     end
 
-    publish :function => :IgnoredFeatures, :type => "list ()"
+    # Resets the stored ignored features
+    # Used for easier testing
+    def reset_ignored_features
+      @ignored_features = nil
+    end
+
+    # Returns whether feature was set to be ignored, see ignored_features()
+    #
+    # @param [String] feature_name
+    # @return [Boolean] whether it's ignored
+    def feature_ignored?(feature_name)
+      ignored_features()
+
+      feature = feature_name.downcase.tr("-_", "")
+      @ignored_features.include?(feature)
+    end
+
+    publish :function => :ignored_features, :type => "list ()"
+    publish :function => :feature_ignored?, :type => "boolean (string)"
   end
 
   InstFunctions = InstFunctionsClass.new
