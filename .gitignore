@@ -29,3 +29,4 @@ tmp.*
 *.log
 *.ybc
 POTFILES
+doc
