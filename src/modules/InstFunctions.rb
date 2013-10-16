@@ -70,6 +70,11 @@ module Yast
     # @param [String] feature_name
     # @return [Boolean] whether it's ignored
     def feature_ignored?(feature_name)
+      if (feature_name == nil)
+        Builtins.y2warning("Undefined feature to check")
+        return false
+      end
+
       ignored_features()
 
       feature = feature_name.downcase.tr("-_", "")

@@ -101,4 +101,18 @@ describe "when checking whether feature is ignored" do
     Yast::Linuxrc.stub(:InstallInf).and_return(linuxrc_commandline)
     expect(Yast::InstFunctions.feature_ignored?("no-such-feature")).to be_false
   end
+
+  it "should be false if feature to check is empty" do
+    linuxrc_commandline = "trash=install ignore_features=feature1 ignored_features=feature2 ignore_features=feature3"
+
+    Yast::Linuxrc.stub(:InstallInf).and_return(linuxrc_commandline)
+    expect(Yast::InstFunctions.feature_ignored?("")).to be_false
+  end
+
+  it "should be false if feature to check is undefined" do
+    linuxrc_commandline = "trash=install ignore_features=feature1 ignored_features=feature2 ignore_features=feature3"
+
+    Yast::Linuxrc.stub(:InstallInf).and_return(linuxrc_commandline)
+    expect(Yast::InstFunctions.feature_ignored?(nil)).to be_false
+  end
 end
