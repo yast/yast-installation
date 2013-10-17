@@ -3,6 +3,7 @@ Tue Oct 15 14:15:31 CEST 2013 - locilka@suse.com
 
 - Added support for ignore[d][_]feature[s] (FATE#314982) allowing
   to skip some unwanted features of the installer
+- 3.1.1
 
 -------------------------------------------------------------------
 Thu Oct 10 14:48:46 CEST 2013 - locilka@suse.com

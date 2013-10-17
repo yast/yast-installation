@@ -54,7 +54,7 @@ describe "when getting list of ignored features from Linuxrc" do
 
   it "returns one feature set on commandline by one entry" do
     linuxrc_commandline = "i-g-n-o-r-e_feature=fff"
-    ignored_features    = ["fff"].sort
+    ignored_features    = ["fff"]
 
     Yast::Linuxrc.stub(:InstallInf).and_return(linuxrc_commandline)
     expect(Yast::InstFunctions.ignored_features.sort).to eq ignored_features
@@ -62,7 +62,7 @@ describe "when getting list of ignored features from Linuxrc" do
 
   it "returns one feature set on commandline by one entry using up/down case" do
     linuxrc_commandline = "Ignore_FeaTUres=ffF"
-    ignored_features    = ["fff"].sort
+    ignored_features    = ["fff"]
 
     Yast::Linuxrc.stub(:InstallInf).and_return(linuxrc_commandline)
     expect(Yast::InstFunctions.ignored_features.sort).to eq ignored_features
