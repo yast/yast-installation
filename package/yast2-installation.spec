@@ -34,6 +34,7 @@ Source2:	YaST2-Firstboot.service
 
 BuildRequires:  docbook-xsl-stylesheets libxslt update-desktop-files yast2-core-devel
 BuildRequires:  yast2-devtools >= 3.0.6
+BuildRequires:  rubygem-rspec
 # trang to convert rnc to rng
 BuildRequires:  trang
 
