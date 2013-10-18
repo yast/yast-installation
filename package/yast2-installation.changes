@@ -4,6 +4,26 @@ Fri Oct 18 11:39:17 UTC 2013 - jsrain@suse.cz
 - show release notes button (fate#314695)
 
 -------------------------------------------------------------------
+Tue Oct 15 14:15:31 CEST 2013 - locilka@suse.com
+
+- Added support for ignore[d][_]feature[s] (FATE#314982) allowing
+  to skip some unwanted features of the installer
+- 3.1.1
+
+-------------------------------------------------------------------
+Thu Oct 10 14:48:46 CEST 2013 - locilka@suse.com
+
+- Dropped modem and DSL detection (and configuration) from
+  installation proposal (FATE#316263, FATE#316264)
+
+-------------------------------------------------------------------
+Fri Sep 27 16:34:11 UTC 2013 - lslezak@suse.cz
+
+- do not use *.spec.in template, use *.spec file with RPM macros
+  instead
+- 3.1.0
+
+-------------------------------------------------------------------
 Fri Sep 27 14:17:54 CEST 2013 - jsuchome@suse.cz
 
 - yast2-mouse was dropped, do not call its components (bnc#841960)

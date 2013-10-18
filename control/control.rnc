@@ -183,6 +183,7 @@ save_instsys_content = element save_instsys_content {
 copy_to_system = element copy_to_system {
     LIST,
     element copy_to_system_item {
+        element id { text } &
 	element copy_to_dir { text } &
 	element mandatory_files {
 	    LIST,

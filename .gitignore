@@ -1,5 +1,5 @@
 Makefile
-Makefile.am
+/Makefile.am
 Makefile.in
 aclocal.m4
 autom4te.cache
@@ -11,7 +11,7 @@ config.log
 config.status
 config.sub
 configure
-configure.in
+configure.ac
 depcomp
 install-sh
 *.pot
@@ -24,9 +24,13 @@ stamp-h*
 Makefile.am.common
 *.ami
 *.bz2
-*.spec
 .dep
 tmp.*
 *.log
 *.ybc
 POTFILES
+doc
+home*:*
+*.sw?
+*.exp
+*.sh
