@@ -126,7 +126,6 @@ module Yast
           "label" => _("Copy files to installed system"),
           "steps" => [
             "autoinst_scripts1",
-            "mouse",
             "copy_files",
             "copy_systemfiles",
             # For live installer only

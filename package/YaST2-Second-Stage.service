@@ -12,6 +12,7 @@ ExecStart=/usr/lib/YaST2/startup/YaST2.Second-Stage
 RemainAfterExit=yes
 TimeoutSec=0
 ExecStartPost=/bin/rm -f /var/lib/YaST2/runme_at_boot
+ExecStartPost=/usr/bin/systemctl restart systemd-vconsole-setup.service
 StandardInput=tty
 
 [Install]

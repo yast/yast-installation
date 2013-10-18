@@ -488,10 +488,6 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 		    <name>hwinfo</name>
 		    <presentation_order>80</presentation_order>
 		</proposal_module>
-		<proposal_module>
-		    <name>mouse</name>
-		    <presentation_order>90</presentation_order>
-		</proposal_module>
 		<!-- software proposal should be computed almost at the end -->
 		<proposal_module>
 		    <name>software</name>
@@ -528,7 +524,6 @@ is the most appropriate desktop for you.</label></desktop_dialog>
                     <proposal_modules config:type="list">
                         <proposal_module>hwinfo</proposal_module>
                         <proposal_module>keyboard</proposal_module>
-                        <proposal_module>mouse</proposal_module>
                         <proposal_module>partitions</proposal_module>
                         <proposal_module>software</proposal_module>
                         <proposal_module>bootloader</proposal_module>
