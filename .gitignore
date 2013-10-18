@@ -30,3 +30,7 @@ tmp.*
 *.ybc
 POTFILES
 doc
+home*:*
+*.sw?
+*.exp
+*.sh
