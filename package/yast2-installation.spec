@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.0
+Version:        3.1.1
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -34,6 +34,7 @@ Source2:	YaST2-Firstboot.service
 
 BuildRequires:  docbook-xsl-stylesheets libxslt update-desktop-files yast2-core-devel
 BuildRequires:  yast2-devtools >= 3.0.6
+BuildRequires:  rubygem-rspec
 # trang to convert rnc to rng
 BuildRequires:  trang
 

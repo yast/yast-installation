@@ -233,7 +233,7 @@ module Yast
       # FATE #302980: Simplified user config during installation
       @actions_functions = Builtins.add(
         @actions_functions,
-        fun_ref(method(:FilesFromOldedSystems), "boolean ()")
+        fun_ref(method(:FilesFromOlderSystems), "boolean ()")
       )
       @visible_icons = Builtins.add(
         @visible_icons,
@@ -513,7 +513,7 @@ module Yast
       ret
     end
 
-    def FilesFromOldedSystems
+    def FilesFromOlderSystems
       # FATE #300421: Import ssh keys from previous installations
       # FATE #120103: Import Users From Existing Partition
       # FATE #302980: Simplified user config during installation
