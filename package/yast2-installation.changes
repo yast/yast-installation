@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Oct 18 11:39:17 UTC 2013 - jsrain@suse.cz
+
+- show release notes button (fate#314695)
+
+-------------------------------------------------------------------
 Fri Sep 27 14:17:54 CEST 2013 - jsuchome@suse.cz
 
 - yast2-mouse was dropped, do not call its components (bnc#841960)
