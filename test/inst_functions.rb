@@ -45,7 +45,7 @@ describe "when getting list of ignored features from Linuxrc" do
   end
 
   it "returns list of features set on commandline by several entries, each feature in separate entry" do
-    linuxrc_commandline = "trash=install ignore_feature=feature1 ignored_features=feature2 ignore_features=feature3"
+    linuxrc_commandline = "trash=install ignore_feature=f.e.a.ture1 ig.n.o.red_features=feature2 ignore_features=feature3"
     ignored_features    = ["feature1", "feature2", "feature3"].sort
 
     Yast::Linuxrc.stub(:InstallInf).and_return(linuxrc_commandline)
@@ -67,9 +67,31 @@ describe "when getting list of ignored features from Linuxrc" do
     Yast::Linuxrc.stub(:InstallInf).and_return(linuxrc_commandline)
     expect(Yast::InstFunctions.ignored_features.sort).to eq ignored_features
   end
+
+  # PTOptions makes a command hidden from 'Cmdline' and creates
+  # a new install.inf entry using the exact name as it appears in PTOptions
+  # @see http://en.opensuse.org/SDB:Linuxrc#p_ptoptions
+  it "returns features set on commandline together with ptoptions" do
+    install_inf = {
+      'ignored_features' => 'f1,f2,f3',
+      'IgnoReDfEAtuRes' => 'f2,f4',
+      'i.g.n.o.r.e.d.features' => 'f1,f5',
+      'IGNORE-FEA-T-U-RE' => 'f6,f7,f7,f7',
+      'another_feature' => 'another_value',
+      'Cmdline' => 'splash=silent vga=0x314',
+      'Keyboard' => '1',
+    }
+    Yast::Linuxrc.stub(:keys).and_return(install_inf.keys)
+    install_inf.keys.each do |key|
+      Yast::Linuxrc.stub(:InstallInf).with(key).and_return(install_inf[key])
+    end
+
+    expect(Yast::Linuxrc.keys.sort).to eq(install_inf.keys.sort)
+    expect(Yast::InstFunctions.ignored_features.sort).to eq(['f1','f2','f3','f4','f5','f6','f7'])
+  end
 end
 
-describe "when checking whether feature is ignored" do
+describe "#feature_ignored?" do
   before(:each) do
     Yast::InstFunctions.reset_ignored_features
   end
@@ -114,5 +136,47 @@ describe "when checking whether feature is ignored" do
 
     Yast::Linuxrc.stub(:InstallInf).and_return(linuxrc_commandline)
     expect(Yast::InstFunctions.feature_ignored?(nil)).to be_false
+  end
+
+  it "should be true if feature is mentioned as a separate install.inf entry or in Cmdline" do
+    install_inf = {
+      'ignored_features' => 'f1,f2,f3',
+      'IgnoReDfEAtuRes' => 'f2,f4',
+      'i.g.n.o.r.e.d.features' => 'f1,f5',
+      'IGNORED-FEA-T-U-RES' => 'f6,f7,f7,f7',
+      'another_feature' => 'another_value',
+      'Cmdline' => 'splash=silent vga=0x314 ignored_feature=f8',
+      'Keyboard' => '1',
+    }
+    Yast::Linuxrc.stub(:keys).and_return(install_inf.keys)
+    install_inf.keys.each do |key|
+      Yast::Linuxrc.stub(:InstallInf).with(key).and_return(install_inf[key])
+    end
+
+    expect(Yast::Linuxrc.keys.sort).to eq(install_inf.keys.sort)
+    expect(Yast::InstFunctions.feature_ignored?('f1')).to be_true
+    expect(Yast::InstFunctions.feature_ignored?('f4')).to be_true
+    expect(Yast::InstFunctions.feature_ignored?('f5')).to be_true
+    expect(Yast::InstFunctions.feature_ignored?('f7')).to be_true
+    expect(Yast::InstFunctions.feature_ignored?('f8')).to be_true
+  end
+
+  it "should be false if feature is not mentioned as a separate install.inf entry or in Cmdline" do
+    install_inf = {
+      'ignored_features' => 'f1,f2,f3',
+      'IgnoReDfEAtuRes' => 'f2,f4',
+      'i.g.n.o.r.e.d.features' => 'f1,f5',
+      'IGNORE-FEA-T-U-RE' => 'f6,f7,f7,f7',
+      'another_feature' => 'another_value',
+      'Cmdline' => 'splash=silent vga=0x314 ignored_feature=f8',
+      'Keyboard' => '1',
+    }
+    Yast::Linuxrc.stub(:keys).and_return(install_inf.keys)
+    install_inf.keys.each do |key|
+      Yast::Linuxrc.stub(:InstallInf).with(key).and_return(install_inf[key])
+    end
+
+    expect(Yast::Linuxrc.keys.sort).to eq(install_inf.keys.sort)
+    expect(Yast::InstFunctions.feature_ignored?('f9')).to be_false
   end
 end

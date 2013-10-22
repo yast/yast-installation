@@ -38,24 +38,40 @@ module Yast
 
     # Returns list of ignored features defined via Linuxrc commandline
     #
-    # - Allowed format is ignore[d][_]feature[s]=$feature1[,$feature2,[...]]
+    # - Allowed format is ign.o.re[d][_]feature[s]=$feature1[,$feature2,[...]]
     # - Multiple ignored_features are allowed on one command line
-    # - Command and features are case-insensitive and all dashes
-    #   and underscores are ignored
+    # - Command and features are case-insensitive and all dashes,
+    #   underscores and dots are ignored, see #polish
+    # - If entries are also mentioned in PTOptions, they do not appear in
+    #   'Cmdline' but as separate entries,
+    #   see http://en.opensuse.org/SDB:Linuxrc#p_ptoptions
     #
     # @return [Array] ignored features
     def ignored_features
       return @ignored_features if @ignored_features
 
-      cmdline = Linuxrc.InstallInf("Cmdline").downcase.tr("-_", "").split
-      ignored_features = cmdline.select do |cmd|
+      # Features defined as individual entries in install.inf
+      features_keys = Linuxrc.keys.select do |key|
+        polish!(key) =~ /^ignored?features?$/
+      end
+
+      unparsed_features = features_keys.map{
+        |key|
+        polish!(Linuxrc.InstallInf(key))
+      }
+
+      # Features mentioned in 'Cmdline' entry
+      cmdline = polish!(Linuxrc.InstallInf("Cmdline")).split
+      cmdline_features = cmdline.select do |cmd|
         cmd =~ /^ignored?features?=/i
       end
 
-      ignored_features.collect! do |feature|
+      cmdline_features = cmdline_features.collect! do |feature|
         feature.gsub(/^ignored?features?=(.*)/i, '\1')
       end
 
+      # Both are supported together
+      ignored_features = unparsed_features + cmdline_features
       @ignored_features = ignored_features.map{ |f| f.split(',') }.flatten.uniq
     end
 
@@ -75,12 +91,20 @@ module Yast
         return false
       end
 
-      feature = feature_name.downcase.tr("-_", "")
+      feature = polish!(feature_name)
       ignored_features.include?(feature)
     end
 
     publish :function => :ignored_features, :type => "list ()"
     publish :function => :feature_ignored?, :type => "boolean (string)"
+
+  private
+
+    # Removes unneeded characters from the given string
+    # for easier handling
+    def polish!(feature)
+      feature.downcase.tr("-_\.", "")
+    end
   end
 
   InstFunctions = InstFunctionsClass.new
