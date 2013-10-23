@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Oct 23 07:27:28 UTC 2013 - lslezak@suse.cz
+
+- removed autorepeat workaround for bnc#346186, not needed anymore,
+  xset might not be installed (bnc#846768)
+
+-------------------------------------------------------------------
 Tue Oct 15 14:15:31 CEST 2013 - locilka@suse.com
 
 - Added support for ignore[d][_]feature[s] (FATE#314982) allowing
