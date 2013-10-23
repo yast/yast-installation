@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Oct 23 07:27:28 UTC 2013 - lslezak@suse.cz
+
+- removed autorepeat workaround for bnc#346186, not needed anymore,
+  xset might not be installed (bnc#846768)
+- 3.0.8
+
+-------------------------------------------------------------------
 Fri Sep 27 13:52:26 CEST 2013 - jsuchome@suse.cz
 
 - yast2-mouse was dropped, do not call its components (bnc#841960)
