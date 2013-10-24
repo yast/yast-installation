@@ -22,7 +22,6 @@ textdomain="control"
         <selection_type config:type="symbol">auto</selection_type>
     </software>
     <partitioning>
-        <evms_config config:type="boolean">false</evms_config>
     </partitioning>
 
     <proposals config:type="list">
