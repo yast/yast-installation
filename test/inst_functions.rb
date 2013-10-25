@@ -86,7 +86,6 @@ describe "when getting list of ignored features from Linuxrc" do
       Yast::Linuxrc.stub(:InstallInf).with(key).and_return(install_inf[key])
     end
 
-    expect(Yast::Linuxrc.keys.sort).to eq(install_inf.keys.sort)
     expect(Yast::InstFunctions.ignored_features.sort).to eq(['f1','f2','f3','f4','f5','f6','f7'])
   end
 end
