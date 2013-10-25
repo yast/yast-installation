@@ -153,7 +153,7 @@ describe "#feature_ignored?" do
     end
 
     ['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8'].each do |key|
-      expect(Yast::InstFunctions.feature_ignored?(key)).to be_true
+      expect(Yast::InstFunctions.feature_ignored?(key)).to be_true, "Key #{key} is not ignored"
     end
   end
 
