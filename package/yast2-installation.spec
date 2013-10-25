@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.1
+Version:        3.1.2
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -41,8 +41,8 @@ BuildRequires:  trang
 # xmllint
 BuildRequires:  libxml2-tools
 
-# /etc/YaST2/XVersion
-BuildRequires: yast2 >= 2.16.52
+# Linuxrc.keys
+BuildRequires: yast2 >= 3.1.1
 
 # AutoinstConfig::getProposalList
 Requires:       autoyast2-installation >= 2.17.1
