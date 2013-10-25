@@ -3,6 +3,7 @@
 module_DATA = \
   modules/ImageInstallation.rb \
   modules/InstData.rb \
+  modules/InstFunctions.rb \
   modules/Vendor.rb \
   modules/SystemFilesCopy.rb
 
