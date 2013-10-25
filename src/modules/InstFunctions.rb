@@ -38,10 +38,11 @@ module Yast
 
     # Returns list of ignored features defined via Linuxrc commandline
     #
-    # - Allowed format is ign.o.re[d][_]feature[s]=$feature1[,$feature2,[...]]
+    # - Allowed format is ignore[d][_]feature[s]=$feature1[,$feature2,[...]]
     # - Multiple ignored_features are allowed on one command line
     # - Command and features are case-insensitive and all dashes,
-    #   underscores and dots are ignored, see #polish
+    #   underscores and dots are ignored to be compatible with Linuxrc,
+    #   see #polish and http://en.opensuse.org/SDB:Linuxrc#Passing_parameters
     # - If entries are also mentioned in PTOptions, they do not appear in
     #   'Cmdline' but as separate entries,
     #   see http://en.opensuse.org/SDB:Linuxrc#p_ptoptions
@@ -52,21 +53,20 @@ module Yast
 
       # Features defined as individual entries in install.inf
       features_keys = Linuxrc.keys.select do |key|
-        polish!(key) =~ /^ignored?features?$/
+        polish(key) =~ /^ignored?features?$/
       end
 
-      unparsed_features = features_keys.map{
-        |key|
-        polish!(Linuxrc.InstallInf(key))
-      }
+      unparsed_features = features_keys.map do |key|
+        polish(Linuxrc.InstallInf(key))
+      end
 
       # Features mentioned in 'Cmdline' entry
-      cmdline = polish!(Linuxrc.InstallInf("Cmdline")).split
+      cmdline = polish(Linuxrc.InstallInf("Cmdline")).split
       cmdline_features = cmdline.select do |cmd|
         cmd =~ /^ignored?features?=/i
       end
 
-      cmdline_features = cmdline_features.collect! do |feature|
+      cmdline_features.collect! do |feature|
         feature.gsub(/^ignored?features?=(.*)/i, '\1')
       end
 
@@ -91,7 +91,7 @@ module Yast
         return false
       end
 
-      feature = polish!(feature_name)
+      feature = polish(feature_name)
       ignored_features.include?(feature)
     end
 
@@ -102,7 +102,14 @@ module Yast
 
     # Removes unneeded characters from the given string
     # for easier handling
-    def polish!(feature)
+    #
+    # These unneeded characters are entered by user on Linuxrc commandline
+    # we remove them everywhere, and down-case all strings so it's very easy
+    # to match given features with user-entered strings
+    #
+    # @param [String] feature
+    # @return [String] polished feature
+    def polish(feature)
       feature.downcase.tr("-_\.", "")
     end
   end
