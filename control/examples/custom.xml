@@ -25,7 +25,6 @@ textdomain="control"
         <base_selection>Minimal+X11</base_selection>
     </software>
     <partitioning>
-        <evms_config config:type="boolean">false</evms_config>
         <partitions config:type="list">
             <partition>
                 <disk config:type="integer">2</disk>
