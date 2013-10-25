@@ -153,11 +153,6 @@ describe "#feature_ignored?" do
       Yast::Linuxrc.stub(:InstallInf).with(key).and_return(install_inf[key])
     end
 
-    expect(Yast::InstFunctions.feature_ignored?('f1')).to be_true
-    expect(Yast::InstFunctions.feature_ignored?('f4')).to be_true
-    expect(Yast::InstFunctions.feature_ignored?('f5')).to be_true
-    expect(Yast::InstFunctions.feature_ignored?('f7')).to be_true
-    expect(Yast::InstFunctions.feature_ignored?('f8')).to be_true
     ['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8'].each do |key|
       expect(Yast::InstFunctions.feature_ignored?(key)).to be_true
     end
