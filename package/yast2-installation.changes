@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Tue Oct 29 13:17:59 UTC 2013 - lslezak@suse.cz
+
+- install only "perl-YAML-LibYAML" and "perl-bootloader" packages
+  to the target system
+- updated scr_switch_debugger.rb client
+
+-------------------------------------------------------------------
+Fri Oct 26 11:39:17 UTC 2013 - jsrain@suse.cz
+
+- show release notes button (fate#314695)
+
+-------------------------------------------------------------------
 Fri Oct 25 10:06:07 CEST 2013 - aschnell@suse.de
 
 - removed long obsolete EVMS entries from control file (see

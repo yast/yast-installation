@@ -5,7 +5,7 @@ Products:
     products. Those special package are used when creating the CDs and they
     install the control file into the first CD of the product.
 
-    Any modification to the control file in the CVS tree of YaST wont
+    Any modification to the control file in the YaST Git tree will not
     appear in the respective products. Such changes have to be done in the
       following packages instead:
 
