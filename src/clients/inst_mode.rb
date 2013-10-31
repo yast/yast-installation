@@ -510,7 +510,7 @@ module Yast
         PackagesProposal.AddResolvables(
           "YaST-Installation",
           :package,
-          ["perl-YAML-LibYAML", "perl-bootloader"]
+          ["perl-Bootloader-YAML"]
         )
       end
 
