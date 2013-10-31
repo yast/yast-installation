@@ -29,7 +29,8 @@ tmp.*
 *.log
 *.ybc
 POTFILES
-doc
+/doc/autodocs
+!/doc/autodocs/Makefile.am
 home*:*
 *.sw?
 *.exp
