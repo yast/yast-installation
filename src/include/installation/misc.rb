@@ -344,33 +344,7 @@ module Yast
       nil
     end
 
-    def AdjustAutomaticConfiguration
-      # AC is supported in Mode::installation only
-      if Mode.installation && ProductControl.GetUseAutomaticConfiguration
-        Builtins.y2milestone("Using AC...")
-
-        ProductControl.DisableAllModulesAndProposals("installation", "continue")
-        ProductControl.EnableModule("automatic_configuration")
-
-        # Enable Modules that are required to run even if using AC, bnc #428190
-        EnableRequiredModules() 
-
-        # Otherwise it is always disabled
-      else
-        Builtins.y2milestone("Not using AC...")
-
-        ProductControl.UnDisableAllModulesAndProposals(
-          "installation",
-          "continue"
-        )
-        ProductControl.DisableModule("automatic_configuration")
-      end
-
-      nil
-    end
-
     def AdjustStepsAccordingToInstallationSettings
-      AdjustAutomaticConfiguration()
 
       if Installation.add_on_selected == true ||
           Linuxrc.InstallInf("addon") != nil
