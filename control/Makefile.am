@@ -9,7 +9,6 @@ SUBDIRS = . docs tests examples
 controldir = $(yast2dir)/control
 
 control_DATA = \
-	control.xml \
 	control.rnc \
 	control.rng
 
@@ -19,7 +18,7 @@ xml_files = \
 	control.openSUSE.xml \
 	add-on-template_installation.xml
 
-# Note: The control.glade -> control.xml symlink is required to make xgettext
+# Note: The control.*.glade -> control.*.xml symlink is required to make xgettext
 # auto-detect the type of this file (glade) so it will extract all
 # <label>..</label> tags. The symlink is created in the toplevel
 # configure.in.in file upon "autoconf" (via "make -f Makefile.cvs").
