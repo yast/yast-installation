@@ -72,7 +72,7 @@ module Yast
       elsif @func == "Write"
         ModulesConf.Save(true)
 
-        # on SGI Altix add fetchop and mmtimer to /etc/modules.d/
+        # on SGI Altix add fetchop and mmtimer to /etc/modules-load.d/*.conf
         if Ops.greater_than(SCR.Read(path(".target.size"), "/proc/sgi_sn"), 0)
           Builtins.y2milestone("found SGI Altix, adding fetchop and mmtimer")
           Kernel.AddModuleToLoad("fetchop")
