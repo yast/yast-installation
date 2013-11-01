@@ -72,7 +72,7 @@ module Yast
       elsif @func == "Write"
         ModulesConf.Save(true)
 
-        # on SGI Altix add fetchop and mmtimer to MODULES_LOADED_ON_BOOT
+        # on SGI Altix add fetchop and mmtimer to /etc/modules.d/
         if Ops.greater_than(SCR.Read(path(".target.size"), "/proc/sgi_sn"), 0)
           Builtins.y2milestone("found SGI Altix, adding fetchop and mmtimer")
           Kernel.AddModuleToLoad("fetchop")
@@ -134,29 +134,6 @@ module Yast
       end
 
       false
-    end
-
-    def adjust_kernel_modules
-      all_modules = Convert.to_string(
-        SCR.Read(path(".sysconfig.kernel.MODULES_LOADED_ON_BOOT"))
-      )
-      all_modules = "" if all_modules == nil
-      modules = Builtins.splitstring(all_modules, " \t\n")
-      Builtins.y2milestone("Modules: %1", modules)
-
-      # already there
-      return true if Builtins.contains(modules, @module_to_load_dell)
-
-      Builtins.y2milestone(
-        "Adding '%1' module to sysconfig/kernel:MODULES_LOADED_ON_BOOT",
-        @module_to_load_dell
-      )
-      modules = Builtins.add(modules, @module_to_load_dell)
-      SCR.Write(
-        path(".sysconfig.kernel.MODULES_LOADED_ON_BOOT"),
-        Builtins.mergestring(modules, " ")
-      )
-      SCR.Write(path(".sysconfig.kernel"), nil)
     end
   end
 end
