@@ -344,10 +344,10 @@ module Yast
     # Function creates term containing radio button and icon
     # based on current display (graphical/textual)
     #
-    # @param string radio button label
-    # @param symbol radio button id
-    # @param string path to an image
-    # @boolean whether selected (more than one buttons selected don't make sense!)
+    # @param button_label [String] radio button label
+    # @param button_id [Symbol] radio button id
+    # @param icon_file [String] path to an image
+    # @param selected [true, false] whether selected (more than one buttons selected don't make sense!)
     def CreateRadioButtonTerm(button_label, button_id, icon_file, selected)
       HBox(
         @in_textmode ?
