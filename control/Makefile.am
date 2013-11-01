@@ -4,7 +4,7 @@
 # process the current directory first
 # (to ensure control.rng file is generated before it is
 # used in the examples subdirectory)
-SUBDIRS = . docs tests examples
+SUBDIRS = . tests examples
 
 controldir = $(yast2dir)/control
 
