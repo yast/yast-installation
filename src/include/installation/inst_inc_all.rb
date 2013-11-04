@@ -69,7 +69,7 @@ module Yast
       )
       Wizard.SetTitleIcon("yast-inst-mode")
 
-      # gh#yast/yast-installation#86 No control file found
+      # gh#86 No control file found
       if ProductControl.current_control_file.nil?
         InstError.ShowErrorPopupWithLogs(
           # TRANSLATORS: Error message
