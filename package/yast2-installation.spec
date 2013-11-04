@@ -177,7 +177,6 @@ install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 %files
 %defattr(-,root,root)
 %dir /usr/share/YaST2/control
-/usr/share/YaST2/control/*.xml
 # Fixme: move to another package (to make build of other packages faster)
 /usr/share/YaST2/control/*.rng
 /usr/share/YaST2/control/*.rnc
