@@ -107,21 +107,23 @@ file into the installation system and makes the file available to YaST.
 YaST then starts and looks for the control file in 3 location before it
 starts with the installation workflow:
 
--   `/control.xml`
+0.  custom control file - runtime specified control file. Used only in special
+    cases like wagon upgrade work-flow.
+
+1.  `/y2update/control.xml`
+
+    File in special directory to update installer on-fly. Needed only for
+    work-arounds and customer specific solutions.
+
+2.  `/control.xml`
 
     Usually the file is in top directory after it has been copied by
     linuxrc and during initial installation phase.
 
--   `/var/lib/YaST2/control.xml`
+3.  `/etc/YaST2/control.xml`
 
-    After reading the file, and before second installation phase, the
-    control file is copies from the top directory to
-    `/var/lib/YaST2/control.xml`
-
--   `/usr/share/YaST2/control/control.xml`
-
-    This is the location where *yast2-installation* installs the file in
-    all products. The file is the same on all products.
+    This is the location where release package installs the file of
+    installed product.
 
 One of the main reasons for using the control is to provide non YaST
 developers the ability to change the installation behavior and customize
