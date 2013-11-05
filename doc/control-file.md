@@ -262,18 +262,18 @@ possible using the control file.
 
 
 ```
-        <proposal>
-            <type>network</type>
-            <stage>continue,normal</stage>
-            <proposal_modules config:type="list">
-                <proposal_module>lan</proposal_module>
-                <proposal_module>dsl</proposal_module>
-                <proposal_module>isdn</proposal_module>
-                <proposal_module>modem</proposal_module>
-                <proposal_module>proxy</proposal_module>
-                <proposal_module>remote</proposal_module>
-            </proposal_modules>
-        </proposal>
+    <proposal>
+        <type>network</type>
+        <stage>continue,normal</stage>
+        <proposal_modules config:type="list">
+            <proposal_module>lan</proposal_module>
+            <proposal_module>dsl</proposal_module>
+            <proposal_module>isdn</proposal_module>
+            <proposal_module>modem</proposal_module>
+            <proposal_module>proxy</proposal_module>
+            <proposal_module>remote</proposal_module>
+        </proposal_modules>
+    </proposal>
 ```
 
 The proposal in the above listing is displayed in the so called
@@ -292,11 +292,11 @@ proposals. The following examples shows how the network proposal is
 called as a workflow step:
 
 ```
-<module>
-    <label>Network</label>
-    <name>proposal</name>
-    <arguments>true,true,`net</arguments>
-</module>
+    <module>
+        <label>Network</label>
+        <name>proposal</name>
+        <arguments>true,true,`net</arguments>
+    </module>
 ```
 
 ### Installation and Product Variables
@@ -514,49 +514,49 @@ well configurable.
 This is an example of AC setup:
 
 ```
-<productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
-    xmlns:config="http://www.suse.com/1.0/configns">
-    <globals>
+    <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
+        xmlns:config="http://www.suse.com/1.0/configns">
+        <globals>
 
-        <!-- List of steps in AC -->
-        <automatic_configuration config:type="list">
+            <!-- List of steps in AC -->
+            <automatic_configuration config:type="list">
 
-            <!-- One step definition -->
-            <ac_step>
-                <text_id>ac_1</text_id>
-                <type>scripts</type>
-                <ac_items config:type="list">
-                    <ac_item>initialization</ac_item>
-                    <ac_item>hostname</ac_item>
-                    <ac_item>netprobe</ac_item>
-                    <ac_item>rpmcopy_secondstage</ac_item>
-                </ac_items>
-                <icon>yast-lan</icon>
-            </ac_step>
+                <!-- One step definition -->
+                <ac_step>
+                    <text_id>ac_1</text_id>
+                    <type>scripts</type>
+                    <ac_items config:type="list">
+                        <ac_item>initialization</ac_item>
+                        <ac_item>hostname</ac_item>
+                        <ac_item>netprobe</ac_item>
+                        <ac_item>rpmcopy_secondstage</ac_item>
+                    </ac_items>
+                    <icon>yast-lan</icon>
+                </ac_step>
 
-            <ac_step>
-                <text_id>ac_3</text_id>
-                <type>proposals</type>
-                <ac_items config:type="list">
-                    <ac_item>x11</ac_item>
-                    <ac_item>printer</ac_item>
-                    <ac_item>sound</ac_item>
-                    <ac_item>tv</ac_item>
-                </ac_items>
-                <icon>yast-hwinfo</icon>
-            </ac_step>
+                <ac_step>
+                    <text_id>ac_3</text_id>
+                    <type>proposals</type>
+                    <ac_items config:type="list">
+                        <ac_item>x11</ac_item>
+                        <ac_item>printer</ac_item>
+                        <ac_item>sound</ac_item>
+                        <ac_item>tv</ac_item>
+                    </ac_items>
+                    <icon>yast-hwinfo</icon>
+                </ac_step>
 
-        </automatic_configuration>
-    </globals>
+            </automatic_configuration>
+        </globals>
 
-    <texts>
+        <texts>
 
-        <!-- Label used during AC, uses "text_id" from "ac_step" -->
-        <ac_1><label>Initialization...</label><ac_1>
-        <ac_3><label>Configuring hardware...</label><ac_3>
+            <!-- Label used during AC, uses "text_id" from "ac_step" -->
+            <ac_1><label>Initialization...</label><ac_1>
+            <ac_3><label>Configuring hardware...</label><ac_3>
 
-    </texts>
-</productDefines>
+        </texts>
+    </productDefines>
 ```
 
 AC setup *automatic\_configuration* consists of list of several
@@ -614,21 +614,21 @@ performed. The following options are available:
     (SuSE-release).
 
 ```
-            <!-- Delete old packages of all products but OES, SLES 9, SLE 10 and SLD 10 -->
-            <software>
-            <delete_old_packages config:type="boolean">true</delete_old_packages>
-            <delete_old_packages_reverse_list config:type="list">
-                <regexp_item>^UnitedLinux .*$</regexp_item>
-                <regexp_item>^Novell Open Enterprise Server Linux.*</regexp_item>
-                <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 9$</regexp_item>
-                <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 9 .*$</regexp_item>
-                <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10.*$</regexp_item>
-                <regexp_item>^SUSE (LINUX|Linux) Enterprise Desktop 10.*$</regexp_item>
-                <!-- Don't forget to define product itself (Service Pack) -->
-                <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10 SP.*$</regexp_item>
-                <regexp_item>^SUSE (LINUX|Linux) Enterprise Desktop 10 SP.*$</regexp_item>
-            </delete_old_packages_reverse_list>
-            </software>
+    <!-- Delete old packages of all products but OES, SLES 9, SLE 10 and SLD 10 -->
+    <software>
+    <delete_old_packages config:type="boolean">true</delete_old_packages>
+    <delete_old_packages_reverse_list config:type="list">
+        <regexp_item>^UnitedLinux .*$</regexp_item>
+        <regexp_item>^Novell Open Enterprise Server Linux.*</regexp_item>
+        <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 9$</regexp_item>
+        <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 9 .*$</regexp_item>
+        <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10.*$</regexp_item>
+        <regexp_item>^SUSE (LINUX|Linux) Enterprise Desktop 10.*$</regexp_item>
+        <!-- Don't forget to define product itself (Service Pack) -->
+        <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10 SP.*$</regexp_item>
+        <regexp_item>^SUSE (LINUX|Linux) Enterprise Desktop 10 SP.*$</regexp_item>
+    </delete_old_packages_reverse_list>
+    </software>
 ```
 
 
@@ -644,13 +644,13 @@ performed. The following options are available:
     name (SuSE-release).
 
 ```
-            <!-- For SLES10, packages are not downgraded -->
-            <software>
-            <silently_downgrade_packages config:type="boolean">true</silently_downgrade_packages>
-            <silently_downgrade_packages_reverse_list config:type="list">
-                <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10.*$</regexp_item>
-            </silently_downgrade_packages_reverse_list>
-            </software>
+    <!-- For SLES10, packages are not downgraded -->
+    <software>
+    <silently_downgrade_packages config:type="boolean">true</silently_downgrade_packages>
+    <silently_downgrade_packages_reverse_list config:type="list">
+        <regexp_item>^SUSE (LINUX|Linux) Enterprise Server 10.*$</regexp_item>
+    </silently_downgrade_packages_reverse_list>
+    </software>
 ```
 
 -   *only\_update\_selected*
@@ -665,17 +665,17 @@ performed. The following options are available:
     regular expressions matching installed product name (SuSE-release).
 
 ```
-            <!--
-            Only update packages but install new packages
-            when upgrading any SUSE Linux or openSUSE
-            -->
-            <software>
-            <only_update_selected config:type="boolean">true</only_update_selected>
-            <only_update_selected_reverse_list config:type="list">
-                <regexp_item>^SUSE Linux [0-9].*</regexp_item>
-                <regexp_item>^openSUSE [0-9].*</regexp_item>
-            </only_update_selected_reverse_list>
-            </software>
+    <!--
+    Only update packages but install new packages
+    when upgrading any SUSE Linux or openSUSE
+    -->
+    <software>
+        <only_update_selected config:type="boolean">true</only_update_selected>
+        <only_update_selected_reverse_list config:type="list">
+            <regexp_item>^SUSE Linux [0-9].*</regexp_item>
+            <regexp_item>^openSUSE [0-9].*</regexp_item>
+        </only_update_selected_reverse_list>
+    </software>
 ```
 
 The other option defines how product upgrading in general is defined.
@@ -685,14 +685,14 @@ The other option defines how product upgrading in general is defined.
     List of known products supported for upgrade (SuSE-release). Old
     releases or other distributions will report warning.
 ```
-            <software>
-            <products_supported_for_upgrade config:type="list">
-                <regexp_item>^Novell LINUX Desktop 9.*</regexp_item>
-                <regexp_item>^SUSE LINUX Enterprise Server 10.*</regexp_item>
-                <regexp_item>^SUSE LINUX Enterprise Desktop 10.*</regexp_item>
-                <regexp_item>^openSUSE .*</regexp_item>
-            </products_supported_for_upgrade>
-            </software>
+    <software>
+        <products_supported_for_upgrade config:type="list">
+            <regexp_item>^Novell LINUX Desktop 9.*</regexp_item>
+            <regexp_item>^SUSE LINUX Enterprise Server 10.*</regexp_item>
+            <regexp_item>^SUSE LINUX Enterprise Desktop 10.*</regexp_item>
+            <regexp_item>^openSUSE .*</regexp_item>
+        </products_supported_for_upgrade>
+    </software>
 ```
 
 All products (regular expressions) are matching the string which can be
@@ -733,56 +733,56 @@ during installation but also the
 Example of supported desktops:
 
 ```
-<productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
-    xmlns:config="http://www.suse.com/1.0/configns">
-    <software>
+    <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
+        xmlns:config="http://www.suse.com/1.0/configns">
+        <software>
 
-        <supported_desktops config:type="list">
+            <supported_desktops config:type="list">
 
-            <one_supported_desktop>
-                <name>gnome</name>
-                <desktop>gnome</desktop>
-                <label_id>desktop_gnome</label_id>
-                <logon>gdm</logon>
-                <cursor>DMZ</cursor>
-                <packages>gdm</packages>
-                <order config:type="integer">1</order>
-                <patterns>gnome x11 base</patterns>
-                <icon>pattern-gnome</icon>
-                <description_id>description_gnome</description_id>
-            </one_supported_desktop>
+                <one_supported_desktop>
+                    <name>gnome</name>
+                    <desktop>gnome</desktop>
+                    <label_id>desktop_gnome</label_id>
+                    <logon>gdm</logon>
+                    <cursor>DMZ</cursor>
+                    <packages>gdm</packages>
+                    <order config:type="integer">1</order>
+                    <patterns>gnome x11 base</patterns>
+                    <icon>pattern-gnome</icon>
+                    <description_id>description_gnome</description_id>
+                </one_supported_desktop>
 
-            <one_supported_desktop>
-                <name>kde</name>
-                <desktop>kde4</desktop>
-                <!-- Generic ID used in texts below -->
-                <label_id>desktop_kde</label_id>
-                <logon>kdm4</logon>
-                <cursor>DMZ</cursor>
-                <packages>kde4-kdm</packages>
-                <order config:type="integer">1</order>
-                <patterns>kde x11 base</patterns>
-                <icon>pattern-kde4</icon>
-                <!-- Generic ID used in texts below -->
-                <description_id>description_kde</description_id>
-            </one_supported_desktop>
+                <one_supported_desktop>
+                    <name>kde</name>
+                    <desktop>kde4</desktop>
+                    <!-- Generic ID used in texts below -->
+                    <label_id>desktop_kde</label_id>
+                    <logon>kdm4</logon>
+                    <cursor>DMZ</cursor>
+                    <packages>kde4-kdm</packages>
+                    <order config:type="integer">1</order>
+                    <patterns>kde x11 base</patterns>
+                    <icon>pattern-kde4</icon>
+                    <!-- Generic ID used in texts below -->
+                    <description_id>description_kde</description_id>
+                </one_supported_desktop>
 
-        </supported_desktops>
+            </supported_desktops>
 
-    </software>
+        </software>
 
-    <texts>
+        <texts>
 
-        <desktop_gnome><label>GNOME</label></desktop_gnome>
-        <!-- See 'desktop_kde' in 'supported_desktops' -->
-        <desktop_kde><label>KDE 4.1</label></desktop_kde>
+            <desktop_gnome><label>GNOME</label></desktop_gnome>
+            <!-- See 'desktop_kde' in 'supported_desktops' -->
+            <desktop_kde><label>KDE 4.1</label></desktop_kde>
 
-        <description_gnome><label>Some description</label></description_gnome>
-        <!-- See 'description_kde' in 'supported_desktops' -->
-        <description_kde><label>Some description</label></description_kde>
+            <description_gnome><label>Some description</label></description_gnome>
+            <!-- See 'description_kde' in 'supported_desktops' -->
+            <description_kde><label>Some description</label></description_kde>
 
-    </texts>
-</productDefines>
+        </texts>
+    </productDefines>
 ```
 
 Section *supported\_desktops* contains list of one or more
@@ -841,57 +841,57 @@ of them can be selected as the selected one.
 Example of configured scenarios:
 
 ```
-<productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
-    xmlns:config="http://www.suse.com/1.0/configns">
-    <software>
+    <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
+        xmlns:config="http://www.suse.com/1.0/configns">
+        <software>
 
-        <!-- list of supported scenarios -->
-        <system_scenarios config:type="list">
+            <!-- list of supported scenarios -->
+            <system_scenarios config:type="list">
 
-            <!-- one scenario -->
-            <system_scenario>
-                <!-- 'id' matches the text 'scenario_game_server' -->
-                <id>scenario_game_server</id>
-                <!-- space-separated list of patterns -->
-                <patterns>game_server-pattern high-load-server</patterns>
-                <!--  plain icon filename (from 32x32 directory) without suffix -->
-                <icon>yast-system</icon>
-            </system_scenario>
+                <!-- one scenario -->
+                <system_scenario>
+                    <!-- 'id' matches the text 'scenario_game_server' -->
+                    <id>scenario_game_server</id>
+                    <!-- space-separated list of patterns -->
+                    <patterns>game_server-pattern high-load-server</patterns>
+                    <!--  plain icon filename (from 32x32 directory) without suffix -->
+                    <icon>yast-system</icon>
+                </system_scenario>
 
-            <system_scenario>
-                <id>scenario_web_server</id>
-                <patterns>web_server-pattern</patterns>
-                <icon>yast-http-server</icon>
-            </system_scenario>
+                <system_scenario>
+                    <id>scenario_web_server</id>
+                    <patterns>web_server-pattern</patterns>
+                    <icon>yast-http-server</icon>
+                </system_scenario>
 
-            <system_scenario>
-                <id>scenario_nfs_server</id>
-                <patterns>nfs_server-pattern</patterns>
-                <icon>yast-nfs-server</icon>
-            </system_scenario>
+                <system_scenario>
+                    <id>scenario_nfs_server</id>
+                    <patterns>nfs_server-pattern</patterns>
+                    <icon>yast-nfs-server</icon>
+                </system_scenario>
 
-        </system_scenarios>
+            </system_scenarios>
 
-        <!-- this scenario (id) is selected by default -->
-        <default_system_scenario>scenario_nfs_server</default_system_scenario>
+            <!-- this scenario (id) is selected by default -->
+            <default_system_scenario>scenario_nfs_server</default_system_scenario>
 
-    </software>
+        </software>
 
-    <texts>
+        <texts>
 
-        <!-- dialog caption -->
-        <scenarios_caption><label>Server Base Scenario</label></scenarios_caption>
-        <!-- informative text between caption and listed scenarios -->
-        <scenarios_text><label>SUSE Linux Enterprise Server offers several base scenarios.
-Choose the one that matches your server the best.</label></scenarios_text>
+            <!-- dialog caption -->
+            <scenarios_caption><label>Server Base Scenario</label></scenarios_caption>
+            <!-- informative text between caption and listed scenarios -->
+            <scenarios_text><label>SUSE Linux Enterprise Server offers several base scenarios.
+    Choose the one that matches your server the best.</label></scenarios_text>
 
-        <!-- matches the 'id' of one 'system_scenario' -->
-        <scenario_game_server><label>Game Server</label></scenario_game_server>
-        <scenario_web_server><label>Web Server</label></scenario_web_server>
-        <scenario_nfs_server><label>NFS Server</label></scenario_nfs_server>
+            <!-- matches the 'id' of one 'system_scenario' -->
+            <scenario_game_server><label>Game Server</label></scenario_game_server>
+            <scenario_web_server><label>Web Server</label></scenario_web_server>
+            <scenario_nfs_server><label>NFS Server</label></scenario_nfs_server>
 
-    </texts>
-</productDefines>
+        </texts>
+    </productDefines>
 ```
 
 System scenarios are defined inside the *software* section. Section
@@ -910,15 +910,15 @@ Selection labels must be defined in [texts](#control_texts) section.
 Scenarios *id*s are used as link identificators.
 
 ```
-        <software>
-        <system_scenario>
-            <id></id>
-        </system_scenario>
-        </software>
+    <software>
+    <system_scenario>
+        <id></id>
+    </system_scenario>
+    </software>
 
-        <texts>
-        <><label>Some Label</label></>
-        </texts>
+    <texts>
+    <><label>Some Label</label></>
+    </texts>
 ```
 
 Section *software* also contains optional *default\_system\_scenario*
@@ -1166,77 +1166,77 @@ on that disk. To make the flexible partitioning possible,
 *partitions* must be surrounded with *flexible\_partitioning* tag.
 
 ```
-<partitioning>
-    <use_flexible_partitioning config:type="boolean">true</use_flexible_partitioning>
+    <partitioning>
+        <use_flexible_partitioning config:type="boolean">true</use_flexible_partitioning>
 
-    <flexible_partitioning>
-        <partitions config:type="list">
-            <partition>
-                <disk config:type="integer">3</disk>
-                <mount>/var</mount>
-                <percent config:type="integer">100</percent>
-            </partition>
-            <partition>
-                <disk config:type="integer">2</disk>
-                <mount>/</mount>
-                <size>1G</size>
-            </partition>
-            <partition>
-                <disk config:type="integer">2</disk>
-                <mount>/usr</mount>
-                <size>2G</size>
-            </partition>
-            <partition>
-                <disk config:type="integer">2</disk>
-                <mount>/opt</mount>
-                <size>2G</size>
-            </partition>
-           <partition>
-                <disk config:type="integer">1</disk>
-                <mount>/home</mount>
-                <percent config:type="integer">100</percent>
-            </partition>
-        </partitions>
-    </flexible_partitioning>
-</partitioning>
+        <flexible_partitioning>
+            <partitions config:type="list">
+                <partition>
+                    <disk config:type="integer">3</disk>
+                    <mount>/var</mount>
+                    <percent config:type="integer">100</percent>
+                </partition>
+                <partition>
+                    <disk config:type="integer">2</disk>
+                    <mount>/</mount>
+                    <size>1G</size>
+                </partition>
+                <partition>
+                    <disk config:type="integer">2</disk>
+                    <mount>/usr</mount>
+                    <size>2G</size>
+                </partition>
+                <partition>
+                    <disk config:type="integer">2</disk>
+                    <mount>/opt</mount>
+                    <size>2G</size>
+                </partition>
+               <partition>
+                    <disk config:type="integer">1</disk>
+                    <mount>/home</mount>
+                    <percent config:type="integer">100</percent>
+                </partition>
+            </partitions>
+        </flexible_partitioning>
+    </partitioning>
 ```
 
 A more complete example with other options is shown below:
 
 ```
-<partitioning>
-    <use_flexible_partitioning config:type="boolean">true</use_flexible_partitioning>
+    <partitioning>
+        <use_flexible_partitioning config:type="boolean">true</use_flexible_partitioning>
 
-    <flexible_partitioning>
-        <partitions config:type="list">
-            <partition>
-                <disk config:type="integer">2</disk>
-                <mount>swap</mount>
-                <size>auto</size>
-            </partition>
-            <partition>
-                <disk config:type="integer">1</disk>
-                <fstopt>defaults</fstopt>
-                <fsys>reiser</fsys>
-                <increasable config:type="boolean">true</increasable>
-                <mount>/</mount>
-                <size>2gb</size>
-            </partition>
-            <partition>
-                <disk config:type="integer">2</disk>
-                <fstopt>defaults,data=writeback,noatime</fstopt>
-                <fsys>reiser</fsys>
-                <increasable config:type="boolean">true</increasable>
-                <mount>/var</mount>
-                <percent config:type="integer">100</percent>
-                <size>2gb</size>
-            </partition>
-        </partitions>
-    </flexible_partitioning>
+        <flexible_partitioning>
+            <partitions config:type="list">
+                <partition>
+                    <disk config:type="integer">2</disk>
+                    <mount>swap</mount>
+                    <size>auto</size>
+                </partition>
+                <partition>
+                    <disk config:type="integer">1</disk>
+                    <fstopt>defaults</fstopt>
+                    <fsys>reiser</fsys>
+                    <increasable config:type="boolean">true</increasable>
+                    <mount>/</mount>
+                    <size>2gb</size>
+                </partition>
+                <partition>
+                    <disk config:type="integer">2</disk>
+                    <fstopt>defaults,data=writeback,noatime</fstopt>
+                    <fsys>reiser</fsys>
+                    <increasable config:type="boolean">true</increasable>
+                    <mount>/var</mount>
+                    <percent config:type="integer">100</percent>
+                    <size>2gb</size>
+                </partition>
+            </partitions>
+        </flexible_partitioning>
 
-    <prefer_remove config:type="boolean">true</prefer_remove>
-    <remove_special_partitions config:type="boolean">false</remove_special_partitions>
-</partitioning>
+        <prefer_remove config:type="boolean">true</prefer_remove>
+        <remove_special_partitions config:type="boolean">false</remove_special_partitions>
+    </partitioning>
 ```
 
 ### Hooks
@@ -1257,19 +1257,19 @@ using CDATA sections to avoid confusion with the XML syntax. The
 following example shows how scripts can be embedded in the control file:
 
 ```
-                <module>
-                    <name>info</name>
-                    <arguments>false,true</arguments>
-                    <prescript>
-                        <interpreter>shell</interpreter>
-                        <source>
+    <module>
+        <name>info</name>
+        <arguments>false,true</arguments>
+        <prescript>
+            <interpreter>shell</interpreter>
+            <source>
 <![CDATA[#!/bin/sh
 touch /tmp/anas
 echo anas > /tmp/anas
 ]]>
-                        </source>
-                    </prescript>
-                </module>
+            </source>
+        </prescript>
+    </module>
 ```
 
 ### Texts
@@ -1281,16 +1281,16 @@ makes it possible to mark some texts for translation.
 The structure is rather easy:
 
 ```
-<texts>
-    <!-- Unique tag that identifies the text -->
-    <some_text_id>
-        <label>Some XML-escaped text: &lt;b&gt;bold &lt;/b&gt;.</label>
-    </some_text_id>
+    <texts>
+        <!-- Unique tag that identifies the text -->
+        <some_text_id>
+            <label>Some XML-escaped text: &lt;b&gt;bold &lt;/b&gt;.</label>
+        </some_text_id>
 
-    <congratulate>
-        <label>&lt;p&gt;&lt;b&gt;Congratulations!&lt;/b&gt;&lt;/p&gt;</label>
-    </congratulate>
-</texts>
+        <congratulate>
+            <label>&lt;p&gt;&lt;b&gt;Congratulations!&lt;/b&gt;&lt;/p&gt;</label>
+        </congratulate>
+    </texts>
 ```
 
 Translated texts can be got using *ProductControl::GetTranslatedText
@@ -1454,146 +1454,146 @@ its own proposals, workflows etc. The control file has a special
 section, which defines changes to the existing workflow and proposals.
 
 ```
-<?xml version="1.0"?>
-<productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
-    xmlns:config="http://www.suse.com/1.0/configns">
-  <!-- .mo-file must be in installation tarball -->
-  <textdomain>OES</textdomain>
-  <!-- these options override base product's ones -->
-  <globals>
-    <additional_kernel_parameters></additional_kernel_parameters>
-  </globals>
-  <software>
-    <selection_type config:type="symbol">auto</selection_type>
-  </software>
-  <partitioning>
-    <root_max_size>10G</root_max_size>
-  </partitioning>
-  <network>
-    <force_static_ip config:type="boolean">false</force_static_ip>
-    <network_manager>laptop</network_manager>
-  </network>
-  <!-- base product's list is preserved, these are appended -->
-  <clone_modules config:type="list">
-    <clone_module>printer</clone_module>
-  </clone_modules>
-  <proposals config:type="list">
-<!-- put proposals for standalone product installation here -->
-  </proposals>
-<!-- workflow for standalone product installation -->
-  <workflows config:type="list">
-    <workflow>
-      <defaults>
-        <archs>all</archs>
-      </defaults>
-      <label>Preparation</label>
-      <!-- mode and stage must be set this way -->
-      <mode>installation</mode>
-      <stage>normal</stage>
-      <modules config:type="list">
-        <module>
-           <label>License Agreement</label>
-           <name>license</name>
-           <enable_back>no</enable_back>
-           <enable_next>yes</enable_next>
-        </module>
-      </modules>
-    </workflow>
-  </workflows>
-  <!-- stuff for installation together with base products -->
-  <update>
-    <proposals config:type="list">
-      <proposal>
-        <label>OES Installation Settings</label>
-        <mode>installation,demo,autoinstallation</mode>
-        <stage>initial</stage>
-        <name>initial</name>
-        <enable_skip>no</enable_skip>
-        <append_modules config:type="list">
-          <append_module>module_1</append_module>
-          <append_module>module_2</append_module>
-        </append_modules>
-        <remove_modules config:type="list">
-          <remove_module>module_3</remove_module>
-          <remove_module>module_4</remove_module>
-        </remove_modules>
-        <replace_modules config:type="list">
-          <replace_module>
-            <replace>old_module</replace>
-            <new_modules config:type="list">
-              <new_module>module_5</new_module>
-              <new_module>module_6</new_module>
-            </new_modules>
-          </replace_module>
-        </replace_modules>
-      </proposal>
-    </proposals>
-    <workflows config:type="list">
-      <workflow>
-        <defaults>
-          <archs>all</archs>
-          <enable_back>no</enable_back>
-          <enable_next>no</enable_next>
-        </defaults>
-        <mode>installation</mode>
-        <stage>initial</stage>
-        <append_modules config:type="list">
-          <module>
-            <heading>yes</heading>
-            <label>OES configuration</label>
-          </module>
-          <module>
-            <label>Perform Installation</label>
-            <name>a1_netsetup</name>
-          </module>
-          <module>
-            <label>Perform Installation</label>
-            <name>a2_netprobe</name>
-          </module>
-        </append_modules>
-        <remove_modules config:type="list">
-          <remove_module>finish</remove_module>
-        </remove_modules>
-        <insert_modules config:type="list">
-          <insert_module>
-            <before>perform</before>
-            <modules config:type="list">
-               <module>
-               <label>Perform Installation</label>
-                <name>i1_netprobe</name>
-              </module>
-            </modules>
-          </insert_module>
-        </insert_modules>
-        <replace_modules config:type="list">
-          <replace_module>
-            <replace>language</replace>
-            <modules config:type="list">
-               <module>
-               <label>Perform Installation</label>
-                <name>r1_language</name>
-              </module>
-            </modules>
-          </replace_module>
-        </replace_modules>
-      </workflow>
-    </workflows>
-    <inst_finish>
-      <before_chroot config:type=”list”>
-        <module>before_chroot_1</module>
-        <module>before_chroot_2</module>
-      </before_chroot>
-      <after_chroot config:type=”list”>
-        <module>after_chroot_1</module>
-        <module>after_chroot_2</module>
-      </after_chroot>
-      <before_umount config:type=”list”>
-        <module>before_umount_1</module>
-        <module>before_umount_2</module>
-      </before_umount>
-    </inst_finish>
-  </update>
-</productDefines>
+    <?xml version="1.0"?>
+    <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
+        xmlns:config="http://www.suse.com/1.0/configns">
+        <!-- .mo-file must be in installation tarball -->
+        <textdomain>OES</textdomain>
+        <!-- these options override base product's ones -->
+        <globals>
+            <additional_kernel_parameters></additional_kernel_parameters>
+        </globals>
+        <software>
+            <selection_type config:type="symbol">auto</selection_type>
+        </software>
+        <partitioning>
+            <root_max_size>10G</root_max_size>
+        </partitioning>
+        <network>
+            <force_static_ip config:type="boolean">false</force_static_ip>
+            <network_manager>laptop</network_manager>
+        </network>
+        <!-- base product's list is preserved, these are appended -->
+        <clone_modules config:type="list">
+            <clone_module>printer</clone_module>
+        </clone_modules>
+        <proposals config:type="list">
+      <!-- put proposals for standalone product installation here -->
+        </proposals>
+      <!-- workflow for standalone product installation -->
+        <workflows config:type="list">
+            <workflow>
+                <defaults>
+                    <archs>all</archs>
+                </defaults>
+                <label>Preparation</label>
+                <!-- mode and stage must be set this way -->
+                <mode>installation</mode>
+                <stage>normal</stage>
+                <modules config:type="list">
+                    <module>
+                         <label>License Agreement</label>
+                         <name>license</name>
+                         <enable_back>no</enable_back>
+                         <enable_next>yes</enable_next>
+                    </module>
+                </modules>
+            </workflow>
+        </workflows>
+        <!-- stuff for installation together with base products -->
+        <update>
+            <proposals config:type="list">
+                <proposal>
+                    <label>OES Installation Settings</label>
+                    <mode>installation,demo,autoinstallation</mode>
+                    <stage>initial</stage>
+                    <name>initial</name>
+                    <enable_skip>no</enable_skip>
+                    <append_modules config:type="list">
+                        <append_module>module_1</append_module>
+                        <append_module>module_2</append_module>
+                    </append_modules>
+                    <remove_modules config:type="list">
+                        <remove_module>module_3</remove_module>
+                        <remove_module>module_4</remove_module>
+                    </remove_modules>
+                    <replace_modules config:type="list">
+                        <replace_module>
+                            <replace>old_module</replace>
+                            <new_modules config:type="list">
+                                <new_module>module_5</new_module>
+                                <new_module>module_6</new_module>
+                            </new_modules>
+                        </replace_module>
+                    </replace_modules>
+                </proposal>
+            </proposals>
+            <workflows config:type="list">
+                <workflow>
+                    <defaults>
+                        <archs>all</archs>
+                        <enable_back>no</enable_back>
+                        <enable_next>no</enable_next>
+                    </defaults>
+                    <mode>installation</mode>
+                    <stage>initial</stage>
+                    <append_modules config:type="list">
+                        <module>
+                            <heading>yes</heading>
+                            <label>OES configuration</label>
+                        </module>
+                        <module>
+                            <label>Perform Installation</label>
+                            <name>a1_netsetup</name>
+                        </module>
+                        <module>
+                            <label>Perform Installation</label>
+                            <name>a2_netprobe</name>
+                        </module>
+                    </append_modules>
+                    <remove_modules config:type="list">
+                        <remove_module>finish</remove_module>
+                    </remove_modules>
+                    <insert_modules config:type="list">
+                        <insert_module>
+                            <before>perform</before>
+                            <modules config:type="list">
+                                 <module>
+                                 <label>Perform Installation</label>
+                                    <name>i1_netprobe</name>
+                                </module>
+                            </modules>
+                        </insert_module>
+                    </insert_modules>
+                    <replace_modules config:type="list">
+                        <replace_module>
+                            <replace>language</replace>
+                            <modules config:type="list">
+                                 <module>
+                                 <label>Perform Installation</label>
+                                    <name>r1_language</name>
+                                </module>
+                            </modules>
+                        </replace_module>
+                    </replace_modules>
+                </workflow>
+            </workflows>
+            <inst_finish>
+                <before_chroot config:type=”list”>
+                    <module>before_chroot_1</module>
+                    <module>before_chroot_2</module>
+                </before_chroot>
+                <after_chroot config:type=”list”>
+                    <module>after_chroot_1</module>
+                    <module>after_chroot_2</module>
+                </after_chroot>
+                <before_umount config:type=”list”>
+                    <module>before_umount_1</module>
+                    <module>before_umount_2</module>
+                </before_umount>
+            </inst_finish>
+        </update>
+    </productDefines>
 ```
 
 ### Setting a text domain
@@ -1603,7 +1603,7 @@ appropriate set of .mo-files must be present to have the texts related
 to the control file translated.
 
 ```
-            <textdomain>OES</textdomain>
+    <textdomain>OES</textdomain>
 ```
 
 ### Defining proposals and workflow for standalone installation
@@ -1613,8 +1613,8 @@ workflow for the standalone installation must have the mode and stage
 set
 
 ```
-            <mode>installation</mode>
-            <stage>normal</stage>
+    <mode>installation</mode>
+    <stage>normal</stage>
 ```
 
 ### Proposal modification
@@ -1624,14 +1624,14 @@ name has to be specified, other options (enable\_skip, architecture) are
 optional. The modes, stages, and architectures do not
 
 ```
-            <proposal>
-                <label>OES Installation Settings</label>
-                <mode>installation,demo,autoinstallation</mode>
-                <stage>initial</stage>
-                <name>initial</name>
-                <enable_skip>no</enable_skip>
-                [.....]
-            </proposal>
+    <proposal>
+        <label>OES Installation Settings</label>
+        <mode>installation,demo,autoinstallation</mode>
+        <stage>initial</stage>
+        <name>initial</name>
+        <enable_skip>no</enable_skip>
+        [.....]
+    </proposal>
 ```
 
 
@@ -1641,19 +1641,19 @@ Adding an item to a proposal is possible at the end only. If the
 proposal has tabs, the items are added to a new created tab.
 
 ```
-            <append_modules config:type="list">
-                <append_module>module_1</append_module>
-                <append_module>module_2</append_module>
-            </append_modules>
+    <append_modules config:type="list">
+        <append_module>module_1</append_module>
+        <append_module>module_2</append_module>
+    </append_modules>
 ```
 
 ### Removing an item from a proposal
 
 ```
-            <remove_modules config:type="list">
-                <remove_module>module_3</remove_module>
-                <remove_module>module_4</remove_module>
-            </remove_modules>
+    <remove_modules config:type="list">
+        <remove_module>module_3</remove_module>
+        <remove_module>module_4</remove_module>
+    </remove_modules>
 ```
 
 ### Replacing an item of a proposal
@@ -1663,15 +1663,15 @@ by one or more new clients. If you need M:N use remove and replace
 together.
 
 ```
-            <replace_modules config:type="list">
-                <replace_module>
-                <replace>old_module</replace>
-                <new_modules config:type="list">
-                    <new_module>module_5</new_module>
-                    <new_module>module_6</new_module>
-                </new_modules>
-                </replace_module>
-            </replace_modules>
+    <replace_modules config:type="list">
+        <replace_module>
+        <replace>old_module</replace>
+        <new_modules config:type="list">
+            <new_module>module_5</new_module>
+            <new_module>module_6</new_module>
+        </new_modules>
+        </replace_module>
+    </replace_modules>
 ```
 
 ### Workflow updates
@@ -1680,76 +1680,76 @@ The workflow to update is identified the same way as other workflows.
 The archs, modes, and installation don't need tobe alligned to the same
 groups as in the base product workflows.
 ```
-            <workflow>
-                <defaults>
-                <archs>all</archs>
-                <enable_back>no</enable_back>
-                <enable_next>no</enable_next>
-                </defaults>
-                <mode>installation</mode>
-                <stage>initial</stage>
-                [...]
-            </workflow>
+    <workflow>
+        <defaults>
+        <archs>all</archs>
+        <enable_back>no</enable_back>
+        <enable_next>no</enable_next>
+        </defaults>
+        <mode>installation</mode>
+        <stage>initial</stage>
+        [...]
+    </workflow>
 ```
 
 ### Append steps to the end of installation sequence
 
 ```
-            <append_modules config:type="list">
-                <module>
-                <heading>yes</heading>
-                <label>OES configuration</label>
-                </module>
-                <module>
-                <label>Perform Installation</label>
-                <name>a1_netsetup</name>
-                </module>
-                <module>
-                <label>Perform Installation</label>
-                <name>a2_netprobe</name>
-                </module>
-                [...]
-            </append_modules>
+    <append_modules config:type="list">
+        <module>
+        <heading>yes</heading>
+        <label>OES configuration</label>
+        </module>
+        <module>
+        <label>Perform Installation</label>
+        <name>a1_netsetup</name>
+        </module>
+        <module>
+        <label>Perform Installation</label>
+        <name>a2_netprobe</name>
+        </module>
+        [...]
+    </append_modules>
 ```
 
 ### Insert steps to installation sequence
 ```
-            <insert_modules config:type="list">
-                <insert_module>
-                <before>perform</before>
-                <modules config:type="list">
-                    <module>
-                    <label>Perform Installation</label>
-                    <name>i1_netprobe</name>
-                    </module>
-                    [...]
-                </modules>
-                </insert_module>
-            </insert_modules>
+    <insert_modules config:type="list">
+        <insert_module>
+        <before>perform</before>
+        <modules config:type="list">
+            <module>
+            <label>Perform Installation</label>
+            <name>i1_netprobe</name>
+            </module>
+            [...]
+        </modules>
+        </insert_module>
+    </insert_modules>
 ```
 
 ### Remove steps from installation sequence
 ```
-            <remove_modules config:type="list">
-                <remove_module>finish</remove_module>
-                [...]
-            </remove_modules>
+    <remove_modules config:type="list">
+        <remove_module>finish</remove_module>
+        [...]
+    </remove_modules>
 ```
 
 ### Replace steps in installation sequence
 ```
-            <replace_modules config:type="list">
-                <replace_module>
-                <replace>language</replace>
-                <modules config:type="list">
-                    <module>
-                    <label>Perform Installation</label>
-                    <name>r1_language</name>
-                    </module>
-                    [...]
-                </modules>
-                </replace_module>
-            </replace_modules>
+    <replace_modules config:type="list">
+        <replace_module>
+        <replace>language</replace>
+        <modules config:type="list">
+            <module>
+            <label>Perform Installation</label>
+            <name>r1_language</name>
+            </module>
+            [...]
+        </modules>
+        </replace_module>
+    </replace_modules>
 ```
 
 ### Add items in inst\_finish.ycp
@@ -1765,41 +1765,41 @@ There are 3 cases that an add-on product can modify the workflow...
 #### Before chroot
 
 ```
-                <inst_finish_stages config:type="list">
-                <before_chroot>
-                    <label>Copy Theme</label>
-                    <steps config:type="list">
-                    <step>copy_theme</step>
-                    [...]
-                    </steps>
-                </before_chroot>
-                </inst_finish_stages>
+    <inst_finish_stages config:type="list">
+    <before_chroot>
+        <label>Copy Theme</label>
+        <steps config:type="list">
+        <step>copy_theme</step>
+        [...]
+        </steps>
+    </before_chroot>
+    </inst_finish_stages>
 ```
 
 #### Running in chroot
 ```
-                <inst_finish_stages config:type="list">
-                <chroot>
-                    <label>Update Configuration</label>
-                    <steps config:type="list">
-                    <step>pkg</step>
-                    [...]
-                    </steps>
-                </chroot>
-                </inst_finish_stages>
+    <inst_finish_stages config:type="list">
+    <chroot>
+        <label>Update Configuration</label>
+        <steps config:type="list">
+        <step>pkg</step>
+        [...]
+        </steps>
+    </chroot>
+    </inst_finish_stages>
 ```
 
 #### Before unmounting the system
 ```
-                <inst_finish_stages config:type="list">
-                <before_umount>
-                    <label>Disconnect Network Disks</label>
-                    <steps config:type="list">
-                    <step>iscsi_disconnect</step>
-                    [...]
-                    </steps>
-                </before_umount>
-                </inst_finish_stages>
+    <inst_finish_stages config:type="list">
+    <before_umount>
+        <label>Disconnect Network Disks</label>
+        <steps config:type="list">
+        <step>iscsi_disconnect</step>
+        [...]
+        </steps>
+    </before_umount>
+    </inst_finish_stages>
 ```
 
 All new steps are added at the end of the current list in the particular
@@ -1811,7 +1811,7 @@ inst\_finish clients or replace them.
 To replace a workflow, just create workflows as in base product control
 file. The important is that the stage of the workflow is set to
 ```
-            <stage>continue</stage>
+    <stage>continue</stage>
 ```
 
 and the mode is set for the specified mode.
@@ -1832,13 +1832,13 @@ accessible via ProductFeatures module. No new option groups can be
 defined. Options which are defined by the base product, but not by the
 add-on product, are kept unchanged (base product's value is used).
 ```
-            <globals>
-                <additional_kernel_parameters></additional_kernel_parameters>
-            </globals>
-            [...]
-            <software>
-                <selection_type config:type="symbol">auto</selection_type>
-            </software>
+    <globals>
+        <additional_kernel_parameters></additional_kernel_parameters>
+    </globals>
+    [...]
+    <software>
+        <selection_type config:type="symbol">auto</selection_type>
+    </software>
 ```
 
 ### AutoYaST profile generation
@@ -1847,10 +1847,10 @@ At the end of the installation, a profile for AutoYaST can be generated.
 The profile will be generated using modules from the base product and
 modules specified in the add-on product control file.
 ```
-            <clone_modules config:type="list">
-                <clone_module>printer</clone_module>
-                [...]
-            </clone_modules>
+    <clone_modules config:type="list">
+        <clone_module>printer</clone_module>
+        [...]
+    </clone_modules>
 ```
 
 ### Example of OES 1.0
@@ -1863,125 +1863,125 @@ installation workflow, selecting and installing packages is missing,
 these steps need to be prepended to the workflow.
 
 ```
-<?xml version="1.0"?>
-<productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
-    xmlns:config="http://www.suse.com/1.0/configns">
-<textdomain>OES</textdomain>
-<network>
-  <force_static_ip config:type="boolean">true</force_static_ip>
-  <network_manager_is_default config:type="boolean">false</network_manager_is_default>
-</network>
-<proposals config:type="list">
-  <proposal>
-    <name>oes</name>
-    <stage>continue,normal</stage>
-    <mode>installation</mode>
-    <proposal_modules config:type="list">
-      <proposal_module>oes-ldap</proposal_module>
-      <proposal_module>imanager</proposal_module>
-      <proposal_module>lifeconsole</proposal_module>
-      <proposal_module>linux-user-mgmt</proposal_module>
-      <proposal_module>eguide</proposal_module>
-      <proposal_module>novell-samba</proposal_module>
-      <proposal_module>ifolder2</proposal_module>
-      <proposal_module>ifolder</proposal_module>
-      <proposal_module>ifolderwebaccess</proposal_module>
-      <proposal_module>iprint</proposal_module>
-      <proposal_module>nss</proposal_module>
-      <proposal_module>netstorage</proposal_module>
-      <proposal_module>novell-quickfinder</proposal_module>
-      <proposal_module>novell-vo</proposal_module>
-      <proposal_module>ncs</proposal_module>
-      <proposal_module>ncpserver</proposal_module>
-      <proposal_module>sms</proposal_module>
-    </proposal_modules>
-  </proposal>
-</proposals>
-<workflows config:type="list">
-  <workflow>
-    <label>Preparation</label>
-    <defaults>
-      <archs>all</archs>
-    </defaults>
-    <mode>installation</mode>
-    <stage>normal</stage>
-    <modules config:type="list">
-      <module>
-        <label>License Agreement</label>
-        <name>inst_license</name>
-        <enable_back>no</enable_back>
-        <enable_next>yes</enable_next>
-      </module>
-      <module>
-        <label>OES Configuration</label>
-        <name>inst_check_cert</name>
-        <enable_back>no</enable_back>
-        <enable_next>yes</enable_next>
-      </module>
-      <module>
-        <label>OES Configuration</label>
-        <name>inst_proposal</name>
-        <arguments>false,false,`product</arguments>
-        <enable_back>no</enable_back>
-        <enable_next>yes</enable_next>
-      </module>
-      <module>
-        <label>OES Configuration</label>
-        <name>inst_oes</name>
-        <enable_back>yes</enable_back>
-        <enable_next>yes</enable_next>
-      </module>
-      <module>
-        <label>OES Configuration</label>
-        <name>inst_oes_congratulate</name>
-        <enable_back>no</enable_back>
-        <enable_next>yes</enable_next>
-      </module>
-    </modules>
-  </workflow>
-</workflows>
-<update>
-  <workflows config:type="list">
-    <workflow>
-      <defaults>
-        <archs>all</archs>
-        <enable_back>no</enable_back>
-        <enable_next>no</enable_next>
-      </defaults>
-      <stage>continue</stage>
-        <mode>installation</mode>
-        <append_modules config:type="list">
-          <module>
-            <label>OES Configuration</label>
-            <name>inst_oes_congratulate</name>
-          </module>
-        </append_modules>
-        <insert_modules config:type="list">
-          <insert_module>
-            <before>release_notes</before>
+    <?xml version="1.0"?>
+    <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
+            xmlns:config="http://www.suse.com/1.0/configns">
+    <textdomain>OES</textdomain>
+    <network>
+        <force_static_ip config:type="boolean">true</force_static_ip>
+        <network_manager_is_default config:type="boolean">false</network_manager_is_default>
+    </network>
+    <proposals config:type="list">
+        <proposal>
+            <name>oes</name>
+            <stage>continue,normal</stage>
+            <mode>installation</mode>
+            <proposal_modules config:type="list">
+                <proposal_module>oes-ldap</proposal_module>
+                <proposal_module>imanager</proposal_module>
+                <proposal_module>lifeconsole</proposal_module>
+                <proposal_module>linux-user-mgmt</proposal_module>
+                <proposal_module>eguide</proposal_module>
+                <proposal_module>novell-samba</proposal_module>
+                <proposal_module>ifolder2</proposal_module>
+                <proposal_module>ifolder</proposal_module>
+                <proposal_module>ifolderwebaccess</proposal_module>
+                <proposal_module>iprint</proposal_module>
+                <proposal_module>nss</proposal_module>
+                <proposal_module>netstorage</proposal_module>
+                <proposal_module>novell-quickfinder</proposal_module>
+                <proposal_module>novell-vo</proposal_module>
+                <proposal_module>ncs</proposal_module>
+                <proposal_module>ncpserver</proposal_module>
+                <proposal_module>sms</proposal_module>
+            </proposal_modules>
+        </proposal>
+    </proposals>
+    <workflows config:type="list">
+        <workflow>
+            <label>Preparation</label>
+            <defaults>
+                <archs>all</archs>
+            </defaults>
+            <mode>installation</mode>
+            <stage>normal</stage>
             <modules config:type="list">
-              <module>
-                <label>OES Configuration</label>
-                <name>inst_check_cert</name>
-              </module>
-              <module>
-                <label>OES Configuration</label>
-                <name>inst_edirectory</name>
-              </module>
-              <module>
-                <label>OES Configuration</label>
-                <name>inst_proposal</name>
-                <arguments>false,true,`product</arguments>
-              </module>
-              <module>
-                <label>OES Configuration</label>
-                <name>inst_oes</name>
-              </module>
+                <module>
+                    <label>License Agreement</label>
+                    <name>inst_license</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+                    <label>OES Configuration</label>
+                    <name>inst_check_cert</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+                    <label>OES Configuration</label>
+                    <name>inst_proposal</name>
+                    <arguments>false,false,`product</arguments>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+                    <label>OES Configuration</label>
+                    <name>inst_oes</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
+                    <label>OES Configuration</label>
+                    <name>inst_oes_congratulate</name>
+                    <enable_back>no</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
             </modules>
-          </insert_module>
-        </insert_modules>
-      </workflow>
+        </workflow>
     </workflows>
-  </update>
-</productDefines>
+    <update>
+        <workflows config:type="list">
+            <workflow>
+                <defaults>
+                    <archs>all</archs>
+                    <enable_back>no</enable_back>
+                    <enable_next>no</enable_next>
+                </defaults>
+                <stage>continue</stage>
+                    <mode>installation</mode>
+                    <append_modules config:type="list">
+                        <module>
+                            <label>OES Configuration</label>
+                            <name>inst_oes_congratulate</name>
+                        </module>
+                    </append_modules>
+                    <insert_modules config:type="list">
+                        <insert_module>
+                            <before>release_notes</before>
+                            <modules config:type="list">
+                                <module>
+                                    <label>OES Configuration</label>
+                                    <name>inst_check_cert</name>
+                                </module>
+                                <module>
+                                    <label>OES Configuration</label>
+                                    <name>inst_edirectory</name>
+                                </module>
+                                <module>
+                                    <label>OES Configuration</label>
+                                    <name>inst_proposal</name>
+                                    <arguments>false,true,`product</arguments>
+                                </module>
+                                <module>
+                                    <label>OES Configuration</label>
+                                    <name>inst_oes</name>
+                                </module>
+                            </modules>
+                        </insert_module>
+                    </insert_modules>
+                </workflow>
+            </workflows>
+        </update>
+    </productDefines>
 ```
