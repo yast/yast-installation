@@ -148,22 +148,22 @@ steps and how they should appear during graphical installation.
 
 A workflow list element is a map with the following elements:
 
--   label
+-   *label*
 
     The label of the workflow as it appears on the left side of the
     wizard. For example *Base Installation*
 
--   defaults
+-   *defaults*
 
     The default arguments to the clients. This is a map element.
 
--   stage
+-   *stage*
 
     This options defines the stage or phase of installation.. Possible
     values are *initial* for the initial stage and *continue* for the
     workflow of the installation after reboot
 
--   mode
+-   *mode*
 
     Defines installation mode. Several modes are available, most
     important modes are:
@@ -174,7 +174,7 @@ A workflow list element is a map with the following elements:
 
     -   autoinst
 
--   modules
+-   *modules*
 
     This is the actual workflow and is a list of elements describing the
     order in which the installation should proceed.
