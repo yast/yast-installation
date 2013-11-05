@@ -199,7 +199,7 @@ The following listing shows a typical installation workflow:
     <workflows config:type="list">
         <workflow>
             <!-- 'label' is what the user will see -->
-	    <label>Base Installation</label>
+            <label>Base Installation</label>
             <!-- default settings for all modules -->
             <defaults>
                 <!-- arguments for the clients -->
@@ -217,13 +217,13 @@ The following listing shows a typical installation workflow:
                 <module>
                     <name>proposal</name>
                     <arguments>true,true,`ini</arguments>
-	            <label>Installation Settings</label>
+                    <label>Installation Settings</label>
                 </module>
                 <module>
                     <name>do_resize</name>
                     <update config:type="boolean">false</update>
                     <archs>i386,x86_64,ia64</archs>
-	            <label>Perform Installation</label>
+                    <label>Perform Installation</label>
                 </module>
                 <module>
                     <name>prepdisk</name>
@@ -231,19 +231,19 @@ The following listing shows a typical installation workflow:
                          collapsed to one single user-visible step.
                          The step is considered finished when the last module
                          with the same 'label' is finished.  -->
-	            <label>Perform Installation</label>
+                    <label>Perform Installation</label>
                 </module>
                 <module>
                     <name>kickoff</name>
-	            <label>Perform Installation</label>
+                    <label>Perform Installation</label>
                 </module>
                 <module>
                     <name>rpmcopy</name>
-	            <label>Perform Installation</label>
+                    <label>Perform Installation</label>
                 </module>
                 <module>
                     <name>finish</name>
-	            <label>Perform Installation</label>
+                    <label>Perform Installation</label>
                 </module>
             </modules>
         </workflow>
@@ -405,12 +405,12 @@ installation and debugging:
 
 ```
     <globals>
-	<save_instsys_content config:type="list">
-	    <save_instsys_item>
-		<instsys_directory>/root/</instsys_directory>
-		<system_directory>/root/inst-sys/</system_directory>
-	    </save_instsys_item>
-	</save_instsys_content>
+        <save_instsys_content config:type="list">
+            <save_instsys_item>
+                <instsys_directory>/root/</instsys_directory>
+                <system_directory>/root/inst-sys/</system_directory>
+            </save_instsys_item>
+        </save_instsys_content>
     </globals>
 ```
 
@@ -442,7 +442,7 @@ See the example:
     <globals>
         <copy_to_system config:type="list">
             <copy_to_system_item>
-		<!-- Files are restored directly to "/" after installation -->
+                <!-- Files are restored directly to "/" after installation -->
                 <copy_to_dir>/</copy_to_dir>
 
                 <!-- Files that must be all present on the previous system -->
@@ -461,17 +461,17 @@ See the example:
             </copy_to_system_item>
 
             <copy_to_system_item>
-		<!--
-		    Files are restored to a special directory
-		    (and used by YaST later)
-		-->
+                <!--
+                    Files are restored to a special directory
+                    (and used by YaST later)
+                -->
                 <copy_to_dir>/var/lib/YaST2/imported/userdata/</copy_to_dir>
 
-		<!--
-		    They finally appear as
-			"/var/lib/YaST2/imported/userdata/etc/shadow"
-			"/var/lib/YaST2/imported/userdata/etc/passwd" ...
-		-->
+                <!--
+                    They finally appear as
+                        "/var/lib/YaST2/imported/userdata/etc/shadow"
+                        "/var/lib/YaST2/imported/userdata/etc/passwd" ...
+                -->
                 <mandatory_files config:type="list">
                     <file_item>/etc/shadow</file_item>
                     <file_item>/etc/passwd</file_item>
@@ -518,42 +518,42 @@ This is an example of AC setup:
     xmlns:config="http://www.suse.com/1.0/configns">
     <globals>
 
-	<!-- List of steps in AC -->
-	<automatic_configuration config:type="list">
+        <!-- List of steps in AC -->
+        <automatic_configuration config:type="list">
 
-	    <!-- One step definition -->
-	    <ac_step>
-		<text_id>ac_1</text_id>
-		<type>scripts</type>
-		<ac_items config:type="list">
-		    <ac_item>initialization</ac_item>
-		    <ac_item>hostname</ac_item>
-		    <ac_item>netprobe</ac_item>
-		    <ac_item>rpmcopy_secondstage</ac_item>
-		</ac_items>
-		<icon>yast-lan</icon>
-	    </ac_step>
+            <!-- One step definition -->
+            <ac_step>
+                <text_id>ac_1</text_id>
+                <type>scripts</type>
+                <ac_items config:type="list">
+                    <ac_item>initialization</ac_item>
+                    <ac_item>hostname</ac_item>
+                    <ac_item>netprobe</ac_item>
+                    <ac_item>rpmcopy_secondstage</ac_item>
+                </ac_items>
+                <icon>yast-lan</icon>
+            </ac_step>
 
-	    <ac_step>
-		<text_id>ac_3</text_id>
-		<type>proposals</type>
-		<ac_items config:type="list">
-		    <ac_item>x11</ac_item>
-		    <ac_item>printer</ac_item>
-		    <ac_item>sound</ac_item>
-		    <ac_item>tv</ac_item>
-		</ac_items>
-		<icon>yast-hwinfo</icon>
-	    </ac_step>
+            <ac_step>
+                <text_id>ac_3</text_id>
+                <type>proposals</type>
+                <ac_items config:type="list">
+                    <ac_item>x11</ac_item>
+                    <ac_item>printer</ac_item>
+                    <ac_item>sound</ac_item>
+                    <ac_item>tv</ac_item>
+                </ac_items>
+                <icon>yast-hwinfo</icon>
+            </ac_step>
 
-	</automatic_configuration>
+        </automatic_configuration>
     </globals>
 
     <texts>
 
-	<!-- Label used during AC, uses "text_id" from "ac_step" -->
-	<ac_1><label>Initialization...</label><ac_1>
-	<ac_3><label>Configuring hardware...</label><ac_3>
+        <!-- Label used during AC, uses "text_id" from "ac_step" -->
+        <ac_1><label>Initialization...</label><ac_1>
+        <ac_3><label>Configuring hardware...</label><ac_3>
 
     </texts>
 </productDefines>
@@ -737,49 +737,49 @@ Example of supported desktops:
     xmlns:config="http://www.suse.com/1.0/configns">
     <software>
 
-	<supported_desktops config:type="list">
+        <supported_desktops config:type="list">
 
-	    <one_supported_desktop>
-		<name>gnome</name>
-		<desktop>gnome</desktop>
-		<label_id>desktop_gnome</label_id>
-		<logon>gdm</logon>
-		<cursor>DMZ</cursor>
-		<packages>gdm</packages>
-		<order config:type="integer">1</order>
-		<patterns>gnome x11 base</patterns>
-		<icon>pattern-gnome</icon>
-		<description_id>description_gnome</description_id>
-	    </one_supported_desktop>
+            <one_supported_desktop>
+                <name>gnome</name>
+                <desktop>gnome</desktop>
+                <label_id>desktop_gnome</label_id>
+                <logon>gdm</logon>
+                <cursor>DMZ</cursor>
+                <packages>gdm</packages>
+                <order config:type="integer">1</order>
+                <patterns>gnome x11 base</patterns>
+                <icon>pattern-gnome</icon>
+                <description_id>description_gnome</description_id>
+            </one_supported_desktop>
 
-	    <one_supported_desktop>
-		<name>kde</name>
-		<desktop>kde4</desktop>
-		<!-- Generic ID used in texts below -->
-		<label_id>desktop_kde</label_id>
-		<logon>kdm4</logon>
-		<cursor>DMZ</cursor>
-		<packages>kde4-kdm</packages>
-		<order config:type="integer">1</order>
-		<patterns>kde x11 base</patterns>
-		<icon>pattern-kde4</icon>
-		<!-- Generic ID used in texts below -->
-		<description_id>description_kde</description_id>
-	    </one_supported_desktop>
+            <one_supported_desktop>
+                <name>kde</name>
+                <desktop>kde4</desktop>
+                <!-- Generic ID used in texts below -->
+                <label_id>desktop_kde</label_id>
+                <logon>kdm4</logon>
+                <cursor>DMZ</cursor>
+                <packages>kde4-kdm</packages>
+                <order config:type="integer">1</order>
+                <patterns>kde x11 base</patterns>
+                <icon>pattern-kde4</icon>
+                <!-- Generic ID used in texts below -->
+                <description_id>description_kde</description_id>
+            </one_supported_desktop>
 
-	</supported_desktops>
+        </supported_desktops>
 
     </software>
 
     <texts>
 
-	<desktop_gnome><label>GNOME</label></desktop_gnome>
-	<!-- See 'desktop_kde' in 'supported_desktops' -->
-	<desktop_kde><label>KDE 4.1</label></desktop_kde>
+        <desktop_gnome><label>GNOME</label></desktop_gnome>
+        <!-- See 'desktop_kde' in 'supported_desktops' -->
+        <desktop_kde><label>KDE 4.1</label></desktop_kde>
 
-	<description_gnome><label>Some description</label></description_gnome>
-	<!-- See 'description_kde' in 'supported_desktops' -->
-	<description_kde><label>Some description</label></description_kde>
+        <description_gnome><label>Some description</label></description_gnome>
+        <!-- See 'description_kde' in 'supported_desktops' -->
+        <description_kde><label>Some description</label></description_kde>
 
     </texts>
 </productDefines>
@@ -845,50 +845,50 @@ Example of configured scenarios:
     xmlns:config="http://www.suse.com/1.0/configns">
     <software>
 
-	<!-- list of supported scenarios -->
-	<system_scenarios config:type="list">
+        <!-- list of supported scenarios -->
+        <system_scenarios config:type="list">
 
-	    <!-- one scenario -->
-	    <system_scenario>
-		<!-- 'id' matches the text 'scenario_game_server' -->
-		<id>scenario_game_server</id>
-		<!-- space-separated list of patterns -->
-		<patterns>game_server-pattern high-load-server</patterns>
-		<!--  plain icon filename (from 32x32 directory) without suffix -->
-		<icon>yast-system</icon>
-	    </system_scenario>
+            <!-- one scenario -->
+            <system_scenario>
+                <!-- 'id' matches the text 'scenario_game_server' -->
+                <id>scenario_game_server</id>
+                <!-- space-separated list of patterns -->
+                <patterns>game_server-pattern high-load-server</patterns>
+                <!--  plain icon filename (from 32x32 directory) without suffix -->
+                <icon>yast-system</icon>
+            </system_scenario>
 
-	    <system_scenario>
-		<id>scenario_web_server</id>
-		<patterns>web_server-pattern</patterns>
-		<icon>yast-http-server</icon>
-	    </system_scenario>
+            <system_scenario>
+                <id>scenario_web_server</id>
+                <patterns>web_server-pattern</patterns>
+                <icon>yast-http-server</icon>
+            </system_scenario>
 
-	    <system_scenario>
-		<id>scenario_nfs_server</id>
-		<patterns>nfs_server-pattern</patterns>
-		<icon>yast-nfs-server</icon>
-	    </system_scenario>
+            <system_scenario>
+                <id>scenario_nfs_server</id>
+                <patterns>nfs_server-pattern</patterns>
+                <icon>yast-nfs-server</icon>
+            </system_scenario>
 
-	</system_scenarios>
+        </system_scenarios>
 
-	<!-- this scenario (id) is selected by default -->
-	<default_system_scenario>scenario_nfs_server</default_system_scenario>
+        <!-- this scenario (id) is selected by default -->
+        <default_system_scenario>scenario_nfs_server</default_system_scenario>
 
     </software>
 
     <texts>
 
-	<!-- dialog caption -->
-	<scenarios_caption><label>Server Base Scenario</label></scenarios_caption>
-	<!-- informative text between caption and listed scenarios -->
-	<scenarios_text><label>SUSE Linux Enterprise Server offers several base scenarios.
+        <!-- dialog caption -->
+        <scenarios_caption><label>Server Base Scenario</label></scenarios_caption>
+        <!-- informative text between caption and listed scenarios -->
+        <scenarios_text><label>SUSE Linux Enterprise Server offers several base scenarios.
 Choose the one that matches your server the best.</label></scenarios_text>
 
-	<!-- matches the 'id' of one 'system_scenario' -->
-	<scenario_game_server><label>Game Server</label></scenario_game_server>
-	<scenario_web_server><label>Web Server</label></scenario_web_server>
-	<scenario_nfs_server><label>NFS Server</label></scenario_nfs_server>
+        <!-- matches the 'id' of one 'system_scenario' -->
+        <scenario_game_server><label>Game Server</label></scenario_game_server>
+        <scenario_web_server><label>Web Server</label></scenario_web_server>
+        <scenario_nfs_server><label>NFS Server</label></scenario_nfs_server>
 
     </texts>
 </productDefines>
@@ -1284,11 +1284,11 @@ The structure is rather easy:
 <texts>
     <!-- Unique tag that identifies the text -->
     <some_text_id>
-	<label>Some XML-escaped text: &lt;b&gt;bold &lt;/b&gt;.</label>
+        <label>Some XML-escaped text: &lt;b&gt;bold &lt;/b&gt;.</label>
     </some_text_id>
 
     <congratulate>
-	<label>&lt;p&gt;&lt;b&gt;Congratulations!&lt;/b&gt;&lt;/p&gt;</label>
+        <label>&lt;p&gt;&lt;b&gt;Congratulations!&lt;/b&gt;&lt;/p&gt;</label>
     </congratulate>
 </texts>
 ```
