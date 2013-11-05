@@ -80,7 +80,7 @@ module Yast
 
       # vv   MAIN (WIZARD) LAYOUT  vv
       @sr_layout = nil
-      @sr_layout = HVCenter(
+      @sr_layout = HVSquash(
         VBox(
           Left(Label(@ask_update_main)),
           Left(
