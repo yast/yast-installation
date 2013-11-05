@@ -101,7 +101,7 @@ related variables.
 > by the package *yast2-installation* in
 > `/usr/share/YaST2/control/control.xml`.
 
-During installation, *linuxrc* searches for the a file named
+During installation, *linuxrc* searches for a file named
 `control.xml` on the installation medium (CD, NFS, FTP..) and copies the
 file into the installation system and makes the file available to YaST.
 YaST then starts and looks for the control file in 3 location before it
