@@ -15,7 +15,6 @@ client_DATA = \
   clients/inst_worker_initial.rb \
   clients/network_finish.rb \
   clients/inst_features.rb \
-  clients/inst_fallback_controlfile.rb \
   clients/disintegrate_all_extensions.rb \
   clients/inst_prepare_image.rb \
   clients/installation_settings_finish.rb \
