@@ -401,7 +401,7 @@ textdomain="control"
 	<clone_module>host</clone_module>
 	<clone_module>routing</clone_module>
 	<clone_module>proxy</clone_module>
-	<clone_module>runlevel</clone_module>
+	<clone_module>services-manager</clone_module>
 	<!--  <clone_module>x11</clone_module>  (bnc#441404)  -->
 	<clone_module>nis</clone_module>
 	<clone_module>ldap</clone_module>
@@ -497,9 +497,8 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 		    <name>software</name>
 		    <presentation_order>30</presentation_order>
 		</proposal_module>
-		<!-- propose the default runlevel after software is selected, bnc #380141 -->
 		<proposal_module>
-		    <name>runlevel</name>
+		    <name>services-manager</name>
 		    <presentation_order>70</presentation_order>
 		</proposal_module>
 		<!-- finds images to deploy -->
@@ -534,7 +533,7 @@ is the most appropriate desktop for you.</label></desktop_dialog>
                         <proposal_module>timezone</proposal_module>
                         <proposal_module>language</proposal_module>
                         <proposal_module>users</proposal_module>
-                        <proposal_module>runlevel</proposal_module>
+                        <proposal_module>services-manager</proposal_module>
                     </proposal_modules>
                 </proposal_tab>
             </proposal_tabs>
@@ -555,7 +554,7 @@ is the most appropriate desktop for you.</label></desktop_dialog>
                 <proposal_module>country_simple</proposal_module>
                 <proposal_module>timezone</proposal_module>
 		<proposal_module>users</proposal_module>
-                <proposal_module>runlevel</proposal_module>
+                <proposal_module>services-manager</proposal_module>
             </proposal_modules>
         </proposal>
 

@@ -267,7 +267,7 @@ textdomain="control"
 	<clone_module>host</clone_module>
 	<clone_module>routing</clone_module>
 	<clone_module>proxy</clone_module>
-	<clone_module>runlevel</clone_module>
+	<clone_module>services-manager</clone_module>
 	<clone_module>x11</clone_module>
 	<clone_module>nis</clone_module>
 	<clone_module>ldap</clone_module>
@@ -369,9 +369,8 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		    <name>software</name>
 		    <presentation_order>35</presentation_order>
 		</proposal_module>
-		<!-- propose the default runlevel after software is selected, bnc #380141 -->
 		<proposal_module>
-		    <name>runlevel</name>
+      <name>services-manager</name>
 		    <presentation_order>55</presentation_order>
 		</proposal_module>
             </proposal_modules>
@@ -399,7 +398,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                         <proposal_module>software</proposal_module>
                         <proposal_module>timezone</proposal_module>
                         <proposal_module>language</proposal_module>
-                        <proposal_module>runlevel</proposal_module>
+                        <proposal_module>services-manager</proposal_module>
                         <proposal_module>kdump</proposal_module>
                     </proposal_modules>
                 </proposal_tab>
@@ -457,9 +456,8 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		    <name>software</name>
 		    <presentation_order>30</presentation_order>
 		</proposal_module>
-		<!-- propose the default runlevel after software is selected, bnc #380141 -->
 		<proposal_module>
-		    <name>runlevel</name>
+		    <name>services-manager</name>
 		    <presentation_order>50</presentation_order>
 		</proposal_module>
             </proposal_modules>
@@ -484,7 +482,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                         <proposal_module>software</proposal_module>
                         <proposal_module>timezone</proposal_module>
                         <proposal_module>language</proposal_module>
-                        <proposal_module>runlevel</proposal_module>
+                        <proposal_module>services-manager</proposal_module>
                         <proposal_module>dasd</proposal_module>
                         <proposal_module>zfcp</proposal_module>
                     </proposal_modules>
@@ -506,7 +504,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <proposal_module>country_simple</proposal_module>
                 <proposal_module>timezone</proposal_module>
 		<proposal_module>users</proposal_module>
-                <proposal_module>runlevel</proposal_module>
+                <proposal_module>services-manager</proposal_module>
             </proposal_modules>
         </proposal>
 
