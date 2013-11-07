@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Nov  7 11:45:45 UTC 2013 - mfilka@suse.com
+
+- bnc#849391
+  - removed explicit start of second phase of SuSEfirewall2 
+    initialization. Not needed when systemd is in use.
+- 3.1.4
+
+-------------------------------------------------------------------
 Thu Oct 31 11:32:01 UTC 2013 - lslezak@suse.cz
 
 - install "perl-Bootloader-YAML" package

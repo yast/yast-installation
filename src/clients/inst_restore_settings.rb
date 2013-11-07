@@ -56,12 +56,6 @@ module Yast
 
       NetworkInterfaces.Read
 
-      # bugzilla #282871
-      # If firewall is enabled, only the initial script is started.
-      # Start also the final firewall phase.
-      Service.Start("SuSEfirewall2_setup") if SuSEFirewall.IsEnabled
-
-
       :auto 
 
       # EOF
