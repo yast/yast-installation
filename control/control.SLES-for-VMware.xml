@@ -370,6 +370,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		    <presentation_order>35</presentation_order>
 		</proposal_module>
 		<proposal_module>
+      <!-- propose the default runlevel after software is selected, bnc #380141 -->
       <name>default_target</name>
 		    <presentation_order>55</presentation_order>
 		</proposal_module>
