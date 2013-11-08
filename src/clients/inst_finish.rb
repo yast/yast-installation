@@ -143,7 +143,7 @@ module Yast
             "save_config",
             # For live installer only
             Mode.live_installation ? "live_save_config" : "",
-            "services-manager",
+            "default_target",
             "desktop",
             "storage",
             "iscsi-client",
