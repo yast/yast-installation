@@ -142,7 +142,7 @@ textdomain="control"
                 <proposal_module>software</proposal_module>
                 <proposal_module>timezone</proposal_module>
                 <proposal_module>language</proposal_module>
-                <proposal_module>services-manager</proposal_module>
+                <proposal_module>default_target</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>
