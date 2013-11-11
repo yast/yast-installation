@@ -1,9 +1,17 @@
 -------------------------------------------------------------------
-Fri Nov  8 15:23:47 UTC 2013 - vmoravec@suse.com
+Mon Nov 11 14:21:37 UTC 2013 - vmoravec@suse.com
 
+- 3.1.5
 - replace runlevel entries in control files with default_target
-  entries from
+  entries
 - replace dependency on yast2-runlevel with yast2-services-manager
+
+-------------------------------------------------------------------
+Thu Nov  7 11:45:45 UTC 2013 - mfilka@suse.com
+
+- bnc#849391
+  - removed explicit start of second phase of SuSEfirewall2 
+    initialization. Not needed when systemd is in use.
 - 3.1.4
 
 -------------------------------------------------------------------
