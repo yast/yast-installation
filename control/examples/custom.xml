@@ -13,7 +13,7 @@ textdomain="control"
         <enable_autologin config:type="boolean">true</enable_autologin>
         <language>de_DE</language>
         <timezone>Canada/Eastern</timezone>
-        <runlevel>5</runlevel>
+        <default_target>graphical</default_target>
     </globals>
 
     <!-- Force a selection (`fixed) to be used instead of automatically
@@ -74,7 +74,7 @@ textdomain="control"
                 <proposal_module>bootloader</proposal_module>
                 <proposal_module>timezone</proposal_module>
                 <proposal_module>language</proposal_module>
-                <proposal_module>runlevel</proposal_module>
+                <proposal_module>default_target</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>
@@ -142,7 +142,7 @@ textdomain="control"
                 <proposal_module>software</proposal_module>
                 <proposal_module>timezone</proposal_module>
                 <proposal_module>language</proposal_module>
-                <proposal_module>runlevel</proposal_module>
+                <proposal_module>default_target</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>

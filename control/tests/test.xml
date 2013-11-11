@@ -40,7 +40,7 @@ textdomain="control"
                 <proposal_module>bootloader</proposal_module>
                 <proposal_module>timezone</proposal_module>
                 <proposal_module>language</proposal_module>
-                <proposal_module>runlevel</proposal_module>
+                <proposal_module>default_target</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>
