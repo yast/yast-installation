@@ -4,6 +4,7 @@ Tue Nov 12 09:24:25 UTC 2013 - lslezak@suse.cz
 - control file cleanup:
   * removed autoconfiguration support in the 2nd stage (the 2nd
     stage has been removed completely)
+  * repair mode removed (not supported)
 
 -------------------------------------------------------------------
 Mon Nov 11 14:21:37 UTC 2013 - vmoravec@suse.com

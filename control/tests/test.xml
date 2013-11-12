@@ -206,24 +206,6 @@ textdomain="control"
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
-	    <label>Preparation</label>
-            <mode>repair</mode>
-            <modules  config:type="list">
-                <module>
-	            <label>System Information</label>
-                    <name>info</name>
-                </module>
-                <module>
-	            <label>Perform Repair</label>
-                    <name>repair</name>
-                </module>
-            </modules>
-        </workflow>
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-            </defaults>
-            <stage>initial</stage>
 	    <label>Base Installation</label>
             <mode>screen_shot</mode>
             <modules  config:type="list">

@@ -54,7 +54,7 @@ textdomain="control"
 
     <proposals config:type="list">
         <proposal>
-            <!-- installation, autoinst, update, repair, etc. -->
+            <!-- installation, autoinst, update, etc. -->
             <mode>installation,demo,autoinst</mode>
             <!-- initial or continue -->
             <stage>initial</stage>
@@ -271,27 +271,6 @@ echo test > /tmp/test
                 <module>
                     <name>finish</name>
 	            <label>Perform Installation</label>
-                </module>
-            </modules>
-        </workflow>
-        <workflow>
-            <defaults>
-                <arguments>false,false</arguments>
-                <archs>all</archs>
-            </defaults>
-            <stage>initial</stage>
-	    <label>Preparation</label>
-            <mode>repair</mode>
-            <modules  config:type="list">
-                <module>
-	            <label>System Information</label>
-                    <name>info</name>
-                    <arguments>false,true</arguments>
-                </module>
-                <module>
-	            <label>Perform Repair</label>
-                    <name>repair</name>
-                    <arguments>false,true,true</arguments>
                 </module>
             </modules>
         </workflow>

@@ -572,48 +572,6 @@ Please visit us at http://www.suse.com/.
             </modules>
         </workflow>
 
-	<!-- Stage: Initial, Mode: Repair -->
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-		<enable_back>yes</enable_back>
-		<enable_next>yes</enable_next>
-            </defaults>
-	    <label>Preparation</label>
-            <mode>repair</mode>
-            <stage>initial</stage>
-            <modules  config:type="list">
-                <module>
-		    <label>Welcome</label>
-                    <name>complex_welcome</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
-                    <arguments>
-                        <first_run>yes</first_run>
-                    </arguments>
-                    <retranslate config:type="boolean">true</retranslate>
-                </module>
-		<module>
-	            <label>Disk Activation</label>
-                    <name>disks_activate</name>
-		</module>
-                <module>
-	            <label>System Analysis</label>
-                    <name>system_analysis</name>
-                </module>
-                <module>
-	            <label>System Analysis</label>
-                    <name>mode</name>
-                </module>
-		<!-- Here, user selects whether to perform New Installation, Upgrade, or Repair -->
-		<module>
-		    <label>Repair</label>
-		    <name>repair</name>
-		    <enable_back>no</enable_back>
-		</module>
-            </modules>
-        </workflow>
-
 	<!-- Stage: Initial, Mode: Live Installation -->
         <workflow>
             <defaults>
@@ -804,25 +762,6 @@ Please visit us at http://www.suse.com/.
                 <module>
 	            <label>Perform Update</label>
                     <name>finish</name>
-                </module>
-            </modules>
-        </workflow>
-
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-            </defaults>
-            <stage>initial</stage>
-	    <label>Preparation</label>
-            <mode>repair</mode>
-            <modules  config:type="list">
-                <module>
-	            <label>System Information</label>
-                    <name>info</name>
-                </module>
-                <module>
-	            <label>Perform Repair</label>
-                    <name>repair</name>
                 </module>
             </modules>
         </workflow>
