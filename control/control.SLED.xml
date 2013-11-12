@@ -330,8 +330,8 @@ Please visit us at http://www.suse.com/.
 		    <name>software</name>
 		    <presentation_order>35</presentation_order>
 		</proposal_module>
+                <!-- propose the default runlevel after software is selected, bnc #380141 -->
 		<proposal_module>
-        <!-- propose the default runlevel after software is selected, bnc #380141 -->
 		    <name>default_target</name>
 		    <presentation_order>55</presentation_order>
 		</proposal_module>
@@ -533,14 +533,6 @@ Please visit us at http://www.suse.com/.
                         <first_run>yes</first_run>
                     </arguments>
                 </module>
-<!--
-                <module>
-	            <label>Desktop Selection</label>
-                    <name>desktop</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
-                </module>
--->
 		<module>
 		    <label>User Settings</label>
 		    <name>user_first</name>
@@ -883,7 +875,7 @@ Please visit us at http://www.suse.com/.
             <stage>initial</stage>
 	    <label>Base Installation</label>
             <mode>demo</mode>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
@@ -925,7 +917,7 @@ Please visit us at http://www.suse.com/.
                 <enable_back>no</enable_back>
                 <enable_next>no</enable_next>
             </defaults>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
 	            <label>Perform Update</label>
                     <name>rpmcopy_secondstage_update</name>
@@ -999,7 +991,7 @@ Please visit us at http://www.suse.com/.
                 <enable_next>yes</enable_next>
                 <archs>all</archs>
             </defaults>
-            <modules  config:type="list">
+            <modules config:type="list">
 		<module>
 		    <heading>yes</heading>
 		    <label>Configuration</label>
@@ -1131,7 +1123,7 @@ Please visit us at http://www.suse.com/.
                 <enable_next>yes</enable_next>
                 <archs>all</archs>
             </defaults>
-            <modules  config:type="list">
+            <modules config:type="list">
 		<module>
 		    <heading>yes</heading>
 		    <label>Configuration</label>
@@ -1164,7 +1156,7 @@ Please visit us at http://www.suse.com/.
                 <enable_back>no</enable_back>
                 <enable_next>no</enable_next>
             </defaults>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
 	            <label>AutoYaST Settings</label>
                     <name>autoinit</name>
@@ -1218,7 +1210,7 @@ Please visit us at http://www.suse.com/.
             <label>Preparation</label>
             <mode>autoupgrade</mode>
             <stage>initial</stage>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
                     <label>System Analysis</label>
                     <name>system_analysis</name>
@@ -1298,7 +1290,6 @@ Please visit us at http://www.suse.com/.
             </modules>
         </workflow>
 
-
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -1307,7 +1298,7 @@ Please visit us at http://www.suse.com/.
             </defaults>
             <stage>continue</stage>
             <mode>autoinstallation</mode>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
 	            <label>Perform Installation</label>
                     <name>netprobe</name>
@@ -1343,7 +1334,7 @@ Please visit us at http://www.suse.com/.
             </defaults>
             <stage>continue</stage>
             <mode>autoupgrade</mode>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
                     <label>Perform Update</label>
                     <name>autopost</name>
@@ -1367,7 +1358,6 @@ Please visit us at http://www.suse.com/.
                 </module>
             </modules>
         </workflow>
-
 
     </workflows>
 </productDefines>

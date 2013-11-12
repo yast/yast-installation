@@ -435,32 +435,6 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 		    <presentation_order>99</presentation_order>
 		</proposal_module>
             </proposal_modules>
-<!--
-            <proposal_tabs config:type="list">
-                <proposal_tab>
-                    <label>Overview</label>
-                    <proposal_modules config:type="list">
-                        <proposal_module>partitions</proposal_module>
-                        <proposal_module>software_simple</proposal_module>
-			<proposal_module>country_simple</proposal_module>
-                    </proposal_modules>
-                </proposal_tab>
-                <proposal_tab>
-                    <label>Expert</label>
-                    <proposal_modules config:type="list">
-                        <proposal_module>hwinfo</proposal_module>
-                        <proposal_module>keyboard</proposal_module>
-                        <proposal_module>partitions</proposal_module>
-                        <proposal_module>software</proposal_module>
-                        <proposal_module>bootloader</proposal_module>
-                        <proposal_module>timezone</proposal_module>
-                        <proposal_module>language</proposal_module>
-                        <proposal_module>users</proposal_module>
-                        <proposal_module>services-manager</proposal_module>
-                    </proposal_modules>
-                </proposal_tab>
-            </proposal_tabs>
--->
         </proposal>
 
         <proposal>
@@ -639,14 +613,6 @@ TODO: inst_start_deploy_image does not exist yet
 		    <label>Desktop Selection</label>
 		    <name>new_desktop</name>
                 </module>
-<!--
-	        <module>
-		    <label>Disk</label>
-		    <name>resize_dialog</name>
-		    <enable_back>yes</enable_back>
-		    <enable_next>yes</enable_next>
-		</module>
--->
 		<module>
 		    <label>User Settings</label>
 		    <name>user_first</name>
@@ -763,16 +729,6 @@ TODO: inst_start_deploy_image does not exist yet
                     </arguments>
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
-<!--
-                <module>
-                    <label>Welcome</label>
-                    <name>inst_live_welcome</name>
-                </module>
-                 <module>
-                    <label>License Agreement</label>
-                    <name>inst_license</name>
-                </module>
--->
                 <module>
                     <label>Time Zone</label>
                     <name>timezone</name>
@@ -795,18 +751,6 @@ TODO: inst_start_deploy_image does not exist yet
                     <label>User Settings</label>
                     <name>root_first</name>
                 </module>
-<!--
-                <module>
-                    <label>Installation Settings</label>
-                    <name>inst_live_simple_proposal</name>
-                    <proposal>initial</proposal>
-                </module>
-                <module>
-                    <label>Installation Settings</label>
-                    <name>inst_live_full_proposal</name>
-                    <proposal>initial</proposal>
-                </module>
--->
                 <module>
                     <label>Installation Settings</label>
                     <name>inst_live_pre-proposal</name>
@@ -1056,64 +1000,6 @@ TODO: inst_start_deploy_image does not exist yet
             </modules>
         </workflow>
 
-	<!-- Stage: Continue, Mode: Update -->
-	<!--
-	Second stage for update has been disabled by FATE #303396
-        <workflow>
-            <stage>continue</stage>
-            <mode>update</mode>
-            <defaults>
-                <archs>all</archs>
-                <enable_back>yes</enable_back>
-                <enable_next>yes</enable_next>
-            </defaults>
-            <modules config:type="list">
-                <module>
-	            <label>Perform Update</label>
-                    <name>rpmcopy_secondstage</name>
-		    <enable_back>no</enable_back>
-		    <enable_next>no</enable_next>
-                </module>
-		<module>
-		    <heading>yes</heading>
-		    <label>Configuration</label>
-		</module>
-                <module>
-	            <label>Network</label>
-                    <name>ask_net_test</name>
-		    <enable_back>no</enable_back>
-                </module>
-                <module>
-	            <label>Network</label>
-                    <name>do_net_test</name>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>addon_update_sources</name>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>ask_online_update</name>
-                </module>
-                <module>
-	            <label>Online Update</label>
-                    <name>you</name>
-                </module>
-		<module>
-		    <label>Online Update</label>
-		    <name>restore_settings</name>
-		</module>
-                <module>
-	            <label>Release Notes</label>
-                    <name>release_notes</name>
-                </module>
-                <module>
-                    <name>congratulate</name>
-                </module>
-            </modules>
-        </workflow>
-	-->
-
 	<!-- Stage: Continue, Mode: Installation -->
         <workflow>
             <stage>continue</stage>
@@ -1336,7 +1222,7 @@ TODO: inst_start_deploy_image does not exist yet
             </modules>
         </workflow>
 
-	<!-- Stage: Continue, Mode: AutoInstallation -->
+	<!-- Stage: Initial, Mode: AutoUpgrade -->
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -1466,7 +1352,7 @@ TODO: inst_start_deploy_image does not exist yet
             </defaults>
             <stage>continue</stage>
             <mode>autoupgrade</mode>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
                     <label>Perform Update</label>
                     <name>autopost</name>
@@ -1486,7 +1372,6 @@ TODO: inst_start_deploy_image does not exist yet
                 </module>
             </modules>
         </workflow>
-
 
     </workflows>
 </productDefines>

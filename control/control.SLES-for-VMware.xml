@@ -1380,7 +1380,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <enable_next>yes</enable_next>
                 <archs>all</archs>
             </defaults>
-            <modules  config:type="list">
+            <modules config:type="list">
 		<module>
 		    <heading>yes</heading>
 		    <label>Configuration</label>
@@ -1413,7 +1413,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <enable_back>no</enable_back>
                 <enable_next>no</enable_next>
             </defaults>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
 	            <label>AutoYaST Settings</label>
                     <name>autoinit</name>
@@ -1473,7 +1473,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
             <label>Preparation</label>
             <mode>autoupgrade</mode>
             <stage>initial</stage>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
                     <label>System Analysis</label>
                     <name>system_analysis</name>
@@ -1562,7 +1562,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
             </defaults>
             <stage>continue</stage>
             <mode>autoinstallation</mode>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
 	            <label>Perform Installation</label>
                     <name>netprobe</name>
@@ -1623,7 +1623,6 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 </module>
             </modules>
         </workflow>
-
 
     </workflows>
 </productDefines>

@@ -287,7 +287,7 @@ textdomain="control"
 	<clone_module>host</clone_module>
 	<clone_module>routing</clone_module>
 	<clone_module>proxy</clone_module>
-  <clone_module>services-manager</clone_module>
+        <clone_module>services-manager</clone_module>
 	<clone_module>x11</clone_module>
 	<clone_module>nis</clone_module>
 	<clone_module>ldap</clone_module>
@@ -479,7 +479,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		    <presentation_order>30</presentation_order>
 		</proposal_module>
 		<proposal_module>
-        <!-- propose the default runlevel after software is selected, bnc #380141 -->
+                <!-- propose the default runlevel after software is selected, bnc #380141 -->
 		    <name>default_target</name>
 		    <presentation_order>50</presentation_order>
 		</proposal_module>
@@ -1077,7 +1077,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
             <stage>initial</stage>
 	    <label>Base Installation</label>
             <mode>screen_shot</mode>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
                     <enable_back>no</enable_back>
                     <enable_next>yes</enable_next>
@@ -1648,7 +1648,6 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 </module>
             </modules>
         </workflow>
-
 
     </workflows>
 </productDefines>
