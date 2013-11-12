@@ -86,7 +86,7 @@ globals_elements =
     | language
     | timezone
     | enable_autologin
-    | runlevel
+    | default_target
     | require_registration
     | services_proposal
     | ac_redraw_and_ignore
@@ -119,7 +119,7 @@ language =				element language { text }
 ## Default timezone
 timezone =				element timezone { text }
 ## Default runlevel
-runlevel =				element runlevel { text }
+default_target =				element default_target { text }
 
 ## Debugging feature, makes workflow manaher to write
 ## more detailed log entries
