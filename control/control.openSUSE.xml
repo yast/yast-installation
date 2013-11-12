@@ -329,7 +329,6 @@ textdomain="control"
 	<clone_module>routing</clone_module>
 	<clone_module>proxy</clone_module>
 	<clone_module>services-manager</clone_module>
-	<!--  <clone_module>x11</clone_module>  (bnc#441404)  -->
 	<clone_module>nis</clone_module>
 	<clone_module>ldap</clone_module>
 	<clone_module>printer</clone_module>
@@ -529,7 +528,6 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 	    <unique_id>hardware_continue</unique_id>
             <enable_skip>yes</enable_skip>
             <proposal_modules config:type="list">
-              <!--  <proposal_module>x11</proposal_module>  (bnc#441404)  -->
                 <proposal_module>printer</proposal_module>
                 <proposal_module>sound</proposal_module>
             </proposal_modules>

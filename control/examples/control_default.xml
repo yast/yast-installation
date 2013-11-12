@@ -93,7 +93,6 @@
             <stage>continue</stage>
 	    <unique_id>hardware_continue</unique_id>
             <proposal_modules config:type="list">
-                <proposal_module>x11_proposal</proposal_module>
                 <proposal_module>printer_proposal</proposal_module>
                 <proposal_module>sound_proposal</proposal_module>
                 <proposal_module>tv_proposal</proposal_module>
@@ -116,7 +115,6 @@
             <stage>continue</stage>
 	    <unique_id>hardware_ppc64_continue</unique_id>
             <proposal_modules config:type="list">
-                <proposal_module>x11_proposal</proposal_module>
                 <proposal_module>printer_proposal</proposal_module>
             </proposal_modules>
         </proposal>

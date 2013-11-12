@@ -136,7 +136,6 @@ textdomain="control"
             <name>hardware</name>
             <stage>continue</stage>
             <proposal_modules config:type="list">
-                <proposal_module>x11</proposal_module>
                 <proposal_module>printer</proposal_module>
                 <proposal_module>sound</proposal_module>
             </proposal_modules>
