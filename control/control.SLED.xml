@@ -88,92 +88,6 @@ textdomain="control"
 	    </copy_to_system_item>
 	</copy_to_system>
 
-	<!-- FATE #303396, Make second stage non-interactive -->
-	<enable_autoconfiguration config:type="boolean">true</enable_autoconfiguration>
-	<autoconfiguration_default config:type="boolean">true</autoconfiguration_default>
-
-	<!-- BNC #428190, Some clients should be called even with AC -->
-	<autoconfiguration_enabled_modules config:type="list">
-	    <module>cont_suse_register</module>
-	    <module>cont_suseconfig</module>
-	    <module>cont_congratulate</module>
-	    <!-- #449128, Run online-update during AC -->
-	    <module>you</module>
-	    <module>restore_settings</module>
-	</autoconfiguration_enabled_modules>
-
-	<!--
-	    BNC #487565, Some AC steps might create their own UI (rpmcopy, for instance)
-	    and AC should just recreate its UI without reporting an error.
-	    Each ac_item here matches inst_* resp. *_proposal from automatic_configuration->ac_item
-	-->
-	<ac_redraw_and_ignore config:type="list">
-	    <ac_item>inst_rpmcopy_secondstage</ac_item>
-	</ac_redraw_and_ignore>
-
-        <!-- Configuration for inst_automatic_configuration script -->
-        <automatic_configuration config:type="list">
-            <!--
-                Adding inst_hostname client here, needed to generate random
-                hostname in automatic config (and for 127.0.0.2 hack) (#383336)
-                Must be called before inst_netprobe however, it cannot override it later on
-            -->
-            <ac_step>
-                <unique_id>ac_1</unique_id>
-                <text_id>ac_1</text_id>
-                <icon>yast-sw_single</icon>
-                <type>scripts</type>
-                <ac_items config:type="list">
-                    <ac_item>initialization</ac_item>
-                    <ac_item>hostname</ac_item>
-                    <ac_item>netprobe</ac_item>
-                    <ac_item>rpmcopy_secondstage</ac_item>
-                </ac_items>
-            </ac_step>
-            <!-- network proposal -->
-            <ac_step>
-                <unique_id>ac_2</unique_id>
-                <text_id>ac_2</text_id>
-                <icon>yast-network</icon>
-                <type>proposals</type>
-                <ac_items config:type="list">
-                    <ac_item>lan</ac_item>
-                    <ac_item>general</ac_item>
-                    <ac_item>isdn</ac_item>
-                    <ac_item>remote</ac_item>
-                    <ac_item>firewall</ac_item>
-                    <!-- FATE #305583: Start CIMOM by default -->
-                    <ac_item>services</ac_item>
-                </ac_items>
-            </ac_step>
-            <!-- hardware proposal -->
-            <ac_step>
-                <unique_id>ac_3</unique_id>
-                <text_id>ac_3</text_id>
-                <icon>yast-hwinfo</icon>
-                <type>proposals</type>
-                <ac_items config:type="list">
-                    <ac_item>x11</ac_item>
-                    <ac_item>printer</ac_item>
-                    <ac_item>sound</ac_item>
-                    <ac_item>tv</ac_item>
-                </ac_items>
-            </ac_step>
-            <!-- finishing configuration -->
-            <ac_step>
-                <unique_id>ac_4</unique_id>
-                <text_id>ac_4</text_id>
-                <icon>yast-sysconfig</icon>
-                <type>scripts</type>
-                <ac_items config:type="list">
-                    <ac_item>addon_update_sources</ac_item>
-                    <ac_item>extrasources</ac_item>
-                    <ac_item>suseconfig</ac_item>
-                    <ac_item>save_hardware_status</ac_item>
-                </ac_items>
-            </ac_step>
-        </automatic_configuration>
-
 	<!-- FATE: #304865: Enhance YaST Modules to cooperate better handling the product licenses -->
 	<base_product_license_directory>/etc/YaST2/licenses/base/</base_product_license_directory>
 
@@ -364,11 +278,6 @@ Please visit us at http://www.suse.com/.
 	<!-- BNC #431336, Do not display any system type -->
 	<desktop_gnome><label></label></desktop_gnome>
 	<dummy_desktop><label></label></dummy_desktop>
-
-	<ac_1><label>Initialization...</label></ac_1>
-	<ac_2><label>Configuring network...</label></ac_2>
-	<ac_3><label>Configuring hardware...</label></ac_3>
-	<ac_4><label>Finishing configuration...</label></ac_4>
 
 	<!-- FATE #305583: Start CIMOM by default -->
 	<service_sfcb><label>CIM Server</label></service_sfcb>

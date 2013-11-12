@@ -374,16 +374,6 @@
 		    entered for a first user also for the user root. If not defined, default is
 		    <emphasis>false</emphasis></para></listitem>
 
-		<!-- FATE #303396: Make second stage non-interactive -->
-		<listitem><para>(boolean) <emphasis>enable_autoconfiguration</emphasis> - enables a check box
-		    in dialog that offers to switch the automatic configuration either on or off.
-		    Default is false.</para></listitem>
-
-		<listitem><para>(boolean) <emphasis>autoconfiguration_default</emphasis> - defines a default
-		    value whether to use the automatic configuration. It works even if
-		    <emphasis>enable_autoconfiguration</emphasis> is turned off, but user would not be able
-		    to change it. Default is false.</para></listitem>
-
 		<!-- FATE: #304865: Enhance YaST Modules to cooperate better handling the product licenses -->
 		<listitem><para>(string) <emphasis>base_product_license_directory</emphasis> - directory
 		    where the base-product licenses are stored (license.txt, license.de_DE.txt,
@@ -504,64 +494,6 @@
 			<emphasis>file_item</emphasis> entries, one entry for one file or
 			directory; files are optional and are copied if they exist; missing
 			files are skipped</para>
-		</listitem>
-	    </itemizedlist>
-	</section>
-
-	<!-- FATE #303939: Enable redetection of hardware at customer first boot -->
-	<section id="control_globals_automatic_configuration">
-	    <title>Automatic Configuration</title>
-
-	    <para>This is another feature defined in <emphasis>globals</emphasis> section.
-	    <emphasis>Automatic Configuration</emphasis> is called via the script
-	    <emphasis>inst_automatic_configuration</emphasis> at the end of the second stage
-	    installation. Having the configuration in control file enables this function for
-	    another modes and makes it very well configurable.</para>
-
-	    <para>This is an example of AC setup:</para>
-	    <programlisting>
-		<xi:include href="examples/globals-automatic_configuration.xml" parse="text"
-            	    xmlns:xi="http://www.w3.org/2001/XInclude"/>
-	    </programlisting>
-
-	    <para>AC setup <emphasis>automatic_configuration</emphasis> consists of list of several
-	    <emphasis>ac_step</emphasis> definitions. On definition for one AC step. These steps
-	    can be compared to sets of scripts or sets of installation proposals, e.g.,
-	    <emphasis>network proposal</emphasis> that consists of <emphasis>lan</emphasis>,
-	    <emphasis>modem</emphasis>, ... and <emphasis>firewall</emphasis> proposals which
-	    might depend on each others proposals.</para>
-
-	    <para>Every single <emphasis>ac_step</emphasis> consists of</para>
-	    <itemizedlist>
-		<listitem>
-		    <para><emphasis>text_id</emphasis> - which is the very same ID as used in
-		    <link linkend="control_texts">texts</link> (you have to define the AC label
-		    there).</para>
-		</listitem>
-		<listitem>
-		    <para><emphasis>type</emphasis> - defines how the AC step items will
-		    be handled. Possible values are <emphasis>scripts</emphasis> or
-		    <emphasis>proposals</emphasis>. More types cannot be mixed within one AC step.
-		    All <emphasis>scripts</emphasis> are called only once one by one,
-		    all <emphasis>proposals</emphasis> in one AC step are called first with
-		    <emphasis>MakeProposal</emphasis> parameter then again all with
-		    <emphasis>Write</emphasis> parameter.</para>
-		</listitem>
-		<listitem>
-		    <para><emphasis>ac_items</emphasis> - is a list of scripts or proposals each in
-		    a separate <emphasis>ac_item</emphasis>.</para>
-
-		    <para>For scripts an <emphasis>ac_item</emphasis> is a name
-		    of YaST client script without <emphasis>inst_</emphasis> prefix, e.g.,
-		    <emphasis>firewall</emphasis> would call <emphasis>inst_firewall</emphasis> script.</para>
-
-		    <para>For proposals an <emphasis>ac_item</emphasis> is a name
-		    of YaST proposal without <emphasis>_proposal</emphasis> suffix, e.g.,
-		    <emphasis>firewall</emphasis> would call <emphasis>firewall_proposal</emphasis>.</para>
-		</listitem>
-		<listitem>
-		    <para><emphasis>icon</emphasis> - plain icon filename (from 22x22 directory) without suffix
-		    and without any explicit directory name, e.g., <emphasis>yast-network</emphasis>.</para>
 		</listitem>
 	    </itemizedlist>
 	</section>

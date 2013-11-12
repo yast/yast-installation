@@ -13,7 +13,6 @@ textdomain="control"
         <enable_autologin config:type="boolean">true</enable_autologin>
         <language>de_DE</language>
         <timezone>Canada/Eastern</timezone>
-        <default_target>graphical</default_target>
     </globals>
 
     <!-- Force a selection (`fixed) to be used instead of automatically
