@@ -95,11 +95,9 @@ related variables.
 >
 > Note that the control file is not an optional tool to help customize
 > installation, it is required during installation and without the file,
-> installation may fail or lead to unexpected results. YaST provides a
-> default and general control file which is always available in the
-> system. The general and product independent control files is installed
-> by the package *yast2-installation* in
-> `/usr/share/YaST2/control/control.xml`.
+> installation may fail or lead to unexpected results. Control file on installed
+> system located in `/etc/YaST2/control.xml` is owned by ${PRODUCT}-release
+> package.
 
 During installation, *linuxrc* searches for a file named
 `control.xml` on the installation medium (CD, NFS, FTP..) and copies the
@@ -129,9 +127,8 @@ One of the main reasons for using the control is to provide non YaST
 developers the ability to change the installation behavior and customize
 various settings without the need to change and re-build YaST packages.
 
-The control files for the various SUSE products are maintained out of
-the YaST development trees and include separate internal and product
-specific packages.
+The control files for some SUSE products are maintained at
+yast2-installation source tree in directory `control`.
 
 Configuration
 -------------
@@ -183,8 +180,10 @@ A workflow list element is a map with the following elements:
 
     -   name: The name of the module. All installation clients and
         modules have a unified prefix (inst\_) which can be ommited
-        here. For example, if the YaST file for the module is called
-        *inst\_test*, then the name in the control file is *test*
+        here. Name is ofted used as ID, so it better be inique within the whole
+        control file. That is why we have execute parameter, see below. For
+        example, if the YaST file for the module is called *inst\_test*, then
+        the name in the control file is *test*
 
     -   label: The label of the module in the step dialog. This is an
         optional element. If it is not set, the label of the previous
@@ -192,6 +191,10 @@ A workflow list element is a map with the following elements:
 
     -   arguments: The arguments for the module is a comma separated
         list which can accept booleans and symbols.
+
+    -   execite: If it is needed to call script that does not start with 
+        *inst_* or you need to call the same script several times with
+        different *name* parameter.
 
 The following listing shows a typical installation workflow:
 
@@ -204,7 +207,8 @@ The following listing shows a typical installation workflow:
             <defaults>
                 <!-- arguments for the clients -->
                 <arguments>false,false</arguments>
-                <!-- allowed architectures "all", "i386", "i386,ia64,x86_64"  -->
+                <!-- allowed architectures "all", "i386", "i386,ia64,x86_64", see
+                  Arch module in yast-yast2 for all possible options  -->
                 <archs>all</archs>
             </defaults>
             <stage>initial</stage>
@@ -256,7 +260,7 @@ Part of the installation workflows are proposal screens, which consists
 of group of related configuration settings. For example *Network*,
 *Hardware* and the initial *Installation* proposal.
 
-If you with for some reason to add or modify a proposal, which is
+If you want for some reason to add or modify a proposal, which is
 discourged because of configuration dependencies, then this would be
 possible using the control file.
 
@@ -281,9 +285,11 @@ The proposal in the above listing is displayed in the so called
 proposal consists of different configuration options which are controled
 using a special API.
 
-Currently, proposals names and captions as fixed and cant be changed. It
+Currently, proposals names and captions are fixed and cannot be changed. It
 is not possible to create a special proposal screen, instead those
-available should be used: *network*, *hardware*, *service*.
+available should be used: *network*, *hardware*, *service*. All proposal script
+names are listed without *_proposal* suffix. If a *proposed_module* is called
+*example*, then installer looks for *example_proposal* script.
 
 In the workflow, the proposals are called as any workflow step with an
 additional argument identifying the proposal screen to be started.
@@ -390,7 +396,7 @@ These options usually enable or disable some installation feature.
 -   (boolean) *require\_registration* - Require registration of add-on
     product (ignored in the base product).
 
-### Installation helpers
+### Installation Helpers
 
 In the *globals* section, there are also helper variables for the
 installation and debugging:
@@ -717,7 +723,8 @@ expressions, such as
     *[:blank:]*, *[:cntrl:]*, *[:digit:]*, *[:graph:]*, *[:lower:]*,
     *[:print:]*, *[:punct:]*, *[:space:]*, *[:upper:]*, *[:xdigit:]*
 
-These regular expressions are evaluated as *YCP*.
+These regular expressions are evaluated as [POSIX regex]
+(www.regular-expressions.info/posix.html).
 
 -   *online\_repos\_preselected*
 
@@ -938,7 +945,7 @@ layout
 If present, the partition proposal will be based on the data provided in
 the control file.
 
-#### Algorithm for space allocation
+#### Algorithm for Space Allocation
 
 Space allocation on a disk happens in the following order. First all
 partition get the size allocated that is determined by the size
@@ -1293,7 +1300,7 @@ The structure is rather easy:
     </texts>
 ```
 
-Translated texts can be got using *ProductControl::GetTranslatedText
+Translated texts can be got using *ProductControl.GetTranslatedText
 (text\_id)* call.
 
 CONTROL-SECTION
@@ -1424,6 +1431,10 @@ product's CD:
 -   (optional) files needed to make the CD bootable (kernel, initrd,
     isolinux,...)
 
+-   (optional) `y2update.tgz` can contain all files that are needed for
+    installation itself. Both for first stage installation and also for the
+    running system.
+
 #### Workflow Adaptation
 
 There is only a single control file to describe both an add-on and
@@ -1443,7 +1454,7 @@ installation source.
 
 ### Diff File Format
 
-Because there are no really usable open source XML diff tools (the
+Because there were no really usable open source XML diff tools (the
 existing ones are typically written in Java), we define a special
 purpose file format aimed to cover the cases as described in the
 previous chapter.
@@ -1638,7 +1649,7 @@ optional. The modes, stages, and architectures do not
 ### Appending an item at the end of proposal
 
 Adding an item to a proposal is possible at the end only. If the
-proposal has tabs, the items are added to a new created tab.
+proposal has tabs, the items are added to a newly created tab.
 
 ```
     <append_modules config:type="list">
@@ -1816,7 +1827,7 @@ file. The important is that the stage of the workflow is set to
 
 and the mode is set for the specified mode.
 
-### Algorith for Adapting Workflow
+### Algorithm for Adapting Workflow
 
 The algorithm is rather straightforward. Every time, remove is applied
 first, then replace and the last step is add. This is done per product,

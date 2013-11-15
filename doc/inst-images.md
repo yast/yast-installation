@@ -66,8 +66,7 @@ when deploying the images, they have to be described in
 */images/details-$ARCH.xml*, respectively in file
 */images/details.xml* stored on the first installation media:
 
-*$ARCH* is one of: *i386*, *sparc*, *mips*, *ppc*, *alpha*, *s390*,
-*ia64*, and *x86\_64*.
-
+*$ARCH* is any architecture recognized by Yast see [Arch library in yast2]
+(https://github.com/yast/yast-yast2/blob/master/library/general/src/modules/Arch.rb).
 Mandatary items for each *image* (file name) are *file* and *size* (in
 bytes).
