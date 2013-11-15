@@ -192,7 +192,7 @@ A workflow list element is a map with the following elements:
     -   arguments: The arguments for the module is a comma separated
         list which can accept booleans and symbols.
 
-    -   execite: If it is needed to call script that does not start with 
+    -   execute: If it is needed to call script that does not start with 
         *inst_* or you need to call the same script several times with
         different *name* parameter.
 
