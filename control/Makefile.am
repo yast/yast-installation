@@ -1,7 +1,7 @@
 # Makefile.am for installation/general
 #
 
-SUBDIRS = docs tests
+SUBDIRS = tests
 
 controldir = $(yast2dir)/control
 
