@@ -285,7 +285,7 @@ Please visit us at http://www.suse.com/.
     <proposals config:type="list">
         <proposal>
             <label>Installation Settings</label>
-            <mode>installation,demo,autoinstallation</mode>
+            <mode>installation,autoinstallation</mode>
             <stage>initial</stage>
             <name>initial</name>
 	    <unique_id>inst_initial</unique_id>
@@ -758,88 +758,6 @@ Please visit us at http://www.suse.com/.
                 <module>
 	            <label>Perform Update</label>
                     <name>finish</name>
-                </module>
-            </modules>
-        </workflow>
-
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-            </defaults>
-            <stage>initial</stage>
-	    <label>Base Installation</label>
-            <mode>screen_shot</mode>
-            <modules  config:type="list">
-                <module>
-                    <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
- 	            <label>Language</label>
-                    <name>language</name>
-                    <retranslate config:type="boolean">true</retranslate>
-                </module>
-                <module>
-	            <label>Installation Settings</label>
-                    <name>initial_screenshot_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>initial</proposal>
-                </module>
-		<!-- FATE #303860: Provide consistent progress during installation -->
-		<module>
-		    <label>Perform Installation</label>
-		    <name>prepareprogress</name>
-		</module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>prepdisk</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>kickoff</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>rpmcopy</name>
-                </module>
-            </modules>
-        </workflow>
-
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-            </defaults>
-            <stage>initial</stage>
-	    <label>Base Installation</label>
-            <mode>demo</mode>
-            <modules config:type="list">
-                <module>
-                    <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
-	            <label>Language</label>
-                    <name>language</name>
-                    <retranslate config:type="boolean">true</retranslate>
-                </module>
-                <module>
-	            <label>Installation Settings</label>
-                    <name>initial_demo_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>initial</proposal>
-                </module>
-		<!-- FATE #303860: Provide consistent progress during installation -->
-		<module>
-		    <label>Perform Installation</label>
-		    <name>prepareprogress</name>
-		</module>
-                <module>
- 	            <label>Perform Installation</label>
-                   <name>prepdisk</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>kickoff</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>rpmcopy</name>
                 </module>
             </modules>
         </workflow>

@@ -382,7 +382,7 @@ is the most appropriate desktop for you.</label></desktop_dialog>
     <proposals config:type="list">
         <proposal>
             <label>Installation Settings</label>
-            <mode>installation,demo,autoinstallation</mode>
+            <mode>installation,autoinstallation</mode>
             <stage>initial</stage>
             <name>initial</name>
 	    <unique_id>inst_initial</unique_id>
@@ -844,96 +844,6 @@ TODO: inst_start_deploy_image does not exist yet
             </modules>
         </workflow>
 
-	<!-- Stage: Initial, Mode: ScreenShot -->
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-		<enable_back>yes</enable_back>
-		<enable_next>yes</enable_next>
-            </defaults>
-            <stage>initial</stage>
-	    <label>Base Installation</label>
-            <mode>screen_shot</mode>
-            <modules  config:type="list">
-                <module>
-                    <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
- 	            <label>Welcome</label>
-                    <name>complex_welcome</name>
-                    <retranslate config:type="boolean">true</retranslate>
-                </module>
-                <module>
-	            <label>Installation Settings</label>
-                    <name>initial_screenshot_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>initial</proposal>
-                </module>
-		<!-- FATE #303860: Provide consistent progress during installation -->
-		<module>
-		    <label>Perform Installation</label>
-		    <name>prepareprogress</name>
-		</module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>prepdisk</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>kickoff</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>rpmcopy</name>
-		    <enable_back>no</enable_back>
-		    <enable_next>yes</enable_next>
-                </module>
-            </modules>
-        </workflow>
-
-	<!-- Stage: Initial, Mode: Demo -->
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-		<enable_back>yes</enable_back>
-		<enable_next>yes</enable_next>
-            </defaults>
-            <stage>initial</stage>
-	    <label>Base Installation</label>
-            <mode>demo</mode>
-            <modules  config:type="list">
-                <module>
-                    <enable_back>no</enable_back>
-	            <label>Welcome</label>
-                    <name>complex_welcome</name>
-                    <retranslate config:type="boolean">true</retranslate>
-                </module>
-                <module>
-	            <label>Installation Settings</label>
-                    <name>initial_demo_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>initial</proposal>
-                </module>
-		<!-- FATE #303860: Provide consistent progress during installation -->
-		<module>
-		    <label>Perform Installation</label>
-		    <name>prepareprogress</name>
-		</module>
-                <module>
- 	            <label>Perform Installation</label>
-                   <name>prepdisk</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>kickoff</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>rpmcopy</name>
-		    <enable_back>no</enable_back>
-		    <enable_next>no</enable_next>
-                </module>
-            </modules>
-        </workflow>
 
         <!-- TODO FIXME: fix the live installer to not require the 2nd stage -->
 	<!-- Stage: Continue, Mode: Live Installation -->
