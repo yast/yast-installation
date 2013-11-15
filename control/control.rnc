@@ -68,15 +68,11 @@ globals_elements =
     | online_repositories_default
     | show_addons
     | addons_default
-    | enable_autoconfiguration
-    | autoconfiguration_default
     | kexec_reboot
     | rle_offer_rulevel_4
     | default_ntp_setup
     | save_instsys_content
     | copy_to_system
-    | autoconfiguration_enabled_modules
-    | automatic_configuration
     | displaymanager_shutdown
     | enable_kdump
     | polkit_default_privs
@@ -89,7 +85,6 @@ globals_elements =
     | default_target
     | require_registration
     | services_proposal
-    | ac_redraw_and_ignore
     | debug_deploying
     | show_drivers_info
 
@@ -153,8 +148,6 @@ show_online_repositories =		element show_online_repositories { BOOLEAN }
 online_repositories_default =		element online_repositories_default { BOOLEAN }
 show_addons =				element show_addons { BOOLEAN }
 addons_default =			element addons_default { BOOLEAN }
-enable_autoconfiguration =		element enable_autoconfiguration { BOOLEAN }
-autoconfiguration_default =		element autoconfiguration_default { BOOLEAN }
 ## Defines whether kexec is the preferred mode instead of rebooting
 ## between the first and the second stage of installation
 kexec_reboot =				element kexec_reboot { BOOLEAN }
@@ -193,34 +186,6 @@ copy_to_system = element copy_to_system {
 	    LIST,
 	    element file_item { text }+
 	}*
-    }+
-}
-
-autoconfiguration_enabled_modules = element autoconfiguration_enabled_modules {
-    LIST,
-    element module { text }+
-}
-
-## Describes the automatic configuration called in the second stage.
-## Proposed values are written to the system without asking user.
-automatic_configuration = element automatic_configuration {
-    LIST,
-    ## One configuration step
-    element ac_step {
-	## Unique ID of the automatic configuration step
-	element unique_id { text } &
-	## ID used in texts
-	element text_id { text }? &
-	## Name of the icon file (without suffix)
-	element icon { text }? &
-	## Type of a configuration step.
-	## Scripts are called directly.
-	## Proposals are all at first called with 'MakeProposal' and then 'Write' parameters.
-	element type { "scripts" | "proposals" }? &
-	element ac_items {
-	    LIST,
-	    element ac_item { text }+
-	}?
     }+
 }
 
@@ -796,11 +761,6 @@ productDefines_elements =
 
 start = element productDefines {
     productDefines_elements*
-}
-
-ac_redraw_and_ignore = element ac_redraw_and_ignore {
-    LIST,
-    element ac_item { text }+
 }
 
 debug_deploying = element debug_deploying { BOOLEAN }
