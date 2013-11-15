@@ -143,7 +143,7 @@ module Yast
             "save_config",
             # For live installer only
             Mode.live_installation ? "live_save_config" : "",
-            "runlevel",
+            "default_target",
             "desktop",
             "storage",
             "iscsi-client",
@@ -425,7 +425,7 @@ module Yast
             if Popup.ConfirmAbort(:incomplete)
               @aborted = true
               raise Break
-            end 
+            end
             # Anything else
           else
             SlideShow.HandleInput(user_ret)

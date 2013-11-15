@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.2
+Version:        3.1.5
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -74,6 +74,9 @@ Requires:	initviocons
 
 # Proxy settings for 2nd stage (bnc#764951)
 Requires:       yast2-proxy
+
+# Systemd default target and services
+Requires: yast2-services-manager
 
 # Only in inst-sys
 # Requires:	yast2-network
@@ -177,7 +180,6 @@ install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 %files
 %defattr(-,root,root)
 %dir /usr/share/YaST2/control
-/usr/share/YaST2/control/*.xml
 # Fixme: move to another package (to make build of other packages faster)
 /usr/share/YaST2/control/*.rng
 /usr/share/YaST2/control/*.rnc

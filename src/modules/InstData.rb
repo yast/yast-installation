@@ -82,10 +82,6 @@ module Yast
       @localDisabledModules = []
       @localDisabledProposals = []
 
-      # FATE #303396, Non-interactive second stage
-      # this variable enables a check box in dialog
-      @enable_autoconfiguration = false
-
       # <-- other
 
       # --> copy files -- config
@@ -112,7 +108,6 @@ module Yast
     publish :variable => :wizardsteps_disabled_ac_items, :type => "string"
     publish :variable => :localDisabledModules, :type => "list <string>"
     publish :variable => :localDisabledProposals, :type => "list <string>"
-    publish :variable => :enable_autoconfiguration, :type => "boolean"
     publish :variable => :copy_files_use_control_file, :type => "boolean"
     publish :variable => :additional_copy_files, :type => "list <map>"
   end

@@ -123,32 +123,6 @@ module Yast
       ProductControl.DisableModule("user_non_interactive")
       ProductControl.DisableModule("auth")
 
-      Builtins.y2milestone("Adjusting automatic configuration")
-      # FATE #303396, Make second stage non-interactive
-      enable_autoconfiguration = ProductFeatures.GetBooleanFeature(
-        "globals",
-        "enable_autoconfiguration"
-      )
-      autoconfiguration_default = ProductFeatures.GetBooleanFeature(
-        "globals",
-        "autoconfiguration_default"
-      )
-
-      # bnc#679435: leave normal second stage for autoYaST
-      if Mode.autoinst
-        enable_autoconfiguration = false
-        autoconfiguration_default = false
-      end
-
-      # Enabled only when AC is selected
-      InstData.enable_autoconfiguration = enable_autoconfiguration == true
-      # Default state
-      ProductControl.SetUseAutomaticConfiguration(
-        autoconfiguration_default == true
-      )
-      # Enables or disables some modules, etc.
-      AdjustAutomaticConfiguration()
-
       nil
     end
 

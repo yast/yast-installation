@@ -91,81 +91,8 @@ textdomain="control"
 	    </copy_to_system_item>
 	</copy_to_system>
 
-	<!-- FATE #303396, Make second stage non-interactive -->
-	<enable_autoconfiguration config:type="boolean">true</enable_autoconfiguration>
-	<autoconfiguration_default config:type="boolean">true</autoconfiguration_default>
-
 	<!-- FATE #303395, Kexec instead of reboot (default 'false') -->
 	<kexec_reboot config:type="boolean">true</kexec_reboot>
-
-	<!--
-	    BNC #487565, Some AC steps might create their own UI (rpmcopy, for instance)
-	    and AC should just recreate its UI without reporting an error.
-	    Each ac_item here matches inst_* resp. *_proposal from automatic_configuration->ac_item
-	-->
-	<ac_redraw_and_ignore config:type="list">
-	    <ac_item>inst_rpmcopy_secondstage</ac_item>
-	</ac_redraw_and_ignore>
-
-	<!-- Configuration for inst_automatic_configuration script -->
-	<automatic_configuration config:type="list">
-	    <!--
-		Adding inst_hostname client here, needed to generate random
-		hostname in automatic config (and for 127.0.0.2 hack) (#383336)
-		Must be called before inst_netprobe however, it cannot override it later on
-	    -->
-	    <ac_step>
-		<unique_id>ac_1</unique_id>
-		<text_id>ac_1</text_id>
-		<icon>yast-sw_single</icon>
-		<type>scripts</type>
-		<ac_items config:type="list">
-		    <ac_item>initialization</ac_item>
-		    <ac_item>hostname</ac_item>
-		    <ac_item>netprobe</ac_item>
-		    <ac_item>rpmcopy_secondstage</ac_item>
-		</ac_items>
-	    </ac_step>
-	    <!-- network proposal -->
-	    <ac_step>
-		<unique_id>ac_2</unique_id>
-		<text_id>ac_2</text_id>
-		<icon>yast-network</icon>
-		<type>proposals</type>
-		<ac_items config:type="list">
-		    <ac_item>lan</ac_item>
-		    <ac_item>general</ac_item>
-		    <ac_item>isdn</ac_item>
-		    <ac_item>remote</ac_item>
-		    <ac_item>firewall</ac_item>
-		</ac_items>
-	    </ac_step>
-	    <!-- hardware proposal -->
-	    <ac_step>
-		<unique_id>ac_3</unique_id>
-		<text_id>ac_3</text_id>
-		<icon>yast-hwinfo</icon>
-		<type>proposals</type>
-		<ac_items config:type="list">
-		   <!-- <ac_item>x11</ac_item>  (bnc#441404) -->
-		    <ac_item>printer</ac_item>
-		    <ac_item>sound</ac_item>
-		    <ac_item>tv</ac_item>
-		</ac_items>
-	    </ac_step>
-	    <!-- finishing configuration -->
-	    <ac_step>
-		<unique_id>ac_4</unique_id>
-		<text_id>ac_4</text_id>
-		<icon>yast-sysconfig</icon>
-		<type>scripts</type>
-		<ac_items config:type="list">
-		    <ac_item>addon_update_sources</ac_item>
-		    <ac_item>extrasources</ac_item>
-		    <ac_item>save_hardware_status</ac_item>
-		</ac_items>
-	    </ac_step>
-	</automatic_configuration>
 
 	<!-- FATE: #304865: Enhance YaST Modules to cooperate better handling the product licenses -->
 	<base_product_license_directory>/etc/YaST2/licenses/base/</base_product_license_directory>
@@ -401,8 +328,7 @@ textdomain="control"
 	<clone_module>host</clone_module>
 	<clone_module>routing</clone_module>
 	<clone_module>proxy</clone_module>
-	<clone_module>runlevel</clone_module>
-	<!--  <clone_module>x11</clone_module>  (bnc#441404)  -->
+	<clone_module>services-manager</clone_module>
 	<clone_module>nis</clone_module>
 	<clone_module>ldap</clone_module>
 	<clone_module>printer</clone_module>
@@ -425,11 +351,6 @@ After clicking &lt;b&gt;Finish&lt;/b&gt;, you can log in to the system.&lt;/p&gt
 &lt;p&gt;Have a lot of fun!&lt;br&gt;Your openSUSE Development Team&lt;/p&gt;
 	    </label>
 	</congratulate>
-
-	<ac_1><label>Initialization...</label></ac_1>
-	<ac_2><label>Configuring network...</label></ac_2>
-	<ac_3><label>Configuring hardware...</label></ac_3>
-	<ac_4><label>Finishing configuration...</label></ac_4>
 
 	<!--
 	    Desktop dialog label. It should not be wider than 75 characters.
@@ -461,7 +382,7 @@ is the most appropriate desktop for you.</label></desktop_dialog>
     <proposals config:type="list">
         <proposal>
             <label>Installation Settings</label>
-            <mode>installation,demo,autoinstallation</mode>
+            <mode>installation,autoinstallation</mode>
             <stage>initial</stage>
             <name>initial</name>
 	    <unique_id>inst_initial</unique_id>
@@ -497,9 +418,9 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 		    <name>software</name>
 		    <presentation_order>30</presentation_order>
 		</proposal_module>
-		<!-- propose the default runlevel after software is selected, bnc #380141 -->
 		<proposal_module>
-		    <name>runlevel</name>
+        <!-- propose the default runlevel after software is selected, bnc #380141 -->
+		    <name>default_target</name>
 		    <presentation_order>70</presentation_order>
 		</proposal_module>
 		<!-- finds images to deploy -->
@@ -513,32 +434,6 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 		    <presentation_order>99</presentation_order>
 		</proposal_module>
             </proposal_modules>
-<!--
-            <proposal_tabs config:type="list">
-                <proposal_tab>
-                    <label>Overview</label>
-                    <proposal_modules config:type="list">
-                        <proposal_module>partitions</proposal_module>
-                        <proposal_module>software_simple</proposal_module>
-			<proposal_module>country_simple</proposal_module>
-                    </proposal_modules>
-                </proposal_tab>
-                <proposal_tab>
-                    <label>Expert</label>
-                    <proposal_modules config:type="list">
-                        <proposal_module>hwinfo</proposal_module>
-                        <proposal_module>keyboard</proposal_module>
-                        <proposal_module>partitions</proposal_module>
-                        <proposal_module>software</proposal_module>
-                        <proposal_module>bootloader</proposal_module>
-                        <proposal_module>timezone</proposal_module>
-                        <proposal_module>language</proposal_module>
-                        <proposal_module>users</proposal_module>
-                        <proposal_module>runlevel</proposal_module>
-                    </proposal_modules>
-                </proposal_tab>
-            </proposal_tabs>
--->
         </proposal>
 
         <proposal>
@@ -555,7 +450,7 @@ is the most appropriate desktop for you.</label></desktop_dialog>
                 <proposal_module>country_simple</proposal_module>
                 <proposal_module>timezone</proposal_module>
 		<proposal_module>users</proposal_module>
-                <proposal_module>runlevel</proposal_module>
+                <proposal_module>default_target</proposal_module>
             </proposal_modules>
         </proposal>
 
@@ -633,11 +528,8 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 	    <unique_id>hardware_continue</unique_id>
             <enable_skip>yes</enable_skip>
             <proposal_modules config:type="list">
-              <!--  <proposal_module>x11</proposal_module>  (bnc#441404)  -->
                 <proposal_module>printer</proposal_module>
                 <proposal_module>sound</proposal_module>
-                <proposal_module>tv</proposal_module>
-                <proposal_module>bluetooth</proposal_module>
             </proposal_modules>
         </proposal>
     </proposals>
@@ -717,14 +609,6 @@ TODO: inst_start_deploy_image does not exist yet
 		    <label>Desktop Selection</label>
 		    <name>new_desktop</name>
                 </module>
-<!--
-	        <module>
-		    <label>Disk</label>
-		    <name>resize_dialog</name>
-		    <enable_back>yes</enable_back>
-		    <enable_next>yes</enable_next>
-		</module>
--->
 		<module>
 		    <label>User Settings</label>
 		    <name>user_first</name>
@@ -778,48 +662,6 @@ TODO: inst_start_deploy_image does not exist yet
             </modules>
         </workflow>
 
-	<!-- Stage: Initial, Mode: Repair -->
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-		<enable_back>yes</enable_back>
-		<enable_next>yes</enable_next>
-            </defaults>
-	    <label>Preparation</label>
-            <mode>repair</mode>
-            <stage>initial</stage>
-            <modules  config:type="list">
-                <module>
-		    <label>Welcome</label>
-                    <name>complex_welcome</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
-                    <arguments>
-                        <first_run>yes</first_run>
-                    </arguments>
-                    <retranslate config:type="boolean">true</retranslate>
-                </module>
-		<module>
-	            <label>Disk Activation</label>
-                    <name>disks_activate</name>
-		</module>
-                <module>
-	            <label>System Analysis</label>
-                    <name>system_analysis</name>
-                </module>
-                <module>
-	            <label>System Analysis</label>
-                    <name>mode</name>
-                </module>
-		<!-- Here, user selects whether to perform New Installation, Upgrade, or Repair -->
-		<module>
-		    <label>Repair</label>
-		    <name>repair</name>
-		    <enable_back>no</enable_back>
-		</module>
-            </modules>
-        </workflow>
-
 	<!-- Stage: Initial, Mode: Live Installation -->
         <workflow>
             <defaults>
@@ -841,16 +683,6 @@ TODO: inst_start_deploy_image does not exist yet
                     </arguments>
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
-<!--
-                <module>
-                    <label>Welcome</label>
-                    <name>inst_live_welcome</name>
-                </module>
-                 <module>
-                    <label>License Agreement</label>
-                    <name>inst_license</name>
-                </module>
--->
                 <module>
                     <label>Time Zone</label>
                     <name>timezone</name>
@@ -873,18 +705,6 @@ TODO: inst_start_deploy_image does not exist yet
                     <label>User Settings</label>
                     <name>root_first</name>
                 </module>
-<!--
-                <module>
-                    <label>Installation Settings</label>
-                    <name>inst_live_simple_proposal</name>
-                    <proposal>initial</proposal>
-                </module>
-                <module>
-                    <label>Installation Settings</label>
-                    <name>inst_live_full_proposal</name>
-                    <proposal>initial</proposal>
-                </module>
--->
                 <module>
                     <label>Installation Settings</label>
                     <name>inst_live_pre-proposal</name>
@@ -1024,293 +844,8 @@ TODO: inst_start_deploy_image does not exist yet
             </modules>
         </workflow>
 
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-            </defaults>
-            <stage>initial</stage>
-	    <label>Preparation</label>
-            <mode>repair</mode>
-            <modules  config:type="list">
-                <module>
-	            <label>System Information</label>
-                    <name>info</name>
-                </module>
-                <module>
-	            <label>Perform Repair</label>
-                    <name>repair</name>
-                </module>
-            </modules>
-        </workflow>
 
-	<!-- Stage: Initial, Mode: ScreenShot -->
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-		<enable_back>yes</enable_back>
-		<enable_next>yes</enable_next>
-            </defaults>
-            <stage>initial</stage>
-	    <label>Base Installation</label>
-            <mode>screen_shot</mode>
-            <modules  config:type="list">
-                <module>
-                    <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
- 	            <label>Welcome</label>
-                    <name>complex_welcome</name>
-                    <retranslate config:type="boolean">true</retranslate>
-                </module>
-                <module>
-	            <label>Installation Settings</label>
-                    <name>initial_screenshot_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>initial</proposal>
-                </module>
-		<!-- FATE #303860: Provide consistent progress during installation -->
-		<module>
-		    <label>Perform Installation</label>
-		    <name>prepareprogress</name>
-		</module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>prepdisk</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>kickoff</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>rpmcopy</name>
-		    <enable_back>no</enable_back>
-		    <enable_next>yes</enable_next>
-                </module>
-            </modules>
-        </workflow>
-
-	<!-- Stage: Initial, Mode: Demo -->
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-		<enable_back>yes</enable_back>
-		<enable_next>yes</enable_next>
-            </defaults>
-            <stage>initial</stage>
-	    <label>Base Installation</label>
-            <mode>demo</mode>
-            <modules  config:type="list">
-                <module>
-                    <enable_back>no</enable_back>
-	            <label>Welcome</label>
-                    <name>complex_welcome</name>
-                    <retranslate config:type="boolean">true</retranslate>
-                </module>
-                <module>
-	            <label>Installation Settings</label>
-                    <name>initial_demo_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>initial</proposal>
-                </module>
-		<!-- FATE #303860: Provide consistent progress during installation -->
-		<module>
-		    <label>Perform Installation</label>
-		    <name>prepareprogress</name>
-		</module>
-                <module>
- 	            <label>Perform Installation</label>
-                   <name>prepdisk</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>kickoff</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>rpmcopy</name>
-		    <enable_back>no</enable_back>
-		    <enable_next>no</enable_next>
-                </module>
-            </modules>
-        </workflow>
-
-	<!-- Stage: Continue, Mode: Update -->
-	<!--
-	Second stage for update has been disabled by FATE #303396
-        <workflow>
-            <stage>continue</stage>
-            <mode>update</mode>
-            <defaults>
-                <archs>all</archs>
-                <enable_back>yes</enable_back>
-                <enable_next>yes</enable_next>
-            </defaults>
-            <modules config:type="list">
-                <module>
-	            <label>Perform Update</label>
-                    <name>rpmcopy_secondstage</name>
-		    <enable_back>no</enable_back>
-		    <enable_next>no</enable_next>
-                </module>
-		<module>
-		    <heading>yes</heading>
-		    <label>Configuration</label>
-		</module>
-                <module>
-	            <label>Network</label>
-                    <name>ask_net_test</name>
-		    <enable_back>no</enable_back>
-                </module>
-                <module>
-	            <label>Network</label>
-                    <name>do_net_test</name>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>addon_update_sources</name>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>ask_online_update</name>
-                </module>
-                <module>
-	            <label>Online Update</label>
-                    <name>you</name>
-                </module>
-		<module>
-		    <label>Online Update</label>
-		    <name>restore_settings</name>
-		</module>
-                <module>
-	            <label>Release Notes</label>
-                    <name>release_notes</name>
-                </module>
-                <module>
-                    <name>congratulate</name>
-                </module>
-            </modules>
-        </workflow>
-	-->
-
-	<!-- Stage: Continue, Mode: Installation -->
-        <workflow>
-            <stage>continue</stage>
-            <mode>installation</mode>
-            <defaults>
-                <enable_back>yes</enable_back>
-                <enable_next>yes</enable_next>
-                <archs>all</archs>
-            </defaults>
-            <modules  config:type="list">
-		<module>
-		    <heading>yes</heading>
-		    <label>Configuration</label>
-		</module>
-		<!--
-		    Automatic configuration: disabled in manual configuration,
-		    FATE #303396
-		    Non-interactive second stage
-		-->
-		<module>
-		    <label>Automatic Configuration</label>
-		    <name>automatic_configuration</name>
-		    <enable_back>no</enable_back>
-		    <enable_next>no</enable_next>
-		</module>
-                <module>
-	            <label>root Password</label>
-                    <name>root</name>
-                    <enable_back>no</enable_back>
-                </module>
-                <module>
-	            <label>Check Installation</label>
-                    <name>initialization</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Check Installation</label>
-                    <name>netprobe</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Check Installation</label>
-                    <name>rpmcopy_secondstage</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Hostname</label>
-                    <name>hostname</name>
-                </module>
-                <module>
-	            <label>Network</label>
-                    <name>continue_network_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>network</proposal>
-                </module>
-                <module>
-	            <label>Network</label>
-                    <name>ask_net_test</name>
-                </module>
-                <module>
-	            <label>Network</label>
-                    <name>do_net_test</name>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>addon_update_sources</name>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>extrasources</name>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>ask_online_update</name>
-                </module>
-                <module>
-	            <label>Online Update</label>
-                    <name>you</name>
-                </module>
-		<module>
-		    <label>Online Update</label>
-		    <name>restore_settings</name>
-		</module>
-                <module>
-	            <label>Users</label>
-                    <name>auth</name>
-                </module>
-                <module>
-	            <label>Users</label>
-                    <name>user</name>
-                </module>
-		<module>
-		    <name>user_non_interactive</name>
-		    <!-- BNC #401319, define client to call explicitly -->
-		    <execute>inst_user</execute>
-		</module>
-                <module>
-	            <label>Release Notes</label>
-                    <name>release_notes</name>
-                </module>
-                <module>
-	            <label>Hardware Configuration</label>
-                    <name>continue_hardware_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>hardware</proposal>
-                </module>
-                <module>
-	            <label>Hardware Configuration</label>
-		    <name>save_hardware_status</name>
-                </module>
-                <module>
-                    <name>congratulate</name>
-                </module>
-            </modules>
-        </workflow>
-
+        <!-- TODO FIXME: fix the live installer to not require the 2nd stage -->
 	<!-- Stage: Continue, Mode: Live Installation -->
         <workflow>
             <stage>continue</stage>
@@ -1414,7 +949,7 @@ TODO: inst_start_deploy_image does not exist yet
             </modules>
         </workflow>
 
-	<!-- Stage: Continue, Mode: AutoInstallation -->
+	<!-- Stage: Initial, Mode: AutoUpgrade -->
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -1544,7 +1079,7 @@ TODO: inst_start_deploy_image does not exist yet
             </defaults>
             <stage>continue</stage>
             <mode>autoupgrade</mode>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
                     <label>Perform Update</label>
                     <name>autopost</name>
@@ -1564,7 +1099,6 @@ TODO: inst_start_deploy_image does not exist yet
                 </module>
             </modules>
         </workflow>
-
 
     </workflows>
 </productDefines>

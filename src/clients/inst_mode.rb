@@ -125,11 +125,7 @@ module Yast
         end if !@in_textmode
       end
 
-      Builtins.y2milestone(
-        "Initial Mode: %1, AC: %2",
-        Mode.mode,
-        ProductControl.GetUseAutomaticConfiguration
-      )
+      Builtins.y2milestone("Initial Mode: #{Mode.mode}")
       AdjustStepsAccordingToInstallationSettings()
       begin
         @ret = Convert.to_symbol(UI.UserInput)
@@ -144,25 +140,6 @@ module Yast
             Builtins.y2milestone(
               "add_on_selected: %1",
               Installation.add_on_selected
-            )
-            AdjustStepsAccordingToInstallationSettings()
-          end
-          @ret = nil
-          next
-        # FIXME: this mode needs more RAM because it starts another YaST process.
-        # Warn user and/or disable the option if a machine has not enough memory.
-
-        # Use-Automatic-Configuration status changed
-        elsif @ret == :use_automatic_configuration
-          if UI.WidgetExists(Id(:use_automatic_configuration))
-            ProductControl.SetUseAutomaticConfiguration(
-              Convert.to_boolean(
-                UI.QueryWidget(Id(:use_automatic_configuration), :Value)
-              )
-            )
-            Builtins.y2milestone(
-              "GetUseAutomaticConfiguration: %1",
-              ProductControl.GetUseAutomaticConfiguration
             )
             AdjustStepsAccordingToInstallationSettings()
           end
@@ -197,26 +174,12 @@ module Yast
                 :productsources,
                 Installation.productsources_selected,
                 @show_online_repositories && @ret != :repair
-              ],
-              # automatic installation works only for new installation
-              [
-                :use_automatic_configuration,
-                ProductControl.GetUseAutomaticConfiguration && @ret == :install,
-                @ret == :install
               ]
             ]
           ) do |one_item|
-            if UI.WidgetExists(Id(Ops.get_symbol(one_item, 0, :_inotdef_)))
-              UI.ChangeWidget(
-                Id(Ops.get_symbol(one_item, 0, :_inotdef_)),
-                :Enabled,
-                Ops.get_boolean(one_item, 2, false)
-              )
-              UI.ChangeWidget(
-                Id(Ops.get_symbol(one_item, 0, :_inotdef_)),
-                :Value,
-                Ops.get_boolean(one_item, 1, false)
-              )
+            if UI.WidgetExists(Id(one_item.first))
+              UI.ChangeWidget(Id(one_item.first), :Enabled, one_item[2])
+              UI.ChangeWidget(Id(one_item.first), :Value, one_item[1])
             end
           end
 
@@ -427,18 +390,7 @@ module Yast
               _("In&clude Add-on Products from Separate Media"),
               Installation.add_on_selected
             )
-          ),
-          InstData.enable_autoconfiguration == true ?
-            Left(
-              CheckBox(
-                Id(:use_automatic_configuration),
-                Opt(:notify),
-                # check box
-                _("&Use Automatic Configuration"),
-                ProductControl.GetUseAutomaticConfiguration
-              )
-            ) :
-            Empty()
+          )
         ),
         HStretch()
       )
@@ -478,19 +430,6 @@ module Yast
             "<b>Include Add-on Products from Separate Media</b>.</p>\n"
         ) +
         # help text for installation method
-        (InstData.enable_autoconfiguration == true ?
-          _(
-            "<p>\n" +
-              "Select <b>Use Automatic Configuration</b> to let the installation program\n" +
-              "configure your network and hardware automatically. Otherwise you will\n" +
-              "be offered a configuration proposal with the possibility to tune all the\n" +
-              "settings manually. Inexperienced users are advised to use automatic\n" +
-              "configuration.</p>\n"
-          ) +
-            # help text for installation method
-            _("<p>Update mode does not support automatic configuration.</p>") :
-          "") +
-        # help text for installation method
         _(
           "<p>The feature <b>Update</b> is only\n" +
             "available if an existing Linux system has been detected.\n" +
@@ -510,7 +449,7 @@ module Yast
         PackagesProposal.AddResolvables(
           "YaST-Installation",
           :package,
-          ["perl-YAML-LibYAML", "perl-bootloader"]
+          ["perl-Bootloader-YAML"]
         )
       end
 

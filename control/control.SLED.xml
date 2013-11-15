@@ -88,92 +88,6 @@ textdomain="control"
 	    </copy_to_system_item>
 	</copy_to_system>
 
-	<!-- FATE #303396, Make second stage non-interactive -->
-	<enable_autoconfiguration config:type="boolean">true</enable_autoconfiguration>
-	<autoconfiguration_default config:type="boolean">true</autoconfiguration_default>
-
-	<!-- BNC #428190, Some clients should be called even with AC -->
-	<autoconfiguration_enabled_modules config:type="list">
-	    <module>cont_suse_register</module>
-	    <module>cont_suseconfig</module>
-	    <module>cont_congratulate</module>
-	    <!-- #449128, Run online-update during AC -->
-	    <module>you</module>
-	    <module>restore_settings</module>
-	</autoconfiguration_enabled_modules>
-
-	<!--
-	    BNC #487565, Some AC steps might create their own UI (rpmcopy, for instance)
-	    and AC should just recreate its UI without reporting an error.
-	    Each ac_item here matches inst_* resp. *_proposal from automatic_configuration->ac_item
-	-->
-	<ac_redraw_and_ignore config:type="list">
-	    <ac_item>inst_rpmcopy_secondstage</ac_item>
-	</ac_redraw_and_ignore>
-
-        <!-- Configuration for inst_automatic_configuration script -->
-        <automatic_configuration config:type="list">
-            <!--
-                Adding inst_hostname client here, needed to generate random
-                hostname in automatic config (and for 127.0.0.2 hack) (#383336)
-                Must be called before inst_netprobe however, it cannot override it later on
-            -->
-            <ac_step>
-                <unique_id>ac_1</unique_id>
-                <text_id>ac_1</text_id>
-                <icon>yast-sw_single</icon>
-                <type>scripts</type>
-                <ac_items config:type="list">
-                    <ac_item>initialization</ac_item>
-                    <ac_item>hostname</ac_item>
-                    <ac_item>netprobe</ac_item>
-                    <ac_item>rpmcopy_secondstage</ac_item>
-                </ac_items>
-            </ac_step>
-            <!-- network proposal -->
-            <ac_step>
-                <unique_id>ac_2</unique_id>
-                <text_id>ac_2</text_id>
-                <icon>yast-network</icon>
-                <type>proposals</type>
-                <ac_items config:type="list">
-                    <ac_item>lan</ac_item>
-                    <ac_item>general</ac_item>
-                    <ac_item>isdn</ac_item>
-                    <ac_item>remote</ac_item>
-                    <ac_item>firewall</ac_item>
-                    <!-- FATE #305583: Start CIMOM by default -->
-                    <ac_item>services</ac_item>
-                </ac_items>
-            </ac_step>
-            <!-- hardware proposal -->
-            <ac_step>
-                <unique_id>ac_3</unique_id>
-                <text_id>ac_3</text_id>
-                <icon>yast-hwinfo</icon>
-                <type>proposals</type>
-                <ac_items config:type="list">
-                    <ac_item>x11</ac_item>
-                    <ac_item>printer</ac_item>
-                    <ac_item>sound</ac_item>
-                    <ac_item>tv</ac_item>
-                </ac_items>
-            </ac_step>
-            <!-- finishing configuration -->
-            <ac_step>
-                <unique_id>ac_4</unique_id>
-                <text_id>ac_4</text_id>
-                <icon>yast-sysconfig</icon>
-                <type>scripts</type>
-                <ac_items config:type="list">
-                    <ac_item>addon_update_sources</ac_item>
-                    <ac_item>extrasources</ac_item>
-                    <ac_item>suseconfig</ac_item>
-                    <ac_item>save_hardware_status</ac_item>
-                </ac_items>
-            </ac_step>
-        </automatic_configuration>
-
 	<!-- FATE: #304865: Enhance YaST Modules to cooperate better handling the product licenses -->
 	<base_product_license_directory>/etc/YaST2/licenses/base/</base_product_license_directory>
 
@@ -335,8 +249,7 @@ textdomain="control"
 	<clone_module>host</clone_module>
 	<clone_module>routing</clone_module>
 	<clone_module>proxy</clone_module>
-	<clone_module>runlevel</clone_module>
-	<clone_module>x11</clone_module>
+	<clone_module>services-manager</clone_module>
 	<clone_module>nis</clone_module>
 	<clone_module>ldap</clone_module>
 	<clone_module>printer</clone_module>
@@ -365,11 +278,6 @@ Please visit us at http://www.suse.com/.
 	<desktop_gnome><label></label></desktop_gnome>
 	<dummy_desktop><label></label></dummy_desktop>
 
-	<ac_1><label>Initialization...</label></ac_1>
-	<ac_2><label>Configuring network...</label></ac_2>
-	<ac_3><label>Configuring hardware...</label></ac_3>
-	<ac_4><label>Finishing configuration...</label></ac_4>
-
 	<!-- FATE #305583: Start CIMOM by default -->
 	<service_sfcb><label>CIM Server</label></service_sfcb>
     </texts>
@@ -377,7 +285,7 @@ Please visit us at http://www.suse.com/.
     <proposals config:type="list">
         <proposal>
             <label>Installation Settings</label>
-            <mode>installation,demo,autoinstallation</mode>
+            <mode>installation,autoinstallation</mode>
             <stage>initial</stage>
             <name>initial</name>
 	    <unique_id>inst_initial</unique_id>
@@ -421,9 +329,9 @@ Please visit us at http://www.suse.com/.
 		    <name>software</name>
 		    <presentation_order>35</presentation_order>
 		</proposal_module>
-		<!-- propose the default runlevel after software is selected, bnc #380141 -->
+                <!-- propose the default runlevel after software is selected, bnc #380141 -->
 		<proposal_module>
-		    <name>runlevel</name>
+		    <name>default_target</name>
 		    <presentation_order>55</presentation_order>
 		</proposal_module>
             </proposal_modules>
@@ -449,7 +357,7 @@ Please visit us at http://www.suse.com/.
                         <proposal_module>software</proposal_module>
                         <proposal_module>timezone</proposal_module>
                         <proposal_module>language</proposal_module>
-                        <proposal_module>runlevel</proposal_module>
+                        <proposal_module>default_target</proposal_module>
                     </proposal_modules>
                 </proposal_tab>
             </proposal_tabs>
@@ -468,7 +376,7 @@ Please visit us at http://www.suse.com/.
                 <proposal_module>country_simple</proposal_module>
                 <proposal_module>timezone</proposal_module>
 		<proposal_module>users</proposal_module>
-                <proposal_module>runlevel</proposal_module>
+                <proposal_module>default_target</proposal_module>
             </proposal_modules>
         </proposal>
         <proposal>
@@ -551,11 +459,8 @@ Please visit us at http://www.suse.com/.
 	    <unique_id>hardware_continue</unique_id>
             <enable_skip>yes</enable_skip>
             <proposal_modules config:type="list">
-                <proposal_module>x11</proposal_module>
                 <proposal_module>printer</proposal_module>
                 <proposal_module>sound</proposal_module>
-                <proposal_module>tv</proposal_module>
-                <proposal_module>bluetooth</proposal_module>
             </proposal_modules>
         </proposal>
     </proposals>
@@ -624,14 +529,6 @@ Please visit us at http://www.suse.com/.
                         <first_run>yes</first_run>
                     </arguments>
                 </module>
-<!--
-                <module>
-	            <label>Desktop Selection</label>
-                    <name>desktop</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
-                </module>
--->
 		<module>
 		    <label>User Settings</label>
 		    <name>user_first</name>
@@ -668,48 +565,6 @@ Please visit us at http://www.suse.com/.
                     <name>finish</name>
                     <enable_back>no</enable_back>
                 </module>
-            </modules>
-        </workflow>
-
-	<!-- Stage: Initial, Mode: Repair -->
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-		<enable_back>yes</enable_back>
-		<enable_next>yes</enable_next>
-            </defaults>
-	    <label>Preparation</label>
-            <mode>repair</mode>
-            <stage>initial</stage>
-            <modules  config:type="list">
-                <module>
-		    <label>Welcome</label>
-                    <name>complex_welcome</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
-                    <arguments>
-                        <first_run>yes</first_run>
-                    </arguments>
-                    <retranslate config:type="boolean">true</retranslate>
-                </module>
-		<module>
-	            <label>Disk Activation</label>
-                    <name>disks_activate</name>
-		</module>
-                <module>
-	            <label>System Analysis</label>
-                    <name>system_analysis</name>
-                </module>
-                <module>
-	            <label>System Analysis</label>
-                    <name>mode</name>
-                </module>
-		<!-- Here, user selects whether to perform New Installation, Upgrade, or Repair -->
-		<module>
-		    <label>Repair</label>
-		    <name>repair</name>
-		    <enable_back>no</enable_back>
-		</module>
             </modules>
         </workflow>
 
@@ -908,107 +763,6 @@ Please visit us at http://www.suse.com/.
         </workflow>
 
         <workflow>
-            <defaults>
-                <archs>all</archs>
-            </defaults>
-            <stage>initial</stage>
-	    <label>Preparation</label>
-            <mode>repair</mode>
-            <modules  config:type="list">
-                <module>
-	            <label>System Information</label>
-                    <name>info</name>
-                </module>
-                <module>
-	            <label>Perform Repair</label>
-                    <name>repair</name>
-                </module>
-            </modules>
-        </workflow>
-
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-            </defaults>
-            <stage>initial</stage>
-	    <label>Base Installation</label>
-            <mode>screen_shot</mode>
-            <modules  config:type="list">
-                <module>
-                    <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
- 	            <label>Language</label>
-                    <name>language</name>
-                    <retranslate config:type="boolean">true</retranslate>
-                </module>
-                <module>
-	            <label>Installation Settings</label>
-                    <name>initial_screenshot_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>initial</proposal>
-                </module>
-		<!-- FATE #303860: Provide consistent progress during installation -->
-		<module>
-		    <label>Perform Installation</label>
-		    <name>prepareprogress</name>
-		</module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>prepdisk</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>kickoff</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>rpmcopy</name>
-                </module>
-            </modules>
-        </workflow>
-
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-            </defaults>
-            <stage>initial</stage>
-	    <label>Base Installation</label>
-            <mode>demo</mode>
-            <modules  config:type="list">
-                <module>
-                    <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
-	            <label>Language</label>
-                    <name>language</name>
-                    <retranslate config:type="boolean">true</retranslate>
-                </module>
-                <module>
-	            <label>Installation Settings</label>
-                    <name>initial_demo_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>initial</proposal>
-                </module>
-		<!-- FATE #303860: Provide consistent progress during installation -->
-		<module>
-		    <label>Perform Installation</label>
-		    <name>prepareprogress</name>
-		</module>
-                <module>
- 	            <label>Perform Installation</label>
-                   <name>prepdisk</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>kickoff</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>rpmcopy</name>
-                </module>
-            </modules>
-        </workflow>
-
-        <workflow>
             <stage>continue</stage>
             <mode>update</mode>
             <defaults>
@@ -1016,7 +770,7 @@ Please visit us at http://www.suse.com/.
                 <enable_back>no</enable_back>
                 <enable_next>no</enable_next>
             </defaults>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
 	            <label>Perform Update</label>
                     <name>rpmcopy_secondstage_update</name>
@@ -1082,138 +836,7 @@ Please visit us at http://www.suse.com/.
             </modules>
         </workflow>
 
-        <workflow>
-            <stage>continue</stage>
-            <mode>installation</mode>
-            <defaults>
-                <enable_back>yes</enable_back>
-                <enable_next>yes</enable_next>
-                <archs>all</archs>
-            </defaults>
-            <modules  config:type="list">
-		<module>
-		    <heading>yes</heading>
-		    <label>Configuration</label>
-		</module>
-		<module>
-		    <label>Automatic Configuration</label>
-		    <name>automatic_configuration</name>
-		    <enable_back>no</enable_back>
-		    <enable_next>no</enable_next>
-		</module>
-                <module>
-	            <label>root Password</label>
-                    <name>root</name>
-                    <enable_back>no</enable_back>
-                </module>
-                <module>
-	            <label>Check Installation</label>
-                    <name>initialization</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Check Installation</label>
-                    <name>netprobe</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Check Installation</label>
-                    <name>rpmcopy_secondstage</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Hostname</label>
-                    <name>hostname</name>
-		    <!-- The very first interactive dialog -->
-                    <enable_back>no</enable_back>
-                </module>
-                <module>
-	            <label>Network</label>
-                    <name>continue_network_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>network</proposal>
-                </module>
-                <module>
-	            <label>Network</label>
-                    <name>ask_net_test</name>
-                </module>
-                <module>
-	            <label>Network</label>
-                    <name>do_net_test</name>
-                </module>
-                <module>
-                    <label>Customer Center</label>
-                    <name>addon_update_sources</name>
-                </module>
-                <module>
-                    <label>Customer Center</label>
-                    <name>cont_suse_register</name>
-                    <execute>inst_suse_register</execute>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>ask_online_update</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
-                </module>
-                <module>
-	            <label>Online Update</label>
-                    <name>you</name>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>extrasources</name>
-                </module>
-		<module>
-		    <label>Online Update</label>
-		    <name>restore_settings</name>
-		</module>
-                <module>
-	            <label>Users</label>
-                    <name>auth</name>
-                </module>
-                <module>
-	            <label>Users</label>
-                    <name>user</name>
-                </module>
-		<module>
-		    <!-- BNC #459080, no label is intentional -->
-		    <name>user_non_interactive</name>
-		    <!-- BNC #401319, define client to call explicitly -->
-		    <execute>inst_user</execute>
-		</module>
-                <module>
-                    <name>cont_suseconfig</name>
-                    <execute>inst_suseconfig</execute>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Release Notes</label>
-                    <name>release_notes</name>
-                </module>
-                <module>
-	            <label>Hardware Configuration</label>
-                    <name>continue_hardware_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>hardware</proposal>
-                </module>
-                <module>
-	            <label>Hardware Configuration</label>
-		    <name>save_hardware_status</name>
-                </module>
-                <module>
-                    <name>cont_congratulate</name>
-                    <execute>inst_congratulate</execute>
-                </module>
-            </modules>
-        </workflow>
-
+        <!-- TODO FIXME: fix the live installer to not require the 2nd stage -->
         <workflow>
             <stage>continue</stage>
             <mode>live_installation</mode>
@@ -1222,7 +845,7 @@ Please visit us at http://www.suse.com/.
                 <enable_next>yes</enable_next>
                 <archs>all</archs>
             </defaults>
-            <modules  config:type="list">
+            <modules config:type="list">
 		<module>
 		    <heading>yes</heading>
 		    <label>Configuration</label>
@@ -1255,7 +878,7 @@ Please visit us at http://www.suse.com/.
                 <enable_back>no</enable_back>
                 <enable_next>no</enable_next>
             </defaults>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
 	            <label>AutoYaST Settings</label>
                     <name>autoinit</name>
@@ -1309,7 +932,7 @@ Please visit us at http://www.suse.com/.
             <label>Preparation</label>
             <mode>autoupgrade</mode>
             <stage>initial</stage>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
                     <label>System Analysis</label>
                     <name>system_analysis</name>
@@ -1389,7 +1012,6 @@ Please visit us at http://www.suse.com/.
             </modules>
         </workflow>
 
-
         <workflow>
             <defaults>
                 <archs>all</archs>
@@ -1398,7 +1020,7 @@ Please visit us at http://www.suse.com/.
             </defaults>
             <stage>continue</stage>
             <mode>autoinstallation</mode>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
 	            <label>Perform Installation</label>
                     <name>netprobe</name>
@@ -1434,7 +1056,7 @@ Please visit us at http://www.suse.com/.
             </defaults>
             <stage>continue</stage>
             <mode>autoupgrade</mode>
-            <modules  config:type="list">
+            <modules config:type="list">
                 <module>
                     <label>Perform Update</label>
                     <name>autopost</name>
@@ -1458,7 +1080,6 @@ Please visit us at http://www.suse.com/.
                 </module>
             </modules>
         </workflow>
-
 
     </workflows>
 </productDefines>

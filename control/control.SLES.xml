@@ -85,9 +85,6 @@ textdomain="control"
 	    </copy_to_system_item>
 	</copy_to_system>
 
-	<!-- FATE #303396, Make second is still interactive -->
-	<enable_autoconfiguration config:type="boolean">false</enable_autoconfiguration>
-
 	<!-- FATE: #304865: Enhance YaST Modules to cooperate better handling the product licenses -->
 	<base_product_license_directory>/etc/YaST2/licenses/base/</base_product_license_directory>
 
@@ -290,8 +287,7 @@ textdomain="control"
 	<clone_module>host</clone_module>
 	<clone_module>routing</clone_module>
 	<clone_module>proxy</clone_module>
-	<clone_module>runlevel</clone_module>
-	<clone_module>x11</clone_module>
+        <clone_module>services-manager</clone_module>
 	<clone_module>nis</clone_module>
 	<clone_module>ldap</clone_module>
 	<clone_module>printer</clone_module>
@@ -345,7 +341,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
     <proposals config:type="list">
         <proposal>
             <label>Installation Settings</label>
-            <mode>installation,demo,autoinstallation</mode>
+            <mode>installation,autoinstallation</mode>
             <stage>initial</stage>
             <name>initial</name>
 	    <unique_id>inst_initial</unique_id>
@@ -395,7 +391,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		</proposal_module>
 		<!-- propose the default runlevel after software is selected, bnc #380141 -->
 		<proposal_module>
-		    <name>runlevel</name>
+		    <name>default_target</name>
 		    <presentation_order>55</presentation_order>
 		</proposal_module>
             </proposal_modules>
@@ -423,7 +419,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                         <proposal_module>software</proposal_module>
                         <proposal_module>timezone</proposal_module>
                         <proposal_module>language</proposal_module>
-                        <proposal_module>runlevel</proposal_module>
+                        <proposal_module>default_target</proposal_module>
                         <proposal_module>kdump</proposal_module>
                     </proposal_modules>
                 </proposal_tab>
@@ -433,7 +429,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
         <proposal>
             <archs>s390</archs>
             <label>Installation Settings</label>
-            <mode>installation,demo,autoinstallation</mode>
+            <mode>installation,autoinstallation</mode>
             <stage>initial</stage>
             <name>initial</name>
 	    <unique_id>inst_s390_initial</unique_id>
@@ -481,9 +477,9 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		    <name>software</name>
 		    <presentation_order>30</presentation_order>
 		</proposal_module>
-		<!-- propose the default runlevel after software is selected, bnc #380141 -->
 		<proposal_module>
-		    <name>runlevel</name>
+                <!-- propose the default runlevel after software is selected, bnc #380141 -->
+		    <name>default_target</name>
 		    <presentation_order>50</presentation_order>
 		</proposal_module>
             </proposal_modules>
@@ -508,7 +504,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                         <proposal_module>software</proposal_module>
                         <proposal_module>timezone</proposal_module>
                         <proposal_module>language</proposal_module>
-                        <proposal_module>runlevel</proposal_module>
+                        <proposal_module>default_target</proposal_module>
                         <proposal_module>dasd</proposal_module>
                         <proposal_module>zfcp</proposal_module>
                     </proposal_modules>
@@ -530,7 +526,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 <proposal_module>country_simple</proposal_module>
                 <proposal_module>timezone</proposal_module>
 		<proposal_module>users</proposal_module>
-                <proposal_module>runlevel</proposal_module>
+                <proposal_module>default_target</proposal_module>
             </proposal_modules>
         </proposal>
 
@@ -671,7 +667,6 @@ Choose the one that matches your server the best.</label></scenarios_text>
 	    <unique_id>hardware_ppc64_continue</unique_id>
             <enable_skip>yes</enable_skip>
             <proposal_modules config:type="list">
-                <proposal_module>x11</proposal_module>
                 <proposal_module>printer</proposal_module>
             </proposal_modules>
         </proposal>
@@ -695,7 +690,6 @@ Choose the one that matches your server the best.</label></scenarios_text>
 	    <unique_id>hardware_continue</unique_id>
             <enable_skip>yes</enable_skip>
             <proposal_modules config:type="list">
-                <proposal_module>x11</proposal_module>
                 <proposal_module>printer</proposal_module>
                 <proposal_module>sound</proposal_module>
             </proposal_modules>
@@ -809,48 +803,6 @@ Choose the one that matches your server the best.</label></scenarios_text>
 	            <label>Perform Installation</label>
                     <name>finish</name>
                 </module>
-            </modules>
-        </workflow>
-
-	<!-- Stage: Initial, Mode: Repair -->
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-		<enable_back>yes</enable_back>
-		<enable_next>yes</enable_next>
-            </defaults>
-	    <label>Preparation</label>
-            <mode>repair</mode>
-            <stage>initial</stage>
-            <modules  config:type="list">
-                <module>
-		    <label>Welcome</label>
-                    <name>complex_welcome</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
-                    <arguments>
-                        <first_run>yes</first_run>
-                    </arguments>
-                    <retranslate config:type="boolean">true</retranslate>
-                </module>
-		<module>
-	            <label>Disk Activation</label>
-                    <name>disks_activate</name>
-		</module>
-                <module>
-	            <label>System Analysis</label>
-                    <name>system_analysis</name>
-                </module>
-                <module>
-	            <label>System Analysis</label>
-                    <name>mode</name>
-                </module>
-		<!-- Here, user selects whether to perform New Installation, Upgrade, or Repair -->
-		<module>
-		    <label>Repair</label>
-		    <name>repair</name>
-		    <enable_back>no</enable_back>
-		</module>
             </modules>
         </workflow>
 
@@ -1055,107 +1007,6 @@ Choose the one that matches your server the best.</label></scenarios_text>
         </workflow>
 
         <workflow>
-            <defaults>
-                <archs>all</archs>
-            </defaults>
-            <stage>initial</stage>
-	    <label>Preparation</label>
-            <mode>repair</mode>
-            <modules  config:type="list">
-                <module>
-	            <label>System Information</label>
-                    <name>info</name>
-                </module>
-                <module>
-	            <label>Perform Repair</label>
-                    <name>repair</name>
-                </module>
-            </modules>
-        </workflow>
-
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-            </defaults>
-            <stage>initial</stage>
-	    <label>Base Installation</label>
-            <mode>screen_shot</mode>
-            <modules  config:type="list">
-                <module>
-                    <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
- 	            <label>Language</label>
-                    <name>language</name>
-                    <retranslate config:type="boolean">true</retranslate>
-                </module>
-                <module>
-	            <label>Installation Settings</label>
-                    <name>initial_screenshot_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>initial</proposal>
-                </module>
-		<!-- FATE #303860: Provide consistent progress during installation -->
-		<module>
-		    <label>Perform Installation</label>
-		    <name>prepareprogress</name>
-		</module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>prepdisk</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>kickoff</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>rpmcopy</name>
-                </module>
-            </modules>
-        </workflow>
-
-        <workflow>
-            <defaults>
-                <archs>all</archs>
-            </defaults>
-            <stage>initial</stage>
-	    <label>Base Installation</label>
-            <mode>demo</mode>
-            <modules  config:type="list">
-                <module>
-                    <enable_back>no</enable_back>
-                    <enable_next>yes</enable_next>
-	            <label>Language</label>
-                    <name>language</name>
-                    <retranslate config:type="boolean">true</retranslate>
-                </module>
-                <module>
-	            <label>Installation Settings</label>
-                    <name>initial_demo_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>initial</proposal>
-                </module>
-		<!-- FATE #303860: Provide consistent progress during installation -->
-		<module>
-		    <label>Perform Installation</label>
-		    <name>prepareprogress</name>
-		</module>
-                <module>
- 	            <label>Perform Installation</label>
-                   <name>prepdisk</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>kickoff</name>
-                </module>
-                <module>
-	            <label>Perform Installation</label>
-                    <name>rpmcopy</name>
-                </module>
-            </modules>
-        </workflow>
-
-        <workflow>
             <stage>continue</stage>
             <mode>update</mode>
             <defaults>
@@ -1253,153 +1104,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
             </modules>
         </workflow>
 
-        <workflow>
-            <stage>continue</stage>
-            <mode>installation</mode>
-            <defaults>
-                <enable_back>yes</enable_back>
-                <enable_next>yes</enable_next>
-                <archs>all</archs>
-            </defaults>
-            <modules  config:type="list">
-		<module>
-		    <heading>yes</heading>
-		    <label>Configuration</label>
-		</module>
-                <module>
-	            <label>root Password</label>
-                    <name>root</name>
-                    <enable_back>no</enable_back>
-                </module>
-                <module>
-	            <label>Check Installation</label>
-                    <name>initialization</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Check Installation</label>
-                    <name>netprobe</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Check Installation</label>
-                    <name>rpmcopy_secondstage</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Hostname</label>
-                    <name>hostname</name>
-		    <!-- The very first interactive dialog -->
-                    <enable_back>no</enable_back>
-                </module>
-                <module>
-	            <label>Network</label>
-                    <name>continue_network_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>network</proposal>
-                </module>
-                <module>
-	            <label>Network</label>
-                    <name>ask_net_test</name>
-                </module>
-                <module>
-	            <label>Network</label>
-                    <name>do_net_test</name>
-                </module>
-                <module>
-                    <label>Customer Center</label>
-                    <name>addon_update_sources</name>
-                </module>
-                <module>
-                    <label>Customer Center</label>
-                    <name>suse_register</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>ask_online_update</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
-                </module>
-                <module>
-	            <label>Online Update</label>
-                    <name>you</name>
-                </module>
-                <module>
-                    <label>Online Update</label>
-                    <name>extrasources</name>
-                </module>
-		<module>
-		    <label>Online Update</label>
-		    <name>restore_settings</name>
-		</module>
-                <module>
-                    <label>Service</label>
-                    <name>continue_service_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>service</proposal>
-                </module>
-                <module>
-	            <label>Users</label>
-                    <name>auth</name>
-                </module>
-                <module>
-	            <label>Users</label>
-                    <name>user</name>
-                </module>
-                <module>
-	            <label>Clean Up</label>
-                    <name>suseconfig</name>
-                    <enable_back>no</enable_back>
-                    <enable_next>no</enable_next>
-                </module>
-                <module>
-	            <label>Release Notes</label>
-                    <name>release_notes</name>
-                </module>
-                <module>
-	            <label>Hardware Configuration</label>
-                    <name>continue_hardware_proposal</name>
-                    <execute>inst_proposal</execute>
-                    <proposal>hardware</proposal>
-                </module>
-                <module>
-	            <label>Hardware Configuration</label>
-		    <name>save_hardware_status</name>
-                </module>
-
-		<!-- FATE #302495: New possibility to stop and disable ZMD -->
-                <module>
-		    <label>Hardware Configuration</label>
-                    <name>congratulate</name>
-		    <archs>i386,x86_64,ia64,ppc,ppc64</archs>
-		    <arguments>
-			<show_zmd_turnoff_checkbox>yes</show_zmd_turnoff_checkbox>
-			<zmd_turnoff_default_state>no</zmd_turnoff_default_state>
-		    </arguments>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
-                </module>
-		<!-- S/390 and S/390x pre-selected by default -->
-                <module>
-		    <label>Hardware Configuration</label>
-                    <name>congratulate</name>
-		    <archs>s390,s390x</archs>
-		    <arguments>
-			<show_zmd_turnoff_checkbox>yes</show_zmd_turnoff_checkbox>
-			<zmd_turnoff_default_state>yes</zmd_turnoff_default_state>
-		    </arguments>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
-                </module>
-
-            </modules>
-        </workflow>
-
+        <!-- TODO FIXME: fix the live installer to not require the 2nd stage -->
         <workflow>
             <stage>continue</stage>
             <mode>live_installation</mode>
@@ -1651,7 +1356,6 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 </module>
             </modules>
         </workflow>
-
 
     </workflows>
 </productDefines>
