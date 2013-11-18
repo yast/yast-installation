@@ -741,9 +741,7 @@ Choose the one that matches your server the best.</label></scenarios_text>
                 </module>
                 <module>
 	            <label>System Analysis</label>
-                    <name>mode</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
+                    <name>installation_options</name>
                 </module>
 		<module>
 		    <label>Add-On Products</label>
@@ -799,6 +797,18 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		    <name>reiplauto</name>
 		    <archs>s390</archs>
 		</module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>addon_update_sources</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>extrasources</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>save_hardware_status</name>
+                </module>
                 <module>
 	            <label>Perform Installation</label>
                     <name>finish</name>

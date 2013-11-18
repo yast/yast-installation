@@ -569,6 +569,10 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 	            <label>System Analysis</label>
                     <name>system_analysis</name>
                 </module>
+                <module>
+	            <label>System Analysis</label>
+                    <name>installation_options</name>
+                </module>
 	        <module>
 		    <label>Disk</label>
 		    <name>disk_proposal</name>
@@ -653,6 +657,18 @@ TODO: inst_start_deploy_image does not exist yet
                     <name>rpmcopy</name>
 		    <enable_next>no</enable_next>
 		    <enable_back>no</enable_back>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>addon_update_sources</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>extrasources</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>save_hardware_status</name>
                 </module>
                 <module>
 	            <label>Perform Installation</label>
