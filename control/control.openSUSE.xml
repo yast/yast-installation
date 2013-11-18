@@ -569,6 +569,10 @@ is the most appropriate desktop for you.</label></desktop_dialog>
 	            <label>System Analysis</label>
                     <name>system_analysis</name>
                 </module>
+                <module>
+	            <label>System Analysis</label>
+                    <name>installation_options</name>
+                </module>
 	        <module>
 		    <label>Disk</label>
 		    <name>disk_proposal</name>

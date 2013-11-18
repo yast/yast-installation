@@ -510,9 +510,7 @@ Please visit us at http://www.suse.com/.
                 </module>
                 <module>
 	            <label>System Analysis</label>
-                    <name>mode</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
+                    <name>installation_options</name>
                 </module>
 		<module>
 		    <label>Add-On Products</label>
