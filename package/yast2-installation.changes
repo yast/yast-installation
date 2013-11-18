@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Nov 18 13:28:32 UTC 2013 - lslezak@suse.cz
+
+- move some steps from removed 2nd stage to the 1st stage
+
+-------------------------------------------------------------------
 Tue Nov 12 09:24:25 UTC 2013 - lslezak@suse.cz
 
 - control file cleanup:

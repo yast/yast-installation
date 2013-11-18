@@ -776,6 +776,18 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		</module>
                 <module>
 	            <label>Perform Installation</label>
+                    <name>addon_update_sources</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>extrasources</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
+                    <name>save_hardware_status</name>
+                </module>
+                <module>
+	            <label>Perform Installation</label>
                     <name>finish</name>
                 </module>
             </modules>
