@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Nov 19 10:19:13 CET 2013 - locilka@suse.com
+
+- Proposing separate /home partition on SLES and SLES for VMware
+  (FATE#316624)
+
+-------------------------------------------------------------------
 Mon Nov 18 13:28:32 UTC 2013 - lslezak@suse.cz
 
 - move some steps from removed 2nd stage to the 1st stage
