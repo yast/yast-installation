@@ -70,7 +70,7 @@ client_DATA = \
   clients/inst_deploy_image.rb \
   clients/ldconfig_finish.rb \
   clients/inst_complex_welcome.rb \
-  clients/inst_mode.rb
+  clients/inst_installation_options.rb
 
 yncludedir = @yncludedir@/installation
 ynclude_DATA = \
