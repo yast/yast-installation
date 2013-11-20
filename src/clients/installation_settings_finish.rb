@@ -131,21 +131,6 @@ module Yast
         Builtins.y2error("Cannot write disabled subproposals")
       end
 
-      Builtins.y2milestone(
-        "Writing disabled AC items %1 into %2",
-        ProductControl.GetDisabledACItems,
-        InstData.wizardsteps_disabled_ac_items
-      )
-
-      if SCR.Write(
-          path(".target.ycp"),
-          InstData.wizardsteps_disabled_ac_items,
-          ProductControl.GetDisabledACItems
-        ) != true
-        Builtins.y2error("Cannot write disabled AC items")
-      end
-
-
       Builtins.y2milestone("Anyway, successful")
 
       nil

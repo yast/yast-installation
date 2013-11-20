@@ -73,11 +73,6 @@ module Yast
         Directory.vardir,
         "/installation_disabled_subproposals"
       )
-      @wizardsteps_disabled_ac_items = Ops.add(
-        Directory.vardir,
-        "/installation_disabled_acs"
-      )
-
       # temporary variables for disabling and enabling steps
       @localDisabledModules = []
       @localDisabledProposals = []
@@ -105,7 +100,6 @@ module Yast
     publish :variable => :wizardsteps_disabled_modules, :type => "string"
     publish :variable => :wizardsteps_disabled_proposals, :type => "string"
     publish :variable => :wizardsteps_disabled_subproposals, :type => "string"
-    publish :variable => :wizardsteps_disabled_ac_items, :type => "string"
     publish :variable => :localDisabledModules, :type => "list <string>"
     publish :variable => :localDisabledProposals, :type => "list <string>"
     publish :variable => :copy_files_use_control_file, :type => "boolean"
