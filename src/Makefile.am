@@ -34,7 +34,6 @@ client_DATA = \
   clients/inst_finish.rb \
   clients/inst_network_check.rb \
   clients/inst_pre_install.rb \
-  clients/inst_automatic_configuration.rb \
   clients/inst_ask_online_update.rb \
   clients/inst_new_desktop.rb \
   clients/inst_initialization.rb \

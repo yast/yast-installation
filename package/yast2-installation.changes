@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Nov 20 13:21:57 UTC 2013 - lslezak@suse.cz
+
+- removed support for automatic 2nd stage (the 2nd stage has been
+  dropped completely) (FATE#314695)
+- 3.1.7
+
+-------------------------------------------------------------------
 Tue Nov 19 10:19:13 CET 2013 - locilka@suse.com
 
 - Proposing separate /home partition on SLES and SLES for VMware

@@ -37,12 +37,6 @@ module Yast
 
       Yast.import "Wizard"
       Yast.import "Stage"
-      Yast.import "GetInstArgs"
-
-      if GetInstArgs.automatic_configuration
-        Builtins.y2milestone("Automatic configuration...")
-        return :auto
-      end
 
       # TRANSLATORS: dialog help
       @helptext = _("Installation is being initialized.")

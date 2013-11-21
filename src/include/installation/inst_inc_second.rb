@@ -178,52 +178,11 @@ module Yast
       nil
     end
 
-    def AdjustDisabledACItems
-      if InstData.wizardsteps_disabled_ac_items == nil
-        Builtins.y2error("Disabled AC items file not defined")
-        return
-      end
-
-      if !FileUtils.Exists(InstData.wizardsteps_disabled_ac_items)
-        Builtins.y2milestone(
-          "File %1 doesn't exist, skipping...",
-          InstData.wizardsteps_disabled_ac_items
-        )
-        return
-      end
-
-      disabled_ac_items = Convert.convert(
-        SCR.Read(path(".target.ycp"), InstData.wizardsteps_disabled_ac_items),
-        :from => "any",
-        :to   => "map <string, list <string>>"
-      )
-      if disabled_ac_items == nil
-        Builtins.y2error(
-          "Error reading %1",
-          InstData.wizardsteps_disabled_ac_items
-        )
-        return
-      end
-
-      Builtins.foreach(disabled_ac_items) do |unique_id, ac_steps|
-        Builtins.foreach(ac_steps) do |one_ac_step|
-          ProductControl.DisableACItem(unique_id, one_ac_step)
-        end
-      end
-
-      Builtins.y2milestone(
-        "Disabled AC items set to %1",
-        ProductControl.GetDisabledACItems
-      )
-
-      nil
-    end
 
     def AdjustDisabledItems
       AdjustDisabledModules()
       AdjustDisabledProposals()
       AdjustDisabledSubProposals()
-      AdjustDisabledACItems()
 
       nil
     end
