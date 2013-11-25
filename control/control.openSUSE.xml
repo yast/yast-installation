@@ -548,7 +548,7 @@ is the most appropriate desktop for you.</label></desktop_dialog>
             <stage>initial</stage>
             <modules  config:type="list">
                 <module>
-		    <label>Network Autosetup</label>
+                    <label>Network Autosetup</label>
                     <name>setup_dhcp</name>
                 </module>
                 <module>
