@@ -148,10 +148,6 @@ module Yast
         end
       end
 
-      # Initializing the default values for AC
-      # @see bnc #404122
-      ProductControl.InitAutomaticConfiguration
-
       nil
     end
 
