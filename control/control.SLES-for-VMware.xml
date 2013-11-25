@@ -681,6 +681,10 @@ Choose the one that matches your server the best.</label></scenarios_text>
             <stage>initial</stage>
             <modules  config:type="list">
                 <module>
+                    <label>Network Autosetup</label>
+                    <name>setup_dhcp</name>
+                </module>
+                <module>
                     <name>complex_welcome</name>
 	            <label>Welcome</label>
                     <enable_back>no</enable_back>

@@ -548,6 +548,10 @@ is the most appropriate desktop for you.</label></desktop_dialog>
             <stage>initial</stage>
             <modules  config:type="list">
                 <module>
+                    <label>Network Autosetup</label>
+                    <name>setup_dhcp</name>
+                </module>
+                <module>
 		    <label>Welcome</label>
                     <name>complex_welcome</name>
                     <enable_back>no</enable_back>
