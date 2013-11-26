@@ -74,7 +74,6 @@ client_DATA = \
 yncludedir = @yncludedir@/installation
 ynclude_DATA = \
   include/installation/inst_inc_second.rb \
-  include/installation/scr_switch_debugger.rb \
   include/installation/inst_inc_first.rb \
   include/installation/misc.rb \
   include/installation/inst_inc_all.rb

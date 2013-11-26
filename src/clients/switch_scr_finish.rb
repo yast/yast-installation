@@ -40,8 +40,6 @@ module Yast
       Yast.import "Directory"
       Yast.import "Installation"
 
-      Yast.include self, "installation/scr_switch_debugger.rb"
-
       @ret = nil
       @func = ""
       @param = {}
@@ -93,7 +91,6 @@ module Yast
         if Installation.scr_handle == nil ||
             Ops.less_than(Installation.scr_handle, 0)
           Builtins.y2error("Cannot switch to the system")
-          ErrorDuringSCRSwitch(Installation.destdir)
           return false
         end
 
@@ -106,8 +103,7 @@ module Yast
         # bnc #433057
         # Even if SCR switch worked, run a set of some simple tests
         if TestTheNewSCRHandler() != true
-          Builtins.y2error("Cannot switch to the system")
-          ErrorDuringSCRSwitch(Installation.destdir)
+          Builtins.y2error("Switched SCR do not work properly.")
           return false
         end
       else
@@ -118,20 +114,6 @@ module Yast
       Builtins.y2debug("ret=%1", @ret)
       Builtins.y2milestone("switch_scr_finish finished")
       deep_copy(@ret)
-    end
-
-    # SCR Switch failed. Reporting error, collecting data.
-    # We don't ask whether to run the debugger, just run it.
-    #
-    # bnc #201058, #411832
-    def ErrorDuringSCRSwitch(chroot_dir)
-      Builtins.y2error(
-        "Cannot switch to SCR '%1', running debugger",
-        chroot_dir
-      )
-      RunSCRSwitchDebugger(chroot_dir)
-
-      nil
     end
 
     # Check the new SCR, bnc #433057
@@ -191,13 +173,7 @@ module Yast
     end
 
     def TestTheNewSCRHandler
-      _SCR_PID = FindSCRPID()
-
-      SwitchY2Debug(_SCR_PID) if Ops.greater_than(_SCR_PID, 0)
-
       ret = TestTheNewSCR()
-
-      SwitchY2Debug(_SCR_PID) if Ops.greater_than(_SCR_PID, 0)
 
       # BNC #460477
       CheckFreeSpaceNow()
