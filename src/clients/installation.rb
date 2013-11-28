@@ -36,6 +36,9 @@ module Yast
       Yast.import "Wizard"
       Yast.import "Stage"
       Yast.import "Report"
+      Yast.import "Hooks"
+
+      Hooks.search_path.join!('installation')
 
       # Initialize the UI
       Wizard.OpenNextBackDialog
@@ -59,12 +62,14 @@ module Yast
       # Call the real installation
       Builtins.y2milestone("=== installation ===")
 
+      Hooks.run 'installation_start'
+
       # First-stage (initial installation)
       if Stage.initial
         Builtins.y2milestone(
           "Stage::initial -> running inst_worker_initial client"
         )
-        @ret = WFM.CallFunction("inst_worker_initial", WFM.Args) 
+        @ret = WFM.CallFunction("inst_worker_initial", WFM.Args)
 
         # Second-stage (initial installation)
       elsif Stage.cont
@@ -79,6 +84,8 @@ module Yast
 
       Builtins.y2milestone("Installation ret: %1", @ret)
       Builtins.y2milestone("=== installation ===")
+
+      Hooks.run 'installation_finish'
 
       # Shutdown the UI
       Wizard.CloseDialog

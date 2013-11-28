@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.7
+Version:        3.1.8
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -42,13 +42,13 @@ BuildRequires:  trang
 BuildRequires:  libxml2-tools
 
 # Linuxrc.keys
-BuildRequires: yast2 >= 3.1.1
+BuildRequires: yast2 >= 3.1.6
 
 # AutoinstConfig::getProposalList
 Requires:       autoyast2-installation >= 2.17.1
 
 # ProductProfile
-Requires:	yast2 >= 3.0.2
+Requires:	yast2 >= 3.1.6
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
@@ -154,6 +154,8 @@ for f in `find %{buildroot}%{_datadir}/autoinstall/modules -name "*.desktop"`; d
     %suse_update_desktop_file $f
 done 
 
+mkdir -p %{buildroot}%{yast_vardir}/hooks/installation
+
 mkdir -p %{buildroot}%{_unitdir}
 install -m 644 %{SOURCE1} %{buildroot}%{_unitdir}
 install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
@@ -213,6 +215,10 @@ install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 
 # programs and scripts
 %{yast_ystartupdir}/startup
+
+# installation hooks
+%dir %{yast_vardir}/hooks
+%dir %{yast_vardir}/hooks/installation
 
 %dir %{yast_docdir}
 %{yast_docdir}/COPYING
