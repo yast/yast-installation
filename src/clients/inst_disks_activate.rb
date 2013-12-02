@@ -107,9 +107,9 @@ module Yast
         VBox(
           VStretch(),
           *dasd_part,
+          *zfcp_part,
           *fcoe_part,
-          *fcoe_part,
-          button(:iscsi, _("Configure &iSCSI Disks")),
+          button_with_spacing(:iscsi, _("Configure &iSCSI Disks")),
           button(:network, _("Change Net&work Configuration")),
           VStretch()
         ),
