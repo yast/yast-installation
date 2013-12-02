@@ -110,6 +110,7 @@ module Yast
           *fcoe_part,
           *fcoe_part,
           button(:iscsi, _("Configure &iSCSI Disks")),
+          button(:network, _("Change Net&work Configuration")),
           VStretch()
         ),
         HWeight(999, HStretch())
@@ -141,6 +142,9 @@ module Yast
           @ret = :redraw
         when :fcoe
           WFM.call("inst_fcoe-client", [@argmap])
+          @ret = :redraw
+        when :network
+          WFM.call("inst_lan", [@argmap])
           @ret = :redraw
         end
         if @ret == :redraw
