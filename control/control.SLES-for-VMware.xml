@@ -735,12 +735,6 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		    <heading>yes</heading>
 		    <label>Installation</label>
 		</module>
-		<!-- FATE #304373: Server scenarios -->
-		<module>
-		    <label>Server Scenario</label>
-		    <name>scenarios</name>
-		    <archs>i386,x86_64</archs>
-		</module>
                 <module>
 	            <label>Installation Summary</label>
                     <name>initial_installation_proposal</name>
