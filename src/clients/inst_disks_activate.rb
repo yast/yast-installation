@@ -60,27 +60,12 @@ module Yast
         UI.OpenDialog(Label(_("Detecting Available Controllers")))
 
         # detect DASD disks
-        @disks = Convert.convert(
-          SCR.Read(path(".probe.disk")),
-          :from => "any",
-          :to   => "list <map <string, any>>"
-        )
-
-        @disks = Builtins.filter(@disks) do |d|
-          Builtins.tolower(Ops.get_string(d, "device", "")) == "dasd"
-        end
-        @have_dasd = Ops.greater_than(Builtins.size(@disks), 0)
+        disks = SCR.Read(path(".probe.disk"))
+        @have_dasd = disks.any? {|d| d["device"] == "dasd" }
 
         # detect zFCP disks
-        @controllers = Convert.convert(
-          SCR.Read(path(".probe.storage")),
-          :from => "any",
-          :to   => "list <map <string, any>>"
-        )
-        @controllers = Builtins.filter(@controllers) do |c|
-          Ops.get_string(c, "device", "") == "zFCP controller"
-        end
-        @have_zfcp = Ops.greater_than(Builtins.size(@controllers), 0)
+        controllers = SCR.Read(path(".probe.storage"))
+        @have_zfcp = controllers.any? {|c| c["device"] == "zFCP controller"
 
         UI.CloseDialog
       end
