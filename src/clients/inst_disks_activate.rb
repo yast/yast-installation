@@ -78,55 +78,38 @@ module Yast
 
       @help = ""
 
+      missing_part = [
+            VSpacing(0),
+            VSpacing(0)
+          ]
+
+      dasd_part = if @have_dasd
+          button_with_spacing(:dasd, _("Configure &DASD Disks"))
+        else
+          missing_part
+        end
+
+      zfcp_part = if @have_zfcp
+          button_with_spacing(:zfce, _("Configure &ZFCP Disks"))
+        else
+          missing_part
+        end
+
+      fcoe_part = if @want_fcoe
+          button_with_spacing(:fcoe, _("Configure &FCoE Interfaces"))
+        else
+          missing_part
+        end
+
+
       @contents = HBox(
         HWeight(999, HStretch()),
         VBox(
           VStretch(),
-          @have_dasd ?
-            HWeight(
-              1,
-              PushButton(
-                Id(:dasd),
-                Opt(:hstretch),
-                # push button
-                _("Configure &DASD Disks")
-              )
-            ) :
-            VSpacing(0),
-          VSpacing(@have_dasd ? 2 : 0),
-          @have_zfcp ?
-            HWeight(
-              1,
-              PushButton(
-                Id(:zfcp),
-                Opt(:hstretch),
-                # push button
-                _("Configure &ZFCP Disks")
-              )
-            ) :
-            VSpacing(0),
-          VSpacing(@have_zfcp ? 2 : 0),
-          @want_fcoe ?
-            HWeight(
-              1,
-              PushButton(
-                Id(:fcoe),
-                Opt(:hstretch),
-                # push button
-                _("Configure &FCoE Interfaces")
-              )
-            ) :
-            VSpacing(0),
-          VSpacing(@want_fcoe ? 2 : 0),
-          HWeight(
-            1,
-            PushButton(
-              Id(:iscsi),
-              Opt(:hstretch),
-              # push button
-              _("Configure &iSCSI Disks")
-            )
-          ),
+          *dasd_part,
+          *fcoe_part,
+          *fcoe_part,
+          button(:iscsi, _("Configure &iSCSI Disks")),
           VStretch()
         ),
         HWeight(999, HStretch())
@@ -194,6 +177,23 @@ module Yast
       Builtins.y2milestone("----------------------------------------")
 
       @ret
+    end
+
+  private
+
+    def button(id, title)
+      HWeight(
+        1,
+        PushButton(
+          Id(id),
+          Opt(:hstretch),
+          title
+        )
+      )
+    end
+
+    def button_with_spacing(id, title)
+      [ button(id, title), VSpacing(2) ]
     end
 
     def RestoreButtons(enable_back, enable_next)
