@@ -65,7 +65,7 @@ module Yast
 
         # detect zFCP disks
         controllers = SCR.Read(path(".probe.storage"))
-        @have_zfcp = controllers.any? {|c| c["device"] == "zFCP controller"
+        @have_zfcp = controllers.any? {|c| c["device"] == "zFCP controller" }
 
         UI.CloseDialog
       end
