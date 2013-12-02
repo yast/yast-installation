@@ -516,6 +516,12 @@ Please visit us at http://www.suse.com/.
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
 		</module>
+	        <module>
+		    <label>Disk</label>
+		    <name>disk_proposal</name>
+		    <enable_back>yes</enable_back>
+		    <enable_next>yes</enable_next>
+		</module>
                 <module>
 	            <label>Time Zone</label>
                     <name>timezone</name>
