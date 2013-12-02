@@ -488,12 +488,6 @@ Please visit us at http://www.suse.com/.
                     </arguments>
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
-                <module>
-	            <label>Welcome</label>
-                    <name>checkmedia</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
-                </module>
 		<module>
 	            <label>Network Activation</label>
                     <name>lan</name>
