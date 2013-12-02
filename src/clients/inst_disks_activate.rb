@@ -146,17 +146,18 @@ module Yast
       @disks_changed = false
       while @ret == nil
         @ret = UI.UserInput
-        if @ret == :dasd
-          @ret = WFM.call("inst_dasd")
+        case @ret
+        when :dasd
+          WFM.call("inst_dasd")
           @ret = :redraw
-        elsif @ret == :zfcp
-          @ret = WFM.call("inst_zfcp")
+        when :zfcp
+          WFM.call("inst_zfcp")
           @ret = :redraw
-        elsif @ret == :iscsi
-          @ret = WFM.call("inst_iscsi-client", [@argmap])
+        when :iscsi
+          WFM.call("inst_iscsi-client", [@argmap])
           @ret = :redraw
-        elsif @ret == :fcoe
-          @ret = WFM.call("inst_fcoe-client", [@argmap])
+        when :fcoe
+          WFM.call("inst_fcoe-client", [@argmap])
           @ret = :redraw
         end
         if @ret == :redraw
@@ -192,10 +193,7 @@ module Yast
       Builtins.y2milestone("Disk activation module finished")
       Builtins.y2milestone("----------------------------------------")
 
-      deep_copy(@ret) 
-
-
-      # EOF
+      @ret
     end
 
     def RestoreButtons(enable_back, enable_next)
@@ -212,8 +210,6 @@ module Yast
       else
         Wizard.DisableNextButton
       end
-
-      nil
     end
   end
 end
