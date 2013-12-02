@@ -60,27 +60,12 @@ module Yast
         UI.OpenDialog(Label(_("Detecting Available Controllers")))
 
         # detect DASD disks
-        @disks = Convert.convert(
-          SCR.Read(path(".probe.disk")),
-          :from => "any",
-          :to   => "list <map <string, any>>"
-        )
-
-        @disks = Builtins.filter(@disks) do |d|
-          Builtins.tolower(Ops.get_string(d, "device", "")) == "dasd"
-        end
-        @have_dasd = Ops.greater_than(Builtins.size(@disks), 0)
+        disks = SCR.Read(path(".probe.disk"))
+        @have_dasd = disks.any? {|d| d["device"] == "dasd" }
 
         # detect zFCP disks
-        @controllers = Convert.convert(
-          SCR.Read(path(".probe.storage")),
-          :from => "any",
-          :to   => "list <map <string, any>>"
-        )
-        @controllers = Builtins.filter(@controllers) do |c|
-          Ops.get_string(c, "device", "") == "zFCP controller"
-        end
-        @have_zfcp = Ops.greater_than(Builtins.size(@controllers), 0)
+        controllers = SCR.Read(path(".probe.storage"))
+        @have_zfcp = controllers.any? {|c| c["device"] == "zFCP controller" }
 
         UI.CloseDialog
       end
@@ -93,55 +78,39 @@ module Yast
 
       @help = ""
 
+      missing_part = [
+            VSpacing(0),
+            VSpacing(0)
+          ]
+
+      dasd_part = if @have_dasd
+          button_with_spacing(:dasd, _("Configure &DASD Disks"))
+        else
+          missing_part
+        end
+
+      zfcp_part = if @have_zfcp
+          button_with_spacing(:zfce, _("Configure &ZFCP Disks"))
+        else
+          missing_part
+        end
+
+      fcoe_part = if @want_fcoe
+          button_with_spacing(:fcoe, _("Configure &FCoE Interfaces"))
+        else
+          missing_part
+        end
+
+
       @contents = HBox(
         HWeight(999, HStretch()),
         VBox(
           VStretch(),
-          @have_dasd ?
-            HWeight(
-              1,
-              PushButton(
-                Id(:dasd),
-                Opt(:hstretch),
-                # push button
-                _("Configure &DASD Disks")
-              )
-            ) :
-            VSpacing(0),
-          VSpacing(@have_dasd ? 2 : 0),
-          @have_zfcp ?
-            HWeight(
-              1,
-              PushButton(
-                Id(:zfcp),
-                Opt(:hstretch),
-                # push button
-                _("Configure &ZFCP Disks")
-              )
-            ) :
-            VSpacing(0),
-          VSpacing(@have_zfcp ? 2 : 0),
-          @want_fcoe ?
-            HWeight(
-              1,
-              PushButton(
-                Id(:fcoe),
-                Opt(:hstretch),
-                # push button
-                _("Configure &FCoE Interfaces")
-              )
-            ) :
-            VSpacing(0),
-          VSpacing(@want_fcoe ? 2 : 0),
-          HWeight(
-            1,
-            PushButton(
-              Id(:iscsi),
-              Opt(:hstretch),
-              # push button
-              _("Configure &iSCSI Disks")
-            )
-          ),
+          *dasd_part,
+          *zfcp_part,
+          *fcoe_part,
+          button_with_spacing(:iscsi, _("Configure &iSCSI Disks")),
+          button(:network, _("Change Net&work Configuration")),
           VStretch()
         ),
         HWeight(999, HStretch())
@@ -161,17 +130,21 @@ module Yast
       @disks_changed = false
       while @ret == nil
         @ret = UI.UserInput
-        if @ret == :dasd
-          @ret = WFM.call("inst_dasd")
+        case @ret
+        when :dasd
+          WFM.call("inst_dasd")
           @ret = :redraw
-        elsif @ret == :zfcp
-          @ret = WFM.call("inst_zfcp")
+        when :zfcp
+          WFM.call("inst_zfcp")
           @ret = :redraw
-        elsif @ret == :iscsi
-          @ret = WFM.call("inst_iscsi-client", [@argmap])
+        when :iscsi
+          WFM.call("inst_iscsi-client", [@argmap])
           @ret = :redraw
-        elsif @ret == :fcoe
-          @ret = WFM.call("inst_fcoe-client", [@argmap])
+        when :fcoe
+          WFM.call("inst_fcoe-client", [@argmap])
+          @ret = :redraw
+        when :network
+          WFM.call("inst_lan", [@argmap])
           @ret = :redraw
         end
         if @ret == :redraw
@@ -207,10 +180,24 @@ module Yast
       Builtins.y2milestone("Disk activation module finished")
       Builtins.y2milestone("----------------------------------------")
 
-      deep_copy(@ret) 
+      @ret
+    end
 
+  private
 
-      # EOF
+    def button(id, title)
+      HWeight(
+        1,
+        PushButton(
+          Id(id),
+          Opt(:hstretch),
+          title
+        )
+      )
+    end
+
+    def button_with_spacing(id, title)
+      [ button(id, title), VSpacing(2) ]
     end
 
     def RestoreButtons(enable_back, enable_next)
@@ -227,8 +214,6 @@ module Yast
       else
         Wizard.DisableNextButton
       end
-
-      nil
     end
   end
 end
