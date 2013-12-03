@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Dec  3 15:11:17 UTC 2013 - jreidinger@suse.com
+
+- remove server base scenario and media check clients from SLE
+  installation (BNC#314695)
+- add storage proposal dialog to SLE installation (FATE#314695)
+- 3.1.11
+
+-------------------------------------------------------------------
 Tue Dec  3 13:40:27 UTC 2013 - vmoravec@suse.com
 
 - Show popup window with used hooks before installation finished

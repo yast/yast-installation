@@ -719,12 +719,6 @@ Choose the one that matches your server the best.</label></scenarios_text>
                     </arguments>
                     <retranslate config:type="boolean">true</retranslate>
                 </module>
-                <module>
-	            <label>Welcome</label>
-                    <name>checkmedia</name>
-                    <enable_back>yes</enable_back>
-                    <enable_next>yes</enable_next>
-                </module>
 		<module>
 	            <label>Network Activation</label>
                     <name>lan</name>
@@ -753,6 +747,12 @@ Choose the one that matches your server the best.</label></scenarios_text>
                     <enable_back>yes</enable_back>
                     <enable_next>yes</enable_next>
 		</module>
+	        <module>
+		    <label>Disk</label>
+		    <name>disk_proposal</name>
+		    <enable_back>yes</enable_back>
+		    <enable_next>yes</enable_next>
+		</module>
                 <module>
 	            <label>Time Zone</label>
                     <name>timezone</name>
@@ -765,12 +765,6 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		<module>
 		    <heading>yes</heading>
 		    <label>Installation</label>
-		</module>
-		<!-- FATE #304373: Server scenarios -->
-		<module>
-		    <label>Server Scenario</label>
-		    <name>scenarios</name>
-		    <archs>i386,x86_64</archs>
 		</module>
                 <module>
 	            <label>Installation Summary</label>
