@@ -533,14 +533,15 @@ module Yast
         Opt(:notify),
         Header('Hook name', 'Result', 'Output'),
         hooks.map do |hook|
-          output = hook.files.map do |file|
+          files_output = hook.files.map do |file|
             file.failed? ? file.result.stderr.strip : file.result.stdout.strip
           end
+          files_output = files_output.join.empty? ? '' : files_output.join('; ')
           Item(
             Id(:hook),
             hook.name,
             hook.failed? ? 'failure' : 'success',
-            output.join.empty? ? '' : output.join('; ')
+            files_output
           )
         end
       )
@@ -548,6 +549,7 @@ module Yast
       Popup.LongText(
         'Hooks results',
         content,
+        # the width and hight numbers reflect subjective visual appearance of the popup
         80, 5 + hooks.size
       )
     end
