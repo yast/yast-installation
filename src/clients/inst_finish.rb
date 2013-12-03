@@ -536,12 +536,11 @@ module Yast
           files_output = hook.files.map do |file|
             file.failed? ? file.result.stderr.strip : file.result.stdout.strip
           end
-          files_output = files_output.join.empty? ? '' : files_output.join('; ')
           Item(
             Id(:hook),
             hook.name,
             hook.failed? ? 'failure' : 'success',
-            files_output
+            files_output.reject(&:empty?).join('; ')
           )
         end
       )
