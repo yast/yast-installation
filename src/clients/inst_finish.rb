@@ -52,6 +52,7 @@ module Yast
       Yast.import "SlideShow"
       Yast.import "InstError"
       Yast.import "PackageCallbacks"
+      Yast.import "Hooks"
 
       # added for fate# 303395
       Yast.import "Directory"
@@ -415,7 +416,11 @@ module Yast
             )
             Builtins.sleep(500)
           else
+            Hooks.run "before_#{step['client']}"
+
             WFM.CallFunction(Ops.get_string(step, "client", ""), ["Write"])
+
+            Hooks.run "after_#{step['client']}"
           end
           Progress.set(orig)
           # Handle user input during client run
@@ -447,6 +452,16 @@ module Yast
         Builtins.y2milestone("Closing previously opened SlideShow dialog")
         SlideShow.CloseDialog
       end
+
+      used_hooks = Hooks.all.select(&:used?)
+      failed_hooks = used_hooks.select(&:failed?)
+
+      if !failed_hooks.empty?
+        Builtins.y2milestone "#{failed_hooks.size} failed hooks found: " +
+          "#{failed_hooks.map(&:name).join(', ')}"
+      end
+      Builtins.y2milestone "Showing the hook list.."
+      show_used_hooks(used_hooks)
 
       # --------------------------------------------------------------
       # Check if there is a message left to display
@@ -512,6 +527,31 @@ module Yast
       :next
     end
 
+    def show_used_hooks hooks
+      content = Table(
+        Id(:hooks_table),
+        Opt(:notify),
+        Header('Hook name', 'Result', 'Output'),
+        hooks.map do |hook|
+          files_output = hook.files.map do |file|
+            file.failed? ? file.result.stderr.strip : file.result.stdout.strip
+          end
+          Item(
+            Id(:hook),
+            hook.name,
+            hook.failed? ? 'failure' : 'success',
+            files_output.reject(&:empty?).join('; ')
+          )
+        end
+      )
+      Builtins.y2milestone "Showing the hooks results.."
+      Popup.LongText(
+        'Hooks results',
+        content,
+        # the width and hight numbers reflect subjective visual appearance of the popup
+        80, 5 + hooks.size
+      )
+    end
     # --> Functions
 
     def ReportClientError(client_error_text)
