@@ -1,3 +1,11 @@
+#
+# IMPORTANT!: After editing control.rnc run "make control.rng" to generate the
+# RNG file and commit _both_ files to Git to keep them in sync!
+#
+# We do not generate the RNG file at build time as it adds huge dependecy (it
+# is a Java tool so it requires complete Java stack)
+#
+
 default namespace = "http://www.suse.com/1.0/yast2ns"
 namespace a = "http://relaxng.org/ns/compatibility/annotations/1.0"
 namespace config = "http://www.suse.com/1.0/configns"
