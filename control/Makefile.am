@@ -12,6 +12,7 @@ control_DATA = \
 xml_files = \
 	control.SLED.xml \
 	control.SLES.xml \
+	control.SLES-for-VMware.xml \
 	control.openSUSE.xml \
 	add-on-template_installation.xml
 
@@ -31,7 +32,7 @@ xml_files = \
 #
 # At build time the RNG file from tarball will have a newer time stamp
 # and thus it will not need rebuild/update making "trang" unnecessary.
-EXTRA_DIST =  $(control_DATA) $(product_DATA) $(xml_files) control.rng
+EXTRA_DIST =  $(control_DATA) $(xml_files)
 
 include $(top_srcdir)/Makefile.am.common
 
@@ -40,4 +41,4 @@ control.rng: control.rnc
 
 # checks only those control files that belong to this package
 check-local: control.rng
-	xmllint --relaxng control.rng --noout $(filter %.xml, $(xml_files) $(control_DATA))
+	xmllint --relaxng control.rng --noout $(xml_files)
