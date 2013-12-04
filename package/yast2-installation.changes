@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Dec  4 16:11:37 UTC 2013 - jreidinger@suse.com
+
+- fix failure in remote disks activation client
+- 3.1.13
+
+-------------------------------------------------------------------
 Wed Dec  4 08:30:37 UTC 2013 - lslezak@suse.cz
 
 - removed "trang" dependency (requires complete Java stack, convert
