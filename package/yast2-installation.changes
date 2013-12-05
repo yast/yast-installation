@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Dec  5 15:25:18 UTC 2013 - lslezak@suse.cz
+
+- added a new client for SCC registration (first iteration, UI
+  only, does not work yet)
+
+-------------------------------------------------------------------
 Wed Dec  4 16:11:37 UTC 2013 - jreidinger@suse.com
 
 - fix failure in remote disks activation client
