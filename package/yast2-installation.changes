@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Dec  5 15:32:24 UTC 2013 - jreidinger@suse.com
+
+- fix opening zfcp client in disk activation on s390
+- 3.1.14
+
+-------------------------------------------------------------------
 Thu Dec  5 15:25:18 UTC 2013 - lslezak@suse.cz
 
 - added a new client for SCC registration (first iteration, UI
