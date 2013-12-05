@@ -90,7 +90,7 @@ module Yast
         end
 
       zfcp_part = if @have_zfcp
-          button_with_spacing(:zfce, _("Configure &ZFCP Disks"))
+          button_with_spacing(:zfcp, _("Configure &ZFCP Disks"))
         else
           missing_part
         end
