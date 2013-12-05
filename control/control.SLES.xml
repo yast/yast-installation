@@ -738,6 +738,11 @@ Choose the one that matches your server the best.</label></scenarios_text>
                     <enable_next>yes</enable_next>
                 </module>
                 <module>
+                    <name>scc</name>
+                    <enable_back>yes</enable_back>
+                    <enable_next>yes</enable_next>
+                </module>
+                <module>
 	            <label>System Analysis</label>
                     <name>installation_options</name>
                 </module>
