@@ -549,7 +549,7 @@ module Yast
             Id(:hook),
             hook.name,
             hook.failed? ? 'failure' : 'success',
-            hook.files.map(&:output).compact.join('; ')
+            hook.files.map(&:output).reject(&:empty?).join
           )
         end
       )
