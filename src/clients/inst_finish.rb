@@ -460,8 +460,21 @@ module Yast
         Builtins.y2milestone "#{failed_hooks.size} failed hooks found: " +
           "#{failed_hooks.map(&:name).join(', ')}"
       end
-      Builtins.y2milestone "Showing the hook list.."
-      show_used_hooks(used_hooks)
+
+      Builtins.y2milestone('Hook summary:') unless used_hooks.empty?
+
+      used_hooks.each do |hook|
+        Builtins.y2milestone("Hook name: #{hook.name}")
+        Builtins.y2milestone("Hook result: #{hook.succeeded? ? 'success' : 'failure' }")
+        hook.files.each do |file|
+          result = file.failed? ? file.result.stderr.strip : file.result.stdout.strip
+          Builtins.y2milestone("Hook file: #{file.path}")
+          Builtins.y2milestone("Hook output: #{result}")
+          Builtins.y2milestone("\n")
+        end
+      end
+
+      show_used_hooks(used_hooks) unless failed_hooks.empty?
 
       # --------------------------------------------------------------
       # Check if there is a message left to display
@@ -544,7 +557,7 @@ module Yast
           )
         end
       )
-      Builtins.y2milestone "Showing the hooks results.."
+      Builtins.y2milestone "Showing the hooks results in UI"
       Popup.LongText(
         'Hooks results',
         content,
