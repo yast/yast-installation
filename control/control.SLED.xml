@@ -140,61 +140,22 @@ textdomain="control"
 	<supported_desktops config:type="list">
 	    <one_supported_desktop>
 		<name>desktop_gnome</name>
-		<desktop>gnome</desktop>
+		<desktop>gnome-classic</desktop>
 		<label_id>desktop_gnome</label_id>
 		<logon>gdm</logon>
 		<cursor>DMZ</cursor>
 		<!-- package has to be installed or selected -->
-		<packages>gdm</packages>
+		<packages>gdm gnome-shell-classic</packages>
 		<order config:type="integer">1</order>
 		<!-- Patterns are selected by the product itself -->
 		<patterns></patterns>
 		<icon>pattern-gnome</icon>
 	    </one_supported_desktop>
 
-	    <!-- BNC 446640: The other desktops should be defined too as a fallback -->
-	    <one_supported_desktop>
-		<name>kde</name>
-		<!-- BNC #381821, BNC #438212 -->
-		<desktop>startkde</desktop>
-		<label_id>dummy_desktop</label_id>
-		<logon>kdm</logon>
-		<cursor>DMZ</cursor>
-		<packages>kdm</packages>
-		<order config:type="integer">1</order>
-		<patterns>kde x11 base</patterns>
-		<icon>pattern-kde4</icon>
-	    </one_supported_desktop>
-
-	    <one_supported_desktop>
-		<name>kde3</name>
-		<!-- BNC #381821 -->
-		<desktop>startkde3</desktop>
-		<label_id>dummy_desktop</label_id>
-		<logon>kdm3</logon>
-		<cursor>DMZ</cursor>
-		<packages>kdebase3-kdm</packages>
-		<order config:type="integer">2</order>
-		<patterns>kde3 x11 base</patterns>
-		<icon>pattern-kde</icon>
-	    </one_supported_desktop>
-
-	    <one_supported_desktop>
-		<name>xfce</name>
-		<desktop>startxfce4</desktop>
-		<label_id>dummy_desktop</label_id>
-		<logon>xdm</logon>
-		<cursor>DMZ</cursor>
-		<packages>xfce4-desktop</packages>
-		<order config:type="integer">4</order>
-		<patterns>xfce x11 base</patterns>
-		<icon>pattern-xfce</icon>
-	    </one_supported_desktop>
-
 	    <one_supported_desktop>
 		<name>min_x</name>
-		<desktop>twm</desktop>
-		<label_id>dummy_desktop</label_id>
+		<desktop>icewm</desktop>
+		<label_id>desktop_min_x</label_id>
 		<logon>xdm</logon>
 		<cursor>DMZ</cursor>
 		<packages>xorg-x11-server</packages>
@@ -206,7 +167,7 @@ textdomain="control"
 	    <one_supported_desktop>
 		<name>textmode</name>
 		<desktop>twm</desktop>
-		<label_id>dummy_desktop</label_id>
+		<label_id>desktop_textmode</label_id>
 		<logon>xdm</logon>
 		<cursor>DMZ</cursor>
 		<packages></packages>
