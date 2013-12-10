@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Dec 10 08:46:11 UTC 2013 - vmoravec@suse.com
+
+- Show hook summary only if some hooks failed
+- 3.1.15
+
+-------------------------------------------------------------------
 Thu Dec  5 15:32:24 UTC 2013 - jreidinger@suse.com
 
 - fix opening zfcp client in disk activation on s390
