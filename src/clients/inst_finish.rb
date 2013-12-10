@@ -469,7 +469,6 @@ module Yast
         hook.files.each do |file|
           Builtins.y2milestone("Hook file: #{file.path}")
           Builtins.y2milestone("Hook output: #{file.output}")
-          Builtins.y2milestone("\n")
         end
       end
 
