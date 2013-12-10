@@ -140,12 +140,12 @@ textdomain="control"
 	<supported_desktops config:type="list">
 	    <one_supported_desktop>
 		<name>desktop_gnome</name>
-		<desktop>gnome</desktop>
+		<desktop>gnome-classic</desktop>
 		<label_id>desktop_gnome</label_id>
 		<logon>gdm</logon>
 		<cursor>DMZ</cursor>
 		<!-- package has to be installed or selected -->
-		<packages>gdm</packages>
+		<packages>gdm gnome-shell-classic</packages>
 		<order config:type="integer">1</order>
 		<!-- Patterns are selected by the product itself -->
 		<patterns></patterns>
