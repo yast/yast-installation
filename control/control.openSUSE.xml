@@ -114,6 +114,12 @@ textdomain="control"
         <delete_old_packages config:type="boolean">true</delete_old_packages>
         <selection_type config:type="symbol">auto</selection_type>
 
+        <!-- warn on older suse -->
+        <products_supported_for_upgrade config:type="list">
+            <regexp_item>^openSUSE 12\..*</regexp_item>
+            <regexp_item>^openSUSE 13\..*$</regexp_item>
+        </products_supported_for_upgrade>
+
 	<!-- Bugzilla #327791, if not set, default is true -->
 	<online_repos_preselected config:type="boolean">false</online_repos_preselected>
 
