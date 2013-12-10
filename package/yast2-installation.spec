@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.14
+Version:        3.1.15
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -40,13 +40,13 @@ BuildRequires:  rubygem-rspec
 BuildRequires:  libxml2-tools
 
 # Linuxrc.keys
-BuildRequires: yast2 >= 3.1.7
+BuildRequires: yast2 >= 3.1.9
 
 # AutoinstConfig::getProposalList
 Requires:       autoyast2-installation >= 2.17.1
 
 # ProductProfile
-Requires:	yast2 >= 3.1.7
+Requires:	yast2 >= 3.1.9
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)

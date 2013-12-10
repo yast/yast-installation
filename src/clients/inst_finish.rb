@@ -457,11 +457,22 @@ module Yast
       failed_hooks = used_hooks.select(&:failed?)
 
       if !failed_hooks.empty?
-        Builtins.y2milestone "#{failed_hooks.size} failed hooks found: " +
+        Builtins.y2error "#{failed_hooks.size} failed hooks found: " +
           "#{failed_hooks.map(&:name).join(', ')}"
       end
-      Builtins.y2milestone "Showing the hook list.."
-      show_used_hooks(used_hooks)
+
+      Builtins.y2milestone('Hook summary:') unless used_hooks.empty?
+
+      used_hooks.each do |hook|
+        Builtins.y2milestone("Hook name: #{hook.name}")
+        Builtins.y2milestone("Hook result: #{hook.succeeded? ? 'success' : 'failure' }")
+        hook.files.each do |file|
+          Builtins.y2milestone("Hook file: #{file.path}")
+          Builtins.y2milestone("Hook output: #{file.output}")
+        end
+      end
+
+      show_used_hooks(used_hooks) unless failed_hooks.empty?
 
       # --------------------------------------------------------------
       # Check if there is a message left to display
@@ -533,18 +544,15 @@ module Yast
         Opt(:notify),
         Header('Hook name', 'Result', 'Output'),
         hooks.map do |hook|
-          files_output = hook.files.map do |file|
-            file.failed? ? file.result.stderr.strip : file.result.stdout.strip
-          end
           Item(
             Id(:hook),
             hook.name,
             hook.failed? ? 'failure' : 'success',
-            files_output.reject(&:empty?).join('; ')
+            hook.files.map(&:output).reject(&:empty?).join
           )
         end
       )
-      Builtins.y2milestone "Showing the hooks results.."
+      Builtins.y2milestone "Showing the hooks results in UI"
       Popup.LongText(
         'Hooks results',
         content,
