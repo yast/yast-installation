@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Dec 11 09:54:10 UTC 2013 - lslezak@suse.cz
+
+- fixed Makefile.am (added missing inst_scc.rb)
+- 3.1.16
+
+-------------------------------------------------------------------
 Tue Dec 10 08:46:11 UTC 2013 - vmoravec@suse.com
 
 - Show hook summary only if some hooks failed
