@@ -395,25 +395,8 @@ is the most appropriate desktop for you.</label></desktop_dialog>
             <enable_skip>no</enable_skip>
             <proposal_modules config:type="list">
 		<proposal_module>
-		    <name>partitions</name>
-		    <presentation_order>10</presentation_order>
-		</proposal_module>
-		<proposal_module>
 		    <name>bootloader</name>
 		    <presentation_order>20</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>country_simple</name>
-		    <presentation_order>40</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>timezone</name>
-		    <presentation_order>50</presentation_order>
-		</proposal_module>
-		<!-- FATE #302980 -->
-		<proposal_module>
-		    <name>users</name>
-		    <presentation_order>60</presentation_order>
 		</proposal_module>
 		<proposal_module>
 		    <name>hwinfo</name>
