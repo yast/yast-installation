@@ -33,7 +33,7 @@ Source1:	YaST2-Second-Stage.service
 Source2:	YaST2-Firstboot.service
 
 BuildRequires:  docbook-xsl-stylesheets libxslt update-desktop-files yast2-core-devel
-BuildRequires:  yast2-devtools >= 3.0.6
+BuildRequires:  yast2-devtools >= 3.1.10
 BuildRequires:  rubygem-rspec
 
 # xmllint
