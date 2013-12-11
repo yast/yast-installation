@@ -32,7 +32,7 @@ client_DATA = \
   clients/inst_check_autoinst_mode.rb \
   clients/inst_info.rb \
   clients/inst_initialization.rb \
-  clients/inst_installation_options.rb
+  clients/inst_installation_options.rb \
   clients/inst_license.rb \
   clients/inst_network_check.rb \
   clients/inst_network_setup.rb \
@@ -70,7 +70,7 @@ client_DATA = \
   clients/umount_finish.rb \
   clients/update_wizard_steps.rb \
   clients/x11_finish.rb \
-  clients/yast_inf_finish.rb \
+  clients/yast_inf_finish.rb
 
 yncludedir = @yncludedir@/installation
 ynclude_DATA = \
