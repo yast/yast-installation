@@ -353,10 +353,6 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		    <presentation_order>10</presentation_order>
 		</proposal_module>
 		<proposal_module>
-		    <name>add-on</name>
-		    <presentation_order>30</presentation_order>
-		</proposal_module>
-		<proposal_module>
 		    <name>bootloader</name>
 		    <presentation_order>40</presentation_order>
 		</proposal_module>
@@ -394,10 +390,6 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		<proposal_module>
 		    <name>partitions</name>
 		    <presentation_order>20</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>add-on</name>
-		    <presentation_order>25</presentation_order>
 		</proposal_module>
 		<proposal_module>
 		    <name>bootloader</name>
