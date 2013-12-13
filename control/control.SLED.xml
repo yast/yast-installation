@@ -259,7 +259,7 @@ Please visit us at http://www.suse.com/.
 		</proposal_module>
 		<proposal_module>
 		    <name>bootloader</name>
-		    <presentation_order>40</presentation_order>
+		    <presentation_order>60</presentation_order>
 		</proposal_module>
 		<!-- software proposal should be computed almost at the end -->
 		<proposal_module>
