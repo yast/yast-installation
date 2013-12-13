@@ -329,36 +329,12 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		    <presentation_order>10</presentation_order>
 		</proposal_module>
 		<proposal_module>
-		    <name>keyboard</name>
-		    <presentation_order>15</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>mouse</name>
-		    <presentation_order>20</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>partitions</name>
-		    <presentation_order>25</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>add-on</name>
-		    <presentation_order>30</presentation_order>
-		</proposal_module>
-		<proposal_module>
 		    <name>bootloader</name>
 		    <presentation_order>40</presentation_order>
 		</proposal_module>
 		<proposal_module>
 		    <name>kdump</name>
 		    <presentation_order>60</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>language</name>
-		    <presentation_order>50</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>timezone</name>
-		    <presentation_order>45</presentation_order>
 		</proposal_module>
 		<!-- software proposal should be computed almost at the end -->
 		<proposal_module>
@@ -368,123 +344,9 @@ Choose the one that matches your server the best.</label></scenarios_text>
 		<proposal_module>
       <!-- propose the default runlevel after software is selected, bnc #380141 -->
       <name>default_target</name>
-		    <presentation_order>55</presentation_order>
+		    <presentation_order>75</presentation_order>
 		</proposal_module>
             </proposal_modules>
-
-            <proposal_tabs config:type="list">
-                <proposal_tab>
-                    <label>Overview</label>
-                    <proposal_modules config:type="list">
-                        <proposal_module>keyboard</proposal_module>
-                        <proposal_module>partitions</proposal_module>
-                        <proposal_module>software</proposal_module>
-                        <proposal_module>language_simple</proposal_module>
-                    </proposal_modules>
-                </proposal_tab>
-
-                <proposal_tab>
-                    <label>Expert</label>
-                    <proposal_modules config:type="list">
-                        <proposal_module>hwinfo</proposal_module>
-                        <proposal_module>keyboard</proposal_module>
-                        <proposal_module>mouse</proposal_module>
-                        <proposal_module>partitions</proposal_module>
-                        <proposal_module>bootloader</proposal_module>
-			<proposal_module>add-on</proposal_module>
-                        <proposal_module>software</proposal_module>
-                        <proposal_module>timezone</proposal_module>
-                        <proposal_module>language</proposal_module>
-                        <proposal_module>default_target</proposal_module>
-                        <proposal_module>kdump</proposal_module>
-                    </proposal_modules>
-                </proposal_tab>
-            </proposal_tabs>
-        </proposal>
-
-        <proposal>
-            <archs>s390</archs>
-            <label>Installation Settings</label>
-            <mode>installation,autoinstallation</mode>
-            <stage>initial</stage>
-            <name>initial</name>
-	    <unique_id>inst_s390_initial</unique_id>
-            <enable_skip>no</enable_skip>
-
-            <proposal_modules config:type="list">
-		<proposal_module>
-		    <name>hwinfo</name>
-		    <presentation_order>10</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>mouse</name>
-		    <presentation_order>15</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>partitions</name>
-		    <presentation_order>20</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>add-on</name>
-		    <presentation_order>25</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>bootloader</name>
-		    <presentation_order>35</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>language</name>
-		    <presentation_order>45</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>timezone</name>
-		    <presentation_order>40</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>dasd</name>
-		    <presentation_order>55</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>zfcp</name>
-		    <presentation_order>60</presentation_order>
-		</proposal_module>
-		<!-- software proposal should be computed almost at the end -->
-		<proposal_module>
-		    <name>software</name>
-		    <presentation_order>30</presentation_order>
-		</proposal_module>
-		<proposal_module>
-		    <name>default_target</name>
-		    <presentation_order>50</presentation_order>
-		</proposal_module>
-            </proposal_modules>
-
-            <proposal_tabs config:type="list">
-                <proposal_tab>
-                    <label>Overview</label>
-                    <proposal_modules config:type="list">
-                        <proposal_module>partitions</proposal_module>
-                        <proposal_module>software</proposal_module>
-                        <proposal_module>language_simple</proposal_module>
-                    </proposal_modules>
-                </proposal_tab>
-                <proposal_tab>
-                    <label>Expert</label>
-                    <proposal_modules config:type="list">
-                        <proposal_module>hwinfo</proposal_module>
-                        <proposal_module>mouse</proposal_module>
-                        <proposal_module>partitions</proposal_module>
-                        <proposal_module>bootloader</proposal_module>
-			<proposal_module>add-on</proposal_module>
-                        <proposal_module>software</proposal_module>
-                        <proposal_module>timezone</proposal_module>
-                        <proposal_module>language</proposal_module>
-                        <proposal_module>default_target</proposal_module>
-                        <proposal_module>dasd</proposal_module>
-                        <proposal_module>zfcp</proposal_module>
-                    </proposal_modules>
-                </proposal_tab>
-            </proposal_tabs>
         </proposal>
 
         <proposal>
