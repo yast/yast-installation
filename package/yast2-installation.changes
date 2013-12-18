@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Dec 12 14:50:32 UTC 2013 - lslezak@suse.cz
+
+- control files have been moved to a separate package/git repo
+  (https://github.com/yast/yast-installation-control)
+- 3.1.17
+
+-------------------------------------------------------------------
 Wed Dec 11 09:54:10 UTC 2013 - lslezak@suse.cz
 
 - fixed Makefile.am (added missing inst_scc.rb)

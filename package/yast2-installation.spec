@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.16
+Version:        3.1.17
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -35,9 +35,6 @@ Source2:	YaST2-Firstboot.service
 BuildRequires:  docbook-xsl-stylesheets libxslt update-desktop-files yast2-core-devel
 BuildRequires:  yast2-devtools >= 3.1.10
 BuildRequires:  rubygem-rspec
-
-# xmllint
-BuildRequires:  libxml2-tools
 
 # Linuxrc.keys
 BuildRequires: yast2 >= 3.1.9
@@ -179,10 +176,6 @@ install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 
 %files
 %defattr(-,root,root)
-%dir /usr/share/YaST2/control
-# Fixme: move to another package (to make build of other packages faster)
-/usr/share/YaST2/control/*.rng
-/usr/share/YaST2/control/*.rnc
 
 # systemd service files
 %{_unitdir}/YaST2-Second-Stage.service
