@@ -82,6 +82,8 @@ module Yast
         Report.Error(_("No workflow defined for this kind of installation."))
       end
 
+      Hooks.run 'installation_failure' if @ret == false
+
       Builtins.y2milestone("Installation ret: %1", @ret)
       Builtins.y2milestone("=== installation ===")
 
