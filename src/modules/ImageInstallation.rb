@@ -472,6 +472,31 @@ module Yast
       # FIXME error checking
     end
 
+    def DeployDiskImage(id, target)
+      InitRepo()
+
+      file = Ops.get_string(@_images, [id, "file"], "")
+      Builtins.y2milestone("Deploying disk image %1 (%2) on %3", id, file, target)
+      file = Builtins.sformat("%1/%2", @_image_path, file)
+      # BNC #409927
+      # Checking files for signatures
+      image = Pkg.SourceProvideDigestedFile(@_repo, 1, file, false)
+
+      if image == nil
+        Builtins.y2error("File %1 not found on media", file)
+        return false
+      end
+
+      Builtins.y2milestone("Copying the image")
+      cmd = Builtins.sformat("dd if=%1/ of=%2", image, target)
+      out = Convert.to_map(SCR.Execute(path(".target.bash_output"), cmd))
+      Builtins.y2milestone("Executing %1 returned %2", cmd, out)
+
+      RemoveTemporaryImage(image)
+
+      Ops.get_integer(out, "exit", -1) == 0 
+    end
+
     # Mount an image of the filesystem type
     # Does not integrate to the system, mounts on target
     # @param [String] id string the id of the image
@@ -579,6 +604,8 @@ module Yast
         return temporary ? MountFsImage(id, target) : DeployFsImage(id, target)
       elsif type == "tar"
         return DeployTarImage(id, target)
+      elsif type == "raw"
+        return DeployDiskImage(id, target)
       end
 
       Builtins.y2error("Unknown type of image: %1", type)
@@ -766,6 +793,13 @@ module Yast
 
       # it's actually matching_patterns = patterns_in_imagesets
       Ops.greater_or_equal(matching_patterns, patterns_in_imagesets)
+    end
+
+    def PrepareOEMImage(path)
+      AddImage(
+        "OEM", path, "raw"
+      )
+      @_image_order = [ path ]
     end
 
     # Find a set of images which suites selected patterns
