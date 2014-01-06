@@ -80,7 +80,7 @@ module Yast
           "id"              => "clone"
         }
       when "Write"
-        WFM.Call "clone_system" if CloneProposalHolder.value
+        WFM.call "clone_system" if CloneProposalHolder.value
         ret = true
       else
         raise "Unsuported action #{func}"
