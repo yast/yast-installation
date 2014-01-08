@@ -54,7 +54,7 @@ module Yast
           ret = WFM.CallFunction("inst_doit", [])
           ret = nil unless ret == :next
 
-          InstData.image_target_disk = disk
+          InstData.image_target_disk = disk if ret == :next
         elsif ret == :abort
           ret = nil unless Popup.ConfirmAbort(:painless)
         end

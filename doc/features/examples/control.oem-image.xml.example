@@ -3,6 +3,11 @@
     xmlns:config="http://www.suse.com/1.0/configns">
 
 <!--
+This is an example of a control file, which deploys an OEM image instead of
+installing system from packages
+-->
+
+<!--
 Work around for the text domain
 textdomain="control"
 -->
