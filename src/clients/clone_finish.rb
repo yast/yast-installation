@@ -34,7 +34,7 @@ module Yast
         func = args[0]
       end
 
-      Builtins.y2milestone("starting clonse_finish")
+      Builtins.y2milestone("starting clone_finish")
       Builtins.y2debug("func=%1", func)
 
       case func
@@ -43,7 +43,7 @@ module Yast
           "steps" => 1,
           # progress step title
           "title" => _(
-            "Generating autoyast profile if needed..."
+            "Generating AutoYaST profile if needed..."
           ),
           "when"  => [:installation]
         }
@@ -55,7 +55,7 @@ module Yast
           WFM.Execute(path(".local.bash"), "cp /root/autoinst.xml /mnt/root/autoinst.xml")
         end
 
-        Builtins.y2milestone("Clone finish write finish")
+        Builtins.y2milestone("clone_finish Write finished")
       else
         raise ("unknown function: #{func}")
       end

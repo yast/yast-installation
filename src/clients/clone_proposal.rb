@@ -2,7 +2,7 @@ module Yast
   import "UI"
   import "Label"
 
-  #helper module to make proposal value persistent
+  # helper module to make proposal value persistent
   module CloneProposalHolder
 
     def self.value=(val)
@@ -46,14 +46,16 @@ module Yast
           "links"                 => [CLONE_ENABLE_LINK, CLONE_DISABLE_LINK],
           # TRANSLATORS: help text
           "help"                  => _(
-            "<p><b>Clone System Settings</b> generates on target system in root" +
-            " home autoyast profile that can automatic reproduce installation.</p>"
+            "<p>Use <b>Clone System Settings</b> if you want to create an AutoYaST profile.\n" +
+              "AutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST\n" +
+              "needs a profile to know what the installed system should look like. If this option is\n" +
+              "selected, a profile of the current system is stored in <tt>/root/autoinst.xml</tt>.</p>"
           )
         }
       when "AskUser"
         chosen_id = Ops.get(param, "chosen_id")
         Builtins.y2milestone(
-          "Images proposal change requested, id %1",
+          "Clone proposal change requested, id %1",
           chosen_id
         )
 
@@ -97,7 +99,7 @@ module Yast
               # TRANSLATORS: Installation overview
               # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
               _(
-                "Autoyast profile will be written under /root (<a href=\"%1\">do not write it</a>)."
+                "The AutoYaST profile will be written under /root/autoinst.xml (<a href=\"%1\">do not write it</a>)."
               ),
               CLONE_DISABLE_LINK
             )
@@ -106,7 +108,7 @@ module Yast
               # TRANSLATORS: Installation overview
               # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
               _(
-                "Autoyast profile won't be written under /root (<a href=\"%1\">write it</a>)."
+                "The AutoYaST profile will not be saved (<a href=\"%1\">write it</a>)."
               ),
               CLONE_ENABLE_LINK
             )
@@ -117,7 +119,7 @@ module Yast
 
     def clone_dialog
       dialog = VBox(
-        CheckBox(Id(:value_holder), _("Write AutoYaST profile to /root"),
+        CheckBox(Id(:value_holder), _("Write AutoYaST profile to /root/autoinst.xml"),
           CloneProposalHolder.value
         ),
         PushButton(Id(:ok), Label.OKButton)
