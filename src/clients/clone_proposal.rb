@@ -77,9 +77,7 @@ module Yast
           # this is a heading
           "rich_text_title" => _("Clone System Configuration"),
           # this is a menu entry
-          "menu_title"      => _(
-            "&Clone System Configuration"
-          ),
+          "menu_title"      => _("&Clone System Configuration"),
           "id"              => CLONE_ACTION_ID
         }
       when "Write"
