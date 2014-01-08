@@ -482,19 +482,19 @@ module Yast
       # Checking files for signatures
       image = Pkg.SourceProvideDigestedFile(@_repo, 1, file, false)
 
-      if image == nil
+      if image.nil?
         Builtins.y2error("File %1 not found on media", file)
         return false
       end
 
       Builtins.y2milestone("Copying the image")
-      cmd = Builtins.sformat("dd if=%1 of=%2", image, target)
-      out = Convert.to_map(SCR.Execute(path(".target.bash_output"), cmd))
+      cmd = Builtins.sformat("ud bs=1048576 if=%1 of=%2", image, target) #1MB of block size
+      out = SCR.Execute(path(".target.bash_output"), cmd)
       Builtins.y2milestone("Executing %1 returned %2", cmd, out)
 
       RemoveTemporaryImage(image)
 
-      Ops.get_integer(out, "exit", -1) == 0 
+      out["exit"] == 0
     end
 
     # Mount an image of the filesystem type
@@ -1516,6 +1516,7 @@ module Yast
     publish :function => :StoreAllChanges, :type => "void ()"
     publish :function => :RestoreAllChanges, :type => "boolean ()"
     publish :function => :FreeInternalVariables, :type => "void ()"
+    publish :function => :PrepareOEMImage, :type => "void ()"
   end
 
   ImageInstallation = ImageInstallationClass.new

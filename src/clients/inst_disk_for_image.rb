@@ -69,10 +69,10 @@ module Yast
     def disks_to_use
       target_map = Storage.GetTargetMap
       Builtins.y2milestone("TM: %1", target_map)
-      supported_types = [ :CT_DISK, :CT_DMRAID, :CT_DMMULTIPATH, :CT_MDPART ]
+      # FIXME: move blacklist to Storage
       used_by_blacklist = [ :CT_DMRAID, :CT_DMMULTIPATH, :CT_MDPART ]
       target_map.select { | key, value |
-        (supported_types.include? value["type"]) && (! used_by_blacklist.include? value["used_by"])
+        Storage.IsDiskType(value["type"]) && (! used_by_blacklist.include? value["used_by"])
       }.keys
     end
 
@@ -95,7 +95,7 @@ partitioned as defined in the image.")
 
     def show_disk_for_image_dialog
       Wizard.SetContents(
-        _("Hard Disk to Deploy To"),
+        _("Hard Disk for Image Deployment"),
         disk_for_image_dialog,
         disk_for_image_help_text,
         GetInstArgs.enable_back || @test_mode,
