@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Jan  8 12:34:10 UTC 2014 - jsrain@suse.cz
+
+- added capability to install OEM images (fate#316326)
+
+-------------------------------------------------------------------
 Fri Dec 20 09:32:08 UTC 2013 - vmoravec@suse.com
 
 - Add abort and fail hooks for installation
