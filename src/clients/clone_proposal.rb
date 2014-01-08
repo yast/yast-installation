@@ -18,6 +18,7 @@ module Yast
   class CloneProposalClient < Client
     CLONE_ENABLE_LINK = "clone_enable"
     CLONE_DISABLE_LINK = "clone_disable"
+    CLONE_ACTION_ID = "clone"
 
     def main
       textdomain "installation"
@@ -64,7 +65,7 @@ module Yast
           CloneProposalHolder.value = false
         when CLONE_ENABLE_LINK
           CloneProposalHolder.value = true
-        when "clone"
+        when CLONE_ACTION_ID
           clone_dialog
         else
           raise "Unexpected value #{chosen_id}"
@@ -79,7 +80,7 @@ module Yast
           "menu_title"      => _(
             "&Clone System Configuration"
           ),
-          "id"              => "clone"
+          "id"              => CLONE_ACTION_ID
         }
       when "Write"
         WFM.call "clone_system" if CloneProposalHolder.value

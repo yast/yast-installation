@@ -21,6 +21,8 @@
 
 
 module Yast
+  import "Installation"
+
   class CloneFinishClient < Client
     def main
 
@@ -52,7 +54,7 @@ module Yast
 
         # copy from insts_sys to target system
         if File.exists? "/root/autoinst.xml"
-          WFM.Execute(path(".local.bash"), "cp /root/autoinst.xml /mnt/root/autoinst.xml")
+          WFM.Execute(path(".local.bash"), "cp /root/autoinst.xml #{Installation.destdir}/root/autoinst.xml")
         end
 
         Builtins.y2milestone("clone_finish Write finished")
