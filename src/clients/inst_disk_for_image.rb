@@ -52,9 +52,11 @@ module Yast
         if ret == :next
           disk = UI.QueryWidget(Id(:disk), :Value)
           ret = WFM.CallFunction("inst_doit", [])
-          ret = nil unless ret == :next
-
-          InstData.image_target_disk = disk if ret == :next
+          if ret == :next
+            InstData.image_target_disk = disk
+          else
+            ret = nil
+          end
         elsif ret == :abort
           ret = nil unless Popup.ConfirmAbort(:painless)
         end
