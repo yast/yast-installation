@@ -101,9 +101,6 @@ module Yast
         WFM.CallFunction("inst_check_autoinst_mode", [])
       end
 
-      # Show the "Release Notes" button
-      Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "show_release_notes")
-
       @ret = nil
 
       # --- Runing the installation workflow ---
