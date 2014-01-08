@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Jan  8 12:46:34 UTC 2014 - jsrain@suse.cz
+
+- added handling Release Notes button (fate#314695)
+
+-------------------------------------------------------------------
 Fri Dec 20 09:32:08 UTC 2013 - vmoravec@suse.com
 
 - Add abort and fail hooks for installation
