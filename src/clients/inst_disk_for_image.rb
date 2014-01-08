@@ -23,6 +23,9 @@
 #
 
 module Yast
+  # Asks for disk to deploy an image to.
+  # Useful for OEM image installation (replacing contents of the full disk),
+  # not for regular installation process
   class InstDiskForImageClient < Client
     def main
       Yast.import "UI"
@@ -36,8 +39,6 @@ module Yast
       Yast.import "InstData"
 
       @test_mode = WFM.Args.include?("test")
-
-      Wizard.CreateDialog #if @test_mode
 
       show_disk_for_image_dialog
 
@@ -58,9 +59,6 @@ module Yast
           ret = nil unless Popup.ConfirmAbort(:painless)
         end
       end
-
-
-      Wizard.CloseDialog if @test_mode
 
       return ret
     end

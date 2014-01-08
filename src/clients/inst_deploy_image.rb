@@ -38,13 +38,12 @@ module Yast
       textdomain "installation"
 
       # OEM image if target disk is defined
-      oem_image = (InstData.image_target_disk != nil)
+      oem_image = !InstData.image_target_disk.nil?
 
       if oem_image
-        path = "/image.raw" #TODO: read from control file
+        path = ProductFeatures.GetStringFeature("globals", "oem_image")
         ImageInstallation.PrepareOEMImage(path)
         Misc.boot_msg = _("The system will reboot now...")
-        path = ProductFeatures.GetStringFeature("globals", "oem_image")
       else
         # There is nothing to do
         if !Installation.image_installation
@@ -152,18 +151,13 @@ module Yast
 
       # in case of OEM image deployment, there is no disk available
       if oem_image
-        @dep_ret = ImageInstallation.DeployImages(@images, InstData.image_target_disk, nil)
+        target = InstData.image_target_disk
       else
         # Set where the images will be downloaded
         SourceManager.InstInitSourceMoveDownloadArea
-
-        # Deploy the images
-        @dep_ret = ImageInstallation.DeployImages(
-          @images,
-          Installation.destdir,
-          nil
-        )
+        target = Installation.destdir
       end
+      @dep_ret = ImageInstallation.DeployImages(@images, target, nil)
       Builtins.y2milestone("DeployImages returned: %1", @dep_ret)
 
       # BNC #444209
