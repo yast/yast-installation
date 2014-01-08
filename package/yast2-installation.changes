@@ -1,6 +1,7 @@
 -------------------------------------------------------------------
 Wed Jan  8 12:46:34 UTC 2014 - jsrain@suse.cz
 
+- added capability to install OEM images (fate#316326)
 - added handling Release Notes button (fate#314695)
 
 -------------------------------------------------------------------
