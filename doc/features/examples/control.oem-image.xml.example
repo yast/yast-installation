@@ -5,6 +5,18 @@
 <!--
 This is an example of a control file, which deploys an OEM image instead of
 installing system from packages
+
+Important changes to standard control file:
+- removed all stuff related to package installation (package selection, rpmcopy)
+- removed configuration of stuff which is already in the image
+- added oem_image variable to globals section
+
+Workflow consists of
+- installation preparation (language, EULA, network, disk activation)
+- selecting full disk for deployment
+- preparing progress
+- deployment of the image
+- inst_finish steps are set to empty (to reuse reboot time-out)
 -->
 
 <!--
