@@ -5,7 +5,7 @@ Installation uses some special clients for inst modules. The goal of this
 article is to describe which one is needed for each task.
 
 
-Module in Wizard (`inst_` client)
+Wizard Plug-in (`inst_` client)
 -----------------------------------------
 
 When a new dialog needs to be added into the installation work-flow then a new
@@ -16,10 +16,10 @@ without the prefix.)
 The new client needs to be added to the installation control file to (the work-flow
 section)[TODO link], and the file must be present in the inst-sys during
 installation. (It can be part of the inst-sys or it can be added dynamically
-from an add-on media.)
+from an add-on media or via (Driver Update)[http://en.opensuse.org/SDB:Linuxrc#p_dud])
 
 
-Module in Installation Summary (`_proposal` client)
+Installation Summary Plug-in (`_proposal` client)
 -----------------------------------------------------------
 
 When a new module should be seen only in the installation summary page or in a
@@ -45,7 +45,7 @@ The actions can be:
 - `"Write"` to write the settings. Called only if the proposal is not skipped. **TODO looks like now all proposals are skipped**
 
 
-Final Write of Module (`_finish` client )
+Final Write of Plug-in (`_finish` client )
 --------------------------------------------
 
 When a module needs to write its settings at the end of installation then a
