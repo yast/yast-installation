@@ -1,19 +1,8 @@
+require "installation/clone_settings"
+
 module Yast
   import "UI"
   import "Label"
-
-  # helper module to make proposal value persistent
-  module CloneProposalHolder
-
-    def self.value=(val)
-      @@value = val
-    end
-
-    def self.value
-      @@value = nil unless defined? @@value
-      @@value
-    end
-  end
 
   class CloneProposalClient < Client
     CLONE_ENABLE_LINK = "clone_enable"
@@ -23,6 +12,7 @@ module Yast
     def main
       textdomain "installation"
 
+      @clone_settings = Installation::CloneSettings.instance
       Yast.import "Installation"
       Yast.import "ProductFeatures"
 
@@ -33,14 +23,14 @@ module Yast
         "globals",
         "enable_clone"
       )
-      if CloneProposalHolder.value.nil?
+      if @clone_settings.enabled.nil?
         y2milestone("Set default value for cloning")
-        CloneProposalHolder.value = product_clone_active
+        @clone_settings.enabled = product_clone_active
       end
 
       case func
       when "MakeProposal"
-        CloneProposalHolder.value = product_clone_active if param["force_reset"]
+        @clone_settings.enabled = product_clone_active if param["force_reset"]
 
         ret = {
           "preformatted_proposal" => proposal_text,
@@ -62,9 +52,9 @@ module Yast
 
         case chosen_id
         when CLONE_DISABLE_LINK
-          CloneProposalHolder.value = false
+          @clone_settings.enabled = false
         when CLONE_ENABLE_LINK
-          CloneProposalHolder.value = true
+          @clone_settings.enabled = true
         when CLONE_ACTION_ID
           clone_dialog
         else
@@ -81,7 +71,7 @@ module Yast
           "id"              => CLONE_ACTION_ID
         }
       when "Write"
-        WFM.call "clone_system" if CloneProposalHolder.value
+        WFM.call "clone_system" if @clone_settings.enabled?
         ret = true
       else
         raise "Unsuported action #{func}"
@@ -93,24 +83,24 @@ module Yast
     def proposal_text
       ret = "<ul><li>\n"
 
-      if CloneProposalHolder.value
+      if @clone_settings.enabled?
         ret << Builtins.sformat(
-              # TRANSLATORS: Installation overview
-              # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
-              _(
-                "The AutoYaST profile will be written under /root/autoinst.xml (<a href=\"%1\">do not write it</a>)."
-              ),
-              CLONE_DISABLE_LINK
-            )
+          # TRANSLATORS: Installation overview
+          # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
+          _(
+            "The AutoYaST profile will be written under /root/autoinst.xml (<a href=\"%1\">do not write it</a>)."
+          ),
+          CLONE_DISABLE_LINK
+        )
       else
         ret << Builtins.sformat(
-              # TRANSLATORS: Installation overview
-              # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
-              _(
-                "The AutoYaST profile will not be saved (<a href=\"%1\">write it</a>)."
-              ),
-              CLONE_ENABLE_LINK
-            )
+          # TRANSLATORS: Installation overview
+          # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
+          _(
+            "The AutoYaST profile will not be saved (<a href=\"%1\">write it</a>)."
+          ),
+          CLONE_ENABLE_LINK
+        )
       end
 
       ret << "</li></ul>\n"
@@ -119,14 +109,14 @@ module Yast
     def clone_dialog
       dialog = VBox(
         CheckBox(Id(:value_holder), _("Write AutoYaST profile to /root/autoinst.xml"),
-          CloneProposalHolder.value
+          @clone_settings.enabled?
         ),
         PushButton(Id(:ok), Label.OKButton)
       )
 
       UI.OpenDialog dialog
       UI.UserInput
-      CloneProposalHolder.value = UI.QueryWidget(:value_holder, :Value)
+      @clone_settings.enabled = UI.QueryWidget(:value_holder, :Value)
       UI.CloseDialog
     end
   end

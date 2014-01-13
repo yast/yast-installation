@@ -100,6 +100,11 @@ desktop_DATA = \
 fillup_DATA = \
   fillup/sysconfig.security-checksig
 
-EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA)
+ylibdir = "${yast2dir}/lib/installation"
+ylib_DATA = \
+  lib/installation/clone_settings.rb
+
+
+EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylib_DATA)
 
 include $(top_srcdir)/Makefile.am.common
