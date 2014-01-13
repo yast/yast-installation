@@ -54,6 +54,7 @@ module Yast
 
       Yast.include self, "installation/misc.rb"
       Yast.include self, "packager/storage_include.rb"
+      Yast.include self, "packager/load_release_notes.rb"
 
       if Mode.autoinst || Mode.autoupgrade
         Report.Import(
@@ -493,6 +494,13 @@ module Yast
       else
         @packager_initialized = true
         Packages.InitializeAddOnProducts
+        if load_release_notes(Packages.GetBaseSourceID)
+          # push button
+          Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
+          UI::SetReleaseNotes( { Product.name => @media_text } )
+        end
+
+
       end
 
       # reregister callbacks

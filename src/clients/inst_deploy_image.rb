@@ -33,16 +33,26 @@ module Yast
       Yast.import "Report"
       Yast.import "ProductFeatures"
       Yast.import "PackagesUI"
+      Yast.import "Misc"
 
       textdomain "installation"
 
-      # There is nothing to do
-      if !Installation.image_installation
-        Builtins.y2milestone("No images have been selected")
-        # bnc #395030
-        # Use less memory
-        ImageInstallation.FreeInternalVariables
-        return :auto
+      # OEM image if target disk is defined
+      oem_image = !InstData.image_target_disk.nil?
+
+      if oem_image
+        path = ProductFeatures.GetStringFeature("globals", "oem_image")
+        ImageInstallation.PrepareOEMImage(path)
+        Misc.boot_msg = _("The system will reboot now...")
+      else
+        # There is nothing to do
+        if !Installation.image_installation
+          Builtins.y2milestone("No images have been selected")
+          # bnc #395030
+          # Use less memory
+          ImageInstallation.FreeInternalVariables
+          return :auto
+        end
       end
 
       Builtins.y2milestone("Deploying images")
@@ -139,15 +149,15 @@ module Yast
 
       Wizard.SetTitleIcon("yast-inst-mode")
 
-      # Set where the images will be downloaded
-      SourceManager.InstInitSourceMoveDownloadArea
-
-      # Deploy the images
-      @dep_ret = ImageInstallation.DeployImages(
-        @images,
-        Installation.destdir,
-        nil
-      )
+      # in case of OEM image deployment, there is no disk available
+      if oem_image
+        target = InstData.image_target_disk
+      else
+        # Set where the images will be downloaded
+        SourceManager.InstInitSourceMoveDownloadArea
+        target = Installation.destdir
+      end
+      @dep_ret = ImageInstallation.DeployImages(@images, target, nil)
       Builtins.y2milestone("DeployImages returned: %1", @dep_ret)
 
       # BNC #444209
@@ -168,9 +178,13 @@ module Yast
 
       # Load the libzypp state from the system (with images deployed)
       PackageCallbacks.RegisterEmptyProgressCallbacks
-      Pkg.TargetInitialize(Installation.destdir)
-      Pkg.TargetLoad
-      PackageCallbacks.RestorePreviousProgressCallbacks
+      if oem_image
+        #TODO later when adding more functionality: mount the deployed image for inst_finish
+      else
+        Pkg.TargetInitialize(Installation.destdir)
+        Pkg.TargetLoad
+        PackageCallbacks.RestorePreviousProgressCallbacks
+      end
 
       # Restore the states stored by StoreAllChanges()
       if ImageInstallation.RestoreAllChanges != true
