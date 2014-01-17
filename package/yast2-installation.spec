@@ -190,6 +190,7 @@ install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 %dir /usr/share/autoinstall/modules
 %dir %{yast_yncludedir}/installation
 %{yast_yncludedir}/installation/*
+%{yast_libdir}/installation
 
 # agents
 %{yast_scrconfdir}/etc_passwd.scr
