@@ -45,7 +45,7 @@ The actions can be:
 - `"Write"` to write the settings. Called only if the proposal is not skipped. **TODO looks like now all proposals are skipped**
 
 
-Final Write of Plug-in (`_finish` client )
+Write Plug-in at the End of Installation (`_finish` client )
 --------------------------------------------
 
 When a module needs to write its settings at the end of installation then a
