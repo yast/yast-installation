@@ -25,6 +25,7 @@ Source0:        %{name}-%{version}.tar.bz2
 
 Group:          System/YaST
 License:        GPL-2.0
+Url:            http://github.com/yast/yast-installation
 Requires:       yast2-ruby-bindings >= 1.0.0
 
 Summary:        YaST2 - Installation Parts
@@ -190,6 +191,7 @@ install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 %dir /usr/share/autoinstall/modules
 %dir %{yast_yncludedir}/installation
 %{yast_yncludedir}/installation/*
+%{yast_libdir}/installation
 
 # agents
 %{yast_scrconfdir}/etc_passwd.scr
