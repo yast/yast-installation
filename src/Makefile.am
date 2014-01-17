@@ -8,6 +8,8 @@ module_DATA = \
   modules/SystemFilesCopy.rb
 
 client_DATA = \
+  clients/clone_proposal.rb \
+  clients/clone_finish.rb \
   clients/copy_files_finish.rb \
   clients/copy_logs_finish.rb \
   clients/copy_systemfiles_finish.rb \
