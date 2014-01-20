@@ -12,7 +12,7 @@ module Yast
     def main
       textdomain "installation"
 
-      @clone_settings = Installation::CloneSettings.instance
+      @clone_settings = ::Installation::CloneSettings.instance
       Yast.import "Installation"
       Yast.import "ProductFeatures"
 
