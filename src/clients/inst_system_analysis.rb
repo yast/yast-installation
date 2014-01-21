@@ -180,6 +180,9 @@ module Yast
           fun_ref(method(:ActionHDDProbe), "boolean ()")
         )
 
+        WFM.CallFunction("inst_features", [])
+      end
+
       # TRANSLATORS: progress step
       @actions_todo = Builtins.add(
         @actions_todo,
