@@ -176,7 +176,7 @@ module Yast
         end
 
         case @input
-        when String #hyperlink
+        when ::String #hyperlink
           # get module for hyperlink id
           @submod = Ops.get_string(@id2submod, @input, "")
 
@@ -1066,14 +1066,15 @@ module Yast
           # May contain newlines, but don't make it very much longer than the original.
           Left(
             Label(
-              UI.TextMode() ?
+              if UI.TextMode()
                 _(
                   "Click a headline to make changes or use the \"Change...\" menu below."
                 )
-              :
+              else
                 _(
                   "Click a headline to make changes."
                 )
+              end
             )
           ),
           rt,
