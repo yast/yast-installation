@@ -1094,6 +1094,7 @@ module Yast
 
       nil
     end
+
     def get_submod_descriptions_and_build_menu
       menu_list = []
       new_submodules = []
@@ -1101,34 +1102,29 @@ module Yast
       @titles = []
       descriptions = {}
 
-      Builtins.foreach(@submodules) do |submod|
+      @submodules.each do |submod|
         description = submod_description(submod)
-        if description == nil
+        if description.nil?
           Builtins.y2milestone(
             "Submodule %1 not available (not installed?)",
             submod
           )
         else
           if description != {}
-            Ops.set(description, "no", no)
-            Ops.set(descriptions, submod, description)
-            new_submodules = Builtins.add(new_submodules, submod)
-            title = Ops.get_string(
-              description,
-              "rich_text_title",
-              Ops.get_string(description, "rich_text_raw_title", submod)
-            )
-            id = Ops.get_string(
-              description,
-              "id",
-              Builtins.sformat("module_%1", no)
-            )
+            description["no"] = no
+            descriptions[submod] = description
+            new_submodules << submod
+            title = description["rich_text_title"] ||
+                description["rich_text_raw_title"] ||
+                submod
 
-            @titles = Builtins.add(@titles, title)
-            Ops.set(@submod2id, submod, id)
-            Ops.set(@id2submod, id, submod)
+            id = description["id"] || Builtins.sformat("module_%1", no)
 
-            no += Ops.add(no, 1)
+            @titles << title
+            @submod2id[submod] = id
+            @id2submod[id] = submod
+
+            no += 1
           end
         end
       end
@@ -1139,43 +1135,34 @@ module Yast
       if UI.TextMode
         # now build the menu button
         Builtins.foreach(@submodules_presentation) do |submod|
-          descr = Ops.get_map(descriptions, submod, {})
-          if descr != {}
-            no2 = Ops.get_integer(descr, "no", 0)
-            id = Ops.get_string(descr, "id", Builtins.sformat("module_%1", no2))
-            if Builtins.haskey(descr, "menu_titles")
-              Builtins.foreach(Ops.get_list(descr, "menu_titles", [])) do |i|
-                id2 = Ops.get(i, "id", "")
-                title = Ops.get(i, "title", "")
-                if id2 != "" && title != ""
-                  menu_list = Builtins.add(
-                    menu_list,
-                    Item(Id(id2), Ops.add(title, "..."))
-                  )
-                else
-                  Builtins.y2error("Invalid menu item: %1", i)
-                end
+          descr = descriptions[submod] || {}
+          next if descr.empty?
+
+          no2 = descr["no"] || 0
+          id = descr["id"] || Builtins.sformat("module_%1", no2)
+          if descr.has_key? "menu_titles"
+            descr["menu_titles"].each do |i|
+              id2 = i["id"]
+              title = i["title"]
+              if id2 && title
+                menu_list << Item(Id(id2), Ops.add(title, "..."))
+              else
+                Builtins.y2error("Invalid menu item: %1", i)
               end
-            else
-              menu_title = Ops.get_string(
-                descr,
-                "menu_title",
-                Ops.get_string(descr, "rich_text_title", submod)
-              )
-              menu_list = Builtins.add(
-                menu_list,
-                Item(Id(id), Ops.add(menu_title, "..."))
-              )
             end
+          else
+            menu_title = descr["menu_title"] ||
+              descr["rich_text_title"] ||
+              submod
+
+            menu_list << Item(Id(id), Ops.add(menu_title, "..."))
           end
         end
 
         # menu button item
-        menu_list = Builtins.add(
-          menu_list,
-          Item(Id(:reset_to_defaults), _("&Reset to defaults")),
-          Item(Id(:export_config), _("&Export Configuration"))
-        )
+        menu_list << Item(Id(:reset_to_defaults), _("&Reset to defaults")) <<
+            Item(Id(:export_config), _("&Export Configuration"))
+
         # menu button
         UI.ReplaceWidget(
           Id(:rep_menu),
@@ -1183,8 +1170,9 @@ module Yast
         )
       end
 
-      Ops.greater_than(no, 1)
+      return no > 1
     end
+
     def set_icon
       icon = "yast-software"
 
