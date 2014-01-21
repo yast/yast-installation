@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Tue Jan 21 12:15:21 UTC 2014 - jreidinger@suse.com
+
+- Remove "Change..." button in non-textual installation
+- Add "Export Configuration" button in non-textual installation
+  (FATE#308539)
+- Add "Export Configuration" menu item in textual installation
+  (FATE#308539)
+- 3.1.20
+
+-------------------------------------------------------------------
 Mon Jan 13 09:58:46 UTC 2014 - jreidinger@suse.com
 
 - add clone proposal and finish client (FATE#308539)
