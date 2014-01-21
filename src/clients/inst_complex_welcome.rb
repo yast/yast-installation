@@ -120,21 +120,16 @@ module Yast
         Left(
           HSquash(
             HBox(
-              HSquash(Icon.Simple("yast-language")),
-              @text_mode ? Empty() : HSpacing(2),
-              Left(@languagesel),
-              HSpacing(1),
-              HSquash(Icon.Simple("yast-keyboard")),
-              @text_mode ? Empty() : HSpacing(2),
-              Left(@keyboardsel),
-              HSpacing(10)
+              HWeight(1, Left(@languagesel)),
+              HSpacing(3),
+              HWeight(1, Left(@keyboardsel))
             )
           )
         ),
         VSpacing(1),
         VWeight(1, VStretch()),
         VWeight(
-          20,
+          30,
           Left(
             HSquash(
               VBox(
@@ -228,8 +223,6 @@ module Yast
         @kbd = Keyboard.GetKeyboardForLanguage(@language, "english-us")
         UI.ChangeWidget(Id(:keyboard), :Value, @kbd)
       end
-
-      Wizard.SetTitleIcon("suse")
 
       # Get the user input.
       #
