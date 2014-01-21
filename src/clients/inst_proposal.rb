@@ -50,6 +50,7 @@ module Yast
       Yast.import "Popup"
       Yast.import "Language"
       Yast.import "GetInstArgs"
+      Yast.import "String"
 
       Yast.include self, "installation/misc.rb"
 
@@ -224,7 +225,7 @@ module Yast
             raise _("Failed to store configuration. Details can be found in log.")
           end
 
-          WFM.Execute(path(".local.bash"), "mv /root/autoinst.xml '#{path}'")
+          WFM.Execute(path(".local.bash"), "mv -- /root/autoinst.xml '#{String.Quote(path)}'")
         when :skip, :dontskip
           if Convert.to_boolean(UI.QueryWidget(Id(:skip), :Value))
             # User doesn't want to use any of the settings
