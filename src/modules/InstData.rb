@@ -88,6 +88,11 @@ module Yast
 
       # <-- copy files -- config
 
+      # variables for OEM image installation
+
+      # disk to use for OEM image
+      @image_target_disk = nil
+
       # EOF
     end
 
@@ -104,6 +109,7 @@ module Yast
     publish :variable => :localDisabledProposals, :type => "list <string>"
     publish :variable => :copy_files_use_control_file, :type => "boolean"
     publish :variable => :additional_copy_files, :type => "list <map>"
+    publish :variable => :image_target_disk, :type => "string"
   end
 
   InstData = InstDataClass.new

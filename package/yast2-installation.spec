@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.19
+Version:        3.1.20
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -25,6 +25,7 @@ Source0:        %{name}-%{version}.tar.bz2
 
 Group:          System/YaST
 License:        GPL-2.0
+Url:            http://github.com/yast/yast-installation
 Requires:       yast2-ruby-bindings >= 1.0.0
 
 Summary:        YaST2 - Installation Parts
@@ -39,8 +40,8 @@ BuildRequires:  rubygem-rspec
 # Linuxrc.keys
 BuildRequires: yast2 >= 3.1.9
 
-# AutoinstConfig::getProposalList
-Requires:       autoyast2-installation >= 2.17.1
+# clone_system client
+Requires:       autoyast2-installation >= 3.1.5
 
 # ProductProfile
 Requires:	yast2 >= 3.1.9
@@ -190,6 +191,7 @@ install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 %dir /usr/share/autoinstall/modules
 %dir %{yast_yncludedir}/installation
 %{yast_yncludedir}/installation/*
+%{yast_libdir}/installation
 
 # agents
 %{yast_scrconfdir}/etc_passwd.scr

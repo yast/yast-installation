@@ -472,6 +472,31 @@ module Yast
       # FIXME error checking
     end
 
+    def DeployDiskImage(id, target)
+      InitRepo()
+
+      file = Ops.get_string(@_images, [id, "file"], "")
+      Builtins.y2milestone("Deploying disk image %1 (%2) on %3", id, file, target)
+      file = Builtins.sformat("%1/%2", @_image_path, file)
+      # BNC #409927
+      # Checking files for signatures
+      image = Pkg.SourceProvideDigestedFile(@_repo, 1, file, false)
+
+      if image.nil?
+        Builtins.y2error("File %1 not found on media", file)
+        return false
+      end
+
+      Builtins.y2milestone("Copying the image")
+      cmd = Builtins.sformat("dd bs=1048576 if=%1 of=%2", image, target) #1MB of block size
+      out = SCR.Execute(path(".target.bash_output"), cmd)
+      Builtins.y2milestone("Executing %1 returned %2", cmd, out)
+
+      RemoveTemporaryImage(image)
+
+      out["exit"] == 0
+    end
+
     # Mount an image of the filesystem type
     # Does not integrate to the system, mounts on target
     # @param [String] id string the id of the image
@@ -579,6 +604,8 @@ module Yast
         return temporary ? MountFsImage(id, target) : DeployFsImage(id, target)
       elsif type == "tar"
         return DeployTarImage(id, target)
+      elsif type == "raw"
+        return DeployDiskImage(id, target)
       end
 
       Builtins.y2error("Unknown type of image: %1", type)
@@ -766,6 +793,13 @@ module Yast
 
       # it's actually matching_patterns = patterns_in_imagesets
       Ops.greater_or_equal(matching_patterns, patterns_in_imagesets)
+    end
+
+    def PrepareOEMImage(path)
+      AddImage(
+        "OEM", path, "raw"
+      )
+      @_image_order = [ path ]
     end
 
     # Find a set of images which suites selected patterns
@@ -1482,6 +1516,7 @@ module Yast
     publish :function => :StoreAllChanges, :type => "void ()"
     publish :function => :RestoreAllChanges, :type => "boolean ()"
     publish :function => :FreeInternalVariables, :type => "void ()"
+    publish :function => :PrepareOEMImage, :type => "void ()"
   end
 
   ImageInstallation = ImageInstallationClass.new

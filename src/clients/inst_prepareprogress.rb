@@ -126,6 +126,26 @@ module Yast
         }
       ]
 
+      # own workflow for OEM image deployment
+      if InstData.image_target_disk
+        @stages = [
+          {
+            "name"        => "images",
+            "description" => _("Deploying Images..."),
+            "value"       => 300000, # just make it longer than inst_finish, TODO: better value later
+            "units"       => :kb
+          },
+          {
+            "name"        => "finish",
+            "description" => _("Finishing Basic Installation"),
+            # fixed value
+            "value"       => 100,
+            "units"       => :sec
+          }
+        ]
+    
+      end
+
       SlideShow.Setup(@stages)
 
       @ret_val = :auto

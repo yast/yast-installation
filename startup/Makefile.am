@@ -4,7 +4,6 @@
 ystartupbindir=$(ystartupdir)/startup
 
 ystartupbin_SCRIPTS = 	\
-	AUTHOR				\
 	YaST2.First-Stage	\
 	YaST2.Second-Stage	\
 	YaST2.call			\

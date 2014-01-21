@@ -1081,10 +1081,6 @@ module Yast
           Builtins.y2milestone("Not using CWM tabs...")
         end
       end
-      if Stage.stage == "initial"
-        # push button
-        Wizard.ShowReleaseNotesButton(_("&Show Release Notes"), "rel_notes")
-      end
 
       nil
     end
