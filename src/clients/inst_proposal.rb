@@ -50,6 +50,7 @@ module Yast
       Yast.import "Popup"
       Yast.import "Language"
       Yast.import "GetInstArgs"
+      Yast.import "String"
 
       Yast.include self, "installation/misc.rb"
 
@@ -175,9 +176,8 @@ module Yast
           get_submod_descriptions_and_build_menu
         end
 
-        # check for hyperlink id
-
-        if Ops.is_string?(@input)
+        case @input
+        when ::String #hyperlink
           # get module for hyperlink id
           @submod = Ops.get_string(@id2submod, @input, "")
 
@@ -200,25 +200,33 @@ module Yast
             # so we have to do this special case here. Kind of broken.
             return :finish if @input == :finish
           end
-        elsif @input == "rel_notes"
-          WFM.CallFunction("release_notes_popup", [])
-        elsif @input == :finish
+        when :finish
           return :finish
-        elsif @input == :abort
+        when :abort
           if Stage.initial
             return :abort if Popup.ConfirmAbort(:painless)
           else
             return :abort if Popup.ConfirmAbort(:incomplete)
           end
-        elsif @input == :reset_to_defaults &&
-            Popup.ContinueCancel(
+        when :reset_to_defaults
+            next unless Popup.ContinueCancel(
               # question in a popup box
               _("Really reset everything to default values?") + "\n" +
                 # explain consequences of a decision
                 _("You will lose all changes.")
             )
           make_proposal(true, false) # force_reset
-        elsif @input == :skip || @input == :dontskip
+        when :export_config
+          path = UI.AskForSaveFileName("/", "*.xml", _("Location of Stored Configuration"))
+          next unless path
+
+          WFM.CallFunction("clone_proposal", ["Write"])
+          if !File.exists?("/root/autoinst.xml")
+            raise _("Failed to store configuration. Details can be found in log.")
+          end
+
+          WFM.Execute(path(".local.bash"), "mv -- /root/autoinst.xml '#{String.Quote(path)}'")
+        when :skip, :dontskip
           if Convert.to_boolean(UI.QueryWidget(Id(:skip), :Value))
             # User doesn't want to use any of the settings
             UI.ChangeWidget(
@@ -236,7 +244,7 @@ module Yast
             make_proposal(false, false)
             UI.ChangeWidget(Id(:menu), :Enabled, true)
           end
-        elsif @input == :next
+        when :next
           @skip = UI.WidgetExists(Id(:skip)) ?
             Convert.to_boolean(UI.QueryWidget(Id(:skip), :Value)) :
             true
@@ -270,17 +278,12 @@ module Yast
             Wizard.HideReleaseNotesButton
             return :next
           end
-        elsif @input == :back
+        when :back
           Wizard.HideReleaseNotesButton
           Wizard.SetNextButton(:next, Label.NextButton) if Stage.initial
           return :back
         end
       end # while input loop
-
-
-      # NOTREACHED
-
-      # EOF
 
       nil
     end
@@ -984,15 +987,25 @@ module Yast
         )
       )
 
+      if UI.TextMode()
+        change_point = ReplacePoint(
+            Id(:rep_menu),
+            # menu button
+            MenuButton(Id(:menu_dummy), _("&Change..."), [Item(Id(:dummy), "")])
+          )
+      else
+        change_point = PushButton(
+            Id(:export_config),
+            # menu button
+            _("&Export Configuration")
+          )
+      end
+
       # change menu
       menu_box = VBox(
         HBox(
           HStretch(),
-          ReplacePoint(
-            Id(:rep_menu),
-            # menu button
-            MenuButton(Id(:menu_dummy), _("&Change..."), [Item(Id(:dummy), "")])
-          ),
+          change_point,
           HStretch()
         ),
         ReplacePoint(Id("inst_proposal_progress"), Empty())
@@ -1054,9 +1067,15 @@ module Yast
           # May contain newlines, but don't make it very much longer than the original.
           Left(
             Label(
-              _(
-                "Click a headline to make changes or use the \"Change...\" menu below."
-              )
+              if UI.TextMode()
+                _(
+                  "Click a headline to make changes or use the \"Change...\" menu below."
+                )
+              else
+                _(
+                  "Click a headline to make changes."
+                )
+              end
             )
           ),
           rt,
@@ -1084,6 +1103,7 @@ module Yast
 
       nil
     end
+
     def get_submod_descriptions_and_build_menu
       menu_list = []
       new_submodules = []
@@ -1091,34 +1111,29 @@ module Yast
       @titles = []
       descriptions = {}
 
-      Builtins.foreach(@submodules) do |submod|
+      @submodules.each do |submod|
         description = submod_description(submod)
-        if description == nil
+        if description.nil?
           Builtins.y2milestone(
             "Submodule %1 not available (not installed?)",
             submod
           )
         else
           if description != {}
-            Ops.set(description, "no", no)
-            Ops.set(descriptions, submod, description)
-            new_submodules = Builtins.add(new_submodules, submod)
-            title = Ops.get_string(
-              description,
-              "rich_text_title",
-              Ops.get_string(description, "rich_text_raw_title", submod)
-            )
-            id = Ops.get_string(
-              description,
-              "id",
-              Builtins.sformat("module_%1", no)
-            )
+            description["no"] = no
+            descriptions[submod] = description
+            new_submodules << submod
+            title = description["rich_text_title"] ||
+                description["rich_text_raw_title"] ||
+                submod
 
-            @titles = Builtins.add(@titles, title)
-            Ops.set(@submod2id, submod, id)
-            Ops.set(@id2submod, id, submod)
+            id = description["id"] || Builtins.sformat("module_%1", no)
 
-            no = Ops.add(no, 1)
+            @titles << title
+            @submod2id[submod] = id
+            @id2submod[id] = submod
+
+            no += 1
           end
         end
       end
@@ -1126,52 +1141,47 @@ module Yast
       @submodules = deep_copy(new_submodules) # maybe some submodules are not installed
       Builtins.y2milestone("Execution order after rewrite: %1", @submodules)
 
-      # now build the menu button
-      Builtins.foreach(@submodules_presentation) do |submod|
-        descr = Ops.get_map(descriptions, submod, {})
-        if descr != {}
-          no2 = Ops.get_integer(descr, "no", 0)
-          id = Ops.get_string(descr, "id", Builtins.sformat("module_%1", no2))
-          if Builtins.haskey(descr, "menu_titles")
-            Builtins.foreach(Ops.get_list(descr, "menu_titles", [])) do |i|
-              id2 = Ops.get(i, "id", "")
-              title = Ops.get(i, "title", "")
-              if id2 != "" && title != ""
-                menu_list = Builtins.add(
-                  menu_list,
-                  Item(Id(id2), Ops.add(title, "..."))
-                )
+      if UI.TextMode
+        # now build the menu button
+        Builtins.foreach(@submodules_presentation) do |submod|
+          descr = descriptions[submod] || {}
+          next if descr.empty?
+
+          no2 = descr["no"] || 0
+          id = descr["id"] || Builtins.sformat("module_%1", no2)
+          if descr.has_key? "menu_titles"
+            descr["menu_titles"].each do |i|
+              id2 = i["id"]
+              title = i["title"]
+              if id2 && title
+                menu_list << Item(Id(id2), Ops.add(title, "..."))
               else
                 Builtins.y2error("Invalid menu item: %1", i)
               end
             end
           else
-            menu_title = Ops.get_string(
-              descr,
-              "menu_title",
-              Ops.get_string(descr, "rich_text_title", submod)
-            )
-            menu_list = Builtins.add(
-              menu_list,
-              Item(Id(id), Ops.add(menu_title, "..."))
-            )
+            menu_title = descr["menu_title"] ||
+              descr["rich_text_title"] ||
+              submod
+
+            menu_list << Item(Id(id), Ops.add(menu_title, "..."))
           end
         end
+
+        # menu button item
+        menu_list << Item(Id(:reset_to_defaults), _("&Reset to defaults")) <<
+            Item(Id(:export_config), _("&Export Configuration"))
+
+        # menu button
+        UI.ReplaceWidget(
+          Id(:rep_menu),
+          MenuButton(Id(:menu), _("&Change..."), menu_list)
+        )
       end
 
-      # menu button item
-      menu_list = Builtins.add(
-        menu_list,
-        Item(Id(:reset_to_defaults), _("&Reset to defaults"))
-      )
-      # menu button
-      UI.ReplaceWidget(
-        Id(:rep_menu),
-        MenuButton(Id(:menu), _("&Change..."), menu_list)
-      )
-
-      Ops.greater_than(no, 1)
+      return no > 1
     end
+
     def set_icon
       icon = "yast-software"
 
