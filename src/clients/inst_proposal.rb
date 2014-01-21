@@ -175,9 +175,8 @@ module Yast
           get_submod_descriptions_and_build_menu
         end
 
-        # check for hyperlink id
-
-        if Ops.is_string?(@input)
+        case @input
+        when String #hyperlink
           # get module for hyperlink id
           @submod = Ops.get_string(@id2submod, @input, "")
 
@@ -200,25 +199,23 @@ module Yast
             # so we have to do this special case here. Kind of broken.
             return :finish if @input == :finish
           end
-        elsif @input == "rel_notes"
-          WFM.CallFunction("release_notes_popup", [])
-        elsif @input == :finish
+        when :finish
           return :finish
-        elsif @input == :abort
+        when :abort
           if Stage.initial
             return :abort if Popup.ConfirmAbort(:painless)
           else
             return :abort if Popup.ConfirmAbort(:incomplete)
           end
-        elsif @input == :reset_to_defaults &&
-            Popup.ContinueCancel(
+        when :reset_to_defaults
+            next unless Popup.ContinueCancel(
               # question in a popup box
               _("Really reset everything to default values?") + "\n" +
                 # explain consequences of a decision
                 _("You will lose all changes.")
             )
           make_proposal(true, false) # force_reset
-        elsif @input == :export_config
+        when :export_config
           path = UI.AskForSaveFileName("/", "*.xml", _("Location of Stored Configuration"))
           next unless path
 
@@ -228,7 +225,7 @@ module Yast
           end
 
           WFM.Execute(path(".local.bash"), "mv /root/autoinst.xml '#{path}'")
-        elsif @input == :skip || @input == :dontskip
+        when :skip, :dontskip
           if Convert.to_boolean(UI.QueryWidget(Id(:skip), :Value))
             # User doesn't want to use any of the settings
             UI.ChangeWidget(
@@ -246,7 +243,7 @@ module Yast
             make_proposal(false, false)
             UI.ChangeWidget(Id(:menu), :Enabled, true)
           end
-        elsif @input == :next
+        when :next
           @skip = UI.WidgetExists(Id(:skip)) ?
             Convert.to_boolean(UI.QueryWidget(Id(:skip), :Value)) :
             true
@@ -280,17 +277,12 @@ module Yast
             Wizard.HideReleaseNotesButton
             return :next
           end
-        elsif @input == :back
+        when :back
           Wizard.HideReleaseNotesButton
           Wizard.SetNextButton(:next, Label.NextButton) if Stage.initial
           return :back
         end
       end # while input loop
-
-
-      # NOTREACHED
-
-      # EOF
 
       nil
     end
