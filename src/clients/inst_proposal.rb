@@ -1066,9 +1066,14 @@ module Yast
           # May contain newlines, but don't make it very much longer than the original.
           Left(
             Label(
-              _(
-                "Click a headline to make changes or use the \"Change...\" menu below."
-              )
+              UI.TextMode() ?
+                _(
+                  "Click a headline to make changes or use the \"Change...\" menu below."
+                )
+              :
+                _(
+                  "Click a headline to make changes."
+                )
             )
           ),
           rt,
