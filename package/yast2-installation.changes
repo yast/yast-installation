@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Tue Jan 21 08:48:17 UTC 2014 - jsrain@suse.cz
+
+- adjusted UI according to Ken's comments
+- 3.1.19
+
+-------------------------------------------------------------------
+Wed Jan  8 12:46:34 UTC 2014 - jsrain@suse.cz
+
+- added capability to install OEM images (fate#316326)
+- added handling Release Notes button (fate#314695)
+
+-------------------------------------------------------------------
 Fri Dec 20 09:32:08 UTC 2013 - vmoravec@suse.com
 
 - Add abort and fail hooks for installation
