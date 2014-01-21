@@ -91,7 +91,6 @@ module Yast
       @actions_todo = []
       @actions_doing = []
       @actions_functions = []
-      @visible_icons = []
 
       Builtins.y2milestone("Probing done: %1", Installation.probing_done)
       if !Installation.probing_done
@@ -106,10 +105,6 @@ module Yast
           @actions_functions = Builtins.add(
             @actions_functions,
             fun_ref(method(:ActionUSB), "boolean ()")
-          )
-          @visible_icons = Builtins.add(
-            @visible_icons,
-            "32x32/apps/yast-usb.png"
           )
 
           # TRANSLATORS: progress step
@@ -126,10 +121,6 @@ module Yast
             @actions_functions,
             fun_ref(method(:ActionFireWire), "boolean ()")
           )
-          @visible_icons = Builtins.add(
-            @visible_icons,
-            "32x32/apps/yast-firewire.png"
-          )
 
           # TRANSLATORS: progress step
           @actions_todo = Builtins.add(
@@ -144,10 +135,6 @@ module Yast
           @actions_functions = Builtins.add(
             @actions_functions,
             fun_ref(method(:ActionFloppyDisks), "boolean ()")
-          )
-          @visible_icons = Builtins.add(
-            @visible_icons,
-            "32x32/apps/yast-floppy.png"
           )
         end
 
@@ -165,10 +152,6 @@ module Yast
           @actions_functions,
           fun_ref(method(:ActionHHDControllers), "boolean ()")
         )
-        @visible_icons = Builtins.add(
-          @visible_icons,
-          "32x32/apps/yast-hdd-controller.png"
-        )
 
         # TRANSLATORS: progress step
         @actions_todo = Builtins.add(
@@ -184,10 +167,6 @@ module Yast
           @actions_functions,
           fun_ref(method(:ActionLoadModules), "boolean ()")
         )
-        @visible_icons = Builtins.add(
-          @visible_icons,
-          "32x32/apps/yast-hdd-controller-kernel-module.png"
-        )
 
         # TRANSLATORS: progress step
         @actions_todo = Builtins.add(@actions_todo, _("Probe hard disks"))
@@ -200,7 +179,6 @@ module Yast
           @actions_functions,
           fun_ref(method(:ActionHDDProbe), "boolean ()")
         )
-        @visible_icons = Builtins.add(@visible_icons, "32x32/apps/yast-hdd.png")
 
         WFM.CallFunction("inst_features", [])
       end
@@ -219,10 +197,6 @@ module Yast
         @actions_functions,
         fun_ref(method(:SearchForLinuxPartitions), "boolean ()")
       )
-      @visible_icons = Builtins.add(
-        @visible_icons,
-        "32x32/apps/yast-search-linux-partition.png"
-      )
 
       # TRANSLATORS: progress step
       @actions_todo = Builtins.add(@actions_todo, _("Search for system files"))
@@ -235,10 +209,6 @@ module Yast
       @actions_functions = Builtins.add(
         @actions_functions,
         fun_ref(method(:FilesFromOlderSystems), "boolean ()")
-      )
-      @visible_icons = Builtins.add(
-        @visible_icons,
-        "32x32/apps/yast-system-files.png"
       )
 
       # TRANSLATORS: progress step
@@ -255,10 +225,6 @@ module Yast
         @actions_functions,
         fun_ref(method(:EvaluateUpdatePossibilities), "boolean ()")
       )
-      @visible_icons = Builtins.add(
-        @visible_icons,
-        "32x32/apps/yast-update-possibility.png"
-      )
 
       # TRANSLATORS: progress step
       @actions_todo = Builtins.add(
@@ -274,12 +240,8 @@ module Yast
         @actions_functions,
         fun_ref(method(:InitInstallationRepositories), "boolean ()")
       )
-      @visible_icons = Builtins.add(
-        @visible_icons,
-        "32x32/apps/yast-package-manager.png"
-      )
 
-      Progress.NewProgressIcons(
+      Progress.New(
         # TRANSLATORS: dialog caption
         _("System Probing"),
         " ",
@@ -288,7 +250,6 @@ module Yast
         @actions_doing,
         # TRANSLATORS: dialog help
         _("YaST is probing computer hardware and installed systems now."),
-        [@visible_icons]
       )
 
       Builtins.foreach(@actions_functions) do |run_function|

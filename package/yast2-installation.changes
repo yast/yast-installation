@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jan 21 14:18:08 UTC 2014 - jreidinger@suse.com
+
+- Remove icons from system analysis according to Ken's comments
+  (fate#314695)
+- 3.1.22
+
+-------------------------------------------------------------------
 Tue Jan 21 12:15:21 UTC 2014 - jreidinger@suse.com
 
 - Remove "Change..." button in non-textual installation
