@@ -984,15 +984,25 @@ module Yast
         )
       )
 
+      if UI.TextMode()
+        change_point = ReplacePoint(
+            Id(:rep_menu),
+            # menu button
+            MenuButton(Id(:menu_dummy), _("&Change..."), [Item(Id(:dummy), "")])
+          )
+      else
+        change_point = PushButton(
+            Id(:export_config),
+            # menu button
+            _("&Export Configuration")
+          )
+      end
+
       # change menu
       menu_box = VBox(
         HBox(
           HStretch(),
-          ReplacePoint(
-            Id(:rep_menu),
-            # menu button
-            MenuButton(Id(:menu_dummy), _("&Change..."), [Item(Id(:dummy), "")])
-          ),
+          change_point,
           HStretch()
         ),
         ReplacePoint(Id("inst_proposal_progress"), Empty())
@@ -1118,7 +1128,7 @@ module Yast
             Ops.set(@submod2id, submod, id)
             Ops.set(@id2submod, id, submod)
 
-            no = Ops.add(no, 1)
+            no += Ops.add(no, 1)
           end
         end
       end
@@ -1126,49 +1136,52 @@ module Yast
       @submodules = deep_copy(new_submodules) # maybe some submodules are not installed
       Builtins.y2milestone("Execution order after rewrite: %1", @submodules)
 
-      # now build the menu button
-      Builtins.foreach(@submodules_presentation) do |submod|
-        descr = Ops.get_map(descriptions, submod, {})
-        if descr != {}
-          no2 = Ops.get_integer(descr, "no", 0)
-          id = Ops.get_string(descr, "id", Builtins.sformat("module_%1", no2))
-          if Builtins.haskey(descr, "menu_titles")
-            Builtins.foreach(Ops.get_list(descr, "menu_titles", [])) do |i|
-              id2 = Ops.get(i, "id", "")
-              title = Ops.get(i, "title", "")
-              if id2 != "" && title != ""
-                menu_list = Builtins.add(
-                  menu_list,
-                  Item(Id(id2), Ops.add(title, "..."))
-                )
-              else
-                Builtins.y2error("Invalid menu item: %1", i)
+      if UI.TextMode
+        # now build the menu button
+        Builtins.foreach(@submodules_presentation) do |submod|
+          descr = Ops.get_map(descriptions, submod, {})
+          if descr != {}
+            no2 = Ops.get_integer(descr, "no", 0)
+            id = Ops.get_string(descr, "id", Builtins.sformat("module_%1", no2))
+            if Builtins.haskey(descr, "menu_titles")
+              Builtins.foreach(Ops.get_list(descr, "menu_titles", [])) do |i|
+                id2 = Ops.get(i, "id", "")
+                title = Ops.get(i, "title", "")
+                if id2 != "" && title != ""
+                  menu_list = Builtins.add(
+                    menu_list,
+                    Item(Id(id2), Ops.add(title, "..."))
+                  )
+                else
+                  Builtins.y2error("Invalid menu item: %1", i)
+                end
               end
+            else
+              menu_title = Ops.get_string(
+                descr,
+                "menu_title",
+                Ops.get_string(descr, "rich_text_title", submod)
+              )
+              menu_list = Builtins.add(
+                menu_list,
+                Item(Id(id), Ops.add(menu_title, "..."))
+              )
             end
-          else
-            menu_title = Ops.get_string(
-              descr,
-              "menu_title",
-              Ops.get_string(descr, "rich_text_title", submod)
-            )
-            menu_list = Builtins.add(
-              menu_list,
-              Item(Id(id), Ops.add(menu_title, "..."))
-            )
           end
         end
-      end
 
-      # menu button item
-      menu_list = Builtins.add(
-        menu_list,
-        Item(Id(:reset_to_defaults), _("&Reset to defaults"))
-      )
-      # menu button
-      UI.ReplaceWidget(
-        Id(:rep_menu),
-        MenuButton(Id(:menu), _("&Change..."), menu_list)
-      )
+        # menu button item
+        menu_list = Builtins.add(
+          menu_list,
+          Item(Id(:reset_to_defaults), _("&Reset to defaults")),
+          Item(Id(:export_config), _("&Export Configuration"))
+        )
+        # menu button
+        UI.ReplaceWidget(
+          Id(:rep_menu),
+          MenuButton(Id(:menu), _("&Change..."), menu_list)
+        )
+      end
 
       Ops.greater_than(no, 1)
     end
