@@ -219,9 +219,9 @@ module Yast
           path = UI.AskForSaveFileName("/", "*.xml", _("Location of Stored Configuration"))
           next unless path
 
-          WFM.call("clone_proposal", ["Write"])
+          WFM.CallFunction("clone_proposal", ["Write"])
           if !File.exists?("/root/autoinst.xml")
-            raise "Failed to store configuration. Details in log."
+            raise _("Failed to store configuration. Details can be found in log.")
           end
 
           WFM.Execute(path(".local.bash"), "mv /root/autoinst.xml '#{path}'")
