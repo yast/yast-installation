@@ -218,6 +218,16 @@ module Yast
                 _("You will lose all changes.")
             )
           make_proposal(true, false) # force_reset
+        elsif @input == :export_config
+          path = UI.AskForSaveFileName("/", "*.xml", _("Location of Stored Configuration"))
+          next unless path
+
+          WFM.call("clone_proposal", ["Write"])
+          if !File.exists?("/root/autoinst.xml")
+            raise "Failed to store configuration. Details in log."
+          end
+
+          WFM.Execute(path(".local.bash"), "mv /root/autoinst.xml '#{path}'")
         elsif @input == :skip || @input == :dontskip
           if Convert.to_boolean(UI.QueryWidget(Id(:skip), :Value))
             # User doesn't want to use any of the settings
