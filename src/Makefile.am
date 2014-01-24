@@ -47,7 +47,6 @@ client_DATA = \
   clients/inst_restore_settings.rb \
   clients/inst_rpmcopy_secondstage.rb \
   clients/inst_save_hardware_status.rb \
-  clients/inst_scc.rb \
   clients/inst_scenarios.rb \
   clients/inst_system_analysis.rb \
   clients/inst_upgrade_urls.rb \
