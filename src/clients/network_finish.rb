@@ -42,6 +42,7 @@ module Yast
       Yast.import "Linuxrc"
       Yast.import "String"
       Yast.import "NetworkService"
+      Yast.import "Lan"
 
       @ret = nil
       @func = ""
@@ -69,6 +70,15 @@ module Yast
           "when"  => [:installation, :update, :autoinst]
         }
       elsif @func == "Write"
+
+        if Lan.UseNetworkManager
+          NetworkService.use_network_manager
+        else
+          NetworkService.use_wicked
+        end
+
+        NetworkService.EnableDisableNow
+
         # if network running, write network configuration
         # also in case of IPv6 (bnc#477917)
         if NetworkService.isNetworkRunning || NetworkService.isNetworkv6Running
