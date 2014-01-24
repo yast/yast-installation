@@ -249,7 +249,7 @@ module Yast
         @actions_todo,
         @actions_doing,
         # TRANSLATORS: dialog help
-        _("YaST is probing computer hardware and installed systems now."),
+        _("YaST is probing computer hardware and installed systems now.")
       )
 
       Builtins.foreach(@actions_functions) do |run_function|
