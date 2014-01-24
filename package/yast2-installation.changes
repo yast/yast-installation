@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jan 24 12:01:29 UTC 2014 - lslezak@suse.cz
+
+- removed inst_scc.rb client (moved to yast2-registration)
+- 3.1.23
+
+-------------------------------------------------------------------
 Tue Jan 21 14:18:08 UTC 2014 - jreidinger@suse.com
 
 - Remove icons from system analysis according to Ken's comments
