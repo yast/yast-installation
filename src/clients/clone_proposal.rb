@@ -16,8 +16,8 @@ module Yast
       Yast.import "Installation"
       Yast.import "ProductFeatures"
 
-      func = WFM.Args(0)
-      param = WFM.Args(1)
+      func = WFM.Args[0]
+      param = WFM.Args[1] || {}
 
       product_clone_active = ProductFeatures.GetBooleanFeature(
         "globals",
@@ -71,7 +71,9 @@ module Yast
           "id"              => CLONE_ACTION_ID
         }
       when "Write"
-        WFM.call "clone_system" if @clone_settings.enabled?
+        if param["force"] || @clone_settings.enabled?
+          WFM.call "clone_system"
+        end
         ret = true
       else
         raise "Unsuported action #{func}"
