@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jan 30 15:41:05 UTC 2014 - jreidinger@suse.com
+
+- Remove write to non-existing /etc/sysconfig/suseconfig
+  (FATE#100011)
+- 3.1.26
+
+-------------------------------------------------------------------
 Tue Jan 28 15:37:15 UTC 2014 - jreidinger@suse.com
 
 - Fix exporting configuration in first stage (FATE#308539)
