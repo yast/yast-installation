@@ -1,7 +1,7 @@
 #
 # spec file for package yast2-installation
 #
-# Copyright (c) 2013 SUSE LINUX Products GmbH, Nuernberg, Germany.
+# Copyright (c) 2014 SUSE LINUX Products GmbH, Nuernberg, Germany.
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.25
+Version:        3.1.26
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
