@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 # ------------------------------------------------------------------------------
-# Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
+# Copyright (c) [2006-2014] Novell, Inc. All Rights Reserved.
 #
 #
 # This program is free software; you can redistribute it and/or modify it under
@@ -61,7 +61,7 @@ module Yast
 
         # detect DASD disks
         disks = SCR.Read(path(".probe.disk"))
-        @have_dasd = disks.any? {|d| d["device"] == "dasd" }
+        @have_dasd = disks.any? {|d| d["device"] == "DASD" }
 
         # detect zFCP disks
         controllers = SCR.Read(path(".probe.storage"))
