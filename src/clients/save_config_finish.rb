@@ -163,15 +163,6 @@ module Yast
         end
         Progress.NextStep
         # progress step title
-        Progress.Title(_("Configuring the superuser's environment..."))
-        SCR.Write(
-          path(".sysconfig.suseconfig.CWD_IN_USER_PATH"),
-          Builtins.contains(Product.flags, "usercwd") ? "yes" : "no"
-        )
-        SCR.Write(path(".sysconfig.suseconfig"), nil)
-
-        Progress.NextStep
-        # progress step title
         Progress.Title(_("Saving security settings..."))
         SCR.Write(
           path(".sysconfig.security.CHECK_SIGNATURES"),
