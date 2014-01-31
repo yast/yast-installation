@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jan 31 12:04:52 UTC 2014 - lslezak@suse.cz
+
+- inst_inc_all.rb - added missing import (bnc#860263)
+- 3.1.28
+
+-------------------------------------------------------------------
 Thu Jan 30 15:43:05 UTC 2014 - jreidinger@suse.com
 
 - Remove write to non-existing /etc/sysconfig/suseconfig
