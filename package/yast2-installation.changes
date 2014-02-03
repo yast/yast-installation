@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Feb  3 14:36:34 UTC 2014 - jreidinger@suse.com
+
+- fix false positive errors in log for easier debugging in future
+- 3.1.29
+
+-------------------------------------------------------------------
 Fri Jan 31 12:04:52 UTC 2014 - lslezak@suse.cz
 
 - inst_inc_all.rb - added missing import (bnc#860263)
