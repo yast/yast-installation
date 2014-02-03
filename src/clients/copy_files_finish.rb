@@ -394,7 +394,7 @@ module Yast
         one_file_from = Builtins.sformat("%1%2", udev_rules_srcdir, one_file)
         one_file_to = Builtins.sformat("%1%2", udev_rules_destdir, one_file)
         if !FileUtils.Exists(one_file_from)
-          Builtins.y2error("Cannot copy non-existent file: %1", one_file_from)
+          Builtins.y2milestone("Udev file not generated, so do not copy it: %1", one_file_from)
         elsif FileUtils.Exists(one_file_to)
           Builtins.y2milestone("File %1 exists, skipping", one_file_to)
         else
