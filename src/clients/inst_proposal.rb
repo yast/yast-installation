@@ -125,7 +125,7 @@ module Yast
       @proposal_result = load_matching_submodules_list
       return :abort if @proposal_result == :abort
 
-      UI.ChangeWidget(Id(:menu_dummy), :Enabled, false)
+      UI.ChangeWidget(Id(:menu_dummy), :Enabled, false) if UI.TextMode
       richtext_busy_cursor(Id(:proposal))
 
       # The "next" button is disabled via Wizard::SetContents() until everything is set up allright
