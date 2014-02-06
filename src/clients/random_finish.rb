@@ -26,6 +26,9 @@
 # Authors: Lukas Ocilka <locilka@suse.cz>
 #
 # $Id$
+
+require "installation/minimal_installation"
+
 module Yast
   class RandomFinishClient < Client
     def main
@@ -52,13 +55,15 @@ module Yast
       Builtins.y2debug("param=%1", @param)
 
       if @func == "Info"
+        minimal_inst = Installation::MinimalInstallation.instance.enabled?
         return {
           "steps" => 1,
           # progress step title
           "title" => _(
             "Enabling random number generator..."
           ),
-          "when"  => [:installation, :live_installation, :update, :autoinst]
+          "when"  => minimal_inst ? [] :
+            [:installation, :live_installation, :update, :autoinst]
         }
       elsif @func == "Write"
         @init_path = "/etc/init.d/"

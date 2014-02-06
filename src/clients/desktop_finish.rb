@@ -66,7 +66,7 @@ module Yast
       Builtins.y2debug("param=%1", @param)
 
       if @func == "Info"
-        minimal_inst = Installation::MinimalInstallation.instance
+        minimal_inst = Installation::MinimalInstallation.instance.enabled?
         return {
           "steps" => 1,
           # progress step title
