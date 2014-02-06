@@ -440,7 +440,7 @@ LOG_PREFIX="Stage [call]"
 # 3) Medium prequalification
 #---------------------------------------------
 # Check which installation mediums can be used. There are
-# four mediums available: Qt(0) SSH(1), VNC(2), NCURSES(3) and Gtk(4).
+# five mediums available: Qt(0) SSH(1), VNC(2), NCURSES(3) and Gtk(4).
 # The following checks will create an array which contains
 # the possible mediums. An index of 1 indicates "can be used"
 # an index of 0 indicated "cannot be used"
