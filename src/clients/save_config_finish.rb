@@ -30,6 +30,9 @@
 #
 # $Id$
 #
+
+require "installation/minimal_installation"
+
 module Yast
   class SaveConfigFinishClient < Client
     def main
@@ -72,9 +75,20 @@ module Yast
       Builtins.y2debug("func=%1", @func)
       Builtins.y2debug("param=%1", @param)
 
+      minimal_inst = Installation::MinimalInstallation.instance.enabled?
+
       if @func == "Info"
+        if Mode.autoinst
+          steps = minimal_inst ? 3 : 7
+        elsif Mode.update
+          steps = minimal_inst ? 2 : 5
+        elsif Mode.installation
+          steps = minimal_inst ? 2 : 6
+        else
+          raise "Unknown mode"
+        end
         return {
-          "steps" => Mode.autoinst ? 7 : Mode.update ? 5 : 6,
+          "steps" => steps,
           "when"  => [:installation, :update, :autoinst]
         }
       elsif @func == "Write"
@@ -115,7 +129,7 @@ module Yast
           end
         end
 
-        if !Mode.update
+        if !Mode.update && !minimal_inst
           # progress step title
           Progress.Title(_("Saving time zone..."))
           # clock must be set correctly in new chroot
@@ -124,7 +138,7 @@ module Yast
         end
 
         Progress.NextStep
-        if !Mode.update
+        if !Mode.update && !minimal_inst
           # progress step title
           Progress.Title(_("Saving language..."))
           Language.Save
@@ -134,7 +148,7 @@ module Yast
           Progress.Title(_("Saving console configuration..."))
           Console.Save
           Progress.NextStep
-        else
+        elsif Mode.update
           @lang = Language.language
           @file = Ops.add(Directory.vardir, "/language.ycp")
           Builtins.y2milestone(
@@ -148,10 +162,12 @@ module Yast
             { "second_stage_language" => @lang }
           )
         end
-        # progress step title
-        Progress.Title(_("Saving keyboard configuration..."))
-        Keyboard.Save
-        Progress.NextStep
+        if !minimal_inst
+          # progress step title
+          Progress.Title(_("Saving keyboard configuration..."))
+          Keyboard.Save
+          Progress.NextStep
+        end
         # progress step title
         Progress.Title(_("Saving product information..."))
         ProductFeatures.Save
@@ -163,25 +179,27 @@ module Yast
         end
         Progress.NextStep
         # progress step title
-        Progress.Title(_("Saving security settings..."))
-        SCR.Write(
-          path(".sysconfig.security.CHECK_SIGNATURES"),
-          SignatureCheckDialogs.CheckSignatures
-        )
-        SCR.Write(path(".sysconfig.security"), nil)
+        if !minimal_inst
+          Progress.Title(_("Saving security settings..."))
+          SCR.Write(
+            path(".sysconfig.security.CHECK_SIGNATURES"),
+            SignatureCheckDialogs.CheckSignatures
+          )
+          SCR.Write(path(".sysconfig.security"), nil)
 
-        Progress.NextStep
-        # progress step title
-        Progress.Title(_("Saving boot scripts settings..."))
-        @run_in_parallel = ProductFeatures.GetBooleanFeature(
-          "globals",
-          "run_init_scripts_in_parallel"
-        )
-        SCR.Write(
-          path(".sysconfig.boot.RUN_PARALLEL"),
-          @run_in_parallel ? "yes" : "no"
-        )
-        SCR.Write(path(".sysconfig.boot"), nil)
+          Progress.NextStep
+          # progress step title
+          Progress.Title(_("Saving boot scripts settings..."))
+          @run_in_parallel = ProductFeatures.GetBooleanFeature(
+            "globals",
+            "run_init_scripts_in_parallel"
+          )
+          SCR.Write(
+            path(".sysconfig.boot.RUN_PARALLEL"),
+            @run_in_parallel ? "yes" : "no"
+          )
+          SCR.Write(path(".sysconfig.boot"), nil)
+        end
 
         # save supportconfig
         if Ops.greater_than(
