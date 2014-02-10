@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Feb 10 12:26:47 UTC 2014 - jreidinger@suse.com
+
+- keep proper installation mode after cloning(BNC#861520)
+- 3.1.31
+
+-------------------------------------------------------------------
 Fri Feb  7 09:36:00 UTC 2014 - jreidinger@suse.com
 
 - Implement minimal installation feature (FATE#313149)
