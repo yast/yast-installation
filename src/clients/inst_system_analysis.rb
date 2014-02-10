@@ -56,7 +56,7 @@ module Yast
       Yast.include self, "packager/storage_include.rb"
       Yast.include self, "packager/load_release_notes.rb"
 
-      if Mode.autoinst || Mode.autoupgrade
+      if Mode.autoupgrade
         Report.Import(
           {
             "messages" => { "timeout" => 10 },
