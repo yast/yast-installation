@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Feb 10 13:00:10 CET 2014 - fehr@suse.de
+
+- Remove initialisation of Report in autoinst mode from 
+  inst_system_analysis. Not needed any more since autoyast Profile 
+  is now processed before inst_system_analysis gets called
+  (bnc#862829).
+
+-------------------------------------------------------------------
 Fri Feb  7 09:36:00 UTC 2014 - jreidinger@suse.com
 
 - Implement minimal installation feature (FATE#313149)
