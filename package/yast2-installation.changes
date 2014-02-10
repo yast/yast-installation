@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Feb 10 14:31:52 UTC 2014 - jsrain@suse.cz
+
+- removed unused release_notes_popup.rb
+
+-------------------------------------------------------------------
 Mon Feb 10 13:00:10 CET 2014 - fehr@suse.de
 
 - Remove initialisation of Report in autoinst mode from 
