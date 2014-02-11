@@ -1,11 +1,20 @@
 -------------------------------------------------------------------
-Mon Feb 10 12:26:47 UTC 2014 - jreidinger@suse.com
+Mon Feb 11 15:26:47 UTC 2014 - jreidinger@suse.com
 
 - keep proper installation mode after cloning(BNC#861520)
+- 3.1.33
+
+-------------------------------------------------------------------
+Tue Feb 11 14:55:36 UTC 2014 - jreidinger@suse.com
+
+- fix dependencies to properly require new ruby bindings
 - 3.1.32
 
 -------------------------------------------------------------------
-Mon Feb 10 13:00:10 CET 2014 - fehr@suse.de
+Mon Feb 10 14:31:52 UTC 2014 - jsrain@suse.cz
+
+- removed unused release_notes_popup.rb
+
 
 - Remove initialisation of Report in autoinst mode from 
   inst_system_analysis. Not needed any more since autoyast Profile 
