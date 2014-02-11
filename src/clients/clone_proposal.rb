@@ -72,7 +72,11 @@ module Yast
         }
       when "Write"
         if param["force"] || @clone_settings.enabled?
+          # keep mode, cloning set it to autoinst_config, but we need to continue
+          # installation with original one(BNC#861520)
+          mode = Mode.mode
           WFM.call "clone_system"
+          Mode.SetMode(mode)
         end
         ret = true
       else
