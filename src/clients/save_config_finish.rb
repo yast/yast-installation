@@ -75,7 +75,7 @@ module Yast
       Builtins.y2debug("func=%1", @func)
       Builtins.y2debug("param=%1", @param)
 
-      minimal_inst = Installation::MinimalInstallation.instance.enabled?
+      minimal_inst = ::Installation::MinimalInstallation.instance.enabled?
 
       if @func == "Info"
         if Mode.autoinst
