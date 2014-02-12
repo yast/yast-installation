@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Feb 12 11:44:20 UTC 2014 - jreidinger@suse.com
+
+- fix namespace collision that cause error in installation
+- 3.1.34
+
+-------------------------------------------------------------------
 Mon Feb 11 15:26:47 UTC 2014 - jreidinger@suse.com
 
 - keep proper installation mode after cloning(BNC#861520)
