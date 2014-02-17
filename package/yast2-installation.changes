@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Feb 17 13:45:08 UTC 2014 - jreidinger@suse.com
+
+- fix detection if ssh daemon run
+- 3.1.35
+
+-------------------------------------------------------------------
 Wed Feb 12 11:44:20 UTC 2014 - jreidinger@suse.com
 
 - fix namespace collision that cause error in installation
