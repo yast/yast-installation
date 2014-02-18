@@ -28,10 +28,6 @@
 # Authors:
 #  Jiri Srain <jsrain@suse.cz>
 #
-# $Id$
-#
-require "fileutils"
-
 module Yast
   class CopyFilesFinishClient < Client
     include Yast::Logger
