@@ -166,7 +166,7 @@ module Yast
                   "/sbin/set_polkit_default_privs | wc -l && " + "echo 'Done'"
               )
             )
-            log.info "Command returned: @ret2"
+            log.info "Command returned: #{@ret2}"
           end
         end
       else
