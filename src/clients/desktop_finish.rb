@@ -35,6 +35,8 @@ require "installation/minimal_installation"
 
 module Yast
   class DesktopFinishClient < Client
+    include Yast::Logger
+
     def main
       Yast.import "Pkg"
 
@@ -76,107 +78,23 @@ module Yast
           "when"  => minimal_inst ? [] : [:installation, :autoinst]
         }
       elsif @func == "Write"
-        # this detects WM and DM according to selected patterns and
-        # installed packages
         if !Mode.update
-          @dd_map = DefaultDesktop.GetAllDesktopsMap
+          # GNOME is the fallback desktop
+          selected_desktop = DefaultDesktop.Desktop || "gnome"
+          Builtins.y2milestone("Selected desktop: %1", selected_desktop)
 
-          @selected_desktop = DefaultDesktop.Desktop
-          Builtins.y2milestone("Selected desktop: %1", @selected_desktop)
+          desktop_details = DefaultDesktop.GetAllDesktopsMap.fetch(selected_desktop, {})
 
-          if @selected_desktop == nil || @selected_desktop == ""
-            @selected_desktop = "gnome"
-          end
+          default_wm = desktop_details["desktop"]    || ""
+          default_dm = desktop_details["logon"]      || ""
+          default_cursor = desktop_details["cursor"] || ""
 
-          @default_dm = ""
-          @default_wm = ""
-          @default_cursor = ""
+          log.info "Default desktop: #{default_wm}"
+          log.info "Default logon manager: #{default_dm}"
+          log.info "Default cursor theme: #{default_cursor}"
 
-          @desktop_order = []
-          @dorder_map = {}
-
-          # build a map $[desktop_id -> desktop_order]
-          Builtins.foreach(@dd_map) do |desktop_id, desktop_def|
-            @desktop_order = Builtins.add(@desktop_order, desktop_id)
-            Ops.set(
-              @dorder_map,
-              desktop_id,
-              Ops.get(desktop_def, "order") != nil ?
-                Ops.get_integer(desktop_def, "order", 9999) :
-                9999
-            )
-          end
-
-          # sort the desktops according to their order
-          @desktop_order = Builtins.sort(@desktop_order) do |desktop_x, desktop_y|
-            Ops.less_than(
-              Ops.get(@dorder_map, desktop_x, 9999),
-              Ops.get(@dorder_map, desktop_y, 9999)
-            )
-          end
-
-          # the default one is always the first one
-          @desktop_order = Builtins.prepend(
-            @desktop_order,
-            DefaultDesktop.Desktop
-          )
-          Builtins.y2milestone("Desktop order: %1", @desktop_order)
-
-          @desktop_found = false
-
-          Builtins.foreach(@desktop_order) do |d|
-            raise Break if @desktop_found
-            Builtins.y2milestone("Checking desktop: %1", d)
-            Builtins.foreach(Ops.get_list(@dd_map, [d, "packages"], [])) do |package|
-              if Pkg.IsProvided(package) &&
-                  (Pkg.PkgInstalled(package) || Pkg.IsSelected(package))
-                Builtins.y2milestone(
-                  "Package %1 selected or installed, desktop %2 matches",
-                  package,
-                  d
-                )
-                @desktop_found = true
-
-                @default_dm = Ops.get_string(@dd_map, [d, "logon"], "")
-                Builtins.y2milestone(
-                  "Setting logon manager %1 - package selected",
-                  @default_dm
-                )
-
-                @default_wm = Ops.get_string(@dd_map, [d, "desktop"], "")
-                Builtins.y2milestone(
-                  "Setting window manager %1 - package selected",
-                  @default_wm
-                )
-
-                @default_cursor = Ops.get_string(
-                  @dd_map,
-                  [d, "cursor"],
-                  @default_cursor
-                )
-                Builtins.y2milestone(
-                  "Setting cursor theme %1 - package selected",
-                  @default_cursor
-                )
-              else
-                Builtins.y2milestone(
-                  "Package %1 for desktop %2 neither selected nor installed, trying next desktop...",
-                  package,
-                  d
-                )
-              end
-            end
-          end
-
-          Builtins.y2milestone("Default desktop: %1", @default_wm)
-          Builtins.y2milestone("Default logon manager: %1", @default_dm)
-          Builtins.y2milestone("Default cursor theme: %1", @default_cursor)
-
-          SCR.Write(path(".sysconfig.windowmanager.DEFAULT_WM"), @default_wm)
-          SCR.Write(
-            path(".sysconfig.windowmanager.X_MOUSE_CURSOR"),
-            @default_cursor
-          )
+          SCR.Write(path(".sysconfig.windowmanager.DEFAULT_WM"), default_wm)
+          SCR.Write(path(".sysconfig.windowmanager.X_MOUSE_CURSOR"), default_cursor)
           SCR.Write(path(".sysconfig.windowmanager"), nil)
 
           @dpmng_file = "/etc/sysconfig/displaymanager"
@@ -201,7 +119,7 @@ module Yast
             "globals",
             "displaymanager_shutdown"
           )
-          Builtins.y2milestone("Logon manager shutdown: %1", @dm_shutdown)
+          log.info "Logon manager shutdown: #{@dm_shutdown}"
           if @dm_shutdown != nil && @dm_shutdown != ""
             SCR.Write(
               path(".sysconfig.displaymanager.DISPLAYMANAGER_SHUTDOWN"),
@@ -211,11 +129,11 @@ module Yast
 
           Builtins.y2milestone(
             "sysconfig/displaymanager/DISPLAYMANAGER=%1",
-            @default_dm
+            default_dm
           )
           SCR.Write(
             path(".sysconfig.displaymanager.DISPLAYMANAGER"),
-            @default_dm
+            default_dm
           )
           SCR.Write(path(".sysconfig.displaymanager"), nil)
 
@@ -248,7 +166,7 @@ module Yast
                   "/sbin/set_polkit_default_privs | wc -l && " + "echo 'Done'"
               )
             )
-            Builtins.y2milestone("Command returned: %1", @ret2)
+            log.info "Command returned: #{@ret2}"
           end
         end
       else
