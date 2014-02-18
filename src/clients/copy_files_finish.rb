@@ -30,8 +30,12 @@
 #
 # $Id$
 #
+require "fileutils"
+
 module Yast
   class CopyFilesFinishClient < Client
+    include Yast::Logger
+
     def main
       Yast.import "Pkg"
       Yast.import "UI"
@@ -366,51 +370,26 @@ module Yast
       nil
     end
 
+    UDEV_RULES_DIR = "/etc/udev/rules.d"
+
     # see bugzilla #328126
     def CopyHardwareUdevRules
-      udev_rules_srcdir = "/etc/udev/rules.d/"
-      udev_rules_destdir = Builtins.sformat(
-        "%1%2",
-        Installation.destdir,
-        udev_rules_srcdir
-      )
+      udev_rules_destdir = File.join(Installation.destdir, UDEV_RULES_DIR)
 
-      if !FileUtils.Exists(udev_rules_destdir)
-        Builtins.y2milestone(
-          "%1 does not exist yet, creating it",
-          udev_rules_destdir
-        )
-        WFM.Execute(
-          path(".local.bash"),
-          Builtins.sformat("mkdir -p '%1'", udev_rules_destdir)
-        )
+      if ! FileUtils.Exists(udev_rules_destdir)
+        log.info "Directory #{udev_rules_destdir} does not exist yet, creating it"
+        WFM.Execute(path(".local.bash"), "mkdir -p #{udev_rules_destdir}")
       end
 
-      # udev files that should be copied
-      # Copy network rules early to get them to initrd, bnc#666079
-      files_to_copy = ["70-persistent-cd.rules", "70-persistent-net.rules"]
+      # Copy all udev files, but do not overwrite those that already exist
+      # on the system bnc#860089
+      # They are (also) needed for initrd bnc#666079
+      cmd = "cp -avr --no-clobber #{UDEV_RULES_DIR}/. #{udev_rules_destdir}"
+      log.info "Copying all udev rules from #{UDEV_RULES_DIR} to #{udev_rules_destdir}"
+      cmd_out = WFM.Execute(path(".local.bash_output"), cmd)
 
-      Builtins.foreach(files_to_copy) do |one_file|
-        one_file_from = Builtins.sformat("%1%2", udev_rules_srcdir, one_file)
-        one_file_to = Builtins.sformat("%1%2", udev_rules_destdir, one_file)
-        if !FileUtils.Exists(one_file_from)
-          Builtins.y2milestone("Udev file not generated, so do not copy it: %1", one_file_from)
-        elsif FileUtils.Exists(one_file_to)
-          Builtins.y2milestone("File %1 exists, skipping", one_file_to)
-        else
-          cmd = Builtins.sformat(
-            "cp -a '%1' '%2'",
-            String.Quote(one_file_from),
-            String.Quote(udev_rules_destdir)
-          )
-          cmd_out = Convert.to_map(WFM.Execute(path(".local.bash_output"), cmd))
-
-          if Ops.get_integer(cmd_out, "exit", -1) != 0
-            Builtins.y2error("Command failed '%1': %2", cmd, cmd_out)
-          else
-            Builtins.y2milestone("Copied to %1", one_file_to)
-          end
-        end
+      if cmd_out["exit"] != 0
+        log.error "Error copying udev rules"
       end
 
       nil
