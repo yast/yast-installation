@@ -21,7 +21,8 @@ Tue Feb 18 17:09:08 CET 2014 - locilka@suse.com
 -------------------------------------------------------------------
 Mon Feb 17 13:45:08 UTC 2014 - jreidinger@suse.com
 
-- fix detection if ssh daemon run
+- fix detection if ssh daemon run otherwise ssh installation do not
+  reboot after first stage(BNC#864260)
 - 3.1.35
 
 -------------------------------------------------------------------
