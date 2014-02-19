@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Feb 19 14:51:24 CET 2014 - locilka@suse.com
+
+- Writing bootloader as late as possible, several configs need to
+  be written and coppied to the installed system first (bnc#860089)
+- 3.1.37
+
+-------------------------------------------------------------------
 Tue Feb 18 17:09:08 CET 2014 - locilka@suse.com
 
 - Copying all udev rules from inst-sys to installed system
