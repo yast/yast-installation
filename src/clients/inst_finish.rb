@@ -161,16 +161,6 @@ module Yast
           "icon"  => "yast-desktop-select"
         },
         {
-          "id"    => "install_bootloader",
-          # progress stage
-          "label" => _("Install boot manager"),
-          "steps" => [
-            "bootloader",
-            ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true ? "kdump" : ""
-          ],
-          "icon"  => "yast-bootloader"
-        },
-        {
           "id"    => "save_settings",
           # progress stage
           "label" => _("Save installation settings"),
@@ -187,6 +177,18 @@ module Yast
             "installation_settings"
           ],
           "icon"  => "yast-network"
+        },
+        # bnc#860089: Save bootloader as late as possible
+        # all different (config) files need to be written and copied first
+        {
+          "id"    => "install_bootloader",
+          # progress stage
+          "label" => _("Install boot manager"),
+          "steps" => [
+            "bootloader",
+            ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true ? "kdump" : ""
+          ],
+          "icon"  => "yast-bootloader"
         },
         {
           "id"    => "prepare_for_reboot",
