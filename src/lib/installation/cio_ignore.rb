@@ -31,7 +31,7 @@ module Installation
       func = args.first
       param = args[1] || {}
 
-      log.debug "cio ignore client called with #{func} and #{param}"
+      log.debug "cio ignore proposal client called with #{func} and #{param}"
 
       case func
       when "MakeProposal"
@@ -99,6 +99,50 @@ module Installation
           end
 
         { "workflow_sequence" => :next }
+    end
+  end
+
+
+  class CIOIgnoreFinish
+    include Yast::Logger
+    include Yast::I18n
+
+    USABLE_WORKFLOWS = [
+      :installation,
+      :live_installation,
+      :autoinst
+    ]
+
+
+    def initialize
+      textdomain "installation"
+    end
+
+    def run(args)
+      func = args.first
+      param = args[1] || {}
+
+      log.debug "cio ignore finish client called with #{func} and #{param}"
+
+      case func
+      when "Info"
+        Yast.import "Arch"
+        usable = Yast::Arch.s390()
+
+        {
+          "steps" => 1,
+          # progress step title
+          "title" => _(
+            "Blacklisting Devices..."
+          ),
+          "when"  => usable ? USABLE_WORKFLOWS : []
+        }
+
+      when "Write"
+        nil
+      else
+        raise "Uknown action passed as first parameter"
+      end
     end
   end
 end

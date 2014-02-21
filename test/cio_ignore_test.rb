@@ -65,3 +65,37 @@ describe ::Installation::CIOIgnoreProposal do
   end
 end
 
+describe ::Installation::CIOIgnoreFinish do
+  subject { ::Installation::CIOIgnoreFinish.new }
+
+  describe "#run" do
+    describe "first paramater \"Info\"" do
+      it "returns info entry hash with empty \"when\" key for non s390x architectures" do
+        arch_mock = double("Yast::Arch", :s390 => false)
+        stub_const("Yast::Arch", arch_mock)
+
+        result = subject.run(["Info"])
+
+        expect(result["when"]).to be_empty
+      end
+
+      it "returns info entry hash with scenarios in \"when\" key for s390x architectures" do
+        arch_mock = double("Yast::Arch", :s390 => true)
+        stub_const("Yast::Arch", arch_mock)
+
+        result = subject.run(["Info"])
+
+        expect(result["when"]).to_not be_empty
+      end
+
+    end
+
+    it "raises RuntimeError if unknown action passed as first parameter" do
+      expect{subject.run(["non_existing_action"])}.to(
+        raise_error(RuntimeError)
+      )
+    end
+  end
+
+end
+
