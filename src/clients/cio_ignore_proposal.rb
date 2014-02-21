@@ -1,3 +1,3 @@
 require "installation/cio_ignore"
 
-::Installation::CIOIgnoreProposal.new.run(Yast::WFM.Args)
+::Installation::CIOIgnoreProposal.new.run(*Yast::WFM.Args)

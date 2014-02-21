@@ -27,7 +27,7 @@ module Installation
       textdomain "installation"
     end
 
-    def run(args)
+    def run(*args)
       func = args.first
       param = args[1] || {}
 
@@ -113,12 +113,14 @@ module Installation
       :autoinst
     ]
 
+    YAST_BASH_PATH = Yast::Path.new ".target.bash"
+
 
     def initialize
       textdomain "installation"
     end
 
-    def run(args)
+    def run(*args)
       func = args.first
       param = args[1] || {}
 
@@ -139,6 +141,16 @@ module Installation
         }
 
       when "Write"
+        return nil unless CIOIgnore.instance.enabled
+
+        res = Yast::SCR.Execute(YAST_BASH_PATH, "cio_ignore --unused --purge")
+
+        log.info "result of cio_ignore call: #{res.inspect}"
+
+        if res["exit"] != 0
+          raise "cio_ignore command failed with stderr: #{res["stderr"]}"
+        end
+
         nil
       else
         raise "Uknown action passed as first parameter"
