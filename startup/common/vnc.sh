@@ -69,11 +69,13 @@ function startVNCServer () {
 	# Start Xvnc...
 	# For -noreset see BNC #351338
 	#------------------------------------------
+	[ -z "$VNCSize" ] && VNCSize=1024x768
+
 	$Xbindir/Xvnc $Xvncparam :0 \
 		-noreset \
 		-rfbauth /root/.vnc/passwd.yast \
 		-desktop "Installation" \
-		-geometry 800x600 \
+		-geometry "$VNCSize" \
 		-depth 16 \
 		-rfbwait 120000 \
 		-httpd /usr/share/vnc/classes \
