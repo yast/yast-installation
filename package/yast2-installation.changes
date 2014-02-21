@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Feb 21 14:54:01 CET 2014 - snwint@suse.de
+
+- Make vnc use real yast theme (bnc #855246) and make vnc screen size configurable.
+- 3.1.40
+
+-------------------------------------------------------------------
 Fri Feb 21 09:16:18 UTC 2014 - mvidner@suse.com
 
 - ssh installation: fix network start after reboot (bnc#850446)
