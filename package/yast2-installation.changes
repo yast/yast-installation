@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Feb 24 09:15:50 UTC 2014 - jreidinger@suse.com
+
+- implement cio ignore feature during installation for s390x 
+  (FATE#315586)
+- 3.1.40
+
+-------------------------------------------------------------------
 Fri Feb 21 09:16:18 UTC 2014 - mvidner@suse.com
 
 - ssh installation: fix network start after reboot (bnc#850446)
