@@ -150,6 +150,7 @@ module Yast
             "storage",
             "iscsi-client",
             "kernel",
+            "cio_ignore",
             "x11",
             "proxy",
             "pkg",
