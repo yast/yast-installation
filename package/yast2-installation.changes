@@ -3,6 +3,12 @@ Mon Feb 24 09:15:50 UTC 2014 - jreidinger@suse.com
 
 - implement cio ignore feature during installation for s390x 
   (FATE#315586)
+- 3.1.41
+
+-------------------------------------------------------------------
+Fri Feb 21 14:54:01 CET 2014 - snwint@suse.de
+
+- Make vnc use real yast theme (bnc #855246) and make vnc screen size configurable.
 - 3.1.40
 
 -------------------------------------------------------------------
