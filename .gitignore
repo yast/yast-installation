@@ -36,3 +36,4 @@ home*:*
 *.exp
 *.sh
 .yardoc
+/coverage
