@@ -9,6 +9,14 @@ Yast.import "InstFunctions"
 # For mocking
 Yast.import "Linuxrc"
 
+def stub_install_inf(install_inf)
+  Yast::Linuxrc.stub(:keys).and_return(install_inf.keys)
+
+  install_inf.keys.each do |key|
+    Yast::Linuxrc.stub(:InstallInf).with(key).and_return(install_inf[key])
+  end
+end
+
 describe "when getting list of ignored features from Linuxrc" do
   before(:each) do
     Yast::InstFunctions.reset_ignored_features
@@ -81,10 +89,7 @@ describe "when getting list of ignored features from Linuxrc" do
       'Cmdline' => 'splash=silent vga=0x314',
       'Keyboard' => '1',
     }
-    Yast::Linuxrc.stub(:keys).and_return(install_inf.keys)
-    install_inf.keys.each do |key|
-      Yast::Linuxrc.stub(:InstallInf).with(key).and_return(install_inf[key])
-    end
+    stub_install_inf(install_inf)
 
     expect(Yast::InstFunctions.ignored_features.sort).to eq(['f1','f2','f3','f4','f5','f6','f7'])
   end
@@ -94,10 +99,7 @@ describe "when getting list of ignored features from Linuxrc" do
       # Cmdline is not defined, bnc#861465
       'Cmdline' => nil,
     }
-    Yast::Linuxrc.stub(:keys).and_return(install_inf.keys)
-    install_inf.keys.each do |key|
-      Yast::Linuxrc.stub(:InstallInf).with(key).and_return(install_inf[key])
-    end
+    stub_install_inf(install_inf)
 
     expect(Yast::InstFunctions.ignored_features.sort).to be_empty
   end
@@ -160,10 +162,7 @@ describe "#feature_ignored?" do
       'Cmdline' => 'splash=silent vga=0x314 ignored_feature=f8',
       'Keyboard' => '1',
     }
-    Yast::Linuxrc.stub(:keys).and_return(install_inf.keys)
-    install_inf.keys.each do |key|
-      Yast::Linuxrc.stub(:InstallInf).with(key).and_return(install_inf[key])
-    end
+    stub_install_inf(install_inf)
 
     ['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8'].each do |key|
       expect(Yast::InstFunctions.feature_ignored?(key)).to be_true, "Key #{key} is not ignored"
@@ -180,10 +179,7 @@ describe "#feature_ignored?" do
       'Cmdline' => 'splash=silent vga=0x314 ignored_feature=f8',
       'Keyboard' => '1',
     }
-    Yast::Linuxrc.stub(:keys).and_return(install_inf.keys)
-    install_inf.keys.each do |key|
-      Yast::Linuxrc.stub(:InstallInf).with(key).and_return(install_inf[key])
-    end
+    stub_install_inf(install_inf)
 
     expect(Yast::InstFunctions.feature_ignored?('f9')).to be_false
   end
