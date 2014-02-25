@@ -88,6 +88,19 @@ describe "when getting list of ignored features from Linuxrc" do
 
     expect(Yast::InstFunctions.ignored_features.sort).to eq(['f1','f2','f3','f4','f5','f6','f7'])
   end
+
+  it "handles missing Cmdline in Linuxrc" do
+    install_inf = {
+      # Cmdline is not defined, bnc#861465
+      'Cmdline' => nil,
+    }
+    Yast::Linuxrc.stub(:keys).and_return(install_inf.keys)
+    install_inf.keys.each do |key|
+      Yast::Linuxrc.stub(:InstallInf).with(key).and_return(install_inf[key])
+    end
+
+    expect(Yast::InstFunctions.ignored_features.sort).to be_empty
+  end
 end
 
 describe "#feature_ignored?" do
