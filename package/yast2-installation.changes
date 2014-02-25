@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Feb 25 13:27:34 CET 2014 - locilka@suse.cz
+
+- Removed hard-coded color and RichText formatting from
+  installation confirmation dialog (#bnc#865371)
+- 3.1.41
+
+-------------------------------------------------------------------
 Fri Feb 21 14:54:01 CET 2014 - snwint@suse.de
 
 - Make vnc use real yast theme (bnc #855246) and make vnc screen size configurable.

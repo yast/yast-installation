@@ -239,7 +239,7 @@ module Yast
         confirm_button_label = Label.InstallButton
       else
         # Heading for confirmation popup before the update really starts
-        heading = "<h3>" + _("Confirm Update") + "</h3>"
+        heading = HTML.Heading(_("Confirm Update"))
 
         body =
           # Text for confirmation popup before the update really starts 1/3
@@ -258,18 +258,7 @@ module Yast
         confirm_button_label = _("Start &Update")
       end
 
-      heading_bg_color = "#A9CEDD"
-
       display_info = UI.GetDisplayInfo
-      text = Ops.get_boolean(display_info, "RichTextSupportsTable", false) ?
-        Builtins.sformat(
-          "<table bgcolor=\"%1\"><tr><td>%2</td></tr></table>%3",
-          heading_bg_color,
-          heading,
-          body
-        ) :
-        Ops.add(heading, body)
-
       size_x = Builtins.tointeger(Ops.get_integer(display_info, "Width", 800))
       size_y = Builtins.tointeger(Ops.get_integer(display_info, "Height", 600))
 
@@ -290,7 +279,7 @@ module Yast
           HBox(
             HSpacing(0.7),
             VSpacing(size_y), # force height
-            RichText(text),
+            RichText(heading + body),
             HSpacing(0.7)
           ),
           ButtonBox(
