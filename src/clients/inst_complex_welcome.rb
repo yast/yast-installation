@@ -308,11 +308,8 @@ module Yast
         VSpacing(@text_mode ? 21 : 25),
         VBox(
           Left(
-            HBox(
-              Icon.Simple("yast-license"),
-              # TRANSLATORS: dialog caption
-              Heading(_("License Agreement"))
-            )
+            # TRANSLATORS: dialog caption
+            Heading(_("License Agreement"))
           ),
           VSpacing(@text_mode ? 0.1 : 0.5),
           HSpacing(82),
