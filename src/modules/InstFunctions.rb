@@ -60,8 +60,8 @@ module Yast
         polish(Linuxrc.InstallInf(key))
       end
 
-      # Features mentioned in 'Cmdline' entry
-      cmdline = polish(Linuxrc.InstallInf("Cmdline")).split
+      # Features mentioned in 'Cmdline' entry, it might not be defined (bnc#861465)
+      cmdline = polish(Linuxrc.InstallInf("Cmdline") || "").split
       cmdline_features = cmdline.select do |cmd|
         cmd =~ /^ignored?features?=/i
       end

@@ -1,8 +1,28 @@
 -------------------------------------------------------------------
-Mon Feb 24 09:15:50 UTC 2014 - jreidinger@suse.com
+Wed Feb 26 09:15:50 UTC 2014 - jreidinger@suse.com
 
-- implement cio ignore feature during installation for s390x 
+- implement cio ignore feature during installation for s390x
   (FATE#315586)
+- 3.1.44
+
+-------------------------------------------------------------------
+Tue Feb 25 16:11:08 CET 2014 - locilka@suse.com
+
+- Removed an icon from License Agreement dialog (bnc#865575)
+- 3.1.43
+
+-------------------------------------------------------------------
+Tue Feb 25 14:14:59 CET 2014 - locilka@suse.com
+
+- Adapted ignored_features to handle possibly missing Cmdline entry
+  from Linuxrc (bnc#861465)
+- 3.1.42
+
+-------------------------------------------------------------------
+Tue Feb 25 13:27:34 CET 2014 - locilka@suse.cz
+
+- Removed hard-coded color and RichText formatting from
+  installation confirmation dialog (#bnc#865371)
 - 3.1.41
 
 -------------------------------------------------------------------
