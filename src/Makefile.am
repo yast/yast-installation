@@ -8,6 +8,8 @@ module_DATA = \
   modules/SystemFilesCopy.rb
 
 client_DATA = \
+  clients/cio_ignore_finish.rb \
+  clients/cio_ignore_proposal.rb \
   clients/clone_proposal.rb \
   clients/clone_finish.rb \
   clients/copy_files_finish.rb \
@@ -103,7 +105,8 @@ fillup_DATA = \
 ylibdir = "${yast2dir}/lib/installation"
 ylib_DATA = \
   lib/installation/clone_settings.rb \
-  lib/installation/minimal_installation.rb
+  lib/installation/minimal_installation.rb \
+  lib/installation/cio_ignore.rb
 
 
 EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylib_DATA)

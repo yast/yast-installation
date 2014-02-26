@@ -1,5 +1,6 @@
 TESTS = \
-  inst_functions.rb
+  inst_functions_test.rb \
+  cio_ignore_test.rb
 
 TEST_EXTENSIONS = .rb
 RB_LOG_COMPILER = rspec
