@@ -54,27 +54,25 @@ module Installation
   private
 
     def proposal_entry
+      Yast.import "HTML"
       enabled = CIOIgnore.instance.enabled
-      text = "<ul><li>\n"
 
-      if enabled
+      text = if enabled
         # TRANSLATORS: Installation overview
         # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
-        text << (_(
+        (_(
             "Blacklist devices enabled (<a href=\"%s\">disable</a>)."
           ) % CIO_DISABLE_LINK)
       else
         # TRANSLATORS: Installation overview
         # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
-        text << (_(
+        (_(
             "Blacklist devices disabled (<a href=\"%1\">enable</a>)."
           ) % CIO_ENABLE_LINK)
       end
 
-      text << "</li></ul>\n"
-
       {
-        "preformatted_proposal" => text,
+        "preformatted_proposal" => Yast::HTML.List([text]),
         "links"                 => [CIO_ENABLE_LINK, CIO_DISABLE_LINK],
         # TRANSLATORS: help text
         "help"                  => _(
@@ -95,7 +93,7 @@ module Installation
           when CIO_ENABLE_LINK  then true
           when CIO_ACTION_ID    then !cio_ignore.enabled
           else
-            raise "Unexpected value #{edit_id}"
+            raise "INTERNAL ERROR: Unexpected value #{edit_id}"
           end
 
         { "workflow_sequence" => :next }
