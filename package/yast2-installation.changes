@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Feb 27 13:55:16 UTC 2014 - jreidinger@suse.com
+
+- revert back complete skip of probing due to disks with activation
+  (BNC#865579)
+- 3.1.46
+
+-------------------------------------------------------------------
 Thu Feb 27 12:54:37 UTC 2014 - jreidinger@suse.com
 
 - Do not rerun system probing as it is already done (BNC#865579)
