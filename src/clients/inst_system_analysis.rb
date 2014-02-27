@@ -73,11 +73,12 @@ module Yast
         return :back
       end
 
+      # probe only once BNC#865579
+      return :next if Installation.probing_done
+
       @found_controllers = true
 
       @packager_initialized = false
-
-      # <-- Function definitions
 
       Wizard.SetContents(_("Analyzing the Computer"), Empty(), "", false, false)
       Wizard.SetTitleIcon("yast-controller")
@@ -88,171 +89,69 @@ module Yast
       # constructors might depend on it.
       # In autoinst mode, this has been called already.
 
-      @actions_todo = []
-      @actions_doing = []
-      @actions_functions = []
+      actions_todo = []
+      actions_doing = []
+      actions_functions = []
 
       Builtins.y2milestone("Probing done: %1", Installation.probing_done)
-      if !Installation.probing_done
-        if !(Arch.s390 || Arch.board_iseries)
-          # TRANSLATORS: progress step
-          @actions_todo = Builtins.add(@actions_todo, _("Probe USB devices"))
-          # TRANSLATORS: progress step
-          @actions_doing = Builtins.add(
-            @actions_doing,
-            _("Probing USB devices...")
-          )
-          @actions_functions = Builtins.add(
-            @actions_functions,
-            fun_ref(method(:ActionUSB), "boolean ()")
-          )
+      # TRANSLATORS: progress steps in system probing
+      if !(Arch.s390 || Arch.board_iseries)
+        actions_todo      << _("Probe USB devices")
+        actions_doing     << _("Probing USB devices...")
+        actions_functions << fun_ref(method(:ActionUSB), "boolean ()")
 
-          # TRANSLATORS: progress step
-          @actions_todo = Builtins.add(
-            @actions_todo,
-            _("Probe FireWire devices")
-          )
-          # TRANSLATORS: progress step
-          @actions_doing = Builtins.add(
-            @actions_doing,
-            _("Probing FireWire devices...")
-          )
-          @actions_functions = Builtins.add(
-            @actions_functions,
-            fun_ref(method(:ActionFireWire), "boolean ()")
-          )
+        actions_todo      << _("Probe FireWire devices")
+        actions_doing     << _("Probing FireWire devices...")
+        actions_functions << fun_ref(method(:ActionFireWire), "boolean ()")
 
-          # TRANSLATORS: progress step
-          @actions_todo = Builtins.add(
-            @actions_todo,
-            _("Probe floppy disk devices")
-          )
-          # TRANSLATORS: progress step
-          @actions_doing = Builtins.add(
-            @actions_doing,
-            _("Probing floppy disk devices...")
-          )
-          @actions_functions = Builtins.add(
-            @actions_functions,
-            fun_ref(method(:ActionFloppyDisks), "boolean ()")
-          )
-        end
-
-        # TRANSLATORS: progress step
-        @actions_todo = Builtins.add(
-          @actions_todo,
-          _("Probe hard disk controllers")
-        )
-        # TRANSLATORS: progress step
-        @actions_doing = Builtins.add(
-          @actions_doing,
-          _("Probing hard disk controllers...")
-        )
-        @actions_functions = Builtins.add(
-          @actions_functions,
-          fun_ref(method(:ActionHHDControllers), "boolean ()")
-        )
-
-        # TRANSLATORS: progress step
-        @actions_todo = Builtins.add(
-          @actions_todo,
-          _("Load kernel modules for hard disk controllers")
-        )
-        # TRANSLATORS: progress step
-        @actions_doing = Builtins.add(
-          @actions_doing,
-          _("Loading kernel modules for hard disk controllers...")
-        )
-        @actions_functions = Builtins.add(
-          @actions_functions,
-          fun_ref(method(:ActionLoadModules), "boolean ()")
-        )
-
-        # TRANSLATORS: progress step
-        @actions_todo = Builtins.add(@actions_todo, _("Probe hard disks"))
-        # TRANSLATORS: progress step
-        @actions_doing = Builtins.add(
-          @actions_doing,
-          _("Probing hard disks...")
-        )
-        @actions_functions = Builtins.add(
-          @actions_functions,
-          fun_ref(method(:ActionHDDProbe), "boolean ()")
-        )
-
-        WFM.CallFunction("inst_features", [])
+        actions_todo      << _("Probe floppy disk devices")
+        actions_doing     << _("Probing floppy disk devices...")
+        actions_functions << fun_ref(method(:ActionFloppyDisks), "boolean ()")
       end
 
-      # TRANSLATORS: progress step
-      @actions_todo = Builtins.add(
-        @actions_todo,
-        _("Search for Linux partitions")
-      )
-      # TRANSLATORS: progress step
-      @actions_doing = Builtins.add(
-        @actions_doing,
-        _("Searching for Linux partitions...")
-      )
-      @actions_functions = Builtins.add(
-        @actions_functions,
-        fun_ref(method(:SearchForLinuxPartitions), "boolean ()")
-      )
+      actions_todo      << _("Probe hard disk controllers")
+      actions_doing     << _("Probing hard disk controllers...")
+      actions_functions << fun_ref(method(:ActionHHDControllers), "boolean ()")
 
-      # TRANSLATORS: progress step
-      @actions_todo = Builtins.add(@actions_todo, _("Search for system files"))
-      # TRANSLATORS: progress step
-      @actions_doing = Builtins.add(
-        @actions_doing,
-        _("Searching for system files...")
-      )
+      actions_todo      << _("Load kernel modules for hard disk controllers")
+      actions_doing     << _("Loading kernel modules for hard disk controllers...")
+      actions_functions << fun_ref(method(:ActionLoadModules), "boolean ()")
+
+      actions_todo      << _("Probe hard disks")
+      actions_doing     << _("Probing hard disks...")
+      actions_functions << fun_ref(method(:ActionHDDProbe), "boolean ()")
+
+      actions_todo      << _("Search for Linux partitions")
+      actions_doing     << _("Searching for Linux partitions...")
+      actions_functions << fun_ref(method(:SearchForLinuxPartitions), "boolean ()")
+
       # FATE #302980: Simplified user config during installation
-      @actions_functions = Builtins.add(
-        @actions_functions,
-        fun_ref(method(:FilesFromOlderSystems), "boolean ()")
-      )
+      actions_todo      << _("Search for system files")
+      actions_doing     << _("Searching for system files...")
+      actions_functions << fun_ref(method(:FilesFromOlderSystems), "boolean ()")
 
-      # TRANSLATORS: progress step
-      @actions_todo = Builtins.add(
-        @actions_todo,
-        _("Evaluate update possibility")
-      )
-      # TRANSLATORS: progress step
-      @actions_doing = Builtins.add(
-        @actions_doing,
-        _("Evaluating update possibility...")
-      )
-      @actions_functions = Builtins.add(
-        @actions_functions,
-        fun_ref(method(:EvaluateUpdatePossibilities), "boolean ()")
-      )
+      actions_todo      << _("Evaluate update possibility")
+      actions_doing     << _("Evaluating update possibility...")
+      actions_functions << fun_ref(method(:EvaluateUpdatePossibilities), "boolean ()")
 
-      # TRANSLATORS: progress step
-      @actions_todo = Builtins.add(
-        @actions_todo,
-        _("Initialize software manager")
-      )
-      # TRANSLATORS: progress step
-      @actions_doing = Builtins.add(
-        @actions_doing,
-        _("Initializing software manager...")
-      )
-      @actions_functions = Builtins.add(
-        @actions_functions,
-        fun_ref(method(:InitInstallationRepositories), "boolean ()")
-      )
+      actions_todo      << _("Initialize software manager")
+      actions_doing     << _("Initializing software manager...")
+      actions_functions << fun_ref(method(:InitInstallationRepositories), "boolean ()")
+
+      WFM.CallFunction("inst_features", [])
 
       Progress.New(
         # TRANSLATORS: dialog caption
         _("System Probing"),
         " ",
-        Builtins.size(@actions_todo),
-        @actions_todo,
-        @actions_doing,
+        actions_todo.size,
+        actions_todo,
+        actions_doing,
         # TRANSLATORS: dialog help
         _("YaST is probing computer hardware and installed systems now.")
       )
 
-      Builtins.foreach(@actions_functions) do |run_function|
+      actions_functions.each do |run_function|
         Progress.NextStage
         # Bugzilla #298049
         # Allow to abort the probing
@@ -265,13 +164,8 @@ module Yast
             next :abort
           end
         end
-        Builtins.y2milestone("Running function: %1", run_function)
-        run_this = Convert.convert(
-          run_function,
-          :from => "any",
-          :to   => "boolean ()"
-        )
-        ret = run_this.call
+
+        ret = run_function.call
         Builtins.y2milestone("Function %1 returned %2", run_function, ret)
       end
       Installation.probing_done = true
@@ -280,9 +174,8 @@ module Yast
       return :abort if ProductProfile.CheckCompliance(nil) == false
 
       Progress.Finish
-      Builtins.sleep(500)
 
-      return :abort if !@packager_initialized
+      return :abort unless @packager_initialized
 
       Builtins.y2milestone(
         "Have Linux: %1, Offer Update: %2",
@@ -290,9 +183,8 @@ module Yast
         InstData.offer_update
       )
 
-      :next 
+      :next
 
-      # EOF
     end
 
     # Function definitions -->
@@ -436,7 +328,7 @@ module Yast
       true
     end
 
-    def InitInstallationRepositoriesReal
+    def InitInstallationRepositories
       # disable callbacks
       PackageCallbacks.RegisterEmptyProgressCallbacks
 
@@ -466,18 +358,6 @@ module Yast
 
       # reregister callbacks
       PackageCallbacks.RestorePreviousProgressCallbacks
-
-      ret
-    end
-
-    def InitInstallationRepositories
-      #boolean progress_orig = Progress::set (false);
-      #y2milestone ("Pregress was: %1", progress_orig);
-
-      ret = InitInstallationRepositoriesReal()
-
-      #y2milestone ("Adjusting progress: %1", progress_orig);
-      #Progress::set (progress_orig);
 
       ret
     end
