@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Feb 27 15:08:12 CET 2014 - aschnell@suse.de
+
+- reset proposal after rescanning storage (bnc#865579)
+- 3.1.47
+
+-------------------------------------------------------------------
 Thu Feb 27 13:55:16 UTC 2014 - jreidinger@suse.com
 
 - revert back complete skip of probing due to disks with activation

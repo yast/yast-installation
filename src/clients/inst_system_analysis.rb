@@ -318,16 +318,16 @@ module Yast
       true
     end
 
-    def SearchForLinuxPartitions
-      Storage.ReReadTargetMap
-      if Storage.HaveLinuxPartitions
-        InstData.have_linux = true
-      else
-        InstData.have_linux = false
-      end
 
+    def SearchForLinuxPartitions
+      # ReReadTargetMap is needed to fix bug #806454
+      Storage.ReReadTargetMap()
+      # SetPartProposalFirst is needed to fix bug #865579
+      Storage.SetPartProposalFirst(true)
+      InstData.have_linux = Storage.HaveLinuxPartitions()
       true
     end
+
 
     def InitInstallationRepositories
       # disable callbacks
