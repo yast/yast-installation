@@ -80,8 +80,6 @@ module Yast
 
       @packager_initialized = false
 
-      # <-- Function definitions
-
       Wizard.SetContents(_("Analyzing the Computer"), Empty(), "", false, false)
       Wizard.SetTitleIcon("yast-controller")
 
@@ -123,8 +121,6 @@ module Yast
       actions_doing     << _("Probing hard disks...")
       actions_functions << fun_ref(method(:ActionHDDProbe), "boolean ()")
 
-      WFM.CallFunction("inst_features", [])
-
       actions_todo      << _("Search for Linux partitions")
       actions_doing     << _("Searching for Linux partitions...")
       actions_functions << fun_ref(method(:SearchForLinuxPartitions), "boolean ()")
@@ -142,6 +138,8 @@ module Yast
       actions_doing     << _("Initializing software manager...")
       actions_functions << fun_ref(method(:InitInstallationRepositories), "boolean ()")
 
+      WFM.CallFunction("inst_features", [])
+
       Progress.New(
         # TRANSLATORS: dialog caption
         _("System Probing"),
@@ -153,7 +151,7 @@ module Yast
         _("YaST is probing computer hardware and installed systems now.")
       )
 
-      Builtins.foreach(actions_functions) do |run_function|
+      actions_functions.each do |run_function|
         Progress.NextStage
         # Bugzilla #298049
         # Allow to abort the probing
@@ -166,13 +164,8 @@ module Yast
             next :abort
           end
         end
-        Builtins.y2milestone("Running function: %1", run_function)
-        run_this = Convert.convert(
-          run_function,
-          :from => "any",
-          :to   => "boolean ()"
-        )
-        ret = run_this.call
+
+        ret = run_function.call
         Builtins.y2milestone("Function %1 returned %2", run_function, ret)
       end
       Installation.probing_done = true
@@ -181,9 +174,8 @@ module Yast
       return :abort if ProductProfile.CheckCompliance(nil) == false
 
       Progress.Finish
-      Builtins.sleep(500)
 
-      return :abort if !@packager_initialized
+      return :abort unless @packager_initialized
 
       Builtins.y2milestone(
         "Have Linux: %1, Offer Update: %2",
@@ -191,9 +183,8 @@ module Yast
         InstData.offer_update
       )
 
-      :next 
+      :next
 
-      # EOF
     end
 
     # Function definitions -->
@@ -337,7 +328,7 @@ module Yast
       true
     end
 
-    def InitInstallationRepositoriesReal
+    def InitInstallationRepositories
       # disable callbacks
       PackageCallbacks.RegisterEmptyProgressCallbacks
 
@@ -367,18 +358,6 @@ module Yast
 
       # reregister callbacks
       PackageCallbacks.RestorePreviousProgressCallbacks
-
-      ret
-    end
-
-    def InitInstallationRepositories
-      #boolean progress_orig = Progress::set (false);
-      #y2milestone ("Pregress was: %1", progress_orig);
-
-      ret = InitInstallationRepositoriesReal()
-
-      #y2milestone ("Adjusting progress: %1", progress_orig);
-      #Progress::set (progress_orig);
 
       ret
     end
