@@ -73,9 +73,6 @@ module Yast
         return :back
       end
 
-      # probe only once BNC#865579
-      return :next if Installation.probing_done
-
       @found_controllers = true
 
       @packager_initialized = false
@@ -94,32 +91,38 @@ module Yast
       actions_functions = []
 
       Builtins.y2milestone("Probing done: %1", Installation.probing_done)
-      # TRANSLATORS: progress steps in system probing
-      if !(Arch.s390 || Arch.board_iseries)
-        actions_todo      << _("Probe USB devices")
-        actions_doing     << _("Probing USB devices...")
-        actions_functions << fun_ref(method(:ActionUSB), "boolean ()")
+      # skip part of probes as it doesn't change, but some parts (mostly disks
+      # that can be activated) need rerun see BNC#865579
+      if !Installation.probing_done
+        # TRANSLATORS: progress steps in system probing
+        if !(Arch.s390 || Arch.board_iseries)
+          actions_todo      << _("Probe USB devices")
+          actions_doing     << _("Probing USB devices...")
+          actions_functions << fun_ref(method(:ActionUSB), "boolean ()")
 
-        actions_todo      << _("Probe FireWire devices")
-        actions_doing     << _("Probing FireWire devices...")
-        actions_functions << fun_ref(method(:ActionFireWire), "boolean ()")
+          actions_todo      << _("Probe FireWire devices")
+          actions_doing     << _("Probing FireWire devices...")
+          actions_functions << fun_ref(method(:ActionFireWire), "boolean ()")
 
-        actions_todo      << _("Probe floppy disk devices")
-        actions_doing     << _("Probing floppy disk devices...")
-        actions_functions << fun_ref(method(:ActionFloppyDisks), "boolean ()")
+          actions_todo      << _("Probe floppy disk devices")
+          actions_doing     << _("Probing floppy disk devices...")
+          actions_functions << fun_ref(method(:ActionFloppyDisks), "boolean ()")
+        end
+
+        actions_todo      << _("Probe hard disk controllers")
+        actions_doing     << _("Probing hard disk controllers...")
+        actions_functions << fun_ref(method(:ActionHHDControllers), "boolean ()")
+
+        actions_todo      << _("Load kernel modules for hard disk controllers")
+        actions_doing     << _("Loading kernel modules for hard disk controllers...")
+        actions_functions << fun_ref(method(:ActionLoadModules), "boolean ()")
+
+        actions_todo      << _("Probe hard disks")
+        actions_doing     << _("Probing hard disks...")
+        actions_functions << fun_ref(method(:ActionHDDProbe), "boolean ()")
+
+        WFM.CallFunction("inst_features", [])
       end
-
-      actions_todo      << _("Probe hard disk controllers")
-      actions_doing     << _("Probing hard disk controllers...")
-      actions_functions << fun_ref(method(:ActionHHDControllers), "boolean ()")
-
-      actions_todo      << _("Load kernel modules for hard disk controllers")
-      actions_doing     << _("Loading kernel modules for hard disk controllers...")
-      actions_functions << fun_ref(method(:ActionLoadModules), "boolean ()")
-
-      actions_todo      << _("Probe hard disks")
-      actions_doing     << _("Probing hard disks...")
-      actions_functions << fun_ref(method(:ActionHDDProbe), "boolean ()")
 
       actions_todo      << _("Search for Linux partitions")
       actions_doing     << _("Searching for Linux partitions...")
@@ -137,8 +140,6 @@ module Yast
       actions_todo      << _("Initialize software manager")
       actions_doing     << _("Initializing software manager...")
       actions_functions << fun_ref(method(:InitInstallationRepositories), "boolean ()")
-
-      WFM.CallFunction("inst_features", [])
 
       Progress.New(
         # TRANSLATORS: dialog caption
