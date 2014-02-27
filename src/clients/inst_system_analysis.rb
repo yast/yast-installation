@@ -73,6 +73,9 @@ module Yast
         return :back
       end
 
+      # probe only once BNC#865579
+      return :next if Installation.probing_done
+
       @found_controllers = true
 
       @packager_initialized = false
@@ -93,95 +96,93 @@ module Yast
       @actions_functions = []
 
       Builtins.y2milestone("Probing done: %1", Installation.probing_done)
-      if !Installation.probing_done
-        if !(Arch.s390 || Arch.board_iseries)
-          # TRANSLATORS: progress step
-          @actions_todo = Builtins.add(@actions_todo, _("Probe USB devices"))
-          # TRANSLATORS: progress step
-          @actions_doing = Builtins.add(
-            @actions_doing,
-            _("Probing USB devices...")
-          )
-          @actions_functions = Builtins.add(
-            @actions_functions,
-            fun_ref(method(:ActionUSB), "boolean ()")
-          )
-
-          # TRANSLATORS: progress step
-          @actions_todo = Builtins.add(
-            @actions_todo,
-            _("Probe FireWire devices")
-          )
-          # TRANSLATORS: progress step
-          @actions_doing = Builtins.add(
-            @actions_doing,
-            _("Probing FireWire devices...")
-          )
-          @actions_functions = Builtins.add(
-            @actions_functions,
-            fun_ref(method(:ActionFireWire), "boolean ()")
-          )
-
-          # TRANSLATORS: progress step
-          @actions_todo = Builtins.add(
-            @actions_todo,
-            _("Probe floppy disk devices")
-          )
-          # TRANSLATORS: progress step
-          @actions_doing = Builtins.add(
-            @actions_doing,
-            _("Probing floppy disk devices...")
-          )
-          @actions_functions = Builtins.add(
-            @actions_functions,
-            fun_ref(method(:ActionFloppyDisks), "boolean ()")
-          )
-        end
-
+      if !(Arch.s390 || Arch.board_iseries)
         # TRANSLATORS: progress step
-        @actions_todo = Builtins.add(
-          @actions_todo,
-          _("Probe hard disk controllers")
-        )
+        @actions_todo = Builtins.add(@actions_todo, _("Probe USB devices"))
         # TRANSLATORS: progress step
         @actions_doing = Builtins.add(
           @actions_doing,
-          _("Probing hard disk controllers...")
+          _("Probing USB devices...")
         )
         @actions_functions = Builtins.add(
           @actions_functions,
-          fun_ref(method(:ActionHHDControllers), "boolean ()")
+          fun_ref(method(:ActionUSB), "boolean ()")
         )
 
         # TRANSLATORS: progress step
         @actions_todo = Builtins.add(
           @actions_todo,
-          _("Load kernel modules for hard disk controllers")
+          _("Probe FireWire devices")
         )
         # TRANSLATORS: progress step
         @actions_doing = Builtins.add(
           @actions_doing,
-          _("Loading kernel modules for hard disk controllers...")
+          _("Probing FireWire devices...")
         )
         @actions_functions = Builtins.add(
           @actions_functions,
-          fun_ref(method(:ActionLoadModules), "boolean ()")
+          fun_ref(method(:ActionFireWire), "boolean ()")
         )
 
         # TRANSLATORS: progress step
-        @actions_todo = Builtins.add(@actions_todo, _("Probe hard disks"))
+        @actions_todo = Builtins.add(
+          @actions_todo,
+          _("Probe floppy disk devices")
+        )
         # TRANSLATORS: progress step
         @actions_doing = Builtins.add(
           @actions_doing,
-          _("Probing hard disks...")
+          _("Probing floppy disk devices...")
         )
         @actions_functions = Builtins.add(
           @actions_functions,
-          fun_ref(method(:ActionHDDProbe), "boolean ()")
+          fun_ref(method(:ActionFloppyDisks), "boolean ()")
         )
-
-        WFM.CallFunction("inst_features", [])
       end
+
+      # TRANSLATORS: progress step
+      @actions_todo = Builtins.add(
+        @actions_todo,
+        _("Probe hard disk controllers")
+      )
+      # TRANSLATORS: progress step
+      @actions_doing = Builtins.add(
+        @actions_doing,
+        _("Probing hard disk controllers...")
+      )
+      @actions_functions = Builtins.add(
+        @actions_functions,
+        fun_ref(method(:ActionHHDControllers), "boolean ()")
+      )
+
+      # TRANSLATORS: progress step
+      @actions_todo = Builtins.add(
+        @actions_todo,
+        _("Load kernel modules for hard disk controllers")
+      )
+      # TRANSLATORS: progress step
+      @actions_doing = Builtins.add(
+        @actions_doing,
+        _("Loading kernel modules for hard disk controllers...")
+      )
+      @actions_functions = Builtins.add(
+        @actions_functions,
+        fun_ref(method(:ActionLoadModules), "boolean ()")
+      )
+
+      # TRANSLATORS: progress step
+      @actions_todo = Builtins.add(@actions_todo, _("Probe hard disks"))
+      # TRANSLATORS: progress step
+      @actions_doing = Builtins.add(
+        @actions_doing,
+        _("Probing hard disks...")
+      )
+      @actions_functions = Builtins.add(
+        @actions_functions,
+        fun_ref(method(:ActionHDDProbe), "boolean ()")
+      )
+
+      WFM.CallFunction("inst_features", [])
 
       # TRANSLATORS: progress step
       @actions_todo = Builtins.add(
