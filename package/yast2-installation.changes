@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Feb 27 12:54:37 UTC 2014 - jreidinger@suse.com
+
+- Do not rerun system probing as it is already done (BNC#865579)
+- 3.1.45
+
+-------------------------------------------------------------------
 Wed Feb 26 09:15:50 UTC 2014 - jreidinger@suse.com
 
 - implement cio ignore feature during installation for s390x
