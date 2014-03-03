@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Mar  3 12:57:24 UTC 2014 - jreidinger@suse.com
+
+- do not crash if there is no general section in autoyast profile
+  (BNC#866529)
+- 3.1.48
+
+-------------------------------------------------------------------
 Thu Feb 27 15:08:12 CET 2014 - aschnell@suse.de
 
 - reset proposal after rescanning storage (bnc#865579)
