@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Mar  4 09:13:41 UTC 2014 - jreidinger@suse.com
+
+- call proper bash agent otherwise cio ignore feature do not work
+  (bnc#866614)
+- 3.1.49
+
+-------------------------------------------------------------------
 Mon Mar  3 12:57:24 UTC 2014 - jreidinger@suse.com
 
 - do not crash if there is no general section in autoyast profile
