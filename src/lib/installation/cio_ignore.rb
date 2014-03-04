@@ -111,7 +111,7 @@ module Installation
       :autoinst
     ]
 
-    YAST_BASH_PATH = Yast::Path.new ".target.bash"
+    YAST_BASH_PATH = Yast::Path.new ".target.bash_output"
 
 
     def initialize
