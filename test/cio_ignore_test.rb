@@ -21,6 +21,16 @@ describe ::Installation::CIOIgnoreProposal do
         expect(result).to have_key("help")
         expect(result).to have_key("preformatted_proposal")
       end
+
+      it "change its content based on cio ignore proposal value" do
+        ::Installation::CIOIgnore.instance.enabled = false
+
+        result = subject.run("MakeProposal")
+
+        expect(result).to have_key("links")
+        expect(result).to have_key("help")
+        expect(result["preformatted_proposal"]).to include("disabled")
+      end
     end
 
     describe "first parameter \"Description\"" do
