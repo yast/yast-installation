@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Mar  6 09:15:24 UTC 2014 - jreidinger@suse.com
+
+- fix malformed string exception if cio ignore is disabled
+  (bnc#866995)
+- 3.1.50
+
+-------------------------------------------------------------------
 Tue Mar  4 09:13:41 UTC 2014 - jreidinger@suse.com
 
 - call proper bash agent otherwise cio ignore feature do not work
