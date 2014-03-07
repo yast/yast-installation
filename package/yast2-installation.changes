@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Mar  7 16:00:42 UTC 2014 - lslezak@suse.cz
+
+- run scc_finish client if present (FATE#312012)
+- 3.1.51
+
+-------------------------------------------------------------------
 Thu Mar  6 09:15:24 UTC 2014 - jreidinger@suse.com
 
 - fix malformed string exception if cio ignore is disabled

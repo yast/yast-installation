@@ -154,6 +154,8 @@ module Yast
             "x11",
             "proxy",
             "pkg",
+            # product registration step is optional
+            WFM.ClientExists("scc_finish") ? "scc" : "",
             "driver_update1",
             "random",
             # bnc #340733
