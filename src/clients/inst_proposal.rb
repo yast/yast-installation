@@ -277,11 +277,9 @@ module Yast
 
             write_settings if !@skip
 
-            Wizard.HideReleaseNotesButton
             return :next
           end
         when :back
-          Wizard.HideReleaseNotesButton
           Wizard.SetNextButton(:next, Label.NextButton) if Stage.initial
           return :back
         end
