@@ -3,6 +3,12 @@ Mon Mar 10 13:01:48 UTC 2014 - jsrain@suse.cz
 
 - don't hide ReleaseNotes button going back fron inst proposal
   (bnc#867389)
+- 3.1.52
+
+-------------------------------------------------------------------
+Fri Mar  7 16:00:42 UTC 2014 - lslezak@suse.cz
+
+- run scc_finish client if present (FATE#312012)
 - 3.1.51
 
 -------------------------------------------------------------------
