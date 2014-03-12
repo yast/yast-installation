@@ -348,12 +348,15 @@ module Yast
       else
         @packager_initialized = true
         Packages.InitializeAddOnProducts
-        if load_release_notes(Packages.GetBaseSourceID)
-          # push button
-          Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
-          UI::SetReleaseNotes( { Product.name => @media_text } )
+        #try on-line release notes first
+        WFM.CallFunction("inst_download_release_notes", [])
+        if InstData.release_notes.empty?
+          if load_release_notes(Packages.GetBaseSourceID)
+            # push button
+            Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
+            UI::SetReleaseNotes( { Product.name => @media_text } )
+          end
         end
-
 
       end
 
