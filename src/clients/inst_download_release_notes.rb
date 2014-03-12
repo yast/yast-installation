@@ -43,7 +43,7 @@ module Yast
 
       # Get proxy settings (if any)
       proxy = ""
-#FIXME: really read proxy settings?
+      # proxy should be set by inst_install_inf if set via Linuxrc
       Proxy.Read
       # Test if proxy works
       if Proxy.enabled
