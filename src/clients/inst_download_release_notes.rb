@@ -20,9 +20,7 @@
 # ------------------------------------------------------------------------------
 
 #
-# Authors:	Klaus Kämpf <kkaempf@suse.de>
-#		Stefan Hundhammer <sh@suse.de>
-#		Arvin Schnell <arvin@suse.de>
+# Authors:	Jiri Srain <jsrain@suse.cz>
 #
 # Purpose:	Downloads on-line release notes
 #
