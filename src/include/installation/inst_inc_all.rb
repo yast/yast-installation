@@ -234,18 +234,6 @@ module Yast
       nil
     end
 
-    def SetNetworkActivationModule
-      # update the workflow according to current situation
-      # disable lan activation if not needed
-
-      if !(Linuxrc.InstallInf("ConfigureNetwork") == "1")
-        Builtins.y2milestone("Disabling network activation module")
-        ProductControl.DisableModule("lan")
-      end
-
-      nil
-    end
-
     def SetDiskActivationModule
       # update the workflow according to current situation
       # disable disks activation if not needed

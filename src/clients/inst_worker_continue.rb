@@ -80,8 +80,6 @@ module Yast
 
       AdjustDisabledItems()
 
-      SetNetworkActivationModule()
-
       SetDiskActivationModule()
 
       UpdateWizardSteps()
