@@ -158,7 +158,7 @@ describe ::Installation::CIOIgnoreFinish do
           expect{subject.run("Write")}.to raise_error(RuntimeError, /stderr/)
         end
 
-        it "adds to bootloader kernel parameter IPLDEV and CONDEV" do
+        it "adds kernel parameters IPLDEV and CONDEV to the bootloader" do
           expect(Yast::Bootloader).to receive(:Write).once
           expect(Yast::Bootloader).to receive(:Read).once
           allow(Yast::Bootloader).to receive(:setKernelParam).once.
@@ -169,7 +169,7 @@ describe ::Installation::CIOIgnoreFinish do
           subject.run("Write")
         end
 
-        it "raise exception if modifying kernel parameters failed" do
+        it "raises an exception if modifying kernel parameters failed" do
           expect(Yast::Bootloader).to receive(:Write).never
           expect(Yast::Bootloader).to receive(:Read).once
           allow(Yast::Bootloader).to receive(:setKernelParam).once.

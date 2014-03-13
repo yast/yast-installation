@@ -151,28 +151,30 @@ module Installation
 
         # add kernel parameters that ensure that ipl and console device is never
         # blacklisted (fate#315318)
-        modify_kernel_append
+        add_boot_kernel_parameters
 
         nil
       else
-        raise "Uknown action passed as first parameter"
+        raise "Uknown action #{func} passed as first parameter"
       end
     end
 
   private
-    def modify_kernel_append
+    def add_boot_kernel_parameters
       Yast.import "Bootloader"
 
-      Yast::Bootloader.Read
+      res = Yast::Bootloader.Read
 
-      res = Yast::Bootloader.setKernelParam("DEFAULT", "IPLDEV", "true")
+      # API is not much intuitive, see Yast::Bootloader.setKernelParam for details
+      res &&= Yast::Bootloader.setKernelParam("DEFAULT", "IPLDEV", "true")
       res &&= Yast::Bootloader.setKernelParam("DEFAULT", "CONDEV", "true")
+
+
+      res &&= Yast::Bootloader.Write
 
       if !res
         raise "failed to write kernel parameters for IPL and console device"
       end
-
-      Yast::Bootloader.Write
     end
   end
 end
