@@ -106,9 +106,10 @@ describe ::Installation::CIOIgnoreFinish do
 
     describe "first parameter \"Write\"" do
       before(:each) do
-        Yast.import "Bootloader"
-        allow(Yast::Bootloader).to receive(:Write)
-        allow(Yast::Bootloader).to receive(:Read)
+        stub_const("Yast::Bootloader", double())
+
+        allow(Yast::Bootloader).to receive(:Write) { true }
+        allow(Yast::Bootloader).to receive(:Read) { true }
         allow(Yast::Bootloader).to receive(:setKernelParam) { true }
 
         allow(Yast::SCR).to receive(:Execute).
@@ -159,8 +160,8 @@ describe ::Installation::CIOIgnoreFinish do
         end
 
         it "adds kernel parameters IPLDEV and CONDEV to the bootloader" do
-          expect(Yast::Bootloader).to receive(:Write).once
-          expect(Yast::Bootloader).to receive(:Read).once
+          expect(Yast::Bootloader).to receive(:Write).once { true }
+          expect(Yast::Bootloader).to receive(:Read).once { true }
           allow(Yast::Bootloader).to receive(:setKernelParam).once.
             with("DEFAULT", "IPLDEV", "true").and_return(true)
           allow(Yast::Bootloader).to receive(:setKernelParam).once.
@@ -171,7 +172,7 @@ describe ::Installation::CIOIgnoreFinish do
 
         it "raises an exception if modifying kernel parameters failed" do
           expect(Yast::Bootloader).to receive(:Write).never
-          expect(Yast::Bootloader).to receive(:Read).once
+          expect(Yast::Bootloader).to receive(:Read).once { true }
           allow(Yast::Bootloader).to receive(:setKernelParam).once.
             with("DEFAULT", "IPLDEV", "true").and_return(true)
           allow(Yast::Bootloader).to receive(:setKernelParam).once.
