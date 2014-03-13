@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Mar 13 09:46:18 UTC 2014 - jreidinger@suse.com
+
+- add kernel parameters for s390 when cio_ignore enabled to never
+  blacklist console or ipl devices (fate#315318)
+- 3.1.54
+
+-------------------------------------------------------------------
 Wed Mar 12 12:00:40 UTC 2014 - mfilka@suse.com
 
 - bnc#858523
