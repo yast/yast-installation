@@ -105,11 +105,23 @@ describe ::Installation::CIOIgnoreFinish do
     end
 
     describe "first parameter \"Write\"" do
+      before(:each) do
+        Yast.import "Bootloader"
+        allow(Yast::Bootloader).to receive(:Write)
+        allow(Yast::Bootloader).to receive(:Read)
+        allow(Yast::Bootloader).to receive(:setKernelParam) { true }
+
+        allow(Yast::SCR).to receive(:Execute).
+          once.
+          and_return({"exit" => 0, "stdout" => "", "stderr" => ""})
+      end
+
       describe "Device blacklisting is disabled" do
         it "do nothing" do
           ::Installation::CIOIgnore.instance.enabled = false
 
           expect(Yast::SCR).to_not receive(:Execute)
+          expect(Yast::Bootloader).to_not receive(:Read)
 
           subject.run("Write")
         end
@@ -146,6 +158,27 @@ describe ::Installation::CIOIgnoreFinish do
           expect{subject.run("Write")}.to raise_error(RuntimeError, /stderr/)
         end
 
+        it "adds to bootloader kernel parameter IPLDEV and CONDEV" do
+          expect(Yast::Bootloader).to receive(:Write).once
+          expect(Yast::Bootloader).to receive(:Read).once
+          allow(Yast::Bootloader).to receive(:setKernelParam).once.
+            with("DEFAULT", "IPLDEV", "true").and_return(true)
+          allow(Yast::Bootloader).to receive(:setKernelParam).once.
+            with("DEFAULT", "CONDEV", "true").and_return(true)
+
+          subject.run("Write")
+        end
+
+        it "raise exception if modifying kernel parameters failed" do
+          expect(Yast::Bootloader).to receive(:Write).never
+          expect(Yast::Bootloader).to receive(:Read).once
+          allow(Yast::Bootloader).to receive(:setKernelParam).once.
+            with("DEFAULT", "IPLDEV", "true").and_return(true)
+          allow(Yast::Bootloader).to receive(:setKernelParam).once.
+            with("DEFAULT", "CONDEV", "true").and_return(false)
+
+          expect{subject.run("Write")}.to raise_error(RuntimeError, /failed to write kernel parameters/)
+        end
       end
     end
 

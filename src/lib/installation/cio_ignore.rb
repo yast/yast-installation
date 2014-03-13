@@ -149,10 +149,30 @@ module Installation
           raise "cio_ignore command failed with stderr: #{res["stderr"]}"
         end
 
+        # add kernel parameters that ensure that ipl and console device is never
+        # blacklisted (fate#315318)
+        modify_kernel_append
+
         nil
       else
         raise "Uknown action passed as first parameter"
       end
+    end
+
+  private
+    def modify_kernel_append
+      Yast.import "Bootloader"
+
+      Yast::Bootloader.Read
+
+      res = Yast::Bootloader.setKernelParam("DEFAULT", "IPLDEV", "true")
+      res &&= Yast::Bootloader.setKernelParam("DEFAULT", "CONDEV", "true")
+
+      if !res
+        raise "failed to write kernel parameters for IPL and console device"
+      end
+
+      Yast::Bootloader.Write
     end
   end
 end
