@@ -78,8 +78,6 @@ module Yast
       # All stages
       SetUIContent()
 
-      SetNetworkActivationModule()
-
       SetDiskActivationModule()
 
       # Cleanup and other settings

@@ -1,8 +1,23 @@
 -------------------------------------------------------------------
-Wed Mar 12 08:15:01 UTC 2014 - jsrain@suse.cz
+Fri Mar 12 08:15:01 UTC 2014 - jsrain@suse.cz
 
 - download on-line version of release notes (fate#314695)
-- 3.1.53
+- 3.1.55
+
+-------------------------------------------------------------------
+Thu Mar 13 09:46:18 UTC 2014 - jreidinger@suse.com
+
+- add kernel parameters for s390 when cio_ignore enabled to never
+  blacklist console or ipl devices (fate#315318)
+- 3.1.54
+
+-------------------------------------------------------------------
+Wed Mar 12 12:00:40 UTC 2014 - mfilka@suse.com
+
+- bnc#858523
+  - dropped disabling network configuration code. yast2-network is
+    in charge of it now.
+- 3.1.53 
 
 -------------------------------------------------------------------
 Mon Mar 10 13:01:48 UTC 2014 - jsrain@suse.cz
