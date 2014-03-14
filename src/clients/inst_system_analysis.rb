@@ -349,7 +349,7 @@ module Yast
         @packager_initialized = true
         Packages.InitializeAddOnProducts
         #try on-line release notes first
-        WFM.CallFunction("inst_download_release_notes", [])
+        WFM.CallFunction("inst_download_release_notes")
         if InstData.release_notes.empty?
           if load_release_notes(Packages.GetBaseSourceID)
             # push button

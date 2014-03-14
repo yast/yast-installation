@@ -34,6 +34,8 @@ module Yast
     Yast.import "Directory"
     Yast.import "InstData"
 
+    include Yast::Logger
+
     # Download all release notes mentioned in Product::relnotesurl_all
     #
     # @return true when successful
@@ -61,64 +63,55 @@ module Yast
           user_pass = Proxy.user != "" ?
             Ops.add(Ops.add(Proxy.user, ":"), Proxy.pass) :
             ""
-          proxy = Ops.add(
-            Ops.add("--proxy ", Proxy.http),
-            user_pass != "" ?
-              Ops.add(Ops.add(" --proxy-user '", user_pass), "'") :
-              ""
-          )
+          proxy = "--proxy #{Proxy.http}"
+          proxy << " --proxy-user '#{user_pass}'" unless user_pass.empty?
         end
       end
 
       products = Pkg.ResolvableDependencies("", :product, "").select { | product |
         product["status"] == :selected || product["status"] == :installed
       }
-      Builtins.y2milestone("Products: %1", products)
-      products.each { | product |
-        url = product["relnotes_url"] #TODO: check
-        Builtins.y2milestone("URL: %1", url)
+      log.info("Products: #{products}")
+      products.each do | product |
+        url = product["relnotes_url"]
+        log.info("URL: #{url}")
         # protect from wrong urls
         if url == nil || url == ""
-          Builtins.y2warning("Skipping relnotesurl '%1'", url)
-          next false
+          log.warning("Skipping invalid URL")
+          next
         end
-        pos = Builtins.findlastof(url, "/")
+        pos = url.rindex("/")
         if pos == nil
-          Builtins.y2error("broken url for release notes: %1", url)
-          next false
+          log.error ("Broken URL for release notes: #{url}")
+          next
         end
         url_base = url[0, pos]
-        Builtins.y2milestone("URL Base: %1", url_base)
         url_template = url_base + filename_templ
-        Builtins.y2milestone("URL Template: %1", url_base)
-        [Language.language, Builtins.substring(Language.language, 0, 2), "en"].each do | lang |
-          Builtins.y2milestone("XX: %1", lang)
+        log.info("URL template: #{url_base}");
+        [Language.language, Language.language[0..1], "en"].each do | lang |
           url = Builtins.sformat(url_template, lang)
-          Builtins.y2milestone("URL: %1", lang)
+          log.info("URL: #{url}");
           # Where we want to store the downloaded release notes
           filename = Builtins.sformat("%1/relnotes",
-            Convert.to_string(SCR.Read(path(".target.tmpdir"))))
+            SCR.Read(path(".target.tmpdir")))
           # download release notes now
-          cmd = Ops.add(
-            "/usr/bin/curl --location --verbose --fail --max-time 300 ",
-            Builtins.sformat(
-              "%1 %2 --output '%3' > '%4/%5' 2>&1",
-              proxy,
-              url,
-              String.Quote(filename),
-              String.Quote(Directory.logdir),
-              "curl_log"
-            )
+          cmd = Builtins.sformat(
+            "/usr/bin/curl --location --verbose --fail --max-time 300  %1 '%2' --output '%3' > '%4/%5' 2>&1",
+            proxy,
+            url,
+            String.Quote(filename),
+            String.Quote(Directory.logdir),
+            "curl_log"
           )
-          Builtins.y2milestone("Downloading release notes: %1", cmd)
-          ret = Convert.to_integer(SCR.Execute(path(".target.bash"), cmd))
+          ret = SCR.Execute(path(".target.bash"), cmd)
+          log.info("Downloading release notes: #{cmd} returned #{ret}")
           if ret == 0
-            Builtins.y2milestone("Release notes downloaded successfully")
+            log.info("Release notes downloaded successfully")
             InstData.release_notes[product["name"]] = SCR.Read(path(".target.string"), filename)
             break
           end
         end
-      }
+      end
       if ! InstData.release_notes.empty?
         UI.SetReleaseNotes(InstData.release_notes)
         Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
