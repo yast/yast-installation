@@ -93,6 +93,9 @@ module Yast
       # disk to use for OEM image
       @image_target_disk = nil
 
+      # downloaded release notes, product => text
+      @release_notes = {}
+
       # EOF
     end
 
@@ -110,6 +113,7 @@ module Yast
     publish :variable => :copy_files_use_control_file, :type => "boolean"
     publish :variable => :additional_copy_files, :type => "list <map>"
     publish :variable => :image_target_disk, :type => "string"
+    publish :variable => :release_notes, :type => "map<string,string>"
   end
 
   InstData = InstDataClass.new
