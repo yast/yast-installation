@@ -37,3 +37,4 @@ home*:*
 *.sh
 .yardoc
 /coverage
+/nbproject/private/

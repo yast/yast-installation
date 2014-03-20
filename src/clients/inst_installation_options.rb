@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 # ------------------------------------------------------------------------------
-# Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
+# Copyright (c) 2006-2014 Novell, Inc. All Rights Reserved.
 #
 #
 # This program is free software; you can redistribute it and/or modify it under
@@ -21,7 +21,7 @@
 
 # File:	clients/inst_installation_options.rb
 # Package:	Installation
-# Summary:	Initialize installation
+# Summary:	Initialize installation, set installation options
 # Authors:	Jiri Srain <jsrain@suse.cz>
 #		Lukas Ocilka <locilka@suse.cz>
 #
@@ -34,7 +34,6 @@ module Yast
       textdomain "installation"
 
       Yast.import "AddOnProduct"
-      Yast.import "GetInstArgs"
       Yast.import "Installation"
       Yast.import "InstData"
       Yast.import "Linuxrc"
@@ -73,24 +72,26 @@ module Yast
         Installation.productsources_selected = false
       end
 
+      # nothing to display, simply continue
+      if !@show_online_repositories
+        SetRequiredPackages()
+        return :auto
+      end
+
       Wizard.SetContents(
         # dialog caption
         _("Installation Options"),
-        InstModeDialogContent(:install),
-        InstModeDialogHelp(),
+        InstOptionsDialogContent(),
+        InstOptionsDialogHelp(),
         true,
         true
       )
       Wizard.SetTitleIcon("yast-software")
 
-      @ret = nil
-
-      @umount_result = Linuxrc.InstallInf("umount_result")
-      @media = Linuxrc.InstallInf("InstMode")
       Builtins.y2milestone(
         "Umount result: %1, inst mode: %2",
-        @umount_result,
-        @media
+        Linuxrc.InstallInf("umount_result"),
+        Linuxrc.InstallInf("InstMode")
       )
 
       AdjustStepsAccordingToInstallationSettings()
@@ -106,8 +107,6 @@ module Yast
             Builtins.y2milestone("add_on_selected: %1", Installation.add_on_selected)
             AdjustStepsAccordingToInstallationSettings()
           end
-          @ret = nil
-          next
         # Use-Community-Repositories status changed
         elsif @ret == :productsources
           if UI.WidgetExists(Id(:productsources))
@@ -118,18 +117,11 @@ module Yast
             )
             AdjustStepsAccordingToInstallationSettings()
           end
-          @ret = nil
-          next
-        # Next button
-        elsif @ret == :next
-          next 
         # Abort button
         elsif @ret == :abort
           if Popup.ConfirmAbort(Stage.initial ? :painless : :incomplete)
             return :abort
           end
-          @ret = nil
-          next
         end
       end until @ret == :back || @ret == :next
 
@@ -171,11 +163,11 @@ module Yast
 
       @ret = :finish if @ret == :next
 
-      @ret 
+      @ret
     end
 
     # see bugzilla #156529
-    def InstModeDialogContent(pre_selected)
+    def InstOptionsDialogContent()
       HBox(
         HStretch(),
         VBox(
@@ -204,7 +196,7 @@ module Yast
       )
     end
 
-    def InstModeDialogHelp
+    def InstOptionsDialogHelp
       # help text for installation method
       _("<p><big><b>Installation Options</b></big></p>") +
         # help text for installation option
