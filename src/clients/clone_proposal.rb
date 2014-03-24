@@ -125,7 +125,7 @@ module Yast
       @clone_settings.enabled = UI.QueryWidget(:value_holder, :Value)
       UI.CloseDialog
     end
-  end
+  end unless defined? (CloneProposalClient) #avoid class redefinition if reevaluated
 end
 
 Yast::CloneProposalClient.new.main
