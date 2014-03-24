@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Mar 24 12:33:47 UTC 2014 - jreidinger@suse.com
+
+- avoid constant redefinition warning(BNC#869202)
+- 3.1.58
+
+-------------------------------------------------------------------
 Wed Mar 19 12:45:27 UTC 2014 - lslezak@suse.cz
 
 - skip "Installation Options" dialog when online repository option
