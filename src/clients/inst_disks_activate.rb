@@ -144,7 +144,7 @@ module Yast
           WFM.call("inst_fcoe-client", [@argmap])
           @ret = :redraw
         when :network
-          WFM.call("inst_lan", [@argmap])
+          WFM.call("inst_lan", [@argmap.merge({"skip_detection" => true}])
           @ret = :redraw
         end
         if @ret == :redraw
