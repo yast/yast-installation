@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Sun Mar 30 17:15:03 UTC 2014 - mfilka@suse.com
+
+- bnc#869719
+  - fixed parameters forcing manual network configuration on user's
+    request at disks activation screen
+- 3.1.60 
+
+-------------------------------------------------------------------
 Mon Mar 24 14:48:36 UTC 2014 - jreidinger@suse.com
 
 - change cio_ignore kernel parameter according to kernel changes
