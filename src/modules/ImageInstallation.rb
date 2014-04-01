@@ -36,6 +36,8 @@ require "yast"
 
 module Yast
   class ImageInstallationClass < Module
+    include Yast::Logger
+
     def main
       Yast.import "UI"
       Yast.import "Pkg"
@@ -886,7 +888,7 @@ module Yast
 
       # trying to find all matching patterns
       Builtins.foreach(image_sets) do |image|
-        pattern = Ops.get_string(image, "patterns", "")
+        pattern = image["patterns"]
         imageset_patterns = Builtins.splitstring(pattern, ", ")
         Ops.set(
           patterns_in_imagesets,
@@ -917,11 +919,7 @@ module Yast
         end
       end
 
-      Builtins.y2debug(
-        "Matching patterns: %1, sizes: %2",
-        possible_patterns,
-        matching_patterns
-      )
+      log.info "Matching patterns: #{possible_patterns}, sizes: #{matching_patterns}"
 
       # selecting the best imageset
       last_pattern = ""
