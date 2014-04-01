@@ -141,6 +141,9 @@ module Yast
           "steps_reserved" => 10
         }
       }
+
+      # Images selected by FindImageSet()
+      @selected_images = {}
     end
 
     # Set the repository to get images from
@@ -955,6 +958,7 @@ module Yast
       end
 
       Builtins.y2milestone("Result: %1/%2", last_pattern, result)
+      @selected_images = result
 
       # No matching pattern
       if result == {}
@@ -1484,8 +1488,14 @@ module Yast
       @_image_order = []
       @images_details = {}
       @_mounted_images = []
+      @selected_images = {}
 
       nil
+    end
+
+    # Only for checking in tests now
+    def selected_images
+      @selected_images
     end
 
     publish :function => :SetRepo, :type => "void (integer)"
