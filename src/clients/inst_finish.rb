@@ -173,7 +173,6 @@ module Yast
             "firewall_stage1",
             "ntp-client",
             "ssh_settings",
-            "ssh_service",
             "save_hw_status",
             "users",
             "autoinst_scripts2",
