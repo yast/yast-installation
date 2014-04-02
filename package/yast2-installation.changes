@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Apr  2 09:25:38 UTC 2014 - jreidinger@suse.com
+
+- remove ssh_service_finish as it is handle in
+  firewall_stage1_finish due to split of ssh port open and sshd
+  enablement (bnc#865056)
+- 3.1.61
+
+-------------------------------------------------------------------
 Sun Mar 30 17:15:03 UTC 2014 - mfilka@suse.com
 
 - bnc#869719
