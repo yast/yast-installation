@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Apr  3 12:15:49 UTC 2014 - jreidinger@suse.com
+
+- do not write network configuration from upgrade to system
+  (bnc#871178)
+- 3.1.62
+
+-------------------------------------------------------------------
 Wed Apr  2 09:25:38 UTC 2014 - jreidinger@suse.com
 
 - remove ssh_service_finish as it is handle in
