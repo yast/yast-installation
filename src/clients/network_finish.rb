@@ -67,7 +67,7 @@ module Yast
           "steps" => 1,
           # progress step title
           "title" => _("Saving network configuration..."),
-          "when"  => [:installation, :update, :autoinst]
+          "when"  => [:installation, :autoinst]
         }
       elsif @func == "Write"
 
