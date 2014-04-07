@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Apr  4 15:33:40 CEST 2014 - snwint@suse.de
+
+- remove LIBGL_ALWAYS_INDIRECT (bnc #869172)
+- 3.1.63
+
+-------------------------------------------------------------------
 Thu Apr  3 12:15:49 UTC 2014 - jreidinger@suse.com
 
 - do not write network configuration from upgrade to system
