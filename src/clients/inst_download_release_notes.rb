@@ -120,6 +120,8 @@ module Yast
     end
 
     def main
+      textdomain "installation"
+
       download_release_notes
       :auto
     end

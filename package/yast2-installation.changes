@@ -1,5 +1,61 @@
 -------------------------------------------------------------------
-Fri Mar 12 08:15:01 UTC 2014 - jsrain@suse.cz
+Fri Apr  4 15:33:40 CEST 2014 - snwint@suse.de
+
+- remove LIBGL_ALWAYS_INDIRECT (bnc #869172)
+- 3.1.63
+
+-------------------------------------------------------------------
+Thu Apr  3 12:15:49 UTC 2014 - jreidinger@suse.com
+
+- do not write network configuration from upgrade to system
+  (bnc#871178)
+- 3.1.62
+
+-------------------------------------------------------------------
+Wed Apr  2 09:25:38 UTC 2014 - jreidinger@suse.com
+
+- remove ssh_service_finish as it is handle in
+  firewall_stage1_finish due to split of ssh port open and sshd
+  enablement (bnc#865056)
+- 3.1.61
+
+-------------------------------------------------------------------
+Sun Mar 30 17:15:03 UTC 2014 - mfilka@suse.com
+
+- bnc#869719
+  - fixed parameters forcing manual network configuration on user's
+    request at disks activation screen
+- 3.1.60 
+
+-------------------------------------------------------------------
+Mon Mar 24 14:48:36 UTC 2014 - jreidinger@suse.com
+
+- change cio_ignore kernel parameter according to kernel changes
+  (bnc#869463)
+- 3.1.59
+
+-------------------------------------------------------------------
+Mon Mar 24 12:33:47 UTC 2014 - jreidinger@suse.com
+
+- avoid constant redefinition warning(BNC#869202)
+- 3.1.58
+
+-------------------------------------------------------------------
+Wed Mar 19 12:45:27 UTC 2014 - lslezak@suse.cz
+
+- skip "Installation Options" dialog when online repository option
+  should not be displayed (part of bnc#868942)
+- 3.1.57
+
+-------------------------------------------------------------------
+Fri Mar 14 14:43:06 CET 2014 - snwint@suse.de
+
+- set LIBGL_ALWAYS_INDIRECT in ssh mode (bnc #868175)
+- enable yast theme in ssh mode
+- 3.1.56
+
+-------------------------------------------------------------------
+Fri Mar 14 08:15:01 UTC 2014 - jsrain@suse.cz
 
 - download on-line version of release notes (fate#314695)
 - 3.1.55

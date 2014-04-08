@@ -36,6 +36,8 @@ require "yast"
 
 module Yast
   class ImageInstallationClass < Module
+    include Yast::Logger
+
     def main
       Yast.import "UI"
       Yast.import "Pkg"
@@ -139,6 +141,9 @@ module Yast
           "steps_reserved" => 10
         }
       }
+
+      # Images selected by FindImageSet()
+      @selected_images = {}
     end
 
     # Set the repository to get images from
@@ -886,7 +891,7 @@ module Yast
 
       # trying to find all matching patterns
       Builtins.foreach(image_sets) do |image|
-        pattern = Ops.get_string(image, "patterns", "")
+        pattern = image["patterns"]
         imageset_patterns = Builtins.splitstring(pattern, ", ")
         Ops.set(
           patterns_in_imagesets,
@@ -917,11 +922,7 @@ module Yast
         end
       end
 
-      Builtins.y2debug(
-        "Matching patterns: %1, sizes: %2",
-        possible_patterns,
-        matching_patterns
-      )
+      log.info "Matching patterns: #{possible_patterns}, sizes: #{matching_patterns}"
 
       # selecting the best imageset
       last_pattern = ""
@@ -957,6 +958,7 @@ module Yast
       end
 
       Builtins.y2milestone("Result: %1/%2", last_pattern, result)
+      @selected_images = result
 
       # No matching pattern
       if result == {}
@@ -1486,8 +1488,14 @@ module Yast
       @_image_order = []
       @images_details = {}
       @_mounted_images = []
+      @selected_images = {}
 
       nil
+    end
+
+    # Only for checking in tests now
+    def selected_images
+      @selected_images
     end
 
     publish :function => :SetRepo, :type => "void (integer)"

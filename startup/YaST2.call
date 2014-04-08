@@ -139,6 +139,7 @@ function prepare_for_ssh () {
 #
 	:
         export Y2STYLE="installation_slim" 
+	set_inst_qt_env
 }
 
 #----[ prepare_for_vnc ]----#
