@@ -39,8 +39,18 @@ module Yast
       Yast.import "ImageInstallation"
       Yast.import "StorageClients"
       Yast.import "PackageSlideShow"
+      Yast.import "Wizard"
+      Yast.import "InstData"
 
       Builtins.y2milestone("BEGIN of inst_prepareprogress.ycp")
+
+      #hide the RN button and set the release notes for SlideShow (bnc#871158)
+      Wizard.HideReleaseNotesButton
+      base_product = Pkg.ResolvableDependencies("", :product, "").select { | product |
+        (product["status"] == :selected || product["status"] == :installed) && 
+        (Mode.normal ? product["category"] == "base" : product["source"] == 0)
+      }[0]["name"]
+      SlideShow.SetReleaseNotes(InstData.release_notes, base_product)
 
       Packages.SlideShowSetUp(Language.language)
 
