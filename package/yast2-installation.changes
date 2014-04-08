@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Apr  8 11:23:18 UTC 2014 - jsrain@suse.cz
+
+- added handling of release notes for slide show (bnc#871158)
+- 3.1.64
+
+-------------------------------------------------------------------
 Fri Apr  4 15:33:40 CEST 2014 - snwint@suse.de
 
 - remove LIBGL_ALWAYS_INDIRECT (bnc #869172)
