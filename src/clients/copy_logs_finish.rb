@@ -118,6 +118,11 @@ module Yast
             InjectFile(Ops.add(Ops.add(Directory.logdir, "/"), file))
           end
         end
+
+        WFM.Execute(
+          path(".local.bash"),
+          "/bin/cp /var/log/pbl.log '#{Installation.destdir}/#{Directory.logdir}/pbl-instsys.log'"
+        )
       else
         Builtins.y2error("unknown function: %1", @func)
         @ret = nil
