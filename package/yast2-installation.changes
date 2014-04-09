@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Apr  9 13:33:26 UTC 2014 - mvidner@suse.com
+
+- Put wizard title on the left instead of on top (bnc#868859)
+- 3.1.65
+
+-------------------------------------------------------------------
 Wed Apr  9 10:07:02 CEST 2014 - snwint@suse.de
 
 - save a copy of pbl.log
