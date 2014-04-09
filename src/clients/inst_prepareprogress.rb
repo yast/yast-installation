@@ -44,7 +44,7 @@ module Yast
 
       Builtins.y2milestone("BEGIN of inst_prepareprogress.ycp")
 
-      #hide the RN button and set the release notes for SlideShow (bnc#871158)
+      # hide the RN button and set the release notes for SlideShow (bnc#871158)
       Wizard.HideReleaseNotesButton
       base_product = Pkg.ResolvableDependencies("", :product, "").select { | product |
         (product["status"] == :selected || product["status"] == :installed) && 
