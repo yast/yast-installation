@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.65
+Version:        3.1.66
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -43,8 +43,8 @@ BuildRequires: yast2 >= 3.1.41
 # clone_system client
 Requires:       autoyast2-installation >= 3.1.5
 
-# ProductProfile
-Requires:	yast2 >= 3.1.9
+# Wizard.OpenLeftTitleNextBackDialog
+Requires:	yast2 >= 3.1.43
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)

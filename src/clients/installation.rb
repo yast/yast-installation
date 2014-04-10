@@ -41,7 +41,7 @@ module Yast
       Hooks.search_path.join!('installation')
 
       # Initialize the UI
-      Wizard.OpenNextBackDialog
+      Wizard.OpenLeftTitleNextBackDialog
       Wizard.SetContents(
         # title
         "",
