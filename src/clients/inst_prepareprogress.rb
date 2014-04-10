@@ -41,6 +41,7 @@ module Yast
       Yast.import "PackageSlideShow"
       Yast.import "Wizard"
       Yast.import "InstData"
+      Yast.import "Product"
 
       Builtins.y2milestone("BEGIN of inst_prepareprogress.ycp")
 
