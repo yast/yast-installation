@@ -39,8 +39,16 @@ module Yast
       Yast.import "ImageInstallation"
       Yast.import "StorageClients"
       Yast.import "PackageSlideShow"
+      Yast.import "Wizard"
+      Yast.import "InstData"
+      Yast.import "Product"
 
       Builtins.y2milestone("BEGIN of inst_prepareprogress.ycp")
+
+      # hide the RN button and set the release notes for SlideShow (bnc#871158)
+      Wizard.HideReleaseNotesButton
+      base_products = Product.FindBaseProducts
+      SlideShow.SetReleaseNotes(InstData.release_notes, base_products[0]["name"])
 
       Packages.SlideShowSetUp(Language.language)
 

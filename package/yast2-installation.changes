@@ -1,7 +1,13 @@
 -------------------------------------------------------------------
-Wed Apr  9 13:33:26 UTC 2014 - mvidner@suse.com
+Thu Apr 10 09:34:30 UTC 2014 - mvidner@suse.com
 
 - Put wizard title on the left instead of on top (bnc#868859)
+- 3.1.66
+
+-------------------------------------------------------------------
+Thu Apr 10 09:15:56 UTC 2014 - jsrain@suse.cz
+
+- added handling of release notes for slide show (bnc#871158)
 - 3.1.65
 
 -------------------------------------------------------------------
