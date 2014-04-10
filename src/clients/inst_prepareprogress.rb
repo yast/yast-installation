@@ -46,11 +46,8 @@ module Yast
 
       # hide the RN button and set the release notes for SlideShow (bnc#871158)
       Wizard.HideReleaseNotesButton
-      base_product = Pkg.ResolvableDependencies("", :product, "").select { | product |
-        (product["status"] == :selected || product["status"] == :installed) && 
-        (Mode.normal ? product["category"] == "base" : product["source"] == 0)
-      }[0]["name"]
-      SlideShow.SetReleaseNotes(InstData.release_notes, base_product)
+      base_products = Product.FindBaseProducts
+      SlideShow.SetReleaseNotes(InstData.release_notes, base_products[0]["name"])
 
       Packages.SlideShowSetUp(Language.language)
 
