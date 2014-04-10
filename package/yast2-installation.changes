@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Apr 10 09:15:56 UTC 2014 - jsrain@suse.cz
+
+- added handling of release notes for slide show (bnc#871158)
+- 3.1.65
+
+-------------------------------------------------------------------
 Wed Apr  9 10:07:02 CEST 2014 - snwint@suse.de
 
 - save a copy of pbl.log

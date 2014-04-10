@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.64
+Version:        3.1.65
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -38,7 +38,7 @@ BuildRequires:  yast2-devtools >= 3.1.10
 BuildRequires:  rubygem-rspec
 
 # Linuxrc.keys
-BuildRequires: yast2 >= 3.1.9
+BuildRequires: yast2 >= 3.1.41
 
 # clone_system client
 Requires:       autoyast2-installation >= 3.1.5
