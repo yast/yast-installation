@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Apr 11 08:44:10 UTC 2014 - jsrain@suse.cz
+
+- added missing files to package (bnc#872925)
+
+-------------------------------------------------------------------
 Thu Apr 10 09:15:56 UTC 2014 - jsrain@suse.cz
 
 - added handling of release notes for slide show (bnc#871158)
