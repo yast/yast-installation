@@ -29,7 +29,9 @@ client_DATA = \
   clients/inst_congratulate.rb \
   clients/inst_deploy_image.rb \
   clients/inst_disks_activate.rb \
+  clients/inst_disk_for_image.rb \
   clients/inst_doit.rb \
+  clients/inst_download_release_notes.rb \
   clients/inst_extrasources.rb \
   clients/inst_features.rb \
   clients/inst_finish.rb \
