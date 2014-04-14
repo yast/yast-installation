@@ -49,12 +49,14 @@ module Yast
       # hide the RN button and set the release notes for SlideShow (bnc#871158)
       Wizard.HideReleaseNotesButton
       base_products = Product.FindBaseProducts
-      if !base_products || base_products.empty?
-        Builtins.y2error "base product not found"
-        Popup.error "Cannot find base product. Release notes won't be shown."
+      base_product_name = base_products && !base_products.empty? &&
+        base_products.first["name"]
+      if !base_product_name || base_product_name.empty?
+        Builtins.y2error "base product not found. Products: #{base_products.inspect}."
+        Popup.error _("Cannot find base product. Release notes won't be shown.")
         SlideShow.SetReleaseNotes(InstData.release_notes, "")
       else
-        SlideShow.SetReleaseNotes(InstData.release_notes, base_products[0]["name"])
+        SlideShow.SetReleaseNotes(InstData.release_notes, base_product_name)
       end
 
       Packages.SlideShowSetUp(Language.language)
