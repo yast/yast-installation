@@ -53,7 +53,7 @@ module Yast
         base_products.first["name"]
       if !base_product_name || base_product_name.empty?
         Builtins.y2error "base product not found. Products: #{base_products.inspect}."
-        Report.Error _("Cannot find base product. Release notes won't be shown.")
+        Report.Error _("Cannot find base product. Release notes will not be shown.")
         SlideShow.SetReleaseNotes(InstData.release_notes, "")
       else
         SlideShow.SetReleaseNotes(InstData.release_notes, base_product_name)
