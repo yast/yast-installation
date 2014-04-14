@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Apr 14 10:11:52 CEST 2014 - locilka@suse.com
+
+- removed loading 'pciehp' Kernel module (added for SLE 11 by FATE
+  #311991) - it is now built-in Kernel (bnc#865834)
+- 3.1.68
+
+-------------------------------------------------------------------
 Fri Apr 11 08:44:10 UTC 2014 - jsrain@suse.cz
 
 - added missing files to package (bnc#872925)
