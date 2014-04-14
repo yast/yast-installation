@@ -57,9 +57,6 @@ module Yast
       Builtins.y2debug("func=%1", @func)
       Builtins.y2debug("param=%1", @param)
 
-      @manufacturer_regexp_dell = "^[dD][eE][lL][lL]"
-      @module_to_load_dell = "pciehp"
-
       if @func == "Info"
         return {
           "steps" => 1,
@@ -78,9 +75,6 @@ module Yast
           Kernel.AddModuleToLoad("fetchop")
           Kernel.AddModuleToLoad("mmtimer")
         end
-
-        # FATE #311991
-        Kernel.AddModuleToLoad(@module_to_load_dell) if pciehp_needed
 
         # Write list of modules to load after system gets up
         Kernel.SaveModulesToLoad
@@ -104,37 +98,6 @@ module Yast
       deep_copy(@ret)
     end
 
-    def manufacturer
-      # Workaround for bug in YaST (FATE #311991, comment #34)
-      SCR.Read(path(".probe.bios_video"))
-      bios_infos = Convert.convert(
-        SCR.Read(path(".probe.bios")),
-        :from => "any",
-        :to   => "list <map>"
-      )
-      bios_info = Ops.get_list(bios_infos, [0, "smbios"], [])
-      Builtins.y2debug("Bios Info: %1", bios_info)
-      manufacturer_info = Builtins.find(bios_info) do |bios_item|
-        Ops.get_string(bios_item, "type", "") == "sysinfo" &&
-          Ops.get_string(bios_item, "manufacturer", "") != ""
-      end
-      Builtins.y2milestone("Bios manufacturer found: %1", manufacturer_info)
-      Ops.get_string(manufacturer_info, "manufacturer", "")
-    end
-
-    def pciehp_needed
-      manufacturer_s = manufacturer
-      if manufacturer_s == nil || manufacturer_s == ""
-        Builtins.y2warning("Cannot find the BIOS manufacturer")
-        return false
-      end
-
-      if Builtins.regexpmatch(manufacturer_s, @manufacturer_regexp_dell)
-        return true
-      end
-
-      false
-    end
   end
 end
 
