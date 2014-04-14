@@ -41,6 +41,7 @@ module Yast
       Yast.import "PackageSlideShow"
       Yast.import "Wizard"
       Yast.import "InstData"
+      Yast.import "Popup"
       Yast.import "Product"
 
       Builtins.y2milestone("BEGIN of inst_prepareprogress.ycp")
@@ -48,7 +49,15 @@ module Yast
       # hide the RN button and set the release notes for SlideShow (bnc#871158)
       Wizard.HideReleaseNotesButton
       base_products = Product.FindBaseProducts
-      SlideShow.SetReleaseNotes(InstData.release_notes, base_products[0]["name"])
+      base_product_name = base_products && !base_products.empty? &&
+        base_products.first["name"]
+      if !base_product_name || base_product_name.empty?
+        Builtins.y2error "base product not found. Products: #{base_products.inspect}."
+        Popup.error _("Cannot find base product. Release notes won't be shown.")
+        SlideShow.SetReleaseNotes(InstData.release_notes, "")
+      else
+        SlideShow.SetReleaseNotes(InstData.release_notes, base_product_name)
+      end
 
       Packages.SlideShowSetUp(Language.language)
 

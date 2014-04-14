@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Apr 14 14:38:22 UTC 2014 - jreidinger@suse.com
+
+- return error message if base product not found and continue in
+  installation(bnc#873458)
+- 3.1.69
+
+-------------------------------------------------------------------
 Mon Apr 14 10:11:52 CEST 2014 - locilka@suse.com
 
 - removed loading 'pciehp' Kernel module (added for SLE 11 by FATE
