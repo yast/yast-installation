@@ -41,8 +41,8 @@ module Yast
       Yast.import "PackageSlideShow"
       Yast.import "Wizard"
       Yast.import "InstData"
-      Yast.import "Popup"
       Yast.import "Product"
+      Yast.import "Report"
 
       Builtins.y2milestone("BEGIN of inst_prepareprogress.ycp")
 
@@ -53,7 +53,7 @@ module Yast
         base_products.first["name"]
       if !base_product_name || base_product_name.empty?
         Builtins.y2error "base product not found. Products: #{base_products.inspect}."
-        Popup.error _("Cannot find base product. Release notes won't be shown.")
+        Report.Error _("Cannot find base product. Release notes will not be shown.")
         SlideShow.SetReleaseNotes(InstData.release_notes, "")
       else
         SlideShow.SetReleaseNotes(InstData.release_notes, base_product_name)
