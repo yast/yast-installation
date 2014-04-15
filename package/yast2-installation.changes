@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Apr 15 07:02:35 UTC 2014 - jreidinger@suse.com
+
+- fix crash from last fix and adapt it to cooperate nice with
+  autoinstallation (bnc#873458)
+- 3.1.70
+
+-------------------------------------------------------------------
 Mon Apr 14 14:38:22 UTC 2014 - jreidinger@suse.com
 
 - return error message if base product not found and continue in
