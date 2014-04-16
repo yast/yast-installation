@@ -41,7 +41,6 @@ client_DATA = \
   clients/inst_installation_options.rb \
   clients/inst_license.rb \
   clients/inst_network_check.rb \
-  clients/inst_network_setup.rb \
   clients/inst_new_desktop.rb \
   clients/inst_pre_install.rb \
   clients/inst_prepare_image.rb \
