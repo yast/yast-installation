@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.71
+Version:        3.1.72
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -89,8 +89,8 @@ Conflicts:	yast2 < 2.18.6
 # Added new function WFM::ClientExists
 Conflicts:	yast2-core < 2.17.10
 
-# ButtonBox widget
-Conflicts:	yast2-ycp-ui-bindings < 2.17.3
+# Top bar with logo
+Conflicts:	yast2-ycp-ui-bindings < 3.1.7
 
 # tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
 Requires:	tar gzip

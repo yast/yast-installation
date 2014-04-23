@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Apr 23 08:48:13 UTC 2014 - jsrain@suse.cz
+
+- enable top bar with logo during installation (bnc#868722)
+- 3.1.72
+
+-------------------------------------------------------------------
 Tue Apr 15 16:51:58 CEST 2014 - locilka@suse.com
 
 - Switched from the old to the new network setup client for remote
