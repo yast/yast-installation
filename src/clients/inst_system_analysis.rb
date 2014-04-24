@@ -133,13 +133,13 @@ module Yast
       actions_doing     << _("Searching for system files...")
       actions_functions << fun_ref(method(:FilesFromOlderSystems), "boolean ()")
 
-      actions_todo      << _("Evaluate update possibility")
-      actions_doing     << _("Evaluating update possibility...")
-      actions_functions << fun_ref(method(:EvaluateUpdatePossibilities), "boolean ()")
-
       actions_todo      << _("Initialize software manager")
       actions_doing     << _("Initializing software manager...")
       actions_functions << fun_ref(method(:InitInstallationRepositories), "boolean ()")
+
+      actions_todo      << _("Evaluate update possibility")
+      actions_doing     << _("Evaluating update possibility...")
+      actions_functions << fun_ref(method(:EvaluateUpdatePossibilities), "boolean ()")
 
       Progress.New(
         # TRANSLATORS: dialog caption
