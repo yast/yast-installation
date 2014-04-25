@@ -69,15 +69,19 @@ module Yast
       end
 
       products = Pkg.ResolvableDependencies("", :product, "").select { | product |
-        product["status"] == :selected || product["status"] == :installed
+        [:selected, :installed].include? product["status"]
       }
-      log.info("Products: #{products}")
+      log.debug("Products: #{products}")
       products.each do | product |
+        if InstData.downloaded_release_notes.include? product["name"]
+          log.info("Release notes for #{product['name']} already downloaded, skipping...")
+          next
+        end
         url = product["relnotes_url"]
-        log.info("URL: #{url}")
+        log.debug("URL: #{url}")
         # protect from wrong urls
-        if url == nil || url == ""
-          log.warning("Skipping invalid URL")
+        if url.nil? || url.empty?
+          log.warning("Skipping invalid URL #{url} for product #{product['name']}")
           next
         end
         pos = url.rindex("/")
@@ -108,6 +112,7 @@ module Yast
           if ret == 0
             log.info("Release notes downloaded successfully")
             InstData.release_notes[product["name"]] = SCR.Read(path(".target.string"), filename)
+            InstData.downloaded_release_notes << product["name"]
             break
           end
         end

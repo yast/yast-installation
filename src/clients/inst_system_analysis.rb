@@ -354,6 +354,7 @@ module Yast
           if load_release_notes(Packages.GetBaseSourceID)
             # push button
             Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
+            InstData.release_notes[Product.name] = @media_text
             UI::SetReleaseNotes( { Product.name => @media_text } )
           end
         end
