@@ -5,6 +5,13 @@ Fri Apr 25 08:22:06 UTC 2014 - jsrain@suse.cz
   downloaded on-line) (bnc#874996)
 
 -------------------------------------------------------------------
+Thu Apr 24 16:02:13 CEST 2014 - locilka@suse.com
+
+- Changed inst_system_analysis to read Product information
+  (that uses libzypp) after initializing libzypp (bnc#873877)
+- 3.1.73
+
+-------------------------------------------------------------------
 Wed Apr 23 08:48:13 UTC 2014 - jsrain@suse.cz
 
 - enable top bar with logo during installation (bnc#868722)
