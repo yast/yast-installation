@@ -81,7 +81,7 @@ module Yast
         log.debug("URL: #{url}")
         # protect from wrong urls
         if url == nil || url == ""
-          log.warning("Skipping invalid URL")
+          log.warning("Skipping invalid URL #{url} for product #{product['name']}")
           next
         end
         pos = url.rindex("/")
