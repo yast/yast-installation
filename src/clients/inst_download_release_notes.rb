@@ -80,7 +80,7 @@ module Yast
         url = product["relnotes_url"]
         log.debug("URL: #{url}")
         # protect from wrong urls
-        if url == nil || url == ""
+        if url.nil? || url.empty?
           log.warning("Skipping invalid URL #{url} for product #{product['name']}")
           next
         end
