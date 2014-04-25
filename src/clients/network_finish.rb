@@ -81,6 +81,7 @@ module Yast
 
         Builtins.y2milestone("Save network configuration")
         WFM.CallFunction("save_network")
+        # false == don't force
         ModulesConf.RunDepmod(false)
       else
         Builtins.y2error("unknown function: %1", @func)
