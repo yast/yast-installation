@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Apr 25 08:22:06 UTC 2014 - jsrain@suse.cz
+
+- enhanced handling of release notes from media (contrary to those
+  downloaded on-line) (bnc#874996)
+
+-------------------------------------------------------------------
 Wed Apr 23 08:48:13 UTC 2014 - jsrain@suse.cz
 
 - enable top bar with logo during installation (bnc#868722)
