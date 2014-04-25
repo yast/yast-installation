@@ -69,7 +69,7 @@ module Yast
       end
 
       products = Pkg.ResolvableDependencies("", :product, "").select { | product |
-        product["status"] == :selected || product["status"] == :installed
+        [:selected, :installed].include? product["status"]
       }
       log.debug("Products: #{products}")
       products.each do | product |
