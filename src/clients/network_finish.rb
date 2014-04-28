@@ -79,13 +79,10 @@ module Yast
 
         NetworkService.EnableDisableNow
 
-        # if network running, write network configuration
-        # also in case of IPv6 (bnc#477917)
-        if NetworkService.isNetworkRunning || NetworkService.isNetworkv6Running
-          Builtins.y2milestone("Save network configuration")
-          WFM.CallFunction("save_network")
-          ModulesConf.RunDepmod(false)
-        end
+        Builtins.y2milestone("Save network configuration")
+        WFM.CallFunction("save_network")
+        # false == don't force
+        ModulesConf.RunDepmod(false)
       else
         Builtins.y2error("unknown function: %1", @func)
         @ret = nil

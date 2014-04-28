@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Apr 25 13:21:52 UTC 2014 - mfilka@suse.com
+
+- bnc#872086
+  - always copy network configuration. Even if network is not
+    running during installation
+- 3.1.75 
+
+-------------------------------------------------------------------
 Fri Apr 25 08:22:06 UTC 2014 - jsrain@suse.cz
 
 - enhanced handling of release notes from media (contrary to those
