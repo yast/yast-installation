@@ -150,7 +150,6 @@ module Yast
             "storage",
             "iscsi-client",
             "kernel",
-            "cio_ignore",
             "x11",
             "proxy",
             "pkg",
@@ -188,7 +187,8 @@ module Yast
           "label" => _("Install boot manager"),
           "steps" => [
             "bootloader",
-            ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true ? "kdump" : ""
+            ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true ? "kdump" : "",
+            "cio_ignore"
           ],
           "icon"  => "yast-bootloader"
         },
