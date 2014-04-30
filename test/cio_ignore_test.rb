@@ -163,7 +163,7 @@ describe ::Installation::CIOIgnoreFinish do
           expect(Yast::Bootloader).to receive(:Write).once { true }
           expect(Yast::Bootloader).to receive(:Read).once { true }
           expect(Yast::Bootloader).to receive(:setKernelParam).once.
-            with("DEFAULT", "cio_ignore", /ALL/).and_return(true)
+            with("DEFAULT", "cio_ignore", /all/).and_return(true)
 
           subject.run("Write")
         end
@@ -172,7 +172,7 @@ describe ::Installation::CIOIgnoreFinish do
           expect(Yast::Bootloader).to receive(:Write).never
           expect(Yast::Bootloader).to receive(:Read).once { true }
           allow(Yast::Bootloader).to receive(:setKernelParam).once.
-            with("DEFAULT", "cio_ignore", /ALL/).and_return(false)
+            with("DEFAULT", "cio_ignore", /all/).and_return(false)
 
           expect{subject.run("Write")}.to raise_error(RuntimeError, /failed to write kernel parameters/)
         end
