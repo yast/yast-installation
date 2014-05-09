@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri May  9 10:44:11 UTC 2014 - jreidinger@suse.com
+
+- ensure maximum size of prep partition for ppc64 (bnc#867345)
+  ( part of patch made by dinaar@suse.com )
+- 3.1.77
+
+-------------------------------------------------------------------
 Wed Apr 30 11:01:12 UTC 2014 - jreidinger@suse.com
 
 - use correct keywords for cio ignore kernel params (bnc#874902)
