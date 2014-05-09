@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri May  9 10:15:34 UTC 2014 - jsrain@suse.cz
+
+- adjusted client to work well with add-ons (bnc#876700)
+
+-------------------------------------------------------------------
 Wed Apr 30 11:01:12 UTC 2014 - jreidinger@suse.com
 
 - use correct keywords for cio ignore kernel params (bnc#874902)
