@@ -1,7 +1,9 @@
 -------------------------------------------------------------------
 Fri May  9 10:15:34 UTC 2014 - jsrain@suse.cz
 
-- adjusted client to work well with add-ons (bnc#876700)
+- adjusted downloading release notes to work also for extensions
+  (bnc#876700)
+- 3.1.77
 
 -------------------------------------------------------------------
 Wed Apr 30 11:01:12 UTC 2014 - jreidinger@suse.com
