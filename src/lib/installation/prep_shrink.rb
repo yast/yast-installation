@@ -22,7 +22,7 @@ module Installation
       func = args.first
       param = args[1] || {}
 
-      log.debug "cio ignore finish client called with #{func} and #{param}"
+      log.debug "prep shrink finish client called with #{func} and #{param}"
 
       case func
       when "Info"
