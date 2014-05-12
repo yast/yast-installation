@@ -45,10 +45,6 @@ module Yast
 
       filename_templ = UI.TextMode ? "/RELEASE-NOTES.%1.txt" : "/RELEASE-NOTES.%1.rtf"
 
-      # installed may mean old (before upgrade) in initial stage
-      # product may not yet be selected although repo is already added
-      product_status = Stage.initial ? [:selected, :available] : [:selected, :installed]
-
       # Get proxy settings (if any)
       proxy = ""
       # proxy should be set by inst_install_inf if set via Linuxrc
@@ -74,8 +70,11 @@ module Yast
         end
       end
 
+      # installed may mean old (before upgrade) in initial stage
+      # product may not yet be selected although repo is already added
+      required_product_statuses = Stage.initial ? [:selected, :available] : [:selected, :installed]
       products = Pkg.ResolvableProperties("", :product, "").select { | product |
-        product_status.include? product["status"]
+        required_product_statuses.include? product["status"]
       }
       log.info("Products: #{products}")
       products.each do | product |
