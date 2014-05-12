@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri May  9 10:44:11 UTC 2014 - jreidinger@suse.com
+
+- ensure maximum size of prep partition for ppc64 (bnc#867345)
+  ( part of patch made by dinaar@suse.com )
+- 3.1.78
+
+-------------------------------------------------------------------
 Fri May  9 10:15:34 UTC 2014 - jsrain@suse.cz
 
 - adjusted downloading release notes to work also for extensions

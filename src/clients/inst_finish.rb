@@ -186,6 +186,7 @@ module Yast
           # progress stage
           "label" => _("Install boot manager"),
           "steps" => [
+            "prep_shrink", # ensure that prep partition is small enough for boot sector (bnc#867345)
             "bootloader",
             ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true ? "kdump" : "",
             "cio_ignore"
