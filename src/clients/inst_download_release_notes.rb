@@ -33,6 +33,8 @@ module Yast
     Yast.import "Proxy"
     Yast.import "Directory"
     Yast.import "InstData"
+    Yast.import "Stage"
+    Yast.import "GetInstArgs"
 
     include Yast::Logger
 
@@ -68,10 +70,13 @@ module Yast
         end
       end
 
-      products = Pkg.ResolvableDependencies("", :product, "").select { | product |
-        [:selected, :installed].include? product["status"]
+      # installed may mean old (before upgrade) in initial stage
+      # product may not yet be selected although repo is already added
+      required_product_statuses = Stage.initial ? [:selected, :available] : [:selected, :installed]
+      products = Pkg.ResolvableProperties("", :product, "").select { | product |
+        required_product_statuses.include? product["status"]
       }
-      log.debug("Products: #{products}")
+      log.info("Products: #{products}")
       products.each do | product |
         if InstData.downloaded_release_notes.include? product["name"]
           log.info("Release notes for #{product['name']} already downloaded, skipping...")
@@ -126,6 +131,10 @@ module Yast
 
     def main
       textdomain "installation"
+
+      if GetInstArgs.going_back
+        return :back
+      end
 
       download_release_notes
       :auto
