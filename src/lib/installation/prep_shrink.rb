@@ -60,6 +60,8 @@ module Installation
       end
     end
 
+    # 0x41 is PPC PREP Boot
+    # 0x108 is DOS PREP boot
     PREP_IDS = [0x41, 0x108]
     def need_shrink?(partition)
       PREP_IDS.include?(partition["fsid"]) &&

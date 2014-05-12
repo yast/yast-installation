@@ -198,7 +198,7 @@ describe ::Installation::PrepShrinkFinish do
           and_return({"exit" => 0, "stdout" => "", "stderr" => ""})
       end
 
-      it "do nothink for non-prep partitions" do
+      it "do nothing for non-prep partitions" do
         expect(Yast::SCR).to receive(:Execute).
           with(
             ::Installation::PrepShrinkFinish::YAST_BASH_PATH,
@@ -209,7 +209,7 @@ describe ::Installation::PrepShrinkFinish do
         subject.run("Write")
       end
 
-      it "do nothink for prep partitions small enough" do
+      it "do nothing for prep partitions small enough" do
         expect(Yast::SCR).to receive(:Execute).
           with(
             ::Installation::PrepShrinkFinish::YAST_BASH_PATH,
