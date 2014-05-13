@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue May 13 10:09:55 CEST 2014 - gs@suse.de
+
+- enable services for FCoE by calling fcoe-client finish script
+  (bnc#877352)
+- 3.1.79
+
+-------------------------------------------------------------------
 Fri May  9 10:44:11 UTC 2014 - jreidinger@suse.com
 
 - ensure maximum size of prep partition for ppc64 (bnc#867345)

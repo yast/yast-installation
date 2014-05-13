@@ -149,6 +149,7 @@ module Yast
             "desktop",
             "storage",
             "iscsi-client",
+            "fcoe-client",
             "kernel",
             "x11",
             "proxy",
