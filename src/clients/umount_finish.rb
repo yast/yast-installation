@@ -352,7 +352,7 @@ module Yast
 
       Builtins.y2milestone("Saving the current randomness state...")
 
-      service_bin = "/sbin/haveged"
+      service_bin = "/usr/sbin/haveged"
       random_path = "/dev/urandom"
       store_to = Builtins.sformat(
         "%1/var/lib/misc/random-seed",

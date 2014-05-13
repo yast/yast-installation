@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue May 13 13:51:52 UTC 2014 - jreidinger@suse.com
+
+- Fix haveged path to kill it properly (patch by Ihno) (bnc#876876)
+- 3.1.80
+
+-------------------------------------------------------------------
 Tue May 13 10:09:55 CEST 2014 - gs@suse.de
 
 - enable services for FCoE by calling fcoe-client finish script
