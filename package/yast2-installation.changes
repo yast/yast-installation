@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed May 14 11:10:05 UTC 2014 - jreidinger@suse.com
+
+- Use new bootloader API to set kernel parameters (bnc#869608)
+- 3.1.81
+
+-------------------------------------------------------------------
 Tue May 13 13:51:52 UTC 2014 - jreidinger@suse.com
 
 - Fix haveged path to kill it properly (patch by Ihno) (bnc#876876)
