@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu May 15 15:48:32 UTC 2014 - mvidner@suse.com
+
+- Fixed "undefined method" if an add-on has empty release notes URL
+  (bnc#877705)
+- 3.1.82
+
+-------------------------------------------------------------------
 Wed May 14 11:10:05 UTC 2014 - jreidinger@suse.com
 
 - Use new bootloader API to set kernel parameters (bnc#869608)
