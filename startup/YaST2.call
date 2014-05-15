@@ -139,6 +139,7 @@ function prepare_for_ssh () {
 #
 	:
         export Y2STYLE="installation_slim" 
+	export LIBGL_ALWAYS_INDIRECT=1
 	set_inst_qt_env
 }
 
