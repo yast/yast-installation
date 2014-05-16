@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri May 16 07:11:52 UTC 2014 - jsrain@suse.cz
+
+- adjusted wording when deploying image to disk (bnc#877666)
+- 3.1.82
+
+-------------------------------------------------------------------
 Wed May 14 11:10:05 UTC 2014 - jreidinger@suse.com
 
 - Use new bootloader API to set kernel parameters (bnc#869608)
