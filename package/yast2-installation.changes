@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri May 16 12:19:30 UTC 2014 - jsrain@suse.cz
+
+- reduced time-out for downloading release notes when behind
+  firewall (bnc#878265)
+- 3.1.83
+
+-------------------------------------------------------------------
 Fri May 16 07:11:52 UTC 2014 - jsrain@suse.cz
 
 - adjusted wording when deploying image to disk (bnc#877666)
