@@ -82,7 +82,7 @@ module Yast
       MarginBox(1, 0.5,
         VBox(
           Left(Label(_("Select the disk to deploy the image to."))),
-          Left(Label(_("All data on the disk will be destroyed!!!"))),
+          Left(Label(_("All data on the disk will be lost!!!"))),
           VSpacing(0.5),
           SelectionBox(Id(:disk), _("&Disk to Use"), disks_to_use)
         )
@@ -91,7 +91,7 @@ module Yast
 
     def disk_for_image_help_text
       _("Select the disk, which the image will be deployed to. " +
-        "All data on the disk will be destroyed and the disk will be " +
+        "All data on the disk will be lost and the disk will be " +
         "partitioned as defined in the image.")
     end
 
