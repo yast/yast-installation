@@ -78,6 +78,10 @@ module Yast
       }
       log.info("Products: #{products}")
       products.each do | product |
+        if InstData.stop_relnotes_download
+          log.info("Skipping release notes download due to previous download issues")
+          break
+        end
         if InstData.downloaded_release_notes.include? product["name"]
           log.info("Release notes for #{product['name']} already downloaded, skipping...")
           next
@@ -105,7 +109,7 @@ module Yast
             SCR.Read(path(".target.tmpdir")))
           # download release notes now
           cmd = Builtins.sformat(
-            "/usr/bin/curl --location --verbose --fail --max-time 300  %1 '%2' --output '%3' > '%4/%5' 2>&1",
+            "/usr/bin/curl --location --verbose --fail --max-time 300 --connect-timeout 15  %1 '%2' --output '%3' > '%4/%5' 2>&1",
             proxy,
             url,
             String.Quote(filename),
@@ -118,6 +122,10 @@ module Yast
             log.info("Release notes downloaded successfully")
             InstData.release_notes[product["name"]] = SCR.Read(path(".target.string"), filename)
             InstData.downloaded_release_notes << product["name"]
+            break
+          elsif ret == 7
+            log.info "Communication with server for release notes download failed, skipping further attempts."
+            InstData.stop_relnotes_download = true
             break
           end
         end
