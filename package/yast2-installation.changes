@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri May 16 08:37:23 UTC 2014 - mvidner@suse.com
+
+- Fixed "undefined method" if an add-on has empty release notes URL
+  (bnc#877705)
+- 3.1.83
+
+-------------------------------------------------------------------
 Fri May 16 07:11:52 UTC 2014 - jsrain@suse.cz
 
 - adjusted wording when deploying image to disk (bnc#877666)
