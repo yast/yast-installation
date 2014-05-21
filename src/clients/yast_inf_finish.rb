@@ -103,9 +103,7 @@ module Yast
           # call command
           WFM.Execute(path(".local.bash_output"), @cmd)
           if !UI.TextMode
-            Builtins.y2milestone(
-              "Printing message about loading kernel via kexec"
-            )
+            Builtins.y2milestone("Printing message about loading kernel via kexec")
             SCR.Write(
               path(".dev.tty.stderr"),
               _(
@@ -121,19 +119,6 @@ module Yast
                   "\t\t"
               )
             )
-          end
-        end
-
-        # FATE #304940: Change YaST2-Module for s390 Disk adaptors from
-        # hwconfig scheme to udev-scheme
-        if Arch.s390
-          @reipl_client = "reipl_finish"
-
-          if WFM.ClientExists(@reipl_client)
-            @changed = Convert.to_boolean(WFM.call(@reipl_client))
-            Ops.set(@linuxrc, "Root", "halt") if @changed == true
-          else
-            Builtins.y2error("No such client: %1", @reipl_client)
           end
         end
 
@@ -161,32 +146,20 @@ module Yast
 
     def LoadKexec
       # command for reading kernel_params
-      cmd = Builtins.sformat(
-        "ls '%1/kernel_params' |tr -d '\n'",
-        String.Quote(Directory.vardir)
-      )
-      Builtins.y2milestone(
-        "Checking existing file kernel_params via command %1",
-        cmd
-      )
+      cmd = Builtins.sformat("ls '%1/kernel_params' |tr -d '\n'", String.Quote(Directory.vardir))
+      Builtins.y2milestone("Checking existing file kernel_params via command %1", cmd)
 
       out = Convert.to_map(WFM.Execute(path(".local.bash_output"), cmd))
 
       cmd = Builtins.sformat("%1/kernel_params", Directory.vardir)
       # check output
       if Ops.get_string(out, "stdout", "") != cmd
-        Builtins.y2milestone(
-          "File kernel_params was not found, output: %1",
-          out
-        )
+        Builtins.y2milestone("File kernel_params was not found, output: %1", out)
         return false
       end
 
       # command for reading kernel_params
-      cmd = Builtins.sformat(
-        "cat '%1/kernel_params' |tr -d '\n'",
-        String.Quote(Directory.vardir)
-      )
+      cmd = Builtins.sformat("cat '%1/kernel_params' |tr -d '\n'", String.Quote(Directory.vardir))
       Builtins.y2milestone("Reading kernel arguments via command %1", cmd)
       # read data from /var/lib/YaST2/kernel_params
       out = Convert.to_map(WFM.Execute(path(".local.bash_output"), cmd))
@@ -199,11 +172,7 @@ module Yast
       kernel_args = Ops.get_string(out, "stdout", "")
       # check if kernel_params contains any data
       if Ops.less_than(Builtins.size(kernel_args), 2)
-        Builtins.y2error(
-          "%1/kernel_params is empty, kernel_params=%2 ",
-          Directory.vardir,
-          kernel_args
-        )
+        Builtins.y2error("%1/kernel_params is empty, kernel_params=%2 ", Directory.vardir, kernel_args)
         return false
       end
 
