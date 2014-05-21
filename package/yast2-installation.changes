@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed May 21 10:32:51 UTC 2014 - jreidinger@suse.com
+
+- do not call reipl multiple times (patch by Ihno)
+- 3.1.85
+
+-------------------------------------------------------------------
 Fri May 16 12:19:30 UTC 2014 - jsrain@suse.cz
 
 - reduced time-out for downloading release notes when behind
