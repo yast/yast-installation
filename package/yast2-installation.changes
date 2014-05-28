@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed May 28 11:00:51 CEST 2014 - aschnell@suse.de
+
+- close port 6000 during installation (bnc#879262)
+- 3.1.86
+
+-------------------------------------------------------------------
 Wed May 21 10:32:51 UTC 2014 - jreidinger@suse.com
 
 - do not call reipl multiple times (patch by Ihno)
