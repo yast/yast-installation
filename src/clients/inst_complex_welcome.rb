@@ -333,7 +333,7 @@ module Yast
         return true
       else
         UI.SetFocus(Id(:license_agreement))
-        Report.Message(_("License needs to be accepted"))
+        Report.Message(_("You must accept the license to install this product"))
         return false
       end
     end

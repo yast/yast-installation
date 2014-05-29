@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed May  7 15:32:56 UTC 2014 - lslezak@suse.cz
+
+- better error message for accepting the license (bnc#875183)
+- 3.1.87
+
+-------------------------------------------------------------------
 Wed May 28 11:00:51 CEST 2014 - aschnell@suse.de
 
 - close port 6000 during installation (bnc#879262)
