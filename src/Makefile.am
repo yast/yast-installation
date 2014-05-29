@@ -60,6 +60,7 @@ client_DATA = \
   clients/ldconfig_finish.rb \
   clients/network_finish.rb \
   clients/pre_umount_finish.rb \
+  clients/prep_shrink_finish.rb \
   clients/proxy_finish.rb \
   clients/random_finish.rb \
   clients/save_config_finish.rb \
@@ -104,9 +105,10 @@ fillup_DATA = \
 
 ylibdir = "${yast2dir}/lib/installation"
 ylib_DATA = \
+  lib/installation/cio_ignore.rb \
   lib/installation/clone_settings.rb \
   lib/installation/minimal_installation.rb \
-  lib/installation/cio_ignore.rb
+  lib/installation/prep_shrink.rb
 
 
 EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylib_DATA)

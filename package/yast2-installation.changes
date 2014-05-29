@@ -2,6 +2,71 @@
 Wed May  7 15:32:56 UTC 2014 - lslezak@suse.cz
 
 - better error message for accepting the license (bnc#875183)
+- 3.1.87
+
+-------------------------------------------------------------------
+Wed May 28 11:00:51 CEST 2014 - aschnell@suse.de
+
+- close port 6000 during installation (bnc#879262)
+- 3.1.86
+
+-------------------------------------------------------------------
+Wed May 21 10:32:51 UTC 2014 - jreidinger@suse.com
+
+- do not call reipl multiple times (patch by Ihno)
+- 3.1.85
+
+-------------------------------------------------------------------
+Fri May 16 12:19:30 UTC 2014 - jsrain@suse.cz
+
+- reduced time-out for downloading release notes when behind
+  firewall (bnc#878265)
+- 3.1.84
+
+-------------------------------------------------------------------
+Fri May 16 08:37:23 UTC 2014 - mvidner@suse.com
+
+- Fixed "undefined method" if an add-on has empty release notes URL
+  (bnc#877705)
+- 3.1.83
+
+-------------------------------------------------------------------
+Fri May 16 07:11:52 UTC 2014 - jsrain@suse.cz
+
+- adjusted wording when deploying image to disk (bnc#877666)
+- 3.1.82
+
+-------------------------------------------------------------------
+Wed May 14 11:10:05 UTC 2014 - jreidinger@suse.com
+
+- Use new bootloader API to set kernel parameters (bnc#869608)
+- 3.1.81
+
+-------------------------------------------------------------------
+Tue May 13 13:51:52 UTC 2014 - jreidinger@suse.com
+
+- Fix haveged path to kill it properly (patch by Ihno) (bnc#876876)
+- 3.1.80
+
+-------------------------------------------------------------------
+Tue May 13 10:09:55 CEST 2014 - gs@suse.de
+
+- enable services for FCoE by calling fcoe-client finish script
+  (bnc#877352)
+- 3.1.79
+
+-------------------------------------------------------------------
+Fri May  9 10:44:11 UTC 2014 - jreidinger@suse.com
+
+- ensure maximum size of prep partition for ppc64 (bnc#867345)
+  ( part of patch made by dinaar@suse.com )
+- 3.1.78
+
+-------------------------------------------------------------------
+Fri May  9 10:15:34 UTC 2014 - jsrain@suse.cz
+
+- adjusted downloading release notes to work also for extensions
+  (bnc#876700)
 - 3.1.77
 
 -------------------------------------------------------------------

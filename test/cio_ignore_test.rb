@@ -110,7 +110,7 @@ describe ::Installation::CIOIgnoreFinish do
 
         allow(Yast::Bootloader).to receive(:Write) { true }
         allow(Yast::Bootloader).to receive(:Read) { true }
-        allow(Yast::Bootloader).to receive(:setKernelParam) { true }
+        allow(Yast::Bootloader).to receive(:modify_kernel_params) { true }
 
         allow(Yast::SCR).to receive(:Execute).
           once.
@@ -162,8 +162,8 @@ describe ::Installation::CIOIgnoreFinish do
         it "adds kernel parameters IPLDEV and CONDEV to the bootloader" do
           expect(Yast::Bootloader).to receive(:Write).once { true }
           expect(Yast::Bootloader).to receive(:Read).once { true }
-          expect(Yast::Bootloader).to receive(:setKernelParam).once.
-            with("DEFAULT", "cio_ignore", /all/).and_return(true)
+          expect(Yast::Bootloader).to receive(:modify_kernel_params).once.
+            and_return(true)
 
           subject.run("Write")
         end
@@ -171,8 +171,8 @@ describe ::Installation::CIOIgnoreFinish do
         it "raises an exception if modifying kernel parameters failed" do
           expect(Yast::Bootloader).to receive(:Write).never
           expect(Yast::Bootloader).to receive(:Read).once { true }
-          allow(Yast::Bootloader).to receive(:setKernelParam).once.
-            with("DEFAULT", "cio_ignore", /all/).and_return(false)
+          allow(Yast::Bootloader).to receive(:modify_kernel_params).once.
+            and_return(false)
 
           expect{subject.run("Write")}.to raise_error(RuntimeError, /failed to write kernel parameters/)
         end

@@ -165,8 +165,7 @@ module Installation
 
       res = Yast::Bootloader.Read
 
-      # API is not much intuitive, see Yast::Bootloader.setKernelParam for details
-      res &&= Yast::Bootloader.setKernelParam("DEFAULT", "cio_ignore", "all,!ipldev,!condev")
+      res &&= Yast::Bootloader.modify_kernel_params("cio_ignore" => "all,!ipldev,!condev")
 
       res &&= Yast::Bootloader.Write
 

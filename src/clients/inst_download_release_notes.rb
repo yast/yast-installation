@@ -33,6 +33,8 @@ module Yast
     Yast.import "Proxy"
     Yast.import "Directory"
     Yast.import "InstData"
+    Yast.import "Stage"
+    Yast.import "GetInstArgs"
 
     include Yast::Logger
 
@@ -68,11 +70,18 @@ module Yast
         end
       end
 
-      products = Pkg.ResolvableDependencies("", :product, "").select { | product |
-        [:selected, :installed].include? product["status"]
+      # installed may mean old (before upgrade) in initial stage
+      # product may not yet be selected although repo is already added
+      required_product_statuses = Stage.initial ? [:selected, :available] : [:selected, :installed]
+      products = Pkg.ResolvableProperties("", :product, "").select { | product |
+        required_product_statuses.include? product["status"]
       }
-      log.debug("Products: #{products}")
+      log.info("Products: #{products}")
       products.each do | product |
+        if InstData.stop_relnotes_download
+          log.info("Skipping release notes download due to previous download issues")
+          break
+        end
         if InstData.downloaded_release_notes.include? product["name"]
           log.info("Release notes for #{product['name']} already downloaded, skipping...")
           next
@@ -81,7 +90,7 @@ module Yast
         log.debug("URL: #{url}")
         # protect from wrong urls
         if url.nil? || url.empty?
-          log.warning("Skipping invalid URL #{url} for product #{product['name']}")
+          log.warn("Skipping invalid URL #{url.inspect} for product #{product['name']}")
           next
         end
         pos = url.rindex("/")
@@ -100,7 +109,7 @@ module Yast
             SCR.Read(path(".target.tmpdir")))
           # download release notes now
           cmd = Builtins.sformat(
-            "/usr/bin/curl --location --verbose --fail --max-time 300  %1 '%2' --output '%3' > '%4/%5' 2>&1",
+            "/usr/bin/curl --location --verbose --fail --max-time 300 --connect-timeout 15  %1 '%2' --output '%3' > '%4/%5' 2>&1",
             proxy,
             url,
             String.Quote(filename),
@@ -114,6 +123,10 @@ module Yast
             InstData.release_notes[product["name"]] = SCR.Read(path(".target.string"), filename)
             InstData.downloaded_release_notes << product["name"]
             break
+          elsif ret == 7
+            log.info "Communication with server for release notes download failed, skipping further attempts."
+            InstData.stop_relnotes_download = true
+            break
           end
         end
       end
@@ -126,6 +139,10 @@ module Yast
 
     def main
       textdomain "installation"
+
+      if GetInstArgs.going_back
+        return :back
+      end
 
       download_release_notes
       :auto
