@@ -821,15 +821,29 @@ module Yast
       if !@repo_files_to_remove.empty?
         backup_dir = File.join(Installation.destdir, "var/adm/backup/upgrade/zypp/repos.d")
 
-        ::FileUtils.mkdir_p(backup_dir) unless File.exist?(backup_dir)
+        ::FileUtils.mkdir_p(backup_dir)
 
         @repo_files_to_remove.each do |repo|
           log.info "Removing repository: #{repo}"
+          repo_alias_regexp = /^\s*\[#{Regexp.escape(repo["alias"])}\]\s*$/
 
           path = File.join(Installation.destdir, "etc/zypp/repos.d", "#{repo["alias"]}.repo")
-          if File.exist?(path)
-            log.info "Moving file #{path} to #{backup_dir}"
+          # quick search: check if the <alias>.repo file exists with the repository
+          if File.exist?(path) && File.read(path).match(repo_alias_regexp)
+            log.info "Removing file #{path} (backed up in #{backup_dir})"
             ::FileUtils.mv(path, backup_dir)
+          else
+            # do a full search: find the appropriate repo file
+            repo_file = Dir[File.join(Installation.destdir, "etc/zypp/repos.d/*.repo")].find do |file|
+              File.read(file).match(repo_alias_regexp)
+            end
+
+            if repo_file
+              log.info "Removing file #{repo_file} (backed up in #{backup_dir})"
+              ::FileUtils.mv(repo_file, backup_dir)
+            else
+              log.warn "Repofile for repository #{repo["alias"]} was not found, not removing"
+            end
           end
         end
 
@@ -865,7 +879,7 @@ module Yast
 
       if !service_files.empty?
         backup_dir = File.join(Installation.destdir, "var/adm/backup/upgrade/zypp/services.d")
-        ::FileUtils.mkdir_p(backup_dir) unless File.exist?(backup_dir)
+        ::FileUtils.mkdir_p(backup_dir)
 
         log.info "Moving #{service_files} to #{backup_dir}"
         ::FileUtils.mv(service_files, backup_dir)
@@ -1200,7 +1214,7 @@ module Yast
           # Repository should be removed (not added)
         elsif Ops.get_string(one_source, "new_status", "") == @REPO_REMOVED
           if Ops.get_string(one_source, "initial_url_status", "") == @REPO_REMOVED
-            Builtins.y2milestone("Repository not loaded or already removed")
+            log.info "Repository not loaded or already removed"
             # repository is not known to pkg-bindings, remove the repo file directly
             @repo_files_to_remove << one_source
           else
