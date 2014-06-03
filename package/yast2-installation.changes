@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Tue Jun  3 13:53:15 UTC 2014 - lslezak@suse.cz
+
+- inst_upgrade_urls.rb client:
+  - remove old repositories (repo files) to avoid loading old
+    SLE11 repositories when refreshing a registered service
+    (bnc#880971)
+  - remove old services to get rid of the old NCC service
+  (Note: everything is backed up into /var/adm/backup/upgrade/zypp
+  directory)
+- 3.1.88
+
+-------------------------------------------------------------------
 Thu May 29 08:23:21 UTC 2014 - lslezak@suse.cz
 
 - better error message for accepting the license (bnc#875183)

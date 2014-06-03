@@ -18,8 +18,13 @@
 # To contact Novell about this file by physical or electronic mail, you may find
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
+
+require "fileutils"
+
 module Yast
   class InstUpgradeUrlsClient < Client
+    include Yast::Logger
+
     def main
       Yast.import "Pkg"
       Yast.import "UI"
@@ -80,6 +85,9 @@ module Yast
 
       @repos_to_remove = []
 
+      # repositories for removal (the repo files will be removed directly)
+      @repo_files_to_remove = []
+
       @repos_to_add = []
 
       @id_to_url = {}
@@ -123,6 +131,8 @@ module Yast
         Pkg.TargetInitialize(Installation.destdir)
         # bnc #429080
         Pkg.TargetLoad
+        # Note: does not work when a repository is already registered
+        # in pkg-bindings!
         Pkg.SourceStartManager(false)
 
         @current_repos_list = Pkg.SourceGetCurrent(
@@ -561,7 +571,7 @@ module Yast
       if status == @REPO_REMOVED
         status = @REPO_ENABLED
       elsif status == @REPO_ENABLED
-        status = @REPO_DISABLED 
+        status = @REPO_DISABLED
         # disabled
       else
         status = @REPO_REMOVED
@@ -808,6 +818,27 @@ module Yast
 
     # Removes selected repositories
     def IUU_RemoveRepositories
+      if !@repo_files_to_remove.empty?
+        backup_dir = File.join(Installation.destdir, "var/adm/backup/upgrade/zypp/repos.d")
+
+        ::FileUtils.mkdir_p(backup_dir) unless File.exist?(backup_dir)
+
+        @repo_files_to_remove.each do |repo|
+          log.info "Removing repository: #{repo}"
+
+          path = File.join(Installation.destdir, "etc/zypp/repos.d", "#{repo["alias"]}.repo")
+          if File.exist?(path)
+            log.info "Moving file #{path} to #{backup_dir}"
+            ::FileUtils.mv(path, backup_dir)
+          end
+        end
+
+        # force reloading the libzypp repomanager to notice the removed files
+        Pkg.TargetFinish
+        Pkg.TargetInitialize(Installation.destdir)
+        Pkg.TargetLoad
+      end
+
       return if Builtins.size(@repos_to_remove) == 0
 
       Progress.Title(_("Removing unused repositories..."))
@@ -827,6 +858,18 @@ module Yast
       end
 
       nil
+    end
+
+    def remove_services
+      service_files = Dir[File.join(Installation.destdir, "/etc/zypp/services.d/*.service")]
+
+      if !service_files.empty?
+        backup_dir = File.join(Installation.destdir, "var/adm/backup/upgrade/zypp/services.d")
+        ::FileUtils.mkdir_p(backup_dir) unless File.exist?(backup_dir)
+
+        log.info "Moving #{service_files} to #{backup_dir}"
+        ::FileUtils.mv(service_files, backup_dir)
+      end
     end
 
     def InsertCorrectMediaHandler(url, name)
@@ -1113,6 +1156,7 @@ module Yast
       @repos_to_add = []
       @id_to_url = {}
       @repos_to_add_disabled = []
+      @repo_files_to_remove = []
 
       # bnc #400823
       @do_not_remove = Ops.get(Pkg.SourceGetCurrent(false), 0, 0)
@@ -1151,16 +1195,18 @@ module Yast
               @repos_to_remove = Builtins.add(@repos_to_remove, current_medianr)
               Builtins.y2milestone("Repository to remove: %1", current_medianr)
             end
-          end 
+          end
 
           # Repository should be removed (not added)
         elsif Ops.get_string(one_source, "new_status", "") == @REPO_REMOVED
           if Ops.get_string(one_source, "initial_url_status", "") == @REPO_REMOVED
-            Builtins.y2milestone("Repository has been already removed")
+            Builtins.y2milestone("Repository not loaded or already removed")
+            # repository is not known to pkg-bindings, remove the repo file directly
+            @repo_files_to_remove << one_source
           else
             @repos_to_remove = Builtins.add(@repos_to_remove, current_medianr)
             Builtins.y2milestone("Repository to remove: %1", current_medianr)
-          end 
+          end
 
           # Repositry will be added in disabled state
           # BNC #583155
@@ -1219,6 +1265,10 @@ module Yast
       SetAddRemoveSourcesProgress()
 
       PackageCallbacks.RegisterEmptyProgressCallbacks
+
+      # (re)move old services - there is no UI for services,
+      # but we really need to get rid of the old NCC service...
+      remove_services
 
       IUU_RemoveRepositories()
 
