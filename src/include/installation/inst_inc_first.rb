@@ -85,9 +85,9 @@ module Yast
         addons_default
       )
       if show_addons
-        ProductControl.DisableModule("add-on")
-      else
         ProductControl.EnableModule("add-on")
+      else
+        ProductControl.DisableModule("add-on")
       end
       Installation.add_on_selected = addons_default
 
