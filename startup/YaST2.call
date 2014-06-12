@@ -280,17 +280,7 @@ function restore_backup () {
   # restores backup if it is available
     if [ -d /mnt/var/adm/backup/system-upgrade ]; then
         for i in /mnt/var/adm/backup/system-upgrade/*.tar.bz2; do
-            tar xvf $i -C /mnt --overwrite && rm $i
-        done
-    fi
-}
-
-#----[ restore_backup ]----#
-function clean_backup () {
-  # clean backup files
-    if [ -d /mnt/var/adm/backup/system-upgrade ]; then
-        for i in /mnt/var/adm/backup/system-upgrade/*.tar.bz2; do
-            rm $i
+            tar xvf $i -C /mnt --overwrite
         done
     fi
 }
@@ -363,7 +353,6 @@ function start_yast () {
 		# YaST ended successfully
 		#---------------------------------------------
 		log "\t$Y2_OK_MESSAGE"
-                clean_backup
 	fi
 	if [ $Y2_EXIT_CODE -eq 0 ];then
 		start_yast_and_reboot
