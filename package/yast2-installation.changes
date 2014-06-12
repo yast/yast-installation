@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jun 12 08:27:01 UTC 2014 - lslezak@suse.cz
+
+- properly enable the add-on module in the installation workflow
+- 3.1.89
+
+-------------------------------------------------------------------
 Tue Jun  3 13:53:15 UTC 2014 - lslezak@suse.cz
 
 - inst_upgrade_urls.rb client:
