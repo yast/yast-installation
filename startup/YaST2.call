@@ -275,6 +275,16 @@ function ssh_reboot_message()
 }
 
 
+#----[ restore_backup ]----#
+function restore_backup () {
+  # restores backup if it is available
+    if [ -d /mnt/var/adm/backup/system-upgrade ]; then
+        for i in /mnt/var/adm/backup/system-upgrade/*.tar.bz2; do
+            tar xvf $i -C /mnt --overwrite
+        done
+    fi
+}
+
 #----[ start_yast ]----#
 function start_yast () {
 #------------------------------------------------------
@@ -336,6 +346,7 @@ function start_yast () {
 		cat /etc/yast.inf | grep -q -i "Aborted: 1"
 		if [ $? = 0 ];then
 			log "\t$Y2_ABORT_MESSAGE"
+                        restore_backup
 		fi
 	else
 		#=============================================
