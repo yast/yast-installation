@@ -153,6 +153,9 @@ module Installation
         # blacklisted (fate#315318)
         add_boot_kernel_parameters
 
+        # store activelly used devices to not be blocked
+        store_active_devices
+
         nil
       else
         raise "Uknown action #{func} passed as first parameter"
@@ -172,6 +175,21 @@ module Installation
       if !res
         raise "failed to write kernel parameters for IPL and console device"
       end
+    end
+
+    ACTIVE_DEVICES_FILE = "/boot/zipl/active_devices.txt"
+    def store_active_devices
+      Yast.import "Installation"
+      res = Yast::SCR.Execute(YAST_BASH_PATH, "cio_ignore -L")
+      log.info "active devices: #{res}"
+
+      raise "cio_ignore -L failed with #{res["stderr"]}" if res["exit"] != 0
+      #lets select only lines that looks like device. Regexp is not perfect, but good enough
+      devices_lines = res["stdout"].lines.grep(/^(?:\h.){0,2}\h{4}.*$/)
+
+      devices = devices_lines.map(&:chomp)
+      target_file = File.join(Yast::Installation.destdir, ACTIVE_DEVICES_FILE)
+      File.write(target_file, devices.join("\n"))
     end
   end
 end

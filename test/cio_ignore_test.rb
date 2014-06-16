@@ -106,6 +106,7 @@ describe ::Installation::CIOIgnoreFinish do
 
     describe "first parameter \"Write\"" do
       before(:each) do
+        stub_const("Yast::Installation", double(:destdir => "/mnt"))
         stub_const("Yast::Bootloader", double())
 
         allow(Yast::Bootloader).to receive(:Write) { true }
@@ -113,8 +114,9 @@ describe ::Installation::CIOIgnoreFinish do
         allow(Yast::Bootloader).to receive(:modify_kernel_params) { true }
 
         allow(Yast::SCR).to receive(:Execute).
-          once.
           and_return({"exit" => 0, "stdout" => "", "stderr" => ""})
+
+        allow(File).to receive(:write)
       end
 
       describe "Device blacklisting is disabled" do
@@ -175,6 +177,42 @@ describe ::Installation::CIOIgnoreFinish do
             and_return(false)
 
           expect{subject.run("Write")}.to raise_error(RuntimeError, /failed to write kernel parameters/)
+        end
+
+        it "writes list of active devices to zipl so it is not blocked" do
+          test_output = <<-EOL
+Devices that are not ignored:
+=============================
+0.0.0160
+0.0.01c0
+0.0.0700-0.0.0702
+0.0.fc00
+          EOL
+          expect(Yast::SCR).to receive(:Execute).
+            with(
+              ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
+              "cio_ignore -L"
+            ).
+            once.
+            and_return({"exit" => 0, "stdout" => test_output, "stderr" => ""})
+
+
+          expect(File).to receive(:write).once.
+            with("/mnt/boot/zipl/active_devices.txt", /0.0.0700-0.0.0702/)
+
+          subject.run("Write")
+        end
+
+        it "raises an exception if cio_ignore -L failed" do
+          expect(Yast::SCR).to receive(:Execute).
+            with(
+              ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
+              "cio_ignore -L"
+            ).
+            once.
+            and_return({"exit" => 1, "stdout" => "", "stderr" => "FAIL"})
+
+          expect{subject.run("Write")}.to raise_error(RuntimeError, /cio_ignore -L failed/)
         end
       end
     end

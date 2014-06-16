@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Jun 16 12:33:18 UTC 2014 - jreidinger@suse.com
+
+- write list of active devices for cio_ignore ( partially written
+  by Ihno )
+- 3.1.91
+
+-------------------------------------------------------------------
 Thu Jun 12 15:20:04 UTC 2014 - jreidinger@suse.com
 
 - restore backup if yast failed during installation/upgrade
