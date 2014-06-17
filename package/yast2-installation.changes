@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jun 17 12:34:33 UTC 2014 - lslezak@suse.cz
+
+- inst_upgrade_urls.rb: set the future target distribution to not
+  ignore the SCC online repositories in libzypp (bnc#881320)
+- 3.1.92
+
+-------------------------------------------------------------------
 Mon Jun 16 12:33:18 UTC 2014 - jreidinger@suse.com
 
 - write list of active devices for cio_ignore ( partially written
