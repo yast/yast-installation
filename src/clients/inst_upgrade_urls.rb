@@ -849,7 +849,8 @@ module Yast
 
         # force reloading the libzypp repomanager to notice the removed files
         Pkg.TargetFinish
-        Pkg.TargetInitialize(Installation.destdir)
+        Pkg.TargetInitializeOptions(Installation.destdir,
+            "target_distro" => target_distribution)
         Pkg.TargetLoad
       end
 
@@ -1300,6 +1301,21 @@ module Yast
 
       :next
     end
+
+    private
+
+    # TODO FIXME: share this code better
+    def target_distribution
+      base_products = Product.FindBaseProducts
+
+      # empty target distribution disables service compatibility check in case
+      # the base product cannot be found
+      target_distro = base_products ? base_products.first["register_target"] : ""
+      log.info "Base product target distribution: #{target_distro}"
+
+      target_distro
+    end
+
   end
 end
 
