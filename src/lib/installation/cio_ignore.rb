@@ -189,6 +189,10 @@ module Installation
 
       devices = devices_lines.map(&:chomp)
       target_file = File.join(Yast::Installation.destdir, ACTIVE_DEVICES_FILE)
+
+      # make sure the file ends with a new line character
+      devices << "" unless devices.empty?
+
       File.write(target_file, devices.join("\n"))
     end
   end
