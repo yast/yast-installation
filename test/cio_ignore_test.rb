@@ -197,8 +197,11 @@ Devices that are not ignored:
             and_return({"exit" => 0, "stdout" => test_output, "stderr" => ""})
 
 
-          expect(File).to receive(:write).once.
-            with("/mnt/boot/zipl/active_devices.txt", /0.0.0700-0.0.0702/)
+          expect(File).to receive(:write).once do |file, content|
+            expect(file).to eq("/mnt/boot/zipl/active_devices.txt")
+            expect(content).to match(/0.0.0700-0.0.0702/)
+            expect(content).to end_with("\n")
+          end
 
           subject.run("Write")
         end

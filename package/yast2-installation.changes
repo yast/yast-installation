@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jun 18 11:47:26 UTC 2014 - lslezak@suse.cz
+
+- make sure the CIO ignore config file ends with a new line
+  (bnc#883198)
+- 3.1.93
+
+-------------------------------------------------------------------
 Tue Jun 17 12:34:33 UTC 2014 - lslezak@suse.cz
 
 - inst_upgrade_urls.rb: set the future target distribution to not
