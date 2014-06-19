@@ -157,7 +157,6 @@ module Yast
             # product registration step is optional
             WFM.ClientExists("scc_finish") ? "scc" : "",
             "driver_update1",
-            "random",
             # bnc #340733
             "system_settings"
           ],
