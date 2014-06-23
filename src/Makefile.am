@@ -62,7 +62,6 @@ client_DATA = \
   clients/pre_umount_finish.rb \
   clients/prep_shrink_finish.rb \
   clients/proxy_finish.rb \
-  clients/random_finish.rb \
   clients/save_config_finish.rb \
   clients/save_hw_status_finish.rb \
   clients/ssh_settings_finish.rb \
