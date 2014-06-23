@@ -139,7 +139,7 @@ module Yast
               "Directory '%1' exists, removing...",
               String.Quote(zypp_data_item)
             )
-            bashcmd = Builtins.sformat("/bin/rm -rf '%1'", zypp_data_item)
+            bashcmd = Builtins.sformat("/usr/bin/rm -rf '%1'", zypp_data_item)
             Builtins.y2milestone(
               "Result: %1",
               WFM.Execute(path(".local.bash_output"), bashcmd)

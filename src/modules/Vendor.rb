@@ -65,7 +65,7 @@ module Yast
       Builtins.y2milestone("Extracting driver update...")
 
       # clean up, just in case
-      SCR.Execute(path(".target.bash"), "/bin/rm -rf /tmp/update")
+      SCR.Execute(path(".target.bash"), "/usr/bin/rm -rf /tmp/update")
 
       # copy log file
       WFM.Execute(
@@ -182,7 +182,7 @@ module Yast
       )
 
       # remove driver update dir
-      SCR.Execute(path(".target.bash"), "/bin/rm -rf /tmp/update")
+      SCR.Execute(path(".target.bash"), "/usr/bin/rm -rf /tmp/update")
 
       nil
     end
