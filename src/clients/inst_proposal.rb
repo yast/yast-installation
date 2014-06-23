@@ -222,12 +222,10 @@ module Yast
 
           # force write, so it always write profile even if user do not want
           # to store profile after installation
-          WFM.CallFunction("clone_proposal", ["Write", "force" => true])
-          if !File.exists?("/root/autoinst.xml")
+          WFM.CallFunction("clone_proposal", ["Write", "force" => true, "target_path" => path])
+          if !File.exists?(path)
             raise _("Failed to store configuration. Details can be found in log.")
           end
-
-          WFM.Execute(path(".local.bash"), "mv -- /root/autoinst.xml '#{String.Quote(path)}'")
         when :skip, :dontskip
           if Convert.to_boolean(UI.QueryWidget(Id(:skip), :Value))
             # User doesn't want to use any of the settings
