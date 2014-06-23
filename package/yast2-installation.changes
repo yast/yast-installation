@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jun 23 16:09:32 CEST 2014 - locilka@suse.com
+
+- Changed /bin/rm path to /usr/bin/rm path (bnc#882453)
+- 3.1.96
+
+-------------------------------------------------------------------
 Mon Jun 23 13:02:27 UTC 2014 - jreidinger@suse.com
 
 - directly export autoyast profile to target file (bnc#881108)
