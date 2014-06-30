@@ -279,8 +279,8 @@ function ssh_reboot_message()
 function restore_backup () {
   # restores backup if it is available
     if [ -d /mnt/var/adm/backup/system-upgrade ]; then
-        for i in /mnt/var/adm/backup/system-upgrade/*.tar.bz2; do
-            tar xvf $i -C /mnt --overwrite
+        for i in /mnt/var/adm/backup/system-upgrade/restore-*.sh; do
+            sh $i /mnt
         done
     fi
 }
