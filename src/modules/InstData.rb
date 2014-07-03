@@ -41,10 +41,6 @@ module Yast
 
       @start_mode = nil
 
-      @offer_update = false
-
-      @have_linux = false
-
       # <-- system analysis
 
       # --> software selection
@@ -108,8 +104,6 @@ module Yast
     end
 
     publish :variable => :start_mode, :type => "string"
-    publish :variable => :offer_update, :type => "boolean"
-    publish :variable => :have_linux, :type => "boolean"
     publish :variable => :selected_desktop, :type => "string"
     publish :variable => :current_systasks_status, :type => "map <string, boolean>"
     publish :variable => :product_license_accepted, :type => "boolean"

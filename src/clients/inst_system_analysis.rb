@@ -124,10 +124,6 @@ module Yast
         WFM.CallFunction("inst_features", [])
       end
 
-      actions_todo      << _("Search for Linux partitions")
-      actions_doing     << _("Searching for Linux partitions...")
-      actions_functions << fun_ref(method(:SearchForLinuxPartitions), "boolean ()")
-
       # FATE #302980: Simplified user config during installation
       actions_todo      << _("Search for system files")
       actions_doing     << _("Searching for system files...")
@@ -136,10 +132,6 @@ module Yast
       actions_todo      << _("Initialize software manager")
       actions_doing     << _("Initializing software manager...")
       actions_functions << fun_ref(method(:InitInstallationRepositories), "boolean ()")
-
-      actions_todo      << _("Evaluate update possibility")
-      actions_doing     << _("Evaluating update possibility...")
-      actions_functions << fun_ref(method(:EvaluateUpdatePossibilities), "boolean ()")
 
       Progress.New(
         # TRANSLATORS: dialog caption
@@ -177,12 +169,6 @@ module Yast
       Progress.Finish
 
       return :abort unless @packager_initialized
-
-      Builtins.y2milestone(
-        "Have Linux: %1, Offer Update: %2",
-        InstData.have_linux,
-        InstData.offer_update
-      )
 
       :next
 
@@ -304,31 +290,6 @@ module Yast
       true
     end
 
-    def EvaluateUpdatePossibilities
-      Builtins.y2milestone("Product flags: %1", Product.flags)
-      if Product.flags == nil || Builtins.size(Product.flags) == 0
-        Builtins.y2warning("No product flags defined!")
-        InstData.offer_update = true
-      elsif Builtins.contains(Product.flags, "update") || Kernel.GetSuSEUpdate
-        InstData.offer_update = true
-      else
-        InstData.offer_update = false
-      end
-
-      true
-    end
-
-
-    def SearchForLinuxPartitions
-      # ReReadTargetMap is needed to fix bug #806454
-      Storage.ReReadTargetMap()
-      # SetPartProposalFirst is needed to fix bug #865579
-      Storage.SetPartProposalFirst(true)
-      InstData.have_linux = Storage.HaveLinuxPartitions()
-      true
-    end
-
-
     def InitInstallationRepositories
       # disable callbacks
       PackageCallbacks.RegisterEmptyProgressCallbacks
@@ -372,6 +333,11 @@ module Yast
       # FATE #120103: Import Users From Existing Partition
       # FATE #302980: Simplified user config during installation
       #	All needs to be known before configuring users
+      # ReReadTargetMap is needed to fix bug #806454
+      Storage.ReReadTargetMap()
+      # SetPartProposalFirst is needed to fix bug #865579
+      Storage.SetPartProposalFirst(true)
+
       Builtins.y2milestone("PreInstallFunctions -- start --")
       WFM.CallFunction("inst_pre_install", [])
       Builtins.y2milestone("PreInstallFunctions -- end --")
