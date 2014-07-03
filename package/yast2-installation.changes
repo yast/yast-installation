@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jul  3 09:14:53 UTC 2014 - jreidinger@suse.com
+
+- remove useless steps from system analysis because it confuse
+  users( bnc#885609)
+- 3.1.98
+
+-------------------------------------------------------------------
 Mon Jun 30 14:34:59 UTC 2014 - jreidinger@suse.cz
 
 - restore: use restore script instead of manual unpacking tarball
