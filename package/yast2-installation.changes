@@ -1,8 +1,8 @@
 -------------------------------------------------------------------
 Thu Jul  3 09:14:53 UTC 2014 - jreidinger@suse.com
 
-- remove useless steps from system analysis because it confuse
-  users( bnc#885609)
+- remove useless steps from system analysis because it confuses
+  users (bnc#885609)
 - 3.1.98
 
 -------------------------------------------------------------------
