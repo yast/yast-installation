@@ -28,6 +28,8 @@
 # Authors:
 #  Jiri Srain <jsrain@suse.cz>
 #
+require "fileutils"
+
 module Yast
   class CopyFilesFinishClient < Client
     include Yast::Logger
@@ -42,6 +44,7 @@ module Yast
       Yast.import "Linuxrc"
       Yast.import "Installation"
       Yast.import "Directory"
+      Yast.import "Mode"
       Yast.import "Packages"
       Yast.import "ProductControl"
       Yast.import "ProductProfile"
@@ -109,6 +112,17 @@ module Yast
           )
         end
 
+        # Copy multipath stuff (bnc#885628)
+        # Only in install, as update should keep its old config
+        if Mode.installation
+          multipath_config = "/etc/multipath/wwids"
+          if File.exist?(multipath_config)
+            log.info "Copying multipath blacklist '#{multipath_config}'"
+            target_path = File.join(Installation.destdir, multipath_config)
+            ::FileUtils.mkdir_p(File.dirname(target_path))
+            ::FileUtils.cp(multipath_config, target_path)
+          end
+        end
 
         # --------------------------------------------------------------
         # Copy /etc/install.inf into built system so that the
