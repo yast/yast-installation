@@ -117,7 +117,7 @@ module Yast
         if Mode.installation
           multipath_config = "/etc/multipath/wwids"
           if File.exist?(multipath_config)
-            Builtins.y2milestone("Copying multipath blacklist")
+            log.info "Copying multipath blacklist '#{multipath_config}'"
             target_path = File.join(Installation.destdir, multipath_config)
             ::FileUtils.mkdir_p(File.dirname(target_path))
             ::FileUtils.cp(multipath_config, target_path)
