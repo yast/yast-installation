@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jul 15 15:44:41 CEST 2014 - locilka@suse.com
+
+- Asking user for confirmation while aborting the installation in
+  disk activation dialog (bnc#886662)
+- 3.1.100
+
+-------------------------------------------------------------------
 Fri Jul  4 08:48:03 UTC 2014 - jreidinger@suse.com
 
 - Copy multipath blacklist to target system (bnc#885628)
