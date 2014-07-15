@@ -101,7 +101,6 @@ module Yast
           missing_part
         end
 
-
       @contents = HBox(
         HWeight(999, HStretch()),
         VBox(
@@ -116,20 +115,12 @@ module Yast
         HWeight(999, HStretch())
       )
 
-      Wizard.SetContents(
-        @caption,
-        @contents,
-        @help,
-        GetInstArgs.enable_back,
-        GetInstArgs.enable_next
-      )
-      Wizard.SetTitleIcon("disk")
-      Wizard.SetFocusToNextButton
-
-      @ret = nil
       @disks_changed = false
-      while @ret == nil
+
+      while @ret.nil?
+        show_base_dialog
         @ret = UI.UserInput
+
         case @ret
         when :dasd
           WFM.call("inst_dasd")
@@ -146,21 +137,14 @@ module Yast
         when :network
           WFM.call("inst_lan", [@argmap.merge({"skip_detection" => true})])
           @ret = :redraw
+        when :abort
+          @ret = nil if Popup.ConfirmAbort(:painless)
         end
+
         if @ret == :redraw
           @disks_changed = true
-          Wizard.SetContents(
-            @caption,
-            @contents,
-            @help,
-            GetInstArgs.enable_back,
-            GetInstArgs.enable_next
-          )
-          Wizard.SetTitleIcon("disk")
-          Wizard.SetFocusToNextButton
           @ret = nil
         end
-        RestoreButtons(GetInstArgs.enable_back, GetInstArgs.enable_next)
       end
 
       if @have_dasd && @ret == :next
@@ -185,6 +169,20 @@ module Yast
 
   private
 
+    def show_base_dialog
+      Wizard.SetContents(
+        @caption,
+        @contents,
+        @help,
+        GetInstArgs.enable_back,
+        GetInstArgs.enable_next
+      )
+
+      Wizard.SetTitleIcon("disk")
+      RestoreButtons(GetInstArgs.enable_back, GetInstArgs.enable_next)
+      Wizard.SetFocusToNextButton
+    end
+
     def button(id, title)
       HWeight(
         1,
@@ -204,16 +202,9 @@ module Yast
       Wizard.RestoreAbortButton
       Wizard.RestoreNextButton
       Wizard.RestoreBackButton
-      if enable_back
-        Wizard.EnableBackButton
-      else
-        Wizard.DisableBackButton
-      end
-      if enable_next
-        Wizard.EnableNextButton
-      else
-        Wizard.DisableNextButton
-      end
+
+      enable_back ? Wizard.EnableBackButton : Wizard.DisableBackButton
+      enable_next ? Wizard.EnableNextButton : Wizard.DisableNextButton
     end
   end
 end
