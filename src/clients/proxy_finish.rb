@@ -65,28 +65,14 @@ module Yast
         }
       elsif @func == "Write"
         if Stage.initial
-          @proxy = Convert.to_string(SCR.Read(path(".etc.install_inf.Proxy")))
-          @proxyport = Convert.to_string(
-            SCR.Read(path(".etc.install_inf.ProxyPort"))
-          )
-          @proxyproto = Convert.to_string(
-            SCR.Read(path(".etc.install_inf.ProxyProto"))
-          )
+          @proxy = Convert.to_string(SCR.Read(path(".etc.install_inf.ProxyURL")))
 
-          if @proxy != nil && @proxyport != nil && @proxyproto != nil
-            @fullproxy = Ops.add(
-              Ops.add(
-                Ops.add(Ops.add(Ops.add(@proxyproto, "://"), @proxy), ":"),
-                @proxyport
-              ),
-              "/"
-            )
-
-            Builtins.y2milestone("setting proxy to %1", @fullproxy)
+          if @proxy != nil
+            Builtins.y2milestone("setting proxy to %1", @proxy)
 
             # maybe use Proxy module
-            SCR.Write(path(".sysconfig.proxy.HTTP_PROXY"), @fullproxy)
-            SCR.Write(path(".sysconfig.proxy.FTP_PROXY"), @fullproxy)
+            SCR.Write(path(".sysconfig.proxy.HTTP_PROXY"), @proxy)
+            SCR.Write(path(".sysconfig.proxy.FTP_PROXY"), @proxy)
             SCR.Write(path(".sysconfig.proxy"), nil)
           end
         end
