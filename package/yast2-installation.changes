@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jul 16 09:15:10 UTC 2014 - jsrain@suse.cz
+
+- retranslate release notes button when going back in workflow
+  (bnc#886660)
+- 3.1.101
+
+-------------------------------------------------------------------
 Tue Jul 15 15:44:41 CEST 2014 - locilka@suse.com
 
 - Asking user for confirmation while aborting the installation in
