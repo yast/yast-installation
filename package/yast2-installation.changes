@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jul 17 10:58:06 CEST 2014 - snwint@suse.de
+
+- linuxrc already provides proxy settings in URL form - so use it
+- 3.1.101
+
+-------------------------------------------------------------------
 Tue Jul 15 15:44:41 CEST 2014 - locilka@suse.com
 
 - Asking user for confirmation while aborting the installation in
