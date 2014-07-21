@@ -7,6 +7,9 @@ ConditionPathExists=/var/lib/YaST2/runme_at_boot
 [Service]
 Type=oneshot
 Environment=SYSTEMCTL_OPTIONS=--ignore-dependencies TERM=linux
+# Workaround of bug in plymouth --> using deactivate option
+# in second boot stage in order to start ncurses yast correctly
+# (bnc#886488)
 ExecStartPre=-/usr/bin/plymouth deactivate --hide-splash
 ExecStart=/usr/lib/YaST2/startup/YaST2.Second-Stage
 RemainAfterExit=yes
