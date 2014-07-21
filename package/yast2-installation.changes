@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Mon Jul 21 12:10:43 CEST 2014 - schubi@suse.de
+
+- taking display-manager.service instead of xdm.service in the
+  second boot stage (bnc#886654, 884447)
+- Workaround of bug in plymouth --> using deactivate option
+  in second boot stage in order to start ncurses yast correctly
+  (bnc#886488)
+- 3.1.102
+
+-------------------------------------------------------------------
 Wed Jul 16 09:15:10 UTC 2014 - jsrain@suse.cz
 
 - retranslate release notes button when going back in workflow
