@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jul 22 08:13:41 CEST 2014 - snwint@suse.de
+
+- linuxrc already provides proxy settings in URL form - so use it
+- 3.1.103
+
+-------------------------------------------------------------------
 Mon Jul 21 12:10:43 CEST 2014 - schubi@suse.de
 
 - taking display-manager.service instead of xdm.service in the

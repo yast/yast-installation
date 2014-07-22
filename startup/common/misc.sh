@@ -22,15 +22,9 @@ function set_proxy() {
 # If Proxy: is set in install.inf export the env
 # variables for http_proxy and ftp_proxy
 # ---
-	if [ -f /etc/install.inf ];then
-	if grep -qs '^Proxy:.*' /etc/install.inf ; then
-		Proxy=$(awk ' /^Proxy:/ { print $2 }' < /etc/install.inf)
-		ProxyPort=$(awk ' /^ProxyPort:/ { print $2 }' < /etc/install.inf)
-		ProxyProto=$(awk ' /^ProxyProto:/ { print $2 }' < /etc/install.inf)
-		FullProxy="${ProxyProto}://${Proxy}:${ProxyPort}/"
-		export http_proxy=$FullProxy
-		export ftp_proxy=$FullProxy
-	fi
+	if [ "$ProxyURL" ] ; then
+		export http_proxy="$ProxyURL"
+		export ftp_proxy="$ProxyURL"
 	fi
 }
 
