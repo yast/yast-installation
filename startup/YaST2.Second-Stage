@@ -96,14 +96,7 @@ done
 LOG_PREFIX="Stage [2]"
 log "YaST2 startup level (2)..."
 log "=========================="
-IFS_SAVE=$IFS
-IFS="
-"
-for i in `export`;do
-	i=${i//Password*/Password=\"<your-password>\"}
-	log "\t$i"
-done
-IFS=$IFS_SAVE
+log_export
 
 #=============================================
 # 1.6) call preSecondStage hook scripts...
