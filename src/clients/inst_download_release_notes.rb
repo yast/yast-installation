@@ -116,6 +116,7 @@ module Yast
             String.Quote(Directory.logdir),
             "curl_log"
           )
+          # TODO: wrap in a Popup.Feedback call, it can take long time
           ret = SCR.Execute(path(".target.bash"), cmd)
           log.info("Downloading release notes: #{cmd} returned #{ret}")
           if ret == 0
@@ -123,7 +124,10 @@ module Yast
             InstData.release_notes[product["name"]] = SCR.Read(path(".target.string"), filename)
             InstData.downloaded_release_notes << product["name"]
             break
-          elsif ret == 7
+          # exit codes (see "man curl"):
+          #  7 = Failed to connect to host.
+          # 28 = Operation timeout.
+          elsif ret == 7 || ret == 28
             log.info "Communication with server for release notes download failed, skipping further attempts."
             InstData.stop_relnotes_download = true
             break
