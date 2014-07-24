@@ -220,3 +220,17 @@ function skip_initviocons () {
 
 	grep -qw TERM /proc/cmdline && return 0 || return 1
 }
+
+function log_export()
+{
+    IFS_SAVE=$IFS
+    IFS="
+"
+    for i in `export` ; do
+	i=${i//Password=*/Password=\"<Password> (sensitive information)\"}
+	i=${i//RepoURL=*/RepoURL=\"<RepoURL (may contain sensitive information)>\"}
+	i=${i//ZyppRepoURL=*/ZyppRepoURL=\"<ZyppRepoURL (may contain sensitive information)>\"}
+	log "\t$i"
+    done
+    IFS=$IFS_SAVE
+}

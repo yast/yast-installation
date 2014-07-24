@@ -72,14 +72,7 @@ LOG_PREFIX="Stage [1]"
 rm -f /var/log/YaST2/y2start.log
 log "YaST2 startup level (1)..."
 log "=========================="
-IFS_SAVE=$IFS
-IFS="
-"
-for i in `export`;do
-	i=${i//Password*/Password=\"<your-password>\"}
-	log "\t$i"
-done
-IFS=$IFS_SAVE
+log_export
 
 #=============================================
 # 1.5) call preFirstStage hooks...
