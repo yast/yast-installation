@@ -35,6 +35,7 @@ module Yast
     Yast.import "InstData"
     Yast.import "Stage"
     Yast.import "GetInstArgs"
+    Yast.import "Wizard"
 
     include Yast::Logger
 
@@ -116,7 +117,6 @@ module Yast
             String.Quote(Directory.logdir),
             "curl_log"
           )
-          # TODO: wrap in a Popup.Feedback call, it can take long time
           ret = SCR.Execute(path(".target.bash"), cmd)
           log.info("Downloading release notes: #{cmd} returned #{ret}")
           if ret == 0
@@ -141,12 +141,21 @@ module Yast
       true
     end
 
+    # Set the UI content to show some progress.
+    # TODO FIXME: use a better title (reused existing texts because of text freeze)
+    def init_ui
+      Wizard.SetContents(_("Initializing"), Label(_("Initializing the installation...")),
+        "", false, false)
+    end
+
     def main
       textdomain "installation"
 
       if GetInstArgs.going_back
         return :back
       end
+
+      init_ui
 
       download_release_notes
       :auto
