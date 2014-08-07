@@ -35,6 +35,8 @@ require "installation/minimal_installation"
 
 module Yast
   class SaveConfigFinishClient < Client
+    include Yast::Logger
+
     def main
 
       textdomain "installation"
@@ -186,6 +188,13 @@ module Yast
             SignatureCheckDialogs.CheckSignatures
           )
           SCR.Write(path(".sysconfig.security"), nil)
+
+          # ensure we have correct ca certificates
+          if Mode.update
+            res = SCR.Execute(path(".target.bash_output"),
+              "/usr/sbin/update-ca-certificates")
+            log.info("updating ca certificates result: #{res}")
+          end
 
           Progress.NextStep
           # progress step title
