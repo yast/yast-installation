@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Aug  7 11:50:28 CEST 2014 - snwint@suse.de
+
+- use oom_score_adj instead of oom_adj (bnc #890432)
+- 3.1.108
+
+-------------------------------------------------------------------
 Thu Aug  7 08:20:36 UTC 2014 - jreidinger@suse.com
 
 - update ca certificates after upgrade (bnc#889616)
