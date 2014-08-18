@@ -196,6 +196,13 @@ module Yast
             log.info("updating ca certificates result: #{res}")
           end
 
+          # workaround missing capabilities if we use deployment from images
+          # as tarballs which is used for images for not support it (bnc#889489)
+          # do nothing if capabilities are properly set
+          res = SCR.Execute(path(".target.bash_output"),
+            "/usr/bin/chkstat --system --set")
+          log.info("updating capabilities: #{res}")
+
           Progress.NextStep
           # progress step title
           Progress.Title(_("Saving boot scripts settings..."))
