@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Aug 18 12:30:53 UTC 2014 - jreidinger@suse.com
+
+- workaround problem with missing capabilities in image deployment
+  (bnc#889489)
+- 3.1.109
+
+-------------------------------------------------------------------
 Thu Aug  7 11:50:28 CEST 2014 - snwint@suse.de
 
 - use oom_score_adj instead of oom_adj (bnc #890432)
