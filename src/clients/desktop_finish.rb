@@ -31,8 +31,6 @@
 # $Id$
 #
 
-require "installation/minimal_installation"
-
 module Yast
   class DesktopFinishClient < Client
     def main
@@ -66,14 +64,13 @@ module Yast
       Builtins.y2debug("param=%1", @param)
 
       if @func == "Info"
-        minimal_inst = ::Installation::MinimalInstallation.instance.enabled?
         return {
           "steps" => 1,
           # progress step title
           "title" => _(
             "Initializing default window manager..."
           ),
-          "when"  => minimal_inst ? [] : [:installation, :autoinst]
+          "when"  => [:installation, :autoinst]
         }
       elsif @func == "Write"
         # this detects WM and DM according to selected patterns and

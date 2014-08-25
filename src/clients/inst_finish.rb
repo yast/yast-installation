@@ -27,6 +27,9 @@
 #              Jiri Srain <jsrain@suse.de>
 #
 # $Id$
+
+require "installation/minimal_installation"
+
 module Yast
   class InstFinishClient < Client
     def main
@@ -120,63 +123,108 @@ module Yast
       Pkg.TargetLoad
       PackageCallbacks.RestorePreviousProgressCallbacks
 
+      if ::Installation::MinimalInstallation.instance.enabled?
+        copy_files_steps = [
+          "autoinst_scripts1",
+          "copy_files",
+          "copy_systemfiles",
+          # For live installer only
+          Mode.live_installation ? "live_copy_files" : "",
+          "switch_scr"
+        ]
+
+        save_config_steps = [
+          "save_config",
+          # For live installer only
+          Mode.live_installation ? "live_save_config" : "",
+          "storage",
+          "kernel",
+        ]
+
+        save_settings_steps = [
+          "yast_inf",
+          "autoinst_scripts2",
+          "installation_settings"
+        ]
+
+        install_bootloader_steps = [
+          "prep_shrink", # ensure that prep partition is small enough for boot sector (bnc#867345)
+          "bootloader"
+        ]
+      else
+        # NOT minimal configuration
+
+        copy_files_steps = [
+          "autoinst_scripts1",
+          "copy_files",
+          "copy_systemfiles",
+          "clone",
+          # For live installer only
+          Mode.live_installation ? "live_copy_files" : "",
+          "switch_scr"
+        ]
+
+        save_config_steps = [
+          "ldconfig",
+          "save_config",
+          # For live installer only
+          Mode.live_installation ? "live_save_config" : "",
+          "default_target",
+          "desktop",
+          "storage",
+          "iscsi-client",
+          "fcoe-client",
+          "kernel",
+          "x11",
+          "proxy",
+          "pkg",
+          # product registration step is optional
+          WFM.ClientExists("scc_finish") ? "scc" : "",
+          "driver_update1",
+          # bnc #340733
+          "system_settings"
+        ]
+
+        save_settings_steps = [
+          "yast_inf",
+          "network",
+          "firewall_stage1",
+          "ntp-client",
+          "ssh_settings",
+          "save_hw_status",
+          "users",
+          "autoinst_scripts2",
+          "installation_settings"
+        ]
+
+        install_bootloader_steps = [
+          "prep_shrink", # ensure that prep partition is small enough for boot sector (bnc#867345)
+          "bootloader",
+          ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true ? "kdump" : "",
+          "cio_ignore"
+        ]
+      end
+
       @stages = [
         {
           "id"    => "copy_files",
           # progress stage
           "label" => _("Copy files to installed system"),
-          "steps" => [
-            "autoinst_scripts1",
-            "copy_files",
-            "copy_systemfiles",
-            "clone",
-            # For live installer only
-            Mode.live_installation ? "live_copy_files" : "",
-            "switch_scr"
-          ],
+          "steps" => copy_files_steps,
           "icon"  => "pattern-basis"
         },
         {
           "id"    => "save_config",
           # progress stage
           "label" => _("Save configuration"),
-          "steps" => [
-            "ldconfig",
-            "save_config",
-            # For live installer only
-            Mode.live_installation ? "live_save_config" : "",
-            "default_target",
-            "desktop",
-            "storage",
-            "iscsi-client",
-            "fcoe-client",
-            "kernel",
-            "x11",
-            "proxy",
-            "pkg",
-            # product registration step is optional
-            WFM.ClientExists("scc_finish") ? "scc" : "",
-            "driver_update1",
-            # bnc #340733
-            "system_settings"
-          ],
+          "steps" => save_config_steps,
           "icon"  => "yast-desktop-select"
         },
         {
           "id"    => "save_settings",
           # progress stage
           "label" => _("Save installation settings"),
-          "steps" => [
-            "yast_inf",
-            "network",
-            "firewall_stage1",
-            "ntp-client",
-            "ssh_settings",
-            "save_hw_status",
-            "users",
-            "autoinst_scripts2",
-            "installation_settings"
-          ],
+          "steps" => save_settings_steps,
           "icon"  => "yast-network"
         },
         # bnc#860089: Save bootloader as late as possible
@@ -185,12 +233,7 @@ module Yast
           "id"    => "install_bootloader",
           # progress stage
           "label" => _("Install boot manager"),
-          "steps" => [
-            "prep_shrink", # ensure that prep partition is small enough for boot sector (bnc#867345)
-            "bootloader",
-            ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true ? "kdump" : "",
-            "cio_ignore"
-          ],
+          "steps" => install_bootloader_steps,
           "icon"  => "yast-bootloader"
         },
         {
