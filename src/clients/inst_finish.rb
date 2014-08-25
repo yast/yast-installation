@@ -128,7 +128,6 @@ module Yast
           "autoinst_scripts1",
           "copy_files",
           "copy_systemfiles",
-          "clone",
           # For live installer only
           Mode.live_installation ? "live_copy_files" : "",
           "switch_scr"
@@ -150,8 +149,7 @@ module Yast
 
         install_bootloader_steps = [
           "prep_shrink", # ensure that prep partition is small enough for boot sector (bnc#867345)
-          "bootloader",
-          "cio_ignore"
+          "bootloader"
         ]
       else
         # NOT minimal configuration
