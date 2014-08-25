@@ -31,8 +31,6 @@
 # $Id$
 #
 
-require "installation/minimal_installation"
-
 module Yast
   class SaveHwStatusFinishClient < Client
     def main
@@ -63,12 +61,11 @@ module Yast
       Builtins.y2debug("param=%1", @param)
 
       if @func == "Info"
-        minimal_inst = ::Installation::MinimalInstallation.instance.enabled?
         return {
           "steps" => 1,
           # progress step title
           "title" => _("Saving hardware configuration..."),
-          "when"  => minimal_inst ? [] : [:installation, :update, :autoinst]
+          "when"  => [:installation, :update, :autoinst]
         }
       elsif @func == "Write"
         # Package yast2-printer needs to be installed
