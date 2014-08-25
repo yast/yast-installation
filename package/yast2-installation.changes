@@ -3,7 +3,7 @@ Mon Aug 25 09:15:13 CEST 2014 - schubi@suse.de
 
 - Autoyast
   -- Disabling second installation stage via autoyast
-     conifguration "second_stage".
+     configuration "second_stage".
   -- Centralized minimal configuration and disabling more
      configuration steps like X11, user, default_desktop,...
   -- bnc#886464 and bnc#892091
