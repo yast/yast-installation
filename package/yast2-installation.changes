@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Aug 27 15:39:52 CEST 2014 - locilka@suse.com
+
+- Fixed [Abort] button handling in Disks Activation dialog
+  (bnc#893281)
+- 3.1.112
+
+-------------------------------------------------------------------
 Wed Aug 27 10:33:03 CEST 2014 - schubi@suse.de
 
 - Autoyast: Second stage will not be called at all. This bug has
