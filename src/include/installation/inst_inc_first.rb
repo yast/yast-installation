@@ -175,7 +175,7 @@ module Yast
       if Stage.initial
         # the current one is 'initial'
         run_second_stage = true
-        if (Mode.autoinst || Mode.autoupgrade)
+        if (Mode.autoinst || Mode.autoupgrade) &&
            !AutoinstConfig.second_stage
           run_second_stage = false
           Builtins.y2milestone("Autoyast: second stage is disabled")
