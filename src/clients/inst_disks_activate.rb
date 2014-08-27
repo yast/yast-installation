@@ -138,7 +138,7 @@ module Yast
           WFM.call("inst_lan", [@argmap.merge({"skip_detection" => true})])
           @ret = :redraw
         when :abort
-          @ret = nil if Popup.ConfirmAbort(:painless)
+          @ret = nil unless Popup.ConfirmAbort(:painless)
         end
 
         if @ret == :redraw
