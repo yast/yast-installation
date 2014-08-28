@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Aug 28 15:04:59 CEST 2014 - locilka@suse.com
+
+- Setting data for &product; macro (used in helps) as soon as
+  the base-product repository is initialized (bnc#886608)
+- 3.1.113
+
+-------------------------------------------------------------------
 Wed Aug 27 15:39:52 CEST 2014 - locilka@suse.com
 
 - Fixed [Abort] button handling in Disks Activation dialog
