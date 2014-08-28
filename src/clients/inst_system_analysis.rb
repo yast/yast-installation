@@ -24,9 +24,9 @@
 # Summary:	Installation mode selection, system analysis
 # Authors:	Jiri Srain <jsrain@suse.cz>
 #		Lukas Ocilka <locilka@suse.cz>
-#
-# $Id$
-#
+
+require "yast"
+
 module Yast
   class InstSystemAnalysisClient < Client
     def main
@@ -290,6 +290,20 @@ module Yast
       true
     end
 
+    def download_and_show_release_notes
+      # try on-line release notes first
+      WFM.CallFunction("inst_download_release_notes")
+
+      if InstData.release_notes.empty? && load_release_notes(Packages.GetBaseSourceID)
+        # push button
+        Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
+
+        product_name = Product.name || _("Unknown Product")
+        InstData.release_notes[product_name] = @media_text
+        UI::SetReleaseNotes( { product_name => @media_text } )
+      end
+    end
+
     def InitInstallationRepositories
       # disable callbacks
       PackageCallbacks.RegisterEmptyProgressCallbacks
@@ -301,29 +315,18 @@ module Yast
       if Packages.InitFailed
         # popup message
         Popup.Message(
-          _(
-            "Failed to initialize the software repositories.\nAborting the installation."
-          )
+          _("Failed to initialize the software repositories.\nAborting the installation.")
         )
         ret = false
       else
         @packager_initialized = true
         Packages.InitializeAddOnProducts
-        #try on-line release notes first
-        WFM.CallFunction("inst_download_release_notes")
-        if InstData.release_notes.empty?
-          if load_release_notes(Packages.GetBaseSourceID)
-            # push button
-            Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
 
-            base_product = Product.FindBaseProducts.first || {}
-            product_name = base_product["name"] || _("Unknown Product")
+        # bnc#886608: Adjusting product name (for &product; macro) right after we
+        # initialize libzypp and get the base product name (intentionally not translated)
+        UI.SetProductName(Product.name  || "SUSE Linux")
 
-            InstData.release_notes[product_name] = @media_text
-            UI::SetReleaseNotes( { product_name => @media_text } )
-          end
-        end
-
+        download_and_show_release_notes
       end
 
       # reregister callbacks
