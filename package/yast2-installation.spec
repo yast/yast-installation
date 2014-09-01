@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.113
+Version:        3.1.114
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -39,6 +39,9 @@ BuildRequires:  rubygem-rspec
 
 # Linuxrc.keys
 BuildRequires: yast2 >= 3.1.41
+
+# Yast::Remote
+BuildRequires: yast2-network
 
 # clone_system client
 Requires:       autoyast2-installation >= 3.1.5
@@ -74,8 +77,10 @@ Requires:       yast2-proxy
 # Systemd default target and services
 Requires: yast2-services-manager
 
+# Yast::Remote
+Requires: yast2-network
+
 # Only in inst-sys
-# Requires:	yast2-network
 # Requires:	yast2-add-on
 # Requires:	yast2-update
 

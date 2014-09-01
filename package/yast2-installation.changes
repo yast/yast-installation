@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Aug 28 15:31:55 UTC 2014 - ancor@suse.com
+
+- Enabled remote access on systems installed using VNC (bnc#893501)
+- 3.1.114
+
+-------------------------------------------------------------------
 Thu Aug 28 15:04:59 CEST 2014 - locilka@suse.com
 
 - Setting data for &product; macro (used in helps) as soon as

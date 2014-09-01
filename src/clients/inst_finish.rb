@@ -191,6 +191,7 @@ module Yast
           "firewall_stage1",
           "ntp-client",
           "ssh_settings",
+          "remote",
           "save_hw_status",
           "users",
           "autoinst_scripts2",
