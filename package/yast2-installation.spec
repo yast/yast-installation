@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.114
+Version:        3.1.115
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -35,7 +35,7 @@ Source2:	YaST2-Firstboot.service
 
 BuildRequires:  docbook-xsl-stylesheets libxslt update-desktop-files yast2-core-devel
 BuildRequires:  yast2-devtools >= 3.1.10
-BuildRequires:  rubygem-rspec
+BuildRequires:  rubygem(rspec)
 
 # Linuxrc.keys
 BuildRequires: yast2 >= 3.1.41
