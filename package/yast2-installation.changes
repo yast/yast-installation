@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Sep  4 12:21:25 UTC 2014 - mvidner@suse.com
+
+- Use a more flexible rubygem requirement syntax (bnc#895069)
+- 3.1.115
+
+-------------------------------------------------------------------
 Wed Aug 28 15:31:55 UTC 2014 - ancor@suse.com
 
 - Enabled remote access on systems installed using VNC (bnc#893501)
