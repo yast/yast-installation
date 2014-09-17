@@ -2,7 +2,7 @@
  * File:
  *   run_df.scr
  * Summary:
- *   SCR Agent for reading the result from /bin/df -P
+ *   SCR Agent for reading the result from /bin/df -P -T
  * Access:
  *   read-only
  * Authors:
@@ -33,24 +33,29 @@
  *       "used":"3382", 
  *       "whole":"23300"], 
  *   ])
- * 
- * $Id$
  *
  * Returns a <b>list of maps</b>. Each map (list-entry) corresponds 
  * with one mount.
- * Keys for the maps are: "spec", "whole", "used", "free", "prz", "name", 
+ * Keys for the maps are: "spec", "type", "whole", "used", "free", "prz", "name",
  * "dummy"
  */
 .run.df
 
 `ag_anyagent(
   `Description (
-      (`Run("/bin/df -P 2>/dev/null")),		// real file name
+      // TODO FIXME: remove the header from df output before processing
+      // to get rid of the strange first item in the list (see the example above)
+      // (but first check the existing code, someone might rely on this...)
+      // -P = portable POSIX output format
+      // -T = additionaly print the file system type
+      (`Run("/bin/df -P -T 2>/dev/null")),		// real file name
       "\n",			// Comment
       true,			// read-only
       (`List (
 	`Tuple (
 	  `spec (`String("^\t ")),
+	  `Separator ("\t "),
+	  `type (`String("^\t ")),
 	  `Separator ("\t "),
 	  `whole (`String("^\t ")),
 	  `Separator ("\t "),
