@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Sep 17 16:04:11 UTC 2014 - lslezak@suse.cz
+
+- additionaly return file system type in ".run.df" agent result,
+  (to use it in the disk usage calculation bnc#896176)
+- 3.1.116
+
+-------------------------------------------------------------------
 Thu Sep  4 12:21:25 UTC 2014 - mvidner@suse.com
 
 - Use a more flexible rubygem requirement syntax (bnc#895069)
