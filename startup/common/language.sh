@@ -55,54 +55,26 @@ function check_run_fbiterm () {
 #----[ set_language_init ]----#
 function set_language_init () {
 #--------------------------------------------------
-# setup LANG variable to a UTF-8 locale if testutf8
-# returns an appropriate exit code. This code only
-# works in first stage (init)
+# setup LANG variable to a UTF-8 locale
+# this code only works in first stage (init)
 # ---
-	if [ ! -x /bin/testutf8 ];then
-		return
-	fi
-	if [ -n "$Console" -o -d /proc/iSeries ];then
-		if testutf8 ; [ $? = 2 ] ; then
-			# append UTF-8
-			[ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}.UTF-8"
-		else
-			# don't use UTF-8 in case of a serial console
-			[ "$LANGUAGE" ] && LANG=$LANGUAGE
-		fi
-	else
-		# append UTF-8
-		[ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}.UTF-8"
-	fi
+        # append UTF-8
+        [ "$LANGUAGE" ] && LANG="${LANGUAGE%%.*}.UTF-8"
 }
 
 #----[ set_language_cont ]----#
 function set_language_cont () {
 #--------------------------------------------------
-# setup LANG variable to a UTF-8 locale if testutf8
-# returns an appropriate exit code. This code only
-# works in second stage (continue)
+# setup LANG variable to a UTF-8 locale
+# This code only works in second stage (continue)
 # ---
         if [ -z "$RC_LANG" ]; then
                 log "\tRC_LANG not set, using en_US as default..."
                 export RC_LANG=en_US
         fi
 
-	if [ ! -x /bin/testutf8 ];then
-		return
-	fi
-	if [ -n "$Console" -o -d /proc/iSeries ];then
-		if testutf8 ; [ $? = 2 ] ; then
-			# get rid of encoding and/or modifier
-			export LANG=${RC_LANG%%[.@]*}.UTF-8
-		else
-			# don't use UTF-8 in case of a serial console
-			export LANG=$RC_LANG
-		fi
-	else
-		# get rid of encoding and/or modifier
-		export LANG=${RC_LANG%%[.@]*}.UTF-8
-	fi
+        # get rid of encoding and/or modifier
+        export LANG=${RC_LANG%%[.@]*}.UTF-8
 }
 
 #----[ start_unicode ]-----#

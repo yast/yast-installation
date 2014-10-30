@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Thu Oct 30 07:35:52 UTC 2014 - lslezak@suse.cz
+
+- properly setup locale in installation start script to display
+  texts and labels correctly in a texmode installation and also
+  to translate all buttons in graphical mode (removed "testutf8"
+  calls, it has been dropped, always set UTF-8 locale) (bnc#902411)
+- 3.1.117
+
+-------------------------------------------------------------------
 Wed Sep 17 16:04:11 UTC 2014 - lslezak@suse.cz
 
 - additionaly return file system type in ".run.df" agent result,
