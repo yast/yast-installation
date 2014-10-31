@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Oct 31 07:41:09 UTC 2014 - jreidinger@suse.com
+
+- do not write obsolete /etc/syconfig/boot RUN_PARALLEL key
+  (bnc#896207)
+- 3.1.118
+
+-------------------------------------------------------------------
 Thu Oct 30 07:35:52 UTC 2014 - lslezak@suse.cz
 
 - properly setup locale in installation start script to display
