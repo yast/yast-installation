@@ -81,11 +81,11 @@ module Yast
 
       if @func == "Info"
         if Mode.autoinst
-          steps = minimal_inst ? 3 : 7
+          steps = minimal_inst ? 3 : 6
         elsif Mode.update
-          steps = minimal_inst ? 2 : 5
+          steps = minimal_inst ? 2 : 4
         elsif Mode.installation
-          steps = minimal_inst ? 2 : 6
+          steps = minimal_inst ? 2 : 5
         else
           raise "Unknown mode"
         end
@@ -202,19 +202,6 @@ module Yast
           res = SCR.Execute(path(".target.bash_output"),
             "/usr/bin/chkstat --system --set")
           log.info("updating capabilities: #{res}")
-
-          Progress.NextStep
-          # progress step title
-          Progress.Title(_("Saving boot scripts settings..."))
-          @run_in_parallel = ProductFeatures.GetBooleanFeature(
-            "globals",
-            "run_init_scripts_in_parallel"
-          )
-          SCR.Write(
-            path(".sysconfig.boot.RUN_PARALLEL"),
-            @run_in_parallel ? "yes" : "no"
-          )
-          SCR.Write(path(".sysconfig.boot"), nil)
         end
 
         # save supportconfig
