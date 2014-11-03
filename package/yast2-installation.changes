@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Nov  3 16:19:30 CET 2014 - schubi@suse.de
+
+- AutoYaST Second Stage: Fixed a crash in package management when
+  running in Qt UI with libproxy1-config-kde4 package installed.
+  (bnc#866692)
+- 3.1.119
+
+-------------------------------------------------------------------
 Fri Oct 31 07:41:09 UTC 2014 - jreidinger@suse.com
 
 - do not write obsolete /etc/syconfig/boot RUN_PARALLEL key
