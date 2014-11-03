@@ -6,7 +6,12 @@ ConditionPathExists=/var/lib/YaST2/runme_at_boot
 
 [Service]
 Type=oneshot
-Environment=SYSTEMCTL_OPTIONS=--ignore-dependencies TERM=linux
+# PX_MODULE_PATH=""  ==>
+# Do not load libproxy modules (config_kde4 module crashes because of Qt4/Qt5
+# clash), empty path causes that the installed modules are not found. Sysconfig
+# and envvar extensions are still loaded, /etc/sysconfig/proxy values are still
+# used correctly (see bnc#866692 and bnc#866692 for details).
+Environment=SYSTEMCTL_OPTIONS=--ignore-dependencies TERM=linux PX_MODULE_PATH=""
 # Workaround of bug in plymouth --> using deactivate option
 # in second boot stage in order to start ncurses yast correctly
 # (bnc#886488)
