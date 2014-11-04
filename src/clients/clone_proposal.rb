@@ -56,7 +56,10 @@ module Yast
         when CLONE_ENABLE_LINK
           @clone_settings.enabled = true
         when CLONE_ACTION_ID
-          clone_dialog
+          @clone_settings.enabled = Popup.YesNo(
+            _("Write AutoYaST profile to /root/autoinst.xml" \
+              "at the end of installation?")
+          )
         else
           raise "Unexpected value #{chosen_id}"
         end
@@ -112,20 +115,6 @@ module Yast
       end
 
       ret << "</li></ul>\n"
-    end
-
-    def clone_dialog
-      dialog = VBox(
-        CheckBox(Id(:value_holder), _("Write AutoYaST profile to /root/autoinst.xml"),
-          @clone_settings.enabled?
-        ),
-        PushButton(Id(:ok), Label.OKButton)
-      )
-
-      UI.OpenDialog dialog
-      UI.UserInput
-      @clone_settings.enabled = UI.QueryWidget(:value_holder, :Value)
-      UI.CloseDialog
     end
   end unless defined? (CloneProposalClient) #avoid class redefinition if reevaluated
 end

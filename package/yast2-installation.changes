@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Nov  4 08:32:27 UTC 2014 - jreidinger@suse.com
+
+- Improve dialog asking if system should be cloned (bnc#900028)
+- 3.1.120
+
+-------------------------------------------------------------------
 Mon Nov  3 16:19:30 CET 2014 - schubi@suse.de
 
 - AutoYaST Second Stage: Fixed a crash in package management when
