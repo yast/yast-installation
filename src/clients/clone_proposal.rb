@@ -56,7 +56,10 @@ module Yast
         when CLONE_ENABLE_LINK
           @clone_settings.enabled = true
         when CLONE_ACTION_ID
-          @clone_settings.enabled = Popup.YesNo(_("Write AutoYaST profile to /root/autoinst.xml at the end of installation?"))
+          @clone_settings.enabled = Popup.YesNo(
+            _("Write AutoYaST profile to /root/autoinst.xml" \
+              "at the end of installation?")
+          )
         else
           raise "Unexpected value #{chosen_id}"
         end
