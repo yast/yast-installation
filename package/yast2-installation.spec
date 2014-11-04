@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.119
+Version:        3.1.120
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -53,7 +53,7 @@ Requires:	yast2 >= 3.1.43
 # Language::Set (handles downloading the translation extensions)
 Requires:	yast2-country-data >= 2.16.11
 
-# Pkg::SourceProvideDigestedFile() 
+# Pkg::SourceProvideDigestedFile()
 Conflicts:	yast2-pkg-bindings < 2.17.25
 
 # Pkg::Add/RemoveUpgradeRepo()
