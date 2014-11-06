@@ -1279,15 +1279,15 @@ module Yast
     # @param zypp_repo [Hash] an entry from @system_urls
     # @return [Hash] repo originated from the url. Nil if none.
     def equivalent_repo_for(zypp_repo)
-      @already_registered_repos.detect {|r| r["name"] == name_for(zypp_repo) }
+      @already_registered_repos.detect {|r| r["alias"] == alias_for(zypp_repo) }
     end
 
-    # Name for an zypp url record
+    # Alias for an zypp url record
     #
     # @param zypp_repo [Hash] an entry from @system_urls
-    # @return [String] valid name to reference the repository
-    def name_for(zypp_repo)
-      zypp_repo["name"] || zypp_repo["id"]
+    # @return [String] valid alias to reference the repository
+    def alias_for(zypp_repo)
+      zypp_repo["id"] || zypp_repo["baseurl"]
     end
 
     # Returns an url description based on a zypp url
@@ -1333,13 +1333,9 @@ module Yast
       end
       new_url = {
         "autorefresh"  => autorefresh,
-        "alias"        => Ops.get_string(
-          repo,
-          "id",
-          Ops.get_string(repo, "baseurl", "")
-        ),
+        "alias"        => alias_for(repo),
         "url"          => Ops.get(repo, "baseurl"),
-        "name"         => name_for(repo),
+        "name"         => (repo["name"] || repo["id"]),
         "keeppackages" => keeppackages,
         @REPO_ENABLED  => enabled,
         "initial_url_status" => @REPO_REMOVED,
