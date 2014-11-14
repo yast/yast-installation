@@ -3,7 +3,7 @@ Thu Oct 16 10:25:37 UTC 2014 - ancor@suse.com
 
 - Fixed the "previously used repositories" step to work properly
   when reached using the back button (bnc#889791)
-- 3.1.117
+- 3.1.116.1
 
 -------------------------------------------------------------------
 Wed Sep 17 16:04:11 UTC 2014 - lslezak@suse.cz
