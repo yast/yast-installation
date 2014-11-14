@@ -25,6 +25,9 @@ module Yast
   class InstUpgradeUrlsClient < Client
     include Yast::Logger
 
+    URL_KEYS = ["alias", "autorefresh", "url", "name", "keeppackages",
+                "type", "id", "initial_url_status", "new_status"]
+
     def main
       Yast.import "Pkg"
       Yast.import "UI"
@@ -78,6 +81,8 @@ module Yast
       @system_urls = []
 
       @already_registered_repos = []
+
+      @new_repos_already_in_system = false
 
       @REPO_REMOVED = "removed"
       @REPO_ENABLED = "enabled"
@@ -162,7 +167,13 @@ module Yast
       Progress.NextStage
       Progress.Finish
 
-      if @already_registered_repos == nil ||
+      # Displaying a screen which includes repos that where not originally
+      # in the system being upgraded can be quite confusing. Let's restore
+      # the partition backup and start again
+      if @new_repos_already_in_system && @ret == :back
+        log.info "Target system already poluted with new repositories"
+        @continue_processing = false
+      elsif @already_registered_repos == nil ||
           Ops.less_than(Builtins.size(@already_registered_repos), 1)
         Builtins.y2milestone("No repositories found")
         @continue_processing = false
@@ -309,27 +320,6 @@ module Yast
       nil
     end
 
-    # 'removed'	-> currently not enabled
-    # 'enabled'	-> currently added as enabled
-    # 'disabled'	-> currently added as disabled
-    def FindCurrentRepoStatus(_alias)
-      if _alias == "" || _alias == nil
-        Builtins.y2error("alias URL not defined!")
-        return @REPO_REMOVED
-      end
-
-      ret = @REPO_REMOVED
-
-      Builtins.foreach(@already_registered_repos) do |one_url|
-        if _alias == Ops.get_string(one_url, "alias", "-A-")
-          ret = Ops.get_boolean(one_url, @REPO_ENABLED, false) == true ? @REPO_ENABLED : @REPO_DISABLED
-          raise Break
-        end
-      end
-
-      ret
-    end
-
     def FindURLName(id)
       if id == "" || id == nil
         Builtins.y2error("Base URL not defined!")
@@ -414,71 +404,27 @@ module Yast
       # If some new (since 10.3 Alpha?) URLs found, use only them
       if @system_urls != nil && @system_urls != []
         Builtins.foreach(@system_urls) do |one_url_map|
-          # bnc #300901
-          enabled = nil
-          # mapping url (zypp-based) keys to keys used in pkg-bindings
-          if Ops.is_integer?(Ops.get_integer(one_url_map, @REPO_ENABLED, 0))
-            enabled = Ops.get_integer(one_url_map, @REPO_ENABLED, 0) == 1
-          elsif Ops.is_string?(Ops.get_string(one_url_map, @REPO_ENABLED, "0"))
-            enabled = Ops.get_string(one_url_map, @REPO_ENABLED, "0") == "1"
-          elsif Ops.is_boolean?(
-              Ops.get_boolean(one_url_map, @REPO_ENABLED, false)
-            )
-            enabled = Ops.get_boolean(one_url_map, @REPO_ENABLED, false)
+          # If the user has gone back and forward, some of the repositories of
+          # the previous system could be already registered for this
+          # installation
+          if repo = equivalent_repo_for(one_url_map)
+            # The installation repository is already in @system_urls. Most
+            # likely there will be also another repositories added by the
+            # installation process (not from the previous system)
+            if repo["media"] == @do_not_remove
+              @new_repos_already_in_system = true
+            else
+              # For any repository not being the installation one, send it
+              # back to the list of found urls
+              new_url_map = repo_to_url(repo)
+              unregister(repo)
+              new_url_map["initial_url_status"] = @REPO_REMOVED
+              log.info "Repository moved to offered urls: #{new_url_map['name']}"
+              @urls << new_url_map
+            end
+          else
+            @urls << zypp_repo_to_url(one_url_map)
           end
-          # bnc #387261
-          autorefresh = true
-          # mapping url (zypp-based) keys to keys used in pkg-bindings
-          if Ops.is_integer?(Ops.get_integer(one_url_map, "autorefresh", 0))
-            autorefresh = Ops.get_integer(one_url_map, "autorefresh", 0) == 1
-          elsif Ops.is_string?(Ops.get_string(one_url_map, "autorefresh", "0"))
-            autorefresh = Ops.get_string(one_url_map, "autorefresh", "0") == "1"
-          elsif Ops.is_boolean?(
-              Ops.get_boolean(one_url_map, "autorefresh", false)
-            )
-            autorefresh = Ops.get_boolean(one_url_map, "autorefresh", false)
-          end
-          keeppackages = true
-          # mapping url (zypp-based) keys to keys used in pkg-bindings
-          if Ops.is_integer?(Ops.get_integer(one_url_map, "keeppackages", 0))
-            keeppackages = Ops.get_integer(one_url_map, "keeppackages", 0) == 1
-          elsif Ops.is_string?(Ops.get_string(one_url_map, "keeppackages", "0"))
-            keeppackages = Ops.get_string(one_url_map, "keeppackages", "0") == "1"
-          elsif Ops.is_boolean?(
-              Ops.get_boolean(one_url_map, "keeppackages", false)
-            )
-            keeppackages = Ops.get_boolean(one_url_map, "keeppackages", false)
-          end
-          new_url_map = {
-            "autorefresh"  => autorefresh,
-            "alias"        => Ops.get_string(
-              one_url_map,
-              "id",
-              Ops.get_string(one_url_map, "baseurl", "")
-            ),
-            "url"          => Ops.get(one_url_map, "baseurl"),
-            "name"         => Ops.get_string(one_url_map, "name", "") == "" ?
-              Ops.get_string(one_url_map, "id", "") :
-              Ops.get_string(one_url_map, "name", ""),
-            @REPO_ENABLED  => enabled,
-            "keeppackages" => keeppackages
-          }
-          if Builtins.haskey(one_url_map, "priority")
-            Ops.set(
-              new_url_map,
-              "priority",
-              Ops.get_integer(one_url_map, "priority", 99)
-            )
-          end
-          # store the repo-type as well
-          if Ops.get_string(one_url_map, "type", "") != ""
-            Ops.set(
-              new_url_map,
-              "type",
-              Ops.get_string(one_url_map, "type", "")
-            )
-          end
-          @urls = Builtins.add(@urls, new_url_map)
         end
       end
 
@@ -495,16 +441,9 @@ module Yast
             "%1",
             Ops.get_string(one_url, "alias", "")
           )
-          Ops.set(one_url, "new_status", FindCurrentRepoStatus(url_alias))
         else
           Builtins.y2warning("No 'alias' defined: %1", one_url)
-          Ops.set(one_url, "new_status", @REPO_REMOVED)
         end
-        Ops.set(
-          one_url,
-          "initial_url_status",
-          Ops.get_string(one_url, "new_status", @REPO_REMOVED)
-        )
         deep_copy(one_url)
       end
 
@@ -1269,10 +1208,6 @@ module Yast
         one_source != @do_not_remove
       end
 
-      @repos_to_add_disabled = Builtins.filter(@repos_to_add_disabled) do |one_source|
-        one_source != Builtins.sformat("ID: %1", @do_not_remove)
-      end
-
       progress = Progress.status
 
       Progress.set(false) if Builtins.size(@repos_to_add) == 0
@@ -1316,6 +1251,113 @@ module Yast
       target_distro
     end
 
+    # Returns an url description based on a registered repo information
+    #
+    # @param repo [Hash] an entry from @already_registered_repos
+    # @return [Hash] a hash ready to be added to @urls
+    def repo_to_url(repo)
+      url = repo.select {|k,v| URL_KEYS.include?(k) }
+      status = repo["enabled"] ? @REPO_ENABLED : @REPO_DISABLED
+      url["new_status"] = status
+      url
+    end
+
+    # Removes a repo from the list of repos to use during installation
+    #
+    # @param repo [Hash] an entry from @already_registered_repos
+    def unregister(repo)
+      @already_registered_repos.delete(repo)
+      Pkg.SourceDelete(repo["media"])
+    end
+
+    # Finds a repo in @already_registered_repos representing the given zypp url
+    #
+    # Returns nil if none is found, which means that it always returns nil when
+    # running the client for the first time (no urls has been previously
+    # registered as repos).
+    #
+    # @param zypp_repo [Hash] an entry from @system_urls
+    # @return [Hash] repo originated from the url. Nil if none.
+    def equivalent_repo_for(zypp_repo)
+      @already_registered_repos.detect {|r| r["alias"] == alias_for(zypp_repo) }
+    end
+
+    # Alias for an zypp url record
+    #
+    # @param zypp_repo [Hash] an entry from @system_urls
+    # @return [String] valid alias to reference the repository
+    def alias_for(zypp_repo)
+      zypp_repo["id"] || zypp_repo["baseurl"]
+    end
+
+    # Returns an url description based on a zypp url
+    #
+    # @param repo [Hash] an entry from @system_urls
+    # @return [Hash] a hash ready to be added to @urls
+    def zypp_repo_to_url(repo)
+      # bnc #300901
+      enabled = nil
+      # mapping url (zypp-based) keys to keys used in pkg-bindings
+      if Ops.is_integer?(Ops.get_integer(repo, @REPO_ENABLED, 0))
+        enabled = Ops.get_integer(repo, @REPO_ENABLED, 0) == 1
+      elsif Ops.is_string?(Ops.get_string(repo, @REPO_ENABLED, "0"))
+        enabled = Ops.get_string(repo, @REPO_ENABLED, "0") == "1"
+      elsif Ops.is_boolean?(
+          Ops.get_boolean(repo, @REPO_ENABLED, false)
+        )
+        enabled = Ops.get_boolean(repo, @REPO_ENABLED, false)
+      end
+
+      # bnc #387261
+      autorefresh = true
+      # mapping url (zypp-based) keys to keys used in pkg-bindings
+      if Ops.is_integer?(Ops.get_integer(repo, "autorefresh", 0))
+        autorefresh = Ops.get_integer(repo, "autorefresh", 0) == 1
+      elsif Ops.is_string?(Ops.get_string(repo, "autorefresh", "0"))
+        autorefresh = Ops.get_string(repo, "autorefresh", "0") == "1"
+      elsif Ops.is_boolean?(
+          Ops.get_boolean(repo, "autorefresh", false)
+        )
+        autorefresh = Ops.get_boolean(repo, "autorefresh", false)
+      end
+      keeppackages = true
+      # mapping url (zypp-based) keys to keys used in pkg-bindings
+      if Ops.is_integer?(Ops.get_integer(repo, "keeppackages", 0))
+        keeppackages = Ops.get_integer(repo, "keeppackages", 0) == 1
+      elsif Ops.is_string?(Ops.get_string(repo, "keeppackages", "0"))
+        keeppackages = Ops.get_string(repo, "keeppackages", "0") == "1"
+      elsif Ops.is_boolean?(
+          Ops.get_boolean(repo, "keeppackages", false)
+        )
+        keeppackages = Ops.get_boolean(repo, "keeppackages", false)
+      end
+      new_url = {
+        "autorefresh"  => autorefresh,
+        "alias"        => alias_for(repo),
+        "url"          => Ops.get(repo, "baseurl"),
+        "name"         => (repo["name"] || repo["id"]),
+        "keeppackages" => keeppackages,
+        @REPO_ENABLED  => enabled,
+        "initial_url_status" => @REPO_REMOVED,
+        "new_status"   => @REPO_REMOVED
+      }
+      if Builtins.haskey(repo, "priority")
+        Ops.set(
+          new_url,
+          "priority",
+          Ops.get_integer(repo, "priority", 99)
+        )
+      end
+      # store the repo-type as well
+      if Ops.get_string(repo, "type", "") != ""
+        Ops.set(
+          new_url,
+          "type",
+          Ops.get_string(repo, "type", "")
+        )
+      end
+      new_url
+    end
   end
 end
 
