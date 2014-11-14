@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Nov 14 09:51:04 UTC 2014 - ancor@suse.com
+
+- Merging changes from 3.1.116.1 (SLE12 maintenance branch)
+- Fixed the "previously used repositories" step to work properly
+  when reached using the back button (bnc#889791)
+- 3.1.121
+
+-------------------------------------------------------------------
 Tue Nov  4 08:32:27 UTC 2014 - jreidinger@suse.com
 
 - Improve dialog asking if system should be cloned (bnc#900028)
