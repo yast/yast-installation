@@ -1,5 +1,5 @@
-= API for YaST2 installation proposal
-== Motivation
+# API for YaST2 installation proposal
+## Motivation
 After five releases, YaST2 is now smart enough to make reasonable proposals for
 (near) every installation setting, thus it is no longer necessary to ask the
 user that many questions during installation: Most users simply hit the [next]
@@ -11,17 +11,17 @@ setting, but he is no longer required to go through all the steps just to
 change some simple things. The only that (currently) really has to be queried
 is the installation language - this cannot reasonably be guessed (yet?).
 
-== API functions
+## API functions
 If any parameter is marked as "optional", it should only be specified if
 it contains a meaningful value. Do not add it with a `nil` value.
 
 It is recommended to use from yast2 Installation::ProposalClient as base class
 for new clients. This base class do automatic method dispatching.
 
-=== MakeProposal
+### MakeProposal
 Makes proposal for installation.
 
-==== Parameters
+#### Parameters
 
 * _boolean_ `force_reset` If `true`, discard anything that may be cached and
   start over from scratch. If `false`, use cached values from the last
@@ -36,7 +36,7 @@ Makes proposal for installation.
   submodules that translate any strings internally based on internal maps
   (e.g., keyboard etc.) need to take more action.
 
-==== Return Values
+#### Return Values
 `MakeProposal()` returns a map containing:
 * _list<string>_ `links` A list of additional hyperlink ids used in summaries returned by this
       section. All possible values must be included.
@@ -72,10 +72,10 @@ Makes proposal for installation.
 * _string_ `help` (optional) Helptext for this module which appears in the standard dialog
   help (particular helps for modules sorted by presentation order).
 
-=== AskUser
+### AskUser
 Runs an interactive workflow.
 
-==== Parameters
+#### Parameters
 
 * _boolean_ `has_next` Use a "next" button even if the module by itself has only one step, thus
   would normally have an "OK" button - or would rename the "next" button to something like "finish" or "accept".
@@ -84,7 +84,7 @@ Runs an interactive workflow.
   this defines the id of the hyperlink. All hyperlink IDs must be set in the map retuned by `Description`. If a user did not click
   on a proposal hyperlink, this parameter is not defined.
 
-==== Return Values
+#### Return Values
 `AskUser()` returns a map containing:
 
 * _symbol_ workflow_sequence with possible values:
@@ -104,15 +104,15 @@ Runs an interactive workflow.
 * _boolean_ language_changed (optional) This module just caused a change of the installation language. This is
   only relevant for the "language" module.
 
-=== Description
+### Description
 Return human readable titles both for the RichText (HTML) widget and for menuentries.
 
-==== Return Values
+#### Return Values
 Returns a map containing:
 
 * _string_ `rich_text_title` (Translated) human readable title for this section in
   the `RichText` widget without any HTML formatting. This will be embedded in
-  `<h3><a href="???"> ... </a></h3>` so make sure not to add any additional HTML formatting.
+  `<h3><a href#"???"> ... </a></h3>` so make sure not to add any additional HTML formatting.
   Keyboard shortcuts are not (yet?) supported, so do not include any `&` characters.
 
 * _string_ `menu_title` (Translated) human readable menuentry for this section. Must contain
@@ -129,7 +129,7 @@ at all. Use with caution - this may be confusing for the user.
 In this case, all other proposal functions must return a useful success
 value so they can be called without problems.
 
-=== Write
+### Write
 Write the proposed (and probably modified) settings to the system.
 It is up to the proposal dispatcher how it remembers the settings.
 The errors must be reported using the Report:: module to have
@@ -139,5 +139,5 @@ This Write() function is optional. The dispatcher module is required
     to allow this function to be called without returning an error value
     if it is not there.
 
-=== Return Values
+#### Return Values
 Returns true, if the settings were written successfully.
