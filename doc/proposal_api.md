@@ -15,8 +15,8 @@ is the installation language - this cannot reasonably be guessed (yet?).
 If any parameter is marked as "optional", it should only be specified if
 it contains a meaningful value. Do not add it with a `nil` value.
 
-It is recommended to use from yast2 Installation::ProposalClient as base class
-for new clients. This base class do automatic method dispatching.
+It is recommended to use Installation::ProposalClient as base class for new clients.
+This base class, implemented in yast2-yast, provides automatic method dispatching.
 
 ### MakeProposal
 Makes proposal for installation.
