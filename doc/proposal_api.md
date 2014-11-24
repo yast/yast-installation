@@ -11,6 +11,22 @@ setting, but he is no longer required to go through all the steps just to
 change some simple things. The only that (currently) really has to be queried
 is the installation language - this cannot reasonably be guessed (yet?).
 
+## Overview
+YaST2 installation modules should cooperate with the main program in a consistent API. General usage:
+
+* inst_proposal (main program) creates empty dialog with RichText widget
+
+* inst_proposal calls each sub-module in turn to make proposal
+
+* user may choose to change individual settings (i.e., clicks on a hyperlink)
+
+* inst_proposal starts that module's sub-workflow which runs independently.
+  After this, inst_proposal tells all subsequent (all?) modules to check their
+  states and return whether a change of their proposal is necessary after the
+  user interaction.
+
+* main program calls each sub-module to write the settings to the system
+
 ## API functions
 If any parameter is marked as "optional", it should only be specified if
 it contains a meaningful value. Do not add it with a `nil` value.
@@ -38,14 +54,14 @@ Makes proposal for installation.
 
 #### Return Values
 `MakeProposal()` returns a map containing:
-* _list<string>_ `links` A list of additional hyperlink ids used in summaries returned by this
+* _list\<string\>_ `links` A list of additional hyperlink ids used in summaries returned by this
       section. All possible values must be included.
 
 * _string_ `preformatted_proposal` (optional) Human readable proposal preformatted in HTML. It is possible to use the HTML:: module for such formatting.
 
 * _list_ `raw_proposal` (only used if 'preformatted_proposal' is not present in the result map). Human readable proposal, not formatted yet. The caller will format each
       list item (string) as a HTML list item `( "<li> ... </li>" )`. The proposal can contain hyperlinks with ids listed in the list `links`.
-* _string_ `warning` (optional) Warning in human readable format without HTML tags other than <br>. The warning will be embedded in appropriate HTML format specifications
+* _string_ `warning` (optional) Warning in human readable format without HTML tags other than `<br>`. The warning will be embedded in appropriate HTML format specifications
       according to 'warning_level' below.
 
 * _symbol_ `warning_level` (optional) Determines the severity and the visual display of the warning.
@@ -73,7 +89,15 @@ Makes proposal for installation.
   help (particular helps for modules sorted by presentation order).
 
 ### AskUser
-Runs an interactive workflow.
+Run an interactive workflow - let user decide upon values he might want to change.
+May contain one single dialog, a sequence of dialogs or one master dialog with
+one or more "expert" dialogs. It can be also non-interactive click on hyperlink.
+The module is responsible for controlling the workflow sequence (i.e., "next",
+"back" buttons etc.).
+
+Submodules do not provide an "abort" button to abort the entire installation. If
+the user wishes to do that, he can always go back to the main dialog (the
+installation proposal) and choose "abort" there.
 
 #### Parameters
 
@@ -112,7 +136,7 @@ Returns a map containing:
 
 * _string_ `rich_text_title` (Translated) human readable title for this section in
   the `RichText` widget without any HTML formatting. This will be embedded in
-  `<h3><a href#"???"> ... </a></h3>` so make sure not to add any additional HTML formatting.
+  `<h3><a href=#"???"> ... </a></h3>` so make sure not to add any additional HTML formatting.
   Keyboard shortcuts are not (yet?) supported, so do not include any `&` characters.
 
 * _string_ `menu_title` (Translated) human readable menuentry for this section. Must contain
