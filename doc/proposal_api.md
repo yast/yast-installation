@@ -136,7 +136,7 @@ Returns a map containing:
 
 * _string_ `rich_text_title` (Translated) human readable title for this section in
   the `RichText` widget without any HTML formatting. This will be embedded in
-  `<h3><a href=#"???"> ... </a></h3>` so make sure not to add any additional HTML formatting.
+  `<h3><a href="#???"> ... </a></h3>` so make sure not to add any additional HTML formatting.
   Keyboard shortcuts are not (yet?) supported, so do not include any `&` characters.
 
 * _string_ `menu_title` (Translated) human readable menuentry for this section. Must contain
