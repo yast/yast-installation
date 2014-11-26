@@ -125,17 +125,10 @@ module Yast
     end
 
     def InjectFile(filename)
+      command = "/bin/cp #{filename} #{Installation.destdir}#{filename}"
       Builtins.y2milestone("InjectFile: <%1>", filename)
-      WFM.Execute(
-        path(".local.bash"),
-        Ops.add(
-          Ops.add(
-            Ops.add(Ops.add("/bin/cp ", filename), " "),
-            Installation.destdir
-          ),
-          filename
-        )
-      )
+      Builtins.y2debug("Inject command: #{command}")
+      WFM.Execute(path(".local.bash"), command)
       nil 
 
       # this just needs too much memory
@@ -145,25 +138,14 @@ module Yast
 
 
     def InjectRenamedFile(dir, src_name, target_name)
-      Builtins.y2milestone(
-        "InjectRenamedFile: <%1/%2> -> <%3/%4/%5>",
-        dir,
-        src_name,
-        Installation.destdir,
-        dir,
-        target_name
-      )
-      WFM.Execute(
-        path(".local.bash"),
-        Builtins.sformat(
-          "/bin/cp %1/%2 %3/%4/%5",
-          dir,
-          src_name,
-          Installation.destdir,
-          dir,
-          target_name
-        )
-      )
+      src = "#{dir}/#{src_name}"
+      target = "#{Installation.destdir}/#{dir}/#{target_name}"
+      command = "/bin/cp #{src} #{target}"
+
+      Builtins.y2milestone("InjectRenamedFile: <%1> -> <%2>", src, target)
+      Builtins.y2debug("Inject command: #{command}")
+
+      WFM.Execute(path(".local.bash"), command)
       nil
     end
 

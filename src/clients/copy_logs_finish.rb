@@ -32,6 +32,8 @@
 #
 module Yast
   class CopyLogsFinishClient < Client
+    include Yast::Logger
+
     def main
       Yast.import "UI"
 
@@ -54,9 +56,9 @@ module Yast
         end
       end
 
-      Builtins.y2milestone("starting copy_logs_finish")
-      Builtins.y2debug("func=%1", @func)
-      Builtins.y2debug("param=%1", @param)
+      log.info "starting copy_logs_finish"
+      log.debug "func=#{@func}"
+      log.debug "param=#{@param}"
 
       if @func == "Info"
         return {
@@ -75,6 +77,8 @@ module Yast
         )
 
         Builtins.foreach(@log_files) do |file|
+          log.debug "Processing file #{file}"
+
           if file == "y2log" || Builtins.regexpmatch(file, "^y2log-[0-9]+$")
             # Prepare y2log, y2log-* for log rotation
 
@@ -98,6 +102,7 @@ module Yast
               Directory.logdir,
               target_basename
             )
+            log.debug "Compress command: #{compress_cmd}"
             WFM.Execute(path(".local.bash"), compress_cmd)
           elsif Builtins.regexpmatch(file, "^y2log-[0-9]+\\.gz$")
             target_no = Ops.add(
@@ -119,17 +124,16 @@ module Yast
           end
         end
 
-        WFM.Execute(
-          path(".local.bash"),
-          "/bin/cp /var/log/pbl.log '#{Installation.destdir}/#{Directory.logdir}/pbl-instsys.log'"
-        )
+        copy_cmd = "/bin/cp /var/log/pbl.log '#{Installation.destdir}/#{Directory.logdir}/pbl-instsys.log'"
+        log.debug "Copy command: #{copy_cmd}"
+        WFM.Execute(path(".local.bash"), copy_cmd)
       else
-        Builtins.y2error("unknown function: %1", @func)
+        log.error "unknown function: #{@func}"
         @ret = nil
       end
 
-      Builtins.y2debug("ret=%1", @ret)
-      Builtins.y2milestone("copy_logs_finish finished")
+      log.debug "ret=#{@ret}"
+      log.info "copy_logs_finish finished"
       deep_copy(@ret)
     end
   end
