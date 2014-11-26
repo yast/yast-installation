@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Nov 26 16:53:17 UTC 2014 - ancor@suse.com
+
+- Added more debug information in order to track bnc#897091
+- 3.1.122
+
+-------------------------------------------------------------------
 Fri Nov 14 09:51:04 UTC 2014 - ancor@suse.com
 
 - Merging changes from 3.1.116.1 (SLE12 maintenance branch)
