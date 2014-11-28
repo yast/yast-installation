@@ -31,6 +31,7 @@ module Installation
   class ProposalRunner
     include Yast::I18n
     include Yast::UIShortcuts
+    include Yast::Logger
 
     def self.run
       new.run
@@ -72,7 +73,6 @@ module Installation
       @id2submod = {}
       @link2submod = {}
       @have_blocker = false
-      @proposal_mode = ""
 
       # FATE #301151: Allow YaST proposals to have help texts
       @submodule_helps = {}
@@ -109,7 +109,7 @@ module Installation
       Yast::Builtins.y2milestone("Installation step #2")
       @proposal_mode = Yast::GetInstArgs.proposal
 
-      if Yast::Builtins.contains(Yast::ProductControl.GetDisabledProposals, @proposal_mode)
+      if Yast::ProductControl.GetDisabledProposals.include?(@proposal_mode)
         return :auto
       end
 
@@ -161,17 +161,17 @@ module Installation
         return :next if @input == :accept
         return :abort if @input == :cancel
 
-        Yast::Builtins.y2milestone("Proposal - UserInput: '%1'", @input)
+        log.info "Proposal - UserInput: '#{@input}'"
         richtext_busy_cursor(Id(:proposal))
 
         # check for tab
 
-        if Yast::Ops.is_integer?(@input)
-          @current_tab = Yast::Convert.to_integer(@input)
+        if @input.is_a?(::Integer)
+          @current_tab = @input
           load_matching_submodules_list
           @proposal = ""
-          Yast::Builtins.foreach(@submodules_presentation) do |mod|
-            @proposal = Yast::Ops.add(@proposal, Yast::Ops.get(@html, mod, ""))
+          @submodules_presentation.each do |mod|
+            @proposal << @html[mod] || ""
           end
           display_proposal(@proposal)
           get_submod_descriptions_and_build_menu
@@ -180,18 +180,18 @@ module Installation
         case @input
         when ::String #hyperlink
           # get module for hyperlink id
-          @submod = Yast::Ops.get_string(@id2submod, @input, "")
+          @submod = @id2submod[@input] || ""
 
           if @submod == ""
             # also try hyperlinks
-            @submod = Yast::Ops.get_string(@link2submod, @input, "")
+            @submod = @link2submod[@input] || ""
           end
 
           if @submod != ""
             # if submod is not the same as input id, provide id to the module
             @additional_info = { "has_next" => false }
 
-            Yast::Ops.set(@additional_info, "chosen_id", @input) if @submod != @input
+            @additional_info["chosen_id"] = @input if @submod != @input
 
             # Call AskUser() function.
             # This will trigger another call to make_proposal() internally.
@@ -228,16 +228,14 @@ module Installation
             raise _("Failed to store configuration. Details can be found in log.")
           end
         when :skip, :dontskip
-          if Yast::Convert.to_boolean(Yast::UI.QueryWidget(Id(:skip), :Value))
+          if Yast::UI.QueryWidget(Id(:skip), :Value)
             # User doesn't want to use any of the settings
             Yast::UI.ChangeWidget(
               Id(:proposal),
               :Value,
-              Yast::Ops.add(
-                Yast::HTML.Newlines(3),
+              Yast::HTML.Newlines(3) +
                 # message show when user has disabled the configuration
                 Yast::HTML.Para(_("Skipping configuration upon user request"))
-              )
             )
             Yast::UI.ChangeWidget(Id(:menu), :Enabled, false)
           else
@@ -265,7 +263,7 @@ module Installation
           # bugzilla #219097, #221571, yast2-update on running system
           elsif Yast::Stage.stage == "normal" && Yast::Mode.update
             if !confirmInstallation
-              Yast::Builtins.y2milestone("Update not confirmed, returning back...")
+              log.info "Update not confirmed, returning back..."
               @input = nil
             end
           end
@@ -306,9 +304,9 @@ module Installation
     def CheckAndCloseWindowsLeft
       if !Yast::UI.WidgetExists(Id(:proposal))
         Yast::Builtins.y2error(-1, "Widget `proposal is not active!!!")
-        Yast::Builtins.y2milestone("--- Current widget tree ---")
+        log.info "--- Current widget tree ---"
         Yast::UI.DumpWidgetTree
-        Yast::Builtins.y2milestone("--- Current widget tree ---")
+        log.info "--- Current widget tree ---"
       end
 
       nil
@@ -326,19 +324,17 @@ module Installation
     def submod_make_proposal(submodule, force_reset, language_changed)
       Yast::UI.BusyCursor
 
-      proposal = Yast::Convert.to_map(
-        Yast::WFM.CallFunction(
-          submodule,
-          [
-            "MakeProposal",
-            {
-              "force_reset"      => force_reset,
-              "language_changed" => language_changed
-            }
-          ]
-        )
+      proposal = Yast::WFM.CallFunction(
+        submodule,
+        [
+          "MakeProposal",
+          {
+            "force_reset"      => force_reset,
+            "language_changed" => language_changed
+          }
+        ]
       )
-      Yast::Builtins.y2debug("%1 MakeProposal() returns %2", submodule, proposal)
+      log.debug "#{submodule} MakeProposal() returns #{proposal}"
 
       # There might be some UI layers left
       # we need to close them
@@ -356,34 +352,16 @@ module Installation
     # @param  has_next		force a "next" button even if the submodule would otherwise rename it
     # @return workflow_sequence see proposal-API.txt
     #
-
     def submod_ask_user(submodule, additional_info)
-      additional_info = deep_copy(additional_info)
       # Call the AskUser() function
+      ask_user_result = Yast::WFM.CallFunction(submodule, ["AskUser", additional_info])
 
-      ask_user_result = Yast::Convert.to_map(
-        Yast::WFM.CallFunction(submodule, ["AskUser", additional_info])
-      )
-      workflow_sequence = Yast::Ops.get_symbol(
-        ask_user_result,
-        "workflow_sequence",
-        :next
-      )
-      language_changed = Yast::Ops.get_boolean(
-        ask_user_result,
-        "language_changed",
-        false
-      )
-      mode_changed = Yast::Ops.get_boolean(ask_user_result, "mode_changed", false)
-      rootpart_changed = Yast::Ops.get_boolean(
-        ask_user_result,
-        "rootpart_changed",
-        false
-      )
+      workflow_sequence = ask_user_result["workflow_sequence"] || :next
+      language_changed = ask_user_result.fetch("language_changed", false)
+      mode_changed = ask_user_result.fetch("mode_changed", false)
+      rootpart_changed = ask_user_result.fetch("rootpart_changed", false)
 
-      if workflow_sequence != :cancel && workflow_sequence != :back &&
-          workflow_sequence != :abort &&
-          workflow_sequence != :finish
+      if ![:cancel, :back, :abort, :finish].include?(workflow_sequence)
         if language_changed
           retranslate_proposal_dialog
           Yast::Pkg.SetTextLocale(Yast::Language.language)
@@ -397,7 +375,7 @@ module Installation
           build_dialog
           load_matching_submodules_list
           if !get_submod_descriptions_and_build_menu
-            Yast::Builtins.y2error("i'm in dutch")
+            log.error "i'm in dutch"
           end
         end
 
@@ -422,9 +400,7 @@ module Installation
     def submod_description(submodule)
       Yast::UI.BusyCursor
 
-      description = Yast::Convert.to_map(
-        Yast::WFM.CallFunction(submodule, ["Description", {}])
-      )
+      description = Yast::WFM.CallFunction(submodule, ["Description", {}])
 
       # There might be some UI layers left
       # we need to close them
@@ -432,42 +408,34 @@ module Installation
 
       Yast::UI.NormalCursor
 
-      deep_copy(description)
+      description
     end
 
     def SubmoduleHelp(prop_map, submod)
-      if Yast::Builtins.haskey(prop_map.value, "help")
-        use_this_help = false
-        # using tabs
-        if Yast::Builtins.haskey(@mod2tab, submod.value)
-          # visible in the current tab
-          if Yast::Ops.get(@mod2tab, submod.value, 999) == @current_tab
-            use_this_help = true
-          end
-          # not using tabs
-        else
+      return unless prop_map.value["help"]
+
+      use_this_help = false
+      # using tabs
+      if @mod2tab[submod.value]
+        # visible in the current tab
+        if @mod2tab[submod.value] == @current_tab
           use_this_help = true
         end
-
-        if use_this_help
-          Yast::Builtins.y2milestone("Submodule '%1' has it's own help", submod.value)
-          own_help = Yast::Ops.get_string(prop_map.value, "help", "")
-
-          if own_help == nil
-            Yast::Builtins.y2error("Help text cannot be 'nil'")
-          elsif own_help == ""
-            Yast::Builtins.y2milestone("Skipping empty help")
-          else
-            Yast::Ops.set(
-              @submodule_helps,
-              submod.value,
-              Yast::Ops.get_string(prop_map.value, "help", "")
-            )
-          end
-        end
+      # not using tabs
+      else
+        use_this_help = true
       end
 
-      nil
+      if use_this_help
+        log.info "Submodule '#{submod.value}' has it's own help"
+        own_help = prop_map.value["help"]
+
+        if own_help.empty?
+          log.info "Skipping empty help"
+        else
+          @submodule_helps[submod.value] = prop_map.value["help"]
+        end
+      end
     end
     def make_proposal(force_reset, language_changed)
       tab_to_switch = 999
@@ -484,46 +452,34 @@ module Installation
         ProgressBar(
           Id("pb_ip"),
           "",
-          Yast::Ops.multiply(2, Yast::Builtins.size(@submodules)),
+          2 * @submodules.size,
           0
         )
       )
       submodule_nr = 0
 
       @html = {}
-      Yast::Builtins.foreach(@submodules) do |submod|
-        prop = ""
+      @submodules.each do |submod|
+        title = @titles[no] || _("ERROR: Missing Title")
         if !Yast::Builtins.contains(@locked_modules, submod)
           heading = Yast::Builtins.issubstring(Yast::Ops.get_string(@titles, no, ""), "<a") ?
-            Yast::Ops.get_locale(@titles, no, _("ERROR: Missing Title")) :
+            title :
             Yast::HTML.Link(
-              Yast::Ops.get_locale(@titles, no, _("ERROR: Missing Title")),
+              title,
               Yast::Ops.get_string(@submod2id, submod, "")
             )
 
           # heading in proposal, in case the module doesn't create one
-          prop = Yast::Ops.add(prop, Yast::HTML.Heading(heading))
+          prop = Yast::HTML.Heading(heading)
         else
-          prop = Yast::Ops.add(
-            prop,
-            Yast::HTML.Heading(
-              Yast::Ops.get_locale(
-                # heading in proposal, in case the module doesn't create one
-                @titles,
-                no,
-                _("ERROR: Missing Title")
-              )
-            )
-          )
+          prop = Yast::HTML.Heading(title)
         end
-        # busy message
-        message = ""
         # BNC #463567
         # Submod already called
-        if Yast::Builtins.contains(@submods_already_called, submod)
+        if @submods_already_called.include?(submod)
           # busy message
-          message = _("Adapting the proposal to the current settings...") 
-          # First run
+          message = _("Adapting the proposal to the current settings...")
+        # First run
         else
           # busy message;
           message = _("Analyzing your system...")
@@ -532,8 +488,8 @@ module Installation
             submod
           )
         end
-        Yast::Ops.set(@html, submod, Yast::Ops.add(prop, Yast::HTML.Para(message)))
-        no = Yast::Ops.add(no, 1)
+        @html[submod] = prop + Yast::HTML.Para(message)
+        no += 1
       end
 
       no = 0
@@ -543,9 +499,9 @@ module Installation
 
       @submodule_helps = {}
 
-      Yast::Builtins.y2debug("Submodules list before execution: %1", @submodules)
+      log.debug "Submodules list before execution: #{@submodules}"
       Yast::Builtins.foreach(@submodules) do |submod|
-        submodule_nr = Yast::Ops.add(submodule_nr, 1)
+        submodule_nr += 1
         Yast::UI.ChangeWidget(Id("pb_ip"), :Value, submodule_nr)
         prop = ""
         if !skip_the_rest
@@ -561,14 +517,9 @@ module Installation
               )
 
             # heading in proposal, in case the module doesn't create one
-            prop = Yast::Ops.add(prop, Yast::HTML.Heading(heading))
+            prop << Yast::HTML.Heading(heading)
           else
-            prop = Yast::Ops.add(
-              prop,
-              Yast::HTML.Heading(
-                Yast::Ops.get_locale(@titles, no, _("ERROR: Missing Title"))
-              )
-            )
+            prop << Yast::HTML.Heading( @titles[no] || _("ERROR: Missing Title"))
           end
 
           prop_map = submod_make_proposal(submod, force_reset, language_changed)
@@ -581,63 +532,59 @@ module Installation
           # check if it is needed to switch to another tab
           # because of an error
           if Yast::Builtins.haskey(@mod2tab, submod)
-            Yast::Builtins.y2milestone("Mod2Tab: '%1'", Yast::Ops.get(@mod2tab, submod))
-            warn_level = Yast::Ops.get_symbol(prop_map, "warning_level", :ok)
-            warn_level = :ok if warn_level == nil
-            if Yast::Builtins.contains([:blocker, :fatal, :error], warn_level)
+            log.info "Mod2Tab: '#{@mod2tab[submod]}'"
+            warn_level = prop_map["warning_level"] || :ok
+            if [:blocker, :fatal, :error].include?(warn_level)
               # bugzilla #237291
               # always switch to more detailed tab only
               # value 999 means to keep current tab, in case of error,
               # tab must be switched (bnc #441434)
-              if Yast::Ops.greater_than(Yast::Ops.get(@mod2tab, submod, 999), tab_to_switch) ||
+              if @mod2tab[submod] > tab_to_switch ||
                   tab_to_switch == 999
-                tab_to_switch = Yast::Ops.get(@mod2tab, submod, 999)
+                tab_to_switch = @mod2tab[submod]
               end
-              if Yast::Ops.get(@mod2tab, submod, 999) == @current_tab
+              if @mod2tab[submod] == @current_tab
                 current_tab_affected = true
               end
             end
           end
 
           # update link map
-          if Yast::Builtins.haskey(prop_map, "links")
-            Yast::Builtins.foreach(Yast::Ops.get_list(prop_map, "links", [])) do |link|
-              Yast::Ops.set(@link2submod, link, submod)
+          if prop_map["links"]
+            prop_map["links"].each do |link|
+              @link2submod[link] = submod
             end
           end
         end
-        if Yast::Ops.get_boolean(prop_map, "language_changed", false) &&
-            !skip_the_rest
+        if prop_map["language_changed"] && !skip_the_rest
           skip_the_rest = true
           retranslate_proposal_dialog
           make_proposal(force_reset, true)
         end
         if !skip_the_rest
-          prop = Yast::Ops.add(prop, format_sub_proposal(prop_map))
+          prop << format_sub_proposal(prop_map)
 
-          Yast::Ops.set(@html, submod, prop)
+          @html[submod] = prop
 
           # now do the complete html
           proposal = ""
           Yast::Builtins.foreach(@submodules_presentation) do |mod|
-            proposal = Yast::Ops.add(proposal, Yast::Ops.get(@html, mod, ""))
+            proposal << @html[mod]
           end
           display_proposal(proposal)
 
           # display_proposal( prop );
-          no = Yast::Ops.add(no, 1)
+          no += 1
         end
-        if Yast::Ops.get_symbol(prop_map, "warning_level", :none) == :fatal
+        if prop_map["warning_level"] == :fatal
           skip_the_rest = true
         end
-        submodule_nr = Yast::Ops.add(submodule_nr, 1)
+        submodule_nr += 1
         Yast::UI.ChangeWidget(Id("pb_ip"), :Value, submodule_nr)
       end
 
       # FATE #301151: Allow YaST proposals to have help texts
-      if Yast::Ops.greater_than(Yast::Builtins.size(@submodule_helps), 0)
-        Yast::Wizard.SetHelpText(help_text)
-      end
+      Yast::Wizard.SetHelpText(help_text) unless @submodule_helps.empty?
 
       if @has_tab && Yast::Ops.less_than(tab_to_switch, 999) && !current_tab_affected
         # FIXME copy-paste from event loop (but for last 2 lines)
@@ -649,12 +596,12 @@ module Installation
         end
         display_proposal(proposal)
         get_submod_descriptions_and_build_menu
-        Yast::Builtins.y2milestone("Switching to tab '%1'", @current_tab)
+        log.info "Switching to tab '#{@current_tab}'"
         if Yast::UI.HasSpecialWidget(:DumbTab)
           if Yast::UI.WidgetExists(:_cwm_tab)
             Yast::UI.ChangeWidget(Id(:_cwm_tab), :CurrentItem, @current_tab)
           else
-            Yast::Builtins.y2warning("Widget with id %1 does not exist!", :_cwm_tab)
+            log.warn "Widget with id #{:_cwm_tab} does not exist!"
           end
         end
       end
@@ -670,45 +617,38 @@ module Installation
     def format_sub_proposal(prop)
       prop = deep_copy(prop)
       html = ""
-      warning = Yast::Ops.get_string(prop, "warning", "")
+      warning = prop["warning"] || ""
 
-      if warning != nil && warning != ""
-        level = Yast::Ops.get_symbol(prop, "warning_level", :warning)
+      if !warning.empty?
+        level = prop["warning_level"] || :warning
 
-        if level == :notice
+        case level
+        when :notice
           warning = Yast::HTML.Bold(warning)
-        elsif level == :warning
+        when :warning
           warning = Yast::HTML.Colorize(warning, "red")
-        elsif level == :error
+        when :error
           warning = Yast::HTML.Colorize(warning, "red")
-        elsif level == :blocker || level == :fatal
+        when :blocker, :fatal
           @have_blocker = true
           warning = Yast::HTML.Colorize(warning, "red")
         end
 
-        html = Yast::Ops.add(html, Yast::HTML.Para(warning))
+        html << Yast::HTML.Para(warning)
       end
 
-      preformatted_prop = Yast::Ops.get_string(prop, "preformatted_proposal", "")
-      preformatted_prop = "" if preformatted_prop == nil
+      preformatted_prop = prop["preformatted_proposal"] || ""
 
-      if preformatted_prop != ""
-        html = Yast::Ops.add(html, preformatted_prop)
-      else
+      if preformatted_prop.empty?
         # fallback proposal, means usually an internal error
-        raw_prop = Yast::Convert.convert(
-          Yast::Ops.get(prop, "raw_proposal") { [_("ERROR: No proposal")] },
-          :from => "any",
-          :to   => "list <locale>"
-        )
-        html = Yast::Ops.add(html, Yast::HTML.List(raw_prop))
+        raw_prop = prop["raw_proposal"] || [_("ERROR: No proposal")]
+        html << Yast::HTML.List(raw_prop)
+      else
+        html << preformatted_prop
       end
 
       html
     end
-
-
-
 
     # Call a submodule's Write() function.
     #
@@ -716,10 +656,9 @@ module Installation
     # @return success		true if Write() was successful of if there is no Write() function
     #
     def submod_write_settings(submodule)
-      result = Yast::Convert.to_map(Yast::WFM.CallFunction(submodule, ["Write", {}]))
-      result = {} if result == nil
+      result = Yast::WFM.CallFunction(submodule, ["Write", {}]) || {}
 
-      Yast::Ops.get_boolean(result, "success", true)
+      result.fetch("success", true)
     end
 
     # Call each submodule's "Write()" function to let it write its settings,
@@ -732,23 +671,18 @@ module Installation
         submod_success = submod_write_settings(submod)
         submod_success = true if submod_success == nil
         if !submod_success
-          Yast::Builtins.y2error("Write() failed for submodule %1", submod)
+          log.error "Write() failed for submodule #{submod}"
         end
         success = success && submod_success
       end
 
       if !success
-        Yast::Builtins.y2error("Write() failed for one or more submodules")
-        # Submodules handle their own error reporting
+        log.error "Write() failed for one or more submodules"
 
+        # Submodules handle their own error reporting
         # text for a message box
         Yast::Popup.TimedMessage(_("Configuration saved.\nThere were errors."), 3)
-      end 
-      # else
-      # {
-      #     // text for a message box
-      #     Popup::TimedMessage( _("Configuration saved successfully."), 3 );
-      # }
+      end
 
       nil
     end
@@ -759,12 +693,7 @@ module Installation
     # @param [Object] widget_id  ID  of the widget, e.g. `id(`proposal)
     #
     def richtext_busy_cursor(widget_id)
-      widget_id = deep_copy(widget_id)
-      if Yast::Ops.is_symbol?(widget_id)
-        Yast::UI.ChangeWidget(Yast::Convert.to_symbol(widget_id), :Enabled, false)
-      else
-        Yast::UI.ChangeWidget(Yast::Convert.to_term(widget_id), :Enabled, false)
-      end
+      Yast::UI.ChangeWidget(widget_id, :Enabled, false)
 
       nil
     end
@@ -775,17 +704,12 @@ module Installation
     # @param [Object] widget_id  ID  of the widget, e.g. `id(`proposal)
     #
     def richtext_normal_cursor(widget_id)
-      widget_id = deep_copy(widget_id)
-      if Yast::Ops.is_symbol?(widget_id)
-        Yast::UI.ChangeWidget(Yast::Convert.to_symbol(widget_id), :Enabled, true)
-      else
-        Yast::UI.ChangeWidget(Yast::Convert.to_term(widget_id), :Enabled, true)
-      end
+      Yast::UI.ChangeWidget(widget_id, :Enabled, true)
 
       nil
     end
     def retranslate_proposal_dialog
-      Yast::Builtins.y2debug("Retranslating proposal dialog")
+      log.debug "Retranslating proposal dialog"
 
       build_dialog
       Yast::ProductControl.RetranslateWizardSteps
@@ -803,7 +727,7 @@ module Installation
         @proposal_mode
       )
       if modules == nil
-        Yast::Builtins.y2error("Error loading proposals")
+        log.error "Error loading proposals"
         return :abort
       end
 
@@ -826,25 +750,23 @@ module Installation
         @proposal_mode
       )
 
-      if Yast::Builtins.size(modules) == 0
-        Yast::Builtins.y2error("No proposals available")
+      if modules.empty?
+        log.error "No proposals available"
         return :abort
       end
 
       # in normal mode we don't want to switch between installation and update
       modules = Yast::Builtins.filter(modules) do |v|
         Yast::Ops.get_string(v, 0, "") != "mode_proposal"
-      end if Yast::Mode.normal(
-      )
+      end if Yast::Mode.normal
 
       # now create the list of modules and order of modules for presentation
-      @submodules = Yast::Builtins.maplist(modules) do |mod|
-        Yast::Ops.get_string(mod, 0, "")
-      end
-      Yast::Builtins.y2milestone("Execution order: %1", @submodules)
+      @submodules = modulesmap { |mod| mod[0] || "" }
+
+      log.info "Execution order: #{@submodules}"
 
       if @has_tab
-        Yast::Builtins.y2milestone("Proposal uses tabs")
+        log.info "Proposal uses tabs"
         data = Yast::ProductControl.getProposalProperties(
           Yast::Stage.stage,
           Yast::Mode.mode,
@@ -857,49 +779,43 @@ module Installation
         )
         # All proposal file names end with _proposal
         @submodules_presentation = Yast::Builtins.maplist(@submodules_presentation) do |m|
-          m = Yast::Ops.add(m, "_proposal") if !Yast::Builtins.issubstring(m, "_proposal")
+          m += "_proposal" unless m.include?("_proposal")
           m
         end
         index = -1
         @mod2tab = {}
-        tmp_all_submods = Yast::Builtins.maplist(
-          Yast::Ops.get_list(data, "proposal_tabs", [])
-        ) do |tab|
-          index = Yast::Ops.add(index, 1)
+        tmp_all_submods = Yast::Builtins.maplist(data["proposal_tabs"] || []) do |tab|
+          index += 1
           Yast::Builtins.foreach(Yast::Ops.get_list(tab, "proposal_modules", [])) do |m|
-            m = Yast::Ops.add(m, "_proposal") if !Yast::Builtins.issubstring(m, "_proposal")
-            if Yast::Ops.less_than(index, Yast::Ops.get(@mod2tab, m, 999))
-              Yast::Ops.set(@mod2tab, m, index)
+            m += "_proposal" unless m.include?("_proposal")
+            if index < @mod2tab[m]
+              @mod2tab[m] = index
             end
           end
-          Yast::Ops.get_list(tab, "proposal_modules", [])
+          tab["proposal_modules"] || []
         end
 
         all_submods = Yast::Builtins.flatten(tmp_all_submods)
         all_submods = Yast::Builtins.maplist(all_submods) do |m|
-          m = Yast::Ops.add(m, "_proposal") if !Yast::Builtins.issubstring(m, "_proposal")
+          m += "_proposal" unless m.include?("_proposal")
           m
         end
         @display_only_modules = Yast::Builtins.filter(all_submods) do |m|
           !Yast::Builtins.contains(@submodules, m)
         end
-        @submodules = Yast::Convert.convert(
-          Yast::Builtins.merge(@submodules, @display_only_modules),
-          :from => "list",
-          :to   => "list <string>"
-        )
+        @submodules = @submodules + @display_only_modules
         p = Yast::AutoinstConfig.getProposalList
         @submodules_presentation = Yast::Builtins.filter(@submodules_presentation) do |v|
           Yast::Builtins.contains(p, v) || p == []
         end
       else
-        Yast::Builtins.y2milestone("Proposal doesn't use tabs")
+        log.info "Proposal doesn't use tabs"
         # sort modules according to presentation ordering
-        modules.sort!{|mod1,mod2| (mod1[1] || 50) <=> (mod2[1] || 50) }
+        modules.sort_by! { |mod| mod[1] || 50 }
 
         # setup the list
-        @submodules_presentation = Yast::Builtins.maplist(modules) do |mod|
-          Yast::Ops.get_string(mod, 0, "")
+        @submodules_presentation = modules.map do |mod|
+          mod[0] || ""
         end
 
         p = Yast::AutoinstConfig.getProposalList
@@ -910,8 +826,8 @@ module Installation
         end
       end
 
-      Yast::Builtins.y2milestone("Presentation order: %1", @submodules_presentation)
-      Yast::Builtins.y2milestone("Execution order: %1", @submodules)
+      log.info "Presentation order: #{@submodules_presentation}"
+      log.info "Execution order: #{@submodules}"
 
       nil
     end
@@ -922,27 +838,18 @@ module Installation
     #
     def have_network_card
       # Maybe obsolete
-
       return true if Yast::Mode.test
 
-      Yast::Ops.greater_than(
-        Yast::Builtins.size(
-          Yast::Convert.convert(
-            Yast::SCR.Read(path(".probe.netcard")),
-            :from => "any",
-            :to   => "list <map>"
-          )
-        ),
-        0
-      )
+      !Yast::SCR.Read(Yast::Path.new(".probe.netcard")).empty?
     end
+
     def build_dialog
       # headline for installation proposal
 
-      headline = Yast::Ops.get_string(@proposal_properties, "label", "")
+      headline = @proposal_properties["label"] || ""
 
 
-      Yast::Builtins.y2milestone("headline: %1", headline)
+      log.info "headline: #{headline}"
 
       if headline == ""
         # dialog headline
@@ -1025,11 +932,9 @@ module Installation
       end
       rt = RichText(
         Id(:proposal),
-        Yast::Ops.add(
-          # Initial contents of proposal subwindow while proposals are calculated
-          Yast::HTML.Newlines(3),
+        Yast::HTML.Newlines(3) +
+        # Initial contents of proposal subwindow while proposals are calculated
           Yast::HTML.Para(_("Analyzing your system..."))
-        )
       )
       data = Yast::ProductControl.getProposalProperties(
         Yast::Stage.stage,
@@ -1039,10 +944,9 @@ module Installation
       if Yast::Builtins.haskey(data, "proposal_tabs")
         @has_tab = true
         index = -1
-        tabs = Yast::Ops.get_list(data, "proposal_tabs", [])
+        tabs = data["proposal_tabs"]
         tab_ids = Yast::Builtins.maplist(tabs) do |tab|
-          index = Yast::Ops.add(index, 1)
-          index
+          index += 1
         end
         if Yast::UI.HasSpecialWidget(:DumbTab)
           panes = Yast::Builtins.maplist(tab_ids) do |t|
@@ -1114,12 +1018,9 @@ module Installation
       @submodules.each do |submod|
         description = submod_description(submod)
         if description.nil?
-          Yast::Builtins.y2milestone(
-            "Submodule %1 not available (not installed?)",
-            submod
-          )
+          log.info "Submodule #{submod} not available (not installed?)"
         else
-          if description != {}
+          if !description.empty?
             description["no"] = no
             descriptions[submod] = description
             new_submodules << submod
@@ -1127,7 +1028,7 @@ module Installation
                 description["rich_text_raw_title"] ||
                 submod
 
-            id = description["id"] || Yast::Builtins.sformat("module_%1", no)
+            id = description["id"] || "module_#{no}"
 
             @titles << title
             @submod2id[submod] = id
@@ -1139,7 +1040,7 @@ module Installation
       end
 
       @submodules = deep_copy(new_submodules) # maybe some submodules are not installed
-      Yast::Builtins.y2milestone("Execution order after rewrite: %1", @submodules)
+      log.info "Execution order after rewrite: #{@submodules}"
 
       if Yast::UI.TextMode
         # now build the menu button
@@ -1148,7 +1049,7 @@ module Installation
           next if descr.empty?
 
           no2 = descr["no"] || 0
-          id = descr["id"] || Yast::Builtins.sformat("module_%1", no2)
+          id = descr["id"] || "module_#{no2}"
           if descr.has_key? "menu_titles"
             descr["menu_titles"].each do |i|
               id2 = i["id"]
@@ -1156,7 +1057,7 @@ module Installation
               if id2 && title
                 menu_list << Item(Id(id2), Yast::Ops.add(title, "..."))
               else
-                Yast::Builtins.y2error("Invalid menu item: %1", i)
+                log.info "Invalid menu item: #{i}"
               end
             end
           else
@@ -1164,7 +1065,7 @@ module Installation
               descr["rich_text_title"] ||
               submod
 
-            menu_list << Item(Id(id), Yast::Ops.add(menu_title, "..."))
+            menu_list << Item(Id(id), menu_title + "...")
           end
         end
 
@@ -1183,24 +1084,20 @@ module Installation
     end
 
     def set_icon
-      icon = "yast-software"
-
-      if @proposal_mode == "network"
-        icon = "yast-network"
-      elsif @proposal_mode == "hardware"
-        icon = "yast-controller"
-      elsif Yast::Ops.get_string(@proposal_properties, "icon", "") != ""
-        icon = Yast::Ops.get_string(@proposal_properties, "icon", "")
-      end
-
-
-      # else if ( proposal_mode == `uml		) icon = "";
-      # else if ( proposal_mode == `dirinstall  ) icon = "";
+      icon = case @proposal_mode
+             when "network"
+               "yast-network"
+             when "hardware"
+               "yast-controller"
+             else
+               @proposal_properties["icon"] || "yast-software"
+             end
 
       Yast::Wizard.SetTitleIcon(icon)
 
       nil
     end
+
     def help_text
       help_text_string = ""
 
