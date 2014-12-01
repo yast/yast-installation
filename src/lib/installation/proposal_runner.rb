@@ -21,6 +21,8 @@
 
 require "yast"
 
+require "installation/proposal_store"
+
 module Installation
 
   # Create and display reasonable proposal for basic
@@ -58,7 +60,6 @@ module Installation
 
       # values used in defined functions
 
-      @proposal_properties = {}
       @submodules = []
       @submodules_presentation = []
       @mod2tab = {} # module -> tab it is in
@@ -69,13 +70,9 @@ module Installation
       @present_only = []
       @locked_modules = []
       @titles = []
-      @submod2id = {}
       @id2submod = {}
       @link2submod = {}
       @have_blocker = false
-
-      # FATE #301151: Allow YaST proposals to have help texts
-      @submodule_helps = {}
 
       @proposal_result = nil
 
@@ -113,11 +110,8 @@ module Installation
         return :auto
       end
 
-      @proposal_properties = Yast::ProductControl.getProposalProperties(
-        Yast::Stage.stage,
-        Yast::Mode.mode,
-        @proposal_mode
-      )
+      @store = ProposalStore.new(@proposal_mode)
+
       build_dialog
 
       #
@@ -370,7 +364,7 @@ module Installation
         end
 
         if mode_changed
-          Yast::Wizard.SetHelpText(help_text)
+          Yast::Wizard.SetHelpText(@store.help_text)
 
           build_dialog
           load_matching_submodules_list
@@ -411,32 +405,6 @@ module Installation
       description
     end
 
-    def SubmoduleHelp(prop_map, submod)
-      return unless prop_map.value["help"]
-
-      use_this_help = false
-      # using tabs
-      if @mod2tab[submod.value]
-        # visible in the current tab
-        if @mod2tab[submod.value] == @current_tab
-          use_this_help = true
-        end
-      # not using tabs
-      else
-        use_this_help = true
-      end
-
-      if use_this_help
-        log.info "Submodule '#{submod.value}' has it's own help"
-        own_help = prop_map.value["help"]
-
-        if own_help.empty?
-          log.info "Skipping empty help"
-        else
-          @submodule_helps[submod.value] = prop_map.value["help"]
-        end
-      end
-    end
     def make_proposal(force_reset, language_changed)
       tab_to_switch = 999
       current_tab_affected = false
@@ -466,7 +434,7 @@ module Installation
             title :
             Yast::HTML.Link(
               title,
-              Yast::Ops.get_string(@submod2id, submod, "")
+              @store.id_for(submod)
             )
 
           # heading in proposal, in case the module doesn't create one
@@ -497,8 +465,6 @@ module Installation
       Yast::Wizard.DisableNextButton
       Yast::UI.BusyCursor
 
-      @submodule_helps = {}
-
       log.debug "Submodules list before execution: #{@submodules}"
       Yast::Builtins.foreach(@submodules) do |submod|
         submodule_nr += 1
@@ -513,7 +479,7 @@ module Installation
               Yast::Ops.get_locale(@titles, no, _("ERROR: Missing Title")) :
               Yast::HTML.Link(
                 Yast::Ops.get_locale(@titles, no, _("ERROR: Missing Title")),
-                Yast::Ops.get_string(@submod2id, submod, "")
+                @store.id_for(submod)
               )
 
             # heading in proposal, in case the module doesn't create one
@@ -523,11 +489,6 @@ module Installation
           end
 
           prop_map = submod_make_proposal(submod, force_reset, language_changed)
-          prop_map_ref = arg_ref(prop_map)
-          submod_ref = arg_ref(submod)
-          SubmoduleHelp(prop_map_ref, submod_ref)
-          prop_map = prop_map_ref.value
-          submod = submod_ref.value
 
           # check if it is needed to switch to another tab
           # because of an error
@@ -584,7 +545,7 @@ module Installation
       end
 
       # FATE #301151: Allow YaST proposals to have help texts
-      Yast::Wizard.SetHelpText(help_text) unless @submodule_helps.empty?
+      Yast::Wizard.SetHelpText(@store.help_text)
 
       if @has_tab && Yast::Ops.less_than(tab_to_switch, 999) && !current_tab_affected
         # FIXME copy-paste from event loop (but for last 2 lines)
@@ -744,12 +705,6 @@ module Installation
         @proposal_mode
       )
 
-      @proposal_properties = Yast::ProductControl.getProposalProperties(
-        Yast::Stage.stage,
-        Yast::Mode.mode,
-        @proposal_mode
-      )
-
       if modules.empty?
         log.error "No proposals available"
         return :abort
@@ -833,33 +788,8 @@ module Installation
     end
 
 
-    # Find out if the target machine has a network card.
-    # @return true if a network card is found, false otherwise
-    #
-    def have_network_card
-      # Maybe obsolete
-      return true if Yast::Mode.test
-
-      !Yast::SCR.Read(Yast::Path.new(".probe.netcard")).empty?
-    end
-
     def build_dialog
-      # headline for installation proposal
-
-      headline = @proposal_properties["label"] || ""
-
-
-      log.info "headline: #{headline}"
-
-      if headline == ""
-        # dialog headline
-        headline = _("Installation Overview")
-      else
-        headline = Yast::Builtins.dgettext(
-          Yast::ProductControl.getProposalTextDomain,
-          headline
-        )
-      end
+      headline = @store.headline
 
       # icon for installation proposal
       icon = ""
@@ -918,52 +848,28 @@ module Installation
         ReplacePoint(Id("inst_proposal_progress"), Empty())
       )
 
-      vbox = nil
+      enable_skip = @store.can_be_skipped?
 
-      enable_skip = true
-      if Yast::Builtins.haskey(@proposal_properties, "enable_skip")
-        enable_skip = Yast::Ops.get_string(@proposal_properties, "enable_skip", "yes") == "yes"
-      else
-        if @proposal_mode == "initial" || @proposal_mode == "uml"
-          enable_skip = false
-        else
-          enable_skip = true
-        end
-      end
       rt = RichText(
         Id(:proposal),
         Yast::HTML.Newlines(3) +
         # Initial contents of proposal subwindow while proposals are calculated
           Yast::HTML.Para(_("Analyzing your system..."))
       )
-      data = Yast::ProductControl.getProposalProperties(
-        Yast::Stage.stage,
-        Yast::Mode.mode,
-        @proposal_mode
-      )
-      if Yast::Builtins.haskey(data, "proposal_tabs")
-        @has_tab = true
-        index = -1
-        tabs = data["proposal_tabs"]
-        tab_ids = Yast::Builtins.maplist(tabs) do |tab|
-          index += 1
-        end
+
+      if @store.has_tabs?
+        tab_labels = @store.tab_labels
         if Yast::UI.HasSpecialWidget(:DumbTab)
-          panes = Yast::Builtins.maplist(tab_ids) do |t|
-            label = Yast::Ops.get_string(tabs, [t, "label"], "Tab")
-            Item(Id(t), label, t == 0)
+          panes = tab_labels.map do |label|
+            Item(Id(t), label, label == tab_labels.first)
           end
           rt = DumbTab(Id(:_cwm_tab), panes, rt)
         else
-          tabbar = HBox()
-          Yast::Builtins.foreach(tab_ids) do |t|
-            label = Yast::Ops.get_string(tabs, [t, "label"], "Tab")
-            tabbar = Yast::Builtins.add(tabbar, PushButton(Id(t), label))
+          tabbar = tab_labels.each_with_object(HBox()) do |label, box|
+            box.params << PushButton(Id(t), label)
           end
           rt = VBox(Left(tabbar), Frame("", rt))
         end
-      else
-        @has_tab = false
       end
       if !enable_skip
         vbox = VBox(
@@ -992,7 +898,7 @@ module Installation
       Yast::Wizard.SetContents(
         headline, # have_next_button
         vbox,
-        help_text,
+        @store.help_text,
         Yast::GetInstArgs.enable_back, # have_back_button
         false
       )
@@ -1031,7 +937,6 @@ module Installation
             id = description["id"] || "module_#{no}"
 
             @titles << title
-            @submod2id[submod] = id
             @id2submod[id] = submod
 
             no += 1
@@ -1084,179 +989,9 @@ module Installation
     end
 
     def set_icon
-      icon = case @proposal_mode
-             when "network"
-               "yast-network"
-             when "hardware"
-               "yast-controller"
-             else
-               @proposal_properties["icon"] || "yast-software"
-             end
-
-      Yast::Wizard.SetTitleIcon(icon)
+      Yast::Wizard.SetTitleIcon(@store.icon)
 
       nil
-    end
-
-    def help_text
-      help_text_string = ""
-
-      # General part of the help text for all types of proposals
-      how_to_change = _(
-        "<p>\n" +
-          "Change the values by clicking on the respective headline\n" +
-          "or by using the <b>Change...</b> menu.\n" +
-          "</p>\n"
-      )
-
-      if @proposal_mode == "initial" && Yast::Mode.installation
-        # Help text for installation proposal
-        # General part ("You can change values...") is added as the next paragraph.
-        help_text_string = Yast::Ops.add(
-          _(
-            "<p>\n" +
-              "Select <b>Install</b> to perform a new installation with the values displayed.\n" +
-              "</p>\n"
-          ),
-          how_to_change
-        )
-
-        # kicking out, bug #203811
-        # no such headline
-        #	    // Help text for installation proposal, continued
-        #	    help_text_string = help_text_string + _("<p>
-        #To update an existing &product; system instead of doing a new install,
-        #click the <b>Mode</b> headline or select <b>Mode</b> in the
-        #<b>Change...</b> menu.
-        #</p>
-        #");
-        # Deliberately omitting "boot installed system" here to avoid
-        # confusion: The user will be prompted for that if Linux
-        # partitions are found.
-        # - sh@suse.de 2002-02-26
-        #
-
-        # Help text for installation proposal, continued
-        help_text_string = Yast::Ops.add(
-          help_text_string,
-          _(
-            "<p>\n" +
-              "Your hard disk has not been modified yet. You can still safely abort.\n" +
-              "</p>\n"
-          )
-        )
-      elsif @proposal_mode == "initial" && Yast::Mode.update
-        # Help text for update proposal
-        # General part ("You can change values...") is added as the next paragraph.
-        help_text_string = Yast::Ops.add(
-          _(
-            "<p>\n" +
-              "Select <b>Update</b> to perform an update with the values displayed.\n" +
-              "</p>\n"
-          ),
-          how_to_change
-        )
-
-        # Deliberately omitting "boot installed system" here to avoid
-        # confusion: The user will be prompted for that if Linux
-        # partitions are found.
-        # - sh@suse.de 2002-02-26
-        #
-
-        # Help text for installation proposal, continued
-        help_text_string = Yast::Ops.add(
-          help_text_string,
-          _(
-            "<p>\n" +
-              "Your hard disk has not been modified yet. You can still safely abort.\n" +
-              "</p>\n"
-          )
-        )
-      elsif @proposal_mode == "network"
-        # Help text for network configuration proposal
-        # General part ("You can change values...") is added as the next paragraph.
-        help_text_string = Yast::Ops.add(
-          _(
-            "<p>\n" +
-              "Put the network settings into effect by pressing <b>Next</b>.\n" +
-              "</p>\n"
-          ),
-          how_to_change
-        )
-      elsif @proposal_mode == "service"
-        # Help text for service configuration proposal
-        # General part ("You can change values...") is added as the next paragraph.
-        help_text_string = Yast::Ops.add(
-          _(
-            "<p>\n" +
-              "Put the service settings into effect by pressing <b>Next</b>.\n" +
-              "</p>\n"
-          ),
-          how_to_change
-        )
-      elsif @proposal_mode == "hardware"
-        # Help text for hardware configuration proposal
-        # General part ("You can change values...") is added as the next paragraph.
-        help_text_string = Yast::Ops.add(
-          _(
-            "<p>\n" +
-              "Put the hardware settings into effect by pressing <b>Next</b>.\n" +
-              "</p>\n"
-          ),
-          how_to_change
-        )
-      elsif @proposal_mode == "uml"
-        # Proposal in uml module
-        help_text_string = _("<P><B>UML Installation Proposal</B></P>") +
-          # help text
-          _(
-            "<P>UML (User Mode Linux) installation allows you to start independent\nLinux virtual machines in the host system.</P>"
-          )
-      elsif Yast::Ops.get_string(@proposal_properties, "help", "") != ""
-        # Proposal help from control file module
-        help_text_string = Yast::Ops.add(
-          Yast::Builtins.dgettext(
-            Yast::ProductControl.getProposalTextDomain,
-            Yast::Ops.get_string(@proposal_properties, "help", "")
-          ),
-          how_to_change
-        )
-      else
-        # Generic help text for other proposals (not basic installation or
-        # hardhware configuration.
-        # General part ("You can change values...") is added as the next paragraph.
-        help_text_string = Yast::Ops.add(
-          _(
-            "<p>\n" +
-              "To use the settings as displayed, press <b>Next</b>.\n" +
-              "</p>\n"
-          ),
-          how_to_change
-        )
-      end
-
-      if Yast::Ops.greater_than(Yast::Builtins.size(@locked_modules), 0)
-        # help text
-        help_text_string = Yast::Ops.add(
-          help_text_string,
-          _(
-            "<p>Some proposals might be\n" +
-              "locked by the system administrator and therefore cannot be changed. If a\n" +
-              "locked proposal needs to be changed, ask your system administrator.</p>\n"
-          )
-        )
-      end
-
-      Yast::Builtins.foreach(@submodules_presentation) do |submod|
-        if Yast::Ops.get(@submodule_helps, submod, "") != ""
-          help_text_string = Yast::Ops.add(
-            help_text_string,
-            Yast::Ops.get(@submodule_helps, submod, "")
-          )
-        end
-      end
-
-      help_text_string
     end
 
     def SetNextButton
