@@ -76,75 +76,6 @@ module Installation
           "</p>\n"
       )
 
-      global_help = case @proposal_mode
-      when "initial"
-        if Yast::Mode.installation
-          # Help text for installation proposal
-          # General part ("You can change values...") is added as the next paragraph.
-          _(
-            "<p>\n" +
-              "Select <b>Install</b> to perform a new installation with the values displayed.\n" +
-              "</p>\n"
-            )
-        else # so update
-        # Help text for update proposal
-        # General part ("You can change values...") is added as the next paragraph.
-          _(
-            "<p>\n" +
-              "Select <b>Update</b> to perform an update with the values displayed.\n" +
-              "</p>\n"
-          )
-        end
-      when "network"
-        # Help text for network configuration proposal
-        # General part ("You can change values...") is added as the next paragraph.
-        _(
-          "<p>\n" +
-            "Put the network settings into effect by pressing <b>Next</b>.\n" +
-            "</p>\n"
-        )
-      when "service"
-        # Help text for service configuration proposal
-        # General part ("You can change values...") is added as the next paragraph.
-        _(
-          "<p>\n" +
-            "Put the service settings into effect by pressing <b>Next</b>.\n" +
-            "</p>\n"
-        )
-      when "hardware"
-        # Help text for hardware configuration proposal
-        # General part ("You can change values...") is added as the next paragraph.
-        _(
-          "<p>\n" +
-            "Put the hardware settings into effect by pressing <b>Next</b>.\n" +
-            "</p>\n"
-        )
-      when "uml"
-        # Proposal in uml module
-        _("<P><B>UML Installation Proposal</B></P>") +
-          # help text
-          _(
-            "<P>UML (User Mode Linux) installation allows you to start independent\nLinux virtual machines in the host system.</P>"
-          )
-      else
-        if properties["help"] && !properties["help"].empty?
-          # Proposal help from control file module
-          Yast::Builtins.dgettext(
-            Yast::ProductControl.getProposalTextDomain,
-            Yast::Ops.get_string(@proposal_properties, "help", "")
-          )
-        else
-          # Generic help text for other proposals (not basic installation or
-          # hardhware configuration.
-          # General part ("You can change values...") is added as the next paragraph.
-          _(
-            "<p>\n" +
-              "To use the settings as displayed, press <b>Next</b>.\n" +
-              "</p>\n"
-          )
-        end
-      end
-
       help_text = global_help + how_to_change
       help_text += not_modified if @proposal_mode == "initial"
 
@@ -220,28 +151,7 @@ module Installation
     def presentation_order
       return @modules_order if @modules_order
 
-      if has_tabs?
-        @modules_order = properties["proposal_tabs"]
-        @modules_order.map! { |m| m["proposal_modules"] }
-
-        @modules_order.each do |module_tab|
-          module_tab.map! do |mod|
-            mod.include?("_proposal") ? mod : mod + "_proposal"
-          end
-        end
-      else
-        @modules_order = Yast::ProductControl.getProposals(
-          Yast::Stage.stage,
-          Yast::Mode.mode,
-          @proposal_mode
-        )
-
-        @modules_order.sort_by! { |m| m[1] || 50 } # second element is presentation order
-
-        @modules_order.map!(&:first)
-      end
-
-      @modules_order
+      has_tabs? ? order_with_tabs : order_without_tabs
     end
 
     # Makes proposal for all proposal clients.
@@ -340,6 +250,105 @@ module Installation
       log.debug "#{client} MakeProposal() returns #{proposal}"
 
       proposal
+    end
+
+    def global_help
+      case @proposal_mode
+      when "initial"
+        if Yast::Mode.installation
+          # Help text for installation proposal
+          # General part ("You can change values...") is added as the next paragraph.
+          _(
+            "<p>\n" +
+              "Select <b>Install</b> to perform a new installation with the values displayed.\n" +
+              "</p>\n"
+            )
+        else # so update
+        # Help text for update proposal
+        # General part ("You can change values...") is added as the next paragraph.
+          _(
+            "<p>\n" +
+              "Select <b>Update</b> to perform an update with the values displayed.\n" +
+              "</p>\n"
+          )
+        end
+      when "network"
+        # Help text for network configuration proposal
+        # General part ("You can change values...") is added as the next paragraph.
+        _(
+          "<p>\n" +
+            "Put the network settings into effect by pressing <b>Next</b>.\n" +
+            "</p>\n"
+        )
+      when "service"
+        # Help text for service configuration proposal
+        # General part ("You can change values...") is added as the next paragraph.
+        _(
+          "<p>\n" +
+            "Put the service settings into effect by pressing <b>Next</b>.\n" +
+            "</p>\n"
+        )
+      when "hardware"
+        # Help text for hardware configuration proposal
+        # General part ("You can change values...") is added as the next paragraph.
+        _(
+          "<p>\n" +
+            "Put the hardware settings into effect by pressing <b>Next</b>.\n" +
+            "</p>\n"
+        )
+      when "uml"
+        # Proposal in uml module
+        _("<P><B>UML Installation Proposal</B></P>") +
+          # help text
+          _(
+            "<P>UML (User Mode Linux) installation allows you to start independent\nLinux virtual machines in the host system.</P>"
+          )
+      else
+        if properties["help"] && !properties["help"].empty?
+          # Proposal help from control file module
+          Yast::Builtins.dgettext(
+            Yast::ProductControl.getProposalTextDomain,
+            properties["help"]
+          )
+        else
+          # Generic help text for other proposals (not basic installation or
+          # hardhware configuration.
+          # General part ("You can change values...") is added as the next paragraph.
+          _(
+            "<p>\n" +
+              "To use the settings as displayed, press <b>Next</b>.\n" +
+              "</p>\n"
+          )
+        end
+      end
+    end
+
+    def order_with_tabs
+      @modules_order = properties["proposal_tabs"]
+      @modules_order.map! { |m| m["proposal_modules"] }
+
+      @modules_order.each do |module_tab|
+        module_tab.map! do |mod|
+          mod.include?("_proposal") ? mod : mod + "_proposal"
+        end
+      end
+
+      @modules_order
+    end
+
+
+    def order_without_tabs
+      @modules_order = Yast::ProductControl.getProposals(
+        Yast::Stage.stage,
+        Yast::Mode.mode,
+        @proposal_mode
+      )
+
+      @modules_order.sort_by! { |m| m[1] || 50 } # second element is presentation order
+
+      @modules_order.map!(&:first)
+
+      @modules_order
     end
   end
 end
