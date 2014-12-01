@@ -88,16 +88,7 @@ module Installation
         )
       end
 
-      modules_order = presentation_order
-      modules_order = modules_order[current_tab] if has_tabs?
-
-
-      modules_order.each_with_object(help_text) do |client, text|
-        next unless descriptions[client]["help"]
-        next if descriptions[client]["help"].empty?
-
-        text << descriptions[client]["help"]
-      end
+      help_text << modules_help
 
       help_text
     end
@@ -259,16 +250,16 @@ module Installation
           # Help text for installation proposal
           # General part ("You can change values...") is added as the next paragraph.
           _(
-            "<p>\n" +
-              "Select <b>Install</b> to perform a new installation with the values displayed.\n" +
+            "<p>\n" \
+              "Select <b>Install</b> to perform a new installation with the values displayed.\n" \
               "</p>\n"
             )
         else # so update
         # Help text for update proposal
         # General part ("You can change values...") is added as the next paragraph.
           _(
-            "<p>\n" +
-              "Select <b>Update</b> to perform an update with the values displayed.\n" +
+            "<p>\n" \
+              "Select <b>Update</b> to perform an update with the values displayed.\n" \
               "</p>\n"
           )
         end
@@ -276,29 +267,29 @@ module Installation
         # Help text for network configuration proposal
         # General part ("You can change values...") is added as the next paragraph.
         _(
-          "<p>\n" +
-            "Put the network settings into effect by pressing <b>Next</b>.\n" +
+          "<p>\n" \
+            "Put the network settings into effect by pressing <b>Next</b>.\n" \
             "</p>\n"
         )
       when "service"
         # Help text for service configuration proposal
         # General part ("You can change values...") is added as the next paragraph.
         _(
-          "<p>\n" +
-            "Put the service settings into effect by pressing <b>Next</b>.\n" +
+          "<p>\n" \
+            "Put the service settings into effect by pressing <b>Next</b>.\n" \
             "</p>\n"
         )
       when "hardware"
         # Help text for hardware configuration proposal
         # General part ("You can change values...") is added as the next paragraph.
         _(
-          "<p>\n" +
-            "Put the hardware settings into effect by pressing <b>Next</b>.\n" +
+          "<p>\n" \
+            "Put the hardware settings into effect by pressing <b>Next</b>.\n" \
             "</p>\n"
         )
       when "uml"
         # Proposal in uml module
-        _("<P><B>UML Installation Proposal</B></P>") +
+        _("<P><B>UML Installation Proposal</B></P>") \
           # help text
           _(
             "<P>UML (User Mode Linux) installation allows you to start independent\nLinux virtual machines in the host system.</P>"
@@ -315,8 +306,8 @@ module Installation
           # hardhware configuration.
           # General part ("You can change values...") is added as the next paragraph.
           _(
-            "<p>\n" +
-              "To use the settings as displayed, press <b>Next</b>.\n" +
+            "<p>\n" \
+              "To use the settings as displayed, press <b>Next</b>.\n" \
               "</p>\n"
           )
         end
@@ -349,6 +340,18 @@ module Installation
       @modules_order.map!(&:first)
 
       @modules_order
+    end
+
+    def modules_help
+      modules_order = presentation_order
+      modules_order = modules_order[current_tab] if has_tabs?
+
+      modules_order.each_with_object("") do |client, text|
+        next unless descriptions[client]["help"]
+        next if descriptions[client]["help"].empty?
+
+        text << descriptions[client]["help"]
+      end
     end
   end
 end
