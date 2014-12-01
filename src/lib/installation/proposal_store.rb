@@ -292,6 +292,12 @@ module Installation
       descriptions[client]["id"]
     end
 
+    def title_for(client)
+      descriptions[client]["rich_text_title"] ||
+        descriptions[client]["rich_text_raw_title"] ||
+        client
+    end
+
     def handle_link(link)
       client = @id_mapping[link]
       client ||= @link2submod[link]

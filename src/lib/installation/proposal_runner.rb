@@ -60,21 +60,12 @@ module Installation
 
       # values used in defined functions
 
-      @submodules = []
       @submodules_presentation = []
       @mod2tab = {} # module -> tab it is in
-      @display_only_modules = [] # modules which do not have propose, but only summary
       @current_tab = 0 # ID of current tab
-      @has_tab = false # true if is tabbed proposal
       @html = {} # proposals of all modules - HTML part
-      @present_only = []
       @locked_modules = []
-      @titles = []
-      @id2submod = {}
-      @link2submod = {}
       @have_blocker = false
-
-      @proposal_result = nil
 
       # skip if not interactive mode.
       if !Yast::AutoinstConfig.Confirm && (Yast::Mode.autoinst || Yast::Mode.autoupgrade)
@@ -117,8 +108,8 @@ module Installation
       #
       # Get submodule descriptions
       #
-      @proposal_result = load_matching_submodules_list
-      return :abort if @proposal_result == :abort
+      proposal_result = load_matching_submodules_list
+      return :abort if proposal_result == :abort
 
       Yast::UI.ChangeWidget(Id(:menu_dummy), :Enabled, false) if Yast::UI.TextMode
       richtext_busy_cursor(Id(:proposal))
@@ -173,28 +164,13 @@ module Installation
 
         case @input
         when ::String #hyperlink
-          # get module for hyperlink id
-          @submod = @id2submod[@input] || ""
+          # Call AskUser() function.
+          # This will trigger another call to make_proposal() internally.
+          @input = submod_ask_user(@input)
 
-          if @submod == ""
-            # also try hyperlinks
-            @submod = @link2submod[@input] || ""
-          end
-
-          if @submod != ""
-            # if submod is not the same as input id, provide id to the module
-            @additional_info = { "has_next" => false }
-
-            @additional_info["chosen_id"] = @input if @submod != @input
-
-            # Call AskUser() function.
-            # This will trigger another call to make_proposal() internally.
-            @input = submod_ask_user(@submod, @additional_info)
-
-            # The workflow_sequence doesn't get handled as a workflow sequence
-            # so we have to do this special case here. Kind of broken.
-            return :finish if @input == :finish
-          end
+          # The workflow_sequence doesn't get handled as a workflow sequence
+          # so we have to do this special case here. Kind of broken.
+          return :finish if @input == :finish
         when :finish
           return :finish
         when :abort
@@ -346,9 +322,9 @@ module Installation
     # @param  has_next		force a "next" button even if the submodule would otherwise rename it
     # @return workflow_sequence see proposal-API.txt
     #
-    def submod_ask_user(submodule, additional_info)
+    def submod_ask_user(input)
       # Call the AskUser() function
-      ask_user_result = Yast::WFM.CallFunction(submodule, ["AskUser", additional_info])
+      ask_user_result = @store.handle_link(input)
 
       workflow_sequence = ask_user_result["workflow_sequence"] || :next
       language_changed = ask_user_result.fetch("language_changed", false)
@@ -413,24 +389,22 @@ module Installation
       skip_the_rest = false
       @have_blocker = false
 
-      @link2submod = {}
-
       Yast::UI.ReplaceWidget(
         Id("inst_proposal_progress"),
         ProgressBar(
           Id("pb_ip"),
           "",
-          2 * @submodules.size,
+          2 * @store.proposal_names.size,
           0
         )
       )
       submodule_nr = 0
 
       @html = {}
-      @submodules.each do |submod|
-        title = @titles[no] || _("ERROR: Missing Title")
+      @store.proposal_names.each do |submod|
+        title = @store.title_for(submod)
         if !Yast::Builtins.contains(@locked_modules, submod)
-          heading = Yast::Builtins.issubstring(Yast::Ops.get_string(@titles, no, ""), "<a") ?
+          heading = title.include?("<a") ?
             title :
             Yast::HTML.Link(
               title,
@@ -465,27 +439,25 @@ module Installation
       Yast::Wizard.DisableNextButton
       Yast::UI.BusyCursor
 
-      log.debug "Submodules list before execution: #{@submodules}"
-      Yast::Builtins.foreach(@submodules) do |submod|
+      log.debug "Submodules list before execution: #{@store.proposal_names}"
+      @store.proposal_names.each do |submod|
         submodule_nr += 1
         Yast::UI.ChangeWidget(Id("pb_ip"), :Value, submodule_nr)
         prop = ""
+        title = @store.title_for(submod)
         if !skip_the_rest
           if !Yast::Builtins.contains(@locked_modules, submod)
-            heading = Yast::Builtins.issubstring(
-              Yast::Ops.get_string(@titles, no, ""),
-              "<a"
-            ) ?
-              Yast::Ops.get_locale(@titles, no, _("ERROR: Missing Title")) :
+            heading = title.include?("<a") ?
+              title :
               Yast::HTML.Link(
-                Yast::Ops.get_locale(@titles, no, _("ERROR: Missing Title")),
+                title,
                 @store.id_for(submod)
               )
 
             # heading in proposal, in case the module doesn't create one
             prop << Yast::HTML.Heading(heading)
           else
-            prop << Yast::HTML.Heading( @titles[no] || _("ERROR: Missing Title"))
+            prop << Yast::HTML.Heading(title)
           end
 
           prop_map = submod_make_proposal(submod, force_reset, language_changed)
@@ -507,13 +479,6 @@ module Installation
               if @mod2tab[submod] == @current_tab
                 current_tab_affected = true
               end
-            end
-          end
-
-          # update link map
-          if prop_map["links"]
-            prop_map["links"].each do |link|
-              @link2submod[link] = submod
             end
           end
         end
@@ -547,7 +512,7 @@ module Installation
       # FATE #301151: Allow YaST proposals to have help texts
       Yast::Wizard.SetHelpText(@store.help_text)
 
-      if @has_tab && Yast::Ops.less_than(tab_to_switch, 999) && !current_tab_affected
+      if @store.has_tabs? && Yast::Ops.less_than(tab_to_switch, 999) && !current_tab_affected
         # FIXME copy-paste from event loop (but for last 2 lines)
         @current_tab = tab_to_switch
         load_matching_submodules_list
@@ -628,7 +593,7 @@ module Installation
     def write_settings
       success = true
 
-      Yast::Builtins.foreach(@submodules) do |submod|
+      @store.proposal_names do |submod|
         submod_success = submod_write_settings(submod)
         submod_success = true if submod_success == nil
         if !submod_success
@@ -680,18 +645,6 @@ module Installation
       nil
     end
     def load_matching_submodules_list
-      modules = []
-
-      modules = Yast::ProductControl.getProposals(
-        Yast::Stage.stage,
-        Yast::Mode.mode,
-        @proposal_mode
-      )
-      if modules == nil
-        log.error "Error loading proposals"
-        return :abort
-      end
-
       @locked_modules = Yast::ProductControl.getLockedProposals(
         Yast::Stage.stage,
         Yast::Mode.mode,
@@ -705,73 +658,30 @@ module Installation
         @proposal_mode
       )
 
-      if modules.empty?
+      if @store.proposal_names.empty?
         log.error "No proposals available"
         return :abort
       end
 
-      # in normal mode we don't want to switch between installation and update
-      modules = Yast::Builtins.filter(modules) do |v|
-        Yast::Ops.get_string(v, 0, "") != "mode_proposal"
-      end if Yast::Mode.normal
-
-      # now create the list of modules and order of modules for presentation
-      @submodules = modulesmap { |mod| mod[0] || "" }
-
-      log.info "Execution order: #{@submodules}"
-
-      if @has_tab
+      if @store.has_tabs?
         log.info "Proposal uses tabs"
-        data = Yast::ProductControl.getProposalProperties(
-          Yast::Stage.stage,
-          Yast::Mode.mode,
-          @proposal_mode
-        )
-        @submodules_presentation = Yast::Ops.get_list(
-          data,
-          ["proposal_tabs", @current_tab, "proposal_modules"],
-          []
-        )
-        # All proposal file names end with _proposal
-        @submodules_presentation = Yast::Builtins.maplist(@submodules_presentation) do |m|
-          m += "_proposal" unless m.include?("_proposal")
-          m
-        end
-        index = -1
+        @submodules_presentation = @store.presentation_order[@current_tab]
         @mod2tab = {}
-        tmp_all_submods = Yast::Builtins.maplist(data["proposal_tabs"] || []) do |tab|
-          index += 1
-          Yast::Builtins.foreach(Yast::Ops.get_list(tab, "proposal_modules", [])) do |m|
-            m += "_proposal" unless m.include?("_proposal")
-            if index < @mod2tab[m]
-              @mod2tab[m] = index
-            end
+        @store.presentation_order.each_index do |index|
+          @store.presentation_order[index].each do |mod|
+            @mod2tab[mod] = index
           end
-          tab["proposal_modules"] || []
         end
 
-        all_submods = Yast::Builtins.flatten(tmp_all_submods)
-        all_submods = Yast::Builtins.maplist(all_submods) do |m|
-          m += "_proposal" unless m.include?("_proposal")
-          m
-        end
-        @display_only_modules = Yast::Builtins.filter(all_submods) do |m|
-          !Yast::Builtins.contains(@submodules, m)
-        end
-        @submodules = @submodules + @display_only_modules
         p = Yast::AutoinstConfig.getProposalList
         @submodules_presentation = Yast::Builtins.filter(@submodules_presentation) do |v|
           Yast::Builtins.contains(p, v) || p == []
         end
       else
         log.info "Proposal doesn't use tabs"
-        # sort modules according to presentation ordering
-        modules.sort_by! { |mod| mod[1] || 50 }
 
         # setup the list
-        @submodules_presentation = modules.map do |mod|
-          mod[0] || ""
-        end
+        @submodules_presentation = @store.presentation_order
 
         p = Yast::AutoinstConfig.getProposalList
 
@@ -782,7 +692,7 @@ module Installation
       end
 
       log.info "Presentation order: #{@submodules_presentation}"
-      log.info "Execution order: #{@submodules}"
+      log.info "Execution order: #{@store.proposal_names}"
 
       nil
     end
@@ -915,77 +825,44 @@ module Installation
     end
 
     def get_submod_descriptions_and_build_menu
-      menu_list = []
-      new_submodules = []
-      no = 1
-      @titles = []
-      descriptions = {}
+      return true unless Yast::UI.TextMode # have menu only in text mode
 
-      @submodules.each do |submod|
-        description = submod_description(submod)
-        if description.nil?
-          log.info "Submodule #{submod} not available (not installed?)"
-        else
-          if !description.empty?
-            description["no"] = no
-            descriptions[submod] = description
-            new_submodules << submod
-            title = description["rich_text_title"] ||
-                description["rich_text_raw_title"] ||
-                submod
+      # now build the menu button
+      menu_list = @submodules_presentation.each_with_object([]) do |submod, menu|
+        descr = @store.descriptions[submod] || {}
+        next if descr.empty?
 
-            id = description["id"] || "module_#{no}"
-
-            @titles << title
-            @id2submod[id] = submod
-
-            no += 1
-          end
-        end
-      end
-
-      @submodules = deep_copy(new_submodules) # maybe some submodules are not installed
-      log.info "Execution order after rewrite: #{@submodules}"
-
-      if Yast::UI.TextMode
-        # now build the menu button
-        Yast::Builtins.foreach(@submodules_presentation) do |submod|
-          descr = descriptions[submod] || {}
-          next if descr.empty?
-
-          no2 = descr["no"] || 0
-          id = descr["id"] || "module_#{no2}"
-          if descr.has_key? "menu_titles"
-            descr["menu_titles"].each do |i|
-              id2 = i["id"]
-              title = i["title"]
-              if id2 && title
-                menu_list << Item(Id(id2), Yast::Ops.add(title, "..."))
-              else
-                log.info "Invalid menu item: #{i}"
-              end
+        id = descr["id"]
+        if descr.has_key? "menu_titles"
+          descr["menu_titles"].each do |i|
+            id2 = i["id"]
+            title = i["title"]
+            if id2 && title
+              menu << Item(Id(id2), title + "...")
+            else
+              log.info "Invalid menu item: #{i}"
             end
-          else
-            menu_title = descr["menu_title"] ||
-              descr["rich_text_title"] ||
-              submod
-
-            menu_list << Item(Id(id), menu_title + "...")
           end
+        else
+          menu_title = descr["menu_title"] ||
+            descr["rich_text_title"] ||
+            submod
+
+          menu << Item(Id(id), menu_title + "...")
         end
-
-        # menu button item
-        menu_list << Item(Id(:reset_to_defaults), _("&Reset to defaults")) <<
-            Item(Id(:export_config), _("&Export Configuration"))
-
-        # menu button
-        Yast::UI.ReplaceWidget(
-          Id(:rep_menu),
-          MenuButton(Id(:menu), _("&Change..."), menu_list)
-        )
       end
 
-      return no > 1
+      # menu button item
+      menu_list << Item(Id(:reset_to_defaults), _("&Reset to defaults")) <<
+          Item(Id(:export_config), _("&Export Configuration"))
+
+      # menu button
+      Yast::UI.ReplaceWidget(
+        Id(:rep_menu),
+        MenuButton(Id(:menu), _("&Change..."), menu_list)
+      )
+
+      return !@store.descriptions.empty?
     end
 
     def set_icon
