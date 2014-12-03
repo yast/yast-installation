@@ -146,13 +146,14 @@ module Installation
     end
 
     # Makes proposal for all proposal clients.
-    def make_proposals(force_reset: false, language_changed: false)
-      # TODO: callbacks to show partial proposals
+    def make_proposals(force_reset: false, language_changed: false, callback: Proc.new)
       @link2submod = {}
 
       proposal_names.each do |submod|
         proposal_map = make_proposal(submod, force_reset: force_reset,
           language_changed: language_changed)
+
+        callback.call(submod, proposal_map)
 
         # update link map
         (proposal_map["links"] || []).each do |link|
@@ -160,7 +161,6 @@ module Installation
         end
 
         if proposal_map["language_changed"]
-          # TODO: callback to notice, that we need to retranslate UI
           @descriptions = nil # invalid descriptions cache
           return make_proposals(force_reset: force_reset, language_changed: true)
         end

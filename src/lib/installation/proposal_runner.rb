@@ -75,8 +75,6 @@ module Installation
       # BNC #463567
       @submods_already_called = []
 
-
-
       #-----------------------------------------------------------------------
       #				    main()
       #-----------------------------------------------------------------------
@@ -93,7 +91,6 @@ module Installation
       # are in separate YCP files that liberally import other YCP modules which
       # in turn takes considerable time for the module constructors.
       #
-
       Yast::Builtins.y2milestone("Installation step #2")
       @proposal_mode = Yast::GetInstArgs.proposal
 
@@ -384,8 +381,6 @@ module Installation
     def make_proposal(force_reset, language_changed)
       tab_to_switch = 999
       current_tab_affected = false
-      no = 0
-      prop_map = {}
       skip_the_rest = false
       @have_blocker = false
 
@@ -398,7 +393,6 @@ module Installation
           0
         )
       )
-      submodule_nr = 0
 
       @html = {}
       @store.proposal_names.each do |submod|
@@ -425,89 +419,79 @@ module Installation
         else
           # busy message;
           message = _("Analyzing your system...")
-          @submods_already_called = Yast::Builtins.add(
-            @submods_already_called,
-            submod
-          )
+          @submods_already_called << submod
         end
         @html[submod] = prop + Yast::HTML.Para(message)
-        no += 1
       end
-
-      no = 0
 
       Yast::Wizard.DisableNextButton
       Yast::UI.BusyCursor
 
-      log.debug "Submodules list before execution: #{@store.proposal_names}"
-      @store.proposal_names.each do |submod|
+      submodule_nr = 0
+      make_proposal_callback = Proc.new do |submod, prop_map|
         submodule_nr += 1
         Yast::UI.ChangeWidget(Id("pb_ip"), :Value, submodule_nr)
-        prop = ""
         title = @store.title_for(submod)
-        if !skip_the_rest
-          if !Yast::Builtins.contains(@locked_modules, submod)
-            heading = title.include?("<a") ?
-              title :
-              Yast::HTML.Link(
-                title,
-                @store.id_for(submod)
-              )
+        if !Yast::Builtins.contains(@locked_modules, submod)
+          heading = title.include?("<a") ?
+            title :
+            Yast::HTML.Link(
+              title,
+              @store.id_for(submod)
+            )
 
-            # heading in proposal, in case the module doesn't create one
-            prop << Yast::HTML.Heading(heading)
-          else
-            prop << Yast::HTML.Heading(title)
-          end
+          # heading in proposal, in case the module doesn't create one
+          prop = Yast::HTML.Heading(heading)
+        else
+          prop = Yast::HTML.Heading(title)
+        end
 
-          prop_map = submod_make_proposal(submod, force_reset, language_changed)
-
-          # check if it is needed to switch to another tab
-          # because of an error
-          if Yast::Builtins.haskey(@mod2tab, submod)
-            log.info "Mod2Tab: '#{@mod2tab[submod]}'"
-            warn_level = prop_map["warning_level"] || :ok
-            if [:blocker, :fatal, :error].include?(warn_level)
-              # bugzilla #237291
-              # always switch to more detailed tab only
-              # value 999 means to keep current tab, in case of error,
-              # tab must be switched (bnc #441434)
-              if @mod2tab[submod] > tab_to_switch ||
-                  tab_to_switch == 999
-                tab_to_switch = @mod2tab[submod]
-              end
-              if @mod2tab[submod] == @current_tab
-                current_tab_affected = true
-              end
+        # check if it is needed to switch to another tab
+        # because of an error
+        if Yast::Builtins.haskey(@mod2tab, submod)
+          log.info "Mod2Tab: '#{@mod2tab[submod]}'"
+          warn_level = prop_map["warning_level"]
+          if [:blocker, :fatal, :error].include?(warn_level)
+            # bugzilla #237291
+            # always switch to more detailed tab only
+            # value 999 means to keep current tab, in case of error,
+            # tab must be switched (bnc #441434)
+            if @mod2tab[submod] > tab_to_switch ||
+                tab_to_switch == 999
+              tab_to_switch = @mod2tab[submod]
+            end
+            if @mod2tab[submod] == @current_tab
+              current_tab_affected = true
             end
           end
         end
-        if prop_map["language_changed"] && !skip_the_rest
-          skip_the_rest = true
+
+        submodule_nr += 1
+        Yast::UI.ChangeWidget(Id("pb_ip"), :Value, submodule_nr)
+
+        if prop_map["language_changed"]
           retranslate_proposal_dialog
-          make_proposal(force_reset, true)
-        end
-        if !skip_the_rest
+          submodule_nr = 0
+        else
           prop << format_sub_proposal(prop_map)
 
           @html[submod] = prop
 
           # now do the complete html
-          proposal = ""
-          Yast::Builtins.foreach(@submodules_presentation) do |mod|
-            proposal << @html[mod]
+          presentation_modules = @store.presentation_modules
+          presentation_modules = presentation_modules[@current_tab] if @store.has_tabs?
+          proposal = presentation_modules.reduce("") do |res, mod|
+            res << @html[mod]
           end
           display_proposal(proposal)
-
-          # display_proposal( prop );
-          no += 1
         end
-        if prop_map["warning_level"] == :fatal
-          skip_the_rest = true
-        end
-        submodule_nr += 1
-        Yast::UI.ChangeWidget(Id("pb_ip"), :Value, submodule_nr)
       end
+
+      @store.make_proposals(
+        force_reset:      force_reset,
+        language_changed: language_changed,
+        callback:         make_proposal_callback
+      )
 
       # FATE #301151: Allow YaST proposals to have help texts
       Yast::Wizard.SetHelpText(@store.help_text)
@@ -540,8 +524,8 @@ module Installation
 
       nil
     end
+
     def format_sub_proposal(prop)
-      prop = deep_copy(prop)
       html = ""
       warning = prop["warning"] || ""
 
@@ -644,6 +628,7 @@ module Installation
 
       nil
     end
+
     def load_matching_submodules_list
       @locked_modules = Yast::ProductControl.getLockedProposals(
         Yast::Stage.stage,
