@@ -37,12 +37,21 @@ module Installation
 
     def self.run
       new.run
+
+      # values used in defined functions
+
+      @submodules_presentation = []
+      @mod2tab = {} # module -> tab it is in
+      @current_tab = 0 # ID of current tab
+      @html = {} # proposals of all modules - HTML part
+      @locked_modules = []
+      @have_blocker = false
+
+      # BNC #463567
+      @submods_already_called = []
     end
 
     def initialize
-    end
-
-    def run
       Yast.import "Pkg"
       Yast.import "UI"
       textdomain "installation"
@@ -56,42 +65,15 @@ module Installation
       Yast.import "Popup"
       Yast.import "Language"
       Yast.import "GetInstArgs"
-      Yast.import "String"
+    end
 
-      # values used in defined functions
-
-      @submodules_presentation = []
-      @mod2tab = {} # module -> tab it is in
-      @current_tab = 0 # ID of current tab
-      @html = {} # proposals of all modules - HTML part
-      @locked_modules = []
-      @have_blocker = false
-
+    def run
       # skip if not interactive mode.
       if !Yast::AutoinstConfig.Confirm && (Yast::Mode.autoinst || Yast::Mode.autoupgrade)
         return :auto
       end
 
-      # BNC #463567
-      @submods_already_called = []
-
-      #-----------------------------------------------------------------------
-      #				    main()
-      #-----------------------------------------------------------------------
-
-
-
-      #
-      # Create dialog
-      #
-      # This is done as early as possible for instant feedback, even though the
-      # menu is still empty. Fortunately enough, nobody will notice this since
-      # we also disable it until everything in there is known. This is to be
-      # done before even the submodule descriptions are known since they usually
-      # are in separate YCP files that liberally import other YCP modules which
-      # in turn takes considerable time for the module constructors.
-      #
-      Yast::Builtins.y2milestone("Installation step #2")
+      log.info "Installation step #2"
       @proposal_mode = Yast::GetInstArgs.proposal
 
       if Yast::ProductControl.GetDisabledProposals.include?(@proposal_mode)
