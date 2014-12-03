@@ -462,13 +462,10 @@ module Installation
         end
         display_proposal(proposal)
         get_submod_descriptions_and_build_menu
+
         log.info "Switching to tab '#{@current_tab}'"
-        if Yast::UI.HasSpecialWidget(:DumbTab)
-          if Yast::UI.WidgetExists(:_cwm_tab)
-            Yast::UI.ChangeWidget(Id(:_cwm_tab), :CurrentItem, @current_tab)
-          else
-            log.warn "Widget with id #{:_cwm_tab} does not exist!"
-          end
+        if Yast::UI.WidgetExists(:_cwm_tab)
+          Yast::UI.ChangeWidget(Id(:_cwm_tab), :CurrentItem, @current_tab)
         end
       end
 
@@ -638,15 +635,9 @@ module Installation
       nil
     end
 
-
-    def build_dialog
-      headline = @store.headline
-
-      # icon for installation proposal
-      icon = ""
-
+    def skip_buttons
       # radiobuttons
-      skip_buttons = RadioButtonGroup(
+      RadioButtonGroup(
         VBox(
           VSpacing(1),
           Left(
@@ -674,6 +665,10 @@ module Installation
           VSpacing(1)
         )
       )
+    end
+
+    def build_dialog
+      headline = @store.headline
 
       if Yast::UI.TextMode()
         change_point = ReplacePoint(
@@ -754,12 +749,11 @@ module Installation
         false
       )
       set_icon
-      if Yast::UI.HasSpecialWidget(:DumbTab)
-        if Yast::UI.WidgetExists(:_cwm_tab)
-          Yast::UI.ChangeWidget(Id(:_cwm_tab), :CurrentItem, @current_tab)
-        else
-          Yast::Builtins.y2milestone("Not using CWM tabs...")
-        end
+
+      if Yast::UI.WidgetExists(:_cwm_tab)
+        Yast::UI.ChangeWidget(Id(:_cwm_tab), :CurrentItem, @current_tab)
+      else
+        log.info "Not using CWM tabs..."
       end
 
       nil
