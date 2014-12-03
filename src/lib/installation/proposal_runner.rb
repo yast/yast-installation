@@ -396,20 +396,7 @@ module Installation
 
       @html = {}
       @store.proposal_names.each do |submod|
-        title = @store.title_for(submod)
-        if !Yast::Builtins.contains(@locked_modules, submod)
-          heading = title.include?("<a") ?
-            title :
-            Yast::HTML.Link(
-              title,
-              @store.id_for(submod)
-            )
-
-          # heading in proposal, in case the module doesn't create one
-          prop = Yast::HTML.Heading(heading)
-        else
-          prop = Yast::HTML.Heading(title)
-        end
+        prop = html_header(submod)
         # BNC #463567
         # Submod already called
         if @submods_already_called.include?(submod)
@@ -431,20 +418,7 @@ module Installation
       make_proposal_callback = Proc.new do |submod, prop_map|
         submodule_nr += 1
         Yast::UI.ChangeWidget(Id("pb_ip"), :Value, submodule_nr)
-        title = @store.title_for(submod)
-        if !Yast::Builtins.contains(@locked_modules, submod)
-          heading = title.include?("<a") ?
-            title :
-            Yast::HTML.Link(
-              title,
-              @store.id_for(submod)
-            )
-
-          # heading in proposal, in case the module doesn't create one
-          prop = Yast::HTML.Heading(heading)
-        else
-          prop = Yast::HTML.Heading(title)
-        end
+        prop = html_header(submod)
 
         # check if it is needed to switch to another tab
         # because of an error
@@ -868,6 +842,22 @@ module Installation
       end
 
       nil
+    end
+
+    def html_header(submod)
+      title = @store.title_for(submod)
+      if @locked_modules.include?(submod)
+        heading = title
+      else
+        heading = title.include?("<a") ?
+          title :
+          Yast::HTML.Link(
+            title,
+            @store.id_for(submod)
+          )
+      end
+
+      Yast::HTML.Heading(title)
     end
   end
 end
