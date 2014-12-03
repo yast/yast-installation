@@ -37,18 +37,6 @@ module Installation
 
     def self.run
       new.run
-
-      # values used in defined functions
-
-      @submodules_presentation = []
-      @mod2tab = {} # module -> tab it is in
-      @current_tab = 0 # ID of current tab
-      @html = {} # proposals of all modules - HTML part
-      @locked_modules = []
-      @have_blocker = false
-
-      # BNC #463567
-      @submods_already_called = []
     end
 
     def initialize
@@ -65,6 +53,18 @@ module Installation
       Yast.import "Popup"
       Yast.import "Language"
       Yast.import "GetInstArgs"
+
+      # values used in defined functions
+
+      @submodules_presentation = []
+      @mod2tab = {} # module -> tab it is in
+      @current_tab = 0 # ID of current tab
+      @html = {} # proposals of all modules - HTML part
+      @locked_modules = []
+      @have_blocker = false
+
+      # BNC #463567
+      @submods_already_called = []
     end
 
     def run
