@@ -275,40 +275,6 @@ module Installation
       nil
     end
 
-
-    # Call a submodule's MakeProposal() function.
-    #
-    # @param [String] submodule	name of the submodule's proposal dispatcher
-    # @param [Boolean] force_reset	discard any existing (cached) proposal
-    # @param [Boolean] language_changed	installation language changed since last call
-    # @return proposal_map	see proposal-API.txt
-    #
-
-    def submod_make_proposal(submodule, force_reset, language_changed)
-      Yast::UI.BusyCursor
-
-      proposal = Yast::WFM.CallFunction(
-        submodule,
-        [
-          "MakeProposal",
-          {
-            "force_reset"      => force_reset,
-            "language_changed" => language_changed
-          }
-        ]
-      )
-      log.debug "#{submodule} MakeProposal() returns #{proposal}"
-
-      # There might be some UI layers left
-      # we need to close them
-      CheckAndCloseWindowsLeft()
-
-      Yast::UI.NormalCursor
-
-      deep_copy(proposal)
-    end
-
-
     # Call a submodule's AskUser() function.
     #
     # @param [String] submodule	name of the submodule's proposal dispatcher
@@ -467,20 +433,7 @@ module Installation
       Yast::Wizard.SetHelpText(@store.help_text)
 
       if @store.has_tabs? && Yast::Ops.less_than(tab_to_switch, 999) && !current_tab_affected
-        # FIXME copy-paste from event loop (but for last 2 lines)
-        @current_tab = tab_to_switch
-        load_matching_submodules_list
-        proposal = ""
-        Yast::Builtins.foreach(@submodules_presentation) do |mod|
-          proposal = Yast::Ops.add(proposal, Yast::Ops.get(@html, mod, ""))
-        end
-        display_proposal(proposal)
-        get_submod_descriptions_and_build_menu
-
-        log.info "Switching to tab '#{@current_tab}'"
-        if Yast::UI.WidgetExists(:_cwm_tab)
-          Yast::UI.ChangeWidget(Id(:_cwm_tab), :CurrentItem, @current_tab)
-        end
+        switch_to_tab(tab_to_switch)
       end
 
       # now do the display-only proposals
