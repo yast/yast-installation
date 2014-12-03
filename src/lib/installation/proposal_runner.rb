@@ -105,33 +105,33 @@ module Installation
       #
       make_proposal(false, false)
 
-      #
-      # Input loop
-      #
-
-      @input = nil
-
       # Set keyboard focus to the [Install] / [Update] or [Next] button
       Yast::Wizard.SetFocusToNextButton
 
-      while true
+      input_loop
+    end
+
+  private
+
+    def input_loop
+
+      loop do
         richtext_normal_cursor(Id(:proposal))
         # bnc #431567
         # Some proposal module can change it while called
         SetNextButton()
 
-        @input = Yast::UI.UserInput
+        input = Yast::UI.UserInput
 
-        return :next if @input == :accept
-        return :abort if @input == :cancel
+        return :next if input == :accept
+        return :abort if input == :cancel
 
         log.info "Proposal - UserInput: '#{@input}'"
         richtext_busy_cursor(Id(:proposal))
 
-        # check for tab
-
-        if @input.is_a?(::Integer)
-          @current_tab = @input
+        case input
+        when ::Integer # tabs
+          @current_tab = input
           load_matching_submodules_list
           @proposal = ""
           @submodules_presentation.each do |mod|
@@ -139,10 +139,8 @@ module Installation
           end
           display_proposal(@proposal)
           get_submod_descriptions_and_build_menu
-        end
 
-        case @input
-        when ::String #hyperlink
+        when ::String # hyperlink
           # Call AskUser() function.
           # This will trigger another call to make_proposal() internally.
           @input = submod_ask_user(@input)
@@ -150,14 +148,14 @@ module Installation
           # The workflow_sequence doesn't get handled as a workflow sequence
           # so we have to do this special case here. Kind of broken.
           return :finish if @input == :finish
+
         when :finish
           return :finish
+
         when :abort
-          if Yast::Stage.initial
-            return :abort if Yast::Popup.ConfirmAbort(:painless)
-          else
-            return :abort if Yast::Popup.ConfirmAbort(:incomplete)
-          end
+          abort_mode = Yast::Stage.initial ? :painless : :incomplete
+          return :abort if Yast::Popup.ConfirmAbort(abort_mode)
+
         when :reset_to_defaults
             next unless Yast::Popup.ContinueCancel(
               # question in a popup box
@@ -166,6 +164,7 @@ module Installation
                 _("You will lose all changes.")
             )
           make_proposal(true, false) # force_reset
+
         when :export_config
           path = Yast::UI.AskForSaveFileName("/", "*.xml", _("Location of Stored Configuration"))
           next unless path
@@ -176,6 +175,7 @@ module Installation
           if !File.exists?(path)
             raise _("Failed to store configuration. Details can be found in log.")
           end
+
         when :skip, :dontskip
           if Yast::UI.QueryWidget(Id(:skip), :Value)
             # User doesn't want to use any of the settings
@@ -192,9 +192,10 @@ module Installation
             make_proposal(false, false)
             Yast::UI.ChangeWidget(Id(:menu), :Enabled, true)
           end
+
         when :next
           @skip = Yast::UI.WidgetExists(Id(:skip)) ?
-            Yast::Convert.to_boolean(Yast::UI.QueryWidget(Id(:skip), :Value)) :
+            Yast::UI.QueryWidget(Id(:skip), :Value) :
             true
           @skip_blocker = Yast::UI.WidgetExists(Id(:skip)) && @skip
           if @have_blocker && !@skip_blocker
@@ -208,23 +209,24 @@ module Installation
           end
 
           if Yast::Stage.stage == "initial"
-            @input = Yast::WFM.CallFunction("inst_doit", [])
+            input = Yast::WFM.CallFunction("inst_doit", [])
           # bugzilla #219097, #221571, yast2-update on running system
           elsif Yast::Stage.stage == "normal" && Yast::Mode.update
             if !confirmInstallation
               log.info "Update not confirmed, returning back..."
-              @input = nil
+              input = nil
             end
           end
 
-          if @input == :next
+          if input == :next
             # anything that needs to be done before
             # real installation starts
 
-            write_settings if !@skip
+            write_settings unless @skip
 
             return :next
           end
+
         when :back
           Yast::Wizard.SetNextButton(:next, Yast::Label.NextButton) if Yast::Stage.initial
           return :back
@@ -233,8 +235,6 @@ module Installation
 
       nil
     end
-
-  private
 
     # Display preformatted proposal in the RichText widget
     #
