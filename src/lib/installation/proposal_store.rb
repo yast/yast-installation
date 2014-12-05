@@ -119,7 +119,7 @@ module Installation
       @tab_labels = tabs.map { |m| m["label"] || "Tab" }
     end
 
-    def proposals_names
+    def proposal_names
       return @proposal_names if @proposal_names
 
       @proposal_names = Yast::ProductControl.getProposals(
