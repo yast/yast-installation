@@ -97,7 +97,7 @@ module Installation
       return @can_skip unless @can_skip.nil?
 
       if properties.key?("enable_skip")
-        @can_skip = properties["enable_skip"]
+        @can_skip = properties["enable_skip"] == "yes"
       else
         @can_skip = !["initial", "uml"].include?(@proposal_mode)
       end
