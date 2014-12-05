@@ -414,7 +414,7 @@ module Installation
           @html[submod] = prop
 
           # now do the complete html
-          presentation_modules = @store.presentation_modules
+          presentation_modules = @store.presentation_order
           presentation_modules = presentation_modules[@current_tab] if @store.has_tabs?
           proposal = presentation_modules.reduce("") do |res, mod|
             res << @html[mod]
