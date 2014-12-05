@@ -175,7 +175,7 @@ module Installation
       missing_no = 1
       @id_mapping = {}
       @descriptions = proposal_names.each_with_object({}) do |client, res|
-        description = Yast::WFM.WFM.CallFunction(client, ["Description", {}])
+        description = Yast::WFM.CallFunction(client, ["Description", {}])
         if !description["id"]
           log.warn "proposal client #{client} missing key 'id' in #{description}"
 
