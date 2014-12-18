@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Dec 18 20:12:47 UTC 2014 - lslezak@suse.cz
+
+- Fix bashisms and shebangs in scripts (by "Ledest")
+- 3.1.125
+
+-------------------------------------------------------------------
 Wed Dec 10 15:57:59 CET 2014 - aschnell@suse.de
 
 - drop check for Gtk since Gtk UI of YaST is no longer supported
