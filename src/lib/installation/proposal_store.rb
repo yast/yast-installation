@@ -88,7 +88,7 @@ module Installation
         )
       end
 
-      help_text << modules_help
+      help_text << modules_help(current_tab)
 
       help_text
     end
@@ -342,7 +342,7 @@ module Installation
       @modules_order
     end
 
-    def modules_help
+    def modules_help(current_tab)
       modules_order = presentation_order
       modules_order = modules_order[current_tab] if has_tabs?
 
