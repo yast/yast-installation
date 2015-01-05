@@ -5,12 +5,16 @@ require_relative "./test_helper"
 require "installation/proposal_runner"
 
 describe ::Installation::ProposalRunner do
+  before do
+    # mock constant to avoid dependency on autoyast
+    autoinst_config = double(:Confirm => false)
+    stub_const("Yast::AutoinstConfig", autoinst_config)
+  end
+
   describe "#run" do
 
     it "do nothing if run non-interactive" do
-      Yast.import "AutoinstConfig"
       Yast.import "Mode"
-      allow(Yast::AutoinstConfig).to receive(:Confirm).and_return(false)
       allow(Yast::Mode).to receive(:autoinst).and_return(true)
 
       expect(subject.run).to eq :auto
