@@ -136,19 +136,6 @@ module Yast
       #return SCR::Write (.target.byte, filename, copy_buffer);
     end
 
-
-    def InjectRenamedFile(dir, src_name, target_name)
-      src = "#{dir}/#{src_name}"
-      target = "#{Installation.destdir}/#{dir}/#{target_name}"
-      command = "/bin/cp #{src} #{target}"
-
-      Builtins.y2milestone("InjectRenamedFile: <%1> -> <%2>", src, target)
-      Builtins.y2debug("Inject command: #{command}")
-
-      WFM.Execute(path(".local.bash"), command)
-      nil
-    end
-
     def UpdateWizardSteps
       wizard_mode = Mode.mode
       Builtins.y2milestone("Switching Steps to %1 ", wizard_mode)
