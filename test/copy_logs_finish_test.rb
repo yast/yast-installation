@@ -34,6 +34,14 @@ describe ::Installation::CopyLogsFinish do
       subject.write
     end
 
+    it "do not stuck during compress if file already exists (bnc#897091)" do
+      allow(Yast::WFM).to receive(:Read).and_return(["y2log-1"])
+
+      expect(Yast::WFM).to receive(:Execute).with(anything(), /gzip -f/)
+
+      subject.write
+    end
+
     it "rotate zypp.log" do
       allow(Yast::WFM).to receive(:Read).and_return(["zypp.log"])
 

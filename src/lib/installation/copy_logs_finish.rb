@@ -70,7 +70,7 @@ module Installation
             Yast::Directory.logdir,
             target_basename
           )
-          compress_cmd = "gzip #{target_path}"
+          compress_cmd = "gzip -f #{target_path}"
           log.debug "Compress command: #{compress_cmd}"
           Yast::WFM.Execute(LOCAL_BASH, compress_cmd)
         when /\Ay2log-\d+\.gz\z/
