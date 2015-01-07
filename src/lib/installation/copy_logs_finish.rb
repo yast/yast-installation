@@ -25,11 +25,12 @@ module Installation
   class CopyLogsFinish < ::Installation::FinishClient
     include Yast::I18n
 
+    LOCAL_BASH = Yast::Path.new(".local.bash")
+
     def initialize
       textdomain "installation"
 
       Yast.import "Directory"
-      Yast.include self, "installation/misc.rb"
     end
 
     def steps
@@ -50,7 +51,8 @@ module Installation
       log_files.each do |file|
         log.debug "Processing file #{file}"
 
-        if file == "y2log" || file =~ /\Ay2log-\d+\z/
+        case file
+        when "y2log", /\Ay2log-\d+\z/
           # Prepare y2log, y2log-* for log rotation
           target_no = 1
 
@@ -60,7 +62,7 @@ module Installation
           end
 
           target_basename = "y2log-#{target_no}"
-          InjectRenamedFile(Yast::Directory.logdir, file, target_basename)
+          copy_log_to_target(file, target_basename)
 
           target_path = ::File.join(
             Yast::Installation.destdir,
@@ -69,27 +71,36 @@ module Installation
           )
           compress_cmd = "gzip #{target_path}"
           log.debug "Compress command: #{compress_cmd}"
-          Yast::WFM.Execute(Yast::Path.new(".local.bash"), compress_cmd)
-        elsif file =~ /\Ay2log-\d+\.gz\z/
+          Yast::WFM.Execute(LOCAL_BASH, compress_cmd)
+        when /\Ay2log-\d+\.gz\z/
           target_no = file[/y2log-(\d+)/, 1].to_i + 1
-          InjectRenamedFile(
-            Yast::Directory.logdir,
-            file,
-            "y2log-#{target_no}"
-          )
-        elsif file == "zypp.log"
+          copy_log_to_target(file, "y2log-#{target_no}")
+        when "zypp.log"
           # Save zypp.log from the inst-sys
-          InjectRenamedFile(Yast::Directory.logdir, file, "zypp.log-1") # not y2log, y2log-*
+          copy_log_to_target(file, "zypp.log-1") # not y2log, y2log-*
         else
-          InjectFile(::File.join(Yast::Directory.logdir, file))
+          copy_log_to_target(file))
         end
       end
 
       copy_cmd = "/bin/cp /var/log/pbl.log '#{Yast::Installation.destdir}/#{Yast::Directory.logdir}/pbl-instsys.log'"
       log.debug "Copy command: #{copy_cmd}"
-      Yast::WFM.Execute(Yast::Path.new(".local.bash"), copy_cmd)
+      Yast::WFM.Execute(LOCAL_BASH, copy_cmd)
 
       nil
+    end
+
+  private
+
+    def copy_log_to_target(src_file, dst_file = src_file)
+      dir = Yast::Directory.logdir
+      src_path = "#{dir}/#{src_file}"
+      dst_path = "#{Yast::Installation.destdir}/#{dir}/#{dst_file}"
+      command = "/bin/cp #{src_path} #{dst_path}"
+
+      log.info "copy log with '#{command}'"
+
+      Yast::WFM.Execute(LOCAL_BASH, command)
     end
   end
 end
