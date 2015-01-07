@@ -97,7 +97,7 @@ module Yast
             InjectRenamedFile(Directory.logdir, file, target_basename)
 
             compress_cmd = Builtins.sformat(
-              "gzip %1/%2/%3",
+              "gzip -f %1/%2/%3",
               Installation.destdir,
               Directory.logdir,
               target_basename
