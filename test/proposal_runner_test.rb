@@ -29,9 +29,8 @@ describe ::Installation::ProposalRunner do
       expect(subject.run).to eq :auto
     end
 
-    it "runs" do
-      # TODO: just catch exceptions
-      expect(subject.run).to eq :abort
+    it "passes a moske test" do
+      expect{subject.run}.to_not raise_error
     end
   end
 end
