@@ -37,8 +37,8 @@ BuildRequires:  docbook-xsl-stylesheets libxslt update-desktop-files yast2-core-
 BuildRequires:  yast2-devtools >= 3.1.10
 BuildRequires:  rubygem(rspec)
 
-# Linuxrc.keys
-BuildRequires: yast2 >= 3.1.41
+# Base clients for inst clients
+BuildRequires: yast2 >= 3.1.112
 
 # Yast::Remote
 BuildRequires: yast2-network
