@@ -70,6 +70,8 @@ module Installation
             Yast::Directory.logdir,
             target_basename
           )
+          # call gzip with -f to avoid stuck during race condition when log
+          # rotator also gzip file and gzip then wait for input (bnc#897091)
           compress_cmd = "gzip -f #{target_path}"
           log.debug "Compress command: #{compress_cmd}"
           Yast::WFM.Execute(LOCAL_BASH, compress_cmd)
