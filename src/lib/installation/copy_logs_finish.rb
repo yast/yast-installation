@@ -31,6 +31,7 @@ module Installation
       textdomain "installation"
 
       Yast.import "Directory"
+      Yast.import "Installation"
     end
 
     def steps
@@ -74,12 +75,12 @@ module Installation
           Yast::WFM.Execute(LOCAL_BASH, compress_cmd)
         when /\Ay2log-\d+\.gz\z/
           target_no = file[/y2log-(\d+)/, 1].to_i + 1
-          copy_log_to_target(file, "y2log-#{target_no}")
+          copy_log_to_target(file, "y2log-#{target_no}.gz")
         when "zypp.log"
           # Save zypp.log from the inst-sys
           copy_log_to_target(file, "zypp.log-1") # not y2log, y2log-*
         else
-          copy_log_to_target(file))
+          copy_log_to_target(file)
         end
       end
 
