@@ -55,15 +55,15 @@ module Yast
 
       # TRANSLATORS: help text, part 1
       @help = _(
-        "<p>At Linux <b>choice</b> is a top priority. <i>openSUSE</i> offers a number \n" +
-          "of different desktop environments. Below you see a list of the 2 major ones \n" +
+        "<p>At Linux <b>choice</b> is a top priority. <i>openSUSE</i> offers a number \n" \
+          "of different desktop environments. Below you see a list of the 2 major ones \n" \
           "<b>GNOME</b> and <b>KDE</b>.</p>"
       ) +
         # TRANSLATORS: help text, part 3
         _(
-          "<p>You may select alternative desktop environments (or one of minimal installation patterns)\n" +
-            "that could fit your needs better using the <b>Other</b> option . Later in the software \n" +
-            "selection or after installation, you can change your selection or add additional desktop \n" +
+          "<p>You may select alternative desktop environments (or one of minimal installation patterns)\n" \
+            "that could fit your needs better using the <b>Other</b> option . Later in the software \n" \
+            "selection or after installation, you can change your selection or add additional desktop \n" \
             "environments. This screen allows you to set the default.</p>"
         )
 

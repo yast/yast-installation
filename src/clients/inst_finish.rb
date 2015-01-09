@@ -496,7 +496,7 @@ module Yast
       failed_hooks = used_hooks.select(&:failed?)
 
       if !failed_hooks.empty?
-        Builtins.y2error "#{failed_hooks.size} failed hooks found: " +
+        Builtins.y2error "#{failed_hooks.size} failed hooks found: " \
           "#{failed_hooks.map(&:name).join(", ")}"
       end
 

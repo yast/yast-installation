@@ -1073,11 +1073,11 @@ module Yast
       )
       # FIXME: this does not copy pipes in filesystem (usually not an issue)
       cmd = Builtins.sformat(
-        "mkfifo %3 ;\n" +
-          "\t mkfifo %4 ;\n" +
-          "\t tar -C %1 --hard-dereference --numeric-owner -cSf %3 --one-file-system . &\n" +
-          "\t dd bs=1048576 if=%3 of=%4 >&2 &\n" +
-          "\t jobs -l >&2;\n" +
+        "mkfifo %3 ;\n" \
+          "\t mkfifo %4 ;\n" \
+          "\t tar -C %1 --hard-dereference --numeric-owner -cSf %3 --one-file-system . &\n" \
+          "\t dd bs=1048576 if=%3 of=%4 >&2 &\n" \
+          "\t jobs -l >&2;\n" \
           "\t tar -C %2 --numeric-owner -xSf %4",
         from,
         to,

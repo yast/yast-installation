@@ -202,11 +202,11 @@ module Yast
       _("<p><big><b>Installation Options</b></big></p>") +
         # help text for installation option
         (@show_online_repositories == true ?
-          _("<p>\nTo use suggested remote repositories during installation or update, select\n" +
+          _("<p>\nTo use suggested remote repositories during installation or update, select\n" \
             "<b>Add Online Repositories Before Installation</b>.</p>") :
           "") +
         # help text for installation method
-        _("<p>\nTo install an add-on product from separate media together with &product;, select\n" +
+        _("<p>\nTo install an add-on product from separate media together with &product;, select\n" \
             "<b>Include Add-on Products from Separate Media</b>.</p>\n") +
         # help text: additional help for installation
         _("<p>If you need specific hardware drivers for installation, see <i>http://drivers.suse.com</i> site.</p>")

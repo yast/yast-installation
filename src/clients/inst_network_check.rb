@@ -95,8 +95,8 @@ module Yast
                   Left(
                     Label(
                       _(
-                        "No network setup has been found.\n" +
-                          "It is important if using remote repositories,\n" +
+                        "No network setup has been found.\n" \
+                          "It is important if using remote repositories,\n" \
                           "otherwise you can safely skip it.\n"
                       )
                     )

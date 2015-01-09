@@ -838,9 +838,9 @@ module Yast
         _("Correct Media Requested"),
         Builtins.sformat(
           _(
-            "Make sure that media with label %1\n" +
-              "is in the CD/DVD drive.\n" +
-              "\n" +
+            "Make sure that media with label %1\n" \
+              "is in the CD/DVD drive.\n" \
+              "\n" \
               "If you skip it, the repository will not be added.\n"
           ),
           name
@@ -901,10 +901,10 @@ module Yast
           Report.Error(
             Builtins.sformat(
               _(
-                "Cannot add repository %1\n" +
-                  "URL: %2\n" +
-                  "\n" +
-                  "\n" +
+                "Cannot add repository %1\n" \
+                  "URL: %2\n" \
+                  "\n" \
+                  "\n" \
                   "Repository will be added in disabled state."
               ),
               repo_name,
@@ -938,8 +938,8 @@ module Yast
           Report.Error(
             Builtins.sformat(
               _(
-                "Cannot add enabled repository\n" +
-                  "Name: %1\n" +
+                "Cannot add enabled repository\n" \
+                  "Name: %1\n" \
                   "URL: %2"
               ),
               repo_name,
@@ -958,8 +958,8 @@ module Yast
                 # TRANSLATORS: error report
                 # %1 is replaced with repo-name, %2 with repo-URL
                 _(
-                  "An error occurred while refreshing repository\n" +
-                    "Name: %1\n" +
+                  "An error occurred while refreshing repository\n" \
+                    "Name: %1\n" \
                     "URL: %2"
                 ),
                 repo_name,
@@ -978,8 +978,8 @@ module Yast
                 # TRANSLATORS: error report
                 # %1 is replaced with repo-name, %2 with repo-URL
                 _(
-                  "An error occurred while enabling repository\n" +
-                    "Name: %1\n" +
+                  "An error occurred while enabling repository\n" \
+                    "Name: %1\n" \
                     "URL: %2\n"
                 ),
                 repo_name,
@@ -1059,8 +1059,8 @@ module Yast
           Report.Error(
             Builtins.sformat(
               _(
-                "Cannot add disabled repository\n" +
-                  "Name: %1\n" +
+                "Cannot add disabled repository\n" \
+                  "Name: %1\n" \
                   "URL: %2"
               ),
               repo_name,

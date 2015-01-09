@@ -89,8 +89,8 @@ module Yast
     end
 
     def disk_for_image_help_text
-      _("Select the disk, which the image will be deployed to. " +
-        "All data on the disk will be lost and the disk will be " +
+      _("Select the disk, which the image will be deployed to. " \
+        "All data on the disk will be lost and the disk will be " \
         "partitioned as defined in the image.")
     end
 

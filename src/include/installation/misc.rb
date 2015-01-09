@@ -211,9 +211,9 @@ module Yast
           body = Ops.add(
             body,
             _(
-              "<p>If you continue now, <b>existing\n" +
-                "partitions</b> on your hard disk will be <b>deleted</b> or <b>formatted</b>\n" +
-                "(<b>erasing any existing data</b> in those partitions) according to the\n" +
+              "<p>If you continue now, <b>existing\n" \
+                "partitions</b> on your hard disk will be <b>deleted</b> or <b>formatted</b>\n" \
+                "(<b>erasing any existing data</b> in those partitions) according to the\n" \
                 "installation settings in the previous dialogs.</p>"
             )
           )
@@ -222,8 +222,8 @@ module Yast
           body = Ops.add(
             body,
             _(
-              "<p>If you continue now, partitions on your\n" +
-                "hard disk will be modified according to the installation settings in the\n" +
+              "<p>If you continue now, partitions on your\n" \
+                "hard disk will be modified according to the installation settings in the\n" \
                 "previous dialogs.</p>"
             )
           )
@@ -245,8 +245,8 @@ module Yast
           _("<p>Information required to perform an update is now complete.</p>") +
             # Text for confirmation popup before the update really starts 2/3
             _(
-              "\n" +
-                "<p>If you continue now, data on your hard disk will be overwritten\n" +
+              "\n" \
+                "<p>If you continue now, data on your hard disk will be overwritten\n" \
                 "according to the settings in the previous dialogs.</p>"
             ) +
             # Text for confirmation popup before the update really starts 3/3

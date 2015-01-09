@@ -37,9 +37,9 @@ module Yast
           "links"                 => [CLONE_ENABLE_LINK, CLONE_DISABLE_LINK],
           # TRANSLATORS: help text
           "help"                  => _(
-            "<p>Use <b>Clone System Settings</b> if you want to create an AutoYaST profile.\n" +
-              "AutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST\n" +
-              "needs a profile to know what the installed system should look like. If this option is\n" +
+            "<p>Use <b>Clone System Settings</b> if you want to create an AutoYaST profile.\n" \
+              "AutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST\n" \
+              "needs a profile to know what the installed system should look like. If this option is\n" \
               "selected, a profile of the current system is stored in <tt>/root/autoinst.xml</tt>.</p>"
           )
         }

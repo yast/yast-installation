@@ -201,8 +201,8 @@ module Yast
         # help 3/4 for dialog "Congratulation Dialog"
         (DisplayKDEHelp() ?
           _(
-            "<p>If you choose the default graphical desktop KDE, you can\n" +
-              "adjust some KDE settings to your hardware. Also notice\n" +
+            "<p>If you choose the default graphical desktop KDE, you can\n" \
+              "adjust some KDE settings to your hardware. Also notice\n" \
               "our SUSE Welcome Dialog.</p>\n"
           ) :
           "") # Show this help only in case of KDE as the default windowmanager
@@ -211,9 +211,9 @@ module Yast
         @help = Ops.add(
           @help,
           _(
-            "<p>Use <b>Clone</b> if you want to create an AutoYaST profile.\n" +
-              "AutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST\n" +
-              "needs a profile to know what the installed system should look like. If this option is\n" +
+            "<p>Use <b>Clone</b> if you want to create an AutoYaST profile.\n" \
+              "AutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST\n" \
+              "needs a profile to know what the installed system should look like. If this option is\n" \
               "selected, a profile of the current system is stored in <tt>/root/autoinst.xml</tt>.</p>"
           )
         )

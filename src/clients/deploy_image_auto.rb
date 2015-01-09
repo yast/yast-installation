@@ -225,15 +225,15 @@ module Yast
           ),
           # TRANSLATORS: help text
           _(
-            "<p><b>Installation from Images</b> is used to speed the installation up.\n" +
-              "Images contain compressed snapshots of an installed system matching your\n" +
-              "selection of patterns. The rest of the packages which are not contained in the\n" +
+            "<p><b>Installation from Images</b> is used to speed the installation up.\n" \
+              "Images contain compressed snapshots of an installed system matching your\n" \
+              "selection of patterns. The rest of the packages which are not contained in the\n" \
               "images will be installed from packages the standard way.</p>\n"
           ) +
             _(
-              "<p><b>Creating own Images</b> is used if you\n" +
-                "want to skip the complete step of RPM installation. Instead AutoYaST will dump an\n" +
-                "image on the harddisk which is a lot faster and can be pre-configured already.\n" +
+              "<p><b>Creating own Images</b> is used if you\n" \
+                "want to skip the complete step of RPM installation. Instead AutoYaST will dump an\n" \
+                "image on the harddisk which is a lot faster and can be pre-configured already.\n" \
                 "Everything else than RPM installation is done like during a normal auto-installation.</p>"
             ),
           Label.BackButton,

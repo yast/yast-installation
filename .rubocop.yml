@@ -48,11 +48,6 @@ Style/Documentation:
 Style/FileName:
   Enabled: false
 
-# Offense count: 165
-# Cop supports --auto-correct.
-Style/LineEndConcatenation:
-  Enabled: false
-
 # Offense count: 4
 # Cop supports --auto-correct.
 Style/MethodCallParentheses:

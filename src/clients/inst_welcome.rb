@@ -71,9 +71,9 @@ module Yast
       @text = _("<p><b>Welcome!</b></p>") +
         # welcome text 2/4
         _(
-          "<p>There are a few more steps to take before your system is ready to\n" +
-            "use. YaST will now guide you through some basic configuration.  Click\n" +
-            "<b>Next</b> to continue. </p>\n" +
+          "<p>There are a few more steps to take before your system is ready to\n" \
+            "use. YaST will now guide you through some basic configuration.  Click\n" \
+            "<b>Next</b> to continue. </p>\n" \
             "            \n"
         )
 

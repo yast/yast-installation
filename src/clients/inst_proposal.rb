@@ -1184,9 +1184,9 @@ module Yast
 
       # General part of the help text for all types of proposals
       how_to_change = _(
-        "<p>\n" +
-          "Change the values by clicking on the respective headline\n" +
-          "or by using the <b>Change...</b> menu.\n" +
+        "<p>\n" \
+          "Change the values by clicking on the respective headline\n" \
+          "or by using the <b>Change...</b> menu.\n" \
           "</p>\n"
       )
 
@@ -1195,8 +1195,8 @@ module Yast
         # General part ("You can change values...") is added as the next paragraph.
         help_text_string = Ops.add(
           _(
-            "<p>\n" +
-              "Select <b>Install</b> to perform a new installation with the values displayed.\n" +
+            "<p>\n" \
+              "Select <b>Install</b> to perform a new installation with the values displayed.\n" \
               "</p>\n"
           ),
           how_to_change
@@ -1221,8 +1221,8 @@ module Yast
         help_text_string = Ops.add(
           help_text_string,
           _(
-            "<p>\n" +
-              "Your hard disk has not been modified yet. You can still safely abort.\n" +
+            "<p>\n" \
+              "Your hard disk has not been modified yet. You can still safely abort.\n" \
               "</p>\n"
           )
         )
@@ -1231,8 +1231,8 @@ module Yast
         # General part ("You can change values...") is added as the next paragraph.
         help_text_string = Ops.add(
           _(
-            "<p>\n" +
-              "Select <b>Update</b> to perform an update with the values displayed.\n" +
+            "<p>\n" \
+              "Select <b>Update</b> to perform an update with the values displayed.\n" \
               "</p>\n"
           ),
           how_to_change
@@ -1248,8 +1248,8 @@ module Yast
         help_text_string = Ops.add(
           help_text_string,
           _(
-            "<p>\n" +
-              "Your hard disk has not been modified yet. You can still safely abort.\n" +
+            "<p>\n" \
+              "Your hard disk has not been modified yet. You can still safely abort.\n" \
               "</p>\n"
           )
         )
@@ -1258,8 +1258,8 @@ module Yast
         # General part ("You can change values...") is added as the next paragraph.
         help_text_string = Ops.add(
           _(
-            "<p>\n" +
-              "Put the network settings into effect by pressing <b>Next</b>.\n" +
+            "<p>\n" \
+              "Put the network settings into effect by pressing <b>Next</b>.\n" \
               "</p>\n"
           ),
           how_to_change
@@ -1269,8 +1269,8 @@ module Yast
         # General part ("You can change values...") is added as the next paragraph.
         help_text_string = Ops.add(
           _(
-            "<p>\n" +
-              "Put the service settings into effect by pressing <b>Next</b>.\n" +
+            "<p>\n" \
+              "Put the service settings into effect by pressing <b>Next</b>.\n" \
               "</p>\n"
           ),
           how_to_change
@@ -1280,8 +1280,8 @@ module Yast
         # General part ("You can change values...") is added as the next paragraph.
         help_text_string = Ops.add(
           _(
-            "<p>\n" +
-              "Put the hardware settings into effect by pressing <b>Next</b>.\n" +
+            "<p>\n" \
+              "Put the hardware settings into effect by pressing <b>Next</b>.\n" \
               "</p>\n"
           ),
           how_to_change
@@ -1308,8 +1308,8 @@ module Yast
         # General part ("You can change values...") is added as the next paragraph.
         help_text_string = Ops.add(
           _(
-            "<p>\n" +
-              "To use the settings as displayed, press <b>Next</b>.\n" +
+            "<p>\n" \
+              "To use the settings as displayed, press <b>Next</b>.\n" \
               "</p>\n"
           ),
           how_to_change
@@ -1321,8 +1321,8 @@ module Yast
         help_text_string = Ops.add(
           help_text_string,
           _(
-            "<p>Some proposals might be\n" +
-              "locked by the system administrator and therefore cannot be changed. If a\n" +
+            "<p>Some proposals might be\n" \
+              "locked by the system administrator and therefore cannot be changed. If a\n" \
               "locked proposal needs to be changed, ask your system administrator.</p>\n"
           )
         )

@@ -107,9 +107,9 @@ module Yast
               if Popup.YesNo(
                   Builtins.sformat(
                     _(
-                      "An error occurred while connecting to the server.\n" +
-                        "Details: %1\n" +
-                        "\n" +
+                      "An error occurred while connecting to the server.\n" \
+                        "Details: %1\n" \
+                        "\n" \
                         "Try again?"
                     ),
                     Pkg.LastError

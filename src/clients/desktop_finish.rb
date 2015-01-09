@@ -238,11 +238,11 @@ module Yast
               SCR.Execute(
                 path(".target.bash_output"),
                 # check whether it exists
-                "test -x /sbin/set_polkit_default_privs && " +
+                "test -x /sbin/set_polkit_default_privs && " \
                   # give some feedback
-                  "echo /sbin/set_polkit_default_privs && " +
+                  "echo /sbin/set_polkit_default_privs && " \
                   # It's dozens of lines...
-                  "/sbin/set_polkit_default_privs | wc -l && " + "echo 'Done'"
+                  "/sbin/set_polkit_default_privs | wc -l && " \ "echo 'Done'"
               )
             )
             Builtins.y2milestone("Command returned: %1", @ret2)

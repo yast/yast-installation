@@ -354,17 +354,17 @@ module Yast
           FileUtils.Exists(Installation.file_inst_failed)
         # popup question (#x1)
         show_error = _(
-          "The previous installation has failed.\n" +
-            "Would you like it to continue?\n" +
-            "\n" +
+          "The previous installation has failed.\n" \
+            "Would you like it to continue?\n" \
+            "\n" \
             "Note: You may have to enter some information again."
         )
         if FileUtils.Exists(Installation.file_inst_aborted)
           # popup question (#x1)
           show_error = _(
-            "The previous installation has been aborted.\n" +
-              "Would you like it to continue?\n" +
-              "\n" +
+            "The previous installation has been aborted.\n" \
+              "Would you like it to continue?\n" \
+              "\n" \
               "Note: You may have to enter some information again."
           )
 
