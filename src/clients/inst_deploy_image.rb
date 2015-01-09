@@ -302,7 +302,7 @@ module Yast
     # Not only images but also some helper files are downloaded
     # Image installation should report only images
     # BNC #449792
-    def MyStartDownloadHandler(url, localfile)
+    def MyStartDownloadHandler(url, _localfile)
       current_image = ImageInstallation.GetCurrentImageDetails
       current_image_file = Ops.get_string(current_image, "file", "")
 
@@ -333,7 +333,7 @@ module Yast
       nil
     end
 
-    def MyProgressDownloadHandler(percent, bps_avg, bps_current)
+    def MyProgressDownloadHandler(percent, _bps_avg, bps_current)
       # changing settings on the fly
       # ... first when download handler is hit
       #

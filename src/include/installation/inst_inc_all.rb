@@ -28,7 +28,7 @@
 #
 module Yast
   module InstallationInstIncAllInclude
-    def initialize_installation_inst_inc_all(include_target)
+    def initialize_installation_inst_inc_all(_include_target)
       Yast.import "UI"
 
       textdomain "installation"

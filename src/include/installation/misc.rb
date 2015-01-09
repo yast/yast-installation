@@ -35,7 +35,7 @@
 #
 module Yast
   module InstallationMiscInclude
-    def initialize_installation_misc(include_target)
+    def initialize_installation_misc(_include_target)
       Yast.import "UI"
 
       textdomain "installation"
