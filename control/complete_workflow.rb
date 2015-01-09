@@ -39,7 +39,7 @@ module Yast
 
       Wizard.OpenNextBackStepsDialog
       @stage_mode = [{ "stage" => "normal", "mode" => Mode.mode }]
-      #stage_mode = add(stage_mode, $["stage": "continue",  "mode": Mode::mode () ] );
+      # stage_mode = add(stage_mode, $["stage": "continue",  "mode": Mode::mode () ] );
       ProductControl.AddWizardSteps(@stage_mode)
 
       @ret = ProductControl.Run

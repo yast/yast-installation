@@ -491,7 +491,7 @@ module Yast
       end
 
       Builtins.y2milestone("Copying the image")
-      cmd = Builtins.sformat("dd bs=1048576 if=%1 of=%2", image, target) #1MB of block size
+      cmd = Builtins.sformat("dd bs=1048576 if=%1 of=%2", image, target) # 1MB of block size
       out = SCR.Execute(path(".target.bash_output"), cmd)
       Builtins.y2milestone("Executing %1 returned %2", cmd, out)
 

@@ -51,7 +51,7 @@ module Yast
       Proxy.Read
       # Test if proxy works
       if Proxy.enabled
-        #it is enough to test http proxy, release notes are downloaded via http
+        # it is enough to test http proxy, release notes are downloaded via http
         proxy_ret = Proxy.RunTestProxy(
           Proxy.http,
           "",

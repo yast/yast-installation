@@ -140,7 +140,7 @@ module Yast
     # @return the urls of known installation sources
     def KnownUrls
       src_ids = Pkg.SourceGetCurrent(
-        true #enabled only?
+        true # enabled only?
       )
       urls = Builtins.maplist(src_ids) do |src_id|
         gendata = Pkg.SourceGeneralData(src_id)

@@ -48,7 +48,7 @@ module Yast
       # USB sources that were used during installation should be disabled (bnc#793709)
       @usb_sources = {}
 
-      #////////////////////////////////////////
+      # ////////////////////////////////////////
 
       if GetInstArgs.going_back # going backwards?
         return :auto # don't execute this once more

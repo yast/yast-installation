@@ -31,7 +31,7 @@ module Yast
     def main
       Yast.import "UI"
 
-      #**
+      # **
       # <h3>Initialization of the disks</h3>
 
       textdomain "installation"

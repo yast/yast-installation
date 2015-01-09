@@ -29,7 +29,7 @@ module Yast
         Label(Ops.add("id: ", Ops.get_string(@args, "step_id", "none")))
       )
 
-      #Wizard::SetContents (caption, contents, help, GetInstArgs::enable_back(), GetInstArgs::enable_next());
+      # Wizard::SetContents (caption, contents, help, GetInstArgs::enable_back(), GetInstArgs::enable_next());
       Wizard.SetContents(@caption, @contents, @help, true, true)
 
       @button = Convert.to_symbol(UI.UserInput)

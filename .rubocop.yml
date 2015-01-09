@@ -48,16 +48,6 @@ Style/Documentation:
 Style/FileName:
   Enabled: false
 
-# Offense count: 8
-# Cop supports --auto-correct.
-Style/InfiniteLoop:
-  Enabled: false
-
-# Offense count: 22
-# Cop supports --auto-correct.
-Style/LeadingCommentSpace:
-  Enabled: false
-
 # Offense count: 165
 # Cop supports --auto-correct.
 Style/LineEndConcatenation:

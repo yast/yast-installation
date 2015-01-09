@@ -642,7 +642,7 @@ module Yast
         Installation.encoding = "UTF-8"
       end
 
-      #//////////////////////////////////////////////////////////
+      # //////////////////////////////////////////////////////////
       # activate language settings and console font
 
       language = Language.language

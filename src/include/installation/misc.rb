@@ -139,8 +139,8 @@ module Yast
       nil 
 
       # this just needs too much memory
-      #byteblock copy_buffer = WFM::Read (.local.byte, filename);
-      #return SCR::Write (.target.byte, filename, copy_buffer);
+      # byteblock copy_buffer = WFM::Read (.local.byte, filename);
+      # return SCR::Write (.target.byte, filename, copy_buffer);
     end
 
 

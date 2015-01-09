@@ -10,7 +10,7 @@ module Installation
     end
 
     def reset
-      #default value requested in FATE#315586
+      # default value requested in FATE#315586
       @enabled = true
     end
   end
@@ -181,7 +181,7 @@ module Installation
       log.info "active devices: #{res}"
 
       raise "cio_ignore -L failed with #{res["stderr"]}" if res["exit"] != 0
-      #lets select only lines that looks like device. Regexp is not perfect, but good enough
+      # lets select only lines that looks like device. Regexp is not perfect, but good enough
       devices_lines = res["stdout"].lines.grep(/^(?:\h.){0,2}\h{4}.*$/)
 
       devices = devices_lines.map(&:chomp)

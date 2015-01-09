@@ -172,7 +172,7 @@ module Yast
         end
 
         case @input
-        when ::String #hyperlink
+        when ::String # hyperlink
           # get module for hyperlink id
           @submod = Ops.get_string(@id2submod, @input, "")
 
@@ -1206,11 +1206,11 @@ module Yast
         # no such headline
         #	    // Help text for installation proposal, continued
         #	    help_text_string = help_text_string + _("<p>
-        #To update an existing &product; system instead of doing a new install,
-        #click the <b>Mode</b> headline or select <b>Mode</b> in the
-        #<b>Change...</b> menu.
-        #</p>
-        #");
+        # To update an existing &product; system instead of doing a new install,
+        # click the <b>Mode</b> headline or select <b>Mode</b> in the
+        # <b>Change...</b> menu.
+        # </p>
+        # ");
         # Deliberately omitting "boot installed system" here to avoid
         # confusion: The user will be prompted for that if Linux
         # partitions are found.
