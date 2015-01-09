@@ -293,14 +293,17 @@ module Yast
       # try on-line release notes first
       WFM.CallFunction("inst_download_release_notes")
 
-      if InstData.release_notes.empty? && load_release_notes(Packages.GetBaseSourceID)
-        # push button
-        Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
-
-        product_name = Product.name || _("Unknown Product")
-        InstData.release_notes[product_name] = @media_text
-        UI::SetReleaseNotes(  product_name => @media_text  )
+      if !InstData.release_notes.empty? &&
+          !load_release_notes(Packages.GetBaseSourceID)
+        return
       end
+
+      # push button
+      Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
+
+      product_name = Product.name || _("Unknown Product")
+      InstData.release_notes[product_name] = @media_text
+      UI::SetReleaseNotes(  product_name => @media_text  )
     end
 
     def InitInstallationRepositories

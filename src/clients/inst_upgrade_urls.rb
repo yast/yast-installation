@@ -817,13 +817,13 @@ module Yast
     def remove_services
       service_files = Dir[File.join(Installation.destdir, "/etc/zypp/services.d/*.service")]
 
-      if !service_files.empty?
-        backup_dir = File.join(Installation.destdir, "var/adm/backup/upgrade/zypp/services.d")
-        ::FileUtils.mkdir_p(backup_dir)
+      return if service_files.empty?
 
-        log.info "Moving #{service_files} to #{backup_dir}"
-        ::FileUtils.mv(service_files, backup_dir)
-      end
+      backup_dir = File.join(Installation.destdir, "var/adm/backup/upgrade/zypp/services.d")
+      ::FileUtils.mkdir_p(backup_dir)
+
+      log.info "Moving #{service_files} to #{backup_dir}"
+      ::FileUtils.mv(service_files, backup_dir)
     end
 
     def InsertCorrectMediaHandler(url, name)

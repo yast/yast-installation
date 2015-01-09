@@ -171,9 +171,7 @@ module Installation
 
       res &&= Yast::Bootloader.Write
 
-      if !res
-        raise "failed to write kernel parameters for IPL and console device"
-      end
+      raise "failed to write kernel parameters for IPL and console device" if !res
     end
 
     ACTIVE_DEVICES_FILE = "/boot/zipl/active_devices.txt"

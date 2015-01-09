@@ -48,11 +48,6 @@ Style/Documentation:
 Style/FileName:
   Enabled: false
 
-# Offense count: 3
-# Configuration parameters: MinBodyLength.
-Style/GuardClause:
-  Enabled: false
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/IndentationConsistency:
