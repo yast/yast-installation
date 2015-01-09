@@ -153,7 +153,7 @@ module Yast
     def SetAutoupgHandling
       # if profile is defined, first read it, then probe hardware
       autoinstall = SCR.Read(path(".etc.install_inf.AutoYaST"))
-      if autoinstall != nil && Ops.is_string?(autoinstall) &&
+      if !autoinstall.nil? && Ops.is_string?(autoinstall) &&
           Convert.to_string(autoinstall) != ""
         ProductControl.DisableModule("system_analysis")
         ProductControl.DisableModule("update_partition_auto")

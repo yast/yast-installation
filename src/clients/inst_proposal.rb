@@ -438,7 +438,7 @@ module Yast
           Builtins.y2milestone("Submodule '%1' has it's own help", submod.value)
           own_help = Ops.get_string(prop_map.value, "help", "")
 
-          if own_help == nil
+          if own_help.nil?
             Builtins.y2error("Help text cannot be 'nil'")
           elsif own_help == ""
             Builtins.y2milestone("Skipping empty help")
@@ -569,7 +569,7 @@ module Yast
           if Builtins.haskey(@mod2tab, submod)
             Builtins.y2milestone("Mod2Tab: '%1'", Ops.get(@mod2tab, submod))
             warn_level = Ops.get_symbol(prop_map, "warning_level", :ok)
-            warn_level = :ok if warn_level == nil
+            warn_level = :ok if warn_level.nil?
             if Builtins.contains([:blocker, :fatal, :error], warn_level)
               # bugzilla #237291
               # always switch to more detailed tab only
@@ -659,7 +659,7 @@ module Yast
       html = ""
       warning = Ops.get_string(prop, "warning", "")
 
-      if warning != nil && warning != ""
+      if !warning.nil? && warning != ""
         level = Ops.get_symbol(prop, "warning_level", :warning)
 
         if level == :notice
@@ -677,7 +677,7 @@ module Yast
       end
 
       preformatted_prop = Ops.get_string(prop, "preformatted_proposal", "")
-      preformatted_prop = "" if preformatted_prop == nil
+      preformatted_prop = "" if preformatted_prop.nil?
 
       if preformatted_prop != ""
         html = Ops.add(html, preformatted_prop)
@@ -701,7 +701,7 @@ module Yast
     #
     def submod_write_settings(submodule)
       result = Convert.to_map(WFM.CallFunction(submodule, ["Write", {}]))
-      result = {} if result == nil
+      result = {} if result.nil?
 
       Ops.get_boolean(result, "success", true)
     end
@@ -714,7 +714,7 @@ module Yast
 
       Builtins.foreach(@submodules) do |submod|
         submod_success = submod_write_settings(submod)
-        submod_success = true if submod_success == nil
+        submod_success = true if submod_success.nil?
         if !submod_success
           Builtins.y2error("Write() failed for submodule %1", submod)
         end
@@ -784,7 +784,7 @@ module Yast
         Mode.mode,
         @proposal_mode
       )
-      if modules == nil
+      if modules.nil?
         Builtins.y2error("Error loading proposals")
         return :abort
       end
@@ -886,7 +886,7 @@ module Yast
 
         p = AutoinstConfig.getProposalList
 
-        if p != nil && p != []
+        if !p.nil? && p != []
           # array intersection
           @submodules_presentation &= v
         end

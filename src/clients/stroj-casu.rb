@@ -56,7 +56,7 @@ module Yast
         from: "any",
         to:   "list <map <string, any>>"
       )
-      @items = [] if @items == nil
+      @items = [] if @items.nil?
       WizardHW.SetContents(@items)
 
       @ui = WizardHW.UserInput

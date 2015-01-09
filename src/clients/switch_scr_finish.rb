@@ -86,7 +86,7 @@ module Yast
 
         # bugzilla #201058
         # WFM::SCROpen returns negative integer in case of failure
-        if Installation.scr_handle == nil ||
+        if Installation.scr_handle.nil? ||
             Ops.less_than(Installation.scr_handle, 0)
           Builtins.y2error("Cannot switch to the system")
           return false
@@ -132,7 +132,7 @@ module Yast
 
       ret_dir = Convert.to_list(SCR.Read(path(".target.dir"), "/"))
 
-      if ret_dir == nil || ret_dir == []
+      if ret_dir.nil? || ret_dir == []
         Builtins.y2milestone("SCR::Read/dir: %1", ret_dir)
         Builtins.y2error("SCR Error")
         return false
@@ -140,7 +140,7 @@ module Yast
 
       scr_dir = SCR.Dir(path(".sysconfig"))
 
-      if scr_dir == nil || scr_dir == []
+      if scr_dir.nil? || scr_dir == []
         Builtins.y2milestone("SCR::Dir: %1", scr_dir)
         Builtins.y2error("SCR Error")
         return false

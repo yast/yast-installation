@@ -120,7 +120,7 @@ module Yast
         @next_step = Builtins.tointeger(Ops.get(@contents_lines, 0))
         @restarting_step = Builtins.tointeger(Ops.get(@contents_lines, 1))
 
-        if @next_step == nil
+        if @next_step.nil?
           Builtins.y2error("Data file specifying step to continue corrupted")
           ProductControl.first_step = 0
           ProductControl.restarting_step = nil

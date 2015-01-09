@@ -130,7 +130,7 @@ module Yast
 
       @continue_processing = false
 
-      if @system_urls != nil && @system_urls != []
+      if !@system_urls.nil? && @system_urls != []
         @continue_processing = true
         # initialize zypp
         Pkg.TargetInitialize(Installation.destdir)
@@ -173,11 +173,11 @@ module Yast
       if @new_repos_already_in_system && @ret == :back
         log.info "Target system already poluted with new repositories"
         @continue_processing = false
-      elsif @already_registered_repos == nil ||
+      elsif @already_registered_repos.nil? ||
           Ops.less_than(Builtins.size(@already_registered_repos), 1)
         Builtins.y2milestone("No repositories found")
         @continue_processing = false
-      elsif @urls == nil || Ops.less_than(Builtins.size(@urls), 1)
+      elsif @urls.nil? || Ops.less_than(Builtins.size(@urls), 1)
         Builtins.y2milestone("No repositories to offer")
         @continue_processing = false
       end
@@ -205,7 +205,7 @@ module Yast
         to:   "list <map>"
       )
 
-      if @system_urls == nil || @system_urls == []
+      if @system_urls.nil? || @system_urls == []
         Builtins.y2milestone("No zypp repositories on the target")
       else
         Builtins.y2milestone("URLs: %1", @system_urls)
@@ -309,7 +309,7 @@ module Yast
 
       UI.ChangeWidget(Id("table_of_repos"), :Items, items)
 
-      if currentitem != nil
+      if !currentitem.nil?
         UI.ChangeWidget(Id("table_of_repos"), :CurrentItem, currentitem)
       end
 
@@ -321,7 +321,7 @@ module Yast
     end
 
     def FindURLName(id)
-      if id == "" || id == nil
+      if id == "" || id.nil?
         Builtins.y2error("Base URL not defined!")
         return nil
       end
@@ -340,7 +340,7 @@ module Yast
     end
 
     def FindURLType(id)
-      if id == "" || id == nil
+      if id == "" || id.nil?
         Builtins.y2error("Base URL not defined!")
         return ""
       end
@@ -359,7 +359,7 @@ module Yast
     end
 
     def EditItem(currentitem)
-      if currentitem == nil || Ops.less_than(currentitem, 0)
+      if currentitem.nil? || Ops.less_than(currentitem, 0)
         Builtins.y2error("Cannot edit item: %1", currentitem)
         return
       end
@@ -402,7 +402,7 @@ module Yast
       @urls = []
 
       # If some new (since 10.3 Alpha?) URLs found, use only them
-      if @system_urls != nil && @system_urls != []
+      if !@system_urls.nil? && @system_urls != []
         Builtins.foreach(@system_urls) do |one_url_map|
           # If the user has gone back and forward, some of the repositories of
           # the previous system could be already registered for this
@@ -436,7 +436,7 @@ module Yast
         # unique ID
         Ops.set(one_url, "id", Builtins.sformat("ID: %1", id))
         # BNC #429059
-        if Builtins.haskey(one_url, "alias") && Ops.get(one_url, "alias") != nil
+        if one_url["alias"]
           url_alias = Builtins.sformat(
             "%1",
             Ops.get_string(one_url, "alias", "")
@@ -538,7 +538,7 @@ module Yast
           currentitem = Convert.to_integer(
             UI.QueryWidget(Id("table_of_repos"), :CurrentItem)
           )
-          if currentitem != nil
+          if !currentitem.nil?
             # BNC #583155: Removed/Enabled/Disabled
             Ops.set(
               @urls,
@@ -686,7 +686,7 @@ module Yast
 
     # See bnc #309317
     def GetUniqueAlias(alias_orig)
-      alias_orig = "" if alias_orig == nil
+      alias_orig = "" if alias_orig.nil?
 
       # all current aliases
       aliases = Builtins.maplist(Pkg.SourceGetCurrent(false)) do |i|
@@ -713,7 +713,7 @@ module Yast
     end
 
     def AdjustRepoSettings(new_repo, id)
-      if id == nil || id == ""
+      if id.nil? || id == ""
         Builtins.y2error("Undefined ID: %1", id)
         return
       end
@@ -872,7 +872,7 @@ module Yast
         one_url = Ops.get(@id_to_url, one_id, "")
         repo_name = Ops.get(@id_to_name, one_id, "")
         pth = "/"
-        if one_url == nil || one_url == ""
+        if one_url.nil? || one_url == ""
           Builtins.y2error("Repository id %1 has no URL", one_id)
           next
         end
@@ -886,7 +886,7 @@ module Yast
           one_url,
           repo_type
         )
-        if (repo_type == nil || repo_type == "NONE") &&
+        if (repo_type.nil? || repo_type == "NONE") &&
             Builtins.substring(one_url, 0, 4) == "dir:"
           one_url = Ops.add("dir:/mnt", Builtins.substring(one_url, 4))
           repo_type = Pkg.RepositoryProbe(one_url, "/")
@@ -896,7 +896,7 @@ module Yast
             repo_type
           )
         end
-        if repo_type == nil || repo_type == "NONE"
+        if repo_type.nil? || repo_type == "NONE"
           Builtins.y2error("Cannot probe repository %1", one_id)
           Report.Error(
             Builtins.sformat(
@@ -933,7 +933,7 @@ module Yast
         repoadd = repoadd_ref.value
         Builtins.y2milestone("Adding repo (enabled): %1", repoadd)
         new_id = Pkg.RepositoryAdd(repoadd)
-        if new_id == nil || new_id == -1
+        if new_id.nil? || new_id == -1
           Builtins.y2error("Error adding repository: %1", repoadd)
           Report.Error(
             Builtins.sformat(
@@ -1049,12 +1049,12 @@ module Yast
         repoadd = repoadd_ref.value
         # do not probe! adding as disabled!
         repo_type = FindURLType(one_url)
-        if repo_type != nil && repo_type != ""
+        if !repo_type.nil? && repo_type != ""
           Ops.set(repoadd, "type", repo_type)
         end
         Builtins.y2milestone("Adding repo (disabled): %1", repoadd)
         new_id = Pkg.RepositoryAdd(repoadd)
-        if new_id == nil || new_id == -1
+        if new_id.nil? || new_id == -1
           Builtins.y2error("Error adding repository: %1", repoadd)
           Report.Error(
             Builtins.sformat(
@@ -1082,12 +1082,12 @@ module Yast
     end
 
     def FindMediaNr(alias_, url)
-      if alias_ == "" || alias_ == nil
+      if alias_ == "" || alias_.nil?
         Builtins.y2error("alias not defined!")
         return nil
       end
 
-      if url == "" || url == nil
+      if url == "" || url.nil?
         Builtins.y2error("URL not defined!")
         return nil
       end

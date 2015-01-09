@@ -157,7 +157,7 @@ module Yast
 
     # Adjusts the repository for images
     def InitRepo
-      return if @_repo != nil
+      return if !@_repo.nil?
 
       SetRepo(Ops.get(Packages.theSources, 0, 0))
 
@@ -165,7 +165,7 @@ module Yast
     end
 
     def ThisIsADebugMode
-      if @debug_mode == nil
+      if @debug_mode.nil?
         @debug_mode = ProductFeatures.GetBooleanFeature(
           "globals",
           "debug_deploying"
@@ -294,13 +294,13 @@ module Yast
       # Checking files for signatures
       image = Pkg.SourceProvideDigestedFile(@_repo, 1, file, false)
 
-      if image == nil
+      if image.nil?
         Builtins.y2error("File %1 not found on media", file)
         return false
       end
 
       # reset, adjust labels, etc.
-      @tar_image_progress.call(0) if @tar_image_progress != nil
+      @tar_image_progress.call(0) if !@tar_image_progress.nil?
 
       Builtins.y2milestone("Creating target directory")
       cmd = Builtins.sformat("test -d %1 || mkdir -p %1", target)
@@ -360,7 +360,7 @@ module Yast
           SCR.Read(path(".process.read_line_stderr"), pid)
         )
 
-        if newline != nil
+        if !newline.nil?
           if !Builtins.regexpmatch(newline, read_checkpoint_str)
             Builtins.y2milestone("Deploying image: %1", newline)
             next
@@ -368,9 +368,9 @@ module Yast
 
           newline = Builtins.regexpsub(newline, read_checkpoint_str, "\\1")
 
-          next if newline == nil || newline == ""
+          next if newline.nil? || newline == ""
 
-          if @tar_image_progress != nil
+          if !@tar_image_progress.nil?
             @tar_image_progress.call(
               Ops.add(Builtins.tointeger(newline), better_feeling_constant)
             )
@@ -394,7 +394,7 @@ module Yast
       # Checking the exit code (0 = OK, nil = still running, 'else' = error)
       exitcode = Convert.to_integer(SCR.Read(path(".process.status"), pid))
 
-      if exitcode != nil && exitcode != 0
+      if !exitcode.nil? && exitcode != 0
         Builtins.y2milestone(
           "Deploying has failed, exit code was: %1, stderr: %2",
           exitcode,
@@ -408,7 +408,7 @@ module Yast
       return false if aborted
 
       # adjust labels etc.
-      @tar_image_progress.call(100) if @tar_image_progress != nil
+      @tar_image_progress.call(100) if !@tar_image_progress.nil?
 
       RemoveTemporaryImage(image)
 
@@ -429,7 +429,7 @@ module Yast
       # Checking files for signatures
       image = Pkg.SourceProvideDigestedFile(@_repo, 1, file, false)
 
-      if image == nil
+      if image.nil?
         Builtins.y2error("File %1 not found on media", file)
         return false
       end
@@ -509,7 +509,7 @@ module Yast
       # Checking files for signatures
       image = Pkg.SourceProvideDigestedFile(@_repo, 1, file, false)
 
-      if image == nil
+      if image.nil?
         Builtins.y2error("File %1 not found on media", file)
         return false
       end
@@ -655,7 +655,7 @@ module Yast
       InitRepo()
 
       # bnc #439104
-      if @_repo == nil
+      if @_repo.nil?
         Builtins.y2warning("No images-repository defined")
         return true
       end
@@ -672,7 +672,7 @@ module Yast
         # BNC #409927
         # Checking files for signatures
         filename = Pkg.SourceProvideDigestedFile(@_repo, 1, try_file, true)
-        if filename != nil && filename != ""
+        if !filename.nil? && filename != ""
           Builtins.y2milestone(
             "Using details file: %1 (%2)",
             filename,
@@ -682,13 +682,13 @@ module Yast
         end
       end
 
-      if filename == nil
+      if filename.nil?
         Builtins.y2milestone("No image installation details found")
         return false
       end
 
       read_details = XML.XMLToYCPFile(filename)
-      if read_details == nil
+      if read_details.nil?
         Builtins.y2error("Cannot parse imagesets details")
         return false
       end
@@ -702,7 +702,7 @@ module Yast
 
       Builtins.foreach(Ops.get_list(read_details, "details", [])) do |image_detail|
         file = Ops.get_string(image_detail, "file", "")
-        next if file == nil || file == ""
+        next if file.nil? || file == ""
         files = Builtins.tointeger(Ops.get_string(image_detail, "files", "0"))
         isize = Builtins.tointeger(Ops.get_string(image_detail, "size", "0"))
         Ops.set(@images_details, file,  "files" => files, "size" => isize)
@@ -727,12 +727,12 @@ module Yast
       FillUpImagesDetails()
 
       # register own callback for downloading
-      if @download_image_progress != nil
+      if !@download_image_progress.nil?
         Pkg.CallbackProgressDownload(@download_image_progress)
       end
 
       # register own callback for start downloading
-      if @start_download_handler != nil
+      if !@start_download_handler.nil?
         Pkg.CallbackStartDownload(@start_download_handler)
       end
 
@@ -742,19 +742,19 @@ module Yast
 
       Builtins.foreach(images) do |img|
         num = Ops.add(num, 1)
-        progress.call(num, 0) if progress != nil
+        progress.call(num, 0) if !progress.nil?
         if !DeployImage(img, target)
           aborted = true
           Builtins.y2milestone("Aborting...")
           raise Break
         end
-        progress.call(num, 100) if progress != nil
+        progress.call(num, 100) if !progress.nil?
       end
 
       return nil if aborted == true
 
       # unregister downloading progress
-      Pkg.CallbackProgressDownload(nil) if @download_image_progress != nil
+      Pkg.CallbackProgressDownload(nil) if !@download_image_progress.nil?
 
       # reregister callbacks
       PackageCallbacks.RestorePreviousProgressCallbacks
@@ -780,11 +780,11 @@ module Yast
     end
 
     def EnoughPatternsMatching(matching_patterns, patterns_in_imagesets)
-      if matching_patterns == nil || Ops.less_than(matching_patterns, 0)
+      if matching_patterns.nil? || Ops.less_than(matching_patterns, 0)
         return false
       end
 
-      if patterns_in_imagesets == nil || Ops.less_than(patterns_in_imagesets, 0)
+      if patterns_in_imagesets.nil? || Ops.less_than(patterns_in_imagesets, 0)
         return false
       end
 
@@ -821,7 +821,7 @@ module Yast
         false
       )
 
-      if filename == nil
+      if filename.nil?
         @image_installation_available = false
         Installation.image_installation = false
         Installation.image_only = false
@@ -830,7 +830,7 @@ module Yast
       end
 
       image_descr = XML.XMLToYCPFile(filename)
-      if image_descr == nil
+      if image_descr.nil?
         @image_installation_available = false
         Installation.image_installation = false
         Installation.image_only = false
@@ -1089,7 +1089,7 @@ module Yast
         line = Convert.to_string(
           SCR.Read(path(".process.read_line_stderr"), process)
         )
-        while line != nil
+        while !line.nil?
           if pid == ""
             if !Builtins.regexpmatch(
               line,
@@ -1120,7 +1120,7 @@ module Yast
           SCR.Execute(path(".target.bash"), cmd)
         end
         Builtins.sleep(300)
-        if done != nil
+        if !done.nil?
           progress = Ops.add(
             progress_start,
             Ops.divide(
@@ -1205,7 +1205,7 @@ module Yast
 
       AdjustProgressLayout(id, nr_steps, _("Storing user preferences..."))
 
-      @generic_set_progress.call(id, 0) if @generic_set_progress != nil
+      @generic_set_progress.call(id, 0) if !@generic_set_progress.nil?
 
       # Query for changed state of all knwon types
       # 'changed' means that they were 'installed' and 'not locked' before
@@ -1221,24 +1221,24 @@ module Yast
           Ops.get_symbol(one_object, "status", :unknown) == :removed
         end
         Ops.set(@objects_state, [one_type, "remove"], remove_resolvables)
-        @generic_set_progress.call(id, nil) if @generic_set_progress != nil
+        @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         install_resolvables = Builtins.filter(resolvable_properties) do |one_object|
           Ops.get_symbol(one_object, "status", :unknown) == :selected
         end
         Ops.set(@objects_state, [one_type, "install"], install_resolvables)
-        @generic_set_progress.call(id, nil) if @generic_set_progress != nil
+        @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         taboo_resolvables = Builtins.filter(resolvable_properties) do |one_object|
           Ops.get_symbol(one_object, "status", :unknown) == :available &&
             Ops.get_boolean(one_object, "locked", false) == true
         end
         Ops.set(@objects_state, [one_type, "taboo"], taboo_resolvables)
-        @generic_set_progress.call(id, nil) if @generic_set_progress != nil
+        @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         lock_resolvables = Builtins.filter(resolvable_properties) do |one_object|
           Ops.get_symbol(one_object, "status", :unknown) == :installed &&
             Ops.get_boolean(one_object, "locked", false) == true
         end
         Ops.set(@objects_state, [one_type, "lock"], lock_resolvables)
-        @generic_set_progress.call(id, nil) if @generic_set_progress != nil
+        @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
       end
 
       if ThisIsADebugMode()
@@ -1337,7 +1337,7 @@ module Yast
 
       AdjustProgressLayout(id, nr_steps, _("Restoring user preferences..."))
 
-      @generic_set_progress.call(id, 0) if @generic_set_progress != nil
+      @generic_set_progress.call(id, 0) if !@generic_set_progress.nil?
 
       Builtins.foreach(@all_supported_types) do |one_type|
         resolvable_properties = Pkg.ResolvableProperties("", one_type, "")
@@ -1346,7 +1346,7 @@ module Yast
         to_install = Builtins.filter(resolvable_properties) do |one_resolvable|
           Ops.get_symbol(one_resolvable, "status", :unknown) == :selected
         end
-        @generic_set_progress.call(id, nil) if @generic_set_progress != nil
+        @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         # List of all packages selected for installation (just names)
         selected_for_installation_pkgnames = Builtins.maplist(
           Ops.get(@objects_state, [one_type, "install"], [])
@@ -1364,7 +1364,7 @@ module Yast
             "version" => Ops.get_string(one_resolvable, "version", "")
           }
         end
-        @generic_set_progress.call(id, nil) if @generic_set_progress != nil
+        @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         # Delete all packages that are installed but should not be
         one_already_installed_resolvable = {}
         Builtins.foreach(resolvable_properties) do |one_resolvable|
@@ -1410,7 +1410,7 @@ module Yast
             end
           end
         end
-        @generic_set_progress.call(id, nil) if @generic_set_progress != nil
+        @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
         # Install all packages that aren't yet
         Builtins.foreach(to_install) do |one_to_install|
           one_to_install_ref = arg_ref(one_to_install)
@@ -1418,7 +1418,7 @@ module Yast
           ProceedWithSelected(one_to_install_ref, one_type_ref)
           one_type = one_type_ref.value
         end
-        @generic_set_progress.call(id, nil) if @generic_set_progress != nil
+        @generic_set_progress.call(id, nil) if !@generic_set_progress.nil?
       end
 
       # Free the memory

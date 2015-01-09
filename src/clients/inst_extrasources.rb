@@ -220,7 +220,7 @@ module Yast
         to:   "list <map>"
       )
 
-      if urls_from_control_file == nil
+      if urls_from_control_file.nil?
         Builtins.y2milestone(
           "Empty or errorneous software/extra_urls: %1",
           urls_from_control_file
@@ -256,7 +256,7 @@ module Yast
       ret = []
 
       Builtins.foreach(url_list) do |new_url|
-        if Ops.get_string(new_url, "baseurl", "") == nil ||
+        if Ops.get_string(new_url, "baseurl", "").nil? ||
             Ops.get_string(new_url, "baseurl", "") == ""
           Builtins.y2error(
             "Cannot use repository: %1, no 'baseurl' defined",
@@ -320,7 +320,7 @@ module Yast
           )
         end
         new_repo_id = Pkg.RepositoryAdd(repo_prop)
-        if new_repo_id != nil && Ops.greater_or_equal(new_repo_id, 0)
+        if !new_repo_id.nil? && Ops.greater_or_equal(new_repo_id, 0)
           Builtins.y2milestone(
             "Registered extra repository: %1: %2",
             new_repo_id,
@@ -346,7 +346,7 @@ module Yast
       Builtins.foreach(srcs) do |src|
         general = Pkg.SourceGeneralData(src)
         url = Ops.get_string(general, "url", "")
-        ret = Builtins.add(ret, url) if url != nil && url != ""
+        ret = Builtins.add(ret, url) if !url.nil? && url != ""
         if Mode.update && Builtins.regexpmatch(url, "^dir:[/]+mnt[/]+")
           Ops.set(@local_urls, src, url)
         end

@@ -129,7 +129,7 @@ module Yast
       mnt_tmpdir = SystemFilesCopy.CreateDirectoryIfMissing(mnt_tmpdir)
 
       # CreateDirectory failed
-      return nil if mnt_tmpdir == nil
+      return nil if mnt_tmpdir.nil?
 
       files_found_on_partitions = {}
 
@@ -179,19 +179,19 @@ module Yast
           file_attribs = Convert.to_map(
             SCR.Read(path(".target.lstat"), filename_to_seek)
           )
-          if file_attribs == nil || file_attribs == {}
+          if file_attribs.nil? || file_attribs == {}
             files_found = false
             next
           end
           # checking for the acces-time
           file_time = Ops.get_integer(file_attribs, "atime")
-          if file_time == nil || file_time == 0
+          if file_time.nil? || file_time == 0
             files_found = false
             next
           end
           # doesn't make sense to copy files with zero size
           file_size = Ops.get_integer(file_attribs, "atime")
-          if file_size == nil || file_size == 0
+          if file_size.nil? || file_size == 0
             files_found = false
             next
           end
@@ -303,7 +303,7 @@ module Yast
             Ops.get(partition, "detected_fs")
           )
           devicename = Ops.get_string(partition, "device")
-          if filesystem == nil
+          if filesystem.nil?
             Builtins.y2milestone(
               "Skipping partition %1, no FS detected",
               devicename

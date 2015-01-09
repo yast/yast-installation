@@ -94,7 +94,7 @@ module Yast
           next
         end
         pos = url.rindex("/")
-        if pos == nil
+        if pos.nil?
           log.error "Broken URL for release notes: #{url}"
           next
         end

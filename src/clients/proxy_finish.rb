@@ -66,7 +66,7 @@ module Yast
         if Stage.initial
           @proxy = Convert.to_string(SCR.Read(path(".etc.install_inf.ProxyURL")))
 
-          if @proxy != nil
+          if !@proxy.nil?
             Builtins.y2milestone("setting proxy to %1", @proxy)
 
             # maybe use Proxy module

@@ -61,7 +61,7 @@ module Yast
     def AdjustModprobeBlacklist
       # check whether we need to run it
       brokenmodules = Linuxrc.InstallInf("BrokenModules")
-      if brokenmodules == "" || brokenmodules == nil
+      if brokenmodules == "" || brokenmodules.nil?
         Builtins.y2milestone("No BrokenModules in install.inf, skipping...")
         return
       end
@@ -81,7 +81,7 @@ module Yast
         content = Convert.to_string(
           SCR.Read(path(".target.string"), blacklist_file)
         )
-        if content == nil
+        if content.nil?
           Builtins.y2error("Cannot read %1 file", blacklist_file)
           content = ""
         end
@@ -202,9 +202,9 @@ module Yast
           "<p>Information required for the base installation is now complete.</p>"
         )
 
-        some_destructive = Builtins.find(Storage.GetCommitInfos) do |info|
+        some_destructive = Storage.GetCommitInfos.any? do |info|
           Ops.get_boolean(info, :destructive, false)
-        end != nil
+        end
 
         if some_destructive
           # Text for confirmation popup before the installation really starts 2/3
@@ -300,13 +300,13 @@ module Yast
     # Some client calls have to be called even if using AC
     def EnableRequiredModules
       # Lazy init
-      if @modules_to_enable_with_AC_on == nil
+      if @modules_to_enable_with_AC_on.nil?
         feature = ProductFeatures.GetFeature(
           "globals",
           "autoconfiguration_enabled_modules"
         )
 
-        if feature == "" || feature == nil || feature == []
+        if feature == "" || feature.nil? || feature == []
           @modules_to_enable_with_AC_on = []
         else
           @modules_to_enable_with_AC_on = Convert.convert(
@@ -322,7 +322,7 @@ module Yast
         )
       end
 
-      if @modules_to_enable_with_AC_on != nil
+      if !@modules_to_enable_with_AC_on.nil?
         Builtins.foreach(@modules_to_enable_with_AC_on) do |one_module|
           ProductControl.EnableModule(one_module)
         end
@@ -333,7 +333,7 @@ module Yast
 
     def AdjustStepsAccordingToInstallationSettings
       if Installation.add_on_selected == true ||
-          Linuxrc.InstallInf("addon") != nil
+          !Linuxrc.InstallInf("addon").nil?
         ProductControl.EnableModule("add-on")
       else
         ProductControl.DisableModule("add-on")

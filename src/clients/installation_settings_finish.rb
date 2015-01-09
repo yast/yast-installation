@@ -79,12 +79,12 @@ module Yast
     end
 
     def Write
-      if ProductControl.GetDisabledModules == nil
+      if ProductControl.GetDisabledModules.nil?
         Builtins.y2error("Wrong definition of DisabledModules")
         return
       end
 
-      if InstData.wizardsteps_disabled_modules == nil
+      if InstData.wizardsteps_disabled_modules.nil?
         Builtins.y2error("Path to write disabled modules is not defined!")
         return
       end

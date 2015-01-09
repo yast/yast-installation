@@ -180,7 +180,7 @@ module Yast
               break
               # something wrong or aborted
             else
-              if @ret2 == nil
+              if @ret2.nil?
                 # error popup
                 Popup.Message(
                   Builtins.sformat(

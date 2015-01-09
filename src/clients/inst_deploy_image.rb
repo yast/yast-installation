@@ -169,7 +169,7 @@ module Yast
         Builtins.y2milestone("Aborting...")
         return :abort
         # nil   == aborted
-      elsif @dep_ret == nil
+      elsif @dep_ret.nil?
         Builtins.y2milestone("Aborting...")
         return :abort
       end
@@ -264,7 +264,7 @@ module Yast
       end
 
       # incremental
-      if current_step == nil
+      if current_step.nil?
         @_current_step_in_subprogress = Ops.add(
           @_current_step_in_subprogress,
           1
@@ -307,7 +307,7 @@ module Yast
       current_image_file = Ops.get_string(current_image, "file", "")
 
       # Fetches is (additionally) downloading some other file
-      if current_image_file == nil || current_image_file == ""
+      if current_image_file.nil? || current_image_file == ""
         Builtins.y2warning("Uknown image being downloaded: %1", current_image)
         @report_image_downloading = false
         return
@@ -425,7 +425,7 @@ module Yast
         @_last_progress = -1
       end
 
-      if max_progress == nil || max_progress == 0
+      if max_progress.nil? || max_progress == 0
         Builtins.y2milestone("Can't find max_progress: %1", current_image)
         return
       end

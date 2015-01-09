@@ -70,7 +70,7 @@ module Yast
 
       # Adjust a SlideShow dialog if not configured
       @get_setup = SlideShow.GetSetup
-      if @get_setup == nil || @get_setup == {}
+      if @get_setup.nil? || @get_setup == {}
         Builtins.y2milestone("No SlideShow setup has been set, adjusting")
         SlideShow.Setup(
           [
@@ -275,10 +275,10 @@ module Yast
         Builtins.foreach(@stages_copy) do |one_stage|
           @counter = Ops.add(@counter, 1)
           label = Ops.get_string(one_stage, "label", "")
-          next if label == nil || label == ""
+          next if label.nil? || label == ""
           loc_label = Builtins.dgettext(@textdom, label)
           # if translated
-          if loc_label != nil && loc_label != "" && loc_label != label
+          if !loc_label.nil? && loc_label != "" && loc_label != label
             Ops.set(@stages, [@counter, "label"], loc_label)
           end
         end
@@ -342,7 +342,7 @@ module Yast
         )
         steps = Builtins.maplist(Ops.get_list(stage, "steps", [])) do |s|
           # some steps are called in live installer only
-          next nil if s == "" || s == nil
+          next nil if s == "" || s.nil?
           s = Ops.add(s, "_finish")
           if !WFM.ClientExists(s)
             Builtins.y2error("Missing YCP client: %1", s)
@@ -352,19 +352,19 @@ module Yast
           orig = Progress.set(false)
           info = Convert.to_map(WFM.CallFunction(s, ["Info"]))
           if @test_mode == true
-            info = {} if info == nil
+            info = {} if info.nil?
             Builtins.y2milestone("Test mode, forcing run")
             Ops.set(info, "when", [:installation, :update, :autoinst])
           end
           Progress.set(orig)
-          if info == nil
+          if info.nil?
             Builtins.y2error("Client %1 returned invalid data", s)
             ReportClientError(
               Builtins.sformat("Client %1 returned invalid data.", s)
             )
             next nil
           end
-          if Ops.get(info, "when") != nil &&
+          if !info["when"].nil &&
               !Builtins.contains(Ops.get_list(info, "when", []), @run_type) &&
               # special hack for autoupgrade - should be as regular upgrade as possible, scripts are the only exception
               !(Mode.autoupgrade &&
@@ -379,7 +379,7 @@ module Yast
           )
           deep_copy(info)
         end
-        Ops.set(stage, "steps", Builtins.filter(steps) { |s| s != nil })
+        Ops.set(stage, "steps", Builtins.filter(steps) { |s| !s.nil? })
         deep_copy(stage)
       end
 

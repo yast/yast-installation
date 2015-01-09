@@ -67,7 +67,7 @@ module Yast
             "environments. This screen allows you to set the default.</p>"
         )
 
-      if DefaultDesktop.Desktop == nil || DefaultDesktop.Desktop == ""
+      if DefaultDesktop.Desktop.nil? || DefaultDesktop.Desktop == ""
         DefaultDesktop.Init
       end
 
@@ -91,7 +91,7 @@ module Yast
       @default_ui_minor = Empty()
 
       @default_desktop = DefaultDesktop.Desktop
-      if @default_desktop != nil && @default_desktop != "" &&
+      if !@default_desktop.nil? && @default_desktop != "" &&
           Builtins.contains(@other_desktops, @default_desktop)
         @default_ui_minor = deep_copy(@minor_desktops)
         @current_minor_d_status = true
@@ -133,7 +133,7 @@ module Yast
       # Adjust default values
       if !UI.WidgetExists(Id("selected_desktop"))
         Builtins.y2error(-1, "Widget selected_desktop does not exist")
-      elsif @default_desktop != nil && @default_desktop != ""
+      elsif !@default_desktop.nil? && @default_desktop != ""
         Builtins.y2milestone(
           "Already selected desktop: %1",
           DefaultDesktop.Desktop
@@ -169,7 +169,7 @@ module Yast
             UI.QueryWidget(Id("selected_desktop"), :Value)
           )
 
-          if @currently_selected != nil && @currently_selected != ""
+          if !@currently_selected.nil? && @currently_selected != ""
             DefaultDesktop.SetDesktop(
               Builtins.regexpsub(
                 Builtins.tostring(@currently_selected),
@@ -179,7 +179,7 @@ module Yast
             )
             Packages.ForceFullRepropose
 
-            if DefaultDesktop.Desktop != nil &&
+            if !DefaultDesktop.Desktop.nil? &&
                 Builtins.haskey(@all_desktops, DefaultDesktop.Desktop)
               SelectSoftwareNow()
               break
@@ -224,7 +224,7 @@ module Yast
     end
 
     def GetDesktopRadioButtonId(desktop_name)
-      if desktop_name == nil || desktop_name == ""
+      if desktop_name.nil? || desktop_name == ""
         Builtins.y2warning("Wrong desktop name: %1", desktop_name)
         return ""
       end
@@ -233,7 +233,7 @@ module Yast
     end
 
     def GetDesktopDescriptionId(desktop_name)
-      if desktop_name == nil || desktop_name == ""
+      if desktop_name.nil? || desktop_name == ""
         Builtins.y2warning("Wrong desktop name: %1", desktop_name)
         return ""
       end

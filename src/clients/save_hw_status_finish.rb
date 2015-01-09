@@ -74,7 +74,7 @@ module Yast
             from: "any",
             to:   "list <string>"
           )
-          if @parports != nil && Ops.greater_than(Builtins.size(@parports), 0)
+          if !@parports.nil? && Ops.greater_than(Builtins.size(@parports), 0)
             HWConfig.SetValue("static-printer", "STARTMODE", "auto")
             HWConfig.SetValue("static-printer", "MODULE", "lp")
           end

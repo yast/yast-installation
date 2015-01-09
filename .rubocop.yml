@@ -4,7 +4,7 @@ inherit_from:
 
 # Offense count: 153
 Metrics/AbcSize:
-  Max: 302
+  Max: 304
 
 # Offense count: 32
 Metrics/BlockNesting:
@@ -91,17 +91,6 @@ Style/NestedTernaryOperator:
 # Offense count: 4
 # Configuration parameters: EnforcedStyle, MinBodyLength, SupportedStyles.
 Style/Next:
-  Enabled: false
-
-# Offense count: 104
-# Cop supports --auto-correct.
-Style/NilComparison:
-  Enabled: false
-
-# Offense count: 69
-# Cop supports --auto-correct.
-# Configuration parameters: IncludeSemanticChanges.
-Style/NonNilCheck:
   Enabled: false
 
 # Offense count: 22

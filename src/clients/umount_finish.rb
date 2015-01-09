@@ -327,7 +327,7 @@ module Yast
         WFM.Read(path(".local.string"), poolsize_path)
       )
 
-      if poolsize == nil || poolsize == ""
+      if poolsize.nil? || poolsize == ""
         Builtins.y2warning(
           "Cannot read poolsize from %1, using the default",
           poolsize_path

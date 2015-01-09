@@ -61,7 +61,7 @@ module Yast
         "system_scenarios"
       )
 
-      if @any_scenarios == nil || @any_scenarios == "" || @any_scenarios == []
+      if @any_scenarios.nil? || @any_scenarios == "" || @any_scenarios == []
         Builtins.y2error("Undefined software->system_scenarios")
         return :auto
       end
@@ -133,7 +133,7 @@ module Yast
             UI.QueryWidget(Id(:scenarios), :CurrentButton)
           )
 
-          if @chosen_selection == nil || @chosen_selection == ""
+          if @chosen_selection.nil? || @chosen_selection == ""
             # TRANSLATORS: pop-up message
             Report.Message(_("Choose one scenario, please."))
           else
@@ -197,7 +197,7 @@ module Yast
             Ops.get(one_scenario, "id", ""),
             Ops.get(one_scenario, "patterns", "")
           )
-          if selected_id == nil
+          if selected_id.nil?
             selected_id = Ops.get(one_scenario, "id", "")
           else
             Builtins.y2warning("Scenario %1 already selected", selected_id)
@@ -206,7 +206,7 @@ module Yast
       end
 
       # matching patterns found
-      if selected_id != nil
+      if !selected_id.nil?
         UI.ChangeWidget(Id(:scenarios), :CurrentButton, selected_id)
 
         # using fallback from control file
@@ -216,7 +216,7 @@ module Yast
           "default_system_scenario"
         )
 
-        if default_selection == nil || default_selection == ""
+        if default_selection.nil? || default_selection == ""
           Builtins.y2warning("No default selection defined")
         else
           Builtins.y2milestone("Pre-selecting default selection")

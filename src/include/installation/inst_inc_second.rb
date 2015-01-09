@@ -57,7 +57,7 @@ module Yast
     end
 
     def AdjustDisabledModules
-      if InstData.wizardsteps_disabled_modules == nil
+      if InstData.wizardsteps_disabled_modules.nil?
         Builtins.y2error("Disabled modules file not defined")
         return
       end
@@ -75,7 +75,7 @@ module Yast
         from: "any",
         to:   "list <string>"
       )
-      if disabled_modules == nil
+      if disabled_modules.nil?
         Builtins.y2error(
           "Error reading %1",
           InstData.wizardsteps_disabled_modules
@@ -96,7 +96,7 @@ module Yast
     end
 
     def AdjustDisabledProposals
-      if InstData.wizardsteps_disabled_proposals == nil
+      if InstData.wizardsteps_disabled_proposals.nil?
         Builtins.y2error("Disabled proposals file not defined")
         return
       end
@@ -114,7 +114,7 @@ module Yast
         from: "any",
         to:   "list <string>"
       )
-      if disabled_proposals == nil
+      if disabled_proposals.nil?
         Builtins.y2error(
           "Error reading %1",
           InstData.wizardsteps_disabled_proposals
@@ -135,7 +135,7 @@ module Yast
     end
 
     def AdjustDisabledSubProposals
-      if InstData.wizardsteps_disabled_subproposals == nil
+      if InstData.wizardsteps_disabled_subproposals.nil?
         Builtins.y2error("Disabled subproposals file not defined")
         return
       end
@@ -156,7 +156,7 @@ module Yast
         from: "any",
         to:   "map <string, list <string>>"
       )
-      if disabled_subproposals == nil
+      if disabled_subproposals.nil?
         Builtins.y2error(
           "Error reading %1",
           InstData.wizardsteps_disabled_subproposals
@@ -242,7 +242,7 @@ module Yast
       Builtins.y2milestone("Adjusting services: %1", network_settings)
 
       # wrong syntax, wrong settings
-      if network_settings == nil
+      if network_settings.nil?
         Builtins.y2error(
           "Cannot read stored network services %1",
           SCR.Read(path(".target.string"), Installation.reboot_net_settings)
@@ -284,7 +284,7 @@ module Yast
         true
       end
 
-      if Builtins.size(network_settings) == 0 || network_settings == nil
+      if Builtins.size(network_settings) == 0 || network_settings.nil?
         Builtins.y2milestone(
           "Nothing to adjust, leaving... %1",
           network_settings
@@ -328,7 +328,7 @@ module Yast
       if FileUtils.Exists(var_file)
         var_map = Convert.to_map(SCR.Read(path(".target.ycp"), var_file))
         lang = Ops.get_string(var_map, "second_stage_language")
-        if lang != nil
+        if !lang.nil?
           Builtins.y2milestone("Setting language to: %1", lang)
           Language.QuickSet(lang)
           Builtins.y2milestone("using %1 for second stage", lang)

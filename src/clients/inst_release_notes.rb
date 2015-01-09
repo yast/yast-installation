@@ -155,7 +155,7 @@ module Yast
           )
           lang_name = Ops.get(@languages_translations, relnotes_lang, "")
           # combobox item
-          if lang_name == nil || lang_name == ""
+          if lang_name.nil? || lang_name == ""
             lang_name = Builtins.sformat(_("Language: %1"), relnotes_lang)
           end
           # set minimal width (maximal length of language name)
@@ -349,20 +349,14 @@ module Yast
         # fallback for short names without xx_YY
         if Builtins.regexpmatch(short, "_")
           short = Builtins.regexpsub(short, "^(.*)_.*$", "\\1")
-          Ops.set(ret, short, translation) if Ops.get(ret, short) == nil
+          Ops.set(ret, short, translation) if Ops.get(ret, short).nil?
         end
       end
 
       # exceptions
-      if Ops.get(ret, "en") != nil && Ops.get(ret, "en_US") != nil
-        Ops.set(ret, "en", Ops.get(ret, "en_US", ""))
-      end
-      if Ops.get(ret, "zh") != nil && Ops.get(ret, "zh_CN") != nil
-        Ops.set(ret, "zh", Ops.get(ret, "zh_CN", ""))
-      end
-      if Ops.get(ret, "pt") != nil && Ops.get(ret, "pt_PT") != nil
-        Ops.set(ret, "pt", Ops.get(ret, "pt_PT", ""))
-      end
+      ret["en"] = ret["en_US"] if ret["en"] && ret["en_US"]
+      ret["zh"] = ret["zh_CN"] if ret["zh"] && ret["zh_CN"]
+      ret["pt"] = ret["pt_PT"] if ret["pt"] && ret["pt_PT"]
 
       deep_copy(ret)
     end
@@ -389,7 +383,7 @@ module Yast
         SCR.Read(path(".target.string"), plain_text ? text_file : use_file)
       )
 
-      if contents == nil || contents == ""
+      if contents.nil? || contents == ""
         Builtins.y2error("Wrong relnotesfile: %1", use_file)
       else
         if plain_text

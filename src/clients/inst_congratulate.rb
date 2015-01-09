@@ -135,7 +135,7 @@ module Yast
         ProductFeatures.GetStringFeature("globals", "ui_mode")
       )
 
-      if @vendor_url_tmp != nil && @vendor_url_tmp != ""
+      if !@vendor_url_tmp.nil? && @vendor_url_tmp != ""
         @vendor_url = @vendor_url_tmp
       end
 
@@ -291,7 +291,7 @@ module Yast
       )
       Builtins.y2debug("Default WM: %1", default_wm)
 
-      if default_wm != nil &&
+      if !default_wm.nil? &&
           Builtins.issubstring(Builtins.tolower(default_wm), "kde")
         return true
       end

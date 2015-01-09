@@ -81,7 +81,7 @@ module Yast
           @selected_desktop = DefaultDesktop.Desktop
           Builtins.y2milestone("Selected desktop: %1", @selected_desktop)
 
-          if @selected_desktop == nil || @selected_desktop == ""
+          if @selected_desktop.nil? || @selected_desktop == ""
             @selected_desktop = "gnome"
           end
 
@@ -98,7 +98,7 @@ module Yast
             Ops.set(
               @dorder_map,
               desktop_id,
-              Ops.get(desktop_def, "order") != nil ?
+              desktop_def["order"] ?
                 Ops.get_integer(desktop_def, "order", 9999) :
                 9999
             )
@@ -199,7 +199,7 @@ module Yast
             "displaymanager_shutdown"
           )
           Builtins.y2milestone("Logon manager shutdown: %1", @dm_shutdown)
-          if @dm_shutdown != nil && @dm_shutdown != ""
+          if !@dm_shutdown.nil? && @dm_shutdown != ""
             SCR.Write(
               path(".sysconfig.displaymanager.DISPLAYMANAGER_SHUTDOWN"),
               @dm_shutdown
@@ -221,7 +221,7 @@ module Yast
             "globals",
             "polkit_default_privs"
           )
-          if @polkit_default_privs != nil && @polkit_default_privs != ""
+          if !@polkit_default_privs.nil? && @polkit_default_privs != ""
             Builtins.y2milestone(
               "Writing %1 to POLKIT_DEFAULT_PRIVS",
               @polkit_default_privs

@@ -148,7 +148,7 @@ module Yast
           1,
           "/media.1/build"
         )
-        if @build_file != nil
+        if !@build_file.nil?
           Builtins.y2milestone("Copying /media.1/build file")
           WFM.Execute(
             path(".local.bash"),
@@ -210,7 +210,7 @@ module Yast
           "globals",
           "base_product_license_directory"
         )
-        if @license_dir == nil || @license_dir == ""
+        if @license_dir.nil? || @license_dir == ""
           @license_dir = Builtins.sformat(
             "%1%2/licenses/base/",
             Installation.destdir,
