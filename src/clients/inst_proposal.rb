@@ -1157,7 +1157,7 @@ module Yast
         )
       end
 
-      return no > 1
+      no > 1
     end
 
     def set_icon

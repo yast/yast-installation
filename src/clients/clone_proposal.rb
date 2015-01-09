@@ -85,7 +85,7 @@ module Yast
         raise "Unsuported action #{func}"
       end
 
-      return ret
+      ret
     end
 
     def proposal_text

@@ -62,7 +62,7 @@ module Yast
         end
       end
 
-      return ret
+      ret
     end
 
     private

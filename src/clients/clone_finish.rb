@@ -58,7 +58,7 @@ module Yast
         raise "unknown function: #{func}"
       end
 
-      return nil
+      nil
     end
   end
 end
