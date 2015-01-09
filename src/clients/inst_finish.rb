@@ -562,7 +562,7 @@ module Yast
         return :next
       end
 
-      # hack for using kexec switch to console 1
+      # HACK: using kexec switch to console 1
       @cmd = Builtins.sformat("chvt 1")
       Builtins.y2milestone("Switch to console 1 via command: %1", @cmd)
       # switch to console 1

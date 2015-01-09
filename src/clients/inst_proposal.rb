@@ -633,7 +633,7 @@ module Yast
       end
 
       if @has_tab && Ops.less_than(tab_to_switch, 999) && !current_tab_affected
-        # FIXME copy-paste from event loop (but for last 2 lines)
+        # FIXME: copy-paste from event loop (but for last 2 lines)
         @current_tab = tab_to_switch
         load_matching_submodules_list
         proposal = ""

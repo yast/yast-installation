@@ -8,7 +8,7 @@ module Installation
       :live_installation,
       :autoinst,
       :update,
-      :autoupg #TODO is autoupgrade still live?
+      :autoupg # TODO: is autoupgrade still live?
     ]
 
     YAST_BASH_PATH = Yast::Path.new ".target.bash_output"

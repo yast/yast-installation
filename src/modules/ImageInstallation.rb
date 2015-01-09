@@ -472,7 +472,7 @@ module Yast
       RemoveTemporaryImage(image)
 
       Ops.get_integer(out, "exit", -1) == 0 
-      # FIXME error checking
+      # FIXME: error checking
     end
 
     def DeployDiskImage(id, target)
@@ -526,8 +526,8 @@ module Yast
       out = Convert.to_map(SCR.Execute(path(".target.bash_output"), cmd))
       Builtins.y2milestone("Executing %1 returned %2", cmd, out)
       Ops.get_integer(out, "exit", -1) == 0 
-      # FIXME error checking
-      # FIXME unmounting
+      # FIXME: error checking
+      # FIXME: unmounting
     end
 
     def TotalSize
@@ -766,7 +766,7 @@ module Yast
       PackageCallbacks.RestorePreviousProgressCallbacks
 
       true 
-      # TODO error checking
+      # TODO: error checking
     end
 
     # Returns the intersection of both patterns supported by the imageset
@@ -1073,7 +1073,7 @@ module Yast
         Convert.to_string(SCR.Read(path(".target.tmpdir"))),
         "/system_clone_fifo_2"
       )
-      # FIXME this does not copy pipes in filesystem (usually not an issue)
+      # FIXME: this does not copy pipes in filesystem (usually not an issue)
       cmd = Builtins.sformat(
         "mkfifo %3 ;\n" +
           "\t mkfifo %4 ;\n" +

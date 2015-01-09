@@ -179,7 +179,7 @@ module Yast
       # Load the libzypp state from the system (with images deployed)
       PackageCallbacks.RegisterEmptyProgressCallbacks
       if oem_image
-        #TODO later when adding more functionality: mount the deployed image for inst_finish
+        #TODO: later when adding more functionality: mount the deployed image for inst_finish
       else
         Pkg.TargetInitialize(Installation.destdir)
         Pkg.TargetLoad

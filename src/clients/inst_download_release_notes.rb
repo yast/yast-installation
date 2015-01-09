@@ -142,7 +142,7 @@ module Yast
     end
 
     # Set the UI content to show some progress.
-    # TODO FIXME: use a better title (reused existing texts because of text freeze)
+    # FIXME: use a better title (reused existing texts because of text freeze)
     def init_ui
       Wizard.SetContents(_("Initializing"), Label(_("Initializing the installation...")),
         "", false, false)

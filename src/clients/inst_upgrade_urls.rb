@@ -1239,7 +1239,7 @@ module Yast
 
     private
 
-    # TODO FIXME: share this code better
+    # FIXME: share this code better
     def target_distribution
       base_products = Product.FindBaseProducts
 

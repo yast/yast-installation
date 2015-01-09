@@ -29,7 +29,7 @@ describe ::Installation::PrepShrinkFinish do
     end
 
     describe "first parameter \"Write\"" do
-      # TODO create factory like method for Storage
+      # TODO: create factory like method for Storage
       STORAGE_DATA = {
         "/dev/sda" => {
           "unique"         => "3OOL.41o+EUK3QE2",
