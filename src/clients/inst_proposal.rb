@@ -718,7 +718,7 @@ module Yast
         if !submod_success
           Builtins.y2error("Write() failed for submodule %1", submod)
         end
-        success = success && submod_success
+        success &&= submod_success
       end
 
       if !success
@@ -888,7 +888,7 @@ module Yast
 
         if p != nil && p != []
           # array intersection
-          @submodules_presentation = @submodules_presentation & v
+          @submodules_presentation &= v
         end
       end
 

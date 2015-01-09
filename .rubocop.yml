@@ -126,10 +126,6 @@ Style/PredicateName:
 Style/RedundantReturn:
   Enabled: false
 
-# Offense count: 3
-Style/SelfAssignment:
-  Enabled: false
-
 # Offense count: 22
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/VariableName:

@@ -390,7 +390,7 @@ module Yast
       ret = true
 
       Builtins.y2milestone("Refreshing repositories %1", repos)
-      Builtins.foreach(repos) { |repo| ret = ret && Pkg.SourceRefreshNow(repo) }
+      Builtins.foreach(repos) { |repo| ret &&= Pkg.SourceRefreshNow(repo) }
 
       Builtins.y2milestone("Refresh succeeded: %1", ret)
 
