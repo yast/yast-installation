@@ -204,12 +204,12 @@ module Yast
             return :abort if Popup.ConfirmAbort(:incomplete)
           end
         when :reset_to_defaults
-            next unless Popup.ContinueCancel(
-              # question in a popup box
-              _("Really reset everything to default values?") + "\n" +
-                # explain consequences of a decision
-                _("You will lose all changes.")
-            )
+          next unless Popup.ContinueCancel(
+            # question in a popup box
+            _("Really reset everything to default values?") + "\n" +
+              # explain consequences of a decision
+              _("You will lose all changes.")
+          )
           make_proposal(true, false) # force_reset
         when :export_config
           path = UI.AskForSaveFileName("/", "*.xml", _("Location of Stored Configuration"))
