@@ -150,9 +150,7 @@ module Yast
     def main
       textdomain "installation"
 
-      if GetInstArgs.going_back
-        return :back
-      end
+      return :back if GetInstArgs.going_back
 
       init_ui
 

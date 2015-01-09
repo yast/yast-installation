@@ -30,9 +30,7 @@ module Yast
 
       # Check arguments
       args = WFM.Args
-      if args.size > 0 && args[0].is_a?(::String)
-        func = args[0]
-      end
+      func = args[0] if args.size > 0 && args[0].is_a?(::String)
 
       Builtins.y2milestone("starting clone_finish")
       Builtins.y2debug("func=%1", func)

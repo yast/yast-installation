@@ -55,12 +55,6 @@ Style/GuardClause:
 
 # Offense count: 1
 # Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/IndentHash:
-  Enabled: true
-
-# Offense count: 1
-# Cop supports --auto-correct.
 Style/IndentationConsistency:
   Enabled: false
 

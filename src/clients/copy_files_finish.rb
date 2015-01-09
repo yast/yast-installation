@@ -398,9 +398,7 @@ module Yast
       log.info "Copying all udev rules from #{UDEV_RULES_DIR} to #{udev_rules_destdir}"
       cmd_out = WFM.Execute(path(".local.bash_output"), cmd)
 
-      if cmd_out["exit"] != 0
-        log.error "Error copying udev rules"
-      end
+      log.error "Error copying udev rules" if cmd_out["exit"] != 0
 
       nil
     end
