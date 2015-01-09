@@ -79,10 +79,10 @@ module Yast
             # BNC #557723: Repositories migh be created without access to network
             # Libzypp must not probe the repo
 
-            _alias = Ops.get(@aliases, url, "")
-            if _alias == ""
+            alias_ = Ops.get(@aliases, url, "")
+            if alias_ == ""
               # don't use spaces in alias (hard to use with zypper)
-              _alias = String.Replace(
+              alias_ = String.Replace(
                 Ops.greater_than(Builtins.size(name), 0) ? name : url,
                 " ",
                 "-"
@@ -93,7 +93,7 @@ module Yast
               "enabled"     => true,
               "autorefresh" => true,
               "name"        => Ops.greater_than(Builtins.size(name), 0) ? name : url,
-              "alias"       => _alias,
+              "alias"       => alias_,
               "base_urls"   => [url],
               "prod_dir"    => "/"
             }

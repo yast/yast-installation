@@ -695,21 +695,21 @@ module Yast
       end
 
       # default
-      _alias = alias_orig
+      alias_ = alias_orig
 
       # repository alias must be unique
       # if it already exists add "_<number>" suffix to it
       idx = 1
-      while Builtins.contains(aliases, _alias)
-        _alias = Builtins.sformat("%1_%2", alias_orig, idx)
+      while Builtins.contains(aliases, alias_)
+        alias_ = Builtins.sformat("%1_%2", alias_orig, idx)
         idx = Ops.add(idx, 1)
       end
 
-      if alias_orig != _alias
-        Builtins.y2milestone("Alias '%1' changed to '%2'", alias_orig, _alias)
+      if alias_orig != alias_
+        Builtins.y2milestone("Alias '%1' changed to '%2'", alias_orig, alias_)
       end
 
-      _alias
+      alias_
     end
 
     def AdjustRepoSettings(new_repo, id)
@@ -1081,8 +1081,8 @@ module Yast
       true
     end
 
-    def FindMediaNr(_alias, url)
-      if _alias == "" || _alias == nil
+    def FindMediaNr(alias_, url)
+      if alias_ == "" || alias_ == nil
         Builtins.y2error("alias not defined!")
         return nil
       end
@@ -1095,7 +1095,7 @@ module Yast
       ret = nil
 
       Builtins.foreach(@already_registered_repos) do |one_url|
-        if _alias == Ops.get_string(one_url, "alias", "-A-") &&
+        if alias_ == Ops.get_string(one_url, "alias", "-A-") &&
             url == Ops.get_string(one_url, "url", "-A-")
           ret = Ops.get_integer(one_url, "media", -1)
           raise Break
