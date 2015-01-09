@@ -1084,8 +1084,8 @@ module Yast
             descriptions[submod] = description
             new_submodules << submod
             title = description["rich_text_title"] ||
-                description["rich_text_raw_title"] ||
-                submod
+              description["rich_text_raw_title"] ||
+              submod
 
             id = description["id"] || Builtins.sformat("module_%1", no)
 
@@ -1130,7 +1130,7 @@ module Yast
 
         # menu button item
         menu_list << Item(Id(:reset_to_defaults), _("&Reset to defaults")) <<
-            Item(Id(:export_config), _("&Export Configuration"))
+          Item(Id(:export_config), _("&Export Configuration"))
 
         # menu button
         UI.ReplaceWidget(
