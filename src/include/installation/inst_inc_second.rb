@@ -72,8 +72,8 @@ module Yast
 
       disabled_modules = Convert.convert(
         SCR.Read(path(".target.ycp"), InstData.wizardsteps_disabled_modules),
-        :from => "any",
-        :to   => "list <string>"
+        from: "any",
+        to:   "list <string>"
       )
       if disabled_modules == nil
         Builtins.y2error(
@@ -111,8 +111,8 @@ module Yast
 
       disabled_proposals = Convert.convert(
         SCR.Read(path(".target.ycp"), InstData.wizardsteps_disabled_proposals),
-        :from => "any",
-        :to   => "list <string>"
+        from: "any",
+        to:   "list <string>"
       )
       if disabled_proposals == nil
         Builtins.y2error(
@@ -153,8 +153,8 @@ module Yast
           path(".target.ycp"),
           InstData.wizardsteps_disabled_subproposals
         ),
-        :from => "any",
-        :to   => "map <string, list <string>>"
+        from: "any",
+        to:   "map <string, list <string>>"
       )
       if disabled_subproposals == nil
         Builtins.y2error(
@@ -236,8 +236,8 @@ module Yast
 
       network_settings = Convert.convert(
         SCR.Read(path(".target.ycp"), Installation.reboot_net_settings),
-        :from => "any",
-        :to   => "map <string, boolean>"
+        from: "any",
+        to:   "map <string, boolean>"
       )
       Builtins.y2milestone("Adjusting services: %1", network_settings)
 
@@ -616,8 +616,8 @@ module Yast
       if FileUtils.Exists(listname)
         files = Convert.convert(
           SCR.Read(path(".target.ycp"), listname),
-          :from => "any",
-          :to   => "list <string>"
+          from: "any",
+          to:   "list <string>"
         )
 
         basedir = Ops.add(

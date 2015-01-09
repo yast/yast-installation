@@ -53,8 +53,8 @@ module Yast
     def DriverUpdate1
       updatefiles = Convert.convert(
         WFM.Read(path(".local.dir"), ["/update", []]),
-        :from => "any",
-        :to   => "list <string>"
+        from: "any",
+        to:   "list <string>"
       )
       if Ops.less_or_equal(Builtins.size(updatefiles), 0)
         Builtins.y2milestone("No files in /update, skipping driver update...")
@@ -168,8 +168,8 @@ module Yast
     def DriverUpdate2
       updatefiles = Convert.convert(
         WFM.Read(path(".local.dir"), ["/update", []]),
-        :from => "any",
-        :to   => "list <string>"
+        from: "any",
+        to:   "list <string>"
       )
       return if Ops.less_or_equal(Builtins.size(updatefiles), 0)
 
@@ -186,8 +186,8 @@ module Yast
       nil
     end
 
-    publish :function => :DriverUpdate1, :type => "void ()"
-    publish :function => :DriverUpdate2, :type => "void ()"
+    publish function: :DriverUpdate1, type: "void ()"
+    publish function: :DriverUpdate2, type: "void ()"
   end
 
   Vendor = VendorClass.new

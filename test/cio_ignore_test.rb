@@ -84,7 +84,7 @@ describe ::Installation::CIOIgnoreFinish do
   describe "#run" do
     describe "first paramater \"Info\"" do
       it "returns info entry hash with empty \"when\" key for non s390x architectures" do
-        arch_mock = double("Yast::Arch", :s390 => false)
+        arch_mock = double("Yast::Arch", s390: false)
         stub_const("Yast::Arch", arch_mock)
 
         result = subject.run("Info")
@@ -93,7 +93,7 @@ describe ::Installation::CIOIgnoreFinish do
       end
 
       it "returns info entry hash with scenarios in \"when\" key for s390x architectures" do
-        arch_mock = double("Yast::Arch", :s390 => true)
+        arch_mock = double("Yast::Arch", s390: true)
         stub_const("Yast::Arch", arch_mock)
 
         result = subject.run("Info")
@@ -104,7 +104,7 @@ describe ::Installation::CIOIgnoreFinish do
 
     describe "first parameter \"Write\"" do
       before(:each) do
-        stub_const("Yast::Installation", double(:destdir => "/mnt"))
+        stub_const("Yast::Installation", double(destdir: "/mnt"))
         stub_const("Yast::Bootloader", double())
 
         allow(Yast::Bootloader).to receive(:Write) { true }

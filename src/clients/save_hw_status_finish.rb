@@ -71,8 +71,8 @@ module Yast
         if Package.Installed("yast2-printer")
           @parports = Convert.convert(
             SCR.Read(path(".proc.parport.devices")),
-            :from => "any",
-            :to   => "list <string>"
+            from: "any",
+            to:   "list <string>"
           )
           if @parports != nil && Ops.greater_than(Builtins.size(@parports), 0)
             HWConfig.SetValue("static-printer", "STARTMODE", "auto")

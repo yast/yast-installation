@@ -85,8 +85,8 @@ module Yast
         # loop over all filesystems
         @mountPoints = Convert.convert(
           Storage.GetMountPoints,
-          :from => "map",
-          :to   => "map <string, list>"
+          from: "map",
+          to:   "map <string, list>"
         )
         Builtins.y2milestone("Known mount points: %1", @mountPoints)
         Builtins.y2milestone(
@@ -130,8 +130,8 @@ module Yast
         if Hotplug.haveUSB
           @umount_these = Convert.convert(
             Builtins.union(["/proc/bus/usb"], @umount_these),
-            :from => "list",
-            :to   => "list <string>"
+            from: "list",
+            to:   "list <string>"
           )
         end
 

@@ -140,8 +140,8 @@ module Yast
         directory = Ops.add(Ops.add(Ops.add(@basedirectory, "/"), product), "/")
         relnotest_list = Convert.convert(
           SCR.Read(path(".target.dir"), directory),
-          :from => "any",
-          :to   => "list <string>"
+          from: "any",
+          to:   "list <string>"
         )
         relnotest_list = Builtins.filter(relnotest_list) do |one_relnotes|
           Builtins.regexpmatch(one_relnotes, "^RELEASE-NOTES..*.rtf$")

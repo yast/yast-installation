@@ -95,8 +95,8 @@ module Yast
       ignored_features.include?(feature)
     end
 
-    publish :function => :ignored_features, :type => "list ()"
-    publish :function => :feature_ignored?, :type => "boolean (string)"
+    publish function: :ignored_features, type: "list ()"
+    publish function: :feature_ignored?, type: "boolean (string)"
 
   private
 

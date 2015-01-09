@@ -53,8 +53,8 @@ module Yast
 
       @items = Convert.convert(
         SCR.Read(path(".probe.time_machines")),
-        :from => "any",
-        :to   => "list <map <string, any>>"
+        from: "any",
+        to:   "list <map <string, any>>"
       )
       @items = [] if @items == nil
       WizardHW.SetContents(@items)

@@ -201,8 +201,8 @@ module Yast
       # New-type URLs
       @system_urls = Convert.convert(
         SCR.Read(path(".zypp_repos"), @dir_new),
-        :from => "any",
-        :to   => "list <map>"
+        from: "any",
+        to:   "list <map>"
       )
 
       if @system_urls == nil || @system_urls == []
@@ -806,8 +806,8 @@ module Yast
           Builtins.filter(AddOnProduct.add_on_products) do |one_addon|
             Ops.get_integer(one_addon, "media", -42) != one_id
           end,
-          :from => "list <map>",
-          :to   => "list <map <string, any>>"
+          from: "list <map>",
+          to:   "list <map <string, any>>"
         )
       end
 
@@ -993,8 +993,8 @@ module Yast
 
           prod = Convert.convert(
             Pkg.SourceProductData(new_id),
-            :from => "map <string, any>",
-            :to   => "map <string, string>"
+            from: "map <string, any>",
+            to:   "map <string, string>"
           )
           Builtins.y2milestone("Product Data: %1", prod)
 
@@ -1198,8 +1198,8 @@ module Yast
         )
         @repos_to_add_disabled = Convert.convert(
           Builtins.union(@repos_to_add_disabled, @repos_to_add),
-          :from => "list",
-          :to   => "list <string>"
+          from: "list",
+          to:   "list <string>"
         )
         @repos_to_add = []
       end

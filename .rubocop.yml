@@ -53,22 +53,6 @@ Style/FileName:
 Style/GuardClause:
   Enabled: false
 
-# Offense count: 167
-# Cop supports --auto-correct.
-# Configuration parameters: SupportedStyles.
-Style/HashSyntax:
-  EnforcedStyle: hash_rockets
-
-# Offense count: 3
-# Configuration parameters: MaxLineLength.
-Style/IfUnlessModifier:
-  Enabled: false
-
-# Offense count: 4
-# Cop supports --auto-correct.
-Style/IndentArray:
-  Enabled: false
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.

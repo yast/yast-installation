@@ -68,8 +68,8 @@ module Yast
 
       @system_scenarios = Convert.convert(
         @any_scenarios,
-        :from => "any",
-        :to   => "list <map <string, string>>"
+        from: "any",
+        to:   "list <map <string, string>>"
       )
 
       # Remove Xen/KVM Virtualization Host Server Installation for non-x86_64 (bnc#702103, bnc#795067)

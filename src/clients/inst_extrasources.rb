@@ -216,8 +216,8 @@ module Yast
       registered = deep_copy(registered)
       urls_from_control_file = Convert.convert(
         ProductFeatures.GetFeature("software", "extra_urls"),
-        :from => "any",
-        :to   => "list <map>"
+        from: "any",
+        to:   "list <map>"
       )
 
       if urls_from_control_file == nil

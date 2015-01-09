@@ -78,9 +78,9 @@ module Yast
       @help = ""
 
       missing_part = [
-            VSpacing(0),
-            VSpacing(0)
-          ]
+        VSpacing(0),
+        VSpacing(0)
+      ]
 
       dasd_part = if @have_dasd
                     button_with_spacing(:dasd, _("Configure &DASD Disks"))

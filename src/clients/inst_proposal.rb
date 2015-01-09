@@ -685,8 +685,8 @@ module Yast
         # fallback proposal, means usually an internal error
         raw_prop = Convert.convert(
           Ops.get(prop, "raw_proposal") { [_("ERROR: No proposal")] },
-          :from => "any",
-          :to   => "list <locale>"
+          from: "any",
+          to:   "list <locale>"
         )
         html = Ops.add(html, HTML.List(raw_prop))
       end
@@ -867,8 +867,8 @@ module Yast
         end
         @submodules = Convert.convert(
           Builtins.merge(@submodules, @display_only_modules),
-          :from => "list",
-          :to   => "list <string>"
+          from: "list",
+          to:   "list <string>"
         )
         p = AutoinstConfig.getProposalList
         @submodules_presentation = Builtins.filter(@submodules_presentation) do |v|
@@ -910,8 +910,8 @@ module Yast
         Builtins.size(
           Convert.convert(
             SCR.Read(path(".probe.netcard")),
-            :from => "any",
-            :to   => "list <map>"
+            from: "any",
+            to:   "list <map>"
           )
         ),
         0

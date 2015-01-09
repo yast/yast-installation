@@ -50,8 +50,8 @@ module Yast
         # -> configuration moved to control file
         @copy_items = Convert.convert(
           ProductFeatures.GetFeature("globals", "copy_to_system"),
-          :from => "any",
-          :to   => "list <map>"
+          from: "any",
+          to:   "list <map>"
         )
 
         @copy_items.each do |one_copy_item|
@@ -247,8 +247,8 @@ module Yast
             Builtins.union(Builtins.maplist(files) do |filename, _filetime|
               filename
             end, optional_files),
-            :from => "list",
-            :to   => "list <string>"
+            from: "list",
+            to:   "list <string>"
           ),
           copy_to
         )

@@ -363,8 +363,8 @@ module Yast
 
       save_content = Convert.convert(
         Ops.get(globals_features, "save_instsys_content"),
-        :from => "any",
-        :to   => "list <map <string, string>>"
+        from: "any",
+        to:   "list <map <string, string>>"
       )
       if save_content == nil
         Builtins.y2error(
@@ -511,14 +511,14 @@ module Yast
       nil
     end
 
-    publish :function => :CreateDirectoryIfMissing, :type => "string (string)"
-    publish :function => :CopyFilesToTemp, :type => "boolean (string, list <string>, string)"
-    publish :function => :CopyFilesToSystem, :type => "boolean (string)"
-    publish :function => :SaveInstSysContent, :type => "boolean ()"
-    publish :function => :GetUseControlFileDef, :type => "boolean ()"
-    publish :function => :SetUseControlFileDef, :type => "void (boolean)"
-    publish :function => :GetCopySystemFiles, :type => "list <map> ()"
-    publish :function => :SetCopySystemFiles, :type => "void (list <map>)"
+    publish function: :CreateDirectoryIfMissing, type: "string (string)"
+    publish function: :CopyFilesToTemp, type: "boolean (string, list <string>, string)"
+    publish function: :CopyFilesToSystem, type: "boolean (string)"
+    publish function: :SaveInstSysContent, type: "boolean ()"
+    publish function: :GetUseControlFileDef, type: "boolean ()"
+    publish function: :SetUseControlFileDef, type: "void (boolean)"
+    publish function: :GetCopySystemFiles, type: "list <map> ()"
+    publish function: :SetCopySystemFiles, type: "void (list <map>)"
   end
 
   SystemFilesCopy = SystemFilesCopyClass.new

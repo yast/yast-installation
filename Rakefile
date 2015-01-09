@@ -21,5 +21,5 @@ task :check_rng_status do
   end
 end
 
-task :tarball => :check_rng_status
+task tarball: :check_rng_status
 

@@ -50,8 +50,8 @@ module Yast
 
       @patterns = Convert.convert(
         Ops.get(@argmap, "patterns", @default_patterns),
-        :from => "any",
-        :to   => "list <string>"
+        from: "any",
+        to:   "list <string>"
       )
 
       @welcome = CustomDialogs.load_file_locale(

@@ -311,8 +311,8 @@ module Yast
         else
           @modules_to_enable_with_AC_on = Convert.convert(
             feature,
-            :from => "any",
-            :to   => "list <string>"
+            from: "any",
+            to:   "list <string>"
           )
         end
 
