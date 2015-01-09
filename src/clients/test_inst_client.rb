@@ -51,7 +51,7 @@ module Yast
       WFM.call(@client, [])
       Wizard.CloseDialog
 
-      true 
+      true
       # EOF
     end
   end

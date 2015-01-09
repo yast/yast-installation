@@ -54,7 +54,7 @@ module Yast
           0
           )
           Builtins.y2milestone("Found control file, switching to autoinst mode")
-          Mode.SetMode("autoinstallation") 
+          Mode.SetMode("autoinstallation")
           # initialize Report behavior
           # Default in autoinst mode is showing messages and warnings with timeout of 10 sec.
           # Errors are shown without timeout.
@@ -62,7 +62,7 @@ module Yast
         SCR.Execute(path(".target.umount"), "/media/floppy")
       end
 
-      true 
+      true
 
       # EOF
     end

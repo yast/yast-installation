@@ -250,7 +250,7 @@ module Yast
                 "according to the settings in the previous dialogs.</p>"
             ) +
             # Text for confirmation popup before the update really starts 3/3
-            _("<p>Go back and check the settings if you are unsure.</p>") 
+            _("<p>Go back and check the settings if you are unsure.</p>")
 
         # Label for the button that confirms startint the installation
         confirm_button_label = _("Start &Update")
@@ -363,7 +363,7 @@ module Yast
         # problems with keyboard in xen
         if SCR.Read(path(".probe.xen")) == true
           Builtins.y2milestone("XEN in X detected: running xset")
-          WFM.Execute(path(".local.bash"), "xset r off; xset m 1") 
+          WFM.Execute(path(".local.bash"), "xset r off; xset m 1")
           # bnc #433338
           # enabling key-repeating
         else

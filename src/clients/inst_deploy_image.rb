@@ -167,7 +167,7 @@ module Yast
           _("Deploying images has failed.\nAborting the installation...\n")
         )
         Builtins.y2milestone("Aborting...")
-        return :abort 
+        return :abort
         # nil   == aborted
       elsif @dep_ret == nil
         Builtins.y2milestone("Aborting...")
@@ -268,7 +268,7 @@ module Yast
         @_current_step_in_subprogress = Ops.add(
           @_current_step_in_subprogress,
           1
-        ) 
+        )
         # set to exact number
       else
         @_current_step_in_subprogress = current_step

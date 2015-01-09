@@ -117,7 +117,7 @@ module Yast
 
       @ret = UI.UserInput
 
-      deep_copy(@ret) 
+      deep_copy(@ret)
 
       # EOF
     end

@@ -80,7 +80,7 @@ module Yast
 
       @copy_files_use_control_file = true
 
-      @additional_copy_files = [] 
+      @additional_copy_files = []
 
       # <-- copy files -- config
 

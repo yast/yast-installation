@@ -82,11 +82,11 @@ module Yast
 
         # Priority 0: More directories
         if @directories != nil && @directories != []
-          Builtins.y2milestone("Using directories: %1", @directories) 
+          Builtins.y2milestone("Using directories: %1", @directories)
           # Priority 1: Script args
         elsif @directory != nil && @directory != ""
           Builtins.y2milestone("Using directory: %1", @directory)
-          @directories = [@directory] 
+          @directories = [@directory]
           # Priority 2: Fallback - Control file
         else
           @directory = ProductFeatures.GetStringFeature(
@@ -99,7 +99,7 @@ module Yast
             Builtins.y2milestone(
               "Using directory (from control file): %1",
               @directory
-            ) 
+            )
             # fallback - hard-coded
           else
             @directory = "/etc/YaST2/licenses/base/"
@@ -162,7 +162,7 @@ module Yast
       else
         Builtins.y2error("Unknown return: %1", @ask_ret)
         return :next
-      end 
+      end
 
       # EOF
     end

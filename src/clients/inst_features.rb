@@ -77,7 +77,7 @@ module Yast
       # Feature is not defined
       if ProductFeatures.GetFeature("software", "online_repos_preselected") == ""
         # Default is true - selected
-        Installation.productsources_selected = true 
+        Installation.productsources_selected = true
         # Defined
       else
         @default_status_or = ProductFeatures.GetBooleanFeature(

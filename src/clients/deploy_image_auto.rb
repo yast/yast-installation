@@ -395,7 +395,7 @@ module Yast
         # BNC #442691
         # Calling image_installation only if set to do so...
         if Installation.image_installation == true
-          WFM.call("inst_prepare_image") 
+          WFM.call("inst_prepare_image")
 
           # moved to control.xml
           #	WFM::call ("inst_deploy_image");
@@ -417,7 +417,7 @@ module Yast
       Builtins.y2milestone("deploy_image_auto finished")
       Builtins.y2milestone("----------------------------------------")
 
-      deep_copy(@ret) 
+      deep_copy(@ret)
 
       # EOF
     end

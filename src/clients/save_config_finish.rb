@@ -159,7 +159,7 @@ module Yast
           SCR.Write(
             path(".target.ycp"),
             @file,
-            "second_stage_language" => @lang 
+            "second_stage_language" => @lang
           )
         end
         if !minimal_inst

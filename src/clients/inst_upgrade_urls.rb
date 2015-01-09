@@ -1000,13 +1000,13 @@ module Yast
 
           AddOnProduct.add_on_products = Builtins.add(
             AddOnProduct.add_on_products,
-            
+
             "media"            => new_id,
             "media_url"        => one_url,
             "product_dir"      => pth,
             "product"          => repo_name,
             "autoyast_product" => repo_name
-            
+
           )
         end
       end

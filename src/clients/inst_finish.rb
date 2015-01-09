@@ -129,7 +129,7 @@ module Yast
           # For live installer only
           Mode.live_installation ? "live_save_config" : "",
           "storage",
-          "kernel",
+          "kernel"
         ]
 
         save_settings_steps = [

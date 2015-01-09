@@ -22,4 +22,3 @@ task :check_rng_status do
 end
 
 task tarball: :check_rng_status
-

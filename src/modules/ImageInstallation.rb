@@ -214,7 +214,7 @@ module Yast
       Ops.set(
         @_images,
         file,
-        "file" => file, "type" => type, "name" => name 
+        "file" => file, "type" => type, "name" => name
       )
 
       nil
@@ -328,7 +328,7 @@ module Yast
           String.Quote(target),
           @_checkpoint,
           @_record_size
-        ) 
+        )
         # xzdec
         # BNC #476079
       elsif Builtins.regexpmatch(image, ".xz$")
@@ -338,7 +338,7 @@ module Yast
           String.Quote(target),
           @_checkpoint,
           @_record_size
-        ) 
+        )
         # bzip2, gzip
       else
         cmd = Builtins.sformat(
@@ -471,7 +471,7 @@ module Yast
 
       RemoveTemporaryImage(image)
 
-      Ops.get_integer(out, "exit", -1) == 0 
+      Ops.get_integer(out, "exit", -1) == 0
       # FIXME: error checking
     end
 
@@ -525,7 +525,7 @@ module Yast
       cmd = Builtins.sformat("mount -o noatime,loop %1 %2", image, target)
       out = Convert.to_map(SCR.Execute(path(".target.bash_output"), cmd))
       Builtins.y2milestone("Executing %1 returned %2", cmd, out)
-      Ops.get_integer(out, "exit", -1) == 0 
+      Ops.get_integer(out, "exit", -1) == 0
       # FIXME: error checking
       # FIXME: unmounting
     end
@@ -765,7 +765,7 @@ module Yast
       # reregister callbacks
       PackageCallbacks.RestorePreviousProgressCallbacks
 
-      true 
+      true
       # TODO: error checking
     end
 
@@ -870,7 +870,7 @@ module Yast
         )
         # no architecture defined == noarch
         if Builtins.size(imageset_archs) == 0
-          next true 
+          next true
           # does architecture match?
         else
           if Builtins.contains(imageset_archs, arch_short)
@@ -898,7 +898,7 @@ module Yast
         )
         # no image-pattern defined, matches all patterns
         if Builtins.size(imageset_patterns) == 0
-          Ops.set(possible_patterns, pattern, image) 
+          Ops.set(possible_patterns, pattern, image)
           # image-patterns matches to patterns got as parameter
         else
           Ops.set(
@@ -1310,7 +1310,7 @@ module Yast
           true
         )
         # is already installed
-        ret = false 
+        ret = false
         # They are not installed
       else
         Builtins.y2milestone(
@@ -1400,7 +1400,7 @@ module Yast
                 one_type,
                 Ops.get_string(one_resolvable, "name", "-x-"),
                 Ops.get_string(one_resolvable, "version", "-x-")
-              ) 
+              )
               # Package is installed or selected but should not be, remove it
             else
               Builtins.y2milestone(
@@ -1451,7 +1451,7 @@ module Yast
           "Cannot solve dependencies automatically, opening Packages UI"
         )
         diaret = PackagesUI.RunPackageSelector(
-           "enable_repo_mgr" => false, "mode" => :summaryMode 
+           "enable_repo_mgr" => false, "mode" => :summaryMode
         )
         Builtins.y2milestone("RunPackageSelector returned %1", diaret)
 
@@ -1463,7 +1463,7 @@ module Yast
             break
           end
           # Aborting not confirmed, next round
-          next 
+          next
           # Solved! (somehow)
         else
           ret = true

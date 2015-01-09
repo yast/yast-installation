@@ -208,7 +208,7 @@ module Yast
         end
       end
 
-      Convert.to_symbol(@ret) 
+      Convert.to_symbol(@ret)
 
       # EOF
     end

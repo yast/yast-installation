@@ -224,14 +224,14 @@ module Yast
       # if there are more products installed, show them in tabs or with
       # combo box, bnc #359137 (do not show tab for one product)
       if Ops.less_or_equal(Builtins.size(@relnotesproducts), 1)
-        @relnoteslayout = deep_copy(@relnotesscreen) 
+        @relnoteslayout = deep_copy(@relnotesscreen)
         # use DumpTab or ComboBox layout
       elsif UI.HasSpecialWidget(:DumbTab) &&
           (Ops.less_than(Builtins.size(@relnotesproducts), 4) &&
             Ops.less_than(@prodnamelen, 90) ||
             Ops.greater_than(Builtins.size(@relnotesproducts), 3) &&
               Ops.less_than(@prodnamelen, 70))
-        @relnoteslayout = DumbTab(@relnotesproducts, @relnotesscreen) 
+        @relnoteslayout = DumbTab(@relnotesproducts, @relnotesscreen)
         # doesn't have DumpTab or too many products
       else
         @relnoteslayout = VBox(
@@ -270,7 +270,7 @@ module Yast
         Wizard.SetNextButton(:next, Label.CloseButton)
         Wizard.EnableNextButton
 
-        Wizard.SetContents(@caption, @contents, @help, false, true) 
+        Wizard.SetContents(@caption, @contents, @help, false, true)
 
         # installation
       else
@@ -311,7 +311,7 @@ module Yast
           break if Mode.normal
           break if Popup.ConfirmAbort(:incomplete)
         elsif @ret == :help
-          Wizard.ShowHelp(@help) 
+          Wizard.ShowHelp(@help)
           # using combobox for products
         elsif @ret == :productsel
           RedrawRelnotesProduct(
@@ -321,7 +321,7 @@ module Yast
         elsif @ret == :lang
           RedrawRelnotesLang(
             Convert.to_string(UI.QueryWidget(Id(:lang), :Value))
-          ) 
+          )
           # using tabs for products
         elsif Ops.is_string?(@ret)
           RedrawRelnotesProduct(:tab, @ret)

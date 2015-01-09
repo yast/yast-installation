@@ -428,7 +428,7 @@ module Yast
           # visible in the current tab
           if Ops.get(@mod2tab, submod.value, 999) == @current_tab
             use_this_help = true
-          end 
+          end
           # not using tabs
         else
           use_this_help = true
@@ -508,7 +508,7 @@ module Yast
         # Submod already called
         if Builtins.contains(@submods_already_called, submod)
           # busy message
-          message = _("Adapting the proposal to the current settings...") 
+          message = _("Adapting the proposal to the current settings...")
           # First run
         else
           # busy message;
@@ -727,7 +727,7 @@ module Yast
 
         # text for a message box
         Popup.TimedMessage(_("Configuration saved.\nThere were errors."), 3)
-      end 
+      end
       # else
       # {
       #     // text for a message box

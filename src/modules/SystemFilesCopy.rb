@@ -78,7 +78,7 @@ module Yast
         # exists as a directory
         if FileUtils.IsDirectory(create_directory)
           Builtins.y2milestone("Directory %1 already exists", create_directory)
-          return create_directory 
+          return create_directory
           # exists but it's not a directory
         else
           Builtins.y2warning("Path %1 is not a directory", create_directory)
@@ -91,7 +91,7 @@ module Yast
           end
 
           return new_dir
-        end 
+        end
 
         # path doesn't exist
       else
@@ -99,7 +99,7 @@ module Yast
         # created successfully
         if FileUtils.Exists(create_directory)
           Builtins.y2milestone("Directory %1 created", create_directory)
-          return create_directory 
+          return create_directory
           # cannot create
         else
           Builtins.y2error("Cannot create path %1", create_directory)

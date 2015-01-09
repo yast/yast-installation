@@ -120,7 +120,7 @@ module Yast
               else
                 # abort
                 again = false
-              end 
+              end
 
               # everything is ok
             else
@@ -132,7 +132,7 @@ module Yast
         Popup.ClearFeedback
       end
 
-      :auto 
+      :auto
 
       # EOF
     end

@@ -177,7 +177,7 @@ module Yast
             # everything went fine
             if @ret2 == :next
               @return_this = :next
-              break 
+              break
               # something wrong or aborted
             else
               if @ret2 == nil
@@ -197,7 +197,7 @@ module Yast
                 "no_do_not_run_setup"
               )
               next
-            end 
+            end
 
             # skip net setup
           else
@@ -219,7 +219,7 @@ module Yast
         end
       end
 
-      @return_this 
+      @return_this
 
       # EOF
     end

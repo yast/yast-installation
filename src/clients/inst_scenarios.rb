@@ -158,7 +158,7 @@ module Yast
       Wizard.CloseDialog if @test_mode
 
       Builtins.y2milestone("Returning: %1", @ret)
-      @ret 
+      @ret
       # EOF
     end
 
@@ -207,7 +207,7 @@ module Yast
 
       # matching patterns found
       if selected_id != nil
-        UI.ChangeWidget(Id(:scenarios), :CurrentButton, selected_id) 
+        UI.ChangeWidget(Id(:scenarios), :CurrentButton, selected_id)
 
         # using fallback from control file
       else

@@ -160,7 +160,7 @@ module Yast
             "units"       => :sec
           }
         ]
-    
+
       end
 
       SlideShow.Setup(@stages)

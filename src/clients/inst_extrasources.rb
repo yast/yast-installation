@@ -170,7 +170,7 @@ module Yast
                   if InstallPackages(@message, @package_list)
                     # start the software manager
                     @ui = PackagesUI.RunPackageSelector(
-                       "mode" => :summaryMode 
+                       "mode" => :summaryMode
                     )
                     Builtins.y2milestone("Package manager returned: %1", @ui)
 
@@ -203,7 +203,7 @@ module Yast
         end
       end
 
-      :auto 
+      :auto
 
       # EOF
     end
@@ -330,7 +330,7 @@ module Yast
         else
           Builtins.y2error("Cannot register: %1", repo_prop)
         end
-      end 
+      end
 
       deep_copy(ret)
     end
@@ -354,7 +354,7 @@ module Yast
         if Builtins.issubstring(url, "device=/dev/disk/by-id/usb-")
           Ops.set(@usb_sources, src, url)
         end
-      end 
+      end
 
       # remove duplicates
       ret = Builtins.toset(ret)

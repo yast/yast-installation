@@ -137,7 +137,7 @@ module Yast
           )
         end
 
-        CleanUpRestartFiles() 
+        CleanUpRestartFiles()
         # Starting the second stage installation
       else
         # Run the installation workflow
@@ -151,7 +151,7 @@ module Yast
 
       if @ret == :reboot || @ret == :restart_yast || @ret == :restart_same_step ||
           @ret == :reboot_same_step
-        @ret = PrepareYaSTforRestart(@ret) 
+        @ret = PrepareYaSTforRestart(@ret)
         # Installation has been aborted
       elsif @ret == :abort
         # tell linuxrc that we aborted
@@ -166,7 +166,7 @@ module Yast
       # when the installation is not aborted or YaST is not restarted on purpose
       # ret == `next -> (ret != `reboot && ret != `restart_yast && ret != `restart_same_step && ret != `abort && ret != `reboot_same_step)
       if @ret == :next
-        HandleSecondStageFinishedCorrectly() 
+        HandleSecondStageFinishedCorrectly()
         # installation (second stage) has been aborted
         # FATE #300422
       elsif @ret == :abort || @ret == :cancel

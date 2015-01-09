@@ -227,10 +227,10 @@ module Yast
 
       # nothing found
       if Builtins.size(files_found_on_partitions) == 0
-        Builtins.y2milestone("No such files found") 
+        Builtins.y2milestone("No such files found")
         # only one (easy)
       elsif Builtins.size(files_found_on_partitions) == 1
-        ic_winner = deep_copy(files_found_on_partitions) 
+        ic_winner = deep_copy(files_found_on_partitions)
         # more than one (getting the best ones)
       else
         ic_winner = FindTheBestFiles(files_found_on_partitions)
@@ -323,7 +323,7 @@ module Yast
           Ops.set(
             @useful_partitions,
             counter,
-            "device" => Ops.get(partition, "device"), "fs" => filesystem 
+            "device" => Ops.get(partition, "device"), "fs" => filesystem
           )
         end
       end
