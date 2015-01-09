@@ -66,6 +66,5 @@ describe Yast::ImageInstallation do
         end
       end
     end
-
   end
 end

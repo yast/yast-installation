@@ -74,9 +74,7 @@ module Yast
 
         WFM.SCRClose(Installation.scr_handle)
 
-
         # --------------------------------------------------------------
-
 
         Builtins.y2milestone("Re-starting SCR on %1", Installation.destdir)
         Installation.scr_handle = WFM.SCROpen(

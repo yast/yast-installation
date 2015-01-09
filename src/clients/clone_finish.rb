@@ -19,13 +19,11 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-
 module Yast
   import "Installation"
 
   class CloneFinishClient < Client
     def main
-
       textdomain "installation"
 
       func = ""

@@ -100,7 +100,6 @@ module Installation
     end
   end
 
-
   class CIOIgnoreFinish
     include Yast::Logger
     include Yast::I18n
@@ -112,7 +111,6 @@ module Installation
     ]
 
     YAST_BASH_PATH = Yast::Path.new ".target.bash_output"
-
 
     def initialize
       textdomain "installation"
@@ -163,6 +161,7 @@ module Installation
     end
 
   private
+
     def add_boot_kernel_parameters
       Yast.import "Bootloader"
 

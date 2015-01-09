@@ -8,7 +8,6 @@ module Yast
   import "Linuxrc"
 
   describe ::Installation::RemoteFinishClient do
-
     subject { ::Installation::RemoteFinishClient.new }
 
     describe "#run" do

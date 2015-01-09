@@ -30,7 +30,6 @@
 module Yast
   class CopySystemfilesFinishClient < Client
     def main
-
       textdomain "installation"
 
       Yast.import "SystemFilesCopy"

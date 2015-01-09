@@ -61,7 +61,6 @@ module Yast
       )
       Builtins.y2debug("welcome map: %1", @welcome)
 
-
       @display = UI.GetDisplayInfo
       @space = Ops.get_boolean(@display, "TextMode", true) ? 1 : 3
 
@@ -83,7 +82,6 @@ module Yast
         Ops.get_string(@welcome, "text", "") :
         @text
 
-
       # help ttext
       @help = _(
         "<p>Click <b>Next</b> to perform the\nbasic configuration of the system.</p>\n"
@@ -98,7 +96,6 @@ module Yast
         @rt = RichText(Id(:welcome_text), Opt(:plainText), @welcome_text)
       end
 
-
       @contents = VBox(
         VSpacing(@space),
         HBox(
@@ -109,9 +106,6 @@ module Yast
         VSpacing(2)
       )
 
-
-
-
       Wizard.SetContents(
         @caption,
         @contents,
@@ -121,9 +115,7 @@ module Yast
       )
       Wizard.SetFocusToNextButton
 
-
       @ret = UI.UserInput
-
 
       deep_copy(@ret) 
 

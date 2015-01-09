@@ -13,7 +13,6 @@ module Installation
 
     YAST_BASH_PATH = Yast::Path.new ".target.bash_output"
 
-
     def initialize
       textdomain "installation"
     end
@@ -46,6 +45,7 @@ module Installation
     end
 
   private
+
     MAXIMAL_SIZE_KB = 8192
     def shrink_partitions
       target_map = Yast::Storage.GetTargetMap

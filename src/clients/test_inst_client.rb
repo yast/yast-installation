@@ -27,7 +27,6 @@
 module Yast
   class TestInstClientClient < Client
     def main
-
       Yast.import "Mode"
       Yast.import "Stage"
       Yast.import "Wizard"

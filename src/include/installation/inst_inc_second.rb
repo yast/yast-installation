@@ -178,7 +178,6 @@ module Yast
       nil
     end
 
-
     def AdjustDisabledItems
       AdjustDisabledModules()
       AdjustDisabledProposals()

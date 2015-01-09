@@ -66,7 +66,6 @@ module Yast
 
       @argmap = GetInstArgs.argmap
 
-
       #  strings for "ask for online update"-popup
       @ask_update_run_btn = _("Run Update")
       @ask_update_skip_btn = _("Skip Update")

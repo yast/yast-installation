@@ -396,8 +396,6 @@ module Yast
         Ops.get_string(s, "label", "")
       end
 
-
-
       @aborted = false
 
       @stages_nr = Builtins.size(@stages)

@@ -52,7 +52,6 @@ module Yast
       @func = ""
       @param = {}
 
-
       # Check arguments
       if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
           Ops.is_string?(WFM.Args(0))

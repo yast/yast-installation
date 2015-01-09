@@ -175,7 +175,6 @@ module Yast
         @text = Builtins.sformat(@text, @vendor_url)
       end
 
-
       @contents = VBox(
         VSpacing(@space),
         HBox(

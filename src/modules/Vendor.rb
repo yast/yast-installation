@@ -38,7 +38,6 @@ require "yast"
 module Yast
   class VendorClass < Module
     def main
-
       Yast.import "Installation"
       Yast.import "Directory"
       Yast.import "String"

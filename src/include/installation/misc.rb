@@ -182,7 +182,6 @@ module Yast
       nil
     end
 
-
     # moved from clients/inst_doit.ycp
     # to fix bug #219097
 
@@ -252,7 +251,6 @@ module Yast
             ) +
             # Text for confirmation popup before the update really starts 3/3
             _("<p>Go back and check the settings if you are unsure.</p>") 
-
 
         # Label for the button that confirms startint the installation
         confirm_button_label = _("Start &Update")
@@ -334,7 +332,6 @@ module Yast
     end
 
     def AdjustStepsAccordingToInstallationSettings
-
       if Installation.add_on_selected == true ||
           Linuxrc.InstallInf("addon") != nil
         ProductControl.EnableModule("add-on")

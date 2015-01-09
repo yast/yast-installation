@@ -38,7 +38,6 @@ module Yast
     include Yast::Logger
 
     def main
-
       textdomain "installation"
 
       Yast.import "Directory"
@@ -57,7 +56,6 @@ module Yast
       Yast.import "FileUtils"
       Yast.import "Installation"
       Yast.import "String"
-
 
       @ret = nil
       @func = ""

@@ -33,7 +33,6 @@
 module Yast
   class KernelFinishClient < Client
     def main
-
       textdomain "installation"
 
       Yast.import "ModulesConf"
@@ -97,7 +96,6 @@ module Yast
       Builtins.y2milestone("kernel_finish finished")
       deep_copy(@ret)
     end
-
   end
 end
 

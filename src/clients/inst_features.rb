@@ -95,7 +95,6 @@ module Yast
         Installation.productsources_selected
       )
 
-
       :auto
     end
   end

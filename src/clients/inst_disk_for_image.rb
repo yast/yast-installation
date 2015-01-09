@@ -65,7 +65,6 @@ module Yast
       return ret
     end
 
-
     private
 
     def disks_to_use

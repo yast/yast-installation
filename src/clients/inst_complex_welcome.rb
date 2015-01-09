@@ -323,7 +323,6 @@ module Yast
       end
     end
 
-
     def ReadCurrentUIState
       @language = Convert.to_string(UI.QueryWidget(Id(:language), :Value))
       @keyboard = Convert.to_string(UI.QueryWidget(Id(:keyboard), :Value))

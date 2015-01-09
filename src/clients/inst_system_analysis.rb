@@ -171,7 +171,6 @@ module Yast
       return :abort unless @packager_initialized
 
       :next
-
     end
 
     # Function definitions -->

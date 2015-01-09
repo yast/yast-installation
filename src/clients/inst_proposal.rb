@@ -86,13 +86,9 @@ module Yast
       # BNC #463567
       @submods_already_called = []
 
-
-
       #-----------------------------------------------------------------------
       #				    main()
       #-----------------------------------------------------------------------
-
-
 
       #
       # Create dialog
@@ -133,7 +129,6 @@ module Yast
       Wizard.EnableAbortButton
 
       return :auto if !submod_descriptions_and_build_menu
-
 
       #
       # Make the initial proposal
@@ -312,7 +307,6 @@ module Yast
       nil
     end
 
-
     # Call a submodule's MakeProposal() function.
     #
     # @param [String] submodule	name of the submodule's proposal dispatcher
@@ -346,7 +340,6 @@ module Yast
 
       deep_copy(proposal)
     end
-
 
     # Call a submodule's AskUser() function.
     #
@@ -405,7 +398,6 @@ module Yast
       workflow_sequence
     end
 
-
     # Call a submodule's Description() function.
     #
     # @param [String] submodule	name of the submodule's proposal dispatcher or nil if no such module
@@ -462,6 +454,7 @@ module Yast
 
       nil
     end
+
     def make_proposal(force_reset, language_changed)
       tab_to_switch = 999
       current_tab_affected = false
@@ -660,6 +653,7 @@ module Yast
 
       nil
     end
+
     def format_sub_proposal(prop)
       prop = deep_copy(prop)
       html = ""
@@ -699,9 +693,6 @@ module Yast
 
       html
     end
-
-
-
 
     # Call a submodule's Write() function.
     #
@@ -746,7 +737,6 @@ module Yast
       nil
     end
 
-
     # Force a RichText widget to use the busy cursor
     #
     # @param [Object] widget_id  ID  of the widget, e.g. `id(`proposal)
@@ -762,7 +752,6 @@ module Yast
       nil
     end
 
-
     # Switch a RichText widget back to use the normal cursor
     #
     # @param [Object] widget_id  ID  of the widget, e.g. `id(`proposal)
@@ -777,6 +766,7 @@ module Yast
 
       nil
     end
+
     def retranslate_proposal_dialog
       Builtins.y2debug("Retranslating proposal dialog")
 
@@ -787,6 +777,7 @@ module Yast
 
       nil
     end
+
     def load_matching_submodules_list
       modules = ProductControl.getProposals(
         Stage.stage,
@@ -907,7 +898,6 @@ module Yast
       nil
     end
 
-
     # Find out if the target machine has a network card.
     # @return true if a network card is found, false otherwise
     #
@@ -927,11 +917,11 @@ module Yast
         0
       )
     end
+
     def build_dialog
       # headline for installation proposal
 
       headline = Ops.get_string(@proposal_properties, "label", "")
-
 
       Builtins.y2milestone("headline: %1", headline)
 
@@ -1181,7 +1171,6 @@ module Yast
         icon = Ops.get_string(@proposal_properties, "icon", "")
       end
 
-
       # else if ( proposal_mode == `uml		) icon = "";
       # else if ( proposal_mode == `dirinstall  ) icon = "";
 
@@ -1189,6 +1178,7 @@ module Yast
 
       nil
     end
+
     def help_text
       help_text_string = ""
 

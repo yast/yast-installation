@@ -33,7 +33,6 @@
 module Yast
   class ProxyFinishClient < Client
     def main
-
       textdomain "installation"
 
       Yast.import "Stage"

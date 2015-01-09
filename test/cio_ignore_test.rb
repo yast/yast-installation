@@ -5,7 +5,6 @@ require_relative "./test_helper"
 require "installation/cio_ignore"
 
 describe ::Installation::CIOIgnoreProposal do
-
   subject { ::Installation::CIOIgnoreProposal.new }
 
   before(:each) do
@@ -101,7 +100,6 @@ describe ::Installation::CIOIgnoreFinish do
 
         expect(result["when"]).to_not be_empty
       end
-
     end
 
     describe "first parameter \"Write\"" do
@@ -131,7 +129,6 @@ describe ::Installation::CIOIgnoreFinish do
       end
 
       describe "Device blacklisting is enabled" do
-
         it "call `cio_ignore --unused --purge`" do
           ::Installation::CIOIgnore.instance.enabled = true
 
@@ -195,7 +192,6 @@ Devices that are not ignored:
             )
             .once
             .and_return("exit" => 0, "stdout" => test_output, "stderr" => "")
-
 
           expect(File).to receive(:write).once do |file, content|
             expect(file).to eq("/mnt/boot/zipl/active_devices.txt")

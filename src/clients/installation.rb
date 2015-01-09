@@ -97,7 +97,6 @@ module Yast
 
       deep_copy(@ret)
     end
-
   end
 end
 

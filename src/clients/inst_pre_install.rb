@@ -38,7 +38,6 @@ module Yast
       # all partitions that can be used as a source of data
       @useful_partitions = []
 
-
       # *******************************************************************************
       # --> main()
 
@@ -120,6 +119,7 @@ module Yast
 
       deep_copy(ret)
     end
+
     def FindAndCopyNewestFiles(copy_to, wanted_files, optional_files)
       wanted_files = deep_copy(wanted_files)
       optional_files = deep_copy(optional_files)

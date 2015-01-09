@@ -72,7 +72,6 @@ module Yast
 
       @want_fcoe = Linuxrc.InstallInf("WithFCoE") == "1"
 
-
       # dialog caption
       @caption = _("Disk Activation")
 

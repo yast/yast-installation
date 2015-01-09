@@ -203,7 +203,6 @@ module Yast
         end
       end
 
-
       :auto 
 
       # EOF
@@ -333,7 +332,6 @@ module Yast
         end
       end 
 
-
       deep_copy(ret)
     end
 
@@ -357,7 +355,6 @@ module Yast
           Ops.set(@usb_sources, src, url)
         end
       end 
-
 
       # remove duplicates
       ret = Builtins.toset(ret)

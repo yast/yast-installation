@@ -1032,8 +1032,6 @@ module Yast
       deep_copy(ret)
     end
 
-
-
     # Copy a subtree, limit to a single filesystem
     # @param [String] from string source directory
     # @param [String] to string target directory

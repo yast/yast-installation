@@ -43,7 +43,6 @@ module Yast
     #
     # @return true when successful
     def download_release_notes
-
       filename_templ = UI.TextMode ? "/RELEASE-NOTES.%1.txt" : "/RELEASE-NOTES.%1.rtf"
 
       # Get proxy settings (if any)

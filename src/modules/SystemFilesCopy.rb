@@ -33,7 +33,6 @@ require "yast"
 module Yast
   class SystemFilesCopyClass < Module
     def main
-
       textdomain "installation"
 
       Yast.import "Directory"
@@ -43,7 +42,6 @@ module Yast
       Yast.import "ProductFeatures"
       Yast.import "Stage"
       Yast.import "InstData"
-
 
       # --> Variables
 

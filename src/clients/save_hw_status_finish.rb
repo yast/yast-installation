@@ -34,7 +34,6 @@
 module Yast
   class SaveHwStatusFinishClient < Client
     def main
-
       textdomain "installation"
 
       Yast.import "Mode"

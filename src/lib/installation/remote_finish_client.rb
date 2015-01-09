@@ -18,7 +18,6 @@
 require "yast"
 
 module Installation
-
   # Step of base installation finish for remote administration (VNC)
   class RemoteFinishClient
     include Yast::Logger

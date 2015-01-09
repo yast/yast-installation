@@ -47,7 +47,6 @@ module Yast
 
       @aliases = {}
 
-
       # feedback heading
       @heading = _("Add-on Product Installation")
       # feedback message
