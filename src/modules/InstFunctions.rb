@@ -72,7 +72,7 @@ module Yast
 
       # Both are supported together
       ignored_features = unparsed_features + cmdline_features
-      @ignored_features = ignored_features.map{ |f| f.split(",") }.flatten.uniq
+      @ignored_features = ignored_features.map { |f| f.split(",") }.flatten.uniq
     end
 
     # Resets the stored ignored features

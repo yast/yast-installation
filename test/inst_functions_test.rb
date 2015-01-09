@@ -89,7 +89,7 @@ describe "when getting list of ignored features from Linuxrc" do
     }
     stub_install_inf(install_inf)
 
-    expect(Yast::InstFunctions.ignored_features.sort).to eq(["f1","f2","f3","f4","f5","f6","f7"])
+    expect(Yast::InstFunctions.ignored_features.sort).to eq(["f1", "f2", "f3", "f4", "f5", "f6", "f7"])
   end
 
   it "handles missing Cmdline in Linuxrc" do

@@ -61,11 +61,11 @@ module Yast
 
         # detect DASD disks
         disks = SCR.Read(path(".probe.disk"))
-        @have_dasd = disks.any? {|d| d["device"] == "DASD" }
+        @have_dasd = disks.any? { |d| d["device"] == "DASD" }
 
         # detect zFCP disks
         controllers = SCR.Read(path(".probe.storage"))
-        @have_zfcp = controllers.any? {|c| c["device"] == "zFCP controller" }
+        @have_zfcp = controllers.any? { |c| c["device"] == "zFCP controller" }
 
         UI.CloseDialog
       end
@@ -194,7 +194,7 @@ module Yast
     end
 
     def button_with_spacing(id, title)
-      [ button(id, title), VSpacing(2) ]
+      [button(id, title), VSpacing(2)]
     end
 
     def RestoreButtons(enable_back, enable_next)

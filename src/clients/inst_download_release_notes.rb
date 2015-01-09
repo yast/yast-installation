@@ -100,10 +100,10 @@ module Yast
         end
         url_base = url[0, pos]
         url_template = url_base + filename_templ
-        log.info("URL template: #{url_base}");
+        log.info("URL template: #{url_base}")
         [Language.language, Language.language[0..1], "en"].each do | lang |
           url = Builtins.sformat(url_template, lang)
-          log.info("URL: #{url}");
+          log.info("URL: #{url}")
           # Where we want to store the downloaded release notes
           filename = Builtins.sformat("%1/relnotes",
             SCR.Read(path(".target.tmpdir")))
@@ -133,7 +133,7 @@ module Yast
           end
         end
       end
-      if ! InstData.release_notes.empty?
+      if !InstData.release_notes.empty?
         UI.SetReleaseNotes(InstData.release_notes)
         Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
       end

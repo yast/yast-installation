@@ -386,7 +386,7 @@ module Yast
     def CopyHardwareUdevRules
       udev_rules_destdir = File.join(Installation.destdir, UDEV_RULES_DIR)
 
-      if ! FileUtils.Exists(udev_rules_destdir)
+      if !FileUtils.Exists(udev_rules_destdir)
         log.info "Directory #{udev_rules_destdir} does not exist yet, creating it"
         WFM.Execute(path(".local.bash"), "mkdir -p #{udev_rules_destdir}")
       end

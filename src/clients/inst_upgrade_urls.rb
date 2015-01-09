@@ -1256,7 +1256,7 @@ module Yast
     # @param repo [Hash] an entry from @already_registered_repos
     # @return [Hash] a hash ready to be added to @urls
     def repo_to_url(repo)
-      url = repo.select {|k,_v| URL_KEYS.include?(k) }
+      url = repo.select { |k, _v| URL_KEYS.include?(k) }
       status = repo["enabled"] ? @REPO_ENABLED : @REPO_DISABLED
       url["new_status"] = status
       url
@@ -1279,7 +1279,7 @@ module Yast
     # @param zypp_repo [Hash] an entry from @system_urls
     # @return [Hash] repo originated from the url. Nil if none.
     def equivalent_repo_for(zypp_repo)
-      @already_registered_repos.detect {|r| r["alias"] == alias_for(zypp_repo) }
+      @already_registered_repos.detect { |r| r["alias"] == alias_for(zypp_repo) }
     end
 
     # Alias for an zypp url record

@@ -55,7 +55,7 @@ describe ::Installation::CIOIgnoreProposal do
       end
 
       it "raises RuntimeError if passed without chosen_id in second param hash" do
-        expect{subject.run("AskUser")}.to(
+        expect { subject.run("AskUser") }.to(
           raise_error(RuntimeError)
         )
       end
@@ -66,12 +66,12 @@ describe ::Installation::CIOIgnoreProposal do
           "chosen_id" => "non_existing"
         ]
 
-        expect{subject.run(*params)}.to raise_error(RuntimeError)
+        expect { subject.run(*params) }.to raise_error(RuntimeError)
       end
     end
 
     it "raises RuntimeError if unknown action passed as first parameter" do
-      expect{subject.run("non_existing_action")}.to(
+      expect { subject.run("non_existing_action") }.to(
         raise_error(RuntimeError)
       )
     end
@@ -155,7 +155,7 @@ describe ::Installation::CIOIgnoreFinish do
             .once
             .and_return("exit" => 1, "stdout" => "", "stderr" => stderr)
 
-          expect{subject.run("Write")}.to raise_error(RuntimeError, /stderr/)
+          expect { subject.run("Write") }.to raise_error(RuntimeError, /stderr/)
         end
 
         it "adds kernel parameters IPLDEV and CONDEV to the bootloader" do
@@ -173,7 +173,7 @@ describe ::Installation::CIOIgnoreFinish do
           allow(Yast::Bootloader).to receive(:modify_kernel_params).once
             .and_return(false)
 
-          expect{subject.run("Write")}.to raise_error(RuntimeError, /failed to write kernel parameters/)
+          expect { subject.run("Write") }.to raise_error(RuntimeError, /failed to write kernel parameters/)
         end
 
         it "writes list of active devices to zipl so it is not blocked" do
@@ -211,13 +211,13 @@ Devices that are not ignored:
             .once
             .and_return("exit" => 1, "stdout" => "", "stderr" => "FAIL")
 
-          expect{subject.run("Write")}.to raise_error(RuntimeError, /cio_ignore -L failed/)
+          expect { subject.run("Write") }.to raise_error(RuntimeError, /cio_ignore -L failed/)
         end
       end
     end
 
     it "raises RuntimeError if unknown action passed as first parameter" do
-      expect{subject.run("non_existing_action")}.to(
+      expect { subject.run("non_existing_action") }.to(
         raise_error(RuntimeError)
       )
     end

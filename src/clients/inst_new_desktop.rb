@@ -259,7 +259,7 @@ module Yast
 
     def GetDesktops(desktops, show_descr)
       sort_order        = @all_desktops.keys
-      sort_order.sort!{|x,y| (@all_desktops[x]["order"] || 99) <=> (@all_desktops[y]["order"] || 99) }
+      sort_order.sort! { |x, y| (@all_desktops[x]["order"] || 99) <=> (@all_desktops[y]["order"] || 99) }
 
       if desktops == "major"
         sort_order = Builtins.filter(sort_order) do |desktop_name|

@@ -205,7 +205,7 @@ module Yast
 
       # In case of going back, Release Notes button may be shown, retranslate it (bnc#886660)
       # Assure that relnotes have been downloaded first
-      if ! InstData.release_notes.empty?
+      if !InstData.release_notes.empty?
         Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
       end
 

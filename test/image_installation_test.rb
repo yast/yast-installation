@@ -11,10 +11,10 @@ Yast.import "Arch"
 
 IMAGES_DESCR_FILE = File.join(File.expand_path(File.dirname(__FILE__)), "data/images/images.xml")
 
-KDE4_PATTERNS  = ["base","enhanced_base","games","imaging","kde4","kde4_basis","multimedia","sw_management","x11"]
-GNOME_PATTERNS = ["base","enhanced_base","fonts","games","gnome","gnome_basis","imaging","multimedia","sw_management","x11"]
-X11_PATTERNS   = ["base","enhanced_base","fonts","sw_management","x11"]
-BASE_PATTERNS  = ["base","enhanced_base","sw_management"]
+KDE4_PATTERNS  = ["base", "enhanced_base", "games", "imaging", "kde4", "kde4_basis", "multimedia", "sw_management", "x11"]
+GNOME_PATTERNS = ["base", "enhanced_base", "fonts", "games", "gnome", "gnome_basis", "imaging", "multimedia", "sw_management", "x11"]
+X11_PATTERNS   = ["base", "enhanced_base", "fonts", "sw_management", "x11"]
+BASE_PATTERNS  = ["base", "enhanced_base", "sw_management"]
 
 NON_MATCHING_PATTERNS_1 = ["games", "gnome_basis"]
 NON_MATCHING_PATTERNS_2 = ["enhanced_base"]

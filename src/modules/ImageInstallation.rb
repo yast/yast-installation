@@ -796,7 +796,7 @@ module Yast
       AddImage(
         "OEM", path, "raw"
       )
-      @_image_order = [ path ]
+      @_image_order = [path]
     end
 
     # Find a set of images which suites selected patterns

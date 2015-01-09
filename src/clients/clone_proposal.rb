@@ -77,7 +77,7 @@ module Yast
           options = {}
           options["target_path"] = param["target_path"] if param["target_path"]
           mode = Mode.mode
-          WFM.call("clone_system",[options])
+          WFM.call("clone_system", [options])
           Mode.SetMode(mode)
         end
         ret = true
