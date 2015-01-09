@@ -194,39 +194,39 @@ describe ::Installation::PrepShrinkFinish do
       before(:each) do
         stub_const("Yast::Storage", double(:GetTargetMap => STORAGE_DATA))
 
-        allow(Yast::SCR).to receive(:Execute).
-          and_return("exit" => 0, "stdout" => "", "stderr" => "")
+        allow(Yast::SCR).to receive(:Execute)
+          .and_return("exit" => 0, "stdout" => "", "stderr" => "")
       end
 
       it "do nothing for non-prep partitions" do
-        expect(Yast::SCR).to receive(:Execute).
-          with(
+        expect(Yast::SCR).to receive(:Execute)
+          .with(
             ::Installation::PrepShrinkFinish::YAST_BASH_PATH,
             /sda.*resize 1/
-          ).
-          never
+          )
+          .never
 
         subject.run("Write")
       end
 
       it "do nothing for prep partitions small enough" do
-        expect(Yast::SCR).to receive(:Execute).
-          with(
+        expect(Yast::SCR).to receive(:Execute)
+          .with(
             ::Installation::PrepShrinkFinish::YAST_BASH_PATH,
             /sdb.*resize 2/
-          ).
-          never
+          )
+          .never
 
         subject.run("Write")
       end
 
       it "shrink prep partitions too big" do
-        expect(Yast::SCR).to receive(:Execute).
-          with(
+        expect(Yast::SCR).to receive(:Execute)
+          .with(
             ::Installation::PrepShrinkFinish::YAST_BASH_PATH,
             /parted.*sdb.*resize 1/
-          ).
-          once
+          )
+          .once
 
         subject.run("Write")
       end

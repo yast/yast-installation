@@ -113,8 +113,8 @@ describe ::Installation::CIOIgnoreFinish do
         allow(Yast::Bootloader).to receive(:Read) { true }
         allow(Yast::Bootloader).to receive(:modify_kernel_params) { true }
 
-        allow(Yast::SCR).to receive(:Execute).
-          and_return("exit" => 0, "stdout" => "", "stderr" => "")
+        allow(Yast::SCR).to receive(:Execute)
+          .and_return("exit" => 0, "stdout" => "", "stderr" => "")
 
         allow(File).to receive(:write)
       end
@@ -135,13 +135,13 @@ describe ::Installation::CIOIgnoreFinish do
         it "call `cio_ignore --unused --purge`" do
           ::Installation::CIOIgnore.instance.enabled = true
 
-          expect(Yast::SCR).to receive(:Execute).
-            with(
+          expect(Yast::SCR).to receive(:Execute)
+            .with(
               ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
               "cio_ignore --unused --purge"
-            ).
-            once.
-            and_return("exit" => 0, "stdout" => "", "stderr" => "")
+            )
+            .once
+            .and_return("exit" => 0, "stdout" => "", "stderr" => "")
 
           subject.run("Write")
         end
@@ -150,13 +150,13 @@ describe ::Installation::CIOIgnoreFinish do
           ::Installation::CIOIgnore.instance.enabled = true
           stderr = "HORRIBLE ERROR!!!"
 
-          expect(Yast::SCR).to receive(:Execute).
-            with(
+          expect(Yast::SCR).to receive(:Execute)
+            .with(
               ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
               "cio_ignore --unused --purge"
-            ).
-            once.
-            and_return("exit" => 1, "stdout" => "", "stderr" => stderr)
+            )
+            .once
+            .and_return("exit" => 1, "stdout" => "", "stderr" => stderr)
 
           expect{subject.run("Write")}.to raise_error(RuntimeError, /stderr/)
         end
@@ -164,8 +164,8 @@ describe ::Installation::CIOIgnoreFinish do
         it "adds kernel parameters IPLDEV and CONDEV to the bootloader" do
           expect(Yast::Bootloader).to receive(:Write).once { true }
           expect(Yast::Bootloader).to receive(:Read).once { true }
-          expect(Yast::Bootloader).to receive(:modify_kernel_params).once.
-            and_return(true)
+          expect(Yast::Bootloader).to receive(:modify_kernel_params).once
+            .and_return(true)
 
           subject.run("Write")
         end
@@ -173,8 +173,8 @@ describe ::Installation::CIOIgnoreFinish do
         it "raises an exception if modifying kernel parameters failed" do
           expect(Yast::Bootloader).to receive(:Write).never
           expect(Yast::Bootloader).to receive(:Read).once { true }
-          allow(Yast::Bootloader).to receive(:modify_kernel_params).once.
-            and_return(false)
+          allow(Yast::Bootloader).to receive(:modify_kernel_params).once
+            .and_return(false)
 
           expect{subject.run("Write")}.to raise_error(RuntimeError, /failed to write kernel parameters/)
         end
@@ -188,13 +188,13 @@ Devices that are not ignored:
 0.0.0700-0.0.0702
 0.0.fc00
           EOL
-          expect(Yast::SCR).to receive(:Execute).
-            with(
+          expect(Yast::SCR).to receive(:Execute)
+            .with(
               ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
               "cio_ignore -L"
-            ).
-            once.
-            and_return("exit" => 0, "stdout" => test_output, "stderr" => "")
+            )
+            .once
+            .and_return("exit" => 0, "stdout" => test_output, "stderr" => "")
 
 
           expect(File).to receive(:write).once do |file, content|
@@ -207,13 +207,13 @@ Devices that are not ignored:
         end
 
         it "raises an exception if cio_ignore -L failed" do
-          expect(Yast::SCR).to receive(:Execute).
-            with(
+          expect(Yast::SCR).to receive(:Execute)
+            .with(
               ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
               "cio_ignore -L"
-            ).
-            once.
-            and_return("exit" => 1, "stdout" => "", "stderr" => "FAIL")
+            )
+            .once
+            .and_return("exit" => 1, "stdout" => "", "stderr" => "FAIL")
 
           expect{subject.run("Write")}.to raise_error(RuntimeError, /cio_ignore -L failed/)
         end
