@@ -111,7 +111,7 @@ module Yast
           Builtins.y2milestone("user didn't accept info.txt")
 
           # tell linuxrc that we aborted
-          Linuxrc.WriteYaSTInf({ "Aborted" => "1" })
+          Linuxrc.WriteYaSTInf( "Aborted" => "1" )
           return :abort
         end
       end

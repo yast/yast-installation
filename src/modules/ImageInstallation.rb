@@ -214,7 +214,7 @@ module Yast
       Ops.set(
         @_images,
         file,
-        { "file" => file, "type" => type, "name" => name }
+        "file" => file, "type" => type, "name" => name 
       )
 
       nil
@@ -711,7 +711,7 @@ module Yast
         next if file == nil || file == ""
         files = Builtins.tointeger(Ops.get_string(image_detail, "files", "0"))
         isize = Builtins.tointeger(Ops.get_string(image_detail, "size", "0"))
-        Ops.set(@images_details, file, { "files" => files, "size" => isize })
+        Ops.set(@images_details, file,  "files" => files, "size" => isize )
       end
 
       # FIXME: y2debug
@@ -1453,7 +1453,7 @@ module Yast
           "Cannot solve dependencies automatically, opening Packages UI"
         )
         diaret = PackagesUI.RunPackageSelector(
-          { "enable_repo_mgr" => false, "mode" => :summaryMode }
+           "enable_repo_mgr" => false, "mode" => :summaryMode 
         )
         Builtins.y2milestone("RunPackageSelector returned %1", diaret)
 

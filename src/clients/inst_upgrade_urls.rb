@@ -599,7 +599,7 @@ module Yast
 
         Builtins.y2milestone("User wants to setup the network")
         # Call network-setup client
-        netret = WFM.call("inst_lan", [GetInstArgs.argmap.merge({"skip_detection" => true})])
+        netret = WFM.call("inst_lan", [GetInstArgs.argmap.merge("skip_detection" => true)])
 
         if netret == :abort
           Builtins.y2milestone("Aborting the network setup")
@@ -1000,13 +1000,13 @@ module Yast
 
           AddOnProduct.add_on_products = Builtins.add(
             AddOnProduct.add_on_products,
-            {
-              "media"            => new_id,
-              "media_url"        => one_url,
-              "product_dir"      => pth,
-              "product"          => repo_name,
-              "autoyast_product" => repo_name
-            }
+            
+            "media"            => new_id,
+            "media_url"        => one_url,
+            "product_dir"      => pth,
+            "product"          => repo_name,
+            "autoyast_product" => repo_name
+            
           )
         end
       end

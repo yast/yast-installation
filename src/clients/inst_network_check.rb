@@ -171,7 +171,7 @@ module Yast
           # run net setup
           if @option_selected == "yes_do_run_setup"
             Builtins.y2milestone("Running inst_lan")
-            @ret2 = WFM.call("inst_lan", [GetInstArgs.argmap.merge({"skip_detection" => true})])
+            @ret2 = WFM.call("inst_lan", [GetInstArgs.argmap.merge("skip_detection" => true)])
             Builtins.y2milestone("inst_lan ret: %1", @ret2)
 
             # everything went fine

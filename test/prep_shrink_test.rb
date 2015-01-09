@@ -195,7 +195,7 @@ describe ::Installation::PrepShrinkFinish do
         stub_const("Yast::Storage", double(:GetTargetMap => STORAGE_DATA))
 
         allow(Yast::SCR).to receive(:Execute).
-          and_return({"exit" => 0, "stdout" => "", "stderr" => ""})
+          and_return("exit" => 0, "stdout" => "", "stderr" => "")
       end
 
       it "do nothing for non-prep partitions" do

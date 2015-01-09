@@ -170,7 +170,7 @@ module Yast
                   if InstallPackages(@message, @package_list)
                     # start the software manager
                     @ui = PackagesUI.RunPackageSelector(
-                      { "mode" => :summaryMode }
+                       "mode" => :summaryMode 
                     )
                     Builtins.y2milestone("Package manager returned: %1", @ui)
 

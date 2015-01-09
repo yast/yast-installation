@@ -58,11 +58,11 @@ module Yast
 
       if Mode.autoupgrade
         Report.Import(
-          {
+          
             "messages" => { "timeout" => 10 },
             "errors"   => { "timeout" => 10 },
             "warnings" => { "timeout" => 10 }
-          }
+          
         )
       end
 
@@ -300,7 +300,7 @@ module Yast
 
         product_name = Product.name || _("Unknown Product")
         InstData.release_notes[product_name] = @media_text
-        UI::SetReleaseNotes( { product_name => @media_text } )
+        UI::SetReleaseNotes(  product_name => @media_text  )
       end
     end
 

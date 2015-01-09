@@ -323,7 +323,7 @@ module Yast
           Ops.set(
             @useful_partitions,
             counter,
-            { "device" => Ops.get(partition, "device"), "fs" => filesystem }
+            "device" => Ops.get(partition, "device"), "fs" => filesystem 
           )
         end
       end

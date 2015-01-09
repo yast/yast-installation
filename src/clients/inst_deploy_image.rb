@@ -492,7 +492,7 @@ module Yast
 
     def RunPackageManager
       Builtins.y2milestone("--- running the package manager ---")
-      PackagesUI.RunPackageSelector({ "mode" => :summaryMode })
+      PackagesUI.RunPackageSelector( "mode" => :summaryMode )
       Builtins.y2milestone("--- running the package manager ---")
 
       nil

@@ -114,7 +114,7 @@ describe ::Installation::CIOIgnoreFinish do
         allow(Yast::Bootloader).to receive(:modify_kernel_params) { true }
 
         allow(Yast::SCR).to receive(:Execute).
-          and_return({"exit" => 0, "stdout" => "", "stderr" => ""})
+          and_return("exit" => 0, "stdout" => "", "stderr" => "")
 
         allow(File).to receive(:write)
       end
@@ -141,7 +141,7 @@ describe ::Installation::CIOIgnoreFinish do
               "cio_ignore --unused --purge"
             ).
             once.
-            and_return({"exit" => 0, "stdout" => "", "stderr" => ""})
+            and_return("exit" => 0, "stdout" => "", "stderr" => "")
 
           subject.run("Write")
         end
@@ -156,7 +156,7 @@ describe ::Installation::CIOIgnoreFinish do
               "cio_ignore --unused --purge"
             ).
             once.
-            and_return({"exit" => 1, "stdout" => "", "stderr" => stderr})
+            and_return("exit" => 1, "stdout" => "", "stderr" => stderr)
 
           expect{subject.run("Write")}.to raise_error(RuntimeError, /stderr/)
         end
@@ -194,7 +194,7 @@ Devices that are not ignored:
               "cio_ignore -L"
             ).
             once.
-            and_return({"exit" => 0, "stdout" => test_output, "stderr" => ""})
+            and_return("exit" => 0, "stdout" => test_output, "stderr" => "")
 
 
           expect(File).to receive(:write).once do |file, content|
@@ -213,7 +213,7 @@ Devices that are not ignored:
               "cio_ignore -L"
             ).
             once.
-            and_return({"exit" => 1, "stdout" => "", "stderr" => "FAIL"})
+            and_return("exit" => 1, "stdout" => "", "stderr" => "FAIL")
 
           expect{subject.run("Write")}.to raise_error(RuntimeError, /cio_ignore -L failed/)
         end

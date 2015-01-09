@@ -155,7 +155,7 @@ module Yast
         # Installation has been aborted
       elsif @ret == :abort
         # tell linuxrc that we aborted
-        Linuxrc.WriteYaSTInf({ "Aborted" => "1" })
+        Linuxrc.WriteYaSTInf( "Aborted" => "1" )
       end
 
       # Store network services to the state in which they are
