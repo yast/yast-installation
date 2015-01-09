@@ -49,7 +49,7 @@ module Installation
     MAXIMAL_SIZE_KB = 8192
     def shrink_partitions
       target_map = Yast::Storage.GetTargetMap
-      target_map.each do |disk, disk_values|
+      target_map.each do |_disk, disk_values|
         (disk_values["partitions"] || []).each do |part_values|
           if need_shrink?(part_values)
             cmd = shrink_command(disk_values, part_values)

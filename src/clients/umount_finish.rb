@@ -103,7 +103,7 @@ module Yast
         # go through mountPoints collecting paths in umountList
         # *** umountList is lexically ordered !
 
-        Builtins.foreach(@mountPoints) do |mountpoint, mountval|
+        Builtins.foreach(@mountPoints) do |mountpoint, _mountval|
           if mountpoint != "swap"
             @umountList = Builtins.add(@umountList, mountpoint)
           end
@@ -289,7 +289,7 @@ module Yast
           @max_loop_dev = Ops.subtract(@max_loop_dev, 1)
         end
 
-        if @targetMap.any? { |k, v| v["type"] == :CT_LVM }
+        if @targetMap.any? { |_k, v| v["type"] == :CT_LVM }
           Builtins.y2milestone("shutting down LVM")
           WFM.Execute(path(".local.bash"), "/sbin/vgchange -a n")
         end

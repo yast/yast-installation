@@ -78,7 +78,7 @@ module Yast
       @other_desktops = []
 
       # filter out those desktops with unavailable patterns
-      @all_desktops = Builtins.filter(@all_desktops) do |desktop_name, one_desktop|
+      @all_desktops = Builtins.filter(@all_desktops) do |_desktop_name, one_desktop|
         PatternsAvailable(Ops.get_list(one_desktop, "patterns", []))
       end
 

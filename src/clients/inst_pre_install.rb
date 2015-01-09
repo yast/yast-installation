@@ -100,7 +100,7 @@ module Yast
       Builtins.foreach(files_found) do |partition_name, files_on_it|
         counter = 0
         filetimes = 0
-        Builtins.foreach(files_on_it) do |filename, filetime|
+        Builtins.foreach(files_on_it) do |_filename, filetime|
           filetimes = Ops.add(filetimes, filetime)
           counter = Ops.add(counter, 1)
         end
@@ -244,7 +244,7 @@ module Yast
         SystemFilesCopy.CopyFilesToTemp(
           partition,
           Convert.convert(
-            Builtins.union(Builtins.maplist(files) do |filename, filetime|
+            Builtins.union(Builtins.maplist(files) do |filename, _filetime|
               filename
             end, optional_files),
             :from => "list",
@@ -287,7 +287,7 @@ module Yast
 
       target_map = Storage.GetTargetMap
       counter = -1
-      device_names = Builtins.maplist(target_map) do |device_name, device_descr|
+      device_names = Builtins.maplist(target_map) do |device_name, _device_descr|
         device_name
       end
       device_names = restrict_disk_names.call(device_names)

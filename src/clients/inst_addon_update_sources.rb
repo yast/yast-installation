@@ -65,7 +65,7 @@ module Yast
       @updateUrls = UpdateUrls()
       Builtins.y2milestone("sources for updates: %1", @updateUrls)
 
-      @addUrls = Builtins.filter(@updateUrls) do |url, name|
+      @addUrls = Builtins.filter(@updateUrls) do |url, _name|
         !Ops.get(@is_known, url, false)
       end
       Builtins.y2milestone("sources to add: %1", @addUrls)

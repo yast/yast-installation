@@ -1038,7 +1038,7 @@ module Yast
         @has_tab = true
         index = -1
         tabs = Ops.get_list(data, "proposal_tabs", [])
-        tab_ids = Builtins.maplist(tabs) do |tab|
+        tab_ids = Builtins.maplist(tabs) do |_tab|
           index = Ops.add(index, 1)
           index
         end

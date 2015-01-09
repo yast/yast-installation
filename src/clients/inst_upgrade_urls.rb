@@ -1256,7 +1256,7 @@ module Yast
     # @param repo [Hash] an entry from @already_registered_repos
     # @return [Hash] a hash ready to be added to @urls
     def repo_to_url(repo)
-      url = repo.select {|k,v| URL_KEYS.include?(k) }
+      url = repo.select {|k,_v| URL_KEYS.include?(k) }
       status = repo["enabled"] ? @REPO_ENABLED : @REPO_DISABLED
       url["new_status"] = status
       url

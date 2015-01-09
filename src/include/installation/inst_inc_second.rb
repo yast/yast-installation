@@ -308,7 +308,7 @@ module Yast
       Progress.NextStage
 
       # Adjusting services
-      Builtins.foreach(network_settings) do |one_service, new_status|
+      Builtins.foreach(network_settings) do |one_service, _new_status|
         ret = Service.Start(one_service)
         Builtins.y2milestone(
           "Starting service %1 returned %2",
