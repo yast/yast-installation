@@ -59,7 +59,7 @@ module Yast
 
         Builtins.y2milestone("clone_finish Write finished")
       else
-        raise ("unknown function: #{func}")
+        raise "unknown function: #{func}"
       end
 
       return nil
