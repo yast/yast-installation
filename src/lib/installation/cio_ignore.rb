@@ -82,21 +82,21 @@ module Installation
     end
 
     def edit edit_id
-        raise "Internal error: no id passed to proposal edit" unless edit_id
+      raise "Internal error: no id passed to proposal edit" unless edit_id
 
-        log.info "CIO proposal change requested, id #{edit_id}"
+      log.info "CIO proposal change requested, id #{edit_id}"
 
-        cio_ignore = CIOIgnore.instance
+      cio_ignore = CIOIgnore.instance
 
-        cio_ignore.enabled = case edit_id
-          when CIO_DISABLE_LINK then false
-          when CIO_ENABLE_LINK  then true
-          when CIO_ACTION_ID    then !cio_ignore.enabled
-          else
-            raise "INTERNAL ERROR: Unexpected value #{edit_id}"
-          end
+      cio_ignore.enabled = case edit_id
+        when CIO_DISABLE_LINK then false
+        when CIO_ENABLE_LINK  then true
+        when CIO_ACTION_ID    then !cio_ignore.enabled
+        else
+          raise "INTERNAL ERROR: Unexpected value #{edit_id}"
+        end
 
-        { "workflow_sequence" => :next }
+      { "workflow_sequence" => :next }
     end
   end
 

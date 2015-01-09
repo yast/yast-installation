@@ -48,12 +48,6 @@ Style/Documentation:
 Style/FileName:
   Enabled: false
 
-# Offense count: 6
-# Cop supports --auto-correct.
-# Configuration parameters: Width.
-Style/IndentationWidth:
-  Enabled: false
-
 # Offense count: 8
 # Cop supports --auto-correct.
 Style/InfiniteLoop:
