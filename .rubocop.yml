@@ -2,11 +2,6 @@
 inherit_from:
   /usr/share/YaST2/data/devtools/data/rubocop_yast_style.yml
 
-# Offense count: 2
-# Cop supports --auto-correct.
-Lint/DeprecatedClassMethods:
-  Enabled: false
-
 # Offense count: 4
 # Configuration parameters: AlignWith, SupportedStyles.
 Lint/EndAlignment:

@@ -223,7 +223,7 @@ module Yast
           # force write, so it always write profile even if user do not want
           # to store profile after installation
           WFM.CallFunction("clone_proposal", ["Write", "force" => true, "target_path" => path])
-          if !File.exists?(path)
+          if !File.exist?(path)
             raise _("Failed to store configuration. Details can be found in log.")
           end
         when :skip, :dontskip

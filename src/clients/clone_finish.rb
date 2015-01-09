@@ -53,7 +53,7 @@ module Yast
         WFM.call("clone_proposal", ["Write"])
 
         # copy from insts_sys to target system
-        if File.exists? "/root/autoinst.xml"
+        if File.exist? "/root/autoinst.xml"
           WFM.Execute(path(".local.bash"), "cp /root/autoinst.xml #{Installation.destdir}/root/autoinst.xml")
         end
 
