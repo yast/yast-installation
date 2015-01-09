@@ -1137,7 +1137,7 @@ module Yast
 
           no2 = descr["no"] || 0
           id = descr["id"] || Builtins.sformat("module_%1", no2)
-          if descr.has_key? "menu_titles"
+          if descr.key? "menu_titles"
             descr["menu_titles"].each do |i|
               id2 = i["id"]
               title = i["title"]

@@ -39,11 +39,6 @@ Metrics/PerceivedComplexity:
 Style/AccessModifierIndentation:
   Enabled: false
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/DeprecatedHashMethods:
-  Enabled: false
-
 # Offense count: 85
 Style/Documentation:
   Enabled: false
