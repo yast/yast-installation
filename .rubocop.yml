@@ -39,10 +39,6 @@ Metrics/PerceivedComplexity:
 Style/AccessModifierIndentation:
   Enabled: false
 
-# Offense count: 5
-Style/AsciiComments:
-  Enabled: false
-
 # Offense count: 3
 # Cop supports --auto-correct.
 Style/Blocks:

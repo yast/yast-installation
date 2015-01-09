@@ -19,18 +19,10 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	clients/inst_extrasources.ycp
-# Package:	yast2-installation
-# Summary:	Automatically register software repositories from content file
-# Authors:	Ladislav Slezák <lslezak@suse.cz>
-#		Lukas Ocilka <locilka@suse.cz>
-#
-# This client loads the target and initializes the package manager.
-# Adds all sources defined in control file (software->extra_urls)
-# and stores them at the end.
-#
-# $Id$
 module Yast
+  # This client loads the target and initializes the package manager.
+  # Adds all sources defined in control file (software->extra_urls)
+  # and stores them at the end.
   class InstExtrasourcesClient < Client
     def main
       Yast.import "UI"

@@ -19,15 +19,6 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	clients/inst_finish.ycp
-# Package:	installation
-# Summary:	Finish installation
-# Authors:	Klaus Kämpf <kkaempf@suse.de>
-#		Arvin Schnell <arvin@suse.de>
-#              Jiri Srain <jsrain@suse.de>
-#
-# $Id$
-
 require "installation/minimal_installation"
 
 module Yast

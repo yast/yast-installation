@@ -19,9 +19,7 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# Stroj času.
 # Enable very easy bug fixes of anything, given the proper hardware
-# $Id$
 module Yast
   class StrojCasuClient < Client
     def main

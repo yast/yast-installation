@@ -19,30 +19,9 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:
-#	inst_complex_welcome.ycp
-#
-# Module:
-#	Installation
-#
-# Authors:
-#	Klaus   Kämpf <kkaempf@suse.de>
-#	Michael Hager <mike@suse.de>
-#	Stefan  Hundhammer <sh@suse.de>
-#	Thomas Roelz <tom@suse.de>
-#	Jiri Suchomel <jsuchome@suse.cz>
-#	Lukas Ocilka <locilka@suse.cz>
-#
-# Summary:
-#	This client shows main dialog for choosing the language,
-#	keyboard and accepting the license.
-#
-# Attention:
-#	This is still work in progress ...
-#
-# $Id$
-#
 module Yast
+  # This client shows main dialog for choosing the language,
+  # keyboard and accepting the license.
   class InstComplexWelcomeClient < Client
     def main
       Yast.import "UI"
