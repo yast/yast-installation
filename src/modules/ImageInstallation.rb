@@ -1120,42 +1120,42 @@ module Yast
           SCR.Execute(path(".target.bash"), cmd)
         end
         Builtins.sleep(300)
-        if !done.nil?
-          progress = Ops.add(
-            progress_start,
+        next if done.nil?
+
+        progress = Ops.add(
+          progress_start,
+          Ops.divide(
             Ops.divide(
               Ops.divide(
-                Ops.divide(
-                  Ops.multiply(
-                    Ops.subtract(progress_finish, progress_start),
-                    Builtins.tointeger(done)
-                  ),
-                  total_mb
+                Ops.multiply(
+                  Ops.subtract(progress_finish, progress_start),
+                  Builtins.tointeger(done)
                 ),
-                1024
-              ),
-              1024
-            )
-          )
-          Builtins.y2debug("Setting progress to %1", progress)
-          SlideShow.StageProgress(progress, nil)
-          SlideShow.SubProgress(
-            Ops.divide(
-              Ops.divide(
-                Ops.divide(
-                  Ops.multiply(
-                    Ops.subtract(progress_finish, progress_start),
-                    Builtins.tointeger(done)
-                  ),
-                  total_mb
-                ),
-                1024
+                total_mb
               ),
               1024
             ),
-            nil
+            1024
           )
-        end
+        )
+        Builtins.y2debug("Setting progress to %1", progress)
+        SlideShow.StageProgress(progress, nil)
+        SlideShow.SubProgress(
+          Ops.divide(
+            Ops.divide(
+              Ops.divide(
+                Ops.multiply(
+                  Ops.subtract(progress_finish, progress_start),
+                  Builtins.tointeger(done)
+                ),
+                total_mb
+              ),
+              1024
+            ),
+            1024
+          ),
+          nil
+        )
       end
 
       copy_result = Convert.to_integer(

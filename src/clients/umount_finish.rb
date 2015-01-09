@@ -228,35 +228,35 @@ module Yast
 
           # bnc #395034
           # Don't remount them read-only!
-          if @umount_status != true
-            if Builtins.contains(
-              ["/proc", "/sys", "/dev", "/proc/bus/usb"],
-              @tmp
-              )
-              Builtins.y2warning("Umount failed, trying lazy umount...")
-              @cmd2 = Builtins.sformat(
-                "sync; umount -l -f '%1';",
-                String.Quote(@tmp)
-              )
-              Builtins.y2milestone(
-                "Cmd: '%1' Ret: %2",
-                @cmd2,
-                WFM.Execute(path(".local.bash_output"), @cmd2)
-              )
-            else
-              Builtins.y2warning(
-                "Umount failed, trying to remount read only..."
-              )
-              @cmd2 = Builtins.sformat(
-                "mount -o remount,ro,noatime '%1'; umount -l -f '%1';",
-                String.Quote(@tmp)
-              )
-              Builtins.y2milestone(
-                "Cmd: '%1' Ret: %2",
-                @cmd2,
-                WFM.Execute(path(".local.bash_output"), @cmd2)
-              )
-            end
+          next if @umount_status
+
+          if Builtins.contains(
+            ["/proc", "/sys", "/dev", "/proc/bus/usb"],
+            @tmp
+            )
+            Builtins.y2warning("Umount failed, trying lazy umount...")
+            @cmd2 = Builtins.sformat(
+              "sync; umount -l -f '%1';",
+              String.Quote(@tmp)
+            )
+            Builtins.y2milestone(
+              "Cmd: '%1' Ret: %2",
+              @cmd2,
+              WFM.Execute(path(".local.bash_output"), @cmd2)
+            )
+          else
+            Builtins.y2warning(
+              "Umount failed, trying to remount read only..."
+            )
+            @cmd2 = Builtins.sformat(
+              "mount -o remount,ro,noatime '%1'; umount -l -f '%1';",
+              String.Quote(@tmp)
+            )
+            Builtins.y2milestone(
+              "Cmd: '%1' Ret: %2",
+              @cmd2,
+              WFM.Execute(path(".local.bash_output"), @cmd2)
+            )
           end
         end
 

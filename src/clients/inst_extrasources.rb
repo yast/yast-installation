@@ -512,12 +512,12 @@ module Yast
       while r != :yes && r != :no && r != :cancel
         r = UI.UserInput
 
-        if r == :show
-          if UI.QueryWidget(Id(:show), :Value) == true
-            UI.ReplaceWidget(Id(:info), RichText(Opt(:plainText), details))
-          else
-            UI.ReplaceWidget(Id(:info), Empty())
-          end
+        next if r != :show
+
+        if UI.QueryWidget(Id(:show), :Value) == true
+          UI.ReplaceWidget(Id(:info), RichText(Opt(:plainText), details))
+        else
+          UI.ReplaceWidget(Id(:info), Empty())
         end
       end
 
