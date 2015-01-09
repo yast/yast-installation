@@ -84,22 +84,22 @@ module Yast
           ]
 
       dasd_part = if @have_dasd
-          button_with_spacing(:dasd, _("Configure &DASD Disks"))
-        else
-          missing_part
-        end
+                    button_with_spacing(:dasd, _("Configure &DASD Disks"))
+                  else
+                    missing_part
+                  end
 
       zfcp_part = if @have_zfcp
-          button_with_spacing(:zfcp, _("Configure &ZFCP Disks"))
-        else
-          missing_part
-        end
+                    button_with_spacing(:zfcp, _("Configure &ZFCP Disks"))
+                  else
+                    missing_part
+                  end
 
       fcoe_part = if @want_fcoe
-          button_with_spacing(:fcoe, _("Configure &FCoE Interfaces"))
-        else
-          missing_part
-        end
+                    button_with_spacing(:fcoe, _("Configure &FCoE Interfaces"))
+                  else
+                    missing_part
+                  end
 
       @contents = HBox(
         HWeight(999, HStretch()),
