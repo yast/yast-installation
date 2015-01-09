@@ -104,11 +104,6 @@ Style/NilComparison:
 Style/NonNilCheck:
   Enabled: false
 
-# Offense count: 13
-# Cop supports --auto-correct.
-Style/NumericLiterals:
-  MinDigits: 10
-
 # Offense count: 22
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/VariableName:

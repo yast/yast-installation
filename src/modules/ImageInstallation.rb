@@ -96,7 +96,7 @@ module Yast
       @_checkpoint = 400
 
       # NUMBER of bytes per record, multiple of 512
-      @_record_size = 10240
+      @_record_size = 10_240
 
       @last_patterns_selected = []
 
@@ -535,7 +535,7 @@ module Yast
       Builtins.foreach(@_image_order) do |image|
         # 128 MB as a fallback size
         # otherwise progress would not move at all
-        sum = Ops.add(sum, Ops.get(@images_details, [image, "size"], 134217728))
+        sum = Ops.add(sum, Ops.get(@images_details, [image, "size"], 134_217_728))
       end
 
       Builtins.y2milestone("Total images size: %1", sum)

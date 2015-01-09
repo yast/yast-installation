@@ -149,7 +149,7 @@ module Yast
           {
             "name"        => "images",
             "description" => _("Deploying Images..."),
-            "value"       => 300000, # just make it longer than inst_finish, TODO: better value later
+            "value"       => 300_000, # just make it longer than inst_finish, TODO: better value later
             "units"       => :kb
           },
           {

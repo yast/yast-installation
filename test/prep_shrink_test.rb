@@ -52,7 +52,7 @@ describe ::Installation::PrepShrinkFinish do
                 "scsi-SATA_HITACHI_HTS72323_E3834563C86LDM-part1",
                 "wwn-0x5000cca6d4c3bbb8-part1"
               ],
-              "size_k"         => 2104515,
+              "size_k"         => 2_104_515,
               "detected_fs"    => :unknown,
               "nr"             => 1,
               "fsid"           => 130,
@@ -72,7 +72,7 @@ describe ::Installation::PrepShrinkFinish do
                 "scsi-SATA_HITACHI_HTS72323_E3834563C86LDM-part2",
                 "wwn-0x5000cca6d4c3bbb8-part2"
               ],
-              "size_k"         => 20980890,
+              "size_k"         => 20_980_890,
               "detected_fs"    => :unknown,
               "nr"             => 2,
               "fsid"           => 131,
@@ -93,18 +93,18 @@ describe ::Installation::PrepShrinkFinish do
                 "scsi-SATA_HITACHI_HTS72323_E3834563C86LDM-part3",
                 "wwn-0x5000cca6d4c3bbb8-part3"
               ],
-              "size_k"         => 289499332,
+              "size_k"         => 289_499_332,
               "detected_fs"    => :unknown,
               "nr"             => 3,
               "fsid"           => 131,
               "fstype"         => "Linux native",
-              "region"         => [2872, 36041],
+              "region"         => [2872, 36_041],
               "type"           => :primary
             }
           ],
-          "size_k"         => 312571224,
-          "cyl_size"       => 8225280,
-          "cyl_count"      => 38913,
+          "size_k"         => 312_571_224,
+          "cyl_size"       => 8_225_280,
+          "cyl_count"      => 38_913,
           "sector_size"    => 512,
           "label"          => "msdos",
           "name"           => "sda",
@@ -140,7 +140,7 @@ describe ::Installation::PrepShrinkFinish do
                 "scsi-35333333000003e80-part1",
                 "wwn-0x5333333000003e80-part1"
               ],
-              "size_k"         => 64260,
+              "size_k"         => 64_260,
               "detected_fs"    => :unknown,
               "nr"             => 1,
               "fsid"           => 65,
@@ -170,8 +170,8 @@ describe ::Installation::PrepShrinkFinish do
               "boot"           => true
             }
           ],
-          "size_k"         => 307200,
-          "cyl_size"       => 65802240,
+          "size_k"         => 307_200,
+          "cyl_size"       => 65_802_240,
           "cyl_count"      => 4,
           "sector_size"    => 4096,
           "label"          => "msdos",
