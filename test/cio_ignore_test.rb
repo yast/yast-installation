@@ -105,7 +105,7 @@ describe ::Installation::CIOIgnoreFinish do
     describe "first parameter \"Write\"" do
       before(:each) do
         stub_const("Yast::Installation", double(destdir: "/mnt"))
-        stub_const("Yast::Bootloader", double())
+        stub_const("Yast::Bootloader", double)
 
         allow(Yast::Bootloader).to receive(:Write) { true }
         allow(Yast::Bootloader).to receive(:Read) { true }

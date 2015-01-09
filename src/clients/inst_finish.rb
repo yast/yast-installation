@@ -575,7 +575,7 @@ module Yast
       :next
     end
 
-    def show_used_hooks hooks
+    def show_used_hooks(hooks)
       content = Table(
         Id(:hooks_table),
         Opt(:notify),

@@ -48,17 +48,6 @@ Style/Documentation:
 Style/FileName:
   Enabled: false
 
-# Offense count: 4
-# Cop supports --auto-correct.
-Style/MethodCallParentheses:
-  Enabled: false
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/MethodDefParentheses:
-  Enabled: false
-
 # Offense count: 179
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/MethodName:

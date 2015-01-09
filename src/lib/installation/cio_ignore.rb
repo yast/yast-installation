@@ -81,7 +81,7 @@ module Installation
       }
     end
 
-    def edit edit_id
+    def edit(edit_id)
       raise "Internal error: no id passed to proposal edit" unless edit_id
 
       log.info "CIO proposal change requested, id #{edit_id}"
@@ -125,7 +125,7 @@ module Installation
       case func
       when "Info"
         Yast.import "Arch"
-        usable = Yast::Arch.s390()
+        usable = Yast::Arch.s390
 
         {
           "steps" => 1,

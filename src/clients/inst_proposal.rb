@@ -818,8 +818,7 @@ module Yast
       # in normal mode we don't want to switch between installation and update
       modules = Builtins.filter(modules) do |v|
         Ops.get_string(v, 0, "") != "mode_proposal"
-      end if Mode.normal(
-      )
+      end if Mode.normal
 
       # now create the list of modules and order of modules for presentation
       @submodules = Builtins.maplist(modules) do |mod|
