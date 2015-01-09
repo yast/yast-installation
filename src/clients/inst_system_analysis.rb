@@ -303,7 +303,7 @@ module Yast
 
       product_name = Product.name || _("Unknown Product")
       InstData.release_notes[product_name] = @media_text
-      UI::SetReleaseNotes(  product_name => @media_text  )
+      UI::SetReleaseNotes(product_name => @media_text)
     end
 
     def InitInstallationRepositories

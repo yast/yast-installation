@@ -176,12 +176,6 @@ module Yast
       @debug_mode
     end
 
-    # Name of image containing software management metadata (if exists)
-    # @return [String] image with sw mgmt metadata
-    def SwMgmtImage
-      @_metadata_image
-    end
-
     # Order of images to be deployed
     # @return a list of images definint the order
     def ImageOrder
@@ -711,7 +705,7 @@ module Yast
         next if file == nil || file == ""
         files = Builtins.tointeger(Ops.get_string(image_detail, "files", "0"))
         isize = Builtins.tointeger(Ops.get_string(image_detail, "size", "0"))
-        Ops.set(@images_details, file,  "files" => files, "size" => isize )
+        Ops.set(@images_details, file,  "files" => files, "size" => isize)
       end
 
       # FIXME: y2debug
@@ -1495,7 +1489,6 @@ module Yast
     publish variable: :last_patterns_selected, type: "list <string>"
     publish variable: :changed_by_user, type: "boolean"
     publish variable: :image_installation_available, type: "boolean"
-    publish function: :SwMgmtImage, type: "string ()"
     publish function: :ImageOrder, type: "list <string> ()"
     publish function: :SetDeployTarImageProgress, type: "void (void (integer))"
     publish function: :SetDownloadTarImageProgress, type: "void (boolean (integer, integer, integer))"
