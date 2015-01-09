@@ -289,9 +289,7 @@ module Yast
           @max_loop_dev = Ops.subtract(@max_loop_dev, 1)
         end
 
-        if Ops.greater_than(Builtins.size(Builtins.filter(@targetMap) do |k, v|
-            Ops.get_symbol(v, "type", :CT_UNKNOWN) == :CT_LVM
-          end), 0)
+        if @targetMap.any? { |k, v| v["type"] == :CT_LVM }
           Builtins.y2milestone("shutting down LVM")
           WFM.Execute(path(".local.bash"), "/sbin/vgchange -a n")
         end
