@@ -57,7 +57,7 @@ module Yast
         @copy_items.each do |one_copy_item|
           item_id = one_copy_item["id"]
 
-          if (InstFunctions.feature_ignored?(item_id))
+          if InstFunctions.feature_ignored?(item_id)
             Builtins.y2milestone("Feature #{item_id} skipped on user request")
             next
           end
