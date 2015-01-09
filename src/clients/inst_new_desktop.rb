@@ -314,7 +314,7 @@ module Yast
                     )
                   )
                 ),
-                desktops == "major" && show_descr ?
+                if desktops == "major" && show_descr
                   ReplacePoint(
                     Id(GetDesktopDescriptionId(desktop_name)),
                     HBox(
@@ -333,8 +333,10 @@ module Yast
                       ),
                       HSpacing(1)
                     )
-                  ) :
+                  )
+                else
                   Empty()
+                end
               ),
               desktops == "major" ?
                 Image(

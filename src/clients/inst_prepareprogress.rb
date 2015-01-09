@@ -110,14 +110,15 @@ module Yast
           "description" => _("Deploying Images..."),
           # Use 'zero' if image installation is not used
           # BNC #439104
-          "value"       => Ops.greater_than(
-            @live_size,
-            0
-          ) ?
-            @live_size :
-            Installation.image_installation ?
-              Ops.divide(ImageInstallation.TotalSize, 1024) :
-              0, # kilobytes
+          "value"       => if @live_size > 0
+                             @live_size
+                           else
+                             if Installation.image_installation
+                               ImageInstallation.TotalSize / 1024
+                             else
+                               0
+                             end
+                           end,
           "units"       => :kb
         },
         {
