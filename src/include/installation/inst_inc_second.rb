@@ -376,8 +376,8 @@ module Yast
 
         if !Popup.YesNoHeadline(
             # popup headline (#x1)
-            _("Starting Installation..."),
-            show_error
+          _("Starting Installation..."),
+          show_error
           )
           Builtins.y2warning(
             "User didn't want to restart the second stage installation..."

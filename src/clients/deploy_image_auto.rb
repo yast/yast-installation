@@ -264,10 +264,10 @@ module Yast
         )
         loop do
           if Ops.greater_than(
-              Builtins.size(
-                Convert.to_string(UI.QueryWidget(:image_location, :Value))
-              ),
-              0
+            Builtins.size(
+              Convert.to_string(UI.QueryWidget(:image_location, :Value))
+            ),
+            0
             ) ||
               Ops.greater_than(
                 Builtins.size(

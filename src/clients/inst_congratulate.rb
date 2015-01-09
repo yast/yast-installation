@@ -305,11 +305,11 @@ module Yast
       AddOnProduct.ReadTmpExportFilename
 
       if !Package.InstallMsg(
-          "autoyast2",
-          _(
-            "<p>To clone the current system, the <b>%1</b> package must be installed.</p>"
-          ) +
-            _("<p>Install it now?</p>")
+        "autoyast2",
+        _(
+          "<p>To clone the current system, the <b>%1</b> package must be installed.</p>"
+        ) +
+          _("<p>Install it now?</p>")
         )
         Popup.Error(_("autoyast2 package not installed. Cloning disabled."))
       else

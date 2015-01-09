@@ -75,8 +75,8 @@ module Yast
       # Remove Xen/KVM Virtualization Host Server Installation for non-x86_64 (bnc#702103, bnc#795067)
       @system_scenarios = Builtins.filter(@system_scenarios) do |one_scenario|
         if Builtins.issubstring(
-            Ops.get(one_scenario, "id", "---"),
-            "virtualization_host"
+          Ops.get(one_scenario, "id", "---"),
+          "virtualization_host"
           ) &&
             !Arch.x86_64
           Builtins.y2milestone("removing Xen Virtualization Host Server option")
@@ -177,8 +177,8 @@ module Yast
         matching_patterns = 0
         Builtins.foreach(patterns) do |one_pattern|
           if Builtins.contains(
-              patterns_required,
-              Ops.get_string(one_pattern, "name", "")
+            patterns_required,
+            Ops.get_string(one_pattern, "name", "")
             ) &&
               (Ops.get_symbol(one_pattern, "status", :a) == :installed ||
                 Ops.get_symbol(one_pattern, "status", :a) == :selected)

@@ -977,15 +977,15 @@ module Yast
 
       if UI.TextMode()
         change_point = ReplacePoint(
-            Id(:rep_menu),
+          Id(:rep_menu),
             # menu button
-            MenuButton(Id(:menu_dummy), _("&Change..."), [Item(Id(:dummy), "")])
+          MenuButton(Id(:menu_dummy), _("&Change..."), [Item(Id(:dummy), "")])
           )
       else
         change_point = PushButton(
-            Id(:export_config),
+          Id(:export_config),
             # menu button
-            _("&Export Configuration")
+          _("&Export Configuration")
           )
       end
 

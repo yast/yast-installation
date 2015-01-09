@@ -931,13 +931,13 @@ module Yast
 
         Builtins.foreach(possible_patterns) do |pattern, image|
           if Ops.greater_than(
-              Ops.get(
-                # imageset matches more patterns than the currently best-one
-                matching_patterns,
-                pattern,
-                0
-              ),
-              last_number_of_matching_patterns
+            Ops.get(
+              # imageset matches more patterns than the currently best-one
+              matching_patterns,
+              pattern,
+              0
+            ),
+            last_number_of_matching_patterns
             ) &&
               # enough patterns matches the selected imageset
               EnoughPatternsMatching(
@@ -1100,12 +1100,12 @@ module Yast
         while line != nil
           if pid == ""
             if !Builtins.regexpmatch(
-                line,
-                Builtins.sformat(
-                  "dd bs=1048576 if=%1 of=%2",
-                  tmp_pipe1,
-                  tmp_pipe2
-                )
+              line,
+              Builtins.sformat(
+                "dd bs=1048576 if=%1 of=%2",
+                tmp_pipe1,
+                tmp_pipe2
+              )
               )
               pid = ""
             else
@@ -1388,14 +1388,14 @@ module Yast
           }
           # Already installed resolvable but not in list of resolvables to be installed
           if !Builtins.contains(
-              selected_for_installation,
-              one_already_installed_resolvable
+            selected_for_installation,
+            one_already_installed_resolvable
             )
             # BNC #489448: Do not remove package which is installed in different version and/or arch
             # It will be upgraded later
             if Builtins.contains(
-                selected_for_installation_pkgnames,
-                Ops.get_string(one_resolvable, "name", "-x-")
+              selected_for_installation_pkgnames,
+              Ops.get_string(one_resolvable, "name", "-x-")
               )
               Builtins.y2milestone(
                 "Not Removing type: %1, name: %2 version: %3",

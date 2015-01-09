@@ -160,8 +160,8 @@ module Yast
           end
           # set minimal width (maximal length of language name)
           if Ops.less_than(
-              Ops.get(@minwidthlang, product, 0),
-              Builtins.size(lang_name)
+            Ops.get(@minwidthlang, product, 0),
+            Builtins.size(lang_name)
             )
             Ops.set(@minwidthlang, product, Builtins.size(lang_name))
           end
@@ -181,8 +181,8 @@ module Yast
             conter = Ops.add(conter, 1)
             item_id2 = Ops.get_string(one_item, [0, 0], "")
             if Builtins.regexpmatch(
-                item_id2,
-                Builtins.sformat("RELEASE-NOTES.%1.rtf$", preffered_lang)
+              item_id2,
+              Builtins.sformat("RELEASE-NOTES.%1.rtf$", preffered_lang)
               )
               preferred_found = true
               raise Break
@@ -441,8 +441,8 @@ module Yast
           )
         )
         if Ops.greater_than(
-            Builtins.size(Ops.get(@languages_of_relnotes, product, [])),
-            1
+          Builtins.size(Ops.get(@languages_of_relnotes, product, [])),
+          1
           )
           UI.ChangeWidget(Id(:lang), :Enabled, true)
         else

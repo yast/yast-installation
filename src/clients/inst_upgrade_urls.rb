@@ -583,14 +583,14 @@ module Yast
         # Network is not running
         if !Popup.AnyQuestion(
             # TRANSLATORS: popup header
-            _("Network is not Configured"),
+          _("Network is not Configured"),
             # TRANSLATORS: popup question
-            _(
-              "Remote repositories require an Internet connection.\nConfigure it?"
-            ),
-            Label.YesButton,
-            Label.NoButton,
-            :yes
+          _(
+            "Remote repositories require an Internet connection.\nConfigure it?"
+          ),
+          Label.YesButton,
+          Label.NoButton,
+          :yes
           )
           Builtins.y2milestone("User decided not to setup the network")
           ret = false
@@ -789,7 +789,7 @@ module Yast
         # force reloading the libzypp repomanager to notice the removed files
         Pkg.TargetFinish
         Pkg.TargetInitializeOptions(Installation.destdir,
-            "target_distro" => target_distribution)
+          "target_distro" => target_distribution)
         Pkg.TargetLoad
       end
 
@@ -835,19 +835,19 @@ module Yast
 
       # true - OK, continue
       if Popup.AnyQuestion(
-          _("Correct Media Requested"),
-          Builtins.sformat(
-            _(
-              "Make sure that media with label %1\n" +
-                "is in the CD/DVD drive.\n" +
-                "\n" +
-                "If you skip it, the repository will not be added.\n"
-            ),
-            name
+        _("Correct Media Requested"),
+        Builtins.sformat(
+          _(
+            "Make sure that media with label %1\n" +
+              "is in the CD/DVD drive.\n" +
+              "\n" +
+              "If you skip it, the repository will not be added.\n"
           ),
-          Label.OKButton,
-          Label.SkipButton,
-          :yes
+          name
+        ),
+        Label.OKButton,
+        Label.SkipButton,
+        :yes
         ) == true
         Pkg.SourceReleaseAll
         return true

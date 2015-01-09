@@ -50,8 +50,8 @@ module Yast
         # is performed automatically.
 
         if Ops.greater_than(
-            SCR.Read(path(".target.size"), "/media/floppy/autoinst.xml"),
-            0
+          SCR.Read(path(".target.size"), "/media/floppy/autoinst.xml"),
+          0
           )
           Builtins.y2milestone("Found control file, switching to autoinst mode")
           Mode.SetMode("autoinstallation") 

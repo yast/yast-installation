@@ -247,8 +247,8 @@ module Yast
       all_available = true
       Builtins.foreach(patterns) do |pattern|
         if Ops.less_than(
-            Builtins.size(Pkg.ResolvableProperties(pattern, :pattern, "")),
-            1
+          Builtins.size(Pkg.ResolvableProperties(pattern, :pattern, "")),
+          1
           )
           Builtins.y2warning("pattern '%1' not found", pattern)
           all_available = false

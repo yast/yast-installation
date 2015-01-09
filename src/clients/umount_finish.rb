@@ -149,8 +149,8 @@ module Yast
             # bnc #395034
             # Don't remount them read-only!
             if Builtins.contains(
-                ["/proc", "/sys", "/dev", "/proc/bus/usb"],
-                umount_dir
+              ["/proc", "/sys", "/dev", "/proc/bus/usb"],
+              umount_dir
               )
               Builtins.y2warning("Umount failed, trying lazy umount...")
               cmd = Builtins.sformat(
@@ -230,8 +230,8 @@ module Yast
           # Don't remount them read-only!
           if @umount_status != true
             if Builtins.contains(
-                ["/proc", "/sys", "/dev", "/proc/bus/usb"],
-                @tmp
+              ["/proc", "/sys", "/dev", "/proc/bus/usb"],
+              @tmp
               )
               Builtins.y2warning("Umount failed, trying lazy umount...")
               @cmd2 = Builtins.sformat(
