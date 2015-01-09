@@ -898,26 +898,6 @@ module Yast
       nil
     end
 
-    # Find out if the target machine has a network card.
-    # @return true if a network card is found, false otherwise
-    #
-    def have_network_card
-      # Maybe obsolete
-
-      return true if Mode.test
-
-      Ops.greater_than(
-        Builtins.size(
-          Convert.convert(
-            SCR.Read(path(".probe.netcard")),
-            from: "any",
-            to:   "list <map>"
-          )
-        ),
-        0
-      )
-    end
-
     def build_dialog
       # headline for installation proposal
 
