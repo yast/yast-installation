@@ -46,7 +46,7 @@ module Yast
       disk = nil
 
       continue_buttons = [:next, :back, :close, :abort]
-      while !continue_buttons.include?(ret)
+      until continue_buttons.include?(ret)
         ret = UI.UserInput
 
         if ret == :next

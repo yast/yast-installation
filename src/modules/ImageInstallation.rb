@@ -1089,7 +1089,7 @@ module Yast
         line = Convert.to_string(
           SCR.Read(path(".process.read_line_stderr"), process)
         )
-        while !line.nil?
+        until line.nil?
           if pid == ""
             if !Builtins.regexpmatch(
               line,
