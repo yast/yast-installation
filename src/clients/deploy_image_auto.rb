@@ -262,7 +262,7 @@ module Yast
           :Enabled,
           @selected == :dont_inst_from_images
         )
-        begin
+        loop do
           if Ops.greater_than(
               Builtins.size(
                 Convert.to_string(UI.QueryWidget(:image_location, :Value))
@@ -376,7 +376,8 @@ module Yast
               UI.ChangeWidget(Id(:create_iso), :Value, false)
             end
           end
-        end while @ret != :ok && @ret != :next && @ret != :abort
+          break if [:ok, :next, :abort].include?(@ret)
+        end
 
         Wizard.CloseDialog
         return deep_copy(@ret)

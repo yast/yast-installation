@@ -96,7 +96,7 @@ module Yast
 
       AdjustStepsAccordingToInstallationSettings()
 
-      begin
+      loop do
         @ret = UI.UserInput
         Builtins.y2milestone("ret: %1", @ret)
 
@@ -123,7 +123,8 @@ module Yast
             return :abort
           end
         end
-      end until @ret == :back || @ret == :next
+        break if [:back, :next].include?(@ret)
+      end
 
       # <-- Handling User Input in Installation Mode
 

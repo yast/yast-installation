@@ -139,7 +139,7 @@ module Yast
       )
 
       @ret = nil
-      begin
+      loop do
         @ret = Wizard.UserInput
 
         if @ret == :abort
@@ -157,7 +157,8 @@ module Yast
             Internet.do_you = true
           end
         end
-      end until @ret == :next || @ret == :back
+        break if [:next, :back].include?(@ret)
+      end
 
       Convert.to_symbol(@ret)
     end

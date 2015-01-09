@@ -238,7 +238,7 @@ module Yast
       end
 
       @ret = nil
-      begin
+      loop do
         @ret = Wizard.UserInput
 
         if @ret == :abort
@@ -246,7 +246,8 @@ module Yast
         elsif @ret == :help
           Wizard.ShowHelp(@help)
         end
-      end until @ret == :next || @ret == :back
+        break if [:next, :back].include?(@ret)
+      end
 
       # bugzilla #221190
       if @ret == :back

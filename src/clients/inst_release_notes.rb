@@ -305,7 +305,7 @@ module Yast
       end
 
       @ret = nil
-      begin
+      loop do
         @ret = Wizard.UserInput
 
         if @ret == :abort
@@ -327,7 +327,8 @@ module Yast
         elsif Ops.is_string?(@ret)
           RedrawRelnotesProduct(:tab, @ret)
         end
-      end until @ret == :next || @ret == :back
+        break if [:next, :back].include?(@ret)
+      end
       Wizard.CloseDialog if Mode.normal
 
       Convert.to_symbol(@ret)
