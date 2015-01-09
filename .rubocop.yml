@@ -41,11 +41,6 @@ Style/AccessModifierIndentation:
 
 # Offense count: 1
 # Cop supports --auto-correct.
-Style/DefWithParentheses:
-  Enabled: false
-
-# Offense count: 1
-# Cop supports --auto-correct.
 Style/DeprecatedHashMethods:
   Enabled: false
 

@@ -168,7 +168,7 @@ module Yast
     end
 
     # see bugzilla #156529
-    def InstOptionsDialogContent()
+    def InstOptionsDialogContent
       HBox(
         HStretch(),
         VBox(
