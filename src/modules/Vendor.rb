@@ -108,9 +108,9 @@ module Yast
                                 Ops.add(
                                   Ops.add(
                                     Ops.add(
+                                      # Logging extracting the driver update
                                       "cd /; \n" \
                                         "for i in /tmp/update/[0-9]*/install ; do \n" \
-                                        # Logging extracting the driver update
                                         "    echo \"# Installing Driver Update from $i\">>",
                                       logfile
                                     ),
@@ -176,8 +176,9 @@ module Yast
       # run update.post2 scripts
       SCR.Execute(
         path(".target.bash"),
-        "cd / ; " + "for i in /tmp/update/[0-9]*/install ; do " \
-          "    [ -f \"$i/update.post2\" ] && /bin/chmod +x \"$i/update.post2\" && \"$i/update.post2\" \"$i\" ; " \ "done"
+        "cd / ; for i in /tmp/update/[0-9]*/install ; do " \
+          "    [ -f \"$i/update.post2\" ] && /bin/chmod +x \"$i/update.post2\" && \"$i/update.post2\" \"$i\" ; " \
+          "done"
       )
 
       # remove driver update dir
