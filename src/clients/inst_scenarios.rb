@@ -268,12 +268,14 @@ module Yast
           HBox(
             HWeight(
               1,
-              Ops.get(one_scenario, "icon", "") == "" ?
-                Empty() :
+              if Ops.get(one_scenario, "icon", "") == ""
+                Empty()
+              else
                 HBox(
                   Image(Icon.IconPath(Ops.get(one_scenario, "icon", "")), ""),
                   HSpacing(2)
                 )
+              end
             ),
             Left(
               RadioButton(

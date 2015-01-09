@@ -78,9 +78,8 @@ module Yast
         )
 
       # welcome text
-      @welcome_text = Ops.get_string(@welcome, "text", "") != "" ?
-        Ops.get_string(@welcome, "text", "") :
-        @text
+      @welcome_text = @welcome["text"]
+      @welcome_text = @text if !@welcome_text || @welcome_text.empty?
 
       # help ttext
       @help = _(

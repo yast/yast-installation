@@ -199,13 +199,15 @@ module Yast
           "<p><b>Finish</b> will close the YaST installation and take you\nto the login screen.</p>\n"
         ) +
         # help 3/4 for dialog "Congratulation Dialog"
-        (DisplayKDEHelp() ?
-          _(
-            "<p>If you choose the default graphical desktop KDE, you can\n" \
-              "adjust some KDE settings to your hardware. Also notice\n" \
-              "our SUSE Welcome Dialog.</p>\n"
-          ) :
-          "") # Show this help only in case of KDE as the default windowmanager
+        (if DisplayKDEHelp()
+           _(
+             "<p>If you choose the default graphical desktop KDE, you can\n" \
+               "adjust some KDE settings to your hardware. Also notice\n" \
+               "our SUSE Welcome Dialog.</p>\n"
+           )
+         else
+           ""
+         end) # Show this help only in case of KDE as the default windowmanager
 
       if @show_clone_checkbox
         @help = Ops.add(

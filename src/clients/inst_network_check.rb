@@ -89,9 +89,7 @@ module Yast
               VBox(
                 # TRANSLATORS: dialog label
                 HBox(
-                  @supports_images ?
-                    HBox(Icon.Simple("warning"), HSpacing(2)) :
-                    Empty(),
+                  @supports_images ? HBox(Icon.Simple("warning"), HSpacing(2)) : Empty(),
                   Left(
                     Label(
                       _(

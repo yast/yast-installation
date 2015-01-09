@@ -248,9 +248,7 @@ module Yast
             "umount"
           ],
           # bnc #438154
-          "icon"  => Mode.live_installation ?
-            "yast-live-install-finish" :
-            "yast-scripts"
+          "icon"  => Mode.live_installation ? "yast-live-install-finish" : "yast-scripts"
         }
       ]
 
@@ -610,13 +608,11 @@ module Yast
         )
       )
 
+      text = cmd["stdout"] if cmd["exit"] == 0 && !cmd["stdout"].empty?
       InstError.ShowErrorPopUp(
         _("Installation Error"),
         client_error_text,
-        Ops.get_integer(cmd, "exit", -1) == 0 &&
-          Ops.get_string(cmd, "stdout", "") != "" ?
-          Ops.get_string(cmd, "stdout", "") :
-          nil
+        text
       )
 
       nil

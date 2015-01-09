@@ -62,9 +62,7 @@ module Yast
 
         if Ops.get_boolean(proxy_ret, ["HTTP", "tested"], true) == true &&
             Ops.get_integer(proxy_ret, ["HTTP", "exit"], 1) == 0
-          user_pass = Proxy.user != "" ?
-            Ops.add(Ops.add(Proxy.user, ":"), Proxy.pass) :
-            ""
+          user_pass = Proxy.user != "" ? "#{Proxy.user}:#{Proxy.pass}" : ""
           proxy = "--proxy #{Proxy.http}"
           proxy << " --proxy-user '#{user_pass}'" unless user_pass.empty?
         end

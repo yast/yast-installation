@@ -98,9 +98,7 @@ module Yast
             Ops.set(
               @dorder_map,
               desktop_id,
-              desktop_def["order"] ?
-                Ops.get_integer(desktop_def, "order", 9999) :
-                9999
+              desktop_def["order"] || 9999
             )
           end
 

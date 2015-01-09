@@ -240,9 +240,7 @@ module Yast
             UI.ChangeWidget(Id(:menu), :Enabled, true)
           end
         when :next
-          @skip = UI.WidgetExists(Id(:skip)) ?
-            Convert.to_boolean(UI.QueryWidget(Id(:skip), :Value)) :
-            true
+          @skip = UI.WidgetExists(Id(:skip)) ? UI.QueryWidget(Id(:skip), :Value) : true
           @skip_blocker = UI.WidgetExists(Id(:skip)) && @skip
           if @have_blocker && !@skip_blocker
             # error message is a popup
@@ -480,12 +478,14 @@ module Yast
       Builtins.foreach(@submodules) do |submod|
         prop = ""
         if !Builtins.contains(@locked_modules, submod)
-          heading = Builtins.issubstring(Ops.get_string(@titles, no, ""), "<a") ?
-            Ops.get_locale(@titles, no, _("ERROR: Missing Title")) :
-            HTML.Link(
-              Ops.get_locale(@titles, no, _("ERROR: Missing Title")),
-              Ops.get_string(@submod2id, submod, "")
-            )
+          heading = if Builtins.issubstring(Ops.get_string(@titles, no, ""), "<a")
+                      Ops.get_locale(@titles, no, _("ERROR: Missing Title"))
+                    else
+                      HTML.Link(
+                        Ops.get_locale(@titles, no, _("ERROR: Missing Title")),
+                        Ops.get_string(@submod2id, submod, "")
+                      )
+                    end
 
           # heading in proposal, in case the module doesn't create one
           prop = Ops.add(prop, HTML.Heading(heading))
@@ -536,15 +536,17 @@ module Yast
         prop = ""
         if !skip_the_rest
           if !Builtins.contains(@locked_modules, submod)
-            heading = Builtins.issubstring(
+            heading = if Builtins.issubstring(
               Ops.get_string(@titles, no, ""),
               "<a"
-            ) ?
-              Ops.get_locale(@titles, no, _("ERROR: Missing Title")) :
-              HTML.Link(
-                Ops.get_locale(@titles, no, _("ERROR: Missing Title")),
-                Ops.get_string(@submod2id, submod, "")
-              )
+            )
+                        Ops.get_locale(@titles, no, _("ERROR: Missing Title"))
+                      else
+                        HTML.Link(
+                          Ops.get_locale(@titles, no, _("ERROR: Missing Title")),
+                          Ops.get_string(@submod2id, submod, "")
+                        )
+                      end
 
             # heading in proposal, in case the module doesn't create one
             prop = Ops.add(prop, HTML.Heading(heading))
@@ -1325,9 +1327,7 @@ module Yast
         Wizard.SetNextButton(
           :next,
           # FATE #120373
-          Mode.update ?
-            _("&Update") :
-            _("&Install")
+          Mode.update ? _("&Update") : _("&Install")
         )
       end
 

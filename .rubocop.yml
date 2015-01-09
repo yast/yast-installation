@@ -70,10 +70,6 @@ Style/MethodName:
 Style/MultilineOperationIndentation:
   Enabled: false
 
-# Offense count: 19
-Style/MultilineTernaryOperator:
-  Enabled: false
-
 # Offense count: 22
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/VariableName:

@@ -338,7 +338,7 @@ module Yast
                   Empty()
                 end
               ),
-              desktops == "major" ?
+              if desktops == "major"
                 Image(
                   Ops.add(
                     Ops.add(
@@ -351,8 +351,10 @@ module Yast
                     ),
                     ".png"
                   )
-                ) :
+                )
+              else
                 Empty()
+              end
             )
           )
         )

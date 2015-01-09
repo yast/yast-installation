@@ -172,7 +172,7 @@ module Yast
       HBox(
         HStretch(),
         VBox(
-          @show_online_repositories == true ?
+          if @show_online_repositories
             Left(
               CheckBox(
                 Id(:productsources),
@@ -181,8 +181,10 @@ module Yast
                 _("&Add Online Repositories Before Installation"),
                 Installation.productsources_selected
               )
-            ) :
-            Empty(),
+            )
+          else
+            Empty()
+          end,
           Left(
             CheckBox(
               Id(:add_on),
@@ -201,10 +203,12 @@ module Yast
       # help text for installation method
       _("<p><big><b>Installation Options</b></big></p>") +
         # help text for installation option
-        (@show_online_repositories == true ?
-          _("<p>\nTo use suggested remote repositories during installation or update, select\n" \
-            "<b>Add Online Repositories Before Installation</b>.</p>") :
-          "") +
+        (if @show_online_repositories
+           _("<p>\nTo use suggested remote repositories during installation or update, select\n" \
+             "<b>Add Online Repositories Before Installation</b>.</p>")
+         else
+           ""
+         end) +
         # help text for installation method
         _("<p>\nTo install an add-on product from separate media together with &product;, select\n" \
             "<b>Include Add-on Products from Separate Media</b>.</p>\n") +

@@ -86,9 +86,11 @@ module Yast
       # return string
       elsif @func == "Summary"
         @ret = "<ul><li>" +
-          (Installation.image_installation == true ?
-            _("Installation from images is: <b>enabled</b>") :
-            _("Installation from images is: <b>disabled</b>")) + "</li></ul>"
+          (if Installation.image_installation
+             _("Installation from images is: <b>enabled</b>")
+           else
+             _("Installation from images is: <b>disabled</b>")
+           end) + "</li></ul>"
       # did configuration changed
       # return boolean
       elsif @func == "GetModified"
