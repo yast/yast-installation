@@ -147,7 +147,7 @@ module Yast
 
       # UI wait loop
       @ret = nil
-      while true
+      loop do
         @ret = UI.UserInput
 
         if Ops.is_string?(@ret) &&

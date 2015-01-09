@@ -125,7 +125,7 @@ module Yast
       @ret = :auto
 
       # Handle user input
-      while true
+      loop do
         @user_input = UI.UserInput
 
         if @user_input == :next

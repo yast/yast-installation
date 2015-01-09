@@ -1451,7 +1451,7 @@ module Yast
       ret = false
 
       # BNC #Trying to solve deps. manually
-      while true
+      loop do
         Builtins.y2warning(
           "Cannot solve dependencies automatically, opening Packages UI"
         )

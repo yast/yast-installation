@@ -254,7 +254,7 @@ module Yast
         UI.ReplaceWidget(:license_checkbox_rp, @license_agreement_checkbox)
       end
 
-      while true
+      loop do
         @ret = UI.UserInput
         Builtins.y2milestone("UserInput() returned %1", @ret)
 

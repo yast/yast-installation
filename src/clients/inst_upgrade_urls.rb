@@ -529,7 +529,7 @@ module Yast
       ret = :next
       ui_ret = nil
 
-      while true
+      loop do
         ui_ret = UI.UserInput
 
         ui_ret = :toggle if ui_ret == "table_of_repos"
@@ -574,7 +574,7 @@ module Yast
     def NetworkRunning
       ret = false
 
-      while true
+      loop do
         if NetworkService.isNetworkRunning
           ret = true
           break

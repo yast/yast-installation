@@ -156,7 +156,7 @@ module Yast
 
       @return_this = :next
 
-      while true
+      loop do
         @ret = UI.UserInput
 
         if @ret == :next

@@ -149,7 +149,7 @@ module Yast
       # Set keyboard focus to the [Install] / [Update] or [Next] button
       Wizard.SetFocusToNextButton
 
-      while true
+      loop do
         richtext_normal_cursor(Id(:proposal))
         # bnc #431567
         # Some proposal module can change it while called
