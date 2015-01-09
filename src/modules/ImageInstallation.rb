@@ -1489,9 +1489,7 @@ module Yast
     end
 
     # Only for checking in tests now
-    def selected_images
-      @selected_images
-    end
+    attr_reader :selected_images
 
     publish function: :SetRepo, type: "void (integer)"
     publish variable: :last_patterns_selected, type: "list <string>"
