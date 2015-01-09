@@ -39,10 +39,6 @@ Metrics/PerceivedComplexity:
 Style/AccessModifierIndentation:
   Enabled: false
 
-# Offense count: 1
-Style/AccessorMethodName:
-  Enabled: false
-
 # Offense count: 5
 Style/AsciiComments:
   Enabled: false

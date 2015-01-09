@@ -132,7 +132,7 @@ module Yast
       Wizard.EnableNextButton
       Wizard.EnableAbortButton
 
-      return :auto if !get_submod_descriptions_and_build_menu
+      return :auto if !submod_descriptions_and_build_menu
 
 
       #
@@ -173,7 +173,7 @@ module Yast
             @proposal = Ops.add(@proposal, Ops.get(@html, mod, ""))
           end
           display_proposal(@proposal)
-          get_submod_descriptions_and_build_menu
+          submod_descriptions_and_build_menu
         end
 
         case @input
@@ -389,7 +389,7 @@ module Yast
 
           build_dialog
           load_matching_submodules_list
-          if !get_submod_descriptions_and_build_menu
+          if !submod_descriptions_and_build_menu
             Builtins.y2error("i'm in dutch")
           end
         end
@@ -641,7 +641,7 @@ module Yast
           proposal = Ops.add(proposal, Ops.get(@html, mod, ""))
         end
         display_proposal(proposal)
-        get_submod_descriptions_and_build_menu
+        submod_descriptions_and_build_menu
         Builtins.y2milestone("Switching to tab '%1'", @current_tab)
         if UI.HasSpecialWidget(:DumbTab)
           if UI.WidgetExists(:_cwm_tab)
@@ -783,7 +783,7 @@ module Yast
       build_dialog
       ProductControl.RetranslateWizardSteps
       Wizard.RetranslateButtons
-      get_submod_descriptions_and_build_menu
+      submod_descriptions_and_build_menu
 
       nil
     end
@@ -1092,7 +1092,7 @@ module Yast
       nil
     end
 
-    def get_submod_descriptions_and_build_menu
+    def submod_descriptions_and_build_menu
       menu_list = []
       new_submodules = []
       no = 1
