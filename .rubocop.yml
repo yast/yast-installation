@@ -2,10 +2,6 @@
 inherit_from:
   /usr/share/YaST2/data/devtools/data/rubocop_yast_style.yml
 
-# Offense count: 7
-Lint/UselessAssignment:
-  Enabled: false
-
 # Offense count: 153
 Metrics/AbcSize:
   Max: 302

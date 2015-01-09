@@ -353,8 +353,6 @@ module Yast
 
       pid = Convert.to_integer(SCR.Execute(path(".process.start_shell"), cmd))
 
-      newline = ""
-
       read_checkpoint_str = "^tar: Read checkpoint ([0123456789]+)$"
 
       # Otherwise it will never make 100%
@@ -1426,7 +1424,6 @@ module Yast
           one_to_install_ref = arg_ref(one_to_install)
           one_type_ref = arg_ref(one_type)
           ProceedWithSelected(one_to_install_ref, one_type_ref)
-          one_to_install = one_to_install_ref.value
           one_type = one_type_ref.value
         end
         @generic_set_progress.call(id, nil) if @generic_set_progress != nil

@@ -373,11 +373,6 @@ module Yast
         false
       )
       mode_changed = Ops.get_boolean(ask_user_result, "mode_changed", false)
-      rootpart_changed = Ops.get_boolean(
-        ask_user_result,
-        "rootpart_changed",
-        false
-      )
 
       if workflow_sequence != :cancel && workflow_sequence != :back &&
           workflow_sequence != :abort &&
@@ -793,8 +788,6 @@ module Yast
       nil
     end
     def load_matching_submodules_list
-      modules = []
-
       modules = ProductControl.getProposals(
         Stage.stage,
         Mode.mode,
@@ -951,9 +944,6 @@ module Yast
           headline
         )
       end
-
-      # icon for installation proposal
-      icon = ""
 
       # radiobuttons
       skip_buttons = RadioButtonGroup(

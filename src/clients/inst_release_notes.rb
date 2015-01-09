@@ -174,7 +174,6 @@ module Yast
           )
         end
         # Selecting default language
-        item_id = nil
         preferred_found = false
         Builtins.foreach(@preferred_langs) do |preffered_lang|
           conter = -1
