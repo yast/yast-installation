@@ -582,9 +582,9 @@ module Yast
 
         # Network is not running
         if !Popup.AnyQuestion(
-            # TRANSLATORS: popup header
+          # TRANSLATORS: popup header
           _("Network is not Configured"),
-            # TRANSLATORS: popup question
+          # TRANSLATORS: popup question
           _(
             "Remote repositories require an Internet connection.\nConfigure it?"
           ),

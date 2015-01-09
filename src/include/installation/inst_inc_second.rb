@@ -375,7 +375,7 @@ module Yast
         end
 
         if !Popup.YesNoHeadline(
-            # popup headline (#x1)
+          # popup headline (#x1)
           _("Starting Installation..."),
           show_error
           )

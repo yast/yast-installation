@@ -405,8 +405,8 @@ module Yast
       nil
     end
 
-  # Prevent from re-defining client class
-  # Re-defining would produce warnings that constants were already initialized
+    # Prevent from re-defining client class
+    # Re-defining would produce warnings that constants were already initialized
   end unless defined? CopyFilesFinishClient
 end
 
