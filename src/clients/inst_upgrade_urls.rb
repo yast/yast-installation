@@ -419,7 +419,7 @@ module Yast
               new_url_map = repo_to_url(repo)
               unregister(repo)
               new_url_map["initial_url_status"] = @REPO_REMOVED
-              log.info "Repository moved to offered urls: #{new_url_map['name']}"
+              log.info "Repository moved to offered urls: #{new_url_map["name"]}"
               @urls << new_url_map
             end
           else
@@ -1332,14 +1332,14 @@ module Yast
         keeppackages = Ops.get_boolean(repo, "keeppackages", false)
       end
       new_url = {
-        "autorefresh"  => autorefresh,
-        "alias"        => alias_for(repo),
-        "url"          => Ops.get(repo, "baseurl"),
-        "name"         => (repo["name"] || repo["id"]),
-        "keeppackages" => keeppackages,
-        @REPO_ENABLED  => enabled,
+        "autorefresh"        => autorefresh,
+        "alias"              => alias_for(repo),
+        "url"                => Ops.get(repo, "baseurl"),
+        "name"               => (repo["name"] || repo["id"]),
+        "keeppackages"       => keeppackages,
+        @REPO_ENABLED        => enabled,
         "initial_url_status" => @REPO_REMOVED,
-        "new_status"   => @REPO_REMOVED
+        "new_status"         => @REPO_REMOVED
       }
       if Builtins.haskey(repo, "priority")
         Ops.set(

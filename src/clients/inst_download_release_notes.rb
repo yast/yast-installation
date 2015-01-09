@@ -84,14 +84,14 @@ module Yast
           break
         end
         if InstData.downloaded_release_notes.include? product["name"]
-          log.info("Release notes for #{product['name']} already downloaded, skipping...")
+          log.info("Release notes for #{product["name"]} already downloaded, skipping...")
           next
         end
         url = product["relnotes_url"]
         log.debug("URL: #{url}")
         # protect from wrong urls
         if url.nil? || url.empty?
-          log.warn("Skipping invalid URL #{url.inspect} for product #{product['name']}")
+          log.warn("Skipping invalid URL #{url.inspect} for product #{product["name"]}")
           next
         end
         pos = url.rindex("/")

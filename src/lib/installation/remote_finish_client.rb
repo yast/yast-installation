@@ -15,7 +15,7 @@
 # this program; if not, contact Novell, Inc.
 # ------------------------------------------------------------------------------
 
-require 'yast'
+require "yast"
 
 module Installation
 

@@ -466,11 +466,11 @@ module Yast
             )
             Builtins.sleep(500)
           else
-            Hooks.run "before_#{step['client']}"
+            Hooks.run "before_#{step["client"]}"
 
             WFM.CallFunction(Ops.get_string(step, "client", ""), ["Write"])
 
-            Hooks.run "after_#{step['client']}"
+            Hooks.run "after_#{step["client"]}"
           end
           Progress.set(orig)
           # Handle user input during client run
@@ -508,14 +508,14 @@ module Yast
 
       if !failed_hooks.empty?
         Builtins.y2error "#{failed_hooks.size} failed hooks found: " +
-          "#{failed_hooks.map(&:name).join(', ')}"
+          "#{failed_hooks.map(&:name).join(", ")}"
       end
 
-      Builtins.y2milestone('Hook summary:') unless used_hooks.empty?
+      Builtins.y2milestone("Hook summary:") unless used_hooks.empty?
 
       used_hooks.each do |hook|
         Builtins.y2milestone("Hook name: #{hook.name}")
-        Builtins.y2milestone("Hook result: #{hook.succeeded? ? 'success' : 'failure' }")
+        Builtins.y2milestone("Hook result: #{hook.succeeded? ? "success" : "failure" }")
         hook.files.each do |file|
           Builtins.y2milestone("Hook file: #{file.path}")
           Builtins.y2milestone("Hook output: #{file.output}")
@@ -592,19 +592,19 @@ module Yast
       content = Table(
         Id(:hooks_table),
         Opt(:notify),
-        Header('Hook name', 'Result', 'Output'),
+        Header("Hook name", "Result", "Output"),
         hooks.map do |hook|
           Item(
             Id(:hook),
             hook.name,
-            hook.failed? ? 'failure' : 'success',
+            hook.failed? ? "failure" : "success",
             hook.files.map(&:output).reject(&:empty?).join
           )
         end
       )
       Builtins.y2milestone "Showing the hooks results in UI"
       Popup.LongText(
-        'Hooks results',
+        "Hooks results",
         content,
         # the width and hight numbers reflect subjective visual appearance of the popup
         80, 5 + hooks.size

@@ -79,23 +79,23 @@ describe "when getting list of ignored features from Linuxrc" do
   # @see http://en.opensuse.org/SDB:Linuxrc#p_ptoptions
   it "returns features set on commandline together with ptoptions" do
     install_inf = {
-      'ignored_features' => 'f1,f2,f3',
-      'IgnoReDfEAtuRes' => 'f2,f4',
-      'i.g.n.o.r.e.d.features' => 'f1,f5',
-      'IGNORE-FEA-T-U-RE' => 'f6,f7,f7,f7',
-      'another_feature' => 'another_value',
-      'Cmdline' => 'splash=silent vga=0x314',
-      'Keyboard' => '1',
+      "ignored_features"       => "f1,f2,f3",
+      "IgnoReDfEAtuRes"        => "f2,f4",
+      "i.g.n.o.r.e.d.features" => "f1,f5",
+      "IGNORE-FEA-T-U-RE"      => "f6,f7,f7,f7",
+      "another_feature"        => "another_value",
+      "Cmdline"                => "splash=silent vga=0x314",
+      "Keyboard"               => "1",
     }
     stub_install_inf(install_inf)
 
-    expect(Yast::InstFunctions.ignored_features.sort).to eq(['f1','f2','f3','f4','f5','f6','f7'])
+    expect(Yast::InstFunctions.ignored_features.sort).to eq(["f1","f2","f3","f4","f5","f6","f7"])
   end
 
   it "handles missing Cmdline in Linuxrc" do
     install_inf = {
       # Cmdline is not defined, bnc#861465
-      'Cmdline' => nil,
+      "Cmdline" => nil,
     }
     stub_install_inf(install_inf)
 
@@ -152,33 +152,33 @@ describe "#feature_ignored?" do
 
   it "should be true if feature is mentioned as a separate install.inf entry or in Cmdline" do
     install_inf = {
-      'ignored_features' => 'f1,f2,f3',
-      'IgnoReDfEAtuRes' => 'f2,f4',
-      'i.g.n.o.r.e.d.features' => 'f1,f5',
-      'IGNORED-FEA-T-U-RES' => 'f6,f7,f7,f7',
-      'another_feature' => 'another_value',
-      'Cmdline' => 'splash=silent vga=0x314 ignored_feature=f8',
-      'Keyboard' => '1',
+      "ignored_features"       => "f1,f2,f3",
+      "IgnoReDfEAtuRes"        => "f2,f4",
+      "i.g.n.o.r.e.d.features" => "f1,f5",
+      "IGNORED-FEA-T-U-RES"    => "f6,f7,f7,f7",
+      "another_feature"        => "another_value",
+      "Cmdline"                => "splash=silent vga=0x314 ignored_feature=f8",
+      "Keyboard"               => "1",
     }
     stub_install_inf(install_inf)
 
-    ['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8'].each do |key|
+    ["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8"].each do |key|
       expect(Yast::InstFunctions.feature_ignored?(key)).to be_true, "Key #{key} is not ignored"
     end
   end
 
   it "should be false if feature is not mentioned as a separate install.inf entry or in Cmdline" do
     install_inf = {
-      'ignored_features' => 'f1,f2,f3',
-      'IgnoReDfEAtuRes' => 'f2,f4',
-      'i.g.n.o.r.e.d.features' => 'f1,f5',
-      'IGNORE-FEA-T-U-RE' => 'f6,f7,f7,f7',
-      'another_feature' => 'another_value',
-      'Cmdline' => 'splash=silent vga=0x314 ignored_feature=f8',
-      'Keyboard' => '1',
+      "ignored_features"       => "f1,f2,f3",
+      "IgnoReDfEAtuRes"        => "f2,f4",
+      "i.g.n.o.r.e.d.features" => "f1,f5",
+      "IGNORE-FEA-T-U-RE"      => "f6,f7,f7,f7",
+      "another_feature"        => "another_value",
+      "Cmdline"                => "splash=silent vga=0x314 ignored_feature=f8",
+      "Keyboard"               => "1",
     }
     stub_install_inf(install_inf)
 
-    expect(Yast::InstFunctions.feature_ignored?('f9')).to be_false
+    expect(Yast::InstFunctions.feature_ignored?("f9")).to be_false
   end
 end
