@@ -74,9 +74,9 @@ module Yast
       # installed may mean old (before upgrade) in initial stage
       # product may not yet be selected although repo is already added
       required_product_statuses = Stage.initial ? [:selected, :available] : [:selected, :installed]
-      products = Pkg.ResolvableProperties("", :product, "").select { | product |
+      products = Pkg.ResolvableProperties("", :product, "").select do | product |
         required_product_statuses.include? product["status"]
-      }
+      end
       log.info("Products: #{products}")
       products.each do | product |
         if InstData.stop_relnotes_download

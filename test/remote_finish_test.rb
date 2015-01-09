@@ -26,9 +26,9 @@ module Yast
     end
 
     describe "#modes" do
-      let(:modes) {
+      let(:modes) do
         subject.modes
-      }
+      end
 
       context "using VNC" do
         before do

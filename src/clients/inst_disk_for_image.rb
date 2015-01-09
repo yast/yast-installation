@@ -73,9 +73,9 @@ module Yast
       Builtins.y2milestone("TM: %1", target_map)
       # FIXME: move blacklist to Storage
       used_by_blacklist = [ :CT_DMRAID, :CT_DMMULTIPATH, :CT_MDPART ]
-      target_map.select { | _key, value |
+      target_map.select do | _key, value |
         Storage.IsDiskType(value["type"]) && (! used_by_blacklist.include? value["used_by"])
-      }.keys
+      end.keys
     end
 
     def disk_for_image_dialog
