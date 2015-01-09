@@ -407,7 +407,7 @@ module Yast
           # If the user has gone back and forward, some of the repositories of
           # the previous system could be already registered for this
           # installation
-          if repo = equivalent_repo_for(one_url_map)
+          if repo == equivalent_repo_for(one_url_map)
             # The installation repository is already in @system_urls. Most
             # likely there will be also another repositories added by the
             # installation process (not from the previous system)
