@@ -117,7 +117,7 @@ module Installation
 
 
       tabs = properties["proposal_tabs"]
-      @tab_labels = tabs.map { |m| m["label"] || "Tab" }
+      @tab_labels = tabs.map { |m| m["label"] }
     end
 
     # @return [Array<String>] proposal names in execution order, including
