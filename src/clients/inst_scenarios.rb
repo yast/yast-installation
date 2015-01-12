@@ -61,22 +61,22 @@ module Yast
         "system_scenarios"
       )
 
-      if @any_scenarios == nil || @any_scenarios == "" || @any_scenarios == []
+      if @any_scenarios.nil? || @any_scenarios == "" || @any_scenarios == []
         Builtins.y2error("Undefined software->system_scenarios")
         return :auto
       end
 
       @system_scenarios = Convert.convert(
         @any_scenarios,
-        :from => "any",
-        :to   => "list <map <string, string>>"
+        from: "any",
+        to:   "list <map <string, string>>"
       )
 
       # Remove Xen/KVM Virtualization Host Server Installation for non-x86_64 (bnc#702103, bnc#795067)
       @system_scenarios = Builtins.filter(@system_scenarios) do |one_scenario|
         if Builtins.issubstring(
-            Ops.get(one_scenario, "id", "---"),
-            "virtualization_host"
+          Ops.get(one_scenario, "id", "---"),
+          "virtualization_host"
           ) &&
             !Arch.x86_64
           Builtins.y2milestone("removing Xen Virtualization Host Server option")
@@ -125,7 +125,7 @@ module Yast
       @ret = :auto
 
       # Handle user input
-      while true
+      loop do
         @user_input = UI.UserInput
 
         if @user_input == :next
@@ -133,7 +133,7 @@ module Yast
             UI.QueryWidget(Id(:scenarios), :CurrentButton)
           )
 
-          if @chosen_selection == nil || @chosen_selection == ""
+          if @chosen_selection.nil? || @chosen_selection == ""
             # TRANSLATORS: pop-up message
             Report.Message(_("Choose one scenario, please."))
           else
@@ -158,7 +158,7 @@ module Yast
       Wizard.CloseDialog if @test_mode
 
       Builtins.y2milestone("Returning: %1", @ret)
-      @ret 
+      @ret
       # EOF
     end
 
@@ -177,8 +177,8 @@ module Yast
         matching_patterns = 0
         Builtins.foreach(patterns) do |one_pattern|
           if Builtins.contains(
-              patterns_required,
-              Ops.get_string(one_pattern, "name", "")
+            patterns_required,
+            Ops.get_string(one_pattern, "name", "")
             ) &&
               (Ops.get_symbol(one_pattern, "status", :a) == :installed ||
                 Ops.get_symbol(one_pattern, "status", :a) == :selected)
@@ -197,7 +197,7 @@ module Yast
             Ops.get(one_scenario, "id", ""),
             Ops.get(one_scenario, "patterns", "")
           )
-          if selected_id == nil
+          if selected_id.nil?
             selected_id = Ops.get(one_scenario, "id", "")
           else
             Builtins.y2warning("Scenario %1 already selected", selected_id)
@@ -206,8 +206,8 @@ module Yast
       end
 
       # matching patterns found
-      if selected_id != nil
-        UI.ChangeWidget(Id(:scenarios), :CurrentButton, selected_id) 
+      if !selected_id.nil?
+        UI.ChangeWidget(Id(:scenarios), :CurrentButton, selected_id)
 
         # using fallback from control file
       else
@@ -216,7 +216,7 @@ module Yast
           "default_system_scenario"
         )
 
-        if default_selection == nil || default_selection == ""
+        if default_selection.nil? || default_selection == ""
           Builtins.y2warning("No default selection defined")
         else
           Builtins.y2milestone("Pre-selecting default selection")
@@ -268,12 +268,14 @@ module Yast
           HBox(
             HWeight(
               1,
-              Ops.get(one_scenario, "icon", "") == "" ?
-                Empty() :
+              if Ops.get(one_scenario, "icon", "") == ""
+                Empty()
+              else
                 HBox(
                   Image(Icon.IconPath(Ops.get(one_scenario, "icon", "")), ""),
                   HSpacing(2)
                 )
+              end
             ),
             Left(
               RadioButton(

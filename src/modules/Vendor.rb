@@ -38,7 +38,6 @@ require "yast"
 module Yast
   class VendorClass < Module
     def main
-
       Yast.import "Installation"
       Yast.import "Directory"
       Yast.import "String"
@@ -54,8 +53,8 @@ module Yast
     def DriverUpdate1
       updatefiles = Convert.convert(
         WFM.Read(path(".local.dir"), ["/update", []]),
-        :from => "any",
-        :to   => "list <string>"
+        from: "any",
+        to:   "list <string>"
       )
       if Ops.less_or_equal(Builtins.size(updatefiles), 0)
         Builtins.y2milestone("No files in /update, skipping driver update...")
@@ -109,9 +108,9 @@ module Yast
                                 Ops.add(
                                   Ops.add(
                                     Ops.add(
-                                      "cd /; \n" +
-                                        "for i in /tmp/update/[0-9]*/install ; do \n" +
-                                        # Logging extracting the driver update
+                                      # Logging extracting the driver update
+                                      "cd /; \n" \
+                                        "for i in /tmp/update/[0-9]*/install ; do \n" \
                                         "    echo \"# Installing Driver Update from $i\">>",
                                       logfile
                                     ),
@@ -151,9 +150,9 @@ module Yast
       )
 
       Builtins.y2milestone(
-        "Calling:\n" +
-          "---------------------------------------------------------\n" +
-          "%1\n" +
+        "Calling:\n" \
+          "---------------------------------------------------------\n" \
+          "%1\n" \
           "---------------------------------------------------------",
         runcmd
       )
@@ -169,16 +168,17 @@ module Yast
     def DriverUpdate2
       updatefiles = Convert.convert(
         WFM.Read(path(".local.dir"), ["/update", []]),
-        :from => "any",
-        :to   => "list <string>"
+        from: "any",
+        to:   "list <string>"
       )
       return if Ops.less_or_equal(Builtins.size(updatefiles), 0)
 
       # run update.post2 scripts
       SCR.Execute(
         path(".target.bash"),
-        "cd / ; " + "for i in /tmp/update/[0-9]*/install ; do " +
-          "    [ -f \"$i/update.post2\" ] && /bin/chmod +x \"$i/update.post2\" && \"$i/update.post2\" \"$i\" ; " + "done"
+        "cd / ; for i in /tmp/update/[0-9]*/install ; do " \
+          "    [ -f \"$i/update.post2\" ] && /bin/chmod +x \"$i/update.post2\" && \"$i/update.post2\" \"$i\" ; " \
+          "done"
       )
 
       # remove driver update dir
@@ -187,8 +187,8 @@ module Yast
       nil
     end
 
-    publish :function => :DriverUpdate1, :type => "void ()"
-    publish :function => :DriverUpdate2, :type => "void ()"
+    publish function: :DriverUpdate1, type: "void ()"
+    publish function: :DriverUpdate2, type: "void ()"
   end
 
   Vendor = VendorClass.new

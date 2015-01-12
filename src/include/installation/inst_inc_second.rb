@@ -57,7 +57,7 @@ module Yast
     end
 
     def AdjustDisabledModules
-      if InstData.wizardsteps_disabled_modules == nil
+      if InstData.wizardsteps_disabled_modules.nil?
         Builtins.y2error("Disabled modules file not defined")
         return
       end
@@ -72,10 +72,10 @@ module Yast
 
       disabled_modules = Convert.convert(
         SCR.Read(path(".target.ycp"), InstData.wizardsteps_disabled_modules),
-        :from => "any",
-        :to   => "list <string>"
+        from: "any",
+        to:   "list <string>"
       )
-      if disabled_modules == nil
+      if disabled_modules.nil?
         Builtins.y2error(
           "Error reading %1",
           InstData.wizardsteps_disabled_modules
@@ -96,7 +96,7 @@ module Yast
     end
 
     def AdjustDisabledProposals
-      if InstData.wizardsteps_disabled_proposals == nil
+      if InstData.wizardsteps_disabled_proposals.nil?
         Builtins.y2error("Disabled proposals file not defined")
         return
       end
@@ -111,10 +111,10 @@ module Yast
 
       disabled_proposals = Convert.convert(
         SCR.Read(path(".target.ycp"), InstData.wizardsteps_disabled_proposals),
-        :from => "any",
-        :to   => "list <string>"
+        from: "any",
+        to:   "list <string>"
       )
-      if disabled_proposals == nil
+      if disabled_proposals.nil?
         Builtins.y2error(
           "Error reading %1",
           InstData.wizardsteps_disabled_proposals
@@ -135,7 +135,7 @@ module Yast
     end
 
     def AdjustDisabledSubProposals
-      if InstData.wizardsteps_disabled_subproposals == nil
+      if InstData.wizardsteps_disabled_subproposals.nil?
         Builtins.y2error("Disabled subproposals file not defined")
         return
       end
@@ -153,10 +153,10 @@ module Yast
           path(".target.ycp"),
           InstData.wizardsteps_disabled_subproposals
         ),
-        :from => "any",
-        :to   => "map <string, list <string>>"
+        from: "any",
+        to:   "map <string, list <string>>"
       )
-      if disabled_subproposals == nil
+      if disabled_subproposals.nil?
         Builtins.y2error(
           "Error reading %1",
           InstData.wizardsteps_disabled_subproposals
@@ -177,7 +177,6 @@ module Yast
 
       nil
     end
-
 
     def AdjustDisabledItems
       AdjustDisabledModules()
@@ -237,13 +236,13 @@ module Yast
 
       network_settings = Convert.convert(
         SCR.Read(path(".target.ycp"), Installation.reboot_net_settings),
-        :from => "any",
-        :to   => "map <string, boolean>"
+        from: "any",
+        to:   "map <string, boolean>"
       )
       Builtins.y2milestone("Adjusting services: %1", network_settings)
 
       # wrong syntax, wrong settings
-      if network_settings == nil
+      if network_settings.nil?
         Builtins.y2error(
           "Cannot read stored network services %1",
           SCR.Read(path(".target.string"), Installation.reboot_net_settings)
@@ -285,7 +284,7 @@ module Yast
         true
       end
 
-      if Builtins.size(network_settings) == 0 || network_settings == nil
+      if Builtins.size(network_settings) == 0 || network_settings.nil?
         Builtins.y2milestone(
           "Nothing to adjust, leaving... %1",
           network_settings
@@ -308,7 +307,7 @@ module Yast
       Progress.NextStage
 
       # Adjusting services
-      Builtins.foreach(network_settings) do |one_service, new_status|
+      Builtins.foreach(network_settings) do |one_service, _new_status|
         ret = Service.Start(one_service)
         Builtins.y2milestone(
           "Starting service %1 returned %2",
@@ -329,7 +328,7 @@ module Yast
       if FileUtils.Exists(var_file)
         var_map = Convert.to_map(SCR.Read(path(".target.ycp"), var_file))
         lang = Ops.get_string(var_map, "second_stage_language")
-        if lang != nil
+        if !lang.nil?
           Builtins.y2milestone("Setting language to: %1", lang)
           Language.QuickSet(lang)
           Builtins.y2milestone("using %1 for second stage", lang)
@@ -355,17 +354,17 @@ module Yast
           FileUtils.Exists(Installation.file_inst_failed)
         # popup question (#x1)
         show_error = _(
-          "The previous installation has failed.\n" +
-            "Would you like it to continue?\n" +
-            "\n" +
+          "The previous installation has failed.\n" \
+            "Would you like it to continue?\n" \
+            "\n" \
             "Note: You may have to enter some information again."
         )
         if FileUtils.Exists(Installation.file_inst_aborted)
           # popup question (#x1)
           show_error = _(
-            "The previous installation has been aborted.\n" +
-              "Would you like it to continue?\n" +
-              "\n" +
+            "The previous installation has been aborted.\n" \
+              "Would you like it to continue?\n" \
+              "\n" \
               "Note: You may have to enter some information again."
           )
 
@@ -375,9 +374,9 @@ module Yast
         end
 
         if !Popup.YesNoHeadline(
-            # popup headline (#x1)
-            _("Starting Installation..."),
-            show_error
+          # popup headline (#x1)
+          _("Starting Installation..."),
+          show_error
           )
           Builtins.y2warning(
             "User didn't want to restart the second stage installation..."
@@ -617,8 +616,8 @@ module Yast
       if FileUtils.Exists(listname)
         files = Convert.convert(
           SCR.Read(path(".target.ycp"), listname),
-          :from => "any",
-          :to   => "list <string>"
+          from: "any",
+          to:   "list <string>"
         )
 
         basedir = Ops.add(
@@ -643,7 +642,7 @@ module Yast
         Installation.encoding = "UTF-8"
       end
 
-      #//////////////////////////////////////////////////////////
+      # //////////////////////////////////////////////////////////
       # activate language settings and console font
 
       language = Language.language

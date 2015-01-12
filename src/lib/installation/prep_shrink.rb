@@ -8,11 +8,10 @@ module Installation
       :live_installation,
       :autoinst,
       :update,
-      :autoupg #TODO is autoupgrade still live?
+      :autoupg # TODO: is autoupgrade still live?
     ]
 
     YAST_BASH_PATH = Yast::Path.new ".target.bash_output"
-
 
     def initialize
       textdomain "installation"
@@ -46,16 +45,17 @@ module Installation
     end
 
   private
+
     MAXIMAL_SIZE_KB = 8192
     def shrink_partitions
       target_map = Yast::Storage.GetTargetMap
-      target_map.each do |disk, disk_values|
+      target_map.each do |_disk, disk_values|
         (disk_values["partitions"] || []).each do |part_values|
-          if need_shrink?(part_values)
-            cmd = shrink_command(disk_values, part_values)
-            log.info "shrinking command #{cmd}"
-            Yast::SCR.Execute(YAST_BASH_PATH, cmd)
-          end
+          next unless need_shrink?(part_values)
+
+          cmd = shrink_command(disk_values, part_values)
+          log.info "shrinking command #{cmd}"
+          Yast::SCR.Execute(YAST_BASH_PATH, cmd)
         end
       end
     end

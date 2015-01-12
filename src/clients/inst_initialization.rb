@@ -58,7 +58,7 @@ module Yast
       Wizard.SetContents(@caption, @content, @helptext, false, false)
       Wizard.SetTitleIcon("yast-software")
 
-      :auto 
+      :auto
 
       # EOF
     end

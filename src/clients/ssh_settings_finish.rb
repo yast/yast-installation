@@ -33,7 +33,6 @@
 module Yast
   class SshSettingsFinishClient < Client
     def main
-
       textdomain "installation"
 
       Yast.import "Linuxrc"

@@ -86,9 +86,11 @@ module Yast
       # return string
       elsif @func == "Summary"
         @ret = "<ul><li>" +
-          (Installation.image_installation == true ?
-            _("Installation from images is: <b>enabled</b>") :
-            _("Installation from images is: <b>disabled</b>")) + "</li></ul>"
+          (if Installation.image_installation
+             _("Installation from images is: <b>enabled</b>")
+           else
+             _("Installation from images is: <b>disabled</b>")
+           end) + "</li></ul>"
       # did configuration changed
       # return boolean
       elsif @func == "GetModified"
@@ -225,15 +227,15 @@ module Yast
           ),
           # TRANSLATORS: help text
           _(
-            "<p><b>Installation from Images</b> is used to speed the installation up.\n" +
-              "Images contain compressed snapshots of an installed system matching your\n" +
-              "selection of patterns. The rest of the packages which are not contained in the\n" +
+            "<p><b>Installation from Images</b> is used to speed the installation up.\n" \
+              "Images contain compressed snapshots of an installed system matching your\n" \
+              "selection of patterns. The rest of the packages which are not contained in the\n" \
               "images will be installed from packages the standard way.</p>\n"
           ) +
             _(
-              "<p><b>Creating own Images</b> is used if you\n" +
-                "want to skip the complete step of RPM installation. Instead AutoYaST will dump an\n" +
-                "image on the harddisk which is a lot faster and can be pre-configured already.\n" +
+              "<p><b>Creating own Images</b> is used if you\n" \
+                "want to skip the complete step of RPM installation. Instead AutoYaST will dump an\n" \
+                "image on the harddisk which is a lot faster and can be pre-configured already.\n" \
                 "Everything else than RPM installation is done like during a normal auto-installation.</p>"
             ),
           Label.BackButton,
@@ -262,12 +264,12 @@ module Yast
           :Enabled,
           @selected == :dont_inst_from_images
         )
-        begin
+        loop do
           if Ops.greater_than(
-              Builtins.size(
-                Convert.to_string(UI.QueryWidget(:image_location, :Value))
-              ),
-              0
+            Builtins.size(
+              Convert.to_string(UI.QueryWidget(:image_location, :Value))
+            ),
+            0
             ) ||
               Ops.greater_than(
                 Builtins.size(
@@ -376,7 +378,8 @@ module Yast
               UI.ChangeWidget(Id(:create_iso), :Value, false)
             end
           end
-        end while @ret != :ok && @ret != :next && @ret != :abort
+          break if [:ok, :next, :abort].include?(@ret)
+        end
 
         Wizard.CloseDialog
         return deep_copy(@ret)
@@ -394,7 +397,7 @@ module Yast
         # BNC #442691
         # Calling image_installation only if set to do so...
         if Installation.image_installation == true
-          WFM.call("inst_prepare_image") 
+          WFM.call("inst_prepare_image")
 
           # moved to control.xml
           #	WFM::call ("inst_deploy_image");
@@ -416,7 +419,7 @@ module Yast
       Builtins.y2milestone("deploy_image_auto finished")
       Builtins.y2milestone("----------------------------------------")
 
-      deep_copy(@ret) 
+      deep_copy(@ret)
 
       # EOF
     end

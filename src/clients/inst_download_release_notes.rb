@@ -43,7 +43,6 @@ module Yast
     #
     # @return true when successful
     def download_release_notes
-
       filename_templ = UI.TextMode ? "/RELEASE-NOTES.%1.txt" : "/RELEASE-NOTES.%1.rtf"
 
       # Get proxy settings (if any)
@@ -52,7 +51,7 @@ module Yast
       Proxy.Read
       # Test if proxy works
       if Proxy.enabled
-        #it is enough to test http proxy, release notes are downloaded via http
+        # it is enough to test http proxy, release notes are downloaded via http
         proxy_ret = Proxy.RunTestProxy(
           Proxy.http,
           "",
@@ -63,9 +62,7 @@ module Yast
 
         if Ops.get_boolean(proxy_ret, ["HTTP", "tested"], true) == true &&
             Ops.get_integer(proxy_ret, ["HTTP", "exit"], 1) == 0
-          user_pass = Proxy.user != "" ?
-            Ops.add(Ops.add(Proxy.user, ":"), Proxy.pass) :
-            ""
+          user_pass = Proxy.user != "" ? "#{Proxy.user}:#{Proxy.pass}" : ""
           proxy = "--proxy #{Proxy.http}"
           proxy << " --proxy-user '#{user_pass}'" unless user_pass.empty?
         end
@@ -74,9 +71,9 @@ module Yast
       # installed may mean old (before upgrade) in initial stage
       # product may not yet be selected although repo is already added
       required_product_statuses = Stage.initial ? [:selected, :available] : [:selected, :installed]
-      products = Pkg.ResolvableProperties("", :product, "").select { | product |
+      products = Pkg.ResolvableProperties("", :product, "").select do | product |
         required_product_statuses.include? product["status"]
-      }
+      end
       log.info("Products: #{products}")
       products.each do | product |
         if InstData.stop_relnotes_download
@@ -84,27 +81,27 @@ module Yast
           break
         end
         if InstData.downloaded_release_notes.include? product["name"]
-          log.info("Release notes for #{product['name']} already downloaded, skipping...")
+          log.info("Release notes for #{product["name"]} already downloaded, skipping...")
           next
         end
         url = product["relnotes_url"]
         log.debug("URL: #{url}")
         # protect from wrong urls
         if url.nil? || url.empty?
-          log.warn("Skipping invalid URL #{url.inspect} for product #{product['name']}")
+          log.warn("Skipping invalid URL #{url.inspect} for product #{product["name"]}")
           next
         end
         pos = url.rindex("/")
-        if pos == nil
-          log.error ("Broken URL for release notes: #{url}")
+        if pos.nil?
+          log.error "Broken URL for release notes: #{url}"
           next
         end
         url_base = url[0, pos]
         url_template = url_base + filename_templ
-        log.info("URL template: #{url_base}");
+        log.info("URL template: #{url_base}")
         [Language.language, Language.language[0..1], "en"].each do | lang |
           url = Builtins.sformat(url_template, lang)
-          log.info("URL: #{url}");
+          log.info("URL: #{url}")
           # Where we want to store the downloaded release notes
           filename = Builtins.sformat("%1/relnotes",
             SCR.Read(path(".target.tmpdir")))
@@ -134,7 +131,7 @@ module Yast
           end
         end
       end
-      if ! InstData.release_notes.empty?
+      if !InstData.release_notes.empty?
         UI.SetReleaseNotes(InstData.release_notes)
         Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
       end
@@ -142,7 +139,7 @@ module Yast
     end
 
     # Set the UI content to show some progress.
-    # TODO FIXME: use a better title (reused existing texts because of text freeze)
+    # FIXME: use a better title (reused existing texts because of text freeze)
     def init_ui
       Wizard.SetContents(_("Initializing"), Label(_("Initializing the installation...")),
         "", false, false)
@@ -151,9 +148,7 @@ module Yast
     def main
       textdomain "installation"
 
-      if GetInstArgs.going_back
-        return :back
-      end
+      return :back if GetInstArgs.going_back
 
       init_ui
 

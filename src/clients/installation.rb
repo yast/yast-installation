@@ -38,10 +38,10 @@ module Yast
       Yast.import "Report"
       Yast.import "Hooks"
 
-      Hooks.search_path.join!('installation')
+      Hooks.search_path.join!("installation")
 
       # Initialize the UI
-      UI.SetProductLogo(true);
+      UI.SetProductLogo(true)
       Wizard.OpenLeftTitleNextBackDialog
       Wizard.SetContents(
         # title
@@ -63,7 +63,7 @@ module Yast
       # Call the real installation
       Builtins.y2milestone("=== installation ===")
 
-      Hooks.run 'installation_start'
+      Hooks.run "installation_start"
 
       # First-stage (initial installation)
       if Stage.initial
@@ -83,12 +83,12 @@ module Yast
         Report.Error(_("No workflow defined for this kind of installation."))
       end
 
-      Hooks.run 'installation_failure' if @ret == false
+      Hooks.run "installation_failure" if @ret == false
 
       Builtins.y2milestone("Installation ret: %1", @ret)
       Builtins.y2milestone("=== installation ===")
 
-      Hooks.run 'installation_finish'
+      Hooks.run "installation_finish"
 
       # Shutdown the UI
       Wizard.CloseDialog
@@ -97,7 +97,6 @@ module Yast
 
       deep_copy(@ret)
     end
-
   end
 end
 

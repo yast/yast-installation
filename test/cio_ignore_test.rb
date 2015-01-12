@@ -5,7 +5,6 @@ require_relative "./test_helper"
 require "installation/cio_ignore"
 
 describe ::Installation::CIOIgnoreProposal do
-
   subject { ::Installation::CIOIgnoreProposal.new }
 
   before(:each) do
@@ -56,7 +55,7 @@ describe ::Installation::CIOIgnoreProposal do
       end
 
       it "raises RuntimeError if passed without chosen_id in second param hash" do
-        expect{subject.run("AskUser")}.to(
+        expect { subject.run("AskUser") }.to(
           raise_error(RuntimeError)
         )
       end
@@ -67,12 +66,12 @@ describe ::Installation::CIOIgnoreProposal do
           "chosen_id" => "non_existing"
         ]
 
-        expect{subject.run(*params)}.to raise_error(RuntimeError)
+        expect { subject.run(*params) }.to raise_error(RuntimeError)
       end
     end
 
     it "raises RuntimeError if unknown action passed as first parameter" do
-      expect{subject.run("non_existing_action")}.to(
+      expect { subject.run("non_existing_action") }.to(
         raise_error(RuntimeError)
       )
     end
@@ -85,7 +84,7 @@ describe ::Installation::CIOIgnoreFinish do
   describe "#run" do
     describe "first paramater \"Info\"" do
       it "returns info entry hash with empty \"when\" key for non s390x architectures" do
-        arch_mock = double("Yast::Arch", :s390 => false)
+        arch_mock = double("Yast::Arch", s390: false)
         stub_const("Yast::Arch", arch_mock)
 
         result = subject.run("Info")
@@ -94,27 +93,26 @@ describe ::Installation::CIOIgnoreFinish do
       end
 
       it "returns info entry hash with scenarios in \"when\" key for s390x architectures" do
-        arch_mock = double("Yast::Arch", :s390 => true)
+        arch_mock = double("Yast::Arch", s390: true)
         stub_const("Yast::Arch", arch_mock)
 
         result = subject.run("Info")
 
         expect(result["when"]).to_not be_empty
       end
-
     end
 
     describe "first parameter \"Write\"" do
       before(:each) do
-        stub_const("Yast::Installation", double(:destdir => "/mnt"))
-        stub_const("Yast::Bootloader", double())
+        stub_const("Yast::Installation", double(destdir: "/mnt"))
+        stub_const("Yast::Bootloader", double)
 
         allow(Yast::Bootloader).to receive(:Write) { true }
         allow(Yast::Bootloader).to receive(:Read) { true }
         allow(Yast::Bootloader).to receive(:modify_kernel_params) { true }
 
-        allow(Yast::SCR).to receive(:Execute).
-          and_return({"exit" => 0, "stdout" => "", "stderr" => ""})
+        allow(Yast::SCR).to receive(:Execute)
+          .and_return("exit" => 0, "stdout" => "", "stderr" => "")
 
         allow(File).to receive(:write)
       end
@@ -131,17 +129,16 @@ describe ::Installation::CIOIgnoreFinish do
       end
 
       describe "Device blacklisting is enabled" do
-
         it "call `cio_ignore --unused --purge`" do
           ::Installation::CIOIgnore.instance.enabled = true
 
-          expect(Yast::SCR).to receive(:Execute).
-            with(
+          expect(Yast::SCR).to receive(:Execute)
+            .with(
               ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
               "cio_ignore --unused --purge"
-            ).
-            once.
-            and_return({"exit" => 0, "stdout" => "", "stderr" => ""})
+            )
+            .once
+            .and_return("exit" => 0, "stdout" => "", "stderr" => "")
 
           subject.run("Write")
         end
@@ -150,22 +147,22 @@ describe ::Installation::CIOIgnoreFinish do
           ::Installation::CIOIgnore.instance.enabled = true
           stderr = "HORRIBLE ERROR!!!"
 
-          expect(Yast::SCR).to receive(:Execute).
-            with(
+          expect(Yast::SCR).to receive(:Execute)
+            .with(
               ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
               "cio_ignore --unused --purge"
-            ).
-            once.
-            and_return({"exit" => 1, "stdout" => "", "stderr" => stderr})
+            )
+            .once
+            .and_return("exit" => 1, "stdout" => "", "stderr" => stderr)
 
-          expect{subject.run("Write")}.to raise_error(RuntimeError, /stderr/)
+          expect { subject.run("Write") }.to raise_error(RuntimeError, /stderr/)
         end
 
         it "adds kernel parameters IPLDEV and CONDEV to the bootloader" do
           expect(Yast::Bootloader).to receive(:Write).once { true }
           expect(Yast::Bootloader).to receive(:Read).once { true }
-          expect(Yast::Bootloader).to receive(:modify_kernel_params).once.
-            and_return(true)
+          expect(Yast::Bootloader).to receive(:modify_kernel_params).once
+            .and_return(true)
 
           subject.run("Write")
         end
@@ -173,10 +170,10 @@ describe ::Installation::CIOIgnoreFinish do
         it "raises an exception if modifying kernel parameters failed" do
           expect(Yast::Bootloader).to receive(:Write).never
           expect(Yast::Bootloader).to receive(:Read).once { true }
-          allow(Yast::Bootloader).to receive(:modify_kernel_params).once.
-            and_return(false)
+          allow(Yast::Bootloader).to receive(:modify_kernel_params).once
+            .and_return(false)
 
-          expect{subject.run("Write")}.to raise_error(RuntimeError, /failed to write kernel parameters/)
+          expect { subject.run("Write") }.to raise_error(RuntimeError, /failed to write kernel parameters/)
         end
 
         it "writes list of active devices to zipl so it is not blocked" do
@@ -188,14 +185,13 @@ Devices that are not ignored:
 0.0.0700-0.0.0702
 0.0.fc00
           EOL
-          expect(Yast::SCR).to receive(:Execute).
-            with(
+          expect(Yast::SCR).to receive(:Execute)
+            .with(
               ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
               "cio_ignore -L"
-            ).
-            once.
-            and_return({"exit" => 0, "stdout" => test_output, "stderr" => ""})
-
+            )
+            .once
+            .and_return("exit" => 0, "stdout" => test_output, "stderr" => "")
 
           expect(File).to receive(:write).once do |file, content|
             expect(file).to eq("/mnt/boot/zipl/active_devices.txt")
@@ -207,21 +203,21 @@ Devices that are not ignored:
         end
 
         it "raises an exception if cio_ignore -L failed" do
-          expect(Yast::SCR).to receive(:Execute).
-            with(
+          expect(Yast::SCR).to receive(:Execute)
+            .with(
               ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
               "cio_ignore -L"
-            ).
-            once.
-            and_return({"exit" => 1, "stdout" => "", "stderr" => "FAIL"})
+            )
+            .once
+            .and_return("exit" => 1, "stdout" => "", "stderr" => "FAIL")
 
-          expect{subject.run("Write")}.to raise_error(RuntimeError, /cio_ignore -L failed/)
+          expect { subject.run("Write") }.to raise_error(RuntimeError, /cio_ignore -L failed/)
         end
       end
     end
 
     it "raises RuntimeError if unknown action passed as first parameter" do
-      expect{subject.run("non_existing_action")}.to(
+      expect { subject.run("non_existing_action") }.to(
         raise_error(RuntimeError)
       )
     end

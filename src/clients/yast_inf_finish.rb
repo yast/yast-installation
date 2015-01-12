@@ -52,7 +52,6 @@ module Yast
       @func = ""
       @param = {}
 
-
       # Check arguments
       if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
           Ops.is_string?(WFM.Args(0))
@@ -107,15 +106,15 @@ module Yast
             SCR.Write(
               path(".dev.tty.stderr"),
               _(
-                "\n" +
-                  "**************************************************************\n" +
-                  "\n" +
-                  "Loading installed kernel using kexec.\n" +
-                  "\n" +
-                  "Trying to load installed kernel via kexec instead of rebooting\n" +
-                  "Please, wait.\n" +
-                  "\n" +
-                  "**************************************************************\n" +
+                "\n" \
+                  "**************************************************************\n" \
+                  "\n" \
+                  "Loading installed kernel using kexec.\n" \
+                  "\n" \
+                  "Trying to load installed kernel via kexec instead of rebooting\n" \
+                  "Please, wait.\n" \
+                  "\n" \
+                  "**************************************************************\n" \
                   "\t\t"
               )
             )
