@@ -47,7 +47,6 @@ module Yast
         #
         # sequence = DummyMod::AskUser( has_next );
 
-
         # Fill return map
 
         @ret = { "workflow_sequence" => :next }

@@ -136,13 +136,12 @@ module Yast
           filename
         )
       )
-      nil 
+      nil
 
       # this just needs too much memory
       # byteblock copy_buffer = WFM::Read (.local.byte, filename);
       # return SCR::Write (.target.byte, filename, copy_buffer);
     end
-
 
     def InjectRenamedFile(dir, src_name, target_name)
       Builtins.y2milestone(
