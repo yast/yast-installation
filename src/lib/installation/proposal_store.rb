@@ -42,6 +42,7 @@ module Installation
 
     end
 
+    # @return [String] translated headline
     def headline
       if properties["label"]
         Yast::Builtins.dgettext(
@@ -53,6 +54,7 @@ module Installation
       end
     end
 
+    # @return [String] like "yast-foo"
     def icon
       case @proposal_mode
       when "network"
@@ -64,6 +66,8 @@ module Installation
       end
     end
 
+    # @return [String] Richtext, the complete help text: a common intro + all
+    #   individual parts.
     def help_text(current_tab: nil, locked_modules: false)
       # General part of the help text for all types of proposals
       how_to_change = _(
@@ -113,6 +117,8 @@ module Installation
       properties.key?("proposal_tabs")
     end
 
+    # @return [Array<String>] translated tab labels
+    # @raise [RuntimeError] if used in proposal without tabs
     def tab_labels
       return @tab_labels if @tab_labels
 
@@ -123,6 +129,8 @@ module Installation
       @tab_labels = tabs.map { |m| m["label"] || "Tab" }
     end
 
+    # @return [Array<String>] proposal names in execution order, including
+    #    the "_proposal" suffix
     def proposal_names
       return @proposal_names if @proposal_names
 
@@ -146,6 +154,8 @@ module Installation
     end
 
     # Makes proposal for all proposal clients.
+    # @param callback Called after each client/part, to report progress. Gets
+    #   part name and part result as arguments
     def make_proposals(force_reset: false, language_changed: false, callback: Proc.new)
       @link2submod = {}
 
@@ -169,6 +179,9 @@ module Installation
       end
     end
 
+    # Calls all clients/parts to retrieve the description
+    # @return [Hash{String => Hash}] map client/part names to hashes with keys
+    # "id", "menu_title" "rich_text_title" http://www.rubydoc.info/github/yast/yast-yast2/Installation/ProposalClient:description
     def descriptions
       return @descriptions if @descriptions
 
@@ -189,6 +202,7 @@ module Installation
       end
     end
 
+    # @return [String] an id provided by the description API
     def id_for(client)
       descriptions[client]["id"]
     end
@@ -199,6 +213,8 @@ module Installation
         client
     end
 
+    # Calls `ask_user`, to change a setting interactively (if link is the
+    # heading for the part) or noninteractively (if it is a "shortcut")
     def handle_link(link)
       client = @id_mapping[link]
       client ||= @link2submod[link]
