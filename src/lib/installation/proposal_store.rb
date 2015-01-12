@@ -134,10 +134,6 @@ module Installation
 
       @proposal_names.map!(&:first) # first element is name of client
 
-      # FIXME: is it still used?
-      # in normal mode we don't want to switch between installation and update
-      @proposal_names.delete("mode_proposal") if Yast::Mode.normal
-
       # FIXME add filter to only installed clients
       @proposal_names
     end
