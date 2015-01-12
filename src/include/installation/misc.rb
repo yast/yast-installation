@@ -129,7 +129,7 @@ module Yast
       Builtins.y2milestone("InjectFile: <%1>", filename)
       Builtins.y2debug("Inject command: #{command}")
       WFM.Execute(path(".local.bash"), command)
-      nil 
+      nil
 
       # this just needs too much memory
       # byteblock copy_buffer = WFM::Read (.local.byte, filename);

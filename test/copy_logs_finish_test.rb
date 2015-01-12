@@ -15,7 +15,7 @@ describe ::Installation::CopyLogsFinish do
     end
 
     def expect_to_run(cmd)
-      expect(Yast::WFM).to receive(:Execute).with(anything(), cmd)
+      expect(Yast::WFM).to receive(:Execute).with(anything, cmd)
     end
 
     it "copies logs from instalation to target system" do

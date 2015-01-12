@@ -116,25 +116,7 @@ module Yast
 
       ret << "</li></ul>\n"
     end
-<<<<<<< HEAD
-  end unless defined? (CloneProposalClient) #avoid class redefinition if reevaluated
-=======
-
-    def clone_dialog
-      dialog = VBox(
-        CheckBox(Id(:value_holder), _("Write AutoYaST profile to /root/autoinst.xml"),
-          @clone_settings.enabled?
-        ),
-        PushButton(Id(:ok), Label.OKButton)
-      )
-
-      UI.OpenDialog dialog
-      UI.UserInput
-      @clone_settings.enabled = UI.QueryWidget(:value_holder, :Value)
-      UI.CloseDialog
-    end
   end unless defined? (CloneProposalClient) # avoid class redefinition if reevaluated
->>>>>>> SLE-12-GA
 end
 
 Yast::CloneProposalClient.new.main
