@@ -148,7 +148,7 @@ module Yast
           1,
           "/media.1/build"
         )
-        if @build_file != nil
+        if !@build_file.nil?
           Builtins.y2milestone("Copying /media.1/build file")
           WFM.Execute(
             path(".local.bash"),
@@ -210,7 +210,7 @@ module Yast
           "globals",
           "base_product_license_directory"
         )
-        if @license_dir == nil || @license_dir == ""
+        if @license_dir.nil? || @license_dir == ""
           @license_dir = Builtins.sformat(
             "%1%2/licenses/base/",
             Installation.destdir,
@@ -386,7 +386,7 @@ module Yast
     def CopyHardwareUdevRules
       udev_rules_destdir = File.join(Installation.destdir, UDEV_RULES_DIR)
 
-      if ! FileUtils.Exists(udev_rules_destdir)
+      if !FileUtils.Exists(udev_rules_destdir)
         log.info "Directory #{udev_rules_destdir} does not exist yet, creating it"
         WFM.Execute(path(".local.bash"), "mkdir -p #{udev_rules_destdir}")
       end
@@ -398,15 +398,13 @@ module Yast
       log.info "Copying all udev rules from #{UDEV_RULES_DIR} to #{udev_rules_destdir}"
       cmd_out = WFM.Execute(path(".local.bash_output"), cmd)
 
-      if cmd_out["exit"] != 0
-        log.error "Error copying udev rules"
-      end
+      log.error "Error copying udev rules" if cmd_out["exit"] != 0
 
       nil
     end
 
-  # Prevent from re-defining client class
-  # Re-defining would produce warnings that constants were already initialized
+    # Prevent from re-defining client class
+    # Re-defining would produce warnings that constants were already initialized
   end unless defined? CopyFilesFinishClient
 end
 

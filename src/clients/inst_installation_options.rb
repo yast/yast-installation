@@ -96,7 +96,7 @@ module Yast
 
       AdjustStepsAccordingToInstallationSettings()
 
-      begin
+      loop do
         @ret = UI.UserInput
         Builtins.y2milestone("ret: %1", @ret)
 
@@ -123,7 +123,8 @@ module Yast
             return :abort
           end
         end
-      end until @ret == :back || @ret == :next
+        break if [:back, :next].include?(@ret)
+      end
 
       # <-- Handling User Input in Installation Mode
 
@@ -167,11 +168,11 @@ module Yast
     end
 
     # see bugzilla #156529
-    def InstOptionsDialogContent()
+    def InstOptionsDialogContent
       HBox(
         HStretch(),
         VBox(
-          @show_online_repositories == true ?
+          if @show_online_repositories
             Left(
               CheckBox(
                 Id(:productsources),
@@ -180,8 +181,10 @@ module Yast
                 _("&Add Online Repositories Before Installation"),
                 Installation.productsources_selected
               )
-            ) :
-            Empty(),
+            )
+          else
+            Empty()
+          end,
           Left(
             CheckBox(
               Id(:add_on),
@@ -200,12 +203,14 @@ module Yast
       # help text for installation method
       _("<p><big><b>Installation Options</b></big></p>") +
         # help text for installation option
-        (@show_online_repositories == true ?
-          _("<p>\nTo use suggested remote repositories during installation or update, select\n" +
-            "<b>Add Online Repositories Before Installation</b>.</p>") :
-          "") +
+        (if @show_online_repositories
+           _("<p>\nTo use suggested remote repositories during installation or update, select\n" \
+             "<b>Add Online Repositories Before Installation</b>.</p>")
+         else
+           ""
+         end) +
         # help text for installation method
-        _("<p>\nTo install an add-on product from separate media together with &product;, select\n" +
+        _("<p>\nTo install an add-on product from separate media together with &product;, select\n" \
             "<b>Include Add-on Products from Separate Media</b>.</p>\n") +
         # help text: additional help for installation
         _("<p>If you need specific hardware drivers for installation, see <i>http://drivers.suse.com</i> site.</p>")

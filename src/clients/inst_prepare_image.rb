@@ -57,7 +57,7 @@ module Yast
       end
 
       @patterns_to_install = Builtins.filter(@patterns_to_install) do |one_pattern|
-        one_pattern != "" && one_pattern != nil
+        one_pattern != "" && !one_pattern.nil?
       end
 
       if @patterns_to_install == ImageInstallation.last_patterns_selected

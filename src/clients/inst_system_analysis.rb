@@ -58,11 +58,11 @@ module Yast
 
       if Mode.autoupgrade
         Report.Import(
-          {
+
             "messages" => { "timeout" => 10 },
             "errors"   => { "timeout" => 10 },
             "warnings" => { "timeout" => 10 }
-          }
+
         )
       end
 
@@ -171,7 +171,6 @@ module Yast
       return :abort unless @packager_initialized
 
       :next
-
     end
 
     # Function definitions -->
@@ -253,8 +252,8 @@ module Yast
             Report.Error(
               Builtins.sformat(
                 _(
-                  "No hard disks were found for the installation.\n" +
-                    "Please check your hardware!\n" +
+                  "No hard disks were found for the installation.\n" \
+                    "Please check your hardware!\n" \
                     "%1\n"
                 ),
                 drivers_info
@@ -263,8 +262,8 @@ module Yast
           else
             Report.Warning(
               _(
-                "No hard disks were found for the installation.\n" +
-                  "During an automatic installation, they might be detected later.\n" +
+                "No hard disks were found for the installation.\n" \
+                  "During an automatic installation, they might be detected later.\n" \
                   "(especially on S/390 or iSCSI systems)\n"
               )
             )
@@ -274,9 +273,9 @@ module Yast
           Report.Error(
             Builtins.sformat(
               _(
-                "No hard disks and no hard disk controllers were\n" +
-                  "found for the installation.\n" +
-                  "Check your hardware.\n" +
+                "No hard disks and no hard disk controllers were\n" \
+                  "found for the installation.\n" \
+                  "Check your hardware.\n" \
                   "%1\n"
               ),
               drivers_info
@@ -294,14 +293,17 @@ module Yast
       # try on-line release notes first
       WFM.CallFunction("inst_download_release_notes")
 
-      if InstData.release_notes.empty? && load_release_notes(Packages.GetBaseSourceID)
-        # push button
-        Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
-
-        product_name = Product.name || _("Unknown Product")
-        InstData.release_notes[product_name] = @media_text
-        UI::SetReleaseNotes( { product_name => @media_text } )
+      if !InstData.release_notes.empty? &&
+          !load_release_notes(Packages.GetBaseSourceID)
+        return
       end
+
+      # push button
+      Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
+
+      product_name = Product.name || _("Unknown Product")
+      InstData.release_notes[product_name] = @media_text
+      UI::SetReleaseNotes(product_name => @media_text)
     end
 
     def InitInstallationRepositories

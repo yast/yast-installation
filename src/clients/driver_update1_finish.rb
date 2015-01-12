@@ -33,7 +33,6 @@
 module Yast
   class DriverUpdate1FinishClient < Client
     def main
-
       textdomain "installation"
 
       Yast.import "Vendor"
@@ -63,7 +62,7 @@ module Yast
         @update_dir = Convert.to_string(
           SCR.Read(path(".etc.install_inf.UpdateDir"))
         )
-        if @update_dir != nil
+        if !@update_dir.nil?
           SCR.Write(
             path(".target.string"),
             Ops.add(Directory.vardir, "/vendor_update"),

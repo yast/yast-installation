@@ -56,7 +56,7 @@ module Yast
 
       NetworkInterfaces.Read
 
-      :auto 
+      :auto
 
       # EOF
     end

@@ -35,7 +35,7 @@
 #
 module Yast
   module InstallationMiscInclude
-    def initialize_installation_misc(include_target)
+    def initialize_installation_misc(_include_target)
       Yast.import "UI"
 
       textdomain "installation"
@@ -61,7 +61,7 @@ module Yast
     def AdjustModprobeBlacklist
       # check whether we need to run it
       brokenmodules = Linuxrc.InstallInf("BrokenModules")
-      if brokenmodules == "" || brokenmodules == nil
+      if brokenmodules == "" || brokenmodules.nil?
         Builtins.y2milestone("No BrokenModules in install.inf, skipping...")
         return
       end
@@ -81,7 +81,7 @@ module Yast
         content = Convert.to_string(
           SCR.Read(path(".target.string"), blacklist_file)
         )
-        if content == nil
+        if content.nil?
           Builtins.y2error("Cannot read %1 file", blacklist_file)
           content = ""
         end
@@ -132,8 +132,8 @@ module Yast
       nil 
 
       # this just needs too much memory
-      #byteblock copy_buffer = WFM::Read (.local.byte, filename);
-      #return SCR::Write (.target.byte, filename, copy_buffer);
+      # byteblock copy_buffer = WFM::Read (.local.byte, filename);
+      # return SCR::Write (.target.byte, filename, copy_buffer);
     end
 
     def UpdateWizardSteps
@@ -150,7 +150,6 @@ module Yast
 
       nil
     end
-
 
     # moved from clients/inst_doit.ycp
     # to fix bug #219097
@@ -172,18 +171,18 @@ module Yast
           "<p>Information required for the base installation is now complete.</p>"
         )
 
-        some_destructive = Builtins.find(Storage.GetCommitInfos) do |info|
+        some_destructive = Storage.GetCommitInfos.any? do |info|
           Ops.get_boolean(info, :destructive, false)
-        end != nil
+        end
 
         if some_destructive
           # Text for confirmation popup before the installation really starts 2/3
           body = Ops.add(
             body,
             _(
-              "<p>If you continue now, <b>existing\n" +
-                "partitions</b> on your hard disk will be <b>deleted</b> or <b>formatted</b>\n" +
-                "(<b>erasing any existing data</b> in those partitions) according to the\n" +
+              "<p>If you continue now, <b>existing\n" \
+                "partitions</b> on your hard disk will be <b>deleted</b> or <b>formatted</b>\n" \
+                "(<b>erasing any existing data</b> in those partitions) according to the\n" \
                 "installation settings in the previous dialogs.</p>"
             )
           )
@@ -192,8 +191,8 @@ module Yast
           body = Ops.add(
             body,
             _(
-              "<p>If you continue now, partitions on your\n" +
-                "hard disk will be modified according to the installation settings in the\n" +
+              "<p>If you continue now, partitions on your\n" \
+                "hard disk will be modified according to the installation settings in the\n" \
                 "previous dialogs.</p>"
             )
           )
@@ -215,13 +214,12 @@ module Yast
           _("<p>Information required to perform an update is now complete.</p>") +
             # Text for confirmation popup before the update really starts 2/3
             _(
-              "\n" +
-                "<p>If you continue now, data on your hard disk will be overwritten\n" +
+              "\n" \
+                "<p>If you continue now, data on your hard disk will be overwritten\n" \
                 "according to the settings in the previous dialogs.</p>"
             ) +
             # Text for confirmation popup before the update really starts 3/3
-            _("<p>Go back and check the settings if you are unsure.</p>") 
-
+            _("<p>Go back and check the settings if you are unsure.</p>")
 
         # Label for the button that confirms startint the installation
         confirm_button_label = _("Start &Update")
@@ -271,19 +269,19 @@ module Yast
     # Some client calls have to be called even if using AC
     def EnableRequiredModules
       # Lazy init
-      if @modules_to_enable_with_AC_on == nil
+      if @modules_to_enable_with_AC_on.nil?
         feature = ProductFeatures.GetFeature(
           "globals",
           "autoconfiguration_enabled_modules"
         )
 
-        if feature == "" || feature == nil || feature == []
+        if feature == "" || feature.nil? || feature == []
           @modules_to_enable_with_AC_on = []
         else
           @modules_to_enable_with_AC_on = Convert.convert(
             feature,
-            :from => "any",
-            :to   => "list <string>"
+            from: "any",
+            to:   "list <string>"
           )
         end
 
@@ -293,7 +291,7 @@ module Yast
         )
       end
 
-      if @modules_to_enable_with_AC_on != nil
+      if !@modules_to_enable_with_AC_on.nil?
         Builtins.foreach(@modules_to_enable_with_AC_on) do |one_module|
           ProductControl.EnableModule(one_module)
         end
@@ -303,9 +301,8 @@ module Yast
     end
 
     def AdjustStepsAccordingToInstallationSettings
-
       if Installation.add_on_selected == true ||
-          Linuxrc.InstallInf("addon") != nil
+          !Linuxrc.InstallInf("addon").nil?
         ProductControl.EnableModule("add-on")
       else
         ProductControl.DisableModule("add-on")
@@ -335,7 +332,7 @@ module Yast
         # problems with keyboard in xen
         if SCR.Read(path(".probe.xen")) == true
           Builtins.y2milestone("XEN in X detected: running xset")
-          WFM.Execute(path(".local.bash"), "xset r off; xset m 1") 
+          WFM.Execute(path(".local.bash"), "xset r off; xset m 1")
           # bnc #433338
           # enabling key-repeating
         else

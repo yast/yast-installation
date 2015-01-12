@@ -33,7 +33,6 @@
 module Yast
   class LdconfigFinishClient < Client
     def main
-
       textdomain "installation"
 
       @ret = nil

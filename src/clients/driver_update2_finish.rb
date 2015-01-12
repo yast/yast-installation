@@ -33,7 +33,6 @@
 module Yast
   class DriverUpdate2FinishClient < Client
     def main
-
       textdomain "installation"
 
       Yast.import "Vendor"

@@ -1,7 +1,7 @@
 require "yast/rake"
 
 Yast::Tasks.configuration do |conf|
-  #lets ignore license check for now
+  # lets ignore license check for now
   conf.skip_license_check << /.*/
 end
 
@@ -17,5 +17,4 @@ task :check_rng_status do
   end
 end
 
-task :tarball => :check_rng_status
-
+task tarball: :check_rng_status

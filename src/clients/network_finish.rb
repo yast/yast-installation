@@ -33,7 +33,6 @@
 module Yast
   class NetworkFinishClient < Client
     def main
-
       textdomain "installation"
 
       Yast.import "Installation"

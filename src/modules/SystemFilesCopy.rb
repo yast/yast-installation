@@ -33,7 +33,6 @@ require "yast"
 module Yast
   class SystemFilesCopyClass < Module
     def main
-
       textdomain "installation"
 
       Yast.import "Directory"
@@ -43,7 +42,6 @@ module Yast
       Yast.import "ProductFeatures"
       Yast.import "Stage"
       Yast.import "InstData"
-
 
       # --> Variables
 
@@ -80,20 +78,20 @@ module Yast
         # exists as a directory
         if FileUtils.IsDirectory(create_directory)
           Builtins.y2milestone("Directory %1 already exists", create_directory)
-          return create_directory 
+          return create_directory
           # exists but it's not a directory
         else
           Builtins.y2warning("Path %1 is not a directory", create_directory)
           new_dir = nil
 
-          while new_dir == nil && Ops.greater_than(@counter_max, 0)
+          while new_dir.nil? && Ops.greater_than(@counter_max, 0)
             @counter_max = Ops.subtract(@counter_max, 1)
             create_directory = Ops.add(create_directory, "x")
             new_dir = CreateDirectoryIfMissing(create_directory)
           end
 
           return new_dir
-        end 
+        end
 
         # path doesn't exist
       else
@@ -101,7 +99,7 @@ module Yast
         # created successfully
         if FileUtils.Exists(create_directory)
           Builtins.y2milestone("Directory %1 created", create_directory)
-          return create_directory 
+          return create_directory
           # cannot create
         else
           Builtins.y2error("Cannot create path %1", create_directory)
@@ -124,7 +122,7 @@ module Yast
         "/tmp/tmp_dir_for_SystemFilesCopy_mount"
       )
 
-      if @inst_sys_tmp_directory == nil || @tmp_mount_directory == nil
+      if @inst_sys_tmp_directory.nil? || @tmp_mount_directory.nil?
         Builtins.y2error("Cannot create one of needed directories")
         return false
       end
@@ -253,7 +251,7 @@ module Yast
       Builtins.foreach(@copy_files_to_installed_system) do |archive_to_extract|
         archive_name = Ops.get(archive_to_extract, 0)
         where_to_extract = Ops.get(archive_to_extract, 1)
-        if archive_name == nil || where_to_extract == nil
+        if archive_name.nil? || where_to_extract.nil?
           Builtins.y2error(
             "Something is wrong with the archive: %1",
             archive_to_extract
@@ -355,7 +353,7 @@ module Yast
 
       globals_features = ProductFeatures.GetSection("globals")
 
-      if globals_features == nil
+      if globals_features.nil?
         Builtins.y2warning("No <globals> defined")
         return false
       elsif Ops.get_list(globals_features, "save_instsys_content", []) == []
@@ -365,10 +363,10 @@ module Yast
 
       save_content = Convert.convert(
         Ops.get(globals_features, "save_instsys_content"),
-        :from => "any",
-        :to   => "list <map <string, string>>"
+        from: "any",
+        to:   "list <map <string, string>>"
       )
-      if save_content == nil
+      if save_content.nil?
         Builtins.y2error(
           "Cannot save inst-sys content: %1",
           Ops.get(globals_features, "save_instsys_content")
@@ -408,7 +406,7 @@ module Yast
         # search ("/a/b", "/a") -> 0
         # search ("/a/b/", "/b/") -> 2
         position_str_in_str = Builtins.search(dir_to, dir_from)
-        if position_str_in_str != nil && position_str_in_str == 0
+        if !position_str_in_str.nil? && position_str_in_str == 0
           Builtins.y2error(
             "Cannot copy a directory content to itself (%1 -> %2)",
             dir_from,
@@ -438,7 +436,7 @@ module Yast
     # @param boolean whether to use them
     # @see #GetUseControlFileDef
     def SetUseControlFileDef(new_value)
-      if new_value == nil
+      if new_value.nil?
         Builtins.y2error("Wrong value: %1", new_value)
         return
       end
@@ -488,17 +486,17 @@ module Yast
         copy_to_dir = Builtins.tostring(
           Ops.get_string(one_copy_item, "copy_to_dir", Directory.vardir)
         )
-        if copy_to_dir == nil || copy_to_dir == ""
+        if copy_to_dir.nil? || copy_to_dir == ""
           Builtins.y2error("(string) 'copy_to_dir' must be defined")
           use_item = false
         end
         mandatory_files = Ops.get_list(one_copy_item, "mandatory_files", [])
-        if mandatory_files == nil || mandatory_files == []
+        if mandatory_files.nil? || mandatory_files == []
           Builtins.y2error("(list <string>) 'mandatory_files' must be defined")
           use_item = false
         end
         optional_files = Ops.get_list(one_copy_item, "optional_files", [])
-        if optional_files == nil
+        if optional_files.nil?
           Builtins.y2error("(list <string>) 'optional_files' wrong definition")
           use_item = false
         end
@@ -513,14 +511,14 @@ module Yast
       nil
     end
 
-    publish :function => :CreateDirectoryIfMissing, :type => "string (string)"
-    publish :function => :CopyFilesToTemp, :type => "boolean (string, list <string>, string)"
-    publish :function => :CopyFilesToSystem, :type => "boolean (string)"
-    publish :function => :SaveInstSysContent, :type => "boolean ()"
-    publish :function => :GetUseControlFileDef, :type => "boolean ()"
-    publish :function => :SetUseControlFileDef, :type => "void (boolean)"
-    publish :function => :GetCopySystemFiles, :type => "list <map> ()"
-    publish :function => :SetCopySystemFiles, :type => "void (list <map>)"
+    publish function: :CreateDirectoryIfMissing, type: "string (string)"
+    publish function: :CopyFilesToTemp, type: "boolean (string, list <string>, string)"
+    publish function: :CopyFilesToSystem, type: "boolean (string)"
+    publish function: :SaveInstSysContent, type: "boolean ()"
+    publish function: :GetUseControlFileDef, type: "boolean ()"
+    publish function: :SetUseControlFileDef, type: "void (boolean)"
+    publish function: :GetCopySystemFiles, type: "list <map> ()"
+    publish function: :SetCopySystemFiles, type: "void (list <map>)"
   end
 
   SystemFilesCopy = SystemFilesCopyClass.new

@@ -140,8 +140,8 @@ module Yast
         directory = Ops.add(Ops.add(Ops.add(@basedirectory, "/"), product), "/")
         relnotest_list = Convert.convert(
           SCR.Read(path(".target.dir"), directory),
-          :from => "any",
-          :to   => "list <string>"
+          from: "any",
+          to:   "list <string>"
         )
         relnotest_list = Builtins.filter(relnotest_list) do |one_relnotes|
           Builtins.regexpmatch(one_relnotes, "^RELEASE-NOTES..*.rtf$")
@@ -155,13 +155,13 @@ module Yast
           )
           lang_name = Ops.get(@languages_translations, relnotes_lang, "")
           # combobox item
-          if lang_name == nil || lang_name == ""
+          if lang_name.nil? || lang_name == ""
             lang_name = Builtins.sformat(_("Language: %1"), relnotes_lang)
           end
           # set minimal width (maximal length of language name)
           if Ops.less_than(
-              Ops.get(@minwidthlang, product, 0),
-              Builtins.size(lang_name)
+            Ops.get(@minwidthlang, product, 0),
+            Builtins.size(lang_name)
             )
             Ops.set(@minwidthlang, product, Builtins.size(lang_name))
           end
@@ -174,7 +174,6 @@ module Yast
           )
         end
         # Selecting default language
-        item_id = nil
         preferred_found = false
         Builtins.foreach(@preferred_langs) do |preffered_lang|
           conter = -1
@@ -182,8 +181,8 @@ module Yast
             conter = Ops.add(conter, 1)
             item_id2 = Ops.get_string(one_item, [0, 0], "")
             if Builtins.regexpmatch(
-                item_id2,
-                Builtins.sformat("RELEASE-NOTES.%1.rtf$", preffered_lang)
+              item_id2,
+              Builtins.sformat("RELEASE-NOTES.%1.rtf$", preffered_lang)
               )
               preferred_found = true
               raise Break
@@ -225,14 +224,14 @@ module Yast
       # if there are more products installed, show them in tabs or with
       # combo box, bnc #359137 (do not show tab for one product)
       if Ops.less_or_equal(Builtins.size(@relnotesproducts), 1)
-        @relnoteslayout = deep_copy(@relnotesscreen) 
+        @relnoteslayout = deep_copy(@relnotesscreen)
         # use DumpTab or ComboBox layout
       elsif UI.HasSpecialWidget(:DumbTab) &&
           (Ops.less_than(Builtins.size(@relnotesproducts), 4) &&
             Ops.less_than(@prodnamelen, 90) ||
             Ops.greater_than(Builtins.size(@relnotesproducts), 3) &&
               Ops.less_than(@prodnamelen, 70))
-        @relnoteslayout = DumbTab(@relnotesproducts, @relnotesscreen) 
+        @relnoteslayout = DumbTab(@relnotesproducts, @relnotesscreen)
         # doesn't have DumpTab or too many products
       else
         @relnoteslayout = VBox(
@@ -271,7 +270,7 @@ module Yast
         Wizard.SetNextButton(:next, Label.CloseButton)
         Wizard.EnableNextButton
 
-        Wizard.SetContents(@caption, @contents, @help, false, true) 
+        Wizard.SetContents(@caption, @contents, @help, false, true)
 
         # installation
       else
@@ -305,14 +304,14 @@ module Yast
       end
 
       @ret = nil
-      begin
+      loop do
         @ret = Wizard.UserInput
 
         if @ret == :abort
           break if Mode.normal
           break if Popup.ConfirmAbort(:incomplete)
         elsif @ret == :help
-          Wizard.ShowHelp(@help) 
+          Wizard.ShowHelp(@help)
           # using combobox for products
         elsif @ret == :productsel
           RedrawRelnotesProduct(
@@ -322,12 +321,13 @@ module Yast
         elsif @ret == :lang
           RedrawRelnotesLang(
             Convert.to_string(UI.QueryWidget(Id(:lang), :Value))
-          ) 
+          )
           # using tabs for products
         elsif Ops.is_string?(@ret)
           RedrawRelnotesProduct(:tab, @ret)
         end
-      end until @ret == :next || @ret == :back
+        break if [:next, :back].include?(@ret)
+      end
       Wizard.CloseDialog if Mode.normal
 
       Convert.to_symbol(@ret)
@@ -349,20 +349,14 @@ module Yast
         # fallback for short names without xx_YY
         if Builtins.regexpmatch(short, "_")
           short = Builtins.regexpsub(short, "^(.*)_.*$", "\\1")
-          Ops.set(ret, short, translation) if Ops.get(ret, short) == nil
+          Ops.set(ret, short, translation) if Ops.get(ret, short).nil?
         end
       end
 
       # exceptions
-      if Ops.get(ret, "en") != nil && Ops.get(ret, "en_US") != nil
-        Ops.set(ret, "en", Ops.get(ret, "en_US", ""))
-      end
-      if Ops.get(ret, "zh") != nil && Ops.get(ret, "zh_CN") != nil
-        Ops.set(ret, "zh", Ops.get(ret, "zh_CN", ""))
-      end
-      if Ops.get(ret, "pt") != nil && Ops.get(ret, "pt_PT") != nil
-        Ops.set(ret, "pt", Ops.get(ret, "pt_PT", ""))
-      end
+      ret["en"] = ret["en_US"] if ret["en"] && ret["en_US"]
+      ret["zh"] = ret["zh_CN"] if ret["zh"] && ret["zh_CN"]
+      ret["pt"] = ret["pt_PT"] if ret["pt"] && ret["pt_PT"]
 
       deep_copy(ret)
     end
@@ -389,7 +383,7 @@ module Yast
         SCR.Read(path(".target.string"), plain_text ? text_file : use_file)
       )
 
-      if contents == nil || contents == ""
+      if contents.nil? || contents == ""
         Builtins.y2error("Wrong relnotesfile: %1", use_file)
       else
         if plain_text
@@ -441,8 +435,8 @@ module Yast
           )
         )
         if Ops.greater_than(
-            Builtins.size(Ops.get(@languages_of_relnotes, product, [])),
-            1
+          Builtins.size(Ops.get(@languages_of_relnotes, product, [])),
+          1
           )
           UI.ChangeWidget(Id(:lang), :Enabled, true)
         else
