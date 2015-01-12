@@ -22,11 +22,15 @@
 require "yast"
 
 module Installation
-  # Stores various proposals clients and provides metadata about them
+  # 1. Provides access to metadata of proposal parts (clients), as defined in the control file elements
+  # /productDefines/proposals/proposal: https://github.com/yast/yast-installation-control/blob/master/control/control.rnc
+  # 2. Handles all calls to the parts (clients).
   class ProposalStore
     include Yast::Logger
     include Yast::I18n
 
+    # @ param[String] proposal_mode one of initial, service, network, hardware,
+    #   uml, ... or anything else
     def initialize(proposal_mode)
       Yast.import "Mode"
       Yast.import "ProductControl"
