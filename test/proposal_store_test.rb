@@ -75,21 +75,6 @@ describe ::Installation::ProposalStore do
       expect(subject.tab_labels).to include("tab2")
     end
 
-    it "returns \"Tab\" for each missing label key" do
-      mock_properties("proposal_tabs" => [
-        {
-          "label" => "tab1"
-        },
-        {
-          "label" => "tab2"
-        },
-        {
-        }
-      ])
-
-      expect(subject.tab_labels).to include("Tab")
-    end
-
     it "raises exception if used on non-tab proposal" do
       mock_properties
 
