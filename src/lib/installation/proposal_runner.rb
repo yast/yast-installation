@@ -319,26 +319,6 @@ module Installation
     end
 
 
-    # Call a submodule's Description() function.
-    #
-    # @param [String] submodule	name of the submodule's proposal dispatcher or nil if no such module
-    # @return description_map	see proposal-API.txt
-    #
-
-    def submod_description(submodule)
-      Yast::UI.BusyCursor
-
-      description = Yast::WFM.CallFunction(submodule, ["Description", {}])
-
-      # There might be some UI layers left
-      # we need to close them
-      CheckAndCloseWindowsLeft()
-
-      Yast::UI.NormalCursor
-
-      description
-    end
-
     def make_proposal(force_reset, language_changed)
       tab_to_switch = 999
       current_tab_affected = false
