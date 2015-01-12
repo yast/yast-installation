@@ -19,15 +19,6 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	clients/inst_finish.ycp
-# Package:	installation
-# Summary:	Finish installation
-# Authors:	Klaus Kämpf <kkaempf@suse.de>
-#		Arvin Schnell <arvin@suse.de>
-#              Jiri Srain <jsrain@suse.de>
-#
-# $Id$
-
 require "installation/minimal_installation"
 
 module Yast
@@ -79,7 +70,7 @@ module Yast
 
       # Adjust a SlideShow dialog if not configured
       @get_setup = SlideShow.GetSetup
-      if @get_setup == nil || @get_setup == {}
+      if @get_setup.nil? || @get_setup == {}
         Builtins.y2milestone("No SlideShow setup has been set, adjusting")
         SlideShow.Setup(
           [
@@ -138,7 +129,7 @@ module Yast
           # For live installer only
           Mode.live_installation ? "live_save_config" : "",
           "storage",
-          "kernel",
+          "kernel"
         ]
 
         save_settings_steps = [
@@ -257,9 +248,7 @@ module Yast
             "umount"
           ],
           # bnc #438154
-          "icon"  => Mode.live_installation ?
-            "yast-live-install-finish" :
-            "yast-scripts"
+          "icon"  => Mode.live_installation ? "yast-live-install-finish" : "yast-scripts"
         }
       ]
 
@@ -284,10 +273,10 @@ module Yast
         Builtins.foreach(@stages_copy) do |one_stage|
           @counter = Ops.add(@counter, 1)
           label = Ops.get_string(one_stage, "label", "")
-          next if label == nil || label == ""
+          next if label.nil? || label == ""
           loc_label = Builtins.dgettext(@textdom, label)
           # if translated
-          if loc_label != nil && loc_label != "" && loc_label != label
+          if !loc_label.nil? && loc_label != "" && loc_label != label
             Ops.set(@stages, [@counter, "label"], loc_label)
           end
         end
@@ -351,7 +340,7 @@ module Yast
         )
         steps = Builtins.maplist(Ops.get_list(stage, "steps", [])) do |s|
           # some steps are called in live installer only
-          next nil if s == "" || s == nil
+          next nil if s == "" || s.nil?
           s = Ops.add(s, "_finish")
           if !WFM.ClientExists(s)
             Builtins.y2error("Missing YCP client: %1", s)
@@ -361,19 +350,19 @@ module Yast
           orig = Progress.set(false)
           info = Convert.to_map(WFM.CallFunction(s, ["Info"]))
           if @test_mode == true
-            info = {} if info == nil
+            info = {} if info.nil?
             Builtins.y2milestone("Test mode, forcing run")
             Ops.set(info, "when", [:installation, :update, :autoinst])
           end
           Progress.set(orig)
-          if info == nil
+          if info.nil?
             Builtins.y2error("Client %1 returned invalid data", s)
             ReportClientError(
               Builtins.sformat("Client %1 returned invalid data.", s)
             )
             next nil
           end
-          if Ops.get(info, "when") != nil &&
+          if !info["when"].nil &&
               !Builtins.contains(Ops.get_list(info, "when", []), @run_type) &&
               # special hack for autoupgrade - should be as regular upgrade as possible, scripts are the only exception
               !(Mode.autoupgrade &&
@@ -388,7 +377,7 @@ module Yast
           )
           deep_copy(info)
         end
-        Ops.set(stage, "steps", Builtins.filter(steps) { |s| s != nil })
+        Ops.set(stage, "steps", Builtins.filter(steps) { |s| !s.nil? })
         deep_copy(stage)
       end
 
@@ -404,8 +393,6 @@ module Yast
       @stage_names = Builtins.maplist(@stages) do |s|
         Ops.get_string(s, "label", "")
       end
-
-
 
       @aborted = false
 
@@ -466,11 +453,11 @@ module Yast
             )
             Builtins.sleep(500)
           else
-            Hooks.run "before_#{step['client']}"
+            Hooks.run "before_#{step["client"]}"
 
             WFM.CallFunction(Ops.get_string(step, "client", ""), ["Write"])
 
-            Hooks.run "after_#{step['client']}"
+            Hooks.run "after_#{step["client"]}"
           end
           Progress.set(orig)
           # Handle user input during client run
@@ -507,15 +494,15 @@ module Yast
       failed_hooks = used_hooks.select(&:failed?)
 
       if !failed_hooks.empty?
-        Builtins.y2error "#{failed_hooks.size} failed hooks found: " +
-          "#{failed_hooks.map(&:name).join(', ')}"
+        Builtins.y2error "#{failed_hooks.size} failed hooks found: " \
+          "#{failed_hooks.map(&:name).join(", ")}"
       end
 
-      Builtins.y2milestone('Hook summary:') unless used_hooks.empty?
+      Builtins.y2milestone("Hook summary:") unless used_hooks.empty?
 
       used_hooks.each do |hook|
         Builtins.y2milestone("Hook name: #{hook.name}")
-        Builtins.y2milestone("Hook result: #{hook.succeeded? ? 'success' : 'failure' }")
+        Builtins.y2milestone("Hook result: #{hook.succeeded? ? "success" : "failure" }")
         hook.files.each do |file|
           Builtins.y2milestone("Hook file: #{file.path}")
           Builtins.y2milestone("Hook output: #{file.output}")
@@ -571,7 +558,7 @@ module Yast
         return :next
       end
 
-      # hack for using kexec switch to console 1
+      # HACK: using kexec switch to console 1
       @cmd = Builtins.sformat("chvt 1")
       Builtins.y2milestone("Switch to console 1 via command: %1", @cmd)
       # switch to console 1
@@ -588,23 +575,23 @@ module Yast
       :next
     end
 
-    def show_used_hooks hooks
+    def show_used_hooks(hooks)
       content = Table(
         Id(:hooks_table),
         Opt(:notify),
-        Header('Hook name', 'Result', 'Output'),
+        Header("Hook name", "Result", "Output"),
         hooks.map do |hook|
           Item(
             Id(:hook),
             hook.name,
-            hook.failed? ? 'failure' : 'success',
+            hook.failed? ? "failure" : "success",
             hook.files.map(&:output).reject(&:empty?).join
           )
         end
       )
       Builtins.y2milestone "Showing the hooks results in UI"
       Popup.LongText(
-        'Hooks results',
+        "Hooks results",
         content,
         # the width and hight numbers reflect subjective visual appearance of the popup
         80, 5 + hooks.size
@@ -621,13 +608,11 @@ module Yast
         )
       )
 
+      text = cmd["stdout"] if cmd["exit"] == 0 && !cmd["stdout"].empty?
       InstError.ShowErrorPopUp(
         _("Installation Error"),
         client_error_text,
-        Ops.get_integer(cmd, "exit", -1) == 0 &&
-          Ops.get_string(cmd, "stdout", "") != "" ?
-          Ops.get_string(cmd, "stdout", "") :
-          nil
+        text
       )
 
       nil

@@ -39,9 +39,9 @@ module Yast
       @out = Convert.to_map(
         SCR.Execute(
           path(".target.bash_output"),
-          "\n" +
-            "hwinfo --pci --block --mouse --keyboard --isdn --save-config=all\n" +
-            "\n" +
+          "\n" \
+            "hwinfo --pci --block --mouse --keyboard --isdn --save-config=all\n" \
+            "\n" \
             "[ -d /var/lib/hardware/udi/org/freedesktop/Hal/devices ] && perl -pi -e \"s/hwinfo.configured = 'new'/hwinfo.configured = 'no'/\" /var/lib/hardware/udi/org/freedesktop/Hal/devices/*"
         )
       )

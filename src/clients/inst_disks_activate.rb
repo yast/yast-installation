@@ -31,7 +31,7 @@ module Yast
     def main
       Yast.import "UI"
 
-      #**
+      # **
       # <h3>Initialization of the disks</h3>
 
       textdomain "installation"
@@ -61,17 +61,16 @@ module Yast
 
         # detect DASD disks
         disks = SCR.Read(path(".probe.disk"))
-        @have_dasd = disks.any? {|d| d["device"] == "DASD" }
+        @have_dasd = disks.any? { |d| d["device"] == "DASD" }
 
         # detect zFCP disks
         controllers = SCR.Read(path(".probe.storage"))
-        @have_zfcp = controllers.any? {|c| c["device"] == "zFCP controller" }
+        @have_zfcp = controllers.any? { |c| c["device"] == "zFCP controller" }
 
         UI.CloseDialog
       end
 
       @want_fcoe = Linuxrc.InstallInf("WithFCoE") == "1"
-
 
       # dialog caption
       @caption = _("Disk Activation")
@@ -79,27 +78,27 @@ module Yast
       @help = ""
 
       missing_part = [
-            VSpacing(0),
-            VSpacing(0)
-          ]
+        VSpacing(0),
+        VSpacing(0)
+      ]
 
       dasd_part = if @have_dasd
-          button_with_spacing(:dasd, _("Configure &DASD Disks"))
-        else
-          missing_part
-        end
+                    button_with_spacing(:dasd, _("Configure &DASD Disks"))
+                  else
+                    missing_part
+                  end
 
       zfcp_part = if @have_zfcp
-          button_with_spacing(:zfcp, _("Configure &ZFCP Disks"))
-        else
-          missing_part
-        end
+                    button_with_spacing(:zfcp, _("Configure &ZFCP Disks"))
+                  else
+                    missing_part
+                  end
 
       fcoe_part = if @want_fcoe
-          button_with_spacing(:fcoe, _("Configure &FCoE Interfaces"))
-        else
-          missing_part
-        end
+                    button_with_spacing(:fcoe, _("Configure &FCoE Interfaces"))
+                  else
+                    missing_part
+                  end
 
       @contents = HBox(
         HWeight(999, HStretch()),
@@ -135,7 +134,7 @@ module Yast
           WFM.call("inst_fcoe-client", [@argmap])
           @ret = :redraw
         when :network
-          WFM.call("inst_lan", [@argmap.merge({"skip_detection" => true})])
+          WFM.call("inst_lan", [@argmap.merge("skip_detection" => true)])
           @ret = :redraw
         when :abort
           @ret = nil unless Popup.ConfirmAbort(:painless)
@@ -195,7 +194,7 @@ module Yast
     end
 
     def button_with_spacing(id, title)
-      [ button(id, title), VSpacing(2) ]
+      [button(id, title), VSpacing(2)]
     end
 
     def RestoreButtons(enable_back, enable_next)

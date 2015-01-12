@@ -5,7 +5,7 @@ Yast::Tasks.configuration do |conf|
   conf.obs_target = "SLE_12"
   conf.obs_sr_project = "SUSE:SLE-12:Update"
   conf.obs_project = "Devel:YaST:SLE-12"
-  #lets ignore license check for now
+  # lets ignore license check for now
   conf.skip_license_check << /.*/
 end
 
@@ -21,5 +21,4 @@ task :check_rng_status do
   end
 end
 
-task :tarball => :check_rng_status
-
+task tarball: :check_rng_status

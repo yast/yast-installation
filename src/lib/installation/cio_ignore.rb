@@ -10,7 +10,7 @@ module Installation
     end
 
     def reset
-      #default value requested in FATE#315586
+      # default value requested in FATE#315586
       @enabled = true
     end
   end
@@ -58,18 +58,18 @@ module Installation
       enabled = CIOIgnore.instance.enabled
 
       text = if enabled
-        # TRANSLATORS: Installation overview
-        # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
-        (_(
-            "Blacklist devices enabled (<a href=\"%s\">disable</a>)."
-          ) % CIO_DISABLE_LINK)
-      else
-        # TRANSLATORS: Installation overview
-        # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
-        (_(
-            "Blacklist devices disabled (<a href=\"%s\">enable</a>)."
-          ) % CIO_ENABLE_LINK)
-      end
+               # TRANSLATORS: Installation overview
+               # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
+               (_(
+                   "Blacklist devices enabled (<a href=\"%s\">disable</a>)."
+                 ) % CIO_DISABLE_LINK)
+             else
+               # TRANSLATORS: Installation overview
+               # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
+               (_(
+                   "Blacklist devices disabled (<a href=\"%s\">enable</a>)."
+                 ) % CIO_ENABLE_LINK)
+             end
 
       {
         "preformatted_proposal" => Yast::HTML.List([text]),
@@ -81,25 +81,24 @@ module Installation
       }
     end
 
-    def edit edit_id
-        raise "Internal error: no id passed to proposal edit" unless edit_id
+    def edit(edit_id)
+      raise "Internal error: no id passed to proposal edit" unless edit_id
 
-        log.info "CIO proposal change requested, id #{edit_id}"
+      log.info "CIO proposal change requested, id #{edit_id}"
 
-        cio_ignore = CIOIgnore.instance
+      cio_ignore = CIOIgnore.instance
 
-        cio_ignore.enabled = case edit_id
-          when CIO_DISABLE_LINK then false
-          when CIO_ENABLE_LINK  then true
-          when CIO_ACTION_ID    then !cio_ignore.enabled
-          else
-            raise "INTERNAL ERROR: Unexpected value #{edit_id}"
-          end
+      cio_ignore.enabled = case edit_id
+        when CIO_DISABLE_LINK then false
+        when CIO_ENABLE_LINK  then true
+        when CIO_ACTION_ID    then !cio_ignore.enabled
+        else
+          raise "INTERNAL ERROR: Unexpected value #{edit_id}"
+        end
 
-        { "workflow_sequence" => :next }
+      { "workflow_sequence" => :next }
     end
   end
-
 
   class CIOIgnoreFinish
     include Yast::Logger
@@ -112,7 +111,6 @@ module Installation
     ]
 
     YAST_BASH_PATH = Yast::Path.new ".target.bash_output"
-
 
     def initialize
       textdomain "installation"
@@ -127,7 +125,7 @@ module Installation
       case func
       when "Info"
         Yast.import "Arch"
-        usable = Yast::Arch.s390()
+        usable = Yast::Arch.s390
 
         {
           "steps" => 1,
@@ -163,6 +161,7 @@ module Installation
     end
 
   private
+
     def add_boot_kernel_parameters
       Yast.import "Bootloader"
 
@@ -172,9 +171,7 @@ module Installation
 
       res &&= Yast::Bootloader.Write
 
-      if !res
-        raise "failed to write kernel parameters for IPL and console device"
-      end
+      raise "failed to write kernel parameters for IPL and console device" if !res
     end
 
     ACTIVE_DEVICES_FILE = "/boot/zipl/active_devices.txt"
@@ -184,7 +181,7 @@ module Installation
       log.info "active devices: #{res}"
 
       raise "cio_ignore -L failed with #{res["stderr"]}" if res["exit"] != 0
-      #lets select only lines that looks like device. Regexp is not perfect, but good enough
+      # lets select only lines that looks like device. Regexp is not perfect, but good enough
       devices_lines = res["stdout"].lines.grep(/^(?:\h.){0,2}\h{4}.*$/)
 
       devices = devices_lines.map(&:chomp)

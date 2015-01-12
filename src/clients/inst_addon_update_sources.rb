@@ -47,7 +47,6 @@ module Yast
 
       @aliases = {}
 
-
       # feedback heading
       @heading = _("Add-on Product Installation")
       # feedback message
@@ -65,7 +64,7 @@ module Yast
       @updateUrls = UpdateUrls()
       Builtins.y2milestone("sources for updates: %1", @updateUrls)
 
-      @addUrls = Builtins.filter(@updateUrls) do |url, name|
+      @addUrls = Builtins.filter(@updateUrls) do |url, _name|
         !Ops.get(@is_known, url, false)
       end
       Builtins.y2milestone("sources to add: %1", @addUrls)
@@ -79,10 +78,10 @@ module Yast
             # BNC #557723: Repositories migh be created without access to network
             # Libzypp must not probe the repo
 
-            _alias = Ops.get(@aliases, url, "")
-            if _alias == ""
+            alias_ = Ops.get(@aliases, url, "")
+            if alias_ == ""
               # don't use spaces in alias (hard to use with zypper)
-              _alias = String.Replace(
+              alias_ = String.Replace(
                 Ops.greater_than(Builtins.size(name), 0) ? name : url,
                 " ",
                 "-"
@@ -93,7 +92,7 @@ module Yast
               "enabled"     => true,
               "autorefresh" => true,
               "name"        => Ops.greater_than(Builtins.size(name), 0) ? name : url,
-              "alias"       => _alias,
+              "alias"       => alias_,
               "base_urls"   => [url],
               "prod_dir"    => "/"
             }
@@ -108,9 +107,9 @@ module Yast
               if Popup.YesNo(
                   Builtins.sformat(
                     _(
-                      "An error occurred while connecting to the server.\n" +
-                        "Details: %1\n" +
-                        "\n" +
+                      "An error occurred while connecting to the server.\n" \
+                        "Details: %1\n" \
+                        "\n" \
                         "Try again?"
                     ),
                     Pkg.LastError
@@ -121,7 +120,7 @@ module Yast
               else
                 # abort
                 again = false
-              end 
+              end
 
               # everything is ok
             else
@@ -133,7 +132,7 @@ module Yast
         Popup.ClearFeedback
       end
 
-      :auto 
+      :auto
 
       # EOF
     end
@@ -141,7 +140,7 @@ module Yast
     # @return the urls of known installation sources
     def KnownUrls
       src_ids = Pkg.SourceGetCurrent(
-        true #enabled only?
+        true # enabled only?
       )
       urls = Builtins.maplist(src_ids) do |src_id|
         gendata = Pkg.SourceGeneralData(src_id)

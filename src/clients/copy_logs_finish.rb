@@ -70,8 +70,8 @@ module Yast
       elsif @func == "Write"
         @log_files = Convert.convert(
           WFM.Read(path(".local.dir"), Directory.logdir),
-          :from => "any",
-          :to   => "list <string>"
+          from: "any",
+          to:   "list <string>"
         )
 
         Builtins.foreach(@log_files) do |file|

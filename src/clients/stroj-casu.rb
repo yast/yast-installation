@@ -19,9 +19,7 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# Stroj času.
 # Enable very easy bug fixes of anything, given the proper hardware
-# $Id$
 module Yast
   class StrojCasuClient < Client
     def main
@@ -55,10 +53,10 @@ module Yast
 
       @items = Convert.convert(
         SCR.Read(path(".probe.time_machines")),
-        :from => "any",
-        :to   => "list <map <string, any>>"
+        from: "any",
+        to:   "list <map <string, any>>"
       )
-      @items = [] if @items == nil
+      @items = [] if @items.nil?
       WizardHW.SetContents(@items)
 
       @ui = WizardHW.UserInput

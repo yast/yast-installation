@@ -86,13 +86,9 @@ module Yast
       # BNC #463567
       @submods_already_called = []
 
-
-
       #-----------------------------------------------------------------------
       #				    main()
       #-----------------------------------------------------------------------
-
-
 
       #
       # Create dialog
@@ -132,8 +128,7 @@ module Yast
       Wizard.EnableNextButton
       Wizard.EnableAbortButton
 
-      return :auto if !get_submod_descriptions_and_build_menu
-
+      return :auto if !submod_descriptions_and_build_menu
 
       #
       # Make the initial proposal
@@ -149,7 +144,7 @@ module Yast
       # Set keyboard focus to the [Install] / [Update] or [Next] button
       Wizard.SetFocusToNextButton
 
-      while true
+      loop do
         richtext_normal_cursor(Id(:proposal))
         # bnc #431567
         # Some proposal module can change it while called
@@ -173,11 +168,11 @@ module Yast
             @proposal = Ops.add(@proposal, Ops.get(@html, mod, ""))
           end
           display_proposal(@proposal)
-          get_submod_descriptions_and_build_menu
+          submod_descriptions_and_build_menu
         end
 
         case @input
-        when ::String #hyperlink
+        when ::String # hyperlink
           # get module for hyperlink id
           @submod = Ops.get_string(@id2submod, @input, "")
 
@@ -209,12 +204,12 @@ module Yast
             return :abort if Popup.ConfirmAbort(:incomplete)
           end
         when :reset_to_defaults
-            next unless Popup.ContinueCancel(
-              # question in a popup box
-              _("Really reset everything to default values?") + "\n" +
-                # explain consequences of a decision
-                _("You will lose all changes.")
-            )
+          next unless Popup.ContinueCancel(
+            # question in a popup box
+            _("Really reset everything to default values?") + "\n" +
+              # explain consequences of a decision
+              _("You will lose all changes.")
+          )
           make_proposal(true, false) # force_reset
         when :export_config
           path = UI.AskForSaveFileName("/", "*.xml", _("Location of Stored Configuration"))
@@ -223,7 +218,7 @@ module Yast
           # force write, so it always write profile even if user do not want
           # to store profile after installation
           WFM.CallFunction("clone_proposal", ["Write", "force" => true, "target_path" => path])
-          if !File.exists?(path)
+          if !File.exist?(path)
             raise _("Failed to store configuration. Details can be found in log.")
           end
         when :skip, :dontskip
@@ -245,9 +240,7 @@ module Yast
             UI.ChangeWidget(Id(:menu), :Enabled, true)
           end
         when :next
-          @skip = UI.WidgetExists(Id(:skip)) ?
-            Convert.to_boolean(UI.QueryWidget(Id(:skip), :Value)) :
-            true
+          @skip = UI.WidgetExists(Id(:skip)) ? UI.QueryWidget(Id(:skip), :Value) : true
           @skip_blocker = UI.WidgetExists(Id(:skip)) && @skip
           if @have_blocker && !@skip_blocker
             # error message is a popup
@@ -312,7 +305,6 @@ module Yast
       nil
     end
 
-
     # Call a submodule's MakeProposal() function.
     #
     # @param [String] submodule	name of the submodule's proposal dispatcher
@@ -347,7 +339,6 @@ module Yast
       deep_copy(proposal)
     end
 
-
     # Call a submodule's AskUser() function.
     #
     # @param [String] submodule	name of the submodule's proposal dispatcher
@@ -373,11 +364,6 @@ module Yast
         false
       )
       mode_changed = Ops.get_boolean(ask_user_result, "mode_changed", false)
-      rootpart_changed = Ops.get_boolean(
-        ask_user_result,
-        "rootpart_changed",
-        false
-      )
 
       if workflow_sequence != :cancel && workflow_sequence != :back &&
           workflow_sequence != :abort &&
@@ -394,7 +380,7 @@ module Yast
 
           build_dialog
           load_matching_submodules_list
-          if !get_submod_descriptions_and_build_menu
+          if !submod_descriptions_and_build_menu
             Builtins.y2error("i'm in dutch")
           end
         end
@@ -409,7 +395,6 @@ module Yast
 
       workflow_sequence
     end
-
 
     # Call a submodule's Description() function.
     #
@@ -441,7 +426,7 @@ module Yast
           # visible in the current tab
           if Ops.get(@mod2tab, submod.value, 999) == @current_tab
             use_this_help = true
-          end 
+          end
           # not using tabs
         else
           use_this_help = true
@@ -451,7 +436,7 @@ module Yast
           Builtins.y2milestone("Submodule '%1' has it's own help", submod.value)
           own_help = Ops.get_string(prop_map.value, "help", "")
 
-          if own_help == nil
+          if own_help.nil?
             Builtins.y2error("Help text cannot be 'nil'")
           elsif own_help == ""
             Builtins.y2milestone("Skipping empty help")
@@ -467,6 +452,7 @@ module Yast
 
       nil
     end
+
     def make_proposal(force_reset, language_changed)
       tab_to_switch = 999
       current_tab_affected = false
@@ -492,12 +478,14 @@ module Yast
       Builtins.foreach(@submodules) do |submod|
         prop = ""
         if !Builtins.contains(@locked_modules, submod)
-          heading = Builtins.issubstring(Ops.get_string(@titles, no, ""), "<a") ?
-            Ops.get_locale(@titles, no, _("ERROR: Missing Title")) :
-            HTML.Link(
-              Ops.get_locale(@titles, no, _("ERROR: Missing Title")),
-              Ops.get_string(@submod2id, submod, "")
-            )
+          heading = if Builtins.issubstring(Ops.get_string(@titles, no, ""), "<a")
+                      Ops.get_locale(@titles, no, _("ERROR: Missing Title"))
+                    else
+                      HTML.Link(
+                        Ops.get_locale(@titles, no, _("ERROR: Missing Title")),
+                        Ops.get_string(@submod2id, submod, "")
+                      )
+                    end
 
           # heading in proposal, in case the module doesn't create one
           prop = Ops.add(prop, HTML.Heading(heading))
@@ -520,7 +508,7 @@ module Yast
         # Submod already called
         if Builtins.contains(@submods_already_called, submod)
           # busy message
-          message = _("Adapting the proposal to the current settings...") 
+          message = _("Adapting the proposal to the current settings...")
           # First run
         else
           # busy message;
@@ -548,15 +536,17 @@ module Yast
         prop = ""
         if !skip_the_rest
           if !Builtins.contains(@locked_modules, submod)
-            heading = Builtins.issubstring(
+            heading = if Builtins.issubstring(
               Ops.get_string(@titles, no, ""),
               "<a"
-            ) ?
-              Ops.get_locale(@titles, no, _("ERROR: Missing Title")) :
-              HTML.Link(
-                Ops.get_locale(@titles, no, _("ERROR: Missing Title")),
-                Ops.get_string(@submod2id, submod, "")
-              )
+            )
+                        Ops.get_locale(@titles, no, _("ERROR: Missing Title"))
+                      else
+                        HTML.Link(
+                          Ops.get_locale(@titles, no, _("ERROR: Missing Title")),
+                          Ops.get_string(@submod2id, submod, "")
+                        )
+                      end
 
             # heading in proposal, in case the module doesn't create one
             prop = Ops.add(prop, HTML.Heading(heading))
@@ -581,7 +571,7 @@ module Yast
           if Builtins.haskey(@mod2tab, submod)
             Builtins.y2milestone("Mod2Tab: '%1'", Ops.get(@mod2tab, submod))
             warn_level = Ops.get_symbol(prop_map, "warning_level", :ok)
-            warn_level = :ok if warn_level == nil
+            warn_level = :ok if warn_level.nil?
             if Builtins.contains([:blocker, :fatal, :error], warn_level)
               # bugzilla #237291
               # always switch to more detailed tab only
@@ -638,7 +628,7 @@ module Yast
       end
 
       if @has_tab && Ops.less_than(tab_to_switch, 999) && !current_tab_affected
-        # FIXME copy-paste from event loop (but for last 2 lines)
+        # FIXME: copy-paste from event loop (but for last 2 lines)
         @current_tab = tab_to_switch
         load_matching_submodules_list
         proposal = ""
@@ -646,7 +636,7 @@ module Yast
           proposal = Ops.add(proposal, Ops.get(@html, mod, ""))
         end
         display_proposal(proposal)
-        get_submod_descriptions_and_build_menu
+        submod_descriptions_and_build_menu
         Builtins.y2milestone("Switching to tab '%1'", @current_tab)
         if UI.HasSpecialWidget(:DumbTab)
           if UI.WidgetExists(:_cwm_tab)
@@ -665,12 +655,13 @@ module Yast
 
       nil
     end
+
     def format_sub_proposal(prop)
       prop = deep_copy(prop)
       html = ""
       warning = Ops.get_string(prop, "warning", "")
 
-      if warning != nil && warning != ""
+      if !warning.nil? && warning != ""
         level = Ops.get_symbol(prop, "warning_level", :warning)
 
         if level == :notice
@@ -688,7 +679,7 @@ module Yast
       end
 
       preformatted_prop = Ops.get_string(prop, "preformatted_proposal", "")
-      preformatted_prop = "" if preformatted_prop == nil
+      preformatted_prop = "" if preformatted_prop.nil?
 
       if preformatted_prop != ""
         html = Ops.add(html, preformatted_prop)
@@ -696,17 +687,14 @@ module Yast
         # fallback proposal, means usually an internal error
         raw_prop = Convert.convert(
           Ops.get(prop, "raw_proposal") { [_("ERROR: No proposal")] },
-          :from => "any",
-          :to   => "list <locale>"
+          from: "any",
+          to:   "list <locale>"
         )
         html = Ops.add(html, HTML.List(raw_prop))
       end
 
       html
     end
-
-
-
 
     # Call a submodule's Write() function.
     #
@@ -715,7 +703,7 @@ module Yast
     #
     def submod_write_settings(submodule)
       result = Convert.to_map(WFM.CallFunction(submodule, ["Write", {}]))
-      result = {} if result == nil
+      result = {} if result.nil?
 
       Ops.get_boolean(result, "success", true)
     end
@@ -728,11 +716,11 @@ module Yast
 
       Builtins.foreach(@submodules) do |submod|
         submod_success = submod_write_settings(submod)
-        submod_success = true if submod_success == nil
+        submod_success = true if submod_success.nil?
         if !submod_success
           Builtins.y2error("Write() failed for submodule %1", submod)
         end
-        success = success && submod_success
+        success &&= submod_success
       end
 
       if !success
@@ -741,7 +729,7 @@ module Yast
 
         # text for a message box
         Popup.TimedMessage(_("Configuration saved.\nThere were errors."), 3)
-      end 
+      end
       # else
       # {
       #     // text for a message box
@@ -750,7 +738,6 @@ module Yast
 
       nil
     end
-
 
     # Force a RichText widget to use the busy cursor
     #
@@ -767,7 +754,6 @@ module Yast
       nil
     end
 
-
     # Switch a RichText widget back to use the normal cursor
     #
     # @param [Object] widget_id  ID  of the widget, e.g. `id(`proposal)
@@ -782,25 +768,25 @@ module Yast
 
       nil
     end
+
     def retranslate_proposal_dialog
       Builtins.y2debug("Retranslating proposal dialog")
 
       build_dialog
       ProductControl.RetranslateWizardSteps
       Wizard.RetranslateButtons
-      get_submod_descriptions_and_build_menu
+      submod_descriptions_and_build_menu
 
       nil
     end
-    def load_matching_submodules_list
-      modules = []
 
+    def load_matching_submodules_list
       modules = ProductControl.getProposals(
         Stage.stage,
         Mode.mode,
         @proposal_mode
       )
-      if modules == nil
+      if modules.nil?
         Builtins.y2error("Error loading proposals")
         return :abort
       end
@@ -832,8 +818,7 @@ module Yast
       # in normal mode we don't want to switch between installation and update
       modules = Builtins.filter(modules) do |v|
         Ops.get_string(v, 0, "") != "mode_proposal"
-      end if Mode.normal(
-      )
+      end if Mode.normal
 
       # now create the list of modules and order of modules for presentation
       @submodules = Builtins.maplist(modules) do |mod|
@@ -883,8 +868,8 @@ module Yast
         end
         @submodules = Convert.convert(
           Builtins.merge(@submodules, @display_only_modules),
-          :from => "list",
-          :to   => "list <string>"
+          from: "list",
+          to:   "list <string>"
         )
         p = AutoinstConfig.getProposalList
         @submodules_presentation = Builtins.filter(@submodules_presentation) do |v|
@@ -893,7 +878,7 @@ module Yast
       else
         Builtins.y2milestone("Proposal doesn't use tabs")
         # sort modules according to presentation ordering
-        modules.sort!{|mod1,mod2| (mod1[1] || 50) <=> (mod2[1] || 50) }
+        modules.sort! { |mod1, mod2| (mod1[1] || 50) <=> (mod2[1] || 50) }
 
         # setup the list
         @submodules_presentation = Builtins.maplist(modules) do |mod|
@@ -902,9 +887,9 @@ module Yast
 
         p = AutoinstConfig.getProposalList
 
-        if p != nil && p != []
+        if !p.nil? && p != []
           # array intersection
-          @submodules_presentation = @submodules_presentation & v
+          @submodules_presentation &= v
         end
       end
 
@@ -914,31 +899,10 @@ module Yast
       nil
     end
 
-
-    # Find out if the target machine has a network card.
-    # @return true if a network card is found, false otherwise
-    #
-    def have_network_card
-      # Maybe obsolete
-
-      return true if Mode.test
-
-      Ops.greater_than(
-        Builtins.size(
-          Convert.convert(
-            SCR.Read(path(".probe.netcard")),
-            :from => "any",
-            :to   => "list <map>"
-          )
-        ),
-        0
-      )
-    end
     def build_dialog
       # headline for installation proposal
 
       headline = Ops.get_string(@proposal_properties, "label", "")
-
 
       Builtins.y2milestone("headline: %1", headline)
 
@@ -951,9 +915,6 @@ module Yast
           headline
         )
       end
-
-      # icon for installation proposal
-      icon = ""
 
       # radiobuttons
       skip_buttons = RadioButtonGroup(
@@ -987,15 +948,15 @@ module Yast
 
       if UI.TextMode()
         change_point = ReplacePoint(
-            Id(:rep_menu),
-            # menu button
-            MenuButton(Id(:menu_dummy), _("&Change..."), [Item(Id(:dummy), "")])
+          Id(:rep_menu),
+          # menu button
+          MenuButton(Id(:menu_dummy), _("&Change..."), [Item(Id(:dummy), "")])
           )
       else
         change_point = PushButton(
-            Id(:export_config),
-            # menu button
-            _("&Export Configuration")
+          Id(:export_config),
+          # menu button
+          _("&Export Configuration")
           )
       end
 
@@ -1038,7 +999,7 @@ module Yast
         @has_tab = true
         index = -1
         tabs = Ops.get_list(data, "proposal_tabs", [])
-        tab_ids = Builtins.maplist(tabs) do |tab|
+        tab_ids = Builtins.maplist(tabs) do |_tab|
           index = Ops.add(index, 1)
           index
         end
@@ -1102,7 +1063,7 @@ module Yast
       nil
     end
 
-    def get_submod_descriptions_and_build_menu
+    def submod_descriptions_and_build_menu
       menu_list = []
       new_submodules = []
       no = 1
@@ -1122,8 +1083,8 @@ module Yast
             descriptions[submod] = description
             new_submodules << submod
             title = description["rich_text_title"] ||
-                description["rich_text_raw_title"] ||
-                submod
+              description["rich_text_raw_title"] ||
+              submod
 
             id = description["id"] || Builtins.sformat("module_%1", no)
 
@@ -1147,7 +1108,7 @@ module Yast
 
           no2 = descr["no"] || 0
           id = descr["id"] || Builtins.sformat("module_%1", no2)
-          if descr.has_key? "menu_titles"
+          if descr.key? "menu_titles"
             descr["menu_titles"].each do |i|
               id2 = i["id"]
               title = i["title"]
@@ -1168,7 +1129,7 @@ module Yast
 
         # menu button item
         menu_list << Item(Id(:reset_to_defaults), _("&Reset to defaults")) <<
-            Item(Id(:export_config), _("&Export Configuration"))
+          Item(Id(:export_config), _("&Export Configuration"))
 
         # menu button
         UI.ReplaceWidget(
@@ -1177,7 +1138,7 @@ module Yast
         )
       end
 
-      return no > 1
+      no > 1
     end
 
     def set_icon
@@ -1191,7 +1152,6 @@ module Yast
         icon = Ops.get_string(@proposal_properties, "icon", "")
       end
 
-
       # else if ( proposal_mode == `uml		) icon = "";
       # else if ( proposal_mode == `dirinstall  ) icon = "";
 
@@ -1199,14 +1159,15 @@ module Yast
 
       nil
     end
+
     def help_text
       help_text_string = ""
 
       # General part of the help text for all types of proposals
       how_to_change = _(
-        "<p>\n" +
-          "Change the values by clicking on the respective headline\n" +
-          "or by using the <b>Change...</b> menu.\n" +
+        "<p>\n" \
+          "Change the values by clicking on the respective headline\n" \
+          "or by using the <b>Change...</b> menu.\n" \
           "</p>\n"
       )
 
@@ -1215,8 +1176,8 @@ module Yast
         # General part ("You can change values...") is added as the next paragraph.
         help_text_string = Ops.add(
           _(
-            "<p>\n" +
-              "Select <b>Install</b> to perform a new installation with the values displayed.\n" +
+            "<p>\n" \
+              "Select <b>Install</b> to perform a new installation with the values displayed.\n" \
               "</p>\n"
           ),
           how_to_change
@@ -1226,11 +1187,11 @@ module Yast
         # no such headline
         #	    // Help text for installation proposal, continued
         #	    help_text_string = help_text_string + _("<p>
-        #To update an existing &product; system instead of doing a new install,
-        #click the <b>Mode</b> headline or select <b>Mode</b> in the
-        #<b>Change...</b> menu.
-        #</p>
-        #");
+        # To update an existing &product; system instead of doing a new install,
+        # click the <b>Mode</b> headline or select <b>Mode</b> in the
+        # <b>Change...</b> menu.
+        # </p>
+        # ");
         # Deliberately omitting "boot installed system" here to avoid
         # confusion: The user will be prompted for that if Linux
         # partitions are found.
@@ -1241,8 +1202,8 @@ module Yast
         help_text_string = Ops.add(
           help_text_string,
           _(
-            "<p>\n" +
-              "Your hard disk has not been modified yet. You can still safely abort.\n" +
+            "<p>\n" \
+              "Your hard disk has not been modified yet. You can still safely abort.\n" \
               "</p>\n"
           )
         )
@@ -1251,8 +1212,8 @@ module Yast
         # General part ("You can change values...") is added as the next paragraph.
         help_text_string = Ops.add(
           _(
-            "<p>\n" +
-              "Select <b>Update</b> to perform an update with the values displayed.\n" +
+            "<p>\n" \
+              "Select <b>Update</b> to perform an update with the values displayed.\n" \
               "</p>\n"
           ),
           how_to_change
@@ -1268,8 +1229,8 @@ module Yast
         help_text_string = Ops.add(
           help_text_string,
           _(
-            "<p>\n" +
-              "Your hard disk has not been modified yet. You can still safely abort.\n" +
+            "<p>\n" \
+              "Your hard disk has not been modified yet. You can still safely abort.\n" \
               "</p>\n"
           )
         )
@@ -1278,8 +1239,8 @@ module Yast
         # General part ("You can change values...") is added as the next paragraph.
         help_text_string = Ops.add(
           _(
-            "<p>\n" +
-              "Put the network settings into effect by pressing <b>Next</b>.\n" +
+            "<p>\n" \
+              "Put the network settings into effect by pressing <b>Next</b>.\n" \
               "</p>\n"
           ),
           how_to_change
@@ -1289,8 +1250,8 @@ module Yast
         # General part ("You can change values...") is added as the next paragraph.
         help_text_string = Ops.add(
           _(
-            "<p>\n" +
-              "Put the service settings into effect by pressing <b>Next</b>.\n" +
+            "<p>\n" \
+              "Put the service settings into effect by pressing <b>Next</b>.\n" \
               "</p>\n"
           ),
           how_to_change
@@ -1300,8 +1261,8 @@ module Yast
         # General part ("You can change values...") is added as the next paragraph.
         help_text_string = Ops.add(
           _(
-            "<p>\n" +
-              "Put the hardware settings into effect by pressing <b>Next</b>.\n" +
+            "<p>\n" \
+              "Put the hardware settings into effect by pressing <b>Next</b>.\n" \
               "</p>\n"
           ),
           how_to_change
@@ -1328,8 +1289,8 @@ module Yast
         # General part ("You can change values...") is added as the next paragraph.
         help_text_string = Ops.add(
           _(
-            "<p>\n" +
-              "To use the settings as displayed, press <b>Next</b>.\n" +
+            "<p>\n" \
+              "To use the settings as displayed, press <b>Next</b>.\n" \
               "</p>\n"
           ),
           how_to_change
@@ -1341,8 +1302,8 @@ module Yast
         help_text_string = Ops.add(
           help_text_string,
           _(
-            "<p>Some proposals might be\n" +
-              "locked by the system administrator and therefore cannot be changed. If a\n" +
+            "<p>Some proposals might be\n" \
+              "locked by the system administrator and therefore cannot be changed. If a\n" \
               "locked proposal needs to be changed, ask your system administrator.</p>\n"
           )
         )
@@ -1365,9 +1326,7 @@ module Yast
         Wizard.SetNextButton(
           :next,
           # FATE #120373
-          Mode.update ?
-            _("&Update") :
-            _("&Install")
+          Mode.update ? _("&Update") : _("&Install")
         )
       end
 

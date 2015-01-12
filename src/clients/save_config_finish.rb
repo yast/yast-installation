@@ -38,7 +38,6 @@ module Yast
     include Yast::Logger
 
     def main
-
       textdomain "installation"
 
       Yast.import "Directory"
@@ -57,7 +56,6 @@ module Yast
       Yast.import "FileUtils"
       Yast.import "Installation"
       Yast.import "String"
-
 
       @ret = nil
       @func = ""
@@ -117,7 +115,7 @@ module Yast
         if Stage.initial
           Builtins.y2milestone("Saving Add-On configuration...")
           @exported_add_ons = AddOnProduct.Export
-          if @exported_add_ons == nil
+          if @exported_add_ons.nil?
             Builtins.y2error("Error, Add-Ons returned 'nil'")
           else
             @saved = SCR.Write(path(".target.ycp"), @save_to, @exported_add_ons)
@@ -161,7 +159,7 @@ module Yast
           SCR.Write(
             path(".target.ycp"),
             @file,
-            { "second_stage_language" => @lang }
+            "second_stage_language" => @lang
           )
         end
         if !minimal_inst
@@ -219,14 +217,14 @@ module Yast
 
         # save supportconfig
         if Ops.greater_than(
-            SCR.Read(path(".target.size"), "/etc/install.inf"),
-            0
+          SCR.Read(path(".target.size"), "/etc/install.inf"),
+          0
           )
           @url = Convert.to_string(
             SCR.Read(path(".etc.install_inf.supporturl"))
           )
           Builtins.y2milestone("URL value from /etc/install.inf : %1", @url)
-          if @url != nil && Ops.greater_than(Builtins.size(@url), 0)
+          if !@url.nil? && Ops.greater_than(Builtins.size(@url), 0)
             @config_path = Builtins.sformat(
               "%1%2",
               String.Quote(Installation.destdir),

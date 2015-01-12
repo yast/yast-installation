@@ -81,7 +81,7 @@ module Yast
           @selected_desktop = DefaultDesktop.Desktop
           Builtins.y2milestone("Selected desktop: %1", @selected_desktop)
 
-          if @selected_desktop == nil || @selected_desktop == ""
+          if @selected_desktop.nil? || @selected_desktop == ""
             @selected_desktop = "gnome"
           end
 
@@ -98,9 +98,7 @@ module Yast
             Ops.set(
               @dorder_map,
               desktop_id,
-              Ops.get(desktop_def, "order") != nil ?
-                Ops.get_integer(desktop_def, "order", 9999) :
-                9999
+              desktop_def["order"] || 9999
             )
           end
 
@@ -199,7 +197,7 @@ module Yast
             "displaymanager_shutdown"
           )
           Builtins.y2milestone("Logon manager shutdown: %1", @dm_shutdown)
-          if @dm_shutdown != nil && @dm_shutdown != ""
+          if !@dm_shutdown.nil? && @dm_shutdown != ""
             SCR.Write(
               path(".sysconfig.displaymanager.DISPLAYMANAGER_SHUTDOWN"),
               @dm_shutdown
@@ -221,7 +219,7 @@ module Yast
             "globals",
             "polkit_default_privs"
           )
-          if @polkit_default_privs != nil && @polkit_default_privs != ""
+          if !@polkit_default_privs.nil? && @polkit_default_privs != ""
             Builtins.y2milestone(
               "Writing %1 to POLKIT_DEFAULT_PRIVS",
               @polkit_default_privs
@@ -238,11 +236,12 @@ module Yast
               SCR.Execute(
                 path(".target.bash_output"),
                 # check whether it exists
-                "test -x /sbin/set_polkit_default_privs && " +
-                  # give some feedback
-                  "echo /sbin/set_polkit_default_privs && " +
-                  # It's dozens of lines...
-                  "/sbin/set_polkit_default_privs | wc -l && " + "echo 'Done'"
+                # give some feedback
+                # It's dozens of lines...
+                "test -x /sbin/set_polkit_default_privs && " \
+                  "echo /sbin/set_polkit_default_privs && " \
+                  "/sbin/set_polkit_default_privs | wc -l && " \
+                  "echo 'Done'"
               )
             )
             Builtins.y2milestone("Command returned: %1", @ret2)
