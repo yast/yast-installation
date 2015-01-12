@@ -46,14 +46,17 @@ Style/Documentation:
 # Offense count: 6
 # Configuration parameters: Exclude.
 Style/FileName:
-  Enabled: false
+  Include:
+    - src/lib/**/*.rb
 
 # Offense count: 179
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/MethodName:
-  Enabled: false
+  Include:
+   - src/lib/**/*.rb
 
 # Offense count: 22
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/VariableName:
-  Enabled: false
+  Include:
+    - src/lib/**/*.rb
