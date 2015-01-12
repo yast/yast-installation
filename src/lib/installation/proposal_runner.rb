@@ -60,7 +60,6 @@ module Installation
       @mod2tab = {} # module -> tab it is in
       @current_tab = 0 # ID of current tab
       @html = {} # proposals of all modules - HTML part
-      @locked_modules = []
       @have_blocker = false
 
       # BNC #463567
@@ -550,12 +549,6 @@ module Installation
     end
 
     def load_matching_submodules_list
-      @locked_modules = Yast::ProductControl.getLockedProposals(
-        Yast::Stage.stage,
-        Yast::Mode.mode,
-        @proposal_mode
-      )
-
       Yast::Builtins.y2milestone(
         "getting proposals for stage: \"%1\" mode: \"%2\" proposal type: \"%3\"",
         Yast::Stage.stage,
@@ -789,18 +782,14 @@ module Installation
 
     def html_header(submod)
       title = @store.title_for(submod)
-      if @locked_modules.include?(submod)
-        heading = title
-      else
-        heading = title.include?("<a") ?
-          title :
-          Yast::HTML.Link(
-            title,
-            @store.id_for(submod)
-          )
-      end
+      heading = title.include?("<a") ?
+        title :
+        Yast::HTML.Link(
+          title,
+          @store.id_for(submod)
+        )
 
-      Yast::HTML.Heading(title)
+      Yast::HTML.Heading(heading)
     end
   end
 end

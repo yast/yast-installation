@@ -68,7 +68,7 @@ module Installation
 
     # @return [String] Richtext, the complete help text: a common intro + all
     #   individual parts.
-    def help_text(current_tab: nil, locked_modules: false)
+    def help_text(current_tab: nil)
       # General part of the help text for all types of proposals
       how_to_change = _(
         "<p>\n" +
@@ -86,15 +86,6 @@ module Installation
 
       help_text = global_help + how_to_change
       help_text += not_modified if @proposal_mode == "initial"
-
-      if locked_modules
-        # help text
-        help_text << _(
-          "<p>Some proposals might be\n" +
-            "locked by the system administrator and therefore cannot be changed. If a\n" +
-            "locked proposal needs to be changed, ask your system administrator.</p>\n"
-        )
-      end
 
       help_text << modules_help(current_tab)
 
