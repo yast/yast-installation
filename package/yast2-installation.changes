@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Tue Jan 13 12:27:40 UTC 2015 - jsrain@suse.cz
 
-- fixed progress bar during (live) image installation (bsc3#854378)
+- fixed progress bar during (live) image installation (bsc#854378)
 
 -------------------------------------------------------------------
 Wed Jan  7 14:27:28 UTC 2015 - jreidinger@suse.com
