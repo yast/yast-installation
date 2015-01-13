@@ -81,12 +81,12 @@ module Yast
         @directories = Ops.get_list(@argmap, "directories", [])
 
         # Priority 0: More directories
-        if @directories != nil && @directories != []
-          Builtins.y2milestone("Using directories: %1", @directories) 
+        if !@directories.nil? && @directories != []
+          Builtins.y2milestone("Using directories: %1", @directories)
           # Priority 1: Script args
-        elsif @directory != nil && @directory != ""
+        elsif !@directory.nil? && @directory != ""
           Builtins.y2milestone("Using directory: %1", @directory)
-          @directories = [@directory] 
+          @directories = [@directory]
           # Priority 2: Fallback - Control file
         else
           @directory = ProductFeatures.GetStringFeature(
@@ -95,11 +95,11 @@ module Yast
           )
 
           # control file
-          if @directory != nil && @directory != ""
+          if !@directory.nil? && @directory != ""
             Builtins.y2milestone(
               "Using directory (from control file): %1",
               @directory
-            ) 
+            )
             # fallback - hard-coded
           else
             @directory = "/etc/YaST2/licenses/base/"
@@ -112,7 +112,7 @@ module Yast
           @directories = [@directory]
         end
 
-        if @directories != nil
+        if !@directories.nil?
           @tmp_directories = Builtins.maplist(@directories) do |one_directory|
             Ops.add(Directory.custom_workflow_dir, one_directory)
           end
@@ -123,7 +123,7 @@ module Yast
           )
         end
 
-        if @directories == nil || @directories == []
+        if @directories.nil? || @directories == []
           # Error message
           Report.Error(_("Internal error: Missing license to show"))
           Builtins.y2error("Nothing to do")
@@ -143,7 +143,7 @@ module Yast
 
       Wizard.CloseDialog if @test_mode
 
-      if @ask_ret == nil || @ask_ret == :auto
+      if @ask_ret.nil? || @ask_ret == :auto
         return :auto
       elsif @ask_ret == :abort || @ask_ret == :back
         return @ask_ret
@@ -162,7 +162,7 @@ module Yast
       else
         Builtins.y2error("Unknown return: %1", @ask_ret)
         return :next
-      end 
+      end
 
       # EOF
     end

@@ -167,9 +167,9 @@ module Yast
           _("Deploying images has failed.\nAborting the installation...\n")
         )
         Builtins.y2milestone("Aborting...")
-        return :abort 
+        return :abort
         # nil   == aborted
-      elsif @dep_ret == nil
+      elsif @dep_ret.nil?
         Builtins.y2milestone("Aborting...")
         return :abort
       end
@@ -179,7 +179,7 @@ module Yast
       # Load the libzypp state from the system (with images deployed)
       PackageCallbacks.RegisterEmptyProgressCallbacks
       if oem_image
-        #TODO later when adding more functionality: mount the deployed image for inst_finish
+        # TODO: later when adding more functionality: mount the deployed image for inst_finish
       else
         Pkg.TargetInitialize(Installation.destdir)
         Pkg.TargetLoad
@@ -264,11 +264,11 @@ module Yast
       end
 
       # incremental
-      if current_step == nil
+      if current_step.nil?
         @_current_step_in_subprogress = Ops.add(
           @_current_step_in_subprogress,
           1
-        ) 
+        )
         # set to exact number
       else
         @_current_step_in_subprogress = current_step
@@ -302,12 +302,12 @@ module Yast
     # Not only images but also some helper files are downloaded
     # Image installation should report only images
     # BNC #449792
-    def MyStartDownloadHandler(url, localfile)
+    def MyStartDownloadHandler(url, _localfile)
       current_image = ImageInstallation.GetCurrentImageDetails
       current_image_file = Ops.get_string(current_image, "file", "")
 
       # Fetches is (additionally) downloading some other file
-      if current_image_file == nil || current_image_file == ""
+      if current_image_file.nil? || current_image_file == ""
         Builtins.y2warning("Uknown image being downloaded: %1", current_image)
         @report_image_downloading = false
         return
@@ -333,7 +333,7 @@ module Yast
       nil
     end
 
-    def MyProgressDownloadHandler(percent, bps_avg, bps_current)
+    def MyProgressDownloadHandler(percent, _bps_avg, bps_current)
       # changing settings on the fly
       # ... first when download handler is hit
       #
@@ -425,7 +425,7 @@ module Yast
         @_last_progress = -1
       end
 
-      if max_progress == nil || max_progress == 0
+      if max_progress.nil? || max_progress == 0
         Builtins.y2milestone("Can't find max_progress: %1", current_image)
         return
       end
@@ -492,7 +492,7 @@ module Yast
 
     def RunPackageManager
       Builtins.y2milestone("--- running the package manager ---")
-      PackagesUI.RunPackageSelector({ "mode" => :summaryMode })
+      PackagesUI.RunPackageSelector("mode" => :summaryMode)
       Builtins.y2milestone("--- running the package manager ---")
 
       nil

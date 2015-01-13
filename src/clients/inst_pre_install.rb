@@ -38,7 +38,6 @@ module Yast
       # all partitions that can be used as a source of data
       @useful_partitions = []
 
-
       # *******************************************************************************
       # --> main()
 
@@ -51,14 +50,14 @@ module Yast
         # -> configuration moved to control file
         @copy_items = Convert.convert(
           ProductFeatures.GetFeature("globals", "copy_to_system"),
-          :from => "any",
-          :to   => "list <map>"
+          from: "any",
+          to:   "list <map>"
         )
 
         @copy_items.each do |one_copy_item|
           item_id = one_copy_item["id"]
 
-          if (InstFunctions.feature_ignored?(item_id))
+          if InstFunctions.feature_ignored?(item_id)
             Builtins.y2milestone("Feature #{item_id} skipped on user request")
             next
           end
@@ -100,7 +99,7 @@ module Yast
       Builtins.foreach(files_found) do |partition_name, files_on_it|
         counter = 0
         filetimes = 0
-        Builtins.foreach(files_on_it) do |filename, filetime|
+        Builtins.foreach(files_on_it) do |_filename, filetime|
           filetimes = Ops.add(filetimes, filetime)
           counter = Ops.add(counter, 1)
         end
@@ -120,6 +119,7 @@ module Yast
 
       deep_copy(ret)
     end
+
     def FindAndCopyNewestFiles(copy_to, wanted_files, optional_files)
       wanted_files = deep_copy(wanted_files)
       optional_files = deep_copy(optional_files)
@@ -129,7 +129,7 @@ module Yast
       mnt_tmpdir = SystemFilesCopy.CreateDirectoryIfMissing(mnt_tmpdir)
 
       # CreateDirectory failed
-      return nil if mnt_tmpdir == nil
+      return nil if mnt_tmpdir.nil?
 
       files_found_on_partitions = {}
 
@@ -179,19 +179,19 @@ module Yast
           file_attribs = Convert.to_map(
             SCR.Read(path(".target.lstat"), filename_to_seek)
           )
-          if file_attribs == nil || file_attribs == {}
+          if file_attribs.nil? || file_attribs == {}
             files_found = false
             next
           end
           # checking for the acces-time
           file_time = Ops.get_integer(file_attribs, "atime")
-          if file_time == nil || file_time == 0
+          if file_time.nil? || file_time == 0
             files_found = false
             next
           end
           # doesn't make sense to copy files with zero size
           file_size = Ops.get_integer(file_attribs, "atime")
-          if file_size == nil || file_size == 0
+          if file_size.nil? || file_size == 0
             files_found = false
             next
           end
@@ -227,10 +227,10 @@ module Yast
 
       # nothing found
       if Builtins.size(files_found_on_partitions) == 0
-        Builtins.y2milestone("No such files found") 
+        Builtins.y2milestone("No such files found")
         # only one (easy)
       elsif Builtins.size(files_found_on_partitions) == 1
-        ic_winner = deep_copy(files_found_on_partitions) 
+        ic_winner = deep_copy(files_found_on_partitions)
         # more than one (getting the best ones)
       else
         ic_winner = FindTheBestFiles(files_found_on_partitions)
@@ -244,11 +244,11 @@ module Yast
         SystemFilesCopy.CopyFilesToTemp(
           partition,
           Convert.convert(
-            Builtins.union(Builtins.maplist(files) do |filename, filetime|
+            Builtins.union(Builtins.maplist(files) do |filename, _filetime|
               filename
             end, optional_files),
-            :from => "list",
-            :to   => "list <string>"
+            from: "list",
+            to:   "list <string>"
           ),
           copy_to
         )
@@ -287,7 +287,7 @@ module Yast
 
       target_map = Storage.GetTargetMap
       counter = -1
-      device_names = Builtins.maplist(target_map) do |device_name, device_descr|
+      device_names = Builtins.maplist(target_map) do |device_name, _device_descr|
         device_name
       end
       device_names = restrict_disk_names.call(device_names)
@@ -303,7 +303,7 @@ module Yast
             Ops.get(partition, "detected_fs")
           )
           devicename = Ops.get_string(partition, "device")
-          if filesystem == nil
+          if filesystem.nil?
             Builtins.y2milestone(
               "Skipping partition %1, no FS detected",
               devicename
@@ -323,7 +323,7 @@ module Yast
           Ops.set(
             @useful_partitions,
             counter,
-            { "device" => Ops.get(partition, "device"), "fs" => filesystem }
+            "device" => Ops.get(partition, "device"), "fs" => filesystem
           )
         end
       end

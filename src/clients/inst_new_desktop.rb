@@ -55,19 +55,19 @@ module Yast
 
       # TRANSLATORS: help text, part 1
       @help = _(
-        "<p>At Linux <b>choice</b> is a top priority. <i>openSUSE</i> offers a number \n" +
-          "of different desktop environments. Below you see a list of the 2 major ones \n" +
+        "<p>At Linux <b>choice</b> is a top priority. <i>openSUSE</i> offers a number \n" \
+          "of different desktop environments. Below you see a list of the 2 major ones \n" \
           "<b>GNOME</b> and <b>KDE</b>.</p>"
       ) +
         # TRANSLATORS: help text, part 3
         _(
-          "<p>You may select alternative desktop environments (or one of minimal installation patterns)\n" +
-            "that could fit your needs better using the <b>Other</b> option . Later in the software \n" +
-            "selection or after installation, you can change your selection or add additional desktop \n" +
+          "<p>You may select alternative desktop environments (or one of minimal installation patterns)\n" \
+            "that could fit your needs better using the <b>Other</b> option . Later in the software \n" \
+            "selection or after installation, you can change your selection or add additional desktop \n" \
             "environments. This screen allows you to set the default.</p>"
         )
 
-      if DefaultDesktop.Desktop == nil || DefaultDesktop.Desktop == ""
+      if DefaultDesktop.Desktop.nil? || DefaultDesktop.Desktop == ""
         DefaultDesktop.Init
       end
 
@@ -78,7 +78,7 @@ module Yast
       @other_desktops = []
 
       # filter out those desktops with unavailable patterns
-      @all_desktops = Builtins.filter(@all_desktops) do |desktop_name, one_desktop|
+      @all_desktops = Builtins.filter(@all_desktops) do |_desktop_name, one_desktop|
         PatternsAvailable(Ops.get_list(one_desktop, "patterns", []))
       end
 
@@ -91,7 +91,7 @@ module Yast
       @default_ui_minor = Empty()
 
       @default_desktop = DefaultDesktop.Desktop
-      if @default_desktop != nil && @default_desktop != "" &&
+      if !@default_desktop.nil? && @default_desktop != "" &&
           Builtins.contains(@other_desktops, @default_desktop)
         @default_ui_minor = deep_copy(@minor_desktops)
         @current_minor_d_status = true
@@ -133,7 +133,7 @@ module Yast
       # Adjust default values
       if !UI.WidgetExists(Id("selected_desktop"))
         Builtins.y2error(-1, "Widget selected_desktop does not exist")
-      elsif @default_desktop != nil && @default_desktop != ""
+      elsif !@default_desktop.nil? && @default_desktop != ""
         Builtins.y2milestone(
           "Already selected desktop: %1",
           DefaultDesktop.Desktop
@@ -147,7 +147,7 @@ module Yast
 
       # UI wait loop
       @ret = nil
-      while true
+      loop do
         @ret = UI.UserInput
 
         if Ops.is_string?(@ret) &&
@@ -169,7 +169,7 @@ module Yast
             UI.QueryWidget(Id("selected_desktop"), :Value)
           )
 
-          if @currently_selected != nil && @currently_selected != ""
+          if !@currently_selected.nil? && @currently_selected != ""
             DefaultDesktop.SetDesktop(
               Builtins.regexpsub(
                 Builtins.tostring(@currently_selected),
@@ -179,7 +179,7 @@ module Yast
             )
             Packages.ForceFullRepropose
 
-            if DefaultDesktop.Desktop != nil &&
+            if !DefaultDesktop.Desktop.nil? &&
                 Builtins.haskey(@all_desktops, DefaultDesktop.Desktop)
               SelectSoftwareNow()
               break
@@ -208,7 +208,7 @@ module Yast
         end
       end
 
-      Convert.to_symbol(@ret) 
+      Convert.to_symbol(@ret)
 
       # EOF
     end
@@ -224,7 +224,7 @@ module Yast
     end
 
     def GetDesktopRadioButtonId(desktop_name)
-      if desktop_name == nil || desktop_name == ""
+      if desktop_name.nil? || desktop_name == ""
         Builtins.y2warning("Wrong desktop name: %1", desktop_name)
         return ""
       end
@@ -233,7 +233,7 @@ module Yast
     end
 
     def GetDesktopDescriptionId(desktop_name)
-      if desktop_name == nil || desktop_name == ""
+      if desktop_name.nil? || desktop_name == ""
         Builtins.y2warning("Wrong desktop name: %1", desktop_name)
         return ""
       end
@@ -247,8 +247,8 @@ module Yast
       all_available = true
       Builtins.foreach(patterns) do |pattern|
         if Ops.less_than(
-            Builtins.size(Pkg.ResolvableProperties(pattern, :pattern, "")),
-            1
+          Builtins.size(Pkg.ResolvableProperties(pattern, :pattern, "")),
+          1
           )
           Builtins.y2warning("pattern '%1' not found", pattern)
           all_available = false
@@ -258,9 +258,8 @@ module Yast
     end
 
     def GetDesktops(desktops, show_descr)
-
       sort_order        = @all_desktops.keys
-      sort_order.sort!{|x,y| (@all_desktops[x]["order"] || 99) <=> (@all_desktops[y]["order"] || 99) }
+      sort_order.sort! { |x, y| (@all_desktops[x]["order"] || 99) <=> (@all_desktops[y]["order"] || 99) }
 
       if desktops == "major"
         sort_order = Builtins.filter(sort_order) do |desktop_name|
@@ -315,7 +314,7 @@ module Yast
                     )
                   )
                 ),
-                desktops == "major" && show_descr ?
+                if desktops == "major" && show_descr
                   ReplacePoint(
                     Id(GetDesktopDescriptionId(desktop_name)),
                     HBox(
@@ -334,10 +333,12 @@ module Yast
                       ),
                       HSpacing(1)
                     )
-                  ) :
+                  )
+                else
                   Empty()
+                end
               ),
-              desktops == "major" ?
+              if desktops == "major"
                 Image(
                   Ops.add(
                     Ops.add(
@@ -350,8 +351,10 @@ module Yast
                     ),
                     ".png"
                   )
-                ) :
+                )
+              else
                 Empty()
+              end
             )
           )
         )

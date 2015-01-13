@@ -19,18 +19,10 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:	clients/inst_extrasources.ycp
-# Package:	yast2-installation
-# Summary:	Automatically register software repositories from content file
-# Authors:	Ladislav Slezák <lslezak@suse.cz>
-#		Lukas Ocilka <locilka@suse.cz>
-#
-# This client loads the target and initializes the package manager.
-# Adds all sources defined in control file (software->extra_urls)
-# and stores them at the end.
-#
-# $Id$
 module Yast
+  # This client loads the target and initializes the package manager.
+  # Adds all sources defined in control file (software->extra_urls)
+  # and stores them at the end.
   class InstExtrasourcesClient < Client
     def main
       Yast.import "UI"
@@ -56,7 +48,7 @@ module Yast
       # USB sources that were used during installation should be disabled (bnc#793709)
       @usb_sources = {}
 
-      #////////////////////////////////////////
+      # ////////////////////////////////////////
 
       if GetInstArgs.going_back # going backwards?
         return :auto # don't execute this once more
@@ -178,7 +170,7 @@ module Yast
                   if InstallPackages(@message, @package_list)
                     # start the software manager
                     @ui = PackagesUI.RunPackageSelector(
-                      { "mode" => :summaryMode }
+                       "mode" => :summaryMode
                     )
                     Builtins.y2milestone("Package manager returned: %1", @ui)
 
@@ -211,8 +203,7 @@ module Yast
         end
       end
 
-
-      :auto 
+      :auto
 
       # EOF
     end
@@ -225,11 +216,11 @@ module Yast
       registered = deep_copy(registered)
       urls_from_control_file = Convert.convert(
         ProductFeatures.GetFeature("software", "extra_urls"),
-        :from => "any",
-        :to   => "list <map>"
+        from: "any",
+        to:   "list <map>"
       )
 
-      if urls_from_control_file == nil
+      if urls_from_control_file.nil?
         Builtins.y2milestone(
           "Empty or errorneous software/extra_urls: %1",
           urls_from_control_file
@@ -265,7 +256,7 @@ module Yast
       ret = []
 
       Builtins.foreach(url_list) do |new_url|
-        if Ops.get_string(new_url, "baseurl", "") == nil ||
+        if Ops.get_string(new_url, "baseurl", "").nil? ||
             Ops.get_string(new_url, "baseurl", "") == ""
           Builtins.y2error(
             "Cannot use repository: %1, no 'baseurl' defined",
@@ -329,7 +320,7 @@ module Yast
           )
         end
         new_repo_id = Pkg.RepositoryAdd(repo_prop)
-        if new_repo_id != nil && Ops.greater_or_equal(new_repo_id, 0)
+        if !new_repo_id.nil? && Ops.greater_or_equal(new_repo_id, 0)
           Builtins.y2milestone(
             "Registered extra repository: %1: %2",
             new_repo_id,
@@ -339,8 +330,7 @@ module Yast
         else
           Builtins.y2error("Cannot register: %1", repo_prop)
         end
-      end 
-
+      end
 
       deep_copy(ret)
     end
@@ -356,7 +346,7 @@ module Yast
       Builtins.foreach(srcs) do |src|
         general = Pkg.SourceGeneralData(src)
         url = Ops.get_string(general, "url", "")
-        ret = Builtins.add(ret, url) if url != nil && url != ""
+        ret = Builtins.add(ret, url) if !url.nil? && url != ""
         if Mode.update && Builtins.regexpmatch(url, "^dir:[/]+mnt[/]+")
           Ops.set(@local_urls, src, url)
         end
@@ -364,8 +354,7 @@ module Yast
         if Builtins.issubstring(url, "device=/dev/disk/by-id/usb-")
           Ops.set(@usb_sources, src, url)
         end
-      end 
-
+      end
 
       # remove duplicates
       ret = Builtins.toset(ret)
@@ -401,7 +390,7 @@ module Yast
       ret = true
 
       Builtins.y2milestone("Refreshing repositories %1", repos)
-      Builtins.foreach(repos) { |repo| ret = ret && Pkg.SourceRefreshNow(repo) }
+      Builtins.foreach(repos) { |repo| ret &&= Pkg.SourceRefreshNow(repo) }
 
       Builtins.y2milestone("Refresh succeeded: %1", ret)
 
@@ -523,12 +512,12 @@ module Yast
       while r != :yes && r != :no && r != :cancel
         r = UI.UserInput
 
-        if r == :show
-          if UI.QueryWidget(Id(:show), :Value) == true
-            UI.ReplaceWidget(Id(:info), RichText(Opt(:plainText), details))
-          else
-            UI.ReplaceWidget(Id(:info), Empty())
-          end
+        next if r != :show
+
+        if UI.QueryWidget(Id(:show), :Value) == true
+          UI.ReplaceWidget(Id(:info), RichText(Opt(:plainText), details))
+        else
+          UI.ReplaceWidget(Id(:info), Empty())
         end
       end
 

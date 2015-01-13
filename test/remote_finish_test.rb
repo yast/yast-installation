@@ -8,7 +8,6 @@ module Yast
   import "Linuxrc"
 
   describe ::Installation::RemoteFinishClient do
-
     subject { ::Installation::RemoteFinishClient.new }
 
     describe "#run" do
@@ -26,9 +25,9 @@ module Yast
     end
 
     describe "#modes" do
-      let(:modes) {
+      let(:modes) do
         subject.modes
-      }
+      end
 
       context "using VNC" do
         before do

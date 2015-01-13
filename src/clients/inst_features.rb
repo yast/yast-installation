@@ -77,7 +77,7 @@ module Yast
       # Feature is not defined
       if ProductFeatures.GetFeature("software", "online_repos_preselected") == ""
         # Default is true - selected
-        Installation.productsources_selected = true 
+        Installation.productsources_selected = true
         # Defined
       else
         @default_status_or = ProductFeatures.GetBooleanFeature(
@@ -86,7 +86,7 @@ module Yast
         )
 
         # if not set, default is "true"
-        @default_status_or = true if @default_status_or == nil
+        @default_status_or = true if @default_status_or.nil?
         Installation.productsources_selected = @default_status_or
       end
 
@@ -94,7 +94,6 @@ module Yast
         "Use Online Repositories (default): %1",
         Installation.productsources_selected
       )
-
 
       :auto
     end

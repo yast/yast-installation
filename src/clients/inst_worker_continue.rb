@@ -120,7 +120,7 @@ module Yast
         @next_step = Builtins.tointeger(Ops.get(@contents_lines, 0))
         @restarting_step = Builtins.tointeger(Ops.get(@contents_lines, 1))
 
-        if @next_step == nil
+        if @next_step.nil?
           Builtins.y2error("Data file specifying step to continue corrupted")
           ProductControl.first_step = 0
           ProductControl.restarting_step = nil
@@ -137,7 +137,7 @@ module Yast
           )
         end
 
-        CleanUpRestartFiles() 
+        CleanUpRestartFiles()
         # Starting the second stage installation
       else
         # Run the installation workflow
@@ -151,11 +151,11 @@ module Yast
 
       if @ret == :reboot || @ret == :restart_yast || @ret == :restart_same_step ||
           @ret == :reboot_same_step
-        @ret = PrepareYaSTforRestart(@ret) 
+        @ret = PrepareYaSTforRestart(@ret)
         # Installation has been aborted
       elsif @ret == :abort
         # tell linuxrc that we aborted
-        Linuxrc.WriteYaSTInf({ "Aborted" => "1" })
+        Linuxrc.WriteYaSTInf("Aborted" => "1")
       end
 
       # Store network services to the state in which they are
@@ -166,7 +166,7 @@ module Yast
       # when the installation is not aborted or YaST is not restarted on purpose
       # ret == `next -> (ret != `reboot && ret != `restart_yast && ret != `restart_same_step && ret != `abort && ret != `reboot_same_step)
       if @ret == :next
-        HandleSecondStageFinishedCorrectly() 
+        HandleSecondStageFinishedCorrectly()
         # installation (second stage) has been aborted
         # FATE #300422
       elsif @ret == :abort || @ret == :cancel
