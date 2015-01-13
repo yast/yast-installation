@@ -37,11 +37,11 @@ describe ::Installation::ProposalStore do
     end
   end
 
-  describe "#has_tabs?" do
+  describe "#tabs?" do
     it "returns true if proposal contains tabs" do
       mock_properties("proposal_tabs" => [])
 
-      expect(subject.has_tabs?).to eq(true)
+      expect(subject.tabs?).to eq(true)
     end
   end
 
