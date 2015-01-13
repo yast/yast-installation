@@ -77,8 +77,8 @@ module Yast
         "addons_default"
       )
       # default fallback
-      show_addons = true if show_addons == nil
-      addons_default = false if addons_default == nil
+      show_addons = true if show_addons.nil?
+      addons_default = false if addons_default.nil?
 
       Builtins.y2milestone(
         "Control file definition for add-on, visible: %1, selected: %2",
@@ -101,8 +101,8 @@ module Yast
         "online_repositories_default"
       )
       # default fallback
-      show_online_repositories = false if show_online_repositories == nil
-      online_repositories_default = true if online_repositories_default == nil
+      show_online_repositories = false if show_online_repositories.nil?
+      online_repositories_default = true if online_repositories_default.nil?
 
       Builtins.y2milestone(
         "Control file definition for productsources, visible: %1, selected: %2",

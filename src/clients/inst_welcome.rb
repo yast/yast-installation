@@ -50,8 +50,8 @@ module Yast
 
       @patterns = Convert.convert(
         Ops.get(@argmap, "patterns", @default_patterns),
-        :from => "any",
-        :to   => "list <string>"
+        from: "any",
+        to:   "list <string>"
       )
 
       @welcome = CustomDialogs.load_file_locale(
@@ -60,7 +60,6 @@ module Yast
         Language.language
       )
       Builtins.y2debug("welcome map: %1", @welcome)
-
 
       @display = UI.GetDisplayInfo
       @space = Ops.get_boolean(@display, "TextMode", true) ? 1 : 3
@@ -72,17 +71,15 @@ module Yast
       @text = _("<p><b>Welcome!</b></p>") +
         # welcome text 2/4
         _(
-          "<p>There are a few more steps to take before your system is ready to\n" +
-            "use. YaST will now guide you through some basic configuration.  Click\n" +
-            "<b>Next</b> to continue. </p>\n" +
+          "<p>There are a few more steps to take before your system is ready to\n" \
+            "use. YaST will now guide you through some basic configuration.  Click\n" \
+            "<b>Next</b> to continue. </p>\n" \
             "            \n"
         )
 
       # welcome text
-      @welcome_text = Ops.get_string(@welcome, "text", "") != "" ?
-        Ops.get_string(@welcome, "text", "") :
-        @text
-
+      @welcome_text = @welcome["text"]
+      @welcome_text = @text if !@welcome_text || @welcome_text.empty?
 
       # help ttext
       @help = _(
@@ -98,7 +95,6 @@ module Yast
         @rt = RichText(Id(:welcome_text), Opt(:plainText), @welcome_text)
       end
 
-
       @contents = VBox(
         VSpacing(@space),
         HBox(
@@ -109,9 +105,6 @@ module Yast
         VSpacing(2)
       )
 
-
-
-
       Wizard.SetContents(
         @caption,
         @contents,
@@ -121,11 +114,9 @@ module Yast
       )
       Wizard.SetFocusToNextButton
 
-
       @ret = UI.UserInput
 
-
-      deep_copy(@ret) 
+      deep_copy(@ret)
 
       # EOF
     end

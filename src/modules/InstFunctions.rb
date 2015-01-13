@@ -72,7 +72,7 @@ module Yast
 
       # Both are supported together
       ignored_features = unparsed_features + cmdline_features
-      @ignored_features = ignored_features.map{ |f| f.split(',') }.flatten.uniq
+      @ignored_features = ignored_features.map { |f| f.split(",") }.flatten.uniq
     end
 
     # Resets the stored ignored features
@@ -86,7 +86,7 @@ module Yast
     # @param [String] feature_name
     # @return [Boolean] whether it's ignored
     def feature_ignored?(feature_name)
-      if feature_name == nil
+      if feature_name.nil?
         Builtins.y2warning("Undefined feature to check")
         return false
       end
@@ -95,8 +95,8 @@ module Yast
       ignored_features.include?(feature)
     end
 
-    publish :function => :ignored_features, :type => "list ()"
-    publish :function => :feature_ignored?, :type => "boolean (string)"
+    publish function: :ignored_features, type: "list ()"
+    publish function: :feature_ignored?, type: "boolean (string)"
 
   private
 

@@ -7,10 +7,9 @@ require "installation/proposal_store"
 Yast.import "ProductControl"
 
 describe ::Installation::ProposalStore do
-
   subject { ::Installation::ProposalStore.new "initial" }
 
-  def mock_properties(data={})
+  def mock_properties(data = {})
     allow(Yast::ProductControl).to receive(:getProposalProperties)
       .and_return(data)
   end
@@ -78,7 +77,7 @@ describe ::Installation::ProposalStore do
     it "raises exception if used on non-tab proposal" do
       mock_properties
 
-      expect{subject.tab_labels}.to raise_error
+      expect { subject.tab_labels }.to raise_error
     end
   end
 
@@ -118,22 +117,22 @@ describe ::Installation::ProposalStore do
     context "proposal without tabs" do
       it "returns array with string names of client in presentation order" do
         allow(Yast::ProductControl).to receive(:getProposals)
-        .and_return([
-          ["test1", 90],
-          ["test2", 30],
-          ["test3", 50]
-        ])
+          .and_return([
+            ["test1", 90],
+            ["test2", 30],
+            ["test3", 50]
+          ])
 
         expect(subject.presentation_order).to eq(["test2", "test3", "test1"])
       end
 
       it "replace value for missing presentation order with 50" do
         allow(Yast::ProductControl).to receive(:getProposals)
-        .and_return([
-          ["test1", 90],
-          ["test2"],
-          ["test3", 40]
-        ])
+          .and_return([
+            ["test1", 90],
+            ["test2"],
+            ["test3", 40]
+          ])
 
         expect(subject.presentation_order).to eq(["test3", "test2", "test1"])
       end
@@ -145,14 +144,14 @@ describe ::Installation::ProposalStore do
           {
             "proposal_modules" => [
               "tab1_client1",
-              "tab1_client2",
+              "tab1_client2"
             ]
           },
           {
             "proposal_modules" => [
               "tab2_client1",
               "tab2_client2",
-              "tab2_client3",
+              "tab2_client3"
             ]
           }
         ])
@@ -167,14 +166,14 @@ describe ::Installation::ProposalStore do
           {
             "proposal_modules" => [
               "tab1_client1",
-              "tab1_client2",
+              "tab1_client2"
             ]
           },
           {
             "proposal_modules" => [
               "tab2_client1",
               "tab2_client2",
-              "tab2_client3",
+              "tab2_client3"
             ]
           }
         ])

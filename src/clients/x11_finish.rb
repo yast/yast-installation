@@ -33,7 +33,6 @@
 module Yast
   class X11FinishClient < Client
     def main
-
       textdomain "installation"
 
       Yast.import "Installation"

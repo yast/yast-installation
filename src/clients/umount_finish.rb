@@ -85,8 +85,8 @@ module Yast
         # loop over all filesystems
         @mountPoints = Convert.convert(
           Storage.GetMountPoints,
-          :from => "map",
-          :to   => "map <string, list>"
+          from: "map",
+          to:   "map <string, list>"
         )
         Builtins.y2milestone("Known mount points: %1", @mountPoints)
         Builtins.y2milestone(
@@ -103,7 +103,7 @@ module Yast
         # go through mountPoints collecting paths in umountList
         # *** umountList is lexically ordered !
 
-        Builtins.foreach(@mountPoints) do |mountpoint, mountval|
+        Builtins.foreach(@mountPoints) do |mountpoint, _mountval|
           if mountpoint != "swap"
             @umountList = Builtins.add(@umountList, mountpoint)
           end
@@ -130,8 +130,8 @@ module Yast
         if Hotplug.haveUSB
           @umount_these = Convert.convert(
             Builtins.union(["/proc/bus/usb"], @umount_these),
-            :from => "list",
-            :to   => "list <string>"
+            from: "list",
+            to:   "list <string>"
           )
         end
 
@@ -149,8 +149,8 @@ module Yast
             # bnc #395034
             # Don't remount them read-only!
             if Builtins.contains(
-                ["/proc", "/sys", "/dev", "/proc/bus/usb"],
-                umount_dir
+              ["/proc", "/sys", "/dev", "/proc/bus/usb"],
+              umount_dir
               )
               Builtins.y2warning("Umount failed, trying lazy umount...")
               cmd = Builtins.sformat(
@@ -228,35 +228,35 @@ module Yast
 
           # bnc #395034
           # Don't remount them read-only!
-          if @umount_status != true
-            if Builtins.contains(
-                ["/proc", "/sys", "/dev", "/proc/bus/usb"],
-                @tmp
-              )
-              Builtins.y2warning("Umount failed, trying lazy umount...")
-              @cmd2 = Builtins.sformat(
-                "sync; umount -l -f '%1';",
-                String.Quote(@tmp)
-              )
-              Builtins.y2milestone(
-                "Cmd: '%1' Ret: %2",
-                @cmd2,
-                WFM.Execute(path(".local.bash_output"), @cmd2)
-              )
-            else
-              Builtins.y2warning(
-                "Umount failed, trying to remount read only..."
-              )
-              @cmd2 = Builtins.sformat(
-                "mount -o remount,ro,noatime '%1'; umount -l -f '%1';",
-                String.Quote(@tmp)
-              )
-              Builtins.y2milestone(
-                "Cmd: '%1' Ret: %2",
-                @cmd2,
-                WFM.Execute(path(".local.bash_output"), @cmd2)
-              )
-            end
+          next if @umount_status
+
+          if Builtins.contains(
+            ["/proc", "/sys", "/dev", "/proc/bus/usb"],
+            @tmp
+            )
+            Builtins.y2warning("Umount failed, trying lazy umount...")
+            @cmd2 = Builtins.sformat(
+              "sync; umount -l -f '%1';",
+              String.Quote(@tmp)
+            )
+            Builtins.y2milestone(
+              "Cmd: '%1' Ret: %2",
+              @cmd2,
+              WFM.Execute(path(".local.bash_output"), @cmd2)
+            )
+          else
+            Builtins.y2warning(
+              "Umount failed, trying to remount read only..."
+            )
+            @cmd2 = Builtins.sformat(
+              "mount -o remount,ro,noatime '%1'; umount -l -f '%1';",
+              String.Quote(@tmp)
+            )
+            Builtins.y2milestone(
+              "Cmd: '%1' Ret: %2",
+              @cmd2,
+              WFM.Execute(path(".local.bash_output"), @cmd2)
+            )
           end
         end
 
@@ -289,9 +289,7 @@ module Yast
           @max_loop_dev = Ops.subtract(@max_loop_dev, 1)
         end
 
-        if Ops.greater_than(Builtins.size(Builtins.filter(@targetMap) do |k, v|
-            Ops.get_symbol(v, "type", :CT_UNKNOWN) == :CT_LVM
-          end), 0)
+        if @targetMap.any? { |_k, v| v["type"] == :CT_LVM }
           Builtins.y2milestone("shutting down LVM")
           WFM.Execute(path(".local.bash"), "/sbin/vgchange -a n")
         end
@@ -329,7 +327,7 @@ module Yast
         WFM.Read(path(".local.string"), poolsize_path)
       )
 
-      if poolsize == nil || poolsize == ""
+      if poolsize.nil? || poolsize == ""
         Builtins.y2warning(
           "Cannot read poolsize from %1, using the default",
           poolsize_path

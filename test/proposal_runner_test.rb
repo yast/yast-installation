@@ -7,12 +7,11 @@ require "installation/proposal_runner"
 describe ::Installation::ProposalRunner do
   before do
     # mock constant to avoid dependency on autoyast
-    autoinst_config = double(:Confirm => false)
+    autoinst_config = double(Confirm: false)
     stub_const("Yast::AutoinstConfig", autoinst_config)
   end
 
   describe "#run" do
-
     it "do nothing if run non-interactive" do
       Yast.import "Mode"
       allow(Yast::Mode).to receive(:autoinst).and_return(true)
@@ -30,7 +29,7 @@ describe ::Installation::ProposalRunner do
     end
 
     it "passes a moske test" do
-      expect{subject.run}.to_not raise_error
+      expect { subject.run }.to_not raise_error
     end
   end
 end

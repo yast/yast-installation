@@ -112,9 +112,9 @@ module Yast
 
       # Installation has been aborted
       if @ret == :abort
-        Hooks.run 'installation_aborted'
+        Hooks.run "installation_aborted"
         # tell linuxrc that we aborted
-        Linuxrc.WriteYaSTInf({ "Aborted" => "1" })
+        Linuxrc.WriteYaSTInf("Aborted" => "1")
       end
 
       # All Sources and Target need to be released...

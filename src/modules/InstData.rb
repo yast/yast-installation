@@ -80,7 +80,7 @@ module Yast
 
       @copy_files_use_control_file = true
 
-      @additional_copy_files = [] 
+      @additional_copy_files = []
 
       # <-- copy files -- config
 
@@ -103,21 +103,21 @@ module Yast
       # EOF
     end
 
-    publish :variable => :start_mode, :type => "string"
-    publish :variable => :selected_desktop, :type => "string"
-    publish :variable => :current_systasks_status, :type => "map <string, boolean>"
-    publish :variable => :product_license_accepted, :type => "boolean"
-    publish :variable => :wizardsteps_disabled_modules, :type => "string"
-    publish :variable => :wizardsteps_disabled_proposals, :type => "string"
-    publish :variable => :wizardsteps_disabled_subproposals, :type => "string"
-    publish :variable => :localDisabledModules, :type => "list <string>"
-    publish :variable => :localDisabledProposals, :type => "list <string>"
-    publish :variable => :copy_files_use_control_file, :type => "boolean"
-    publish :variable => :additional_copy_files, :type => "list <map>"
-    publish :variable => :image_target_disk, :type => "string"
-    publish :variable => :release_notes, :type => "map<string,string>"
-    publish :variable => :downloaded_release_notes, :type => "list<string>"
-    publish :variable => :stop_relnotes_download, :type => "boolean"
+    publish variable: :start_mode, type: "string"
+    publish variable: :selected_desktop, type: "string"
+    publish variable: :current_systasks_status, type: "map <string, boolean>"
+    publish variable: :product_license_accepted, type: "boolean"
+    publish variable: :wizardsteps_disabled_modules, type: "string"
+    publish variable: :wizardsteps_disabled_proposals, type: "string"
+    publish variable: :wizardsteps_disabled_subproposals, type: "string"
+    publish variable: :localDisabledModules, type: "list <string>"
+    publish variable: :localDisabledProposals, type: "list <string>"
+    publish variable: :copy_files_use_control_file, type: "boolean"
+    publish variable: :additional_copy_files, type: "list <map>"
+    publish variable: :image_target_disk, type: "string"
+    publish variable: :release_notes, type: "map<string,string>"
+    publish variable: :downloaded_release_notes, type: "list<string>"
+    publish variable: :stop_relnotes_download, type: "boolean"
   end
 
   InstData = InstDataClass.new

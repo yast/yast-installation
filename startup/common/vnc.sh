@@ -19,7 +19,7 @@
 . /etc/YaST2/XVersion
 
 #----[ setupVNCAuthentication ]------#
-function setupVNCAuthentication () {
+setupVNCAuthentication () {
 #---------------------------------------------------
 # handle the VNCPassword variable to create a valid
 # password file.
@@ -39,7 +39,7 @@ function setupVNCAuthentication () {
 }
 
 #----[ startVNCServer ]------#
-function startVNCServer () {
+startVNCServer () {
 #---------------------------------------------------
 # start Xvnc server and write a log file from the
 # VNC server process
@@ -82,7 +82,7 @@ function startVNCServer () {
 		-rfbport 5901 \
 		-httpport 5801 \
 		-fp $Xfontdir/misc/,$Xfontdir/uni/,$Xfontdir/truetype/ \
-	&> /var/log/YaST2/vncserver.log &
+	>/var/log/YaST2/vncserver.log 2>&1 &
 	xserver_pid=$!
 	export DISPLAY=:0
 	export XCURSOR_CORE=1

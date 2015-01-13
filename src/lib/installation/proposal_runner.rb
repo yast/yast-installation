@@ -24,7 +24,6 @@ require "yast"
 require "installation/proposal_store"
 
 module Installation
-
   # Create and display reasonable proposal for basic
   # installation and call sub-workflows as required
   # on user request.
@@ -96,8 +95,7 @@ module Installation
       Yast::Wizard.EnableNextButton
       Yast::Wizard.EnableAbortButton
 
-      return :auto if !get_submod_descriptions_and_build_menu
-
+      return :auto if !submod_descriptions_and_build_menu
 
       #
       # Make the initial proposal
@@ -117,7 +115,7 @@ module Installation
         richtext_normal_cursor(Id(:proposal))
         # bnc #431567
         # Some proposal module can change it while called
-        SetNextButton()
+        assign_next_button
 
         input = Yast::UI.UserInput
 
@@ -188,7 +186,7 @@ module Installation
         @proposal << @html[mod] || ""
       end
       display_proposal(@proposal)
-      get_submod_descriptions_and_build_menu
+      submod_descriptions_and_build_menu
     end
 
     def export_config
@@ -198,9 +196,7 @@ module Installation
       # force write, so it always write profile even if user do not want
       # to store profile after installation
       Yast::WFM.CallFunction("clone_proposal", ["Write", "force" => true, "target_path" => path])
-      if !File.exists?(path)
-        raise _("Failed to store configuration. Details can be found in log.")
-      end
+      raise _("Failed to store configuration. Details can be found in log.") unless File.exist?(path)
     end
 
     def handle_skip
@@ -222,9 +218,11 @@ module Installation
     end
 
     def pre_continue_handling
-      @skip = Yast::UI.WidgetExists(Id(:skip)) ?
-        Yast::UI.QueryWidget(Id(:skip), :Value) :
-        true
+      @skip = if Yast::UI.WidgetExists(Id(:skip))
+                Yast::UI.QueryWidget(Id(:skip), :Value)
+              else
+                true
+              end
       skip_blocker = Yast::UI.WidgetExists(Id(:skip)) && @skip
       if @have_blocker && !skip_blocker
         # error message is a popup
@@ -263,7 +261,7 @@ module Installation
       nil
     end
 
-    def CheckAndCloseWindowsLeft
+    def check_windows_left
       if !Yast::UI.WidgetExists(Id(:proposal))
         Yast::Builtins.y2error(-1, "Widget `proposal is not active!!!")
         log.info "--- Current widget tree ---"
@@ -287,7 +285,6 @@ module Installation
       workflow_sequence = ask_user_result["workflow_sequence"] || :next
       language_changed = ask_user_result.fetch("language_changed", false)
       mode_changed = ask_user_result.fetch("mode_changed", false)
-      rootpart_changed = ask_user_result.fetch("rootpart_changed", false)
 
       if ![:cancel, :back, :abort, :finish].include?(workflow_sequence)
         if language_changed
@@ -302,9 +299,7 @@ module Installation
 
           build_dialog
           load_matching_submodules_list
-          if !get_submod_descriptions_and_build_menu
-            log.error "i'm in dutch"
-          end
+          log.error "i'm in dutch" unless submod_descriptions_and_build_menu
         end
 
         # Make a new proposal based on those user changes
@@ -313,16 +308,14 @@ module Installation
 
       # There might be some UI layers left
       # we need to close them
-      CheckAndCloseWindowsLeft()
+      check_windows_left
 
       workflow_sequence
     end
 
-
     def make_proposal(force_reset, language_changed)
       tab_to_switch = 999
       current_tab_affected = false
-      skip_the_rest = false
       @have_blocker = false
 
       Yast::UI.ReplaceWidget(
@@ -356,7 +349,7 @@ module Installation
       Yast::UI.BusyCursor
 
       submodule_nr = 0
-      make_proposal_callback = Proc.new do |submod, prop_map|
+      make_proposal_callback = proc do |submod, prop_map|
         submodule_nr += 1
         Yast::UI.ChangeWidget(Id("pb_ip"), :Value, submodule_nr)
         prop = html_header(submod)
@@ -375,9 +368,7 @@ module Installation
                 tab_to_switch == 999
               tab_to_switch = @mod2tab[submod]
             end
-            if @mod2tab[submod] == @current_tab
-              current_tab_affected = true
-            end
+            current_tab_affected = true if @mod2tab[submod] == @current_tab
           end
         end
 
@@ -394,7 +385,7 @@ module Installation
 
           # now do the complete html
           presentation_modules = @store.presentation_order
-          presentation_modules = presentation_modules[@current_tab] if @store.has_tabs?
+          presentation_modules = presentation_modules[@current_tab] if @store.tabs?
           proposal = presentation_modules.reduce("") do |res, mod|
             res << @html[mod]
           end
@@ -411,7 +402,7 @@ module Installation
       # FATE #301151: Allow YaST proposals to have help texts
       Yast::Wizard.SetHelpText(@store.help_text)
 
-      if @store.has_tabs? && Yast::Ops.less_than(tab_to_switch, 999) && !current_tab_affected
+      if @store.tabs? && Yast::Ops.less_than(tab_to_switch, 999) && !current_tab_affected
         switch_to_tab(tab_to_switch)
       end
 
@@ -478,24 +469,19 @@ module Installation
 
       @store.proposal_names do |submod|
         submod_success = submod_write_settings(submod)
-        submod_success = true if submod_success == nil
-        if !submod_success
-          log.error "Write() failed for submodule #{submod}"
-        end
-        success = success && submod_success
+        submod_success = true if submod_success.nil?
+        log.error "Write() failed for submodule #{submod}" unless submod_success
+        success &&= submod_success
       end
 
-      if !success
-        log.error "Write() failed for one or more submodules"
+      return nil if success
 
-        # Submodules handle their own error reporting
-        # text for a message box
-        Yast::Popup.TimedMessage(_("Configuration saved.\nThere were errors."), 3)
-      end
+      log.error "Write() failed for one or more submodules"
 
-      nil
+      # Submodules handle their own error reporting
+      # text for a message box
+      Yast::Popup.TimedMessage(_("Configuration saved.\nThere were errors."), 3)
     end
-
 
     # Force a RichText widget to use the busy cursor
     #
@@ -507,7 +493,6 @@ module Installation
       nil
     end
 
-
     # Switch a RichText widget back to use the normal cursor
     #
     # @param [Object] widget_id  ID  of the widget, e.g. `id(`proposal)
@@ -517,13 +502,14 @@ module Installation
 
       nil
     end
+
     def retranslate_proposal_dialog
       log.debug "Retranslating proposal dialog"
 
       build_dialog
       Yast::ProductControl.RetranslateWizardSteps
       Yast::Wizard.RetranslateButtons
-      get_submod_descriptions_and_build_menu
+      submod_descriptions_and_build_menu
 
       nil
     end
@@ -541,7 +527,7 @@ module Installation
         return :abort
       end
 
-      if @store.has_tabs?
+      if @store.tabs?
         log.info "Proposal uses tabs"
         @submodules_presentation = @store.presentation_order[@current_tab]
         @mod2tab = {}
@@ -563,9 +549,9 @@ module Installation
 
         p = Yast::AutoinstConfig.getProposalList
 
-        if p != nil && p != []
+        if !p.nil? && p != []
           # array intersection
-          @submodules_presentation = @submodules_presentation & v
+          @submodules_presentation &= v
         end
       end
 
@@ -612,15 +598,15 @@ module Installation
 
       if Yast::UI.TextMode()
         change_point = ReplacePoint(
-            Id(:rep_menu),
-            # menu button
-            MenuButton(Id(:menu_dummy), _("&Yast::Change..."), [Item(Id(:dummy), "")])
+          Id(:rep_menu),
+          # menu button
+          MenuButton(Id(:menu_dummy), _("&Yast::Change..."), [Item(Id(:dummy), "")])
           )
       else
         change_point = PushButton(
-            Id(:export_config),
-            # menu button
-            _("&Export Configuration")
+          Id(:export_config),
+          # menu button
+          _("&Export Configuration")
           )
       end
 
@@ -639,11 +625,11 @@ module Installation
       rt = RichText(
         Id(:proposal),
         Yast::HTML.Newlines(3) +
-        # Initial contents of proposal subwindow while proposals are calculated
+          # Initial contents of proposal subwindow while proposals are calculated
           Yast::HTML.Para(_("Analyzing your system..."))
       )
 
-      if @store.has_tabs?
+      if @store.tabs?
         tab_labels = @store.tab_labels
         if Yast::UI.HasSpecialWidget(:DumbTab)
           panes = tab_labels.map do |label|
@@ -699,7 +685,7 @@ module Installation
       nil
     end
 
-    def get_submod_descriptions_and_build_menu
+    def submod_descriptions_and_build_menu
       return true unless Yast::UI.TextMode # have menu only in text mode
 
       # now build the menu button
@@ -708,7 +694,7 @@ module Installation
         next if descr.empty?
 
         id = descr["id"]
-        if descr.has_key? "menu_titles"
+        if descr.key? "menu_titles"
           descr["menu_titles"].each do |i|
             id2 = i["id"]
             title = i["title"]
@@ -729,7 +715,7 @@ module Installation
 
       # menu button item
       menu_list << Item(Id(:reset_to_defaults), _("&Reset to defaults")) <<
-          Item(Id(:export_config), _("&Export Configuration"))
+        Item(Id(:export_config), _("&Export Configuration"))
 
       # menu button
       Yast::UI.ReplaceWidget(
@@ -737,7 +723,7 @@ module Installation
         MenuButton(Id(:menu), _("&Change..."), menu_list)
       )
 
-      return !@store.descriptions.empty?
+      !@store.descriptions.empty?
     end
 
     def set_icon
@@ -746,14 +732,12 @@ module Installation
       nil
     end
 
-    def SetNextButton
+    def assign_next_button
       if Yast::Stage.initial && @proposal_mode == "initial"
         Yast::Wizard.SetNextButton(
           :next,
           # FATE #120373
-          Yast::Mode.update ?
-            _("&Update") :
-            _("&Install")
+          Yast::Mode.update ? _("&Update") : _("&Install")
         )
       end
 
@@ -762,12 +746,14 @@ module Installation
 
     def html_header(submod)
       title = @store.title_for(submod)
-      heading = title.include?("<a") ?
-        title :
-        Yast::HTML.Link(
-          title,
-          @store.id_for(submod)
-        )
+      heading = if title.include?("<a")
+                  title
+                else
+                  Yast::HTML.Link(
+                    title,
+                    @store.id_for(submod)
+                  )
+                end
 
       Yast::HTML.Heading(heading)
     end

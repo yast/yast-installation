@@ -17,7 +17,7 @@ test -z "$Y2MAXLOGNUM"  && export Y2MAXLOGNUM=5
 #---------------------------------------------
 
 # log size not defined by user
-if [ "$Y2MAXLOGSIZE_INITIAL" == "" ]; then
+if [ -z "$Y2MAXLOGSIZE_INITIAL" ]; then
     USE=`awk '/^MemFree:/{ n=2 ; printf "%d\n", $n/3 }' /proc/meminfo`
     if [ "$USE" -gt "$Y2MAXLOGSIZE" ];then
 	    export Y2MAXLOGSIZE=$USE

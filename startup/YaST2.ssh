@@ -21,7 +21,7 @@
 #========================================
 # boot into system
 #----------------------------------------
-function continue_after_second_stage () {
+continue_after_second_stage () {
 cat <<-EOF
 
 	Continue with booting ...
@@ -32,7 +32,7 @@ cat <<-EOF
 EOF
 }
 
-function reboot_during_second_stage () {
+reboot_during_second_stage () {
 cat <<-EOF
 
 	Your system has been updated and needs to reboot ...
@@ -43,7 +43,7 @@ cat <<-EOF
 EOF
 }
 
-function not_running_yast () {
+not_running_yast () {
 cat <<-EOF
 
     File /var/lib/YaST2/runme_at_boot does not exist ...

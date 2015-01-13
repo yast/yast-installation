@@ -37,9 +37,9 @@ module Yast
           "links"                 => [CLONE_ENABLE_LINK, CLONE_DISABLE_LINK],
           # TRANSLATORS: help text
           "help"                  => _(
-            "<p>Use <b>Clone System Settings</b> if you want to create an AutoYaST profile.\n" +
-              "AutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST\n" +
-              "needs a profile to know what the installed system should look like. If this option is\n" +
+            "<p>Use <b>Clone System Settings</b> if you want to create an AutoYaST profile.\n" \
+              "AutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST\n" \
+              "needs a profile to know what the installed system should look like. If this option is\n" \
               "selected, a profile of the current system is stored in <tt>/root/autoinst.xml</tt>.</p>"
           )
         }
@@ -80,7 +80,7 @@ module Yast
           options = {}
           options["target_path"] = param["target_path"] if param["target_path"]
           mode = Mode.mode
-          WFM.call("clone_system",[options])
+          WFM.call("clone_system", [options])
           Mode.SetMode(mode)
         end
         ret = true
@@ -88,7 +88,7 @@ module Yast
         raise "Unsuported action #{func}"
       end
 
-      return ret
+      ret
     end
 
     def proposal_text
@@ -116,7 +116,7 @@ module Yast
 
       ret << "</li></ul>\n"
     end
-  end unless defined? (CloneProposalClient) #avoid class redefinition if reevaluated
+  end unless defined? (CloneProposalClient) # avoid class redefinition if reevaluated
 end
 
 Yast::CloneProposalClient.new.main

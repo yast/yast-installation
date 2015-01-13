@@ -79,12 +79,12 @@ module Yast
     end
 
     def Write
-      if ProductControl.GetDisabledModules == nil
+      if ProductControl.GetDisabledModules.nil?
         Builtins.y2error("Wrong definition of DisabledModules")
         return
       end
 
-      if InstData.wizardsteps_disabled_modules == nil
+      if InstData.wizardsteps_disabled_modules.nil?
         Builtins.y2error("Path to write disabled modules is not defined!")
         return
       end
@@ -96,9 +96,9 @@ module Yast
       )
 
       if SCR.Write(
-          path(".target.ycp"),
-          InstData.wizardsteps_disabled_modules,
-          ProductControl.GetDisabledModules
+        path(".target.ycp"),
+        InstData.wizardsteps_disabled_modules,
+        ProductControl.GetDisabledModules
         ) != true
         Builtins.y2error("Cannot write disabled modules")
       end
@@ -110,9 +110,9 @@ module Yast
       )
 
       if SCR.Write(
-          path(".target.ycp"),
-          InstData.wizardsteps_disabled_proposals,
-          ProductControl.GetDisabledProposals
+        path(".target.ycp"),
+        InstData.wizardsteps_disabled_proposals,
+        ProductControl.GetDisabledProposals
         ) != true
         Builtins.y2error("Cannot write disabled proposals")
       end
@@ -124,9 +124,9 @@ module Yast
       )
 
       if SCR.Write(
-          path(".target.ycp"),
-          InstData.wizardsteps_disabled_subproposals,
-          ProductControl.GetDisabledSubProposals
+        path(".target.ycp"),
+        InstData.wizardsteps_disabled_subproposals,
+        ProductControl.GetDisabledSubProposals
         ) != true
         Builtins.y2error("Cannot write disabled subproposals")
       end

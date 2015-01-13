@@ -19,15 +19,8 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-#
-# Authors:	Klaus Kämpf <kkaempf@suse.de>
-#		Stefan Hundhammer <sh@suse.de>
-#		Arvin Schnell <arvin@suse.de>
-#
-# Purpose:	Asks user to really do the installation/update.
-#
-# $Id$
 module Yast
+  # Asks user to really do the installation/update.
   class InstDoitClient < Client
     def main
       Yast.import "UI"

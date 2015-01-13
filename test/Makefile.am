@@ -1,6 +1,7 @@
 TESTS = \
   inst_functions_test.rb \
   cio_ignore_test.rb \
+  copy_logs_finish_test.rb \
   prep_shrink_test.rb \
   proposal_store_test.rb \
   proposal_runner_test.rb \

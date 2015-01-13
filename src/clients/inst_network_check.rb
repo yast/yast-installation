@@ -89,14 +89,12 @@ module Yast
               VBox(
                 # TRANSLATORS: dialog label
                 HBox(
-                  @supports_images ?
-                    HBox(Icon.Simple("warning"), HSpacing(2)) :
-                    Empty(),
+                  @supports_images ? HBox(Icon.Simple("warning"), HSpacing(2)) : Empty(),
                   Left(
                     Label(
                       _(
-                        "No network setup has been found.\n" +
-                          "It is important if using remote repositories,\n" +
+                        "No network setup has been found.\n" \
+                          "It is important if using remote repositories,\n" \
                           "otherwise you can safely skip it.\n"
                       )
                     )
@@ -156,7 +154,7 @@ module Yast
 
       @return_this = :next
 
-      while true
+      loop do
         @ret = UI.UserInput
 
         if @ret == :next
@@ -171,16 +169,16 @@ module Yast
           # run net setup
           if @option_selected == "yes_do_run_setup"
             Builtins.y2milestone("Running inst_lan")
-            @ret2 = WFM.call("inst_lan", [GetInstArgs.argmap.merge({"skip_detection" => true})])
+            @ret2 = WFM.call("inst_lan", [GetInstArgs.argmap.merge("skip_detection" => true)])
             Builtins.y2milestone("inst_lan ret: %1", @ret2)
 
             # everything went fine
             if @ret2 == :next
               @return_this = :next
-              break 
+              break
               # something wrong or aborted
             else
-              if @ret2 == nil
+              if @ret2.nil?
                 # error popup
                 Popup.Message(
                   Builtins.sformat(
@@ -197,7 +195,7 @@ module Yast
                 "no_do_not_run_setup"
               )
               next
-            end 
+            end
 
             # skip net setup
           else
@@ -219,7 +217,7 @@ module Yast
         end
       end
 
-      @return_this 
+      @return_this
 
       # EOF
     end

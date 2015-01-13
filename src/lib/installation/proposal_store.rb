@@ -39,7 +39,6 @@ module Installation
       textdomain "installation"
 
       @proposal_mode = proposal_mode
-
     end
 
     # @return [String] translated headline
@@ -71,16 +70,16 @@ module Installation
     def help_text(current_tab: nil)
       # General part of the help text for all types of proposals
       how_to_change = _(
-        "<p>\n" +
-          "Change the values by clicking on the respective headline\n" +
-          "or by using the <b>Change...</b> menu.\n" +
+        "<p>\n" \
+          "Change the values by clicking on the respective headline\n" \
+          "or by using the <b>Change...</b> menu.\n" \
           "</p>\n"
       )
 
       # Help text for installation proposal, continued
       not_modified = _(
-        "<p>\n" +
-          "Your hard disk has not been modified yet. You can still safely abort.\n" +
+        "<p>\n" \
+          "Your hard disk has not been modified yet. You can still safely abort.\n" \
           "</p>\n"
       )
 
@@ -104,7 +103,7 @@ module Installation
       @can_skip
     end
 
-    def has_tabs?
+    def tabs?
       properties.key?("proposal_tabs")
     end
 
@@ -113,8 +112,7 @@ module Installation
     def tab_labels
       return @tab_labels if @tab_labels
 
-      raise "Invalid call to tab_labels for proposal without tabs" unless has_tabs?
-
+      raise "Invalid call to tab_labels for proposal without tabs" unless tabs?
 
       tabs = properties["proposal_tabs"]
       @tab_labels = tabs.map { |m| m["label"] }
@@ -133,7 +131,7 @@ module Installation
 
       @proposal_names.map!(&:first) # first element is name of client
 
-      # FIXME add filter to only installed clients
+      # FIXME: add filter to only installed clients
       @proposal_names
     end
 
@@ -141,7 +139,7 @@ module Installation
     def presentation_order
       return @modules_order if @modules_order
 
-      has_tabs? ? order_with_tabs : order_without_tabs
+      tabs? ? order_with_tabs : order_without_tabs
     end
 
     # Makes proposal for all proposal clients.
@@ -151,8 +149,8 @@ module Installation
       @link2submod = {}
 
       proposal_names.each do |submod|
-        proposal_map = make_proposal(submod, force_reset: force_reset,
-          language_changed: language_changed)
+        proposal_map = make_proposal(submod, force_reset:      force_reset,
+                                             language_changed: language_changed)
 
         callback.call(submod, proposal_map)
 
@@ -262,8 +260,8 @@ module Installation
               "</p>\n"
             )
         else # so update
-        # Help text for update proposal
-        # General part ("You can change values...") is added as the next paragraph.
+          # Help text for update proposal
+          # General part ("You can change values...") is added as the next paragraph.
           _(
             "<p>\n" \
               "Select <b>Update</b> to perform an update with the values displayed.\n" \
@@ -297,10 +295,10 @@ module Installation
       when "uml"
         # Proposal in uml module
         _("<P><B>UML Installation Proposal</B></P>") \
-          # help text
-          _(
-            "<P>UML (User Mode Linux) installation allows you to start independent\nLinux virtual machines in the host system.</P>"
-          )
+        # help text
+        _(
+          "<P>UML (User Mode Linux) installation allows you to start independent\nLinux virtual machines in the host system.</P>"
+        )
       else
         if properties["help"] && !properties["help"].empty?
           # Proposal help from control file module
@@ -334,7 +332,6 @@ module Installation
       @modules_order
     end
 
-
     def order_without_tabs
       @modules_order = Yast::ProductControl.getProposals(
         Yast::Stage.stage,
@@ -351,7 +348,7 @@ module Installation
 
     def modules_help(current_tab)
       modules_order = presentation_order
-      modules_order = modules_order[current_tab] if has_tabs?
+      modules_order = modules_order[current_tab] if tabs?
 
       modules_order.each_with_object("") do |client, text|
         next unless descriptions[client]["help"]

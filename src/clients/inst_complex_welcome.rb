@@ -19,30 +19,9 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-# File:
-#	inst_complex_welcome.ycp
-#
-# Module:
-#	Installation
-#
-# Authors:
-#	Klaus   Kämpf <kkaempf@suse.de>
-#	Michael Hager <mike@suse.de>
-#	Stefan  Hundhammer <sh@suse.de>
-#	Thomas Roelz <tom@suse.de>
-#	Jiri Suchomel <jsuchome@suse.cz>
-#	Lukas Ocilka <locilka@suse.cz>
-#
-# Summary:
-#	This client shows main dialog for choosing the language,
-#	keyboard and accepting the license.
-#
-# Attention:
-#	This is still work in progress ...
-#
-# $Id$
-#
 module Yast
+  # This client shows main dialog for choosing the language,
+  # keyboard and accepting the license.
   class InstComplexWelcomeClient < Client
     def main
       Yast.import "UI"
@@ -170,37 +149,37 @@ module Yast
 
       # help text for initial (first time) language screen
       @help_text = _(
-        "<p>\n" +
-          "Choose the <b>Language</b> and the <b>Keyboard layout</b> to be used during\n" +
-          "installation and for the installed system.\n" +
+        "<p>\n" \
+          "Choose the <b>Language</b> and the <b>Keyboard layout</b> to be used during\n" \
+          "installation and for the installed system.\n" \
           "</p>\n"
       ) +
         # help text, continued
         # Describes the #ICW_B1 button
         _(
-          "<p>\n" +
-            "The license must be accepted before the installation continues.\n" +
-            "Use <b>License Translations...</b> to show the license in all available translations.\n" +
+          "<p>\n" \
+            "The license must be accepted before the installation continues.\n" \
+            "Use <b>License Translations...</b> to show the license in all available translations.\n" \
             "</p>\n"
         ) +
         # help text, continued
         _(
-          "<p>\n" +
-            "Click <b>Next</b> to proceed to the next dialog.\n" +
+          "<p>\n" \
+            "Click <b>Next</b> to proceed to the next dialog.\n" \
             "</p>\n"
         ) +
         # help text, continued
         _(
-          "<p>\n" +
-            "Nothing will happen to your computer until you confirm\n" +
-            "all your settings in the last installation dialog.\n" +
+          "<p>\n" \
+            "Nothing will happen to your computer until you confirm\n" \
+            "all your settings in the last installation dialog.\n" \
             "</p>\n"
         ) +
         # help text, continued
         _(
-          "<p>\n" +
-            "Select <b>Abort</b> to abort the\n" +
-            "installation process at any time.\n" +
+          "<p>\n" \
+            "Select <b>Abort</b> to abort the\n" \
+            "installation process at any time.\n" \
             "</p>\n"
         )
 
@@ -226,7 +205,7 @@ module Yast
 
       # In case of going back, Release Notes button may be shown, retranslate it (bnc#886660)
       # Assure that relnotes have been downloaded first
-      if ! InstData.release_notes.empty?
+      if !InstData.release_notes.empty?
         Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
       end
 
@@ -254,7 +233,7 @@ module Yast
         UI.ReplaceWidget(:license_checkbox_rp, @license_agreement_checkbox)
       end
 
-      while true
+      loop do
         @ret = UI.UserInput
         Builtins.y2milestone("UserInput() returned %1", @ret)
 
@@ -343,7 +322,6 @@ module Yast
         return false
       end
     end
-
 
     def ReadCurrentUIState
       @language = Convert.to_string(UI.QueryWidget(Id(:language), :Value))

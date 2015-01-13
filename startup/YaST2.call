@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #================
 # FILE          : YaST2.call
 #----------------
@@ -83,7 +83,7 @@ function prepare_for_x11 () {
 	fi
 
 	#=============================================
-	# set YaST2 Qt/Gtk options for local displays
+	# set YaST2 Qt options for local displays
 	#---------------------------------------------
 	if [ ! -z "$NEED_XSERVER" ];then
 		Y2_UI_ARGS="--noborder --auto-fonts --fullscreen"
@@ -94,12 +94,6 @@ function prepare_for_x11 () {
 #----[ prepare_for_qt ]----#
 function prepare_for_qt () {
     set_inst_qt_env
-    prepare_for_x11
-}
-
-
-#----[ prepare_for_gtk ]----#
-function prepare_for_gtk () {
     prepare_for_x11
 }
 
@@ -180,7 +174,7 @@ function prepare_for_vnc () {
 #----[ check_x11 ]----#
 function check_x11 () {
 #------------------------------------------------------
-# check if the prepared medium X11 (Qt/Gtk) is valid
+# check if the prepared medium X11 (Qt) is valid
 # ---
 	if [ ! -z "$NEED_XSERVER" ];then
 		if [ "$server_running" = 0 ];then
@@ -225,12 +219,8 @@ function check_network () {
 		Y2_MODE=qt
 	fi
 	if ! check_qt ; then
-	    log "\tQt plugin check failed falling back to Gtk"
-	    Y2_MODE=gtk
-	    if ! check_gtk ; then
-		log "\tGtk plugin check failed falling back to ncurses"
-		Y2_MODE=ncurses
-	    fi
+	    log "\tQt plugin check failed falling back to ncurses"
+	    Y2_MODE=ncurses
 	fi
 }
 
@@ -455,32 +445,27 @@ LOG_PREFIX="Stage [call]"
 # 3) Medium prequalification
 #---------------------------------------------
 # Check which installation mediums can be used. There are
-# five mediums available: Qt(0) SSH(1), VNC(2), NCURSES(3) and Gtk(4).
+# four mediums available: Qt(0) SSH(1), VNC(2), NCURSES(3).
 # The following checks will create an array which contains
 # the possible mediums. An index of 1 indicates "can be used"
 # an index of 0 indicated "cannot be used"
 # ---
-MEDIUM=(1 1 1 1 1)
+MEDIUM=(1 1 1 1)
 
 #=============================================
-# 3.1) prequalification checks for Qt and Gtk
+# 3.1) prequalification checks for Qt and
 #---------------------------------------------
 log "Starting prequalification checks..."
 log "==================================="
-# 3.1.1) Qt and Gtk plugin check...
+# 3.1.1) Qt plugin check...
 if ! check_qt ; then
 	log "\tQt plugin check failed -> Medium Qt disabled"
 	MEDIUM[0]=0
 fi
-if ! check_gtk ; then
-	log "\tGtk plugin check failed -> Medium Gtk disabled"
-	MEDIUM[4]=0
-fi
-# 3.1.3) Memory check >= $MEM_NEEDED for Qt/Gtk/X11...
+# 3.1.3) Memory check >= $MEM_NEEDED for Qt/X11...
 if [ $MEM_TOTAL -lt "$MEM_NEEDED" ];then
-	log "\tMemory requirement > $MEM_NEEDED not fulfilled -> Medium Qt and Gtk disabled"
+	log "\tMemory requirement > $MEM_NEEDED not fulfilled -> Medium Qt disabled"
 	MEDIUM[0]=0
-	MEDIUM[4]=0
 fi
 # 3.1.4) Check if we need to start our own X11 server...
 if [ -z "$DISPLAY" ];then
@@ -497,25 +482,22 @@ fi
 
 # 3.1.6) Check for WindowManager configuration
 if [ ! -f /etc/icewm/preferences.yast2 ];then
-	log "\tNo Windowmanager configuration found -> Medium Qt and Gtk disabled"
+	log "\tNo Windowmanager configuration found -> Medium Qt disabled"
 	MEDIUM[0]=0
-	MEDIUM[4]=0
 fi
 # 3.1.7) Check for remote display usage
 if [ ! -z $Display_IP ];then
-	log "\tRemote Display usage -> Medium Qt and Gtk enabled"
+	log "\tRemote Display usage -> Medium Qt enabled"
 	log "\tExporting DISPLAY to host: $Display_IP:0.0"
 	export DISPLAY="$Display_IP:0.0"
 	NEED_XSERVER=""
 	MEDIUM[0]=1
-	MEDIUM[4]=1
 fi
 
 # 3.1.8) Check for testX binary
 if [ ! -x /usr/lib/YaST2/bin/testX ] ; then
-	log "\tNo testX binary installed -> Medium Qt and Gtk disabled"
+	log "\tNo testX binary installed -> Medium Qt disabled"
 	MEDIUM[0]=0
-	MEDIUM[4]=0
 fi
 
 #=============================================
@@ -590,22 +572,8 @@ log "\tWished medium is: $SELECTED_MEDIUM"
 case $SELECTED_MEDIUM in
 	QT)  {
 		if [ ${MEDIUM[0]} -eq 0 ];then
-			log "\tMedium Qt not available, falling back to Gtk"
-			SELECTED_MEDIUM="GTK"
-			if [ ${MEDIUM[4]} -eq 0 ];then
-				log "\tMedium Gtk not available, falling back to ncurses"
-				SELECTED_MEDIUM="NCURSES"
-			fi
-		fi
-	} ;;
-	GTK) {
-		if [ ${MEDIUM[4]} -eq 0 ];then
-			log "\tMedium Gtk not available, falling back to Qt"
-			SELECTED_MEDIUM="QT"
-			if [ ${MEDIUM[0]} -eq 0 ];then
-				log "\tMedium Qt not available, falling back to ncurses"
-				SELECTED_MEDIUM="NCURSES"
-			fi
+			log "\tMedium Qt not available, falling back to ncurses"
+			SELECTED_MEDIUM="NCURSES"
 		fi
 	} ;;
 	SSH) {
@@ -628,7 +596,6 @@ log "\tSelected medium is: $SELECTED_MEDIUM"
 #---------------------------------------------
 case $SELECTED_MEDIUM in
 	QT)      prepare_for_qt      ; Y2_MODE=qt      ;;
-	GTK)     prepare_for_gtk     ; Y2_MODE=gtk     ;;
 	SSH)     prepare_for_ssh     ; Y2_MODE=ncurses ;;
 	VNC)     prepare_for_vnc     ; Y2_MODE=qt      ;;
 	NCURSES) prepare_for_ncurses ; Y2_MODE=ncurses ;;
@@ -639,7 +606,6 @@ esac
 #---------------------------------------------
 case $SELECTED_MEDIUM in
 	QT)  check_x11     ;;
-	GTK) check_x11     ;;
 	SSH) check_network ;;
 	VNC) check_vnc     ;;
 esac

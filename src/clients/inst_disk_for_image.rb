@@ -46,7 +46,7 @@ module Yast
       disk = nil
 
       continue_buttons = [:next, :back, :close, :abort]
-      while !continue_buttons.include?(ret) do
+      until continue_buttons.include?(ret)
         ret = UI.UserInput
 
         if ret == :next
@@ -62,9 +62,8 @@ module Yast
         end
       end
 
-      return ret
+      ret
     end
-
 
     private
 
@@ -72,10 +71,11 @@ module Yast
       target_map = Storage.GetTargetMap
       Builtins.y2milestone("TM: %1", target_map)
       # FIXME: move blacklist to Storage
-      used_by_blacklist = [ :CT_DMRAID, :CT_DMMULTIPATH, :CT_MDPART ]
-      target_map.select { | key, value |
-        Storage.IsDiskType(value["type"]) && (! used_by_blacklist.include? value["used_by"])
-      }.keys
+      used_by_blacklist = [:CT_DMRAID, :CT_DMMULTIPATH, :CT_MDPART]
+      filtered_map = target_map.select do | _key, value |
+        Storage.IsDiskType(value["type"]) && (!used_by_blacklist.include? value["used_by"])
+      end
+      filtered_map.keys
     end
 
     def disk_for_image_dialog
@@ -90,8 +90,8 @@ module Yast
     end
 
     def disk_for_image_help_text
-      _("Select the disk, which the image will be deployed to. " +
-        "All data on the disk will be lost and the disk will be " +
+      _("Select the disk, which the image will be deployed to. " \
+        "All data on the disk will be lost and the disk will be " \
         "partitioned as defined in the image.")
     end
 

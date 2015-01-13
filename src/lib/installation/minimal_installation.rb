@@ -1,7 +1,6 @@
 require "singleton"
 require "yast"
 
-
 module Installation
   # Wrapper around minimal installation configuration.
   #
