@@ -38,6 +38,9 @@ module Yast
   class ImageInstallationClass < Module
     include Yast::Logger
 
+    IMAGE_COMPRESS_RATIO = 3.6
+    MEGABYTE = 2**20
+
     def main
       Yast.import "UI"
       Yast.import "Pkg"
@@ -1057,13 +1060,12 @@ module Yast
     # @return [Boolean] true on success
     def FileSystemCopy(from, to, progress_start, progress_finish)
       if from == "/"
+        # root is a merge of two filesystems, df returns only one part for /
         total_mb = calculate_fs_size("/read-write") + calculate_fs_size("/read-only")
       else
         total_mb = 0
       end
-      if total_mb == 0
-        total_mb = calculate_fs_size(from)
-      end
+      total_mb = calculate_fs_size(from) if total_mb == 0
       # Using df-based progress estimation, is rather faster
       #    may be less precise
       #    see bnc#555288
@@ -1073,7 +1075,7 @@ module Yast
       #     y2milestone ("Output: %1", out);
       #     string total_str = out["stdout"]:"";
       #     integer total_mb = tointeger (total_str);
-      total_mb = (total_mb * 3.6).to_i #compression ratio - rough estimate
+      total_mb = (total_mb * IMAGE_COMPRESS_RATIO).to_i #compression ratio - rough estimate
       total_mb = 4096 if total_mb == 0 # should be big enough
 
       tmp_pipe1 = Ops.add(
@@ -1147,7 +1149,7 @@ module Yast
                 Ops.divide(
                   Ops.multiply(
                     Ops.subtract(progress_finish, progress_start),
-                    Builtins.tointeger(done) / 1048576 #count megabytes
+                    Builtins.tointeger(done) / MEGABYTE #count megabytes
                   ),
                   total_mb
                 ),
