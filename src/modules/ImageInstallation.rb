@@ -1034,20 +1034,14 @@ module Yast
       deep_copy(ret)
     end
 
-
-
-    # Copy a subtree, limit to a single filesystem
-    # @param [String] from string source directory
-    # @param [String] to string target directory
-    # @return [Boolean] true on success
-    def FileSystemCopy(from, to, progress_start, progress_finish)
-      cmd = Builtins.sformat("df -P -k %1", from)
+    def calculate_fs_size(mountpoint)
+      cmd = Builtins.sformat("df -P -k %1", mountpoint)
       Builtins.y2milestone("Executing %1", cmd)
       out = Convert.to_map(SCR.Execute(path(".target.bash_output"), cmd))
       Builtins.y2milestone("Output: %1", out)
       total_str = Ops.get_string(out, "stdout", "")
       total_str = Ops.get(Builtins.splitstring(total_str, "\n"), 1, "")
-      total_mb = Ops.divide(
+      return Ops.divide(
         Builtins.tointeger(
           Ops.get(Builtins.filter(Builtins.splitstring(total_str, " ")) do |s|
             s != ""
@@ -1055,7 +1049,21 @@ module Yast
         ),
         1024
       )
+    end
 
+    # Copy a subtree, limit to a single filesystem
+    # @param [String] from string source directory
+    # @param [String] to string target directory
+    # @return [Boolean] true on success
+    def FileSystemCopy(from, to, progress_start, progress_finish)
+      if from == "/"
+        total_mb = calculate_fs_size("/read-write") + calculate_fs_size("/read-only")
+      else
+        total_mb = 0
+      end
+      if total_mb == 0
+        total_mb = calculate_fs_size(from)
+      end
       # Using df-based progress estimation, is rather faster
       #    may be less precise
       #    see bnc#555288
@@ -1065,7 +1073,8 @@ module Yast
       #     y2milestone ("Output: %1", out);
       #     string total_str = out["stdout"]:"";
       #     integer total_mb = tointeger (total_str);
-      total_mb = 1024 if total_mb == 0 # should be big enough
+      total_mb = (total_mb * 3.6).to_i #compression ratio - rough estimate
+      total_mb = 4096 if total_mb == 0 # should be big enough
 
       tmp_pipe1 = Ops.add(
         Convert.to_string(SCR.Read(path(".target.tmpdir"))),
@@ -1138,7 +1147,7 @@ module Yast
                 Ops.divide(
                   Ops.multiply(
                     Ops.subtract(progress_finish, progress_start),
-                    Builtins.tointeger(done)
+                    Builtins.tointeger(done) / 1048576 #count megabytes
                   ),
                   total_mb
                 ),
