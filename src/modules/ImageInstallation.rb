@@ -1067,7 +1067,7 @@ module Yast
       #     y2milestone ("Output: %1", out);
       #     string total_str = out["stdout"]:"";
       #     integer total_mb = tointeger (total_str);
-      total_mb = (total_mb * IMAGE_COMPRESS_RATIO).to_i #compression ratio - rough estimate
+      total_mb = (total_mb * IMAGE_COMPRESS_RATIO).to_i # compression ratio - rough estimate
       total_mb = 4096 if total_mb == 0 # should be big enough
 
       tmp_pipe1 = Ops.add(
@@ -1142,7 +1142,7 @@ module Yast
               Ops.divide(
                 Ops.multiply(
                   Ops.subtract(progress_finish, progress_start),
-                  Builtins.tointeger(done) / MEGABYTE #count megabytes
+                  Builtins.tointeger(done) / MEGABYTE # count megabytes
                 ),
                 total_mb
               ),
