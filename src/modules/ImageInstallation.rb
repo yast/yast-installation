@@ -1036,7 +1036,7 @@ module Yast
       Builtins.y2milestone("Output: %1", out)
       total_str = Ops.get_string(out, "stdout", "")
       total_str = Ops.get(Builtins.splitstring(total_str, "\n"), 1, "")
-      return Ops.divide(
+      Ops.divide(
         Builtins.tointeger(
           Ops.get(Builtins.filter(Builtins.splitstring(total_str, " ")) do |s|
             s != ""
