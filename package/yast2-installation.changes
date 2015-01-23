@@ -3,6 +3,7 @@ Tue Jan 13 12:27:52 UTC 2015 - jreidinger@suse.com
 
 - Refactored inst_proposal into Installation::ProposalRunner and
   Installation::ProposalStore.
+- 3.1.127
 
 -------------------------------------------------------------------
 Tue Jan 13 12:27:40 UTC 2015 - jsrain@suse.cz
