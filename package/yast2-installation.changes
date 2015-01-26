@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Jan 26 10:21:19 UTC 2015 - jreidinger@suse.com
+
+- Properly install new Proposal* libs to fix installation
+
+-------------------------------------------------------------------
 Tue Jan 13 12:27:52 UTC 2015 - jreidinger@suse.com
 
 - Refactored inst_proposal into Installation::ProposalRunner and
