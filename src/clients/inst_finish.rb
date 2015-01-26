@@ -362,7 +362,7 @@ module Yast
             )
             next nil
           end
-          if !info["when"].nil &&
+          if !info["when"].nil? &&
               !Builtins.contains(Ops.get_list(info, "when", []), @run_type) &&
               # special hack for autoupgrade - should be as regular upgrade as possible, scripts are the only exception
               !(Mode.autoupgrade &&
