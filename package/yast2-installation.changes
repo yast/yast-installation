@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jan 27 13:39:57 CET 2015 - jsuchome@suse.cz
+
+- explicitely set language packages for installation during the
+  live install (bnc#904103)
+- 3.1.128
+
+-------------------------------------------------------------------
 Mon Jan 26 16:09:01 UTC 2015 - jreidinger@suse.com
 
 - fix typo causing error in installation ( catched by openQA ) 
