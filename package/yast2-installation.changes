@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jan 28 15:16:59 UTC 2015 - lslezak@suse.cz
+
+- SLES control files: display the generic network settings also
+  on PPC and S390 (bnc#914288) (patch by Dinar)
+- 2.17.110
+
+-------------------------------------------------------------------
 Tue Jan 27 17:31:10 UTC 2015 - cwh@suse.com
 
 - use oom_score_adj instead of oom_adj (bnc#913950)
