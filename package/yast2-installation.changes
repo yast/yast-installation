@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jan 29 17:10:44 UTC 2015 - jsrain@suse.cz
+
+- allow keyboard layout testing in language dialog (bsc#889549)
+- 3.1.129
+
+-------------------------------------------------------------------
 Tue Jan 27 13:39:57 CET 2015 - jsuchome@suse.cz
 
 - explicitely set language packages for installation during the

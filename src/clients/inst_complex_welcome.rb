@@ -97,30 +97,27 @@ module Yast
       @contents = VBox(
         VWeight(1, VStretch()),
         Left(
-          HSquash(
-            HBox(
-              HWeight(1, Left(@languagesel)),
-              HSpacing(3),
-              HWeight(1, Left(@keyboardsel))
-            )
+          HBox(
+            HWeight(1, Left(@languagesel)),
+            HSpacing(3),
+            HWeight(1, Left(@keyboardsel))
           )
         ),
-        VSpacing(1),
-        VWeight(1, VStretch()),
+        Left(
+          HBox(
+            HWeight(1, HStretch()),
+            HSpacing(3),
+            HWeight(1, Left(TextEntry(Id(:keyboard_test), _("K&eyboard Test"))))
+          )
+        ),
         VWeight(
           30,
           Left(
             HSquash(
               VBox(
                 HBox(
-                  Label(Opt(:boldFont), _("License Agreement")),
-                  HStretch(),
-                  # ID: #ICW_B1 button
-                  PushButton(
-                    Id(:show_fulscreen_license),
-                    # TRANSLATORS: button label
-                    _("License &Translations...")
-                  )
+                  Left(Label(Opt(:boldFont), _("License Agreement"))),
+                  HStretch()
                 ),
                 # bnc #438100
                 HSquash(
@@ -134,10 +131,15 @@ module Yast
                 MinHeight(
                   1,
                   HBox(
-                    HStretch(),
                     # Will be replaced with license checkbox if required
                     ReplacePoint(Id(:license_checkbox_rp), Empty()),
-                    HStretch()
+                    HStretch(),
+                    # ID: #ICW_B1 button
+                    PushButton(
+                      Id(:show_fulscreen_license),
+                      # TRANSLATORS: button label
+                      _("License &Translations...")
+                    )
                   )
                 )
               )
