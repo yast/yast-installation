@@ -110,14 +110,15 @@ module Yast
           "description" => _("Deploying Images..."),
           # Use 'zero' if image installation is not used
           # BNC #439104
-          "value"       => Ops.greater_than(
-            @live_size,
-            0
-          ) ?
-            @live_size :
-            Installation.image_installation ?
-              Ops.divide(ImageInstallation.TotalSize, 1024) :
-              0, # kilobytes
+          "value"       => if @live_size > 0
+                             @live_size
+                           else
+                             if Installation.image_installation
+                               ImageInstallation.TotalSize / 1024
+                             else
+                               0
+                             end
+                           end,
           "units"       => :kb
         },
         {
@@ -149,7 +150,7 @@ module Yast
           {
             "name"        => "images",
             "description" => _("Deploying Images..."),
-            "value"       => 300000, # just make it longer than inst_finish, TODO: better value later
+            "value"       => 300_000, # just make it longer than inst_finish, TODO: better value later
             "units"       => :kb
           },
           {
@@ -160,7 +161,7 @@ module Yast
             "units"       => :sec
           }
         ]
-    
+
       end
 
       SlideShow.Setup(@stages)

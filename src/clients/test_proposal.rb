@@ -44,7 +44,7 @@ module Yast
       Ops.set(@args, "enable_next", nil)
       Ops.set(@args, "proposal", WFM.Args(0))
       WFM.call("inst_proposal", [@args])
-      UI.CloseDialog 
+      UI.CloseDialog
 
       # EOF
 

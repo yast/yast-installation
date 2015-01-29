@@ -28,7 +28,7 @@
 #
 module Yast
   module InstallationInstIncAllInclude
-    def initialize_installation_inst_inc_all(include_target)
+    def initialize_installation_inst_inc_all(_include_target)
       Yast.import "UI"
 
       textdomain "installation"
@@ -153,7 +153,7 @@ module Yast
     def SetAutoupgHandling
       # if profile is defined, first read it, then probe hardware
       autoinstall = SCR.Read(path(".etc.install_inf.AutoYaST"))
-      if autoinstall != nil && Ops.is_string?(autoinstall) &&
+      if !autoinstall.nil? && Ops.is_string?(autoinstall) &&
           Convert.to_string(autoinstall) != ""
         ProductControl.DisableModule("system_analysis")
         ProductControl.DisableModule("update_partition_auto")
@@ -172,13 +172,13 @@ module Yast
           # text mode. Inform the user about this fact.
           x11_msg = Builtins.sformat(
             _(
-              "Your computer does not fulfill all requirements for\n" +
-                "a graphical installation. There is either less than %1 MB\n" +
-                "memory or the X server could not be started.\n" +
-                "\n" +
-                "As fallback, the text front-end of YaST2 will guide you\n" +
-                "through the installation. This front-end offers the\n" +
-                "same functionality as the graphical one, but the screens\n" +
+              "Your computer does not fulfill all requirements for\n" \
+                "a graphical installation. There is either less than %1 MB\n" \
+                "memory or the X server could not be started.\n" \
+                "\n" \
+                "As fallback, the text front-end of YaST2 will guide you\n" \
+                "through the installation. This front-end offers the\n" \
+                "same functionality as the graphical one, but the screens\n" \
                 "differ from those in the manual.\n"
             ),
             "96"
@@ -191,14 +191,14 @@ module Yast
           # Somehow the graphical frontend failed and we're running in
           # text mode. Inform the user about this fact.
           x11_msg = _(
-            "The graphical interface could not be started.\n" +
-              "\n" +
-              "Either the required packages were not installed (minimal installation) \n" +
-              "or the graphics card is not properly supported.\n" +
-              "\n" +
-              "As fallback, the text front-end of YaST2 will guide you\n" +
-              "through the installation. This front-end offers the\n" +
-              "same functionality as the graphical one, but the screens\n" +
+            "The graphical interface could not be started.\n" \
+              "\n" \
+              "Either the required packages were not installed (minimal installation) \n" \
+              "or the graphics card is not properly supported.\n" \
+              "\n" \
+              "As fallback, the text front-end of YaST2 will guide you\n" \
+              "through the installation. This front-end offers the\n" \
+              "same functionality as the graphical one, but the screens\n" \
               "differ from those in the manual.\n"
           )
         end

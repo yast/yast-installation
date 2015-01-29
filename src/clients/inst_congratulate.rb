@@ -135,7 +135,7 @@ module Yast
         ProductFeatures.GetStringFeature("globals", "ui_mode")
       )
 
-      if @vendor_url_tmp != nil && @vendor_url_tmp != ""
+      if !@vendor_url_tmp.nil? && @vendor_url_tmp != ""
         @vendor_url = @vendor_url_tmp
       end
 
@@ -175,7 +175,6 @@ module Yast
         @text = Builtins.sformat(@text, @vendor_url)
       end
 
-
       @contents = VBox(
         VSpacing(@space),
         HBox(
@@ -200,21 +199,23 @@ module Yast
           "<p><b>Finish</b> will close the YaST installation and take you\nto the login screen.</p>\n"
         ) +
         # help 3/4 for dialog "Congratulation Dialog"
-        (DisplayKDEHelp() ?
-          _(
-            "<p>If you choose the default graphical desktop KDE, you can\n" +
-              "adjust some KDE settings to your hardware. Also notice\n" +
-              "our SUSE Welcome Dialog.</p>\n"
-          ) :
-          "") # Show this help only in case of KDE as the default windowmanager
+        (if DisplayKDEHelp()
+           _(
+             "<p>If you choose the default graphical desktop KDE, you can\n" \
+               "adjust some KDE settings to your hardware. Also notice\n" \
+               "our SUSE Welcome Dialog.</p>\n"
+           )
+         else
+           ""
+         end) # Show this help only in case of KDE as the default windowmanager
 
       if @show_clone_checkbox
         @help = Ops.add(
           @help,
           _(
-            "<p>Use <b>Clone</b> if you want to create an AutoYaST profile.\n" +
-              "AutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST\n" +
-              "needs a profile to know what the installed system should look like. If this option is\n" +
+            "<p>Use <b>Clone</b> if you want to create an AutoYaST profile.\n" \
+              "AutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST\n" \
+              "needs a profile to know what the installed system should look like. If this option is\n" \
               "selected, a profile of the current system is stored in <tt>/root/autoinst.xml</tt>.</p>"
           )
         )
@@ -238,7 +239,7 @@ module Yast
       end
 
       @ret = nil
-      begin
+      loop do
         @ret = Wizard.UserInput
 
         if @ret == :abort
@@ -246,7 +247,8 @@ module Yast
         elsif @ret == :help
           Wizard.ShowHelp(@help)
         end
-      end until @ret == :next || @ret == :back
+        break if [:next, :back].include?(@ret)
+      end
 
       # bugzilla #221190
       if @ret == :back
@@ -291,7 +293,7 @@ module Yast
       )
       Builtins.y2debug("Default WM: %1", default_wm)
 
-      if default_wm != nil &&
+      if !default_wm.nil? &&
           Builtins.issubstring(Builtins.tolower(default_wm), "kde")
         return true
       end
@@ -304,11 +306,11 @@ module Yast
       AddOnProduct.ReadTmpExportFilename
 
       if !Package.InstallMsg(
-          "autoyast2",
-          _(
-            "<p>To clone the current system, the <b>%1</b> package must be installed.</p>"
-          ) +
-            _("<p>Install it now?</p>")
+        "autoyast2",
+        _(
+          "<p>To clone the current system, the <b>%1</b> package must be installed.</p>"
+        ) +
+          _("<p>Install it now?</p>")
         )
         Popup.Error(_("autoyast2 package not installed. Cloning disabled."))
       else

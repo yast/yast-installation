@@ -107,8 +107,11 @@ ylibdir = "${yast2dir}/lib/installation"
 ylib_DATA = \
   lib/installation/cio_ignore.rb \
   lib/installation/clone_settings.rb \
+  lib/installation/copy_logs_finish.rb \
   lib/installation/minimal_installation.rb \
   lib/installation/prep_shrink.rb \
+  lib/installation/proposal_runner.rb \
+  lib/installation/proposal_store.rb \
   lib/installation/remote_finish_client.rb
 
 

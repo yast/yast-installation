@@ -67,9 +67,9 @@ module Yast
             "links"                 => [@im_do_enable, @im_do_disable],
             # TRANSLATORS: help text
             "help"                  => _(
-              "<p><b>Installation from Images</b> is used to speed the installation up.\n" +
-                "Images contain compressed snapshots of an installed system matching your\n" +
-                "selection of patterns. The rest of the packages which are not contained in the\n" +
+              "<p><b>Installation from Images</b> is used to speed the installation up.\n" \
+                "Images contain compressed snapshots of an installed system matching your\n" \
+                "selection of patterns. The rest of the packages which are not contained in the\n" \
                 "images will be installed from packages the standard way.</p>\n"
             ) +
               # TRANSLATORS: help text
@@ -117,9 +117,9 @@ module Yast
             @old_status == Installation.image_installation
           Report.Message(
             _(
-              "Cannot enable installation from images.\n" +
-                "\n" +
-                "Currently selected patterns do not fit the images\n" +
+              "Cannot enable installation from images.\n" \
+                "\n" \
+                "Currently selected patterns do not fit the images\n" \
                 "stored on the installation media.\n"
             )
           )

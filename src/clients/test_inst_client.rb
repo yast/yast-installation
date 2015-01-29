@@ -27,7 +27,6 @@
 module Yast
   class TestInstClientClient < Client
     def main
-
       Yast.import "Mode"
       Yast.import "Stage"
       Yast.import "Wizard"
@@ -52,7 +51,7 @@ module Yast
       WFM.call(@client, [])
       Wizard.CloseDialog
 
-      true 
+      true
       # EOF
     end
   end

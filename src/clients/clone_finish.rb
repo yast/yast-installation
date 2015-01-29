@@ -19,22 +19,18 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-
 module Yast
   import "Installation"
 
   class CloneFinishClient < Client
     def main
-
       textdomain "installation"
 
       func = ""
 
       # Check arguments
       args = WFM.Args
-      if args.size > 0 && args[0].is_a?(::String)
-        func = args[0]
-      end
+      func = args[0] if args.size > 0 && args[0].is_a?(::String)
 
       Builtins.y2milestone("starting clone_finish")
       Builtins.y2debug("func=%1", func)
@@ -53,16 +49,16 @@ module Yast
         WFM.call("clone_proposal", ["Write"])
 
         # copy from insts_sys to target system
-        if File.exists? "/root/autoinst.xml"
+        if File.exist? "/root/autoinst.xml"
           WFM.Execute(path(".local.bash"), "cp /root/autoinst.xml #{Installation.destdir}/root/autoinst.xml")
         end
 
         Builtins.y2milestone("clone_finish Write finished")
       else
-        raise ("unknown function: #{func}")
+        raise "unknown function: #{func}"
       end
 
-      return nil
+      nil
     end
   end
 end
