@@ -372,6 +372,11 @@ function prepare_for_vnc () {
 			log "\tXvnc-Server is ready: $xserver_pid"
 		fi
 	fi
+
+	#=============================================
+	# Use YaST theme
+	#---------------------------------------------
+	set_inst_qt_env
 }
 
 #----[ check_x11 ]----#
