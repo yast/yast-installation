@@ -358,9 +358,7 @@ function prepare_for_vnc () {
 	#=============================================
 	# Setup y2base options
 	#---------------------------------------------
-	# xxx
-	#Y2_UI_ARGS="--fullscreen --noborder --auto-fonts"
-	Y2_UI_ARGS="--noborder --auto-fonts"
+	Y2_UI_ARGS="--fullscreen --noborder --auto-fonts"
 
 	#=============================================
 	# Setup VNC server and start it
