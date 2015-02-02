@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Mon Feb  2 13:29:47 CET 2015 - schubi@suse.de
+
+- AutoYaST: If the system starts in multi-user mode plymouth will
+  be quit while installation in order to ensure that installation
+  will be finished on console 1 and the login prompt will be
+  shown.
+  (bnc#903682,889757,897956)
+- 3.1.116.2
+
+-------------------------------------------------------------------
 Thu Oct 16 10:25:37 UTC 2014 - ancor@suse.com
 
 - Fixed the "previously used repositories" step to work properly
