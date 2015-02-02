@@ -40,6 +40,22 @@ function startYaST2 () {
 . /usr/lib/YaST2/startup/common/functions.sh
 
 #=============================================
+# 1.0) Checking for text installation in
+#      Multi-User mode
+#---------------------------------------------
+# If the system starts in multi-user mode plymouth
+# will be quit while installation in order to ensure
+# that installation will be finished on console 1 and the
+# login prompt. So we have to ensure that the second
+# stage of installation has to be run in ncurses mode.
+# (bnc#903682,889757,897956)
+if [ `systemctl get-default` = "multi-user.target" ];then
+    if [ -f /etc/install.inf ];then
+	sed -i 's/Textmode: 0/Textmode: 1/g' /etc/install.inf
+    fi
+fi
+
+#=============================================
 # 1.1) turn off splash screen, be verbose
 #---------------------------------------------
 disable_splash
