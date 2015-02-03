@@ -15,7 +15,10 @@ Environment=SYSTEMCTL_OPTIONS=--ignore-dependencies TERM=linux PX_MODULE_PATH=""
 # Workaround of bug in plymouth --> using deactivate option
 # in second boot stage in order to start ncurses yast correctly
 # (bnc#886488)
-ExecStartPre=-/usr/bin/plymouth deactivate --hide-splash
+# If the system starts in multi-user mode plymouth will be quit while
+# installation in order to ensure that installation will be finished on
+# console 1 and the login prompt. (bnc#903682,889757,897956)
+ExecStartPre=/bin/sh -c 'if [ `/usr/bin/systemctl get-default` = "multi-user.target" ];then /usr/bin/plymouth quit; else /usr/bin/plymouth deactivate --hide-splash; fi'
 ExecStart=/usr/lib/YaST2/startup/YaST2.Second-Stage
 RemainAfterExit=yes
 TimeoutSec=0

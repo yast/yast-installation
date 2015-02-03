@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Tue Feb  3 11:11:49 CET 2015 - schubi@suse.de
+
+- AutoYaST: If the system starts in multi-user mode plymouth will
+  be quit while installation in order to ensure that installation
+  will be finished on console 1 and the login prompt will be
+  shown.
+  (bnc#903682,889757,897956)
+
+-------------------------------------------------------------------
 Thu Jan 29 17:10:44 UTC 2015 - jsrain@suse.cz
 
 - allow keyboard layout testing in language dialog (bsc#889549)
