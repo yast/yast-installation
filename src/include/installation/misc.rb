@@ -365,5 +365,30 @@ module Yast
 
       nil
     end
+
+    def second_stage_required?
+      return false unless Stage.initial
+
+      # the current one is 'initial'
+      if (Mode.autoinst || Mode.autoupgrade) && !AutoinstConfig.second_stage
+        run_second_stage = false
+        Builtins.y2milestone("Autoyast: second stage is disabled")
+      else
+        # after reboot/kexec it would be 'continue'
+        stage_to_check = "continue"
+
+        # for matching the control file
+        mode_to_check = Mode.mode
+
+        Builtins.y2milestone(
+          "Checking RunRequired (%1, %2)",
+          stage_to_check,
+          mode_to_check
+        )
+        run_second_stage = ProductControl.RunRequired(stage_to_check, mode_to_check)
+      end
+
+      run_second_stage
+    end
   end
 end

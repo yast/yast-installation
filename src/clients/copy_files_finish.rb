@@ -127,7 +127,11 @@ module Yast
         # --------------------------------------------------------------
         # Copy /etc/install.inf into built system so that the
         # second phase of the installation can find it.
-        Linuxrc.SaveInstallInf(Installation.destdir)
+        if second_stage_required?
+          Linuxrc.SaveInstallInf(Installation.destdir)
+        else
+          SCR.Execute(path(".target.remove"), "/etc/install.inf")
+        end
 
         # Copy control.xml so it can be read once again during continue mode
         Builtins.y2milestone("Copying YaST control file")
