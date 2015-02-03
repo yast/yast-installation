@@ -787,8 +787,19 @@ fi
 # 3.1.7) Check for remote display usage
 if [ ! -z $Display_IP ];then
 	log "\tRemote Display usage -> Medium Qt and Gtk enabled"
-	log "\tExporting DISPLAY to host: $Display_IP:0.0"
-	export DISPLAY="$Display_IP:0.0"
+        # check if a display is defined, check for ":<display>[.<screen>]" suffix
+        #
+        # Note: simple ":<display>" suffix works only for IPv4 addresses,
+        # IPv6 address requires full ":<display>.<screen>" suffix
+        # because it's not easy to check whether e.g. trailing ":1" is a screen
+        # number or a part of the IPv6 address
+        SCREEN_REGEX="(:[0-9]+\.[0-9]+$|^[^:]+:[0-9]+$)"
+        if [[ $Display_IP =~ $SCREEN_REGEX ]]; then
+          export DISPLAY="$Display_IP"
+        else
+          export DISPLAY="$Display_IP:0.0"
+        fi
+        log "\tExporting DISPLAY: $DISPLAY"
 	NEED_XSERVER=""
 	MEDIUM[0]=1
 	MEDIUM[4]=1

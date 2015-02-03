@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Feb  4 13:15:43 UTC 2015 - lslezak@suse.cz
+
+- support custom display number in "display_ip" boot option
+  (bnc#913888)
+- 2.17.112
+
+-------------------------------------------------------------------
 Wed Feb  4 10:41:27 CET 2015 - snwint@suse.de
 
 - add VNCSize boot option and use usual theme for VNC install  (bnc #913888)
