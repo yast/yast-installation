@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Feb 16 12:44:16 UTC 2015 - cwh@suse.com
+
+- Delete or copy install.inf as applicable (bnc#897066)
+- 3.1.133
+
+-------------------------------------------------------------------
 Wed Feb 11 09:03:38 UTC 2015 - lslezak@suse.cz
 
 - removed redundant initialization label (bnc#878538)
