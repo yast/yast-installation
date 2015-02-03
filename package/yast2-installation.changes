@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Feb  3 18:12:12 UTC 2015 - cwh@suse.com
+
+- Delete or copy install.inf as applicable (bnc#897066)
+- 3.1.130
+
+-------------------------------------------------------------------
 Tue Feb  3 11:11:49 CET 2015 - schubi@suse.de
 
 - AutoYaST: If the system starts in multi-user mode plymouth will
