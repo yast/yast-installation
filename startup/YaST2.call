@@ -788,12 +788,9 @@ fi
 if [ ! -z $Display_IP ];then
 	log "\tRemote Display usage -> Medium Qt and Gtk enabled"
         # check if a display is defined, check for ":<display>[.<screen>]" suffix
-        #
-        # Note: simple ":<display>" suffix works only for IPv4 addresses,
-        # IPv6 address requires full ":<display>.<screen>" suffix
-        # because it's not easy to check whether e.g. trailing ":1" is a screen
-        # number or a part of the IPv6 address
-        SCREEN_REGEX="(:[0-9]+\.[0-9]+$|^[^:]+:[0-9]+$)"
+        # Note: IPv6 address needs to be enclosed in square brackets because
+        # it uses ':' delimiter which can cause ambiguity
+        SCREEN_REGEX="(^([^:]+|\[.*\]):[0-9]+(|\.[0-9]+)$)"
         if [[ $Display_IP =~ $SCREEN_REGEX ]]; then
           export DISPLAY="$Display_IP"
         else
