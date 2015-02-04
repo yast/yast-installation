@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Feb  4 10:41:27 CET 2015 - snwint@suse.de
+
+- add VNCSize boot option and use usual theme for VNC install  (bnc #913888)
+- 2.17.111
+
+-------------------------------------------------------------------
 Wed Jan 28 15:16:59 UTC 2015 - lslezak@suse.cz
 
 - SLES control files: display the generic network settings also
