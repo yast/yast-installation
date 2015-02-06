@@ -112,42 +112,42 @@ describe "#feature_ignored?" do
     linuxrc_commandline = "trash=install ignore_features=feature1 ignored_features=feature2 ignore_features=feature3"
 
     Yast::Linuxrc.stub(:InstallInf).and_return(linuxrc_commandline)
-    expect(Yast::InstFunctions.feature_ignored?("feature2")).to be_true
+    expect(Yast::InstFunctions.feature_ignored?("feature2")).to eq(true)
   end
 
   it "should be true if feature is exactly on commandline using up/down case" do
     linuxrc_commandline = "trash=install ignore_features=fEAture1 igno-RED_features=f-eatuRE_2 ignore_features=feature3"
 
     Yast::Linuxrc.stub(:InstallInf).and_return(linuxrc_commandline)
-    expect(Yast::InstFunctions.feature_ignored?("f-e-a-t-u-r-e-2")).to be_true
+    expect(Yast::InstFunctions.feature_ignored?("f-e-a-t-u-r-e-2")).to eq(true)
   end
 
   it "should be true if feature is set on commandline with dashes and underscores" do
     linuxrc_commandline = "trash=install ignore_features=feature1 ignored_features=feature2 ignore_features=feature3"
 
     Yast::Linuxrc.stub(:InstallInf).and_return(linuxrc_commandline)
-    expect(Yast::InstFunctions.feature_ignored?("f-e-a-t-u-r-e_2")).to be_true
+    expect(Yast::InstFunctions.feature_ignored?("f-e-a-t-u-r-e_2")).to eq(true)
   end
 
   it "should be false if feature is not set on commandline" do
     linuxrc_commandline = "trash=install ignore_features=feature1 ignored_features=feature2 ignore_features=feature3"
 
     Yast::Linuxrc.stub(:InstallInf).and_return(linuxrc_commandline)
-    expect(Yast::InstFunctions.feature_ignored?("no-such-feature")).to be_false
+    expect(Yast::InstFunctions.feature_ignored?("no-such-feature")).to eq(false)
   end
 
   it "should be false if feature to check is empty" do
     linuxrc_commandline = "trash=install ignore_features=feature1 ignored_features=feature2 ignore_features=feature3"
 
     Yast::Linuxrc.stub(:InstallInf).and_return(linuxrc_commandline)
-    expect(Yast::InstFunctions.feature_ignored?("")).to be_false
+    expect(Yast::InstFunctions.feature_ignored?("")).to eq(false)
   end
 
   it "should be false if feature to check is undefined" do
     linuxrc_commandline = "trash=install ignore_features=feature1 ignored_features=feature2 ignore_features=feature3"
 
     Yast::Linuxrc.stub(:InstallInf).and_return(linuxrc_commandline)
-    expect(Yast::InstFunctions.feature_ignored?(nil)).to be_false
+    expect(Yast::InstFunctions.feature_ignored?(nil)).to eq(false)
   end
 
   it "should be true if feature is mentioned as a separate install.inf entry or in Cmdline" do
@@ -163,7 +163,7 @@ describe "#feature_ignored?" do
     stub_install_inf(install_inf)
 
     ["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8"].each do |key|
-      expect(Yast::InstFunctions.feature_ignored?(key)).to be_true, "Key #{key} is not ignored"
+      expect(Yast::InstFunctions.feature_ignored?(key)).to eq(true), "Key #{key} is not ignored"
     end
   end
 
@@ -179,6 +179,6 @@ describe "#feature_ignored?" do
     }
     stub_install_inf(install_inf)
 
-    expect(Yast::InstFunctions.feature_ignored?("f9")).to be_false
+    expect(Yast::InstFunctions.feature_ignored?("f9")).to eq(false)
   end
 end

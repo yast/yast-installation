@@ -35,8 +35,8 @@ describe Yast::ImageInstallation do
 
         [KDE4_PATTERNS, GNOME_PATTERNS, X11_PATTERNS, BASE_PATTERNS].each do |patterns|
           Yast::ImageInstallation.FreeInternalVariables()
-          expect(Yast::ImageInstallation.FindImageSet(patterns)).to be_true
-          expect(Yast::Installation.image_installation).to be_true
+          expect(Yast::ImageInstallation.FindImageSet(patterns)).to eq(true)
+          expect(Yast::Installation.image_installation).to eq(true)
           expect(Yast::ImageInstallation.selected_images["archs"]).to eq(arch)
         end
       end
@@ -47,8 +47,8 @@ describe Yast::ImageInstallation do
         Yast::Arch.stub(:arch_short).and_return(NON_MATCHING_ARCH)
         Yast::ImageInstallation.FreeInternalVariables()
 
-        expect(Yast::ImageInstallation.FindImageSet(patterns)).to be_true
-        expect(Yast::Installation.image_installation).to be_false
+        expect(Yast::ImageInstallation.FindImageSet(patterns)).to eq(true)
+        expect(Yast::Installation.image_installation).to eq(false)
         expect(Yast::ImageInstallation.selected_images).to be_empty
       end
     end
@@ -60,8 +60,8 @@ describe Yast::ImageInstallation do
         [NON_MATCHING_PATTERNS_2, NON_MATCHING_PATTERNS_2].each do |patterns|
           Yast::ImageInstallation.FreeInternalVariables()
 
-          expect(Yast::ImageInstallation.FindImageSet(patterns)).to be_true
-          expect(Yast::Installation.image_installation).to be_false
+          expect(Yast::ImageInstallation.FindImageSet(patterns)).to eq(true)
+          expect(Yast::Installation.image_installation).to eq(false)
           expect(Yast::ImageInstallation.selected_images).to be_empty
         end
       end
