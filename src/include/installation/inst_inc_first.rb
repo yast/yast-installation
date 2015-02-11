@@ -172,45 +172,15 @@ module Yast
     end
 
     def HandleSecondStageRequired
-      if Stage.initial
-        # the current one is 'initial'
-        run_second_stage = true
-        if (Mode.autoinst || Mode.autoupgrade) && !AutoinstConfig.second_stage
-          run_second_stage = false
-          Builtins.y2milestone("Autoyast: second stage is disabled")
-        else
-          # after reboot/kexec it would be 'continue'
-          stage_to_check = "continue"
-
-          # for matching the control file
-          mode_to_check = Mode.mode
-
-          # file name
-          run_yast_at_boot = Builtins.sformat(
-            "%1/%2",
-            Installation.destdir,
-            Installation.run_yast_at_boot
-          )
-
-          Builtins.y2milestone(
-            "Checking RunRequired (%1, %2)",
-            stage_to_check,
-            mode_to_check
-          )
-          run_second_stage = ProductControl.RunRequired(stage_to_check, mode_to_check)
-        end
-
-        if run_second_stage
-          Builtins.y2milestone("Running the second stage is required")
-          WFM.Write(path(".local.string"), run_yast_at_boot, "")
-          WriteSecondStageRequired(true)
-        else
-          Builtins.y2milestone("It is not required to run the second stage")
-          WFM.Execute(path(".local.remove"), run_yast_at_boot)
-          WriteSecondStageRequired(false)
-        end
+      if SecondStageRequired?
+        Builtins.y2milestone("Running the second stage is required")
+        WFM.Write(path(".local.string"), run_yast_at_boot, "")
+        WriteSecondStageRequired(true)
+      else
+        Builtins.y2milestone("It is not required to run the second stage")
+        WFM.Execute(path(".local.remove"), run_yast_at_boot)
+        WriteSecondStageRequired(false)
       end
-
       nil
     end
   end
