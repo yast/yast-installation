@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Feb 11 09:03:38 UTC 2015 - lslezak@suse.cz
+
+- removed redundant initialization label (bnc#878538)
+- 3.1.132
+
+-------------------------------------------------------------------
 Fri Feb  6 12:56:53 UTC 2015 - ancor@suse.com
 
 - The unit tests are now compatible with RSpec 3 (bnc#916364)

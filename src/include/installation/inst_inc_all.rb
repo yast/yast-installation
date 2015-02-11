@@ -47,7 +47,7 @@ module Yast
 
     def SetInitializingUI
       # dialog content - busy message
-      ui_message = _("Initializing the installation environment...")
+      ui_message = ""
       # help for the dialog - busy message
       ui_help = _("<p>Initializing the installation...</p>")
 
