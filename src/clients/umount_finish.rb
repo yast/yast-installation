@@ -103,7 +103,7 @@ module Yast
             umount_list << mountpoint[Installation.destdir.length, mountpoint.length]
           end
         end
-        umount_list = umount_list.sort()
+        umount_list = umount_list.sort
         log.info("umount_list:#{umount_list}")
 
         # symlink points to /proc, keep it (bnc#665437)
