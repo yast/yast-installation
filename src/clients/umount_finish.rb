@@ -30,7 +30,6 @@
 
 module Yast
   class UmountFinishClient < Client
-
     include Yast::Logger
 
     def main
