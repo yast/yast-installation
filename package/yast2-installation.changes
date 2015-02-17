@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Feb 17 14:24:19 CET 2015 - aschnell@suse.de
+
+- get list of mounts from /proc/mounts in umount_finish (for
+  fate#318392)
+- 3.1.133
+
+-------------------------------------------------------------------
 Wed Feb 11 09:03:38 UTC 2015 - lslezak@suse.cz
 
 - removed redundant initialization label (bnc#878538)
