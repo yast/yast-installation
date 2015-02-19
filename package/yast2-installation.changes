@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Feb 17 14:24:19 CET 2015 - aschnell@suse.de
+
+- get list of mounts from /proc/mounts in umount_finish (for
+  fate#318392)
+- 3.1.134
+
+-------------------------------------------------------------------
 Mon Feb 16 12:44:16 UTC 2015 - cwh@suse.com
 
 - Delete or copy install.inf as applicable (bnc#897066)

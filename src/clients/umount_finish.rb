@@ -20,18 +20,18 @@
 # ------------------------------------------------------------------------------
 
 # File:
-#  umount_finish.ycp
+#  umount_finish.rb
 #
 # Module:
 #  Step of base installation finish
 #
 # Authors:
 #  Jiri Srain <jsrain@suse.cz>
-#
-# $Id$
-#
+
 module Yast
   class UmountFinishClient < Client
+    include Yast::Logger
+
     def main
       Yast.import "Pkg"
 
@@ -82,13 +82,6 @@ module Yast
         Pkg.SourceSaveAll
         Pkg.TargetFinish
 
-        # loop over all filesystems
-        @mountPoints = Convert.convert(
-          Storage.GetMountPoints,
-          from: "map",
-          to:   "map <string, list>"
-        )
-        Builtins.y2milestone("Known mount points: %1", @mountPoints)
         Builtins.y2milestone(
           "/proc/mounts:\n%1",
           WFM.Read(path(".local.string"), "/proc/mounts")
@@ -98,16 +91,19 @@ module Yast
           WFM.Read(path(".local.string"), "/proc/partitions")
         )
 
-        @umountList = []
+        # get mounts at and in the target from /proc/mounts - do not use
+        # Storage here since Storage does not know whether other processes,
+        # e.g. snapper, mounted filesystems in the target
 
-        # go through mountPoints collecting paths in umountList
-        # *** umountList is lexically ordered !
-
-        Builtins.foreach(@mountPoints) do |mountpoint, _mountval|
-          if mountpoint != "swap"
-            @umountList = Builtins.add(@umountList, mountpoint)
+        umount_list = []
+        SCR.Read(path(".proc.mounts")).each do |entry|
+          mountpoint = entry["file"]
+          if mountpoint.start_with?(Installation.destdir)
+            umount_list << mountpoint[Installation.destdir.length, mountpoint.length]
           end
         end
+        umount_list.sort!
+        log.info("umount_list:#{umount_list}")
 
         # symlink points to /proc, keep it (bnc#665437)
         if !FileUtils.IsLink("/etc/mtab")
@@ -187,33 +183,33 @@ module Yast
         # first umount all file based crypto fs since they potentially
         # could mess up umounting of normale filesystems if the crypt
         # file is not on the root fs
-        Builtins.y2milestone("umount list %1", @umountList)
+        Builtins.y2milestone("umount list %1", umount_list)
         Builtins.foreach(
           Ops.get_list(@targetMap, ["/dev/loop", "partitions"], [])
         ) do |e|
           if Ops.greater_than(Builtins.size(Ops.get_string(e, "mount", "")), 0)
             Storage.Umount(Ops.get_string(e, "device", ""), true)
-            @umountList = Builtins.filter(@umountList) do |m|
+            umount_list = Builtins.filter(umount_list) do |m|
               m != Ops.get_string(e, "mount", "")
             end
             Builtins.y2milestone(
               "loop umount %1 new list %2",
               Ops.get_string(e, "mount", ""),
-              @umountList
+              umount_list
             )
           end
         end
 
-        # *** umountList is lexically ordered !
+        # *** umount_list is lexically ordered !
         # now umount in reverse order (guarantees "/" as last umount)
 
-        @umountLength = Builtins.size(@umountList)
+        @umountLength = Builtins.size(umount_list)
 
         while Ops.greater_than(@umountLength, 0)
           @umountLength = Ops.subtract(@umountLength, 1)
           @tmp = Ops.add(
             Installation.destdir,
-            Ops.get(@umountList, @umountLength, "")
+            Ops.get(umount_list, @umountLength, "")
           )
 
           Builtins.y2milestone(
