@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Mar 16 14:12:09 UTC 2015 - mvidner@suse.com
+
+- Use a consistent look for openqa tests even via SSH (bsc#920635)
+  - Enable the installation theme.
+  - Let Y2FULLSCREEN=1 enable the full screen mode.
+- 2.17.113
+
+-------------------------------------------------------------------
 Wed Feb  4 13:15:43 UTC 2015 - lslezak@suse.cz
 
 - support custom display number in "display_ip" boot option
