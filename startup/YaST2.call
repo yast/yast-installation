@@ -341,6 +341,11 @@ function prepare_for_ssh () {
 # prepare SSH installation
 # ---
 #
+        # bsc#920635 consistent look for openqa tests even via ssh
+        if [ "$Y2FULLSCREEN" = 1 ]; then
+                log "\tFull screen mode requested"
+                Y2_UI_ARGS="--fullscreen --noborder --auto-fonts"
+        fi
         set_inst_qt_env
 }
 
