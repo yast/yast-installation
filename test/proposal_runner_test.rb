@@ -11,6 +11,13 @@ describe ::Installation::ProposalRunner do
     stub_const("Yast::AutoinstConfig", autoinst_config)
   end
 
+  describe ".new" do
+    it "Allows passing different store implementation" do
+      class C < ::Installation::ProposalStore; end
+      expect { ::Installation::ProposalRunner.new(C) }.to_not raise_error
+    end
+  end
+
   describe "#run" do
     it "do nothing if run non-interactive" do
       Yast.import "Mode"
@@ -28,7 +35,7 @@ describe ::Installation::ProposalRunner do
       expect(subject.run).to eq :auto
     end
 
-    it "passes a moske test" do
+    it "passes a smoke test" do
       expect { subject.run }.to_not raise_error
     end
   end

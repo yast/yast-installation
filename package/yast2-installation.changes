@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Mar 27 13:14:22 UTC 2015 - jreidinger@suse.com
+
+- allow proposal runner dialog to use different proposal store
+- 3.1.135
+
+-------------------------------------------------------------------
 Tue Feb 17 14:24:19 CET 2015 - aschnell@suse.de
 
 - get list of mounts from /proc/mounts in umount_finish (for

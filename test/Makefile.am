@@ -1,5 +1,7 @@
 TESTS = \
   inst_functions_test.rb \
+  installation_misc_test.rb \
+  image_installation_test.rb \
   cio_ignore_test.rb \
   copy_logs_finish_test.rb \
   prep_shrink_test.rb \
