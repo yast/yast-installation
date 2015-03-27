@@ -9,7 +9,9 @@ class InstallationMiscIncludeTest
 end
 
 # fake AutoinstConfig to avoid dependency on autoyast
-class Yast::AutoinstConfig
+module Yast
+  class AutoinstConfig
+  end
 end
 
 # we need to mock these modules
