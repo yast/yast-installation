@@ -38,7 +38,7 @@ module Installation
       new.run
     end
 
-    def initialize
+    def initialize(store = ::Installation::ProposalStore)
       Yast.import "Pkg"
       Yast.import "UI"
       textdomain "installation"
@@ -63,6 +63,7 @@ module Installation
 
       # BNC #463567
       @submods_already_called = []
+      @store_class = store
     end
 
     def run
@@ -78,7 +79,7 @@ module Installation
         return :auto
       end
 
-      @store = ProposalStore.new(@proposal_mode)
+      @store = @store_class.new(@proposal_mode)
 
       build_dialog
 
