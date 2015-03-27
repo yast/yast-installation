@@ -26,12 +26,12 @@ ARCHS = ["i386", "x86_64", "ppc"]
 describe Yast::ImageInstallation do
   describe "#FindImageSet" do
     before(:each) do
-      Yast::Pkg.stub(:SourceProvideDigestedFile).and_return(IMAGES_DESCR_FILE)
+      allow(Yast::Pkg).to receive(:SourceProvideDigestedFile).and_return(IMAGES_DESCR_FILE)
     end
 
     it "finds images matching architecture and selected patterns and returns if processing was successful" do
       ARCHS.each do |arch|
-        Yast::Arch.stub(:arch_short).and_return(arch)
+        allow(Yast::Arch).to receive(:arch_short).and_return(arch)
 
         [KDE4_PATTERNS, GNOME_PATTERNS, X11_PATTERNS, BASE_PATTERNS].each do |patterns|
           Yast::ImageInstallation.FreeInternalVariables()
@@ -44,7 +44,7 @@ describe Yast::ImageInstallation do
 
     it "does not find any image using unsupported architecture and returns if processing was successful" do
       [KDE4_PATTERNS, GNOME_PATTERNS, X11_PATTERNS, BASE_PATTERNS].each do |patterns|
-        Yast::Arch.stub(:arch_short).and_return(NON_MATCHING_ARCH)
+        allow(Yast::Arch).to receive(:arch_short).and_return(NON_MATCHING_ARCH)
         Yast::ImageInstallation.FreeInternalVariables()
 
         expect(Yast::ImageInstallation.FindImageSet(patterns)).to eq(true)
@@ -55,7 +55,7 @@ describe Yast::ImageInstallation do
 
     it "does not find any image using unsupported patterns and returns if processing was successful" do
       ARCHS.each do |arch|
-        Yast::Arch.stub(:arch_short).and_return(arch)
+        allow(Yast::Arch).to receive(:arch_short).and_return(arch)
 
         [NON_MATCHING_PATTERNS_2, NON_MATCHING_PATTERNS_2].each do |patterns|
           Yast::ImageInstallation.FreeInternalVariables()
