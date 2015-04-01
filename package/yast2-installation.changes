@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Apr  1 11:39:32 UTC 2015 - jreidinger@suse.com
+
+- fix dependencies to not force different proposal store to not
+  import it
+- 3.1.136
+
+-------------------------------------------------------------------
 Fri Mar 27 13:14:22 UTC 2015 - jreidinger@suse.com
 
 - allow proposal runner dialog to use different proposal store
