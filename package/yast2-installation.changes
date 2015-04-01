@@ -1,8 +1,7 @@
 -------------------------------------------------------------------
 Wed Apr  1 11:39:32 UTC 2015 - jreidinger@suse.com
 
-- fix dependencies to not force different proposal store to not
-  import it
+- fix dependencies in proposal_store
 - 3.1.136
 
 -------------------------------------------------------------------
