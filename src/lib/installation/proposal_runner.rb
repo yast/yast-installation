@@ -52,6 +52,7 @@ module Installation
       Yast.import "Popup"
       Yast.import "Language"
       Yast.import "GetInstArgs"
+      Yast.import "ProductControl"
 
       # values used in defined functions
 
