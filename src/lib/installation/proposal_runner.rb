@@ -53,6 +53,7 @@ module Installation
       Yast.import "Language"
       Yast.import "GetInstArgs"
       Yast.import "ProductControl"
+      Yast.import "HTML"
 
       # values used in defined functions
 
@@ -111,6 +112,58 @@ module Installation
     end
 
   private
+
+    # Shows dialog to user to confirm update and return user response.
+    # Returns 'true' if the user confirms, 'false' otherwise.
+    #
+    def confirm_update
+      # Heading for confirmation popup before the update really starts
+      heading = Yast::HTML.Heading(_("Confirm Update"))
+
+      body =
+        # Text for confirmation popup before the update really starts 1/3
+        _("<p>Information required to perform an update is now complete.</p>") +
+          # Text for confirmation popup before the update really starts 2/3
+          _(
+            "\n" \
+            "<p>If you continue now, data on your hard disk will be overwritten\n" \
+            "according to the settings in the previous dialogs.</p>"
+          ) +
+          # Text for confirmation popup before the update really starts 3/3
+          _("<p>Go back and check the settings if you are unsure.</p>")
+
+      # Label for the button that confirms startint the installation
+      confirm_button_label = _("Start &Update")
+
+      size_x = 70
+      size_y = 18
+
+      Yast::UI.OpenDialog(
+        VBox(
+          VSpacing(0.4),
+          HSpacing(size_x), # force width
+          HBox(
+            HSpacing(0.7),
+            VSpacing(size_y), # force height
+            RichText(heading + body),
+            HSpacing(0.7)
+          ),
+          ButtonBox(
+            PushButton(
+              Id(:cancel),
+              Opt(:cancelButton, :key_F10, :default),
+              Yast::Label.BackButton
+            ),
+            PushButton(Id(:ok), Opt(:okButton, :key_F9), confirm_button_label)
+          )
+        )
+      )
+
+      button = Yast::UI.UserInput
+      Yast::UI.CloseDialog
+
+      button == :ok
+    end
 
     def input_loop
       loop do
@@ -240,7 +293,7 @@ module Installation
         input = Yast::WFM.CallFunction("inst_doit", [])
       # bugzilla #219097, #221571, yast2-update on running system
       elsif Yast::Stage.stage == "normal" && Yast::Mode.update
-        if !confirmInstallation
+        if !confirm_update
           log.info "Update not confirmed, returning back..."
           input = nil
         end
