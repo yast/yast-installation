@@ -357,12 +357,12 @@ module Yast
 
       # Copy the current state of random number generator to the installed system
       if LocalCommand(
-          Builtins.sformat(
-            "dd if='%1' bs=%2 count=1 of='%3'",
-            String.Quote(random_path),
-            read_poolsize,
-            String.Quote(store_to)
-          )
+        Builtins.sformat(
+          "dd if='%1' bs=%2 count=1 of='%3'",
+          String.Quote(random_path),
+          read_poolsize,
+          String.Quote(store_to)
+        )
         )
         Builtins.y2milestone(
           "State of %1 has been successfully copied to %2",

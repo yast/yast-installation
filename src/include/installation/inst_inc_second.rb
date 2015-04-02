@@ -584,11 +584,11 @@ module Yast
       if !Mode.autoupgrade
         # Detect mode early to be able to setup steps correctly
         if FileUtils.Exists(
-            Ops.add(Installation.destdir, Installation.file_update_mode)
+          Ops.add(Installation.destdir, Installation.file_update_mode)
           )
           Mode.SetMode("update")
         elsif FileUtils.Exists(
-            Ops.add(Installation.destdir, Installation.file_live_install_mode)
+          Ops.add(Installation.destdir, Installation.file_live_install_mode)
           )
           Mode.SetMode("live_installation")
         end

@@ -1304,7 +1304,7 @@ module Yast
       elsif Ops.is_string?(Ops.get_string(repo, @REPO_ENABLED, "0"))
         enabled = Ops.get_string(repo, @REPO_ENABLED, "0") == "1"
       elsif Ops.is_boolean?(
-          Ops.get_boolean(repo, @REPO_ENABLED, false)
+        Ops.get_boolean(repo, @REPO_ENABLED, false)
         )
         enabled = Ops.get_boolean(repo, @REPO_ENABLED, false)
       end
@@ -1317,7 +1317,7 @@ module Yast
       elsif Ops.is_string?(Ops.get_string(repo, "autorefresh", "0"))
         autorefresh = Ops.get_string(repo, "autorefresh", "0") == "1"
       elsif Ops.is_boolean?(
-          Ops.get_boolean(repo, "autorefresh", false)
+        Ops.get_boolean(repo, "autorefresh", false)
         )
         autorefresh = Ops.get_boolean(repo, "autorefresh", false)
       end
@@ -1328,7 +1328,7 @@ module Yast
       elsif Ops.is_string?(Ops.get_string(repo, "keeppackages", "0"))
         keeppackages = Ops.get_string(repo, "keeppackages", "0") == "1"
       elsif Ops.is_boolean?(
-          Ops.get_boolean(repo, "keeppackages", false)
+        Ops.get_boolean(repo, "keeppackages", false)
         )
         keeppackages = Ops.get_boolean(repo, "keeppackages", false)
       end

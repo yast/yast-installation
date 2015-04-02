@@ -1458,7 +1458,7 @@ module Yast
           "Cannot solve dependencies automatically, opening Packages UI"
         )
         diaret = PackagesUI.RunPackageSelector(
-           "enable_repo_mgr" => false, "mode" => :summaryMode
+          "enable_repo_mgr" => false, "mode" => :summaryMode
         )
         Builtins.y2milestone("RunPackageSelector returned %1", diaret)
 

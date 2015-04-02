@@ -61,13 +61,13 @@ module Installation
                # TRANSLATORS: Installation overview
                # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
                (_(
-                   "Blacklist devices enabled (<a href=\"%s\">disable</a>)."
+                 "Blacklist devices enabled (<a href=\"%s\">disable</a>)."
                  ) % CIO_DISABLE_LINK)
              else
                # TRANSLATORS: Installation overview
                # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
                (_(
-                   "Blacklist devices disabled (<a href=\"%s\">enable</a>)."
+                 "Blacklist devices disabled (<a href=\"%s\">enable</a>)."
                  ) % CIO_ENABLE_LINK)
              end
 
