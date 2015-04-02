@@ -293,10 +293,8 @@ module Installation
         input = Yast::WFM.CallFunction("inst_doit", [])
       # bugzilla #219097, #221571, yast2-update on running system
       elsif Yast::Stage.stage == "normal" && Yast::Mode.update
-        if !confirm_update
-          log.info "Update not confirmed, returning back..."
-          input = nil
-        end
+        input = confirm_update ? :next : nil
+        log.info "Update not confirmed, returning back..." unless input
       end
 
       input
