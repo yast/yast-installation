@@ -123,14 +123,14 @@ module Installation
       body =
         # Text for confirmation popup before the update really starts 1/3
         _("<p>Information required to perform an update is now complete.</p>") +
-        # Text for confirmation popup before the update really starts 2/3
-        _(
-          "\n" \
-          "<p>If you continue now, data on your hard disk will be overwritten\n" \
-          "according to the settings in the previous dialogs.</p>"
-        ) +
-         # Text for confirmation popup before the update really starts 3/3
-        _("<p>Go back and check the settings if you are unsure.</p>")
+          # Text for confirmation popup before the update really starts 2/3
+          _(
+            "\n" \
+            "<p>If you continue now, data on your hard disk will be overwritten\n" \
+            "according to the settings in the previous dialogs.</p>"
+          ) +
+          # Text for confirmation popup before the update really starts 3/3
+          _("<p>Go back and check the settings if you are unsure.</p>")
 
       # Label for the button that confirms startint the installation
       confirm_button_label = _("Start &Update")
