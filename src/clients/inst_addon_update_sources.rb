@@ -105,15 +105,15 @@ module Yast
               # popup error message
               # %1 represents the the error message details
               if Popup.YesNo(
-                  Builtins.sformat(
-                    _(
-                      "An error occurred while connecting to the server.\n" \
-                        "Details: %1\n" \
-                        "\n" \
-                        "Try again?"
-                    ),
-                    Pkg.LastError
-                  )
+                Builtins.sformat(
+                  _(
+                    "An error occurred while connecting to the server.\n" \
+                      "Details: %1\n" \
+                      "\n" \
+                      "Try again?"
+                  ),
+                  Pkg.LastError
+                )
                 )
                 # try again
                 url = editUrl(url)

@@ -59,9 +59,9 @@ module Yast
       if Mode.autoupgrade
         Report.Import(
 
-            "messages" => { "timeout" => 10 },
-            "errors"   => { "timeout" => 10 },
-            "warnings" => { "timeout" => 10 }
+          "messages" => { "timeout" => 10 },
+          "errors"   => { "timeout" => 10 },
+          "warnings" => { "timeout" => 10 }
 
         )
       end

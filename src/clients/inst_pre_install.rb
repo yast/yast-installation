@@ -155,11 +155,11 @@ module Yast
         end
         # mounting read-only
         if !Convert.to_boolean(
-            SCR.Execute(
-              path(".target.mount"),
-              [partition_device, mnt_tmpdir],
-              "-o ro,noatime"
-            )
+          SCR.Execute(
+            path(".target.mount"),
+            [partition_device, mnt_tmpdir],
+            "-o ro,noatime"
+          )
           )
           Builtins.y2error("Mounting falied!")
           next
