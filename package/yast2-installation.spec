@@ -171,7 +171,10 @@ install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 
 # bsc#924278 Always enable these services by default, they are already listed
 # in systemd-presets-branding package, but that works for new installations
-# only, it does not work for upgrades
+# only, it does not work for upgrades from SLE 11 where scripts had different
+# name and were not handled by systemd.
+# When we upgrade/update from systemd-based system, scripts are always enabled
+# by the %service_add_post macro.
 systemctl enable YaST2-Second-Stage.service
 systemctl enable YaST2-Firstboot.service
 
