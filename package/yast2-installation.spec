@@ -169,6 +169,12 @@ install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 
 %service_add_post YaST2-Second-Stage.service YaST2-Firstboot.service
 
+# bsc#924278 Always enable these services by default, they are already listed
+# in systemd-presets-branding package, but that works for new installations
+# only, it does not work for upgrades
+systemctl enable YaST2-Second-Stage.service
+systemctl enable YaST2-Firstboot.service
+
 %pre
 %service_add_pre YaST2-Second-Stage.service YaST2-Firstboot.service
 
