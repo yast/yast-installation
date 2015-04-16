@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Apr 16 13:02:23 CEST 2015 - locilka@suse.com
+
+- Always enable systemd startup services for Second Stage and
+  Firstboot (bsc#924278)
+- 3.1.139
+
+-------------------------------------------------------------------
 Thu Apr  2 09:27:55 UTC 2015 - jreidinger@suse.com
 
 - avoid endless loop when confirm update in proposal runner
