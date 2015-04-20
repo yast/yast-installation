@@ -238,7 +238,7 @@ module Installation
       load_matching_submodules_list
       @proposal = ""
       @submodules_presentation.each do |mod|
-        @proposal << @html[mod] || ""
+        @proposal << (@html[mod] || "")
       end
       display_proposal(@proposal)
       submod_descriptions_and_build_menu
@@ -348,7 +348,7 @@ module Installation
         end
 
         if mode_changed
-          Yast::Wizard.SetHelpText(@store.help_text)
+          Yast::Wizard.SetHelpText(@store.help_text(@current_tab))
 
           build_dialog
           load_matching_submodules_list
@@ -440,7 +440,7 @@ module Installation
           presentation_modules = @store.presentation_order
           presentation_modules = presentation_modules[@current_tab] if @store.tabs?
           proposal = presentation_modules.reduce("") do |res, mod|
-            res << @html[mod]
+            res << (@html[mod] || "")
           end
           display_proposal(proposal)
         end
@@ -453,7 +453,7 @@ module Installation
       )
 
       # FATE #301151: Allow YaST proposals to have help texts
-      Yast::Wizard.SetHelpText(@store.help_text)
+      Yast::Wizard.SetHelpText(@store.help_text(@current_tab))
 
       if @store.tabs? && Yast::Ops.less_than(tab_to_switch, 999) && !current_tab_affected
         switch_to_tab(tab_to_switch)
@@ -685,17 +685,19 @@ module Installation
       if @store.tabs?
         tab_labels = @store.tab_labels
         if Yast::UI.HasSpecialWidget(:DumbTab)
-          panes = tab_labels.map do |label|
-            Item(Id(t), label, label == tab_labels.first)
+          panes = tab_labels.map.with_index(0) do |label, id|
+            Item(Id(id), label, label == tab_labels.first)
           end
           rt = DumbTab(Id(:_cwm_tab), panes, rt)
         else
-          tabbar = tab_labels.each_with_object(HBox()) do |label, box|
-            box.params << PushButton(Id(t), label)
+          box = HBox()
+          tabbar = tab_labels.map.with_index(0) do |label, id|
+            box.params << PushButton(Id(id), label)
           end
           rt = VBox(Left(tabbar), Frame("", rt))
         end
       end
+
       if !enable_skip
         vbox = VBox(
           # Help message between headline and installation proposal / settings summary.
@@ -723,7 +725,7 @@ module Installation
       Yast::Wizard.SetContents(
         headline, # have_next_button
         vbox,
-        @store.help_text,
+        @store.help_text(@current_tab),
         Yast::GetInstArgs.enable_back, # have_back_button
         false
       )

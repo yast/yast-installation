@@ -67,7 +67,7 @@ module Installation
 
     # @return [String] Richtext, the complete help text: a common intro + all
     #   individual parts.
-    def help_text(current_tab: nil)
+    def help_text(current_tab = nil)
       # General part of the help text for all types of proposals
       how_to_change = _(
         "<p>\n" \
@@ -348,13 +348,16 @@ module Installation
 
     def modules_help(current_tab)
       modules_order = presentation_order
-      modules_order = modules_order[current_tab] if tabs?
+      if tabs? && current_tab
+        modules_order = modules_order[current_tab]
 
-      modules_order.each_with_object("") do |client, text|
-        next unless descriptions[client]["help"]
-        next if descriptions[client]["help"].empty?
-
-        text << descriptions[client]["help"]
+        modules_order.each_with_object("") do |client, text|
+          if descriptions[client] && !descriptions[client]["help"].to_s.empty?
+            text << descriptions[client]["help"]
+          end
+        end
+      else
+        ""
       end
     end
   end
