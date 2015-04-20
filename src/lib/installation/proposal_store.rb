@@ -352,11 +352,9 @@ module Installation
         modules_order = modules_order[current_tab]
 
         modules_order.each_with_object("") do |client, text|
-          next unless descriptions[client]
-          next unless descriptions[client]["help"]
-          next if descriptions[client]["help"].empty?
-
-          text << descriptions[client]["help"]
+          if descriptions[client] && !descriptions[client]["help"].to_s.empty?
+            text << descriptions[client]["help"]
+          end
         end
       else
         ""
