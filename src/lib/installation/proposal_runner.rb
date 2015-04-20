@@ -685,7 +685,7 @@ module Installation
       if @store.tabs?
         tab_labels = @store.tab_labels
         if Yast::UI.HasSpecialWidget(:DumbTab)
-          panes = tab_labels.map.with_index(0) do |label,id|
+          panes = tab_labels.map.with_index(0) do |label, id|
             Item(Id(id), label, label == tab_labels.first)
           end
           rt = DumbTab(Id(:_cwm_tab), panes, rt)
