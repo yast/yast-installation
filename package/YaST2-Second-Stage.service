@@ -18,7 +18,7 @@ Environment=SYSTEMCTL_OPTIONS=--ignore-dependencies TERM=linux PX_MODULE_PATH=""
 # If the system starts in multi-user mode plymouth will be quit while
 # installation in order to ensure that installation will be finished on
 # console 1 and the login prompt. (bnc#903682,889757,897956)
-ExecStartPre=/bin/sh -c 'if [ `/usr/bin/systemctl get-default` = "multi-user.target" ];then /usr/bin/plymouth quit; else /usr/bin/plymouth deactivate --hide-splash; fi'
+ExecStartPre=/bin/sh -c 'if [ -x /usr/bin/plymouth ] ; then if [ `/usr/bin/systemctl get-default` = "multi-user.target" ];then /usr/bin/plymouth quit; else /usr/bin/plymouth deactivate --hide-splash; fi; fi'
 ExecStart=/usr/lib/YaST2/startup/YaST2.Second-Stage
 RemainAfterExit=yes
 TimeoutSec=0
