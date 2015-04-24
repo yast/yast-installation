@@ -1,6 +1,8 @@
 [Unit]
 Description=YaST2 Second Stage
-After=apparmor.service local-fs.target plymouth-start.service
+# If xinetd is enabled, make sure it's already running so we can stop it during
+# initialization of the VNC server
+After=apparmor.service local-fs.target plymouth-start.service xinetd.service
 Before=getty@tty1.service display-manager.service network.service NetworkManager.service SuSEfirewall2_init.service SuSEfirewall2.service
 ConditionPathExists=/var/lib/YaST2/runme_at_boot
 

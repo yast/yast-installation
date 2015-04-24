@@ -158,8 +158,10 @@ function prepare_for_vnc () {
 	setupVNCAuthentication
 	if [ $VNCPASS_EXCEPTION = 0 ];then
 		disable_splash
+		disable_xinetd
 		startVNCServer
 		wait_for_x11
+		restore_xinetd
 		if [ "$server_running" = 1 ];then
 			log "\tXvnc-Server is ready: $xserver_pid"
 		fi
