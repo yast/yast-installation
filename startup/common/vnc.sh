@@ -77,6 +77,7 @@ startVNCServer () {
 		-desktop "Installation" \
 		-geometry "$VNCSize" \
 		-depth 16 \
+                -dpi 96 \
 		-rfbwait 120000 \
 		-httpd /usr/share/vnc/classes \
 		-rfbport 5901 \
