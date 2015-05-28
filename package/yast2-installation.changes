@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu May 28 12:41:49 UTC 2015 - igonzalezsosa@suse.com
+
+- add a client to create a snapshot after installation/upgrade
+  (fate #317973)
+- 3.1.143
+
+-------------------------------------------------------------------
 Wed May 20 19:29:48 UTC 2015 - lslezak@suse.cz
 
 - set Xvnc server resolution to 96 dpi to fix broken layout in VNC
