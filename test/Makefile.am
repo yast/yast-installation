@@ -7,7 +7,8 @@ TESTS = \
   prep_shrink_test.rb \
   proposal_store_test.rb \
   proposal_runner_test.rb \
-  remote_finish_test.rb
+  remote_finish_test.rb \
+  snapshots_finish_test.rb
 
 TEST_EXTENSIONS = .rb
 RB_LOG_COMPILER = rspec
