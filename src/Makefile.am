@@ -112,7 +112,8 @@ ylib_DATA = \
   lib/installation/prep_shrink.rb \
   lib/installation/proposal_runner.rb \
   lib/installation/proposal_store.rb \
-  lib/installation/remote_finish_client.rb
+  lib/installation/remote_finish_client.rb \
+  lib/installation/snapshots_finish.rb
 
 
 EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylib_DATA)

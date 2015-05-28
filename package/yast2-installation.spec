@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.142
+Version:        3.1.143
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -38,7 +38,7 @@ BuildRequires:  yast2-devtools >= 3.1.10
 BuildRequires:  rubygem(rspec)
 
 # Base clients for inst clients
-BuildRequires: yast2 >= 3.1.112
+BuildRequires: yast2 >= 3.1.126
 
 # Yast::Remote
 BuildRequires: yast2-network
@@ -47,7 +47,7 @@ BuildRequires: yast2-network
 Requires:       autoyast2-installation >= 3.1.5
 
 # Wizard.OpenLeftTitleNextBackDialog
-Requires:	yast2 >= 3.1.43
+Requires:	yast2 >= 3.1.126
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)

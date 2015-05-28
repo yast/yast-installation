@@ -245,6 +245,7 @@ module Yast
             # copy logs just before 'umount'
             # keeps maximum logs available after reboot
             "copy_logs",
+            "snapshots",
             "umount"
           ],
           # bnc #438154
