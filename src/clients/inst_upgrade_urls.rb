@@ -71,7 +71,7 @@ module Yast
           return @ret
         end
         if !Mode.update
-          Builtins.y2milestone("Not an udpate mode")
+          Builtins.y2milestone("Not an update mode")
           return @ret
         end
       end
@@ -765,6 +765,10 @@ module Yast
 
         @repo_files_to_remove.each do |repo|
           log.info "Removing repository: #{repo}"
+          if !repo["alias"]
+            log.warn "Repo alias is nil -> not removing it"
+            next
+          end
           repo_alias_regexp = /^\s*\[#{Regexp.escape(repo["alias"])}\]\s*$/
 
           path = File.join(Installation.destdir, "etc/zypp/repos.d", "#{repo["alias"]}.repo")
