@@ -65,6 +65,7 @@ client_DATA = \
   clients/remote_finish.rb \
   clients/save_config_finish.rb \
   clients/save_hw_status_finish.rb \
+  clients/snapshots_finish.rb \
   clients/ssh_settings_finish.rb \
   clients/stroj-casu.rb \
   clients/switch_scr_finish.rb \
