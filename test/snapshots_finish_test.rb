@@ -44,8 +44,8 @@ describe ::Installation::SnapshotsFinish do
           end
 
           it "creates a snapshot of type 'post' with 'after upgrade' as description and paired with 'pre' snapshot" do
-            expect(Yast2::FsSnapshotStore).to receive(:load).and_return(1)
-            expect(Yast2::FsSnapshotStore).to receive(:clean)
+            expect(Yast2::FsSnapshotStore).to receive(:load).with("upgrade").and_return(1)
+            expect(Yast2::FsSnapshotStore).to receive(:clean).with("upgrade")
             expect(Yast2::FsSnapshot).to receive(:create_post).with("after upgrade", 1).and_return(true)
             expect(subject.write).to eq(true)
           end

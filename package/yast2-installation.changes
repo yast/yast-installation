@@ -1,8 +1,15 @@
 -------------------------------------------------------------------
+Tue Jun  2 08:41:03 UTC 2015 - jreidinger@suse.com
+
+- fix crash in Upgrade when creating post upgrade snapshot
+  (fate#317973)
+- 3.1.144
+
+-------------------------------------------------------------------
 Thu May 28 12:41:49 UTC 2015 - igonzalezsosa@suse.com
 
 - add a client to create a snapshot after installation/upgrade
-  (fate #317973)
+  (fate#317973)
 - 3.1.143
 
 -------------------------------------------------------------------

@@ -45,7 +45,7 @@ module Installation
     def create_post_snapshot
       pre_number = Yast2::FsSnapshotStore.load("upgrade")
       Yast2::FsSnapshot.create_post("after upgrade", pre_number)
-      Yast2::FsSnapshotStore.clean
+      Yast2::FsSnapshotStore.clean("upgrade")
       true
     end
 
