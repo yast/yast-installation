@@ -131,8 +131,13 @@ module Installation
 
       @proposal_names.map!(&:first) # first element is name of client
 
-      # FIXME: add filter to only installed clients
-      @proposal_names
+      missing_proposals = @proposal_names.reject { |proposal| Yast::WFM::ClientExists(proposal) }
+      unless missing_proposals.empty?
+        log.warn "These proposals are missing on system: #{missing_proposals}"
+      end
+
+      # Filter missing proposals out
+      @proposal_names -= missing_proposals
     end
 
     # returns single list of modules presentation order or list of tabs with list of modules
@@ -146,72 +151,70 @@ module Installation
     # @param callback Called after each client/part, to report progress. Gets
     #   part name and part result as arguments
     def make_proposals(force_reset: false, language_changed: false, callback: Proc.new)
-      @link2submod = {}
+      proposal_names.each do |client|
+        description_map = make_proposal(client, force_reset: force_reset,
+          language_changed: language_changed, callback: callback)
 
-      proposal_names.each do |submod|
-        proposal_map = make_proposal(submod, force_reset:      force_reset,
-                                             language_changed: language_changed)
-
-        callback.call(submod, proposal_map)
-
-        # update link map
-        (proposal_map["links"] || []).each do |link|
-          @link2submod[link] = submod
-        end
-
-        if proposal_map["language_changed"]
-          @descriptions = nil # invalid descriptions cache
+        if description_map["language_changed"]
+          # Invalidate all of them at once
+          invalidate_description
           return make_proposals(force_reset: force_reset, language_changed: true)
         end
 
-        break if proposal_map["warning_level"] == :fatal
+        break if description_map["warning_level"] == :fatal
       end
     end
 
-    # Calls all clients/parts to retrieve the description
-    # @return [Hash{String => Hash}] map client/part names to hashes with keys
-    # "id", "menu_title" "rich_text_title" http://www.rubydoc.info/github/yast/yast-yast2/Installation/ProposalClient:description
+    # Calls a given client/part to retrieve their description
+    # @return [Hash] with keys "id", "menu_title" "rich_text_title"
+    # @see http://www.rubydoc.info/github/yast/yast-yast2/Installation/ProposalClient:description
+    def description_for(client)
+      @descriptions ||= {}
+      return @descriptions[client] if @descriptions.has_key?(client)
+
+      description = Yast::WFM.CallFunction(client, ["Description", {}])
+
+      if !description.has_key?("id")
+        log.warn "proposal client #{client} is missing key 'id' in #{description}"
+        @missing_no ||= 1
+        description["id"] = "module_#{@missing_no}"
+        @missing_no += 1
+      end
+
+      @descriptions[client] = description
+    end
+
+    # Returns all currently cached client descriptions
+    #
+    # @return [Hash] with descriptions
     def descriptions
-      return @descriptions if @descriptions
-
-      missing_no = 1
-      @id_mapping = {}
-      @descriptions = proposal_names.each_with_object({}) do |client, res|
-        description = Yast::WFM.CallFunction(client, ["Description", {}])
-        if !description["id"]
-          log.warn "proposal client #{client} missing key 'id' in #{description}"
-
-          description["id"] = "module_#{missing_no}"
-          missing_no += 1
-        end
-
-        @id_mapping[description["id"]] = client
-
-        res[client] = description
-      end
+      @descriptions ||= {}
+      @descriptions
     end
 
+    # Returns ID for given client
+    #
     # @return [String] an id provided by the description API
     def id_for(client)
-      descriptions[client]["id"]
+      description_for(client).fetch("id", client)
     end
 
+    # Returns UI title for given client
+    #
+    # @param [String] client
+    # @return [String] a title provided by the description API
     def title_for(client)
-      descriptions[client]["rich_text_title"] ||
-        descriptions[client]["rich_text_raw_title"] ||
+      description = description_for(client)
+
+      description["rich_text_title"] ||
+        description["rich_text_raw_title"] ||
         client
     end
 
-    # Calls `ask_user`, to change a setting interactively (if link is the
+    # Calls client('AskUser'), to change a setting interactively (if link is the
     # heading for the part) or noninteractively (if it is a "shortcut")
     def handle_link(link)
-      client = @id_mapping[link]
-      client ||= @link2submod[link]
-
-      if !client
-        log.error "unknown link #{link}. Broken proposal client?"
-        return nil
-      end
+      client = client_for_link(link)
 
       data = {
         "has_next"  => false,
@@ -221,7 +224,37 @@ module Installation
       Yast::WFM.CallFunction(client, ["AskUser", data])
     end
 
+    # Returns client name that handles the given link returned by UI,
+    # returns nil if link is unknown.
+    # Link can be either the client ID or a shortcut link.
+    #
+    # @param [String] link
+    # @return [String] client name
+    def client_for_link(link)
+      raise "There are no client descriptions known, call 'client(Description)' first" if @descriptions.nil?
+
+      matching_client = @descriptions.find do |client, description|
+        description.fetch("id", nil) == link ||
+          description.fetch("links", []).include?(link)
+      end
+
+      raise "Unknown user request #{link}. Broken proposal client?" if matching_client.nil?
+
+      matching_client.first
+    end
+
   private
+
+    # Invalidates proposal description coming from a given client
+    #
+    # @param [String] client or nil for all descriptions
+    def invalidate_description(client = nil)
+      if client.nil?
+        @descriptions.clear
+      else
+        @descriptions.delete(client)
+      end
+    end
 
     def properties
       @proposal_properties ||= Yast::ProductControl.getProposalProperties(
@@ -231,7 +264,7 @@ module Installation
       )
     end
 
-    def make_proposal(client, force_reset: false, language_changed: false)
+    def make_proposal(client, force_reset: false, language_changed: false, callback: Proc.new)
       proposal = Yast::WFM.CallFunction(
         client,
         [
@@ -244,6 +277,8 @@ module Installation
       )
 
       log.debug "#{client} MakeProposal() returns #{proposal}"
+
+      callback.call(client, proposal_map)
 
       proposal
     end
@@ -352,9 +387,8 @@ module Installation
         modules_order = modules_order[current_tab]
 
         modules_order.each_with_object("") do |client, text|
-          if descriptions[client] && !descriptions[client]["help"].to_s.empty?
-            text << descriptions[client]["help"]
-          end
+          description = description_for(client)
+          text << description["help"] unless !description["help"].to_s.empty?
         end
       else
         ""

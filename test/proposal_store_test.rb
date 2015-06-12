@@ -88,7 +88,13 @@ describe ::Installation::ProposalStore do
   end
 
   describe "#proposal_names" do
+    before do
+      allow(Yast::WFM).to receive(:ClientExists).and_return(true)
+    end
+
     it "returns array with string names of clients" do
+      allow(Yast::WFM).to receive(:ClientExists).with(/test3/).and_return(false)
+
       allow(Yast::ProductControl).to receive(:getProposals)
         .and_return([
           ["test1"],
@@ -98,7 +104,7 @@ describe ::Installation::ProposalStore do
 
       expect(subject.proposal_names).to include("test1")
       expect(subject.proposal_names).to include("test2")
-      expect(subject.proposal_names).to include("test3")
+      expect(subject.proposal_names).not_to include("test3")
     end
 
     it "use same order as in control file to preserve evaluation order" do
@@ -180,6 +186,76 @@ describe ::Installation::ProposalStore do
 
         expect(subject.presentation_order[0]).to include "tab1_client1_proposal"
         expect(subject.presentation_order[1]).to include "tab2_client1_proposal"
+      end
+    end
+  end
+
+  let(:client_description) {{
+    "rich_text_title" => "Software",
+    "menu_title"      => "&Software",
+    "id"              => "software",
+    "links"           => [ "software_link_1", "software_link_2" ]
+  }}
+
+  let(:client_name) { "software_proposal" }
+
+  describe "#description_for" do
+    it "returns description for a given client" do
+      expect(Yast::WFM).to receive(:CallFunction).with(client_name, ["Description", {}]).and_return(client_description).once
+
+      desc1 = subject.description_for(client_name)
+      # description should be cached
+      desc2 = subject.description_for(client_name)
+
+      expect(desc1["id"]).to eq("software")
+      expect(desc2["id"]).to eq("software")
+    end
+  end
+
+  describe "#id_for" do
+    it "returns id for a given client" do
+      allow(subject).to receive(:description_for).with(client_name).and_return(client_description)
+
+      expect(subject.id_for(client_name)).to eq(client_description["id"])
+    end
+  end
+
+  describe "#title_for" do
+    it "returns title for a given client" do
+      allow(subject).to receive(:description_for).with(client_name).and_return(client_description)
+
+      expect(subject.title_for(client_name)).to eq(client_description["rich_text_title"])
+    end
+  end
+
+  describe "#handle_link" do
+    before do
+      allow(Yast::WFM).to receive(:CallFunction).with(client_name, ["Description", {}]).and_return(client_description)
+    end
+
+    context "when client('Description') has not been called before" do
+      it "raises an exception" do
+        expect { subject.handle_link("software") }.to raise_error /no client descriptions known/
+      end
+    end
+
+    context "when no client matches the given link" do
+      it "raises an exception" do
+        # Cache some desriptipn first
+        subject.description_for(client_name)
+
+        expect { subject.handle_link("unknown_link") }.to raise_error /Unknown user request/
+      end
+    end
+
+    context "when client('Description') has been called before" do
+      it "calls a given client and returns its result" do
+        # Description needs to be cached first
+        subject.description_for(client_name)
+
+        expect(Yast::WFM).to receive(:CallFunction).with(client_name,
+          ["AskUser", {"has_next"=>false, "chosen_id"=>"software"}]).and_return(:next)
+        expect(subject.handle_link("software")).to eq(:next)
       end
     end
   end
