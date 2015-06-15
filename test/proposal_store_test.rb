@@ -190,6 +190,59 @@ describe ::Installation::ProposalStore do
     end
   end
 
+  let(:proposal_names) { ["proposal_a", "proposal_b", "proposal_c"] }
+
+  let(:proposal_a) {{
+    "rich_text_title" => "Proposal A",
+    "menu_title"      => "&Proposal A",
+    "id"              => "proposal_a",
+    "links"           => [ "proposal_a-link_1", "proposal_a-link_2" ]
+  }}
+
+  let(:proposal_b) {{
+    "rich_text_title" => "Proposal B",
+    "menu_title"      => "&Proposal B",
+    "id"              => "proposal_b"
+  }}
+
+  let(:proposal_c) {{
+    "rich_text_title" => "Proposal C",
+    "menu_title"      => "&Proposal C"
+  }}
+
+  describe "#make_proposals" do
+    before do
+      allow(subject).to receive(:proposal_names).and_return(proposal_names)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", anything()).and_return(proposal_a)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", anything()).and_return(proposal_b)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", anything()).and_return(proposal_c)
+    end
+
+    context "when all proposals return correct data" do
+      it "for each proposal client, calls given callback and creates new proposal" do
+        @callback = 0
+        callback = Proc.new { @callback += 1 }
+
+        expect{ subject.make_proposals(callback: callback) }.not_to raise_exception
+        expect(@callback).to eq(proposal_names.size)
+      end
+    end
+
+    context "when some proposal returns invalid data (e.g. crashes)" do
+      it "raises an exception" do
+        allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", anything()).and_return(nil)
+
+        expect { subject.make_proposals }.to raise_exception /Invalid proposal from client/
+      end
+    end
+
+    context "when given callback is not a block" do
+      it "raises an exception" do
+        expect { subject.make_proposals(callback: 4) }.to raise_exception /Callback is not a block/
+      end
+    end
+  end
+
   let(:client_description) {{
     "rich_text_title" => "Software",
     "menu_title"      => "&Software",

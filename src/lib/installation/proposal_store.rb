@@ -150,10 +150,12 @@ module Installation
     # Makes proposal for all proposal clients.
     # @param callback Called after each client/part, to report progress. Gets
     #   part name and part result as arguments
-    def make_proposals(force_reset: false, language_changed: false, callback: Proc.new)
+    def make_proposals(force_reset: false, language_changed: false, callback: Proc.new {})
       proposal_names.each do |client|
         description_map = make_proposal(client, force_reset: force_reset,
           language_changed: language_changed, callback: callback)
+
+        raise "Invalid proposal from client #{client}" if description_map.nil?
 
         if description_map["language_changed"]
           # Invalidate all of them at once
@@ -264,7 +266,7 @@ module Installation
       )
     end
 
-    def make_proposal(client, force_reset: false, language_changed: false, callback: Proc.new)
+    def make_proposal(client, force_reset: false, language_changed: false, callback: Proc.new {})
       proposal = Yast::WFM.CallFunction(
         client,
         [
@@ -278,7 +280,8 @@ module Installation
 
       log.debug "#{client} MakeProposal() returns #{proposal}"
 
-      callback.call(client, proposal_map)
+      raise "Callback is not a block: #{callback.class}" unless callback.is_a? Proc
+      callback.call(client, proposal)
 
       proposal
     end
