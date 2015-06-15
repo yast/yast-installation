@@ -151,20 +151,43 @@ module Installation
     # @param callback Called after each client/part, to report progress. Gets
     #   part name and part result as arguments
     def make_proposals(force_reset: false, language_changed: false, callback: Proc.new {})
-      proposal_names.each do |client|
-        description_map = make_proposal(client, force_reset: force_reset,
-          language_changed: language_changed, callback: callback)
+      @triggers = {}
 
-        raise "Invalid proposal from client #{client}" if description_map.nil?
+      # At first run, all clients will be called
+      call_proposals = Yast.deep_copy(proposal_names)
+      log.info "Proposals to call: #{call_proposals}"
 
-        if description_map["language_changed"]
-          # Invalidate all of them at once
-          invalidate_description
-          return make_proposals(force_reset: force_reset, language_changed: true)
+      begin
+        call_proposals.each do |client|
+          description_map = make_proposal(client, force_reset: force_reset,
+            language_changed: language_changed, callback: callback)
+
+          raise "Invalid proposal from client #{client}" if description_map.nil?
+
+          if description_map["warning_level"] == :fatal
+            log.warn "There is an error in the proposal"
+            call_proposals = []
+            raise StopIteration, "fatal_error"
+          end
+
+          if description_map["language_changed"]
+            log.info "Language changed, reseting proposal"
+            # Invalidate all descriptions at once, they will be lazy-loaded again
+            invalidate_description
+            make_proposals(force_reset: force_reset, language_changed: true, callback: callback)
+            call_proposals = []
+            raise StopIteration, "language_changed"
+          end
+
+          @triggers[client] = description_map["trigger"] if description_map.has_key?("trigger")
         end
 
-        break if description_map["warning_level"] == :fatal
-      end
+        # Second and next runs: only triggered clients will be called
+        call_proposals = proposal_names.select{ |client| should_be_called_again?(client) }
+        log.info "These proposals want to be called again: #{call_proposals}" unless call_proposals.empty?
+      rescue StopIteration => message
+        log.info "Iteration over proposals stopped: #{message}"
+      end while !call_proposals.empty?
     end
 
     # Calls a given client/part to retrieve their description
@@ -247,12 +270,43 @@ module Installation
 
   private
 
+    # Returns whether given client should be called again during 'this'
+    # proposal run according to triggers
+    #
+    # @param [String] client name
+    # @return [Boolean] whether it should be called
+    def should_be_called_again?(client)
+      @triggers ||= {}
+      return false unless @triggers.has_key?(client)
+
+      if @triggers[client].has_key?("expect") &&
+         @triggers[client]["expect"].is_a?(String) &&
+         @triggers[client].has_key?("value")
+
+        expectation_code = @triggers[client]["expect"]
+        expectation_value = @triggers[client]["value"]
+        value = eval(expectation_code)
+
+        if value == expectation_value
+          log.info "Proposal client #{client}: returned value matches expectation '#{value}'"
+          return false
+        else
+          log.info "Proposal client #{client}: returned value '#{value}' "
+            "does not match expected value '#{expectation_value}'"
+          return true
+        end
+      else
+        raise "Incorrect definition of 'trigger': #{@triggers[client]} "
+          "both [String] 'expect' and [Any] 'value' must be set"
+      end
+    end
+
     # Invalidates proposal description coming from a given client
     #
     # @param [String] client or nil for all descriptions
     def invalidate_description(client = nil)
       if client.nil?
-        @descriptions.clear
+        @descriptions = {}
       else
         @descriptions.delete(client)
       end

@@ -199,15 +199,67 @@ describe ::Installation::ProposalStore do
     "links"           => [ "proposal_a-link_1", "proposal_a-link_2" ]
   }}
 
+  let(:proposal_a_expected_val) { 3 }
+
+  let(:proposal_a_with_trigger) {{
+    "rich_text_title" => "Proposal A",
+    "menu_title"      => "&Proposal A",
+    "id"              => "proposal_a",
+    "trigger"         => {
+      "expect"        => "Yast::ProductControl.proposal_a_val",
+      "value"         => proposal_a_expected_val,
+    }
+  }}
+
   let(:proposal_b) {{
     "rich_text_title" => "Proposal B",
     "menu_title"      => "&Proposal B",
     "id"              => "proposal_b"
   }}
 
+  let(:proposal_b_with_language_change) {{
+    "rich_text_title"  => "Proposal B",
+    "menu_title"       => "&Proposal B",
+    "id"               => "proposal_b",
+    "language_changed" => true
+  }}
+
+  let(:proposal_b_with_fatal_error) {{
+    "rich_text_title" => "Proposal B",
+    "menu_title"      => "&Proposal B",
+    "id"              => "proposal_b",
+    "warning_level"   => :fatal,
+    "warning"         => "some fatal error"
+  }}
+
   let(:proposal_c) {{
     "rich_text_title" => "Proposal C",
     "menu_title"      => "&Proposal C"
+  }}
+
+  let(:proposal_c_expected_val) { true }
+
+  let(:proposal_c_with_trigger) {{
+    "rich_text_title" => "Proposal C",
+    "menu_title"      => "&Proposal C",
+    "trigger"         => {
+      "expect"        => "
+        # multi-line with coments
+        1 + 1 + 1 + 1 + 1
+        Yast::ProductControl.proposal_c_val
+      ",
+      "value"         => proposal_c_expected_val,
+    }
+  }}
+
+  let(:proposal_c_with_incorrect_trigger) {{
+    "rich_text_title" => "Proposal C",
+    "menu_title"      => "&Proposal C",
+    "trigger"         => {
+      # 'expect' must be a string that is evaluated later
+      "expect"        => 333,
+      "value"         => "anything",
+    }
   }}
 
   describe "#make_proposals" do
@@ -239,6 +291,62 @@ describe ::Installation::ProposalStore do
     context "when given callback is not a block" do
       it "raises an exception" do
         expect { subject.make_proposals(callback: 4) }.to raise_exception /Callback is not a block/
+      end
+    end
+
+    context "when returned proposal contains a 'trigger' section" do
+      it "for each proposal client, creates new proposal and calls the client while trigger evaluates to true" do
+        allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", anything()).and_return(proposal_a_with_trigger)
+        allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", anything()).and_return(proposal_c_with_trigger)
+
+        # Proposal A wants to be additionally called twice
+        allow(Yast::ProductControl).to receive(:proposal_a_val).and_return(0, 0, proposal_a_expected_val)
+        # Proposal A wants to be additionally called once
+        allow(Yast::ProductControl).to receive(:proposal_c_val).and_return(false, proposal_c_expected_val)
+
+        expect(subject).to receive(:make_proposal).with("proposal_a", anything()).exactly(3).times.and_call_original
+        expect(subject).to receive(:make_proposal).with("proposal_b", anything()).exactly(1).times.and_call_original
+        expect(subject).to receive(:make_proposal).with("proposal_c", anything()).exactly(2).times.and_call_original
+
+        subject.make_proposals
+      end
+    end
+
+    context "when returned proposal triggers changing a language" do
+      it "calls all proposals again with language_changed: true" do
+        allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", anything()).and_return(proposal_b_with_language_change, proposal_b)
+
+        # Call proposals till the one that changes the language
+        expect(subject).to receive(:make_proposal).with("proposal_a", hash_including(:language_changed => false)).once.and_call_original
+        expect(subject).to receive(:make_proposal).with("proposal_b", hash_including(:language_changed => false)).once.and_call_original
+
+        # Call all again with language_changed: true
+        expect(subject).to receive(:make_proposal).with("proposal_a", hash_including(:language_changed => true)).once.and_call_original
+        expect(subject).to receive(:make_proposal).with("proposal_b", hash_including(:language_changed => true)).once.and_call_original
+        expect(subject).to receive(:make_proposal).with("proposal_c", hash_including(:language_changed => true)).once.and_call_original
+
+        subject.make_proposals
+      end
+    end
+
+    context "when returned proposal contains a fatal error" do
+      it "calls all proposals till fatal error is received, then it stops proceeding immediately" do
+        allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", anything()).and_return(proposal_b_with_fatal_error)
+
+        expect(subject).to receive(:make_proposal).with("proposal_a", anything()).once.and_call_original
+        expect(subject).to receive(:make_proposal).with("proposal_b", anything()).once.and_call_original
+        # Proposal C is never called, as it goes after proposal B
+        expect(subject).not_to receive(:make_proposal).with("proposal_c", anything())
+
+        subject.make_proposals
+      end
+    end
+
+    context "when trigger from proposal is incorrectly set" do
+      it "raises an exception" do
+        allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", anything()).and_return(proposal_c_with_incorrect_trigger)
+
+        expect { subject.make_proposals }.to raise_error /Incorrect definition/
       end
     end
   end
