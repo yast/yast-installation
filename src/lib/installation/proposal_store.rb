@@ -29,7 +29,12 @@ module Installation
     include Yast::Logger
     include Yast::I18n
 
-    # @ param[String] proposal_mode one of initial, service, network, hardware,
+    # How many times to maximally (re)run the proposal while some proposal clients
+    # try to re-trigger their run again, number includes their initial run
+    # and resets before each proposal loop starts
+    MAX_LOOPS_IN_PROPOSAL = 8
+
+    # @param [String] proposal_mode one of initial, service, network, hardware,
     #   uml, ... or anything else
     def initialize(proposal_mode)
       Yast.import "Mode"
@@ -151,7 +156,8 @@ module Installation
     # @param callback Called after each client/part, to report progress. Gets
     #   part name and part result as arguments
     def make_proposals(force_reset: false, language_changed: false, callback: Proc.new {})
-      @triggers = {}
+      clear_triggers
+      clear_proposals_counter
 
       # At first run, all clients will be called
       call_proposals = Yast.deep_copy(proposal_names)
@@ -165,8 +171,7 @@ module Installation
           raise "Invalid proposal from client #{client}" if description_map.nil?
 
           if description_map["warning_level"] == :fatal
-            log.warn "There is an error in the proposal"
-            call_proposals = []
+            log.error "There is an error in the proposal"
             raise StopIteration, "fatal_error"
           end
 
@@ -175,7 +180,6 @@ module Installation
             # Invalidate all descriptions at once, they will be lazy-loaded again
             invalidate_description
             make_proposals(force_reset: force_reset, language_changed: true, callback: callback)
-            call_proposals = []
             raise StopIteration, "language_changed"
           end
 
@@ -184,9 +188,14 @@ module Installation
 
         # Second and next runs: only triggered clients will be called
         call_proposals = proposal_names.select{ |client| should_be_called_again?(client) }
-        log.info "These proposals want to be called again: #{call_proposals}" unless call_proposals.empty?
+
+        unless call_proposals.empty?
+          log.info "These proposals want to be called again: #{call_proposals}"
+          raise StopIteration, "too_many_loops" unless should_run_proposals_again?(call_proposals)
+        end
       rescue StopIteration => message
         log.info "Iteration over proposals stopped: #{message}"
+        break
       end while !call_proposals.empty?
     end
 
@@ -269,6 +278,26 @@ module Installation
     end
 
   private
+
+    def clear_proposals_counter
+      @proposals_run_counter = {}
+    end
+
+    def should_run_proposals_again?(proposals)
+      @proposals_run_counter ||= {}
+
+      proposals.each do |proposal|
+        @proposals_run_counter[proposal] ||= 0
+        @proposals_run_counter[proposal] += 1
+      end
+
+      log.info "Proposal counters: #{@proposals_run_counter}"
+      @proposals_run_counter.values.max < MAX_LOOPS_IN_PROPOSAL
+    end
+
+    def clear_triggers
+      @triggers = {}
+    end
 
     # Returns whether given client should be called again during 'this'
     # proposal run according to triggers

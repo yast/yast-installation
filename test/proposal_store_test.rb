@@ -314,7 +314,7 @@ describe ::Installation::ProposalStore do
 
         # Proposal A wants to be additionally called twice
         allow(Yast::ProductControl).to receive(:proposal_a_val).and_return(0, 0, proposal_a_expected_val)
-        # Proposal A wants to be additionally called once
+        # Proposal C wants to be additionally called once
         allow(Yast::ProductControl).to receive(:proposal_c_val).and_return(false, proposal_c_expected_val)
 
         expect(subject).to receive(:make_proposal).with("proposal_a", anything()).exactly(3).times.and_call_original
@@ -368,6 +368,20 @@ describe ::Installation::ProposalStore do
         allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", anything()).and_return(proposal_c_with_exception)
 
         expect { subject.make_proposals }.to raise_error /Checking the trigger expectations for proposal_c have failed/
+      end
+    end
+
+    context "When any proposal client wants to retrigger its run more than MAX_LOOPS_IN_PROPOSAL times" do
+      it "stops iterating over proposals immediately" do
+        allow(subject).to receive(:should_be_called_again?).with(/proposal_(a|b)/).and_return(false)
+        # Proposal C wants to be called again and again
+        allow(subject).to receive(:should_be_called_again?).with("proposal_c").and_return(true)
+
+        expect(subject).to receive(:make_proposal).with(/proposal_(a|b)/, anything()).twice.and_call_original
+        # Number of calls including the initial one
+        expect(subject).to receive(:make_proposal).with("proposal_c", anything()).exactly(8).times.and_call_original
+
+        subject.make_proposals
       end
     end
   end
