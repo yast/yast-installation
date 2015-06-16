@@ -262,6 +262,19 @@ describe ::Installation::ProposalStore do
     }
   }}
 
+  let(:proposal_c_with_exception) {{
+    "rich_text_title" => "Proposal C",
+    "menu_title"      => "&Proposal C",
+    "trigger"         => {
+      # 'expect' must be a string that is evaluated later
+      "expect"        => "
+        test2 = nil
+        test2.first
+      ",
+      "value"         => 22,
+    }
+  }}
+
   describe "#make_proposals" do
     before do
       allow(subject).to receive(:proposal_names).and_return(proposal_names)
@@ -347,6 +360,14 @@ describe ::Installation::ProposalStore do
         allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", anything()).and_return(proposal_c_with_incorrect_trigger)
 
         expect { subject.make_proposals }.to raise_error /Incorrect definition/
+      end
+    end
+
+    context "when trigger from proposal raises an exception" do
+      it "raises an exception" do
+        allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", anything()).and_return(proposal_c_with_exception)
+
+        expect { subject.make_proposals }.to raise_error /Checking the trigger expectations for proposal_c have failed/
       end
     end
   end

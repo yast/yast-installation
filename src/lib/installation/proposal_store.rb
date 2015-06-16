@@ -279,25 +279,30 @@ module Installation
       @triggers ||= {}
       return false unless @triggers.has_key?(client)
 
-      if @triggers[client].has_key?("expect") &&
-         @triggers[client]["expect"].is_a?(String) &&
-         @triggers[client].has_key?("value")
+      unless @triggers[client].has_key?("expect") &&
+        @triggers[client]["expect"].is_a?(String) &&
+        @triggers[client].has_key?("value")
 
-        expectation_code = @triggers[client]["expect"]
-        expectation_value = @triggers[client]["value"]
-        value = eval(expectation_code)
-
-        if value == expectation_value
-          log.info "Proposal client #{client}: returned value matches expectation '#{value}'"
-          return false
-        else
-          log.info "Proposal client #{client}: returned value '#{value}' "
-            "does not match expected value '#{expectation_value}'"
-          return true
-        end
-      else
         raise "Incorrect definition of 'trigger': #{@triggers[client]} "
           "both [String] 'expect' and [Any] 'value' must be set"
+      end
+
+      expectation_code = @triggers[client]["expect"]
+      expectation_value = @triggers[client]["value"]
+
+      begin
+        value = eval(expectation_code)
+      rescue Exception => error
+        raise "Checking the trigger expectations for #{client} have failed:\n#{error}"
+      end
+
+      if value == expectation_value
+        log.info "Proposal client #{client}: returned value matches expectation '#{value}'"
+        return false
+      else
+        log.info "Proposal client #{client}: returned value '#{value}' "
+          "does not match expected value '#{expectation_value}'"
+        return true
       end
     end
 
