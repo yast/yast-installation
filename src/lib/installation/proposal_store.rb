@@ -160,7 +160,7 @@ module Installation
       clear_proposals_counter
 
       # At first run, all clients will be called
-      call_proposals = Yast.deep_copy(proposal_names)
+      call_proposals = proposal_names
       log.info "Proposals to call: #{call_proposals}"
 
       begin
@@ -168,22 +168,8 @@ module Installation
           description_map = make_proposal(client, force_reset: force_reset,
             language_changed: language_changed, callback: callback)
 
-          raise "Invalid proposal from client #{client}" if description_map.nil?
-
-          if description_map["warning_level"] == :fatal
-            log.error "There is an error in the proposal"
-            raise StopIteration, "fatal_error"
-          end
-
-          if description_map["language_changed"]
-            log.info "Language changed, reseting proposal"
-            # Invalidate all descriptions at once, they will be lazy-loaded again
-            invalidate_description
-            make_proposals(force_reset: force_reset, language_changed: true, callback: callback)
-            raise StopIteration, "language_changed"
-          end
-
-          @triggers[client] = description_map["trigger"] if description_map.key?("trigger")
+          # This call can also raise StopIteration exception
+          parse_description_map(client, description_map, force_reset, callback)
         end
 
         # Second and next runs: only triggered clients will be called
@@ -208,7 +194,7 @@ module Installation
 
       description = Yast::WFM.CallFunction(client, ["Description", {}])
 
-      if !description.key?("id")
+      unless description.key?("id")
         log.warn "proposal client #{client} is missing key 'id' in #{description}"
         @missing_no ||= 1
         description["id"] = "module_#{@missing_no}"
@@ -223,7 +209,6 @@ module Installation
     # @return [Hash] with descriptions
     def descriptions
       @descriptions ||= {}
-      @descriptions
     end
 
     # Returns ID for given client
@@ -268,8 +253,7 @@ module Installation
       raise "There are no client descriptions known, call 'client(Description)' first" if @descriptions.nil?
 
       matching_client = @descriptions.find do |_client, description|
-        description.fetch("id", nil) == link ||
-          description.fetch("links", []).include?(link)
+        description["id"] == link || description.fetch("links", []).include?(link)
       end
 
       raise "Unknown user request #{link}. Broken proposal client?" if matching_client.nil?
@@ -279,17 +263,47 @@ module Installation
 
   private
 
+    # Evaluates the given description map, and handles all the events
+    # Also stores triggers for later use
+    def parse_description_map(client, description_map, force_reset, callback)
+      raise "Invalid proposal from client #{client}" if description_map.nil?
+
+      if description_map["warning_level"] == :fatal
+        log.error "There is an error in the proposal"
+        raise StopIteration, "fatal_error"
+      end
+
+      if description_map["language_changed"]
+        log.info "Language changed, reseting proposal"
+        # Invalidate all descriptions at once, they will be lazy-loaded again
+        invalidate_description
+        make_proposals(force_reset: force_reset, language_changed: true, callback: callback)
+        raise StopIteration, "language_changed"
+      end
+
+      @triggers ||= {}
+      @triggers[client] = description_map["trigger"] if description_map.key?("trigger")
+    end
+
     def clear_proposals_counter
       @proposals_run_counter = {}
     end
 
-    def should_run_proposals_again?(proposals)
+    # Updates internal counter that holds information how many times
+    # has been each proposal called during the current make_proposals run
+    def update_proposals_counter(proposals)
       @proposals_run_counter ||= {}
 
       proposals.each do |proposal|
         @proposals_run_counter[proposal] ||= 0
         @proposals_run_counter[proposal] += 1
       end
+    end
+
+    # Finds out whether we can call given proposals again during
+    # the current make_proposals run
+    def should_run_proposals_again?(proposals)
+      update_proposals_counter(proposals)
 
       log.info "Proposal counters: #{@proposals_run_counter}"
       @proposals_run_counter.values.max < MAX_LOOPS_IN_PROPOSAL
@@ -297,6 +311,15 @@ module Installation
 
     def clear_triggers
       @triggers = {}
+    end
+
+    # Returns whether given trigger definition is correct
+    # e.g., all mandatory parts are there
+    #
+    # @param [Hash] trigger definition
+    # @rturn [Boolean] whether it is correct
+    def valid_trigger?(trigger_def)
+      trigger_def.key?("expect") && trigger_def["expect"].is_a?(String) && trigger_def.key?("value")
     end
 
     # Returns whether given client should be called again during 'this'
@@ -308,13 +331,8 @@ module Installation
       @triggers ||= {}
       return false unless @triggers.key?(client)
 
-      unless @triggers[client].key?("expect") &&
-          @triggers[client]["expect"].is_a?(String) &&
-          @triggers[client].key?("value")
-
-        raise "Incorrect definition of 'trigger': #{@triggers[client]} " \
-          "both [String] 'expect' and [Any] 'value' must be set"
-      end
+      raise "Incorrect definition of 'trigger': #{@triggers[client]} " \
+          "both [String] 'expect' and [Any] 'value' must be set" unless valid_trigger?(@triggers[client])
 
       expectation_code = @triggers[client]["expect"]
       expectation_value = @triggers[client]["value"]
@@ -479,7 +497,7 @@ module Installation
 
         modules_order.each_with_object("") do |client, text|
           description = description_for(client)
-          text << description["help"] unless !description["help"].to_s.empty?
+          text << description["help"] if description["help"]
         end
       else
         ""

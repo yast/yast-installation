@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Wed Jun 17 09:29:09 CEST 2015 - locilka@suse.com
 
-- Implemented 'trigger's for installation proposal (FATE #317488).
+- Implemented triggers for installation proposal (FATE #317488).
   Any *_proposal client can define 'trigger' in 'MakeProposal'
   that defines in which circumstances it should be called again
   after all proposals have been called, e.g., if partitioning or
