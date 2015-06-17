@@ -326,11 +326,11 @@ module Installation
       end
 
       if value == expectation_value
-        log.info "Proposal client #{client}: returned value matches expectation '#{value}'"
+        log.info "Proposal client #{client}: returned value matches expectation '#{value.inspect}'"
         return false
       else
-        log.info "Proposal client #{client}: returned value '#{value}' "
-          "does not match expected value '#{expectation_value}'"
+        log.info "Proposal client #{client}: returned value '#{value.inspect}' "
+          "does not match expected value '#{expectation_value.inspect}'"
         return true
       end
     end
