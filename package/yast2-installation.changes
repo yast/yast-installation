@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Wed Jun 17 09:29:09 CEST 2015 - locilka@suse.com
+
+- Implemented 'trigger's for installation proposal (FATE #317488).
+  Any *_proposal client can define 'trigger' in 'MakeProposal'
+  that defines in which circumstances it should be called again
+  after all proposals have been called, e.g., if partitioning or
+  software selection changes.
+- 3.1.145
+
+-------------------------------------------------------------------
 Tue Jun  2 08:41:03 UTC 2015 - jreidinger@suse.com
 
 - fix crash in Upgrade when creating post upgrade snapshot
