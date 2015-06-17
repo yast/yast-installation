@@ -155,7 +155,7 @@ module Installation
     # Makes proposal for all proposal clients.
     # @param callback Called after each client/part, to report progress. Gets
     #   part name and part result as arguments
-    def make_proposals(force_reset: false, language_changed: false, callback: Proc.new {})
+    def make_proposals(force_reset: false, language_changed: false, callback: proc {})
       clear_triggers
       clear_proposals_counter
 
@@ -183,11 +183,11 @@ module Installation
             raise StopIteration, "language_changed"
           end
 
-          @triggers[client] = description_map["trigger"] if description_map.has_key?("trigger")
+          @triggers[client] = description_map["trigger"] if description_map.key?("trigger")
         end
 
         # Second and next runs: only triggered clients will be called
-        call_proposals = proposal_names.select{ |client| should_be_called_again?(client) }
+        call_proposals = proposal_names.select { |client| should_be_called_again?(client) }
 
         unless call_proposals.empty?
           log.info "These proposals want to be called again: #{call_proposals}"
@@ -204,11 +204,11 @@ module Installation
     # @see http://www.rubydoc.info/github/yast/yast-yast2/Installation/ProposalClient:description
     def description_for(client)
       @descriptions ||= {}
-      return @descriptions[client] if @descriptions.has_key?(client)
+      return @descriptions[client] if @descriptions.key?(client)
 
       description = Yast::WFM.CallFunction(client, ["Description", {}])
 
-      if !description.has_key?("id")
+      if !description.key?("id")
         log.warn "proposal client #{client} is missing key 'id' in #{description}"
         @missing_no ||= 1
         description["id"] = "module_#{@missing_no}"
@@ -267,7 +267,7 @@ module Installation
     def client_for_link(link)
       raise "There are no client descriptions known, call 'client(Description)' first" if @descriptions.nil?
 
-      matching_client = @descriptions.find do |client, description|
+      matching_client = @descriptions.find do |_client, description|
         description.fetch("id", nil) == link ||
           description.fetch("links", []).include?(link)
       end
@@ -306,13 +306,13 @@ module Installation
     # @return [Boolean] whether it should be called
     def should_be_called_again?(client)
       @triggers ||= {}
-      return false unless @triggers.has_key?(client)
+      return false unless @triggers.key?(client)
 
-      unless @triggers[client].has_key?("expect") &&
-        @triggers[client]["expect"].is_a?(String) &&
-        @triggers[client].has_key?("value")
+      unless @triggers[client].key?("expect") &&
+          @triggers[client]["expect"].is_a?(String) &&
+          @triggers[client].key?("value")
 
-        raise "Incorrect definition of 'trigger': #{@triggers[client]} "
+        raise "Incorrect definition of 'trigger': #{@triggers[client]} " \
           "both [String] 'expect' and [Any] 'value' must be set"
       end
 
@@ -321,7 +321,7 @@ module Installation
 
       begin
         value = eval(expectation_code)
-      rescue Exception => error
+      rescue StandardError, ScriptError => error
         raise "Checking the trigger expectations for #{client} have failed:\n#{error}"
       end
 
@@ -329,7 +329,7 @@ module Installation
         log.info "Proposal client #{client}: returned value matches expectation '#{value.inspect}'"
         return false
       else
-        log.info "Proposal client #{client}: returned value '#{value.inspect}' "
+        log.info "Proposal client #{client}: returned value '#{value.inspect}' " \
           "does not match expected value '#{expectation_value.inspect}'"
         return true
       end
@@ -354,7 +354,7 @@ module Installation
       )
     end
 
-    def make_proposal(client, force_reset: false, language_changed: false, callback: Proc.new {})
+    def make_proposal(client, force_reset: false, language_changed: false, callback: proc {})
       proposal = Yast::WFM.CallFunction(
         client,
         [
