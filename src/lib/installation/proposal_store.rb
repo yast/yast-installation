@@ -163,26 +163,27 @@ module Installation
       call_proposals = proposal_names
       log.info "Proposals to call: #{call_proposals}"
 
-      begin
+      loop do
         call_proposals.each do |client|
           description_map = make_proposal(client, force_reset: force_reset,
             language_changed: language_changed, callback: callback)
 
-          # This call can also raise StopIteration exception
-          parse_description_map(client, description_map, force_reset, callback)
+          break unless parse_description_map(client, description_map, force_reset, callback)
         end
 
         # Second and next runs: only triggered clients will be called
         call_proposals = proposal_names.select { |client| should_be_called_again?(client) }
 
-        unless call_proposals.empty?
-          log.info "These proposals want to be called again: #{call_proposals}"
-          raise StopIteration, "too_many_loops" unless should_run_proposals_again?(call_proposals)
+        break if call_proposals.empty?
+        log.info "These proposals want to be called again: #{call_proposals}"
+
+        unless should_run_proposals_again?(call_proposals)
+          log.warn "Too many loops in proposal, exiting"
+          break
         end
-      rescue StopIteration => message
-        log.info "Iteration over proposals stopped: #{message}"
-        break
-      end while !call_proposals.empty?
+      end
+
+      log.info "Making proposals have finished"
     end
 
     # Calls a given client/part to retrieve their description
@@ -264,25 +265,30 @@ module Installation
   private
 
     # Evaluates the given description map, and handles all the events
+    # by returning whether to continue in the current proposal loop
     # Also stores triggers for later use
+    #
+    # @return [Boolean] whether to continue with iteration over proposals
     def parse_description_map(client, description_map, force_reset, callback)
       raise "Invalid proposal from client #{client}" if description_map.nil?
 
       if description_map["warning_level"] == :fatal
         log.error "There is an error in the proposal"
-        raise StopIteration, "fatal_error"
+        return false
       end
 
       if description_map["language_changed"]
         log.info "Language changed, reseting proposal"
-        # Invalidate all descriptions at once, they will be lazy-loaded again
+        # Invalidate all descriptions at once, they will be lazy-loaded again with new translations
         invalidate_description
         make_proposals(force_reset: force_reset, language_changed: true, callback: callback)
-        raise StopIteration, "language_changed"
+        return false
       end
 
       @triggers ||= {}
       @triggers[client] = description_map["trigger"] if description_map.key?("trigger")
+
+      true
     end
 
     def clear_proposals_counter
