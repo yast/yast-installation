@@ -5,6 +5,7 @@ require_relative "./test_helper"
 require "installation/proposal_store"
 
 Yast.import "ProductControl"
+Yast.import "Installation"
 
 describe ::Installation::ProposalStore do
   subject { ::Installation::ProposalStore.new "initial" }
@@ -201,7 +202,7 @@ describe ::Installation::ProposalStore do
     }
   end
 
-  let(:proposal_a_expected_val) { 3 }
+  let(:proposal_a_expected_val) { "/" }
 
   let(:proposal_a_with_trigger) do
     {
@@ -209,7 +210,7 @@ describe ::Installation::ProposalStore do
       "menu_title"      => "&Proposal A",
       "id"              => "proposal_a",
       "trigger"         => {
-        "expect" => "Yast::ProductControl.proposal_a_val",
+        "expect" => Yast::FunRef.new(Yast::Installation.method(:scr_destdir), "string ()"),
         "value"  => proposal_a_expected_val
       }
     }
@@ -249,23 +250,6 @@ describe ::Installation::ProposalStore do
     }
   end
 
-  let(:proposal_c_expected_val) { true }
-
-  let(:proposal_c_with_trigger) do
-    {
-      "rich_text_title" => "Proposal C",
-      "menu_title"      => "&Proposal C",
-      "trigger"         => {
-        "expect" => "
-          # multi-line with coments
-          1 + 1 + 1 + 1 + 1
-          Yast::ProductControl.proposal_c_val
-        ",
-        "value"  => proposal_c_expected_val
-      }
-    }
-  end
-
   let(:proposal_c_with_incorrect_trigger) do
     {
       "rich_text_title" => "Proposal C",
@@ -284,10 +268,7 @@ describe ::Installation::ProposalStore do
       "menu_title"      => "&Proposal C",
       "trigger"         => {
         # 'expect' must be a string that is evaluated later
-        "expect" => "
-          test2 = nil
-          test2.first
-        ",
+        "expect" => Yast::FunRef.new(method(:raise), "string ()"),
         "value"  => 22
       }
     }
@@ -328,16 +309,14 @@ describe ::Installation::ProposalStore do
     context "when returned proposal contains a 'trigger' section" do
       it "for each proposal client, creates new proposal and calls the client while trigger evaluates to true" do
         allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", anything).and_return(proposal_a_with_trigger)
-        allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", anything).and_return(proposal_c_with_trigger)
 
-        # Proposal A wants to be additionally called twice
-        allow(Yast::ProductControl).to receive(:proposal_a_val).and_return(0, 0, proposal_a_expected_val)
-        # Proposal C wants to be additionally called once
-        allow(Yast::ProductControl).to receive(:proposal_c_val).and_return(false, proposal_c_expected_val)
+        # Mock evaluation of the trigger
+        allow_any_instance_of(Yast::FunRef).to receive(:call).and_return("/x", "/y", proposal_a_expected_val)
 
+        # 1. initial call 2. (...) via trigger
         expect(subject).to receive(:make_proposal).with("proposal_a", anything).exactly(3).times.and_call_original
         expect(subject).to receive(:make_proposal).with("proposal_b", anything).exactly(1).times.and_call_original
-        expect(subject).to receive(:make_proposal).with("proposal_c", anything).exactly(2).times.and_call_original
+        expect(subject).to receive(:make_proposal).with("proposal_c", anything).exactly(1).times.and_call_original
 
         subject.make_proposals
       end
