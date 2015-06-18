@@ -92,17 +92,14 @@ Makes proposal for installation.
   For intance, when partitioning or software selection changes.
   Mandatory keys of the trigger are:
 
-  * _string_ `expect` with multi-line code to be executed with `eval`, all necessary libraries must be loaded within this code
+  * _FunRef_ `expect` a FunRef reference to method that will be called and its result compared with `value`
   * _any_ `value` expected value, if the evaluated code does not match the `value`, proposal will be called again
 
   Example:
 
       {
         "trigger" => {
-          "expect" => "
-            Yast.import \"Packages\"
-            Yast::Packages.CountSizeToBeDownloaded()
-          ",
+          "expect" => Yast::FunRef.new(Yast::Packages.method(:CountSizeToBeDownloaded), "integer ()"),
           "value" => 88883333
         }
       }
