@@ -325,7 +325,13 @@ module Installation
     # @param [Hash] trigger definition
     # @rturn [Boolean] whether it is correct
     def valid_trigger?(trigger_def)
-      trigger_def.key?("expect") && trigger_def["expect"].respond_to?(:call) && trigger_def.key?("value")
+      trigger_def.key?("expect") &&
+        trigger_def["expect"].is_a?(Hash) &&
+        trigger_def["expect"].key?("class") &&
+        trigger_def["expect"]["class"].is_a?(String) &&
+        trigger_def["expect"].key?("method") &&
+        trigger_def["expect"]["method"].is_a?(String) &&
+        trigger_def.key?("value")
     end
 
     # Returns whether given client should be called again during 'this'
@@ -337,14 +343,18 @@ module Installation
       @triggers ||= {}
       return false unless @triggers.key?(client)
 
-      raise "Incorrect definition of 'trigger': #{@triggers[client].inspect} " \
-          "both 'expect' (responding to call) and 'value' (any) must be set" unless valid_trigger?(@triggers[client])
+      raise "Incorrect definition of 'trigger': #{@triggers[client].inspect} \n" \
+        "both [Hash] 'expect', including keys [Symbol] 'class' and [Symbol] 'method', \n" \
+        "and [Any] 'value' must be set" unless valid_trigger?(@triggers[client])
 
-      expectation_code = @triggers[client]["expect"]
+      expectation_class = @triggers[client]["expect"]["class"]
+      expectation_method = @triggers[client]["expect"]["method"]
       expectation_value = @triggers[client]["value"]
 
+      log.info "Calling #{expectation_class}.send(#{expectation_method.inspect})"
+
       begin
-        value = expectation_code.call
+        value = Object.const_get(expectation_class).send(expectation_method)
       rescue StandardError, ScriptError => error
         raise "Checking the trigger expectations for #{client} have failed:\n#{error}"
       end

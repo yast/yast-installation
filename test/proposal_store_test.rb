@@ -210,7 +210,10 @@ describe ::Installation::ProposalStore do
       "menu_title"      => "&Proposal A",
       "id"              => "proposal_a",
       "trigger"         => {
-        "expect" => Yast::FunRef.new(Yast::Installation.method(:scr_destdir), "string ()"),
+        "expect" => {
+          "class"  => "Yast::Installation",
+          "method" => "destdir"
+        },
         "value"  => proposal_a_expected_val
       }
     }
@@ -268,7 +271,10 @@ describe ::Installation::ProposalStore do
       "menu_title"      => "&Proposal C",
       "trigger"         => {
         # 'expect' must be a string that is evaluated later
-        "expect" => Yast::FunRef.new(method(:raise), "string ()"),
+        "expect" => {
+          "class"  => "Erroneous",
+          "method" => "big_mistake"
+        },
         "value"  => 22
       }
     }
@@ -311,7 +317,7 @@ describe ::Installation::ProposalStore do
         allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", anything).and_return(proposal_a_with_trigger)
 
         # Mock evaluation of the trigger
-        allow_any_instance_of(Yast::FunRef).to receive(:call).and_return("/x", "/y", proposal_a_expected_val)
+        allow(Yast::Installation).to receive(:destdir).and_return("/x", "/y", proposal_a_expected_val)
 
         # 1. initial call 2. (...) via trigger
         expect(subject).to receive(:make_proposal).with("proposal_a", anything).exactly(3).times.and_call_original
