@@ -88,6 +88,25 @@ Makes proposal for installation.
 * _string_ `help` (optional) Helptext for this module which appears in the standard dialog
   help (particular helps for modules sorted by presentation order).
 
+* _map_ `trigger` defines circumstances when the proposal should be called again at the end.
+  For intance, when partitioning or software selection changes.
+  Mandatory keys of the trigger are:
+
+  * _map_ `expect` containing _string_ `class` and _string_ `method` that will be called and its result compared with `value`
+  * _any_ `value` expected value, if the evaluated code does not match the `value`, proposal will be called again
+
+  Example:
+
+      {
+        "trigger" => {
+          "expect" => {
+            "class"  => "Yast::Packages",
+            "method" => "CountSizeToBeDownloaded"
+          }
+          "value" => 88883333
+        }
+      }
+
 ### AskUser
 Run an interactive workflow - let user decide upon values he might want to change.
 May contain one single dialog, a sequence of dialogs or one master dialog with

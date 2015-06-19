@@ -745,7 +745,7 @@ module Installation
 
       # now build the menu button
       menu_list = @submodules_presentation.each_with_object([]) do |submod, menu|
-        descr = @store.descriptions[submod] || {}
+        descr = @store.description_for(submod) || {}
         next if descr.empty?
 
         id = descr["id"]
