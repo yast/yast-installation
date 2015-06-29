@@ -656,7 +656,7 @@ module Installation
         change_point = ReplacePoint(
           Id(:rep_menu),
           # menu button
-          MenuButton(Id(:menu_dummy), _("&Yast::Change..."), [Item(Id(:dummy), "")])
+          MenuButton(Id(:menu_dummy), _("&Change..."), [Item(Id(:dummy), "")])
           )
       elsif @hide_export
         change_point = Empty()
@@ -711,7 +711,7 @@ module Installation
             Label(
               if Yast::UI.TextMode()
                 _(
-                  "Click a headline to make changes or use the \"Yast::Change...\" menu below."
+                  "Click a headline to make changes or use the \"Change...\" menu below."
                 )
               else
                 _(
