@@ -74,6 +74,9 @@ module Installation
         return :auto
       end
 
+      args = (Yast::WFM.Args || []).first || {}
+      @hide_export = args["hide_export"]
+
       log.info "Installation step #2"
       @proposal_mode = Yast::GetInstArgs.proposal
 
@@ -655,6 +658,8 @@ module Installation
           # menu button
           MenuButton(Id(:menu_dummy), _("&Yast::Change..."), [Item(Id(:dummy), "")])
           )
+      elsif @hide_export
+        change_point = Empty()
       else
         change_point = PushButton(
           Id(:export_config),
@@ -769,8 +774,8 @@ module Installation
       end
 
       # menu button item
-      menu_list << Item(Id(:reset_to_defaults), _("&Reset to defaults")) <<
-        Item(Id(:export_config), _("&Export Configuration"))
+      menu_list << Item(Id(:reset_to_defaults), _("&Reset to defaults"))
+      menu_list << Item(Id(:export_config), _("&Export Configuration")) unless @hide_export
 
       # menu button
       Yast::UI.ReplaceWidget(
