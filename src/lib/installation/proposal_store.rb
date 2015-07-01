@@ -156,8 +156,7 @@ module Installation
     # @param callback Called after each client/part, to report progress. Gets
     #   part name and part result as arguments
     def make_proposals(force_reset: false, language_changed: false, callback: proc {})
-      clear_triggers
-      clear_proposals_counter
+      clear_proposals
 
       # At first run, all clients will be called
       call_proposals = proposal_names
@@ -245,16 +244,16 @@ module Installation
     end
 
     # Returns client name that handles the given link returned by UI,
-    # returns nil if link is unknown.
-    # Link can be either the client ID or a shortcut link.
+    # raises exception if link is unknown.
+    # Link can be either the client ID or a shortcut link from proposal text.
     #
-    # @param [String] link
+    # @param [String] link ID
     # @return [String] client name
     def client_for_link(link)
-      raise "There are no client descriptions known, call 'client(Description)' first" if @descriptions.nil?
+      raise "There are no client proposals known, call 'client(MakeProposal)' first" if @proposals.nil?
 
-      matching_client = @descriptions.find do |_client, description|
-        description["id"] == link || description.fetch("links", []).include?(link)
+      matching_client = @proposals.find do |_client, proposal|
+        link == proposal["id"] || proposal.fetch("links", []).include?(link)
       end
 
       raise "Unknown user request #{link}. Broken proposal client?" if matching_client.nil?
@@ -266,7 +265,7 @@ module Installation
 
     # Evaluates the given description map, and handles all the events
     # by returning whether to continue in the current proposal loop
-    # Also stores triggers for later use
+    # Also stores proposals for later use
     #
     # @return [Boolean] whether to continue with iteration over proposals
     def parse_description_map(client, description_map, force_reset, callback)
@@ -285,14 +284,17 @@ module Installation
         return false
       end
 
-      @triggers ||= {}
-      @triggers[client] = description_map["trigger"] if description_map.key?("trigger")
+      description_map["id"] = id_for(client)
+
+      @proposals ||= {}
+      @proposals[client] = description_map
 
       true
     end
 
-    def clear_proposals_counter
+    def clear_proposals
       @proposals_run_counter = {}
+      @proposals = {}
     end
 
     # Updates internal counter that holds information how many times
@@ -315,10 +317,6 @@ module Installation
       @proposals_run_counter.values.max < MAX_LOOPS_IN_PROPOSAL
     end
 
-    def clear_triggers
-      @triggers = {}
-    end
-
     # Returns whether given trigger definition is correct
     # e.g., all mandatory parts are there
     #
@@ -335,21 +333,23 @@ module Installation
     end
 
     # Returns whether given client should be called again during 'this'
-    # proposal run according to triggers
+    # proposal run according to triggers in proposals
     #
     # @param [String] client name
     # @return [Boolean] whether it should be called
     def should_be_called_again?(client)
-      @triggers ||= {}
-      return false unless @triggers.key?(client)
+      @proposals ||= {}
+      return false unless @proposals.fetch(client, {}).key?("trigger")
 
-      raise "Incorrect definition of 'trigger': #{@triggers[client].inspect} \n" \
+      trigger = @proposals[client]["trigger"]
+
+      raise "Incorrect definition of 'trigger': #{trigger.inspect} \n" \
         "both [Hash] 'expect', including keys [Symbol] 'class' and [Symbol] 'method', \n" \
-        "and [Any] 'value' must be set" unless valid_trigger?(@triggers[client])
+        "and [Any] 'value' must be set" unless valid_trigger?(trigger)
 
-      expectation_class = @triggers[client]["expect"]["class"]
-      expectation_method = @triggers[client]["expect"]["method"]
-      expectation_value = @triggers[client]["value"]
+      expectation_class  = trigger["expect"]["class"]
+      expectation_method = trigger["expect"]["method"]
+      expectation_value  = trigger["value"]
 
       log.info "Calling #{expectation_class}.send(#{expectation_method.inspect})"
 

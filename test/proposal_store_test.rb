@@ -197,19 +197,24 @@ describe ::Installation::ProposalStore do
     {
       "rich_text_title" => "Proposal A",
       "menu_title"      => "&Proposal A",
-      "id"              => "proposal_a",
-      "links"           => ["proposal_a-link_1", "proposal_a-link_2"]
+      "id"              => "proposal_a"
+    }
+  end
+
+  let(:proposal_a_desc) do
+    {
+      "preformatted_proposal" => "Values proposed for A",
+      "links"                 => ["proposal_a-link_1", "proposal_a-link_2"]
     }
   end
 
   let(:proposal_a_expected_val) { "/" }
 
-  let(:proposal_a_with_trigger) do
+  let(:proposal_a_desc_with_trigger) do
     {
-      "rich_text_title" => "Proposal A",
-      "menu_title"      => "&Proposal A",
-      "id"              => "proposal_a",
-      "trigger"         => {
+      "preformatted_proposal" => "Values proposed for A",
+      "links"                 => ["proposal_a-link_1", "proposal_a-link_2"],
+      "trigger"               => {
         "expect" => {
           "class"  => "Yast::Installation",
           "method" => "destdir"
@@ -227,22 +232,24 @@ describe ::Installation::ProposalStore do
     }
   end
 
-  let(:proposal_b_with_language_change) do
+  let(:proposal_b_desc) do
     {
-      "rich_text_title"  => "Proposal B",
-      "menu_title"       => "&Proposal B",
-      "id"               => "proposal_b",
-      "language_changed" => true
+      "preformatted_proposal" => "Values proposed for B"
     }
   end
 
-  let(:proposal_b_with_fatal_error) do
+  let(:proposal_b_desc_with_language_change) do
     {
-      "rich_text_title" => "Proposal B",
-      "menu_title"      => "&Proposal B",
-      "id"              => "proposal_b",
-      "warning_level"   => :fatal,
-      "warning"         => "some fatal error"
+      "preformatted_proposal" => "Values proposed for B",
+      "language_changed"      => true
+    }
+  end
+
+  let(:proposal_b_desc_with_fatal_error) do
+    {
+      "preformatted_proposal" => "Values proposed for A",
+      "warning_level"         => :fatal,
+      "warning"               => "some fatal error"
     }
   end
 
@@ -253,11 +260,16 @@ describe ::Installation::ProposalStore do
     }
   end
 
-  let(:proposal_c_with_incorrect_trigger) do
+  let(:proposal_c_desc) do
     {
-      "rich_text_title" => "Proposal C",
-      "menu_title"      => "&Proposal C",
-      "trigger"         => {
+      "preformatted_proposal" => "Values proposed for C"
+    }
+  end
+
+  let(:proposal_c_desc_with_incorrect_trigger) do
+    {
+      "preformatted_proposal" => "Values proposed for C",
+      "trigger"               => {
         # 'expect' must be a string that is evaluated later
         "expect" => 333,
         "value"  => "anything"
@@ -265,11 +277,10 @@ describe ::Installation::ProposalStore do
     }
   end
 
-  let(:proposal_c_with_exception) do
+  let(:proposal_c_desc_with_exception) do
     {
-      "rich_text_title" => "Proposal C",
-      "menu_title"      => "&Proposal C",
-      "trigger"         => {
+      "preformatted_proposal" => "Values proposed for C",
+      "trigger"               => {
         # 'expect' must be a string that is evaluated later
         "expect" => {
           "class"  => "Erroneous",
@@ -283,9 +294,12 @@ describe ::Installation::ProposalStore do
   describe "#make_proposals" do
     before do
       allow(subject).to receive(:proposal_names).and_return(proposal_names)
-      allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", anything).and_return(proposal_a)
-      allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", anything).and_return(proposal_b)
-      allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", anything).and_return(proposal_c)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", ["Description", anything]).and_return(proposal_a)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["Description", anything]).and_return(proposal_b)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", ["Description", anything]).and_return(proposal_c)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", ["MakeProposal", anything]).and_return(proposal_a_desc)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["MakeProposal", anything]).and_return(proposal_b_desc)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", ["MakeProposal", anything]).and_return(proposal_c_desc)
     end
 
     context "when all proposals return correct data" do
@@ -314,7 +328,7 @@ describe ::Installation::ProposalStore do
 
     context "when returned proposal contains a 'trigger' section" do
       it "for each proposal client, creates new proposal and calls the client while trigger evaluates to true" do
-        allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", anything).and_return(proposal_a_with_trigger)
+        allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", anything).and_return(proposal_a_desc_with_trigger)
 
         # Mock evaluation of the trigger
         allow(Yast::Installation).to receive(:destdir).and_return("/x", "/y", proposal_a_expected_val)
@@ -330,7 +344,7 @@ describe ::Installation::ProposalStore do
 
     context "when returned proposal triggers changing a language" do
       it "calls all proposals again with language_changed: true" do
-        allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", anything).and_return(proposal_b_with_language_change, proposal_b)
+        allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["MakeProposal", anything]).and_return(proposal_b_desc_with_language_change, proposal_b_desc)
 
         # Call proposals till the one that changes the language
         expect(subject).to receive(:make_proposal).with("proposal_a", hash_including(language_changed: false)).once.and_call_original
@@ -347,7 +361,7 @@ describe ::Installation::ProposalStore do
 
     context "when returned proposal contains a fatal error" do
       it "calls all proposals till fatal error is received, then it stops proceeding immediately" do
-        allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", anything).and_return(proposal_b_with_fatal_error)
+        allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["MakeProposal", anything]).and_return(proposal_b_desc_with_fatal_error)
 
         expect(subject).to receive(:make_proposal).with("proposal_a", anything).once.and_call_original
         expect(subject).to receive(:make_proposal).with("proposal_b", anything).once.and_call_original
@@ -360,7 +374,7 @@ describe ::Installation::ProposalStore do
 
     context "when trigger from proposal is incorrectly set" do
       it "raises an exception" do
-        allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", anything).and_return(proposal_c_with_incorrect_trigger)
+        allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["MakeProposal", anything]).and_return(proposal_c_desc_with_incorrect_trigger)
 
         expect { subject.make_proposals }.to raise_error(/Incorrect definition/)
       end
@@ -368,7 +382,7 @@ describe ::Installation::ProposalStore do
 
     context "when trigger from proposal raises an exception" do
       it "raises an exception" do
-        allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", anything).and_return(proposal_c_with_exception)
+        allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", ["MakeProposal", anything]).and_return(proposal_c_desc_with_exception)
 
         expect { subject.make_proposals }.to raise_error(/Checking the trigger expectations for proposal_c have failed/)
       end
@@ -393,8 +407,7 @@ describe ::Installation::ProposalStore do
     {
       "rich_text_title" => "Software",
       "menu_title"      => "&Software",
-      "id"              => "software",
-      "links"           => ["software_link_1", "software_link_2"]
+      "id"              => "software"
     }
   end
 
@@ -431,32 +444,51 @@ describe ::Installation::ProposalStore do
 
   describe "#handle_link" do
     before do
-      allow(Yast::WFM).to receive(:CallFunction).with(client_name, ["Description", {}]).and_return(client_description)
+      allow(subject).to receive(:proposal_names).and_return(proposal_names)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", ["Description", anything]).and_return(proposal_a)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["Description", anything]).and_return(proposal_b)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", ["Description", anything]).and_return(proposal_c)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_a", ["MakeProposal", anything]).and_return(proposal_a_desc)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_b", ["MakeProposal", anything]).and_return(proposal_b_desc)
+      allow(Yast::WFM).to receive(:CallFunction).with("proposal_c", ["MakeProposal", anything]).and_return(proposal_c_desc)
     end
 
-    context "when client('Description') has not been called before" do
+    context "when client('MakeProposal') has not been called before" do
       it "raises an exception" do
-        expect { subject.handle_link("software") }.to raise_error(/no client descriptions known/)
+        expect { subject.handle_link("proposal_a-link_2") }.to raise_error(/no client proposals known/)
       end
     end
 
     context "when no client matches the given link" do
       it "raises an exception" do
-        # Cache some desriptipn first
-        subject.description_for(client_name)
+        # Cache some proposals first
+        subject.make_proposals
 
         expect { subject.handle_link("unknown_link") }.to raise_error(/Unknown user request/)
       end
     end
 
-    context "when client('Description') has been called before" do
-      it "calls a given client and returns its result" do
-        # Description needs to be cached first
-        subject.description_for(client_name)
+    context "when client('MakeProposal') has been called before" do
+      context "when handling link from returned proposal" do
+        it "calls a respective client(AskUser) and returns its result" do
+          # Proposals need to be cached first
+          subject.make_proposals
 
-        expect(Yast::WFM).to receive(:CallFunction).with(client_name,
-          ["AskUser", { "has_next" => false, "chosen_id" => "software" }]).and_return(:next)
-        expect(subject.handle_link("software")).to eq(:next)
+          expect(Yast::WFM).to receive(:CallFunction).with("proposal_a",
+            ["AskUser", { "has_next" => false, "chosen_id" => "proposal_a-link_2" }]).and_return(:next)
+          expect(subject.handle_link("proposal_a-link_2")).to eq(:next)
+        end
+      end
+
+      context "when handling link == client id from Description" do
+        it "calls a respective client(AskUser) and returns its result" do
+          # Proposals need to be cached first
+          subject.make_proposals
+
+          expect(Yast::WFM).to receive(:CallFunction).with("proposal_a",
+            ["AskUser", { "has_next" => false, "chosen_id" => "proposal_a" }]).and_return(:next)
+          expect(subject.handle_link("proposal_a")).to eq(:next)
+        end
       end
     end
   end
