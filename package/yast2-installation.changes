@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jul  1 10:46:50 CEST 2015 - locilka@suse.com
+
+- Fixed handling user request to change an installation proposal
+  (bsc#936448)
+- 3.1.148
+
+-------------------------------------------------------------------
 Mon Jun 29 13:11:57 UTC 2015 - lslezak@suse.cz
 
 - fixed menu button label in the proposal (bsc#936427)
