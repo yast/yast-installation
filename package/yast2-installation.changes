@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jul  1 13:50:55 CEST 2015 - shundhammer@suse.de
+
+- Cleanup for snapshots made during installation (bnc#935923)
+- 3.1.149 
+
+-------------------------------------------------------------------
 Wed Jul  1 10:46:50 CEST 2015 - locilka@suse.com
 
 - Fixed handling user request to change an installation proposal
