@@ -1,2 +1,2 @@
-require "installation/inst_initialization"
+require "installation/clients/inst_initialization"
 Yast::InstInitializationClient.new.main

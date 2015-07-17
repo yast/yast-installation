@@ -1,2 +1,2 @@
-require "installation/kernel_finish"
+require "installation/clients/kernel_finish"
 Yast::KernelFinishClient.new.main

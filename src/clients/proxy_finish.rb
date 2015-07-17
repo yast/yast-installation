@@ -1,2 +1,2 @@
-require "installation/proxy_finish"
+require "installation/clients/proxy_finish"
 Yast::ProxyFinishClient.new.main

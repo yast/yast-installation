@@ -1,2 +1,2 @@
-require "installation/inst_scenarios"
+require "installation/clients/inst_scenarios"
 Yast::InstScenariosClient.new.main

@@ -1,2 +1,2 @@
-require "installation/inst_welcome"
+require "installation/clients/inst_welcome"
 Yast::InstWelcomeClient.new.main

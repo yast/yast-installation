@@ -1,2 +1,2 @@
-require "installation/inst_deploy_image"
+require "installation/clients/inst_deploy_image"
 Yast::InstDeployImageClient.new.main

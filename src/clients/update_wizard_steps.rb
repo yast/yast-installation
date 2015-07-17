@@ -1,2 +1,2 @@
-require "installation/update_wizard_steps"
+require "installation/clients/update_wizard_steps"
 Yast::UpdateWizardStepsClient.new.main

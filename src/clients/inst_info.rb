@@ -1,2 +1,2 @@
-require "installation/inst_info"
+require "installation/clients/inst_info"
 Yast::InstInfoClient.new.main

@@ -1,2 +1,2 @@
-require "installation/inst_installation_options"
+require "installation/clients/inst_installation_options"
 Yast::InstModeClient.new.main

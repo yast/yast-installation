@@ -1,2 +1,2 @@
-require "installation/inst_prepareprogress"
+require "installation/clients/inst_prepareprogress"
 Yast::InstPrepareprogressClient.new.main

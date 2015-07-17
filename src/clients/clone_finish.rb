@@ -1,2 +1,2 @@
-require "installation/clone_finish"
+require "installation/clients/clone_finish"
 Yast::CloneFinishClient.new.main

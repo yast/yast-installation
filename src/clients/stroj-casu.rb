@@ -1,2 +1,2 @@
-require "installation/stroj-casu"
+require "installation/clients/stroj-casu"
 Yast::StrojCasuClient.new.main

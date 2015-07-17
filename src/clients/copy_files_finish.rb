@@ -1,2 +1,2 @@
-require "installation/copy_files_finish"
+require "installation/clients/copy_files_finish"
 Yast::CopyFilesFinishClient.new.main

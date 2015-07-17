@@ -1,2 +1,2 @@
-require "installation/yast_inf_finish"
+require "installation/clients/yast_inf_finish"
 Yast::YastInfFinishClient.new.main

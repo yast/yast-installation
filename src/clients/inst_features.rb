@@ -1,2 +1,2 @@
-require "installation/inst_features"
+require "installation/clients/inst_features"
 Yast::InstFeaturesClient.new.main

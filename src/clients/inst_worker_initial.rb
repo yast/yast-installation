@@ -1,2 +1,2 @@
-require "installation/inst_worker_initial"
+require "installation/clients/inst_worker_initial"
 Yast::InstWorkerInitialClient.new.main

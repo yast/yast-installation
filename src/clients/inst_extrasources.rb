@@ -1,2 +1,2 @@
-require "installation/inst_extrasources"
+require "installation/clients/inst_extrasources"
 Yast::InstExtrasourcesClient.new.main

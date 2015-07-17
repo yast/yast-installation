@@ -1,2 +1,2 @@
-require "installation/inst_restore_settings"
+require "installation/clients/inst_restore_settings"
 Yast::InstRestoreSettingsClient.new.main

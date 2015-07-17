@@ -1,2 +1,2 @@
-require "installation/deploying_proposal"
+require "installation/clients/deploying_proposal"
 Yast::DeployingProposalClient.new.main

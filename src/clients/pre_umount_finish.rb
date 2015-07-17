@@ -1,2 +1,2 @@
-require "installation/pre_umount_finish"
+require "installation/clients/pre_umount_finish"
 Yast::PreUmountFinishClient.new.main

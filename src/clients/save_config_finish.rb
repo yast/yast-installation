@@ -1,2 +1,2 @@
-require "installation/save_config_finish"
+require "installation/clients/save_config_finish"
 Yast::SaveConfigFinishClient.new.main

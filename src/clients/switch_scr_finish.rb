@@ -1,2 +1,2 @@
-require "installation/switch_scr_finish"
+require "installation/clients/switch_scr_finish"
 Yast::SwitchScrFinishClient.new.main

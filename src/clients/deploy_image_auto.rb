@@ -1,2 +1,2 @@
-require "installation/deploy_image_auto"
+require "installation/clients/deploy_image_auto"
 Yast::DeployImageAutoClient.new.main

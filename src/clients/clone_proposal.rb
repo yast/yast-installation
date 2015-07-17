@@ -1,2 +1,2 @@
-require "installation/clone_proposal"
+require "installation/clients/clone_proposal"
 Yast::CloneProposalClient.new.main

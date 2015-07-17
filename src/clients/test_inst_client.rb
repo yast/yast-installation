@@ -1,2 +1,2 @@
-require "installation/test_inst_client"
+require "installation/clients/test_inst_client"
 Yast::TestInstClientClient.new.main

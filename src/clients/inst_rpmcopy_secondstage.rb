@@ -1,2 +1,2 @@
-require "installation/inst_rpmcopy_secondstage"
+require "installation/clients/inst_rpmcopy_secondstage"
 Yast::InstRpmcopySecondstageClient.new.main

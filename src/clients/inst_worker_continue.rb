@@ -1,2 +1,2 @@
-require "installation/inst_worker_continue"
+require "installation/clients/inst_worker_continue"
 Yast::InstWorkerContinueClient.new.main
