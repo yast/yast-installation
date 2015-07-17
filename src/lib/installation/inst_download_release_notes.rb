@@ -27,16 +27,6 @@
 # $Id$
 module Yast
   class InstDownloadReleaseNotesClient < Client
-    Yast.import "UI"
-    Yast.import "Product"
-    Yast.import "Language"
-    Yast.import "Proxy"
-    Yast.import "Directory"
-    Yast.import "InstData"
-    Yast.import "Stage"
-    Yast.import "GetInstArgs"
-    Yast.import "Wizard"
-
     include Yast::Logger
 
     # Download all release notes mentioned in Product::relnotesurl_all
@@ -146,6 +136,16 @@ module Yast
     end
 
     def main
+      Yast.import "UI"
+      Yast.import "Product"
+      Yast.import "Language"
+      Yast.import "Proxy"
+      Yast.import "Directory"
+      Yast.import "InstData"
+      Yast.import "Stage"
+      Yast.import "GetInstArgs"
+      Yast.import "Wizard"
+
       textdomain "installation"
 
       return :back if GetInstArgs.going_back
