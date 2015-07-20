@@ -48,15 +48,21 @@ Style/Documentation:
 Style/FileName:
   Include:
     - src/lib/**/*.rb
+  Exclude:
+    - src/lib/installation/clients/*.rb
 
 # Offense count: 179
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/MethodName:
   Include:
    - src/lib/**/*.rb
+  Exclude:
+    - src/lib/installation/clients/*.rb
 
 # Offense count: 22
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/VariableName:
   Include:
     - src/lib/**/*.rb
+  Exclude:
+    - src/lib/installation/clients/*.rb
