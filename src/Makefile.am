@@ -116,6 +116,68 @@ ylib_DATA = \
   lib/installation/remote_finish_client.rb \
   lib/installation/snapshots_finish.rb
 
+ylibclientdir = "${yast2dir}/lib/installation/clients"
+ylibclient_DATA = \
+  lib/installation/clients/clone_finish.rb \
+  lib/installation/clients/clone_proposal.rb \
+  lib/installation/clients/copy_files_finish.rb \
+  lib/installation/clients/copy_systemfiles_finish.rb \
+  lib/installation/clients/deploy_image_auto.rb \
+  lib/installation/clients/deploying_proposal.rb \
+  lib/installation/clients/desktop_finish.rb \
+  lib/installation/clients/disintegrate_all_extensions.rb \
+  lib/installation/clients/driver_update1_finish.rb \
+  lib/installation/clients/driver_update2_finish.rb \
+  lib/installation/clients/inst_addon_update_sources.rb \
+  lib/installation/clients/installation.rb \
+  lib/installation/clients/installation_settings_finish.rb \
+  lib/installation/clients/inst_ask_online_update.rb \
+  lib/installation/clients/inst_complex_welcome.rb \
+  lib/installation/clients/inst_congratulate.rb \
+  lib/installation/clients/inst_deploy_image.rb \
+  lib/installation/clients/inst_disk_for_image.rb \
+  lib/installation/clients/inst_disks_activate.rb \
+  lib/installation/clients/inst_doit.rb \
+  lib/installation/clients/inst_download_release_notes.rb \
+  lib/installation/clients/inst_extrasources.rb \
+  lib/installation/clients/inst_features.rb \
+  lib/installation/clients/inst_finish.rb \
+  lib/installation/clients/inst_check_autoinst_mode.rb \
+  lib/installation/clients/inst_info.rb \
+  lib/installation/clients/inst_initialization.rb \
+  lib/installation/clients/inst_installation_options.rb \
+  lib/installation/clients/inst_license.rb \
+  lib/installation/clients/inst_network_check.rb \
+  lib/installation/clients/inst_new_desktop.rb \
+  lib/installation/clients/inst_pre_install.rb \
+  lib/installation/clients/inst_prepare_image.rb \
+  lib/installation/clients/inst_prepareprogress.rb \
+  lib/installation/clients/inst_release_notes.rb \
+  lib/installation/clients/inst_restore_settings.rb \
+  lib/installation/clients/inst_rpmcopy_secondstage.rb \
+  lib/installation/clients/inst_save_hardware_status.rb \
+  lib/installation/clients/inst_scenarios.rb \
+  lib/installation/clients/inst_system_analysis.rb \
+  lib/installation/clients/inst_upgrade_urls.rb \
+  lib/installation/clients/inst_welcome.rb \
+  lib/installation/clients/inst_worker_continue.rb \
+  lib/installation/clients/inst_worker_initial.rb \
+  lib/installation/clients/kernel_finish.rb \
+  lib/installation/clients/ldconfig_finish.rb \
+  lib/installation/clients/network_finish.rb \
+  lib/installation/clients/pre_umount_finish.rb \
+  lib/installation/clients/proxy_finish.rb \
+  lib/installation/clients/save_config_finish.rb \
+  lib/installation/clients/save_hw_status_finish.rb \
+  lib/installation/clients/ssh_settings_finish.rb \
+  lib/installation/clients/stroj-casu.rb \
+  lib/installation/clients/switch_scr_finish.rb \
+  lib/installation/clients/test_inst_client.rb \
+  lib/installation/clients/test_proposal.rb \
+  lib/installation/clients/umount_finish.rb \
+  lib/installation/clients/update_wizard_steps.rb \
+  lib/installation/clients/x11_finish.rb \
+  lib/installation/clients/yast_inf_finish.rb
 
 EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylib_DATA)
 
