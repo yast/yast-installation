@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jul 21 09:16:03 UTC 2015 - mvidner@suse.com
+
+- Moved client code to lib/installation/clients to enable test
+  coverage measurements.
+- 3.1.150
+
+-------------------------------------------------------------------
 Wed Jul  1 13:50:55 CEST 2015 - shundhammer@suse.de
 
 - Cleanup for snapshots made during installation (bnc#935923)
