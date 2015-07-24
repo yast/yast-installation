@@ -70,15 +70,15 @@ module Yast
           log.info("Skipping release notes download due to previous download issues")
           break
         end
-        if InstData.downloaded_release_notes.include? product["name"]
-          log.info("Release notes for #{product["name"]} already downloaded, skipping...")
+        if InstData.downloaded_release_notes.include? product["short_name"]
+          log.info("Release notes for #{product["short_name"]} already downloaded, skipping...")
           next
         end
         url = product["relnotes_url"]
         log.debug("URL: #{url}")
         # protect from wrong urls
         if url.nil? || url.empty?
-          log.warn("Skipping invalid URL #{url.inspect} for product #{product["name"]}")
+          log.warn("Skipping invalid URL #{url.inspect} for product #{product["short_name"]}")
           next
         end
         pos = url.rindex("/")
@@ -108,8 +108,8 @@ module Yast
           log.info("Downloading release notes: #{cmd} returned #{ret}")
           if ret == 0
             log.info("Release notes downloaded successfully")
-            InstData.release_notes[product["name"]] = SCR.Read(path(".target.string"), filename)
-            InstData.downloaded_release_notes << product["name"]
+            InstData.release_notes[product["short_name"]] = SCR.Read(path(".target.string"), filename)
+            InstData.downloaded_release_notes << product["short_name"]
             break
           # exit codes (see "man curl"):
           #  7 = Failed to connect to host.

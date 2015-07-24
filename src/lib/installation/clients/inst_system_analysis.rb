@@ -301,7 +301,7 @@ module Yast
       # push button
       Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
 
-      product_name = Product.name || _("Unknown Product")
+      product_name = Product.short_name || _("Unknown Product")
       InstData.release_notes[product_name] = @media_text
       UI::SetReleaseNotes(product_name => @media_text)
     end
