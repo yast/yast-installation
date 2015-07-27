@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Fri Jul 24 13:01:22 UTC 2015 - jsrain@suse.cz
 
-- avoid suplicating release notes for products (bsc#935599)
+- avoid duplicating release notes for products (bsc#935599)
 - 3.1.151
 
 -------------------------------------------------------------------
