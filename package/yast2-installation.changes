@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jul 24 13:01:22 UTC 2015 - jsrain@suse.cz
+
+- avoid duplicating release notes for products (bsc#935599)
+- 3.1.151
+
+-------------------------------------------------------------------
 Tue Jul 21 09:16:03 UTC 2015 - mvidner@suse.com
 
 - Moved client code to lib/installation/clients to enable test
