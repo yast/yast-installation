@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Aug  5 11:45:25 UTC 2015 - jsrain@suse.cz
+
+- store cio_ignore settings before installing bootloader
+  (bsc#933177)
+- 3.1.152
+
+-------------------------------------------------------------------
 Fri Jul 24 13:01:22 UTC 2015 - jsrain@suse.cz
 
 - avoid duplicating release notes for products (bsc#935599)

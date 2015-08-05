@@ -191,9 +191,9 @@ module Yast
 
         install_bootloader_steps = [
           "prep_shrink", # ensure that prep partition is small enough for boot sector (bnc#867345)
+          "cio_ignore", # needs to be run before initrd is created (bsc#933177)
           "bootloader",
-          ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true ? "kdump" : "",
-          "cio_ignore"
+          ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true ? "kdump" : ""
         ]
       end
 
