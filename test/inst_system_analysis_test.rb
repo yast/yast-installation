@@ -3,11 +3,11 @@
 require_relative "./test_helper"
 require "installation/clients/inst_system_analysis"
 
-describe Yast::InstSystemAnalysisClient do
-  before do
-    subject.main # Initialization and dependencies import
-  end
+Yast.import "Product"
+Yast.import "InstData"
+Yast.import "Packages"
 
+describe Yast::InstSystemAnalysisClient do
   describe "#download_and_show_release_notes" do
     let(:product) { "openSUSE" }
     let(:notes) { "some release notes" }
