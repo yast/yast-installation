@@ -34,7 +34,7 @@ describe Yast::InstSystemAnalysisClient do
 
       context "but can be loaded from media" do
         before do
-          expect(subject).to receive(:load_release_notes).and_return(true)
+          allow(subject).to receive(:load_release_notes).and_return(true)
           subject.instance_variable_set(:@media_text, notes)
         end
 
@@ -42,12 +42,13 @@ describe Yast::InstSystemAnalysisClient do
           expect(Yast::Wizard).to receive(:ShowReleaseNotesButton)
           expect(Yast::UI).to receive(:SetReleaseNotes).with(product => notes)
           subject.download_and_show_release_notes
+          expect(Yast::InstData.release_notes).to eq({ product => notes })
         end
       end
 
       context "and could not be loaded from media" do
         before do
-          expect(subject).to receive(:load_release_notes).and_return(false)
+          allow(subject).to receive(:load_release_notes).and_return(false)
         end
 
         it "does not enable the button nor load release notes" do
