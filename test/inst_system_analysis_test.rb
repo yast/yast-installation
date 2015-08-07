@@ -13,8 +13,8 @@ describe Yast::InstSystemAnalysisClient do
     let(:notes) { "some release notes" }
 
     before do
-      allow(Yast::WFM).to receive(:CallFunction).with("inst_download_release_notes").
-        and_return(:auto)
+      allow(Yast::WFM).to receive(:CallFunction).with("inst_download_release_notes")
+        .and_return(:auto)
       allow(Yast::Product).to receive(:short_name).and_return(product)
       allow(Yast::InstData).to receive(:release_notes).and_return(release_notes)
     end
@@ -42,7 +42,7 @@ describe Yast::InstSystemAnalysisClient do
           expect(Yast::Wizard).to receive(:ShowReleaseNotesButton)
           expect(Yast::UI).to receive(:SetReleaseNotes).with(product => notes)
           subject.download_and_show_release_notes
-          expect(Yast::InstData.release_notes).to eq({ product => notes })
+          expect(Yast::InstData.release_notes).to eq(product => notes)
         end
       end
 
