@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Aug  7 12:53:08 UTC 2015 - igonzalezsosa@suse.com
+
+- Fix release notes loading when network is not working (bsc#940648)
+- 3.1.153
+
+-------------------------------------------------------------------
 Wed Aug  5 11:45:25 UTC 2015 - jsrain@suse.cz
 
 - store cio_ignore settings before installing bootloader
