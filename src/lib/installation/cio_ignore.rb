@@ -1,8 +1,12 @@
 require "yast"
 
 module Installation
+
   class CIOIgnore
     include Singleton
+    Yast.import "Mode"
+    Yast.import "AutoinstConfig"
+
     attr_accessor :enabled
 
     def initialize
@@ -10,8 +14,12 @@ module Installation
     end
 
     def reset
-      # default value requested in FATE#315586
-      @enabled = true
+      if Yast::Mode.autoinst
+        @enabled = Yast::AutoinstConfig.cio_ignore
+      else
+        # default value requested in FATE#315586
+        @enabled = true
+      end
     end
   end
 
