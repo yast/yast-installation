@@ -43,6 +43,8 @@ BuildRequires: yast2 >= 3.1.126
 # Yast::Remote
 BuildRequires: yast2-network
 
+BuildRequires: autoyast2-installation
+
 # clone_system client
 Requires:       autoyast2-installation >= 3.1.5
 
