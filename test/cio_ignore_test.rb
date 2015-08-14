@@ -20,6 +20,14 @@ describe ::Installation::CIOIgnore do
       ::Installation::CIOIgnore.instance.reset
       expect(::Installation::CIOIgnore.instance.enabled).to eq(true)
     end
+
+    it "take unexpected value from AutoinstConfig.cio_ignore" do
+      allow(Yast::Mode).to receive(:autoinst).and_return(true)
+      allow(Yast::AutoinstConfig).to receive(:cio_ignore).and_return("autoinst_value")
+      ::Installation::CIOIgnore.instance.reset
+      expect(::Installation::CIOIgnore.instance.enabled).to eq("autoinst_value")
+    end
+
   end
 end
 
