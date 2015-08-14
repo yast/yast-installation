@@ -1,16 +1,23 @@
 #! /usr/bin/env rspec
 
+# fake AutoinstConfigClass class which is not supported by Ubuntu
+module Yast
+  # Faked AutoinstConfigClass module
+  class AutoinstConfigClass
+    # we need at least one non-default methods, otherwise ruby-bindings thinks
+    # it is just namespace
+    def fake_method
+    end
+  end
+  AutoinstConfig = AutoinstConfigClass.new
+end
+
 require_relative "./test_helper"
 
 require "installation/cio_ignore"
 
 describe ::Installation::CIOIgnore do
   describe "enable/disable" do
-
-    before(:each) do
-      Yast.import "Mode"
-      Yast.import "AutoinstConfig"
-    end
 
     it "take AutoYaST cio_ignore setting if it is enabled" do
       allow(Yast::Mode).to receive(:autoinst).and_return(true)
