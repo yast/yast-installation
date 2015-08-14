@@ -17,8 +17,15 @@ module Installation
       if Yast::Mode.autoinst
         @enabled = Yast::AutoinstConfig.cio_ignore
       else
-        # default value requested in FATE#315586
-        @enabled = true
+        if File.exists?("/proc/sysinfo") &&
+          (File.readlines("/proc/sysinfo").grep(/Control Program: KVM\/Linux/).any? ||
+            File.readlines("/proc/sysinfo").grep(/Control Program: z\/VM/).any?)
+          # cio_ignore does not make sense for KVM or z/VM (fate#317861)
+          @enabled = false
+        else
+          # default value requested in FATE#315586
+          @enabled = true
+        end
       end
     end
   end
