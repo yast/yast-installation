@@ -37,7 +37,6 @@ module Installation
       File.exist?("/proc/sysinfo") &&
         File.readlines("/proc/sysinfo").grep(/Control Program: z\/VM/).any?
     end
-
   end
 
   class CIOIgnoreProposal
