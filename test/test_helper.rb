@@ -4,6 +4,18 @@ ENV["Y2DIR"] = y2dirs.unshift(srcdir).join(":")
 
 require "yast"
 
+# fake AutoinstConfigClass class which is not supported by Ubuntu
+module Yast
+  # Faked AutoinstConfigClass module
+  class AutoinstConfigClass
+    # we need at least one non-default methods, otherwise ruby-bindings thinks
+    # it is just namespace
+    def fake_method
+    end
+  end
+  AutoinstConfig = AutoinstConfigClass.new
+end
+
 if ENV["COVERAGE"]
   require "simplecov"
   SimpleCov.start do

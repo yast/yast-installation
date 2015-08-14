@@ -3,6 +3,9 @@ require "yast"
 module Installation
   class CIOIgnore
     include Singleton
+    Yast.import "Mode"
+    Yast.import "AutoinstConfig"
+
     attr_accessor :enabled
 
     def initialize
@@ -10,8 +13,29 @@ module Installation
     end
 
     def reset
-      # default value requested in FATE#315586
-      @enabled = true
+      if Yast::Mode.autoinst
+        @enabled = Yast::AutoinstConfig.cio_ignore
+      else
+        if kvm? || zvm?
+          # cio_ignore does not make sense for KVM or z/VM (fate#317861)
+          @enabled = false
+        else
+          # default value requested in FATE#315586
+          @enabled = true
+        end
+      end
+    end
+
+    private
+
+    def kvm?
+      File.exist?("/proc/sysinfo") &&
+        File.readlines("/proc/sysinfo").grep(/Control Program: KVM\/Linux/).any?
+    end
+
+    def zvm?
+      File.exist?("/proc/sysinfo") &&
+        File.readlines("/proc/sysinfo").grep(/Control Program: z\/VM/).any?
     end
   end
 

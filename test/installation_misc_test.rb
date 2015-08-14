@@ -8,12 +8,6 @@ class InstallationMiscIncludeTest
   include Yast::InstallationMiscInclude
 end
 
-# fake AutoinstConfig to avoid dependency on autoyast
-module Yast
-  class AutoinstConfig
-  end
-end
-
 # we need to mock these modules
 Yast.import "Stage"
 Yast.import "Mode"

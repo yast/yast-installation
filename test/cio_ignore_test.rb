@@ -4,6 +4,26 @@ require_relative "./test_helper"
 
 require "installation/cio_ignore"
 
+describe ::Installation::CIOIgnore do
+  describe "enable/disable" do
+
+    it "take AutoYaST cio_ignore setting" do
+      allow(Yast::Mode).to receive(:autoinst).and_return(true)
+      allow(Yast::AutoinstConfig).to receive(:cio_ignore).and_return(false)
+      ::Installation::CIOIgnore.instance.reset
+      expect(::Installation::CIOIgnore.instance.enabled).to eq(false)
+    end
+
+    it "take default cio_ignore entry if it is in the normal workflow" do
+      allow(Yast::Mode).to receive(:autoinst).and_return(false)
+      expect(Yast::AutoinstConfig).not_to receive(:cio_ignore)
+      ::Installation::CIOIgnore.instance.reset
+      expect(::Installation::CIOIgnore.instance.enabled).to eq(true)
+    end
+
+  end
+end
+
 describe ::Installation::CIOIgnoreProposal do
   subject { ::Installation::CIOIgnoreProposal.new }
 
