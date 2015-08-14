@@ -16,7 +16,7 @@ module Installation
       if Yast::Mode.autoinst
         @enabled = Yast::AutoinstConfig.cio_ignore
       else
-        if is_kvm? || is_zvm?
+        if kvm? || zvm?
           # cio_ignore does not make sense for KVM or z/VM (fate#317861)
           @enabled = false
         else
@@ -28,12 +28,12 @@ module Installation
 
     private
 
-    def is_kvm?
+    def kvm?
       File.exist?("/proc/sysinfo") &&
         File.readlines("/proc/sysinfo").grep(/Control Program: KVM\/Linux/).any?
     end
 
-    def is_zvm?
+    def zvm?
       File.exist?("/proc/sysinfo") &&
         File.readlines("/proc/sysinfo").grep(/Control Program: z\/VM/).any?
     end
