@@ -6,6 +6,8 @@ Thu Aug 13 13:26:56 CEST 2015 - schubi@suse.de
   (values: true/false). If it is not set cio_ignore is true.
   So it is backward compatible.
   (bnc#941406)
+- cio_ignore does not make sense for KVM or z/VM. So checking
+  for KVM and z/VM and evtl. disabling cio_ignore (fate#317861).
 - 3.1.155
 
 -------------------------------------------------------------------
