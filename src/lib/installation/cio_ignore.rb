@@ -1,7 +1,6 @@
 require "yast"
 
 module Installation
-
   class CIOIgnore
     include Singleton
     Yast.import "Mode"
@@ -17,9 +16,9 @@ module Installation
       if Yast::Mode.autoinst
         @enabled = Yast::AutoinstConfig.cio_ignore
       else
-        if File.exists?("/proc/sysinfo") &&
-          (File.readlines("/proc/sysinfo").grep(/Control Program: KVM\/Linux/).any? ||
-            File.readlines("/proc/sysinfo").grep(/Control Program: z\/VM/).any?)
+        if File.exist?("/proc/sysinfo") &&
+            (File.readlines("/proc/sysinfo").grep(/Control Program: KVM\/Linux/).any? ||
+              File.readlines("/proc/sysinfo").grep(/Control Program: z\/VM/).any?)
           # cio_ignore does not make sense for KVM or z/VM (fate#317861)
           @enabled = false
         else
