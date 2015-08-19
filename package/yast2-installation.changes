@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Aug 19 15:34:47 CEST 2015 - schubi@suse.de
+
+- AutoYaST second stage: YaST2-Second-Stage.service
+  Continue installation even if plymouth has returned an error.
+  (bnc#940878)
+- 3.1.116.5
+
+-------------------------------------------------------------------
 Mon Jul 20 17:15:53 UTC 2015 - igonzalezsosa@suse.com
 
 - Fix a typo in inst_finish client (bsc#938790)
