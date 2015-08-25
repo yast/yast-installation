@@ -17,6 +17,7 @@ describe ::Installation::CIOIgnore do
     it "take default cio_ignore entry if it is in the normal workflow" do
       allow(Yast::Mode).to receive(:autoinst).and_return(false)
       expect(Yast::AutoinstConfig).not_to receive(:cio_ignore)
+      expect(File).to receive(:exist?).with("/proc/sysinfo").exactly(2).times.and_return(false)
       ::Installation::CIOIgnore.instance.reset
       expect(::Installation::CIOIgnore.instance.enabled).to eq(true)
     end
