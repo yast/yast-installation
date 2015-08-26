@@ -8,7 +8,7 @@ module Installation
     include Yast::I18n
 
     def initialize
-      textdomain "storage"
+      textdomain "installation"
 
       Yast.import "Mode"
       Yast.import "StorageSnapper"
