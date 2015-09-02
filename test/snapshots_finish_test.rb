@@ -3,10 +3,12 @@
 require_relative "./test_helper"
 require "installation/snapshots_finish"
 
+Yast.import "InstFunctions"
+
 describe ::Installation::SnapshotsFinish do
   describe "#write" do
     before do
-      allow(subject).to receive(:second_stage_required?).and_return(second_stage_required)
+      allow(Yast::InstFunctions).to receive(:second_stage_required?).and_return(second_stage_required)
       allow(Yast2::FsSnapshot).to receive(:configured?).and_return(snapper_configured)
     end
 

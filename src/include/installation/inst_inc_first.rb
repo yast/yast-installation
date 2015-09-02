@@ -45,6 +45,7 @@ module Yast
       Yast.import "Mode"
       Yast.import "ProductFeatures"
       Yast.import "AutoinstConfig"
+      Yast.import "InstFunctions"
 
       Yast.include include_target, "installation/misc.rb"
     end
@@ -175,7 +176,7 @@ module Yast
       # file name
       run_yast_at_boot = "#{Installation.destdir}/#{Installation.run_yast_at_boot}"
 
-      if second_stage_required?
+      if InstFunctions.second_stage_required?
         Builtins.y2milestone("Running the second stage is required")
         WFM.Write(path(".local.string"), run_yast_at_boot, "")
         WriteSecondStageRequired(true)
