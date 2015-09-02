@@ -12,6 +12,7 @@ module Installation
 
       Yast.import "Mode"
       Yast.import "StorageSnapper"
+      Yast.import "InstFunctions"
       Yast.include self, "installation/misc.rb"
     end
 
@@ -23,7 +24,7 @@ module Installation
     # @return [TrueClass,FalseClass] True if snapshot was created;
     #                                otherwise it returns false.
     def write
-      if !second_stage_required? && Yast2::FsSnapshot.configured?
+      if !InstFunctions.second_stage_required? && Yast2::FsSnapshot.configured?
         log.info("Creating root filesystem snapshot")
         if Mode.update
           create_post_snapshot

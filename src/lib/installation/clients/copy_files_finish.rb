@@ -53,6 +53,7 @@ module Yast
       Yast.import "WorkflowManager"
       Yast.import "SystemFilesCopy"
       Yast.import "ProductFeatures"
+      Yast.import "InstFunctions"
 
       Yast.include self, "installation/misc.rb"
 
@@ -127,7 +128,7 @@ module Yast
         # --------------------------------------------------------------
         # Copy /etc/install.inf into built system so that the
         # second phase of the installation can find it.
-        if second_stage_required?
+        if InstFunctions.second_stage_required?
           Linuxrc.SaveInstallInf(Installation.destdir)
         else
           SCR.Execute(path(".target.remove"), "/etc/install.inf")
