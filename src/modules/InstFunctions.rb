@@ -129,9 +129,11 @@ module Yast
 
       run_second_stage
     end
+    alias_method :second_stage_required, :second_stage_required?
 
     publish function: :ignored_features, type: "list ()"
     publish function: :feature_ignored?, type: "boolean (string)"
+    publish function: :second_stage_required, type: "boolean ()"
 
   private
 
