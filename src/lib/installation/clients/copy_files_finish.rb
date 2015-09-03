@@ -275,6 +275,8 @@ module Yast
         # bugzila #328126
         # Copy 70-persistent-cd.rules ... if not updating
         CopyHardwareUdevRules() if !Mode.update
+
+        Profile.save_skip_list if Mode.autoinst || Mode.autoupgrade
       else
         Builtins.y2error("unknown function: %1", @func)
         @ret = nil

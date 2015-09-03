@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Sep  3 07:50:29 UTC 2015 - igonzalezsosa@suse.com
+
+- Copy profile sections to skip during the 2nd stage to installed
+  system (bnc#892091)
+- 3.1.158
+
+-------------------------------------------------------------------
 Wed Sep  2 09:43:21 UTC 2015 - igonzalezsosa@suse.com
 
 - Move #second_stage_required? method to InstFunctions module
