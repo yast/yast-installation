@@ -353,7 +353,7 @@ module Yast
 
         # Set it in the Language module.
         Language.Set(@language)
-        Language.languages = [Language.RemoveSuffix(@language)]
+        Language.languages = Language.RemoveSuffix(@language)
       end
       # Check and set CJK languages
       if Stage.initial || Stage.firstboot
@@ -403,7 +403,8 @@ module Yast
 
         # In case of normal installation, solver run will follow without this explicit call
         if Mode.live_installation && Language.PackagesModified
-          Language.PackagesInit(Language.languages)
+          selected_languages = Language.languages.split(",") << Language.language
+          Language.PackagesInit(selected_languages)
         end
 
         Builtins.y2milestone(
