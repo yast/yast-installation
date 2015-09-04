@@ -299,7 +299,7 @@ module Installation
         input = confirm_update ? :next : nil
         log.info "Update not confirmed, returning back..." unless input
       else
-        #sane default for other cases (bsc#944334)
+        # sane default for other cases (bsc#944334)
         input = :next
       end
 
