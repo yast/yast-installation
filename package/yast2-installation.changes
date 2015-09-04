@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Sep  4 07:07:33 UTC 2015 - jsrain@suse.cz
+
+- fix bug preventing to finish proposal in some sutuations
+  (bsc#944334)
+- 3.1.159
+
+-------------------------------------------------------------------
 Thu Sep  3 14:41:07 CEST 2015 - locilka@suse.com
 
 - Fixed setting language / languages in the installation welcome

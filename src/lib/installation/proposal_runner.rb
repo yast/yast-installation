@@ -298,6 +298,9 @@ module Installation
       elsif Yast::Stage.stage == "normal" && Yast::Mode.update
         input = confirm_update ? :next : nil
         log.info "Update not confirmed, returning back..." unless input
+      else
+        # sane default for other cases (bsc#944334)
+        input = :next
       end
 
       input
