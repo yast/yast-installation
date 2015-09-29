@@ -293,10 +293,10 @@ module Yast
       device_names = restrict_disk_names.call(device_names)
       Builtins.foreach(device_names) do |device_name|
         device_descr = Ops.get(target_map, device_name, {})
-        partitons = Ops.get_list(device_descr, "partitions", [])
+        partitions = Ops.get_list(device_descr, "partitions", [])
         filesystem = nil
         devicename = nil
-        Builtins.foreach(partitons) do |partition|
+        Builtins.foreach(partitions) do |partition|
           filesystem = Ops.get_symbol(
             partition,
             "used_fs",
@@ -328,7 +328,7 @@ module Yast
         end
       end
 
-      Builtins.y2milestone("Possible partitons: %1", @useful_partitions)
+      Builtins.y2milestone("Possible partitions: %1", @useful_partitions)
 
       nil
     end
