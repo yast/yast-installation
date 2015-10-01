@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Oct  1 15:55:54 UTC 2015 - ancor@suse.com
+
+- Simplified second stage systemd unit to avoid dependencies cycles
+  (bnc#947521 and bnc#931643). Logic moved to YaST startup scripts.
+- 3.1.160
+
+-------------------------------------------------------------------
 Fri Sep  4 07:07:33 UTC 2015 - jsrain@suse.cz
 
 - fix bug preventing to finish proposal in some sutuations
