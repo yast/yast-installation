@@ -38,15 +38,14 @@ setupVNCAuthentication () {
 	fi
 }
 
-#----[ startVNCServer ]------#
-startVNCServer () {
+#----[ displayVNCMessage ]------#
+displayVNCMessage () {
 #---------------------------------------------------
-# start Xvnc server and write a log file from the
-# VNC server process
+# inform the user that VNC server is going to be executed and provide
+# instructions on how to connect to it
 #
 	# The IP set in install.inf may not be valid if the DHCP server
 	# gave us a different lease in the meantime (#43974).
-
 	echo
 	echo starting VNC server...
 	echo A log file will be written to: /var/log/YaST2/vncserver.log ...
@@ -64,13 +63,17 @@ startVNCServer () {
 	EOF
 	list_ifaces
 	echo
+}
 
-	#==========================================
-	# Start Xvnc...
-	# For -noreset see BNC #351338
-	#------------------------------------------
+#----[ startVNCServer ]------#
+startVNCServer () {
+#---------------------------------------------------
+# start Xvnc server and write a log file from the
+# VNC server process
+#
 	[ -z "$VNCSize" ] && VNCSize=1024x768
 
+	# For -noreset see BNC #351338
 	$Xbindir/Xvnc $Xvncparam :0 \
 		-noreset \
 		-rfbauth /root/.vnc/passwd.yast \
