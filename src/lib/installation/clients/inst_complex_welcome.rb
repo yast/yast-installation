@@ -203,6 +203,7 @@ module Yast
       else
         @kbd = Keyboard.GetKeyboardForLanguage(@language, "english-us")
         UI.ChangeWidget(Id(:keyboard), :Value, @kbd)
+        Keyboard.Set(@kbd)
       end
 
       # In case of going back, Release Notes button may be shown, retranslate it (bnc#886660)

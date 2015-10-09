@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Oct  9 13:32:36 UTC 2015 - ancor@suse.com
+
+- Language selection screen fixed to immediately apply the keyboard
+  layout after changing it automatically (bsc#947969).
+- 3.1.161
+
+-------------------------------------------------------------------
 Thu Oct  1 15:55:54 UTC 2015 - ancor@suse.com
 
 - Simplified second stage systemd unit to avoid dependencies cycles
