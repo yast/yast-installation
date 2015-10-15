@@ -138,7 +138,7 @@ module Yast
     #
     # **Structure:**
     #
-    #     partiton  == "/dev/sdb4"
+    #     partition  == "/dev/sdb4"
     #
     # **Structure:**
     #
