@@ -1,9 +1,4 @@
 -------------------------------------------------------------------
-Tue Sep 29 14:40:13 CEST 2015 - aschnell@suse.com
-
-- fixed typo
-
--------------------------------------------------------------------
 Fri Sep  4 07:07:33 UTC 2015 - jsrain@suse.cz
 
 - fix bug preventing to finish proposal in some sutuations
