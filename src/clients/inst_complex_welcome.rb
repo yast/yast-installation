@@ -67,45 +67,16 @@ module Yast
       # Build dialog
       # ----------------------------------------------------------------------
       # heading text
-      @heading_text = _("Language, Keyboard and License Agreement")
-
-      @languagesel = ComboBox(
-        Id(:language),
-        Opt(:notify, :hstretch),
-        # combo box label
-        _("&Language"),
-        Language.GetLanguageItems(:first_screen)
-      )
-
-      @keyboardsel = ComboBox(
-        Id(:keyboard),
-        Opt(:notify, :hstretch),
-        # combo box label
-        _("&Keyboard Layout"),
-        Keyboard.GetKeyboardItems
-      )
-
-      # BNC #448598
-      # License sometimes doesn't need to be manually accepted
-      @license_agreement_checkbox = Left(
-        CheckBox(
-          # bnc #359456
-          # TRANSLATORS: check-box
-          Id(:license_agreement),
-          Opt(:notify),
-          _("I &Agree to the License Terms."),
-          InstData.product_license_accepted
-        )
-      )
+      heading_text = _("Language, Keyboard and License Agreement")
 
       # this type of contents will be shown only for initial installation dialog
       @contents = VBox(
         VWeight(1, VStretch()),
         Left(
           HBox(
-            HWeight(1, Left(@languagesel)),
+            HWeight(1, Left(language_selection)),
             HSpacing(3),
-            HWeight(1, Left(@keyboardsel))
+            HWeight(1, Left(keyboard_selection))
           )
         ),
         Left(
@@ -154,76 +125,20 @@ module Yast
         VWeight(1, VStretch())
       )
 
-      # help text for initial (first time) language screen
-      @help_text = _(
-        "<p>\n" \
-          "Choose the <b>Language</b> and the <b>Keyboard layout</b> to be used during\n" \
-          "installation and for the installed system.\n" \
-          "</p>\n"
-      ) +
-        # help text, continued
-        # Describes the #ICW_B1 button
-        _(
-          "<p>\n" \
-            "The license must be accepted before the installation continues.\n" \
-            "Use <b>License Translations...</b> to show the license in all available translations.\n" \
-            "</p>\n"
-        ) +
-        # help text, continued
-        _(
-          "<p>\n" \
-            "Click <b>Next</b> to proceed to the next dialog.\n" \
-            "</p>\n"
-        ) +
-        # help text, continued
-        _(
-          "<p>\n" \
-            "Nothing will happen to your computer until you confirm\n" \
-            "all your settings in the last installation dialog.\n" \
-            "</p>\n"
-        ) +
-        # help text, continued
-        _(
-          "<p>\n" \
-            "Select <b>Abort</b> to abort the\n" \
-            "installation process at any time.\n" \
-            "</p>\n"
-        )
 
       # Screen title for the first interactive dialog
 
       Wizard.SetContents(
-        @heading_text,
+        heading_text,
         @contents,
-        @help_text,
+        help_text,
         Ops.get_boolean(@argmap, "enable_back", true),
         Ops.get_boolean(@argmap, "enable_next", true)
       )
-      Wizard.EnableAbortButton
 
-      UI.ChangeWidget(Id(:language), :Value, @language)
-
-      if Keyboard.user_decision == true
-        UI.ChangeWidget(Id(:keyboard), :Value, Keyboard.current_kbd)
-      else
-        @kbd = Keyboard.GetKeyboardForLanguage(@language, "english-us")
-        UI.ChangeWidget(Id(:keyboard), :Value, @kbd)
-      end
-
-      # In case of going back, Release Notes button may be shown, retranslate it (bnc#886660)
-      # Assure that relnotes have been downloaded first
-      if !InstData.release_notes.empty?
-        Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
-      end
-
-      # Get the user input.
-      #
-      @ret = nil
-
-      UI.SetFocus(Id(:language))
+      initialize_widgets
 
       @keyboard = ""
-      @license_acc = nil
 
       ProductLicense.ShowLicenseInInstallation(:base_license_rp, @license_id)
 
@@ -237,7 +152,7 @@ module Yast
         ProductLicense.AcceptanceNeeded(@license_ui_id)
       )
       if ProductLicense.AcceptanceNeeded(@license_ui_id)
-        UI.ReplaceWidget(:license_checkbox_rp, @license_agreement_checkbox)
+        UI.ReplaceWidget(:license_checkbox_rp, license_agreement_checkbox)
       end
 
       loop do
@@ -298,6 +213,65 @@ module Yast
 
   private
 
+    def initialize_widgets
+      Wizard.EnableAbortButton
+
+      UI.ChangeWidget(Id(:language), :Value, @language)
+
+      if Keyboard.user_decision == true
+        UI.ChangeWidget(Id(:keyboard), :Value, Keyboard.current_kbd)
+      else
+        @kbd = Keyboard.GetKeyboardForLanguage(@language, "english-us")
+        UI.ChangeWidget(Id(:keyboard), :Value, @kbd)
+      end
+
+      # In case of going back, Release Notes button may be shown, retranslate it (bnc#886660)
+      # Assure that relnotes have been downloaded first
+      if !InstData.release_notes.empty?
+        Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
+      end
+
+      UI.SetFocus(Id(:language))
+    end
+
+    def help_text
+      # help text for initial (first time) language screen
+      @help_text = _(
+        "<p>\n" \
+          "Choose the <b>Language</b> and the <b>Keyboard layout</b> to be used during\n" \
+          "installation and for the installed system.\n" \
+          "</p>\n"
+      ) +
+        # help text, continued
+        # Describes the #ICW_B1 button
+        _(
+          "<p>\n" \
+            "The license must be accepted before the installation continues.\n" \
+            "Use <b>License Translations...</b> to show the license in all available translations.\n" \
+            "</p>\n"
+        ) +
+        # help text, continued
+        _(
+          "<p>\n" \
+            "Click <b>Next</b> to proceed to the next dialog.\n" \
+            "</p>\n"
+        ) +
+        # help text, continued
+        _(
+          "<p>\n" \
+            "Nothing will happen to your computer until you confirm\n" \
+            "all your settings in the last installation dialog.\n" \
+            "</p>\n"
+        ) +
+        # help text, continued
+        _(
+          "<p>\n" \
+            "Select <b>Abort</b> to abort the\n" \
+            "installation process at any time.\n" \
+            "</p>\n"
+        )
+    end
+
     def AllLicensesDialog
       # As long as possible
       # bnc #385257
@@ -321,6 +295,41 @@ module Yast
               Label.OKButton
             )
           )
+        )
+      )
+    end
+
+    def language_selection
+      ComboBox(
+        Id(:language),
+        Opt(:notify, :hstretch),
+        # combo box label
+        _("&Language"),
+        Language.GetLanguageItems(:first_screen)
+      )
+    end
+
+    def keyboard_selection
+      ComboBox(
+        Id(:keyboard),
+        Opt(:notify, :hstretch),
+        # combo box label
+        _("&Keyboard Layout"),
+        Keyboard.GetKeyboardItems
+      )
+    end
+
+    # BNC #448598
+    # License sometimes doesn't need to be manually accepted
+    def license_agreement_checkbox
+      Left(
+        CheckBox(
+          # bnc #359456
+          Id(:license_agreement),
+          Opt(:notify),
+          # TRANSLATORS: check-box
+          _("I &Agree to the License Terms."),
+          InstData.product_license_accepted
         )
       )
     end
