@@ -58,9 +58,6 @@ module Yast
 
       @language = Language.language
 
-      # language preselected in /etc/install.inf
-      @preselected = Language.preselected
-
       @text_mode = Language.GetTextMode
 
       @license_id = Ops.get(Pkg.SourceGetCurrent(true), 0, 0)
