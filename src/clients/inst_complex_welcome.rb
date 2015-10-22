@@ -19,6 +19,9 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
+require "yaml"
+require "fileutils"
+
 module Yast
   # This client shows main dialog for choosing the language,
   # keyboard and accepting the license.
@@ -45,6 +48,11 @@ module Yast
       Yast.import "ProductLicense"
 
       # ------------------------------------- main part of the client -----------
+
+      if data_stored?
+        apply_data
+        return :next
+      end
 
       @argmap = GetInstArgs.argmap
 
@@ -274,7 +282,10 @@ module Yast
             break
           end
 
-          break if @ret == :next
+          if @ret == :next
+            store_data
+            break
+          end
         elsif @ret == :show_fulscreen_license
           UI.OpenDialog(AllLicensesDialog())
           ProductLicense.ShowFullScreenLicenseInInstallation(
@@ -287,6 +298,8 @@ module Yast
 
       Convert.to_symbol(@ret)
     end
+
+  private
 
     def AllLicensesDialog
       # As long as possible
@@ -340,6 +353,17 @@ module Yast
       nil
     end
 
+    def retranslate_yast
+      Console.SelectFont(@language)
+      # no yast translation for nn_NO, use nb_NO as a backup
+      if @language == "nn_NO"
+        Builtins.y2milestone("Nynorsk not translated, using Bokm\u00E5l")
+        Language.WfmSetGivenLanguage("nb_NO")
+      else
+        Language.WfmSetLanguage
+      end
+    end
+
     # Returns true if the dialog needs redrawing
     def SetLanguageIfChanged(ret)
       ret = deep_copy(ret)
@@ -360,14 +384,7 @@ module Yast
         if ret == :language && Language.SwitchToEnglishIfNeeded(true)
           Builtins.y2debug("UI switched to en_US")
         elsif ret == :language
-          Console.SelectFont(@language)
-          # no yast translation for nn_NO, use nb_NO as a backup
-          if @language == "nn_NO"
-            Builtins.y2milestone("Nynorsk not translated, using Bokm\u00E5l")
-            Language.WfmSetGivenLanguage("nb_NO")
-          else
-            Language.WfmSetLanguage
-          end
+          retranslate_yast
         end
       end
 
@@ -415,7 +432,32 @@ module Yast
 
       false
     end
-  end
+
+    DATA_PATH = "/var/lib/YaST2/complex_welcome_store.yaml"
+    def data_stored?
+      ::File.exists?(DATA_PATH)
+    end
+
+    def store_data
+      data = {
+        "language" => @language,
+        "keyboard" => @keyboard
+      }
+
+      File.write(DATA_PATH, data.to_yaml)
+    end
+
+    def apply_data
+      data = YAML.load(File.read(DATA_PATH))
+      @language = data["language"]
+      @keyboard = data["keyboard"]
+
+      SetLanguageIfChanged(:next)
+      retranslate_yast
+
+      ::FileUtils.rm_rf(DATA_PATH)
+    end
+  end unless defined? Yast::InstComplexWelcomeClient
 end
 
 Yast::InstComplexWelcomeClient.new.main
