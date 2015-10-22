@@ -817,7 +817,9 @@ Section *supported\_desktops* contains list of one or more
 
 -   (string) *packages*
 
-    (whitespace-separated).
+    List of packages (whitespace-separated) that identify and verify which
+    desktop has been selected by user (or automatically). These packages are
+    *not* selected for installation by Yast, use *patterns* for that.
 
 -   (integer) *order*
 
@@ -828,7 +830,7 @@ Section *supported\_desktops* contains list of one or more
 
 -   (string) *patterns*
 
-    Patterns to select for the desktop (whitespace-separated).
+    Patterns to select for a particular desktop (whitespace-separated).
 
 -   (string) *icon*
 
