@@ -198,7 +198,7 @@ A workflow list element is a map with the following elements:
 
 The following listing shows a typical installation workflow:
 
-```
+```xml
     <workflows config:type="list">
         <workflow>
             <!-- 'label' is what the user will see -->
@@ -265,7 +265,7 @@ discourged because of configuration dependencies, then this would be
 possible using the control file.
 
 
-```
+```xml
     <proposal>
         <type>network</type>
         <stage>continue,normal</stage>
@@ -297,7 +297,7 @@ additional argument identifying the proposal screen to be started.
 proposals. The following examples shows how the network proposal is
 called as a workflow step:
 
-```
+```xml
     <module>
         <label>Network</label>
         <name>proposal</name>
@@ -330,7 +330,7 @@ The following variables can be set:
 
 the following example shows all options above
 
-```
+```xml
     <globals>
         <enable_autologin config:type="boolean">true</enable_autologin>
         <language>de_DE</language>
@@ -339,6 +339,7 @@ the following example shows all options above
         <io_scheduler>as</io_scheduler>
     </globals>
 ```
+
 ### Special Installation and Product Variables
 
 These options usually enable or disable some installation feature.
@@ -409,7 +410,7 @@ installation and debugging:
     This example shows how content of the */root/* directory is copied
     to the */root/inst-sys/* directory on the installed system:
 
-```
+```xml
     <globals>
         <save_instsys_content config:type="list">
             <save_instsys_item>
@@ -444,7 +445,7 @@ chosen.
 
 See the example:
 
-```
+```xml
     <globals>
         <copy_to_system config:type="list">
             <copy_to_system_item>
@@ -519,7 +520,7 @@ well configurable.
 
 This is an example of AC setup:
 
-```
+```xml
     <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
         xmlns:config="http://www.suse.com/1.0/configns">
         <globals>
@@ -619,7 +620,7 @@ performed. The following options are available:
     list of regular expressions matching installed product name
     (SuSE-release).
 
-```
+```xml
     <!-- Delete old packages of all products but OES, SLES 9, SLE 10 and SLD 10 -->
     <software>
     <delete_old_packages config:type="boolean">true</delete_old_packages>
@@ -649,7 +650,7 @@ performed. The following options are available:
     defined as list of regular expressions matching installed product
     name (SuSE-release).
 
-```
+```xml
     <!-- For SLES10, packages are not downgraded -->
     <software>
     <silently_downgrade_packages config:type="boolean">true</silently_downgrade_packages>
@@ -670,7 +671,7 @@ performed. The following options are available:
     Inverts the *only\_update\_selected* for products defined as list of
     regular expressions matching installed product name (SuSE-release).
 
-```
+```xml
     <!--
     Only update packages but install new packages
     when upgrading any SUSE Linux or openSUSE
@@ -690,7 +691,7 @@ The other option defines how product upgrading in general is defined.
 
     List of known products supported for upgrade (SuSE-release). Old
     releases or other distributions will report warning.
-```
+```xml
     <software>
         <products_supported_for_upgrade config:type="list">
             <regexp_item>^Novell LINUX Desktop 9.*</regexp_item>
@@ -739,7 +740,7 @@ during installation but also the
 
 Example of supported desktops:
 
-```
+```xml
     <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
         xmlns:config="http://www.suse.com/1.0/configns">
         <software>
@@ -849,7 +850,7 @@ of them can be selected as the selected one.
 
 Example of configured scenarios:
 
-```
+```xml
     <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
         xmlns:config="http://www.suse.com/1.0/configns">
         <software>
@@ -918,7 +919,7 @@ Every single *system\_scenario* consists of:
 Selection labels must be defined in [texts](#control_texts) section.
 Scenarios *id*s are used as link identificators.
 
-```
+```xml
     <software>
     <system_scenario>
         <id></id>
@@ -1174,7 +1175,7 @@ on that disk. To make the flexible partitioning possible,
 *use\_flexible\_partitioning* option must be se to *true* and
 *partitions* must be surrounded with *flexible\_partitioning* tag.
 
-```
+```xml
     <partitioning>
         <use_flexible_partitioning config:type="boolean">true</use_flexible_partitioning>
 
@@ -1212,7 +1213,7 @@ on that disk. To make the flexible partitioning possible,
 
 A more complete example with other options is shown below:
 
-```
+```xml
     <partitioning>
         <use_flexible_partitioning config:type="boolean">true</use_flexible_partitioning>
 
@@ -1265,7 +1266,7 @@ perl) and the source of the scripts which is embedded in the XML file
 using CDATA sections to avoid confusion with the XML syntax. The
 following example shows how scripts can be embedded in the control file:
 
-```
+```xml
     <module>
         <name>info</name>
         <arguments>false,true</arguments>
@@ -1289,7 +1290,7 @@ makes it possible to mark some texts for translation.
 
 The structure is rather easy:
 
-```
+```xml
     <texts>
         <!-- Unique tag that identifies the text -->
         <some_text_id>
@@ -1466,7 +1467,7 @@ existing control.xml. In principle, the file is a control file defining
 its own proposals, workflows etc. The control file has a special
 section, which defines changes to the existing workflow and proposals.
 
-```
+```xml
     <?xml version="1.0"?>
     <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
         xmlns:config="http://www.suse.com/1.0/configns">
@@ -1615,7 +1616,7 @@ Text domain is important for YaST to handle translations properly. The
 appropriate set of .mo-files must be present to have the texts related
 to the control file translated.
 
-```
+```xml
     <textdomain>OES</textdomain>
 ```
 
@@ -1625,7 +1626,7 @@ The proposals are defined the same way as for the base product. The
 workflow for the standalone installation must have the mode and stage
 set
 
-```
+```xml
     <mode>installation</mode>
     <stage>normal</stage>
 ```
@@ -1636,7 +1637,7 @@ The label of the proposal can be modified. The mode, stage, and proposal
 name has to be specified, other options (enable\_skip, architecture) are
 optional. The modes, stages, and architectures do not
 
-```
+```xml
     <proposal>
         <label>OES Installation Settings</label>
         <mode>installation,demo,autoinstallation</mode>
@@ -1653,7 +1654,7 @@ optional. The modes, stages, and architectures do not
 Adding an item to a proposal is possible at the end only. If the
 proposal has tabs, the items are added to a newly created tab.
 
-```
+```xml
     <append_modules config:type="list">
         <append_module>module_1</append_module>
         <append_module>module_2</append_module>
@@ -1662,7 +1663,7 @@ proposal has tabs, the items are added to a newly created tab.
 
 ### Removing an item from a proposal
 
-```
+```xml
     <remove_modules config:type="list">
         <remove_module>module_3</remove_module>
         <remove_module>module_4</remove_module>
@@ -1675,7 +1676,7 @@ The replacement is available in 1:N mode – one client is to be replaced
 by one or more new clients. If you need M:N use remove and replace
 together.
 
-```
+```xml
     <replace_modules config:type="list">
         <replace_module>
         <replace>old_module</replace>
@@ -1692,7 +1693,7 @@ together.
 The workflow to update is identified the same way as other workflows.
 The archs, modes, and installation don't need tobe alligned to the same
 groups as in the base product workflows.
-```
+```xml
     <workflow>
         <defaults>
         <archs>all</archs>
@@ -1707,7 +1708,7 @@ groups as in the base product workflows.
 
 ### Append steps to the end of installation sequence
 
-```
+```xml
     <append_modules config:type="list">
         <module>
         <heading>yes</heading>
@@ -1726,7 +1727,7 @@ groups as in the base product workflows.
 ```
 
 ### Insert steps to installation sequence
-```
+```xml
     <insert_modules config:type="list">
         <insert_module>
         <before>perform</before>
@@ -1742,7 +1743,7 @@ groups as in the base product workflows.
 ```
 
 ### Remove steps from installation sequence
-```
+```xml
     <remove_modules config:type="list">
         <remove_module>finish</remove_module>
         [...]
@@ -1750,7 +1751,7 @@ groups as in the base product workflows.
 ```
 
 ### Replace steps in installation sequence
-```
+```xml
     <replace_modules config:type="list">
         <replace_module>
         <replace>language</replace>
@@ -1777,7 +1778,7 @@ There are 3 cases that an add-on product can modify the workflow...
 
 #### Before chroot
 
-```
+```xml
     <inst_finish_stages config:type="list">
     <before_chroot>
         <label>Copy Theme</label>
@@ -1790,7 +1791,7 @@ There are 3 cases that an add-on product can modify the workflow...
 ```
 
 #### Running in chroot
-```
+```xml
     <inst_finish_stages config:type="list">
     <chroot>
         <label>Update Configuration</label>
@@ -1803,7 +1804,7 @@ There are 3 cases that an add-on product can modify the workflow...
 ```
 
 #### Before unmounting the system
-```
+```xml
     <inst_finish_stages config:type="list">
     <before_umount>
         <label>Disconnect Network Disks</label>
@@ -1823,7 +1824,7 @@ inst\_finish clients or replace them.
 
 To replace a workflow, just create workflows as in base product control
 file. The important is that the stage of the workflow is set to
-```
+```xml
     <stage>continue</stage>
 ```
 
@@ -1844,7 +1845,7 @@ value, the resulting values are changed. Within YaST, the options are
 accessible via ProductFeatures module. No new option groups can be
 defined. Options which are defined by the base product, but not by the
 add-on product, are kept unchanged (base product's value is used).
-```
+```xml
     <globals>
         <additional_kernel_parameters></additional_kernel_parameters>
     </globals>
@@ -1859,7 +1860,7 @@ add-on product, are kept unchanged (base product's value is used).
 At the end of the installation, a profile for AutoYaST can be generated.
 The profile will be generated using modules from the base product and
 modules specified in the add-on product control file.
-```
+```xml
     <clone_modules config:type="list">
         <clone_module>printer</clone_module>
         [...]
@@ -1875,7 +1876,7 @@ installation together with the base product. In the standalone
 installation workflow, selecting and installing packages is missing,
 these steps need to be prepended to the workflow.
 
-```
+```xml
     <?xml version="1.0"?>
     <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
             xmlns:config="http://www.suse.com/1.0/configns">
