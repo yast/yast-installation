@@ -21,11 +21,14 @@
 
 require "yaml"
 require "fileutils"
+require "yast"
 
 module Yast
   # This client shows main dialog for choosing the language,
   # keyboard and accepting the license.
   class InstComplexWelcomeClient < Client
+    include Yast::Logger
+
     import "Console"
     import "GetInstArgs"
     import "InstData"
@@ -77,7 +80,7 @@ module Yast
     def event_loop
       loop do
         ret = UI.UserInput
-        Builtins.y2milestone("UserInput() returned %1", ret)
+        log.info "UserInput() returned #{ret}"
 
         case ret
         when :back
@@ -280,7 +283,7 @@ module Yast
       Console.SelectFont(@language)
       # no yast translation for nn_NO, use nb_NO as a backup
       if @language == "nn_NO"
-        Builtins.y2milestone("Nynorsk not translated, using Bokm\u00E5l")
+        log.info "Nynorsk not translated, using Bokm\u00E5l"
         Language.WfmSetGivenLanguage("nb_NO")
       else
         Language.WfmSetLanguage
@@ -291,11 +294,7 @@ module Yast
     def SetLanguageIfChanged(ret)
       ret = deep_copy(ret)
       if @language != Language.language
-        Builtins.y2milestone(
-          "Language changed from %1 to %2",
-          Language.language,
-          @language
-        )
+        log.info "Language changed from #{Language.language} to #{@language}"
         Timezone.ResetZonemap
 
         # Set it in the Language module.
@@ -303,9 +302,10 @@ module Yast
         Language.languages = [Language.RemoveSuffix(@language)]
       end
       # Check and set CJK languages
+      # TODO: is it used outside of first boot or initial at all?
       if Stage.initial || Stage.firstboot
         if ret == :language && Language.SwitchToEnglishIfNeeded(true)
-          Builtins.y2debug("UI switched to en_US")
+          log.debug "UI switched to en_US"
         elsif ret == :language
           retranslate_yast
         end
@@ -322,7 +322,7 @@ module Yast
 
         # Language has been set already.
         # On first run store users decision as default.
-        Builtins.y2milestone("Resetting to default language")
+        log.info "Resetting to default language"
         Language.SetDefault
 
         Timezone.SetTimezoneForLanguage(@language)
@@ -334,10 +334,7 @@ module Yast
         end
 
         # Bugzilla #354133
-        Builtins.y2milestone(
-          "Adjusting package and text locale to %1",
-          @language
-        )
+        log.info "Adjusting package and text locale to #{@language}"
         Pkg.SetPackageLocale(@language)
         Pkg.SetTextLocale(@language)
 
@@ -346,11 +343,7 @@ module Yast
           Language.PackagesInit(Language.languages)
         end
 
-        Builtins.y2milestone(
-          "Language: '%1', system encoding '%2'",
-          @language,
-          WFM.GetEncoding
-        )
+        log.info "Language: '#{@language}', system encoding '#{WFM.GetEncoding}'"
       end
 
       false
@@ -459,11 +452,7 @@ module Yast
       ProductLicense.ShowLicenseInInstallation(:base_license_rp, @license_id)
 
       # If accepting the license is required, show the check-box
-      Builtins.y2milestone(
-        "Acceptance needed: %1 => %2",
-        @license_ui_id,
-        ProductLicense.AcceptanceNeeded(@license_ui_id)
-      )
+      log.info "Acceptance needed: #{@license_ui_id} => #{ProductLicense.AcceptanceNeeded(@license_ui_id)}"
       if ProductLicense.AcceptanceNeeded(@license_ui_id)
         UI.ReplaceWidget(:license_checkbox_rp, license_agreement_checkbox)
       end
