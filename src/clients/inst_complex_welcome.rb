@@ -27,25 +27,23 @@ module Yast
   # keyboard and accepting the license.
   class InstComplexWelcomeClient < Client
     def main
-      Yast.import "UI"
-      Yast.import "Pkg"
       textdomain "installation"
 
       Yast.import "Console"
       Yast.import "GetInstArgs"
+      Yast.import "InstData"
       Yast.import "Keyboard"
       Yast.import "Label"
       Yast.import "Language"
       Yast.import "Mode"
+      Yast.import "Pkg"
       Yast.import "Popup"
-      Yast.import "ProductFeatures"
+      Yast.import "ProductLicense"
       Yast.import "Report"
       Yast.import "Stage"
       Yast.import "Timezone"
+      Yast.import "UI"
       Yast.import "Wizard"
-      Yast.import "Icon"
-      Yast.import "InstData"
-      Yast.import "ProductLicense"
 
       # ------------------------------------- main part of the client -----------
 
