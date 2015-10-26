@@ -72,10 +72,11 @@ module Yast
       # Screen title for the first interactive dialog
       initialize_dialog
 
-      return event_loop
+      event_loop
     end
 
   private
+
     def event_loop
       loop do
         ret = UI.UserInput
@@ -106,9 +107,7 @@ module Yast
 
           # BNC #448598
           # Check whether the license has been accepted only if required
-          if @licence_required && !LicenseAccepted()
-            next
-          end
+          next if @licence_required && !license_accepted?
 
           next if !Language.CheckIncompleteTranslation(@language)
 
@@ -252,7 +251,7 @@ module Yast
       )
     end
 
-    def LicenseAccepted
+    def license_accepted?
       return true if @license_acc
 
       UI.SetFocus(Id(:license_agreement))
@@ -326,7 +325,7 @@ module Yast
 
     DATA_PATH = "/var/lib/YaST2/complex_welcome_store.yaml"
     def data_stored?
-      ::File.exists?(DATA_PATH)
+      ::File.exist?(DATA_PATH)
     end
 
     def store_data
@@ -428,10 +427,10 @@ module Yast
       # If accepting the license is required, show the check-box
       @licence_required = ProductLicense.AcceptanceNeeded(@license_id.to_s)
 
-      log.info "Acceptance needed: #{@id} => #{@licence_required}"
       if @licence_required
         UI.ReplaceWidget(:license_checkbox_rp, license_agreement_checkbox)
       end
+      log.info "Acceptance needed: #{@id} => #{@licence_required}"
     end
   end unless defined? Yast::InstComplexWelcomeClient
 end
