@@ -28,6 +28,7 @@ module Yast
   # keyboard and accepting the license.
   class InstComplexWelcomeClient < Client
     include Yast::Logger
+    extend Yast::I18n
 
     Yast.import "Console"
     Yast.import "GetInstArgs"
@@ -342,8 +343,8 @@ module Yast
       @language = data["language"]
       @keyboard = data["keyboard"]
 
-      SetLanguageIfChanged(:next)
-      retranslate_yast
+      change_language
+      setup_final_choice
 
       ::FileUtils.rm_rf(DATA_PATH)
     end
