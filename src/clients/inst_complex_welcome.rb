@@ -42,11 +42,15 @@ module Yast
     import "UI"
     import "Wizard"
 
+    HEADING_TEXT = N_("Language, Keyboard and License Agreement")
+
     def main
+      # bnc#206706
+      return :auto if Mode.autoinst
+
       textdomain "installation"
 
       # ------------------------------------- main part of the client -----------
-
       if data_stored? && !GetInstArgs.going_back
         apply_data
         return :next
@@ -55,8 +59,7 @@ module Yast
       @argmap = GetInstArgs.argmap
 
       @language = Language.language
-
-      @text_mode = Language.GetTextMode
+      @keyboard = ""
 
       @license_id = Ops.get(Pkg.SourceGetCurrent(true), 0, 0)
       @license_ui_id = Builtins.tostring(@license_id)
@@ -64,117 +67,38 @@ module Yast
       # ----------------------------------------------------------------------
       # Build dialog
       # ----------------------------------------------------------------------
-      # heading text
-      heading_text = _("Language, Keyboard and License Agreement")
-
-      # this type of contents will be shown only for initial installation dialog
-      @contents = VBox(
-        VWeight(1, VStretch()),
-        Left(
-          HBox(
-            HWeight(1, Left(language_selection)),
-            HSpacing(3),
-            HWeight(1, Left(keyboard_selection))
-          )
-        ),
-        Left(
-          HBox(
-            HWeight(1, HStretch()),
-            HSpacing(3),
-            HWeight(1, Left(TextEntry(Id(:keyboard_test), _("K&eyboard Test"))))
-          )
-        ),
-        VWeight(
-          30,
-          Left(
-            HSquash(
-              VBox(
-                HBox(
-                  Left(Label(Opt(:boldFont), _("License Agreement"))),
-                  HStretch()
-                ),
-                # bnc #438100
-                HSquash(
-                  MinWidth(
-                    # BNC #607135
-                    @text_mode ? 85 : 106,
-                    Left(ReplacePoint(Id(:base_license_rp), Empty()))
-                  )
-                ),
-                VSpacing(@text_mode ? 0.1 : 0.5),
-                MinHeight(
-                  1,
-                  HBox(
-                    # Will be replaced with license checkbox if required
-                    ReplacePoint(Id(:license_checkbox_rp), Empty()),
-                    HStretch(),
-                    # ID: #ICW_B1 button
-                    PushButton(
-                      Id(:show_fulscreen_license),
-                      # TRANSLATORS: button label
-                      _("License &Translations...")
-                    )
-                  )
-                )
-              )
-            )
-          )
-        ),
-        VWeight(1, VStretch())
-      )
-
-
       # Screen title for the first interactive dialog
+      initialize_dialog
 
-      Wizard.SetContents(
-        heading_text,
-        @contents,
-        help_text,
-        Ops.get_boolean(@argmap, "enable_back", true),
-        Ops.get_boolean(@argmap, "enable_next", true)
-      )
+      return event_loop
+    end
 
-      initialize_widgets
-
-      @keyboard = ""
-
-      ProductLicense.ShowLicenseInInstallation(:base_license_rp, @license_id)
-
-      # bugzilla #206706
-      return :auto if Mode.autoinst
-
-      # If accepting the license is required, show the check-box
-      Builtins.y2milestone(
-        "Acceptance needed: %1 => %2",
-        @license_ui_id,
-        ProductLicense.AcceptanceNeeded(@license_ui_id)
-      )
-      if ProductLicense.AcceptanceNeeded(@license_ui_id)
-        UI.ReplaceWidget(:license_checkbox_rp, license_agreement_checkbox)
-      end
+  private
+    def event_loop
+      ret = nil
 
       loop do
-        @ret = UI.UserInput
-        Builtins.y2milestone("UserInput() returned %1", @ret)
+        ret = UI.UserInput
+        Builtins.y2milestone("UserInput() returned %1", ret)
 
-        if @ret == :back
+        if ret == :back
           break
-        elsif @ret == :abort && Popup.ConfirmAbort(:painless)
+        elsif ret == :abort && Popup.ConfirmAbort(:painless)
           Wizard.RestoreNextButton
-          @ret = :abort
+          ret = :abort
           break
-        elsif @ret == :keyboard
+        elsif ret == :keyboard
           ReadCurrentUIState()
           Keyboard.Set(@keyboard)
           Keyboard.user_decision = true
-        elsif @ret == :license_agreement
+        elsif ret == :license_agreement
           InstData.product_license_accepted = Convert.to_boolean(
             UI.QueryWidget(Id(:license_agreement), :Value)
           )
-        elsif @ret == :next || @ret == :language && !Mode.config
+        elsif ret == :next || ret == :language && !Mode.config
           ReadCurrentUIState()
 
-          if @ret == :next
+          if ret == :next
             # BNC #448598
             # Check whether the license has been accepted only if required
             if ProductLicense.AcceptanceNeeded(@license_ui_id) &&
@@ -187,16 +111,16 @@ module Yast
             Language.CheckLanguagesSupport(@language) if Stage.initial
           end
 
-          if SetLanguageIfChanged(@ret)
-            @ret = :again
+          if SetLanguageIfChanged(ret)
+            ret = :again
             break
           end
 
-          if @ret == :next
+          if ret == :next
             store_data
             break
           end
-        elsif @ret == :show_fulscreen_license
+        elsif ret == :show_fulscreen_license
           UI.OpenDialog(AllLicensesDialog())
           ProductLicense.ShowFullScreenLicenseInInstallation(
             :full_screen_license_rp,
@@ -206,10 +130,8 @@ module Yast
         end
       end
 
-      Convert.to_symbol(@ret)
+      ret
     end
-
-  private
 
     def initialize_widgets
       Wizard.EnableAbortButton
@@ -274,13 +196,13 @@ module Yast
       # As long as possible
       # bnc #385257
       HBox(
-        VSpacing(@text_mode ? 21 : 25),
+        VSpacing(text_mode? ? 21 : 25),
         VBox(
           Left(
             # TRANSLATORS: dialog caption
             Heading(_("License Agreement"))
           ),
-          VSpacing(@text_mode ? 0.1 : 0.5),
+          VSpacing(text_mode? ? 0.1 : 0.5),
           HSpacing(82),
           HBox(
             VStretch(),
@@ -460,6 +382,94 @@ module Yast
       retranslate_yast
 
       ::FileUtils.rm_rf(DATA_PATH)
+    end
+
+    def text_mode?
+      return @text_mode unless @text_mode.nil?
+
+      @text_mode = Language.GetTextMode
+    end
+
+    def dialog_content
+      # this type of contents will be shown only for initial installation dialog
+      VBox(
+        VWeight(1, VStretch()),
+        Left(
+          HBox(
+            HWeight(1, Left(language_selection)),
+            HSpacing(3),
+            HWeight(1, Left(keyboard_selection))
+          )
+        ),
+        Left(
+          HBox(
+            HWeight(1, HStretch()),
+            HSpacing(3),
+            HWeight(1, Left(TextEntry(Id(:keyboard_test), _("K&eyboard Test"))))
+          )
+        ),
+        VWeight(
+          30,
+          Left(
+            HSquash(
+              VBox(
+                HBox(
+                  Left(Label(Opt(:boldFont), _("License Agreement"))),
+                  HStretch()
+                ),
+                # bnc #438100
+                HSquash(
+                  MinWidth(
+                    # BNC #607135
+                    text_mode? ? 85 : 106,
+                    Left(ReplacePoint(Id(:base_license_rp), Empty()))
+                  )
+                ),
+                VSpacing(text_mode? ? 0.1 : 0.5),
+                MinHeight(
+                  1,
+                  HBox(
+                    # Will be replaced with license checkbox if required
+                    ReplacePoint(Id(:license_checkbox_rp), Empty()),
+                    HStretch(),
+                    # ID: #ICW_B1 button
+                    PushButton(
+                      Id(:show_fulscreen_license),
+                      # TRANSLATORS: button label
+                      _("License &Translations...")
+                    )
+                  )
+                )
+              )
+            )
+          )
+        ),
+        VWeight(1, VStretch())
+      )
+    end
+
+    def initialize_dialog
+      Wizard.SetContents(
+        _(HEADING_TEXT),
+        dialog_content,
+        help_text,
+        GetInstArgs.argmap.fetch("enable_back", true),
+        GetInstArgs.argmap.fetch("enable_next", true)
+      )
+
+      initialize_widgets
+
+      ProductLicense.ShowLicenseInInstallation(:base_license_rp, @license_id)
+
+      # If accepting the license is required, show the check-box
+      Builtins.y2milestone(
+        "Acceptance needed: %1 => %2",
+        @license_ui_id,
+        ProductLicense.AcceptanceNeeded(@license_ui_id)
+      )
+      if ProductLicense.AcceptanceNeeded(@license_ui_id)
+        UI.ReplaceWidget(:license_checkbox_rp, license_agreement_checkbox)
+      end
     end
   end unless defined? Yast::InstComplexWelcomeClient
 end
