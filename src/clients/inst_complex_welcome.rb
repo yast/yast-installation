@@ -75,27 +75,25 @@ module Yast
 
   private
     def event_loop
-      ret = nil
-
       loop do
         ret = UI.UserInput
         Builtins.y2milestone("UserInput() returned %1", ret)
 
-        if ret == :back
-          break
-        elsif ret == :abort && Popup.ConfirmAbort(:painless)
+        case ret
+        when :back
+          return ret
+        when :abort
+          next unless Popup.ConfirmAbort(:painless)
           Wizard.RestoreNextButton
-          ret = :abort
-          break
-        elsif ret == :keyboard
+          return ret
+        when :keyboard
           ReadCurrentUIState()
           Keyboard.Set(@keyboard)
           Keyboard.user_decision = true
-        elsif ret == :license_agreement
-          InstData.product_license_accepted = Convert.to_boolean(
-            UI.QueryWidget(Id(:license_agreement), :Value)
-          )
-        elsif ret == :next || ret == :language && !Mode.config
+        when :license_agreement
+          InstData.product_license_accepted = UI.QueryWidget(Id(:license_agreement), :Value)
+        when :next, :language
+          next if Mode.config
           ReadCurrentUIState()
 
           if ret == :next
@@ -112,25 +110,24 @@ module Yast
           end
 
           if SetLanguageIfChanged(ret)
-            ret = :again
-            break
+            return :again # redraw dialog
           end
 
           if ret == :next
             store_data
             break
           end
-        elsif ret == :show_fulscreen_license
+        when :show_fulscreen_license
           UI.OpenDialog(AllLicensesDialog())
           ProductLicense.ShowFullScreenLicenseInInstallation(
             :full_screen_license_rp,
             @license_id
           )
           UI.CloseDialog
+        else
+          raise "unknown input '#{ret}'"
         end
       end
-
-      ret
     end
 
     def initialize_widgets
