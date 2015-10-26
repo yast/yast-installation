@@ -94,31 +94,32 @@ module Yast
           Keyboard.user_decision = true
         when :license_agreement
           InstData.product_license_accepted = UI.QueryWidget(Id(:license_agreement), :Value)
-        when :next, :language
+        when :language
           next if Mode.config
           read_ui_state
-          if ret == :next
-            # BNC #448598
-            # Check whether the license has been accepted only if required
-            if @licence_required && !LicenseAccepted()
-              next
-            end
+          change_language
+          Wizard.SetFocusToNextButton
+          return :again
+        when :next
+          next if Mode.config
+          read_ui_state
 
-            next if !Language.CheckIncompleteTranslation(@language)
-
-            Language.CheckLanguagesSupport(@language) if Stage.initial
+          # BNC #448598
+          # Check whether the license has been accepted only if required
+          if @licence_required && !LicenseAccepted()
+            next
           end
 
-          if SetLanguageIfChanged(ret)
-            return :again # redraw dialog
-          end
+          next if !Language.CheckIncompleteTranslation(@language)
 
-          if ret == :next
-            store_data
-            break
-          end
+          Language.CheckLanguagesSupport(@language) if Stage.initial
+
+          setup_final_choice
+
+          store_data
+          return :next
         when :show_fulscreen_license
-          UI.OpenDialog(AllLicensesDialog())
+          UI.OpenDialog(all_licenses_dialog)
           ProductLicense.ShowFullScreenLicenseInInstallation(
             :full_screen_license_rp,
             @license_id
@@ -189,7 +190,7 @@ module Yast
         )
     end
 
-    def AllLicensesDialog
+    def all_licenses_dialog
       # As long as possible
       # bnc #385257
       HBox(
@@ -252,13 +253,10 @@ module Yast
     end
 
     def LicenseAccepted
-      if @license_acc == true
-        return true
-      else
-        UI.SetFocus(Id(:license_agreement))
-        Report.Message(_("You must accept the license to install this product"))
-        return false
-      end
+      return true if @license_acc
+
+      UI.SetFocus(Id(:license_agreement))
+      Report.Message(_("You must accept the license to install this product"))
     end
 
     def read_ui_state
@@ -279,63 +277,51 @@ module Yast
       end
     end
 
-    # Returns true if the dialog needs redrawing
-    def SetLanguageIfChanged(ret)
-      ret = deep_copy(ret)
-      if @language != Language.language
-        log.info "Language changed from #{Language.language} to #{@language}"
-        Timezone.ResetZonemap
+    def change_language
+      return if @language == Language.language
 
-        # Set it in the Language module.
-        Language.Set(@language)
-        Language.languages = [Language.RemoveSuffix(@language)]
-      end
-      # Check and set CJK languages
-      # TODO: is it used outside of first boot or initial at all?
-      if Stage.initial || Stage.firstboot
-        if ret == :language && Language.SwitchToEnglishIfNeeded(true)
-          log.debug "UI switched to en_US"
-        elsif ret == :language
-          retranslate_yast
-        end
-      end
+      log.info "Language changed from #{Language.language} to #{@language}"
+      Timezone.ResetZonemap
 
-      if ret == :language
+      # Set it in the Language module.
+      Language.Set(@language)
+      Language.languages = [Language.RemoveSuffix(@language)]
+
+      if Language.SwitchToEnglishIfNeeded(true)
+        log.debug "UI switched to en_US"
+      else
         # Display newly translated dialog.
-        Wizard.SetFocusToNextButton
-        return true
+        retranslate_yast
+      end
+    end
+
+    def setup_final_choice
+      Keyboard.Set(@keyboard)
+
+      # Language has been set already.
+      # On first run store users decision as default.
+      log.info "Resetting to default language"
+      Language.SetDefault
+
+      Timezone.SetTimezoneForLanguage(@language)
+
+      if !Stage.initial && !Mode.update
+        # save settings (rest is saved in LanguageWrite)
+        Keyboard.Save
+        Timezone.Save
       end
 
-      if ret == :next
-        Keyboard.Set(@keyboard)
+      # Bugzilla #354133
+      log.info "Adjusting package and text locale to #{@language}"
+      Pkg.SetPackageLocale(@language)
+      Pkg.SetTextLocale(@language)
 
-        # Language has been set already.
-        # On first run store users decision as default.
-        log.info "Resetting to default language"
-        Language.SetDefault
-
-        Timezone.SetTimezoneForLanguage(@language)
-
-        if !Stage.initial && !Mode.update
-          # save settings (rest is saved in LanguageWrite)
-          Keyboard.Save
-          Timezone.Save
-        end
-
-        # Bugzilla #354133
-        log.info "Adjusting package and text locale to #{@language}"
-        Pkg.SetPackageLocale(@language)
-        Pkg.SetTextLocale(@language)
-
-        # In case of normal installation, solver run will follow without this explicit call
-        if Mode.live_installation && Language.PackagesModified
-          Language.PackagesInit(Language.languages)
-        end
-
-        log.info "Language: '#{@language}', system encoding '#{WFM.GetEncoding}'"
+      # In case of normal installation, solver run will follow without this explicit call
+      if Mode.live_installation && Language.PackagesModified
+        Language.PackagesInit(Language.languages)
       end
 
-      false
+      log.info "Language: '#{@language}', system encoding '#{WFM.GetEncoding}'"
     end
 
     DATA_PATH = "/var/lib/YaST2/complex_welcome_store.yaml"
@@ -411,7 +397,6 @@ module Yast
                     # Will be replaced with license checkbox if required
                     ReplacePoint(Id(:license_checkbox_rp), Empty()),
                     HStretch(),
-                    # ID: #ICW_B1 button
                     PushButton(
                       Id(:show_fulscreen_license),
                       # TRANSLATORS: button label
