@@ -49,7 +49,7 @@ module Yast
 
       # ------------------------------------- main part of the client -----------
 
-      if data_stored?
+      if data_stored? && !GetInstArgs.going_back
         apply_data
         return :next
       end
