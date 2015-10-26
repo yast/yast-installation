@@ -65,7 +65,6 @@ module Yast
       @keyboard = ""
 
       @license_id = Ops.get(Pkg.SourceGetCurrent(true), 0, 0)
-      @license_ui_id = Builtins.tostring(@license_id)
 
       # ----------------------------------------------------------------------
       # Build dialog
@@ -90,20 +89,18 @@ module Yast
           Wizard.RestoreNextButton
           return ret
         when :keyboard
-          ReadCurrentUIState()
+          read_ui_state
           Keyboard.Set(@keyboard)
           Keyboard.user_decision = true
         when :license_agreement
           InstData.product_license_accepted = UI.QueryWidget(Id(:license_agreement), :Value)
         when :next, :language
           next if Mode.config
-          ReadCurrentUIState()
-
+          read_ui_state
           if ret == :next
             # BNC #448598
             # Check whether the license has been accepted only if required
-            if ProductLicense.AcceptanceNeeded(@license_ui_id) &&
-                !LicenseAccepted()
+            if @licence_required && !LicenseAccepted()
               next
             end
 
@@ -264,19 +261,11 @@ module Yast
       end
     end
 
-    def ReadCurrentUIState
-      @language = Convert.to_string(UI.QueryWidget(Id(:language), :Value))
-      @keyboard = Convert.to_string(UI.QueryWidget(Id(:keyboard), :Value))
+    def read_ui_state
+      @language = UI.QueryWidget(Id(:language), :Value)
+      @keyboard = UI.QueryWidget(Id(:keyboard), :Value)
 
-      if ProductLicense.AcceptanceNeeded(@license_ui_id)
-        @license_acc = Convert.to_boolean(
-          UI.QueryWidget(Id(:license_agreement), :Value)
-        )
-      else
-        @license_acc = true
-      end
-
-      nil
+      @license_acc = @licence_required ? UI.QueryWidget(Id(:license_agreement), :Value) : true
     end
 
     def retranslate_yast
@@ -452,8 +441,10 @@ module Yast
       ProductLicense.ShowLicenseInInstallation(:base_license_rp, @license_id)
 
       # If accepting the license is required, show the check-box
-      log.info "Acceptance needed: #{@license_ui_id} => #{ProductLicense.AcceptanceNeeded(@license_ui_id)}"
-      if ProductLicense.AcceptanceNeeded(@license_ui_id)
+      @licence_required = ProductLicense.AcceptanceNeeded(@license_id.to_s)
+
+      log.info "Acceptance needed: #{@id} => #{@licence_required}"
+      if @licence_required
         UI.ReplaceWidget(:license_checkbox_rp, license_agreement_checkbox)
       end
     end
