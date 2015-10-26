@@ -26,24 +26,24 @@ module Yast
   # This client shows main dialog for choosing the language,
   # keyboard and accepting the license.
   class InstComplexWelcomeClient < Client
+    import "Console"
+    import "GetInstArgs"
+    import "InstData"
+    import "Keyboard"
+    import "Label"
+    import "Language"
+    import "Mode"
+    import "Pkg"
+    import "Popup"
+    import "ProductLicense"
+    import "Report"
+    import "Stage"
+    import "Timezone"
+    import "UI"
+    import "Wizard"
+
     def main
       textdomain "installation"
-
-      Yast.import "Console"
-      Yast.import "GetInstArgs"
-      Yast.import "InstData"
-      Yast.import "Keyboard"
-      Yast.import "Label"
-      Yast.import "Language"
-      Yast.import "Mode"
-      Yast.import "Pkg"
-      Yast.import "Popup"
-      Yast.import "ProductLicense"
-      Yast.import "Report"
-      Yast.import "Stage"
-      Yast.import "Timezone"
-      Yast.import "UI"
-      Yast.import "Wizard"
 
       # ------------------------------------- main part of the client -----------
 
