@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Nov  6 11:59:26 UTC 2015 - ancor@suse.com
+
+- Ensure second stage and YaST-Firstboot don't get killed by
+  getty when running over serial console (bsc#935965)
+- 3.1.162
+
+-------------------------------------------------------------------
 Fri Oct  9 13:32:36 UTC 2015 - ancor@suse.com
 
 - Language selection screen fixed to immediately apply the keyboard
