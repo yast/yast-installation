@@ -44,7 +44,7 @@ BuildRequires: yast2 >= 3.1.126
 BuildRequires: yast2-network
 
 # AutoinstSoftware.SavePackageSelection()
-Requires:       autoyast2-installation >= 3.1.105
+Requires:       autoyast2-installation >= 3.1.101.3
 
 # Wizard.OpenLeftTitleNextBackDialog
 Requires:	yast2 >= 3.1.126
