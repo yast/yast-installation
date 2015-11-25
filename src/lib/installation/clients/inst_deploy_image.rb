@@ -18,8 +18,13 @@
 # To contact Novell about this file by physical or electronic mail, you may find
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
+
+require "installation/clone_settings"
+
 module Yast
   class InstDeployImageClient < Client
+    include Yast::Logger
+
     def main
       Yast.import "Pkg"
       Yast.import "Installation"
@@ -53,6 +58,13 @@ module Yast
           ImageInstallation.FreeInternalVariables
           return :auto
         end
+      end
+
+      if ::Installation::CloneSettings.instance.enabled?
+        log.info "Cloning enabled, storing the current package selection"
+        # store the software selection for AutoYaST for later (bsc#956325)
+        Yast.import "AutoinstSoftware"
+        AutoinstSoftware.SavePackageSelection
       end
 
       Builtins.y2milestone("Deploying images")
