@@ -108,7 +108,7 @@ describe ::Installation::ProposalStore do
       expect(subject.proposal_names).to include("test2")
     end
 
-    it "filter out from result all clients that do not exist on media" do
+    it "filters out clients that do not exist on media" do
       allow(Yast::WFM).to receive(:ClientExists).with(/test3/).and_return(false)
 
       allow(Yast::ProductControl).to receive(:getProposals)
@@ -123,7 +123,7 @@ describe ::Installation::ProposalStore do
       expect(subject.proposal_names).not_to include("test3")
     end
 
-    it "filter out clients that itself report as unavailable" do
+    it "filters out clients that report themselves as unavailable" do
       allow(Yast::ProductControl).to receive(:getProposals)
         .and_return([
           ["test1"],
