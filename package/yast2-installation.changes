@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Nov 25 13:15:19 UTC 2015 - lslezak@suse.cz
+
+- Save the software selection for using it later in AutoYaST
+  when deploying installation images (bsc#956325, bsc#910728)
+- 3.1.163
+
+-------------------------------------------------------------------
 Fri Nov  6 11:59:26 UTC 2015 - ancor@suse.com
 
 - Ensure second stage and YaST-Firstboot don't get killed by
