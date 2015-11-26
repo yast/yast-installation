@@ -15,6 +15,10 @@ describe ::Installation::ProposalStore do
       .and_return(data)
   end
 
+  before do
+    allow(Yast::WFM).to receive(:CallFunction).and_return({})
+  end
+
   describe "#headline" do
     it "use translated label from product control" do
       original_label = "Label"
@@ -78,7 +82,7 @@ describe ::Installation::ProposalStore do
     it "raises exception if used on non-tab proposal" do
       mock_properties
 
-      expect { subject.tab_labels }.to raise_error
+      expect { subject.tab_labels }.to raise_error(RuntimeError)
     end
   end
 
@@ -94,6 +98,17 @@ describe ::Installation::ProposalStore do
     end
 
     it "returns array with string names of clients" do
+      allow(Yast::ProductControl).to receive(:getProposals)
+        .and_return([
+          ["test1"],
+          ["test2"],
+        ])
+
+      expect(subject.proposal_names).to include("test1")
+      expect(subject.proposal_names).to include("test2")
+    end
+
+    it "filter out from result all clients that do not exist on media" do
       allow(Yast::WFM).to receive(:ClientExists).with(/test3/).and_return(false)
 
       allow(Yast::ProductControl).to receive(:getProposals)
@@ -102,6 +117,21 @@ describe ::Installation::ProposalStore do
           ["test2"],
           ["test3"]
         ])
+
+      expect(subject.proposal_names).to include("test1")
+      expect(subject.proposal_names).to include("test2")
+      expect(subject.proposal_names).not_to include("test3")
+    end
+
+    it "filter out clients that itself report as unavailable" do
+      allow(Yast::ProductControl).to receive(:getProposals)
+        .and_return([
+          ["test1"],
+          ["test2"],
+          ["test3"]
+        ])
+
+      allow(Yast::WFM).to receive(:CallFunction).with("test3", ["Description", anything]).and_return(nil)
 
       expect(subject.proposal_names).to include("test1")
       expect(subject.proposal_names).to include("test2")
