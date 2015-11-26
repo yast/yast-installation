@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Nov 26 13:15:19 UTC 2015 - lslezak@suse.cz
+
+- Save the software selection for using it later in AutoYaST
+  when deploying installation images (bsc#956325, bsc#910728)
+- 3.1.162.2
+
+-------------------------------------------------------------------
 Thu Nov 26 09:09:59 UTC 2015 - jreidinger@suse.com
 
 - Do not crash in proposal client if zfcp proposal reports itself

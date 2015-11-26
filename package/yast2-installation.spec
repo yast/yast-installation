@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.162.1
+Version:        3.1.162.2
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -43,8 +43,8 @@ BuildRequires: yast2 >= 3.1.126
 # Yast::Remote
 BuildRequires: yast2-network
 
-# clone_system client
-Requires:       autoyast2-installation >= 3.1.5
+# AutoinstSoftware.SavePackageSelection()
+Requires:       autoyast2-installation >= 3.1.101.3
 
 # Wizard.OpenLeftTitleNextBackDialog
 Requires:	yast2 >= 3.1.126
