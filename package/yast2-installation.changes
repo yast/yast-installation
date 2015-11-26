@@ -1,8 +1,8 @@
 -------------------------------------------------------------------
 Thu Nov 26 09:09:59 UTC 2015 - jreidinger@suse.com
 
-- Do not crash in proposal client if zfcp proposal report itself as
-  unavailable (bnc#956745)
+- Do not crash in proposal client if zfcp proposal reports itself
+  as unavailable (bnc#956745)
 - 3.1.163.1
 
 -------------------------------------------------------------------

@@ -101,7 +101,7 @@ describe ::Installation::ProposalStore do
       allow(Yast::ProductControl).to receive(:getProposals)
         .and_return([
           ["test1"],
-          ["test2"],
+          ["test2"]
         ])
 
       expect(subject.proposal_names).to include("test1")
