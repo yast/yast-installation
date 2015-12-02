@@ -1,7 +1,8 @@
 [Unit]
 Description=YaST2 Firstboot
 After=apparmor.service local-fs.target YaST2-Second-Stage.service plymouth-start.service
-Before=getty@tty1.service serial-getty@ttyS0.service display-manager.service network.service NetworkManager.service
+Before=getty@tty1.service serial-getty@ttyS0.service serial-getty@ttyS1.service serial-getty@ttyS2.service
+Before=display-manager.service network.service NetworkManager.service
 ConditionPathExists=/var/lib/YaST2/reconfig_system
 
 [Service]
