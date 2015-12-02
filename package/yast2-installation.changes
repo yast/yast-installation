@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Dec  2 13:55:07 UTC 2015 - mvidner@suse.com
+
+- Ensure second stage and YaST-Firstboot don't get killed by
+  getty when running over 2nd or 3rd serial console (bsc#935965)
+- 3.1.162.3
+
+-------------------------------------------------------------------
 Thu Nov 26 13:15:19 UTC 2015 - lslezak@suse.cz
 
 - Save the software selection for using it later in AutoYaST
