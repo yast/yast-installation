@@ -143,6 +143,13 @@ module Installation
 
       # Filter missing proposals out
       @proposal_names -= missing_proposals
+
+      unavailable_proposals = @proposal_names.select { |name| description_for(name).nil? }
+      unless unavailable_proposals.empty?
+        log.info "These proposals report itself as unavailable: #{unavailable_proposals}"
+      end
+
+      @proposal_names -= unavailable_proposals
     end
 
     # returns single list of modules presentation order or list of tabs with list of modules
@@ -193,6 +200,8 @@ module Installation
       return @descriptions[client] if @descriptions.key?(client)
 
       description = Yast::WFM.CallFunction(client, ["Description", {}])
+
+      return nil unless description
 
       unless description.key?("id")
         log.warn "proposal client #{client} is missing key 'id' in #{description}"
