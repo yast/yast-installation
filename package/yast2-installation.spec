@@ -38,6 +38,7 @@ BuildRequires:  yast2-devtools >= 3.1.10
 BuildRequires:  rubygem(rspec)
 
 # Base clients for inst clients
+# Arch::is_zkvm
 BuildRequires: yast2 >= 3.1.162
 
 # Yast::Remote
