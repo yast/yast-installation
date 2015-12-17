@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Dec 17 15:53:34 CET 2015 - schubi@suse.de
+
+- Removing network dependencies in the service files in order to
+  prevent booting cycles in Tumbleweed. (bnc#954908)
+- 3.1.166
+
+-------------------------------------------------------------------
 Fri Dec 11 09:17:16 UTC 2015 - jsrain@suse.cz
 
 - don't enforce the disk activation dialog on zKVM (bsc#956736)
