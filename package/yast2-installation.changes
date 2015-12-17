@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Dec 11 09:17:16 UTC 2015 - jsrain@suse.cz
+
+- don't enforce the disk activation dialog on zKVM (bsc#956736)
+- 3.1.165
+
+-------------------------------------------------------------------
 Wed Dec  2 13:55:07 UTC 2015 - mvidner@suse.com
 
 - Ensure second stage and YaST-Firstboot don't get killed by

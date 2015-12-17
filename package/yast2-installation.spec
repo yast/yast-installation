@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.164
+Version:        3.1.165
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -38,7 +38,8 @@ BuildRequires:  yast2-devtools >= 3.1.10
 BuildRequires:  rubygem(rspec)
 
 # Base clients for inst clients
-BuildRequires: yast2 >= 3.1.126
+# Arch::is_zkvm
+BuildRequires: yast2 >= 3.1.162
 
 # Yast::Remote
 BuildRequires: yast2-network
