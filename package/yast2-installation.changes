@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Mon Dec 21 08:08:15 UTC 2015 - jsrain@suse.cz
 
-- fixed function name to check zKVM hypervisoe (bsc#956736)
+- fixed function name to check zKVM hypervisor (bsc#956736)
 - 3.1.166
 
 -------------------------------------------------------------------
