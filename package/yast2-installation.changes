@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Dec 21 08:08:15 UTC 2015 - jsrain@suse.cz
+
+- fixed function name to check zKVM hypervisoe (bsc#956736)
+- 3.1.166
+
+-------------------------------------------------------------------
 Fri Dec 11 09:17:16 UTC 2015 - jsrain@suse.cz
 
 - don't enforce the disk activation dialog on zKVM (bsc#956736)

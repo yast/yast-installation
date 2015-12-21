@@ -241,7 +241,7 @@ module Yast
       fcoe = Linuxrc.InstallInf("WithFCoE") == "1"
       no_disk = Builtins.isempty(Storage.GetDetectedDiskPaths)
 
-      if !((Arch.s390 && !Arch.zkvm) || iscsi || fcoe || no_disk)
+      if !((Arch.s390 && !Arch.is_zkvm) || iscsi || fcoe || no_disk)
         Builtins.y2milestone("Disabling disk activation module")
         ProductControl.DisableModule("disks_activate")
       end
