@@ -4,7 +4,7 @@ Description=YaST2 Second Stage
 # initialization of the VNC server
 After=apparmor.service local-fs.target plymouth-start.service
 Before=getty@tty1.service serial-getty@ttyS0.service serial-getty@ttyS1.service serial-getty@ttyS2.service
-Before=display-manager.service network.service NetworkManager.service SuSEfirewall2_init.service SuSEfirewall2.service
+Before=display-manager.service
 ConditionPathExists=/var/lib/YaST2/runme_at_boot
 
 [Service]

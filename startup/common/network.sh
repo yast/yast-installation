@@ -44,7 +44,7 @@ function found_iface () {
 
 function list_ifaces()
 {
-    /sbin/ifconfig | grep -A1 "^[a-z]"
+    /sbin/ip a|grep "inet "
 }
 
 

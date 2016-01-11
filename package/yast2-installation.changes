@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Dec 22 15:53:34 CET 2015 - schubi@suse.de
+
+- Removing network dependencies in the service files in order to
+  prevent booting cycles in Tumbleweed. (bnc#954908)
+- 3.1.167
+
+-------------------------------------------------------------------
 Mon Dec 21 08:08:15 UTC 2015 - jsrain@suse.cz
 
 - fixed function name to check zKVM hypervisor (bsc#956736)
