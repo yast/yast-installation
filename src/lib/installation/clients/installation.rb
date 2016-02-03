@@ -30,6 +30,8 @@
 # $Id$
 module Yast
   class InstallationClient < Client
+    include Yast::Logger
+
     def main
       textdomain "installation"
 
@@ -37,12 +39,27 @@ module Yast
       Yast.import "Stage"
       Yast.import "Report"
       Yast.import "Hooks"
+      Yast.import "Linuxrc"
 
       Hooks.search_path.join!("installation")
 
       # Initialize the UI
       UI.SetProductLogo(true)
       Wizard.OpenLeftTitleNextBackDialog
+
+      # start the debugger if required (FATE#318421)
+      if (Linuxrc.InstallInf("Cmdline") || "").match(/\bY2DEBUGGER=(.*)\b/i)
+        option = Regexp.last_match[1]
+        log.info "Y2DEBUGGER option: #{option}"
+
+        if option == "1" || option == "remote" || option == "manual"
+          require "yast/debugger"
+          Debugger.start(remote: option == "remote", start_client: option != "manual")
+        else
+          log.warn "Unknown Y2DEBUGGER value: #{option}"
+        end
+      end
+
       Wizard.SetContents(
         # title
         "",
