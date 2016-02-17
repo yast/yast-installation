@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Feb 17 16:03:56 UTC 2016 - cwh@suse.com
+
+- Remove autoyast clone button (fate#317970) 
+- 3.1.168
+
+-------------------------------------------------------------------
 Thu Dec 22 15:53:34 CET 2015 - schubi@suse.de
 
 - Removing network dependencies in the service files in order to
