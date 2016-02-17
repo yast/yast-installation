@@ -74,9 +74,6 @@ module Installation
         return :auto
       end
 
-      args = (Yast::WFM.Args || []).first || {}
-      @hide_export = args["hide_export"]
-
       log.info "Installation step #2"
       @proposal_mode = Yast::GetInstArgs.proposal
 
@@ -210,9 +207,6 @@ module Installation
           )
           make_proposal(true, false) # force_reset
 
-        when :export_config
-          export_config
-
         when :skip, :dontskip
           handle_skip
 
@@ -245,16 +239,6 @@ module Installation
       end
       display_proposal(@proposal)
       submod_descriptions_and_build_menu
-    end
-
-    def export_config
-      path = Yast::UI.AskForSaveFileName("/", "*.xml", _("Location of Stored Configuration"))
-      return unless path
-
-      # force write, so it always write profile even if user do not want
-      # to store profile after installation
-      Yast::WFM.CallFunction("clone_proposal", ["Write", "force" => true, "target_path" => path])
-      raise _("Failed to store configuration. Details can be found in log.") unless File.exist?(path)
     end
 
     def handle_skip
@@ -654,21 +638,14 @@ module Installation
 
     def build_dialog
       headline = @store.headline
+      change_point = Empty()
 
       if Yast::UI.TextMode()
         change_point = ReplacePoint(
           Id(:rep_menu),
           # menu button
           MenuButton(Id(:menu_dummy), _("&Change..."), [Item(Id(:dummy), "")])
-          )
-      elsif @hide_export
-        change_point = Empty()
-      else
-        change_point = PushButton(
-          Id(:export_config),
-          # menu button
-          _("&Export Configuration")
-          )
+        )
       end
 
       # change menu
@@ -778,7 +755,6 @@ module Installation
 
       # menu button item
       menu_list << Item(Id(:reset_to_defaults), _("&Reset to defaults"))
-      menu_list << Item(Id(:export_config), _("&Export Configuration")) unless @hide_export
 
       # menu button
       Yast::UI.ReplaceWidget(
