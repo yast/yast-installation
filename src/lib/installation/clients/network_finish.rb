@@ -70,18 +70,6 @@ module Yast
           "when"  => [:installation, :autoinst]
         }
       elsif @func == "Write"
-
-        # FIXME: move into yast2-network for common installation too
-        if !Mode.autoinst
-          if Lan.UseNetworkManager
-            NetworkService.use_network_manager
-          else
-            NetworkService.use_wicked
-          end
-
-          NetworkService.EnableDisableNow
-        end
-
         Builtins.y2milestone("Save network configuration")
         WFM.CallFunction("save_network")
         # false == don't force
