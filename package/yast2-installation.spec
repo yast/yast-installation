@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.162.3
+Version:        3.1.162.4
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -77,8 +77,8 @@ Requires:       yast2-proxy
 # Systemd default target and services
 Requires: yast2-services-manager
 
-# Yast::Remote
-Requires: yast2-network
+# Network service setup moved into yast2-network
+Requires: yast2-network >= 3.1.140.3
 
 # Only in inst-sys
 # Requires:	yast2-add-on

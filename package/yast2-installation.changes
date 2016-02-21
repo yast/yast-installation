@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Sun Feb 21 21:15:02 UTC 2016 - mfilka@suse.com
+
+- bnc#960703
+  - network service setup moved into yast2-network package.
+- 3.1.162.4
+
+-------------------------------------------------------------------
 Wed Dec  2 13:55:07 UTC 2015 - mvidner@suse.com
 
 - Ensure second stage and YaST-Firstboot don't get killed by
