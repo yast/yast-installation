@@ -10,8 +10,6 @@ module_DATA = \
 client_DATA = \
   clients/cio_ignore_finish.rb \
   clients/cio_ignore_proposal.rb \
-  clients/clone_proposal.rb \
-  clients/clone_finish.rb \
   clients/copy_files_finish.rb \
   clients/copy_logs_finish.rb \
   clients/copy_systemfiles_finish.rb \
@@ -107,7 +105,6 @@ fillup_DATA = \
 ylibdir = "${yast2dir}/lib/installation"
 ylib_DATA = \
   lib/installation/cio_ignore.rb \
-  lib/installation/clone_settings.rb \
   lib/installation/copy_logs_finish.rb \
   lib/installation/minimal_installation.rb \
   lib/installation/prep_shrink.rb \
@@ -118,8 +115,6 @@ ylib_DATA = \
 
 ylibclientdir = "${yast2dir}/lib/installation/clients"
 ylibclient_DATA = \
-  lib/installation/clients/clone_finish.rb \
-  lib/installation/clients/clone_proposal.rb \
   lib/installation/clients/copy_files_finish.rb \
   lib/installation/clients/copy_systemfiles_finish.rb \
   lib/installation/clients/deploy_image_auto.rb \

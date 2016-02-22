@@ -149,7 +149,6 @@ module Yast
           "autoinst_scripts1",
           "copy_files",
           "copy_systemfiles",
-          "clone",
           # For live installer only
           Mode.live_installation ? "live_copy_files" : "",
           "switch_scr"
