@@ -35,13 +35,7 @@ module Yast
     def main
       textdomain "installation"
 
-      Yast.import "Installation"
       Yast.import "ModulesConf"
-      Yast.import "Arch"
-      Yast.import "Linuxrc"
-      Yast.import "String"
-      Yast.import "NetworkService"
-      Yast.import "Lan"
 
       @ret = nil
       @func = ""
@@ -58,8 +52,6 @@ module Yast
       end
 
       Builtins.y2milestone("starting network_finish")
-      Builtins.y2debug("func=%1", @func)
-      Builtins.y2debug("param=%1", @param)
 
       if @func == "Info"
         return {
@@ -69,15 +61,6 @@ module Yast
           "when"  => [:installation, :autoinst]
         }
       elsif @func == "Write"
-
-        if Lan.UseNetworkManager
-          NetworkService.use_network_manager
-        else
-          NetworkService.use_wicked
-        end
-
-        NetworkService.EnableDisableNow
-
         Builtins.y2milestone("Save network configuration")
         WFM.CallFunction("save_network")
         # false == don't force
@@ -87,7 +70,6 @@ module Yast
         @ret = nil
       end
 
-      Builtins.y2debug("ret=%1", @ret)
       Builtins.y2milestone("network_finish finished")
       deep_copy(@ret)
     end
