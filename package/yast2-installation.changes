@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Feb 26 08:36:55 UTC 2016 - ancor@suse.com
+
+- Ensure plymouth does not interfere with X11 when executing
+  yast2-firstboot (bsc#966874)
+- 3.1.116.8
+
+-------------------------------------------------------------------
 Thu Nov 19 09:38:48 UTC 2015 - mvidner@suse.com
 
 - Ensure second stage and YaST-Firstboot don't get killed by
