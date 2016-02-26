@@ -50,6 +50,7 @@ client_DATA = \
   clients/inst_save_hardware_status.rb \
   clients/inst_scenarios.rb \
   clients/inst_system_analysis.rb \
+  clients/inst_system_role.rb \
   clients/inst_upgrade_urls.rb \
   clients/inst_welcome.rb \
   clients/inst_worker_continue.rb \
@@ -111,6 +112,7 @@ ylib_DATA = \
   lib/installation/proposal_runner.rb \
   lib/installation/proposal_store.rb \
   lib/installation/remote_finish_client.rb \
+  lib/installation/select_system_role.rb \
   lib/installation/snapshots_finish.rb
 
 ylibclientdir = "${yast2dir}/lib/installation/clients"

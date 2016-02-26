@@ -8,6 +8,7 @@ TESTS = \
   proposal_store_test.rb \
   proposal_runner_test.rb \
   remote_finish_test.rb \
+  select_system_role_test.rb \
   snapshots_finish_test.rb
 
 TEST_EXTENSIONS = .rb
