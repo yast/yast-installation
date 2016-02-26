@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Feb 26 08:36:55 UTC 2016 - ancor@suse.com
+
+- Ensure plymouth does not interfere with X11 when executing
+  yast2-firstboot (bsc#966874)
+- 3.1.162.5
+
+-------------------------------------------------------------------
 Sun Feb 21 21:15:02 UTC 2016 - mfilka@suse.com
 
 - bnc#960703
