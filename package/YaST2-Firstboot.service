@@ -8,7 +8,8 @@ ConditionPathExists=/var/lib/YaST2/reconfig_system
 [Service]
 Type=oneshot
 Environment=SYSTEMCTL_OPTIONS=--ignore-dependencies TERM=linux
-ExecStartPre=-/usr/bin/plymouth --hide-splash
+ExecStartPre=-/usr/bin/plymouth quit
+ExecStartPre=-/usr/bin/plymouth --wait
 ExecStart=/usr/lib/YaST2/startup/YaST2.Firstboot
 ExecStartPost=/usr/bin/rm -f /var/lib/YaST2/reconfig_system
 ExecStartPost=/usr/bin/systemctl restart systemd-vconsole-setup.service
