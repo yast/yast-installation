@@ -44,7 +44,10 @@ function found_iface () {
 
 function list_ifaces()
 {
-    /sbin/ifconfig | grep -A1 "^[a-z]"
+    # list network interfaces
+    # - all active ones with all IPv4 / IPv6 addresses
+    # - excluding loopback device
+    /sbin/ip -o a s | grep "inet" | cut -d' ' -f2 | uniq | grep -v "^lo" | xargs -n1 -d'\n' /sbin/ip a s
 }
 
 
