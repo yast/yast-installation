@@ -1,4 +1,18 @@
 -------------------------------------------------------------------
+Mon Feb 29 09:05:16 UTC 2016 - mfilka@suse.com
+
+- bsc#956473
+  - network interfaces listing shows all IPv4 / IPv6 addresses per
+    device
+- 3.1.170
+
+-------------------------------------------------------------------
+Fri Feb 26 08:36:55 UTC 2016 - ancor@suse.com
+
+- Ensure plymouth does not interfere with X11 when executing
+  yast2-firstboot (bsc#966874)
+
+-------------------------------------------------------------------
 Sun Feb 21 21:15:02 UTC 2016 - mfilka@suse.com
 
 - bnc#960703
