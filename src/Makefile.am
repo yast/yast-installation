@@ -107,13 +107,15 @@ ylibdir = "${yast2dir}/lib/installation"
 ylib_DATA = \
   lib/installation/cio_ignore.rb \
   lib/installation/copy_logs_finish.rb \
+  lib/installation/driver_update.rb \
   lib/installation/minimal_installation.rb \
   lib/installation/prep_shrink.rb \
   lib/installation/proposal_runner.rb \
   lib/installation/proposal_store.rb \
   lib/installation/remote_finish_client.rb \
   lib/installation/select_system_role.rb \
-  lib/installation/snapshots_finish.rb
+  lib/installation/snapshots_finish.rb \
+  lib/installation/updates_manager.rb
 
 ylibclientdir = "${yast2dir}/lib/installation/clients"
 ylibclient_DATA = \
