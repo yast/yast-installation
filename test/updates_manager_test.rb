@@ -13,10 +13,34 @@ describe Installation::UpdatesManager do
   let(:target) { Pathname.new("/update") }
   let(:uri) { URI("http://updates.opensuse.org/sles12.dud") }
 
+  let(:update0) { double("update0") }
+  let(:update1) { double("update1") }
+
   describe "#add_update" do
-    it "adds a driver update to the list of updates" do
-      expect(Installation::DriverUpdate).to receive(:new).with(uri)
+    before do
+      allow(Installation::DriverUpdate).to receive(:new).with(uri)
+        .and_return(update0)
+    end
+
+    it "fetchs the driver and it to the list of updates" do
+      expect(update0).to receive(:fetch).with(target.join("000")).and_return(true)
       manager.add_update(uri)
+      expect(manager.updates).to eq([update0])
+    end
+
+    context "if the update is not found" do
+      before do
+        allow(update0).to receive(:fetch).and_raise(Installation::DriverUpdate::NotFound)
+      end
+
+      it "returns false" do
+        expect(manager.add_update(uri)).to eq(false)
+      end
+
+      it "does not add the update" do
+        manager.add_update(uri)
+        expect(manager.updates).to be_empty
+      end
     end
   end
 
@@ -29,22 +53,19 @@ describe Installation::UpdatesManager do
 
     context "when some update was added" do
       before do
+        allow(Installation::DriverUpdate).to receive(:new).with(uri)
+          .and_return(update0)
+        expect(update0).to receive(:fetch).with(target.join("000")).and_return(true)
         manager.add_update(uri)
       end
 
-      it "returns an array containing the update" do
-        updates = manager.updates
-        expect(updates.size).to eq(1)
-        update = updates.first
-        expect(update.uri).to eq(uri)
+      it "returns an array containing the updates" do
+        expect(manager.updates).to eq([update0])
       end
     end
   end
 
   describe "#fetch_all" do
-    let(:update0) { double("update0") }
-    let(:update1) { double("update1") }
-
     it "fetches all updates using consecutive numbers in the directory name" do
       allow(manager).to receive(:updates).and_return([update0, update1])
       expect(update0).to receive(:fetch).with(target.join("000"))

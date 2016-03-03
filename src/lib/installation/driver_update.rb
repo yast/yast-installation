@@ -8,6 +8,8 @@ module Installation
   # The DUD will be fetched from a remote URL. At this time, only HTTP/HTTPS
   # are supported.
   class DriverUpdate
+    class NotFound < StandardError; end
+
     EXTRACT_CMD = "gzip -dc %<source>s | cpio --quiet --sparse -dimu --no-absolute-filenames"
     APPLY_CMD = "/etc/adddir %<source>s/inst-sys /"
     FETCH_CMD = "/usr/bin/curl --location --verbose --fail --max-time 300 --connect-timeout 15 " \
@@ -20,9 +22,9 @@ module Installation
     #
     # @param uri        [URI]      DUD's URI
     def initialize(uri)
+      Yast.import "Linuxrc"
       @uri = uri
       @local_path = nil
-      Yast.import "Linuxrc"
     end
 
     # Fetch the DUD and stores it in the given directory
