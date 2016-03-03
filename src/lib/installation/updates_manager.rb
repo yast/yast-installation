@@ -39,7 +39,12 @@ module Installation
     #
     # @see Installation::DriverUpdate
     def add_update(uri)
-      @updates << Installation::DriverUpdate.new(uri)
+      new_update = Installation::DriverUpdate.new(uri)
+      dir = target.join(format("%03d", next_update))
+      new_update.fetch(dir)
+      @updates << new_update
+    rescue Installation::DriverUpdate::NotFound
+      false
     end
 
     # Fetches all updates in the pool
