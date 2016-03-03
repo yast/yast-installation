@@ -10,6 +10,9 @@ module Installation
   class DriverUpdate
     EXTRACT_CMD = "gzip -dc %<source>s | cpio --quiet --sparse -dimu --no-absolute-filenames"
     APPLY_CMD = "/etc/adddir %<source>s/inst-sys /"
+    FETCH_CMD = "/usr/bin/curl --location --verbose --fail --max-time 300 --connect-timeout 15 " \
+      "%<uri>s --output '%<output>s'"
+    TEMP_FILENAME = "remote.dud"
 
     attr_reader :uri, :local_path
 
@@ -31,7 +34,13 @@ module Installation
     # FIXME: should it be called by the constructor?
     def fetch(target)
       @local_path = target
-      extract_to(download_file, local_path)
+      Dir.mktmpdir do |dir|
+        Dir.chdir(dir) do
+          temp_file = Pathname.pwd.join(TEMP_FILENAME)
+          download_file_to(temp_file)
+          extract(temp_file, local_path)
+        end
+      end
     end
 
     # Apply the DUD to the running system
@@ -39,6 +48,7 @@ module Installation
     # @return [Boolean] true if the DUD was applied; false otherwise.
     #
     # FIXME: remove the ! sign
+    # FIXME: handle update.{pre,post} scripts
     def apply!
       raise "Not fetched yet!" if local_path.nil?
       cmd = format(APPLY_CMD, source: local_path)
@@ -53,16 +63,12 @@ module Installation
     # @param source [Pathname]
     #
     # @see EXTRACT_CMD
-    def extract_to(source, target)
-      Dir.mktmpdir do |dir|
-        Dir.chdir(dir) do
-          cmd = format(EXTRACT_CMD, source: source.path)
-          out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
-          raise "Could not extract DUD" unless out["exit"].zero?
-          setup_target(target)
-          FileUtils.mv(update_dir, target)
-        end
-      end
+    def extract(source, target)
+      cmd = format(EXTRACT_CMD, source: source)
+      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
+      raise "Could not extract DUD" unless out["exit"].zero?
+      setup_target(target)
+      FileUtils.mv(update_dir, target)
     end
 
     # Set up the target directory
@@ -75,16 +81,14 @@ module Installation
       FileUtils.mkdir_p(dir) unless dir.dirname.exist?
     end
 
-    # Download the DUD to a temporal file
+    # Download the DUD to a file
     #
-    # @return [Tempfile] Temporal file where the DUD is stored
-    #
-    # FIXME: use curl instead of open-uri to avoid problems with redirections.
-    def download_file
-      tempfile = Tempfile.new(["update", ".dud"])
-      content = open(uri).read
-      File.write(tempfile.path, content)
-      tempfile
+    # @return [True] True if download was successful
+    def download_file_to(path)
+      cmd = format(FETCH_CMD, uri: uri, output: path)
+      Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
+      raise NotFound unless path.exist?
+      true
     end
 
     # Directory which contains files within the DUD

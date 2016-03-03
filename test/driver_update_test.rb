@@ -15,7 +15,7 @@ describe Installation::DriverUpdate do
   TEST_DIR = Pathname.new(__FILE__).dirname
   FIXTURES_DIR = TEST_DIR.join("fixtures")
 
-  let(:url) { URI("https://update.opensuse.com/0001.dud") }
+  let(:url) { URI("file://#{FIXTURES_DIR}/fake.dud") }
 
   subject { Installation::DriverUpdate.new(url) }
 
@@ -31,7 +31,6 @@ describe Installation::DriverUpdate do
     it "downloads the file at #url and stores in the given directory" do
       allow(Yast::Linuxrc).to receive(:InstallInf).with("UpdateDir")
         .and_return("/linux/suse/x86_64-sles12")
-      expect(subject).to receive(:open).with(URI(url)).and_return(dud_io)
       subject.fetch(target)
       expect(target.join("dud.config")).to be_file
     end
@@ -40,8 +39,7 @@ describe Installation::DriverUpdate do
       let(:url) { URI("http://non-existent-url.com/") }
 
       it "raises an exception" do
-        expect(subject).to receive(:open).with(url).and_raise(SocketError)
-        expect { subject.fetch(target) }.to raise_error SocketError
+        expect { subject.fetch(target) }.to raise_error StandardError
       end
     end
 
