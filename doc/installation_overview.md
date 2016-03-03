@@ -183,5 +183,5 @@ different modes and scenarios are described in the _control file_. _YaST_ search
 in `/y2update/control.xml`, `/control.xml` and `/etc/YaST2/control.xml` and each SUSE product will
 have their own file.
 
-Quite nice [documentation](doc/control-file.md) lives in this repository about
+Quite nice [documentation](control-file.md) lives in this repository about
 the content of these files.
