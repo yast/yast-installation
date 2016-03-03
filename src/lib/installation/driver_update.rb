@@ -51,9 +51,8 @@ module Installation
     # FIXME: handle update.{pre,post} scripts
     def apply!
       raise "Not fetched yet!" if local_path.nil?
-      cmd = format(APPLY_CMD, source: local_path)
-      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
-      out["exit"].zero?
+      adddir
+      run_update_pre
     end
 
     private
@@ -78,7 +77,7 @@ module Installation
     # @param dir [Pathname] Directory to re-create
     def setup_target(dir)
       FileUtils.rm_r(dir) if dir.exist?
-      FileUtils.mkdir_p(dir) unless dir.dirname.exist?
+      FileUtils.mkdir_p(dir.dirname) unless dir.dirname.exist?
     end
 
     # Download the DUD to a file
@@ -97,6 +96,24 @@ module Installation
     def update_dir
       path = Pathname.new(Yast::Linuxrc.InstallInf("UpdateDir"))
       path.relative_path_from(Pathname.new("/"))
+    end
+
+    def adddir
+      cmd = format(APPLY_CMD, source: local_path)
+      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
+      out["exit"].zero?
+    end
+
+    # Run update.pre script
+    #
+    # @return [Boolean,NilClass] true if execution was successful; false if
+    #                            it failed; nil if script does not exist or
+    #                            was not executable.
+    def run_update_pre
+      update_pre_path = local_path.join("install", "update.pre")
+      return nil unless update_pre_path.exist? && update_pre_path.executable?
+      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), update_pre_path.to_s)
+      out["exit"].zero?
     end
 
   end
