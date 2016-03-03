@@ -842,6 +842,59 @@ Section *supported\_desktops* contains list of one or more
 
     Text ID used for desktop selection label.
 
+### System Roles
+
+System Roles, if defined in the control file, are presented during
+the first stage of the installation. The user will select one of them
+and they will affect the proposed configuration of Partitioning and Software.
+
+They were requested in FATE#317481 and they are an evolution of the earlier
+concept of Server Scenarios used in SLE 11.
+
+Example:
+
+```xml
+<productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
+    xmlns:config="http://www.suse.com/1.0/configns">
+    <!-- ... -->
+    <system_roles config:type="list">
+      <system_role>
+        <id>plain</id>
+        <!-- nothing else here, no overrides -->
+      </system_role>
+
+      <system_role>
+        <id>virtualization_host_kvm</id>
+        <partitioning>
+          <proposal_lvm config:type="boolean">true</proposal_lvm>
+        </partitioning>
+        <software>
+          <default_patterns>base Minimal kvm_server</default_patterns>
+        </software>
+      </system_role>
+    </system_roles>
+
+    <texts>
+      <plain><label>General Server</label></plain>
+      <plain_description>
+        <label>Suitable for physical machines.</label>
+      </plain_description>
+      <virtualization_host_kvm>
+        <label>KVM Virtualization Host</label>
+      </virtualization_host_kvm>
+      <virtualization_host_kvm_description>
+        <label>Will install the appropriate packages.
+Will use LVM disk layout.</label>
+      </virtualization_host_kvm_description>
+    </texts>
+</productDefines>
+```
+
+Each role has a short label and a few lines of description in the *texts*
+section, identified by a matching *id* element. The contents of *partitioning*
+and *software* are merged with the corresponding top-level definitions. See
+[Partitioning](#partitioning) and [Software](#software).
+
 ### System Scenarios
 
 System scenarios contain definition of dialog *inst\_scenarios* in the
