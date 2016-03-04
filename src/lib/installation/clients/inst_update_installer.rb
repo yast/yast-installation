@@ -40,7 +40,7 @@ module Yast
 
     # Check if installer was updated
     #
-    # It checks if a fle UPDATED_FILENAME exists in Directory.vardir
+    # It checks if a file UPDATED_FILENAME exists in Directory.vardir
     #
     # @return [Boolean] true if it exists; false otherwise.
     def installer_updated?

@@ -1,17 +1,17 @@
 require "yast"
 require "tempfile"
-require "open-uri"
+require "pathname"
 
 module Installation
   # Represents a driver update disk (DUD)
   #
-  # The DUD will be fetched from a remote URL. At this time, only HTTP/HTTPS
-  # are supported.
+  # The DUD will be fetched from a given URL. At this time, HTTP, HTTPS, FTP
+  # and file:/ are supported.
   class DriverUpdate
     class NotFound < StandardError; end
 
     EXTRACT_CMD = "gzip -dc %<source>s | cpio --quiet --sparse -dimu --no-absolute-filenames"
-    APPLY_CMD = "/etc/adddir %<source>s/inst-sys /"
+    APPLY_CMD = "/etc/adddir %<source>s/inst-sys /" # openSUSE/installation-images
     FETCH_CMD = "/usr/bin/curl --location --verbose --fail --max-time 300 --connect-timeout 15 " \
       "%<uri>s --output '%<output>s'"
     TEMP_FILENAME = "remote.dud"
@@ -20,20 +20,16 @@ module Installation
 
     # Constructor
     #
-    # @param uri        [URI]      DUD's URI
+    # @param uri [URI] Driver Update URI
     def initialize(uri)
       Yast.import "Linuxrc"
       @uri = uri
       @local_path = nil
     end
 
-    # Fetch the DUD and stores it in the given directory
-    #
-    # Retrieves and extract the DUD to the given directory.
+    # Fetch the DUD and store it in the given directory
     #
     # @param target [Pathname] Directory to extract the DUD to.
-    #
-    # FIXME: should it be called by the constructor?
     def fetch(target)
       @local_path = target
       Dir.mktmpdir do |dir|
@@ -46,13 +42,8 @@ module Installation
     end
 
     # Apply the DUD to the running system
-    #
-    # @return [Boolean] true if the DUD was applied; false otherwise.
-    #
-    # FIXME: remove the ! sign
-    # FIXME: handle update.{pre,post} scripts
-    def apply!
-      raise "Not fetched yet!" if local_path.nil?
+    def apply
+      raise "Driver updated not fetched yet!" if local_path.nil?
       adddir
       run_update_pre
     end
@@ -74,7 +65,7 @@ module Installation
 
     # Set up the target directory
     #
-    # Refresh the target directory (re-creates it)
+    # Refresh the target directory (dir will be re-created).
     #
     # @param dir [Pathname] Directory to re-create
     def setup_target(dir)
@@ -84,7 +75,9 @@ module Installation
 
     # Download the DUD to a file
     #
-    # @return [True] True if download was successful
+    # If the file is not downloaded, DriverUpdate::NotFound exception is risen.
+    #
+    # @return [True] true if download was successful
     def download_file_to(path)
       cmd = format(FETCH_CMD, uri: uri, output: path)
       Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
@@ -100,6 +93,9 @@ module Installation
       path.relative_path_from(Pathname.new("/"))
     end
 
+    # Add files/directories to the inst-sys
+    #
+    # @see APPLY_CMD
     def adddir
       cmd = format(APPLY_CMD, source: local_path)
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
@@ -117,6 +113,5 @@ module Installation
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), update_pre_path.to_s)
       out["exit"].zero?
     end
-
   end
 end
