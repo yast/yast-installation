@@ -57,7 +57,7 @@ module Installation
 
     # Applies all updates in the pool
     def apply_all
-      updates.each(&:apply!)
+      updates.each(&:apply)
     end
 
     private

@@ -3,10 +3,6 @@
 require_relative "./test_helper"
 
 require "installation/driver_update"
-require "pathname"
-require "uri"
-require "fileutils"
-require "net/http"
 require "open-uri"
 
 Yast.import "Linuxrc"
@@ -52,7 +48,7 @@ describe Installation::DriverUpdate do
     end
   end
 
-  describe "#apply!" do
+  describe "#apply" do
     let(:local_path) { TEMP_DIR.join("000") }
 
     context "when the remote file was fetched" do
@@ -64,7 +60,7 @@ describe Installation::DriverUpdate do
         expect(Yast::SCR).to receive(:Execute)
           .with(Yast::Path.new(".target.bash_output"), "/etc/adddir #{local_path}/inst-sys /")
           .and_return("exit" => 0)
-        subject.apply!
+        subject.apply
       end
     end
 
@@ -72,7 +68,7 @@ describe Installation::DriverUpdate do
       let(:local_path) { nil }
 
       it "raises an exception" do
-        expect { subject.apply! }.to raise_error(RuntimeError)
+        expect { subject.apply }.to raise_error(RuntimeError)
       end
     end
   end
