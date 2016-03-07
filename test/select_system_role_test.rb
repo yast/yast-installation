@@ -23,15 +23,13 @@ describe ::Installation::SelectSystemRole do
           .and_return("system_roles" => [])
       end
 
-      it "does not display dialog" do
+      it "does not display dialog, and returns :auto" do
         expect(Yast::Wizard).to_not receive(:SetContents)
-        subject.run
+        expect(subject.run).to eq(:auto)
       end
     end
 
     context "when some roles are defined" do
-      include Yast::UIShortcuts
-
       let(:control_file_roles) do
         [
           { "id" => "foo", "partitioning" => { "format" => true } },

@@ -18,17 +18,15 @@
 
 require "yast"
 require "ui/installation_dialog"
+Yast.import "ProductControl"
+Yast.import "ProductFeatures"
 
 module Installation
   class SelectSystemRole < ::UI::InstallationDialog
-    include Yast
-
     def initialize
       super
 
       textdomain "installation"
-      Yast.import "ProductControl"
-      Yast.import "ProductFeatures"
     end
 
     def run
@@ -40,8 +38,6 @@ module Installation
       super
     end
 
-    public                      # called by parent class
-
     def dialog_title
       _("System Role")
     end
@@ -51,32 +47,27 @@ module Installation
     end
 
     def dialog_content
-      RadioButtonGroup(
-        Id(:roles),
-        VBox(
-          * ui_roles.map do |r|
-              VBox(
-                Left(RadioButton(Id(r[:id]), r[:label])),
-                HBox(
-                  HSpacing(4),
-                  Left(Label(r[:description]))
-                ),
-                VSpacing(2)
-              )
-            end
+      ui_roles = role_attributes.each_with_object(VBox()) do |r, vbox|
+        vbox << Left(RadioButton(Id(r[:id]), r[:label]))
+        vbox << HBox(
+          HSpacing(4),
+          Left(Label(r[:description]))
         )
-      )
+        vbox << VSpacing(2)
+      end
+
+      RadioButtonGroup(Id(:roles), ui_roles)
     end
 
     def create_dialog
       clear_role
       ok = super
-      UI.ChangeWidget(Id(:roles), :CurrentButton, ui_roles.first[:id])
+      Yast::UI.ChangeWidget(Id(:roles), :CurrentButton, role_attributes.first[:id])
       ok
     end
 
     def next_handler
-      role_id = UI.QueryWidget(Id(:roles), :CurrentButton)
+      role_id = Yast::UI.QueryWidget(Id(:roles), :CurrentButton)
       apply_role(role_id)
 
       super
@@ -85,7 +76,7 @@ module Installation
     private
 
     def clear_role
-      ProductFeatures.ClearOverlay
+      Yast::ProductFeatures.ClearOverlay
     end
 
     def apply_role(role_id)
@@ -93,7 +84,7 @@ module Installation
       features = raw_roles.find { |r| r["id"] == role_id }
       features = features.dup
       features.delete("id")
-      ProductFeatures.SetOverlay(features)
+      Yast::ProductFeatures.SetOverlay(features)
     end
 
     # the contents is an overlay for ProductFeatures sections
@@ -103,17 +94,17 @@ module Installation
     # ]
     # @return [Array<Hash{String => Object}>]
     def raw_roles
-      ProductControl.productControl.fetch("system_roles", [])
+      Yast::ProductControl.productControl.fetch("system_roles", [])
     end
 
-    def ui_roles
+    def role_attributes
       raw_roles.map do |r|
         id = r["id"]
 
         {
           id:          id,
-          label:       ProductControl.GetTranslatedText(id),
-          description: ProductControl.GetTranslatedText(id + "_description")
+          label:       Yast::ProductControl.GetTranslatedText(id),
+          description: Yast::ProductControl.GetTranslatedText(id + "_description")
         }
       end
     end
