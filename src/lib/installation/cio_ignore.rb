@@ -26,7 +26,7 @@ module Installation
       end
     end
 
-    private
+  private
 
     def kvm?
       File.exist?("/proc/sysinfo") &&
