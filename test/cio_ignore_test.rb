@@ -6,7 +6,6 @@ require "installation/cio_ignore"
 
 describe ::Installation::CIOIgnore do
   describe "enable/disable" do
-
     it "take AutoYaST cio_ignore setting" do
       allow(Yast::Mode).to receive(:autoinst).and_return(true)
       allow(Yast::AutoinstConfig).to receive(:cio_ignore).and_return(false)
@@ -21,7 +20,6 @@ describe ::Installation::CIOIgnore do
       ::Installation::CIOIgnore.instance.reset
       expect(::Installation::CIOIgnore.instance.enabled).to eq(true)
     end
-
   end
 end
 
