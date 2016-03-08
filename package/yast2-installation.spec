@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.171
+Version:        3.1.172
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -37,9 +37,8 @@ BuildRequires:  docbook-xsl-stylesheets libxslt update-desktop-files yast2-core-
 BuildRequires:  yast2-devtools >= 3.1.10
 BuildRequires:  rubygem(rspec)
 
-# Base clients for inst clients
-# Arch::is_zkvm
-BuildRequires: yast2 >= 3.1.162
+# ProductFeatures.SetOverlay
+BuildRequires: yast2 >= 3.1.177
 
 # Yast::Remote
 BuildRequires: yast2-network
@@ -47,8 +46,8 @@ BuildRequires: yast2-network
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
 
-# Wizard.OpenLeftTitleNextBackDialog
-Requires:	yast2 >= 3.1.126
+# ProductFeatures.SetOverlay
+Requires:       yast2 >= 3.1.177
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
