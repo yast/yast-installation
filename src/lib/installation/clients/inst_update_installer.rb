@@ -30,11 +30,13 @@ module Yast
     # * Get URL from control file or Linuxrc
     def main
       Yast.import "Directory"
+      Yast.import "Installation"
 
       return :next if installer_updated?
 
       if update_installer
         ::FileUtils.touch(update_file) # Indicates that the installer was updated.
+        ::FileUtils.touch(Installation.restart_file)
         :restart_yast # restart YaST to apply modifications.
       else
         :next
