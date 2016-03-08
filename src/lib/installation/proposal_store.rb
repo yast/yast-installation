@@ -270,7 +270,7 @@ module Installation
       matching_client.first
     end
 
-  private
+    private
 
     # Evaluates the given description map, and handles all the events
     # by returning whether to continue in the current proposal loop

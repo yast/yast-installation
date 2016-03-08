@@ -1242,7 +1242,7 @@ module Yast
       :next
     end
 
-  private
+    private
 
     # FIXME: share this code better
     def target_distribution

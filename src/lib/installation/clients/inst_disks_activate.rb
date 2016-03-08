@@ -166,7 +166,7 @@ module Yast
       @ret
     end
 
-  private
+    private
 
     def show_base_dialog
       Wizard.SetContents(

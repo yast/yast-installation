@@ -111,7 +111,7 @@ module Installation
       input_loop
     end
 
-  private
+    private
 
     # Shows dialog to user to confirm update and return user response.
     # Returns 'true' if the user confirms, 'false' otherwise.

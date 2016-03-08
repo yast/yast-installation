@@ -44,7 +44,7 @@ module Installation
       end
     end
 
-  private
+    private
 
     MAXIMAL_SIZE_KB = 8192
     def shrink_partitions

@@ -41,7 +41,7 @@ module Installation
       _("Creating root filesystem snapshot...")
     end
 
-  private
+    private
 
     def create_post_snapshot
       pre_number = Yast2::FsSnapshotStore.load("update")
