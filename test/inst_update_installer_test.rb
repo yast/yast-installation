@@ -16,6 +16,7 @@ describe Yast::InstUpdateInstaller do
 
       it "creates update file and returns :restart_yast" do
         expect(::FileUtils).to receive(:touch)
+        expect(::FileUtils).to receive(:touch)
         expect(subject.main).to eq(:restart_yast)
       end
     end
