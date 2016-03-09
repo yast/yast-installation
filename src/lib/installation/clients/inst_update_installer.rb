@@ -31,6 +31,7 @@ module Yast
       Yast.import "Installation"
       Yast.import "ProductFeatures"
       Yast.import "Linuxrc"
+      Yast.import "Popup"
 
       return :next if installer_updated? || !self_update_enabled?
 
@@ -45,14 +46,20 @@ module Yast
 
     # Tries to update the installer
     #
+    # It also shows feedback to the user.
+    #
     # @return [Boolean] true if installer was updated; false otherwise.
     def update_installer
       manager = ::Installation::UpdatesManager.new
+      Popup.ShowFeedback(_("YaST2 update"), _("Searching for installer updates"))
       if manager.add_update(self_update_url)
-        manager.apply_all
+        Popup.ShowFeedback(_("YaST2 update"), _("Applying updates"))
+        ret = manager.apply_all
       else
-        false
+        ret = false
       end
+      Popup.ClearFeedback
+      ret
     end
 
     # Determines whether self-update feature is enabled
