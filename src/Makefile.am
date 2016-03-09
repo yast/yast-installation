@@ -52,6 +52,7 @@ client_DATA = \
   clients/inst_system_analysis.rb \
   clients/inst_system_role.rb \
   clients/inst_upgrade_urls.rb \
+  clients/inst_update_installer.rb \
   clients/inst_welcome.rb \
   clients/inst_worker_continue.rb \
   clients/inst_worker_initial.rb \
@@ -107,13 +108,15 @@ ylibdir = "${yast2dir}/lib/installation"
 ylib_DATA = \
   lib/installation/cio_ignore.rb \
   lib/installation/copy_logs_finish.rb \
+  lib/installation/driver_update.rb \
   lib/installation/minimal_installation.rb \
   lib/installation/prep_shrink.rb \
   lib/installation/proposal_runner.rb \
   lib/installation/proposal_store.rb \
   lib/installation/remote_finish_client.rb \
   lib/installation/select_system_role.rb \
-  lib/installation/snapshots_finish.rb
+  lib/installation/snapshots_finish.rb \
+  lib/installation/updates_manager.rb
 
 ylibclientdir = "${yast2dir}/lib/installation/clients"
 ylibclient_DATA = \
@@ -155,6 +158,7 @@ ylibclient_DATA = \
   lib/installation/clients/inst_save_hardware_status.rb \
   lib/installation/clients/inst_scenarios.rb \
   lib/installation/clients/inst_system_analysis.rb \
+  lib/installation/clients/inst_update_installer.rb \
   lib/installation/clients/inst_upgrade_urls.rb \
   lib/installation/clients/inst_welcome.rb \
   lib/installation/clients/inst_worker_continue.rb \
