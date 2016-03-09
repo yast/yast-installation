@@ -93,7 +93,7 @@ module Installation
       nil
     end
 
-    private
+  private
 
     def copy_log_to_target(src_file, dst_file = src_file)
       dir = Yast::Directory.logdir

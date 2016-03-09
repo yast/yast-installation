@@ -135,7 +135,7 @@ module Yast
     publish function: :feature_ignored?, type: "boolean (string)"
     publish function: :second_stage_required, type: "boolean ()"
 
-    private
+  private
 
     # Removes unneeded characters from the given string
     # for easier handling

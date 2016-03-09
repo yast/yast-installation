@@ -26,7 +26,7 @@ module Installation
       end
     end
 
-    private
+  private
 
     def kvm?
       File.exist?("/proc/sysinfo") &&
@@ -75,7 +75,7 @@ module Installation
       end
     end
 
-    private
+  private
 
     def proposal_entry
       Yast.import "HTML"
@@ -184,7 +184,7 @@ module Installation
       end
     end
 
-    private
+  private
 
     def add_boot_kernel_parameters
       Yast.import "Bootloader"

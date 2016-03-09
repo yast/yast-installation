@@ -73,7 +73,7 @@ module Installation
       super
     end
 
-    private
+  private
 
     def clear_role
       Yast::ProductFeatures.ClearOverlay
