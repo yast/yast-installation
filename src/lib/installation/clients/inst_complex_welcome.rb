@@ -83,6 +83,8 @@ module Yast
 
   private
 
+    attr_reader :license_required
+
     def event_loop
       loop do
         ret = UI.UserInput
@@ -113,7 +115,7 @@ module Yast
 
           # BNC #448598
           # Check whether the license has been accepted only if required
-          next if @licence_required && !license_accepted?
+          next if license_required && !license_accepted?
 
           next if !Language.CheckIncompleteTranslation(@language)
 
@@ -122,6 +124,7 @@ module Yast
           setup_final_choice
 
           store_data
+
           return :next
         when :show_fulscreen_license
           UI.OpenDialog(all_licenses_dialog)
@@ -332,6 +335,7 @@ module Yast
     end
 
     DATA_PATH = "/var/lib/YaST2/complex_welcome_store.yaml"
+
     def data_stored?
       ::File.exist?(DATA_PATH)
     end
