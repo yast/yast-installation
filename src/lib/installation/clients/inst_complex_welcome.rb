@@ -342,8 +342,9 @@ module Yast
 
     def store_data
       data = {
-        "language" => @language,
-        "keyboard" => @keyboard
+        "language"    => @language,
+        "keyboard"    => @keyboard,
+        "license_acc" => @license_acc
       }
 
       File.write(DATA_PATH, data.to_yaml)
@@ -351,8 +352,9 @@ module Yast
 
     def apply_data
       data = YAML.load(File.read(DATA_PATH))
-      @language = data["language"]
-      @keyboard = data["keyboard"]
+      @language    = data["language"]
+      @keyboard    = data["keyboard"]
+      @license_acc = data["license_acc"]
 
       change_language
       setup_final_choice
