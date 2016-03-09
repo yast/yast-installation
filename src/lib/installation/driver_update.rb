@@ -16,6 +16,7 @@
 require "yast"
 require "tempfile"
 require "pathname"
+require "transfer/file_from_url"
 
 module Installation
   # Represents a driver update disk (DUD)
@@ -23,12 +24,13 @@ module Installation
   # The DUD will be fetched from a given URL. At this time, HTTP, HTTPS, FTP
   # and file:/ are supported.
   class DriverUpdate
+    include Yast::I18n # missing in yast2-update
+    include Yast::Transfer::FileFromUrl # get_file_from_url
+
     class NotFound < StandardError; end
 
     EXTRACT_CMD = "gzip -dc %<source>s | cpio --quiet --sparse -dimu --no-absolute-filenames"
     APPLY_CMD = "/etc/adddir %<source>s/inst-sys /" # openSUSE/installation-images
-    FETCH_CMD = "/usr/bin/curl --location --verbose --fail --max-time 300 --connect-timeout 15 " \
-      "%<uri>s --output '%<output>s'"
     TEMP_FILENAME = "remote.dud"
 
     attr_reader :uri, :local_path
@@ -75,7 +77,7 @@ module Installation
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
       raise "Could not extract DUD" unless out["exit"].zero?
       setup_target(target)
-      FileUtils.mv(update_dir, target)
+      ::FileUtils.mv(update_dir, target)
     end
 
     # Set up the target directory
@@ -84,8 +86,8 @@ module Installation
     #
     # @param dir [Pathname] Directory to re-create
     def setup_target(dir)
-      FileUtils.rm_r(dir) if dir.exist?
-      FileUtils.mkdir_p(dir.dirname) unless dir.dirname.exist?
+      ::FileUtils.rm_r(dir) if dir.exist?
+      ::FileUtils.mkdir_p(dir.dirname) unless dir.dirname.exist?
     end
 
     # Download the DUD to a file
@@ -94,8 +96,8 @@ module Installation
     #
     # @return [True] true if download was successful
     def download_file_to(path)
-      cmd = format(FETCH_CMD, uri: uri, output: path)
-      Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
+      get_file_from_url(scheme: uri.scheme, host: uri.host, urlpath: uri.path,
+                        localfile: path.to_s, urltok: {}, destdir: "")
       raise NotFound unless path.exist?
       true
     end

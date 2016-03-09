@@ -22,14 +22,14 @@ describe Installation::DriverUpdate do
   end
 
   after do
-    FileUtils.rm_r(TEMP_DIR) if TEMP_DIR.exist?
+    ::FileUtils.rm_r(TEMP_DIR) if TEMP_DIR.exist?
   end
 
   describe "#fetch" do
     let(:target) { TEST_DIR.join("target") }
 
     after do
-      FileUtils.rm_r(target) if target.exist? # Make sure the file is removed
+      ::FileUtils.rm_r(target) if target.exist? # Make sure the file is removed
     end
 
     let(:dud_io) { StringIO.new(File.binread(FIXTURES_DIR.join("fake.dud"))) }
