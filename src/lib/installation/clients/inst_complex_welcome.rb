@@ -442,5 +442,3 @@ module Yast
     end
   end unless defined? Yast::InstComplexWelcomeClient
 end
-
-Yast::InstComplexWelcomeClient.new.main
