@@ -3,7 +3,6 @@
 require_relative "test_helper"
 require "installation/clients/inst_complex_welcome"
 
-
 describe Yast::InstComplexWelcomeClient do
 
   describe "#main" do
@@ -83,7 +82,7 @@ describe Yast::InstComplexWelcomeClient do
               expect(subject).to receive(:license_required) { true }
               expect(subject).to receive(:license_accepted?) { true }
               expect(Yast::Language).to receive(:CheckIncompleteTranslation) { true }
-              expect(Yast::Stage).to receive (:initial) { false }
+              expect(Yast::Stage).to receive(:initial) { false }
 
               expect(subject).to receive(:setup_final_choice)
 

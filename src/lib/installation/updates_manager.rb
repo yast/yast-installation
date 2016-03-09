@@ -75,7 +75,7 @@ module Installation
       updates.each(&:apply)
     end
 
-    private
+  private
 
     # Find the number for the next update to be deployed
     def next_update

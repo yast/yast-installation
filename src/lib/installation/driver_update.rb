@@ -63,7 +63,7 @@ module Installation
       run_update_pre
     end
 
-    private
+  private
 
     # Extract the DUD at 'source' to 'target'
     #
