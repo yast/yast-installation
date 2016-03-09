@@ -33,12 +33,6 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Max: 63
 
-# Offense count: 6
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/AccessModifierIndentation:
-  Enabled: false
-
 # Offense count: 85
 Style/Documentation:
   Enabled: false

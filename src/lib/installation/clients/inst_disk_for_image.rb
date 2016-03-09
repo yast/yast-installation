@@ -65,7 +65,7 @@ module Yast
       ret
     end
 
-    private
+  private
 
     def disks_to_use
       target_map = Storage.GetTargetMap
