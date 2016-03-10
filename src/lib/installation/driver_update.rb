@@ -31,17 +31,30 @@ module Installation
 
     EXTRACT_CMD = "gzip -dc %<source>s | cpio --quiet --sparse -dimu --no-absolute-filenames"
     APPLY_CMD = "/etc/adddir %<source>s/inst-sys /" # openSUSE/installation-images
+    EXTRACT_SIG_CMD = "gpg --homedir %<homedir>s --batch --no-default-keyring --keyring %<keyring>s " \
+      "--ignore-valid-from --ignore-time-conflict --output '%<unpacked>s' '%<source>s'"
+    VERIFY_SIG_CMD = "gpg --homedir %<homedir>s --batch --no-default-keyring --keyring %<keyring>s " \
+      "--ignore-valid-from --ignore-time-conflict --verify '%<path>s'"
     TEMP_FILENAME = "remote.dud"
+    UNPACKED_EXT = ".unpacked"
+    SIG_EXT = ".asc"
 
-    attr_reader :uri, :local_path
+    attr_reader :uri, :local_path, :keyring, :gpg_homedir
 
     # Constructor
     #
     # @param uri [URI] Driver Update URI
-    def initialize(uri)
+    def initialize(uri, keyring: keyring, gpg_homedir: nil)
       Yast.import "Linuxrc"
       @uri = uri
       @local_path = nil
+      @keyring = keyring
+      @gpg_homedir = gpg_homedir || "/root/.gnupg"
+      @signed = nil
+    end
+
+    def signed?
+      @signed
     end
 
     # Fetch the DUD and store it in the given directory
@@ -53,9 +66,24 @@ module Installation
         Dir.chdir(dir) do
           temp_file = Pathname.pwd.join(TEMP_FILENAME)
           download_file_to(temp_file)
+          clear_signature(temp_file)
+          check_detached_signature(temp_file) unless signed?
           extract(temp_file, local_path)
         end
       end
+    end
+
+    def check_detached_signature(temp_file)
+      asc_file = temp_file.sub_ext("#{temp_file.extname}#{SIG_EXT}")
+      get_remote_file(uri.merge("#{uri}#{SIG_EXT}"), asc_file)
+      cmd = format(VERIFY_SIG_CMD, path: asc_file, keyring: keyring, homedir: gpg_homedir)
+      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
+      ::FileUtils.rm(asc_file) if asc_file.exist?
+      @signed = check_gpg_output(out)
+    end
+
+    def check_gpg_output(out)
+      out["exit"].zero? && !out["stderr"].include?("WARNING")
     end
 
     # Apply the DUD to the running system
@@ -80,6 +108,15 @@ module Installation
       ::FileUtils.mv(update_dir, target)
     end
 
+    def clear_signature(path)
+      unpacked_path = path.sub_ext(UNPACKED_EXT)
+      cmd = format(EXTRACT_SIG_CMD, source: path, unpacked: unpacked_path,
+                   keyring: keyring, homedir: gpg_homedir)
+      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
+      @signed = check_gpg_output(out)
+      ::FileUtils.mv(unpacked_path, path) if unpacked_path.exist?
+    end
+
     # Set up the target directory
     #
     # Refresh the target directory (dir will be re-created).
@@ -96,8 +133,7 @@ module Installation
     #
     # @return [True] true if download was successful
     def download_file_to(path)
-      get_file_from_url(scheme: uri.scheme, host: uri.host, urlpath: uri.path,
-                        localfile: path.to_s, urltok: {}, destdir: "")
+      get_remote_file(uri, path)
       raise NotFound unless path.exist?
       true
     end
@@ -129,6 +165,11 @@ module Installation
       return nil unless update_pre_path.exist? && update_pre_path.executable?
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), update_pre_path.to_s)
       out["exit"].zero?
+    end
+
+    def get_remote_file(location, path)
+      get_file_from_url(scheme: location.scheme, host: location.host, urlpath: location.path,
+                        localfile: path.to_s, urltok: {}, destdir: "")
     end
   end
 end
