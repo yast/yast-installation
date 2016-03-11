@@ -75,6 +75,11 @@ module Installation
       updates.each(&:apply)
     end
 
+    # Determines whether the updates to apply are signed
+    def all_signed?
+      updates.all?(&:signed?)
+    end
+
     private
 
     # Find the number for the next update to be deployed

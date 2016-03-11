@@ -23,15 +23,16 @@ module Yast
     UPDATED_FLAG_FILENAME = "installer_updated"
     URL_SUPPORTED_SCHEMES = ["http", "https", "ftp"]
 
+    Yast.import "Directory"
+    Yast.import "Installation"
+    Yast.import "ProductFeatures"
+    Yast.import "Linuxrc"
+    Yast.import "Popup"
+
     # TODO
     #
     # * Handle unsigned files
     def main
-      Yast.import "Directory"
-      Yast.import "Installation"
-      Yast.import "ProductFeatures"
-      Yast.import "Linuxrc"
-      Yast.import "Popup"
 
       return :next if installer_updated? || !self_update_enabled?
 
@@ -52,11 +53,10 @@ module Yast
     def update_installer
       manager = ::Installation::UpdatesManager.new
       Popup.ShowFeedback(_("YaST2 update"), _("Searching for installer updates"))
+      ret = false
       if manager.add_update(self_update_url)
         Popup.ShowFeedback(_("YaST2 update"), _("Applying updates"))
-        ret = manager.apply_all
-      else
-        ret = false
+        ret = manager.apply_all if manager.all_signed? || insecure_mode? || ask_insecure?
       end
       Popup.ClearFeedback
       ret
@@ -127,6 +127,26 @@ module Yast
     # @see #update_installer
     def update_flag_file
       File.join(Directory.vardir, UPDATED_FLAG_FILENAME)
+    end
+
+    # Determines whether the update is running in insecure mode
+    #
+    # @return [Boolean] true if running in insecure mode; false otherwise.
+    def insecure_mode?
+      Linuxrc.InstallInf("Insecure") == "1" # Insecure mode is enabled
+    end
+
+    # Ask the user if she/he wants to apply the update although it's not properly signed
+    #
+    # @return [Boolean] true if user answered 'Yes'; false otherwise.
+    def ask_insecure?
+      Popup.AnyQuestion(
+        Label::WarningMsg(),
+        _("Installer update is not signed or signature is invalid. Do you want to apply this update?"),
+        _("Yes, apply and continue"),
+        _("No, skip and continue"),
+        :focus_yes
+      )
     end
   end
 end

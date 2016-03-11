@@ -6,9 +6,11 @@ require "installation/clients/inst_update_installer"
 describe Yast::InstUpdateInstaller do
   Yast.import "Linuxrc"
   Yast.import "ProductFeatures"
+  Yast.import "UI"
 
-  let(:manager) { double("update_manager") }
+  let(:manager) { double("update_manager", all_signed?: all_signed?) }
   let(:url) { "http://update.opensuse.org/update.dud" }
+  let(:all_signed?) { true }
 
   describe "#main" do
     context "when update is enabled" do
@@ -77,8 +79,11 @@ describe Yast::InstUpdateInstaller do
   describe "#update_installer" do
     let(:update_result) { true }
     let(:add_result) { true }
+    let(:insecure) { "0" }
 
     before do
+      allow(Yast::Linuxrc).to receive(:InstallInf).with("Insecure").and_return(insecure)
+      allow(Yast::Linuxrc).to receive(:InstallInf).with("SelfUpdate").and_return("1")
       allow(::Installation::UpdatesManager).to receive(:new).and_return(manager)
       allow(manager).to receive(:add_update).and_return(add_result)
       allow(manager).to receive(:apply_all).and_return(update_result)
@@ -106,6 +111,35 @@ describe Yast::InstUpdateInstaller do
 
       it "returns true" do
         expect(subject.update_installer).to eq(false)
+      end
+    end
+
+    context "when signature is not OK" do
+      let(:all_signed?) { false }
+
+      context "when secure mode is disabled" do
+        let(:insecure) { "1" }
+
+        it "applies the update" do
+          expect(manager).to receive(:apply_all)
+          expect(subject.update_installer).to eq(true)
+        end
+      end
+
+      context "when secure mode is enabled" do
+        let(:insecure) { nil }
+
+        it "does not apply the update if the user refuses" do
+          expect(Yast::Popup).to receive(:AnyQuestion).and_return(false)
+          expect(manager).to_not receive(:apply_all)
+          expect(subject.update_installer).to eq(false)
+        end
+
+        it "applies the update if the user confirms" do
+          expect(Yast::Popup).to receive(:AnyQuestion).and_return(true)
+          expect(manager).to receive(:apply_all)
+          expect(subject.update_installer).to eq(true)
+        end
       end
     end
   end
