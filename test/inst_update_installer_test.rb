@@ -8,7 +8,7 @@ describe Yast::InstUpdateInstaller do
   Yast.import "ProductFeatures"
   Yast.import "UI"
 
-  let(:manager) { double("update_manager", all_signed?: all_signed?) }
+  let(:manager) { double("update_manager", all_signed?: all_signed?, apply_all: true) }
   let(:url) { "http://update.opensuse.org/update.dud" }
   let(:all_signed?) { true }
 
@@ -42,24 +42,46 @@ describe Yast::InstUpdateInstaller do
       end
 
       context "when an URL is specified through Linuxrc" do
-        it "tries to update the installer using the given URL" do
+        before do
           allow(Yast::Linuxrc).to receive(:InstallInf).with("SelfUpdate").and_return(url)
           allow(::Installation::UpdatesManager).to receive(:new).and_return(manager)
-          expect(manager).to receive(:add_update).with(URI(url))
+        end
+
+        it "tries to update the installer using the given URL" do
+          expect(manager).to receive(:add_update).with(URI(url)).and_return(true)
+          expect(manager).to receive(:apply_all).and_return(true)
+          allow(::FileUtils).to receive(:touch)
+          expect(subject.main).to eq(:restart_yast)
+        end
+
+        it "shows an error if update is not found" do
+          expect(Yast::Popup).to receive(:Error)
+          expect(manager).to receive(:add_update).with(URI(url)).and_return(false)
           expect(subject.main).to eq(:next)
         end
       end
 
       context "when no URL is specified through Linuxrc" do
-
-        it "gets URL from control file" do
+        before do
           allow(Yast::ProductFeatures).to receive(:GetStringFeature).and_return(url)
           allow(::Installation::UpdatesManager).to receive(:new).and_return(manager)
-          expect(manager).to receive(:add_update).with(URI(url))
+        end
+
+        it "gets URL from control file" do
+          allow(::FileUtils).to receive(:touch)
+          expect(manager).to receive(:add_update).with(URI(url)).and_return(true)
+          expect(subject.main).to eq(:restart_yast)
+        end
+
+        it "does not show an error if update is not found" do
+          expect(Yast::Popup).to_not receive(:Error)
+          expect(manager).to receive(:add_update).with(URI(url)).and_return(false)
           expect(subject.main).to eq(:next)
         end
 
         context "and control file doesn't have an URL" do
+          let(:url) { "" }
+
           it "does not update the installer" do
             expect(subject).to_not receive(:update_installer)
           end

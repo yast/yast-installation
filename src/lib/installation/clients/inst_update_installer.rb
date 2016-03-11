@@ -45,21 +45,13 @@ module Yast
       end
     end
 
-    # Tries to update the installer
+    # Instantiates an UpdatesManager to be used by the client
     #
-    # It also shows feedback to the user.
+    # The manager is 'memoized'.
     #
-    # @return [Boolean] true if installer was updated; false otherwise.
-    def update_installer
-      manager = ::Installation::UpdatesManager.new
-      Popup.ShowFeedback(_("YaST2 update"), _("Searching for installer updates"))
-      ret = false
-      if manager.add_update(self_update_url)
-        Popup.ShowFeedback(_("YaST2 update"), _("Applying updates"))
-        ret = manager.apply_all if manager.all_signed? || insecure_mode? || ask_insecure?
-      end
-      Popup.ClearFeedback
-      ret
+    # @return [UpdatesManager] Updates manager to be used by the client
+    def updates_manager
+      @updates_manager ||= ::Installation::UpdatesManager.new
     end
 
     # Determines whether self-update feature is enabled
@@ -147,6 +139,49 @@ module Yast
         _("No, skip and continue"),
         :focus_yes
       )
+    end
+
+    # Tries to update the installer
+    #
+    # It also shows feedback to the user.
+    #
+    # @return [Boolean] true if installer was updated; false otherwise.
+    def update_installer
+      if fetch_update
+        apply_update
+      else
+        false
+      end
+    end
+
+    # Fetch updates from self_update_url
+    #
+    # @return [Boolean] true if update was fetched successfully; false otherwise.
+    def fetch_update
+      ret = nil
+      Popup.Feedback(_("YaST2 update"), _("Searching for installer updates")) do
+        ret = updates_manager.add_update(self_update_url)
+      end
+      Popup.Error(_("Update could not be found")) unless ret || using_default_url?
+      ret
+    end
+
+    # Apply the updates and shows feedback information
+    #
+    # @return [Boolean] true if the update was applied; false otherwise
+    def apply_update
+      if updates_manager.all_signed? || insecure_mode? || ask_insecure?
+        Popup.Feedback(_("YaST2 update"), _("Applying installer updates")) do
+          updates_manager.apply_all
+        end
+      else
+        false
+      end
+    end
+
+    # Determines whether the given URL is equals to the default one
+    def using_default_url?
+      self_update_url_from_control == self_update_url
     end
   end
 end
