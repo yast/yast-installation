@@ -3,7 +3,7 @@
 require_relative "./test_helper"
 
 require "installation/driver_update"
-require "open-uri"
+require "uri"
 
 Yast.import "Linuxrc"
 
