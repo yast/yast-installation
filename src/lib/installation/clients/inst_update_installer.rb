@@ -21,7 +21,6 @@ module Yast
     include Yast::Logger
 
     UPDATED_FLAG_FILENAME = "installer_updated"
-    URL_SUPPORTED_SCHEMES = ["http", "https", "ftp"]
 
     Yast.import "Directory"
     Yast.import "Installation"
@@ -82,25 +81,24 @@ module Yast
     #
     # @return [URI,nil] self-update URL. nil if no URL was set in Linuxrc.
     def self_update_url_from_linuxrc
-      url = URI(Linuxrc.InstallInf("SelfUpdate") || "")
-      valid_url?(url) ? url : nil
+      url = Linuxrc.InstallInf("SelfUpdate") || ""
+      valid_url?(url) ? URI(url) : nil
     end
 
     # Return the self-update URL according to product's control file
     #
-    # @return [URI,nil] self-update URL. nil if no URL was set in control file.
     def self_update_url_from_control
-      url = URI(ProductFeatures.GetStringFeature("globals", "self_update_url"))
-      valid_url?(url) ? url : nil
+      url = ProductFeatures.GetStringFeature("globals", "self_update_url")
+      valid_url?(url) ? URI(url) : nil
     end
 
     # Determines whether the URL is valid or no
     #
     # @return [Boolean] True if it's valid; false otherwise.
     #
-    # @see URL_SUPPORTED_SCHEMES
+    # @see URI.regexp
     def valid_url?(url)
-      URL_SUPPORTED_SCHEMES.include?(url.scheme) ? url : false
+      URI.regexp.match(url)
     end
 
     # Check if installer was updated
