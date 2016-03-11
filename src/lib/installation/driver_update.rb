@@ -38,7 +38,7 @@ module Installation
       "--ignore-valid-from --ignore-time-conflict --output '%<unpacked>s' '%<source>s'"
     # Command to verify a detached PGP signature
     VERIFY_SIG_CMD = "gpg --homedir %<homedir>s --batch --no-default-keyring --keyring %<keyring>s " \
-      "--ignore-valid-from --ignore-time-conflict --verify '%<path>s'"
+      "--ignore-valid-from --ignore-time-conflict --verify '%<signature>s' '%<data>s'"
     # Temporary name for driver updates
     TEMP_FILENAME = "remote.dud"
     # Extension for unpacked driver updates after extracting the PGP signature
@@ -215,7 +215,8 @@ module Installation
       get_file(uri.merge("#{uri}#{SIG_EXT}"), asc_file)
 
       # Verify the signature
-      cmd = format(VERIFY_SIG_CMD, path: asc_file, keyring: keyring, homedir: gpg_homedir)
+      cmd = format(VERIFY_SIG_CMD, signature: asc_file, data: temp_file,
+                   keyring: keyring, homedir: gpg_homedir)
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
       ::FileUtils.rm(asc_file) if asc_file.exist?
       @signed = check_gpg_output(out) # Set signature
