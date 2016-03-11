@@ -27,6 +27,7 @@ module Installation
     include Yast::Transfer::FileFromUrl # get_file_from_url
 
     class NotFound < StandardError; end
+    class CouldNotBeApplied < StandardError; end
 
     # Command to extract the content of the DUD
     EXTRACT_CMD = "gzip -dc %<source>s | cpio --quiet --sparse -dimu --no-absolute-filenames"
@@ -52,7 +53,7 @@ module Installation
     # @param uri         [URI]      Driver Update URI
     # @param keyring     [Pathname] Path to keyring to check signatures against
     # @param gpg_homedir [Pathname] Path to GPG home dir
-    def initialize(uri, keyring: keyring, gpg_homedir: Pathname.new("/root/.gnupg"))
+    def initialize(uri, keyring: nil, gpg_homedir: Pathname.new("/root/.gnupg"))
       Yast.import "Linuxrc"
       @uri = uri
       @local_path = nil
@@ -82,13 +83,11 @@ module Installation
     def fetch(target)
       @local_path = target
       Dir.mktmpdir do |dir|
-        Dir.chdir(dir) do
-          temp_file = Pathname.pwd.join(TEMP_FILENAME)
-          download_file_to(temp_file)
-          clear_attached_signature(temp_file)
-          check_detached_signature(temp_file) unless signed?
-          extract(temp_file, local_path)
-        end
+        temp_file = Pathname(dir).join(TEMP_FILENAME)
+        download_file_to(temp_file)
+        clear_attached_signature(temp_file)
+        check_detached_signature(temp_file) unless signed?
+        extract(temp_file, local_path)
       end
     end
 
@@ -121,10 +120,12 @@ module Installation
     # @see EXTRACT_CMD
     def extract(source, target)
       cmd = format(EXTRACT_CMD, source: source)
-      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
-      raise "Could not extract DUD" unless out["exit"].zero?
-      setup_target(target)
-      ::FileUtils.mv(update_dir, target)
+      Dir.chdir(source.dirname) do
+        out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
+        raise "Could not extract DUD" unless out["exit"].zero?
+        setup_target(target)
+        ::FileUtils.mv(update_dir, target)
+      end
     end
 
     # Clear and check an attached signature
@@ -140,6 +141,64 @@ module Installation
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
       ::FileUtils.mv(unpacked_path, path) if unpacked_path.exist?
       @signed = check_gpg_output(out)
+    end
+
+    # Set up the target directory
+    #
+    # Refresh the target directory (dir will be re-created).
+    #
+    # @param dir [Pathname] Directory to re-create
+    def setup_target(dir)
+      ::FileUtils.rm_r(dir) if dir.exist?
+      ::FileUtils.mkdir_p(dir.dirname) unless dir.dirname.exist?
+    end
+
+    # Download the DUD to a file
+    #
+    # If the file is not downloaded, DriverUpdate::NotFound exception is risen.
+    #
+    # @raise DriverUpdate::NotFound
+    def download_file_to(path)
+      get_file(uri, path)
+      raise NotFound unless path.exist?
+    end
+
+    # Directory which contains files within the DUD
+    #
+    # @see UpdateDir value at /etc/install.inf.
+    def update_dir
+      path = Pathname.new(Yast::Linuxrc.InstallInf("UpdateDir"))
+      path.relative_path_from(Pathname.new("/"))
+    end
+
+    # Add files/directories to the inst-sys
+    #
+    # @see APPLY_CMD
+    def adddir
+      cmd = format(APPLY_CMD, source: local_path)
+      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
+      raise CouldNotBeApplied unless out["exit"].zero?
+    end
+
+    # Run update.pre script
+    #
+    # @return [Boolean,NilClass] true if execution was successful; false if
+    #                            update script didn't exist.
+    # @raise DriverUpdate::CouldNotBeApplied
+    def run_update_pre
+      update_pre_path = local_path.join("install", "update.pre")
+      return false unless update_pre_path.exist? && update_pre_path.executable?
+      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), update_pre_path.to_s)
+      raise CouldNotBeApplied unless out["exit"].zero?
+      true
+    end
+
+    # Wrapper to get a file using Yast::Transfer::FileFromUrl#get_file_from_url
+    #
+    # @return [Boolean] true if the file was retrieved; false otherwise.
+    def get_file(location, path)
+      get_file_from_url(scheme: location.scheme, host: location.host, urlpath: location.path,
+                        localfile: path.to_s, urltok: {}, destdir: "")
     end
 
     # Check a detached signature for a DUD
@@ -162,62 +221,5 @@ module Installation
       @signed = check_gpg_output(out) # Set signature
     end
 
-    # Set up the target directory
-    #
-    # Refresh the target directory (dir will be re-created).
-    #
-    # @param dir [Pathname] Directory to re-create
-    def setup_target(dir)
-      ::FileUtils.rm_r(dir) if dir.exist?
-      ::FileUtils.mkdir_p(dir.dirname) unless dir.dirname.exist?
-    end
-
-    # Download the DUD to a file
-    #
-    # If the file is not downloaded, DriverUpdate::NotFound exception is risen.
-    #
-    # @return [True] true if download was successful
-    def download_file_to(path)
-      get_file(uri, path)
-      raise NotFound unless path.exist?
-      true
-    end
-
-    # Directory which contains files within the DUD
-    #
-    # @see UpdateDir value at /etc/install.inf.
-    def update_dir
-      path = Pathname.new(Yast::Linuxrc.InstallInf("UpdateDir"))
-      path.relative_path_from(Pathname.new("/"))
-    end
-
-    # Add files/directories to the inst-sys
-    #
-    # @see APPLY_CMD
-    def adddir
-      cmd = format(APPLY_CMD, source: local_path)
-      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
-      out["exit"].zero?
-    end
-
-    # Run update.pre script
-    #
-    # @return [Boolean,NilClass] true if execution was successful; false if
-    #                            it failed; nil if script does not exist or
-    #                            was not executable.
-    def run_update_pre
-      update_pre_path = local_path.join("install", "update.pre")
-      return nil unless update_pre_path.exist? && update_pre_path.executable?
-      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), update_pre_path.to_s)
-      out["exit"].zero?
-    end
-
-    # Wrapper to get a file using Yast::Transfer::FileFromUrl#get_file_from_url
-    #
-    # @return [Boolean] true if the file was retrieved; false otherwise.
-    def get_file(location, path)
-      get_file_from_url(scheme: location.scheme, host: location.host, urlpath: location.path,
-                        localfile: path.to_s, urltok: {}, destdir: "")
-    end
   end
 end

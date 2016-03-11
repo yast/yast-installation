@@ -28,13 +28,11 @@ module Installation
   #   manager = UpdatesManager.new
   #   manager.add_update(URI("http://update.opensuse.org/sles12.dud"))
   #   manager.add_update(URI("http://example.net/example.dud"))
-  #   manager.fetch_all
   #   manager.apply_all
   #
   # @example Applying multiple driver updates
   #   manager = UpdatesManager.new
   #   manager.add_update(URI("http://update.opensuse.org/sles12.dud"))
-  #   manager.fetch_all
   #   manager.apply_all
   class UpdatesManager
     attr_reader :target, :updates
@@ -60,14 +58,6 @@ module Installation
       @updates << new_update
     rescue Installation::DriverUpdate::NotFound
       false
-    end
-
-    # Fetches all updates in the pool
-    def fetch_all
-      shift = next_update
-      updates.each_with_index do |update, idx|
-        update.fetch(target.join("00#{idx + shift}"))
-      end
     end
 
     # Applies all updates in the pool

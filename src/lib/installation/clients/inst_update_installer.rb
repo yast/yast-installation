@@ -17,8 +17,9 @@ require "installation/updates_manager"
 require "uri"
 
 module Yast
-  class InstUpdateInstaller < Client
+  class InstUpdateInstaller
     include Yast::Logger
+    include Yast::I18n
 
     UPDATED_FLAG_FILENAME = "installer_updated"
 
@@ -27,11 +28,10 @@ module Yast
     Yast.import "ProductFeatures"
     Yast.import "Linuxrc"
     Yast.import "Popup"
+    Yast.import "Report"
 
-    # TODO
-    #
-    # * Handle unsigned files
     def main
+      textdomain "installation"
 
       return :next if installer_updated? || !self_update_enabled?
 
@@ -81,24 +81,22 @@ module Yast
     #
     # @return [URI,nil] self-update URL. nil if no URL was set in Linuxrc.
     def self_update_url_from_linuxrc
-      url = Linuxrc.InstallInf("SelfUpdate") || ""
-      valid_url?(url) ? URI(url) : nil
+      get_url_from(Linuxrc.InstallInf("SelfUpdate") || "")
     end
 
     # Return the self-update URL according to product's control file
     #
     def self_update_url_from_control
-      url = ProductFeatures.GetStringFeature("globals", "self_update_url")
-      valid_url?(url) ? URI(url) : nil
+      get_url_from(ProductFeatures.GetStringFeature("globals", "self_update_url"))
     end
 
-    # Determines whether the URL is valid or no
+    # Converts the string into an URI if it's valid
     #
     # @return [Boolean] True if it's valid; false otherwise.
     #
     # @see URI.regexp
-    def valid_url?(url)
-      URI.regexp.match(url)
+    def get_url_from(url)
+      URI.regexp.match(url) ? URI(url) : nil
     end
 
     # Check if installer was updated
@@ -110,7 +108,7 @@ module Yast
       File.exist?(update_flag_file)
     end
 
-    # Returns the name of the "update flag file"
+    # Returns the path to the "update flag file"
     #
     # @return [String] Path to the "update flag file"
     #
@@ -132,9 +130,11 @@ module Yast
     def ask_insecure?
       Popup.AnyQuestion(
         Label::WarningMsg(),
-        _("Installer update is not signed or signature is invalid. Do you want to apply this update?"),
-        _("Yes, apply and continue"),
-        _("No, skip and continue"),
+        _("Installer update is not signed or the signature is invalid.\n" \
+          "Using this update may put the integrity of your system at risk.\n" \
+          "Use it anyway?"),
+        _("Yes"),
+        _("No"),
         :focus_yes
       )
     end
@@ -145,11 +145,7 @@ module Yast
     #
     # @return [Boolean] true if installer was updated; false otherwise.
     def update_installer
-      if fetch_update
-        apply_update
-      else
-        false
-      end
+      fetch_update ? apply_update : false
     end
 
     # Fetch updates from self_update_url
@@ -160,7 +156,7 @@ module Yast
       Popup.Feedback(_("YaST2 update"), _("Searching for installer updates")) do
         ret = updates_manager.add_update(self_update_url)
       end
-      Popup.Error(_("Update could not be found")) unless ret || using_default_url?
+      Report.Error(_("Update could not be found")) unless ret || using_default_url?
       ret
     end
 
@@ -168,13 +164,24 @@ module Yast
     #
     # @return [Boolean] true if the update was applied; false otherwise
     def apply_update
-      if updates_manager.all_signed? || insecure_mode? || ask_insecure?
-        Popup.Feedback(_("YaST2 update"), _("Applying installer updates")) do
-          updates_manager.apply_all
-        end
-      else
-        false
+      return false unless allowed_to_be_applied?
+      Popup.Feedback(_("YaST2 update"), _("Applying installer updates")) do
+        updates_manager.apply_all
       end
+      true
+    end
+
+    # Check whether the update is allowed to be applied
+    #
+    # It's allowed to be applied when one of these requirements is met:
+    #
+    # * All updates are signed.
+    # * We're running in insecure mode (so we don't need them to be signed).
+    # * The user requests to install it although is not signed.
+    #
+    # @report [Boolean] true if it should be applied; false otherwise.
+    def allowed_to_be_applied?
+      updates_manager.all_signed? || insecure_mode? || ask_insecure?
     end
 
     # Determines whether the given URL is equals to the default one

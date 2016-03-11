@@ -65,28 +65,6 @@ describe Installation::UpdatesManager do
     end
   end
 
-  describe "#fetch_all" do
-    it "fetches all updates using consecutive numbers in the directory name" do
-      allow(manager).to receive(:updates).and_return([update0, update1])
-      expect(update0).to receive(:fetch).with(target.join("000"))
-      expect(update1).to receive(:fetch).with(target.join("001"))
-      manager.fetch_all
-    end
-
-    context "when some driver update exists" do
-      before do
-        allow(Pathname).to receive(:glob).with(target.join("*"))
-          .and_return([Pathname.new("000")])
-      end
-
-      it "does not override the existing one" do
-        allow(manager).to receive(:updates).and_return([update0])
-        expect(update0).to receive(:fetch).with(target.join("001"))
-        manager.fetch_all
-      end
-    end
-  end
-
   describe "#apply_all" do
     let(:update0) { double("update0") }
     let(:update1) { double("update1") }

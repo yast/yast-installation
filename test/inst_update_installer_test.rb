@@ -108,27 +108,23 @@ describe Yast::InstUpdateInstaller do
       allow(Yast::Linuxrc).to receive(:InstallInf).with("SelfUpdate").and_return("1")
       allow(::Installation::UpdatesManager).to receive(:new).and_return(manager)
       allow(manager).to receive(:add_update).and_return(add_result)
-      allow(manager).to receive(:apply_all).and_return(update_result)
     end
 
     context "when update works" do
-      let(:update_result) { true }
-
       it "returns true" do
+        allow(manager).to receive(:apply_all)
         expect(subject.update_installer).to eq(true)
       end
     end
 
     context "when applying an update fails" do
-      let(:update_result) { false }
-
-      it "returns false" do
-        expect(subject.update_installer).to eq(false)
+      it "raises an exception" do
+        allow(manager).to receive(:apply_all).and_raise(StandardError)
+        expect { subject.update_installer }.to raise_error(StandardError)
       end
     end
 
     context "when adding an update fails" do
-      let(:update_result) { true }
       let(:add_result) { false }
 
       it "returns true" do
