@@ -49,10 +49,6 @@ describe Installation::DriverUpdate do
   end
 
   describe "#signed?" do
-    before do
-      #subject.fetch(target)
-    end
-
     context "if the signature is attached" do
       context "and signature is valid and trusted" do
         let(:url) { URI("file://#{FIXTURES_DIR}/fake.signed.dud") }
@@ -67,9 +63,9 @@ describe Installation::DriverUpdate do
         let(:url) { URI("file://#{FIXTURES_DIR}/fake.signed+untrusted.dud") }
 
         it "returns false" do
-          allow(subject).to receive(:get_remote_file).with(any_args).and_call_original
-          allow(subject).to receive(:get_remote_file)
-            .with(URI("file://#{FIXTURES_DIR}/fake.signed+untrusted.dud.asc"), any_args).once.and_return(false)
+          allow(subject).to receive(:get_file).with(any_args).and_call_original
+          allow(subject).to receive(:get_file)
+            .with(URI("file://#{FIXTURES_DIR}/fake.signed+untrusted.dud.asc"), any_args).and_return(false)
           subject.fetch(target)
           expect(subject).to_not be_signed
         end
@@ -79,8 +75,8 @@ describe Installation::DriverUpdate do
         let(:url) { URI("file://#{FIXTURES_DIR}/fake.signed+unknown.dud") }
 
         it "returns false" do
-          allow(subject).to receive(:get_remote_file).with(any_args).and_call_original
-          allow(subject).to receive(:get_remote_file)
+          allow(subject).to receive(:get_file).with(any_args).and_call_original
+          allow(subject).to receive(:get_file)
             .with(URI("file://#{FIXTURES_DIR}/fake.signed+unknown.dud.asc"), any_args).once.and_return(false)
           subject.fetch(target)
           expect(subject).to_not be_signed
@@ -116,13 +112,16 @@ describe Installation::DriverUpdate do
       end
 
       context "and .asc file does not exist" do
+        let(:url) { URI("file://#{FIXTURES_DIR}/fake.dud") }
+
         before do
-          allow(subject).to receive(:get_remote_file)
+          allow(subject).to receive(:get_file).with(any_args).and_call_original
+          allow(subject).to receive(:get_file)
             .with(URI("file://#{FIXTURES_DIR}/fake.dud.asc"), any_args).once.and_return(false)
-          allow(subject).to receive(:get_remote_file).with(any_args).and_call_original
         end
 
         it "returns false" do
+          subject.fetch(target)
           expect(subject).to_not be_signed
         end
       end
