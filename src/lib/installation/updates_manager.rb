@@ -25,23 +25,29 @@ module Installation
   # to inst-sys.
   #
   # @example Applying one driver update
-  #   manager = UpdatesManager.new
+  #   manager = UpdatesManager.new(Pathname.new("/update"), Pathname.new("/install.gpg"),
+  #                                Pathname.new("/root/.gnupg"))
   #   manager.add_update(URI("http://update.opensuse.org/sles12.dud"))
   #   manager.add_update(URI("http://example.net/example.dud"))
   #   manager.apply_all
   #
   # @example Applying multiple driver updates
-  #   manager = UpdatesManager.new
+  #   manager = UpdatesManager.new(Pathname.new("/update"), Pathname.new("/install.gpg"),
+  #                                Pathname.new("/root/.gnupg"))
   #   manager.add_update(URI("http://update.opensuse.org/sles12.dud"))
   #   manager.apply_all
   class UpdatesManager
-    attr_reader :target, :updates
+    attr_reader :target, :keyring, :gpg_homedir, :updates
 
     # Constructor
     #
-    # @param target [Pathname] Directory to copy updates to.
-    def initialize(target = Pathname.new("/update"))
+    # @param target      [Pathname] Directory to copy updates to.
+    # @param keyring     [Pathname] Path to keyring to check signatures against
+    # @param gpg_homedir [Pathname] Path to GPG home dir
+    def initialize(target, keyring, gpg_homedir)
       @target = target
+      @keyring = keyring
+      @gpg_homedir = gpg_homedir
       @updates = []
     end
 
@@ -52,7 +58,7 @@ module Installation
     #
     # @see Installation::DriverUpdate
     def add_update(uri)
-      new_update = Installation::DriverUpdate.new(uri)
+      new_update = Installation::DriverUpdate.new(uri, keyring, gpg_homedir)
       dir = target.join(format("%03d", next_update))
       new_update.fetch(dir)
       @updates << new_update

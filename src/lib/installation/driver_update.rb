@@ -53,7 +53,7 @@ module Installation
     # @param uri         [URI]      Driver Update URI
     # @param keyring     [Pathname] Path to keyring to check signatures against
     # @param gpg_homedir [Pathname] Path to GPG home dir
-    def initialize(uri, keyring: nil, gpg_homedir: Pathname.new("/root/.gnupg"))
+    def initialize(uri, keyring, gpg_homedir)
       Yast.import "Linuxrc"
       @uri = uri
       @local_path = nil

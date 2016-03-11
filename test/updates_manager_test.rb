@@ -8,17 +8,19 @@ require "pathname"
 require "uri"
 
 describe Installation::UpdatesManager do
-  subject(:manager) { Installation::UpdatesManager.new(target) }
+  subject(:manager) { Installation::UpdatesManager.new(target, keyring, gpg_homedir) }
 
   let(:target) { Pathname.new("/update") }
   let(:uri) { URI("http://updates.opensuse.org/sles12.dud") }
+  let(:keyring) { Pathname.new("install.gpg") }
+  let(:gpg_homedir) { Pathname.new(".gnupg") }
 
   let(:update0) { double("update0") }
   let(:update1) { double("update1") }
 
   describe "#add_update" do
     before do
-      allow(Installation::DriverUpdate).to receive(:new).with(uri)
+      allow(Installation::DriverUpdate).to receive(:new).with(uri, keyring, gpg_homedir)
         .and_return(update0)
     end
 
@@ -53,7 +55,7 @@ describe Installation::UpdatesManager do
 
     context "when some update was added" do
       before do
-        allow(Installation::DriverUpdate).to receive(:new).with(uri)
+        allow(Installation::DriverUpdate).to receive(:new).with(uri, keyring, gpg_homedir)
           .and_return(update0)
         expect(update0).to receive(:fetch).with(target.join("000")).and_return(true)
         manager.add_update(uri)

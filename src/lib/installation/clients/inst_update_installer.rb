@@ -22,6 +22,9 @@ module Yast
     include Yast::I18n
 
     UPDATED_FLAG_FILENAME = "installer_updated"
+    UPDATES_PATH = Pathname.new("/update")
+    KEYRING_PATH = Pathname.new("/installkeys.gpg")
+    GPG_HOMEDIR  = Pathname.new("/home/.gnupg")
 
     Yast.import "Directory"
     Yast.import "Installation"
@@ -50,7 +53,7 @@ module Yast
     #
     # @return [UpdatesManager] Updates manager to be used by the client
     def updates_manager
-      @updates_manager ||= ::Installation::UpdatesManager.new
+      @updates_manager ||= ::Installation::UpdatesManager.new(UPDATES_PATH, KEYRING_PATH, GPG_HOMEDIR)
     end
 
     # Determines whether self-update feature is enabled

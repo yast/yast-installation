@@ -17,7 +17,7 @@ describe Installation::DriverUpdate do
   let(:gpg_homedir) { FIXTURES_DIR.join("dot.gnupg") }
   let(:target) { TEST_DIR.join("target") }
 
-  subject { Installation::DriverUpdate.new(url, keyring: keyring, gpg_homedir: gpg_homedir) }
+  subject { Installation::DriverUpdate.new(url, keyring, gpg_homedir) }
 
   before do
     allow(Yast::Linuxrc).to receive(:InstallInf).with("UpdateDir")
