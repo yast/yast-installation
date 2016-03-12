@@ -45,6 +45,8 @@ module Installation
     UNPACKED_EXT = ".unpacked"
     # Extension for detached PGP signatures
     SIG_EXT = ".asc"
+    # gpg output that means that signature is OK
+    SIGNATURE_OK = "gpg: Good signature"
 
     attr_reader :uri, :local_path, :keyring, :gpg_homedir
 
@@ -97,8 +99,10 @@ module Installation
     # no warning was shown.
     #
     # @return [Boolean] True if signature check was successful; false otherwise.
+    #
+    # @see SIGNATURE_OK
     def check_gpg_output(out)
-      out["exit"].zero? && !out["stderr"].include?("WARNING")
+      out["exit"].zero? && out["stderr"].include?(SIGNATURE_OK)
     end
 
     # Apply the DUD to inst-sys

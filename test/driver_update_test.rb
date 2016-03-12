@@ -62,12 +62,12 @@ describe Installation::DriverUpdate do
       context "and signature is valid but not trusted" do
         let(:url) { URI("file://#{FIXTURES_DIR}/fake.signed+untrusted.dud") }
 
-        it "returns false" do
+        it "returns true" do
           allow(subject).to receive(:get_file).with(any_args).and_call_original
           allow(subject).to receive(:get_file)
             .with(URI("file://#{FIXTURES_DIR}/fake.signed+untrusted.dud.asc"), any_args).and_return(false)
           subject.fetch(target)
-          expect(subject).to_not be_signed
+          expect(subject).to be_signed
         end
       end
 
@@ -97,9 +97,9 @@ describe Installation::DriverUpdate do
       context "and signature is valid but not trusted" do
         let(:url) { URI("file://#{FIXTURES_DIR}/fake.detached+untrusted.dud") }
 
-        it "returns false" do
+        it "returns true" do
           subject.fetch(target)
-          expect(subject).to_not be_signed
+          expect(subject).to be_signed
         end
       end
 
