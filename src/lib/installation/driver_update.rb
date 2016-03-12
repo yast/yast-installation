@@ -159,8 +159,7 @@ module Installation
     #
     # @raise DriverUpdate::NotFound
     def download_file_to(path)
-      get_file(uri, path)
-      raise NotFound unless path.exist?
+      raise NotFound unless get_file(uri, path)
     end
 
     # Directory which contains files within the DUD
