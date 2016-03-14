@@ -6,6 +6,7 @@ TESTS = \
   cio_ignore_test.rb \
   copy_logs_finish_test.rb \
 	driver_update_test.rb \
+	file_from_url_test.rb \
   prep_shrink_test.rb \
   proposal_store_test.rb \
   proposal_runner_test.rb \
