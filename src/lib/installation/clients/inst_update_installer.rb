@@ -26,6 +26,7 @@ module Yast
     KEYRING_PATH = Pathname.new("/installkey.gpg")
     GPG_HOMEDIR  = Pathname.new("/root/.gnupg")
 
+    Yast.import "Arch"
     Yast.import "Directory"
     Yast.import "Installation"
     Yast.import "ProductFeatures"
@@ -95,12 +96,16 @@ module Yast
 
     # Converts the string into an URI if it's valid
     #
+    # It substitutes $ARCH pattern with the architecture of the current system.
+    #
     # @return [URI,nil] The string converted into a URL; nil if it's
     #                   not a valid URL.
     #
     # @see URI.regexp
     def get_url_from(url)
-      URI.regexp.match(url) ? URI(url) : nil
+      return nil unless url.is_a?(::String)
+      real_url = url.sub('$ARCH', Arch.architecture)
+      URI.regexp.match(real_url) ? URI(real_url) : nil
     end
 
     # Check if installer was updated

@@ -4,13 +4,18 @@ require_relative "test_helper"
 require "installation/clients/inst_update_installer"
 
 describe Yast::InstUpdateInstaller do
+  Yast.import "Arch"
   Yast.import "Linuxrc"
   Yast.import "ProductFeatures"
   Yast.import "UI"
 
   let(:manager) { double("update_manager", all_signed?: all_signed?, apply_all: true) }
-  let(:url) { "http://update.opensuse.org/update.dud" }
+  let(:url) { "http://update.opensuse.org/\$ARCH/update.dud" }
+  let(:real_url) { "http://update.opensuse.org/#{arch}/update.dud" }
+  let(:arch) { "x86_64" }
   let(:all_signed?) { true }
+
+  before { allow(Yast::Arch).to receive(:architecture).and_return(arch) }
 
   describe "#main" do
     context "when update is enabled" do
@@ -48,7 +53,7 @@ describe Yast::InstUpdateInstaller do
         end
 
         it "tries to update the installer using the given URL" do
-          expect(manager).to receive(:add_update).with(URI(url)).and_return(true)
+          expect(manager).to receive(:add_update).with(URI(real_url)).and_return(true)
           expect(manager).to receive(:apply_all).and_return(true)
           allow(::FileUtils).to receive(:touch)
           expect(subject.main).to eq(:restart_yast)
@@ -56,7 +61,7 @@ describe Yast::InstUpdateInstaller do
 
         it "shows an error if update is not found" do
           expect(Yast::Popup).to receive(:Error)
-          expect(manager).to receive(:add_update).with(URI(url)).and_return(false)
+          expect(manager).to receive(:add_update).with(URI(real_url)).and_return(false)
           expect(subject.main).to eq(:next)
         end
       end
@@ -69,13 +74,13 @@ describe Yast::InstUpdateInstaller do
 
         it "gets URL from control file" do
           allow(::FileUtils).to receive(:touch)
-          expect(manager).to receive(:add_update).with(URI(url)).and_return(true)
+          expect(manager).to receive(:add_update).with(URI(real_url)).and_return(true)
           expect(subject.main).to eq(:restart_yast)
         end
 
         it "does not show an error if update is not found" do
           expect(Yast::Popup).to_not receive(:Error)
-          expect(manager).to receive(:add_update).with(URI(url)).and_return(false)
+          expect(manager).to receive(:add_update).with(URI(real_url)).and_return(false)
           expect(subject.main).to eq(:next)
         end
 
