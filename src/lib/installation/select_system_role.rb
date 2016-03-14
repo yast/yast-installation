@@ -56,7 +56,7 @@ module Installation
       ui_roles = role_attributes.each_with_object(VBox()) do |r, vbox|
         vbox << Left(RadioButton(Id(r[:id]), r[:label]))
         vbox << HBox(
-          HSpacing(4),
+          HSpacing(Yast::UI.TextMode ? 4 : 2),
           Left(Label(r[:description]))
         )
         vbox << VSpacing(2)
