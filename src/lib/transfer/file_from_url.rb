@@ -21,7 +21,7 @@
 
 require "yast"
 
-
+# rubocop:disable all
 module Yast::Transfer
   module FileFromUrl
     include Yast
@@ -87,7 +87,7 @@ module Yast::Transfer
     #
     # @return [Boolean] true on success
     def get_file_from_url(scheme:, host:, urlpath:, localfile:,
-                          urltok:, destdir:)
+      urltok:, destdir:)
       # adapt sane API to legacy implementation
       _Scheme    = scheme
       _Host      = host
@@ -128,21 +128,21 @@ module Yast::Transfer
       if _Scheme == "http" || _Scheme == "https"
         HTTP.easySSL(true)
         if Ops.greater_than(
-            SCR.Read(
-              path(".target.size"),
-              "/etc/ssl/clientcerts/client-cert.pem"
-            ),
-            0
-          )
+          SCR.Read(
+            path(".target.size"),
+            "/etc/ssl/clientcerts/client-cert.pem"
+          ),
+          0
+        )
           HTTP.clientCertSSL("/etc/ssl/clientcerts/client-cert.pem")
         end
         if Ops.greater_than(
-            SCR.Read(
-              path(".target.size"),
-              "/etc/ssl/clientcerts/client-key.pem"
-            ),
-            0
-          )
+          SCR.Read(
+            path(".target.size"),
+            "/etc/ssl/clientcerts/client-key.pem"
+          ),
+          0
+        )
           HTTP.clientKeySSL("/etc/ssl/clientcerts/client-key.pem")
         end
         res = HTTP.Get(full_url, _Localfile)
@@ -260,11 +260,11 @@ module Yast::Transfer
               try_again = 10
               while Ops.greater_than(try_again, 0)
                 if !Convert.to_boolean(
-                    WFM.Execute(
-                      path(".local.mount"),
-                      [cdrom_device, mount_point, Installation.mountlog]
-                    )
+                  WFM.Execute(
+                    path(".local.mount"),
+                    [cdrom_device, mount_point, Installation.mountlog]
                   )
+                )
                   # autoyast tried to mount the CD but had no success.
                   @GET_error = Ops.add(
                     @GET_error,
@@ -308,12 +308,12 @@ module Yast::Transfer
         end
       elsif _Scheme == "nfs" # NFS
         if !Convert.to_boolean(
-            SCR.Execute(
-              path(".target.mount"),
-              [Ops.add(Ops.add(_Host, ":"), dirname(_Path)), mount_point],
-              "-o noatime,nolock"
-            )
-          ) &&
+          SCR.Execute(
+            path(".target.mount"),
+            [Ops.add(Ops.add(_Host, ":"), dirname(_Path)), mount_point],
+            "-o noatime,nolock"
+          )
+        ) &&
             !Convert.to_boolean(
               SCR.Execute(
                 path(".target.mount"),
@@ -359,12 +359,12 @@ module Yast::Transfer
         SCR.Execute(path(".target.umount"), mount_point)
       elsif _Scheme == "cifs" # CIFS
         if !Convert.to_boolean(
-            SCR.Execute(
-              path(".target.mount"),
-              [Ops.add(Ops.add("//", _Host), dirname(_Path)), mount_point],
-              "-t cifs -o guest,ro,noatime"
-            )
+          SCR.Execute(
+            path(".target.mount"),
+            [Ops.add(Ops.add("//", _Host), dirname(_Path)), mount_point],
+            "-t cifs -o guest,ro,noatime"
           )
+        )
           Builtins.y2warning("Mount failed")
           # autoyast tried to mount a NFS directory which failed
           @GET_error = Builtins.sformat(
@@ -409,15 +409,15 @@ module Yast::Transfer
           )
 
           if WFM.Execute(
-              path(".local.bash"),
+            path(".local.bash"),
+            Ops.add(
               Ops.add(
-                Ops.add(
-                  Ops.add(Ops.add(Ops.add("/bin/cp ", mount_point), "/"), _Path),
-                  " "
-                ),
-                _Localfile
-              )
-            ) != 0
+                Ops.add(Ops.add(Ops.add("/bin/cp ", mount_point), "/"), _Path),
+                " "
+              ),
+              _Localfile
+            )
+          ) != 0
             Builtins.y2error(
               "file  %1 can't be retrieved",
               Ops.add(Ops.add(mount_point, "/"), _Path)
@@ -435,13 +435,13 @@ module Yast::Transfer
             disks = _Scheme == "device" ?
               Convert.convert(
                 SCR.Read(path(".probe.disk")),
-                :from => "any",
-                :to   => "list <map>"
+                from: "any",
+                to:   "list <map>"
               ) :
               Convert.convert(
                 SCR.Read(path(".probe.usb")),
-                :from => "any",
-                :to   => "list <map>"
+                from: "any",
+                to:   "list <map>"
               )
             Builtins.foreach(disks) do |m|
               if _Scheme == "usb" && Ops.get_string(m, "bus", "USB") != "SCSI"
@@ -522,18 +522,18 @@ module Yast::Transfer
               next
             end
             if WFM.Execute(
-                path(".local.bash"),
+              path(".local.bash"),
+              Ops.add(
                 Ops.add(
                   Ops.add(
-                    Ops.add(
-                      Ops.add(Ops.add("/bin/cp ", mount_point), "/"),
-                      _Path
-                    ),
-                    " "
+                    Ops.add(Ops.add("/bin/cp ", mount_point), "/"),
+                    _Path
                   ),
-                  _Localfile
-                )
-              ) != 0
+                  " "
+                ),
+                _Localfile
+              )
+            ) != 0
               # autoyast tried to copy a file but that file can't be found
               @GET_error = Builtins.sformat(
                 _("File %1 cannot be found"),

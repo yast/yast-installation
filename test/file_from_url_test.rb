@@ -18,6 +18,7 @@ describe Yast::Transfer::FileFromUrl do
   end
 
   # avoid BuildRequiring a package that we stub entirely anyway
+  # rubocop:disable ConstantName
   Yast::Storage = nil
   Yast::StorageDevices = nil
   before do
@@ -45,7 +46,7 @@ describe Yast::Transfer::FileFromUrl do
 
     it "returns false for unknown scheme" do
       expect(subject.Get("money_transfer_protocol",
-                         "bank", "account", "pocket")).to eq(false)
+        "bank", "account", "pocket")).to eq(false)
     end
 
     context "when scheme is 'device'" do
@@ -113,32 +114,32 @@ describe Yast::Transfer::FileFromUrl do
           mount_succeeded = {
             "/dev/sda"  => false,
             "/dev/sda4" => true,
-            "/dev/sda5" => true,
+            "/dev/sda5" => true
           }
 
           mount_succeeded.each do |device, result|
             expect(Yast::SCR).to receive(:Execute)
               .with(path(".target.mount"),
-                    [device, mount_points[device].last],
-                    "-o noatime")
+                [device, mount_points[device].last],
+                "-o noatime")
               .and_return(result)
           end
 
           expect(Yast::WFM).to receive(:Execute)
             .with(path(".local.bash"),
-                  "/bin/cp /mnt_sda1/mypath /localfile")
+              "/bin/cp /mnt_sda1/mypath /localfile")
             .exactly(3).times
             .and_return(1, 1, 0) # sda1 fails, sda4 fails, sda5 succeeds
 
           expect(Yast::WFM).to receive(:Execute)
             .with(path(".local.bash"),
-#                  "/bin/cp /destdir/tmp_dir/tmp_mount/mypath /localfile")
-# Bug: it is wrong if destdir is used
-                  "/bin/cp /tmp_dir/tmp_mount/mypath /localfile")
+              #                  "/bin/cp /destdir/tmp_dir/tmp_mount/mypath /localfile")
+              # Bug: it is wrong if destdir is used
+              "/bin/cp /tmp_dir/tmp_mount/mypath /localfile")
             .exactly(0).times
-#            .and_return(1, 0)   # sda4 fails, sda5 succeeds
+          #            .and_return(1, 0)   # sda4 fails, sda5 succeeds
 
-# Bug: local is wrong. nfs and cifs correctly use .target.umount
+          # Bug: local is wrong. nfs and cifs correctly use .target.umount
           expect(Yast::WFM).to receive(:Execute)
             .with(path(".local.umount"), "/mnt_sda1")
             .exactly(2).times
