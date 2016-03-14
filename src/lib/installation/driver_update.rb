@@ -65,7 +65,7 @@ module Installation
       @local_path = nil
       @keyring = keyring
       @gpg_homedir = gpg_homedir
-      @signature_status
+      @signature_status = nil
     end
 
     # Determines whether a driver update is signed or not
