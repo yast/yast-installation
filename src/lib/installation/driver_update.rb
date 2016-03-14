@@ -129,7 +129,7 @@ module Installation
         out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
         raise "Could not extract DUD" unless out["exit"].zero?
         setup_target(target)
-        ::FileUtils.mv(update_dir, target)
+        ::FileUtils.mv(update_dir.realpath, target)
       end
     end
 
