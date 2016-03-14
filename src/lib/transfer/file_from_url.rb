@@ -31,7 +31,7 @@ module Yast::Transfer
       return if @file_from_url_initialized
       @file_from_url_initialized = true
 
-      textdomain "autoinst"
+      textdomain "installation"
 
       Yast.import "URL"
       Yast.import "FTP"
