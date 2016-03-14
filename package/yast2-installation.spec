@@ -174,7 +174,7 @@ install -m 644 %{SOURCE2} %{buildroot}%{_unitdir}
 # only, it does not work for upgrades from SLE 11 where scripts had different
 # name and were not handled by systemd.
 # When we upgrade/update from systemd-based system, scripts are always enabled
-# by the %service_add_post macro.
+# by the service_add_post macro.
 systemctl enable YaST2-Second-Stage.service
 systemctl enable YaST2-Firstboot.service
 
