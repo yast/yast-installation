@@ -48,30 +48,30 @@ describe Installation::DriverUpdate do
     end
   end
 
-  describe "#signed?" do
+  describe "#signature" do
     context "if the signature is attached" do
       context "and signature is valid and trusted" do
         let(:url) { URI("file://#{FIXTURES_DIR}/fake.signed.dud") }
 
-        it "returns true" do
+        it "returns :ok" do
           subject.fetch(target)
-          expect(subject).to be_signed
+          expect(subject.signature_status).to eq(:ok)
         end
       end
 
       context "and signature is valid but not trusted" do
         let(:url) { URI("file://#{FIXTURES_DIR}/fake.signed+untrusted.dud") }
 
-        it "returns true" do
+        it "returns :warning" do
           allow(subject).to receive(:get_file).with(any_args).and_call_original
           allow(subject).to receive(:get_file)
             .with(URI("file://#{FIXTURES_DIR}/fake.signed+untrusted.dud.asc"), any_args).and_return(false)
           subject.fetch(target)
-          expect(subject).to be_signed
+          expect(subject.signature_status).to eq(:warning)
         end
       end
 
-      context "and signature is unknown" do
+      context "and signature is :error" do
         let(:url) { URI("file://#{FIXTURES_DIR}/fake.signed+unknown.dud") }
 
         it "returns false" do
@@ -79,7 +79,7 @@ describe Installation::DriverUpdate do
           allow(subject).to receive(:get_file)
             .with(URI("file://#{FIXTURES_DIR}/fake.signed+unknown.dud.asc"), any_args).once.and_return(false)
           subject.fetch(target)
-          expect(subject).to_not be_signed
+          expect(subject.signature_status).to eq(:error)
         end
       end
     end
@@ -90,7 +90,7 @@ describe Installation::DriverUpdate do
 
         it "returns true" do
           subject.fetch(target)
-          expect(subject).to be_signed
+          expect(subject.signature_status).to eq(:ok)
         end
       end
 
@@ -99,15 +99,16 @@ describe Installation::DriverUpdate do
 
         it "returns true" do
           subject.fetch(target)
-          expect(subject).to be_signed
+          expect(subject.signature_status).to eq(:warning)
         end
       end
 
       context "and signature is unknown" do
         let(:url) { URI("file://#{FIXTURES_DIR}/fake.detached+unknown.dud") }
 
-        it "returns false" do
-          expect(subject).to_not be_signed
+        it "returns :error" do
+          subject.fetch(target)
+          expect(subject.signature_status).to eq(:error)
         end
       end
 
@@ -120,10 +121,46 @@ describe Installation::DriverUpdate do
             .with(URI("file://#{FIXTURES_DIR}/fake.dud.asc"), any_args).once.and_return(false)
         end
 
-        it "returns false" do
+        it "returns :missing" do
           subject.fetch(target)
-          expect(subject).to_not be_signed
+          expect(subject.signature_status).to eq(:missing)
         end
+      end
+    end
+  end
+
+  describe "#signed?" do
+    before { expect(subject).to receive(:signature_status).and_return(status) }
+
+    context "present and good" do
+      let(:status) { :ok }
+
+      it "returns true" do
+        expect(subject).to be_signed
+      end
+    end
+
+    context "good but with a warning" do
+      let(:status) { :warning }
+
+      it "returns true" do
+        expect(subject).to be_signed
+      end
+    end
+
+    context "signed with and unknown key" do
+      let(:status) { :error }
+
+      it "returns false" do
+        expect(subject).to_not be_signed
+      end
+    end
+
+    context "is signature is missing" do
+      let(:status) { :missing }
+
+      it "returns false" do
+        expect(subject).to_not be_signed
       end
     end
   end

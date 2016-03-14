@@ -47,9 +47,11 @@ module Installation
     # Extension for detached PGP signatures
     SIG_EXT = ".asc"
     # gpg output that means that signature is OK
-    SIGNATURE_OK = "gpg: Good signature"
+    GPG_SIGNATURE_OK = "gpg: Good signature"
+    GPG_SIGNED = "gpg: Signature made"
+    GPG_WARNING = "WARNING:"
 
-    attr_reader :uri, :local_path, :keyring, :gpg_homedir
+    attr_reader :uri, :local_path, :keyring, :gpg_homedir, :signature_status
 
     # Constructor
     #
@@ -62,7 +64,7 @@ module Installation
       @local_path = nil
       @keyring = keyring
       @gpg_homedir = gpg_homedir
-      @signed = nil
+      @signature_status
     end
 
     # Determines whether a driver update is signed or not
@@ -71,13 +73,14 @@ module Installation
     # is that we need to check the original files and we don't want to keep them
     # after the update is extracted (to save some memory during installation).
     #
-    # The driver update will be considered signed if the signature is OK and the
-    # public key is known. It will be false otherwise. For more details, check
-    # #check_gpg_output.
+    # The driver update will be considered signed if the signature is OK. It
+    # will be false otherwise. For more details, check #gpg_output_to_status.
     #
     # @return [Boolean] True if it's correctly signed; false otherwise.
+    #
+    # @see #signature_status
     def signed?
-      @signed
+      [:ok, :warning].include?(signature_status)
     end
 
     # Fetch the DUD and extract it in the given directory
@@ -96,14 +99,22 @@ module Installation
 
     # Determine if gpg command was successful
     #
-    # The signature was successfully signed if command error code was 0 and
-    # a good signature was reported.
+    # * :ok:      Signature is ok.
+    # * :warning: Signature is ok but with some warning (for example not trusted ones).
+    # * :error:   Signature is invalid (maybe public key is missing).
+    # * :missing: Signature is missing.
     #
-    # @return [Boolean] True if signature check was successful; false otherwise.
+    # @return [Symbol] Signature status
     #
-    # @see SIGNATURE_OK
-    def check_gpg_output(out)
-      out["exit"].zero? && out["stderr"].include?(SIGNATURE_OK)
+    # @see GPG_SIGNATURE_OK
+    def gpg_output_to_status(out)
+      if out["stderr"].include?(GPG_SIGNATURE_OK)
+        out["stderr"].include?(GPG_WARNING) ? :warning : :ok
+      elsif out["stderr"].include?(GPG_SIGNED)
+        :error
+      else
+        :missing
+      end
     end
 
     # Apply the DUD to inst-sys
@@ -145,7 +156,7 @@ module Installation
                    keyring: keyring, homedir: gpg_homedir)
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
       ::FileUtils.mv(unpacked_path, path) if unpacked_path.exist?
-      @signed = check_gpg_output(out)
+      @signature_status = gpg_output_to_status(out)
     end
 
     # Set up the target directory
@@ -212,18 +223,18 @@ module Installation
     #
     # @return [Boolean] True if the signature is OK; false otherwise.
     #
-    # @see #check_gpg_output
+    # @see #gpg_output_to_status
     def check_detached_signature(temp_file)
       # Download the detached signature
       asc_file = temp_file.sub_ext("#{temp_file.extname}#{SIG_EXT}")
-      get_file(uri.merge("#{uri}#{SIG_EXT}"), asc_file)
+      return false unless get_file(uri.merge("#{uri}#{SIG_EXT}"), asc_file)
 
       # Verify the signature
       cmd = format(VERIFY_SIG_CMD, signature: asc_file, data: temp_file,
                    keyring: keyring, homedir: gpg_homedir)
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
       ::FileUtils.rm(asc_file) if asc_file.exist?
-      @signed = check_gpg_output(out) # Set signature
+      @signature_status = gpg_output_to_status(out) # Set signature status
     end
 
   end

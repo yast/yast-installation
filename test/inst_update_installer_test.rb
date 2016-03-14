@@ -151,6 +151,9 @@ describe Yast::InstUpdateInstaller do
 
       context "when secure mode is enabled" do
         let(:insecure) { nil }
+        let(:unsigned_update) { double("update", uri: real_url, signature_status: :error) }
+
+        before { allow(manager).to receive(:updates).and_return([unsigned_update]) }
 
         it "does not apply the update if the user refuses" do
           expect(Yast::Popup).to receive(:AnyQuestion).and_return(false)

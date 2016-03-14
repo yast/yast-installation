@@ -139,9 +139,7 @@ module Yast
     def ask_insecure?
       Popup.AnyQuestion(
         Label::WarningMsg(),
-        _("Installer update is not signed or the signature is invalid.\n" \
-          "Using this update may put the integrity of your system at risk.\n" \
-          "Use it anyway?"),
+        signatures_error_message,
         _("Yes"),
         _("No"),
         :focus_no
@@ -185,7 +183,7 @@ module Yast
     # * We're running in insecure mode (so we don't need them to be signed).
     # * The user requests to install it although is not signed.
     #
-    # @report [Boolean] true if it should be applied; false otherwise.
+    # @return [Boolean] true if it should be applied; false otherwise.
     def applicable?
       updates_manager.all_signed? || insecure_mode? || ask_insecure?
     end
@@ -193,6 +191,24 @@ module Yast
     # Determines whether the given URL is equals to the default one
     def using_default_url?
       self_update_url_from_control == self_update_url
+    end
+
+    # Builds an error message when signatures are invalid
+    #
+    # @return [String] Error message
+    def signatures_error_message
+      # UpdatesManager support several updates to be applied. But this client
+      # does not take advantage of that feature yet.
+      update = updates_manager.updates.first
+      reason =
+        case update.signature_status
+        when :error
+          format(_("Installer update at %s can't be verified."), update.uri)
+        when :missing
+          format(_("Installer update at %s is not signed."), update.uri)
+        end
+      reason + _("\n\nUsing this update may put the integrity of your system at risk.\n" \
+        "Use it anyway?")
     end
   end
 end
