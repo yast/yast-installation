@@ -28,6 +28,7 @@ module Installation
 
     class NotFound < StandardError; end
     class CouldNotBeApplied < StandardError; end
+    class PreScriptFailed < StandardError; end
 
     # Command to extract the content of the DUD
     EXTRACT_CMD = "gzip -dc %<source>s | cpio --quiet --sparse -dimu --no-absolute-filenames"
@@ -96,7 +97,7 @@ module Installation
     # Determine if gpg command was successful
     #
     # The signature was successfully signed if command error code was 0 and
-    # no warning was shown.
+    # a good signature was reported.
     #
     # @return [Boolean] True if signature check was successful; false otherwise.
     #
@@ -185,14 +186,14 @@ module Installation
 
     # Run update.pre script
     #
-    # @return [Boolean,NilClass] true if execution was successful; false if
-    #                            update script didn't exist.
+    # @return [Boolean,nil] true if execution was successful; false if
+    #                       update script didn't exist.
     # @raise DriverUpdate::CouldNotBeApplied
     def run_update_pre
       update_pre_path = local_path.join("install", "update.pre")
       return false unless update_pre_path.exist? && update_pre_path.executable?
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), update_pre_path.to_s)
-      raise CouldNotBeApplied unless out["exit"].zero?
+      raise PreScriptFailed unless out["exit"].zero?
       true
     end
 

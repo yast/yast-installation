@@ -84,7 +84,7 @@ module Yast
     #
     # @return [URI,nil] self-update URL. nil if no URL was set in Linuxrc.
     def self_update_url_from_linuxrc
-      get_url_from(Linuxrc.InstallInf("SelfUpdate") || "")
+      get_url_from(Linuxrc.InstallInf("SelfUpdate"))
     end
 
     # Return the self-update URL according to product's control file
@@ -95,7 +95,8 @@ module Yast
 
     # Converts the string into an URI if it's valid
     #
-    # @return [Boolean] True if it's valid; false otherwise.
+    # @return [URI,nil] The string converted into a URL; nil if it's
+    #                   not a valid URL.
     #
     # @see URI.regexp
     def get_url_from(url)
@@ -138,7 +139,7 @@ module Yast
           "Use it anyway?"),
         _("Yes"),
         _("No"),
-        :focus_yes
+        :focus_no
       )
     end
 
@@ -155,10 +156,7 @@ module Yast
     #
     # @return [Boolean] true if update was fetched successfully; false otherwise.
     def fetch_update
-      ret = nil
-      Popup.Feedback(_("YaST2 update"), _("Searching for installer updates")) do
-        ret = updates_manager.add_update(self_update_url)
-      end
+      ret = updates_manager.add_update(self_update_url)
       Report.Error(_("Update could not be found")) unless ret || using_default_url?
       ret
     end
@@ -167,8 +165,8 @@ module Yast
     #
     # @return [Boolean] true if the update was applied; false otherwise
     def apply_update
-      return false unless allowed_to_be_applied?
-      Popup.Feedback(_("YaST2 update"), _("Applying installer updates")) do
+      return false unless applicable?
+      Popup.Feedback(_("YaST update"), _("Applying installer updates")) do
         updates_manager.apply_all
       end
       true
@@ -176,14 +174,14 @@ module Yast
 
     # Check whether the update is allowed to be applied
     #
-    # It's allowed to be applied when one of these requirements is met:
+    # It should be applied when one of these requirements is met:
     #
     # * All updates are signed.
     # * We're running in insecure mode (so we don't need them to be signed).
     # * The user requests to install it although is not signed.
     #
     # @report [Boolean] true if it should be applied; false otherwise.
-    def allowed_to_be_applied?
+    def applicable?
       updates_manager.all_signed? || insecure_mode? || ask_insecure?
     end
 

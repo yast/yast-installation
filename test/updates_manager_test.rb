@@ -68,9 +68,6 @@ describe Installation::UpdatesManager do
   end
 
   describe "#apply_all" do
-    let(:update0) { double("update0") }
-    let(:update1) { double("update1") }
-
     it "applies all the updates" do
       allow(manager).to receive(:updates).and_return([update0, update1])
       expect(update0).to receive(:apply)
@@ -80,14 +77,14 @@ describe Installation::UpdatesManager do
   end
 
   describe "#all_signed?" do
-    let(:update0) { double("update0", signed?: true) }
+    let(:signed_update) { double("update0", signed?: true) }
 
     before do
-      allow(manager).to receive(:updates).and_return([update0, update1])
+      allow(manager).to receive(:updates).and_return([signed_update, other_update])
     end
 
     context "when all updates are signed" do
-      let(:update1) { double("update1", signed?: true) }
+      let(:other_update) { double("other_update", signed?: true) }
 
       it "returns true" do
         expect(manager).to be_all_signed
@@ -95,7 +92,7 @@ describe Installation::UpdatesManager do
     end
 
     context "when some update is not signed" do
-      let(:update1) { double("update1", signed?: false) }
+      let(:other_update) { double("other_update", signed?: false) }
 
       it "returns false" do
         expect(manager).to_not be_all_signed
