@@ -10,7 +10,7 @@ describe Yast::InstUpdateInstaller do
   Yast.import "UI"
 
   let(:manager) { double("update_manager", all_signed?: all_signed?, apply_all: true) }
-  let(:url) { "http://update.opensuse.org/\$ARCH/update.dud" }
+  let(:url) { "http://update.opensuse.org/\$arch/update.dud" }
   let(:real_url) { "http://update.opensuse.org/#{arch}/update.dud" }
   let(:arch) { "x86_64" }
   let(:all_signed?) { true }

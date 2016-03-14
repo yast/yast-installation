@@ -98,7 +98,7 @@ module Yast
 
     # Converts the string into an URI if it's valid
     #
-    # It substitutes $ARCH pattern with the architecture of the current system.
+    # It substitutes $arch pattern with the architecture of the current system.
     #
     # @return [URI,nil] The string converted into a URL; nil if it's
     #                   not a valid URL.
@@ -106,7 +106,7 @@ module Yast
     # @see URI.regexp
     def get_url_from(url)
       return nil unless url.is_a?(::String)
-      real_url = url.sub("\$ARCH", Arch.architecture)
+      real_url = url.gsub(/\$arch\b/, Arch.architecture)
       URI.regexp.match(real_url) ? URI(real_url) : nil
     end
 
