@@ -115,6 +115,10 @@ ylib_DATA = \
   lib/installation/select_system_role.rb \
   lib/installation/snapshots_finish.rb
 
+ylibtransferdir = "${yast2dir}/lib/transfer"
+ylibtransfer_DATA = \
+  lib/transfer/file_from_url.rb
+
 ylibclientdir = "${yast2dir}/lib/installation/clients"
 ylibclient_DATA = \
   lib/installation/clients/copy_files_finish.rb \
@@ -176,6 +180,6 @@ ylibclient_DATA = \
   lib/installation/clients/x11_finish.rb \
   lib/installation/clients/yast_inf_finish.rb
 
-EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylib_DATA)
+EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylib_DATA) $(ylibtransfer_DATA)
 
 include $(top_srcdir)/Makefile.am.common

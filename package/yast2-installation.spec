@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.172
+Version:        3.1.173
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -206,6 +206,7 @@ systemctl enable YaST2-Firstboot.service
 %dir %{yast_yncludedir}/installation
 %{yast_yncludedir}/installation/*
 %{yast_libdir}/installation
+%{yast_libdir}/transfer
 
 # agents
 %{yast_scrconfdir}/etc_passwd.scr
