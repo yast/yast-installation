@@ -103,7 +103,7 @@ desktop_DATA = \
 fillup_DATA = \
   fillup/sysconfig.security-checksig
 
-ylibdir = "${yast2dir}/lib/installation"
+ylibdir = "${yast2dir}/lib"
 ylib_DATA = \
   lib/installation/cio_ignore.rb \
   lib/installation/copy_logs_finish.rb \
@@ -113,7 +113,8 @@ ylib_DATA = \
   lib/installation/proposal_store.rb \
   lib/installation/remote_finish_client.rb \
   lib/installation/select_system_role.rb \
-  lib/installation/snapshots_finish.rb
+  lib/installation/snapshots_finish.rb \
+	lib/transfer/file_from_url.rb
 
 ylibclientdir = "${yast2dir}/lib/installation/clients"
 ylibclient_DATA = \
