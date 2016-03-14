@@ -64,6 +64,60 @@ describe ::Installation::SelectSystemRole do
 
         expect(subject.run).to eq(:back)
       end
+
+      context "when re-selecting a role" do
+        it "just proceeds on the same role" do
+          subject.class.original_role_id = "foo"
+
+          allow(Yast::Wizard).to receive(:SetContents)
+          allow(Yast::UI).to receive(:UserInput)
+            .and_return(:next)
+          allow(Yast::UI).to receive(:QueryWidget)
+            .with(Id(:roles), :CurrentButton).and_return("foo")
+
+          expect(Yast::Popup).to_not receive(:ContinueCancel)
+
+          expect(Yast::ProductFeatures).to receive(:ClearOverlay)
+          expect(Yast::ProductFeatures).to receive(:SetOverlay)
+
+          expect(subject.run).to eq(:next)
+        end
+
+        it "displays popup, and proceeds on Continue" do
+          subject.class.original_role_id = "bar"
+
+          allow(Yast::Wizard).to receive(:SetContents)
+          allow(Yast::UI).to receive(:UserInput)
+            .and_return(:next)
+          allow(Yast::UI).to receive(:QueryWidget)
+            .with(Id(:roles), :CurrentButton).and_return("foo")
+
+          expect(Yast::Popup).to receive(:ContinueCancel)
+            .and_return(true)
+
+          expect(Yast::ProductFeatures).to receive(:ClearOverlay)
+          expect(Yast::ProductFeatures).to receive(:SetOverlay)
+
+          expect(subject.run).to eq(:next)
+        end
+
+        it "displays popup, and stays on Cancel" do
+          subject.class.original_role_id = "bar"
+
+          allow(Yast::Wizard).to receive(:SetContents)
+          allow(Yast::UI).to receive(:UserInput)
+            .and_return(:next, :back)
+          allow(Yast::UI).to receive(:QueryWidget)
+            .with(Id(:roles), :CurrentButton).and_return("foo")
+
+          expect(Yast::Popup).to receive(:ContinueCancel)
+            .and_return(false)
+          expect(Yast::ProductFeatures).to receive(:ClearOverlay)
+          expect(Yast::ProductFeatures).to_not receive(:SetOverlay)
+
+          expect(subject.run).to eq(:back)
+        end
+      end
     end
   end
 end

@@ -18,11 +18,17 @@
 
 require "yast"
 require "ui/installation_dialog"
+Yast.import "Popup"
 Yast.import "ProductControl"
 Yast.import "ProductFeatures"
 
 module Installation
   class SelectSystemRole < ::UI::InstallationDialog
+    class << self
+      # once the user selects a role, remember it in case they come back
+      attr_accessor :original_role_id
+    end
+
     def initialize
       super
 
@@ -62,12 +68,22 @@ module Installation
     def create_dialog
       clear_role
       ok = super
-      Yast::UI.ChangeWidget(Id(:roles), :CurrentButton, role_attributes.first[:id])
+      role_id = self.class.original_role_id || role_attributes.first[:id]
+      Yast::UI.ChangeWidget(Id(:roles), :CurrentButton, role_id)
       ok
     end
 
     def next_handler
       role_id = Yast::UI.QueryWidget(Id(:roles), :CurrentButton)
+
+      orig_role_id = self.class.original_role_id
+      if !orig_role_id.nil? && orig_role_id != role_id
+        # A Continue-Cancel popup
+        msg = _("Changing the system role may undo adjustments you may have done.")
+        Yast::Popup.ContinueCancel(msg) || return
+      end
+      self.class.original_role_id = role_id
+
       apply_role(role_id)
 
       super
