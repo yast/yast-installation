@@ -81,7 +81,7 @@ module Installation
       updates.all?(&:signed?)
     end
 
-    private
+  private
 
     # Find the number for the next update to be deployed
     def next_update

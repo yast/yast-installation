@@ -129,7 +129,7 @@ module Installation
       run_update_pre
     end
 
-    private
+  private
 
     # Extract the DUD at 'source' to 'target'
     #
@@ -239,6 +239,5 @@ module Installation
       ::FileUtils.rm(asc_file) if asc_file.exist?
       @signature_status = gpg_output_to_status(out) # Set signature status
     end
-
   end
 end
