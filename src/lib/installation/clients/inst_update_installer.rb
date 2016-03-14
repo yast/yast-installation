@@ -23,8 +23,8 @@ module Yast
 
     UPDATED_FLAG_FILENAME = "installer_updated"
     UPDATES_PATH = Pathname.new("/update")
-    KEYRING_PATH = Pathname.new("/installkeys.gpg")
-    GPG_HOMEDIR  = Pathname.new("/home/.gnupg")
+    KEYRING_PATH = Pathname.new("/installkey.gpg")
+    GPG_HOMEDIR  = Pathname.new("/root/.gnupg")
 
     Yast.import "Directory"
     Yast.import "Installation"
