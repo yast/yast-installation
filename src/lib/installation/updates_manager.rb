@@ -37,6 +37,8 @@ module Installation
   #   manager.add_update(URI("http://update.opensuse.org/sles12.dud"))
   #   manager.apply_all
   class UpdatesManager
+    include Yast::Logger
+
     attr_reader :target, :keyring, :gpg_homedir, :updates
 
     # Constructor
@@ -60,9 +62,12 @@ module Installation
     def add_update(uri)
       new_update = Installation::DriverUpdate.new(uri, keyring, gpg_homedir)
       dir = target.join(format("%03d", next_update))
+      log.info("Fetching Driver update from #{uri} to #{dir}")
       new_update.fetch(dir)
+      log.info("Driver update extracted to #{dir}")
       @updates << new_update
     rescue Installation::DriverUpdate::NotFound
+      log.error("Driver updated at #{uri} could not be found")
       false
     end
 

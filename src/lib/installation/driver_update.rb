@@ -23,6 +23,7 @@ module Installation
   #
   # The DUD will be fetched from a given URL.
   class DriverUpdate
+    include Yast::Logger
     include Yast::I18n # missing in yast2-update
     include Yast::Transfer::FileFromUrl # get_file_from_url
 
@@ -108,6 +109,7 @@ module Installation
     #
     # @see GPG_SIGNATURE_OK
     def gpg_output_to_status(out)
+      log.info("Checking gpg output: #{out}")
       if out["stderr"].include?(GPG_SIGNATURE_OK)
         out["stderr"].include?(GPG_WARNING) ? :warning : :ok
       elsif out["stderr"].include?(GPG_SIGNED)
@@ -227,6 +229,7 @@ module Installation
     def check_detached_signature(temp_file)
       # Download the detached signature
       asc_file = temp_file.sub_ext("#{temp_file.extname}#{SIG_EXT}")
+      log.info("Downloading #{asc_file} to check the signature")
       return false unless get_file(uri.merge("#{uri}#{SIG_EXT}"), asc_file)
 
       # Verify the signature

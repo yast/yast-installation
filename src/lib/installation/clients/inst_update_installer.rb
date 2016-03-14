@@ -39,6 +39,8 @@ module Yast
 
       return :next if installer_updated? || !self_update_enabled?
 
+      log.info("Trying installer update")
+
       if update_installer
         ::FileUtils.touch(update_flag_file) # Indicates that the installer was updated.
         ::FileUtils.touch(Installation.restart_file)
@@ -160,6 +162,7 @@ module Yast
     # @return [Boolean] true if update was fetched successfully; false otherwise.
     def fetch_update
       ret = updates_manager.add_update(self_update_url)
+      log.info("Adding update from #{self_update_url} (ret = #{ret})")
       Report.Error(_("Update could not be found")) unless ret || using_default_url?
       ret
     end
@@ -169,6 +172,7 @@ module Yast
     # @return [Boolean] true if the update was applied; false otherwise
     def apply_update
       return false unless applicable?
+      log.info("Applying installer updates")
       Popup.Feedback(_("YaST update"), _("Applying installer updates")) do
         updates_manager.apply_all
       end
