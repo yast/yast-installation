@@ -65,8 +65,8 @@ describe ::Installation::SelectSystemRole do
         expect(subject.run).to eq(:back)
       end
 
-      context "when re-selecting a role" do
-        it "just proceeds on the same role" do
+      context "when re-selecting the same role" do
+        it "just proceeds without a popup" do
           subject.class.original_role_id = "foo"
 
           allow(Yast::Wizard).to receive(:SetContents)
@@ -82,8 +82,10 @@ describe ::Installation::SelectSystemRole do
 
           expect(subject.run).to eq(:next)
         end
+      end
 
-        it "displays popup, and proceeds on Continue" do
+      context "when re-selecting a different role" do
+        it "displays a popup, and proceeds if Continue is answered" do
           subject.class.original_role_id = "bar"
 
           allow(Yast::Wizard).to receive(:SetContents)
@@ -101,7 +103,7 @@ describe ::Installation::SelectSystemRole do
           expect(subject.run).to eq(:next)
         end
 
-        it "displays popup, and stays on Cancel" do
+        it "displays a popup, and does not proceed if Cancel is answered" do
           subject.class.original_role_id = "bar"
 
           allow(Yast::Wizard).to receive(:SetContents)
