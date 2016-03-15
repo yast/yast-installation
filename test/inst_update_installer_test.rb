@@ -14,8 +14,12 @@ describe Yast::InstUpdateInstaller do
   let(:real_url) { "http://update.opensuse.org/#{arch}/update.dud" }
   let(:arch) { "x86_64" }
   let(:all_signed?) { true }
+  let(:network_running) { true }
 
-  before { allow(Yast::Arch).to receive(:architecture).and_return(arch) }
+  before do
+    allow(Yast::Arch).to receive(:architecture).and_return(arch)
+    allow(Yast::NetworkService).to receive(:isNetworkRunning).and_return(network_running)
+  end
 
   describe "#main" do
     context "when update is enabled" do
@@ -94,8 +98,9 @@ describe Yast::InstUpdateInstaller do
       end
 
       context "when network is not available" do
+        let(:network_running) { false }
+
         it "does not update the installer" do
-          expect(Yast::NetworkService).to receive(:isNetworkRunning).and_return(false)
           expect(subject).to_not receive(:update_installer)
           expect(subject.main).to eq(:next)
         end
