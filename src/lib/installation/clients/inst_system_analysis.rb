@@ -124,6 +124,11 @@ module Yast
         WFM.CallFunction("inst_features", [])
       end
 
+      # FATE #319716: Installer self-update
+      actions_todo      << _("Update Installer")
+      actions_doing     << _("Updating installer...")
+      actions_functions << fun_ref(method(:update_installer), "boolean ()")
+
       # FATE #302980: Simplified user config during installation
       actions_todo      << _("Search for system files")
       actions_doing     << _("Searching for system files...")
@@ -132,10 +137,6 @@ module Yast
       actions_todo      << _("Initialize software manager")
       actions_doing     << _("Initializing software manager...")
       actions_functions << fun_ref(method(:InitInstallationRepositories), "boolean ()")
-
-      actions_todo      << _("Update Installer")
-      actions_doing     << _("Updating installer...")
-      actions_functions << fun_ref(method(:update_installer), "boolean ()")
 
       Progress.New(
         # TRANSLATORS: dialog caption
