@@ -8,7 +8,7 @@ installation even after the media has been released. Check
 ## Disabling updates
 
 Self-update is enabled by default. However, it can be disabled setting
-`SelfUpdate=0` in Linuxrc.
+`self_update=0` in Linuxrc.
 
 ## Basic workflow
 
