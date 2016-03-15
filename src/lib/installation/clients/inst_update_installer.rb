@@ -69,6 +69,7 @@ module Yast
     # @return [Boolean] True if it's enabled; false otherwise.
     def self_update_enabled?
       if Linuxrc.InstallInf("SelfUpdate") == "0" # disabled via Linuxrc
+        log.info("self-update was disabled through Linuxrc")
         false
       else
         !self_update_url.nil?
@@ -82,7 +83,9 @@ module Yast
     # @see #self_update_url_from_linuxrc
     # @see #self_update_url_from_control
     def self_update_url
-      self_update_url_from_linuxrc || self_update_url_from_control
+      url = self_update_url_from_linuxrc || self_update_url_from_control
+      log.info("self-update URL is #{url}")
+      url
     end
 
     # Return the self-update URL according to Linuxrc
@@ -118,7 +121,13 @@ module Yast
     #
     # @return [Boolean] true if it exists; false otherwise.
     def installer_updated?
-      File.exist?(update_flag_file)
+      if File.exist?(update_flag_file)
+        log.info("#{update_flag_file} exists")
+        true
+      else
+        log.info("#{update_flag_file} does not exist")
+        false
+      end
     end
 
     # Returns the path to the "update flag file"

@@ -199,13 +199,14 @@ module Installation
 
     # Run update.pre script
     #
-    # @return [Boolean,nil] true if execution was successful; false if
-    #                       update script didn't exist.
+    # @return [Boolean] true if execution was successful; false if
+    #                   update script didn't exist.
     # @raise DriverUpdate::CouldNotBeApplied
     def run_update_pre
       update_pre_path = local_path.join("install", "update.pre")
       return false unless update_pre_path.exist? && update_pre_path.executable?
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), update_pre_path.to_s)
+      log.info("update.pre script at #{update_pre_path} was executed: #{out}")
       raise PreScriptFailed unless out["exit"].zero?
       true
     end
