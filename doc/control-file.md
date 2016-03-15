@@ -1246,9 +1246,9 @@ A more complete example with other options is shown below:
     </partitioning>
 ```
 
-### Self-update
+### Self Update
 
-To enable the self-update feature (FATE#319716), the location of the update
+To enable the self update feature (FATE#319716), the location of the update
 should be defined in the control file.
 
 ```
@@ -1260,7 +1260,9 @@ architecture, such as `x86_64`, `s390x`, etc. You can find more information in
 the [Arch
 module](http://www.rubydoc.info/github/yast/yast-yast2/Yast/ArchClass).
 
-It's ok that the URL points to a non-existent archive until an update is released.
+Missing driver update archive at the specified URL is not considered as an
+error. If the DUD file is not found then YaST ignores the error and skips the
+self update step silently.
 
 ### Hooks
 
