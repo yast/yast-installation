@@ -2,6 +2,13 @@
 Tue Mar 15 07:41:01 UTC 2016 - knut.anderssen@suse.com
 
 - Added automatic update during installation (FATE#319716)
+- 3.1.175
+
+-------------------------------------------------------------------
+Mon Mar 14 13:09:52 UTC 2016 - mvidner@suse.com
+
+- System Role: align labels (FATE#317481).
+- System Role: pop-up if changing the role to a different one.
 - 3.1.174
 
 -------------------------------------------------------------------
