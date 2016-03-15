@@ -30,6 +30,7 @@ module Yast
     Yast.import "Directory"
     Yast.import "Installation"
     Yast.import "ProductFeatures"
+    Yast.import "Label"
     Yast.import "Linuxrc"
     Yast.import "Popup"
     Yast.import "Report"
@@ -142,8 +143,8 @@ module Yast
       Popup.AnyQuestion(
         Label::WarningMsg(),
         signatures_error_message,
-        _("Yes"),
-        _("No"),
+        Label.YesButton,
+        Label.NoButton,
         :focus_no
       )
     end
@@ -207,12 +208,19 @@ module Yast
       reason =
         case update.signature_status
         when :error
+          # TRANSLATORS: %s will be replaced by an URL which should contain the update.
           format(_("Installer update at %s can't be verified."), update.uri)
         when :missing
+          # TRANSLATORS: %s will be replaced by an URL which should contain the update.
           format(_("Installer update at %s is not signed."), update.uri)
+        else
+          # TRANSLATORS: %s will be replaced by an URL which should contain the update.
+          format(_("An error occurred while verifying the signature of update at %s"), update.uri)
         end
-      reason + _("\n\nUsing this update may put the integrity of your system at risk.\n" \
-        "Use it anyway?")
+      # TRANSLATORS: Popup question, %s contains the details about the failed
+      # signature verification
+      format(_("%s\n\nUsing this update may put the integrity of your system at risk.\n" \
+        "Use it anyway?"), reason)
     end
   end
 end
