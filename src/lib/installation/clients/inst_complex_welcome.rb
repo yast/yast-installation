@@ -144,12 +144,12 @@ module Yast
 
       UI.ChangeWidget(Id(:language), :Value, @language)
 
-      if Keyboard.user_decision == true
+      if Keyboard.user_decision
         UI.ChangeWidget(Id(:keyboard), :Value, Keyboard.current_kbd)
       else
-        @kbd = Keyboard.GetKeyboardForLanguage(@language, "english-us")
-        UI.ChangeWidget(Id(:keyboard), :Value, @kbd)
-        Keyboard.Set(@kbd)
+        kbd = Keyboard.GetKeyboardForLanguage(@language, "english-us")
+        UI.ChangeWidget(Id(:keyboard), :Value, kbd)
+        Keyboard.Set(kbd)
       end
 
       # In case of going back, Release Notes button may be shown, retranslate it (bnc#886660)
@@ -363,7 +363,7 @@ module Yast
     def text_mode?
       return @text_mode unless @text_mode.nil?
 
-      @text_mode = Language.GetTextMode
+      @text_mode = UI.TextMode
     end
 
     def dialog_content
