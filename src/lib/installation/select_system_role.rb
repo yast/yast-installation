@@ -80,7 +80,7 @@ module Installation
       if !orig_role_id.nil? && orig_role_id != role_id
         # A Continue-Cancel popup
         msg = _("Changing the system role may undo adjustments you may have done.")
-        Yast::Popup.ContinueCancel(msg) || return
+        return unless Yast::Popup.ContinueCancel(msg)
       end
       self.class.original_role_id = role_id
 
