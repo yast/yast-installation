@@ -133,9 +133,9 @@ module Yast
       actions_doing     << _("Initializing software manager...")
       actions_functions << fun_ref(method(:InitInstallationRepositories), "boolean ()")
 
-      actions_todo      << _("Check for updates")
-      actions_doing     << _("Checking updates...")
-      actions_functions << fun_ref(method(:check_for_updates), "boolean ()")
+      actions_todo      << _("Update Installer")
+      actions_doing     << _("Updating installer...")
+      actions_functions << fun_ref(method(:update_installer), "boolean ()")
 
       Progress.New(
         # TRANSLATORS: dialog caption
@@ -164,6 +164,7 @@ module Yast
 
         ret = run_function.call
         Builtins.y2milestone("Function %1 returned %2", run_function, ret)
+        # Return in case of restart is needed
         return ret if ret == :restart_yast
       end
       Installation.probing_done = true
@@ -311,7 +312,7 @@ module Yast
       UI::SetReleaseNotes(product_name => @media_text)
     end
 
-    def check_for_updates
+    def update_installer
       ret = WFM::CallFunction("inst_update_installer")
       ret == :restart_yast ? :restart_yast : true
     end
