@@ -34,11 +34,12 @@ module Yast
     Yast.import "Linuxrc"
     Yast.import "Popup"
     Yast.import "Report"
+    Yast.import "NetworkService"
 
     def main
       textdomain "installation"
 
-      return :next if installer_updated? || !self_update_enabled?
+      return :next unless try_to_update?
 
       log.info("Trying installer update")
 
@@ -178,6 +179,23 @@ module Yast
         updates_manager.apply_all
       end
       true
+    end
+
+    # Check whether the update should be performed
+    #
+    # The update should be performed when these requeriments are met:
+    #
+    # * Installer is not updated yet.
+    # * Self-update feature is enabled.
+    # * Network is up.
+    #
+    # @return [Boolean] true if the update should be performed; false otherwise.
+    #
+    # @see #installer_updated?
+    # @see #self_update_enabled?
+    # @see NetworkService.isNetworkRunning
+    def try_to_update?
+      !installer_updated? && self_update_enabled? && NetworkService.isNetworkRunning
     end
 
     # Check whether the update is allowed to be applied

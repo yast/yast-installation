@@ -92,6 +92,14 @@ describe Yast::InstUpdateInstaller do
           end
         end
       end
+
+      context "when network is not available" do
+        it "does not update the installer" do
+          expect(Yast::NetworkService).to receive(:isNetworkRunning).and_return(false)
+          expect(subject).to_not receive(:update_installer)
+          expect(subject.main).to eq(:next)
+        end
+      end
     end
 
     context "when update is disabled through Linuxrc" do
