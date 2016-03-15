@@ -1246,6 +1246,22 @@ A more complete example with other options is shown below:
     </partitioning>
 ```
 
+### Self-update
+
+To enable the self-update feature (FATE#319716), the location of the update
+should be defined in the control file.
+
+```
+    <self_update_url>http://updates.opensuse.org/$arch/leap-42.1.dud</self_update_url>
+```
+
+The URL can contain a variable `$arch` that will be replaced by the system's
+architecture, such as `x86_64`, `s390x`, etc. You can find more information in
+the [Arch
+module](http://www.rubydoc.info/github/yast/yast-yast2/Yast/ArchClass).
+
+It's ok that the URL points to a non-existent archive until an update is released.
+
 ### Hooks
 
 It is possible to add hooks before and after any workflow step for
