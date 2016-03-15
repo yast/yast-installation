@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Mar 15 07:41:01 UTC 2016 - knut.anderssen@suse.com
+
+- Added automatic update during installation (FATE#319716)
+- 3.1.174
+
+-------------------------------------------------------------------
 Mon Mar 14 09:39:50 UTC 2016 - igonzalezsosa@suse.com
 
 - Moved Yast::Transfer::FileFromUrl here from yast2-update
