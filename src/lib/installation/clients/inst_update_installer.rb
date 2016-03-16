@@ -184,9 +184,7 @@ module Yast
     def apply_update
       return false unless applicable?
       log.info("Applying installer updates")
-      Popup.Feedback(_("YaST update"), _("Applying installer updates")) do
-        updates_manager.apply_all
-      end
+      updates_manager.apply_all
       true
     end
 
