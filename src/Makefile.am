@@ -115,7 +115,8 @@ ylib_DATA = \
   lib/installation/remote_finish_client.rb \
   lib/installation/select_system_role.rb \
   lib/installation/snapshots_finish.rb \
-  lib/installation/updates_manager.rb
+  lib/installation/updates_manager.rb \
+  lib/installation/update_repository.rb
 
 ylibtransferdir = "${yast2dir}/lib/transfer"
 ylibtransfer_DATA = \

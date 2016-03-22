@@ -22,9 +22,6 @@ module Yast
     include Yast::I18n
 
     UPDATED_FLAG_FILENAME = "installer_updated"
-    UPDATES_PATH = Pathname.new("/update")
-    KEYRING_PATH = Pathname.new("/installkey.gpg")
-    GPG_HOMEDIR  = Pathname.new("/root/.gnupg")
 
     Yast.import "Arch"
     Yast.import "Directory"
@@ -58,7 +55,7 @@ module Yast
     #
     # @return [UpdatesManager] Updates manager to be used by the client
     def updates_manager
-      @updates_manager ||= ::Installation::UpdatesManager.new(UPDATES_PATH, KEYRING_PATH, GPG_HOMEDIR)
+      @updates_manager ||= ::Installation::UpdatesManager.new
     end
 
     # Determines whether self-update feature is enabled
@@ -172,7 +169,7 @@ module Yast
     #
     # @return [Boolean] true if update was fetched successfully; false otherwise.
     def fetch_update
-      ret = updates_manager.add_update(self_update_url)
+      ret = updates_manager.add_repository(self_update_url)
       log.info("Adding update from #{self_update_url} (ret = #{ret})")
       Report.Error(_("Update could not be found")) unless ret || using_default_url?
       ret

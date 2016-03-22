@@ -15,79 +15,64 @@
 
 require "pathname"
 require "installation/driver_update"
+require "installation/update_repository"
 
 module Installation
   # This class takes care of managing installer updates
   #
-  # Installer updates are distributed as Driver Update Disks that are downloaded
-  # from a remote location (only HTTP and HTTPS are supported at this time).
-  # This class tries to offer a really simple API to get updates and apply them
-  # to inst-sys.
+  # Installer updates are distributed as rpm-md repositories. This class tries
+  # to offer a really simple API to get updates and apply them to inst-sys.
   #
-  # @example Applying one driver update
-  #   manager = UpdatesManager.new(Pathname.new("/update"), Pathname.new("/install.gpg"),
-  #                                Pathname.new("/root/.gnupg"))
-  #   manager.add_update(URI("http://update.opensuse.org/sles12.dud"))
-  #   manager.add_update(URI("http://example.net/example.dud"))
+  # @example Applying updates from one repository
+  #   manager = UpdatesManager.new
+  #   manager.add_repository(URI("http://update.opensuse.org/42.1"))
   #   manager.apply_all
   #
-  # @example Applying multiple driver updates
-  #   manager = UpdatesManager.new(Pathname.new("/update"), Pathname.new("/install.gpg"),
-  #                                Pathname.new("/root/.gnupg"))
-  #   manager.add_update(URI("http://update.opensuse.org/sles12.dud"))
+  # @example Applying updates from multiple repositories
+  #   manager = UpdatesManager.new
+  #   manager.add_repository(URI("http://update.opensuse.org/42.1"))
+  #   manager.add_repository(URI("http://example.net/leap"))
   #   manager.apply_all
   class UpdatesManager
     include Yast::Logger
 
-    attr_reader :target, :keyring, :gpg_homedir, :updates
+    attr_reader :repositories
 
     # Constructor
-    #
-    # @param target      [Pathname] Directory to copy updates to.
-    # @param keyring     [Pathname] Path to keyring to check signatures against
-    # @param gpg_homedir [Pathname] Path to GPG home dir
-    def initialize(target, keyring, gpg_homedir)
-      @target = target
-      @keyring = keyring
-      @gpg_homedir = gpg_homedir
-      @updates = []
+    def initialize
+      @repositories = []
     end
 
-    # Add an update to the updates pool
+    # Add an update repository
     #
-    # @param uri [URI]                               URI where the update (DUD) lives
-    # @return    [Array<Installation::DriverUpdate>] List of updates
+    # @param uri [URI] URI where the repository lives
+    # @return [Array<UpdateRepository>,false] List of update repositories.
+    #   If the repository is not found, it returns false.
     #
-    # @see Installation::DriverUpdate
-    def add_update(uri)
-      new_update = Installation::DriverUpdate.new(uri, keyring, gpg_homedir)
-      dir = target.join(format("%03d", next_update))
-      log.info("Fetching Driver update from #{uri} to #{dir}")
-      new_update.fetch(dir)
-      log.info("Driver update extracted to #{dir}")
-      @updates << new_update
-    rescue Installation::DriverUpdate::NotFound
-      log.error("Driver updated at #{uri} could not be found")
+    # @see Installation::UpdateRepository
+    def add_repository(uri)
+      new_repository = Installation::UpdateRepository.new(uri)
+      new_repository.fetch
+      @repositories << new_repository
+    rescue Installation::UpdateRepository::NotFound
+      log.error("Update repository at #{uri} could not be found")
       false
     end
 
-    # Applies all updates in the pool
+    # Applies all the updates
+    #
+    # It delegates the responsiability of updating the inst-sys to
+    # added repositories.
+    #
+    # @see Installation::UpdateRepository#apply
+    # @see #repositories
     def apply_all
-      updates.each(&:apply)
+      repositories.each(&:apply)
     end
 
-    # Determines whether the updates to apply are signed
+    # TODO: to remove/update as soon as the signatures checking is implemented
     def all_signed?
-      updates.all?(&:signed?)
-    end
-
-  private
-
-    # Find the number for the next update to be deployed
-    def next_update
-      files = Pathname.glob(target.join("*")).map(&:basename)
-      updates = files.map(&:to_s).grep(/\A\d+\Z/)
-      updates.empty? ? 0 : updates.map(&:to_i).max + 1
+      true
     end
   end
 end
