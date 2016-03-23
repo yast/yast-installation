@@ -129,4 +129,3 @@ describe Installation::UpdateRepository do
     end
   end
 end
-

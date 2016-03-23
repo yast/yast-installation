@@ -36,11 +36,14 @@ module Installation
   class UpdatesManager
     include Yast::Logger
 
-    attr_reader :repositories
+    attr_reader :repositories, :driver_updates
+
+    DRIVER_UPDATES_PATH = Pathname("/update")
 
     # Constructor
-    def initialize
+    def initialize(duds_path = DRIVER_UPDATES_PATH)
       @repositories = []
+      @driver_updates = Installation::DriverUpdate.find(duds_path)
     end
 
     # Add an update repository
@@ -68,6 +71,7 @@ module Installation
     # @see #repositories
     def apply_all
       repositories.each(&:apply)
+      driver_updates.each(&:apply)
     end
 
     # TODO: to remove/update as soon as the signatures checking is implemented

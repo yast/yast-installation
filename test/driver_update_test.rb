@@ -35,18 +35,27 @@ describe Installation::DriverUpdate do
   end
 
   describe "#apply" do
-    context "when the remote file was fetched" do
-      it "applies the DUD and executes update.pre script" do
+    it "applies the DUD" do
+      expect(Yast::SCR).to receive(:Execute)
+        .with(Yast::Path.new(".target.bash_output"), "/etc/adddir #{update_path}/inst-sys /")
+        .and_return("exit" => 0, "stdout" => "", "stderr" => "")
+      expect(Yast::SCR).to_not receive(:Execute)
+        .with(Yast::Path.new(".target.bash_output"), "#{update_path}/install/update.pre")
+      dud.apply
+    end
+
+    context "when the update.pre script is enabled" do
+      it "applies the DUD" do
         expect(Yast::SCR).to receive(:Execute)
           .with(Yast::Path.new(".target.bash_output"), "/etc/adddir #{update_path}/inst-sys /")
           .and_return("exit" => 0, "stdout" => "", "stderr" => "")
         expect(Yast::SCR).to receive(:Execute)
           .with(Yast::Path.new(".target.bash_output"), "#{update_path}/install/update.pre")
           .and_return("exit" => 0, "stdout" => "", "stderr" => "")
-        dud.apply
+        dud.apply(pre: true)
       end
 
-      context "if an update.pre does not exist" do
+      context "but an update.pre does not exist" do
         let(:update_path) { FIXTURES_DIR.join("updates", "001") }
 
         it "does not try to run the update.pre script" do

@@ -12,8 +12,9 @@ describe Installation::UpdatesManager do
 
   let(:uri) { URI("http://updates.opensuse.org/sles12.dud") }
 
-  let(:repo0) { double("repo0") }
-  let(:repo1) { double("repo1") }
+  let(:repo0) { double("repo0", apply: true) }
+  let(:repo1) { double("repo1", apply: true) }
+  let(:dud0)  { double("dud0", apply: true) }
 
   describe "#add_repository" do
     context "when repository is added successfully" do
@@ -56,12 +57,48 @@ describe Installation::UpdatesManager do
     end
   end
 
+  describe "#driver_updates" do
+    context "when no driver updates exist" do
+      before do
+        allow(Installation::DriverUpdate).to receive(:find).and_return([])
+      end
+
+      it "returns an empty array" do
+        expect(subject.driver_updates).to eq([])
+      end
+    end
+
+    context "when some driver update exist" do
+      before do
+        allow(Installation::DriverUpdate).to receive(:find).and_return([dud0])
+      end
+
+      it "returns an array containing existing updates" do
+        expect(subject.driver_updates).to eq([dud0])
+      end
+    end
+  end
+
   describe "#apply_all" do
-    it "applies all the updates" do
+    before do
       allow(manager).to receive(:repositories).and_return([repo0, repo1])
+    end
+
+    it "applies all the updates" do
       expect(repo0).to receive(:apply)
       expect(repo1).to receive(:apply)
       manager.apply_all
+    end
+
+    context "when some driver update exists" do
+      before do
+        allow(manager).to receive(:driver_updates).and_return([dud0])
+      end
+
+      it "also re-applies the driver updates" do
+        expect(dud0).to receive(:apply)
+        manager.apply_all
+      end
     end
   end
 end

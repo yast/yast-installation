@@ -40,8 +40,11 @@ module Installation
       # @param dir [Pathname] Directory to search for driver updates
       # @return [Array<DriverUpdate>] Found driver updates
       def find(dir)
-        Dir.glob("#{dir}/*/dud.config").map do |path|
-          new(Pathname(path))
+        log.info("Searching for Driver Updates at #{dir}")
+        Pathname.glob("#{dir}/*/dud.config").map do |path|
+          dud_dir = path.dirname
+          log.info("Found a Driver Update at #{dud_dir}")
+          new(dud_dir)
         end
       end
     end
@@ -57,9 +60,9 @@ module Installation
     #
     # @see #adddir
     # @see #run_update_pre
-    def apply
+    def apply(pre: false)
       adddir
-      run_update_pre
+      run_update_pre if pre
     end
 
     # Add files/directories to the inst-sys
@@ -70,6 +73,7 @@ module Installation
     def adddir
       cmd = format(APPLY_CMD, source: path)
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
+      log.info("Applying update at #{path} (#{cmd}): #{out}")
       raise CouldNotBeApplied unless out["exit"].zero?
     end
 
