@@ -24,7 +24,7 @@ describe Yast::InstUpdateInstaller do
   describe "#main" do
     context "when update is enabled" do
       before do
-        allow(subject).to receive(:self_update_enabled?).and_return(true)
+        allow(Yast::ProductFeatures).to receive(:GetStringFeature).and_return(url)
       end
 
       context "when update works" do
@@ -51,13 +51,15 @@ describe Yast::InstUpdateInstaller do
       end
 
       context "when an URL is specified through Linuxrc" do
+        let(:custom_url) { "http://example.net/sles12/" }
+
         before do
-          allow(Yast::Linuxrc).to receive(:InstallInf).with("SelfUpdate").and_return(url)
+          allow(Yast::Linuxrc).to receive(:InstallInf).with("SelfUpdate").and_return(custom_url)
           allow(::Installation::UpdatesManager).to receive(:new).and_return(manager)
         end
 
         it "tries to update the installer using the given URL" do
-          expect(manager).to receive(:add_repository).with(URI(real_url)).and_return(true)
+          expect(manager).to receive(:add_repository).with(URI(custom_url)).and_return(true)
           expect(manager).to receive(:apply_all).and_return(true)
           allow(::FileUtils).to receive(:touch)
           expect(subject.main).to eq(:restart_yast)
@@ -65,7 +67,7 @@ describe Yast::InstUpdateInstaller do
 
         it "shows an error if update is not found" do
           expect(Yast::Popup).to receive(:Error)
-          expect(manager).to receive(:add_repository).with(URI(real_url)).and_return(false)
+          expect(manager).to receive(:add_repository).with(URI(custom_url)).and_return(false)
           expect(subject.main).to eq(:next)
         end
       end
