@@ -133,10 +133,6 @@ module Yast
       actions_doing     << _("Initializing software manager...")
       actions_functions << fun_ref(method(:InitInstallationRepositories), "boolean ()")
 
-      actions_todo      << _("Update Installer")
-      actions_doing     << _("Updating installer...")
-      actions_functions << fun_ref(method(:update_installer), "boolean ()")
-
       Progress.New(
         # TRANSLATORS: dialog caption
         _("System Probing"),
@@ -310,11 +306,6 @@ module Yast
       product_name = Product.short_name || _("Unknown Product")
       InstData.release_notes[product_name] = @media_text
       UI::SetReleaseNotes(product_name => @media_text)
-    end
-
-    def update_installer
-      ret = WFM::CallFunction("inst_update_installer")
-      ret == :restart_yast ? :restart_yast : true
     end
 
     def InitInstallationRepositories
