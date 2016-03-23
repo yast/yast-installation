@@ -100,14 +100,16 @@ describe Installation::UpdateRepository do
   end
 
   describe "#apply" do
-    let(:update_path) { Pathname("/download/yast_001") }
+    let(:update_path) { Pathname("/download/yast_000") }
     let(:mount_point) { updates_path.join("yast_0000") }
+    let(:file) { double("file") }
 
     before do
       allow(repo).to receive(:paths).and_return([update_path])
     end
 
     it "mounts and adds files/dir" do
+      allow(repo.instsys_parts_path).to receive(:open)
       expect(FileUtils).to receive(:mkdir).with(mount_point)
       # mount
       expect(Yast::SCR).to receive(:Execute)
@@ -118,6 +120,16 @@ describe Installation::UpdateRepository do
         .with(Yast::Path.new(".target.bash_output"), /adddir #{mount_point} \//)
         .and_return("exit" => 0)
 
+      repo.apply(updates_path)
+    end
+
+    it "adds mounted filesystem to instsys.parts file" do
+      allow(repo.instsys_parts_path).to receive(:open).and_yield(file)
+      allow(FileUtils).to receive(:mkdir).with(mount_point)
+      allow(Yast::SCR).to receive(:Execute)
+        .with(any_args)
+        .and_return("exit" => 0)
+      expect(file).to receive(:puts).with(%r{\Adownload/yast_000.+yast_0000})
       repo.apply(updates_path)
     end
   end

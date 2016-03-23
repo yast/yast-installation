@@ -31,7 +31,7 @@ module Installation
   class UpdateRepository
     include Yast::Logger
 
-    attr_reader :uri, :repo_id, :paths
+    attr_reader :uri, :repo_id, :paths, :instsys_parts_path
 
     class NotFound < StandardError; end
     class CouldNotBeApplied < StandardError; end
@@ -52,18 +52,21 @@ module Installation
     DEFAULT_STORE_PATH = Pathname("/download")
     # Directory to mount the update
     DEFAULT_MOUNT_PATH = Pathname("/mounts")
+    # Default instsys.parts file
+    DEFAULT_INSTSYS_PARTS = Pathname("/etc/instsys.parts")
 
     # Constructor
     #
-    # @param uri           [URI]      Repository URI
-    # @param download_path [Pathname] Path to store update
-    def initialize(uri)
+    # @param uri                [URI]      Repository URI
+    # @param instsys_parts_path [Pathname] Path to instsys.parts file
+    def initialize(uri, instsys_parts_path = DEFAULT_INSTSYS_PARTS)
       Yast.import "Pkg"
 
       @uri = uri
       @repo_id = add_repo
       @paths = nil
       @packages = nil
+      @instsys_parts_path = instsys_parts_path
     end
 
     # TODO: it should be changed as soon as the signature checking is implemented.
@@ -126,6 +129,7 @@ module Installation
         mountpoint = next_name(mount_path, length: 4)
         mount_squashfs(path, mountpoint)
         adddir(mountpoint)
+        update_instsys_parts(path, mountpoint)
       end
     end
 
@@ -239,6 +243,18 @@ module Installation
       dirs = dirs.map { |d| d.sub(prefix, "") } unless prefix.empty?
       number = dirs.empty? ? 0 : dirs.map(&:to_i).max + 1
       basedir.join(format("#{prefix}%0#{length}d", number))
+    end
+
+    # Register a mounted filesystem in instsys.parts file
+    #
+    # @param path       [Pathname] Filesystem to mount
+    # @param mountpoint [Pathname] Mountpoint
+    #
+    # @see instsys_parts_path
+    def update_instsys_parts(path, mountpoint)
+      instsys_parts_path.open("a") do |f|
+        f.puts "#{path.relative_path_from(Pathname("/"))} #{mountpoint}"
+      end
     end
   end
 end
