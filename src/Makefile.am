@@ -86,7 +86,6 @@ ynclude_DATA = \
 scrconf_DATA = \
   scrconf/cfg_boot.scr \
   scrconf/cfg_windowmanager.scr \
-  scrconf/proc_modules.scr \
   scrconf/cfg_fam.scr \
   scrconf/etc_install_inf_options.scr \
   scrconf/etc_passwd.scr \
