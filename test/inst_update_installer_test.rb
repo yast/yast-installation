@@ -149,37 +149,5 @@ describe Yast::InstUpdateInstaller do
         expect(subject.update_installer).to eq(false)
       end
     end
-
-    context "when signature is not OK" do
-      let(:all_signed?) { false }
-
-      context "when secure mode is disabled" do
-        let(:insecure) { "1" }
-
-        it "applies the update" do
-          expect(manager).to receive(:apply_all)
-          expect(subject.update_installer).to eq(true)
-        end
-      end
-
-      context "when secure mode is enabled" do
-        let(:insecure) { nil }
-        let(:unsigned_update) { double("update", uri: real_url, signature_status: :error) }
-
-        before { allow(manager).to receive(:updates).and_return([unsigned_update]) }
-
-        it "does not apply the update if the user refuses" do
-          expect(Yast::Popup).to receive(:AnyQuestion).and_return(false)
-          expect(manager).to_not receive(:apply_all)
-          expect(subject.update_installer).to eq(false)
-        end
-
-        it "applies the update if the user confirms" do
-          expect(Yast::Popup).to receive(:AnyQuestion).and_return(true)
-          expect(manager).to receive(:apply_all)
-          expect(subject.update_installer).to eq(true)
-        end
-      end
-    end
   end
 end

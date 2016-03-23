@@ -73,10 +73,5 @@ module Installation
       repositories.each(&:apply)
       driver_updates.each(&:apply)
     end
-
-    # TODO: to remove/update as soon as the signatures checking is implemented
-    def all_signed?
-      true
-    end
   end
 end

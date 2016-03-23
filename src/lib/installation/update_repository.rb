@@ -69,11 +69,6 @@ module Installation
       @instsys_parts_path = instsys_parts_path
     end
 
-    # TODO: it should be changed as soon as the signature checking is implemented.
-    def signed?
-      true
-    end
-
     # Retrieves the list of packages to install
     #
     # Only packages in the update repository are considered.  Packages are

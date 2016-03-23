@@ -143,19 +143,6 @@ module Yast
       Linuxrc.InstallInf("Insecure") == "1" # Insecure mode is enabled
     end
 
-    # Ask the user if she/he wants to apply the update although it's not properly signed
-    #
-    # @return [Boolean] true if user answered 'Yes'; false otherwise.
-    def ask_insecure?
-      Popup.AnyQuestion(
-        Label::WarningMsg(),
-        signatures_error_message,
-        Label.YesButton,
-        Label.NoButton,
-        :focus_no
-      )
-    end
-
     # Tries to update the installer
     #
     # It also shows feedback to the user.
@@ -179,7 +166,6 @@ module Yast
     #
     # @return [Boolean] true if the update was applied; false otherwise
     def apply_update
-      return false unless applicable?
       log.info("Applying installer updates")
       updates_manager.apply_all
       true
@@ -202,47 +188,9 @@ module Yast
       !installer_updated? && self_update_enabled? && NetworkService.isNetworkRunning
     end
 
-    # Check whether the update is allowed to be applied
-    #
-    # It should be applied when one of these requirements is met:
-    #
-    # * All updates are signed.
-    # * We're running in insecure mode (so we don't need them to be signed).
-    # * The user requests to install it although is not signed.
-    #
-    # @return [Boolean] true if it should be applied; false otherwise.
-    def applicable?
-      updates_manager.all_signed? || insecure_mode? || ask_insecure?
-    end
-
     # Determines whether the given URL is equals to the default one
     def using_default_url?
       self_update_url_from_control == self_update_url
-    end
-
-    # Builds an error message when signatures are invalid
-    #
-    # @return [String] Error message
-    def signatures_error_message
-      # UpdatesManager support several updates to be applied. But this client
-      # does not take advantage of that feature yet.
-      update = updates_manager.updates.first
-      reason =
-        case update.signature_status
-        when :error
-          # TRANSLATORS: %s will be replaced by an URL which should contain the update.
-          format(_("Installer update at %s can't be verified."), update.uri)
-        when :missing
-          # TRANSLATORS: %s will be replaced by an URL which should contain the update.
-          format(_("Installer update at %s is not signed."), update.uri)
-        else
-          # TRANSLATORS: %s will be replaced by an URL which should contain the update.
-          format(_("An error occurred while verifying the signature of update at %s"), update.uri)
-        end
-      # TRANSLATORS: Popup question, %s contains the details about the failed
-      # signature verification
-      format(_("%s\n\nUsing this update may put the integrity of your system at risk.\n" \
-        "Use it anyway?"), reason)
     end
   end
 end
