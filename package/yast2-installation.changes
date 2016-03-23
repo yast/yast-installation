@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Mar 23 16:32:31 UTC 2016 - cwh@suse.com
+
+- Moved proc_modules.scr to yast2.rpm to avoid that yast-sound
+  depends on yast-installation (bsc#972310)
+- 3.1.176
+
+-------------------------------------------------------------------
 Tue Mar 15 07:41:01 UTC 2016 - knut.anderssen@suse.com
 
 - Added automatic update during installation (FATE#319716)
