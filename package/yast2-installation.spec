@@ -216,7 +216,6 @@ systemctl enable YaST2-Firstboot.service
 %{yast_scrconfdir}/etc_install_inf.scr
 %{yast_scrconfdir}/etc_install_inf_alias.scr
 %{yast_scrconfdir}/etc_install_inf_options.scr
-%{yast_scrconfdir}/proc_modules.scr
 %{yast_scrconfdir}/run_df.scr
 # fillup
 /var/adm/fillup-templates/sysconfig.security-checksig
