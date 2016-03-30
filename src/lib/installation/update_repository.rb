@@ -15,6 +15,7 @@
 require "yast"
 require "tempfile"
 require "pathname"
+require "fileutils"
 
 module Installation
   # Represents a update repository
@@ -146,13 +147,28 @@ module Installation
     # @see #apply
     def fetch_package(package, dir)
       workdir = Dir.mktmpdir
-      package_path = Yast::Pkg.SourceProvideFile(repo_id, 0, package["path"])
-      extract(package_path, workdir)
+      fun_ref = Yast::FunRef.new(method(:copy_file_to_tempfile), "boolean(string)")
+      package_path = Yast::Pkg.ProvidePackage(repo_id, package["name"], fun_ref)
+      extract(Pathname(package_path), workdir)
       squashed_path = next_name(dir, length: 3)
       build_squashfs(workdir, squashed_path)
       squashed_path
     ensure
       FileUtils.remove_entry(workdir)
+    end
+
+    # Copy a given package to a tempfile
+    #
+    # This method will be used as a callback for Yast::Pkg.ProvidePackage
+    #
+    # @param source [String] Path to the original file
+    # @return [String] Path to the tempfile
+    def copy_file_to_tempfile(source)
+      tempfile = Tempfile.new(File.basename(source))
+      tempfile.close
+      log.info("Copying '#{source}' to '#{tempfile.path}")
+      FileUtils.cp(source, tempfile.path)
+      tempfile.path
     end
 
     # Extract a RPM content to a given directory

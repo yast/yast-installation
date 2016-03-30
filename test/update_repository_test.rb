@@ -73,7 +73,9 @@ describe Installation::UpdateRepository do
       { "name" => "pkg1", "path" => "./x86_64/pkg1-3.1.x86_64.rpm", "source" => repo_id }
     end
 
+    let(:libzypp_package_path) { "/var/adm/tmp/pkg1-3.1.x86_64.rpm" }
     let(:package_path) { "/var/adm/tmp/pkg1-3.1.x86_64.rpm" }
+    let(:tempfile) { double("tempfile", close: true, path: package_path) }
 
     before do
       allow(repo).to receive(:add_repo).and_return(repo_id)
@@ -82,10 +84,15 @@ describe Installation::UpdateRepository do
     end
 
     it "builds one squashed filesystem by package" do
+      allow(FileUtils).to receive(:cp).with(libzypp_package_path, package_path)
+      allow(Tempfile).to receive(:new).and_return(tempfile)
+
       # Download
-      expect(Yast::Pkg).to receive(:SourceProvideFile)
-        .with(repo_id, 0, package["path"])
-        .and_return(package_path)
+      expect(Yast::Pkg).to receive(:ProvidePackage)
+        .with(repo_id, package["name"], kind_of(Yast::FunRef)) do |args|
+          subject.send(:copy_file_to_tempfile, libzypp_package_path)
+        end
+
       # Extract
       expect(Yast::SCR).to receive(:Execute)
         .with(Yast::Path.new(".target.bash_output"), /rpm2cpio.*#{package_path}/)
