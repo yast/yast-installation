@@ -49,23 +49,29 @@ module Installation
     # Add an update repository
     #
     # @param uri [URI] URI where the repository lives
-    # @return [Array<UpdateRepository>,false] List of update repositories.
-    #   If the repository is not found, it returns false.
+    # @return [Symbol] :ok if the repository was added;
+    #                  :not_found if it wasn't found a valid repository;
+    #                  :error if some error happened when fetching the update.
     #
     # @see Installation::UpdateRepository
     def add_repository(uri)
       new_repository = Installation::UpdateRepository.new(uri)
       new_repository.fetch
       @repositories << new_repository
-    rescue Installation::UpdateRepository::NotFound
-      log.error("Update repository at #{uri} could not be found")
-      false
+      :ok
+    rescue Installation::UpdateRepository::ValidRepoNotFound
+      log.warn("Update repository at #{uri} could not be found")
+      :not_found
+    rescue Installation::UpdateRepository::CouldNotProbeRepo,
+           Installation::UpdateRepository::CouldNotRefreshRepo
+      log.error("Update repository at #{uri} was found but update could not be fetched")
+      :error
     end
 
     # Applies all the updates
     #
-    # It delegates the responsiability of updating the inst-sys to
-    # added repositories.
+    # It delegates the responsability of updating the inst-sys to
+    # added repositories and driver updates.
     #
     # @see Installation::UpdateRepository#apply
     # @see #repositories

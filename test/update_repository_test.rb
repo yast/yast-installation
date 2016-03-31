@@ -18,8 +18,11 @@ describe Installation::UpdateRepository do
   let(:download_path) { TEMP_DIR.join("download") }
   let(:updates_path) { TEMP_DIR.join("mounts") }
   let(:tmpdir) { TEMP_DIR.join("tmp") }
+  let(:probed) { "RPMMD" }
+  let(:packages) { [] }
 
   before do
+    allow(Yast::Pkg).to receive(:RepositoryProbe).with(uri.to_s, "/").and_return(probed)
     allow(Yast::Pkg).to receive(:RepositoryAdd)
       .with(hash_including("base_urls" => [uri.to_s]))
       .and_return(repo_id)
@@ -39,6 +42,32 @@ describe Installation::UpdateRepository do
     before do
       allow(Yast::Pkg).to receive(:ResolvableProperties).with("", :package, "")
         .and_return(packages)
+    end
+
+    context "when the repository type can't be determined" do
+      let(:probed) { "NONE" }
+
+      it "raises a ValidRepoNotFound error" do
+        expect { subject.packages }.to raise_error(Installation::UpdateRepository::ValidRepoNotFound)
+      end
+    end
+
+    context "when the repository can't be probed" do
+      let(:probed) { nil }
+
+      it "raises a CouldNotProbeRepo error" do
+        expect { subject.packages }.to raise_error(Installation::UpdateRepository::CouldNotProbeRepo)
+      end
+    end
+
+    context "when repository cannot be refreshed" do
+      before do
+        allow(Yast::Pkg).to receive(:SourceRefreshNow).and_return(nil)
+      end
+
+      it "raises a CouldNotRefreshRepo error" do
+        expect { subject.packages }.to raise_error(Installation::UpdateRepository::CouldNotRefreshRepo)
+      end
     end
 
     context "when the repo does not have packages" do
@@ -103,6 +132,16 @@ describe Installation::UpdateRepository do
         .and_return("exit" => 0, "stdout" => "", "stderr" => "")
 
       repo.fetch(download_path)
+    end
+
+    context "when a package can't be retrieved" do
+      before do
+        allow(Yast::Pkg).to receive(:ProvidePackage).and_return(nil)
+      end
+
+      it "raises a CouldNotBeApplied error" do
+        expect { repo.fetch(download_path) }.to raise_error(Installation::UpdateRepository::CouldNotBeApplied)
+      end
     end
   end
 

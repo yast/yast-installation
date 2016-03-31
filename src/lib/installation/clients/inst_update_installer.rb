@@ -32,6 +32,7 @@ module Yast
     Yast.import "Popup"
     Yast.import "Report"
     Yast.import "NetworkService"
+    Yast.import "Pkg"
 
     def main
       textdomain "installation"
@@ -136,13 +137,6 @@ module Yast
       File.join(Directory.vardir, UPDATED_FLAG_FILENAME)
     end
 
-    # Determines whether the update is running in insecure mode
-    #
-    # @return [Boolean] true if running in insecure mode; false otherwise.
-    def insecure_mode?
-      Linuxrc.InstallInf("Insecure") == "1" # Insecure mode is enabled
-    end
-
     # Tries to update the installer
     #
     # It also shows feedback to the user.
@@ -158,8 +152,12 @@ module Yast
     def fetch_update
       ret = updates_manager.add_repository(self_update_url)
       log.info("Adding update from #{self_update_url} (ret = #{ret})")
-      Report.Error(_("Update could not be found")) unless ret || using_default_url?
-      ret
+      if ret == :not_found && !using_default_url? # not found (quite expected)
+        Report.Error(_("A valid update could not be found at #{self_update_url}"))
+      elsif ret == :error # found but an error occurred
+        Report.Error(_("Could not read update information from #{self_update_url}"))
+      end
+      ret == :ok
     end
 
     # Apply the updates and shows feedback information
