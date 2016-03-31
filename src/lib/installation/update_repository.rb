@@ -151,8 +151,6 @@ module Installation
     end
 
     # Release the repository
-    #
-    # @param [Integer] Repository Id
     def cleanup
       Yast::Pkg.SourceDelete(repo_id)
     end

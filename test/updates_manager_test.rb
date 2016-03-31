@@ -12,8 +12,8 @@ describe Installation::UpdatesManager do
 
   let(:uri) { URI("http://updates.opensuse.org/sles12.dud") }
 
-  let(:repo0) { double("repo0", apply: true) }
-  let(:repo1) { double("repo1", apply: true) }
+  let(:repo0) { double("repo0", apply: true, cleanup: true) }
+  let(:repo1) { double("repo1", apply: true, cleanup: true) }
   let(:dud0)  { double("dud0", apply: true) }
 
   describe "#add_repository" do
@@ -102,6 +102,8 @@ describe Installation::UpdatesManager do
     it "applies all the updates" do
       expect(repo0).to receive(:apply)
       expect(repo1).to receive(:apply)
+      expect(repo0).to receive(:cleanup)
+      expect(repo1).to receive(:cleanup)
       manager.apply_all
     end
 

@@ -78,6 +78,7 @@ module Installation
     def apply_all
       repositories.each(&:apply)
       driver_updates.each(&:apply)
+      repositories.each(&:cleanup)
     end
   end
 end
