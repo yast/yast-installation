@@ -238,7 +238,7 @@ module Installation
       raise CouldNotProbeRepo if status == :error
       new_repo_id = Yast::Pkg.RepositoryAdd("base_urls" => [uri.to_s],
                                             "enabled" => true, "autorefresh" => true)
-      log.info("Added repository #{uri.to_s} as '#{new_repo_id}'")
+      log.info("Added repository #{uri} as '#{new_repo_id}'")
       if Yast::Pkg.SourceRefreshNow(new_repo_id) && Yast::Pkg.SourceLoad
         new_repo_id
       else
@@ -260,7 +260,7 @@ module Installation
       log.info("Probed repository #{uri}: #{probed}")
       if probed == "NONE"
         :not_found
-      elsif probed.kind_of?(String)
+      elsif probed.is_a?(String)
         :ok
       else
         log.warn("Status of repository at #{uri} cannot be determined")

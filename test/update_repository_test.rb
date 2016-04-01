@@ -121,7 +121,7 @@ describe Installation::UpdateRepository do
 
       # Download
       expect(Yast::Pkg).to receive(:ProvidePackage)
-        .with(repo_id, package["name"], kind_of(Yast::FunRef)) do |args|
+        .with(repo_id, package["name"], kind_of(Yast::FunRef)) do |_args|
           subject.send(:copy_file_to_tempfile, libzypp_package_path)
         end
 

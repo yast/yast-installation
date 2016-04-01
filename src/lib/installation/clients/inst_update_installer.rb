@@ -32,7 +32,6 @@ module Yast
     Yast.import "Popup"
     Yast.import "Report"
     Yast.import "NetworkService"
-    Yast.import "Pkg"
 
     def main
       textdomain "installation"
