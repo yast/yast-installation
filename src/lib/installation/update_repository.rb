@@ -17,7 +17,8 @@ require "pathname"
 require "fileutils"
 
 module Installation
-  # Represents a update repository
+  # Represents a update repository to be used during self-update
+  # (check doc/SELF_UPDATE.md for details).
   #
   # @example Fetching and applying an update
   #   repo = UpdateRepository.new(URI("http://update.opensuse.org/42.1"))
@@ -31,7 +32,14 @@ module Installation
   class UpdateRepository
     include Yast::Logger
 
-    attr_reader :uri, :repo_id, :paths, :instsys_parts_path
+    # @return [URI] URI of the repository
+    attr_reader :uri
+    # @return [Fixnum] libzypp ID of the repository
+    attr_reader :repo_id
+    # @return [Array<Pathname>] local paths of packages fetched from the repo
+    attr_reader :paths
+    # @return [Pathname] Registry of inst-sys updated parts
+    attr_reader :instsys_parts_path
 
     # A valid repository was not found (usually the repository
     # type could no be determined altough it exists).
@@ -306,6 +314,8 @@ module Installation
     end
 
     # Register a mounted filesystem in instsys.parts file
+    #
+    # It's intended to help when debugging problems in inst-sys.
     #
     # @param path       [Pathname] Filesystem to mount
     # @param mountpoint [Pathname] Mountpoint
