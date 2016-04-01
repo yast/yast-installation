@@ -48,7 +48,8 @@ describe Installation::UpdateRepository do
       let(:probed) { "NONE" }
 
       it "raises a ValidRepoNotFound error" do
-        expect { subject.packages }.to raise_error(Installation::UpdateRepository::ValidRepoNotFound)
+        expect { subject.packages }
+          .to raise_error(Installation::UpdateRepository::ValidRepoNotFound)
       end
     end
 
@@ -56,7 +57,8 @@ describe Installation::UpdateRepository do
       let(:probed) { nil }
 
       it "raises a CouldNotProbeRepo error" do
-        expect { subject.packages }.to raise_error(Installation::UpdateRepository::CouldNotProbeRepo)
+        expect { subject.packages }
+          .to raise_error(Installation::UpdateRepository::CouldNotProbeRepo)
       end
     end
 
@@ -66,7 +68,8 @@ describe Installation::UpdateRepository do
       end
 
       it "raises a CouldNotRefreshRepo error" do
-        expect { subject.packages }.to raise_error(Installation::UpdateRepository::CouldNotRefreshRepo)
+        expect { subject.packages }
+          .to raise_error(Installation::UpdateRepository::CouldNotRefreshRepo)
       end
     end
 
@@ -139,8 +142,34 @@ describe Installation::UpdateRepository do
         allow(Yast::Pkg).to receive(:ProvidePackage).and_return(nil)
       end
 
-      it "raises a CouldNotBeApplied error" do
-        expect { repo.fetch(download_path) }.to raise_error(Installation::UpdateRepository::CouldNotBeApplied)
+      it "raises a PackageNotFound error" do
+        expect { repo.fetch(download_path) }
+          .to raise_error(Installation::UpdateRepository::PackageNotFound)
+      end
+    end
+
+    context "when a package can't be extracted" do
+      it "raises a CouldNotExtractPackage error" do
+        allow(Yast::Pkg).to receive(:ProvidePackage).and_return(libzypp_package_path)
+        allow(Yast::SCR).to receive(:Execute)
+          .with(Yast::Path.new(".target.bash_output"), /rpm2cpio/)
+          .and_return("exit" => 1, "stdout" => "", "stderr" => "")
+
+        expect { repo.fetch(download_path) }
+          .to raise_error(Installation::UpdateRepository::CouldNotExtractPackage)
+      end
+    end
+
+    context "when a package can't be squashed" do
+      it "raises a CouldNotSquashPackage error" do
+        allow(Yast::Pkg).to receive(:ProvidePackage).and_return(libzypp_package_path)
+        allow(Yast::SCR).to receive(:Execute).and_return("exit" => 0)
+        allow(Yast::SCR).to receive(:Execute)
+          .with(Yast::Path.new(".target.bash_output"), /mksquash/)
+          .and_return("exit" => 1, "stdout" => "", "stderr" => "")
+
+        expect { repo.fetch(download_path) }
+          .to raise_error(Installation::UpdateRepository::CouldNotSquashPackage)
       end
     end
   end
@@ -152,11 +181,11 @@ describe Installation::UpdateRepository do
 
     before do
       allow(repo).to receive(:paths).and_return([update_path])
+      allow(repo.instsys_parts_path).to receive(:open).and_yield(file)
+      allow(FileUtils).to receive(:mkdir).with(mount_point)
     end
 
     it "mounts and adds files/dir" do
-      allow(repo.instsys_parts_path).to receive(:open)
-      expect(FileUtils).to receive(:mkdir).with(mount_point)
       # mount
       expect(Yast::SCR).to receive(:Execute)
         .with(Yast::Path.new(".target.bash_output"), /mount.+#{update_path}.+#{mount_point}/)
@@ -166,17 +195,36 @@ describe Installation::UpdateRepository do
         .with(Yast::Path.new(".target.bash_output"), /adddir #{mount_point} \//)
         .and_return("exit" => 0)
 
+      expect(file).to receive(:puts)
       repo.apply(updates_path)
     end
 
     it "adds mounted filesystem to instsys.parts file" do
-      allow(repo.instsys_parts_path).to receive(:open).and_yield(file)
-      allow(FileUtils).to receive(:mkdir).with(mount_point)
-      allow(Yast::SCR).to receive(:Execute)
-        .with(any_args)
-        .and_return("exit" => 0)
+      allow(Yast::SCR).to receive(:Execute).and_return("exit" => 0)
       expect(file).to receive(:puts).with(%r{\Adownload/yast_000.+yast_0000})
       repo.apply(updates_path)
+    end
+
+    context "when a squashed package can't be mounted" do
+      it "raises a CouldNotSquashPackage error" do
+        allow(Yast::SCR).to receive(:Execute).and_return("exit" => 0)
+        allow(Yast::SCR).to receive(:Execute)
+          .with(Yast::Path.new(".target.bash_output"), /mount/)
+          .and_return("exit" => 1, "stdout" => "", "stderr" => "")
+        expect { repo.apply(updates_path) }
+          .to raise_error(Installation::UpdateRepository::CouldNotMountUpdate)
+      end
+    end
+
+    context "when files can't be added to inst-sys" do
+      it "raises a CouldNotBeApplied error" do
+        allow(Yast::SCR).to receive(:Execute).with(any_args).and_return("exit" => 0)
+        allow(Yast::SCR).to receive(:Execute)
+          .with(Yast::Path.new(".target.bash_output"), /adddir/)
+          .and_return("exit" => 1, "stdout" => "", "stderr" => "")
+        expect { repo.apply(updates_path) }
+          .to raise_error(Installation::UpdateRepository::CouldNotBeApplied)
+      end
     end
   end
 
