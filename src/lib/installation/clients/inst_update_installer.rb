@@ -22,6 +22,7 @@ module Yast
     include Yast::I18n
 
     UPDATED_FLAG_FILENAME = "installer_updated"
+    REMOTE_SCHEMES = ["http", "https", "ftp", "nfs", "cifs", "smb"]
 
     Yast.import "Arch"
     Yast.import "Directory"
@@ -138,34 +139,60 @@ module Yast
 
     # Tries to update the installer
     #
-    # It also shows feedback to the user.
+    # It also shows feedback to the user in case of error.
+    #
+    # Errors handling:
+    #
+    # * A repository is not found: warn the user if she/he is using
+    #   a custom URL.
+    # * Could not fetch update from repository: report the user about
+    #   this error.
+    # * Repository could not be probed: suggest checking network
+    #   configuration if URL has a REMOTE_SCHEME.
     #
     # @return [Boolean] true if installer was updated; false otherwise.
     def update_installer
-      fetch_update ? apply_update : false
-    end
-
-    # Fetch updates from self_update_url
-    #
-    # @return [Boolean] true if update was fetched successfully; false otherwise.
-    def fetch_update
-      ret = updates_manager.add_repository(self_update_url)
-      log.info("Adding update from #{self_update_url} (ret = #{ret})")
-      if ret == :not_found && !using_default_url? # not found (quite expected)
-        Report.Error(_("A valid update could not be found at #{self_update_url}"))
-      elsif ret == :error # found but an error occurred
-        Report.Error(_("Could not read update information from #{self_update_url}"))
-      end
-      ret == :ok
-    end
-
-    # Apply the updates and shows feedback information
-    #
-    # @return [Boolean] true if the update was applied; false otherwise
-    def apply_update
+      log.info("Adding update from #{self_update_url}")
+      updates_manager.add_repository(self_update_url)
       log.info("Applying installer updates")
       updates_manager.apply_all
       true
+
+    rescue ::Installation::UpdatesManager::ValidRepoNotFound
+      Report.Error(_("A valid update could not be found at #{self_update_url}")) unless using_default_url?
+      false
+
+    rescue ::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo
+      Report.Error(_("Could not fetch update from #{self_update_url}"))
+      false
+
+    rescue ::Installation::UpdatesManager::CouldNotProbeRepo
+      retry if remote_self_update_url? && configure_network?
+      false
+    end
+
+    # Determine whether the URL is remote
+    #
+    # @return [Boolean] true if it's considered remote; false otherwise.
+    def remote_self_update_url?
+      REMOTE_SCHEMES.include?(self_update_url.scheme)
+    end
+
+    # Launch the network configuration client on users' demand
+    #
+    # Ask the user about checking network configuration. If she/he accepts,
+    # the `inst_lan` client will be launched.
+    #
+    # @return [Boolean] true if the network configuration client was launched;
+    #                   false if the network is not configured.
+    def configure_network?
+      if Popup.YesNo(_("There was a problem reading the updates repository. "\
+                       "Would you like to check your network configuration?"))
+        Yast::WFM.CallFunction("inst_lan", [{ "skip_detection" => true }])
+        true
+      else
+        false
+      end
     end
 
     # Check whether the update should be performed
@@ -186,6 +213,8 @@ module Yast
     end
 
     # Determines whether the given URL is equals to the default one
+    #
+    # @return [Boolean] true if it's the default URL; false otherwise.
     def using_default_url?
       self_update_url_from_control == self_update_url
     end

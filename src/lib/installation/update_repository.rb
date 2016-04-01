@@ -24,44 +24,65 @@ module Installation
   #   repo = UpdateRepository.new(URI("http://update.opensuse.org/42.1"))
   #   repo.fetch
   #   repo.apply
+  #   repo.cleanup
   #
   # @example Fetching and applying to non-standard places
   #   repo = UpdateRepository.new(URI("http://update.opensuse.org/42.1"))
   #   repo.fetch(Pathname("/downloading"))
   #   repo.apply(Pathname("/updates"))
+  #   repo.cleanup
   class UpdateRepository
     include Yast::Logger
 
     # @return [URI] URI of the repository
     attr_reader :uri
-    # @return [Fixnum] libzypp ID of the repository
+    # @return [Fixnum] yast2-pkg-bindings ID of the repository
     attr_reader :repo_id
-    # @return [Array<Pathname>] local paths of packages fetched from the repo
-    attr_reader :paths
     # @return [Pathname] Registry of inst-sys updated parts
     attr_reader :instsys_parts_path
+    # @return [Array<Pathname>] local paths of updates fetched from the repo
+    attr_reader :update_files
 
-    # A valid repository was not found (usually the repository
-    # type could no be determined altough it exists).
+    # A valid repository was not found (altough the URL exists,
+    # repository type cannot be determined).
     class ValidRepoNotFound < StandardError; end
-    # The repository could not be probed (some error occurred,
-    # including network errors).
+
+    # Error while trying to fetch the update (used to group fetching
+    # errors).
+    class FetchError < StandardError; end
+
+    # The repository could not be probed (it includes network errors).
     class CouldNotProbeRepo < StandardError; end
+
     # The repository could not be refreshed, so metadata is not
     # available.
-    class CouldNotRefreshRepo < StandardError; end
-    # Some package from the update repository is missing.
-    class PackageNotFound < StandardError; end
-    # Some package could not be extracted.
-    class CouldNotExtractPackage < StandardError; end
-    # The squashed filesystem could not be created.
-    class CouldNotSquashPackage < StandardError; end
+    class CouldNotRefreshRepo < FetchError; end
+
+    # Updates could not be fetched (missing packages, network errors,
+    # content from packages could not be extracted and so on).
+    class CouldNotFetchUpdate < FetchError; end
+
     # The squashed filesystem could not be mounted.
     class CouldNotMountUpdate < StandardError; end
+
     # The inst-sys could not be updated.
     class CouldNotBeApplied < StandardError; end
+
     # Updates should be fetched before calling to #apply.
     class UpdatesNotFetched < StandardError; end
+
+    #
+    # Internal exceptions (handled internally)
+    #
+    # Some package from the update repository is missing (converted to
+    # CouldNotFetchUpdate).
+    class PackageNotFound < FetchError; end
+    # Some package could not be extracted (converted to
+    # CouldNotFetchUpdate).
+    class CouldNotExtractPackage < FetchError; end
+    # The squashed filesystem could not be created (converted to
+    # CouldNotFetchUpdate).
+    class CouldNotSquashPackage < FetchError; end
 
     # Command to extract an RPM which is part of an update
     EXTRACT_CMD = "rpm2cpio %<source>s | cpio --quiet --sparse -dimu --no-absolute-filenames"
@@ -81,20 +102,20 @@ module Installation
     # Constructor
     #
     # @param uri                [URI]      Repository URI
-    # @param instsys_parts_path [Pathname] Path to instsys.parts file
+    # @param instsys_parts_path [Pathname] Path to instsys.parts registry
     def initialize(uri, instsys_parts_path = DEFAULT_INSTSYS_PARTS)
       Yast.import "Pkg"
 
       @uri = uri
       @repo_id = add_repo
-      @paths = nil
+      @update_files = []
       @packages = nil
       @instsys_parts_path = instsys_parts_path
     end
 
     # Retrieves the list of packages to install
     #
-    # Only packages in the update repository are considered.  Packages are
+    # Only packages in the update repository are considered. Packages are
     # sorted by name (alphabetical order).
     #
     # @return [Array<Hash>] List of packages to install
@@ -114,18 +135,38 @@ module Installation
     # sequentially using three digits and the prefix 'yast'. For example:
     # yast_000, yast_001 and so on.
     #
-    # The object will track updates so they can be applied later.
+    # If a known error occurs, it will be converted to a CouldNotFetchUpdate
+    # exception.
     #
     # @param path [Pathname] Directory to store the updates
     # @return [Pathname] Paths to the updates
     #
     # @see #fetch_package
     # @see #paths
+    # @see #update_files
     # @see DEFAULT_STORE_PATH
+    #
+    # @raise CouldNotFetchUpdate
     def fetch(path = DEFAULT_STORE_PATH)
-      @paths = packages.map do |package|
-        fetch_package(package, path)
+      packages.each_with_object(update_files) do |package, files|
+        files << fetch_package(package, path)
       end
+    rescue PackageNotFound, CouldNotExtractPackage, CouldNotSquashPackage => e
+      log.error("Could not fetch update: #{e.inspect}. Rolling back.")
+      remove_update_files
+      raise CouldNotFetchUpdate
+    end
+
+    # Remove fetched packages
+    #
+    # Remove fetched packages from the filesystem. This method won't work
+    # if the update is already applied.
+    def remove_update_files
+      log.info("Removing update files: #{update_files}")
+      update_files.each do |path|
+        FileUtils.rm_f(path)
+      end
+      update_files.clear
     end
 
     # Apply updates to inst-sys
@@ -137,13 +178,13 @@ module Installation
     #
     # @param mount_path [Pathname] Directory to mount the update
     #
-    # @raise UpdateNotFetched
+    # @raise UpdatesNotFetched
     #
     # @see #mount_squashfs
     # @see #adddir
     def apply(mount_path = DEFAULT_MOUNT_PATH)
-      raise UpdatesNotFetched if paths.nil?
-      paths.each do |path|
+      raise UpdatesNotFetched if update_files.nil?
+      update_files.each do |path|
         mountpoint = next_name(mount_path, length: 4)
         mount_squashfs(path, mountpoint)
         adddir(mountpoint)
@@ -151,6 +192,8 @@ module Installation
       end
     end
 
+    # Clean-up
+    #
     # Release the repository
     def cleanup
       Yast::Pkg.SourceDelete(repo_id)
@@ -158,7 +201,7 @@ module Installation
 
   private
 
-    # Fetch and build an squashfs filesytem for a given package
+    # Fetch and build a squashfs filesytem for a given package
     #
     # @param package [Hash] Package to retrieve
     # @param dir     [Pathname] Path to store the squashed filesystems
@@ -197,7 +240,7 @@ module Installation
       tempfile.path
     end
 
-    # Extract a RPM content to a given directory
+    # Extract a RPM contents to a given directory
     #
     # @param package_path [String]   RPM local path
     # @param dir          [Pathname] Directory to extract the RPM contents
@@ -212,7 +255,7 @@ module Installation
       end
     end
 
-    # Build an squashfs filesystem from a directory
+    # Build a squashfs filesystem from a directory
     #
     # @param dir  [Pathname] Path to include in the squashed file
     # @param file [Pathname] Path to write the squashed file
@@ -250,7 +293,7 @@ module Installation
     # Check the status of the repository
     #
     # @return [Symbol] :ok the repository looks good
-    #                  :not_found if repository could not be probed;
+    #                  :not_found if repository could not be identified;
     #                  :error if some error occurred (ie. network problems)
     def repo_status
       # According to Pkg.RepositoryProbe documentation:

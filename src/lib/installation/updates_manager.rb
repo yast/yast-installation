@@ -36,11 +36,30 @@ module Installation
   class UpdatesManager
     include Yast::Logger
 
-    attr_reader :repositories, :driver_updates
+    # @return [Array<UpdateRepository>] Repositories containing updates
+    attr_reader :repositories
+
+    # @return [Array<DriverUpdate>] Driver updates found in inst-sys
+    attr_reader :driver_updates
+
+    # The URL was found but a valid repo is not there.
+    class ValidRepoNotFound < StandardError; end
+
+    # The update could not be fetched (missing packages, broken
+    # repository, etc.).
+    class CouldNotFetchUpdateFromRepo < StandardError; end
+
+    # Repo is unreachable (name solving issues, etc.).
+    class CouldNotProbeRepo < StandardError; end
 
     DRIVER_UPDATES_PATH = Pathname("/update")
 
     # Constructor
+    #
+    # At instantiation time, this class looks for existin driver
+    # updates in the given `duds_path`.
+    #
+    # @param duds_path [Pathname] Path where driver updates are supposed to live
     def initialize(duds_path = DRIVER_UPDATES_PATH)
       @repositories = []
       @driver_updates = Installation::DriverUpdate.find(duds_path)
@@ -48,24 +67,30 @@ module Installation
 
     # Add an update repository
     #
+    # Most of exceptions coming from Installation::UpdateRepository are
+    # catched, except those that has something to do with applying
+    # the update itself (mounting or adding files to inst-sys). Check
+    # Installation::UpdateRepository::CouldNotMountUpdate and
+    # Installation::UpdateRepository::CouldNotBeApplied for more
+    # information.
+    #
     # @param uri [URI] URI where the repository lives
-    # @return [Symbol] :ok if the repository was added;
-    #                  :not_found if it wasn't found a valid repository;
-    #                  :error if some error happened when fetching the update.
+    # @return [Array<UpdateRepository] Array of repositories to be applied
     #
     # @see Installation::UpdateRepository
     def add_repository(uri)
       new_repository = Installation::UpdateRepository.new(uri)
       new_repository.fetch
       @repositories << new_repository
-      :ok
     rescue Installation::UpdateRepository::ValidRepoNotFound
       log.warn("Update repository at #{uri} could not be found")
-      :not_found
-    rescue Installation::UpdateRepository::CouldNotProbeRepo,
-           Installation::UpdateRepository::CouldNotRefreshRepo
+      raise ValidRepoNotFound
+    rescue Installation::UpdateRepository::FetchError
       log.error("Update repository at #{uri} was found but update could not be fetched")
-      :error
+      raise CouldNotFetchUpdateFromRepo
+    rescue Installation::UpdateRepository::CouldNotProbeRepo
+      log.error("Update repository at #{uri} could not be read")
+      raise CouldNotProbeRepo
     end
 
     # Applies all the updates
@@ -74,10 +99,10 @@ module Installation
     # added repositories and driver updates.
     #
     # @see Installation::UpdateRepository#apply
+    # @see Installation::DriverUpdate#apply
     # @see #repositories
     def apply_all
-      repositories.each(&:apply)
-      driver_updates.each(&:apply)
+      (repositories + driver_updates).each(&:apply)
       repositories.each(&:cleanup)
     end
   end

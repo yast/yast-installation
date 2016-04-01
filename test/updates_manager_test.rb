@@ -17,36 +17,33 @@ describe Installation::UpdatesManager do
   let(:dud0)  { double("dud0", apply: true) }
 
   describe "#add_repository" do
+    before do
+      allow(Installation::UpdateRepository).to receive(:new).with(uri)
+        .and_return(repo0)
+    end
+
     context "when repository is added successfully" do
       it "returns an array containing all repos" do
-        allow(Installation::UpdateRepository).to receive(:new).with(uri)
-          .and_return(repo0)
         allow(repo0).to receive(:fetch)
-        expect(manager.add_repository(uri)).to eq(:ok)
+        expect(manager.add_repository(uri)).to eq([repo0])
       end
     end
 
-    context "when repository is not found" do
-      it "returns :not_found" do
-        allow(Installation::UpdateRepository).to receive(:new).with(uri)
+    context "when a valid repository is not found" do
+      it "raises a ValidRepoNotFound error" do
+        allow(repo0).to receive(:fetch)
           .and_raise(Installation::UpdateRepository::ValidRepoNotFound)
-        expect(manager.add_repository(uri)).to eq(:not_found)
+        expect { manager.add_repository(uri) }
+          .to raise_error(Installation::UpdatesManager::ValidRepoNotFound)
       end
     end
 
-    context "when repository can not be refreshed" do
-      it "returns :error" do
-        allow(Installation::UpdateRepository).to receive(:new).with(uri)
-          .and_raise(Installation::UpdateRepository::CouldNotRefreshRepo)
-        expect(manager.add_repository(uri)).to eq(:error)
-      end
-    end
-
-    context "when repository can not be probed" do
-      it "returns :error" do
-        allow(Installation::UpdateRepository).to receive(:new).with(uri)
-          .and_raise(Installation::UpdateRepository::CouldNotProbeRepo)
-        expect(manager.add_repository(uri)).to eq(:error)
+    context "when update could not be fetched" do
+      it "raises a CouldNotFetchUpdateFromRepo error" do
+        allow(repo0).to receive(:fetch)
+          .and_raise(Installation::UpdateRepository::FetchError)
+        expect { manager.add_repository(uri) }
+          .to raise_error(Installation::UpdatesManager::CouldNotFetchUpdateFromRepo)
       end
     end
   end

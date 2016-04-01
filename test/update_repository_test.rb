@@ -142,35 +142,49 @@ describe Installation::UpdateRepository do
         allow(Yast::Pkg).to receive(:ProvidePackage).and_return(nil)
       end
 
-      it "raises a PackageNotFound error" do
+      it "clear downloaded files and raises a CouldNotFetchUpdate error" do
+        expect(repo).to receive(:remove_update_files)
         expect { repo.fetch(download_path) }
-          .to raise_error(Installation::UpdateRepository::PackageNotFound)
+          .to raise_error(Installation::UpdateRepository::CouldNotFetchUpdate)
       end
     end
 
     context "when a package can't be extracted" do
-      it "raises a CouldNotExtractPackage error" do
+      it "clear downloaded files and raises a CouldNotFetchUpdate error" do
         allow(Yast::Pkg).to receive(:ProvidePackage).and_return(libzypp_package_path)
         allow(Yast::SCR).to receive(:Execute)
           .with(Yast::Path.new(".target.bash_output"), /rpm2cpio/)
           .and_return("exit" => 1, "stdout" => "", "stderr" => "")
 
+        expect(repo).to receive(:remove_update_files)
         expect { repo.fetch(download_path) }
-          .to raise_error(Installation::UpdateRepository::CouldNotExtractPackage)
+          .to raise_error(Installation::UpdateRepository::CouldNotFetchUpdate)
       end
     end
 
     context "when a package can't be squashed" do
-      it "raises a CouldNotSquashPackage error" do
+      it "clear downloaded files and raises a CouldNotFetchUpdate error" do
         allow(Yast::Pkg).to receive(:ProvidePackage).and_return(libzypp_package_path)
         allow(Yast::SCR).to receive(:Execute).and_return("exit" => 0)
         allow(Yast::SCR).to receive(:Execute)
           .with(Yast::Path.new(".target.bash_output"), /mksquash/)
           .and_return("exit" => 1, "stdout" => "", "stderr" => "")
 
+        expect(repo).to receive(:remove_update_files)
         expect { repo.fetch(download_path) }
-          .to raise_error(Installation::UpdateRepository::CouldNotSquashPackage)
+          .to raise_error(Installation::UpdateRepository::CouldNotFetchUpdate)
       end
+    end
+  end
+
+  describe "#remove_update_files" do
+    let(:update_file) { Pathname.new("yast_001") }
+
+    it "removes downloaded files and clear update_files" do
+      allow(repo).to receive(:update_files).and_return([update_file])
+      expect(FileUtils).to receive(:rm_f).with(update_file)
+      expect(repo.update_files).to receive(:clear)
+      repo.remove_update_files
     end
   end
 
@@ -180,7 +194,7 @@ describe Installation::UpdateRepository do
     let(:file) { double("file") }
 
     before do
-      allow(repo).to receive(:paths).and_return([update_path])
+      allow(repo).to receive(:update_files).and_return([update_path])
       allow(repo.instsys_parts_path).to receive(:open).and_yield(file)
       allow(FileUtils).to receive(:mkdir).with(mount_point)
     end
@@ -206,7 +220,7 @@ describe Installation::UpdateRepository do
     end
 
     context "when a squashed package can't be mounted" do
-      it "raises a CouldNotSquashPackage error" do
+      it "raises a CouldNotMountUpdate error" do
         allow(Yast::SCR).to receive(:Execute).and_return("exit" => 0)
         allow(Yast::SCR).to receive(:Execute)
           .with(Yast::Path.new(".target.bash_output"), /mount/)
