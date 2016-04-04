@@ -21,16 +21,22 @@ module Installation
   # (check doc/SELF_UPDATE.md for details).
   #
   # @example Fetching and applying an update
-  #   repo = UpdateRepository.new(URI("http://update.opensuse.org/42.1"))
-  #   repo.fetch
-  #   repo.apply
-  #   repo.cleanup
+  #   begin
+  #     repo = UpdateRepository.new(URI("http://update.opensuse.org/42.1"))
+  #     repo.fetch
+  #     repo.apply
+  #   ensure
+  #     repo.cleanup
+  #   end
   #
   # @example Fetching and applying to non-standard places
-  #   repo = UpdateRepository.new(URI("http://update.opensuse.org/42.1"))
-  #   repo.fetch(Pathname("/downloading"))
-  #   repo.apply(Pathname("/updates"))
-  #   repo.cleanup
+  #   begin
+  #     repo = UpdateRepository.new(URI("http://update.opensuse.org/42.1"))
+  #     repo.fetch(Pathname("/downloading"))
+  #     repo.apply(Pathname("/updates"))
+  #   ensure
+  #     repo.cleanup
+  #   end
   class UpdateRepository
     include Yast::Logger
 

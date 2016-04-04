@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Apr  4 09:48:42 UTC 2016 - igonzalezsosa@suse.com
+
+- Automatic update during installation will use Zypper repositories
+  instead of Driver Update Disks (FATE#319716).
+- 3.1.177
+
+-------------------------------------------------------------------
 Wed Mar 23 16:32:31 UTC 2016 - cwh@suse.com
 
 - Moved proc_modules.scr to yast2.rpm to avoid that yast-sound

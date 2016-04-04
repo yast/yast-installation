@@ -22,7 +22,7 @@ module Yast
     include Yast::I18n
 
     UPDATED_FLAG_FILENAME = "installer_updated"
-    REMOTE_SCHEMES = ["http", "https", "ftp", "nfs", "cifs", "smb"]
+    REMOTE_SCHEMES = ["http", "https", "ftp", "nfs", "nfs4", "cifs", "smb", "obs"]
 
     Yast.import "Arch"
     Yast.import "Directory"
@@ -159,11 +159,13 @@ module Yast
       true
 
     rescue ::Installation::UpdatesManager::ValidRepoNotFound
-      Report.Error(_("A valid update could not be found at #{self_update_url}")) unless using_default_url?
+      if !using_default_url?
+        Report.Error(format(_("A valid update could not be found at %s."), self_update_url))
+      end
       false
 
     rescue ::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo
-      Report.Error(_("Could not fetch update from #{self_update_url}"))
+      Report.Error(format(_("Could not fetch update from %s."), self_update_url))
       false
 
     rescue ::Installation::UpdatesManager::CouldNotProbeRepo
@@ -186,8 +188,9 @@ module Yast
     # @return [Boolean] true if the network configuration client was launched;
     #                   false if the network is not configured.
     def configure_network?
-      if Popup.YesNo(_("There was a problem reading the updates repository. "\
-                       "Would you like to check your network configuration?"))
+      if Popup.YesNo(
+        format(_("There was a problem reading the updates repository at %s.\n\n"\
+                 "Would you like to check your network configuration?"), self_update_url))
         Yast::WFM.CallFunction("inst_lan", [{ "skip_detection" => true }])
         true
       else
@@ -212,7 +215,7 @@ module Yast
       !installer_updated? && self_update_enabled? && NetworkService.isNetworkRunning
     end
 
-    # Determines whether the given URL is equals to the default one
+    # Determines whether the given URL is equal to the default one
     #
     # @return [Boolean] true if it's the default URL; false otherwise.
     def using_default_url?
