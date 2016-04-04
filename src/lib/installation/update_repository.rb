@@ -195,38 +195,26 @@ module Installation
     #
     # @param package [Hash] Package to retrieve
     # @param dir     [Pathname] Path to store the squashed filesystems
+    # @return [Pathname] Path where the file is stored
     #
     # @see #packages
     # @see #apply
     #
     # @raise PackageNotFound
     def fetch_package(package, dir)
+      tempfile = Tempfile.new(package["name"])
+      tempfile.close
       Dir.mktmpdir do |workdir|
-        fun_ref = Yast::FunRef.new(method(:copy_file_to_tempfile), "boolean(string)")
-        package_path = Yast::Pkg.ProvidePackage(repo_id, package["name"], fun_ref)
-        if package_path.nil?
+        log.info("DEBUG 1")
+        if !Yast::Pkg.ProvidePackage(repo_id, package["name"], tempfile.path.to_s)
           log.error("Package #{package} could not be retrieved.")
           raise PackageNotFound
         end
-        extract(Pathname(package_path), workdir)
-        squashed_path = next_name(dir, length: 3)
-        build_squashfs(workdir, squashed_path)
-        squashed_path
+        extract(tempfile, workdir)
+        build_squashfs(workdir, next_name(dir, length: 3))
       end
-    end
-
-    # Copy a given package to a tempfile
-    #
-    # This method will be used as a callback for Yast::Pkg.ProvidePackage
-    #
-    # @param source [String] Path to the original file
-    # @return [String] Path to the tempfile
-    def copy_file_to_tempfile(source)
-      tempfile = Tempfile.new(File.basename(source))
-      tempfile.close
-      log.info("Copying '#{source}' to '#{tempfile.path}")
-      FileUtils.cp(source, tempfile.path)
-      tempfile.path
+    ensure
+      tempfile.unlink
     end
 
     # Command to extract an RPM which is part of an update
@@ -234,13 +222,13 @@ module Installation
 
     # Extract a RPM contents to a given directory
     #
-    # @param package_path [String]   RPM local path
+    # @param package_path [Pathname] RPM local path
     # @param dir          [Pathname] Directory to extract the RPM contents
     #
     # @raise CouldNotExtractPackage
     def extract(package_path, dir)
       Dir.chdir(dir) do
-        cmd = format(EXTRACT_CMD, source: package_path)
+        cmd = format(EXTRACT_CMD, source: package_path.path)
         out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
         log.info("Extracting package #{package_path}: #{out}")
         raise CouldNotExtractPackage unless out["exit"].zero?
@@ -254,6 +242,7 @@ module Installation
     #
     # @param dir  [Pathname] Path to include in the squashed file
     # @param file [Pathname] Path to write the squashed file
+    # @return [Pathname] Path where the squashed file is written (same as +file+)
     #
     # @raise CouldNotSquashPackage
     def build_squashfs(dir, file)
@@ -261,6 +250,7 @@ module Installation
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
       log.info("Squashing packages into #{file}: #{out}")
       raise CouldNotSquashPackage unless out["exit"].zero?
+      file
     end
 
     # Add the repository to libzypp sources
