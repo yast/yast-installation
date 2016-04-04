@@ -17,34 +17,48 @@ require "yast"
 require "pathname"
 
 module Installation
-  # Represents a driver update disk (DUD)
+  # Represents a driver update.
   #
-  # The DUD will be fetched from a given URL.
+  # This class will handle driver updates which are applied yet.
+  # The main purpose is to re-apply them after the installer's
+  # self-update has been performed.
+  #
+  # At this point, two kinds of driver updates are considered:
+  #
+  # * Driver Update Disks (DUD): a directory containing different
+  #   subdirectories, one of them called inst-sys.
+  # * Packages: are stored in a squashed filesystem which is mounted
+  #   in /mounts directory.
+  #
   class DriverUpdate
     include Yast::Logger
 
     class CouldNotBeApplied < StandardError; end
     class PreScriptFailed < StandardError; end
+    class NotFound < StandardError; end
 
-    # Command to apply the DUD disk to inst-sys
-    APPLY_CMD = "/etc/adddir %<source>s/inst-sys /" # openSUSE/installation-images
-
+    # @return [Pathname] Path to the driver update.
     attr_reader :path
 
+    # @return [Symbol] Kind of driver update (:dud or :archive).
+    attr_reader :kind
+
+    # @return [Pathname] Path to the instsys path of the driver
+    #                    update.
+    attr_reader :instsys_path
+
     class << self
-      # Find driver updates in a given directory
+      # Find driver updates in a given set of directories
       #
-      # A directory with a `dud.config` file will be considered a driver
-      # update.
-      #
-      # @param dir [Pathname] Directory to search for driver updates
+      # @param dirs [Array<Pathname>,Pathname] Directories to search for driver updates
       # @return [Array<DriverUpdate>] Found driver updates
-      def find(dir)
-        log.info("Searching for Driver Updates at #{dir}")
-        Pathname.glob("#{dir}/*/dud.config").map do |path|
-          dud_dir = path.dirname
-          log.info("Found a Driver Update at #{dud_dir}")
-          new(dud_dir)
+      def find(update_dirs)
+        dirs = Array(update_dirs)
+        log.info("Searching for Driver Updates at #{dirs.map(&:to_s)}")
+        globs = dirs.map { |d| d.join("dud_*") }
+        Pathname.glob(globs).map do |path|
+          log.info("Found a Driver Update at #{path}")
+          new(path)
         end
       end
     end
@@ -52,18 +66,28 @@ module Installation
     # Constructor
     #
     # @param path [Pathname] Path to driver update
+    #
+    # @raise NotFound
     def initialize(path)
       @path = path
+      if !path.exist?
+        log.error("Driver Update not found at #{path}")
+        raise NotFound
+      end
+      @kind = path.file? ? :archive : :dud
+      @instsys_path = send("#{@kind}_instsys_path")
     end
 
     # Apply the DUD to inst-sys
     #
     # @see #adddir
-    # @see #run_update_pre
     def apply(pre: false)
-      adddir
-      run_update_pre if pre
+      adddir unless instsys_path.nil?
+      run_update_pre if pre && kind == :dud
     end
+
+    # Command to apply the DUD disk to inst-sys
+    APPLY_CMD = "/etc/adddir %<source>s /" # openSUSE/installation-images
 
     # Add files/directories to the inst-sys
     #
@@ -71,7 +95,7 @@ module Installation
     #
     # @raise CouldNotBeApplied
     def adddir
-      cmd = format(APPLY_CMD, source: path)
+      cmd = format(APPLY_CMD, source: instsys_path)
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
       log.info("Applying update at #{path} (#{cmd}): #{out}")
       raise CouldNotBeApplied unless out["exit"].zero?
@@ -90,6 +114,39 @@ module Installation
       log.info("update.pre script at #{update_pre_path} was executed: #{out}")
       raise PreScriptFailed unless out["exit"].zero?
       true
+    end
+
+  private
+
+    # LOSETUP command
+    LOSETUP_CMD = "/sbin/losetup"
+
+    # Returns the instsys_path for updates of type :archive
+    #
+    # Packages updates have a loopback device attached and are mounted.
+    # So this method searches mount point for the attached device.
+    #
+    # @return [Pathname] Update's mountpoint
+    def archive_instsys_path
+      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), LOSETUP_CMD)
+      log.info("Reading loopback devices: #{out}")
+      regexp = %r{(/dev/loop\d+)[^\n]+#{path.to_s}\n}
+      lodevice = out["stdout"][regexp, 1]
+      mount = Yast::SCR.Read(Yast::Path.new(".proc.mounts")).find { |m| m["spec"] == lodevice }
+      if mount.nil?
+        log.warn("Driver Update at #{path} is not mounted")
+      else
+        Pathname.new(mount["file"])
+      end
+    end
+
+    # Returns the instsys_path for updates of type :dud
+    #
+    # Driver Update Disks are uncompressed and available somewhere.
+    #
+    # @return [Pathname] Path to the inst-sys part of the driver update
+    def dud_instsys_path
+      path.join("inst-sys")
     end
   end
 end

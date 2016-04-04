@@ -53,4 +53,9 @@ Updates signatures will be checked by libzypp. If the signature is not
 correct (or is missing), the user will be asked whether she/he wants to apply
 the update (although it's a security risk).
 
-Signature checking can be ignored setting `insecure=1` in Linuxrc prompt.
+## Self-update and Driver Updates Disks (DUD)
+
+Changes introduced via Driver Updates Disks (applied by Linuxrc) will
+take precedence.  As those changes will be commited prior to YaST
+installer being run, they will be applied again on top of installer
+updates.

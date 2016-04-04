@@ -52,7 +52,7 @@ module Installation
     # Repo is unreachable (name solving issues, etc.).
     class CouldNotProbeRepo < StandardError; end
 
-    DRIVER_UPDATES_PATH = Pathname("/update")
+    DRIVER_UPDATES_PATHS = [Pathname("/update"), Pathname("/download")]
 
     # Constructor
     #
@@ -60,9 +60,9 @@ module Installation
     # updates in the given `duds_path`.
     #
     # @param duds_path [Pathname] Path where driver updates are supposed to live
-    def initialize(duds_path = DRIVER_UPDATES_PATH)
+    def initialize(duds_paths = DRIVER_UPDATES_PATHS)
       @repositories = []
-      @driver_updates = Installation::DriverUpdate.find(duds_path)
+      @driver_updates = Installation::DriverUpdate.find(duds_paths)
     end
 
     # Add an update repository
