@@ -84,26 +84,11 @@ module Installation
     # CouldNotFetchUpdate).
     class CouldNotSquashPackage < FetchError; end
 
-    # Command to extract an RPM which is part of an update
-    EXTRACT_CMD = "rpm2cpio %<source>s | cpio --quiet --sparse -dimu --no-absolute-filenames"
-    # Command to build an squashfs filesystem containing all updates
-    SQUASH_CMD = "mksquashfs %<dir>s %<file>s -noappend -no-progress"
-    # Command to mount squashfs filesystem
-    MOUNT_CMD = "mount %<source>s %<target>s"
-    # Command to apply the DUD disk to inst-sys
-    APPLY_CMD = "/etc/adddir %<source>s /" # openSUSE/installation-images
-    # Directory to store the update
-    DEFAULT_STORE_PATH = Pathname("/download")
-    # Directory to mount the update
-    DEFAULT_MOUNT_PATH = Pathname("/mounts")
-    # Default instsys.parts file
-    DEFAULT_INSTSYS_PARTS = Pathname("/etc/instsys.parts")
-
     # Constructor
     #
     # @param uri                [URI]      Repository URI
     # @param instsys_parts_path [Pathname] Path to instsys.parts registry
-    def initialize(uri, instsys_parts_path = DEFAULT_INSTSYS_PARTS)
+    def initialize(uri, instsys_parts_path = Pathname("/etc/instsys.parts"))
       Yast.import "Pkg"
 
       @uri = uri
@@ -144,10 +129,9 @@ module Installation
     # @see #fetch_package
     # @see #paths
     # @see #update_files
-    # @see DEFAULT_STORE_PATH
     #
     # @raise CouldNotFetchUpdate
-    def fetch(path = DEFAULT_STORE_PATH)
+    def fetch(path = Pathname("/download"))
       packages.each_with_object(update_files) do |package, files|
         files << fetch_package(package, path)
       end
@@ -182,7 +166,7 @@ module Installation
     #
     # @see #mount_squashfs
     # @see #adddir
-    def apply(mount_path = DEFAULT_MOUNT_PATH)
+    def apply(mount_path = Pathname("/mounts"))
       raise UpdatesNotFetched if update_files.nil?
       update_files.each do |path|
         mountpoint = next_name(mount_path, length: 4)
@@ -211,19 +195,18 @@ module Installation
     #
     # @raise PackageNotFound
     def fetch_package(package, dir)
-      workdir = Dir.mktmpdir
-      fun_ref = Yast::FunRef.new(method(:copy_file_to_tempfile), "boolean(string)")
-      package_path = Yast::Pkg.ProvidePackage(repo_id, package["name"], fun_ref)
-      if package_path.nil?
-        log.error("Package #{package} could not be retrieved.")
-        raise PackageNotFound
+      Dir.mktmpdir do |workdir|
+        fun_ref = Yast::FunRef.new(method(:copy_file_to_tempfile), "boolean(string)")
+        package_path = Yast::Pkg.ProvidePackage(repo_id, package["name"], fun_ref)
+        if package_path.nil?
+          log.error("Package #{package} could not be retrieved.")
+          raise PackageNotFound
+        end
+        extract(Pathname(package_path), workdir)
+        squashed_path = next_name(dir, length: 3)
+        build_squashfs(workdir, squashed_path)
+        squashed_path
       end
-      extract(Pathname(package_path), workdir)
-      squashed_path = next_name(dir, length: 3)
-      build_squashfs(workdir, squashed_path)
-      squashed_path
-    ensure
-      FileUtils.remove_entry(workdir)
     end
 
     # Copy a given package to a tempfile
@@ -240,6 +223,9 @@ module Installation
       tempfile.path
     end
 
+    # Command to extract an RPM which is part of an update
+    EXTRACT_CMD = "rpm2cpio %<source>s | cpio --quiet --sparse -dimu --no-absolute-filenames"
+
     # Extract a RPM contents to a given directory
     #
     # @param package_path [String]   RPM local path
@@ -254,6 +240,9 @@ module Installation
         raise CouldNotExtractPackage unless out["exit"].zero?
       end
     end
+
+    # Command to build an squashfs filesystem containing all updates
+    SQUASH_CMD = "mksquashfs %<dir>s %<file>s -noappend -no-progress"
 
     # Build a squashfs filesystem from a directory
     #
@@ -311,6 +300,9 @@ module Installation
       end
     end
 
+    # Command to mount squashfs filesystem
+    MOUNT_CMD = "mount %<source>s %<target>s"
+
     # Mount the squashed filesystem containing updates
     #
     # @param path [Pathname] Mountpoint
@@ -319,12 +311,15 @@ module Installation
     #
     # @see MOUNT_CMD
     def mount_squashfs(file, mountpoint)
-      FileUtils.mkdir(mountpoint) unless mountpoint.exist?
+      FileUtils.mkdir_p(mountpoint) unless mountpoint.exist?
       cmd = format(MOUNT_CMD, source: file.to_s, target: mountpoint.to_s)
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
       log.info("Mounting squashfs system #{file} as #{mountpoint}: #{out}")
       raise CouldNotMountUpdate unless out["exit"].zero?
     end
+
+    # Command to apply the DUD disk to inst-sys
+    APPLY_CMD = "/etc/adddir %<source>s /" # openSUSE/installation-images
 
     # Add files/directories to the inst-sys
     #
@@ -340,18 +335,17 @@ module Installation
 
     # Calculates the next filename
     #
-    # It finds the next name (formed by digits) to be used
-    # in a given directory. For example, '000', '001', etc.
+    # It finds the next name (formed by digits) to be used in a given
+    # directory. For example, 'yast_000', 'yast_001', etc.
     #
     # @param basedir [Pathname] Directory
-    # @param prefix  [String]   Name prefix
-    # @param length  [Integer]  Name's length
+    # @param prefix  [String]   Prefix
+    # @param length  [Integer]  Length
     # @return [Pathname] File name
     def next_name(basedir, prefix: "yast_", length: 3)
       files = Pathname.glob(basedir.join("*")).map(&:basename)
       dirs = files.map(&:to_s).grep(/\A#{prefix}\d+\Z/)
-      dirs = dirs.map { |d| d.sub(prefix, "") } unless prefix.empty?
-      number = dirs.empty? ? 0 : dirs.map(&:to_i).max + 1
+      number = dirs.size
       basedir.join(format("#{prefix}%0#{length}d", number))
     end
 

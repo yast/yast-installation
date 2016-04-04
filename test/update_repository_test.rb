@@ -31,6 +31,8 @@ describe Installation::UpdateRepository do
   end
 
   describe "#packages" do
+    after { FileUtils.rm_rf(TEMP_DIR) }
+
     let(:package) do
       { "name" => "pkg1", "path" => "./x86_64/pkg1-3.1.x86_64.rpm", "source" => repo_id }
     end
@@ -112,7 +114,7 @@ describe Installation::UpdateRepository do
     before do
       allow(repo).to receive(:add_repo).and_return(repo_id)
       allow(repo).to receive(:packages).and_return([package])
-      allow(Dir).to receive(:mktmpdir).and_return(tmpdir.to_s)
+      allow(Dir).to receive(:mktmpdir).and_yield(tmpdir.to_s)
     end
 
     it "builds one squashed filesystem by package" do
@@ -196,7 +198,7 @@ describe Installation::UpdateRepository do
     before do
       allow(repo).to receive(:update_files).and_return([update_path])
       allow(repo.instsys_parts_path).to receive(:open).and_yield(file)
-      allow(FileUtils).to receive(:mkdir).with(mount_point)
+      allow(FileUtils).to receive(:mkdir_p).with(mount_point)
     end
 
     it "mounts and adds files/dir" do
