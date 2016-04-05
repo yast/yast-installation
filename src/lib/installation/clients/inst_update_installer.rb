@@ -158,7 +158,7 @@ module Yast
       updates_manager.apply_all
       true
 
-    rescue ::Installation::UpdatesManager::ValidRepoNotFound
+    rescue ::Installation::UpdatesManager::NotValidRepo
       if !using_default_url?
         Report.Error(format(_("A valid update could not be found at %s."), self_update_url))
       end

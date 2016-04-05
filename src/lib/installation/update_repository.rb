@@ -51,7 +51,7 @@ module Installation
 
     # A valid repository was not found (altough the URL exists,
     # repository type cannot be determined).
-    class ValidRepoNotFound < StandardError; end
+    class NotValidRepo < StandardError; end
 
     # Error while trying to fetch the update (used to group fetching
     # errors).
@@ -257,12 +257,12 @@ module Installation
     #
     # @return [Integer] Repository ID
     #
-    # @raise ValidRepoNotFound
+    # @raise NotValidRepo
     # @raise CouldNotProbeRepo
     # @raise CouldNotRefreshRepo
     def add_repo
       status = repo_status
-      raise ValidRepoNotFound if status == :not_found
+      raise NotValidRepo if status == :not_found
       raise CouldNotProbeRepo if status == :error
       new_repo_id = Yast::Pkg.RepositoryAdd("base_urls" => [uri.to_s],
                                             "enabled" => true, "autorefresh" => true)

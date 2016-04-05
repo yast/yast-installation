@@ -43,7 +43,7 @@ module Installation
     attr_reader :driver_updates
 
     # The URL was found but a valid repo is not there.
-    class ValidRepoNotFound < StandardError; end
+    class NotValidRepo < StandardError; end
 
     # The update could not be fetched (missing packages, broken
     # repository, etc.).
@@ -82,9 +82,9 @@ module Installation
       new_repository = Installation::UpdateRepository.new(uri)
       new_repository.fetch
       @repositories << new_repository
-    rescue Installation::UpdateRepository::ValidRepoNotFound
+    rescue Installation::UpdateRepository::NotValidRepo
       log.warn("Update repository at #{uri} could not be found")
-      raise ValidRepoNotFound
+      raise NotValidRepo
     rescue Installation::UpdateRepository::FetchError
       log.error("Update repository at #{uri} was found but update could not be fetched")
       raise CouldNotFetchUpdateFromRepo

@@ -97,7 +97,7 @@ describe Yast::InstUpdateInstaller do
         it "shows an error if update is not found" do
           expect(Yast::Popup).to receive(:Error)
           expect(manager).to receive(:add_repository).with(URI(custom_url))
-            .and_raise(::Installation::UpdatesManager::ValidRepoNotFound)
+            .and_raise(::Installation::UpdatesManager::NotValidRepo)
           expect(subject.main).to eq(:next)
         end
       end
@@ -116,7 +116,7 @@ describe Yast::InstUpdateInstaller do
         it "does not show an error if update is not found" do
           expect(Yast::Popup).to_not receive(:Error)
           expect(manager).to receive(:add_repository).with(URI(real_url))
-            .and_raise(::Installation::UpdatesManager::ValidRepoNotFound)
+            .and_raise(::Installation::UpdatesManager::NotValidRepo)
           expect(subject.main).to eq(:next)
         end
 

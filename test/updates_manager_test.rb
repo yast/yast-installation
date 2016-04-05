@@ -30,11 +30,11 @@ describe Installation::UpdatesManager do
     end
 
     context "when a valid repository is not found" do
-      it "raises a ValidRepoNotFound error" do
+      it "raises a NotValidRepo error" do
         allow(repo0).to receive(:fetch)
-          .and_raise(Installation::UpdateRepository::ValidRepoNotFound)
+          .and_raise(Installation::UpdateRepository::NotValidRepo)
         expect { manager.add_repository(uri) }
-          .to raise_error(Installation::UpdatesManager::ValidRepoNotFound)
+          .to raise_error(Installation::UpdatesManager::NotValidRepo)
       end
     end
 

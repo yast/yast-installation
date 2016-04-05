@@ -49,9 +49,9 @@ describe Installation::UpdateRepository do
     context "when the repository type can't be determined" do
       let(:probed) { "NONE" }
 
-      it "raises a ValidRepoNotFound error" do
+      it "raises a NotValidRepo error" do
         expect { subject.packages }
-          .to raise_error(Installation::UpdateRepository::ValidRepoNotFound)
+          .to raise_error(Installation::UpdateRepository::NotValidRepo)
       end
     end
 
