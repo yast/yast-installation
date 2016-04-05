@@ -22,7 +22,7 @@ module Yast
     include Yast::I18n
 
     UPDATED_FLAG_FILENAME = "installer_updated"
-    REMOTE_SCHEMES = ["http", "https", "ftp", "nfs", "nfs4", "cifs", "smb", "obs"]
+    REMOTE_SCHEMES = ["http", "https", "ftp", "ftp", "sftp", "nfs", "nfs4", "cifs", "smb"]
 
     Yast.import "Arch"
     Yast.import "Directory"
@@ -160,12 +160,14 @@ module Yast
 
     rescue ::Installation::UpdatesManager::NotValidRepo
       if !using_default_url?
-        Report.Error(format(_("A valid update could not be found at %s."), self_update_url))
+        # TRANSLATORS: %s is an URL
+        Report.Error(format(_("A valid update could not be found at\n%s.\n\n"), self_update_url))
       end
       false
 
     rescue ::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo
-      Report.Error(format(_("Could not fetch update from %s."), self_update_url))
+      # TRANSLATORS: %s is an URL
+      Report.Error(format(_("Could not fetch update from\n%s.\n\n"), self_update_url))
       false
 
     rescue ::Installation::UpdatesManager::CouldNotProbeRepo
@@ -189,7 +191,9 @@ module Yast
     #                   false if the network is not configured.
     def configure_network?
       if Popup.YesNo(
-        format(_("There was a problem reading the updates repository at %s.\n\n"\
+        # TRANSLATORS: %s is an URL
+        format(_("Your network is not working properly so installer updates "\
+                 "could not be fetched from\n%s.\n\n" \
                  "Would you like to check your network configuration?"), self_update_url))
         Yast::WFM.CallFunction("inst_lan", [{ "skip_detection" => true }])
         true
