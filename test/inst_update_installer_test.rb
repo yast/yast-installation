@@ -7,6 +7,7 @@ describe Yast::InstUpdateInstaller do
   Yast.import "Arch"
   Yast.import "Linuxrc"
   Yast.import "ProductFeatures"
+  Yast.import "GetInstArgs"
   Yast.import "UI"
 
   let(:manager) { double("update_manager", all_signed?: all_signed?, apply_all: true) }
@@ -24,6 +25,16 @@ describe Yast::InstUpdateInstaller do
   end
 
   describe "#main" do
+    context "when returning back from other dialog" do
+      before do
+        allow(Yast::GetInstArgs).to receive(:going_back).and_return(true)
+      end
+
+      it "returns :back " do
+        expect(subject.main).to eq(:back)
+      end
+    end
+
     context "when update is enabled" do
       before do
         allow(Yast::ProductFeatures).to receive(:GetStringFeature).and_return(url)

@@ -25,6 +25,7 @@ module Yast
     REMOTE_SCHEMES = ["http", "https", "ftp", "tftp", "sftp", "nfs", "nfs4", "cifs", "smb"]
 
     Yast.import "Arch"
+    Yast.import "GetInstArgs"
     Yast.import "Directory"
     Yast.import "Installation"
     Yast.import "ProductFeatures"
@@ -37,6 +38,7 @@ module Yast
     def main
       textdomain "installation"
 
+      return :back if GetInstArgs.going_back
       return :next unless try_to_update?
 
       log.info("Trying installer update")
