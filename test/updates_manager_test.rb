@@ -10,7 +10,7 @@ require "uri"
 describe Installation::UpdatesManager do
   subject(:manager) { Installation::UpdatesManager.new }
 
-  let(:uri) { URI("http://updates.opensuse.org/sles12.dud") }
+  let(:uri) { URI("http://updates.opensuse.org/sles12") }
 
   let(:repo0) { double("repo0", apply: true, cleanup: true) }
   let(:repo1) { double("repo1", apply: true, cleanup: true) }
