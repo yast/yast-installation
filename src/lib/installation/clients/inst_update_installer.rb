@@ -22,7 +22,7 @@ module Yast
     include Yast::I18n
 
     UPDATED_FLAG_FILENAME = "installer_updated"
-    REMOTE_SCHEMES = ["http", "https", "ftp", "ftp", "sftp", "nfs", "nfs4", "cifs", "smb"]
+    REMOTE_SCHEMES = ["http", "https", "ftp", "tftp", "sftp", "nfs", "nfs4", "cifs", "smb"]
 
     Yast.import "Arch"
     Yast.import "Directory"
@@ -192,8 +192,7 @@ module Yast
     def configure_network?
       if Popup.YesNo(
         # TRANSLATORS: %s is an URL
-        format(_("Your network is not working properly so installer updates "\
-                 "could not be fetched from\n%s.\n\n" \
+        format(_("Downloading installer updates from \n%s\nfailed.\n\n" \
                  "Would you like to check your network configuration?"), self_update_url))
         Yast::WFM.CallFunction("inst_lan", [{ "skip_detection" => true }])
         true

@@ -64,7 +64,7 @@ describe Yast::InstUpdateInstaller do
       context "when repository can't be probed" do
         context "and self-update URL is remote" do
           it "shows a dialog suggesting to check the network configuration" do
-            expect(Yast::Popup).to receive(:YesNo).with(/problem reading/)
+            expect(Yast::Popup).to receive(:YesNo).with(/installer updates from/)
             expect(manager).to receive(:add_repository).and_raise(::Installation::UpdatesManager::CouldNotProbeRepo)
             expect(subject.main).to eq(:next)
           end
