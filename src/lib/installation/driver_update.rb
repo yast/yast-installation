@@ -78,14 +78,6 @@ module Installation
       @instsys_path = send("#{@kind}_instsys_path")
     end
 
-    # Apply the DUD to inst-sys
-    #
-    # @see #adddir
-    def apply(pre: false)
-      adddir unless instsys_path.nil?
-      run_update_pre if pre && kind == :dud
-    end
-
     # Command to apply the DUD disk to inst-sys
     APPLY_CMD = "/etc/adddir %<source>s /" # openSUSE/installation-images
 
@@ -94,26 +86,12 @@ module Installation
     # @see APPLY_CMD
     #
     # @raise CouldNotBeApplied
-    def adddir
+    def apply
+      return false if instsys_path.nil? || !instsys_path.exist?
       cmd = format(APPLY_CMD, source: instsys_path)
       out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
       log.info("Applying update at #{path} (#{cmd}): #{out}")
       raise CouldNotBeApplied unless out["exit"].zero?
-    end
-
-    # Run update.pre script
-    #
-    # @return [Boolean] true if execution was successful; false if
-    #                   update script didn't exist.
-    #
-    # @raise DriverUpdate::PreScriptFailed
-    def run_update_pre
-      update_pre_path = path.join("install", "update.pre")
-      return false unless update_pre_path.exist? && update_pre_path.executable?
-      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), update_pre_path.to_s)
-      log.info("update.pre script at #{update_pre_path} was executed: #{out}")
-      raise PreScriptFailed unless out["exit"].zero?
-      true
     end
 
   private
@@ -136,6 +114,7 @@ module Installation
       if mount.nil?
         log.warn("Driver Update at #{path} is not mounted")
       else
+        log.info("Driver Update mount point for #{path} is #{mount}")
         Pathname.new(mount["file"])
       end
     end

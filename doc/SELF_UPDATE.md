@@ -18,9 +18,8 @@ These are the basic steps performed by YaST in order to peform the update:
    containing the updates.
 2. If updates are available, they will be downloaded. Otherwise, the process
    will be silently skipped.
-3. Signatures will be checked.
-4. The update will be applied to the installation system.
-5. YaST will be restarted and the installation will be resumed.
+3. The update will be applied to the installation system.
+4. YaST will be restarted and the installation will be resumed.
 
 ## Update format
 
@@ -53,9 +52,10 @@ Updates signatures will be checked by libzypp. If the signature is not
 correct (or is missing), the user will be asked whether she/he wants to apply
 the update (although it's a security risk).
 
-## Self-update and Driver Updates Disks (DUD)
+## Self-update and user updates
 
-Changes introduced via Driver Updates Disks (applied by Linuxrc) will
-take precedence.  As those changes will be commited prior to YaST
-installer being run, they will be applied again on top of installer
-updates.
+Changes introduced by the user via Driver Updates (option `dud` in Linuxrc
+command line) will take precedence. As you may know, user driver updates
+are applied first (before the self-update is performed).
+
+However, user changes will be re-applied on top of installer updates.

@@ -78,37 +78,39 @@ describe Installation::DriverUpdate do
   end
 
   describe "#apply" do
-    it "applies the driver update" do
-      expect(Yast::SCR).to receive(:Execute)
-        .with(Yast::Path.new(".target.bash_output"), "/etc/adddir #{update.instsys_path} /")
-        .and_return("exit" => 0, "stdout" => "", "stderr" => "")
-      expect(Yast::SCR).to_not receive(:Execute)
-        .with(Yast::Path.new(".target.bash_output"), "#{update_path}/install/update.pre")
-      update.apply
+    before do
+      allow(update).to receive(:instsys_path)
+        .and_return(instsys_path)
     end
 
-    context "when the update.pre script is enabled" do
-      it "applies the driver update" do
-        expect(Yast::SCR).to receive(:Execute)
-          .with(Yast::Path.new(".target.bash_output"), "/etc/adddir #{update.instsys_path} /")
-          .and_return("exit" => 0, "stdout" => "", "stderr" => "")
-        expect(Yast::SCR).to receive(:Execute)
-          .with(Yast::Path.new(".target.bash_output"), "#{update_path}/install/update.pre")
-          .and_return("exit" => 0, "stdout" => "", "stderr" => "")
-        update.apply(pre: true)
+    context "when instsys_path exists" do
+      let(:instsys_path) do
+        double("instsys", :exist? => true, :to_s => "/some-path")
       end
 
-      context "but an update.pre does not exist" do
-        let(:update_path) { FIXTURES_DIR.join("updates", "dud_001") }
+      it "applies the driver update" do
+        expect(Yast::SCR).to receive(:Execute)
+                              .with(Yast::Path.new(".target.bash_output"), "/etc/adddir #{update.instsys_path} /")
+                              .and_return("exit" => 0, "stdout" => "", "stderr" => "")
+        update.apply
+      end
+    end
 
-        it "does not try to run the update.pre script" do
-          expect(Yast::SCR).to receive(:Execute)
-            .with(Yast::Path.new(".target.bash_output"), /adddir/)
-            .and_return("exit" => 0)
-          expect(Yast::SCR).to_not receive(:Execute)
-            .with(Yast::Path.new(".target.bash_output"), "update.pre")
-          update.apply
-        end
+    context "when instsys_path does not exist" do
+      let(:instsys_path) { double("instsys", :exist? => false) }
+
+      it "returns false" do
+        expect(Yast::SCR).to_not receive(:Execute)
+        expect(update.apply).to eq(false)
+      end
+    end
+
+    context "when instsys_path cannot be determined" do
+      let(:instsys_path) { nil }
+
+      it "returns false" do
+        expect(Yast::SCR).to_not receive(:Execute)
+        expect(update.apply).to eq(false)
       end
     end
   end
