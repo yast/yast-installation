@@ -1,0 +1,3 @@
+#! /usr/bin/perl
+
+print "Just a testing script.\n"

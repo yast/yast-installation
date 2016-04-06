@@ -22,11 +22,10 @@ module Yast
     include Yast::I18n
 
     UPDATED_FLAG_FILENAME = "installer_updated"
-    UPDATES_PATH = Pathname.new("/update")
-    KEYRING_PATH = Pathname.new("/installkey.gpg")
-    GPG_HOMEDIR  = Pathname.new("/root/.gnupg")
+    REMOTE_SCHEMES = ["http", "https", "ftp", "tftp", "sftp", "nfs", "nfs4", "cifs", "smb"]
 
     Yast.import "Arch"
+    Yast.import "GetInstArgs"
     Yast.import "Directory"
     Yast.import "Installation"
     Yast.import "ProductFeatures"
@@ -39,6 +38,7 @@ module Yast
     def main
       textdomain "installation"
 
+      return :back if GetInstArgs.going_back
       return :next unless try_to_update?
 
       log.info("Trying installer update")
@@ -58,7 +58,7 @@ module Yast
     #
     # @return [UpdatesManager] Updates manager to be used by the client
     def updates_manager
-      @updates_manager ||= ::Installation::UpdatesManager.new(UPDATES_PATH, KEYRING_PATH, GPG_HOMEDIR)
+      @updates_manager ||= ::Installation::UpdatesManager.new
     end
 
     # Determines whether self-update feature is enabled
@@ -139,53 +139,68 @@ module Yast
       File.join(Directory.vardir, UPDATED_FLAG_FILENAME)
     end
 
-    # Determines whether the update is running in insecure mode
-    #
-    # @return [Boolean] true if running in insecure mode; false otherwise.
-    def insecure_mode?
-      Linuxrc.InstallInf("Insecure") == "1" # Insecure mode is enabled
-    end
-
-    # Ask the user if she/he wants to apply the update although it's not properly signed
-    #
-    # @return [Boolean] true if user answered 'Yes'; false otherwise.
-    def ask_insecure?
-      Popup.AnyQuestion(
-        Label::WarningMsg(),
-        signatures_error_message,
-        Label.YesButton,
-        Label.NoButton,
-        :focus_no
-      )
-    end
-
     # Tries to update the installer
     #
-    # It also shows feedback to the user.
+    # It also shows feedback to the user in case of error.
+    #
+    # Errors handling:
+    #
+    # * A repository is not found: warn the user if she/he is using
+    #   a custom URL.
+    # * Could not fetch update from repository: report the user about
+    #   this error.
+    # * Repository could not be probed: suggest checking network
+    #   configuration if URL has a REMOTE_SCHEME.
     #
     # @return [Boolean] true if installer was updated; false otherwise.
     def update_installer
-      fetch_update ? apply_update : false
-    end
-
-    # Fetch updates from self_update_url
-    #
-    # @return [Boolean] true if update was fetched successfully; false otherwise.
-    def fetch_update
-      ret = updates_manager.add_update(self_update_url)
-      log.info("Adding update from #{self_update_url} (ret = #{ret})")
-      Report.Error(_("Update could not be found")) unless ret || using_default_url?
-      ret
-    end
-
-    # Apply the updates and shows feedback information
-    #
-    # @return [Boolean] true if the update was applied; false otherwise
-    def apply_update
-      return false unless applicable?
+      log.info("Adding update from #{self_update_url}")
+      updates_manager.add_repository(self_update_url)
       log.info("Applying installer updates")
       updates_manager.apply_all
       true
+
+    rescue ::Installation::UpdatesManager::NotValidRepo
+      if !using_default_url?
+        # TRANSLATORS: %s is an URL
+        Report.Error(format(_("A valid update could not be found at\n%s.\n\n"), self_update_url))
+      end
+      false
+
+    rescue ::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo
+      # TRANSLATORS: %s is an URL
+      Report.Error(format(_("Could not fetch update from\n%s.\n\n"), self_update_url))
+      false
+
+    rescue ::Installation::UpdatesManager::CouldNotProbeRepo
+      retry if remote_self_update_url? && configure_network?
+      false
+    end
+
+    # Determine whether the URL is remote
+    #
+    # @return [Boolean] true if it's considered remote; false otherwise.
+    def remote_self_update_url?
+      REMOTE_SCHEMES.include?(self_update_url.scheme)
+    end
+
+    # Launch the network configuration client on users' demand
+    #
+    # Ask the user about checking network configuration. If she/he accepts,
+    # the `inst_lan` client will be launched.
+    #
+    # @return [Boolean] true if the network configuration client was launched;
+    #                   false if the network is not configured.
+    def configure_network?
+      if Popup.YesNo(
+        # TRANSLATORS: %s is an URL
+        format(_("Downloading installer updates from \n%s\nfailed.\n\n" \
+                 "Would you like to check your network configuration?"), self_update_url))
+        Yast::WFM.CallFunction("inst_lan", [{ "skip_detection" => true }])
+        true
+      else
+        false
+      end
     end
 
     # Check whether the update should be performed
@@ -205,47 +220,11 @@ module Yast
       !installer_updated? && self_update_enabled? && NetworkService.isNetworkRunning
     end
 
-    # Check whether the update is allowed to be applied
+    # Determines whether the given URL is equal to the default one
     #
-    # It should be applied when one of these requirements is met:
-    #
-    # * All updates are signed.
-    # * We're running in insecure mode (so we don't need them to be signed).
-    # * The user requests to install it although is not signed.
-    #
-    # @return [Boolean] true if it should be applied; false otherwise.
-    def applicable?
-      updates_manager.all_signed? || insecure_mode? || ask_insecure?
-    end
-
-    # Determines whether the given URL is equals to the default one
+    # @return [Boolean] true if it's the default URL; false otherwise.
     def using_default_url?
       self_update_url_from_control == self_update_url
-    end
-
-    # Builds an error message when signatures are invalid
-    #
-    # @return [String] Error message
-    def signatures_error_message
-      # UpdatesManager support several updates to be applied. But this client
-      # does not take advantage of that feature yet.
-      update = updates_manager.updates.first
-      reason =
-        case update.signature_status
-        when :error
-          # TRANSLATORS: %s will be replaced by an URL which should contain the update.
-          format(_("Installer update at %s can't be verified."), update.uri)
-        when :missing
-          # TRANSLATORS: %s will be replaced by an URL which should contain the update.
-          format(_("Installer update at %s is not signed."), update.uri)
-        else
-          # TRANSLATORS: %s will be replaced by an URL which should contain the update.
-          format(_("An error occurred while verifying the signature of update at %s"), update.uri)
-        end
-      # TRANSLATORS: Popup question, %s contains the details about the failed
-      # signature verification
-      format(_("%s\n\nUsing this update may put the integrity of your system at risk.\n" \
-        "Use it anyway?"), reason)
     end
   end
 end

@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.176
+Version:        3.1.177
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -53,11 +53,8 @@ Requires:       yast2 >= 3.1.180
 # Language::Set (handles downloading the translation extensions)
 Requires:	yast2-country-data >= 2.16.11
 
-# Pkg::SourceProvideDigestedFile()
-Conflicts:	yast2-pkg-bindings < 2.17.25
-
-# Pkg::Add/RemoveUpgradeRepo()
-Requires:	yast2-pkg-bindings >= 2.21.2
+# Pkg::ProvidePackage
+Requires:	yast2-pkg-bindings >= 3.1.33
 
 # Mouse-related scripts moved to yast2-mouse
 Conflicts:	yast2-mouse < 2.18.0

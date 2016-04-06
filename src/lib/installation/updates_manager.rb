@@ -15,79 +15,95 @@
 
 require "pathname"
 require "installation/driver_update"
+require "installation/update_repository"
 
 module Installation
   # This class takes care of managing installer updates
   #
-  # Installer updates are distributed as Driver Update Disks that are downloaded
-  # from a remote location (only HTTP and HTTPS are supported at this time).
-  # This class tries to offer a really simple API to get updates and apply them
-  # to inst-sys.
+  # Installer updates are distributed as rpm-md repositories. This class tries
+  # to offer a really simple API to get updates and apply them to inst-sys.
   #
-  # @example Applying one driver update
-  #   manager = UpdatesManager.new(Pathname.new("/update"), Pathname.new("/install.gpg"),
-  #                                Pathname.new("/root/.gnupg"))
-  #   manager.add_update(URI("http://update.opensuse.org/sles12.dud"))
-  #   manager.add_update(URI("http://example.net/example.dud"))
+  # @example Applying updates from one repository
+  #   manager = UpdatesManager.new
+  #   manager.add_repository(URI("http://update.opensuse.org/42.1"))
   #   manager.apply_all
   #
-  # @example Applying multiple driver updates
-  #   manager = UpdatesManager.new(Pathname.new("/update"), Pathname.new("/install.gpg"),
-  #                                Pathname.new("/root/.gnupg"))
-  #   manager.add_update(URI("http://update.opensuse.org/sles12.dud"))
+  # @example Applying updates from multiple repositories
+  #   manager = UpdatesManager.new
+  #   manager.add_repository(URI("http://update.opensuse.org/42.1"))
+  #   manager.add_repository(URI("http://example.net/leap"))
   #   manager.apply_all
   class UpdatesManager
     include Yast::Logger
 
-    attr_reader :target, :keyring, :gpg_homedir, :updates
+    # @return [Array<UpdateRepository>] Repositories containing updates
+    attr_reader :repositories
+
+    # @return [Array<DriverUpdate>] Driver updates found in inst-sys
+    attr_reader :driver_updates
+
+    # The URL was found but a valid repo is not there.
+    class NotValidRepo < StandardError; end
+
+    # The update could not be fetched (missing packages, broken
+    # repository, etc.).
+    class CouldNotFetchUpdateFromRepo < StandardError; end
+
+    # Repo is unreachable (name solving issues, etc.).
+    class CouldNotProbeRepo < StandardError; end
+
+    DRIVER_UPDATES_PATHS = [Pathname("/update"), Pathname("/download")]
 
     # Constructor
     #
-    # @param target      [Pathname] Directory to copy updates to.
-    # @param keyring     [Pathname] Path to keyring to check signatures against
-    # @param gpg_homedir [Pathname] Path to GPG home dir
-    def initialize(target, keyring, gpg_homedir)
-      @target = target
-      @keyring = keyring
-      @gpg_homedir = gpg_homedir
-      @updates = []
+    # At instantiation time, this class looks for existin driver
+    # updates in the given `duds_path`.
+    #
+    # @param duds_path [Pathname] Path where driver updates are supposed to live
+    def initialize(duds_paths = DRIVER_UPDATES_PATHS)
+      @repositories = []
+      @driver_updates = Installation::DriverUpdate.find(duds_paths)
     end
 
-    # Add an update to the updates pool
+    # Add an update repository
     #
-    # @param uri [URI]                               URI where the update (DUD) lives
-    # @return    [Array<Installation::DriverUpdate>] List of updates
+    # Most of exceptions coming from Installation::UpdateRepository are
+    # catched, except those that has something to do with applying
+    # the update itself (mounting or adding files to inst-sys). Check
+    # Installation::UpdateRepository::CouldNotMountUpdate and
+    # Installation::UpdateRepository::CouldNotBeApplied for more
+    # information.
     #
-    # @see Installation::DriverUpdate
-    def add_update(uri)
-      new_update = Installation::DriverUpdate.new(uri, keyring, gpg_homedir)
-      dir = target.join(format("%03d", next_update))
-      log.info("Fetching Driver update from #{uri} to #{dir}")
-      new_update.fetch(dir)
-      log.info("Driver update extracted to #{dir}")
-      @updates << new_update
-    rescue Installation::DriverUpdate::NotFound
-      log.error("Driver updated at #{uri} could not be found")
-      false
+    # @param uri [URI] URI where the repository lives
+    # @return [Array<UpdateRepository] Array of repositories to be applied
+    #
+    # @see Installation::UpdateRepository
+    def add_repository(uri)
+      new_repository = Installation::UpdateRepository.new(uri)
+      new_repository.fetch
+      @repositories << new_repository
+    rescue Installation::UpdateRepository::NotValidRepo
+      log.warn("Update repository at #{uri} could not be found")
+      raise NotValidRepo
+    rescue Installation::UpdateRepository::FetchError
+      log.error("Update repository at #{uri} was found but update could not be fetched")
+      raise CouldNotFetchUpdateFromRepo
+    rescue Installation::UpdateRepository::CouldNotProbeRepo
+      log.error("Update repository at #{uri} could not be read")
+      raise CouldNotProbeRepo
     end
 
-    # Applies all updates in the pool
+    # Applies all the updates
+    #
+    # It delegates the responsability of updating the inst-sys to
+    # added repositories and driver updates.
+    #
+    # @see Installation::UpdateRepository#apply
+    # @see Installation::DriverUpdate#apply
+    # @see #repositories
     def apply_all
-      updates.each(&:apply)
-    end
-
-    # Determines whether the updates to apply are signed
-    def all_signed?
-      updates.all?(&:signed?)
-    end
-
-  private
-
-    # Find the number for the next update to be deployed
-    def next_update
-      files = Pathname.glob(target.join("*")).map(&:basename)
-      updates = files.map(&:to_s).grep(/\A\d+\Z/)
-      updates.empty? ? 0 : updates.map(&:to_i).max + 1
+      (repositories + driver_updates).each(&:apply)
+      repositories.each(&:cleanup)
     end
   end
 end

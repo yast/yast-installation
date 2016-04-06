@@ -3,189 +3,114 @@
 require_relative "./test_helper"
 
 require "installation/driver_update"
-require "uri"
 
 Yast.import "Linuxrc"
 
 describe Installation::DriverUpdate do
-  TEST_DIR = Pathname.new(__FILE__).dirname
-  TEMP_DIR = TEST_DIR.join("test", "tmp", "update")
-  FIXTURES_DIR = TEST_DIR.join("fixtures")
+  FIXTURES_DIR = Pathname.new(__FILE__).dirname.join("fixtures")
 
-  let(:url) { URI("file://#{FIXTURES_DIR}/fake.signed.dud") }
-  let(:keyring) { FIXTURES_DIR.join("pubring.gpg") }
-  let(:gpg_homedir) { FIXTURES_DIR.join("dot.gnupg") }
-  let(:target) { TEST_DIR.join("target") }
+  subject(:update) { Installation::DriverUpdate.new(update_path) }
 
-  subject { Installation::DriverUpdate.new(url, keyring, gpg_homedir) }
+  let(:update_path) { FIXTURES_DIR.join("updates", "dud_000") }
+  let(:losetup_content) do
+    "NAME       SIZELIMIT OFFSET AUTOCLEAR RO BACK-FILE\n" \
+    "/dev/loop5         0      0         0  0 /download/dud_000\n" \
+    "/dev/loop6         0      0         0  0 #{FIXTURES_DIR.join("updates", "dud_002")}\n"
+  end
 
   before do
-    allow(Yast::Linuxrc).to receive(:InstallInf).with("UpdateDir")
-      .and_return("/linux/suse/x86_64-sles12")
-    ::FileUtils.chmod(0700, gpg_homedir)
+    allow(Yast::SCR).to receive(:Execute)
+      .with(Yast::Path.new(".target.bash_output"), "/sbin/losetup")
+      .and_return("exit" => 0, "stdout" => losetup_content)
+    allow(Yast::SCR).to receive(:Read)
+      .with(Yast::Path.new(".proc.mounts"))
+      .and_return(["spec" => "/dev/loop6", "file" => "/mounts/mp_0005"])
   end
 
-  after do
-    # Make sure those files are removed
-    ::FileUtils.rm_r(TEMP_DIR) if TEMP_DIR.exist?
-    ::FileUtils.rm_r(target) if target.exist?
-  end
-
-  describe "#fetch" do
-    let(:url) { URI("file://#{FIXTURES_DIR}/fake.signed.dud") }
-
-    it "downloads the file at #url and stores in the given directory" do
-      subject.fetch(target)
-      expect(target.join("dud.config")).to be_file
+  describe ".find" do
+    context "when no updates exist" do
+      it "returns an empty array" do
+        expect(described_class.find([FIXTURES_DIR])).to eq([])
+      end
     end
 
-    context "when the remote file does not exists" do
-      let(:url) { URI("http://non-existent-url.com/") }
-
-      it "raises an exception" do
-        expect { subject.fetch(target) }.to raise_error StandardError
+    context "when updates exist" do
+      it "returns an array of driver updates" do
+        updates = described_class.find([FIXTURES_DIR.join("updates")])
+        expect(updates).to all(be_an(described_class))
+        expect(updates.size).to eq(3)
       end
     end
   end
 
-  describe "#signature" do
-    context "if the signature is attached" do
-      context "and signature is valid and trusted" do
-        let(:url) { URI("file://#{FIXTURES_DIR}/fake.signed.dud") }
+  describe ".new" do
+    context "when file does not exist" do
+      let(:update_path) { Pathname.pwd.join("dud_001") }
 
-        it "returns :ok" do
-          subject.fetch(target)
-          expect(subject.signature_status).to eq(:ok)
-        end
-      end
-
-      context "and signature is valid but not trusted" do
-        let(:url) { URI("file://#{FIXTURES_DIR}/fake.signed+untrusted.dud") }
-
-        it "returns :warning" do
-          allow(subject).to receive(:get_file).with(any_args).and_call_original
-          allow(subject).to receive(:get_file)
-            .with(URI("file://#{FIXTURES_DIR}/fake.signed+untrusted.dud.asc"), any_args).and_return(false)
-          subject.fetch(target)
-          expect(subject.signature_status).to eq(:warning)
-        end
-      end
-
-      context "and signature is :error" do
-        let(:url) { URI("file://#{FIXTURES_DIR}/fake.signed+unknown.dud") }
-
-        it "returns false" do
-          allow(subject).to receive(:get_file).with(any_args).and_call_original
-          allow(subject).to receive(:get_file)
-            .with(URI("file://#{FIXTURES_DIR}/fake.signed+unknown.dud.asc"), any_args).once.and_return(false)
-          subject.fetch(target)
-          expect(subject.signature_status).to eq(:error)
-        end
-      end
-    end
-
-    context "signature is detached" do
-      context "and signature is valid and trusted" do
-        let(:url) { URI("file://#{FIXTURES_DIR}/fake.detached.dud") }
-
-        it "returns true" do
-          subject.fetch(target)
-          expect(subject.signature_status).to eq(:ok)
-        end
-      end
-
-      context "and signature is valid but not trusted" do
-        let(:url) { URI("file://#{FIXTURES_DIR}/fake.detached+untrusted.dud") }
-
-        it "returns true" do
-          subject.fetch(target)
-          expect(subject.signature_status).to eq(:warning)
-        end
-      end
-
-      context "and signature is unknown" do
-        let(:url) { URI("file://#{FIXTURES_DIR}/fake.detached+unknown.dud") }
-
-        it "returns :error" do
-          subject.fetch(target)
-          expect(subject.signature_status).to eq(:error)
-        end
-      end
-
-      context "and .asc file does not exist" do
-        let(:url) { URI("file://#{FIXTURES_DIR}/fake.dud") }
-
-        before do
-          allow(subject).to receive(:get_file).with(any_args).and_call_original
-          allow(subject).to receive(:get_file)
-            .with(URI("file://#{FIXTURES_DIR}/fake.dud.asc"), any_args).once.and_return(false)
-        end
-
-        it "returns :missing" do
-          subject.fetch(target)
-          expect(subject.signature_status).to eq(:missing)
-        end
+      it "raises a NotFound exception" do
+        expect { update }.to raise_error(::Installation::DriverUpdate::NotFound)
       end
     end
   end
 
-  describe "#signed?" do
-    before { expect(subject).to receive(:signature_status).and_return(status) }
+  describe "#kind" do
+    context "when is a driver update disk" do
+      let(:update_path) { FIXTURES_DIR.join("updates", "dud_000") }
 
-    context "present and good" do
-      let(:status) { :ok }
-
-      it "returns true" do
-        expect(subject).to be_signed
+      it "returns :dud" do
+        expect(update.kind).to eq(:dud)
       end
     end
 
-    context "good but with a warning" do
-      let(:status) { :warning }
+    context "when is an archive" do
+      let(:update_path) { FIXTURES_DIR.join("updates", "dud_002") }
 
-      it "returns true" do
-        expect(subject).to be_signed
+      it "returns :archive" do
+        expect(update.kind).to eq(:archive)
       end
     end
+  end
 
-    context "signed with and unknown key" do
-      let(:status) { :error }
-
-      it "returns false" do
-        expect(subject).to_not be_signed
-      end
-    end
-
-    context "is signature is missing" do
-      let(:status) { :missing }
-
-      it "returns false" do
-        expect(subject).to_not be_signed
-      end
+  describe "#path" do
+    it "returns the path where the DUD is located" do
+      expect(update.path).to eq(update_path)
     end
   end
 
   describe "#apply" do
-    let(:local_path) { TEMP_DIR.join("000") }
+    before do
+      allow(update).to receive(:instsys_path)
+        .and_return(instsys_path)
+    end
 
-    context "when the remote file was fetched" do
-      before do
-        subject.fetch(local_path)
+    context "when instsys_path exists" do
+      let(:instsys_path) do
+        double("instsys", :exist? => true, :to_s => "/some-path")
       end
 
-      it "applies the DUD to the running system" do
+      it "applies the driver update" do
         expect(Yast::SCR).to receive(:Execute)
-          .with(Yast::Path.new(".target.bash_output"), "/etc/adddir #{local_path}/inst-sys /")
-          .and_return("exit" => 0)
-        subject.apply
+          .with(Yast::Path.new(".target.bash_output"), "/etc/adddir #{update.instsys_path} /")
+          .and_return("exit" => 0, "stdout" => "", "stderr" => "")
+        update.apply
       end
     end
 
-    context "when the remote file was not fetched" do
-      let(:local_path) { nil }
+    context "when instsys_path does not exist" do
+      let(:instsys_path) { double("instsys", :exist? => false) }
 
-      it "raises an exception" do
-        expect { subject.apply }.to raise_error(RuntimeError)
+      it "returns false" do
+        expect(Yast::SCR).to_not receive(:Execute)
+        expect(update.apply).to eq(false)
+      end
+    end
+
+    context "when instsys_path cannot be determined" do
+      let(:instsys_path) { nil }
+
+      it "returns false" do
+        expect(Yast::SCR).to_not receive(:Execute)
+        expect(update.apply).to eq(false)
       end
     end
   end

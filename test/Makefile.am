@@ -13,7 +13,8 @@ TESTS = \
   remote_finish_test.rb \
   select_system_role_test.rb \
   snapshots_finish_test.rb \
-  updates_manager_test.rb
+  updates_manager_test.rb \
+  update_repository_test.rb
 
 TEST_EXTENSIONS = .rb
 RB_LOG_COMPILER = rspec
