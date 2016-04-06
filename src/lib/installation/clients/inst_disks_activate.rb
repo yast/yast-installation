@@ -170,7 +170,7 @@ module Yast
   private
 
     def network_button
-      Right(PushButton(Id(:network), _("Network Configuration...")))
+      Right(PushButton(Id(:network), _("Net&work Configuration...")))
     end
 
     def show_base_dialog
