@@ -100,19 +100,20 @@ module Yast
                     missing_part
                   end
 
-      @contents = HBox(
-        HWeight(999, HStretch()),
+      @contents =
         VBox(
+          network_button,
           VStretch(),
-          *dasd_part,
-          *zfcp_part,
-          *fcoe_part,
-          *(button_with_spacing(:iscsi, _("Configure &iSCSI Disks"))),
-          button(:network, _("Change Net&work Configuration")),
+          HSquash(
+            VBox(
+              *dasd_part,
+              *zfcp_part,
+              *fcoe_part,
+              *(button_with_spacing(:iscsi, _("Configure &iSCSI Disks")))
+            )
+          ),
           VStretch()
-        ),
-        HWeight(999, HStretch())
-      )
+        )
 
       @disks_changed = false
 
@@ -167,6 +168,10 @@ module Yast
     end
 
   private
+
+    def network_button
+      Right(PushButton(Id(:network), _("Net&work Configuration...")))
+    end
 
     def show_base_dialog
       Wizard.SetContents(
