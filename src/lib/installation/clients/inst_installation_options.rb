@@ -73,9 +73,7 @@ module Yast
       end
 
       # nothing to display, simply continue
-      if !@show_online_repositories
-        return :auto
-      end
+      return :auto unless @show_online_repositories
 
       Wizard.SetContents(
         # dialog caption
