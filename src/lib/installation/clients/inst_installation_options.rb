@@ -73,10 +73,7 @@ module Yast
       end
 
       # nothing to display, simply continue
-      if !@show_online_repositories
-        SetRequiredPackages()
-        return :auto
-      end
+      return :auto unless @show_online_repositories
 
       Wizard.SetContents(
         # dialog caption
@@ -159,7 +156,6 @@ module Yast
       Wizard.SetTitleIcon("yast-software")
 
       UpdateWizardSteps()
-      SetRequiredPackages()
       @ret = ProductControl.RunFrom(ProductControl.CurrentStep + 1, false)
 
       @ret = :finish if @ret == :next
@@ -214,17 +210,6 @@ module Yast
             "<b>Include Add-on Products from Separate Media</b>.</p>\n") +
         # help text: additional help for installation
         _("<p>If you need specific hardware drivers for installation, see <i>http://drivers.suse.com</i> site.</p>")
-    end
-
-    def SetRequiredPackages
-      Builtins.y2milestone(
-        "Adding packages required for installation to succeed..."
-      )
-      PackagesProposal.AddResolvables(
-        "YaST-Installation",
-        :package,
-        ["perl-Bootloader-YAML"]
-      )
     end
   end
 end

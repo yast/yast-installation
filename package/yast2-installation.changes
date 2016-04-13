@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Apr 12 15:09:15 UTC 2016 - jreidinger@suse.com
+
+- do not install perl-Bootloader-YAML on target system as it is no
+  longer needed (FATE#317701)
+- 3.1.178
+
+-------------------------------------------------------------------
 Mon Apr  4 09:48:42 UTC 2016 - igonzalezsosa@suse.com
 
 - Automatic update during installation will use Zypper repositories

@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.177
+Version:        3.1.178
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -87,6 +87,9 @@ Conflicts:	yast2-pkg-bindings < 2.17.25
 
 # InstError
 Conflicts:	yast2 < 2.18.6
+
+# lower version requires perl-Bootloader-YAML no longer installed
+Conflicts:	yast2-bootloader < 3.1.166
 
 # Added new function WFM::ClientExists
 Conflicts:	yast2-core < 2.17.10
