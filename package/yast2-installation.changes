@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Apr 13 07:14:09 UTC 2016 - mfilka@suse.com
+
+- bsc#956473
+  - improved formatting of network interfaces listing
+- 3.1.116.10
+
+-------------------------------------------------------------------
 Mon Feb 29 09:05:16 UTC 2016 - mfilka@suse.com
 
 - bsc#956473
