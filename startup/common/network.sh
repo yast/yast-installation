@@ -47,7 +47,15 @@ function list_ifaces()
     # list network interfaces
     # - all active ones with all IPv4 / IPv6 addresses
     # - excluding loopback device
-    /sbin/ip -o a s | grep "inet" | cut -d' ' -f2 | uniq | grep -v "^lo" | xargs -n1 -d'\n' /sbin/ip a s
+    ifaces=$(/sbin/ip -o a s | grep "inet" | cut -d' ' -f2 | uniq | grep -v "^lo")
+
+    for i in ${ifaces}; do
+      ip a s $i | sed -n \
+        -e "1{s/^[^ ]* \([^:]*\).*/\1:/;h}" \
+        -e "/ether/{ s/^.*ether[^ ]* \([^ ]*\).*/\1/; H; g; s/\n/ /; p}" \
+        -e "s/^[ ]*inet \([^ ]*\).*/  \1/p" \
+        -e "s/^[ ]*inet6 \([^ ]*\).*/  \1/p"
+    done;
 }
 
 
@@ -77,7 +85,7 @@ function ssh_message () {
 	you can login now and proceed with the installation
 	run the command 'yast.ssh'
 	
-	active interfaces:
+	These network addresses are available:
 	
 	EOF
 	list_ifaces
