@@ -11,10 +11,20 @@ module Yast
   class AutoinstConfigClass
     # we need at least one non-default methods, otherwise ruby-bindings thinks
     # it is just namespace
-    def fake_method
+    def cio_ignore
+    end
+
+    def second_stage
     end
   end
   AutoinstConfig = AutoinstConfigClass.new
+
+  # Faked Profile module
+  class Profile
+    def current
+    end
+  end
+  Profile = Profile.new
 end
 
 if ENV["COVERAGE"]

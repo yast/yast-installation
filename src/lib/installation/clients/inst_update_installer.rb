@@ -34,6 +34,7 @@ module Yast
     Yast.import "Popup"
     Yast.import "Report"
     Yast.import "NetworkService"
+    Yast.import "Mode"
 
     def main
       textdomain "installation"
@@ -82,8 +83,10 @@ module Yast
     #
     # @see #self_update_url_from_linuxrc
     # @see #self_update_url_from_control
+    # @see #self_update_url_from_profile
     def self_update_url
-      url = self_update_url_from_linuxrc || self_update_url_from_control
+      url = self_update_url_from_linuxrc || self_update_url_from_profile ||
+        self_update_url_from_control
       log.info("self-update URL is #{url}")
       url
     end
@@ -99,6 +102,19 @@ module Yast
     #
     def self_update_url_from_control
       get_url_from(ProductFeatures.GetStringFeature("globals", "self_update_url"))
+    end
+
+    # Return the self-update URL from the AutoYaST profile
+    # @return [URI,nil] the self-update URL, nil if not running in AutoYaST mode
+    #   or when the URL is not defined in the profile
+    def self_update_url_from_profile
+      return nil unless Mode.auto
+
+      Yast.import "Profile"
+      profile = Yast::Profile.current
+      profile_url = profile.fetch("general", {})["self_update_url"]
+
+      get_url_from(profile_url)
     end
 
     # Converts the string into an URI if it's valid
