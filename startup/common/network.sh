@@ -47,14 +47,14 @@ function list_ifaces()
     # list network interfaces
     # - all active ones with all IPv4 / IPv6 addresses
     # - excluding loopback device
-    ifaces=$(/sbin/ip -o a s | grep "inet" | cut -d' ' -f2 | uniq | grep -v "^lo")
+    ifaces=$(/sbin/ip -oneline address show | grep "inet" | cut --delimiter=' ' --fields=2 | uniq | grep --invert-match "^lo")
 
     for i in ${ifaces}; do
-      ip a s $i | sed -n \
-        -e "1{s/^[^ ]* \([^:]*\).*/\1:/;h}" \
-        -e "/ether/{ s/^.*ether[^ ]* \([^ ]*\).*/\1/; H; g; s/\n/ /; p}" \
-        -e "s/^[ ]*inet \([^ ]*\).*/  \1/p" \
-        -e "s/^[ ]*inet6 \([^ ]*\).*/  \1/p"
+      ip address show $i | sed --quiet \
+        --expression="1{s/^[^ ]* \([^:]*\).*/\1:/;h}" \
+        --expression="/ether/{ s/^.*ether[^ ]* \([^ ]*\).*/\1/; H; g; s/\n/ /; p}" \
+        --expression="s/^[ ]*inet \([^ ]*\).*/  \1/p" \
+        --expression="s/^[ ]*inet6 \([^ ]*\).*/  \1/p"
     done;
 }
 
