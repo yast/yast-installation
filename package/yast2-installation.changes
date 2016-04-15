@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Apr 13 07:14:09 UTC 2016 - mfilka@suse.com
+
+- bsc#956473
+  - improved formatting of network interfaces listing
+- 3.1.179
+
+-------------------------------------------------------------------
 Tue Apr 12 15:09:15 UTC 2016 - jreidinger@suse.com
 
 - do not install perl-Bootloader-YAML on target system as it is no
