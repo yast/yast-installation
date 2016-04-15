@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Apr 15 12:51:00 UTC 2016 - lslezak@suse.cz
+
+- Run the automatic installer self update also in the AutoYaST
+  mode, read the optional custom URL from the profile ("general" ->
+  "self_update_url" node) (FATE#319716)
+- 3.1.180
+
+-------------------------------------------------------------------
 Wed Apr 13 07:14:09 UTC 2016 - mfilka@suse.com
 
 - bsc#956473

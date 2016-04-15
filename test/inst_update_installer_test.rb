@@ -20,8 +20,13 @@ describe Yast::InstUpdateInstaller do
 
   before do
     allow(Yast::Arch).to receive(:architecture).and_return(arch)
+    allow(Yast::Mode).to receive(:auto).and_return(false)
     allow(Yast::NetworkService).to receive(:isNetworkRunning).and_return(network_running)
     allow(::Installation::UpdatesManager).to receive(:new).and_return(manager)
+
+    # stub the Profile module to avoid dependency on autoyast2-installation
+    ay_profile = double("Yast::Profile")
+    stub_const("Yast::Profile", ay_profile)
   end
 
   describe "#main" do
@@ -118,24 +123,81 @@ describe Yast::InstUpdateInstaller do
           allow(Yast::ProductFeatures).to receive(:GetStringFeature).and_return(url)
         end
 
-        it "gets URL from control file" do
-          allow(::FileUtils).to receive(:touch)
-          expect(manager).to receive(:add_repository).with(URI(real_url))
-          expect(subject.main).to eq(:restart_yast)
+        context "in standard installation" do
+          it "gets URL from control file" do
+            allow(::FileUtils).to receive(:touch)
+            expect(manager).to receive(:add_repository).with(URI(real_url))
+            expect(subject.main).to eq(:restart_yast)
+          end
+
+          it "does not show an error if update is not found" do
+            expect(Yast::Popup).to_not receive(:Error)
+            expect(manager).to receive(:add_repository).with(URI(real_url))
+              .and_raise(::Installation::UpdatesManager::NotValidRepo)
+            expect(subject.main).to eq(:next)
+          end
+
+          context "and control file doesn't have an URL" do
+            let(:url) { "" }
+
+            it "does not update the installer" do
+              expect(subject).to_not receive(:update_installer)
+            end
+          end
         end
 
-        it "does not show an error if update is not found" do
-          expect(Yast::Popup).to_not receive(:Error)
-          expect(manager).to receive(:add_repository).with(URI(real_url))
-            .and_raise(::Installation::UpdatesManager::NotValidRepo)
-          expect(subject.main).to eq(:next)
-        end
+        context "in AutoYaST installation or upgrade" do
+          let(:profile_url) { "http://ay.test.example.com/update" }
 
-        context "and control file doesn't have an URL" do
-          let(:url) { "" }
+          before do
+            expect(Yast::Mode).to receive(:auto).at_least(1).and_return(true)
+            allow(Yast::Profile).to receive(:current)
+              .and_return("general" => { "self_update_url" =>  profile_url })
+            allow(::FileUtils).to receive(:touch)
+          end
 
-          it "does not update the installer" do
-            expect(subject).to_not receive(:update_installer)
+          context "the profile defines the update URL" do
+            it "gets the URL from AutoYaST profile" do
+              expect(manager).to receive(:add_repository).with(URI(profile_url))
+              subject.main
+            end
+
+            it "returns :restart_yast" do
+              allow(manager).to receive(:add_repository).with(URI(profile_url))
+              expect(subject.main).to eq(:restart_yast)
+            end
+
+            it "shows an error and returns :next if update fails" do
+              expect(Yast::Report).to receive(:Error)
+              expect(manager).to receive(:add_repository)
+                .and_raise(::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo)
+              expect(subject.main).to eq(:next)
+            end
+          end
+
+          context "the profile does not define the update URL" do
+            let(:profile_url) { nil }
+
+            it "gets URL from control file" do
+              expect(manager).to receive(:add_repository).with(URI(real_url))
+              expect(subject.main).to eq(:restart_yast)
+            end
+
+            it "does not show an error if update is not found" do
+              expect(Yast::Report).to_not receive(:Error)
+              expect(manager).to receive(:add_repository).with(URI(real_url))
+                .and_raise(::Installation::UpdatesManager::NotValidRepo)
+              expect(subject.main).to eq(:next)
+            end
+
+            context "and control file doesn't have an URL" do
+              let(:url) { "" }
+
+              it "does not update the installer" do
+                expect(subject).to_not receive(:update_installer)
+                expect(subject.main).to eq(:next)
+              end
+            end
           end
         end
       end
