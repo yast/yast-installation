@@ -51,8 +51,8 @@ The URL of the update repository is evaluated in this order:
    </globals>
    ```
 
-The first found option is used. If the base product does not define the URL
-then the self update is skipped.
+The first found option is used. If no update URL is found then the self update
+is skipped.
 
 The URL can contain a variable `$arch` that will be replaced by the system's
 architecture, such as `x86_64`, `s390x`, etc. You can find more information
