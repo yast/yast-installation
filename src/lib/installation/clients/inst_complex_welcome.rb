@@ -83,8 +83,6 @@ module Yast
 
   private
 
-    attr_reader :license_required
-
     def event_loop
       loop do
         ret = UI.UserInput
@@ -115,7 +113,10 @@ module Yast
 
           # BNC #448598
           # Check whether the license has been accepted only if required
-          next if license_required && !license_accepted?
+          if license_required? && !license_accepted?
+            warn_license_required
+            next
+          end
 
           next if !Language.CheckIncompleteTranslation(@language)
 
@@ -261,9 +262,25 @@ module Yast
       )
     end
 
+    # Determines whether the license was accepted or not
+    #
+    # It relies in the value of the :license_agreement widget.
+    #
+    # @return [Boolean] true if license was accepted; false otherwise.
     def license_accepted?
-      return true if @license_acc
+      license_required? ? UI.QueryWidget(Id(:license_agreement), :Value) : true
+    end
 
+    # Determines whether the license is required or not
+    #
+    # @return [Boolean] true if license is required; false otherwise.
+    def license_required?
+      return @license_required unless @license_required.nil?
+      @license_required = ProductLicense.AcceptanceNeeded(@license_id.to_s)
+    end
+
+    # Report error about missing license acceptance
+    def warn_license_required
       UI.SetFocus(Id(:license_agreement))
       Report.Message(_("You must accept the license to install this product"))
     end
@@ -271,8 +288,6 @@ module Yast
     def read_ui_state
       @language = UI.QueryWidget(Id(:language), :Value)
       @keyboard = UI.QueryWidget(Id(:keyboard), :Value)
-
-      @license_acc = @licence_required ? UI.QueryWidget(Id(:license_agreement), :Value) : true
     end
 
     def retranslate_yast
@@ -437,12 +452,10 @@ module Yast
       ProductLicense.ShowLicenseInInstallation(:base_license_rp, @license_id)
 
       # If accepting the license is required, show the check-box
-      @licence_required = ProductLicense.AcceptanceNeeded(@license_id.to_s)
-
-      if @licence_required
+      if license_required?
         UI.ReplaceWidget(:license_checkbox_rp, license_agreement_checkbox)
       end
-      log.info "Acceptance needed: #{@id} => #{@licence_required}"
+      log.info "Acceptance needed: #{@id} => #{license_required?}"
     end
   end unless defined? Yast::InstComplexWelcomeClient
 end
