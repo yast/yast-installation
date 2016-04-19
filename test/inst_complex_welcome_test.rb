@@ -4,6 +4,20 @@ require_relative "test_helper"
 require "installation/clients/inst_complex_welcome"
 
 describe Yast::InstComplexWelcomeClient do
+  Yast.import "Mode"
+  Yast.import "ProductLicense"
+
+  textdomain "installation"
+
+  let(:store_path) { File.join(File.dirname(__FILE__), "complex_welcome_store.yaml") }
+
+  before do
+    stub_const("Yast::InstComplexWelcomeClient::DATA_PATH", store_path)
+  end
+
+  after do
+    FileUtils.rm(store_path) if File.exist?(store_path)
+  end
 
   describe "#main" do
     context "when installation Mode is auto" do
@@ -59,42 +73,57 @@ describe Yast::InstComplexWelcomeClient do
 
         context "when next is selected" do
           before do
-            expect(Yast::Mode).to receive(:config) { false }
-            expect(subject).to receive(:initialize_dialog)
+            allow(Yast::Mode).to receive(:config).and_return(false)
+            allow(Yast::Stage).to receive(:initial).and_return(true)
+
+            allow(Yast::Language).to receive(:CheckIncompleteTranslation).and_return(true)
+            allow(Yast::Language).to receive(:CheckLanguagesSupport)
+
+            allow(Yast::ProductLicense).to receive(:AcceptanceNeeded).and_return(license_needed)
+            allow(subject).to receive(:license_accepted?).and_return(license_accepted)
           end
 
           context "when license is required and not accepted" do
+            let(:license_needed) { true }
+            let(:license_accepted) { false }
+
             it "not returns" do
               expect(Yast::UI).to receive(:UserInput).and_return(:next, :back)
-              expect(subject).to receive(:read_ui_state)
-              expect(subject).to receive(:license_required) { true }
-              expect(subject).to receive(:license_accepted?) { false }
-
+              expect(Yast::Report).to receive(:Message)
+                .with(_("You must accept the license to install this product"))
               expect(subject.main).to eql(:back)
             end
           end
 
-          context "when license is not required or is required and accepted" do
+          context "when license is not required" do
+            let(:license_needed) { false }
+            let(:license_accepted) { false }
+
             it "stores selected data and returns next" do
               expect(Yast::UI).to receive(:UserInput).and_return(:next)
-              expect(subject).to receive(:read_ui_state)
-
-              expect(subject).to receive(:license_required) { true }
-              expect(subject).to receive(:license_accepted?) { true }
-              expect(Yast::Language).to receive(:CheckIncompleteTranslation) { true }
-              expect(Yast::Stage).to receive(:initial) { false }
-
               expect(subject).to receive(:setup_final_choice)
-
               expect(subject).to receive(:store_data)
+              expect(Yast::Report).to_not receive(:Message)
+
+              expect(subject.main).to eql(:next)
+            end
+          end
+
+          context "when license is required and accepted" do
+            let(:license_needed) { true }
+            let(:license_accepted) { true }
+
+            it "stores selected data and returns next" do
+              expect(Yast::UI).to receive(:UserInput).and_return(:next)
+              expect(subject).to receive(:setup_final_choice)
+              expect(subject).to receive(:store_data)
+              expect(Yast::Report).to_not receive(:Message)
+
               expect(subject.main).to eql(:next)
             end
           end
         end
-
       end
-
     end
   end
-
 end
