@@ -7,6 +7,8 @@ describe Yast::InstComplexWelcomeClient do
   Yast.import "Mode"
   Yast.import "ProductLicense"
 
+  textdomain "installation"
+
   let(:store_path) { File.join(File.dirname(__FILE__), "complex_welcome_store.yaml") }
 
   before do
@@ -87,7 +89,8 @@ describe Yast::InstComplexWelcomeClient do
 
             it "not returns" do
               expect(Yast::UI).to receive(:UserInput).and_return(:next, :back)
-              expect(Yast::Report).to receive(:Message).with(/You must accept/)
+              expect(Yast::Report).to receive(:Message)
+                .with(_("You must accept the license to install this product"))
               expect(subject.main).to eql(:back)
             end
           end
@@ -100,7 +103,7 @@ describe Yast::InstComplexWelcomeClient do
               expect(Yast::UI).to receive(:UserInput).and_return(:next)
               expect(subject).to receive(:setup_final_choice)
               expect(subject).to receive(:store_data)
-              expect(Yast::Report).to_not receive(:Message).with(/You must accept/)
+              expect(Yast::Report).to_not receive(:Message)
 
               expect(subject.main).to eql(:next)
             end
@@ -114,7 +117,7 @@ describe Yast::InstComplexWelcomeClient do
               expect(Yast::UI).to receive(:UserInput).and_return(:next)
               expect(subject).to receive(:setup_final_choice)
               expect(subject).to receive(:store_data)
-              expect(Yast::Report).to_not receive(:Message).with(/You must accept/)
+              expect(Yast::Report).to_not receive(:Message)
 
               expect(subject.main).to eql(:next)
             end
