@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Apr 19 09:08:35 UTC 2016 - igonzalezsosa@suse.com
+
+- Fix handling of license acceptance in welcome screen
+  (bsc#975774)
+- 3.1.181
+
+-------------------------------------------------------------------
 Fri Apr 15 12:51:00 UTC 2016 - lslezak@suse.cz
 
 - Run the automatic installer self update also in the AutoYaST
