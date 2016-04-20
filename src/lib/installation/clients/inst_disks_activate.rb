@@ -26,6 +26,9 @@
 #
 # $Id$
 #
+
+require "installation/clients/inst_update_installer"
+
 module Yast
   class InstDisksActivateClient < Client
     def main
@@ -54,6 +57,10 @@ module Yast
       @have_dasd = false
       @have_zfcp = false
       @want_fcoe = false
+
+      @installer_update ||= InstUpdateInstaller.new
+
+      return :next if !GetInstArgs.going_back && @installer_update.installer_updated?
 
       if Arch.s390
         # popup label

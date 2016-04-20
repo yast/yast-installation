@@ -2,6 +2,7 @@
 
 require_relative "test_helper"
 require "installation/clients/inst_disks_activate"
+require "installation/clients/inst_update_installer"
 
 describe Yast::InstDisksActivateClient do
   Yast.import "Arch"
@@ -10,11 +11,12 @@ describe Yast::InstDisksActivateClient do
   Yast.import "GetInstArgs"
   Yast.import "UI"
   Yast.import "Popup"
-  Yast.import "Storage"
 
   describe "#main" do
     let(:probed_disks) { [] }
     let(:s390) { false }
+    let(:installer) { double("update_installer", installer_updated?: false) }
+    let(:going_back) { false }
 
     before do
       allow(Yast::Linuxrc).to receive(:InstallInf).with("WithFCoE").and_return("0")
@@ -22,7 +24,19 @@ describe Yast::InstDisksActivateClient do
       allow(Yast::UI).to receive(:CloseDialog)
       allow(Yast::Popup).to receive(:ConfirmAbort).with(:painless).and_return(true)
       allow(Yast::Arch).to receive(:s390).and_return(s390)
-      allow(Yast::Storage).to receive(:ReReadTargetMap)
+      allow(Yast::InstUpdateInstaller).to receive(:new).and_return(installer)
+      allow(Yast::GetInstArgs).to receive(:going_back) { going_back }
+      stub_const("Yast::Storage", double("Yast::Storage", ReReadTargetMap: true))
+    end
+
+    context "when installer had been updated and not coming from other dialog" do
+      let(:installer) { double("update_installer", installer_updated?: true) }
+
+      it "returns next" do
+        expect(Yast::Arch).to_not receive(:s390)
+
+        expect(subject.main).to eql(:next)
+      end
     end
 
     context "when architecture is s390" do
