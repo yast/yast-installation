@@ -100,7 +100,8 @@ module Yast
           Keyboard.Set(@keyboard)
           Keyboard.user_decision = true
         when :license_agreement
-          InstData.product_license_accepted = UI.QueryWidget(Id(:license_agreement), :Value)
+          read_ui_state
+          InstData.product_license_accepted = @license_accepted
         when :language
           next if Mode.config
           read_ui_state
@@ -144,6 +145,7 @@ module Yast
       Wizard.EnableAbortButton
 
       UI.ChangeWidget(Id(:language), :Value, @language)
+      UI.ChangeWidget(Id(:license_agreement), :Value, @license_accepted)
 
       if Keyboard.user_decision
         UI.ChangeWidget(Id(:keyboard), :Value, Keyboard.current_kbd)
@@ -286,8 +288,9 @@ module Yast
     end
 
     def read_ui_state
-      @language = UI.QueryWidget(Id(:language), :Value)
-      @keyboard = UI.QueryWidget(Id(:keyboard), :Value)
+      @language         = UI.QueryWidget(Id(:language), :Value)
+      @keyboard         = UI.QueryWidget(Id(:keyboard), :Value)
+      @license_accepted = UI.QueryWidget(Id(:license_agreement), :Value)
     end
 
     def retranslate_yast
@@ -321,6 +324,7 @@ module Yast
 
     def setup_final_choice
       Keyboard.Set(@keyboard)
+      InstData.product_license_accepted = @license_accepted
 
       # Language has been set already.
       # On first run store users decision as default.
@@ -357,8 +361,9 @@ module Yast
 
     def store_data
       data = {
-        "language" => @language,
-        "keyboard" => @keyboard
+        "language"         => @language,
+        "keyboard"         => @keyboard,
+        "license_accepted" => @license_accepted
       }
 
       File.write(DATA_PATH, data.to_yaml)
@@ -366,8 +371,9 @@ module Yast
 
     def apply_data
       data = YAML.load(File.read(DATA_PATH))
-      @language = data["language"]
-      @keyboard = data["keyboard"]
+      @language         = data["language"]
+      @keyboard         = data["keyboard"]
+      @license_accepted = data["license_accepted"]
 
       change_language
       setup_final_choice
