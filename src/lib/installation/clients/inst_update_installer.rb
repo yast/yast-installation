@@ -40,14 +40,16 @@ module Yast
       textdomain "installation"
 
       return :back if GetInstArgs.going_back
+
+      Installation.finish_restarting! if Installation.restarting?
+
       return :next unless try_to_update?
 
       log.info("Trying installer update")
 
       if update_installer
         ::FileUtils.touch(update_flag_file) # Indicates that the installer was updated.
-        ::FileUtils.touch(Installation.restart_file)
-        :restart_yast # restart YaST to apply modifications.
+        Installation.restart!
       else
         :next
       end

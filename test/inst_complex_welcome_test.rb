@@ -13,6 +13,7 @@ describe Yast::InstComplexWelcomeClient do
 
   before do
     stub_const("Yast::InstComplexWelcomeClient::DATA_PATH", store_path)
+    allow(Yast::ProductLicense).to receive(:info_seen?) { true }
   end
 
   after do
@@ -20,6 +21,7 @@ describe Yast::InstComplexWelcomeClient do
   end
 
   describe "#main" do
+    let(:restarting) { false }
     context "when installation Mode is auto" do
       it "returns :auto" do
         expect(Yast::Mode).to receive(:autoinst) { true }
@@ -31,18 +33,29 @@ describe Yast::InstComplexWelcomeClient do
     context "when installation mode is not auto" do
       before do
         expect(Yast::Mode).to receive(:autoinst) { false }
+        allow(Yast::Installation).to receive(:restarting?) { restarting }
       end
 
-      context "and previous data exist" do
-        it "applies data and returns :next" do
+      context "and installer is restarting" do
+        let(:restarting) { true }
+        it "applies data if exists and returns next" do
           allow(subject).to receive(:data_stored?) { true }
           expect(subject).to receive(:apply_data)
 
           expect(subject.main).to eql(:next)
         end
+
+        it "does not apply data if not exists and continues as not restarting" do
+          allow(subject).to receive(:data_stored?) { false }
+          expect(subject).not_to receive(:apply_data)
+          allow(subject).to receive(:event_loop)
+          expect(subject).to receive(:initialize_dialog)
+
+          subject.main
+        end
       end
 
-      context "and no previous data exist" do
+      context "and installer is not restarting" do
         before do
           allow(subject).to receive(:data_stored?) { false }
         end

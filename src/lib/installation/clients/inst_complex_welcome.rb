@@ -42,8 +42,10 @@ module Yast
 
       textdomain "installation"
 
+      @license_id = Ops.get(Pkg.SourceGetCurrent(true), 0, 0)
+
       # ------------------------------------- main part of the client -----------
-      if data_stored? && !GetInstArgs.going_back
+      if Installation.restarting? && data_stored?
         apply_data
         return :next
       end
@@ -52,8 +54,6 @@ module Yast
 
       @language = Language.language
       @keyboard = ""
-
-      @license_id = Ops.get(Pkg.SourceGetCurrent(true), 0, 0)
 
       # ----------------------------------------------------------------------
       # Build dialog
@@ -374,6 +374,7 @@ module Yast
       @language         = data["language"]
       @keyboard         = data["keyboard"]
       @license_accepted = data["license_accepted"]
+      ProductLicense.info_seen!(@license_id)
 
       change_language
       setup_final_choice

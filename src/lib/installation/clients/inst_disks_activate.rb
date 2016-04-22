@@ -58,9 +58,7 @@ module Yast
       @have_zfcp = false
       @want_fcoe = false
 
-      @installer_update ||= InstUpdateInstaller.new
-
-      return :next if !GetInstArgs.going_back && @installer_update.installer_updated?
+      return :next if Installation.restarting?
 
       if Arch.s390
         # popup label
