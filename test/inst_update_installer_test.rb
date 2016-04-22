@@ -23,6 +23,8 @@ describe Yast::InstUpdateInstaller do
     allow(Yast::Mode).to receive(:auto).and_return(false)
     allow(Yast::NetworkService).to receive(:isNetworkRunning).and_return(network_running)
     allow(::Installation::UpdatesManager).to receive(:new).and_return(manager)
+    allow(Yast::Installation).to receive(:restarting?)
+    allow(Yast::Installation).to receive(:restart!) { :restart_yast }
 
     # stub the Profile module to avoid dependency on autoyast2-installation
     ay_profile = double("Yast::Profile")
@@ -51,7 +53,7 @@ describe Yast::InstUpdateInstaller do
         end
 
         it "creates update file and returns :restart_yast" do
-          expect(::FileUtils).to receive(:touch).twice
+          expect(::FileUtils).to receive(:touch).once
           allow(subject).to receive(:self_update_enabled?).and_return(true)
           expect(subject.main).to eq(:restart_yast)
         end

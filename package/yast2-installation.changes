@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Wed Apr 20 10:47:12 UTC 2016 - knut.anderssen@suse.com
+
+- Disk Activation step will be skipped in case of installer update
+  success (bsc#974409)
+- License agreement will be remembered in case of going back after
+  a installer update.
+- 3.1.182
+
+-------------------------------------------------------------------
 Tue Apr 19 09:08:35 UTC 2016 - igonzalezsosa@suse.com
 
 - Fix handling of license acceptance in welcome screen
