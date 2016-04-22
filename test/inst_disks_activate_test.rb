@@ -2,7 +2,6 @@
 
 require_relative "test_helper"
 require "installation/clients/inst_disks_activate"
-require "installation/clients/inst_update_installer"
 
 describe Yast::InstDisksActivateClient do
   Yast.import "Arch"
