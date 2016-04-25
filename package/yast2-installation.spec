@@ -47,7 +47,7 @@ BuildRequires: yast2-network
 Requires:       autoyast2-installation >= 3.1.105
 
 # Moved proc_modules.scr
-Requires:       yast2 >= 3.1.180
+Requires:       yast2 >= 3.1.186
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
@@ -60,7 +60,7 @@ Requires:	yast2-pkg-bindings >= 3.1.33
 Conflicts:	yast2-mouse < 2.18.0
 
 # New API for ProductLicense
-Requires:	yast2-packager >= 2.19.2
+Requires:	yast2-packager >= 3.1.96
 
 # Storage::GetDetectedDiskPaths
 Requires:	yast2-storage >= 2.24.1
