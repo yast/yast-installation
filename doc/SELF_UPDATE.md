@@ -37,12 +37,12 @@ The URL of the update repository is evaluated in this order:
 
 1. The `SelfUpdate` boot option
 2. The AutoYaST control file - in AutoYaST installation only, use the
-   `/generic/self_update_url` XML node:
+   `/general/self_update_url` XML node:
 
    ```xml
-   <generic>
+   <general>
      <self_update_url>http://example.com/updates/$arch</self_update_url>
-   </generic>
+   </general>
    ```
 3. Hard-coded in the `control.xml` file on the installation medium (thus it
    depends on the base product):
