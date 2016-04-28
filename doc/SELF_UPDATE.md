@@ -73,3 +73,14 @@ precedence. As you may know, user driver updates are applied first (before the
 self-update is performed).
 
 However, the user changes will be re-applied on top of the installer updates.
+
+## Resume installation
+
+Any client called before the self update step is responsible to remember its state (if
+needed) and automatically going to the next dialog after the YaST restart.
+Once the self update step is reached again it will remove the restarting flag.
+
+Currently there is no API available for remembering the client states. The easiest
+way is to store the configuration into an YAML file and load it when restarting the
+installer. See the [example](https://github.com/yast/yast-installation/pull/367/files#diff-4c91d6424e08c9bef9237f7d959fc0c2R48)
+in the `inst_complex_welcome` client.
