@@ -85,6 +85,8 @@ module Yast
         end
       end
 
+      read_users
+
       # free the memory
       @useful_partitions = nil
 
@@ -206,6 +208,23 @@ module Yast
       end
 
       nil
+    end
+
+    # Stores all found user databases (/etc/passwd and friends) into
+    # UsersDatabase.all, so it can be used during the users import step
+    def read_users
+      require_users_database
+      return unless defined? Users::UsersDatabase
+      each_mounted_partition do |device, mount_point|
+        log.info "Reading users information from #{device}"
+        Users::UsersDatabase.import(mount_point)
+      end
+    end
+
+    def require_users_database
+      require "users/users_database"
+    rescue LoadError
+      log.error "UsersDatabase not found. YaST2-users is missing, old or broken."
     end
 
     def Initialize
