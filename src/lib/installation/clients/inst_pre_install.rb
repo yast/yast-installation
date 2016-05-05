@@ -165,13 +165,8 @@ module Yast
           end
           Ops.set(one_partition_files_found, wanted_file, file_time)
         end
-        if files_found
-          Ops.set(
-            files_found_on_partitions,
-            device,
-            one_partition_files_found
-          )
-        end
+        next unless files_found
+        Ops.set(files_found_on_partitions, device, one_partition_files_found)
       end
 
       Builtins.y2milestone("Files found: %1", files_found_on_partitions)
