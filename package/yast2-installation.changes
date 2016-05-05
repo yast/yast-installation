@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu May  5 13:39:46 UTC 2016 - ancor@suse.com
+
+- Always read the lists of local users in the previous system to
+  have them available during user importing (part of fate#319624)
+- 3.1.183
+
+-------------------------------------------------------------------
 Wed Apr 20 10:47:12 UTC 2016 - knut.anderssen@suse.com
 
 - Disk Activation step will be skipped in case of installer update
