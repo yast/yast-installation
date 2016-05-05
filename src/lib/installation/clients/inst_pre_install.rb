@@ -20,6 +20,8 @@
 # ------------------------------------------------------------------------------
 module Yast
   class InstPreInstallClient < Client
+    include Yast::Logger
+
     def main
       Yast.import "Storage"
       Yast.import "FileSystems"
@@ -83,6 +85,8 @@ module Yast
         end
       end
 
+      read_users
+
       # free the memory
       @useful_partitions = nil
 
@@ -124,46 +128,10 @@ module Yast
       wanted_files = deep_copy(wanted_files)
       optional_files = deep_copy(optional_files)
       Builtins.y2milestone("Searching for files: %1", wanted_files)
-      mnt_tmpdir = Ops.add(Directory.tmpdir, "/tmp_mnt_for_check")
-
-      mnt_tmpdir = SystemFilesCopy.CreateDirectoryIfMissing(mnt_tmpdir)
-
-      # CreateDirectory failed
-      return nil if mnt_tmpdir.nil?
 
       files_found_on_partitions = {}
 
-      Builtins.foreach(@useful_partitions) do |partition|
-        partition_device = Ops.get_string(partition, "device", "")
-        Builtins.y2milestone("Mounting %1 to %2", partition_device, mnt_tmpdir)
-        already_mounted = Builtins.sformat(
-          "grep '[\\t ]%1[\\t ]' /proc/mounts",
-          mnt_tmpdir
-        )
-        am = Convert.to_map(
-          SCR.Execute(path(".target.bash_output"), already_mounted)
-        )
-        if Ops.get_integer(am, "exit", -1) == 0 &&
-            Ops.greater_than(Builtins.size(Ops.get_string(am, "stdout", "")), 0)
-          Builtins.y2warning(
-            "%1 is already mounted, trying to umount...",
-            mnt_tmpdir
-          )
-          if Convert.to_boolean(SCR.Execute(path(".target.umount"), mnt_tmpdir)) != true
-            Builtins.y2error("Cannot umount %1", mnt_tmpdir)
-          end
-        end
-        # mounting read-only
-        if !Convert.to_boolean(
-          SCR.Execute(
-            path(".target.mount"),
-            [partition_device, mnt_tmpdir],
-            "-o ro,noatime"
-          )
-          )
-          Builtins.y2error("Mounting falied!")
-          next
-        end
+      each_mounted_partition do |device, mnt_tmpdir|
         files_found = true
         one_partition_files_found = {}
         Builtins.foreach(wanted_files) do |wanted_file|
@@ -197,28 +165,8 @@ module Yast
           end
           Ops.set(one_partition_files_found, wanted_file, file_time)
         end
-        if files_found
-          Ops.set(
-            files_found_on_partitions,
-            partition_device,
-            one_partition_files_found
-          )
-        end
-        # bnc #427879
-        exec = Convert.to_map(
-          SCR.Execute(
-            path(".target.bash_output"),
-            Builtins.sformat("fuser -v '%1' 2>&1", String.Quote(mnt_tmpdir))
-          )
-        )
-        if Ops.get_string(exec, "stdout", "") != ""
-          Builtins.y2error("Processes in %1: %2", mnt_tmpdir, exec)
-        end
-        # umounting
-        Builtins.y2milestone("Umounting %1", partition_device)
-        if !Convert.to_boolean(SCR.Execute(path(".target.umount"), mnt_tmpdir))
-          Builtins.y2error("Umount failed!")
-        end
+        next unless files_found
+        Ops.set(files_found_on_partitions, device, one_partition_files_found)
       end
 
       Builtins.y2milestone("Files found: %1", files_found_on_partitions)
@@ -255,6 +203,23 @@ module Yast
       end
 
       nil
+    end
+
+    # Stores all found user databases (/etc/passwd and friends) into
+    # UsersDatabase.all, so it can be used during the users import step
+    def read_users
+      require_users_database
+      return unless defined? Users::UsersDatabase
+      each_mounted_partition do |device, mount_point|
+        log.info "Reading users information from #{device}"
+        Users::UsersDatabase.import(mount_point)
+      end
+    end
+
+    def require_users_database
+      require "users/users_database"
+    rescue LoadError
+      log.error "UsersDatabase not found. YaST2-users is missing, old or broken."
     end
 
     def Initialize
@@ -331,6 +296,50 @@ module Yast
       Builtins.y2milestone("Possible partitions: %1", @useful_partitions)
 
       nil
+    end
+
+  protected
+
+    def each_mounted_partition(&block)
+      mnt_tmpdir = "#{Directory.tmpdir}/tmp_mnt_for_check"
+      mnt_tmpdir = SystemFilesCopy.CreateDirectoryIfMissing(mnt_tmpdir)
+
+      # CreateDirectory failed
+      if mnt_tmpdir.nil?
+        log.error "Error creating temporary directory"
+        return
+      end
+
+      @useful_partitions.each do |partition|
+        partition_device = partition["device"] || ""
+        log.info "Mounting #{partition_device} to #{mnt_tmpdir}"
+        already_mounted = Builtins.sformat(
+          "grep '[\\t ]%1[\\t ]' /proc/mounts",
+          mnt_tmpdir
+        )
+        am = SCR.Execute(path(".target.bash_output"), already_mounted)
+        if am["exit"] == 0 && !am["stdout"].to_s.empty?
+          log.warning "#{mnt_tmpdir} is already mounted, trying to umount..."
+          log.error("Cannot umount #{mnt_tmpdir}") unless SCR.Execute(path(".target.umount"), mnt_tmpdir)
+        end
+        # mounting read-only
+        if !SCR.Execute(path(".target.mount"), [partition_device, mnt_tmpdir], "-o ro,noatime")
+          log.error "Mounting falied!"
+          next
+        end
+
+        block.call(partition_device, mnt_tmpdir)
+
+        # bnc #427879
+        exec = SCR.Execute(
+          path(".target.bash_output"),
+          Builtins.sformat("fuser -v '%1' 2>&1", String.Quote(mnt_tmpdir))
+        )
+        log.error("Processes in #{mnt_tmpdir}: #{exec}") unless exec["stdout"].to_s.empty?
+        # umounting
+        log.info "Umounting #{partition_device}"
+        log.error("Umount failed!") unless SCR.Execute(path(".target.umount"), mnt_tmpdir)
+      end
     end
   end
 end

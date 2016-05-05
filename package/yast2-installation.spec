@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.182
+Version:        3.1.183
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -117,7 +117,8 @@ Requires:	pciutils
 
 Recommends:	yast2-registration
 Recommends:	yast2-online-update
-Recommends:	yast2-users
+# UsersDatabase class
+Recommends:	yast2-users >= 3.1.49
 Recommends:	yast2-firewall
 Recommends:	release-notes
 Recommends:	curl
