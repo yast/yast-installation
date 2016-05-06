@@ -45,24 +45,19 @@ module Installation
     end
 
     def dialog_title
-      _("System Role")
+      Yast::ProductControl.GetTranslatedText("roles_caption")
     end
 
     def help_text
-      ""                    # no Help, besides the descriptions in dialog body
+      Yast::ProductControl.GetTranslatedText("roles_help")
     end
 
     def dialog_content
-      ui_roles = role_attributes.each_with_object(VBox()) do |r, vbox|
-        vbox << Left(RadioButton(Id(r[:id]), r[:label]))
-        vbox << HBox(
-          HSpacing(Yast::UI.TextMode ? 4 : 2),
-          Left(Label(r[:description]))
-        )
-        vbox << VSpacing(2)
-      end
-
-      RadioButtonGroup(Id(:roles), ui_roles)
+      VBox(
+        Left(Label(Yast::ProductControl.GetTranslatedText("roles_text"))),
+        VSpacing(2),
+        role_buttons
+      )
     end
 
     def create_dialog
@@ -93,6 +88,19 @@ module Installation
 
     def clear_role
       Yast::ProductFeatures.ClearOverlay
+    end
+
+    def role_buttons
+      ui_roles = role_attributes.each_with_object(VBox()) do |r, vbox|
+        vbox << Left(RadioButton(Id(r[:id]), r[:label]))
+        vbox << HBox(
+          HSpacing(Yast::UI.TextMode ? 4 : 2),
+          Left(Label(r[:description]))
+        )
+        vbox << VSpacing(2)
+      end
+
+      RadioButtonGroup(Id(:roles), ui_roles)
     end
 
     def apply_role(role_id)
