@@ -875,6 +875,24 @@ Example:
     </system_roles>
 
     <texts>
+      <!-- Caption of the whole dialog -->
+      <roles_caption><label>System Role</label></roles_caption>
+      <!-- Few lines of text above the selection of the roles -->
+      <roles_text>
+        <label>System Roles are predefined use cases which adjust the system
+to be installed tailored for the selected scenario.
+Choose the one which matches your system best.</label>
+      </roles_text>
+      <!-- Help text of the roles dialog -->
+      <roles_help>
+        <label>&lt;p&gt;The system roles adjustments are in the range from package selection up
+to disk partitioning. By choosing a system role, the system is
+configured accordingly to match the use case of the role. The settings
+defined by a role can be overridden in the next steps if necessary.&lt;/p&gt;</label>
+      </roles_help>
+
+
+
       <plain><label>General Server</label></plain>
       <plain_description>
         <label>Suitable for physical machines.</label>
