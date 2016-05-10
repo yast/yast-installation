@@ -86,6 +86,9 @@ module Yast
 
         @linuxrc["Root"] = "kexec" if LoadKexec()
 
+        # Override linuxrc setting when run on zKVM (fate#320262)
+        @linuxrc["Root"] = "halt" if Arch.is_zkvm
+
         # Override linuxrc settings in autoinst mode
         if Mode.autoinst
           if AutoinstConfig.ForceBoot
