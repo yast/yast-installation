@@ -32,6 +32,8 @@
 #
 module Yast
   class YastInfFinishClient < Client
+    include Yast::Logger
+
     def main
       Yast.import "UI"
 
@@ -53,8 +55,7 @@ module Yast
       @param = {}
 
       # Check arguments
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
-          Ops.is_string?(WFM.Args(0))
+      if WFM.Args.size > 0 && Ops.is_string?(WFM.Args(0))
         @func = Convert.to_string(WFM.Args(0))
         if Ops.greater_than(Builtins.size(WFM.Args), 1) &&
             Ops.is_map?(WFM.Args(1))
@@ -62,9 +63,9 @@ module Yast
         end
       end
 
-      Builtins.y2milestone("starting yast_inf_finish")
-      Builtins.y2debug("func=%1", @func)
-      Builtins.y2debug("param=%1", @param)
+      log.info "starting yast_inf_finish"
+      log.debug "func=#{@func}"
+      log.debug "param=#{@func}"
 
       if @func == "Info"
         return {
@@ -78,31 +79,31 @@ module Yast
         # collect data for linuxrc, will be written to /etc/yast.inf
         @linuxrc = {}
 
-        # always do hard reboot to ensure that all stuff is initializes
+        # always do hard reboot to ensure that all stuff is initialized
         # correctly. but no reboot message form linuxrc.
-        Ops.set(@linuxrc, "Root", "reboot")
-        Ops.set(@linuxrc, "RebootMsg", "0")
+        @linuxrc["Root"] = "reboot"
+        @linuxrc["RebootMsg"] = "0"
 
-        Ops.set(@linuxrc, "Root", "kexec") if LoadKexec()
+        @linuxrc["Root"] = "kexec" if LoadKexec()
 
         # Override linuxrc settings in autoinst mode
         if Mode.autoinst
           if AutoinstConfig.ForceBoot
-            Ops.set(@linuxrc, "Root", "reboot")
+            @linuxrc["Root"] = "reboot"
           elsif AutoinstConfig.RebootMsg
-            Ops.set(@linuxrc, "RebootMsg", "1")
+            @linuxrc["RebootMsg"] = "1"
           elsif AutoinstConfig.Halt
-            Ops.set(@linuxrc, "Root", "halt")
+            @linuxrc["Root"] = "halt"
           end
         end
 
-        if Ops.get(@linuxrc, "Root", "") == "kexec"
-          # flag for inst_finish -> kerel was successful loaded by kexec
+        if @linuxrc["Root"] == "kexec"
+          # flag for inst_finish -> kernel was successfully loaded by kexec
           @cmd = Builtins.sformat("touch \"%1/kexec_done\"", Directory.vardir)
           # call command
           WFM.Execute(path(".local.bash_output"), @cmd)
           if !UI.TextMode
-            Builtins.y2milestone("Printing message about loading kernel via kexec")
+            log.info "Printing message about loading kernel via kexec"
             SCR.Write(
               path(".dev.tty.stderr"),
               _(
@@ -121,8 +122,8 @@ module Yast
           end
         end
 
-        Ops.set(@linuxrc, "Language", Language.language)
-        Ops.set(@linuxrc, "Keytable", Keyboard.keymap)
+        @linuxrc["Language"] = Language.language
+        @linuxrc["Keytable"] = Keyboard.keymap
 
         Linuxrc.WriteYaSTInf(@linuxrc)
 
@@ -135,8 +136,8 @@ module Yast
         @ret = nil
       end
 
-      Builtins.y2debug("ret=%1", @ret)
-      Builtins.y2milestone("yast_inf_finish finished")
+      log.debug "ret=#{@ret}"
+      log.info "yast_inf_finish finished"
       deep_copy(@ret)
     end
 
@@ -146,20 +147,20 @@ module Yast
     def LoadKexec
       # command for reading kernel_params
       cmd = Builtins.sformat("ls '%1/kernel_params' |tr -d '\n'", String.Quote(Directory.vardir))
-      Builtins.y2milestone("Checking existing file kernel_params via command %1", cmd)
+      log.info "Checking existing file kernel_params via command #{cmd}"
 
       out = Convert.to_map(WFM.Execute(path(".local.bash_output"), cmd))
 
       cmd = Builtins.sformat("%1/kernel_params", Directory.vardir)
       # check output
       if Ops.get_string(out, "stdout", "") != cmd
-        Builtins.y2milestone("File kernel_params was not found, output: %1", out)
+        log.info "File kernel_params was not found, output: #{out}"
         return false
       end
 
       # command for reading kernel_params
       cmd = Builtins.sformat("cat '%1/kernel_params' |tr -d '\n'", String.Quote(Directory.vardir))
-      Builtins.y2milestone("Reading kernel arguments via command %1", cmd)
+      log.info "Reading kernel arguments via command #{cmd}"
       # read data from /var/lib/YaST2/kernel_params
       out = Convert.to_map(WFM.Execute(path(".local.bash_output"), cmd))
       # check output
@@ -177,7 +178,7 @@ module Yast
 
       # command for finding initrd file
       cmd = Builtins.sformat("ls %1/initrd-* |tr -d '\n'", Directory.vardir)
-      Builtins.y2milestone("Finding initrd file via command: %1", cmd)
+      log.info "Finding initrd file via command: #{cmd}"
       # find inird file
       out = Convert.to_map(WFM.Execute(path(".local.bash_output"), cmd))
       # check output
@@ -195,7 +196,7 @@ module Yast
 
       # command for finding vmlinuz file
       cmd = Builtins.sformat("ls %1/vmlinuz-* |tr -d '\n'", Directory.vardir)
-      Builtins.y2milestone("Finding vmlinuz file via command: %1", cmd)
+      log.info "Finding vmlinuz file via command: #{cmd}"
       # find inird file
       out = Convert.to_map(WFM.Execute(path(".local.bash_output"), cmd))
       # check output
@@ -218,7 +219,7 @@ module Yast
         String.Quote(initrd),
         String.Quote(vmlinuz)
       )
-      Builtins.y2milestone("Calling kexec via command: %1", cmd)
+      log.info "Calling kexec via command: #{cmd}"
 
       # call kexec
       out = Convert.to_map(WFM.Execute(path(".local.bash_output"), cmd))
@@ -228,7 +229,7 @@ module Yast
         return false
       end
 
-      Builtins.y2milestone("Loading new kernel was succesful")
+      log.info "Loading new kernel was successful"
       true
     end
   end
