@@ -389,6 +389,7 @@ module Yast
       @text_mode = UI.TextMode
     end
 
+    # Showing where the EULA will be installed
     def license_location
       file_location = ProductFeatures.GetStringFeature(
         "globals",
