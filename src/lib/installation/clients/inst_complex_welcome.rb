@@ -403,7 +403,7 @@ module Yast
             Label(
               # TRANSLATORS: addition license information
               # %1 is replaced with the filename
-              _("EULA location in the installed system:\n%s") %
+              _("EULA location in the installed system: %s") %
                 file_location
             )
           )
