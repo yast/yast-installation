@@ -430,7 +430,7 @@ module Yast
                 ),
                 VSpacing(text_mode? ? 0.5 : 1),
                 HBox(
-                  license_location != nil ?
+                  !license_location.nil? ?
                   Left(
                     ReplacePoint(
                       Id(:license_location),
