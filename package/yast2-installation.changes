@@ -2,6 +2,7 @@
 Mon May  9 15:14:22 CEST 2016 - schubi@suse.de
 
 - Do not copy licences from inst-sys to target system.
+  Showing EULA location in the installed system.
   (fate#219341)
 - 3.1.185
 
