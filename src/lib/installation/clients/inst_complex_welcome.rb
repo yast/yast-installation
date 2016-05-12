@@ -389,7 +389,7 @@ module Yast
       @text_mode = UI.TextMode
     end
 
-    def lisence_location
+    def license_location
       file_location = ProductFeatures.GetStringFeature(
         "globals",
         "base_product_license_directory"
