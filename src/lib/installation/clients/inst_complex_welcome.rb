@@ -437,12 +437,8 @@ module Yast
                       Label(
                         # TRANSLATORS: addition license information
                         # %1 is replaced with the filename
-                        Builtins.sformat(
-                          _(
-                            "EULA location in the installed system: %1"
-                          ),
+                        _("EULA location in the installed system:\n%1") %
                           license_location
-                        )
                       )
                     )
                   ) :
