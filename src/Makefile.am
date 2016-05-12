@@ -66,6 +66,7 @@ client_DATA = \
   clients/save_config_finish.rb \
   clients/save_hw_status_finish.rb \
   clients/snapshots_finish.rb \
+  clients/ssh_import_proposal.rb \
   clients/ssh_settings_finish.rb \
   clients/stroj-casu.rb \
   clients/switch_scr_finish.rb \
@@ -116,7 +117,10 @@ ylib_DATA = \
   lib/installation/select_system_role.rb \
   lib/installation/snapshots_finish.rb \
   lib/installation/updates_manager.rb \
-  lib/installation/update_repository.rb
+  lib/installation/update_repository.rb \
+  lib/installation/ssh_config.rb \
+  lib/installation/ssh_key.rb \
+  lib/installation/ssh_config_file.rb
 
 ylibtransferdir = "${yast2dir}/lib/transfer"
 ylibtransfer_DATA = \
@@ -174,6 +178,7 @@ ylibclient_DATA = \
   lib/installation/clients/proxy_finish.rb \
   lib/installation/clients/save_config_finish.rb \
   lib/installation/clients/save_hw_status_finish.rb \
+  lib/installation/clients/ssh_import_proposal.rb \
   lib/installation/clients/ssh_settings_finish.rb \
   lib/installation/clients/stroj-casu.rb \
   lib/installation/clients/switch_scr_finish.rb \
@@ -184,6 +189,10 @@ ylibclient_DATA = \
   lib/installation/clients/x11_finish.rb \
   lib/installation/clients/yast_inf_finish.rb
 
-EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylib_DATA) $(ylibtransfer_DATA)
+ylibdialogdir = "${yast2dir}/lib/installation/dialogs"
+ylibdialog_DATA = \
+  lib/installation/dialogs/ssh_import.rb
+
+EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylibdialog_DATA) $(ylib_DATA) $(ylibtransfer_DATA)
 
 include $(top_srcdir)/Makefile.am.common
