@@ -390,7 +390,11 @@ module Yast
     end
 
     def lisence_location
-      if license_location.nil?
+      file_location = ProductFeatures.GetStringFeature(
+        "globals",
+        "base_product_license_directory"
+      )
+      if file_location.nil?
         Empty()
       else
         Left(
@@ -400,7 +404,7 @@ module Yast
               # TRANSLATORS: addition license information
               # %1 is replaced with the filename
               _("EULA location in the installed system:\n%s") %
-                license_location
+                file_location
             )
           )
         )
@@ -408,10 +412,6 @@ module Yast
     end
 
     def dialog_content
-      license_location = ProductFeatures.GetStringFeature(
-        "globals",
-        "base_product_license_directory"
-      )
       # this type of contents will be shown only for initial installation dialog
       VBox(
         VWeight(1, VStretch()),
