@@ -4,6 +4,9 @@ ENV["Y2DIR"] = y2dirs.unshift(srcdir).join(":")
 
 require "yast"
 require "yast/rspec"
+require "pathname"
+
+FIXTURES_DIR = Pathname.new(__FILE__).dirname.join("fixtures")
 
 # fake AutoinstConfigClass class which is not supported by Ubuntu
 module Yast
@@ -20,11 +23,11 @@ module Yast
   AutoinstConfig = AutoinstConfigClass.new
 
   # Faked Profile module
-  class Profile
+  class ProfileClass
     def current
     end
   end
-  Profile = Profile.new
+  Profile = ProfileClass.new
 end
 
 if ENV["COVERAGE"]
