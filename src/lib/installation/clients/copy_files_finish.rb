@@ -29,6 +29,7 @@
 #  Jiri Srain <jsrain@suse.cz>
 #
 require "fileutils"
+require "installation/ssh_config"
 
 module Yast
   class CopyFilesFinishClient < Client
@@ -202,6 +203,9 @@ module Yast
         # bugzila #328126
         # Copy 70-persistent-cd.rules ... if not updating
         CopyHardwareUdevRules() if !Mode.update
+
+        # fate#319624
+        copy_ssh_files
       else
         Builtins.y2error("unknown function: %1", @func)
         @ret = nil
@@ -333,6 +337,11 @@ module Yast
       log.error "Error copying udev rules" if cmd_out["exit"] != 0
 
       nil
+    end
+
+    def copy_ssh_files
+      log.info "Copying SSH keys and config files"
+      ::Installation::SshConfig.export(Installation.destdir)
     end
 
     # Prevent from re-defining client class
