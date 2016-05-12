@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon May  9 15:14:22 CEST 2016 - schubi@suse.de
+
+- Do not copy licenses from inst-sys to target system.
+  Showing EULA location in the installed system.
+  (fate#219341)
+- 3.1.185
+
+-------------------------------------------------------------------
 Fri May  6 11:09:28 UTC 2016 - jsrain@suse.cz
 
 - get more texts for roles dialog from control file, allow

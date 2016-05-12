@@ -79,6 +79,7 @@ module Yast
       Yast.import "Timezone"
       Yast.import "UI"
       Yast.import "Wizard"
+      Yast.import "ProductFeatures"
     end
 
   private
@@ -388,6 +389,30 @@ module Yast
       @text_mode = UI.TextMode
     end
 
+    # Showing where the EULA will be installed
+    def license_location
+      file_location = ProductFeatures.GetStringFeature(
+        "globals",
+        "base_product_license_directory"
+      )
+      if file_location.nil?
+        Empty()
+      else
+        Left(
+          ReplacePoint(
+            Id(:license_location),
+            Label(
+              # TRANSLATORS: addition license information
+              # %1 is replaced with the filename. Please keep
+              # the translation VERY short.
+              _("EULA location in the installed system: %s") %
+                file_location
+            )
+          )
+        )
+      end
+    end
+
     def dialog_content
       # this type of contents will be shown only for initial installation dialog
       VBox(
@@ -422,6 +447,10 @@ module Yast
                     text_mode? ? 85 : 106,
                     Left(ReplacePoint(Id(:base_license_rp), Empty()))
                   )
+                ),
+                VSpacing(text_mode? ? 0.5 : 1),
+                HBox(
+                  license_location
                 ),
                 VSpacing(text_mode? ? 0.1 : 0.5),
                 MinHeight(
