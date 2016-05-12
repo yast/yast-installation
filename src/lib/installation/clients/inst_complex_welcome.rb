@@ -403,7 +403,8 @@ module Yast
             Id(:license_location),
             Label(
               # TRANSLATORS: addition license information
-              # %1 is replaced with the filename
+              # %1 is replaced with the filename. Please keep
+              # the translation VERY short.
               _("EULA location in the installed system: %s") %
                 file_location
             )
