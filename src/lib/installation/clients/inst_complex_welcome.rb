@@ -390,7 +390,9 @@ module Yast
     end
 
     def lisence_location
-      unless license_location.nil?
+      if license_location.nil?
+        Empty()
+      else
         Left(
           ReplacePoint(
             Id(:license_location),
@@ -402,8 +404,6 @@ module Yast
             )
           )
         )
-      else
-        Empty()
       end
     end
 
