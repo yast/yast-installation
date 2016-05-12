@@ -389,6 +389,24 @@ module Yast
       @text_mode = UI.TextMode
     end
 
+    def lisence_location
+      unless license_location.nil?
+        Left(
+          ReplacePoint(
+            Id(:license_location),
+            Label(
+              # TRANSLATORS: addition license information
+              # %1 is replaced with the filename
+              _("EULA location in the installed system:\n%s") %
+                license_location
+            )
+          )
+        )
+      else
+        Empty()
+      end
+    end
+
     def dialog_content
       license_location = ProductFeatures.GetStringFeature(
         "globals",
@@ -430,19 +448,7 @@ module Yast
                 ),
                 VSpacing(text_mode? ? 0.5 : 1),
                 HBox(
-                  !license_location.nil? ?
-                  Left(
-                    ReplacePoint(
-                      Id(:license_location),
-                      Label(
-                        # TRANSLATORS: addition license information
-                        # %1 is replaced with the filename
-                        _("EULA location in the installed system:\n%s") %
-                          license_location
-                      )
-                    )
-                  ) :
-                  Empty()
+                  license_location
                 ),
                 VSpacing(text_mode? ? 0.1 : 0.5),
                 MinHeight(
