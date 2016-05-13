@@ -18,6 +18,7 @@
 
 require "installation/ssh_key"
 require "installation/ssh_config_file"
+require "fileutils"
 
 module Installation
   # Class that allows to memorize the list of SSH keys and config files found in
@@ -58,6 +59,7 @@ module Installation
       # @param root_dir [String] Path to use as "/" to locate the ssh directory
       def export(root_dir)
         dir = ssh_dir(root_dir)
+        ::FileUtils.mkdir_p(dir)
         all.each { |config| config.write_files(dir) }
       end
 
