@@ -516,7 +516,7 @@ module Yast
       # and display it, if necessary
 
       # Do not call any SCR, it's already closed!
-      if Ops.greater_than(Builtins.size(Misc.boot_msg), 0) && !Mode.autoinst
+      if Ops.greater_than(Builtins.size(Misc.boot_msg), 0)
         # bugzilla #245742, #160301
         if Linuxrc.usessh && !Linuxrc.vnc ||
             # also live installation - bzilla #297691
