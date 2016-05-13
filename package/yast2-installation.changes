@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed May 11 15:09:44 UTC 2016 - cwh@suse.com
+
+- Shutdown zKVM machine at the end of installation instead of
+  rebooting (fate#320262)
+- 3.1.186
+
+-------------------------------------------------------------------
 Mon May  9 15:14:22 CEST 2016 - schubi@suse.de
 
 - Do not copy licenses from inst-sys to target system.
