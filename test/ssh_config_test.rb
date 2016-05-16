@@ -24,6 +24,8 @@ require "fileutils"
 
 describe Installation::SshConfig do
   describe ".from_dir" do
+    textdomain "installation"
+
     let(:recent_root1_atime) { Time.now }
     let(:old_root1_atime) { Time.now - 60 }
     let(:root1_dir) { FIXTURES_DIR.join("root1") }
@@ -43,7 +45,7 @@ describe Installation::SshConfig do
 
     it "uses 'Linux' as name for systems without /etc/os-release" do
       root2 = described_class.from_dir(root2_dir)
-      expect(root2.system_name).to eq "Linux"
+      expect(root2.system_name).to eq _("Linux")
     end
 
     it "stores all the keys and files with their names" do

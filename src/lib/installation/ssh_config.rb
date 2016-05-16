@@ -16,6 +16,7 @@
 #  To contact SUSE about this file by physical or electronic mail,
 #  you may find current contact information at www.suse.com
 
+require "yast"
 require "installation/ssh_key"
 require "installation/ssh_config_file"
 require "fileutils"
@@ -26,10 +27,11 @@ module Installation
   #
   # Used by the SSH keys importing functionality.
   class SshConfig
-    # TODO: i18n
-    DEFAULT_NAME = "Linux"
+    extend Yast::I18n
+    textdomain "installation"
 
     class << self
+
       # Creates a new object with the information read from a filesystem
       #
       # @param root_dir [String] Path where the original "/" is mounted
@@ -57,15 +59,19 @@ module Installation
       # @param mount_point [String] Path where the original "/" is mounted
       # @return [String] Speaking name of the Linux installation
       def name_for(mount_point)
+        # TRANSLATORS: default name for a found Linux system (we don't know if
+        # it's an openSUSE, Ubuntu...)
+        default_name = _("Linux")
         os_release = parse_ini_file(os_release_file(mount_point))
+
         name = os_release["PRETTY_NAME"]
-        if name.empty? || name == DEFAULT_NAME
-          name = os_release[NAME] || DEFAULT_NAME
-          name += os_release[VERSION]
+        if name.empty?
+          name = os_release[NAME] || default_name
+          name += " #{os_release[VERSION]}"
         end
         name
       rescue Errno::ENOENT # No /etc/os-release found
-        DEFAULT_NAME
+        default_name
       end
 
       # Parse a simple .ini file and return the content in a hash.
