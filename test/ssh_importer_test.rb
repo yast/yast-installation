@@ -90,8 +90,89 @@ describe Installation::SshImporter do
   end
 
   describe ".write" do
-  end
+    let(:root1) { instance_double("Installation::SshConfig") }
+    let(:root2) { instance_double("Installation::SshConfig") }
 
-  describe ".reset" do
+    before do
+      allow(importer).to receive(:configurations).and_return(
+        "/dev/root1" => root1,
+        "/dev/root2" => root2
+      )
+    end
+
+    context "if no device is selected" do
+      it "writes nothing" do
+        importer.device = nil
+
+        expect(root1).to_not receive(:write_files)
+        expect(root2).to_not receive(:write_files)
+
+        importer.write("/somewhere")
+      end
+    end
+
+    context "if a device is selected" do
+      before do
+        importer.device = "/dev/root2"
+      end
+
+      context "if #copy_config? is true" do
+        before do
+          importer.copy_config = true
+        end
+
+        it "writes the ssh keys of the choosen device" do
+          expect(root2).to receive(:write_files) do |root_dir, flags|
+            expect(flags[:write_keys]).to eq true
+          end
+
+          importer.write("/somewhere")
+        end
+
+        it "writes the config files of the choosen device" do
+          expect(root2).to receive(:write_files) do |root_dir, flags|
+            expect(flags[:write_config_files]).to eq true
+          end
+
+          importer.write("/somewhere")
+        end
+
+        it "does not write files from other devices" do
+          allow(root2).to receive(:write_files)
+          expect(root1).to_not receive(:write_files)
+
+          importer.write("/somewhere")
+        end
+      end
+
+      context "if #copy_config? is false" do
+        before do
+          importer.copy_config = false
+        end
+
+        it "writes the ssh keys of the choosen device" do
+          expect(root2).to receive(:write_files) do |root_dir, flags|
+            expect(flags[:write_keys]).to eq true
+          end
+
+          importer.write("/somewhere")
+        end
+
+        it "does not write the config files of the choosen device" do
+          expect(root2).to receive(:write_files) do |root_dir, flags|
+            expect(flags[:write_config_files]).to eq false
+          end
+
+          importer.write("/somewhere")
+        end
+
+        it "does not write files from other devices" do
+          allow(root2).to receive(:write_files)
+          expect(root1).to_not receive(:write_files)
+
+          importer.write("/somewhere")
+        end
+      end
+    end
   end
 end
