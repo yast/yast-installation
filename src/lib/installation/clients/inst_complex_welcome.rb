@@ -92,10 +92,10 @@ module Yast
         case ret
         when :back
           return ret
-        when :abort
+        when :abort, :cancel
           next unless Popup.ConfirmAbort(:painless)
           Wizard.RestoreNextButton
-          return ret
+          return :abort
         when :keyboard
           read_ui_state
           Keyboard.Set(@keyboard)

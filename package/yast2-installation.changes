@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon May 16 08:29:25 UTC 2016 - lslezak@suse.cz
+
+- SSH installation: handle closing the initial installation screen
+  by the window manager close button (bsc#979499)
+- 3.1.186
+
+-------------------------------------------------------------------
 Mon May  9 15:14:22 CEST 2016 - schubi@suse.de
 
 - Do not copy licenses from inst-sys to target system.

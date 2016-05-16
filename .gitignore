@@ -37,4 +37,5 @@ home*:*
 *.sh
 .yardoc
 /coverage
-/nbproject/private/
+/test-driver
+test/*.trs
