@@ -34,12 +34,9 @@ module Installation
     attr_accessor :content
     # @return [Fixmum] mode of the original file. @see File.chmod
     attr_accessor :permissions
-    # @return [Boolean] whether the file should be copied in the target system
-    attr_writer :to_export
 
     def initialize(name)
       @name = name
-      @to_export = false
     end
 
     def read(path)
@@ -53,11 +50,6 @@ module Installation
       backup(path)
       IO.write(path, content)
       File.chmod(permissions, path)
-    end
-
-    # @return [Boolean] whether the file should be copied in the target system
-    def to_export?
-      !!@to_export
     end
 
   protected

@@ -49,6 +49,7 @@ client_DATA = \
   clients/inst_rpmcopy_secondstage.rb \
   clients/inst_save_hardware_status.rb \
   clients/inst_scenarios.rb \
+  clients/inst_ssh_import.rb \
   clients/inst_system_analysis.rb \
   clients/inst_system_role.rb \
   clients/inst_upgrade_urls.rb \
@@ -120,7 +121,8 @@ ylib_DATA = \
   lib/installation/update_repository.rb \
   lib/installation/ssh_config.rb \
   lib/installation/ssh_key.rb \
-  lib/installation/ssh_config_file.rb
+  lib/installation/ssh_config_file.rb \
+  lib/installation/ssh_importer.rb
 
 ylibtransferdir = "${yast2dir}/lib/transfer"
 ylibtransfer_DATA = \

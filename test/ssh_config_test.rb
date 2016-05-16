@@ -23,120 +23,81 @@ require "tmpdir"
 require "fileutils"
 
 describe Installation::SshConfig do
-  describe ".import" do
+  describe ".from_dir" do
+    let(:recent_root1_atime) { Time.now }
+    let(:old_root1_atime) { Time.now - 60 }
+    let(:root1_dir) { FIXTURES_DIR.join("root1") }
+    let(:root2_dir) { FIXTURES_DIR.join("root2") }
+
     before do
-      Installation::SshConfig.all.clear
-    end
-
-    context "reading valid directories" do
-      let(:recent_root1_atime) { Time.now }
-      let(:old_root1_atime) { Time.now - 60 }
-      let(:root1_atime) { recent_root1_atime }
-      let(:root2_atime) { Time.now - 1200 }
-
-      before do
-        allow(File).to receive(:atime) do |path|
-          if path =~ /root2/
-            root2_atime
-          else
-            path =~ /ssh_host_key$/ ? recent_root1_atime : old_root1_atime
-          end
-        end
-
-        Installation::SshConfig.import(FIXTURES_DIR.join("root1"), "/dev/root1")
-        Installation::SshConfig.import(FIXTURES_DIR.join("root2"), "/dev/root2")
-      end
-
-      let(:root1) { Installation::SshConfig.all.detect { |c| c.device == "/dev/root1" } }
-      let(:root2) { Installation::SshConfig.all.detect { |c| c.device == "/dev/root2" } }
-
-      it "reads the name of the systems with /etc/os-release" do
-        expect(Installation::SshConfig.all).to include(
-          an_object_having_attributes(
-            device: "/dev/root1",
-            system_name: "Operating system 1"
-          )
-        )
-      end
-
-      it "uses 'Linux' as name for systems without /etc/os-release" do
-        expect(Installation::SshConfig.all).to include(
-          an_object_having_attributes(
-            device: "/dev/root2",
-            system_name: "Linux"
-          )
-        )
-      end
-
-      it "stores the device name for all systems" do
-        expect(Installation::SshConfig.all).to contain_exactly(
-          an_object_having_attributes(device: "/dev/root1"),
-          an_object_having_attributes(device: "/dev/root2")
-        )
-      end
-
-      it "stores all the keys and files with their names" do
-        expect(root1.config_files.map(&:name)).to contain_exactly(
-          "moduli", "ssh_config", "sshd_config"
-        )
-        expect(root1.keys.map(&:name)).to contain_exactly(
-          "ssh_host_dsa_key", "ssh_host_key"
-        )
-        expect(root2.config_files.map(&:name)).to contain_exactly(
-          "known_hosts", "ssh_config", "sshd_config"
-        )
-        expect(root2.keys.map(&:name)).to contain_exactly(
-          "ssh_host_ed25519_key", "ssh_host_key"
-        )
-      end
-
-      it "stores the content of the config files" do
-        expect(root1.config_files.map(&:content)).to contain_exactly(
-          "root1: content of moduli file\n",
-          "root1: content of ssh_config file\n",
-          "root1: content of sshd_config file\n"
-        )
-      end
-
-      it "stores the content of both files for the keys" do
-        contents = root1.keys.map { |k| k.files.map(&:content) }
-        expect(contents).to contain_exactly(
-          ["root1: content of ssh_host_dsa_key file\n", "root1: content of ssh_host_dsa_key.pub file\n"],
-          ["root1: content of ssh_host_key file\n", "root1: content of ssh_host_key.pub file\n"]
-        )
-      end
-
-      it "uses the most recent file of each key to set #atime" do
-        host_key = root1.keys.detect { |k| k.name == "ssh_host_key" }
-        host_dsa_key = root1.keys.detect { |k| k.name == "ssh_host_dsa_key" }
-
-        expect(host_key.atime).to eq recent_root1_atime
-        expect(host_dsa_key.atime).to eq old_root1_atime
-      end
-
-      it "selects no file or key for exporting initially" do
-        expect(root1.keys.any?(&:to_export?)).to eq false
-        expect(root1.config_files.any?(&:to_export?)).to eq false
-        expect(root2.keys.any?(&:to_export?)).to eq false
-        expect(root2.config_files.any?(&:to_export?)).to eq false
+      # The ssh_host private key file is more recent than any other file
+      allow(File).to receive(:atime) do |path|
+        path =~ /ssh_host_key$/ ? recent_root1_atime : old_root1_atime
       end
     end
 
-    it "ignores wrong root directories" do
-      Installation::SshConfig.import(FIXTURES_DIR.join("root1/etc"), "dev")
-      Installation::SshConfig.import("/non-existent", "dev")
-      expect(Installation::SshConfig.all).to be_empty
+    it "reads the name of the systems with /etc/os-release" do
+      root1 = described_class.from_dir(root1_dir)
+      expect(root1.system_name).to eq "Operating system 1"
+    end
+
+    it "uses 'Linux' as name for systems without /etc/os-release" do
+      root2 = described_class.from_dir(root2_dir)
+      expect(root2.system_name).to eq "Linux"
+    end
+
+    it "stores all the keys and files with their names" do
+      root1 = described_class.from_dir(root1_dir)
+      root2 = described_class.from_dir(root2_dir)
+
+      expect(root1.config_files.map(&:name)).to contain_exactly(
+        "moduli", "ssh_config", "sshd_config"
+      )
+      expect(root1.keys.map(&:name)).to contain_exactly(
+        "ssh_host_dsa_key", "ssh_host_key"
+      )
+      expect(root2.config_files.map(&:name)).to contain_exactly(
+        "known_hosts", "ssh_config", "sshd_config"
+      )
+      expect(root2.keys.map(&:name)).to contain_exactly(
+        "ssh_host_ed25519_key", "ssh_host_key"
+      )
+    end
+
+    it "stores the content of the config files" do
+      root1 = described_class.from_dir(root1_dir)
+      expect(root1.config_files.map(&:content)).to contain_exactly(
+        "root1: content of moduli file\n",
+        "root1: content of ssh_config file\n",
+        "root1: content of sshd_config file\n"
+      )
+    end
+
+    it "stores the content of both files for the keys" do
+      root1 = described_class.from_dir(root1_dir)
+      contents = root1.keys.map { |k| k.files.map(&:content) }
+      expect(contents).to contain_exactly(
+        ["root1: content of ssh_host_dsa_key file\n", "root1: content of ssh_host_dsa_key.pub file\n"],
+        ["root1: content of ssh_host_key file\n", "root1: content of ssh_host_key.pub file\n"]
+      )
+    end
+
+    it "uses the most recent file of each key to set #atime" do
+      root1 = described_class.from_dir(root1_dir)
+      host_key = root1.keys.detect { |k| k.name == "ssh_host_key" }
+      host_dsa_key = root1.keys.detect { |k| k.name == "ssh_host_dsa_key" }
+
+      expect(host_key.atime).to eq recent_root1_atime
+      expect(host_dsa_key.atime).to eq old_root1_atime
     end
   end
 
-  describe ".export" do
+  describe ".write_files" do
     def permissions(file)
       sprintf("%o", File.stat(file).mode)[-3..-1]
     end
 
     around do |example|
-      Installation::SshConfig.all.clear
-
       # Git does not preserve file permissions (only the executable bit),
       # so let's copy test/fixtures to a temporal directory and ensure
       # sensible permissions there
@@ -149,7 +110,7 @@ describe Installation::SshConfig do
             File.chmod(0644, file)
           end
         end
-        Installation::SshConfig.import(File.join(dir, "root1"), "/dev/root1")
+        @config = Installation::SshConfig.from_dir(File.join(dir, "root1"))
       end
 
       Dir.mktmpdir do |dir|
@@ -158,79 +119,89 @@ describe Installation::SshConfig do
       end
     end
     
-    let(:config) { Installation::SshConfig.all.first }
+    let(:ssh_dir) { File.join(@target_dir, "etc", "ssh") }
 
     it "creates /etc/ssh/ if it does not exist" do
-      Installation::SshConfig.export(@target_dir)
+      @config.write_files(@target_dir)
       expect(Dir.glob("#{@target_dir}/etc/*")).to eq ["#{@target_dir}/etc/ssh"]
     end
 
     it "reuses /etc/ssh if it's already there" do
-      etc_dir = File.join(@target_dir, "etc", "ssh")
-      ::FileUtils.mkdir_p(etc_dir)
-      ::FileUtils.touch(File.join(etc_dir, "preexisting_file"))
-      config.config_files.each { |f| f.to_export = true }
+      ::FileUtils.mkdir_p(ssh_dir)
+      ::FileUtils.touch(File.join(ssh_dir, "preexisting_file"))
 
-      Installation::SshConfig.export(@target_dir)
+      @config.write_files(@target_dir, write_keys: false)
 
-      files = Dir.glob("#{etc_dir}/*")
-      expect(files.size).to eq(config.config_files.size + 1)
-      expect(files).to include "#{etc_dir}/preexisting_file"
+      files = Dir.glob("#{ssh_dir}/*")
+      expect(files.size).to eq(@config.config_files.size + 1)
+      expect(files).to include "#{ssh_dir}/preexisting_file"
     end
 
-    context "with some files and keys selected to export" do
-      before do
-        config.config_files.detect { |f| f.name == "moduli" }.to_export = true
-        config.keys.detect { |f| f.name == "ssh_host_key" }.to_export = true
-      end
-      let(:ssh_dir) { File.join(@target_dir, "etc", "ssh") }
+    it "writes all the files by default" do
+      @config.write_files(@target_dir)
 
-      it "writes the selected files" do
-        Installation::SshConfig.export(@target_dir)
+      target_content = Dir.glob("#{ssh_dir}/*")
+      expect(target_content).to contain_exactly(
+        "#{ssh_dir}/ssh_host_key", "#{ssh_dir}/ssh_host_key.pub",
+        "#{ssh_dir}/ssh_host_dsa_key", "#{ssh_dir}/ssh_host_dsa_key.pub",
+        "#{ssh_dir}/moduli", "#{ssh_dir}/ssh_config", "#{ssh_dir}/sshd_config"
+      )
+    end
 
-        target_content = Dir.glob("#{ssh_dir}/*")
-        expect(target_content).to contain_exactly(
-          "#{ssh_dir}/ssh_host_key", "#{ssh_dir}/ssh_host_key.pub", "#{ssh_dir}/moduli"
-        )
-      end
+    it "writes only the key files if write_config_files is false" do
+      @config.write_files(@target_dir, write_config_files: false)
 
-      it "preserves original permissions for files and keys" do
-        config.config_files.detect { |f| f.name == "ssh_config" }.to_export = true
-        Installation::SshConfig.export(@target_dir)
+      target_content = Dir.glob("#{ssh_dir}/*")
+      expect(target_content).to contain_exactly(
+        "#{ssh_dir}/ssh_host_key", "#{ssh_dir}/ssh_host_key.pub",
+        "#{ssh_dir}/ssh_host_dsa_key", "#{ssh_dir}/ssh_host_dsa_key.pub"
+      )
+    end
 
-        expect(permissions("#{ssh_dir}/moduli")).to eq "600"
-        expect(permissions("#{ssh_dir}/ssh_config")).to eq "644"
-        expect(permissions("#{ssh_dir}/ssh_host_key")).to eq "600"
-        expect(permissions("#{ssh_dir}/ssh_host_key.pub")).to eq "644"
-      end
+    it "writes only the config files if write_keys is false" do
+      @config.write_files(@target_dir, write_keys: false)
+
+      target_content = Dir.glob("#{ssh_dir}/*")
+      expect(target_content).to contain_exactly(
+        "#{ssh_dir}/moduli", "#{ssh_dir}/ssh_config", "#{ssh_dir}/sshd_config"
+      )
+    end
+
+    it "preserves original permissions for files and keys" do
+      @config.write_files(@target_dir)
+
+      expect(permissions("#{ssh_dir}/moduli")).to eq "600"
+      expect(permissions("#{ssh_dir}/ssh_config")).to eq "644"
+      expect(permissions("#{ssh_dir}/ssh_host_key")).to eq "600"
+      expect(permissions("#{ssh_dir}/ssh_host_key.pub")).to eq "644"
+    end
     
-      it "backups config files found in the target directory" do
-        ::FileUtils.mkdir_p(ssh_dir)
-        ::FileUtils.touch(File.join(ssh_dir, "moduli"))
+    it "backups config files found in the target directory" do
+      ::FileUtils.mkdir_p(ssh_dir)
+      ::FileUtils.touch(File.join(ssh_dir, "moduli"))
 
-        Installation::SshConfig.export(@target_dir)
+      @config.write_files(@target_dir)
 
-        expect(File.exist?(File.join(ssh_dir, "moduli.yast.orig"))).to eq true
-      end
+      expect(File.exist?(File.join(ssh_dir, "moduli.yast.orig"))).to eq true
+    end
   
-      it "writes the original content for each file" do
-        Installation::SshConfig.export(@target_dir)
+    it "writes the original content for each file" do
+      @config.write_files(@target_dir)
 
-        expect(IO.read("#{ssh_dir}/moduli")).to eq(
-          "root1: content of moduli file\n"
-        )
-        expect(IO.read("#{ssh_dir}/ssh_host_key")).to eq(
-          "root1: content of ssh_host_key file\n"
-        )
-        expect(IO.read("#{ssh_dir}/ssh_host_key.pub")).to eq(
-          "root1: content of ssh_host_key.pub file\n"
-        )
-      end
+      expect(IO.read("#{ssh_dir}/moduli")).to eq(
+        "root1: content of moduli file\n"
+      )
+      expect(IO.read("#{ssh_dir}/ssh_host_key")).to eq(
+        "root1: content of ssh_host_key file\n"
+      )
+      expect(IO.read("#{ssh_dir}/ssh_host_key.pub")).to eq(
+        "root1: content of ssh_host_key.pub file\n"
+      )
     end
   end
 
   describe "#keys_atime" do
-    subject(:config) { Installation::SshConfig.new("name", "device") }
+    subject(:config) { ::Installation::SshConfig.new("name") }
     let(:now) { Time.now }
 
     it "returns the access time of the most recently accessed key" do

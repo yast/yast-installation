@@ -17,89 +17,95 @@
 #  you may find current contact information at www.suse.com
 
 require "yast"
-require "ui/dialog"
-require "installation/ssh_config"
+require "ui/installation_dialog"
+require "installation/ssh_importer"
 
 module Yast
-  class SshImportDialog < ::UI::Dialog
-    def initialize(device, copy_config)
-      super()
+  class SshImportDialog < ::UI::InstallationDialog
+    def initialize
+      super
 
       Yast.import "UI"
       Yast.import "Label"
 
       textdomain "installation"
-
-      @device = device
-      @copy_config = copy_config
     end
 
     # Event callback for the 'ok' button
-    def ok_handler
+    def next_handler
       partition = UI.QueryWidget(Id(:device), :Value)
       partition = nil if partition == :none
       copy_config = UI.QueryWidget(Id(:copy_config), :Value)
-      finish_dialog(device: partition, copy_config: copy_config)
+      log.info "SshImportDialog partition => #{partition} copy_config => #{copy_config}"
+      importer.device = partition
+      importer.copy_config = copy_config
+      super
     end
 
   private
 
-    attr_reader :device, :copy_config
+    def importer
+      @importer ||= ::Installation::SshImporter.instance
+    end
 
     def partitions
-      @partitions ||= ::Installation::SshConfig.all.reject { |c| c.keys.empty? }
+      @partitions ||= importer.configurations
+    end
+
+    def device
+      @device ||= importer.device
+    end
+
+    def copy_config
+      @copy_config ||= importer.copy_config
     end
 
     def dialog_content
-      VBox(
-        Heading(_("System to Import SSH Keys from")),
-        HBox(
-          HStretch(),
-          VBox(
-            partitions_list_widget,
-            VSpacing(0.5),
-            Left(copy_config_widget)
-          ),
-          HStretch()
-        ),
-        VSpacing(0.5),
-        HBox(
-          PushButton(Id(:ok), Opt(:default), Label.OKButton),
-          PushButton(Id(:cancel), Label.CancelButton)
+      HSquash(
+        VBox(
+          Left(Label(_("System to Import SSH Keys from"))),
+          partitions_list_widget,
+          VSpacing(1),
+          Left(copy_config_widget)
         )
       )
     end
 
-    def dialog_options
-      Opt(:decorated)
+    def dialog_title
+      _("Import SSH Configuration and Keys")
+    end
+
+    def help_text
+      # TODO
+      "Say hey!"
     end
 
     def partitions_list_widget
-      part_widgets = partitions.map do |partition|
-        Left(partition_widget(partition))
+      sorted_partitions = partitions.to_a.sort_by(&:first)
+      part_widgets = sorted_partitions.map do |device, partition|
+        Left(partition_widget(device, partition))
       end
 
       RadioButtonGroup(
         Id(:device),
         VBox(
           # TRANSLATORS: option to select no partition for SSH keys import
-          Left(RadioButton(Id(:none), _("None"), @device.nil?)),
+          Left(RadioButton(Id(:none), _("None"), device.nil?)),
           *part_widgets
         )
       )
     end
 
-    def partition_widget(partition)
-      dev = partition.device
+    def partition_widget(dev, partition)
       strings = {system_name: partition.system_name, device: dev}
-      # TRANSLATORS: system_name is a string like "openSUSE 13.2", device
+      # TRANSLATORS: %{system_name} is a string like "openSUSE 13.2", %{device}
       # is a string like /dev/sda1
       name = _("%{system_name} at %{device}") % strings
       RadioButton(Id(dev), name, device == dev)
     end
 
     def copy_config_widget
-      CheckBox(Id(:copy_config), _("Copy whole SSH configuration"), @copy_config)
+      CheckBox(Id(:copy_config), _("Copy Whole SSH Configuration"), copy_config)
     end
   end
 end

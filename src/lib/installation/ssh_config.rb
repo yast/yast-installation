@@ -22,55 +22,19 @@ require "fileutils"
 
 module Installation
   # Class that allows to memorize the list of SSH keys and config files found in
-  # a partition (i.e. the content of the /etc/ssh directory)
+  # a filesystem (i.e. the content of the /etc/ssh directory)
   #
   # Used by the SSH keys importing functionality.
-  #
-  # It provides class methods to hold a list of configurations
   class SshConfig
+    # TODO: i18n
     DEFAULT_NAME = "Linux"
 
-    @all = []
-
     class << self
-      # List of all the known configurations. Populated by .import.
-      # @see .import
-      # @see .export
-      def all
-        @all
-      end
-
-      # Imports ssh keys and config files from a given root directory and stores
-      # the information in the global list (.all)
+      # Creates a new object with the information read from a filesystem
       #
       # @param root_dir [String] Path where the original "/" is mounted
-      # @param device [String] Name of the mounted device
-      def import(root_dir, device)
-        config = from_dir(root_dir, device)
-        return if config.keys.empty? && config.config_files.empty?
-
-        @all << config
-      end
-
-      # Writes the selected ssh keys and config files in the ssh directory.
-      #
-      # Only files and keys with the flag #to_export? are written.
-      #
-      # @param root_dir [String] Path to use as "/" to locate the ssh directory
-      def export(root_dir)
-        dir = ssh_dir(root_dir)
-        ::FileUtils.mkdir_p(dir)
-        all.each { |config| config.write_files(dir) }
-      end
-
-    protected
-
-      # Creates a new object with the information read from a directory
-      #
-      # @param root_dir [String] Path where the original "/" is mounted
-      # @param device [String] Name of the mounted device
-      def from_dir(root_dir, device)
-        config = SshConfig.new(name_for(root_dir), device)
+      def from_dir(root_dir)
+        config = SshConfig.new(name_for(root_dir))
         dir = ssh_dir(root_dir)
         config.read_files(dir)
         config
@@ -79,6 +43,8 @@ module Installation
       def ssh_dir(root_dir)
         File.join(root_dir, "etc", "ssh")
       end
+
+    protected
 
       def os_release_file(root_dir)
         File.join(root_dir, "etc", "os-release")
@@ -124,23 +90,21 @@ module Installation
 
     # @return [String] name to help the user identify the configuration
     attr_accessor :system_name
-    # @return [String] device name of the partition
-    attr_accessor :device
     # @return [Array<SshKey>] keys found in the partition
     attr_accessor :keys
     # @return [Array<SshConfigFile>] configuration files found in the partition
     attr_accessor :config_files
 
-    def initialize(system_name, device)
+    def initialize(system_name)
       self.system_name = system_name
-      self.device = device
       self.keys = []
       self.config_files = []
     end
 
-    # Populates the list of keys and config files from a ssh directory
+    # Populates the list of keys and config files from a ssh configuration
+    # directory
     #
-    # @param dir [String] path of the SSH directory
+    # @param dir [String] path of the SSH configuration directory
     def read_files(dir)
       filenames = Dir.glob("#{dir}/*")
 
@@ -159,16 +123,17 @@ module Installation
       end
     end
 
-    # Writes the files to a directory
+    # Writes keys and/or configuration files to a filesystem
     #
-    # @param dir [String] path of the target SSH directory
-    def write_files(dir)
-      keys.select(&:to_export?).each do |key|
-        key.write_files(dir)
-      end
-      config_files.select(&:to_export?).each do |file|
-        file.write(dir)
-      end
+    # @param root_dir [String] path where the target filesystem (/) is mounted
+    # @param write_keys [Boolean] whether to copy the keys
+    # @param write_config_files [Boolean] whether to copy the config files
+    def write_files(root_dir, write_keys: true, write_config_files: true)
+      dir = self.class.ssh_dir(root_dir)
+      ::FileUtils.mkdir_p(dir)
+
+      keys.each { |k| k.write_files(dir) } if write_keys
+      config_files.each { |f| f.write(dir) } if write_config_files
     end
 
     # Access time of the most recently accessed SSH key.
@@ -178,16 +143,6 @@ module Installation
     # @return [Time]
     def keys_atime
       keys.map(&:atime).max
-    end
-
-    # @return [Array<SshKey>]
-    def keys_to_export
-      keys.select(&:to_export?)
-    end
-
-    # @return [Array<SshConfigFile>]
-    def config_files_to_export
-      config_files.select(&:to_export?)
     end
 
   protected

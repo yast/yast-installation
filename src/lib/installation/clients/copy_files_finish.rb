@@ -29,7 +29,7 @@
 #  Jiri Srain <jsrain@suse.cz>
 #
 require "fileutils"
-require "installation/ssh_config"
+require "installation/ssh_importer"
 
 module Yast
   class CopyFilesFinishClient < Client
@@ -341,7 +341,7 @@ module Yast
 
     def copy_ssh_files
       log.info "Copying SSH keys and config files"
-      ::Installation::SshConfig.export(Installation.destdir)
+      ::Installation::SshImporter.instance.write(Installation.destdir)
     end
 
     # Prevent from re-defining client class

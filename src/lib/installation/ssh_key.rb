@@ -29,13 +29,10 @@ module Installation
     attr_accessor :atime
     # @return [Array<Keyfile>] list of files associated to the key
     attr_accessor :files
-    # @return [Boolean] whether the key should be copied in the target system
-    attr_writer :to_export
 
     def initialize(name)
       @name = name
       @files = []
-      @to_export = false
     end
 
     def read_files(priv_filename)
@@ -50,11 +47,6 @@ module Installation
         IO.write(path, file.content)
         File.chmod(file.permissions, path)
       end
-    end
-
-    # @return [Boolean] whether the key should be copied in the target system
-    def to_export?
-      !!@to_export
     end
 
   protected

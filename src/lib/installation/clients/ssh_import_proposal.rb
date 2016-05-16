@@ -1,13 +1,11 @@
 require "installation/proposal_client"
-require "installation/dialogs/ssh_import"
-require "installation/ssh_config"
+require "installation/ssh_importer"
 
 module Yast
-  # Proposal client for bootloader configuration
+  # Proposal client for SSH keys import
   class SshImportProposalClient < ::Installation::ProposalClient
     include Yast::I18n
-
-    @@calculated = false
+    include Yast::Logger
 
     def initialize
       Yast.import "UI"
@@ -27,54 +25,27 @@ module Yast
     end
 
     def make_proposal(attrs)
-      if !@@calculated || attrs["force_reset"]
-        @@calculated = true
-        set_default_values
-      end
-      update_ssh_configs
+      importer.reset if attrs["force_reset"]
       {
         "preformatted_proposal" => preformatted_proposal,
         "links" => ["ssh_import"]
       }
     end
 
-    # To ensure backwards compatibility, the default proposal is to copy all
-    # the ssh keys in the most recently accessed config and to not copy any
-    # additional config file
-    def set_default_values
-      @@device = default_ssh_config.device
-      @@copy_config = false
-    end
-
-    # Syncs the status of SshConfig.all with the settings in the proposal
-    #
-    # It updates the #to_export flag for all the SSH keys and config files.
-    def update_ssh_configs
-      all_ssh_configs.each do |config|
-        selected = config.device == @@device
-        config.config_files.each { |f| f.to_export = (selected && @@copy_config) }
-        config.keys.each { |k| k.to_export = selected }
-      end
-    end
-
-    def default_ssh_config
-      @default_ssh_config ||= all_ssh_configs.select(&:keys_atime).max_by(&:keys_atime)
-    end
-
-    def all_ssh_configs
-      @all_ssh_configs ||= ::Installation::SshConfig.all
+    def importer
+      ::Installation::SshImporter.instance
     end
 
     def preformatted_proposal
-      if all_ssh_configs.empty?
+      if importer.configurations.empty?
         return _("No previous Linux installation found - not importing any SSH Key")
       end
-      if @@device.nil?
+      if importer.device.nil?
         res = _("No existing SSH keys will be copied")
       else
-        ssh_config = all_ssh_configs.detect { |c| c.device == @@device }
+        ssh_config = importer.configurations[importer.device]
         partition = ssh_config.system_name
-        if @@copy_config
+        if importer.copy_config?
           # TRANSLATORS: %s is the name of a Linux system found in the hard
           # disk, like 'openSUSE 13.2'
           res = _("SSH keys and configuration will be copied from %s") % partition
@@ -84,20 +55,28 @@ module Yast
           res = _("SSH keys will be copied from %s") % partition
         end
       end
+      # TRANSLATORS: link to change the proposal
       res += " " + _("(<a href=%s>change</a>)") % '"ssh_import"'
       res
     end
 
     def ask_user(param)
-      log.info "Asking user which SSH keys to import"
-      user_input = Yast::SshImportDialog.new(@@device, @@copy_config).run
-      if user_input
-        log.info "SshImportDialog result: #{user_input}"
-        @@device = user_input[:device]
-        @@copy_config = user_input[:copy_config]
-      end
+      args = {
+        "enable_back" => true,
+        "enable_next" => param.fetch("has_next", false),
+        "going_back"  => true
+      } 
 
-      { "workflow_sequence" => :next }
+      log.info "Asking user which SSH keys to import"
+      begin
+        Yast::Wizard.OpenAcceptDialog
+        result = WFM.CallFunction("inst_ssh_import", [args])
+      ensure
+        Yast::Wizard.CloseDialog
+      end
+      log.info "Returning from ssh_import ask_user with #{result}"
+
+      { "workflow_sequence" => result }
     end
   end
 end

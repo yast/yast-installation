@@ -19,7 +19,7 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
-require "installation/ssh_config"
+require "installation/ssh_importer"
 
 module Yast
   class InstPreInstallClient < Client
@@ -90,7 +90,7 @@ module Yast
       end
 
       each_mounted_partition do |device, mount_point|
-        read_users(device, mount_point) if read_users?
+        read_users(device, mount_point) if can_read_users?
         read_ssh_info(device, mount_point)
       end
 
@@ -291,31 +291,38 @@ module Yast
   protected
 
     # Checks whether it's possible to read the existing users databases
-    def read_users?
+    def can_read_users?
       @read_users ||= begin
         require_users_database
         defined? Users::UsersDatabase
       end
     end
 
+    # Requires users_database if possible, not failing otherwise
     def require_users_database
       require "users/users_database"
     rescue LoadError
       log.error "UsersDatabase not found. YaST2-users is missing, old or broken."
     end
 
-    # Stores the users database (/etc/passwd and friends) of a given partition
+    # Stores the users database (/etc/passwd and friends) of a given filesystem
     # in UsersDatabase.all, so it can be used during the users import step
+    #
+    # @param device [String] device name of the filesystem
+    # @param mount_point [String] path where the filesystem is mounted
     def read_users(device, mount_point)
       log.info "Reading users information from #{device}"
       Users::UsersDatabase.import(mount_point)
     end
 
-    # Stores the SSH configuration of a given partition in SshConfig.all
+    # Stores the SSH configuration of a given partition in the SSH importer
     # @see CopyFilesFinishClient and SshImportProposalClient
+    #
+    # @param device [String] device name of the filesystem
+    # @param mount_point [String] path where the filesystem is mounted
     def read_ssh_info(device, mount_point)
       log.info "Reading SSH information from #{device}"
-      ::Installation::SshConfig.import(mount_point, device)
+      ::Installation::SshImporter.instance.add_config(mount_point, device)
     end
 
     def each_mounted_partition(&block)
