@@ -56,7 +56,6 @@ module Installation
       #
       # @param mount_point [String] Path where the original "/" is mounted
       # @return [String] Speaking name of the Linux installation
-      #
       def name_for(mount_point)
         os_release = parse_ini_file(os_release_file(mount_point))
         name = os_release["PRETTY_NAME"]

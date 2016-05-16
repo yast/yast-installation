@@ -292,7 +292,7 @@ module Yast
 
     # Checks whether it's possible to read the existing users databases
     def can_read_users?
-      @read_users ||= begin
+      @can_read_users ||= begin
         require_users_database
         defined? Users::UsersDatabase
       end

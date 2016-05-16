@@ -79,6 +79,12 @@ module Installation
 
   protected
 
+    # Sets #device according to the logic implemented in the old
+    # "copy_to_system" feature, to ensure backwards compatibility. That means
+    # selecting the device which contains the most recently accessed (atime)
+    # key file.
+    #
+    # For some background, see fate#300421, fate#305019, fate#319624
     def set_device
       if configurations.empty?
         @device = nil
