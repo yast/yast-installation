@@ -7,8 +7,6 @@ require "installation/driver_update"
 Yast.import "Linuxrc"
 
 describe Installation::DriverUpdate do
-  FIXTURES_DIR = Pathname.new(__FILE__).dirname.join("fixtures")
-
   subject(:update) { Installation::DriverUpdate.new(update_path) }
 
   let(:update_path) { FIXTURES_DIR.join("updates", "dud_000") }

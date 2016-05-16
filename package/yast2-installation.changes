@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Mon May 16 16:39:34 UTC 2016 - ancor@suse.com
+
+- The user is now informed about SSH keys to be reused (copied
+  from a previous system) during system installation.
+- The user can select a different partition (or none) to read the
+  keys from and whether to also copy config files.
+- SSH import functionality not longer depending from
+  "copy_to_system" feature.
+- Fate#319624
+- 3.1.187
+
+-------------------------------------------------------------------
 Mon May 16 08:29:25 UTC 2016 - lslezak@suse.cz
 
 - SSH installation: handle closing the initial installation screen

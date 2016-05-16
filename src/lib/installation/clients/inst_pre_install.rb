@@ -18,6 +18,9 @@
 # To contact Novell about this file by physical or electronic mail, you may find
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
+
+require "installation/ssh_importer"
+
 module Yast
   class InstPreInstallClient < Client
     include Yast::Logger
@@ -55,6 +58,7 @@ module Yast
           from: "any",
           to:   "list <map>"
         )
+        @copy_items ||= []
 
         @copy_items.each do |one_copy_item|
           item_id = one_copy_item["id"]
@@ -85,7 +89,10 @@ module Yast
         end
       end
 
-      read_users
+      each_mounted_partition do |device, mount_point|
+        read_users(device, mount_point) if can_read_users?
+        read_ssh_info(device, mount_point)
+      end
 
       # free the memory
       @useful_partitions = nil
@@ -205,23 +212,6 @@ module Yast
       nil
     end
 
-    # Stores all found user databases (/etc/passwd and friends) into
-    # UsersDatabase.all, so it can be used during the users import step
-    def read_users
-      require_users_database
-      return unless defined? Users::UsersDatabase
-      each_mounted_partition do |device, mount_point|
-        log.info "Reading users information from #{device}"
-        Users::UsersDatabase.import(mount_point)
-      end
-    end
-
-    def require_users_database
-      require "users/users_database"
-    rescue LoadError
-      log.error "UsersDatabase not found. YaST2-users is missing, old or broken."
-    end
-
     def Initialize
       Builtins.y2milestone("Evaluating all current partitions")
 
@@ -299,6 +289,41 @@ module Yast
     end
 
   protected
+
+    # Checks whether it's possible to read the existing users databases
+    def can_read_users?
+      @can_read_users ||= begin
+        require_users_database
+        defined? Users::UsersDatabase
+      end
+    end
+
+    # Requires users_database if possible, not failing otherwise
+    def require_users_database
+      require "users/users_database"
+    rescue LoadError
+      log.error "UsersDatabase not found. YaST2-users is missing, old or broken."
+    end
+
+    # Stores the users database (/etc/passwd and friends) of a given filesystem
+    # in UsersDatabase.all, so it can be used during the users import step
+    #
+    # @param device [String] device name of the filesystem
+    # @param mount_point [String] path where the filesystem is mounted
+    def read_users(device, mount_point)
+      log.info "Reading users information from #{device}"
+      Users::UsersDatabase.import(mount_point)
+    end
+
+    # Stores the SSH configuration of a given partition in the SSH importer
+    # @see CopyFilesFinishClient and SshImportProposalClient
+    #
+    # @param device [String] device name of the filesystem
+    # @param mount_point [String] path where the filesystem is mounted
+    def read_ssh_info(device, mount_point)
+      log.info "Reading SSH information from #{device}"
+      ::Installation::SshImporter.instance.add_config(mount_point, device)
+    end
 
     def each_mounted_partition(&block)
       mnt_tmpdir = "#{Directory.tmpdir}/tmp_mnt_for_check"
