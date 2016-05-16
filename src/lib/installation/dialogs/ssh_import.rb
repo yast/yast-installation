@@ -72,12 +72,17 @@ module Yast
     end
 
     def dialog_title
-      _("Import SSH Configuration and Keys")
+      _("Import SSH Keys and Configuration")
     end
 
     def help_text
-      # TODO
-      "Say hey!"
+      _(
+        "<p>Choose an existing Linux installation to reuse the keys of its SSH " \
+        "server. The key files found in /etc/ssh will be copied to the new " \
+        "system being installed.</p>" \
+        "<p>Check <b>Copy Whole SSH Configuration</b> to also copy other files " \
+        "found in /etc/ssh, in addition to the keys.</p>"
+      )
     end
 
     def partitions_list_widget

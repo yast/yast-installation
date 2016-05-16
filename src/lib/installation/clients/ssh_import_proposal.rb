@@ -17,9 +17,9 @@ module Yast
     def description
       {
         # proposal part - bootloader label
-        "rich_text_title" => _("Import SSH Configuration and Keys"),
+        "rich_text_title" => _("Import SSH Keys and Configuration"),
         # menubutton entry
-        "menu_title"      => _("&Import SSH Configuration and Keys"),
+        "menu_title"      => _("&Import SSH Keys and Configuration"),
         "id"              => "ssh_import"
       }
     end
