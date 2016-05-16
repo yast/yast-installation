@@ -54,7 +54,7 @@ describe Installation::SshImporter do
       let(:now) { Time.now }
       let(:root2_atime) { Time.now - 60 }
       # We just want all config to have some keys, no matter which
-      let(:keys) { [ instance_double(Installation::SshKey) ] }
+      let(:keys) { [instance_double(Installation::SshKey)] }
       let(:root1) { instance_double("Installation::SshConfig", keys_atime: now - 1200, keys: keys) }
       let(:root2) { instance_double("Installation::SshConfig", keys_atime: now, keys: keys) }
       let(:root3) { instance_double("Installation::SshConfig", keys_atime: now - 60, keys: keys) }
@@ -73,7 +73,7 @@ describe Installation::SshImporter do
         expect(importer.configurations).to eq(
           "/dev/root1" => root1,
           "/dev/root2" => root2,
-          "/dev/root3" => root3,
+          "/dev/root3" => root3
         )
       end
 
@@ -122,7 +122,7 @@ describe Installation::SshImporter do
         end
 
         it "writes the ssh keys of the choosen device" do
-          expect(root2).to receive(:write_files) do |root_dir, flags|
+          expect(root2).to receive(:write_files) do |_dir, flags|
             expect(flags[:write_keys]).to eq true
           end
 
@@ -130,7 +130,7 @@ describe Installation::SshImporter do
         end
 
         it "writes the config files of the choosen device" do
-          expect(root2).to receive(:write_files) do |root_dir, flags|
+          expect(root2).to receive(:write_files) do |_dir, flags|
             expect(flags[:write_config_files]).to eq true
           end
 
@@ -151,7 +151,7 @@ describe Installation::SshImporter do
         end
 
         it "writes the ssh keys of the choosen device" do
-          expect(root2).to receive(:write_files) do |root_dir, flags|
+          expect(root2).to receive(:write_files) do |_dir, flags|
             expect(flags[:write_keys]).to eq true
           end
 
@@ -159,7 +159,7 @@ describe Installation::SshImporter do
         end
 
         it "does not write the config files of the choosen device" do
-          expect(root2).to receive(:write_files) do |root_dir, flags|
+          expect(root2).to receive(:write_files) do |_dir, flags|
             expect(flags[:write_config_files]).to eq false
           end
 

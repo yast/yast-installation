@@ -28,7 +28,7 @@ module Yast
       importer.reset if attrs["force_reset"]
       {
         "preformatted_proposal" => preformatted_proposal,
-        "links" => ["ssh_import"]
+        "links"                 => ["ssh_import"]
       }
     end
 
@@ -65,7 +65,7 @@ module Yast
         "enable_back" => true,
         "enable_next" => param.fetch("has_next", false),
         "going_back"  => true
-      } 
+      }
 
       log.info "Asking user which SSH keys to import"
       begin

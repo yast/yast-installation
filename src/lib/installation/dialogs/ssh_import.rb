@@ -102,7 +102,7 @@ module Yast
     end
 
     def partition_widget(dev, partition)
-      strings = {system_name: partition.system_name, device: dev}
+      strings = { system_name: partition.system_name, device: dev }
       # TRANSLATORS: %{system_name} is a string like "openSUSE 13.2", %{device}
       # is a string like /dev/sda1
       name = _("%{system_name} at %{device}") % strings

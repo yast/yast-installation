@@ -31,7 +31,6 @@ module Installation
     textdomain "installation"
 
     class << self
-
       # Creates a new object with the information read from a filesystem
       #
       # @param root_dir [String] Path where the original "/" is mounted
@@ -155,7 +154,7 @@ module Installation
     def add_key(priv_filename)
       key = SshKey.new(File.basename(priv_filename))
       key.read_files(priv_filename)
-      self.keys << key
+      keys << key
     end
 
     def add_config_file(filename)

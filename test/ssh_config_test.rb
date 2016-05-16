@@ -96,7 +96,7 @@ describe Installation::SshConfig do
 
   describe ".write_files" do
     def permissions(file)
-      sprintf("%o", File.stat(file).mode)[-3..-1]
+      format("%o", File.stat(file).mode)[-3..-1]
     end
 
     around do |example|
@@ -120,7 +120,7 @@ describe Installation::SshConfig do
         example.run
       end
     end
-    
+
     let(:ssh_dir) { File.join(@target_dir, "etc", "ssh") }
 
     it "creates /etc/ssh/ if it does not exist" do
@@ -177,7 +177,7 @@ describe Installation::SshConfig do
       expect(permissions("#{ssh_dir}/ssh_host_key")).to eq "600"
       expect(permissions("#{ssh_dir}/ssh_host_key.pub")).to eq "644"
     end
-    
+
     it "backups config files found in the target directory" do
       ::FileUtils.mkdir_p(ssh_dir)
       ::FileUtils.touch(File.join(ssh_dir, "moduli"))
@@ -186,7 +186,7 @@ describe Installation::SshConfig do
 
       expect(File.exist?(File.join(ssh_dir, "moduli.yast.orig"))).to eq true
     end
-  
+
     it "writes the original content for each file" do
       @config.write_files(@target_dir)
 

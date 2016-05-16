@@ -63,7 +63,7 @@ module Installation
     def add_config(root_dir, device)
       config = SshConfig.from_dir(root_dir)
       return if config.keys.empty?
-      
+
       configurations[device] = config
       set_device
     end
@@ -76,7 +76,7 @@ module Installation
       return unless device
       configurations[device].write_files(
         root_dir,
-        write_keys: true,
+        write_keys:         true,
         write_config_files: copy_config
       )
     end
@@ -93,11 +93,11 @@ module Installation
       if configurations.empty?
         @device = nil
       else
-        with_atime = configurations.to_a.select { |dev, config| config.keys_atime }
+        with_atime = configurations.to_a.select { |_dev, config| config.keys_atime }
         if with_atime.empty?
           @device = configurations.keys.first
         else
-          recent = with_atime.max_by { |dev, config| config.keys_atime }
+          recent = with_atime.max_by { |_dev, config| config.keys_atime }
           @device = recent.first
         end
       end

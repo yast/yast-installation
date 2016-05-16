@@ -56,7 +56,7 @@ module Installation
     def add_file(path)
       content = IO.read(path)
       permissions = File.stat(path).mode
-      self.files << KeyFile.new(File.basename(path), content, permissions)
+      files << KeyFile.new(File.basename(path), content, permissions)
       atime = File.atime(path)
       self.atime = atime unless self.atime && self.atime > atime
     end
