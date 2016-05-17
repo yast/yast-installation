@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue May 17 08:17:51 UTC 2016 - ancor@suse.com
+
+- Visual improvement in the SSH keys importing proposal summary
+
+-------------------------------------------------------------------
 Mon May 16 16:39:34 UTC 2016 - ancor@suse.com
 
 - The user is now informed about SSH keys to be reused (copied
