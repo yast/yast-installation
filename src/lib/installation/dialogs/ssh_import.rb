@@ -63,7 +63,7 @@ module Yast
     def dialog_content
       HSquash(
         VBox(
-          Left(Label(_("System to Import SSH Keys from"))),
+          Left(Label(_("System to Import SSH Host Keys from"))),
           partitions_list_widget,
           VSpacing(1),
           Left(copy_config_widget)
@@ -72,14 +72,16 @@ module Yast
     end
 
     def dialog_title
-      _("Import SSH Keys and Configuration")
+      _("Import SSH Host Keys and Configuration")
     end
 
     def help_text
       _(
-        "<p>Choose an existing Linux installation to reuse the keys of its SSH " \
-        "server. The key files found in /etc/ssh will be copied to the new " \
-        "system being installed.</p>" \
+        "<p>Every SSH server is identified by one or several public host keys. " \
+        "Choose an existing Linux installation to reuse the host keys -and " \
+        "thus the identity- of its SSH server. The key files found in /etc/ssh " \
+        "(one pair of files per host key) will be copied to the new system " \
+        "being installed.</p>" \
         "<p>Check <b>Copy Whole SSH Configuration</b> to also copy other files " \
         "found in /etc/ssh, in addition to the keys.</p>"
       )

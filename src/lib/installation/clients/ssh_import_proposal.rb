@@ -17,9 +17,9 @@ module Yast
     def description
       {
         # proposal part - bootloader label
-        "rich_text_title" => _("Import SSH Keys and Configuration"),
+        "rich_text_title" => _("Import SSH Host Keys and Configuration"),
         # menubutton entry
-        "menu_title"      => _("&Import SSH Keys and Configuration"),
+        "menu_title"      => _("&Import SSH Host Keys and Configuration"),
         "id"              => "ssh_import"
       }
     end
@@ -41,18 +41,18 @@ module Yast
         return _("No previous Linux installation found - not importing any SSH Key")
       end
       if importer.device.nil?
-        res = _("No existing SSH keys will be copied")
+        res = _("No existing SSH host keys will be copied")
       else
         ssh_config = importer.configurations[importer.device]
         partition = ssh_config.system_name
         if importer.copy_config?
           # TRANSLATORS: %s is the name of a Linux system found in the hard
           # disk, like 'openSUSE 13.2'
-          res = _("SSH keys and configuration will be copied from %s") % partition
+          res = _("SSH host keys and configuration will be copied from %s") % partition
         else
           # TRANSLATORS: %s is the name of a Linux system found in the hard
           # disk, like 'openSUSE 13.2'
-          res = _("SSH keys will be copied from %s") % partition
+          res = _("SSH host keys will be copied from %s") % partition
         end
       end
       # TRANSLATORS: link to change the proposal
