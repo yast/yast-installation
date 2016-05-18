@@ -57,7 +57,7 @@ module Yast
       end
       # TRANSLATORS: link to change the proposal
       res += " " + _("(<a href=%s>change</a>)") % '"ssh_import"'
-      res
+      Yast::HTML.List([res])
     end
 
     def ask_user(param)
