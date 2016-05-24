@@ -1,3 +1,3 @@
-require "installation/clients/ssh_impot_auto"
+require "installation/clients/ssh_import_auto"
 
 ::Installation::SSHImportAutoClient.run
