@@ -7,7 +7,7 @@ Yast.import "Progress"
 
 module Installation
   # Autoyast client for ssh_import
-  class SSHImpotAutoClient < ::Installation::AutoClient
+  class SSHImportAutoClient < ::Installation::AutoClient
     class << self
       attr_accessor :changed
     end
