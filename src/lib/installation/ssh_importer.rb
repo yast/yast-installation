@@ -26,6 +26,7 @@ module Installation
   # in the hard disk and to copy its files to the target system
   class SshImporter
     include Singleton
+    include Yast::I18n
     include Yast::Logger
 
     # @return [String] device name of the source filesystem (i.e. the
@@ -99,7 +100,7 @@ module Installation
     #   <import config:type="boolean">true</import>
     #   <config config:type="boolean">true</config>
     #   <device>/dev/sda4</device>
-    # <ssh_import>
+    # </ssh_import>
     def import(data)
       log.info "Importing AutoYaST data: #{data}"
       if data["import"]
