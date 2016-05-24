@@ -83,11 +83,11 @@ module Installation
         if copy_config?
           # TRANSLATORS: %s is the name of a Linux system found in the hard
           # disk, like 'openSUSE 13.2'
-          return = _("SSH host keys and configuration will be copied from %s") % partition
+          return _("SSH host keys and configuration will be copied from %s") % partition
         else
           # TRANSLATORS: %s is the name of a Linux system found in the hard
           # disk, like 'openSUSE 13.2'
-          return = _("SSH host keys will be copied from %s") % partition
+          return _("SSH host keys will be copied from %s") % partition
         end
       end
     end
