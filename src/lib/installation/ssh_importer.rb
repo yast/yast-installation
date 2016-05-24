@@ -105,20 +105,20 @@ module Installation
       log.info "Importing AutoYaST data: #{data}"
       if data["import"]
         set_device # set default device
-        copy_config = data["config"] || false
+        @copy_config = data["config"] || false
         if data["device"] && !data["device"].empty?
           if configurations.has_key?( data["device"] )
-            device = data["device"]
+            @device = data["device"]
           else
-            Report.LongWarning(
+            Yast::Report.Warning(
               # TRANSLATORS: %s is the device name like /dev/sda0
               _("Device %s not found. Taking default entry.") %
-              device
+              data["device"]
             )
           end
         end
       else
-        device = nil # do not copy ssh keys into the installed system
+        @device = nil # do not copy ssh keys into the installed system
       end
     end
 
