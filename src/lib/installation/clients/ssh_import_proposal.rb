@@ -20,7 +20,9 @@ module Yast
         "rich_text_title" => _("Import SSH Host Keys and Configuration"),
         # menubutton entry
         "menu_title"      => _("&Import SSH Host Keys and Configuration"),
-        "id"              => "ssh_import"
+        # empty string is returned in case of not previous installation to
+        # avoid text link.
+        "id"              => importer.configurations.empty? ? "" : "ssh_import"
       }
     end
 
