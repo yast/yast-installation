@@ -61,5 +61,10 @@ module Installation
       ::Installation::SshImporter.instance.write
     end
 
+    def read
+      # It is a user decision only. Not depending on system
+      true
+    end
+
   end
 end

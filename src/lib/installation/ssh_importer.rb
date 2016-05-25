@@ -122,20 +122,15 @@ module Installation
       end
     end
 
-    # Exporting data to the AutoYaST configuration module
+    # Exporting data to the AutoYaST configuration module.
+    # That's are default entries.
     def export
-      ret = {}
-      if device
-        ret["import"] = true
-      else
-        ret["import"] = false
-      end
-      ret["config"] = copy_config
+      ret = { "import" => true, "config" => false }
       # Device will not be set because it is optional and the
       # most-recently-accessed device (biggest keys_atime)
       # will be used for.
       # ret["device"] = device
-      deep_copy(ret)
+      ret
     end
 
     # Writes the SSH keys from the selected device (and also other configuration
