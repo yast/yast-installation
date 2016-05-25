@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed May 25 13:07:59 UTC 2016 - lslezak@suse.cz
+
+- Start the Ruby debugger at the beginning of installation
+  when Y2DEBUGGER is set (FATE#318421)
+- 3.1.188
+
+-------------------------------------------------------------------
 Tue May 17 08:17:51 UTC 2016 - ancor@suse.com
 
 - Visual improvement in the SSH keys importing proposal summary
