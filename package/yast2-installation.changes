@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed May 25 15:49:41 UTC 2016 - kanderssen@suse.com
+
+- More visual improvements in the SSH keys importing proposal
+  summary based on blog entry feedback.
+
+-------------------------------------------------------------------
 Wed May 25 13:07:59 UTC 2016 - lslezak@suse.cz
 
 - Start the Ruby debugger at the beginning of installation
