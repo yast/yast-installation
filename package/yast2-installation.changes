@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed May 25 13:48:05 CEST 2016 - schubi@suse.de
+
+- AutoYaST support for ssh_import module.
+  Fate#319624
+- 3.1.188
+
+-------------------------------------------------------------------
 Tue May 17 08:17:51 UTC 2016 - ancor@suse.com
 
 - Visual improvement in the SSH keys importing proposal summary
