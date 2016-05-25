@@ -50,6 +50,7 @@ client_DATA = \
   clients/inst_save_hardware_status.rb \
   clients/inst_scenarios.rb \
   clients/inst_ssh_import.rb \
+  clients/auto_ssh_import.rb \
   clients/inst_system_analysis.rb \
   clients/inst_system_role.rb \
   clients/inst_upgrade_urls.rb \
@@ -195,7 +196,8 @@ ylibclient_DATA = \
 
 ylibdialogdir = "${yast2dir}/lib/installation/dialogs"
 ylibdialog_DATA = \
-  lib/installation/dialogs/ssh_import.rb
+  lib/installation/dialogs/ssh_import.rb \
+  lib/installation/dialogs/auto_ssh_import.rb
 
 EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylibdialog_DATA) $(ylib_DATA) $(ylibtransfer_DATA)
 

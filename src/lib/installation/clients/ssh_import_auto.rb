@@ -4,6 +4,8 @@ require "installation/auto_client"
 require "installation/ssh_importer"
 
 Yast.import "Progress"
+Yast.import "Mode"
+Yast.import "Popup"
 
 module Installation
   # Autoyast client for ssh_import
@@ -26,7 +28,7 @@ module Installation
     end
 
     def summary
-      "<UL>" + ::Installation::SshImporter.instance.summaray + "</UL>"
+      "<UL>" + ::Installation::SshImporter.instance.summary + "</UL>"
     end
 
     def modified?
@@ -43,8 +45,13 @@ module Installation
 
     def change
       begin
+        args = {
+          "enable_back" => true,
+          "enable_next" => false,
+          "going_back"  => true
+        }
         Yast::Wizard.OpenAcceptDialog
-        result = WFM.CallFunction("inst_ssh_import", [args])
+        result = WFM.CallFunction("auto_ssh_import", [args])
       ensure
         Yast::Wizard.CloseDialog
       end
@@ -58,7 +65,12 @@ module Installation
     end
 
     def write
-      ::Installation::SshImporter.instance.write
+      if Mode.config
+        Popup.Notify _("It makes no sense to write these settings to system.")
+        return true
+      else
+        return ::Installation::SshImporter.instance.write
+      end
     end
 
     def read
