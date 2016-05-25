@@ -47,18 +47,8 @@ module Yast
       UI.SetProductLogo(true)
       Wizard.OpenLeftTitleNextBackDialog
 
-      # start the debugger if required (FATE#318421)
-      if (Linuxrc.InstallInf("Cmdline") || "").match(/\bY2DEBUGGER=(.*)\b/i)
-        option = Regexp.last_match[1]
-        log.info "Y2DEBUGGER option: #{option}"
-
-        if option == "1" || option == "remote" || option == "manual"
-          require "yast/debugger"
-          Debugger.start(remote: option == "remote", start_client: option != "manual")
-        else
-          log.warn "Unknown Y2DEBUGGER value: #{option}"
-        end
-      end
+      # start the debugger if requested (FATE#318421)
+      start_debugger
 
       Wizard.SetContents(
         # title
@@ -113,6 +103,23 @@ module Yast
       WFM.CallFunction("disintegrate_all_extensions") if Stage.initial
 
       deep_copy(@ret)
+    end
+
+  private
+
+    # start the Ruby debugger if booted with the Y2DEBUGGER option
+    def start_debugger
+      return unless (Linuxrc.InstallInf("Cmdline") || "").match(/\bY2DEBUGGER=(.*)\b/i)
+
+      option = Regexp.last_match[1]
+      log.info "Y2DEBUGGER option: #{option}"
+
+      if option == "1" || option == "remote" || option == "manual"
+        require "yast/debugger"
+        Debugger.start(remote: option == "remote", start_client: option != "manual")
+      else
+        log.warn "Unknown Y2DEBUGGER value: #{option}"
+      end
     end
   end
 end
