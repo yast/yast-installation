@@ -17,7 +17,6 @@
 #  you may find current contact information at www.suse.com
 
 require "installation/ssh_config"
-Yast.import "Report"
 
 module Installation
   # Entry point for the SSH keys importing functionality.
@@ -26,7 +25,6 @@ module Installation
   # in the hard disk and to copy its files to the target system
   class SshImporter
     include Singleton
-    include Yast::I18n
     include Yast::Logger
 
     # @return [String] device name of the source filesystem (i.e. the
@@ -69,68 +67,6 @@ module Installation
 
       configurations[device] = config
       set_device
-    end
-
-    # Returns a human readable summary
-    def summary
-      if configurations.empty?
-        return _("No previous Linux installation found - not importing any SSH Key")
-      end
-      if device.nil?
-        return _("No existing SSH host keys will be copied")
-      else
-        ssh_config = configurations[@device]
-        partition = ssh_config.system_name
-        if copy_config?
-          # TRANSLATORS: %s is the name of a Linux system found in the hard
-          # disk, like 'openSUSE 13.2'
-          return _("SSH host keys and configuration will be copied from %s") % partition
-        else
-          # TRANSLATORS: %s is the name of a Linux system found in the hard
-          # disk, like 'openSUSE 13.2'
-          return _("SSH host keys will be copied from %s") % partition
-        end
-      end
-    end
-
-    # Importing data from the AutoYaST configuration module
-    # AutoYaST data format:
-    #
-    # <ssh_import>
-    #   <import config:type="boolean">true</import>
-    #   <config config:type="boolean">true</config>
-    #   <device>/dev/sda4</device>
-    # </ssh_import>
-    def import(data)
-      log.info "Importing AutoYaST data: #{data}"
-      if data["import"]
-        set_device # set default device
-        @copy_config = data["config"] || false
-        if data["device"] && !data["device"].empty?
-          if configurations.has_key?( data["device"] )
-            @device = data["device"]
-          else
-            Yast::Report.Warning(
-              # TRANSLATORS: %s is the device name like /dev/sda0
-              _("Device %s not found. Taking default entry.") %
-              data["device"]
-            )
-          end
-        end
-      else
-        self.device = nil # do not copy ssh keys into the installed system
-      end
-    end
-
-    # Exporting data to the AutoYaST configuration module.
-    # That's are default entries.
-    def export
-      ret = { "import" => true, "config" => false }
-      # Device will not be set because it is optional and the
-      # most-recently-accessed device (biggest keys_atime)
-      # will be used for.
-      # ret["device"] = device
-      ret
     end
 
     # Writes the SSH keys from the selected device (and also other configuration
