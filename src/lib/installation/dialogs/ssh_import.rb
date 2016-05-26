@@ -63,7 +63,7 @@ module Yast
     def dialog_content
       HSquash(
         VBox(
-          Left(CheckBoxFrame(
+          CheckBoxFrame(
             Id(:import_ssh_key),
             _("I would like to import SSH keys from a previous installation"),
             true,
@@ -80,7 +80,7 @@ module Yast
                 Left(copy_config_widget)
               )
             )
-          )),
+          ),
           HStretch()
         )
       )
