@@ -38,7 +38,7 @@ module Yast
 
     def preformatted_proposal
       if importer.configurations.empty?
-        return _("No previous Linux installation found - not importing any SSH Key")
+        return Yast::HTML.List([_("No previous Linux installation found")])
       end
       if importer.device.nil?
         res = _("No existing SSH host keys will be copied")
@@ -55,8 +55,6 @@ module Yast
           res = _("SSH host keys will be copied from %s") % partition
         end
       end
-      # TRANSLATORS: link to change the proposal
-      res += " " + _("(<a href=%s>change</a>)") % '"ssh_import"'
       Yast::HTML.List([res])
     end
 
