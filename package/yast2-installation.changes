@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu May 26 13:17:42 UTC 2016 - kanderssen@suse.com
+
+- System Role: centered dialog (ncurses).
+
+-------------------------------------------------------------------
 Wed May 25 15:49:41 UTC 2016 - kanderssen@suse.com
 
 - More visual improvements in the SSH keys importing proposal

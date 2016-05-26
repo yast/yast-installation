@@ -53,10 +53,12 @@ module Installation
     end
 
     def dialog_content
-      VBox(
-        Left(Label(Yast::ProductControl.GetTranslatedText("roles_text"))),
-        VSpacing(2),
-        role_buttons
+      HSquash(
+        VBox(
+          Left(Label(Yast::ProductControl.GetTranslatedText("roles_text"))),
+          VSpacing(2),
+          role_buttons
+        )
       )
     end
 
