@@ -61,8 +61,7 @@ module Yast
     end
 
     def dialog_content
-      HBox(
-        HStretch(),
+      HSquash(
         VBox(
           Left(CheckBoxFrame(
             Id(:import_ssh_key),
@@ -75,13 +74,14 @@ module Yast
                 HSpacing(2),
                 partitions_list_widget
               ),
-              VSpacing(1),
+              VSpacing(3),
               HBox(
                 HSpacing(2),
                 Left(copy_config_widget)
               )
             )
           )),
+          HStretch()
         )
       )
     end
@@ -97,7 +97,7 @@ module Yast
         "thus the identity- of its SSH server. The key files found in /etc/ssh " \
         "(one pair of files per host key) will be copied to the new system " \
         "being installed.</p>" \
-        "<p>Check <b>Insert SSH Configuration</b> to also copy other files " \
+        "<p>Check <b>Import SSH Configuration</b> to also copy other files " \
         "found in /etc/ssh, in addition to the keys.</p>"
       )
     end
@@ -125,7 +125,7 @@ module Yast
     end
 
     def copy_config_widget
-      CheckBox(Id(:copy_config), _("Insert SSH Configuration"), copy_config)
+      CheckBox(Id(:copy_config), _("Import SSH Configuration"), copy_config)
     end
   end
 end

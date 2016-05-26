@@ -40,7 +40,7 @@ module Yast
 
     def preformatted_proposal
       if importer.configurations.empty?
-        return _("No previous Linux installation found - not importing any SSH Key")
+        return Yast::HTML.List([_("No previous Linux installation found")])
       end
       if importer.device.nil?
         res = _("No existing SSH host keys will be copied")
@@ -57,8 +57,6 @@ module Yast
           res = _("SSH host keys will be copied from %s") % partition
         end
       end
-      # TRANSLATORS: link to change the proposal
-      res += " " + _("(<a href=%s>change</a>)") % '"ssh_import"'
       Yast::HTML.List([res])
     end
 
@@ -69,15 +67,18 @@ module Yast
         "going_back"  => true
       }
 
-      log.info "Asking user which SSH keys to import"
-      begin
-        Yast::Wizard.OpenAcceptDialog
-        result = WFM.CallFunction("inst_ssh_import", [args])
-      ensure
-        Yast::Wizard.CloseDialog
+      if importer.configurations.empty?
+        result = :next
+      else
+        log.info "Asking user which SSH keys to import"
+        begin
+          Yast::Wizard.OpenAcceptDialog
+          result = WFM.CallFunction("inst_ssh_import", [args])
+        ensure
+          Yast::Wizard.CloseDialog
+        end
+        log.info "Returning from ssh_import ask_user with #{result}"
       end
-      log.info "Returning from ssh_import ask_user with #{result}"
-
       { "workflow_sequence" => result }
     end
   end

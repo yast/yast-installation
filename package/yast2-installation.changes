@@ -2,7 +2,7 @@
 Wed May 25 15:49:41 UTC 2016 - kanderssen@suse.com
 
 - More visual improvements in the SSH keys importing proposal
-  summary based on blog entry feedback.
+  summary based on blog entry feedback. (Fate#319624)
 
 -------------------------------------------------------------------
 Wed May 25 13:07:59 UTC 2016 - lslezak@suse.cz
