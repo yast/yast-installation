@@ -76,7 +76,7 @@ module Installation
       if configurations.empty?
         return _("No previous Linux installation found - not importing any SSH Key")
       end
-      if @device.nil?
+      if device.nil?
         return _("No existing SSH host keys will be copied")
       else
         ssh_config = configurations[@device]
@@ -118,7 +118,7 @@ module Installation
           end
         end
       else
-        @device = nil # do not copy ssh keys into the installed system
+        self.device = nil # do not copy ssh keys into the installed system
       end
     end
 
