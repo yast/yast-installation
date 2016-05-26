@@ -20,9 +20,7 @@ module Yast
         "rich_text_title" => _("Import SSH Host Keys and Configuration"),
         # menubutton entry
         "menu_title"      => _("&Import SSH Host Keys and Configuration"),
-        # empty string is returned in case of not previous installation to
-        # avoid text link.
-        "id"              => importer.configurations.empty? ? "" : "ssh_import"
+        "id"              => "ssh_import"
       }
     end
 
@@ -67,18 +65,15 @@ module Yast
         "going_back"  => true
       }
 
-      if importer.configurations.empty?
-        result = :next
-      else
-        log.info "Asking user which SSH keys to import"
-        begin
-          Yast::Wizard.OpenAcceptDialog
-          result = WFM.CallFunction("inst_ssh_import", [args])
-        ensure
-          Yast::Wizard.CloseDialog
-        end
-        log.info "Returning from ssh_import ask_user with #{result}"
+      log.info "Asking user which SSH keys to import"
+      begin
+        Yast::Wizard.OpenAcceptDialog
+        result = WFM.CallFunction("inst_ssh_import", [args])
+      ensure
+        Yast::Wizard.CloseDialog
       end
+      log.info "Returning from ssh_import ask_user with #{result}"
+
       { "workflow_sequence" => result }
     end
   end
