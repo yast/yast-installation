@@ -51,7 +51,7 @@ module Installation
           "going_back"  => true
         }
         Yast::Wizard.OpenAcceptDialog
-        result = WFM.CallFunction("auto_ssh_import", [args])
+        result = WFM.CallFunction("inst_ssh_import", [args])
       ensure
         Yast::Wizard.CloseDialog
       end
