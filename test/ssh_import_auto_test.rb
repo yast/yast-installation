@@ -38,13 +38,10 @@ describe ::Installation::SSHImportAutoClient do
 
       context "when no previous configurations were found" do
         let(:config) { "root3" }
-        let(:message) do
-          _("No previous Linux installation found - " \
-            "not importing any SSH Key")
-        end
+        let(:message) { _("No previous Linux installation found") }
 
         it "returns 'No previous Linux...' message" do
-          expect(subject.run).to eq("<UL>#{message}</UL>")
+          expect(subject.run).to eq("<UL><LI>#{message}</LI></UL>")
         end
       end
 
@@ -54,7 +51,7 @@ describe ::Installation::SSHImportAutoClient do
         let(:message) { _("No existing SSH host keys will be copied") }
 
         it "returns 'No existing SSH...'" do
-          expect(subject.run).to eq("<UL>#{message}</UL>")
+          expect(subject.run).to eq("<UL><LI>#{message}</LI></UL>")
         end
       end
 
@@ -67,7 +64,7 @@ describe ::Installation::SSHImportAutoClient do
         end
 
         it "returns 'No existing SSH...'" do
-          expect(subject.run).to eq("<UL>#{message}</UL>")
+          expect(subject.run).to eq("<UL><LI>#{message}</LI></UL>")
         end
       end
 
@@ -80,7 +77,7 @@ describe ::Installation::SSHImportAutoClient do
         end
 
         it "returns 'No existing SSH...'" do
-          expect(subject.run).to eq("<UL>#{message}</UL>")
+          expect(subject.run).to eq("<UL><LI>#{message}</LI></UL>")
         end
       end
     end

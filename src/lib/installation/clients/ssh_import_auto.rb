@@ -55,7 +55,7 @@ module Installation
     def summary
       message =
         if ssh_importer.configurations.empty?
-          _("No previous Linux installation found - not importing any SSH Key")
+          _("No previous Linux installation found")
         elsif ssh_importer.device.nil?
           _("No existing SSH host keys will be copied")
         else
@@ -70,7 +70,8 @@ module Installation
             _("SSH host keys will be copied from %s") % name
           end
         end
-      "<UL>#{message}</UL>"
+      # FIXME: we should use the Summary module.
+      "<UL><LI>#{message}</LI></UL>"
     end
 
     def modified?
