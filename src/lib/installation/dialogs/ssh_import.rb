@@ -27,6 +27,7 @@ module Yast
 
       Yast.import "UI"
       Yast.import "Label"
+      Yast.import "Mode"
 
       textdomain "installation"
     end
@@ -72,7 +73,7 @@ module Yast
               VSpacing(1),
               HBox(
                 HSpacing(2),
-                partitions_list_widget
+                Mode.config ? device_name : partitions_list_widget
               ),
               VSpacing(3),
               HBox(
@@ -100,6 +101,11 @@ module Yast
         "<p>Check <b>Import SSH Configuration</b> to also copy other files " \
         "found in /etc/ssh, in addition to the keys.</p>"
       )
+    end
+
+    def device_name
+      # AutoYaST configuration mode. The user can input the device e.b. /dev/sda0
+      TextEntry(Id(:device), _("&Device"), importer.device || "default")
     end
 
     def partitions_list_widget

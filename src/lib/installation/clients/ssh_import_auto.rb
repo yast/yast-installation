@@ -54,12 +54,13 @@ module Installation
     # Returns a human readable summary
     def summary
       message =
-        if ssh_importer.configurations.empty?
-          _("No previous Linux installation found")
+        if ssh_importer.configurations.empty? && Mode.installation
+          _("No previous Linux installation found.")
         elsif ssh_importer.device.nil?
           _("No existing SSH host keys will be copied")
         else
-          name = ssh_config.system_name
+          name = ssh_config.system_name if ssh_config
+          name ||= ssh_importer.device || "default"
           if ssh_importer.copy_config?
             # TRANSLATORS: %s is the name of a Linux system found in the hard
             # disk, like 'openSUSE 13.2'
@@ -87,25 +88,44 @@ module Installation
     end
 
     def change
-      args = {
-        "enable_back" => true,
-        "enable_next" => false,
-        "going_back"  => true
-      }
-      Yast::Wizard.OpenAcceptDialog
-      WFM.CallFunction("inst_ssh_import", [args])
-    ensure
-      Yast::Wizard.CloseDialog
+      modified
+      begin
+        args = {
+          "enable_back" => true,
+          "enable_next" => false,
+          "going_back"  => true
+        }
+        Yast::Wizard.OpenAcceptDialog
+        WFM.CallFunction("inst_ssh_import", [args])
+      ensure
+        Yast::Wizard.CloseDialog
+      end
     end
 
     # Exporting data to the AutoYaST configuration module.
     # That's are default entries.
     def export
-      ret = { "import" => true, "config" => false }
-      # Device will not be set because it is optional and the
-      # most-recently-accessed device (biggest keys_atime)
-      # will be used for.
-      # ret["device"] = device
+      ret = {}
+      if Mode.config
+        # Taking values from AutoYast configuration module
+        if ssh_importer.device && !ssh_importer.device.empty?
+          ret["import"] = true
+          ret["config"] = ssh_importer.copy_config
+          if !ssh_importer.device.empty? && ssh_importer.device != "default"
+            ret["device"] = ssh_importer.device
+          end
+        else
+          ret["import"] = false
+          ret["config"] = false
+        end
+      else
+        # Taking default values
+        ret = { "import" => true, "config" => false }
+        # Device will not be set because it is optional and the
+        # most-recently-accessed device (biggest keys_atime)
+        # will be used for.
+        # ret["device"] = device
+      end
       ret
     end
 
