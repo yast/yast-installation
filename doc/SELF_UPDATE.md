@@ -60,6 +60,23 @@ The URL can contain a variable `$arch` that will be replaced by the system's
 architecture, such as `x86_64`, `s390x`, etc. You can find more information
 in the [Arch module](http://www.rubydoc.info/github/yast/yast-yast2/Yast/ArchClass).
 
+### Actual URLs
+
+The regular update URLs have the form
+`https://updates.suse.com/SUSE/Updates/$PRODUCT/$VERSION/$ARCH/update` where
+- PRODUCT is like OpenStack-Cloud, SLE-DESKTOP, SLE-SDK, SLE-SERVER,
+- VERSION (for SLE-SERVER) is like 12, 12-SP1,
+- ARCH is one of aarch64 i586 ia64 ppc ppc64 ppc64le s390x x86_64
+
+For the self-update the *PRODUCT* is replaced
+with *PRODUCT*-INSTALLER, producing these repository paths
+under https://updates.suse.com/
+- /SUSE/Updates/SLE-DESKTOP-INSTALLER/12-SP2/x86_64/update
+- /SUSE/Updates/SLE-SERVER-INSTALLER/12-SP2/aarch64/update
+- /SUSE/Updates/SLE-SERVER-INSTALLER/12-SP2/ppc64le/update
+- /SUSE/Updates/SLE-SERVER-INSTALLER/12-SP2/s390x/update
+- /SUSE/Updates/SLE-SERVER-INSTALLER/12-SP2/x86_64/update
+
 ## Security
 
 Updates signatures will be checked by libzypp. If the signature is not
