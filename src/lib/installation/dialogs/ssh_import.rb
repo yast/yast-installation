@@ -67,7 +67,7 @@ module Yast
           CheckBoxFrame(
             Id(:import_ssh_key),
             _("I would like to import SSH keys from a previous installation"),
-            true,
+            (!importer.device.nil? && !importer.device.empty?),
             VBox(
               HStretch(),
               VSpacing(1),
