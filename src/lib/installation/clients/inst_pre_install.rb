@@ -94,6 +94,12 @@ module Yast
         read_ssh_info(device, mount_point)
       end
 
+      # The ssh_import proposal doesn't make sense if there is no
+      # configuration to import from.
+      if ::Installation::SshImporter.instance.configurations.empty?
+        ProductControl.DisableSubProposal("inst_initial", "ssh_import")
+      end
+
       # free the memory
       @useful_partitions = nil
 

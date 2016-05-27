@@ -34,7 +34,7 @@ module Yast
     # Event callback for the 'ok' button
     def next_handler
       partition = UI.QueryWidget(Id(:device), :Value)
-      partition = nil if partition == :none
+      partition = nil unless UI.QueryWidget(Id(:import_ssh_key), :Value)
       copy_config = UI.QueryWidget(Id(:copy_config), :Value)
       log.info "SshImportDialog partition => #{partition} copy_config => #{copy_config}"
       importer.device = partition
@@ -63,10 +63,25 @@ module Yast
     def dialog_content
       HSquash(
         VBox(
-          Left(Label(_("System to Import SSH Host Keys from"))),
-          partitions_list_widget,
-          VSpacing(1),
-          Left(copy_config_widget)
+          CheckBoxFrame(
+            Id(:import_ssh_key),
+            _("I would like to import SSH keys from a previous installation"),
+            true,
+            VBox(
+              HStretch(),
+              VSpacing(1),
+              HBox(
+                HSpacing(2),
+                partitions_list_widget
+              ),
+              VSpacing(3),
+              HBox(
+                HSpacing(2),
+                Left(copy_config_widget)
+              )
+            )
+          ),
+          HStretch()
         )
       )
     end
@@ -82,7 +97,7 @@ module Yast
         "thus the identity- of its SSH server. The key files found in /etc/ssh " \
         "(one pair of files per host key) will be copied to the new system " \
         "being installed.</p>" \
-        "<p>Check <b>Copy Whole SSH Configuration</b> to also copy other files " \
+        "<p>Check <b>Import SSH Configuration</b> to also copy other files " \
         "found in /etc/ssh, in addition to the keys.</p>"
       )
     end
@@ -96,8 +111,6 @@ module Yast
       RadioButtonGroup(
         Id(:device),
         VBox(
-          # TRANSLATORS: option to select no partition for SSH keys import
-          Left(RadioButton(Id(:none), _("None"), device.nil?)),
           *part_widgets
         )
       )
@@ -112,7 +125,7 @@ module Yast
     end
 
     def copy_config_widget
-      CheckBox(Id(:copy_config), _("Copy Whole SSH Configuration"), copy_config)
+      CheckBox(Id(:copy_config), _("Import SSH Configuration"), copy_config)
     end
   end
 end

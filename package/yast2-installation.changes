@@ -1,8 +1,27 @@
 -------------------------------------------------------------------
-Wed May 25 13:48:05 CEST 2016 - schubi@suse.de
+Wed May 27 13:48:05 CEST 2016 - schubi@suse.de
 
 - AutoYaST support for ssh_import module.
   Fate#319624
+- 3.1.190
+
+-------------------------------------------------------------------
+Thu May 26 13:17:42 UTC 2016 - kanderssen@suse.com
+
+- System Role: centered dialog (ncurses).
+
+-------------------------------------------------------------------
+Wed May 25 15:49:41 UTC 2016 - kanderssen@suse.com
+
+- More visual improvements in the SSH keys importing proposal
+  summary based on blog entry feedback. (Fate#319624)
+- 3.1.189
+
+-------------------------------------------------------------------
+Wed May 25 13:07:59 UTC 2016 - lslezak@suse.cz
+
+- Start the Ruby debugger at the beginning of installation
+  when Y2DEBUGGER is set (FATE#318421)
 - 3.1.188
 
 -------------------------------------------------------------------
