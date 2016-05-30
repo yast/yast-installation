@@ -88,7 +88,12 @@ module Installation
     end
 
     def change
+      # If this module has been called and do not
+      # depends on the installed system we would like to
+      # have this section in the exported AutoYaST file
+      # regardless if the entries have been changed nor not.
       modified
+
       begin
         args = {
           "enable_back" => true,
