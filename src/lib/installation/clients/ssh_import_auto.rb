@@ -30,23 +30,31 @@ module Installation
     #   <config config:type="boolean">true</config>
     #   <device>/dev/sda4</device>
     # </ssh_import>
+    #
+    # @param data [Hash] AutoYaST specification.
+    # @option data [Boolean] :import Import SSH keys
+    # @option data [Boolean] :config Import SSH server configuration
+    #   in addition to keys.
+    # @option data [Boolean] :device Device to import the keys/configuration from.
     def import(data)
-      if data["import"]
-        log.info "Importing AutoYaST data: #{data}"
-        ssh_importer.copy_config = data["config"] == true
-        if data["device"] && !data["device"].empty?
-          if ssh_importer.configurations.key?(data["device"])
-            ssh_importer.device = data["device"]
-          else
-            Yast::Report.Warning(
-              # TRANSLATORS: %s is the device name like /dev/sda0
-              _("Device %s not found. Taking default entry.") %
-              data["device"]
-              )
-          end
-        end
-      else
+      if !data["import"]
+        log.info("Do not import ssh keys/configuration")
         ssh_importer.device = nil # do not copy ssh keys into the installed system
+        return true
+      end
+
+      log.info "Importing AutoYaST data: #{data}"
+      ssh_importer.copy_config = data["config"] == true
+      if data["device"] && !data["device"].empty?
+        if ssh_importer.configurations.key?(data["device"])
+          ssh_importer.device = data["device"]
+        else
+          Yast::Report.Warning(
+            # TRANSLATORS: %s is the device name like /dev/sda0
+            _("Device %s not found. Taking default entry.") %
+            data["device"]
+            )
+        end
       end
       true
     end

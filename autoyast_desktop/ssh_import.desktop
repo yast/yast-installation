@@ -20,7 +20,7 @@ X-SuSE-YaST-AutoInstClonable=true
 Icon=yast-ssh_import
 Exec=
 
-Name=SHH Key Import
-GenericName=Importing SSH keys from a previous installtion
+Name=SSH Key Import
+GenericName=Importing SSH keys from a previous installation
 
 StartupNotify=true
