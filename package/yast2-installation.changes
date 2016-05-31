@@ -1,8 +1,15 @@
 -------------------------------------------------------------------
-Wed May 27 13:48:05 CEST 2016 - schubi@suse.de
+Wed May 31 13:48:05 CEST 2016 - schubi@suse.de
 
 - AutoYaST support for ssh_import module.
   Fate#319624
+- 3.1.191
+
+-------------------------------------------------------------------
+Mon May 30 14:35:05 UTC 2016 - lslezak@suse.cz
+
+- Move the debugger invocation code to yast2-ruby-bindings package
+  to use the same implementation at run time (FATE#318421)
 - 3.1.190
 
 -------------------------------------------------------------------
