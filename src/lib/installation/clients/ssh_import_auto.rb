@@ -54,8 +54,8 @@ module Installation
     # Returns a human readable summary
     def summary
       message =
-        if ssh_importer.configurations.empty? && Mode.installation
-          _("No previous Linux installation found.")
+        if ssh_importer.configurations.empty? && (Mode.installation || Mode.autoinst)
+          _("No previous Linux installation found")
         elsif ssh_importer.device.nil?
           _("No existing SSH host keys will be copied")
         else

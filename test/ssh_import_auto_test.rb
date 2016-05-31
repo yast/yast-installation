@@ -5,10 +5,12 @@ require "installation/clients/ssh_import_auto"
 
 describe ::Installation::SSHImportAutoClient do
   let(:importer) { ::Installation::SshImporter.instance }
+  let(:mode) { "autoinstallation" }
   let(:args) { [] }
 
   before do
     allow(Yast::WFM).to receive(:Args).and_return([func, args])
+    allow(Yast::Mode).to receive(:mode).and_return(mode)
   end
 
   describe "#run" do
@@ -39,6 +41,7 @@ describe ::Installation::SSHImportAutoClient do
       context "when no previous configurations were found" do
         let(:config) { "root3" }
         let(:message) { _("No previous Linux installation found") }
+        let(:device) { nil }
 
         it "returns 'No previous Linux...' message" do
           expect(subject.run).to eq("<UL><LI>#{message}</LI></UL>")
