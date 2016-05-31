@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon May 30 14:35:05 UTC 2016 - lslezak@suse.cz
+
+- Move the debugger invocation code to yast2-ruby-bindings package
+  to use the same implementation at run time (FATE#318421)
+- 3.1.190
+
+-------------------------------------------------------------------
 Thu May 26 13:17:42 UTC 2016 - kanderssen@suse.com
 
 - System Role: centered dialog (ncurses).
