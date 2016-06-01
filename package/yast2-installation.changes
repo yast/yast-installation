@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jun  1 11:41:27 UTC 2016 - igonzalezsosa@suse.com
+
+- When importing SSH keys/configuration, only regular files
+  will be considered (bsc#982522).
+
+-------------------------------------------------------------------
 Mon May 30 14:35:05 UTC 2016 - lslezak@suse.cz
 
 - Move the debugger invocation code to yast2-ruby-bindings package

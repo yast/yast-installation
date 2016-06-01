@@ -108,6 +108,8 @@ describe Installation::SshConfig do
         Dir.glob("#{dir}/root1/etc/ssh/*").each do |file|
           if file.end_with?("_key") || file.end_with?("sshd_config") || file.end_with?("moduli")
             File.chmod(0600, file)
+          elsif File.directory?(file)
+            File.chmod(0755)
           else
             File.chmod(0644, file)
           end
