@@ -2,7 +2,10 @@
 Wed Jun  1 11:41:27 UTC 2016 - igonzalezsosa@suse.com
 
 - When importing SSH keys/configuration, only regular files
-  will be considered (bsc#982522).
+  will be considered (bsc#982522)
+- Force YaST2-Firstboot.service to run after
+  YaST2-Second-Stage.service (bsc#980365)
+- 3.1.191
 
 -------------------------------------------------------------------
 Mon May 30 14:35:05 UTC 2016 - lslezak@suse.cz
