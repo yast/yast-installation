@@ -61,7 +61,7 @@ module Installation
       Yast::HTML.List([message])
     end
 
-    private
+  private
 
     # Helper method to access to SshConfig for the selected device
     #
