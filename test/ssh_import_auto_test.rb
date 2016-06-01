@@ -29,59 +29,14 @@ describe ::Installation::SSHImportAutoClient do
 
     context "Summary" do
       let(:func) { "Summary" }
-      let(:device) { "dev" }
-      let(:copy_config) { false }
+      let(:presenter) { double("presenter", summary: "Summary") }
 
       before do
-        importer.add_config(FIXTURES_DIR.join(config), "dev")
-        importer.device = device
-        importer.copy_config = copy_config
+        allow(::Installation::SshImporterPresenter).to receive(:new).and_return(presenter)
       end
 
-      context "when no previous configurations were found" do
-        let(:config) { "root3" }
-        let(:message) { _("No previous Linux installation found") }
-        let(:device) { nil }
-
-        it "returns 'No previous Linux...' message" do
-          expect(subject.run).to eq("<UL><LI>#{message}</LI></UL>")
-        end
-      end
-
-      context "when no device was selected" do
-        let(:config) { "root1" }
-        let(:device) { nil }
-        let(:message) { _("No existing SSH host keys will be copied") }
-
-        it "returns 'No existing SSH...'" do
-          expect(subject.run).to eq("<UL><LI>#{message}</LI></UL>")
-        end
-      end
-
-      context "when device is set and copy config is enabled" do
-        let(:config) { "root1" }
-        let(:copy_config) { true }
-        let(:message) do
-          _("SSH host keys and configuration will be copied from %s") %
-            "Operating system 1"
-        end
-
-        it "returns 'No existing SSH...'" do
-          expect(subject.run).to eq("<UL><LI>#{message}</LI></UL>")
-        end
-      end
-
-      context "when device is set and copy config is disabled" do
-        let(:config) { "root1" }
-        let(:copy_config) { false }
-        let(:message) do
-          _("SSH host keys will be copied from %s") %
-            "Operating system 1"
-        end
-
-        it "returns 'No existing SSH...'" do
-          expect(subject.run).to eq("<UL><LI>#{message}</LI></UL>")
-        end
+      it "returns SSH importer summary" do
+        expect(subject.run).to eq(presenter.summary)
       end
     end
 

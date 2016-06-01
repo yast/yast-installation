@@ -1,5 +1,6 @@
 require "installation/proposal_client"
 require "installation/ssh_importer"
+require "installation/ssh_importer_presenter"
 
 module Yast
   # Proposal client for SSH keys import
@@ -37,10 +38,7 @@ module Yast
     end
 
     def preformatted_proposal
-      res = importer.summary
-      # TRANSLATORS: link to change the proposal
-      res += " " + _("(<a href=%s>change</a>)") % '"ssh_import"'
-      Yast::HTML.List([res])
+      ::Installation::SshImporterPresenter.new(ssh_importer).summary
     end
 
     def ask_user(param)

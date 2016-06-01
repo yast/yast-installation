@@ -2,6 +2,7 @@ require "yast"
 
 require "installation/auto_client"
 require "installation/ssh_importer"
+require "installation/ssh_importer_presenter"
 
 Yast.import "Progress"
 Yast.import "Mode"
@@ -30,49 +31,40 @@ module Installation
     #   <config config:type="boolean">true</config>
     #   <device>/dev/sda4</device>
     # </ssh_import>
+    #
+    # @param data [Hash] AutoYaST specification.
+    # @option data [Boolean] :import Import SSH keys
+    # @option data [Boolean] :config Import SSH server configuration
+    #   in addition to keys.
+    # @option data [Boolean] :device Device to import the keys/configuration from.
     def import(data)
-      if data["import"]
-        log.info "Importing AutoYaST data: #{data}"
-        ssh_importer.copy_config = data["config"] == true
-        if data["device"] && !data["device"].empty?
-          if ssh_importer.configurations.key?(data["device"])
-            ssh_importer.device = data["device"]
-          else
-            Yast::Report.Warning(
-              # TRANSLATORS: %s is the device name like /dev/sda0
-              _("Device %s not found. Taking default entry.") %
-              data["device"]
-              )
-          end
-        end
-      else
+      if !data["import"]
+        log.info("Do not import ssh keys/configuration")
         ssh_importer.device = nil # do not copy ssh keys into the installed system
+        return true
+      end
+
+      log.info "Importing AutoYaST data: #{data}"
+      ssh_importer.copy_config = data["config"] == true
+      if data["device"] && !data["device"].empty?
+        if ssh_importer.configurations.key?(data["device"])
+          ssh_importer.device = data["device"]
+        else
+          Yast::Report.Warning(
+            # TRANSLATORS: %s is the device name like /dev/sda0
+            _("Device %s not found. Taking default entry.") %
+            data["device"]
+            )
+        end
       end
       true
     end
 
     # Returns a human readable summary
+    #
+    # @see ::Installation::SshImporterPresenter
     def summary
-      message =
-        if ssh_importer.configurations.empty? && (Mode.installation || Mode.autoinst)
-          _("No previous Linux installation found")
-        elsif ssh_importer.device.nil?
-          _("No existing SSH host keys will be copied")
-        else
-          name = ssh_config.system_name if ssh_config
-          name ||= ssh_importer.device || "default"
-          if ssh_importer.copy_config?
-            # TRANSLATORS: %s is the name of a Linux system found in the hard
-            # disk, like 'openSUSE 13.2'
-            _("SSH host keys and configuration will be copied from %s") % name
-          else
-            # TRANSLATORS: %s is the name of a Linux system found in the hard
-            # disk, like 'openSUSE 13.2'
-            _("SSH host keys will be copied from %s") % name
-          end
-        end
-      # FIXME: we should use the Summary module.
-      "<UL><LI>#{message}</LI></UL>"
+      ::Installation::SshImporterPresenter.new(ssh_importer).summary
     end
 
     def modified?
@@ -158,14 +150,6 @@ module Installation
     # @return [::Installation::SshImporter] SSH importer
     def ssh_importer
       @ssh_importer ||= ::Installation::SshImporter.instance
-    end
-
-    # Helper method to access to SshConfig for the selected device
-    #
-    # @return [::Installation::SshConfig] SSH configuration
-    def ssh_config
-      # TODO: add a method #current_config to SshImporter (?)
-      ssh_importer.device ? ssh_importer.configurations[ssh_importer.device] : nil
     end
   end
 end
