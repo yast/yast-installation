@@ -1,5 +1,6 @@
 require "installation/proposal_client"
 require "installation/ssh_importer"
+require "installation/ssh_importer_presenter"
 
 module Yast
   # Proposal client for SSH keys import
@@ -37,25 +38,7 @@ module Yast
     end
 
     def preformatted_proposal
-      if importer.configurations.empty?
-        return Yast::HTML.List([_("No previous Linux installation found")])
-      end
-      if importer.device.nil?
-        res = _("No existing SSH host keys will be copied")
-      else
-        ssh_config = importer.configurations[importer.device]
-        partition = ssh_config.system_name
-        if importer.copy_config?
-          # TRANSLATORS: %s is the name of a Linux system found in the hard
-          # disk, like 'openSUSE 13.2'
-          res = _("SSH host keys and configuration will be copied from %s") % partition
-        else
-          # TRANSLATORS: %s is the name of a Linux system found in the hard
-          # disk, like 'openSUSE 13.2'
-          res = _("SSH host keys will be copied from %s") % partition
-        end
-      end
-      Yast::HTML.List([res])
+      ::Installation::SshImporterPresenter.new(ssh_importer).summary
     end
 
     def ask_user(param)
