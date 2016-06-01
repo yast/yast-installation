@@ -1,8 +1,17 @@
 -------------------------------------------------------------------
-Wed May 31 13:48:05 CEST 2016 - schubi@suse.de
+Wed Jun  1 11:45:00 UTC 2016 - schubi@suse.de
 
 - AutoYaST support for ssh_import module.
   Fate#319624
+- 3.1.192
+
+-------------------------------------------------------------------
+Wed Jun  1 11:41:27 UTC 2016 - igonzalezsosa@suse.com
+
+- When importing SSH keys/configuration, only regular files
+  will be considered (bsc#982522)
+- Force YaST2-Firstboot.service to run after
+  YaST2-Second-Stage.service (bsc#980365)
 - 3.1.191
 
 -------------------------------------------------------------------

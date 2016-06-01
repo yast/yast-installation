@@ -110,7 +110,7 @@ module Installation
     #
     # @param dir [String] path of the SSH configuration directory
     def read_files(dir)
-      filenames = Dir.glob("#{dir}/*")
+      filenames = Dir.glob("#{dir}/*").select { |f| File.file?(f) }
 
       # Let's process keys first, pairs of files like "xyz" & "xyz.pub"
       pub_key_filenames = filenames.select { |f| f.end_with?(SshKey::PUBLIC_FILE_SUFFIX) }
