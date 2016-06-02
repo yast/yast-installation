@@ -1,8 +1,14 @@
 -------------------------------------------------------------------
-Wed Jun  1 11:45:00 UTC 2016 - schubi@suse.de
+Thu Jun  2 11:09:33 UTC 2016 - schubi@suse.de
 
 - AutoYaST support for ssh_import module.
   Fate#319624
+- 3.1.193
+
+-------------------------------------------------------------------
+Thu Jun  2 10:09:33 UTC 2016 - igonzalezsosa@suse.com
+
+- Drop yast2-installation-devel-doc package (fate#320356)
 - 3.1.192
 
 -------------------------------------------------------------------

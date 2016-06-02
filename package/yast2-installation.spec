@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.192
+Version:        3.1.193
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -129,18 +129,7 @@ PreReq:		%fillup_prereq
 
 BuildArch: noarch
 
-%package devel-doc
-Group:          Documentation/HTML
-Requires:	yast2-installation >= 2.15.34
-
-PreReq:		%fillup_prereq
-
-Summary:	YaST2 - Installation Parts
-
 %description
-System installation code as present on installation media.
-
-%description devel-doc
 System installation code as present on installation media.
 
 %prep
@@ -230,8 +219,3 @@ systemctl enable YaST2-Firstboot.service
 
 %dir %{yast_docdir}
 %{yast_docdir}/COPYING
-
-%files devel-doc
-%defattr(-,root,root)
-%doc %{yast_docdir}
-%exclude %{yast_docdir}/COPYING
