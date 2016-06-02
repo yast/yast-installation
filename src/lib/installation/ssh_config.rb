@@ -138,13 +138,18 @@ module Installation
       ::FileUtils.mkdir_p(dir)
 
       if write_keys
-        log.info "Writing SSH keys to the target system:"
+        log.info "Writing SSH keys to the target system: "
         keys.each do |k|
-          log.info k
+          log.info "#{k}"
           k.write_files(dir)
         end
       end
-      config_files.each { |f| f.write(dir) } if write_config_files
+      if write_config_files
+        config_files.each do |f|
+          log.info "Writing SSH configuration to the target system: #{f}"
+          f.write(dir)
+        end
+      end
     end
 
     # Access time of the most recently accessed SSH key.

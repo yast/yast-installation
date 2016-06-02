@@ -52,6 +52,11 @@ module Installation
       File.chmod(permissions, path)
     end
 
+    # Override to_s method for logging.
+    def to_s
+      "#{name}"
+    end
+
   protected
 
     def backup(filename)

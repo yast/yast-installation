@@ -49,10 +49,10 @@ module Installation
       end
     end
 
-     # Override to_s method for logging.
+    # Override to_s method for logging.
     def to_s
       "#{name}:\n" +
-      files.collect{ |file| "    #{file.filename}" }.join("\n")
+      files.collect{ |file| "  #{file.filename}" }.join("\n")
     end
 
   protected
