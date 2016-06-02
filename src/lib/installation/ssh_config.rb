@@ -148,7 +148,6 @@ module Installation
         log.info "Writing SSH configuration to the target system: #{f}"
         f.write(dir)
       end if write_config_files
-
     end
 
     # Access time of the most recently accessed SSH key.
