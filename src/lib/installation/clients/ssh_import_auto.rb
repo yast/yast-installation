@@ -130,7 +130,7 @@ module Installation
     # configuration files if #copy_config? is true) in the target
     # filesystem
     def write
-      if Mode.config
+      if Mode.config || Mode.normal # normal=configuration in an installed system
         Popup.Notify _("It makes no sense to write these settings to system.")
         true
       else
