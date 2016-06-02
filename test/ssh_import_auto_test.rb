@@ -4,6 +4,8 @@ require_relative "test_helper"
 require "installation/clients/ssh_import_auto"
 
 describe ::Installation::SSHImportAutoClient do
+  textdomain "installation"
+
   let(:importer) { ::Installation::SshImporter.instance }
   let(:mode) { "autoinstallation" }
   let(:args) { [] }
@@ -44,7 +46,7 @@ describe ::Installation::SSHImportAutoClient do
       let(:func) { "Import" }
 
       before do
-        importer.add_config(FIXTURES_DIR.join("root1"), "dev")
+        importer.add_config(fixtures_dir("root1"), "dev")
       end
 
       context "when importing is disabled" do
@@ -69,7 +71,7 @@ describe ::Installation::SSHImportAutoClient do
         let(:args) { { "import" => true, "device" => "other" } }
 
         it "sets given device to be used" do
-          importer.add_config(FIXTURES_DIR.join("root1"), "other")
+          importer.add_config(fixtures_dir("root1"), "other")
           subject.run
           expect(importer.device).to eq("other")
         end
@@ -78,7 +80,9 @@ describe ::Installation::SSHImportAutoClient do
       context "when given device does not exist" do
         let(:args) { { "import" => true, "device" => "missing" } }
 
-        it "sets default device to be used" do
+        it "sets default device to be used and warns the user" do
+          expect(Yast::Report).to receive(:Warning)
+            .with(_("Device missing not found. Using data from dev."))
           subject.run
           expect(importer.device).to eq("dev")
         end
@@ -87,7 +91,7 @@ describe ::Installation::SSHImportAutoClient do
       context "when copying configuration is disabled" do
         let(:args) { { "import" => true, "config" => false } }
 
-        it "disable copy_config to false" do
+        it "sets copy_config to false" do
           subject.run
           expect(importer.copy_config).to eq(false)
         end
@@ -96,7 +100,7 @@ describe ::Installation::SSHImportAutoClient do
       context "when copying configuration is enabled" do
         let(:args) { { "import" => true, "config" => true } }
 
-        it "disable copy_config to true" do
+        it "sets copy_config to true" do
           subject.run
           expect(importer.copy_config).to eq(true)
         end
@@ -107,7 +111,7 @@ describe ::Installation::SSHImportAutoClient do
       let(:func) { "Write" }
 
       before do
-        importer.add_config(FIXTURES_DIR.join("root1"), "dev")
+        importer.add_config(fixtures_dir("root1"), "dev")
         allow(::Installation).to receive(:destdir).and_return("/")
       end
 

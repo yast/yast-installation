@@ -1,8 +1,8 @@
 -------------------------------------------------------------------
 Thu Jun  2 11:09:33 UTC 2016 - schubi@suse.de
 
-- AutoYaST support for ssh_import module.
-  Fate#319624
+- Adapt AutoYaST to support import of SSH server keys/configuration
+  (fate#319624)
 - 3.1.193
 
 -------------------------------------------------------------------

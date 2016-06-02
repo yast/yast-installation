@@ -33,7 +33,7 @@ describe ::Installation::SshImporterPresenter do
         let(:message) { _("No previous Linux installation found") }
 
         it "returns 'No previous Linux...' message" do
-          expect(presenter.summary).to eq("<ul><li>#{message}</li></ul>")
+          expect(presenter.summary).to include(message)
         end
       end
 
@@ -42,7 +42,7 @@ describe ::Installation::SshImporterPresenter do
         let(:message) { _("No previous Linux installation found") }
 
         it "returns 'No previous Linux...' message" do
-          expect(presenter.summary).to eq("<ul><li>#{message}</li></ul>")
+          expect(presenter.summary).to include(message)
         end
       end
 
@@ -51,7 +51,7 @@ describe ::Installation::SshImporterPresenter do
         let(:message) { _("No existing SSH host keys will be copied") }
 
         it "returns 'No previous Linux...' message" do
-          expect(presenter.summary).to eq("<ul><li>#{message}</li></ul>")
+          expect(presenter.summary).to include(message)
         end
       end
     end
@@ -65,7 +65,7 @@ describe ::Installation::SshImporterPresenter do
       end
 
       it "returns 'SSH host keys and configuration...'" do
-        expect(presenter.summary).to eq("<ul><li>#{message}</li></ul>")
+        expect(presenter.summary).to include(message)
       end
     end
 
@@ -77,7 +77,7 @@ describe ::Installation::SshImporterPresenter do
       end
 
       it "returns 'SSH host keys will be copied...'" do
-        expect(presenter.summary).to eq("<ul><li>#{message}</li></ul>")
+        expect(presenter.summary).to include(message)
       end
     end
   end

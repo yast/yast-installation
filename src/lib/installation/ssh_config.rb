@@ -134,20 +134,13 @@ module Installation
     # @param write_keys [Boolean] whether to copy the keys
     # @param write_config_files [Boolean] whether to copy the config files
     def write_files(root_dir, write_keys: true, write_config_files: true)
+      log.info "Writing SSH keys and/or configuration: " \
+        "keys: #{write_keys}, config: #{write_config_files}"
       dir = self.class.ssh_dir(root_dir)
       ::FileUtils.mkdir_p(dir)
 
-      if write_keys
-        log.info "Writing SSH keys to the target system: "
-        keys.each do |k|
-          log.info "#{k}"
-          k.write_files(dir)
-        end
-      end
-      config_files.each do |f|
-        log.info "Writing SSH configuration to the target system: #{f}"
-        f.write(dir)
-      end if write_config_files
+      keys.each { |k| k.write_files(dir) } if write_keys
+      config_files.each { |f| f.write(dir) } if write_config_files
     end
 
     # Access time of the most recently accessed SSH key.

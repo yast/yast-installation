@@ -39,7 +39,7 @@ module Installation
     # @option data [Boolean] :device Device to import the keys/configuration from.
     def import(data)
       if !data["import"]
-        log.info("Do not import ssh keys/configuration")
+        log.info "Do not import ssh keys/configuration"
         ssh_importer.device = nil # do not copy ssh keys into the installed system
         return true
       end
@@ -51,10 +51,9 @@ module Installation
           ssh_importer.device = data["device"]
         else
           Yast::Report.Warning(
-            # TRANSLATORS: %s is the device name like /dev/sda0
-            _("Device %s not found. Taking default entry.") %
-            data["device"]
-            )
+            # TRANSLATORS: both %s are device names like /dev/sda0
+            _(format("Device %s not found. Using data from %s.",
+              data["device"], ssh_importer.device)))
         end
       end
       true

@@ -5,6 +5,7 @@ ENV["Y2DIR"] = y2dirs.unshift(srcdir).join(":")
 require "yast"
 require "yast/rspec"
 require "pathname"
+require_relative "helpers"
 
 FIXTURES_DIR = Pathname.new(__FILE__).dirname.join("fixtures")
 
@@ -56,4 +57,5 @@ end
 RSpec.configure do |config|
   config.extend Yast::I18n  # available in context/describe
   config.include Yast::I18n # available in it/let/before/...
+  config.include Helpers    # custom helpers
 end
