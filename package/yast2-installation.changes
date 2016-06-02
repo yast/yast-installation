@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jun  2 10:09:33 UTC 2016 - igonzalezsosa@suse.com
+
+- Drop yast2-installation-devel-doc package (fate#320356)
+- 3.1.192
+
+-------------------------------------------------------------------
 Wed Jun  1 11:41:27 UTC 2016 - igonzalezsosa@suse.com
 
 - When importing SSH keys/configuration, only regular files
