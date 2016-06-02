@@ -144,12 +144,11 @@ module Installation
           k.write_files(dir)
         end
       end
-      if write_config_files
-        config_files.each do |f|
-          log.info "Writing SSH configuration to the target system: #{f}"
-          f.write(dir)
-        end
-      end
+      config_files.each do |f|
+        log.info "Writing SSH configuration to the target system: #{f}"
+        f.write(dir)
+      end if write_config_files
+
     end
 
     # Access time of the most recently accessed SSH key.
