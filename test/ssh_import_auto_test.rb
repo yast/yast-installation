@@ -25,7 +25,7 @@ describe ::Installation::SSHImportAutoClient do
       let(:func) { "Export" }
 
       it "returns a hash with default configuration" do
-        expect(subject.run).to eq("config" => false, "import" => true)
+        expect(subject.run).to eq("copy_config" => false, "import" => true)
       end
     end
 
@@ -89,7 +89,7 @@ describe ::Installation::SSHImportAutoClient do
       end
 
       context "when copying configuration is disabled" do
-        let(:args) { { "import" => true, "config" => false } }
+        let(:args) { { "import" => true, "copy_config" => false } }
 
         it "sets copy_config to false" do
           subject.run
@@ -98,7 +98,7 @@ describe ::Installation::SSHImportAutoClient do
       end
 
       context "when copying configuration is enabled" do
-        let(:args) { { "import" => true, "config" => true } }
+        let(:args) { { "import" => true, "copy_config" => true } }
 
         it "sets copy_config to true" do
           subject.run
