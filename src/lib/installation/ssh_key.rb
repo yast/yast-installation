@@ -21,6 +21,7 @@ module Installation
   #
   # Used to implement the SSH keys importing functionality.
   class SshKey
+    include Yast::Logger
     PUBLIC_FILE_SUFFIX = ".pub"
 
     # @return [String] name for the user to identify the key
@@ -42,6 +43,7 @@ module Installation
     end
 
     def write_files(dir)
+      log.info "Write SSH keys to #{dir}:\n#{self}"
       files.each do |file|
         path = File.join(dir, file.filename)
         IO.write(path, file.content)
