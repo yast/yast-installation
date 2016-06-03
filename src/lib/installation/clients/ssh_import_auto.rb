@@ -28,13 +28,13 @@ module Installation
     #
     # <ssh_import>
     #   <import config:type="boolean">true</import>
-    #   <config config:type="boolean">true</config>
+    #   <copy_config config:type="boolean">true</copy_config>
     #   <device>/dev/sda4</device>
     # </ssh_import>
     #
     # @param data [Hash] AutoYaST specification.
     # @option data [Boolean] :import Import SSH keys
-    # @option data [Boolean] :config Import SSH server configuration
+    # @option data [Boolean] :copy_config Import SSH server configuration
     #   in addition to keys.
     # @option data [Boolean] :device Device to import the keys/configuration from.
     def import(data)
@@ -45,7 +45,7 @@ module Installation
       end
 
       log.info "Importing AutoYaST data: #{data}"
-      ssh_importer.copy_config = data["config"] == true
+      ssh_importer.copy_config = data["copy_config"] == true
       if data["device"] && !data["device"].empty?
         if ssh_importer.configurations.key?(data["device"])
           ssh_importer.device = data["device"]
@@ -106,17 +106,17 @@ module Installation
         # Taking values from AutoYast configuration module
         if ssh_importer.device && !ssh_importer.device.empty?
           ret["import"] = true
-          ret["config"] = ssh_importer.copy_config
+          ret["copy_config"] = ssh_importer.copy_config
           if !ssh_importer.device.empty? && ssh_importer.device != "default"
             ret["device"] = ssh_importer.device
           end
         else
           ret["import"] = false
-          ret["config"] = false
+          ret["copy_config"] = false
         end
       else
         # Taking default values
-        ret = { "import" => true, "config" => false }
+        ret = { "import" => true, "copy_config" => false }
         # Device will not be set because it is optional and the
         # most-recently-accessed device (biggest keys_atime)
         # will be used for.
