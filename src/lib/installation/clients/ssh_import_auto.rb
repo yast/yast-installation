@@ -87,9 +87,9 @@ module Installation
 
       begin
         args = {
-          "enable_back" => true,
+          "enable_back" => false,
           "enable_next" => false,
-          "going_back"  => true
+          "going_back"  => false
         }
         Yast::Wizard.OpenAcceptDialog
         WFM.CallFunction("inst_ssh_import", [args])
