@@ -24,6 +24,8 @@ module Installation
   #
   # Used by the SSH configuration importing functionality.
   class SshConfigFile
+    include Yast::Logger
+
     BACKUP_SUFFIX = ".yast.orig"
 
     # @return [String] file name
@@ -46,10 +48,16 @@ module Installation
     end
 
     def write(dir)
+      log.info "Write SSH config file #{dir} to #{name}"
       path = File.join(dir, name)
       backup(path)
       IO.write(path, content)
       File.chmod(permissions, path)
+    end
+
+    # Override to_s method for logging.
+    def to_s
+      "#{name}"
     end
 
   protected

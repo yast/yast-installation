@@ -29,6 +29,7 @@ module Installation
   class SshConfig
     extend Yast::I18n
     textdomain "installation"
+    include Yast::Logger
 
     class << self
       # Creates a new object with the information read from a filesystem
@@ -133,6 +134,8 @@ module Installation
     # @param write_keys [Boolean] whether to copy the keys
     # @param write_config_files [Boolean] whether to copy the config files
     def write_files(root_dir, write_keys: true, write_config_files: true)
+      log.info "Writing SSH keys and/or configuration: " \
+        "keys: #{write_keys}, config: #{write_config_files}"
       dir = self.class.ssh_dir(root_dir)
       ::FileUtils.mkdir_p(dir)
 

@@ -25,6 +25,7 @@ module Installation
   # in the hard disk and to copy its files to the target system
   class SshImporter
     include Singleton
+    include Yast::Logger
 
     # @return [String] device name of the source filesystem (i.e. the
     # SshConfig to copy the keys from)
