@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jun  7 06:34:43 UTC 2016 - kanderssen@suse.com
+
+- SSH Importer: Width fix to avoid cut of CheckBoxFrame Label
+- 3.1.208
+
+-------------------------------------------------------------------
 Fri Aug  5 07:22:59 UTC 2016 - igonzalezsosa@suse.com
 
 - Fix the registration screen initialization when SCC server

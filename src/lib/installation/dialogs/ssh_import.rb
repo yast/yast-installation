@@ -62,23 +62,26 @@ module Yast
     end
 
     def dialog_content
+      label = _("I would like to import SSH keys from a previous installation")
       HSquash(
         VBox(
-          CheckBoxFrame(
-            Id(:import_ssh_key),
-            _("I would like to import SSH keys from a previous installation"),
-            !(importer.device.nil? || importer.device.empty?),
-            VBox(
-              HStretch(),
-              VSpacing(1),
-              HBox(
-                HSpacing(2),
-                Mode.config ? device_name : partitions_list_widget
-              ),
-              VSpacing(3),
-              HBox(
-                HSpacing(2),
-                Left(copy_config_widget)
+          MinWidth(label.length,
+            CheckBoxFrame(
+              Id(:import_ssh_key),
+              label,
+              !(importer.device.nil? || importer.device.empty?),
+              VBox(
+                HStretch(),
+                VSpacing(1),
+                HBox(
+                  HSpacing(2),
+                  Mode.config ? device_name : partitions_list_widget
+                ),
+                VSpacing(3),
+                HBox(
+                  HSpacing(2),
+                  Left(copy_config_widget)
+                )
               )
             )
           ),
