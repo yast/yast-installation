@@ -1,7 +1,8 @@
 -------------------------------------------------------------------
-Tue Jun  7 06:34:43 UTC 2016 - kanderssen@suse.com
+Tue Aug 16 15:34:43 UTC 2016 - kanderssen@suse.com
 
 - SSH Importer: Width fix to avoid cut of CheckBoxFrame Label
+  (fate##319624)
 - 3.1.208
 
 -------------------------------------------------------------------

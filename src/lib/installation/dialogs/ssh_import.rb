@@ -65,6 +65,9 @@ module Yast
       label = _("I would like to import SSH keys from a previous installation")
       HSquash(
         VBox(
+          # For some reason the CheckBoxFrame Label is cut if the label size
+          # exceeds the CheckBoxFrame content's width. MinWidth with label length
+          # is used to avoid this issue.
           MinWidth(label.length,
             CheckBoxFrame(
               Id(:import_ssh_key),
