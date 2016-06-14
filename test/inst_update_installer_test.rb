@@ -4,7 +4,6 @@ require_relative "test_helper"
 require "installation/clients/inst_update_installer"
 
 describe Yast::InstUpdateInstaller do
-  Yast.import "Arch"
   Yast.import "Linuxrc"
   Yast.import "ProductFeatures"
   Yast.import "GetInstArgs"
@@ -19,7 +18,7 @@ describe Yast::InstUpdateInstaller do
   let(:repo) { double("repo") }
 
   before do
-    allow(Yast::Arch).to receive(:architecture).and_return(arch)
+    allow(Yast::Pkg).to receive(:GetArchitecture).and_return(arch)
     allow(Yast::Mode).to receive(:auto).and_return(false)
     allow(Yast::NetworkService).to receive(:isNetworkRunning).and_return(network_running)
     allow(::Installation::UpdatesManager).to receive(:new).and_return(manager)

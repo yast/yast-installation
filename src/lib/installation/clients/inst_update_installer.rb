@@ -24,7 +24,7 @@ module Yast
     UPDATED_FLAG_FILENAME = "installer_updated"
     REMOTE_SCHEMES = ["http", "https", "ftp", "tftp", "sftp", "nfs", "nfs4", "cifs", "smb"]
 
-    Yast.import "Arch"
+    Yast.import "Pkg"
     Yast.import "GetInstArgs"
     Yast.import "Directory"
     Yast.import "Installation"
@@ -129,7 +129,7 @@ module Yast
     # @see URI.regexp
     def get_url_from(url)
       return nil unless url.is_a?(::String)
-      real_url = url.gsub(/\$arch\b/, Arch.architecture)
+      real_url = url.gsub(/\$arch\b/, Pkg.GetArchitecture)
       URI.regexp.match(real_url) ? URI(real_url) : nil
     end
 
