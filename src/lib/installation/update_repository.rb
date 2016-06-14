@@ -205,7 +205,7 @@ module Installation
       tempfile = Tempfile.new(package["name"])
       tempfile.close
       Dir.mktmpdir do |workdir|
-        log.info("DEBUG 1")
+        log.info("Trying to get #{package["name"]} from repo #{repo_id}")
         if !Yast::Pkg.ProvidePackage(repo_id, package["name"], tempfile.path.to_s)
           log.error("Package #{package} could not be retrieved.")
           raise PackageNotFound

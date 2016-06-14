@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jun 14 14:17:53 UTC 2016 - igonzalezsosa@suse.com
+
+- Fix architecture detection during self-update (bsc#984656)
+- 3.1.194
+
+-------------------------------------------------------------------
 Thu Jun  2 11:09:33 UTC 2016 - schubi@suse.de
 
 - Adapt AutoYaST to support import of SSH server keys/configuration
