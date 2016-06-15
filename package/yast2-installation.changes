@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jun 15 15:15:15 CEST 2016 - snwint@suse.de
+
+- call set_videomode to adjust video mode (bsc#974821)
+- 3.1.195
+
+-------------------------------------------------------------------
 Tue Jun 14 14:17:53 UTC 2016 - igonzalezsosa@suse.com
 
 - Fix architecture detection during self-update (bsc#984656)
