@@ -54,6 +54,11 @@ function wait_for_x11() {
 			# server is running, detach oom-killer from it
 			echo -n '-17' > /proc/$xserver_pid/oom_score_adj
 			server_running=1
+			# adjust video mode using xrandr, if requested
+			SETMODE=/usr/lib/YaST2/bin/set_videomode
+			if [ -n "$XVideo" -a -x $SETMODE ];then
+			  $SETMODE "$XVideo"
+			fi
 			break
 		fi
 	done
