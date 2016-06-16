@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun 16 13:31:16 UTC 2016 - igonzalezsosa@suse.com
+
+- Avoid restarting YaST when self-update repository exists but
+  is empty (bsc#985113)
+- 3.1.196
+
+-------------------------------------------------------------------
 Wed Jun 15 15:15:15 CEST 2016 - snwint@suse.de
 
 - call set_videomode to adjust video mode (bsc#974821)
