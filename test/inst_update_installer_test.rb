@@ -9,13 +9,17 @@ describe Yast::InstUpdateInstaller do
   Yast.import "GetInstArgs"
   Yast.import "UI"
 
-  let(:manager) { double("update_manager", all_signed?: all_signed?, apply_all: true) }
+  let(:manager) do
+    double("update_manager", all_signed?: all_signed?, apply_all: true,
+      repositories?: has_repos)
+  end
   let(:url) { "http://update.opensuse.org/\$arch/update.dud" }
   let(:real_url) { "http://update.opensuse.org/#{arch}/update.dud" }
   let(:arch) { "x86_64" }
   let(:all_signed?) { true }
   let(:network_running) { true }
   let(:repo) { double("repo") }
+  let(:has_repos) { true }
 
   before do
     allow(Yast::Pkg).to receive(:GetArchitecture).and_return(arch)
@@ -79,6 +83,8 @@ describe Yast::InstUpdateInstaller do
       end
 
       context "when repository is empty" do
+        let(:has_repos) { false }
+
         it "does not restart YaST" do
           expect(manager).to receive(:add_repository)
             .and_return(false)

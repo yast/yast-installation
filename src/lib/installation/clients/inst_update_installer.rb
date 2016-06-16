@@ -173,14 +173,13 @@ module Yast
     # @return [Boolean] true if installer was updated; false otherwise.
     def update_installer
       log.info("Adding update from #{self_update_url}")
-      if updates_manager.add_repository(self_update_url)
+      updates_manager.add_repository(self_update_url)
+      updated = updates_manager.repositories?
+      if updated
         log.info("Applying installer updates")
         updates_manager.apply_all
-        true
-      else
-        log.info("No packages were found")
-        false
       end
+      updated
 
     rescue ::Installation::UpdatesManager::NotValidRepo
       if !using_default_url?
