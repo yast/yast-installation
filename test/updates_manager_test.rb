@@ -23,9 +23,10 @@ describe Installation::UpdatesManager do
     end
 
     context "when repository is added successfully" do
-      it "returns true" do
+      it "returns true and add the repository" do
         allow(repo0).to receive(:fetch)
         expect(manager.add_repository(uri)).to eq(true)
+        expect(manager.repositories).to eq([repo0])
       end
     end
 
@@ -34,6 +35,7 @@ describe Installation::UpdatesManager do
         allow(repo0).to receive(:fetch)
         allow(repo0).to receive(:empty?).and_return(true)
         expect(manager.add_repository(uri)).to eq(false)
+        expect(manager.repositories).to be_empty
       end
     end
 
