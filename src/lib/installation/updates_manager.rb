@@ -75,13 +75,19 @@ module Installation
     # information.
     #
     # @param uri [URI] URI where the repository lives
-    # @return [Array<UpdateRepository] Array of repositories to be applied
+    # @return [Boolean] true if the repository was added; false otherwise.
     #
     # @see Installation::UpdateRepository
     def add_repository(uri)
       new_repository = Installation::UpdateRepository.new(uri)
       new_repository.fetch
-      @repositories << new_repository
+      if new_repository.empty?
+        log.info("Update repository at #{uri} is empty. Skipping...")
+        false
+      else
+        @repositories << new_repository
+        true
+      end
     rescue Installation::UpdateRepository::NotValidRepo
       log.warn("Update repository at #{uri} could not be found")
       raise NotValidRepo

@@ -12,8 +12,8 @@ describe Installation::UpdatesManager do
 
   let(:uri) { URI("http://updates.opensuse.org/sles12") }
 
-  let(:repo0) { double("repo0", apply: true, cleanup: true) }
-  let(:repo1) { double("repo1", apply: true, cleanup: true) }
+  let(:repo0) { double("repo0", apply: true, cleanup: true, :empty? => false) }
+  let(:repo1) { double("repo1", apply: true, cleanup: true, :empty? => false) }
   let(:dud0)  { double("dud0", apply: true) }
 
   describe "#add_repository" do
@@ -23,9 +23,17 @@ describe Installation::UpdatesManager do
     end
 
     context "when repository is added successfully" do
-      it "returns an array containing all repos" do
+      it "returns true" do
         allow(repo0).to receive(:fetch)
-        expect(manager.add_repository(uri)).to eq([repo0])
+        expect(manager.add_repository(uri)).to eq(true)
+      end
+    end
+
+    context "when repository is empty" do
+      it "returns false" do
+        allow(repo0).to receive(:fetch)
+        allow(repo0).to receive(:empty?).and_return(true)
+        expect(manager.add_repository(uri)).to eq(false)
       end
     end
 
