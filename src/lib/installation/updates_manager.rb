@@ -75,13 +75,19 @@ module Installation
     # information.
     #
     # @param uri [URI] URI where the repository lives
-    # @return [Array<UpdateRepository] Array of repositories to be applied
+    # @return [Boolean] true if the repository was added; false otherwise.
     #
     # @see Installation::UpdateRepository
     def add_repository(uri)
       new_repository = Installation::UpdateRepository.new(uri)
       new_repository.fetch
-      @repositories << new_repository
+      has_packages = !new_repository.empty?
+      if has_packages
+        repositories << new_repository
+      else
+        log.info("Update repository at #{uri} is empty. Skipping...")
+      end
+      has_packages
     rescue Installation::UpdateRepository::NotValidRepo
       log.warn("Update repository at #{uri} could not be found")
       raise NotValidRepo
@@ -104,6 +110,11 @@ module Installation
     def apply_all
       (repositories + driver_updates).each(&:apply)
       repositories.each(&:cleanup)
+    end
+
+    # Determines whether the manager has repositories with updates
+    def repositories?
+      !repositories.empty?
     end
   end
 end

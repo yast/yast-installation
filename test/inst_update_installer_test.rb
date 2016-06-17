@@ -9,13 +9,17 @@ describe Yast::InstUpdateInstaller do
   Yast.import "GetInstArgs"
   Yast.import "UI"
 
-  let(:manager) { double("update_manager", all_signed?: all_signed?, apply_all: true) }
+  let(:manager) do
+    double("update_manager", all_signed?: all_signed?, apply_all: true,
+      repositories?: has_repos)
+  end
   let(:url) { "http://update.opensuse.org/\$arch/update.dud" }
   let(:real_url) { "http://update.opensuse.org/#{arch}/update.dud" }
   let(:arch) { "x86_64" }
   let(:all_signed?) { true }
   let(:network_running) { true }
   let(:repo) { double("repo") }
+  let(:has_repos) { true }
 
   before do
     allow(Yast::Pkg).to receive(:GetArchitecture).and_return(arch)
@@ -78,11 +82,22 @@ describe Yast::InstUpdateInstaller do
         end
       end
 
+      context "when repository is empty" do
+        let(:has_repos) { false }
+
+        it "does not restart YaST" do
+          expect(manager).to receive(:add_repository)
+            .and_return(false)
+          expect(subject.main).to eq(:next)
+        end
+      end
+
       context "when repository can't be probed" do
         context "and self-update URL is remote" do
           it "shows a dialog suggesting to check the network configuration" do
             expect(Yast::Popup).to receive(:YesNo).with(/installer updates from/)
-            expect(manager).to receive(:add_repository).and_raise(::Installation::UpdatesManager::CouldNotProbeRepo)
+            expect(manager).to receive(:add_repository)
+              .and_raise(::Installation::UpdatesManager::CouldNotProbeRepo)
             expect(subject.main).to eq(:next)
           end
         end
@@ -105,7 +120,7 @@ describe Yast::InstUpdateInstaller do
         end
 
         it "tries to update the installer using the given URL" do
-          expect(manager).to receive(:add_repository).with(URI(custom_url))
+          expect(manager).to receive(:add_repository).with(URI(custom_url)).and_return(true)
           expect(manager).to receive(:apply_all)
           allow(::FileUtils).to receive(:touch)
           expect(subject.main).to eq(:restart_yast)
@@ -127,7 +142,7 @@ describe Yast::InstUpdateInstaller do
         context "in standard installation" do
           it "gets URL from control file" do
             allow(::FileUtils).to receive(:touch)
-            expect(manager).to receive(:add_repository).with(URI(real_url))
+            expect(manager).to receive(:add_repository).with(URI(real_url)).and_return(true)
             expect(subject.main).to eq(:restart_yast)
           end
 
@@ -160,11 +175,13 @@ describe Yast::InstUpdateInstaller do
           context "the profile defines the update URL" do
             it "gets the URL from AutoYaST profile" do
               expect(manager).to receive(:add_repository).with(URI(profile_url))
+                .and_return(true)
               subject.main
             end
 
             it "returns :restart_yast" do
               allow(manager).to receive(:add_repository).with(URI(profile_url))
+                .and_return(true)
               expect(subject.main).to eq(:restart_yast)
             end
 
@@ -181,6 +198,7 @@ describe Yast::InstUpdateInstaller do
 
             it "gets URL from control file" do
               expect(manager).to receive(:add_repository).with(URI(real_url))
+                .and_return(true)
               expect(subject.main).to eq(:restart_yast)
             end
 
@@ -215,6 +233,7 @@ describe Yast::InstUpdateInstaller do
       context "when a error happens while applying the update" do
         it "does not catch the exception" do
           expect(manager).to receive(:add_repository)
+            .and_return(true)
           expect(manager).to receive(:apply_all)
             .and_raise(StandardError)
           expect { subject.update_installer }.to raise_error(StandardError)

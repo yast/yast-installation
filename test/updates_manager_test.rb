@@ -12,8 +12,8 @@ describe Installation::UpdatesManager do
 
   let(:uri) { URI("http://updates.opensuse.org/sles12") }
 
-  let(:repo0) { double("repo0", apply: true, cleanup: true) }
-  let(:repo1) { double("repo1", apply: true, cleanup: true) }
+  let(:repo0) { double("repo0", apply: true, cleanup: true, empty?: false) }
+  let(:repo1) { double("repo1", apply: true, cleanup: true, empty?: false) }
   let(:dud0)  { double("dud0", apply: true) }
 
   describe "#add_repository" do
@@ -23,9 +23,19 @@ describe Installation::UpdatesManager do
     end
 
     context "when repository is added successfully" do
-      it "returns an array containing all repos" do
+      it "returns true and add the repository" do
         allow(repo0).to receive(:fetch)
-        expect(manager.add_repository(uri)).to eq([repo0])
+        expect(manager.add_repository(uri)).to eq(true)
+        expect(manager.repositories).to eq([repo0])
+      end
+    end
+
+    context "when repository is empty" do
+      it "returns false" do
+        allow(repo0).to receive(:fetch)
+        allow(repo0).to receive(:empty?).and_return(true)
+        expect(manager.add_repository(uri)).to eq(false)
+        expect(manager.repositories).to be_empty
       end
     end
 
@@ -112,6 +122,28 @@ describe Installation::UpdatesManager do
       it "also re-applies the driver updates" do
         expect(dud0).to receive(:apply)
         manager.apply_all
+      end
+    end
+  end
+
+  describe "#repositories?" do
+    context "when some repository was added" do
+      before do
+        allow(manager).to receive(:repositories).and_return([repo0])
+      end
+
+      it "returns true" do
+        expect(manager.repositories?).to eq(true)
+      end
+    end
+
+    context "when no repository was added" do
+      before do
+        allow(manager).to receive(:repositories).and_return([])
+      end
+
+      it "returns false" do
+        expect(manager.repositories?).to eq(false)
       end
     end
   end

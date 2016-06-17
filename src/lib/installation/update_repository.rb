@@ -189,6 +189,15 @@ module Installation
       Yast::Pkg.SourceDelete(repo_id)
     end
 
+    # Determine whether the repository is empty or not
+    #
+    # @return [Boolean] true if the repository is empty; false otherwise.
+    #
+    # @see #packages
+    def empty?
+      packages.empty?
+    end
+
   private
 
     # Fetch and build a squashfs filesytem for a given package
