@@ -214,9 +214,19 @@ module Yast
     #                   false if the network is not configured.
     def configure_network?
       if Popup.YesNo(
+        # Note: the proxy cannot be configured in the YaST installer yet,
+        # it needs to be set via the "proxy" boot option.
         # TRANSLATORS: %s is an URL
-        format(_("Downloading installer updates from \n%s\nfailed.\n\n" \
-                 "Would you like to check your network configuration?"), self_update_url))
+        format(_("Downloading the optional installer updates from \n%s\nfailed.\n" \
+                 "\n" \
+                 "You can continue the installation without applying the updates.\n" \
+                 "However, some potentially important bug fixes might be missing.\n" \
+                 "\n" \
+                 "If you need a proxy server to access the update repository\n" \
+                 "then use the \"proxy\" boot parameter.\n" \
+                 "\n" \
+                 "Would you like to check your network configuration\n" \
+                 "and try installing the updates again?"), self_update_url))
         Yast::WFM.CallFunction("inst_lan", [{ "skip_detection" => true }])
         true
       else
