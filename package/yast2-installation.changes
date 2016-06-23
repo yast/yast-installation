@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun 23 08:17:24 UTC 2016 - lslezak@suse.cz
+
+- Display more information in the error popup when downloading
+  the optional installer updates fails (bsc#986091)
+- 3.1.197
+
+-------------------------------------------------------------------
 Thu Jun 16 13:31:16 UTC 2016 - igonzalezsosa@suse.com
 
 - Avoid restarting YaST when self-update repository exists but
