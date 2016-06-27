@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Jun 27 13:00:24 UTC 2016 - jreidinger@suse.com
+
+- Always run kdump before final bootloader installation to allow
+  skip kdump writting of bootloader and speed up installation
+  (bnc#986649)
+- 3.1.198
+
+-------------------------------------------------------------------
 Thu Jun 23 08:17:24 UTC 2016 - lslezak@suse.cz
 
 - Display more information in the error popup when downloading
