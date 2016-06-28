@@ -189,13 +189,8 @@ module Installation
     def add_boot_kernel_parameters
       Yast.import "Bootloader"
 
-      res = Yast::Bootloader.Read
-
-      res &&= Yast::Bootloader.modify_kernel_params("cio_ignore" => "all,!ipldev,!condev")
-
-      res &&= Yast::Bootloader.Write
-
-      raise "failed to write kernel parameters for IPL and console device" if !res
+      # boot code is already proposed and will be written in next step, so just modify
+      Yast::Bootloader.modify_kernel_params("cio_ignore" => "all,!ipldev,!condev")
     end
 
     ACTIVE_DEVICES_FILE = "/boot/zipl/active_devices.txt"

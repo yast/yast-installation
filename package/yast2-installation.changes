@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Mon Jun 27 13:00:24 UTC 2016 - jreidinger@suse.com
+
+- Make writing of bootloader settings the last step so that other
+  installation steps (kdump, cio-ignore) do not have to waste time
+  repeating it
+  (bnc#986649)
+- 3.1.198
+
+-------------------------------------------------------------------
 Thu Jun 23 08:17:24 UTC 2016 - lslezak@suse.cz
 
 - Display more information in the error popup when downloading

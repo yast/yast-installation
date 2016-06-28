@@ -178,21 +178,10 @@ describe ::Installation::CIOIgnoreFinish do
         end
 
         it "adds kernel parameters IPLDEV and CONDEV to the bootloader" do
-          expect(Yast::Bootloader).to receive(:Write).once { true }
-          expect(Yast::Bootloader).to receive(:Read).once { true }
           expect(Yast::Bootloader).to receive(:modify_kernel_params).once
             .and_return(true)
 
           subject.run("Write")
-        end
-
-        it "raises an exception if modifying kernel parameters failed" do
-          expect(Yast::Bootloader).to receive(:Write).never
-          expect(Yast::Bootloader).to receive(:Read).once { true }
-          allow(Yast::Bootloader).to receive(:modify_kernel_params).once
-            .and_return(false)
-
-          expect { subject.run("Write") }.to raise_error(RuntimeError, /failed to write kernel parameters/)
         end
 
         it "writes list of active devices to zipl so it is not blocked" do
