@@ -21,170 +21,44 @@
 
 require "installation/minimal_installation"
 
+Yast.import "UI"
+Yast.import "Pkg"
+textdomain "installation"
+
+Yast.import "AddOnProduct"
+Yast.import "WorkflowManager"
+Yast.import "Installation"
+Yast.import "Linuxrc"
+Yast.import "Misc"
+Yast.import "Mode"
+Yast.import "Stage"
+Yast.import "Popup"
+Yast.import "ProductControl"
+Yast.import "Progress"
+Yast.import "Report"
+Yast.import "Wizard"
+Yast.import "String"
+Yast.import "GetInstArgs"
+Yast.import "ProductFeatures"
+Yast.import "SlideShow"
+Yast.import "InstError"
+Yast.import "PackageCallbacks"
+Yast.import "Hooks"
+
+# added for fate# 303395
+Yast.import "Directory"
+
 module Yast
   class InstFinishClient < Client
     include Yast::Logger
 
     def main
-      Yast.import "UI"
-      Yast.import "Pkg"
-      textdomain "installation"
-
-      Yast.import "AddOnProduct"
-      Yast.import "WorkflowManager"
-      Yast.import "Installation"
-      Yast.import "Linuxrc"
-      Yast.import "Misc"
-      Yast.import "Mode"
-      Yast.import "Stage"
-      Yast.import "Popup"
-      Yast.import "ProductControl"
-      Yast.import "Progress"
-      Yast.import "Report"
-      Yast.import "Wizard"
-      Yast.import "String"
-      Yast.import "GetInstArgs"
-      Yast.import "ProductFeatures"
-      Yast.import "SlideShow"
-      Yast.import "InstError"
-      Yast.import "PackageCallbacks"
-      Yast.import "Hooks"
-
-      # added for fate# 303395
-      Yast.import "Directory"
-
       return :auto if GetInstArgs.going_back
 
-      # <-- Functions
+      setup_wizard
+      setup_slide_show
 
-      Wizard.DisableBackButton
-      Wizard.DisableNextButton
-
-      # Adjust a SlideShow dialog if not configured
-      if [nil, {}].include?(SlideShow.GetSetup)
-        Builtins.y2milestone("No SlideShow setup has been set, adjusting")
-        SlideShow.Setup(
-          [
-            {
-              "name"        => "finish",
-              "description" => _("Finishing Basic Installation"),
-              # fixed value
-              "value"       => 100,
-              "units"       => :sec
-            }
-          ]
-        )
-      end
-
-      Wizard.SetTitleIcon("yast-sysconfig")
-
-      # Do not open a new SlideShow widget, reuse the old one instead
-      # variable used later to close that dialog (if needed)
-      required_to_open_sl_dialog = !SlideShow.HaveSlideWidget
-
-      if required_to_open_sl_dialog
-        Builtins.y2milestone("SlideShow dialog not yet created")
-        SlideShow.OpenDialog
-      end
-
-      # Might be left from the previous stage
-      SlideShow.HideTable
-
-      SlideShow.MoveToStage("finish")
-
-      log = _("Creating list of finish scripts to call...")
-      SlideShow.SubProgress(0, "")
-      SlideShow.StageProgress(0, log)
-      SlideShow.AppendMessageToInstLog(log)
-
-      # Used later in 'stages' definition
-      # Using empty callbacks that don't break the UI
-      PackageCallbacks.RegisterEmptyProgressCallbacks
-      Pkg.TargetInitialize(Installation.destdir)
-      Pkg.TargetLoad
-      PackageCallbacks.RestorePreviousProgressCallbacks
-
-      if ::Installation::MinimalInstallation.instance.enabled?
-        copy_files_steps = [
-          "autoinst_scripts1",
-          "copy_files",
-          "copy_systemfiles",
-          # For live installer only
-          Mode.live_installation ? "live_copy_files" : "",
-          "switch_scr"
-        ]
-
-        save_config_steps = [
-          "save_config",
-          # For live installer only
-          Mode.live_installation ? "live_save_config" : "",
-          "storage",
-          "kernel"
-        ]
-
-        save_settings_steps = [
-          "yast_inf",
-          "autoinst_scripts2",
-          "installation_settings"
-        ]
-
-        install_bootloader_steps = [
-          "prep_shrink", # ensure that prep partition is small enough for boot sector (bnc#867345)
-          "bootloader"
-        ]
-      else
-        # NOT minimal configuration
-
-        copy_files_steps = [
-          "autoinst_scripts1",
-          "copy_files",
-          "copy_systemfiles",
-          # For live installer only
-          Mode.live_installation ? "live_copy_files" : "",
-          "switch_scr"
-        ]
-
-        save_config_steps = [
-          "ldconfig",
-          "save_config",
-          # For live installer only
-          Mode.live_installation ? "live_save_config" : "",
-          "default_target",
-          "desktop",
-          "storage",
-          "iscsi-client",
-          "fcoe-client",
-          "kernel",
-          "x11",
-          "proxy",
-          "pkg",
-          # product registration step is optional
-          WFM.ClientExists("scc_finish") ? "scc" : "",
-          "driver_update1",
-          # bnc #340733
-          "system_settings"
-        ]
-
-        save_settings_steps = [
-          "yast_inf",
-          "network",
-          "firewall_stage1",
-          "ntp-client",
-          "ssh_settings",
-          "remote",
-          "save_hw_status",
-          "users",
-          "autoinst_scripts2",
-          "installation_settings"
-        ]
-
-        install_bootloader_steps = [
-          "prep_shrink", # ensure that prep partition is small enough for boot sector (bnc#867345)
-          "cio_ignore", # needs to be run before initrd is created (bsc#933177)
-          ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true ? "kdump" : "",
-          "bootloader"
-        ]
-      end
+      init_packager
 
       @stages = [
         {
@@ -253,56 +127,28 @@ module Yast
           "control"
         )
 
-        @stages_copy = deep_copy(@stages)
-
         log.info "Inst finish stages before: #{@stages}"
 
-        @counter = -1
-        # going through copy, the original is going to be changed in the loop
-        Builtins.foreach(@stages_copy) do |one_stage|
-          @counter = Ops.add(@counter, 1)
-          label = Ops.get_string(one_stage, "label", "")
+        @stages.each do |stage|
+          label = stage["label"]
           next if label.nil? || label == ""
-          loc_label = Builtins.dgettext(@textdom, label)
+          loc_label = Builtins.dgettext(textdom, label)
           # if translated
           if !loc_label.nil? && loc_label != "" && loc_label != label
-            Ops.set(@stages, [@counter, "label"], loc_label)
+            stage["label"] = loc_label
           end
         end
 
-        Builtins.y2milestone("Inst finish stages after: %1", @stages)
+        log.info "Inst finish stages after: #{@stages}"
       else
-        Builtins.y2milestone(
-          "inst_finish steps definition not found in control file"
-        )
+        log.info "inst_finish steps definition not found in control file"
       end
 
       # merge steps from add-on products
       # bnc #438678
-      Ops.set(
-        @stages,
-        [0, "steps"],
-        Builtins.merge(
-          WorkflowManager.GetAdditionalFinishSteps("before_chroot"),
-          Ops.get_list(@stages, [0, "steps"], [])
-        )
-      )
-      Ops.set(
-        @stages,
-        [1, "steps"],
-        Builtins.merge(
-          WorkflowManager.GetAdditionalFinishSteps("after_chroot"),
-          Ops.get_list(@stages, [1, "steps"], [])
-        )
-      )
-      Ops.set(
-        @stages,
-        [3, "steps"],
-        Builtins.merge(
-          Ops.get_list(@stages, [3, "steps"], []),
-          WorkflowManager.GetAdditionalFinishSteps("before_umount")
-        )
-      )
+      @stages[0]["steps"] = WorkflowManager.GetAdditionalFinishSteps("before_chroot") + @stages[0]["steps"]
+      @stages[1]["steps"] = WorkflowManager.GetAdditionalFinishSteps("after_chroot") + @stages[1]["steps"]
+      @stages[3]["steps"].concat(WorkflowManager.GetAdditionalFinishSteps("after_chroot"))
 
       @run_type = :installation
       if Mode.update
@@ -315,139 +161,101 @@ module Yast
 
       @steps_count = 0
 
-      @stages_to_check = Builtins.size(@stages)
-      @currently_checking = 0
+      @stages_to_check = @stages.size
+      currently_checking = 0
 
-      @stages = Builtins.maplist(@stages) do |stage|
-        @currently_checking = Ops.add(@currently_checking, 1)
+      @stages = @stages.map do |stage|
+        currently_checking += 1
         SlideShow.SubProgress(
-          Ops.divide(Ops.multiply(100, @currently_checking), @stages_to_check),
-          Builtins.sformat(
-            _("Checking stage: %1..."),
-            Ops.get_string(stage, "label", Ops.get_string(stage, "id", ""))
-          )
+          100*@currently_checking/@stages_to_check
+          Builtins.sformat(_("Checking stage: %1..."), stage["label"] || stage["id"] || "")
         )
-        steps = Builtins.maplist(Ops.get_list(stage, "steps", [])) do |s|
+        steps = stage["steps"].map do |s|
           # some steps are called in live installer only
           next nil if s == "" || s.nil?
-          s = Ops.add(s, "_finish")
+          s += "_finish"
           if !WFM.ClientExists(s)
-            Builtins.y2error("Missing YCP client: %1", s)
+            log.error "Missing YaST client: #{s}"
             next nil
           end
-          Builtins.y2milestone("Calling inst_finish script: %1 (Info)", s)
+          log.info "Calling inst_finish script: #{s} (Info)"
           orig = Progress.set(false)
-          info = Convert.to_map(WFM.CallFunction(s, ["Info"]))
-          if @test_mode == true
-            info = {} if info.nil?
-            Builtins.y2milestone("Test mode, forcing run")
-            Ops.set(info, "when", [:installation, :update, :autoinst])
-          end
+          info = WFM.CallFunction(s, ["Info"])
           Progress.set(orig)
           if info.nil?
-            Builtins.y2error("Client %1 returned invalid data", s)
+            log.error "Client #{s} returned invalid data"
             ReportClientError(
-              Builtins.sformat("Client %1 returned invalid data.", s)
+              Builtins.sformat(_("Client %1 returned invalid data."), s)
             )
             next nil
           end
-          if !info["when"].nil? &&
-              !Builtins.contains(Ops.get_list(info, "when", []), @run_type) &&
+          if info["when"] && !info["when"].include?(@run_type) &&
               # special hack for autoupgrade - should be as regular upgrade as possible, scripts are the only exception
-              !(Mode.autoupgrade &&
-                Builtins.contains(Ops.get_list(info, "when", []), :autoupg))
+              !(Mode.autoupgrade && info["when"].include?(:autoupg))
             next nil
           end
-          Builtins.y2milestone("inst_finish client %1 will be called", s)
-          Ops.set(info, "client", s)
-          @steps_count = Ops.add(
-            @steps_count,
-            Ops.get_integer(info, "steps", 1)
-          )
-          deep_copy(info)
+          log.info "inst_finish client %{s} will be called"
+          info["client"] = s
+          @steps_count += info["steps"] || 1
         end
-        Ops.set(stage, "steps", Builtins.filter(steps) { |s| !s.nil? })
-        deep_copy(stage)
+        stage["steps"] = steps.compact
       end
 
-      Builtins.y2milestone("These inst_finish stages will be called:")
-      Builtins.foreach(@stages) do |stage|
-        Builtins.y2milestone("Stage: %1", stage)
-      end
+      log.info "These inst_finish stages will be called:"
+      @stages.each { |stage| log.info "Stage: #{stage}" }
 
-      @stages = Builtins.filter(@stages) do |s|
-        Ops.greater_than(Builtins.size(Ops.get_list(s, "steps", [])), 0)
-      end
-
-      @stage_names = Builtins.maplist(@stages) do |s|
-        Ops.get_string(s, "label", "")
-      end
+      @stages.delete_if { |s| s["steps"].empty? }
+      @stage_names = @stages.map { |s| s["label"] or raise "missing stage label for #{s.inspect}" }
 
       @aborted = false
 
-      @stages_nr = Builtins.size(@stages)
+      @stages_nr = @stages.size
       @current_stage = -1
       @current_stage_percent = 0
-      @fallback_msg = nil
 
-      Builtins.foreach(@stages) do |stage|
-        if Ops.get_string(stage, "icon", "") != ""
-          Wizard.SetTitleIcon(Ops.get_string(stage, "icon", ""))
+      @stages.each do |stage|
+        if stage["icon"] && !stage["icon"].empty?
+          Wizard.SetTitleIcon(stage["icon"])
         end
-        @current_stage = Ops.add(@current_stage, 1)
-        @current_stage_percent = Ops.divide(
-          Ops.multiply(100, @current_stage),
-          @stages_nr
-        )
+        @current_stage += 1
+        @current_stage_percent = 100*@current_stage / @stages_nr
         SlideShow.StageProgress(
           @current_stage_percent,
-          Ops.get_string(stage, "label", "")
+          stage["label"] || ""
         )
-        SlideShow.AppendMessageToInstLog(Ops.get_string(stage, "label", ""))
-        steps_nr = Builtins.size(Ops.get_list(stage, "steps", []))
+        SlideShow.AppendMessageToInstLog(stage["label"] || "")
+        steps_nr = stage["steps"].size
         current_step = -1
-        Builtins.foreach(Ops.get_list(stage, "steps", [])) do |step|
-          current_step = Ops.add(current_step, 1)
+        stage["steps"].each do |step|
+          current_step += 1
           # a fallback busy message
-          @fallback_msg = Builtins.sformat(
+          fallback_msg = Builtins.sformat(
             _("Calling step %1..."),
-            Ops.get_string(step, "client", "")
+            step["client"]
           )
           SlideShow.SubProgress(
-            Ops.divide(Ops.multiply(100, current_step), steps_nr),
-            Ops.get_string(step, "title", @fallback_msg)
+            100*current_step/steps_nr,
+            step["title"] || fallback_msg
           )
           SlideShow.StageProgress(
-            Ops.add(
-              @current_stage_percent,
-              Ops.divide(
-                Ops.multiply(Ops.divide(100, @stages_nr), current_step),
-                steps_nr
-              )
-            ),
+            @current_stage_percent + (100/@stages_nr)*current_step/steps_nr,
             nil
           )
           # use as ' * %1' -> ' * One of the finish steps...' in the SlideShow log
           SlideShow.AppendMessageToInstLog(
             Builtins.sformat(
               _(" * %1"),
-              Ops.get_string(step, "title", @fallback_msg)
+              step["title"] || fallback_msg
             )
           )
           orig = Progress.set(false)
-          if @test_mode == true
-            Builtins.y2milestone(
-              "Test-mode, skipping  WFM::CallFunction (%1, ['Write'])",
-              Ops.get_string(step, "client", "")
-            )
-            Builtins.sleep(500)
-          else
-            Hooks.run "before_#{step["client"]}"
 
-            WFM.CallFunction(Ops.get_string(step, "client", ""), ["Write"])
+          Hooks.run "before_#{step["client"]}"
 
-            Hooks.run "after_#{step["client"]}"
-          end
+          WFM.CallFunction(step["client"], ["Write"])
+
+          Hooks.run "after_#{step["client"]}"
+
           Progress.set(orig)
           # Handle user input during client run
           user_ret = UI.PollInput
@@ -455,50 +263,25 @@ module Yast
           if user_ret == :abort
             if Popup.ConfirmAbort(:incomplete)
               @aborted = true
-              raise Break
+              break
             end
             # Anything else
           else
             SlideShow.HandleInput(user_ret)
           end
         end
-        raise Break if @aborted
+        break if @aborted
         SlideShow.SubProgress(100, nil)
       end
 
-      SlideShow.StageProgress(100, nil)
-      SlideShow.AppendMessageToInstLog(_("Finished"))
+      finish_slide_show
 
       if @aborted
         Builtins.y2milestone("inst_finish aborted")
         return :abort
       end
 
-      if required_to_open_sl_dialog
-        Builtins.y2milestone("Closing previously opened SlideShow dialog")
-        SlideShow.CloseDialog
-      end
-
-      used_hooks = Hooks.all.select(&:used?)
-      failed_hooks = used_hooks.select(&:failed?)
-
-      if !failed_hooks.empty?
-        Builtins.y2error "#{failed_hooks.size} failed hooks found: " \
-          "#{failed_hooks.map(&:name).join(", ")}"
-      end
-
-      Builtins.y2milestone("Hook summary:") unless used_hooks.empty?
-
-      used_hooks.each do |hook|
-        Builtins.y2milestone("Hook name: #{hook.name}")
-        Builtins.y2milestone("Hook result: #{hook.succeeded? ? "success" : "failure" }")
-        hook.files.each do |file|
-          Builtins.y2milestone("Hook file: #{file.path}")
-          Builtins.y2milestone("Hook output: #{file.output}")
-        end
-      end
-
-      show_used_hooks(used_hooks) unless failed_hooks.empty?
+      report_hooks
 
       # --------------------------------------------------------------
       # Check if there is a message left to display
@@ -519,31 +302,23 @@ module Yast
         Misc.boot_msg = ""
       end
 
-      if @test_mode
-        Wizard.CloseDialog
-        return :auto
-      end
-
       # fate #303395: Use kexec to avoid booting between first and second stage
       # run new kernel via kexec instead of reboot
 
       # command for reading kernel_params
-      @cmd = Builtins.sformat(
+      cmd = Builtins.sformat(
         "ls '%1/kexec_done' |tr -d '\n'",
         String.Quote(Directory.vardir)
       )
-      Builtins.y2milestone(
-        "Checking flag of successful loading kernel via command %1",
-        @cmd
-      )
+      log.info "Checking flag of successful loading kernel via command #{cmd}"
 
-      @out = Convert.to_map(WFM.Execute(path(".local.bash_output"), @cmd))
+      out = WFM.Execute(path(".local.bash_output"), cmd)
 
-      @cmd = Builtins.sformat("%1/kexec_done", Directory.vardir)
+      expected_output = "#{Directory.vardir}/kexec_done"
 
       # check output
-      if Ops.get_string(@out, "stdout", "") != @cmd
-        Builtins.y2milestone("File kexec_done was not found, output: %1", @out)
+      if @out["stdout] != @cmd
+        log.info "File kexec_done was not found, output: #{@out}"
         return :next
       end
 
@@ -562,6 +337,31 @@ module Yast
       Builtins.sleep(1000)
 
       :next
+    end
+
+  private
+
+    def report_hooks
+      used_hooks = Hooks.all.select(&:used?)
+      failed_hooks = used_hooks.select(&:failed?)
+
+      if !failed_hooks.empty?
+        log.error "#{failed_hooks.size} failed hooks found: " \
+          "#{failed_hooks.map(&:name).join(", ")}"
+      end
+
+      log.info "Hook summary:" unless used_hooks.empty?
+
+      used_hooks.each do |hook|
+        log.info "Hook name: #{hook.name}"
+        log.info "Hook result: #{hook.succeeded? ? "success" : "failure" }"
+        hook.files.each do |file|
+          log.info "Hook file: #{file.path}"
+          log.info "Hook output: #{file.output}"
+        end
+      end
+
+      show_used_hooks(used_hooks) unless failed_hooks.empty?
     end
 
     def show_used_hooks(hooks)
@@ -605,6 +405,163 @@ module Yast
       )
 
       nil
+    end
+
+    def setup_wizard
+      Wizard.DisableBackButton
+      Wizard.DisableNextButton
+
+      Wizard.SetTitleIcon("yast-sysconfig")
+    end
+
+    def setup_slide_show
+      # Adjust a SlideShow dialog if not configured
+      if [nil, {}].include?(SlideShow.GetSetup)
+        Builtins.y2milestone("No SlideShow setup has been set, adjusting")
+        SlideShow.Setup(
+          [
+            {
+              "name"        => "finish",
+              "description" => _("Finishing Basic Installation"),
+              # fixed value
+              "value"       => 100,
+              "units"       => :sec
+            }
+          ]
+        )
+      end
+
+      # Do not open a new SlideShow widget, reuse the old one instead
+      # variable used later to close that dialog (if needed)
+      @required_to_open_sl_dialog = !SlideShow.HaveSlideWidget
+
+      if @required_to_open_sl_dialog
+        Builtins.y2milestone("SlideShow dialog not yet created")
+        SlideShow.OpenDialog
+      end
+
+      # Might be left from the previous stage
+      SlideShow.HideTable
+
+      SlideShow.MoveToStage("finish")
+
+      log = _("Creating list of finish scripts to call...")
+      SlideShow.SubProgress(0, "")
+      SlideShow.StageProgress(0, log)
+      SlideShow.AppendMessageToInstLog(log)
+    end
+
+    def finish_slide_show
+      SlideShow.StageProgress(100, nil)
+      SlideShow.AppendMessageToInstLog(_("Finished"))
+
+      if @required_to_open_sl_dialog
+        log.info "Closing previously opened SlideShow dialog"
+        SlideShow.CloseDialog
+      end
+    end
+
+    def init_packager
+      # Used later in 'stages' definition
+      # Using empty callbacks that don't break the UI
+      PackageCallbacks.RegisterEmptyProgressCallbacks
+      Pkg.TargetInitialize(Installation.destdir)
+      Pkg.TargetLoad
+      PackageCallbacks.RestorePreviousProgressCallbacks
+    end
+
+    def copy_files_steps
+      if ::Installation::MinimalInstallation.instance.enabled?
+        [
+          "autoinst_scripts1",
+          "copy_files",
+          "copy_systemfiles",
+          # For live installer only
+          Mode.live_installation ? "live_copy_files" : "",
+          "switch_scr"
+        ]
+      else
+        [
+          "autoinst_scripts1",
+          "copy_files",
+          "copy_systemfiles",
+          # For live installer only
+          Mode.live_installation ? "live_copy_files" : "",
+          "switch_scr"
+        ]
+      end
+    end
+
+    def save_config_steps
+      if ::Installation::MinimalInstallation.instance.enabled?
+        [
+          "save_config",
+          # For live installer only
+          Mode.live_installation ? "live_save_config" : "",
+          "storage",
+          "kernel"
+        ]
+      else
+        [
+          "ldconfig",
+          "save_config",
+          # For live installer only
+          Mode.live_installation ? "live_save_config" : "",
+          "default_target",
+          "desktop",
+          "storage",
+          "iscsi-client",
+          "fcoe-client",
+          "kernel",
+          "x11",
+          "proxy",
+          "pkg",
+          # product registration step is optional
+          WFM.ClientExists("scc_finish") ? "scc" : "",
+          "driver_update1",
+          # bnc #340733
+          "system_settings"
+        ]
+      end
+    end
+
+    def save_settings_steps
+      if ::Installation::MinimalInstallation.instance.enabled?
+        [
+          "yast_inf",
+          "autoinst_scripts2",
+          "installation_settings"
+        ]
+      else
+        [
+          "yast_inf",
+          "network",
+          "firewall_stage1",
+          "ntp-client",
+          "ssh_settings",
+          "remote",
+          "save_hw_status",
+          "users",
+          "autoinst_scripts2",
+          "installation_settings"
+        ]
+      end
+    end
+
+    def install_bootloader_steps
+      if ::Installation::MinimalInstallation.instance.enabled?
+        [
+          "prep_shrink", # ensure that prep partition is small enough for boot sector (bnc#867345)
+          "bootloader"
+        ]
+      else
+        [
+          "prep_shrink", # ensure that prep partition is small enough for boot sector (bnc#867345)
+          "cio_ignore", # needs to be run before initrd is created (bsc#933177)
+          ProductFeatures.GetBooleanFeature("globals", "enable_kdump") == true ? "kdump" : "",
+          "bootloader"
+        ]
+      end
     end
   end
 end
