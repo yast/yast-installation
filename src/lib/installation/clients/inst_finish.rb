@@ -60,185 +60,49 @@ module Yast
 
       init_packager
 
-      @stages = [
-        {
-          "id"    => "copy_files",
-          # progress stage
-          "label" => _("Copy files to installed system"),
-          "steps" => copy_files_steps,
-          "icon"  => "pattern-basis"
-        },
-        {
-          "id"    => "save_config",
-          # progress stage
-          "label" => _("Save configuration"),
-          "steps" => save_config_steps,
-          "icon"  => "yast-desktop-select"
-        },
-        {
-          "id"    => "save_settings",
-          # progress stage
-          "label" => _("Save installation settings"),
-          "steps" => save_settings_steps,
-          "icon"  => "yast-network"
-        },
-        # bnc#860089: Save bootloader as late as possible
-        # all different (config) files need to be written and copied first
-        {
-          "id"    => "install_bootloader",
-          # progress stage
-          "label" => _("Install boot manager"),
-          "steps" => install_bootloader_steps,
-          "icon"  => "yast-bootloader"
-        },
-        {
-          "id"    => "prepare_for_reboot",
-          # progress stage
-          "label" => _("Prepare system for initial boot"),
-          "steps" => [
-            # For live installer only
-            Mode.live_installation ? "live_runme_at_boot" : "",
-            # vm_finish called only if yast2-vm is installed
-            # Can't use PackageSystem::Installed as the current SCR is attached to inst-sys
-            # instead of the installed system
-            Pkg.PkgInstalled("yast2-vm") ? "vm" : "",
-            "driver_update2",
-            # no second stage if possible
-            "pre_umount",
-            # copy logs just before 'umount'
-            # keeps maximum logs available after reboot
-            "copy_logs",
-            "snapshots",
-            "umount"
-          ],
-          # bnc #438154
-          "icon"  => Mode.live_installation ? "yast-live-install-finish" : "yast-scripts"
-        }
-      ]
+      aborted = !write_stages
 
-      if !ProductControl.inst_finish.size
-        log.info "Using inst_finish steps definition from control file"
-        @stages = deep_copy(ProductControl.inst_finish)
+      finish_slide_show
 
-        # Inst-finish need to be translated (#343783)
-        textdom = Ops.get_string(
-          ProductControl.productControl,
-          "textdomain",
-          "control"
-        )
-
-        log.info "Inst finish stages before: #{@stages}"
-
-        @stages.each do |stage|
-          label = stage["label"]
-          next if label.nil? || label == ""
-          loc_label = Builtins.dgettext(textdom, label)
-          # if translated
-          if !loc_label.nil? && loc_label != "" && loc_label != label
-            stage["label"] = loc_label
-          end
-        end
-
-        log.info "Inst finish stages after: #{@stages}"
-      else
-        log.info "inst_finish steps definition not found in control file"
+      if aborted
+        Builtins.y2milestone("inst_finish aborted")
+        return :abort
       end
 
-      # merge steps from add-on products
-      # bnc #438678
-      @stages[0]["steps"] = WorkflowManager.GetAdditionalFinishSteps("before_chroot") + @stages[0]["steps"]
-      @stages[1]["steps"] = WorkflowManager.GetAdditionalFinishSteps("after_chroot") + @stages[1]["steps"]
-      @stages[3]["steps"].concat(WorkflowManager.GetAdditionalFinishSteps("after_chroot"))
+      report_hooks
 
-      @run_type = :installation
-      if Mode.update
-        @run_type = :update
-      elsif Mode.autoinst
-        @run_type = :autoinst
-      elsif Mode.live_installation
-        @run_type = :live_installation
-      end
+      report_messages
+      handle_kexec
 
-      @steps_count = 0
+      :next
+    end
 
-      @stages_to_check = @stages.size
-      currently_checking = 0
+  private
 
-      @stages = @stages.map do |stage|
-        currently_checking += 1
-        SlideShow.SubProgress(
-          100*@currently_checking/@stages_to_check
-          Builtins.sformat(_("Checking stage: %1..."), stage["label"] || stage["id"] || "")
-        )
-        steps = stage["steps"].map do |s|
-          # some steps are called in live installer only
-          next nil if s == "" || s.nil?
-          s += "_finish"
-          if !WFM.ClientExists(s)
-            log.error "Missing YaST client: #{s}"
-            next nil
-          end
-          log.info "Calling inst_finish script: #{s} (Info)"
-          orig = Progress.set(false)
-          info = WFM.CallFunction(s, ["Info"])
-          Progress.set(orig)
-          if info.nil?
-            log.error "Client #{s} returned invalid data"
-            ReportClientError(
-              Builtins.sformat(_("Client %1 returned invalid data."), s)
-            )
-            next nil
-          end
-          if info["when"] && !info["when"].include?(@run_type) &&
-              # special hack for autoupgrade - should be as regular upgrade as possible, scripts are the only exception
-              !(Mode.autoupgrade && info["when"].include?(:autoupg))
-            next nil
-          end
-          log.info "inst_finish client %{s} will be called"
-          info["client"] = s
-          @steps_count += info["steps"] || 1
-        end
-        stage["steps"] = steps.compact
-      end
-
-      log.info "These inst_finish stages will be called:"
-      @stages.each { |stage| log.info "Stage: #{stage}" }
-
-      @stages.delete_if { |s| s["steps"].empty? }
-      @stage_names = @stages.map { |s| s["label"] or raise "missing stage label for #{s.inspect}" }
-
-      @aborted = false
-
-      @stages_nr = @stages.size
-      @current_stage = -1
-      @current_stage_percent = 0
-
-      @stages.each do |stage|
+    def write_stages(stages)
+      stages.each_with_index do |stage, index|
         if stage["icon"] && !stage["icon"].empty?
           Wizard.SetTitleIcon(stage["icon"])
         end
-        @current_stage += 1
-        @current_stage_percent = 100*@current_stage / @stages_nr
+        current_stage_percent = 100 * index / stages.size
         SlideShow.StageProgress(
-          @current_stage_percent,
+          current_stage_percent,
           stage["label"] || ""
         )
         SlideShow.AppendMessageToInstLog(stage["label"] || "")
         steps_nr = stage["steps"].size
-        current_step = -1
-        stage["steps"].each do |step|
-          current_step += 1
+        stage["steps"].each_with_index do |step, step_index|
           # a fallback busy message
           fallback_msg = Builtins.sformat(
             _("Calling step %1..."),
             step["client"]
           )
           SlideShow.SubProgress(
-            100*current_step/steps_nr,
+            100*step_index/steps_nr,
             step["title"] || fallback_msg
           )
           SlideShow.StageProgress(
-            @current_stage_percent + (100/@stages_nr)*current_step/steps_nr,
+            current_stage_percent + (100/stages.size)*step_index/steps_nr,
             nil
           )
           # use as ' * %1' -> ' * One of the finish steps...' in the SlideShow log
@@ -262,54 +126,46 @@ module Yast
           # Aborting...?
           if user_ret == :abort
             if Popup.ConfirmAbort(:incomplete)
-              @aborted = true
-              break
+              return false
             end
-            # Anything else
+          # Anything else
           else
             SlideShow.HandleInput(user_ret)
           end
         end
-        break if @aborted
         SlideShow.SubProgress(100, nil)
       end
 
-      finish_slide_show
+      true
+    end
 
-      if @aborted
-        Builtins.y2milestone("inst_finish aborted")
-        return :abort
-      end
-
-      report_hooks
-
+    def report_messages
+      return if Misc.boot_msg.empty?
+      return if Mode.autoinst
       # --------------------------------------------------------------
       # Check if there is a message left to display
       # and display it, if necessary
 
       # Do not call any SCR, it's already closed!
-      if Ops.greater_than(Builtins.size(Misc.boot_msg), 0) && !Mode.autoinst
-        # bugzilla #245742, #160301
-        if Linuxrc.usessh && !Linuxrc.vnc ||
-            # also live installation - bzilla #297691
-            Mode.live_installation
-          # Display the message and wait for user to accept it
-          Report.DisplayMessages(true, 0)
-        else
-          Report.DisplayMessages(true, 10)
-        end
-        Report.LongMessage(Misc.boot_msg)
-        Misc.boot_msg = ""
+      # bugzilla #245742, #160301
+      if Linuxrc.usessh && !Linuxrc.vnc ||
+          # also live installation - bzilla #297691
+          Mode.live_installation
+        # Display the message and wait for user to accept it
+        Report.DisplayMessages(true, 0)
+      else
+        Report.DisplayMessages(true, 10)
       end
+      Report.LongMessage(Misc.boot_msg)
+      Misc.boot_msg = ""
+    end
 
+    def handle_kexec
       # fate #303395: Use kexec to avoid booting between first and second stage
       # run new kernel via kexec instead of reboot
 
       # command for reading kernel_params
-      cmd = Builtins.sformat(
-        "ls '%1/kexec_done' |tr -d '\n'",
-        String.Quote(Directory.vardir)
-      )
+      cmd = "ls '#{String.Quote(Directory.vardir)}/kexec_done' |tr -d '\n'"
       log.info "Checking flag of successful loading kernel via command #{cmd}"
 
       out = WFM.Execute(path(".local.bash_output"), cmd)
@@ -317,29 +173,25 @@ module Yast
       expected_output = "#{Directory.vardir}/kexec_done"
 
       # check output
-      if @out["stdout] != @cmd
-        log.info "File kexec_done was not found, output: #{@out}"
-        return :next
+      if out["stdout"] != expected_output
+        log.info "File kexec_done was not found, output: #{out}"
+        return
       end
 
       # HACK: using kexec switch to console 1
-      @cmd = Builtins.sformat("chvt 1")
-      Builtins.y2milestone("Switch to console 1 via command: %1", @cmd)
+      cmd = "chvt 1"
+      log.info "Switch to console 1 via command: #{cmd}"
       # switch to console 1
-      @out = Convert.to_map(WFM.Execute(path(".local.bash_output"), @cmd))
+      out = WFM.Execute(path(".local.bash_output"), cmd)
       # check output
-      if Ops.get(@out, "exit") != 0
-        Builtins.y2error("Switching failed, output: %1", @out)
-        return :next
+      if out["exit"] != 0
+        log.error "Switching failed, output: #{out}"
+        return
       end
 
       # waiting s for switching...
-      Builtins.sleep(1000)
-
-      :next
+      sleep(1)
     end
-
-  private
 
     def report_hooks
       used_hooks = Hooks.all.select(&:used?)
@@ -562,6 +414,176 @@ module Yast
           "bootloader"
         ]
       end
+    end
+
+    def control_stages
+      log.info "Using inst_finish steps definition from control file"
+      stages = deep_copy(ProductControl.inst_finish)
+
+      # Inst-finish need to be translated (#343783)
+      textdom = Ops.get_string(
+        ProductControl.productControl,
+        "textdomain",
+        "control"
+      )
+
+      log.info "Inst finish stages before: #{stages}"
+
+      stages.each do |stage|
+        label = stage["label"]
+        next if label.nil? || label == ""
+        loc_label = Builtins.dgettext(textdom, label)
+        # if translated
+        if !loc_label.nil? && loc_label != "" && loc_label != label
+          stage["label"] = loc_label
+        end
+      end
+
+      log.info "Inst finish stages after: #{stages}"
+
+      stages
+    end
+
+    def predefined_stages
+      log.info "inst_finish steps definition not found in control file"
+
+      [
+        {
+          "id"    => "copy_files",
+          # progress stage
+          "label" => _("Copy files to installed system"),
+          "steps" => copy_files_steps,
+          "icon"  => "pattern-basis"
+        },
+        {
+          "id"    => "save_config",
+          # progress stage
+          "label" => _("Save configuration"),
+          "steps" => save_config_steps,
+          "icon"  => "yast-desktop-select"
+        },
+        {
+          "id"    => "save_settings",
+          # progress stage
+          "label" => _("Save installation settings"),
+          "steps" => save_settings_steps,
+          "icon"  => "yast-network"
+        },
+        # bnc#860089: Save bootloader as late as possible
+        # all different (config) files need to be written and copied first
+        {
+          "id"    => "install_bootloader",
+          # progress stage
+          "label" => _("Install boot manager"),
+          "steps" => install_bootloader_steps,
+          "icon"  => "yast-bootloader"
+        },
+        {
+          "id"    => "prepare_for_reboot",
+          # progress stage
+          "label" => _("Prepare system for initial boot"),
+          "steps" => [
+            # For live installer only
+            Mode.live_installation ? "live_runme_at_boot" : "",
+            # vm_finish called only if yast2-vm is installed
+            # Can't use PackageSystem::Installed as the current SCR is attached to inst-sys
+            # instead of the installed system
+            Pkg.PkgInstalled("yast2-vm") ? "vm" : "",
+            "driver_update2",
+            # no second stage if possible
+            "pre_umount",
+            # copy logs just before 'umount'
+            # keeps maximum logs available after reboot
+            "copy_logs",
+            "snapshots",
+            "umount"
+          ],
+          # bnc #438154
+          "icon"  => Mode.live_installation ? "yast-live-install-finish" : "yast-scripts"
+        }
+      ]
+    end
+
+    def merge_addon_steps(stages)
+      # merge steps from add-on products
+      # bnc #438678
+      stages[0]["steps"] = WorkflowManager.GetAdditionalFinishSteps("before_chroot") + stages[0]["steps"]
+      stages[1]["steps"] = WorkflowManager.GetAdditionalFinishSteps("after_chroot") + stages[1]["steps"]
+      stages[3]["steps"].concat(WorkflowManager.GetAdditionalFinishSteps("after_chroot"))
+    end
+
+    def run_type
+      return @run_type if @run_type
+
+      if Mode.update
+        @run_type = :update
+      elsif Mode.autoinst
+        @run_type = :autoinst
+      elsif Mode.live_installation
+        @run_type = :live_installation
+      else
+        @run_type = :installation
+      end
+
+      @run_type
+    end
+
+    def keep_only_valid_steps(stage)
+      steps = stage["steps"].map do |s|
+        # some steps are called in live installer only
+        next nil if s == "" || s.nil?
+        s += "_finish"
+        if !WFM.ClientExists(s)
+          log.warn "Missing YaST client: #{s}"
+          next nil
+        end
+        log.info "Calling inst_finish script: #{s} (Info)"
+        orig = Progress.set(false)
+        info = WFM.CallFunction(s, ["Info"])
+        Progress.set(orig)
+        if info.nil?
+          log.error "Client #{s} returned invalid data"
+          ReportClientError(
+            Builtins.sformat(_("Client %1 returned invalid data."), s)
+          )
+          next nil
+        end
+        if info["when"] && !info["when"].include?(run_type) &&
+            # special hack for autoupgrade - should be as regular upgrade as possible, scripts are the only exception
+            !(Mode.autoupgrade && info["when"].include?(:autoupg))
+          next nil
+        end
+        log.info "inst_finish client %{s} will be called"
+        info["client"] = s
+      end
+      stage["steps"] = steps.compact
+    end
+
+    def stages
+      return @stages if @stages
+
+      stages = if ProductControl.inst_finish.empty?
+                 control_stages
+               else
+                 predefined_stages
+               end
+
+      merge_addon_steps(stages)
+
+      stages.each_with_index do |stage, index|
+        SlideShow.SubProgress(
+          100*(index+1)/stages.size,
+          Builtins.sformat(_("Checking stage: %1..."), stage["label"] || stage["id"] || "")
+        )
+        keep_only_valid_steps(stage)
+      end
+
+      log.info "These inst_finish stages will be called:"
+      stages.each { |stage| log.info "Stage: #{stage}" }
+
+      stages.delete_if { |s| s["steps"].empty? }
+
+      @stages = stages
     end
   end
 end
