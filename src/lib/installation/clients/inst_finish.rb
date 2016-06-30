@@ -61,7 +61,7 @@ module Yast
 
       init_packager
 
-      aborted = !write_stages
+      aborted = !write
 
       finish_slide_show
 
@@ -80,7 +80,7 @@ module Yast
 
   private
 
-    def write_stages(stages)
+    def write
       stages.each_with_index do |stage, index|
         if stage["icon"] && !stage["icon"].empty?
           Wizard.SetTitleIcon(stage["icon"])
