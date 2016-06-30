@@ -23,6 +23,8 @@ require "installation/minimal_installation"
 
 module Yast
   class InstFinishClient < Client
+    include Yast::Logger
+
     def main
       Yast.import "UI"
       Yast.import "Pkg"
@@ -55,22 +57,11 @@ module Yast
 
       # <-- Functions
 
-      @test_mode = false
-
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
-          Ops.is_string?(WFM.Args(0))
-        Builtins.y2milestone("Args: %1", WFM.Args)
-        @test_mode = true if WFM.Args(0) == "test"
-      end
-
-      Wizard.CreateDialog if @test_mode
-
       Wizard.DisableBackButton
       Wizard.DisableNextButton
 
       # Adjust a SlideShow dialog if not configured
-      @get_setup = SlideShow.GetSetup
-      if @get_setup.nil? || @get_setup == {}
+      if [nil, {}].include?(SlideShow.GetSetup)
         Builtins.y2milestone("No SlideShow setup has been set, adjusting")
         SlideShow.Setup(
           [
@@ -84,15 +75,14 @@ module Yast
           ]
         )
       end
-      @get_setup = nil
 
       Wizard.SetTitleIcon("yast-sysconfig")
 
       # Do not open a new SlideShow widget, reuse the old one instead
       # variable used later to close that dialog (if needed)
-      @required_to_open_sl_dialog = !SlideShow.HaveSlideWidget
+      required_to_open_sl_dialog = !SlideShow.HaveSlideWidget
 
-      if @required_to_open_sl_dialog
+      if required_to_open_sl_dialog
         Builtins.y2milestone("SlideShow dialog not yet created")
         SlideShow.OpenDialog
       end
@@ -102,10 +92,10 @@ module Yast
 
       SlideShow.MoveToStage("finish")
 
-      @log = _("Creating list of finish scripts to call...")
+      log = _("Creating list of finish scripts to call...")
       SlideShow.SubProgress(0, "")
-      SlideShow.StageProgress(0, @log)
-      SlideShow.AppendMessageToInstLog(@log)
+      SlideShow.StageProgress(0, log)
+      SlideShow.AppendMessageToInstLog(log)
 
       # Used later in 'stages' definition
       # Using empty callbacks that don't break the UI
@@ -252,21 +242,20 @@ module Yast
         }
       ]
 
-      if Ops.greater_than(Builtins.size(ProductControl.inst_finish), 0)
-        Builtins.y2milestone(
-          "Using inst_finish steps definition from control file"
-        )
+      if !ProductControl.inst_finish.size
+        log.info "Using inst_finish steps definition from control file"
         @stages = deep_copy(ProductControl.inst_finish)
 
         # Inst-finish need to be translated (#343783)
-        @textdom = Ops.get_string(
+        textdom = Ops.get_string(
           ProductControl.productControl,
           "textdomain",
           "control"
         )
+
         @stages_copy = deep_copy(@stages)
 
-        Builtins.y2milestone("Inst finish stages before: %1", @stages)
+        log.info "Inst finish stages before: #{@stages}"
 
         @counter = -1
         # going through copy, the original is going to be changed in the loop
@@ -485,7 +474,7 @@ module Yast
         return :abort
       end
 
-      if @required_to_open_sl_dialog
+      if required_to_open_sl_dialog
         Builtins.y2milestone("Closing previously opened SlideShow dialog")
         SlideShow.CloseDialog
       end
