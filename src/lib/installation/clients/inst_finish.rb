@@ -23,7 +23,6 @@ require "installation/minimal_installation"
 
 Yast.import "UI"
 Yast.import "Pkg"
-textdomain "installation"
 
 Yast.import "AddOnProduct"
 Yast.import "WorkflowManager"
@@ -53,6 +52,8 @@ module Yast
     include Yast::Logger
 
     def main
+      textdomain "installation"
+
       return :auto if GetInstArgs.going_back
 
       setup_wizard
