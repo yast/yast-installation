@@ -322,90 +322,95 @@ module Yast
       PackageCallbacks.RestorePreviousProgressCallbacks
     end
 
+    COPY_FILES_STEPS =
+      [
+        "autoinst_scripts1",
+        "copy_files",
+        "copy_systemfiles",
+        "live_copy_files",
+        "switch_scr"
+      ]
+
     def copy_files_steps
-      if ::Installation::MinimalInstallation.instance.enabled?
-        [
-          "autoinst_scripts1",
-          "copy_files",
-          "copy_systemfiles",
-          # For live installer only
-          Mode.live_installation ? "live_copy_files" : "",
-          "switch_scr"
-        ]
-      else
-        [
-          "autoinst_scripts1",
-          "copy_files",
-          "copy_systemfiles",
-          # For live installer only
-          Mode.live_installation ? "live_copy_files" : "",
-          "switch_scr"
-        ]
-      end
+      COPY_FILES_STEPS
     end
+
+    SAVE_CONFIG_STEPS_MINIMAL =
+      [
+        "save_config",
+        "live_save_config",
+        "storage",
+        "kernel"
+      ]
+
+    SAVE_CONFIG_STEPS_FULL =
+      [
+        "ldconfig",
+        "save_config",
+        "live_save_config",
+        "default_target",
+        "desktop",
+        "storage",
+        "iscsi-client",
+        "fcoe-client",
+        "kernel",
+        "x11",
+        "proxy",
+        "pkg",
+        "scc",
+        "driver_update1",
+        # bnc #340733
+        "system_settings"
+      ]
+
 
     def save_config_steps
       if ::Installation::MinimalInstallation.instance.enabled?
-        [
-          "save_config",
-          # For live installer only
-          Mode.live_installation ? "live_save_config" : "",
-          "storage",
-          "kernel"
-        ]
+        SAVE_CONFIG_STEPS_MINIMAL
       else
-        [
-          "ldconfig",
-          "save_config",
-          # For live installer only
-          Mode.live_installation ? "live_save_config" : "",
-          "default_target",
-          "desktop",
-          "storage",
-          "iscsi-client",
-          "fcoe-client",
-          "kernel",
-          "x11",
-          "proxy",
-          "pkg",
-          # product registration step is optional
-          WFM.ClientExists("scc_finish") ? "scc" : "",
-          "driver_update1",
-          # bnc #340733
-          "system_settings"
-        ]
+        SAVE_CONFIG_STEPS_FULL
       end
     end
+
+    SAVE_SETTINGS_STEPS_MINIMAL =
+      [
+        "yast_inf",
+        "autoinst_scripts2",
+        "installation_settings"
+      ]
+
+    SAVE_SETTINGS_STEPS_FULL =
+      [
+        "yast_inf",
+        "network",
+        "firewall_stage1",
+        "ntp-client",
+        "ssh_settings",
+        "remote",
+        "save_hw_status",
+        "users",
+        "autoinst_scripts2",
+        "installation_settings"
+      ]
+
 
     def save_settings_steps
       if ::Installation::MinimalInstallation.instance.enabled?
-        [
-          "yast_inf",
-          "autoinst_scripts2",
-          "installation_settings"
-        ]
+        SAVE_SETTINGS_STEPS_MINIMAL
       else
-        [
-          "yast_inf",
-          "network",
-          "firewall_stage1",
-          "ntp-client",
-          "ssh_settings",
-          "remote",
-          "save_hw_status",
-          "users",
-          "autoinst_scripts2",
-          "installation_settings"
-        ]
+        SAVE_SETTINGS_STEPS_FULL
       end
     end
 
+    INSTALL_BOOTLOADER_STEPS_MINIMAL =
+      [
+        "prep_shrink", # ensure that prep partition is small enough for boot sector (bnc#867345)
+        "bootloader"
+      ]
+
     def install_bootloader_steps
       if ::Installation::MinimalInstallation.instance.enabled?
-        [
-          "prep_shrink", # ensure that prep partition is small enough for boot sector (bnc#867345)
-          "bootloader"
-        ]
+        INSTALL_BOOTLOADER_STEPS_MINIMAL
       else
         [
           "prep_shrink", # ensure that prep partition is small enough for boot sector (bnc#867345)
