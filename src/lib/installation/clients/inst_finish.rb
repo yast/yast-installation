@@ -99,11 +99,11 @@ module Yast
             step["client"]
           )
           SlideShow.SubProgress(
-            100*step_index/steps_nr,
+            100 * step_index / steps_nr,
             step["title"] || fallback_msg
           )
           SlideShow.StageProgress(
-            current_stage_percent + (100/stages.size)*step_index/steps_nr,
+            current_stage_percent + (100 / stages.size) * step_index / steps_nr,
             nil
           )
           # use as ' * %1' -> ' * One of the finish steps...' in the SlideShow log
@@ -126,9 +126,7 @@ module Yast
           user_ret = UI.PollInput
           # Aborting...?
           if user_ret == :abort
-            if Popup.ConfirmAbort(:incomplete)
-              return false
-            end
+            return false if Popup.ConfirmAbort(:incomplete)
           # Anything else
           else
             SlideShow.HandleInput(user_ret)
@@ -308,10 +306,10 @@ module Yast
       SlideShow.StageProgress(100, nil)
       SlideShow.AppendMessageToInstLog(_("Finished"))
 
-      if @required_to_open_sl_dialog
-        log.info "Closing previously opened SlideShow dialog"
-        SlideShow.CloseDialog
-      end
+      return unless @required_to_open_sl_dialog
+
+      log.info "Closing previously opened SlideShow dialog"
+      SlideShow.CloseDialog
     end
 
     def init_packager
@@ -364,7 +362,6 @@ module Yast
         "system_settings"
       ]
 
-
     def save_config_steps
       if ::Installation::MinimalInstallation.instance.enabled?
         SAVE_CONFIG_STEPS_MINIMAL
@@ -393,7 +390,6 @@ module Yast
         "autoinst_scripts2",
         "installation_settings"
       ]
-
 
     def save_settings_steps
       if ::Installation::MinimalInstallation.instance.enabled?
@@ -581,7 +577,7 @@ module Yast
 
       stages.each_with_index do |stage, index|
         SlideShow.SubProgress(
-          100*(index+1)/stages.size,
+          100 * (index + 1) / stages.size,
           Builtins.sformat(_("Checking stage: %1..."), stage["label"] || stage["id"] || "")
         )
         keep_only_valid_steps(stage)
