@@ -561,6 +561,8 @@ module Yast
         end
         log.info "inst_finish client %{s} will be called"
         info["client"] = s
+
+        info
       end
       stage["steps"] = steps.compact
     end
