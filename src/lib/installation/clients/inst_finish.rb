@@ -568,10 +568,11 @@ module Yast
     def stages
       return @stages if @stages
 
+      # FIXME: looks like product specific finish steps are not used at all
       stages = if ProductControl.inst_finish.empty?
-                 control_stages
-               else
                  predefined_stages
+               else
+                 control_stages
                end
 
       merge_addon_steps(stages)
