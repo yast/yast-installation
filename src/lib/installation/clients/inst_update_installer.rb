@@ -86,11 +86,34 @@ module Yast
     # @see #self_update_url_from_linuxrc
     # @see #self_update_url_from_control
     # @see #self_update_url_from_profile
+    # @see #self_update_url_from_connect
     def self_update_url
-      url = self_update_url_from_linuxrc || self_update_url_from_profile ||
-        self_update_url_from_control
-      log.info("self-update URL is #{url}")
-      url
+      return @url unless @url.nil?
+      @url = self_update_url_from_linuxrc || self_update_url_from_profile ||
+        self_update_url_from_connect || self_update_url_from_control
+      log.info("self-update URL is #{@url}")
+      @url
+    end
+
+    # Return the self-update URL from SMT servers
+    #
+    # Return nil if yast2-registration or SUSEConnect are not available
+    # (for instance in openSUSE).
+    #
+    # @return [URI,nil] self-update URL. nil if no URL was found.
+    def self_update_url_from_connect
+      require "registration/sw_mgmt"
+      require "registration/url_helpers"
+      require "suse/connect"
+      base_product = Registration::SwMgmt.base_product_to_register
+      product = Registration::SwMgmt.remote_product(base_product)
+      update = SUSE::Connect::YaST.list_installer_updates(product,
+        url: Registration::UrlHelpers.registration_url).first
+      log.info("self-update repository for product '#{base_product}' is #{update}")
+      update ? URI(update.url) : nil
+    rescue LoadError
+      log.info "yast2-registration or SUSEConnect are not available"
+      nil
     end
 
     # Return the self-update URL according to Linuxrc

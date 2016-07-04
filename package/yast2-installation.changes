@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Jul  4 08:05:53 UTC 2016 - igonzalezsosa@suse.com
+
+- Retrieve the self-update URL from the registration
+  server (SCC/SMT) (FATE#319716)
+- 3.1.199
+
+-------------------------------------------------------------------
 Mon Jun 27 13:00:24 UTC 2016 - jreidinger@suse.com
 
 - Make writing of bootloader settings the last step so that other
