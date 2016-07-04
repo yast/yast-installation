@@ -1,7 +1,8 @@
 -------------------------------------------------------------------
-Mon Jul  4 08:05:53 UTC 2016 - igonzalezsosa@suse.com
+Mon Jul 25 15:07:19 UTC 2016 - igonzalezsosa@suse.com
 
-- Retrieve self-update URL from SMT (FATE#319716)
+- Retrieve the self-update URL from the registration
+  server (SCC/SMT) (FATE#319716)
 - 3.1.204
 
 -------------------------------------------------------------------
