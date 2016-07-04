@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jul  4 08:05:53 UTC 2016 - igonzalezsosa@suse.com
+
+- Retrieve self-update URL from SMT (FATE#319716)
+- 3.1.204
+
+-------------------------------------------------------------------
 Fri Jul 22 13:48:12 UTC 2016 - igonzalezsosa@suse.com
 
 - Don't halt the installation if installer updates server

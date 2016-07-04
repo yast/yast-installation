@@ -28,6 +28,7 @@ describe Yast::InstUpdateInstaller do
     allow(::Installation::UpdatesManager).to receive(:new).and_return(manager)
     allow(Yast::Installation).to receive(:restarting?)
     allow(Yast::Installation).to receive(:restart!) { :restart_yast }
+    allow(subject).to receive(:require).with("registration/sw_mgmt").and_raise(LoadError)
 
     # stub the Profile module to avoid dependency on autoyast2-installation
     ay_profile = double("Yast::Profile")
@@ -174,6 +175,57 @@ describe Yast::InstUpdateInstaller do
             it "does not update the installer" do
               expect(subject).to_not receive(:update_installer)
             end
+          end
+        end
+
+        context "when SMT defines the URL" do
+          let(:smt_url) { "http://update.suse.com/sle12/12.2" }
+
+          let(:base_product) do
+            {
+              "arch" => "x86_64",
+              "name" => "SLES",
+              "version" => "12-2",
+              "release_type" => ""
+            }
+          end
+
+          let(:product) do
+            OpenStruct.new(
+              arch:         base_product["arch"],
+              identifier:   base_product["name"],
+              version:      base_product["version"],
+              release_type: base_product["release_type"]
+            )
+          end
+
+          let(:update) { OpenStruct.new(name: "SLES-12-Installer-Updates", url: smt_url) }
+
+          let(:sw_mgmt) do
+            double("sw_mgmt", base_product_to_register: base_product,
+              remote_product: product)
+          end
+
+          let(:suse_connect) do
+            double("suse_connect", list_installer_updates: [update])
+          end
+
+          before do
+            allow(subject).to receive(:require).with("registration/sw_mgmt").and_return(true)
+            allow(subject).to receive(:require).with("suse/connect").and_return(true)
+            stub_const("Registration::SwMgmt", sw_mgmt)
+            stub_const("SUSE::Connect::YaST", suse_connect)
+            allow(suse_connect).to receive(:list_installer_updates)
+              .and_return([update])
+            allow(::FileUtils).to receive(:touch)
+          end
+
+          it "tries to update the installer using the given URL" do
+            expect(sw_mgmt).to receive(:remote_product).with(base_product)
+              .and_return(product)
+            expect(manager).to receive(:add_repository).with(URI(smt_url))
+              .and_return(true)
+            expect(subject.main).to eq(:restart_yast)
           end
         end
 
