@@ -184,9 +184,9 @@ describe Yast::InstUpdateInstaller do
 
           let(:base_product) do
             {
-              "arch" => "x86_64",
-              "name" => "SLES",
-              "version" => "12-2",
+              "arch"         => "x86_64",
+              "name"         => "SLES",
+              "version"      => "12-2",
               "release_type" => ""
             }
           end
@@ -204,7 +204,7 @@ describe Yast::InstUpdateInstaller do
 
           let(:sw_mgmt) do
             double("sw_mgmt", base_product_to_register: base_product,
-              remote_product: product)
+                              remote_product:           product)
           end
 
           let(:suse_connect) do
