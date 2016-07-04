@@ -179,7 +179,8 @@ describe Yast::InstUpdateInstaller do
         end
 
         context "when SMT defines the URL" do
-          let(:smt_url) { "http://update.suse.com/sle12/12.2" }
+          let(:update_url) { "http://update.suse.com/sle12/12.2" }
+          let(:smt_url) { "http://update.suse.com" }
 
           let(:base_product) do
             {
@@ -199,7 +200,7 @@ describe Yast::InstUpdateInstaller do
             )
           end
 
-          let(:update) { OpenStruct.new(name: "SLES-12-Installer-Updates", url: smt_url) }
+          let(:update) { OpenStruct.new(name: "SLES-12-Installer-Updates", url: update_url) }
 
           let(:sw_mgmt) do
             double("sw_mgmt", base_product_to_register: base_product,
@@ -210,21 +211,25 @@ describe Yast::InstUpdateInstaller do
             double("suse_connect", list_installer_updates: [update])
           end
 
+          let(:url_helpers) { double("url_helpers", registration_url: smt_url) }
+
           before do
             allow(subject).to receive(:require).with("registration/sw_mgmt").and_return(true)
+            allow(subject).to receive(:require).with("registration/url_helpers").and_return(true)
             allow(subject).to receive(:require).with("suse/connect").and_return(true)
             stub_const("Registration::SwMgmt", sw_mgmt)
+            stub_const("Registration::UrlHelpers", url_helpers)
             stub_const("SUSE::Connect::YaST", suse_connect)
-            allow(suse_connect).to receive(:list_installer_updates)
-              .and_return([update])
             allow(::FileUtils).to receive(:touch)
           end
 
           it "tries to update the installer using the given URL" do
             expect(sw_mgmt).to receive(:remote_product).with(base_product)
               .and_return(product)
-            expect(manager).to receive(:add_repository).with(URI(smt_url))
+            expect(manager).to receive(:add_repository).with(URI(update_url))
               .and_return(true)
+            expect(suse_connect).to receive(:list_installer_updates).with(product, url: smt_url)
+              .and_return([update])
             expect(subject.main).to eq(:restart_yast)
           end
         end

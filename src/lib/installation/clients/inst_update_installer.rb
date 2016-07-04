@@ -103,10 +103,12 @@ module Yast
     # @return [URI,nil] self-update URL. nil if no URL was found.
     def self_update_url_from_connect
       require "registration/sw_mgmt"
+      require "registration/url_helpers"
       require "suse/connect"
       base_product = Registration::SwMgmt.base_product_to_register
       product = Registration::SwMgmt.remote_product(base_product)
-      update = SUSE::Connect::YaST.list_installer_updates(product).first
+      update = SUSE::Connect::YaST.list_installer_updates(product,
+        url: Registration::UrlHelpers.registration_url).first
       log.info("self-update repository for product '#{base_product}' is #{update}")
       update ? URI(update.url) : nil
     rescue LoadError
