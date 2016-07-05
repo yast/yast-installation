@@ -42,15 +42,29 @@ module Installation
     # @return [Array<DriverUpdate>] Driver updates found in inst-sys
     attr_reader :driver_updates
 
+    # Base exception to be used for repository problems
+    class RepoError < StandardError
+      # @return [URI] Repository URI
+      attr_reader :uri
+
+      # Constructor
+      #
+      # @param uri [URI] Repository URI
+      def initialize(uri)
+        super()
+        @uri = uri
+      end
+    end
+
     # The URL was found but a valid repo is not there.
-    class NotValidRepo < StandardError; end
+    class NotValidRepo < RepoError; end
 
     # The update could not be fetched (missing packages, broken
     # repository, etc.).
-    class CouldNotFetchUpdateFromRepo < StandardError; end
+    class CouldNotFetchUpdateFromRepo < RepoError; end
 
     # Repo is unreachable (name solving issues, etc.).
-    class CouldNotProbeRepo < StandardError; end
+    class CouldNotProbeRepo < RepoError; end
 
     DRIVER_UPDATES_PATHS = [Pathname("/update"), Pathname("/download")].freeze
 
@@ -90,13 +104,13 @@ module Installation
       has_packages
     rescue Installation::UpdateRepository::NotValidRepo
       log.warn("Update repository at #{uri} could not be found")
-      raise NotValidRepo
+      raise NotValidRepo.new(uri)
     rescue Installation::UpdateRepository::FetchError
       log.error("Update repository at #{uri} was found but update could not be fetched")
-      raise CouldNotFetchUpdateFromRepo
+      raise CouldNotFetchUpdateFromRepo.new(uri)
     rescue Installation::UpdateRepository::CouldNotProbeRepo
       log.error("Update repository at #{uri} could not be read")
-      raise CouldNotProbeRepo
+      raise CouldNotProbeRepo.new(uri)
     end
 
     # Applies all the updates

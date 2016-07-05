@@ -78,7 +78,7 @@ describe Yast::InstUpdateInstaller do
         it "shows an error and returns :next" do
           expect(Yast::Popup).to receive(:Error)
           expect(manager).to receive(:add_repository)
-            .and_raise(::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo)
+            .and_raise(::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo.new(url))
           expect(subject.main).to eq(:next)
         end
       end
@@ -102,6 +102,8 @@ describe Yast::InstUpdateInstaller do
         context "and self-update URL is remote" do
           it "shows a dialog suggesting to check the network configuration" do
             expect(Yast::Popup).to receive(:YesNo)
+            expect(manager).to receive(:add_repository)
+              .and_raise(::Installation::UpdatesManager::CouldNotProbeRepo.new(URI(url)))
             expect(subject.main).to eq(:next)
           end
 
@@ -123,6 +125,8 @@ describe Yast::InstUpdateInstaller do
 
           it "shows a dialog suggesting to check the network configuration" do
             expect(Yast::Popup).to_not receive(:YesNo)
+            expect(manager).to receive(:add_repository)
+              .and_raise(::Installation::UpdatesManager::CouldNotProbeRepo.new(URI(url)))
             expect(subject.main).to eq(:next)
           end
         end
@@ -145,7 +149,7 @@ describe Yast::InstUpdateInstaller do
         it "shows an error if update is not found" do
           expect(Yast::Popup).to receive(:Error)
           expect(manager).to receive(:add_repository).with(URI(custom_url))
-            .and_raise(::Installation::UpdatesManager::NotValidRepo)
+            .and_raise(::Installation::UpdatesManager::NotValidRepo.new(URI(custom_url)))
           expect(subject.main).to eq(:next)
         end
       end
@@ -165,7 +169,7 @@ describe Yast::InstUpdateInstaller do
           it "does not show an error if update is not found" do
             expect(Yast::Popup).to_not receive(:Error)
             expect(manager).to receive(:add_repository).with(URI(real_url))
-              .and_raise(::Installation::UpdatesManager::NotValidRepo)
+              .and_raise(::Installation::UpdatesManager::NotValidRepo.new(URI(real_url)))
             expect(subject.main).to eq(:next)
           end
 
@@ -179,7 +183,8 @@ describe Yast::InstUpdateInstaller do
         end
 
         context "when SMT defines the URL" do
-          let(:update_url) { "http://update.suse.com/sle12/12.2" }
+          let(:update0_url) { "http://update.suse.com/sle12/12.2" }
+          let(:update1_url) { "http://update.suse.com/sles12/12.2" }
           let(:smt_url) { "http://update.suse.com" }
 
           let(:base_product) do
@@ -200,7 +205,8 @@ describe Yast::InstUpdateInstaller do
             )
           end
 
-          let(:update) { OpenStruct.new(name: "SLES-12-Installer-Updates", url: update_url) }
+          let(:update0) { OpenStruct.new(name: "SLES-12-Installer-Updates-0", url: update0_url) }
+          let(:update1) { OpenStruct.new(name: "SLES-12-Installer-Updates-1", url: update1_url) }
 
           let(:sw_mgmt) do
             double("sw_mgmt", base_product_to_register: base_product,
@@ -208,7 +214,7 @@ describe Yast::InstUpdateInstaller do
           end
 
           let(:suse_connect) do
-            double("suse_connect", list_installer_updates: [update])
+            double("suse_connect", list_installer_updates: [update0, update1])
           end
 
           let(:url_helpers) { double("url_helpers", registration_url: smt_url) }
@@ -226,10 +232,12 @@ describe Yast::InstUpdateInstaller do
           it "tries to update the installer using the given URL" do
             expect(sw_mgmt).to receive(:remote_product).with(base_product)
               .and_return(product)
-            expect(manager).to receive(:add_repository).with(URI(update_url))
+            expect(manager).to receive(:add_repository).with(URI(update0_url))
+              .and_return(true)
+            expect(manager).to receive(:add_repository).with(URI(update1_url))
               .and_return(true)
             expect(suse_connect).to receive(:list_installer_updates).with(product, url: smt_url)
-              .and_return([update])
+              .and_return([update0, update1])
             expect(subject.main).to eq(:restart_yast)
           end
         end
@@ -260,7 +268,7 @@ describe Yast::InstUpdateInstaller do
             it "shows an error and returns :next if update fails" do
               expect(Yast::Report).to receive(:Error)
               expect(manager).to receive(:add_repository)
-                .and_raise(::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo)
+                .and_raise(::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo.new(url))
               expect(subject.main).to eq(:next)
             end
           end
@@ -277,7 +285,7 @@ describe Yast::InstUpdateInstaller do
             it "does not show an error if update is not found" do
               expect(Yast::Report).to_not receive(:Error)
               expect(manager).to receive(:add_repository).with(URI(real_url))
-                .and_raise(::Installation::UpdatesManager::NotValidRepo)
+                .and_raise(::Installation::UpdatesManager::NotValidRepo.new(URI(real_url)))
               expect(subject.main).to eq(:next)
             end
 
@@ -328,12 +336,13 @@ describe Yast::InstUpdateInstaller do
 
     before do
       allow(Yast::Linuxrc).to receive(:InstallInf).with("Insecure").and_return(insecure)
-      allow(Yast::Linuxrc).to receive(:InstallInf).with("SelfUpdate").and_return("1")
+      allow(Yast::Linuxrc).to receive(:InstallInf).with("SelfUpdate")
+        .and_return(url)
     end
 
     context "when update works" do
       it "returns true" do
-        allow(manager).to receive(:add_repository).and_return([repo])
+        allow(manager).to receive(:add_repository).and_return(true)
         allow(manager).to receive(:apply_all)
         expect(subject.update_installer).to eq(true)
       end
