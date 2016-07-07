@@ -104,13 +104,13 @@ module Installation
       has_packages
     rescue Installation::UpdateRepository::NotValidRepo
       log.warn("Update repository at #{uri} could not be found")
-      raise NotValidRepo.new(uri)
+      raise NotValidRepo, uri
     rescue Installation::UpdateRepository::FetchError
       log.error("Update repository at #{uri} was found but update could not be fetched")
-      raise CouldNotFetchUpdateFromRepo.new(uri)
+      raise CouldNotFetchUpdateFromRepo, uri
     rescue Installation::UpdateRepository::CouldNotProbeRepo
       log.error("Update repository at #{uri} could not be read")
-      raise CouldNotProbeRepo.new(uri)
+      raise CouldNotProbeRepo, uri
     end
 
     # Applies all the updates
