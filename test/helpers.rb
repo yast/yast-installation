@@ -12,4 +12,12 @@ module Helpers
   def fixtures_dir(*dirs)
     FIXTURES_DIR.join(*dirs)
   end
+
+  # Read the fixture file
+  # @param *path [Array<String>] path components
+  # @see fixtures_dir
+  # @return [String] the loaded file
+  def load_fixture(*path)
+    File.read(fixtures_dir(*path))
+  end
 end
