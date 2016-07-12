@@ -98,7 +98,8 @@ scrconf_DATA = \
 
 schemafilesdir = $(schemadir)/autoyast/rnc
 schemafiles_DATA = \
-  autoyast-rnc/deploy_image.rnc
+  autoyast-rnc/deploy_image.rnc \
+  autoyast-rnc/ssh_import.rnc
 
 desktop_DATA = \
   desktop/release_notes.desktop
