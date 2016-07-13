@@ -31,11 +31,17 @@ module Yast
     def main
       textdomain "installation"
 
+# storage-ng
+# rubocop:disable Style/BlockComments
+=begin
       Yast.import "StorageDevices"
+=end
       Yast.import "Mode"
 
       Builtins.y2milestone("Checking for autoinst.xml on floppy...")
 
+# storage-ng
+=begin
       # do we have a floppy drive attached ?
       if StorageDevices.FloppyReady
         # Try to load settings from disk, if a floppy is present
@@ -61,6 +67,7 @@ module Yast
         end
         SCR.Execute(path(".target.umount"), "/media/floppy")
       end
+=end
 
       true
 
