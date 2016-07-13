@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Jul 13 12:16:58 UTC 2016 - ancor@suse.com
+
+- storage-ng: commented installation-related code relying on the
+  old yast2-storage
+- Version temporarily bumped to 3.2.x to prioritize this branch
+- 3.2.1
+
+-------------------------------------------------------------------
 Tue Jul 12 16:14:28 CEST 2016 - schubi@suse.de
 
 - Added AutoYaST schema file "ssh_import".
