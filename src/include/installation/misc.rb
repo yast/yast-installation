@@ -49,7 +49,11 @@ module Yast
       Yast.import "Linuxrc"
       Yast.import "InstData"
       Yast.import "HTML"
+# storage-ng
+# rubocop:disable Style/BlockComments
+=begin
       Yast.import "Storage"
+=end
 
       @modules_to_enable_with_AC_on = nil
     end
@@ -171,9 +175,13 @@ module Yast
           "<p>Information required for the base installation is now complete.</p>"
         )
 
+        # storage-ng
+        some_destructive = false
+=begin
         some_destructive = Storage.GetCommitInfos.any? do |info|
           Ops.get_boolean(info, :destructive, false)
         end
+=end
 
         if some_destructive
           # Text for confirmation popup before the installation really starts 2/3

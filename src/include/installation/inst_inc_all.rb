@@ -42,7 +42,11 @@ module Yast
       Yast.import "Installation"
       Yast.import "Stage"
       Yast.import "Mode"
+# storage-ng
+# rubocop:disable Style/BlockComments
+=begin
       Yast.import "Storage"
+=end
     end
 
     def SetInitializingUI
@@ -239,7 +243,11 @@ module Yast
       # disable disks activation if not needed
       iscsi = Linuxrc.InstallInf("WithiSCSI") == "1"
       fcoe = Linuxrc.InstallInf("WithFCoE") == "1"
+      # storage-ng
+      no_disk = false
+=begin
       no_disk = Builtins.isempty(Storage.GetDetectedDiskPaths)
+=end
 
       if !((Arch.s390 && !Arch.is_zkvm) || iscsi || fcoe || no_disk)
         Builtins.y2milestone("Disabling disk activation module")
