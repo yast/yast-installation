@@ -42,22 +42,22 @@ module Installation
     def summary
       message =
         if importer.configurations.empty? && (Yast::Mode.installation || Yast::Mode.autoinst)
-          _("No previous Linux installation found")
-        elsif importer.device.nil?
-          _("No existing SSH host keys will be copied")
+        _("No previous Linux installation found")
+      elsif importer.device.nil?
+        _("No existing SSH host keys will be copied")
+      else
+        name = ssh_config.system_name if ssh_config
+        name ||= importer.device || "default"
+        if importer.copy_config?
+          # TRANSLATORS: %s is the name of a Linux system found in the hard
+          # disk, like 'openSUSE 13.2'
+          _("SSH host keys and configuration will be copied from %s") % name
         else
-          name = ssh_config.system_name if ssh_config
-          name ||= importer.device || "default"
-          if importer.copy_config?
-            # TRANSLATORS: %s is the name of a Linux system found in the hard
-            # disk, like 'openSUSE 13.2'
-            _("SSH host keys and configuration will be copied from %s") % name
-          else
-            # TRANSLATORS: %s is the name of a Linux system found in the hard
-            # disk, like 'openSUSE 13.2'
-            _("SSH host keys will be copied from %s") % name
-          end
+          # TRANSLATORS: %s is the name of a Linux system found in the hard
+          # disk, like 'openSUSE 13.2'
+          _("SSH host keys will be copied from %s") % name
         end
+      end
       Yast::HTML.List([message])
     end
 

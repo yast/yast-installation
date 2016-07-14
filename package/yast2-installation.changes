@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jul 14 08:10:16 UTC 2016 - lslezak@suse.cz
+
+- Properly adjust the OOM killer (oom_score_adj has a different
+  range than the original oom_adj) (bsc#974601)
+- 3.1.200
+
+-------------------------------------------------------------------
 Tue Jul 12 16:14:28 CEST 2016 - schubi@suse.de
 
 - Added AutoYaST schema file "ssh_import".
