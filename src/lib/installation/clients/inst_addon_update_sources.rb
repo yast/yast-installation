@@ -114,7 +114,7 @@ module Yast
                   ),
                   Pkg.LastError
                 )
-                )
+              )
                 # try again
                 url = editUrl(url)
               else

@@ -143,28 +143,27 @@ module Yast
 
       Wizard.CloseDialog if @test_mode
 
-      if @ask_ret.nil? || @ask_ret == :auto
-        return :auto
-      elsif @ask_ret == :abort || @ask_ret == :back
-        return @ask_ret
-      elsif @ask_ret == :halt
+      case @ask_ret
+      when nil, :auto
+        :auto
+      when :abort, :back
+        @ask_ret
+      when :halt
         UI.CloseDialog
         # License has been aborted
         # bugzilla #282958
         if @test_mode != true
           SCR.Execute(path(".target.bash"), "/sbin/halt -f -n -p")
         end
-        return :abort
-      elsif @ask_ret == :next
-        return :next
-      elsif @ask_ret == :accepted
-        return :next
+        :abort
+      when :next
+        :next
+      when :accepted
+        :next
       else
         Builtins.y2error("Unknown return: %1", @ask_ret)
-        return :next
+        :next
       end
-
-      # EOF
     end
   end
 end

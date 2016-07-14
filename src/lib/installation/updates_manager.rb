@@ -52,7 +52,7 @@ module Installation
     # Repo is unreachable (name solving issues, etc.).
     class CouldNotProbeRepo < StandardError; end
 
-    DRIVER_UPDATES_PATHS = [Pathname("/update"), Pathname("/download")]
+    DRIVER_UPDATES_PATHS = [Pathname("/update"), Pathname("/download")].freeze
 
     # Constructor
     #

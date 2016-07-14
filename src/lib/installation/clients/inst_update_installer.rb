@@ -21,8 +21,8 @@ module Yast
     include Yast::Logger
     include Yast::I18n
 
-    UPDATED_FLAG_FILENAME = "installer_updated"
-    REMOTE_SCHEMES = ["http", "https", "ftp", "tftp", "sftp", "nfs", "nfs4", "cifs", "smb"]
+    UPDATED_FLAG_FILENAME = "installer_updated".freeze
+    REMOTE_SCHEMES = ["http", "https", "ftp", "tftp", "sftp", "nfs", "nfs4", "cifs", "smb"].freeze
 
     Yast.import "Pkg"
     Yast.import "GetInstArgs"
@@ -226,7 +226,8 @@ module Yast
                  "then use the \"proxy\" boot parameter.\n" \
                  "\n" \
                  "Would you like to check your network configuration\n" \
-                 "and try installing the updates again?"), self_update_url))
+                 "and try installing the updates again?"), self_update_url)
+      )
         Yast::WFM.CallFunction("inst_lan", [{ "skip_detection" => true }])
         true
       else

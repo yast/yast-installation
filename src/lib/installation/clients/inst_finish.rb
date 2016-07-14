@@ -502,7 +502,7 @@ module Yast
 
       used_hooks.each do |hook|
         Builtins.y2milestone("Hook name: #{hook.name}")
-        Builtins.y2milestone("Hook result: #{hook.succeeded? ? "success" : "failure" }")
+        Builtins.y2milestone("Hook result: #{hook.succeeded? ? "success" : "failure"}")
         hook.files.each do |file|
           Builtins.y2milestone("Hook file: #{file.path}")
           Builtins.y2milestone("Hook output: #{file.output}")

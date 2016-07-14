@@ -56,9 +56,10 @@ module Yast
       Builtins.y2debug("func=%1", @func)
       Builtins.y2debug("param=%1", @param)
 
-      if @func == "Info"
+      case @func
+      when "Info"
         return { "steps" => 0, "when" => [:installation, :update, :autoinst] }
-      elsif @func == "Write"
+      when "Write"
         Vendor.DriverUpdate2
 
         if WFM.ClientExists("product_finish")

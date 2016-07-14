@@ -148,12 +148,12 @@ module Yast
           Wizard.ShowHelp(@help)
         elsif @ret == :next
           # Skipping online update
-          if Convert.to_boolean(UI.QueryWidget(Id(:noupdate), :Value))
-            Internet.do_you = false
+          Internet.do_you = if Convert.to_boolean(UI.QueryWidget(Id(:noupdate), :Value))
+            false
           else
             # needed later
             # BNC #450229
-            Internet.do_you = true
+            true
           end
         end
         break if [:next, :back].include?(@ret)

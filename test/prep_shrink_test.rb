@@ -118,7 +118,8 @@ describe ::Installation::PrepShrinkFinish do
             "ata-HITACHI_HTS723232A7A364_E3834563C86LDM",
             "scsi-1ATA_HITACHI_HTS723232A7A364_E3834563C86LDM",
             "scsi-SATA_HITACHI_HTS72323_E3834563C86LDM",
-            "wwn-0x5000cca6d4c3bbb8"],
+            "wwn-0x5000cca6d4c3bbb8"
+          ],
           "udev_path"      => "pci-0000:00:1f.2-scsi-0:0:0:0"
         },
         "/dev/sdb" => {
@@ -189,7 +190,7 @@ describe ::Installation::PrepShrinkFinish do
           ],
           "udev_path"      => "scsi-0:0:0:0"
         }
-      }
+      }.freeze
 
       before(:each) do
         stub_const("Yast::Storage", double(GetTargetMap: STORAGE_DATA))
