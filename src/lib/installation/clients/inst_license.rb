@@ -156,9 +156,7 @@ module Yast
           SCR.Execute(path(".target.bash"), "/sbin/halt -f -n -p")
         end
         :abort
-      when :next
-        :next
-      when :accepted
+      when :next, :accepted
         :next
       else
         Builtins.y2error("Unknown return: %1", @ask_ret)

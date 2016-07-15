@@ -46,7 +46,7 @@ module Installation
       [:installation, :live_installation, :update, :autoinst]
     end
 
-    PREFIX_SIZE = 6 # "y2log-".size
+    PREFIX_SIZE = "y2log-".size
     def write
       log_files = Yast::WFM.Read(Yast::Path.new(".local.dir"), Yast::Directory.logdir)
 
