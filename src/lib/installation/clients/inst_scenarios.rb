@@ -77,7 +77,7 @@ module Yast
         if Builtins.issubstring(
           Ops.get(one_scenario, "id", "---"),
           "virtualization_host"
-          ) &&
+        ) &&
             !Arch.x86_64
           Builtins.y2milestone("removing Xen Virtualization Host Server option")
           next false
@@ -179,7 +179,7 @@ module Yast
           if Builtins.contains(
             patterns_required,
             Ops.get_string(one_pattern, "name", "")
-            ) &&
+          ) &&
               (Ops.get_symbol(one_pattern, "status", :a) == :installed ||
                 Ops.get_symbol(one_pattern, "status", :a) == :selected)
             matching_patterns = Ops.add(matching_patterns, 1)

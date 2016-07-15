@@ -213,10 +213,8 @@ module Yast
           Installation.reboot_net_settings,
           network_settings
         )
-      else
-        if FileUtils.Exists(Installation.reboot_net_settings)
-          SCR.Execute(path(".target.remove"), Installation.reboot_net_settings)
-        end
+      elsif FileUtils.Exists(Installation.reboot_net_settings)
+        SCR.Execute(path(".target.remove"), Installation.reboot_net_settings)
       end
 
       nil
@@ -377,7 +375,7 @@ module Yast
           # popup headline (#x1)
           _("Starting Installation..."),
           show_error
-          )
+        )
           Builtins.y2warning(
             "User didn't want to restart the second stage installation..."
           )
@@ -585,11 +583,11 @@ module Yast
         # Detect mode early to be able to setup steps correctly
         if FileUtils.Exists(
           Ops.add(Installation.destdir, Installation.file_update_mode)
-          )
+        )
           Mode.SetMode("update")
         elsif FileUtils.Exists(
           Ops.add(Installation.destdir, Installation.file_live_install_mode)
-          )
+        )
           Mode.SetMode("live_installation")
         end
       end

@@ -328,7 +328,7 @@ module Yast
 
         # bnc#886608: Adjusting product name (for &product; macro) right after we
         # initialize libzypp and get the base product name (intentionally not translated)
-        UI.SetProductName(Product.name  || "SUSE Linux")
+        UI.SetProductName(Product.name || "SUSE Linux")
 
         download_and_show_release_notes
       end

@@ -316,7 +316,7 @@ module Yast
       nil
     end
 
-    UDEV_RULES_DIR = "/etc/udev/rules.d"
+    UDEV_RULES_DIR = "/etc/udev/rules.d".freeze
 
     # see bugzilla #328126
     def CopyHardwareUdevRules

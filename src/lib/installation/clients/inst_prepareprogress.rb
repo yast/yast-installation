@@ -112,12 +112,10 @@ module Yast
           # BNC #439104
           "value"       => if @live_size > 0
                              @live_size
+                           elsif Installation.image_installation
+                             ImageInstallation.TotalSize / 1024
                            else
-                             if Installation.image_installation
-                               ImageInstallation.TotalSize / 1024
-                             else
-                               0
-                             end
+                             0
                            end,
           "units"       => :kb
         },

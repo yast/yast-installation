@@ -147,16 +147,11 @@ module Yast
             if Builtins.contains(
               ["/proc", "/sys", "/dev", "/proc/bus/usb"],
               umount_dir
-              )
+            )
               Builtins.y2warning("Umount failed, trying lazy umount...")
               cmd = Builtins.sformat(
                 "sync; umount -l -f '%1';",
                 String.Quote(umount_this)
-              )
-              Builtins.y2milestone(
-                "Cmd: '%1' Ret: %2",
-                cmd,
-                WFM.Execute(path(".local.bash_output"), cmd)
               )
             else
               Builtins.y2warning(
@@ -166,12 +161,12 @@ module Yast
                 "sync; mount -o remount,noatime,ro '%1'; umount -l -f '%1';",
                 String.Quote(umount_this)
               )
-              Builtins.y2milestone(
-                "Cmd: '%1' Ret: %2",
-                cmd,
-                WFM.Execute(path(".local.bash_output"), cmd)
-              )
             end
+            Builtins.y2milestone(
+              "Cmd: '%1' Ret: %2",
+              cmd,
+              WFM.Execute(path(".local.bash_output"), cmd)
+            )
           end
         end
 
@@ -229,16 +224,11 @@ module Yast
           if Builtins.contains(
             ["/proc", "/sys", "/dev", "/proc/bus/usb"],
             @tmp
-            )
+          )
             Builtins.y2warning("Umount failed, trying lazy umount...")
             @cmd2 = Builtins.sformat(
               "sync; umount -l -f '%1';",
               String.Quote(@tmp)
-            )
-            Builtins.y2milestone(
-              "Cmd: '%1' Ret: %2",
-              @cmd2,
-              WFM.Execute(path(".local.bash_output"), @cmd2)
             )
           else
             Builtins.y2warning(
@@ -248,12 +238,13 @@ module Yast
               "mount -o remount,ro,noatime '%1'; umount -l -f '%1';",
               String.Quote(@tmp)
             )
-            Builtins.y2milestone(
-              "Cmd: '%1' Ret: %2",
-              @cmd2,
-              WFM.Execute(path(".local.bash_output"), @cmd2)
-            )
           end
+          Builtins.y2milestone(
+            "Cmd: '%1' Ret: %2",
+            @cmd2,
+            WFM.Execute(path(".local.bash_output"), @cmd2)
+          )
+
         end
 
         # bugzilla #326478
@@ -304,14 +295,12 @@ module Yast
       cmd = Convert.to_map(WFM.Execute(path(".local.bash_output"), command))
       Builtins.y2milestone("Command %1 returned: %2", command, cmd)
 
-      if Ops.get_integer(cmd, "exit", -1) == 0
-        return true
-      else
-        if Ops.get_string(cmd, "stderr", "") != ""
-          Builtins.y2error("Error: %1", Ops.get_string(cmd, "stderr", ""))
-        end
-        return false
+      return true if Ops.get_integer(cmd, "exit", -1) == 0
+
+      if Ops.get_string(cmd, "stderr", "") != ""
+        Builtins.y2error("Error: %1", Ops.get_string(cmd, "stderr", ""))
       end
+      false
     end
 
     # Reads and returns the current poolsize from /proc.
@@ -363,7 +352,7 @@ module Yast
           read_poolsize,
           String.Quote(store_to)
         )
-        )
+      )
         Builtins.y2milestone(
           "State of %1 has been successfully copied to %2",
           random_path,

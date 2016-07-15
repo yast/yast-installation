@@ -311,7 +311,7 @@ module Yast
           "<p>To clone the current system, the <b>%1</b> package must be installed.</p>"
         ) +
           _("<p>Install it now?</p>")
-        )
+      )
         Popup.Error(_("autoyast2 package not installed. Cloning disabled."))
       else
         # #165860

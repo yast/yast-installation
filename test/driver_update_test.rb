@@ -83,7 +83,7 @@ describe Installation::DriverUpdate do
 
     context "when instsys_path exists" do
       let(:instsys_path) do
-        double("instsys", :exist? => true, :to_s => "/some-path")
+        double("instsys", exist?: true, to_s: "/some-path")
       end
 
       it "applies the driver update" do
@@ -95,7 +95,7 @@ describe Installation::DriverUpdate do
     end
 
     context "when instsys_path does not exist" do
-      let(:instsys_path) { double("instsys", :exist? => false) }
+      let(:instsys_path) { double("instsys", exist?: false) }
 
       it "returns false" do
         expect(Yast::SCR).to_not receive(:Execute)

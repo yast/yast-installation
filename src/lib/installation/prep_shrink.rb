@@ -9,7 +9,7 @@ module Installation
       :autoinst,
       :update,
       :autoupg # TODO: is autoupgrade still live?
-    ]
+    ].freeze
 
     YAST_BASH_PATH = Yast::Path.new ".target.bash_output"
 
@@ -62,7 +62,7 @@ module Installation
 
     # 0x41 is PPC PREP Boot
     # 0x108 is DOS PREP boot
-    PREP_IDS = [0x41, 0x108]
+    PREP_IDS = [0x41, 0x108].freeze
     def need_shrink?(partition)
       PREP_IDS.include?(partition["fsid"]) &&
         partition["size_k"] > MAXIMAL_SIZE_KB

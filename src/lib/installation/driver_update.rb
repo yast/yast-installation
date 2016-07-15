@@ -79,7 +79,7 @@ module Installation
     end
 
     # Command to apply the DUD disk to inst-sys
-    APPLY_CMD = "/etc/adddir %<source>s /" # openSUSE/installation-images
+    APPLY_CMD = "/etc/adddir %<source>s /".freeze # openSUSE/installation-images
 
     # Add files/directories to the inst-sys
     #
@@ -97,7 +97,7 @@ module Installation
   private
 
     # LOSETUP command
-    LOSETUP_CMD = "/sbin/losetup"
+    LOSETUP_CMD = "/sbin/losetup".freeze
 
     # Returns the instsys_path for updates of type :archive
     #

@@ -270,7 +270,7 @@ module Yast
               Convert.to_string(UI.QueryWidget(:image_location, :Value))
             ),
             0
-            ) ||
+          ) ||
               Ops.greater_than(
                 Builtins.size(
                   Convert.to_string(UI.QueryWidget(:image_name, :Value))

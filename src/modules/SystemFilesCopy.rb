@@ -177,7 +177,7 @@ module Yast
           [partition, @tmp_mount_directory],
           "-o ro,noatime"
         )
-        )
+      )
         Builtins.y2error("Mounting failed!")
         return false
       end
@@ -222,7 +222,7 @@ module Yast
       Builtins.y2milestone("Umounting %1", partition)
       if !Convert.to_boolean(
         SCR.Execute(path(".target.umount"), @tmp_mount_directory)
-        )
+      )
         Builtins.y2warning("Umounting failed!")
       end
 

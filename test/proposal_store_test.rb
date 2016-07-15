@@ -67,13 +67,13 @@ describe ::Installation::ProposalStore do
   describe "tab_labels" do
     it "returns list of labels for each tab" do
       mock_properties("proposal_tabs" => [
-        {
-          "label" => "tab1"
-        },
-        {
-          "label" => "tab2"
-        }
-      ])
+                        {
+                          "label" => "tab1"
+                        },
+                        {
+                          "label" => "tab2"
+                        }
+                      ])
 
       expect(subject.tab_labels).to include("tab1")
       expect(subject.tab_labels).to include("tab2")
@@ -100,9 +100,9 @@ describe ::Installation::ProposalStore do
     it "returns array with string names of clients" do
       allow(Yast::ProductControl).to receive(:getProposals)
         .and_return([
-          ["test1"],
-          ["test2"]
-        ])
+                      ["test1"],
+                      ["test2"]
+                    ])
 
       expect(subject.proposal_names).to include("test1")
       expect(subject.proposal_names).to include("test2")
@@ -113,10 +113,10 @@ describe ::Installation::ProposalStore do
 
       allow(Yast::ProductControl).to receive(:getProposals)
         .and_return([
-          ["test1"],
-          ["test2"],
-          ["test3"]
-        ])
+                      ["test1"],
+                      ["test2"],
+                      ["test3"]
+                    ])
 
       expect(subject.proposal_names).to include("test1")
       expect(subject.proposal_names).to include("test2")
@@ -126,10 +126,10 @@ describe ::Installation::ProposalStore do
     it "filters out clients that report themselves as unavailable" do
       allow(Yast::ProductControl).to receive(:getProposals)
         .and_return([
-          ["test1"],
-          ["test2"],
-          ["test3"]
-        ])
+                      ["test1"],
+                      ["test2"],
+                      ["test3"]
+                    ])
 
       allow(Yast::WFM).to receive(:CallFunction).with("test3", ["Description", anything]).and_return(nil)
 
@@ -141,10 +141,10 @@ describe ::Installation::ProposalStore do
     it "use same order as in control file to preserve evaluation order" do
       allow(Yast::ProductControl).to receive(:getProposals)
         .and_return([
-          ["test1"],
-          ["test2"],
-          ["test3"]
-        ])
+                      ["test1"],
+                      ["test2"],
+                      ["test3"]
+                    ])
 
       expect(subject.proposal_names).to eq(["test1", "test2", "test3"])
     end
@@ -155,10 +155,10 @@ describe ::Installation::ProposalStore do
       it "returns array with string names of client in presentation order" do
         allow(Yast::ProductControl).to receive(:getProposals)
           .and_return([
-            ["test1", 90],
-            ["test2", 30],
-            ["test3", 50]
-          ])
+                        ["test1", 90],
+                        ["test2", 30],
+                        ["test3", 50]
+                      ])
 
         expect(subject.presentation_order).to eq(["test2", "test3", "test1"])
       end
@@ -166,10 +166,10 @@ describe ::Installation::ProposalStore do
       it "replace value for missing presentation order with 50" do
         allow(Yast::ProductControl).to receive(:getProposals)
           .and_return([
-            ["test1", 90],
-            ["test2"],
-            ["test3", 40]
-          ])
+                        ["test1", 90],
+                        ["test2"],
+                        ["test3", 40]
+                      ])
 
         expect(subject.presentation_order).to eq(["test3", "test2", "test1"])
       end
@@ -178,20 +178,20 @@ describe ::Installation::ProposalStore do
     context "proposal with tabs" do
       it "returns array of arrays with order in each tab" do
         mock_properties("proposal_tabs" => [
-          {
-            "proposal_modules" => [
-              "tab1_client1",
-              "tab1_client2"
-            ]
-          },
-          {
-            "proposal_modules" => [
-              "tab2_client1",
-              "tab2_client2",
-              "tab2_client3"
-            ]
-          }
-        ])
+                          {
+                            "proposal_modules" => [
+                              "tab1_client1",
+                              "tab1_client2"
+                            ]
+                          },
+                          {
+                            "proposal_modules" => [
+                              "tab2_client1",
+                              "tab2_client2",
+                              "tab2_client3"
+                            ]
+                          }
+                        ])
 
         expect(subject.presentation_order.size).to eq 2
         expect(subject.presentation_order[0].size).to eq 2
@@ -200,20 +200,20 @@ describe ::Installation::ProposalStore do
 
       it "adds '_proposal' suffix to clients if missing" do
         mock_properties("proposal_tabs" => [
-          {
-            "proposal_modules" => [
-              "tab1_client1",
-              "tab1_client2"
-            ]
-          },
-          {
-            "proposal_modules" => [
-              "tab2_client1",
-              "tab2_client2",
-              "tab2_client3"
-            ]
-          }
-        ])
+                          {
+                            "proposal_modules" => [
+                              "tab1_client1",
+                              "tab1_client2"
+                            ]
+                          },
+                          {
+                            "proposal_modules" => [
+                              "tab2_client1",
+                              "tab2_client2",
+                              "tab2_client3"
+                            ]
+                          }
+                        ])
 
         expect(subject.presentation_order[0]).to include "tab1_client1_proposal"
         expect(subject.presentation_order[1]).to include "tab2_client1_proposal"
