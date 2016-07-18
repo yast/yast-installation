@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Jul 18 13:13:05 UTC 2016 - lslezak@suse.cz
+
+- Run extra inst-sys cleanup to free more memory on systems with
+  low memory (bsc#974601)
+- 3.1.201
+
+-------------------------------------------------------------------
 Thu Jul 14 08:10:16 UTC 2016 - lslezak@suse.cz
 
 - Properly adjust the OOM killer (oom_score_adj has a different
