@@ -2,6 +2,10 @@ srcdir = File.expand_path("../../src", __FILE__)
 y2dirs = ENV.fetch("Y2DIR", "").split(":")
 ENV["Y2DIR"] = y2dirs.unshift(srcdir).join(":")
 
+# make sure we run the tests in English locale
+# (some tests check the output which is marked for translation)
+ENV["LC_ALL"] = "en_US.UTF-8"
+
 require "yast"
 require "yast/rspec"
 require "pathname"
