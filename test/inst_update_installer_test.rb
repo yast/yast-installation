@@ -2,8 +2,15 @@
 
 require_relative "test_helper"
 require "installation/clients/inst_update_installer"
+require "singleton"
 
 describe Yast::InstUpdateInstaller do
+  # Registration::Storage::InstallationOptions fake
+  class FakeInstallationOptions
+    include Singleton
+    attr_accessor :custom_url
+  end
+
   Yast.import "Linuxrc"
   Yast.import "ProductFeatures"
   Yast.import "GetInstArgs"
@@ -222,9 +229,11 @@ describe Yast::InstUpdateInstaller do
           before do
             allow(subject).to receive(:require).with("registration/sw_mgmt").and_return(true)
             allow(subject).to receive(:require).with("registration/url_helpers").and_return(true)
+            allow(subject).to receive(:require).with("registration/storage").and_return(true)
             allow(subject).to receive(:require).with("suse/connect").and_return(true)
             stub_const("Registration::SwMgmt", sw_mgmt)
             stub_const("Registration::UrlHelpers", url_helpers)
+            stub_const("Registration::Storage::InstallationOptions", FakeInstallationOptions)
             stub_const("SUSE::Connect::YaST", suse_connect)
             allow(::FileUtils).to receive(:touch)
           end
@@ -239,6 +248,12 @@ describe Yast::InstUpdateInstaller do
             expect(suse_connect).to receive(:list_installer_updates).with(product, url: smt_url)
               .and_return([update0, update1])
             expect(subject.main).to eq(:restart_yast)
+          end
+
+          it "saves the registration URL" do
+            expect(manager).to receive(:add_repository).twice
+            expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(smt_url)
+            subject.main
           end
         end
 

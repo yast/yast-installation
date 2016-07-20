@@ -145,20 +145,22 @@ module Yast
 
     # Return the self-update URLs from SCC/SMT server
     #
-    # Return an empty array if yast2-registration or SUSEConnect are
-    # not available (for instance in openSUSE). More than 1 URLs can
-    # be specified.
+    # Return an empty array if yast2-registration or SUSEConnect are not
+    # available (for instance in openSUSE). More than 1 URLs can be specified.
+    #
+    # As a side effect, it stores the URL of the registration server used.
     #
     # @return [URI,nil] self-update URL. nil if no URL was found.
     def self_update_url_from_connect
-      require "registration/sw_mgmt"
-      require "registration/url_helpers"
-      require "suse/connect"
+      require_registration_libraries
       base_product = Registration::SwMgmt.base_product_to_register
       product = Registration::SwMgmt.remote_product(base_product)
+      options = Registration::Storage::InstallationOptions.instance
+      options.custom_url = Registration::UrlHelpers.registration_url
       updates = SUSE::Connect::YaST.list_installer_updates(product,
-        url: Registration::UrlHelpers.registration_url)
-      log.info("self-update repository for product '#{base_product}' are #{updates}")
+        url: options.custom_url)
+      log.info("self-update repository using '#{options.custom_url}' " \
+               "for product '#{base_product}' are #{updates}")
       updates.map { |u| URI(u.url) }
     rescue LoadError
       log.info "yast2-registration or SUSEConnect are not available"
@@ -329,6 +331,16 @@ module Yast
         "\n" \
         "If you need a proxy server to access the update repository\n" \
         "then use the \"proxy\" boot parameter.\n"), url.to_s)
+    end
+
+    # Require registration libraries
+    #
+    # @raise LoadError
+    def require_registration_libraries
+      require "registration/sw_mgmt"
+      require "registration/url_helpers"
+      require "registration/storage"
+      require "suse/connect"
     end
   end
 end
