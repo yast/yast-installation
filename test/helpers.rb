@@ -14,7 +14,7 @@ module Helpers
   end
 
   # Read the fixture file
-  # @param *path [Array<String>] path components
+  # @param path [Array<String>] path components
   # @see fixtures_dir
   # @return [String] the loaded file
   def load_fixture(*path)

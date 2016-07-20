@@ -16,13 +16,12 @@
 #
 
 require "fileutils"
-require "shellwords"
-require "English"
 
 require "yast"
 require "yast/logger"
 # memory size detection
 require "yast2/hw_detection"
+require "yast2/execute"
 
 module Installation
   class InstsysCleaner
@@ -93,53 +92,60 @@ module Installation
       log.info("Removing the kernel modules inst-sys image")
       log_space_usage("Before removing the kernel modules:")
 
-      # find the loop device for the mount point
-      mounts = `mount`.split("\n")
-      mounts.find { |m| m.match(/\A(\/dev\/loop.*) on #{Regexp.escape(KERNEL_MODULES_MOUNT_POINT)} /) }
+      # find the image for the mount point
+      device = find_device || return
+      image = losetup_backing_file(device) || return
 
-      device = Regexp.last_match(1)
-      if !device
-        log.warn("Cannot find the loop device for the #{KERNEL_MODULES_MOUNT_POINT} mount point")
-        return
-      end
-
-      # find the backend file for the loop device
-      file = `losetup -n -O BACK-FILE #{Shellwords.escape(device)}`.strip
-
-      if file.nil? || file.empty?
-        log.warn("Cannot find the backend file for the #{device} device")
-        return
-      end
-
-      # unmount the loop device
-      `umount #{KERNEL_MODULES_MOUNT_POINT}`
-      if $CHILD_STATUS && !$CHILD_STATUS.success?
-        log.warn("Unmouting #{KERNEL_MODULES_MOUNT_POINT} failed")
-        return
-      end
+      # unmount the image
+      Yast::Execute.locally("umount", KERNEL_MODULES_MOUNT_POINT)
 
       # remove the loop device binding
-      `losetup -d #{Shellwords.escape(device)}`
-      if $CHILD_STATUS && !$CHILD_STATUS.success?
-        log.warn("Detaching loopback device #{device} failed")
-        return
-      end
+      Yast::Execute.locally("losetup", "-d", device)
 
       # remove the image file
-      ::FileUtils.rm_rf(file)
+      ::FileUtils.rm_rf(image)
 
       log_space_usage("After removing the kernel modules:")
     end
 
+    # Log the memory and disk usage to see how the clean up was effective
     def self.log_space_usage(msg)
       log.info(msg)
-      log.info("disk usage in MB ('df -m'):")
-      log.info(`df -m`)
-      log.info("memory usage in MB ('free -m'):")
-      log.info(`free -m`)
+      # the Cheetah backend by default logs the output
+      Yast::Execute.locally("df", "-m")
+      Yast::Execute.locally("free", "-m")
+    end
+
+    # Find the device for the kernel modules mount point.
+    # @return [String,nil] device name (/dev/loopN) or nil if not found
+    def self.find_device
+      mounts = Yast::Execute.locally("mount", stdout: :capture).split("\n")
+      mounts.find { |m| m.match(/\A(\/dev\/loop.*) on #{Regexp.escape(KERNEL_MODULES_MOUNT_POINT)} /) }
+      device = Regexp.last_match(1)
+
+      if !device
+        log.warn("Cannot find the loop device for the #{KERNEL_MODULES_MOUNT_POINT} mount point")
+      end
+
+      device
+    end
+
+    # Find the backend file for a loop device.
+    # @param device [String] device name
+    # @return [String,nil] backing file or nil if not found
+    def self.losetup_backing_file(device)
+      # find the backend file for the loop device
+      file = Yast::Execute.locally("losetup", "-n", "-O", "BACK-FILE", device, stdout: :capture).strip
+
+      if file.nil? || file.empty?
+        log.warn("Cannot find the backend file for the #{device} device")
+        return nil
+      end
+
+      file
     end
 
     private_class_method :log_space_usage, :unmount_kernel_modules,
-      :cleanup_zypp_cache
+      :cleanup_zypp_cache, :find_device, :losetup_backing_file
   end
 end
