@@ -8,8 +8,7 @@ describe Yast::InstFinishClient do
   describe "#main" do
     before do
       allow(Yast::WFM).to receive(:ClientExists).and_return(true)
-      allow(Yast::WFM).to receive(:CallFunction).with(anything, ["Info"])
-        .and_return({})
+      allow(Yast::WFM).to receive(:CallFunction).with(anything, ["Info"]) { Hash.new }
       allow(Yast::WFM).to receive(:CallFunction).with(anything, ["Write"])
 
       allow(Yast::UI).to receive(:PollInput)
@@ -24,6 +23,8 @@ describe Yast::InstFinishClient do
 
       allow(Yast::PackageCallbacks).to receive(:RegisterEmptyProgressCallbacks)
       allow(Yast::PackageCallbacks).to receive(:RestorePreviousProgressCallbacks)
+
+      allow(Yast::Hooks).to receive(:run)
     end
 
     it "return :next if not aborted" do
@@ -135,6 +136,40 @@ describe Yast::InstFinishClient do
       expect(Yast::Pkg).to receive(:TargetLoad)
 
       subject.main
+    end
+
+    context "finish clients" do
+      it "Call info for all specified finish clients" do
+        expect(Yast::WFM).to receive(:CallFunction).at_least(1).and_return({})
+
+        subject.main
+      end
+
+      it "filter out all cliets which 'when' key do not match current mode" do
+        allow(Yast::Mode).to receive(:update).and_return(true)
+        # fake that this client will be called only during common installation, so skipped in update
+        client = "bootloader_finish"
+        allow(Yast::WFM).to receive(:CallFunction).with(client, ["Info"])
+          .and_return("when" => [:installation])
+
+        # so not write can happen
+        expect(Yast::WFM).to_not receive(:CallFunction).with(client, ["Write"])
+
+        subject.main
+      end
+
+      it "runs before_<client_name> hook" do
+        expect(Yast::Hooks).to receive(:run).with("before_bootloader_finish")
+
+        subject.main
+      end
+
+      it "runs after_<client_name> hook" do
+        expect(Yast::Hooks).to receive(:run).with("after_bootloader_finish")
+
+        subject.main
+      end
+
     end
   end
 end
