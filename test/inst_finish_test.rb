@@ -44,13 +44,13 @@ describe Yast::InstFinishClient do
       expect(subject.main).to eq :auto
     end
 
-    it "disabled during its run Back button" do
+    it "disables Back button" do
       expect(Yast::Wizard).to receive(:DisableBackButton)
 
       subject.main
     end
 
-    it "disabled during its run Next button" do
+    it "disables Next button" do
       expect(Yast::Wizard).to receive(:DisableNextButton)
 
       subject.main
@@ -145,7 +145,7 @@ describe Yast::InstFinishClient do
         subject.main
       end
 
-      it "filter out all cliets which 'when' key do not match current mode" do
+      it "filter out all clients which 'when' key do not match current mode" do
         allow(Yast::Mode).to receive(:update).and_return(true)
         # fake that this client will be called only during common installation, so skipped in update
         client = "bootloader_finish"
