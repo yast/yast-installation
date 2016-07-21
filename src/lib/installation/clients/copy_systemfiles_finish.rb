@@ -64,10 +64,10 @@ module Yast
           "when"  => [:installation, :autoinst]
         }
       elsif @func == "Write"
-        if SystemFilesCopy.CopyFilesToSystem(Installation.destdir)
-          @ret = :ok
+        @ret = if SystemFilesCopy.CopyFilesToSystem(Installation.destdir)
+          :ok
         else
-          @ret = :something_was_wrong
+          :something_was_wrong
         end
       else
         Builtins.y2error("unknown function: %1", @func)

@@ -47,15 +47,13 @@ module Yast
         path = ProductFeatures.GetStringFeature("globals", "oem_image")
         ImageInstallation.PrepareOEMImage(path)
         Misc.boot_msg = _("The system will reboot now...")
-      else
-        # There is nothing to do
-        if !Installation.image_installation
-          Builtins.y2milestone("No images have been selected")
-          # bnc #395030
-          # Use less memory
-          ImageInstallation.FreeInternalVariables
-          return :auto
-        end
+      # There is nothing to do
+      elsif !Installation.image_installation
+        Builtins.y2milestone("No images have been selected")
+        # bnc #395030
+        # Use less memory
+        ImageInstallation.FreeInternalVariables
+        return :auto
       end
 
       Builtins.y2milestone("Deploying images")
@@ -267,14 +265,14 @@ module Yast
       end
 
       # incremental
-      if current_step.nil?
-        @_current_step_in_subprogress = Ops.add(
+      @_current_step_in_subprogress = if current_step.nil?
+        Ops.add(
           @_current_step_in_subprogress,
           1
         )
         # set to exact number
       else
-        @_current_step_in_subprogress = current_step
+        current_step
       end
 
       if id == "storing_user_prefs" || id == "restoring_user_prefs"
@@ -373,13 +371,13 @@ module Yast
         end
 
         # unknown image
-        if image_info == ""
-          image_info = Builtins.sformat(
+        image_info = if image_info == ""
+          Builtins.sformat(
             _("Downloading image at speed %1/s"),
             String.FormatSize(bps_current)
           )
         else
-          image_info = Builtins.sformat(
+          Builtins.sformat(
             _("Downloading image %1 at speed %2/s"),
             image_info,
             String.FormatSize(bps_current)
@@ -389,10 +387,8 @@ module Yast
         SlideShow.SubProgress(percent, image_info)
 
         current_image_nr = Ops.get_integer(current_image, "image_nr", 0)
-        current_steps = 0
-
-        if @download_handler_hit
-          current_steps = Ops.add(
+        current_steps = if @download_handler_hit
+          Ops.add(
             Ops.multiply(
               Ops.multiply(current_image_nr, 2),
               @_steps_for_one_image
@@ -400,7 +396,7 @@ module Yast
             percent
           )
         else
-          current_steps = Ops.add(
+          Ops.add(
             Ops.multiply(current_image_nr, @_steps_for_one_image),
             percent
           )
@@ -441,10 +437,10 @@ module Yast
       if x_progress == 0
         current_image_name = Ops.get_string(current_image, "name", "")
 
-        if current_image_name == ""
-          current_image_name = _("Deploying image...")
+        current_image_name = if current_image_name == ""
+          _("Deploying image...")
         else
-          current_image_name = Builtins.sformat(
+          Builtins.sformat(
             _("Deploying image %1..."),
             current_image_name
           )
@@ -470,10 +466,8 @@ module Yast
         SlideShow.SubProgress(x_progress, nil)
         @_last_progress = x_progress
         current_image_nr = Ops.get_integer(current_image, "image_nr", 0)
-        current_steps = 0
-
-        if @download_handler_hit
-          current_steps = Ops.add(
+        current_steps = if @download_handler_hit
+          Ops.add(
             Ops.multiply(
               Ops.add(Ops.multiply(current_image_nr, 2), 1),
               @_steps_for_one_image
@@ -481,7 +475,7 @@ module Yast
             x_progress
           )
         else
-          current_steps = Ops.add(
+          Ops.add(
             Ops.multiply(current_image_nr, @_steps_for_one_image),
             x_progress
           )

@@ -38,7 +38,7 @@ module Installation
     def run
       if raw_roles.empty?
         log.info "No roles defined, skipping their dialog"
-        return :auto            # skip forward or backward
+        return :auto # skip forward or backward
       end
 
       super

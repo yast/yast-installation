@@ -249,7 +249,7 @@ module Yast
         if Ops.less_than(
           Builtins.size(Pkg.ResolvableProperties(pattern, :pattern, "")),
           1
-          )
+        )
           Builtins.y2warning("pattern '%1' not found", pattern)
           all_available = false
         end
@@ -258,7 +258,7 @@ module Yast
     end
 
     def GetDesktops(desktops, show_descr)
-      sort_order        = @all_desktops.keys
+      sort_order = @all_desktops.keys
       sort_order.sort! { |x, y| (@all_desktops[x]["order"] || 99) <=> (@all_desktops[y]["order"] || 99) }
 
       if desktops == "major"

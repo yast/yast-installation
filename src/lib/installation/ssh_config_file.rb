@@ -26,7 +26,7 @@ module Installation
   class SshConfigFile
     include Yast::Logger
 
-    BACKUP_SUFFIX = ".yast.orig"
+    BACKUP_SUFFIX = ".yast.orig".freeze
 
     # @return [String] file name
     attr_accessor :name
@@ -57,7 +57,7 @@ module Installation
 
     # Override to_s method for logging.
     def to_s
-      "#{name}"
+      name.to_s
     end
 
   protected

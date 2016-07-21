@@ -53,7 +53,8 @@ module Installation
           Yast::Report.Warning(
             # TRANSLATORS: both %s are device names like /dev/sda0
             _(format("Device %s not found. Using data from %s.",
-              data["device"], ssh_importer.device)))
+              data["device"], ssh_importer.device))
+          )
         end
       end
       true

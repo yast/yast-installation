@@ -46,6 +46,7 @@ module Installation
       [:installation, :live_installation, :update, :autoinst]
     end
 
+    PREFIX_SIZE = "y2log-".size
     def write
       log_files = Yast::WFM.Read(Yast::Path.new(".local.dir"), Yast::Directory.logdir)
 
@@ -57,10 +58,7 @@ module Installation
           # Prepare y2log, y2log-* for log rotation
           target_no = 1
 
-          if file != "y2log"
-            prefix_size = "y2log-".size
-            target_no = file[prefix_size..-1].to_i + 1
-          end
+          target_no = file[PREFIX_SIZE..-1].to_i + 1 if file != "y2log"
 
           target_basename = "y2log-#{target_no}"
           copy_log_to_target(file, target_basename)

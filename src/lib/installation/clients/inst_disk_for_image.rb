@@ -85,8 +85,7 @@ module Yast
           Left(Label(_("All data on the disk will be lost!!!"))),
           VSpacing(0.5),
           SelectionBox(Id(:disk), _("&Disk to Use"), disks_to_use)
-        )
-      )
+        ))
     end
 
     def disk_for_image_help_text
