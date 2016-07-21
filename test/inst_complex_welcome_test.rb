@@ -2,10 +2,8 @@
 
 # fake Console class to avoid build dependency on yast2-country
 module Yast
-  class ConsoleClass
-  end
-
-  Console = ConsoleClass.new
+  Console = "fake"
+  Keyboard = "fake"
 end
 
 
@@ -25,6 +23,7 @@ describe Yast::InstComplexWelcomeClient do
     stub_const("Yast::InstComplexWelcomeClient::DATA_PATH", store_path)
     allow(Yast::ProductLicense).to receive(:info_seen?) { true }
     stub_const("Yast::Console", double.as_null_object)
+    stub_const("Yast::Keyboard", double.as_null_object)
   end
 
   after do
