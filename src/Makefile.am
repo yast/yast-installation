@@ -37,6 +37,7 @@ client_DATA = \
   clients/inst_info.rb \
   clients/inst_initialization.rb \
   clients/inst_installation_options.rb \
+  clients/inst_instsys_cleanup.rb \
   clients/inst_license.rb \
   clients/inst_network_check.rb \
   clients/inst_new_desktop.rb \
@@ -112,6 +113,7 @@ ylib_DATA = \
   lib/installation/cio_ignore.rb \
   lib/installation/copy_logs_finish.rb \
   lib/installation/driver_update.rb \
+  lib/installation/instsys_cleaner.rb \
   lib/installation/minimal_installation.rb \
   lib/installation/prep_shrink.rb \
   lib/installation/proposal_runner.rb \
@@ -159,6 +161,7 @@ ylibclient_DATA = \
   lib/installation/clients/inst_info.rb \
   lib/installation/clients/inst_initialization.rb \
   lib/installation/clients/inst_installation_options.rb \
+  lib/installation/clients/inst_instsys_cleanup_client.rb \
   lib/installation/clients/inst_license.rb \
   lib/installation/clients/inst_network_check.rb \
   lib/installation/clients/inst_new_desktop.rb \
