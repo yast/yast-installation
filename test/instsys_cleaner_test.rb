@@ -15,8 +15,8 @@ describe Installation::InstsysCleaner do
         expect(Yast::Mode).to receive(:installation).and_return(true)
 
         # mock the logged memory stats
-        allow(Yast::Execute).to receive(:locally).with("df", "-m").and_return("")
-        allow(Yast::Execute).to receive(:locally).with("free", "-m").and_return("")
+        allow(Yast::Execute).to receive(:locally).with("df", "-m")
+        allow(Yast::Execute).to receive(:locally).with("free", "-m")
       end
 
       it "removes the libzypp cache if the memory less than 640MB" do
