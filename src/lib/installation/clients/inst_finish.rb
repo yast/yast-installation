@@ -205,7 +205,7 @@ module Yast
 
       used_hooks.each do |hook|
         log.info "Hook name: #{hook.name}"
-        log.info "Hook result: #{hook.succeeded? ? "success" : "failure" }"
+        log.info "Hook result: #{hook.succeeded? ? "success" : "failure"}"
         hook.files.each do |file|
           log.info "Hook file: #{file.path}"
           log.info "Hook output: #{file.output}"
@@ -328,7 +328,7 @@ module Yast
         "copy_systemfiles",
         "live_copy_files",
         "switch_scr"
-      ]
+      ].freeze
 
     def copy_files_steps
       COPY_FILES_STEPS
@@ -340,7 +340,7 @@ module Yast
         "live_save_config",
         "storage",
         "kernel"
-      ]
+      ].freeze
 
     SAVE_CONFIG_STEPS_FULL =
       [
@@ -360,7 +360,7 @@ module Yast
         "driver_update1",
         # bnc #340733
         "system_settings"
-      ]
+      ].freeze
 
     def save_config_steps
       if ::Installation::MinimalInstallation.instance.enabled?
@@ -375,7 +375,7 @@ module Yast
         "yast_inf",
         "autoinst_scripts2",
         "installation_settings"
-      ]
+      ].freeze
 
     SAVE_SETTINGS_STEPS_FULL =
       [
@@ -389,7 +389,7 @@ module Yast
         "users",
         "autoinst_scripts2",
         "installation_settings"
-      ]
+      ].freeze
 
     def save_settings_steps
       if ::Installation::MinimalInstallation.instance.enabled?
@@ -403,7 +403,7 @@ module Yast
       [
         "prep_shrink", # ensure that prep partition is small enough for boot sector (bnc#867345)
         "bootloader"
-      ]
+      ].freeze
 
     def install_bootloader_steps
       if ::Installation::MinimalInstallation.instance.enabled?
@@ -517,14 +517,14 @@ module Yast
     def run_type
       return @run_type if @run_type
 
-      if Mode.update
-        @run_type = :update
+      @run_type = if Mode.update
+        :update
       elsif Mode.autoinst
-        @run_type = :autoinst
+        :autoinst
       elsif Mode.live_installation
-        @run_type = :live_installation
+        :live_installation
       else
-        @run_type = :installation
+        :installation
       end
 
       @run_type
@@ -568,10 +568,10 @@ module Yast
 
       # FIXME: looks like product specific finish steps are not used at all
       stages = if ProductControl.inst_finish.empty?
-                 predefined_stages
-               else
-                 control_stages
-               end
+        predefined_stages
+      else
+        control_stages
+      end
 
       merge_addon_steps(stages)
 
