@@ -4,6 +4,7 @@
 module Yast
   Console = "fake"
   Keyboard = "fake"
+  Timezone = "fake"
 end
 
 
@@ -24,6 +25,7 @@ describe Yast::InstComplexWelcomeClient do
     allow(Yast::ProductLicense).to receive(:info_seen?) { true }
     stub_const("Yast::Console", double.as_null_object)
     stub_const("Yast::Keyboard", double.as_null_object)
+    stub_const("Yast::Timezone", double.as_null_object)
   end
 
   after do
