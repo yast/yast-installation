@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Thu Jul 21 11:52:59 UTC 2016 - jreidinger@suse.com
 
-- simplify and speed up inst_finish client(bnc#986649)
+- simplify and speed up inst_finish client (bnc#986649)
 - add test suite for inst_finish client
 - 3.1.202
 
