@@ -26,6 +26,7 @@ describe Yast::InstComplexWelcomeClient do
     stub_const("Yast::Console", double.as_null_object)
     stub_const("Yast::Keyboard", double.as_null_object)
     stub_const("Yast::Timezone", double.as_null_object)
+    stub_const("Yast::UI", double.as_null_object)
   end
 
   after do
