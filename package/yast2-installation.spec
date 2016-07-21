@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.198
+Version:        3.1.200
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -193,6 +193,7 @@ systemctl enable YaST2-Firstboot.service
 %{yast_desktopdir}/*.desktop
 /usr/share/autoinstall/modules/*.desktop
 /usr/share/YaST2/schema/autoyast/rnc/deploy_image.rnc
+/usr/share/YaST2/schema/autoyast/rnc/ssh_import.rnc
 %dir /usr/share/autoinstall
 %dir /usr/share/autoinstall/modules
 %dir %{yast_yncludedir}/installation

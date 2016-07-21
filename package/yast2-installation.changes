@@ -1,4 +1,18 @@
 -------------------------------------------------------------------
+Thu Jul 14 08:10:16 UTC 2016 - lslezak@suse.cz
+
+- Properly adjust the OOM killer (oom_score_adj has a different
+  range than the original oom_adj) (bsc#974601)
+- 3.1.200
+
+-------------------------------------------------------------------
+Tue Jul 12 16:14:28 CEST 2016 - schubi@suse.de
+
+- Added AutoYaST schema file "ssh_import".
+  (fate#319624)
+- 3.1.199
+
+-------------------------------------------------------------------
 Mon Jun 27 13:00:24 UTC 2016 - jreidinger@suse.com
 
 - Make writing of bootloader settings the last step so that other

@@ -261,10 +261,10 @@ module Installation
 
     def pre_continue_handling
       @skip = if Yast::UI.WidgetExists(Id(:skip))
-                Yast::UI.QueryWidget(Id(:skip), :Value)
-              else
-                true
-              end
+        Yast::UI.QueryWidget(Id(:skip), :Value)
+      else
+        true
+      end
       skip_blocker = Yast::UI.WidgetExists(Id(:skip)) && @skip
       if @have_blocker && !skip_blocker
         # error message is a popup
@@ -786,13 +786,13 @@ module Installation
     def html_header(submod)
       title = @store.title_for(submod)
       heading = if title.include?("<a")
-                  title
-                else
-                  Yast::HTML.Link(
-                    title,
-                    @store.id_for(submod)
-                  )
-                end
+        title
+      else
+        Yast::HTML.Link(
+          title,
+          @store.id_for(submod)
+        )
+      end
 
       Yast::HTML.Heading(heading)
     end
