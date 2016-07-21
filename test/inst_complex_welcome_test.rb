@@ -1,5 +1,15 @@
 #!/usr/bin/env rspec
 
+# fake Console class to avoid build dependency on yast2-country
+module Yast
+  class ConsoleClass
+  end
+
+  Console = ConsoleClass.new
+end
+
+
+
 require_relative "test_helper"
 require "installation/clients/inst_complex_welcome"
 
@@ -14,6 +24,7 @@ describe Yast::InstComplexWelcomeClient do
   before do
     stub_const("Yast::InstComplexWelcomeClient::DATA_PATH", store_path)
     allow(Yast::ProductLicense).to receive(:info_seen?) { true }
+    stub_const("Yast::Console", double.as_null_object)
   end
 
   after do
