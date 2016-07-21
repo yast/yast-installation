@@ -11,7 +11,19 @@ describe Yast::InstFinishClient do
       allow(Yast::WFM).to receive(:CallFunction).with(anything, ["Info"])
         .and_return({})
       allow(Yast::WFM).to receive(:CallFunction).with(anything, ["Write"])
+
       allow(Yast::UI).to receive(:PollInput)
+
+      allow(Yast::Wizard).to receive(:DisableBackButton)
+      allow(Yast::Wizard).to receive(:DisableNextButton)
+
+      allow(Yast::SlideShow).to receive(:Setup)
+      allow(Yast::SlideShow).to receive(:HaveSlideWidget).and_return(true)
+      allow(Yast::SlideShow).to receive(:StageProgress)
+      allow(Yast::SlideShow).to receive(:SubProgress)
+
+      allow(Yast::PackageCallbacks).to receive(:RegisterEmptyProgressCallbacks)
+      allow(Yast::PackageCallbacks).to receive(:RestorePreviousProgressCallbacks)
     end
 
     it "return :next if not aborted" do
@@ -29,6 +41,100 @@ describe Yast::InstFinishClient do
       expect(Yast::GetInstArgs).to receive(:going_back).and_return(true)
 
       expect(subject.main).to eq :auto
+    end
+
+    it "disabled during its run Back button" do
+      expect(Yast::Wizard).to receive(:DisableBackButton)
+
+      subject.main
+    end
+
+    it "disabled during its run Next button" do
+      expect(Yast::Wizard).to receive(:DisableNextButton)
+
+      subject.main
+    end
+
+    context "Slide Show handling" do
+      it "configure it unless already done" do
+        allow(Yast::SlideShow).to receive(:GetSetup).and_return(nil)
+
+        expect(Yast::SlideShow).to receive(:Setup)
+
+        subject.main
+      end
+
+      it "opens dialog unless already opened" do
+        allow(Yast::SlideShow).to receive(:HaveSlideWidget).and_return(false)
+
+        expect(Yast::SlideShow).to receive(:OpenDialog)
+
+        subject.main
+      end
+
+      it "closes dialog if it is opened by method" do
+        allow(Yast::SlideShow).to receive(:HaveSlideWidget).and_return(false)
+
+        expect(Yast::SlideShow).to receive(:CloseDialog)
+
+        subject.main
+      end
+
+      it "hides table" do
+        expect(Yast::SlideShow).to receive(:HideTable)
+
+        subject.main
+      end
+
+      it "moves to finish stage" do
+        expect(Yast::SlideShow).to receive(:MoveToStage).with("finish")
+
+        subject.main
+      end
+
+      it "sets subprogress to 0%" do
+        expect(Yast::SlideShow).to receive(:SubProgress).with(0, "")
+
+        subject.main
+      end
+
+      it "sets stage progress to 0%" do
+        expect(Yast::SlideShow).to receive(:StageProgress).with(0, anything)
+
+        subject.main
+      end
+
+      it "sets stage progress to 100% when finished" do
+        expect(Yast::SlideShow).to receive(:StageProgress).with(100, anything)
+
+        subject.main
+      end
+    end
+
+    it "ensures no callbacks during initialization called" do
+      expect(Yast::PackageCallbacks).to receive(:RegisterEmptyProgressCallbacks)
+
+      subject.main
+    end
+
+    it "restores previously used callbacks afterwards" do
+      expect(Yast::PackageCallbacks).to receive(:RestorePreviousProgressCallbacks)
+
+      subject.main
+    end
+
+    it "initializes installation target dir as packager targer" do
+      allow(Yast::Installation).to receive(:destdir).and_return("/mnt")
+
+      expect(Yast::Pkg).to receive(:TargetInitialize).with("/mnt")
+
+      subject.main
+    end
+
+    it "loads data from packager target" do
+      expect(Yast::Pkg).to receive(:TargetLoad)
+
+      subject.main
     end
   end
 end
