@@ -18,6 +18,9 @@ describe Yast::InstComplexWelcomeClient do
     stub_const("Yast::Console", double.as_null_object)
     stub_const("Yast::Keyboard", double.as_null_object)
     stub_const("Yast::Timezone", double.as_null_object)
+    # stub complete UI, as if it goes thrue component system it will get one of
+    # null object returned above as parameter and it raise exception from
+    # component system
     stub_const("Yast::UI", double.as_null_object)
   end
 
