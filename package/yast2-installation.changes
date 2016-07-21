@@ -1,9 +1,8 @@
 -------------------------------------------------------------------
 Thu Jul 21 11:52:59 UTC 2016 - jreidinger@suse.com
 
-- refactoring of inst_finish code and speed it up by reducing
-  amount of data copies (bnc#986649)
-- add test suite for inst_finish code
+- simplify and speed up inst_finish client(bnc#986649)
+- add test suite for inst_finish client
 - 3.1.202
 
 -------------------------------------------------------------------
