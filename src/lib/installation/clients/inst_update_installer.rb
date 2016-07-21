@@ -150,21 +150,49 @@ module Yast
     #
     # As a side effect, it stores the URL of the registration server used.
     #
-    # @return [URI,nil] self-update URL. nil if no URL was found.
+    # @return [Array<URI>] self-update URLs.
     def self_update_url_from_connect
-      require_registration_libraries
+      return [] unless require_registration_libraries
       base_product = Registration::SwMgmt.base_product_to_register
       product = Registration::SwMgmt.remote_product(base_product)
       options = Registration::Storage::InstallationOptions.instance
-      options.custom_url = Registration::UrlHelpers.registration_url
+      options.custom_url = registration_url
       updates = SUSE::Connect::YaST.list_installer_updates(product,
         url: options.custom_url)
       log.info("self-update repository using '#{options.custom_url}' " \
                "for product '#{base_product}' are #{updates}")
       updates.map { |u| URI(u.url) }
-    rescue LoadError
-      log.info "yast2-registration or SUSEConnect are not available"
-      []
+    end
+
+    # Return the URL of the preferred registration server
+    #
+    # If there's only 1 SMT server, it will be chosen automatically.
+    # If there's more than 1 SMT server, it will ask the user to choose one
+    # (@see #registration_server_from_user).
+    #
+    # @return [String] Registration URL
+    def registration_url
+      services = ::Registration::UrlHelpers.slp_discovery_feedback
+      return nil if services.empty?
+      service =
+        if services.size > 1
+          registration_service_from_user(services)
+        else
+          services.first
+        end
+      return nil unless service.respond_to?(:slp_url)
+      ::Registration::UrlHelpers.service_url(service.slp_url)
+    end
+
+    # Ask the user to chose a registration server
+    #
+    # @param services [Array<SlpServiceClass::Service>] Array of registration servers
+    def registration_service_from_user(services)
+      ::Registration::UI::RegserviceSelectionDialog.run(
+        services: services,
+        description: _("Select a detected registration server from the list\n" \
+          "to search for installer updates.")
+      )
     end
 
     # Return the self-update URL according to product's control file
@@ -340,7 +368,12 @@ module Yast
       require "registration/sw_mgmt"
       require "registration/url_helpers"
       require "registration/storage"
+      require "registration/ui/regservice_selection_dialog"
       require "suse/connect"
+      true
+    rescue LoadError
+      log.info "yast2-registration or SUSEConnect are not available"
+      false
     end
   end
 end

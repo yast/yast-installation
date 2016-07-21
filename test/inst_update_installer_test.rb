@@ -224,12 +224,13 @@ describe Yast::InstUpdateInstaller do
             double("suse_connect", list_installer_updates: [update0, update1])
           end
 
-          let(:url_helpers) { double("url_helpers", registration_url: smt_url) }
+          let(:url_helpers) { double("url_helpers", registration_url: smt_url, slp_discovery_feedback: []) }
 
           before do
             allow(subject).to receive(:require).with("registration/sw_mgmt").and_return(true)
             allow(subject).to receive(:require).with("registration/url_helpers").and_return(true)
             allow(subject).to receive(:require).with("registration/storage").and_return(true)
+            allow(subject).to receive(:require).with("registration/ui/regservice_selection_dialog").and_return(true)
             allow(subject).to receive(:require).with("suse/connect").and_return(true)
             stub_const("Registration::SwMgmt", sw_mgmt)
             stub_const("Registration::UrlHelpers", url_helpers)
@@ -245,14 +246,14 @@ describe Yast::InstUpdateInstaller do
               .and_return(true)
             expect(manager).to receive(:add_repository).with(URI(update1_url))
               .and_return(true)
-            expect(suse_connect).to receive(:list_installer_updates).with(product, url: smt_url)
+            expect(suse_connect).to receive(:list_installer_updates).with(product, url: nil)
               .and_return([update0, update1])
             expect(subject.main).to eq(:restart_yast)
           end
 
           it "saves the registration URL" do
             expect(manager).to receive(:add_repository).twice
-            expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(smt_url)
+            expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(nil)
             subject.main
           end
         end
