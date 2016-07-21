@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Jul 21 11:52:59 UTC 2016 - jreidinger@suse.com
+
+- refactoring of inst_finish code and speed it up by reducing
+  amount of data copies (bnc#986649)
+- add test suite for inst_finish code
+- 3.1.202
+
+-------------------------------------------------------------------
 Mon Jul 18 13:13:05 UTC 2016 - lslezak@suse.cz
 
 - Run extra inst-sys cleanup to free more memory on systems with
