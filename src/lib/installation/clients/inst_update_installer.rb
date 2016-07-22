@@ -195,7 +195,7 @@ module Yast
 
     rescue ::Installation::UpdatesManager::CouldNotProbeRepo
       if Mode.auto
-        Report.Error(could_not_probe_repo_msg)
+        Report.Warning(could_not_probe_repo_msg)
       else
         retry if remote_self_update_url? && configure_network?
       end

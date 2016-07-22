@@ -111,7 +111,7 @@ describe Yast::InstUpdateInstaller do
             end
 
             it "shows an error" do
-              expect(Yast::Report).to receive(:Error)
+              expect(Yast::Report).to receive(:Warning)
               expect(subject.main).to eq(:next)
             end
           end
