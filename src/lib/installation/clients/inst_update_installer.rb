@@ -196,8 +196,8 @@ module Yast
     rescue ::Installation::UpdatesManager::CouldNotProbeRepo
       if Mode.auto
         Report.Warning(could_not_probe_repo_msg)
-      else
-        retry if remote_self_update_url? && configure_network?
+      elsif remote_self_update_url? && configure_network?
+        retry
       end
       false
     end
@@ -217,9 +217,9 @@ module Yast
     # @return [Boolean] true if the network configuration client was launched;
     #                   false if the network is not configured.
     def configure_network?
-      msg = could_not_probe_repo_msg + "\n" \
-        "Would you like to check your network configuration\n" \
-        "and try installing the updates again?"
+      msg = could_not_probe_repo_msg +
+        _("\nWould you like to check your network configuration\n" \
+        "and try installing the updates again?")
 
       if Popup.YesNo(msg)
         Yast::WFM.CallFunction("inst_lan", [{ "skip_detection" => true }])
@@ -270,6 +270,5 @@ module Yast
         "If you need a proxy server to access the update repository\n" \
         "then use the \"proxy\" boot parameter.\n"), self_update_url)
     end
-
   end
 end
