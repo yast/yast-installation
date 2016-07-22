@@ -93,20 +93,35 @@ describe Yast::InstUpdateInstaller do
       end
 
       context "when repository can't be probed" do
+        before do
+          allow(manager).to receive(:add_repository)
+            .and_raise(::Installation::UpdatesManager::CouldNotProbeRepo)
+        end
+
         context "and self-update URL is remote" do
           it "shows a dialog suggesting to check the network configuration" do
-            expect(Yast::Popup).to receive(:YesNo).with(/installer updates from/)
-            expect(manager).to receive(:add_repository)
-              .and_raise(::Installation::UpdatesManager::CouldNotProbeRepo)
+            expect(Yast::Popup).to receive(:YesNo)
             expect(subject.main).to eq(:next)
+          end
+
+          context "in AutoYaST installation or upgrade" do
+            before do
+              allow(Yast::Mode).to receive(:auto).at_least(1).and_return(true)
+              allow(Yast::Profile).to receive(:current).and_return({})
+            end
+
+            it "shows an error" do
+              expect(Yast::Report).to receive(:Error)
+              expect(subject.main).to eq(:next)
+            end
           end
         end
 
         context "and self-update URL is not remote" do
           let(:url) { "cd:/?device=sr0" }
+
           it "shows a dialog suggesting to check the network configuration" do
             expect(Yast::Popup).to_not receive(:YesNo)
-            expect(manager).to receive(:add_repository).and_raise(::Installation::UpdatesManager::CouldNotProbeRepo)
             expect(subject.main).to eq(:next)
           end
         end
@@ -248,7 +263,6 @@ describe Yast::InstUpdateInstaller do
         expect(subject.main).to eq(:next)
       end
     end
-
   end
 
   describe "#update_installer" do
