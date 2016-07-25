@@ -162,6 +162,12 @@ module Yast
       log.info("self-update repository using '#{options.custom_url}' " \
                "for product '#{base_product}' are #{updates}")
       updates.map { |u| URI(u.url) }
+    rescue SocketError
+      if configure_network?(could_not_find_updates_msg)
+        retry
+      else
+        []
+      end
     end
 
     # Return the URL of the preferred registration server
@@ -281,9 +287,10 @@ module Yast
       false
 
     rescue ::Installation::UpdatesManager::CouldNotProbeRepo
+      msg = could_not_probe_repo_msg(url)
       if Mode.auto
-        Report.Warning(could_not_probe_repo_msg(url))
-      elsif remote_url?(url) && configure_network?(url)
+        Report.Warning(msg)
+      elsif remote_url?(url) && configure_network?(msg)
         retry
       end
       false
@@ -305,9 +312,8 @@ module Yast
     # @param url [URI] URL to show in the message
     # @return [Boolean] true if the network configuration client was launched;
     #                   false if the network is not configured.
-    def configure_network?(url)
-      msg = could_not_probe_repo_msg(url) +
-        _("\nWould you like to check your network configuration\n" \
+    def configure_network?(reason)
+      msg = reason + _("\nWould you like to check your network configuration\n" \
         "and try installing the updates again?")
 
       if Popup.YesNo(msg)
@@ -359,6 +365,10 @@ module Yast
         "\n" \
         "If you need a proxy server to access the update repository\n" \
         "then use the \"proxy\" boot parameter.\n"), url.to_s)
+    end
+
+    def could_not_find_updates_msg
+      _("Could not reach a registration server to search for updates.\n")
     end
 
     # Require registration libraries
