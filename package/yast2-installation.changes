@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Jul 22 13:48:12 UTC 2016 - igonzalezsosa@suse.com
+
+- Don't halt the installation if installer updates server
+  cannot be reached when using AutoYaST (bsc#988949)
+- 3.1.203
+
+-------------------------------------------------------------------
 Thu Jul 21 11:52:59 UTC 2016 - jreidinger@suse.com
 
 - simplify and speed up inst_finish client (bnc#986649)
