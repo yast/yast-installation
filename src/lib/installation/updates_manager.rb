@@ -43,18 +43,7 @@ module Installation
     attr_reader :driver_updates
 
     # Base exception to be used for repository problems
-    class RepoError < StandardError
-      # @return [URI] Repository URI
-      attr_reader :uri
-
-      # Constructor
-      #
-      # @param uri [URI] Repository URI
-      def initialize(uri)
-        super()
-        @uri = uri
-      end
-    end
+    class RepoError < StandardError; end
 
     # The URL was found but a valid repo is not there.
     class NotValidRepo < RepoError; end
@@ -104,13 +93,13 @@ module Installation
       has_packages
     rescue Installation::UpdateRepository::NotValidRepo
       log.warn("Update repository at #{uri} could not be found")
-      raise NotValidRepo, uri
+      raise NotValidRepo
     rescue Installation::UpdateRepository::FetchError
       log.error("Update repository at #{uri} was found but update could not be fetched")
-      raise CouldNotFetchUpdateFromRepo, uri
+      raise CouldNotFetchUpdateFromRepo
     rescue Installation::UpdateRepository::CouldNotProbeRepo
       log.error("Update repository at #{uri} could not be read")
-      raise CouldNotProbeRepo, uri
+      raise CouldNotProbeRepo
     end
 
     # Applies all the updates

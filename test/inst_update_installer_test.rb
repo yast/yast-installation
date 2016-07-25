@@ -85,7 +85,7 @@ describe Yast::InstUpdateInstaller do
         it "shows an error and returns :next" do
           expect(Yast::Popup).to receive(:Error)
           expect(manager).to receive(:add_repository)
-            .and_raise(::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo.new(url))
+            .and_raise(::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo)
           expect(subject.main).to eq(:next)
         end
       end
@@ -110,7 +110,7 @@ describe Yast::InstUpdateInstaller do
           it "shows a dialog suggesting to check the network configuration" do
             expect(Yast::Popup).to receive(:YesNo)
             expect(manager).to receive(:add_repository)
-              .and_raise(::Installation::UpdatesManager::CouldNotProbeRepo.new(URI(url)))
+              .and_raise(::Installation::UpdatesManager::CouldNotProbeRepo)
             expect(subject.main).to eq(:next)
           end
 
@@ -133,7 +133,7 @@ describe Yast::InstUpdateInstaller do
           it "shows a dialog suggesting to check the network configuration" do
             expect(Yast::Popup).to_not receive(:YesNo)
             expect(manager).to receive(:add_repository)
-              .and_raise(::Installation::UpdatesManager::CouldNotProbeRepo.new(URI(url)))
+              .and_raise(::Installation::UpdatesManager::CouldNotProbeRepo)
             expect(subject.main).to eq(:next)
           end
         end
@@ -156,7 +156,7 @@ describe Yast::InstUpdateInstaller do
         it "shows an error if update is not found" do
           expect(Yast::Popup).to receive(:Error)
           expect(manager).to receive(:add_repository).with(URI(custom_url))
-            .and_raise(::Installation::UpdatesManager::NotValidRepo.new(URI(custom_url)))
+            .and_raise(::Installation::UpdatesManager::NotValidRepo)
           expect(subject.main).to eq(:next)
         end
       end
@@ -176,7 +176,7 @@ describe Yast::InstUpdateInstaller do
           it "does not show an error if update is not found" do
             expect(Yast::Popup).to_not receive(:Error)
             expect(manager).to receive(:add_repository).with(URI(real_url))
-              .and_raise(::Installation::UpdatesManager::NotValidRepo.new(URI(real_url)))
+              .and_raise(::Installation::UpdatesManager::NotValidRepo)
             expect(subject.main).to eq(:next)
           end
 
@@ -284,7 +284,7 @@ describe Yast::InstUpdateInstaller do
             it "shows an error and returns :next if update fails" do
               expect(Yast::Report).to receive(:Error)
               expect(manager).to receive(:add_repository)
-                .and_raise(::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo.new(url))
+                .and_raise(::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo)
               expect(subject.main).to eq(:next)
             end
           end
@@ -301,7 +301,7 @@ describe Yast::InstUpdateInstaller do
             it "does not show an error if update is not found" do
               expect(Yast::Report).to_not receive(:Error)
               expect(manager).to receive(:add_repository).with(URI(real_url))
-                .and_raise(::Installation::UpdatesManager::NotValidRepo.new(URI(real_url)))
+                .and_raise(::Installation::UpdatesManager::NotValidRepo)
               expect(subject.main).to eq(:next)
             end
 

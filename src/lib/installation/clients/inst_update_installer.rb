@@ -268,22 +268,22 @@ module Yast
       log.info("Adding update from #{url}")
       updates_manager.add_repository(url)
 
-    rescue ::Installation::UpdatesManager::NotValidRepo => e
-      if !default_url?(e.uri)
+    rescue ::Installation::UpdatesManager::NotValidRepo
+      if !default_url?(url)
         # TRANSLATORS: %s is an URL
-        Report.Error(format(_("A valid update could not be found at\n%s.\n\n"), e.uri))
+        Report.Error(format(_("A valid update could not be found at\n%s.\n\n"), url))
       end
       false
 
-    rescue ::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo => e
+    rescue ::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo
       # TRANSLATORS: %s is an URL
-      Report.Error(format(_("Could not fetch update from\n%s.\n\n"), e.uri))
+      Report.Error(format(_("Could not fetch update from\n%s.\n\n"), url))
       false
 
     rescue ::Installation::UpdatesManager::CouldNotProbeRepo
       if Mode.auto
-        Report.Warning(could_not_probe_repo_msg)
-      elsif remote_url?(e.uri) && configure_network?(e.uri)
+        Report.Warning(could_not_probe_repo_msg(url))
+      elsif remote_url?(url) && configure_network?(url)
         retry
       end
       false
