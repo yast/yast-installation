@@ -156,13 +156,16 @@ module Yast
       base_product = Registration::SwMgmt.base_product_to_register
       product = Registration::SwMgmt.remote_product(base_product)
       options = Registration::Storage::InstallationOptions.instance
-      options.custom_url = registration_url
+      url = registration_url
+      return [] if url == :cancel
+      options.custom_url = url == :scc ? nil : url
       updates = SUSE::Connect::YaST.list_installer_updates(product,
         url: options.custom_url)
       log.info("self-update repository using '#{options.custom_url}' " \
                "for product '#{base_product}' are #{updates}")
       updates.map { |u| URI(u.url) }
-    rescue SocketError
+    rescue SocketError => e
+      log.warn("Registration server could not be reached (URL: #{options.custom_url})")
       if configure_network?(could_not_find_updates_msg)
         retry
       else
@@ -172,13 +175,17 @@ module Yast
 
     # Return the URL of the preferred registration server
     #
+    # If a server was specified via Linuxrc command line, chose that one.
     # If there's only 1 SMT server, it will be chosen automatically.
     # If there's more than 1 SMT server, it will ask the user to choose one
     # (@see #registration_server_from_user).
     #
-    # @return [String] Registration URL
+    # @return [String,Symbol] Registration URL; :scc if SCC server was selected;
+    #                         :cancel if dialog was dismissed.
     def registration_url
-      services = ::Registration::UrlHelpers.slp_discovery_feedback
+      boot_url = ::Registration::UrlHelpers.boot_reg_url
+      return boot_url if boot_url
+      services = ::Registration::UrlHelpers.slp_discovery
       return nil if services.empty?
       service =
         if services.size > 1
@@ -186,13 +193,15 @@ module Yast
         else
           services.first
         end
-      return nil unless service.respond_to?(:slp_url)
+      return service unless service.respond_to?(:slp_url)
       ::Registration::UrlHelpers.service_url(service.slp_url)
     end
 
     # Ask the user to chose a registration server
     #
     # @param services [Array<SlpServiceClass::Service>] Array of registration servers
+    # @return [SlpServiceClass::Service,Symbol] Registration service to use; :scc if SCC is selected;
+    #                                           :cancel if the dialog was dismissed.
     def registration_service_from_user(services)
       ::Registration::UI::RegserviceSelectionDialog.run(
         services: services,
