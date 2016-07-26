@@ -109,10 +109,10 @@ module Yast
     #
     # @return [Array<URI>] self-update URLs
     #
-    # @see #custom_self_update_url
     # @see #default_self_update_url
+    # @see #custom_self_update_url
     def self_update_urls
-      return @self_update_urls unless @self_update_urls.nil?
+      return @self_update_urls if @self_update_urls
       @self_update_urls = Array(custom_self_update_url)
       @self_update_urls = default_self_update_urls if @self_update_urls.empty?
       log.info("self-update URLs are #{@self_update_urls}")
@@ -125,7 +125,7 @@ module Yast
     #
     # @return [Array<URI>] self-update URLs
     def default_self_update_urls
-      return @default_self_update_urls unless @default_self_update_urls.nil?
+      return @default_self_update_urls if @default_self_update_urls
       @default_self_update_urls = self_update_url_from_connect
       return @default_self_update_urls unless @default_self_update_urls.empty?
       @default_self_update_urls = Array(self_update_url_from_control)
@@ -146,9 +146,10 @@ module Yast
     # Return the self-update URLs from SCC/SMT server
     #
     # Return an empty array if yast2-registration or SUSEConnect are not
-    # available (for instance in openSUSE). More than 1 URLs can be specified.
+    # available (for instance in openSUSE). More than 1 URLs can be found.
     #
-    # As a side effect, it stores the URL of the registration server used.
+    # As a side effect, it stores the URL of the registration server used
+    # in the installation options.
     #
     # @return [Array<URI>] self-update URLs.
     def self_update_url_from_connect
@@ -165,7 +166,7 @@ module Yast
                "for product '#{base_product}' are #{updates}")
       updates.map { |u| URI(u.url) }
     rescue SocketError => e
-      log.warn("Registration server could not be reached (URL: #{options.custom_url})")
+      log.warn("Registration server (URL #{options.custom_url}) could not be reached (#{e.message})")
       if configure_network?(could_not_find_updates_msg)
         retry
       else
@@ -204,7 +205,7 @@ module Yast
     #                                           :cancel if the dialog was dismissed.
     def registration_service_from_user(services)
       ::Registration::UI::RegserviceSelectionDialog.run(
-        services: services,
+        services:    services,
         description: _("Select a detected registration server from the list\n" \
           "to search for installer updates.")
       )
