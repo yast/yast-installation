@@ -35,6 +35,7 @@ module Yast
     Yast.import "Report"
     Yast.import "NetworkService"
     Yast.import "Mode"
+    Yast.import "Profile"
 
     def main
       textdomain "installation"
@@ -176,16 +177,21 @@ module Yast
 
     # Return the URL of the preferred registration server
     #
-    # If a server was specified via Linuxrc command line, chose that one.
-    # If there's only 1 SMT server, it will be chosen automatically.
-    # If there's more than 1 SMT server, it will ask the user to choose one
-    # (@see #registration_server_from_user).
+    # Determined in the following order:
+    #
+    # * via AutoYaST profile
+    # * regurl boot parameter
+    # * SLP look up
+    #   * If there's only 1 SMT server, it will be chosen automatically.
+    #   * If there's more than 1 SMT server, it will ask the user to choose one
     #
     # @return [String,Symbol] Registration URL; :scc if SCC server was selected;
     #                         :cancel if dialog was dismissed.
+    #
+    # @see #registration_server_from_user
     def registration_url
-      boot_url = ::Registration::UrlHelpers.boot_reg_url
-      return boot_url if boot_url
+      url = registration_url_from_profile || ::Registration::UrlHelpers.boot_reg_url
+      return url if url
       services = ::Registration::UrlHelpers.slp_discovery
       return nil if services.empty?
       service =
@@ -196,6 +202,18 @@ module Yast
         end
       return service unless service.respond_to?(:slp_url)
       ::Registration::UrlHelpers.service_url(service.slp_url)
+    end
+
+    # Return the registration server URL from the AutoYaST profile
+    #
+    # @return [URI,nil] the self-update URL, nil if not running in AutoYaST mode
+    #   or when the URL is not defined in the profile
+    def registration_url_from_profile
+      return nil unless Mode.auto
+
+      profile = Yast::Profile.current
+      profile_url = profile.fetch("suse_register", {})["reg_server"]
+      get_url_from(profile_url)
     end
 
     # Ask the user to chose a registration server
@@ -226,12 +244,12 @@ module Yast
     end
 
     # Return the self-update URL from the AutoYaST profile
+    #
     # @return [URI,nil] the self-update URL, nil if not running in AutoYaST mode
     #   or when the URL is not defined in the profile
     def self_update_url_from_profile
       return nil unless Mode.auto
 
-      Yast.import "Profile"
       profile = Yast::Profile.current
       profile_url = profile.fetch("general", {})["self_update_url"]
 

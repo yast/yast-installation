@@ -343,6 +343,24 @@ describe Yast::InstUpdateInstaller do
               subject.main
             end
           end
+
+          context "when a registration server was specified via AutoYaST profile" do
+            let(:reg_server_url) { "http://ay.test.example.com/update" }
+
+            before do
+              allow(Yast::Mode).to receive(:auto).at_least(1).and_return(true)
+              allow(Yast::Profile).to receive(:current)
+                .and_return("suse_register" => { "reg_server" => reg_server_url })
+            end
+
+            it "uses the given server" do
+              expect(suse_connect).to receive(:list_installer_updates).with(product, url: URI(reg_server_url))
+                .and_return([update0])
+              expect(manager).to receive(:add_repository).with(URI(update0_url))
+                .and_return(true)
+              subject.main
+            end
+          end
         end
 
         context "in AutoYaST installation or upgrade" do
