@@ -35,7 +35,8 @@ describe Yast::InstUpdateInstaller do
     allow(::Installation::UpdatesManager).to receive(:new).and_return(manager)
     allow(Yast::Installation).to receive(:restarting?)
     allow(Yast::Installation).to receive(:restart!) { :restart_yast }
-    allow(subject).to receive(:require).with("registration/sw_mgmt").and_raise(LoadError)
+    allow(subject).to receive(:require).with("registration/url_helpers").and_raise(LoadError)
+    allow(::FileUtils).to receive(:touch)
 
     # stub the Profile module to avoid dependency on autoyast2-installation
     ay_profile = double("Yast::Profile")
@@ -190,114 +191,86 @@ describe Yast::InstUpdateInstaller do
         end
 
         context "when a SCC/SMT server defines the URL" do
-          let(:update0_url) { "http://update.suse.com/sle12/12.2" }
-          let(:update1_url) { "http://update.suse.com/sles12/12.2" }
-          let(:smt0_url) { "http://update.suse.com" }
-          let(:smt1_url) { "http://update.example.net" }
-          let(:service0) { double("service", slp_url: smt0_url) }
-          let(:service1) { double("service", slp_url: smt1_url) }
+          let(:smt0) { double("service", slp_url: "http://update.suse.com") }
+          let(:smt1) { double("service", slp_url: "http://update.example.net") }
 
-          let(:base_product) do
-            {
-              "arch"         => "x86_64",
-              "name"         => "SLES",
-              "version"      => "12-2",
-              "release_type" => ""
-            }
-          end
-
-          let(:product) do
+          let(:update0) do
             OpenStruct.new(
-              arch:         base_product["arch"],
-              identifier:   base_product["name"],
-              version:      base_product["version"],
-              release_type: base_product["release_type"]
+              name: "SLES-12-Installer-Updates-0",
+              url:  "http://update.suse.com/updates/sle12/12.2"
             )
           end
 
-          let(:update0) { OpenStruct.new(name: "SLES-12-Installer-Updates-0", url: update0_url) }
-          let(:update1) { OpenStruct.new(name: "SLES-12-Installer-Updates-1", url: update1_url) }
-
-          let(:sw_mgmt) do
-            double("sw_mgmt", base_product_to_register: base_product,
-                              remote_product:           product)
+          let(:update1) do
+            OpenStruct.new(
+              name: "SLES-12-Installer-Updates-1",
+              url: "http://update.suse.com/updates/sles12/12.2"
+            )
           end
 
-          let(:regservice_selection) { double("regservice_selection") }
+          let(:regservice_selection) { Class.new }
 
-          let(:suse_connect) do
-            double("suse_connect", list_installer_updates: [update0, update1])
-          end
-
-          let(:url_helpers) { double("url_helpers", registration_url: smt0_url, slp_discovery: []) }
+          let(:url_helpers) { double("url_helpers", registration_url: smt0.slp_url, slp_discovery: []) }
           let(:regurl) { nil }
 
+          let(:registration) { double("registration", url: smt0.slp_url) }
+          let(:registration_class) { double("registration_class", new: registration) }
+
+          let(:updates) { [update0, update1] }
+
           before do
-            allow(subject).to receive(:require).with("registration/sw_mgmt").and_return(true)
-            allow(subject).to receive(:require).with("registration/url_helpers").and_return(true)
-            allow(subject).to receive(:require).with("registration/storage").and_return(true)
-            allow(subject).to receive(:require).with("registration/ui/regservice_selection_dialog").and_return(true)
-            allow(subject).to receive(:require).with("suse/connect").and_return(true)
-            stub_const("Registration::SwMgmt", sw_mgmt)
+            # Load registration libraries
+            allow(subject).to receive(:require).with("registration/url_helpers")
+              .and_return(true)
+            allow(subject).to receive(:require).with("registration/registration")
+              .and_return(true)
+            allow(subject).to receive(:require).with("registration/ui/regservice_selection_dialog")
+              .and_return(true)
+            stub_const("Registration::Registration", registration_class)
             stub_const("Registration::UrlHelpers", url_helpers)
             stub_const("Registration::Storage::InstallationOptions", FakeInstallationOptions)
-            stub_const("SUSE::Connect::YaST", suse_connect)
             stub_const("Registration::UI::RegserviceSelectionDialog", regservice_selection)
-            allow(::FileUtils).to receive(:touch)
+
             allow(url_helpers).to receive(:service_url) { |u| u }
             allow(url_helpers).to receive(:boot_reg_url).and_return(regurl)
+            allow(registration).to receive(:get_updates_list).and_return(updates)
+            allow(manager).to receive(:add_repository).and_return(true)
           end
 
           it "tries to update the installer using the given URL" do
-            expect(sw_mgmt).to receive(:remote_product).with(base_product)
-              .and_return(product)
-            expect(manager).to receive(:add_repository).with(URI(update0_url))
+            expect(manager).to receive(:add_repository).with(URI(update0.url))
               .and_return(true)
-            expect(manager).to receive(:add_repository).with(URI(update1_url))
+            expect(manager).to receive(:add_repository).with(URI(update1.url))
               .and_return(true)
-            expect(suse_connect).to receive(:list_installer_updates).with(product, url: nil)
-              .and_return([update0, update1])
             expect(subject.main).to eq(:restart_yast)
           end
 
           it "saves the registration URL" do
-            expect(manager).to receive(:add_repository).twice
-            expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(nil)
+            allow(manager).to receive(:add_repository)
+            expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(smt0.slp_url)
             subject.main
-          end
-
-          context "when cannot connect to registration server" do
-            it "shows a dialog suggesting to check the network configuration" do
-              expect(manager).to receive(:add_repository)
-              expect(Yast::Popup).to receive(:YesNo).and_return(false)
-              expect(suse_connect).to receive(:list_installer_updates).with(product, url: nil)
-                .and_raise(SocketError)
-              subject.main
-            end
           end
 
           context "when more than one SMT server exist" do
             before do
-              allow(url_helpers).to receive(:slp_discovery).and_return([service0, service1])
+              allow(url_helpers).to receive(:slp_discovery).and_return([smt0, smt1])
             end
 
-            it "ask the user to chose one of them" do
-              expect(regservice_selection).to receive(:run).and_return(service0)
-              expect(suse_connect).to receive(:list_installer_updates).with(product, url: service0.slp_url)
-                .and_return([update0])
-              expect(manager).to receive(:add_repository).with(URI(update0_url))
-                .and_return(true)
+            it "ask the user to choose one of them" do
+              expect(regservice_selection).to receive(:run).and_return(smt0)
+              expect(registration_class).to receive(:new).with(smt0.slp_url)
+                .and_return(registration)
               expect(subject.main).to eq(:restart_yast)
             end
 
             context "if user cancels the dialog" do
               before do
                 allow(regservice_selection).to receive(:run).and_return(:cancel)
-                allow(manager).to receive(:add_repository)
+                allow(manager).to receive(:add_repository) # it will use the default URL
               end
 
               it "does not search for updates" do
-                expect(suse_connect).to_not receive(:list_installer_updates)
+                expect(registration).to_not receive(:get_updates_list)
                 subject.main
               end
             end
@@ -308,10 +281,9 @@ describe Yast::InstUpdateInstaller do
               end
 
               it "asks the SCC server" do
-                expect(suse_connect).to receive(:list_installer_updates).with(product, url: nil)
-                  .and_return([update0])
-                expect(manager).to receive(:add_repository).with(URI(update0_url))
-                  .and_return(true)
+                expect(registration_class).to receive(:new).with(nil)
+                  .and_return(registration)
+                allow(manager).to receive(:add_repository)
                 subject.main
               end
             end
@@ -320,10 +292,8 @@ describe Yast::InstUpdateInstaller do
               let(:regurl) { "http://regserver.example.net" }
 
               it "uses the given server" do
-                expect(suse_connect).to receive(:list_installer_updates).with(product, url: regurl)
-                  .and_return([update0])
-                expect(manager).to receive(:add_repository).with(URI(update0_url))
-                  .and_return(true)
+                expect(registration_class).to receive(:new).with(regurl)
+                  .and_return(registration)
                 subject.main
               end
             end
@@ -331,15 +301,13 @@ describe Yast::InstUpdateInstaller do
 
           context "when only one SMT server exist" do
             before do
-              allow(url_helpers).to receive(:slp_discovery).and_return([service0])
+              allow(url_helpers).to receive(:slp_discovery).and_return([smt0])
             end
 
             it "is selected automatically" do
               expect(regservice_selection).to_not receive(:run)
-              expect(suse_connect).to receive(:list_installer_updates).with(product, url: service0.slp_url)
-                .and_return([update0])
-              expect(manager).to receive(:add_repository).with(URI(update0_url))
-                .and_return(true)
+              expect(registration_class).to receive(:new).with(smt0.slp_url)
+                .and_return(registration)
               subject.main
             end
           end
@@ -354,10 +322,8 @@ describe Yast::InstUpdateInstaller do
             end
 
             it "uses the given server" do
-              expect(suse_connect).to receive(:list_installer_updates).with(product, url: URI(reg_server_url))
-                .and_return([update0])
-              expect(manager).to receive(:add_repository).with(URI(update0_url))
-                .and_return(true)
+              expect(registration_class).to receive(:new).with(URI(reg_server_url))
+                .and_return(registration)
               subject.main
             end
           end

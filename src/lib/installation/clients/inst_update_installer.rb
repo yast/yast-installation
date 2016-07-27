@@ -155,24 +155,13 @@ module Yast
     # @return [Array<URI>] self-update URLs.
     def self_update_url_from_connect
       return [] unless require_registration_libraries
-      base_product = Registration::SwMgmt.base_product_to_register
-      product = Registration::SwMgmt.remote_product(base_product)
-      options = Registration::Storage::InstallationOptions.instance
       url = registration_url
       return [] if url == :cancel
-      options.custom_url = url == :scc ? nil : url
-      updates = SUSE::Connect::YaST.list_installer_updates(product,
-        url: options.custom_url)
-      log.info("self-update repository using '#{options.custom_url}' " \
-               "for product '#{base_product}' are #{updates}")
-      updates.map { |u| URI(u.url) }
-    rescue SocketError => e
-      log.warn("Registration server (URL #{options.custom_url}) could not be reached (#{e.message})")
-      if configure_network?(could_not_find_updates_msg)
-        retry
-      else
-        []
-      end
+
+      registration = Registration::Registration.new(url == :scc ? nil : url)
+      # Save custom_url into installation options
+      Registration::Storage::InstallationOptions.instance.custom_url = registration.url
+      registration.get_updates_list.map { |u| URI(u.url) }
     end
 
     # Return the URL of the preferred registration server
@@ -395,22 +384,16 @@ module Yast
         "then use the \"proxy\" boot parameter.\n"), url.to_s)
     end
 
-    def could_not_find_updates_msg
-      _("Could not reach a registration server to search for updates.\n")
-    end
-
     # Require registration libraries
     #
     # @raise LoadError
     def require_registration_libraries
-      require "registration/sw_mgmt"
       require "registration/url_helpers"
-      require "registration/storage"
+      require "registration/registration"
       require "registration/ui/regservice_selection_dialog"
-      require "suse/connect"
       true
     rescue LoadError
-      log.info "yast2-registration or SUSEConnect are not available"
+      log.info "yast2-registration is not available"
       false
     end
   end
