@@ -15,6 +15,7 @@
 
 require "installation/updates_manager"
 require "uri"
+require "yaml"
 
 module Yast
   class InstUpdateInstaller
@@ -23,6 +24,7 @@ module Yast
 
     UPDATED_FLAG_FILENAME = "installer_updated".freeze
     REMOTE_SCHEMES = ["http", "https", "ftp", "tftp", "sftp", "nfs", "nfs4", "cifs", "smb"].freeze
+    REGISTRATION_DATA_PATH = "/var/lib/YaST2/inst_update_installer.yaml".freeze
 
     Yast.import "Pkg"
     Yast.import "GetInstArgs"
@@ -42,7 +44,10 @@ module Yast
 
       return :back if GetInstArgs.going_back
 
-      Installation.finish_restarting! if Installation.restarting?
+      if Installation.restarting?
+        load_registration_url
+        Installation.finish_restarting!
+      end
 
       return :next unless try_to_update?
 
@@ -159,8 +164,9 @@ module Yast
       return [] if url == :cancel
 
       registration = Registration::Registration.new(url == :scc ? nil : url)
-      # Save custom_url into installation options
+      # Set custom_url into installation options
       Registration::Storage::InstallationOptions.instance.custom_url = registration.url
+      store_registration_url(registration.url)
       registration.get_updates_list.map { |u| URI(u.url) }
     end
 
@@ -395,6 +401,25 @@ module Yast
     rescue LoadError
       log.info "yast2-registration is not available"
       false
+    end
+
+    # Store URL of registration server to be used by inst_scc client
+    #
+    # @params [String] Registration server URL.
+    def store_registration_url(url)
+      data = { "custom_url" => url }
+      File.write(REGISTRATION_DATA_PATH, data.to_yaml)
+    end
+
+    # Load URL of registration server to be used by inst_scc client
+    #
+    # @return [Boolean] true if data was loaded; false otherwise.
+    def load_registration_url
+      return false unless File.exist?(REGISTRATION_DATA_PATH) && require_registration_libraries
+      data = YAML.load(File.read(REGISTRATION_DATA_PATH))
+      Registration::Storage::InstallationOptions.instance.custom_url = data["custom_url"]
+      ::FileUtils.rm_rf(REGISTRATION_DATA_PATH)
+      true
     end
   end
 end

@@ -27,16 +27,18 @@ describe Yast::InstUpdateInstaller do
   let(:network_running) { true }
   let(:repo) { double("repo") }
   let(:has_repos) { true }
+  let(:restarting) { false }
 
   before do
     allow(Yast::Pkg).to receive(:GetArchitecture).and_return(arch)
     allow(Yast::Mode).to receive(:auto).and_return(false)
     allow(Yast::NetworkService).to receive(:isNetworkRunning).and_return(network_running)
     allow(::Installation::UpdatesManager).to receive(:new).and_return(manager)
-    allow(Yast::Installation).to receive(:restarting?)
+    allow(Yast::Installation).to receive(:restarting?).and_return(restarting)
     allow(Yast::Installation).to receive(:restart!) { :restart_yast }
     allow(subject).to receive(:require).with("registration/url_helpers").and_raise(LoadError)
     allow(::FileUtils).to receive(:touch)
+    stub_const("Registration::Storage::InstallationOptions", FakeInstallationOptions)
 
     # stub the Profile module to avoid dependency on autoyast2-installation
     ay_profile = double("Yast::Profile")
@@ -228,13 +230,13 @@ describe Yast::InstUpdateInstaller do
               .and_return(true)
             stub_const("Registration::Registration", registration_class)
             stub_const("Registration::UrlHelpers", url_helpers)
-            stub_const("Registration::Storage::InstallationOptions", FakeInstallationOptions)
             stub_const("Registration::UI::RegserviceSelectionDialog", regservice_selection)
 
             allow(url_helpers).to receive(:service_url) { |u| u }
             allow(url_helpers).to receive(:boot_reg_url).and_return(regurl)
             allow(registration).to receive(:get_updates_list).and_return(updates)
             allow(manager).to receive(:add_repository).and_return(true)
+            allow(File).to receive(:write)
           end
 
           it "tries to update the installer using the given URL" do
@@ -245,9 +247,11 @@ describe Yast::InstUpdateInstaller do
             expect(subject.main).to eq(:restart_yast)
           end
 
-          it "saves the registration URL" do
+          it "saves the registration URL to be used later" do
             allow(manager).to receive(:add_repository)
             expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(smt0.slp_url)
+            expect(File).to receive(:write).with(/inst_update_installer.yaml/,
+              { "custom_url" => smt0.slp_url }.to_yaml)
             subject.main
           end
 
@@ -413,6 +417,49 @@ describe Yast::InstUpdateInstaller do
         expect(Yast::Linuxrc).to receive(:InstallInf).with("SelfUpdate").and_return("0")
         expect(subject).to_not receive(:update_installer)
         expect(subject.main).to eq(:next)
+      end
+    end
+
+    context "when restarting YaST2" do
+      let(:restarting) { true }
+      let(:data_file_exists) { true }
+      let(:smt_url) { "https://smt.example.net" }
+      let(:registration_libs) { true }
+
+      before do
+        allow(File).to receive(:exist?)
+        allow(File).to receive(:exist?).with(/inst_update_installer.yaml/)
+          .and_return(data_file_exists)
+        allow(subject).to receive(:require_registration_libraries)
+          .and_return(registration_libs)
+        allow(File).to receive(:exist?).with(/installer_updated/).and_return(true)
+      end
+
+      context "and data file is available" do
+        it "sets custom_url" do
+          allow(File).to receive(:read).and_return("---\ncustom_url: #{smt_url}\n")
+          expect(FakeInstallationOptions.instance).to receive(:custom_url=)
+            .with(smt_url)
+          subject.main
+        end
+      end
+
+      context "and data file is not available" do
+        let(:data_file_exists) { false }
+
+        it "does not set custom_url" do
+          expect(FakeInstallationOptions.instance).to_not receive(:custom_url=)
+          subject.main
+        end
+      end
+
+      context "and yast2-registration is not available" do
+        let(:registration_libs) { false }
+
+        it "does not load custom_url" do
+          expect(FakeInstallationOptions.instance).to_not receive(:custom_url=)
+          subject.main
+        end
       end
     end
   end
