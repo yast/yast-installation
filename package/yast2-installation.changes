@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Jul 29 07:32:46 UTC 2016 - ancor@suse.com
+
+- If the user has skipped multipath activation, don't ask again
+  after installer self-update (bsc#989770)
+- 3.1.204
+
+-------------------------------------------------------------------
 Fri Jul 22 13:48:12 UTC 2016 - igonzalezsosa@suse.com
 
 - Don't halt the installation if installer updates server
