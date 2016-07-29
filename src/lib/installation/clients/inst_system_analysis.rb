@@ -27,10 +27,12 @@
 
 require "yast"
 require "fileutils"
+require "y2storage"
 
 module Yast
   class InstSystemAnalysisClient < Client
     include Yast::Logger
+    using Y2Storage::Refinements::DevicegraphLists
 
     def main
       Yast.import "UI"
@@ -50,9 +52,13 @@ module Yast
       Yast.import "ProductFeatures"
       Yast.import "Progress"
       Yast.import "Report"
+# storage-ng
+# rubocop:disable Style/BlockComments
+=begin
       Yast.import "Storage"
       Yast.import "StorageControllers"
       Yast.import "StorageDevices"
+=end
       Yast.import "Wizard"
       Yast.import "PackageCallbacks"
 
@@ -75,7 +81,10 @@ module Yast
       # This dialog in not interactive
       # always return `back when came from the previous dialog
       if GetInstArgs.going_back
+# storage-ng
+=begin
         Storage.ActivateHld(false)
+=end
         return :back
       end
 
@@ -110,11 +119,18 @@ module Yast
           actions_doing     << _("Probing FireWire devices...")
           actions_functions << fun_ref(method(:ActionFireWire), "boolean ()")
 
+# storage-ng
+=begin
           actions_todo      << _("Probe floppy disk devices")
           actions_doing     << _("Probing floppy disk devices...")
           actions_functions << fun_ref(method(:ActionFloppyDisks), "boolean ()")
+=end
         end
 
+# storage-ng
+# As soon as we introduce support for RAID or multipath, we'll need to replace
+# StorageController with a new OOP way of probing and loading controllers
+=begin
         actions_todo      << _("Probe hard disk controllers")
         actions_doing     << _("Probing hard disk controllers...")
         actions_functions << fun_ref(method(:ActionHHDControllers), "boolean ()")
@@ -122,6 +138,7 @@ module Yast
         actions_todo      << _("Load kernel modules for hard disk controllers")
         actions_doing     << _("Loading kernel modules for hard disk controllers...")
         actions_functions << fun_ref(method(:ActionLoadModules), "boolean ()")
+=end
 
         actions_todo      << _("Probe hard disks")
         actions_doing     << _("Probing hard disks...")
@@ -130,10 +147,13 @@ module Yast
         WFM.CallFunction("inst_features", [])
       end
 
+# storage-ng
+=begin
       # FATE #302980: Simplified user config during installation
       actions_todo      << _("Search for system files")
       actions_doing     << _("Searching for system files...")
       actions_functions << fun_ref(method(:FilesFromOlderSystems), "boolean ()")
+=end
 
       actions_todo      << _("Initialize software manager")
       actions_doing     << _("Initializing software manager...")
@@ -150,8 +170,11 @@ module Yast
         _("YaST is probing computer hardware and installed systems now.")
       )
 
+# storage-ng
+=begin
       # bug#989770
       Storage.SetMultipathStartup(false) if persisted_multipath_off?
+=end
 
       actions_functions.each do |run_function|
         Progress.NextStage
@@ -174,11 +197,14 @@ module Yast
       end
       Installation.probing_done = true
 
+# storage-ng
+=begin
       # bug#989770
       if Storage.multipath_off?
         log.info "The user decided to not activate multipath"
         persist_multipath_off
       end
+=end
 
       # the last step is hidden
       return :abort if ProductProfile.CheckCompliance(nil) == false
@@ -251,7 +277,7 @@ module Yast
     #				  Hard disks
     # --------------------------------------------------------------
     def ActionHDDProbe
-      targetMap = StorageDevices.Probe(true)
+      devicegraph = Y2Storage::StorageManager.instance.probed
 
       # additonal error when HW was not found
       drivers_info = _(
@@ -262,7 +288,7 @@ module Yast
         drivers_info = ""
       end
 
-      if Builtins.size(targetMap) == 0
+      if devicegraph.disks.empty?
         if @found_controllers || Arch.s390
           if !(Mode.autoinst || Mode.autoupgrade)
             # pop-up error report
