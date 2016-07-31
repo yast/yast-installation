@@ -106,12 +106,12 @@ describe Installation::SshConfig do
       Dir.mktmpdir do |dir|
         ::FileUtils.cp_r(FIXTURES_DIR.join("root1"), dir)
         Dir.glob("#{dir}/root1/etc/ssh/*").each do |file|
-          if file.end_with?("_key") || file.end_with?("sshd_config") || file.end_with?("moduli")
-            File.chmod(0600, file)
+          if file.end_with?("_key", "sshd_config", "moduli")
+            File.chmod(0o600, file)
           elsif File.directory?(file)
-            File.chmod(0755)
+            File.chmod(0o755)
           else
-            File.chmod(0644, file)
+            File.chmod(0o644, file)
           end
         end
         @config = Installation::SshConfig.from_dir(File.join(dir, "root1"))

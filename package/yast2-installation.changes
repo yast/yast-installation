@@ -1,4 +1,34 @@
 -------------------------------------------------------------------
+Fri Jul 29 07:32:46 UTC 2016 - ancor@suse.com
+
+- If the user has skipped multipath activation, don't ask again
+  after installer self-update (bsc#989770)
+
+-------------------------------------------------------------------
+Fri Jul 22 13:48:12 UTC 2016 - igonzalezsosa@suse.com
+
+- Don't halt the installation if installer updates server
+  cannot be reached when using AutoYaST (bsc#988949)
+
+-------------------------------------------------------------------
+Thu Jul 21 11:52:59 UTC 2016 - jreidinger@suse.com
+
+- simplify and speed up inst_finish client (bnc#986649)
+- add test suite for inst_finish client
+
+-------------------------------------------------------------------
+Mon Jul 18 13:13:05 UTC 2016 - lslezak@suse.cz
+
+- Run extra inst-sys cleanup to free more memory on systems with
+  low memory (bsc#974601)
+
+-------------------------------------------------------------------
+Thu Jul 14 08:10:16 UTC 2016 - lslezak@suse.cz
+
+- Properly adjust the OOM killer (oom_score_adj has a different
+  range than the original oom_adj) (bsc#974601)
+
+-------------------------------------------------------------------
 Wed Jul 13 12:16:58 UTC 2016 - ancor@suse.com
 
 - storage-ng: commented installation-related code relying on the

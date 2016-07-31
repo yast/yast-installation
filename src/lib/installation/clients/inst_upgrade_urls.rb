@@ -26,7 +26,7 @@ module Yast
     include Yast::Logger
 
     URL_KEYS = ["alias", "autorefresh", "url", "name", "keeppackages",
-                "type", "id", "initial_url_status", "new_status"]
+                "type", "id", "initial_url_status", "new_status"].freeze
 
     def main
       Yast.import "Pkg"
@@ -508,13 +508,13 @@ module Yast
       repo_map = deep_copy(repo_map)
       status = Ops.get_string(repo_map, "new_status", @REPO_REMOVED)
 
-      if status == @REPO_REMOVED
-        status = @REPO_ENABLED
+      status = if status == @REPO_REMOVED
+        @REPO_ENABLED
       elsif status == @REPO_ENABLED
-        status = @REPO_DISABLED
+        @REPO_DISABLED
         # disabled
       else
-        status = @REPO_REMOVED
+        @REPO_REMOVED
       end
 
       status
@@ -592,7 +592,7 @@ module Yast
           Label.YesButton,
           Label.NoButton,
           :yes
-          )
+        )
           Builtins.y2milestone("User decided not to setup the network")
           ret = false
           break
@@ -853,7 +853,7 @@ module Yast
         Label.OKButton,
         Label.SkipButton,
         :yes
-        ) == true
+      ) == true
         Pkg.SourceReleaseAll
         return true
       end
@@ -1309,7 +1309,7 @@ module Yast
         enabled = Ops.get_string(repo, @REPO_ENABLED, "0") == "1"
       elsif Ops.is_boolean?(
         Ops.get_boolean(repo, @REPO_ENABLED, false)
-        )
+      )
         enabled = Ops.get_boolean(repo, @REPO_ENABLED, false)
       end
 
@@ -1322,7 +1322,7 @@ module Yast
         autorefresh = Ops.get_string(repo, "autorefresh", "0") == "1"
       elsif Ops.is_boolean?(
         Ops.get_boolean(repo, "autorefresh", false)
-        )
+      )
         autorefresh = Ops.get_boolean(repo, "autorefresh", false)
       end
       keeppackages = true
@@ -1333,7 +1333,7 @@ module Yast
         keeppackages = Ops.get_string(repo, "keeppackages", "0") == "1"
       elsif Ops.is_boolean?(
         Ops.get_boolean(repo, "keeppackages", false)
-        )
+      )
         keeppackages = Ops.get_boolean(repo, "keeppackages", false)
       end
       new_url = {

@@ -22,7 +22,7 @@ module Installation
   # Used to implement the SSH keys importing functionality.
   class SshKey
     include Yast::Logger
-    PUBLIC_FILE_SUFFIX = ".pub"
+    PUBLIC_FILE_SUFFIX = ".pub".freeze
 
     # @return [String] name for the user to identify the key
     attr_accessor :name

@@ -1,5 +1,9 @@
 TESTS = \
   inst_functions_test.rb \
+  inst_finish_test.rb \
+  inst_instsys_cleanup_client_test.rb \
+  inst_complex_welcome_test.rb \
+  instsys_cleaner_test.rb \
 	inst_update_installer_test.rb \
   installation_misc_test.rb \
   image_installation_test.rb \

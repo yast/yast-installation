@@ -600,16 +600,17 @@ module Yast
 
       SetCurrentImageDetails(img)
 
-      if type == "fs"
-        return temporary ? MountFsImage(id, target) : DeployFsImage(id, target)
-      elsif type == "tar"
-        return DeployTarImage(id, target)
-      elsif type == "raw"
-        return DeployDiskImage(id, target)
+      case type
+      when "fs"
+        temporary ? MountFsImage(id, target) : DeployFsImage(id, target)
+      when "tar"
+        DeployTarImage(id, target)
+      when "raw"
+        DeployDiskImage(id, target)
+      else
+        Builtins.y2error("Unknown type of image: %1", type)
+        false
       end
-
-      Builtins.y2error("Unknown type of image: %1", type)
-      false
     end
 
     # Deploy an image
@@ -708,7 +709,7 @@ module Yast
         next if file.nil? || file == ""
         files = Builtins.tointeger(Ops.get_string(image_detail, "files", "0"))
         isize = Builtins.tointeger(Ops.get_string(image_detail, "size", "0"))
-        Ops.set(@images_details, file,  "files" => files, "size" => isize)
+        Ops.set(@images_details, file, "files" => files, "size" => isize)
       end
 
       # FIXME: y2debug
@@ -866,22 +867,17 @@ module Yast
           " ,"
         )
         # no architecture defined == noarch
-        if Builtins.size(imageset_archs) == 0
-          next true
-          # does architecture match?
-        else
-          if Builtins.contains(imageset_archs, arch_short)
-            next true
-          else
-            # For debugging purpose
-            Builtins.y2milestone(
-              "Filtered-out, Patterns: %1, Archs: %2",
-              Ops.get_string(image, "patterns", ""),
-              Ops.get_string(image, "archs", "")
-            )
-            next false
-          end
-        end
+        next true if Builtins.size(imageset_archs) == 0
+        # does architecture match?
+        next true if Builtins.contains(imageset_archs, arch_short)
+
+        # For debugging purpose
+        Builtins.y2milestone(
+          "Filtered-out, Patterns: %1, Archs: %2",
+          Ops.get_string(image, "patterns", ""),
+          Ops.get_string(image, "archs", "")
+        )
+        false
       end
 
       # trying to find all matching patterns
@@ -935,7 +931,7 @@ module Yast
               0
             ),
             last_number_of_matching_patterns
-            ) &&
+          ) &&
               # enough patterns matches the selected imageset
               EnoughPatternsMatching(
                 Ops.get(matching_patterns, pattern, 0),
@@ -1051,11 +1047,11 @@ module Yast
     # @param [String] to string target directory
     # @return [Boolean] true on success
     def FileSystemCopy(from, to, progress_start, progress_finish)
-      if from == "/"
+      total_mb = if from == "/"
         # root is a merge of two filesystems, df returns only one part for /
-        total_mb = calculate_fs_size("/read-write") + calculate_fs_size("/read-only")
+        calculate_fs_size("/read-write") + calculate_fs_size("/read-only")
       else
-        total_mb = 0
+        0
       end
       total_mb = calculate_fs_size(from) if total_mb == 0
       # Using df-based progress estimation, is rather faster
@@ -1111,7 +1107,7 @@ module Yast
                 tmp_pipe1,
                 tmp_pipe2
               )
-              )
+            )
               pid = ""
             else
               pid = Builtins.regexpsub(line, "([0-9]+) [^ 0-9]+ +dd", "\\1")
@@ -1395,13 +1391,13 @@ module Yast
           if !Builtins.contains(
             selected_for_installation,
             one_already_installed_resolvable
-            )
+          )
             # BNC #489448: Do not remove package which is installed in different version and/or arch
             # It will be upgraded later
             if Builtins.contains(
               selected_for_installation_pkgnames,
               Ops.get_string(one_resolvable, "name", "-x-")
-              )
+            )
               Builtins.y2milestone(
                 "Not Removing type: %1, name: %2 version: %3",
                 one_type,

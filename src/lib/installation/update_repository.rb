@@ -227,7 +227,7 @@ module Installation
     end
 
     # Command to extract an RPM which is part of an update
-    EXTRACT_CMD = "rpm2cpio %<source>s | cpio --quiet --sparse -dimu --no-absolute-filenames"
+    EXTRACT_CMD = "rpm2cpio %<source>s | cpio --quiet --sparse -dimu --no-absolute-filenames".freeze
 
     # Extract a RPM contents to a given directory
     #
@@ -245,7 +245,7 @@ module Installation
     end
 
     # Command to build an squashfs filesystem containing all updates
-    SQUASH_CMD = "mksquashfs %<dir>s %<file>s -noappend -no-progress"
+    SQUASH_CMD = "mksquashfs %<dir>s %<file>s -noappend -no-progress".freeze
 
     # Build a squashfs filesystem from a directory
     #
@@ -306,7 +306,7 @@ module Installation
     end
 
     # Command to mount squashfs filesystem
-    MOUNT_CMD = "mount %<source>s %<target>s"
+    MOUNT_CMD = "mount %<source>s %<target>s".freeze
 
     # Mount the squashed filesystem containing updates
     #
@@ -324,7 +324,7 @@ module Installation
     end
 
     # Command to apply the DUD disk to inst-sys
-    APPLY_CMD = "/etc/adddir %<source>s /" # openSUSE/installation-images
+    APPLY_CMD = "/etc/adddir %<source>s /".freeze # openSUSE/installation-images
 
     # Add files/directories to the inst-sys
     #

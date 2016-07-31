@@ -39,7 +39,8 @@ module Yast
 
     def preformatted_proposal
       ::Installation::SshImporterPresenter.new(
-        ::Installation::SshImporter.instance).summary
+        ::Installation::SshImporter.instance
+      ).summary
     end
 
     def ask_user(param)
