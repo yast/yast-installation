@@ -97,6 +97,9 @@ Conflicts:	yast2-core < 2.17.10
 # Top bar with logo
 Conflicts:	yast2-ycp-ui-bindings < 3.1.7
 
+# RegserviceSelectionDialog
+Conflicts:  yast2-registration < 3.1.179
+
 Obsoletes:	yast2-installation-devel-doc
 
 # tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
