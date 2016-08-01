@@ -206,7 +206,7 @@ describe Yast::InstUpdateInstaller do
           let(:update1) do
             OpenStruct.new(
               name: "SLES-12-Installer-Updates-1",
-              url: "http://update.suse.com/updates/sles12/12.2"
+              url:  "http://update.suse.com/updates/sles12/12.2"
             )
           end
 
