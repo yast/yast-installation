@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Aug  1 07:51:08 UTC 2016 - ancor@suse.com
+
+- storage-ng: use the new library for storage hardware probing
+  (devicegraph) instead of the old one (targetmap)
+- 3.2.2
+
+-------------------------------------------------------------------
 Fri Jul 29 07:32:46 UTC 2016 - ancor@suse.com
 
 - If the user has skipped multipath activation, don't ask again
