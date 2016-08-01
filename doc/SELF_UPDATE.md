@@ -36,7 +36,7 @@ handled in a different way:
 The URL of the update repository is evaluated in this order:
 
 1. The `SelfUpdate` boot option
-2. The AutoYaST control file - in AutoYaST installation only, use the
+2. The AutoYaST profile - in AutoYaST installation only, use the
    `/general/self_update_url` XML node:
 
    ```xml
@@ -44,6 +44,14 @@ The URL of the update repository is evaluated in this order:
      <self_update_url>http://example.com/updates/$arch</self_update_url>
    </general>
    ```
+3. Registration server (SCC/SMT), not available in openSUSE. The URL of the
+   registration server which should be used is determined via:
+   1. AutoYaST profile ([reg_server element](https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#CreateProfile.Register)).
+   2. The `regurl` boot parameter
+   3. SLP lookup:
+      * If one server is found, it will be used automatically.
+      * If more than one server is found, it will ask the user to choose one.
+   4. Default SUSE Customer Center API (`https://scc.suse.com/`).
 3. Hard-coded in the `control.xml` file on the installation medium (thus it
    depends on the base product):
 
@@ -62,7 +70,7 @@ in the [Arch module](http://www.rubydoc.info/github/yast/yast-yast2/Yast/ArchCla
 
 ### Actual URLs
 
-The regular update URLs have the form
+Whe using registration servers, the regular update URLs have the form
 `https://updates.suse.com/SUSE/Updates/$PRODUCT/$VERSION/$ARCH/update` where
 - PRODUCT is like OpenStack-Cloud, SLE-DESKTOP, SLE-SDK, SLE-SERVER,
 - VERSION (for SLE-SERVER) is like 12, 12-SP1,
