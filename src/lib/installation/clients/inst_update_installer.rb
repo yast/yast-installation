@@ -163,6 +163,7 @@ module Yast
       url = registration_url
       return [] if url == :cancel
 
+      log.info("Using registration URL: #{url}")
       registration = Registration::Registration.new(url == :scc ? nil : url)
       # Set custom_url into installation options
       Registration::Storage::InstallationOptions.instance.custom_url = registration.url
@@ -186,7 +187,7 @@ module Yast
     # @see #registration_server_from_user
     def registration_url
       url = registration_url_from_profile || ::Registration::UrlHelpers.boot_reg_url
-      return url if url
+      return url.to_s if url
       services = ::Registration::UrlHelpers.slp_discovery
       return nil if services.empty?
       service =
@@ -405,9 +406,9 @@ module Yast
 
     # Store URL of registration server to be used by inst_scc client
     #
-    # @params [String] Registration server URL.
+    # @params [URI] Registration server URL.
     def store_registration_url(url)
-      data = { "custom_url" => url }
+      data = { "custom_url" => url.to_s }
       File.write(REGISTRATION_DATA_PATH, data.to_yaml)
     end
 

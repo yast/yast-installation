@@ -326,7 +326,7 @@ describe Yast::InstUpdateInstaller do
             end
 
             it "uses the given server" do
-              expect(registration_class).to receive(:new).with(URI(reg_server_url))
+              expect(registration_class).to receive(:new).with(reg_server_url)
                 .and_return(registration)
               subject.main
             end
