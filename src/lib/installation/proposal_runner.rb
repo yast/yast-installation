@@ -123,14 +123,14 @@ module Installation
       body =
         # Text for confirmation popup before the update really starts 1/3
         _("<p>Information required to perform an update is now complete.</p>") +
-          # Text for confirmation popup before the update really starts 2/3
-          _(
-            "\n" \
-            "<p>If you continue now, data on your hard disk will be overwritten\n" \
-            "according to the settings in the previous dialogs.</p>"
-          ) +
-          # Text for confirmation popup before the update really starts 3/3
-          _("<p>Go back and check the settings if you are unsure.</p>")
+        # Text for confirmation popup before the update really starts 2/3
+        _(
+          "\n" \
+          "<p>If you continue now, data on your hard disk will be overwritten\n" \
+          "according to the settings in the previous dialogs.</p>"
+        ) +
+        # Text for confirmation popup before the update really starts 3/3
+        _("<p>Go back and check the settings if you are unsure.</p>")
 
       # Label for the button that confirms startint the installation
       confirm_button_label = _("Start &Update")
@@ -261,10 +261,10 @@ module Installation
 
     def pre_continue_handling
       @skip = if Yast::UI.WidgetExists(Id(:skip))
-                Yast::UI.QueryWidget(Id(:skip), :Value)
-              else
-                true
-              end
+        Yast::UI.QueryWidget(Id(:skip), :Value)
+      else
+        true
+      end
       skip_blocker = Yast::UI.WidgetExists(Id(:skip)) && @skip
       if @have_blocker && !skip_blocker
         # error message is a popup
@@ -786,13 +786,13 @@ module Installation
     def html_header(submod)
       title = @store.title_for(submod)
       heading = if title.include?("<a")
-                  title
-                else
-                  Yast::HTML.Link(
-                    title,
-                    @store.id_for(submod)
-                  )
-                end
+        title
+      else
+        Yast::HTML.Link(
+          title,
+          @store.id_for(submod)
+        )
+      end
 
       Yast::HTML.Heading(heading)
     end

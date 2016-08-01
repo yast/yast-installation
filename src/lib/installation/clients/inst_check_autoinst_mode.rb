@@ -58,7 +58,7 @@ module Yast
         if Ops.greater_than(
           SCR.Read(path(".target.size"), "/media/floppy/autoinst.xml"),
           0
-          )
+        )
           Builtins.y2milestone("Found control file, switching to autoinst mode")
           Mode.SetMode("autoinstallation")
           # initialize Report behavior

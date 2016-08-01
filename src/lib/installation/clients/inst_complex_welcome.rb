@@ -354,7 +354,7 @@ module Yast
       log.info "Language: '#{@language}', system encoding '#{WFM.GetEncoding}'"
     end
 
-    DATA_PATH = "/var/lib/YaST2/complex_welcome_store.yaml"
+    DATA_PATH = "/var/lib/YaST2/complex_welcome_store.yaml".freeze
 
     def data_stored?
       ::File.exist?(DATA_PATH)

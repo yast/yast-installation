@@ -206,7 +206,7 @@ module Yast
         if Ops.greater_than(
           SCR.Read(path(".target.size"), "/etc/install.inf"),
           0
-          )
+        )
           @url = Convert.to_string(
             SCR.Read(path(".etc.install_inf.supporturl"))
           )

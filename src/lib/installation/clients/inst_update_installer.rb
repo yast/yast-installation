@@ -21,8 +21,8 @@ module Yast
     include Yast::Logger
     include Yast::I18n
 
-    UPDATED_FLAG_FILENAME = "installer_updated"
-    REMOTE_SCHEMES = ["http", "https", "ftp", "tftp", "sftp", "nfs", "nfs4", "cifs", "smb"]
+    UPDATED_FLAG_FILENAME = "installer_updated".freeze
+    REMOTE_SCHEMES = ["http", "https", "ftp", "tftp", "sftp", "nfs", "nfs4", "cifs", "smb"].freeze
 
     Yast.import "Pkg"
     Yast.import "GetInstArgs"
@@ -194,7 +194,11 @@ module Yast
       false
 
     rescue ::Installation::UpdatesManager::CouldNotProbeRepo
-      retry if remote_self_update_url? && configure_network?
+      if Mode.auto
+        Report.Warning(could_not_probe_repo_msg)
+      elsif remote_self_update_url? && configure_network?
+        retry
+      end
       false
     end
 
@@ -213,20 +217,11 @@ module Yast
     # @return [Boolean] true if the network configuration client was launched;
     #                   false if the network is not configured.
     def configure_network?
-      if Popup.YesNo(
-        # Note: the proxy cannot be configured in the YaST installer yet,
-        # it needs to be set via the "proxy" boot option.
-        # TRANSLATORS: %s is an URL
-        format(_("Downloading the optional installer updates from \n%s\nfailed.\n" \
-                 "\n" \
-                 "You can continue the installation without applying the updates.\n" \
-                 "However, some potentially important bug fixes might be missing.\n" \
-                 "\n" \
-                 "If you need a proxy server to access the update repository\n" \
-                 "then use the \"proxy\" boot parameter.\n" \
-                 "\n" \
-                 "Would you like to check your network configuration\n" \
-                 "and try installing the updates again?"), self_update_url))
+      msg = could_not_probe_repo_msg +
+        _("\nWould you like to check your network configuration\n" \
+        "and try installing the updates again?")
+
+      if Popup.YesNo(msg)
         Yast::WFM.CallFunction("inst_lan", [{ "skip_detection" => true }])
         true
       else
@@ -256,6 +251,24 @@ module Yast
     # @return [Boolean] true if it's the default URL; false otherwise.
     def using_default_url?
       self_update_url_from_control == self_update_url
+    end
+
+    # Return a message to be shown when the updates repo could not be probed
+    #
+    # @return [String] Message including the repository URL
+    #
+    # @see #self_update_url
+    def could_not_probe_repo_msg
+      # Note: the proxy cannot be configured in the YaST installer yet,
+      # it needs to be set via the "proxy" boot option.
+      # TRANSLATORS: %s is an URL
+      format(_("Downloading the optional installer updates from \n%s\nfailed.\n" \
+        "\n" \
+        "You can continue the installation without applying the updates.\n" \
+        "However, some potentially important bug fixes might be missing.\n" \
+        "\n" \
+        "If you need a proxy server to access the update repository\n" \
+        "then use the \"proxy\" boot parameter.\n"), self_update_url)
     end
   end
 end

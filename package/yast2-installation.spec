@@ -62,8 +62,8 @@ Conflicts:	yast2-mouse < 2.18.0
 # New API for ProductLicense
 Requires:	yast2-packager >= 3.1.96
 
-# Storage::GetDetectedDiskPaths
-Requires:	yast2-storage >= 2.24.1
+# Yast::Storage.multipath_off?
+Requires:	yast2-storage >= 3.1.97
 
 # use in startup scripts
 Requires:	initviocons

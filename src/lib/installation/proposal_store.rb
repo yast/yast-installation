@@ -99,10 +99,10 @@ module Installation
     def can_be_skipped?
       return @can_skip unless @can_skip.nil?
 
-      if properties.key?("enable_skip")
-        @can_skip = properties["enable_skip"] == "yes"
+      @can_skip = if properties.key?("enable_skip")
+        properties["enable_skip"] == "yes"
       else
-        @can_skip = !["initial", "uml"].include?(@proposal_mode)
+        !["initial", "uml"].include?(@proposal_mode)
       end
 
       @can_skip
@@ -427,7 +427,7 @@ module Installation
             "<p>\n" \
               "Select <b>Install</b> to perform a new installation with the values displayed.\n" \
               "</p>\n"
-            )
+          )
         else # so update
           # Help text for update proposal
           # General part ("You can change values...") is added as the next paragraph.

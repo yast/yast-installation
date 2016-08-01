@@ -162,7 +162,7 @@ module Yast
           if Ops.less_than(
             Ops.get(@minwidthlang, product, 0),
             Builtins.size(lang_name)
-            )
+          )
             Ops.set(@minwidthlang, product, Builtins.size(lang_name))
           end
           combobox_items = Builtins.add(
@@ -183,7 +183,7 @@ module Yast
             if Builtins.regexpmatch(
               item_id2,
               Builtins.sformat("RELEASE-NOTES.%1.rtf$", preffered_lang)
-              )
+            )
               preferred_found = true
               raise Break
             end
@@ -385,18 +385,16 @@ module Yast
 
       if contents.nil? || contents == ""
         Builtins.y2error("Wrong relnotesfile: %1", use_file)
+      elsif plain_text
+        UI.ReplaceWidget(
+          Id(:content_rp),
+          RichText(Id(:relnotescontent), Opt(:plainText), contents)
+        )
       else
-        if plain_text
-          UI.ReplaceWidget(
-            Id(:content_rp),
-            RichText(Id(:relnotescontent), Opt(:plainText), contents)
-          )
-        else
-          UI.ReplaceWidget(
-            Id(:content_rp),
-            RichText(Id(:relnotescontent), contents)
-          )
-        end
+        UI.ReplaceWidget(
+          Id(:content_rp),
+          RichText(Id(:relnotescontent), contents)
+        )
       end
 
       nil
@@ -437,7 +435,7 @@ module Yast
         if Ops.greater_than(
           Builtins.size(Ops.get(@languages_of_relnotes, product, [])),
           1
-          )
+        )
           UI.ChangeWidget(Id(:lang), :Enabled, true)
         else
           UI.ChangeWidget(Id(:lang), :Enabled, false)

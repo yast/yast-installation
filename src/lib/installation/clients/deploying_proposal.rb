@@ -102,12 +102,12 @@ module Yast
 
         @old_status = Installation.image_installation
 
-        if @chosen_id == @im_do_disable
-          Installation.image_installation = false
+        Installation.image_installation = if @chosen_id == @im_do_disable
+          false
         elsif @chosen_id == @im_do_enable
-          Installation.image_installation = true
+          true
         else
-          Installation.image_installation = !Installation.image_installation
+          !Installation.image_installation
         end
 
         # changed to true

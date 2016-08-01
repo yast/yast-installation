@@ -13,15 +13,15 @@ module Installation
     end
 
     def reset
-      if Yast::Mode.autoinst
-        @enabled = Yast::AutoinstConfig.cio_ignore
+      @enabled = if Yast::Mode.autoinst
+        Yast::AutoinstConfig.cio_ignore
       else
-        if kvm? || zvm?
+        @enabled = if kvm? || zvm?
           # cio_ignore does not make sense for KVM or z/VM (fate#317861)
-          @enabled = false
+          false
         else
           # default value requested in FATE#315586
-          @enabled = true
+          true
         end
       end
     end
@@ -43,9 +43,9 @@ module Installation
     include Yast::Logger
     include Yast::I18n
 
-    CIO_ENABLE_LINK = "cio_enable"
-    CIO_DISABLE_LINK = "cio_disable"
-    CIO_ACTION_ID = "cio"
+    CIO_ENABLE_LINK = "cio_enable".freeze
+    CIO_DISABLE_LINK = "cio_disable".freeze
+    CIO_ACTION_ID = "cio".freeze
 
     def initialize
       textdomain "installation"
@@ -82,18 +82,18 @@ module Installation
       enabled = CIOIgnore.instance.enabled
 
       text = if enabled
-               # TRANSLATORS: Installation overview
-               # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
-               (_(
-                 "Blacklist devices enabled (<a href=\"%s\">disable</a>)."
-                 ) % CIO_DISABLE_LINK)
-             else
-               # TRANSLATORS: Installation overview
-               # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
-               (_(
-                 "Blacklist devices disabled (<a href=\"%s\">enable</a>)."
-                 ) % CIO_ENABLE_LINK)
-             end
+        # TRANSLATORS: Installation overview
+        # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
+        (_(
+          "Blacklist devices enabled (<a href=\"%s\">disable</a>)."
+        ) % CIO_DISABLE_LINK)
+      else
+        # TRANSLATORS: Installation overview
+        # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
+        (_(
+          "Blacklist devices disabled (<a href=\"%s\">enable</a>)."
+        ) % CIO_ENABLE_LINK)
+      end
 
       {
         "preformatted_proposal" => Yast::HTML.List([text]),
@@ -113,12 +113,12 @@ module Installation
       cio_ignore = CIOIgnore.instance
 
       cio_ignore.enabled = case edit_id
-        when CIO_DISABLE_LINK then false
-        when CIO_ENABLE_LINK  then true
-        when CIO_ACTION_ID    then !cio_ignore.enabled
-        else
-          raise "INTERNAL ERROR: Unexpected value #{edit_id}"
-        end
+      when CIO_DISABLE_LINK then false
+      when CIO_ENABLE_LINK  then true
+      when CIO_ACTION_ID    then !cio_ignore.enabled
+      else
+        raise "INTERNAL ERROR: Unexpected value #{edit_id}"
+      end
 
       { "workflow_sequence" => :next }
     end
@@ -132,7 +132,7 @@ module Installation
       :installation,
       :live_installation,
       :autoinst
-    ]
+    ].freeze
 
     YAST_BASH_PATH = Yast::Path.new ".target.bash_output"
 
@@ -193,7 +193,7 @@ module Installation
       Yast::Bootloader.modify_kernel_params("cio_ignore" => "all,!ipldev,!condev")
     end
 
-    ACTIVE_DEVICES_FILE = "/boot/zipl/active_devices.txt"
+    ACTIVE_DEVICES_FILE = "/boot/zipl/active_devices.txt".freeze
     def store_active_devices
       Yast.import "Installation"
       res = Yast::SCR.Execute(YAST_BASH_PATH, "cio_ignore -L")

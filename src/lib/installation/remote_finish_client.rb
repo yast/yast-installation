@@ -33,10 +33,10 @@ module Installation
     # WMF.CallFunction
     def run(*args)
       ret = nil
-      if args.empty?
-        func = ""
+      func = if args.empty?
+        ""
       else
-        func = args.first.to_s
+        args.first.to_s
       end
 
       log.info "starting remote_finish"

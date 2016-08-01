@@ -15,6 +15,10 @@ Metrics/BlockNesting:
 Metrics/ClassLength:
   Max: 1100
 
+
+Metrics/ModuleLength:
+  Max: 600
+
 # Offense count: 88
 Metrics/CyclomaticComplexity:
   Max: 57

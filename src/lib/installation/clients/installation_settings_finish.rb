@@ -99,7 +99,7 @@ module Yast
         path(".target.ycp"),
         InstData.wizardsteps_disabled_modules,
         ProductControl.GetDisabledModules
-        ) != true
+      ) != true
         Builtins.y2error("Cannot write disabled modules")
       end
 
@@ -113,7 +113,7 @@ module Yast
         path(".target.ycp"),
         InstData.wizardsteps_disabled_proposals,
         ProductControl.GetDisabledProposals
-        ) != true
+      ) != true
         Builtins.y2error("Cannot write disabled proposals")
       end
 
@@ -127,7 +127,7 @@ module Yast
         path(".target.ycp"),
         InstData.wizardsteps_disabled_subproposals,
         ProductControl.GetDisabledSubProposals
-        ) != true
+      ) != true
         Builtins.y2error("Cannot write disabled subproposals")
       end
 
