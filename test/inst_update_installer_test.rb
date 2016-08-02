@@ -11,6 +11,11 @@ describe Yast::InstUpdateInstaller do
     attr_accessor :custom_url
   end
 
+  class FakeRegConfig
+    include Singleton
+    def import(_args); end
+  end
+
   Yast.import "Linuxrc"
   Yast.import "ProductFeatures"
   Yast.import "GetInstArgs"
@@ -28,6 +33,8 @@ describe Yast::InstUpdateInstaller do
   let(:repo) { double("repo") }
   let(:has_repos) { true }
   let(:restarting) { false }
+  let(:profile) { {} }
+  let(:ay_profile) { double("Yast::Profile", current: profile) }
 
   before do
     allow(Yast::Pkg).to receive(:GetArchitecture).and_return(arch)
@@ -39,9 +46,9 @@ describe Yast::InstUpdateInstaller do
     allow(subject).to receive(:require).with("registration/url_helpers").and_raise(LoadError)
     allow(::FileUtils).to receive(:touch)
     stub_const("Registration::Storage::InstallationOptions", FakeInstallationOptions)
+    stub_const("Registration::Storage::Config", FakeRegConfig)
 
     # stub the Profile module to avoid dependency on autoyast2-installation
-    ay_profile = double("Yast::Profile")
     stub_const("Yast::Profile", ay_profile)
   end
 
@@ -120,7 +127,6 @@ describe Yast::InstUpdateInstaller do
           context "in AutoYaST installation or upgrade" do
             before do
               allow(Yast::Mode).to receive(:auto).at_least(1).and_return(true)
-              allow(Yast::Profile).to receive(:current).and_return({})
             end
 
             it "shows an error" do
@@ -316,13 +322,12 @@ describe Yast::InstUpdateInstaller do
             end
           end
 
-          context "when a registration server was specified via AutoYaST profile" do
+          context "when a registration configuration is specified via AutoYaST profile" do
             let(:reg_server_url) { "http://ay.test.example.com/update" }
+            let(:profile) { { "suse_register" => { "reg_server" => reg_server_url } } }
 
             before do
               allow(Yast::Mode).to receive(:auto).at_least(1).and_return(true)
-              allow(Yast::Profile).to receive(:current)
-                .and_return("suse_register" => { "reg_server" => reg_server_url })
             end
 
             it "uses the given server" do
@@ -330,16 +335,21 @@ describe Yast::InstUpdateInstaller do
                 .and_return(registration)
               subject.main
             end
+
+            it "imports profile settings into registration configuration" do
+              allow(manager).to receive(:add_repository)
+              expect(FakeRegConfig.instance).to receive(:import).with(profile["suse_register"])
+              subject.main
+            end
           end
         end
 
         context "in AutoYaST installation or upgrade" do
           let(:profile_url) { "http://ay.test.example.com/update" }
+          let(:profile) { { "general" => { "self_update_url" => profile_url } } }
 
           before do
             expect(Yast::Mode).to receive(:auto).at_least(1).and_return(true)
-            allow(Yast::Profile).to receive(:current)
-              .and_return("general" => { "self_update_url" =>  profile_url })
             allow(::FileUtils).to receive(:touch)
           end
 

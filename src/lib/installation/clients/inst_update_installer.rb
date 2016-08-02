@@ -164,6 +164,7 @@ module Yast
       return [] if url == :cancel
 
       log.info("Using registration URL: #{url}")
+      import_registration_ayconfig if Mode.auto
       registration = Registration::Registration.new(url == :scc ? nil : url)
       # Set custom_url into installation options
       Registration::Storage::InstallationOptions.instance.custom_url = registration.url
@@ -421,6 +422,17 @@ module Yast
       Registration::Storage::InstallationOptions.instance.custom_url = data["custom_url"]
       ::FileUtils.rm_rf(REGISTRATION_DATA_PATH)
       true
+    end
+
+    # Load registration configuration from AutoYaST profile
+    #
+    # This data will be used by Registration::ConnectHelpers.catch_registration_errors.
+    #
+    # @see Yast::Profile.current
+    def import_registration_ayconfig
+      ::Registration::Storage::Config.instance.import(
+        Yast::Profile.current.fetch("suse_register", {})
+      )
     end
   end
 end
