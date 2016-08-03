@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Aug  3 17:06:46 CEST 2016 - locilka@suse.com
+
+- UI, UX and internal handling for the Welcome screen optimized to
+  prevent from not showing that the license needs to be accepted
+  (bsc#980374).
+- 3.1.205
+
+-------------------------------------------------------------------
 Fri Jul 29 07:32:46 UTC 2016 - ancor@suse.com
 
 - If the user has skipped multipath activation, don't ask again
