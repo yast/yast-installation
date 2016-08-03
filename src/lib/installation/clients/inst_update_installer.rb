@@ -165,7 +165,7 @@ module Yast
 
       log.info("Using registration URL: #{url}")
       import_registration_ayconfig if Mode.auto
-      registration = Registration::Registration.new(url == :scc ? nil : url)
+      registration = Registration::Registration.new(url == :scc ? nil : url.to_s)
       # Set custom_url into installation options
       Registration::Storage::InstallationOptions.instance.custom_url = registration.url
       store_registration_url(registration.url)
@@ -182,15 +182,15 @@ module Yast
     #   * If there's only 1 SMT server, it will be chosen automatically.
     #   * If there's more than 1 SMT server, it will ask the user to choose one
     #
-    # @return [String,Symbol] Registration URL; :scc if SCC server was selected;
-    #                         :cancel if dialog was dismissed.
+    # @return [URI,:scc,:cancel] Registration URL; :scc if SCC server was selected;
+    #                            :cancel if dialog was dismissed.
     #
     # @see #registration_server_from_user
     def registration_url
       url = registration_url_from_profile || ::Registration::UrlHelpers.boot_reg_url
-      return url.to_s if url
+      return URI(url) if url
       services = ::Registration::UrlHelpers.slp_discovery
-      return nil if services.empty?
+      return :scc if services.empty?
       service =
         if services.size > 1
           registration_service_from_user(services)
@@ -198,7 +198,7 @@ module Yast
           services.first
         end
       return service unless service.respond_to?(:slp_url)
-      ::Registration::UrlHelpers.service_url(service.slp_url)
+      URI(::Registration::UrlHelpers.service_url(service.slp_url))
     end
 
     # Return the registration server URL from the AutoYaST profile

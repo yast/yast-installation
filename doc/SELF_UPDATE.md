@@ -52,7 +52,7 @@ The URL of the update repository is evaluated in this order:
       * If one server is found, it will be used automatically.
       * If more than one server is found, it will ask the user to choose one.
    4. Default SUSE Customer Center API (`https://scc.suse.com/`).
-3. Hard-coded in the `control.xml` file on the installation medium (thus it
+4. Hard-coded in the `control.xml` file on the installation medium (thus it
    depends on the base product):
 
    ```xml
@@ -61,8 +61,10 @@ The URL of the update repository is evaluated in this order:
    </globals>
    ```
 
-The first found option is used. If no update URL is found then the self update
-is skipped.
+The first suitable URL will be used. There are two exceptions:
+
+* Of course, if no update URL is found then the self update is skipped.
+* If SCC/SMT provides multiple URLs, they will be all used.
 
 The URL can contain a variable `$arch` that will be replaced by the system's
 architecture, such as `x86_64`, `s390x`, etc. You can find more information
@@ -70,7 +72,7 @@ in the [Arch module](http://www.rubydoc.info/github/yast/yast-yast2/Yast/ArchCla
 
 ### Actual URLs
 
-Whe using registration servers, the regular update URLs have the form
+When using registration servers, the regular update URLs have the form
 `https://updates.suse.com/SUSE/Updates/$PRODUCT/$VERSION/$ARCH/update` where
 - PRODUCT is like OpenStack-Cloud, SLE-DESKTOP, SLE-SDK, SLE-SERVER,
 - VERSION (for SLE-SERVER) is like 12, 12-SP1,

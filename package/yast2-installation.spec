@@ -130,8 +130,6 @@ Recommends:	curl
 Recommends:	yast2-update
 Recommends:	yast2-add-on
 
-Conflicts: yast2-registration < 3.1.177
-
 PreReq:		%fillup_prereq
 
 BuildArch: noarch
