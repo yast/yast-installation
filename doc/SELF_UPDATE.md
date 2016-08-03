@@ -48,7 +48,7 @@ The URL of the update repository is evaluated in this order:
    registration server which should be used is determined via:
    1. AutoYaST profile ([reg_server element](https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#CreateProfile.Register)).
    2. The `regurl` boot parameter
-   3. SLP lookup:
+   3. SLP lookup (this behavior applies to regular and AutoYaST installations):
       * If one server is found, it will be used automatically.
       * If more than one server is found, it will ask the user to choose one.
    4. Default SUSE Customer Center API (`https://scc.suse.com/`).
@@ -109,3 +109,22 @@ Currently there is no API available for remembering the client states. The easie
 way is to store the configuration into an YAML file and load it when restarting the
 installer. See the [example](https://github.com/yast/yast-installation/pull/367/files#diff-4c91d6424e08c9bef9237f7d959fc0c2R48)
 in the `inst_complex_welcome` client.
+
+## Error handling
+
+Errors during the installer update are handled as described below:
+
+* If network is not available, the installer update will be skipped.
+* If the network is configured but the installer updates repository or the
+  registration server are not reachable:
+  * in a regular installation/upgrade, YaST2 will offer the possibility
+    to check/adjust the network configuration.
+  * in an AutoYaST installation/upgrade, a warning will be shown.
+* If the updates repository is found but it is empty or not valid:
+  * in the case that the URL was specified by the user (using the *SelfUpdate* boot
+    option or through the *self_update_url* element in an AutoYaST profile), an
+    error message will be shown.
+  * if the URL was not specified by the user, the installer will skip the update
+    process (it will assume that no updates are available).
+* If something goes wrong trying to fetch and apply the update, the user will be
+  notified.
