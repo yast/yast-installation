@@ -2,8 +2,20 @@
 
 require_relative "test_helper"
 require "installation/clients/inst_update_installer"
+require "singleton"
 
 describe Yast::InstUpdateInstaller do
+  # Registration::Storage::InstallationOptions fake
+  class FakeInstallationOptions
+    include Singleton
+    attr_accessor :custom_url
+  end
+
+  class FakeRegConfig
+    include Singleton
+    def import(_args); end
+  end
+
   Yast.import "Linuxrc"
   Yast.import "ProductFeatures"
   Yast.import "GetInstArgs"
@@ -20,17 +32,24 @@ describe Yast::InstUpdateInstaller do
   let(:network_running) { true }
   let(:repo) { double("repo") }
   let(:has_repos) { true }
+  let(:restarting) { false }
+  let(:profile) { {} }
+  let(:ay_profile) { double("Yast::Profile", current: profile) }
 
   before do
     allow(Yast::Pkg).to receive(:GetArchitecture).and_return(arch)
     allow(Yast::Mode).to receive(:auto).and_return(false)
     allow(Yast::NetworkService).to receive(:isNetworkRunning).and_return(network_running)
     allow(::Installation::UpdatesManager).to receive(:new).and_return(manager)
-    allow(Yast::Installation).to receive(:restarting?)
+    allow(Yast::Installation).to receive(:restarting?).and_return(restarting)
+    allow(Yast::Installation).to receive(:finish_restarting!)
     allow(Yast::Installation).to receive(:restart!) { :restart_yast }
+    allow(subject).to receive(:require).with("registration/url_helpers").and_raise(LoadError)
+    allow(::FileUtils).to receive(:touch)
+    stub_const("Registration::Storage::InstallationOptions", FakeInstallationOptions)
+    stub_const("Registration::Storage::Config", FakeRegConfig)
 
     # stub the Profile module to avoid dependency on autoyast2-installation
-    ay_profile = double("Yast::Profile")
     stub_const("Yast::Profile", ay_profile)
   end
 
@@ -101,13 +120,14 @@ describe Yast::InstUpdateInstaller do
         context "and self-update URL is remote" do
           it "shows a dialog suggesting to check the network configuration" do
             expect(Yast::Popup).to receive(:YesNo)
+            expect(manager).to receive(:add_repository)
+              .and_raise(::Installation::UpdatesManager::CouldNotProbeRepo)
             expect(subject.main).to eq(:next)
           end
 
           context "in AutoYaST installation or upgrade" do
             before do
               allow(Yast::Mode).to receive(:auto).at_least(1).and_return(true)
-              allow(Yast::Profile).to receive(:current).and_return({})
             end
 
             it "shows an error" do
@@ -122,6 +142,8 @@ describe Yast::InstUpdateInstaller do
 
           it "shows a dialog suggesting to check the network configuration" do
             expect(Yast::Popup).to_not receive(:YesNo)
+            expect(manager).to receive(:add_repository)
+              .and_raise(::Installation::UpdatesManager::CouldNotProbeRepo)
             expect(subject.main).to eq(:next)
           end
         end
@@ -177,13 +199,158 @@ describe Yast::InstUpdateInstaller do
           end
         end
 
+        context "when a SCC/SMT server defines the URL" do
+          let(:smt0) { double("service", slp_url: "http://update.suse.com") }
+          let(:smt1) { double("service", slp_url: "http://update.example.net") }
+
+          let(:update0) do
+            OpenStruct.new(
+              name: "SLES-12-Installer-Updates-0",
+              url:  "http://update.suse.com/updates/sle12/12.2"
+            )
+          end
+
+          let(:update1) do
+            OpenStruct.new(
+              name: "SLES-12-Installer-Updates-1",
+              url:  "http://update.suse.com/updates/sles12/12.2"
+            )
+          end
+
+          let(:regservice_selection) { Class.new }
+
+          let(:url_helpers) { double("url_helpers", registration_url: smt0.slp_url, slp_discovery: []) }
+          let(:regurl) { nil }
+
+          let(:registration) { double("registration", url: smt0.slp_url) }
+          let(:registration_class) { double("registration_class", new: registration) }
+
+          let(:updates) { [update0, update1] }
+
+          before do
+            # Load registration libraries
+            allow(subject).to receive(:require).with("registration/url_helpers")
+              .and_return(true)
+            allow(subject).to receive(:require).with("registration/registration")
+              .and_return(true)
+            allow(subject).to receive(:require).with("registration/ui/regservice_selection_dialog")
+              .and_return(true)
+            stub_const("Registration::Registration", registration_class)
+            stub_const("Registration::UrlHelpers", url_helpers)
+            stub_const("Registration::UI::RegserviceSelectionDialog", regservice_selection)
+
+            allow(url_helpers).to receive(:service_url) { |u| u }
+            allow(url_helpers).to receive(:boot_reg_url).and_return(regurl)
+            allow(registration).to receive(:get_updates_list).and_return(updates)
+            allow(manager).to receive(:add_repository).and_return(true)
+            allow(File).to receive(:write)
+          end
+
+          it "tries to update the installer using the given URL" do
+            expect(manager).to receive(:add_repository).with(URI(update0.url))
+              .and_return(true)
+            expect(manager).to receive(:add_repository).with(URI(update1.url))
+              .and_return(true)
+            expect(subject.main).to eq(:restart_yast)
+          end
+
+          it "saves the registration URL to be used later" do
+            allow(manager).to receive(:add_repository)
+            expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(smt0.slp_url)
+            expect(File).to receive(:write).with(/inst_update_installer.yaml/,
+              { "custom_url" => smt0.slp_url }.to_yaml)
+            subject.main
+          end
+
+          context "when more than one SMT server exist" do
+            before do
+              allow(url_helpers).to receive(:slp_discovery).and_return([smt0, smt1])
+            end
+
+            it "ask the user to choose one of them" do
+              expect(regservice_selection).to receive(:run).and_return(smt0)
+              expect(registration_class).to receive(:new).with(smt0.slp_url)
+                .and_return(registration)
+              expect(subject.main).to eq(:restart_yast)
+            end
+
+            context "if user cancels the dialog" do
+              before do
+                allow(regservice_selection).to receive(:run).and_return(:cancel)
+                allow(manager).to receive(:add_repository) # it will use the default URL
+              end
+
+              it "does not search for updates" do
+                expect(registration).to_not receive(:get_updates_list)
+                subject.main
+              end
+            end
+
+            context "if users selects the SCC server" do
+              before do
+                allow(regservice_selection).to receive(:run).and_return(:scc)
+              end
+
+              it "asks the SCC server" do
+                expect(registration_class).to receive(:new).with(nil)
+                  .and_return(registration)
+                allow(manager).to receive(:add_repository)
+                subject.main
+              end
+            end
+
+            context "when a regurl was specified via Linuxrc" do
+              let(:regurl) { "http://regserver.example.net" }
+
+              it "uses the given server" do
+                expect(registration_class).to receive(:new).with(regurl)
+                  .and_return(registration)
+                subject.main
+              end
+            end
+          end
+
+          context "when only one SMT server exist" do
+            before do
+              allow(url_helpers).to receive(:slp_discovery).and_return([smt0])
+            end
+
+            it "is selected automatically" do
+              expect(regservice_selection).to_not receive(:run)
+              expect(registration_class).to receive(:new).with(smt0.slp_url)
+                .and_return(registration)
+              subject.main
+            end
+          end
+
+          context "when a registration configuration is specified via AutoYaST profile" do
+            let(:reg_server_url) { "http://ay.test.example.com/update" }
+            let(:profile) { { "suse_register" => { "reg_server" => reg_server_url } } }
+
+            before do
+              allow(Yast::Mode).to receive(:auto).at_least(1).and_return(true)
+            end
+
+            it "uses the given server" do
+              expect(registration_class).to receive(:new).with(reg_server_url)
+                .and_return(registration)
+              subject.main
+            end
+
+            it "imports profile settings into registration configuration" do
+              allow(manager).to receive(:add_repository)
+              expect(FakeRegConfig.instance).to receive(:import).with(profile["suse_register"])
+              subject.main
+            end
+          end
+        end
+
         context "in AutoYaST installation or upgrade" do
           let(:profile_url) { "http://ay.test.example.com/update" }
+          let(:profile) { { "general" => { "self_update_url" => profile_url } } }
 
           before do
             expect(Yast::Mode).to receive(:auto).at_least(1).and_return(true)
-            allow(Yast::Profile).to receive(:current)
-              .and_return("general" => { "self_update_url" =>  profile_url })
             allow(::FileUtils).to receive(:touch)
           end
 
@@ -263,6 +430,49 @@ describe Yast::InstUpdateInstaller do
         expect(subject.main).to eq(:next)
       end
     end
+
+    context "when restarting YaST2" do
+      let(:restarting) { true }
+      let(:data_file_exists) { true }
+      let(:smt_url) { "https://smt.example.net" }
+      let(:registration_libs) { true }
+
+      before do
+        allow(File).to receive(:exist?)
+        allow(File).to receive(:exist?).with(/inst_update_installer.yaml/)
+          .and_return(data_file_exists)
+        allow(subject).to receive(:require_registration_libraries)
+          .and_return(registration_libs)
+        allow(File).to receive(:exist?).with(/installer_updated/).and_return(true)
+      end
+
+      context "and data file is available" do
+        it "sets custom_url" do
+          allow(File).to receive(:read).and_return("---\ncustom_url: #{smt_url}\n")
+          expect(FakeInstallationOptions.instance).to receive(:custom_url=)
+            .with(smt_url)
+          subject.main
+        end
+      end
+
+      context "and data file is not available" do
+        let(:data_file_exists) { false }
+
+        it "does not set custom_url" do
+          expect(FakeInstallationOptions.instance).to_not receive(:custom_url=)
+          subject.main
+        end
+      end
+
+      context "and yast2-registration is not available" do
+        let(:registration_libs) { false }
+
+        it "does not load custom_url" do
+          expect(FakeInstallationOptions.instance).to_not receive(:custom_url=)
+          subject.main
+        end
+      end
+    end
   end
 
   describe "#update_installer" do
@@ -271,12 +481,13 @@ describe Yast::InstUpdateInstaller do
 
     before do
       allow(Yast::Linuxrc).to receive(:InstallInf).with("Insecure").and_return(insecure)
-      allow(Yast::Linuxrc).to receive(:InstallInf).with("SelfUpdate").and_return("1")
+      allow(Yast::Linuxrc).to receive(:InstallInf).with("SelfUpdate")
+        .and_return(url)
     end
 
     context "when update works" do
       it "returns true" do
-        allow(manager).to receive(:add_repository).and_return([repo])
+        allow(manager).to receive(:add_repository).and_return(true)
         allow(manager).to receive(:apply_all)
         expect(subject.update_installer).to eq(true)
       end

@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.205
+Version:        3.1.206
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -96,6 +96,9 @@ Conflicts:	yast2-core < 2.17.10
 
 # Top bar with logo
 Conflicts:	yast2-ycp-ui-bindings < 3.1.7
+
+# RegserviceSelectionDialog
+Conflicts:  yast2-registration < 3.1.179
 
 Obsoletes:	yast2-installation-devel-doc
 

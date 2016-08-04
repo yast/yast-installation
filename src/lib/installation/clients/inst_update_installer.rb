@@ -15,6 +15,7 @@
 
 require "installation/updates_manager"
 require "uri"
+require "yaml"
 
 module Yast
   class InstUpdateInstaller
@@ -23,6 +24,7 @@ module Yast
 
     UPDATED_FLAG_FILENAME = "installer_updated".freeze
     REMOTE_SCHEMES = ["http", "https", "ftp", "tftp", "sftp", "nfs", "nfs4", "cifs", "smb"].freeze
+    REGISTRATION_DATA_PATH = "/var/lib/YaST2/inst_update_installer.yaml".freeze
 
     Yast.import "Pkg"
     Yast.import "GetInstArgs"
@@ -35,13 +37,17 @@ module Yast
     Yast.import "Report"
     Yast.import "NetworkService"
     Yast.import "Mode"
+    Yast.import "Profile"
 
     def main
       textdomain "installation"
 
       return :back if GetInstArgs.going_back
 
-      Installation.finish_restarting! if Installation.restarting?
+      if Installation.restarting?
+        load_registration_url
+        Installation.finish_restarting!
+      end
 
       return :next unless try_to_update?
 
@@ -54,6 +60,32 @@ module Yast
         :next
       end
     end
+
+    # Tries to update the installer
+    #
+    # It also shows feedback to the user in case of error.
+    #
+    # Errors handling:
+    #
+    # * A repository is not found: warn the user if she/he is using
+    #   a custom URL.
+    # * Could not fetch update from repository: report the user about
+    #   this error.
+    # * Repository could not be probed: suggest checking network
+    #   configuration if URL has a REMOTE_SCHEME.
+    #
+    # @return [Boolean] true if installer was updated; false otherwise.
+    def update_installer
+      updated = self_update_urls.map { |u| add_repository(u) }.any?
+
+      if updated
+        log.info("Applying installer updates")
+        updates_manager.apply_all
+      end
+      updated
+    end
+
+  protected
 
     # Instantiates an UpdatesManager to be used by the client
     #
@@ -75,22 +107,130 @@ module Yast
         log.info("self-update was disabled through Linuxrc")
         false
       else
-        !self_update_url.nil?
+        !self_update_urls.empty?
       end
     end
 
-    # Return the self-update URL
+    # Return the self-update URLs
+    #
+    # @return [Array<URI>] self-update URLs
+    #
+    # @see #default_self_update_url
+    # @see #custom_self_update_url
+    def self_update_urls
+      return @self_update_urls if @self_update_urls
+      @self_update_urls = Array(custom_self_update_url)
+      @self_update_urls = default_self_update_urls if @self_update_urls.empty?
+      log.info("self-update URLs are #{@self_update_urls}")
+      @self_update_urls
+    end
+
+    # Return the default self-update URLs
+    #
+    # A default URL can be specified via SCC/SMT servers or in the control.xml file.
+    #
+    # @return [Array<URI>] self-update URLs
+    def default_self_update_urls
+      return @default_self_update_urls if @default_self_update_urls
+      @default_self_update_urls = self_update_url_from_connect
+      return @default_self_update_urls unless @default_self_update_urls.empty?
+      @default_self_update_urls = Array(self_update_url_from_control)
+    end
+
+    # Return the custom self-update URL
+    #
+    # A custom URL can be specified via Linuxrc or in an AutoYaST profile.
+    # Only 1 custom self-update URL can be specified.
     #
     # @return [URI] self-update URL
-    #
     # @see #self_update_url_from_linuxrc
-    # @see #self_update_url_from_control
     # @see #self_update_url_from_profile
-    def self_update_url
-      url = self_update_url_from_linuxrc || self_update_url_from_profile ||
-        self_update_url_from_control
-      log.info("self-update URL is #{url}")
-      url
+    def custom_self_update_url
+      @custom_self_update_url ||= self_update_url_from_linuxrc || self_update_url_from_profile
+    end
+
+    # Return the self-update URLs from SCC/SMT server
+    #
+    # Return an empty array if yast2-registration or SUSEConnect are not
+    # available (for instance in openSUSE). More than 1 URLs can be found.
+    #
+    # As a side effect, it stores the URL of the registration server used
+    # in the installation options.
+    #
+    # @return [Array<URI>] self-update URLs.
+    def self_update_url_from_connect
+      return [] unless require_registration_libraries
+      url = registration_url
+      return [] if url == :cancel
+
+      log.info("Using registration URL: #{url}")
+      import_registration_ayconfig if Mode.auto
+      registration = Registration::Registration.new(url == :scc ? nil : url.to_s)
+      # Set custom_url into installation options
+      Registration::Storage::InstallationOptions.instance.custom_url = registration.url
+      store_registration_url(registration.url)
+      registration.get_updates_list.map { |u| URI(u.url) }
+    end
+
+    # Return the URL of the preferred registration server
+    #
+    # Determined in the following order:
+    #
+    # * via AutoYaST profile
+    # * regurl boot parameter
+    # * SLP look up
+    #   * If there's only 1 SMT server, it will be chosen automatically.
+    #   * If there's more than 1 SMT server, it will ask the user to choose one
+    #
+    # @return [URI,:scc,:cancel] Registration URL; :scc if SCC server was selected;
+    #                            :cancel if dialog was dismissed.
+    #
+    # @see #registration_server_from_user
+    def registration_url
+      url = registration_url_from_profile || ::Registration::UrlHelpers.boot_reg_url
+      return URI(url) if url
+      services = ::Registration::UrlHelpers.slp_discovery
+      return :scc if services.empty?
+      service =
+        if services.size > 1
+          registration_service_from_user(services)
+        else
+          services.first
+        end
+      return service unless service.respond_to?(:slp_url)
+      URI(::Registration::UrlHelpers.service_url(service.slp_url))
+    end
+
+    # Return the registration server URL from the AutoYaST profile
+    #
+    # @return [URI,nil] the self-update URL, nil if not running in AutoYaST mode
+    #   or when the URL is not defined in the profile
+    def registration_url_from_profile
+      return nil unless Mode.auto
+
+      profile = Yast::Profile.current
+      profile_url = profile.fetch("suse_register", {})["reg_server"]
+      get_url_from(profile_url)
+    end
+
+    # Ask the user to chose a registration server
+    #
+    # @param services [Array<SlpServiceClass::Service>] Array of registration servers
+    # @return [SlpServiceClass::Service,Symbol] Registration service to use; :scc if SCC is selected;
+    #                                           :cancel if the dialog was dismissed.
+    def registration_service_from_user(services)
+      ::Registration::UI::RegserviceSelectionDialog.run(
+        services:    services,
+        description: _("Select a detected registration server from the list\n" \
+          "to search for installer updates.")
+      )
+    end
+
+    # Return the self-update URL according to product's control file
+    #
+    # @return [URI,nil] self-update URL. nil if no URL was set in control file.
+    def self_update_url_from_control
+      get_url_from(ProductFeatures.GetStringFeature("globals", "self_update_url"))
     end
 
     # Return the self-update URL according to Linuxrc
@@ -100,19 +240,13 @@ module Yast
       get_url_from(Linuxrc.InstallInf("SelfUpdate"))
     end
 
-    # Return the self-update URL according to product's control file
-    #
-    def self_update_url_from_control
-      get_url_from(ProductFeatures.GetStringFeature("globals", "self_update_url"))
-    end
-
     # Return the self-update URL from the AutoYaST profile
+    #
     # @return [URI,nil] the self-update URL, nil if not running in AutoYaST mode
     #   or when the URL is not defined in the profile
     def self_update_url_from_profile
       return nil unless Mode.auto
 
-      Yast.import "Profile"
       profile = Yast::Profile.current
       profile_url = profile.fetch("general", {})["self_update_url"]
 
@@ -157,46 +291,31 @@ module Yast
       File.join(Directory.vardir, UPDATED_FLAG_FILENAME)
     end
 
-    # Tries to update the installer
+    # Add a repository to the updates manager
     #
-    # It also shows feedback to the user in case of error.
-    #
-    # Errors handling:
-    #
-    # * A repository is not found: warn the user if she/he is using
-    #   a custom URL.
-    # * Could not fetch update from repository: report the user about
-    #   this error.
-    # * Repository could not be probed: suggest checking network
-    #   configuration if URL has a REMOTE_SCHEME.
-    #
-    # @return [Boolean] true if installer was updated; false otherwise.
-    def update_installer
-      log.info("Adding update from #{self_update_url}")
-      updates_manager.add_repository(self_update_url)
-      updated = updates_manager.repositories?
-      if updated
-        log.info("Applying installer updates")
-        updates_manager.apply_all
-      end
-      updated
+    # @param url [URI] Repository URL
+    # @return [Boolean] true if the repository was added; false otherwise.
+    def add_repository(url)
+      log.info("Adding update from #{url}")
+      updates_manager.add_repository(url)
 
     rescue ::Installation::UpdatesManager::NotValidRepo
-      if !using_default_url?
+      if !default_url?(url)
         # TRANSLATORS: %s is an URL
-        Report.Error(format(_("A valid update could not be found at\n%s.\n\n"), self_update_url))
+        Report.Error(format(_("A valid update could not be found at\n%s.\n\n"), url))
       end
       false
 
     rescue ::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo
       # TRANSLATORS: %s is an URL
-      Report.Error(format(_("Could not fetch update from\n%s.\n\n"), self_update_url))
+      Report.Error(format(_("Could not fetch update from\n%s.\n\n"), url))
       false
 
     rescue ::Installation::UpdatesManager::CouldNotProbeRepo
+      msg = could_not_probe_repo_msg(url)
       if Mode.auto
-        Report.Warning(could_not_probe_repo_msg)
-      elsif remote_self_update_url? && configure_network?
+        Report.Warning(msg)
+      elsif remote_url?(url) && configure_network?(msg)
         retry
       end
       false
@@ -204,9 +323,10 @@ module Yast
 
     # Determine whether the URL is remote
     #
+    # @param url [URI] URL to check
     # @return [Boolean] true if it's considered remote; false otherwise.
-    def remote_self_update_url?
-      REMOTE_SCHEMES.include?(self_update_url.scheme)
+    def remote_url?(url)
+      REMOTE_SCHEMES.include?(url.scheme)
     end
 
     # Launch the network configuration client on users' demand
@@ -214,11 +334,11 @@ module Yast
     # Ask the user about checking network configuration. If she/he accepts,
     # the `inst_lan` client will be launched.
     #
+    # @param url [URI] URL to show in the message
     # @return [Boolean] true if the network configuration client was launched;
     #                   false if the network is not configured.
-    def configure_network?
-      msg = could_not_probe_repo_msg +
-        _("\nWould you like to check your network configuration\n" \
+    def configure_network?(reason)
+      msg = reason + _("\nWould you like to check your network configuration\n" \
         "and try installing the updates again?")
 
       if Popup.YesNo(msg)
@@ -249,16 +369,17 @@ module Yast
     # Determines whether the given URL is equal to the default one
     #
     # @return [Boolean] true if it's the default URL; false otherwise.
-    def using_default_url?
-      self_update_url_from_control == self_update_url
+    def default_url?(uri)
+      default_self_update_urls.include?(uri)
     end
 
     # Return a message to be shown when the updates repo could not be probed
     #
+    # @param [URI,String] Repository URI
     # @return [String] Message including the repository URL
     #
     # @see #self_update_url
-    def could_not_probe_repo_msg
+    def could_not_probe_repo_msg(url)
       # Note: the proxy cannot be configured in the YaST installer yet,
       # it needs to be set via the "proxy" boot option.
       # TRANSLATORS: %s is an URL
@@ -268,7 +389,50 @@ module Yast
         "However, some potentially important bug fixes might be missing.\n" \
         "\n" \
         "If you need a proxy server to access the update repository\n" \
-        "then use the \"proxy\" boot parameter.\n"), self_update_url)
+        "then use the \"proxy\" boot parameter.\n"), url.to_s)
+    end
+
+    # Require registration libraries
+    #
+    # @raise LoadError
+    def require_registration_libraries
+      require "registration/url_helpers"
+      require "registration/registration"
+      require "registration/ui/regservice_selection_dialog"
+      true
+    rescue LoadError
+      log.info "yast2-registration is not available"
+      false
+    end
+
+    # Store URL of registration server to be used by inst_scc client
+    #
+    # @params [URI] Registration server URL.
+    def store_registration_url(url)
+      data = { "custom_url" => url.to_s }
+      File.write(REGISTRATION_DATA_PATH, data.to_yaml)
+    end
+
+    # Load URL of registration server to be used by inst_scc client
+    #
+    # @return [Boolean] true if data was loaded; false otherwise.
+    def load_registration_url
+      return false unless File.exist?(REGISTRATION_DATA_PATH) && require_registration_libraries
+      data = YAML.load(File.read(REGISTRATION_DATA_PATH))
+      Registration::Storage::InstallationOptions.instance.custom_url = data["custom_url"]
+      ::FileUtils.rm_rf(REGISTRATION_DATA_PATH)
+      true
+    end
+
+    # Load registration configuration from AutoYaST profile
+    #
+    # This data will be used by Registration::ConnectHelpers.catch_registration_errors.
+    #
+    # @see Yast::Profile.current
+    def import_registration_ayconfig
+      ::Registration::Storage::Config.instance.import(
+        Yast::Profile.current.fetch("suse_register", {})
+      )
     end
   end
 end

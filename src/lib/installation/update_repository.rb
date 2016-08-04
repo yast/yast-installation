@@ -49,7 +49,7 @@ module Installation
     # @return [Array<Pathname>] local paths of updates fetched from the repo
     attr_reader :update_files
 
-    # A valid repository was not found (altough the URL exists,
+    # A valid repository was not found (although the URL exists,
     # repository type cannot be determined).
     class NotValidRepo < StandardError; end
 

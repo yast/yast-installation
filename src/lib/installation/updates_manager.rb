@@ -42,15 +42,18 @@ module Installation
     # @return [Array<DriverUpdate>] Driver updates found in inst-sys
     attr_reader :driver_updates
 
+    # Base exception to be used for repository problems
+    class RepoError < StandardError; end
+
     # The URL was found but a valid repo is not there.
-    class NotValidRepo < StandardError; end
+    class NotValidRepo < RepoError; end
 
     # The update could not be fetched (missing packages, broken
     # repository, etc.).
-    class CouldNotFetchUpdateFromRepo < StandardError; end
+    class CouldNotFetchUpdateFromRepo < RepoError; end
 
     # Repo is unreachable (name solving issues, etc.).
-    class CouldNotProbeRepo < StandardError; end
+    class CouldNotProbeRepo < RepoError; end
 
     DRIVER_UPDATES_PATHS = [Pathname("/update"), Pathname("/download")].freeze
 
