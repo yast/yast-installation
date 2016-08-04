@@ -1,8 +1,16 @@
 -------------------------------------------------------------------
-Mon Aug  1 08:56:26 UTC 2016 - igonzalezsosa@suse.com
+Thu Aug  4 10:02:28 UTC 2016 - igonzalezsosa@suse.com
 
 - Retrieve the self-update URL from the registration
   server (SCC/SMT) (FATE#319716)
+- 3.1.206
+
+-------------------------------------------------------------------
+Wed Aug  3 17:06:46 CEST 2016 - locilka@suse.com
+
+- UI, UX and internal handling for the Welcome screen optimized to
+  prevent from not showing that the license needs to be accepted
+  (bsc#980374).
 - 3.1.205
 
 -------------------------------------------------------------------
