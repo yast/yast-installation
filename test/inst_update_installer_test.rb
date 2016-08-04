@@ -42,6 +42,7 @@ describe Yast::InstUpdateInstaller do
     allow(Yast::NetworkService).to receive(:isNetworkRunning).and_return(network_running)
     allow(::Installation::UpdatesManager).to receive(:new).and_return(manager)
     allow(Yast::Installation).to receive(:restarting?).and_return(restarting)
+    allow(Yast::Installation).to receive(:finish_restarting!)
     allow(Yast::Installation).to receive(:restart!) { :restart_yast }
     allow(subject).to receive(:require).with("registration/url_helpers").and_raise(LoadError)
     allow(::FileUtils).to receive(:touch)
