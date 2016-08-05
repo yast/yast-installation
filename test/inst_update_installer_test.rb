@@ -273,8 +273,8 @@ describe Yast::InstUpdateInstaller do
 
               it "saves the registration URL to be used later" do
                 allow(manager).to receive(:add_repository)
-                expect(FakeInstallationOptions.instance).to_not receive(:custom_url=).with(nil)
-                expect(File).to receive(:write).with(/inst_update_installer.yaml/,
+                expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(smt0.slp_url)
+                expect(File).to receive(:write).with(/\/inst_update_installer.yaml\z/,
                   { "custom_url" => smt0.slp_url }.to_yaml)
                 subject.main
               end
@@ -306,7 +306,8 @@ describe Yast::InstUpdateInstaller do
 
               it "does not save the registration URL to be used later" do
                 allow(manager).to receive(:add_repository)
-                expect(FakeInstallationOptions.instance).to_not receive(:custom_url=).with(nil)
+                allow(registration).to receive(:url).and_return(nil)
+                expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(nil)
                 expect(File).to_not receive(:write).with(/inst_update_installer.yaml/, anything)
                 subject.main
               end
@@ -338,7 +339,7 @@ describe Yast::InstUpdateInstaller do
             it "saves the registration URL to be used later" do
               allow(manager).to receive(:add_repository)
               expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(smt0.slp_url)
-              expect(File).to receive(:write).with(/inst_update_installer.yaml/,
+              expect(File).to receive(:write).with(/\/inst_update_installer.yaml\z/,
                 { "custom_url" => smt0.slp_url }.to_yaml)
               subject.main
             end
@@ -460,7 +461,7 @@ describe Yast::InstUpdateInstaller do
 
       before do
         allow(File).to receive(:exist?)
-        allow(File).to receive(:exist?).with(/inst_update_installer.yaml/)
+        allow(File).to receive(:exist?).with(/\/inst_update_installer.yaml\z/)
           .and_return(data_file_exists)
         allow(subject).to receive(:require_registration_libraries)
           .and_return(registration_libs)

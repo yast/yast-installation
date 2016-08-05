@@ -168,7 +168,7 @@ module Yast
       registration = Registration::Registration.new(url == :scc ? nil : url.to_s)
       # Set custom_url into installation options
       Registration::Storage::InstallationOptions.instance.custom_url = registration.url
-      store_registration_url(url) if url.is_a?(URI)
+      store_registration_url(url) unless url == :scc
       registration.get_updates_list.map { |u| URI(u.url) }
     end
 
