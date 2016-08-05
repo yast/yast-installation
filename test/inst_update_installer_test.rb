@@ -254,24 +254,30 @@ describe Yast::InstUpdateInstaller do
             expect(subject.main).to eq(:restart_yast)
           end
 
-          it "saves the registration URL to be used later" do
-            allow(manager).to receive(:add_repository)
-            expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(smt0.slp_url)
-            expect(File).to receive(:write).with(/inst_update_installer.yaml/,
-              { "custom_url" => smt0.slp_url }.to_yaml)
-            subject.main
-          end
-
           context "when more than one SMT server exist" do
             before do
               allow(url_helpers).to receive(:slp_discovery).and_return([smt0, smt1])
             end
 
-            it "ask the user to choose one of them" do
-              expect(regservice_selection).to receive(:run).and_return(smt0)
-              expect(registration_class).to receive(:new).with(smt0.slp_url)
-                .and_return(registration)
-              expect(subject.main).to eq(:restart_yast)
+            context "if the user selects a SMT server" do
+              before do
+                allow(regservice_selection).to receive(:run).and_return(smt0)
+              end
+
+              it "asks that SMT server for the updates URLs" do
+                expect(registration_class).to receive(:new).with(smt0.slp_url)
+                  .and_return(registration)
+                allow(manager).to receive(:add_repository)
+                subject.main
+              end
+
+              it "saves the registration URL to be used later" do
+                allow(manager).to receive(:add_repository)
+                expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(smt0.slp_url)
+                expect(File).to receive(:write).with(/\/inst_update_installer.yaml\z/,
+                  { "custom_url" => smt0.slp_url }.to_yaml)
+                subject.main
+              end
             end
 
             context "if user cancels the dialog" do
@@ -291,10 +297,18 @@ describe Yast::InstUpdateInstaller do
                 allow(regservice_selection).to receive(:run).and_return(:scc)
               end
 
-              it "asks the SCC server" do
+              it "asks the SCC server for the updates URLs" do
                 expect(registration_class).to receive(:new).with(nil)
                   .and_return(registration)
                 allow(manager).to receive(:add_repository)
+                subject.main
+              end
+
+              it "does not save the registration URL to be used later" do
+                allow(manager).to receive(:add_repository)
+                allow(registration).to receive(:url).and_return(nil)
+                expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(nil)
+                expect(File).to_not receive(:write).with(/inst_update_installer.yaml/, anything)
                 subject.main
               end
             end
@@ -319,6 +333,14 @@ describe Yast::InstUpdateInstaller do
               expect(regservice_selection).to_not receive(:run)
               expect(registration_class).to receive(:new).with(smt0.slp_url)
                 .and_return(registration)
+              subject.main
+            end
+
+            it "saves the registration URL to be used later" do
+              allow(manager).to receive(:add_repository)
+              expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(smt0.slp_url)
+              expect(File).to receive(:write).with(/\/inst_update_installer.yaml\z/,
+                { "custom_url" => smt0.slp_url }.to_yaml)
               subject.main
             end
           end
@@ -439,7 +461,7 @@ describe Yast::InstUpdateInstaller do
 
       before do
         allow(File).to receive(:exist?)
-        allow(File).to receive(:exist?).with(/inst_update_installer.yaml/)
+        allow(File).to receive(:exist?).with(/\/inst_update_installer.yaml\z/)
           .and_return(data_file_exists)
         allow(subject).to receive(:require_registration_libraries)
           .and_return(registration_libs)

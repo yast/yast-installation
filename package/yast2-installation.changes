@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Aug  5 07:22:59 UTC 2016 - igonzalezsosa@suse.com
+
+- Fix the registration screen initialization when SCC server
+  is used during self-update (FATE#319716)
+- 3.1.207
+
+-------------------------------------------------------------------
 Thu Aug  4 10:02:28 UTC 2016 - igonzalezsosa@suse.com
 
 - Retrieve the self-update URL from the registration
