@@ -32,7 +32,6 @@ require "y2storage"
 module Yast
   class InstSystemAnalysisClient < Client
     include Yast::Logger
-    using Y2Storage::Refinements::DevicegraphLists
 
     def main
       Yast.import "UI"
@@ -288,7 +287,7 @@ module Yast
         drivers_info = ""
       end
 
-      if devicegraph.disks.empty?
+      if devicegraph.empty?
         if @found_controllers || Arch.s390
           if !(Mode.autoinst || Mode.autoupgrade)
             # pop-up error report
