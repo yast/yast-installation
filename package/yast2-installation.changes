@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Aug  9 14:51:06 UTC 2016 - ancor@suse.com
+
+- storage-ng: removed dependency from (old) yast2-storage, even
+  if it breaks some functionality.
+- 3.2.2
+
+-------------------------------------------------------------------
 Fri Jul 29 07:32:46 UTC 2016 - ancor@suse.com
 
 - If the user has skipped multipath activation, don't ask again
