@@ -62,6 +62,11 @@ Conflicts:	yast2-mouse < 2.18.0
 # New API for ProductLicense
 Requires:	yast2-packager >= 3.1.96
 
+# FIXME: some code present in this package still depends on the old yast2-storage
+# and will break without this dependency. That's acceptable at this point of the
+# migration to storage-ng. See installer-hacks.md in the yast-storage-ng repo.
+# Requires:  yast2-storage >= 3.1.97
+
 # use in startup scripts
 Requires:	initviocons
 
