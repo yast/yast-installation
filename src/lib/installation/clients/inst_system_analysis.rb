@@ -96,6 +96,10 @@ module Yast
       actions_doing = []
       actions_functions = []
 
+      actions_todo      << _("Initialize software manager")
+      actions_doing     << _("Initializing software manager...")
+      actions_functions << fun_ref(method(:InitInstallationRepositories), "boolean ()")
+
       Builtins.y2milestone("Probing done: %1", Installation.probing_done)
       # skip part of probes as it doesn't change, but some parts (mostly disks
       # that can be activated) need rerun see BNC#865579
@@ -134,10 +138,6 @@ module Yast
       actions_todo      << _("Search for system files")
       actions_doing     << _("Searching for system files...")
       actions_functions << fun_ref(method(:FilesFromOlderSystems), "boolean ()")
-
-      actions_todo      << _("Initialize software manager")
-      actions_doing     << _("Initializing software manager...")
-      actions_functions << fun_ref(method(:InitInstallationRepositories), "boolean ()")
 
       Progress.New(
         # TRANSLATORS: dialog caption
@@ -339,6 +339,7 @@ module Yast
         ret = false
       else
         @packager_initialized = true
+        return :restart_yast if update_installer == :restart_yast
         Packages.InitializeAddOnProducts
 
         # bnc#886608: Adjusting product name (for &product; macro) right after we
@@ -352,6 +353,13 @@ module Yast
       PackageCallbacks.RestorePreviousProgressCallbacks
 
       ret
+    end
+
+    # Runs installer's self-update
+    #
+    # @see inst_update_installer client
+    def update_installer
+      WFM.CallFunction("inst_update_installer", [])
     end
 
     def FilesFromOlderSystems
