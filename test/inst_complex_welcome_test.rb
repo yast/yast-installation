@@ -101,6 +101,7 @@ describe Yast::InstComplexWelcomeClient do
             allow(Yast::Language).to receive(:CheckLanguagesSupport)
 
             allow(Yast::ProductLicense).to receive(:AcceptanceNeeded).and_return(license_needed)
+            allow(Yast::ProductLicense).to receive(:cache_license_acceptance_needed).and_return(nil)
             allow(subject).to receive(:license_accepted?).and_return(license_accepted)
           end
 
