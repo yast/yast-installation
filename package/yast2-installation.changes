@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Aug 16 13:28:14 CEST 2016 - locilka@suse.com
+
+- Fixed testsuite for inst_complex_welcome after implementing lazy
+  loading in ProductLicense in yast2-packager (bsc#993285)
+- 3.1.208
+
+-------------------------------------------------------------------
 Fri Aug  5 07:22:59 UTC 2016 - igonzalezsosa@suse.com
 
 - Fix the registration screen initialization when SCC server
