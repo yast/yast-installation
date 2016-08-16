@@ -34,6 +34,7 @@ Source1:	YaST2-Second-Stage.service
 Source2:	YaST2-Firstboot.service
 
 BuildRequires:  docbook-xsl-stylesheets libxslt update-desktop-files yast2-core-devel
+BuildRequires:  yast2-packager >= 3.1.113
 BuildRequires:  yast2-devtools >= 3.1.10
 BuildRequires:  rubygem(rspec)
 
@@ -59,8 +60,8 @@ Requires:	yast2-pkg-bindings >= 3.1.33
 # Mouse-related scripts moved to yast2-mouse
 Conflicts:	yast2-mouse < 2.18.0
 
-# New API for ProductLicense
-Requires:	yast2-packager >= 3.1.96
+# Lazy loading in ProductLicense
+Requires:	yast2-packager >= 3.1.113
 
 # Yast::Storage.multipath_off?
 Requires:	yast2-storage >= 3.1.97
