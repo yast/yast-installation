@@ -68,7 +68,8 @@ module Yast
           # For some reason the CheckBoxFrame Label is cut if the label size
           # exceeds the CheckBoxFrame content's width. MinWidth with label length
           # is used to avoid this issue.
-          MinWidth(label.length,
+          MinWidth(
+            label.length,
             CheckBoxFrame(
               Id(:import_ssh_key),
               label,
