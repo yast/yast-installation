@@ -61,7 +61,7 @@ Requires:	yast2-pkg-bindings >= 3.1.33
 Conflicts:	yast2-mouse < 2.18.0
 
 # Lazy loading in ProductLicense
-Conflicts:	yast2-packager < 3.1.113
+Requires:	yast2-packager >= 3.1.113
 
 # Yast::Storage.multipath_off?
 Requires:	yast2-storage >= 3.1.97
