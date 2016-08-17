@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Aug 17 15:02:02 UTC 2016 - jreidinger@suse.com
+
+- filter out same repositories from extraurls if they differ only
+  in trailing slash (bnc#970488)
+- 3.1.210
+
+-------------------------------------------------------------------
 Tue Aug 16 15:34:43 UTC 2016 - kanderssen@suse.com
 
 - SSH Importer: Width fix to avoid cut of CheckBoxFrame Label
