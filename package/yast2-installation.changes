@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Aug 16 15:34:43 UTC 2016 - kanderssen@suse.com
+
+- SSH Importer: Width fix to avoid cut of CheckBoxFrame Label
+  (fate##319624)
+- 3.1.209
+
+-------------------------------------------------------------------
 Tue Aug 16 13:28:14 CEST 2016 - locilka@suse.com
 
 - Fixed testsuite for inst_complex_welcome after implementing lazy
