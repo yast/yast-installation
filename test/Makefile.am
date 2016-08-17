@@ -1,4 +1,5 @@
 TESTS = \
+  inst_extrasources_test.rb \
   inst_functions_test.rb \
   inst_finish_test.rb \
   inst_instsys_cleanup_client_test.rb \
