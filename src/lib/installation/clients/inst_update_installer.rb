@@ -27,6 +27,9 @@ module Yast
     REGISTRATION_DATA_PATH = "/var/lib/YaST2/inst_update_installer.yaml".freeze
 
     Yast.import "Pkg"
+    Yast.import "Packages"
+    Yast.import "PackageCallbacks"
+    Yast.import "Language"
     Yast.import "GetInstArgs"
     Yast.import "Directory"
     Yast.import "Installation"
@@ -52,6 +55,9 @@ module Yast
       return :next unless try_to_update?
 
       log.info("Trying installer update")
+
+      # prepare for downloading packages
+      initialize_packager
 
       if update_installer
         ::FileUtils.touch(update_flag_file) # Indicates that the installer was updated.
@@ -208,6 +214,8 @@ module Yast
     def registration_url_from_profile
       return nil unless Mode.auto
 
+      # TODO: download the AutoYaST profile first
+      # see ../../lib/transfer/file_from_url.rb#L89
       profile = Yast::Profile.current
       profile_url = profile.fetch("suse_register", {})["reg_server"]
       get_url_from(profile_url)
@@ -433,6 +441,18 @@ module Yast
       ::Registration::Storage::Config.instance.import(
         Yast::Profile.current.fetch("suse_register", {})
       )
+    end
+
+    # Initialize the package management so we can download the updates from
+    # the update repository.
+    def initialize_packager
+      log.info "Initializing the package management"
+      # initialize package callbacks to show a progress while downloading files
+      PackageCallbacks.InitPackageCallbacks
+      # make sure libzypp reports errors using the current locale
+      Pkg.SetTextLocale(Language.language)
+      # load the GPG keys from inst-sys
+      Packages.ImportGPGKeys
     end
   end
 end

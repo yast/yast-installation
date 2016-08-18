@@ -186,7 +186,10 @@ module Installation
     #
     # Release the repository
     def cleanup
+      Yast::Pkg.SourceRelease(repo_id)
       Yast::Pkg.SourceDelete(repo_id)
+      # make sure it's also removed from disk
+      Yast::Pkg.SourceSaveAll
     end
 
     # Determine whether the repository is empty or not
