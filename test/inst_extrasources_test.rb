@@ -29,14 +29,14 @@ describe Yast::InstExtrasourcesClient do
       allow(Yast::Mode).to receive(:update).and_return(true)
       subject.RegisteredUrls
 
-      expect(subject.instance_variable_get(:"@local_urls")).to eq({2 => "dir:///mnt/path"})
+      expect(subject.instance_variable_get(:"@local_urls")).to eq(2 => "dir:///mnt/path")
     end
 
     it "fills list of usb sources" do
       subject.RegisteredUrls
 
       expect(subject.instance_variable_get(:"@usb_sources")).to eq(
-        {1 => "usb://device=/dev/disk/by-id/usb-15"}
+        1 => "usb://device=/dev/disk/by-id/usb-15"
       )
     end
   end
@@ -46,13 +46,11 @@ describe Yast::InstExtrasourcesClient do
        "without already registered entries passed as argument" do
       already_registered = "http://test.com"
       allow(Yast::ProductFeatures).to receive(:GetFeature).with("software", "extra_urls")
-        .and_return([{"baseurl" => "http://test.com/"}, {"baseurl" => "http://test2.com"}])
+        .and_return([{ "baseurl" => "http://test.com/" }, { "baseurl" => "http://test2.com" }])
 
       expect(subject.GetURLsToRegister(already_registered)).to eq(
-        [{"baseurl" => "http://test2.com"}]
+        [{ "baseurl" => "http://test2.com" }]
       )
     end
   end
 end
-
-

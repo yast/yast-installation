@@ -342,13 +342,9 @@ module Yast
         general = Pkg.SourceGeneralData(src)
         url = general["url"]
         next if url.nil? || url.empty?
-        if Mode.update && url =~ /^dir:\/+mnt\/+/
-          @local_urls[src] = url
-        end
+        @local_urls[src] = url if Mode.update && url =~ /^dir:\/+mnt\/+/
         # check for USB sources which should be disabled
-        if url.include?("device=/dev/disk/by-id/usb-")
-          @usb_sources[src] = url
-        end
+        @usb_sources[src] = url if url.include?("device=/dev/disk/by-id/usb-")
         url.chop! if url.end_with?("/") # remove trailing slash to normalize path (see bnc#970488)
         ret << url
       end
