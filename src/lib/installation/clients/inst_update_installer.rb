@@ -29,6 +29,7 @@ module Yast
     Yast.import "Pkg"
     Yast.import "Packages"
     Yast.import "PackageCallbacks"
+    Yast.import "InstURL"
     Yast.import "Language"
     Yast.import "GetInstArgs"
     Yast.import "Directory"
@@ -52,10 +53,14 @@ module Yast
         Installation.finish_restarting!
       end
 
+      # shortcut - already updated
+      return :next if installer_updated?
+
       # initialize packager, we need to load the base product name
       # to properly obtain the update URL from the registration server
-      initialize_packager
+      return :abort unless initialize_packager
 
+      # self update disabled or not possible
       return :next unless try_to_update?
 
       log.info("Trying installer update")
@@ -450,13 +455,36 @@ module Yast
     # Initialize the package management so we can download the updates from
     # the update repository.
     def initialize_packager
-      log.info "Initializing the package management"
-      # initialize package callbacks to show a progress while downloading files
+      log.info "Initializing the package management..."
+
+      # add the initial installation repository, Packages.InitializeCatalogs
+      # cannot be used here is does too much (adds y2update.tgz, selects the
+      # product, selects the default patterns, looks for addon product files...)
+
+      # initialize package callbacks to show a progress while downloading the files
       PackageCallbacks.InitPackageCallbacks
 
-      # initialize the package management (load the GPG keys from inst-sys,
-      # add the initial installation repository)
-      Packages.InitializeCatalogs
+      # set the language for the package manager (error messages)
+      Pkg.SetTextLocale(Language.language)
+
+      # load the GPG keys from inst-sys
+      Packages.ImportGPGKeys
+
+      base_url = InstURL.installInf2Url("")
+      initial_repository = Pkg.SourceCreateBase(base_url, "")
+
+      while !initial_repository
+        log.error "Adding the installation repository failed"
+        # ask the user to retry
+        base_url = Packages.UpdateSourceURL(base_url)
+
+        # aborted by user
+        return false if base_url == ""
+
+        initial_repository = Pkg.SourceCreateBase(base_url, "")
+      end
+
+      true
     end
 
     # delete all added installation repositories
