@@ -59,9 +59,11 @@ module Yast
       return :next unless try_to_update?
 
       log.info("Trying installer update")
+      installer_updated = update_installer
 
+      finish_packager
 
-      if update_installer
+      if installer_updated
         ::FileUtils.touch(update_flag_file) # Indicates that the installer was updated.
         Installation.restart!
       else
@@ -452,9 +454,17 @@ module Yast
       # initialize package callbacks to show a progress while downloading files
       PackageCallbacks.InitPackageCallbacks
 
-      # initialize the package management (load the GPG keys,
-      # load the initial repository)
+      # initialize the package management (load the GPG keys from inst-sys,
+      # add the initial installation repository)
       Packages.InitializeCatalogs
+    end
+
+    # delete all added installation repositories
+    # to make sure there is no leftover which could affect the installation later
+    def finish_packager
+      # false = all repositories, even the disabled ones
+      Pkg.SourceGetCurrent(false).each { |r| Pkg.SourceDelete(r) }
+      Pkg.SourceSaveAll
     end
   end
 end
