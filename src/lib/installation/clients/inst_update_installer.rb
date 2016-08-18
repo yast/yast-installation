@@ -52,12 +52,14 @@ module Yast
         Installation.finish_restarting!
       end
 
+      # initialize packager, we need to load the base product name
+      # to properly obtain the update URL from the registration server
+      initialize_packager
+
       return :next unless try_to_update?
 
       log.info("Trying installer update")
 
-      # prepare for downloading packages
-      initialize_packager
 
       if update_installer
         ::FileUtils.touch(update_flag_file) # Indicates that the installer was updated.
@@ -449,10 +451,10 @@ module Yast
       log.info "Initializing the package management"
       # initialize package callbacks to show a progress while downloading files
       PackageCallbacks.InitPackageCallbacks
-      # make sure libzypp reports errors using the current locale
-      Pkg.SetTextLocale(Language.language)
-      # load the GPG keys from inst-sys
-      Packages.ImportGPGKeys
+
+      # initialize the package management (load the GPG keys,
+      # load the initial repository)
+      Packages.InitializeCatalogs
     end
   end
 end
