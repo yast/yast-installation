@@ -201,7 +201,7 @@ module Installation
 
       description = Yast::WFM.CallFunction(client, ["Description", {}])
 
-      return nil unless description
+      return nil if description.nil? || description.empty?
 
       unless description.key?("id")
         log.warn "proposal client #{client} is missing key 'id' in #{description}"
