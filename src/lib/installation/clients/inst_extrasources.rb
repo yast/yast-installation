@@ -223,7 +223,7 @@ module Yast
       end
 
       urls_from_control_file = Builtins.filter(urls_from_control_file) do |one_url|
-        url = one_url["base_url"] || ""
+        url = one_url["baseurl"] || ""
         normalized_url = url.end_with?("/") ? url.chop : url
         if registered.include?(normalized_url)
           Builtins.y2milestone(

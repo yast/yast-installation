@@ -46,10 +46,10 @@ describe Yast::InstExtrasourcesClient do
        "without already registered entries passed as argument" do
       already_registered = "http://test.com"
       allow(Yast::ProductFeatures).to receive(:GetFeature).with("software", "extra_urls")
-        .and_return([{"base_url" => "http://test.com/"}, {"base_url" => "http://test2.com"}])
+        .and_return([{"baseurl" => "http://test.com/"}, {"baseurl" => "http://test2.com"}])
 
       expect(subject.GetURLsToRegister(already_registered)).to eq(
-        [{"base_url" => "http://test2.com"}]
+        [{"baseurl" => "http://test2.com"}]
       )
     end
   end
