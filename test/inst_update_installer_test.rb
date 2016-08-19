@@ -48,6 +48,9 @@ describe Yast::InstUpdateInstaller do
     allow(::FileUtils).to receive(:touch)
     stub_const("Registration::Storage::InstallationOptions", FakeInstallationOptions)
     stub_const("Registration::Storage::Config", FakeRegConfig)
+    # skip the libzypp initialization globally, enable in the specific tests
+    allow(subject).to receive(:initialize_packager).and_return(true)
+    allow(subject).to receive(:finish_packager)
 
     # stub the Profile module to avoid dependency on autoyast2-installation
     stub_const("Yast::Profile", ay_profile)
@@ -321,27 +324,6 @@ describe Yast::InstUpdateInstaller do
                   .and_return(registration)
                 subject.main
               end
-            end
-          end
-
-          context "when only one SMT server exist" do
-            before do
-              allow(url_helpers).to receive(:slp_discovery).and_return([smt0])
-            end
-
-            it "is selected automatically" do
-              expect(regservice_selection).to_not receive(:run)
-              expect(registration_class).to receive(:new).with(smt0.slp_url)
-                .and_return(registration)
-              subject.main
-            end
-
-            it "saves the registration URL to be used later" do
-              allow(manager).to receive(:add_repository)
-              expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(smt0.slp_url)
-              expect(File).to receive(:write).with(/\/inst_update_installer.yaml\z/,
-                { "custom_url" => smt0.slp_url }.to_yaml)
-              subject.main
             end
           end
 
