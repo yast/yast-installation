@@ -58,8 +58,6 @@ module Yast
       @have_zfcp = false
       @want_fcoe = false
 
-      return :next if Installation.restarting?
-
       if Arch.s390
         # popup label
         UI.OpenDialog(Label(_("Detecting Available Controllers")))
