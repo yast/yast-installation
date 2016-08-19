@@ -148,7 +148,7 @@ module Installation
       init_progress
 
       packages.each_with_object(update_files).with_index do |(package, files), index|
-        update_progress(100 * index / packages.size)
+        update_progress(index)
         files << fetch_package(package, path)
       end
     rescue PackageNotFound, CouldNotExtractPackage, CouldNotSquashPackage => e
@@ -394,7 +394,7 @@ module Installation
         # TRANSLATORS: progress title
         _("Downloading Packages..."),
         # size
-        100,
+        packages.size,
         # stages
         [
           # TRANSLATORS: progress label
