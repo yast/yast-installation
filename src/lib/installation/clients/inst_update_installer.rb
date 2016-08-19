@@ -69,7 +69,8 @@ module Yast
       finish_packager
 
       if installer_updated
-        ::FileUtils.touch(update_flag_file) # Indicates that the installer was updated.
+        # Indicates that the installer was updated.
+        ::FileUtils.touch(update_flag_file)
         Installation.restart!
       else
         :next
@@ -457,17 +458,18 @@ module Yast
     def initialize_packager
       log.info "Initializing the package management..."
 
-      # add the initial installation repository, Packages.InitializeCatalogs
-      # cannot be used here is does too much (adds y2update.tgz, selects the
-      # product, selects the default patterns, looks for addon product files...)
+      # Add the initial installation repository.
+      # Unfortunately the Packages.InitializeCatalogs call cannot be used here
+      # as is does too much (adds y2update.tgz, selects the product, selects
+      # the default patterns, looks for the addon product files...).
 
       # initialize package callbacks to show a progress while downloading the files
       PackageCallbacks.InitPackageCallbacks
 
-      # set the language for the package manager (error messages)
+      # set the language for the package manager (mainly error messages)
       Pkg.SetTextLocale(Language.language)
 
-      # load the GPG keys from inst-sys
+      # load the GPG keys (*.gpg files) from inst-sys
       Packages.ImportGPGKeys
 
       base_url = InstURL.installInf2Url("")
@@ -475,7 +477,7 @@ module Yast
 
       until initial_repository
         log.error "Adding the installation repository failed"
-        # ask the user to retry
+        # ask user to retry
         base_url = Packages.UpdateSourceURL(base_url)
 
         # aborted by user
