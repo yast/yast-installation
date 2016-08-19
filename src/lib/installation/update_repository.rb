@@ -148,7 +148,7 @@ module Installation
       init_progress
 
       packages.each_with_object(update_files).with_index do |(package, files), index|
-        set_progress(100 * index / packages.size)
+        update_progress(100 * index / packages.size)
         files << fetch_package(package, path)
       end
     rescue PackageNotFound, CouldNotExtractPackage, CouldNotSquashPackage => e
@@ -398,10 +398,10 @@ module Installation
         # stages
         [
           # TRANSLATORS: progress label
-          _("Downloading the Installer Updates..."),
+          _("Downloading the Installer Updates...")
         ],
         # steps
-        [ ],
+        [],
         # help text
         ""
       )
@@ -412,7 +412,7 @@ module Installation
 
     # Display the current Progress
     # @param [Fixnum] percent the current progress in range 0..100
-    def set_progress(percent)
+    def update_progress(percent)
       Yast::Progress.Step(percent)
     end
 
@@ -421,6 +421,5 @@ module Installation
       Yast::Progress.Finish
       Yast::Wizard.CloseDialog if Yast::Progress.status
     end
-
   end
 end
