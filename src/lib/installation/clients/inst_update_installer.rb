@@ -192,27 +192,39 @@ module Yast
     #
     # Determined in the following order:
     #
-    # * via AutoYaST profile
-    # * regurl boot parameter
+    # * "regurl" boot parameter
+    # * From AutoYaST profile
     # * SLP look up
-    #   * If there's only 1 SMT server, it will be chosen automatically.
-    #   * If there's more than 1 SMT server, it will ask the user to choose one
+    #   * In AutoYaST mode the SLP needs to be explicitly enabled in the profile,
+    #     if the scan finds *exactly* one SLP service then it is used. If more
+    #     than one service is found then an interactive popup is displayed.
+    #     (This breaks the AY unattended concept but basically more services
+    #     is treated as an error, AytoYaST cannot know which one to use.)
+    #   * In non-AutoYaST mode it will ask the user to choose the found SLP
+    #     servise or the SCC default.
+    #  * Fallbacks to SCC if no SLP service is found.
     #
     # @return [URI,:scc,:cancel] Registration URL; :scc if SCC server was selected;
     #                            :cancel if dialog was dismissed.
     #
-    # @see #registration_server_from_user
+    # @see #registration_service_from_user
     def registration_url
-      url = registration_url_from_profile || ::Registration::UrlHelpers.boot_reg_url
+      url = ::Registration::UrlHelpers.boot_reg_url || registration_url_from_profile
       return URI(url) if url
+
+      # do the SLP scan in AutoYast mode only when allowed in the profile
+      return :scc if Mode.auto && registration_profile["slp_discovery"] != true
+
       services = ::Registration::UrlHelpers.slp_discovery
       return :scc if services.empty?
+
       service =
-        if services.size > 1
-          registration_service_from_user(services)
-        else
+        if Mode.auto && services.size == 1
           services.first
+        else
+          registration_service_from_user(services)
         end
+
       return service unless service.respond_to?(:slp_url)
       URI(::Registration::UrlHelpers.service_url(service.slp_url))
     end
@@ -226,9 +238,16 @@ module Yast
 
       # TODO: download the AutoYaST profile first
       # see ../../lib/transfer/file_from_url.rb#L89
+
+      get_url_from(registration_profile["reg_server"])
+    end
+
+    # return the registration settings from the loaded AutoYaST profile
+    # @return [Hash] the current settings, returns empty Hash if the
+    #   registration section is missing in the profile
+    def registration_profile
       profile = Yast::Profile.current
-      profile_url = profile.fetch("suse_register", {})["reg_server"]
-      get_url_from(profile_url)
+      profile.fetch("suse_register", {})
     end
 
     # Ask the user to chose a registration server
