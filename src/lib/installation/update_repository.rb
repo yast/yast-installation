@@ -39,6 +39,7 @@ module Installation
   #   end
   class UpdateRepository
     include Yast::Logger
+    include Yast::I18n
 
     # @return [URI] URI of the repository
     attr_reader :uri
@@ -96,6 +97,9 @@ module Installation
     # @param instsys_parts_path [Pathname] Path to instsys.parts registry
     def initialize(uri, instsys_parts_path = Pathname("/etc/instsys.parts"))
       Yast.import "Pkg"
+      Yast.import "Progress"
+
+      textdomain "installation"
 
       @uri = uri
       @repo_id = add_repo
@@ -129,6 +133,9 @@ module Installation
     # If a known error occurs, it will be converted to a CouldNotFetchUpdate
     # exception.
     #
+    # A progress is displayed when the packages are downloaded.
+    # The progress can be disabled by calling `Yast::Progress.set(false)`.
+    #
     # @param path [Pathname] Directory to store the updates
     # @return [Pathname] Paths to the updates
     #
@@ -138,13 +145,18 @@ module Installation
     #
     # @raise CouldNotFetchUpdate
     def fetch(path = Pathname("/download"))
-      packages.each_with_object(update_files) do |package, files|
+      init_progress
+
+      packages.each_with_object(update_files).with_index do |(package, files), index|
+        set_progress(100 * index / packages.size)
         files << fetch_package(package, path)
       end
     rescue PackageNotFound, CouldNotExtractPackage, CouldNotSquashPackage => e
       log.error("Could not fetch update: #{e.inspect}. Rolling back.")
       remove_update_files
       raise CouldNotFetchUpdate
+    ensure
+      finish_progress
     end
 
     # Remove fetched packages
@@ -370,5 +382,45 @@ module Installation
         f.puts "#{path.relative_path_from(Pathname("/"))} #{mountpoint}"
       end
     end
+
+    # Initialize the progress if it is enabled.
+    def init_progress
+      # open a new wizard window for the progress (only when Progress is enabled)
+      # to not mess the current dialog
+      Yast::Wizard.CreateDialog if Yast::Progress.status
+      Yast::Progress.New(
+        # TRANSLATORS: dialog title
+        _("Updating..."),
+        # TRANSLATORS: progress title
+        _("Downloading Packages..."),
+        # size
+        100,
+        # stages
+        [
+          # TRANSLATORS: progress label
+          _("Downloading the Installer Updates..."),
+        ],
+        # steps
+        [ ],
+        # help text
+        ""
+      )
+
+      # mark the first stage active
+      Yast::Progress.NextStage
+    end
+
+    # Display the current Progress
+    # @param [Fixnum] percent the current progress in range 0..100
+    def set_progress(percent)
+      Yast::Progress.Step(percent)
+    end
+
+    # Close the progress if it is enabled
+    def finish_progress
+      Yast::Progress.Finish
+      Yast::Wizard.CloseDialog if Yast::Progress.status
+    end
+
   end
 end
