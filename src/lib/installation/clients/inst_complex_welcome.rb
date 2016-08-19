@@ -45,10 +45,6 @@ module Yast
       @license_id = Ops.get(Pkg.SourceGetCurrent(true), 0, 0)
 
       # ------------------------------------- main part of the client -----------
-      if Installation.restarting? && data_stored?
-        apply_data
-        return :next
-      end
 
       @argmap = GetInstArgs.argmap
 
@@ -126,8 +122,6 @@ module Yast
           Language.CheckLanguagesSupport(@language) if Stage.initial
 
           setup_final_choice
-
-          store_data
 
           return :next
         when :show_fulscreen_license
@@ -381,35 +375,6 @@ module Yast
       end
 
       log.info "Language: '#{@language}', system encoding '#{WFM.GetEncoding}'"
-    end
-
-    DATA_PATH = "/var/lib/YaST2/complex_welcome_store.yaml".freeze
-
-    def data_stored?
-      ::File.exist?(DATA_PATH)
-    end
-
-    def store_data
-      data = {
-        "language"         => @language,
-        "keyboard"         => @keyboard,
-        "license_accepted" => InstData.product_license_accepted
-      }
-
-      File.write(DATA_PATH, data.to_yaml)
-    end
-
-    def apply_data
-      data = YAML.load(File.read(DATA_PATH))
-      @language = data["language"]
-      @keyboard = data["keyboard"]
-      InstData.product_license_accepted = data["license_accepted"]
-      ProductLicense.info_seen!(@license_id)
-
-      change_language
-      setup_final_choice
-
-      ::FileUtils.rm_rf(DATA_PATH)
     end
 
     def text_mode?
