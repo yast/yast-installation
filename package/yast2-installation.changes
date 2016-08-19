@@ -4,6 +4,8 @@ Fri Aug 19 11:15:21 UTC 2016 - kanderssen@suse.com
 - Move the installer self update step earlier in the workflow
   so the user entered values are not lost after restart and avoid
   repeating some steps again (bsc#985055)
+- Improved the self update URL handling - the boot parameter has
+  the highest priority, always ask user when a SLP service is found
 - 3.1.210
 
 -------------------------------------------------------------------
