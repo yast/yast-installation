@@ -473,7 +473,7 @@ module Yast
       base_url = InstURL.installInf2Url("")
       initial_repository = Pkg.SourceCreateBase(base_url, "")
 
-      while !initial_repository
+      until initial_repository
         log.error "Adding the installation repository failed"
         # ask the user to retry
         base_url = Packages.UpdateSourceURL(base_url)
