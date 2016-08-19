@@ -14,7 +14,6 @@ describe Yast::InstDisksActivateClient do
   describe "#main" do
     let(:probed_disks) { [] }
     let(:s390) { false }
-    let(:restarting) { false }
 
     before do
       allow(Yast::Linuxrc).to receive(:InstallInf).with("WithFCoE").and_return("0")
@@ -23,17 +22,7 @@ describe Yast::InstDisksActivateClient do
       allow(Yast::Popup).to receive(:ConfirmAbort).with(:painless).and_return(true)
       allow(Yast::Arch).to receive(:s390).and_return(s390)
       allow(Yast::GetInstArgs).to receive(:going_back) { going_back }
-      allow(Yast::Installation).to receive(:restarting?) { restarting }
       stub_const("Yast::Storage", double("Yast::Storage", ReReadTargetMap: true))
-    end
-
-    context "when installation is restarting" do
-      let(:restarting) { true }
-      it "returns next" do
-        expect(Yast::Arch).to_not receive(:s390)
-
-        expect(subject.main).to eql(:next)
-      end
     end
 
     context "when architecture is s390" do
