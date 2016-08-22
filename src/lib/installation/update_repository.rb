@@ -148,15 +148,13 @@ module Installation
       init_progress
 
       packages.each_with_object(update_files).with_index do |(package, files), index|
-        update_progress(index)
+        update_progress(100 * index / packages.size)
         files << fetch_package(package, path)
       end
     rescue PackageNotFound, CouldNotExtractPackage, CouldNotSquashPackage => e
       log.error("Could not fetch update: #{e.inspect}. Rolling back.")
       remove_update_files
       raise CouldNotFetchUpdate
-    ensure
-      finish_progress
     end
 
     # Remove fetched packages
@@ -383,30 +381,9 @@ module Installation
       end
     end
 
-    # Initialize the progress if it is enabled.
+    # Initialize the progress
     def init_progress
-      # open a new wizard window for the progress (only when Progress is enabled)
-      # to not mess the current dialog
-      Yast::Wizard.CreateDialog if Yast::Progress.status
-      Yast::Progress.New(
-        # TRANSLATORS: dialog title
-        _("Updating..."),
-        # TRANSLATORS: progress title
-        _("Downloading Packages..."),
-        # size
-        packages.size,
-        # stages
-        [
-          # TRANSLATORS: progress label
-          _("Downloading the Installer Updates...")
-        ],
-        # steps
-        [],
-        # help text
-        ""
-      )
-
-      # mark the first stage active
+      # mark the next stage active
       Yast::Progress.NextStage
     end
 
@@ -414,12 +391,6 @@ module Installation
     # @param [Fixnum] percent the current progress in range 0..100
     def update_progress(percent)
       Yast::Progress.Step(percent)
-    end
-
-    # Close the progress if it is enabled
-    def finish_progress
-      Yast::Progress.Finish
-      Yast::Wizard.CloseDialog if Yast::Progress.status
     end
   end
 end

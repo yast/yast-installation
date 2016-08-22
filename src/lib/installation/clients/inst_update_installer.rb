@@ -56,6 +56,35 @@ module Yast
       # shortcut - already updated
       return :next if installer_updated?
 
+      # open a new wizard dialog with title on the top
+      # (the default dialog with title on the left looks ugly with the
+      # Progress dialog)
+      Yast::Wizard.CreateDialog
+      @wizard_open = true
+
+      Yast::Progress.New(
+        # TRANSLATORS: dialog title
+        _("Updating the Installer..."),
+        # TRANSLATORS: progress title
+        _("Updating the Installer..."),
+        # max is 100%
+        100,
+        # stages
+        [
+          # TRANSLATORS: progress label
+          _("Add Update Repository"),
+          _("Download the Packages"),
+          _("Restart")
+        ],
+        # steps
+        [],
+        # help text
+        ""
+      )
+
+      # mark the first stage active
+      Yast::Progress.NextStage
+
       # initialize packager, we need to load the base product name
       # to properly obtain the update URL from the registration server
       return :abort unless initialize_packager
@@ -71,9 +100,15 @@ module Yast
       if installer_updated
         # Indicates that the installer was updated.
         ::FileUtils.touch(update_flag_file)
+        Yast::Progress.NextStage
         Installation.restart!
       else
         :next
+      end
+    ensure
+      if @wizard_open
+        Yast::Progress.Finish
+        Yast::Wizard.CloseDialog
       end
     end
 
