@@ -101,6 +101,7 @@ module Yast
 
       if updated
         log.info("Applying installer updates")
+        Yast::Progress.NextStage
         updates_manager.apply_all
       end
       updated
@@ -221,6 +222,7 @@ module Yast
       return :scc if Mode.auto && registration_profile["slp_discovery"] != true
 
       services = ::Registration::UrlHelpers.slp_discovery
+      log.info "SLP discovery result: #{services.inspect}"
       return :scc if services.empty?
 
       service =
@@ -229,6 +231,8 @@ module Yast
         else
           registration_service_from_user(services)
         end
+
+      log.info "Selected SLP service: #{service.inspect}"
 
       return service unless service.respond_to?(:slp_url)
       URI(::Registration::UrlHelpers.service_url(service.slp_url))
@@ -541,6 +545,7 @@ module Yast
         # TRANSLATORS: progress label
         _("Add Update Repository"),
         _("Download the Packages"),
+        _("Apply the Packages"),
         _("Restart")
       ],
       # steps
