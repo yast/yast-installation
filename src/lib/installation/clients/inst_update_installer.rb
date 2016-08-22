@@ -56,34 +56,7 @@ module Yast
       # shortcut - already updated
       return :next if installer_updated?
 
-      # open a new wizard dialog with title on the top
-      # (the default dialog with title on the left looks ugly with the
-      # Progress dialog)
-      Yast::Wizard.CreateDialog
-      @wizard_open = true
-
-      Yast::Progress.New(
-        # TRANSLATORS: dialog title
-        _("Updating the Installer..."),
-        # TRANSLATORS: progress title
-        _("Updating the Installer..."),
-        # max is 100%
-        100,
-        # stages
-        [
-          # TRANSLATORS: progress label
-          _("Add Update Repository"),
-          _("Download the Packages"),
-          _("Restart")
-        ],
-        # steps
-        [],
-        # help text
-        ""
-      )
-
-      # mark the first stage active
-      Yast::Progress.NextStage
+      initialize_progress
 
       # initialize packager, we need to load the base product name
       # to properly obtain the update URL from the registration server
@@ -106,10 +79,7 @@ module Yast
         :next
       end
     ensure
-      if @wizard_open
-        Yast::Progress.Finish
-        Yast::Wizard.CloseDialog
-      end
+      finish_progress
     end
 
     # Tries to update the installer
@@ -549,6 +519,46 @@ module Yast
       # false = all repositories, even the disabled ones
       Pkg.SourceGetCurrent(false).each { |r| Pkg.SourceDelete(r) }
       Pkg.SourceSaveAll
+    end
+
+    # Show global self update progress
+    def initialize_progress
+      # open a new wizard dialog with title on the top
+      # (the default dialog with title on the left looks ugly with the
+      # Progress dialog)
+      Yast::Wizard.CreateDialog
+      @wizard_open = true
+
+      Yast::Progress.New(
+      # TRANSLATORS: dialog title
+      _("Updating the Installer..."),
+      # TRANSLATORS: progress title
+      _("Updating the Installer..."),
+      # max is 100%
+      100,
+      # stages
+      [
+        # TRANSLATORS: progress label
+        _("Add Update Repository"),
+        _("Download the Packages"),
+        _("Restart")
+      ],
+      # steps
+      [],
+      # help text
+      ""
+      )
+
+      # mark the first stage active
+      Yast::Progress.NextStage
+    end
+
+    # Finish the self update progress
+    def finish_progress
+      return unless @wizard_open
+
+      Yast::Progress.Finish
+      Yast::Wizard.CloseDialog
     end
   end
 end
