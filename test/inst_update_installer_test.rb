@@ -35,6 +35,7 @@ describe Yast::InstUpdateInstaller do
   let(:restarting) { false }
   let(:profile) { {} }
   let(:ay_profile) { double("Yast::Profile", current: profile) }
+  let(:ay_profile_location) { double("Yast::ProfileLocation") }
 
   before do
     allow(Yast::Pkg).to receive(:GetArchitecture).and_return(arch)
@@ -51,9 +52,12 @@ describe Yast::InstUpdateInstaller do
     # skip the libzypp initialization globally, enable in the specific tests
     allow(subject).to receive(:initialize_packager).and_return(true)
     allow(subject).to receive(:finish_packager)
+    allow(subject).to receive(:fetch_profile).and_return(ay_profile)
 
     # stub the Profile module to avoid dependency on autoyast2-installation
     stub_const("Yast::Profile", ay_profile)
+
+    stub_const("Yast::ProfileLocation", ay_profile_location)
   end
 
   describe "#main" do

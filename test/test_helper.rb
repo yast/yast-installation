@@ -33,6 +33,13 @@ module Yast
     end
   end
   Profile = ProfileClass.new
+
+  class ProfileLocationClass
+    def Process
+    end
+  end
+
+  ProfileLocation = ProfileLocationClass.new
 end
 
 if ENV["COVERAGE"]
