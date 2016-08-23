@@ -534,24 +534,24 @@ module Yast
       @wizard_open = true
 
       Yast::Progress.New(
-      # TRANSLATORS: dialog title
-      _("Updating the Installer..."),
-      # TRANSLATORS: progress title
-      _("Updating the Installer..."),
-      # max is 100%
-      100,
-      # stages
-      [
-        # TRANSLATORS: progress label
-        _("Add Update Repository"),
-        _("Download the Packages"),
-        _("Apply the Packages"),
-        _("Restart")
-      ],
-      # steps
-      [],
-      # help text
-      ""
+        # TRANSLATORS: dialog title
+        _("Updating the Installer..."),
+        # TRANSLATORS: progress title
+        _("Updating the Installer..."),
+        # max is 100%
+        100,
+        # stages
+        [
+          # TRANSLATORS: progress label
+          _("Add Update Repository"),
+          _("Download the Packages"),
+          _("Apply the Packages"),
+          _("Restart")
+        ],
+        # steps
+        [],
+        # help text
+        ""
       )
 
       # mark the first stage active
