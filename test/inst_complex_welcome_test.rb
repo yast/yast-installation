@@ -22,6 +22,7 @@ describe Yast::InstComplexWelcomeClient do
     # null object returned above as parameter and it raise exception from
     # component system
     stub_const("Yast::UI", double.as_null_object)
+    allow(Yast::Pkg).to receive(:SourceGetCurrent).and_return([])
   end
 
   after do
