@@ -26,6 +26,7 @@ describe Yast::InstFinishClient do
 
       allow(Yast::Pkg).to receive(:TargetInitialize)
       allow(Yast::Pkg).to receive(:TargetLoad)
+      allow(Yast::Pkg).to receive(:PkgInstalled).and_return(false)
 
       allow(Yast::Hooks).to receive(:run)
     end
