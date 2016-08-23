@@ -37,6 +37,7 @@ describe Yast::InstUpdateInstaller do
   let(:ay_profile) { double("Yast::Profile", current: profile) }
 
   before do
+    allow(Yast::GetInstArgs).to receive(:going_back).and_return(false)
     allow(Yast::Pkg).to receive(:GetArchitecture).and_return(arch)
     allow(Yast::Mode).to receive(:auto).and_return(false)
     allow(Yast::NetworkService).to receive(:isNetworkRunning).and_return(network_running)
@@ -67,7 +68,54 @@ describe Yast::InstUpdateInstaller do
       end
     end
 
-    context "when update is enabled" do
+    it "intializes the package management" do
+      # override the global stub
+      expect(subject).to receive(:initialize_packager).and_call_original
+
+      url = "cd:///"
+      expect(Yast::Pkg).to receive(:SetTextLocale)
+      expect(Yast::Packages).to receive(:ImportGPGKeys)
+      expect(Yast::InstURL).to receive(:installInf2Url).and_return(url)
+      expect(Yast::Pkg).to receive(:SourceCreateBase).with(url, "").and_return(0)
+
+      # just a shortcut to avoid mocking the whole update
+      allow(subject).to receive(:self_update_enabled?).and_return(false)
+      subject.main
+    end
+
+    it "cleans up the package management at the end" do
+      # override the global stub
+      expect(subject).to receive(:finish_packager).and_call_original
+
+      expect(Yast::Pkg).to receive(:SourceGetCurrent).and_return([0])
+      expect(Yast::Pkg).to receive(:SourceDelete).with(0)
+      expect(Yast::Pkg).to receive(:SourceSaveAll)
+
+      # just a shortcut to avoid mocking the whole update
+      allow(subject).to receive(:self_update_enabled?).and_return(false)
+      subject.main
+    end
+
+    it "displays a progress" do
+      expect(Yast::Wizard).to receive(:CreateDialog)
+      expect(Yast::Progress).to receive(:New)
+      expect(Yast::Progress).to receive(:NextStage)
+
+      # just a shortcut to avoid mocking the whole update
+      allow(subject).to receive(:self_update_enabled?).and_return(false)
+      subject.main
+    end
+
+    it "finishes the progress at the end" do
+      expect(Yast::Progress).to receive(:Finish)
+      expect(Yast::Wizard).to receive(:CloseDialog)
+
+      # just a shortcut to avoid mocking the whole update
+      allow(subject).to receive(:self_update_enabled?).and_return(false)
+      subject.main
+    end
+
+    context "when update URL is configured in control.xml" do
       before do
         allow(Yast::ProductFeatures).to receive(:GetStringFeature).and_return(url)
       end

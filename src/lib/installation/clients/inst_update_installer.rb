@@ -68,8 +68,6 @@ module Yast
       log.info("Trying installer update")
       installer_updated = update_installer
 
-      finish_packager
-
       if installer_updated
         # Indicates that the installer was updated.
         ::FileUtils.touch(update_flag_file)
@@ -79,6 +77,7 @@ module Yast
         :next
       end
     ensure
+      finish_packager
       finish_progress
     end
 
