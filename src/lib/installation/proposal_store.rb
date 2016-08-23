@@ -100,10 +100,13 @@ module Installation
       return @can_skip unless @can_skip.nil?
 
       @can_skip = if properties.key?("enable_skip")
+        log.info "properties skip available #{properties["enable_skip"].inspect}."
         properties["enable_skip"] == "yes"
       else
         !["initial", "uml"].include?(@proposal_mode)
       end
+
+      log.info "can skip set to #{@can_skip.inspect}."
 
       @can_skip
     end
@@ -390,11 +393,17 @@ module Installation
     end
 
     def properties
-      @proposal_properties ||= Yast::ProductControl.getProposalProperties(
+      return @proposal_properties unless @proposal_properties.nil?
+
+      @proposal_properties = Yast::ProductControl.getProposalProperties(
         Yast::Stage.stage,
         Yast::Mode.mode,
         @proposal_mode
       )
+
+      log.info "Properties #{@proposal_properties.inspect}"
+
+      @proposal_properties
     end
 
     def make_proposal(client, force_reset: false, language_changed: false, callback: proc {})
