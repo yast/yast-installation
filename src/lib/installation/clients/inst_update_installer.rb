@@ -78,8 +78,6 @@ module Yast
       log.info("Trying installer update")
       installer_updated = update_installer
 
-      finish_packager
-
       if installer_updated
         # Indicates that the installer was updated.
         ::FileUtils.touch(update_flag_file)
@@ -89,6 +87,7 @@ module Yast
         :next
       end
     ensure
+      finish_packager
       finish_progress
     end
 
@@ -554,18 +553,18 @@ module Yast
       @wizard_open = true
 
       Yast::Progress.New(
-      # TRANSLATORS: dialog title
-      _("Updating the Installer..."),
-      # TRANSLATORS: progress title
-      _("Updating the Installer..."),
-      # max is 100%
-      100,
-      # stages
-      stages,
-      # steps
-      [],
-      # help text
-      ""
+        # TRANSLATORS: dialog title
+        _("Updating the Installer..."),
+        # TRANSLATORS: progress title
+        _("Updating the Installer..."),
+        # max is 100%
+        100,
+        # stages
+        stages,
+        # steps
+        [],
+        # help text
+        ""
       )
 
       # mark the first stage active
