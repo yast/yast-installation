@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Aug 24 14:51:45 UTC 2016 - cwh@suse.com
+
+- Replace unicode bullet char by asterisk for ncurses (bsc#995082)
+- 3.1.211
+
+-------------------------------------------------------------------
 Wed Aug 17 15:02:02 UTC 2016 - jreidinger@suse.com
 
 - filter out same repositories from extraurls if they differ only
