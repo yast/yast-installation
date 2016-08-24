@@ -24,7 +24,7 @@ module Yast
 
     UPDATED_FLAG_FILENAME = "installer_updated".freeze
     REMOTE_SCHEMES = ["http", "https", "ftp", "tftp", "sftp", "nfs", "nfs4", "cifs", "smb"].freeze
-    PROFILE_VALID_SCHEMES   = ["http", "https", "ftp", "tftp", "sftp"].freeze
+    PROFILE_FORBIDDEN_SCHEMES = ["label"]
     REGISTRATION_DATA_PATH = "/var/lib/YaST2/inst_update_installer.yaml".freeze
 
     Yast.import "Pkg"
@@ -45,7 +45,7 @@ module Yast
     Yast.import "Profile"
     Yast.import "ProfileLocation"
     Yast.import "AutoinstConfig"
-
+    Yast.import "AutoinstGeneral"
 
     def main
       textdomain "installation"
@@ -64,8 +64,7 @@ module Yast
 
       if Mode.auto
         log.info("Fetching profile")
-
-        return :next unless fetch_profile
+        fetch_profile
         Yast::Progress.NextStage
       end
 
@@ -546,7 +545,7 @@ module Yast
         _("Restart")
       ]
 
-      stages.unshift(_("Fetching AutoYast Profile")) if Mode.auto && profile_given?
+      stages.unshift(_("Fetching AutoYast Profile")) if Mode.auto
 
       # open a new wizard dialog with title on the top
       # (the default dialog with title on the left looks ugly with the
@@ -583,65 +582,54 @@ module Yast
 
   private
 
-    def profile_given?
-      url = SCR.Read(Yast::Path.new(".etc.install_inf.AutoYaST"))
-
-      url.to_s.empty? ? false : true
-    end
-
     def profile_valid_scheme?
-      PROFILE_VALID_SCHEMES.include? Yast::AutoinstConfig.scheme
+      !PROFILE_FORBIDDEN_SCHEMES.include? AutoinstConfig.scheme
     end
 
     def current_profile
       return nil if Yast::Profile.current == {}
 
-      Yast::Profile.current
+      Profile.current
     end
 
     def fetch_profile
       return current_profile if current_profile
 
-      if !profile_valid_scheme?
-        Report.Error(format(_("Not supported scheme %s.\n\n"), Yast::AutoinstConfig.scheme))
+      unless profile_valid_scheme?
+        log.info("The scheme used (#{AutoinstConfig.scheme}), is not supported in self update.")
         return nil
       end
 
-      Yast::ProfileLocation.Process
+      log.info("Processing profile location...")
+      ProfileLocation.Process
 
-      while !current_profile
-        return nil if ask_profile_uri.nil?
-
-        Yast::ProfileLocation.Process
-      end
-
-      if !Yast::Profile.ReadXML(Yast::AutoinstConfig.xml_tmpfile)
-        Report.Error(_("Error while parsing the control file.\n\n"))
+      unless current_profile
+        log.info("Unable to load the profile from: #{AutoinstConfig.OriginalURI}")
         return nil
       end
 
-      # TODO:
-      #  * Should be reported non supported sections at this point?
-      #  * Check if Yast::AutoinstGeneral.SetSignatureHandling is needed
+      if !Profile.ReadXML(AutoinstConfig.xml_tmpfile)
+        Popup.Warning(_("Error while parsing the control file.\n\n"))
+        return nil
+      end
+
+      Report.LogMessages(true)
+      Report.LogErrors(true)
+      Report.LogWarnings(true)
+
+      report = Profile.current["report"]
+
+      if report && !report.has_key?( "yesno_messages" )
+        report = Report.Export
+        report["yesno_messages"] = report.fetch("errors",{})
+      end
+
+      Report.Import(report)
+
+      AutoinstGeneral.Import(Profile.current.fetch("general",{}))
+      AutoinstGeneral.SetSignatureHandling
 
       current_profile
-    end
-
-    def ask_profile_uri
-      newURI = ProfileLocation.ProfileSourceDialog(AutoinstConfig.OriginalURI)
-      return nil if newURI.empty?
-
-      # Updating new URI in /etc/install.inf (bnc#963487)
-      # SCR.Write does not work in inst-sys here.
-      WFM.Execute(
-        Yast::Path.new(".local.bash"),
-        "sed -i \'/AutoYaST:/c\AutoYaST: #{newURI}\' /etc/install.inf"
-      )
-
-      AutoinstConfig.ParseCmdLine(newURI)
-      AutoinstConfig.SetProtocolMessage
-
-      newURI
     end
   end
 end

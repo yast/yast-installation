@@ -56,8 +56,6 @@ describe Yast::InstUpdateInstaller do
 
     # stub the Profile module to avoid dependency on autoyast2-installation
     stub_const("Yast::Profile", ay_profile)
-
-    stub_const("Yast::ProfileLocation", ay_profile_location)
   end
 
   describe "#main" do
@@ -360,6 +358,14 @@ describe Yast::InstUpdateInstaller do
           before do
             expect(Yast::Mode).to receive(:auto).at_least(1).and_return(true)
             allow(::FileUtils).to receive(:touch)
+          end
+
+          it "tries to fetch the profile from the given profile" do
+            expect(subject).to receive(:fetch_profile)
+            expect(manager).to receive(:add_repository).with(URI(profile_url))
+              .and_return(true)
+
+            subject.main
           end
 
           context "the profile defines the update URL" do

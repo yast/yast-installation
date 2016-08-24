@@ -25,7 +25,19 @@ module Yast
     def second_stage
     end
   end
+
   AutoinstConfig = AutoinstConfigClass.new
+
+  class AutoinstGeneralClass
+    # we need at least one non-default methods, otherwise ruby-bindings thinks
+    # it is just namespace
+    def SetSignatureHandling
+    end
+    def Import(profile)
+    end
+  end
+
+  AutoinstGeneral = AutoinstGeneralClass.new
 
   # Faked Profile module
   class ProfileClass
