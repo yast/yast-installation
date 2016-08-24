@@ -24,7 +24,7 @@ module Yast
 
     UPDATED_FLAG_FILENAME = "installer_updated".freeze
     REMOTE_SCHEMES = ["http", "https", "ftp", "tftp", "sftp", "nfs", "nfs4", "cifs", "smb"].freeze
-    PROFILE_FORBIDDEN_SCHEMES = ["label"]
+    PROFILE_FORBIDDEN_SCHEMES = ["label"].freeze
     REGISTRATION_DATA_PATH = "/var/lib/YaST2/inst_update_installer.yaml".freeze
 
     Yast.import "Pkg"
@@ -63,8 +63,7 @@ module Yast
       initialize_progress
 
       if Mode.auto
-        log.info("Fetching profile")
-        fetch_profile
+        process_profile
         Yast::Progress.NextStage
       end
 
@@ -581,20 +580,37 @@ module Yast
 
   private
 
+    #
+    # TODO: Most of the code responsable of process the profile has been
+    # obtained from which inst_autoinit client in yast2-autoinstallation.
+    # We should try to move it to a independent class or to Yast::Profile.
+    #
+
+    # @return [Boolean] true if the scheme is not forbidden
     def profile_valid_scheme?
       !PROFILE_FORBIDDEN_SCHEMES.include? AutoinstConfig.scheme
     end
 
+    # Obtains the current profile
+    #
+    # @return [Hash, nil] current profile if not empty; nil otherwise
+    #
+    # @see Yast::Profile.current
     def current_profile
       return nil if Yast::Profile.current == {}
 
       Profile.current
     end
 
+    # Fetchs the profile from the given URI
+    #
+    # @return [Hash, nil] current profile if fetched or exists; nil otherwise
+    #
+    # @see Yast::Profile.current
     def fetch_profile
       return current_profile if current_profile
 
-      unless profile_valid_scheme?
+      if !profile_valid_scheme?
         log.info("The scheme used (#{AutoinstConfig.scheme}), is not supported in self update.")
         return nil
       end
@@ -602,13 +618,10 @@ module Yast
       log.info("Processing profile location...")
       ProfileLocation.Process
 
-      unless current_profile
-        log.info("Unable to load the profile from: #{AutoinstConfig.OriginalURI}")
-        return nil
-      end
+      if !current_profile
+        secure_uri = Yast::URL.HidePassword(AutoinstConfig.OriginalURI)
+        log.info("Unable to load the profile from: #{secure_uri}")
 
-      if !Profile.ReadXML(AutoinstConfig.xml_tmpfile)
-        Popup.Warning(_("Error while parsing the control file.\n\n"))
         return nil
       end
 
@@ -616,19 +629,40 @@ module Yast
       Report.LogErrors(true)
       Report.LogWarnings(true)
 
+      if !Profile.ReadXML(AutoinstConfig.xml_tmpfile)
+        Popup.Warning(_("Error while parsing the control file.\n\n"))
+        return nil
+      end
+
+      current_profile
+    end
+
+    # Imports Report settings from the current profile
+    def profile_prepare_reports
       report = Profile.current["report"]
 
-      if report && !report.has_key?( "yesno_messages" )
+      if report && !report.key?("yesno_messages")
         report = Report.Export
-        report["yesno_messages"] = report.fetch("errors",{})
+        report["yesno_messages"] = report.fetch("errors", {})
       end
 
       Report.Import(report)
+    end
 
-      AutoinstGeneral.Import(Profile.current.fetch("general",{}))
+    # Imports general settings from the profile and set signature callbacks
+    def profile_prepare_signatures
+      AutoinstGeneral.Import(Profile.current.fetch("general", {}))
       AutoinstGeneral.SetSignatureHandling
+    end
 
-      current_profile
+    # Fetch profile and prepare reports and signature callbas in case of
+    # obtained a valid one.
+    def process_profile
+      log.info("Fetching the profile")
+      return false if !fetch_profile
+
+      profile_prepare_reports
+      profile_prepare_signatures
     end
   end
 end

@@ -54,6 +54,7 @@ describe Yast::InstUpdateInstaller do
     allow(subject).to receive(:initialize_packager).and_return(true)
     allow(subject).to receive(:finish_packager)
     allow(subject).to receive(:fetch_profile).and_return(ay_profile)
+    allow(subject).to receive(:process_profile)
 
     # stub the Profile module to avoid dependency on autoyast2-installation
     stub_const("Yast::Profile", ay_profile)
@@ -408,8 +409,8 @@ describe Yast::InstUpdateInstaller do
             allow(::FileUtils).to receive(:touch)
           end
 
-          it "tries to fetch the profile from the given profile" do
-            expect(subject).to receive(:fetch_profile)
+          it "tries to process the profile from the given URL" do
+            expect(subject).to receive(:process_profile)
             expect(manager).to receive(:add_repository).with(URI(profile_url))
               .and_return(true)
 
