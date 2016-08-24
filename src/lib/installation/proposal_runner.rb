@@ -261,7 +261,9 @@ module Installation
 
     def pre_continue_handling
       @skip = if Yast::UI.WidgetExists(Id(:skip))
-        Yast::UI.QueryWidget(Id(:skip), :Value)
+        val = Yast::UI.QueryWidget(Id(:skip), :Value)
+        log.info "there is :skip widget with value #{val.inspect}."
+        val
       else
         true
       end
@@ -509,6 +511,8 @@ module Installation
     #
     def write_settings
       success = true
+
+      log.info "Writting settings for proposal"
 
       @store.proposal_names do |submod|
         submod_success = submod_write_settings(submod)
