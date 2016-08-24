@@ -261,8 +261,9 @@ module Installation
 
     def pre_continue_handling
       @skip = if Yast::UI.WidgetExists(Id(:skip))
-        log.info "there is skip widget with value #{Yast::UI.QueryWidget(Id(:skip), :Value)}."
-        Yast::UI.QueryWidget(Id(:skip), :Value)
+        val = Yast::UI.QueryWidget(Id(:skip), :Value)
+        log.info "there is :skip widget with value #{val.inspect}."
+        val
       else
         true
       end
