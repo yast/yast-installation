@@ -33,6 +33,7 @@ module Yast
     # it is just namespace
     def SetSignatureHandling
     end
+
     def Import(profile)
     end
   end

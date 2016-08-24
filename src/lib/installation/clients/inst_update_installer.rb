@@ -611,12 +611,16 @@ module Yast
       return current_profile if current_profile
 
       if !profile_valid_scheme?
-        log.info("The scheme used (#{AutoinstConfig.scheme}), is not supported in self update.")
+        Report.Warning("The scheme used (#{AutoinstConfig.scheme}), " \
+                       "is not supported in self update.")
         return nil
       end
 
-      log.info("Processing profile location...")
-      ProfileLocation.Process
+      Report.LogMessages(true)
+      Report.LogErrors(true)
+      Report.LogWarnings(true)
+
+      process_location
 
       if !current_profile
         secure_uri = Yast::URL.HidePassword(AutoinstConfig.OriginalURI)
@@ -625,12 +629,8 @@ module Yast
         return nil
       end
 
-      Report.LogMessages(true)
-      Report.LogErrors(true)
-      Report.LogWarnings(true)
-
       if !Profile.ReadXML(AutoinstConfig.xml_tmpfile)
-        Popup.Warning(_("Error while parsing the control file.\n\n"))
+        Report.Warning(_("Error while parsing the control file.\n\n"))
         return nil
       end
 
@@ -663,6 +663,24 @@ module Yast
 
       profile_prepare_reports
       profile_prepare_signatures
+    end
+
+    # It retrieves the profile and the user rules from the given location not
+    # blocking AutoYast
+    #
+    # @see ProfileLocation.Process
+    def process_location
+      # ProfileLocation reports an error in case that the profile was not
+      # available in the given URL. We change the timeout error to not block
+      # AutoYast during update_installer, just to this method.
+      report_settings = Report.Export
+
+      Report.Import(report_settings.merge("errors" => { "timeout" => 10 }))
+
+      log.info("Processing profile location...")
+      ProfileLocation.Process
+
+      Report.Import(report_settings)
     end
   end
 end
