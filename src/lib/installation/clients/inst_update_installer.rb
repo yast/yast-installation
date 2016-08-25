@@ -505,6 +505,9 @@ module Yast
       # set the language for the package manager (mainly error messages)
       Pkg.SetTextLocale(Language.language)
 
+      # set the target to inst-sys otherwise libzypp complains in the GPG check
+      Pkg.TargetInitialize("/")
+
       # load the GPG keys (*.gpg files) from inst-sys
       Packages.ImportGPGKeys
 
@@ -531,6 +534,7 @@ module Yast
       # false = all repositories, even the disabled ones
       Pkg.SourceGetCurrent(false).each { |r| Pkg.SourceDelete(r) }
       Pkg.SourceSaveAll
+      Pkg.TargetFinish
     end
 
     # Show global self update progress

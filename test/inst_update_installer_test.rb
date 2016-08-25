@@ -77,6 +77,7 @@ describe Yast::InstUpdateInstaller do
 
       url = "cd:///"
       expect(Yast::Pkg).to receive(:SetTextLocale)
+      expect(Yast::Pkg).to receive(:TargetInitialize).with("/")
       expect(Yast::Packages).to receive(:ImportGPGKeys)
       expect(Yast::InstURL).to receive(:installInf2Url).and_return(url)
       expect(Yast::Pkg).to receive(:SourceCreateBase).with(url, "").and_return(0)
@@ -93,6 +94,7 @@ describe Yast::InstUpdateInstaller do
       expect(Yast::Pkg).to receive(:SourceGetCurrent).and_return([0])
       expect(Yast::Pkg).to receive(:SourceDelete).with(0)
       expect(Yast::Pkg).to receive(:SourceSaveAll)
+      expect(Yast::Pkg).to receive(:TargetFinish)
 
       # just a shortcut to avoid mocking the whole update
       allow(subject).to receive(:self_update_enabled?).and_return(false)
