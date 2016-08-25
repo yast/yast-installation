@@ -94,6 +94,7 @@ describe Yast::InstUpdateInstaller do
       expect(Yast::Pkg).to receive(:SourceGetCurrent).and_return([0])
       expect(Yast::Pkg).to receive(:SourceDelete).with(0)
       expect(Yast::Pkg).to receive(:SourceSaveAll)
+      expect(Yast::Pkg).to receive(:SourceFinishAll)
       expect(Yast::Pkg).to receive(:TargetFinish)
 
       # just a shortcut to avoid mocking the whole update
