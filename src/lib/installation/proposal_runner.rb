@@ -514,7 +514,7 @@ module Installation
 
       log.info "Writting settings for proposal"
 
-      @store.proposal_names do |submod|
+      @store.proposal_names.each do |submod|
         submod_success = submod_write_settings(submod)
         submod_success = true if submod_success.nil?
         log.error "Write() failed for submodule #{submod}" unless submod_success
