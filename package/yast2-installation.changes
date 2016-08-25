@@ -1,4 +1,18 @@
 -------------------------------------------------------------------
+Thu Aug 25 10:48:20 UTC 2016 - lslezak@suse.cz
+
+- Move the installer self update step earlier in the workflow
+  so the user entered values are not lost after restart and avoid
+  repeating some steps again (bsc#985055)
+- This also fixes losing some values due to restaring YaST (bsc#993690),
+  (bsc#992608)
+- Improved the self update URL handling - the boot parameter has
+  the highest priority, always ask user when a SLP service is found,
+  in AutoYaST mode SLP needs to be enabled in the profile
+- Display progress when downloading and applying the updates
+- 3.1.212
+
+-------------------------------------------------------------------
 Thu Aug 25 07:33:10 UTC 2016 - jreidinger@suse.com
 
 - fix writing proposals (bnc#994127)
