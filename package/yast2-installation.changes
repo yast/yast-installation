@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Aug 25 12:51:45 UTC 2016 - cwh@suse.com
+
+- Replace unicode bullet char by asterisk for ncurses (bsc#995082)
+- 3.1.212
+
+-------------------------------------------------------------------
 Thu Aug 25 07:33:10 UTC 2016 - jreidinger@suse.com
 
 - fix writing proposals (bnc#994127)
