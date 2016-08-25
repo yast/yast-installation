@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Aug 25 07:33:10 UTC 2016 - jreidinger@suse.com
+
+- fix writing proposals (bnc#994127)
+- 3.1.211
+
+-------------------------------------------------------------------
 Wed Aug 17 15:02:02 UTC 2016 - jreidinger@suse.com
 
 - filter out same repositories from extraurls if they differ only
