@@ -176,6 +176,11 @@ module Installation
     # * Mount the squashfs filesystem
     # * Add files/directories to inst-sys using the /etc/adddir script
     #
+    # @note The current implementation creates one squashfs image per package
+    # and mounting a squashfs image consumes one loop device (/dev/loop*).
+    # Inst-sys has by default 64 loop devices, but some of them already used,
+    # in an extreme case we might run out of loop devices.
+    #
     # @param mount_path [Pathname] Directory to mount the update
     #
     # @raise UpdatesNotFetched
@@ -244,15 +249,15 @@ module Installation
 
     # Extract a RPM contents to a given directory
     #
-    # @param package_path [Pathname] RPM local path
+    # @param package_file [File] RPM package (local file name)
     # @param dir          [Pathname] Directory to extract the RPM contents
     #
     # @raise CouldNotExtractPackage
-    def extract(package_path, dir)
+    def extract(package_file, dir)
       Dir.chdir(dir) do
-        cmd = format(EXTRACT_CMD, source: package_path.path)
+        cmd = format(EXTRACT_CMD, source: package_file.path)
         out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
-        log.info("Extracting package #{package_path}: #{out}")
+        log.info("Extracting package #{package_file.inspect}: #{out}")
         raise CouldNotExtractPackage unless out["exit"].zero?
       end
     end
