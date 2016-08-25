@@ -24,6 +24,7 @@ module Yast
 
     UPDATED_FLAG_FILENAME = "installer_updated".freeze
     REMOTE_SCHEMES = ["http", "https", "ftp", "tftp", "sftp", "nfs", "nfs4", "cifs", "smb"].freeze
+    PROFILE_FORBIDDEN_SCHEMES = ["label"].freeze
     REGISTRATION_DATA_PATH = "/var/lib/YaST2/inst_update_installer.yaml".freeze
 
     Yast.import "Pkg"
@@ -42,6 +43,9 @@ module Yast
     Yast.import "NetworkService"
     Yast.import "Mode"
     Yast.import "Profile"
+    Yast.import "ProfileLocation"
+    Yast.import "AutoinstConfig"
+    Yast.import "AutoinstGeneral"
 
     def main
       textdomain "installation"
@@ -57,6 +61,11 @@ module Yast
       return :next if installer_updated?
 
       initialize_progress
+
+      if Mode.auto
+        process_profile
+        Yast::Progress.NextStage
+      end
 
       # initialize packager, we need to load the base product name
       # to properly obtain the update URL from the registration server
@@ -526,6 +535,16 @@ module Yast
 
     # Show global self update progress
     def initialize_progress
+      stages = [
+        # TRANSLATORS: progress label
+        _("Add Update Repository"),
+        _("Download the Packages"),
+        _("Apply the Packages"),
+        _("Restart")
+      ]
+
+      stages.unshift(_("Fetching AutoYast Profile")) if Mode.auto
+
       # open a new wizard dialog with title on the top
       # (the default dialog with title on the left looks ugly with the
       # Progress dialog)
@@ -540,13 +559,7 @@ module Yast
         # max is 100%
         100,
         # stages
-        [
-          # TRANSLATORS: progress label
-          _("Add Update Repository"),
-          _("Download the Packages"),
-          _("Apply the Packages"),
-          _("Restart")
-        ],
+        stages,
         # steps
         [],
         # help text
@@ -563,6 +576,111 @@ module Yast
 
       Yast::Progress.Finish
       Yast::Wizard.CloseDialog
+    end
+
+  private
+
+    #
+    # TODO: Most of the code responsable of process the profile has been
+    # obtained from which inst_autoinit client in yast2-autoinstallation.
+    # We should try to move it to a independent class or to Yast::Profile.
+    #
+
+    # @return [Boolean] true if the scheme is not forbidden
+    def profile_valid_scheme?
+      !PROFILE_FORBIDDEN_SCHEMES.include? AutoinstConfig.scheme
+    end
+
+    # Obtains the current profile
+    #
+    # @return [Hash, nil] current profile if not empty; nil otherwise
+    #
+    # @see Yast::Profile.current
+    def current_profile
+      return nil if Yast::Profile.current == {}
+
+      Profile.current
+    end
+
+    # Fetchs the profile from the given URI
+    #
+    # @return [Hash, nil] current profile if fetched or exists; nil otherwise
+    #
+    # @see Yast::Profile.current
+    def fetch_profile
+      return current_profile if current_profile
+
+      if !profile_valid_scheme?
+        Report.Warning("The scheme used (#{AutoinstConfig.scheme}), " \
+                       "is not supported in self update.")
+        return nil
+      end
+
+      Report.LogMessages(true)
+      Report.LogErrors(true)
+      Report.LogWarnings(true)
+
+      process_location
+
+      if !current_profile
+        secure_uri = Yast::URL.HidePassword(AutoinstConfig.OriginalURI)
+        log.info("Unable to load the profile from: #{secure_uri}")
+
+        return nil
+      end
+
+      if !Profile.ReadXML(AutoinstConfig.xml_tmpfile)
+        Report.Warning(_("Error while parsing the control file.\n\n"))
+        return nil
+      end
+
+      current_profile
+    end
+
+    # Imports Report settings from the current profile
+    def profile_prepare_reports
+      report = Profile.current["report"]
+
+      if report && !report.key?("yesno_messages")
+        report = Report.Export
+        report["yesno_messages"] = report.fetch("errors", {})
+      end
+
+      Report.Import(report)
+    end
+
+    # Imports general settings from the profile and set signature callbacks
+    def profile_prepare_signatures
+      AutoinstGeneral.Import(Profile.current.fetch("general", {}))
+      AutoinstGeneral.SetSignatureHandling
+    end
+
+    # Fetch profile and prepare reports and signature callbas in case of
+    # obtained a valid one.
+    def process_profile
+      log.info("Fetching the profile")
+      return false if !fetch_profile
+
+      profile_prepare_reports
+      profile_prepare_signatures
+    end
+
+    # It retrieves the profile and the user rules from the given location not
+    # blocking AutoYast
+    #
+    # @see ProfileLocation.Process
+    def process_location
+      # ProfileLocation reports an error in case that the profile was not
+      # available in the given URL. We change the timeout error to not block
+      # AutoYast during update_installer, just to this method.
+      report_settings = Report.Export
+
+      Report.Import(report_settings.merge("errors" => { "timeout" => 10 }))
+
+      log.info("Processing profile location...")
+      ProfileLocation.Process
+
+      Report.Import(report_settings)
     end
   end
 end
