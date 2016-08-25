@@ -71,7 +71,7 @@ describe Yast::InstUpdateInstaller do
       end
     end
 
-    it "intializes the package management" do
+    it "initializes the package management" do
       # override the global stub
       expect(subject).to receive(:initialize_packager).and_call_original
 

@@ -181,6 +181,10 @@ module Installation
     # Inst-sys has by default 64 loop devices, but some of them already used,
     # in an extreme case we might run out of loop devices.
     #
+    # On the other hand downloading and unpacking all packages at once might
+    # require a lot of memory, the installer could crash on a system with
+    # small memory.
+    #
     # @param mount_path [Pathname] Directory to mount the update
     #
     # @raise UpdatesNotFetched

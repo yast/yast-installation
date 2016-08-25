@@ -597,12 +597,12 @@ module Yast
     #
     # @see Yast::Profile.current
     def current_profile
-      return nil if Yast::Profile.current == {}
+      return nil if Profile.current == {}
 
       Profile.current
     end
 
-    # Fetchs the profile from the given URI
+    # Fetch the profile from the given URI
     #
     # @return [Hash, nil] current profile if fetched or exists; nil otherwise
     #

@@ -243,7 +243,7 @@ describe Installation::UpdateRepository do
   end
 
   describe "#cleanup" do
-    it "deletes the repository and releases it" do
+    it "deletes and releases the repository" do
       expect(Yast::Pkg).to receive(:SourceDelete).with(repo_id)
       expect(Yast::Pkg).to receive(:SourceReleaseAll)
       expect(Yast::Pkg).to receive(:SourceSaveAll)

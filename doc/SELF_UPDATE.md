@@ -23,8 +23,8 @@ These are the basic steps performed by YaST in order to perform the update:
 
 ### Language Selection
 
-The self update step is exeuted before selecting the language
-(`inst_complex_welcome`). That means the self update progress and
+The self update step is executed before selecting the language
+(`inst_complex_welcome` client). That means the self update progress and
 the errors which happens during the self update process are by default displayed
 in English.
 
