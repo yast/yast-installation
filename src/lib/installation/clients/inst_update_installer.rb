@@ -57,8 +57,11 @@ module Yast
         Installation.finish_restarting!
       end
 
-      # shortcut - already updated
-      return :next if installer_updated?
+      # shortcut - already updated or disabled via boot option
+      if installer_updated? || disabled_in_linuxrc?
+        log.info "Self update not needed, skipping"
+        return :next
+      end
 
       initialize_progress
 
@@ -67,8 +70,6 @@ module Yast
         Yast::Progress.NextStage
       end
 
-      # initialize packager, we need to load the base product name
-      # to properly obtain the update URL from the registration server
       return :abort unless initialize_packager
 
       # self update disabled or not possible
@@ -133,12 +134,18 @@ module Yast
     #
     # @return [Boolean] True if it's enabled; false otherwise.
     def self_update_enabled?
-      if Linuxrc.InstallInf("SelfUpdate") == "0" # disabled via Linuxrc
+      if disabled_in_linuxrc?
         log.info("self-update was disabled through Linuxrc")
         false
       else
+        initialize_packager
         !self_update_urls.empty?
       end
+    end
+
+    # disabled via Linuxrc ?
+    def disabled_in_linuxrc?
+      Linuxrc.InstallInf("SelfUpdate") == "0"
     end
 
     # Return the self-update URLs
@@ -534,6 +541,7 @@ module Yast
       # false = all repositories, even the disabled ones
       Pkg.SourceGetCurrent(false).each { |r| Pkg.SourceDelete(r) }
       Pkg.SourceSaveAll
+      Pkg.SourceFinishAll
       Pkg.TargetFinish
     end
 
