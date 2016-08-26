@@ -63,8 +63,8 @@ Conflicts:	yast2-mouse < 2.18.0
 # Lazy loading in ProductLicense
 Requires:	yast2-packager >= 3.1.113
 
-# Yast::Storage.multipath_off?
-Requires:	yast2-storage >= 3.1.97
+# Storage::GetDetectedDiskPaths
+Requires:	yast2-storage >= 2.24.1
 
 # use in startup scripts
 Requires:	initviocons
