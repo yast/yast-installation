@@ -39,6 +39,7 @@ module Installation
   #   end
   class UpdateRepository
     include Yast::Logger
+    include Yast::I18n
 
     # @return [URI] URI of the repository
     attr_reader :uri
@@ -96,6 +97,9 @@ module Installation
     # @param instsys_parts_path [Pathname] Path to instsys.parts registry
     def initialize(uri, instsys_parts_path = Pathname("/etc/instsys.parts"))
       Yast.import "Pkg"
+      Yast.import "Progress"
+
+      textdomain "installation"
 
       @uri = uri
       @repo_id = add_repo
@@ -129,6 +133,9 @@ module Installation
     # If a known error occurs, it will be converted to a CouldNotFetchUpdate
     # exception.
     #
+    # A progress is displayed when the packages are downloaded.
+    # The progress can be disabled by calling `Yast::Progress.set(false)`.
+    #
     # @param path [Pathname] Directory to store the updates
     # @return [Pathname] Paths to the updates
     #
@@ -138,7 +145,10 @@ module Installation
     #
     # @raise CouldNotFetchUpdate
     def fetch(path = Pathname("/download"))
-      packages.each_with_object(update_files) do |package, files|
+      init_progress
+
+      packages.each_with_object(update_files).with_index do |(package, files), index|
+        update_progress(100 * index / packages.size)
         files << fetch_package(package, path)
       end
     rescue PackageNotFound, CouldNotExtractPackage, CouldNotSquashPackage => e
@@ -166,6 +176,15 @@ module Installation
     # * Mount the squashfs filesystem
     # * Add files/directories to inst-sys using the /etc/adddir script
     #
+    # @note The current implementation creates one squashfs image per package
+    # and mounting a squashfs image consumes one loop device (/dev/loop*).
+    # Inst-sys has by default 64 loop devices, but some of them already used,
+    # in an extreme case we might run out of loop devices.
+    #
+    # On the other hand downloading and unpacking all packages at once might
+    # require a lot of memory, the installer could crash on a system with
+    # small memory.
+    #
     # @param mount_path [Pathname] Directory to mount the update
     #
     # @raise UpdatesNotFetched
@@ -186,7 +205,10 @@ module Installation
     #
     # Release the repository
     def cleanup
+      Yast::Pkg.SourceReleaseAll
       Yast::Pkg.SourceDelete(repo_id)
+      # make sure it's also removed from disk
+      Yast::Pkg.SourceSaveAll
     end
 
     # Determine whether the repository is empty or not
@@ -231,15 +253,15 @@ module Installation
 
     # Extract a RPM contents to a given directory
     #
-    # @param package_path [Pathname] RPM local path
+    # @param package_file [File] RPM package (local file name)
     # @param dir          [Pathname] Directory to extract the RPM contents
     #
     # @raise CouldNotExtractPackage
-    def extract(package_path, dir)
+    def extract(package_file, dir)
       Dir.chdir(dir) do
-        cmd = format(EXTRACT_CMD, source: package_path.path)
+        cmd = format(EXTRACT_CMD, source: package_file.path)
         out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
-        log.info("Extracting package #{package_path}: #{out}")
+        log.info("Extracting package #{package_file.inspect}: #{out}")
         raise CouldNotExtractPackage unless out["exit"].zero?
       end
     end
@@ -366,6 +388,18 @@ module Installation
       instsys_parts_path.open("a") do |f|
         f.puts "#{path.relative_path_from(Pathname("/"))} #{mountpoint}"
       end
+    end
+
+    # Initialize the progress
+    def init_progress
+      # mark the next stage active
+      Yast::Progress.NextStage
+    end
+
+    # Display the current Progress
+    # @param [Fixnum] percent the current progress in range 0..100
+    def update_progress(percent)
+      Yast::Progress.Step(percent)
     end
   end
 end

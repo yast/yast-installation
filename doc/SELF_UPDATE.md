@@ -21,6 +21,18 @@ These are the basic steps performed by YaST in order to perform the update:
 3. The update will be applied to the installation system.
 4. YaST will be restarted and the installation will be resumed.
 
+### Language Selection
+
+The self update step is executed before selecting the language
+(`inst_complex_welcome` client). That means the self update progress and
+the errors which happens during the self update process are by default displayed
+in English.
+
+To use another language also for the self update press `F2` in the DVD boot menu
+and select the language from the list. Or use the `language` boot option, e.g.
+`language=de_DE`.
+
+
 ## Update Format
 
 YaST will use RPM packages stored in a rpm-md repository, although they are
@@ -46,11 +58,15 @@ The URL of the update repository is evaluated in this order:
    ```
 3. Registration server (SCC/SMT), not available in openSUSE. The URL of the
    registration server which should be used is determined via:
-   1. AutoYaST profile ([reg_server element](https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#CreateProfile.Register)).
-   2. The `regurl` boot parameter
+   1. The `regurl` boot parameter
+   2. AutoYaST profile ([reg_server element](https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#CreateProfile.Register)).
    3. SLP lookup (this behavior applies to regular and AutoYaST installations):
-      * If one server is found, it will be used automatically.
-      * If more than one server is found, it will ask the user to choose one.
+      * If at least one server is found it will ask the user to choose one.
+      * In AutoYaST mode SLP is skipped unless enabled in the profile in the
+        registration section (see [documentation](https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#idm140139881100304)).
+        AutoYaST expects that only one server is reported by SLP, if more
+        servers are found it is considered as an error and user interaction is
+        required just like in manual installation.
    4. Default SUSE Customer Center API (`https://scc.suse.com/`).
 4. Hard-coded in the `control.xml` file on the installation medium (thus it
    depends on the base product):
@@ -93,6 +109,10 @@ Updates signatures will be checked by libzypp. If the signature is not
 correct (or is missing), the user will be asked whether she/he wants to apply
 the update (although it's a security risk).
 
+When using SLP discovery a popup is displayed to choose the server to use.
+SLP by default does not use any authentication, everybody on the local network
+can announce a registration server.
+
 ## Self-update and User Updates
 
 Changes introduced by the user via Driver Updates (`dud` boot option) will take
@@ -107,10 +127,15 @@ Any client called before the self update step is responsible to remember its sta
 needed) and automatically going to the next dialog after the YaST restart.
 Once the self update step is reached again it will remove the restarting flag.
 
-Currently there is no API available for remembering the client states. The easiest
-way is to store the configuration into an YAML file and load it when restarting the
-installer. See the [example](https://github.com/yast/yast-installation/pull/367/files#diff-4c91d6424e08c9bef9237f7d959fc0c2R48)
-in the `inst_complex_welcome` client.
+The self update step is called very early in the workflow, for the self update
+step only configured network is needed. That is configured either by `linuxrc`
+or by the `setup_dhcp` YaST client which does not need to remember any state.
+
+## Supported URL Schemes
+
+Currently only HTTP/HTTPS and FTP URL schemes are supported for downloading
+the updates. Some additional schemes might work but are not tested and therefore
+not supported.
 
 ## Error handling
 

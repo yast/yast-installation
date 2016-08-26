@@ -35,8 +35,10 @@ describe Yast::InstUpdateInstaller do
   let(:restarting) { false }
   let(:profile) { {} }
   let(:ay_profile) { double("Yast::Profile", current: profile) }
+  let(:ay_profile_location) { double("Yast::ProfileLocation") }
 
   before do
+    allow(Yast::GetInstArgs).to receive(:going_back).and_return(false)
     allow(Yast::Pkg).to receive(:GetArchitecture).and_return(arch)
     allow(Yast::Mode).to receive(:auto).and_return(false)
     allow(Yast::NetworkService).to receive(:isNetworkRunning).and_return(network_running)
@@ -48,6 +50,12 @@ describe Yast::InstUpdateInstaller do
     allow(::FileUtils).to receive(:touch)
     stub_const("Registration::Storage::InstallationOptions", FakeInstallationOptions)
     stub_const("Registration::Storage::Config", FakeRegConfig)
+    # skip the libzypp initialization globally, enable in the specific tests
+    allow(subject).to receive(:initialize_packager).and_return(true)
+    allow(subject).to receive(:finish_packager)
+    allow(subject).to receive(:add_installation_repo)
+    allow(subject).to receive(:fetch_profile).and_return(ay_profile)
+    allow(subject).to receive(:process_profile)
 
     # stub the Profile module to avoid dependency on autoyast2-installation
     stub_const("Yast::Profile", ay_profile)
@@ -64,7 +72,44 @@ describe Yast::InstUpdateInstaller do
       end
     end
 
-    context "when update is enabled" do
+    it "cleans up the package management at the end" do
+      # override the global stub
+      expect(subject).to receive(:finish_packager).and_call_original
+      # pretend the package management has been initialized
+      # TODO: test the uninitialized case as well
+      subject.instance_variable_set(:@packager_initialized, true)
+
+      expect(Yast::Pkg).to receive(:SourceGetCurrent).and_return([0])
+      expect(Yast::Pkg).to receive(:SourceDelete).with(0)
+      expect(Yast::Pkg).to receive(:SourceSaveAll)
+      expect(Yast::Pkg).to receive(:SourceFinishAll)
+      expect(Yast::Pkg).to receive(:TargetFinish)
+
+      # just a shortcut to avoid mocking the whole update
+      allow(subject).to receive(:disabled_in_linuxrc?).and_return(true)
+      subject.main
+    end
+
+    it "displays a progress" do
+      expect(Yast::Wizard).to receive(:CreateDialog)
+      expect(Yast::Progress).to receive(:New)
+      expect(Yast::Progress).to receive(:NextStage)
+
+      # just a shortcut to avoid mocking the whole update
+      allow(subject).to receive(:self_update_enabled?).and_return(false)
+      subject.main
+    end
+
+    it "finishes the progress at the end" do
+      expect(Yast::Progress).to receive(:Finish)
+      expect(Yast::Wizard).to receive(:CloseDialog)
+
+      # just a shortcut to avoid mocking the whole update
+      allow(subject).to receive(:self_update_enabled?).and_return(false)
+      subject.main
+    end
+
+    context "when update URL is configured in control.xml" do
       before do
         allow(Yast::ProductFeatures).to receive(:GetStringFeature).and_return(url)
       end
@@ -246,6 +291,23 @@ describe Yast::InstUpdateInstaller do
             allow(File).to receive(:write)
           end
 
+          it "initializes the package management" do
+            # override the global stubs
+            expect(subject).to receive(:initialize_packager).and_call_original
+            expect(subject).to receive(:add_installation_repo).and_call_original
+
+            url = "cd:///"
+            expect(Yast::Pkg).to receive(:SetTextLocale)
+            expect(Yast::Pkg).to receive(:TargetInitialize).with("/")
+            expect(Yast::Packages).to receive(:ImportGPGKeys)
+            expect(Yast::InstURL).to receive(:installInf2Url).and_return(url)
+            expect(Yast::Pkg).to receive(:SourceCreateBase).with(url, "").and_return(0)
+
+            # just a shortcut to avoid mocking the whole update
+            allow(subject).to receive(:update_installer).and_return(false)
+            subject.main
+          end
+
           it "tries to update the installer using the given URL" do
             expect(manager).to receive(:add_repository).with(URI(update0.url))
               .and_return(true)
@@ -324,27 +386,6 @@ describe Yast::InstUpdateInstaller do
             end
           end
 
-          context "when only one SMT server exist" do
-            before do
-              allow(url_helpers).to receive(:slp_discovery).and_return([smt0])
-            end
-
-            it "is selected automatically" do
-              expect(regservice_selection).to_not receive(:run)
-              expect(registration_class).to receive(:new).with(smt0.slp_url)
-                .and_return(registration)
-              subject.main
-            end
-
-            it "saves the registration URL to be used later" do
-              allow(manager).to receive(:add_repository)
-              expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(smt0.slp_url)
-              expect(File).to receive(:write).with(/\/inst_update_installer.yaml\z/,
-                { "custom_url" => smt0.slp_url }.to_yaml)
-              subject.main
-            end
-          end
-
           context "when a registration configuration is specified via AutoYaST profile" do
             let(:reg_server_url) { "http://ay.test.example.com/update" }
             let(:profile) { { "suse_register" => { "reg_server" => reg_server_url } } }
@@ -374,6 +415,14 @@ describe Yast::InstUpdateInstaller do
           before do
             expect(Yast::Mode).to receive(:auto).at_least(1).and_return(true)
             allow(::FileUtils).to receive(:touch)
+          end
+
+          it "tries to process the profile from the given URL" do
+            expect(subject).to receive(:process_profile)
+            expect(manager).to receive(:add_repository).with(URI(profile_url))
+              .and_return(true)
+
+            subject.main
           end
 
           context "the profile defines the update URL" do
