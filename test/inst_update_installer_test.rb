@@ -71,22 +71,6 @@ describe Yast::InstUpdateInstaller do
       end
     end
 
-    it "initializes the package management" do
-      # override the global stub
-      expect(subject).to receive(:initialize_packager).and_call_original
-
-      url = "cd:///"
-      expect(Yast::Pkg).to receive(:SetTextLocale)
-      expect(Yast::Pkg).to receive(:TargetInitialize).with("/")
-      expect(Yast::Packages).to receive(:ImportGPGKeys)
-      expect(Yast::InstURL).to receive(:installInf2Url).and_return(url)
-      expect(Yast::Pkg).to receive(:SourceCreateBase).with(url, "").and_return(0)
-
-      # just a shortcut to avoid mocking the whole update
-      allow(subject).to receive(:self_update_enabled?).and_return(false)
-      subject.main
-    end
-
     it "cleans up the package management at the end" do
       # override the global stub
       expect(subject).to receive(:finish_packager).and_call_original
@@ -98,7 +82,7 @@ describe Yast::InstUpdateInstaller do
       expect(Yast::Pkg).to receive(:TargetFinish)
 
       # just a shortcut to avoid mocking the whole update
-      allow(subject).to receive(:self_update_enabled?).and_return(false)
+      allow(subject).to receive(:disabled_in_linuxrc?).and_return(true)
       subject.main
     end
 
@@ -301,6 +285,22 @@ describe Yast::InstUpdateInstaller do
             allow(registration).to receive(:get_updates_list).and_return(updates)
             allow(manager).to receive(:add_repository).and_return(true)
             allow(File).to receive(:write)
+          end
+
+          it "initializes the package management" do
+            # override the global stub
+            expect(subject).to receive(:initialize_packager).and_call_original
+
+            url = "cd:///"
+            expect(Yast::Pkg).to receive(:SetTextLocale)
+            expect(Yast::Pkg).to receive(:TargetInitialize).with("/")
+            expect(Yast::Packages).to receive(:ImportGPGKeys)
+            expect(Yast::InstURL).to receive(:installInf2Url).and_return(url)
+            expect(Yast::Pkg).to receive(:SourceCreateBase).with(url, "").and_return(0)
+
+            # just a shortcut to avoid mocking the whole update
+            allow(subject).to receive(:update_installer).and_return(false)
+            subject.main
           end
 
           it "tries to update the installer using the given URL" do
