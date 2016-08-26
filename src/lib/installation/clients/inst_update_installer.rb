@@ -70,8 +70,6 @@ module Yast
         Yast::Progress.NextStage
       end
 
-      return :abort unless initialize_packager
-
       # self update disabled or not possible
       return :next unless try_to_update?
 
@@ -138,12 +136,13 @@ module Yast
         log.info("self-update was disabled through Linuxrc")
         false
       else
-        initialize_packager
         !self_update_urls.empty?
       end
     end
 
     # disabled via Linuxrc ?
+    # @return [Boolean] true if self update has been disabled by "self_update=0"
+    #   boot option
     def disabled_in_linuxrc?
       Linuxrc.InstallInf("SelfUpdate") == "0"
     end
@@ -169,6 +168,9 @@ module Yast
     # @return [Array<URI>] self-update URLs
     def default_self_update_urls
       return @default_self_update_urls if @default_self_update_urls
+      # initialize packager to load the base product from the installation medium,
+      # the registration server needs it for evaluating the self update URL
+      initialize_packager
       @default_self_update_urls = self_update_url_from_connect
       return @default_self_update_urls unless @default_self_update_urls.empty?
       @default_self_update_urls = Array(self_update_url_from_control)
@@ -648,12 +650,6 @@ module Yast
     # Imports Report settings from the current profile
     def profile_prepare_reports
       report = Profile.current["report"]
-
-      if report && !report.key?("yesno_messages")
-        report = Report.Export
-        report["yesno_messages"] = report.fetch("errors", {})
-      end
-
       Report.Import(report)
     end
 
