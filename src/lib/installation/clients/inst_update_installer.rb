@@ -524,8 +524,6 @@ module Yast
       Packages.ImportGPGKeys
 
       @packager_initialized = true
-
-      true
     end
 
     def add_installation_repo
