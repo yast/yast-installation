@@ -264,9 +264,6 @@ module Yast
     def registration_url_from_profile
       return nil unless Mode.auto
 
-      # TODO: download the AutoYaST profile first
-      # see ../../lib/transfer/file_from_url.rb#L89
-
       get_url_from(registration_profile["reg_server"])
     end
 
