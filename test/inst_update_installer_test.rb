@@ -53,6 +53,7 @@ describe Yast::InstUpdateInstaller do
     # skip the libzypp initialization globally, enable in the specific tests
     allow(subject).to receive(:initialize_packager).and_return(true)
     allow(subject).to receive(:finish_packager)
+    allow(subject).to receive(:add_installation_repo)
     allow(subject).to receive(:fetch_profile).and_return(ay_profile)
     allow(subject).to receive(:process_profile)
 
@@ -74,6 +75,9 @@ describe Yast::InstUpdateInstaller do
     it "cleans up the package management at the end" do
       # override the global stub
       expect(subject).to receive(:finish_packager).and_call_original
+      # pretend the package management has been initialized
+      # TODO: test the uninitialized case as well
+      subject.instance_variable_set(:@packager_initialized, true)
 
       expect(Yast::Pkg).to receive(:SourceGetCurrent).and_return([0])
       expect(Yast::Pkg).to receive(:SourceDelete).with(0)
@@ -288,8 +292,9 @@ describe Yast::InstUpdateInstaller do
           end
 
           it "initializes the package management" do
-            # override the global stub
+            # override the global stubs
             expect(subject).to receive(:initialize_packager).and_call_original
+            expect(subject).to receive(:add_installation_repo).and_call_original
 
             url = "cd:///"
             expect(Yast::Pkg).to receive(:SetTextLocale)

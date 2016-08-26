@@ -70,6 +70,8 @@ module Yast
         Yast::Progress.NextStage
       end
 
+      initialize_packager
+
       # self update disabled or not possible
       return :next unless try_to_update?
 
@@ -168,9 +170,9 @@ module Yast
     # @return [Array<URI>] self-update URLs
     def default_self_update_urls
       return @default_self_update_urls if @default_self_update_urls
-      # initialize packager to load the base product from the installation medium,
+      # load the base product from the installation medium,
       # the registration server needs it for evaluating the self update URL
-      initialize_packager
+      add_installation_repo
       @default_self_update_urls = self_update_url_from_connect
       return @default_self_update_urls unless @default_self_update_urls.empty?
       @default_self_update_urls = Array(self_update_url_from_control)
@@ -501,6 +503,7 @@ module Yast
     # Initialize the package management so we can download the updates from
     # the update repository.
     def initialize_packager
+      return if @packager_initialized
       log.info "Initializing the package management..."
 
       # Add the initial installation repository.
@@ -520,6 +523,12 @@ module Yast
       # load the GPG keys (*.gpg files) from inst-sys
       Packages.ImportGPGKeys
 
+      @packager_initialized = true
+
+      true
+    end
+
+    def add_installation_repo
       base_url = InstURL.installInf2Url("")
       initial_repository = Pkg.SourceCreateBase(base_url, "")
 
@@ -533,13 +542,12 @@ module Yast
 
         initial_repository = Pkg.SourceCreateBase(base_url, "")
       end
-
-      true
     end
 
     # delete all added installation repositories
     # to make sure there is no leftover which could affect the installation later
     def finish_packager
+      return unless @packager_initialized
       # false = all repositories, even the disabled ones
       Pkg.SourceGetCurrent(false).each { |r| Pkg.SourceDelete(r) }
       Pkg.SourceSaveAll
