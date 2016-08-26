@@ -1,5 +1,5 @@
 -------------------------------------------------------------------
-Thu Aug 25 10:48:20 UTC 2016 - lslezak@suse.cz
+Thu Aug 25 14:23:20 UTC 2016 - lslezak@suse.cz
 
 - Move the installer self update step earlier in the workflow
   so the user entered values are not lost after restart and avoid
@@ -10,6 +10,11 @@ Thu Aug 25 10:48:20 UTC 2016 - lslezak@suse.cz
   the highest priority, always ask user when a SLP service is found,
   in AutoYaST mode SLP needs to be enabled in the profile
 - Display progress when downloading and applying the updates
+- 3.1.213
+
+Wed Aug 25 12:51:45 UTC 2016 - cwh@suse.com
+
+- Replace unicode bullet char by asterisk for ncurses (bsc#995082)
 - 3.1.212
 
 -------------------------------------------------------------------
