@@ -628,10 +628,6 @@ module Yast
         return nil
       end
 
-      Report.LogMessages(true)
-      Report.LogErrors(true)
-      Report.LogWarnings(true)
-
       process_location
 
       if !current_profile
@@ -677,22 +673,12 @@ module Yast
       profile_prepare_signatures
     end
 
-    # It retrieves the profile and the user rules from the given location not
-    # blocking AutoYast
+    # It retrieves the profile and the user rules from the given location
     #
     # @see ProfileLocation.Process
     def process_location
-      # ProfileLocation reports an error in case that the profile was not
-      # available in the given URL. We change the timeout error to not block
-      # AutoYast during update_installer, just to this method.
-      report_settings = Report.Export
-
-      Report.Import(report_settings.merge("errors" => { "timeout" => 10 }))
-
       log.info("Processing profile location...")
       ProfileLocation.Process
-
-      Report.Import(report_settings)
     end
   end
 end
