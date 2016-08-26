@@ -12,6 +12,7 @@ Thu Aug 25 14:23:20 UTC 2016 - lslezak@suse.cz
 - Display progress when downloading and applying the updates
 - 3.1.213
 
+-------------------------------------------------------------------
 Wed Aug 25 12:51:45 UTC 2016 - cwh@suse.com
 
 - Replace unicode bullet char by asterisk for ncurses (bsc#995082)
