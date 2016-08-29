@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Aug 30 06:55:13 UTC 2016 - lslezak@suse.cz
+
+- Display a warning popup when the installer self update uses
+  the fallback URL instead of selected SMT or the default SCC
+  server (bsc#996179)
+- 3.1.124
+
+-------------------------------------------------------------------
 Thu Aug 25 14:23:20 UTC 2016 - lslezak@suse.cz
 
 - Move the installer self update step earlier in the workflow
