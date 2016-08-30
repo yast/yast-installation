@@ -60,7 +60,7 @@ The URL of the update repository is evaluated in this order:
    registration server which should be used is determined via:
    1. The `regurl` boot parameter
    2. AutoYaST profile ([reg_server element](https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#CreateProfile.Register)).
-   3. SLP lookup (this behaviour applies to regular and AutoYaST installations):
+   3. SLP lookup (this behavior applies to regular and AutoYaST installations):
       * If at least one server is found it will ask the user to choose one.
       * In AutoYaST mode SLP is skipped unless enabled in the profile in the
         registration section (see [documentation](https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#idm140139881100304)).
