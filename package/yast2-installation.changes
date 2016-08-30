@@ -1,9 +1,11 @@
 -------------------------------------------------------------------
 Tue Aug 30 06:55:13 UTC 2016 - lslezak@suse.cz
 
-- Display a warning popup when the installer self update uses
-  the fallback URL instead of selected SMT or the default SCC
+- Display a warning popup when the installer self-update uses
+  the fallback URL instead of the selected SMT or the default SCC
   server (bsc#996179)
+- Do not contact the registration server in self-update when
+  network is not running, skip self-update completely
 - 3.1.124
 
 -------------------------------------------------------------------

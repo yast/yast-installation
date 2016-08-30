@@ -57,8 +57,8 @@ module Yast
         Installation.finish_restarting!
       end
 
-      # shortcut - already updated or disabled via boot option
-      if installer_updated? || disabled_in_linuxrc?
+      # shortcut - already updated, disabled via boot option or network not running
+      if installer_updated? || disabled_in_linuxrc? || !NetworkService.isNetworkRunning
         log.info "Self update not needed, skipping"
         return :next
       end
@@ -72,7 +72,7 @@ module Yast
 
       initialize_packager
 
-      # self update disabled or not possible
+      # self-update not possible, the repo URL is not defined
       return :next unless try_to_update?
 
       log.info("Trying installer update")
@@ -437,9 +437,9 @@ module Yast
     #
     # The update should be performed when these requeriments are met:
     #
-    # * Installer is not updated yet.
-    # * Self-update feature is enabled.
     # * Network is up.
+    # * Installer is not updated yet.
+    # * Self-update feature is enabled and the repository URL is defined
     #
     # @return [Boolean] true if the update should be performed; false otherwise.
     #
@@ -447,7 +447,7 @@ module Yast
     # @see #self_update_enabled?
     # @see NetworkService.isNetworkRunning
     def try_to_update?
-      !installer_updated? && self_update_enabled? && NetworkService.isNetworkRunning
+      NetworkService.isNetworkRunning && !installer_updated? && self_update_enabled?
     end
 
     # Determines whether the given URL is equal to the default one
