@@ -23,12 +23,12 @@ These are the basic steps performed by YaST in order to perform the update:
 
 ### Language Selection
 
-The self update step is executed before selecting the language
-(`inst_complex_welcome` client). That means the self update progress and
-the errors which happens during the self update process are by default displayed
+The self-update step is executed before selecting the language
+(`inst_complex_welcome` client). That means the self-update progress and
+the errors which happens during the self-update process are by default displayed
 in English.
 
-To use another language also for the self update press `F2` in the DVD boot menu
+To use another language also for the self-update press `F2` in the DVD boot menu
 and select the language from the list. Or use the `language` boot option, e.g.
 `language=de_DE`.
 
@@ -60,7 +60,7 @@ The URL of the update repository is evaluated in this order:
    registration server which should be used is determined via:
    1. The `regurl` boot parameter
    2. AutoYaST profile ([reg_server element](https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#CreateProfile.Register)).
-   3. SLP lookup (this behavior applies to regular and AutoYaST installations):
+   3. SLP lookup (this behaviour applies to regular and AutoYaST installations):
       * If at least one server is found it will ask the user to choose one.
       * In AutoYaST mode SLP is skipped unless enabled in the profile in the
         registration section (see [documentation](https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#idm140139881100304)).
@@ -79,7 +79,7 @@ The URL of the update repository is evaluated in this order:
 
 The first suitable URL will be used. There are two exceptions:
 
-* Of course, if no update URL is found then the self update is skipped.
+* Of course, if no update URL is found then the self-update is skipped.
 * If SCC/SMT provides multiple URLs, they will be all used.
 
 The URL can contain a variable `$arch` that will be replaced by the system's
@@ -109,9 +109,13 @@ Updates signatures will be checked by libzypp. If the signature is not
 correct (or is missing), the user will be asked whether she/he wants to apply
 the update (although it's a security risk).
 
-When using SLP discovery a popup is displayed to choose the server to use.
-SLP by default does not use any authentication, everybody on the local network
-can announce a registration server.
+When using AutoYaST, this behavior can be modified including the
+[/general/signature-handling](https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#idm140139881381840)
+section in the profile.
+
+On the other hand, if SLP discovery is enabled, a popup is displayed to choose the
+server to use. SLP by default does not use any authentication, everybody on the
+local network can announce a registration server.
 
 ## Self-update and User Updates
 
@@ -123,11 +127,11 @@ However, the user changes will be re-applied on top of the installer updates.
 
 ## Resume installation
 
-Any client called before the self update step is responsible to remember its state (if
+Any client called before the self-update step is responsible to remember its state (if
 needed) and automatically going to the next dialog after the YaST restart.
-Once the self update step is reached again it will remove the restarting flag.
+Once the self-update step is reached again it will remove the restarting flag.
 
-The self update step is called very early in the workflow, for the self update
+The self-update step is called very early in the workflow, for the self-update
 step only configured network is needed. That is configured either by `linuxrc`
 or by the `setup_dhcp` YaST client which does not need to remember any state.
 
