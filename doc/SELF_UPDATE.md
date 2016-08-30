@@ -18,8 +18,9 @@ These are the basic steps performed by YaST in order to perform the update:
    containing the updates.
 2. If updates are available, they will be downloaded. Otherwise, the process
    will be silently skipped.
-3. The update will be applied to the installation system.
-4. YaST will be restarted and the installation will be resumed.
+3. The updates will be applied to the installation system.
+4. YaST will be restarted to reload the modified files and the installation
+   will be resumed.
 
 ### Language Selection
 
@@ -43,11 +44,15 @@ handled in a different way:
   are executed.
 * No dependency checks are performed. RPMs are added in alphabetical order.
 
+The rpm-md repository is required by SMT as this is the only format which it
+supports for data mirroring.
+
 ## Where to Find the Updates
 
 The URL of the update repository is evaluated in this order:
 
-1. The `SelfUpdate` boot option
+1. The `self_update` boot option  
+   (Note: `self_update=0` completely disables the self-update!)
 2. The AutoYaST profile - in AutoYaST installation only, use the
    `/general/self_update_url` XML node:
 
@@ -79,12 +84,51 @@ The URL of the update repository is evaluated in this order:
 
 The first suitable URL will be used. There are two exceptions:
 
-* Of course, if no update URL is found then the self-update is skipped.
-* If SCC/SMT provides multiple URLs, they will be all used.
+* If no update URL is found then the self-update is skipped.
+* If SCC/SMT provides multiple URLs, they will be all used. Currently this is
+  the only way how to use more update repositories.
+
+### Downloading the AutoYaST Profile
+
+As mentioned above, the self-update repository URL might be stored also in the
+AutoYaST installation profile.
+
+However, the self-update runs at the very beginning when some hardware might
+not be initialized yet and therefore in some rare cases it might happen that the
+self-updater is not able to load the profile eventhough it can be loaded
+by the usual AutoYaST workflow later.
+
+If that is the case you need to specify the custom update URL via `self_update`
+boot option instead of specifying it in the profile.
+
+### Manual SLP Discovery
+
+If you want to check which SMT servers are announced locally via SLP you can
+run this command: `slptool findsrvs registration.suse`.
+
+Make sure the SLP communication is not blocked by firewall. Open UDP source port
+427 if the firewall is running.
+
+### Disabling SSL Certificate Check for SMT Server
+
+When the used SMT server uses a self-signed SSL certificate for HTTPS conntections
+YaST will ask to import that certificate. In that case you should verify the
+certificate fingerprint before importing it.
+
+If there are other issues with the certificate (signed by an unknown certificate
+authority, expired certificate, ...) then you can disable the SSL check by
+the `ptoptions=reg_ssl_verify reg_ssl_verify=0` boot options. But this is
+a security risk and should be used only in a trusted network, using a valid
+SSL certificate should be preferred.
+
+### Variable Expansion
 
 The URL can contain a variable `$arch` that will be replaced by the system's
-architecture, such as `x86_64`, `s390x`, etc. You can find more information
-in the [Arch module](http://www.rubydoc.info/github/yast/yast-yast2/Yast/ArchClass).
+architecture, such as `x86_64`, `i586`, `s390x`, etc.
+
+YaST uses [libzypp](https://github.com/openSUSE/libzypp/blob/e68b5df6c96e3f1d140ba15e2a9e85a990210f37/zypp/ZConfig.cc#L63)
+for detecting the system architecture so the `$arch` expansion is compatible
+with the expansion used in usual repository URLs.
 
 ### Actual URLs
 
@@ -92,7 +136,7 @@ When using registration servers, the regular update URLs have the form
 `https://updates.suse.com/SUSE/Updates/$PRODUCT/$VERSION/$ARCH/update` where
 - PRODUCT is like OpenStack-Cloud, SLE-DESKTOP, SLE-SDK, SLE-SERVER,
 - VERSION (for SLE-SERVER) is like 12, 12-SP1,
-- ARCH is one of aarch64 i586 ia64 ppc ppc64 ppc64le s390x x86_64
+- ARCH is one of `aarch64` `ppc64le` `s390x` `x86_64`
 
 For the self-update the *PRODUCT* is replaced
 with *PRODUCT*-INSTALLER, producing these repository paths
@@ -105,6 +149,8 @@ under https://updates.suse.com/
 
 ## Security
 
+### Package Integrity
+
 Updates signatures will be checked by libzypp. If the signature is not
 correct (or is missing), the user will be asked whether she/he wants to apply
 the update (although it's a security risk).
@@ -113,9 +159,16 @@ When using AutoYaST, this behavior can be modified including the
 [/general/signature-handling](https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#idm140139881381840)
 section in the profile.
 
-On the other hand, if SLP discovery is enabled, a popup is displayed to choose the
-server to use. SLP by default does not use any authentication, everybody on the
-local network can announce a registration server.
+### SLP Discovery
+
+If SLP discovery is enabled, a popup is displayed to choose the server to use.
+SLP by default does not use any authentication, everybody on the
+local network can announce a registration server so it must be confirmed by user.
+
+In AutoYaST mode SLP discovery must be enabled in the profile (in the
+registration section) and it is expected that only one SLP server is present
+in the network. If more servers are found the selection popup is displayed
+even in the AutoYaST mode.
 
 ## Self-update and User Updates
 
@@ -125,7 +178,7 @@ self-update is performed).
 
 However, the user changes will be re-applied on top of the installer updates.
 
-## Resume installation
+## Resuming Installation
 
 Any client called before the self-update step is responsible to remember its state (if
 needed) and automatically going to the next dialog after the YaST restart.
@@ -141,7 +194,7 @@ Currently only HTTP/HTTPS and FTP URL schemes are supported for downloading
 the updates. Some additional schemes might work but are not tested and therefore
 not supported.
 
-## Error handling
+## Error Handling
 
 Errors during the installer update are handled as described below:
 
@@ -151,6 +204,8 @@ Errors during the installer update are handled as described below:
   * in a regular installation/upgrade, YaST2 will offer the possibility
     to check/adjust the network configuration.
   * in an AutoYaST installation/upgrade, a warning will be shown.
+* If SCC/SMT is used and it returns no URL or fails then the fallback URL from
+  `control.xml` is used.
 * If the updates repository is found but it is empty or not valid:
   * in the case that the URL was specified by the user (using the *SelfUpdate* boot
     option or through the *self_update_url* element in an AutoYaST profile), an
