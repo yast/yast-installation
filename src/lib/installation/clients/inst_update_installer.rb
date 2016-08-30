@@ -212,22 +212,27 @@ module Yast
       store_registration_url(url) if url != :scc
       ret = registration.get_updates_list.map { |u| URI(u.url) }
 
-      if ret.empty?
-        # TRANSLATORS: error message
-        msg = _("<p>Cannot obtain the installer update repository URL\n" \
-          "from the registration server.</p>")
-
-        if self_update_url_from_control
-          # TRANSLATORS: part of an error message, %s is the default repository
-          # URL from control.xml
-          msg += _("<p>The default URL %s will be used.<p>") % self_update_url_from_control
-        end
-
-        # display the message in a RichText widget to wrap long lines
-        Report.LongWarning(msg)
-      end
+      display_fallback_warning if ret.empty?
 
       ret
+    end
+
+    # Display a warning message about using the default update URL from
+    # control.xml when the registration server does not return any URL or fails.
+    # In AutoYaST mode the dialog is closed after a timeout.
+    def display_fallback_warning
+      # TRANSLATORS: error message
+      msg = _("<p>Cannot obtain the installer update repository URL\n" \
+        "from the registration server.</p>")
+
+      if self_update_url_from_control
+        # TRANSLATORS: part of an error message, %s is the default repository
+        # URL from control.xml
+        msg += _("<p>The default URL %s will be used.<p>") % self_update_url_from_control
+      end
+
+      # display the message in a RichText widget to wrap long lines
+      Report.LongWarning(msg)
     end
 
     # Return the URL of the preferred registration server
