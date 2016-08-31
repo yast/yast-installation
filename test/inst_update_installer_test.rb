@@ -316,6 +316,18 @@ describe Yast::InstUpdateInstaller do
             expect(subject.main).to eq(:restart_yast)
           end
 
+          context "when the registration server returns empty URL list or fails" do
+            before do
+              allow(registration).to receive(:get_updates_list).and_return([])
+            end
+
+            it "displays a warning about using the default URL from control.xml" do
+              expect(Yast::Report).to receive(:LongWarning)
+                .with(/#{Regexp.escape("http://update.opensuse.org/x86_64/update.dud")}/)
+              subject.main
+            end
+          end
+
           context "when more than one SMT server exist" do
             before do
               allow(url_helpers).to receive(:slp_discovery).and_return([smt0, smt1])

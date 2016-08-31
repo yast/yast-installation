@@ -57,8 +57,8 @@ module Yast
         Installation.finish_restarting!
       end
 
-      # shortcut - already updated or disabled via boot option
-      if installer_updated? || disabled_in_linuxrc?
+      # shortcut - already updated, disabled via boot option or network not running
+      if installer_updated? || disabled_in_linuxrc? || !NetworkService.isNetworkRunning
         log.info "Self update not needed, skipping"
         return :next
       end
@@ -72,7 +72,7 @@ module Yast
 
       initialize_packager
 
-      # self update disabled or not possible
+      # self-update not possible, the repo URL is not defined
       return :next unless try_to_update?
 
       log.info("Trying installer update")
@@ -210,7 +210,29 @@ module Yast
       # Set custom_url into installation options
       Registration::Storage::InstallationOptions.instance.custom_url = registration.url
       store_registration_url(url) if url != :scc
-      registration.get_updates_list.map { |u| URI(u.url) }
+      ret = registration.get_updates_list.map { |u| URI(u.url) }
+
+      display_fallback_warning if ret.empty?
+
+      ret
+    end
+
+    # Display a warning message about using the default update URL from
+    # control.xml when the registration server does not return any URL or fails.
+    # In AutoYaST mode the dialog is closed after a timeout.
+    def display_fallback_warning
+      # TRANSLATORS: error message
+      msg = _("<p>Cannot obtain the installer update repository URL\n" \
+        "from the registration server.</p>")
+
+      if self_update_url_from_control
+        # TRANSLATORS: part of an error message, %s is the default repository
+        # URL from control.xml
+        msg += _("<p>The default URL %s will be used.<p>") % self_update_url_from_control
+      end
+
+      # display the message in a RichText widget to wrap long lines
+      Report.LongWarning(msg)
     end
 
     # Return the URL of the preferred registration server
@@ -415,9 +437,9 @@ module Yast
     #
     # The update should be performed when these requeriments are met:
     #
-    # * Installer is not updated yet.
-    # * Self-update feature is enabled.
     # * Network is up.
+    # * Installer is not updated yet.
+    # * Self-update feature is enabled and the repository URL is defined
     #
     # @return [Boolean] true if the update should be performed; false otherwise.
     #
@@ -425,7 +447,7 @@ module Yast
     # @see #self_update_enabled?
     # @see NetworkService.isNetworkRunning
     def try_to_update?
-      !installer_updated? && self_update_enabled? && NetworkService.isNetworkRunning
+      NetworkService.isNetworkRunning && !installer_updated? && self_update_enabled?
     end
 
     # Determines whether the given URL is equal to the default one
