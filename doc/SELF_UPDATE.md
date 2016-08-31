@@ -33,6 +33,20 @@ To use another language also for the self-update press `F2` in the DVD boot menu
 and select the language from the list. Or use the `language` boot option, e.g.
 `language=de_DE`.
 
+If you want to use a different keyboard layout for the console then use the
+[`keytable`](https://en.opensuse.org/SDB:Linuxrc#p_keytable) boot option.
+
+## Network Setup
+
+Obviously, for downloading the installer updates YaST needs network.
+
+YaST by default tries using DHCP on all network interfaces. If there is
+a DHCP server in the network then network is configured automatically.
+
+If you need static IP setup in your network then use the `hostip` boot
+option, e.g. `hostip=192.168.1.101/24`. If you need to set more options
+(gateway, nameserver,...) the see the [Linuxrc documentation](
+https://en.opensuse.org/SDB:Linuxrc#Network_Config).
 
 ## Update Format
 
@@ -44,8 +58,15 @@ handled in a different way:
   are executed.
 * No dependency checks are performed. RPMs are added in alphabetical order.
 
-The rpm-md repository is required by SMT as this is the only format which it
-supports for data mirroring.
+The rpm-md repository is required by SMT ([SUSE Subscription Management Tool](
+https://www.suse.com/products/subscription-management-tool))
+as this is the only format which it supports for data mirroring.
+
+The files from the packages override the files from the original inst-sys.
+That means the update packages might not need to contain all files,
+it is enough to include only the changed files which are different than
+in the original inst-sys. The unchanged files can be omitted to save memory
+and the download bandwidth.
 
 ## Where to Find the Updates
 
@@ -61,8 +82,10 @@ The URL of the update repository is evaluated in this order:
      <self_update_url>http://example.com/updates/$arch</self_update_url>
    </general>
    ```
-3. Registration server (SCC/SMT), not available in openSUSE. The URL of the
-   registration server which should be used is determined via:
+3. Registration server ([SCC](https://scc.suse.com) or
+   [SMT](https://www.suse.com/products/subscription-management-tool)), not
+   available in openSUSE. The URL of the registration server which should
+   be used is determined via:
    1. The `regurl` boot parameter
    2. AutoYaST profile ([reg_server element](https://www.suse.com/documentation/sles-12/singlehtml/book_autoyast/book_autoyast.html#CreateProfile.Register)).
    3. SLP lookup (this behavior applies to regular and AutoYaST installations):
