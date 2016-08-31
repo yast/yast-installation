@@ -43,10 +43,10 @@ Obviously, for downloading the installer updates YaST needs network.
 YaST by default tries using DHCP on all network interfaces. If there is
 a DHCP server in the network then network is configured automatically.
 
-If you need static IP setup in your network then use the `hostip` boot
-option, e.g. `hostip=192.168.1.101/24`. If you need to set more options
-(gateway, nameserver,...) the see the [Linuxrc documentation](
-https://en.opensuse.org/SDB:Linuxrc#Network_Config).
+If you need static IP setup in your network then use the `netsetup` and `hostip`
+boot options, e.g. `netsetup=hostip hostip=192.168.1.101/24`.
+If you need to set more options (gateway, nameserver,...) the see the
+[Linuxrc documentation](https://en.opensuse.org/SDB:Linuxrc#Network_Config).
 
 ## Update Format
 
