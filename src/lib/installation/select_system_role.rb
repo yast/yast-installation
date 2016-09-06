@@ -95,6 +95,7 @@ module Installation
 
     def role_buttons
       ui_roles = role_attributes.each_with_object(VBox()) do |r, vbox|
+        # FIXME: following workaround can be removed as soon as bsc#997402 is fixed:
         # bsc#995082: System role descriptions use a character that is missing in console font
         description = Yast::UI.TextMode ? r[:description].tr("•", "*") : r[:description]
         vbox << Left(RadioButton(Id(r[:id]), r[:label]))
