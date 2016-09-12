@@ -6,7 +6,7 @@ Tue Aug 30 06:55:13 UTC 2016 - lslezak@suse.cz
   server (bsc#996179)
 - Do not contact the registration server in self-update when
   network is not running, skip self-update completely
-- 3.1.124
+- 3.1.214
 
 -------------------------------------------------------------------
 Thu Aug 25 14:23:20 UTC 2016 - lslezak@suse.cz
