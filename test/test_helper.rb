@@ -25,7 +25,20 @@ module Yast
     def second_stage
     end
   end
+
   AutoinstConfig = AutoinstConfigClass.new
+
+  class AutoinstGeneralClass
+    # we need at least one non-default methods, otherwise ruby-bindings thinks
+    # it is just namespace
+    def SetSignatureHandling
+    end
+
+    def Import(profile)
+    end
+  end
+
+  AutoinstGeneral = AutoinstGeneralClass.new
 
   # Faked Profile module
   class ProfileClass
@@ -33,6 +46,13 @@ module Yast
     end
   end
   Profile = ProfileClass.new
+
+  class ProfileLocationClass
+    def Process
+    end
+  end
+
+  ProfileLocation = ProfileLocationClass.new
 end
 
 if ENV["COVERAGE"]

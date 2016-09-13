@@ -24,9 +24,14 @@ module Yast
 
     UPDATED_FLAG_FILENAME = "installer_updated".freeze
     REMOTE_SCHEMES = ["http", "https", "ftp", "tftp", "sftp", "nfs", "nfs4", "cifs", "smb"].freeze
+    PROFILE_FORBIDDEN_SCHEMES = ["label"].freeze
     REGISTRATION_DATA_PATH = "/var/lib/YaST2/inst_update_installer.yaml".freeze
 
     Yast.import "Pkg"
+    Yast.import "Packages"
+    Yast.import "PackageCallbacks"
+    Yast.import "InstURL"
+    Yast.import "Language"
     Yast.import "GetInstArgs"
     Yast.import "Directory"
     Yast.import "Installation"
@@ -38,6 +43,9 @@ module Yast
     Yast.import "NetworkService"
     Yast.import "Mode"
     Yast.import "Profile"
+    Yast.import "ProfileLocation"
+    Yast.import "AutoinstConfig"
+    Yast.import "AutoinstGeneral"
 
     def main
       textdomain "installation"
@@ -49,16 +57,38 @@ module Yast
         Installation.finish_restarting!
       end
 
+      # shortcut - already updated, disabled via boot option or network not running
+      if installer_updated? || disabled_in_linuxrc? || !NetworkService.isNetworkRunning
+        log.info "Self update not needed, skipping"
+        return :next
+      end
+
+      initialize_progress
+
+      if Mode.auto
+        process_profile
+        Yast::Progress.NextStage
+      end
+
+      initialize_packager
+
+      # self-update not possible, the repo URL is not defined
       return :next unless try_to_update?
 
       log.info("Trying installer update")
+      installer_updated = update_installer
 
-      if update_installer
-        ::FileUtils.touch(update_flag_file) # Indicates that the installer was updated.
+      if installer_updated
+        # Indicates that the installer was updated.
+        ::FileUtils.touch(update_flag_file)
+        Yast::Progress.NextStage
         Installation.restart!
       else
         :next
       end
+    ensure
+      finish_packager
+      finish_progress
     end
 
     # Tries to update the installer
@@ -80,6 +110,7 @@ module Yast
 
       if updated
         log.info("Applying installer updates")
+        Yast::Progress.NextStage
         updates_manager.apply_all
       end
       updated
@@ -103,12 +134,19 @@ module Yast
     #
     # @return [Boolean] True if it's enabled; false otherwise.
     def self_update_enabled?
-      if Linuxrc.InstallInf("SelfUpdate") == "0" # disabled via Linuxrc
+      if disabled_in_linuxrc?
         log.info("self-update was disabled through Linuxrc")
         false
       else
         !self_update_urls.empty?
       end
+    end
+
+    # disabled via Linuxrc ?
+    # @return [Boolean] true if self update has been disabled by "self_update=0"
+    #   boot option
+    def disabled_in_linuxrc?
+      Linuxrc.InstallInf("SelfUpdate") == "0"
     end
 
     # Return the self-update URLs
@@ -132,6 +170,9 @@ module Yast
     # @return [Array<URI>] self-update URLs
     def default_self_update_urls
       return @default_self_update_urls if @default_self_update_urls
+      # load the base product from the installation medium,
+      # the registration server needs it for evaluating the self update URL
+      add_installation_repo
       @default_self_update_urls = self_update_url_from_connect
       return @default_self_update_urls unless @default_self_update_urls.empty?
       @default_self_update_urls = Array(self_update_url_from_control)
@@ -169,34 +210,71 @@ module Yast
       # Set custom_url into installation options
       Registration::Storage::InstallationOptions.instance.custom_url = registration.url
       store_registration_url(url) if url != :scc
-      registration.get_updates_list.map { |u| URI(u.url) }
+      ret = registration.get_updates_list.map { |u| URI(u.url) }
+
+      display_fallback_warning if ret.empty?
+
+      ret
+    end
+
+    # Display a warning message about using the default update URL from
+    # control.xml when the registration server does not return any URL or fails.
+    # In AutoYaST mode the dialog is closed after a timeout.
+    def display_fallback_warning
+      # TRANSLATORS: error message
+      msg = _("<p>Cannot obtain the installer update repository URL\n" \
+        "from the registration server.</p>")
+
+      if self_update_url_from_control
+        # TRANSLATORS: part of an error message, %s is the default repository
+        # URL from control.xml
+        msg += _("<p>The default URL %s will be used.<p>") % self_update_url_from_control
+      end
+
+      # display the message in a RichText widget to wrap long lines
+      Report.LongWarning(msg)
     end
 
     # Return the URL of the preferred registration server
     #
     # Determined in the following order:
     #
-    # * via AutoYaST profile
-    # * regurl boot parameter
+    # * "regurl" boot parameter
+    # * From AutoYaST profile
     # * SLP look up
-    #   * If there's only 1 SMT server, it will be chosen automatically.
-    #   * If there's more than 1 SMT server, it will ask the user to choose one
+    #   * In AutoYaST mode the SLP needs to be explicitly enabled in the profile,
+    #     if the scan finds *exactly* one SLP service then it is used. If more
+    #     than one service is found then an interactive popup is displayed.
+    #     (This breaks the AY unattended concept but basically more services
+    #     is treated as an error, AytoYaST cannot know which one to use.)
+    #   * In non-AutoYaST mode it will ask the user to choose the found SLP
+    #     servise or the SCC default.
+    #  * Fallbacks to SCC if no SLP service is found.
     #
     # @return [URI,:scc,:cancel] Registration URL; :scc if SCC server was selected;
     #                            :cancel if dialog was dismissed.
     #
-    # @see #registration_server_from_user
+    # @see #registration_service_from_user
     def registration_url
-      url = registration_url_from_profile || ::Registration::UrlHelpers.boot_reg_url
+      url = ::Registration::UrlHelpers.boot_reg_url || registration_url_from_profile
       return URI(url) if url
+
+      # do the SLP scan in AutoYast mode only when allowed in the profile
+      return :scc if Mode.auto && registration_profile["slp_discovery"] != true
+
       services = ::Registration::UrlHelpers.slp_discovery
+      log.info "SLP discovery result: #{services.inspect}"
       return :scc if services.empty?
+
       service =
-        if services.size > 1
-          registration_service_from_user(services)
-        else
+        if Mode.auto && services.size == 1
           services.first
+        else
+          registration_service_from_user(services)
         end
+
+      log.info "Selected SLP service: #{service.inspect}"
+
       return service unless service.respond_to?(:slp_url)
       URI(::Registration::UrlHelpers.service_url(service.slp_url))
     end
@@ -208,9 +286,15 @@ module Yast
     def registration_url_from_profile
       return nil unless Mode.auto
 
+      get_url_from(registration_profile["reg_server"])
+    end
+
+    # return the registration settings from the loaded AutoYaST profile
+    # @return [Hash] the current settings, returns empty Hash if the
+    #   registration section is missing in the profile
+    def registration_profile
       profile = Yast::Profile.current
-      profile_url = profile.fetch("suse_register", {})["reg_server"]
-      get_url_from(profile_url)
+      profile.fetch("suse_register", {})
     end
 
     # Ask the user to chose a registration server
@@ -353,9 +437,9 @@ module Yast
     #
     # The update should be performed when these requeriments are met:
     #
-    # * Installer is not updated yet.
-    # * Self-update feature is enabled.
     # * Network is up.
+    # * Installer is not updated yet.
+    # * Self-update feature is enabled and the repository URL is defined
     #
     # @return [Boolean] true if the update should be performed; false otherwise.
     #
@@ -363,7 +447,7 @@ module Yast
     # @see #self_update_enabled?
     # @see NetworkService.isNetworkRunning
     def try_to_update?
-      !installer_updated? && self_update_enabled? && NetworkService.isNetworkRunning
+      NetworkService.isNetworkRunning && !installer_updated? && self_update_enabled?
     end
 
     # Determines whether the given URL is equal to the default one
@@ -433,6 +517,189 @@ module Yast
       ::Registration::Storage::Config.instance.import(
         Yast::Profile.current.fetch("suse_register", {})
       )
+    end
+
+    # Initialize the package management so we can download the updates from
+    # the update repository.
+    def initialize_packager
+      return if @packager_initialized
+      log.info "Initializing the package management..."
+
+      # Add the initial installation repository.
+      # Unfortunately the Packages.InitializeCatalogs call cannot be used here
+      # as is does too much (adds y2update.tgz, selects the product, selects
+      # the default patterns, looks for the addon product files...).
+
+      # initialize package callbacks to show a progress while downloading the files
+      PackageCallbacks.InitPackageCallbacks
+
+      # set the language for the package manager (mainly error messages)
+      Pkg.SetTextLocale(Language.language)
+
+      # set the target to inst-sys otherwise libzypp complains in the GPG check
+      Pkg.TargetInitialize("/")
+
+      # load the GPG keys (*.gpg files) from inst-sys
+      Packages.ImportGPGKeys
+
+      @packager_initialized = true
+    end
+
+    def add_installation_repo
+      base_url = InstURL.installInf2Url("")
+      initial_repository = Pkg.SourceCreateBase(base_url, "")
+
+      until initial_repository
+        log.error "Adding the installation repository failed"
+        # ask user to retry
+        base_url = Packages.UpdateSourceURL(base_url)
+
+        # aborted by user
+        return false if base_url == ""
+
+        initial_repository = Pkg.SourceCreateBase(base_url, "")
+      end
+    end
+
+    # delete all added installation repositories
+    # to make sure there is no leftover which could affect the installation later
+    def finish_packager
+      return unless @packager_initialized
+      # false = all repositories, even the disabled ones
+      Pkg.SourceGetCurrent(false).each { |r| Pkg.SourceDelete(r) }
+      Pkg.SourceSaveAll
+      Pkg.SourceFinishAll
+      Pkg.TargetFinish
+    end
+
+    # Show global self update progress
+    def initialize_progress
+      stages = [
+        # TRANSLATORS: progress label
+        _("Add Update Repository"),
+        _("Download the Packages"),
+        _("Apply the Packages"),
+        _("Restart")
+      ]
+
+      stages.unshift(_("Fetching AutoYast Profile")) if Mode.auto
+
+      # open a new wizard dialog with title on the top
+      # (the default dialog with title on the left looks ugly with the
+      # Progress dialog)
+      Yast::Wizard.CreateDialog
+      @wizard_open = true
+
+      Yast::Progress.New(
+        # TRANSLATORS: dialog title
+        _("Updating the Installer..."),
+        # TRANSLATORS: progress title
+        _("Updating the Installer..."),
+        # max is 100%
+        100,
+        # stages
+        stages,
+        # steps
+        [],
+        # help text
+        ""
+      )
+
+      # mark the first stage active
+      Yast::Progress.NextStage
+    end
+
+    # Finish the self update progress
+    def finish_progress
+      return unless @wizard_open
+
+      Yast::Progress.Finish
+      Yast::Wizard.CloseDialog
+    end
+
+  private
+
+    #
+    # TODO: Most of the code responsable of process the profile has been
+    # obtained from which inst_autoinit client in yast2-autoinstallation.
+    # We should try to move it to a independent class or to Yast::Profile.
+    #
+
+    # @return [Boolean] true if the scheme is not forbidden
+    def profile_valid_scheme?
+      !PROFILE_FORBIDDEN_SCHEMES.include? AutoinstConfig.scheme
+    end
+
+    # Obtains the current profile
+    #
+    # @return [Hash, nil] current profile if not empty; nil otherwise
+    #
+    # @see Yast::Profile.current
+    def current_profile
+      return nil if Profile.current == {}
+
+      Profile.current
+    end
+
+    # Fetch the profile from the given URI
+    #
+    # @return [Hash, nil] current profile if fetched or exists; nil otherwise
+    #
+    # @see Yast::Profile.current
+    def fetch_profile
+      return current_profile if current_profile
+
+      if !profile_valid_scheme?
+        Report.Warning("The scheme used (#{AutoinstConfig.scheme}), " \
+                       "is not supported in self update.")
+        return nil
+      end
+
+      process_location
+
+      if !current_profile
+        secure_uri = Yast::URL.HidePassword(AutoinstConfig.OriginalURI)
+        log.info("Unable to load the profile from: #{secure_uri}")
+
+        return nil
+      end
+
+      if !Profile.ReadXML(AutoinstConfig.xml_tmpfile)
+        Report.Warning(_("Error while parsing the control file.\n\n"))
+        return nil
+      end
+
+      current_profile
+    end
+
+    # Imports Report settings from the current profile
+    def profile_prepare_reports
+      report = Profile.current["report"]
+      Report.Import(report)
+    end
+
+    # Imports general settings from the profile and set signature callbacks
+    def profile_prepare_signatures
+      AutoinstGeneral.Import(Profile.current.fetch("general", {}))
+      AutoinstGeneral.SetSignatureHandling
+    end
+
+    # Fetch profile and prepare reports and signature callbas in case of
+    # obtained a valid one.
+    def process_profile
+      log.info("Fetching the profile")
+      return false if !fetch_profile
+
+      profile_prepare_reports
+      profile_prepare_signatures
+    end
+
+    # It retrieves the profile and the user rules from the given location
+    #
+    # @see ProfileLocation.Process
+    def process_location
+      log.info("Processing profile location...")
+      ProfileLocation.Process
     end
   end
 end
