@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Sep 13 12:37:57 UTC 2016 - jreidinger@suse.com
+
+- fix skipping of proposal returning empty hash otherwise it
+  creates non sense proposal entry in UI (bnc#994127)
+- 3.1.215
+
+-------------------------------------------------------------------
 Tue Aug 30 06:55:13 UTC 2016 - lslezak@suse.cz
 
 - Display a warning popup when the installer self-update uses

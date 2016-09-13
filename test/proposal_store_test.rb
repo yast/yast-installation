@@ -95,6 +95,7 @@ describe ::Installation::ProposalStore do
   describe "#proposal_names" do
     before do
       allow(Yast::WFM).to receive(:ClientExists).and_return(true)
+      allow(Yast::WFM).to receive(:CallFunction).with(anything, ["Description", anything]).and_return("id" => "id")
     end
 
     it "returns array with string names of clients" do
@@ -131,10 +132,11 @@ describe ::Installation::ProposalStore do
                       ["test3"]
                     ])
 
+      allow(Yast::WFM).to receive(:CallFunction).with("test2", ["Description", anything]).and_return({})
       allow(Yast::WFM).to receive(:CallFunction).with("test3", ["Description", anything]).and_return(nil)
 
       expect(subject.proposal_names).to include("test1")
-      expect(subject.proposal_names).to include("test2")
+      expect(subject.proposal_names).not_to include("test2")
       expect(subject.proposal_names).not_to include("test3")
     end
 
@@ -453,6 +455,16 @@ describe ::Installation::ProposalStore do
 
       expect(desc1["id"]).to eq("software")
       expect(desc2["id"]).to eq("software")
+    end
+
+    it "returns nil if description is nil" do
+      expect(Yast::WFM).to receive(:CallFunction).with(client_name, ["Description", {}]).and_return(nil).once
+      expect(subject.description_for(client_name)).to eq nil
+    end
+
+    it "returns nil if description is empty" do
+      expect(Yast::WFM).to receive(:CallFunction).with(client_name, ["Description", {}]).and_return({}).once
+      expect(subject.description_for(client_name)).to eq nil
     end
   end
 
