@@ -37,6 +37,7 @@ BuildRequires:  update-desktop-files
 BuildRequires:  yast2-packager >= 3.1.113
 BuildRequires:  yast2-devtools >= 3.1.10
 BuildRequires:  rubygem(rspec)
+BuildRequires:  rubygem(yast-rake)
 
 # Moved proc_modules.scr
 BuildRequires: yast2 >= 3.1.180
@@ -140,15 +141,17 @@ System installation code as present on installation media.
 %prep
 %setup -n %{name}-%{version}
 
+%check
+rake test:unit
+
 %build
-%yast_build
 
 %install
-%yast_install
+rake install DESTDIR="%{buildroot}"
 
 for f in `find %{buildroot}%{_datadir}/autoinstall/modules -name "*.desktop"`; do
     %suse_update_desktop_file $f
-done 
+done
 
 mkdir -p %{buildroot}%{yast_vardir}/hooks/installation
 
