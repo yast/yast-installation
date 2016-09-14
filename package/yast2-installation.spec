@@ -152,6 +152,14 @@ for f in `find %{buildroot}%{_datadir}/autoinstall/modules -name "*.desktop"`; d
 done
 
 mkdir -p %{buildroot}%{yast_vardir}/hooks/installation
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/preFirstCall
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/preSecondCall
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/postFirstCall
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/postSecondCall
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/preFirstStage
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/preSecondStage
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/postFirstStage
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/postSecondStage
 
 mkdir -p %{buildroot}%{_unitdir}
 install -m 644 %{SOURCE1} %{buildroot}%{_unitdir}
