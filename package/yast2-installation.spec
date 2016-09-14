@@ -33,7 +33,7 @@ Summary:        YaST2 - Installation Parts
 Source1:	YaST2-Second-Stage.service
 Source2:	YaST2-Firstboot.service
 
-BuildRequires:  docbook-xsl-stylesheets libxslt update-desktop-files yast2-core-devel
+BuildRequires:  update-desktop-files
 BuildRequires:  yast2-packager >= 3.1.113
 BuildRequires:  yast2-devtools >= 3.1.10
 BuildRequires:  rubygem(rspec)
@@ -108,7 +108,6 @@ Requires:	tar gzip
 Requires:	coreutils
 
 %if 0%{?suse_version} >= 1210
-BuildRequires: systemd-devel
 %{systemd_requires}
 %endif
 
