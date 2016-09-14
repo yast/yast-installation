@@ -15,7 +15,7 @@ FIXTURES_DIR = Pathname.new(__FILE__).dirname.join("fixtures")
 
 # stub class from packager module
 def stub_module(name)
-  Yast.const_set name.to_sym, Class.new { def self.fake_method;end }
+  Yast.const_set name.to_sym, Class.new { def self.fake_method; end }
 end
 
 # stub classes from other modules to speed up a build
