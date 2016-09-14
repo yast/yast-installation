@@ -34,7 +34,6 @@ Source1:	YaST2-Second-Stage.service
 Source2:	YaST2-Firstboot.service
 
 BuildRequires:  update-desktop-files
-BuildRequires:  yast2-packager >= 3.1.113
 BuildRequires:  yast2-devtools >= 3.1.10
 BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
