@@ -42,9 +42,6 @@ BuildRequires:  rubygem(yast-rake)
 # Moved proc_modules.scr
 BuildRequires: yast2 >= 3.1.180
 
-# Yast::Remote
-BuildRequires: yast2-network
-
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
 
