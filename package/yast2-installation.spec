@@ -227,4 +227,6 @@ systemctl enable YaST2-Firstboot.service
 %dir %{yast_vardir}/hooks/installation
 
 %dir %{yast_docdir}
-%{yast_docdir}/COPYING
+%doc %{yast_docdir}/COPYING
+%doc %{yast_docdir}/README.md
+%doc %{yast_docdir}/CONTRIBUTING.md
