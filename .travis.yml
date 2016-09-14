@@ -11,8 +11,4 @@ script:
     - rake check:pot
     - rubocop
     - COVERAGE=1 rake test:unit
-    - make -f Makefile.cvs
-    - make
-    - sudo make install
-    - make check
-
+    - sudo rake install
