@@ -14,10 +14,12 @@ describe Yast::InstComplexWelcomeClient do
   before do
     stub_const("Yast::InstComplexWelcomeClient::DATA_PATH", store_path)
     allow(Yast::ProductLicense).to receive(:info_seen?) { true }
+    allow(Yast::ProductLicense).to receive(:ShowLicenseInInstallation) { true }
     # fake yast2-country, to avoid additional build dependencies
     stub_const("Yast::Console", double.as_null_object)
     stub_const("Yast::Keyboard", double.as_null_object)
     stub_const("Yast::Timezone", double.as_null_object)
+    stub_const("Yast::Language", double(language: "en_US", GetLanguageItems: []))
     # stub complete UI, as if it goes thrue component system it will get one of
     # null object returned above as parameter and it raise exception from
     # component system

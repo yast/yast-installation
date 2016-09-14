@@ -35,6 +35,8 @@ Source2:	YaST2-Firstboot.service
 
 BuildRequires:  update-desktop-files
 BuildRequires:  yast2-devtools >= 3.1.10
+# needed for xml agent reading about products
+BuildRequires:  yast2-xml
 BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
 

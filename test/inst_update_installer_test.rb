@@ -59,6 +59,7 @@ describe Yast::InstUpdateInstaller do
 
     # stub the Profile module to avoid dependency on autoyast2-installation
     stub_const("Yast::Profile", ay_profile)
+    stub_const("Yast::Language", double(language: "en_US"))
   end
 
   describe "#main" do

@@ -1,16 +1,25 @@
 #!/usr/bin/env rspec
 
 require_relative "test_helper"
+
+# stub class from packager module
+module Yast
+  def self.stub_module(name)
+    eval "class #{name}; def self.fake_method;end;end"
+  end
+end
+
+#stub classes from other modules to speed up a build
+Yast.stub_module("Packages")
+Yast.stub_module("InstURL")
+Yast.stub_module("Language")
+Yast.stub_module("AddOnProduct")
+Yast.stub_module("ProductLicense")
+
 require "installation/clients/inst_disks_activate"
 
-describe Yast::InstDisksActivateClient do
-  Yast.import "Arch"
-  Yast.import "Linuxrc"
-  Yast.import "ProductFeatures"
-  Yast.import "GetInstArgs"
-  Yast.import "UI"
-  Yast.import "Popup"
 
+describe Yast::InstDisksActivateClient do
   describe "#main" do
     let(:probed_disks) { [] }
     let(:s390) { false }
@@ -23,6 +32,7 @@ describe Yast::InstDisksActivateClient do
       allow(Yast::Arch).to receive(:s390).and_return(s390)
       allow(Yast::GetInstArgs).to receive(:going_back) { going_back }
       stub_const("Yast::Storage", double("Yast::Storage", ReReadTargetMap: true))
+      stub_const("Yast::Packages", double(GetBaseSourceID: 0))
     end
 
     context "when architecture is s390" do
