@@ -11,8 +11,6 @@
 @YAST2-CHECKS-COMMON@
 @YAST2-CHECKS-YCP@
 
-AX_CHECK_DOCBOOK
-
 # If we change the default here instead of in Makefile.am
 # then it can be overriden at configure time
 if test "${sysconfdir}" = '${prefix}/etc'; then
