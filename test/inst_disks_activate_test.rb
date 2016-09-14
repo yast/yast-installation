@@ -3,18 +3,16 @@
 require_relative "test_helper"
 
 # stub class from packager module
-module Yast
-  def self.stub_module(name)
-    class_eval "class #{name}; def self.fake_method;end;end"
-  end
+def stub_module(name)
+  Yast.const_set name.to_sym, Class.new { def self.fake_method;end }
 end
 
 # stub classes from other modules to speed up a build
-Yast.stub_module("Packages")
-Yast.stub_module("InstURL")
-Yast.stub_module("Language")
-Yast.stub_module("AddOnProduct")
-Yast.stub_module("ProductLicense")
+stub_module("Packages")
+stub_module("InstURL")
+stub_module("Language")
+stub_module("AddOnProduct")
+stub_module("ProductLicense")
 
 require "installation/clients/inst_disks_activate"
 
