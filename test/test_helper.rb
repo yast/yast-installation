@@ -13,47 +13,22 @@ require_relative "helpers"
 
 FIXTURES_DIR = Pathname.new(__FILE__).dirname.join("fixtures")
 
-# fake AutoinstConfigClass class which is not supported by Ubuntu
-module Yast
-  # Faked AutoinstConfigClass module
-  class AutoinstConfigClass
-    # we need at least one non-default methods, otherwise ruby-bindings thinks
-    # it is just namespace
-    def cio_ignore
-    end
-
-    def second_stage
-    end
-  end
-
-  AutoinstConfig = AutoinstConfigClass.new
-
-  class AutoinstGeneralClass
-    # we need at least one non-default methods, otherwise ruby-bindings thinks
-    # it is just namespace
-    def SetSignatureHandling
-    end
-
-    def Import(profile)
-    end
-  end
-
-  AutoinstGeneral = AutoinstGeneralClass.new
-
-  # Faked Profile module
-  class ProfileClass
-    def current
-    end
-  end
-  Profile = ProfileClass.new
-
-  class ProfileLocationClass
-    def Process
-    end
-  end
-
-  ProfileLocation = ProfileLocationClass.new
+# stub module to prevent its Import
+# Useful for modules from different yast packages, to avoid build dependencies
+def stub_module(name)
+  Yast.const_set name.to_sym, Class.new { def self.fake_method; end }
 end
+
+# stub classes from other modules to speed up a build
+stub_module("Packages")
+stub_module("InstURL")
+stub_module("Language")
+stub_module("AddOnProduct")
+stub_module("ProductLicense")
+stub_module("AutoinstGeneral")
+stub_module("AutoinstConfig")
+stub_module("Profile")
+stub_module("ProfileLocation")
 
 if ENV["COVERAGE"]
   require "simplecov"

@@ -1,16 +1,10 @@
 #!/usr/bin/env rspec
 
 require_relative "test_helper"
+
 require "installation/clients/inst_disks_activate"
 
 describe Yast::InstDisksActivateClient do
-  Yast.import "Arch"
-  Yast.import "Linuxrc"
-  Yast.import "ProductFeatures"
-  Yast.import "GetInstArgs"
-  Yast.import "UI"
-  Yast.import "Popup"
-
   describe "#main" do
     let(:probed_disks) { [] }
     let(:s390) { false }
@@ -23,6 +17,7 @@ describe Yast::InstDisksActivateClient do
       allow(Yast::Arch).to receive(:s390).and_return(s390)
       allow(Yast::GetInstArgs).to receive(:going_back) { going_back }
       stub_const("Yast::Storage", double("Yast::Storage", ReReadTargetMap: true))
+      stub_const("Yast::Packages", double(GetBaseSourceID: 0))
     end
 
     context "when architecture is s390" do

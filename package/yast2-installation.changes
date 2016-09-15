@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Sep 14 13:53:41 UTC 2016 - jreidinger@suse.com
+
+- reduce time needed for building this package
+
+-------------------------------------------------------------------
 Tue Sep 13 12:37:57 UTC 2016 - jreidinger@suse.com
 
 - fix skipping of proposal returning empty hash otherwise it

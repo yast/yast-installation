@@ -33,16 +33,15 @@ Summary:        YaST2 - Installation Parts
 Source1:	YaST2-Second-Stage.service
 Source2:	YaST2-Firstboot.service
 
-BuildRequires:  docbook-xsl-stylesheets libxslt update-desktop-files yast2-core-devel
-BuildRequires:  yast2-packager >= 3.1.113
+BuildRequires:  update-desktop-files
 BuildRequires:  yast2-devtools >= 3.1.10
+# needed for xml agent reading about products
+BuildRequires:  yast2-xml
 BuildRequires:  rubygem(rspec)
+BuildRequires:  rubygem(yast-rake)
 
 # Moved proc_modules.scr
 BuildRequires: yast2 >= 3.1.180
-
-# Yast::Remote
-BuildRequires: yast2-network
 
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
@@ -108,7 +107,6 @@ Requires:	tar gzip
 Requires:	coreutils
 
 %if 0%{?suse_version} >= 1210
-BuildRequires: systemd-devel
 %{systemd_requires}
 %endif
 
@@ -141,17 +139,27 @@ System installation code as present on installation media.
 %prep
 %setup -n %{name}-%{version}
 
+%check
+rake test:unit
+
 %build
-%yast_build
 
 %install
-%yast_install
+rake install DESTDIR="%{buildroot}"
 
 for f in `find %{buildroot}%{_datadir}/autoinstall/modules -name "*.desktop"`; do
     %suse_update_desktop_file $f
-done 
+done
 
 mkdir -p %{buildroot}%{yast_vardir}/hooks/installation
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/preFirstCall
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/preSecondCall
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/postFirstCall
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/postSecondCall
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/preFirstStage
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/preSecondStage
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/postFirstStage
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/postSecondStage
 
 mkdir -p %{buildroot}%{_unitdir}
 install -m 644 %{SOURCE1} %{buildroot}%{_unitdir}
@@ -225,4 +233,6 @@ systemctl enable YaST2-Firstboot.service
 %dir %{yast_vardir}/hooks/installation
 
 %dir %{yast_docdir}
-%{yast_docdir}/COPYING
+%doc %{yast_docdir}/COPYING
+%doc %{yast_docdir}/README.md
+%doc %{yast_docdir}/CONTRIBUTING.md
