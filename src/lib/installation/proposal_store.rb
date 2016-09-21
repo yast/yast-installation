@@ -531,7 +531,7 @@ module Installation
 
         modules_order.each_with_object("") do |client, text|
           description = description_for(client)
-          text << description["help"] if description["help"]
+          text << description["help"] if description && description["help"]
         end
       else
         ""
