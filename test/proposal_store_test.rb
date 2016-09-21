@@ -90,6 +90,15 @@ describe ::Installation::ProposalStore do
     it "returns string with localized help" do
       expect(subject.help_text).to be_a String
     end
+
+    it "does not crash if modules have not been found" do
+      # bnc#999953
+      allow(subject).to receive(:presentation_order)
+        .and_return([["test1","test2", "test3"]])
+      allow(subject).to receive(:tabs?).and_return(true)
+
+      expect(subject.help_text(0)).to be_a String
+    end
   end
 
   describe "#proposal_names" do

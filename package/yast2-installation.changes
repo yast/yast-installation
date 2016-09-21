@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Sep 21 11:00:27 CEST 2016 - schubi@suse.de
+
+- Fixed crash if one defined proposal module has not been found on
+  system while switching back from "Expert" proposal.
+  (bnc#999953)
+- 3.1.216
+
+-------------------------------------------------------------------
 Tue Sep 13 12:37:57 UTC 2016 - jreidinger@suse.com
 
 - fix skipping of proposal returning empty hash otherwise it
