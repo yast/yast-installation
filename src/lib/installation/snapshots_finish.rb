@@ -45,12 +45,14 @@ module Installation
 
     def create_post_snapshot
       pre_number = Yast2::FsSnapshotStore.load("update")
+      # TRANSLATORS: label for filesystem snapshot taken after system update
       Yast2::FsSnapshot.create_post(_("after update"), pre_number, cleanup: :number, important: true)
       Yast2::FsSnapshotStore.clean("update")
       true
     end
 
     def create_single_snapshot
+      # TRANSLATORS: label for filesystem snapshot taken after system installation
       Yast2::FsSnapshot.create_single(_("after installation"), cleanup: :number, important: true)
       true
     end
