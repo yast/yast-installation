@@ -1,8 +1,16 @@
 -------------------------------------------------------------------
+Thu Oct  6 12:55:58 CEST 2016 - schubi@suse.de
+
+- AutoYaST upgrade: Do not override the Report module settings in
+  the AutoYaST upgrade mode, keep the previous settings
+  (bnc#999895).
+- 3.2.3
+
+-------------------------------------------------------------------
 Thu Sep 29 08:09:28 UTC 2016 - igonzalezsosa@suse.com
 
 - Translate description of Snapper snapshots (bsc#988700)
-- 3.1.218
+- 3.2.2
 
 -------------------------------------------------------------------
 Wed Sep 21 11:00:27 CEST 2016 - schubi@suse.de
@@ -10,13 +18,13 @@ Wed Sep 21 11:00:27 CEST 2016 - schubi@suse.de
 - Fixed crash if one defined proposal module has not been found on
   system while switching back from "Expert" proposal.
   (bnc#999953)
-- 3.1.217
+- 3.2.1
 
 -------------------------------------------------------------------
 Wed Sep 14 13:53:41 UTC 2016 - jreidinger@suse.com
 
 - reduce time needed for building this package
-- 3.1.216
+- 3.2.0
 
 -------------------------------------------------------------------
 Tue Sep 13 12:37:57 UTC 2016 - jreidinger@suse.com
