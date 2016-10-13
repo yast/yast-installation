@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Oct 13 14:15:23 UTC 2016 - igonzalezsosa@suse.com
+
+- Set libyui-ncurses environment before starting the installer
+  (related to bsc#780621)
+- 3.2.4
+
+-------------------------------------------------------------------
 Thu Oct 13 13:55:33 UTC 2016 - igonzalezsosa@suse.com
 
 - Bump version number to release fixes for bnc#999895,
