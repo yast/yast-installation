@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.2.3
+Version:        3.2.4
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -46,8 +46,8 @@ BuildRequires: yast2 >= 3.1.180
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
 
-# Moved proc_modules.scr
-Requires:       yast2 >= 3.1.186
+# Needs set_inst_ncurses_env
+Requires:       yast2 >= 3.2.0
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
