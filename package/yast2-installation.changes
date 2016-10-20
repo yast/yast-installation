@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Oct 20 09:52:00 UTC 2016 - jreidinger@suse.com
+
+- more robust password filtering in y2start.log
+  (bsc#798966)
+- 3.2.5
+
+-------------------------------------------------------------------
 Thu Oct 13 14:15:23 UTC 2016 - igonzalezsosa@suse.com
 
 - Set libyui-ncurses environment before starting the installer
