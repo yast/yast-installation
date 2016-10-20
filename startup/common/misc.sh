@@ -263,9 +263,7 @@ function log_export()
     IFS="
 "
     for i in `export` ; do
-	i=${i//Password=*/Password=\"<Password> (sensitive information)\"}
-	i=${i//RepoURL=*/RepoURL=\"<RepoURL (may contain sensitive information)>\"}
-	i=${i//ZyppRepoURL=*/ZyppRepoURL=\"<ZyppRepoURL (may contain sensitive information)>\"}
+        i=$(sed 's/\([^[:space:]]*\(repourl\|password\)\)=.*/\1="<\1 may contain sensitive information>"/i' <<< $i)
 	log "\t$i"
     done
     IFS=$IFS_SAVE
