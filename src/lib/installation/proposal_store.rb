@@ -242,6 +242,14 @@ module Installation
         client
     end
 
+    # Returns the read-only flag
+    #
+    # @param [String] client
+    # @return [String] a title provided by the description API
+    def read_only?(client)
+      read_only_proposals.include?(client)
+    end
+
     # Calls client('AskUser'), to change a setting interactively (if link is the
     # heading for the part) or noninteractively (if it is a "shortcut")
     def handle_link(link)
@@ -271,6 +279,24 @@ module Installation
       raise "Unknown user request #{link}. Broken proposal client?" if matching_client.nil?
 
       matching_client.first
+    end
+
+    def read_only_proposals
+      return @read_only_proposals unless @read_only_proposals.nil?
+
+      @read_only_proposals = []
+      log.info "all proposals: #{properties["proposal_modules"]}"
+
+      properties.fetch("proposal_modules", []).each do |proposal|
+        if proposal["read_only"]
+          name = proposal["name"]
+          name += "_proposal" unless name.end_with?("_proposal")
+          @read_only_proposals << name
+        end
+      end
+
+      log.info "Found read-only proposals: #{@read_only_proposals}"
+      @read_only_proposals
     end
 
   private

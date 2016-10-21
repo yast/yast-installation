@@ -734,6 +734,9 @@ module Installation
 
       # now build the menu button
       menu_list = @submodules_presentation.each_with_object([]) do |submod, menu|
+        # skip read-only proposals
+        next if @store.read_only?(submod)
+
         descr = @store.description_for(submod) || {}
         next if descr.empty?
 
@@ -787,9 +790,23 @@ module Installation
       nil
     end
 
+    # Get the header for the specific proposal module
+    # @param submod [String] the proposal module name
+    # @return [String] richtext string with the proposal header
     def html_header(submod)
+      # the read-only proposals do not have a clickable title
+      heading = @store.read_only?(submod) ? plain_header(submod) : link_header(submod)
+
+      Yast::HTML.Heading(heading)
+    end
+
+    # Get a richtext clickable text header for the specific proposal module
+    # @param submod [String] the proposal module name
+    # @return [String] richtext string with the proposal header
+    def link_header(submod)
       title = @store.title_for(submod)
-      heading = if title.include?("<a")
+
+      if title.include?("<a")
         title
       else
         Yast::HTML.Link(
@@ -797,8 +814,20 @@ module Installation
           @store.id_for(submod)
         )
       end
+    end
 
-      Yast::HTML.Heading(heading)
+    # Get a plain text header for the specific proposal module
+    # @param submod [String] the proposal module name
+    # @return [String] plain string with the proposal header
+    def plain_header(submod)
+      title = @store.title_for(submod)
+
+      # a link is usually not present, skip the substitution
+      return title unless title.include?("<a")
+
+      # use the non-greedy .*? repetition to handle
+      # the "<a>foo</a> <a>bar</a>" case correctly
+      title.gsub(/<a.*?>(.*?)<\/a>/, "\\1")
     end
   end
 end
