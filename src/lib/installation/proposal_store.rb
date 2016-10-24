@@ -304,11 +304,11 @@ module Installation
       log.info "all proposals: #{properties["proposal_modules"]}"
 
       properties.fetch("proposal_modules", []).each do |proposal|
-        if proposal["read_only"]
-          name = proposal["name"]
-          name += "_proposal" unless name.end_with?("_proposal")
-          @read_only_proposals << name
-        end
+        next unless proposal["read_only"]
+
+        name = proposal["name"]
+        name += "_proposal" unless name.end_with?("_proposal")
+        @read_only_proposals << name
       end
 
       log.info "Found read-only proposals: #{@read_only_proposals}"
