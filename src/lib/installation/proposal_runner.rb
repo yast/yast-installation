@@ -325,17 +325,11 @@ module Installation
     # @return workflow_sequence see proposal-API.txt, or nil if the link cannot be handled
     #   (is read-only)
     def submod_ask_user(input)
-      client = @store.client_for_link(input)
-      if @store.read_only?(client)
-        log.warn "Proposal client #{client.inspect} is read-only, ignoring the user action"
-        # TRANSLATORS: Warning message, can be split to more lines if needed
-        Yast::Report.Warning(_("This proposed setting is marked as read-only\n" \
-          "and cannot be changed."))
-        return nil
-      end
-
       # Call the AskUser() function
       ask_user_result = @store.handle_link(input)
+
+      # read-only proposal
+      return nil if ask_user_result.nil?
 
       workflow_sequence = ask_user_result["workflow_sequence"] || :next
       language_changed = ask_user_result.fetch("language_changed", false)
@@ -804,40 +798,16 @@ module Installation
     # @param submod [String] the proposal module name
     # @return [String] richtext string with the proposal header
     def html_header(submod)
-      # the read-only proposals do not have a clickable title
-      heading = @store.read_only?(submod) ? plain_header(submod) : link_header(submod)
-
-      Yast::HTML.Heading(heading)
-    end
-
-    # Get a richtext clickable text header for the specific proposal module
-    # @param submod [String] the proposal module name
-    # @return [String] richtext string with the proposal header
-    def link_header(submod)
       title = @store.title_for(submod)
 
-      if title.include?("<a")
+      # do not add a link if the module is read-only or link is already included
+      heading = if @store.read_only?(submod) || title.include?("<a")
         title
       else
-        Yast::HTML.Link(
-          title,
-          @store.id_for(submod)
-        )
+        Yast::HTML.Link(title, @store.id_for(submod))
       end
-    end
 
-    # Get a plain text header for the specific proposal module
-    # @param submod [String] the proposal module name
-    # @return [String] plain string with the proposal header
-    def plain_header(submod)
-      title = @store.title_for(submod)
-
-      # a link is usually not present, skip the substitution
-      return title unless title.include?("<a")
-
-      # use the non-greedy .*? repetition to handle
-      # the "<a>foo</a> <a>bar</a>" case correctly
-      title.gsub(/<a.*?>(.*?)<\/a>/, "\\1")
+      Yast::HTML.Heading(heading)
     end
   end
 end

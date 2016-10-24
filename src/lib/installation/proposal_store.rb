@@ -40,6 +40,7 @@ module Installation
       Yast.import "Mode"
       Yast.import "ProductControl"
       Yast.import "Stage"
+      Yast.import "Report"
 
       textdomain "installation"
 
@@ -237,9 +238,16 @@ module Installation
     def title_for(client)
       description = description_for(client)
 
-      description["rich_text_title"] ||
+      title = description["rich_text_title"] ||
         description["rich_text_raw_title"] ||
         client
+
+      return title unless read_only?(client)
+
+      # remove any HTML links if the proposal is read only,
+      # use the non-greedy .*? repetition to handle
+      # the "<a>foo</a> <a>bar</a>" case correctly
+      title.gsub(/<a.*?>(.*?)<\/a>/, "\\1")
     end
 
     # Returns the read-only flag
@@ -254,6 +262,14 @@ module Installation
     # heading for the part) or noninteractively (if it is a "shortcut")
     def handle_link(link)
       client = client_for_link(link)
+
+      if read_only?(client)
+        log.warn "Proposal client #{client.inspect} is read-only, ignoring the user action"
+        # TRANSLATORS: Warning message, can be split to more lines if needed
+        Yast::Report.Warning(_("This proposed setting is marked as read-only\n" \
+          "and cannot be changed."))
+        return nil
+      end
 
       data = {
         "has_next"  => false,

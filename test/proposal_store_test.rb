@@ -542,5 +542,10 @@ describe ::Installation::ProposalStore do
         end
       end
     end
+
+    context "when the proposal is marked as read-only" do
+      it "displays a warning and does not run the proposal client" do
+      end
+    end
   end
 end
