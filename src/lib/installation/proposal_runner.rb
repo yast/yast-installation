@@ -54,6 +54,7 @@ module Installation
       Yast.import "GetInstArgs"
       Yast.import "ProductControl"
       Yast.import "HTML"
+      Yast.import "Report"
 
       # values used in defined functions
 
@@ -321,9 +322,18 @@ module Installation
     #
     # @param [String] submodule	name of the submodule's proposal dispatcher
     # @param  has_next		force a "next" button even if the submodule would otherwise rename it
-    # @return workflow_sequence see proposal-API.txt
-    #
+    # @return workflow_sequence see proposal-API.txt, or nil if the link cannot be handled
+    #   (is read-only)
     def submod_ask_user(input)
+      client = @store.client_for_link(input)
+      if @store.read_only?(client)
+        log.warn "Proposal client #{client.inspect} is read-only, ignoring the user action"
+        # TRANSLATORS: Warning message, can be split to more lines if needed
+        Yast::Report.Warning(_("This proposed setting is marked as read-only\n" \
+          "and cannot be changed."))
+        return nil
+      end
+
       # Call the AskUser() function
       ask_user_result = @store.handle_link(input)
 
