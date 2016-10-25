@@ -54,7 +54,6 @@ module Installation
       Yast.import "GetInstArgs"
       Yast.import "ProductControl"
       Yast.import "HTML"
-      Yast.import "Report"
 
       # values used in defined functions
 

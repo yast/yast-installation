@@ -454,6 +454,7 @@ module Installation
         [
           "MakeProposal",
           {
+            "read_only"        => read_only?(client),
             "force_reset"      => force_reset,
             "language_changed" => language_changed
           }
