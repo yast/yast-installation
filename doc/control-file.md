@@ -1018,6 +1018,141 @@ layout
 
 ### Partitioning
 
+#### Subvolumes
+
+This section is used to specify what subvolumes should be created if Btrfs is
+used for the root filesystem.
+
+The *subvolumes* section is optional. If it is missing, a hard-coded list of
+default subvolumes is used. If the *subvolumes* section is there, but empty, no
+subvolumes are created.
+
+Each *subvolume* section has a mandatory *path* and optional *copy_on_write*
+and *archs* elements.
+
+*path* is the directory path of the subvolume without a starting slash ("/"),
+e.g. `var/cache`. The value of *btrfs_default_subvolume* and a slash are
+prepended, i.e. the result will be something like `@/var/cache`.
+
+*copy_on_write* is optional and *true* by default. Specify *false* for NoCOW
+subvolumes. NoCOW is recommended for database directories where a rollback
+together with the rest of the filesystem (in case of a system or kernel update
+that did not quite go as well as expected) is not desired.
+
+*archs* is a comma-separated list of system architectures (e.g. i386, x86_64,
+ppc, s390) to which a subvolume is restricted. The default is "all architectures"
+if not specified. Notice that "all" is not a legal value for this element; if a
+subvolume is relevant for all architectures, omit *archs*.
+
+Use an exlamation mark ("!") to exclude the subvolume on an architecture:
+
+```xml
+<archs>ppc,!board_powernv</archs>
+```
+
+This means "use for ppc, but not for board_powervr" (board_powervr is a PPC
+with a special board).
+
+Normally, architectures are combined with logical OR, i.e.
+
+```xml
+<archs>i386,x86_64</archs>
+```
+
+means "if architecture i386 or x86_64". If the current architecture is an
+architecture that was excluded with "!", that subvolume is not used no matter
+what other architectures are specified that might also apply.
+
+**Example:**
+
+This is the full list of SLE-12 SP2:
+
+```xml
+<subvolumes config:type="list">
+    <subvolume>
+        <path>home</path>
+    </subvolume>
+    <subvolume>
+        <path>opt</path>
+    </subvolume>
+    <subvolume>
+        <path>srv</path>
+    </subvolume>
+    <subvolume>
+        <path>tmp</path>
+    </subvolume>
+    <subvolume>
+        <path>usr/local</path>
+    </subvolume>
+    <subvolume>
+        <path>var/cache</path>
+    </subvolume>
+    <subvolume>
+        <path>var/crash</path>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/libvirt/images</path>
+        <copy_on_write config:type="boolean">false</copy_on_write>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/machines</path>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/mailman</path>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/mariadb</path>
+        <copy_on_write config:type="boolean">false</copy_on_write>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/mysql</path>
+        <copy_on_write config:type="boolean">false</copy_on_write>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/named</path>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/pgsql</path>
+        <copy_on_write config:type="boolean">false</copy_on_write>
+    </subvolume>
+    <subvolume>
+        <path>var/log</path>
+    </subvolume>
+    <subvolume>
+        <path>var/opt</path>
+    </subvolume>
+    <subvolume>
+        <path>var/spool</path>
+    </subvolume>
+    <subvolume>
+        <path>var/tmp</path>
+    </subvolume>
+
+    <!-- architecture specific subvolumes -->
+
+    <subvolume>
+        <path>boot/grub2/i386-pc</path>
+        <archs>i386,x86_64</archs>
+    </subvolume>
+    <subvolume>
+        <path>boot/grub2/x86_64-efi</path>
+        <archs>x86_64</archs>
+    </subvolume>
+    <subvolume>
+        <path>boot/grub2/powerpc-ieee1275</path>
+        <archs>ppc,!board_powernv</archs>
+    </subvolume>
+    <subvolume>
+        <path>boot/grub2/x86_64-efi</path>
+        <archs>x86_64</archs>
+    </subvolume>
+    <subvolume>
+        <path>boot/grub2/s390x-emu</path>
+        <archs>s390</archs>
+    </subvolume>
+</subvolumes>
+```
+
 
 
 ### Self Update
