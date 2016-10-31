@@ -56,16 +56,6 @@ module Yast
       Yast.include self, "packager/storage_include.rb"
       Yast.include self, "packager/load_release_notes.rb"
 
-      if Mode.autoupgrade
-        Report.Import(
-
-          "messages" => { "timeout" => 10 },
-          "errors"   => { "timeout" => 10 },
-          "warnings" => { "timeout" => 10 }
-
-        )
-      end
-
       # This dialog in not interactive
       # always return `back when came from the previous dialog
       if GetInstArgs.going_back
