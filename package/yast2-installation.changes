@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Mon Oct 31 13:23:38 UTC 2016 - lslezak@suse.cz
+
+- Added support for read-only proposal modules (fate#321739)
+- 3.2.6
+
+-------------------------------------------------------------------
+Thu Oct 27 15:09:58 CEST 2016 - shundhammer@suse.de
+
+- Documentation for subvolumes in control.xml (fate#321737)
+
+-------------------------------------------------------------------
 Thu Oct 20 09:52:00 UTC 2016 - jreidinger@suse.com
 
 - more robust password filtering in y2start.log

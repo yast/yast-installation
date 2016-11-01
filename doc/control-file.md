@@ -65,8 +65,10 @@ options:
 
 -   Partitioning
 
-    Integrates flexible partitioning into configuration file, instead of
-    the separate file currently used.
+    This is to customize disk usage, including minimum and maximum useful size
+    of the root filesystem, what filesytem type to use, whether or not to use
+    LVM and encryption, and what subvolumes to create if Btrfs is used on the
+    root filesystem.
 
 -   Scripting and Hooks
 
@@ -192,7 +194,7 @@ A workflow list element is a map with the following elements:
     -   arguments: The arguments for the module is a comma separated
         list which can accept booleans and symbols.
 
-    -   execute: If it is needed to call script that does not start with 
+    -   execute: If it is needed to call script that does not start with
         *inst_* or you need to call the same script several times with
         different *name* parameter.
 
@@ -1016,309 +1018,142 @@ layout
 
 ### Partitioning
 
-If present, the partition proposal will be based on the data provided in
-the control file.
+#### Subvolumes
 
-#### Algorithm for Space Allocation
+This section is used to specify what subvolumes should be created if Btrfs is
+used for the root filesystem.
 
-Space allocation on a disk happens in the following order. First all
-partition get the size allocated that is determined by the size
-parameter of the partition description. If a disk cannot hold the sum of
-these sizes this disk is not considered for installation. If all demands
-by the size parameter are fulfilled and there is still space available
-on the disk, the partitions which have a parameter "percent" specified
-are increased until the size demanded by by "percent" is fulfilled. If
-there is still available space on the disk (this normally only can
-happen if the sum of all percent values are below 100), all partitions
-that are specified with a size of zero are enlarged as far as possible.
-If a "maxsize" is specified for a partition, all enlargement are only
-done up to the specified maxsize.
+The *subvolumes* section is optional. If it is missing, a hard-coded list of
+default subvolumes is used. If the *subvolumes* section is there, but empty, no
+subvolumes are created.
 
-If more than one of the available disks is eligible to hold a certain
-partition set, the disk is selected as follows. If there is a partition
-allocated on that disk that has its size specified by keywords "percent"
-or by "size=0" and does not have a "maxsize" value set then the desired
-size for this partition is considered to be unlimited. If a partition
-group contains a partition which an unlimited desired size, the disk
-that maximizes the partition size for the unlimited partitions is
-selected. If all partitions in a partition group are limited in size
-then the smallest disk that can hold the desired sizes of all partitions
-is selected for that partition group.
+Each *subvolume* section has a mandatory *path* and optional *copy_on_write*
+and *archs* elements.
 
-If there are multiple partition groups the the partition group with the
-lowest number (means highest priority) get assigned its disk first.
-Afterward the partition group with the next priority gets assigned a the
-optimal disk from the so far unassigned disks.
+*path* is the directory path of the subvolume without a starting slash ("/"),
+e.g. `var/cache`. The value of *btrfs_default_subvolume* and a slash are
+prepended, i.e. the result will be something like `@/var/cache`.
 
-#### Configuration Options
+*copy_on_write* is optional and *true* by default. Specify *false* for NoCOW
+subvolumes. NoCOW is recommended for database directories where a rollback
+together with the rest of the filesystem (in case of a system or kernel update
+that did not quite go as well as expected) is not desired.
 
-The following elements are global to all disks and partitions:
+*archs* is a comma-separated list of system architectures (e.g. i386, x86_64,
+ppc, s390) to which a subvolume is restricted. The default is "all architectures"
+if not specified. Notice that "all" is not a legal value for this element; if a
+subvolume is relevant for all architectures, omit *archs*.
 
-Possible values
-:   true|false
-
-Default value
-:   true
-
-Description
-:   If set to false the partition suggestion tries to use gaps on the
-    disks or to re-use existing partitions. If set to true then the
-    partition suggestion prefers removal of existing partitions.
-
-Possible values
-:   true|false
-
-Default value
-:   false
-
-Description
-:   If set to false YaST2 will not remove some special partitions (e.g.
-    0x12 Compaq diagnostics, 0xde Dell Utility) if they exists on the
-    disk even if prefer\_remove is set to true. If set to true YaST2
-    will remove even those special partitions.
-
-    > **Caution**
-    >
-    > Caution: Since some machines are not even bootable any more when
-    > these partitions are removed one should really know what he does
-    > when setting this to true
-
-Possible values
-:   comma separated list of reiser, xfs, fat, vfat, ext2, ext3, jfs,
-    ntfs, swap
-
-Default value
-:   Empty list
-
-Description
-:   Partitions that contain filesystems in that list are not deleted
-    even if prefer\_remove is set to true.
-
-Possible values
-:   comma separated list of possible partition ids
-
-Default value
-:   Empty list
-
-Description
-:   Partitions that have a partition id that is contained in the list
-    are not deleted even if prefer\_remove is set to true.
-
-Possible values
-:   comma separated list of possible partition numbers
-
-Default value
-:   Empty list
-
-Description
-:   Partitions that have a partition number that is contained in the
-    list are not deleted even if prefer\_remove is set to true.
-
-To configure individual partitions and disks, a list element is used
-with its items describing how should the partitions be created and
-configured
-
-The attributes of such a partition are determined by several elements.
-These elements are described in more detail later.
-
-> **Note**
->
-> If there is a blank or a equal sign (=) contained in an option value,
-> the values has to be surrounded by double quotes ("). Values that
-> describe sizes can be followed by the letters K, M, G. (K means
-> Kilobytes, M Megabytes and G Gigabytes).
-
-Example
-:   \<mount\>swap\</mount\>
-
-Description
-:   This entry describes the mount point of the partition. For a swap
-    partition the special value "swap" has to be used.
-
-Example
-:   \<fsys\>reiser\</fsys\>
-
-Description
-:   This entry describes the filesystem type created on this partition.
-    Possible Filesystem types are: reiser, ext2, ext3, xfs, vfat, jfs,
-    swap If no filesystem type is given for a partition, reiserfs is
-    used.
-
-Example
-:   \<formatopt\>reiser\<formatopt\>
-
-Description
-:   This entry describes the options given to the format command.
-    Multiple options have to be separated by blanks. There must not be a
-    blank between option letter and option value. This entry is
-    optional.
-
-Example
-:   \<fstopt\>acl,user\_xattr\<fstopt\>
-
-Description
-:   This entry describes the options written to `/etc/fstab`. Multiple
-    options have to be separated by comma. This entry is optional.
-
-Example
-:   \<label\>emil\<label\>
-
-Description
-:   If the filesystem can have a label, the value of the label is set to
-    this value.
-
-Example
-:   \<id\>0x8E\<id\>
-
-Description
-:   This keyword makes it possible to create partitions with partition
-    ide other than 0x83 (for normal filesystem partitions) or 0x82 (for
-    swap partitions). This make it possible to create LVM or MD
-    partitions on a disk.
-
-Example
-:   \<size\>2G\<size\>
-
-Description
-:   This keyword determines the size that is at least needed for a
-    partition. A size value of zero means that YaST2 should try to make
-    the partition as large as possible after all other demands regarding
-    partition size are fulfilled. The special value of "auto" can be
-    given for the `/boot` and swap partition. If auto is set for a /boot
-    or swap partition YaST2 computes a suitable partition size by
-    itself.
-
-Example
-:   \<percent\>30\<percent\>
-
-Description
-:   This keyword determines that a partition should be allocated a
-    certain percentage of the available space for installation on a
-    disk.
-
-Example
-:   \<maxsize\>4G\<maxsize\>
-
-Description
-:   This keyword limits the maximal amount of space that is allocated to
-    a certain partition. This keyword is only useful in conjunction with
-    a size specification by keyword "percent" or by an entry of
-    "size=0".
-
-Example
-:   \<increasable config:type="boolean"\>true\<increasable\>
-
-Default
-:   false
-
-Description
-:   After determining the optimal disk usage the partition may be
-    increased if there is unallocated space in the same gap available.
-    If this keyword is set, the partition may grow larger than specified
-    by the maxsize and percent parameter. This keyword is intended to
-    avoid having unallocated space on a disk after partitioning if
-    possible.
-
-Example
-:   \<disk\>2\<disk\>
-
-Description
-:   This keyword specifies which partitions should be placed on which
-    disks if multiple disks are present in the system. All partitions
-    with the same disk value will be placed on the same disk. The value
-    after the keyword determines the priority of the partition group.
-    Lower numbers mean higher priority. If there are not enough disks in
-    the system a partition group with lower priority is assigned a
-    separate disks before a partition group with higher priority. A
-    partition without disk keyword is implicitly assigned the highest
-    priority 0.
-
-If in the example below the machine has three disks then each of the
-partition groups gets on a separate disk. So one disk will hold `/var`,
-another disk will hold /home`` and another disk will hold `/`, `/usr`
-and` /opt`. If in the above example the machine has only two disks then
-`/home` will still be on a separate disk (since it has lower priority
-than the other partition groups) and `/`, `/usr`, `/opt` and `/var` will
-share the other disk.
-
-If there is only one disk in the system of course all partitions will be
-on that disk. To make the flexible partitioning possible,
-*use\_flexible\_partitioning* option must be se to *true* and
-*partitions* must be surrounded with *flexible\_partitioning* tag.
+Use an exlamation mark ("!") to exclude the subvolume on an architecture:
 
 ```xml
-    <partitioning>
-        <use_flexible_partitioning config:type="boolean">true</use_flexible_partitioning>
-
-        <flexible_partitioning>
-            <partitions config:type="list">
-                <partition>
-                    <disk config:type="integer">3</disk>
-                    <mount>/var</mount>
-                    <percent config:type="integer">100</percent>
-                </partition>
-                <partition>
-                    <disk config:type="integer">2</disk>
-                    <mount>/</mount>
-                    <size>1G</size>
-                </partition>
-                <partition>
-                    <disk config:type="integer">2</disk>
-                    <mount>/usr</mount>
-                    <size>2G</size>
-                </partition>
-                <partition>
-                    <disk config:type="integer">2</disk>
-                    <mount>/opt</mount>
-                    <size>2G</size>
-                </partition>
-               <partition>
-                    <disk config:type="integer">1</disk>
-                    <mount>/home</mount>
-                    <percent config:type="integer">100</percent>
-                </partition>
-            </partitions>
-        </flexible_partitioning>
-    </partitioning>
+<archs>ppc,!board_powernv</archs>
 ```
 
-A more complete example with other options is shown below:
+This means "use for ppc, but not for board_powervr" (board_powervr is a PPC
+with a special board).
+
+Normally, architectures are combined with logical OR, i.e.
 
 ```xml
-    <partitioning>
-        <use_flexible_partitioning config:type="boolean">true</use_flexible_partitioning>
-
-        <flexible_partitioning>
-            <partitions config:type="list">
-                <partition>
-                    <disk config:type="integer">2</disk>
-                    <mount>swap</mount>
-                    <size>auto</size>
-                </partition>
-                <partition>
-                    <disk config:type="integer">1</disk>
-                    <fstopt>defaults</fstopt>
-                    <fsys>reiser</fsys>
-                    <increasable config:type="boolean">true</increasable>
-                    <mount>/</mount>
-                    <size>2gb</size>
-                </partition>
-                <partition>
-                    <disk config:type="integer">2</disk>
-                    <fstopt>defaults,data=writeback,noatime</fstopt>
-                    <fsys>reiser</fsys>
-                    <increasable config:type="boolean">true</increasable>
-                    <mount>/var</mount>
-                    <percent config:type="integer">100</percent>
-                    <size>2gb</size>
-                </partition>
-            </partitions>
-        </flexible_partitioning>
-
-        <prefer_remove config:type="boolean">true</prefer_remove>
-        <remove_special_partitions config:type="boolean">false</remove_special_partitions>
-    </partitioning>
+<archs>i386,x86_64</archs>
 ```
+
+means "if architecture i386 or x86_64". If the current architecture is an
+architecture that was excluded with "!", that subvolume is not used no matter
+what other architectures are specified that might also apply.
+
+**Example:**
+
+This is the full list of SLE-12 SP2:
+
+```xml
+<subvolumes config:type="list">
+    <subvolume>
+        <path>home</path>
+    </subvolume>
+    <subvolume>
+        <path>opt</path>
+    </subvolume>
+    <subvolume>
+        <path>srv</path>
+    </subvolume>
+    <subvolume>
+        <path>tmp</path>
+    </subvolume>
+    <subvolume>
+        <path>usr/local</path>
+    </subvolume>
+    <subvolume>
+        <path>var/cache</path>
+    </subvolume>
+    <subvolume>
+        <path>var/crash</path>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/libvirt/images</path>
+        <copy_on_write config:type="boolean">false</copy_on_write>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/machines</path>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/mailman</path>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/mariadb</path>
+        <copy_on_write config:type="boolean">false</copy_on_write>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/mysql</path>
+        <copy_on_write config:type="boolean">false</copy_on_write>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/named</path>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/pgsql</path>
+        <copy_on_write config:type="boolean">false</copy_on_write>
+    </subvolume>
+    <subvolume>
+        <path>var/log</path>
+    </subvolume>
+    <subvolume>
+        <path>var/opt</path>
+    </subvolume>
+    <subvolume>
+        <path>var/spool</path>
+    </subvolume>
+    <subvolume>
+        <path>var/tmp</path>
+    </subvolume>
+
+    <!-- architecture specific subvolumes -->
+
+    <subvolume>
+        <path>boot/grub2/i386-pc</path>
+        <archs>i386,x86_64</archs>
+    </subvolume>
+    <subvolume>
+        <path>boot/grub2/x86_64-efi</path>
+        <archs>x86_64</archs>
+    </subvolume>
+    <subvolume>
+        <path>boot/grub2/powerpc-ieee1275</path>
+        <archs>ppc,!board_powernv</archs>
+    </subvolume>
+    <subvolume>
+        <path>boot/grub2/x86_64-efi</path>
+        <archs>x86_64</archs>
+    </subvolume>
+    <subvolume>
+        <path>boot/grub2/s390x-emu</path>
+        <archs>s390</archs>
+    </subvolume>
+</subvolumes>
+```
+
+
 
 ### Self Update
 
