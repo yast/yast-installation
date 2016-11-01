@@ -298,16 +298,14 @@ module Installation
     end
 
     def read_only_proposals
-      return @read_only_proposals unless @read_only_proposals.nil?
+      return @read_only_proposals if @read_only_proposals
 
       @read_only_proposals = []
-      log.info "all proposals: #{properties["proposal_modules"]}"
 
       properties.fetch("proposal_modules", []).each do |proposal|
         next unless proposal["read_only"]
 
-        name = proposal["name"]
-        name += "_proposal" unless name.end_with?("_proposal")
+        name = full_module_name(proposal["name"])
         @read_only_proposals << name
       end
 
@@ -545,12 +543,20 @@ module Installation
       @modules_order.map! { |m| m["proposal_modules"] }
 
       @modules_order.each do |module_tab|
-        module_tab.map! do |mod|
-          mod.include?("_proposal") ? mod : mod + "_proposal"
-        end
+        module_tab.map! { |mod| full_module_name(mod) }
       end
 
       @modules_order
+    end
+
+    # Build the full proposal module name including the "_proposal" suffix.
+    # The sufix is not added when it is already present.
+    # @param [String] full or short proposal module name
+    # @return [String] full proposal module name
+    def full_module_name(name)
+      # already a full name?
+      return name if name.end_with?("_proposal")
+      name + "_proposal"
     end
 
     def order_without_tabs
