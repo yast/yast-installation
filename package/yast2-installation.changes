@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Oct 31 13:23:38 UTC 2016 - lslezak@suse.cz
+
+- Added support for read-only proposal modules (FATE#321739)
+- 3.1.216.1.2
+
+-------------------------------------------------------------------
 Thu Oct 27 15:09:58 CEST 2016 - shundhammer@suse.de
 
 - Documentation for subvolumes in control.xml (fate#321737)

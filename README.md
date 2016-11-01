@@ -3,7 +3,7 @@ YaST Installation Framework
 
 [![Travis Build](https://travis-ci.org/yast/yast-installation.svg?branch=master)](https://travis-ci.org/yast/yast-installation)
 [![Jenkins Build](http://img.shields.io/jenkins/s/https/ci.opensuse.org/yast-installation-master.svg)](https://ci.opensuse.org/view/Yast/job/yast-installation-master/)
-
+[![Coverage Status](https://coveralls.io/repos/github/yast/yast-installation/badge.svg?branch=SLE-12-SP2-Octopus)](https://coveralls.io/github/yast/yast-installation?branch=SLE-12-SP2-Octopus)
 
 Description
 ============

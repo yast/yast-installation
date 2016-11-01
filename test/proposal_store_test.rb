@@ -452,6 +452,14 @@ describe ::Installation::ProposalStore do
     }
   end
 
+  let(:client_description_with_link) do
+    {
+      "rich_text_title" => "<a href=\"software_link\">Software</a>",
+      "menu_title"      => "&Software",
+      "id"              => "software"
+    }
+  end
+
   let(:client_name) { "software_proposal" }
 
   describe "#description_for" do
@@ -490,6 +498,18 @@ describe ::Installation::ProposalStore do
       allow(subject).to receive(:description_for).with(client_name).and_return(client_description)
 
       expect(subject.title_for(client_name)).to eq(client_description["rich_text_title"])
+    end
+
+    context "when the proposal is marked as read-only" do
+      before do
+        expect(subject).to receive(:read_only?).with(client_name).and_return(true)
+      end
+
+      it "removes all <a> tags from the title" do
+        allow(subject).to receive(:description_for).with(client_name).and_return(client_description_with_link)
+        # compare with the client description without the link
+        expect(subject.title_for(client_name)).to eq(client_description["rich_text_title"])
+      end
     end
   end
 
@@ -540,6 +560,32 @@ describe ::Installation::ProposalStore do
             ["AskUser", { "has_next" => false, "chosen_id" => "proposal_a" }]).and_return(:next)
           expect(subject.handle_link("proposal_a")).to eq(:next)
         end
+      end
+    end
+
+    context "when the proposal is marked as read-only" do
+      before do
+        # Proposals need to be cached first
+        subject.make_proposals
+
+        expect(subject).to receive(:read_only?).with("proposal_a").and_return(true)
+        allow(Yast::Report).to receive(:Warning)
+      end
+
+      it "displays a warning" do
+        expect(Yast::Report).to receive(:Warning)
+
+        subject.handle_link("proposal_a")
+      end
+
+      it "does not run the proposal client" do
+        expect(Yast::WFM).to_not receive(:CallFunction)
+
+        subject.handle_link("proposal_a")
+      end
+
+      it "returns nil" do
+        expect(subject.handle_link("proposal_a")).to eq(nil)
       end
     end
   end

@@ -321,11 +321,14 @@ module Installation
     #
     # @param [String] submodule	name of the submodule's proposal dispatcher
     # @param  has_next		force a "next" button even if the submodule would otherwise rename it
-    # @return workflow_sequence see proposal-API.txt
-    #
+    # @return workflow_sequence see proposal-API.txt, or nil if the link cannot be handled
+    #   (is read-only)
     def submod_ask_user(input)
       # Call the AskUser() function
       ask_user_result = @store.handle_link(input)
+
+      # read-only proposal
+      return nil if ask_user_result.nil?
 
       workflow_sequence = ask_user_result["workflow_sequence"] || :next
       language_changed = ask_user_result.fetch("language_changed", false)
@@ -734,6 +737,9 @@ module Installation
 
       # now build the menu button
       menu_list = @submodules_presentation.each_with_object([]) do |submod, menu|
+        # skip read-only proposals
+        next if @store.read_only?(submod)
+
         descr = @store.description_for(submod) || {}
         next if descr.empty?
 
@@ -787,15 +793,17 @@ module Installation
       nil
     end
 
+    # Get the header for the specific proposal module
+    # @param submod [String] the proposal module name
+    # @return [String] richtext string with the proposal header
     def html_header(submod)
       title = @store.title_for(submod)
-      heading = if title.include?("<a")
+
+      # do not add a link if the module is read-only or link is already included
+      heading = if @store.read_only?(submod) || title.include?("<a")
         title
       else
-        Yast::HTML.Link(
-          title,
-          @store.id_for(submod)
-        )
+        Yast::HTML.Link(title, @store.id_for(submod))
       end
 
       Yast::HTML.Heading(heading)
