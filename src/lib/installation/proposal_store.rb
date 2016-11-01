@@ -40,6 +40,7 @@ module Installation
       Yast.import "Mode"
       Yast.import "ProductControl"
       Yast.import "Stage"
+      Yast.import "Report"
 
       textdomain "installation"
 
@@ -237,15 +238,38 @@ module Installation
     def title_for(client)
       description = description_for(client)
 
-      description["rich_text_title"] ||
+      title = description["rich_text_title"] ||
         description["rich_text_raw_title"] ||
         client
+
+      return title unless read_only?(client)
+
+      # remove any HTML links if the proposal is read only,
+      # use the non-greedy .*? repetition to handle
+      # the "<a>foo</a> <a>bar</a>" case correctly
+      title.gsub(/<a.*?>(.*?)<\/a>/, "\\1")
+    end
+
+    # Returns the read-only flag
+    #
+    # @param [String] client
+    # @return [String] a title provided by the description API
+    def read_only?(client)
+      read_only_proposals.include?(client)
     end
 
     # Calls client('AskUser'), to change a setting interactively (if link is the
     # heading for the part) or noninteractively (if it is a "shortcut")
     def handle_link(link)
       client = client_for_link(link)
+
+      if read_only?(client)
+        log.warn "Proposal client #{client.inspect} is read-only, ignoring the user action"
+        # TRANSLATORS: Warning message, can be split to more lines if needed
+        Yast::Report.Warning(_("This proposed setting is marked as read-only\n" \
+          "and cannot be changed."))
+        return nil
+      end
 
       data = {
         "has_next"  => false,
@@ -271,6 +295,22 @@ module Installation
       raise "Unknown user request #{link}. Broken proposal client?" if matching_client.nil?
 
       matching_client.first
+    end
+
+    def read_only_proposals
+      return @read_only_proposals if @read_only_proposals
+
+      @read_only_proposals = []
+
+      properties.fetch("proposal_modules", []).each do |proposal|
+        next unless proposal["read_only"]
+
+        name = full_module_name(proposal["name"])
+        @read_only_proposals << name
+      end
+
+      log.info "Found read-only proposals: #{@read_only_proposals}"
+      @read_only_proposals
     end
 
   private
@@ -412,6 +452,7 @@ module Installation
         [
           "MakeProposal",
           {
+            "read_only"        => read_only?(client),
             "force_reset"      => force_reset,
             "language_changed" => language_changed
           }
@@ -502,12 +543,20 @@ module Installation
       @modules_order.map! { |m| m["proposal_modules"] }
 
       @modules_order.each do |module_tab|
-        module_tab.map! do |mod|
-          mod.include?("_proposal") ? mod : mod + "_proposal"
-        end
+        module_tab.map! { |mod| full_module_name(mod) }
       end
 
       @modules_order
+    end
+
+    # Build the full proposal module name including the "_proposal" suffix.
+    # The sufix is not added when it is already present.
+    # @param [String] full or short proposal module name
+    # @return [String] full proposal module name
+    def full_module_name(name)
+      # already a full name?
+      return name if name.end_with?("_proposal")
+      name + "_proposal"
     end
 
     def order_without_tabs

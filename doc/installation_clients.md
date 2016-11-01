@@ -33,9 +33,18 @@ section)[TODO link].
 
 The actions can be:
 
-- `"MakeProposal"` that creates a proposal for the module. It can have parameter `"force_reset"`
-  that can force reset and create a new one from scratch. Response is a `Hash` with proposal text,
-  optional link definitions and a help text. **TODO specify exactly format.**
+- `"MakeProposal"` that creates a proposal for the module. The optional `Hash`
+  then has this structure:
+  ```ruby
+  {
+    "force_reset"      => true/false,
+    "language_changed" => true/false,
+    "read_only"        => true/false
+  }
+  ```
+
+  See more details [in the generic `ProposalClient` class](
+    https://github.com/yast/yast-yast2/blob/5762181d62762816a73fc040362c1efb5d97deed/library/general/src/lib/installation/proposal_client.rb#L100)
 - `"AskUser"` for automatic or manual user request to change the proposed configuration. Parameter is
   `"chosen_id"` which specify action. It can be `"id"` from `"Description"` action
   which should open dialog to modify values or links specified in `"MakeProposal"`
