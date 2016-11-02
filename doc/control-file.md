@@ -129,8 +129,15 @@ One of the main reasons for using the control is to provide non YaST
 developers the ability to change the installation behavior and customize
 various settings without the need to change and re-build YaST packages.
 
-The control files for some SUSE products are maintained at
-yast2-installation source tree in directory `control`.
+This way it is possible to define different behavior and different installation
+defaults in SLE and openSUSE products.
+
+The control files for SUSE products are maintained at specific Git
+repositories (e.g. for [SLES](https://github.com/yast/skelcd-control-SLES/blob/master/control/control.SLES.xml),
+[SLED](https://github.com/yast/skelcd-control-SLED/blob/master/control/control.SLED.xml)
+or [openSUSE](https://github.com/yast/skelcd-control-openSUSE/blob/master/control/control.openSUSE.xml)
+).
+
 
 Configuration
 -------------
@@ -268,30 +275,47 @@ possible using the control file.
 
 
 ```xml
-    <proposal>
-        <type>network</type>
-        <stage>continue,normal</stage>
-        <proposal_modules config:type="list">
-            <proposal_module>lan</proposal_module>
-            <proposal_module>dsl</proposal_module>
-            <proposal_module>isdn</proposal_module>
-            <proposal_module>modem</proposal_module>
-            <proposal_module>proxy</proposal_module>
-            <proposal_module>remote</proposal_module>
-        </proposal_modules>
-    </proposal>
+<proposal>
+    <label>Installation Settings</label>
+    <mode>installation</mode>
+    <stage>initial</stage>
+    <name>initial</name>
+    <unique_id>inst_initial</unique_id>
+    <enable_skip>no</enable_skip>
+    <proposal_modules config:type="list">
+        <proposal_module>
+            <name>bootloader</name>
+            <presentation_order>20</presentation_order>
+        </proposal_module>
+        <proposal_module>
+            <name>hwinfo</name>
+            <presentation_order>80</presentation_order>
+        </proposal_module>
+        ...
+    </proposal_modules>
+</proposal>
 ```
 
-The proposal in the above listing is displayed in the so called
-*continue* mode which is the second phase of the installation. The
-proposal consists of different configuration options which are controled
-using a special API.
+Each proposal definition can contain these values:
 
-Currently, proposals names and captions are fixed and cannot be changed. It
-is not possible to create a special proposal screen, instead those
-available should be used: *network*, *hardware*, *service*. All proposal script
-names are listed without *_proposal* suffix. If a *proposed_module* is called
-*example*, then installer looks for *example_proposal* script.
+```xml
+<proposal_module>
+    <name>module_name</name>
+    <presentation_order>50</presentation_order>
+    <read_only config:type="boolean">true</read_only>
+</proposal_module>
+```
+
+Details:
+
+- `name` (string) - proposal client name without the `_proposal` suffix
+  (the code actually allows writing it but that makes the definitions longer
+  and less readable).
+- `presentation_order` (integer, optional) - the number defines the display order
+  in the proposal, the absolute value is not important, it depends on the relative
+  value when compared against the other proposal modules.
+- `read_only` (boolean, optional) - the module is treated as read only and
+  any user interaction with the proposal module is disabled.
 
 In the workflow, the proposals are called as any workflow step with an
 additional argument identifying the proposal screen to be started.
@@ -511,93 +535,6 @@ Every *copy\_to\_system\_item* entry consists of:
 -   (list) *optional\_files* - list of (string) *file\_item* entries,
     one entry for one file or directory; files are optional and are
     copied if they exist; missing files are skipped
-
-### Automatic Configuration
-
-This is another feature defined in *globals* section. *Automatic
-Configuration* is called via the script *inst\_automatic\_configuration*
-at the end of the second stage installation. Having the configuration in
-control file enables this function for another modes and makes it very
-well configurable.
-
-This is an example of AC setup:
-
-```xml
-    <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
-        xmlns:config="http://www.suse.com/1.0/configns">
-        <globals>
-
-            <!-- List of steps in AC -->
-            <automatic_configuration config:type="list">
-
-                <!-- One step definition -->
-                <ac_step>
-                    <text_id>ac_1</text_id>
-                    <type>scripts</type>
-                    <ac_items config:type="list">
-                        <ac_item>initialization</ac_item>
-                        <ac_item>hostname</ac_item>
-                        <ac_item>netprobe</ac_item>
-                        <ac_item>rpmcopy_secondstage</ac_item>
-                    </ac_items>
-                    <icon>yast-lan</icon>
-                </ac_step>
-
-                <ac_step>
-                    <text_id>ac_3</text_id>
-                    <type>proposals</type>
-                    <ac_items config:type="list">
-                        <ac_item>x11</ac_item>
-                        <ac_item>printer</ac_item>
-                        <ac_item>sound</ac_item>
-                        <ac_item>tv</ac_item>
-                    </ac_items>
-                    <icon>yast-hwinfo</icon>
-                </ac_step>
-
-            </automatic_configuration>
-        </globals>
-
-        <texts>
-
-            <!-- Label used during AC, uses "text_id" from "ac_step" -->
-            <ac_1><label>Initialization...</label><ac_1>
-            <ac_3><label>Configuring hardware...</label><ac_3>
-
-        </texts>
-    </productDefines>
-```
-
-AC setup *automatic\_configuration* consists of list of several
-*ac\_step* definitions. On definition for one AC step. These steps can
-be compared to sets of scripts or sets of installation proposals, e.g.,
-*network proposal* that consists of *lan*, *modem*, ... and *firewall*
-proposals which might depend on each others proposals.
-
-Every single *ac\_step* consists of
-
--   *text\_id* - which is the very same ID as used in
-    [texts](#control_texts) (you have to define the AC label there).
-
--   *type* - defines how the AC step items will be handled. Possible
-    values are *scripts* or *proposals*. More types cannot be mixed
-    within one AC step. All *scripts* are called only once one by one,
-    all *proposals* in one AC step are called first with *MakeProposal*
-    parameter then again all with *Write* parameter.
-
--   *ac\_items* - is a list of scripts or proposals each in a separate
-    *ac\_item*.
-
-    For scripts an *ac\_item* is a name of YaST client script without
-    *inst\_* prefix, e.g., *firewall* would call *inst\_firewall*
-    script.
-
-    For proposals an *ac\_item* is a name of YaST proposal without
-    *\_proposal* suffix, e.g., *firewall* would call
-    *firewall\_proposal*.
-
--   *icon* - plain icon filename (from 22x22 directory) without suffix
-    and without any explicit directory name, e.g., *yast-network*.
 
 ### Software
 
@@ -1158,20 +1095,16 @@ This is the full list of SLE-12 SP2:
 ### Self Update
 
 To enable the self update feature (FATE#319716), the location of the update
-should be defined in the control file.
+repository should be defined in the control file.
 
 ```
-    <self_update_url>http://updates.opensuse.org/$arch/leap-42.1.dud</self_update_url>
+    <self_update_url>http://updates.opensuse.org/$arch/leap-42.1-installer-update</self_update_url>
 ```
 
-The URL can contain a variable `$arch` that will be replaced by the system's
-architecture, such as `x86_64`, `s390x`, etc. You can find more information in
-the [Arch
-module](http://www.rubydoc.info/github/yast/yast-yast2/Yast/ArchClass).
+This is the fallback which is used when the self-update repository is not
+specified on the boot command line or when there registration module is not available.
 
-Missing driver update archive at the specified URL is not considered as an
-error. If the DUD file is not found then YaST ignores the error and skips the
-self update step silently.
+See more details in the [self-update documentation](./SELF_UPDATE.md).
 
 ### Hooks
 
