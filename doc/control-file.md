@@ -1101,7 +1101,7 @@ repository should be defined in the control file.
     <self_update_url>http://updates.opensuse.org/$arch/leap-42.1-installer-update</self_update_url>
 ```
 
-This is the fallback which is used when the self-update repository is not\
+This is the fallback which is used when the self-update repository is not
 specified on the boot command line or when there registration module is not available.
 
 See more details in the [self-update documentation](./SELF_UPDATE.md).
