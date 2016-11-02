@@ -312,7 +312,7 @@ Details:
   (the code actually allows writing it but that makes the definitions longer
   and less readable).
 - `presentation_order` (integer, optional) - the number defines the display order
-  in the proposal, the absolute value is not important, important is the relative
+  in the proposal, the absolute value is not important, it depends on the relative
   value when compared against the other proposal modules.
 - `read_only` (boolean, optional) - the module is treated as read only and
   any user interaction with the proposal module is disabled.
