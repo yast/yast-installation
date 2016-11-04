@@ -8,7 +8,7 @@ installation even after the media has been released. Check
 ## Enabling Updates
 
 Self-update is disabled by default. However, it can be enabled by setting
-`self_update=1` boot option. In the following sections is assumed that the this
+`self_update=1` boot option. In the following sections it is assumed that this
 feature is enabled.
 
 ## Basic Workflow
