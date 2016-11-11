@@ -2,7 +2,7 @@
 Fri Nov 11 13:50:06 UTC 2016 - jreidinger@suse.com
 
 - Do not crash if importing ssh config from system which
-  /etc/os-release missing pretty name (bsc#1009492)
+  /etc/os-release does not contain pretty name (bsc#1009492)
 - 3.2.7
 
 -------------------------------------------------------------------

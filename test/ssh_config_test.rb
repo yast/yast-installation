@@ -49,7 +49,7 @@ describe Installation::SshConfig do
       expect(root2.system_name).to eq _("Linux")
     end
 
-    it "uses name and version when PRETTY_NAME missing in /etc/os-release" do
+    it "uses name and version when PRETTY_NAME is missing in /etc/os-release" do
       root3 = described_class.from_dir(root3_dir)
       expect(root3.system_name).to eq _("SUSE 10")
     end
