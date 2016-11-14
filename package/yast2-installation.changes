@@ -2,7 +2,7 @@
 Mon Nov 14 14:30:12 UTC 2016 - jreidinger@suse.com
 
 - User have to confirm when the configuration proposal contains
-  non-blocking error (generic fix for bsc#1003682)7
+  non-blocking error (generic fix for bsc#1003682)
 - 3.1.216.1.3
 
 -------------------------------------------------------------------
