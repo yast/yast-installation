@@ -22,6 +22,7 @@
 require "yast"
 
 require "installation/proposal_store"
+require "installation/proposal_errors"
 
 module Installation
   # Create and display reasonable proposal for basic
@@ -66,6 +67,7 @@ module Installation
       # BNC #463567
       @submods_already_called = []
       @store_class = store
+      @errors = ProposalErrors.new
     end
 
     def run
@@ -278,6 +280,8 @@ module Installation
         return nil
       end
 
+      return nil unless @errors.approved?
+
       if Yast::Stage.stage == "initial"
         input = Yast::WFM.CallFunction("inst_doit", [])
       # bugzilla #219097, #221571, yast2-update on running system
@@ -441,6 +445,7 @@ module Installation
         end
       end
 
+      @errors.clear
       @store.make_proposals(
         force_reset:      force_reset,
         language_changed: language_changed,
@@ -469,6 +474,7 @@ module Installation
 
       if !warning.empty?
         level = prop["warning_level"] || :warning
+        log.info "proposal returns warning with level #{level} and msg #{warning}"
 
         case level
         when :notice
@@ -476,6 +482,7 @@ module Installation
         when :warning
           warning = Yast::HTML.Colorize(warning, "red")
         when :error
+          @errors.append(warning)
           warning = Yast::HTML.Colorize(warning, "red")
         when :blocker, :fatal
           @have_blocker = true

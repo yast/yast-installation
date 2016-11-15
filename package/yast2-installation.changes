@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Nov 14 14:30:12 UTC 2016 - jreidinger@suse.com
+
+- The user has to confirm when the configuration proposal contains
+  a non-blocking error (generic fix for bsc#1003682)
+- 3.2.9
+
+-------------------------------------------------------------------
 Fri Nov 11 16:41:25 CET 2016 - schubi@suse.de
 
 - Fixed bug: AutoYaST hangs while running second stage.
