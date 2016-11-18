@@ -118,6 +118,7 @@ ylib_DATA = \
   lib/installation/prep_shrink.rb \
   lib/installation/proposal_runner.rb \
   lib/installation/proposal_store.rb \
+  lib/installation/proposal_errors.rb \
   lib/installation/remote_finish_client.rb \
   lib/installation/select_system_role.rb \
   lib/installation/snapshots_finish.rb \
