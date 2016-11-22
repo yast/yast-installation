@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Nov 22 12:27:17 UTC 2016 - jreidinger@suse.com
+
+- fix missing icon next to SSH Key Import in autoyast
+  (bsc#988377)
+
+-------------------------------------------------------------------
 Fri Nov 18 15:10:49 UTC 2016 - jreidinger@suse.com
 
 - add missing file causing crash (introduced with generic fix of
