@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Nov 22 12:27:17 UTC 2016 - jreidinger@suse.com
+
+- fix missing icon next to SSH Key Import in autoyast
+  (bsc#988377)
+
+-------------------------------------------------------------------
 Thu Oct  6 12:55:58 CEST 2016 - schubi@suse.de
 
 - AutoYaST upgrade: Setting timeout for errors, messages, ...
