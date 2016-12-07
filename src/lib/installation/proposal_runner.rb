@@ -604,11 +604,11 @@ module Installation
         # setup the list
         @submodules_presentation = @store.presentation_order
 
-        p = Yast::AutoinstConfig.getProposalList
+        proposals = Yast::AutoinstConfig.getProposalList
 
-        if !p.nil? && p != []
+        if proposals && !proposals.empty?
           # array intersection
-          @submodules_presentation &= v
+          @submodules_presentation &= proposals
         end
       end
 
