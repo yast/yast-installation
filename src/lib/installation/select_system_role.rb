@@ -35,7 +35,7 @@ module Installation
     NON_OVERLAY_ATTRIBUTES = [
       "additional_dialogs",
       "id"
-    ]
+    ].freeze
 
     def initialize
       super
@@ -52,7 +52,6 @@ module Installation
       if Yast::GetInstArgs.going_back
         return :next if run_clients(self.class.original_role_id, going_back: true)
       end
-
 
       super
     end
@@ -120,11 +119,10 @@ module Installation
       loop do
         result = Yast::WFM.CallFunction(clients[client_to_show],
           [{
-            "going_back" => going_back,
+            "going_back"  => going_back,
             "enable_next" => true,
             "enable_back" => true
-          }]
-        )
+          }])
 
         log.info "client #{clients[client_to_show]} return #{result}"
 
@@ -141,10 +139,10 @@ module Installation
         end
 
         client_to_show += step
-        break unless (0..(clients.size - 1)).include?(client_to_show)
+        break unless (0..(clients.size - 1)).cover?(client_to_show)
       end
 
-      return client_to_show >= clients.size
+      client_to_show >= clients.size
     end
 
     def clear_role
