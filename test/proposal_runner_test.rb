@@ -41,6 +41,12 @@ describe ::Installation::ProposalRunner do
 
     let(:properties) { PROPERTIES }
     let(:proposals) { [["keyboard_proposal", 90], ["hwinfo_proposal", 15]] }
+    let(:keyboard_description) do
+      {"id"=>"keyboard_stuff", "menu_title"=>"&Keyboard Layout", "rich_text_title"=>"Keyboard Layout"}
+    end
+    let(:hwinfo_description) do
+      {"id"=>"init_hwinfo", "menu_title"=>"S&ystem", "rich_text_title"=>"System"}
+    end
 
     before do
       allow(Yast::ProductControl).to receive(:getProposalProperties)
@@ -49,6 +55,11 @@ describe ::Installation::ProposalRunner do
         .and_return(proposals)
       allow_any_instance_of(::Installation::ProposalStore).to receive(:proposal_names)
         .and_return(proposals.map(&:first))
+      allow(Yast::WFM).to receive(:CallFunction).and_call_original
+      allow(Yast::WFM).to receive(:CallFunction)
+        .with("keyboard_proposal", ["Description", {}]).and_return(keyboard_description)
+      allow(Yast::WFM).to receive(:CallFunction)
+        .with("hwinfo_proposal", ["Description", {}]).and_return(hwinfo_description)
     end
 
     it "do nothing if run non-interactive" do
