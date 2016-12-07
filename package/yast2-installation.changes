@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Dec  7 14:00:53 UTC 2016 - igonzalezsosa@suse.com
+
+- Do not crash when the proposal screen is configured through
+  an AutoYaST profile and tabs are not being used (bsc#1013976)
+- 3.1.218
+
+-------------------------------------------------------------------
 Tue Nov 22 12:27:17 UTC 2016 - jreidinger@suse.com
 
 - fix missing icon next to SSH Key Import in autoyast
