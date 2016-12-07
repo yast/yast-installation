@@ -27,25 +27,25 @@ describe ::Installation::ProposalRunner do
 
   describe "#run" do
     PROPERTIES = {
-      "enable_skip" => "no",
-      "label" => "Installation Settings",
-      "mode" => "autoinstallation",
-      "name" => "initial",
-      "stage" => "initial",
-      "unique_id" => "auto_inst_proposal",
+      "enable_skip"      => "no",
+      "label"            => "Installation Settings",
+      "mode"             => "autoinstallation",
+      "name"             => "initial",
+      "stage"            => "initial",
+      "unique_id"        => "auto_inst_proposal",
       "proposal_modules" => [
         { "name" => "hwinfo", "presentation_order" => "90" },
         { "name" => "keyboard", "presentation_order" => "15" }
-      ],
+      ]
     }.freeze
 
     let(:properties) { PROPERTIES }
     let(:proposals) { [["keyboard_proposal", 90], ["hwinfo_proposal", 15]] }
     let(:keyboard_description) do
-      {"id"=>"keyboard_stuff", "menu_title"=>"&Keyboard Layout", "rich_text_title"=>"Keyboard Layout"}
+      { "id" => "keyboard_stuff", "menu_title" => "&Keyboard Layout", "rich_text_title" => "Keyboard Layout" }
     end
     let(:hwinfo_description) do
-      {"id"=>"init_hwinfo", "menu_title"=>"S&ystem", "rich_text_title"=>"System"}
+      { "id" => "init_hwinfo", "menu_title" => "S&ystem", "rich_text_title" => "System" }
     end
 
     before do
@@ -81,19 +81,19 @@ describe ::Installation::ProposalRunner do
 
     context "when proposal contains tabs" do
       let(:properties) do
-        PROPERTIES.merge({
+        PROPERTIES.merge(
           "proposal_tabs" => [
             { "label" => "Overview", "proposal_modules" => ["keyboard"] },
             { "label" => "Expert", "proposal_modules" => ["hwinfo", "keyboard"] }
           ]
-        })
+        )
       end
 
       it "makes a proposal" do
         expect_any_instance_of(::Installation::ProposalStore).to receive(:make_proposal)
-          .with("keyboard_proposal", anything).and_return({"preformatted_proposal" => ""})
+          .with("keyboard_proposal", anything).and_return("preformatted_proposal" => "")
         expect_any_instance_of(::Installation::ProposalStore).to receive(:make_proposal)
-          .with("hwinfo_proposal", anything).and_return({"preformatted_proposal" => ""})
+          .with("hwinfo_proposal", anything).and_return("preformatted_proposal" => "")
         expect(subject.run).to eq(:next)
       end
 
@@ -102,9 +102,9 @@ describe ::Installation::ProposalRunner do
 
         it "makes a proposal" do
           expect_any_instance_of(::Installation::ProposalStore).to receive(:make_proposal)
-            .with("keyboard_proposal", anything).and_return({"preformatted_proposal" => ""})
+            .with("keyboard_proposal", anything).and_return("preformatted_proposal" => "")
           expect_any_instance_of(::Installation::ProposalStore).to receive(:make_proposal)
-            .with("hwinfo_proposal", anything).and_return({"preformatted_proposal" => ""})
+            .with("hwinfo_proposal", anything).and_return("preformatted_proposal" => "")
           expect(subject.run).to eq(:next)
         end
       end
@@ -113,9 +113,9 @@ describe ::Installation::ProposalRunner do
     context "when proposal does not contain tabs" do
       it "makes a proposal" do
         expect_any_instance_of(::Installation::ProposalStore).to receive(:make_proposal)
-          .with("keyboard_proposal", anything).and_return({"preformatted_proposal" => ""})
+          .with("keyboard_proposal", anything).and_return("preformatted_proposal" => "")
         expect_any_instance_of(::Installation::ProposalStore).to receive(:make_proposal)
-          .with("hwinfo_proposal", anything).and_return({"preformatted_proposal" => ""})
+          .with("hwinfo_proposal", anything).and_return("preformatted_proposal" => "")
         expect(subject.run).to eq(:next)
       end
 
@@ -124,9 +124,9 @@ describe ::Installation::ProposalRunner do
 
         it "makes a proposal" do
           expect_any_instance_of(::Installation::ProposalStore).to receive(:make_proposal)
-            .with("keyboard_proposal", anything).and_return({"preformatted_proposal" => ""})
+            .with("keyboard_proposal", anything).and_return("preformatted_proposal" => "")
           expect_any_instance_of(::Installation::ProposalStore).to receive(:make_proposal)
-            .with("hwinfo_proposal", anything).and_return({"preformatted_proposal" => ""})
+            .with("hwinfo_proposal", anything).and_return("preformatted_proposal" => "")
           expect(subject.run).to eq(:next)
         end
       end
