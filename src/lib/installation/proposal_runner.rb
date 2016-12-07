@@ -598,7 +598,7 @@ module Installation
 
         if !p.nil? && p != []
           # array intersection
-          @submodules_presentation &= v
+          @submodules_presentation &= p
         end
       end
 
