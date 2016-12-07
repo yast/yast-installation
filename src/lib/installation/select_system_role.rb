@@ -19,6 +19,8 @@
 
 require "yast"
 require "ui/installation_dialog"
+
+Yast.import "GetInstArgs"
 Yast.import "Popup"
 Yast.import "ProductControl"
 Yast.import "ProductFeatures"
@@ -29,6 +31,11 @@ module Installation
       # once the user selects a role, remember it in case they come back
       attr_accessor :original_role_id
     end
+
+    NON_OVERLAY_ATTRIBUTES = [
+      "additional_dialogs",
+      "id"
+    ]
 
     def initialize
       super
@@ -41,6 +48,11 @@ module Installation
         log.info "No roles defined, skipping their dialog"
         return :auto # skip forward or backward
       end
+
+      if Yast::GetInstArgs.going_back
+        return :next if run_clients(self.class.original_role_id, going_back: true)
+      end
+
 
       super
     end
@@ -84,10 +96,56 @@ module Installation
 
       apply_role(role_id)
 
+      # if run clients goes back, then show again this dialog
+      if !run_clients(role_id)
+        create_dialog
+        return
+      end
+
       super
     end
 
   private
+
+    # @return true if clients successfully go to next dialog after roles
+    def run_clients(role_id, going_back: false)
+      clients = raw_roles.find { |r| r["id"] == role_id }["additional_dialogs"]
+      clients ||= ""
+      clients = clients.split(",")
+
+      return !going_back if clients.empty?
+      result = going_back ? :back : :next
+
+      client_to_show = going_back ? clients.size - 1 : 0
+      loop do
+        result = Yast::WFM.CallFunction(clients[client_to_show],
+          [{
+            "going_back" => going_back,
+            "enable_next" => true,
+            "enable_back" => true
+          }]
+        )
+
+        log.info "client #{clients[client_to_show]} return #{result}"
+
+        step = case result
+        when :auto
+          going_back ? -1 : +1
+        when :next
+          +1
+        when :back
+          -1
+        # TODO: handle abort!
+        else
+          raise "unsupported client response #{result.inspect}"
+        end
+
+        client_to_show += step
+        break unless (0..(clients.size - 1)).include?(client_to_show)
+      end
+
+      return client_to_show >= clients.size
+    end
 
     def clear_role
       Yast::ProductFeatures.ClearOverlay
@@ -112,7 +170,7 @@ module Installation
       log.info "Applying system role '#{role_id}'"
       features = raw_roles.find { |r| r["id"] == role_id }
       features = features.dup
-      features.delete("id")
+      NON_OVERLAY_ATTRIBUTES.each { |a| features.delete(a) }
       Yast::ProductFeatures.SetOverlay(features)
     end
 

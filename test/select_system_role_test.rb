@@ -17,6 +17,14 @@ describe ::Installation::SelectSystemRole do
   end
 
   describe "#run" do
+    before do
+      # reset previous test
+      subject.class.original_role_id = nil
+
+      allow(Yast::ProductFeatures).to receive(:ClearOverlay)
+      allow(Yast::ProductFeatures).to receive(:SetOverlay) # .with
+    end
+
     context "when no roles are defined" do
       before do
         allow(Yast::ProductControl).to receive(:productControl)
@@ -33,7 +41,7 @@ describe ::Installation::SelectSystemRole do
       let(:control_file_roles) do
         [
           { "id" => "foo", "partitioning" => { "format" => true } },
-          { "id" => "bar", "software" => { "desktop" => "knome" } }
+          { "id" => "bar", "software" => { "desktop" => "knome" }, "additional_dialogs" => "a,b" }
         ]
       end
 
@@ -63,6 +71,33 @@ describe ::Installation::SelectSystemRole do
         expect(Yast::ProductFeatures).to_not receive(:SetOverlay)
 
         expect(subject.run).to eq(:back)
+      end
+
+      context "when role contain additional dialogs" do
+        it "show first dialog when going forward" do
+          allow(Yast::Wizard).to receive(:SetContents)
+          allow(Yast::UI).to receive(:UserInput)
+            .and_return(:next)
+          allow(Yast::UI).to receive(:QueryWidget)
+            .with(Id(:roles), :CurrentButton).and_return("bar")
+
+          allow(Yast::WFM).to receive(:CallFunction).and_return(:next)
+          expect(Yast::WFM).to receive(:CallFunction).with("a", anything).and_return(:next)
+
+          expect(subject.run).to eq(:next)
+        end
+
+        it "shows last dialog when going back" do
+          subject.class.original_role_id = "bar"
+          allow(Yast::GetInstArgs).to receive(:going_back).and_return(true)
+          expect(Yast::Wizard).to_not receive(:SetContents)
+          expect(Yast::UI).to_not receive(:UserInput)
+          expect(Yast::UI).to_not receive(:QueryWidget)
+
+          expect(Yast::WFM).to receive(:CallFunction).with("b", anything).and_return(:next)
+
+          expect(subject.run).to eq(:next)
+        end
       end
 
       context "when re-selecting the same role" do
