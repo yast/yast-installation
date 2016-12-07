@@ -75,10 +75,6 @@ describe ::Installation::ProposalRunner do
       expect(subject.run).to eq :auto
     end
 
-    it "passes a smoke test" do
-      expect { subject.run }.to_not raise_error
-    end
-
     context "when proposal contains tabs" do
       let(:properties) do
         PROPERTIES.merge(
