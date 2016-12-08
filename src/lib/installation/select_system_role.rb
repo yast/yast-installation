@@ -27,7 +27,7 @@ Yast.import "ProductFeatures"
 
 module Installation
   # marker exception when additional dialog return abort
-  class AbortException < RuntimeError;end
+  class AbortException < RuntimeError; end
 
   class SelectSystemRole < ::UI::InstallationDialog
     class << self
