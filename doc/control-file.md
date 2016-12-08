@@ -849,6 +849,11 @@ Section *supported\_desktops* contains list of one or more
 System Roles, if defined in the control file, are presented during
 the first stage of the installation. The user will select one of them
 and they will affect the proposed configuration of Partitioning and Software.
+Selected role can also define additional dialogs that is shown when given role
+is selected. It is common installation dialog with abort, cancel and next
+layout. It supports and use all parameters from GetInstArgs module. When going
+back, it will first shown last additional dialog and when going back through
+all additional dialogs, it will show again roles selection.
 
 They were requested in FATE#317481 and they are an evolution of the earlier
 concept of Server Scenarios used in SLE 11.
@@ -873,6 +878,7 @@ Example:
         <software>
           <default_patterns>base Minimal kvm_server</default_patterns>
         </software>
+        <additional_dialogs>kvm_setup,virt_manager_setup </additional_dialogs>
       </system_role>
     </system_roles>
 
