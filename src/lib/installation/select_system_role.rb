@@ -26,6 +26,9 @@ Yast.import "ProductControl"
 Yast.import "ProductFeatures"
 
 module Installation
+  # marker exception when additional dialog return abort
+  class AbortException < RuntimeError;end
+
   class SelectSystemRole < ::UI::InstallationDialog
     class << self
       # once the user selects a role, remember it in case they come back
@@ -54,6 +57,8 @@ module Installation
       end
 
       super
+    rescue AbortException
+      return :abort
     end
 
     def dialog_title
@@ -102,6 +107,10 @@ module Installation
       end
 
       super
+
+    rescue AbortException
+      finish_dialog(:abort)
+      return
     end
 
   private
@@ -133,7 +142,8 @@ module Installation
           +1
         when :back
           -1
-        # TODO: handle abort!
+        when :abort
+          raise AbortException, "client aborted"
         else
           raise "unsupported client response #{result.inspect}"
         end
