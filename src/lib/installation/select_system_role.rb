@@ -119,7 +119,7 @@ module Installation
     def run_clients(role_id, going_back: false)
       clients = raw_roles.find { |r| r["id"] == role_id }["additional_dialogs"]
       clients ||= ""
-      clients = clients.split(",")
+      clients = clients.split(",").map!(&:strip)
 
       return !going_back if clients.empty?
       result = going_back ? :back : :next
