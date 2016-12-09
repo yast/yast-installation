@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Dec  9 15:12:30 CET 2016 - schubi@suse.de
+
+- Added description for readonly_timezone and
+  clone_install_recommended_default flag in control-file
+  documentation. (Fate#321754, Fate#321764)
+- 3.1.217.3
+
+-------------------------------------------------------------------
 Wed Dec  7 14:00:53 UTC 2016 - igonzalezsosa@suse.com
 
 - Do not crash when the proposal screen is configured through
