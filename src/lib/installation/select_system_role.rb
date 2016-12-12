@@ -112,10 +112,7 @@ module Installation
 
   private
 
-    # @return [Symbol] what should the caller do next
-    #   :next - go to next wizard dialog
-    #   :back - show role selection dialog again
-    #   :abort - user pressed Abort
+    # @return [:next,:back,:abort] which direction the additional dialogs exited
     def run_clients(role_id, going_back: false)
       clients = raw_roles.find { |r| r["id"] == role_id }["additional_dialogs"]
       clients ||= ""
