@@ -26,9 +26,6 @@ Yast.import "ProductControl"
 Yast.import "ProductFeatures"
 
 module Installation
-  # marker exception when additional dialog return abort
-  class AbortException < RuntimeError; end
-
   class SelectSystemRole < ::UI::InstallationDialog
     class << self
       # once the user selects a role, remember it in case they come back
@@ -53,12 +50,13 @@ module Installation
       end
 
       if Yast::GetInstArgs.going_back
-        return :next if run_clients(self.class.original_role_id, going_back: true)
+        # If coming back, we have to run the additional dialogs first...
+        direction = run_clients(self.class.original_role_id, going_back: true)
+        # ... and only run the main dialog (super) if we are *still* going back
+        return direction unless direction == :back
       end
 
       super
-    rescue AbortException
-      return :abort
     end
 
     def dialog_title
@@ -100,29 +98,23 @@ module Installation
 
       apply_role(role_id)
 
-      # if run clients goes back, then show again this dialog
-      if !run_clients(role_id)
-        create_dialog
-        return
-      end
-
-      super
-
-    rescue AbortException
-      finish_dialog(:abort)
-      return
+      result = run_clients(role_id)
+      # We show the main role dialog; but the additional clients have
+      # drawn over it, so do it again, and propagate its result.
+      result = self.class.run if result == :back
+      finish_dialog(result)
     end
 
   private
 
-    # @return true if clients successfully go to next dialog after roles
+    # @return [:next,:back,:abort] which direction the additional dialogs exited
     def run_clients(role_id, going_back: false)
       clients = raw_roles.find { |r| r["id"] == role_id }["additional_dialogs"]
       clients ||= ""
       clients = clients.split(",").map!(&:strip)
 
-      return !going_back if clients.empty?
       result = going_back ? :back : :next
+      return result if clients.empty?
 
       client_to_show = going_back ? clients.size - 1 : 0
       loop do
@@ -143,7 +135,7 @@ module Installation
         when :back
           -1
         when :abort
-          raise AbortException, "client aborted"
+          return :abort
         else
           raise "unsupported client response #{result.inspect}"
         end
@@ -152,7 +144,7 @@ module Installation
         break unless (0..(clients.size - 1)).cover?(client_to_show)
       end
 
-      client_to_show >= clients.size
+      client_to_show >= clients.size ? :next : :back
     end
 
     def clear_role
