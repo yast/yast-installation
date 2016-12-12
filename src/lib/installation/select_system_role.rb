@@ -51,7 +51,8 @@ module Installation
 
       if Yast::GetInstArgs.going_back
         # If coming back, we have to run the additional dialogs first...
-        direction = run_clients(self.class.original_role_id, going_back: true)
+        clients = additional_clients(self.class.original_role_id)
+        direction = run_clients(clients, going_back: true)
         # ... and only run the main dialog (super) if we are *still* going back
         return direction unless direction == :back
       end
@@ -98,7 +99,7 @@ module Installation
 
       apply_role(role_id)
 
-      result = run_clients(role_id)
+      result = run_clients(additional_clients(role_id))
       # We show the main role dialog; but the additional clients have
       # drawn over it, so do it again, and propagate its result.
       result = self.class.run if result == :back
@@ -107,12 +108,15 @@ module Installation
 
   private
 
-    # @return [:next,:back,:abort] which direction the additional dialogs exited
-    def run_clients(role_id, going_back: false)
+    def additional_clients(role_id)
       clients = raw_roles.find { |r| r["id"] == role_id }["additional_dialogs"]
       clients ||= ""
-      clients = clients.split(",").map!(&:strip)
+      clients.split(",").map!(&:strip)
+    end
 
+    # @note it is a bit specialized form of {ProductControl.RunFrom}
+    # @return [:next,:back,:abort] which direction the additional dialogs exited
+    def run_clients(clients, going_back: false)
       result = going_back ? :back : :next
       return result if clients.empty?
 
