@@ -399,6 +399,9 @@ These options usually enable or disable some installation feature.
 -   (boolean) *require\_registration* - Require registration of add-on
     product (ignored in the base product).
 
+-   (boolean) *readonly\_timezone* - Suggested timezone cannot be
+    changed by the user.
+
 ### Installation Helpers
 
 In the *globals* section, there are also helper variables for the
@@ -608,6 +611,9 @@ This is a list of supported entries in *software*:
 
 -   *default\_desktop* - defines a desktop selected by default by the
     installation.
+
+-   *clone\_install\_recommended\_default* - Default entry for
+    "install_recommended" in created AutoYaST configuration file.
 
 Additionally, you can configure how updating of packages should be
 performed. The following options are available:

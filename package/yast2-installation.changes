@@ -3,7 +3,28 @@ Mon Dec 12 13:09:56 UTC 2016 - jreidinger@suse.com
 
 - implement support for running additional dialogs for specific
   roles (FATE#321754)
+- 3.1.217.4
+
+-------------------------------------------------------------------
+Fri Dec  9 15:12:30 CET 2016 - schubi@suse.de
+
+- Added description for readonly_timezone and
+  clone_install_recommended_default flag in control-file
+  documentation. (Fate#321754, Fate#321764)
+- 3.1.217.3
+
+-------------------------------------------------------------------
+Wed Dec  7 14:00:53 UTC 2016 - igonzalezsosa@suse.com
+
+- Do not crash when the proposal screen is configured through
+  an AutoYaST profile and tabs are not being used (bsc#1013976)
 - 3.1.217.2
+
+-------------------------------------------------------------------
+Tue Nov 22 12:27:17 UTC 2016 - jreidinger@suse.com
+
+- fix missing icon next to SSH Key Import in autoyast
+  (bsc#988377)
 
 -------------------------------------------------------------------
 Fri Nov 18 15:10:49 UTC 2016 - jreidinger@suse.com
