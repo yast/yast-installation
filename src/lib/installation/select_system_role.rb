@@ -98,16 +98,11 @@ module Installation
 
       apply_role(role_id)
 
-      case run_clients(role_id)
-      when :next
-        super
-      when :back
-        # We show the main role dialog; but the additional clients have
-        # drawn over it, so do it again, and propagate its result.
-        finish_dialog(run)
-      when :abort
-        finish_dialog(:abort)
-      end
+      result = run_clients(role_id)
+      # We show the main role dialog; but the additional clients have
+      # drawn over it, so do it again, and propagate its result.
+      result = self.class.run if result == :back
+      finish_dialog(result)
     end
 
   private
