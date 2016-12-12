@@ -102,7 +102,9 @@ module Installation
 
       # if run clients goes back, then show again this dialog
       if !run_clients(role_id)
-        create_dialog
+        # We show the main role dialog; but the additional clients have
+        # drawn over it, so do it again, and propagate its result.
+        finish_dialog(run)
         return
       end
 
