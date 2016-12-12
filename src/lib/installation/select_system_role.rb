@@ -108,6 +108,7 @@ module Installation
 
   private
 
+    # gets array of clients to run for given role
     def additional_clients_for(role_id)
       clients = raw_roles.find { |r| r["id"] == role_id }["additional_dialogs"]
       clients ||= ""

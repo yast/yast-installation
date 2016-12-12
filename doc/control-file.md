@@ -859,7 +859,7 @@ and they will affect the proposed configuration of Partitioning and Software.
 A role can also define additional dialogs that are shown when a given role is
 selected. It is a common installation dialog with *Abort*, *Cancel* and *Next*
 buttons. It supports and uses all parameters from the **GetInstArgs** module.
-When going back, it will first shown the last additional dialog and when going
+When going back, it will first show the last additional dialog and when going
 back through all additional dialogs, it will show again the roles selection.
 
 They were requested in FATE#317481 and they are an evolution of the earlier

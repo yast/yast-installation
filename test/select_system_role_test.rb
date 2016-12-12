@@ -73,8 +73,8 @@ describe ::Installation::SelectSystemRole do
         expect(subject.run).to eq(:back)
       end
 
-      context "when role contain additional dialogs" do
-        it "show first dialog when going forward" do
+      context "when a role contains additional dialogs" do
+        it "shows the first dialog when going forward" do
           allow(Yast::Wizard).to receive(:SetContents)
           allow(Yast::UI).to receive(:UserInput)
             .and_return(:next)
@@ -87,7 +87,7 @@ describe ::Installation::SelectSystemRole do
           expect(subject.run).to eq(:next)
         end
 
-        it "shows last dialog when going back" do
+        it "shows the last dialog when going back" do
           subject.class.original_role_id = "bar"
           allow(Yast::GetInstArgs).to receive(:going_back).and_return(true)
           expect(Yast::Wizard).to_not receive(:SetContents)
