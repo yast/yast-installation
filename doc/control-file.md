@@ -399,6 +399,9 @@ These options usually enable or disable some installation feature.
 -   (boolean) *require\_registration* - Require registration of add-on
     product (ignored in the base product).
 
+-   (boolean) *readonly\_timezone* - Suggested timezone cannot be
+    changed by the user.
+
 ### Installation Helpers
 
 In the *globals* section, there are also helper variables for the
@@ -608,6 +611,9 @@ This is a list of supported entries in *software*:
 
 -   *default\_desktop* - defines a desktop selected by default by the
     installation.
+
+-   *clone\_install\_recommended\_default* - Default entry for
+    "install_recommended" in created AutoYaST configuration file.
 
 Additionally, you can configure how updating of packages should be
 performed. The following options are available:
@@ -850,6 +856,12 @@ System Roles, if defined in the control file, are presented during
 the first stage of the installation. The user will select one of them
 and they will affect the proposed configuration of Partitioning and Software.
 
+A role can also define additional dialogs that are shown when a given role is
+selected. It is a common installation dialog with *Abort*, *Cancel* and *Next*
+buttons. It supports and uses all parameters from the **GetInstArgs** module.
+When going back, it will first show the last additional dialog and when going
+back through all additional dialogs, it will show again the roles selection.
+
 They were requested in FATE#317481 and they are an evolution of the earlier
 concept of Server Scenarios used in SLE 11.
 
@@ -873,6 +885,7 @@ Example:
         <software>
           <default_patterns>base Minimal kvm_server</default_patterns>
         </software>
+        <additional_dialogs>kvm_setup,virt_manager_setup </additional_dialogs>
       </system_role>
     </system_roles>
 
