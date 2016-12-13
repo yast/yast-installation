@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Dec 13 10:54:21 UTC 2016 - kanderssen@suse.com
+
+- Added worker role dialog (Fate#321754)
+- 3.1.217.5
+
+-------------------------------------------------------------------
 Mon Dec 12 13:09:56 UTC 2016 - jreidinger@suse.com
 
 - implement support for running additional dialogs for specific
