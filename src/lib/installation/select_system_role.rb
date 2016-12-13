@@ -101,9 +101,15 @@ module Installation
 
       result = run_clients(additional_clients_for(role_id))
       # We show the main role dialog; but the additional clients have
-      # drawn over it, so do it again, and propagate its result.
-      result = self.class.run if result == :back
-      finish_dialog(result)
+      # drawn over it, so draw it again and go back to input loop.
+      # create_dialog do not create new dialog if it already exist like in this
+      # case.
+      if result == :back
+        create_dialog
+        return
+      else
+        finish_dialog(result)
+      end
     end
 
   private
