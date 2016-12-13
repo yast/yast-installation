@@ -45,6 +45,7 @@ module Yast
       Yast.import "Internet"
       Yast.import "FileUtils"
       Yast.import "Mode"
+      Yast.import "ProductFeatures"
 
       @ret = nil
       @func = ""
@@ -390,7 +391,7 @@ module Yast
     #
     def set_root_subvol_read_only
       return unless root_subvol_read_only_configured?
-      log.info("Setting root subvolume to read-only");
+      log.info("Setting root subvolume to read-only")
       set_fstab_root_subvol_read_only
       set_root_subvol_property_read_only
     end
@@ -399,7 +400,7 @@ module Yast
     # should be set to read-only.
     #
     def root_subvol_read_only_configured?
-      true
+      ProductFeatures.GetBooleanFeature("partitioning", "root_subvolume_read_only")
     end
 
     # Change /etc/fstab on the target to mount the root subvolume read-only.
