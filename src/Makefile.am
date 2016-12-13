@@ -38,7 +38,7 @@ client_DATA = \
   clients/inst_initialization.rb \
   clients/inst_installation_options.rb \
   clients/inst_instsys_cleanup.rb \
-  clients/inst_keyboard_rootpassword.rb \
+  clients/inst_keyboard_root_password.rb \
   clients/inst_license.rb \
   clients/inst_network_check.rb \
   clients/inst_new_desktop.rb \
