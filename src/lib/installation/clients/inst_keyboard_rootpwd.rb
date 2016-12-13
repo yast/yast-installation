@@ -64,7 +64,8 @@ module Installation
     def content
       VBox(
         VStretch(),
-        ::Y2Country::KeyboardSelectionWidget.new,
+        # use english us as default keyboard layout
+        ::Y2Country::Widgets::KeyboardSelection.new("english-us"),
         VStretch(),
         ::Users::PasswordWidget.new,
         VStretch()
