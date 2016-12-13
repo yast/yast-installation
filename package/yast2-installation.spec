@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.217.4
+Version:        3.1.217.5
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -82,6 +82,11 @@ Requires: yast2-network >= 3.1.143
 # Requires:	yast2-add-on
 # Requires:	yast2-update
 
+# new root password cwm widget
+Requires:	yast2-users >= 3.1.57.2
+# new keyboard layout cwm widget
+Requires:	yast2-country >= 3.1.33.1
+
 # Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
 # pkg-bindings are not directly required
 Conflicts:	yast2-pkg-bindings < 2.17.25
@@ -123,8 +128,6 @@ Requires:	pciutils
 
 Recommends:	yast2-registration
 Recommends:	yast2-online-update
-# UsersDatabase class
-Recommends:	yast2-users >= 3.1.49
 Recommends:	yast2-firewall
 Recommends:	release-notes
 Recommends:	curl
