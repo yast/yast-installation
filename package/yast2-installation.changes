@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Dec 12 13:09:56 UTC 2016 - jreidinger@suse.com
+
+- implement support for running additional dialogs for specific
+  roles (FATE#321754)
+- 3.1.217.4
+
+-------------------------------------------------------------------
 Fri Dec  9 15:12:30 CET 2016 - schubi@suse.de
 
 - Added description for readonly_timezone and
