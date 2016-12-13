@@ -397,6 +397,11 @@ These options usually enable or disable some installation feature.
 -   (boolean) *require\_registration* - Require registration of add-on
     product (ignored in the base product).
 
+-   (boolean) *readonly\_timezone* - Timezone cannot be changed by the
+    user during installation or upgrade. The default value is
+    determined using the *timezone* element in the *globals* section.
+    If it's not specified, *UTC* will be used.
+
 ### Installation Helpers
 
 In the *globals* section, there are also helper variables for the
