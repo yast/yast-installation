@@ -22,7 +22,6 @@
 require "users/widgets"
 require "y2country/widgets"
 
-
 module Installation
   # This library provides a simple dialog for setting new password for the
   # system adminitrator (root) and keyboard layout.
