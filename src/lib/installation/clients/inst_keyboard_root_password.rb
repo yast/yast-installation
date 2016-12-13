@@ -23,11 +23,13 @@ require "users/widgets"
 require "y2country/widgets"
 
 module Installation
-  # This library provides a simple dialog for setting new password for the
-  # system adminitrator (root) and keyboard layout.
-  # The new password is not stored here, just set in UsersSimple module
-  # and stored later during inst_finish.
-  class InstKeyboardRootpwd
+  # This library provides a simple dialog for setting
+  # - the password for the system administrator (root)
+  # - the keyboard layout
+  # This dialog does not write the password to the system,
+  # only stores it in UsersSimple module,
+  # to be written during inst_finish.
+  class InstKeyboardRootPassword
     include Yast::Logger
     include Yast::I18n
     include Yast::UIShortcuts

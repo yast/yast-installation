@@ -38,7 +38,7 @@ client_DATA = \
   clients/inst_initialization.rb \
   clients/inst_installation_options.rb \
   clients/inst_instsys_cleanup.rb \
-  clients/inst_keyboard_rootpwd.rb \
+  clients/inst_keyboard_rootpassword.rb \
   clients/inst_license.rb \
   clients/inst_network_check.rb \
   clients/inst_new_desktop.rb \
@@ -164,7 +164,7 @@ ylibclient_DATA = \
   lib/installation/clients/inst_initialization.rb \
   lib/installation/clients/inst_installation_options.rb \
   lib/installation/clients/inst_instsys_cleanup_client.rb \
-  lib/installation/clients/inst_keyboard_rootpwd.rb \
+  lib/installation/clients/inst_keyboard_root_password.rb \
   lib/installation/clients/inst_license.rb \
   lib/installation/clients/inst_network_check.rb \
   lib/installation/clients/inst_new_desktop.rb \
