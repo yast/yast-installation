@@ -38,7 +38,7 @@ BuildRequires:  yast2-packager >= 3.1.113
 BuildRequires:  yast2-devtools >= 3.1.10
 BuildRequires:  rubygem(rspec)
 
-# Moved proc_modules.scr
+# UI::Widgets
 BuildRequires: yast2 >= 3.1.210.1
 
 # Yast::Remote
@@ -47,7 +47,7 @@ BuildRequires: yast2-network
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
 
-# Moved proc_modules.scr
+# UI::Widgets
 Requires:       yast2 >= 3.1.210.1
 
 # Language::GetLanguageItems and other API
