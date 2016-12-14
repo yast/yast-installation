@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Dec 14 10:46:21 CET 2016 - shundhammer@suse.de
+
+- Set root subvolume read-only if configured (Fate##321755)
+- Document new control.xml parameter root_subvolume_read_only
+- 3.1.217.7
+
+-------------------------------------------------------------------
 Tue Dec 13 14:09:54 UTC 2016 - jreidinger@suse.com
 
 - Add new installation dialog with keyboard layout and root

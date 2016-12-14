@@ -1044,6 +1044,12 @@ should be an extra warning pop-up dialog when the user enters the expert
 partitioner dialog during installation, for example because the product has
 special requirements for partitioning (Btrfs to support snapshots etc.).
 
+*root_subvolume_read_only* (boolean, default _false_) specifies whether the
+root subvolume should be mounted read-only in /etc/fstab and its 'ro' Btrfs
+property should be set to _true_. This works only for Btrfs root
+filesystems. If another root filesystem type is chosen, this might fail
+silently.
+
 
 #### Subvolumes
 
