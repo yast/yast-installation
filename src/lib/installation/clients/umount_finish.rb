@@ -174,7 +174,6 @@ module Yast
         # BNC #692799: Preserve the randomness state before umounting
         preserve_randomness_state
 
-
         #
         # !!! NO WRITE OPERATIONS TO THE TARGET AFTER THIS POINT !!!
         #
@@ -183,7 +182,6 @@ module Yast
         # (because the btrfs command requires that), but after the last write
         # access to it (because it will be read only afterwards).
         set_root_subvol_read_only
-
 
         @targetMap = Storage.GetTargetMap
 
