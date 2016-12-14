@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Dec 14 15:47:02 UTC 2016 - jreidinger@suse.com
+
+- Change layout of new installation dialog according to UX team
+  suggestion (FATE#321754)
+- 3.1.217.8
+
+-------------------------------------------------------------------
 Wed Dec 14 10:46:21 CET 2016 - shundhammer@suse.de
 
 - Set root subvolume read-only if configured (Fate##321755)
