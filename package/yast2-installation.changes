@@ -3,6 +3,12 @@ Tue Dec 13 14:09:54 UTC 2016 - jreidinger@suse.com
 
 - Add new installation dialog with keyboard layout and root
   password (FATE#321754)
+- 3.1.217.6
+
+-------------------------------------------------------------------
+Tue Dec 13 10:54:21 UTC 2016 - kanderssen@suse.com
+
+- Added worker role dialog (Fate#321754)
 - 3.1.217.5
 
 -------------------------------------------------------------------
