@@ -21,6 +21,7 @@
 
 require "users/widgets"
 require "y2country/widgets"
+require "ui/widgets"
 
 module Installation
   # This library provides a simple dialog for setting
@@ -67,6 +68,8 @@ module Installation
         VStretch(),
         # use english us as default keyboard layout
         ::Y2Country::Widgets::KeyboardSelection.new("english-us"),
+        VSpacing(1),
+        ::UI::Widgets::KeyboardLayoutTest.new,
         VStretch(),
         ::Users::PasswordWidget.new,
         VStretch()
