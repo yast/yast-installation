@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.217.7
+Version:        3.1.217.8
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -38,8 +38,8 @@ BuildRequires:  yast2-packager >= 3.1.113
 BuildRequires:  yast2-devtools >= 3.1.10
 BuildRequires:  rubygem(rspec)
 
-# Moved proc_modules.scr
-BuildRequires: yast2 >= 3.1.180
+# UI::Widgets
+BuildRequires: yast2 >= 3.1.210.1
 
 # Yast::Remote
 BuildRequires: yast2-network
@@ -47,8 +47,8 @@ BuildRequires: yast2-network
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
 
-# Moved proc_modules.scr
-Requires:       yast2 >= 3.1.186
+# UI::Widgets
+Requires:       yast2 >= 3.1.210.1
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
@@ -83,7 +83,7 @@ Requires: yast2-network >= 3.1.143
 # Requires:	yast2-update
 
 # new root password cwm widget
-Requires:	yast2-users >= 3.1.57.2
+Requires:	yast2-users >= 3.1.57.4
 # new keyboard layout cwm widget
 Requires:	yast2-country >= 3.1.33.1
 
