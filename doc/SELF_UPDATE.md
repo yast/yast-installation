@@ -5,10 +5,11 @@ system installation. This feature will help to solve problems with the
 installation even after the media has been released. Check
 [FATE#319716](https://fate.suse.com/319716) for a more in-depth rationale.
 
-## Disabling Updates
+## Enabling Updates
 
-Self-update is enabled by default. However, it can be disabled by setting
-`self_update=0` boot option.
+Self-update is disabled by default. However, it can be enabled by setting
+`self_update=1` boot option. In the following sections it is assumed that this
+feature is enabled.
 
 ## Basic Workflow
 
@@ -74,7 +75,7 @@ and the download bandwidth.
 The URL of the update repository is evaluated in this order:
 
 1. The `self_update` boot option  
-   (Note: `self_update=0` completely disables the self-update!)
+   (Note: `self_update=1` will enable the self-update)
 2. The AutoYaST profile - in AutoYaST installation only, use the
    `/general/self_update_url` XML node:
 
