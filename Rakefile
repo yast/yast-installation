@@ -3,7 +3,6 @@ require "yast/rake"
 Yast::Tasks.configuration do |conf|
   # lets ignore license check for now
   conf.skip_license_check << /.*/
-
   conf.install_locations["autoyast_desktop/*.desktop"] = Packaging::Configuration::DESTDIR + "/usr/share/autoinstall/modules"
   # TODO: move to src/client and verify if needed
   conf.install_locations["control/*.rb"] = Packaging::Configuration::YAST_DIR + "/clients"

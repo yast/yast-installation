@@ -423,6 +423,11 @@ These options usually enable or disable some installation feature.
 -   (boolean) *require\_registration* - Require registration of add-on
     product (ignored in the base product).
 
+-   (boolean) *readonly\_timezone* - Timezone cannot be changed by the
+    user during installation or upgrade. The default value is
+    determined using the *timezone* element in the *globals* section.
+    If it's not specified, *UTC* will be used.
+
 ### Installation Helpers
 
 In the *globals* section, there are also helper variables for the
@@ -545,6 +550,9 @@ This is a list of supported entries in *software*:
 
 -   *default\_desktop* - defines a desktop selected by default by the
     installation.
+
+-   *clone\_install\_recommended\_default* - Default entry for
+    "install_recommended" in created AutoYaST configuration file.
 
 Additionally, you can configure how updating of packages should be
 performed. The following options are available:
@@ -787,6 +795,12 @@ System Roles, if defined in the control file, are presented during
 the first stage of the installation. The user will select one of them
 and they will affect the proposed configuration of Partitioning and Software.
 
+A role can also define additional dialogs that are shown when a given role is
+selected. It is a common installation dialog with *Abort*, *Cancel* and *Next*
+buttons. It supports and uses all parameters from the **GetInstArgs** module.
+When going back, it will first show the last additional dialog and when going
+back through all additional dialogs, it will show again the roles selection.
+
 They were requested in FATE#317481 and they are an evolution of the earlier
 concept of Server Scenarios used in SLE 11.
 
@@ -810,6 +824,7 @@ Example:
         <software>
           <default_patterns>base Minimal kvm_server</default_patterns>
         </software>
+        <additional_dialogs>kvm_setup,virt_manager_setup </additional_dialogs>
       </system_role>
     </system_roles>
 
@@ -965,6 +980,12 @@ products this is not desired.
 should be an extra warning pop-up dialog when the user enters the expert
 partitioner dialog during installation, for example because the product has
 special requirements for partitioning (Btrfs to support snapshots etc.).
+
+*root_subvolume_read_only* (boolean, default _false_) specifies whether the
+root subvolume should be mounted read-only in /etc/fstab and its 'ro' Btrfs
+property should be set to _true_. This works only for Btrfs root
+filesystems. If another root filesystem type is chosen, this might fail
+silently.
 
 
 #### Subvolumes

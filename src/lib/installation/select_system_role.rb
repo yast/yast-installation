@@ -19,6 +19,8 @@
 
 require "yast"
 require "ui/installation_dialog"
+
+Yast.import "GetInstArgs"
 Yast.import "Popup"
 Yast.import "ProductControl"
 Yast.import "ProductFeatures"
@@ -30,6 +32,11 @@ module Installation
       attr_accessor :original_role_id
     end
 
+    NON_OVERLAY_ATTRIBUTES = [
+      "additional_dialogs",
+      "id"
+    ].freeze
+
     def initialize
       super
 
@@ -40,6 +47,14 @@ module Installation
       if raw_roles.empty?
         log.info "No roles defined, skipping their dialog"
         return :auto # skip forward or backward
+      end
+
+      if Yast::GetInstArgs.going_back
+        # If coming back, we have to run the additional dialogs first...
+        clients = additional_clients_for(self.class.original_role_id)
+        direction = run_clients(clients, going_back: true)
+        # ... and only run the main dialog (super) if we are *still* going back
+        return direction unless direction == :back
       end
 
       super
@@ -84,10 +99,68 @@ module Installation
 
       apply_role(role_id)
 
-      super
+      result = run_clients(additional_clients_for(role_id))
+      # We show the main role dialog; but the additional clients have
+      # drawn over it, so draw it again and go back to input loop.
+      # create_dialog do not create new dialog if it already exist like in this
+      # case.
+      if result == :back
+        create_dialog
+        return
+      else
+        finish_dialog(result)
+      end
     end
 
   private
+
+    # gets array of clients to run for given role
+    def additional_clients_for(role_id)
+      clients = raw_roles.find { |r| r["id"] == role_id }["additional_dialogs"]
+      clients ||= ""
+      clients.split(",").map!(&:strip)
+    end
+
+    # @note it is a bit specialized form of {ProductControl.RunFrom}
+    # @param clients [Array<String>] list of clients to run. Requirement is to
+    #   work well with installation wizard. Suggestion is to use
+    #   {InstallationDialog} as base.
+    # @param going_back [Boolean] when going in reverse order of clients
+    # @return [:next,:back,:abort] which direction the additional dialogs exited
+    def run_clients(clients, going_back: false)
+      result = going_back ? :back : :next
+      return result if clients.empty?
+
+      client_to_show = going_back ? clients.size - 1 : 0
+      loop do
+        result = Yast::WFM.CallFunction(clients[client_to_show],
+          [{
+            "going_back"  => going_back,
+            "enable_next" => true,
+            "enable_back" => true
+          }])
+
+        log.info "client #{clients[client_to_show]} return #{result}"
+
+        step = case result
+        when :auto
+          going_back ? -1 : +1
+        when :next
+          +1
+        when :back
+          -1
+        when :abort
+          return :abort
+        else
+          raise "unsupported client response #{result.inspect}"
+        end
+
+        client_to_show += step
+        break unless (0..(clients.size - 1)).cover?(client_to_show)
+      end
+
+      client_to_show >= clients.size ? :next : :back
+    end
 
     def clear_role
       Yast::ProductFeatures.ClearOverlay
@@ -113,7 +186,7 @@ module Installation
       log.info "Applying system role '#{role_id}'"
       features = raw_roles.find { |r| r["id"] == role_id }
       features = features.dup
-      features.delete("id")
+      NON_OVERLAY_ATTRIBUTES.each { |a| features.delete(a) }
       Yast::ProductFeatures.SetOverlay(features)
     end
 

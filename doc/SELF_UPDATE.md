@@ -8,7 +8,8 @@ installation even after the media has been released. Check
 ## Disabling Updates
 
 Self-update is enabled by default. However, it can be disabled by setting
-`self_update=0` boot option.
+`self_update=0` boot option. In the following sections it is assumed that this
+feature is enabled.
 
 ## Basic Workflow
 
@@ -73,7 +74,7 @@ and the download bandwidth.
 
 The URL of the update repository is evaluated in this order:
 
-1. The `self_update` boot option  
+1. The `self_update` boot option
    (Note: `self_update=0` completely disables the self-update!)
 2. The AutoYaST profile - in AutoYaST installation only, use the
    `/general/self_update_url` XML node:

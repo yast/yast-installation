@@ -1,4 +1,23 @@
 -------------------------------------------------------------------
+Wed Dec 14 15:47:02 UTC 2016 - jreidinger@suse.com
+
+Port changes from CASP1.0:
+
+- Change layout of new installation dialog according to UX team
+  suggestion (FATE#321754)
+- Set root subvolume read-only if configured (Fate##321755)
+- Document new control.xml parameter root_subvolume_read_only
+- Add new installation dialog with keyboard layout and root
+  password (FATE#321754)
+- Added worker role dialog (Fate#321754)
+- implement support for running additional dialogs for specific
+  roles (FATE#321754)
+- Added description for readonly_timezone and
+  clone_install_recommended_default flag in control-file
+  documentation. (Fate#321754, Fate#321764)
+- 3.2.12
+
+-------------------------------------------------------------------
 Wed Dec  7 14:00:53 UTC 2016 - igonzalezsosa@suse.com
 
 - Do not crash when the proposal screen is configured through

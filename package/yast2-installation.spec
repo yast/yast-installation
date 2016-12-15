@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.2.11
+Version:        3.2.12
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -40,14 +40,14 @@ BuildRequires:  yast2-xml
 BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
 
-# Moved proc_modules.scr
-BuildRequires: yast2 >= 3.1.180
+# UI::Widgets
+BuildRequires: yast2 >= 3.2.8
 
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
 
-# Needs set_inst_ncurses_env
-Requires:       yast2 >= 3.2.0
+# Needs UI:Widgets
+Requires:       yast2 >= 3.2.8
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
@@ -80,6 +80,11 @@ Requires: yast2-network >= 3.1.143
 # Only in inst-sys
 # Requires:	yast2-add-on
 # Requires:	yast2-update
+
+# new root password cwm widget
+Requires:	yast2-users >= 3.2.7
+# new keyboard layout cwm widget
+Requires:	yast2-country >= 3.2.5
 
 # Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
 # pkg-bindings are not directly required
@@ -121,8 +126,6 @@ Requires:	pciutils
 
 Recommends:	yast2-registration
 Recommends:	yast2-online-update
-# UsersDatabase class
-Recommends:	yast2-users >= 3.1.49
 Recommends:	yast2-firewall
 Recommends:	release-notes
 Recommends:	curl
