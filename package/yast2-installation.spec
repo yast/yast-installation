@@ -41,7 +41,7 @@ BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
 
 # UI::Widgets
-BuildRequires: yast2 >= 3.1.210.1
+BuildRequires: yast2 >= 3.2.8
 
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
@@ -82,9 +82,9 @@ Requires: yast2-network >= 3.1.143
 # Requires:	yast2-update
 
 # new root password cwm widget
-Requires:	yast2-users >= 3.1.57.4
+Requires:	yast2-users >= 3.2.7
 # new keyboard layout cwm widget
-Requires:	yast2-country >= 3.1.33.1
+Requires:	yast2-country >= 3.2.5
 
 # Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
 # pkg-bindings are not directly required
