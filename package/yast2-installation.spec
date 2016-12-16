@@ -83,8 +83,10 @@ Requires: yast2-network >= 3.1.143
 
 # new root password cwm widget
 Requires:	yast2-users >= 3.2.7
-# new keyboard layout cwm widget
-Requires:	yast2-country >= 3.2.5
+# new keyboard layout cwm widget needed only for CASP, so use version that works
+# also for SP3
+# FIXME: update dependency when CASP is merged to SP2 and SP3 for yast2-country
+Requires:	yast2-country >= 3.1.30
 
 # Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
 # pkg-bindings are not directly required
