@@ -83,8 +83,8 @@ Requires: yast2-network >= 3.1.143
 
 # new root password cwm widget
 Requires:	yast2-users >= 3.2.7
-# new keyboard layout cwm widget
-Requires:	yast2-country >= 3.2.5
+# new keyboard layout cwm widget, but keep dependency compatible with SLE12
+Requires:	yast2-country >= 3.1.30
 
 # Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
 # pkg-bindings are not directly required
