@@ -75,6 +75,30 @@ describe ::Installation::ProposalRunner do
       expect(subject.run).to eq :auto
     end
 
+    describe "#html_header" do
+      it "returns clickable header when forced" do
+        allow(Yast::GetInstArgs).to receive(:proposal).and_return("software")
+
+        expect_any_instance_of(::Installation::ProposalRunner)
+          .to receive(:submod_descriptions_and_build_menu)
+          .and_return(false)
+        expect_any_instance_of(::Installation::ProposalStore)
+          .to receive(:title_for)
+          .and_return("Software")
+        expect_any_instance_of(::Installation::ProposalStore)
+          .to receive(:id_for)
+          .and_return("software")
+        expect_any_instance_of(::Installation::ProposalStore)
+          .not_to receive(:read_only?)
+          .and_return(true)
+
+        # initialization of internal state
+        expect(subject.run).to eq :auto
+
+        expect(subject.send(:html_header, "software", force_rw: true)).to eql Yast::HTML.Heading(Yast::HTML.Link("Software", "software"))
+      end
+    end
+
     context "when proposal contains tabs" do
       let(:properties) do
         PROPERTIES.merge(

@@ -568,24 +568,51 @@ describe ::Installation::ProposalStore do
         # Proposals need to be cached first
         subject.make_proposals
 
-        expect(subject).to receive(:read_only?).with("proposal_a").and_return(true)
         allow(Yast::Report).to receive(:Warning)
       end
 
-      it "displays a warning" do
-        expect(Yast::Report).to receive(:Warning)
+      context "in case of hard read only proposal" do
+        before do
+          expect(subject).to receive(:hard_read_only?).with("proposal_a").and_return(true)
+        end
 
-        subject.handle_link("proposal_a")
+        it "displays a warning" do
+          expect(Yast::Report).to receive(:Warning)
+
+          subject.handle_link("proposal_a")
+        end
+
+        it "does not run the proposal client" do
+          expect(Yast::WFM).to_not receive(:CallFunction)
+
+          subject.handle_link("proposal_a")
+        end
+
+        it "returns nil" do
+          expect(subject.handle_link("proposal_a")).to eq(nil)
+        end
       end
 
-      it "does not run the proposal client" do
-        expect(Yast::WFM).to_not receive(:CallFunction)
+      context "in case of soft read only proposal" do
+        before do
+          expect(subject).to receive(:soft_read_only?).with("proposal_a").and_return(true)
+        end
 
-        subject.handle_link("proposal_a")
-      end
+        it "displays a warning" do
+          expect(Yast::Report).to receive(:Warning)
 
-      it "returns nil" do
-        expect(subject.handle_link("proposal_a")).to eq(nil)
+          subject.handle_link("proposal_a")
+        end
+
+        it "does not run the proposal client" do
+          expect(Yast::WFM).to_not receive(:CallFunction)
+
+          subject.handle_link("proposal_a")
+        end
+
+        it "returns nil" do
+          expect(subject.handle_link("proposal_a")).to eq(nil)
+        end
       end
     end
   end
