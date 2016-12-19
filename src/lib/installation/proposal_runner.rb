@@ -365,6 +365,11 @@ module Installation
       workflow_sequence
     end
 
+    # Checks if given proposal map contains an error report
+    #
+    # @param [Hash] proposal map as returned by make_proposal
+    # @return [Boolean] true if the map reports an issue in proposal
+    # @see ProposalClient#make_proposal
     def proposal_failed?(proposal)
       proposal && [:blocker, :fatal, :error].include?(proposal["warning_level"])
     end

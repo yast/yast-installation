@@ -325,6 +325,10 @@ module Installation
       matching_client.first
     end
 
+    # Reads read-only proposals from the control file
+    #
+    # @return [Hash] map with keys :hard and :soft. Values are names
+    # of proposals with "hard" or "soft" read_only flag set.
     def read_only_proposals
       return @read_only_proposals if @read_only_proposals
 
