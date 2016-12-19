@@ -256,10 +256,10 @@ module Installation
     # "soft" read-only means that the proposal is made changeable when an error
     #
     # @return [Boolean] true if client is "hard" or "soft" read-only
-    # @see read_only_no_recovery
-    # @see read_only_with_recovery
+    # @see soft_read_only
+    # @see hard_read_only
     def read_only?(client)
-      read_only_no_recovery?(client) || read_only_with_recovery?(client)
+      hard_read_only?(client) || soft_read_only?(client)
     end
 
     # Checks if the client's proposal is configured as "hard" read-only
@@ -270,7 +270,7 @@ module Installation
     #
     # @param [String] client
     # @return [Boolean] if the client is marked as "hard" read only
-    def read_only_no_recovery?(client)
+    def hard_read_only?(client)
       read_only_proposals[:hard].include?(client)
     end
 
@@ -282,7 +282,7 @@ module Installation
     #
     # @param [String] client
     # @return [Boolean] if the client is marked as "soft" read only
-    def read_only_with_recovery?(client)
+    def soft_read_only?(client)
       read_only_proposals[:soft].include?(client)
     end
 
