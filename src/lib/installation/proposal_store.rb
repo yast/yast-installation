@@ -335,11 +335,15 @@ module Installation
 
         name = full_module_name(proposal["name"])
 
-        case proposal["read_only"]
+        ro_type = proposal["read_only"]
+
+        case ro_type
         when "hard"
           @read_only_proposals[:hard] << name
         when "soft"
           @read_only_proposals[:soft] << name
+        else
+          log.info("Uknown value for read_only node: #{ro_type}")
         end
       end
 
