@@ -250,6 +250,14 @@ module Installation
       title.gsub(/<a.*?>(.*?)<\/a>/, "\\1")
     end
 
+    # Checks if the client's proposal is configured as "hard" or "soft" read-only
+    #
+    # "hard" read-only means that the proposal is always read-only
+    # "soft" read-only means that the proposal is made changeable when an error
+    #
+    # @return [Boolean] true if client is "hard" or "soft" read-only
+    # @see read_only_no_recovery
+    # @see read_only_with_recovery
     def read_only?(client)
       read_only_no_recovery?(client) || read_only_with_recovery?(client)
     end
