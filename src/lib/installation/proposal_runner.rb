@@ -807,7 +807,7 @@ module Installation
       title = @store.title_for(submod)
 
       # do not add a link if the module is read-only or link is already included
-      heading = if @store.read_only?(submod) || title.include?("<a")
+      heading = if @store.read_only_no_recovery?(submod) || title.include?("<a")
         title
       else
         Yast::HTML.Link(title, @store.id_for(submod))

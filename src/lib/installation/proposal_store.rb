@@ -250,12 +250,32 @@ module Installation
       title.gsub(/<a.*?>(.*?)<\/a>/, "\\1")
     end
 
-    # Returns the read-only flag
+    def read_only?(client)
+      read_only_no_recovery?(client) || read_only_with_recovery?(client)
+    end
+
+    # Checks if the client's proposal is configured as "hard" read-only
+    #
+    # "hard" read-only means that the proposal is always read-only
+    # "soft" read-only means that the proposal is made changeable when an error
+    # in proposal is detected.
     #
     # @param [String] client
-    # @return [String] a title provided by the description API
-    def read_only?(client)
-      read_only_proposals.include?(client)
+    # @return [Boolean] if the client is marked as "hard" read only
+    def read_only_no_recovery?(client)
+      read_only_proposals[:hard].include?(client)
+    end
+
+    # Checks if the client's proposal is configured as "soft" read-only
+    #
+    # "hard" read-only means that the proposal is always read-only
+    # "soft" read-only means that the proposal is made changeable when an error
+    # in proposal is detected.
+    #
+    # @param [String] client
+    # @return [Boolean] if the client is marked as "soft" read only
+    def read_only_with_recovery?(client)
+      read_only_proposals[:soft].include?(client)
     end
 
     # Calls client('AskUser'), to change a setting interactively (if link is the
@@ -300,13 +320,19 @@ module Installation
     def read_only_proposals
       return @read_only_proposals if @read_only_proposals
 
-      @read_only_proposals = []
+      @read_only_proposals = { hard: [], soft: [] }
 
       properties.fetch("proposal_modules", []).each do |proposal|
         next unless proposal["read_only"]
 
         name = full_module_name(proposal["name"])
-        @read_only_proposals << name
+
+        case proposal["read_only"]
+        when "hard"
+          @read_only_proposals[:hard] << name
+        when "soft"
+          @read_only_proposals[:soft] << name
+        end
       end
 
       log.info "Found read-only proposals: #{@read_only_proposals}"
