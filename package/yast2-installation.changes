@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Jan  5 13:16:08 CET 2017 - schubi@suse.de
+
+- AutoYaST after second stage: Initialize tty1 in order to remove
+  old YaST output and to show the cursor again.
+  (bnc#1018037)
+- 3.1.219
+
+-------------------------------------------------------------------
 Wed Dec  7 14:00:53 UTC 2016 - igonzalezsosa@suse.com
 
 - Do not crash when the proposal screen is configured through
