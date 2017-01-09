@@ -1,3 +1,3 @@
-FROM yastdevel/ruby-tw
-COPY . /tmp/sources
+FROM yastdevel/ruby
+COPY . /usr/src/app
 

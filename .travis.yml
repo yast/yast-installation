@@ -1,5 +1,5 @@
 sudo: required
-language: ruby
+language: bash
 services:
   - docker
 
@@ -8,4 +8,4 @@ before_install:
 script:
   # the "yast-travis" script is included in the base yastdevel/ruby-tw image
   # see https://github.com/yast/docker-yast-ruby-tw/blob/master/yast-travis
-  - docker run -it -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" yast-installation-image yast-travis
+  - docker run -it -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" yast-installation-image yast-travis-ruby
