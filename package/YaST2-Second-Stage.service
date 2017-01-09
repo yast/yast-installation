@@ -25,6 +25,9 @@ ExecStartPre=-/bin/sh -c 'if [ -x /usr/bin/plymouth ] ; then if [ `/usr/bin/syst
 ExecStart=/usr/lib/YaST2/startup/YaST2.Second-Stage
 RemainAfterExit=yes
 TimeoutSec=0
+# Initialize tty1 in order to remove old YaST output and to show the cursor
+# again (bnc#1018037)
+ExecStartPost=/bin/sh -c '/usr/bin/printf "\033c" > /dev/tty1'
 ExecStartPost=/usr/bin/rm -f /var/lib/YaST2/runme_at_boot
 ExecStartPost=/usr/bin/systemctl restart systemd-vconsole-setup.service
 StandardInput=tty
