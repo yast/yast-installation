@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Jan  5 13:16:08 CET 2017 - schubi@suse.de
+
+- AutoYaST after second stage: Initialize tty1 in order to remove
+  old YaST output and to show the cursor again.
+  (bnc#1018037)
+- 3.2.13
+
+-------------------------------------------------------------------
 Wed Dec 14 15:47:02 UTC 2016 - jreidinger@suse.com
 
 Port changes from CASP1.0:
