@@ -23,6 +23,7 @@ end
 stub_module("Packages")
 stub_module("InstURL")
 stub_module("Language")
+stub_module("Keyboard")
 stub_module("AddOnProduct")
 stub_module("ProductLicense")
 stub_module("AutoinstGeneral")
