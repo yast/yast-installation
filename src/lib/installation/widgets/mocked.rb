@@ -16,26 +16,6 @@ module Widgets
   end
 end
 
-# move this to: stays in installation
-module Widgets
-  class SystemRole < CWM::ComboBox
-    def initialize
-      textdomain "FIXME"
-    end
-
-    def label
-      _("System Role")
-    end
-    
-    def items
-      [
-        ["Romeo",  _("Romeo")], # DUH, find the real ones
-        ["Juliet", _("Juliet")]
-      ]
-    end
-  end
-end
-
 # move this to: yast2-tune
 module Widgets
   class SystemInformation < CWM::PushButton
@@ -60,9 +40,9 @@ module Widgets
   class Overview < CWM::CustomWidget
     def contents
       VBox(
-        PushButton(Id(button_id), self.label),
-        Label("* foo"),
-        Label("* bar")
+        Left(PushButton(Id(button_id), label)),
+        Left(Label(" * foo")),
+        Left(Label(" * bar"))
       )
     end
 
@@ -82,7 +62,7 @@ module Widgets
       _("Partitioning")
     end
   end
-  
+
   class BootloaderOverview < Overview
     def initialize
       textdomain "FIXME"
@@ -96,6 +76,7 @@ module Widgets
     def initialize
       textdomain "FIXME"
     end
+
     def label
       _("Network")
     end
@@ -104,8 +85,9 @@ module Widgets
     def initialize
       textdomain "FIXME"
     end
+
     def label
-      _("Kdump")                # FIXME: spelling
+      _("Kdump") # FIXME: spelling
     end
   end
 end

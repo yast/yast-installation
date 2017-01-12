@@ -23,6 +23,7 @@ require "users/widgets"
 require "y2country/widgets"
 require "ui/widgets"
 
+require "installation/widgets/system_role"
 # FIXME: prototype only
 require "installation/widgets/mocked"
 
@@ -74,7 +75,7 @@ module Installation
           7,
           VBox(
             VStretch(),
-            Widgets::RegistrationCode.new,
+            ::Widgets::RegistrationCode.new,
             VStretch(),
             ::Users::PasswordWidget.new, # TODO: horizontal layout
             VStretch(),
@@ -82,9 +83,9 @@ module Installation
             # TODO: ComboBox, not SelectionBox
             ::Y2Country::Widgets::KeyboardSelection.new("english-us"),
             VStretch(),
-            Widgets::SystemRole.new,
+            Installation::Widgets::SystemRole.new,
             VStretch(),
-            Widgets::SystemInformation.new,
+            ::Widgets::SystemInformation.new,
             VStretch()
           )
         ),
@@ -93,13 +94,13 @@ module Installation
           3,
           VBox(
             VStretch(),
-            Left(Widgets::PartitioningOverview.new),
+            ::Widgets::PartitioningOverview.new,
             VStretch(),
-            Left(Widgets::BootloaderOverview.new),
+            ::Widgets::BootloaderOverview.new,
             VStretch(),
-            Left(Widgets::NetworkOverview.new),
+            ::Widgets::NetworkOverview.new,
             VStretch(),
-            Left(Widgets::KdumpOverview.new),
+            ::Widgets::KdumpOverview.new,
             VStretch()
           )
         )
