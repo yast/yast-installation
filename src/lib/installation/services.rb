@@ -1,6 +1,6 @@
 require "yast"
 
-Yast.import 'SystemdService'
+Yast.import "SystemdService"
 
 module Installation
   # Represents services manipulation in installation.
