@@ -16,26 +16,6 @@ module Widgets
   end
 end
 
-# move this to: yast2-tune
-module Widgets
-  class SystemInformation < CWM::PushButton
-    include Yast::Logger
-    def initialize
-      textdomain "tune"
-    end
-
-    def label
-      _("System Information")
-    end
-
-    def handle
-      Yast::WFM.CallFunction("inst_hwinfo", [])
-      # doc?
-      nil
-    end
-  end
-end
-
 module Widgets
   class Overview < CWM::CustomWidget
     def contents

@@ -22,6 +22,7 @@
 require "users/widgets"
 require "y2country/widgets"
 require "ui/widgets"
+require "tune/widgets"
 
 require "installation/widgets/system_role"
 # FIXME: prototype only
@@ -85,7 +86,7 @@ module Installation
             VStretch(),
             Installation::Widgets::SystemRole.new,
             VStretch(),
-            ::Widgets::SystemInformation.new,
+            Tune::Widgets::SystemInformation.new,
             VStretch()
           )
         ),
