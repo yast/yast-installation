@@ -23,6 +23,9 @@ require "users/widgets"
 require "y2country/widgets"
 require "ui/widgets"
 
+# FIXME: prototype only
+require "mocked_widgets"
+
 module Installation
   # This library provides a simple dialog for setting
   # - the password for the system administrator (root)
@@ -46,12 +49,14 @@ module Installation
       # helpful when testing all manually on a running system
       Yast::Wizard.CreateDialog if separate_wizard_needed?
 
-      Yast::Wizard.SetTitleIcon("yast-users")
+      Yast::Wizard.SetTitleIcon("yast-users") # ?
       Yast::Wizard.EnableAbortButton
+
+      Yast::Wizard.SetNextButton(Id(:install), _("Install"))
 
       ret = Yast::CWM.show(
         content,
-        # Title for root-password dialogue
+        # Title for installation overview dialog
         caption: _("Installation Overview")
       )
 
@@ -64,16 +69,40 @@ module Installation
 
     # Returns a UI widget-set for the dialog
     def content
-      VBox(
-        VStretch(),
-        # use english us as default keyboard layout
-        ::Y2Country::Widgets::KeyboardSelection.new("english-us"),
-        VSpacing(1),
-        ::UI::Widgets::KeyboardLayoutTest.new,
-        VStretch(),
-        ::Users::PasswordWidget.new,
-        VStretch(),
-        Label("FIXME: add other widgets")
+      HBox(
+        HWeight(
+          7,
+          VBox(
+            VStretch(),
+            Widgets::RegistrationCode.new,
+            VStretch(),
+            ::Users::PasswordWidget.new, # TODO: horizontal layout
+            VStretch(),
+            # use english us as default keyboard layout
+            # TODO: ComboBox, not SelectionBox
+            ::Y2Country::Widgets::KeyboardSelection.new("english-us"),
+            VStretch(),
+            Widgets::SystemRole.new,
+            VStretch(),
+            Widgets::SystemInformation.new,
+            VStretch()
+          )
+        ),
+        HSpacing(1),
+        HWeight(
+          3,
+          VBox(
+            VStretch(),
+            Left(Widgets::PartitioningOverview.new),
+            VStretch(),
+            Left(Widgets::BootloaderOverview.new),
+            VStretch(),
+            Left(Widgets::NetworkOverview.new),
+            VStretch(),
+            Left(Widgets::KdumpOverview.new),
+            VStretch()
+          )
+        )
       )
     end
 
