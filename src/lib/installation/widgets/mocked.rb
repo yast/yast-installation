@@ -36,11 +36,12 @@ module Widgets
   end
 end
 
+# move this to: yast2-tune
 module Widgets
   class SystemInformation < CWM::PushButton
     include Yast::Logger
     def initialize
-      textdomain "FIXME"
+      textdomain "tune"
     end
 
     def label
@@ -48,7 +49,7 @@ module Widgets
     end
 
     def handle
-      log.info "The system is a system"
+      Yast::WFM.CallFunction("inst_hwinfo", [])
       # doc?
       nil
     end

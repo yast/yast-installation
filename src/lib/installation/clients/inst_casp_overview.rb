@@ -24,7 +24,7 @@ require "y2country/widgets"
 require "ui/widgets"
 
 # FIXME: prototype only
-require "mocked_widgets"
+require "installation/widgets/mocked"
 
 module Installation
   # This library provides a simple dialog for setting
