@@ -69,6 +69,7 @@ client_DATA = \
   clients/remote_finish.rb \
   clients/save_config_finish.rb \
   clients/save_hw_status_finish.rb \
+  clients/services_finish.rb \
   clients/snapshots_finish.rb \
   clients/ssh_import_proposal.rb \
   clients/ssh_import_auto.rb \
@@ -126,6 +127,7 @@ ylib_DATA = \
   lib/installation/snapshots_finish.rb \
   lib/installation/updates_manager.rb \
   lib/installation/update_repository.rb \
+  lib/installation/services.rb \
   lib/installation/ssh_config.rb \
   lib/installation/ssh_key.rb \
   lib/installation/ssh_config_file.rb \
@@ -190,6 +192,7 @@ ylibclient_DATA = \
   lib/installation/clients/proxy_finish.rb \
   lib/installation/clients/save_config_finish.rb \
   lib/installation/clients/save_hw_status_finish.rb \
+  lib/installation/clients/services_finish.rb \
   lib/installation/clients/ssh_import_proposal.rb \
   lib/installation/clients/ssh_settings_finish.rb \
   lib/installation/clients/stroj-casu.rb \

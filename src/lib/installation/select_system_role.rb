@@ -19,6 +19,7 @@
 
 require "yast"
 require "ui/installation_dialog"
+require "installation/services"
 
 Yast.import "GetInstArgs"
 Yast.import "Popup"
@@ -34,7 +35,8 @@ module Installation
 
     NON_OVERLAY_ATTRIBUTES = [
       "additional_dialogs",
-      "id"
+      "id",
+      "services"
     ].freeze
 
     def initialize
@@ -187,6 +189,17 @@ module Installation
       features = features.dup
       NON_OVERLAY_ATTRIBUTES.each { |a| features.delete(a) }
       Yast::ProductFeatures.SetOverlay(features)
+      adapt_services(role_id)
+    end
+
+    def adapt_services(role_id)
+      services = raw_roles.find { |r| r["id"] == role_id }["services"]
+      services ||= []
+
+      to_enable = services.map { |s| s["name"] }
+      log.info "enable for #{role_id} these services: #{to_enable.inspect}"
+
+      Installation::Services.enabled = to_enable
     end
 
     # the contents is an overlay for ProductFeatures sections
