@@ -21,11 +21,13 @@ module Widgets
     def contents
       VBox(
         Left(PushButton(Id(button_id), label)),
-        Left(Label(" * foo")),
-        Left(Label(" * bar"))
+        * items.map { |i| Left(Label(" * #{i}")) }
       )
     end
 
+    def items
+      ["foo", "bar"]
+    end
   private
 
     def button_id
@@ -52,6 +54,7 @@ module Widgets
       _("Booting")
     end
   end
+
   class NetworkOverview < Overview
     def initialize
       textdomain "FIXME"
@@ -61,13 +64,26 @@ module Widgets
       _("Network")
     end
   end
+
   class KdumpOverview < Overview
     def initialize
-      textdomain "FIXME"
+      textdomain "kdump"
+
+      Yast.import "Kdump"
     end
 
     def label
-      _("Kdump") # FIXME: spelling
+      _("&Kdump")
+    end
+
+    def items
+      Yast::Kdump.Summary
+    end
+
+    def handle(event)
+      Yast::WFM.CallFunction("kdump_proposal", ["AskUser", {}])
+      # FIXME: refresh the summary items
+      nil
     end
   end
 end

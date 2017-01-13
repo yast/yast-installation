@@ -73,7 +73,7 @@ module Installation
     def content
       HBox(
         HWeight(
-          7,
+          6,
           VBox(
             ::Widgets::RegistrationCode.new,
             VStretch(),
@@ -89,7 +89,7 @@ module Installation
         ),
         HSpacing(1),
         HWeight(
-          3,
+          4,
           VBox(
             VStretch(),
             ::Widgets::PartitioningOverview.new,
