@@ -35,6 +35,10 @@ module Installation
         _("System Role")
       end
 
+      def opt
+        [:hstretch]
+      end
+
       def items
         [
           # FIXME: still hardcoding for easier testing

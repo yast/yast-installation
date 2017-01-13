@@ -54,12 +54,12 @@ module Installation
       Yast::Wizard.SetTitleIcon("yast-users") # ?
       Yast::Wizard.EnableAbortButton
 
-      Yast::Wizard.SetNextButton(Id(:install), _("Install"))
-
       ret = Yast::CWM.show(
         content,
         # Title for installation overview dialog
-        caption: _("Installation Overview")
+        caption: _("Installation Overview"),
+        # Button label: start the installation
+        next_button: _("Install")
       )
 
       Yast::Wizard.CloseDialog if separate_wizard_needed?
@@ -75,7 +75,6 @@ module Installation
         HWeight(
           7,
           VBox(
-            VStretch(),
             ::Widgets::RegistrationCode.new,
             VStretch(),
             ::Users::PasswordWidget.new(little_space: true),
@@ -86,8 +85,7 @@ module Installation
             VStretch(),
             Installation::Widgets::SystemRole.new,
             VStretch(),
-            Tune::Widgets::SystemInformation.new,
-            VStretch()
+            Tune::Widgets::SystemInformation.new
           )
         ),
         HSpacing(1),
