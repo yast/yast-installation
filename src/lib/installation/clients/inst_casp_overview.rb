@@ -80,8 +80,7 @@ module Installation
             ::Users::PasswordWidget.new(little_space: true),
             VStretch(),
             # use english us as default keyboard layout
-            # TODO: ComboBox, not SelectionBox
-            ::Y2Country::Widgets::KeyboardSelection.new("english-us"),
+            ::Y2Country::Widgets::KeyboardSelectionCombo.new("english-us"),
             VStretch(),
             Installation::Widgets::SystemRole.new,
             VStretch(),
