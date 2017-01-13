@@ -78,7 +78,7 @@ module Installation
             VStretch(),
             ::Widgets::RegistrationCode.new,
             VStretch(),
-            ::Users::PasswordWidget.new, # TODO: horizontal layout
+            ::Users::PasswordWidget.new(little_space: true),
             VStretch(),
             # use english us as default keyboard layout
             # TODO: ComboBox, not SelectionBox
