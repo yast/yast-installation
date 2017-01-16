@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Jan 16 12:17:38 UTC 2017 - mfilka@suse.com
+
+- fate#321739
+  - Made user's interaction possible in case of error in read-only
+    proposal.
+- 3.2.14
+
+-------------------------------------------------------------------
 Thu Jan  5 13:16:08 CET 2017 - schubi@suse.de
 
 - AutoYaST after second stage: Initialize tty1 in order to remove
