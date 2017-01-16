@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Dec 19 13:23:12 UTC 2016 - mfilka@suse.com
+
+- fate#321739
+  - Made user's interaction possible in case of error in read-only
+    proposal.
+- 3.1.217.9 
+
+-------------------------------------------------------------------
 Wed Dec 14 15:47:02 UTC 2016 - jreidinger@suse.com
 
 - Change layout of new installation dialog according to UX team

@@ -75,6 +75,29 @@ describe ::Installation::ProposalRunner do
       expect(subject.run).to eq :auto
     end
 
+    describe "#html_header" do
+      it "returns clickable header when forced" do
+        allow(Yast::GetInstArgs).to receive(:proposal).and_return("software")
+
+        expect_any_instance_of(::Installation::ProposalRunner)
+          .to receive(:submod_descriptions_and_build_menu)
+          .and_return(false)
+        expect_any_instance_of(::Installation::ProposalStore)
+          .to receive(:title_for)
+          .and_return("Software")
+        expect_any_instance_of(::Installation::ProposalStore)
+          .to receive(:id_for)
+          .and_return("software")
+        expect_any_instance_of(::Installation::ProposalStore)
+          .not_to receive(:read_only?)
+
+        # initialization of internal state
+        expect(subject.run).to eq :auto
+
+        expect(subject.send(:html_header, "software", force_rw: true)).to eql Yast::HTML.Heading(Yast::HTML.Link("Software", "software"))
+      end
+    end
+
     context "when proposal contains tabs" do
       let(:properties) do
         PROPERTIES.merge(
@@ -123,6 +146,42 @@ describe ::Installation::ProposalRunner do
             .with("keyboard_proposal", anything).and_return("preformatted_proposal" => "")
           expect_any_instance_of(::Installation::ProposalStore).to receive(:make_proposal)
             .with("hwinfo_proposal", anything).and_return("preformatted_proposal" => "")
+          expect(subject.run).to eq(:next)
+        end
+      end
+
+      context "and it enables soft r/o proposal in case of error" do
+        PROPERTIES = {
+          "enable_skip"      => "no",
+          "label"            => "Installation Settings",
+          "mode"             => "autoinstallation",
+          "name"             => "initial",
+          "stage"            => "initial",
+          "unique_id"        => "auto_inst_proposal",
+          "proposal_modules" => [
+            { "name" => "software", "presentation_order" => "15", "read_only" => "soft" }
+          ]
+        }.freeze
+        let(:proposals) { [["software_proposal", 15]] }
+
+        it "makes a proposal" do
+          allow(subject)
+            .to receive(:html_header)
+            .with("software_proposal")
+            .and_call_original
+
+          # we need ProposalStore#make_proposal to call the callback
+          expect(Yast::WFM)
+            .to receive(:CallFunction)
+            .and_return(
+              "preformated_proposal" => "",
+              "warning_lever"        => :error
+            )
+          expect(subject)
+            .to receive(:html_header)
+            .with("software_proposal", force_rw: true)
+            .at_least(:once)
+            .and_call_original
           expect(subject.run).to eq(:next)
         end
       end

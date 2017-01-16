@@ -617,6 +617,10 @@ This is a list of supported entries in *software*:
 -   *clone\_install\_recommended\_default* - Default entry for
     "install_recommended" in created AutoYaST configuration file.
 
+-   *minimalistic_libzypp_config* - adjust the libzypp configuration
+    to reduce the amount of packages to install: only required
+    packages are considered, no documentation and no multiversion.
+
 Additionally, you can configure how updating of packages should be
 performed. The following options are available:
 
