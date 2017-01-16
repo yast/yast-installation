@@ -14,11 +14,13 @@ module Installation
     class << self
       include Yast::Logger
 
+      # gets array of services to enable
       def enabled
         @enabled ||= []
-        @enabled
       end
 
+      # sets array of services to enable
+      # @raise [ArgumentError] when argument is not Array
       def enabled=(services)
         if !services.is_a?(::Array)
           raise ArgumentError, "Services#enabled= allows only Array as " \
@@ -28,6 +30,7 @@ module Installation
         @enabled = services
       end
 
+      # does real enablement of services previously set
       def write
         enabled.each do |service|
           log.info "Enabling service #{service}"

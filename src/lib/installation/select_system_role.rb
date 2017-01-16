@@ -183,6 +183,7 @@ module Installation
       RadioButtonGroup(Id(:roles), ui_roles)
     end
 
+    # Applies given role to configuration
     def apply_role(role_id)
       log.info "Applying system role '#{role_id}'"
       features = raw_roles.find { |r| r["id"] == role_id }
@@ -192,6 +193,8 @@ module Installation
       adapt_services(role_id)
     end
 
+    # for given role sets in {::Installation::Services} list of services to enable
+    # according to its config. Do not use alone and use apply_role instead.
     def adapt_services(role_id)
       services = raw_roles.find { |r| r["id"] == role_id }["services"]
       services ||= []
