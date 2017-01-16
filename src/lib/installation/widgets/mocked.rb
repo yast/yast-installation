@@ -11,7 +11,7 @@ module Widgets
     end
 
     def label
-      _("Registration Code")
+      _("Registration Code or SMT Server URL")
     end
   end
 end

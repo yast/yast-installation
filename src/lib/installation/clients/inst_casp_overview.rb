@@ -69,38 +69,48 @@ module Installation
 
   private
 
-    # Returns a UI widget-set for the dialog
-    def content
+    def quadrant_layout(upper_left:, lower_left:, upper_right:, lower_right:)
       HBox(
         HWeight(
           6,
           VBox(
-            ::Widgets::RegistrationCode.new,
+            VWeight(5, upper_left),
             VStretch(),
-            ::Users::PasswordWidget.new(little_space: true),
-            VStretch(),
-            # use english us as default keyboard layout
-            ::Y2Country::Widgets::KeyboardSelectionCombo.new("english-us"),
-            VStretch(),
-            Installation::Widgets::SystemRole.new,
-            VStretch(),
-            Tune::Widgets::SystemInformation.new
+            VWeight(5, lower_left)
           )
         ),
-        HSpacing(1),
+        HSpacing(3),
         HWeight(
           4,
           VBox(
+            VWeight(5, upper_right),
             VStretch(),
-            ::Widgets::PartitioningOverview.new,
-            VStretch(),
-            ::Widgets::BootloaderOverview.new,
-            VStretch(),
-            ::Widgets::NetworkOverview.new,
-            VStretch(),
-            ::Widgets::KdumpOverview.new,
-            VStretch()
+            VWeight(5, lower_right)
           )
+        )
+      )
+    end
+
+    # Returns a UI widget-set for the dialog
+    def content
+      quadrant_layout(
+        upper_left: VBox(
+          ::Widgets::RegistrationCode.new,
+          ::Users::PasswordWidget.new(little_space: true),
+          # use english us as default keyboard layout
+          ::Y2Country::Widgets::KeyboardSelectionCombo.new("english-us")
+        ),
+        lower_left: VBox(
+          Installation::Widgets::SystemRole.new,
+          Tune::Widgets::SystemInformation.new
+        ),
+        upper_right: VBox(
+          ::Widgets::PartitioningOverview.new,
+          ::Widgets::BootloaderOverview.new
+        ),
+        lower_right: VBox(
+          ::Widgets::NetworkOverview.new,
+          ::Widgets::KdumpOverview.new
         )
       )
     end
