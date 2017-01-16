@@ -45,7 +45,7 @@ describe ::Installation::Services do
     it "raises Yast::SystemdServiceNotFound exception if service to enable does not exist" do
       described_class.enabled = ["non-existing-service"]
 
-      expect{described_class.write}.to raise_error(Yast::SystemdServiceNotFound)
+      expect { described_class.write }.to raise_error(Yast::SystemdServiceNotFound)
     end
   end
 end
