@@ -4,6 +4,12 @@ Yast.import "SystemdService"
 
 module Installation
   # Represents services manipulation in installation.
+  #
+  # @note For installed system use ServicesManagerServices from
+  # yast2-services-manager. But for installation it is not suitable as it
+  # expects list of all systemd services in advance and try to adapt all of it.
+  # On other hand goal of this module is to do just fine tuning of few single
+  # services and keep defaults for rest.
   class Services
     class << self
       include Yast::Logger
