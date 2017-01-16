@@ -171,12 +171,13 @@ describe ::Installation::ProposalRunner do
             .and_call_original
 
           # we need ProposalStore#make_proposal to call the callback
-          expect(Yast::WFM)
+          allow(Yast::WFM)
             .to receive(:CallFunction)
             .and_return(
               "preformated_proposal" => "",
-              "warning_lever"        => :error
+              "warning_level"        => :error
             )
+
           expect(subject)
             .to receive(:html_header)
             .with("software_proposal", force_rw: true)
