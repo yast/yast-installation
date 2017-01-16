@@ -29,6 +29,12 @@ module Yast
   class InstDownloadReleaseNotesClient < Client
     include Yast::Logger
 
+    # When cURL returns one of those codes, the download won't be retried
+    # @see man curl
+    #  7 = Failed to connect to host.
+    # 28 = Operation timeout.
+    CURL_GIVE_UP_RETURN_CODES = [7, 28].freeze
+
     # Download all release notes mentioned in Product::relnotesurl_all
     #
     # @return true when successful
@@ -111,10 +117,7 @@ module Yast
             InstData.release_notes[product["short_name"]] = SCR.Read(path(".target.string"), filename)
             InstData.downloaded_release_notes << product["short_name"]
             break
-          # exit codes (see "man curl"):
-          #  7 = Failed to connect to host.
-          # 28 = Operation timeout.
-          elsif ret == 7 || ret == 28
+          elsif CURL_GIVE_UP_RETURN_CODES.include?(ret)
             log.info "Communication with server for release notes download failed, skipping further attempts."
             InstData.stop_relnotes_download = true
             break
