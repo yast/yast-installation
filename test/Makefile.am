@@ -13,10 +13,12 @@ TESTS = \
 	driver_update_test.rb \
 	file_from_url_test.rb \
   prep_shrink_test.rb \
+  proposal_errors_test.rb \
   proposal_store_test.rb \
   proposal_runner_test.rb \
   remote_finish_test.rb \
   select_system_role_test.rb \
+  services_test.rb \
   snapshots_finish_test.rb \
   ssh_import_auto_test.rb \
   updates_manager_test.rb \
