@@ -245,7 +245,7 @@ module Yast
     # Register the installation sources in offline mode (no network connection required).
     # The repository metadata will be downloaded by sw_single (or another yast module) when the repostory is enabled
     #
-    # @param list <map> list of the sources to register
+    # @param url_list [Array<Hash>] list of the sources to register
     # @return [Array<Fixnum>] list of created source IDs
     def RegisterRepos(url_list)
       url_list = deep_copy(url_list)

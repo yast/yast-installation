@@ -98,7 +98,7 @@ related variables.
 > Note that the control file is not an optional tool to help customize
 > installation, it is required during installation and without the file,
 > installation may fail or lead to unexpected results. Control file on installed
-> system located in `/etc/YaST2/control.xml` is owned by ${PRODUCT}-release
+> system located in `/etc/YaST2/control.xml` is owned by `${PRODUCT}-release`
 > package.
 
 During installation, *linuxrc* searches for a file named

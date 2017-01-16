@@ -372,8 +372,8 @@ module Installation
     # Returns whether given trigger definition is correct
     # e.g., all mandatory parts are there
     #
-    # @param [Hash] trigger definition
-    # @rturn [Boolean] whether it is correct
+    # @param [Hash] trigger_def definition
+    # @return [Boolean] whether it is correct
     def valid_trigger?(trigger_def)
       trigger_def.key?("expect") &&
         trigger_def["expect"].is_a?(Hash) &&
@@ -551,7 +551,7 @@ module Installation
 
     # Build the full proposal module name including the "_proposal" suffix.
     # The sufix is not added when it is already present.
-    # @param [String] full or short proposal module name
+    # @param [String] name full or short proposal module name
     # @return [String] full proposal module name
     def full_module_name(name)
       # already a full name?

@@ -332,7 +332,8 @@ module Installation
 
     # Mount the squashed filesystem containing updates
     #
-    # @param path [Pathname] Mountpoint
+    # @param file [Pathname] file with squashfs content
+    # @param mountpoint [Pathname] where to mount
     #
     # @raise CouldNotMountUpdate
     #
