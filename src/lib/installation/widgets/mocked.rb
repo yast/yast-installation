@@ -25,9 +25,26 @@ module Widgets
       )
     end
 
-    def items
-      ["foo", "bar"]
+    def label
+      d = Yast::WFM.CallFunction(proposal_client, ["Description", {}])
+      d["menu_title"]
     end
+
+    def items
+      d = Yast::WFM.CallFunction(proposal_client,
+                                 [
+                                   "MakeProposal",
+                                   {"cramped_label_mode" => true}
+                                 ])
+      d["label_proposal"]
+    end
+
+    def handle(_event)
+      Yast::WFM.CallFunction(proposal_client, ["AskUser", {}])
+      # FIXME: refresh the summary items
+      nil
+    end
+
   private
 
     def button_id
@@ -37,32 +54,72 @@ module Widgets
 
   class PartitioningOverview < Overview
     def initialize
-      textdomain "FIXME"
+      textdomain "storage"
+    end
+
+    def proposal_client
+      "partitions_proposal"
     end
 
     def label
-      _("Partitioning")
+      # FIXME: The storage subsystem is locked by an unknown app...
+      if ENV["FAKE_STORAGE"]
+        "&Partitioning"
+      else
+        super
+      end
+    end
+
+    def items
+      if ENV["FAKE_STORAGE"]
+        ["Standard"]
+      else
+        super
+      end
     end
   end
 
   class BootloaderOverview < Overview
     def initialize
-      textdomain "FIXME"
+      textdomain "bootloader"
+
+      Yast.import "Bootloader"
+    end
+
+    def proposal_client
+      "bootloader_proposal"
     end
 
     def label
       _("Booting")
     end
+
+    def items
+      # FIXME: it returns richtext
+      Yast::Bootloader.Summary
+    end
   end
 
   class NetworkOverview < Overview
     def initialize
-      textdomain "FIXME"
+      textdomain "network"
+      Yast.import "Lan"
     end
 
     def label
-      _("Network")
+      _("&Network")
     end
+
+    def items
+      Yast::Lan.Summary("")
+    end
+
+    def handle(event)
+      Yast::WFM.CallFunction("inst_lan", [{"skip_detection" => true}])
+      # FIXME: refresh the summary items
+      nil
+    end
+
   end
 
   class KdumpOverview < Overview
@@ -72,18 +129,8 @@ module Widgets
       Yast.import "Kdump"
     end
 
-    def label
-      _("&Kdump")
-    end
-
-    def items
-      Yast::Kdump.Summary
-    end
-
-    def handle(event)
-      Yast::WFM.CallFunction("kdump_proposal", ["AskUser", {}])
-      # FIXME: refresh the summary items
-      nil
+    def proposal_client
+      "kdump_proposal"
     end
   end
 end
