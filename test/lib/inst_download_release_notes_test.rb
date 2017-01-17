@@ -3,7 +3,6 @@
 require_relative "../test_helper"
 require "installation/clients/inst_download_release_notes"
 
-Yast.import "Proxy"
 Yast.import "InstData"
 Yast.import "Pkg"
 Yast.import "Language"
@@ -28,12 +27,12 @@ describe Yast::InstDownloadReleaseNotesClient do
   end
 
   describe "#main" do
-    let(:proxy) { false }
+    let(:proxy) { double("proxy", "Read" => nil, "enabled" => false) }
     let(:curl_code) { CURL_SUCCESS_CODE }
     let(:language) { "en_US" }
 
     before do
-      allow(Yast::Proxy).to receive(:enabled).and_return(false)
+      stub_const("Yast::Proxy", proxy)
       allow(Yast::Pkg).to receive(:ResolvableProperties).with("", :product, "")
         .and_return([product])
 
