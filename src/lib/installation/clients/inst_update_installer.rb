@@ -418,7 +418,7 @@ module Yast
     # Ask the user about checking network configuration. If she/he accepts,
     # the `inst_lan` client will be launched.
     #
-    # @param url [URI] URL to show in the message
+    # @param reason [String] reason why user want to check his network configuration
     # @return [Boolean] true if the network configuration client was launched;
     #                   false if the network is not configured.
     def configure_network?(reason)
@@ -459,7 +459,7 @@ module Yast
 
     # Return a message to be shown when the updates repo could not be probed
     #
-    # @param [URI,String] Repository URI
+    # @param url [URI,String] Repository URI
     # @return [String] Message including the repository URL
     #
     # @see #self_update_url
@@ -491,7 +491,7 @@ module Yast
 
     # Store URL of registration server to be used by inst_scc client
     #
-    # @params [URI] Registration server URL.
+    # @param url [URI] Registration server URL.
     def store_registration_url(url)
       data = { "custom_url" => url.to_s }
       File.write(REGISTRATION_DATA_PATH, data.to_yaml)

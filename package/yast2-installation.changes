@@ -1,4 +1,17 @@
 -------------------------------------------------------------------
+Tue Jan 17 15:34:22 UTC 2017 - igonzalezsosa@suse.com
+
+- Do not retry to download release notes if a previous attempt
+  failed (bsc#1015794)
+- 3.2.15
+
+-------------------------------------------------------------------
+Mon Jan 16 12:42:52 UTC 2017 - jreidinger@suse.com
+
+- add ability to roles to enable list of services when selected
+  (FATE#321754)
+
+-------------------------------------------------------------------
 Mon Jan 16 12:17:38 UTC 2017 - mfilka@suse.com
 
 - fate#321739
