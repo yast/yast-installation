@@ -127,5 +127,26 @@ describe Yast::InstDownloadReleaseNotesClient do
         end
       end
     end
+
+    context "when called twice" do
+      let(:language) { "en" }
+      let(:curl_code) { 22 }
+
+      it "does not try to download again already failed release notes" do
+        expect(Yast::SCR).to receive(:Execute).once
+          .with(Yast::Path.new(".target.bash"), /curl.*RELEASE-NOTES.en.rtf/)
+          .and_return(CURL_NOT_FOUND_CODE)
+        client.main
+        client.main # call it a second time
+      end
+
+      it "does not download again already downloaded release notes" do
+        expect(Yast::SCR).to receive(:Execute).once
+          .with(Yast::Path.new(".target.bash"), /curl.*RELEASE-NOTES.en.rtf/)
+          .and_return(CURL_SUCCESS_CODE)
+        client.main
+        client.main # call it a second time
+      end
+    end
   end
 end

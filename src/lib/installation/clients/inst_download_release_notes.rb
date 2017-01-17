@@ -101,6 +101,12 @@ module Yast
           # Where we want to store the downloaded release notes
           filename = Builtins.sformat("%1/relnotes",
             SCR.Read(path(".target.tmpdir")))
+
+          if InstData.failed_release_notes.include?(url)
+            log.info("Skipping download of already failed release notes at #{url}")
+            next
+          end
+
           # download release notes now
           cmd = Builtins.sformat(
             "/usr/bin/curl --location --verbose --fail --max-time 300 --connect-timeout 15  %1 '%2' --output '%3' > '%4/%5' 2>&1",
@@ -121,6 +127,8 @@ module Yast
             log.info "Communication with server for release notes download failed, skipping further attempts."
             InstData.stop_relnotes_download = true
             break
+          else
+            InstData.failed_release_notes << url
           end
         end
       end

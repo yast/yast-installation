@@ -96,6 +96,9 @@ module Yast
       # only product names, not the actual RN text
       @downloaded_release_notes = []
 
+      # list of release notes that YaST failed to download
+      @failed_release_notes = []
+
       # remember that downloading release notes failed due to communication
       # issues with the server, avoid further attempts then
       @stop_relnotes_download = false
@@ -118,6 +121,8 @@ module Yast
     publish variable: :release_notes, type: "map<string,string>"
     publish variable: :downloaded_release_notes, type: "list<string>"
     publish variable: :stop_relnotes_download, type: "boolean"
+    publish variable: :failed_release_notes, type: "list<string>"
+
   end
 
   InstData = InstDataClass.new
