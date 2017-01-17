@@ -19,6 +19,7 @@
 
 require "yast"
 require "ui/installation_dialog"
+require "installation/services"
 
 Yast.import "GetInstArgs"
 Yast.import "Popup"
@@ -34,7 +35,8 @@ module Installation
 
     NON_OVERLAY_ATTRIBUTES = [
       "additional_dialogs",
-      "id"
+      "id",
+      "services"
     ].freeze
 
     def initialize
@@ -181,12 +183,26 @@ module Installation
       RadioButtonGroup(Id(:roles), ui_roles)
     end
 
+    # Applies given role to configuration
     def apply_role(role_id)
       log.info "Applying system role '#{role_id}'"
       features = raw_roles.find { |r| r["id"] == role_id }
       features = features.dup
       NON_OVERLAY_ATTRIBUTES.each { |a| features.delete(a) }
       Yast::ProductFeatures.SetOverlay(features)
+      adapt_services(role_id)
+    end
+
+    # for given role sets in {::Installation::Services} list of services to enable
+    # according to its config. Do not use alone and use apply_role instead.
+    def adapt_services(role_id)
+      services = raw_roles.find { |r| r["id"] == role_id }["services"]
+      services ||= []
+
+      to_enable = services.map { |s| s["name"] }
+      log.info "enable for #{role_id} these services: #{to_enable.inspect}"
+
+      Installation::Services.enabled = to_enable
     end
 
     # the contents is an overlay for ProductFeatures sections

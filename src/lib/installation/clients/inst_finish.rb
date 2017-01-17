@@ -388,7 +388,8 @@ module Yast
         "save_hw_status",
         "users",
         "autoinst_scripts2",
-        "installation_settings"
+        "installation_settings",
+        "services"
       ].freeze
 
     def save_settings_steps
