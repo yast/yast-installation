@@ -95,7 +95,7 @@ module Yast
         url_base = url[0, pos]
         url_template = url_base + filename_templ
         log.info("URL template: #{url_base}")
-        [Language.language, Language.language[0..1], "en"].each do |lang|
+        [Language.language, Language.language[0..1], "en"].uniq.each do |lang|
           url = Builtins.sformat(url_template, lang)
           log.info("URL: #{url}")
           # Where we want to store the downloaded release notes
