@@ -65,13 +65,19 @@ module Installation
       # this dialog in the workflow.
       Yast::Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
 
-      ret = Yast::CWM.show(
-        content,
-        # Title for installation overview dialog
-        caption: _("Installation Overview"),
-        # Button label: start the installation
-        next_button: _("Install")
-      )
+      ret = nil
+      loop do
+        ret = Yast::CWM.show(
+          content,
+          # Title for installation overview dialog
+          caption:        _("Installation Overview"),
+          # Button label: start the installation
+          next_button:    _("Install"),
+          # do not store stuff when just redrawing
+          skip_store_for: [:redraw]
+        )
+        break if ret != :redraw
+      end
 
       Yast::Wizard.CloseDialog if separate_wizard_needed?
 
