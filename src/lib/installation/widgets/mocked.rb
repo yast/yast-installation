@@ -41,8 +41,7 @@ module Widgets
 
     def handle(_event)
       Yast::WFM.CallFunction(proposal_client, ["AskUser", {}])
-      # FIXME: refresh the summary items
-      nil
+      :redraw
     end
 
   private
