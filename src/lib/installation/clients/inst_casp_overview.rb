@@ -54,6 +54,17 @@ module Installation
       Yast::Wizard.SetTitleIcon("yast-users") # ?
       Yast::Wizard.EnableAbortButton
 
+      # FIXME: where in the CaaSP workflow do we set the real thing?
+      fake_release_notes = {
+        # product name => notes (rich text)
+        "CaaaaaaaSP!" => "<p>These are the <i>fake</i> release notes.</p>"
+      }
+      Yast::UI.SetReleaseNotes(fake_release_notes)
+      # FIXME: This is copied from inst_complex_welcome
+      # and may be superfluous here. We will find out once we integrate
+      # this dialog in the workflow.
+      Yast::Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
+
       ret = Yast::CWM.show(
         content,
         # Title for installation overview dialog
