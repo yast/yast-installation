@@ -122,7 +122,6 @@ module Yast
     publish variable: :downloaded_release_notes, type: "list<string>"
     publish variable: :stop_relnotes_download, type: "boolean"
     publish variable: :failed_release_notes, type: "list<string>"
-
   end
 
   InstData = InstDataClass.new
