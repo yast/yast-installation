@@ -88,15 +88,6 @@ module Widgets
     def proposal_client
       "bootloader_proposal"
     end
-
-    def label
-      _("Booting")
-    end
-
-    def items
-      # FIXME: it returns richtext
-      Yast::Bootloader.Summary
-    end
   end
 
   class NetworkOverview < Overview
