@@ -34,7 +34,7 @@ module Widgets
       d = Yast::WFM.CallFunction(proposal_client,
                                  [
                                    "MakeProposal",
-                                   {"cramped_label_mode" => true}
+                                   {"simple_mode" => true}
                                  ])
       d["label_proposal"]
     end
