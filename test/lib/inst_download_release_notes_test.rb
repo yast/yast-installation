@@ -36,12 +36,12 @@ describe Yast::InstDownloadReleaseNotesClient do
       allow(Yast::Pkg).to receive(:ResolvableProperties).with("", :product, "")
         .and_return([product])
 
-      allow(Yast::SCR).to receive(:Execute).and_call_original
       allow(Yast::SCR).to receive(:Execute)
         .with(Yast::Path.new(".target.bash"), /curl.*relnotes/)
         .and_return(curl_code)
 
-      allow(Yast::SCR).to receive(:Read).and_call_original
+      allow(Yast::SCR).to receive(:Read)
+        .with(Yast::Path.new(".target.tmpdir"))
       allow(Yast::SCR).to receive(:Read)
         .with(Yast::Path.new(".target.string"), /relnotes/)
         .and_return("RELNOTES CONTENT")
