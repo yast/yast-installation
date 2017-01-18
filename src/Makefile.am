@@ -72,6 +72,7 @@ client_DATA = \
   clients/save_hw_status_finish.rb \
   clients/snapshots_finish.rb \
   clients/ssh_import_proposal.rb \
+  clients/network_proposal.rb \
   clients/ssh_import_auto.rb \
   clients/ssh_settings_finish.rb \
   clients/stroj-casu.rb \
@@ -193,6 +194,7 @@ ylibclient_DATA = \
   lib/installation/clients/save_config_finish.rb \
   lib/installation/clients/save_hw_status_finish.rb \
   lib/installation/clients/ssh_import_proposal.rb \
+  lib/installation/clients/network_proposal.rb \
   lib/installation/clients/ssh_settings_finish.rb \
   lib/installation/clients/stroj-casu.rb \
   lib/installation/clients/switch_scr_finish.rb \
