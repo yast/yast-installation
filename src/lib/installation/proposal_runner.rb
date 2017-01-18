@@ -323,8 +323,7 @@ module Installation
 
     # Call a submodule's AskUser() function.
     #
-    # @param [String] submodule	name of the submodule's proposal dispatcher
-    # @param  has_next		force a "next" button even if the submodule would otherwise rename it
+    # @param [String] input passed link from proposal dispatcher
     # @return workflow_sequence see proposal-API.txt, or nil if the link cannot be handled
     #   (is read-only)
     def submod_ask_user(input)

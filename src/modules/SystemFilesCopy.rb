@@ -70,8 +70,7 @@ module Yast
     # If the path exists but it is not a directory, it tries to create another
     # directory and returns its name. 'nil' is returned when everythig fails.
     #
-    # @param string mnt_tmpdir
-    # #return string mnt_tmpdir (maybe changed)
+    # @param create_directory [String] directory to create
     def CreateDirectoryIfMissing(create_directory)
       # path already exists
       if FileUtils.Exists(create_directory)
@@ -433,7 +432,7 @@ module Yast
 
     # Sets whether to use copy_files from control file
     #
-    # @param boolean whether to use them
+    # @param new_value [Boolean] whether to use them
     # @see #GetUseControlFileDef
     def SetUseControlFileDef(new_value)
       if new_value.nil?
@@ -459,7 +458,7 @@ module Yast
     # Sets new rules which files will be copied during installation.
     #
     # @see FATE #305019: configure the files to copy from a previous installation
-    # @param list <map> of new definitions
+    # @param new_copy_files[Array<Hash>] of new definitions
     #
     #
     # **Structure:**
