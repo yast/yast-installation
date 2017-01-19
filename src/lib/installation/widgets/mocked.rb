@@ -93,21 +93,10 @@ module Widgets
   class NetworkOverview < Overview
     def initialize
       textdomain "network"
-      Yast.import "Lan"
     end
 
-    def label
-      _("&Network")
-    end
-
-    def items
-      Yast::Lan.Summary("")
-    end
-
-    def handle(event)
-      Yast::WFM.CallFunction("inst_lan", [{"skip_detection" => true}])
-      # FIXME: refresh the summary items
-      nil
+    def proposal_client
+      "network_proposal"
     end
 
   end
