@@ -34,7 +34,8 @@ module Installation
 
     NON_OVERLAY_ATTRIBUTES = [
       "additional_dialogs",
-      "id"
+      "id",
+      "services"
     ].freeze
 
     def initialize
