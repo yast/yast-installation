@@ -69,7 +69,7 @@ module Installation
 
     # Modes in which #enable_remote should be called
     #
-    # @return Array<Symbol>
+    # @return [Array<Symbol>]
     def modes
       Yast::Linuxrc.vnc ? [:installation, :autoinst] : []
     end

@@ -250,12 +250,40 @@ module Installation
       title.gsub(/<a.*?>(.*?)<\/a>/, "\\1")
     end
 
-    # Returns the read-only flag
+    # Checks if the client's proposal is configured as "hard" or "soft" read-only
+    #
+    # "hard" read-only means that the proposal is always read-only
+    # "soft" read-only means that the proposal is made changeable when an error
+    #
+    # @return [Boolean] true if client is "hard" or "soft" read-only
+    # @see soft_read_only
+    # @see hard_read_only
+    def read_only?(client)
+      hard_read_only?(client) || soft_read_only?(client)
+    end
+
+    # Checks if the client's proposal is configured as "hard" read-only
+    #
+    # "hard" read-only means that the proposal is always read-only
+    # "soft" read-only means that the proposal is made changeable when an error
+    # in proposal is detected.
     #
     # @param [String] client
-    # @return [String] a title provided by the description API
-    def read_only?(client)
-      read_only_proposals.include?(client)
+    # @return [Boolean] if the client is marked as "hard" read only
+    def hard_read_only?(client)
+      read_only_proposals[:hard].include?(client)
+    end
+
+    # Checks if the client's proposal is configured as "soft" read-only
+    #
+    # "hard" read-only means that the proposal is always read-only
+    # "soft" read-only means that the proposal is made changeable when an error
+    # in proposal is detected.
+    #
+    # @param [String] client
+    # @return [Boolean] if the client is marked as "soft" read only
+    def soft_read_only?(client)
+      read_only_proposals[:soft].include?(client)
     end
 
     # Calls client('AskUser'), to change a setting interactively (if link is the
@@ -297,16 +325,30 @@ module Installation
       matching_client.first
     end
 
+    # Reads read-only proposals from the control file
+    #
+    # @return [Hash] map with keys :hard and :soft. Values are names
+    # of proposals with "hard" or "soft" read_only flag set.
     def read_only_proposals
       return @read_only_proposals if @read_only_proposals
 
-      @read_only_proposals = []
+      @read_only_proposals = { hard: [], soft: [] }
 
       properties.fetch("proposal_modules", []).each do |proposal|
         next unless proposal["read_only"]
 
         name = full_module_name(proposal["name"])
-        @read_only_proposals << name
+
+        ro_type = proposal["read_only"]
+
+        case ro_type
+        when "hard"
+          @read_only_proposals[:hard] << name
+        when "soft"
+          @read_only_proposals[:soft] << name
+        else
+          log.info("Uknown value for read_only node: #{ro_type}")
+        end
       end
 
       log.info "Found read-only proposals: #{@read_only_proposals}"
@@ -372,8 +414,8 @@ module Installation
     # Returns whether given trigger definition is correct
     # e.g., all mandatory parts are there
     #
-    # @param [Hash] trigger definition
-    # @rturn [Boolean] whether it is correct
+    # @param [Hash] trigger_def definition
+    # @return [Boolean] whether it is correct
     def valid_trigger?(trigger_def)
       trigger_def.key?("expect") &&
         trigger_def["expect"].is_a?(Hash) &&
@@ -551,7 +593,7 @@ module Installation
 
     # Build the full proposal module name including the "_proposal" suffix.
     # The sufix is not added when it is already present.
-    # @param [String] full or short proposal module name
+    # @param [String] name full or short proposal module name
     # @return [String] full proposal module name
     def full_module_name(name)
       # already a full name?
