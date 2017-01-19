@@ -1,4 +1,26 @@
 -------------------------------------------------------------------
+Tue Jan 17 15:34:22 UTC 2017 - igonzalezsosa@suse.com
+
+- Do not retry to download release notes if a previous attempt
+  failed (bsc#1015794)
+- 3.1.217.11
+
+-------------------------------------------------------------------
+Mon Jan 16 12:42:52 UTC 2017 - jreidinger@suse.com
+
+- add ability to roles to enable list of services when selected
+  (FATE#321754)
+- 3.1.217.10
+
+-------------------------------------------------------------------
+Mon Dec 19 13:23:12 UTC 2016 - mfilka@suse.com
+
+- fate#321739
+  - Made user's interaction possible in case of error in read-only
+    proposal.
+- 3.1.217.9 
+
+-------------------------------------------------------------------
 Wed Dec 14 15:47:02 UTC 2016 - jreidinger@suse.com
 
 - Change layout of new installation dialog according to UX team

@@ -323,8 +323,7 @@ module Installation
 
     # Call a submodule's AskUser() function.
     #
-    # @param [String] submodule	name of the submodule's proposal dispatcher
-    # @param  has_next		force a "next" button even if the submodule would otherwise rename it
+    # @param [String] input passed link from proposal dispatcher
     # @return workflow_sequence see proposal-API.txt, or nil if the link cannot be handled
     #   (is read-only)
     def submod_ask_user(input)
@@ -363,6 +362,15 @@ module Installation
       check_windows_left
 
       workflow_sequence
+    end
+
+    # Checks if given proposal map contains an error report
+    #
+    # @param [Hash] proposal map as returned by make_proposal
+    # @return [Boolean] true if the map reports an issue in proposal
+    # @see ProposalClient#make_proposal
+    def proposal_failed?(proposal)
+      proposal && [:blocker, :fatal, :error].include?(proposal["warning_level"])
     end
 
     def make_proposal(force_reset, language_changed)
@@ -404,14 +412,14 @@ module Installation
       make_proposal_callback = proc do |submod, prop_map|
         submodule_nr += 1
         Yast::UI.ChangeWidget(Id("pb_ip"), :Value, submodule_nr)
-        prop = html_header(submod)
+        force_rw = proposal_failed?(prop_map) && @store.soft_read_only?(submod)
+        prop = html_header(submod, force_rw: force_rw)
 
         # check if it is needed to switch to another tab
         # because of an error
         if Yast::Builtins.haskey(@mod2tab, submod)
           log.info "Mod2Tab: '#{@mod2tab[submod]}'"
-          warn_level = prop_map["warning_level"]
-          if [:blocker, :fatal, :error].include?(warn_level)
+          if proposal_failed?(prop_map)
             # bugzilla #237291
             # always switch to more detailed tab only
             # value 999 means to keep current tab, in case of error,
@@ -803,11 +811,11 @@ module Installation
     # Get the header for the specific proposal module
     # @param submod [String] the proposal module name
     # @return [String] richtext string with the proposal header
-    def html_header(submod)
+    def html_header(submod, force_rw: false)
       title = @store.title_for(submod)
 
       # do not add a link if the module is read-only or link is already included
-      heading = if @store.read_only?(submod) || title.include?("<a")
+      heading = if (!force_rw && @store.read_only?(submod)) || title.include?("<a")
         title
       else
         Yast::HTML.Link(title, @store.id_for(submod))
