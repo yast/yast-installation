@@ -110,6 +110,7 @@ module Installation
 
     # Returns a UI widget-set for the dialog
     def content
+      dashboard = Installation::Widgets::DashboardPlace.new
       quadrant_layout(
         upper_left: VBox(
           ::Widgets::RegistrationCode.new,
@@ -118,7 +119,8 @@ module Installation
           ::Y2Country::Widgets::KeyboardSelectionCombo.new("english-us")
         ),
         lower_left: VBox(
-          Installation::Widgets::SystemRole.new,
+          Installation::Widgets::SystemRole.new(dashboard),
+          dashboard,
           Tune::Widgets::SystemInformation.new
         ),
         upper_right: VBox(
