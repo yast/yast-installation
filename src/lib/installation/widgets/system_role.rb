@@ -29,16 +29,42 @@ Yast.import "ProductFeatures"
 
 module Installation
   module Widgets
-    # TODO: steal / refactor Installation::SelectSystemRole
-    # from src/lib/installation/select_system_role.rb
+    class DashboardURL < CWM::InputField
+      def label
+        # intentional no translation for CAASP
+        "Dashboard URL"
+      end
+
+      def store
+        # TODO: implement it together with init and some validation
+      end
+    end
+
+    class DashboardPlace < CWM::ReplacePoint
+      def initialize
+        @dashboard = DashboardURL.new
+        @empty = CWM::Empty.new("no_dashboard")
+        super(widget: @empty)
+      end
+
+      def show
+        replace(@dashboard)
+      end
+
+      def hide
+        replace(@empty)
+      end
+    end
+
     class SystemRole < CWM::ComboBox
       class << self
         # once the user selects a role, remember it in case they come back
         attr_accessor :original_role_id
       end
 
-      def initialize
+      def initialize(dashboard_widget)
         textdomain "installation"
+        @dashboard_widget = dashboard_widget
       end
 
       def label
@@ -46,12 +72,22 @@ module Installation
       end
 
       def opt
-        [:hstretch]
+        [:hstretch, :notify]
       end
 
       def init
-        self.class.original_role_id ||= roles_attributes.first[:id]
+        self.class.original_role_id ||= roles_description.first[:id]
         self.value = self.class.original_role_id
+      end
+
+      def handle
+        if value == "worker_role"
+          @dashboard_widget.show
+        else
+          @dashboard_widget.hide
+        end
+
+        nil
       end
 
       def items
@@ -62,7 +98,7 @@ module Installation
 
       def help
         Yast::ProductControl.GetTranslatedText("roles_help") + "\n\n"
-          roles_description.map { |r| r[:label] + "\n\n" + r[:description] + "\n\n\n"}
+          roles_description.map { |r| r[:label] + "\n\n" + r[:description]}.join("\n\n\n")
       end
 
       NON_OVERLAY_ATTRIBUTES = [
