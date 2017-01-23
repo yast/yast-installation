@@ -68,5 +68,29 @@ module Installation
         "ask_" + proposal_client
       end
     end
+
+    class PartitioningOverview < Overview
+      def initialize
+        super(client: "partitions_proposal")
+      end
+    end
+
+    class BootloaderOverview < Overview
+      def initialize
+        super(client: "bootloader_proposal")
+      end
+    end
+
+    class NetworkOverview < Overview
+      def initialize
+        super(client: "network_proposal")
+      end
+    end
+
+    class KdumpOverview < Overview
+      def initialize
+        super(client: "kdump_proposal")
+      end
+    end
   end
 end

@@ -128,12 +128,12 @@ module Installation
           Tune::Widgets::SystemInformation.new
         ),
         upper_right: VBox(
-          Installation::Widgets::Overview.new(client: "partitions_proposal"),
-          Installation::Widgets::Overview.new(client: "bootloader_proposal")
+          Installation::Widgets::PartitioningOverview.new,
+          Installation::Widgets::BootloaderOverview.new
         ),
         lower_right: VBox(
-          Installation::Widgets::Overview.new(client: "network_proposal"),
-          Installation::Widgets::Overview.new(client: "kdump_proposal")
+          Installation::Widgets::NetworkOverview.new,
+          Installation::Widgets::KdumpOverview.new
         )
       )
     end
