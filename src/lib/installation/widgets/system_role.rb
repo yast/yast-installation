@@ -97,7 +97,7 @@ module Installation
       end
 
       def help
-        Yast::ProductControl.GetTranslatedText("roles_help") + "\n\n"
+        Yast::ProductControl.GetTranslatedText("roles_help") + "\n\n" +
           roles_description.map { |r| r[:label] + "\n\n" + r[:description]}.join("\n\n\n")
       end
 
