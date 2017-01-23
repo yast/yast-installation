@@ -24,6 +24,7 @@ require "y2country/widgets"
 require "ui/widgets"
 require "tune/widgets"
 
+require "installation/widgets/overview"
 require "installation/widgets/system_role"
 # FIXME: prototype only
 require "installation/widgets/mocked"
@@ -127,12 +128,12 @@ module Installation
           Tune::Widgets::SystemInformation.new
         ),
         upper_right: VBox(
-          ::Widgets::PartitioningOverview.new,
-          ::Widgets::BootloaderOverview.new
+          Installation::Widgets::Overview.new(client: "partitions_proposal"),
+          Installation::Widgets::Overview.new(client: "bootloader_proposal")
         ),
         lower_right: VBox(
-          ::Widgets::NetworkOverview.new,
-          ::Widgets::KdumpOverview.new
+          Installation::Widgets::Overview.new(client: "network_proposal"),
+          Installation::Widgets::Overview.new(client: "kdump_proposal")
         )
       )
     end
