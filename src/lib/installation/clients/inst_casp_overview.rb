@@ -73,6 +73,9 @@ module Installation
           caption:        _("Installation Overview"),
           # Button label: start the installation
           next_button:    _("Install"),
+          # do not show abort and back button
+          abort_button:   "",
+          back_button:    "",
           # do not store stuff when just redrawing
           skip_store_for: [:redraw]
         )
