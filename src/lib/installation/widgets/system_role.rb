@@ -138,11 +138,11 @@ module Installation
       end
 
       def adapt_services
-        services = raw_roles.find { |r| r["id"] == role_id }["services"]
+        services = raw_roles.find { |r| r["id"] == value }["services"]
         services ||= []
 
         to_enable = services.map { |s| s["name"] }
-        log.info "enable for #{role_id} these services: #{to_enable.inspect}"
+        log.info "enable for #{value} these services: #{to_enable.inspect}"
 
         Installation::Services.enabled = to_enable
       end
