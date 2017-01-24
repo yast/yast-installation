@@ -26,8 +26,6 @@ require "tune/widgets"
 
 require "installation/widgets/overview"
 require "installation/widgets/system_role"
-# FIXME: prototype only
-require "installation/widgets/mocked"
 
 module Installation
   # This library provides a simple dialog for setting
@@ -116,13 +114,13 @@ module Installation
     def content
       dashboard = Installation::Widgets::DashboardPlace.new
       quadrant_layout(
-        upper_left: VBox(
-          ::Widgets::RegistrationCode.new,
+        upper_left:  VBox(
+          Registration::Widgets::RegistrationCode.new,
           ::Users::PasswordWidget.new(little_space: true),
           # use english us as default keyboard layout
           ::Y2Country::Widgets::KeyboardSelectionCombo.new("english-us")
         ),
-        lower_left: VBox(
+        lower_left:  VBox(
           Installation::Widgets::SystemRole.new(dashboard),
           dashboard,
           Tune::Widgets::SystemInformation.new

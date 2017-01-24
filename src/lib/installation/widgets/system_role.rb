@@ -26,7 +26,6 @@ require "installation/services"
 Yast.import "ProductControl"
 Yast.import "ProductFeatures"
 
-
 module Installation
   module Widgets
     class DashboardURL < CWM::InputField
