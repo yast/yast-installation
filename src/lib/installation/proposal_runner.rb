@@ -102,6 +102,12 @@ module Installation
 
       return :auto if !submod_descriptions_and_build_menu
 
+      # Default language is the most often set by language proposal later in the workflow
+      # and overwrites this.
+      # However, some products do not contain such proposal (e.g. CaaSP) and needs this
+      # setup to avoid false language change detection (e.g. in software proposal)
+      Yast::Pkg.SetPackageLocale(Yast::Language.language)
+
       #
       # Make the initial proposal
       #

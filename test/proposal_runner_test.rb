@@ -60,6 +60,8 @@ describe ::Installation::ProposalRunner do
         .with("keyboard_proposal", ["Description", {}]).and_return(keyboard_description)
       allow(Yast::WFM).to receive(:CallFunction)
         .with("hwinfo_proposal", ["Description", {}]).and_return(hwinfo_description)
+      # Language class is missing in buildroot -> mock it
+      allow(Yast::Language).to receive(:language).and_return("en_US")
     end
 
     it "do nothing if run non-interactive" do
