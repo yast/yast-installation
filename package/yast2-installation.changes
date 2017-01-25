@@ -2,7 +2,7 @@
 Wed Jan 25 10:41:33 UTC 2017 - igonzalezsosa@suse.com
 
 - Add an option to disable the self-update feature through the
-  AutoYaST profile
+  AutoYaST profile (FATE#319716)
 - 3.2.17
 
 -------------------------------------------------------------------
