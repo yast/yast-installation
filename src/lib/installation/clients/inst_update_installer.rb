@@ -134,8 +134,8 @@ module Yast
     #
     # @return [Boolean] True if it's enabled; false otherwise.
     def self_update_enabled?
-      if disabled_in_linuxrc?
-        log.info("self-update was disabled through Linuxrc")
+      if disabled_in_linuxrc? || disabled_in_profile?
+        log.info("self-update was disabled by the user")
         false
       else
         !self_update_urls.empty?
@@ -147,6 +147,16 @@ module Yast
     #   boot option
     def disabled_in_linuxrc?
       Linuxrc.InstallInf("SelfUpdate") == "0"
+    end
+
+    # Determines whether self-update feature is disable via AutoYaST profile
+    #
+    # @return [Boolean] true if self update has been disabled by AutoYaST profile
+    def disabled_in_profile?
+      return false unless Mode.auto
+
+      profile = Yast::Profile.current
+      !profile.fetch("general", {}).fetch("self_update", true)
     end
 
     # Return the self-update URLs
