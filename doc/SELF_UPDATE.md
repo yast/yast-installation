@@ -7,9 +7,21 @@ installation even after the media has been released. Check
 
 ## Disabling Updates
 
-Self-update is enabled by default. However, it can be disabled by setting
-`self_update=0` boot option. In the following sections it is assumed that this
-feature is enabled.
+Starting in SUSE Linux Enterprise 12 SP3, self-update is enabled by default.
+However, it can be disabled by setting `self_update=0` boot option. If you're
+using AutoYaST, it is also possible to disable this feature using the
+`self_update` element in the `general` section of the profile:
+
+   ```xml
+   <general>
+     <self_update config:type="boolean">false</self_update>
+   </general>
+   ```
+
+Please, take into account that self-update will be skipped if any option
+disables it (boot parameter *or* AutoYaST profile).
+
+During the rest of this document it is assumed that self-update is enabled.
 
 ## Basic Workflow
 

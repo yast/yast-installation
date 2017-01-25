@@ -484,6 +484,15 @@ describe Yast::InstUpdateInstaller do
               end
             end
           end
+
+          context "when update is disabled through the profile" do
+            let(:profile) { { "general" => { "self_update" => false } } }
+
+            it "does not update the installer" do
+              expect(subject).to_not receive(:update_installer)
+              expect(subject.main).to eq(:next)
+            end
+          end
         end
       end
 
