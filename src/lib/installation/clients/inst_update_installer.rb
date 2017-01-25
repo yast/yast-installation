@@ -148,12 +148,10 @@ module Yast
       Linuxrc.InstallInf("SelfUpdate") == "0"
     end
 
-    # Determines whether self-update feature is disable via AutoYaST profile
+    # Determines whether self-update feature is disabled via AutoYaST profile
     #
     # @return [Boolean] true if self update has been disabled by AutoYaST profile
     def disabled_in_profile?
-      return false unless Mode.auto
-
       profile = Yast::Profile.current
       !profile.fetch("general", {}).fetch("self_update", true)
     end
