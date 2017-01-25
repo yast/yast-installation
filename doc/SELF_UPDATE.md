@@ -18,8 +18,8 @@ using AutoYaST, it is also possible to disable this feature using the
    </general>
    ```
 
-Please, take into account that self-update will be disabled if any of those
-values is set.
+Please, take into account that self-update will be skipped if any option
+disables it (boot parameter *or* AutoYaST profile).
 
 During the rest of this document it is assumed that self-update is enabled.
 
