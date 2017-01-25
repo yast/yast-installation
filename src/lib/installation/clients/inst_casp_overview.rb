@@ -133,7 +133,8 @@ module Installation
         ),
         lower_right: VBox(
           Installation::Widgets::NetworkOverview.new,
-          Installation::Widgets::KdumpOverview.new
+          Installation::Widgets::KdumpOverview.new,
+          Installation::Widgets::InvisibleSoftwareOverview.new
         )
       )
     end
