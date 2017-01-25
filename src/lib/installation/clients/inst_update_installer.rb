@@ -63,13 +63,12 @@ module Yast
         return :next
       end
 
-      initialize_progress
-
       if Mode.auto
         process_profile
-        Yast::Progress.NextStage
+        return :next if disabled_in_profile?
       end
 
+      initialize_progress
       initialize_packager
 
       # self-update not possible, the repo URL is not defined
@@ -134,8 +133,8 @@ module Yast
     #
     # @return [Boolean] True if it's enabled; false otherwise.
     def self_update_enabled?
-      if disabled_in_linuxrc? || disabled_in_profile?
-        log.info("self-update was disabled by the user")
+      if disabled_in_linuxrc?
+        log.info("self-update was disabled through Linuxrc")
         false
       else
         !self_update_urls.empty?
@@ -591,8 +590,6 @@ module Yast
         _("Apply the Packages"),
         _("Restart")
       ]
-
-      stages.unshift(_("Fetching AutoYast Profile")) if Mode.auto
 
       # open a new wizard dialog with title on the top
       # (the default dialog with title on the left looks ugly with the
