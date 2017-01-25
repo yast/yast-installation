@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jan 25 15:29:02 UTC 2017 - mvidner@suse.com
+
+- Added an all-in-one installation overview for CaaSP (FATE#322328)
+- 3.1.217.12
+
+-------------------------------------------------------------------
 Tue Jan 17 15:34:22 UTC 2017 - igonzalezsosa@suse.com
 
 - Do not retry to download release notes if a previous attempt
