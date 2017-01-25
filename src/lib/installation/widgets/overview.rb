@@ -70,5 +70,16 @@ module Installation
         "ask_" + proposal_client
       end
     end
+
+    class InvisibleSoftwareOverview < Overview
+      def initialize
+        super(client: "software_proposal")
+      end
+
+      def contents
+        _ = items
+        Empty()
+      end
+    end
   end
 end

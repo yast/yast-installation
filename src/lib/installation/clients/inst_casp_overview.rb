@@ -133,7 +133,8 @@ module Installation
         ),
         lower_right: VBox(
           Installation::Widgets::Overview.new(client: "network_proposal"),
-          Installation::Widgets::Overview.new(client: "kdump_proposal")
+          Installation::Widgets::Overview.new(client: "kdump_proposal"),
+          Installation::Widgets::InvisibleSoftwareOverview.new
         )
       )
     end
