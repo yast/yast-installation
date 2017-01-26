@@ -6,12 +6,16 @@ ENV["Y2DIR"] = y2dirs.unshift(srcdir).join(":")
 # (some tests check the output which is marked for translation)
 ENV["LC_ALL"] = "en_US.UTF-8"
 
+
 require "yast"
 require "yast/rspec"
 require "pathname"
 require_relative "helpers"
 
 FIXTURES_DIR = Pathname.new(__FILE__).dirname.join("fixtures")
+
+# mock some dependencies, to not increase built dependencies
+$LOAD_PATH.unshift(File.join(FIXTURES_DIR.to_s, "stub_libs"))
 
 # fake AutoinstConfigClass class which is not supported by Ubuntu
 module Yast

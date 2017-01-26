@@ -9,6 +9,19 @@ Yast.import "Pkg"
 Yast.import "Popup"
 Yast.import "Wizard"
 
+# stub tune widgets used in dialog
+require "cwm/widget"
+
+module Tune
+  module Widgets
+    class SystemInformation < CWM::PushButton
+      def label
+        "System Information"
+      end
+    end
+  end
+end
+
 describe ::Installation::InstCaspOverview do
   describe "#run" do
     before do
