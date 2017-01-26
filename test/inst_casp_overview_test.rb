@@ -1,3 +1,5 @@
+#! /usr/bin/env rspec
+
 require_relative "test_helper"
 
 require "installation/clients/inst_casp_overview"
