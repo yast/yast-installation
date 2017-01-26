@@ -49,8 +49,9 @@ module Installation
       end
 
       def label
+        return @label if @label
         d = Yast::WFM.CallFunction(proposal_client, ["Description", {}])
-        d["menu_title"]
+        @label = d["menu_title"]
       end
 
       def items
@@ -67,7 +68,7 @@ module Installation
             "Severity: %{severity}<br>" \
             "Message: %{message}" %
             ({
-              client: proposal_client,
+              client: label,
               severity: (d["warning_level"] || :warning).to_s,
               message: d["warning"]
             })

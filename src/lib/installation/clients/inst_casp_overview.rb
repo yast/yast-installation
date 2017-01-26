@@ -76,10 +76,10 @@ module Installation
         )
         blocker = blocking_widgets.find(&:blocking?)
         if blocker
-          # %title stands for title of problematic part
+          # %s is a heading of a problematic section, like "Partitioning" or "Network"
           Yast::Popup.Error(
-            _("%{title} blocks installation. Please solve problem here before proceeding.") %
-            ({title: blocker.label.gsub(/&/, "")})
+            _("%s blocks the installation. Please solve the problem there before proceeding.") %
+            blocker.label.gsub(/&/, "")
           )
           next
         end
