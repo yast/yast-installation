@@ -43,11 +43,17 @@ module Installation
 
     def run
       Yast.import "UI"
+      Yast.import "Language"
       Yast.import "Mode"
       Yast.import "CWM"
       Yast.import "Popup"
+      Yast.import "Pkg"
 
       textdomain "installation"
+
+      # Simplified work-flow do not contain language proposal, but have software one.
+      # So avoid false positive detection of language change
+      Yast::Pkg.SetPackageLocale(Yast::Language.language)
 
       # We do not need to create a wizard dialog in installation, but it's
       # helpful when testing all manually on a running system
