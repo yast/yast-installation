@@ -26,7 +26,6 @@ require "installation/services"
 Yast.import "ProductControl"
 Yast.import "ProductFeatures"
 
-
 module Installation
   module Widgets
     class DashboardURL < CWM::InputField
@@ -98,7 +97,7 @@ module Installation
 
       def help
         Yast::ProductControl.GetTranslatedText("roles_help") + "\n\n" +
-          roles_description.map { |r| r[:label] + "\n\n" + r[:description]}.join("\n\n\n")
+          roles_description.map { |r| r[:label] + "\n\n" + r[:description] }.join("\n\n\n")
       end
 
       NON_OVERLAY_ATTRIBUTES = [
@@ -106,7 +105,6 @@ module Installation
         "id"
       ].freeze
       private_constant :NON_OVERLAY_ATTRIBUTES
-
 
       def store
         log.info "Applying system role '#{value}'"
@@ -117,7 +115,6 @@ module Installation
         adapt_services
         self.class.original_role_id = value
       end
-
 
     private
 

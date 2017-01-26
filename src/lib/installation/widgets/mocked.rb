@@ -15,4 +15,3 @@ module Widgets
     end
   end
 end
-

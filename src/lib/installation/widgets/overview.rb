@@ -51,10 +51,10 @@ module Installation
 
       def items
         d = Yast::WFM.CallFunction(proposal_client,
-                                   [
-                                     "MakeProposal",
-                                     {"simple_mode" => true}
-                                   ])
+          [
+            "MakeProposal",
+            { "simple_mode" => true }
+          ])
         d["label_proposal"]
       end
 
@@ -63,7 +63,7 @@ module Installation
         :redraw
       end
 
-      private
+    private
 
       def button_id
         # an arbitrary unique id
