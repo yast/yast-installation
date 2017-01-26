@@ -6,7 +6,6 @@ ENV["Y2DIR"] = y2dirs.unshift(srcdir).join(":")
 # (some tests check the output which is marked for translation)
 ENV["LC_ALL"] = "en_US.UTF-8"
 
-
 require "yast"
 require "yast/rspec"
 require "pathname"
