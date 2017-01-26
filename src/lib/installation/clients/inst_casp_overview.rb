@@ -43,10 +43,17 @@ module Installation
 
     def run
       Yast.import "UI"
+      Yast.import "Language"
       Yast.import "Mode"
       Yast.import "CWM"
+      Yast.import "Popup"
+      Yast.import "Pkg"
 
       textdomain "installation"
+
+      # Simplified work-flow do not contain language proposal, but have software one.
+      # So avoid false positive detection of language change
+      Yast::Pkg.SetPackageLocale(Yast::Language.language)
 
       # We do not need to create a wizard dialog in installation, but it's
       # helpful when testing all manually on a running system
@@ -54,6 +61,7 @@ module Installation
 
       ret = nil
       loop do
+        content, blocking_widgets = content_and_blocking_widgets
         ret = Yast::CWM.show(
           content,
           # Title for installation overview dialog
@@ -66,6 +74,15 @@ module Installation
           # do not store stuff when just redrawing
           skip_store_for: [:redraw]
         )
+        blocker = blocking_widgets.find(&:blocking?)
+        if blocker
+          # %s is a heading of a problematic section, like "Partitioning" or "Network"
+          Yast::Popup.Error(
+            _("%s blocks the installation. Please solve the problem there before proceeding.") %
+            blocker.label.delete("&")
+          )
+          next
+        end
         break if ret != :redraw
       end
 
@@ -98,10 +115,16 @@ module Installation
       )
     end
 
-    # Returns a UI widget-set for the dialog
-    def content
+    # Returns a pair with UI widget-set for the dialog and widgets that can
+    # block installation
+    def content_and_blocking_widgets
       dashboard = Installation::Widgets::DashboardPlace.new
-      quadrant_layout(
+      partitions = Installation::Widgets::Overview.new(client: "partitions_proposal")
+      bootloader = Installation::Widgets::Overview.new(client: "bootloader_proposal")
+      network = Installation::Widgets::Overview.new(client: "network_proposal")
+      kdump = Installation::Widgets::Overview.new(client: "kdump_proposal")
+      blocking = [partitions, bootloader, network, kdump]
+      content = quadrant_layout(
         upper_left:  VBox(
           ::Widgets::RegistrationCode.new,
           ::Users::PasswordWidget.new(little_space: true),
@@ -114,15 +137,17 @@ module Installation
           Tune::Widgets::SystemInformation.new
         ),
         upper_right: VBox(
-          Installation::Widgets::Overview.new(client: "partitions_proposal"),
-          Installation::Widgets::Overview.new(client: "bootloader_proposal")
+          partitions,
+          bootloader
         ),
         lower_right: VBox(
-          Installation::Widgets::Overview.new(client: "network_proposal"),
-          Installation::Widgets::Overview.new(client: "kdump_proposal"),
+          network,
+          kdump,
           Installation::Widgets::InvisibleSoftwareOverview.new
         )
       )
+
+      [content, blocking]
     end
 
     # Returns whether we need/ed to create new UI Wizard

@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jan 26 14:16:43 UTC 2017 - jreidinger@suse.com
+
+- handle proposal errors in all-in-one dialog (FATE#322328)
+- 3.1.217.14
+
+-------------------------------------------------------------------
 Wed Jan 25 15:29:02 UTC 2017 - mvidner@suse.com
 
 - Added an all-in-one installation overview for CaaSP (FATE#322328)
