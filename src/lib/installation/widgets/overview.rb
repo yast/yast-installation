@@ -22,10 +22,13 @@
 require "yast"
 require "cwm/widget"
 
+Yast.import "Popup"
+
 module Installation
   module Widgets
     # A widget for an all-in-one installation dialog.
     # It uses the `simple_mode` of {Installation::ProposalClient#make_proposal}
+    # It is immutable, so for showing new values reinitialize widget
     class Overview < CWM::CustomWidget
       attr_reader :proposal_client
 
@@ -35,6 +38,7 @@ module Installation
         @proposal_client = client
         # by default widget_id is the class name; must differentiate instances
         self.widget_id = "overview_" + client
+        @blocking = false
       end
 
       def contents
@@ -50,17 +54,36 @@ module Installation
       end
 
       def items
+        return @items if @items
+
         d = Yast::WFM.CallFunction(proposal_client,
           [
             "MakeProposal",
             { "simple_mode" => true }
           ])
-        d["label_proposal"]
+        if d["warning"] && !d["warning"].empty? && d["warning_level"] != :notice
+          Yast::Popup.LongError(
+            "Problem found when proposing %{client}:<br>" \
+            "Severity: %{severity}<br>" \
+            "Message: %{message}" %
+            ({
+              client: proposal_client,
+              severity: (d["warning_level"] || :warning).to_s,
+              message: d["warning"]
+            })
+          )
+          @blocking = [:blocker, :fatal].include?(d["warning_level"])
+        end
+        @items = d["label_proposal"]
       end
 
       def handle(_event)
         Yast::WFM.CallFunction(proposal_client, ["AskUser", {}])
         :redraw
+      end
+
+      def blocking?
+        @blocking
       end
 
     private
