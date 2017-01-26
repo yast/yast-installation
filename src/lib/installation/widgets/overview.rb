@@ -64,14 +64,14 @@ module Installation
           ])
         if d["warning"] && !d["warning"].empty? && d["warning_level"] != :notice
           Yast::Popup.LongError(
-            "Problem found when proposing %{client}:<br>" \
-            "Severity: %{severity}<br>" \
-            "Message: %{message}" %
-            ({
-              client: label,
+            format(
+              "Problem found when proposing %{client}:<br>" \
+              "Severity: %{severity}<br>" \
+              "Message: %{message}",
+              client:   label.delete("&"),
               severity: (d["warning_level"] || :warning).to_s,
-              message: d["warning"]
-            })
+              message:  d["warning"]
+            )
           )
           @blocking = [:blocker, :fatal].include?(d["warning_level"])
         end

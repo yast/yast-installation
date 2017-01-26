@@ -79,7 +79,7 @@ module Installation
           # %s is a heading of a problematic section, like "Partitioning" or "Network"
           Yast::Popup.Error(
             _("%s blocks the installation. Please solve the problem there before proceeding.") %
-            blocker.label.gsub(/&/, "")
+            blocker.label.delete("&")
           )
           next
         end
