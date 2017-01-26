@@ -23,6 +23,7 @@ client_DATA = \
   clients/installation.rb \
   clients/installation_settings_finish.rb \
   clients/inst_ask_online_update.rb \
+  clients/inst_casp_overview.rb \
   clients/inst_complex_welcome.rb \
   clients/inst_congratulate.rb \
   clients/inst_deploy_image.rb \
@@ -152,6 +153,7 @@ ylibclient_DATA = \
   lib/installation/clients/installation.rb \
   lib/installation/clients/installation_settings_finish.rb \
   lib/installation/clients/inst_ask_online_update.rb \
+  lib/installation/clients/inst_casp_overview.rb \
   lib/installation/clients/inst_complex_welcome.rb \
   lib/installation/clients/inst_congratulate.rb \
   lib/installation/clients/inst_deploy_image.rb \
@@ -209,6 +211,12 @@ ylibdialogdir = "${yast2dir}/lib/installation/dialogs"
 ylibdialog_DATA = \
   lib/installation/dialogs/ssh_import.rb \
   lib/installation/dialogs/worker_role.rb
+
+ylibwidgetdir = "${yast2dir}/lib/installation/widgets"
+ylibwidget_DATA = \
+  lib/installation/widgets/mocked.rb \
+  lib/installation/widgets/overview.rb \
+  lib/installation/widgets/system_role.rb
 
 EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylibdialog_DATA) $(ylib_DATA) $(ylibtransfer_DATA)
 
