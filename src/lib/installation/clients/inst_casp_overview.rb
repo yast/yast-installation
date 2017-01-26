@@ -78,7 +78,7 @@ module Installation
         if blocker
           # %title stands for title of problematic part
           Yast::Popup.Error(
-            _("%{title} blocks installation. Please solve before before proceeding.") %
+            _("%{title} blocks installation. Please solve problem here before proceeding.") %
             ({title: blocker.label.gsub(/&/, "")})
           )
           next
