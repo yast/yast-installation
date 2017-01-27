@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Jan 27 15:55:33 UTC 2017 - kanderssen@suse.com
+
+- Ask for installation confirmation in all-in-one dialog before
+  proceed with it. (Fate#3222328)
+- 3.1.217.16
+
+-------------------------------------------------------------------
 Fri Jan 27 09:11:32 UTC 2017 - jreidinger@suse.com
 
 - Respect newly registered update repos in software proposal and
