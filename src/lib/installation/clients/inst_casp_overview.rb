@@ -73,23 +73,21 @@ module Installation
           # do not store stuff when just redrawing
           skip_store_for: [:redraw]
         )
-        if ret != :redraw
-          # do software proposal
-          d = Yast::WFM.CallFunction("software_proposal",
-            [
-              "MakeProposal",
-              { "simple_mode" => true }
-            ])
-          if ([:blocker, :fatal].include?(d["warning_level"]))
-            # %s is a problem description
-            Yast::Popup.Error(
-              _("Software proposal failed. Cannot proceed with installation.\n%s") % d["warning"]
-            )
-          else
-            break
-          end
-        end
+        next if ret == :redraw
 
+        # do software proposal
+        d = Yast::WFM.CallFunction("software_proposal",
+          [
+            "MakeProposal",
+            { "simple_mode" => true }
+          ])
+        # no problem, so lets continue
+        break unless [:blocker, :fatal].include?(d["warning_level"])
+
+        # %s is a problem description
+        Yast::Popup.Error(
+          _("Software proposal failed. Cannot proceed with installation.\n%s") % d["warning"]
+        )
       end
 
       Yast::Wizard.CloseDialog if separate_wizard_needed?
