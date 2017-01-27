@@ -73,7 +73,23 @@ module Installation
           # do not store stuff when just redrawing
           skip_store_for: [:redraw]
         )
-        break if ret != :redraw
+        if ret != :redraw
+          # do software proposal
+          d = Yast::WFM.CallFunction("software_proposal",
+            [
+              "MakeProposal",
+              { "simple_mode" => true }
+            ])
+          if ([:blocker, :fatal].include?(d["warning_level"]))
+            # %s is a problem description
+            Yast::Popup.Error(
+              _("Software proposal failed. Cannot proceed with installation.\n%s") % d["warning"]
+            )
+          else
+            break
+          end
+        end
+
       end
 
       Yast::Wizard.CloseDialog if separate_wizard_needed?
@@ -127,8 +143,7 @@ module Installation
         ),
         lower_right: VBox(
           Installation::Widgets::Overview.new(client: "network_proposal"),
-          Installation::Widgets::Overview.new(client: "kdump_proposal"),
-          Installation::Widgets::InvisibleSoftwareOverview.new
+          Installation::Widgets::Overview.new(client: "kdump_proposal")
         )
       )
     end
