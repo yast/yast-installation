@@ -34,6 +34,30 @@ module Registration
   end
 end
 
+module Users
+  class PasswordWidget < CWM::CustomWidget
+    def initialize(little_space: true)
+    end
+
+    def label
+      "Password"
+    end
+  end
+end
+
+module Y2Country
+  module Widgets
+    class KeyboardSelectionCombo < CWM::ComboBox
+      def initialize(_language)
+      end
+
+      def label
+        "Keyboard"
+      end
+    end
+  end
+end
+
 describe ::Installation::InstCaspOverview do
   describe "#run" do
     before do
