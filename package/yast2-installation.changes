@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Jan 27 09:11:32 UTC 2017 - jreidinger@suse.com
+
+- Respect newly registered update repos in software proposal and
+  add error reporting for software proposal (FATE#322328)
+- 3.1.217.15
+
+-------------------------------------------------------------------
 Thu Jan 26 14:16:43 UTC 2017 - jreidinger@suse.com
 
 - handle proposal errors in all-in-one dialog (FATE#322328)
