@@ -77,6 +77,7 @@ module Installation
       def init
         self.class.original_role_id ||= roles_description.first[:id]
         self.value = self.class.original_role_id
+        handle
       end
 
       def handle
