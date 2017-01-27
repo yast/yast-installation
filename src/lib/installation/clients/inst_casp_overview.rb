@@ -23,11 +23,10 @@ require "users/widgets"
 require "y2country/widgets"
 require "ui/widgets"
 require "tune/widgets"
+require "registration/widgets/registration_code"
 
 require "installation/widgets/overview"
 require "installation/widgets/system_role"
-# FIXME: prototype only
-require "installation/widgets/mocked"
 
 module Installation
   # This library provides a simple dialog for setting
@@ -61,7 +60,6 @@ module Installation
 
       ret = nil
       loop do
-        content, blocking_widgets = content_and_blocking_widgets
         ret = Yast::CWM.show(
           content,
           # Title for installation overview dialog
@@ -74,16 +72,21 @@ module Installation
           # do not store stuff when just redrawing
           skip_store_for: [:redraw]
         )
-        blocker = blocking_widgets.find(&:blocking?)
-        if blocker
-          # %s is a heading of a problematic section, like "Partitioning" or "Network"
-          Yast::Popup.Error(
-            _("%s blocks the installation. Please solve the problem there before proceeding.") %
-            blocker.label.delete("&")
-          )
-          next
-        end
-        break if ret != :redraw
+        next if ret == :redraw
+
+        # do software proposal
+        d = Yast::WFM.CallFunction("software_proposal",
+          [
+            "MakeProposal",
+            { "simple_mode" => true }
+          ])
+        # no problem, so lets continue
+        break unless [:blocker, :fatal].include?(d["warning_level"])
+
+        # %s is a problem description
+        Yast::Popup.Error(
+          _("Software proposal failed. Cannot proceed with installation.\n%s") % d["warning"]
+        )
       end
 
       Yast::Wizard.CloseDialog if separate_wizard_needed?
@@ -117,16 +120,11 @@ module Installation
 
     # Returns a pair with UI widget-set for the dialog and widgets that can
     # block installation
-    def content_and_blocking_widgets
+    def content
       dashboard = Installation::Widgets::DashboardPlace.new
-      partitions = Installation::Widgets::Overview.new(client: "partitions_proposal")
-      bootloader = Installation::Widgets::Overview.new(client: "bootloader_proposal")
-      network = Installation::Widgets::Overview.new(client: "network_proposal")
-      kdump = Installation::Widgets::Overview.new(client: "kdump_proposal")
-      blocking = [partitions, bootloader, network, kdump]
-      content = quadrant_layout(
+      quadrant_layout(
         upper_left:  VBox(
-          ::Widgets::RegistrationCode.new,
+          ::Registration::Widgets::RegistrationCode.new,
           ::Users::PasswordWidget.new(little_space: true),
           # use english us as default keyboard layout
           ::Y2Country::Widgets::KeyboardSelectionCombo.new("english-us")
@@ -137,17 +135,14 @@ module Installation
           Tune::Widgets::SystemInformation.new
         ),
         upper_right: VBox(
-          partitions,
-          bootloader
+          Installation::Widgets::Overview.new(client: "partitions_proposal"),
+          Installation::Widgets::Overview.new(client: "bootloader_proposal")
         ),
         lower_right: VBox(
-          network,
-          kdump,
-          Installation::Widgets::InvisibleSoftwareOverview.new
+          Installation::Widgets::Overview.new(client: "network_proposal"),
+          Installation::Widgets::Overview.new(client: "kdump_proposal")
         )
       )
-
-      [content, blocking]
     end
 
     # Returns whether we need/ed to create new UI Wizard

@@ -24,6 +24,16 @@ module Tune
   end
 end
 
+module Registration
+  module Widgets
+    class RegistrationCode < CWM::InputField
+      def label
+        "Registration code"
+      end
+    end
+  end
+end
+
 describe ::Installation::InstCaspOverview do
   describe "#run" do
     before do
@@ -31,6 +41,7 @@ describe ::Installation::InstCaspOverview do
       allow(Yast::Wizard).to receive(:CloseDialog)
       allow(Yast::Pkg).to receive(:SetPackageLocale)
       allow(Yast::CWM).to receive(:show).and_return(:next)
+      allow(Yast::WFM).to receive(:CallFunction).and_return({})
     end
 
     it "sets package locale same as Language" do

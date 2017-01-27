@@ -35,6 +35,7 @@ module Installation
       # @param client [String] A proposal client implementing simple_mode,
       #   eg. "bootloader_proposal"
       def initialize(client:)
+        textdomain "installation"
         @proposal_client = client
         # by default widget_id is the class name; must differentiate instances
         self.widget_id = "overview_" + client
@@ -50,6 +51,7 @@ module Installation
 
       def label
         return @label if @label
+
         d = Yast::WFM.CallFunction(proposal_client, ["Description", {}])
         @label = d["menu_title"]
       end
@@ -65,9 +67,9 @@ module Installation
         if d["warning"] && !d["warning"].empty? && d["warning_level"] != :notice
           Yast::Popup.LongError(
             format(
-              "Problem found when proposing %{client}:<br>" \
+              _("Problem found when proposing %{client}:<br>" \
               "Severity: %{severity}<br>" \
-              "Message: %{message}",
+              "Message: %{message}"),
               client:   label.delete("&"),
               severity: (d["warning_level"] || :warning).to_s,
               message:  d["warning"]
@@ -83,6 +85,18 @@ module Installation
         :redraw
       end
 
+      def validate
+        return true unless @blocking
+
+        # %s is a heading of a problematic section, like "Partitioning" or "Network"
+        Yast::Popup.Error(
+          _("%s blocks the installation. Please solve the problem there before proceeding.") %
+          label.delete("&")
+        )
+
+        false
+      end
+
       def blocking?
         @blocking
       end
@@ -92,17 +106,6 @@ module Installation
       def button_id
         # an arbitrary unique id
         "ask_" + proposal_client
-      end
-    end
-
-    class InvisibleSoftwareOverview < Overview
-      def initialize
-        super(client: "software_proposal")
-      end
-
-      def contents
-        _ = items
-        Empty()
       end
     end
   end
