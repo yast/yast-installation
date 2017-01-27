@@ -23,11 +23,10 @@ require "users/widgets"
 require "y2country/widgets"
 require "ui/widgets"
 require "tune/widgets"
+require "registration/widgets/registration_code"
 
 require "installation/widgets/overview"
 require "installation/widgets/system_role"
-# FIXME: prototype only
-require "installation/widgets/mocked"
 
 module Installation
   # This library provides a simple dialog for setting
@@ -125,7 +124,7 @@ module Installation
       dashboard = Installation::Widgets::DashboardPlace.new
       quadrant_layout(
         upper_left:  VBox(
-          ::Widgets::RegistrationCode.new,
+          ::Registration::Widgets::RegistrationCode.new,
           ::Users::PasswordWidget.new(little_space: true),
           # use english us as default keyboard layout
           ::Y2Country::Widgets::KeyboardSelectionCombo.new("english-us")

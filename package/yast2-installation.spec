@@ -105,8 +105,8 @@ Conflicts:	yast2-core < 2.17.10
 # Top bar with logo
 Conflicts:	yast2-ycp-ui-bindings < 3.1.7
 
-# RegserviceSelectionDialog
-Conflicts:  yast2-registration < 3.1.179
+# new registration widget
+Conflicts:  yast2-registration <= 3.1.190
 
 Obsoletes:	yast2-installation-devel-doc
 
