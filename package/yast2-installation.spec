@@ -83,8 +83,10 @@ Requires: yast2-network >= 3.1.143
 # Requires:	yast2-update
 
 # new root password cwm widget
+BuildRequires:	yast2-users >= 3.1.57.4
 Requires:	yast2-users >= 3.1.57.4
 # new keyboard layout cwm widget
+BuildRequires:	yast2-country >= 3.1.33.1
 Requires:	yast2-country >= 3.1.33.1
 
 # Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
