@@ -24,6 +24,16 @@ module Tune
   end
 end
 
+module Registration
+  module Widgets
+    class RegistrationCode < CWM::InputField
+      def label
+        "Registration code"
+      end
+    end
+  end
+end
+
 describe ::Installation::InstCaspOverview do
   describe "#run" do
     before do
