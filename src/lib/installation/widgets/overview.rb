@@ -99,7 +99,6 @@ module Installation
 
       def blocking?
         @blocking
-
       end
 
     private
