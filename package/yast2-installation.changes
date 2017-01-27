@@ -2,7 +2,7 @@
 Fri Jan 27 09:11:32 UTC 2017 - jreidinger@suse.com
 
 - Respect newly registered update repos in software proposal and
-  add error reporting for software proposal (FATE#322328)
+  do register. (FATE#322328)
 - 3.1.217.15
 
 -------------------------------------------------------------------
@@ -23,7 +23,7 @@ Fri Jan 20 08:44:28 UTC 2017 - mfilka@suse.com
 - bnc#1017752
   - do not show language change warning in software proposal
     incorrectly when language was not changed.
-- 3.1.217.12 
+- 3.1.217.12
 
 -------------------------------------------------------------------
 Tue Jan 17 15:34:22 UTC 2017 - igonzalezsosa@suse.com
@@ -45,7 +45,7 @@ Mon Dec 19 13:23:12 UTC 2016 - mfilka@suse.com
 - fate#321739
   - Made user's interaction possible in case of error in read-only
     proposal.
-- 3.1.217.9 
+- 3.1.217.9
 
 -------------------------------------------------------------------
 Wed Dec 14 15:47:02 UTC 2016 - jreidinger@suse.com
