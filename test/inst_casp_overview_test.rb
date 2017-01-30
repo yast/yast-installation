@@ -66,6 +66,8 @@ describe ::Installation::InstCaspOverview do
       allow(Yast::Pkg).to receive(:SetPackageLocale)
       allow(Yast::CWM).to receive(:show).and_return(:next)
       allow(Yast::WFM).to receive(:CallFunction).and_return({})
+      allow(Yast::WFM).to receive(:CallFunction)
+        .with("inst_doit", []).and_return(:next)
     end
 
     it "sets package locale same as Language" do

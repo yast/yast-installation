@@ -80,13 +80,16 @@ module Installation
             "MakeProposal",
             { "simple_mode" => true }
           ])
-        # no problem, so lets continue
-        break unless [:blocker, :fatal].include?(d["warning_level"])
-
-        # %s is a problem description
-        Yast::Popup.Error(
-          _("Software proposal failed. Cannot proceed with installation.\n%s") % d["warning"]
-        )
+        # report problems with sofware proposal
+        if [:blocker, :fatal].include?(d["warning_level"])
+          # %s is a problem description
+          Yast::Popup.Error(
+            _("Software proposal failed. Cannot proceed with installation.\n%s") % d["warning"]
+          )
+        # continue only if confirmed
+        elsif Yast::WFM.CallFunction("inst_doit", []) == :next
+          break
+        end
       end
 
       Yast::Wizard.CloseDialog if separate_wizard_needed?
