@@ -13,6 +13,9 @@ require_relative "helpers"
 
 FIXTURES_DIR = Pathname.new(__FILE__).dirname.join("fixtures")
 
+# mock some dependencies, to not increase built dependencies
+$LOAD_PATH.unshift(File.join(FIXTURES_DIR.to_s, "stub_libs"))
+
 # stub module to prevent its Import
 # Useful for modules from different yast packages, to avoid build dependencies
 def stub_module(name)

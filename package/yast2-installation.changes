@@ -1,4 +1,27 @@
 -------------------------------------------------------------------
+Fri Jan 27 15:55:33 UTC 2017 - kanderssen@suse.com
+
+- Ask for installation confirmation in all-in-one dialog before
+  proceed with it. (Fate#322328)
+- 3.2.18
+
+-------------------------------------------------------------------
+Fri Jan 27 09:11:32 UTC 2017 - jreidinger@suse.com
+
+- Respect newly registered update repos in software proposal and
+  do register. (FATE#322328)
+
+-------------------------------------------------------------------
+Thu Jan 26 14:16:43 UTC 2017 - jreidinger@suse.com
+
+- handle proposal errors in all-in-one dialog (FATE#322328)
+
+-------------------------------------------------------------------
+Wed Jan 25 15:29:02 UTC 2017 - mvidner@suse.com
+
+- Added an all-in-one installation overview for CaaSP (FATE#322328)
+
+-------------------------------------------------------------------
 Wed Jan 25 10:41:33 UTC 2017 - igonzalezsosa@suse.com
 
 - Add an option to disable the self-update feature through the

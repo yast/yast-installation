@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.2.17
+Version:        3.2.18
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -82,11 +82,11 @@ Requires: yast2-network >= 3.1.143
 # Requires:	yast2-update
 
 # new root password cwm widget
-Requires:	yast2-users >= 3.2.7
-# new keyboard layout cwm widget needed only for CASP, so use version that works
-# also for SP3
-# FIXME: update dependency when CASP is merged to SP2 and SP3 for yast2-country
-Requires:	yast2-country >= 3.1.30
+BuildRequires:	yast2-users >= 3.2.8
+Requires:	yast2-users >= 3.2.8
+# new keyboard layout cwm widget
+BuildRequires:	yast2-country >= 3.2.7
+Requires:	yast2-country >= 3.2.7
 
 # Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
 # pkg-bindings are not directly required
@@ -104,8 +104,8 @@ Conflicts:	yast2-core < 2.17.10
 # Top bar with logo
 Conflicts:	yast2-ycp-ui-bindings < 3.1.7
 
-# RegserviceSelectionDialog
-Conflicts:  yast2-registration < 3.1.179
+# new registration widget
+Conflicts:  yast2-registration <= 3.2.1
 
 Obsoletes:	yast2-installation-devel-doc
 
