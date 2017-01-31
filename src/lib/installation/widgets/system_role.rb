@@ -103,7 +103,8 @@ module Installation
 
       NON_OVERLAY_ATTRIBUTES = [
         "additional_dialogs",
-        "id"
+        "id",
+        "services"
       ].freeze
       private_constant :NON_OVERLAY_ATTRIBUTES
 
