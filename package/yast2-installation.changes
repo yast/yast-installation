@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jan 31 16:06:40 UTC 2017 - jreidinger@suse.com
+
+- Do not crash if role contain own service to enable (bsc#1022762)
+- 3.1.217.17
+
+-------------------------------------------------------------------
 Fri Jan 27 15:55:33 UTC 2017 - kanderssen@suse.com
 
 - Ask for installation confirmation in all-in-one dialog before
