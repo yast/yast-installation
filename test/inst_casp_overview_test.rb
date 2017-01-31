@@ -65,6 +65,7 @@ describe ::Installation::InstCaspOverview do
       allow(Yast::Wizard).to receive(:CloseDialog)
       allow(Yast::Pkg).to receive(:SetPackageLocale)
       allow(Yast::CWM).to receive(:show).and_return(:next)
+      allow(Yast::Language).to receive(:language).and_return("en_US")
       allow(Yast::WFM).to receive(:CallFunction).and_return({})
       allow(Yast::WFM).to receive(:CallFunction)
         .with("inst_doit", []).and_return(:next)
