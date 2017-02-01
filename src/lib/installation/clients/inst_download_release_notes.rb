@@ -118,7 +118,7 @@ module Yast
             InstData.release_notes[product["short_name"]] = SCR.Read(path(".target.string"), filename)
             InstData.downloaded_release_notes << product["short_name"]
             break
-          elsif skip_ret.has_key? ret
+          elsif skip_ret.key? ret
             log.info "Communication with server for release notes download failed ( #{skip_ret[ret]} ), skipping further attempts."
             InstData.stop_relnotes_download = true
             break
