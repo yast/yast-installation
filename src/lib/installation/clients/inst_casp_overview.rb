@@ -104,6 +104,8 @@ module Installation
 
     # Specific services that needs to be enabled on CAaSP see (FATE#321738)
     # It is additional services to the ones defined for role.
+    # It is caasp only services and for generic approach systemd-presets should be used.
+    # In this case it is not used, due to some problems with cloud services.
     CASP_SERVICES = ["sshd", "cloud-init-local", "cloud-init", "cloud-config",
                      "cloud-final", "issue-generator", "issue-add-ssh-keys"].freeze
     def add_casp_services
