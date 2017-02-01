@@ -105,7 +105,7 @@ module Installation
     # Specific services that needs to be enabled on CAaSP see (FATE#321738)
     # It is additional services to the ones defined for role.
     CASP_SERVICES = ["sshd", "cloud-init-local", "cloud-init", "cloud-config",
-      "cloud-final", "issue-generator", "issue-add-ssh-keys"]
+                     "cloud-final", "issue-generator", "issue-add-ssh-keys"].freeze
     def add_casp_services
       ::Installation::Services.enabled.concat(CASP_SERVICES)
     end
