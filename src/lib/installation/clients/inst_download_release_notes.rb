@@ -106,16 +106,20 @@ module Yast
           )
           ret = SCR.Execute(path(".target.bash"), cmd)
           log.info("Downloading release notes: #{cmd} returned #{ret}")
+          # exit codes (see "man curl"):
+          skip_ret = {
+            5  => "Couldn't resolve proxy.",
+            6  => "Couldn't resolve host.",
+            7  => "Failed to connect to host.",
+            28 => "Operation timeout."
+          }
           if ret == 0
             log.info("Release notes downloaded successfully")
             InstData.release_notes[product["short_name"]] = SCR.Read(path(".target.string"), filename)
             InstData.downloaded_release_notes << product["short_name"]
             break
-          # exit codes (see "man curl"):
-          #  7 = Failed to connect to host.
-          # 28 = Operation timeout.
-          elsif ret == 7 || ret == 28
-            log.info "Communication with server for release notes download failed, skipping further attempts."
+          elsif skip_ret.has_key? ret
+            log.info "Communication with server for release notes download failed ( #{skip_ret[ret]} ), skipping further attempts."
             InstData.stop_relnotes_download = true
             break
           end

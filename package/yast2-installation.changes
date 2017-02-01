@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Feb  1 17:07:23 CET 2017 - schubi@suse.de
+
+- Downloading release notes: Do not try again if the host or the
+  proxy cannot be resolved (bnc#1022784)
+- 3.1.220
+
+-------------------------------------------------------------------
 Thu Jan  5 13:16:08 CET 2017 - schubi@suse.de
 
 - AutoYaST after second stage: Initialize tty1 in order to remove
