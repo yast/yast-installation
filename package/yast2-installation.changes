@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Feb  1 14:20:43 UTC 2017 - jreidinger@suse.com
+
+- Enable CaaSP specific services on the installed system
+  (FATE#321738)
+- 3.1.217.18
+
+-------------------------------------------------------------------
 Tue Jan 31 16:06:40 UTC 2017 - jreidinger@suse.com
 
 - Do not crash if role contain own service to enable (bsc#1022762)
