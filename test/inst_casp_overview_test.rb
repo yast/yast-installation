@@ -108,5 +108,11 @@ describe ::Installation::InstCaspOverview do
 
       subject.run
     end
+
+    it "adds caasp specific services to be enabled" do
+      subject.run
+
+      expect(::Installation::Services.enabled).to include("cloud-init")
+    end
   end
 end
