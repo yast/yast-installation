@@ -27,6 +27,7 @@ require "registration/widgets/registration_code"
 
 require "installation/widgets/overview"
 require "installation/widgets/system_role"
+require "installation/services"
 
 module Installation
   # This library provides a simple dialog for setting
@@ -92,12 +93,24 @@ module Installation
         end
       end
 
+      add_casp_services
+
       Yast::Wizard.CloseDialog if separate_wizard_needed?
 
       ret
     end
 
   private
+
+    # Specific services that needs to be enabled on CAaSP see (FATE#321738)
+    # It is additional services to the ones defined for role.
+    # It is caasp only services and for generic approach systemd-presets should be used.
+    # In this case it is not used, due to some problems with cloud services.
+    CASP_SERVICES = ["sshd", "cloud-init-local", "cloud-init", "cloud-config",
+                     "cloud-final", "issue-generator", "issue-add-ssh-keys"].freeze
+    def add_casp_services
+      ::Installation::Services.enabled.concat(CASP_SERVICES)
+    end
 
     def quadrant_layout(upper_left:, lower_left:, upper_right:, lower_right:)
       HBox(
