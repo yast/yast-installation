@@ -50,6 +50,7 @@ module Yast
       @current_systasks_status = {}
 
       # <-- software selection
+      #
 
       # --> other
 
@@ -109,6 +110,7 @@ module Yast
     publish variable: :start_mode, type: "string"
     publish variable: :selected_desktop, type: "string"
     publish variable: :current_systasks_status, type: "map <string, boolean>"
+    publish variable: :current_role_options, type: "map <string, string>"
     publish variable: :product_license_accepted, type: "boolean"
     publish variable: :wizardsteps_disabled_modules, type: "string"
     publish variable: :wizardsteps_disabled_proposals, type: "string"

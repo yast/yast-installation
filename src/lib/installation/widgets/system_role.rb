@@ -25,23 +25,46 @@ require "installation/services"
 
 Yast.import "ProductControl"
 Yast.import "ProductFeatures"
+Yast.import "IP"
+Yast.import "Hostname"
 
 module Installation
   module Widgets
-    class DashboardURL < CWM::InputField
+    class ControllerNode < CWM::InputField
+      class << self
+        attr_accessor :location
+      end
+
       def label
         # intentional no translation for CAASP
-        "Dashboard URL"
+        "Controller Node"
       end
 
       def store
-        # TODO: implement it together with init and some validation
+        self.class.location = value
+      end
+
+      def init
+        self.value = self.class.location
+      end
+
+      def validate
+        unless Yast::IP.Check(value) || Yast::Hostname.CheckFQ(value)
+          Yast::Popup.Error(
+            # TRANSLATORS: error message for invalid controller node location
+            _("Not valid location for the controller node, " \
+            "please enter a valid IP or Hostname")
+          )
+          return false
+        end
+
+        true
       end
     end
 
     class DashboardPlace < CWM::ReplacePoint
       def initialize
-        @dashboard = DashboardURL.new
+        @dashboard = ControllerNode.new
         @empty = CWM::Empty.new("no_dashboard")
         super(widget: @empty)
       end
