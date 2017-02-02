@@ -29,6 +29,15 @@ module Yast
   class InstDownloadReleaseNotesClient < Client
     include Yast::Logger
 
+    # When cURL returns one of those codes, the download won't be retried
+    # @see man curl
+    CURL_GIVE_UP_RETURN_CODES = {
+      5  => "Couldn't resolve proxy.",
+      6  => "Couldn't resolve host.",
+      7  => "Failed to connect to host.",
+      28 => "Operation timeout."
+    }.freeze
+
     # Download all release notes mentioned in Product::relnotesurl_all
     #
     # @return true when successful
@@ -106,20 +115,13 @@ module Yast
           )
           ret = SCR.Execute(path(".target.bash"), cmd)
           log.info("Downloading release notes: #{cmd} returned #{ret}")
-          # exit codes (see "man curl"):
-          skip_ret = {
-            5  => "Couldn't resolve proxy.",
-            6  => "Couldn't resolve host.",
-            7  => "Failed to connect to host.",
-            28 => "Operation timeout."
-          }
           if ret == 0
             log.info("Release notes downloaded successfully")
             InstData.release_notes[product["short_name"]] = SCR.Read(path(".target.string"), filename)
             InstData.downloaded_release_notes << product["short_name"]
             break
-          elsif skip_ret.key? ret
-            log.info "Communication with server for release notes download failed ( #{skip_ret[ret]} ), skipping further attempts."
+          elsif CURL_GIVE_UP_RETURN_CODES.key? ret
+            log.info "Communication with server for release notes download failed ( #{CURL_GIVE_UP_RETURN_CODES[ret]} ), skipping further attempts."
             InstData.stop_relnotes_download = true
             break
           end
