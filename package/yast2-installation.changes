@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Feb  1 17:07:23 CET 2017 - schubi@suse.de
+
+- Downloading release notes: Do not try again if the host or the
+  proxy cannot be resolved (bnc#1022784)
+- 3.2.19
+
+-------------------------------------------------------------------
 Fri Jan 27 15:55:33 UTC 2017 - kanderssen@suse.com
 
 - Ask for installation confirmation in all-in-one dialog before

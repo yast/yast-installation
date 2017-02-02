@@ -31,9 +31,12 @@ module Yast
 
     # When cURL returns one of those codes, the download won't be retried
     # @see man curl
-    #  7 = Failed to connect to host.
-    # 28 = Operation timeout.
-    CURL_GIVE_UP_RETURN_CODES = [7, 28].freeze
+    CURL_GIVE_UP_RETURN_CODES = {
+      5  => "Couldn't resolve proxy.",
+      6  => "Couldn't resolve host.",
+      7  => "Failed to connect to host.",
+      28 => "Operation timeout."
+    }.freeze
 
     # Download all release notes mentioned in Product::relnotesurl_all
     #
@@ -123,8 +126,8 @@ module Yast
             InstData.release_notes[product["short_name"]] = SCR.Read(path(".target.string"), filename)
             InstData.downloaded_release_notes << product["short_name"]
             break
-          elsif CURL_GIVE_UP_RETURN_CODES.include?(ret)
-            log.info "Communication with server for release notes download failed, skipping further attempts."
+          elsif CURL_GIVE_UP_RETURN_CODES.key? ret
+            log.info "Communication with server for release notes download failed ( #{CURL_GIVE_UP_RETURN_CODES[ret]} ), skipping further attempts."
             InstData.stop_relnotes_download = true
             break
           else
