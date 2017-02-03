@@ -38,6 +38,47 @@ module Yast
       28 => "Operation timeout."
     }.freeze
 
+    # Download of index of release notes for a specific product
+    # @param url_base URL pointing to directory with the index
+    # @param proxy the proxy URL to be passed to curl
+    #
+    # @return true when successful
+    def download_release_notes_index(url_base, proxy)
+      url_index = url_base + "/directory.yast2"
+      log.info("Index with available files: #{url_index}")
+      filename = Builtins.sformat("%1/directory.yast", SCR.Read(path(".target.tmpdir")))
+      # download the index with much shorter time-out
+      cmd = Builtins.sformat(
+        "/usr/bin/curl --location --verbose --fail --max-time 30 --connect-timeout 15  %1 '%2' --output '%3' > '%4/%5' 2>&1",
+        proxy,
+        url_index,
+        String.Quote(filename),
+        String.Quote(Directory.logdir),
+        "curl_log"
+      )
+      ret = SCR.Execute(path(".target.bash"), cmd)
+      log.info("Downloading release notes index: #{cmd} returned #{ret}")
+      if ret == 0
+        log.info("Release notes index downloaded successfully")
+        index_file = SCR.Read(path(".target.string"), filename)
+        if index_file.nil? || index_file.empty?
+          log.info("Release notes index empty, not filtering further downloads")
+          return nil
+        else
+          rn_filter = index_file.split("\n")
+          log.info("Index of RN files at the server: #{rn_filter}")
+          return rn_filter
+        end
+      elsif CURL_GIVE_UP_RETURN_CODES.key? ret
+        log.info "Communication with server for release notes download failed ( #{CURL_GIVE_UP_RETURN_CODES[ret]} ), skipping further attempts."
+        InstData.stop_relnotes_download = true
+        return nil
+      else
+        log.info "Downloading index failed, trying all files according to selected language"
+        return nil
+      end
+    end
+
     # Download all release notes mentioned in Product::relnotesurl_all
     #
     # @return true when successful
@@ -96,9 +137,24 @@ module Yast
           next
         end
         url_base = url[0, pos]
+
+        rn_filter = download_release_notes_index(url_base, proxy)
+        if InstData.stop_relnotes_download
+          log.info("Skipping release notes download due to previous download issues")
+          break
+        end
+
         url_template = url_base + filename_templ
         log.info("URL template: #{url_base}")
         [Language.language, Language.language[0..1], "en"].uniq.each do |lang|
+          if !rn_filter.nil?
+            filename = Builtins.sformat(filename_templ, lang)
+            filename = Builtins.substring(filename, 1)
+            if ! rn_filter.include? filename
+              log.info "File #{filename} not found in index, skipping attempt download"
+              next
+            end
+          end
           url = Builtins.sformat(url_template, lang)
           log.info("URL: #{url}")
           # Where we want to store the downloaded release notes
@@ -163,6 +219,12 @@ module Yast
       textdomain "installation"
 
       return :back if GetInstArgs.going_back
+
+      # skip download during AutoYaST
+      if Mode.auto
+        log.info "Skipping release notes during AutoYaST-driven installation or upgrade"
+        return :auto
+      end
 
       init_ui
 
