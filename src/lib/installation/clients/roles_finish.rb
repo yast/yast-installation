@@ -34,12 +34,12 @@ module Installation
       def write
         log.info("The current role is: #{current_role}")
         if current_role == "worker_role"
-          master_conf = ::Installation::CFA::MinionMasterConf.new
+          master_conf = CFA::MinionMasterConf.new
           begin
             master_conf.load
           rescue Errno::ENOENT
-            log.info("Fail does not exist, will be created")
             raise unless Yast::Stage.initial
+            log.info("The minion master.conf file does not exist, it will be created")
           end
           log.info("The controller node for this worker role is: #{master}")
           master_conf.master = master
@@ -51,12 +51,12 @@ module Installation
 
       # Obtains the current role from the role selection widget
       def current_role
-        ::Installation::Widgets::SystemRole.original_role_id
+        Widgets::SystemRole.original_role_id
       end
 
       # Obtains the controller node location from the controller node widget
       def master
-        ::Installation::Widgets::ControllerNode.location
+        Widgets::ControllerNode.location
       end
     end
   end

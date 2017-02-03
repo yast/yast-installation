@@ -48,6 +48,10 @@ module Installation
         self.value = self.class.location
       end
 
+      # If the value is not a valid IP or a valid FQDN it display an error
+      # popup and returns false, in other case just return true.
+      #
+      # @return <Boolean> false if not a valid IP or FQDN; true otherwise
       def validate
         unless Yast::IP.Check(value) || Yast::Hostname.CheckFQ(value)
           Yast::Popup.Error(
