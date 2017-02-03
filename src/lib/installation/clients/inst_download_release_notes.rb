@@ -60,7 +60,7 @@ module Yast
       log.info("Downloading release notes index: #{cmd} returned #{ret}")
       if ret == 0
         log.info("Release notes index downloaded successfully")
-        index_file = SCR.Read(path(".target.string"), filename)
+        index_file = File.read(filename)
         if index_file.nil? || index_file.empty?
           log.info("Release notes index empty, not filtering further downloads")
           return nil
@@ -149,8 +149,7 @@ module Yast
         [Language.language, Language.language[0..1], "en"].uniq.each do |lang|
           if !rn_filter.nil?
             filename = Builtins.sformat(filename_templ, lang)
-            filename = Builtins.substring(filename, 1)
-            if !rn_filter.include? filename
+            if !rn_filter.include?(filename[1..-1])
               log.info "File #{filename} not found in index, skipping attempt download"
               next
             end

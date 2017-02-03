@@ -3,7 +3,7 @@ Fri Feb  3 10:07:35 UTC 2017 - jsrain@suse.cz
 
 - Downloading release notes: Do not download them at all during
   AutoYaST (bsc#1009276)
-- Use the directory.yast file to check avialable
+- Use the directory.yast file to check avilable
   translations (fate#322372)
 - 3.2.20
 
