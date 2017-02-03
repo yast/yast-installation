@@ -150,7 +150,7 @@ module Yast
           if !rn_filter.nil?
             filename = Builtins.sformat(filename_templ, lang)
             filename = Builtins.substring(filename, 1)
-            if ! rn_filter.include? filename
+            if !rn_filter.include? filename
               log.info "File #{filename} not found in index, skipping attempt download"
               next
             end
