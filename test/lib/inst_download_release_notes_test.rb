@@ -138,8 +138,8 @@ describe Yast::InstDownloadReleaseNotesClient do
         expect(Yast::SCR).to receive(:Execute)
           .with(Yast::Path.new(".target.bash"), /curl.*directory.yast/)
           .and_return(CURL_SUCCESS_CODE)
-        expect(Yast::SCR).to receive(:Read)
-          .with(Yast::Path.new(".target.string"), /directory.yast/)
+        expect(File).to receive(:read)
+          .with(/directory.yast/)
           .and_return("foo\nRELEASE-NOTES.es.rtf\nbar")
         expect(Yast::SCR).to receive(:Execute).once
           .with(Yast::Path.new(".target.bash"), /curl.*RELEASE-NOTES.#{language[0..1]}.rtf/)
@@ -151,8 +151,8 @@ describe Yast::InstDownloadReleaseNotesClient do
         expect(Yast::SCR).to receive(:Execute)
           .with(Yast::Path.new(".target.bash"), /curl.*directory.yast/)
           .and_return(CURL_SUCCESS_CODE)
-        expect(Yast::SCR).to receive(:Read)
-          .with(Yast::Path.new(".target.string"), /directory.yast/)
+        expect(File).to receive(:read)
+          .with(/directory.yast/)
           .and_return("")
         expect(Yast::SCR).to receive(:Execute).once
           .with(Yast::Path.new(".target.bash"), /curl.*RELEASE-NOTES.#{language}.rtf/)
