@@ -37,6 +37,10 @@ describe Yast::InstDownloadReleaseNotesClient do
         .and_return([product])
 
       allow(Yast::SCR).to receive(:Execute)
+        .with(Yast::Path.new(".target.bash"), /curl.*directory.yast/)
+        .and_return(CURL_NOT_FOUND_CODE)
+
+      allow(Yast::SCR).to receive(:Execute)
         .with(Yast::Path.new(".target.bash"), /curl.*relnotes/)
         .and_return(curl_code)
 
@@ -124,6 +128,39 @@ describe Yast::InstDownloadReleaseNotesClient do
             .and_return(CURL_NOT_FOUND_CODE)
           client.main
         end
+      end
+    end
+
+    context "when release notes index file is found" do
+      let(:language) { "es_ES" }
+
+      it "Reads the index and falls back to es" do
+        expect(Yast::SCR).to receive(:Execute)
+          .with(Yast::Path.new(".target.bash"), /curl.*directory.yast/)
+          .and_return(CURL_SUCCESS_CODE)
+        expect(File).to receive(:read)
+          .with(/directory.yast/)
+          .and_return("foo\nRELEASE-NOTES.es.rtf\nbar")
+        expect(Yast::SCR).to receive(:Execute).once
+          .with(Yast::Path.new(".target.bash"), /curl.*RELEASE-NOTES.#{language[0..1]}.rtf/)
+          .and_return(CURL_SUCCESS_CODE)
+        client.main
+      end
+
+      it "Tries to read the index file, which is empty, falls back to es" do
+        expect(Yast::SCR).to receive(:Execute)
+          .with(Yast::Path.new(".target.bash"), /curl.*directory.yast/)
+          .and_return(CURL_SUCCESS_CODE)
+        expect(File).to receive(:read)
+          .with(/directory.yast/)
+          .and_return("")
+        expect(Yast::SCR).to receive(:Execute).once
+          .with(Yast::Path.new(".target.bash"), /curl.*RELEASE-NOTES.#{language}.rtf/)
+          .and_return(CURL_NOT_FOUND_CODE)
+        expect(Yast::SCR).to receive(:Execute).once
+          .with(Yast::Path.new(".target.bash"), /curl.*RELEASE-NOTES.#{language[0..1]}.rtf/)
+          .and_return(CURL_SUCCESS_CODE)
+        client.main
       end
     end
 
