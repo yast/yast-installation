@@ -38,7 +38,6 @@ module Installation
           begin
             master_conf.load
           rescue Errno::ENOENT
-            raise unless Yast::Stage.initial
             log.info("The minion master.conf file does not exist, it will be created")
           end
           log.info("The controller node for this worker role is: #{master}")

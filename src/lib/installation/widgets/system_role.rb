@@ -40,16 +40,20 @@ module Installation
         "Controller Node"
       end
 
+      # It stores the content of the value if validates
+      #
+      # @see #validate
       def store
         self.class.location = value
       end
 
+      # The input field is initialized with previous stored value
       def init
         self.value = self.class.location
       end
 
-      # If the value is not a valid IP or a valid FQDN it display an error
-      # popup and returns false, in other case just return true.
+      # If the value is not a valid IP or a valid FQDN it displays a popup
+      # error and returns false, in other case it just returns true.
       #
       # @return <Boolean> false if not a valid IP or FQDN; true otherwise
       def validate
