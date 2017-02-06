@@ -78,6 +78,7 @@ Requires: yast2-services-manager
 # Network service setup moved into yast2-network
 Requires: yast2-network >= 3.1.143
 
+# Augeas lenses
 Requires:       augeas-lenses
 
 # Only in inst-sys

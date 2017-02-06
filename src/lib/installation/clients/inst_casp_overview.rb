@@ -144,7 +144,7 @@ module Installation
     # Returns a pair with UI widget-set for the dialog and widgets that can
     # block installation
     def content
-      dashboard = Installation::Widgets::DashboardPlace.new
+      controller_node = Installation::Widgets::ControllerNodePlace.new
       quadrant_layout(
         upper_left:  VBox(
           ::Registration::Widgets::RegistrationCode.new,
@@ -153,8 +153,8 @@ module Installation
           ::Y2Country::Widgets::KeyboardSelectionCombo.new("english-us")
         ),
         lower_left:  VBox(
-          Installation::Widgets::SystemRole.new(dashboard),
-          dashboard,
+          Installation::Widgets::SystemRole.new(controller_node),
+          controller_node,
           Tune::Widgets::SystemInformation.new
         ),
         upper_right: VBox(

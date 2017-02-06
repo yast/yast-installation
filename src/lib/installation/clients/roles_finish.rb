@@ -25,6 +25,11 @@ require "installation/cfa/salt"
 
 module Installation
   module Clients
+    # This is a step of base installation finish and is reponsable of write the
+    # specific configuration for the current system role.
+    #
+    # It has been added for CaaSP Roles (FATE#321754) and currently only
+    # the 'worker_role' has an special behavior.
     class RolesFinish < ::Installation::FinishClient
       def title
         textdomain "installation"

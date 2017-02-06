@@ -30,6 +30,8 @@ Yast.import "Hostname"
 
 module Installation
   module Widgets
+    # This widget is reponsable of validate and store the introduced location
+    # which must be a valid IP or FQDN.
     class ControllerNode < CWM::InputField
       class << self
         attr_accessor :location
@@ -70,15 +72,15 @@ module Installation
       end
     end
 
-    class DashboardPlace < CWM::ReplacePoint
+    class ControllerNodePlace < CWM::ReplacePoint
       def initialize
-        @dashboard = ControllerNode.new
-        @empty = CWM::Empty.new("no_dashboard")
+        @controller_node = ControllerNode.new
+        @empty = CWM::Empty.new("no_controller")
         super(widget: @empty)
       end
 
       def show
-        replace(@dashboard)
+        replace(@controller_node)
       end
 
       def hide
@@ -92,9 +94,9 @@ module Installation
         attr_accessor :original_role_id
       end
 
-      def initialize(dashboard_widget)
+      def initialize(controller_node_widget)
         textdomain "installation"
-        @dashboard_widget = dashboard_widget
+        @controller_node_widget = controller_node_widget
       end
 
       def label
@@ -113,9 +115,9 @@ module Installation
 
       def handle
         if value == "worker_role"
-          @dashboard_widget.show
+          @controller_node_widget.show
         else
-          @dashboard_widget.hide
+          @controller_node_widget.hide
         end
 
         nil
