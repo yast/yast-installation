@@ -4,8 +4,12 @@ compiler:
 before_install:
     # disable rvm, use system Ruby
     - rvm reset
+    # install newer augeasget repo with newer augeas, otherwise ruby-augeas fails (see https://github.com/yast/yast-network/pull/454#issuecomment-253795507)
+    - sudo add-apt-repository -y ppa:raphink/augeas
+    - sudo apt-get update
+    - sudo apt-get install libaugeas-dev libxml2-dev
     - wget https://raw.githubusercontent.com/yast/yast-devtools/master/travis-tools/travis_setup.sh
-    - sh ./travis_setup.sh -p "rake yast2-devtools yast2-testsuite yast2-core-dev yast2 yast2-network yast2-transfer yast2-users yast2-country" -g "rspec:3.3.0 yast-rake gettext rubocop:0.41.2 simplecov:0.12.0 coveralls:0.8.19 cheetah"
+    - sh ./travis_setup.sh -p "rake yast2-devtools yast2-testsuite yast2-core-dev yast2 yast2-network yast2-transfer yast2-users yast2-country libaugeas-dev" -g "rspec:3.3.0 yast-rake gettext rubocop:0.41.2 simplecov:0.12.0 coveralls:0.8.19 cheetah abstract_method cfa"
 script:
     - rake check:syntax
     - rake check:pot

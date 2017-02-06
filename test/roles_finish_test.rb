@@ -31,7 +31,7 @@ describe ::Installation::Clients::RolesFinish do
 
   describe "#write" do
     context "when the current role is 'worker'" do
-      context "when the minion master.conf file not exists" do
+      context "when the minion master.conf file does not exist" do
         it "creates the file with master: as the controller node location" do
           allow(subject).to receive(:current_role).and_return("worker_role")
 
