@@ -40,7 +40,7 @@ module Installation
         "Controller Node"
       end
 
-      # It stores the content of the value if validates
+      # It stores the value of the input field if validates
       #
       # @see #validate
       def store
