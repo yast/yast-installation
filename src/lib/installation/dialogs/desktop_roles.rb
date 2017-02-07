@@ -38,7 +38,8 @@ module Installation
     def content
       VBox(
         Widgets::SystemRolesRadioButtons.new,
-        Widgets::OnlineReposCheckbox.new
+	VSpacing(1),
+        Left(Widgets::OnlineReposCheckbox.new)
       )
     end
   end
