@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Feb  8 16:42:29 UTC 2017 - kanderssen@suse.com
+
+- CaaSP all-in-one-dialog: added validation to the controller node
+  location field, modified label and write it to the minion
+  master.conf file at the end of the installation
+- 3.1.217.20
+
+-------------------------------------------------------------------
 Wed Feb  8 11:57:14 UTC 2017 - lslezak@suse.cz
 
 - CaaSP: Display the Beta product warning at start when it is
