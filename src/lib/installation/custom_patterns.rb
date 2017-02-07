@@ -5,7 +5,7 @@ Yast.import "PackagesUI"
 module Installation
   class CustomPatterns
     class << self
-      # flag if custom patters should be shown
+      # flag if custom patterns should be shown
       attr_accessor :show
     end
 

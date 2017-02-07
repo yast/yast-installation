@@ -1,27 +1,11 @@
 require "yast"
 require "installation/widgets/system_role"
+require "installation/widgets/online_repos_checkbox"
 require "cwm/widget"
 
 Yast.import "CWM"
-# add-on product holds also online repos
-Yast.import "AddOnProduct"
 
 module Installation
-  # small widget implmenetation. Probably not worth reuse elsewhere
-  class OnlineRepos < CWM::CheckBox
-    def initialize
-      textdomain "installation"
-    end
-
-    def label
-      _("Add On-line Repositories Before Installation")
-    end
-
-    def store
-      Yast::AddOnProduct.skip_add_ons = !value
-    end
-  end
-
   # opensuse specific installation desktop selection dialog
   class DesktopRoles
     include Yast::I18n
@@ -54,7 +38,7 @@ module Installation
     def content
       VBox(
         Widgets::SystemRolesRadioButtons.new,
-        OnlineRepos.new
+        Widgets::OnlineReposCheckbox.new
       )
     end
   end
