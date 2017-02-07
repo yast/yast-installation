@@ -55,7 +55,6 @@ client_DATA = \
   clients/inst_ssh_import.rb \
   clients/inst_system_analysis.rb \
   clients/inst_system_role.rb \
-  clients/inst_worker_role.rb \
   clients/inst_upgrade_urls.rb \
   clients/inst_update_installer.rb \
   clients/inst_welcome.rb \
@@ -211,8 +210,7 @@ ylibclient_DATA = \
 
 ylibdialogdir = "${yast2dir}/lib/installation/dialogs"
 ylibdialog_DATA = \
-  lib/installation/dialogs/ssh_import.rb \
-  lib/installation/dialogs/worker_role.rb
+  lib/installation/dialogs/ssh_import.rb
 
 ylibwidgetdir = "${yast2dir}/lib/installation/widgets"
 ylibwidget_DATA = \
