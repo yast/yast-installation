@@ -16,6 +16,8 @@ module Installation
       else
         ret = :auto
       end
+
+      ret
     end
   end
 end

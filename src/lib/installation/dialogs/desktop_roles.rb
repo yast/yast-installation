@@ -7,7 +7,6 @@ Yast.import "CWM"
 Yast.import "AddOnProduct"
 
 module Installation
-
   # small widget implmenetation. Probably not worth reuse elsewhere
   class OnlineRepos < CWM::CheckBox
     def initialize
@@ -22,7 +21,6 @@ module Installation
       Yast::AddOnProduct.skip_add_ons = !value
     end
   end
-
 
   # opensuse specific installation desktop selection dialog
   class DesktopRoles

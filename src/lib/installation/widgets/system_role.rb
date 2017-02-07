@@ -118,7 +118,6 @@ module Installation
 
         Installation::Services.enabled = to_enable
       end
-
     end
 
     # CaaSP specialized role widget
