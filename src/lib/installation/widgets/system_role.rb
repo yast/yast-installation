@@ -22,6 +22,7 @@
 require "yast"
 require "cwm/widget"
 require "installation/services"
+require "installation/custom_patterns"
 
 Yast.import "ProductControl"
 Yast.import "ProductFeatures"
@@ -55,39 +56,9 @@ module Installation
       end
     end
 
-    class SystemRole < CWM::ComboBox
-      class << self
-        # once the user selects a role, remember it in case they come back
-        attr_accessor :original_role_id
-      end
-
-      def initialize(dashboard_widget)
-        textdomain "installation"
-        @dashboard_widget = dashboard_widget
-      end
-
+    module SystemRoleReader
       def label
         Yast::ProductControl.GetTranslatedText("roles_caption")
-      end
-
-      def opt
-        [:hstretch, :notify]
-      end
-
-      def init
-        self.class.original_role_id ||= roles_description.first[:id]
-        self.value = self.class.original_role_id
-        handle
-      end
-
-      def handle
-        if value == "worker_role"
-          @dashboard_widget.show
-        else
-          @dashboard_widget.hide
-        end
-
-        nil
       end
 
       def items
@@ -107,6 +78,11 @@ module Installation
       ].freeze
       private_constant :NON_OVERLAY_ATTRIBUTES
 
+      def init
+        self.class.original_role_id ||= roles_description.first[:id]
+        self.value = self.class.original_role_id
+      end
+
       def store
         log.info "Applying system role '#{value}'"
         features = raw_roles.find { |r| r["id"] == value }
@@ -116,8 +92,6 @@ module Installation
         adapt_services
         self.class.original_role_id = value
       end
-
-    private
 
       def raw_roles
         @raw_roles ||= Yast::ProductControl.productControl.fetch("system_roles", [])
@@ -143,6 +117,58 @@ module Installation
         log.info "enable for #{value} these services: #{to_enable.inspect}"
 
         Installation::Services.enabled = to_enable
+      end
+
+    end
+
+    # CaaSP specialized role widget
+    class SystemRole < CWM::ComboBox
+      class << self
+        # once the user selects a role, remember it in case they come back
+        attr_accessor :original_role_id
+      end
+
+      include SystemRoleReader
+
+      def initialize(dashboard_widget)
+        textdomain "installation"
+        @dashboard_widget = dashboard_widget
+      end
+
+      def opt
+        [:hstretch, :notify]
+      end
+
+      alias_method :init_orig, :init
+      def init
+        init_orig
+        handle
+      end
+
+      def handle
+        if value == "worker_role"
+          @dashboard_widget.show
+        else
+          @dashboard_widget.hide
+        end
+
+        nil
+      end
+    end
+
+    class SystemRolesRadioButtons < CWM::RadioButtons
+      class << self
+        # once the user selects a role, remember it in case they come back
+        attr_accessor :original_role_id
+      end
+
+      include SystemRoleReader
+
+      alias_method :store_orig, :store
+      def store
+        # set flag to show custom patterns only if custom role selected
+        CustomPatterns.show = value == "custom"
+        store_orig
       end
     end
   end
