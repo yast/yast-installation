@@ -20,7 +20,7 @@
 # ------------------------------------------------------------------------------
 
 require "installation/finish_client"
-require "installation/widgets/system_role"
+require "installation/system_role"
 require "installation/cfa/salt"
 
 module Installation
@@ -37,30 +37,8 @@ module Installation
       end
 
       def write
-        log.info("The current role is: #{current_role}")
-        if current_role == "worker_role"
-          master_conf = CFA::MinionMasterConf.new
-          begin
-            master_conf.load
-          rescue Errno::ENOENT
-            log.info("The minion master.conf file does not exist, it will be created")
-          end
-          log.info("The controller node for this worker role is: #{master}")
-          master_conf.master = master
-          master_conf.save
-        end
-      end
-
-    private
-
-      # Obtains the current role from the role selection widget
-      def current_role
-        Widgets::SystemRole.original_role_id
-      end
-
-      # Obtains the controller node location from the controller node widget
-      def master
-        Widgets::ControllerNode.location
+        # Finish installation for the selected role
+        SystemRole.installation_finish
       end
     end
   end

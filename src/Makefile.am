@@ -133,7 +133,8 @@ ylib_DATA = \
   lib/installation/ssh_key.rb \
   lib/installation/ssh_config_file.rb \
   lib/installation/ssh_importer_presenter.rb \
-  lib/installation/ssh_importer.rb
+  lib/installation/ssh_importer.rb \
+  lib/installation/system_role.rb
 
 ylibtransferdir = "${yast2dir}/lib/transfer"
 ylibtransfer_DATA = \

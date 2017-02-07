@@ -22,6 +22,7 @@
 require "yast"
 require "cwm/widget"
 require "installation/services"
+require "installation/system_role"
 
 Yast.import "ProductControl"
 Yast.import "ProductFeatures"
@@ -33,10 +34,6 @@ module Installation
     # This widget is responsible of validate and store the introduced location
     # which must be a valid IP or FQDN.
     class ControllerNode < CWM::InputField
-      class << self
-        attr_accessor :location
-      end
-
       def label
         # intentional no translation for CAASP
         "Controller Node"
@@ -46,12 +43,12 @@ module Installation
       #
       # @see #validate
       def store
-        self.class.location = value
+        system_role.options["controller_node"] = value
       end
 
       # The input field is initialized with previous stored value
       def init
-        self.value = self.class.location
+        self.value = system_role.options["controller_node"]
       end
 
       # If the value is not a valid IP or a valid FQDN it displays a popup
@@ -69,6 +66,10 @@ module Installation
         end
 
         true
+      end
+    private
+      def system_role
+        @system_role = ::Installation::SystemRole.instance
       end
     end
 
@@ -89,11 +90,6 @@ module Installation
     end
 
     class SystemRole < CWM::ComboBox
-      class << self
-        # once the user selects a role, remember it in case they come back
-        attr_accessor :original_role_id
-      end
-
       def initialize(controller_node_widget)
         textdomain "installation"
         @controller_node_widget = controller_node_widget
@@ -108,8 +104,7 @@ module Installation
       end
 
       def init
-        self.class.original_role_id ||= roles_description.first[:id]
-        self.value = self.class.original_role_id
+        self.value = system_role.selected
         handle
       end
 
@@ -143,22 +138,22 @@ module Installation
 
       def store
         log.info "Applying system role '#{value}'"
-        features = raw_roles.find { |r| r["id"] == value }
-        features = features.dup
+        system_role.selected = value
+        features = system_role.features.dup
         NON_OVERLAY_ATTRIBUTES.each { |a| features.delete(a) }
         Yast::ProductFeatures.SetOverlay(features)
-        adapt_services
-        self.class.original_role_id = value
+        system_role.adapt_services
       end
 
     private
 
-      def raw_roles
-        @raw_roles ||= Yast::ProductControl.productControl.fetch("system_roles", [])
+
+      def system_role
+        @system_role ||= ::Installation::SystemRole.instance
       end
 
       def roles_description
-        @roles_description ||= raw_roles.map do |r|
+        @roles_description ||= system_role.all.map do |r|
           id = r["id"]
 
           {
@@ -167,16 +162,6 @@ module Installation
             description: Yast::ProductControl.GetTranslatedText(id + "_description")
           }
         end
-      end
-
-      def adapt_services
-        services = raw_roles.find { |r| r["id"] == value }["services"]
-        services ||= []
-
-        to_enable = services.map { |s| s["name"] }
-        log.info "enable for #{value} these services: #{to_enable.inspect}"
-
-        Installation::Services.enabled = to_enable
       end
     end
   end
