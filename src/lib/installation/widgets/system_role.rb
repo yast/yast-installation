@@ -24,6 +24,7 @@ require "cwm/widget"
 require "installation/services"
 require "installation/custom_patterns"
 
+Yast.import "DefaultDesktop"
 Yast.import "ProductControl"
 Yast.import "ProductFeatures"
 
@@ -168,6 +169,9 @@ module Installation
         # set flag to show custom patterns only if custom role selected
         CustomPatterns.show = value == "custom"
         store_orig
+        # force reset of Default Desktop, because it is cached and when going
+        # forward and backward, it can be changed
+        Yast::DefaultDesktop.ForceReinit
       end
     end
   end
