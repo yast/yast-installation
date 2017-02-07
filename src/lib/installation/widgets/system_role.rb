@@ -30,7 +30,7 @@ Yast.import "Hostname"
 
 module Installation
   module Widgets
-    # This widget is reponsable of validate and store the introduced location
+    # This widget is responsible of validate and store the introduced location
     # which must be a valid IP or FQDN.
     class ControllerNode < CWM::InputField
       class << self
