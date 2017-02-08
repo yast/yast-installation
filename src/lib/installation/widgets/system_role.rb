@@ -25,7 +25,6 @@ require "installation/services"
 require "installation/system_role"
 
 Yast.import "ProductControl"
-Yast.import "ProductFeatures"
 Yast.import "IP"
 Yast.import "Hostname"
 
@@ -43,12 +42,12 @@ module Installation
       #
       # @see #validate
       def store
-        system_role.options["controller_node"] = value
+        role.option("controller_node", value)
       end
 
       # The input field is initialized with previous stored value
       def init
-        self.value = system_role.options["controller_node"]
+        self.value = role.option("controller_node")
       end
 
       # If the value is not a valid IP or a valid FQDN it displays a popup
@@ -68,8 +67,8 @@ module Installation
         true
       end
     private
-      def system_role
-        @system_role = ::Installation::SystemRole.instance
+      def role
+        ::Installation::SystemRole.find("worker_role")
       end
     end
 
@@ -104,7 +103,7 @@ module Installation
       end
 
       def init
-        self.value = system_role.selected
+        self.value = ::Installation::SystemRole.current
         handle
       end
 
@@ -119,49 +118,29 @@ module Installation
       end
 
       def items
-        roles_description.map do |attr|
-          [attr[:id], attr[:label]]
+        ::Installation::SystemRole.roles.map do |role|
+          [role.id, role.label]
         end
       end
 
       def help
-        Yast::ProductControl.GetTranslatedText("roles_help") + "\n\n" +
-          roles_description.map { |r| r[:label] + "\n\n" + r[:description] }.join("\n\n\n")
+        Yast::ProductControl.GetTranslatedText("roles_help") + "\n\n" + roles_help_text
       end
-
-      NON_OVERLAY_ATTRIBUTES = [
-        "additional_dialogs",
-        "id",
-        "services"
-      ].freeze
-      private_constant :NON_OVERLAY_ATTRIBUTES
 
       def store
         log.info "Applying system role '#{value}'"
-        system_role.selected = value
-        features = system_role.features.dup
-        NON_OVERLAY_ATTRIBUTES.each { |a| features.delete(a) }
-        Yast::ProductFeatures.SetOverlay(features)
-        system_role.adapt_services
+        role = ::Installation::SystemRole.select(value)
+
+        role.overlay_features
+        role.adapt_services
       end
 
     private
 
-
-      def system_role
-        @system_role ||= ::Installation::SystemRole.instance
-      end
-
-      def roles_description
-        @roles_description ||= system_role.all.map do |r|
-          id = r["id"]
-
-          {
-            id:          id,
-            label:       Yast::ProductControl.GetTranslatedText(id),
-            description: Yast::ProductControl.GetTranslatedText(id + "_description")
-          }
-        end
+      def roles_help_text
+        ::Installation::SystemRole.roles.map do |role|
+          role.label + "\n\n" + role.description
+        end.join("\n\n\n")
       end
     end
   end

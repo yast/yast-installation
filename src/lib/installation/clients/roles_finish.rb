@@ -38,7 +38,7 @@ module Installation
 
       def write
         # Finish installation for the selected role
-        SystemRole.installation_finish
+        SystemRole.finish(SystemRole.current) if SystemRole.current
       end
     end
   end
