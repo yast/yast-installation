@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Wed Feb  8 12:58:16 UTC 2017 - jreidinger@suse.com
+
+- Add new desktop selection client for opensuse based on roles
+  (poo#14936)
+- drop "inst_new_desktop" client which was replaced by new desktop
+  selection one
+- 3.2.21
+
+-------------------------------------------------------------------
 Fri Feb  3 10:07:35 UTC 2017 - jsrain@suse.cz
 
 - Downloading release notes: Do not download them at all during
