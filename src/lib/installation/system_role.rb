@@ -20,6 +20,7 @@
 # ------------------------------------------------------------------------------
 
 require "yast"
+require "installation/system_roles/handlers"
 
 Yast.import "ProductControl"
 Yast.import "ProductFeatures"
@@ -28,14 +29,14 @@ module Installation
   class SystemRole
     include Yast::Logger
 
-    attr_accessor :id, :label, :description, :services, :options
+    attr_accessor :id, :label, :description, :services
 
-    def initialize(id, label, description, services, options = {})
+    def initialize(id:, label: id, description: nil, services: [])
       @id          = id
       @label       = label
       @description = description
-      @services    = services || []
-      @options     = options
+      @services    = services
+      @options     = {}
     end
 
     class << self
@@ -49,6 +50,10 @@ module Installation
         all.keys
       end
 
+      # Initializes and maintains a map with the id of the roles and
+      # SystemRole objects with the roles defined in the control file.
+      #
+      # @return [Hash<String => SystemRole>]
       def all
         return @roles if @roles
 
@@ -57,42 +62,62 @@ module Installation
         end
       end
 
-      # Read the roles from the control file
+      # Reads the roles from the control file
       def raw_roles
         @raw_roles ||= Yast::ProductControl.productControl.fetch("system_roles", [])
       end
 
-      # @return [Hash<SystemRole>]
+      # Returns an array with all the SystemRole objects
+      #
+      # @return [Array<SystemRole>]
       def roles
         all.values
       end
 
+      # Establish as the current role the one given
+      #
+      # @param [String] role id selected
+      # @return [SystemRole] the role selected
       def select(role_id)
         @current_role = find(role_id)
       end
 
+      # Returns the current role's id
+      #
+      # @return [String, nil] current role's id
       def current
         @current_role ? @current_role.id : nil
       end
 
+      # Returns the SystemRole object for the specific role id
+      #
+      # @param [String] role id
+      # @return [SystemRole, nil]
       def find(role_id)
         all[role_id]
       end
 
+      # Creates SystemRole instances based from a role's hash definition
       def from_control(raw_role)
         id = raw_role["id"]
-        default_args =
-          [
-            id,
-            Yast::ProductControl.GetTranslatedText(id),
-            Yast::ProductControl.GetTranslatedText("#{id}_description"),
-            raw_role["services"]
-          ]
 
-        new(*default_args)
+        new(
+          id: id,
+          label: Yast::ProductControl.GetTranslatedText(id),
+          description: Yast::ProductControl.GetTranslatedText("#{id}_description"),
+          services: raw_role["services"]
+        )
       end
 
+      # Given a role, it runs a a special finish handler for it if exists
+      #
+      # @param [String] role id
       def finish(role_id)
+        if !role_id
+          log.info("There is no role selected so nothing to do")
+          return
+        end
+
         class_name_role = role_id.split("_").map { |s| s.capitalize }.join
         handler = "::Installation::SystemRoleHandlers::#{class_name_role}Finish"
 
@@ -104,20 +129,15 @@ module Installation
       end
     end
 
-    def option(*args)
-      key, value = args
-      case args.size
-      when 0
-        raise ArgumentError, "Missing key argument"
-      when 1
-        @options[key]
-      when 2
-        @options[key] = value
-      else
-        raise ArgumentError, "Too many arguments, only key and/or value are supported"
-      end
+    def [](key)
+      @options[key]
     end
 
+    def []=(key, value)
+      @options[key] = value
+    end
+
+    # Enables the role services defined in the control file
     def adapt_services
       to_enable = services.map { |s| s["name"] }
 
@@ -134,29 +154,13 @@ module Installation
 
     private_constant :NON_OVERLAY_ATTRIBUTES
 
+    # Overlays the product features for this role with the configuration
+    # obtained from the control file
     def overlay_features
       features = self.class.raw_roles.find { |r| r["id"] == id }.dup
 
       NON_OVERLAY_ATTRIBUTES.each { |a| features.delete(a) }
       Yast::ProductFeatures.SetOverlay(features)
-    end
-  end
-
-  module SystemRoleHandlers
-    class WorkerRoleFinish
-      def self.run
-        role = SystemRole.find("worker_role")
-        master_conf = CFA::MinionMasterConf.new
-        master = role.option("controller_node")
-        begin
-          master_conf.load
-        rescue Errno::ENOENT
-          log.info("The minion master.conf file does not exist, it will be created")
-        end
-        log.info("The controller node for this worker role is: #{master}")
-        master_conf.master = master
-        master_conf.save
-      end
     end
   end
 end

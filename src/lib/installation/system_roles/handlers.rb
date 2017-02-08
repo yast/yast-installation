@@ -19,25 +19,25 @@
 # current contact information at www.suse.com.
 # ------------------------------------------------------------------------------
 
-require "installation/finish_client"
-require "installation/system_role"
+
+
+require "installation/cfa/salt"
 
 module Installation
-  module Clients
-    # This is a step of base installation finish and is responsible of write the
-    # specific configuration for the current system role.
-    #
-    # It has been added for CaaSP Roles (FATE#321754) and currently only
-    # the 'worker_role' has an special behavior.
-    class RolesFinish < ::Installation::FinishClient
-      def title
-        textdomain "installation"
-        _("Writing specific role configuration  ...")
-      end
-
-      def write
-        # Finish installation for the selected role
-        SystemRole.finish(SystemRole.current)
+  module SystemRoleHandlers
+    class WorkerRoleFinish
+      def self.run
+        role = SystemRole.find("worker_role")
+        master_conf = CFA::MinionMasterConf.new
+        master = role["controller_node"]
+        begin
+          master_conf.load
+        rescue Errno::ENOENT
+          log.info("The minion master.conf file does not exist, it will be created")
+        end
+        log.info("The controller node for this worker role is: #{master}")
+        master_conf.master = master
+        master_conf.save
       end
     end
   end

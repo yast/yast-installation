@@ -5,13 +5,20 @@ require_relative "test_helper"
 require "installation/widgets/system_role"
 
 describe ::Installation::Widgets::ControllerNode do
+  let(:worker_role) { ::Installation::SystemRole.new(id: "worker_role") }
+
+  before do
+    allow(subject).to receive(:role).and_return(worker_role)
+  end
+
   it "has label" do
     expect(subject.label).to_not be_empty
   end
 
   context "initialization" do
     it "is initialized with the previously stored value if present" do
-      allow(described_class).to receive(:location).and_return("previous_location")
+      worker_role["controller_node"] = "previous_location"
+
       expect(subject).to receive(:value=).with("previous_location")
 
       subject.init
@@ -22,7 +29,7 @@ describe ::Installation::Widgets::ControllerNode do
     it "stores current value" do
       expect(subject).to receive(:value).and_return("value_to_store")
 
-      expect(described_class).to receive(:location=).with("value_to_store")
+      expect(worker_role).to receive("[]=").with("controller_node", "value_to_store")
 
       subject.store
     end

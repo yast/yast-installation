@@ -42,12 +42,12 @@ module Installation
       #
       # @see #validate
       def store
-        role.option("controller_node", value)
+        role["controller_node"] = value
       end
 
       # The input field is initialized with previous stored value
       def init
-        self.value = role.option("controller_node")
+        self.value = role["controller_node"]
       end
 
       # If the value is not a valid IP or a valid FQDN it displays a popup

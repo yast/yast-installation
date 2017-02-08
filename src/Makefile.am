@@ -222,7 +222,10 @@ ylibcfadir = "${yast2dir}/lib/installation/cfa"
 ylibcfa_DATA = \
   lib/installation/cfa/salt.rb
 
+ylibrolehandlerdir = "${yast2dir}/lib/installation/system_roles"
+ylibrolehandler_DATA = \
+  lib/installation/system_roles/handlers.rb
 
-EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylibdialog_DATA) $(ylib_DATA) $(ylibtransfer_DATA) $(ylibcfa_DATA)
+EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylibdialog_DATA) $(ylib_DATA) $(ylibtransfer_DATA) $(ylibcfa_DATA) $(ylibrolehandler_DATA)
 
 include $(top_srcdir)/Makefile.am.common

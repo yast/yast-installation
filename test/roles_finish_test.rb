@@ -30,31 +30,11 @@ describe ::Installation::Clients::RolesFinish do
   end
 
   describe "#write" do
-    context "when the current role is 'worker'" do
-      context "when the minion master.conf file does not exist" do
-        it "creates the file with master: as the controller node location" do
-          allow(subject).to receive(:current_role).and_return("worker_role")
+    it "calls finish handler for the current role" do
+      expect(::Installation::SystemRole).to receive(:current).and_return("worker_role")
+      expect(::Installation::SystemRole).to receive(:finish).with("worker_role")
 
-          subject.write
-
-          expect(File.read(master_conf_path)).to eq(File.read(MASTER_CONF_EXPECTED))
-        end
-      end
-
-      context "when the minion master.conf file exists" do
-        before do
-          FileUtils.cp(MASTER_CONF_EXISTENT, MASTER_CONF)
-        end
-
-        it "modifies master: with the controller node location" do
-          expect(File.read(master_conf_path)).not_to eq(File.read(MASTER_CONF_EXPECTED))
-          allow(subject).to receive(:current_role).and_return("worker_role")
-
-          subject.write
-
-          expect(File.read(master_conf_path)).to eq(File.read(MASTER_CONF_EXPECTED))
-        end
-      end
+      subject.write
     end
   end
 end
