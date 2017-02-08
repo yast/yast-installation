@@ -19,8 +19,6 @@
 # current contact information at www.suse.com.
 # ------------------------------------------------------------------------------
 
-
-
 require "installation/cfa/salt"
 
 module Installation

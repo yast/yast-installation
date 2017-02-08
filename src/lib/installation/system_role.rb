@@ -40,7 +40,6 @@ module Installation
     end
 
     class << self
-
       attr_reader :current_role
 
       # Return an array with all the role ids
@@ -102,10 +101,10 @@ module Installation
         id = raw_role["id"]
 
         new(
-          id: id,
-          label: Yast::ProductControl.GetTranslatedText(id),
+          id:          id,
+          label:       Yast::ProductControl.GetTranslatedText(id),
           description: Yast::ProductControl.GetTranslatedText("#{id}_description"),
-          services: raw_role["services"]
+          services:    raw_role["services"]
         )
       end
 
@@ -118,7 +117,7 @@ module Installation
           return
         end
 
-        class_name_role = role_id.split("_").map { |s| s.capitalize }.join
+        class_name_role = role_id.split("_").map(&:capitalize).join
         handler = "::Installation::SystemRoleHandlers::#{class_name_role}Finish"
 
         begin

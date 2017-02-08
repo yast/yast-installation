@@ -66,7 +66,9 @@ module Installation
 
         true
       end
+
     private
+
       def role
         ::Installation::SystemRole.find("worker_role")
       end
