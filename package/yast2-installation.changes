@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Feb  8 11:57:14 UTC 2017 - lslezak@suse.cz
+
+- CaaSP: Display the Beta product warning at start when it is
+  present (bsc#1016887)
+- 3.1.217.19
+
+-------------------------------------------------------------------
 Wed Feb  1 14:20:43 UTC 2017 - jreidinger@suse.com
 
 - Enable CaaSP specific services on the installed system
