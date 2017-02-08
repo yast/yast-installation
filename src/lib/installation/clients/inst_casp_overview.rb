@@ -48,6 +48,7 @@ module Installation
       Yast.import "CWM"
       Yast.import "Popup"
       Yast.import "Pkg"
+      Yast.import "InstShowInfo"
 
       textdomain "installation"
 
@@ -58,6 +59,9 @@ module Installation
       # We do not need to create a wizard dialog in installation, but it's
       # helpful when testing all manually on a running system
       Yast::Wizard.CreateDialog if separate_wizard_needed?
+
+      # show the Beta warning if it exists
+      Yast::InstShowInfo.show_info_txt(INFO_FILE) if File.exist?(INFO_FILE)
 
       ret = nil
       loop do
@@ -101,6 +105,9 @@ module Installation
     end
 
   private
+
+    # location of the info.txt file (containing the Beta warning)
+    INFO_FILE = "/info.txt".freeze
 
     # Specific services that needs to be enabled on CAaSP see (FATE#321738)
     # It is additional services to the ones defined for role.
