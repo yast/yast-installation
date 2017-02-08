@@ -1,6 +1,7 @@
 require "yast"
 
 Yast.import "PackagesUI"
+Yast.import "Label"
 
 module Installation
   class CustomPatterns
@@ -11,7 +12,7 @@ module Installation
 
     def run
       if self.class.show
-        ret = Yast::PackagesUI.RunPatternSelector
+        ret = Yast::PackagesUI.RunPatternSelector(enable_back: true, cancel_label: Yast::Label.AbortButton)
         ret = :next if ret == :accept
       else
         ret = :auto
