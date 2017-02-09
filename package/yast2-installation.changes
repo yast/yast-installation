@@ -3,7 +3,7 @@ Wed Feb  8 16:42:29 UTC 2017 - kanderssen@suse.com
 
 - CaaSP all-in-one-dialog: added validation to the controller node
   location field, modified label and write it to the minion
-  master.conf file at the end of the installation
+  master.conf file at the end of the installation (FATE#321738)
 - 3.1.217.20
 
 -------------------------------------------------------------------
