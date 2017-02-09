@@ -34,15 +34,20 @@ module Installation
     include Yast::Logger
     extend Forwardable
 
-    attr_accessor :id, :label, :description
+    # @return [String]
+    attr_accessor :id
+    # @return [String]
+    attr_accessor :label
+    # @return [String, nil]
+    attr_accessor :description
 
     # All the special attributes for a given role are delegated to @options
     def_delegators :@options, :[], :[]=
 
     # Constructor
     #
-    # Only the id, label and description are allowed to be initialized other
-    # options has to be set explicitly.
+    # Only the id, label and description are allowed to be initialized others
+    # options have to be set explicitly.
     #
     # @example SystemRole with 'services' and a 'controller node' defined
     #   @role = SystemRole.new(id: "test_role")
@@ -50,7 +55,7 @@ module Installation
     #   @role["controller_node"] = "salt"
     #
     # @param id [String]
-    # @param label [String]
+    # @param label [String] it uses the id as label if not given
     # @param description [String]
     def initialize(id:, label: id, description: nil)
       @id          = id
@@ -60,6 +65,7 @@ module Installation
     end
 
     class << self
+      # @return [SystemRole, nil] returns the current role
       attr_reader :current_role
 
       # Returns an array with all the role ids
@@ -67,7 +73,7 @@ module Installation
       # @example
       #   SystemRole.ids #=> ["role_one", "role_two"]
       #
-      # @return [Array<String>] array with all the role ids
+      # @return [Array<String>] array with all the role ids; empty if no roles
       def ids
         all.keys
       end
@@ -89,14 +95,14 @@ module Installation
       # @example
       #   SystemRole.raw_roles #=> [{ "id" => "role_one" }]
       #
-      # @return [Array<Hash>]
+      # @return [Array<Hash>] returns an empty array if no roles defined
       def raw_roles
         @raw_roles ||= Yast::ProductControl.productControl.fetch("system_roles", []) || []
       end
 
       # Returns an array with all the SystemRole objects
       #
-      # @return [Array<SystemRole>]
+      # @return [Array<SystemRole>] retuns an empty array if no roles defined
       def roles
         all.values
       end

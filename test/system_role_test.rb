@@ -24,7 +24,7 @@ describe Installation::SystemRole do
   end
 
   describe ".raw_roles" do
-    it "fetchs the roles from the control file and returns them" do
+    it "returns the roles from the control file" do
       allow(described_class).to receive(:raw_roles).and_call_original
       expect(Yast::ProductControl).to receive(:productControl)
         .and_return("system_roles" => system_roles)

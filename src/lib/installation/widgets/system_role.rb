@@ -53,7 +53,7 @@ module Installation
       # It returns true if the value is a valid IP or a valid FQDN, if not it
       # displays a popup error.
       #
-      # @return <Boolean> true if valid IP or FQDN
+      # @return [Boolean] true if valid IP or FQDN
       def validate
         return true if Yast::IP.Check(value) || Yast::Hostname.CheckFQ(value)
 

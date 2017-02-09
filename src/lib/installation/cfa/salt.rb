@@ -10,8 +10,9 @@ module Installation
 
       # Configuration parser
       #
-      # FIXME: At this time, we're using Augeas' cobblersettings lense,
-      # as long as YAML is not supported. We should use another parser.
+      # FIXME: At this time, we're using Augeas' cobblersettings lense because,
+      # although the file is in yaml format, it doesn't have a YAML header
+      # which is required by the yaml lense.
       PARSER = ::CFA::AugeasParser.new("cobblersettings.lns")
       # Path to configuration file
       PATH = "/etc/salt/minion.d/master.conf".freeze
