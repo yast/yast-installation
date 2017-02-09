@@ -34,10 +34,19 @@ module Installation
     include Yast::Logger
     extend Forwardable
 
+    # This is the id or name of the role and used as reference to the role
+    #
     # @return [String]
     attr_accessor :id
+    # The label is usually translated and shoule be a short word more
+    # descriptive than the id.
+    #
     # @return [String]
     attr_accessor :label
+    # It descripts the main capabilities of the role and it is also usually
+    # translated  because it is used for description and/or for help in some
+    # cases.
+    #
     # @return [String, nil]
     attr_accessor :description
 
@@ -54,7 +63,7 @@ module Installation
     #   @role["services"] = { "name" => "salt-minion" }
     #   @role["controller_node"] = "salt"
     #
-    # @param id [String]
+    # @param id [String] role id or name
     # @param label [String] it uses the id as label if not given
     # @param description [String]
     def initialize(id:, label: id, description: nil)
