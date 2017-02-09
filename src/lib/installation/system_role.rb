@@ -46,7 +46,7 @@ module Installation
 
     # Constructor
     #
-    # Only the id, label and description are allowed to be initialized others
+    # Only the id, label and description are allowed to be initialized other
     # options have to be set explicitly.
     #
     # @example SystemRole with 'services' and a 'controller node' defined
