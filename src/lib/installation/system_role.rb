@@ -32,14 +32,30 @@ module Installation
   # installation.
   class SystemRole
     include Yast::Logger
+    extend Forwardable
 
-    attr_accessor :id, :label, :description, :services
+    attr_accessor :id, :label, :description
 
-    def initialize(id:, label: id, description: nil, services: [])
+    # All the special attributes for a given role are delegated to @options
+    def_delegators :@options, :[], :[]=
+
+    # Constructor
+    #
+    # Only the id, label and description are allowed to be initialized other
+    # options has to be set explicitly.
+    #
+    # @example SystemRole with 'services' and a 'controller node' defined
+    #   @role = SystemRole.new(id: "test_role")
+    #   @role["services"] = { "name" => "salt-minion" }
+    #   @role["controller_node"] = "salt"
+    #
+    # @param id [String]
+    # @param label [String]
+    # @param description [String]
+    def initialize(id:, label: id, description: nil)
       @id          = id
       @label       = label
       @description = description
-      @services    = services
       @options     = {}
     end
 
@@ -47,6 +63,9 @@ module Installation
       attr_reader :current_role
 
       # Returns an array with all the role ids
+      #
+      # @example
+      #   SystemRole.ids #=> ["role_one", "role_two"]
       #
       # @return [Array<String>] array with all the role ids
       def ids
@@ -56,7 +75,7 @@ module Installation
       # Initializes and maintains a map with the id of the roles and
       # SystemRole objects with the roles defined in the control file.
       #
-      # @return [Hash<String => SystemRole>]
+      # @return [Hash<String, SystemRole>]
       def all
         return @roles if @roles
 
@@ -66,6 +85,11 @@ module Installation
       end
 
       # Fetchs the roles from the control file and returns them as they are.
+      #
+      # @example
+      #   SystemRole.raw_roles #=> [{ "id" => "role_one" }]
+      #
+      # @return [Array<Hash>]
       def raw_roles
         @raw_roles ||= Yast::ProductControl.productControl.fetch("system_roles", []) || []
       end
@@ -79,13 +103,14 @@ module Installation
 
       # Establish as the current role the one given as parameter.
       #
-      # @param [String] role id selected
-      # @return [SystemRole] the role selected
+      # @param role_id [String] role to be used as current
+      # @return [SystemRole] the object corresponding to the selected role
+      # @see current
       def select(role_id)
         @current_role = find(role_id)
       end
 
-      # Returns the current role's id
+      # Returns the current role id
       #
       # @return [String, nil] current role's id
       def current
@@ -94,55 +119,56 @@ module Installation
 
       # Returns the SystemRole object for the specific role id.
       #
-      # @param [String] role id
+      # @param role_id [String]
       # @return [SystemRole, nil]
       def find(role_id)
         all[role_id]
       end
 
-      # Creates SystemRole instances for the given role (in raw format).
+      # Creates a SystemRole instance for the given role (in raw format).
+      #
+      # @param raw_role [Hash] role definition
+      # @return [SystemRole]
       def from_control(raw_role)
         id = raw_role["id"]
 
-        new(
-          id:          id,
-          label:       Yast::ProductControl.GetTranslatedText(id),
-          description: Yast::ProductControl.GetTranslatedText("#{id}_description"),
-          services:    raw_role["services"]
-        )
+        role =
+          new(
+            id:          id,
+            label:       Yast::ProductControl.GetTranslatedText(id),
+            description: Yast::ProductControl.GetTranslatedText("#{id}_description")
+          )
+
+        role["services"] = raw_role["services"] || []
+
+        role
       end
 
-      # Given a role, it runs a a special finish handler for it if exists
-      #
-      # @param [String] role id
-      def finish(role_id)
-        if !role_id
+      # It runs a special finish handler for the current role if exists
+      def finish
+        if !current
           log.info("There is no role selected so nothing to do")
           return
         end
 
-        class_name_role = role_id.split("_").map(&:capitalize).join
+        class_name_role = current.split("_").map(&:capitalize).join
         handler = "::Installation::SystemRoleHandlers::#{class_name_role}Finish"
 
-        begin
+        if Object.const_defined?(handler)
           Object.const_get(handler).run
-        rescue NameError, LoadError
-          log.info("There is no special finisher for #{role_id}")
+        else
+          log.info("There is no special finisher for #{current}")
         end
       end
     end
 
-    def [](key)
-      @options[key]
-    end
-
-    def []=(key, value)
-      @options[key] = value
-    end
-
     # Enables the role services defined in the control file
+    #
+    # @return [Array] the list of services to be enable
     def adapt_services
-      to_enable = services.map { |s| s["name"] }
+      return [] if !self["services"]
+
+      to_enable = self["services"].map { |s| s["name"] }
 
       log.info "enable for #{id} these services: #{to_enable.inspect}"
 

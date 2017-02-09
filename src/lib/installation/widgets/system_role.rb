@@ -50,21 +50,20 @@ module Installation
         self.value = role["controller_node"]
       end
 
-      # If the value is not a valid IP or a valid FQDN it displays a popup
-      # error and returns false, in other case it just returns true.
+      # It returns true if the value is a valid IP or a valid FQDN, if not it
+      # displays a popup error.
       #
-      # @return <Boolean> false if not a valid IP or FQDN; true otherwise
+      # @return <Boolean> true if valid IP or FQDN
       def validate
-        unless Yast::IP.Check(value) || Yast::Hostname.CheckFQ(value)
-          Yast::Popup.Error(
-            # TRANSLATORS: error message for invalid controller node location
-            _("Not valid location for the controller node, " \
-            "please enter a valid IP or Hostname")
-          )
-          return false
-        end
+        return true if Yast::IP.Check(value) || Yast::Hostname.CheckFQ(value)
 
-        true
+        Yast::Popup.Error(
+          # TRANSLATORS: error message for invalid controller node location
+          _("Not valid location for the controller node, " \
+          "please enter a valid IP or Hostname")
+        )
+
+        false
       end
 
     private
@@ -105,7 +104,7 @@ module Installation
       end
 
       def init
-        self.value = ::Installation::SystemRole.current
+        self.value = ::Installation::SystemRole.current || default
         handle
       end
 
@@ -143,6 +142,10 @@ module Installation
         ::Installation::SystemRole.roles.map do |role|
           role.label + "\n\n" + role.description
         end.join("\n\n\n")
+      end
+
+      def default
+        ::Installation::SystemRole.ids.first
       end
     end
   end

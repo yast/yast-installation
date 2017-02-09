@@ -35,9 +35,9 @@ module Installation
         _("Writing specific role configuration  ...")
       end
 
+      # Finish installation for the current role
       def write
-        # Finish installation for the selected role
-        SystemRole.finish(SystemRole.current)
+        SystemRole.finish
       end
     end
   end

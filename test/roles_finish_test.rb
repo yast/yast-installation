@@ -31,8 +31,7 @@ describe ::Installation::Clients::RolesFinish do
 
   describe "#write" do
     it "calls finish handler for the current role" do
-      expect(::Installation::SystemRole).to receive(:current).and_return("worker_role")
-      expect(::Installation::SystemRole).to receive(:finish).with("worker_role")
+      expect(::Installation::SystemRole).to receive(:finish)
 
       subject.write
     end
