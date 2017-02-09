@@ -20,12 +20,16 @@
 # ------------------------------------------------------------------------------
 
 require "yast"
+require "installation/services"
 require "installation/system_roles/handlers"
 
 Yast.import "ProductControl"
 Yast.import "ProductFeatures"
 
 module Installation
+  # This class fetchs and stores the roles declared in the installation control
+  # file. It works as a storage for them and for the role selected during the
+  # installation.
   class SystemRole
     include Yast::Logger
 
@@ -42,7 +46,7 @@ module Installation
     class << self
       attr_reader :current_role
 
-      # Return an array with all the role ids
+      # Returns an array with all the role ids
       #
       # @return [Array<String>] array with all the role ids
       def ids
@@ -61,9 +65,9 @@ module Installation
         end
       end
 
-      # Reads the roles from the control file
+      # Fetchs the roles from the control file and returns them as they are.
       def raw_roles
-        @raw_roles ||= Yast::ProductControl.productControl.fetch("system_roles", [])
+        @raw_roles ||= Yast::ProductControl.productControl.fetch("system_roles", []) || []
       end
 
       # Returns an array with all the SystemRole objects
@@ -73,7 +77,7 @@ module Installation
         all.values
       end
 
-      # Establish as the current role the one given
+      # Establish as the current role the one given as parameter.
       #
       # @param [String] role id selected
       # @return [SystemRole] the role selected
@@ -88,7 +92,7 @@ module Installation
         @current_role ? @current_role.id : nil
       end
 
-      # Returns the SystemRole object for the specific role id
+      # Returns the SystemRole object for the specific role id.
       #
       # @param [String] role id
       # @return [SystemRole, nil]
@@ -96,7 +100,7 @@ module Installation
         all[role_id]
       end
 
-      # Creates SystemRole instances based from a role's hash definition
+      # Creates SystemRole instances for the given role (in raw format).
       def from_control(raw_role)
         id = raw_role["id"]
 

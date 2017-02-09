@@ -18,13 +18,16 @@ TESTS = \
   proposal_store_test.rb \
   proposal_runner_test.rb \
   remote_finish_test.rb \
+  roles_finish_test.rb \
   select_system_role_test.rb \
   services_test.rb \
   services_finish_test.rb \
   snapshots_finish_test.rb \
   ssh_import_auto_test.rb \
+  system_role_test.rb \
   updates_manager_test.rb \
-  update_repository_test.rb
+  update_repository_test.rb \
+  widgets_system_role_test.rb
 
 TEST_EXTENSIONS = .rb
 RB_LOG_COMPILER = rspec
