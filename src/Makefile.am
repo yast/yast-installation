@@ -55,7 +55,6 @@ client_DATA = \
   clients/inst_ssh_import.rb \
   clients/inst_system_analysis.rb \
   clients/inst_system_role.rb \
-  clients/inst_worker_role.rb \
   clients/inst_upgrade_urls.rb \
   clients/inst_update_installer.rb \
   clients/inst_welcome.rb \
@@ -68,6 +67,7 @@ client_DATA = \
   clients/prep_shrink_finish.rb \
   clients/proxy_finish.rb \
   clients/remote_finish.rb \
+  clients/roles_finish.rb \
   clients/save_config_finish.rb \
   clients/save_hw_status_finish.rb \
   clients/services_finish.rb \
@@ -133,7 +133,8 @@ ylib_DATA = \
   lib/installation/ssh_key.rb \
   lib/installation/ssh_config_file.rb \
   lib/installation/ssh_importer_presenter.rb \
-  lib/installation/ssh_importer.rb
+  lib/installation/ssh_importer.rb \
+  lib/installation/system_role.rb
 
 ylibtransferdir = "${yast2dir}/lib/transfer"
 ylibtransfer_DATA = \
@@ -192,6 +193,7 @@ ylibclient_DATA = \
   lib/installation/clients/network_finish.rb \
   lib/installation/clients/pre_umount_finish.rb \
   lib/installation/clients/proxy_finish.rb \
+  lib/installation/clients/roles_finish.rb \
   lib/installation/clients/save_config_finish.rb \
   lib/installation/clients/save_hw_status_finish.rb \
   lib/installation/clients/services_finish.rb \
@@ -209,14 +211,21 @@ ylibclient_DATA = \
 
 ylibdialogdir = "${yast2dir}/lib/installation/dialogs"
 ylibdialog_DATA = \
-  lib/installation/dialogs/ssh_import.rb \
-  lib/installation/dialogs/worker_role.rb
+  lib/installation/dialogs/ssh_import.rb
 
 ylibwidgetdir = "${yast2dir}/lib/installation/widgets"
 ylibwidget_DATA = \
   lib/installation/widgets/overview.rb \
   lib/installation/widgets/system_role.rb
 
-EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylibdialog_DATA) $(ylib_DATA) $(ylibtransfer_DATA)
+ylibcfadir = "${yast2dir}/lib/installation/cfa"
+ylibcfa_DATA = \
+  lib/installation/cfa/salt.rb
+
+ylibrolehandlerdir = "${yast2dir}/lib/installation/system_roles"
+ylibrolehandler_DATA = \
+  lib/installation/system_roles/handlers.rb
+
+EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylibdialog_DATA) $(ylib_DATA) $(ylibtransfer_DATA) $(ylibcfa_DATA) $(ylibrolehandler_DATA)
 
 include $(top_srcdir)/Makefile.am.common
