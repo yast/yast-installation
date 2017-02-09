@@ -37,16 +37,14 @@ module Installation
       def initialize(client:)
         textdomain "installation"
         @proposal_client = client
+        @replace_point = "rp_" + client
         # by default widget_id is the class name; must differentiate instances
         self.widget_id = "overview_" + client
         @blocking = false
       end
 
       def contents
-        VBox(
-          Left(PushButton(Id(button_id), label)),
-          * items.map { |i| Left(Label(" * #{i}")) }
-        )
+        ReplacePoint(Id(@replace_point), widget)
       end
 
       def label
@@ -80,9 +78,18 @@ module Installation
         @items = d["label_proposal"]
       end
 
+      def redraw
+        reset
+
+        Yast::UI.ReplaceWidget(Id(@replace_point), widget)
+      end
+
       def handle(_event)
         Yast::WFM.CallFunction(proposal_client, ["AskUser", {}])
-        :redraw
+
+        redraw
+
+        nil
       end
 
       def validate
@@ -106,6 +113,19 @@ module Installation
       def button_id
         # an arbitrary unique id
         "ask_" + proposal_client
+      end
+
+      def widget
+        VBox(
+          Left(PushButton(Id(button_id), label)),
+          * items.map { |i| Left(Label(" * #{i}")) }
+        )
+      end
+
+      # Flush cache(s)
+      def reset
+        @label = nil
+        @items = nil
       end
     end
   end

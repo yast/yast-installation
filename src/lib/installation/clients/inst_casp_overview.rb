@@ -73,11 +73,11 @@ module Installation
           next_button:    _("Install"),
           # do not show abort and back button
           abort_button:   "",
-          back_button:    "",
-          # do not store stuff when just redrawing
-          skip_store_for: [:redraw]
+          back_button:    ""
         )
-        next if ret == :redraw
+
+        # TODO: check exception type
+        raise ArgumentError, "Unexpected return value" if ret != :next
 
         # do software proposal
         d = Yast::WFM.CallFunction("software_proposal",
