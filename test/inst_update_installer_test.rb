@@ -36,8 +36,10 @@ describe Yast::InstUpdateInstaller do
   let(:profile) { {} }
   let(:ay_profile) { double("Yast::Profile", current: profile) }
   let(:ay_profile_location) { double("Yast::ProfileLocation") }
+  let(:finder) { ::Installation::UpdateRepositoriesFinder.new }
 
   before do
+    allow(::Installation::UpdateRepositoriesFinder).to receive(:new).and_return(finder)
     allow(Yast::GetInstArgs).to receive(:going_back).and_return(false)
     allow(Yast::Pkg).to receive(:GetArchitecture).and_return(arch)
     allow(Yast::Mode).to receive(:auto).and_return(false)
@@ -53,13 +55,15 @@ describe Yast::InstUpdateInstaller do
     # skip the libzypp initialization globally, enable in the specific tests
     allow(subject).to receive(:initialize_packager).and_return(true)
     allow(subject).to receive(:finish_packager)
-    allow(subject).to receive(:add_installation_repo)
+    allow(finder).to receive(:add_installation_repo)
     allow(subject).to receive(:fetch_profile).and_return(ay_profile)
     allow(subject).to receive(:process_profile)
 
     # stub the Profile module to avoid dependency on autoyast2-installation
     stub_const("Yast::Profile", ay_profile)
     stub_const("Yast::Language", double(language: "en_US"))
+
+    FakeInstallationOptions.instance.custom_url = nil
   end
 
   describe "#main" do
@@ -295,7 +299,7 @@ describe Yast::InstUpdateInstaller do
           it "initializes the package management" do
             # override the global stubs
             expect(subject).to receive(:initialize_packager).and_call_original
-            expect(subject).to receive(:add_installation_repo).and_call_original
+            expect(finder).to receive(:add_installation_repo).and_call_original
 
             url = "cd:///"
             expect(Yast::Pkg).to receive(:SetTextLocale)
@@ -349,6 +353,7 @@ describe Yast::InstUpdateInstaller do
               it "saves the registration URL to be used later" do
                 allow(manager).to receive(:add_repository)
                 expect(FakeInstallationOptions.instance).to receive(:custom_url=).with(smt0.slp_url)
+                  .and_call_original
                 expect(File).to receive(:write).with(/\/inst_update_installer.yaml\z/,
                   { "custom_url" => smt0.slp_url }.to_yaml)
                 subject.main

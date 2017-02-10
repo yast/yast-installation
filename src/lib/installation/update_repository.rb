@@ -41,14 +41,20 @@ module Installation
     include Yast::Logger
     include Yast::I18n
 
+    # Where the repository information comes from
+    #
+    # * :default: Default
+    # * :user:    User defined
+    ORIGINS = [:default, :user]
+
     # @return [URI] URI of the repository
     attr_reader :uri
-    # @return [Fixnum] yast2-pkg-bindings ID of the repository
-    attr_reader :repo_id
     # @return [Pathname] Registry of inst-sys updated parts
     attr_reader :instsys_parts_path
     # @return [Array<Pathname>] local paths of updates fetched from the repo
     attr_reader :update_files
+    # @return [Symbol] Repository origin. @see ORIGINS
+    attr_reader :origin
 
     # A valid repository was not found (although the URL exists,
     # repository type cannot be determined).
@@ -78,6 +84,9 @@ module Installation
     # Updates should be fetched before calling to #apply.
     class UpdatesNotFetched < StandardError; end
 
+    # Not valid origin for the repository
+    class UnknownOrigin < StandardError; end
+
     #
     # Internal exceptions (handled internally)
     #
@@ -94,18 +103,28 @@ module Installation
     # Constructor
     #
     # @param uri                [URI]      Repository URI
+    # @param origin             [Symbol]   Repository origin (@see ORIGINS)
     # @param instsys_parts_path [Pathname] Path to instsys.parts registry
-    def initialize(uri, instsys_parts_path = Pathname("/etc/instsys.parts"))
+    # TODO: instsys_parts_path should not be a constructor's parameter.
+    #       It should be passed directly to the apply method with a default
+    #       value defined as a constant.
+    def initialize(uri, origin = :default, instsys_parts_path = Pathname("/etc/instsys.parts"))
       Yast.import "Pkg"
       Yast.import "Progress"
 
       textdomain "installation"
 
       @uri = uri
-      @repo_id = add_repo
       @update_files = []
       @packages = nil
       @instsys_parts_path = instsys_parts_path
+      raise UnknownOrigin unless ORIGINS.include?(origin)
+      @origin = origin
+    end
+
+    # @return [Fixnum] yast2-pkg-bindings ID of the repository
+    def repo_id
+      @repo_id ||= add_repo
     end
 
     # Retrieves the list of packages to install
@@ -218,6 +237,14 @@ module Installation
     # @see #packages
     def empty?
       packages.empty?
+    end
+
+    # Returns whether is a user defined repository
+    #
+    # @return [Boolean] true if the repository is user-defined empty;
+    #                   false otherwise.
+    def user_defined?
+      origin == :user
     end
 
   private

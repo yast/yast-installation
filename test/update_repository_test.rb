@@ -251,4 +251,28 @@ describe Installation::UpdateRepository do
       subject.cleanup
     end
   end
+
+  describe "#user_defined?" do
+    context "when origin is :user" do
+      subject(:repo) { Installation::UpdateRepository.new(uri, :user) }
+
+      it "returns true" do
+        expect(repo).to be_user_defined
+      end
+    end
+
+    context "when origin is :default" do
+      subject(:repo) { Installation::UpdateRepository.new(uri, :default) }
+
+      it "returns false" do
+        expect(repo).to_not be_user_defined
+      end
+    end
+
+    context "when origin is not specified" do
+      it "returns false" do
+        expect(repo).to_not be_user_defined
+      end
+    end
+  end
 end
