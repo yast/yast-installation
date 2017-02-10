@@ -1,4 +1,17 @@
 -------------------------------------------------------------------
+Wed Feb  8 16:42:29 UTC 2017 - kanderssen@suse.com
+
+- CaaSP all-in-one-dialog: added validation to the controller node
+  location field, modified label and write it to the minion
+  master.conf file at the end of the installation (FATE#321738)
+- CaaSP: Display the Beta product warning at start when it is
+  present (bsc#1016887)
+- Enable CaaSP specific services on the installed system
+  (FATE#321738)
+- Do not crash if role contain own service to enable (bsc#1022762)
+- 3.2.21
+
+-------------------------------------------------------------------
 Fri Feb  3 10:07:35 UTC 2017 - jsrain@suse.cz
 
 - Downloading release notes: Do not download them at all during

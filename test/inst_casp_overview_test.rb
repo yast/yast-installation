@@ -69,6 +69,8 @@ describe ::Installation::InstCaspOverview do
       allow(Yast::WFM).to receive(:CallFunction).and_return({})
       allow(Yast::WFM).to receive(:CallFunction)
         .with("inst_doit", []).and_return(:next)
+      allow(File).to receive(:exist?).and_call_original
+      allow(File).to receive(:exist?).with("/info.txt").and_return(false)
     end
 
     it "sets package locale same as Language" do
@@ -105,6 +107,28 @@ describe ::Installation::InstCaspOverview do
       allow(Yast::Mode).to receive(:normal).and_return(true)
 
       expect(Yast::CWM).to receive(:show).twice.and_return(:redraw, :next)
+
+      subject.run
+    end
+
+    it "adds caasp specific services to be enabled" do
+      subject.run
+
+      expect(::Installation::Services.enabled).to include("cloud-init")
+    end
+
+    it "displays the /info.txt file if it exists" do
+      expect(File).to receive(:exist?).with("/info.txt").and_return(true)
+      expect(Yast::InstShowInfo).to receive(:show_info_txt).with("/info.txt").and_return(true)
+      expect(Yast::CWM).to receive(:show).and_return(:next)
+
+      subject.run
+    end
+
+    it "does not try displaying the /info.txt file if it does not exist" do
+      expect(File).to receive(:exist?).with("/info.txt").and_return(false)
+      expect(Yast::InstShowInfo).to_not receive(:show_info_txt)
+      expect(Yast::CWM).to receive(:show).and_return(:next)
 
       subject.run
     end

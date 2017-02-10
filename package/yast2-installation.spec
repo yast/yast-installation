@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.2.20
+Version:        3.2.21
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -76,6 +76,9 @@ Requires: yast2-services-manager
 
 # Network service setup moved into yast2-network
 Requires: yast2-network >= 3.1.143
+
+# Augeas lenses
+Requires:       augeas-lenses
 
 # Only in inst-sys
 # Requires:	yast2-add-on
