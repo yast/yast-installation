@@ -46,11 +46,12 @@ module Installation
     # * :default: Default
     # * :user:    User defined
     ORIGINS = [:default, :user]
+    # Path to instsys.parts registry
+    INSTSYS_PARTS_PATH = Pathname("/etc/instsys.parts").freeze
+
 
     # @return [URI] URI of the repository
     attr_reader :uri
-    # @return [Pathname] Registry of inst-sys updated parts
-    attr_reader :instsys_parts_path
     # @return [Array<Pathname>] local paths of updates fetched from the repo
     attr_reader :update_files
     # @return [Symbol] Repository origin. @see ORIGINS
@@ -104,11 +105,7 @@ module Installation
     #
     # @param uri                [URI]      Repository URI
     # @param origin             [Symbol]   Repository origin (@see ORIGINS)
-    # @param instsys_parts_path [Pathname] Path to instsys.parts registry
-    # TODO: instsys_parts_path should not be a constructor's parameter.
-    #       It should be passed directly to the apply method with a default
-    #       value defined as a constant.
-    def initialize(uri, origin = :default, instsys_parts_path = Pathname("/etc/instsys.parts"))
+    def initialize(uri, origin = :default)
       Yast.import "Pkg"
       Yast.import "Progress"
 
@@ -117,7 +114,6 @@ module Installation
       @uri = uri
       @update_files = []
       @packages = nil
-      @instsys_parts_path = instsys_parts_path
       raise UnknownOrigin unless ORIGINS.include?(origin)
       @origin = origin
     end
@@ -413,9 +409,9 @@ module Installation
     # @param path       [Pathname] Filesystem to mount
     # @param mountpoint [Pathname] Mountpoint
     #
-    # @see instsys_parts_path
+    # @see INSTSYS_PARTS_PATH
     def update_instsys_parts(path, mountpoint)
-      instsys_parts_path.open("a") do |f|
+      INSTSYS_PARTS_PATH.open("a") do |f|
         f.puts "#{path.relative_path_from(Pathname("/"))} #{mountpoint}"
       end
     end
