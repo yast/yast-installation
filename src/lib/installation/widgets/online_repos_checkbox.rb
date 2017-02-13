@@ -13,7 +13,7 @@ module Installation
       end
 
       def label
-        _("Add On-line Repositories Before Installation")
+        _("Select Addiotional On-line Repositories")
       end
 
       def store
