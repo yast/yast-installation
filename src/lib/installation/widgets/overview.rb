@@ -82,6 +82,7 @@ module Installation
         @items = d["label_proposal"]
       end
 
+      # Updates overview content
       def redraw
         reset
 
@@ -90,6 +91,7 @@ module Installation
         @overviews_for_redraw.each(&:redraw)
       end
 
+      # Custom event handler
       def handle(_event)
         Yast::WFM.CallFunction(proposal_client, ["AskUser", {}])
 
@@ -121,6 +123,7 @@ module Installation
         "ask_" + proposal_client
       end
 
+      # The overview representation in common UI widgets
       def widget
         VBox(
           Left(PushButton(Id(button_id), label)),
