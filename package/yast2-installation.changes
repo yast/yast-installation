@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Feb 13 13:00:42 UTC 2017 - kanderssen@suse.com
+
+- CaaSP: do not crash when used a dashed url for the controller
+  node location (bsc#1024965)
+- 3.1.217.21
+
+-------------------------------------------------------------------
 Wed Feb  8 16:42:29 UTC 2017 - kanderssen@suse.com
 
 - CaaSP all-in-one-dialog: added validation to the controller node
