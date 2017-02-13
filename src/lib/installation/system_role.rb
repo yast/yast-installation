@@ -87,6 +87,11 @@ module Installation
         all.keys
       end
 
+      # returns if roles should set default or have no role preselected
+      def default?
+        all.first["no_default"]
+      end
+
       # Initializes and maintains a map with the id of the roles and
       # SystemRole objects with the roles defined in the control file.
       #
@@ -155,6 +160,7 @@ module Installation
           )
 
         role["services"] = raw_role["services"] || []
+        role["no_default"] = raw_role["no_default"] || false
 
         role
       end
@@ -193,6 +199,7 @@ module Installation
     NON_OVERLAY_ATTRIBUTES = [
       "additional_dialogs",
       "id",
+      "no_default",
       "services"
     ].freeze
 

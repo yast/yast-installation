@@ -93,9 +93,12 @@ module Installation
 
     module SystemRoleReader
 
+      def default
+        ::Installation::SystemRole.default? ? ::Installation::SystemRole.ids.first : nil
+      end
+
       def init
-        self.class.original_role_id ||= roles_description.first[:id]
-        self.value = self.class.original_role_id
+        self.value = ::Installation::SystemRole.current || default
       end
 
       def label
@@ -136,11 +139,6 @@ module Installation
 
     # CaaSP specialized role widget
     class SystemRole < CWM::ComboBox
-      class << self
-        # once the user selects a role, remember it in case they come back
-        attr_accessor :original_role_id
-      end
-
       include SystemRoleReader
 
       def initialize(dashboard_widget)
@@ -170,11 +168,6 @@ module Installation
     end
 
     class SystemRolesRadioButtons < CWM::RadioButtons
-      class << self
-        # once the user selects a role, remember it in case they come back
-        attr_accessor :original_role_id
-      end
-
       include SystemRoleReader
 
       alias_method :store_orig, :store
