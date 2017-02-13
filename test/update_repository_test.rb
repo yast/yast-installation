@@ -275,4 +275,24 @@ describe Installation::UpdateRepository do
       end
     end
   end
+
+  describe "#remote?" do
+    context "when is a remote URL according to libzypp" do
+      it "returns true" do
+        expect(Yast::Pkg).to receive(:UrlSchemeIsRemote).with("http")
+          .and_call_original
+        expect(repo).to be_remote
+      end
+    end
+
+    context "when is not a remote URL according to libzypp" do
+      let(:uri) { URI("cd:/?device=sr0") }
+
+      it "returns false" do
+        expect(Yast::Pkg).to receive(:UrlSchemeIsRemote).with("cd")
+          .and_call_original
+        expect(repo).to_not be_remote
+      end
+    end
+  end
 end

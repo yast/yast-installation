@@ -245,6 +245,16 @@ module Installation
       origin == :user
     end
 
+    # Determines whether the URI of the repository is remote or not
+    #
+    # @return [Boolean] true if the repository is using a 'remote URI';
+    #                   false otherwise.
+    #
+    # @see Pkg.UrlSchemeIsRemote
+    def remote?
+      Yast::Pkg.UrlSchemeIsRemote(uri.scheme)
+    end
+
   private
 
     # Fetch and build a squashfs filesytem for a given package

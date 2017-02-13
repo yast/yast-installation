@@ -24,7 +24,6 @@ module Yast
     include Yast::I18n
 
     UPDATED_FLAG_FILENAME = "installer_updated".freeze
-    REMOTE_SCHEMES = ["http", "https", "ftp", "tftp", "sftp", "nfs", "nfs4", "cifs", "smb"].freeze
     PROFILE_FORBIDDEN_SCHEMES = ["label"].freeze
     REGISTRATION_DATA_PATH = "/var/lib/YaST2/inst_update_installer.yaml".freeze
 
@@ -106,7 +105,7 @@ module Yast
     # * Could not fetch update from repository: report the user about
     #   this error.
     # * Repository could not be probed: suggest checking network
-    #   configuration if URL has a REMOTE_SCHEME.
+    #   configuration if URL is remote.
     #
     # @return [Boolean] true if installer was updated; false otherwise.
     def update_installer
@@ -239,19 +238,10 @@ module Yast
       msg = could_not_probe_repo_msg(repo.uri)
       if Mode.auto
         Report.Warning(msg)
-      elsif remote_url?(repo.uri) && configure_network?(msg)
-        # TODO: repo#remote?
+      elsif repo.remote? && configure_network?(msg)
         retry
       end
       false
-    end
-
-    # Determine whether the URL is remote
-    #
-    # @param url [URI] URL to check
-    # @return [Boolean] true if it's considered remote; false otherwise.
-    def remote_url?(url)
-      REMOTE_SCHEMES.include?(url.scheme)
     end
 
     # Launch the network configuration client on users' demand

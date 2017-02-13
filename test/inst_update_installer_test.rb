@@ -18,6 +18,7 @@ describe Yast::InstUpdateInstaller do
   end
   let(:url) { "http://update.opensuse.org/\$arch/update.dud" }
   let(:real_url) { "http://update.opensuse.org/#{arch}/update.dud" }
+  let(:remote_url) { true }
   let(:arch) { "x86_64" }
   let(:all_signed?) { true }
   let(:network_running) { true }
@@ -28,7 +29,7 @@ describe Yast::InstUpdateInstaller do
   let(:ay_profile) { double("Yast::Profile", current: profile) }
   let(:ay_profile_location) { double("Yast::ProfileLocation") }
   let(:finder) { ::Installation::UpdateRepositoriesFinder.new }
-  let(:update) { double("update", uri: URI(real_url)) }
+  let(:update) { double("update", uri: URI(real_url), remote?: remote_url) }
   let(:updates) { [update] }
 
   before do
@@ -180,6 +181,7 @@ describe Yast::InstUpdateInstaller do
 
         context "and self-update URL is not remote" do
           let(:real_url) { "cd:/?device=sr0" }
+          let(:remote_url) { false }
 
           it "shows a dialog suggesting to check the network configuration" do
             expect(Yast::Popup).to_not receive(:YesNo)
