@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Feb 13 13:45:08 CET 2017 - schubi@suse.de
+
+- Calling services-manager_finish in order to write AutoYaST
+  service settings (if needed)
+  (FATE#321738)
+- 3.1.217.19
+
+-------------------------------------------------------------------
 Wed Feb  1 14:20:43 UTC 2017 - jreidinger@suse.com
 
 - Enable CaaSP specific services on the installed system
