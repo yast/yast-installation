@@ -390,7 +390,8 @@ module Yast
         "autoinst_scripts2",
         "installation_settings",
         "roles",
-        "services"
+        "services",
+        "services-manager"
       ].freeze
 
     def save_settings_steps
@@ -557,7 +558,7 @@ module Yast
             !(Mode.autoupgrade && info["when"].include?(:autoupg))
           next nil
         end
-        log.info "inst_finish client %{s} will be called"
+        log.info "inst_finish client #{s} will be called"
         info["client"] = s
 
         info
