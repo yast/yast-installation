@@ -33,14 +33,18 @@ module Installation
       attr_reader :proposal_client
 
       # @param client [String] A proposal client implementing simple_mode,
+      # @param redraw [Array<Overview>] list of other Overview clients. In case
+      # of :redraw action every of these clients will be redrawn too. Caller is
+      # responsible for not creating circular dependencies.
       #   eg. "bootloader_proposal"
-      def initialize(client:)
+      def initialize(client:, on_redraw: [])
         textdomain "installation"
         @proposal_client = client
         @replace_point = "rp_" + client
         # by default widget_id is the class name; must differentiate instances
         self.widget_id = "overview_" + client
         @blocking = false
+        @overviews_for_redraw = on_redraw
       end
 
       def contents
@@ -82,6 +86,8 @@ module Installation
         reset
 
         Yast::UI.ReplaceWidget(Id(@replace_point), widget)
+
+        @overviews_for_redraw.each(&:redraw)
       end
 
       def handle(_event)
