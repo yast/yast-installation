@@ -68,12 +68,12 @@ module Installation
         ret = Yast::CWM.show(
           content,
           # Title for installation overview dialog
-          caption:        _("Installation Overview"),
+          caption:      _("Installation Overview"),
           # Button label: start the installation
-          next_button:    _("Install"),
+          next_button:  _("Install"),
           # do not show abort and back button
-          abort_button:   "",
-          back_button:    ""
+          abort_button: "",
+          back_button:  ""
         )
 
         # TODO: check exception type
@@ -147,7 +147,7 @@ module Installation
       controller_node = Installation::Widgets::ControllerNodePlace.new
 
       kdump_overview = Installation::Widgets::Overview.new(client: "kdump_proposal")
-      bootloader_overview = Installation::Widgets::Overview.new(client: "bootloader_proposal", on_redraw: [ kdump_overview ])
+      bootloader_overview = Installation::Widgets::Overview.new(client: "bootloader_proposal", on_redraw: [kdump_overview])
 
       quadrant_layout(
         upper_left:  VBox(
@@ -162,7 +162,7 @@ module Installation
           Tune::Widgets::SystemInformation.new
         ),
         upper_right: VBox(
-          Installation::Widgets::Overview.new(client: "partitions_proposal", on_redraw: [ bootloader_overview ]),
+          Installation::Widgets::Overview.new(client: "partitions_proposal", on_redraw: [bootloader_overview]),
           bootloader_overview
         ),
         lower_right: VBox(
