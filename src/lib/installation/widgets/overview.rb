@@ -37,14 +37,14 @@ module Installation
       # of :redraw action every of these clients will be redrawn too. Caller is
       # responsible for not creating circular dependencies.
       #   eg. "bootloader_proposal"
-      def initialize(client:, on_redraw: [])
+      def initialize(client:, redraw: [])
         textdomain "installation"
         @proposal_client = client
         @replace_point = "rp_" + client
         # by default widget_id is the class name; must differentiate instances
         self.widget_id = "overview_" + client
         @blocking = false
-        @overviews_for_redraw = on_redraw
+        @overviews_for_redraw = redraw
       end
 
       def contents

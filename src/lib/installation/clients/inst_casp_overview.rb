@@ -76,8 +76,9 @@ module Installation
           back_button:  ""
         )
 
-        # TODO: check exception type
-        raise ArgumentError, "Unexpected return value" if ret != :next
+        # Currently no other return value is expected, behavior can
+        # be unpredictable if something else is received
+        raise RuntimeError, "Unexpected return value" if ret != :next
 
         # do software proposal
         d = Yast::WFM.CallFunction("software_proposal",
@@ -147,7 +148,7 @@ module Installation
       controller_node = Installation::Widgets::ControllerNodePlace.new
 
       kdump_overview = Installation::Widgets::Overview.new(client: "kdump_proposal")
-      bootloader_overview = Installation::Widgets::Overview.new(client: "bootloader_proposal", on_redraw: [kdump_overview])
+      bootloader_overview = Installation::Widgets::Overview.new(client: "bootloader_proposal", redraw: [kdump_overview])
 
       quadrant_layout(
         upper_left:  VBox(
@@ -162,7 +163,7 @@ module Installation
           Tune::Widgets::SystemInformation.new
         ),
         upper_right: VBox(
-          Installation::Widgets::Overview.new(client: "partitions_proposal", on_redraw: [bootloader_overview]),
+          Installation::Widgets::Overview.new(client: "partitions_proposal", redraw: [bootloader_overview]),
           bootloader_overview
         ),
         lower_right: VBox(
