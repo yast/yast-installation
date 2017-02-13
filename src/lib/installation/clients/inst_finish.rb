@@ -389,6 +389,7 @@ module Yast
         "users",
         "autoinst_scripts2",
         "installation_settings",
+        "roles",
         "services"
       ].freeze
 

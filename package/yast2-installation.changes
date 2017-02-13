@@ -1,10 +1,23 @@
 -------------------------------------------------------------------
-Wed Feb  8 12:58:16 UTC 2017 - jreidinger@suse.com
+Wed Feb  8 17:58:16 UTC 2017 - jreidinger@suse.com
 
 - Add new desktop selection client for opensuse based on roles
   (poo#14936)
 - drop "inst_new_desktop" client which was replaced by new desktop
   selection one
+- 3.2.22
+
+-------------------------------------------------------------------
+Wed Feb  8 16:42:29 UTC 2017 - kanderssen@suse.com
+
+- CaaSP all-in-one-dialog: added validation to the controller node
+  location field, modified label and write it to the minion
+  master.conf file at the end of the installation (FATE#321738)
+- CaaSP: Display the Beta product warning at start when it is
+  present (bsc#1016887)
+- Enable CaaSP specific services on the installed system
+  (FATE#321738)
+- Do not crash if role contain own service to enable (bsc#1022762)
 - 3.2.21
 
 -------------------------------------------------------------------

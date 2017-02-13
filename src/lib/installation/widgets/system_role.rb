@@ -23,33 +23,67 @@ require "yast"
 require "cwm/widget"
 require "installation/services"
 require "installation/custom_patterns"
+require "installation/system_role"
 
 Yast.import "DefaultDesktop"
 Yast.import "ProductControl"
-Yast.import "ProductFeatures"
+Yast.import "IP"
+Yast.import "Hostname"
 
 module Installation
   module Widgets
-    class DashboardURL < CWM::InputField
+    # This widget is responsible of validate and store the introduced location
+    # which must be a valid IP or FQDN.
+    class ControllerNode < CWM::InputField
       def label
         # intentional no translation for CAASP
-        "Dashboard URL"
+        "Controller Node"
       end
 
+      # It stores the value of the input field if validates
+      #
+      # @see #validate
       def store
-        # TODO: implement it together with init and some validation
+        role["controller_node"] = value
+      end
+
+      # The input field is initialized with previous stored value
+      def init
+        self.value = role["controller_node"]
+      end
+
+      # It returns true if the value is a valid IP or a valid FQDN, if not it
+      # displays a popup error.
+      #
+      # @return [Boolean] true if valid IP or FQDN
+      def validate
+        return true if Yast::IP.Check(value) || Yast::Hostname.CheckFQ(value)
+
+        Yast::Popup.Error(
+          # TRANSLATORS: error message for invalid controller node location
+          _("Not valid location for the controller node, " \
+          "please enter a valid IP or Hostname")
+        )
+
+        false
+      end
+
+    private
+
+      def role
+        ::Installation::SystemRole.find("worker_role")
       end
     end
 
-    class DashboardPlace < CWM::ReplacePoint
+    class ControllerNodePlace < CWM::ReplacePoint
       def initialize
-        @dashboard = DashboardURL.new
-        @empty = CWM::Empty.new("no_dashboard")
+        @controller_node = ControllerNode.new
+        @empty = CWM::Empty.new("no_controller")
         super(widget: @empty)
       end
 
       def show
-        replace(@dashboard)
+        replace(@controller_node)
       end
 
       def hide
@@ -58,66 +92,45 @@ module Installation
     end
 
     module SystemRoleReader
-      def label
-        Yast::ProductControl.GetTranslatedText("roles_caption")
-      end
-
-      def items
-        roles_description.map do |attr|
-          [attr[:id], attr[:label]]
-        end
-      end
-
-      def help
-        Yast::ProductControl.GetTranslatedText("roles_help") + "\n\n" +
-          roles_description.map { |r| r[:label] + "\n\n" + r[:description] }.join("\n\n\n")
-      end
-
-      NON_OVERLAY_ATTRIBUTES = [
-        "additional_dialogs",
-        "id"
-      ].freeze
-      private_constant :NON_OVERLAY_ATTRIBUTES
 
       def init
         self.class.original_role_id ||= roles_description.first[:id]
         self.value = self.class.original_role_id
       end
 
-      def store
-        log.info "Applying system role '#{value}'"
-        features = raw_roles.find { |r| r["id"] == value }
-        features = features.dup
-        NON_OVERLAY_ATTRIBUTES.each { |a| features.delete(a) }
-        Yast::ProductFeatures.SetOverlay(features)
-        adapt_services
-        self.class.original_role_id = value
+      def label
+        Yast::ProductControl.GetTranslatedText("roles_caption")
       end
 
-      def raw_roles
-        @raw_roles ||= Yast::ProductControl.productControl.fetch("system_roles", [])
-      end
-
-      def roles_description
-        @roles_description ||= raw_roles.map do |r|
-          id = r["id"]
-
-          {
-            id:          id,
-            label:       Yast::ProductControl.GetTranslatedText(id),
-            description: Yast::ProductControl.GetTranslatedText(id + "_description")
-          }
+      def items
+        ::Installation::SystemRole.roles.map do |role|
+          [role.id, role.label]
         end
       end
 
-      def adapt_services
-        services = raw_roles.find { |r| r["id"] == value }["services"]
-        services ||= []
+      def help
+        Yast::ProductControl.GetTranslatedText("roles_help") + "\n\n" + roles_help_text
+      end
 
-        to_enable = services.map { |s| s["name"] }
-        log.info "enable for #{value} these services: #{to_enable.inspect}"
 
-        Installation::Services.enabled = to_enable
+      def store
+        log.info "Applying system role '#{value}'"
+        role = ::Installation::SystemRole.select(value)
+
+        role.overlay_features
+        role.adapt_services
+      end
+
+    private
+
+      def roles_help_text
+        ::Installation::SystemRole.roles.map do |role|
+          role.label + "\n\n" + role.description
+        end.join("\n\n\n")
+      end
+
+      def default
+        ::Installation::SystemRole.ids.first
       end
     end
 
