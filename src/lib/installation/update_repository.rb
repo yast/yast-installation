@@ -124,7 +124,8 @@ module Installation
 
     # @return [Fixnum] yast2-pkg-bindings ID of the repository
     def repo_id
-      @repo_id ||= add_repo
+      return @repo_id unless @repo_id.nil?
+      add_repo
     end
 
     # Retrieves the list of packages to install
@@ -137,6 +138,7 @@ module Installation
     # @see Yast::Pkg.ResolvableProperties
     def packages
       return @packages unless @packages.nil?
+      add_repo if repo_id.nil?
       candidates = Yast::Pkg.ResolvableProperties("", :package, "")
       @packages = candidates.select { |p| p["source"] == repo_id }.sort_by! { |a| a["name"] }
       log.info "Considering #{@packages.size} packages: #{@packages}"
