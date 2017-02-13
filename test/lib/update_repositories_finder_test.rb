@@ -1,17 +1,12 @@
 #!/usr/bin/env rspec
 
 require_relative "../test_helper"
+require_relative "../support/fake_registration"
 require "installation/update_repositories_finder"
 
 Yast.import "Linuxrc"
 
 describe Installation::UpdateRepositoriesFinder do
-  # Registration::Storage::InstallationOptions fake
-  class FakeInstallationOptions
-    include Singleton
-    attr_accessor :custom_url
-  end
-
   describe "#updates" do
     let(:url_from_linuxrc) { nil }
     let(:url_from_control) { "http://update.opensuse.org/\$arch/42.2" }
