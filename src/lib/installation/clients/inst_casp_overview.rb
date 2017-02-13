@@ -77,8 +77,9 @@ module Installation
         )
 
         # Currently no other return value is expected, behavior can
-        # be unpredictable if something else is received
-        raise RuntimeError, "Unexpected return value" if ret != :next
+        # be unpredictable if something else is received - raise
+        # RuntimeError
+        raise "Unexpected return value" if ret != :next
 
         # do software proposal
         d = Yast::WFM.CallFunction("software_proposal",
