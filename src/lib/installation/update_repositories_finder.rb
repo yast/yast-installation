@@ -132,7 +132,6 @@ module Installation
       ret
     end
 
-
     # Converts the string into an URI if it's valid
     #
     # It substitutes $arch pattern with the architecture of the current system.
