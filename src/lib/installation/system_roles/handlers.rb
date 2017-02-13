@@ -19,11 +19,14 @@
 # current contact information at www.suse.com.
 # ------------------------------------------------------------------------------
 
+require "yast"
 require "installation/cfa/salt"
 
 module Installation
   module SystemRoleHandlers
     class WorkerRoleFinish
+      include Yast::Logger
+
       def self.run
         role = SystemRole.find("worker_role")
         master_conf = CFA::MinionMasterConf.new
