@@ -146,8 +146,8 @@ module Installation
     def content
       controller_node = Installation::Widgets::ControllerNodePlace.new
 
-      bootloader_overview = Installation::Widgets::Overview.new(client: "bootloader_proposal")
       kdump_overview = Installation::Widgets::Overview.new(client: "kdump_proposal")
+      bootloader_overview = Installation::Widgets::Overview.new(client: "bootloader_proposal", on_redraw: [ kdump_overview ])
 
       quadrant_layout(
         upper_left:  VBox(
@@ -162,7 +162,7 @@ module Installation
           Tune::Widgets::SystemInformation.new
         ),
         upper_right: VBox(
-          Installation::Widgets::Overview.new(client: "partitions_proposal", on_redraw: [ kdump_overview, bootloader_overview ]),
+          Installation::Widgets::Overview.new(client: "partitions_proposal", on_redraw: [ bootloader_overview ]),
           bootloader_overview
         ),
         lower_right: VBox(
