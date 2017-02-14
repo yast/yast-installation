@@ -72,7 +72,8 @@ Requires:	initviocons
 # Proxy settings for 2nd stage (bnc#764951)
 Requires:       yast2-proxy
 
-# Systemd default target and services
+# Systemd default target and services. This version supports
+# writing settings in the first installation stage.
 Requires: yast2-services-manager >= 3.1.43.1
 
 # Network service setup moved into yast2-network
