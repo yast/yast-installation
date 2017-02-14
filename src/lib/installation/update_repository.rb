@@ -56,6 +56,9 @@ module Installation
     attr_reader :update_files
     # @return [Symbol] Repository origin. @see ORIGINS
     attr_reader :origin
+    # @return [Integer] Repository ID
+    attr_writer :repo_id
+    private :repo_id=
 
     # A valid repository was not found (although the URL exists,
     # repository type cannot be determined).
@@ -120,7 +123,6 @@ module Installation
 
     # @return [Fixnum] yast2-pkg-bindings ID of the repository
     def repo_id
-      return @repo_id unless @repo_id.nil?
       add_repo
     end
 
@@ -134,7 +136,7 @@ module Installation
     # @see Yast::Pkg.ResolvableProperties
     def packages
       return @packages unless @packages.nil?
-      add_repo if repo_id.nil?
+      add_repo
       candidates = Yast::Pkg.ResolvableProperties("", :package, "")
       @packages = candidates.select { |p| p["source"] == repo_id }.sort_by! { |a| a["name"] }
       log.info "Considering #{@packages.size} packages: #{@packages}"
@@ -327,6 +329,7 @@ module Installation
     # @raise CouldNotProbeRepo
     # @raise CouldNotRefreshRepo
     def add_repo
+      return @repo_id unless @repo_id.nil?
       status = repo_status
       raise NotValidRepo if status == :not_found
       raise CouldNotProbeRepo if status == :error
@@ -334,7 +337,7 @@ module Installation
                                             "enabled" => true, "autorefresh" => true)
       log.info("Added repository #{uri} as '#{new_repo_id}'")
       if Yast::Pkg.SourceRefreshNow(new_repo_id) && Yast::Pkg.SourceLoad
-        new_repo_id
+        self.repo_id = new_repo_id
       else
         log.error("Could not get metadata from repository '#{new_repo_id}'")
         raise CouldNotRefreshRepo
