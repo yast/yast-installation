@@ -195,7 +195,7 @@ describe Installation::UpdateRepository do
 
     before do
       allow(repo).to receive(:update_files).and_return([update_path])
-      allow(repo.instsys_parts_path).to receive(:open).and_yield(file)
+      allow(Installation::UpdateRepository::INSTSYS_PARTS_PATH).to receive(:open).and_yield(file)
       allow(FileUtils).to receive(:mkdir_p).with(mount_point)
     end
 

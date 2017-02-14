@@ -47,7 +47,7 @@ module Installation
     # * :user:    User defined
     ORIGINS = [:default, :user]
     # Path to instsys.parts registry
-    INSTSYS_PARTS_PATH = Pathname("/etc/instsys.parts").freeze
+    INSTSYS_PARTS_PATH = Pathname("/etc/instsys.parts")
 
 
     # @return [URI] URI of the repository
