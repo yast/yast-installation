@@ -388,7 +388,8 @@ module Yast
         "save_hw_status",
         "users",
         "autoinst_scripts2",
-        "installation_settings"
+        "installation_settings",
+        "services-manager"
       ].freeze
 
     def save_settings_steps
@@ -555,7 +556,7 @@ module Yast
             !(Mode.autoupgrade && info["when"].include?(:autoupg))
           next nil
         end
-        log.info "inst_finish client %{s} will be called"
+        log.info "inst_finish client #{s} will be called"
         info["client"] = s
 
         info
