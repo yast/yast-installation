@@ -4,6 +4,13 @@ Mon Feb 13 14:12:59 CET 2017 - schubi@suse.de
 - Calling services-manager_finish in order to write AutoYaST
   service settings (if needed).
   (FATE#321738)
+- 3.1.217.22  
+
+-------------------------------------------------------------------
+Mon Feb 13 13:00:42 UTC 2017 - kanderssen@suse.com
+
+- CaaSP: do not crash when used a dashed url for the controller
+  node location (bsc#1024965)
 - 3.1.217.21
 
 -------------------------------------------------------------------
