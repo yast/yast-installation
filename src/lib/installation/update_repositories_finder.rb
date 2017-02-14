@@ -272,7 +272,7 @@ module Installation
     # Runs a block of code handling errors
     #
     # If errors should be shown, the helper {catch_registration_errors}
-    # from Registration::ConnectionHelpers will be used.
+    # from Registration::ConnectHelpers will be used.
     #
     # Otherwise, errors will be logged and the method will return +false+.
     #
@@ -280,12 +280,12 @@ module Installation
     # @return [false, Object] The value returned by the block itself. False
     #                         if the block failed.
     #
-    # @see Registration::ConnectionHelpers.catch_registration_errors
+    # @see Registration::ConnectHelpers.catch_registration_errors
     def handle_registration_errors(show_errors)
       if show_errors
-        require "registration/connection_helpers"
+        require "registration/connect_helpers"
         ret = nil
-        success = ::Registration::ConnectionHelpers.catch_registration_errors { ret = yield }
+        success = ::Registration::ConnectHelpers.catch_registration_errors { ret = yield }
         success && ret
       else
         begin

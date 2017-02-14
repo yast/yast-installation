@@ -20,8 +20,8 @@ describe Installation::UpdateRepositoriesFinder do
 
     before do
       stub_const("Yast::Profile", ay_profile)
-      stub_const("::Registration::ConnectionHelpers", FakeConnectionHelpers)
-      allow(finder).to receive(:require).with("registration/connection_helpers")
+      stub_const("::Registration::ConnectHelpers", FakeConnectHelpers)
+      allow(finder).to receive(:require).with("registration/connect_helpers")
       allow(Yast::Linuxrc).to receive(:InstallInf).with("SelfUpdate")
         .and_return(url_from_linuxrc)
     end
@@ -148,7 +148,7 @@ describe Installation::UpdateRepositoriesFinder do
             end
 
             it "handles registration errors" do
-              expect(Registration::ConnectionHelpers).to receive(:catch_registration_errors)
+              expect(Registration::ConnectHelpers).to receive(:catch_registration_errors)
                 .and_call_original
               finder.updates
             end
@@ -184,7 +184,7 @@ describe Installation::UpdateRepositoriesFinder do
           end
 
           it "does not handles registration errors" do
-            expect(Registration::ConnectionHelpers).to_not receive(:catch_registration_errors)
+            expect(Registration::ConnectHelpers).to_not receive(:catch_registration_errors)
             finder.updates
           end
         end
@@ -199,7 +199,7 @@ describe Installation::UpdateRepositoriesFinder do
           end
 
           it "handles registration errors" do
-            expect(Registration::ConnectionHelpers).to receive(:catch_registration_errors)
+            expect(Registration::ConnectHelpers).to receive(:catch_registration_errors)
               .and_call_original
             finder.updates
           end

@@ -10,7 +10,7 @@ class FakeRegConfig
   def import(_args); end
 end
 
-module FakeConnectionHelpers
+module FakeConnectHelpers
   def self.catch_registration_errors
     yield
     true
