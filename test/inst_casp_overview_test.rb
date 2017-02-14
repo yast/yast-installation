@@ -103,14 +103,6 @@ describe ::Installation::InstCaspOverview do
       subject.run
     end
 
-    it "shows CWM widgets again if it returns redraw event" do
-      allow(Yast::Mode).to receive(:normal).and_return(true)
-
-      expect(Yast::CWM).to receive(:show).twice.and_return(:redraw, :next)
-
-      subject.run
-    end
-
     it "adds caasp specific services to be enabled" do
       subject.run
 

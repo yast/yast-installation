@@ -33,20 +33,22 @@ module Installation
       attr_reader :proposal_client
 
       # @param client [String] A proposal client implementing simple_mode,
+      # @param redraw [Array<Overview>] list of other Overview clients. In case
+      # of :redraw action every of these clients will be redrawn too. Caller is
+      # responsible for not creating circular dependencies.
       #   eg. "bootloader_proposal"
-      def initialize(client:)
+      def initialize(client:, redraw: [])
         textdomain "installation"
         @proposal_client = client
+        @replace_point = "rp_" + client
         # by default widget_id is the class name; must differentiate instances
         self.widget_id = "overview_" + client
         @blocking = false
+        @overviews_for_redraw = redraw
       end
 
       def contents
-        VBox(
-          Left(PushButton(Id(button_id), label)),
-          * items.map { |i| Left(Label(" * #{i}")) }
-        )
+        ReplacePoint(Id(@replace_point), widget)
       end
 
       def label
@@ -80,9 +82,22 @@ module Installation
         @items = d["label_proposal"]
       end
 
+      # Updates overview content
+      def redraw
+        reset
+
+        Yast::UI.ReplaceWidget(Id(@replace_point), widget)
+
+        @overviews_for_redraw.each(&:redraw)
+      end
+
+      # Custom event handler
       def handle(_event)
         Yast::WFM.CallFunction(proposal_client, ["AskUser", {}])
-        :redraw
+
+        redraw
+
+        nil
       end
 
       def validate
@@ -106,6 +121,20 @@ module Installation
       def button_id
         # an arbitrary unique id
         "ask_" + proposal_client
+      end
+
+      # The overview representation in common UI widgets
+      def widget
+        VBox(
+          Left(PushButton(Id(button_id), label)),
+          * items.map { |i| Left(Label(" * #{i}")) }
+        )
+      end
+
+      # Flush cache(s)
+      def reset
+        @label = nil
+        @items = nil
       end
     end
   end

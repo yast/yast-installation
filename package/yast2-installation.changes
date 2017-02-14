@@ -3,6 +3,30 @@ Tue Feb 14 13:24:33 CET 2017 - schubi@suse.de
 
 - CaaSP AY: Adapted requirements of yast2-services-manager.
   (FATE#321738)
+- 3.1.217.24
+
+-------------------------------------------------------------------  
+Mon Feb 13 14:49:14 UTC 2017 - mfilka@suse.com
+
+- bnc#1022546
+  - update all-in-one's subdialog (network/kdump/partitioning/...)
+    overview when the dialog is closed and do not lose another
+    content already entered by user.
+- 3.1.217.23
+
+-------------------------------------------------------------------
+Mon Feb 13 14:12:59 CET 2017 - schubi@suse.de
+
+- Calling services-manager_finish in order to write AutoYaST
+  service settings (if needed).
+  (FATE#321738)
+- 3.1.217.22  
+
+-------------------------------------------------------------------
+Mon Feb 13 13:00:42 UTC 2017 - kanderssen@suse.com
+
+- CaaSP: do not crash when used a dashed url for the controller
+  node location (bsc#1024965
 - 3.1.217.21
 
 -------------------------------------------------------------------
