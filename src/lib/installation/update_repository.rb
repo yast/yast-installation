@@ -16,6 +16,10 @@ require "tempfile"
 require "pathname"
 require "fileutils"
 
+Yast.import "Pkg"
+Yast.import "Progress"
+Yast.import "URL"
+
 module Installation
   # Represents a update repository to be used during self-update
   # (check doc/SELF_UPDATE.md for details).
@@ -109,9 +113,6 @@ module Installation
     # @param uri                [URI]      Repository URI
     # @param origin             [Symbol]   Repository origin (@see ORIGINS)
     def initialize(uri, origin = :default)
-      Yast.import "Pkg"
-      Yast.import "Progress"
-
       textdomain "installation"
 
       @uri = uri
@@ -255,6 +256,14 @@ module Installation
     # @see Pkg.UrlSchemeIsRemote
     def remote?
       Yast::Pkg.UrlSchemeIsRemote(uri.scheme)
+    end
+
+    # Redefines the inspect method to avoid logging passwords
+    #
+    # @return [String] Debugging information
+    def inspect
+      safe_url = Yast::URL.HidePassword(uri.to_s)
+      "#<Installation::UpdateRepository> @uri=\"#{safe_url}\" @origin=#{@origin.inspect}"
     end
 
   private
