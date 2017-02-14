@@ -20,6 +20,8 @@ describe Installation::UpdateRepositoriesFinder do
 
     before do
       stub_const("Yast::Profile", ay_profile)
+      stub_const("::Registration::ConnectionHelpers", FakeConnectionHelpers)
+      allow(finder).to receive(:require).with("registration/connection_helpers")
       allow(Yast::Linuxrc).to receive(:InstallInf).with("SelfUpdate")
         .and_return(url_from_linuxrc)
     end
@@ -144,6 +146,12 @@ describe Installation::UpdateRepositoriesFinder do
                 .with(URI(update0.url), :default).and_return(repo)
               finder.updates
             end
+
+            it "handles registration errors" do
+              expect(Registration::ConnectionHelpers).to receive(:catch_registration_errors)
+                .and_call_original
+              finder.updates
+            end
           end
 
           context "if user cancels the dialog" do
@@ -174,6 +182,11 @@ describe Installation::UpdateRepositoriesFinder do
               .with(URI(update1.url), :default).and_return(repo)
             finder.updates
           end
+
+          it "does not handles registration errors" do
+            expect(Registration::ConnectionHelpers).to_not receive(:catch_registration_errors)
+            finder.updates
+          end
         end
 
         context "when a regurl was specified via Linuxrc" do
@@ -182,6 +195,12 @@ describe Installation::UpdateRepositoriesFinder do
           it "asks the SCC server for the updates URLs" do
             expect(registration_class).to receive(:new).with(regurl)
               .and_return(registration)
+            finder.updates
+          end
+
+          it "handles registration errors" do
+            expect(Registration::ConnectionHelpers).to receive(:catch_registration_errors)
+              .and_call_original
             finder.updates
           end
         end

@@ -37,9 +37,13 @@ module Installation
     def updates
       return @updates if @updates
 
-      @updates = Array(custom_update)
+      @updates = Array(custom_update) # Custom URL
       return @updates unless @updates.empty?
-      default_updates
+
+      @updates = updates_from_connect
+      return @updates unless @updates.empty?
+
+      @updates = Array(update_from_control)
     end
 
     private
@@ -49,33 +53,33 @@ module Installation
     # It tries to find an URL in Linuxrc boot parameters and
     # AutoYaST profile.
     #
-    # @return [UpdateRepository] self-update repository
+    # @return [UpdateRepository,nil] self-update repository or nil is not defined
     #
     # @see update_url_from_linuxrc
     # @see update_url_from_profile
     def custom_update
       url = update_url_from_linuxrc || update_url_from_profile
-      url ? UpdateRepository.new(url, :user) : nil
+      url && UpdateRepository.new(url, :user)
     end
 
-    def default_updates
-      urls = default_urls
-      urls.map { |u| UpdateRepository.new(u, :default) }
+    # Return the self-update repository defined in the control file
+    #
+    # @return [UpdateRepository,nil] self-update repository or nil if not defined
+    def update_from_control
+      url = update_url_from_control
+      url && UpdateRepository.new(url, :default)
     end
 
-    # Return the default self-update URLs
+    # Return the self-update repository defined in the registration server
     #
-    # A default URL can be specified via SCC/SMT servers or in the control.xml file.
-    #
-    # @return [Array<URI>] self-update URLs
-    def default_urls
+    # @return [Array<UpdateRepository>] self-update repositories
+    def updates_from_connect
+      return [] unless defined?(::Registration::UrlHelpers)
       # load the base product from the installation medium,
       # the registration server needs it for evaluating the self update URL
-      # TODO: not needed in opensuse (should we move it to update_urls_from_connect)
       add_installation_repo
       urls = update_urls_from_connect
-      return urls unless urls.empty?
-      [update_url_from_control].compact
+      urls ? urls.map { |u| UpdateRepository.new(u, :default) } : []
     end
 
     # Return the self-update URL according to Linuxrc
@@ -113,23 +117,21 @@ module Installation
     # As a side effect, it stores the URL of the registration server used
     # in the installation options.
     #
-    # @return [Array<URI>] self-update URLs.
+    # @return [Array<URI>,false] self-update URLs or false in case of error
     def update_urls_from_connect
-      return [] unless defined?(::Registration::UrlHelpers)
       url = registration_url
       return [] if url == :cancel
 
+      custom_regserver = url != :scc
       log.info("Using registration URL: #{url}")
       import_registration_ayconfig if Yast::Mode.auto
-      registration = Registration::Registration.new(url == :scc ? nil : url.to_s)
+      registration = Registration::Registration.new(custom_regserver ? url.to_s : nil)
       # Set custom_url into installation options
       Registration::Storage::InstallationOptions.instance.custom_url = registration.url
-      ret = registration.get_updates_list.map { |u| URI(u.url) }
 
-      # avoid unless using a custom registration server
-      display_fallback_warning if ret.empty?
-
-      ret
+      handle_registration_errors(custom_regserver) do
+        registration.get_updates_list.map { |u| URI(u.url) }
+      end
     end
 
     # Converts the string into an URI if it's valid
@@ -146,6 +148,7 @@ module Installation
       URI.regexp.match(real_url) ? URI(real_url) : nil
     end
 
+    # Loads the base product from the installation medium
     def add_installation_repo
       base_url = Yast::InstURL.installInf2Url("")
       initial_repository = Yast::Pkg.SourceCreateBase(base_url, "")
@@ -264,6 +267,35 @@ module Installation
 
       # display the message in a RichText widget to wrap long lines
       Yast::Report.LongWarning(msg)
+    end
+
+    # Runs a block of code handling errors
+    #
+    # If errors should be shown, the helper {catch_registration_errors}
+    # from Registration::ConnectionHelpers will be used.
+    #
+    # Otherwise, errors will be logged and the method will return +false+.
+    #
+    # @params [Boolean] True if errors should be shown to the user. False otherwise.
+    # @return [false, Object] The value returned by the block itself. False
+    #                         if the block failed.
+    #
+    # @see Registration::ConnectionHelpers.catch_registration_errors
+    def handle_registration_errors(show_errors)
+      if show_errors
+        require "registration/connection_helpers"
+        ret = nil
+        success = ::Registration::ConnectionHelpers.catch_registration_errors { ret = yield }
+        success && ret
+      else
+        begin
+          yield
+        rescue StandardError => e
+          log.error("Could not determine update repositories through the registration server: " \
+            "#{e.class}: #{e}, #{e.backtrace}")
+          false
+        end
+      end
     end
   end
 end
