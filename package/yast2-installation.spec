@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.2.20
+Version:        3.2.21
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -71,11 +71,15 @@ Requires:	initviocons
 # Proxy settings for 2nd stage (bnc#764951)
 Requires:       yast2-proxy
 
-# Systemd default target and services
-Requires: yast2-services-manager
+# Systemd default target and services. This version supports
+# writing settings in the first installation stage.
+Requires: yast2-services-manager >= 3.1.43.1
 
 # Network service setup moved into yast2-network
 Requires: yast2-network >= 3.1.143
+
+# Augeas lenses
+Requires:       augeas-lenses
 
 # Only in inst-sys
 # Requires:	yast2-add-on

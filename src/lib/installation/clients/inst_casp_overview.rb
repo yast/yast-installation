@@ -27,6 +27,7 @@ require "registration/widgets/registration_code"
 
 require "installation/widgets/overview"
 require "installation/widgets/system_role"
+require "installation/services"
 
 module Installation
   # This library provides a simple dialog for setting
@@ -47,6 +48,7 @@ module Installation
       Yast.import "CWM"
       Yast.import "Popup"
       Yast.import "Pkg"
+      Yast.import "InstShowInfo"
 
       textdomain "installation"
 
@@ -58,21 +60,26 @@ module Installation
       # helpful when testing all manually on a running system
       Yast::Wizard.CreateDialog if separate_wizard_needed?
 
+      # show the Beta warning if it exists
+      Yast::InstShowInfo.show_info_txt(INFO_FILE) if File.exist?(INFO_FILE)
+
       ret = nil
       loop do
         ret = Yast::CWM.show(
           content,
           # Title for installation overview dialog
-          caption:        _("Installation Overview"),
+          caption:      _("Installation Overview"),
           # Button label: start the installation
-          next_button:    _("Install"),
+          next_button:  _("Install"),
           # do not show abort and back button
-          abort_button:   "",
-          back_button:    "",
-          # do not store stuff when just redrawing
-          skip_store_for: [:redraw]
+          abort_button: "",
+          back_button:  ""
         )
-        next if ret == :redraw
+
+        # Currently no other return value is expected, behavior can
+        # be unpredictable if something else is received - raise
+        # RuntimeError
+        raise "Unexpected return value" if ret != :next
 
         # do software proposal
         d = Yast::WFM.CallFunction("software_proposal",
@@ -92,12 +99,27 @@ module Installation
         end
       end
 
+      add_casp_services
+
       Yast::Wizard.CloseDialog if separate_wizard_needed?
 
       ret
     end
 
   private
+
+    # location of the info.txt file (containing the Beta warning)
+    INFO_FILE = "/info.txt".freeze
+
+    # Specific services that needs to be enabled on CAaSP see (FATE#321738)
+    # It is additional services to the ones defined for role.
+    # It is caasp only services and for generic approach systemd-presets should be used.
+    # In this case it is not used, due to some problems with cloud services.
+    CASP_SERVICES = ["sshd", "cloud-init-local", "cloud-init", "cloud-config",
+                     "cloud-final", "issue-generator", "issue-add-ssh-keys"].freeze
+    def add_casp_services
+      ::Installation::Services.enabled.concat(CASP_SERVICES)
+    end
 
     def quadrant_layout(upper_left:, lower_left:, upper_right:, lower_right:)
       HBox(
@@ -124,7 +146,11 @@ module Installation
     # Returns a pair with UI widget-set for the dialog and widgets that can
     # block installation
     def content
-      dashboard = Installation::Widgets::DashboardPlace.new
+      controller_node = Installation::Widgets::ControllerNodePlace.new
+
+      kdump_overview = Installation::Widgets::Overview.new(client: "kdump_proposal")
+      bootloader_overview = Installation::Widgets::Overview.new(client: "bootloader_proposal", redraw: [kdump_overview])
+
       quadrant_layout(
         upper_left:  VBox(
           ::Registration::Widgets::RegistrationCode.new,
@@ -133,17 +159,17 @@ module Installation
           ::Y2Country::Widgets::KeyboardSelectionCombo.new("english-us")
         ),
         lower_left:  VBox(
-          Installation::Widgets::SystemRole.new(dashboard),
-          dashboard,
+          Installation::Widgets::SystemRole.new(controller_node),
+          controller_node,
           Tune::Widgets::SystemInformation.new
         ),
         upper_right: VBox(
-          Installation::Widgets::Overview.new(client: "partitions_proposal"),
-          Installation::Widgets::Overview.new(client: "bootloader_proposal")
+          Installation::Widgets::Overview.new(client: "partitions_proposal", redraw: [bootloader_overview]),
+          bootloader_overview
         ),
         lower_right: VBox(
           Installation::Widgets::Overview.new(client: "network_proposal"),
-          Installation::Widgets::Overview.new(client: "kdump_proposal")
+          kdump_overview
         )
       )
     end
