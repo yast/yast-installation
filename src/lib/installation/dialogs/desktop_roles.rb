@@ -26,10 +26,10 @@ module Installation
       Yast::Wizard.CloseDialog if separate_wizard_needed?
 
       # support passing addon as cmd argument, openQA use it for testing
-      if !Linuxrc.InstallInf("addon").nil?
-        ProductControl.EnableModule("add-on")
+      if !Yast::Linuxrc.InstallInf("addon").nil?
+        Yast::ProductControl.EnableModule("add-on")
       else
-        ProductControl.DisableModule("add-on")
+        Yast::ProductControl.DisableModule("add-on")
       end
 
       ret

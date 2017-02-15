@@ -18,9 +18,9 @@ module Installation
       def store
         # adjust work-flow according to value
         if value
-          ProductControl.EnableModule("productsources")
+          Yast::ProductControl.EnableModule("productsources")
         else
-          ProductControl.DisableModule("productsources")
+          Yast::ProductControl.DisableModule("productsources")
         end
       end
     end
