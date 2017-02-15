@@ -1,8 +1,7 @@
 require "yast"
 require "cwm/widget"
 
-# add-on product holds also online repos
-Yast.import "AddOnProduct"
+Yast.import "ProductControl"
 
 module Installation
   module Widgets
@@ -17,7 +16,12 @@ module Installation
       end
 
       def store
-        Yast::AddOnProduct.skip_add_ons = !value
+        # adjust work-flow according to value
+        if value
+          ProductControl.EnableModule("productsources")
+        else
+          ProductControl.DisableModule("productsources")
+        end
       end
     end
   end
