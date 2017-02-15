@@ -183,7 +183,7 @@ describe Installation::UpdateRepositoriesFinder do
             finder.updates
           end
 
-          it "does not handles registration errors" do
+          it "does not handle registration errors" do
             expect(Registration::ConnectHelpers).to_not receive(:catch_registration_errors)
             finder.updates
           end

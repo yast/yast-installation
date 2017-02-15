@@ -53,7 +53,7 @@ module Installation
     # It tries to find an URL in Linuxrc boot parameters and
     # AutoYaST profile.
     #
-    # @return [UpdateRepository,nil] self-update repository or nil is not defined
+    # @return [UpdateRepository,nil] self-update repository or nil if not defined
     #
     # @see update_url_from_linuxrc
     # @see update_url_from_profile
@@ -276,7 +276,7 @@ module Installation
     #
     # Otherwise, errors will be logged and the method will return +false+.
     #
-    # @params [Boolean] True if errors should be shown to the user. False otherwise.
+    # @param [Boolean] show_errors True if errors should be shown to the user. False otherwise.
     # @return [false, Object] The value returned by the block itself. False
     #                         if the block failed.
     #
@@ -291,7 +291,7 @@ module Installation
         begin
           yield
         rescue StandardError => e
-          log.error("Could not determine update repositories through the registration server: " \
+          log.warn("Could not determine update repositories through the registration server: " \
             "#{e.class}: #{e}, #{e.backtrace}")
           false
         end

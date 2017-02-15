@@ -122,7 +122,14 @@ module Installation
       @origin = origin
     end
 
+    # Returns the repository ID
+    #
+    # As a potential side-effect, the repository will be added to libzypp (if it
+    # was not added yet) in order to get the ID.
+    #
     # @return [Fixnum] yast2-pkg-bindings ID of the repository
+    #
+    # @see add_repo
     def repo_id
       add_repo
     end
@@ -331,6 +338,9 @@ module Installation
     end
 
     # Add the repository to libzypp sources
+    #
+    # If the repository was already added, it will just simply return
+    # the repository ID.
     #
     # @return [Integer] Repository ID
     #

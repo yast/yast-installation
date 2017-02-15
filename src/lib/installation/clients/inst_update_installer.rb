@@ -216,7 +216,7 @@ module Yast
 
     # Add a repository to the updates manager
     #
-    # @param repository [UpdateRepository] Update repository to add
+    # @param repo [UpdateRepository] Update repository to add
     # @return [Boolean] true if the repository was added; false otherwise.
     def add_repository(repo)
       log.info("Adding update from #{repo.inspect}")
