@@ -216,7 +216,7 @@ module Yast
 
     # Add a repository to the updates manager
     #
-    # @param repository [UpdateRepository] Update repository to add
+    # @param repo [UpdateRepository] Update repository to add
     # @return [Boolean] true if the repository was added; false otherwise.
     def add_repository(repo)
       log.info("Adding update from #{repo.inspect}")
@@ -230,11 +230,14 @@ module Yast
       false
 
     rescue ::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo
+      if repo.user_defined?
       # TRANSLATORS: %s is an URL
-      Report.Error(format(_("Could not fetch update from\n%s.\n\n"), repo.uri))
+        Report.Error(format(_("Could not fetch update from\n%s.\n\n"), repo.uri))
+      end
       false
 
     rescue ::Installation::UpdatesManager::CouldNotProbeRepo
+      return false unless repo.user_defined?
       msg = could_not_probe_repo_msg(repo.uri)
       if Mode.auto
         Report.Warning(msg)

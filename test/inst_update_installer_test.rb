@@ -19,18 +19,18 @@ describe Yast::InstUpdateInstaller do
   let(:url) { "http://update.opensuse.org/\$arch/update.dud" }
   let(:real_url) { "http://update.opensuse.org/#{arch}/update.dud" }
   let(:remote_url) { true }
+  let(:user_defined) { true }
+  let(:update) { double("update", uri: URI(real_url), remote?: remote_url, user_defined?: user_defined) }
+  let(:updates) { [update] }
   let(:arch) { "x86_64" }
   let(:all_signed?) { true }
   let(:network_running) { true }
-  let(:repo) { double("repo") }
   let(:has_repos) { true }
   let(:restarting) { false }
   let(:profile) { {} }
   let(:ay_profile) { double("Yast::Profile", current: profile) }
   let(:ay_profile_location) { double("Yast::ProfileLocation") }
   let(:finder) { ::Installation::UpdateRepositoriesFinder.new }
-  let(:update) { double("update", uri: URI(real_url), remote?: remote_url) }
-  let(:updates) { [update] }
 
   before do
     allow(::Installation::UpdateRepositoriesFinder).to receive(:new).and_return(finder)
@@ -107,9 +107,7 @@ describe Yast::InstUpdateInstaller do
     end
 
     context "when some update is available" do
-      before do
-        allow(Yast::ProductFeatures).to receive(:GetStringFeature).and_return(url)
-      end
+      let(:updates) { [update] }
 
       context "and update works" do
         before do
@@ -134,9 +132,20 @@ describe Yast::InstUpdateInstaller do
         end
       end
 
-      context "when the update cannot be fetched" do
+      context "when the update cannot be fetched from a user defined repository" do
         it "shows an error and returns :next" do
           expect(Yast::Popup).to receive(:Error)
+          expect(manager).to receive(:add_repository)
+            .and_raise(::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo)
+          expect(subject.main).to eq(:next)
+        end
+      end
+
+      context "when the update cannot be fetched from a default repository" do
+        let(:user_defined) { false }
+
+        it "does not show any error and returns :next" do
+          expect(Yast::Popup).to_not receive(:Error)
           expect(manager).to receive(:add_repository)
             .and_raise(::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo)
           expect(subject.main).to eq(:next)
@@ -153,7 +162,18 @@ describe Yast::InstUpdateInstaller do
         end
       end
 
-      context "when repository can't be probed" do
+      context "when a default repository can't be probed" do
+        let(:user_defined) { false }
+
+        it "does not show any error and returns :next" do
+          expect(Yast::Popup).to_not receive(:YesNo)
+          expect(manager).to receive(:add_repository)
+            .and_raise(::Installation::UpdatesManager::CouldNotProbeRepo)
+          expect(subject.main).to eq(:next)
+        end
+      end
+
+      context "when a user defined repository can't be probed" do
         before do
           allow(manager).to receive(:add_repository)
             .and_raise(::Installation::UpdatesManager::CouldNotProbeRepo)

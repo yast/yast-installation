@@ -9,3 +9,10 @@ class FakeRegConfig
   include Singleton
   def import(_args); end
 end
+
+module FakeConnectHelpers
+  def self.catch_registration_errors
+    yield
+    true
+  end
+end

@@ -16,6 +16,10 @@ require "tempfile"
 require "pathname"
 require "fileutils"
 
+Yast.import "Pkg"
+Yast.import "Progress"
+Yast.import "URL"
+
 module Installation
   # Represents a update repository to be used during self-update
   # (check doc/SELF_UPDATE.md for details).
@@ -56,6 +60,9 @@ module Installation
     attr_reader :update_files
     # @return [Symbol] Repository origin. @see ORIGINS
     attr_reader :origin
+    # @return [Integer] Repository ID
+    attr_writer :repo_id
+    private :repo_id=
 
     # A valid repository was not found (although the URL exists,
     # repository type cannot be determined).
@@ -106,9 +113,6 @@ module Installation
     # @param uri                [URI]      Repository URI
     # @param origin             [Symbol]   Repository origin (@see ORIGINS)
     def initialize(uri, origin = :default)
-      Yast.import "Pkg"
-      Yast.import "Progress"
-
       textdomain "installation"
 
       @uri = uri
@@ -118,9 +122,15 @@ module Installation
       @origin = origin
     end
 
+    # Returns the repository ID
+    #
+    # As a potential side-effect, the repository will be added to libzypp (if it
+    # was not added yet) in order to get the ID.
+    #
     # @return [Fixnum] yast2-pkg-bindings ID of the repository
+    #
+    # @see add_repo
     def repo_id
-      return @repo_id unless @repo_id.nil?
       add_repo
     end
 
@@ -134,7 +144,7 @@ module Installation
     # @see Yast::Pkg.ResolvableProperties
     def packages
       return @packages unless @packages.nil?
-      add_repo if repo_id.nil?
+      add_repo
       candidates = Yast::Pkg.ResolvableProperties("", :package, "")
       @packages = candidates.select { |p| p["source"] == repo_id }.sort_by! { |a| a["name"] }
       log.info "Considering #{@packages.size} packages: #{@packages}"
@@ -255,6 +265,14 @@ module Installation
       Yast::Pkg.UrlSchemeIsRemote(uri.scheme)
     end
 
+    # Redefines the inspect method to avoid logging passwords
+    #
+    # @return [String] Debugging information
+    def inspect
+      safe_url = Yast::URL.HidePassword(uri.to_s)
+      "#<Installation::UpdateRepository> @uri=\"#{safe_url}\" @origin=#{@origin.inspect}"
+    end
+
   private
 
     # Fetch and build a squashfs filesytem for a given package
@@ -321,12 +339,16 @@ module Installation
 
     # Add the repository to libzypp sources
     #
+    # If the repository was already added, it will just simply return
+    # the repository ID.
+    #
     # @return [Integer] Repository ID
     #
     # @raise NotValidRepo
     # @raise CouldNotProbeRepo
     # @raise CouldNotRefreshRepo
     def add_repo
+      return @repo_id unless @repo_id.nil?
       status = repo_status
       raise NotValidRepo if status == :not_found
       raise CouldNotProbeRepo if status == :error
@@ -334,7 +356,7 @@ module Installation
                                             "enabled" => true, "autorefresh" => true)
       log.info("Added repository #{uri} as '#{new_repo_id}'")
       if Yast::Pkg.SourceRefreshNow(new_repo_id) && Yast::Pkg.SourceLoad
-        new_repo_id
+        self.repo_id = new_repo_id
       else
         log.error("Could not get metadata from repository '#{new_repo_id}'")
         raise CouldNotRefreshRepo
