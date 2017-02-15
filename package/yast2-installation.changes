@@ -1,17 +1,19 @@
 -------------------------------------------------------------------
 Wed Feb 15 09:12:08 UTC 2017 - mfilka@suse.com
 
+- CaaSP: do not crash when used a dashed url for the controller
+  node location (bsc#1024965)
 - CaaSP AY: Adapted requirements of yast2-services-manager.
   (FATE#321738)
 - bnc#1022546
   - update all-in-one's subdialog (network/kdump/partitioning/...)
     overview when the dialog is closed and do not lose another
     content already entered by user.
-- Calling services-manager_finish in order to write AutoYaST
-  service settings (if needed).
-  (FATE#321738)
-- CaaSP: do not crash when used a dashed url for the controller
-  node location (bsc#1024965)
+- 3.2.22
+
+-------------------------------------------------------------------
+Wed Feb  8 16:42:29 UTC 2017 - kanderssen@suse.com
+
 - CaaSP all-in-one-dialog: added validation to the controller node
   location field, modified label and write it to the minion
   master.conf file at the end of the installation (FATE#321738)
@@ -21,6 +23,7 @@ Wed Feb 15 09:12:08 UTC 2017 - mfilka@suse.com
   (FATE#321738)
 - Do not crash if role contain own service to enable (bsc#1022762)
 - 3.2.21
+
 -------------------------------------------------------------------
 Fri Feb  3 10:07:35 UTC 2017 - jsrain@suse.cz
 
