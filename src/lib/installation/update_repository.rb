@@ -269,8 +269,7 @@ module Installation
     #
     # @return [String] Debugging information
     def inspect
-      safe_url = Yast::URL.HidePassword(uri.to_s)
-      "#<Installation::UpdateRepository> @uri=\"#{safe_url}\" @origin=#{@origin.inspect}"
+      "#<Installation::UpdateRepository> @uri=\"#{safe_uri}\" @origin=#{@origin.inspect}"
     end
 
   private
@@ -458,6 +457,15 @@ module Installation
     # @param [Fixnum] percent the current progress in range 0..100
     def update_progress(percent)
       Yast::Progress.Step(percent)
+    end
+
+    # Returns the URI removing sensitive information
+    #
+    # @return [String] URI without the password (if present)
+    #
+    # @see Yast::URL.HidePassword
+    def safe_uri
+      @safe_uri ||= Yast::URL.HidePassword(uri.to_s)
     end
   end
 end

@@ -295,4 +295,20 @@ describe Installation::UpdateRepository do
       end
     end
   end
+
+  describe "#inspect" do
+    let(:uri) { URI("http://user:123456@updates.suse.com") }
+
+    it "does not contain sensitive information" do
+      expect(repo.inspect).to_not include("123456")
+    end
+  end
+
+  describe "#to_s" do
+    let(:uri) { URI("http://user:123456@updates.suse.com") }
+
+    it "does not contain sensitive information" do
+      expect(repo.to_s).to_not include("123456")
+    end
+  end
 end
