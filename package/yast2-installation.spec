@@ -107,8 +107,8 @@ Conflicts:	yast2-core < 2.17.10
 # Top bar with logo
 Conflicts:	yast2-ycp-ui-bindings < 3.1.7
 
-# new registration widget
-Conflicts:  yast2-registration <= 3.2.1
+# Registration#get_updates_list does not handle exceptions
+Conflicts:  yast2-registration < 3.2.3
 
 Obsoletes:	yast2-installation-devel-doc
 
