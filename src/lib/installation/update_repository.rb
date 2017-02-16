@@ -16,6 +16,10 @@ require "tempfile"
 require "pathname"
 require "fileutils"
 
+Yast.import "Pkg"
+Yast.import "Progress"
+Yast.import "URL"
+
 module Installation
   # Represents a update repository to be used during self-update
   # (check doc/SELF_UPDATE.md for details).
@@ -41,14 +45,23 @@ module Installation
     include Yast::Logger
     include Yast::I18n
 
+    # Where the repository information comes from
+    #
+    # * :default: Default
+    # * :user:    User defined
+    ORIGINS = [:default, :user].freeze
+    # Path to instsys.parts registry
+    INSTSYS_PARTS_PATH = Pathname("/etc/instsys.parts")
+
     # @return [URI] URI of the repository
     attr_reader :uri
-    # @return [Fixnum] yast2-pkg-bindings ID of the repository
-    attr_reader :repo_id
-    # @return [Pathname] Registry of inst-sys updated parts
-    attr_reader :instsys_parts_path
     # @return [Array<Pathname>] local paths of updates fetched from the repo
     attr_reader :update_files
+    # @return [Symbol] Repository origin. @see ORIGINS
+    attr_reader :origin
+    # @return [Integer] Repository ID
+    attr_writer :repo_id
+    private :repo_id=
 
     # A valid repository was not found (although the URL exists,
     # repository type cannot be determined).
@@ -78,6 +91,9 @@ module Installation
     # Updates should be fetched before calling to #apply.
     class UpdatesNotFetched < StandardError; end
 
+    # Not valid origin for the repository
+    class UnknownOrigin < StandardError; end
+
     #
     # Internal exceptions (handled internally)
     #
@@ -94,18 +110,27 @@ module Installation
     # Constructor
     #
     # @param uri                [URI]      Repository URI
-    # @param instsys_parts_path [Pathname] Path to instsys.parts registry
-    def initialize(uri, instsys_parts_path = Pathname("/etc/instsys.parts"))
-      Yast.import "Pkg"
-      Yast.import "Progress"
-
+    # @param origin             [Symbol]   Repository origin (@see ORIGINS)
+    def initialize(uri, origin = :default)
       textdomain "installation"
 
       @uri = uri
-      @repo_id = add_repo
       @update_files = []
       @packages = nil
-      @instsys_parts_path = instsys_parts_path
+      raise UnknownOrigin unless ORIGINS.include?(origin)
+      @origin = origin
+    end
+
+    # Returns the repository ID
+    #
+    # As a potential side-effect, the repository will be added to libzypp (if it
+    # was not added yet) in order to get the ID.
+    #
+    # @return [Fixnum] yast2-pkg-bindings ID of the repository
+    #
+    # @see add_repo
+    def repo_id
+      add_repo
     end
 
     # Retrieves the list of packages to install
@@ -118,6 +143,7 @@ module Installation
     # @see Yast::Pkg.ResolvableProperties
     def packages
       return @packages unless @packages.nil?
+      add_repo
       candidates = Yast::Pkg.ResolvableProperties("", :package, "")
       @packages = candidates.select { |p| p["source"] == repo_id }.sort_by! { |a| a["name"] }
       log.info "Considering #{@packages.size} packages: #{@packages}"
@@ -220,6 +246,31 @@ module Installation
       packages.empty?
     end
 
+    # Returns whether is a user defined repository
+    #
+    # @return [Boolean] true if the repository is user-defined empty;
+    #                   false otherwise.
+    def user_defined?
+      origin == :user
+    end
+
+    # Determines whether the URI of the repository is remote or not
+    #
+    # @return [Boolean] true if the repository is using a 'remote URI';
+    #                   false otherwise.
+    #
+    # @see Pkg.UrlSchemeIsRemote
+    def remote?
+      Yast::Pkg.UrlSchemeIsRemote(uri.scheme)
+    end
+
+    # Redefines the inspect method to avoid logging passwords
+    #
+    # @return [String] Debugging information
+    def inspect
+      "#<Installation::UpdateRepository> @uri=\"#{safe_uri}\" @origin=#{@origin.inspect}"
+    end
+
   private
 
     # Fetch and build a squashfs filesytem for a given package
@@ -286,12 +337,16 @@ module Installation
 
     # Add the repository to libzypp sources
     #
+    # If the repository was already added, it will just simply return
+    # the repository ID.
+    #
     # @return [Integer] Repository ID
     #
     # @raise NotValidRepo
     # @raise CouldNotProbeRepo
     # @raise CouldNotRefreshRepo
     def add_repo
+      return @repo_id unless @repo_id.nil?
       status = repo_status
       raise NotValidRepo if status == :not_found
       raise CouldNotProbeRepo if status == :error
@@ -299,7 +354,7 @@ module Installation
                                             "enabled" => true, "autorefresh" => true)
       log.info("Added repository #{uri} as '#{new_repo_id}'")
       if Yast::Pkg.SourceRefreshNow(new_repo_id) && Yast::Pkg.SourceLoad
-        new_repo_id
+        self.repo_id = new_repo_id
       else
         log.error("Could not get metadata from repository '#{new_repo_id}'")
         raise CouldNotRefreshRepo
@@ -384,9 +439,9 @@ module Installation
     # @param path       [Pathname] Filesystem to mount
     # @param mountpoint [Pathname] Mountpoint
     #
-    # @see instsys_parts_path
+    # @see INSTSYS_PARTS_PATH
     def update_instsys_parts(path, mountpoint)
-      instsys_parts_path.open("a") do |f|
+      INSTSYS_PARTS_PATH.open("a") do |f|
         f.puts "#{path.relative_path_from(Pathname("/"))} #{mountpoint}"
       end
     end
@@ -401,6 +456,15 @@ module Installation
     # @param [Fixnum] percent the current progress in range 0..100
     def update_progress(percent)
       Yast::Progress.Step(percent)
+    end
+
+    # Returns the URI removing sensitive information
+    #
+    # @return [String] URI without the password (if present)
+    #
+    # @see Yast::URL.HidePassword
+    def safe_uri
+      @safe_uri ||= Yast::URL.HidePassword(uri.to_s)
     end
   end
 end
