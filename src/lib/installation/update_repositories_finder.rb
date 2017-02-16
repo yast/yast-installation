@@ -33,6 +33,11 @@ module Installation
     include Yast::Logger
     include Yast::I18n
 
+    # Constructor
+    def initialize
+      textdomain "installation"
+    end
+
     # Return the update source
     def updates
       return @updates if @updates
