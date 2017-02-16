@@ -11,7 +11,7 @@ describe Installation::UpdateRepositoriesFinder do
     let(:url_from_linuxrc) { nil }
     let(:url_from_control) { "http://update.opensuse.org/\$arch/42.2" }
     let(:real_url_from_control) { "http://update.opensuse.org/#{arch}/42.2" }
-    let(:arch) { "x86_64" }
+    let(:arch) { "armv7hl" }
     let(:profile) { {} }
     let(:ay_profile) { double("Yast::Profile", current: profile) }
     let(:repo) { double("UpdateRepository") }
@@ -24,6 +24,7 @@ describe Installation::UpdateRepositoriesFinder do
       allow(finder).to receive(:require).with("registration/connect_helpers")
       allow(Yast::Linuxrc).to receive(:InstallInf).with("SelfUpdate")
         .and_return(url_from_linuxrc)
+      allow(Yast::Pkg).to receive(:GetArchitecture).and_return(arch)
     end
 
     context "when URL was specified via Linuxrc" do
