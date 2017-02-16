@@ -14,7 +14,7 @@ module Installation
       end
 
       def handle
-        Yast::WFM.CallFunction("inst_productsources", [{"skip_already_used_repos" => true}])
+        Yast::WFM.CallFunction("inst_productsources", [{"script_called_from_another" => true}])
 
         :redraw
       end
