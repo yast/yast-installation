@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Feb 14 14:55:08 UTC 2017 - igonzalezsosa@suse.com
+
+- Self-Update only shows errors when a custom URL is used
+  (bsc#1025251)
+- 3.2.22
+
+-------------------------------------------------------------------
 Wed Feb  8 16:42:29 UTC 2017 - kanderssen@suse.com
 
 - CaaSP all-in-one-dialog: added validation to the controller node
