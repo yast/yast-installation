@@ -92,7 +92,6 @@ module Installation
     end
 
     module SystemRoleReader
-
       def default
         ::Installation::SystemRole.default? ? ::Installation::SystemRole.ids.first : nil
       end
@@ -115,7 +114,6 @@ module Installation
         Yast::ProductControl.GetTranslatedText("roles_help") + "\n\n" + roles_help_text
       end
 
-
       def store
         log.info "Applying system role '#{value}'"
         role = ::Installation::SystemRole.select(value)
@@ -130,10 +128,6 @@ module Installation
         ::Installation::SystemRole.roles.map do |role|
           role.label + "\n\n" + role.description
         end.join("\n\n\n")
-      end
-
-      def default
-        ::Installation::SystemRole.ids.first
       end
     end
 

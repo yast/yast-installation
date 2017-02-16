@@ -22,7 +22,7 @@ module Installation
       loop do
         ret = Yast::CWM.show(
           content,
-          caption: _("Computer Role"),
+          caption:        _("Computer Role"),
           skip_store_for: [:redraw]
         )
         break if ret != :redraw
@@ -31,10 +31,10 @@ module Installation
       Yast::Wizard.CloseDialog if separate_wizard_needed?
 
       # support passing addon as cmd argument, openQA use it for testing
-      if !Yast::Linuxrc.InstallInf("addon").nil?
-        Yast::ProductControl.EnableModule("add-on")
-      else
+      if Yast::Linuxrc.InstallInf("addon").nil?
         Yast::ProductControl.DisableModule("add-on")
+      else
+        Yast::ProductControl.EnableModule("add-on")
       end
 
       ret
@@ -50,7 +50,7 @@ module Installation
     def content
       VBox(
         Widgets::SystemRolesRadioButtons.new,
-	VSpacing(1),
+        VSpacing(1),
         Left(Widgets::OnlineRepos.new)
       )
     end
