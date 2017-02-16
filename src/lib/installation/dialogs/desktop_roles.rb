@@ -1,6 +1,6 @@
 require "yast"
 require "installation/widgets/system_role"
-require "installation/widgets/online_repos_checkbox"
+require "installation/widgets/online_repos"
 require "cwm/widget"
 
 Yast.import "CWM"
@@ -46,7 +46,7 @@ module Installation
       VBox(
         Widgets::SystemRolesRadioButtons.new,
 	VSpacing(1),
-        Left(Widgets::OnlineReposCheckbox.new)
+        Left(Widgets::OnlineRepos.new)
       )
     end
   end
