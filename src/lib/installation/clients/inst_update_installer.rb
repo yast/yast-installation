@@ -231,7 +231,7 @@ module Yast
 
     rescue ::Installation::UpdatesManager::CouldNotFetchUpdateFromRepo
       if repo.user_defined?
-      # TRANSLATORS: %s is an URL
+        # TRANSLATORS: %s is an URL
         Report.Error(format(_("Could not fetch update from\n%s.\n\n"), repo.uri))
       end
       false

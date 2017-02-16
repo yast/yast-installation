@@ -51,7 +51,7 @@ module Installation
       @updates = Array(update_from_control)
     end
 
-    private
+  private
 
     # Return the self-update repository if defined by the user
     #

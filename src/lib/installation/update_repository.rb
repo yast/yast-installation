@@ -49,10 +49,9 @@ module Installation
     #
     # * :default: Default
     # * :user:    User defined
-    ORIGINS = [:default, :user]
+    ORIGINS = [:default, :user].freeze
     # Path to instsys.parts registry
     INSTSYS_PARTS_PATH = Pathname("/etc/instsys.parts")
-
 
     # @return [URI] URI of the repository
     attr_reader :uri
