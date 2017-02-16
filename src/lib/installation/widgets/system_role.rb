@@ -22,8 +22,10 @@
 require "yast"
 require "cwm/widget"
 require "installation/services"
+require "installation/custom_patterns"
 require "installation/system_role"
 
+Yast.import "DefaultDesktop"
 Yast.import "ProductControl"
 Yast.import "IP"
 Yast.import "Hostname"
@@ -89,33 +91,17 @@ module Installation
       end
     end
 
-    class SystemRole < CWM::ComboBox
-      def initialize(controller_node_widget)
-        textdomain "installation"
-        @controller_node_widget = controller_node_widget
-      end
-
-      def label
-        Yast::ProductControl.GetTranslatedText("roles_caption")
-      end
-
-      def opt
-        [:hstretch, :notify]
+    module SystemRoleReader
+      def default
+        ::Installation::SystemRole.default? ? ::Installation::SystemRole.ids.first : nil
       end
 
       def init
         self.value = ::Installation::SystemRole.current || default
-        handle
       end
 
-      def handle
-        if value == "worker_role"
-          @controller_node_widget.show
-        else
-          @controller_node_widget.hide
-        end
-
-        nil
+      def label
+        Yast::ProductControl.GetTranslatedText("roles_caption")
       end
 
       def items
@@ -143,9 +129,55 @@ module Installation
           role.label + "\n\n" + role.description
         end.join("\n\n\n")
       end
+    end
 
-      def default
-        ::Installation::SystemRole.ids.first
+    # CaaSP specialized role widget
+    class SystemRole < CWM::ComboBox
+      include SystemRoleReader
+
+      def initialize(dashboard_widget)
+        textdomain "installation"
+        @dashboard_widget = dashboard_widget
+      end
+
+      def opt
+        [:hstretch, :notify]
+      end
+
+      alias_method :init_orig, :init
+      def init
+        init_orig
+        handle
+      end
+
+      def handle
+        if value == "worker_role"
+          @dashboard_widget.show
+        else
+          @dashboard_widget.hide
+        end
+
+        nil
+      end
+    end
+
+    class SystemRolesRadioButtons < CWM::RadioButtons
+      include SystemRoleReader
+
+      alias_method :store_orig, :store
+      def store
+        # set flag to show custom patterns only if custom role selected
+        CustomPatterns.show = value == "custom"
+        store_orig
+
+        if value == "custom"
+          # for custom role do not use any desktop
+          Yast::DefaultDesktop.SetDesktop(nil)
+        else
+          # force reset of Default Desktop, because it is cached and when going
+          # forward and backward, it can be changed
+          Yast::DefaultDesktop.ForceReinit
+        end
       end
     end
   end

@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Wed Feb 15 17:58:16 UTC 2017 - jreidinger@suse.com
+
+- Add new desktop selection client for opensuse based on roles
+  (poo#14936, bsc#1025415)
+- drop "inst_new_desktop" client which was replaced by new desktop
+  selection one
+- 3.2.23
+
+-------------------------------------------------------------------
 Tue Feb 14 14:55:08 UTC 2017 - igonzalezsosa@suse.com
 
 - Self-Update only shows errors when a custom URL is used
