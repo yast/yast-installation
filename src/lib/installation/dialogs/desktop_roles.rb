@@ -18,10 +18,15 @@ module Installation
       # helpful when testing all manually on a running system
       Yast::Wizard.CreateDialog if separate_wizard_needed?
 
-      ret = Yast::CWM.show(
-        content,
-        caption: _("Computer Role")
-      )
+      ret = nil
+      loop do
+        ret = Yast::CWM.show(
+          content,
+          caption: _("Computer Role"),
+          skip_store_for: [:redraw]
+        )
+        break if ret != :redraw
+      end
 
       Yast::Wizard.CloseDialog if separate_wizard_needed?
 
