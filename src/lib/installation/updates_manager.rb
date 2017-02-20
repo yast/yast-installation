@@ -62,7 +62,7 @@ module Installation
     # At instantiation time, this class looks for existin driver
     # updates in the given `duds_path`.
     #
-    # @param duds_path [Pathname] Path where driver updates are supposed to live
+    # @param duds_paths [Pathname] Path where driver updates are supposed to live
     def initialize(duds_paths = DRIVER_UPDATES_PATHS)
       @repositories = []
       @driver_updates = Installation::DriverUpdate.find(duds_paths)

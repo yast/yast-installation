@@ -98,7 +98,7 @@ related variables.
 > Note that the control file is not an optional tool to help customize
 > installation, it is required during installation and without the file,
 > installation may fail or lead to unexpected results. Control file on installed
-> system located in `/etc/YaST2/control.xml` is owned by ${PRODUCT}-release
+> system located in `/etc/YaST2/control.xml` is owned by `${PRODUCT}-release`
 > package.
 
 During installation, *linuxrc* searches for a file named
@@ -616,6 +616,10 @@ This is a list of supported entries in *software*:
 
 -   *clone\_install\_recommended\_default* - Default entry for
     "install_recommended" in created AutoYaST configuration file.
+
+-   *minimalistic_libzypp_config* - adjust the libzypp configuration
+    to reduce the amount of packages to install: only required
+    packages are considered, no documentation and no multiversion.
 
 Additionally, you can configure how updating of packages should be
 performed. The following options are available:

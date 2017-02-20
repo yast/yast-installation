@@ -3,6 +3,121 @@ Mon Feb 20 13:28:28 CET 2017 - schubi@suse.de
 
 - Downloading release notes: Do not try again if the host or the
   proxy cannot be resolved (bnc#1022784)
+- 3.1.217.25
+
+-------------------------------------------------------------------  
+Tue Feb 14 13:24:33 CET 2017 - schubi@suse.de
+
+- CaaSP AY: Adapted requirements of yast2-services-manager.
+  (FATE#321738)
+- 3.1.217.24
+
+-------------------------------------------------------------------  
+Mon Feb 13 14:49:14 UTC 2017 - mfilka@suse.com
+
+- bnc#1022546
+  - update all-in-one's subdialog (network/kdump/partitioning/...)
+    overview when the dialog is closed and do not lose another
+    content already entered by user.
+- 3.1.217.23
+
+-------------------------------------------------------------------
+Mon Feb 13 14:12:59 CET 2017 - schubi@suse.de
+
+- Calling services-manager_finish in order to write AutoYaST
+  service settings (if needed).
+  (FATE#321738)
+- 3.1.217.22  
+
+-------------------------------------------------------------------
+Mon Feb 13 13:00:42 UTC 2017 - kanderssen@suse.com
+
+- CaaSP: do not crash when used a dashed url for the controller
+  node location (bsc#1024965)
+- 3.1.217.21
+
+-------------------------------------------------------------------
+Wed Feb  8 16:42:29 UTC 2017 - kanderssen@suse.com
+
+- CaaSP all-in-one-dialog: added validation to the controller node
+  location field, modified label and write it to the minion
+  master.conf file at the end of the installation (FATE#321738)
+- 3.1.217.20
+
+-------------------------------------------------------------------
+Wed Feb  8 11:57:14 UTC 2017 - lslezak@suse.cz
+
+- CaaSP: Display the Beta product warning at start when it is
+  present (bsc#1016887)
+- 3.1.217.19
+
+-------------------------------------------------------------------
+Wed Feb  1 14:20:43 UTC 2017 - jreidinger@suse.com
+
+- Enable CaaSP specific services on the installed system
+  (FATE#321738)
+- 3.1.217.18
+
+-------------------------------------------------------------------
+Tue Jan 31 16:06:40 UTC 2017 - jreidinger@suse.com
+
+- Do not crash if role contain own service to enable (bsc#1022762)
+- 3.1.217.17
+
+-------------------------------------------------------------------
+Fri Jan 27 15:55:33 UTC 2017 - kanderssen@suse.com
+
+- Ask for installation confirmation in all-in-one dialog before
+  proceed with it. (Fate#322328)
+- 3.1.217.16
+
+-------------------------------------------------------------------
+Fri Jan 27 09:11:32 UTC 2017 - jreidinger@suse.com
+
+- Respect newly registered update repos in software proposal and
+  do register. (FATE#322328)
+- 3.1.217.15
+
+-------------------------------------------------------------------
+Thu Jan 26 14:16:43 UTC 2017 - jreidinger@suse.com
+
+- handle proposal errors in all-in-one dialog (FATE#322328)
+- 3.1.217.14
+
+-------------------------------------------------------------------
+Wed Jan 25 15:29:02 UTC 2017 - mvidner@suse.com
+
+- Added an all-in-one installation overview for CaaSP (FATE#322328)
+- 3.1.217.13
+
+-------------------------------------------------------------------
+Fri Jan 20 08:44:28 UTC 2017 - mfilka@suse.com
+
+- bnc#1017752
+  - do not show language change warning in software proposal
+    incorrectly when language was not changed.
+- 3.1.217.12
+
+-------------------------------------------------------------------
+Tue Jan 17 15:34:22 UTC 2017 - igonzalezsosa@suse.com
+
+- Do not retry to download release notes if a previous attempt
+  failed (bsc#1015794)
+- 3.1.217.11
+
+-------------------------------------------------------------------
+Mon Jan 16 12:42:52 UTC 2017 - jreidinger@suse.com
+
+- add ability to roles to enable list of services when selected
+  (FATE#321754)
+- 3.1.217.10
+
+-------------------------------------------------------------------
+Mon Dec 19 13:23:12 UTC 2016 - mfilka@suse.com
+
+- fate#321739
+  - Made user's interaction possible in case of error in read-only
+    proposal.
 - 3.1.217.9
 
 -------------------------------------------------------------------

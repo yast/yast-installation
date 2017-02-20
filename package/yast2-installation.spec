@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.217.9
+Version:        3.1.217.25
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -72,19 +72,25 @@ Requires:	initviocons
 # Proxy settings for 2nd stage (bnc#764951)
 Requires:       yast2-proxy
 
-# Systemd default target and services
-Requires: yast2-services-manager
+# Systemd default target and services. This version supports
+# writing settings in the first installation stage.
+Requires: yast2-services-manager >= 3.1.43.1
 
 # Network service setup moved into yast2-network
 Requires: yast2-network >= 3.1.143
+
+# Augeas lenses
+Requires:       augeas-lenses
 
 # Only in inst-sys
 # Requires:	yast2-add-on
 # Requires:	yast2-update
 
 # new root password cwm widget
+BuildRequires:	yast2-users >= 3.1.57.4
 Requires:	yast2-users >= 3.1.57.4
 # new keyboard layout cwm widget
+BuildRequires:	yast2-country >= 3.1.33.1
 Requires:	yast2-country >= 3.1.33.1
 
 # Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
@@ -103,8 +109,8 @@ Conflicts:	yast2-core < 2.17.10
 # Top bar with logo
 Conflicts:	yast2-ycp-ui-bindings < 3.1.7
 
-# RegserviceSelectionDialog
-Conflicts:  yast2-registration < 3.1.179
+# new registration widget
+Conflicts:  yast2-registration <= 3.1.190
 
 Obsoletes:	yast2-installation-devel-doc
 
