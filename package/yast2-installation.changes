@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Feb 20 13:28:28 CET 2017 - schubi@suse.de
+
+- Downloading release notes: Do not try again if the host or the
+  proxy cannot be resolved (bnc#1022784)
+- 3.1.217.9
+
+-------------------------------------------------------------------
 Wed Dec 14 15:47:02 UTC 2016 - jreidinger@suse.com
 
 - Change layout of new installation dialog according to UX team
