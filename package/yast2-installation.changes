@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Feb 20 14:29:18 CET 2017 - schubi@suse.de
+
+- Removed simplecov from .travis.yml
+  Build for FATE#321738
+- 3.1.217.25
+
+-------------------------------------------------------------------
 Tue Feb 14 13:24:33 CET 2017 - schubi@suse.de
 
 - CaaSP AY: Adapted requirements of yast2-services-manager.
