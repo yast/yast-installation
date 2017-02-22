@@ -206,7 +206,7 @@ function check_x11 () {
 			# NCURSES mode as fallback ?
 			# ---
 			log "\tX-Server couldn't be started, falling back to ncurses"
-			Y2_MODE_FLAGS='(text_fallback)'
+			Y2_MODE_FLAGS="--arg text_fallback"
 			SELECTED_MEDIUM="NCURSES"
 			prepare_for_ncurses
 			Y2_MODE=ncurses
@@ -331,9 +331,8 @@ function start_yast () {
 	if [ "$Y2GDB" != "1" ]; then
 	    $OPT_FBITERM y2base		\
 		"$Y2_MODULE_NAME"	\
-                -S                      \
 		$Y2_MODE_FLAGS		\
-		"$Y2_MODULE_ARGS"	\
+		$Y2_MODULE_ARGS	        \
 		$Y2_MODE		\
 		$Y2_UI_ARGS
 	    Y2_EXIT_CODE=$?
@@ -342,7 +341,7 @@ function start_yast () {
 	    echo tty /dev/tty10 > $GDBCMDS
 	    echo set args "$Y2_MODULE_NAME"	\
 			$Y2_MODE_FLAGS		\
-			"'"$Y2_MODULE_ARGS"'"	\
+			$Y2_MODULE_ARGS 	\
 			$Y2_MODE		\
 			$Y2_UI_ARGS >> $GDBCMDS
 	    echo set pagination off >> $GDBCMDS
@@ -654,7 +653,10 @@ esac
 # 8) Call YaST2
 #---------------------------------------------
 Y2_MODULE_NAME=${1:-installation}; shift
-Y2_MODULE_ARGS=\($*\)
+Y2_MODULE_ARGS=""
+for i in "$@"; do
+  Y2_MODULE_ARGS="$Y2_MODULE_ARGS --arg $i"
+done
 start_yast
 
 #=============================================
