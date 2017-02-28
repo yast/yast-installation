@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Feb 28 15:09:34 UTC 2017 - jreidinger@suse.com
+
+- Adapt to new syntax of y2base script (bsc#1027181)
+- 3.2.24
+
+-------------------------------------------------------------------
 Wed Feb 15 17:58:16 UTC 2017 - jreidinger@suse.com
 
 - Add new desktop selection client for opensuse based on roles
