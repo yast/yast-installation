@@ -59,6 +59,17 @@ describe Yast::InstDownloadReleaseNotesClient do
       expect(client.main).to eq(:auto)
     end
 
+    context "when running AutoYaST" do
+      before do
+        allow(Yast::Mode).to receive(:auto).and_return(true)
+      end
+
+      it "does not download the release notes" do
+        expect(client).to_not receive(:download_release_notes)
+        client.main
+      end
+    end
+
     context "when release notes are downloaded correctly" do
       let(:curl_code) { 0 }
 

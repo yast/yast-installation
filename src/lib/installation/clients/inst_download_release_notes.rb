@@ -229,6 +229,7 @@ module Yast
       Yast.import "Stage"
       Yast.import "GetInstArgs"
       Yast.import "Wizard"
+      Yast.import "Mode"
 
       textdomain "installation"
 
