@@ -38,55 +38,38 @@ module Yast
       28 => "Operation timeout."
     }.freeze
 
-    # Download of index of release notes for a specific product
-    # @param url_base URL pointing to directory with the index
-    # @param proxy the proxy URL to be passed to curl
+    # @param url [String]
+    # @param filename [String]
+    # @param proxy_args [String] to be interpolated unquoted
+    # @param max_time [Integer] timeout in seconds
     #
+    # Download *url* to *filename*
     # May set InstData.stop_relnotes_download on download failure.
-    # @return [Array<String>,nil] filenames, nil if not found
-    def download_release_notes_index(url_base, proxy)
-      url_index = url_base + "/directory.yast2"
-      log.info("Index with available files: #{url_index}")
-      filename = Builtins.sformat("%1/directory.yast", SCR.Read(path(".target.tmpdir")))
-      # download the index with much shorter time-out
+    #
+    # @return [Boolean,nil] true: success, false: failure, nil: failure+dont retry
+    def curl_download(url, filename, proxy_args:, max_time: 300)
       cmd = Builtins.sformat(
-        "/usr/bin/curl --location --verbose --fail --max-time 30 --connect-timeout 15  %1 '%2' --output '%3' > '%4/%5' 2>&1",
-        proxy,
-        url_index,
+        "/usr/bin/curl --location --verbose --fail --max-time %6 --connect-timeout 15  %1 '%2' --output '%3' > '%4/%5' 2>&1",
+        proxy_args,
+        url,
         String.Quote(filename),
         String.Quote(Directory.logdir),
-        "curl_log"
+        "curl_log",
+        max_time
       )
       ret = SCR.Execute(path(".target.bash"), cmd)
-      log.info("Downloading release notes index: #{cmd} returned #{ret}")
-      if ret == 0
-        log.info("Release notes index downloaded successfully")
-        index_file = File.read(filename)
-        if index_file.nil? || index_file.empty?
-          log.info("Release notes index empty, not filtering further downloads")
-          return nil
-        else
-          rn_filter = index_file.split("\n")
-          log.info("Index of RN files at the server: #{rn_filter}")
-          return rn_filter
-        end
-      elsif CURL_GIVE_UP_RETURN_CODES.key? ret
-        log.info "Communication with server for release notes download failed ( #{CURL_GIVE_UP_RETURN_CODES[ret]} ), skipping further attempts."
+      log.info("#{cmd} returned #{ret}")
+      reason = CURL_GIVE_UP_RETURN_CODES[ret]
+      if !reason.nil?
+        log.info "Communication with server failed (#{reason}), skipping further attempts."
         InstData.stop_relnotes_download = true
         return nil
-      else
-        log.info "Downloading index failed, trying all files according to selected language"
-        return nil
       end
+      ret == 0
     end
 
-    # Download release notes for all selected and installed products
-    #
-    # @return true when successful
-    def download_release_notes
-      filename_templ = UI.TextMode ? "/RELEASE-NOTES.%1.txt" : "/RELEASE-NOTES.%1.rtf"
-
-      # Get proxy settings (if any)
+    # @return [String] to be interpolated in a .target.bash command, unquoted
+    def curl_proxy_args
       proxy = ""
       # proxy should be set by inst_install_inf if set via Linuxrc
       Proxy.Read
@@ -108,6 +91,49 @@ module Yast
           proxy << " --proxy-user '#{user_pass}'" unless user_pass.empty?
         end
       end
+      proxy
+    end
+
+    # Download of index of release notes for a specific product
+    # @param url_base URL pointing to directory with the index
+    # @param proxy the proxy URL to be passed to curl
+    #
+    # May set InstData.stop_relnotes_download on download failure.
+    # @return [Array<String>,nil] filenames, nil if not found
+    def download_release_notes_index(url_base, proxy)
+      url_index = url_base + "/directory.yast2"
+      log.info("Index with available files: #{url_index}")
+      filename = Builtins.sformat("%1/directory.yast", SCR.Read(path(".target.tmpdir")))
+      # download the index with much shorter time-out
+      ok = curl_download(url_index, filename, proxy_args: proxy, max_time: 30)
+
+      if ok
+        log.info("Release notes index downloaded successfully")
+        index_file = File.read(filename)
+        if index_file.nil? || index_file.empty?
+          log.info("Release notes index empty, not filtering further downloads")
+          return nil
+        else
+          rn_filter = index_file.split("\n")
+          log.info("Index of RN files at the server: #{rn_filter}")
+          return rn_filter
+        end
+      elsif ok.nil?
+        return nil
+      else
+        log.info "Downloading index failed, trying all files according to selected language"
+        return nil
+      end
+    end
+
+    # Download release notes for all selected and installed products
+    #
+    # @return true when successful
+    def download_release_notes
+      filename_templ = UI.TextMode ? "/RELEASE-NOTES.%1.txt" : "/RELEASE-NOTES.%1.rtf"
+
+      # Get proxy settings (if any)
+      proxy = curl_proxy_args
 
       # installed may mean old (before upgrade) in initial stage
       # product may not yet be selected although repo is already added
@@ -167,24 +193,13 @@ module Yast
           end
 
           # download release notes now
-          cmd = Builtins.sformat(
-            "/usr/bin/curl --location --verbose --fail --max-time 300 --connect-timeout 15  %1 '%2' --output '%3' > '%4/%5' 2>&1",
-            proxy,
-            url,
-            String.Quote(filename),
-            String.Quote(Directory.logdir),
-            "curl_log"
-          )
-          ret = SCR.Execute(path(".target.bash"), cmd)
-          log.info("Downloading release notes: #{cmd} returned #{ret}")
-          if ret == 0
+          ok = curl_download(url, filename, proxy_args: proxy)
+          if ok
             log.info("Release notes downloaded successfully")
             InstData.release_notes[product["short_name"]] = SCR.Read(path(".target.string"), filename)
             InstData.downloaded_release_notes << product["short_name"]
             break
-          elsif CURL_GIVE_UP_RETURN_CODES.key? ret
-            log.info "Communication with server for release notes download failed ( #{CURL_GIVE_UP_RETURN_CODES[ret]} ), skipping further attempts."
-            InstData.stop_relnotes_download = true
+          elsif ok.nil?
             break
           else
             InstData.failed_release_notes << url
