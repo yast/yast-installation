@@ -79,7 +79,7 @@ module Yast
       end
     end
 
-    # Download all release notes mentioned in Product::relnotesurl_all
+    # Download release notes for all selected and installed products
     #
     # @return true when successful
     def download_release_notes
@@ -206,7 +206,6 @@ module Yast
 
     def main
       Yast.import "UI"
-      Yast.import "Product"
       Yast.import "Language"
       Yast.import "Proxy"
       Yast.import "Directory"
