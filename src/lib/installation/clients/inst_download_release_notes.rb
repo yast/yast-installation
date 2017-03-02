@@ -42,7 +42,8 @@ module Yast
     # @param url_base URL pointing to directory with the index
     # @param proxy the proxy URL to be passed to curl
     #
-    # @return true when successful
+    # May set InstData.stop_relnotes_download on download failure.
+    # @return [Array<String>,nil] filenames, nil if not found
     def download_release_notes_index(url_base, proxy)
       url_index = url_base + "/directory.yast2"
       log.info("Index with available files: #{url_index}")
