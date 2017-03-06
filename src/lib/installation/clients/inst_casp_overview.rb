@@ -126,8 +126,8 @@ module Installation
         HWeight(
           6,
           VBox(
+            VSpacing(2),
             VWeight(5, upper_left),
-            VStretch(),
             VWeight(5, lower_left)
           )
         ),
@@ -135,8 +135,8 @@ module Installation
         HWeight(
           4,
           VBox(
+            VSpacing(2),
             VWeight(5, upper_right),
-            VStretch(),
             VWeight(5, lower_right)
           )
         )
