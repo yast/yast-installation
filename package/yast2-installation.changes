@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Mar  6 13:33:41 UTC 2017 - mfilka@suse.com
+
+- fate#322328
+  - adapted all-in-one dialog according to comments from UX
+- 3.2.25
+
+-------------------------------------------------------------------
 Mon Mar  6 09:39:00 UTC 2017 - mfilka@suse.com
 
 - CaaSP: do not crash when used a dashed url for the controller
