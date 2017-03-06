@@ -1,4 +1,17 @@
 -------------------------------------------------------------------
+Mon Mar  6 09:39:00 UTC 2017 - mfilka@suse.com
+
+- CaaSP: do not crash when used a dashed url for the controller
+  node location (bsc#1024965)
+- CaaSP AY: Adapted requirements of yast2-services-manager.
+  (FATE#321738)
+- bnc#1022546
+  - update all-in-one's subdialog (network/kdump/partitioning/...)
+    overview when the dialog is closed and do not lose another
+    content already entered by user.
+- 3.2.24
+
+-------------------------------------------------------------------
 Wed Feb 15 17:58:16 UTC 2017 - jreidinger@suse.com
 
 - Add new desktop selection client for opensuse based on roles
