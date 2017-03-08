@@ -116,7 +116,7 @@ module Installation
       #
       # @return [Array<Hash>] returns an empty array if no roles defined
       def raw_roles
-        @raw_roles ||= Yast::ProductControl.productControl.fetch("system_roles", []) || []
+        Yast::ProductControl.system_roles
       end
 
       # Returns an array with all the SystemRole objects
