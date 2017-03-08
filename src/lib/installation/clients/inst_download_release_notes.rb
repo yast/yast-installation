@@ -101,7 +101,7 @@ module Yast
     # May set InstData.stop_relnotes_download on download failure.
     # @return [Array<String>,nil] filenames, nil if not found
     def download_release_notes_index(url_base, proxy)
-      url_index = url_base + "/directory.yast2"
+      url_index = url_base + "/directory.yast"
       log.info("Index with available files: #{url_index}")
       filename = Builtins.sformat("%1/directory.yast", SCR.Read(path(".target.tmpdir")))
       # download the index with much shorter time-out
