@@ -84,7 +84,7 @@ module Installation
       #
       # @return [Array<String>] array with all the role ids; empty if no roles
       def ids
-        all.keys
+        all.map(&:id)
       end
 
       # returns if roles should set default or have no role preselected
@@ -92,16 +92,11 @@ module Installation
         !all.values.first["no_default"]
       end
 
-      # Initializes and maintains a map with the id of the roles and
-      # SystemRole objects with the roles defined in the control file.
+      # Returns an array with all the SystemRole objects
       #
       # @return [Hash<String, SystemRole>]
       def all
-        return @roles if @roles
-
-        @roles = raw_roles.each_with_object({}) do |raw_role, entries|
-          entries[raw_role["id"]] = from_control(raw_role)
-        end
+        @roles ||= raw_roles.map { |r| from_control(r) }
       end
 
       # Clears roles cache
@@ -117,13 +112,6 @@ module Installation
       # @return [Array<Hash>] returns an empty array if no roles defined
       def raw_roles
         Yast::ProductControl.system_roles
-      end
-
-      # Returns an array with all the SystemRole objects
-      #
-      # @return [Array<SystemRole>] retuns an empty array if no roles defined
-      def roles
-        all.values
       end
 
       # Establish as the current role the one given as parameter.
@@ -147,7 +135,7 @@ module Installation
       # @param role_id [String]
       # @return [SystemRole, nil]
       def find(role_id)
-        all[role_id]
+        all.find { |r| r.id == role_id }
       end
 
       # Creates a SystemRole instance for the given role (in raw format).

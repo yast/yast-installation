@@ -21,6 +21,7 @@ describe Installation::SystemRole do
 
   before do
     allow(Yast::ProductControl).to receive(:system_roles).and_return(system_roles)
+    described_class.clear
   end
 
   describe ".raw_roles" do
@@ -38,19 +39,10 @@ describe Installation::SystemRole do
     end
   end
 
-  describe ".roles" do
-    it "returns an array of SystemRole objects for all the declared roles " do
-      expect(described_class.roles.size).to eql(2)
-
-      expect(described_class.roles.last.class).to eql(described_class)
-    end
-  end
-
   describe ".all" do
-    it "returns a hash indexed by roles 'id' and the related SystemRole object as the value" do
+    it "returns an array of SystemRole objects for all the declared roles " do
       expect(described_class.all.size).to eql(2)
-      expect(described_class.all.keys).to eql(["role_one", "role_two"])
-      expect(described_class.all.values.first.class).to eql(described_class)
+      expect(described_class.all.last.class).to eql(described_class)
     end
   end
 
@@ -62,8 +54,8 @@ describe Installation::SystemRole do
 
   describe ".find" do
     it "looks for the given role 'id' and returns the specific SystemRole object" do
-      role_two = described_class.all["role_two"]
-      expect(described_class.find("role_two")).to eql(role_two)
+      role_two = described_class.find("role_two")
+      expect(role_two.id).to eq("role_two")
     end
   end
 
