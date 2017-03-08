@@ -29,8 +29,8 @@ describe ::Installation::SelectSystemRole do
 
     context "when no roles are defined" do
       before do
-        allow(Yast::ProductControl).to receive(:productControl)
-          .and_return("system_roles" => [])
+        allow(Yast::ProductControl).to receive(:system_roles)
+          .and_return([])
       end
 
       it "does not display dialog, and returns :auto" do
@@ -48,8 +48,8 @@ describe ::Installation::SelectSystemRole do
       end
 
       before do
-        allow(Yast::ProductControl).to receive(:productControl)
-          .and_return("system_roles" => control_file_roles)
+        allow(Yast::ProductControl).to receive(:system_roles)
+          .and_return(control_file_roles)
       end
 
       it "displays dialog, and sets ProductFeatures on Next" do
