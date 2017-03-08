@@ -34,9 +34,6 @@ module Installation
       attr_accessor :original_role_id
     end
 
-    # @return [Array<SystemRole>] List of defined roles
-    attr_reader :roles
-
     NON_OVERLAY_ATTRIBUTES = [
       "additional_dialogs",
       "id",
@@ -50,7 +47,7 @@ module Installation
     end
 
     def run
-      if roles.empty?
+      if roles(true).empty?
         log.info "No roles defined, skipping their dialog"
         return :auto # skip forward or backward
       end
@@ -206,8 +203,17 @@ module Installation
       Installation::Services.enabled = to_enable
     end
 
-    def roles
-      @roles ||= SystemRole.roles
+    # Return the list of defined roles
+    #
+    # @param [Boolean] refresh Refresh system roles cache
+    # @return [Array<SystemRole>] List of defined roles
+    #
+    # @see SystemRole.all
+    # @see SystemRole.clear
+    def roles(refresh = false)
+      # Refresh system roles list
+      SystemRole.clear if refresh
+      SystemRole.all
     end
   end
 end
