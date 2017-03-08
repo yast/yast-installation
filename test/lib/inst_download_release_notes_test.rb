@@ -59,6 +59,17 @@ describe Yast::InstDownloadReleaseNotesClient do
       expect(client.main).to eq(:auto)
     end
 
+    context "when running AutoYaST" do
+      before do
+        allow(Yast::Mode).to receive(:auto).and_return(true)
+      end
+
+      it "does not download the release notes" do
+        expect(client).to_not receive(:download_release_notes)
+        client.main
+      end
+    end
+
     context "when release notes are downloaded correctly" do
       let(:curl_code) { 0 }
 
@@ -166,7 +177,7 @@ describe Yast::InstDownloadReleaseNotesClient do
 
     context "when called twice" do
       let(:language) { "en" }
-      let(:curl_code) { 22 }
+      let(:curl_code) { CURL_NOT_FOUND_CODE }
 
       it "does not try to download again already failed release notes" do
         expect(Yast::SCR).to receive(:Execute).once
@@ -182,6 +193,50 @@ describe Yast::InstDownloadReleaseNotesClient do
           .and_return(CURL_SUCCESS_CODE)
         client.main
         client.main # call it a second time
+      end
+    end
+  end
+
+  describe "#curl_proxy_args" do
+    before do
+      stub_const("Yast::Proxy", double("proxy"))
+      allow(Yast::Proxy).to receive(:Read)
+    end
+
+    it "returns an empty string when no proxy is needed" do
+      expect(Yast::Proxy).to receive(:enabled).and_return(false)
+      expect(client.curl_proxy_args).to eq ""
+    end
+
+    context "when a proxy is needed " do
+      before do
+        expect(Yast::Proxy).to receive(:enabled).and_return(true)
+        expect(Yast::Proxy).to receive(:http).twice
+          .and_return("http://proxy.example.com")
+        test = {
+          "HTTP" => {
+            "tested" => true,
+            "exit"   => 0
+          }
+        }
+        expect(Yast::Proxy).to receive(:RunTestProxy).and_return(test)
+
+      end
+
+      it "returns correct args for an unauthenticated proxy" do
+        allow(Yast::Proxy).to receive(:user).and_return("")
+        allow(Yast::Proxy).to receive(:pass).and_return("")
+
+        expect(client.curl_proxy_args)
+          .to eq "--proxy http://proxy.example.com"
+      end
+
+      it "returns correct args for an authenticated proxy" do
+        allow(Yast::Proxy).to receive(:user).and_return("baggins")
+        allow(Yast::Proxy).to receive(:pass).and_return("thief")
+
+        expect(client.curl_proxy_args)
+          .to eq "--proxy http://proxy.example.com --proxy-user 'baggins:thief'"
       end
     end
   end
