@@ -164,6 +164,7 @@ module Installation
             description: Yast::ProductControl.GetTranslatedText("#{id}_description")
           )
 
+        role["additional_dialogs"] = raw_role["additional_dialogs"]
         role["services"] = raw_role["services"] || []
         role["no_default"] = raw_role["no_default"] || false
 

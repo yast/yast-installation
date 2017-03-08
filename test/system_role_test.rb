@@ -94,13 +94,18 @@ describe Installation::SystemRole do
 
   describe ".from_control" do
     it "creates a new instance of SystemRole based on a control file role entry definition" do
-      raw_role = { "id" => "raw_role", "services" => [{ "name" => "services_one" }] }
+      raw_role = {
+        "id" => "raw_role",
+        "services" => [{ "name" => "services_one" }],
+        "additional_dialogs" => "dialog"
+      }
 
       system_role = described_class.from_control(raw_role)
 
       expect(system_role.class).to eql(described_class)
       expect(system_role.id).to eql("raw_role")
-      expect(system_role["services"].size).to eql(1)
+      expect(system_role["services"]).to eq([{"name" => "services_one"}])
+      expect(system_role["additional_dialogs"]).to eq("dialog")
     end
   end
 
