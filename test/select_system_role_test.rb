@@ -14,6 +14,8 @@ describe ::Installation::SelectSystemRole do
     end
 
     allow(Yast::UI).to receive(:ChangeWidget)
+
+    Installation::SystemRole.clear # Clear system roles cache
   end
 
   describe "#run" do

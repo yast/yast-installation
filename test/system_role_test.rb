@@ -108,6 +108,15 @@ describe Installation::SystemRole do
     end
   end
 
+  describe ".clear" do
+    it "clears roles cache" do
+      expect(Yast::ProductControl).to receive(:system_roles).twice
+      described_class.all
+      described_class.clear
+      described_class.all
+    end
+  end
+
   describe "#adapt_services" do
     it "sets to be enable the specific services for this role" do
       role = described_class.find("role_two")

@@ -104,6 +104,11 @@ module Installation
         end
       end
 
+      # Clears roles cache
+      def clear
+        @roles = nil
+      end
+
       # Fetchs the roles from the control file and returns them as they are.
       #
       # @example
