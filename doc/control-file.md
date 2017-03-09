@@ -1778,27 +1778,6 @@ modules specified in the add-on product control file.
     </clone_modules>
 ```
 
-### Adding a system role
-
-This example shows how to add an additional `example_role`.
-
-```xml
-    <system_roles>
-      <insert_system_roles config:type="list">
-        <insert_system_roles>
-          <system_roles config:type="list">
-            <system_role>
-              <id>example_role</id>
-            </system_role>
-          </system_roles>
-        </insert_system_roles>
-      </insert_system_roles>
-    </system_roles>
-```
-
-NOTE: do not forget to add labels and descriptions to the `texts` section. Check
-*System Roles* section for more details.
-
 ### Example of OES 1.0
 
 The network code is instructed to force a static IP address.

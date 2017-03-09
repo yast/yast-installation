@@ -47,7 +47,7 @@ module Installation
     end
 
     def run
-      if roles(true).empty?
+      if roles(refresh: true).empty?
         log.info "No roles defined, skipping their dialog"
         return :auto # skip forward or backward
       end
@@ -210,7 +210,7 @@ module Installation
     #
     # @see SystemRole.all
     # @see SystemRole.clear
-    def roles(refresh = false)
+    def roles(refresh: false)
       # Refresh system roles list
       SystemRole.clear if refresh
       SystemRole.all
