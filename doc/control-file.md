@@ -1303,6 +1303,12 @@ the installation workflow. Basically, adding proposal has two steps:
 Is possible as replacing or removing a step of the installation
 workflow.
 
+#### Adding new system roles
+
+Add-ons are allowed to define additional system roles. Those roles will be shown
+at the bottom of the list of already existing roles. For the time being,
+modifying or removing system roles is not possible.
+
 ### File layout
 
 #### Add-on Product CD
@@ -1500,6 +1506,17 @@ section, which defines changes to the existing workflow and proposals.
                     <module>before_umount_2</module>
                 </before_umount>
             </inst_finish>
+            <system_roles>
+              <insert_system_roles config:type="list">
+                <insert_system_roles>
+                  <system_roles config:type="list">
+                    <system_role>
+                      <id>additional_role</id>
+                    </system_role>
+                  </system_roles>
+                </insert_system_roles>
+              </insert_system_roles>
+            </system_roles>
         </update>
     </productDefines>
 ```
@@ -1760,6 +1777,27 @@ modules specified in the add-on product control file.
         [...]
     </clone_modules>
 ```
+
+### Adding a system role
+
+This example shows how to add an additional `example_role`.
+
+```xml
+    <system_roles>
+      <insert_system_roles config:type="list">
+        <insert_system_roles>
+          <system_roles config:type="list">
+            <system_role>
+              <id>example_role</id>
+            </system_role>
+          </system_roles>
+        </insert_system_roles>
+      </insert_system_roles>
+    </system_roles>
+```
+
+NOTE: do not forget to add labels and descriptions to the `texts` section. Check
+*System Roles* section for more details.
 
 ### Example of OES 1.0
 
