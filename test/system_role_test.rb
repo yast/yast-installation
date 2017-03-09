@@ -58,6 +58,12 @@ describe Installation::SystemRole do
     end
   end
 
+  describe ".default?" do
+    it "returns true if default option should be set" do
+      expect(described_class.default?).to eq true
+    end
+  end
+
   describe ".find" do
     it "looks for the given role 'id' and returns the specific SystemRole object" do
       role_two = described_class.all["role_two"]

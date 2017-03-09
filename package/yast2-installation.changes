@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Mar  9 17:48:25 UTC 2017 - jreidinger@suse.com
+
+- fix crash when reading if desktop role should have default
+  pre-selected (bsc#1025415)
+- 3.2.27
+
+-------------------------------------------------------------------
 Wed Mar  8 16:11:59 CET 2017 - mvidner@suse.cz
 
 - Really use the directory.yast file (fate#322372)
