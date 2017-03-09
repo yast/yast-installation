@@ -89,7 +89,7 @@ module Installation
 
       # returns if roles should set default or have no role preselected
       def default?
-        all.first["no_default"]
+        !all.values.first["no_default"]
       end
 
       # Initializes and maintains a map with the id of the roles and
