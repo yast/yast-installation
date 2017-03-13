@@ -89,7 +89,7 @@ module Installation
 
       # returns if roles should set default or have no role preselected
       def default?
-        !all.values.first["no_default"]
+        !all.first["no_default"]
       end
 
       # Returns an array with all the SystemRole objects
