@@ -1508,13 +1508,13 @@ section, which defines changes to the existing workflow and proposals.
             </inst_finish>
             <system_roles>
               <insert_system_roles config:type="list">
-                <insert_system_roles>
+                <insert_system_role>
                   <system_roles config:type="list">
                     <system_role>
                       <id>additional_role</id>
                     </system_role>
                   </system_roles>
-                </insert_system_roles>
+                </insert_system_role>
               </insert_system_roles>
             </system_roles>
         </update>
