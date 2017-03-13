@@ -20,6 +20,7 @@
 require "yast"
 require "ui/installation_dialog"
 require "installation/services"
+require "installation/system_role"
 
 Yast.import "GetInstArgs"
 Yast.import "Popup"
@@ -46,7 +47,7 @@ module Installation
     end
 
     def run
-      if raw_roles.empty?
+      if roles(refresh: true).empty?
         log.info "No roles defined, skipping their dialog"
         return :auto # skip forward or backward
       end
@@ -83,7 +84,7 @@ module Installation
     def create_dialog
       clear_role
       ok = super
-      role_id = self.class.original_role_id || role_attributes.first[:id]
+      role_id = self.class.original_role_id || (roles.first && roles.first.id)
       Yast::UI.ChangeWidget(Id(:roles), :CurrentButton, role_id)
       ok
     end
@@ -99,7 +100,7 @@ module Installation
       end
       self.class.original_role_id = role_id
 
-      apply_role(role_id)
+      apply_role(SystemRole.find(role_id))
 
       result = run_clients(additional_clients_for(role_id))
       # We show the main role dialog; but the additional clients have
@@ -118,8 +119,8 @@ module Installation
 
     # gets array of clients to run for given role
     def additional_clients_for(role_id)
-      clients = raw_roles.find { |r| r["id"] == role_id }["additional_dialogs"]
-      clients ||= ""
+      role = SystemRole.find(role_id)
+      clients = role["additional_dialogs"] || ""
       clients.split(",").map!(&:strip)
     end
 
@@ -169,11 +170,11 @@ module Installation
     end
 
     def role_buttons
-      ui_roles = role_attributes.each_with_object(VBox()) do |r, vbox|
+      ui_roles = roles.each_with_object(VBox()) do |role, vbox|
         # FIXME: following workaround can be removed as soon as bsc#997402 is fixed:
         # bsc#995082: System role descriptions use a character that is missing in console font
-        description = Yast::UI.TextMode ? r[:description].tr("•", "*") : r[:description]
-        vbox << Left(RadioButton(Id(r[:id]), r[:label]))
+        description = Yast::UI.TextMode ? role.description.tr("•", "*") : role.description
+        vbox << Left(RadioButton(Id(role.id), role.label))
         vbox << HBox(
           HSpacing(Yast::UI.TextMode ? 4 : 2),
           Left(Label(description))
@@ -185,47 +186,34 @@ module Installation
     end
 
     # Applies given role to configuration
-    def apply_role(role_id)
-      log.info "Applying system role '#{role_id}'"
-      features = raw_roles.find { |r| r["id"] == role_id }
-      features = features.dup
-      NON_OVERLAY_ATTRIBUTES.each { |a| features.delete(a) }
-      Yast::ProductFeatures.SetOverlay(features)
-      adapt_services(role_id)
+    def apply_role(role)
+      log.info "Applying system role '#{role.id}'"
+      role.overlay_features
+      adapt_services(role)
     end
 
     # for given role sets in {::Installation::Services} list of services to enable
     # according to its config. Do not use alone and use apply_role instead.
-    def adapt_services(role_id)
-      services = raw_roles.find { |r| r["id"] == role_id }["services"]
-      services ||= []
+    def adapt_services(role)
+      services = role["services"] || []
 
       to_enable = services.map { |s| s["name"] }
-      log.info "enable for #{role_id} these services: #{to_enable.inspect}"
+      log.info "enable for #{role.id} these services: #{to_enable.inspect}"
 
       Installation::Services.enabled = to_enable
     end
 
-    # the contents is an overlay for ProductFeatures sections
-    # [
-    #  { "id" => "foo", "partitioning" => ... },
-    #  { "id" => "bar", "partitioning" => ... , "software" => ...},
-    # ]
-    # @return [Array<Hash{String => Object}>]
-    def raw_roles
-      Yast::ProductControl.productControl.fetch("system_roles", [])
-    end
-
-    def role_attributes
-      raw_roles.map do |r|
-        id = r["id"]
-
-        {
-          id:          id,
-          label:       Yast::ProductControl.GetTranslatedText(id),
-          description: Yast::ProductControl.GetTranslatedText(id + "_description")
-        }
-      end
+    # Return the list of defined roles
+    #
+    # @param [Boolean] refresh Refresh system roles cache
+    # @return [Array<SystemRole>] List of defined roles
+    #
+    # @see SystemRole.all
+    # @see SystemRole.clear
+    def roles(refresh: false)
+      # Refresh system roles list
+      SystemRole.clear if refresh
+      SystemRole.all
     end
   end
 end

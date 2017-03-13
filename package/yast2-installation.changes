@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Mar 13 12:16:23 UTC 2017 - igonzalezsosa@suse.com
+
+- Support to add roles through addons (FATE#320772)
+- 3.2.28
+
+-------------------------------------------------------------------
 Thu Mar  9 17:48:25 UTC 2017 - jreidinger@suse.com
 
 - fix crash when reading if desktop role should have default
