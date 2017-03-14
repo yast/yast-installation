@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Mar 14 12:05:44 UTC 2017 - igonzalezsosa@suse.com
+
+- Fix desktop selection during installation (bsc#1029312)
+- 3.2.29
+
+-------------------------------------------------------------------
 Mon Mar 13 12:16:23 UTC 2017 - igonzalezsosa@suse.com
 
 - Support to add roles through addons (FATE#320772)
