@@ -105,7 +105,7 @@ module Installation
       end
 
       def items
-        ::Installation::SystemRole.roles.map do |role|
+        ::Installation::SystemRole.all.map do |role|
           [role.id, role.label]
         end
       end
@@ -125,9 +125,7 @@ module Installation
     private
 
       def roles_help_text
-        ::Installation::SystemRole.roles.map do |role|
-          role.label + "\n\n" + role.description
-        end.join("\n\n\n")
+        ::Installation::SystemRole.all.map { |r| "#{r.label}\n\n#{r.description}" }.join("\n\n\n")
       end
     end
 
