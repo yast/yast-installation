@@ -239,13 +239,13 @@ module Installation
       separation = 2.downto(0).find do |l|
         needed_lines_for_roles + (roles.size * l) + default_opts[:margin] <= available_lines_for_roles
       end
-      opts = separation.nil? ? { description: false } : { separation: separation }
+      opts = separation.nil? ? { description: false, separation: 0 } : { separation: separation }
       merged_opts = default_opts.merge(opts)
       log.info "Options for role buttons: #{merged_opts.inspect}"
       merged_opts
     end
 
-    # Number of required lines to show roles information
+    # Number of required lines to show roles buttons
     #
     # Title + Descriptions
     #
