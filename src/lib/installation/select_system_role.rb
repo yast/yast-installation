@@ -298,7 +298,7 @@ module Installation
       return @needed_lines_for_roles if @needed_lines_for_roles
       texts = roles.map(&:description)
       texts << intro_text unless intro_text.nil?
-      lines = texts.compact.map { |t| t.lines }.reduce(:+).size
+      lines = texts.compact.map(&:lines).reduce(:+).size
       @needed_lines_for_roles = roles.size + lines
     end
 
