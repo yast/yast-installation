@@ -72,12 +72,7 @@ module Installation
     end
 
     def dialog_content
-      HSquash(
-        VBox(
-          Left(Label(Yast::ProductControl.GetTranslatedText("roles_text"))),
-          role_buttons
-        )
-      )
+      HSquash(VBox(role_buttons))
     end
 
     def create_dialog
@@ -215,17 +210,43 @@ module Installation
     # @param margin      [Integer] Top marging
     # @param description [Boolean] Indicates whether the description should be included
     # @return [Yast::Term] Role buttons
-    def role_buttons_content(margin: 2, indentation: 4, separation: 2, description: true)
-      ui_roles = roles.each_with_object([]) do |role, vbox|
+    def role_buttons_content(margin: 2, indentation: 4, separation: 2, description: true, show_intro: true)
+      box = []
+      box << Left(Label(Yast::ProductControl.GetTranslatedText("roles_text"))) if show_intro
+      box << VSpacing(margin) unless margin.zero?
+
+      ui_roles = roles.each_with_object(box) do |role, vbox|
         # FIXME: following workaround can be removed as soon as bsc#997402 is fixed:
         # bsc#995082: System role descriptions use a character that is missing in console font
         role_description = Yast::UI.TextMode ? role.description.tr("•", "*") : role.description
         vbox << Left(RadioButton(Id(role.id), role.label))
         vbox << HBox(HSpacing(indentation), Left(Label(role_description))) if description
-        vbox << VSpacing(separation) unless roles.last == role
+        vbox << VSpacing(separation) unless roles.last == role || separation.zero?
       end
 
-      RadioButtonGroup(Id(:roles), VBox(VSpacing(margin), *ui_roles))
+      RadioButtonGroup(Id(:roles), VBox(*ui_roles))
+    end
+
+    # Default role buttons options for the Qt UI
+    DEFAULT_ROLE_BUTTONS_QT_OPTS = {
+      indentation: 4,
+      margin:      2,
+      separation:  2,
+      show_intro:  true,
+      description: true
+    }.freeze
+
+    # Default role buttons options for the textmode UI
+    DEFAULT_ROLE_BUTTONS_TEXT_OPTS = {
+      indentation: 2,
+      margin:      1,
+      separation:  2,
+      show_intro:  true,
+      description: true
+    }.freeze
+
+    def intro_text
+      @intro_text ||= Yast::ProductControl.GetTranslatedText("roles_text")
     end
 
     # Space for roles
@@ -234,35 +255,60 @@ module Installation
     #
     # @see available_lines_for_roles
     def role_buttons_options
-      return { indentation: 4, margin: 2 } unless Yast::UI.TextMode
-      default_opts = { indentation: 2, margin: 1 }
-      separation = 2.downto(0).find do |l|
-        needed_lines_for_roles + (roles.size * l) + default_opts[:margin] <= available_lines_for_roles
+      return DEFAULT_ROLE_BUTTONS_QT_OPTS unless Yast::UI.TextMode
+      margin = DEFAULT_ROLE_BUTTONS_TEXT_OPTS[:margin]
+      required_lines = needed_lines_for_roles + margin
+
+      # Try reducing separation until finding one which fits
+      separation = DEFAULT_ROLE_BUTTONS_TEXT_OPTS[:separation].downto(0).find do |sep|
+        required_lines + (roles.size * sep) <= available_lines_for_roles
       end
-      opts = separation.nil? ? { description: false, separation: 0 } : { separation: separation }
-      merged_opts = default_opts.merge(opts)
+
+      opts = separation.nil? ? shrinked_role_buttons_options : { separation: separation }
+
+      merged_opts = DEFAULT_ROLE_BUTTONS_TEXT_OPTS.merge(opts)
       log.info "Options for role buttons: #{merged_opts.inspect}"
       merged_opts
     end
 
-    # Number of required lines to show roles buttons
+    # Options to fit space buttons on minimal space
+    #
+    # @return [Hash] Options to distribute roles
+    def shrinked_role_buttons_options
+      margin = DEFAULT_ROLE_BUTTONS_TEXT_OPTS[:margin]
+      minimal_space_opts = { description: false, separation: 0 }
+      required_lines = roles.size + intro_text.lines.size
+      opts =
+        if required_lines + margin <= available_lines_for_roles
+          { margin: margin, show_intro: true }
+        elsif required_lines <= available_lines_for_roles
+          { margin: 0, show_intro: true }
+        else
+          { margin: 0, show_intro: false }
+        end
+      minimal_space_opts.merge(opts)
+    end
+
+    # Number of required lines to show roles information and buttons
     #
     # Title + Descriptions
     #
     # @return [Integer] Number of lines needed to display roles information
     def needed_lines_for_roles
-      @needed_lines_for_roles ||= roles.size + roles.map(&:description).reduce(0) do |sum, description|
-        sum + description.split("\n").size
-      end
+      return @needed_lines_for_roles if @needed_lines_for_roles
+      texts = roles.map(&:description)
+      texts << intro_text unless intro_text.nil?
+      lines = texts.compact.map { |t| t.lines }.reduce(:+).size
+      @needed_lines_for_roles = roles.size + lines
     end
 
-    # Space taken by header, description and footer and not available for the roles buttons
-    RESERVED_LINES = 9
+    # Space taken by header/footer and not available for the roles buttons
+    RESERVED_LINES = 4
     # Returns an estimation of the available space for displaying the roles buttons
     #
     # @return [Integer] Estimated amount of available space
     def available_lines_for_roles
-      @available_lines_for_roles ||= Yast::UI.GetDisplayInfo().fetch("Height") - RESERVED_LINES
+      @available_lines_for_roles ||= Yast::UI.GetDisplayInfo()["Height"] - RESERVED_LINES
     end
   end
 end
