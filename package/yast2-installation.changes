@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Mar 15 10:19:33 UTC 2017 - igonzalezsosa@suse.com
+
+- Improve roles buttons distribution in textmode (related to
+  FATE#320772)
+- 3.2.30 
+
+-------------------------------------------------------------------
 Tue Mar 14 12:05:44 UTC 2017 - igonzalezsosa@suse.com
 
 - Fix desktop selection during installation (bsc#1029312)
