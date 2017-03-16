@@ -256,37 +256,39 @@ module Installation
     # @see available_lines_for_roles
     def role_buttons_options
       return DEFAULT_ROLE_BUTTONS_QT_OPTS unless Yast::UI.TextMode
-      margin = DEFAULT_ROLE_BUTTONS_TEXT_OPTS[:margin]
-      required_lines = needed_lines_for_roles + margin
 
-      # Try reducing separation until finding one which fits
-      separation = DEFAULT_ROLE_BUTTONS_TEXT_OPTS[:separation].downto(0).find do |sep|
-        required_lines + (roles.size * sep) <= available_lines_for_roles
-      end
-
-      opts = separation.nil? ? shrinked_role_buttons_options : { separation: separation }
-
-      merged_opts = DEFAULT_ROLE_BUTTONS_TEXT_OPTS.merge(opts)
-      log.info "Options for role buttons: #{merged_opts.inspect}"
-      merged_opts
+      opts = textmode_role_buttons_options
+      log.info "Options for role buttons: #{opts.inspect}"
+      opts
     end
 
-    # Options to fit space buttons on minimal space
+    # Returns space options for roles in textmode
     #
     # @return [Hash] Options to distribute roles
-    def shrinked_role_buttons_options
-      margin = DEFAULT_ROLE_BUTTONS_TEXT_OPTS[:margin]
-      minimal_space_opts = { description: false, separation: 0 }
-      required_lines = roles.size + intro_text.lines.size
-      opts =
-        if required_lines + margin <= available_lines_for_roles
-          { margin: margin, show_intro: true }
-        elsif required_lines <= available_lines_for_roles
-          { margin: 0, show_intro: true }
-        else
-          { margin: 0, show_intro: false }
-        end
-      minimal_space_opts.merge(opts)
+    def textmode_role_buttons_options
+      opts = DEFAULT_ROLE_BUTTONS_TEXT_OPTS.dup
+
+      # Set separation
+      separation = [
+        DEFAULT_ROLE_BUTTONS_TEXT_OPTS[:separation],
+        (available_lines_for_roles - needed_lines_for_roles - opts[:margin]) / 2
+      ].min
+      separation = 0 if separation < 0
+      opts = DEFAULT_ROLE_BUTTONS_TEXT_OPTS.merge(separation: separation)
+
+      # Set intro size
+      intro_lines = intro_text.lines.size
+
+      # No space for descriptions
+      opts[:description] = false if needed_lines_for_roles > available_lines_for_roles
+
+      # No space for margin
+      opts[:margin] = 0 if roles.size + intro_lines + opts[:margin] > available_lines_for_roles
+
+      # No space for intro
+      opts[:show_intro] = false if roles.size + intro_lines > available_lines_for_roles
+
+      opts
     end
 
     # Number of required lines to show roles information and buttons
@@ -298,8 +300,8 @@ module Installation
       return @needed_lines_for_roles if @needed_lines_for_roles
       texts = roles.map(&:description)
       texts << intro_text unless intro_text.nil?
-      lines = texts.compact.map(&:lines).reduce(:+).size
-      @needed_lines_for_roles = roles.size + lines
+      lines_qty = texts.compact.map(&:lines).map(&:size).reduce(:+)
+      @needed_lines_for_roles = roles.size + lines_qty
     end
 
     # Space taken by header/footer and not available for the roles buttons
