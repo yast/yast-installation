@@ -25,6 +25,7 @@ require "yast"
 module Yast::Transfer
   module FileFromUrl
     include Yast
+    include Yast::Logger
 
     # lazy initialization
     def initialize_file_from_url
@@ -37,9 +38,7 @@ module Yast::Transfer
       Yast.import "FTP"
       Yast.import "Installation"
       Yast.import "HTTP"
-      Yast.import "StorageDevices"
       Yast.import "TFTP"
-      Yast.import "Storage"
       Yast.import "InstURL"
     end
 
@@ -402,32 +401,8 @@ module Yast::Transfer
 
         SCR.Execute(path(".target.umount"), mount_point)
       elsif _Scheme == "floppy"
-        if StorageDevices.FloppyReady
-          WFM.Execute(
-            path(".local.mount"),
-            [StorageDevices.FloppyDevice, mount_point]
-          )
-
-          if WFM.Execute(
-            path(".local.bash"),
-            Ops.add(
-              Ops.add(
-                Ops.add(Ops.add(Ops.add("/bin/cp ", mount_point), "/"), _Path),
-                " "
-              ),
-              _Localfile
-            )
-          ) != 0
-            Builtins.y2error(
-              "file  %1 can't be retrieved",
-              Ops.add(Ops.add(mount_point, "/"), _Path)
-            )
-          else
-            @GET_error = ""
-            ok = true
-          end
-          SCR.Execute(path(".target.umount"), mount_point)
-        end
+        @GET_error = _("Floppy is not supported anymore.")
+        ok = false
       elsif _Scheme == "device" || _Scheme == "usb" # Device or USB
         if _Path != ""
           deviceList = []
@@ -489,13 +464,10 @@ module Yast::Transfer
           end
           Builtins.foreach(deviceList) do |_Host2|
             Builtins.y2milestone("looking for profile on %1", _Host2)
-            # this is workaround for bnc#849767
-            # because of changes in autoyast startup this code is now
-            # called much sooner (before Storage stuff is initialized)
-            # call dummy method to trigger Storage initialization
-            dummy = Storage.GetUsedFs()
-            mp = Storage.DeviceMounted(Ops.add("/dev/", _Host2))
-            already_mounted = !Builtins.isempty(mp)
+            # checking if device has already been mounted. Taking new mountpoint
+            # if it has already been done.
+            mp = `/usr/bin/findmnt --first-only --output=target /dev/#{_Host2}`.split.last
+            already_mounted = !mp.nil?
             mount_point = mp if already_mounted
             Builtins.y2milestone(
               "already mounted=%1 mountpoint=%2 mp=%3",
