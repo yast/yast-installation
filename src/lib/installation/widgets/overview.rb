@@ -114,10 +114,6 @@ module Installation
         false
       end
 
-      def blocking?
-        @blocking
-      end
-
     private
 
       def button_id
