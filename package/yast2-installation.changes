@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Mar 16 13:07:44 UTC 2017 - mvidner@suse.com
+
+- Allow proceeding with the installation after a blocking condition
+  has been corrected in the overview dialog (bsc#1029291).
+- 3.1.218.28
+
+-------------------------------------------------------------------
 Fri Mar  3 10:07:35 UTC 2017 - jsrain@suse.cz
 
 - Downloading release notes: Do not download them at all during

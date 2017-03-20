@@ -34,6 +34,7 @@ TESTS = \
   system_role_test.rb \
   update_repository_test.rb \
   updates_manager_test.rb \
+  widgets_overview_test.rb \
   widgets_system_role_test.rb
 
 TEST_EXTENSIONS = .rb
