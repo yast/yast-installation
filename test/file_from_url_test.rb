@@ -18,7 +18,6 @@ describe Yast::Transfer::FileFromUrl do
   end
 
   # avoid BuildRequiring a package that we stub entirely anyway
-  # rubocop:disable ConstantName
   before do
     allow(Yast).to receive(:import).and_call_original
   end
