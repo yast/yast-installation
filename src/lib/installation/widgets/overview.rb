@@ -78,6 +78,8 @@ module Installation
             )
           )
           @blocking = [:blocker, :fatal].include?(d["warning_level"])
+        else
+          @blocking = false
         end
         @items = d["label_proposal"]
       end
@@ -110,10 +112,6 @@ module Installation
         )
 
         false
-      end
-
-      def blocking?
-        @blocking
       end
 
     private

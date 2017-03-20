@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Mar 16 13:07:44 UTC 2017 - mvidner@suse.com
+
+- Allow proceeding with the installation after a blocking condition
+  has been corrected in the overview dialog (bsc#1029291).
+- 3.2.31
+
+-------------------------------------------------------------------
 Wed Mar 15 10:19:33 UTC 2017 - igonzalezsosa@suse.com
 
 - Improve roles buttons distribution in textmode (related to
