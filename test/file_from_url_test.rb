@@ -19,12 +19,8 @@ describe Yast::Transfer::FileFromUrl do
 
   # avoid BuildRequiring a package that we stub entirely anyway
   # rubocop:disable ConstantName
-  Yast::Storage = nil
-  Yast::StorageDevices = nil
   before do
     allow(Yast).to receive(:import).and_call_original
-    allow(Yast).to receive(:import).with("Storage").and_return true
-    allow(Yast).to receive(:import).with("StorageDevices").and_return true
   end
 
   subject { FileFromUrlTest.new }
@@ -103,11 +99,10 @@ describe Yast::Transfer::FileFromUrl do
             "/dev/sda5" => ["",          "/mnt_sda1"]
           }
 
-          expect(Yast::Storage).to receive(:GetUsedFs).at_least(:once)
-
           mount_points.each do |device, mp|
-            expect(Yast::Storage).to receive(:DeviceMounted)
-              .with(device).and_return(mp.first)
+            expect(subject).to receive(:`)
+              .with("/usr/bin/findmnt --first-only --output=target #{device}")
+              .and_return(mp.first)
           end
 
           # only up to sda5 because that is when we find the file
