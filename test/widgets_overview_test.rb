@@ -4,30 +4,54 @@ require_relative "test_helper"
 
 require "installation/widgets/overview"
 
-# TODO: move these shared examples somewhere to be available to everyone
+# TODO: these shared examples will soon be available in yast2.rpm
+# and then we can just `require "cwm/rspec"`
 RSpec.shared_examples "CWM::AbstractWidget" do
-  describe "#label" do
-    it "produces a String" do
-      expect(subject.label).to be_a String
+  context "these methods are only tested if they exist" do
+    describe "#label" do
+      it "produces a String" do
+        next unless subject.respond_to?(:label)
+        expect(subject.label).to be_a String
+      end
     end
-  end
 
-  describe "#handle" do
-    it "produces a Symbol or nil" do
-      expect(subject.handle(:dummy_event)).to be_a(Symbol).or be_nil
+    describe "#help" do
+      it "produces a String" do
+        next unless subject.respond_to?(:help)
+        expect(subject.help).to be_a String
+      end
     end
-  end
 
-  describe "#validate" do
-    it "produces a Boolean (or nil)" do
-      expect(subject.validate).to be(true).or be(false).or be_nil
+    describe "#opt" do
+      it "produces Symbols" do
+        next unless subject.respond_to?(:opt)
+        expect(subject.opt).to be_an Enumerable
+        subject.opt.each do |o|
+          expect(o).to be_a Symbol
+        end
+      end
+    end
+
+    describe "#handle" do
+      it "produces a Symbol or nil" do
+        next unless subject.respond_to?(:handle)
+        m = subject.method(:handle)
+        args = m.arity == 0 ? [] : [:dummy_event]
+        expect(subject.handle(* args)).to be_a(Symbol).or be_nil
+      end
+    end
+
+    describe "#validate" do
+      it "produces a Boolean (or nil)" do
+        next unless subject.respond_to?(:validate)
+        expect(subject.validate).to be(true).or be(false).or be_nil
+      end
     end
   end
 end
 
 RSpec.shared_examples "CWM::CustomWidget" do
   include_examples "CWM::AbstractWidget"
-
   describe "#contents" do
     it "produces a Term" do
       expect(subject.contents).to be_a Yast::Term
