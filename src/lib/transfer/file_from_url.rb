@@ -467,6 +467,7 @@ module Yast::Transfer
             Builtins.y2milestone("looking for profile on %1", _Host2)
             # checking if device has already been mounted. Taking new mountpoint
             # if it has already been done.
+            # storage-ng: This should be move to storage-ng
             mp = `/usr/bin/findmnt --first-only --noheadings --output=target /dev/#{Shellwords.escape(_Host2)}`.split.last
             already_mounted = !mp.nil?
             mount_point = mp if already_mounted
