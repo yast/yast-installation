@@ -177,6 +177,12 @@ module Installation
           Yast::DefaultDesktop.ForceReinit
         end
       end
+
+      def cwm_definition
+        definition = super
+        definition["vspacing"] = 1
+        definition
+      end
     end
   end
 end
