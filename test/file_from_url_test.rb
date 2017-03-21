@@ -100,7 +100,7 @@ describe Yast::Transfer::FileFromUrl do
 
           mount_points.each do |device, mp|
             expect(subject).to receive(:`)
-              .with("/usr/bin/findmnt --first-only --output=target #{device}")
+              .with("/usr/bin/findmnt --first-only --noheadings --output=target #{device}")
               .and_return(mp.first)
           end
 
