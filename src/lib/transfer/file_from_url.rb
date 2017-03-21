@@ -20,6 +20,7 @@
 # ------------------------------------------------------------------------------
 
 require "yast"
+require "shellwords"
 
 # rubocop:disable all
 module Yast::Transfer
@@ -401,7 +402,7 @@ module Yast::Transfer
 
         SCR.Execute(path(".target.umount"), mount_point)
       elsif _Scheme == "floppy"
-        @GET_error = _("Floppy is not supported anymore.")
+        @GET_error = _("URLs starting with 'floppy:/' are not longer supported")
         ok = false
       elsif _Scheme == "device" || _Scheme == "usb" # Device or USB
         if _Path != ""
@@ -466,7 +467,7 @@ module Yast::Transfer
             Builtins.y2milestone("looking for profile on %1", _Host2)
             # checking if device has already been mounted. Taking new mountpoint
             # if it has already been done.
-            mp = `/usr/bin/findmnt --first-only --output=target /dev/#{_Host2}`.split.last
+            mp = `/usr/bin/findmnt --first-only --noheadings --output=target /dev/#{Shellwords.escape(_Host2)}`.split.last
             already_mounted = !mp.nil?
             mount_point = mp if already_mounted
             Builtins.y2milestone(
