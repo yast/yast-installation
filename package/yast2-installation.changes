@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Mar 17 16:59:04 CET 2017 - schubi@suse.de
+
+- storage-ng: Taking /usr/bin/findmnt in order to evaluate mount
+  points. Floppy support removed.
+
+-------------------------------------------------------------------
 Wed Aug 10 11:51:08 UTC 2016 - ancor@suse.com
 
 - storage-ng: use the new library for storage hardware probing
