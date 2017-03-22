@@ -3,7 +3,7 @@ module Installation
     class WorkerRoleFinish
       include Yast::Logger
 
-      def self.run
+      def run
         role = SystemRole.find("worker_role")
         master_conf = CFA::MinionMasterConf.new
         master = role["controller_node"]

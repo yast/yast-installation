@@ -34,7 +34,7 @@ module Installation
       handler = "::Installation::SystemRoleHandlers::#{class_name_role}Finish"
 
       if Object.const_defined?(handler)
-        Object.const_get(handler).run
+        Object.const_get(handler).new.run
       else
         log.info("There is no special finisher for #{role_id} ('#{class_name_role}' not defined)")
       end

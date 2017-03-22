@@ -5,6 +5,7 @@ require "installation/system_role"
 require "installation/system_role_handlers/worker_role_finish"
 
 describe Installation::SystemRoleHandlers::WorkerRoleFinish do
+  subject(:handler) { described_class.new }
   let(:role) { instance_double("::Installation::SystemRole") }
   let(:conf) do
     instance_double("::Installation::CFA::MinionMasterConf", load: true, save: true)
@@ -21,16 +22,15 @@ describe Installation::SystemRoleHandlers::WorkerRoleFinish do
       it "surrounds the url with single quotes before save" do
         expect(role).to receive(:[]).with("controller_node").and_return("controller-url")
         expect(conf).to receive(:master=).with("'controller-url'")
-        described_class.run
+        handler.run
       end
-
     end
 
     context "if the worker role controller node location does not contain dashes" do
       it "saves the url as defined" do
         expect(role).to receive(:[]).with("controller_node").and_return("controller")
         expect(conf).to receive(:master=).with("controller")
-        described_class.run
+        handler.run
       end
     end
 
@@ -39,7 +39,7 @@ describe Installation::SystemRoleHandlers::WorkerRoleFinish do
       expect(conf).to receive(:master=).with("controller")
       expect(conf).to receive(:save)
 
-      described_class.run
+      handler.run
     end
   end
 end
