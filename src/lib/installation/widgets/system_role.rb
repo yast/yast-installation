@@ -178,10 +178,8 @@ module Installation
         end
       end
 
-      def cwm_definition
-        definition = super
-        definition["vspacing"] = 1
-        definition
+      def vspacing
+        1
       end
     end
   end

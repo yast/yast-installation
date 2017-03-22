@@ -40,8 +40,8 @@ BuildRequires:  yast2-xml
 BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
 
-# ProductControl.system_roles
-BuildRequires: yast2 >= 3.2.15
+# CWM::RadioButtons#vspacing
+BuildRequires: yast2 >= 3.2.20
 
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
