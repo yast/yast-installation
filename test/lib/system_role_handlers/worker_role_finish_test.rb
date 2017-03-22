@@ -1,8 +1,8 @@
 #! /usr/bin/env rspec
 
-require_relative "./test_helper"
+require_relative "../../test_helper"
 require "installation/system_role"
-require "installation/system_roles/handlers"
+require "installation/system_role_handlers/worker_role_finish"
 
 describe Installation::SystemRoleHandlers::WorkerRoleFinish do
   let(:role) { instance_double("::Installation::SystemRole") }

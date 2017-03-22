@@ -21,7 +21,7 @@
 
 require "yast"
 require "installation/services"
-require "installation/system_roles/handlers"
+require "installation/system_role_handlers_runner"
 
 Yast.import "ProductControl"
 Yast.import "ProductFeatures"
@@ -165,15 +165,7 @@ module Installation
           log.info("There is no role selected so nothing to do")
           return
         end
-
-        class_name_role = current.split("_").map(&:capitalize).join
-        handler = "::Installation::SystemRoleHandlers::#{class_name_role}Finish"
-
-        if Object.const_defined?(handler)
-          Object.const_get(handler).run
-        else
-          log.info("There is no special finisher for #{current}")
-        end
+        SystemRoleHandlersRunner.new.finish(current)
       end
     end
 
