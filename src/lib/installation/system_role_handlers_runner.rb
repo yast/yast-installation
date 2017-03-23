@@ -23,10 +23,15 @@ require "yast"
 require "installation/cfa/salt"
 
 module Installation
+  # Run system roles handlers
+  #
+  # System role handlers are a mechanism to execute code depending on the
+  # selected role. Currently those handlers are only used in the inst_finish
+  # client, but they could be extended in the future.
   class SystemRoleHandlersRunner
     include Yast::Logger
 
-    # Run finish handler for a given role
+    # Run the finish handler for a given role
     def finish(role_id)
       return unless require_handler(role_id)
 
