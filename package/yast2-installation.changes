@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Mar 23 09:13:58 UTC 2017 - ancor@suse.com
+
+- Version temporarily bumped to 3.3.x to prioritize the
+  storage-ng branch
+- 3.3.0
+
+-------------------------------------------------------------------
 Tue Mar 21 11:59:26 UTC 2017 - ancor@suse.com
 
 - Added some extra space to the openSUSE desktop/roles selection
