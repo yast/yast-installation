@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Mar 21 11:59:26 UTC 2017 - ancor@suse.com
+
+- Added some extra space to the openSUSE desktop/roles selection
+  dialog (improvement on the fix for poo#14936, bsc#1025415).
+- 3.2.32
+
+-------------------------------------------------------------------
 Thu Mar 16 13:07:44 UTC 2017 - mvidner@suse.com
 
 - Allow proceeding with the installation after a blocking condition

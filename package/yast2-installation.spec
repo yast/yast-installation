@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.2.31
+Version:        3.2.32
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -40,8 +40,8 @@ BuildRequires:  yast2-xml
 BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
 
-# ProductControl.system_roles
-BuildRequires: yast2 >= 3.2.15
+# CWM::RadioButtons#vspacing
+BuildRequires: yast2 >= 3.2.20
 
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105

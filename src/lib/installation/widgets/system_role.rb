@@ -177,6 +177,10 @@ module Installation
           Yast::DefaultDesktop.ForceReinit
         end
       end
+
+      def vspacing
+        1
+      end
     end
   end
 end
