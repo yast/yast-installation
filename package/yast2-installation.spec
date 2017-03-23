@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.2.2
+Version:        3.3.0
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -33,15 +33,15 @@ Summary:        YaST2 - Installation Parts
 Source1:	YaST2-Second-Stage.service
 Source2:	YaST2-Firstboot.service
 
-BuildRequires:  docbook-xsl-stylesheets libxslt update-desktop-files yast2-core-devel
+BuildRequires:  update-desktop-files
 BuildRequires:  yast2-devtools >= 3.1.10
+# needed for xml agent reading about products
+BuildRequires:  yast2-xml
 BuildRequires:  rubygem(rspec)
+BuildRequires:  rubygem(yast-rake)
 
-# Moved proc_modules.scr
-BuildRequires: yast2 >= 3.1.180
-
-# Yast::Remote
-BuildRequires: yast2-network
+# CWM::RadioButtons#vspacing
+BuildRequires: yast2 >= 3.2.20
 
 # Y2Storage
 BuildRequires: yast2-storage-ng >= 0.1.1
@@ -50,8 +50,8 @@ Requires:      yast2-storage-ng >= 0.1.1
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
 
-# Moved proc_modules.scr
-Requires:       yast2 >= 3.1.186
+# ProductControl.system_roles
+Requires:       yast2 >= 3.2.15
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
@@ -63,13 +63,13 @@ Requires:	yast2-pkg-bindings >= 3.1.33
 # Mouse-related scripts moved to yast2-mouse
 Conflicts:	yast2-mouse < 2.18.0
 
-# New API for ProductLicense
-Requires:	yast2-packager >= 3.1.96
+# Lazy loading in ProductLicense
+Requires:	yast2-packager >= 3.1.113
 
 # FIXME: some code present in this package still depends on the old yast2-storage
 # and will break without this dependency. That's acceptable at this point of the
 # migration to storage-ng. See installer-hacks.md in the yast-storage-ng repo.
-# Requires:  yast2-storage >= 3.1.97
+# Requires:  yast2-storage >= 2.24.1
 
 # use in startup scripts
 Requires:	initviocons
@@ -77,15 +77,26 @@ Requires:	initviocons
 # Proxy settings for 2nd stage (bnc#764951)
 Requires:       yast2-proxy
 
-# Systemd default target and services
-Requires: yast2-services-manager
+# Systemd default target and services. This version supports
+# writing settings in the first installation stage.
+Requires: yast2-services-manager >= 3.2.1
 
 # Network service setup moved into yast2-network
 Requires: yast2-network >= 3.1.143
 
+# Augeas lenses
+Requires:       augeas-lenses
+
 # Only in inst-sys
 # Requires:	yast2-add-on
 # Requires:	yast2-update
+
+# new root password cwm widget
+BuildRequires:	yast2-users >= 3.2.8
+Requires:	yast2-users >= 3.2.8
+# new keyboard layout cwm widget
+BuildRequires:	yast2-country >= 3.2.7
+Requires:	yast2-country >= 3.2.7
 
 # Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
 # pkg-bindings are not directly required
@@ -103,6 +114,9 @@ Conflicts:	yast2-core < 2.17.10
 # Top bar with logo
 Conflicts:	yast2-ycp-ui-bindings < 3.1.7
 
+# Registration#get_updates_list does not handle exceptions
+Conflicts:  yast2-registration < 3.2.3
+
 Obsoletes:	yast2-installation-devel-doc
 
 # tar-gzip some system files and untar-ungzip them after the installation (FATE #300421, #120103)
@@ -110,7 +124,6 @@ Requires:	tar gzip
 Requires:	coreutils
 
 %if 0%{?suse_version} >= 1210
-BuildRequires: systemd-devel
 %{systemd_requires}
 %endif
 
@@ -125,8 +138,6 @@ Requires:	pciutils
 
 Recommends:	yast2-registration
 Recommends:	yast2-online-update
-# UsersDatabase class
-Recommends:	yast2-users >= 3.1.49
 Recommends:	yast2-firewall
 Recommends:	release-notes
 Recommends:	curl
@@ -143,17 +154,27 @@ System installation code as present on installation media.
 %prep
 %setup -n %{name}-%{version}
 
+%check
+rake test:unit
+
 %build
-%yast_build
 
 %install
-%yast_install
+rake install DESTDIR="%{buildroot}"
 
 for f in `find %{buildroot}%{_datadir}/autoinstall/modules -name "*.desktop"`; do
     %suse_update_desktop_file $f
-done 
+done
 
 mkdir -p %{buildroot}%{yast_vardir}/hooks/installation
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/preFirstCall
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/preSecondCall
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/postFirstCall
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/postSecondCall
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/preFirstStage
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/preSecondStage
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/postFirstStage
+mkdir -p %{buildroot}%{yast_ystartupdir}/startup/hooks/postSecondStage
 
 mkdir -p %{buildroot}%{_unitdir}
 install -m 644 %{SOURCE1} %{buildroot}%{_unitdir}
@@ -227,4 +248,6 @@ systemctl enable YaST2-Firstboot.service
 %dir %{yast_vardir}/hooks/installation
 
 %dir %{yast_docdir}
-%{yast_docdir}/COPYING
+%doc %{yast_docdir}/COPYING
+%doc %{yast_docdir}/README.md
+%doc %{yast_docdir}/CONTRIBUTING.md

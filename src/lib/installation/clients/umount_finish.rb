@@ -44,6 +44,7 @@ module Yast
       Yast.import "Internet"
       Yast.import "FileUtils"
       Yast.import "Mode"
+      Yast.import "ProductFeatures"
 
       @ret = nil
       @func = ""
@@ -171,6 +172,15 @@ module Yast
 
         # BNC #692799: Preserve the randomness state before umounting
         preserve_randomness_state
+
+        #
+        # !!! NO WRITE OPERATIONS TO THE TARGET AFTER THIS POINT !!!
+        #
+
+        # This must be done as long as the target root is still mounted
+        # (because the btrfs command requires that), but after the last write
+        # access to it (because it will be read only afterwards).
+        set_root_subvol_read_only
 
 # storage-ng
 # rubocop:disable Style/BlockComments
@@ -383,6 +393,41 @@ module Yast
       LocalCommand(Builtins.sformat("killproc -TERM %1", service_bin))
 
       nil
+    end
+
+    # Set the root subvolume to read-only and change the /etc/fstab entry
+    # accordingly
+    #
+    def set_root_subvol_read_only
+      return unless root_subvol_read_only_configured?
+      log.info("Setting root subvolume to read-only")
+      set_fstab_root_subvol_read_only
+      set_root_subvol_property_read_only
+    end
+
+    # Check the product configuration (control.xml) if the root subvolume
+    # should be set to read-only.
+    #
+    def root_subvol_read_only_configured?
+      ProductFeatures.GetBooleanFeature("partitioning", "root_subvolume_read_only")
+    end
+
+    # Change /etc/fstab on the target to mount the root subvolume read-only.
+    #
+    def set_fstab_root_subvol_read_only
+      cmd = "sed -i -e '/ \\/ btrfs/s/defaults/ro/' /etc/fstab"
+      log.info("Setting root subvol to read-only in /etc/fstab: \"#{cmd}\"")
+      SCR.Execute(path(".target.bash"), cmd)
+    end
+
+    # Set the "read-only" property for the root subvolume.
+    # This has to be done as long as the target root filesystem is still
+    # mounted.
+    #
+    def set_root_subvol_property_read_only
+      cmd = "btrfs property set /.snapshots/1/snapshot ro true"
+      log.info("Setting root subvol read-only property: \"#{cmd}\"")
+      SCR.Execute(path(".target.bash"), cmd)
     end
   end
 end

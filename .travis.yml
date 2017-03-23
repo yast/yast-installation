@@ -5,6 +5,7 @@ services:
 
 before_install:
   - docker build -t yast-installation-image .
+
 script:
   # the "storage-ng-travis-ruby" script is included in the base yastdevel/storage-ng image
   # see https://github.com/yast/docker-storage-ng/blob/master/storage-ng-travis-ruby

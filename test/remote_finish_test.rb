@@ -8,6 +8,10 @@ module Yast
   import "Linuxrc"
 
   describe ::Installation::RemoteFinishClient do
+    before do
+      stub_const("Yast::Remote", double)
+    end
+
     subject { ::Installation::RemoteFinishClient.new }
 
     describe "#run" do
@@ -52,9 +56,9 @@ module Yast
 
     describe "#enable_remote" do
       it "enables remote access" do
+        expect(Remote).to receive(:Enable)
         expect(Remote).to receive(:Write)
         subject.enable_remote
-        expect(Remote.IsEnabled).to eql(true)
       end
     end
   end

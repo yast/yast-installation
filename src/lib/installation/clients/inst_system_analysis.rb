@@ -26,20 +26,16 @@
 #		Lukas Ocilka <locilka@suse.cz>
 
 require "yast"
-require "fileutils"
 require "y2storage"
 
 module Yast
   class InstSystemAnalysisClient < Client
-    include Yast::Logger
-
     def main
       Yast.import "UI"
 
       textdomain "installation"
 
       Yast.import "Arch"
-      Yast.import "Directory"
       Yast.import "GetInstArgs"
       Yast.import "Hotplug"
       Yast.import "InstData"
@@ -64,18 +60,6 @@ module Yast
       Yast.include self, "installation/misc.rb"
       Yast.include self, "packager/storage_include.rb"
       Yast.include self, "packager/load_release_notes.rb"
-
-      @multipath_off_file = File.join(Directory.vardir, "multipath_off")
-
-      if Mode.autoupgrade
-        Report.Import(
-
-          "messages" => { "timeout" => 10 },
-          "errors"   => { "timeout" => 10 },
-          "warnings" => { "timeout" => 10 }
-
-        )
-      end
 
       # This dialog in not interactive
       # always return `back when came from the previous dialog
@@ -169,12 +153,6 @@ module Yast
         _("YaST is probing computer hardware and installed systems now.")
       )
 
-# storage-ng
-=begin
-      # bug#989770
-      Storage.SetMultipathStartup(false) if persisted_multipath_off?
-=end
-
       actions_functions.each do |run_function|
         Progress.NextStage
         # Bugzilla #298049
@@ -195,15 +173,6 @@ module Yast
         return ret if ret == :restart_yast
       end
       Installation.probing_done = true
-
-# storage-ng
-=begin
-      # bug#989770
-      if Storage.multipath_off?
-        log.info "The user decided to not activate multipath"
-        persist_multipath_off
-      end
-=end
 
       # the last step is hidden
       return :abort if ProductProfile.CheckCompliance(nil) == false
@@ -394,23 +363,6 @@ module Yast
       Builtins.y2milestone("PreInstallFunctions -- end --")
 
       true
-    end
-
-  protected
-
-    # Sets a mark for the installer (in case it's executed again due to
-    # self-update) to disable multipath without asking the user
-    def persist_multipath_off
-      log.info "Multipath activation pop-up will be skipped if installer restarts"
-      ::FileUtils.touch(@multipath_off_file)
-    end
-
-    # Checks if #persist_multipath_off was called in the previous execution of
-    # the installer. @see #persist_multipath_off
-    #
-    # @return [Boolean]
-    def persisted_multipath_off?
-      ::File.exist?(@multipath_off_file)
     end
   end
 end

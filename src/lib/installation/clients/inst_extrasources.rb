@@ -19,28 +19,27 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
+Yast.import "UI"
+Yast.import "Pkg"
+Yast.import "GetInstArgs"
+Yast.import "Mode"
+Yast.import "PackageLock"
+Yast.import "ProductFeatures"
+# We need the constructor
+Yast.import "ProductControl"
+Yast.import "Installation"
+Yast.import "Icon"
+Yast.import "NetworkService"
+Yast.import "PackagesUI"
+Yast.import "Label"
+
 module Yast
   # This client loads the target and initializes the package manager.
   # Adds all sources defined in control file (software->extra_urls)
   # and stores them at the end.
   class InstExtrasourcesClient < Client
     def main
-      Yast.import "UI"
-      Yast.import "Pkg"
-
       textdomain "installation"
-
-      Yast.import "GetInstArgs"
-      Yast.import "Mode"
-      Yast.import "PackageLock"
-      Yast.import "ProductFeatures"
-      # We need the constructor
-      Yast.import "ProductControl"
-      Yast.import "Installation"
-      Yast.import "Icon"
-      Yast.import "NetworkService"
-      Yast.import "PackagesUI"
-      Yast.import "Label"
 
       # local sources that have been attached under /mnt during upgrade
       @local_urls = {}
@@ -213,12 +212,7 @@ module Yast
     # @param [Array<String>] registered URLs of already registered repositories (they will be ignored to not register the same repository one more)
     # @return [Array<Hash>] of URLs to register
     def GetURLsToRegister(registered)
-      registered = deep_copy(registered)
-      urls_from_control_file = Convert.convert(
-        ProductFeatures.GetFeature("software", "extra_urls"),
-        from: "any",
-        to:   "list <map>"
-      )
+      urls_from_control_file = ProductFeatures.GetFeature("software", "extra_urls")
 
       if urls_from_control_file.nil?
         Builtins.y2milestone(
@@ -229,7 +223,9 @@ module Yast
       end
 
       urls_from_control_file = Builtins.filter(urls_from_control_file) do |one_url|
-        if Builtins.contains(registered, Ops.get_string(one_url, "baseurl", ""))
+        url = one_url["baseurl"] || ""
+        normalized_url = url.end_with?("/") ? url.chop : url
+        if registered.include?(normalized_url)
           Builtins.y2milestone(
             "Already registered: %1",
             Ops.get_string(one_url, "baseurl", "")
@@ -249,7 +245,10 @@ module Yast
     # Register the installation sources in offline mode (no network connection required).
     # The repository metadata will be downloaded by sw_single (or another yast module) when the repostory is enabled
     #
-    # @param list <map> list of the sources to register
+    # @param url_list [Array<Hash>] list of the sources to register. Following
+    #   keys are recognized with default in brackets:
+    #   "enabled" (false), "autorefresh" (true), "name" ("alias"("baseurl"(""))),
+    #   "alias ("baseurl"("")), "baseurl" (["baseurls"]), "prod_dir", "priority"
     # @return [Array<Fixnum>] list of created source IDs
     def RegisterRepos(url_list)
       url_list = deep_copy(url_list)
@@ -337,29 +336,26 @@ module Yast
 
     # Returns list of already registered repositories.
     #
-    # @return [Array<String>] of registered repositories
+    # @return [Array<String>] of registered repositories without trailing '/'
     def RegisteredUrls
       # get all registered installation sources
       srcs = Pkg.SourceGetCurrent(false)
 
-      ret = []
-      Builtins.foreach(srcs) do |src|
+      result = srcs.each_with_object([]) do |src, ret|
         general = Pkg.SourceGeneralData(src)
-        url = Ops.get_string(general, "url", "")
-        ret = Builtins.add(ret, url) if !url.nil? && url != ""
-        if Mode.update && Builtins.regexpmatch(url, "^dir:[/]+mnt[/]+")
-          Ops.set(@local_urls, src, url)
-        end
+        url = general["url"]
+        next if url.nil? || url.empty?
+        @local_urls[src] = url if Mode.update && url =~ /^dir:\/+mnt\/+/
         # check for USB sources which should be disabled
-        if Builtins.issubstring(url, "device=/dev/disk/by-id/usb-")
-          Ops.set(@usb_sources, src, url)
-        end
+        @usb_sources[src] = url if url.include?("device=/dev/disk/by-id/usb-")
+        url.chop! if url.end_with?("/") # remove trailing slash to normalize path (see bnc#970488)
+        ret << url
       end
 
       # remove duplicates
-      ret = Builtins.toset(ret)
+      result.uniq!
 
-      Builtins.y2milestone("Registered sources: %1", ret)
+      Builtins.y2milestone("Registered sources: %1", result)
 
       Builtins.y2milestone(
         "Registered local sources under /mnt: %1",
@@ -368,7 +364,7 @@ module Yast
 
       Builtins.y2milestone("Registered USB sources: %1", @usb_sources)
 
-      deep_copy(ret)
+      result
     end
 
     # Initialize the package manager

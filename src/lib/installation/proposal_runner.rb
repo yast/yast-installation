@@ -22,6 +22,7 @@
 require "yast"
 
 require "installation/proposal_store"
+require "installation/proposal_errors"
 
 module Installation
   # Create and display reasonable proposal for basic
@@ -66,6 +67,7 @@ module Installation
       # BNC #463567
       @submods_already_called = []
       @store_class = store
+      @errors = ProposalErrors.new
     end
 
     def run
@@ -99,6 +101,12 @@ module Installation
       Yast::Wizard.EnableAbortButton
 
       return :auto if !submod_descriptions_and_build_menu
+
+      # Default language is the most often set by language proposal later in the workflow
+      # and overwrites this.
+      # However, some products do not contain such proposal (e.g. CaaSP) and needs this
+      # setup to avoid false language change detection (e.g. in software proposal)
+      Yast::Pkg.SetPackageLocale(Yast::Language.language)
 
       #
       # Make the initial proposal
@@ -261,7 +269,9 @@ module Installation
 
     def pre_continue_handling
       @skip = if Yast::UI.WidgetExists(Id(:skip))
-        Yast::UI.QueryWidget(Id(:skip), :Value)
+        val = Yast::UI.QueryWidget(Id(:skip), :Value)
+        log.info "there is :skip widget with value #{val.inspect}."
+        val
       else
         true
       end
@@ -275,6 +285,8 @@ module Installation
         )
         return nil
       end
+
+      return nil unless @errors.approved?
 
       if Yast::Stage.stage == "initial"
         input = Yast::WFM.CallFunction("inst_doit", [])
@@ -317,13 +329,15 @@ module Installation
 
     # Call a submodule's AskUser() function.
     #
-    # @param [String] submodule	name of the submodule's proposal dispatcher
-    # @param  has_next		force a "next" button even if the submodule would otherwise rename it
-    # @return workflow_sequence see proposal-API.txt
-    #
+    # @param [String] input passed link from proposal dispatcher
+    # @return workflow_sequence see proposal-API.txt, or nil if the link cannot be handled
+    #   (is read-only)
     def submod_ask_user(input)
       # Call the AskUser() function
       ask_user_result = @store.handle_link(input)
+
+      # read-only proposal
+      return nil if ask_user_result.nil?
 
       workflow_sequence = ask_user_result["workflow_sequence"] || :next
       language_changed = ask_user_result.fetch("language_changed", false)
@@ -354,6 +368,15 @@ module Installation
       check_windows_left
 
       workflow_sequence
+    end
+
+    # Checks if given proposal map contains an error report
+    #
+    # @param [Hash] proposal map as returned by make_proposal
+    # @return [Boolean] true if the map reports an issue in proposal
+    # @see ProposalClient#make_proposal
+    def proposal_failed?(proposal)
+      proposal && [:blocker, :fatal, :error].include?(proposal["warning_level"])
     end
 
     def make_proposal(force_reset, language_changed)
@@ -395,14 +418,14 @@ module Installation
       make_proposal_callback = proc do |submod, prop_map|
         submodule_nr += 1
         Yast::UI.ChangeWidget(Id("pb_ip"), :Value, submodule_nr)
-        prop = html_header(submod)
+        force_rw = proposal_failed?(prop_map) && @store.soft_read_only?(submod)
+        prop = html_header(submod, force_rw: force_rw)
 
         # check if it is needed to switch to another tab
         # because of an error
         if Yast::Builtins.haskey(@mod2tab, submod)
           log.info "Mod2Tab: '#{@mod2tab[submod]}'"
-          warn_level = prop_map["warning_level"]
-          if [:blocker, :fatal, :error].include?(warn_level)
+          if proposal_failed?(prop_map)
             # bugzilla #237291
             # always switch to more detailed tab only
             # value 999 means to keep current tab, in case of error,
@@ -436,6 +459,7 @@ module Installation
         end
       end
 
+      @errors.clear
       @store.make_proposals(
         force_reset:      force_reset,
         language_changed: language_changed,
@@ -464,6 +488,7 @@ module Installation
 
       if !warning.empty?
         level = prop["warning_level"] || :warning
+        log.info "proposal returns warning with level #{level} and msg #{warning}"
 
         case level
         when :notice
@@ -471,6 +496,7 @@ module Installation
         when :warning
           warning = Yast::HTML.Colorize(warning, "red")
         when :error
+          @errors.append(warning)
           warning = Yast::HTML.Colorize(warning, "red")
         when :blocker, :fatal
           @have_blocker = true
@@ -510,7 +536,9 @@ module Installation
     def write_settings
       success = true
 
-      @store.proposal_names do |submod|
+      log.info "Writting settings for proposal"
+
+      @store.proposal_names.each do |submod|
         submod_success = submod_write_settings(submod)
         submod_success = true if submod_success.nil?
         log.error "Write() failed for submodule #{submod}" unless submod_success
@@ -590,11 +618,11 @@ module Installation
         # setup the list
         @submodules_presentation = @store.presentation_order
 
-        p = Yast::AutoinstConfig.getProposalList
+        proposals = Yast::AutoinstConfig.getProposalList
 
-        if !p.nil? && p != []
+        if proposals && !proposals.empty?
           # array intersection
-          @submodules_presentation &= v
+          @submodules_presentation &= proposals
         end
       end
 
@@ -730,6 +758,9 @@ module Installation
 
       # now build the menu button
       menu_list = @submodules_presentation.each_with_object([]) do |submod, menu|
+        # skip read-only proposals
+        next if @store.read_only?(submod)
+
         descr = @store.description_for(submod) || {}
         next if descr.empty?
 
@@ -783,15 +814,17 @@ module Installation
       nil
     end
 
-    def html_header(submod)
+    # Get the header for the specific proposal module
+    # @param submod [String] the proposal module name
+    # @return [String] richtext string with the proposal header
+    def html_header(submod, force_rw: false)
       title = @store.title_for(submod)
-      heading = if title.include?("<a")
+
+      # do not add a link if the module is read-only or link is already included
+      heading = if (!force_rw && @store.read_only?(submod)) || title.include?("<a")
         title
       else
-        Yast::HTML.Link(
-          title,
-          @store.id_for(submod)
-        )
+        Yast::HTML.Link(title, @store.id_for(submod))
       end
 
       Yast::HTML.Heading(heading)

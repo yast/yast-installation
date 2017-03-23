@@ -5,7 +5,6 @@ require "installation/clients/inst_system_analysis"
 
 Yast.import "Product"
 Yast.import "InstData"
-Yast.import "Packages"
 
 describe Yast::InstSystemAnalysisClient do
   describe "#download_and_show_release_notes" do
@@ -17,6 +16,7 @@ describe Yast::InstSystemAnalysisClient do
         .and_return(:auto)
       allow(Yast::Product).to receive(:short_name).and_return(product)
       allow(Yast::InstData).to receive(:release_notes).and_return(release_notes)
+      stub_const("Yast::Packages", double(GetBaseSourceID: 0))
     end
 
     context "when release notes were downloaded" do

@@ -7,6 +7,10 @@ Yast::Tasks.configuration do |conf|
   conf.obs_project = "YaST:storage-ng"
   # Make sure 'rake osc:sr' fails
   conf.obs_sr_project = nil
+  conf.install_locations["autoyast_desktop/*.desktop"] = Packaging::Configuration::DESTDIR + "/usr/share/autoinstall/modules"
+  # TODO: move to src/client and verify if needed
+  conf.install_locations["control/*.rb"] = Packaging::Configuration::YAST_DIR + "/clients"
+  conf.install_locations["startup"] = Packaging::Configuration::YAST_LIB_DIR
 end
 
 # safety check - make sure the RNG file is up to date

@@ -45,15 +45,13 @@ module Yast
       @license_id = Ops.get(Pkg.SourceGetCurrent(true), 0, 0)
 
       # ------------------------------------- main part of the client -----------
-      if Installation.restarting? && data_stored?
-        apply_data
-        return :next
-      end
 
       @argmap = GetInstArgs.argmap
 
       @language = Language.language
       @keyboard = ""
+
+      InstData.product_license_accepted ||= false
 
       # ----------------------------------------------------------------------
       # Build dialog
@@ -102,7 +100,6 @@ module Yast
           Keyboard.user_decision = true
         when :license_agreement
           read_ui_state
-          InstData.product_license_accepted = @license_accepted
         when :language
           next if Mode.config
           read_ui_state
@@ -126,8 +123,6 @@ module Yast
 
           setup_final_choice
 
-          store_data
-
           return :next
         when :show_fulscreen_license
           UI.OpenDialog(all_licenses_dialog)
@@ -142,12 +137,21 @@ module Yast
       end
     end
 
-    def initialize_widgets
-      Wizard.EnableAbortButton
+    def initialize_license
+      # Showing empty license to prevent from redrawing the dialog when
+      # the translated license is found and shown to the user
+      UI.ReplaceWidget(Id(:base_license_rp), RichText(""))
 
-      UI.ChangeWidget(Id(:language), :Value, @language)
-      UI.ChangeWidget(Id(:license_agreement), :Value, @license_accepted)
+      # If accepting the license is required, show the check-box
+      if license_required?
+        UI.ReplaceWidget(:license_checkbox_rp, license_agreement_checkbox)
+        UI.ChangeWidget(Id(:license_agreement), :Value, InstData.product_license_accepted)
+      end
 
+      log.info "Acceptance needed: #{@id} => #{license_required?}"
+    end
+
+    def initialize_keyboard_selection
       if Keyboard.user_decision
         UI.ChangeWidget(Id(:keyboard), :Value, Keyboard.current_kbd)
       else
@@ -155,6 +159,18 @@ module Yast
         UI.ChangeWidget(Id(:keyboard), :Value, kbd)
         Keyboard.Set(kbd)
       end
+    end
+
+    def initialize_widgets
+      UI.BusyCursor
+
+      initialize_license
+
+      Wizard.EnableAbortButton
+
+      UI.ChangeWidget(Id(:language), :Value, @language)
+
+      initialize_keyboard_selection
 
       # In case of going back, Release Notes button may be shown, retranslate it (bnc#886660)
       # Assure that relnotes have been downloaded first
@@ -162,7 +178,13 @@ module Yast
         Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
       end
 
+      # This also shows content of the info file if it exists, so it has to be
+      # called at the very end
+      ProductLicense.ShowLicenseInInstallation(:base_license_rp, @license_id)
+
       UI.SetFocus(Id(:language))
+
+      UI.NormalCursor
     end
 
     def help_text
@@ -271,7 +293,8 @@ module Yast
     #
     # @return [Boolean] true if license was accepted; false otherwise.
     def license_accepted?
-      license_required? ? UI.QueryWidget(Id(:license_agreement), :Value) : true
+      read_ui_state
+      InstData.product_license_accepted
     end
 
     # Determines whether the license is required or not
@@ -289,14 +312,15 @@ module Yast
     end
 
     def read_ui_state
-      @language         = UI.QueryWidget(Id(:language), :Value)
-      @keyboard         = UI.QueryWidget(Id(:keyboard), :Value)
-      @license_accepted = UI.QueryWidget(Id(:license_agreement), :Value)
+      @language = UI.QueryWidget(Id(:language), :Value)
+      @keyboard = UI.QueryWidget(Id(:keyboard), :Value)
+      InstData.product_license_accepted = UI.QueryWidget(Id(:license_agreement), :Value)
     end
 
     def retranslate_yast
       Console.SelectFont(@language)
       # no yast translation for nn_NO, use nb_NO as a backup
+      # FIXME: remove the hack, please
       if @language == "nn_NO"
         log.info "Nynorsk not translated, using Bokm\u00E5l"
         Language.WfmSetGivenLanguage("nb_NO")
@@ -325,7 +349,6 @@ module Yast
 
     def setup_final_choice
       Keyboard.Set(@keyboard)
-      InstData.product_license_accepted = @license_accepted
 
       # Language has been set already.
       # On first run store users decision as default.
@@ -352,35 +375,6 @@ module Yast
       end
 
       log.info "Language: '#{@language}', system encoding '#{WFM.GetEncoding}'"
-    end
-
-    DATA_PATH = "/var/lib/YaST2/complex_welcome_store.yaml".freeze
-
-    def data_stored?
-      ::File.exist?(DATA_PATH)
-    end
-
-    def store_data
-      data = {
-        "language"         => @language,
-        "keyboard"         => @keyboard,
-        "license_accepted" => @license_accepted
-      }
-
-      File.write(DATA_PATH, data.to_yaml)
-    end
-
-    def apply_data
-      data = YAML.load(File.read(DATA_PATH))
-      @language         = data["language"]
-      @keyboard         = data["keyboard"]
-      @license_accepted = data["license_accepted"]
-      ProductLicense.info_seen!(@license_id)
-
-      change_language
-      setup_final_choice
-
-      ::FileUtils.rm_rf(DATA_PATH)
     end
 
     def text_mode?
@@ -428,7 +422,7 @@ module Yast
           HBox(
             HWeight(1, HStretch()),
             HSpacing(3),
-            HWeight(1, Left(TextEntry(Id(:keyboard_test), _("K&eyboard Test"))))
+            HWeight(1, Left(InputField(Id(:keyboard_test), Opt(:hstretch), _("K&eyboard Test"))))
           )
         ),
         VWeight(
@@ -445,7 +439,7 @@ module Yast
                   MinWidth(
                     # BNC #607135
                     text_mode? ? 85 : 106,
-                    Left(ReplacePoint(Id(:base_license_rp), Empty()))
+                    Left(ReplacePoint(Id(:base_license_rp), Opt(:hstretch), Empty()))
                   )
                 ),
                 VSpacing(text_mode? ? 0.5 : 1),
@@ -484,14 +478,6 @@ module Yast
       )
 
       initialize_widgets
-
-      ProductLicense.ShowLicenseInInstallation(:base_license_rp, @license_id)
-
-      # If accepting the license is required, show the check-box
-      if license_required?
-        UI.ReplaceWidget(:license_checkbox_rp, license_agreement_checkbox)
-      end
-      log.info "Acceptance needed: #{@id} => #{license_required?}"
     end
   end unless defined? Yast::InstComplexWelcomeClient
 end

@@ -50,7 +50,7 @@ module Installation
     class << self
       # Find driver updates in a given set of directories
       #
-      # @param dirs [Array<Pathname>,Pathname] Directories to search for driver updates
+      # @param update_dirs [Array<Pathname>,Pathname] Directories to search for driver updates
       # @return [Array<DriverUpdate>] Found driver updates
       def find(update_dirs)
         dirs = Array(update_dirs)
