@@ -6,6 +6,10 @@ require "installation/snapshots_finish"
 Yast.import "InstFunctions"
 
 describe ::Installation::SnapshotsFinish do
+  before do
+    stub_const("Yast::StorageSnapper", double)
+  end
+
   describe "#write" do
     before do
       allow(Yast::InstFunctions).to receive(:second_stage_required?).and_return(second_stage_required)

@@ -13,27 +13,26 @@ require_relative "helpers"
 
 FIXTURES_DIR = Pathname.new(__FILE__).dirname.join("fixtures")
 
-# fake AutoinstConfigClass class which is not supported by Ubuntu
-module Yast
-  # Faked AutoinstConfigClass module
-  class AutoinstConfigClass
-    # we need at least one non-default methods, otherwise ruby-bindings thinks
-    # it is just namespace
-    def cio_ignore
-    end
+# mock some dependencies, to not increase built dependencies
+$LOAD_PATH.unshift(File.join(FIXTURES_DIR.to_s, "stub_libs"))
 
-    def second_stage
-    end
-  end
-  AutoinstConfig = AutoinstConfigClass.new
-
-  # Faked Profile module
-  class ProfileClass
-    def current
-    end
-  end
-  Profile = ProfileClass.new
+# stub module to prevent its Import
+# Useful for modules from different yast packages, to avoid build dependencies
+def stub_module(name)
+  Yast.const_set name.to_sym, Class.new { def self.fake_method; end }
 end
+
+# stub classes from other modules to speed up a build
+stub_module("Packages")
+stub_module("InstURL")
+stub_module("Language")
+stub_module("Keyboard")
+stub_module("AddOnProduct")
+stub_module("ProductLicense")
+stub_module("AutoinstGeneral")
+stub_module("AutoinstConfig")
+stub_module("Profile")
+stub_module("ProfileLocation")
 
 if ENV["COVERAGE"]
   require "simplecov"
@@ -42,11 +41,7 @@ if ENV["COVERAGE"]
   end
 
   # For coverage we need to load all ruby files
-  # Note that clients/ are excluded because they run too eagerly by
-  # design
-  Dir["#{srcdir}/{include,lib,modules}/**/*.rb"].each do |f|
-    require_relative f
-  end
+  SimpleCov.track_files("#{srcdir}/**/*.rb")
 
   # use coveralls for on-line code coverage reporting at Travis CI
   if ENV["TRAVIS"]

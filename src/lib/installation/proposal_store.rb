@@ -40,6 +40,7 @@ module Installation
       Yast.import "Mode"
       Yast.import "ProductControl"
       Yast.import "Stage"
+      Yast.import "Report"
 
       textdomain "installation"
 
@@ -100,10 +101,13 @@ module Installation
       return @can_skip unless @can_skip.nil?
 
       @can_skip = if properties.key?("enable_skip")
+        log.info "properties skip available #{properties["enable_skip"].inspect}."
         properties["enable_skip"] == "yes"
       else
         !["initial", "uml"].include?(@proposal_mode)
       end
+
+      log.info "can skip set to #{@can_skip.inspect}."
 
       @can_skip
     end
@@ -201,7 +205,7 @@ module Installation
 
       description = Yast::WFM.CallFunction(client, ["Description", {}])
 
-      return nil unless description
+      return nil if description.nil? || description.empty?
 
       unless description.key?("id")
         log.warn "proposal client #{client} is missing key 'id' in #{description}"
@@ -234,15 +238,66 @@ module Installation
     def title_for(client)
       description = description_for(client)
 
-      description["rich_text_title"] ||
+      title = description["rich_text_title"] ||
         description["rich_text_raw_title"] ||
         client
+
+      return title unless read_only?(client)
+
+      # remove any HTML links if the proposal is read only,
+      # use the non-greedy .*? repetition to handle
+      # the "<a>foo</a> <a>bar</a>" case correctly
+      title.gsub(/<a.*?>(.*?)<\/a>/, "\\1")
+    end
+
+    # Checks if the client's proposal is configured as "hard" or "soft" read-only
+    #
+    # "hard" read-only means that the proposal is always read-only
+    # "soft" read-only means that the proposal is made changeable when an error
+    #
+    # @return [Boolean] true if client is "hard" or "soft" read-only
+    # @see soft_read_only
+    # @see hard_read_only
+    def read_only?(client)
+      hard_read_only?(client) || soft_read_only?(client)
+    end
+
+    # Checks if the client's proposal is configured as "hard" read-only
+    #
+    # "hard" read-only means that the proposal is always read-only
+    # "soft" read-only means that the proposal is made changeable when an error
+    # in proposal is detected.
+    #
+    # @param [String] client
+    # @return [Boolean] if the client is marked as "hard" read only
+    def hard_read_only?(client)
+      read_only_proposals[:hard].include?(client)
+    end
+
+    # Checks if the client's proposal is configured as "soft" read-only
+    #
+    # "hard" read-only means that the proposal is always read-only
+    # "soft" read-only means that the proposal is made changeable when an error
+    # in proposal is detected.
+    #
+    # @param [String] client
+    # @return [Boolean] if the client is marked as "soft" read only
+    def soft_read_only?(client)
+      read_only_proposals[:soft].include?(client)
     end
 
     # Calls client('AskUser'), to change a setting interactively (if link is the
     # heading for the part) or noninteractively (if it is a "shortcut")
     def handle_link(link)
       client = client_for_link(link)
+
+      if read_only?(client)
+        log.warn "Proposal client #{client.inspect} is read-only, ignoring the user action"
+        # TRANSLATORS: Warning message, can be split to more lines if needed
+        Yast::Report.Warning(_("This proposed setting is marked as read-only\n" \
+          "and cannot be changed."))
+        return nil
+      end
 
       data = {
         "has_next"  => false,
@@ -268,6 +323,36 @@ module Installation
       raise "Unknown user request #{link}. Broken proposal client?" if matching_client.nil?
 
       matching_client.first
+    end
+
+    # Reads read-only proposals from the control file
+    #
+    # @return [Hash] map with keys :hard and :soft. Values are names
+    # of proposals with "hard" or "soft" read_only flag set.
+    def read_only_proposals
+      return @read_only_proposals if @read_only_proposals
+
+      @read_only_proposals = { hard: [], soft: [] }
+
+      properties.fetch("proposal_modules", []).each do |proposal|
+        next unless proposal["read_only"]
+
+        name = full_module_name(proposal["name"])
+
+        ro_type = proposal["read_only"]
+
+        case ro_type
+        when "hard"
+          @read_only_proposals[:hard] << name
+        when "soft"
+          @read_only_proposals[:soft] << name
+        else
+          log.info("Uknown value for read_only node: #{ro_type}")
+        end
+      end
+
+      log.info "Found read-only proposals: #{@read_only_proposals}"
+      @read_only_proposals
     end
 
   private
@@ -329,8 +414,8 @@ module Installation
     # Returns whether given trigger definition is correct
     # e.g., all mandatory parts are there
     #
-    # @param [Hash] trigger definition
-    # @rturn [Boolean] whether it is correct
+    # @param [Hash] trigger_def definition
+    # @return [Boolean] whether it is correct
     def valid_trigger?(trigger_def)
       trigger_def.key?("expect") &&
         trigger_def["expect"].is_a?(Hash) &&
@@ -390,11 +475,17 @@ module Installation
     end
 
     def properties
-      @proposal_properties ||= Yast::ProductControl.getProposalProperties(
+      return @proposal_properties unless @proposal_properties.nil?
+
+      @proposal_properties = Yast::ProductControl.getProposalProperties(
         Yast::Stage.stage,
         Yast::Mode.mode,
         @proposal_mode
       )
+
+      log.info "Properties #{@proposal_properties.inspect}"
+
+      @proposal_properties
     end
 
     def make_proposal(client, force_reset: false, language_changed: false, callback: proc {})
@@ -403,6 +494,7 @@ module Installation
         [
           "MakeProposal",
           {
+            "read_only"        => read_only?(client),
             "force_reset"      => force_reset,
             "language_changed" => language_changed
           }
@@ -493,12 +585,20 @@ module Installation
       @modules_order.map! { |m| m["proposal_modules"] }
 
       @modules_order.each do |module_tab|
-        module_tab.map! do |mod|
-          mod.include?("_proposal") ? mod : mod + "_proposal"
-        end
+        module_tab.map! { |mod| full_module_name(mod) }
       end
 
       @modules_order
+    end
+
+    # Build the full proposal module name including the "_proposal" suffix.
+    # The sufix is not added when it is already present.
+    # @param [String] name full or short proposal module name
+    # @return [String] full proposal module name
+    def full_module_name(name)
+      # already a full name?
+      return name if name.end_with?("_proposal")
+      name + "_proposal"
     end
 
     def order_without_tabs
@@ -522,7 +622,7 @@ module Installation
 
         modules_order.each_with_object("") do |client, text|
           description = description_for(client)
-          text << description["help"] if description["help"]
+          text << description["help"] if description && description["help"]
         end
       else
         ""

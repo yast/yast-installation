@@ -16,6 +16,10 @@ require "tempfile"
 require "pathname"
 require "fileutils"
 
+Yast.import "Pkg"
+Yast.import "Progress"
+Yast.import "URL"
+
 module Installation
   # Represents a update repository to be used during self-update
   # (check doc/SELF_UPDATE.md for details).
@@ -39,17 +43,27 @@ module Installation
   #   end
   class UpdateRepository
     include Yast::Logger
+    include Yast::I18n
+
+    # Where the repository information comes from
+    #
+    # * :default: Default
+    # * :user:    User defined
+    ORIGINS = [:default, :user].freeze
+    # Path to instsys.parts registry
+    INSTSYS_PARTS_PATH = Pathname("/etc/instsys.parts")
 
     # @return [URI] URI of the repository
     attr_reader :uri
-    # @return [Fixnum] yast2-pkg-bindings ID of the repository
-    attr_reader :repo_id
-    # @return [Pathname] Registry of inst-sys updated parts
-    attr_reader :instsys_parts_path
     # @return [Array<Pathname>] local paths of updates fetched from the repo
     attr_reader :update_files
+    # @return [Symbol] Repository origin. @see ORIGINS
+    attr_reader :origin
+    # @return [Integer] Repository ID
+    attr_writer :repo_id
+    private :repo_id=
 
-    # A valid repository was not found (altough the URL exists,
+    # A valid repository was not found (although the URL exists,
     # repository type cannot be determined).
     class NotValidRepo < StandardError; end
 
@@ -77,6 +91,9 @@ module Installation
     # Updates should be fetched before calling to #apply.
     class UpdatesNotFetched < StandardError; end
 
+    # Not valid origin for the repository
+    class UnknownOrigin < StandardError; end
+
     #
     # Internal exceptions (handled internally)
     #
@@ -93,15 +110,27 @@ module Installation
     # Constructor
     #
     # @param uri                [URI]      Repository URI
-    # @param instsys_parts_path [Pathname] Path to instsys.parts registry
-    def initialize(uri, instsys_parts_path = Pathname("/etc/instsys.parts"))
-      Yast.import "Pkg"
+    # @param origin             [Symbol]   Repository origin (@see ORIGINS)
+    def initialize(uri, origin = :default)
+      textdomain "installation"
 
       @uri = uri
-      @repo_id = add_repo
       @update_files = []
       @packages = nil
-      @instsys_parts_path = instsys_parts_path
+      raise UnknownOrigin unless ORIGINS.include?(origin)
+      @origin = origin
+    end
+
+    # Returns the repository ID
+    #
+    # As a potential side-effect, the repository will be added to libzypp (if it
+    # was not added yet) in order to get the ID.
+    #
+    # @return [Fixnum] yast2-pkg-bindings ID of the repository
+    #
+    # @see add_repo
+    def repo_id
+      add_repo
     end
 
     # Retrieves the list of packages to install
@@ -114,6 +143,7 @@ module Installation
     # @see Yast::Pkg.ResolvableProperties
     def packages
       return @packages unless @packages.nil?
+      add_repo
       candidates = Yast::Pkg.ResolvableProperties("", :package, "")
       @packages = candidates.select { |p| p["source"] == repo_id }.sort_by! { |a| a["name"] }
       log.info "Considering #{@packages.size} packages: #{@packages}"
@@ -129,6 +159,9 @@ module Installation
     # If a known error occurs, it will be converted to a CouldNotFetchUpdate
     # exception.
     #
+    # A progress is displayed when the packages are downloaded.
+    # The progress can be disabled by calling `Yast::Progress.set(false)`.
+    #
     # @param path [Pathname] Directory to store the updates
     # @return [Pathname] Paths to the updates
     #
@@ -138,7 +171,10 @@ module Installation
     #
     # @raise CouldNotFetchUpdate
     def fetch(path = Pathname("/download"))
-      packages.each_with_object(update_files) do |package, files|
+      init_progress
+
+      packages.each_with_object(update_files).with_index do |(package, files), index|
+        update_progress(100 * index / packages.size)
         files << fetch_package(package, path)
       end
     rescue PackageNotFound, CouldNotExtractPackage, CouldNotSquashPackage => e
@@ -166,6 +202,15 @@ module Installation
     # * Mount the squashfs filesystem
     # * Add files/directories to inst-sys using the /etc/adddir script
     #
+    # @note The current implementation creates one squashfs image per package
+    # and mounting a squashfs image consumes one loop device (/dev/loop*).
+    # Inst-sys has by default 64 loop devices, but some of them already used,
+    # in an extreme case we might run out of loop devices.
+    #
+    # On the other hand downloading and unpacking all packages at once might
+    # require a lot of memory, the installer could crash on a system with
+    # small memory.
+    #
     # @param mount_path [Pathname] Directory to mount the update
     #
     # @raise UpdatesNotFetched
@@ -186,7 +231,10 @@ module Installation
     #
     # Release the repository
     def cleanup
+      Yast::Pkg.SourceReleaseAll
       Yast::Pkg.SourceDelete(repo_id)
+      # make sure it's also removed from disk
+      Yast::Pkg.SourceSaveAll
     end
 
     # Determine whether the repository is empty or not
@@ -196,6 +244,31 @@ module Installation
     # @see #packages
     def empty?
       packages.empty?
+    end
+
+    # Returns whether is a user defined repository
+    #
+    # @return [Boolean] true if the repository is user-defined empty;
+    #                   false otherwise.
+    def user_defined?
+      origin == :user
+    end
+
+    # Determines whether the URI of the repository is remote or not
+    #
+    # @return [Boolean] true if the repository is using a 'remote URI';
+    #                   false otherwise.
+    #
+    # @see Pkg.UrlSchemeIsRemote
+    def remote?
+      Yast::Pkg.UrlSchemeIsRemote(uri.scheme)
+    end
+
+    # Redefines the inspect method to avoid logging passwords
+    #
+    # @return [String] Debugging information
+    def inspect
+      "#<Installation::UpdateRepository> @uri=\"#{safe_uri}\" @origin=#{@origin.inspect}"
     end
 
   private
@@ -231,15 +304,15 @@ module Installation
 
     # Extract a RPM contents to a given directory
     #
-    # @param package_path [Pathname] RPM local path
+    # @param package_file [File] RPM package (local file name)
     # @param dir          [Pathname] Directory to extract the RPM contents
     #
     # @raise CouldNotExtractPackage
-    def extract(package_path, dir)
+    def extract(package_file, dir)
       Dir.chdir(dir) do
-        cmd = format(EXTRACT_CMD, source: package_path.path)
+        cmd = format(EXTRACT_CMD, source: package_file.path)
         out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
-        log.info("Extracting package #{package_path}: #{out}")
+        log.info("Extracting package #{package_file.inspect}: #{out}")
         raise CouldNotExtractPackage unless out["exit"].zero?
       end
     end
@@ -264,12 +337,16 @@ module Installation
 
     # Add the repository to libzypp sources
     #
+    # If the repository was already added, it will just simply return
+    # the repository ID.
+    #
     # @return [Integer] Repository ID
     #
     # @raise NotValidRepo
     # @raise CouldNotProbeRepo
     # @raise CouldNotRefreshRepo
     def add_repo
+      return @repo_id unless @repo_id.nil?
       status = repo_status
       raise NotValidRepo if status == :not_found
       raise CouldNotProbeRepo if status == :error
@@ -277,7 +354,7 @@ module Installation
                                             "enabled" => true, "autorefresh" => true)
       log.info("Added repository #{uri} as '#{new_repo_id}'")
       if Yast::Pkg.SourceRefreshNow(new_repo_id) && Yast::Pkg.SourceLoad
-        new_repo_id
+        self.repo_id = new_repo_id
       else
         log.error("Could not get metadata from repository '#{new_repo_id}'")
         raise CouldNotRefreshRepo
@@ -310,7 +387,8 @@ module Installation
 
     # Mount the squashed filesystem containing updates
     #
-    # @param path [Pathname] Mountpoint
+    # @param file [Pathname] file with squashfs content
+    # @param mountpoint [Pathname] where to mount
     #
     # @raise CouldNotMountUpdate
     #
@@ -361,11 +439,32 @@ module Installation
     # @param path       [Pathname] Filesystem to mount
     # @param mountpoint [Pathname] Mountpoint
     #
-    # @see instsys_parts_path
+    # @see INSTSYS_PARTS_PATH
     def update_instsys_parts(path, mountpoint)
-      instsys_parts_path.open("a") do |f|
+      INSTSYS_PARTS_PATH.open("a") do |f|
         f.puts "#{path.relative_path_from(Pathname("/"))} #{mountpoint}"
       end
+    end
+
+    # Initialize the progress
+    def init_progress
+      # mark the next stage active
+      Yast::Progress.NextStage
+    end
+
+    # Display the current Progress
+    # @param [Fixnum] percent the current progress in range 0..100
+    def update_progress(percent)
+      Yast::Progress.Step(percent)
+    end
+
+    # Returns the URI removing sensitive information
+    #
+    # @return [String] URI without the password (if present)
+    #
+    # @see Yast::URL.HidePassword
+    def safe_uri
+      @safe_uri ||= Yast::URL.HidePassword(uri.to_s)
     end
   end
 end

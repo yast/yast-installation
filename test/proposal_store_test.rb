@@ -90,11 +90,21 @@ describe ::Installation::ProposalStore do
     it "returns string with localized help" do
       expect(subject.help_text).to be_a String
     end
+
+    it "does not crash if modules have not been found" do
+      # bnc#999953
+      allow(subject).to receive(:presentation_order)
+        .and_return([["test1", "test2", "test3"]])
+      allow(subject).to receive(:tabs?).and_return(true)
+
+      expect(subject.help_text(0)).to be_a String
+    end
   end
 
   describe "#proposal_names" do
     before do
       allow(Yast::WFM).to receive(:ClientExists).and_return(true)
+      allow(Yast::WFM).to receive(:CallFunction).with(anything, ["Description", anything]).and_return("id" => "id")
     end
 
     it "returns array with string names of clients" do
@@ -131,10 +141,11 @@ describe ::Installation::ProposalStore do
                       ["test3"]
                     ])
 
+      allow(Yast::WFM).to receive(:CallFunction).with("test2", ["Description", anything]).and_return({})
       allow(Yast::WFM).to receive(:CallFunction).with("test3", ["Description", anything]).and_return(nil)
 
       expect(subject.proposal_names).to include("test1")
-      expect(subject.proposal_names).to include("test2")
+      expect(subject.proposal_names).not_to include("test2")
       expect(subject.proposal_names).not_to include("test3")
     end
 
@@ -441,6 +452,14 @@ describe ::Installation::ProposalStore do
     }
   end
 
+  let(:client_description_with_link) do
+    {
+      "rich_text_title" => "<a href=\"software_link\">Software</a>",
+      "menu_title"      => "&Software",
+      "id"              => "software"
+    }
+  end
+
   let(:client_name) { "software_proposal" }
 
   describe "#description_for" do
@@ -453,6 +472,16 @@ describe ::Installation::ProposalStore do
 
       expect(desc1["id"]).to eq("software")
       expect(desc2["id"]).to eq("software")
+    end
+
+    it "returns nil if description is nil" do
+      expect(Yast::WFM).to receive(:CallFunction).with(client_name, ["Description", {}]).and_return(nil).once
+      expect(subject.description_for(client_name)).to eq nil
+    end
+
+    it "returns nil if description is empty" do
+      expect(Yast::WFM).to receive(:CallFunction).with(client_name, ["Description", {}]).and_return({}).once
+      expect(subject.description_for(client_name)).to eq nil
     end
   end
 
@@ -469,6 +498,18 @@ describe ::Installation::ProposalStore do
       allow(subject).to receive(:description_for).with(client_name).and_return(client_description)
 
       expect(subject.title_for(client_name)).to eq(client_description["rich_text_title"])
+    end
+
+    context "when the proposal is marked as read-only" do
+      before do
+        expect(subject).to receive(:read_only?).with(client_name).and_return(true)
+      end
+
+      it "removes all <a> tags from the title" do
+        allow(subject).to receive(:description_for).with(client_name).and_return(client_description_with_link)
+        # compare with the client description without the link
+        expect(subject.title_for(client_name)).to eq(client_description["rich_text_title"])
+      end
     end
   end
 
@@ -518,6 +559,59 @@ describe ::Installation::ProposalStore do
           expect(Yast::WFM).to receive(:CallFunction).with("proposal_a",
             ["AskUser", { "has_next" => false, "chosen_id" => "proposal_a" }]).and_return(:next)
           expect(subject.handle_link("proposal_a")).to eq(:next)
+        end
+      end
+    end
+
+    context "when the proposal is marked as read-only" do
+      before do
+        # Proposals need to be cached first
+        subject.make_proposals
+
+        allow(Yast::Report).to receive(:Warning)
+      end
+
+      context "in case of hard read only proposal" do
+        before do
+          expect(subject).to receive(:hard_read_only?).with("proposal_a").and_return(true)
+        end
+
+        it "displays a warning" do
+          expect(Yast::Report).to receive(:Warning)
+
+          subject.handle_link("proposal_a")
+        end
+
+        it "does not run the proposal client" do
+          expect(Yast::WFM).to_not receive(:CallFunction)
+
+          subject.handle_link("proposal_a")
+        end
+
+        it "returns nil" do
+          expect(subject.handle_link("proposal_a")).to eq(nil)
+        end
+      end
+
+      context "in case of soft read only proposal" do
+        before do
+          expect(subject).to receive(:soft_read_only?).with("proposal_a").and_return(true)
+        end
+
+        it "displays a warning" do
+          expect(Yast::Report).to receive(:Warning)
+
+          subject.handle_link("proposal_a")
+        end
+
+        it "does not run the proposal client" do
+          expect(Yast::WFM).to_not receive(:CallFunction)
+
+          subject.handle_link("proposal_a")
+        end
+
+        it "returns nil" do
+          expect(subject.handle_link("proposal_a")).to eq(nil)
         end
       end
     end

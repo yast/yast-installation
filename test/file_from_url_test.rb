@@ -5,6 +5,12 @@ require_relative "test_helper"
 require "transfer/file_from_url"
 
 describe Yast::Transfer::FileFromUrl do
+  before do
+    stub_const("Yast::FTP", double(fake_method: nil))
+    stub_const("Yast::HTTP", double(Get: nil))
+    stub_const("Yast::TFTP", double(Get: nil))
+  end
+
   class FileFromUrlTest
     include Yast::I18n
     include Yast::Transfer::FileFromUrl

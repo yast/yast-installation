@@ -15,6 +15,10 @@ module Installation
       attr_accessor :changed
     end
 
+    def initialize
+      textdomain "installation"
+    end
+
     def run
       progress_orig = Yast::Progress.set(false)
       ret = super

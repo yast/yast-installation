@@ -195,7 +195,7 @@ describe Installation::UpdateRepository do
 
     before do
       allow(repo).to receive(:update_files).and_return([update_path])
-      allow(repo.instsys_parts_path).to receive(:open).and_yield(file)
+      allow(Installation::UpdateRepository::INSTSYS_PARTS_PATH).to receive(:open).and_yield(file)
       allow(FileUtils).to receive(:mkdir_p).with(mount_point)
     end
 
@@ -243,9 +243,72 @@ describe Installation::UpdateRepository do
   end
 
   describe "#cleanup" do
-    it "deletes the repository" do
+    it "deletes and releases the repository" do
       expect(Yast::Pkg).to receive(:SourceDelete).with(repo_id)
+      expect(Yast::Pkg).to receive(:SourceReleaseAll)
+      expect(Yast::Pkg).to receive(:SourceSaveAll)
+
       subject.cleanup
+    end
+  end
+
+  describe "#user_defined?" do
+    context "when origin is :user" do
+      subject(:repo) { Installation::UpdateRepository.new(uri, :user) }
+
+      it "returns true" do
+        expect(repo).to be_user_defined
+      end
+    end
+
+    context "when origin is :default" do
+      subject(:repo) { Installation::UpdateRepository.new(uri, :default) }
+
+      it "returns false" do
+        expect(repo).to_not be_user_defined
+      end
+    end
+
+    context "when origin is not specified" do
+      it "returns false" do
+        expect(repo).to_not be_user_defined
+      end
+    end
+  end
+
+  describe "#remote?" do
+    context "when is a remote URL according to libzypp" do
+      it "returns true" do
+        expect(Yast::Pkg).to receive(:UrlSchemeIsRemote).with("http")
+          .and_call_original
+        expect(repo).to be_remote
+      end
+    end
+
+    context "when is not a remote URL according to libzypp" do
+      let(:uri) { URI("cd:/?device=sr0") }
+
+      it "returns false" do
+        expect(Yast::Pkg).to receive(:UrlSchemeIsRemote).with("cd")
+          .and_call_original
+        expect(repo).to_not be_remote
+      end
+    end
+  end
+
+  describe "#inspect" do
+    let(:uri) { URI("http://user:123456@updates.suse.com") }
+
+    it "does not contain sensitive information" do
+      expect(repo.inspect).to_not include("123456")
+    end
+  end
+
+  describe "#to_s" do
+    let(:uri) { URI("http://user:123456@updates.suse.com") }
+
+    it "does not contain sensitive information" do
+      expect(repo.to_s).to_not include("123456")
     end
   end
 end

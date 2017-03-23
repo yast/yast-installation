@@ -65,9 +65,9 @@ module Installation
         os_release = parse_ini_file(os_release_file(mount_point))
 
         name = os_release["PRETTY_NAME"]
-        if name.empty?
-          name = os_release[NAME] || default_name
-          name += " #{os_release[VERSION]}"
+        if !name || name.empty?
+          name = os_release["NAME"] || default_name
+          name += " #{os_release["VERSION"]}"
         end
         name
       rescue Errno::ENOENT # No /etc/os-release found
@@ -85,6 +85,7 @@ module Installation
           line = line.lstrip.chomp
           next if line.empty? || line.start_with?("#")
           (key, value) = line.split("=")
+          key.rstrip!
           value.gsub!(/^\s*"/, "")
           value.gsub!(/"\s*$/, "")
           content[key] = value

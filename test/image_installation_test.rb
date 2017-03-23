@@ -24,6 +24,10 @@ NON_MATCHING_ARCH = "unsupported".freeze
 ARCHS = ["i386", "x86_64", "ppc"].freeze
 
 describe Yast::ImageInstallation do
+  before do
+    stub_const("Yast::Packages", double(theSources: [0]))
+  end
+
   describe "#FindImageSet" do
     before(:each) do
       allow(Yast::Pkg).to receive(:SourceProvideDigestedFile).and_return(IMAGES_DESCR_FILE)

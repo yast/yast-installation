@@ -44,7 +44,7 @@ module Yast::Transfer
     end
 
     # Basename
-    # @param string path
+    # @param filePath [String] path
     # @return [String]  basename
     def basename(filePath)
       pathComponents = Builtins.splitstring(filePath, "/")
@@ -57,7 +57,7 @@ module Yast::Transfer
     end
 
     # Get directory name
-    # @param string path
+    # @param filePath [String] path
     # @return  [String] dirname
     def dirname(filePath)
       pathComponents = Builtins.splitstring(filePath, "/")

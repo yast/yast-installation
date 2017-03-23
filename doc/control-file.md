@@ -65,8 +65,10 @@ options:
 
 -   Partitioning
 
-    Integrates flexible partitioning into configuration file, instead of
-    the separate file currently used.
+    This is to customize disk usage, including minimum and maximum useful size
+    of the root filesystem, what filesytem type to use, whether or not to use
+    LVM and encryption, and what subvolumes to create if Btrfs is used on the
+    root filesystem.
 
 -   Scripting and Hooks
 
@@ -96,7 +98,7 @@ related variables.
 > Note that the control file is not an optional tool to help customize
 > installation, it is required during installation and without the file,
 > installation may fail or lead to unexpected results. Control file on installed
-> system located in `/etc/YaST2/control.xml` is owned by ${PRODUCT}-release
+> system located in `/etc/YaST2/control.xml` is owned by `${PRODUCT}-release`
 > package.
 
 During installation, *linuxrc* searches for a file named
@@ -127,8 +129,15 @@ One of the main reasons for using the control is to provide non YaST
 developers the ability to change the installation behavior and customize
 various settings without the need to change and re-build YaST packages.
 
-The control files for some SUSE products are maintained at
-yast2-installation source tree in directory `control`.
+This way it is possible to define different behavior and different installation
+defaults in SLE and openSUSE products.
+
+The control files for SUSE products are maintained at specific Git
+repositories (e.g. for [SLES](https://github.com/yast/skelcd-control-SLES/blob/master/control/control.SLES.xml),
+[SLED](https://github.com/yast/skelcd-control-SLED/blob/master/control/control.SLED.xml)
+or [openSUSE](https://github.com/yast/skelcd-control-openSUSE/blob/master/control/control.openSUSE.xml)
+).
+
 
 Configuration
 -------------
@@ -192,7 +201,7 @@ A workflow list element is a map with the following elements:
     -   arguments: The arguments for the module is a comma separated
         list which can accept booleans and symbols.
 
-    -   execute: If it is needed to call script that does not start with 
+    -   execute: If it is needed to call script that does not start with
         *inst_* or you need to call the same script several times with
         different *name* parameter.
 
@@ -266,30 +275,47 @@ possible using the control file.
 
 
 ```xml
-    <proposal>
-        <type>network</type>
-        <stage>continue,normal</stage>
-        <proposal_modules config:type="list">
-            <proposal_module>lan</proposal_module>
-            <proposal_module>dsl</proposal_module>
-            <proposal_module>isdn</proposal_module>
-            <proposal_module>modem</proposal_module>
-            <proposal_module>proxy</proposal_module>
-            <proposal_module>remote</proposal_module>
-        </proposal_modules>
-    </proposal>
+<proposal>
+    <label>Installation Settings</label>
+    <mode>installation</mode>
+    <stage>initial</stage>
+    <name>initial</name>
+    <unique_id>inst_initial</unique_id>
+    <enable_skip>no</enable_skip>
+    <proposal_modules config:type="list">
+        <proposal_module>
+            <name>bootloader</name>
+            <presentation_order>20</presentation_order>
+        </proposal_module>
+        <proposal_module>
+            <name>hwinfo</name>
+            <presentation_order>80</presentation_order>
+        </proposal_module>
+        ...
+    </proposal_modules>
+</proposal>
 ```
 
-The proposal in the above listing is displayed in the so called
-*continue* mode which is the second phase of the installation. The
-proposal consists of different configuration options which are controled
-using a special API.
+Each proposal definition can contain these values:
 
-Currently, proposals names and captions are fixed and cannot be changed. It
-is not possible to create a special proposal screen, instead those
-available should be used: *network*, *hardware*, *service*. All proposal script
-names are listed without *_proposal* suffix. If a *proposed_module* is called
-*example*, then installer looks for *example_proposal* script.
+```xml
+<proposal_module>
+    <name>module_name</name>
+    <presentation_order>50</presentation_order>
+    <read_only config:type="boolean">true</read_only>
+</proposal_module>
+```
+
+Details:
+
+- `name` (string) - proposal client name without the `_proposal` suffix
+  (the code actually allows writing it but that makes the definitions longer
+  and less readable).
+- `presentation_order` (integer, optional) - the number defines the display order
+  in the proposal, the absolute value is not important, it depends on the relative
+  value when compared against the other proposal modules.
+- `read_only` (boolean, optional) - the module is treated as read only and
+  any user interaction with the proposal module is disabled.
 
 In the workflow, the proposals are called as any workflow step with an
 additional argument identifying the proposal screen to be started.
@@ -396,6 +422,11 @@ These options usually enable or disable some installation feature.
 
 -   (boolean) *require\_registration* - Require registration of add-on
     product (ignored in the base product).
+
+-   (boolean) *readonly\_timezone* - Timezone cannot be changed by the
+    user during installation or upgrade. The default value is
+    determined using the *timezone* element in the *globals* section.
+    If it's not specified, *UTC* will be used.
 
 ### Installation Helpers
 
@@ -510,93 +541,6 @@ Every *copy\_to\_system\_item* entry consists of:
     one entry for one file or directory; files are optional and are
     copied if they exist; missing files are skipped
 
-### Automatic Configuration
-
-This is another feature defined in *globals* section. *Automatic
-Configuration* is called via the script *inst\_automatic\_configuration*
-at the end of the second stage installation. Having the configuration in
-control file enables this function for another modes and makes it very
-well configurable.
-
-This is an example of AC setup:
-
-```xml
-    <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
-        xmlns:config="http://www.suse.com/1.0/configns">
-        <globals>
-
-            <!-- List of steps in AC -->
-            <automatic_configuration config:type="list">
-
-                <!-- One step definition -->
-                <ac_step>
-                    <text_id>ac_1</text_id>
-                    <type>scripts</type>
-                    <ac_items config:type="list">
-                        <ac_item>initialization</ac_item>
-                        <ac_item>hostname</ac_item>
-                        <ac_item>netprobe</ac_item>
-                        <ac_item>rpmcopy_secondstage</ac_item>
-                    </ac_items>
-                    <icon>yast-lan</icon>
-                </ac_step>
-
-                <ac_step>
-                    <text_id>ac_3</text_id>
-                    <type>proposals</type>
-                    <ac_items config:type="list">
-                        <ac_item>x11</ac_item>
-                        <ac_item>printer</ac_item>
-                        <ac_item>sound</ac_item>
-                        <ac_item>tv</ac_item>
-                    </ac_items>
-                    <icon>yast-hwinfo</icon>
-                </ac_step>
-
-            </automatic_configuration>
-        </globals>
-
-        <texts>
-
-            <!-- Label used during AC, uses "text_id" from "ac_step" -->
-            <ac_1><label>Initialization...</label><ac_1>
-            <ac_3><label>Configuring hardware...</label><ac_3>
-
-        </texts>
-    </productDefines>
-```
-
-AC setup *automatic\_configuration* consists of list of several
-*ac\_step* definitions. On definition for one AC step. These steps can
-be compared to sets of scripts or sets of installation proposals, e.g.,
-*network proposal* that consists of *lan*, *modem*, ... and *firewall*
-proposals which might depend on each others proposals.
-
-Every single *ac\_step* consists of
-
--   *text\_id* - which is the very same ID as used in
-    [texts](#control_texts) (you have to define the AC label there).
-
--   *type* - defines how the AC step items will be handled. Possible
-    values are *scripts* or *proposals*. More types cannot be mixed
-    within one AC step. All *scripts* are called only once one by one,
-    all *proposals* in one AC step are called first with *MakeProposal*
-    parameter then again all with *Write* parameter.
-
--   *ac\_items* - is a list of scripts or proposals each in a separate
-    *ac\_item*.
-
-    For scripts an *ac\_item* is a name of YaST client script without
-    *inst\_* prefix, e.g., *firewall* would call *inst\_firewall*
-    script.
-
-    For proposals an *ac\_item* is a name of YaST proposal without
-    *\_proposal* suffix, e.g., *firewall* would call
-    *firewall\_proposal*.
-
--   *icon* - plain icon filename (from 22x22 directory) without suffix
-    and without any explicit directory name, e.g., *yast-network*.
-
 ### Software
 
 In the *software* section you can define how is the selection of
@@ -606,6 +550,13 @@ This is a list of supported entries in *software*:
 
 -   *default\_desktop* - defines a desktop selected by default by the
     installation.
+
+-   *clone\_install\_recommended\_default* - Default entry for
+    "install_recommended" in created AutoYaST configuration file.
+
+-   *minimalistic_libzypp_config* - adjust the libzypp configuration
+    to reduce the amount of packages to install: only required
+    packages are considered, no documentation and no multiversion.
 
 Additionally, you can configure how updating of packages should be
 performed. The following options are available:
@@ -848,6 +799,12 @@ System Roles, if defined in the control file, are presented during
 the first stage of the installation. The user will select one of them
 and they will affect the proposed configuration of Partitioning and Software.
 
+A role can also define additional dialogs that are shown when a given role is
+selected. It is a common installation dialog with *Abort*, *Cancel* and *Next*
+buttons. It supports and uses all parameters from the **GetInstArgs** module.
+When going back, it will first show the last additional dialog and when going
+back through all additional dialogs, it will show again the roles selection.
+
 They were requested in FATE#317481 and they are an evolution of the earlier
 concept of Server Scenarios used in SLE 11.
 
@@ -871,6 +828,7 @@ Example:
         <software>
           <default_patterns>base Minimal kvm_server</default_patterns>
         </software>
+        <additional_dialogs>kvm_setup,virt_manager_setup </additional_dialogs>
       </system_role>
     </system_roles>
 
@@ -1016,327 +974,174 @@ layout
 
 ### Partitioning
 
-If present, the partition proposal will be based on the data provided in
-the control file.
+*proposal_settings_editable* (boolean, default _true_) is specifies if the user
+should be able to change the configuration of the storage proposal in the
+installer: What filesystem to use for the root partition, if there should be a
+separate /home partition, if LVM or encryption should be used. For some
+products this is not desired.
 
-#### Algorithm for Space Allocation
+*expert_partitioner_warning* (boolean, default _false_) specifies if there
+should be an extra warning pop-up dialog when the user enters the expert
+partitioner dialog during installation, for example because the product has
+special requirements for partitioning (Btrfs to support snapshots etc.).
 
-Space allocation on a disk happens in the following order. First all
-partition get the size allocated that is determined by the size
-parameter of the partition description. If a disk cannot hold the sum of
-these sizes this disk is not considered for installation. If all demands
-by the size parameter are fulfilled and there is still space available
-on the disk, the partitions which have a parameter "percent" specified
-are increased until the size demanded by by "percent" is fulfilled. If
-there is still available space on the disk (this normally only can
-happen if the sum of all percent values are below 100), all partitions
-that are specified with a size of zero are enlarged as far as possible.
-If a "maxsize" is specified for a partition, all enlargement are only
-done up to the specified maxsize.
+*root_subvolume_read_only* (boolean, default _false_) specifies whether the
+root subvolume should be mounted read-only in /etc/fstab and its 'ro' Btrfs
+property should be set to _true_. This works only for Btrfs root
+filesystems. If another root filesystem type is chosen, this might fail
+silently.
 
-If more than one of the available disks is eligible to hold a certain
-partition set, the disk is selected as follows. If there is a partition
-allocated on that disk that has its size specified by keywords "percent"
-or by "size=0" and does not have a "maxsize" value set then the desired
-size for this partition is considered to be unlimited. If a partition
-group contains a partition which an unlimited desired size, the disk
-that maximizes the partition size for the unlimited partitions is
-selected. If all partitions in a partition group are limited in size
-then the smallest disk that can hold the desired sizes of all partitions
-is selected for that partition group.
 
-If there are multiple partition groups the the partition group with the
-lowest number (means highest priority) get assigned its disk first.
-Afterward the partition group with the next priority gets assigned a the
-optimal disk from the so far unassigned disks.
+#### Subvolumes
 
-#### Configuration Options
+This section is used to specify what subvolumes should be created if Btrfs is
+used for the root filesystem.
 
-The following elements are global to all disks and partitions:
+The *subvolumes* section is optional. If it is missing, a hard-coded list of
+default subvolumes is used. If the *subvolumes* section is there, but empty, no
+subvolumes are created.
 
-Possible values
-:   true|false
+Each *subvolume* section has a mandatory *path* and optional *copy_on_write*
+and *archs* elements.
 
-Default value
-:   true
+*path* is the directory path of the subvolume without a starting slash ("/"),
+e.g. `var/cache`. The value of *btrfs_default_subvolume* and a slash are
+prepended, i.e. the result will be something like `@/var/cache`.
 
-Description
-:   If set to false the partition suggestion tries to use gaps on the
-    disks or to re-use existing partitions. If set to true then the
-    partition suggestion prefers removal of existing partitions.
+*copy_on_write* is optional and *true* by default. Specify *false* for NoCOW
+subvolumes. NoCOW is recommended for database directories where a rollback
+together with the rest of the filesystem (in case of a system or kernel update
+that did not quite go as well as expected) is not desired.
 
-Possible values
-:   true|false
+*archs* is a comma-separated list of system architectures (e.g. i386, x86_64,
+ppc, s390) to which a subvolume is restricted. The default is "all architectures"
+if not specified. Notice that "all" is not a legal value for this element; if a
+subvolume is relevant for all architectures, omit *archs*.
 
-Default value
-:   false
-
-Description
-:   If set to false YaST2 will not remove some special partitions (e.g.
-    0x12 Compaq diagnostics, 0xde Dell Utility) if they exists on the
-    disk even if prefer\_remove is set to true. If set to true YaST2
-    will remove even those special partitions.
-
-    > **Caution**
-    >
-    > Caution: Since some machines are not even bootable any more when
-    > these partitions are removed one should really know what he does
-    > when setting this to true
-
-Possible values
-:   comma separated list of reiser, xfs, fat, vfat, ext2, ext3, jfs,
-    ntfs, swap
-
-Default value
-:   Empty list
-
-Description
-:   Partitions that contain filesystems in that list are not deleted
-    even if prefer\_remove is set to true.
-
-Possible values
-:   comma separated list of possible partition ids
-
-Default value
-:   Empty list
-
-Description
-:   Partitions that have a partition id that is contained in the list
-    are not deleted even if prefer\_remove is set to true.
-
-Possible values
-:   comma separated list of possible partition numbers
-
-Default value
-:   Empty list
-
-Description
-:   Partitions that have a partition number that is contained in the
-    list are not deleted even if prefer\_remove is set to true.
-
-To configure individual partitions and disks, a list element is used
-with its items describing how should the partitions be created and
-configured
-
-The attributes of such a partition are determined by several elements.
-These elements are described in more detail later.
-
-> **Note**
->
-> If there is a blank or a equal sign (=) contained in an option value,
-> the values has to be surrounded by double quotes ("). Values that
-> describe sizes can be followed by the letters K, M, G. (K means
-> Kilobytes, M Megabytes and G Gigabytes).
-
-Example
-:   \<mount\>swap\</mount\>
-
-Description
-:   This entry describes the mount point of the partition. For a swap
-    partition the special value "swap" has to be used.
-
-Example
-:   \<fsys\>reiser\</fsys\>
-
-Description
-:   This entry describes the filesystem type created on this partition.
-    Possible Filesystem types are: reiser, ext2, ext3, xfs, vfat, jfs,
-    swap If no filesystem type is given for a partition, reiserfs is
-    used.
-
-Example
-:   \<formatopt\>reiser\<formatopt\>
-
-Description
-:   This entry describes the options given to the format command.
-    Multiple options have to be separated by blanks. There must not be a
-    blank between option letter and option value. This entry is
-    optional.
-
-Example
-:   \<fstopt\>acl,user\_xattr\<fstopt\>
-
-Description
-:   This entry describes the options written to `/etc/fstab`. Multiple
-    options have to be separated by comma. This entry is optional.
-
-Example
-:   \<label\>emil\<label\>
-
-Description
-:   If the filesystem can have a label, the value of the label is set to
-    this value.
-
-Example
-:   \<id\>0x8E\<id\>
-
-Description
-:   This keyword makes it possible to create partitions with partition
-    ide other than 0x83 (for normal filesystem partitions) or 0x82 (for
-    swap partitions). This make it possible to create LVM or MD
-    partitions on a disk.
-
-Example
-:   \<size\>2G\<size\>
-
-Description
-:   This keyword determines the size that is at least needed for a
-    partition. A size value of zero means that YaST2 should try to make
-    the partition as large as possible after all other demands regarding
-    partition size are fulfilled. The special value of "auto" can be
-    given for the `/boot` and swap partition. If auto is set for a /boot
-    or swap partition YaST2 computes a suitable partition size by
-    itself.
-
-Example
-:   \<percent\>30\<percent\>
-
-Description
-:   This keyword determines that a partition should be allocated a
-    certain percentage of the available space for installation on a
-    disk.
-
-Example
-:   \<maxsize\>4G\<maxsize\>
-
-Description
-:   This keyword limits the maximal amount of space that is allocated to
-    a certain partition. This keyword is only useful in conjunction with
-    a size specification by keyword "percent" or by an entry of
-    "size=0".
-
-Example
-:   \<increasable config:type="boolean"\>true\<increasable\>
-
-Default
-:   false
-
-Description
-:   After determining the optimal disk usage the partition may be
-    increased if there is unallocated space in the same gap available.
-    If this keyword is set, the partition may grow larger than specified
-    by the maxsize and percent parameter. This keyword is intended to
-    avoid having unallocated space on a disk after partitioning if
-    possible.
-
-Example
-:   \<disk\>2\<disk\>
-
-Description
-:   This keyword specifies which partitions should be placed on which
-    disks if multiple disks are present in the system. All partitions
-    with the same disk value will be placed on the same disk. The value
-    after the keyword determines the priority of the partition group.
-    Lower numbers mean higher priority. If there are not enough disks in
-    the system a partition group with lower priority is assigned a
-    separate disks before a partition group with higher priority. A
-    partition without disk keyword is implicitly assigned the highest
-    priority 0.
-
-If in the example below the machine has three disks then each of the
-partition groups gets on a separate disk. So one disk will hold `/var`,
-another disk will hold /home`` and another disk will hold `/`, `/usr`
-and` /opt`. If in the above example the machine has only two disks then
-`/home` will still be on a separate disk (since it has lower priority
-than the other partition groups) and `/`, `/usr`, `/opt` and `/var` will
-share the other disk.
-
-If there is only one disk in the system of course all partitions will be
-on that disk. To make the flexible partitioning possible,
-*use\_flexible\_partitioning* option must be se to *true* and
-*partitions* must be surrounded with *flexible\_partitioning* tag.
+Use an exlamation mark ("!") to exclude the subvolume on an architecture:
 
 ```xml
-    <partitioning>
-        <use_flexible_partitioning config:type="boolean">true</use_flexible_partitioning>
-
-        <flexible_partitioning>
-            <partitions config:type="list">
-                <partition>
-                    <disk config:type="integer">3</disk>
-                    <mount>/var</mount>
-                    <percent config:type="integer">100</percent>
-                </partition>
-                <partition>
-                    <disk config:type="integer">2</disk>
-                    <mount>/</mount>
-                    <size>1G</size>
-                </partition>
-                <partition>
-                    <disk config:type="integer">2</disk>
-                    <mount>/usr</mount>
-                    <size>2G</size>
-                </partition>
-                <partition>
-                    <disk config:type="integer">2</disk>
-                    <mount>/opt</mount>
-                    <size>2G</size>
-                </partition>
-               <partition>
-                    <disk config:type="integer">1</disk>
-                    <mount>/home</mount>
-                    <percent config:type="integer">100</percent>
-                </partition>
-            </partitions>
-        </flexible_partitioning>
-    </partitioning>
+<archs>ppc,!board_powernv</archs>
 ```
 
-A more complete example with other options is shown below:
+This means "use for ppc, but not for board_powervr" (board_powervr is a PPC
+with a special board).
+
+Normally, architectures are combined with logical OR, i.e.
 
 ```xml
-    <partitioning>
-        <use_flexible_partitioning config:type="boolean">true</use_flexible_partitioning>
-
-        <flexible_partitioning>
-            <partitions config:type="list">
-                <partition>
-                    <disk config:type="integer">2</disk>
-                    <mount>swap</mount>
-                    <size>auto</size>
-                </partition>
-                <partition>
-                    <disk config:type="integer">1</disk>
-                    <fstopt>defaults</fstopt>
-                    <fsys>reiser</fsys>
-                    <increasable config:type="boolean">true</increasable>
-                    <mount>/</mount>
-                    <size>2gb</size>
-                </partition>
-                <partition>
-                    <disk config:type="integer">2</disk>
-                    <fstopt>defaults,data=writeback,noatime</fstopt>
-                    <fsys>reiser</fsys>
-                    <increasable config:type="boolean">true</increasable>
-                    <mount>/var</mount>
-                    <percent config:type="integer">100</percent>
-                    <size>2gb</size>
-                </partition>
-            </partitions>
-        </flexible_partitioning>
-
-        <prefer_remove config:type="boolean">true</prefer_remove>
-        <remove_special_partitions config:type="boolean">false</remove_special_partitions>
-    </partitioning>
+<archs>i386,x86_64</archs>
 ```
+
+means "if architecture i386 or x86_64". If the current architecture is an
+architecture that was excluded with "!", that subvolume is not used no matter
+what other architectures are specified that might also apply.
+
+**Example:**
+
+This is the full list of SLE-12 SP2:
+
+```xml
+<subvolumes config:type="list">
+    <subvolume>
+        <path>home</path>
+    </subvolume>
+    <subvolume>
+        <path>opt</path>
+    </subvolume>
+    <subvolume>
+        <path>srv</path>
+    </subvolume>
+    <subvolume>
+        <path>tmp</path>
+    </subvolume>
+    <subvolume>
+        <path>usr/local</path>
+    </subvolume>
+    <subvolume>
+        <path>var/cache</path>
+    </subvolume>
+    <subvolume>
+        <path>var/crash</path>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/libvirt/images</path>
+        <copy_on_write config:type="boolean">false</copy_on_write>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/machines</path>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/mailman</path>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/mariadb</path>
+        <copy_on_write config:type="boolean">false</copy_on_write>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/mysql</path>
+        <copy_on_write config:type="boolean">false</copy_on_write>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/named</path>
+    </subvolume>
+    <subvolume>
+        <path>var/lib/pgsql</path>
+        <copy_on_write config:type="boolean">false</copy_on_write>
+    </subvolume>
+    <subvolume>
+        <path>var/log</path>
+    </subvolume>
+    <subvolume>
+        <path>var/opt</path>
+    </subvolume>
+    <subvolume>
+        <path>var/spool</path>
+    </subvolume>
+    <subvolume>
+        <path>var/tmp</path>
+    </subvolume>
+
+    <!-- architecture specific subvolumes -->
+
+    <subvolume>
+        <path>boot/grub2/i386-pc</path>
+        <archs>i386,x86_64</archs>
+    </subvolume>
+    <subvolume>
+        <path>boot/grub2/x86_64-efi</path>
+        <archs>x86_64</archs>
+    </subvolume>
+    <subvolume>
+        <path>boot/grub2/powerpc-ieee1275</path>
+        <archs>ppc,!board_powernv</archs>
+    </subvolume>
+    <subvolume>
+        <path>boot/grub2/x86_64-efi</path>
+        <archs>x86_64</archs>
+    </subvolume>
+    <subvolume>
+        <path>boot/grub2/s390x-emu</path>
+        <archs>s390</archs>
+    </subvolume>
+</subvolumes>
+```
+
+
 
 ### Self Update
 
 To enable the self update feature (FATE#319716), the location of the update
-should be defined in the control file.
+repository should be defined in the control file.
 
 ```
-    <self_update_url>http://updates.opensuse.org/$arch/leap-42.1.dud</self_update_url>
+    <self_update_url>http://updates.opensuse.org/$arch/leap-42.1-installer-update</self_update_url>
 ```
 
-The URL can contain a variable `$arch` that will be replaced by the system's
-architecture, such as `x86_64`, `s390x`, etc. You can find more information in
-the [Arch
-module](http://www.rubydoc.info/github/yast/yast-yast2/Yast/ArchClass).
+This is the fallback which is used when the self-update repository is not
+specified on the boot command line or when there registration module is not available.
 
-Missing driver update archive at the specified URL is not considered as an
-error. If the DUD file is not found then YaST ignores the error and skips the
-self update step silently.
+See more details in the [self-update documentation](./SELF_UPDATE.md).
 
 ### Hooks
 
@@ -1497,6 +1302,12 @@ the installation workflow. Basically, adding proposal has two steps:
 
 Is possible as replacing or removing a step of the installation
 workflow.
+
+#### Adding new system roles
+
+Add-ons are allowed to define additional system roles. Those roles will be shown
+at the bottom of the list of already existing roles. For the time being,
+modifying or removing system roles is not possible.
 
 ### File layout
 
@@ -1695,6 +1506,17 @@ section, which defines changes to the existing workflow and proposals.
                     <module>before_umount_2</module>
                 </before_umount>
             </inst_finish>
+            <system_roles>
+              <insert_system_roles config:type="list">
+                <insert_system_role>
+                  <system_roles config:type="list">
+                    <system_role>
+                      <id>additional_role</id>
+                    </system_role>
+                  </system_roles>
+                </insert_system_role>
+              </insert_system_roles>
+            </system_roles>
         </update>
     </productDefines>
 ```
