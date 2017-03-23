@@ -30,12 +30,14 @@ TESTS = \
   ssh_import_auto_test.rb \
   ssh_importer_presenter_test.rb \
   ssh_importer_test.rb \
-  system_role_handlers_test.rb \
   system_role_test.rb \
   update_repository_test.rb \
   updates_manager_test.rb \
   widgets_overview_test.rb \
-  widgets_system_role_test.rb
+  widgets_system_role_test.rb \
+  lib/system_role_handlers_runner_test.rb \
+  lib/system_role_handlers/dashboard_role_finish_test.rb \
+  lib/system_role_handlers/worker_role_finish_test.rb
 
 TEST_EXTENSIONS = .rb
 RB_LOG_COMPILER = rspec

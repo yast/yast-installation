@@ -134,7 +134,8 @@ ylib_DATA = \
   lib/installation/ssh_config_file.rb \
   lib/installation/ssh_importer_presenter.rb \
   lib/installation/ssh_importer.rb \
-  lib/installation/system_role.rb
+  lib/installation/system_role.rb \
+  lib/installation/system_role_handlers_runner.rb
 
 ylibtransferdir = "${yast2dir}/lib/transfer"
 ylibtransfer_DATA = \
@@ -222,9 +223,10 @@ ylibcfadir = "${yast2dir}/lib/installation/cfa"
 ylibcfa_DATA = \
   lib/installation/cfa/salt.rb
 
-ylibrolehandlerdir = "${yast2dir}/lib/installation/system_roles"
+ylibrolehandlerdir = "${yast2dir}/lib/installation/system_role_handlers"
 ylibrolehandler_DATA = \
-  lib/installation/system_roles/handlers.rb
+  lib/installation/system_role_handlers/dashboard_role_finish.rb \
+  lib/installation/system_role_handlers/worker_role_finish.rb
 
 EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylibdialog_DATA) $(ylib_DATA) $(ylibtransfer_DATA) $(ylibcfa_DATA) $(ylibrolehandler_DATA)
 

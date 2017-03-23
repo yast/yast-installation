@@ -20,28 +20,18 @@
 # ------------------------------------------------------------------------------
 
 require "yast"
-require "installation/cfa/salt"
+require "yast2/execute"
 
 module Installation
   module SystemRoleHandlers
-    class WorkerRoleFinish
-      include Yast::Logger
+    # Implement finish handler for the "dashboard" role
+    class DashboardRoleFinish
+      # Path to the activation script
+      ACTIVATION_SCRIPT_PATH = "/usr/share/caasp-container-manifests/activate.sh".freeze
 
-      def self.run
-        role = SystemRole.find("worker_role")
-        master_conf = CFA::MinionMasterConf.new
-        master = role["controller_node"]
-        begin
-          master_conf.load
-        rescue Errno::ENOENT
-          log.info("The minion master.conf file does not exist, it will be created")
-        end
-        log.info("The controller node for this worker role is: #{master}")
-        # FIXME: the cobblersettings lense does not support dashes in the url
-        # without single quotes, we need to use a custom lense for salt conf.
-        # As Salt can use also 'url' just use in case of dashed.
-        master_conf.master = master.include?("-") ? "'#{master}'" : master
-        master_conf.save
+      # Run the activation script
+      def run
+        Yast::Execute.on_target(ACTIVATION_SCRIPT_PATH)
       end
     end
   end
