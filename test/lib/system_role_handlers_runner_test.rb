@@ -11,9 +11,9 @@ describe Installation::SystemRoleHandlersRunner do
     let(:handler) { double("HandlerInstance") }
 
     before do
-      stub_const("::Installation::SystemRoleHandlers::TestRoleFinish", handler_class)
+      stub_const("Y2SystemRoleHandlers::TestRoleFinish", handler_class)
       allow(handler_class).to receive(:new).and_return(handler)
-      allow(runner).to receive(:require).with("installation/system_role_handlers/test_role_finish")
+      allow(runner).to receive(:require).with("y2system_role_handlers/test_role_finish")
     end
 
     it "runs the handler's 'run' method" do
@@ -34,7 +34,7 @@ describe Installation::SystemRoleHandlersRunner do
 
     context "when handler class is not defined" do
       before do
-        allow(runner).to receive(:require).with("installation/system_role_handlers/undefined_role_finish")
+        allow(runner).to receive(:require).with("y2system_role_handlers/undefined_role_finish")
       end
 
       it "logs the error" do
