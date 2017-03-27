@@ -55,6 +55,7 @@ module Installation
       true
     rescue LoadError
       log.info("There is no special finisher for #{role_id} ('#{filename}' not found)")
+      false
     end
   end
 end
