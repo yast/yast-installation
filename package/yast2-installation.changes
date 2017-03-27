@@ -1,16 +1,22 @@
 -------------------------------------------------------------------
+Fri Mar 24 10:08:47 UTC 2017 - igonzalezsosa@suse.com
+
+- Move CaaSP specific code to yast2-caasp (bsc#1030874)
+- 3.1.217.30
+
+-------------------------------------------------------------------
 Thu Mar 23 11:34:47 UTC 2017 - igonzalezsosa@suse.com
 
 - Run the activation script for the Dashboard role
   (bsc#1030107)
-- 3.1.128.29 
+- 3.1.217.29
 
 -------------------------------------------------------------------
 Thu Mar 16 13:07:44 UTC 2017 - mvidner@suse.com
 
 - Allow proceeding with the installation after a blocking condition
   has been corrected in the overview dialog (bsc#1029291).
-- 3.1.218.28
+- 3.1.217.28
 
 -------------------------------------------------------------------
 Fri Mar  3 10:07:35 UTC 2017 - jsrain@suse.cz

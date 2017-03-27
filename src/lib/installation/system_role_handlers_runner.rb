@@ -20,7 +20,6 @@
 # ------------------------------------------------------------------------------
 
 require "yast"
-require "installation/cfa/salt"
 
 module Installation
   # Run system roles handlers
@@ -36,7 +35,7 @@ module Installation
       return unless require_handler(role_id)
 
       class_name_role = role_id.split("_").map(&:capitalize).join
-      handler = "::Installation::SystemRoleHandlers::#{class_name_role}Finish"
+      handler = "Y2SystemRoleHandlers::#{class_name_role}Finish"
 
       if Object.const_defined?(handler)
         Object.const_get(handler).new.run
@@ -51,11 +50,12 @@ module Installation
     #
     # @return [Boolean] True if the file was loaded; false otherwise.
     def require_handler(role_id)
-      filename = "installation/system_role_handlers/#{role_id}_finish"
+      filename = "y2system_role_handlers/#{role_id}_finish"
       require filename
       true
     rescue LoadError
       log.info("There is no special finisher for #{role_id} ('#{filename}' not found)")
+      false
     end
   end
 end
