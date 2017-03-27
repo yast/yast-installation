@@ -1,7 +1,8 @@
 # System Role Handlers
 
 This is a mechanism that allows to execute specific code depending on the system
-role selected during the installation which was introduced in version 3.1.217.20.
+role selected during the installation which was introduced in version 3.2.21
+(originally in 3.1.217.20 in the `SLE-12-SP2-CASP` branch).
 
 If you prefer, you could think of them as *hooks for system roles*.
 
