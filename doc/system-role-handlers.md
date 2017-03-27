@@ -32,7 +32,8 @@ end
 ```
 
 The `run` method won't receive any argument and is also not expected to return
-any special value.
+any special value. Finally, exceptions will be handled like any other YaST
+exception.
 
 ## Examples
 
