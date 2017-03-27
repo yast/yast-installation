@@ -292,7 +292,7 @@ module Installation
       tempfile = Tempfile.new(package["name"])
       tempfile.close
       Dir.mktmpdir do |workdir|
-        downloader = Packages::PackageDownloader.new(repo_id, package)
+        downloader = Packages::PackageDownloader.new(repo_id, package["name"])
         downloader.download(tempfile.path.to_s)
 
         extractor = Packages::PackageExtractor.new(tempfile.path.to_s)

@@ -110,23 +110,24 @@ describe Installation::UpdateRepository do
     let(:libzypp_package_path) { "/var/adm/tmp/pkg1-3.1.x86_64.rpm" }
     let(:package_path) { "/var/adm/tmp/pkg1-3.1.x86_64.rpm" }
     let(:tempfile) { double("tempfile", close: true, path: package_path, unlink: true) }
+    let(:downloader) { double("Packages::PackageDownloader", download: nil)}
+    let(:extractor) { double("Packages::PackageExtractor", extract: nil)}
 
     before do
       allow(repo).to receive(:add_repo).and_return(repo_id)
       allow(repo).to receive(:packages).and_return([package])
       allow(Dir).to receive(:mktmpdir).and_yield(tmpdir.to_s)
+      allow(Packages::PackageDownloader).to receive(:new).with(repo_id, package["name"]).and_return(downloader)
+      allow(Packages::PackageExtractor).to receive(:new).with(tempfile.path.to_s).and_return(extractor)
+      allow(Tempfile).to receive(:new).and_return(tempfile)
     end
 
     it "builds one squashed filesystem by package" do
-      allow(Tempfile).to receive(:new).and_return(tempfile)
-
       # Download
-      expect_any_instance_of(Packages::PackageDownloader).to receive(:download)
-        .with(tempfile.path.to_s)
+      expect(downloader).to receive(:download).with(tempfile.path.to_s)
 
       # Extract
-      expect_any_instance_of(Packages::PackageExtractor).to receive(:extract)
-        .with(tmpdir.to_s)
+      expect(extractor).to receive(:extract).with(tmpdir.to_s)
 
       # Squash
       expect(Yast::SCR).to receive(:Execute)
@@ -138,8 +139,7 @@ describe Installation::UpdateRepository do
 
     context "when a package can't be retrieved" do
       before do
-        expect_any_instance_of(Packages::PackageDownloader).to receive(:download)
-          .and_raise(Packages::PackageDownloader::FetchError)
+        expect(downloader).to receive(:download).and_raise(Packages::PackageDownloader::FetchError)
       end
 
       it "clear downloaded files and raises a CouldNotFetchUpdate error" do
@@ -151,9 +151,7 @@ describe Installation::UpdateRepository do
 
     context "when a package can't be extracted" do
       it "clear downloaded files and raises a CouldNotFetchUpdate error" do
-        allow_any_instance_of(Packages::PackageDownloader).to receive(:download)
-        allow_any_instance_of(Packages::PackageExtractor).to receive(:extract)
-          .and_raise(Packages::PackageExtractor::ExtractionFailed)
+        expect(extractor).to receive(:extract).and_raise(Packages::PackageExtractor::ExtractionFailed)
 
         expect(repo).to receive(:remove_update_files)
         expect { repo.fetch(download_path) }
@@ -163,9 +161,6 @@ describe Installation::UpdateRepository do
 
     context "when a package can't be squashed" do
       it "clear downloaded files and raises a CouldNotFetchUpdate error" do
-        allow_any_instance_of(Packages::PackageDownloader).to receive(:download)
-        allow_any_instance_of(Packages::PackageExtractor).to receive(:extract)
-
         allow(Yast::SCR).to receive(:Execute)
           .with(Yast::Path.new(".target.bash_output"), /mksquash/)
           .and_return("exit" => 1, "stdout" => "", "stderr" => "")
