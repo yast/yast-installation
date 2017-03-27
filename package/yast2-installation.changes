@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Mar 27 06:50:29 UTC 2017 - lslezak@suse.cz
+
+- Use the shared package download and extraction functionality
+  from FATE#320772
+- 3.2.33
+
+-------------------------------------------------------------------
 Tue Mar 21 11:59:26 UTC 2017 - ancor@suse.com
 
 - Added some extra space to the openSUSE desktop/roles selection

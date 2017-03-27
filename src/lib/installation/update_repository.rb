@@ -16,6 +16,9 @@ require "tempfile"
 require "pathname"
 require "fileutils"
 
+require "packages/package_downloader"
+require "packages/package_extractor"
+
 Yast.import "Pkg"
 Yast.import "Progress"
 Yast.import "URL"
@@ -177,7 +180,9 @@ module Installation
         update_progress(100 * index / packages.size)
         files << fetch_package(package, path)
       end
-    rescue PackageNotFound, CouldNotExtractPackage, CouldNotSquashPackage => e
+    rescue Packages::PackageDownloader::FetchError, Packages::PackageExtractor::ExtractionFailed,
+           CouldNotSquashPackage => e
+
       log.error("Could not fetch update: #{e.inspect}. Rolling back.")
       remove_update_files
       raise CouldNotFetchUpdate
@@ -287,34 +292,16 @@ module Installation
       tempfile = Tempfile.new(package["name"])
       tempfile.close
       Dir.mktmpdir do |workdir|
-        log.info("Trying to get #{package["name"]} from repo #{repo_id}")
-        if !Yast::Pkg.ProvidePackage(repo_id, package["name"], tempfile.path.to_s)
-          log.error("Package #{package} could not be retrieved.")
-          raise PackageNotFound
-        end
-        extract(tempfile, workdir)
+        downloader = Packages::PackageDownloader.new(repo_id, package["name"])
+        downloader.download(tempfile.path.to_s)
+
+        extractor = Packages::PackageExtractor.new(tempfile.path.to_s)
+        extractor.extract(workdir)
+
         build_squashfs(workdir, next_name(dir, length: 3))
       end
     ensure
       tempfile.unlink
-    end
-
-    # Command to extract an RPM which is part of an update
-    EXTRACT_CMD = "rpm2cpio %<source>s | cpio --quiet --sparse -dimu --no-absolute-filenames".freeze
-
-    # Extract a RPM contents to a given directory
-    #
-    # @param package_file [File] RPM package (local file name)
-    # @param dir          [Pathname] Directory to extract the RPM contents
-    #
-    # @raise CouldNotExtractPackage
-    def extract(package_file, dir)
-      Dir.chdir(dir) do
-        cmd = format(EXTRACT_CMD, source: package_file.path)
-        out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
-        log.info("Extracting package #{package_file.inspect}: #{out}")
-        raise CouldNotExtractPackage unless out["exit"].zero?
-      end
     end
 
     # Command to build an squashfs filesystem containing all updates

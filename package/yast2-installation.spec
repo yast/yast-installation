@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.2.32
+Version:        3.2.33
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -46,8 +46,8 @@ BuildRequires: yast2 >= 3.2.20
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
 
-# ProductControl.system_roles
-Requires:       yast2 >= 3.2.15
+# PackageDownloader and PackageExtractor
+Requires:       yast2 >= 3.2.19
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
