@@ -110,8 +110,8 @@ describe Installation::UpdateRepository do
     let(:libzypp_package_path) { "/var/adm/tmp/pkg1-3.1.x86_64.rpm" }
     let(:package_path) { "/var/adm/tmp/pkg1-3.1.x86_64.rpm" }
     let(:tempfile) { double("tempfile", close: true, path: package_path, unlink: true) }
-    let(:downloader) { double("Packages::PackageDownloader", download: nil)}
-    let(:extractor) { double("Packages::PackageExtractor", extract: nil)}
+    let(:downloader) { double("Packages::PackageDownloader", download: nil) }
+    let(:extractor) { double("Packages::PackageExtractor", extract: nil) }
 
     before do
       allow(repo).to receive(:add_repo).and_return(repo_id)
