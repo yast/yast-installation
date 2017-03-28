@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Mar 27 13:39:38 UTC 2017 - igonzalezsosa@suse.com
+
+- Move CaaSP specific code to yast2-caasp (bsc#1030874)
+- 3.2.34
+
+-------------------------------------------------------------------
 Mon Mar 27 06:50:29 UTC 2017 - lslezak@suse.cz
 
 - Use the shared package download and extraction functionality
