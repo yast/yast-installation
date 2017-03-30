@@ -810,6 +810,16 @@ System roles by default preselect first defined entry unless user set it.
 If the first role has an attribute *no_default* then no role will be
 preselected.
 
+Example snippet for no\_default:
+```xml
+<system_roles config:type="list">
+  <system_role>
+    <id>plain</id>
+    <no_default config:type="boolean"> true </no_default>
+  </system_role>
+<system_roles>
+```
+
 They were requested in FATE#317481 and they are an evolution of the earlier
 concept of Server Scenarios used in SLE 11.
 
@@ -827,16 +837,23 @@ Example:
 
       <system_role>
         <id>virtualization_host_kvm</id>
+        <!-- partitioning override -->
         <partitioning>
           <proposal_lvm config:type="boolean">true</proposal_lvm>
         </partitioning>
+        <!-- software override -->
         <software>
           <default_patterns>base Minimal kvm_server</default_patterns>
         </software>
+        <!-- few additional dialogs needed for this role -->
         <additional_dialogs>kvm_setup,virt_manager_setup </additional_dialogs>
+        <!-- enable few additional services -->
         <services config:type="list">
           <service>
             <name>salt-minion</name>
+          </service>
+          <service>
+            <name>devil-master</name>
           </service>
         </services>
       </system_role>
