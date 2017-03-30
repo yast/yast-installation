@@ -798,12 +798,17 @@ Section *supported\_desktops* contains list of one or more
 System Roles, if defined in the control file, are presented during
 the first stage of the installation. The user will select one of them
 and they will affect the proposed configuration of Partitioning and Software.
+It also allows to modify configuration of Systemd Services.
 
 A role can also define additional dialogs that are shown when a given role is
 selected. It is a common installation dialog with *Abort*, *Cancel* and *Next*
 buttons. It supports and uses all parameters from the **GetInstArgs** module.
 When going back, it will first show the last additional dialog and when going
 back through all additional dialogs, it will show again the roles selection.
+
+System roles by default preselect first defined entry unless user set it.
+If the first role has an attribute *no_default* then no role will be
+preselected.
 
 They were requested in FATE#317481 and they are an evolution of the earlier
 concept of Server Scenarios used in SLE 11.
@@ -829,6 +834,11 @@ Example:
           <default_patterns>base Minimal kvm_server</default_patterns>
         </software>
         <additional_dialogs>kvm_setup,virt_manager_setup </additional_dialogs>
+        <services config:type="list">
+          <service>
+            <name>salt-minion</name>
+          </service>
+        </services>
       </system_role>
     </system_roles>
 
@@ -870,6 +880,9 @@ Each role has a short label and a few lines of description in the *texts*
 section, identified by a matching *id* element. The contents of *partitioning*
 and *software* are merged with the corresponding top-level definitions. See
 [Partitioning](#partitioning) and [Software](#software).
+
+The *services* part currently supports only enabling additional services which
+is done by specifying *service* with its *name* as seen in the example.
 
 ### System Scenarios
 
