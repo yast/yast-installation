@@ -9,7 +9,9 @@ should link to a package providing the installer extension by a
 `Provides: installerextension(<package_name>)` dependency.
 
 That referenced package should contain the `installation.xml` file and optionally
-the `y2update.tgz` archive.
+the `y2update.tgz` archive in the root directory. The package should never
+be installed into system, it is used just to provide the temporary data for the
+installer. After the installation is finished the files are not need anymore.
 
 ## Modifying the Installation Workflow
 
@@ -18,11 +20,7 @@ also in add-on installation in an installed system:
 
 ```xml
 <?xml version="1.0"?>
-<!DOCTYPE productDefines SYSTEM "/usr/share/YaST2/control/control.rng">
 <productDefines xmlns="http://www.suse.com/1.0/yast2ns" xmlns:config="http://www.suse.com/1.0/configns">
-    <!-- defines the gettext domain for the messages in this XML -->
-    <textdomain>testing-extension-control</textdomain>
-
     <workflows config:type="list">
         <!-- Installation on a running system -->
         <workflow>
@@ -84,11 +82,7 @@ This `installation.xml` example adds a new role:
 
 ```xml
 <?xml version="1.0"?>
-<!DOCTYPE productDefines SYSTEM "/usr/share/YaST2/control/control.rng">
 <productDefines xmlns="http://www.suse.com/1.0/yast2ns" xmlns:config="http://www.suse.com/1.0/configns">
-    <!-- defines the gettext domain for the messages in this XML -->
-    <textdomain>testing-extension-control</textdomain>
-
     <update>
         <system_roles>
           <insert_system_roles config:type="list">
@@ -120,7 +114,7 @@ This `installation.xml` example adds a new role:
 ```
 
 In this case it just configures the default software patterns but it is possible
-to define any other defaults like partitioning, firewall status, etc...
+to define any other defaults like partitioning, etc...
 
 ## Adding New YaST Code
 
@@ -178,3 +172,6 @@ https://build.opensuse.org/package/show/YaST:extension/testing-extension-install
 contains the `installation.xml` file which defines an additional role and
 adds a new installation step before the role selection dialog. The new installation
 step is defined in the included `y2update.tgz` file.
+
+![Example Extension](
+https://cloud.githubusercontent.com/assets/907998/24544095/48e4e2d0-1602-11e7-8081-4c35bcf90069.gif)
