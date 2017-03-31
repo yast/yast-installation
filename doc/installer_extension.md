@@ -11,12 +11,15 @@ should link to a package providing the installer extension by a
 That referenced package should contain the `installation.xml` file and optionally
 the `y2update.tgz` archive in the root directory. The package should never
 be installed into system, it is used just to provide the temporary data for the
-installer. After the installation is finished the files are not need anymore.
+installer. After the installation is finished the files are not needed anymore.
 
 ## Modifying the Installation Workflow
 
-This `installation.xml` example adds a new step into installtion workflow and
-also in add-on installation in an installed system:
+This `installation.xml` example has two parts:
+
+- The first part adds a new step into the add-on installation workflow in already
+  installed system.
+- The second part adds a new step into the initial installation workflow.
 
 ```xml
 <?xml version="1.0"?>
