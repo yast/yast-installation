@@ -392,7 +392,7 @@ module Yast
         "roles",
         "services",
         "services-manager",
-        "configuration-management"
+        "configuration_management"
       ].freeze
 
     def save_settings_steps
