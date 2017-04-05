@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Apr  5 10:31:12 CEST 2017 - schubi@suse.de
+
+- Added configuration-management to inst_finish.
+  (FATE#319830)
+- 3.2.25
+
+-------------------------------------------------------------------
 Mon Mar 27 13:39:38 UTC 2017 - igonzalezsosa@suse.com
 
 - Move CaaSP specific code to yast2-caasp (bsc#1030874)

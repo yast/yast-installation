@@ -391,7 +391,8 @@ module Yast
         "installation_settings",
         "roles",
         "services",
-        "services-manager"
+        "services-manager",
+        "configuration-management"
       ].freeze
 
     def save_settings_steps
