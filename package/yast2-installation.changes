@@ -3,7 +3,13 @@ Wed Apr  5 10:31:12 CEST 2017 - schubi@suse.de
 
 - Added configuration-management to inst_finish.
   (FATE#319830)
-- 3.2.25
+- 3.2.36
+
+-------------------------------------------------------------------
+Tue Apr  4 14:16:28 UTC 2017 - mvidner@suse.com
+
+- Renamed Controller Node to Administration Node (bsc#1032057).
+- 3.2.35
 
 -------------------------------------------------------------------
 Mon Mar 27 13:39:38 UTC 2017 - igonzalezsosa@suse.com

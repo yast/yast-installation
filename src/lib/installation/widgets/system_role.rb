@@ -34,10 +34,11 @@ module Installation
   module Widgets
     # This widget is responsible of validate and store the introduced location
     # which must be a valid IP or FQDN.
+    # bsc#1032057: old name: Controller Node, new name: Administration Node.
     class ControllerNode < CWM::InputField
       def label
         # intentional no translation for CAASP
-        "Controller Node"
+        "Administration Node"
       end
 
       # It stores the value of the input field if validates
@@ -60,8 +61,8 @@ module Installation
         return true if Yast::IP.Check(value) || Yast::Hostname.CheckFQ(value)
 
         Yast::Popup.Error(
-          # TRANSLATORS: error message for invalid controller node location
-          _("Not valid location for the controller node, " \
+          # TRANSLATORS: error message for invalid administration node location
+          _("Not valid location for the administration node, " \
           "please enter a valid IP or Hostname")
         )
 
