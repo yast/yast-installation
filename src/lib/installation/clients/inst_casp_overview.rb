@@ -68,16 +68,18 @@ module Installation
         ret = Yast::CWM.show(
           content,
           # Title for installation overview dialog
-          caption:        _("Installation Overview"),
+          caption:      _("Installation Overview"),
           # Button label: start the installation
-          next_button:    _("Install"),
+          next_button:  _("Install"),
           # do not show abort and back button
-          abort_button:   "",
-          back_button:    "",
-          # do not store stuff when just redrawing
-          skip_store_for: [:redraw]
+          abort_button: "",
+          back_button:  ""
         )
-        next if ret == :redraw
+
+        # Currently no other return value is expected, behavior can
+        # be unpredictable if something else is received - raise
+        # RuntimeError
+        raise "Unexpected return value" if ret != :next
 
         # do software proposal
         d = Yast::WFM.CallFunction("software_proposal",
@@ -124,8 +126,8 @@ module Installation
         HWeight(
           6,
           VBox(
+            VSpacing(2),
             VWeight(5, upper_left),
-            VStretch(),
             VWeight(5, lower_left)
           )
         ),
@@ -133,8 +135,8 @@ module Installation
         HWeight(
           4,
           VBox(
+            VSpacing(2),
             VWeight(5, upper_right),
-            VStretch(),
             VWeight(5, lower_right)
           )
         )
@@ -145,6 +147,10 @@ module Installation
     # block installation
     def content
       controller_node = Installation::Widgets::ControllerNodePlace.new
+
+      kdump_overview = Installation::Widgets::Overview.new(client: "kdump_proposal")
+      bootloader_overview = Installation::Widgets::Overview.new(client: "bootloader_proposal", redraw: [kdump_overview])
+
       quadrant_layout(
         upper_left:  VBox(
           ::Registration::Widgets::RegistrationCode.new,
@@ -158,12 +164,12 @@ module Installation
           Tune::Widgets::SystemInformation.new
         ),
         upper_right: VBox(
-          Installation::Widgets::Overview.new(client: "partitions_proposal"),
-          Installation::Widgets::Overview.new(client: "bootloader_proposal")
+          Installation::Widgets::Overview.new(client: "partitions_proposal", redraw: [bootloader_overview]),
+          bootloader_overview
         ),
         lower_right: VBox(
           Installation::Widgets::Overview.new(client: "network_proposal"),
-          Installation::Widgets::Overview.new(client: "kdump_proposal")
+          kdump_overview
         )
       )
     end

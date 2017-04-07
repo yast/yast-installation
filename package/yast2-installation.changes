@@ -1,7 +1,100 @@
 -------------------------------------------------------------------
-Tue Feb 28 15:09:34 UTC 2017 - jreidinger@suse.com
+Wed Apr  5 11:31:12 CEST 2017 - jreidinger@suse.com
 
 - Adapt to new syntax of y2base script (bsc#1027181)
+- 3.2.37
+
+-------------------------------------------------------------------
+Wed Apr  5 10:31:12 CEST 2017 - schubi@suse.de
+
+- Added configuration-management to inst_finish.
+  (FATE#319830)
+- 3.2.36
+
+-------------------------------------------------------------------
+Tue Apr  4 14:16:28 UTC 2017 - mvidner@suse.com
+
+- Renamed Controller Node to Administration Node (bsc#1032057).
+- 3.2.35
+
+-------------------------------------------------------------------
+Mon Mar 27 13:39:38 UTC 2017 - igonzalezsosa@suse.com
+
+- Move CaaSP specific code to yast2-caasp (bsc#1030874)
+- 3.2.34
+
+-------------------------------------------------------------------
+Mon Mar 27 06:50:29 UTC 2017 - lslezak@suse.cz
+
+- Use the shared package download and extraction functionality
+  from FATE#320772
+- 3.2.33
+
+-------------------------------------------------------------------
+Tue Mar 21 11:59:26 UTC 2017 - ancor@suse.com
+
+- Added some extra space to the openSUSE desktop/roles selection
+  dialog (improvement on the fix for poo#14936, bsc#1025415).
+- 3.2.32
+
+-------------------------------------------------------------------
+Thu Mar 16 13:07:44 UTC 2017 - mvidner@suse.com
+
+- Allow proceeding with the installation after a blocking condition
+  has been corrected in the overview dialog (bsc#1029291).
+- 3.2.31
+
+-------------------------------------------------------------------
+Wed Mar 15 10:19:33 UTC 2017 - igonzalezsosa@suse.com
+
+- Improve roles buttons distribution in textmode (related to
+  FATE#320772)
+- 3.2.30 
+
+-------------------------------------------------------------------
+Tue Mar 14 12:05:44 UTC 2017 - igonzalezsosa@suse.com
+
+- Fix desktop selection during installation (bsc#1029312)
+- 3.2.29
+
+-------------------------------------------------------------------
+Mon Mar 13 12:16:23 UTC 2017 - igonzalezsosa@suse.com
+
+- Support to add roles through addons (FATE#320772)
+- 3.2.28
+
+-------------------------------------------------------------------
+Thu Mar  9 17:48:25 UTC 2017 - jreidinger@suse.com
+
+- fix crash when reading if desktop role should have default
+  pre-selected (bsc#1025415)
+- 3.2.27
+
+-------------------------------------------------------------------
+Wed Mar  8 16:11:59 CET 2017 - mvidner@suse.cz
+
+- Really use the directory.yast file (fate#322372)
+- 3.2.26
+
+-------------------------------------------------------------------
+Thu Mar  6 13:33:41 UTC 2017 - mfilka@suse.com
+
+- fate#322328
+  - adapted all-in-one dialog according to comments from UX
+- 3.2.25
+
+-------------------------------------------------------------------
+Mon Mar  6 09:39:00 UTC 2017 - mfilka@suse.com
+
+- CaaSP: do not crash when used a dashed url for the controller
+  node location (bsc#1024965)
+- CaaSP AY: Adapted requirements of yast2-services-manager.
+  (FATE#321738)
+- bnc#1022546
+  - update all-in-one's subdialog (network/kdump/partitioning/...)
+    overview when the dialog is closed and do not lose another
+    content already entered by user.
+>>>>>>> master
 - 3.2.24
 
 -------------------------------------------------------------------

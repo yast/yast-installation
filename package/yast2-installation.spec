@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.2.24
+Version:        3.2.37
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -26,8 +26,8 @@ Source0:        %{name}-%{version}.tar.bz2
 Group:          System/YaST
 License:        GPL-2.0
 Url:            http://github.com/yast/yast-installation
-# new y2base script
-Requires:       yast2-ruby-bindings >= 3.2.6
+# new y2start script
+Requires:       yast2-ruby-bindings >= 3.2.10
 
 Summary:        YaST2 - Installation Parts
 
@@ -41,14 +41,14 @@ BuildRequires:  yast2-xml
 BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
 
-# UI::Widgets
-BuildRequires: yast2 >= 3.2.8
+# CWM::RadioButtons#vspacing
+BuildRequires: yast2 >= 3.2.20
 
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
 
-# Needs UI:Widgets
-Requires:       yast2 >= 3.2.8
+# PackageDownloader and PackageExtractor
+Requires:       yast2 >= 3.2.19
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
@@ -72,8 +72,9 @@ Requires:	initviocons
 # Proxy settings for 2nd stage (bnc#764951)
 Requires:       yast2-proxy
 
-# Systemd default target and services
-Requires: yast2-services-manager
+# Systemd default target and services. This version supports
+# writing settings in the first installation stage.
+Requires: yast2-services-manager >= 3.2.1
 
 # Network service setup moved into yast2-network
 Requires: yast2-network >= 3.1.143

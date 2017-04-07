@@ -21,7 +21,7 @@
 
 require "yast"
 require "installation/services"
-require "installation/system_roles/handlers"
+require "installation/system_role_handlers_runner"
 
 Yast.import "ProductControl"
 Yast.import "ProductFeatures"
@@ -84,24 +84,24 @@ module Installation
       #
       # @return [Array<String>] array with all the role ids; empty if no roles
       def ids
-        all.keys
+        all.map(&:id)
       end
 
       # returns if roles should set default or have no role preselected
       def default?
-        all.first["no_default"]
+        !all.first["no_default"]
       end
 
-      # Initializes and maintains a map with the id of the roles and
-      # SystemRole objects with the roles defined in the control file.
+      # Returns an array with all the SystemRole objects
       #
       # @return [Hash<String, SystemRole>]
       def all
-        return @roles if @roles
+        @roles ||= raw_roles.map { |r| from_control(r) }
+      end
 
-        @roles = raw_roles.each_with_object({}) do |raw_role, entries|
-          entries[raw_role["id"]] = from_control(raw_role)
-        end
+      # Clears roles cache
+      def clear
+        @roles = nil
       end
 
       # Fetchs the roles from the control file and returns them as they are.
@@ -111,14 +111,7 @@ module Installation
       #
       # @return [Array<Hash>] returns an empty array if no roles defined
       def raw_roles
-        @raw_roles ||= Yast::ProductControl.productControl.fetch("system_roles", []) || []
-      end
-
-      # Returns an array with all the SystemRole objects
-      #
-      # @return [Array<SystemRole>] retuns an empty array if no roles defined
-      def roles
-        all.values
+        Yast::ProductControl.system_roles
       end
 
       # Establish as the current role the one given as parameter.
@@ -142,7 +135,7 @@ module Installation
       # @param role_id [String]
       # @return [SystemRole, nil]
       def find(role_id)
-        all[role_id]
+        all.find { |r| r.id == role_id }
       end
 
       # Creates a SystemRole instance for the given role (in raw format).
@@ -159,6 +152,7 @@ module Installation
             description: Yast::ProductControl.GetTranslatedText("#{id}_description")
           )
 
+        role["additional_dialogs"] = raw_role["additional_dialogs"]
         role["services"] = raw_role["services"] || []
         role["no_default"] = raw_role["no_default"] || false
 
@@ -171,15 +165,7 @@ module Installation
           log.info("There is no role selected so nothing to do")
           return
         end
-
-        class_name_role = current.split("_").map(&:capitalize).join
-        handler = "::Installation::SystemRoleHandlers::#{class_name_role}Finish"
-
-        if Object.const_defined?(handler)
-          Object.const_get(handler).run
-        else
-          log.info("There is no special finisher for #{current}")
-        end
+        SystemRoleHandlersRunner.new.finish(current)
       end
     end
 
