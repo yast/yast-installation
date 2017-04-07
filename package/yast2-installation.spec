@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.2.36
+Version:        3.2.37
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -26,7 +26,8 @@ Source0:        %{name}-%{version}.tar.bz2
 Group:          System/YaST
 License:        GPL-2.0
 Url:            http://github.com/yast/yast-installation
-Requires:       yast2-ruby-bindings >= 3.1.8
+# new y2start script
+Requires:       yast2-ruby-bindings >= 3.2.10
 
 Summary:        YaST2 - Installation Parts
 
