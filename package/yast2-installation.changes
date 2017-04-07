@@ -94,7 +94,6 @@ Mon Mar  6 09:39:00 UTC 2017 - mfilka@suse.com
   - update all-in-one's subdialog (network/kdump/partitioning/...)
     overview when the dialog is closed and do not lose another
     content already entered by user.
->>>>>>> master
 - 3.2.24
 
 -------------------------------------------------------------------
