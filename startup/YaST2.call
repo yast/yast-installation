@@ -154,7 +154,7 @@ function prepare_for_vnc () {
 	set_splash 100
 
 	#=============================================
-	# Setup y2base options
+	# Setup y2start options
 	#---------------------------------------------
 	Y2_UI_ARGS="--fullscreen --noborder --auto-fonts"
 
@@ -329,7 +329,7 @@ function start_yast () {
 	log "\tQT_IM_MODULE: $QT_IM_MODULE"
 
 	if [ "$Y2GDB" != "1" ]; then
-	    $OPT_FBITERM y2base		\
+	    $OPT_FBITERM y2start		\
 		"$Y2_MODULE_NAME"	\
 		$Y2_MODE_FLAGS		\
 		$Y2_MODULE_ARGS	        \
@@ -345,7 +345,7 @@ function start_yast () {
 			$Y2_MODE		\
 			$Y2_UI_ARGS >> $GDBCMDS
 	    echo set pagination off >> $GDBCMDS
-	    /usr/bin/gdb -x $GDBCMDS /usr/lib/YaST2/bin/y2base | \
+	    /usr/bin/gdb -x $GDBCMDS /usr/lib/YaST2/bin/y2start | \
 		tee /var/log/YaST2/gdb-log
 	    Y2_EXIT_CODE=$?
 	fi
