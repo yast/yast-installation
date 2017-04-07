@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Wed Apr  5 11:31:12 CEST 2017 - jreidinger@suse.com
 
-- Adapt to new syntax of y2base script (bsc#1027181)
+- Use y2start script instead of y2base (bsc#1027181)
 - 3.2.37
 
 -------------------------------------------------------------------
