@@ -19,11 +19,31 @@ describe ::Installation::Widgets::NtpServer do
   end
 
   describe "#init" do
+    let(:ntp_servers) { [] }
+
+    before do
+      allow(Yast::SlpService).to receive(:all).and_return(ntp_servers)
+    end
+
     it "reads initial value from dashboard role" do
       allow(dashboard_role).to receive(:[]).with("ntp_servers")
         .and_return(["server1"])
       expect(widget).to receive(:value=).with("server1")
       widget.init
+    end
+
+    context "when some NTP server is found via SLP" do
+      let(:ntp_servers) do
+        [
+          double("server1", slp_url: "service:ntp://server1.lan:123,65535"),
+          double("server2", slp_url: "service:ntp://server2.lan:123,65535")
+        ]
+      end
+
+      it "sets those servers as the default value" do
+        expect(widget).to receive(:value=).with("server1.lan server2.lan")
+        widget.init
+      end
     end
   end
 

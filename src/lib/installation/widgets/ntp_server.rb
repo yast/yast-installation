@@ -1,16 +1,20 @@
 require "yast"
 require "installation/system_role"
+require "uri"
 
 Yast.import "CWM"
 Yast.import "Popup"
 Yast.import "Label"
 Yast.import "IP"
 Yast.import "Hostname"
+Yast.import "SlpService"
 
 module Installation
   module Widgets
     # This widget is responsible of validating and storing the NTP server to use.
     class NtpServer < CWM::InputField
+      SLP_SERVICE = "ntp".freeze
+
       # intentional no translation for CaaSP
       def label
         "NTP Servers"
@@ -23,7 +27,22 @@ module Installation
 
       # Initializes the widget's value
       def init
-        self.value = (role["ntp_servers"] || []).join(" ")
+        saved_servers =
+          if role["ntp_servers"] && !role["ntp_servers"].empty?
+            role["ntp_servers"]
+          else
+            ntp_servers
+          end
+        self.value = saved_servers.join(" ")
+      end
+
+      SERVICE_REGEXP = %r{\Aservice:(ntp://[^,]+)(,\d+)?}
+      def ntp_servers
+        Yast::SlpService.all("ntp").map do |service|
+          match = SERVICE_REGEXP.match(service.slp_url)
+          url = match[1]
+          URI(url).host
+        end
       end
 
       # Validate input
