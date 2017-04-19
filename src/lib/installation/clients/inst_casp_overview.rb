@@ -27,6 +27,7 @@ require "registration/widgets/registration_code"
 
 require "installation/widgets/overview"
 require "installation/widgets/system_role"
+require "installation/widgets/ntp_server"
 require "installation/services"
 
 module Installation
@@ -147,6 +148,7 @@ module Installation
     # block installation
     def content
       controller_node = Installation::Widgets::ControllerNodePlace.new
+      ntp_server = Installation::Widgets::NtpServerPlace.new
 
       kdump_overview = Installation::Widgets::Overview.new(client: "kdump_proposal")
       bootloader_overview = Installation::Widgets::Overview.new(client: "bootloader_proposal", redraw: [kdump_overview])
@@ -159,8 +161,9 @@ module Installation
           ::Y2Country::Widgets::KeyboardSelectionCombo.new("english-us")
         ),
         lower_left:  VBox(
-          Installation::Widgets::SystemRole.new(controller_node),
+          Installation::Widgets::SystemRole.new(controller_node, ntp_server),
           controller_node,
+          ntp_server,
           Tune::Widgets::SystemInformation.new
         ),
         upper_right: VBox(
