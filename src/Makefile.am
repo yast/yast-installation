@@ -217,7 +217,8 @@ ylibdialog_DATA = \
 ylibwidgetdir = "${yast2dir}/lib/installation/widgets"
 ylibwidget_DATA = \
   lib/installation/widgets/overview.rb \
-  lib/installation/widgets/system_role.rb
+  lib/installation/widgets/system_role.rb \
+  lib/installation/widgets/ntp_server.rb
 
 EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(schemafiles_DATA) $(desktop_DATA) $(fillup_DATA) $(ylibdialog_DATA) $(ylib_DATA) $(ylibtransfer_DATA)
 
