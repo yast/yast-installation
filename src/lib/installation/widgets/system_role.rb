@@ -88,6 +88,11 @@ module Installation
     end
 
     class ControllerNodePlace < CWM::ReplacePoint
+      # @return [ControllerNode] Controller node widget
+      attr_reader :controller_node
+      # @return [Empty] Empty widget placeholder
+      attr_reader :empty
+
       def initialize
         @controller_node = ControllerNode.new
         @empty = CWM::Empty.new("no_controller")
@@ -95,11 +100,12 @@ module Installation
       end
 
       def show
-        replace(@controller_node)
+        replace(controller_node)
       end
 
       def hide
-        replace(@empty)
+        controller_node.remember!
+        replace(empty)
       end
     end
 
