@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Apr 20 14:00:08 UTC 2017 - igonzalezsosa@suse.com
+
+- Add a NTP Servers settings to the overview dialog
+  (FATE#323249)
+- 3.1.217.32
+
+-------------------------------------------------------------------
 Tue Apr  4 14:16:28 UTC 2017 - mvidner@suse.com
 
 - Renamed Controller Node to Administration Node (bsc#1032057).
