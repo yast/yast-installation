@@ -21,7 +21,6 @@ describe ::Installation::Widgets::NtpServer do
   describe "#init" do
     subject(:widget) { ::Installation::Widgets::NtpServer.new(["ntp.suse.de"]) }
 
-
     it "reads initial value from dashboard role" do
       allow(dashboard_role).to receive(:[]).with("ntp_servers")
         .and_return(["server1"])
@@ -51,7 +50,6 @@ describe ::Installation::Widgets::NtpServer do
 
   describe "#store" do
     let(:value) { "" }
-
 
     before do
       allow(widget).to receive(:value).and_return(value)

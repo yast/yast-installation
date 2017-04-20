@@ -184,7 +184,6 @@ module Installation
       Yast::Mode.normal
     end
 
-
     # Regexp to extract the URL from a SLP URL
     SERVICE_REGEXP = %r{\Aservice:(ntp://[^,]+)(,\d+)?}
     # SLP identifier for NTP
