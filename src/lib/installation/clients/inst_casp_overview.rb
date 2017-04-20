@@ -19,6 +19,7 @@
 # current contact information at www.suse.com.
 # ------------------------------------------------------------------------------
 
+require "uri"
 require "users/widgets"
 require "y2country/widgets"
 require "ui/widgets"
@@ -50,6 +51,7 @@ module Installation
       Yast.import "Popup"
       Yast.import "Pkg"
       Yast.import "InstShowInfo"
+      Yast.import "SlpService"
 
       textdomain "installation"
 
@@ -148,7 +150,7 @@ module Installation
     # block installation
     def content
       controller_node = Installation::Widgets::ControllerNodePlace.new
-      ntp_server = Installation::Widgets::NtpServerPlace.new
+      ntp_server = Installation::Widgets::NtpServerPlace.new(ntp_servers)
 
       kdump_overview = Installation::Widgets::Overview.new(client: "kdump_proposal")
       bootloader_overview = Installation::Widgets::Overview.new(client: "bootloader_proposal", redraw: [kdump_overview])
@@ -180,6 +182,22 @@ module Installation
     # Returns whether we need/ed to create new UI Wizard
     def separate_wizard_needed?
       Yast::Mode.normal
+    end
+
+
+    # Regexp to extract the URL from a SLP URL
+    SERVICE_REGEXP = %r{\Aservice:(ntp://[^,]+)(,\d+)?}
+    # SLP identifier for NTP
+    NTP_SLP_SERVICE = "ntp".freeze
+    # Discover NTP servers through SLP
+    #
+    # @return [Array<String>] NTP server names
+    def ntp_servers
+      Yast::SlpService.all(NTP_SLP_SERVICE).map do |service|
+        match = SERVICE_REGEXP.match(service.slp_url)
+        url = match[1]
+        URI(url).host
+      end
     end
   end
 end

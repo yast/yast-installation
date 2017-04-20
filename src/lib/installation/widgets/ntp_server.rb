@@ -7,13 +7,20 @@ Yast.import "Popup"
 Yast.import "Label"
 Yast.import "IP"
 Yast.import "Hostname"
-Yast.import "SlpService"
 
 module Installation
   module Widgets
     # This widget is responsible of validating and storing the NTP server to use.
     class NtpServer < CWM::InputField
-      SLP_SERVICE = "ntp".freeze
+      # @return [Array<String>] List of default servers
+      attr_reader :default_servers
+
+      # Constructor
+      #
+      # @params default_servers [Array<String>] List of servers
+      def initialize(default_servers = [])
+        @default_servers = default_servers
+      end
 
       # intentional no translation for CaaSP
       def label
@@ -31,18 +38,9 @@ module Installation
           if role["ntp_servers"] && !role["ntp_servers"].empty?
             role["ntp_servers"]
           else
-            ntp_servers
+            default_servers
           end
         self.value = saved_servers.join(" ")
-      end
-
-      SERVICE_REGEXP = %r{\Aservice:(ntp://[^,]+)(,\d+)?}
-      def ntp_servers
-        Yast::SlpService.all("ntp").map do |service|
-          match = SERVICE_REGEXP.match(service.slp_url)
-          url = match[1]
-          URI(url).host
-        end
       end
 
       # Validate input
@@ -97,8 +95,8 @@ module Installation
 
     # NTP Server widget placeholder
     class NtpServerPlace < CWM::ReplacePoint
-      def initialize
-        @ntp_server = NtpServer.new
+      def initialize(default_servers = [])
+        @ntp_server = NtpServer.new(default_servers)
         @empty = CWM::Empty.new("no_ntp_server")
         super(id: "ntp_server_placeholder", widget: @empty)
       end
