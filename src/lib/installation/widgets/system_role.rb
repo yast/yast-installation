@@ -35,6 +35,10 @@ module Installation
     # which must be a valid IP or FQDN.
     # bsc#1032057: old name: Controller Node, new name: Administration Node.
     class ControllerNode < CWM::InputField
+      # @return [String] Last known value (@see #remember!)
+      attr_accessor :last_value
+      private :last_value, :last_value=
+
       def label
         # intentional no translation for CAASP
         "Administration Node"
@@ -44,12 +48,13 @@ module Installation
       #
       # @see #validate
       def store
+        remember!
         role["controller_node"] = value
       end
 
       # The input field is initialized with previous stored value
       def init
-        self.value = role["controller_node"]
+        self.value = last_value || role["controller_node"]
       end
 
       # It returns true if the value is a valid IP or a valid FQDN, if not it
@@ -66,6 +71,13 @@ module Installation
         )
 
         false
+      end
+
+      # Remember the value when init is called
+      #
+      # @see #last_value
+      def remember!
+        self.last_value = value
       end
 
     private

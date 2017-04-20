@@ -15,7 +15,7 @@ describe ::Installation::Widgets::ControllerNode do
     expect(subject.label).to_not be_empty
   end
 
-  context "initialization" do
+  describe "#init" do
     it "is initialized with the previously stored value if present" do
       worker_role["controller_node"] = "previous_location"
 
@@ -23,19 +23,38 @@ describe ::Installation::Widgets::ControllerNode do
 
       subject.init
     end
+
+    context "when a value was remembered" do
+      before do
+        allow(subject).to receive(:value).and_return("remembered_location")
+        worker_role["controller_node"] = "previous_location"
+        subject.remember!
+      end
+
+      it "uses the remembered value" do
+        expect(subject).to receive(:value=).with("remembered_location")
+        subject.init
+      end
+    end
   end
 
-  context "store" do
+  describe "#store" do
+    before do
+      allow(subject).to receive(:value).and_return("value_to_store")
+    end
+
     it "stores current value" do
-      expect(subject).to receive(:value).and_return("value_to_store")
-
       expect(worker_role).to receive("[]=").with("controller_node", "value_to_store")
+      subject.store
+    end
 
+    it "remembers the last value" do
+      expect(subject).to receive(:remember!)
       subject.store
     end
   end
 
-  context "validation" do
+  describe "#validate" do
     it "reports an error if the current value is not a valid IP or FQDN and returns false" do
       allow(Yast::IP).to receive(:Check).and_return(false)
       allow(Yast::Hostname).to receive(:CheckFQ).and_return(false)
@@ -58,5 +77,4 @@ describe ::Installation::Widgets::ControllerNode do
       expect(subject.validate).to eql(true)
     end
   end
-
 end
