@@ -15,6 +15,10 @@ module Installation
       # @return [Array<String>] List of default servers
       attr_reader :default_servers
 
+      # @return [String] Last known value (@see #remember!)
+      attr_accessor :last_value
+      private :last_value, :last_value=
+
       # Constructor
       #
       # @params default_servers [Array<String>] List of servers
@@ -23,17 +27,24 @@ module Installation
       end
 
       # intentional no translation for CaaSP
+      #
+      # @return [String] Widget's label
       def label
         "NTP Servers"
       end
 
       # Store the value of the input field if validates
       def store
+        remember!
         role["ntp_servers"] = servers
       end
 
       # Initializes the widget's value
       def init
+        if last_value
+          self.value = last_value
+          return
+        end
         saved_servers =
           if role["ntp_servers"] && !role["ntp_servers"].empty?
             role["ntp_servers"]
@@ -59,6 +70,13 @@ module Installation
         )
 
         false
+      end
+
+      # Remember the value when init is called
+      #
+      # @see #last_value
+      def remember!
+        self.last_value = value
       end
 
     private
@@ -95,6 +113,14 @@ module Installation
 
     # NTP Server widget placeholder
     class NtpServerPlace < CWM::ReplacePoint
+      # @return [NtpServer] NTP Server widget
+      attr_reader :ntp_server
+      # @return [Empty] Empty widget placeholder
+      attr_reader :empty
+
+      private :ntp_server, :empty
+
+      # Constructor
       def initialize(default_servers = [])
         @ntp_server = NtpServer.new(default_servers)
         @empty = CWM::Empty.new("no_ntp_server")
@@ -103,12 +129,13 @@ module Installation
 
       # Show the NtpServer widget
       def show
-        replace(@ntp_server)
+        replace(ntp_server)
       end
 
       # Hide the NtpServer widget
       def hide
-        replace(@empty)
+        ntp_server.remember!
+        replace(empty)
       end
     end
   end
