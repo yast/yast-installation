@@ -99,7 +99,7 @@ module Installation
       # @return [Boolean] true if user wants to skip it; false otherwise.
       def skip_ntp_server?
         Yast::Popup.AnyQuestion(
-          "NTP Server",
+          "NTP Servers",
           # TRANSLATORS: error message for invalid ntp server name/address
           "You have not configured an NTP server. This may lead to\n" \
           "your cluster not functioning properly or at all.\n" \
