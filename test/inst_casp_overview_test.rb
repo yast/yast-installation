@@ -74,7 +74,7 @@ describe ::Installation::InstCaspOverview do
         .with("inst_doit", []).and_return(:next)
       allow(File).to receive(:exist?).and_call_original
       allow(File).to receive(:exist?).with("/info.txt").and_return(false)
-      expect(Yast::SlpService).to receive(:all).and_return(ntp_servers)
+      allow(Yast::SlpService).to receive(:all).and_return(ntp_servers)
     end
 
     it "sets package locale same as Language" do

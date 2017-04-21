@@ -57,12 +57,7 @@ module Installation
 
       # Initializes the widget's value
       def init
-        saved_servers =
-          if role["ntp_servers"] && !role["ntp_servers"].empty?
-            role["ntp_servers"]
-          else
-            default_servers
-          end
+        saved_servers = role["ntp_servers"] || default_servers
         self.value = saved_servers.join(" ")
       end
 
