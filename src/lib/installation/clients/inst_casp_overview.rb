@@ -27,6 +27,7 @@ require "tune/widgets"
 require "registration/widgets/registration_code"
 
 require "installation/widgets/overview"
+require "installation/widgets/hiding_place"
 require "installation/widgets/system_role"
 require "installation/widgets/ntp_server"
 require "installation/services"
@@ -149,8 +150,8 @@ module Installation
     # Returns a pair with UI widget-set for the dialog and widgets that can
     # block installation
     def content
-      controller_node = Installation::Widgets::ControllerNodePlace.new
-      ntp_server = Installation::Widgets::NtpServerPlace.new(ntp_servers)
+      controller_node = Installation::Widgets::HidingPlace.new(Installation::Widgets::ControllerNode.new)
+      ntp_server = Installation::Widgets::HidingPlace.new(Installation::Widgets::NtpServer.new(ntp_servers))
 
       kdump_overview = Installation::Widgets::Overview.new(client: "kdump_proposal")
       bootloader_overview = Installation::Widgets::Overview.new(client: "bootloader_proposal", redraw: [kdump_overview])

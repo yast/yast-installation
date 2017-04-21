@@ -116,40 +116,5 @@ module Installation
         ::Installation::SystemRole.find("dashboard_role")
       end
     end
-
-    # NTP Server widget placeholder
-    class NtpServerPlace < CWM::ReplacePoint
-      # Constructor
-      def initialize(default_servers = [])
-        @ntp_server = NtpServer.new(default_servers)
-        @empty = CWM::Empty.new("no_ntp_server")
-        super(id: "ntp_server_placeholder", widget: @empty)
-      end
-
-      # Show the NtpServer widget
-      def show
-        replace(ntp_server)
-        ntp_server.value = @ntp_server_value if @ntp_server_value
-      end
-
-      # Hide the NtpServer widget
-      def hide
-        @ntp_server_value = ntp_server.value
-        replace(empty)
-      end
-
-      # Save the current NTP Server value
-      def store
-        @ntp_server_value = ntp_server.value
-        super
-      end
-
-    private
-
-      # @return [NtpServer] NTP Server widget
-      attr_reader :ntp_server
-      # @return [Empty] Empty widget placeholder
-      attr_reader :empty
-    end
   end
 end

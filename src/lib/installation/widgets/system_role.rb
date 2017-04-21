@@ -75,37 +75,6 @@ module Installation
       end
     end
 
-    class ControllerNodePlace < CWM::ReplacePoint
-      def initialize
-        @controller_node = ControllerNode.new
-        @empty = CWM::Empty.new("no_controller")
-        super(id: "controller_placeholder", widget: @empty)
-      end
-
-      def show
-        replace(controller_node)
-        controller_node.value = @controller_node_value if @controller_node_value
-      end
-
-      def hide
-        @controller_node_value = controller_node.value
-        replace(empty)
-      end
-
-      # Save the current NTP Server value
-      def store
-        @controller_node_value = controller_node_value
-        super
-      end
-
-    private
-
-      # @return [ControllerNode] Controller node widget
-      attr_reader :controller_node
-      # @return [Empty] Empty widget placeholder
-      attr_reader :empty
-    end
-
     class SystemRole < CWM::ComboBox
       ROLE_WIDGETS = {
         "worker_role"    => [:controller_node],
