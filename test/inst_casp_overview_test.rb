@@ -143,5 +143,47 @@ describe ::Installation::InstCaspOverview do
         subject.run
       end
     end
+
+    context "when some SLP URL cannot be parsed" do
+      let(:ntp_servers) do
+        [
+          double("server1", slp_url: "service:ntp://server1.lan:123,65535"),
+          double("error1", slp_url: "service:ntp://*,65535"),
+          double("error2", slp_url: "ntp:,65535")
+        ]
+      end
+
+      it "proposes only the valid ones" do
+        expect(Installation::Widgets::NtpServer).to receive(:new)
+          .with(["server1.lan"]).and_call_original
+        subject.run
+      end
+
+      it "logs the problem" do
+        expect(subject.log).to receive(:warn).twice.with(/not a valid URI/)
+        subject.run
+      end
+    end
+
+    context "when some SLP URL cannot be parsed" do
+      let(:ntp_servers) do
+        [
+          double("server1", slp_url: "service:ntp://server1.lan:123,65535"),
+          double("error1", slp_url: "service:ntp://*,65535"),
+          double("error2", slp_url: "ntp:,65535")
+        ]
+      end
+
+      it "proposes only the valid ones" do
+        expect(Installation::Widgets::NtpServer).to receive(:new)
+          .with(["server1.lan"]).and_call_original
+        subject.run
+      end
+
+      it "logs the problem" do
+        expect(subject.log).to receive(:warn).twice.with(/not a valid URI/)
+        subject.run
+      end
+    end
   end
 end

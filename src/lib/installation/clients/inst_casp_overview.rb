@@ -199,8 +199,8 @@ module Installation
         url = service.slp_url[SERVICE_REGEXP, 1]
         begin
           host = URI(url).host
-        rescue URI::InvalidURIError
-          log.warn "#{url} is not a valid URI"
+        rescue URI::InvalidURIError, ArgumentError
+          log.warn "#{url.inspect} is not a valid URI"
         else
           servers << host if host
         end
