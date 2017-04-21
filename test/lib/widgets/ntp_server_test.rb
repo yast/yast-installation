@@ -55,7 +55,7 @@ describe ::Installation::Widgets::NtpServer do
       allow(widget).to receive(:value).and_return(value)
     end
 
-    context "when value is an empty" do
+    context "when value is empty" do
       it "sets the role ntp_servers property to an empty array" do
         widget.store
         expect(dashboard_role["ntp_servers"]).to eq([])
@@ -71,7 +71,7 @@ describe ::Installation::Widgets::NtpServer do
       end
     end
 
-    context "when more than one hostname/address separated by spaces" do
+    context "when several hostnames/addresses separated by spaces" do
       let(:value) { "server1 server2" }
 
       it "sets the role ntp_servers property to an array containing all the hostnames/addresses" do
@@ -80,7 +80,7 @@ describe ::Installation::Widgets::NtpServer do
       end
     end
 
-    context "when more than one hostname/address separated by commas" do
+    context "when several hostnames/addresses separated by commas" do
       let(:value) { "server1,server2" }
 
       it "sets the role ntp_servers property to an array containing all the hostnames/addresses" do

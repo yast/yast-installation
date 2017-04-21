@@ -1,3 +1,24 @@
+# encoding: utf-8
+
+# ------------------------------------------------------------------------------
+# Copyright (c) 2017 SUSE LLC
+#
+#
+# This program is free software; you can redistribute it and/or modify it under
+# the terms of version 2 of the GNU General Public License as published by the
+# Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program; if not, contact SUSE.
+#
+# To contact SUSE about this file by physical or electronic mail, you may find
+# current contact information at www.suse.com.
+# ------------------------------------------------------------------------------
+
 require "yast"
 require "installation/system_role"
 require "uri"
@@ -81,14 +102,14 @@ module Installation
 
     private
 
-      # Parses the widget's value an return the potential list of hostnames/addresses
+      # Parse the widget's value an return the potential list of hostnames/addresses
       #
       # @return [Array<String>] List of hostnames/addresses
       def servers
         value.tr(",", " ").split(" ")
       end
 
-      # Determine if the user wants to intentionally skip the NTP server configuration
+      # Check if the user wants to intentionally skip the NTP server configuration
       #
       # @return [Boolean] true if user wants to skip it; false otherwise.
       def skip_ntp_server?

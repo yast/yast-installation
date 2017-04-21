@@ -185,6 +185,8 @@ module Installation
     end
 
     # Regexp to extract the URL from a SLP URL
+    # For instance, match 1 for "service:ntp://ntp.suse.de:123,65535"
+    # will be "ntp://ntp.suse.de:123"
     SERVICE_REGEXP = %r{\Aservice:(ntp://[^,]+)(,\d+)?}
     # SLP identifier for NTP
     NTP_SLP_SERVICE = "ntp".freeze
