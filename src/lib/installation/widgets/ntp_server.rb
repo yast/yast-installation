@@ -66,7 +66,7 @@ module Installation
         self.value = saved_servers.join(" ")
       end
 
-      NOT_VALID_SERVERS_MESSAGE = "Not valid location for the NTP servers:\n%<servers>" \
+      NOT_VALID_SERVERS_MESSAGE = "Not valid location for the NTP servers:\n%<servers>s" \
         "\n\nPlease, enter a valid IP or Hostname".freeze
       # Validate input
       #
