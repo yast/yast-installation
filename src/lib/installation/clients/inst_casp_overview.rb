@@ -187,17 +187,22 @@ module Installation
     # Regexp to extract the URL from a SLP URL
     # For instance, match 1 for "service:ntp://ntp.suse.de:123,65535"
     # will be "ntp://ntp.suse.de:123"
-    SERVICE_REGEXP = %r{\Aservice:(ntp://[^,]+)(,\d+)?}
+    SERVICE_REGEXP = %r{\Aservice:(ntp://[^,]+)}
     # SLP identifier for NTP
     NTP_SLP_SERVICE = "ntp".freeze
     # Discover NTP servers through SLP
     #
     # @return [Array<String>] NTP server names
     def ntp_servers
-      Yast::SlpService.all(NTP_SLP_SERVICE).map do |service|
-        match = SERVICE_REGEXP.match(service.slp_url)
-        url = match[1]
-        URI(url).host
+      Yast::SlpService.all(NTP_SLP_SERVICE).each_with_object([]) do |service, servers|
+        url = service.slp_url[SERVICE_REGEXP, 1]
+        begin
+          host = URI(url).host
+        rescue URI::InvalidURIError
+          log.warn "#{url} is not a valid URI"
+        else
+          servers << host if host
+        end
       end
     end
   end

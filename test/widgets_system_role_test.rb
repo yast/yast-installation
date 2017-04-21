@@ -23,19 +23,6 @@ describe ::Installation::Widgets::ControllerNode do
 
       subject.init
     end
-
-    context "when a value was remembered" do
-      before do
-        allow(subject).to receive(:value).and_return("remembered_location")
-        worker_role["controller_node"] = "previous_location"
-        subject.remember!
-      end
-
-      it "uses the remembered value" do
-        expect(subject).to receive(:value=).with("remembered_location")
-        subject.init
-      end
-    end
   end
 
   describe "#store" do
@@ -45,11 +32,6 @@ describe ::Installation::Widgets::ControllerNode do
 
     it "stores current value" do
       expect(worker_role).to receive("[]=").with("controller_node", "value_to_store")
-      subject.store
-    end
-
-    it "remembers the last value" do
-      expect(subject).to receive(:remember!)
       subject.store
     end
   end

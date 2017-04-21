@@ -34,18 +34,6 @@ describe ::Installation::Widgets::NtpServer do
         widget.init
       end
     end
-
-    context "when a value was remembered" do
-      before do
-        allow(widget).to receive(:value).and_return("alt-ntp.suse.de")
-        widget.remember!
-      end
-
-      it "uses the remembered value" do
-        expect(widget).to receive(:value=).with("alt-ntp.suse.de")
-        widget.init
-      end
-    end
   end
 
   describe "#store" do
@@ -96,11 +84,6 @@ describe ::Installation::Widgets::NtpServer do
         widget.store
         expect(dashboard_role["ntp_servers"]).to eq(["server1", "server2", "server3"])
       end
-    end
-
-    it "remembers the current value" do
-      expect(widget).to receive(:remember!).and_call_original
-      widget.store
     end
   end
 
