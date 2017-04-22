@@ -173,6 +173,7 @@ describe ::Installation::ProposalRunner do
             .and_call_original
 
           # we need ProposalStore#make_proposal to call the callback
+          # for some reason mocking using expect do not work in this case
           allow(Yast::WFM)
             .to receive(:CallFunction)
             .and_return(
