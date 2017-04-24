@@ -1,9 +1,16 @@
 -------------------------------------------------------------------
+Mon Apr 24 09:03:42 UTC 2017 - gsouza@suse.com
+
+- bsc#1031840
+  - changed CheckFreeSpaceNow to use LANG=en_US.UTF-8
+- 3.1.162.8
+
+-------------------------------------------------------------------
 Wed Apr 13 07:14:09 UTC 2016 - mfilka@suse.com
 
 - bsc#956473
   - improved formatting of network interfaces listing
-- 3.1.163.7
+- 3.1.162.7
 
 -------------------------------------------------------------------
 Mon Feb 29 09:05:16 UTC 2016 - mfilka@suse.com
