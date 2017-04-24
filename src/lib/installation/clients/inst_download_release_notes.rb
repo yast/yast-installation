@@ -38,8 +38,7 @@ module Yast
       28 => "Operation timeout."
     }.freeze
 
-    # Download *url* to *filename*
-    # May set InstData.stop_relnotes_download on download failure.
+    # Download all release notes mentioned in Product::relnotesurl_all
     #
     # @return [Boolean,nil] true: success, false: failure, nil: failure+dont retry
     def curl_download(url, filename, proxy_args:, max_time: 300)
