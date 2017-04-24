@@ -19,6 +19,7 @@
 # current contact information at www.suse.com.
 # ------------------------------------------------------------------------------
 
+require "uri"
 require "users/widgets"
 require "y2country/widgets"
 require "ui/widgets"
@@ -26,7 +27,9 @@ require "tune/widgets"
 require "registration/widgets/registration_code"
 
 require "installation/widgets/overview"
+require "installation/widgets/hiding_place"
 require "installation/widgets/system_role"
+require "installation/widgets/ntp_server"
 require "installation/services"
 
 module Installation
@@ -49,6 +52,7 @@ module Installation
       Yast.import "Popup"
       Yast.import "Pkg"
       Yast.import "InstShowInfo"
+      Yast.import "SlpService"
 
       textdomain "installation"
 
@@ -146,7 +150,8 @@ module Installation
     # Returns a pair with UI widget-set for the dialog and widgets that can
     # block installation
     def content
-      controller_node = Installation::Widgets::ControllerNodePlace.new
+      controller_node = Installation::Widgets::HidingPlace.new(Installation::Widgets::ControllerNode.new)
+      ntp_server = Installation::Widgets::HidingPlace.new(Installation::Widgets::NtpServer.new(ntp_servers))
 
       kdump_overview = Installation::Widgets::Overview.new(client: "kdump_proposal")
       bootloader_overview = Installation::Widgets::Overview.new(client: "bootloader_proposal", redraw: [kdump_overview])
@@ -159,8 +164,9 @@ module Installation
           ::Y2Country::Widgets::KeyboardSelectionCombo.new("english-us")
         ),
         lower_left:  VBox(
-          Installation::Widgets::SystemRole.new(controller_node),
+          Installation::Widgets::SystemRole.new(controller_node, ntp_server),
           controller_node,
+          ntp_server,
           Tune::Widgets::SystemInformation.new
         ),
         upper_right: VBox(
@@ -177,6 +183,28 @@ module Installation
     # Returns whether we need/ed to create new UI Wizard
     def separate_wizard_needed?
       Yast::Mode.normal
+    end
+
+    # Regexp to extract the URL from a SLP URL
+    # For instance, match 1 for "service:ntp://ntp.suse.de:123,65535"
+    # will be "ntp://ntp.suse.de:123"
+    SERVICE_REGEXP = %r{\Aservice:(ntp://[^,]+)}
+    # SLP identifier for NTP
+    NTP_SLP_SERVICE = "ntp".freeze
+    # Discover NTP servers through SLP
+    #
+    # @return [Array<String>] NTP server names
+    def ntp_servers
+      Yast::SlpService.all(NTP_SLP_SERVICE).each_with_object([]) do |service, servers|
+        url = service.slp_url[SERVICE_REGEXP, 1]
+        begin
+          host = URI(url).host
+        rescue URI::InvalidURIError, ArgumentError
+          log.warn "#{url.inspect} is not a valid URI"
+        else
+          servers << host if host
+        end
+      end
     end
   end
 end

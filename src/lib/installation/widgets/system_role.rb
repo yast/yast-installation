@@ -23,6 +23,7 @@ require "yast"
 require "cwm/widget"
 require "installation/services"
 require "installation/system_role"
+require "installation/widgets/ntp_server"
 
 Yast.import "ProductControl"
 Yast.import "IP"
@@ -74,26 +75,20 @@ module Installation
       end
     end
 
-    class ControllerNodePlace < CWM::ReplacePoint
-      def initialize
-        @controller_node = ControllerNode.new
-        @empty = CWM::Empty.new("no_controller")
-        super(widget: @empty)
-      end
-
-      def show
-        replace(@controller_node)
-      end
-
-      def hide
-        replace(@empty)
-      end
-    end
-
     class SystemRole < CWM::ComboBox
-      def initialize(controller_node_widget)
+      ROLE_WIDGETS = {
+        "worker_role"    => [:controller_node],
+        "dashboard_role" => [:ntp_server]
+      }.freeze
+
+      attr_reader :widgets_map
+
+      def initialize(controller_node_widget, ntp_server_widget)
         textdomain "installation"
-        @controller_node_widget = controller_node_widget
+        @widgets_map = {
+          controller_node: controller_node_widget,
+          ntp_server:      ntp_server_widget
+        }
       end
 
       def label
@@ -110,12 +105,10 @@ module Installation
       end
 
       def handle
-        if value == "worker_role"
-          @controller_node_widget.show
-        else
-          @controller_node_widget.hide
-        end
-
+        to_show = ROLE_WIDGETS.fetch(value, [])
+        to_hide = widgets_map.keys - to_show
+        to_hide.each { |w| widgets_map[w].hide }
+        to_show.each { |w| widgets_map[w].show }
         nil
       end
 

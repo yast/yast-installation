@@ -10,6 +10,7 @@ Yast.import "Mode"
 Yast.import "Pkg"
 Yast.import "Popup"
 Yast.import "Wizard"
+Yast.import "SlpService"
 
 # stub tune widgets used in dialog
 require "cwm/widget"
@@ -60,6 +61,8 @@ end
 
 describe ::Installation::InstCaspOverview do
   describe "#run" do
+    let(:ntp_servers) { [] }
+
     before do
       allow(Yast::Wizard).to receive(:CreateDialog)
       allow(Yast::Wizard).to receive(:CloseDialog)
@@ -71,6 +74,7 @@ describe ::Installation::InstCaspOverview do
         .with("inst_doit", []).and_return(:next)
       allow(File).to receive(:exist?).and_call_original
       allow(File).to receive(:exist?).with("/info.txt").and_return(false)
+      allow(Yast::SlpService).to receive(:all).and_return(ntp_servers)
     end
 
     it "sets package locale same as Language" do
@@ -123,6 +127,63 @@ describe ::Installation::InstCaspOverview do
       expect(Yast::CWM).to receive(:show).and_return(:next)
 
       subject.run
+    end
+
+    context "when some NTP server is detected via SLP" do
+      let(:ntp_servers) do
+        [
+          double("server1", slp_url: "service:ntp://server1.lan:123,65535"),
+          double("server2", slp_url: "service:ntp://server2.lan:123,65535")
+        ]
+      end
+
+      it "proposes to use it by default" do
+        expect(Installation::Widgets::NtpServer).to receive(:new)
+          .with(["server1.lan", "server2.lan"]).and_call_original
+        subject.run
+      end
+    end
+
+    context "when some SLP URL cannot be parsed" do
+      let(:ntp_servers) do
+        [
+          double("server1", slp_url: "service:ntp://server1.lan:123,65535"),
+          double("error1", slp_url: "service:ntp://*,65535"),
+          double("error2", slp_url: "ntp:,65535")
+        ]
+      end
+
+      it "proposes only the valid ones" do
+        expect(Installation::Widgets::NtpServer).to receive(:new)
+          .with(["server1.lan"]).and_call_original
+        subject.run
+      end
+
+      it "logs the problem" do
+        expect(subject.log).to receive(:warn).twice.with(/not a valid URI/)
+        subject.run
+      end
+    end
+
+    context "when some SLP URL cannot be parsed" do
+      let(:ntp_servers) do
+        [
+          double("server1", slp_url: "service:ntp://server1.lan:123,65535"),
+          double("error1", slp_url: "service:ntp://*,65535"),
+          double("error2", slp_url: "ntp:,65535")
+        ]
+      end
+
+      it "proposes only the valid ones" do
+        expect(Installation::Widgets::NtpServer).to receive(:new)
+          .with(["server1.lan"]).and_call_original
+        subject.run
+      end
+
+      it "logs the problem" do
+        expect(subject.log).to receive(:warn).twice.with(/not a valid URI/)
+        subject.run
+      end
     end
   end
 end

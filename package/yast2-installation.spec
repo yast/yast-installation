@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.1.217.31
+Version:        3.1.217.32
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -92,6 +92,10 @@ Requires:	yast2-users >= 3.1.57.4
 # new keyboard layout cwm widget
 BuildRequires:	yast2-country >= 3.1.33.1
 Requires:	yast2-country >= 3.1.33.1
+
+# SlpServices.find
+Requires:      yast2-slp
+BuildRequires: yast2-slp
 
 # Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
 # pkg-bindings are not directly required

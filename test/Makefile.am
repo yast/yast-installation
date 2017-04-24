@@ -35,7 +35,10 @@ TESTS = \
   updates_manager_test.rb \
   widgets_overview_test.rb \
   widgets_system_role_test.rb \
-  lib/system_role_handlers_runner_test.rb
+  lib/system_role_handlers_runner_test.rb \
+  lib/widgets/hiding_place_test.rb \
+  lib/widgets/ntp_server_test.rb \
+  lib/widgets/system_role_test.rb
 
 TEST_EXTENSIONS = .rb
 RB_LOG_COMPILER = rspec
