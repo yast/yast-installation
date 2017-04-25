@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Apr 24 15:53:00 UTC 2017 - gsouza@suse.com
+
+- bsc#1031840
+  - changed CheckFreeSpaceNow to use LANG=en_US.UTF-8
+- 3.2.38
+
+-------------------------------------------------------------------
 Wed Apr  5 11:31:12 CEST 2017 - jreidinger@suse.com
 
 - Use y2start script instead of y2base (bsc#1027181)
