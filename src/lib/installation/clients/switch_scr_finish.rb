@@ -152,7 +152,7 @@ module Yast
 
     def CheckFreeSpaceNow
       ret_exec = Convert.to_map(
-        SCR.Execute(path(".target.bash_output"), "/bin/df -h")
+        SCR.Execute(path(".target.bash_output"), "LANG=en_US.UTF-8 /bin/df -h")
       )
 
       if Ops.get_integer(ret_exec, "exit", -1) != 0

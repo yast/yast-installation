@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Apr 26 09:52:01 UTC 2017 - gsouza@suse.com
+
+- bsc#1031840
+  - changed CheckFreeSpaceNow to use LANG=en_US.UTF-8
+-3.1.217.33 
+
+-------------------------------------------------------------------
 Thu Apr 20 14:00:08 UTC 2017 - igonzalezsosa@suse.com
 
 - Add a NTP Servers settings to the overview dialog
