@@ -59,8 +59,8 @@ RSpec.shared_examples "CWM::CustomWidget" do
   end
 end
 
-describe ::Installation::Widgets::Overview do
-  subject { ::Installation::Widgets::Overview.new(client: "adventure") }
+describe Y2Caasp::Widgets::Overview do
+  subject { Y2Caasp::Widgets::Overview.new(client: "adventure") }
   let(:description) do
     {
       "menu_title" => "An Unexpected Journey"

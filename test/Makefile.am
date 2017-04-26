@@ -4,7 +4,6 @@ TESTS = \
   driver_update_test.rb \
   file_from_url_test.rb \
   image_installation_test.rb \
-  inst_casp_overview_test.rb \
   inst_complex_welcome_test.rb \
   inst_disks_activate_test.rb \
   inst_extrasources_test.rb \
@@ -33,12 +32,8 @@ TESTS = \
   system_role_test.rb \
   update_repository_test.rb \
   updates_manager_test.rb \
-  widgets_overview_test.rb \
-  widgets_system_role_test.rb \
   lib/system_role_handlers_runner_test.rb \
-  lib/widgets/hiding_place_test.rb \
-  lib/widgets/ntp_server_test.rb \
-  lib/widgets/system_role_test.rb
+  lib/widgets/hiding_place_test.rb
 
 TEST_EXTENSIONS = .rb
 RB_LOG_COMPILER = rspec
