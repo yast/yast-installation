@@ -2,6 +2,7 @@
 Wed Apr 26 15:03:33 UTC 2017 - igonzalezsosa@suse.com
 
 - Move CaaSP specific code to yast2-caasp package
+  (bsc#1036838)
 - 3.1.217.34
 
 -------------------------------------------------------------------
