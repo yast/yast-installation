@@ -24,7 +24,7 @@ require "cwm/widget"
 
 Yast.import "Popup"
 
-module Installation
+module Y2Caasp
   module Widgets
     # A widget for an all-in-one installation dialog.
     # It uses the `simple_mode` of {Installation::ProposalClient#make_proposal}
