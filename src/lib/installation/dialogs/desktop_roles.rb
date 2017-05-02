@@ -1,5 +1,5 @@
 require "yast"
-require "installation/widgets/system_role"
+require "installation/widgets/system_roles_radio_buttons"
 require "installation/widgets/online_repos"
 require "cwm/widget"
 
