@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon May  8 13:17:17 UTC 2017 - knut.anderssen@suse.com
+
+- Don't crash if the regurl provided by linuxrc is invalid using
+  the one provided by the control file as fallback (bsc#1035908).
+- 3.2.39
+
+-------------------------------------------------------------------
 Wed Apr 26 15:03:33 UTC 2017 - igonzalezsosa@suse.com
 
 - Move CaaSP specific code to yast2-caasp package
