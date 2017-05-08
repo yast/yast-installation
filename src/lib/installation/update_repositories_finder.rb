@@ -124,7 +124,13 @@ module Installation
     #
     # @return [Array<URI>,false] self-update URLs or false in case of error
     def update_urls_from_connect
-      url = registration_url
+      begin
+        url = registration_url
+      rescue URI::InvalidURIError => e
+        log.error("Custom registration url is wrong, URI failed with: #{e.message}")
+        return []
+      end
+
       return [] if url == :cancel
 
       custom_regserver = url != :scc
