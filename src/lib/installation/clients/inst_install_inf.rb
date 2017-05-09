@@ -22,7 +22,10 @@ module Yast
 
       regurl = Linuxrc.InstallInf("regurl")
 
-      fix_regurl(regurl) if need_fix?(regurl)
+      if need_fix?(regurl)
+        fix_regurl!(regurl)
+        Linuxrc.ResetInstallInf
+      end
 
       Yast::Wizard.CloseDialog if separate_wizard_needed?
 
@@ -35,7 +38,7 @@ module Yast
       url && !valid_url?(url)
     end
 
-    def fix_regurl(regurl)
+    def fix_regurl!(regurl)
       while regurl && !valid_url?(regurl)
         new_url = ::Installation::RegistrationURLDialog.new(regurl).run
         case new_url
