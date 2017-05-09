@@ -40,43 +40,50 @@ module Installation
     # @param [String] original Original value
     # @return [String] new value
     def dialog_content
-      HBox(
-        HWeight(30, RichText(help_text)),
-        HStretch(),
-        HSpacing(1),
-        HWeight(
-          70,
-          VBox(
-            Heading(dialog_title),
-            VSpacing(1),
-            VStretch(),
-            MinWidth(60,
-              Left(TextEntry(Id(:uri), entry_label, @url))),
-            VSpacing(1),
-            VStretch(),
-            HBox(
-              PushButton(Id(:retry), Opt(:default), Yast::Label.RetryButton),
-              PushButton(Id(:abort), Yast::Label.AbortButton)
-            )
-          )
+      VBox(
+        Heading(dialog_title),
+        show_help? ? RichText(help_text) : Empty(),
+        VSpacing(1),
+        VStretch(),
+        MinWidth(60,
+          Left(TextEntry(Id(:uri), entry_label, @url))),
+        VSpacing(1),
+        VStretch(),
+        HBox(
+          PushButton(Id(:ok), Opt(:default), ok_label),
+          PushButton(Id(:cancel), cancel_label)
         )
       )
     end
 
-    def retry_handler
+    def ok_handler
       @url = Yast::UI.QueryWidget(Id(:uri), :Value)
       finish_dialog(@url)
     end
 
-    def abort_handler
-      finish_dialog(:abort)
+    def cancel_handler
+      finish_dialog(:cancel)
     end
 
-    # Help text that will be displayed at the left of the dialog
+    def ok_label
+      Yast::Label.OKButton
+    end
+
+    def cancel_label
+      Yast::Label.CancelButton
+    end
+
+    # Help text that will be displayed above the url entry
     #
     # @return [String]
     def help_text
       ""
+    end
+
+    def show_help?
+      return true if help_text && help_text != ""
+
+      false
     end
 
     # Heading title for the dialog

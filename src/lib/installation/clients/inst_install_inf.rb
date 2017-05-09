@@ -42,9 +42,10 @@ module Yast
       while regurl && !valid_url?(regurl)
         new_url = ::Installation::RegistrationURLDialog.new(regurl).run
         case new_url
-        when :abort
-          if Popup.YesNo(_("If you decide to abort, the custom URL\n" \
-                         "will be completely removed.\n\n Really abort?\n"))
+        when :cancel
+          if Popup.YesNo(_("If you decide to cancel, the custom URL\n" \
+                         "will be completelly ignored.\n\n" \
+                         "Really cancel URL modification?"))
             regurl = nil
           end
         when "",
