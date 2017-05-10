@@ -22,10 +22,7 @@ module Yast
 
       regurl = Linuxrc.InstallInf("regurl")
 
-      if need_fix?(regurl)
-        fix_regurl!(regurl)
-        Linuxrc.ResetInstallInf
-      end
+      fix_regurl!(regurl) if need_fix?(regurl)
 
       Yast::Wizard.CloseDialog if separate_wizard_needed?
 
@@ -34,12 +31,21 @@ module Yast
 
   private
 
+    # Checks if the given url is invalid and needs to be fixed.
+    #
+    # @params url [String]
+    # @return [Boolean] return true if not nil and invalid.
     def need_fix?(url)
       url && !valid_url?(url)
     end
 
+    # Shows a dialog allowing the user to modify the invalid URL, modifying the
+    # /etc/install.inf file with the new value. In case of cancelled or empty,
+    # the URL will be completely removed.
+    #
+    # @param regurl [String]
     def fix_regurl!(regurl)
-      while regurl && !valid_url?(regurl)
+      while need_fix?(regurl)
         new_url = ::Installation::RegistrationURLDialog.new(regurl).run
         case new_url
         when :cancel
@@ -55,7 +61,9 @@ module Yast
         end
       end
 
-      regurl ? replace_install_inf("regurl", regurl) : delete_install_inf("regurl")
+      SCR.Write(path(".etc.install_inf.regurl"), regurl)
+      SCR.Write(path(".etc.install_inf"), nil) # Flush the cache
+      Linuxrc.ResetInstallInf
     end
 
     # Check if the given URI is valid or not
@@ -71,24 +79,6 @@ module Yast
     # Returns whether we need/ed to create new UI Wizard
     def separate_wizard_needed?
       Yast::Mode.normal
-    end
-
-    def replace_install_inf(key, value)
-      # Updating new URI in /etc/install.inf (bnc#963487)
-      # SCR.Write does not work in inst-sys here.
-      WFM.Execute(
-        path(".local.bash"),
-        "sed -i \'/#{key}:/c\\#{key}: #{value}\' /etc/install.inf"
-      )
-    end
-
-    def delete_install_inf(key)
-      # Deleting URI in /etc/install.inf (bnc#963487)
-      # SCR.Write does not work in inst-sys here.
-      WFM.Execute(
-        path(".local.bash"),
-        "sed -i \'/#{key}:/d\' /etc/install.inf"
-      )
     end
   end
 end
