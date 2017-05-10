@@ -25,7 +25,6 @@ Yast.import "Linuxrc"
 Yast.import "Mode"
 Yast.import "Profile"
 Yast.import "ProductFeatures"
-Yast.import "Report"
 
 module Installation
   # This class find repositories to be used by the self-update feature.
@@ -126,9 +125,8 @@ module Installation
     def update_urls_from_connect
       begin
         url = registration_url
-      rescue URI::InvalidURIError => e
-        log.error("Custom registration url is wrong, URI failed with: #{e.message}")
-        return []
+      rescue URI::InvalidURIError
+        raise ::Registration::InvalidURL
       end
 
       return [] if url == :cancel
@@ -260,24 +258,6 @@ module Installation
       ::Registration::Storage::Config.instance.import(
         Yast::Profile.current.fetch("suse_register", {})
       )
-    end
-
-    # Display a warning message about using the default update URL from
-    # control.xml when the registration server does not return any URL or fails.
-    # In AutoYaST mode the dialog is closed after a timeout.
-    def display_fallback_warning
-      # TRANSLATORS: error message
-      msg = _("<p>Cannot obtain the installer update repository URL\n" \
-        "from the registration server.</p>")
-
-      if update_url_from_control
-        # TRANSLATORS: part of an error message, %s is the default repository
-        # URL from control.xml
-        msg += _("<p>The default URL %s will be used.<p>") % update_url_from_control
-      end
-
-      # display the message in a RichText widget to wrap long lines
-      Yast::Report.LongWarning(msg)
     end
 
     # Runs a block of code handling errors
