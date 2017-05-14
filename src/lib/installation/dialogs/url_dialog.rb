@@ -22,15 +22,29 @@
 require "yast"
 require "ui/dialog"
 
-# FIXME: move to yast2
-# (This dialog is based in ProfileSourceDialog)
 module Installation
+  # A subclass of UI::Dialog which provides a common dialog to edit an url. It
+  # is composed by two buttons to confirm and cancel the edition, a dialog
+  # heading and a help text.
+  #
+  # @example simple url location dialog
+  #
+  #   class ExampleURLDialog < UI::URLDialog
+  #     def entry_label
+  #       "Example URL"
+  #     end
+  #   end
   class URLDialog < UI::Dialog
     include Yast::I18n
     include Yast::UIShortcuts
 
     attr_accessor :url
 
+    # Constructor
+    #
+    # The dialog text entry will be filled with the url given
+    #
+    # @param url [String]
     def initialize(url)
       @url = url
     end
@@ -41,7 +55,7 @@ module Installation
     # @return [String] new value
     def dialog_content
       VBox(
-        Heading(dialog_title),
+        show_heading? ? Heading(dialog_title) : Empty(),
         show_help? ? RichText(help_text) : Empty(),
         VSpacing(1),
         VStretch(),
@@ -56,11 +70,18 @@ module Installation
       )
     end
 
+    # Handler for the :ok button which queries the value of the URL entry and
+    # finish the dialog returning the value of it
+    #
+    # @return  [String] the value of the url text entry
     def ok_handler
       @url = Yast::UI.QueryWidget(Id(:uri), :Value)
       finish_dialog(@url)
     end
 
+    # Handler for the :cancel button wich finishes the dialog and returns :cancel
+    #
+    # @return [Symbol] :cancel
     def cancel_handler
       finish_dialog(:cancel)
     end
@@ -80,12 +101,6 @@ module Installation
       ""
     end
 
-    def show_help?
-      return true if help_text && help_text != ""
-
-      false
-    end
-
     # Heading title for the dialog
     #
     # @return [String]
@@ -99,5 +114,30 @@ module Installation
     def entry_label
       ""
     end
+
+  private
+
+    # Determines wether the help text is shown
+    #
+    # @return [Boolean] true if the help text is not empty
+    #
+    # @see help_text
+    def show_help?
+      return true if !help_text.empty?
+
+      false
+    end
+
+    # Determines wether the dialog title is shown
+    #
+    # @return [Boolean] true if the dialog title is not empty
+    #
+    # @see dialog_title
+    def show_heading?
+      return true if !dialog_title.empty?
+
+      false
+    end
+
   end
 end
