@@ -138,6 +138,5 @@ module Installation
 
       false
     end
-
   end
 end
