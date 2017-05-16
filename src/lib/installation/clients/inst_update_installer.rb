@@ -176,6 +176,10 @@ module Yast
       @update_repositories = update_repositories_finder.updates
       log.info("self-update repositories are #{@update_repositories.inspect}")
       @update_repositories
+    rescue ::Registration::InvalidURL
+      Yast::Popup.Error(_("The registration URL provided is not valid.\n" \
+                          "Skipping installer update.\n"))
+      @update_repositories = []
     end
 
     # Return the custom self-update URL
@@ -311,6 +315,7 @@ module Yast
       require "registration/url_helpers"
       require "registration/registration"
       require "registration/ui/regservice_selection_dialog"
+      require "registration/exceptions"
       @require_registration_libraries = true
     rescue LoadError
       log.info "yast2-registration is not available"

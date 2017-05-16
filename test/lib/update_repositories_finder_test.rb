@@ -190,12 +190,14 @@ describe Installation::UpdateRepositoriesFinder do
           end
         end
 
-        context "when a regurl was specified via Linuxrc" do
+        context "when a valid regurl was specified via Linuxrc" do
           let(:regurl) { "http://regserver.example.net" }
 
           it "asks the SCC server for the updates URLs" do
             expect(registration_class).to receive(:new).with(regurl)
               .and_return(registration)
+            expect(finder).not_to receive(:update_from_control)
+
             finder.updates
           end
 
@@ -203,6 +205,23 @@ describe Installation::UpdateRepositoriesFinder do
             expect(Registration::ConnectHelpers).to receive(:catch_registration_errors)
               .and_call_original
             finder.updates
+          end
+        end
+
+        context "when a invalid regurl was specified via Linuxrc" do
+          let(:regurl) { "http://wrong{}regserver.example.net" }
+
+          it "does not ask the SCC server for the updates URLs" do
+            expect(registration_class).not_to receive(:new).with(regurl)
+            expect(finder).to receive(:update_from_control)
+
+            finder.updates
+          end
+
+          it "falls back to use updates URL defined in the control file" do
+            expect(Installation::UpdateRepository).to receive(:new)
+              .with(URI(real_url_from_control), :default).and_return(repo)
+            expect(finder.updates).to eq([repo])
           end
         end
       end
