@@ -27,6 +27,9 @@ Yast.import "Profile"
 Yast.import "ProductFeatures"
 
 module Installation
+  # Invalid registration URL error
+  class RegistrationURLError < URI::InvalidURIError; end
+
   # This class find repositories to be used by the self-update feature.
   class UpdateRepositoriesFinder
     include Yast::Logger
@@ -126,7 +129,7 @@ module Installation
       begin
         url = registration_url
       rescue URI::InvalidURIError
-        raise ::Registration::InvalidURL
+        raise RegistrationURLError
       end
 
       return [] if url == :cancel

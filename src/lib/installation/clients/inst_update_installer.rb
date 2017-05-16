@@ -176,7 +176,8 @@ module Yast
       @update_repositories = update_repositories_finder.updates
       log.info("self-update repositories are #{@update_repositories.inspect}")
       @update_repositories
-    rescue ::Registration::InvalidURL
+
+    rescue RegistrationURLError
       Yast::Popup.Error(_("The registration URL provided is not valid.\n" \
                           "Skipping installer update.\n"))
       @update_repositories = []

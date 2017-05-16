@@ -3,6 +3,7 @@
 require_relative "../test_helper"
 require_relative "../support/fake_registration"
 require "installation/update_repositories_finder"
+require "uri"
 
 Yast.import "Linuxrc"
 
@@ -211,10 +212,10 @@ describe Installation::UpdateRepositoriesFinder do
         context "when a invalid regurl was specified via Linuxrc" do
           let(:regurl) { "http://wrong{}regserver.example.net" }
 
-          it "raises an Registration::InvalidURL exception" do
+          it "raises an RegistrationURLError exception" do
             expect(registration_class).not_to receive(:new).with(regurl)
 
-            expect { finder.updates }.to raise_error(::Registration::InvalidURL)
+            expect { finder.updates }.to raise_error(Installation::RegistrationURLError)
           end
         end
       end
