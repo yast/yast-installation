@@ -16,3 +16,8 @@ module FakeConnectHelpers
     true
   end
 end
+
+class Registration
+  class InvalidURL < StandardError
+  end
+end
