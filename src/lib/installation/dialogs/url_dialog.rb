@@ -123,9 +123,7 @@ module Installation
     #
     # @see help_text
     def show_help?
-      return true if !help_text.empty?
-
-      false
+      !help_text.empty?
     end
 
     # Determines wether the dialog title is shown
@@ -134,9 +132,7 @@ module Installation
     #
     # @see dialog_title
     def show_heading?
-      return true if !dialog_title.empty?
-
-      false
+      !dialog_title.empty?
     end
   end
 end

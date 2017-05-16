@@ -22,7 +22,7 @@ describe Yast::InstInstallInfClient do
 
     context "when a regurl is provided by linuxrc" do
       let(:invalid_url) { "http://wrong_url{}.com" }
-      let(:valid_url) { "http://scc.custom.com" }
+      let(:valid_url) { "https://scc.custom.com" }
 
       it "allows the user to fix it it's invalid" do
         expect(Yast::Linuxrc).to receive(:InstallInf).with("regurl").and_return(invalid_url)
@@ -31,7 +31,7 @@ describe Yast::InstInstallInfClient do
         subject.main
       end
 
-      it "does nothing with the url in case of valid" do
+      it "does nothing with the URL in case of valid" do
         expect(Yast::Linuxrc).to receive(:InstallInf).with("regurl").and_return(valid_url)
         expect(subject).to_not receive(:fix_regurl!)
 

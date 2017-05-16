@@ -27,7 +27,7 @@ module Installation
     def help_text
       # TRANSLATORS: Help text alerting the user about a invalid url
       _("<p>\n" \
-        "The registration url provided in the command line is not valid.\n" \
+        "The registration URL provided in the command line is not valid.\n" \
         "Check that you entered it correctly and try again.\n" \
         "</p>")
     end
