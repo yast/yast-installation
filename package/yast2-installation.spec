@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.2.38
+Version:        3.2.39
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -76,8 +76,8 @@ Requires:       yast2-proxy
 # writing settings in the first installation stage.
 Requires: yast2-services-manager >= 3.2.1
 
-# Network service setup moved into yast2-network
-Requires: yast2-network >= 3.1.143
+## Moved inst_install_inf from yast2-network to this package
+Requires: yast2-network >= 3.2.25
 
 # Augeas lenses
 Requires:       augeas-lenses
