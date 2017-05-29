@@ -20,9 +20,8 @@
 # ------------------------------------------------------------------------------
 
 require "yast"
+require "cwm/widget"
 require "installation/system_role"
-
-Yast.import "CWM"
 
 module Installation
   module Widgets
