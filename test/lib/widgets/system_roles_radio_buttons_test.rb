@@ -5,6 +5,7 @@ require "installation/widgets/system_roles_radio_buttons"
 
 describe Installation::Widgets::SystemRolesRadioButtons do
   subject(:widget) { Installation::Widgets::SystemRolesRadioButtons.new }
+  let(:default) { nil }
 
   describe "#store" do
     before do
@@ -29,6 +30,77 @@ describe Installation::Widgets::SystemRolesRadioButtons do
         expect(Installation::CustomPatterns).to receive(:show=).with(false)
         expect(Yast::DefaultDesktop).to receive(:ForceReinit)
         widget.store
+      end
+    end
+  end
+
+  describe "#handle" do
+    it "selects the system role according to the current value" do
+      expect(Installation::SystemRole).to receive(:select).with(default)
+
+      widget.handle
+    end
+
+    it "returns nil" do
+      expect(Installation::SystemRole).to receive(:select).with(default)
+
+      expect(widget.handle).to eql(nil)
+    end
+  end
+
+  describe "#init" do
+    it "initializes the widget with the current system role" do
+      expect(Installation::SystemRole).to receive(:current).and_return("server")
+      expect(widget).to receive(:value=).with("server")
+
+      expect(widget.init).to eql("server")
+    end
+  end
+
+  describe "#validate" do
+    let(:value) { nil }
+
+    before do
+      allow(widget).to receive(:value).and_return(value)
+    end
+
+    context "when the value of the widget is nil" do
+      it "opens an error popup" do
+        expect(Yast::Popup).to receive(:Error)
+
+        expect(widget.validate).to eql(false)
+      end
+
+      it "returns false" do
+        expect(Yast::Popup).to receive(:Error)
+
+        expect(widget.validate).to eql(false)
+      end
+    end
+
+    context "when the value of the widget is an empty string" do
+      let(:value) { "" }
+
+      it "opens an error popup" do
+        expect(Yast::Popup).to receive(:Error)
+
+        expect(widget.validate).to eql(false)
+      end
+
+      it "returns false" do
+        expect(Yast::Popup).to receive(:Error)
+
+        expect(widget.validate).to eql(false)
+      end
+    end
+
+    context "when the widget has some value selected" do
+      let(:value) { "server" }
+
+      it "returns true" do
+        expect(Yast::Popup).to_not receive(:Error)
+
+        expect(widget.validate).to eql(true)
       end
     end
   end
