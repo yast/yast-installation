@@ -36,9 +36,9 @@ describe Installation::Widgets::SystemRolesRadioButtons do
 
   describe "#handle" do
     it "selects the system role according to the current value" do
-      allow(Installation::SystemRole).to receive(:select)
+      expect(Installation::SystemRole).to receive(:select).with(default)
 
-      expect(widget.handle).to eql(default)
+      widget.handle
     end
 
     it "returns nil" do
