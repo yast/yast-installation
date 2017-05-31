@@ -66,7 +66,7 @@ module Installation
       end
 
       def validate
-        return true if !value.to_s.empty?
+        return true if value
 
         # TRANSLATORS: Popup error requesting to choose some option.
         Yast::Popup.Error(_("You must choose some option before you continue."))

@@ -78,22 +78,6 @@ describe Installation::Widgets::SystemRolesRadioButtons do
       end
     end
 
-    context "when the value of the widget is an empty string" do
-      let(:value) { "" }
-
-      it "opens an error popup" do
-        expect(Yast::Popup).to receive(:Error)
-
-        widget.validate
-      end
-
-      it "returns false" do
-        allow(Yast::Popup).to receive(:Error)
-
-        expect(widget.validate).to eql(false)
-      end
-    end
-
     context "when the widget has some value selected" do
       let(:value) { "server" }
 
