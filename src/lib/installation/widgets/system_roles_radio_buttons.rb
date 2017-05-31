@@ -39,8 +39,8 @@ module Installation
       alias_method :store_orig, :store
 
       def initialize
-        # We need to handle all the events because if not the current selection
-        # is lost when the widget is redrawn (bsc#1033594)
+        # We need to handle all the events because otherwise the current
+        # selection is lost when the widget is redrawn (bsc#1033594)
         self.handle_all_events = true
       end
 
@@ -69,7 +69,7 @@ module Installation
         return true if !value.to_s.empty?
 
         # TRANSLATORS: Popup error requesting to choose some option.
-        Yast::Popup.Error(_("You must choose some option before continue."))
+        Yast::Popup.Error(_("You must choose some option before you continue."))
 
         false
       end

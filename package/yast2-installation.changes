@@ -1,9 +1,9 @@
 -------------------------------------------------------------------
 Tue May 31 21:47:24 UTC 2017 - knut.anderssen@suse.com
 
-- Don't lose the last desktop selection when online repositories is
-  called. (bsc#1033594)
-- Don't allow to continue without desktop selection. (bsc#1040884)
+- Do not lose the desktop selection when the online repositories is
+  pressed. (bsc#1033594)
+- Do not allow to continue without desktop selection. (bsc#1040884)
 - 3.2.43
 
 -------------------------------------------------------------------

@@ -36,13 +36,13 @@ describe Installation::Widgets::SystemRolesRadioButtons do
 
   describe "#handle" do
     it "selects the system role according to the current value" do
-      expect(Installation::SystemRole).to receive(:select).with(default)
+      allow(Installation::SystemRole).to receive(:select)
 
-      widget.handle
+      expect(widget.handle).to eql(default)
     end
 
     it "returns nil" do
-      expect(Installation::SystemRole).to receive(:select).with(default)
+      allow(Installation::SystemRole).to receive(:select)
 
       expect(widget.handle).to eql(nil)
     end
@@ -50,7 +50,7 @@ describe Installation::Widgets::SystemRolesRadioButtons do
 
   describe "#init" do
     it "initializes the widget with the current system role" do
-      expect(Installation::SystemRole).to receive(:current).and_return("server")
+      allow(Installation::SystemRole).to receive(:current).and_return("server")
       expect(widget).to receive(:value=).with("server")
 
       expect(widget.init).to eql("server")
@@ -64,7 +64,7 @@ describe Installation::Widgets::SystemRolesRadioButtons do
       allow(widget).to receive(:value).and_return(value)
     end
 
-    context "when the value of the widget is nil" do
+    context "when no option has been selected" do
       it "opens an error popup" do
         expect(Yast::Popup).to receive(:Error)
 
@@ -84,11 +84,11 @@ describe Installation::Widgets::SystemRolesRadioButtons do
       it "opens an error popup" do
         expect(Yast::Popup).to receive(:Error)
 
-        expect(widget.validate).to eql(false)
+        widget.validate
       end
 
       it "returns false" do
-        expect(Yast::Popup).to receive(:Error)
+        allow(Yast::Popup).to receive(:Error)
 
         expect(widget.validate).to eql(false)
       end
