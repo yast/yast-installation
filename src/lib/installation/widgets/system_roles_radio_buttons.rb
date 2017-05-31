@@ -40,7 +40,8 @@ module Installation
 
       def initialize
         # We need to handle all the events because otherwise the current
-        # selection is lost when the widget is redrawn (bsc#1033594)
+        # selection is lost when the widget is redrawn.
+        # FIXME: It will not be needed once RadioButtons widget take care of it
         self.handle_all_events = true
       end
 
