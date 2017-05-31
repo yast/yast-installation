@@ -205,7 +205,7 @@ module Installation
     # It happens in two phases (for each update/package):
     #
     # * Mount the squashfs filesystem
-    # * Add files/directories to inst-sys using the /etc/adddir script
+    # * Add files/directories to inst-sys using the /sbin/adddir script
     #
     # @note The current implementation creates one squashfs image per package
     # and mounting a squashfs image consumes one loop device (/dev/loop*).
@@ -389,7 +389,7 @@ module Installation
     end
 
     # Command to apply the DUD disk to inst-sys
-    APPLY_CMD = "/etc/adddir %<source>s /".freeze # openSUSE/installation-images
+    APPLY_CMD = "/sbin/adddir %<source>s /".freeze # openSUSE/installation-images
 
     # Add files/directories to the inst-sys
     #
