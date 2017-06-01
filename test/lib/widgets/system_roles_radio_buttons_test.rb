@@ -9,6 +9,7 @@ describe Installation::Widgets::SystemRolesRadioButtons do
 
   describe "#store" do
     before do
+      stub_const("Yast::Packages", double(SelectSystemPatterns: nil, Reset: nil))
       allow(widget).to receive(:value).and_return(value)
       allow(widget).to receive(:store_orig)
     end

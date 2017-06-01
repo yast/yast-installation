@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun  1 12:58:03 CEST 2017 - schubi@suse.de
+
+- "custom" roles: Initialize pattern selection screen with settings
+  defined in the control files. (bnc#1031295)
+- 3.2.44
+
+-------------------------------------------------------------------
 Tue May 31 21:47:24 UTC 2017 - knut.anderssen@suse.com
 
 - Do not lose the desktop selection when the online repositories is
