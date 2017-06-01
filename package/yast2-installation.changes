@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue May 31 21:47:24 UTC 2017 - knut.anderssen@suse.com
+
+- Do not lose the desktop selection when the online repositories is
+  pressed. (bsc#1033594)
+- Do not allow to continue without desktop selection. (bsc#1040884)
+- 3.2.43
+
+-------------------------------------------------------------------
 Wed May 31 10:52:59 UTC 2017 - lslezak@suse.cz
 
 - Fixed path to the "adddir" command (it is /sbin instead of /etc)

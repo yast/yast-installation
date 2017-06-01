@@ -37,6 +37,14 @@ module Installation
       include SystemRoleReader
 
       alias_method :store_orig, :store
+
+      def initialize
+        # We need to handle all the events because otherwise the current
+        # selection is lost when the widget is redrawn.
+        # FIXME: It will not be needed once RadioButtons widget take care of it
+        self.handle_all_events = true
+      end
+
       def store
         # set flag to show custom patterns only if custom role selected
         CustomPatterns.show = value == "custom"
@@ -50,6 +58,21 @@ module Installation
           # forward and backward, it can be changed
           Yast::DefaultDesktop.ForceReinit
         end
+      end
+
+      def handle
+        ::Installation::SystemRole.select(value)
+
+        nil
+      end
+
+      def validate
+        return true if value
+
+        # TRANSLATORS: Popup error requesting to choose some option.
+        Yast::Popup.Error(_("You must choose some option before you continue."))
+
+        false
       end
 
       def vspacing
