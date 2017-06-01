@@ -57,8 +57,10 @@ module Installation
           Yast::DefaultDesktop.SetDesktop(nil)
           # But select patterns which have been defined e.g. in the
           # software/default_patterns section in the control.xml file.
-          # (Can be done in the general default_patterns section or in
-          #  the role specific default_patterns section)
+          # (This can be done in the general default_patterns section or in
+          # the role specific default_patterns section.)
+          # Another possibility to set it are the default pattern settings
+          # in each product description.
           Yast::Packages.SelectSystemPatterns(false)
           Yast::Pkg.PkgSolve(false)
         else
