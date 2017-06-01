@@ -60,7 +60,8 @@ module Installation
           # (This can be done in the general default_patterns section or in
           # the role specific default_patterns section.)
           # Another possibility to set it are the default pattern settings
-          # in each product description.
+          # in each product description defined by the "defaultpattern()"
+          # "Provides" dependency (FATE#320199).
           Yast::Packages.SelectSystemPatterns(false)
           Yast::Pkg.PkgSolve(false)
         else
