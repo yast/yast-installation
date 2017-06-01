@@ -30,6 +30,7 @@ Yast.import "DefaultDesktop"
 Yast.import "ProductControl"
 Yast.import "IP"
 Yast.import "Hostname"
+Yast.import "Pkg"
 
 module Installation
   module Widgets
@@ -50,9 +51,16 @@ module Installation
         CustomPatterns.show = value == "custom"
         store_orig
 
+        Yast::Packages.Reset([])
         if value == "custom"
           # for custom role do not use any desktop
           Yast::DefaultDesktop.SetDesktop(nil)
+          # But select patterns which have been defined e.g. in the
+          # software/default_patterns section in the control.xml file.
+          # (Can be done in the general default_patterns section or in
+          #  the role specific default_patterns section)
+          Yast::Packages.SelectSystemPatterns(false)
+          Yast::Pkg.PkgSolve(false)
         else
           # force reset of Default Desktop, because it is cached and when going
           # forward and backward, it can be changed
