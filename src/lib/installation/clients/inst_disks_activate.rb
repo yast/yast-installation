@@ -27,6 +27,7 @@
 # $Id$
 #
 
+require "y2storage"
 require "installation/clients/inst_update_installer"
 
 module Yast
@@ -48,7 +49,6 @@ module Yast
       Yast.import "Label"
       Yast.import "Linuxrc"
       Yast.import "Popup"
-      Yast.import "Storage"
       Yast.import "Wizard"
 
       # all the arguments
@@ -159,7 +159,7 @@ module Yast
         )
       end
 
-      Storage.ReReadTargetMap if @disks_changed
+      Y2Storage::StorageManager.instance.probe if @disks_changed
 
       Builtins.y2debug("ret=%1", @ret)
 
