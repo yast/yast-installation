@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jun 14 21:33:02 CEST 2017 - aschnell@suse.com
+
+- adapted inst_disks_activate.rb to storage-ng
+- 3.3.1
+
+-------------------------------------------------------------------
 Thu Mar 23 09:13:58 UTC 2017 - ancor@suse.com
 
 - Version temporarily bumped to 3.3.x to prioritize the

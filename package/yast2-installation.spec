@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.3.0
+Version:        3.3.1
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -45,7 +45,7 @@ BuildRequires: yast2 >= 3.2.20
 
 # Y2Storage
 BuildRequires: yast2-storage-ng >= 0.1.1
-Requires:      yast2-storage-ng >= 0.1.1
+Requires:      yast2-storage-ng >= 0.1.18
 
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
