@@ -131,7 +131,11 @@ Requires:	coreutils
 # BNC 446533, /sbin/lspci called but not installed
 Requires:	pciutils
 
+# install the registration module only in SLE (bsc#1043122)
+%if !0%{?is_opensuse}
 Recommends:	yast2-registration
+%endif
+
 Recommends:	yast2-online-update
 Recommends:	yast2-firewall
 Recommends:	release-notes
