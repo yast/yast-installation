@@ -1,3 +1,11 @@
+# storage-ng
+#
+# This is apparently used to shrink all (?!) PReP partitions on CHRP (?!)
+# machines to 8 MiB.
+#
+# Not sure what this tries to achieve nor why this deserved its own client.
+#
+
 module Installation
   class PrepShrinkFinish
     include Yast::Logger
