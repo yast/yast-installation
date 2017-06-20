@@ -245,7 +245,7 @@ module Yast
     #				  Hard disks
     # --------------------------------------------------------------
     def ActionHDDProbe
-      devicegraph = Y2Storage::StorageManager.instance.probed
+      devicegraph = Y2Storage::StorageManager.instance.y2storage_probed
 
       # additonal error when HW was not found
       drivers_info = _(
