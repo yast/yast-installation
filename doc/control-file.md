@@ -1054,6 +1054,17 @@ property should be set to _true_. This works only for Btrfs root
 filesystems. If another root filesystem type is chosen, this might fail
 silently.
 
+*home_path* (string) is the path (mount point) for the home
+partition or volume, if any is created (depending on *try_separate_home*,
+*limit_try_home* and available disk space).
+
+By default, this is "/home". This can be set to another value like "/data", in
+which case the same partitioning proposal logic (including the other _home_
+parameters in this control.xml file) will be used as for "/home", just for
+"/data" as the mount point, and "/home" will be on the root filesystem again
+(with its own subvolume if Btrfs is used). Notice that you cannot have both a
+separate "/home" and a separate "/data" with this mechanism.
+
 
 #### Subvolumes
 
