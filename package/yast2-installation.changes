@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jun 26 11:11:19 CEST 2017 - shundhammer@suse.de
+
+- Allow different mount point for home partition (Fate#323532)
+- 3.1.217.35
+
+-------------------------------------------------------------------
 Wed Apr 26 15:03:33 UTC 2017 - igonzalezsosa@suse.com
 
 - Move CaaSP specific code to yast2-caasp package
