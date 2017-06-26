@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jun 26 11:11:19 CEST 2017 - shundhammer@suse.de
+
+- Allow different mount point for home partition (Fate#323532)
+- 3.2.46
+
+-------------------------------------------------------------------
 Mon Jun 19 07:03:16 UTC 2017 - lslezak@suse.cz
 
 - install the yast2-registration package only in SLE (bsc#1043122)
