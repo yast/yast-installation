@@ -1065,6 +1065,19 @@ parameters in this control.xml file) will be used as for "/home", just for
 (with its own subvolume if Btrfs is used). Notice that you cannot have both a
 separate "/home" and a separate "/data" with this mechanism.
 
+**NOTICE:**
+
+_This "home_path" parameter is a hack, introduced to make a feature possible
+against all odds at the very latest stages of CaaSP 1.0 development without
+breaking the entire storage proposal logic._
+
+It is strongly advised not to use this in general. This documentation only
+exists for the sake of completeness, not as an encouragement to use this
+parameter.
+
+Please contact the YaST team if you feel you need this.
+
+
 
 #### Subvolumes
 
