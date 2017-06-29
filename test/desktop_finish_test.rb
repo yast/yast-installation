@@ -27,10 +27,10 @@ describe Yast::DesktopFinishClient do
       allow(Yast::DefaultDesktop).to receive(:Desktop).and_return("gnome")
       allow(Yast::DefaultDesktop).to receive(:GetAllDesktopsMap)
         .and_return("gnome" => {
-          "logon" => "gdm",
-          "cursor" => "DMZ",
-          "desktop" => "gnome"
-        })
+                      "logon"   => "gdm",
+                      "cursor"  => "DMZ",
+                      "desktop" => "gnome"
+                    })
 
       allow(Yast::SCR).to receive(:Write)
       allow(Yast::Execute).to receive(:on_target)

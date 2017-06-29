@@ -62,6 +62,7 @@ module Yast
       end
 
       desktop_map = DefaultDesktop.GetAllDesktopsMap[selected_desktop]
+      raise "Selected desktop '#{selected_desktop}' missing in desktops map" unless desktop_map
 
       log.info "selected desktop #{desktop_map}"
 
