@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun 29 11:51:55 UTC 2017 - jreidinger@suse.com
+
+- openSUSE only: reword title of desktop selection dialog
+  (boo#1045180)
+- 3.2.47
+
+-------------------------------------------------------------------
 Thu Jun 29 08:40:43 UTC 2017 - jreidinger@suse.com
 
 - openSUSE only: when custom role is selected in desktop selection
