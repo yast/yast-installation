@@ -22,7 +22,7 @@ module Installation
       loop do
         ret = Yast::CWM.show(
           content,
-          caption:        _("Computer Role"),
+          caption:        _("User Interface"),
           skip_store_for: [:redraw]
         )
         break if ret != :redraw
