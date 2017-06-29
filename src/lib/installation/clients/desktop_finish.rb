@@ -43,6 +43,7 @@ module Yast
       Yast.import "Mode"
       Yast.import "ProductFeatures"
       Yast.import "FileUtils"
+      Yast.import "Product"
       Yast.import "String"
 
       @ret = nil
@@ -80,6 +81,12 @@ module Yast
 
           @selected_desktop = DefaultDesktop.Desktop
           Builtins.y2milestone("Selected desktop: %1", @selected_desktop)
+
+          if @selected_desktop.nil? && Product.short_name =~ /opensuse/i
+            Builtins.y2milestone("no desktop set, skipping.")
+            Builtins.y2milestone("desktop_finish finished")
+            return nil
+          end
 
           if @selected_desktop.nil? || @selected_desktop == ""
             @selected_desktop = "gnome"
