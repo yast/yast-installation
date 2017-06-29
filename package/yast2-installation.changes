@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun 29 08:40:43 UTC 2017 - jreidinger@suse.com
+
+- when custom role is selected in desktop selection
+  keep default value in /etc/sysconfig/windowmanager (bsc#1030873)
+- 3.3.0
+
+-------------------------------------------------------------------
 Mon Jun 26 11:11:19 CEST 2017 - shundhammer@suse.de
 
 - Allow different mount point for home partition (Fate#323532)
