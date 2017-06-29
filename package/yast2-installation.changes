@@ -2,7 +2,7 @@
 Thu Jun 29 08:40:43 UTC 2017 - jreidinger@suse.com
 
 - openSUSE only: when custom role is selected in desktop selection
-  keep default value in /etc/sysconfig/windowmanager
+  keep default value in /etc/sysconfig/windowmanager (bsc#1030873)
 - 3.2.46
 
 -------------------------------------------------------------------
