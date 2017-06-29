@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun 29 08:40:43 UTC 2017 - jreidinger@suse.com
+
+- openSUSE only: when custom role is selected in desktop selection
+  keep default value in /etc/sysconfig/windowmanager
+- 3.2.46
+
+-------------------------------------------------------------------
 Mon Jun 19 07:03:16 UTC 2017 - lslezak@suse.cz
 
 - install the yast2-registration package only in SLE (bsc#1043122)
