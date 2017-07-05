@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.3.1
+Version:        3.4.0
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -26,7 +26,8 @@ Source0:        %{name}-%{version}.tar.bz2
 Group:          System/YaST
 License:        GPL-2.0
 Url:            http://github.com/yast/yast-installation
-Requires:       yast2-ruby-bindings >= 3.1.8
+# new y2start script
+Requires:       yast2-ruby-bindings >= 3.2.10
 
 Summary:        YaST2 - Installation Parts
 
@@ -50,8 +51,8 @@ Requires:      yast2-storage-ng >= 0.1.18
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
 
-# ProductControl.system_roles
-Requires:       yast2 >= 3.2.15
+# PackageDownloader and PackageExtractor
+Requires:       yast2 >= 3.2.19
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
@@ -81,8 +82,8 @@ Requires:       yast2-proxy
 # writing settings in the first installation stage.
 Requires: yast2-services-manager >= 3.2.1
 
-# Network service setup moved into yast2-network
-Requires: yast2-network >= 3.1.143
+## Moved inst_install_inf from yast2-network to this package
+Requires: yast2-network >= 3.2.25
 
 # Augeas lenses
 Requires:       augeas-lenses
@@ -136,7 +137,11 @@ Requires:	coreutils
 # BNC 446533, /sbin/lspci called but not installed
 Requires:	pciutils
 
+# install the registration module only in SLE (bsc#1043122)
+%if !0%{?is_opensuse}
 Recommends:	yast2-registration
+%endif
+
 Recommends:	yast2-online-update
 Recommends:	yast2-firewall
 Recommends:	release-notes

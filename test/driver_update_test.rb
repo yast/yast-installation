@@ -88,7 +88,7 @@ describe Installation::DriverUpdate do
 
       it "applies the driver update" do
         expect(Yast::SCR).to receive(:Execute)
-          .with(Yast::Path.new(".target.bash_output"), "/etc/adddir #{update.instsys_path} /")
+          .with(Yast::Path.new(".target.bash_output"), "/sbin/adddir #{update.instsys_path} /")
           .and_return("exit" => 0, "stdout" => "", "stderr" => "")
         update.apply
       end

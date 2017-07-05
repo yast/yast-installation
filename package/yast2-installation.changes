@@ -1,8 +1,118 @@
 -------------------------------------------------------------------
+Wed Jul  5 12:06:33 CEST 2017 - shundhammer@suse.de
+
+- Merged master to storage-ng branch
+- 3.4.0
+
+-------------------------------------------------------------------
+Thu Jun 29 11:51:55 UTC 2017 - jreidinger@suse.com
+
+- openSUSE only: reword title of desktop selection dialog
+  (boo#1045180)
+
+-------------------------------------------------------------------
+Thu Jun 29 08:40:43 UTC 2017 - jreidinger@suse.com
+
+- when custom role is selected in desktop selection
+  keep default value in /etc/sysconfig/windowmanager (bsc#1030873)
+
+-------------------------------------------------------------------
+Mon Jun 26 11:11:19 CEST 2017 - shundhammer@suse.de
+
+- Allow different mount point for home partition (Fate#323532)
+
+-------------------------------------------------------------------
+Mon Jun 19 07:03:16 UTC 2017 - lslezak@suse.cz
+
+- install the yast2-registration package only in SLE (bsc#1043122)
+
+-------------------------------------------------------------------
 Wed Jun 14 21:33:02 CEST 2017 - aschnell@suse.com
 
 - adapted inst_disks_activate.rb to storage-ng
 - 3.3.1
+
+-------------------------------------------------------------------
+Thu Jun  1 12:58:03 CEST 2017 - schubi@suse.de
+
+- "custom" roles: Initialize pattern selection screen with settings
+  defined in the control files. (bnc#1031295)
+
+-------------------------------------------------------------------
+Tue May 31 21:47:24 UTC 2017 - knut.anderssen@suse.com
+
+- Do not lose the desktop selection when the online repositories is
+  pressed. (bsc#1033594)
+- Do not allow to continue without desktop selection. (bsc#1040884)
+
+-------------------------------------------------------------------
+Wed May 31 10:52:59 UTC 2017 - lslezak@suse.cz
+
+- Fixed path to the "adddir" command (it is /sbin instead of /etc)
+  (bsc#1041882)
+
+-------------------------------------------------------------------
+Mon May 29 08:37:19 UTC 2017 - knut.anderssen@suse.com
+
+- Added requirement of 'cwm/widget' in hiding_place as consequence
+  of changes made in CWM. (boo#1039901).
+
+-------------------------------------------------------------------
+Mon May 22 10:50:32 UTC 2017 - lslezak@suse.cz
+
+- Fixed push button label ("Configure Online Repositories")
+  (bsc#1039988)
+
+-------------------------------------------------------------------
+Mon May  8 13:17:17 UTC 2017 - knut.anderssen@suse.com
+
+- Don't crash if the regurl provided by linuxrc is invalid using
+  the one provided by the control file as fallback (bsc#1035908).
+
+-------------------------------------------------------------------
+Wed Apr 26 15:03:33 UTC 2017 - igonzalezsosa@suse.com
+
+- Move CaaSP specific code to yast2-caasp package
+  (bsc#1036838)
+
+-------------------------------------------------------------------
+Wed Apr 26 09:52:01 UTC 2017 - gsouza@suse.com
+
+- bsc#1031840
+  - changed CheckFreeSpaceNow to use LANG=en_US.UTF-8
+
+-------------------------------------------------------------------
+Thu Apr 20 14:00:08 UTC 2017 - igonzalezsosa@suse.com
+
+- Add a NTP Servers settings to the overview dialog
+  (FATE#323249)
+
+-------------------------------------------------------------------
+Wed Apr  5 11:31:12 CEST 2017 - jreidinger@suse.com
+
+- Use y2start script instead of y2base (bsc#1027181)
+
+-------------------------------------------------------------------
+Wed Apr  5 10:31:12 CEST 2017 - schubi@suse.de
+
+- Added configuration-management to inst_finish.
+  (FATE#319830)
+
+-------------------------------------------------------------------
+Tue Apr  4 14:16:28 UTC 2017 - mvidner@suse.com
+
+- Renamed Controller Node to Administration Node (bsc#1032057).
+
+-------------------------------------------------------------------
+Mon Mar 27 13:39:38 UTC 2017 - igonzalezsosa@suse.com
+
+- Move CaaSP specific code to yast2-caasp (bsc#1030874)
+
+-------------------------------------------------------------------
+Mon Mar 27 06:50:29 UTC 2017 - lslezak@suse.cz
+
+- Use the shared package download and extraction functionality
+  from FATE#320772
 
 -------------------------------------------------------------------
 Thu Mar 23 09:13:58 UTC 2017 - ancor@suse.com

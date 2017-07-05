@@ -798,12 +798,27 @@ Section *supported\_desktops* contains list of one or more
 System Roles, if defined in the control file, are presented during
 the first stage of the installation. The user will select one of them
 and they will affect the proposed configuration of Partitioning and Software.
+It also allows to modify configuration of Systemd Services.
 
 A role can also define additional dialogs that are shown when a given role is
 selected. It is a common installation dialog with *Abort*, *Cancel* and *Next*
 buttons. It supports and uses all parameters from the **GetInstArgs** module.
 When going back, it will first show the last additional dialog and when going
 back through all additional dialogs, it will show again the roles selection.
+
+System roles by default preselect first defined entry unless user set it.
+If the first role has an attribute *no_default* then no role will be
+preselected.
+
+Example snippet for no\_default:
+```xml
+<system_roles config:type="list">
+  <system_role>
+    <id>plain</id>
+    <no_default config:type="boolean"> true </no_default>
+  </system_role>
+<system_roles>
+```
 
 They were requested in FATE#317481 and they are an evolution of the earlier
 concept of Server Scenarios used in SLE 11.
@@ -822,13 +837,25 @@ Example:
 
       <system_role>
         <id>virtualization_host_kvm</id>
+        <!-- partitioning override -->
         <partitioning>
           <proposal_lvm config:type="boolean">true</proposal_lvm>
         </partitioning>
+        <!-- software override -->
         <software>
           <default_patterns>base Minimal kvm_server</default_patterns>
         </software>
+        <!-- few additional dialogs needed for this role -->
         <additional_dialogs>kvm_setup,virt_manager_setup </additional_dialogs>
+        <!-- enable few additional services -->
+        <services config:type="list">
+          <service>
+            <name>salt-minion</name>
+          </service>
+          <service>
+            <name>devil-master</name>
+          </service>
+        </services>
       </system_role>
     </system_roles>
 
@@ -870,6 +897,9 @@ Each role has a short label and a few lines of description in the *texts*
 section, identified by a matching *id* element. The contents of *partitioning*
 and *software* are merged with the corresponding top-level definitions. See
 [Partitioning](#partitioning) and [Software](#software).
+
+The *services* part currently supports only enabling additional services which
+is done by specifying *service* with its *name* as seen in the example.
 
 ### System Scenarios
 
@@ -990,6 +1020,30 @@ root subvolume should be mounted read-only in /etc/fstab and its 'ro' Btrfs
 property should be set to _true_. This works only for Btrfs root
 filesystems. If another root filesystem type is chosen, this might fail
 silently.
+
+*home_path* (string) is the path (mount point) for the home
+partition or volume, if any is created (depending on *try_separate_home*,
+*limit_try_home* and available disk space).
+
+By default, this is "/home". This can be set to another value like "/data", in
+which case the same partitioning proposal logic (including the other _home_
+parameters in this control.xml file) will be used as for "/home", just for
+"/data" as the mount point, and "/home" will be on the root filesystem again
+(with its own subvolume if Btrfs is used). Notice that you cannot have both a
+separate "/home" and a separate "/data" with this mechanism.
+
+**NOTICE:**
+
+_This "home_path" parameter is a hack, introduced to make a feature possible
+against all odds at the very latest stages of CaaSP 1.0 development without
+breaking the entire storage proposal logic._
+
+It is strongly advised not to use this in general. This documentation only
+exists for the sake of completeness, not as an encouragement to use this
+parameter.
+
+Please contact the YaST team if you feel you need this.
+
 
 
 #### Subvolumes

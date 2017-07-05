@@ -10,7 +10,8 @@ module Installation
       end
 
       def label
-        _("Configure On-line Repositories")
+        # TRANSLATORS: Push button label
+        _("Configure Online Repositories")
       end
 
       def handle

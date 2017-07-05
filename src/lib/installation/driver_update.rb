@@ -79,7 +79,7 @@ module Installation
     end
 
     # Command to apply the DUD disk to inst-sys
-    APPLY_CMD = "/etc/adddir %<source>s /".freeze # openSUSE/installation-images
+    APPLY_CMD = "/sbin/adddir %<source>s /".freeze # openSUSE/installation-images
 
     # Add files/directories to the inst-sys
     #
