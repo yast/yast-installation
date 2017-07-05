@@ -1,5 +1,5 @@
 require "yast"
-require "installation/widgets/system_role"
+require "installation/widgets/system_roles_radio_buttons"
 require "installation/widgets/online_repos"
 require "cwm/widget"
 
@@ -22,7 +22,7 @@ module Installation
       loop do
         ret = Yast::CWM.show(
           content,
-          caption:        _("Computer Role"),
+          caption:        _("User Interface"),
           skip_store_for: [:redraw]
         )
         break if ret != :redraw

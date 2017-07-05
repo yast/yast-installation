@@ -1,7 +1,7 @@
 #!/usr/bin/env rspec
 
 require_relative "../../test_helper"
-require "installation/widgets/system_role"
+require "installation/widgets/system_role_reader"
 
 describe ::Installation::Widgets::SystemRoleReader do
   class DummySystemRoleReader
