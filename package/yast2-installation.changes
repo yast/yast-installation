@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Thu Aug  10 13:30:12 UTC 2017 - qzhao@suse.com
+
+- Update YaST2-Firstboot.service: Depreciate plymouth --wait, add
+  conflict to plymouth start service.
+- Update YaST2-Second-Stage.service: Depreciate plymouth deactivate
+  command and add conflict to plymouth start service. For that will
+  block TTY device activation(bsc#1042554).
+- 3.3.6
+
+-------------------------------------------------------------------
 Mon Aug  7 13:43:34 UTC 2017 - jreidinger@suse.com
 
 - Fix crash when going back from product selection (FATE#323450)
