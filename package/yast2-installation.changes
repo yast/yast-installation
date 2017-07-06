@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Thu Jan 18 13:27:26 UTC 2018 - qzhao@suse.com
+
+- Update YaST2-Firstboot.service: Depreciate plymouth --wait, add
+  conflict to plymouth start service.
+- Update YaST2-Second-Stage.service: Depreciate plymouth deactivate
+  command and add conflict to plymouth start service. For that will
+  block TTY device activation(bsc#1042554).
+- 3.1.223
+
+-------------------------------------------------------------------
 Mon Apr 24 14:16:51 UTC 2017 - gsouza@suse.com
 
 - bsc#1031840
