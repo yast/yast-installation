@@ -3,6 +3,8 @@ require "yast"
 require "cwm/dialog"
 require "installation/widgets/product_selector"
 
+Yast.import "WorkflowManager"
+
 module Installation
   module Dialogs
     class ProductSelection < CWM::Dialog
@@ -30,6 +32,18 @@ module Installation
 
       def contents
         VBox(selector)
+      end
+
+      def run
+        res = super
+
+        if res == :next
+          # TODO: real mapping to selected product
+          Yast::WorkflowManager.AddWorkflow(:package, 0, "skelcd-control-SLES")
+          Yast::WorkflowManager.MergeWorkflows
+        end
+
+        res
       end
     end
   end
