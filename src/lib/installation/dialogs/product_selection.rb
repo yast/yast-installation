@@ -41,6 +41,7 @@ module Installation
           # TODO: real mapping to selected product
           Yast::WorkflowManager.AddWorkflow(:package, 0, "skelcd-control-SLES")
           Yast::WorkflowManager.MergeWorkflows
+          Yast::WorkflowManager.RedrawWizardSteps
         end
 
         res
