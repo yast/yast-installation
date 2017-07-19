@@ -22,7 +22,7 @@ module Installation
         [
           ["sles", "SUSE Linux Enterprise Server"],
           ["sled", "SUSE Linux Enterprise Desktop"],
-          ["openSUSE", "openSUSE Leap"],
+          ["leanos", "Lean OS"],
           ["todo", "Ball Kicking Product"]
         ]
       end
