@@ -26,23 +26,23 @@ describe Installation::ProductReader do
     end
 
     it "returns Installation::Product objects" do
-      products = YAML.load(load_fixture("products", "sles12sp3.yml"))
+      products = YAML.load(load_fixture("products", "sles15.yml"))
       expect(Yast::Pkg).to receive(:ResolvableProperties).with("", :product, "")
         .and_return(products)
       expect(subject.available_base_products.first).to be_a(Installation::Product)
     end
 
     it "returns the correct product properties" do
-      products = YAML.load(load_fixture("products", "sles12sp3.yml"))
+      products = YAML.load(load_fixture("products", "sles15.yml"))
       expect(Yast::Pkg).to receive(:ResolvableProperties).with("", :product, "")
         .and_return(products)
       ret = subject.available_base_products.first
       expect(ret.name).to eq("SLES")
-      expect(ret.label).to eq("SUSE Linux Enterprise Server 12 SP3")
+      expect(ret.label).to eq("SUSE Linux Enterprise Server 15 Alpha1")
     end
 
     it "returns only the products from the initial repository" do
-      sp3 = YAML.load(load_fixture("products", "sles12sp3.yml")).first
+      sp3 = YAML.load(load_fixture("products", "sles15.yml")).first
       addon1 = sp3.dup
       addon1["source"] = 1
       addon2 = sp3.dup
