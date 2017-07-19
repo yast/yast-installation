@@ -21,6 +21,7 @@ module Installation
         # TODO: read real
         [
           ["sles", "SUSE Linux Enterprise Server"],
+          ["sles_for_sap", "SUSE Linux Enterprise Server for SAP"],
           ["sled", "SUSE Linux Enterprise Desktop"],
           ["leanos", "Lean OS"],
           ["todo", "Ball Kicking Product"]
