@@ -3,6 +3,7 @@ require "yast"
 require "cwm/dialog"
 require "installation/widgets/product_selector"
 
+Yast.import "ProductControl"
 Yast.import "WorkflowManager"
 
 module Installation
@@ -42,6 +43,8 @@ module Installation
           Yast::WorkflowManager.AddWorkflow(:package, 0, "skelcd-control-SLES")
           Yast::WorkflowManager.MergeWorkflows
           Yast::WorkflowManager.RedrawWizardSteps
+          # run new steps for product, for now disable back TODO: allow it
+          res = Yast::ProductControl.RunFrom(Yast::ProductControl.CurrentStep + 1, false)
         end
 
         res
