@@ -18,29 +18,29 @@ require "installation/product_sorter"
 describe "Installation::PRODUCT_SORTER" do
 
   # testing products with defined ordering
-  let(:p1) { Installation::Product.new("p10", "Product with order 10", order: 10)}
-  let(:p2) { Installation::Product.new("p20", "Product with order 20", order: 20)}
-  let(:p3) { Installation::Product.new("p30", "Product with order 30", order: 30)}
+  let(:p1) { Installation::Product.new("p10", "Product with order 10", order: 10) }
+  let(:p2) { Installation::Product.new("p20", "Product with order 20", order: 20) }
+  let(:p3) { Installation::Product.new("p30", "Product with order 30", order: 30) }
   # testing products with undefined (nil) ordering
-  let(:pnil1) { Installation::Product.new("p1", "Product 1 without order")}
-  let(:pnil2) { Installation::Product.new("p2", "Product 2 without order")}
+  let(:pnil1) { Installation::Product.new("p1", "Product 1 without order") }
+  let(:pnil2) { Installation::Product.new("p2", "Product 2 without order") }
 
   it "keeps an already sorted list unchanged" do
-      products = [p1, p2, p3]
-      products.sort!(&::Installation::PRODUCT_SORTER)
-      expect(products).to eq([p1, p2, p3])
+    products = [p1, p2, p3]
+    products.sort!(&::Installation::PRODUCT_SORTER)
+    expect(products).to eq([p1, p2, p3])
   end
 
   it "sorts the products by the ordering number" do
-      products = [p3, p2, p1]
-      products.sort!(&::Installation::PRODUCT_SORTER)
-      expect(products).to eq([p1, p2, p3])
+    products = [p3, p2, p1]
+    products.sort!(&::Installation::PRODUCT_SORTER)
+    expect(products).to eq([p1, p2, p3])
   end
 
   it "sorts by label if ordering is missing" do
-      products = [pnil2, pnil1]
-      products.sort!(&::Installation::PRODUCT_SORTER)
-      expect(products).to eq([pnil1, pnil2])
+    products = [pnil2, pnil1]
+    products.sort!(&::Installation::PRODUCT_SORTER)
+    expect(products).to eq([pnil1, pnil2])
   end
 
   it "puts the products with undefined order at the end" do

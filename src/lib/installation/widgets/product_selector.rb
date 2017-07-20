@@ -7,9 +7,9 @@ module Installation
     class ProductSelector < CWM::RadioButtons
       attr_reader :items
 
-      # @param products [Array<string>] to display
+      # @param products [Array<Installation::Product>] to display
       def initialize(products)
-        @items = products
+        @items = products.map { |p| [p.name, p.label, p.selected?] }
         textdomain "installation"
       end
 

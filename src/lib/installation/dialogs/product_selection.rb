@@ -2,6 +2,7 @@ require "yast"
 
 require "cwm/dialog"
 require "installation/widgets/product_selector"
+require "installation/product_reader"
 
 Yast.import "ProductControl"
 Yast.import "WorkflowManager"
@@ -18,14 +19,7 @@ module Installation
       end
 
       def products
-        # TODO: read real
-        [
-          ["sles", "SUSE Linux Enterprise Server"],
-          ["sles_for_sap", "SUSE Linux Enterprise Server for SAP"],
-          ["sled", "SUSE Linux Enterprise Desktop"],
-          ["leanos", "Lean OS"],
-          ["todo", "Ball Kicking Product"]
-        ]
+        ProductReader.available_base_products
       end
 
       def selector

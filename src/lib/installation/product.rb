@@ -16,7 +16,6 @@ Yast.import "Pkg"
 module Installation
   # Simple Libzypp Product wrapper
   class Product
-
     attr_reader :name, :label, :order
 
     # @param name [String] name of the product resolvable

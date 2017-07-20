@@ -10,7 +10,6 @@
 # FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 # ------------------------------------------------------------------------------
 
-
 require "yast"
 require "installation/product"
 
@@ -41,6 +40,5 @@ module Installation
         Product.new(p["name"], label)
       end
     end
-
   end
 end

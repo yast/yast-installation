@@ -10,7 +10,6 @@
 # FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 # ------------------------------------------------------------------------------
 
-
 module Installation
   # Sorter for sorting Products in required display order
   # @param x [Installation::Product] the first item to compare
@@ -22,7 +21,7 @@ module Installation
     # only one product has defined order
     elsif x.order || y.order
       # product with defined order first
-      x.order ? 1 : -1
+      x.order ? -1 : 1
     else
       # none product has defined order, sort by label
       x.label <=> y.label
