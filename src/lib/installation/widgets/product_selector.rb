@@ -27,6 +27,8 @@ module Installation
         product = products.find { |p| p.name == value }
         product.select if product
       end
+
+      # TODO: validation, a product must be selected
     end
   end
 end
