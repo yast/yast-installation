@@ -31,6 +31,10 @@ module Installation
         p["source"] == 0
       end
 
+      # remove duplicates, there migth be different flavors ("DVD"/"POOL")
+      # or archs (x86_64/i586)
+      products.uniq! { |p| p["name"] }
+
       log.debug "Found base products: #{products}"
       log.info "Found base products: #{products.map { |p| p["name"] }}"
 
