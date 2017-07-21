@@ -15,7 +15,7 @@ describe ::Installation::Widgets::ProductSelector do
   describe "#store" do
     it "selects the product to install" do
       # mock selecting the first product
-      expect(subject).to receive(:value).and_return("test1")
+      allow(subject).to receive(:value).and_return("test1")
 
       expect(product1).to receive(:select)
       expect(product2).to_not receive(:select)
