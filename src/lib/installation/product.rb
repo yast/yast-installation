@@ -16,6 +16,8 @@ Yast.import "Pkg"
 module Installation
   # Simple Libzypp Product wrapper
   class Product
+    include Yast::Logger
+
     attr_reader :name, :label, :order
 
     # @param name [String] name of the product resolvable
@@ -30,6 +32,7 @@ module Installation
     # select the product to install
     # @return [Boolean] true if the product has been sucessfully selected
     def select
+      log.info "Selecting product #{name} to install"
       Yast::Pkg.ResolvableInstall(name, :product, "")
     end
 

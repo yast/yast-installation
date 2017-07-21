@@ -5,6 +5,8 @@ require "cwm/common_widgets"
 module Installation
   module Widgets
     class ProductSelector < CWM::RadioButtons
+      include Yast::Logger
+
       attr_reader :items, :products
 
       # @param products [Array<Installation::Product>] to display
@@ -24,7 +26,9 @@ module Installation
 
       def store
         # TODO: deselect the previously selected product when going back
+        log.info "Selected product: #{value}"
         product = products.find { |p| p.name == value }
+        log.info "Found product: #{product} "
         product.select if product
       end
 
