@@ -28,18 +28,31 @@ module Installation
       installation_mapping = installation_package_mapping
       result = products.map do |p|
         label = p["display_name"] || p["short_name"] || p["name"]
-        # TODO: add the display order
-        product = Product.new(p["name"], label)
+        prod_pkg = product_package(p["product_package"], p["source"])
+
+        if prod_pkg
+          prod_pkg["deps"].find { |dep| dep["provides"] =~ /\Adisplayorder\(\s*([0-9]+)\s*\)\z/ }
+          displayorder = Regexp.last_match[1].to_i if Regexp.last_match
+        end
+
+        product = Product.new(p["name"], label, order: displayorder)
         product.installation_package = installation_mapping[product.name]
         product
       end
 
       # only installable products
-      result.select! { |p| p.installation_package }
+      result.select!(&:installation_package)
 
       log.info "available base products #{result}"
 
       result
+    end
+
+    def self.product_package(name, repo_id)
+      return nil unless name
+      Yast::Pkg.ResolvableDependencies(name, :package, "").find do |p|
+        p["source"] == repo_id
+      end
     end
 
     def self.base_products
@@ -54,7 +67,6 @@ module Installation
       # remove duplicates, there migth be different flavors ("DVD"/"POOL")
       # or archs (x86_64/i586)
       products.uniq! { |p| p["name"] }
-
 
       log.info "Found products: #{products.map { |p| p["name"] }}"
 

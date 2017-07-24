@@ -1,0 +1,360 @@
+---
+- arch: x86_64
+  dependencies:
+  - dep_kind: conflicts
+    name: sle-we-release
+    res_kind: package
+  - dep_kind: conflicts
+    name: sled-release
+    res_kind: package
+  - dep_kind: conflicts
+    name: leanos-release
+    res_kind: package
+  - dep_kind: obsoletes
+    name: leanos-release
+    res_kind: package
+  - dep_kind: prerequires
+    name: glibc
+    res_kind: package
+  - dep_kind: prerequires
+    name: bash
+    res_kind: package
+  - dep_kind: prerequires
+    name: coreutils
+    res_kind: package
+  - dep_kind: provides
+    name: sle-we-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-moleculars-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-server-applications-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-scripting-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-legacy-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-development-tools-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-desktop-applications-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-basesystem-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-ha-geo-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-scripting-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-legacy-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-development-tools-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-desktop-applications-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-basesystem-release
+    res_kind: package
+  - dep_kind: provides
+    name: SLES-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: leanos-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-moleculars-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-ha-geo-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-ha-release
+    res_kind: package
+  - dep_kind: provides
+    name: sled-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-server-applications-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-ha-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-we-release
+    res_kind: package
+  - dep_kind: provides
+    name: openSUSE-release
+    res_kind: package
+  - dep_kind: provides
+    name: sles-release
+    res_kind: package
+  - dep_kind: provides
+    name: SLED-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: leanos-SP1-migration
+    res_kind: package
+  - dep_kind: recommends
+    name: branding-SLE
+    res_kind: package
+  - dep_kind: recommends
+    name: branding-openSUSE
+    res_kind: package
+  - dep_kind: requires
+    name: glibc
+    res_kind: package
+  - dep_kind: requires
+    name: coreutils
+    res_kind: package
+  - dep_kind: requires
+    name: issue-generator
+    res_kind: package
+  - dep_kind: requires
+    name: bash
+    res_kind: package
+  deps:
+  - conflicts: leanos-release
+  - conflicts: sled-release
+  - conflicts: kernel < 4.4
+  - conflicts: perl-Bootloader < 0.904
+  - obsoletes: leanos-release
+  - prerequires: "/bin/sh"
+  - prerequires: coreutils
+  - prerequires: glibc >= 2.22
+  - provides: product-endoflife()
+  - provides: distribution-release
+  - provides: displayorder(200)
+  - provides: sles-release-15
+  - provides: product(SUSE_SLE) = 15
+  - provides: product-register-target() = sle%2D15%2Dx86_64
+  - provides: product(SUSE_SLE-SP0) = 15
+  - provides: product(SUSE_SLE) = 15-80.1
+  - provides: product(SUSE_SLE-SP0) = 15-80.1
+  - provides: product(SLES) = 15-0
+  - provides: product() = SLES
+  - provides: product-cpeid() = cpe%3A%2Fo%3Asuse%3Asles%3A15
+  - provides: product-label() = SLES15
+  - provides: config(sles-release) = 15-80.1
+  - provides: sles-release = 15-80.1
+  - provides: product-url(releasenotes) = https%3A%2F%2Fwww.suse.com%2Freleasenotes%2Fx86_64%2FSUSE%2DSLES%2F15%2Frelease%2Dnotes%2Dsles.rpm
+  - provides: sles-release(x86-64) = 15-80.1
+  - recommends: branding
+  - requires: issue-generator
+  - requires: "/bin/sh"
+  - requires: coreutils
+  - requires: glibc >= 2.22
+  description: |-
+    SUSE Linux Enterprise offers a comprehensive
+            suite of products built on a single code base.
+            The platform addresses business needs from
+            the smallest thin-client devices to the world's
+            most powerful high-performance computing
+            and mainframe servers. SUSE Linux Enterprise
+            offers common management tools and technology
+            certifications across the platform, and
+            each product is enterprise-class.
+  download_size: 23849
+  inst_size: 76384
+  location: sles-release-15-80.1.x86_64.rpm
+  locked: false
+  medium_nr: 0
+  name: sles-release
+  on_system_by_user: false
+  path: "./x86_64/sles-release-15-80.1.x86_64.rpm"
+  source: 0
+  status: :available
+  summary: SUSE Linux Enterprise Server 15 Alpha1
+  transact_by: :solver
+  vendor: SUSE LINUX Products GmbH, Nuernberg, Germany
+  version: 15-80.1
+  version_epoch: 
+  version_release: '80.1'
+  version_version: '15'
+- arch: i586
+  dependencies:
+  - dep_kind: conflicts
+    name: sle-we-release
+    res_kind: package
+  - dep_kind: conflicts
+    name: sled-release
+    res_kind: package
+  - dep_kind: conflicts
+    name: leanos-release
+    res_kind: package
+  - dep_kind: obsoletes
+    name: leanos-release
+    res_kind: package
+  - dep_kind: prerequires
+    name: glibc
+    res_kind: package
+  - dep_kind: prerequires
+    name: bash
+    res_kind: package
+  - dep_kind: prerequires
+    name: coreutils
+    res_kind: package
+  - dep_kind: provides
+    name: sle-we-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-moleculars-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-server-applications-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-scripting-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-legacy-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-development-tools-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-desktop-applications-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-basesystem-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-ha-geo-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-scripting-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-legacy-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-development-tools-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-desktop-applications-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-basesystem-release
+    res_kind: package
+  - dep_kind: provides
+    name: SLES-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: leanos-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-moleculars-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-ha-geo-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-ha-release
+    res_kind: package
+  - dep_kind: provides
+    name: sled-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-module-server-applications-release
+    res_kind: package
+  - dep_kind: provides
+    name: sle-ha-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: sle-we-release
+    res_kind: package
+  - dep_kind: provides
+    name: openSUSE-release
+    res_kind: package
+  - dep_kind: provides
+    name: sles-release
+    res_kind: package
+  - dep_kind: provides
+    name: SLED-SP1-migration
+    res_kind: package
+  - dep_kind: provides
+    name: leanos-SP1-migration
+    res_kind: package
+  - dep_kind: recommends
+    name: branding-SLE
+    res_kind: package
+  - dep_kind: recommends
+    name: branding-openSUSE
+    res_kind: package
+  - dep_kind: requires
+    name: glibc
+    res_kind: package
+  - dep_kind: requires
+    name: coreutils
+    res_kind: package
+  - dep_kind: requires
+    name: issue-generator
+    res_kind: package
+  - dep_kind: requires
+    name: bash
+    res_kind: package
+  deps:
+  - conflicts: leanos-release
+  - conflicts: sled-release
+  - conflicts: kernel < 4.4
+  - conflicts: perl-Bootloader < 0.904
+  - obsoletes: leanos-release
+  - prerequires: "/bin/sh"
+  - prerequires: coreutils
+  - prerequires: glibc >= 2.22
+  - provides: product-endoflife()
+  - provides: distribution-release
+  - provides: displayorder(200)
+  - provides: sles-release-15
+  - provides: product(SUSE_SLE) = 15
+  - provides: product(SUSE_SLE-SP0) = 15
+  - provides: product(SUSE_SLE) = 15-80.1
+  - provides: product(SUSE_SLE-SP0) = 15-80.1
+  - provides: product(SLES) = 15-0
+  - provides: product() = SLES
+  - provides: product-cpeid() = cpe%3A%2Fo%3Asuse%3Asles%3A15
+  - provides: product-label() = SLES15
+  - provides: config(sles-release) = 15-80.1
+  - provides: sles-release = 15-80.1
+  - provides: product-url(releasenotes) = https%3A%2F%2Fwww.suse.com%2Freleasenotes%2Fi586%2FSUSE%2DSLES%2F15%2Frelease%2Dnotes%2Dsles.rpm
+  - provides: sles-release(x86-32) = 15-80.1
+  - recommends: branding
+  - requires: issue-generator
+  - requires: "/bin/sh"
+  - requires: coreutils
+  - requires: glibc >= 2.22
+  description: |-
+    SUSE Linux Enterprise offers a comprehensive
+            suite of products built on a single code base.
+            The platform addresses business needs from
+            the smallest thin-client devices to the world's
+            most powerful high-performance computing
+            and mainframe servers. SUSE Linux Enterprise
+            offers common management tools and technology
+            certifications across the platform, and
+            each product is enterprise-class.
+  download_size: 23806
+  inst_size: 76341
+  location: sles-release-15-80.1.i586.rpm
+  locked: false
+  medium_nr: 0
+  name: sles-release
+  on_system_by_user: false
+  path: "./i586/sles-release-15-80.1.i586.rpm"
+  source: 0
+  status: :available
+  summary: SUSE Linux Enterprise Server 15 Alpha1
+  transact_by: :solver
+  vendor: SUSE LINUX Products GmbH, Nuernberg, Germany
+  version: 15-80.1
+  version_epoch: 
+  version_release: '80.1'
+  version_version: '15'
