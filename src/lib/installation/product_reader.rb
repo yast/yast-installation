@@ -34,7 +34,8 @@ module Installation
         product
       end
 
-      result.reject { |p| !p.installation_package }
+      # only installable products
+      result.select! { |p| p.installation_package }
 
       log.info "available base products #{result}"
 
@@ -66,12 +67,13 @@ module Installation
       mapping = {}
       installation_packages.each do |list|
         pkg_name = list.first
-        dependencies = Yast::Pkg.ResolvableDependencies(pkg_name, :package, "")
+        # FIXME: can be there more result then one?
+        dependencies = Yast::Pkg.ResolvableDependencies(pkg_name, :package, "").first["deps"]
         install_provide = dependencies.find do |d|
-          d["provides"] && d["provides"].match?(/system-installation\(\)/)
+          d["provides"] && d["provides"].match(/system-installation\(\)/)
         end
 
-        product_name = install_provide[/system-installation\(\)\s*=\s*(\S+)/, 1]
+        product_name = install_provide["provides"][/system-installation\(\)\s*=\s*(\S+)/, 1]
         log.info "package #{pkg_name} install product #{product_name}"
         mapping[product_name] = pkg_name
       end
