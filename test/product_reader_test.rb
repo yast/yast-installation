@@ -19,6 +19,11 @@ describe Installation::ProductReader do
   subject { Installation::ProductReader }
 
   describe "#available_base_products" do
+    before do
+      # TODO proper mocking of pkg methods
+      allow(subject).to receive(:installation_package_mapping).and_return({"SLES" => "skelcd-SLES"})
+    end
+
     it "returns empty list if there is no product" do
       expect(Yast::Pkg).to receive(:ResolvableProperties).with("", :product, "")
         .and_return([])
