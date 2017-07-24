@@ -13,6 +13,20 @@ describe ::Installation::Widgets::ProductSelector do
   include_examples "CWM::RadioButtons"
 
   describe "#store" do
+    before do
+      allow(Yast::Pkg).to receive(:PkgApplReset)
+      allow(Yast::Pkg).to receive(:PkgReset)
+    end
+
+    it "resets previous package configuration" do
+      # mock selecting the first product
+      allow(subject).to receive(:value).and_return("test1")
+      allow(product1).to receive(:select)
+      expect(Yast::Pkg).to receive(:PkgApplReset)
+      expect(Yast::Pkg).to receive(:PkgReset)
+      subject.store
+    end
+
     it "selects the product to install" do
       # mock selecting the first product
       allow(subject).to receive(:value).and_return("test1")

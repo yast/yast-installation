@@ -1,4 +1,5 @@
 require "yast"
+Yast.import "Pkg"
 
 require "cwm/common_widgets"
 
@@ -25,11 +26,17 @@ module Installation
       end
 
       def store
-        # TODO: deselect the previously selected product when going back
         log.info "Selected product: #{value}"
         product = products.find { |p| p.name == value }
-        log.info "Found product: #{product} "
-        product.select if product
+        log.info "Found product: #{product}"
+
+        return unless product
+
+        # reset both YaST and user selection (when going back or any products
+        # selected by YaST in the previous steps)
+        Yast::Pkg.PkgApplReset
+        Yast::Pkg.PkgReset
+        product.select
       end
 
       # TODO: validation, a product must be selected
