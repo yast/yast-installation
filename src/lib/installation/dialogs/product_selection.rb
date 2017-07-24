@@ -34,8 +34,8 @@ module Installation
         res = super
 
         if res == :next
-          # TODO: real mapping to selected product
-          Yast::WorkflowManager.AddWorkflow(:package, 0, "skelcd-control-SLES")
+          product = selector.product
+          Yast::WorkflowManager.AddWorkflow(:package, 0, product.installation_package)
           Yast::WorkflowManager.MergeWorkflows
           Yast::WorkflowManager.RedrawWizardSteps
           # run new steps for product, for now disable back TODO: allow it

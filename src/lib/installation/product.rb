@@ -19,6 +19,8 @@ module Installation
     include Yast::Logger
 
     attr_reader :name, :label, :order
+    # package including installation.xml for install on top of lean os
+    attr_accessor :installation_package
 
     # @param name [String] name of the product resolvable
     # @param label [String] user visible product label

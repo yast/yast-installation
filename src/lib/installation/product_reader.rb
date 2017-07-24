@@ -23,6 +23,25 @@ module Installation
     # In installation Read the available libzypp base products for installation
     # @return [Array<Installation::Product>] the found available base products
     def self.available_base_products
+      products = base_products
+
+      installation_mapping = installation_package_mapping
+      result = products.map do |p|
+        label = p["display_name"] || p["short_name"] || p["name"]
+        # TODO: add the display order
+        product = Product.new(p["name"], label)
+        product.installation_package = installation_mapping[product.name]
+        product
+      end
+
+      result.reject { |p| !p.installation_package }
+
+      log.info "available base products #{result}"
+
+      result
+    end
+
+    def self.base_products
       products = Yast::Pkg.ResolvableProperties("", :product, "").select do |p|
         # during installation/upgrade the product["type"] is not valid yet yet
         # (the base product is determined by /etc/products.d/baseproduct symlink)
@@ -35,14 +54,29 @@ module Installation
       # or archs (x86_64/i586)
       products.uniq! { |p| p["name"] }
 
-      log.debug "Found base products: #{products}"
-      log.info "Found base products: #{products.map { |p| p["name"] }}"
 
-      products.map do |p|
-        label = p["display_name"] || p["short_name"] || p["name"]
-        # TODO: add the display order
-        Product.new(p["name"], label)
+      log.info "Found products: #{products.map { |p| p["name"] }}"
+
+      products
+    end
+
+    def self.installation_package_mapping
+      installation_packages = Yast::Pkg.PkgQueryProvides("system-installation()")
+
+      mapping = {}
+      installation_packages.each do |list|
+        pkg_name = list.first
+        dependencies = Yast::Pkg.ResolvableDependencies(pkg_name, :package, "")
+        install_provide = dependencies.find do |d|
+          d["provides"] && d["provides"].match?(/system-installation\(\)/)
+        end
+
+        product_name = install_provide[/system-installation\(\)\s*=\s*(\S+)/, 1]
+        log.info "package #{pkg_name} install product #{product_name}"
+        mapping[product_name] = pkg_name
       end
+
+      mapping
     end
   end
 end
