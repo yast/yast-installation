@@ -44,9 +44,9 @@ BuildRequires:  rubygem(yast-rake)
 # CWM::RadioButtons#vspacing
 BuildRequires: yast2 >= 3.2.20
 
-# Y2Storage
-BuildRequires: yast2-storage-ng >= 0.1.1
-Requires:      yast2-storage-ng >= 0.1.18
+# New Y2Storage::StorageManager API
+BuildRequires: yast2-storage-ng >= 0.1.32
+Requires:      yast2-storage-ng >= 0.1.32
 
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
