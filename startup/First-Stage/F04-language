@@ -6,10 +6,6 @@ log "========================"
 # 4) set language environment
 #---------------------------------------------
 LANGUAGE=en_US
-infofile=/content
-if [ -f $infofile ];then
-	LANGUAGE=`sed -n 's/^LANGUAGE \([^ ]*\)/\1/p' $infofile`
-fi
 if [ ! "$Locale" = "" ];then
 	LANGUAGE=$Locale
 fi
