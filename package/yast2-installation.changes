@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jul 26 14:42:15 UTC 2017 - jreidinger@suse.com
+
+- drop reading /content (FATE#322386)
+- 3.3.2
+
+-------------------------------------------------------------------
 Thu Jun 29 11:51:55 UTC 2017 - jreidinger@suse.com
 
 - openSUSE only: reword title of desktop selection dialog
