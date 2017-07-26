@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jul 25 15:08:59 UTC 2017 - ancor@suse.com
+
+- storage-ng: adapted to the new Y2Storage::StorageManager API
+  and improved probing and activation of storage devices.
+
+-------------------------------------------------------------------
 Wed Jul  5 12:06:33 CEST 2017 - shundhammer@suse.de
 
 - Merged master to storage-ng branch

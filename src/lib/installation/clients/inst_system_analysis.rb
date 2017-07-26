@@ -123,12 +123,12 @@ module Yast
         actions_functions << fun_ref(method(:ActionLoadModules), "boolean ()")
 =end
 
-        actions_todo      << _("Probe hard disks")
-        actions_doing     << _("Probing hard disks...")
-        actions_functions << fun_ref(method(:ActionHDDProbe), "boolean ()")
-
         WFM.CallFunction("inst_features", [])
       end
+
+      actions_todo      << _("Probe hard disks")
+      actions_doing     << _("Probing hard disks...")
+      actions_functions << fun_ref(method(:ActionHDDProbe), "boolean ()")
 
 # storage-ng
 =begin
@@ -245,7 +245,14 @@ module Yast
     #				  Hard disks
     # --------------------------------------------------------------
     def ActionHDDProbe
-      devicegraph = Y2Storage::StorageManager.instance.y2storage_probed
+      storage = Y2Storage::StorageManager.instance
+      # Activate high level devices (RAID, multipath, LVM, encryption...)
+      # and (re)probe. Reprobing ensures we don't bring bug#806454 back and
+      # invalidates cached proposal, so we are also safe from bug#865579.
+      storage.activate
+      storage.probe
+
+      devicegraph = storage.probed
 
       # additonal error when HW was not found
       drivers_info = _(
@@ -352,12 +359,6 @@ module Yast
       # FATE #300421: Import ssh keys from previous installations
       # FATE #120103: Import Users From Existing Partition
       # FATE #302980: Simplified user config during installation
-      #	All needs to be known before configuring users
-      # ReReadTargetMap is needed to fix bug #806454
-      Storage.ReReadTargetMap()
-      # SetPartProposalFirst is needed to fix bug #865579
-      Storage.SetPartProposalFirst(true)
-
       Builtins.y2milestone("PreInstallFunctions -- start --")
       WFM.CallFunction("inst_pre_install", [])
       Builtins.y2milestone("PreInstallFunctions -- end --")
