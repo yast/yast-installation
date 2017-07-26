@@ -248,7 +248,7 @@ module Yast
       storage = Y2Storage::StorageManager.instance
       # Activate high level devices (RAID, multipath, LVM, encryption...)
       # and (re)probe. Reprobing ensures we don't bring bug#806454 back and
-      # invalidates cached proposal, so we we are also safe from bug#865579.
+      # invalidates cached proposal, so we are also safe from bug#865579.
       storage.activate
       storage.probe
 
