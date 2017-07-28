@@ -130,13 +130,10 @@ module Yast
       actions_doing     << _("Probing hard disks...")
       actions_functions << fun_ref(method(:ActionHDDProbe), "boolean ()")
 
-# storage-ng
-=begin
       # FATE #302980: Simplified user config during installation
       actions_todo      << _("Search for system files")
       actions_doing     << _("Searching for system files...")
       actions_functions << fun_ref(method(:FilesFromOlderSystems), "boolean ()")
-=end
 
       actions_todo      << _("Initialize software manager")
       actions_doing     << _("Initializing software manager...")
