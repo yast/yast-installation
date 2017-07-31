@@ -18,7 +18,12 @@ module Installation
   class Product
     include Yast::Logger
 
-    attr_reader :name, :label, :order
+    # @return [String] the internal libzypp product name
+    attr_reader :name
+    # @return [String] the human readable product label
+    attr_reader :label
+    # @return [Integer, nil] the display order (nil if not defined)
+    attr_reader :order
     # package including installation.xml for install on top of lean os
     attr_accessor :installation_package
 
