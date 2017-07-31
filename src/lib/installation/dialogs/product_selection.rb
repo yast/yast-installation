@@ -10,6 +10,11 @@ Yast.import "WorkflowManager"
 module Installation
   module Dialogs
     class ProductSelection < CWM::Dialog
+
+      class << self
+        attr_accessor :selected_package
+      end
+
       def initialize
         textdomain "installation"
       end
@@ -34,12 +39,17 @@ module Installation
         res = super
 
         if res == :next
+          # remove already selected if it is not first run of dialog
+          if self.class.selected_package
+            Yast::WorkflowManager.RemoveWorkflow(:package, 0, self.class.selected_package)
+          end
           product = selector.product
           Yast::WorkflowManager.AddWorkflow(:package, 0, product.installation_package)
           Yast::WorkflowManager.MergeWorkflows
           Yast::WorkflowManager.RedrawWizardSteps
-          # run new steps for product, for now disable back TODO: allow it
-          res = Yast::ProductControl.RunFrom(Yast::ProductControl.CurrentStep + 1, false)
+          self.class.selected_package = product.installation_package
+          # run new steps for product
+          res = Yast::ProductControl.RunFrom(Yast::ProductControl.CurrentStep + 1, true)
         end
 
         res

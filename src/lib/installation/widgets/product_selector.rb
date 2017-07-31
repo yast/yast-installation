@@ -51,7 +51,7 @@ module Installation
       def validation
         return true if value
 
-        Yast::Popup.Error(_("Please select product to install.")
+        Yast::Popup.Error(_("Please select product to install."))
         false
       end
     end
