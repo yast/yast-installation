@@ -2,6 +2,12 @@
 Mon Jul 31 08:16:23 UTC 2017 - jreidinger@suse.com
 
 - New client for product selection (FATE#323450)
+- 3.3.3
+
+-------------------------------------------------------------------
+Wed Jul 26 14:42:15 UTC 2017 - jreidinger@suse.com
+
+- drop reading /content (FATE#322386)
 - 3.3.2
 
 -------------------------------------------------------------------
