@@ -10,7 +10,6 @@ Yast.import "WorkflowManager"
 module Installation
   module Dialogs
     class ProductSelection < CWM::Dialog
-
       class << self
         attr_accessor :selected_package
       end

@@ -28,7 +28,7 @@ module Installation
       end
 
       def init
-        selected = products.find { |p| p.selected? }
+        selected = products.find(&:selected?)
         return unless selected
 
         self.value = selected.name
