@@ -1,5 +1,6 @@
 require "yast"
 Yast.import "Pkg"
+Yast.import "Popup"
 
 require "cwm/common_widgets"
 
@@ -14,7 +15,7 @@ module Installation
       # @param products [Array<Installation::Product>] to display
       def initialize(products)
         @products = products
-        @items = products.map { |p| [p.name, p.label, p.selected?] }
+        @items = products.map { |p| [p.name, p.label] }
         textdomain "installation"
       end
 
@@ -24,6 +25,13 @@ module Installation
 
       def label
         _("Product to Install")
+      end
+
+      def init
+        selected = products.find { |p| p.selected? }
+        return unless selected
+
+        self.value = selected.name
       end
 
       def store
@@ -40,7 +48,12 @@ module Installation
         @product.select
       end
 
-      # TODO: validation, a product must be selected
+      def validation
+        return true if value
+
+        Yast::Popup.Error(_("Please select product to install.")
+        false
+      end
     end
   end
 end
