@@ -86,6 +86,8 @@ module Installation
           d["provides"] && d["provides"].match(/system-installation\(\)/)
         end
 
+        # parse product name from provides. Format of provide is
+        # `system-installation() = <product_name>`
         product_name = install_provide["provides"][/system-installation\(\)\s*=\s*(\S+)/, 1]
         log.info "package #{pkg_name} install product #{product_name}"
         mapping[product_name] = pkg_name
