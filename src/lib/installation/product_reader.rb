@@ -12,6 +12,7 @@
 
 require "yast"
 require "installation/product"
+require "installation/product_sorter"
 
 Yast.import "Pkg"
 
@@ -21,7 +22,8 @@ module Installation
     include Yast::Logger
 
     # In installation Read the available libzypp base products for installation
-    # @return [Array<Installation::Product>] the found available base products
+    # @return [Array<Installation::Product>] the found available base products,
+    #   the products are sorted by the 'displayorder' provides value
     def self.available_base_products
       products = base_products
 
@@ -42,6 +44,9 @@ module Installation
 
       # only installable products
       result.select!(&:installation_package)
+
+      # sort the products
+      result.sort!(&::Installation::PRODUCT_SORTER)
 
       log.info "available base products #{result}"
 
