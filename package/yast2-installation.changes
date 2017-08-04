@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Aug  4 06:26:43 UTC 2017 - lslezak@suse.com
+
+- Allow using base products from additional repositories
+  (FATE#323450)
+- 3.3.4
+
+-------------------------------------------------------------------
 Mon Jul 31 08:16:23 UTC 2017 - jreidinger@suse.com
 
 - New client for product selection (FATE#323450)

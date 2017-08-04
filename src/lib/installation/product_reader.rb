@@ -25,7 +25,7 @@ module Installation
     # @return [Array<Installation::Product>] the found available base products,
     #   the products are sorted by the 'displayorder' provides value
     def self.available_base_products
-      products = base_products
+      products = available_products
 
       installation_mapping = installation_package_mapping
       result = products.map do |prod|
@@ -60,21 +60,21 @@ module Installation
       end
     end
 
-    # read the available base products
+    # read the available products, remove potential duplicates
     # @return [Array<Hash>] pkg-bindings data structure
-    def self.base_products
-      products = Yast::Pkg.ResolvableProperties("", :product, "").select do |prod|
-        prod["source"] == 0
-      end
+    def self.available_products
+      products = Yast::Pkg.ResolvableProperties("", :product, "")
 
       # remove duplicates, there migth be different flavors ("DVD"/"POOL")
-      # or archs (x86_64/i586)
+      # or archs (x86_64/i586), when selecting the product to install later
+      # libzypp will select the correct arch automatically
       products.uniq! { |prod| prod["name"] }
-
       log.info "Found products: #{products.map { |prod| prod["name"] }}"
 
       products
     end
+
+    private_class_method :available_products
 
     def self.installation_package_mapping
       installation_packages = Yast::Pkg.PkgQueryProvides("system-installation()")
