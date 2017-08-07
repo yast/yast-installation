@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Aug  7 13:43:34 UTC 2017 - jreidinger@suse.com
+
+- Fix crash when going back from product selection (FATE#323450)
+- 3.3.5
+
+-------------------------------------------------------------------
 Fri Aug  4 06:26:43 UTC 2017 - lslezak@suse.com
 
 - Allow using base products from additional repositories

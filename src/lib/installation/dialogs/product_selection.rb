@@ -38,7 +38,8 @@ module Installation
 
       # enhances default run by additional action if next is pressed
       def run
-        return if super != :next
+        res = super
+        return res if res != :next
 
         # remove already selected if it is not first run of dialog
         if self.class.selected_package
