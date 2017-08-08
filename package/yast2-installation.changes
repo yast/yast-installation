@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Aug  8 10:57:46 CEST 2017 - shundhammer@suse.de
+
+- Merged SLE-12-SP2-CASP branch to SLE-12-SP3 branch (bsc#1051200)
+- 3.2.48 
+
+-------------------------------------------------------------------
 Thu Jun 29 11:51:55 UTC 2017 - jreidinger@suse.com
 
 - openSUSE only: reword title of desktop selection dialog
@@ -11,6 +17,13 @@ Thu Jun 29 08:40:43 UTC 2017 - jreidinger@suse.com
 - openSUSE only: when custom role is selected in desktop selection
   keep default value in /etc/sysconfig/windowmanager (bsc#1030873)
 - 3.2.46
+
+-------------------------------------------------------------------
+Mon Jun 26 11:11:19 CEST 2017 - shundhammer@suse.de
+
+- Allow different mount point for home partition (Fate#323532)
+- Move remaining CaaSP specific code to yast2-caasp package
+  (bsc#1036838)
 
 -------------------------------------------------------------------
 Mon Jun 19 07:03:16 UTC 2017 - lslezak@suse.cz
