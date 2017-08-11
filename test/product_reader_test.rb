@@ -34,7 +34,7 @@ describe Installation::ProductReader do
       products = YAML.load(load_fixture("products", "sles15.yml"))
       expect(Yast::Pkg).to receive(:ResolvableProperties).with("", :product, "")
         .and_return(products)
-      expect(subject.available_base_products.first).to be_a(Installation::Product)
+      expect(subject.available_base_products.first).to be_a(Packages::Product)
     end
 
     it "returns the correct product properties" do

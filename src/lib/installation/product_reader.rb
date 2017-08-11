@@ -11,7 +11,7 @@
 # ------------------------------------------------------------------------------
 
 require "yast"
-require "installation/product"
+require "packages/product"
 require "installation/product_sorter"
 
 Yast.import "Pkg"
@@ -29,7 +29,6 @@ module Installation
 
       installation_mapping = installation_package_mapping
       result = products.map do |prod|
-        label = prod["display_name"] || prod["short_name"] || prod["name"]
         prod_pkg = product_package(prod["product_package"], prod["source"])
 
         if prod_pkg
@@ -37,9 +36,9 @@ module Installation
           displayorder = Regexp.last_match[1].to_i if Regexp.last_match
         end
 
-        product = Product.new(prod["name"], label, order: displayorder)
-        product.installation_package = installation_mapping[product.name]
-        product
+        Packages::Product.new(name: prod["name"], short_name: prod["short_name"],
+                              display_name: prod["display_name"], order: displayorder,
+                              installation_package: installation_mapping[prod["name"]])
       end
 
       # only installable products
