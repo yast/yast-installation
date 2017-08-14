@@ -1,4 +1,46 @@
 -------------------------------------------------------------------
+Mon Aug 14 15:13:42 CEST 2017 - shundhammer@suse.de
+
+- Merged storage-ng branch to master (fate#318196)
+- Note: all changes below with this date belong to the merge.
+- 3.3.6
+
+-------------------------------------------------------------------
+Mon Aug 14 15:13:42 CEST 2017 - ancor@suse.com
+
+- storage-ng: adapted to the new Y2Storage::StorageManager API
+  and improved probing and activation of storage devices.
+
+-------------------------------------------------------------------
+Mon Aug 14 15:13:42 CEST 2017 - aschnell@suse.com
+
+- adapted inst_disks_activate.rb to storage-ng
+
+-------------------------------------------------------------------
+Mon Aug 14 15:13:42 CEST 2017 - schubi@suse.de
+
+- storage-ng: Taking /usr/bin/findmnt in order to evaluate mount
+  points. Floppy support removed.
+
+-------------------------------------------------------------------
+Mon Aug 14 15:13:42 CEST 2017 - ancor@suse.com
+
+- storage-ng: use the new library for storage hardware probing
+  (devicegraph) instead of the old one (targetmap)
+
+-------------------------------------------------------------------
+Mon Aug 14 15:13:42 CEST 2017 - ancor@suse.com
+
+- storage-ng: removed dependency from (old) yast2-storage, even
+  if it breaks some functionality.
+
+-------------------------------------------------------------------
+Mon Aug 14 15:13:42 CEST 2017 - ancor@suse.com
+
+- storage-ng: commented installation-related code relying on the
+  old yast2-storage
+
+-------------------------------------------------------------------
 Mon Aug  7 13:43:34 UTC 2017 - jreidinger@suse.com
 
 - Fix crash when going back from product selection (FATE#323450)

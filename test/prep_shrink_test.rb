@@ -222,6 +222,7 @@ describe ::Installation::PrepShrinkFinish do
       end
 
       it "shrink prep partitions too big" do
+        skip "TODO: not converted to storage-ng yet"
         expect(Yast::SCR).to receive(:Execute)
           .with(
             ::Installation::PrepShrinkFinish::YAST_BASH_PATH,

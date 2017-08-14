@@ -38,7 +38,6 @@ module Yast
       textdomain "installation"
 
       Yast.import "Installation"
-      Yast.import "Storage"
       Yast.import "Hotplug"
       Yast.import "Vendor"
       Yast.import "String"
@@ -183,6 +182,10 @@ module Yast
         # access to it (because it will be read only afterwards).
         set_root_subvol_read_only
 
+# storage-ng
+# rubocop:disable Style/BlockComments
+=begin
+
         @targetMap = Storage.GetTargetMap
 
         # first umount all file based crypto fs since they potentially
@@ -204,6 +207,8 @@ module Yast
             )
           end
         end
+
+=end
 
         # *** umount_list is lexically ordered !
         # now umount in reverse order (guarantees "/" as last umount)
@@ -269,6 +274,9 @@ module Yast
         )
         @cmd_run = Convert.to_map(WFM.Execute(path(".local.bash_output"), @cmd))
 
+# storage-ng
+=begin
+
         # must call .local.bash_output !
         @max_loop_dev = Storage.NumLoopDevices
 
@@ -290,6 +298,9 @@ module Yast
           Builtins.y2milestone("shutting down LVM")
           WFM.Execute(path(".local.bash"), "/sbin/vgchange -a n")
         end
+
+=end
+
       else
         Builtins.y2error("unknown function: %1", @func)
         @ret = nil

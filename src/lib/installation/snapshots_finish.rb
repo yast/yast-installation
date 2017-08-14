@@ -11,7 +11,6 @@ module Installation
       textdomain "installation"
 
       Yast.import "Mode"
-      Yast.import "StorageSnapper"
       Yast.import "InstFunctions"
       Yast.include self, "installation/misc.rb"
     end
