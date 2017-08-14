@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.3.5
+Version:        3.3.6
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -44,6 +44,10 @@ BuildRequires:  rubygem(yast-rake)
 # CWM::RadioButtons#vspacing
 BuildRequires: yast2 >= 3.2.20
 
+# New Y2Storage::StorageManager API
+BuildRequires: yast2-storage-ng >= 0.1.32
+Requires:      yast2-storage-ng >= 0.1.32
+
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
 
@@ -63,8 +67,10 @@ Conflicts:	yast2-mouse < 2.18.0
 # Lazy loading in ProductLicense
 Requires:	yast2-packager >= 3.1.113
 
-# Storage::GetDetectedDiskPaths
-Requires:	yast2-storage >= 2.24.1
+# FIXME: some code present in this package still depends on the old yast2-storage
+# and will break without this dependency. That's acceptable at this point of the
+# migration to storage-ng. See installer-hacks.md in the yast-storage-ng repo.
+# Requires:  yast2-storage >= 2.24.1
 
 # use in startup scripts
 Requires:	initviocons
@@ -76,8 +82,8 @@ Requires:       yast2-proxy
 # writing settings in the first installation stage.
 Requires: yast2-services-manager >= 3.2.1
 
-## Moved inst_install_inf from yast2-network to this package
-Requires: yast2-network >= 3.2.25
+## storage-ng based version
+Requires: yast2-network >= 3.3.7
 
 # Augeas lenses
 Requires:       augeas-lenses
@@ -89,9 +95,9 @@ Requires:       augeas-lenses
 # new root password cwm widget
 BuildRequires:	yast2-users >= 3.2.8
 Requires:	yast2-users >= 3.2.8
-# new keyboard layout cwm widget
-BuildRequires:	yast2-country >= 3.2.7
-Requires:	yast2-country >= 3.2.7
+# storage-ng based version
+BuildRequires:	yast2-country >= 3.3.1
+Requires:	yast2-country >= 3.3.1
 
 # Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
 # pkg-bindings are not directly required
@@ -100,8 +106,8 @@ Conflicts:	yast2-pkg-bindings < 2.17.25
 # InstError
 Conflicts:	yast2 < 2.18.6
 
-# lower version requires perl-Bootloader-YAML no longer installed
-Conflicts:	yast2-bootloader < 3.1.166
+# storage-ng based version
+Conflicts:	yast2-bootloader < 3.3.1
 
 # Added new function WFM::ClientExists
 Conflicts:	yast2-core < 2.17.10

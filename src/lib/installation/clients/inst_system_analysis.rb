@@ -26,6 +26,7 @@
 #		Lukas Ocilka <locilka@suse.cz>
 
 require "yast"
+require "y2storage"
 
 module Yast
   class InstSystemAnalysisClient < Client
@@ -46,9 +47,13 @@ module Yast
       Yast.import "ProductFeatures"
       Yast.import "Progress"
       Yast.import "Report"
+# storage-ng
+# rubocop:disable Style/BlockComments
+=begin
       Yast.import "Storage"
       Yast.import "StorageControllers"
       Yast.import "StorageDevices"
+=end
       Yast.import "Wizard"
       Yast.import "PackageCallbacks"
 
@@ -59,7 +64,10 @@ module Yast
       # This dialog in not interactive
       # always return `back when came from the previous dialog
       if GetInstArgs.going_back
+# storage-ng
+=begin
         Storage.ActivateHld(false)
+=end
         return :back
       end
 
@@ -94,11 +102,18 @@ module Yast
           actions_doing     << _("Probing FireWire devices...")
           actions_functions << fun_ref(method(:ActionFireWire), "boolean ()")
 
+# storage-ng
+=begin
           actions_todo      << _("Probe floppy disk devices")
           actions_doing     << _("Probing floppy disk devices...")
           actions_functions << fun_ref(method(:ActionFloppyDisks), "boolean ()")
+=end
         end
 
+# storage-ng
+# As soon as we introduce support for RAID or multipath, we'll need to replace
+# StorageController with a new OOP way of probing and loading controllers
+=begin
         actions_todo      << _("Probe hard disk controllers")
         actions_doing     << _("Probing hard disk controllers...")
         actions_functions << fun_ref(method(:ActionHHDControllers), "boolean ()")
@@ -106,18 +121,22 @@ module Yast
         actions_todo      << _("Load kernel modules for hard disk controllers")
         actions_doing     << _("Loading kernel modules for hard disk controllers...")
         actions_functions << fun_ref(method(:ActionLoadModules), "boolean ()")
-
-        actions_todo      << _("Probe hard disks")
-        actions_doing     << _("Probing hard disks...")
-        actions_functions << fun_ref(method(:ActionHDDProbe), "boolean ()")
+=end
 
         WFM.CallFunction("inst_features", [])
       end
 
+      actions_todo      << _("Probe hard disks")
+      actions_doing     << _("Probing hard disks...")
+      actions_functions << fun_ref(method(:ActionHDDProbe), "boolean ()")
+
+# storage-ng
+=begin
       # FATE #302980: Simplified user config during installation
       actions_todo      << _("Search for system files")
       actions_doing     << _("Searching for system files...")
       actions_functions << fun_ref(method(:FilesFromOlderSystems), "boolean ()")
+=end
 
       actions_todo      << _("Initialize software manager")
       actions_doing     << _("Initializing software manager...")
@@ -226,7 +245,14 @@ module Yast
     #				  Hard disks
     # --------------------------------------------------------------
     def ActionHDDProbe
-      targetMap = StorageDevices.Probe(true)
+      storage = Y2Storage::StorageManager.instance
+      # Activate high level devices (RAID, multipath, LVM, encryption...)
+      # and (re)probe. Reprobing ensures we don't bring bug#806454 back and
+      # invalidates cached proposal, so we are also safe from bug#865579.
+      storage.activate
+      storage.probe
+
+      devicegraph = storage.probed
 
       # additonal error when HW was not found
       drivers_info = _(
@@ -237,7 +263,7 @@ module Yast
         drivers_info = ""
       end
 
-      if Builtins.size(targetMap) == 0
+      if devicegraph.empty?
         if @found_controllers || Arch.s390
           if !(Mode.autoinst || Mode.autoupgrade)
             # pop-up error report
@@ -333,12 +359,6 @@ module Yast
       # FATE #300421: Import ssh keys from previous installations
       # FATE #120103: Import Users From Existing Partition
       # FATE #302980: Simplified user config during installation
-      #	All needs to be known before configuring users
-      # ReReadTargetMap is needed to fix bug #806454
-      Storage.ReReadTargetMap()
-      # SetPartProposalFirst is needed to fix bug #865579
-      Storage.SetPartProposalFirst(true)
-
       Builtins.y2milestone("PreInstallFunctions -- start --")
       WFM.CallFunction("inst_pre_install", [])
       Builtins.y2milestone("PreInstallFunctions -- end --")

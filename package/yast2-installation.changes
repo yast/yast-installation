@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Aug 14 15:13:42 CEST 2017 - shundhammer@suse.de
+
+- Merged storage-ng branch to master (fate#318196)
+- 3.3.6
+
+-------------------------------------------------------------------
 Mon Aug  7 13:43:34 UTC 2017 - jreidinger@suse.com
 
 - Fix crash when going back from product selection (FATE#323450)
@@ -24,37 +30,49 @@ Wed Jul 26 14:42:15 UTC 2017 - jreidinger@suse.com
 - 3.3.2
 
 -------------------------------------------------------------------
+Tue Jul 25 15:08:59 UTC 2017 - ancor@suse.com
+
+- storage-ng: adapted to the new Y2Storage::StorageManager API
+  and improved probing and activation of storage devices.
+
+-------------------------------------------------------------------
+Wed Jul  5 12:06:33 CEST 2017 - shundhammer@suse.de
+
+- Merged master to storage-ng branch
+
+-------------------------------------------------------------------
 Thu Jun 29 11:51:55 UTC 2017 - jreidinger@suse.com
 
 - openSUSE only: reword title of desktop selection dialog
   (boo#1045180)
-- 3.3.1
 
 -------------------------------------------------------------------
 Thu Jun 29 08:40:43 UTC 2017 - jreidinger@suse.com
 
 - when custom role is selected in desktop selection
   keep default value in /etc/sysconfig/windowmanager (bsc#1030873)
-- 3.3.0
 
 -------------------------------------------------------------------
 Mon Jun 26 11:11:19 CEST 2017 - shundhammer@suse.de
 
 - Allow different mount point for home partition (Fate#323532)
-- 3.2.46
 
 -------------------------------------------------------------------
 Mon Jun 19 07:03:16 UTC 2017 - lslezak@suse.cz
 
 - install the yast2-registration package only in SLE (bsc#1043122)
-- 3.2.45
+
+-------------------------------------------------------------------
+Wed Jun 14 21:33:02 CEST 2017 - aschnell@suse.com
+
+- adapted inst_disks_activate.rb to storage-ng
+- 3.3.1
 
 -------------------------------------------------------------------
 Thu Jun  1 12:58:03 CEST 2017 - schubi@suse.de
 
 - "custom" roles: Initialize pattern selection screen with settings
   defined in the control files. (bnc#1031295)
-- 3.2.44
 
 -------------------------------------------------------------------
 Tue May 31 21:47:24 UTC 2017 - knut.anderssen@suse.com
@@ -62,42 +80,36 @@ Tue May 31 21:47:24 UTC 2017 - knut.anderssen@suse.com
 - Do not lose the desktop selection when the online repositories is
   pressed. (bsc#1033594)
 - Do not allow to continue without desktop selection. (bsc#1040884)
-- 3.2.43
 
 -------------------------------------------------------------------
 Wed May 31 10:52:59 UTC 2017 - lslezak@suse.cz
 
 - Fixed path to the "adddir" command (it is /sbin instead of /etc)
   (bsc#1041882)
-- 3.2.42
 
 -------------------------------------------------------------------
 Mon May 29 08:37:19 UTC 2017 - knut.anderssen@suse.com
 
 - Added requirement of 'cwm/widget' in hiding_place as consequence
   of changes made in CWM. (boo#1039901).
-- 3.2.41
 
 -------------------------------------------------------------------
 Mon May 22 10:50:32 UTC 2017 - lslezak@suse.cz
 
 - Fixed push button label ("Configure Online Repositories")
   (bsc#1039988)
-- 3.2.40
 
 -------------------------------------------------------------------
 Mon May  8 13:17:17 UTC 2017 - knut.anderssen@suse.com
 
 - Don't crash if the regurl provided by linuxrc is invalid using
   the one provided by the control file as fallback (bsc#1035908).
-- 3.2.39
 
 -------------------------------------------------------------------
 Wed Apr 26 15:03:33 UTC 2017 - igonzalezsosa@suse.com
 
 - Move CaaSP specific code to yast2-caasp package
   (bsc#1036838)
-- 3.2.38
 
 -------------------------------------------------------------------
 Wed Apr 26 09:52:01 UTC 2017 - gsouza@suse.com
@@ -115,86 +127,86 @@ Thu Apr 20 14:00:08 UTC 2017 - igonzalezsosa@suse.com
 Wed Apr  5 11:31:12 CEST 2017 - jreidinger@suse.com
 
 - Use y2start script instead of y2base (bsc#1027181)
-- 3.2.37
 
 -------------------------------------------------------------------
 Wed Apr  5 10:31:12 CEST 2017 - schubi@suse.de
 
 - Added configuration-management to inst_finish.
   (FATE#319830)
-- 3.2.36
 
 -------------------------------------------------------------------
 Tue Apr  4 14:16:28 UTC 2017 - mvidner@suse.com
 
 - Renamed Controller Node to Administration Node (bsc#1032057).
-- 3.2.35
 
 -------------------------------------------------------------------
 Mon Mar 27 13:39:38 UTC 2017 - igonzalezsosa@suse.com
 
 - Move CaaSP specific code to yast2-caasp (bsc#1030874)
-- 3.2.34
 
 -------------------------------------------------------------------
 Mon Mar 27 06:50:29 UTC 2017 - lslezak@suse.cz
 
 - Use the shared package download and extraction functionality
   from FATE#320772
-- 3.2.33
+
+-------------------------------------------------------------------
+Thu Mar 23 09:13:58 UTC 2017 - ancor@suse.com
+
+- Version temporarily bumped to 3.3.x to prioritize the
+  storage-ng branch
+- 3.3.0
 
 -------------------------------------------------------------------
 Tue Mar 21 11:59:26 UTC 2017 - ancor@suse.com
 
 - Added some extra space to the openSUSE desktop/roles selection
   dialog (improvement on the fix for poo#14936, bsc#1025415).
-- 3.2.32
+
+-------------------------------------------------------------------
+Fri Mar 17 16:59:04 CET 2017 - schubi@suse.de
+
+- storage-ng: Taking /usr/bin/findmnt in order to evaluate mount
+  points. Floppy support removed.
 
 -------------------------------------------------------------------
 Thu Mar 16 13:07:44 UTC 2017 - mvidner@suse.com
 
 - Allow proceeding with the installation after a blocking condition
   has been corrected in the overview dialog (bsc#1029291).
-- 3.2.31
 
 -------------------------------------------------------------------
 Wed Mar 15 10:19:33 UTC 2017 - igonzalezsosa@suse.com
 
 - Improve roles buttons distribution in textmode (related to
   FATE#320772)
-- 3.2.30 
 
 -------------------------------------------------------------------
 Tue Mar 14 12:05:44 UTC 2017 - igonzalezsosa@suse.com
 
 - Fix desktop selection during installation (bsc#1029312)
-- 3.2.29
 
 -------------------------------------------------------------------
 Mon Mar 13 12:16:23 UTC 2017 - igonzalezsosa@suse.com
 
 - Support to add roles through addons (FATE#320772)
-- 3.2.28
 
 -------------------------------------------------------------------
 Thu Mar  9 17:48:25 UTC 2017 - jreidinger@suse.com
 
 - fix crash when reading if desktop role should have default
   pre-selected (bsc#1025415)
-- 3.2.27
 
 -------------------------------------------------------------------
 Wed Mar  8 16:11:59 CET 2017 - mvidner@suse.cz
 
 - Really use the directory.yast file (fate#322372)
-- 3.2.26
 
 -------------------------------------------------------------------
 Thu Mar  6 13:33:41 UTC 2017 - mfilka@suse.com
 
 - fate#322328
   - adapted all-in-one dialog according to comments from UX
-- 3.2.25
 
 -------------------------------------------------------------------
 Mon Mar  6 09:39:00 UTC 2017 - mfilka@suse.com
@@ -207,7 +219,6 @@ Mon Mar  6 09:39:00 UTC 2017 - mfilka@suse.com
   - update all-in-one's subdialog (network/kdump/partitioning/...)
     overview when the dialog is closed and do not lose another
     content already entered by user.
-- 3.2.24
 
 -------------------------------------------------------------------
 Wed Feb 15 17:58:16 UTC 2017 - jreidinger@suse.com
@@ -216,14 +227,12 @@ Wed Feb 15 17:58:16 UTC 2017 - jreidinger@suse.com
   (poo#14936, bsc#1025415)
 - drop "inst_new_desktop" client which was replaced by new desktop
   selection one
-- 3.2.23
 
 -------------------------------------------------------------------
 Tue Feb 14 14:55:08 UTC 2017 - igonzalezsosa@suse.com
 
 - Self-Update only shows errors when a custom URL is used
   (bsc#1025251)
-- 3.2.22
 
 -------------------------------------------------------------------
 Wed Feb  8 16:42:29 UTC 2017 - kanderssen@suse.com
@@ -236,7 +245,6 @@ Wed Feb  8 16:42:29 UTC 2017 - kanderssen@suse.com
 - Enable CaaSP specific services on the installed system
   (FATE#321738)
 - Do not crash if role contain own service to enable (bsc#1022762)
-- 3.2.21
 
 -------------------------------------------------------------------
 Fri Feb  3 10:07:35 UTC 2017 - jsrain@suse.cz
@@ -245,21 +253,18 @@ Fri Feb  3 10:07:35 UTC 2017 - jsrain@suse.cz
   AutoYaST (bsc#1009276)
 - Use the directory.yast file to check avilable
   translations (fate#322372)
-- 3.2.20
 
 -------------------------------------------------------------------
 Wed Feb  1 17:07:23 CET 2017 - schubi@suse.de
 
 - Downloading release notes: Do not try again if the host or the
   proxy cannot be resolved (bnc#1022784)
-- 3.2.19
 
 -------------------------------------------------------------------
 Fri Jan 27 15:55:33 UTC 2017 - kanderssen@suse.com
 
 - Ask for installation confirmation in all-in-one dialog before
   proceed with it. (Fate#322328)
-- 3.2.18
 
 -------------------------------------------------------------------
 Fri Jan 27 09:11:32 UTC 2017 - jreidinger@suse.com
@@ -282,7 +287,6 @@ Wed Jan 25 10:41:33 UTC 2017 - igonzalezsosa@suse.com
 
 - Add an option to disable the self-update feature through the
   AutoYaST profile (FATE#319716)
-- 3.2.17
 
 -------------------------------------------------------------------
 Fri Jan 20 08:44:28 UTC 2017 - mfilka@suse.com
@@ -290,14 +294,12 @@ Fri Jan 20 08:44:28 UTC 2017 - mfilka@suse.com
 - bnc#1017752
   - do not show language change warning in software proposal
     incorrectly when language was not changed.
-- 3.2.16
 
 -------------------------------------------------------------------
 Tue Jan 17 15:34:22 UTC 2017 - igonzalezsosa@suse.com
 
 - Do not retry to download release notes if a previous attempt
   failed (bsc#1015794)
-- 3.2.15
 
 -------------------------------------------------------------------
 Mon Jan 16 12:42:52 UTC 2017 - jreidinger@suse.com
@@ -311,7 +313,6 @@ Mon Jan 16 12:17:38 UTC 2017 - mfilka@suse.com
 - fate#321739
   - Made user's interaction possible in case of error in read-only
     proposal.
-- 3.2.14
 
 -------------------------------------------------------------------
 Thu Jan  5 13:16:08 CET 2017 - schubi@suse.de
@@ -319,7 +320,6 @@ Thu Jan  5 13:16:08 CET 2017 - schubi@suse.de
 - AutoYaST after second stage: Initialize tty1 in order to remove
   old YaST output and to show the cursor again.
   (bnc#1018037)
-- 3.2.13
 
 -------------------------------------------------------------------
 Wed Dec 14 15:47:02 UTC 2016 - jreidinger@suse.com
@@ -338,14 +338,12 @@ Port changes from CASP1.0:
 - Added description for readonly_timezone and
   clone_install_recommended_default flag in control-file
   documentation. (Fate#321754, Fate#321764)
-- 3.2.12
 
 -------------------------------------------------------------------
 Wed Dec  7 14:00:53 UTC 2016 - igonzalezsosa@suse.com
 
 - Do not crash when the proposal screen is configured through
   an AutoYaST profile and tabs are not being used (bsc#1013976)
-- 3.2.11
 
 -------------------------------------------------------------------
 Tue Nov 22 12:27:17 UTC 2016 - jreidinger@suse.com
@@ -359,7 +357,6 @@ Fri Nov 18 15:10:49 UTC 2016 - jreidinger@suse.com
 - add missing file causing crash (introduced with generic fix of
   bsc#1003682)
   (invisible in master since autotools support is dropped there)
-- 3.2.10
 
 -------------------------------------------------------------------
 Thu Nov 17 11:59:06 CET 2016 - shundhammer@suse.de
@@ -372,7 +369,6 @@ Mon Nov 14 14:30:12 UTC 2016 - jreidinger@suse.com
 
 - The user has to confirm when the configuration proposal contains
   a non-blocking error (generic fix for bsc#1003682)
-- 3.2.9
 
 -------------------------------------------------------------------
 Fri Nov 11 16:41:25 CET 2016 - schubi@suse.de
@@ -380,20 +376,17 @@ Fri Nov 11 16:41:25 CET 2016 - schubi@suse.de
 - Fixed bug: AutoYaST hangs while running second stage.
   Removed network.service in the Before section of
   YaST2-Firstboot.service. (bnc#1007752)
-- 3.2.8
 
 -------------------------------------------------------------------
 Fri Nov 11 13:50:06 UTC 2016 - jreidinger@suse.com
 
 - Do not crash if importing ssh config from system which
   /etc/os-release does not contain pretty name (bsc#1009492)
-- 3.2.7
 
 -------------------------------------------------------------------
 Mon Oct 31 13:23:38 UTC 2016 - lslezak@suse.cz
 
 - Added support for read-only proposal modules (fate#321739)
-- 3.2.6
 
 -------------------------------------------------------------------
 Thu Oct 27 15:09:58 CEST 2016 - shundhammer@suse.de
@@ -405,21 +398,18 @@ Thu Oct 20 09:52:00 UTC 2016 - jreidinger@suse.com
 
 - more robust password filtering in y2start.log
   (bsc#798966)
-- 3.2.5
 
 -------------------------------------------------------------------
 Thu Oct 13 14:15:23 UTC 2016 - igonzalezsosa@suse.com
 
 - Set libyui-ncurses environment before starting the installer
   (related to bsc#780621)
-- 3.2.4
 
 -------------------------------------------------------------------
 Thu Oct 13 13:55:33 UTC 2016 - igonzalezsosa@suse.com
 
 - Bump version number to release fixes for bnc#999895,
   bsc#988700 and bnc#999953.
-- 3.2.3
 
 -------------------------------------------------------------------
 Thu Oct  6 12:55:58 CEST 2016 - schubi@suse.de
@@ -432,7 +422,6 @@ Thu Oct  6 12:55:58 CEST 2016 - schubi@suse.de
 Thu Sep 29 08:09:28 UTC 2016 - igonzalezsosa@suse.com
 
 - Translate description of Snapper snapshots (bsc#988700)
-- 3.2.2
 
 -------------------------------------------------------------------
 Wed Sep 21 11:00:27 CEST 2016 - schubi@suse.de
@@ -440,20 +429,17 @@ Wed Sep 21 11:00:27 CEST 2016 - schubi@suse.de
 - Fixed crash if one defined proposal module has not been found on
   system while switching back from "Expert" proposal.
   (bnc#999953)
-- 3.2.1
 
 -------------------------------------------------------------------
 Wed Sep 14 13:53:41 UTC 2016 - jreidinger@suse.com
 
 - reduce time needed for building this package
-- 3.2.0
 
 -------------------------------------------------------------------
 Tue Sep 13 12:37:57 UTC 2016 - jreidinger@suse.com
 
 - fix skipping of proposal returning empty hash otherwise it
   creates non sense proposal entry in UI (bnc#994127)
-- 3.1.215
 
 -------------------------------------------------------------------
 Tue Aug 30 06:55:13 UTC 2016 - lslezak@suse.cz
@@ -463,7 +449,6 @@ Tue Aug 30 06:55:13 UTC 2016 - lslezak@suse.cz
   server (bsc#996179)
 - Do not contact the registration server in self-update when
   network is not running, skip self-update completely
-- 3.1.214
 
 -------------------------------------------------------------------
 Thu Aug 25 14:23:20 UTC 2016 - lslezak@suse.cz
@@ -477,54 +462,59 @@ Thu Aug 25 14:23:20 UTC 2016 - lslezak@suse.cz
   the highest priority, always ask user when a SLP service is found,
   in AutoYaST mode SLP needs to be enabled in the profile
 - Display progress when downloading and applying the updates
-- 3.1.213
 
 -------------------------------------------------------------------
 Wed Aug 25 12:51:45 UTC 2016 - cwh@suse.com
 
 - Replace unicode bullet char by asterisk for ncurses (bsc#995082)
-- 3.1.212
 
 -------------------------------------------------------------------
 Thu Aug 25 07:33:10 UTC 2016 - jreidinger@suse.com
 
 - fix writing proposals (bnc#994127)
-- 3.1.211
 
 -------------------------------------------------------------------
 Wed Aug 17 15:02:02 UTC 2016 - jreidinger@suse.com
 
 - filter out same repositories from extraurls if they differ only
   in trailing slash (bnc#970488)
-- 3.1.210
 
 -------------------------------------------------------------------
 Tue Aug 16 15:34:43 UTC 2016 - kanderssen@suse.com
 
 - SSH Importer: Width fix to avoid cut of CheckBoxFrame Label
   (fate##319624)
-- 3.1.209
 
 -------------------------------------------------------------------
 Tue Aug 16 13:28:14 CEST 2016 - locilka@suse.com
 
 - Fixed testsuite for inst_complex_welcome after implementing lazy
   loading in ProductLicense in yast2-packager (bsc#993285)
-- 3.1.208
+
+-------------------------------------------------------------------
+Wed Aug 10 11:51:08 UTC 2016 - ancor@suse.com
+
+- storage-ng: use the new library for storage hardware probing
+  (devicegraph) instead of the old one (targetmap)
+
+-------------------------------------------------------------------
+Tue Aug  9 14:51:06 UTC 2016 - ancor@suse.com
+
+- storage-ng: removed dependency from (old) yast2-storage, even
+  if it breaks some functionality.
+- 3.2.2
 
 -------------------------------------------------------------------
 Fri Aug  5 07:22:59 UTC 2016 - igonzalezsosa@suse.com
 
 - Fix the registration screen initialization when SCC server
   is used during self-update (FATE#319716)
-- 3.1.207
 
 -------------------------------------------------------------------
 Thu Aug  4 10:02:28 UTC 2016 - igonzalezsosa@suse.com
 
 - Retrieve the self-update URL from the registration
   server (SCC/SMT) (FATE#319716)
-- 3.1.206
 
 -------------------------------------------------------------------
 Wed Aug  3 17:06:46 CEST 2016 - locilka@suse.com
@@ -532,42 +522,44 @@ Wed Aug  3 17:06:46 CEST 2016 - locilka@suse.com
 - UI, UX and internal handling for the Welcome screen optimized to
   prevent from not showing that the license needs to be accepted
   (bsc#980374).
-- 3.1.205
 
 -------------------------------------------------------------------
 Fri Jul 29 07:32:46 UTC 2016 - ancor@suse.com
 
 - If the user has skipped multipath activation, don't ask again
   after installer self-update (bsc#989770)
-- 3.1.204
 
 -------------------------------------------------------------------
 Fri Jul 22 13:48:12 UTC 2016 - igonzalezsosa@suse.com
 
 - Don't halt the installation if installer updates server
   cannot be reached when using AutoYaST (bsc#988949)
-- 3.1.203
 
 -------------------------------------------------------------------
 Thu Jul 21 11:52:59 UTC 2016 - jreidinger@suse.com
 
 - simplify and speed up inst_finish client (bnc#986649)
 - add test suite for inst_finish client
-- 3.1.202
 
 -------------------------------------------------------------------
 Mon Jul 18 13:13:05 UTC 2016 - lslezak@suse.cz
 
 - Run extra inst-sys cleanup to free more memory on systems with
   low memory (bsc#974601)
-- 3.1.201
 
 -------------------------------------------------------------------
 Thu Jul 14 08:10:16 UTC 2016 - lslezak@suse.cz
 
 - Properly adjust the OOM killer (oom_score_adj has a different
   range than the original oom_adj) (bsc#974601)
-- 3.1.200
+
+-------------------------------------------------------------------
+Wed Jul 13 12:16:58 UTC 2016 - ancor@suse.com
+
+- storage-ng: commented installation-related code relying on the
+  old yast2-storage
+- Version temporarily bumped to 3.2.x to prioritize this branch
+- 3.2.1
 
 -------------------------------------------------------------------
 Tue Jul 12 16:14:28 CEST 2016 - schubi@suse.de
