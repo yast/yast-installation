@@ -39,7 +39,6 @@ Wed Jul 13 12:16:58 UTC 2016 - ancor@suse.com
 
 - storage-ng: commented installation-related code relying on the
   old yast2-storage
-- Version temporarily bumped to 3.2.x to prioritize this branch
 
 -------------------------------------------------------------------
 Mon Aug  7 13:43:34 UTC 2017 - jreidinger@suse.com
