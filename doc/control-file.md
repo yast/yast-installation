@@ -1021,6 +1021,12 @@ property should be set to _true_. This works only for Btrfs root
 filesystems. If another root filesystem type is chosen, this might fail
 silently.
 
+*root_fs* (string, default _btrfs_) is the filesystem type for the root
+ partition.
+
+*home_fs* (string, default _xfs_) is the filesystem type for the home
+ partition.
+
 *home_path* (string) is the path (mount point) for the home
 partition or volume, if any is created (depending on *try_separate_home*,
 *limit_try_home* and available disk space).

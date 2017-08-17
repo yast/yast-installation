@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Aug 17 15:16:05 CEST 2017 - shundhammer@suse.de
+
+- Merged SLE-12-SP2-CASP branch to SLE-12-SP3 branch:
+  Make filesystem type for home and root configurable in control.xml
+  (bsc#1051762)
+- 3.2.49
+
+-------------------------------------------------------------------
 Tue Aug  8 10:57:46 CEST 2017 - shundhammer@suse.de
 
 - Merged SLE-12-SP2-CASP branch to SLE-12-SP3 branch (bsc#1051200)
