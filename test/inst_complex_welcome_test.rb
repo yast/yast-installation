@@ -3,47 +3,60 @@
 require_relative "test_helper"
 require "installation/clients/inst_complex_welcome"
 
-describe Yast::InstComplexWelcomeClient do
-  Yast.import "Mode"
-  Yast.import "ProductLicense"
+Yast.import "UI"
+Yast.import "Mode"
+Yast.import "Installation"
+Yast.import "Report"
 
+describe Yast::InstComplexWelcomeClient do
   textdomain "installation"
 
-  let(:store_path) { File.join(File.dirname(__FILE__), "complex_welcome_store.yaml") }
+  let(:product) do
+    instance_double(
+      Y2Packager::Product,
+      license_confirmation_required?: license_needed?,
+      license?:                       license?,
+      license:                        "license content"
+    )
+  end
+  let(:license_needed?) { true }
+  let(:license?) { true }
+
+  let(:other_product) { instance_double(Y2Packager::Product) }
+  let(:products) { [product, other_product] }
+
+  let(:autoinst) { false }
 
   before do
-    stub_const("Yast::InstComplexWelcomeClient::DATA_PATH", store_path)
-    allow(Yast::ProductLicense).to receive(:info_seen?) { true }
-    allow(Yast::ProductLicense).to receive(:ShowLicenseInInstallation) { true }
     # fake yast2-country, to avoid additional build dependencies
     stub_const("Yast::Console", double.as_null_object)
-    stub_const("Yast::Keyboard", double.as_null_object)
+    stub_const("Yast::Keyboard", double(current_kbd: "english-us", GetKeyboardItems: [], user_decision: true))
     stub_const("Yast::Timezone", double.as_null_object)
     stub_const("Yast::Language", double(language: "en_US", GetLanguageItems: []))
+    stub_const("Yast::Wizard", double.as_null_object)
+    stub_const("Yast::ProductLicense", double.as_null_object)
+    stub_const("Yast::Mode", double(autoinst: autoinst))
     # stub complete UI, as if it goes thrue component system it will get one of
     # null object returned above as parameter and it raise exception from
     # component system
-    stub_const("Yast::UI", double.as_null_object)
-    allow(Yast::Pkg).to receive(:SourceGetCurrent).and_return([])
-  end
 
-  after do
-    FileUtils.rm(store_path) if File.exist?(store_path)
+    allow(Y2Packager::Product).to receive(:selected_base).and_return(product)
+    allow(Y2Packager::Product).to receive(:available_base_products).and_return(products)
   end
 
   describe "#main" do
     let(:restarting) { false }
-    context "when installation Mode is auto" do
-      it "returns :auto" do
-        expect(Yast::Mode).to receive(:autoinst) { true }
 
+    context "when installation Mode is auto" do
+      let(:autoinst) { true }
+
+      it "returns :auto" do
         expect(subject.main).to eql(:auto)
       end
     end
 
     context "when installation mode is not auto" do
       before do
-        expect(Yast::Mode).to receive(:autoinst) { false }
         allow(Yast::Installation).to receive(:restarting?) { restarting }
       end
 
@@ -62,7 +75,6 @@ describe Yast::InstComplexWelcomeClient do
       end
 
       context "when back is selected" do
-
         it "returns back" do
           expect(subject).to receive(:initialize_dialog)
           expect(Yast::UI).to receive(:UserInput).and_return(:back)
@@ -79,12 +91,11 @@ describe Yast::InstComplexWelcomeClient do
           allow(Yast::Language).to receive(:CheckIncompleteTranslation).and_return(true)
           allow(Yast::Language).to receive(:CheckLanguagesSupport)
 
-          allow(Yast::ProductLicense).to receive(:AcceptanceNeeded).and_return(license_needed)
-          allow(Yast::ProductLicense).to receive(:cache_license_acceptance_needed).and_return(nil)
+          allow(subject).to receive(:license_required?).and_return(license_needed)
           allow(subject).to receive(:license_accepted?).and_return(license_accepted)
         end
 
-        context "when license is required and not accepted" do
+        context "and license is required and not accepted" do
           let(:license_needed) { true }
           let(:license_accepted) { false }
 
@@ -96,7 +107,7 @@ describe Yast::InstComplexWelcomeClient do
           end
         end
 
-        context "when license is not required" do
+        context "and license is not required" do
           let(:license_needed) { false }
           let(:license_accepted) { false }
 
@@ -120,6 +131,47 @@ describe Yast::InstComplexWelcomeClient do
 
             expect(subject.main).to eql(:next)
           end
+        end
+      end
+    end
+
+    context "licensing" do
+      before do
+        allow(Yast::UI).to receive(:UserInput).and_return(:back)
+      end
+
+      it "shows the license for the selected product" do
+        allow(Yast::UI).to receive(:ReplaceWidget)
+        expect(Yast::UI).to receive(:ReplaceWidget)
+          .with(Id(:base_license_rp), RichText(product.license))
+        subject.main
+      end
+
+      context "when no base products are defined" do
+        let(:product) { nil }
+        let(:products) { [] }
+
+        it "shows the default license using the old mechanism" do
+          expect(Yast::ProductLicense).to receive(:ShowLicenseInInstallation)
+            .with(:base_license_rp, anything)
+          subject.main
+        end
+      end
+
+      context "and no license is defined" do
+        let(:license?) { false }
+
+        it "shows the default license using the old mechanism" do
+          expect(Yast::ProductLicense).to receive(:ShowLicenseInInstallation)
+            .with(:base_license_rp, anything)
+          subject.main
+        end
+      end
+
+      context "when no base product is selected" do
+        it "does not show any license" do
+          expect(Yast::ProductLicense).to_not receive(:ShowLicenseInInstallation)
+          subject.main
         end
       end
     end
