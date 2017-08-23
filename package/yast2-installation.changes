@@ -1,6 +1,8 @@
 -------------------------------------------------------------------
 Thu Aug 17 08:22:09 UTC 2017 - igonzalezsosa@suse.com
 
+- Show the product's license from libzypp in the welcome screen
+  (FATE#322276)
 - Replace Installation::Product and Installation::ProductReader
   classes by Y2Packager::Product and Y2Packager::ProductReader
   (related to FATE#322276)
