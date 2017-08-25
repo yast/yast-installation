@@ -2,12 +2,12 @@ require_relative "../test_helper"
 
 require "cwm/rspec"
 
-require "installation/product"
+require "y2packager/product"
 require "installation/widgets/product_selector"
 
 describe ::Installation::Widgets::ProductSelector do
-  let(:product1) { Installation::Product.new("test1", "Test 1") }
-  let(:product2) { Installation::Product.new("test2", "Test 2") }
+  let(:product1) { Y2Packager::Product.new(name: "test1", display_name: "Test 1") }
+  let(:product2) { Y2Packager::Product.new(name: "test2", display_name: "Test 2") }
   subject { described_class.new([product1, product2]) }
 
   include_examples "CWM::RadioButtons"

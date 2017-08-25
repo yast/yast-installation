@@ -2,7 +2,7 @@ require "yast"
 
 require "cwm/dialog"
 require "installation/widgets/product_selector"
-require "installation/product_reader"
+require "y2packager/product"
 
 Yast.import "ProductControl"
 Yast.import "WorkflowManager"
@@ -25,7 +25,7 @@ module Installation
       end
 
       def products
-        ProductReader.available_base_products
+        Y2Packager::Product.available_base_products
       end
 
       def selector
