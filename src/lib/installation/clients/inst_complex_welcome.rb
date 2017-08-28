@@ -22,6 +22,7 @@
 require "yaml"
 require "fileutils"
 require "yast"
+require "y2packager/product"
 
 module Yast
   # This client shows main dialog for choosing the language,
@@ -164,7 +165,7 @@ module Yast
     def initialize_widgets
       UI.BusyCursor
 
-      initialize_license
+      initialize_license if show_license?
 
       Wizard.EnableAbortButton
 
@@ -180,7 +181,7 @@ module Yast
 
       # This also shows content of the info file if it exists, so it has to be
       # called at the very end
-      ProductLicense.ShowLicenseInInstallation(:base_license_rp, @license_id)
+      show_license if show_license?
 
       UI.SetFocus(Id(:language))
 
@@ -301,8 +302,10 @@ module Yast
     #
     # @return [Boolean] true if license is required; false otherwise.
     def license_required?
+      return false unless show_license?
       return @license_required unless @license_required.nil?
-      @license_required = ProductLicense.AcceptanceNeeded(@license_id.to_s)
+      @license_required = (selected_product && selected_product.license_confirmation_required?) ||
+        ProductLicense.AcceptanceNeeded(@license_id.to_s)
     end
 
     # Report error about missing license acceptance
@@ -374,6 +377,8 @@ module Yast
         Language.PackagesInit(selected_languages)
       end
 
+      selected_product.license_confirmation = true if selected_product
+
       log.info "Language: '#{@language}', system encoding '#{WFM.GetEncoding}'"
     end
 
@@ -425,46 +430,54 @@ module Yast
             HWeight(1, Left(InputField(Id(:keyboard_test), Opt(:hstretch), _("K&eyboard Test"))))
           )
         ),
-        VWeight(
-          30,
-          Left(
-            HSquash(
-              VBox(
+        show_license? ? license_agreement_content : Empty(),
+        VWeight(1, VStretch())
+      )
+    end
+
+    def products
+      Y2Packager::Product.available_base_products
+    end
+
+    def license_agreement_content
+      VWeight(
+        30,
+        Left(
+          HSquash(
+            VBox(
+              HBox(
+                Left(Label(Opt(:boldFont), _("License Agreement"))),
+                HStretch()
+              ),
+              # bnc #438100
+              HSquash(
+                MinWidth(
+                  # BNC #607135
+                  text_mode? ? 85 : 106,
+                  Left(ReplacePoint(Id(:base_license_rp), Opt(:hstretch), Empty()))
+                )
+              ),
+              VSpacing(text_mode? ? 0.5 : 1),
+              HBox(
+                license_location
+              ),
+              VSpacing(text_mode? ? 0.1 : 0.5),
+              MinHeight(
+                1,
                 HBox(
-                  Left(Label(Opt(:boldFont), _("License Agreement"))),
-                  HStretch()
-                ),
-                # bnc #438100
-                HSquash(
-                  MinWidth(
-                    # BNC #607135
-                    text_mode? ? 85 : 106,
-                    Left(ReplacePoint(Id(:base_license_rp), Opt(:hstretch), Empty()))
-                  )
-                ),
-                VSpacing(text_mode? ? 0.5 : 1),
-                HBox(
-                  license_location
-                ),
-                VSpacing(text_mode? ? 0.1 : 0.5),
-                MinHeight(
-                  1,
-                  HBox(
-                    # Will be replaced with license checkbox if required
-                    ReplacePoint(Id(:license_checkbox_rp), Empty()),
-                    HStretch(),
-                    PushButton(
-                      Id(:show_fulscreen_license),
-                      # TRANSLATORS: button label
-                      _("License &Translations...")
-                    )
+                  # Will be replaced with license checkbox if required
+                  ReplacePoint(Id(:license_checkbox_rp), Empty()),
+                  HStretch(),
+                  PushButton(
+                    Id(:show_fulscreen_license),
+                    # TRANSLATORS: button label
+                    _("License &Translations...")
                   )
                 )
               )
             )
           )
-        ),
-        VWeight(1, VStretch())
+        )
       )
     end
 
@@ -478,6 +491,43 @@ module Yast
       )
 
       initialize_widgets
+    end
+
+    # Return the list of base products
+    #
+    # @return [Array<Y2Packager::Product>] List of available base products
+    def products
+      @products ||= Y2Packager::Product.available_base_products
+    end
+
+    # Determine the selected product
+    #
+    # @return [Y2Packager::Product]
+    # @see Y2Packager::Product.selected_base
+    def selected_product
+      @selected_product ||= Y2Packager::Product.selected_base
+    end
+
+    # Determine whether the license should be shown
+    #
+    # * If a base product is already selected, the license should be shown.
+    # * If no products are detected, show the license.
+    #
+    # @return [Boolean] A license should be shown
+    def show_license?
+      !selected_product.nil? || products.empty?
+    end
+
+    # Show the license
+    #
+    # It will try to obtain the license from libzypp (using Y2Packager::Product#license).
+    # Otherwise, it will fallback to the old license.tar.gz tarball.
+    def show_license
+      if selected_product && selected_product.license?
+        UI.ReplaceWidget(Id(:base_license_rp), RichText(selected_product.license))
+      else
+        ProductLicense.ShowLicenseInInstallation(:base_license_rp, @license_id)
+      end
     end
   end unless defined? Yast::InstComplexWelcomeClient
 end
