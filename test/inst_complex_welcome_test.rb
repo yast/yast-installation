@@ -6,6 +6,10 @@ require "installation/clients/inst_complex_welcome"
 describe Yast::InstComplexWelcomeClient do
   Yast.import "Mode"
   Yast.import "ProductLicense"
+  Yast.import "Pkg"
+  Yast.import "Installation"
+  Yast.import "InstShowInfo"
+  Yast.import "GetInstArgs"
 
   textdomain "installation"
 
@@ -33,6 +37,21 @@ describe Yast::InstComplexWelcomeClient do
 
   describe "#main" do
     let(:restarting) { false }
+    context "when README.BETA file exists" do
+      before do
+        allow(Yast::FileUtils).to receive(:Exists).with("/README.BETA")
+          .and_return(true)
+        allow(Yast::GetInstArgs).to receive(:going_back).and_return(false)
+        allow(subject).to receive(:event_loop)
+        allow(Yast::ProductLicense).to receive(:AcceptanceNeeded).and_return(false)
+      end
+
+      it "shows the information contained in the file" do
+        expect(Yast::InstShowInfo).to receive(:show_info_txt).with("/README.BETA")
+        subject.main
+      end
+    end
+
     context "when installation Mode is auto" do
       it "returns :auto" do
         expect(Yast::Mode).to receive(:autoinst) { true }

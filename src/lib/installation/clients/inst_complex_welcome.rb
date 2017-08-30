@@ -31,9 +31,16 @@ module Yast
     extend Yast::I18n
 
     HEADING_TEXT = N_("Language, Keyboard and License Agreement")
+    BETA_FILE = "/README.BETA"
 
     def main
       Yast.import "Mode"
+      Yast.import "InstShowInfo"
+      Yast.import "FileUtils"
+
+      if FileUtils.Exists(BETA_FILE) && !GetInstArgs.going_back
+        InstShowInfo.show_info_txt(BETA_FILE)
+      end
 
       # bnc#206706
       return :auto if Mode.autoinst
