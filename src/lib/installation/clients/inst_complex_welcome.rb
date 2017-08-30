@@ -32,7 +32,7 @@ module Yast
     extend Yast::I18n
 
     HEADING_TEXT = N_("Language, Keyboard and License Agreement")
-    BETA_FILE = "/README.BETA"
+    BETA_FILE = "/README.BETA".freeze
 
     def main
       Yast.import "Mode"
