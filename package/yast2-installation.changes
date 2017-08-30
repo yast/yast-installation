@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Aug 30 07:28:06 UTC 2017 - gsouza@suse.com
+
+- Show README.BETA if it exists.
+- 3.3.8
+
+-------------------------------------------------------------------
 Thu Aug 17 08:22:09 UTC 2017 - igonzalezsosa@suse.com
 
 - Replace Installation::Product and Installation::ProductReader
