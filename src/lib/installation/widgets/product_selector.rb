@@ -48,7 +48,7 @@ module Installation
         @product.select
       end
 
-      def validation
+      def validate
         return true if value
 
         Yast::Popup.Error(_("Please select a product to install."))
