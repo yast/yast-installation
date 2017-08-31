@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Aug 31 12:26:51 UTC 2017 - gsouza@suse.com
+
+- Skip complex welcome module in auto mode.
+- 3.3.10
+
+-------------------------------------------------------------------
 Wed Aug 30 07:28:06 UTC 2017 - gsouza@suse.com
 
 - Show README.BETA if it exists (bsc#1047060)
