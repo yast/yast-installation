@@ -18,10 +18,12 @@ describe Yast::InstComplexWelcomeClient do
       Y2Packager::Product,
       license_confirmation_required?: license_needed?,
       license?:                       license?,
-      license:                        "license content"
+      license:                        "license content",
+      license_confirmed?:             license_confirmed?
     )
   end
   let(:license_needed?) { true }
+  let(:license_confirmed?) { false }
   let(:license?) { true }
 
   let(:other_product) { instance_double(Y2Packager::Product) }
@@ -37,7 +39,7 @@ describe Yast::InstComplexWelcomeClient do
     stub_const("Yast::Language", double(language: "en_US", GetLanguageItems: []))
     stub_const("Yast::Wizard", double.as_null_object)
     stub_const("Yast::ProductLicense", double.as_null_object)
-    stub_const("Yast::Mode", double(autoinst: autoinst))
+    stub_const("Yast::Mode", double(autoinst: autoinst, normal: false))
     # stub complete UI, as if it goes thrue component system it will get one of
     # null object returned above as parameter and it raise exception from
     # component system
@@ -48,6 +50,12 @@ describe Yast::InstComplexWelcomeClient do
 
   describe "#main" do
     let(:restarting) { false }
+    let(:dialog_result) { :next }
+
+    before do
+      allow(Installation::Dialogs::ComplexWelcome).to receive(:run).and_return(dialog_result)
+    end
+
     context "when README.BETA file exists" do
       before do
         allow(Yast::FileUtils).to receive(:Exists).with("/README.BETA")
@@ -71,122 +79,68 @@ describe Yast::InstComplexWelcomeClient do
       end
     end
 
-    context "when installation mode is not auto" do
-      before do
-        allow(Yast::Installation).to receive(:restarting?) { restarting }
-      end
+    it "runs the dialog" do
+      expect(Installation::Dialogs::ComplexWelcome).to receive(:run).and_return(:back)
+      subject.main
+    end
 
-      it "initializes dialog" do
-        allow(subject).to receive(:event_loop)
-        expect(subject).to receive(:initialize_dialog)
+    context "when back is pressed" do
+      let(:dialog_result) { :back }
 
-        subject.main
-      end
-
-      it "starts input loop" do
-        expect(subject).to receive(:initialize_dialog)
-        expect(subject).to receive(:event_loop)
-
-        subject.main
-      end
-
-      context "when back is selected" do
-        it "returns back" do
-          expect(subject).to receive(:initialize_dialog)
-          expect(Yast::UI).to receive(:UserInput).and_return(:back)
-
-          expect(subject.main).to eql(:back)
-        end
-      end
-
-      context "when next is selected" do
-        before do
-          allow(Yast::Mode).to receive(:config).and_return(false)
-          allow(Yast::Stage).to receive(:initial).and_return(true)
-
-          allow(Yast::Language).to receive(:CheckIncompleteTranslation).and_return(true)
-          allow(Yast::Language).to receive(:CheckLanguagesSupport)
-
-          allow(subject).to receive(:license_required?).and_return(license_needed)
-          allow(subject).to receive(:license_accepted?).and_return(license_accepted)
-        end
-
-        context "and license is required and not accepted" do
-          let(:license_needed) { true }
-          let(:license_accepted) { false }
-
-          it "not returns" do
-            expect(Yast::UI).to receive(:UserInput).and_return(:next, :back)
-            expect(Yast::Report).to receive(:Message)
-              .with(_("You must accept the license to install this product"))
-            expect(subject.main).to eql(:back)
-          end
-        end
-
-        context "and license is not required" do
-          let(:license_needed) { false }
-          let(:license_accepted) { false }
-
-          it "stores selected data and returns next" do
-            expect(Yast::UI).to receive(:UserInput).and_return(:next)
-            expect(subject).to receive(:setup_final_choice)
-            expect(Yast::Report).to_not receive(:Message)
-
-            expect(subject.main).to eql(:next)
-          end
-        end
-
-        context "when license is required and accepted" do
-          let(:license_needed) { true }
-          let(:license_accepted) { true }
-
-          it "stores selected data and returns next" do
-            expect(Yast::UI).to receive(:UserInput).and_return(:next)
-            expect(subject).to receive(:setup_final_choice)
-            expect(Yast::Report).to_not receive(:Message)
-
-            expect(subject.main).to eql(:next)
-          end
-        end
+      it "returns :back" do
+        expect(subject.main).to eq(:back)
       end
     end
 
-    context "licensing" do
-      before do
-        allow(Yast::UI).to receive(:UserInput).and_return(:back)
+    context "when language changes" do
+      let(:dialog_result) { :language_changed }
+
+      it "returns :again" do
+        allow(subject).to receive(:change_language)
+        expect(subject.main).to eq(:again)
       end
 
-      it "shows the license for the selected product" do
-        allow(Yast::UI).to receive(:ReplaceWidget)
-        expect(Yast::UI).to receive(:ReplaceWidget)
-          .with(Id(:base_license_rp), RichText(product.license))
+      it "changes the language" do
+        expect(subject).to receive(:change_language)
+        subject.main
+      end
+    end
+
+    context "when keyboard changes" do
+      it "sets the selection as user selected" do
+        allow(Installation::Dialogs::ComplexWelcome).to receive(:run).and_return(:keyboard_changed, :back)
+        expect(Yast::Keyboard).to receive(:user_decision=).with(true)
         subject.main
       end
 
-      context "when no base products are defined" do
-        let(:product) { nil }
-        let(:products) { [] }
+      it "reruns the dialog" do
+        expect(Installation::Dialogs::ComplexWelcome).to receive(:run).twice
+          .and_return(:keyboard_changed, :back)
+        allow(Yast::Keyboard).to receive(:user_decision=)
+        subject.main
+      end
+    end
 
-        it "shows the default license using the old mechanism" do
-          expect(Yast::ProductLicense).to receive(:ShowLicenseInInstallation)
-            .with(:base_license_rp, anything)
-          subject.main
+    context "when :abort is pressed" do
+      let(:dialog_result) { :abort }
+
+      it "asks for confirmation" do
+        expect(Yast::Popup).to receive(:ConfirmAbort).with(:painless).and_return(true)
+        subject.main
+      end
+
+      context "and user confirms" do
+        it "returns :abort" do
+          allow(Yast::Popup).to receive(:ConfirmAbort).with(:painless).and_return(true)
+          expect(Installation::Dialogs::ComplexWelcome).to receive(:run).and_return(:abort)
+          expect(subject.main).to eq(:abort)
         end
       end
 
-      context "and no license is defined" do
-        let(:license?) { false }
-
-        it "shows the default license using the old mechanism" do
-          expect(Yast::ProductLicense).to receive(:ShowLicenseInInstallation)
-            .with(:base_license_rp, anything)
-          subject.main
-        end
-      end
-
-      context "when no base product is selected" do
-        it "does not show any license" do
-          expect(Yast::ProductLicense).to_not receive(:ShowLicenseInInstallation)
+      context "and user does not confirm" do
+        it "reruns the dialog" do
+          allow(Yast::Popup).to receive(:ConfirmAbort).with(:painless).and_return(false, true)
+          expect(Installation::Dialogs::ComplexWelcome).to receive(:run).twice.and_return(:abort, :abort)
           subject.main
         end
       end
