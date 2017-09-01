@@ -116,44 +116,6 @@ module Yast
       Yast::ProductControl.RunFrom(Yast::ProductControl.CurrentStep + 1, true)
     end
 
-    def help_text
-      # help text for initial (first time) language screen
-      @help_text = _(
-        "<p>\n" \
-          "Choose the <b>Language</b> and the <b>Keyboard layout</b> to be used during\n" \
-          "installation and for the installed system.\n" \
-          "</p>\n"
-      ) +
-        # help text, continued
-        # Describes the #ICW_B1 button
-        _(
-          "<p>\n" \
-            "The license must be accepted before the installation continues.\n" \
-            "Use <b>License Translations...</b> to show the license in all available translations.\n" \
-            "</p>\n"
-        ) +
-        # help text, continued
-        _(
-          "<p>\n" \
-            "Click <b>Next</b> to proceed to the next dialog.\n" \
-            "</p>\n"
-        ) +
-        # help text, continued
-        _(
-          "<p>\n" \
-            "Nothing will happen to your computer until you confirm\n" \
-            "all your settings in the last installation dialog.\n" \
-            "</p>\n"
-        ) +
-        # help text, continued
-        _(
-          "<p>\n" \
-            "Select <b>Abort</b> to abort the\n" \
-            "installation process at any time.\n" \
-            "</p>\n"
-        )
-    end
-
     def retranslate_yast
       Console.SelectFont(Language.language)
       # no yast translation for nn_NO, use nb_NO as a backup
