@@ -72,7 +72,7 @@ module Yast
 
     # Handle dialog's result
     #
-    # @param [Symbol] Dialog's return value (:next, :language_changed, etc.)
+    # @param value [Symbol] Dialog's return value (:next, :language_changed, etc.)
     # @return [Symbol,nil] Client's return value. Nil if client should not
     #   finish yet.
     def handle_dialog_result(value)
