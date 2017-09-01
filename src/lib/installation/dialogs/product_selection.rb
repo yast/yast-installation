@@ -41,15 +41,7 @@ module Installation
         res = super
         return res if res != :next
 
-        # remove already selected if it is not first run of dialog
-        if self.class.selected_package
-          Yast::WorkflowManager.RemoveWorkflow(:package, 0, self.class.selected_package)
-        end
-        product = selector.product
-        Yast::WorkflowManager.AddWorkflow(:package, 0, product.installation_package)
-        Yast::WorkflowManager.MergeWorkflows
-        Yast::WorkflowManager.RedrawWizardSteps
-        self.class.selected_package = product.installation_package
+        Yast::WorkflowManager.merge_product_workflow(product)
         # run new steps for product
         Yast::ProductControl.RunFrom(Yast::ProductControl.CurrentStep + 1, true)
       end
