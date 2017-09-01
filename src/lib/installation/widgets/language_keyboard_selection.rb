@@ -15,7 +15,7 @@ module Installation
     # try the keyboard selection is included too.
     #
     # The main objective of this widget is to signal when language or keyboard
-    # is changed.  In that case, #handle will return :language_changed or
+    # are changed.  In that case, #handle will return :language_changed or
     # :keyboard_changed interrupting the CWM loop and giving the opportunity to
     # translate the YaST interface.  See
     # Installation::Clients::InstComplexWelcome for further information.
