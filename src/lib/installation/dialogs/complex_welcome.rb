@@ -96,7 +96,7 @@ module Installation
         products.size == 1
       end
 
-      # Fill space if needed
+      # UI to fill space if needed
       def filling
         (show_license? || Yast::UI.TextMode) ? Empty() : VWeight(1, VStretch())
       end

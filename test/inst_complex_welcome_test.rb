@@ -136,8 +136,9 @@ describe Yast::InstComplexWelcomeClient do
     end
 
     context "when keyboard changes" do
+      let(:dialog_results) { [:keyboard_changed, :back] }
+
       it "sets the selection as user selected" do
-        allow(Installation::Dialogs::ComplexWelcome).to receive(:run).and_return(:keyboard_changed, :back)
         expect(Yast::Keyboard).to receive(:user_decision=).with(true)
         subject.main
       end
@@ -363,12 +364,11 @@ describe Yast::InstComplexWelcomeClient do
       context "and additional packages are not needed for the given language" do
         let(:lang_packages_needed) { false }
 
-        it "adds the packages for installation" do
+        it "does not add the packages for installation" do
           expect(Yast::Language).to_not receive(:PackagesInit)
           subject.send(:setup_final_choice)
         end
       end
-
     end
   end
 end

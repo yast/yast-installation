@@ -41,14 +41,15 @@ Yast.import "Wizard"
 Yast.import "WorkflowManager"
 
 module Yast
-  # This client shows main dialog for choosing the language,
-  # keyboard and accepting the license.
+  # This client shows main dialog for choosing the language, keyboard,
+  # selecting the product/accepting the license.
   class InstComplexWelcomeClient < Client
     include Yast::Logger
     extend Yast::I18n
 
     BETA_FILE = "/README.BETA".freeze
 
+    # Main client method
     def main
       if FileUtils.Exists(BETA_FILE) && !GetInstArgs.going_back
         InstShowInfo.show_info_txt(BETA_FILE)
@@ -118,6 +119,9 @@ module Yast
 
     # Change YaST interface language
     #
+    # Most of the work is done by #retranslate_yast. If changing to english if
+    # needed, no configuration changes are performed.
+    #
     # @see #retranslate_yast
     def change_language
       if Language.SwitchToEnglishIfNeeded(true)
@@ -157,6 +161,7 @@ module Yast
       log.info "Language: '#{Language.language}', system encoding '#{WFM.GetEncoding}'"
     end
 
+    # Change YaST interface language
     def retranslate_yast
       Console.SelectFont(Language.language)
       # no yast translation for nn_NO, use nb_NO as a backup

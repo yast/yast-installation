@@ -57,17 +57,17 @@ describe Installation::Widgets::LanguageKeyboardSelection do
           allow(keyboard_mock).to receive(:Set)
         end
 
-        it "uses the keyboard which matches the language as default" do
+        it "uses by default the keyboard which matches the language" do
           expect(keyboard_selection_class).to receive(:new).with("german")
           widget.contents
         end
 
-        it "sets keyboard to the default value different" do
+        it "sets keyboard to the default value" do
           expect(keyboard_mock).to receive(:Set).with("german")
           widget.contents
         end
 
-        context "and keyboard which matches the language is still the same" do
+        context "and keyboard that matches the language is the same than the current one" do
           before do
             allow(keyboard_mock).to receive(:GetKeyboardForLanguage).and_return("english-us")
           end

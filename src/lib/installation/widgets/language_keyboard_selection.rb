@@ -14,10 +14,11 @@ module Installation
     # yast2-country. Additionally, a textfield which can be used by the user to
     # try the keyboard selection is included too.
     #
-    # The main objective of this widget is to signal when language was changed.
-    # In that case, #handle will return :language_changed interrupting the CWM
-    # loop and giving the opportunity to translate the YaST interface.
-    # See Installation::Clients::InstComplexWelcome for further information.
+    # The main objective of this widget is to signal when language or keyboard
+    # is changed.  In that case, #handle will return :language_changed or
+    # :keyboard_changed interrupting the CWM loop and giving the opportunity to
+    # translate the YaST interface.  See
+    # Installation::Clients::InstComplexWelcome for further information.
     class LanguageKeyboardSelection < CWM::CustomWidget
       # Constructor
       def initialize
