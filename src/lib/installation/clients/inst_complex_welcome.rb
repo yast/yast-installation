@@ -34,9 +34,11 @@ Yast.import "Language"
 Yast.import "Mode"
 Yast.import "Pkg"
 Yast.import "Popup"
+Yast.import "ProductControl"
 Yast.import "Stage"
 Yast.import "Timezone"
 Yast.import "Wizard"
+Yast.import "WorkflowManager"
 
 module Yast
   # This client shows main dialog for choosing the language,
@@ -46,6 +48,7 @@ module Yast
     extend Yast::I18n
 
     BETA_FILE = "/README.BETA".freeze
+
     def main
       if FileUtils.Exists(BETA_FILE) && !GetInstArgs.going_back
         InstShowInfo.show_info_txt(BETA_FILE)
@@ -62,13 +65,18 @@ module Yast
         dialog_result = ::Installation::Dialogs::ComplexWelcome.run(
           products, disable_buttons: disable_buttons
         )
-        result = handle_ret(dialog_result)
+        result = handle_dialog_result(dialog_result)
         return result if result
       end
     end
 
-    def handle_ret(ret)
-      case ret
+    # Handle dialog's result
+    #
+    # @param [Symbol] Dialog's return value (:next, :language_changed, etc.)
+    # @return [Symbol,nil] Client's return value. Nil if client should not
+    #   finish yet.
+    def handle_dialog_result(value)
+      case value
       when :language_changed
         return if Mode.config
         change_language
@@ -83,7 +91,8 @@ module Yast
         nil
 
       when :next
-        return nil unless Language.CheckIncompleteTranslation(@language)
+        return if Mode.config
+        return unless Language.CheckIncompleteTranslation(Language.language)
         if selected_product.nil?
           Yast::Popup.Error(_("Please select a product to install."))
           return nil
@@ -93,12 +102,15 @@ module Yast
         :next
 
       else
-        ret
+        value
       end
     end
 
   private
 
+    # Merge selected product's workflow and go to next step
+    #
+    # @see Yast::WorkflowManager.merge_product_workflow
     def merge_and_run_workflow
       Yast::WorkflowManager.merge_product_workflow(selected_product)
       Yast::ProductControl.RunFrom(Yast::ProductControl.CurrentStep + 1, true)
