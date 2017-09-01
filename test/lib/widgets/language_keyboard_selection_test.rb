@@ -11,12 +11,13 @@ describe Installation::Widgets::LanguageKeyboardSelection do
 
   let(:language) { "de_DE" }
   let(:selected_language) { "de_DE" }
+  let(:selected_keyboard) { "english-us" }
   let(:user_decision) { true }
   let(:language_mock) { double("Yast::Language", language: language) }
   let(:keyboard_mock) { double("Yast::Keyboard", user_decision: user_decision, current_kbd: "english-us") }
 
   let(:keyboard_selection) do
-    instance_double("Y2Country::Widgets::KeyboardSelectionCombo")
+    instance_double("Y2Country::Widgets::KeyboardSelectionCombo", value: selected_keyboard)
   end
 
   let(:language_selection) do
@@ -86,6 +87,10 @@ describe Installation::Widgets::LanguageKeyboardSelection do
   end
 
   describe "#handle" do
+    it "returns nil" do
+      expect(widget.handle).to be_nil
+    end
+
     context "when language has changed" do
       let(:selected_language) { "es_ES" }
 
@@ -94,9 +99,11 @@ describe Installation::Widgets::LanguageKeyboardSelection do
       end
     end
 
-    context "when language has not changed" do
-      it "returns nil" do
-        expect(widget.handle).to be_nil
+    context "when keyboard has changed" do
+      let(:selected_keyboard) { "spanish" }
+
+      it "returns :keyboard_changed" do
+        expect(widget.handle).to eq(:keyboard_changed)
       end
     end
   end

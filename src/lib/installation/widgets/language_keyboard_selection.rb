@@ -30,6 +30,7 @@ module Installation
       # @see CWM::AbstractWidget#handle
       def handle
         return :language_changed if language_changed?
+        return :keyboard_changed if keyboard_changed?
         nil
       end
 
@@ -82,11 +83,18 @@ module Installation
         @keyboard_selector ||= Y2Country::Widgets::KeyboardSelectionCombo.new(initial_keyboard)
       end
 
-      # Determine whether the language has been changed
+      # Determine whether the language has changed
       #
-      # @return [Boolean] true if the language has been changed
+      # @return [Boolean] true if the language has changed
       def language_changed?
         initial_language != language_selector.value
+      end
+
+      # Determine wether the keyboard has changed
+      #
+      # @return [Boolean] true if the keyboard has changed
+      def keyboard_changed?
+        initial_keyboard != keyboard_selector.value
       end
 
       # Determine the default keyboard value
