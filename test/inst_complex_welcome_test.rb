@@ -97,7 +97,33 @@ describe Yast::InstComplexWelcomeClient do
     end
 
     it "runs the dialog" do
+      expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
+        .and_return(:back)
       subject.main
+    end
+
+    context "release notes" do
+      before do
+        allow(Yast::InstData).to receive(:release_notes).and_return(release_notes)
+      end
+
+      context "when release notes have been downloaded" do
+        let(:release_notes) { "release notes" }
+
+        it "show release notes" do
+          expect(Yast::Wizard).to receive(:ShowReleaseNotesButton)
+          subject.main
+        end
+      end
+
+      context "when release notes have not been downloaded" do
+        let(:release_notes) { "" }
+
+        it "does not download release notes again" do
+          expect(Yast::Wizard).to_not receive(:ShowReleaseNotesButton)
+          subject.main
+        end
+      end
     end
 
     context "when back is pressed" do

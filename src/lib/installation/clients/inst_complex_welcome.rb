@@ -28,6 +28,7 @@ require "y2packager/product"
 Yast.import "Console"
 Yast.import "FileUtils"
 Yast.import "GetInstArgs"
+Yast.import "InstData"
 Yast.import "InstShowInfo"
 Yast.import "Keyboard"
 Yast.import "Language"
@@ -61,6 +62,7 @@ module Yast
       textdomain "installation"
 
       Yast::Wizard.EnableAbortButton
+      show_release_notes
 
       loop do
         dialog_result = ::Installation::Dialogs::ComplexWelcome.run(
@@ -172,6 +174,12 @@ module Yast
       else
         Language.WfmSetLanguage
       end
+    end
+
+    # Show release notes if they have been downloaded
+    def show_release_notes
+      return if InstData.release_notes.empty?
+      Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
     end
 
     # Return the list of base products
