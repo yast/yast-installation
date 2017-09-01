@@ -193,21 +193,14 @@ describe Yast::InstComplexWelcomeClient do
         subject.main
       end
 
-      it "returns :next" do
-        expect(subject.main).to eq(:next)
+      it "returns nil" do
+        expect(subject.main).to be_nil
       end
 
-      context "when a product was selected" do
-        it "merges the product's workflow" do
-          expect(Yast::WorkflowManager).to receive(:merge_product_workflow)
-            .with(selected_product)
-          subject.main
-        end
-
-        it "returns :next" do
-          allow(Yast::WorkflowManager).to receive(:merge_product_workflow)
-          expect(subject.main).to eq(:next)
-        end
+      it "executes from next step" do
+        expect(Yast::ProductControl).to receive(:RunFrom)
+          .with(Yast::ProductControl.CurrentStep + 1, true)
+        subject.main
       end
 
       context "when no product was selected" do
@@ -228,16 +221,36 @@ describe Yast::InstComplexWelcomeClient do
           subject.main
         end
 
-        it "returns :next if user accepts" do
-          expect(subject.main).to eq(:next)
+        context "and user accepts" do
+          before do
+            allow(Yast::Language).to receive(:CheckIncompleteTranslation).and_return(true)
+          end
 
+          it "returns nil" do
+            expect(subject.main).to be_nil
+          end
+
+          it "executes from next step" do
+            expect(Yast::ProductControl).to receive(:RunFrom)
+              .with(Yast::ProductControl.CurrentStep + 1, true)
+            subject.main
+          end
         end
 
-        it "returns to the dialog if the user does not accept" do
-          allow(Yast::Language).to receive(:CheckIncompleteTranslation).and_return(false)
+        context "and user does not accept" do
+          before do
+            allow(Yast::Language).to receive(:CheckIncompleteTranslation).and_return(false)
+          end
 
-          expect(::Installation::Dialogs::ComplexWelcome).to receive(:run).twice
-          expect(subject.main).to eq(:back)
+          it "returns to the dialog" do
+            expect(::Installation::Dialogs::ComplexWelcome).to receive(:run).twice
+            expect(subject.main).to eq(:back)
+          end
+
+          it "does not execute from next step" do
+            expect(Yast::ProductControl).to_not receive(:RunFrom)
+            subject.main
+          end
         end
       end
 

@@ -69,7 +69,8 @@ module Yast
           products, disable_buttons: disable_buttons
         )
         result = handle_dialog_result(dialog_result)
-        return result if result
+        next unless result
+        return result == :next ? merge_and_run_workflow : result
       end
     end
 
@@ -101,7 +102,6 @@ module Yast
           return nil
         end
         setup_final_choice
-        merge_and_run_workflow if selected_product
         :next
 
       else
