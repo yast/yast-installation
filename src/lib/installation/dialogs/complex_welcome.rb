@@ -77,7 +77,7 @@ module Installation
       #
       # @return [::Installation::Widgets::ProductSelector]
       def product_selector
-        ::Installation::Widgets::ProductSelector.new(products)
+        ::Installation::Widgets::ProductSelector.new(products, skip_validation: true)
       end
 
       # Product license widget
@@ -100,7 +100,6 @@ module Installation
       def filling
         (show_license? || Yast::UI.TextMode) ? Empty() : VWeight(1, VStretch())
       end
-
     end
   end
 end

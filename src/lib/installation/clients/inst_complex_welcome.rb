@@ -84,6 +84,10 @@ module Yast
 
       when :next
         return nil unless Language.CheckIncompleteTranslation(@language)
+        if selected_product.nil?
+          Yast::Popup.Error(_("Please select a product to install."))
+          return nil
+        end
         setup_final_choice
         merge_and_run_workflow if selected_product
         :next

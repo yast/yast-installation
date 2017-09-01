@@ -49,7 +49,7 @@ describe Installation::Dialogs::ComplexWelcome do
 
       it "shows the product selector" do
         expect(Installation::Widgets::ProductSelector).to receive(:new)
-          .with(products)
+          .with(products, skip_validation: true)
         expect(widget.contents.to_s).to include("selector_widget")
       end
     end
