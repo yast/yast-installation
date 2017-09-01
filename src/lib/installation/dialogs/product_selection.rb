@@ -12,10 +12,6 @@ module Installation
     # The dialog is used to select from available product that can do system installation.
     # Currently it is mainly used for LeanOS that have on one media more products.
     class ProductSelection < CWM::Dialog
-      class << self
-        attr_accessor :selected_package
-      end
-
       def initialize
         textdomain "installation"
       end
