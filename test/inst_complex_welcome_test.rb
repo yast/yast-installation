@@ -22,17 +22,41 @@ describe Yast::InstComplexWelcomeClient do
   let(:products) { [product, other_product] }
   let(:autoinst) { false }
   let(:config_mode) { false }
+  let(:update_mode) { false }
+  let(:language) { "en_US" }
+
+  let(:language_mock) do
+    double(
+      language:                   language,
+      languages:                  "en_US,de_DE",
+      GetLanguageItems:           [], 
+      CheckIncompleteTranslation: true,
+      Save:                       nil,
+      SetDefault:                 nil
+    )
+  end
+
+  let(:keyboard_mock) do
+    double(current_kbd: "english-us", GetKeyboardItems: [], user_decision: true, Save: nil)
+  end
+
+  let(:mode_mock) do
+    double(
+      autoinst: autoinst, normal: false, config: config_mode,
+      update: update_mode, live_installation: false
+    )
+  end
 
   before do
     # fake yast2-country, to avoid additional build dependencies
     stub_const("Yast::Console", double.as_null_object)
-    stub_const("Yast::Keyboard", double(current_kbd: "english-us", GetKeyboardItems: [], user_decision: true))
+    stub_const("Yast::Keyboard", keyboard_mock)
     stub_const("Yast::Timezone", double.as_null_object)
-    stub_const("Yast::Language",
-      double(language: "en_US", GetLanguageItems: [], CheckIncompleteTranslation: true))
+    stub_const("Yast::Language", language_mock)
     stub_const("Yast::Wizard", double.as_null_object)
     stub_const("Yast::ProductLicense", double.as_null_object)
-    stub_const("Yast::Mode", double(autoinst: autoinst, normal: false, config: config_mode))
+    stub_const("Yast::Mode", mode_mock)
+
     # stub complete UI, as if it goes thrue component system it will get one of
     # null object returned above as parameter and it raise exception from
     # component system
@@ -224,6 +248,127 @@ describe Yast::InstComplexWelcomeClient do
           subject.main
         end
       end
+    end
+  end
+
+  describe "#change_language" do
+    # NOTE: we are using #send in order to simplify tests.
+    let(:switch_to_english) { false }
+
+    before do
+      allow(Yast::Console).to receive(:SelectFont)
+      allow(Yast::Language).to receive(:WfmSetGivenLanguage)
+      allow(Yast::Language).to receive(:WfmSetLanguage)
+      allow(Yast::Language).to receive(:SwitchToEnglishIfNeeded)
+        .and_return(switch_to_english)
+    end
+
+    it "sets the console font" do
+      expect(Yast::Console).to receive(:SelectFont).with(language)
+      subject.send(:change_language)
+    end
+
+    it "sets the workflow manager language" do
+      expect(Yast::Language).to receive(:WfmSetLanguage)
+      subject.send(:change_language)
+    end
+
+    context "when language is 'nn_NO'" do
+      let(:language) { "nn_NO" }
+
+      it "falls back to 'nb_NO'" do
+        allow(Yast::Language).to receive(:WfmSetGivenLanguage).with("nb_NO")
+        subject.send(:change_language)
+      end
+    end
+
+    context "when switching to english is needed" do
+      let(:switch_to_english) { true }
+
+      it "does not change anything" do
+        expect(Yast::Console).to_not receive(:SelectFont)
+        expect(Yast::Language).to_not receive(:WfmSetGivenLanguage)
+        expect(Yast::Language).to_not receive(:WfmSetLanguage)
+        subject.send(:change_language)
+      end
+    end
+  end
+
+  describe "#setup_final_choice" do
+    let(:initial_stage) { false }
+
+    before do
+      allow(Yast::Stage).to receive(:initial).and_return(initial_stage)
+    end
+
+    it "sets user decision as default" do
+      expect(Yast::Language).to receive(:SetDefault)
+      subject.send(:setup_final_choice)
+    end
+
+    it "sets the timezone to match the selected language" do
+      expect(Yast::Timezone).to receive(:SetTimezoneForLanguage).with(language)
+      subject.send(:setup_final_choice)
+    end
+
+    it "sets packager locale" do
+      expect(Yast::Pkg).to receive(:SetPackageLocale).with(language)
+      expect(Yast::Pkg).to receive(:SetTextLocale).with(language)
+      subject.send(:setup_final_choice)
+    end
+
+    it "saves keyboard and timezone" do
+      expect(Yast::Keyboard).to receive(:Save)
+      expect(Yast::Timezone).to receive(:Save)
+      subject.send(:setup_final_choice)
+    end
+
+    context "when running on update mode" do
+      let(:update_mode) { true }
+      let(:initial_stage) { false }
+
+      it "does not save keyboard nor timezone" do
+        expect(Yast::Keyboard).to_not receive(:Save)
+        expect(Yast::Timezone).to_not receive(:Save)
+        subject.send(:setup_final_choice)
+      end
+    end
+
+    context "when running on first stage" do
+      let(:update_mode) { false }
+      let(:initial_stage) { true }
+
+      it "does not save keyboard nor timezone" do
+        expect(Yast::Keyboard).to_not receive(:Save)
+        expect(Yast::Timezone).to_not receive(:Save)
+        subject.send(:setup_final_choice)
+      end
+    end
+
+    context "when running on live installer" do
+      before do
+        allow(Yast::Mode).to receive(:live_installation).and_return(true)
+        allow(Yast::Language).to receive(:PackagesModified).and_return(lang_packages_needed)
+      end
+
+      context "and additional packages are needed for the given language" do
+        let(:lang_packages_needed) { true }
+
+        it "adds the packages for installation" do
+          expect(Yast::Language).to receive(:PackagesInit).with(["en_US", "de_DE", "en_US"])
+          subject.send(:setup_final_choice)
+        end
+      end
+
+      context "and additional packages are not needed for the given language" do
+        let(:lang_packages_needed) { false }
+
+        it "adds the packages for installation" do
+          expect(Yast::Language).to_not receive(:PackagesInit)
+          subject.send(:setup_final_choice)
+        end
+      end
+
     end
   end
 end

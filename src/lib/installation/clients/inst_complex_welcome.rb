@@ -116,18 +116,9 @@ module Yast
       Yast::ProductControl.RunFrom(Yast::ProductControl.CurrentStep + 1, true)
     end
 
-    def retranslate_yast
-      Console.SelectFont(Language.language)
-      # no yast translation for nn_NO, use nb_NO as a backup
-      # FIXME: remove the hack, please
-      if Language.language == "nn_NO"
-        log.info "Nynorsk not translated, using Bokm\u00E5l"
-        Language.WfmSetGivenLanguage("nb_NO")
-      else
-        Language.WfmSetLanguage
-      end
-    end
-
+    # Change YaST interface language
+    #
+    # @see #retranslate_yast
     def change_language
       if Language.SwitchToEnglishIfNeeded(true)
         log.debug "UI switched to en_US"
@@ -137,6 +128,7 @@ module Yast
       end
     end
 
+    # Set up system according to user choices
     def setup_final_choice
       # Language has been set already.
       # On first run store users decision as default.
@@ -163,6 +155,18 @@ module Yast
       end
 
       log.info "Language: '#{Language.language}', system encoding '#{WFM.GetEncoding}'"
+    end
+
+    def retranslate_yast
+      Console.SelectFont(Language.language)
+      # no yast translation for nn_NO, use nb_NO as a backup
+      # FIXME: remove the hack, please
+      if Language.language == "nn_NO"
+        log.info "Nynorsk not translated, using Bokm\u00E5l"
+        Language.WfmSetGivenLanguage("nb_NO")
+      else
+        Language.WfmSetLanguage
+      end
     end
 
     # Return the list of base products
