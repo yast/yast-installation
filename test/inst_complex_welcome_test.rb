@@ -29,7 +29,7 @@ describe Yast::InstComplexWelcomeClient do
     double(
       language:                   language,
       languages:                  "en_US,de_DE",
-      GetLanguageItems:           [], 
+      GetLanguageItems:           [],
       CheckIncompleteTranslation: true,
       Save:                       nil,
       SetDefault:                 nil
