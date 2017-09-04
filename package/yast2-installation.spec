@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.3.11
+Version:        3.3.12
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -52,9 +52,8 @@ Requires:      yast2-storage-ng >= 0.1.32
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
 
-# Yast::WorkflowManager#merge_product_workflow
-# CWM.show support to disable buttons
-Requires:       yast2 >= 4.0.2
+# Yast2::FsSnapshots.configure_snapper (& friends)
+Requires:       yast2 >= 4.0.3
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)

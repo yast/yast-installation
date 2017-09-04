@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Sep  4 12:18:45 UTC 2017 - ancor@suse.com
+
+- Configure Snapper at the end of installation if requested
+  (part of fate#318196).
+- 3.3.12
+
+-------------------------------------------------------------------
 Fri Sep  1 12:43:42 UTC 2017 - igonzalezsosa@suse.com
 
 - On multi-product installation medias, the product selection

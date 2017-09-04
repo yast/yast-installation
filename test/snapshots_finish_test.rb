@@ -14,6 +14,57 @@ describe ::Installation::SnapshotsFinish do
     before do
       allow(Yast::InstFunctions).to receive(:second_stage_required?).and_return(second_stage_required)
       allow(Yast2::FsSnapshot).to receive(:configured?).and_return(snapper_configured)
+      allow(Yast::Mode).to receive(:installation).and_return(mode == :installation)
+      allow(Yast2::FsSnapshot).to receive(:configure_on_install?).and_return configure
+    end
+
+    let(:second_stage_required) { false }
+    let(:snapper_configured) { false }
+    let(:mode) { :normal }
+    let(:configure) { false }
+
+    context "during a fresh installation" do
+      let(:mode) { :installation }
+
+      context "if Snapper configuration was requested" do
+        let(:configure) { true }
+
+        it "configures Snapper" do
+          expect(Yast2::FsSnapshot).to receive(:configure_snapper)
+          subject.write
+        end
+      end
+
+      context "if Snapper configuration was not requested" do
+        let(:configure) { false }
+
+        it "does not configure Snapper" do
+          expect(Yast2::FsSnapshot).to_not receive(:configure_snapper)
+          subject.write
+        end
+      end
+    end
+
+    context "during update" do
+      let(:mode) { :update }
+
+      context "if Snapper configuration was requested" do
+        let(:configure) { true }
+
+        it "does not configure Snapper" do
+          expect(Yast2::FsSnapshot).to_not receive(:configure_snapper)
+          subject.write
+        end
+      end
+
+      context "if Snapper configuration was not requested" do
+        let(:configure) { false }
+
+        it "does not configure Snapper" do
+          expect(Yast2::FsSnapshot).to_not receive(:configure_snapper)
+          subject.write
+        end
+      end
     end
 
     context "when second stage is required" do
