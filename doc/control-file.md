@@ -783,6 +783,8 @@ Section *supported\_desktops* contains list of one or more
 -   (string) *patterns*
 
     Patterns to select for a particular desktop (whitespace-separated).
+    These patterns are **optional** and will not be reported as an error by
+    the software proposal in case of missing.
 
 -   (string) *icon*
 
