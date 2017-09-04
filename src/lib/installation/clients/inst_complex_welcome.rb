@@ -121,8 +121,8 @@ module Yast
 
     # Change YaST interface language
     #
-    # Most of the work is done by #retranslate_yast. If changing to english if
-    # needed, no configuration changes are performed.
+    # Most of the work is done by #retranslate_yast. No configuration will be
+    # performed if changing to english is needed.
     #
     # @see #retranslate_yast
     def change_language

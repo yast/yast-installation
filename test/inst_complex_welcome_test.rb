@@ -62,7 +62,6 @@ describe Yast::InstComplexWelcomeClient do
   end
 
   describe "#main" do
-    let(:restarting) { false }
     let(:dialog_results) { [:back] }
 
     before do
