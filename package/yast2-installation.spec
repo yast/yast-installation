@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.3.11
+Version:        3.3.12
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
