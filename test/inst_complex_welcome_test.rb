@@ -20,7 +20,7 @@ describe Yast::InstComplexWelcomeClient do
   let(:license?) { true }
   let(:other_product) { instance_double(Y2Packager::Product) }
   let(:products) { [product, other_product] }
-  let(:autoinst) { false }
+  let(:auto) { false }
   let(:config_mode) { false }
   let(:update_mode) { false }
   let(:language) { "en_US" }
@@ -42,7 +42,7 @@ describe Yast::InstComplexWelcomeClient do
 
   let(:mode_mock) do
     double(
-      autoinst: autoinst, normal: false, config: config_mode,
+      auto: auto, normal: false, config: config_mode,
       update: update_mode, live_installation: false
     )
   end
@@ -56,10 +56,6 @@ describe Yast::InstComplexWelcomeClient do
     stub_const("Yast::Wizard", double.as_null_object)
     stub_const("Yast::ProductLicense", double.as_null_object)
     stub_const("Yast::Mode", mode_mock)
-
-    # stub complete UI, as if it goes thrue component system it will get one of
-    # null object returned above as parameter and it raise exception from
-    # component system
 
     allow(Y2Packager::Product).to receive(:selected_base).and_return(product)
     allow(Y2Packager::Product).to receive(:available_base_products).and_return(products)
@@ -89,7 +85,7 @@ describe Yast::InstComplexWelcomeClient do
     end
 
     context "when installation Mode is auto" do
-      let(:autoinst) { true }
+      let(:auto) { true }
 
       it "returns :auto" do
         expect(subject.main).to eql(:auto)

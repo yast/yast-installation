@@ -57,7 +57,7 @@ module Yast
       end
 
       # bnc#206706
-      return :auto if Mode.autoinst
+      return :auto if Mode.auto
 
       textdomain "installation"
 
