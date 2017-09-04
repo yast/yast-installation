@@ -51,7 +51,6 @@ module Installation
 
     # Shows a dialog when the given url is wrong
     #
-    # @param [String] original Original value
     # @return [String] new value
     def dialog_content
       VBox(

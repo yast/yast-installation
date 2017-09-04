@@ -33,7 +33,7 @@ module Yast
 
     # Checks if the given url is invalid and needs to be fixed.
     #
-    # @params url [String]
+    # @param url [String]
     # @return [Boolean] return true if not nil and invalid.
     def need_fix?(url)
       url && !valid_url?(url)
@@ -68,7 +68,7 @@ module Yast
 
     # Check if the given URI is valid or not
     #
-    # @params url [String]
+    # @param url [String]
     # @return [Boolean]
     def valid_url?(url)
       VALID_URL_SCHEMES.include?(URI(url).scheme)

@@ -17,7 +17,7 @@
 
 
 Name:           yast2-installation
-Version:        3.3.10
+Version:        3.3.11
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -41,8 +41,9 @@ BuildRequires:  yast2-xml
 BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
 
-# CWM::RadioButtons#vspacing
-BuildRequires: yast2 >= 3.2.20
+# Yast::WorkflowManager#merge_product_workflow
+# CWM.show support to disable buttons
+BuildRequires: yast2 >= 4.0.2
 
 # New Y2Storage::StorageManager API
 BuildRequires: yast2-storage-ng >= 0.1.32
@@ -51,8 +52,9 @@ Requires:      yast2-storage-ng >= 0.1.32
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
 
-# PackageDownloader and PackageExtractor
-Requires:       yast2 >= 3.2.19
+# Yast::WorkflowManager#merge_product_workflow
+# CWM.show support to disable buttons
+Requires:       yast2 >= 4.0.2
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
@@ -64,8 +66,8 @@ Requires:	yast2-pkg-bindings >= 3.1.33
 # Mouse-related scripts moved to yast2-mouse
 Conflicts:	yast2-mouse < 2.18.0
 
-# Y2Packager::Product
-Requires:	yast2-packager >= 3.3.7
+# Y2Packager::Widgets::ProductLicense
+Requires:	yast2-packager >= 3.3.9
 
 # FIXME: some code present in this package still depends on the old yast2-storage
 # and will break without this dependency. That's acceptable at this point of the
