@@ -35,7 +35,7 @@ describe ::Installation::SnapshotsFinish do
         end
       end
 
-      context "is Snapper configuration was not requested" do
+      context "if Snapper configuration was not requested" do
         let(:configure) { false }
 
         it "does not configure Snapper" do
@@ -57,7 +57,7 @@ describe ::Installation::SnapshotsFinish do
         end
       end
 
-      context "is Snapper configuration was not requested" do
+      context "if Snapper configuration was not requested" do
         let(:configure) { false }
 
         it "does not configure Snapper" do
