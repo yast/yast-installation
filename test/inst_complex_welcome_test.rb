@@ -175,6 +175,8 @@ describe Yast::InstComplexWelcomeClient do
     context "when :next is pressed" do
       let(:dialog_results) { [:next] }
       let(:selected_product) { product }
+      let(:license_needed?) { true }
+      let(:license_confirmed?) { true }
 
       before do
         allow(subject).to receive(:setup_final_choice)
@@ -196,6 +198,41 @@ describe Yast::InstComplexWelcomeClient do
         expect(Yast::ProductControl).to receive(:RunFrom)
           .with(Yast::ProductControl.CurrentStep + 1, true)
         subject.main
+      end
+
+      context "when license was not confirmed" do
+        let(:products) { [product] }
+        let(:license_confirmed?) { false }
+
+        context "and confirmation is needed" do
+          let(:dialog_results) { [:next, :back] }
+          let(:license_needed?) { true }
+
+          it "reports an error" do
+            expect(Yast::Popup).to receive(:Error)
+            subject.main
+          end
+        end
+
+        context "and confirmation was not needed" do
+          let(:license_needed?) { false }
+
+          it "does not report an error" do
+            expect(Yast::Popup).to_not receive(:Error)
+            subject.main
+          end
+        end
+
+        context "when more than 1 product exists (it should be accepted later)" do
+          let(:dialog_results) { [:next, :back] }
+          let(:license_needed?) { true }
+          let(:products) { [product, other_product] }
+
+          it "does not report an error" do
+            expect(Yast::Popup).to_not receive(:Error)
+            subject.main
+          end
+        end
       end
 
       context "when no product was selected" do

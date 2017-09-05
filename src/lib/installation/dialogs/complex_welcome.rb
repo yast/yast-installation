@@ -84,7 +84,7 @@ module Installation
       #
       # @return [Y2Packager::Widgets::ProductLicense]
       def product_license
-        Y2Packager::Widgets::ProductLicense.new(products.first)
+        Y2Packager::Widgets::ProductLicense.new(products.first, skip_validation: true)
       end
 
       # Determine whether the license must be shown
