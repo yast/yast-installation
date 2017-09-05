@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Sep  5 11:41:50 UTC 2017 - lslezak@suse.cz
+
+- Download release notes only for the selected products (if any
+  product is already selected) (bsc#1056872)
+- 4.0.0
+
+-------------------------------------------------------------------
 Tue Sep  5 10:20:43 UTC 2017 - igonzalezsosa@suse.com
 
 - Fix license confirmation handling on single product medias
