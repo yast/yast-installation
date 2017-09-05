@@ -65,8 +65,8 @@ Requires:	yast2-pkg-bindings >= 3.1.33
 # Mouse-related scripts moved to yast2-mouse
 Conflicts:	yast2-mouse < 2.18.0
 
-# Y2Packager::Widgets::ProductLicense
-Requires:	yast2-packager >= 3.3.9
+# Y2Packager::Widgets::ProductLicense with skip validation option
+Requires:	yast2-packager >= 3.3.10
 
 # FIXME: some code present in this package still depends on the old yast2-storage
 # and will break without this dependency. That's acceptable at this point of the
