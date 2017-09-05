@@ -38,7 +38,7 @@ describe Installation::Dialogs::ComplexWelcome do
 
       it "shows the product license" do
         expect(Y2Packager::Widgets::ProductLicense).to receive(:new)
-          .with(products.first).and_return(license_widget)
+          .with(products.first, skip_validation: true).and_return(license_widget)
         expect(widget.contents.to_s).to include("license_widget")
       end
     end

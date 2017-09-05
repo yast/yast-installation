@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Sep  5 10:20:43 UTC 2017 - igonzalezsosa@suse.com
+
+- Fix license confirmation handling on single product medias
+  (fate#322276)
+- 3.3.13
+
+-------------------------------------------------------------------
 Mon Sep  4 12:18:45 UTC 2017 - ancor@suse.com
 
 - Configure Snapper at the end of installation if requested

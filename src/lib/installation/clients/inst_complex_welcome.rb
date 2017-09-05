@@ -97,10 +97,15 @@ module Yast
       when :next
         return if Mode.config
         return unless Language.CheckIncompleteTranslation(Language.language)
+
         if selected_product.nil?
           Yast::Popup.Error(_("Please select a product to install."))
           return nil
+        elsif license_confirmation_required? && !selected_product.license_confirmed?
+          Yast::Popup.Error(_("You must accept the license to install this product"))
+          return nil
         end
+
         setup_final_choice
         :next
 
@@ -203,6 +208,16 @@ module Yast
       [:back, :next].reject do |button|
         GetInstArgs.argmap.fetch("enable_#{button}", true)
       end
+    end
+
+    # Determine whether selected product license should be confirmed
+    #
+    # If more than 1 product exists, it is supposed to be accepted later.
+    #
+    # @return [Boolean] true if it should be accepted; false otherwise.
+    def license_confirmation_required?
+      return false if products.size > 1
+      selected_product.license_confirmation_required?
     end
   end unless defined? Yast::InstComplexWelcomeClient
 end
