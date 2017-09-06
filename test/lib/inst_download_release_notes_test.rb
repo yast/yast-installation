@@ -195,6 +195,62 @@ describe Yast::InstDownloadReleaseNotesClient do
         client.main # call it a second time
       end
     end
+
+    context "in the initial stage" do
+      let(:selected_product) do
+        {
+          "arch" => "x86_64", "description" => "SUSE Linux Enterprise Server",
+          "category" => "base", "status" => :selected, "short_name" => "SLES",
+          "relnotes_url" => "https://suse.com/releasenotes/x86_64/SUSE-SLES/15/release-notes-sles.rpm"
+        }
+      end
+
+      let(:available_product) do
+        {
+          "arch" => "x86_64", "description" => "SUSE Linux Enterprise Desktop",
+          "category" => "base", "status" => :available, "short_name" => "SLED",
+          "relnotes_url" => "https://suse.com/releasenotes/x86_64/SUSE-SLED/15/release-notes-sled.rpm"
+        }
+      end
+
+      before do
+        expect(Yast::Stage).to receive(:initial).and_return(true)
+        expect(Yast::SCR).to receive(:Execute)
+          .with(Yast::Path.new(".target.bash"), /curl.*directory.yast/)
+          .and_return(CURL_SUCCESS_CODE)
+        expect(File).to receive(:read)
+          .with(/directory.yast/)
+          .and_return("RELEASE-NOTES.en.rtf")
+      end
+
+      context "a product is already selected" do
+        before do
+          allow(Yast::Pkg).to receive(:ResolvableProperties).with("", :product, "")
+            .and_return([selected_product, available_product])
+        end
+
+        it "downloads the release notes only for the selected products" do
+          expect(Yast::SCR).to receive(:Execute)
+            .with(Yast::Path.new(".target.bash"), /curl.*SUSE-SLES/)
+            .and_return(CURL_SUCCESS_CODE)
+          client.main
+        end
+      end
+
+      context "no product is selected" do
+        before do
+          allow(Yast::Pkg).to receive(:ResolvableProperties).with("", :product, "")
+            .and_return([available_product, available_product])
+        end
+
+        it "downloads the release notes only for the available products" do
+          expect(Yast::SCR).to receive(:Execute)
+            .with(Yast::Path.new(".target.bash"), /curl.*SUSE-SLED/)
+            .and_return(CURL_SUCCESS_CODE)
+          client.main
+        end
+      end
+    end
   end
 
   describe "#curl_proxy_args" do

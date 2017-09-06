@@ -130,9 +130,8 @@ module Yast
       # Get proxy settings (if any)
       proxy = curl_proxy_args
 
-      # installed may mean old (before upgrade) in initial stage
-      # product may not yet be selected although repo is already added
-      required_product_statuses = Stage.initial ? [:selected, :available] : [:selected, :installed]
+      required_product_statuses = check_product_states
+      log.info("Checking products in state: #{required_product_statuses}")
       products = Pkg.ResolvableProperties("", :product, "").select do |product|
         required_product_statuses.include? product["status"]
       end
@@ -240,6 +239,25 @@ module Yast
 
       download_release_notes
       :auto
+    end
+
+  private
+
+    # Get the list of product states which should be used for downloading
+    # release notes.
+    # @return [Array<Symbol>] list of states (:selected, :installed or :available)
+    def check_product_states
+      # installed may mean old (before upgrade) in initial stage
+      # product may not yet be selected although repo is already added
+      return [:selected, :installed] unless Stage.initial
+
+      # if a product is already selected then use the selected products
+      # otherwise use the available one(s)
+      product_selected = Pkg.ResolvableProperties("", :product, "").any? do |p|
+        p["status"] == :selected
+      end
+
+      product_selected ? [:selected] : [:available]
     end
   end
 end
