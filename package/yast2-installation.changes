@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Sep 11 14:08:49 UTC 2017 - jreidinger@suse.com
+
+- Adapt to new yast2-country changes (needed for FATE#323837)
+- 4.0.1
+
+-------------------------------------------------------------------
 Tue Sep  5 11:41:50 UTC 2017 - lslezak@suse.cz
 
 - Download release notes only for the selected products (if any
