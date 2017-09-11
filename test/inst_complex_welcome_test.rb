@@ -129,49 +129,6 @@ describe Yast::InstComplexWelcomeClient do
       end
     end
 
-    context "when language changes" do
-      let(:dialog_results) { [:language_changed] }
-
-      it "returns :again" do
-        allow(subject).to receive(:change_language)
-        expect(subject.main).to eq(:again)
-      end
-
-      it "changes the language" do
-        expect(subject).to receive(:change_language)
-        subject.main
-      end
-
-      context "and running in config mode" do
-        let(:config_mode) { true }
-        let(:dialog_results) { [:language_changed, :back] }
-
-        before do
-        end
-
-        it "does not change the language" do
-          expect(subject).to_not receive(:change_language)
-          subject.main
-        end
-      end
-    end
-
-    context "when keyboard changes" do
-      let(:dialog_results) { [:keyboard_changed, :back] }
-
-      it "sets the selection as user selected" do
-        expect(Yast::Keyboard).to receive(:user_decision=).with(true)
-        subject.main
-      end
-
-      it "reruns the dialog" do
-        expect(Installation::Dialogs::ComplexWelcome).to receive(:run).twice
-          .and_return(:keyboard_changed, :back)
-        allow(Yast::Keyboard).to receive(:user_decision=)
-        subject.main
-      end
-    end
-
     context "when :next is pressed" do
       let(:dialog_results) { [:next] }
       let(:selected_product) { product }
@@ -319,49 +276,6 @@ describe Yast::InstComplexWelcomeClient do
           expect(Installation::Dialogs::ComplexWelcome).to receive(:run).twice.and_return(:abort, :abort)
           subject.main
         end
-      end
-    end
-  end
-
-  describe "#change_language" do
-    # NOTE: we are using #send in order to simplify tests.
-    let(:switch_to_english) { false }
-
-    before do
-      allow(Yast::Console).to receive(:SelectFont)
-      allow(Yast::Language).to receive(:WfmSetGivenLanguage)
-      allow(Yast::Language).to receive(:WfmSetLanguage)
-      allow(Yast::Language).to receive(:SwitchToEnglishIfNeeded)
-        .and_return(switch_to_english)
-    end
-
-    it "sets the console font" do
-      expect(Yast::Console).to receive(:SelectFont).with(language)
-      subject.send(:change_language)
-    end
-
-    it "sets the workflow manager language" do
-      expect(Yast::Language).to receive(:WfmSetLanguage)
-      subject.send(:change_language)
-    end
-
-    context "when language is 'nn_NO'" do
-      let(:language) { "nn_NO" }
-
-      it "falls back to 'nb_NO'" do
-        allow(Yast::Language).to receive(:WfmSetGivenLanguage).with("nb_NO")
-        subject.send(:change_language)
-      end
-    end
-
-    context "when switching to english is needed" do
-      let(:switch_to_english) { true }
-
-      it "does not change anything" do
-        expect(Yast::Console).to_not receive(:SelectFont)
-        expect(Yast::Language).to_not receive(:WfmSetGivenLanguage)
-        expect(Yast::Language).to_not receive(:WfmSetLanguage)
-        subject.send(:change_language)
       end
     end
   end

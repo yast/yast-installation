@@ -15,7 +15,8 @@ require "cwm"
 require "cwm/dialog"
 
 require "installation/widgets/product_selector"
-require "installation/widgets/language_keyboard_selection"
+require "y2country/widgets/language_selection"
+require "y2country/widgets/keyboard_selection"
 require "y2packager/widgets/product_license"
 
 Yast.import "UI"
@@ -63,15 +64,54 @@ module Installation
       #
       # @return [Yast::Term] Dialog's content
       def contents
-        VBox(
+        @contents ||= VBox(
           filling,
-          Left(::Installation::Widgets::LanguageKeyboardSelection.new),
+          locale_settings,
           show_license? ? product_license : product_selector,
           filling
         )
       end
 
+      def skip_store_for
+        [:redraw]
+      end
+
+      def run
+        res = nil
+
+        loop do
+          res = super
+          break if res != :redraw
+        end
+
+        res
+      end
+
     private
+
+      def locale_settings
+        Left(
+          VBox(
+            Left(
+              HBox(
+                HWeight(1, Left(Y2Country::Widgets::LanguageSelection.new(emit_event: true))),
+                HSpacing(3),
+                HWeight(1, Left(Y2Country::Widgets::KeyboardSelectionCombo.new))
+              )
+            ),
+            Left(
+              HBox(
+                HWeight(1, HStretch()),
+                HSpacing(3),
+                HWeight(
+                  1,
+                  Left(InputField(Id(:keyboard_test), Opt(:hstretch), _("K&eyboard Test")))
+                )
+              )
+            )
+          )
+        )
+      end
 
       # Product selection widget
       #
@@ -98,7 +138,11 @@ module Installation
 
       # UI to fill space if needed
       def filling
-        (show_license? || Yast::UI.TextMode) ? Empty() : VWeight(1, VStretch())
+        if show_license? || Yast::UI.TextMode
+          Empty()
+        else
+          VWeight(1, VStretch())
+        end
       end
     end
   end
