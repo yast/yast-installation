@@ -81,15 +81,6 @@ module Yast
     #   finish yet.
     def handle_dialog_result(value)
       case value
-      when :language_changed
-        return if Mode.config
-        change_language
-        :again
-
-      when :keyboard_changed
-        Keyboard.user_decision = true
-        nil
-
       when :abort
         return :abort if Yast::Popup.ConfirmAbort(:painless)
         nil
@@ -124,21 +115,6 @@ module Yast
       Yast::ProductControl.RunFrom(Yast::ProductControl.CurrentStep + 1, true)
     end
 
-    # Change YaST interface language
-    #
-    # Most of the work is done by #retranslate_yast. No configuration will be
-    # performed if changing to english is needed.
-    #
-    # @see #retranslate_yast
-    def change_language
-      if Language.SwitchToEnglishIfNeeded(true)
-        log.debug "UI switched to en_US"
-      else
-        # Display newly translated dialog.
-        retranslate_yast
-      end
-    end
-
     # Set up system according to user choices
     def setup_final_choice
       # Language has been set already.
@@ -166,19 +142,6 @@ module Yast
       end
 
       log.info "Language: '#{Language.language}', system encoding '#{WFM.GetEncoding}'"
-    end
-
-    # Change YaST interface language
-    def retranslate_yast
-      Console.SelectFont(Language.language)
-      # no yast translation for nn_NO, use nb_NO as a backup
-      # FIXME: remove the hack, please
-      if Language.language == "nn_NO"
-        log.info "Nynorsk not translated, using Bokm\u00E5l"
-        Language.WfmSetGivenLanguage("nb_NO")
-      else
-        Language.WfmSetLanguage
-      end
     end
 
     # Show release notes if they have been downloaded

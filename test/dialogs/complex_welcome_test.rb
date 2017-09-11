@@ -17,12 +17,15 @@ describe Installation::Dialogs::ComplexWelcome do
   describe "#content" do
     let(:sles_product) { instance_double("Y2Packager::Product", label: "SLES") }
     let(:language_widget) { Yast::Term.new(:language_widget) }
+    let(:keyboard_widget) { Yast::Term.new(:keyboard_widget) }
     let(:license_widget) { Yast::Term.new(:license_widget) }
     let(:selector_widget) { Yast::Term.new(:selector_widget) }
 
     before do
-      allow(Installation::Widgets::LanguageKeyboardSelection).to receive(:new)
+      allow(Y2Country::Widgets::LanguageSelection).to receive(:new)
         .and_return(language_widget)
+      allow(Y2Country::Widgets::KeyboardSelectionCombo).to receive(:new)
+        .and_return(keyboard_widget)
       allow(Y2Packager::Widgets::ProductLicense).to receive(:new)
         .and_return(license_widget)
       allow(Installation::Widgets::ProductSelector).to receive(:new)
@@ -31,6 +34,7 @@ describe Installation::Dialogs::ComplexWelcome do
 
     it "includes a language/keyboard selection" do
       expect(widget.contents.to_s).to include("language_widget")
+      expect(widget.contents.to_s).to include("keyboard_widget")
     end
 
     context "when only 1 product is available" do
