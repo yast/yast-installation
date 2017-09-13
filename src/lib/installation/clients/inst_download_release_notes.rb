@@ -25,6 +25,18 @@
 # Purpose:	Downloads on-line release notes
 #
 # $Id$
+
+require "y2packager/product"
+
+Yast.import "InstData"
+Yast.import "Pkg"
+Yast.import "Language"
+Yast.import "Stage"
+Yast.import "UI"
+Yast.import "GetInstArgs"
+Yast.import "Wizard"
+Yast.import "Mode"
+
 module Yast
   class InstDownloadReleaseNotesClient < Client
     include Yast::Logger
@@ -125,85 +137,17 @@ module Yast
     #
     # @return true when successful
     def download_release_notes
-      filename_templ = UI.TextMode ? "/RELEASE-NOTES.%1.txt" : "/RELEASE-NOTES.%1.rtf"
+      format = UI.TextMode ? :txt : :rtf
 
-      # Get proxy settings (if any)
-      proxy = curl_proxy_args
-
-      required_product_statuses = check_product_states
-      log.info("Checking products in state: #{required_product_statuses}")
-      products = Pkg.ResolvableProperties("", :product, "").select do |product|
-        required_product_statuses.include? product["status"]
-      end
-      log.info("Products: #{products}")
+      products = Y2Packager::Product.with_status(*check_product_states)
       products.each do |product|
-        if InstData.stop_relnotes_download
-          log.info("Skipping release notes download due to previous download issues")
-          break
-        end
-        if InstData.downloaded_release_notes.include? product["short_name"]
-          log.info("Release notes for #{product["short_name"]} already downloaded, skipping...")
-          next
-        end
-        url = product["relnotes_url"]
-        log.debug("URL: #{url}")
-        # protect from wrong urls
-        if url.nil? || url.empty?
-          log.warn("Skipping invalid URL #{url.inspect} for product #{product["short_name"]}")
-          next
-        end
-        pos = url.rindex("/")
-        if pos.nil?
-          log.error "Broken URL for release notes: #{url}"
-          next
-        end
-        url_base = url[0, pos]
-
-        rn_filter = download_release_notes_index(url_base, proxy)
-        if InstData.stop_relnotes_download
-          log.info("Skipping release notes download due to previous download issues")
-          break
-        end
-
-        url_template = url_base + filename_templ
-        log.info("URL template: #{url_base}")
-        [Language.language, Language.language[0..1], "en"].uniq.each do |lang|
-          if !rn_filter.nil?
-            filename = Builtins.sformat(filename_templ, lang)
-            if !rn_filter.include?(filename[1..-1])
-              log.info "File #{filename} not found in index, skipping attempt download"
-              next
-            end
-          end
-          url = Builtins.sformat(url_template, lang)
-          log.info("URL: #{url}")
-          # Where we want to store the downloaded release notes
-          filename = Builtins.sformat("%1/relnotes",
-            SCR.Read(path(".target.tmpdir")))
-
-          if InstData.failed_release_notes.include?(url)
-            log.info("Skipping download of already failed release notes at #{url}")
-            next
-          end
-
-          # download release notes now
-          ok = curl_download(url, filename, proxy_args: proxy)
-          if ok
-            log.info("Release notes downloaded successfully")
-            InstData.release_notes[product["short_name"]] = SCR.Read(path(".target.string"), filename)
-            InstData.downloaded_release_notes << product["short_name"]
-            break
-          elsif ok.nil?
-            break
-          else
-            InstData.failed_release_notes << url
-          end
-        end
+        InstData.release_notes[product.short_name] = product.release_notes(format)
+        InstData.downloaded_release_notes << product.short_name
       end
-      if !InstData.release_notes.empty?
-        UI.SetReleaseNotes(InstData.release_notes)
-        Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
-      end
+      return if InstData.release_notes.empty?
+
+      UI.SetReleaseNotes(InstData.release_notes)
+      Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
       true
     end
 
