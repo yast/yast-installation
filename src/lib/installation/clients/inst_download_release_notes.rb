@@ -57,11 +57,9 @@ module Yast
         InstData.release_notes[product.short_name] = relnotes
         InstData.downloaded_release_notes << product.short_name
       end
-      return if InstData.release_notes.empty?
 
-      UI.SetReleaseNotes(InstData.release_notes)
-      Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
-      true
+      refresh_ui
+      !InstData.release_notes.empty?
     end
 
     # Set the UI content to show some progress.
@@ -105,6 +103,15 @@ module Yast
       end
 
       product_selected ? [:selected] : [:available]
+    end
+
+    def refresh_ui
+      Yast::UI.SetReleaseNotes(InstData.release_notes)
+      if Yast::InstData.release_notes.empty?
+        Yast::Wizard.HideReleaseNotesButton
+      else
+        Yast::Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
+      end
     end
   end
 end

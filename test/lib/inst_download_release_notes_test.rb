@@ -15,8 +15,10 @@ describe Yast::InstDownloadReleaseNotesClient do
       instance_double(Y2Packager::Product, short_name: "SDK", release_notes: "SDK RN")
     end
 
+    let(:textmode) { true }
+
     before do
-      allow(Yast::UI).to receive(:TextMode).and_return(true)
+      allow(Yast::UI).to receive(:TextMode).and_return(textmode)
       allow(Y2Packager::Product).to receive(:with_status).with(:available)
         .and_return([sles, sdk])
       allow(Yast::Stage).to receive(:initial).and_return(true)
@@ -45,8 +47,26 @@ describe Yast::InstDownloadReleaseNotesClient do
       end
 
       it "does not enable the release notes button" do
-        expect(Yast::UI).to_not receive(:SetReleaseNotes)
+        expect(Yast::UI).to receive(:SetReleaseNotes).with({})
         expect(Yast::Wizard).to_not receive(:ShowReleaseNotesButton)
+        subject.download_release_notes
+      end
+    end
+
+    context "when running in text mode" do
+      let(:textmode) { true }
+
+      it "asks for :txt version" do
+        expect(sles).to receive(:release_notes).with(:txt)
+        subject.download_release_notes
+      end
+    end
+
+    context "when running in graphical mode" do
+      let(:textmode) { false }
+
+      it "asks for :rtf version" do
+        expect(sles).to receive(:release_notes).with(:rtf)
         subject.download_release_notes
       end
     end
