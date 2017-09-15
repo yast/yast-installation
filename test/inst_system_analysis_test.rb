@@ -22,7 +22,7 @@ describe Yast::InstSystemAnalysisClient do
     context "when release notes were downloaded" do
       let(:release_notes) { { product => notes } }
 
-      it "does not enable the button nor load release notes again" do
+      xit "does not enable the button nor load release notes again" do
         expect(Yast::Wizard).to_not receive(:ShowReleaseNotesButton)
         expect(Yast::UI).to_not receive(:SetReleaseNotes)
         subject.download_and_show_release_notes
@@ -38,7 +38,7 @@ describe Yast::InstSystemAnalysisClient do
           subject.instance_variable_set(:@media_text, notes)
         end
 
-        it "enables the button and load the release notes" do
+        xit "enables the button and load the release notes" do
           expect(Yast::Wizard).to receive(:ShowReleaseNotesButton)
           expect(Yast::UI).to receive(:SetReleaseNotes).with(product => notes)
           subject.download_and_show_release_notes
@@ -51,7 +51,7 @@ describe Yast::InstSystemAnalysisClient do
           allow(subject).to receive(:load_release_notes).and_return(false)
         end
 
-        it "does not enable the button nor load release notes" do
+        xit "does not enable the button nor load release notes" do
           expect(Yast::Wizard).to_not receive(:ShowReleaseNotesButton)
           expect(Yast::UI).to_not receive(:SetReleaseNotes)
           subject.download_and_show_release_notes
