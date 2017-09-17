@@ -30,7 +30,7 @@ require "y2packager/product"
 
 Yast.import "InstData"
 Yast.import "Pkg"
-Yast.import "Language"
+Yast.import "Packages"
 Yast.import "Stage"
 Yast.import "UI"
 Yast.import "GetInstArgs"
@@ -38,6 +38,10 @@ Yast.import "Wizard"
 Yast.import "Mode"
 
 module Yast
+  # Client to download and manage release notes button
+  #
+  # This client ask for products' release notes and sets UI elements accordingly
+  # ("Release Notes" button and dialog).
   class InstDownloadReleaseNotesClient < Client
     include Yast::Logger
 
@@ -47,19 +51,18 @@ module Yast
     def download_release_notes
       format = UI.TextMode ? :txt : :rtf
 
-      products = Y2Packager::Product.with_status(*check_product_states)
-      products.each do |product|
+      relnotes_map = products.each_with_object({}) do |product, all|
         relnotes = product.release_notes(format)
         if relnotes.nil?
           log.info "No release notes were found for product #{product.short_name}"
           next
         end
-        InstData.release_notes[product.short_name] = relnotes
-        InstData.downloaded_release_notes << product.short_name
+        all[product.short_name] = relnotes.content
       end
 
-      refresh_ui
-      !InstData.release_notes.empty?
+      refresh_ui(relnotes_map)
+      InstData.release_notes = relnotes_map
+      !relnotes_map.empty?
     end
 
     # Set the UI content to show some progress.
@@ -70,7 +73,8 @@ module Yast
     end
 
     def main
-      textdomain "installation"
+      textdomain "packager"
+      return :auto unless Packages.init_called
 
       return :back if GetInstArgs.going_back
 
@@ -88,29 +92,25 @@ module Yast
 
   private
 
-    # Get the list of product states which should be used for downloading
-    # release notes.
-    # @return [Array<Symbol>] list of states (:selected, :installed or :available)
-    def check_product_states
+    # List of products which should be used for downloading release notes
+    #
+    # @return [Array<Y2Packager::Product>] list of products
+    def products
       # installed may mean old (before upgrade) in initial stage
       # product may not yet be selected although repo is already added
-      return [:selected, :installed] unless Stage.initial
-
-      # if a product is already selected then use the selected products
-      # otherwise use the available one(s)
-      product_selected = Pkg.ResolvableProperties("", :product, "").any? do |p|
-        p["status"] == :selected
-      end
-
-      product_selected ? [:selected] : [:available]
+      return Y2Packager::Product.with_status(:selected, :installed) unless Stage.initial
+      selected = Y2Packager::Product.with_status(:selected)
+      return selected unless selected.empty?
+      Y2Packager::Product.with_status(:available)
     end
 
-    def refresh_ui
-      Yast::UI.SetReleaseNotes(InstData.release_notes)
-      if Yast::InstData.release_notes.empty?
-        Yast::Wizard.HideReleaseNotesButton
+    # Refresh release notes UI
+    def refresh_ui(relnotes_map)
+      UI.SetReleaseNotes(relnotes_map)
+      if relnotes_map.empty?
+        Wizard.HideReleaseNotesButton
       else
-        Yast::Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
+        Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
       end
     end
   end
