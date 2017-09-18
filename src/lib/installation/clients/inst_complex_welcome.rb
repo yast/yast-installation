@@ -38,7 +38,6 @@ Yast.import "ProductControl"
 Yast.import "Stage"
 Yast.import "Timezone"
 Yast.import "Wizard"
-Yast.import "WFM"
 Yast.import "WorkflowManager"
 
 module Yast
@@ -61,7 +60,6 @@ module Yast
 
       textdomain "installation"
 
-      Yast::WFM.CallFunction("inst_download_release_notes") if selected_product
       Yast::Wizard.EnableAbortButton
 
       loop do
@@ -76,7 +74,7 @@ module Yast
 
     # Handle dialog's result
     #
-    # @param value [Symbol] Dialog's return value (:next or :abort)
+    # @param value [Symbol] Dialog's return value (:next, :language_changed, etc.)
     # @return [Symbol,nil] Client's return value. Nil if client should not
     #   finish yet.
     def handle_dialog_result(value)
