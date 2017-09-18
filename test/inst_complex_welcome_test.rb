@@ -97,6 +97,20 @@ describe Yast::InstComplexWelcomeClient do
       subject.main
     end
 
+    it "downloads release notes" do
+      expect(Yast::WFM).to receive(:CallFunction).with("inst_download_release_notes")
+      subject.main
+    end
+
+    context "when no base product is selected" do
+      let(:product) { nil }
+
+      it "does not download release notes" do
+        expect(Yast::WFM).to_not receive(:CallFunction).with("inst_download_release_notes")
+        subject.main
+      end
+    end
+
     context "when back is pressed" do
       let(:dialog_results) { [:back] }
 
