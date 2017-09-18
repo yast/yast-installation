@@ -73,7 +73,8 @@ module Yast
     end
 
     def main
-      textdomain "packager"
+      textdomain "installation"
+
       return :auto unless Packages.init_called
 
       return :back if GetInstArgs.going_back
