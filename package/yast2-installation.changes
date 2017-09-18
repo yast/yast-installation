@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Sep 18 10:36:38 UTC 2017 - igonzalezsosa@suse.com
+
+- Add support to read release notes from an RPM in the
+  repository (fate#323273)
+- 4.0.3
+
+-------------------------------------------------------------------
 Tue Sep 12 08:38:17 UTC 2017 - knut.anderssen@suse.com
 
 - Removed obsolete inst_info client which is not used anymore.
