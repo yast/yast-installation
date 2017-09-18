@@ -1,6 +1,6 @@
 # Installer Self-update
 
-Starting on version 3.1.175, yast2-install is able to update itself during
+Starting on version 3.1.175, yast2-installation is able to update itself during
 system installation. This feature will help to solve problems with the
 installation even after the media has been released. Check
 [FATE#319716](https://fate.suse.com/319716) for a more in-depth rationale.
