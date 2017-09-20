@@ -10,12 +10,12 @@ specification using the tag `release-notes()`:
 
     Provides: release-notes() = openSUSE
 
-The package should contain a set of failes with the following name:
+The package should contain a set of files with the following name:
 `RELEASE-NOTES.[lang].[format]`, where `lang` and `format` should be replaced by
 language code and format. For instance:
 
 * `RELEASE-NOTES.en_US.txt` English version of release notes for textmode interface.
-* `RELEASE-NOTES.de_DE.rtf` German version of release notes graphical interface.
+* `RELEASE-NOTES.de_DE.rtf` German version of release notes for graphical interface.
 * `RELEASE-NOTES.es.rtf` Spanish version of release notes for graphical
   interface. Note that it is possible to use a two characters language code
   which will be used as fallback for `es_ES`, `es_AR`, etc.
