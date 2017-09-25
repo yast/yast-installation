@@ -50,6 +50,10 @@ module Installation
     # @return [String, nil]
     attr_accessor :description
 
+    # Order of role.
+    # @return [Integer]
+    attr_reader :order
+
     # All the special attributes for a given role are delegated to @options
     def_delegators :@options, :[], :[]=
 
@@ -66,11 +70,13 @@ module Installation
     # @param id [String] role id or name
     # @param label [String] it uses the id as label if not given
     # @param description [String]
-    def initialize(id:, label: id, description: nil)
+    # @param order [String, nil] string representation of order or default if nil passed
+    def initialize(id:, order:, label: id, description: nil)
       @id          = id
       @label       = label
       @description = description
       @options     = {}
+      @order = order.to_i
     end
 
     class << self
@@ -92,11 +98,14 @@ module Installation
         !all.first["no_default"]
       end
 
-      # Returns an array with all the SystemRole objects
+      # Returns an array with all the SystemRole objects sorted according to order
       #
       # @return [Hash<String, SystemRole>]
       def all
-        @roles ||= raw_roles.map { |r| from_control(r) }
+        return @roles  if @roles
+
+        @roles = raw_roles.map { |r| from_control(r) }
+        @roles.sort_by!(&:order)
       end
 
       # Clears roles cache
@@ -148,6 +157,7 @@ module Installation
         role =
           new(
             id:          id,
+            order:       raw_role["order"],
             label:       Yast::ProductControl.GetTranslatedText(id),
             description: Yast::ProductControl.GetTranslatedText("#{id}_description")
           )
@@ -186,7 +196,8 @@ module Installation
       "additional_dialogs",
       "id",
       "no_default",
-      "services"
+      "services",
+      "order"
     ].freeze
 
     private_constant :NON_OVERLAY_ATTRIBUTES
