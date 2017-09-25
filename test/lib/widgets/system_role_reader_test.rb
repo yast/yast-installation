@@ -12,11 +12,11 @@ describe ::Installation::Widgets::SystemRoleReader do
   subject { DummySystemRoleReader.new }
 
   let(:default_role) do
-    ::Installation::SystemRole.new(id: "default", label: "Default Role", description: "Role description")
+    ::Installation::SystemRole.new(id: "default", order: "100", label: "Default Role", description: "Role description")
   end
 
   let(:alt_role) do
-    ::Installation::SystemRole.new(id: "alt", label: "Alternate Role", description: "Role description")
+    ::Installation::SystemRole.new(id: "alt", order: "200", label: "Alternate Role", description: "Role description")
   end
 
   before do
