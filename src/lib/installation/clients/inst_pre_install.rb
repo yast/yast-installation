@@ -228,8 +228,7 @@ module Yast
           count = 0
           disks = disks.select do |dist|
             next true unless dist.start_with?(s)
-            count += 1
-            count <= 8
+            (count += 1) <= 8
           end
 
           nil
@@ -249,7 +248,7 @@ module Yast
       device_names = restrict_disk_names.call(device_names)
       Builtins.foreach(device_names) do |device_name|
         device = Y2Storage::BlkDevice.find_by_name(probed, device_name)
-        filesystems = device.descendants.select {|i| i.is?(:blk_filesystem) }
+        filesystems = device.descendants.select { |i| i.is?(:blk_filesystem) }
         filesystems.each do |filesystem|
           device = filesystem.blk_devices.first
           if !filesystem.type.root_ok?
