@@ -102,7 +102,7 @@ module Installation
       #
       # @return [Hash<String, SystemRole>]
       def all
-        return @roles  if @roles
+        return @roles if @roles
 
         @roles = raw_roles.map { |r| from_control(r) }
         @roles.sort_by!(&:order)

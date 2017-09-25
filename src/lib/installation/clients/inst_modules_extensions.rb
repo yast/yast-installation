@@ -6,7 +6,7 @@ Yast.import "WorkflowManager"
 
 module Installation
   module Clients
-
+    # Client that add to installation workflow all extension from modules
     class InstModulesExtensions
       include Yast::Logger
 
