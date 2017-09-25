@@ -20,14 +20,13 @@
 # ------------------------------------------------------------------------------
 
 require "installation/ssh_importer"
+require "y2storage"
 
 module Yast
   class InstPreInstallClient < Client
     include Yast::Logger
 
     def main
-      Yast.import "Storage"
-      Yast.import "FileSystems"
       Yast.import "FileUtils"
       Yast.import "Directory"
       Yast.import "SystemFilesCopy"
@@ -40,8 +39,8 @@ module Yast
 
       # --> Variables
 
-      # all partitions that can be used as a source of data
-      @useful_partitions = []
+      # all devices that can be used as a source of data
+      @useful_devices = []
 
       # *******************************************************************************
       # --> main()
@@ -89,7 +88,7 @@ module Yast
         end
       end
 
-      each_mounted_partition do |device, mount_point|
+      each_mounted_device do |device, mount_point|
         read_users(device, mount_point) if can_read_users?
         read_ssh_info(device, mount_point)
       end
@@ -101,7 +100,7 @@ module Yast
       end
 
       # free the memory
-      @useful_partitions = nil
+      @useful_devices = nil
 
       # at least some return
       :auto
@@ -144,7 +143,7 @@ module Yast
 
       files_found_on_partitions = {}
 
-      each_mounted_partition do |device, mnt_tmpdir|
+      each_mounted_device do |device, mnt_tmpdir|
         files_found = true
         one_partition_files_found = {}
         Builtins.foreach(wanted_files) do |wanted_file|
@@ -225,13 +224,11 @@ module Yast
       # mounting of all partitions (fate#305873, bnc#468922)
       # FIXME: copy-pasted from partitioner, just different number of disks and added /dev/dasd
       restrict_disk_names = lambda do |disks|
-        disks = deep_copy(disks)
         helper = lambda do |s|
           count = 0
-          disks = Builtins.filter(disks) do |dist|
-            next true if Builtins.search(dist, s) != 0
-            count = Ops.add(count, 1)
-            Ops.less_or_equal(count, 8)
+          disks = disks.select do |dist|
+            next true unless dist.start_with?(s)
+            (count += 1) <= 8
           end
 
           nil
@@ -246,50 +243,29 @@ module Yast
         deep_copy(disks)
       end
 
-      target_map = Storage.GetTargetMap
-      counter = -1
-      device_names = Builtins.maplist(target_map) do |device_name, _device_descr|
-        device_name
-      end
+      probed = Y2Storage::StorageManager.instance.probed
+      device_names = probed.disk_devices.map(&:name)
       device_names = restrict_disk_names.call(device_names)
       Builtins.foreach(device_names) do |device_name|
-        device_descr = Ops.get(target_map, device_name, {})
-        partitions = Ops.get_list(device_descr, "partitions", [])
-        filesystem = nil
-        devicename = nil
-        Builtins.foreach(partitions) do |partition|
-          filesystem = Ops.get_symbol(
-            partition,
-            "used_fs",
-            Ops.get(partition, "detected_fs")
-          )
-          devicename = Ops.get_string(partition, "device")
-          if filesystem.nil?
-            Builtins.y2milestone(
-              "Skipping partition %1, no FS detected",
-              devicename
+        device = Y2Storage::BlkDevice.find_by_name(probed, device_name)
+        filesystems = device.descendants.select { |i| i.is?(:blk_filesystem) }
+        filesystems.each do |filesystem|
+          device = filesystem.blk_devices.first
+          if !filesystem.type.root_ok?
+            log.info(
+              "Skipping device #{device.name}, "\
+              "#{filesystem.type} is not a root filesystem"
             )
             next
           end
-          if !Builtins.contains(FileSystems.possible_root_fs, filesystem)
-            Builtins.y2milestone(
-              "Skipping partition %1, %2 is not a root filesystem",
-              devicename,
-              filesystem
-            )
-            next
-          end
-          # adding the partition into the list of possible ones
-          counter = Ops.add(counter, 1)
-          Ops.set(
-            @useful_partitions,
-            counter,
-            "device" => Ops.get(partition, "device"), "fs" => filesystem
-          )
+          @useful_devices << device.name
         end
       end
+      # Duplicates can happen, e.g. if there are PVs for the same LVM VG in
+      # several disks
+      @useful_devices.uniq!
 
-      Builtins.y2milestone("Possible partitions: %1", @useful_partitions)
+      Builtins.y2milestone("Possible devices: %1", @useful_devices)
 
       nil
     end
@@ -331,7 +307,7 @@ module Yast
       ::Installation::SshImporter.instance.add_config(mount_point, device)
     end
 
-    def each_mounted_partition(&block)
+    def each_mounted_device(&block)
       mnt_tmpdir = "#{Directory.tmpdir}/tmp_mnt_for_check"
       mnt_tmpdir = SystemFilesCopy.CreateDirectoryIfMissing(mnt_tmpdir)
 
@@ -341,9 +317,8 @@ module Yast
         return
       end
 
-      @useful_partitions.each do |partition|
-        partition_device = partition["device"] || ""
-        log.info "Mounting #{partition_device} to #{mnt_tmpdir}"
+      @useful_devices.each do |device|
+        log.info "Mounting #{device} to #{mnt_tmpdir}"
         already_mounted = Builtins.sformat(
           "grep '[\\t ]%1[\\t ]' /proc/mounts",
           mnt_tmpdir
@@ -354,12 +329,12 @@ module Yast
           log.error("Cannot umount #{mnt_tmpdir}") unless SCR.Execute(path(".target.umount"), mnt_tmpdir)
         end
         # mounting read-only
-        if !SCR.Execute(path(".target.mount"), [partition_device, mnt_tmpdir], "-o ro,noatime")
+        if !SCR.Execute(path(".target.mount"), [device, mnt_tmpdir], "-o ro,noatime")
           log.error "Mounting falied!"
           next
         end
 
-        block.call(partition_device, mnt_tmpdir)
+        block.call(device, mnt_tmpdir)
 
         # bnc #427879
         exec = SCR.Execute(
@@ -368,7 +343,7 @@ module Yast
         )
         log.error("Processes in #{mnt_tmpdir}: #{exec}") unless exec["stdout"].to_s.empty?
         # umounting
-        log.info "Umounting #{partition_device}"
+        log.info "Umounting #{device}"
         log.error("Umount failed!") unless SCR.Execute(path(".target.umount"), mnt_tmpdir)
       end
     end
