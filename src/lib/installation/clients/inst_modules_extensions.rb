@@ -20,7 +20,7 @@ module Installation
 
     private
 
-      PROVIDES_KEY = "installer_module_extension()"
+      PROVIDES_KEY = "installer_module_extension()".freeze
 
       def extension_packages
         extension_packages = Yast::Pkg.PkgQueryProvides(PROVIDES_KEY)

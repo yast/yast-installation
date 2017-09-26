@@ -9,10 +9,10 @@ describe ::Installation::Clients::InstModulesExtensions do
       allow(Yast::Pkg).to receive(:PkgQueryProvides).and_return([["package_a"], ["package_b"]])
 
       allow(Yast::Pkg).to receive(:ResolvableDependencies).with("package_a", :package, "")
-        .and_return([{"deps" => [{"provides" => "installer_module_extension() = module_a"}]}])
+        .and_return([{ "deps" => [{ "provides" => "installer_module_extension() = module_a" }] }])
 
       allow(Yast::Pkg).to receive(:ResolvableDependencies).with("package_b", :package, "")
-        .and_return([{"deps" => [{"provides" => "installer_module_extension() = module_b"}]}])
+        .and_return([{ "deps" => [{ "provides" => "installer_module_extension() = module_b" }] }])
 
       allow(Yast::WorkflowManager).to receive(:merge_modules_extensions)
     end
