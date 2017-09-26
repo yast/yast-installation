@@ -31,6 +31,7 @@ module Installation
 
       def init
         selected = products.find(&:selected?)
+        disable if registered?
         return unless selected
 
         self.value = selected.name
@@ -62,6 +63,14 @@ module Installation
       # @see #initialize
       def skip_validation?
         @skip_validation
+      end
+
+      # Determine whether the system is registered
+      def registered?
+        require "registration/registration"
+        Registration::Registration.is_registered?
+      rescue LoadError
+        false
       end
     end
   end

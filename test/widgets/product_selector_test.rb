@@ -12,6 +12,47 @@ describe ::Installation::Widgets::ProductSelector do
 
   include_examples "CWM::RadioButtons"
 
+  describe "#init" do
+    let(:registration) { double("Registration::Registration", is_registered?: registered?) }
+
+    before do
+      stub_const("Registration::Registration", registration)
+      allow(subject).to receive(:require).with("registration/registration")
+    end
+
+    context "when the system is registered" do
+      let(:registered?) { true }
+
+      it "disables the widget" do
+        expect(subject).to receive(:disable)
+        subject.init
+      end
+    end
+
+    context "when the system is not registered" do
+      let(:registered?) { false }
+
+      it "does not disable the widget" do
+        expect(subject).to_not receive(:disable)
+        subject.init
+      end
+    end
+
+    context "when registration is not available" do
+      let(:registered?) { false }
+
+      before do
+        allow(subject).to receive(:require).with("registration/registration")
+          .and_raise(LoadError)
+      end
+
+      it "does not disable the widget" do
+        expect(subject).to_not receive(:disable)
+        subject.init
+      end
+    end
+  end
+
   describe "#store" do
     before do
       allow(Yast::Pkg).to receive(:PkgApplReset)

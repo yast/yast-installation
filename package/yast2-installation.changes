@@ -1,8 +1,22 @@
 -------------------------------------------------------------------
-Mon Sep 18 10:36:38 UTC 2017 - igonzalezsosa@suse.com
+Tue Sep 26 10:44:57 UTC 2017 - igonzalezsosa@suse.com
 
 - Add support to read release notes from an RPM in the
   repository (fate#323273)
+- 4.0.4
+
+-------------------------------------------------------------------
+Tue Sep 26 08:50:31 UTC 2017 - igonzalezsosa@suse.com
+
+- Do not allow changing the selected base product on an already
+  registered system (bsc#1060252)
+
+-------------------------------------------------------------------
+Mon Sep 25 08:23:25 UTC 2017 - ancor@suse.com
+
+- Re-activated the step to search for system files (users and SSH
+  keys) in existing systems. It was temporarily disabled during the
+  migration to storage-ng (part of fate#323837).
 - 4.0.3
 
 -------------------------------------------------------------------
