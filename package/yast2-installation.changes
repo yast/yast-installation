@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Sep 26 08:50:31 UTC 2017 - igonzalezsosa@suse.com
+
+- Do not allow changing the selected base product on an already
+  registered system (bsc#1060252)
+
+-------------------------------------------------------------------
 Mon Sep 25 08:23:25 UTC 2017 - ancor@suse.com
 
 - Re-activated the step to search for system files (users and SSH
