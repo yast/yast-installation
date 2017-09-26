@@ -304,23 +304,6 @@ module Yast
       true
     end
 
-    def download_and_show_release_notes
-      # try on-line release notes first
-      WFM.CallFunction("inst_download_release_notes")
-
-      if !InstData.release_notes.empty? ||
-          !load_release_notes(Packages.GetBaseSourceID)
-        return
-      end
-
-      # push button
-      Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
-
-      product_name = Product.short_name || _("Unknown Product")
-      InstData.release_notes[product_name] = @media_text
-      UI::SetReleaseNotes(product_name => @media_text)
-    end
-
     def InitInstallationRepositories
       # disable callbacks
       PackageCallbacks.RegisterEmptyProgressCallbacks
@@ -342,8 +325,6 @@ module Yast
         # bnc#886608: Adjusting product name (for &product; macro) right after we
         # initialize libzypp and get the base product name (intentionally not translated)
         UI.SetProductName(Product.name || "SUSE Linux")
-
-        download_and_show_release_notes
       end
 
       # reregister callbacks
