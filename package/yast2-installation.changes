@@ -1,9 +1,14 @@
 -------------------------------------------------------------------
-Tue Sep 26 10:44:57 UTC 2017 - igonzalezsosa@suse.com
+Tue Sep 26 13:37:17 UTC 2017 - igonzalezsosa@suse.com
 
 - Add support to read release notes from an RPM in the
   repository (fate#323273)
 - 4.0.4
+
+-------------------------------------------------------------------
+Tue Sep 26 13:35:36 UTC 2017 - jreidinger@suse.com
+
+- Add support for system roles ordering (related to bsc#1049297)
 
 -------------------------------------------------------------------
 Tue Sep 26 08:50:31 UTC 2017 - igonzalezsosa@suse.com

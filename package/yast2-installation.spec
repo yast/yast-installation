@@ -41,9 +41,8 @@ BuildRequires:  yast2-xml
 BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
 
-# Yast::WorkflowManager#merge_product_workflow
-# CWM.show support to disable buttons
-BuildRequires: yast2 >= 4.0.2
+# Yast::WorkflowManager.merge_modules_extensions
+BuildRequires: yast2 >= 4.0.8
 # Y2Packager::Product#release_notes Y2Packager::ReleaseNotes
 BuildRequires:	yast2-packager >= 4.0.5
 
@@ -54,8 +53,8 @@ Requires:      yast2-storage-ng >= 0.1.32
 # AutoinstSoftware.SavePackageSelection()
 Requires:       autoyast2-installation >= 3.1.105
 
-# Yast2::FsSnapshots.configure_snapper (& friends)
-Requires:       yast2 >= 4.0.3
+# Yast::WorkflowManager.merge_modules_extensions
+Requires:       yast2 >= 4.0.8
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
