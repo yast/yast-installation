@@ -20,18 +20,20 @@ module Installation
 
     private
 
+      PROVIDES_KEY = "installer_module_extension()"
+
       def extension_packages
-        extension_packages = Yast::Pkg.PkgQueryProvides("installer_module_extension()")
+        extension_packages = Yast::Pkg.PkgQueryProvides(PROVIDES_KEY)
         log.info "module extension packages #{extension_packages.inspect}"
 
         extension_packages.map do |list|
           pkg_name = list.first
           dependencies = Yast::Pkg.ResolvableDependencies(pkg_name, :package, "").first["deps"]
           extension_provide = dependencies.find do |d|
-            d["provides"] && d["provides"].match(/installer_module_extension\(\)/)
+            d["provides"] && d["provides"].match(/#{Regexp.escape(PROVIDES_KEY)}/)
           end
 
-          module_name = extension_provide["provides"][/installer_module_extension\(\)\s*=\s*(\S+)/, 1]
+          module_name = extension_provide["provides"][/#{Regexp.escape(PROVIDES_KEY)}\s*=\s*(\S+)/, 1]
           log.info "extension for module #{module_name} in package #{pkg_name}"
 
           pkg_name

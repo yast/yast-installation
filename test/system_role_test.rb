@@ -49,6 +49,7 @@ describe Installation::SystemRole do
 
     it "returns array sorted by order" do
       expect(described_class.all.first.id).to eql("role_two")
+      expect(described_class.all[1].id).to eql("role_one")
     end
   end
 
