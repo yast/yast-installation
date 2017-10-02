@@ -413,6 +413,11 @@ These options usually enable or disable some installation feature.
     currently assigned hostname is written to /etc/hosts with IPv4
     address 127.0.0.2. Defaul value is *false* if not set.
 
+-   (boolean) *dhclient\_set\_hostname* - defines the default of
+    DHCLIENT_SET_HOSTNAME in /etc/sysconfing/network/dhcp which is
+    preloading at the beginning of the installation. It can be disabled
+    by [linuxrc](https://github.com/openSUSE/linuxrc/blob/master/linuxrc_yast_interface.txt#L144) cmdline with sethostname=0.
+
 -   (boolean) *default\_ntp\_setup* - NTP configuration proposes a
     default ntp server if set to *true*. Default value is *false*.
 
