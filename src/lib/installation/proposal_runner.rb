@@ -75,7 +75,7 @@ module Installation
     def run
       if !Yast::AutoinstConfig.Confirm && (Yast::Mode.autoinst || Yast::Mode.autoupgrade)
         # Checking if vnc, ssh,... is available
-        error_message = Yast::Packages.check_remote_installation_packages()
+        error_message = Yast::Packages.check_remote_installation_packages
         Yast::Report.Warning(error_message) unless error_message.empty?
         # skip if not interactive mode.
         return :auto
