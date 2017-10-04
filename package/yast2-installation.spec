@@ -43,8 +43,8 @@ BuildRequires:  rubygem(yast-rake)
 
 # Yast::WorkflowManager.merge_modules_extensions
 BuildRequires: yast2 >= 4.0.8
-# Y2Packager::Product#release_notes Y2Packager::ReleaseNotes
-BuildRequires:	yast2-packager >= 4.0.5
+# Yast::Packages.check_remote_installation_packages
+BuildRequires:	yast2-packager >= 4.0.9
 
 # New Y2Storage::StorageManager API
 BuildRequires: yast2-storage-ng >= 0.1.32
@@ -66,8 +66,8 @@ Requires:	yast2-pkg-bindings >= 3.1.33
 # Mouse-related scripts moved to yast2-mouse
 Conflicts:	yast2-mouse < 2.18.0
 
-# Y2Packager::Product#release_notes Y2Packager::ReleaseNotes
-Requires:	yast2-packager >= 4.0.5
+# Yast::Packages.check_remote_installation_packages
+Requires:	yast2-packager >= 4.0.9
 
 # FIXME: some code present in this package still depends on the old yast2-storage
 # and will break without this dependency. That's acceptable at this point of the
