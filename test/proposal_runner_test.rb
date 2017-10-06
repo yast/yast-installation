@@ -7,6 +7,7 @@ require "installation/proposal_runner"
 Yast.import "ProductControl"
 Yast.import "GetInstArgs"
 Yast.import "Mode"
+Yast.import "Packages"
 
 describe ::Installation::ProposalRunner do
   let(:autoyast_proposals) { [] }
@@ -64,8 +65,9 @@ describe ::Installation::ProposalRunner do
       allow(Yast::Language).to receive(:language).and_return("en_US")
     end
 
-    it "do nothing if run non-interactive" do
+    it "checks remote environment and returns -auto- in autoyast mode" do
       allow(Yast::Mode).to receive(:autoinst).and_return(true)
+      expect(Yast::Packages).to receive(:check_remote_installation_packages).and_return("")
 
       expect(subject.run).to eq :auto
     end
