@@ -55,6 +55,8 @@ module Installation
       Yast.import "GetInstArgs"
       Yast.import "ProductControl"
       Yast.import "HTML"
+      Yast.import "Packages"
+      Yast.import "Report"
 
       # values used in defined functions
 
@@ -71,8 +73,11 @@ module Installation
     end
 
     def run
-      # skip if not interactive mode.
       if !Yast::AutoinstConfig.Confirm && (Yast::Mode.autoinst || Yast::Mode.autoupgrade)
+        # Checking if vnc, ssh,... is available
+        error_message = Yast::Packages.check_remote_installation_packages
+        Yast::Report.Warning(error_message) unless error_message.empty?
+        # skip if not interactive mode.
         return :auto
       end
 

@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Oct  4 10:32:55 CEST 2017 - schubi@suse.de
+
+- AY: Warn the user if an remote installation is not completely
+  possible because there are not all needed packages availble in
+  the installed system. (bnc#1055279, bnc#1058071)
+- 4.0.5
+
+-------------------------------------------------------------------
 Tue Sep 26 13:37:17 UTC 2017 - igonzalezsosa@suse.com
 
 - Add support to read release notes from an RPM in the
