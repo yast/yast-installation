@@ -150,15 +150,6 @@ module Yast
         end
       end
 
-      if @have_dasd && @ret == :next
-        @cmd = "/sbin/dasd_reload"
-        Builtins.y2milestone(
-          "Initialize cmd %1 ret %2",
-          @cmd,
-          SCR.Execute(path(".target.bash_output"), @cmd)
-        )
-      end
-
       Y2Storage::StorageManager.instance.probe if @disks_changed
 
       Builtins.y2debug("ret=%1", @ret)
