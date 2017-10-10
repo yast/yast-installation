@@ -62,14 +62,7 @@ module Yast
 
       Yast::Wizard.EnableAbortButton
 
-      loop do
-        dialog_result = ::Installation::Dialogs::ComplexWelcome.run(
-          products, disable_buttons: disable_buttons
-        )
-        result = handle_dialog_result(dialog_result)
-        next unless result
-        return result == :next ? merge_and_run_workflow : result
-      end
+      Mode.update ? handle_update : handle_installation
     end
 
     # Handle dialog's result
@@ -87,19 +80,34 @@ module Yast
         return if Mode.config
         return unless Language.CheckIncompleteTranslation(Language.language)
 
-        if selected_product.nil?
-          Yast::Popup.Error(_("Please select a product to install."))
-          return nil
-        elsif license_confirmation_required? && !selected_product.license_confirmed?
-          Yast::Popup.Error(_("You must accept the license to install this product"))
-          return nil
-        end
+        check_product_selection if !Mode.update
 
         setup_final_choice
         :next
 
       else
         value
+      end
+    end
+
+    def handle_update
+      loop do
+        dialog_result = ::Installation::Dialogs::ComplexWelcome.run(
+          [], disable_buttons: disable_buttons
+        )
+        result = handle_dialog_result(dialog_result)
+        return result if result
+      end
+    end
+
+    def handle_installation
+      loop do
+        dialog_result = ::Installation::Dialogs::ComplexWelcome.run(
+          products, disable_buttons: disable_buttons
+        )
+        result = handle_dialog_result(dialog_result)
+        next unless result
+        return result == :next ? merge_and_run_workflow : result
       end
     end
 
@@ -174,5 +182,17 @@ module Yast
       return false if products.size > 1
       selected_product.license_confirmation_required?
     end
+
+    def check_product_selection
+      if selected_product.nil?
+        Yast::Popup.Error(_("Please select a product to install."))
+        return nil
+      elsif license_confirmation_required? && !selected_product.license_confirmed?
+        Yast::Popup.Error(_("You must accept the license to install this product"))
+        return nil
+      end
+    end
+
+
   end unless defined? Yast::InstComplexWelcomeClient
 end

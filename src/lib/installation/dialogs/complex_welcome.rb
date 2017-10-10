@@ -53,10 +53,14 @@ module Installation
       #
       # @return [String] Dialog's title
       def title
-        if show_license?
-          _("Language, Keyboard and License Agreement")
+        if show_product_selection?
+          if show_license?
+            _("Language, Keyboard and License Agreement")
+          else
+            _("Language, Keyboard and Product Selection")
+          end
         else
-          _("Language, Keyboard and Product Selection")
+          _("Language and Keyboard Selection")
         end
       end
 
@@ -67,7 +71,7 @@ module Installation
         @contents ||= VBox(
           filling,
           locale_settings,
-          show_license? ? product_license : product_selector,
+          product_selection,
           filling
         )
       end
@@ -134,6 +138,16 @@ module Installation
       # @return [Boolean] true if the license must be shown; false otherwise
       def show_license?
         products.size == 1
+      end
+
+      def show_product_selection?
+        !products.empty?
+      end
+
+      def product_selection
+        return Empty() unless show_product_selection?
+
+        show_license? ? product_license : product_selector
       end
 
       # UI to fill space if needed
