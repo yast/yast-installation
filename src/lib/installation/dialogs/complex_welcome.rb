@@ -53,15 +53,9 @@ module Installation
       #
       # @return [String] Dialog's title
       def title
-        if show_product_selection?
-          if show_license?
-            _("Language, Keyboard and License Agreement")
-          else
-            _("Language, Keyboard and Product Selection")
-          end
-        else
-          _("Language and Keyboard Selection")
-        end
+        return product_title if show_product_selection?
+
+        _("Language and Keyboard Selection")
       end
 
       # Dialog content
@@ -140,10 +134,22 @@ module Installation
         products.size == 1
       end
 
+      # Determine whether the product selection must be shown
+      #
+      # The product selection will be shown only if there are at least some
+      # product available.
+      #
+      # @return [Boolean] true if the products list is not empty
       def show_product_selection?
         !products.empty?
       end
 
+      # Product content
+      #
+      # Shows the product selection if there is more than one product or the
+      # license agreement if there is only one.
+      #
+      # @return [Yast::Term] Product selection content; Empty() if no products
       def product_selection
         return Empty() unless show_product_selection?
 
@@ -156,6 +162,20 @@ module Installation
           Empty()
         else
           VWeight(1, VStretch())
+        end
+      end
+
+      # Title of the dialog in case there are some product available.
+      #
+      # The title can vary depending if the license agreement or the product
+      # selection is shown.
+      #
+      # @return [String] Dialog's title
+      def product_title
+        if show_license?
+          _("Language, Keyboard and License Agreement")
+        else
+          _("Language, Keyboard and Product Selection")
         end
       end
     end
