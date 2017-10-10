@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Oct 10 08:34:44 UTC 2017 - jreidinger@suse.com
+
+- Dropped call of dasd_reload which caused renumbering of disks and
+  user got confused.(FATE#318138)
+- 4.0.6
+
+-------------------------------------------------------------------
 Wed Oct  4 10:32:55 CEST 2017 - schubi@suse.de
 
 - AY: Warn the user if an remote installation is not completely
