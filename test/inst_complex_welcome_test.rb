@@ -97,160 +97,181 @@ describe Yast::InstComplexWelcomeClient do
       subject.main
     end
 
-    context "when back is pressed" do
-      let(:dialog_results) { [:back] }
+    it "handles the dialog result" do
+      expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
+        .and_return(:back)
+      expect(subject).to receive(:handle_dialog_result).with(:back)
+        .and_return(:back)
 
+      subject.main
+    end
+
+    context "depending on the result of the handling" do
+      it "returns to the dialog if no result" do
+        expect(::Installation::Dialogs::ComplexWelcome).to receive(:run).twice
+          .and_return(:next, :abort)
+        expect(subject).to receive(:handle_dialog_result).with(:next)
+          .and_return(nil)
+        expect(subject).to receive(:handle_dialog_result).with(:abort)
+          .and_return(:abort)
+
+        subject.main
+      end
+
+      context "when no product is available for select" do
+        let(:dialog_results) { [:next] }
+        let(:productse) { [] }
+
+        it "returns the result" do
+          expect(subject).to receive(:handle_dialog_result)
+            .with(:next).and_return(:handling_result)
+
+          expect(subject.main).to eql(:handling_result)
+        end
+      end
+
+      context "there is some product to select" do
+        let(:dialog_results) { [:next] }
+
+        it "returns the result if different than :next" do
+          expect(subject).to receive(:handle_dialog_result)
+            .with(:next).and_return(:handling_result)
+
+          expect(subject.main).to eql(:handling_result)
+        end
+
+        it "executes from next step" do
+          expect(subject).to receive(:handle_dialog_result)
+            .with(:next).and_return(:next)
+          expect(subject).to receive(:merge_and_run_workflow)
+
+          subject.main
+        end
+      end
+    end
+  end
+
+  describe "#handling_dialog_result" do
+    context "when :back is given" do
       it "returns :back" do
-        expect(subject.main).to eq(:back)
+        expect(subject.handle_dialog_result(:back)).to eq(:back)
       end
     end
 
-    context "when :next is pressed" do
-      let(:dialog_results) { [:next] }
-      let(:selected_product) { product }
-      let(:license_needed?) { true }
-      let(:license_confirmed?) { true }
-
-      before do
-        allow(subject).to receive(:setup_final_choice)
-        allow(subject).to receive(:selected_product).and_return(selected_product)
-        allow(Yast::WorkflowManager).to receive(:merge_product_workflow)
-        allow(Yast::ProductControl).to receive(:RunFrom)
-      end
-
-      it "sets up according to chosen values" do
-        expect(subject).to receive(:setup_final_choice)
-        subject.main
-      end
-
-      it "returns nil" do
-        expect(subject.main).to be_nil
-      end
-
-      it "executes from next step" do
-        expect(Yast::ProductControl).to receive(:RunFrom)
-          .with(Yast::ProductControl.CurrentStep + 1, true)
-        subject.main
-      end
-
-      context "when license was not confirmed" do
-        let(:products) { [product] }
-        let(:license_confirmed?) { false }
-
-        context "and confirmation is needed" do
-          let(:dialog_results) { [:next, :back] }
-          let(:license_needed?) { true }
-
-          it "reports an error" do
-            expect(Yast::Popup).to receive(:Error)
-            subject.main
-          end
-        end
-
-        context "and confirmation was not needed" do
-          let(:license_needed?) { false }
-
-          it "does not report an error" do
-            expect(Yast::Popup).to_not receive(:Error)
-            subject.main
-          end
-        end
-
-        context "when more than 1 product exists (it should be accepted later)" do
-          let(:dialog_results) { [:next, :back] }
-          let(:license_needed?) { true }
-          let(:products) { [product, other_product] }
-
-          it "does not report an error" do
-            expect(Yast::Popup).to_not receive(:Error)
-            subject.main
-          end
-        end
-      end
-
-      context "when no product was selected" do
-        let(:dialog_results) { [:next, :back] }
-        let(:selected_product) { nil }
-
-        it "reports an error" do
-          expect(Yast::Popup).to receive(:Error)
-          subject.main
-        end
-      end
-
-      context "when language support is incomplete" do
-        let(:dialog_results) { [:next, :back] }
-
-        it "warns the user" do
-          expect(Yast::Language).to receive(:CheckIncompleteTranslation).and_return(true)
-          subject.main
-        end
-
-        context "and user accepts" do
-          before do
-            allow(Yast::Language).to receive(:CheckIncompleteTranslation).and_return(true)
-          end
-
-          it "returns nil" do
-            expect(subject.main).to be_nil
-          end
-
-          it "executes from next step" do
-            expect(Yast::ProductControl).to receive(:RunFrom)
-              .with(Yast::ProductControl.CurrentStep + 1, true)
-            subject.main
-          end
-        end
-
-        context "and user does not accept" do
-          before do
-            allow(Yast::Language).to receive(:CheckIncompleteTranslation).and_return(false)
-          end
-
-          it "returns to the dialog" do
-            expect(::Installation::Dialogs::ComplexWelcome).to receive(:run).twice
-            expect(subject.main).to eq(:back)
-          end
-
-          it "does not execute from next step" do
-            expect(Yast::ProductControl).to_not receive(:RunFrom)
-            subject.main
-          end
-        end
-      end
-
-      context "when running in config mode" do
-        let(:dialog_results) { [:next, :back] }
-        let(:config_mode) { true }
-
-        it "returns nil" do
-          expect(::Installation::Dialogs::ComplexWelcome).to receive(:run).twice
-          subject.main
-        end
-      end
-    end
-
-    context "when :abort is pressed" do
-      let(:dialog_results) { [:abort] }
-
+    context "when :abort is given" do
       it "asks for confirmation" do
-        expect(Yast::Popup).to receive(:ConfirmAbort).with(:painless).and_return(true)
-        subject.main
+        expect(Yast::Popup).to receive(:ConfirmAbort).with(:painless)
+        subject.handle_dialog_result(:abort)
       end
 
       context "and user confirms" do
         it "returns :abort" do
           allow(Yast::Popup).to receive(:ConfirmAbort).with(:painless).and_return(true)
-          expect(Installation::Dialogs::ComplexWelcome).to receive(:run).and_return(:abort)
-          expect(subject.main).to eq(:abort)
+          expect(subject.handle_dialog_result(:abort)).to eq(:abort)
         end
       end
 
       context "and user does not confirm" do
-        it "reruns the dialog" do
-          allow(Yast::Popup).to receive(:ConfirmAbort).with(:painless).and_return(false, true)
-          expect(Installation::Dialogs::ComplexWelcome).to receive(:run).twice.and_return(:abort, :abort)
-          subject.main
+        it "returns nil" do
+          allow(Yast::Popup).to receive(:ConfirmAbort).with(:painless).and_return(false)
+          expect(subject.handle_dialog_result(:abort)).to eq(nil)
+        end
+      end
+    end
+
+    context "when :next is given" do
+      before do
+        allow(Yast::Language).to receive(:CheckIncompleteTranslation).and_return(true)
+        allow(subject).to receive(:product_selection_finished?).and_return(true)
+      end
+
+      context "and running in config mode" do
+        let(:config_mode) { true }
+        it "returns nil" do
+          expect(subject.handle_dialog_result(:next)).to eq(nil)
+        end
+      end
+
+      context "when language support is incomplete" do
+        it "warns the user" do
+          expect(Yast::Language).to receive(:CheckIncompleteTranslation).and_return(true)
+
+          subject.handle_dialog_result(:next)
+        end
+
+        it "returns nil if the user does not accept" do
+          expect(Yast::Language).to receive(:CheckIncompleteTranslation).and_return(false)
+
+          expect(subject.handle_dialog_result(:next)).to eq(nil)
+        end
+      end
+
+      it "sets up according to chosen values" do
+        expect(subject).to receive(:setup_final_choice)
+        subject.handle_dialog_result(:next)
+      end
+
+      it "returns :next" do
+        expect(subject.handle_dialog_result(:next)).to eq(:next)
+      end
+
+      context "when no products are available" do
+        it "returns nil if product selection has not been completed" do
+          expect(subject).to receive(:product_selection_finished?).and_return(false)
+          expect(subject.handle_dialog_result(:next)).to eq(nil)
+        end
+      end
+    end
+  end
+
+  describe "#product_selection_finished?" do
+    let(:selected_product) { product }
+
+    before do
+      allow(subject).to receive(:selected_product).and_return(selected_product)
+    end
+
+    context "when no product was selected" do
+      let(:dialog_results) { [:next, :back] }
+      let(:selected_product) { nil }
+
+      it "reports an error" do
+        expect(Yast::Popup).to receive(:Error)
+        subject.send(:product_selection_finished?)
+      end
+    end
+
+    context "when license was not confirmed" do
+      let(:products) { [product] }
+      let(:license_confirmed?) { false }
+
+      context "and confirmation is needed" do
+        let(:dialog_results) { [:next, :back] }
+        let(:license_needed?) { true }
+
+        it "reports an error" do
+          expect(Yast::Popup).to receive(:Error)
+          subject.send(:product_selection_finished?)
+        end
+      end
+
+      context "and confirmation was not needed" do
+        let(:license_needed?) { false }
+
+        it "does not report an error" do
+          expect(Yast::Popup).to_not receive(:Error)
+          subject.send(:product_selection_finished?)
+        end
+      end
+
+      context "when more than 1 product exists (it should be accepted later)" do
+        let(:dialog_results) { [:next, :back] }
+        let(:license_needed?) { true }
+        let(:products) { [product, other_product] }
+
+        it "does not report an error" do
+          expect(Yast::Popup).to_not receive(:Error)
+          subject.send(:product_selection_finished?)
         end
       end
     end
