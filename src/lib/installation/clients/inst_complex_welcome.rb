@@ -62,7 +62,16 @@ module Yast
 
       Yast::Wizard.EnableAbortButton
 
-      Mode.update ? handle_update : handle_installation
+      loop do
+        dialog_result = ::Installation::Dialogs::ComplexWelcome.run(
+          products, disable_buttons: disable_buttons
+        )
+        result = handle_dialog_result(dialog_result)
+        next unless result
+
+        return result if products.empty? || result != :next
+        return merge_and_run_workflow
+      end
     end
 
     # Handle dialog's result
@@ -80,34 +89,13 @@ module Yast
         return if Mode.config
         return unless Language.CheckIncompleteTranslation(Language.language)
 
-        check_product_selection if !Mode.update
+        return if !products.empty? && !product_selection_finished?
 
         setup_final_choice
         :next
 
       else
         value
-      end
-    end
-
-    def handle_update
-      loop do
-        dialog_result = ::Installation::Dialogs::ComplexWelcome.run(
-          [], disable_buttons: disable_buttons
-        )
-        result = handle_dialog_result(dialog_result)
-        return result if result
-      end
-    end
-
-    def handle_installation
-      loop do
-        dialog_result = ::Installation::Dialogs::ComplexWelcome.run(
-          products, disable_buttons: disable_buttons
-        )
-        result = handle_dialog_result(dialog_result)
-        next unless result
-        return result == :next ? merge_and_run_workflow : result
       end
     end
 
@@ -150,11 +138,15 @@ module Yast
       log.info "Language: '#{Language.language}', system encoding '#{WFM.GetEncoding}'"
     end
 
-    # Return the list of base products
+    # Return the list of base products when available or an empty list of
+    # products in update mode.
     #
-    # @return [Array<Y2Packager::Product>] List of available base products
+    # @return [Array<Y2Packager::Product>] List of available base products;
+    # empty list in update mode.
     def products
-      @products ||= Y2Packager::Product.available_base_products
+      return @products if @products
+
+      @products = Mode.update ? [] : Y2Packager::Product.available_base_products
     end
 
     # Convenience method to find out the selected base product
@@ -183,16 +175,21 @@ module Yast
       selected_product.license_confirmation_required?
     end
 
-    def check_product_selection
+    # Reports an error if no product is selected or if the selected product
+    # requires a license agreement and it has not been confirmed.
+    #
+    # @return [Boolean] true if a product has been selected and license
+    # agreement confirmed when required; false otherwise
+    def product_selection_finished?
       if selected_product.nil?
         Yast::Popup.Error(_("Please select a product to install."))
-        return nil
+        return false
       elsif license_confirmation_required? && !selected_product.license_confirmed?
         Yast::Popup.Error(_("You must accept the license to install this product"))
-        return nil
+        return false
       end
+
+      true
     end
-
-
   end unless defined? Yast::InstComplexWelcomeClient
 end
