@@ -69,10 +69,12 @@ module Yast
         result = handle_dialog_result(dialog_result)
         next unless result
 
-        return result if products.empty? || result != :next
+        return result if !available_products? || result != :next
         return merge_and_run_workflow
       end
     end
+
+  private
 
     # Handle dialog's result
     #
@@ -89,7 +91,7 @@ module Yast
         return if Mode.config
         return unless Language.CheckIncompleteTranslation(Language.language)
 
-        return if !products.empty? && !product_selection_finished?
+        return if available_products? && !product_selection_finished?
 
         setup_final_choice
         :next
@@ -98,8 +100,6 @@ module Yast
         value
       end
     end
-
-  private
 
     # Merge selected product's workflow and go to next step
     #
@@ -147,6 +147,13 @@ module Yast
       return @products if @products
 
       @products = Mode.update ? [] : Y2Packager::Product.available_base_products
+    end
+
+    # Determine whether some product is available or not
+    #
+    # @return [Boolean] false if no product available; true otherwise
+    def available_products?
+      !products.empty?
     end
 
     # Convenience method to find out the selected base product

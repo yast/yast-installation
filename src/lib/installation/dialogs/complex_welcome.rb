@@ -53,7 +53,7 @@ module Installation
       #
       # @return [String] Dialog's title
       def title
-        return product_title if show_product_selection?
+        return license_or_product_title if available_products?
 
         _("Language and Keyboard Selection")
       end
@@ -65,7 +65,7 @@ module Installation
         @contents ||= VBox(
           filling,
           locale_settings,
-          product_selection,
+          license_or_product_content,
           filling
         )
       end
@@ -134,24 +134,21 @@ module Installation
         products.size == 1
       end
 
-      # Determine whether the product selection must be shown
+      # Determine whether some product is available or not
       #
-      # The product selection will be shown only if there are at least some
-      # product available.
-      #
-      # @return [Boolean] true if the products list is not empty
-      def show_product_selection?
+      # @return [Boolean] false if no product available; true otherwise
+      def available_products?
         !products.empty?
       end
 
-      # Product content
+      # License or Product content
       #
       # Shows the product selection if there is more than one product or the
       # license agreement if there is only one.
       #
       # @return [Yast::Term] Product selection content; Empty() if no products
-      def product_selection
-        return Empty() unless show_product_selection?
+      def license_or_product_content
+        return Empty() unless available_products?
 
         show_license? ? product_license : product_selector
       end
@@ -165,13 +162,13 @@ module Installation
         end
       end
 
-      # Title of the dialog in case there are some product available.
+      # Title of the dialog in case there is some product available.
       #
       # The title can vary depending if the license agreement or the product
       # selection is shown.
       #
       # @return [String] Dialog's title
-      def product_title
+      def license_or_product_title
         if show_license?
           _("Language, Keyboard and License Agreement")
         else
