@@ -68,9 +68,13 @@ module Yast
         )
         result = handle_dialog_result(dialog_result)
         next unless result
-        return result == :next ? merge_and_run_workflow : result
+
+        return result if !available_products? || result != :next
+        return merge_and_run_workflow
       end
     end
+
+  private
 
     # Handle dialog's result
     #
@@ -87,13 +91,7 @@ module Yast
         return if Mode.config
         return unless Language.CheckIncompleteTranslation(Language.language)
 
-        if selected_product.nil?
-          Yast::Popup.Error(_("Please select a product to install."))
-          return nil
-        elsif license_confirmation_required? && !selected_product.license_confirmed?
-          Yast::Popup.Error(_("You must accept the license to install this product"))
-          return nil
-        end
+        return if available_products? && !product_selection_finished?
 
         setup_final_choice
         :next
@@ -102,8 +100,6 @@ module Yast
         value
       end
     end
-
-  private
 
     # Merge selected product's workflow and go to next step
     #
@@ -142,11 +138,22 @@ module Yast
       log.info "Language: '#{Language.language}', system encoding '#{WFM.GetEncoding}'"
     end
 
-    # Return the list of base products
+    # Return the list of base products when available or an empty list of
+    # products in update mode.
     #
-    # @return [Array<Y2Packager::Product>] List of available base products
+    # @return [Array<Y2Packager::Product>] List of available base products;
+    # empty list in update mode.
     def products
-      @products ||= Y2Packager::Product.available_base_products
+      return @products if @products
+
+      @products = Mode.update ? [] : Y2Packager::Product.available_base_products
+    end
+
+    # Determine whether some product is available or not
+    #
+    # @return [Boolean] false if no product available; true otherwise
+    def available_products?
+      !products.empty?
     end
 
     # Convenience method to find out the selected base product
@@ -173,6 +180,23 @@ module Yast
     def license_confirmation_required?
       return false if products.size > 1
       selected_product.license_confirmation_required?
+    end
+
+    # Reports an error if no product is selected or if the selected product
+    # requires a license agreement and it has not been confirmed.
+    #
+    # @return [Boolean] true if a product has been selected and license
+    # agreement confirmed when required; false otherwise
+    def product_selection_finished?
+      if selected_product.nil?
+        Yast::Popup.Error(_("Please select a product to install."))
+        return false
+      elsif license_confirmation_required? && !selected_product.license_confirmed?
+        Yast::Popup.Error(_("You must accept the license to install this product"))
+        return false
+      end
+
+      true
     end
   end unless defined? Yast::InstComplexWelcomeClient
 end

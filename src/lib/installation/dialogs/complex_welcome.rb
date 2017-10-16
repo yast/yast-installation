@@ -53,11 +53,9 @@ module Installation
       #
       # @return [String] Dialog's title
       def title
-        if show_license?
-          _("Language, Keyboard and License Agreement")
-        else
-          _("Language, Keyboard and Product Selection")
-        end
+        return license_or_product_title if available_products?
+
+        _("Language and Keyboard Selection")
       end
 
       # Dialog content
@@ -67,7 +65,7 @@ module Installation
         @contents ||= VBox(
           filling,
           locale_settings,
-          show_license? ? product_license : product_selector,
+          license_or_product_content,
           filling
         )
       end
@@ -136,12 +134,45 @@ module Installation
         products.size == 1
       end
 
+      # Determine whether some product is available or not
+      #
+      # @return [Boolean] false if no product available; true otherwise
+      def available_products?
+        !products.empty?
+      end
+
+      # License or Product content
+      #
+      # Shows the product selection if there is more than one product or the
+      # license agreement if there is only one.
+      #
+      # @return [Yast::Term] Product selection content; Empty() if no products
+      def license_or_product_content
+        return Empty() unless available_products?
+
+        show_license? ? product_license : product_selector
+      end
+
       # UI to fill space if needed
       def filling
         if show_license? || Yast::UI.TextMode
           Empty()
         else
           VWeight(1, VStretch())
+        end
+      end
+
+      # Title of the dialog in case there is some product available.
+      #
+      # The title can vary depending if the license agreement or the product
+      # selection is shown.
+      #
+      # @return [String] Dialog's title
+      def license_or_product_title
+        if show_license?
+          _("Language, Keyboard and License Agreement")
+        else
+          _("Language, Keyboard and Product Selection")
         end
       end
     end

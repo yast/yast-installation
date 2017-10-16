@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Sun Oct 15 22:00:11 UTC 2017 - knut.anderssen@suse.com
+
+- Adapted complex welcome client allowing to continue with the
+  installation when there are no products available. (bsc#1059070)
+- 4.0.7
+
+-------------------------------------------------------------------
 Tue Oct 10 08:34:44 UTC 2017 - jreidinger@suse.com
 
 - Dropped call of dasd_reload which caused renumbering of disks and
