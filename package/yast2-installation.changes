@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Oct 16 15:29:07 UTC 2017 - jreidinger@suse.com
+
+- Write polkit settings even if no desktop is selected
+  (bsc#1062788)
+- 4.0.8
+
+-------------------------------------------------------------------
 Sun Oct 15 22:00:11 UTC 2017 - knut.anderssen@suse.com
 
 - Adapted complex welcome client allowing to continue with the
