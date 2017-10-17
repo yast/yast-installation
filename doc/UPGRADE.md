@@ -15,7 +15,7 @@ At the online upgrade the system is running and the packages are upgraded while
 the system is in use. At the offline upgrade the system is rebooted into
 installation medium and the system cannot be used during the upgrade.
 
-The online upgrade can used for a service pack level upgrade, for upgrading to
+The online upgrade can be used for a service pack level upgrade, for upgrading to
 a new product version the offline upgrade should be used.
 
 ### Recommendations
