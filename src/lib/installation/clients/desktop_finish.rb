@@ -91,37 +91,6 @@ module Yast
       )
       SCR.Write(path(".sysconfig.displaymanager"), nil)
 
-      # bnc #431158, patch done by lnussel
-      polkit_default_privs = ProductFeatures.GetStringFeature(
-        "globals",
-        "polkit_default_privs"
-      )
-      if !polkit_default_privs.nil? && polkit_default_privs != ""
-        Builtins.y2milestone(
-          "Writing %1 to POLKIT_DEFAULT_PRIVS",
-          polkit_default_privs
-        )
-        SCR.Write(
-          path(".sysconfig.security.POLKIT_DEFAULT_PRIVS"),
-          polkit_default_privs
-        )
-        # BNC #440182
-        # Flush the SCR cache before calling the script
-        SCR.Write(path(".sysconfig.security"), nil)
-
-        ret2 = SCR.Execute(
-          path(".target.bash_output"),
-          # check whether it exists
-          # give some feedback
-          # It's dozens of lines...
-          "test -x /sbin/set_polkit_default_privs && " \
-            "echo /sbin/set_polkit_default_privs && " \
-            "/sbin/set_polkit_default_privs | wc -l && " \
-            "echo 'Done'"
-        )
-        log.info "Command returned: #{ret2}"
-      end
-
       nil
     end
   end
