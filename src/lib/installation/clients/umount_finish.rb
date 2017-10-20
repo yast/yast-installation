@@ -122,13 +122,16 @@ module Yast
         # /proc/bus/usb
         # /proc
 
+        EFIVARS_PATH = "/sys/firmware/efi/efivars".freeze
+        USB_PATH = "/proc/bus/usb".freeze
+
         @umount_these = ["/proc", "/sys", "/dev", "/run"]
         if Hotplug.haveUSB
-          @umount_these = Convert.convert(
-            Builtins.union(["/proc/bus/usb"], @umount_these),
-            from: "list",
-            to:   "list <string>"
-          )
+          @umount_these.unshift(USB_PATH)
+        end
+
+        File.exist?(EFIVARS_PATH) #exists in both inst-sys and target or in neither
+          @umount_these.unshift(EFIVARS_PATH)
         end
 
         Builtins.foreach(@umount_these) do |umount_dir|
@@ -145,7 +148,7 @@ module Yast
             # bnc #395034
             # Don't remount them read-only!
             if Builtins.contains(
-              ["/proc", "/sys", "/dev", "/proc/bus/usb"],
+              ["/proc", "/sys", "/dev", USB_PATH, EFIVARS_PATH],
               umount_dir
             )
               Builtins.y2warning("Umount failed, trying lazy umount...")
