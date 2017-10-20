@@ -32,6 +32,9 @@ module Yast
   class UmountFinishClient < Client
     include Yast::Logger
 
+    EFIVARS_PATH = "/sys/firmware/efi/efivars".freeze
+    USB_PATH = "/proc/bus/usb".freeze
+
     def main
       Yast.import "Pkg"
 
@@ -122,15 +125,12 @@ module Yast
         # /proc/bus/usb
         # /proc
 
-        EFIVARS_PATH = "/sys/firmware/efi/efivars".freeze
-        USB_PATH = "/proc/bus/usb".freeze
-
         @umount_these = ["/proc", "/sys", "/dev", "/run"]
         if Hotplug.haveUSB
           @umount_these.unshift(USB_PATH)
         end
 
-        File.exist?(EFIVARS_PATH) #exists in both inst-sys and target or in neither
+        if File.exist?(EFIVARS_PATH) #exists in both inst-sys and target or in neither
           @umount_these.unshift(EFIVARS_PATH)
         end
 
