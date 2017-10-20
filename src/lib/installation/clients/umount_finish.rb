@@ -130,7 +130,7 @@ module Yast
         @umount_these.unshift(USB_PATH) if Hotplug.haveUSB
 
         # exists in both inst-sys and target or in neither
-        @umount_these.unshift(EFIVARS_PATH) if File.exist?(EFIVARS_PATH) 
+        @umount_these.unshift(EFIVARS_PATH) if File.exist?(EFIVARS_PATH)
 
         Builtins.foreach(@umount_these) do |umount_dir|
           umount_this = Builtins.sformat(
