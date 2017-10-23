@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Oct 20 12:59:37 UTC 2017 - jsrain@suse.cz
+
+- umount efivars properly (bsc#1063063)
+- 4.0.9
+
+-------------------------------------------------------------------
 Mon Oct 16 15:29:07 UTC 2017 - jreidinger@suse.com
 
 - Write polkit settings even if no desktop is selected
