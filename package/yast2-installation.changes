@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Oct 24 10:05:38 UTC 2017 - lslezak@suse.cz
+
+- Less eager inst-sys cleanup, libzypp actually needs some cached
+  files during package installation, remove only the white listed
+  known files (bsc#1063459)
+- 4.0.10
+
+-------------------------------------------------------------------
 Fri Oct 20 12:59:37 UTC 2017 - jsrain@suse.cz
 
 - umount efivars properly (bsc#1063063)
