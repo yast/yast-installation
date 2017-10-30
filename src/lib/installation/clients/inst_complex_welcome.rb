@@ -138,15 +138,21 @@ module Yast
       log.info "Language: '#{Language.language}', system encoding '#{WFM.GetEncoding}'"
     end
 
-    # Return the list of base products when available or an empty list of
-    # products in update mode.
+    # Return the list of base products available
+    #
+    # In update mode, when there are more than 1 product, this method will
+    # return an empty list because the dialog will not show the license (we do
+    # not know which product we are upgrading yet) nor the product selector
+    # (as you cannot change the product during upgrade).
     #
     # @return [Array<Y2Packager::Product>] List of available base products;
     # empty list in update mode.
     def products
       return @products if @products
 
-      @products = Mode.update ? [] : Y2Packager::Product.available_base_products
+      @products = Y2Packager::Product.available_base_products
+      @products = [] if Mode.update && @products.size > 1
+      @products
     end
 
     # Determine whether some product is available or not
