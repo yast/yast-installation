@@ -1,6 +1,6 @@
 #!/usr/bin/env rspec
 
-require_relative "test_helper"
+require_relative "../../test_helper"
 require "installation/clients/inst_complex_welcome"
 
 describe Yast::InstComplexWelcomeClient do
@@ -230,6 +230,56 @@ describe Yast::InstComplexWelcomeClient do
           allow(Yast::Popup).to receive(:ConfirmAbort).with(:painless).and_return(false, true)
           expect(Installation::Dialogs::ComplexWelcome).to receive(:run).twice.and_return(:abort, :abort)
           subject.main
+        end
+      end
+    end
+
+    describe "dialog content" do
+      context "when running on install mode" do
+        let(:update_mode) { false }
+
+        context "and more than 1 product is availble" do
+          let(:products) { [product, other_product] }
+
+          it "runs the complex welcome dialog with the list of available products" do
+            expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
+              .with(products, anything)
+            subject.main
+          end
+        end
+
+        context "and only 1 product is available" do
+          let(:products) { [product] }
+
+          it "runs the complex welcome dialog with the list of available products" do
+            expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
+              .with(products, anything)
+            subject.main
+          end
+        end
+      end
+
+      context "when running on update mode" do
+        let(:update_mode) { true }
+
+        context "and more than 1 product is availble" do
+          let(:products) { [product, other_product] }
+
+          it "runs the complex welcome dialog with no products (no license or product selector)" do
+            expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
+              .with([], anything)
+            subject.main
+          end
+        end
+
+        context "and only 1 product is available" do
+          let(:products) { [product] }
+
+          it "runs the complex welcome dialog with the list of available products" do
+            expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
+              .with(products, anything)
+            subject.main
+          end
         end
       end
     end
