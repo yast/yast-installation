@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Nov  2 15:36:38 UTC 2017 - knut.anderssen@suse.com
+
+- Unify firewall proposals and finish clients replacing
+  firewall_stage1_finish by firewall_finish. (fate#323460)
+- 4.0.13
+
+-------------------------------------------------------------------
 Thu Nov  2 13:05:34 CET 2017 - locilka@suse.com
 
 - Cleanup old registration attempts before starting Installer. This

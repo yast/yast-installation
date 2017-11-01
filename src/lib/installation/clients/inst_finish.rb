@@ -381,7 +381,7 @@ module Yast
       [
         "yast_inf",
         "network",
-        "firewall_stage1",
+        "firewall",
         "ntp-client",
         "ssh_settings",
         "remote",
