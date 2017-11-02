@@ -15,7 +15,7 @@ callHooks preFirstCall
 #
 # log "Cleaning up previous registration attempts"
 # Using /dev/null - If there is nothing to do, let it fail silently
-SUSEConnect --cleanup 1>/dev/null 2>/dev/null
+SUSEConnect --cleanup > /dev/null 2>&1
 
 #=============================================
 # 9.1) check for driver update mode
