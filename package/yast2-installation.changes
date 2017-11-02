@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Nov  2 13:05:34 CET 2017 - locilka@suse.com
+
+- Cleanup old registration attempts before starting Installer. This
+  is needed for restarted installation after it has been aborted
+  earlier (bsc#1065167).
+- 4.0.12
+
+-------------------------------------------------------------------
 Mon Oct 30 15:09:06 UTC 2017 - igonzalezsosa@suse.com
 
 - Always show the license agreement on single product media,
