@@ -1011,6 +1011,12 @@ layout
 
 ### Partitioning
 
+> **Note:** this section describes the format implemented by yast2-storage
+> and usually referred as "legacy format" by yast2-storage-ng. Products using
+> yast2-storage-ng also support a more powerful and flexible specification for
+> the `<partitioning>` section. That new format is currently documented [in this
+> file](https://github.com/yast/yast-storage-ng/blob/master/doc/old_and_new_proposal.md).
+
 *proposal_settings_editable* (boolean, default _true_) is specifies if the user
 should be able to change the configuration of the storage proposal in the
 installer: What filesystem to use for the root partition, if there should be a
