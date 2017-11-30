@@ -5,6 +5,12 @@ Thu Nov 30 14:33:07 UTC 2017 - igonzalezsosa@suse.com
 - 4.0.14
 
 -------------------------------------------------------------------
+Thu Nov 30 06:38:15 UTC 2017 - rbrown@suse.com
+
+- Replace references to /var/adm/fillup-templates with new
+  %_fillupdir macro (boo#1069468).
+
+-------------------------------------------------------------------
 Thu Nov  2 15:36:38 UTC 2017 - knut.anderssen@suse.com
 
 - Unify firewall proposals and finish clients replacing
