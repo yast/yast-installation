@@ -16,6 +16,11 @@
 #
 
 
+#Compat macro for new _fillupdir macro introduced in Nov 2017
+%if ! %{defined _fillupdir}
+  %define _fillupdir /var/adm/fillup-templates
+%endif
+
 Name:           yast2-installation
 Version:        4.0.13
 Release:        0
@@ -245,7 +250,7 @@ systemctl enable YaST2-Firstboot.service
 %{yast_scrconfdir}/etc_install_inf_options.scr
 %{yast_scrconfdir}/run_df.scr
 # fillup
-/var/adm/fillup-templates/sysconfig.security-checksig
+%{_fillupdir}/sysconfig.security-checksig
 
 # programs and scripts
 %{yast_ystartupdir}/startup
