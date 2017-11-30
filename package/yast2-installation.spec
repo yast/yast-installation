@@ -15,14 +15,8 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
-
-#Compat macro for new _fillupdir macro introduced in Nov 2017
-%if ! %{defined _fillupdir}
-  %define _fillupdir /var/adm/fillup-templates
-%endif
-
 Name:           yast2-installation
-Version:        4.0.13
+Version:        4.0.14
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
