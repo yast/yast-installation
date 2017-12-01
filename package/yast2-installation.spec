@@ -45,9 +45,9 @@ BuildRequires: yast2 >= 4.0.8
 # Yast::Packages.check_remote_installation_packages
 BuildRequires:	yast2-packager >= 4.0.9
 
-# New Y2Storage::StorageManager API
-BuildRequires: yast2-storage-ng >= 0.1.32
-Requires:      yast2-storage-ng >= 0.1.32
+# Y2Storage::StorageManager#activate accepts an argument
+BuildRequires: yast2-storage-ng >= 4.0.43
+Requires:      yast2-storage-ng >= 4.0.43
 
 # Y2Autoinstall::ActivateCallbacks
 Requires:       autoyast2-installation >= 4.0.11
