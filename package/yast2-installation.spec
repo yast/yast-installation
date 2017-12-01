@@ -15,14 +15,8 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
-
-#Compat macro for new _fillupdir macro introduced in Nov 2017
-%if ! %{defined _fillupdir}
-  %define _fillupdir /var/adm/fillup-templates
-%endif
-
 Name:           yast2-installation
-Version:        4.0.13
+Version:        4.0.14
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -51,12 +45,12 @@ BuildRequires: yast2 >= 4.0.8
 # Yast::Packages.check_remote_installation_packages
 BuildRequires:	yast2-packager >= 4.0.9
 
-# New Y2Storage::StorageManager API
-BuildRequires: yast2-storage-ng >= 0.1.32
-Requires:      yast2-storage-ng >= 0.1.32
+# Y2Storage::StorageManager#activate accepts an argument
+BuildRequires: yast2-storage-ng >= 4.0.43
+Requires:      yast2-storage-ng >= 4.0.43
 
-# AutoinstSoftware.SavePackageSelection()
-Requires:       autoyast2-installation >= 3.1.105
+# Y2Autoinstall::ActivateCallbacks
+Requires:       autoyast2-installation >= 4.0.11
 
 # Yast::WorkflowManager.merge_modules_extensions
 Requires:       yast2 >= 4.0.8

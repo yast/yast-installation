@@ -27,6 +27,7 @@
 
 require "yast"
 require "y2storage"
+require "autoinstall/activate_callbacks"
 
 module Yast
   class InstSystemAnalysisClient < Client
@@ -246,7 +247,7 @@ module Yast
       # Activate high level devices (RAID, multipath, LVM, encryption...)
       # and (re)probe. Reprobing ensures we don't bring bug#806454 back and
       # invalidates cached proposal, so we are also safe from bug#865579.
-      storage.activate
+      storage.activate(activate_callbacks)
       storage.probe
 
       devicegraph = storage.probed
@@ -342,6 +343,19 @@ module Yast
       Builtins.y2milestone("PreInstallFunctions -- end --")
 
       true
+    end
+
+    # Return the activate callbacks for libstorage-ng
+    #
+    # When running AutoYaST, it will use a different set of callbacks.
+    # Otherwise, it just delegates on yast2-storage-ng which callbacks
+    # to use.
+    #
+    # @return [Storage::ActivateCallbacks,nil] Activate callbacks to use
+    #   or +nil+ for default.
+    def activate_callbacks
+      return nil unless Mode.auto
+      Y2Autoinstallation::ActivateCallbacks.new
     end
   end
 end
