@@ -27,7 +27,6 @@
 
 require "yast"
 require "y2storage"
-require "autoinstall/activate_callbacks"
 
 module Yast
   class InstSystemAnalysisClient < Client
@@ -35,6 +34,9 @@ module Yast
       Yast.import "UI"
 
       textdomain "installation"
+
+      # Require here to break dependency cycle (bsc#1070996)
+      require "autoinstall/activate_callbacks"
 
       Yast.import "Arch"
       Yast.import "GetInstArgs"

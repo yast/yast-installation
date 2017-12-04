@@ -49,10 +49,6 @@ BuildRequires:	yast2-packager >= 4.0.9
 BuildRequires: yast2-storage-ng >= 4.0.43
 Requires:      yast2-storage-ng >= 4.0.43
 
-# Y2Autoinstall::ActivateCallbacks
-BuildRequires:  autoyast2-installation >= 4.0.11
-Requires:       autoyast2-installation >= 4.0.11
-
 # Yast::WorkflowManager.merge_modules_extensions
 Requires:       yast2 >= 4.0.8
 
