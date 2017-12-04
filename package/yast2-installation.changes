@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Dec  4 12:32:49 UTC 2017 - igonzalezsosa@suse.com
+
+- Break autoyast2 and yast2-installation dependency cycle
+  (bsc#1070996) 
+- 4.0.15
+
+-------------------------------------------------------------------
 Thu Nov 30 14:33:07 UTC 2017 - igonzalezsosa@suse.com
 
 - Do not ignore start_multipath setting (bsc#1070343).

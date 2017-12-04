@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.0.14
+Version:        4.0.15
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -48,10 +48,6 @@ BuildRequires:	yast2-packager >= 4.0.9
 # Y2Storage::StorageManager#activate accepts an argument
 BuildRequires: yast2-storage-ng >= 4.0.43
 Requires:      yast2-storage-ng >= 4.0.43
-
-# Y2Autoinstall::ActivateCallbacks
-BuildRequires:  autoyast2-installation >= 4.0.11
-Requires:       autoyast2-installation >= 4.0.11
 
 # Yast::WorkflowManager.merge_modules_extensions
 Requires:       yast2 >= 4.0.8

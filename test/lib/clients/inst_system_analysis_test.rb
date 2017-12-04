@@ -33,6 +33,10 @@ describe Yast::InstSystemAnalysisClient do
     let(:auto) { false }
 
     before do
+      allow(client).to receive(:require).with("autoinstall/activate_callbacks")
+    end
+
+    before do
       allow(Y2Storage::StorageManager).to receive(:instance).and_return(storage)
       allow(Yast::Mode).to receive(:auto).and_return(auto)
     end
@@ -44,9 +48,13 @@ describe Yast::InstSystemAnalysisClient do
 
     context "when running AutoYaST" do
       let(:auto) { true }
+      let(:callbacks_class) { double("Y2Autoinstallation::ActivateCallbacks", new: callbacks) }
+      let(:callbacks) { instance_double("Y2Autoinstallation::ActivateCallbacks") }
+
+      before { stub_const("Y2Autoinstallation::ActivateCallbacks", callbacks_class) }
 
       it "uses AutoYaST activation callbacks" do
-        expect(storage).to receive(:activate).with(Y2Autoinstallation::ActivateCallbacks)
+        expect(storage).to receive(:activate).with(callbacks)
         client.ActionHDDProbe
       end
     end
