@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Dec  8 14:17:28 UTC 2017 - gsouza@suse.com
+
+- Filter out modules extensions based on product, using white list
+  approach (fate##324198)
+- 4.0.14
+
+-------------------------------------------------------------------
 Thu Nov  2 15:36:38 UTC 2017 - knut.anderssen@suse.com
 
 - Unify firewall proposals and finish clients replacing

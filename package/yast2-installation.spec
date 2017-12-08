@@ -22,7 +22,7 @@
 %endif
 
 Name:           yast2-installation
-Version:        4.0.13
+Version:        4.0.14
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
