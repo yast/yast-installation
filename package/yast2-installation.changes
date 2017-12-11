@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Mon Dec 11 15:50:04 UTC 2017 - knut.anderssen@suse.com
 
-- Replaced Remode module by the new y2remote/remoce class
+- Replaced Remote module by the new y2remote/remote class
   (bsc#1070582)
 - Updated yast2-network dependency.
 - 4.0.17
