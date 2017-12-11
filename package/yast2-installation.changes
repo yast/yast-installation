@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Dec  8 14:17:28 UTC 2017 - gsouza@suse.com
+
+- Filter out modules extensions based on product, using white list
+  approach (fate##324198)
+- 4.0.16
+
+-------------------------------------------------------------------
 Mon Dec  4 12:32:49 UTC 2017 - igonzalezsosa@suse.com
 
 - Break autoyast2 and yast2-installation dependency cycle
