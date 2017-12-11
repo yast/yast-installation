@@ -78,7 +78,7 @@ module Installation
         error_message = Yast::Packages.check_remote_installation_packages
         Yast::Report.Warning(error_message) unless error_message.empty?
 
-        # Second stage needed: Checking environment if it can be run.
+        # Checking if second stage is needed and the environment has been setup.
         error_message = Yast::AutoinstConfig.check_second_stage_environment
         Yast::Report.Warning(error_message) unless error_message.empty?
 
