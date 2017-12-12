@@ -325,7 +325,6 @@ module Yast
       [
         "autoinst_scripts1",
         "copy_files",
-        "copy_systemfiles",
         "live_copy_files",
         "switch_scr"
       ].freeze
