@@ -77,7 +77,7 @@ module Installation
         # Checking if second stage is needed and the environment has been setup.
         second_stage_error = Yast::AutoinstConfig.check_second_stage_environment
 
-        if !Yast::AutoinstConfig.Confirm && (
+        if !Yast::AutoinstConfig.Confirm
           # Checking if vnc, ssh,... is available
           error_message = Yast::Packages.check_remote_installation_packages
           Yast::Report.Warning(error_message) unless error_message.empty?
