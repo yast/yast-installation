@@ -40,6 +40,10 @@ module Yast
       Yast.import "Report"
       Yast.import "Hooks"
       Yast.import "Linuxrc"
+      Yast.import "OSRelease"
+
+      # log the inst-sys identification for easier debugging
+      log_os_release
 
       Hooks.search_path.join!("installation")
 
@@ -100,6 +104,16 @@ module Yast
       WFM.CallFunction("disintegrate_all_extensions") if Stage.initial
 
       deep_copy(@ret)
+    end
+
+    # log the system name found in the /etc/os-release file
+    # to easily find which system is running in inst-sys
+    def log_os_release
+      if OSRelease.os_release_exists?
+        log.info("System identification: #{OSRelease.ReleaseInformation.inspect}")
+      else
+        log.warn("Cannot read the OS release file")
+      end
     end
   end
 end

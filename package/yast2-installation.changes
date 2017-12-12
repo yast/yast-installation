@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Dec 12 08:21:36 UTC 2017 - lslezak@suse.cz
+
+- Log the system name at start to see which system is running
+  in the inst-sys (for easier debugging)
+
+-------------------------------------------------------------------
 Mon Dec 11 15:50:04 UTC 2017 - knut.anderssen@suse.com
 
 - Replaced Remote module by the new y2remote/remote class
