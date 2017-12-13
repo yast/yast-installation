@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Dec 13 16:07:47 UTC 2017 - jreidinger@suse.com
+
+- drop copy_to_system support (FATE#320873)
+- 4.0.18
+
+-------------------------------------------------------------------
 Tue Dec 12 08:21:36 UTC 2017 - lslezak@suse.cz
 
 - Log the system name at start to see which system is running
