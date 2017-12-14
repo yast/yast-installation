@@ -27,15 +27,10 @@ module Yast
     include Yast::Logger
 
     def main
-      Yast.import "FileUtils"
       Yast.import "Directory"
       Yast.import "SystemFilesCopy"
-      Yast.import "ProductFeatures"
       Yast.import "ProductControl"
-      Yast.import "InstData"
       Yast.import "String"
-      Yast.import "Linuxrc"
-      Yast.import "InstFunctions"
 
       # --> Variables
 
@@ -46,47 +41,6 @@ module Yast
       # --> main()
 
       Initialize()
-
-      if SystemFilesCopy.GetUseControlFileDef
-        Builtins.y2milestone("Using copy_to_system from control file")
-
-        # FATE #305019: configure the files to copy from a previous installation
-        # -> configuration moved to control file
-        @copy_items = Convert.convert(
-          ProductFeatures.GetFeature("globals", "copy_to_system"),
-          from: "any",
-          to:   "list <map>"
-        )
-        @copy_items ||= []
-
-        @copy_items.each do |one_copy_item|
-          item_id = one_copy_item["id"]
-
-          if InstFunctions.feature_ignored?(item_id)
-            Builtins.y2milestone("Feature #{item_id} skipped on user request")
-            next
-          end
-
-          copy_to_dir     = one_copy_item.fetch("copy_to_dir", Directory.vardir)
-          mandatory_files = one_copy_item.fetch("mandatory_files", [])
-          optional_files  = one_copy_item.fetch("optional_files", [])
-
-          FindAndCopyNewestFiles(copy_to_dir, mandatory_files, optional_files)
-        end
-      end
-
-      if SystemFilesCopy.GetCopySystemFiles != []
-        Builtins.y2milestone("Using additional copy_to_system")
-
-        Builtins.foreach(SystemFilesCopy.GetCopySystemFiles) do |one_copy_item|
-          copy_to_dir = Builtins.tostring(
-            Ops.get_string(one_copy_item, "copy_to_dir", Directory.vardir)
-          )
-          mandatory_files = Ops.get_list(one_copy_item, "mandatory_files", [])
-          optional_files = Ops.get_list(one_copy_item, "optional_files", [])
-          FindAndCopyNewestFiles(copy_to_dir, mandatory_files, optional_files)
-        end
-      end
 
       each_mounted_device do |device, mount_point|
         read_users(device, mount_point) if can_read_users?
@@ -104,117 +58,6 @@ module Yast
 
       # at least some return
       :auto
-    end
-
-    def FindTheBestFiles(files_found)
-      files_found = deep_copy(files_found)
-      ret = {}
-      max = 0
-
-      # going through all partitions
-      Builtins.foreach(files_found) do |partition_name, files_on_it|
-        counter = 0
-        filetimes = 0
-        Builtins.foreach(files_on_it) do |_filename, filetime|
-          filetimes = Ops.add(filetimes, filetime)
-          counter = Ops.add(counter, 1)
-        end
-        # if there were some files on in
-        if Ops.greater_than(counter, 0)
-          # average filetime (if more files were there)
-          filetimes = Ops.divide(filetimes, counter)
-
-          # the current time is bigger (newer file) then the maximum found
-          if Ops.greater_than(filetimes, max)
-            max = filetimes
-            ret = {}
-            Ops.set(ret, partition_name, files_on_it)
-          end
-        end
-      end
-
-      deep_copy(ret)
-    end
-
-    def FindAndCopyNewestFiles(copy_to, wanted_files, optional_files)
-      wanted_files = deep_copy(wanted_files)
-      optional_files = deep_copy(optional_files)
-      Builtins.y2milestone("Searching for files: %1", wanted_files)
-
-      files_found_on_partitions = {}
-
-      each_mounted_device do |device, mnt_tmpdir|
-        files_found = true
-        one_partition_files_found = {}
-        Builtins.foreach(wanted_files) do |wanted_file|
-          filename_to_seek = Ops.add(mnt_tmpdir, wanted_file)
-          if !FileUtils.Exists(filename_to_seek)
-            files_found = false
-            next
-          end
-          if FileUtils.IsLink(filename_to_seek)
-            files_found = false
-            next
-          end
-          file_attribs = Convert.to_map(
-            SCR.Read(path(".target.lstat"), filename_to_seek)
-          )
-          if file_attribs.nil? || file_attribs == {}
-            files_found = false
-            next
-          end
-          # checking for the acces-time
-          file_time = Ops.get_integer(file_attribs, "atime")
-          if file_time.nil? || file_time == 0
-            files_found = false
-            next
-          end
-          # doesn't make sense to copy files with zero size
-          file_size = Ops.get_integer(file_attribs, "atime")
-          if file_size.nil? || file_size == 0
-            files_found = false
-            next
-          end
-          Ops.set(one_partition_files_found, wanted_file, file_time)
-        end
-        next unless files_found
-        Ops.set(files_found_on_partitions, device, one_partition_files_found)
-      end
-
-      Builtins.y2milestone("Files found: %1", files_found_on_partitions)
-
-      ic_winner = {}
-
-      # nothing found
-      if Builtins.size(files_found_on_partitions) == 0
-        Builtins.y2milestone("No such files found")
-        # only one (easy)
-      elsif Builtins.size(files_found_on_partitions) == 1
-        ic_winner = deep_copy(files_found_on_partitions)
-        # more than one (getting the best ones)
-      else
-        ic_winner = FindTheBestFiles(files_found_on_partitions)
-      end
-      files_found_on_partitions = nil
-
-      Builtins.y2milestone("Selected files: %1", ic_winner)
-
-      # should be only one entry
-      Builtins.foreach(ic_winner) do |partition, files|
-        SystemFilesCopy.CopyFilesToTemp(
-          partition,
-          Convert.convert(
-            Builtins.union(Builtins.maplist(files) do |filename, _filetime|
-              filename
-            end, optional_files),
-            from: "list",
-            to:   "list <string>"
-          ),
-          copy_to
-        )
-      end
-
-      nil
     end
 
     def Initialize
