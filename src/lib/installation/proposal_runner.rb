@@ -82,13 +82,12 @@ module Installation
           error_message = Yast::Packages.check_remote_installation_packages
           Yast::Report.Warning(error_message) unless error_message.empty?
           Yast::Report.Warning(second_stage_error) unless second_stage_error.empty?
+          # skip if not interactive mode.
+          return :auto
         else
           # This string will be shown in the proposal overview
           Yast::AutoinstData.autoyast_second_stage_error = second_stage_error
         end
-
-        # skip if not interactive mode.
-        return :auto
       end
 
       log.info "Installation step #2"
