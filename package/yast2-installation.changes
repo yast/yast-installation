@@ -1,15 +1,36 @@
 -------------------------------------------------------------------
-Mon Dec 11 13:58:10 CET 2017 - schubi@suse.de
+Mon Dec 14 13:58:10 CET 2017 - schubi@suse.de
 
 - Warn the user if the infrastructure is not available for running 
   the second stage (bnc#1061754)
-- 4.0.17 
+- 4.0.19
+
+-------------------------------------------------------------------
+Wed Dec 13 16:07:47 UTC 2017 - jreidinger@suse.com
+
+- drop copy_to_system support (FATE#320873)
+- 4.0.18
+
+-------------------------------------------------------------------
+Tue Dec 12 08:21:36 UTC 2017 - lslezak@suse.cz
+
+- Log the system name at start to see which system is running
+  in the inst-sys (for easier debugging)
+
+-------------------------------------------------------------------
+Mon Dec 11 15:50:04 UTC 2017 - knut.anderssen@suse.com
+
+- Replaced Remote module by the new y2remote/remote class
+  (bsc#1070582)
+- Updated yast2-network dependency.
+- 4.0.17
+>>>>>>> master
 
 -------------------------------------------------------------------
 Fri Dec  8 14:17:28 UTC 2017 - gsouza@suse.com
 
 - Filter out modules extensions based on product, using white list
-  approach (fate##324198)
+  approach (fate#324198)
 - 4.0.16
 
 -------------------------------------------------------------------

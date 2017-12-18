@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.0.17
+Version:        4.0.19
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -80,8 +80,9 @@ Requires:       yast2-proxy
 # writing settings in the first installation stage.
 Requires: yast2-services-manager >= 3.2.1
 
-## storage-ng based version
-Requires: yast2-network >= 3.3.7
+## y2remote based version
+BuildRequires: yast2-network >= 4.0.13
+Requires: yast2-network >= 4.0.13
 
 # Augeas lenses
 Requires:       augeas-lenses
