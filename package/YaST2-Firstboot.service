@@ -7,7 +7,7 @@ ConditionPathExists=/var/lib/YaST2/reconfig_system
 
 [Service]
 Type=oneshot
-Environment=SYSTEMCTL_OPTIONS=--ignore-dependencies TERM=linux
+Environment=TERM=linux
 ExecStartPre=-/usr/bin/plymouth quit
 ExecStartPre=-/usr/bin/plymouth --wait
 ExecStart=/usr/lib/YaST2/startup/YaST2.Firstboot

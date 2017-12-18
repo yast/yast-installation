@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Dec 18 13:20:47 UTC 2017 - gsouza@suse.com
+
+- Removal of SYSTEMCTL_OPTIONS environment variable (fate#323393)
+- 4.0.19
+
+-------------------------------------------------------------------
 Wed Dec 13 16:07:47 UTC 2017 - jreidinger@suse.com
 
 - drop copy_to_system support (FATE#320873)
