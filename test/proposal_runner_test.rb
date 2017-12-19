@@ -14,7 +14,8 @@ describe ::Installation::ProposalRunner do
 
   before do
     # mock constant to avoid dependency on autoyast
-    autoinst_config = double(Confirm: false, getProposalList: autoyast_proposals)
+    autoinst_config = double(Confirm: false,
+    getProposalList: autoyast_proposals, check_second_stage_environment: "")
     stub_const("Yast::AutoinstConfig", autoinst_config)
     allow(Yast::UI).to receive(:UserInput).and_return(:accept)
   end
@@ -65,10 +66,10 @@ describe ::Installation::ProposalRunner do
       allow(Yast::Language).to receive(:language).and_return("en_US")
     end
 
-    it "checks remote environment and returns -auto- in autoyast mode" do
+    it "checks remote/second_stage environment and returns -auto- in autoyast mode" do
       allow(Yast::Mode).to receive(:autoinst).and_return(true)
       expect(Yast::Packages).to receive(:check_remote_installation_packages).and_return("")
-
+      expect(Yast::Report).not_to receive(:Warning)
       expect(subject.run).to eq :auto
     end
 

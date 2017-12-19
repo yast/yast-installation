@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Dec 18 15:58:10 CET 2017 - schubi@suse.de
+
+- Warn the user if the infrastructure is not available for running 
+  the second stage (bnc#1061754)
+- 4.0.20
+
+-------------------------------------------------------------------
 Mon Dec 18 13:20:47 UTC 2017 - gsouza@suse.com
 
 - Removal of SYSTEMCTL_OPTIONS environment variable (fate#323393)
