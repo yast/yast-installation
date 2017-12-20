@@ -84,7 +84,7 @@ module Installation
           # Checking if vnc, ssh,... is available
           error_message = Yast::Packages.check_remote_installation_packages
           # Fit to the given UI
-          displayinfo = Yast::UI.GetDisplayInfo
+          displayinfo = Yast::UI.GetDisplayInfo || {}
           width = displayinfo["TextMode"] ? displayinfo.fetch("Width", 80) : 80
           Yast::Report.Warning(
             wrap_text(error_message, width - 4)) unless error_message.empty?
