@@ -23,6 +23,7 @@ require "yast"
 
 require "installation/proposal_store"
 require "installation/proposal_errors"
+require "ui/text_helpers"
 
 module Installation
   # Create and display reasonable proposal for basic
@@ -34,6 +35,7 @@ module Installation
     include Yast::I18n
     include Yast::UIShortcuts
     include Yast::Logger
+    include ::UI::TextHelpers
 
     def self.run
       new.run
@@ -57,6 +59,7 @@ module Installation
       Yast.import "HTML"
       Yast.import "Packages"
       Yast.import "Report"
+      Yast.import "UI"
 
       # values used in defined functions
 
@@ -80,8 +83,13 @@ module Installation
         if !Yast::AutoinstConfig.Confirm
           # Checking if vnc, ssh,... is available
           error_message = Yast::Packages.check_remote_installation_packages
-          Yast::Report.Warning(error_message) unless error_message.empty?
-          Yast::Report.Warning(second_stage_error) unless second_stage_error.empty?
+          # Fit to the given UI
+          displayinfo = Yast::UI.GetDisplayInfo || {}
+          width = displayinfo["TextMode"] ? displayinfo.fetch("Width", 80) : 80
+          Yast::Report.Warning(wrap_text(error_message,
+            width - 4)) unless error_message.empty?
+          Yast::Report.Warning(wrap_text(second_stage_error,
+            width - 4)) unless second_stage_error.empty?
           # skip if not interactive mode.
           return :auto
         else
