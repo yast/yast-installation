@@ -192,7 +192,7 @@ The extension package on the medium have to have
 for logging purpose.
 
 The extension package will be available for all products in the medium unless it is stated
-otherwise. In order to specify the extension package for a product, it needs to have the
+otherwise. In order to limit the extension package to a product, it needs to have the
 `extension_for_product() = <product name>` dependency. Multiple products can be specified
 by having multiple dependencies, one for every product.
 
