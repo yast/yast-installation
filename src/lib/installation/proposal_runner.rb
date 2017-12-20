@@ -86,9 +86,9 @@ module Installation
           # Fit to the given UI
           displayinfo = Yast::UI.GetDisplayInfo || {}
           width = displayinfo["TextMode"] ? displayinfo.fetch("Width", 80) : 80
-          Yast::Report.Warning( wrap_text(error_message,
+          Yast::Report.Warning(wrap_text(error_message,
             width - 4)) unless error_message.empty?
-          Yast::Report.Warning( wrap_text(second_stage_error,
+          Yast::Report.Warning(wrap_text(second_stage_error,
             width - 4)) unless second_stage_error.empty?
           # skip if not interactive mode.
           return :auto
