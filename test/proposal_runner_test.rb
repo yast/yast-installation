@@ -14,9 +14,10 @@ describe ::Installation::ProposalRunner do
 
   before do
     # mock constant to avoid dependency on autoyast
-    autoinst_config = double(Confirm: false,
-    getProposalList: autoyast_proposals, check_second_stage_environment: "")
+    autoinst_config = double(Confirm: false, getProposalList: autoyast_proposals)
     stub_const("Yast::AutoinstConfig", autoinst_config)
+    autoinst_functions = double(check_second_stage_environment: "")
+    stub_const("Yast::AutoinstFunctions", autoinst_functions)
     allow(Yast::UI).to receive(:UserInput).and_return(:accept)
   end
 
