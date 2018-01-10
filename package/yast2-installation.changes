@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jan 10 14:32:39 UTC 2018 - igonzalezsosa@suse.com
+
+- Fix initialization to copy the profile to /tmp/profile again
+  (bsc#1075334) 
+- 4.0.22
+
+-------------------------------------------------------------------
 Wed Dec 20 13:24:37 CET 2017 - schubi@suse.de
 
 - Fixed popup layout for bnc#1061754.
