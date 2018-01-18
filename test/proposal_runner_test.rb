@@ -7,6 +7,7 @@ require "installation/proposal_runner"
 Yast.import "ProductControl"
 Yast.import "GetInstArgs"
 Yast.import "Mode"
+Yast.import "Packages"
 
 describe ::Installation::ProposalRunner do
   let(:autoyast_proposals) { [] }
@@ -15,6 +16,8 @@ describe ::Installation::ProposalRunner do
     # mock constant to avoid dependency on autoyast
     autoinst_config = double(Confirm: false, getProposalList: autoyast_proposals)
     stub_const("Yast::AutoinstConfig", autoinst_config)
+    autoinst_functions = double(check_second_stage_environment: "")
+    stub_const("Yast::AutoinstFunctions", autoinst_functions)
     allow(Yast::UI).to receive(:UserInput).and_return(:accept)
   end
 
@@ -64,9 +67,10 @@ describe ::Installation::ProposalRunner do
       allow(Yast::Language).to receive(:language).and_return("en_US")
     end
 
-    it "do nothing if run non-interactive" do
+    it "checks remote/second_stage environment and returns -auto- in autoyast mode" do
       allow(Yast::Mode).to receive(:autoinst).and_return(true)
-
+      expect(Yast::Packages).to receive(:check_remote_installation_packages).and_return("")
+      expect(Yast::Report).not_to receive(:Warning)
       expect(subject.run).to eq :auto
     end
 

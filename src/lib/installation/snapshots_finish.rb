@@ -11,19 +11,22 @@ module Installation
       textdomain "installation"
 
       Yast.import "Mode"
-      Yast.import "StorageSnapper"
       Yast.import "InstFunctions"
       Yast.include self, "installation/misc.rb"
     end
 
     # Writes configuration
     #
-    # It creates a snapshot when no second stage is required and
+    # It finishes the Snapper configuration, if needed.
+    #
+    # It also creates a snapshot when no second stage is required and
     # Snapper is configured.
     #
     # @return [TrueClass,FalseClass] True if snapshot was created;
     #                                otherwise it returns false.
     def write
+      snapper_config
+
       if !InstFunctions.second_stage_required? && Yast2::FsSnapshot.configured?
         log.info("Creating root filesystem snapshot")
         if Mode.update
@@ -55,6 +58,15 @@ module Installation
       # TRANSLATORS: label for filesystem snapshot taken after system installation
       Yast2::FsSnapshot.create_single(_("after installation"), cleanup: :number, important: true)
       true
+    end
+
+    def snapper_config
+      if Mode.installation && Yast2::FsSnapshot.configure_on_install?
+        log.info("Finishing Snapper configuration")
+        Yast2::FsSnapshot.configure_snapper
+      else
+        log.info("There is no need to configure Snapper")
+      end
     end
   end
 end

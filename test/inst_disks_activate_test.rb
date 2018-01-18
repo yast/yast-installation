@@ -16,7 +16,9 @@ describe Yast::InstDisksActivateClient do
       allow(Yast::Popup).to receive(:ConfirmAbort).with(:painless).and_return(true)
       allow(Yast::Arch).to receive(:s390).and_return(s390)
       allow(Yast::GetInstArgs).to receive(:going_back) { going_back }
-      stub_const("Yast::Storage", double("Yast::Storage", ReReadTargetMap: true))
+
+      allow(Y2Storage::StorageManager.instance).to receive(:probe)
+
       stub_const("Yast::Packages", double(GetBaseSourceID: 0))
     end
 

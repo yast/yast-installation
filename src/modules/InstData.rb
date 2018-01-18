@@ -91,19 +91,6 @@ module Yast
 
       # downloaded (also from media) release notes, product => text
       @release_notes = {}
-
-      # list of release notes which were downloaded from internet (not from media)
-      # only product names, not the actual RN text
-      @downloaded_release_notes = []
-
-      # list of release notes that YaST failed to download
-      @failed_release_notes = []
-
-      # remember that downloading release notes failed due to communication
-      # issues with the server, avoid further attempts then
-      @stop_relnotes_download = false
-
-      # EOF
     end
 
     publish variable: :start_mode, type: "string"
@@ -119,9 +106,6 @@ module Yast
     publish variable: :additional_copy_files, type: "list <map>"
     publish variable: :image_target_disk, type: "string"
     publish variable: :release_notes, type: "map<string,string>"
-    publish variable: :downloaded_release_notes, type: "list<string>"
-    publish variable: :stop_relnotes_download, type: "boolean"
-    publish variable: :failed_release_notes, type: "list<string>"
   end
 
   InstData = InstDataClass.new

@@ -13,9 +13,11 @@ module Installation
       attr_reader :product
 
       # @param products [Array<Installation::Product>] to display
-      def initialize(products)
+      # @param skip_validation [Boolean] Skip value validation
+      def initialize(products, skip_validation: false)
         @products = products
         @items = products.map { |p| [p.name, p.label] }
+        @skip_validation = skip_validation
         textdomain "installation"
       end
 
@@ -29,6 +31,7 @@ module Installation
 
       def init
         selected = products.find(&:selected?)
+        disable if registered?
         return unless selected
 
         self.value = selected.name
@@ -48,10 +51,25 @@ module Installation
         @product.select
       end
 
-      def validation
-        return true if value
+      def validate
+        return true if value || skip_validation?
 
         Yast::Popup.Error(_("Please select a product to install."))
+        false
+      end
+
+      # Determine whether the validation should be skipped
+      #
+      # @see #initialize
+      def skip_validation?
+        @skip_validation
+      end
+
+      # Determine whether the system is registered
+      def registered?
+        require "registration/registration"
+        Registration::Registration.is_registered?
+      rescue LoadError
         false
       end
     end

@@ -16,6 +16,7 @@
 # ------------------------------------------------------------------------------
 
 require "yast"
+require "y2remote/remote"
 
 module Installation
   # Step of base installation finish for remote administration (VNC)
@@ -25,7 +26,6 @@ module Installation
 
     def initialize
       Yast.import "Linuxrc"
-      Yast.import "Remote"
       textdomain "installation"
     end
 
@@ -76,8 +76,12 @@ module Installation
 
     # Enables remote access
     def enable_remote
-      Yast::Remote.Enable
-      Yast::Remote.Write
+      remote.enable!
+      remote.write
+    end
+
+    def remote
+      @remote ||= Y2Remote::Remote.instance
     end
   end
 end

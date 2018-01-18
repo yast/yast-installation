@@ -178,3 +178,28 @@ step is defined in the included `y2update.tgz` file.
 
 ![Example Extension](
 https://cloud.githubusercontent.com/assets/907998/24544095/48e4e2d0-1602-11e7-8081-4c35bcf90069.gif)
+
+# Modify Installation by Availability of Package
+
+The YaST installation workflow can be easily changed or extended by availability of package that
+provides certain provisioning. It is useful for modules, which can be added, but does not need
+to have own product.
+
+## Configuring the Package Metadata
+
+The extension package on the medium have to have
+`Provides: installer_module_extension() = <module name>` dependency. Module name is used only
+for logging purpose.
+
+The extension package will be available for all products in the medium unless it is stated
+otherwise. In order to limit the extension package to a product, it needs to have the
+`extension_for_product() = <product name>` dependency. Multiple products can be specified
+by having multiple dependencies, one for every product.
+
+That package should contain the `installation.xml` file and optionally
+the `y2update.tgz` archive in the root directory. The package should never
+be installed into system, it is used just to provide the temporary data for the
+installer. After the installation is finished the files are not needed anymore.
+
+Requirements for `installation.xml` and `y2update.tgz` is identical like for add-ons.
+For example package see https://github.com/yast/skelcd-control-server-applications-module

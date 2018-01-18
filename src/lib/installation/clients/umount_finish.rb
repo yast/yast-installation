@@ -32,13 +32,15 @@ module Yast
   class UmountFinishClient < Client
     include Yast::Logger
 
+    EFIVARS_PATH = "/sys/firmware/efi/efivars".freeze
+    USB_PATH = "/proc/bus/usb".freeze
+
     def main
       Yast.import "Pkg"
 
       textdomain "installation"
 
       Yast.import "Installation"
-      Yast.import "Storage"
       Yast.import "Hotplug"
       Yast.import "Vendor"
       Yast.import "String"
@@ -124,13 +126,11 @@ module Yast
         # /proc
 
         @umount_these = ["/proc", "/sys", "/dev", "/run"]
-        if Hotplug.haveUSB
-          @umount_these = Convert.convert(
-            Builtins.union(["/proc/bus/usb"], @umount_these),
-            from: "list",
-            to:   "list <string>"
-          )
-        end
+
+        @umount_these.unshift(USB_PATH) if Hotplug.haveUSB
+
+        # exists in both inst-sys and target or in neither
+        @umount_these.unshift(EFIVARS_PATH) if File.exist?(EFIVARS_PATH)
 
         Builtins.foreach(@umount_these) do |umount_dir|
           umount_this = Builtins.sformat(
@@ -146,7 +146,7 @@ module Yast
             # bnc #395034
             # Don't remount them read-only!
             if Builtins.contains(
-              ["/proc", "/sys", "/dev", "/proc/bus/usb"],
+              ["/proc", "/sys", "/dev", USB_PATH, EFIVARS_PATH],
               umount_dir
             )
               Builtins.y2warning("Umount failed, trying lazy umount...")
@@ -183,6 +183,10 @@ module Yast
         # access to it (because it will be read only afterwards).
         set_root_subvol_read_only
 
+# storage-ng
+# rubocop:disable Style/BlockComments
+=begin
+
         @targetMap = Storage.GetTargetMap
 
         # first umount all file based crypto fs since they potentially
@@ -204,6 +208,8 @@ module Yast
             )
           end
         end
+
+=end
 
         # *** umount_list is lexically ordered !
         # now umount in reverse order (guarantees "/" as last umount)
@@ -269,6 +275,9 @@ module Yast
         )
         @cmd_run = Convert.to_map(WFM.Execute(path(".local.bash_output"), @cmd))
 
+# storage-ng
+=begin
+
         # must call .local.bash_output !
         @max_loop_dev = Storage.NumLoopDevices
 
@@ -290,6 +299,9 @@ module Yast
           Builtins.y2milestone("shutting down LVM")
           WFM.Execute(path(".local.bash"), "/sbin/vgchange -a n")
         end
+
+=end
+
       else
         Builtins.y2error("unknown function: %1", @func)
         @ret = nil

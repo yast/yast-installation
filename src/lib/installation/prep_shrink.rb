@@ -1,3 +1,11 @@
+# storage-ng
+#
+# This is apparently used to shrink all (?!) PReP partitions on CHRP (?!)
+# machines to 8 MiB.
+#
+# Not sure what this tries to achieve nor why this deserved its own client.
+#
+
 module Installation
   class PrepShrinkFinish
     include Yast::Logger
@@ -48,6 +56,9 @@ module Installation
 
     MAXIMAL_SIZE_KB = 8192
     def shrink_partitions
+# storage-ng
+# rubocop:disable Style/BlockComments
+=begin
       target_map = Yast::Storage.GetTargetMap
       target_map.each do |_disk, disk_values|
         (disk_values["partitions"] || []).each do |part_values|
@@ -58,6 +69,7 @@ module Installation
           Yast::SCR.Execute(YAST_BASH_PATH, cmd)
         end
       end
+=end
     end
 
     # 0x41 is PPC PREP Boot

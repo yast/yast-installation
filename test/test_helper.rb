@@ -23,14 +23,15 @@ def stub_module(name)
 end
 
 # stub classes from other modules to speed up a build
-stub_module("Packages")
-stub_module("InstURL")
-stub_module("Language")
-stub_module("Keyboard")
 stub_module("AddOnProduct")
-stub_module("ProductLicense")
-stub_module("AutoinstGeneral")
 stub_module("AutoinstConfig")
+stub_module("AutoinstGeneral")
+stub_module("Console")
+stub_module("InstURL")
+stub_module("Keyboard")
+stub_module("Language")
+stub_module("Packages")
+stub_module("ProductLicense")
 stub_module("Profile")
 stub_module("ProfileLocation")
 

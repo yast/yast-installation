@@ -1,6 +1,6 @@
 # Installer Self-update
 
-Starting on version 3.1.175, yast2-install is able to update itself during
+Starting on version 3.1.175, yast2-installation is able to update itself during
 system installation. This feature will help to solve problems with the
 installation even after the media has been released. Check
 [FATE#319716](https://fate.suse.com/319716) for a more in-depth rationale.
@@ -110,6 +110,11 @@ The URL of the update repository is evaluated in this order:
         servers are found it is considered as an error and user interaction is
         required just like in manual installation.
    4. Default SUSE Customer Center API (`https://scc.suse.com/`).
+
+   Registration server is then asked for URL providing product on media.
+   For multi-product media it is possible to specify ID used instead of product
+   name in control.xml as globals->self_update_id.
+
 4. Hard-coded in the `control.xml` file on the installation medium (thus it
    depends on the base product):
 

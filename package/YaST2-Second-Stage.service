@@ -15,7 +15,7 @@ Type=oneshot
 # clash), empty path causes that the installed modules are not found. Sysconfig
 # and envvar extensions are still loaded, /etc/sysconfig/proxy values are still
 # used correctly (see bnc#866692 and bnc#866692 for details).
-Environment=SYSTEMCTL_OPTIONS=--ignore-dependencies TERM=linux PX_MODULE_PATH=""
+Environment=TERM=linux PX_MODULE_PATH=""
 ExecStartPre=-/usr/bin/plymouth quit
 ExecStart=/usr/lib/YaST2/startup/YaST2.Second-Stage
 RemainAfterExit=yes

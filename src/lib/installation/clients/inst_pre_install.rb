@@ -20,76 +20,29 @@
 # ------------------------------------------------------------------------------
 
 require "installation/ssh_importer"
+require "y2storage"
 
 module Yast
   class InstPreInstallClient < Client
     include Yast::Logger
 
     def main
-      Yast.import "Storage"
-      Yast.import "FileSystems"
-      Yast.import "FileUtils"
       Yast.import "Directory"
       Yast.import "SystemFilesCopy"
-      Yast.import "ProductFeatures"
       Yast.import "ProductControl"
-      Yast.import "InstData"
       Yast.import "String"
-      Yast.import "Linuxrc"
-      Yast.import "InstFunctions"
 
       # --> Variables
 
-      # all partitions that can be used as a source of data
-      @useful_partitions = []
+      # all devices that can be used as a source of data
+      @useful_devices = []
 
       # *******************************************************************************
       # --> main()
 
       Initialize()
 
-      if SystemFilesCopy.GetUseControlFileDef
-        Builtins.y2milestone("Using copy_to_system from control file")
-
-        # FATE #305019: configure the files to copy from a previous installation
-        # -> configuration moved to control file
-        @copy_items = Convert.convert(
-          ProductFeatures.GetFeature("globals", "copy_to_system"),
-          from: "any",
-          to:   "list <map>"
-        )
-        @copy_items ||= []
-
-        @copy_items.each do |one_copy_item|
-          item_id = one_copy_item["id"]
-
-          if InstFunctions.feature_ignored?(item_id)
-            Builtins.y2milestone("Feature #{item_id} skipped on user request")
-            next
-          end
-
-          copy_to_dir     = one_copy_item.fetch("copy_to_dir", Directory.vardir)
-          mandatory_files = one_copy_item.fetch("mandatory_files", [])
-          optional_files  = one_copy_item.fetch("optional_files", [])
-
-          FindAndCopyNewestFiles(copy_to_dir, mandatory_files, optional_files)
-        end
-      end
-
-      if SystemFilesCopy.GetCopySystemFiles != []
-        Builtins.y2milestone("Using additional copy_to_system")
-
-        Builtins.foreach(SystemFilesCopy.GetCopySystemFiles) do |one_copy_item|
-          copy_to_dir = Builtins.tostring(
-            Ops.get_string(one_copy_item, "copy_to_dir", Directory.vardir)
-          )
-          mandatory_files = Ops.get_list(one_copy_item, "mandatory_files", [])
-          optional_files = Ops.get_list(one_copy_item, "optional_files", [])
-          FindAndCopyNewestFiles(copy_to_dir, mandatory_files, optional_files)
-        end
-      end
-
-      each_mounted_partition do |device, mount_point|
+      each_mounted_device do |device, mount_point|
         read_users(device, mount_point) if can_read_users?
         read_ssh_info(device, mount_point)
       end
@@ -101,121 +54,10 @@ module Yast
       end
 
       # free the memory
-      @useful_partitions = nil
+      @useful_devices = nil
 
       # at least some return
       :auto
-    end
-
-    def FindTheBestFiles(files_found)
-      files_found = deep_copy(files_found)
-      ret = {}
-      max = 0
-
-      # going through all partitions
-      Builtins.foreach(files_found) do |partition_name, files_on_it|
-        counter = 0
-        filetimes = 0
-        Builtins.foreach(files_on_it) do |_filename, filetime|
-          filetimes = Ops.add(filetimes, filetime)
-          counter = Ops.add(counter, 1)
-        end
-        # if there were some files on in
-        if Ops.greater_than(counter, 0)
-          # average filetime (if more files were there)
-          filetimes = Ops.divide(filetimes, counter)
-
-          # the current time is bigger (newer file) then the maximum found
-          if Ops.greater_than(filetimes, max)
-            max = filetimes
-            ret = {}
-            Ops.set(ret, partition_name, files_on_it)
-          end
-        end
-      end
-
-      deep_copy(ret)
-    end
-
-    def FindAndCopyNewestFiles(copy_to, wanted_files, optional_files)
-      wanted_files = deep_copy(wanted_files)
-      optional_files = deep_copy(optional_files)
-      Builtins.y2milestone("Searching for files: %1", wanted_files)
-
-      files_found_on_partitions = {}
-
-      each_mounted_partition do |device, mnt_tmpdir|
-        files_found = true
-        one_partition_files_found = {}
-        Builtins.foreach(wanted_files) do |wanted_file|
-          filename_to_seek = Ops.add(mnt_tmpdir, wanted_file)
-          if !FileUtils.Exists(filename_to_seek)
-            files_found = false
-            next
-          end
-          if FileUtils.IsLink(filename_to_seek)
-            files_found = false
-            next
-          end
-          file_attribs = Convert.to_map(
-            SCR.Read(path(".target.lstat"), filename_to_seek)
-          )
-          if file_attribs.nil? || file_attribs == {}
-            files_found = false
-            next
-          end
-          # checking for the acces-time
-          file_time = Ops.get_integer(file_attribs, "atime")
-          if file_time.nil? || file_time == 0
-            files_found = false
-            next
-          end
-          # doesn't make sense to copy files with zero size
-          file_size = Ops.get_integer(file_attribs, "atime")
-          if file_size.nil? || file_size == 0
-            files_found = false
-            next
-          end
-          Ops.set(one_partition_files_found, wanted_file, file_time)
-        end
-        next unless files_found
-        Ops.set(files_found_on_partitions, device, one_partition_files_found)
-      end
-
-      Builtins.y2milestone("Files found: %1", files_found_on_partitions)
-
-      ic_winner = {}
-
-      # nothing found
-      if Builtins.size(files_found_on_partitions) == 0
-        Builtins.y2milestone("No such files found")
-        # only one (easy)
-      elsif Builtins.size(files_found_on_partitions) == 1
-        ic_winner = deep_copy(files_found_on_partitions)
-        # more than one (getting the best ones)
-      else
-        ic_winner = FindTheBestFiles(files_found_on_partitions)
-      end
-      files_found_on_partitions = nil
-
-      Builtins.y2milestone("Selected files: %1", ic_winner)
-
-      # should be only one entry
-      Builtins.foreach(ic_winner) do |partition, files|
-        SystemFilesCopy.CopyFilesToTemp(
-          partition,
-          Convert.convert(
-            Builtins.union(Builtins.maplist(files) do |filename, _filetime|
-              filename
-            end, optional_files),
-            from: "list",
-            to:   "list <string>"
-          ),
-          copy_to
-        )
-      end
-
-      nil
     end
 
     def Initialize
@@ -225,13 +67,11 @@ module Yast
       # mounting of all partitions (fate#305873, bnc#468922)
       # FIXME: copy-pasted from partitioner, just different number of disks and added /dev/dasd
       restrict_disk_names = lambda do |disks|
-        disks = deep_copy(disks)
         helper = lambda do |s|
           count = 0
-          disks = Builtins.filter(disks) do |dist|
-            next true if Builtins.search(dist, s) != 0
-            count = Ops.add(count, 1)
-            Ops.less_or_equal(count, 8)
+          disks = disks.select do |dist|
+            next true unless dist.start_with?(s)
+            (count += 1) <= 8
           end
 
           nil
@@ -246,50 +86,29 @@ module Yast
         deep_copy(disks)
       end
 
-      target_map = Storage.GetTargetMap
-      counter = -1
-      device_names = Builtins.maplist(target_map) do |device_name, _device_descr|
-        device_name
-      end
+      probed = Y2Storage::StorageManager.instance.probed
+      device_names = probed.disk_devices.map(&:name)
       device_names = restrict_disk_names.call(device_names)
       Builtins.foreach(device_names) do |device_name|
-        device_descr = Ops.get(target_map, device_name, {})
-        partitions = Ops.get_list(device_descr, "partitions", [])
-        filesystem = nil
-        devicename = nil
-        Builtins.foreach(partitions) do |partition|
-          filesystem = Ops.get_symbol(
-            partition,
-            "used_fs",
-            Ops.get(partition, "detected_fs")
-          )
-          devicename = Ops.get_string(partition, "device")
-          if filesystem.nil?
-            Builtins.y2milestone(
-              "Skipping partition %1, no FS detected",
-              devicename
+        device = Y2Storage::BlkDevice.find_by_name(probed, device_name)
+        filesystems = device.descendants.select { |i| i.is?(:blk_filesystem) }
+        filesystems.each do |filesystem|
+          device = filesystem.blk_devices.first
+          if !filesystem.type.root_ok?
+            log.info(
+              "Skipping device #{device.name}, "\
+              "#{filesystem.type} is not a root filesystem"
             )
             next
           end
-          if !Builtins.contains(FileSystems.possible_root_fs, filesystem)
-            Builtins.y2milestone(
-              "Skipping partition %1, %2 is not a root filesystem",
-              devicename,
-              filesystem
-            )
-            next
-          end
-          # adding the partition into the list of possible ones
-          counter = Ops.add(counter, 1)
-          Ops.set(
-            @useful_partitions,
-            counter,
-            "device" => Ops.get(partition, "device"), "fs" => filesystem
-          )
+          @useful_devices << device.name
         end
       end
+      # Duplicates can happen, e.g. if there are PVs for the same LVM VG in
+      # several disks
+      @useful_devices.uniq!
 
-      Builtins.y2milestone("Possible partitions: %1", @useful_partitions)
+      Builtins.y2milestone("Possible devices: %1", @useful_devices)
 
       nil
     end
@@ -331,7 +150,7 @@ module Yast
       ::Installation::SshImporter.instance.add_config(mount_point, device)
     end
 
-    def each_mounted_partition(&block)
+    def each_mounted_device(&block)
       mnt_tmpdir = "#{Directory.tmpdir}/tmp_mnt_for_check"
       mnt_tmpdir = SystemFilesCopy.CreateDirectoryIfMissing(mnt_tmpdir)
 
@@ -341,9 +160,8 @@ module Yast
         return
       end
 
-      @useful_partitions.each do |partition|
-        partition_device = partition["device"] || ""
-        log.info "Mounting #{partition_device} to #{mnt_tmpdir}"
+      @useful_devices.each do |device|
+        log.info "Mounting #{device} to #{mnt_tmpdir}"
         already_mounted = Builtins.sformat(
           "grep '[\\t ]%1[\\t ]' /proc/mounts",
           mnt_tmpdir
@@ -354,12 +172,12 @@ module Yast
           log.error("Cannot umount #{mnt_tmpdir}") unless SCR.Execute(path(".target.umount"), mnt_tmpdir)
         end
         # mounting read-only
-        if !SCR.Execute(path(".target.mount"), [partition_device, mnt_tmpdir], "-o ro,noatime")
+        if !SCR.Execute(path(".target.mount"), [device, mnt_tmpdir], "-o ro,noatime")
           log.error "Mounting falied!"
           next
         end
 
-        block.call(partition_device, mnt_tmpdir)
+        block.call(device, mnt_tmpdir)
 
         # bnc #427879
         exec = SCR.Execute(
@@ -368,7 +186,7 @@ module Yast
         )
         log.error("Processes in #{mnt_tmpdir}: #{exec}") unless exec["stdout"].to_s.empty?
         # umounting
-        log.info "Umounting #{partition_device}"
+        log.info "Umounting #{device}"
         log.error("Umount failed!") unless SCR.Execute(path(".target.umount"), mnt_tmpdir)
       end
     end
