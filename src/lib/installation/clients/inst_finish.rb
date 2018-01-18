@@ -325,7 +325,6 @@ module Yast
       [
         "autoinst_scripts1",
         "copy_files",
-        "copy_systemfiles",
         "live_copy_files",
         "switch_scr"
       ].freeze
@@ -381,7 +380,7 @@ module Yast
       [
         "yast_inf",
         "network",
-        "firewall_stage1",
+        "firewall",
         "ntp-client",
         "ssh_settings",
         "remote",

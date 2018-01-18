@@ -413,6 +413,11 @@ These options usually enable or disable some installation feature.
     currently assigned hostname is written to /etc/hosts with IPv4
     address 127.0.0.2. Defaul value is *false* if not set.
 
+-   (boolean) *dhclient\_set\_hostname* - defines the default of
+    DHCLIENT_SET_HOSTNAME in /etc/sysconfing/network/dhcp which is
+    preloading at the beginning of the installation. It can be disabled
+    by [linuxrc](https://github.com/openSUSE/linuxrc/blob/master/linuxrc_yast_interface.txt#L144) cmdline with sethostname=0.
+
 -   (boolean) *default\_ntp\_setup* - NTP configuration proposes a
     default ntp server if set to *true*. Default value is *false*.
 
@@ -462,84 +467,6 @@ installation and debugging:
     write more debug logs and some more debugging features in the
     workflow. The default is *false*. This feature should be off in the
     production phase.
-
-### Importing Files from Previous Installation
-
-Even if users are performing new reinstallation of their system,
-installation process can backup some files or directories before their
-disks are formatted and restore them after the installation. For
-instance, SSH keys are reused.
-
-Typically, there is only one system previously installed, if there are
-more systems, the one with the newest access time to required files is
-chosen.
-
-See the example:
-
-```xml
-    <globals>
-        <copy_to_system config:type="list">
-            <copy_to_system_item>
-                <!-- Files are restored directly to "/" after installation -->
-                <copy_to_dir>/</copy_to_dir>
-
-                <!-- Files that must be all present on the previous system -->
-                <mandatory_files config:type="list">
-                    <file_item>/etc/ssh/ssh_host_key</file_item>
-                    <file_item>/etc/ssh/ssh_host_key.pub</file_item>
-                </mandatory_files>
-
-                <!-- Files thay may be present and are used if exist -->
-                <optional_files config:type="list">
-                    <file_item>/etc/ssh/ssh_host_dsa_key</file_item>
-                    <file_item>/etc/ssh/ssh_host_dsa_key.pub</file_item>
-                    <file_item>/etc/ssh/ssh_host_rsa_key</file_item>
-                    <file_item>/etc/ssh/ssh_host_rsa_key.pub</file_item>
-                </optional_files>
-            </copy_to_system_item>
-
-            <copy_to_system_item>
-                <!--
-                    Files are restored to a special directory
-                    (and used by YaST later)
-                -->
-                <copy_to_dir>/var/lib/YaST2/imported/userdata/</copy_to_dir>
-
-                <!--
-                    They finally appear as
-                        "/var/lib/YaST2/imported/userdata/etc/shadow"
-                        "/var/lib/YaST2/imported/userdata/etc/passwd" ...
-                -->
-                <mandatory_files config:type="list">
-                    <file_item>/etc/shadow</file_item>
-                    <file_item>/etc/passwd</file_item>
-                    <file_item>/etc/login.defs</file_item>
-                    <file_item>/etc/group</file_item>
-                </mandatory_files>
-            </copy_to_system_item>
-        </copy_to_system>
-    </globals>
-```
-
-In the *globals* section, there is a *copy\_to\_system* list of
-*copy\_to\_system\_item* entries.
-
-Every *copy\_to\_system\_item* entry consists of:
-
--   (string) *copy\_to\_dir* - files are finally stored into the
-    mentioned directory, they additionally keep their path in the
-    previous filesystem, e.g., file */etc/file* copied to directory
-    */var/lib/YaST2/* will be finally stored as
-    */var/lib/YaST2/etc/file*
-
--   (list) *mandatory\_files* - list of (string) *file\_item* entries,
-    one entry for one file or directory; these files are mandatory and
-    must all exist on the source system; if any of the files are
-    missing, such system is skipped
-
--   (list) *optional\_files* - list of (string) *file\_item* entries,
-    one entry for one file or directory; files are optional and are
-    copied if they exist; missing files are skipped
 
 ### Software
 
@@ -783,6 +710,8 @@ Section *supported\_desktops* contains list of one or more
 -   (string) *patterns*
 
     Patterns to select for a particular desktop (whitespace-separated).
+    These patterns are **optional** and will not be reported as an error by
+    the software proposal in case of missing.
 
 -   (string) *icon*
 
@@ -1003,6 +932,12 @@ layout
     available selections below.
 
 ### Partitioning
+
+> **Note:** this section describes the format implemented by yast2-storage
+> and usually referred as "legacy format" by yast2-storage-ng. Products using
+> yast2-storage-ng also support a more powerful and flexible specification for
+> the `<partitioning>` section. That new format is currently documented [in this
+> file](https://github.com/yast/yast-storage-ng/blob/master/doc/old_and_new_proposal.md).
 
 *proposal_settings_editable* (boolean, default _true_) is specifies if the user
 should be able to change the configuration of the storage proposal in the

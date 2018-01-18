@@ -7,6 +7,16 @@ log "====================="
 #---------------------------------------------
 callHooks preFirstCall
 
+# 9.05) cleanup before (re)starting
+
+# bsc#1065167: Installer does not allow to change a base product when it's
+# already registered. When installation is aborted and then restarted,
+# the data of the previous registration was not automatically removed.
+#
+# log "Cleaning up previous registration attempts"
+# Using /dev/null - If there is nothing to do, let it fail silently
+SUSEConnect --cleanup > /dev/null 2>&1
+
 #=============================================
 # 9.1) check for driver update mode
 #---------------------------------------------

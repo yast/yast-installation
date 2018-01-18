@@ -22,340 +22,101 @@
 require "yaml"
 require "fileutils"
 require "yast"
+require "installation/dialogs/complex_welcome"
+require "y2packager/product"
+
+Yast.import "Console"
+Yast.import "FileUtils"
+Yast.import "GetInstArgs"
+Yast.import "InstShowInfo"
+Yast.import "Keyboard"
+Yast.import "Language"
+Yast.import "Mode"
+Yast.import "Pkg"
+Yast.import "Popup"
+Yast.import "ProductControl"
+Yast.import "Stage"
+Yast.import "Timezone"
+Yast.import "Wizard"
+Yast.import "WorkflowManager"
 
 module Yast
-  # This client shows main dialog for choosing the language,
-  # keyboard and accepting the license.
+  # This client shows main dialog for choosing the language, keyboard,
+  # selecting the product/accepting the license.
   class InstComplexWelcomeClient < Client
     include Yast::Logger
     extend Yast::I18n
 
-    HEADING_TEXT = N_("Language, Keyboard and License Agreement")
+    BETA_FILE = "/README.BETA".freeze
 
+    # Main client method
     def main
-      Yast.import "Mode"
+      if FileUtils.Exists(BETA_FILE) && !GetInstArgs.going_back
+        InstShowInfo.show_info_txt(BETA_FILE)
+      end
 
       # bnc#206706
-      return :auto if Mode.autoinst
-
-      import_modules
+      return :auto if Mode.auto
 
       textdomain "installation"
 
-      @license_id = Ops.get(Pkg.SourceGetCurrent(true), 0, 0)
+      Yast::Wizard.EnableAbortButton
 
-      # ------------------------------------- main part of the client -----------
+      loop do
+        dialog_result = ::Installation::Dialogs::ComplexWelcome.run(
+          products, disable_buttons: disable_buttons
+        )
+        result = handle_dialog_result(dialog_result)
+        next unless result
 
-      @argmap = GetInstArgs.argmap
-
-      @language = Language.language
-      @keyboard = ""
-
-      InstData.product_license_accepted ||= false
-
-      # ----------------------------------------------------------------------
-      # Build dialog
-      # ----------------------------------------------------------------------
-      # Screen title for the first interactive dialog
-      initialize_dialog
-
-      event_loop
-    end
-
-    def import_modules
-      Yast.import "Console"
-      Yast.import "GetInstArgs"
-      Yast.import "InstData"
-      Yast.import "Keyboard"
-      Yast.import "Label"
-      Yast.import "Language"
-      Yast.import "Pkg"
-      Yast.import "Popup"
-      Yast.import "ProductLicense"
-      Yast.import "Report"
-      Yast.import "Stage"
-      Yast.import "Timezone"
-      Yast.import "UI"
-      Yast.import "Wizard"
-      Yast.import "ProductFeatures"
+        return result if !available_products? || result != :next
+        return merge_and_run_workflow
+      end
     end
 
   private
 
-    def event_loop
-      loop do
-        ret = UI.UserInput
-        log.info "UserInput() returned #{ret}"
-
-        case ret
-        when :back
-          return ret
-        when :abort, :cancel
-          next unless Popup.ConfirmAbort(:painless)
-          Wizard.RestoreNextButton
-          return :abort
-        when :keyboard
-          read_ui_state
-          Keyboard.Set(@keyboard)
-          Keyboard.user_decision = true
-        when :license_agreement
-          read_ui_state
-        when :language
-          next if Mode.config
-          read_ui_state
-          change_language
-          Wizard.SetFocusToNextButton
-          return :again
-        when :next
-          next if Mode.config
-          read_ui_state
-
-          # BNC #448598
-          # Check whether the license has been accepted only if required
-          if license_required? && !license_accepted?
-            warn_license_required
-            next
-          end
-
-          next if !Language.CheckIncompleteTranslation(@language)
-
-          Language.CheckLanguagesSupport(@language) if Stage.initial
-
-          setup_final_choice
-
-          return :next
-        when :show_fulscreen_license
-          UI.OpenDialog(all_licenses_dialog)
-          ProductLicense.ShowFullScreenLicenseInInstallation(
-            :full_screen_license_rp,
-            @license_id
-          )
-          UI.CloseDialog
-        else
-          raise "unknown input '#{ret}'"
-        end
-      end
-    end
-
-    def initialize_license
-      # Showing empty license to prevent from redrawing the dialog when
-      # the translated license is found and shown to the user
-      UI.ReplaceWidget(Id(:base_license_rp), RichText(""))
-
-      # If accepting the license is required, show the check-box
-      if license_required?
-        UI.ReplaceWidget(:license_checkbox_rp, license_agreement_checkbox)
-        UI.ChangeWidget(Id(:license_agreement), :Value, InstData.product_license_accepted)
-      end
-
-      log.info "Acceptance needed: #{@id} => #{license_required?}"
-    end
-
-    def initialize_keyboard_selection
-      if Keyboard.user_decision
-        UI.ChangeWidget(Id(:keyboard), :Value, Keyboard.current_kbd)
-      else
-        kbd = Keyboard.GetKeyboardForLanguage(@language, "english-us")
-        UI.ChangeWidget(Id(:keyboard), :Value, kbd)
-        Keyboard.Set(kbd)
-      end
-    end
-
-    def initialize_widgets
-      UI.BusyCursor
-
-      initialize_license
-
-      Wizard.EnableAbortButton
-
-      UI.ChangeWidget(Id(:language), :Value, @language)
-
-      initialize_keyboard_selection
-
-      # In case of going back, Release Notes button may be shown, retranslate it (bnc#886660)
-      # Assure that relnotes have been downloaded first
-      if !InstData.release_notes.empty?
-        Wizard.ShowReleaseNotesButton(_("Re&lease Notes..."), "rel_notes")
-      end
-
-      # This also shows content of the info file if it exists, so it has to be
-      # called at the very end
-      ProductLicense.ShowLicenseInInstallation(:base_license_rp, @license_id)
-
-      UI.SetFocus(Id(:language))
-
-      UI.NormalCursor
-    end
-
-    def help_text
-      # help text for initial (first time) language screen
-      @help_text = _(
-        "<p>\n" \
-          "Choose the <b>Language</b> and the <b>Keyboard layout</b> to be used during\n" \
-          "installation and for the installed system.\n" \
-          "</p>\n"
-      ) +
-        # help text, continued
-        # Describes the #ICW_B1 button
-        _(
-          "<p>\n" \
-            "The license must be accepted before the installation continues.\n" \
-            "Use <b>License Translations...</b> to show the license in all available translations.\n" \
-            "</p>\n"
-        ) +
-        # help text, continued
-        _(
-          "<p>\n" \
-            "Click <b>Next</b> to proceed to the next dialog.\n" \
-            "</p>\n"
-        ) +
-        # help text, continued
-        _(
-          "<p>\n" \
-            "Nothing will happen to your computer until you confirm\n" \
-            "all your settings in the last installation dialog.\n" \
-            "</p>\n"
-        ) +
-        # help text, continued
-        _(
-          "<p>\n" \
-            "Select <b>Abort</b> to abort the\n" \
-            "installation process at any time.\n" \
-            "</p>\n"
-        )
-    end
-
-    def all_licenses_dialog
-      # As long as possible
-      # bnc #385257
-      HBox(
-        VSpacing(text_mode? ? 21 : 25),
-        VBox(
-          Left(
-            # TRANSLATORS: dialog caption
-            Heading(_("License Agreement"))
-          ),
-          VSpacing(text_mode? ? 0.1 : 0.5),
-          HSpacing(82),
-          HBox(
-            VStretch(),
-            ReplacePoint(Id(:full_screen_license_rp), Opt(:vstretch), Empty())
-          ),
-          ButtonBox(
-            PushButton(
-              Id(:close),
-              Opt(:okButton, :default, :key_F10),
-              Label.OKButton
-            )
-          )
-        )
-      )
-    end
-
-    def language_selection
-      ComboBox(
-        Id(:language),
-        Opt(:notify, :hstretch),
-        # combo box label
-        _("&Language"),
-        Language.GetLanguageItems(:first_screen)
-      )
-    end
-
-    def keyboard_selection
-      ComboBox(
-        Id(:keyboard),
-        Opt(:notify, :hstretch),
-        # combo box label
-        _("&Keyboard Layout"),
-        Keyboard.GetKeyboardItems
-      )
-    end
-
-    # BNC #448598
-    # License sometimes doesn't need to be manually accepted
-    def license_agreement_checkbox
-      Left(
-        CheckBox(
-          # bnc #359456
-          Id(:license_agreement),
-          Opt(:notify),
-          # TRANSLATORS: check-box
-          _("I &Agree to the License Terms."),
-          InstData.product_license_accepted
-        )
-      )
-    end
-
-    # Determines whether the license was accepted or not
+    # Handle dialog's result
     #
-    # It relies in the value of the :license_agreement widget.
-    #
-    # @return [Boolean] true if license was accepted; false otherwise.
-    def license_accepted?
-      read_ui_state
-      InstData.product_license_accepted
-    end
+    # @param value [Symbol] Dialog's return value (:next, :language_changed, etc.)
+    # @return [Symbol,nil] Client's return value. Nil if client should not
+    #   finish yet.
+    def handle_dialog_result(value)
+      case value
+      when :abort
+        return :abort if Yast::Popup.ConfirmAbort(:painless)
+        nil
 
-    # Determines whether the license is required or not
-    #
-    # @return [Boolean] true if license is required; false otherwise.
-    def license_required?
-      return @license_required unless @license_required.nil?
-      @license_required = ProductLicense.AcceptanceNeeded(@license_id.to_s)
-    end
+      when :next
+        return if Mode.config
+        return unless Language.CheckIncompleteTranslation(Language.language)
 
-    # Report error about missing license acceptance
-    def warn_license_required
-      UI.SetFocus(Id(:license_agreement))
-      Report.Message(_("You must accept the license to install this product"))
-    end
+        return if available_products? && !product_selection_finished?
 
-    def read_ui_state
-      @language = UI.QueryWidget(Id(:language), :Value)
-      @keyboard = UI.QueryWidget(Id(:keyboard), :Value)
-      InstData.product_license_accepted = UI.QueryWidget(Id(:license_agreement), :Value)
-    end
+        setup_final_choice
+        :next
 
-    def retranslate_yast
-      Console.SelectFont(@language)
-      # no yast translation for nn_NO, use nb_NO as a backup
-      # FIXME: remove the hack, please
-      if @language == "nn_NO"
-        log.info "Nynorsk not translated, using Bokm\u00E5l"
-        Language.WfmSetGivenLanguage("nb_NO")
       else
-        Language.WfmSetLanguage
+        value
       end
     end
 
-    def change_language
-      return if @language == Language.language
-
-      log.info "Language changed from #{Language.language} to #{@language}"
-      Timezone.ResetZonemap
-
-      # Set it in the Language module.
-      Language.Set(@language)
-      Language.languages = Language.RemoveSuffix(@language)
-
-      if Language.SwitchToEnglishIfNeeded(true)
-        log.debug "UI switched to en_US"
-      else
-        # Display newly translated dialog.
-        retranslate_yast
-      end
+    # Merge selected product's workflow and go to next step
+    #
+    # @see Yast::WorkflowManager.merge_product_workflow
+    def merge_and_run_workflow
+      Yast::WorkflowManager.merge_product_workflow(selected_product)
+      Yast::ProductControl.RunFrom(Yast::ProductControl.CurrentStep + 1, true)
     end
 
+    # Set up system according to user choices
     def setup_final_choice
-      Keyboard.Set(@keyboard)
-
       # Language has been set already.
       # On first run store users decision as default.
       log.info "Resetting to default language"
       Language.SetDefault
 
-      Timezone.SetTimezoneForLanguage(@language)
+      Timezone.SetTimezoneForLanguage(Language.language)
 
       if !Stage.initial && !Mode.update
         # save settings (rest is saved in LanguageWrite)
@@ -365,8 +126,8 @@ module Yast
 
       # Bugzilla #354133
       log.info "Adjusting package and text locale to #{@language}"
-      Pkg.SetPackageLocale(@language)
-      Pkg.SetTextLocale(@language)
+      Pkg.SetPackageLocale(Language.language)
+      Pkg.SetTextLocale(Language.language)
 
       # In case of normal installation, solver run will follow without this explicit call
       if Mode.live_installation && Language.PackagesModified
@@ -374,110 +135,74 @@ module Yast
         Language.PackagesInit(selected_languages)
       end
 
-      log.info "Language: '#{@language}', system encoding '#{WFM.GetEncoding}'"
+      log.info "Language: '#{Language.language}', system encoding '#{WFM.GetEncoding}'"
     end
 
-    def text_mode?
-      return @text_mode unless @text_mode.nil?
+    # Return the list of base products available
+    #
+    # In update mode, when there are more than 1 product, this method will
+    # return an empty list because the dialog will not show the license (we do
+    # not know which product we are upgrading yet) nor the product selector
+    # (as you cannot change the product during upgrade).
+    #
+    # @return [Array<Y2Packager::Product>] List of available base products;
+    # empty list in update mode.
+    def products
+      return @products if @products
 
-      @text_mode = UI.TextMode
+      @products = Y2Packager::Product.available_base_products
+      @products = [] if Mode.update && @products.size > 1
+      @products
     end
 
-    # Showing where the EULA will be installed
-    def license_location
-      file_location = ProductFeatures.GetStringFeature(
-        "globals",
-        "base_product_license_directory"
-      )
-      if file_location.nil?
-        Empty()
-      else
-        Left(
-          ReplacePoint(
-            Id(:license_location),
-            Label(
-              # TRANSLATORS: addition license information
-              # %1 is replaced with the filename. Please keep
-              # the translation VERY short.
-              _("EULA location in the installed system: %s") %
-                file_location
-            )
-          )
-        )
+    # Determine whether some product is available or not
+    #
+    # @return [Boolean] false if no product available; true otherwise
+    def available_products?
+      !products.empty?
+    end
+
+    # Convenience method to find out the selected base product
+    #
+    # @return [Y2Packager::Product] Selected base product
+    def selected_product
+      Y2Packager::Product.selected_base
+    end
+
+    # Buttons to disable according to GetInstArgs
+    #
+    # @return [Array<Symbol>] Buttons to disable (:next, :back)
+    def disable_buttons
+      [:back, :next].reject do |button|
+        GetInstArgs.argmap.fetch("enable_#{button}", true)
       end
     end
 
-    def dialog_content
-      # this type of contents will be shown only for initial installation dialog
-      VBox(
-        VWeight(1, VStretch()),
-        Left(
-          HBox(
-            HWeight(1, Left(language_selection)),
-            HSpacing(3),
-            HWeight(1, Left(keyboard_selection))
-          )
-        ),
-        Left(
-          HBox(
-            HWeight(1, HStretch()),
-            HSpacing(3),
-            HWeight(1, Left(InputField(Id(:keyboard_test), Opt(:hstretch), _("K&eyboard Test"))))
-          )
-        ),
-        VWeight(
-          30,
-          Left(
-            HSquash(
-              VBox(
-                HBox(
-                  Left(Label(Opt(:boldFont), _("License Agreement"))),
-                  HStretch()
-                ),
-                # bnc #438100
-                HSquash(
-                  MinWidth(
-                    # BNC #607135
-                    text_mode? ? 85 : 106,
-                    Left(ReplacePoint(Id(:base_license_rp), Opt(:hstretch), Empty()))
-                  )
-                ),
-                VSpacing(text_mode? ? 0.5 : 1),
-                HBox(
-                  license_location
-                ),
-                VSpacing(text_mode? ? 0.1 : 0.5),
-                MinHeight(
-                  1,
-                  HBox(
-                    # Will be replaced with license checkbox if required
-                    ReplacePoint(Id(:license_checkbox_rp), Empty()),
-                    HStretch(),
-                    PushButton(
-                      Id(:show_fulscreen_license),
-                      # TRANSLATORS: button label
-                      _("License &Translations...")
-                    )
-                  )
-                )
-              )
-            )
-          )
-        ),
-        VWeight(1, VStretch())
-      )
+    # Determine whether selected product license should be confirmed
+    #
+    # If more than 1 product exists, it is supposed to be accepted later.
+    #
+    # @return [Boolean] true if it should be accepted; false otherwise.
+    def license_confirmation_required?
+      return false if products.size > 1
+      selected_product.license_confirmation_required?
     end
 
-    def initialize_dialog
-      Wizard.SetContents(
-        _(HEADING_TEXT),
-        dialog_content,
-        help_text,
-        GetInstArgs.argmap.fetch("enable_back", true),
-        GetInstArgs.argmap.fetch("enable_next", true)
-      )
+    # Reports an error if no product is selected or if the selected product
+    # requires a license agreement and it has not been confirmed.
+    #
+    # @return [Boolean] true if a product has been selected and license
+    # agreement confirmed when required; false otherwise
+    def product_selection_finished?
+      if selected_product.nil?
+        Yast::Popup.Error(_("Please select a product to install."))
+        return false
+      elsif license_confirmation_required? && !selected_product.license_confirmed?
+        Yast::Popup.Error(_("You must accept the license to install this product"))
+        return false
+      end
 
-      initialize_widgets
+      true
     end
   end unless defined? Yast::InstComplexWelcomeClient
 end

@@ -42,8 +42,9 @@ describe ::Installation::SelectSystemRole do
     context "when some roles are defined" do
       let(:control_file_roles) do
         [
-          { "id" => "foo", "partitioning" => { "format" => true } },
-          { "id" => "bar", "software" => { "desktop" => "knome" }, "additional_dialogs" => "a,b" }
+          { "id" => "foo", "order" => "100", "partitioning" => { "format" => true } },
+          { "id" => "bar", "order" => "200",
+            "software" => { "desktop" => "knome" }, "additional_dialogs" => "a,b" }
         ]
       end
 
@@ -163,8 +164,8 @@ describe ::Installation::SelectSystemRole do
   describe "#dialog_content" do
     let(:system_roles) do # 5 lines are needed
       [
-        ::Installation::SystemRole.new(id: "role1", description: "Line 1\nLine 2"),
-        ::Installation::SystemRole.new(id: "role2", description: "Line 1")
+        ::Installation::SystemRole.new(id: "role1", order: "100", description: "Line 1\nLine 2"),
+        ::Installation::SystemRole.new(id: "role2", order: "200", description: "Line 1")
       ]
     end
 

@@ -2,7 +2,7 @@ require "yast"
 
 require "cwm/dialog"
 require "installation/widgets/product_selector"
-require "installation/product_reader"
+require "y2packager/product"
 
 Yast.import "ProductControl"
 Yast.import "WorkflowManager"
@@ -12,10 +12,6 @@ module Installation
     # The dialog is used to select from available product that can do system installation.
     # Currently it is mainly used for LeanOS that have on one media more products.
     class ProductSelection < CWM::Dialog
-      class << self
-        attr_accessor :selected_package
-      end
-
       def initialize
         textdomain "installation"
       end
@@ -25,7 +21,7 @@ module Installation
       end
 
       def products
-        ProductReader.available_base_products
+        Y2Packager::Product.available_base_products
       end
 
       def selector
@@ -41,15 +37,7 @@ module Installation
         res = super
         return res if res != :next
 
-        # remove already selected if it is not first run of dialog
-        if self.class.selected_package
-          Yast::WorkflowManager.RemoveWorkflow(:package, 0, self.class.selected_package)
-        end
-        product = selector.product
-        Yast::WorkflowManager.AddWorkflow(:package, 0, product.installation_package)
-        Yast::WorkflowManager.MergeWorkflows
-        Yast::WorkflowManager.RedrawWizardSteps
-        self.class.selected_package = product.installation_package
+        Yast::WorkflowManager.merge_product_workflow(product)
         # run new steps for product
         Yast::ProductControl.RunFrom(Yast::ProductControl.CurrentStep + 1, true)
       end

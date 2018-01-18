@@ -37,7 +37,6 @@ module Yast
       Yast.import "Language"
       Yast.import "SlideShow"
       Yast.import "ImageInstallation"
-      Yast.import "StorageClients"
       Yast.import "PackageSlideShow"
       Yast.import "Wizard"
       Yast.import "InstData"

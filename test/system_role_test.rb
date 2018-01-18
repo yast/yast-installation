@@ -10,11 +10,13 @@ describe Installation::SystemRole do
       {
         "id"       => "role_one",
         "services" => [{ "name" => "service_one" }],
-        "software" => { "desktop" => "knome" }
+        "software" => { "desktop" => "knome" },
+        "order"    => "500"
       },
       {
         "id"       => "role_two",
-        "services" => [{ "name" => "service_one" }, { "name" => "service_two" }]
+        "services" => [{ "name" => "service_one" }, { "name" => "service_two" }],
+        "order"    => "100"
       }
     ]
   end
@@ -35,7 +37,7 @@ describe Installation::SystemRole do
 
   describe ".ids" do
     it "returns a list with all the role ids declared in the control file" do
-      expect(described_class.ids).to eql(["role_one", "role_two"])
+      expect(described_class.ids).to match_array(["role_one", "role_two"])
     end
   end
 
@@ -43,6 +45,11 @@ describe Installation::SystemRole do
     it "returns an array of SystemRole objects for all the declared roles " do
       expect(described_class.all.size).to eql(2)
       expect(described_class.all.last.class).to eql(described_class)
+    end
+
+    it "returns array sorted by order" do
+      expect(described_class.all.first.id).to eql("role_two")
+      expect(described_class.all[1].id).to eql("role_one")
     end
   end
 
