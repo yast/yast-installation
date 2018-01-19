@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jan 19 14:27:55 UTC 2018 - jsrain@suse.cz
+
+- save keyboard settings before console settings (bsc#1076798)
+- 4.0.24
+
+-------------------------------------------------------------------
 Thu Jan 18 12:48:55 UTC 2018 - qzhao@suse.com
 
 - Update YaST2-Firstboot.service: Depreciate plymouth --wait, add

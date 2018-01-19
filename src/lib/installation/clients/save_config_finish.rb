@@ -138,6 +138,14 @@ module Yast
         end
 
         Progress.NextStep
+        # save keyboard settings (via systemd-firstboot) before setting console
+        # otherwise they are not written (bsc#1076798)
+        if !minimal_inst
+          # progress step title
+          Progress.Title(_("Saving keyboard configuration..."))
+          Keyboard.Save
+          Progress.NextStep
+        end
         if !Mode.update && !minimal_inst
           # progress step title
           Progress.Title(_("Saving language..."))
@@ -161,12 +169,6 @@ module Yast
             @file,
             "second_stage_language" => @lang
           )
-        end
-        if !minimal_inst
-          # progress step title
-          Progress.Title(_("Saving keyboard configuration..."))
-          Keyboard.Save
-          Progress.NextStep
         end
         # progress step title
         Progress.Title(_("Saving product information..."))
