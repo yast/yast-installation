@@ -1,9 +1,15 @@
 -------------------------------------------------------------------
+Mon Jan 22 13:00:36 UTC 2018 - igonzalezsosa@suse.com
+
+- Use a proper method to set roles features (bsc#1077038)
+- 4.0.28
+
+-------------------------------------------------------------------
 Tue Jan 30 09:30:26 UTC 2018 - lslezak@suse.cz
 
 - Reimplemented finding package upgrades to require less memory
   (related to bsc#1076768)
-- 4.0.33
+- 4.0.27
 
 -------------------------------------------------------------------
 Fri Jan 26 11:19:05 UTC 2018 - jreidinger@suse.com
