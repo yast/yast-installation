@@ -132,7 +132,7 @@ describe Installation::SystemRole do
       role = described_class.find("role_one")
 
       expect(Yast::ProductFeatures).to receive(:SetSection)
-        .with("software", { "desktop" => "knome" })
+        .with("software", "desktop" => "knome")
 
       role.overlay_features
     end
