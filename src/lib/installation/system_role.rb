@@ -208,7 +208,7 @@ module Installation
       features = self.class.raw_roles.find { |r| r["id"] == id }.dup
 
       NON_OVERLAY_ATTRIBUTES.each { |a| features.delete(a) }
-      Yast::ProductFeatures.SetOverlay(features)
+      features.each { |s, v| Yast::ProductFeatures.SetSection(s, v) }
     end
   end
 end
