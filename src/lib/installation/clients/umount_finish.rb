@@ -410,7 +410,15 @@ module Yast
     # should be set to read-only.
     #
     def root_subvol_read_only_configured?
-      ProductFeatures.GetBooleanFeature("partitioning", "root_subvolume_read_only")
+      # FIXME: this whole method should rely on Y2Storage::ProposalSettings.
+      # But right now there is no #root_subvolume_read_only method there
+
+      partitioning = ProductFeatures.GetSection("partitioning")
+      proposal = partitioning.nil? ? nil : partitioning["proposal"]
+      return false if proposal.nil?
+
+      value = proposal["root_subvolume_read_only"]
+      value == true || value.respond_to?(:casecmp?) && value.casecmp?("yes")
     end
 
     # Change /etc/fstab on the target to mount the root subvolume read-only.
