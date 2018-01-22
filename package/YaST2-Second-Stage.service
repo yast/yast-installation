@@ -3,6 +3,7 @@ Description=YaST2 Second Stage
 # If xinetd is enabled, make sure it's already running so we can stop it during
 # initialization of the VNC server
 After=apparmor.service local-fs.target plymouth-start.service
+Conflicts=plymouth-start.service
 Before=getty@tty1.service serial-getty@ttyS0.service serial-getty@ttyS1.service serial-getty@ttyS2.service
 Before=display-manager.service
 ConditionPathExists=/var/lib/YaST2/runme_at_boot
@@ -15,13 +16,7 @@ Type=oneshot
 # and envvar extensions are still loaded, /etc/sysconfig/proxy values are still
 # used correctly (see bnc#866692 and bnc#866692 for details).
 Environment=SYSTEMCTL_OPTIONS=--ignore-dependencies TERM=linux PX_MODULE_PATH=""
-# Workaround of bug in plymouth --> using deactivate option
-# in second boot stage in order to start ncurses yast correctly
-# (bnc#886488)
-# If the system starts in multi-user mode plymouth will be quit while
-# installation in order to ensure that installation will be finished on
-# console 1 and the login prompt. (bnc#903682,889757,897956)
-ExecStartPre=-/bin/sh -c 'if [ -x /usr/bin/plymouth ] ; then if [ `/usr/bin/systemctl get-default` = "multi-user.target" ];then /usr/bin/plymouth quit; else /usr/bin/plymouth deactivate --hide-splash; fi; fi'
+ExecStartPre=-/usr/bin/plymouth quit
 ExecStart=/usr/lib/YaST2/startup/YaST2.Second-Stage
 RemainAfterExit=yes
 TimeoutSec=0
