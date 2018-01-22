@@ -1,6 +1,7 @@
 [Unit]
 Description=YaST2 Firstboot
 After=apparmor.service local-fs.target plymouth-start.service YaST2-Second-Stage.service
+Conflicts=plymouth-start.service
 Before=getty@tty1.service serial-getty@ttyS0.service serial-getty@ttyS1.service serial-getty@ttyS2.service
 Before=display-manager.service
 ConditionPathExists=/var/lib/YaST2/reconfig_system
@@ -9,7 +10,6 @@ ConditionPathExists=/var/lib/YaST2/reconfig_system
 Type=oneshot
 Environment=SYSTEMCTL_OPTIONS=--ignore-dependencies TERM=linux
 ExecStartPre=-/usr/bin/plymouth quit
-ExecStartPre=-/usr/bin/plymouth --wait
 ExecStart=/usr/lib/YaST2/startup/YaST2.Firstboot
 ExecStartPost=/usr/bin/rm -f /var/lib/YaST2/reconfig_system
 ExecStartPost=/usr/bin/systemctl restart systemd-vconsole-setup.service
