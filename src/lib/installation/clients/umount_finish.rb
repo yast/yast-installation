@@ -410,7 +410,7 @@ module Yast
     # should be set to read-only.
     #
     def root_subvol_read_only_configured?
-      ProductFeatures.GetBooleanFeature("partitioning", "root_subvolume_read_only")
+      ProductFeatures.GetBooleanFeature("partitioning", "proposal", "root_subvolume_read_only")
     end
 
     # Change /etc/fstab on the target to mount the root subvolume read-only.
