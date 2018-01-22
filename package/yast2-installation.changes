@@ -1,4 +1,17 @@
 -------------------------------------------------------------------
+Mon Jan 22 15:42:35 UTC 2018 - rbrown@suse.com
+
+- use root_subvolume_read_only from libstorage-ng location
+  (boo#1077047)
+- 4.0.26
+
+-------------------------------------------------------------------
+Mon Jan 22 13:00:36 UTC 2018 - igonzalezsosa@suse.com
+
+- Use a proper method to set roles features (bsc#1077038)
+- 4.0.25
+
+-------------------------------------------------------------------
 Fri Jan 19 14:27:55 UTC 2018 - jsrain@suse.cz
 
 - save keyboard settings before console settings (bsc#1076798)
