@@ -83,35 +83,8 @@ describe Yast::UmountFinishClient do
       end
     end
 
-    context "if root_subvolume_read_only is set to 'yes' in the /partitioning/proposal section" do
-      let(:features) do
-        {
-          "partitioning" => {
-            "proposal" => { "root_subvolume_read_only" => "yes" }
-          }
-        }
-      end
-
-      it "returns true" do
-        expect(client.root_subvol_read_only_configured?).to eq true
-      end
-    end
-
-    context "if root_subvolume_read_only is set to 'YES' in the /partitioning/proposal section" do
-      let(:features) do
-        {
-          "partitioning" => {
-            "proposal" => { "root_subvolume_read_only" => "YES" }
-          }
-        }
-      end
-
-      it "returns true" do
-        expect(client.root_subvol_read_only_configured?).to eq true
-      end
-    end
-
-    context "if root_subvolume_read_only is set to another string in /partitioning/proposal section" do
+    # Validation should protect us from this, but is not always checked
+    context "if root_subvolume_read_only has a non boolean value in /partitioning/proposal section" do
       let(:features) do
         {
           "partitioning" => {

@@ -416,9 +416,7 @@ module Yast
       partitioning = ProductFeatures.GetSection("partitioning")
       proposal = partitioning.nil? ? nil : partitioning["proposal"]
       return false if proposal.nil?
-
-      value = proposal["root_subvolume_read_only"]
-      value == true || value.respond_to?(:casecmp?) && value.casecmp?("yes")
+      proposal["root_subvolume_read_only"] == true
     end
 
     # Change /etc/fstab on the target to mount the root subvolume read-only.
