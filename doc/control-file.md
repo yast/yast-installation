@@ -538,33 +538,6 @@ performed. The following options are available:
     </software>
 ```
 
--   *only\_update\_selected*
-
-    One can update (only update packages already installed) or upgrade
-    (also install new packages with new functionality). For example,
-    SLES should do "update", not "upgrade" by default
-
--   *only\_update\_selected\_reverse\_list*
-
-    Inverts the *only\_update\_selected* for products defined as list of
-    regular expressions matching installed product name (SuSE-release).
-
-```xml
-    <!--
-    Only update packages but install new packages
-    when upgrading any SUSE Linux or openSUSE
-    -->
-    <software>
-        <only_update_selected config:type="boolean">true</only_update_selected>
-        <only_update_selected_reverse_list config:type="list">
-            <regexp_item>^SUSE Linux [0-9].*</regexp_item>
-            <regexp_item>^openSUSE [0-9].*</regexp_item>
-        </only_update_selected_reverse_list>
-    </software>
-```
-
-The other option defines how product upgrading in general is defined.
-
 -   *products\_supported\_for\_upgrade*
 
     List of known products supported for upgrade (SuSE-release). Old
