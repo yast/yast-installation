@@ -1,4 +1,18 @@
 -------------------------------------------------------------------
+Fri Jan 26 11:19:05 UTC 2018 - jreidinger@suse.com
+
+- Start performing real installation with as much memory as
+  possible  (bsc#1076768)
+- 4.0.26
+
+-------------------------------------------------------------------
+Mon Jan 22 17:25:35 UTC 2018 - ancor@suse.com
+
+- Read the root_subvolume_read_only setting from its new location
+  (moved by libstorage-ng) in the control file (boo#1077047).
+- 4.0.25
+
+-------------------------------------------------------------------
 Fri Jan 19 14:27:55 UTC 2018 - jsrain@suse.cz
 
 - save keyboard settings before console settings (bsc#1076798)
@@ -18,7 +32,7 @@ Thu Jan 18 12:48:55 UTC 2018 - qzhao@suse.com
 Wed Jan 10 14:32:39 UTC 2018 - igonzalezsosa@suse.com
 
 - Fix initialization to copy the profile to /tmp/profile again
-  (bsc#1075334) 
+  (bsc#1075334)
 - 4.0.22
 
 -------------------------------------------------------------------

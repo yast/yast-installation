@@ -167,6 +167,13 @@ module Yast
 
       Builtins.y2milestone("END of inst_prepareprogress.ycp")
 
+      Builtins.y2milestone("Cleaning memory.")
+      Builtins.y2milestone("Memory before:\n#{File.read("/proc/#{Process.pid}/status")}")
+      # clean as much memory as possible before doing real installation, because some packages
+      # can have memory demanding scripts
+      GC.start
+      Builtins.y2milestone("Memory after:\n#{File.read("/proc/#{Process.pid}/status")}")
+
       @ret_val
     end
   end
