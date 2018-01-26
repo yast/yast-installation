@@ -50,6 +50,7 @@ module Installation
       Yast.import "Mode"
       Yast.import "Stage"
       Yast.import "AutoinstConfig"
+      Yast.import "AutoinstFunctions"
       Yast.import "Wizard"
       Yast.import "HTML"
       Yast.import "Popup"
@@ -78,7 +79,7 @@ module Installation
     def run
       if Yast::Mode.auto
         # Checking if second stage is needed and the environment has been setup.
-        second_stage_error = Yast::AutoinstConfig.check_second_stage_environment
+        second_stage_error = Yast::AutoinstFunctions.check_second_stage_environment
 
         if !Yast::AutoinstConfig.Confirm
           # Checking if vnc, ssh,... is available
