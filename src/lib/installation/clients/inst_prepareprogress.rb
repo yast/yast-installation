@@ -167,6 +167,10 @@ module Yast
 
       Builtins.y2milestone("END of inst_prepareprogress.ycp")
 
+      # clean as much memory as possible before doing real installation, because some packages
+      # can have memory demanding scripts
+      GC.start
+
       @ret_val
     end
   end
