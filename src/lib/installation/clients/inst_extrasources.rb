@@ -38,6 +38,8 @@ module Yast
   # Adds all sources defined in control file (software->extra_urls)
   # and stores them at the end.
   class InstExtrasourcesClient < Client
+    include Yast::Logger
+
     def main
       textdomain "installation"
 
@@ -448,28 +450,24 @@ module Yast
     # check if there is a selected package in the requested repositories
     # returns list of repositories providing an update (repo IDs)
     def UpgradesAvailable(repos)
-      repos = deep_copy(repos)
       ret = []
       packages = []
 
-      Builtins.foreach(Pkg.ResolvableProperties("", :package, "")) do |pkg|
-        source = Ops.get_integer(pkg, "source", -1)
-        if Ops.get_symbol(pkg, "status", :none) == :selected &&
-            Builtins.contains(repos, source)
-          package = Builtins.sformat(
-            "%1-%2.%3",
-            Ops.get_string(pkg, "name", ""),
-            Ops.get_string(pkg, "version", ""),
-            Ops.get_string(pkg, "arch", "")
-          )
-          Builtins.y2milestone("Found upgrade to install: %1", package)
-          packages = Builtins.add(packages, package)
+      # only package names (without version)
+      names_only = true
+      Pkg.GetPackages(:selected, names_only).each do |pkg|
+        Pkg.ResolvableProperties(pkg, :package, "").each do |p|
+          source = p["source"]
+          next unless p["status"] == :selected && repos.include?(source)
 
-          ret = Builtins.add(ret, source) if !Builtins.contains(ret, source)
+          package = "#{p["name"]}-#{p["version"]}.#{p["arch"]}"
+          log.info("Found upgrade to install: #{package}")
+          packages << package
+          ret << source unless ret.include?(source)
         end
       end
 
-      Builtins.y2milestone("Upgrades found in repositories: %1", ret)
+      log.info("Upgrades found in repositories: #{ret.inspect}")
 
       { "repositories" => ret, "packages" => packages }
     end
