@@ -131,8 +131,8 @@ describe Installation::SystemRole do
     it "overlays the product features with the ones defined in the control file for this role" do
       role = described_class.find("role_one")
 
-      expect(Yast::ProductFeatures).to receive(:SetOverlay)
-        .with("software" => { "desktop" => "knome" })
+      expect(Yast::ProductFeatures).to receive(:SetSection)
+        .with("software", "desktop" => "knome")
 
       role.overlay_features
     end
