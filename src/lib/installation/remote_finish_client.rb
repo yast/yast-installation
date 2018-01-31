@@ -76,7 +76,8 @@ module Installation
 
     # Enables remote access
     def enable_remote
-      remote.enable!
+      # Do not enable xvnc.socket. xvnc will be started by
+      # calling it in vnc.sh directly. (bnc#1077236)
       remote.write
     end
 
