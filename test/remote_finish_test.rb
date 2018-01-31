@@ -21,7 +21,7 @@ module Yast
       end
 
       it "can be called as a WFM client with 'Write'" do
-        expect_any_instance_of(::Installation::RemoteFinishClient).to receive(:enable_remote)
+        expect(remote).to receive(:write)
         expect(Yast::WFM.CallFunction("remote_finish", ["Write"])).to be_nil
       end
     end
@@ -52,13 +52,5 @@ module Yast
       end
     end
 
-    describe "#enable_remote" do
-      it "enables remote access" do
-        expect(remote).to_not receive(:enable!)
-        expect(remote).to receive(:write)
-
-        subject.enable_remote
-      end
-    end
   end
 end

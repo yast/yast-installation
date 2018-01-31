@@ -50,7 +50,7 @@ module Installation
           "when"  => modes
         }
       when "Write"
-        enable_remote
+        remote.write
       else
         log.error "unknown function: #{func}"
       end
@@ -67,18 +67,11 @@ module Installation
       _("Enabling remote administration...")
     end
 
-    # Modes in which #enable_remote should be called
+    # Modes which will be used for writing settings
     #
     # @return [Array<Symbol>]
     def modes
       Yast::Linuxrc.vnc ? [:installation, :autoinst] : []
-    end
-
-    # Enables remote access
-    def enable_remote
-      # Do not enable xvnc.socket. xvnc will be started by
-      # calling it in vnc.sh directly. (bnc#1077236)
-      remote.write
     end
 
     def remote
