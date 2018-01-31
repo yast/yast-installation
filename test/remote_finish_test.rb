@@ -54,7 +54,7 @@ module Yast
 
     describe "#enable_remote" do
       it "enables remote access" do
-        expect(remote).to receive(:enable!)
+        expect(remote).to_not receive(:enable!)
         expect(remote).to receive(:write)
 
         subject.enable_remote
