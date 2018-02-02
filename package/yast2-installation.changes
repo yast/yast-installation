@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Feb  2 15:26:05 UTC 2018 - jreidinger@suse.com
+
+- do not crash if no role is selected (bsc#1078809)
+- 4.0.30
+
+-------------------------------------------------------------------
 Fri Feb  2 12:49:34 UTC 2018 - igonzalezsosa@suse.com
 
 - Provides the current language when asking for the product's
