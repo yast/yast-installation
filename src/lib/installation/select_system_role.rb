@@ -88,7 +88,7 @@ module Installation
 
       if role_id.nil? # no role selected (bsc#1078809)
         # An Error popup
-        msg = _("No role is selected. Cannot continue until a role is selected.")
+        msg = _("Select one of the available roles to continue.")
         Yast::Popup.Error(msg)
         return
       end
