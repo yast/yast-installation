@@ -86,6 +86,13 @@ module Installation
     def next_handler
       role_id = Yast::UI.QueryWidget(Id(:roles), :CurrentButton)
 
+      if role_id.nil? # no role selected (bsc#1078809)
+        # An Error popup
+        msg = _("Select one of the available roles to continue.")
+        Yast::Popup.Error(msg)
+        return
+      end
+
       orig_role_id = self.class.original_role_id
       if !orig_role_id.nil? && orig_role_id != role_id
         # A Continue-Cancel popup
