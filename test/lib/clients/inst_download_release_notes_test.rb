@@ -9,6 +9,7 @@ describe Yast::InstDownloadReleaseNotesClient do
   describe "#main" do
     let(:sles_relnotes) { instance_double(Y2Packager::ReleaseNotes, content: "SLES RN") }
     let(:sdk_relnotes) { instance_double(Y2Packager::ReleaseNotes, content: "SDK RN") }
+    let(:language) { double("Yast::Language", language: "en_US") }
 
     let(:sles) do
       instance_double(Y2Packager::Product, short_name: "SLES", release_notes: sles_relnotes)
@@ -27,6 +28,7 @@ describe Yast::InstDownloadReleaseNotesClient do
         .and_return([sles, sdk])
       allow(Yast::Stage).to receive(:initial).and_return(true)
       allow(Yast::Packages).to receive(:init_called).and_return(packages_init_called)
+      stub_const("Yast::Language", language)
 
       Yast::InstData.main
     end
@@ -66,7 +68,7 @@ describe Yast::InstDownloadReleaseNotesClient do
       let(:textmode) { true }
 
       it "asks for :txt version" do
-        expect(sles).to receive(:release_notes).with(:txt)
+        expect(sles).to receive(:release_notes).with(language.language, :txt)
         client.main
       end
     end
@@ -75,7 +77,7 @@ describe Yast::InstDownloadReleaseNotesClient do
       let(:textmode) { false }
 
       it "asks for :rtf version" do
-        expect(sles).to receive(:release_notes).with(:rtf)
+        expect(sles).to receive(:release_notes).with(language.language, :rtf)
         client.main
       end
     end
