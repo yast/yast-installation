@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.0.28
+Version:        4.0.29
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -40,8 +40,8 @@ BuildRequires:  yast2-xml
 BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
 
-# Yast::AutoinstData.autoyast_second_stage_error
-BuildRequires: yast2 >= 4.0.27
+# Mandatory language in Product#release_notes
+BuildRequires:  yast2 >= 4.0.49
 # Yast::Packages.check_remote_installation_packages
 BuildRequires:	yast2-packager >= 4.0.9
 
@@ -49,8 +49,8 @@ BuildRequires:	yast2-packager >= 4.0.9
 BuildRequires: yast2-storage-ng >= 4.0.43
 Requires:      yast2-storage-ng >= 4.0.43
 
-# Yast::AutoinstData.autoyast_second_stage_error
-Requires:       yast2 >= 4.0.27
+# Mandatory language in Product#release_notes
+Requires:       yast2 >= 4.0.49
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)

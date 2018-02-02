@@ -36,6 +36,7 @@ Yast.import "UI"
 Yast.import "GetInstArgs"
 Yast.import "Wizard"
 Yast.import "Mode"
+Yast.import "Language"
 
 module Yast
   # Client to download and manage release notes button
@@ -52,7 +53,7 @@ module Yast
       format = UI.TextMode ? :txt : :rtf
 
       relnotes_map = products.each_with_object({}) do |product, all|
-        relnotes = product.release_notes(format)
+        relnotes = product.release_notes(Yast::Language.language, format)
         if relnotes.nil?
           log.info "No release notes were found for product #{product.short_name}"
           next
