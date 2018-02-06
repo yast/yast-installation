@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Feb  6 12:24:34 CET 2018 - schubi@suse.de
+
+- Added requirement iproute2 to spec file. This is needed by
+  the VNC AutoYaST installation in the second stage.
+  (Follow up of bnc#1077236)
+- 4.0.31
+
+-------------------------------------------------------------------
 Fri Feb  2 15:26:05 UTC 2018 - jreidinger@suse.com
 
 - do not crash if no role is selected (bsc#1078809)

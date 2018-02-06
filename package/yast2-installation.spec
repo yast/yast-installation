@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.0.30
+Version:        4.0.31
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -135,6 +135,9 @@ Requires:	coreutils
 
 # BNC 446533, /sbin/lspci called but not installed
 Requires:	pciutils
+
+# Needed call /sbin/ip in vnc.sh/network.sh
+Requires:	iproute2
 
 # install the registration module only in SLE (bsc#1043122)
 %if !0%{?is_opensuse}
