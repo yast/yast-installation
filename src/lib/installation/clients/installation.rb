@@ -48,8 +48,8 @@ module Yast
       Hooks.search_path.join!("installation")
 
       # Initialize the UI
-      UI.SetProductLogo(true)
-      Wizard.OpenLeftTitleNextBackDialog
+      UI.SetProductLogo(false)
+      Wizard.OpenNextBackStepsDialog
 
       Wizard.SetContents(
         # title
