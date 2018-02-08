@@ -186,42 +186,6 @@ function disable_splash () {
 	[ -f /proc/splash ] && echo "verbose" > /proc/splash
 }
 
-#----[ stop_xinetd ]-----#
-function stop_xinetd () {
-#--------------------------------------------------
-# stop xinetd since its default configuration collides
-# with the Xvnc server used for VNC installation
-# ---
-	systemctl stop xinetd.service >/dev/null 2>&1
-}
-
-#----[ is_xinetd_enabled ]-----#
-function is_xinetd_enabled () {
-# return 0 if xinetd is enabled
-# ---
-	systemctl --quiet is-enabled xinetd.service >/dev/null 2>&1
-	return $?
-}
-
-#----[ is_xinetd_active ]-----#
-function is_xinetd_active () {
-# return 0 if xinetd is currently running
-# ---
-	systemctl --quiet is-active xinetd.service >/dev/null 2>&1
-	return $?
-}
-
-#----[ restore_xinetd ]-----#
-function restore_xinetd () {
-#--------------------------------------------------
-# start xinetd again if it is enabled, once the Xvnc
-# server already owns its port
-# ---
-	if is_xinetd_enabled; then
-		systemctl start xinetd.service
-	fi
-}
-
 #----[ have_pid ]----#
 function have_pid () {
 #------------------------------------------------------

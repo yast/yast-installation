@@ -10,13 +10,11 @@ if test ! -z "$SPID" ; then
 	log "\tkill console with PID: $SPID"
 	kill -KILL $SPID >/dev/null 2>&1
 fi
-# 13.2) kill VNC server, VNC passwd and allow
-#       xinetd to control de VNC port again
+# 13.2) kill VNC server, VNC passwd
 if [ ! -z "$VNC" ] && [ "$VNC" -eq 1 ] ; then
 	log "\tkill all VNC sessions..."
 	killall Xvnc >/dev/null 2>&1
 	rm -fv /root/.vnc/passwd.yast
-	systemctl reload xinetd.service >/dev/null 2>&1
 fi
 # 13.3) stop network and sshd
 if [ "$Y2_NETWORK_ACTIVE" -ne 0 ] ; then
