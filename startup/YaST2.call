@@ -165,24 +165,9 @@ function prepare_for_vnc () {
 	if [ $VNCPASS_EXCEPTION = 0 ];then
 		disable_splash
 		displayVNCMessage
-		stop_xinetd
+		stop_xvnc
 		startVNCServer
 		wait_for_x11
-		if is_xinetd_active; then
-			# xinetd shouldn't be running since we stopped it right
-			# before starting VNC. But there is still one small
-			# chance that xinetd was started by the systemd boot
-			# sequence during VNC startup. If it's running we cannot
-			# be sure that our VNC got the ports, so retry.
-			#
-			# Using systemd dependencies to ensure the correct order
-			# looks nicer, but is fragile (bnc#931643, bnc#947521).
-			killall Xvnc >/dev/null 2>&1
-			stop_xinetd
-			startVNCServer
-			wait_for_x11
-		fi
-		restore_xinetd
 		if [ "$server_running" = 1 ];then
 			log "\tXvnc-Server is ready: $xserver_pid"
 		fi

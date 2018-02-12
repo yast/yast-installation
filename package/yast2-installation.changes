@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Thu Feb  8 13:55:21 UTC 2018 - knut.anderssen@suse.com
+
+- Startup scripts: Replaced xinetd by xvnc.socket (fate#323373)
+- Revert changes added in 4.0.29 bringing back the enablement of
+  the xvnc.socket during the first stage if Linuxrc.vnc is set.
+  (bnc#1077236)
+- 4.0.32
+
+-------------------------------------------------------------------
 Tue Feb  6 12:24:34 CET 2018 - schubi@suse.de
 
 - Added requirement iproute2 to spec file. This is needed by
