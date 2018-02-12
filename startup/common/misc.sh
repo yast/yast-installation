@@ -193,6 +193,8 @@ function stop_xvnc () {
 # with the Xvnc server used for VNC installation
 # ---
 	systemctl stop xvnc.socket >/dev/null 2>&1
+# stop also running instances of xvnc to allow start our own
+        systemctl stop xvnc@* >/dev/null 2>&1
 }
 
 #----[ is_xvnc_enabled ]-----#
