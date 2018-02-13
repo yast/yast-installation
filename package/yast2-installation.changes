@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Feb 13 12:53:44 UTC 2018 - jreidinger@suse.com
+
+- Ensure previous role is clear when doing desktop selection
+  (bsc#1078961)
+- 4.0.33
+
+-------------------------------------------------------------------
 Thu Feb  8 13:55:21 UTC 2018 - knut.anderssen@suse.com
 
 - Startup scripts: Replaced xinetd by xvnc.socket (fate#323373)
