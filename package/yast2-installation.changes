@@ -1,8 +1,8 @@
 -------------------------------------------------------------------
 Tue Feb 13 12:53:44 UTC 2018 - jreidinger@suse.com
 
-- Ensure previous role is clear when doing desktop selection
-  (bsc#1078961)
+- Ensure previous role selection is cleared when doing desktop
+  selection (bsc#1078961)
 - 4.0.33
 
 -------------------------------------------------------------------
