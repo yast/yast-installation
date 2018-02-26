@@ -130,7 +130,7 @@ module Yast
 
           if Popup.ConfirmAbort(:painless)
             Builtins.y2warning("User decided to abort the installation")
-            next :abort
+            return :abort
           end
         end
 
