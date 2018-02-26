@@ -68,8 +68,6 @@ module Yast
       # always return `back when came from the previous dialog
       return :back if GetInstArgs.going_back
 
-      @found_controllers = true
-
       @packager_initialized = false
 
       Wizard.SetContents(_("Analyzing the Computer"), Empty(), "", false, false)
@@ -197,37 +195,23 @@ module Yast
       end
 
       if devicegraph.empty?
-        if @found_controllers || Arch.s390
-          if !(Mode.autoinst || Mode.autoupgrade)
-            # pop-up error report
-            Report.Error(
-              Builtins.sformat(
-                _(
-                  "No hard disks were found for the installation.\n" \
-                    "Please check your hardware!\n" \
-                    "%1\n"
-                ),
-                drivers_info
-              )
+        if Mode.auto
+          Report.Warning(
+            # TRANSLATORS: Error pop-up
+            _(
+              "No hard disks were found for the installation.\n" \
+              "During an automatic installation, they might be detected later.\n" \
+              "(especially on S/390 or iSCSI systems)\n"
             )
-          else
-            Report.Warning(
-              _(
-                "No hard disks were found for the installation.\n" \
-                  "During an automatic installation, they might be detected later.\n" \
-                  "(especially on S/390 or iSCSI systems)\n"
-              )
-            )
-          end
+          )
         else
-          # pop-up error report
           Report.Error(
             Builtins.sformat(
+              # TRANSLATORS: Error pop-up
               _(
-                "No hard disks and no hard disk controllers were\n" \
-                  "found for the installation.\n" \
-                  "Check your hardware.\n" \
-                  "%1\n"
+                "No hard disks were found for the installation.\n" \
+                "Please check your hardware!\n" \
+                "%1\n"
               ),
               drivers_info
             )
