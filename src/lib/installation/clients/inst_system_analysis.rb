@@ -50,13 +50,6 @@ module Yast
       Yast.import "ProductFeatures"
       Yast.import "Progress"
       Yast.import "Report"
-# storage-ng
-# rubocop:disable Style/BlockComments
-=begin
-      Yast.import "Storage"
-      Yast.import "StorageControllers"
-      Yast.import "StorageDevices"
-=end
       Yast.import "Wizard"
       Yast.import "PackageCallbacks"
 
@@ -67,10 +60,6 @@ module Yast
       # This dialog in not interactive
       # always return `back when came from the previous dialog
       if GetInstArgs.going_back
-# storage-ng
-=begin
-        Storage.ActivateHld(false)
-=end
         return :back
       end
 
@@ -104,27 +93,7 @@ module Yast
           actions_todo      << _("Probe FireWire devices")
           actions_doing     << _("Probing FireWire devices...")
           actions_functions << fun_ref(method(:ActionFireWire), "boolean ()")
-
-# storage-ng
-=begin
-          actions_todo      << _("Probe floppy disk devices")
-          actions_doing     << _("Probing floppy disk devices...")
-          actions_functions << fun_ref(method(:ActionFloppyDisks), "boolean ()")
-=end
         end
-
-# storage-ng
-# As soon as we introduce support for RAID or multipath, we'll need to replace
-# StorageController with a new OOP way of probing and loading controllers
-=begin
-        actions_todo      << _("Probe hard disk controllers")
-        actions_doing     << _("Probing hard disk controllers...")
-        actions_functions << fun_ref(method(:ActionHHDControllers), "boolean ()")
-
-        actions_todo      << _("Load kernel modules for hard disk controllers")
-        actions_doing     << _("Loading kernel modules for hard disk controllers...")
-        actions_functions << fun_ref(method(:ActionLoadModules), "boolean ()")
-=end
 
         WFM.CallFunction("inst_features", [])
       end
@@ -200,43 +169,6 @@ module Yast
     # --------------------------------------------------------------
     def ActionFireWire
       Hotplug.StartFireWire
-
-      true
-    end
-
-    # --------------------------------------------------------------
-    #				    Floppy
-    # --------------------------------------------------------------
-    def ActionFloppyDisks
-      StorageDevices.FloppyReady
-
-      true
-    end
-
-    # --------------------------------------------------------------
-    #			     Hard disk controllers
-    # 1. Probe
-    # 2. Initialize (module loading)
-    # --------------------------------------------------------------
-    # In live_eval mode, all modules have been loaded by linuxrc. But
-    # they are loaded by StorageControllers::Initialize(). Well, there
-    # also was another reason for skipping StorageControllers::Probe ()
-    # but nobody seems to remember more.
-    # --------------------------------------------------------------
-    def ActionHHDControllers
-      @found_controllers = Ops.greater_than(StorageControllers.Probe, 0)
-
-      true
-    end
-
-    # --------------------------------------------------------------
-    # Don't abort or even warn if no storage controllers can be
-    # found.  Disks might be detected even without proper knowledge
-    # about the controller.  There's a warning below if no disks were
-    # found.
-    # --------------------------------------------------------------
-    def ActionLoadModules
-      StorageControllers.Initialize
 
       true
     end
