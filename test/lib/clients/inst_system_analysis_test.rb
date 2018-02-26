@@ -31,6 +31,8 @@ describe Yast::InstSystemAnalysisClient do
 
     let(:devicegraph) { instance_double(Y2Storage::Devicegraph, empty?: false) }
     let(:auto) { false }
+    let(:activate_result) { true }
+    let(:probe_result) { true }
 
     before do
       allow(client).to receive(:require).with("autoinstall/activate_callbacks")
@@ -38,11 +40,13 @@ describe Yast::InstSystemAnalysisClient do
 
     before do
       allow(Y2Storage::StorageManager).to receive(:instance).and_return(storage)
+      allow(storage).to receive(:activate).and_return activate_result
+      allow(storage).to receive(:probe).and_return probe_result
       allow(Yast::Mode).to receive(:auto).and_return(auto)
     end
 
     it "uses default activation callbacks" do
-      expect(storage).to receive(:activate).with(nil)
+      expect(storage).to receive(:activate).with(nil).and_return true
       client.ActionHDDProbe
     end
 
@@ -54,8 +58,27 @@ describe Yast::InstSystemAnalysisClient do
       before { stub_const("Y2Autoinstallation::ActivateCallbacks", callbacks_class) }
 
       it "uses AutoYaST activation callbacks" do
-        expect(storage).to receive(:activate).with(callbacks)
+        expect(storage).to receive(:activate).with(callbacks).and_return true
         client.ActionHDDProbe
+      end
+    end
+
+    context "when activation fails and the error is not recovered" do
+      let(:activate_result) { false }
+
+      it "does not probe and raises AbortedByUserError" do
+        expect(storage).to_not receive(:probe)
+        expect { client.ActionHDDProbe }
+          .to raise_error Yast::InstSystemAnalysisClient::AbortError
+      end
+    end
+
+    context "when probing fails and the error is not recovered" do
+      let(:probe_result) { false }
+
+      it "raises AbortedByUserError" do
+        expect { client.ActionHDDProbe }
+          .to raise_error Yast::InstSystemAnalysisClient::AbortError
       end
     end
   end

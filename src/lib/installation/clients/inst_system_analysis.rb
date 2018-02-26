@@ -30,6 +30,13 @@ require "y2storage"
 
 module Yast
   class InstSystemAnalysisClient < Client
+    include Yast::Logger
+
+    # Custom exception class to indicate the user (or the AutoYaST profile)
+    # decided to abort the installation due to a libstorage-ng error
+    class AbortError < RuntimeError
+    end
+
     def main
       Yast.import "UI"
 
@@ -134,8 +141,13 @@ module Yast
           end
         end
 
-        ret = run_function.call
-        Builtins.y2milestone("Function %1 returned %2", run_function, ret)
+        begin
+          ret = run_function.call
+          Builtins.y2milestone("Function %1 returned %2", run_function, ret)
+        rescue AbortError
+          return :abort
+        end
+
         # Return in case of restart is needed
         return ret if ret == :restart_yast
       end
@@ -153,36 +165,27 @@ module Yast
 
     # Function definitions -->
 
-    # --------------------------------------------------------------
-    #				      USB
-    # --------------------------------------------------------------
+    #	USB initialization
     def ActionUSB
       Hotplug.StartUSB
 
       true
     end
 
-    # --------------------------------------------------------------
-    #				FireWire (ieee1394)
-    # --------------------------------------------------------------
+    # FireWire (ieee1394) initialization
     def ActionFireWire
       Hotplug.StartFireWire
 
       true
     end
 
-    # --------------------------------------------------------------
-    #				  Hard disks
-    # --------------------------------------------------------------
+    #	Hard disks initialization
+    #
+    # @raise [AbortError] if an error is found and the installation must
+    #   be aborted because of such error
     def ActionHDDProbe
-      storage = Y2Storage::StorageManager.instance
-      # Activate high level devices (RAID, multipath, LVM, encryption...)
-      # and (re)probe. Reprobing ensures we don't bring bug#806454 back and
-      # invalidates cached proposal, so we are also safe from bug#865579.
-      storage.activate(activate_callbacks)
-      storage.probe
-
-      devicegraph = storage.probed
+      init_storage
+      devicegraph = storage_manager.probed
 
       # additonal error when HW was not found
       drivers_info = _(
@@ -277,6 +280,8 @@ module Yast
       true
     end
 
+  private
+
     # Return the activate callbacks for libstorage-ng
     #
     # When running AutoYaST, it will use a different set of callbacks.
@@ -288,6 +293,28 @@ module Yast
     def activate_callbacks
       return nil unless Mode.auto
       Y2Autoinstallation::ActivateCallbacks.new
+    end
+
+    # Activates high level devices (RAID, multipath, LVM, encryption...)
+    # and (re)probes
+    #
+    # Reprobing ensures we don't bring bug#806454 back and invalidates cached
+    # proposal, so we are also safe from bug#865579.
+    #
+    # @raise [AbortError] if an error is found and the installation must
+    #   be aborted because of such error
+    def init_storage
+      success = storage_manager.activate(activate_callbacks)
+      success &&= storage_manager.probe
+      return if success
+
+      log.info "A storage error was raised and the installation must be aborted."
+      raise AbortError, "User aborted"
+    end
+
+    # @return [Y2Storage::StorageManager]
+    def storage_manager
+      @storage_manager ||= Y2Storage::StorageManager.instance
     end
   end
 end
