@@ -59,9 +59,7 @@ module Yast
 
       # This dialog in not interactive
       # always return `back when came from the previous dialog
-      if GetInstArgs.going_back
-        return :back
-      end
+      return :back if GetInstArgs.going_back
 
       @found_controllers = true
 
