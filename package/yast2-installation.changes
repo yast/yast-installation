@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Tue Feb 27 01:41:17 UTC 2018 - ancor@suse.com
+
+- More gentle handling of aborts caused by hardware probing errors
+  (bsc#1079228, bsc#1079817, bsc#1063059, bsc#1080554, bsc#1076776,
+  bsc#1070459 and some others).
+- Re-enable the old fix for bsc#298049 (abort button during ongoing
+  hardware probing).
+- Cleanup of dead code
+- 4.0.44
+
+-------------------------------------------------------------------
 Tue Feb 13 12:53:44 UTC 2018 - jreidinger@suse.com
 
 - Ensure previous role selection is cleared when doing desktop
