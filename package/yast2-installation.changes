@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Feb 27 14:12:10 UTC 2018 - igonzalezsosa@suse.com
+
+- Do not block autoinstallation when local disk controllers are
+  not found (bsc#1082854).
+- 3.2.51
+
+-------------------------------------------------------------------
 Thu Jan 18 13:27:26 UTC 2018 - qzhao@suse.com
 
 - Update YaST2-Firstboot.service: Depreciate plymouth --wait, add
