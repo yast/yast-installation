@@ -239,7 +239,7 @@ module Yast
 
       if Builtins.size(targetMap) == 0
         if @found_controllers || Arch.s390
-          if !(Mode.autoinst || Mode.autoupgrade)
+          if !Mode.auto
             # pop-up error report
             Report.Error(
               Builtins.sformat(
@@ -261,18 +261,33 @@ module Yast
             )
           end
         else
-          # pop-up error report
-          Report.Error(
-            Builtins.sformat(
-              _(
-                "No hard disks and no hard disk controllers were\n" \
+          if !Mode.auto
+            # pop-up error report
+            Report.Error(
+              Builtins.sformat(
+                _(
+                  "No hard disks and no hard disk controllers were\n" \
                   "found for the installation.\n" \
                   "Check your hardware.\n" \
                   "%1\n"
-              ),
-              drivers_info
+                ),
+                drivers_info
+              )
             )
-          )
+          else
+            # pop-up warning report
+            Report.Warning(
+              Builtins.sformat(
+                _(
+                  "No local hard disks and no local hard disk controllers were\n" \
+                  "found for the installation.\n" \
+                  "During an automatic installation, they might be detected later.\n" \
+                  "%1\n"
+                ),
+                drivers_info
+              )
+            )
+          end
         end
 
         return false
