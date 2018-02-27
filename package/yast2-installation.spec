@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.0.33
+Version:        4.0.34
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -45,9 +45,9 @@ BuildRequires:  yast2 >= 4.0.49
 # Yast::Packages.check_remote_installation_packages
 BuildRequires:	yast2-packager >= 4.0.9
 
-# Y2Storage::StorageManager#activate accepts an argument
-BuildRequires: yast2-storage-ng >= 4.0.43
-Requires:      yast2-storage-ng >= 4.0.43
+# Y2Storage::StorageManager#activate and #probe as boolean
+BuildRequires: yast2-storage-ng >= 4.0.114
+Requires:      yast2-storage-ng >= 4.0.114
 
 # Mandatory language in Product#release_notes
 Requires:       yast2 >= 4.0.49
@@ -64,11 +64,6 @@ Conflicts:	yast2-mouse < 2.18.0
 
 # Yast::Packages.check_remote_installation_packages
 Requires:	yast2-packager >= 4.0.9
-
-# FIXME: some code present in this package still depends on the old yast2-storage
-# and will break without this dependency. That's acceptable at this point of the
-# migration to storage-ng. See installer-hacks.md in the yast-storage-ng repo.
-# Requires:  yast2-storage >= 2.24.1
 
 # use in startup scripts
 Requires:	initviocons

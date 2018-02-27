@@ -30,6 +30,13 @@ require "y2storage"
 
 module Yast
   class InstSystemAnalysisClient < Client
+    include Yast::Logger
+
+    # Custom exception class to indicate the user (or the AutoYaST profile)
+    # decided to abort the installation due to a libstorage-ng error
+    class AbortError < RuntimeError
+    end
+
     def main
       Yast.import "UI"
 
@@ -50,13 +57,6 @@ module Yast
       Yast.import "ProductFeatures"
       Yast.import "Progress"
       Yast.import "Report"
-# storage-ng
-# rubocop:disable Style/BlockComments
-=begin
-      Yast.import "Storage"
-      Yast.import "StorageControllers"
-      Yast.import "StorageDevices"
-=end
       Yast.import "Wizard"
       Yast.import "PackageCallbacks"
 
@@ -66,15 +66,7 @@ module Yast
 
       # This dialog in not interactive
       # always return `back when came from the previous dialog
-      if GetInstArgs.going_back
-# storage-ng
-=begin
-        Storage.ActivateHld(false)
-=end
-        return :back
-      end
-
-      @found_controllers = true
+      return :back if GetInstArgs.going_back
 
       @packager_initialized = false
 
@@ -104,27 +96,7 @@ module Yast
           actions_todo      << _("Probe FireWire devices")
           actions_doing     << _("Probing FireWire devices...")
           actions_functions << fun_ref(method(:ActionFireWire), "boolean ()")
-
-# storage-ng
-=begin
-          actions_todo      << _("Probe floppy disk devices")
-          actions_doing     << _("Probing floppy disk devices...")
-          actions_functions << fun_ref(method(:ActionFloppyDisks), "boolean ()")
-=end
         end
-
-# storage-ng
-# As soon as we introduce support for RAID or multipath, we'll need to replace
-# StorageController with a new OOP way of probing and loading controllers
-=begin
-        actions_todo      << _("Probe hard disk controllers")
-        actions_doing     << _("Probing hard disk controllers...")
-        actions_functions << fun_ref(method(:ActionHHDControllers), "boolean ()")
-
-        actions_todo      << _("Load kernel modules for hard disk controllers")
-        actions_doing     << _("Loading kernel modules for hard disk controllers...")
-        actions_functions << fun_ref(method(:ActionLoadModules), "boolean ()")
-=end
 
         WFM.CallFunction("inst_features", [])
       end
@@ -163,12 +135,17 @@ module Yast
 
           if Popup.ConfirmAbort(:painless)
             Builtins.y2warning("User decided to abort the installation")
-            next :abort
+            return :abort
           end
         end
 
-        ret = run_function.call
-        Builtins.y2milestone("Function %1 returned %2", run_function, ret)
+        begin
+          ret = run_function.call
+          Builtins.y2milestone("Function %1 returned %2", run_function, ret)
+        rescue AbortError
+          return :abort
+        end
+
         # Return in case of restart is needed
         return ret if ret == :restart_yast
       end
@@ -186,73 +163,27 @@ module Yast
 
     # Function definitions -->
 
-    # --------------------------------------------------------------
-    #				      USB
-    # --------------------------------------------------------------
+    #	USB initialization
     def ActionUSB
       Hotplug.StartUSB
 
       true
     end
 
-    # --------------------------------------------------------------
-    #				FireWire (ieee1394)
-    # --------------------------------------------------------------
+    # FireWire (ieee1394) initialization
     def ActionFireWire
       Hotplug.StartFireWire
 
       true
     end
 
-    # --------------------------------------------------------------
-    #				    Floppy
-    # --------------------------------------------------------------
-    def ActionFloppyDisks
-      StorageDevices.FloppyReady
-
-      true
-    end
-
-    # --------------------------------------------------------------
-    #			     Hard disk controllers
-    # 1. Probe
-    # 2. Initialize (module loading)
-    # --------------------------------------------------------------
-    # In live_eval mode, all modules have been loaded by linuxrc. But
-    # they are loaded by StorageControllers::Initialize(). Well, there
-    # also was another reason for skipping StorageControllers::Probe ()
-    # but nobody seems to remember more.
-    # --------------------------------------------------------------
-    def ActionHHDControllers
-      @found_controllers = Ops.greater_than(StorageControllers.Probe, 0)
-
-      true
-    end
-
-    # --------------------------------------------------------------
-    # Don't abort or even warn if no storage controllers can be
-    # found.  Disks might be detected even without proper knowledge
-    # about the controller.  There's a warning below if no disks were
-    # found.
-    # --------------------------------------------------------------
-    def ActionLoadModules
-      StorageControllers.Initialize
-
-      true
-    end
-
-    # --------------------------------------------------------------
-    #				  Hard disks
-    # --------------------------------------------------------------
+    #	Hard disks initialization
+    #
+    # @raise [AbortError] if an error is found and the installation must
+    #   be aborted because of such error
     def ActionHDDProbe
-      storage = Y2Storage::StorageManager.instance
-      # Activate high level devices (RAID, multipath, LVM, encryption...)
-      # and (re)probe. Reprobing ensures we don't bring bug#806454 back and
-      # invalidates cached proposal, so we are also safe from bug#865579.
-      storage.activate(activate_callbacks)
-      storage.probe
-
-      devicegraph = storage.probed
+      init_storage
+      devicegraph = storage_manager.probed
 
       # additonal error when HW was not found
       drivers_info = _(
@@ -264,37 +195,23 @@ module Yast
       end
 
       if devicegraph.empty?
-        if @found_controllers || Arch.s390
-          if !(Mode.autoinst || Mode.autoupgrade)
-            # pop-up error report
-            Report.Error(
-              Builtins.sformat(
-                _(
-                  "No hard disks were found for the installation.\n" \
-                    "Please check your hardware!\n" \
-                    "%1\n"
-                ),
-                drivers_info
-              )
+        if Mode.auto
+          Report.Warning(
+            # TRANSLATORS: Error pop-up
+            _(
+              "No hard disks were found for the installation.\n" \
+              "During an automatic installation, they might be detected later.\n" \
+              "(especially on S/390 or iSCSI systems)\n"
             )
-          else
-            Report.Warning(
-              _(
-                "No hard disks were found for the installation.\n" \
-                  "During an automatic installation, they might be detected later.\n" \
-                  "(especially on S/390 or iSCSI systems)\n"
-              )
-            )
-          end
+          )
         else
-          # pop-up error report
           Report.Error(
             Builtins.sformat(
+              # TRANSLATORS: Error pop-up
               _(
-                "No hard disks and no hard disk controllers were\n" \
-                  "found for the installation.\n" \
-                  "Check your hardware.\n" \
-                  "%1\n"
+                "No hard disks were found for the installation.\n" \
+                "Please check your hardware!\n" \
+                "%1\n"
               ),
               drivers_info
             )
@@ -347,6 +264,8 @@ module Yast
       true
     end
 
+  private
+
     # Return the activate callbacks for libstorage-ng
     #
     # When running AutoYaST, it will use a different set of callbacks.
@@ -358,6 +277,28 @@ module Yast
     def activate_callbacks
       return nil unless Mode.auto
       Y2Autoinstallation::ActivateCallbacks.new
+    end
+
+    # Activates high level devices (RAID, multipath, LVM, encryption...)
+    # and (re)probes
+    #
+    # Reprobing ensures we don't bring bug#806454 back and invalidates cached
+    # proposal, so we are also safe from bug#865579.
+    #
+    # @raise [AbortError] if an error is found and the installation must
+    #   be aborted because of such error
+    def init_storage
+      success = storage_manager.activate(activate_callbacks)
+      success &&= storage_manager.probe
+      return if success
+
+      log.info "A storage error was raised and the installation must be aborted."
+      raise AbortError, "User aborted"
+    end
+
+    # @return [Y2Storage::StorageManager]
+    def storage_manager
+      @storage_manager ||= Y2Storage::StorageManager.instance
     end
   end
 end
