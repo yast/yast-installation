@@ -244,7 +244,7 @@ module Yast
             Report.Error(
               Builtins.sformat(
                 _(
-                  "No hard disks were found for the installation.\n" \
+                  "No local hard disks were found for the installation.\n" \
                     "Please check your hardware!\n" \
                     "%1\n"
                 ),
@@ -254,7 +254,7 @@ module Yast
           else
             Report.Warning(
               _(
-                "No hard disks were found for the installation.\n" \
+                "No local hard disks were found for the installation.\n" \
                   "During an automatic installation, they might be detected later.\n" \
                   "(especially on S/390 or iSCSI systems)\n"
               )
@@ -266,7 +266,7 @@ module Yast
             Report.Error(
               Builtins.sformat(
                 _(
-                  "No hard disks and no hard disk controllers were\n" \
+                  "No local hard disks and no hard disk controllers were\n" \
                   "found for the installation.\n" \
                   "Check your hardware.\n" \
                   "%1\n"
@@ -279,7 +279,7 @@ module Yast
             Report.Warning(
               Builtins.sformat(
                 _(
-                  "No local hard disks and no local hard disk controllers were\n" \
+                  "No local hard disks and no hard disk controllers were\n" \
                   "found for the installation.\n" \
                   "During an automatic installation, they might be detected later.\n" \
                   "%1\n"
