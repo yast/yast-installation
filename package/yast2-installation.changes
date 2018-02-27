@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Feb 27 12:23:03 UTC 2018 - jreidinger@suse.com
+
+- fix marking texts for translation (bsc#1081361, bsc#1083015)
+- 4.0.35
+
+-------------------------------------------------------------------
 Tue Feb 27 01:41:17 UTC 2018 - ancor@suse.com
 
 - More gentle handling of aborts caused by hardware probing errors
