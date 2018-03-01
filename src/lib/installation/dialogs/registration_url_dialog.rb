@@ -24,8 +24,9 @@ require "installation/dialogs/url_dialog"
 
 module Installation
   class RegistrationURLDialog < ::Installation::URLDialog
-    def initialize
+    def initialize(*args)
       textdomain "installation"
+      super
     end
 
     def help_text
