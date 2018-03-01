@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar  1 14:48:45 UTC 2018 - shundhammer@suse.com
+
+- Pass args to parent class constructor (bsc#1083500)
+- 4.0.36
+
+-------------------------------------------------------------------
 Tue Feb 27 12:23:03 UTC 2018 - jreidinger@suse.com
 
 - fix marking texts for translation (bsc#1081361, bsc#1083015)
