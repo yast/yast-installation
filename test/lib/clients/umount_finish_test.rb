@@ -3,98 +3,66 @@
 require_relative "../../test_helper"
 require "installation/clients/umount_finish"
 
-Yast.import "ProductFeatures"
-
 describe Yast::UmountFinishClient do
   subject(:client) { described_class.new }
 
-  describe "root_subvol_read_only_configured?" do
+  DEFAULT_SUBVOLUME = "@/.snapshots/1/snapshot".freeze
+
+  describe "#set_btrfs_defaults_as_ro" do
     before do
-      Yast::ProductFeatures.Import(features)
+      allow(Y2Storage::VolumeSpecification).to receive(:for)
+        .and_return(root_spec)
+      allow(Yast::Execute).to receive(:on_target)
+        .with("btrfs", "subvolume", "get-default", "/", anything)
+        .and_return("ID 276 gen 1172 top level 275 path @/.snapshots/1/snapshot\n")
+      allow(Y2Storage::StorageManager.instance).to receive(:staging).and_return(devicegraph)
     end
 
-    after do
-      # Reset the product features to its default values after
-      # fiddling with then
-      Yast::ProductFeatures.Import({})
+    let(:devicegraph) do
+      instance_double(Y2Storage::Devicegraph, filesystems: [root_fs])
     end
 
-    context "if there is no /partitioning section in the product features" do
-      let(:features) { {} }
-
-      it "returns false" do
-        expect(client.root_subvol_read_only_configured?).to eq false
-      end
+    let(:root_fs) do
+      instance_double(
+        Y2Storage::Filesystems::Btrfs,
+        is?:           true,
+        mount_point:   mount_point,
+        mount_options: mount_options
+      )
     end
 
-    context "if there is no /partitioning/proposal section in the product features" do
-      let(:features) { { "partitioning" => {} } }
+    let(:mount_point) { instance_double(Y2Storage::MountPoint, path: "/") }
+    let(:mount_options) { ["ro"] }
 
-      it "returns false" do
-        expect(client.root_subvol_read_only_configured?).to eq false
-      end
+    let(:root_spec) do
+      instance_double(Y2Storage::VolumeSpecification, btrfs_default_subvolume: "@")
     end
 
-    context "if root_subvolume_read_only is not set in /partitioning/proposal" do
-      let(:features) do
-        { "partitioning" => { "proposal" => {} } }
-      end
-
-      it "returns false" do
-        expect(client.root_subvol_read_only_configured?).to eq false
-      end
-    end
-
-    context "if root_subvolume_read_only is set directly in the /partitioning section" do
-      let(:features) do
-        { "partitioning" => { "root_subvolume_read_only" => true } }
-      end
-
-      it "returns false" do
-        expect(client.root_subvol_read_only_configured?).to eq false
+    context "when a Btrfs filesystem is mounted as read-only" do
+      it "sets 'ro' property to true on the default subvolume" do
+        expect(Yast::Execute).to receive(:on_target)
+          .with("btrfs", "property", "set", ".snapshots/1/snapshot", "ro", "true")
+        client.set_btrfs_defaults_as_ro
       end
     end
 
-    context "if root_subvolume_read_only is set to true in the /partitioning/proposal section" do
-      let(:features) do
-        {
-          "partitioning" => {
-            "proposal" => { "root_subvolume_read_only" => true }
-          }
-        }
-      end
+    context "when a non-Btrfs filesystem is mounted" do
+      let(:root_fs) { instance_double(Y2Storage::Filesystems::Base, is?: false) }
 
-      it "returns true" do
-        expect(client.root_subvol_read_only_configured?).to eq true
+      it "does not try to set 'ro' property for that filesystem" do
+        expect(Yast::Execute).to_not receive(:on_target)
+          .with("btrfs", "property", "set", any_args)
+        client.set_btrfs_defaults_as_ro
       end
     end
 
-    context "if root_subvolume_read_only is set to false in /partitioning/proposal section" do
-      let(:features) do
-        {
-          "partitioning" => {
-            "proposal" => { "root_subvolume_read_only" => false }
-          }
-        }
-      end
+    context "when no Btrfs fileystem is mounted as read-only" do
+      let(:mount_options) { [] }
 
-      it "returns false" do
-        expect(client.root_subvol_read_only_configured?).to eq false
-      end
-    end
-
-    # Validation should protect us from this, but is not always checked
-    context "if root_subvolume_read_only has a non boolean value in /partitioning/proposal section" do
-      let(:features) do
-        {
-          "partitioning" => {
-            "proposal" => { "root_subvolume_read_only" => "not so sure" }
-          }
-        }
-      end
-
-      it "returns false" do
-        expect(client.root_subvol_read_only_configured?).to eq false
+      it "does not try to set 'ro' property" do
+        expect(Yast::Execute).to_not receive(:on_target)
+          .with("btrfs", "property", "set", any_args)
+        client.set_btrfs_defaults_as_ro
       end
     end
   end
