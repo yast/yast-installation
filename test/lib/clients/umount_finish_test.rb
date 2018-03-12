@@ -56,7 +56,7 @@ describe Yast::UmountFinishClient do
       end
     end
 
-    context "when no Btrfs fileystem is mounted as read-only" do
+    context "when Btrfs filesystem is not mounted as read-only" do
       let(:mount_options) { [] }
 
       it "does not try to set 'ro' property" do
