@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Mar 12 15:34:38 UTC 2018 - igonzalezsosa@suse.com
+
+- Set Btrfs 'ro' property at the end of the installation
+  when needed (bsc#1079000)
+- 4.0.37
+
+-------------------------------------------------------------------
 Thu Mar  1 14:48:45 UTC 2018 - shundhammer@suse.com
 
 - Pass args to parent class constructor (bsc#1083500)

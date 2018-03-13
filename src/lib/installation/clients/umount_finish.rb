@@ -28,6 +28,8 @@
 # Authors:
 #  Jiri Srain <jsrain@suse.cz>
 
+require "y2storage"
+
 module Yast
   class UmountFinishClient < Client
     include Yast::Logger
@@ -118,6 +120,18 @@ module Yast
           SCR.Execute(path(".target.bash"), "ln -s /proc/self/mounts /etc/mtab")
         end
 
+        # BNC #692799: Preserve the randomness state before umounting
+        preserve_randomness_state
+
+        #
+        # !!! NO WRITE OPERATIONS TO THE TARGET AFTER THIS POINT !!!
+        #
+
+        # This must be done as long as the target root is still mounted
+        # (because the btrfs command requires that), but after the last write
+        # access to it (because it will be read only afterwards).
+        set_btrfs_defaults_as_ro
+
         # Stop SCR on target
         WFM.SCRClose(Installation.scr_handle)
 
@@ -170,18 +184,6 @@ module Yast
             )
           end
         end
-
-        # BNC #692799: Preserve the randomness state before umounting
-        preserve_randomness_state
-
-        #
-        # !!! NO WRITE OPERATIONS TO THE TARGET AFTER THIS POINT !!!
-        #
-
-        # This must be done as long as the target root is still mounted
-        # (because the btrfs command requires that), but after the last write
-        # access to it (because it will be read only afterwards).
-        set_root_subvol_read_only
 
 # storage-ng
 # rubocop:disable Style/BlockComments
@@ -399,42 +401,34 @@ module Yast
     # Set the root subvolume to read-only and change the /etc/fstab entry
     # accordingly
     #
-    def set_root_subvol_read_only
-      return unless root_subvol_read_only_configured?
-      log.info("Setting root subvolume to read-only")
-      set_fstab_root_subvol_read_only
-      set_root_subvol_property_read_only
-    end
+    def set_btrfs_defaults_as_ro
+      devicegraph = Y2Storage::StorageManager.instance.staging
 
-    # Check the product configuration (control.xml) if the root subvolume
-    # should be set to read-only.
-    #
-    def root_subvol_read_only_configured?
-      # FIXME: this whole method should rely on Y2Storage::ProposalSettings.
-      # But right now there is no #root_subvolume_read_only method there
+      ro_btrfs_filesystems = devicegraph.filesystems.select do |fs|
+        fs.is?(:btrfs) && fs.mount_point && fs.mount_options.include?("ro")
+      end
 
-      partitioning = ProductFeatures.GetSection("partitioning")
-      proposal = partitioning.nil? ? nil : partitioning["proposal"]
-      return false if proposal.nil?
-      proposal["root_subvolume_read_only"] == true
-    end
-
-    # Change /etc/fstab on the target to mount the root subvolume read-only.
-    #
-    def set_fstab_root_subvol_read_only
-      cmd = "sed -i -e '/ \\/ btrfs/s/defaults/ro/' /etc/fstab"
-      log.info("Setting root subvol to read-only in /etc/fstab: \"#{cmd}\"")
-      SCR.Execute(path(".target.bash"), cmd)
+      ro_btrfs_filesystems.each { |f| default_subvolume_as_ro(f.mount_point.path) }
     end
 
     # Set the "read-only" property for the root subvolume.
     # This has to be done as long as the target root filesystem is still
     # mounted.
     #
-    def set_root_subvol_property_read_only
-      cmd = "btrfs property set /.snapshots/1/snapshot ro true"
-      log.info("Setting root subvol read-only property: \"#{cmd}\"")
-      SCR.Execute(path(".target.bash"), cmd)
+    def default_subvolume_as_ro(path)
+      output = Yast::Execute.on_target(
+        "btrfs", "subvolume", "get-default", path, stdout: :capture
+      )
+
+      default_subvolume = output.strip.split.last
+      spec = Y2Storage::VolumeSpecification.for(path)
+      if spec.btrfs_default_subvolume
+        prefix = Pathname.new(spec.btrfs_default_subvolume)
+        default_subvolume = Pathname.new(default_subvolume).relative_path_from(prefix).to_s
+      end
+
+      log.info("Setting root subvol read-only property on #{default_subvolume}")
+      Yast::Execute.on_target("btrfs", "property", "set", default_subvolume, "ro", "true")
     end
   end
 end
