@@ -63,7 +63,7 @@ module Installation
       #
       # @return [Yast::Term] Dialog's content
       def contents
-        @contents ||= VBox(
+        @contents = VBox(
           filling,
           locale_settings,
           license_or_product_content,
