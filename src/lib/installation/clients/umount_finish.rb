@@ -29,6 +29,7 @@
 #  Jiri Srain <jsrain@suse.cz>
 
 require "y2storage"
+require "pathname"
 
 module Yast
   class UmountFinishClient < Client
@@ -400,7 +401,6 @@ module Yast
 
     # Set the root subvolume to read-only and change the /etc/fstab entry
     # accordingly
-    #
     def set_btrfs_defaults_as_ro
       devicegraph = Y2Storage::StorageManager.instance.staging
 
@@ -408,24 +408,28 @@ module Yast
         fs.is?(:btrfs) && fs.mount_point && fs.mount_options.include?("ro")
       end
 
-      ro_btrfs_filesystems.each { |f| default_subvolume_as_ro(f.mount_point.path) }
+      ro_btrfs_filesystems.each { |f| default_subvolume_as_ro(f) }
     end
 
     # Set the "read-only" property for the root subvolume.
     # This has to be done as long as the target root filesystem is still
     # mounted.
     #
-    def default_subvolume_as_ro(path)
+    # @param fs [Y2Storage::Filesystems::Btrfs] Btrfs filesystem to set read-only property on.
+    def default_subvolume_as_ro(fs)
       output = Yast::Execute.on_target(
-        "btrfs", "subvolume", "get-default", path, stdout: :capture
+        "btrfs", "subvolume", "get-default", fs.mount_point.path, stdout: :capture
       )
-
       default_subvolume = output.strip.split.last
-      spec = Y2Storage::VolumeSpecification.for(path)
-      if spec.btrfs_default_subvolume
-        prefix = Pathname.new(spec.btrfs_default_subvolume)
-        default_subvolume = Pathname.new(default_subvolume).relative_path_from(prefix).to_s
+
+      # no btrfs_default_subvolume and no snapshots
+      default_subvolume = "" if default_subvolume == "(FS_TREE)"
+
+      if !fs.subvolumes_prefix.empty?
+        default_subvolume = default_subvolume.sub(fs.subvolumes_prefix, "")
       end
+
+      default_subvolume = Pathname.new(fs.mount_point.path).join(default_subvolume).to_s
 
       log.info("Setting root subvol read-only property on #{default_subvolume}")
       Yast::Execute.on_target("btrfs", "property", "set", default_subvolume, "ro", "true")
