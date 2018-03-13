@@ -411,6 +411,9 @@ module Yast
       ro_btrfs_filesystems.each { |f| default_subvolume_as_ro(f) }
     end
 
+    # [String] Name used by btrfs tools to name the filesystem tree.
+    BTRFS_FS_TREE = "(FS_TREE)".freeze
+
     # Set the "read-only" property for the root subvolume.
     # This has to be done as long as the target root filesystem is still
     # mounted.
@@ -421,18 +424,13 @@ module Yast
         "btrfs", "subvolume", "get-default", fs.mount_point.path, stdout: :capture
       )
       default_subvolume = output.strip.split.last
-
       # no btrfs_default_subvolume and no snapshots
-      default_subvolume = "" if default_subvolume == "(FS_TREE)"
+      default_subvolume = "" if default_subvolume == BTRFS_FS_TREE
 
-      if !fs.subvolumes_prefix.empty?
-        default_subvolume = default_subvolume.sub(fs.subvolumes_prefix, "")
-      end
+      subvolume_path = fs.btrfs_subvolume_mount_point(default_subvolume)
 
-      default_subvolume = Pathname.new(fs.mount_point.path).join(default_subvolume).to_s
-
-      log.info("Setting root subvol read-only property on #{default_subvolume}")
-      Yast::Execute.on_target("btrfs", "property", "set", default_subvolume, "ro", "true")
+      log.info("Setting root subvol read-only property on #{subvolume_path}")
+      Yast::Execute.on_target("btrfs", "property", "set", subvolume_path, "ro", "true")
     end
   end
 end

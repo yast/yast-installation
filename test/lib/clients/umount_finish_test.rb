@@ -43,6 +43,8 @@ describe Yast::UmountFinishClient do
           let(:get_default) { "ID 276 gen 1172 top level 275 path .snapshots/1/snapshot\n" }
 
           it "sets 'ro' property to true on the snapshot" do
+            expect(root_fs).to receive(:btrfs_subvolume_mount_point)
+              .with(".snapshots/1/snapshot").and_return("/.snapshots/1/snapshot")
             expect(Yast::Execute).to receive(:on_target)
               .with("btrfs", "property", "set", "/.snapshots/1/snapshot", "ro", "true")
             client.set_btrfs_defaults_as_ro
@@ -53,6 +55,8 @@ describe Yast::UmountFinishClient do
           let(:get_default) { "ID 5 (FS_TREE)\n" }
 
           it "sets 'ro' property to true on the mount point" do
+            expect(root_fs).to receive(:btrfs_subvolume_mount_point)
+              .with("").and_return("/")
             expect(Yast::Execute).to receive(:on_target)
               .with("btrfs", "property", "set", "/", "ro", "true")
             client.set_btrfs_defaults_as_ro
@@ -67,6 +71,8 @@ describe Yast::UmountFinishClient do
           let(:get_default) { "ID 276 gen 1172 top level 275 path @/.snapshots/1/snapshot\n" }
 
           it "sets 'ro' property to true on the snapshot" do
+            expect(root_fs).to receive(:btrfs_subvolume_mount_point)
+              .with("@/.snapshots/1/snapshot").and_return("/.snapshots/1/snapshot")
             expect(Yast::Execute).to receive(:on_target)
               .with("btrfs", "property", "set", "/.snapshots/1/snapshot", "ro", "true")
             client.set_btrfs_defaults_as_ro
@@ -77,6 +83,8 @@ describe Yast::UmountFinishClient do
           let(:get_default) { "ID 276 gen 1172 top level 275 path @\n" }
 
           it "sets 'ro' property to true on the mount point" do
+            expect(root_fs).to receive(:btrfs_subvolume_mount_point)
+              .with("@").and_return("/")
             expect(Yast::Execute).to receive(:on_target)
               .with("btrfs", "property", "set", "/", "ro", "true")
             client.set_btrfs_defaults_as_ro
@@ -95,6 +103,8 @@ describe Yast::UmountFinishClient do
         end
 
         it "sets 'ro' property to true on the mount point" do
+          expect(root_fs).to receive(:btrfs_subvolume_mount_point)
+            .with("").and_return("/home")
           expect(Yast::Execute).to receive(:on_target)
             .with("btrfs", "property", "set", "/home", "ro", "true")
           client.set_btrfs_defaults_as_ro
