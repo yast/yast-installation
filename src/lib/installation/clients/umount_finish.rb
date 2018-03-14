@@ -29,6 +29,7 @@
 #  Jiri Srain <jsrain@suse.cz>
 
 require "y2storage"
+require "pathname"
 
 module Yast
   class UmountFinishClient < Client
@@ -400,7 +401,6 @@ module Yast
 
     # Set the root subvolume to read-only and change the /etc/fstab entry
     # accordingly
-    #
     def set_btrfs_defaults_as_ro
       devicegraph = Y2Storage::StorageManager.instance.staging
 
@@ -408,27 +408,29 @@ module Yast
         fs.is?(:btrfs) && fs.mount_point && fs.mount_options.include?("ro")
       end
 
-      ro_btrfs_filesystems.each { |f| default_subvolume_as_ro(f.mount_point.path) }
+      ro_btrfs_filesystems.each { |f| default_subvolume_as_ro(f) }
     end
+
+    # [String] Name used by btrfs tools to name the filesystem tree.
+    BTRFS_FS_TREE = "(FS_TREE)".freeze
 
     # Set the "read-only" property for the root subvolume.
     # This has to be done as long as the target root filesystem is still
     # mounted.
     #
-    def default_subvolume_as_ro(path)
+    # @param fs [Y2Storage::Filesystems::Btrfs] Btrfs filesystem to set read-only property on.
+    def default_subvolume_as_ro(fs)
       output = Yast::Execute.on_target(
-        "btrfs", "subvolume", "get-default", path, stdout: :capture
+        "btrfs", "subvolume", "get-default", fs.mount_point.path, stdout: :capture
       )
-
       default_subvolume = output.strip.split.last
-      spec = Y2Storage::VolumeSpecification.for(path)
-      if spec.btrfs_default_subvolume
-        prefix = Pathname.new(spec.btrfs_default_subvolume)
-        default_subvolume = Pathname.new(default_subvolume).relative_path_from(prefix).to_s
-      end
+      # no btrfs_default_subvolume and no snapshots
+      default_subvolume = "" if default_subvolume == BTRFS_FS_TREE
 
-      log.info("Setting root subvol read-only property on #{default_subvolume}")
-      Yast::Execute.on_target("btrfs", "property", "set", default_subvolume, "ro", "true")
+      subvolume_path = fs.btrfs_subvolume_mount_point(default_subvolume)
+
+      log.info("Setting root subvol read-only property on #{subvolume_path}")
+      Yast::Execute.on_target("btrfs", "property", "set", subvolume_path, "ro", "true")
     end
   end
 end

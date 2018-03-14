@@ -10,11 +10,9 @@ describe Yast::UmountFinishClient do
 
   describe "#set_btrfs_defaults_as_ro" do
     before do
-      allow(Y2Storage::VolumeSpecification).to receive(:for)
-        .and_return(root_spec)
       allow(Yast::Execute).to receive(:on_target)
         .with("btrfs", "subvolume", "get-default", "/", anything)
-        .and_return("ID 276 gen 1172 top level 275 path @/.snapshots/1/snapshot\n")
+        .and_return(get_default)
       allow(Y2Storage::StorageManager.instance).to receive(:staging).and_return(devicegraph)
     end
 
@@ -25,24 +23,92 @@ describe Yast::UmountFinishClient do
     let(:root_fs) do
       instance_double(
         Y2Storage::Filesystems::Btrfs,
-        is?:           true,
-        mount_point:   mount_point,
-        mount_options: mount_options
+        is?:               true,
+        mount_point:       mount_point,
+        mount_options:     mount_options,
+        subvolumes_prefix: subvolumes_prefix
       )
     end
 
     let(:mount_point) { instance_double(Y2Storage::MountPoint, path: "/") }
     let(:mount_options) { ["ro"] }
-
-    let(:root_spec) do
-      instance_double(Y2Storage::VolumeSpecification, btrfs_default_subvolume: "@")
-    end
+    let(:subvolumes_prefix) { "@" }
+    let(:get_default) { "ID 276 gen 1172 top level 275 path @/.snapshots/1/snapshot\n" }
 
     context "when a Btrfs filesystem is mounted as read-only" do
-      it "sets 'ro' property to true on the default subvolume" do
-        expect(Yast::Execute).to receive(:on_target)
-          .with("btrfs", "property", "set", ".snapshots/1/snapshot", "ro", "true")
-        client.set_btrfs_defaults_as_ro
+      context "and there is no subvolume_prefix" do
+        let(:subvolumes_prefix) { "" }
+
+        context "and snapshots are enabled" do
+          let(:get_default) { "ID 276 gen 1172 top level 275 path .snapshots/1/snapshot\n" }
+
+          it "sets 'ro' property to true on the snapshot" do
+            expect(root_fs).to receive(:btrfs_subvolume_mount_point)
+              .with(".snapshots/1/snapshot").and_return("/.snapshots/1/snapshot")
+            expect(Yast::Execute).to receive(:on_target)
+              .with("btrfs", "property", "set", "/.snapshots/1/snapshot", "ro", "true")
+            client.set_btrfs_defaults_as_ro
+          end
+        end
+
+        context "and snapshots are disabled" do
+          let(:get_default) { "ID 5 (FS_TREE)\n" }
+
+          it "sets 'ro' property to true on the mount point" do
+            expect(root_fs).to receive(:btrfs_subvolume_mount_point)
+              .with("").and_return("/")
+            expect(Yast::Execute).to receive(:on_target)
+              .with("btrfs", "property", "set", "/", "ro", "true")
+            client.set_btrfs_defaults_as_ro
+          end
+        end
+      end
+
+      context "and there is a subvolume_prefix" do
+        let(:subvolumes_prefix) { "@" }
+
+        context "and snapshots are enabled" do
+          let(:get_default) { "ID 276 gen 1172 top level 275 path @/.snapshots/1/snapshot\n" }
+
+          it "sets 'ro' property to true on the snapshot" do
+            expect(root_fs).to receive(:btrfs_subvolume_mount_point)
+              .with("@/.snapshots/1/snapshot").and_return("/.snapshots/1/snapshot")
+            expect(Yast::Execute).to receive(:on_target)
+              .with("btrfs", "property", "set", "/.snapshots/1/snapshot", "ro", "true")
+            client.set_btrfs_defaults_as_ro
+          end
+        end
+
+        context "and snapshots are disabled" do
+          let(:get_default) { "ID 276 gen 1172 top level 275 path @\n" }
+
+          it "sets 'ro' property to true on the mount point" do
+            expect(root_fs).to receive(:btrfs_subvolume_mount_point)
+              .with("@").and_return("/")
+            expect(Yast::Execute).to receive(:on_target)
+              .with("btrfs", "property", "set", "/", "ro", "true")
+            client.set_btrfs_defaults_as_ro
+          end
+        end
+      end
+
+      context "mount point is different than root" do
+        let(:mount_point) { instance_double(Y2Storage::MountPoint, path: "/home") }
+        let(:subvolumes_prefix) { "" }
+
+        before do
+          allow(Yast::Execute).to receive(:on_target)
+            .with("btrfs", "subvolume", "get-default", "/home", anything)
+            .and_return("ID 5 (FS_TREE)\n")
+        end
+
+        it "sets 'ro' property to true on the mount point" do
+          expect(root_fs).to receive(:btrfs_subvolume_mount_point)
+            .with("").and_return("/home")
+          expect(Yast::Execute).to receive(:on_target)
+            .with("btrfs", "property", "set", "/home", "ro", "true")
+          client.set_btrfs_defaults_as_ro
+        end
       end
     end
 
