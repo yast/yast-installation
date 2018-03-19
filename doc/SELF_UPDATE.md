@@ -111,9 +111,15 @@ The URL of the update repository is evaluated in this order:
         required just like in manual installation.
    4. Default SUSE Customer Center API (`https://scc.suse.com/`).
 
-   Registration server is then asked for URL providing product on media.
-   For multi-product media it is possible to specify ID used instead of product
-   name in control.xml as globals->self_update_id.
+   The registration server is then asked for the list of update repositories.
+
+   For being able to determine the list, the registration server expect
+   the product `name`, `version` and `arch` of the installer being updated.
+   **Ex:** `product: SLED`, `version: 15`, `arch: x86_64`
+
+   In case of multi-product media, as the installer is the same for all the
+   products on the media, the product `name` can be hard-coded in the control
+   file (control.xml) as `globals -> self_update_id`.
 
 4. Hard-coded in the `control.xml` file on the installation medium (thus it
    depends on the base product):
