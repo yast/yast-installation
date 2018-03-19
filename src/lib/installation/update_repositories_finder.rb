@@ -25,6 +25,7 @@ Yast.import "Linuxrc"
 Yast.import "Mode"
 Yast.import "Profile"
 Yast.import "ProductFeatures"
+Yast.import "InstFunctions"
 
 module Installation
   # Invalid registration URL error
@@ -141,7 +142,8 @@ module Installation
       # Set custom_url into installation options
       Registration::Storage::InstallationOptions.instance.custom_url = registration.url
 
-      handle_registration_errors(custom_regserver) do
+      show_errors = custom_regserver || Yast::InstFunctions.self_update_explicitly_enabled?
+      handle_registration_errors(show_errors) do
         registration.get_updates_list.map { |u| URI(u.url) }
       end
     end

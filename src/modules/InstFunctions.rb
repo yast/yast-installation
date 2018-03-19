@@ -30,6 +30,7 @@ require "yast"
 
 module Yast
   class InstFunctionsClass < Module
+    include Yast::Logger
     def main
       textdomain "installation"
 
@@ -38,6 +39,7 @@ module Yast
       Yast.import "Stage"
       Yast.import "Mode"
       Yast.import "ProductControl"
+      Yast.import "Profile"
     end
 
     # Returns list of ignored features defined via Linuxrc commandline
@@ -130,6 +132,28 @@ module Yast
       run_second_stage
     end
     alias_method :second_stage_required, :second_stage_required?
+
+    # Determine whether the installer update (self_update=1) has been
+    # explicitly enabled by linuxrc or by the AY profile. It does not check if
+    # a custom url has been provided or not.
+    #
+    # return [Boolean] true if enabled explicitly; false otherwise
+    def self_update_explicitly_enabled?
+      cmdline = polish(Linuxrc.InstallInf("Cmdline") || "").split
+      cmdline_requested = cmdline.include?("selfupdate=1")
+
+      if cmdline_requested
+        log.info("Self update was enabled explicitly by linuxrc cmdline")
+        return true
+      end
+
+      return false unless Mode.auto
+
+      profile = Yast::Profile.current
+      profile_requested = profile.fetch("general", {}).fetch("self_update", false)
+      log.info("Self update was enabled explicitly by the AY profile") if profile_requested
+      profile_requested
+    end
 
     publish function: :ignored_features, type: "list ()"
     publish function: :feature_ignored?, type: "boolean (string)"
