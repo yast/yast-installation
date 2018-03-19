@@ -112,14 +112,18 @@ The URL of the update repository is evaluated in this order:
    4. Default SUSE Customer Center API (`https://scc.suse.com/`).
 
    The registration server is then asked for the list of update repositories.
+   In order to determine such list, the product `name`, `version` and
+   `architecture` are used
 
-   For being able to determine the list, the registration server expect
-   the product `name`, `version` and `arch` of the installer being updated.
-   **Ex:** `product: SLED`, `version: 15`, `arch: x86_64`
+   In case of a multi-product installation medium, as the installer is the same
+   for all the included products, the product `name` can be hard-coded in the
+   `control.xml` file with the `/globals/self_update_id` XML node.
 
-   In case of multi-product media, as the installer is the same for all the
-   products on the media, the product `name` can be hard-coded in the control
-   file (control.xml) as `globals -> self_update_id`.
+   ```xml
+   <globals>
+     <self_update_id>SLES</self_update_id>
+   </globals>
+   ```
 
 4. Hard-coded in the `control.xml` file on the installation medium (thus it
    depends on the base product):
