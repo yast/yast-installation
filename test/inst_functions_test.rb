@@ -262,4 +262,43 @@ describe Yast::InstFunctions do
       end
     end
   end
+
+  describe "#self_update_explicitly_enabled?" do
+    context "when self_update=1 is provided by linuxrc" do
+      it "returns true" do
+        stub_install_inf("Cmdline" => "self_update=1 textmode=0")
+
+        expect(subject.self_update_explicitly_enabled?).to eq true
+      end
+    end
+
+    context "when self_update=custom_url is provided by linuxrc" do
+      it "returns true" do
+        stub_install_inf("Cmdline" => "self_update=http://custom_url.com textmode=0")
+
+        expect(subject.self_update_explicitly_enabled?).to eq true
+      end
+    end
+
+    context "when self_update is explicitly enabled in an AutoYaST profile" do
+      let(:profile) { { "general" => { "self_update" => true } } }
+
+      it "returns true" do
+        allow(Yast::Mode).to receive("auto").and_return(true)
+        allow(Yast::Profile).to receive("current").and_return(profile)
+
+        expect(subject.self_update_explicitly_enabled?).to eq true
+      end
+    end
+
+    context "when sel_update has not been explicitly enabled" do
+      it "returns false" do
+        stub_install_inf("Cmdline" => nil)
+        allow(Yast::Mode).to receive("auto").and_return(true)
+        allow(Yast::Profile).to receive("current").and_return({})
+
+        expect(subject.self_update_explicitly_enabled?).to eq false
+      end
+    end
+  end
 end

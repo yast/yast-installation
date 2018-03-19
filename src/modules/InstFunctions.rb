@@ -133,16 +133,16 @@ module Yast
     end
     alias_method :second_stage_required, :second_stage_required?
 
-    # Determine whether the installer update (self_update=1) has been
-    # explicitly enabled by linuxrc or by the AY profile. It does not check if
-    # a custom url has been provided or not.
+    # Determine whether the installer update has been explicitly enabled by
+    # linuxrc or by the AY profile.
     #
     # return [Boolean] true if enabled explicitly; false otherwise
     def self_update_explicitly_enabled?
+      # Linuxrc always export SelfUpdate with the default value even if not has
+      # been set by the user. For that reason we need to check the cmdline for
+      # knowing whether the user has requested the self update explicitly.
       cmdline = polish(Linuxrc.InstallInf("Cmdline") || "").split
-      cmdline_requested = cmdline.include?("selfupdate=1")
-
-      if cmdline_requested
+      if cmdline.find { |s| s.start_with?("selfupdate=") && s != "selfupdate=0" }
         log.info("Self update was enabled explicitly by linuxrc cmdline")
         return true
       end
@@ -150,9 +150,9 @@ module Yast
       return false unless Mode.auto
 
       profile = Yast::Profile.current
-      profile_requested = profile.fetch("general", {}).fetch("self_update", false)
-      log.info("Self update was enabled explicitly by the AY profile") if profile_requested
-      profile_requested
+      in_profile = profile.fetch("general", {}).fetch("self_update", false)
+      log.info("Self update was enabled explicitly by the AY profile") if in_profile
+      in_profile
     end
 
     publish function: :ignored_features, type: "list ()"
