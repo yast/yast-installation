@@ -259,6 +259,9 @@ Errors during the installer update are handled as described below:
 * If SCC/SMT is used and it returns no URL or fails then the fallback URL from
   `control.xml` is used.
 * If the updates repository is found but it is empty or not valid:
+  * if the installer update was enabled explicitly (using the *SelfUpdate* boot
+    option or through the *self_update* element in an AutoYaST profile), an error
+    will be shown.
   * in the case that the URL was specified by the user (using the *SelfUpdate* boot
     option or through the *self_update_url* element in an AutoYaST profile), an
     error message will be shown.
