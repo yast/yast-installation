@@ -260,34 +260,32 @@ module Yast
               )
             )
           end
+        elsif !Mode.auto
+          # pop-up error report
+          Report.Error(
+            Builtins.sformat(
+              _(
+                "No local hard disks and no hard disk controllers were\n" \
+                "found for the installation.\n" \
+                "Check your hardware.\n" \
+                "%1\n"
+              ),
+              drivers_info
+            )
+          )
         else
-          if !Mode.auto
-            # pop-up error report
-            Report.Error(
-              Builtins.sformat(
-                _(
-                  "No local hard disks and no hard disk controllers were\n" \
-                  "found for the installation.\n" \
-                  "Check your hardware.\n" \
-                  "%1\n"
-                ),
-                drivers_info
-              )
+          # pop-up warning report
+          Report.Warning(
+            Builtins.sformat(
+              _(
+                "No local hard disks and no hard disk controllers were\n" \
+                "found for the installation.\n" \
+                "During an automatic installation, they might be detected later.\n" \
+                "%1\n"
+              ),
+              drivers_info
             )
-          else
-            # pop-up warning report
-            Report.Warning(
-              Builtins.sformat(
-                _(
-                  "No local hard disks and no hard disk controllers were\n" \
-                  "found for the installation.\n" \
-                  "During an automatic installation, they might be detected later.\n" \
-                  "%1\n"
-                ),
-                drivers_info
-              )
-            )
-          end
+          )
         end
 
         return false
