@@ -264,18 +264,22 @@ describe Yast::InstFunctions do
   end
 
   describe "#self_update_explicitly_enabled?" do
-    context "when self_update=1 is provided by linuxrc" do
-      it "returns true" do
-        stub_install_inf("Cmdline" => "self_update=1 textmode=0")
+    let(:linuxrc_self_update) { nil }
+    before do
+      allow(Yast::Linuxrc).to receive(:value_for).with("self_update")
+        .and_return(linuxrc_self_update)
+    end
 
+    context "when self_update=1 is provided by linuxrc" do
+      let(:linuxrc_self_update) { "1" }
+      it "returns true" do
         expect(subject.self_update_explicitly_enabled?).to eq true
       end
     end
 
     context "when self_update=custom_url is provided by linuxrc" do
+      let(:linuxrc_self_update) { "http://custom_url.com" }
       it "returns true" do
-        stub_install_inf("Cmdline" => "self_update=http://custom_url.com textmode=0")
-
         expect(subject.self_update_explicitly_enabled?).to eq true
       end
     end

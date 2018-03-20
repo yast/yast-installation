@@ -141,8 +141,8 @@ module Yast
       # Linuxrc always export SelfUpdate with the default value even if not has
       # been set by the user. For that reason we need to check the cmdline for
       # knowing whether the user has requested the self update explicitly.
-      cmdline = polish(Linuxrc.InstallInf("Cmdline") || "").split
-      if cmdline.find { |s| s.start_with?("selfupdate=") && s != "selfupdate=0" }
+      in_cmdline = Linuxrc.value_for("self_update")
+      if in_cmdline && in_cmdline != "0"
         log.info("Self update was enabled explicitly by linuxrc cmdline")
         return true
       end

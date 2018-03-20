@@ -16,7 +16,7 @@ describe Installation::UpdateRepositoriesFinder do
     let(:profile) { {} }
     let(:ay_profile) { double("Yast::Profile", current: profile) }
     let(:repo) { double("UpdateRepository") }
-    let(:linuxrc_cmdline) { "" }
+    let(:linuxrc_self_update) { nil }
 
     subject(:finder) { described_class.new }
 
@@ -24,8 +24,8 @@ describe Installation::UpdateRepositoriesFinder do
       stub_const("Yast::Profile", ay_profile)
       stub_const("::Registration::ConnectHelpers", FakeConnectHelpers)
       allow(finder).to receive(:require).with("registration/connect_helpers")
-      allow(Yast::Linuxrc).to receive(:InstallInf).with("Cmdline")
-        .and_return(linuxrc_cmdline)
+      allow(Yast::Linuxrc).to receive("value_for").with("self_update")
+        .and_return(linuxrc_self_update)
       allow(Yast::Linuxrc).to receive(:InstallInf).with("SelfUpdate")
         .and_return(url_from_linuxrc)
       allow(Yast::Pkg).to receive(:GetArchitecture).and_return(arch)
@@ -189,7 +189,7 @@ describe Installation::UpdateRepositoriesFinder do
           end
 
           context "and enables the installer update explicitly by linuxrc" do
-            let(:linuxrc_cmdline) { "self_update=1 ifcfg=*= dhcp" }
+            let(:linuxrc_self_update) { "1" }
 
             it "handles registration errors" do
               expect(Registration::ConnectHelpers).to receive(:catch_registration_errors)
