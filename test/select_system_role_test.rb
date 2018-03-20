@@ -148,6 +148,24 @@ describe ::Installation::SelectSystemRole do
           expect(subject.run).to eq(:back)
         end
       end
+
+      context "when no roles is selected" do
+        it "shows error and does not continue" do
+          allow(Yast::Wizard).to receive(:SetContents)
+          allow(Yast::UI).to receive(:UserInput)
+            .and_return(:next, :back)
+          allow(Yast::UI).to receive(:QueryWidget)
+            .with(Id(:roles), :CurrentButton).and_return(nil)
+          allow(Installation::SystemRole).to receive(:default?)
+            .and_return(false)
+
+          expect(Yast::Popup).to receive(:Error)
+          expect(Yast::ProductFeatures).to receive(:ClearOverlay)
+          expect(Yast::ProductFeatures).to_not receive(:SetOverlay)
+
+          expect(subject.run).to eq(:back)
+        end
+      end
     end
   end
 end

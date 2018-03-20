@@ -72,7 +72,8 @@ module Installation
     end
 
     def dialog_content
-      @selected_role_id = self.class.original_role_id || (roles.first && roles.first.id)
+      @selected_role_id = self.class.original_role_id
+      @selected_role_id ||= roles.first && roles.first.id if SystemRole.default?
 
       HSquash(ReplacePoint(Id(:rp), role_buttons(selected_role_id: @selected_role_id)))
     end
