@@ -104,7 +104,7 @@ describe Yast::InstSystemAnalysisClient do
           end
         end
 
-        context "during autoinstallation" do
+        context "during normal installation" do
           let(:auto) { false }
 
           it "reports an error" do
@@ -126,7 +126,7 @@ describe Yast::InstSystemAnalysisClient do
           end
         end
 
-        context "during autoinstallation" do
+        context "during normal installation" do
           let(:auto) { false }
 
           it "reports an error" do
@@ -145,7 +145,7 @@ describe Yast::InstSystemAnalysisClient do
             end
           end
 
-          context "during autoinstallation" do
+          context "during normal installation" do
             let(:auto) { false }
 
             it "reports an error" do
