@@ -167,7 +167,7 @@ module Yast
     def self_update_in_cmdline?
       cmdline = polish(SCR.Read(path(".target.string"), "/proc/cmdline").to_s)
 
-      !!cmdline.split.find { |s| s.start_with?("selfupdate=") && s != "selfupdate=0" }
+      cmdline.split.any? { |s| s.start_with?("selfupdate=") && s != "selfupdate=0" }
     end
 
     # Removes unneeded characters from the given string
