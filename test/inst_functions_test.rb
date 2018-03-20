@@ -264,21 +264,23 @@ describe Yast::InstFunctions do
   end
 
   describe "#self_update_explicitly_enabled?" do
-    let(:linuxrc_self_update) { nil }
+    let(:self_update_in_cmdline) { false }
     before do
       allow(Yast::Linuxrc).to receive(:value_for).with("self_update")
-        .and_return(linuxrc_self_update)
+        .and_return(self_update_in_cmdline)
+      allow(subject).to receive(:self_update_in_cmdline?)
+        .and_return(self_update_in_cmdline)
     end
 
     context "when self_update=1 is provided by linuxrc" do
-      let(:linuxrc_self_update) { "1" }
+      let(:self_update_in_cmdline) { true }
       it "returns true" do
         expect(subject.self_update_explicitly_enabled?).to eq true
       end
     end
 
     context "when self_update=custom_url is provided by linuxrc" do
-      let(:linuxrc_self_update) { "http://custom_url.com" }
+      let(:self_update_in_cmdline) { true }
       it "returns true" do
         expect(subject.self_update_explicitly_enabled?).to eq true
       end

@@ -40,6 +40,7 @@ module Yast
       Yast.import "Mode"
       Yast.import "ProductControl"
       Yast.import "Profile"
+      Yast.import "SCR"
     end
 
     # Returns list of ignored features defined via Linuxrc commandline
@@ -141,15 +142,14 @@ module Yast
       # Linuxrc always export SelfUpdate with the default value even if not has
       # been set by the user. For that reason we need to check the cmdline for
       # knowing whether the user has requested the self update explicitly.
-      in_cmdline = Linuxrc.value_for("self_update")
-      if in_cmdline && in_cmdline != "0"
+      if self_update_in_cmdline?
         log.info("Self update was enabled explicitly by linuxrc cmdline")
         return true
       end
 
       return false unless Mode.auto
 
-      profile = Yast::Profile.current
+      profile = Profile.current
       in_profile = profile.fetch("general", {}).fetch("self_update", false)
       log.info("Self update was enabled explicitly by the AY profile") if in_profile
       in_profile
@@ -160,6 +160,15 @@ module Yast
     publish function: :second_stage_required, type: "boolean ()"
 
   private
+
+    # Return whether self_update has been explicitly enabled by linuxrc or not
+    #
+    # return [Boolean] true if enabled; false otherwise
+    def self_update_in_cmdline?
+      cmdline = polish(SCR.Read(path(".target.string"), "/proc/cmdline").to_s)
+
+      !!cmdline.split.find { |s| s.start_with?("selfupdate=") && s != "selfupdate=0" }
+    end
 
     # Removes unneeded characters from the given string
     # for easier handling
