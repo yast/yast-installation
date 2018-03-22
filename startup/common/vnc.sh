@@ -82,12 +82,17 @@ startVNCServer () {
 		-depth 16 \
                 -dpi 96 \
 		-rfbwait 120000 \
-		-httpd /usr/share/vnc/classes \
 		-rfbport 5901 \
-		-httpport 5801 \
 		-fp $Xfontdir/misc/,$Xfontdir/uni/,$Xfontdir/truetype/ \
 	>/var/log/YaST2/vncserver.log 2>&1 &
 	xserver_pid=$!
+
+	/usr/bin/websockify \
+		--web /usr/share/novnc \
+		5801 \
+		localhost:5901
+	>/var/log/YaST2/websockify.log 2>&1 &
+
 	export DISPLAY=:0
 	export XCURSOR_CORE=1
 }

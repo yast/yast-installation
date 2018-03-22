@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar 22 13:34:33 UTC 2018 - gsouza@suse.com
+
+- Start webvnc to the installation process (bsc#1078785)
+- 4.0.42
+
+-------------------------------------------------------------------
 Tue Mar 20 16:10:24 UTC 2018 - mvidner@suse.com
 
 - Make many system roles fit in the dialog (using a RichText
