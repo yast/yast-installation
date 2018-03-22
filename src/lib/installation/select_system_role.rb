@@ -257,14 +257,21 @@ module Installation
       "#{enabled_widget}<br>"
     end
 
+    IMAGE_DIR = "/usr/share/YaST2/theme/current/wizard".freeze
+
     BUTTON_ON = "◉".freeze # U+25C9 Fisheye
     BUTTON_OFF = "○".freeze # U+25CB White Circle
 
     def richtext_radiobutton_gui(id:, label:, selected:)
-      check = selected ? BUTTON_ON : BUTTON_OFF
-      widget = "#{check} #{label}"
       # check for installation style, which is dark, FIXME: find better way
       installation = ENV["Y2STYLE"] == "installation.qss"
+      if installation
+        image = selected ? "inst_radio-button-checked.png" : "inst_radio-button-unchecked.png"
+        bullet = "<img src=\"#{IMAGE_DIR}/#{image}\"></img>"
+      else
+        bullet = selected ? BUTTON_ON : BUTTON_OFF
+      end
+      widget = "#{bullet} #{label}"
       color = installation ? "white" : "black"
       enabled_widget = "<a style='text-decoration:none; color:#{color}' href=\"#{id}\">#{widget}</a>"
       "<p>#{enabled_widget}</p>"
