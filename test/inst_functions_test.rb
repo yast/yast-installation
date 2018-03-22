@@ -262,4 +262,49 @@ describe Yast::InstFunctions do
       end
     end
   end
+
+  describe "#self_update_explicitly_enabled?" do
+    let(:self_update_in_cmdline) { false }
+    before do
+      allow(Yast::Linuxrc).to receive(:value_for).with("self_update")
+        .and_return(self_update_in_cmdline)
+      allow(subject).to receive(:self_update_in_cmdline?)
+        .and_return(self_update_in_cmdline)
+    end
+
+    context "when self_update=1 is provided by linuxrc" do
+      let(:self_update_in_cmdline) { true }
+      it "returns true" do
+        expect(subject.self_update_explicitly_enabled?).to eq true
+      end
+    end
+
+    context "when self_update=custom_url is provided by linuxrc" do
+      let(:self_update_in_cmdline) { true }
+      it "returns true" do
+        expect(subject.self_update_explicitly_enabled?).to eq true
+      end
+    end
+
+    context "when self_update is explicitly enabled in an AutoYaST profile" do
+      let(:profile) { { "general" => { "self_update" => true } } }
+
+      it "returns true" do
+        allow(Yast::Mode).to receive("auto").and_return(true)
+        allow(Yast::Profile).to receive("current").and_return(profile)
+
+        expect(subject.self_update_explicitly_enabled?).to eq true
+      end
+    end
+
+    context "when sel_update has not been explicitly enabled" do
+      it "returns false" do
+        stub_install_inf("Cmdline" => nil)
+        allow(Yast::Mode).to receive("auto").and_return(true)
+        allow(Yast::Profile).to receive("current").and_return({})
+
+        expect(subject.self_update_explicitly_enabled?).to eq false
+      end
+    end
+  end
 end

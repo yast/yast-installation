@@ -1,4 +1,41 @@
 -------------------------------------------------------------------
+Tue Mar 20 16:10:24 UTC 2018 - mvidner@suse.com
+
+- Make many system roles fit in the dialog (using a RichText
+  widget, bsc#1084674)
+- 4.0.41
+
+-------------------------------------------------------------------
+Mon Mar 19 22:53:57 UTC 2018 - knut.anderssen@suse.com
+
+- Self-Update report errors when the self_update is enabled
+  explicitly by linuxrc or using an AutoYaST profile.
+  (bsc#1084820)
+- 4.0.40
+
+-------------------------------------------------------------------
+Tue Mar 13 16:37:23 UTC 2018 - igonzalezsosa@suse.com
+
+- Set the 'ro' property on Btrfs filesystem when using an AutoYaST
+  profile which sets the 'ro' option explicitly (related to
+  bsc#1079000).
+- 4.0.39
+
+-------------------------------------------------------------------
+Tue Mar 13 12:09:45 CET 2018 - schubi@suse.de
+
+- complex_welcome: Translate license text if the language has been
+  changed (bnc#1077733).
+- 4.0.38
+
+-------------------------------------------------------------------
+Mon Mar 12 15:34:38 UTC 2018 - igonzalezsosa@suse.com
+
+- Set Btrfs 'ro' property at the end of the installation
+  when needed (bsc#1079000)
+- 4.0.37
+
+-------------------------------------------------------------------
 Thu Mar  1 14:48:45 UTC 2018 - shundhammer@suse.com
 
 - Pass args to parent class constructor (bsc#1083500)
