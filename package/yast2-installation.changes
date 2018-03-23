@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Mar 23 09:57:56 UTC 2018 - mvidner@suse.com
+
+- System roles: make the radio buttons match other dialogs,
+  using images (bsc#1084674)
+- 4.0.42
+
+-------------------------------------------------------------------
 Tue Mar 20 16:10:24 UTC 2018 - mvidner@suse.com
 
 - Make many system roles fit in the dialog (using a RichText
