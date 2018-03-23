@@ -17,6 +17,7 @@
 #  To contact SUSE about this file by physical or electronic mail,
 #  you may find current contact information at www.suse.com
 
+require "cgi"
 require "yast"
 require "ui/installation_dialog"
 require "installation/services"
@@ -229,7 +230,7 @@ module Installation
                                   label:    role.label,
                                   selected: role.id == selected_role_id)
 
-        description = description.gsub("\n", "<br>\n")
+        description = CGI.escape_html(description).gsub("\n", "<br>\n")
         # extra empty paragraphs for better spacing
         "<p></p>#{rb}<p></p><ul>#{description}</ul>"
       end
@@ -252,7 +253,7 @@ module Installation
 
     def richtext_radiobutton_tui(id:, label:, selected:)
       check = selected ? "(x)" : "( )"
-      widget = "#{check} #{label}"
+      widget = "#{check} #{CGI.escape_html(label)}"
       enabled_widget = "<a href=\"#{id}\">#{widget}</a>"
       "#{enabled_widget}<br>"
     end
@@ -271,7 +272,7 @@ module Installation
       else
         bullet = selected ? BUTTON_ON : BUTTON_OFF
       end
-      widget = "#{bullet} #{label}"
+      widget = "#{bullet} #{CGI.escape_html(label)}"
       color = installation ? "white" : "black"
       enabled_widget = "<a style='text-decoration:none; color:#{color}' href=\"#{id}\">#{widget}</a>"
       "<p>#{enabled_widget}</p>"
