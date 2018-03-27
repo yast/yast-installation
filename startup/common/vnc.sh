@@ -65,6 +65,11 @@ displayVNCMessage () {
 	echo
 }
 
+websockify() {
+	# this shortcut avoids requiring the optional numpy dependency
+	python3 -c 'import websockify.websocketproxy; websockify.websocketproxy.websockify_init()' "$@"
+}
+
 #----[ startVNCServer ]------#
 startVNCServer () {
 #---------------------------------------------------
@@ -87,10 +92,13 @@ startVNCServer () {
 	>/var/log/YaST2/vncserver.log 2>&1 &
 	xserver_pid=$!
 
-	/usr/bin/websockify \
+	# Python gets confused by the symlink games played in inst-sys
+	# so we must help it
+	export PYTHONPATH=`echo /usr/lib/python3*`/site-packages:$PYTHONPATH
+	websockify \
 		--web /usr/share/novnc \
 		5801 \
-		localhost:5901
+		localhost:5901 \
 	>/var/log/YaST2/websockify.log 2>&1 &
 
 	export DISPLAY=:0
