@@ -19,6 +19,8 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
+require "installation/inst_confirm"
+
 module Yast
   # Asks user to really do the installation/update.
   class InstDoitClient < Client
@@ -41,9 +43,7 @@ module Yast
       # bugzilla #256627
       PackagesUI.ConfirmLicenses
 
-      # function in installation/misc.ycp
-      # bugzilla #219097
-      @confirmed = confirmInstallation
+      @confirmed = InstConfirmDialog.new.run
 
       if @confirmed
         Builtins.y2milestone(
