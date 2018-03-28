@@ -96,10 +96,34 @@ module Yast
 
       initialize_license if show_license
 
-      button = Convert.to_symbol(UI.UserInput)
-      UI.CloseDialog
+      loop do
+        ret = UI.UserInput
+        log.info "UserInput() returned #{ret}"
 
-      button == :ok
+        case ret
+        when :license_agreement
+          InstData.product_license_accepted = UI.QueryWidget(
+            Id(:license_agreement), :Value)
+        when :ok
+          # Check whether the license has been accepted only if required
+          if license_required? && !InstData.product_license_accepted
+            warn_license_required
+            next
+          end
+          UI.CloseDialog
+          return true
+        when :show_fulscreen_license
+          UI.OpenDialog(all_licenses_dialog)
+          ProductLicense.ShowFullScreenLicenseInInstallation(
+            :full_screen_license_rp,
+            @license_id
+          )
+          UI.CloseDialog
+        else
+          UI.CloseDialog
+          return false
+        end
+      end
     end
 
 private
