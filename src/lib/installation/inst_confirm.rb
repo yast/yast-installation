@@ -48,32 +48,23 @@ module Yast
 
         if some_destructive
           # Text for confirmation popup before the installation really starts 2/3
-          body = Ops.add(
-            body,
-            _(
-              "<p>If you continue now, <b>existing\n" \
-                "partitions</b> on your hard disk will be <b>deleted</b> or <b>formatted</b>\n" \
-                "(<b>erasing any existing data</b> in those partitions) according to the\n" \
-                "installation settings in the previous dialogs.</p>"
-            )
+          body += _(
+            "<p>If you continue now, <b>existing\n" \
+            "partitions</b> on your hard disk will be <b>deleted</b> or <b>formatted</b>\n" \
+            "(<b>erasing any existing data</b> in those partitions) according to the\n" \
+            "installation settings in the previous dialogs.</p>"
           )
         else
           # Text for confirmation popup before the installation really starts 2/3
-          body = Ops.add(
-            body,
-            _(
-              "<p>If you continue now, partitions on your\n" \
-                "hard disk will be modified according to the installation settings in the\n" \
-                "previous dialogs.</p>"
-            )
+          body += _(
+            "<p>If you continue now, partitions on your\n" \
+            "hard disk will be modified according to the installation settings in the\n" \
+            "previous dialogs.</p>"
           )
         end
 
         # Text for confirmation popup before the installation really starts 3/3
-        body = Ops.add(
-          body,
-          _("<p>Go back and check the settings if you are unsure.</p>")
-        )
+        body += _("<p>Go back and check the settings if you are unsure.</p>")
 
         confirm_button_label = Label.InstallButton
       else
@@ -118,12 +109,12 @@ private
   
     def layout_without_license(heading, body, confirm_button_label)
       display_info = UI.GetDisplayInfo
-      size_x = Builtins.tointeger(Ops.get_integer(display_info, "Width", 800))
-      size_y = Builtins.tointeger(Ops.get_integer(display_info, "Height", 600))
+      size_x = display_info["Width"] || 800
+      size_y = display_info["Height"] || 600
 
       # 576x384 support for for ps3
       # bugzilla #273147
-      if Ops.greater_or_equal(size_x, 800) && Ops.greater_or_equal(size_y, 600)
+      if size_x >= 800 && size_y >= 600
         size_x = 70
         size_y = 18
       else
@@ -201,13 +192,6 @@ private
       )
     end
 
-
-    def text_mode?
-      return @text_mode unless @text_mode.nil?
-
-      @text_mode = UI.TextMode
-    end
-
     # Determines whether the license is required or not
     #
     # @return [Boolean] true if license is required; false otherwise.
@@ -226,7 +210,6 @@ private
     def license_agreement_checkbox
       Left(
         CheckBox(
-          # bnc #359456
           Id(:license_agreement),
           Opt(:notify),
           # TRANSLATORS: check-box
@@ -243,7 +226,7 @@ private
         UI.ChangeWidget(Id(:license_agreement), :Value, InstData.product_license_accepted)
       end
 
-      log.info "Acceptance needed: #{@id} => #{license_required?}"
+      log.info "Acceptance needed: #{@license_id} => #{license_required?}"
 
       # The info file has already been seen in inst_casp_overview before.
       ProductLicense.info_seen!(@license_id)
