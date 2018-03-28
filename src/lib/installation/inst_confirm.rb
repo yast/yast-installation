@@ -161,30 +161,18 @@ private
           )
         ),
         VWeight(
-          30,
+          20,
           Left(
             HSquash(
               HBox(
                 HSpacing(0.7),
                 VBox(
                   HBox(
+                    HSpacing(0.7),
                     Left(Label(Opt(:boldFont), _("License Agreement"))),
                     HStretch()
                   ),
-                  # bnc #438100
-                  HSquash(
-                    MinWidth(
-                      # BNC #607135
-                      text_mode? ? 85 : 106,
-                      Left(ReplacePoint(Id(:base_license_rp), Opt(:hstretch), Empty()))
-                    )
-                  ),
-                  VSpacing(text_mode? ? 0.1 : 0.5),
-                  MinHeight(
-                    1,
-                    # Will be replaced with license checkbox if required
-                    ReplacePoint(Id(:license_checkbox_rp), Empty())
-                  )
+                  Left(ReplacePoint(Id(:base_license_rp), Opt(:hstretch), Empty()))
                 ),
                 HSpacing(0.7)
               )
@@ -192,14 +180,24 @@ private
           )
         ),
         VWeight(3,
-          ButtonBox(
-            PushButton(
-              Id(:cancel),
-              Opt(:cancelButton, :key_F10, :default),
-              Label.BackButton
-            ),
-            PushButton(Id(:ok), Opt(:okButton, :key_F9), confirm_button_label)
-          ))
+          HBox(
+            HSpacing(2),
+            HWeight(2,
+              # Will be replaced with license checkbox if required
+              ReplacePoint(Id(:license_checkbox_rp), Empty())),
+            HStretch(),
+            HWeight(1,
+              ButtonBox(
+                PushButton(
+                  Id(:cancel),
+                  Opt(:cancelButton, :key_F10, :default),
+                  Label.BackButton
+                ),
+                PushButton(Id(:ok), Opt(:okButton, :key_F9), confirm_button_label)
+              )
+            )
+          ),
+        )
       )
     end
 
