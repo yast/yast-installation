@@ -32,6 +32,7 @@ module Yast
       Yast.import "Mode"
       Yast.import "AutoinstConfig"
       Yast.import "PackagesUI"
+      Yast.import "GetInstArgs"
 
       Yast.import "Label"
 
@@ -41,9 +42,11 @@ module Yast
 
       # old functionality replaced with this function-call
       # bugzilla #256627
+      # Confirming single package licenses
       PackagesUI.ConfirmLicenses
 
-      @confirmed = InstConfirmDialog.new.run
+      @confirmed = InstConfirmDialog.new.run(
+        GetInstArgs.argmap["show_license"] || false)
 
       if @confirmed
         Builtins.y2milestone(

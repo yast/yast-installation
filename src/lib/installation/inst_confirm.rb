@@ -5,9 +5,7 @@ Yast.import "Mode"
 Yast.import "ProductControl"
 Yast.import "Storage"
 Yast.import "Label"
-Yast.import "CWM"
 Yast.import "HTML"
-Yast.import "GetInstArgs"
 Yast.import "InstData"
 Yast.import "ProductLicense"
 
@@ -19,12 +17,11 @@ module Yast
     include Yast::I18n
     include Yast::UIShortcuts
 
-    def run
+    def run(show_license = false)
       # Confirm installation or update.
       # Returns 'true' if the user confirms, 'false' otherwise.
       #
       textdomain "installation"
-      confirm_license = true
 
       heading = ""
       body = ""
@@ -87,7 +84,7 @@ module Yast
         confirm_button_label = _("Start &Update")
       end
    
-      if confirm_license
+      if show_license
         widgets = layout_with_license(heading, body, confirm_button_label)
       else
         widgets = layout_without_license(heading, body, confirm_button_label)
@@ -97,7 +94,7 @@ module Yast
         widgets
       )
 
-      initialize_license if confirm_license
+      initialize_license if show_license
 
       button = Convert.to_symbol(UI.UserInput)
       UI.CloseDialog
