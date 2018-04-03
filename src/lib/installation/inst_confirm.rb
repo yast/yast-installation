@@ -112,13 +112,6 @@ module Yast
           end
           UI.CloseDialog
           return true
-        when :show_fulscreen_license
-          UI.OpenDialog(all_licenses_dialog)
-          ProductLicense.ShowFullScreenLicenseInInstallation(
-            :full_screen_license_rp,
-            @license_id
-          )
-          UI.CloseDialog
         else
           UI.CloseDialog
           return false
