@@ -46,7 +46,8 @@ module Yast
       PackagesUI.ConfirmLicenses
 
       @confirmed = InstConfirmDialog.new.run(
-        GetInstArgs.argmap["show_license"] || false)
+        GetInstArgs.argmap["show_license"] || false
+      )
 
       if @confirmed
         Builtins.y2milestone(
