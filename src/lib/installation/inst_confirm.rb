@@ -10,9 +10,7 @@ Yast.import "InstData"
 Yast.import "ProductLicense"
 
 module Yast
-   
   class InstConfirmDialog
-
     include Yast::Logger
     include Yast::I18n
     include Yast::UIShortcuts
@@ -29,7 +27,7 @@ module Yast
       confirm_button_label = ""
 
       @license_id = Ops.get(Pkg.SourceGetCurrent(true), 0, 0)
-      log.info ("License ID of base product: #{@license_id}")
+      log.info "License ID of base product: #{@license_id}"
 
       if !Mode.update
         # Heading for confirmation popup before the installation really starts
@@ -44,9 +42,9 @@ module Yast
           Ops.get_boolean(info, :destructive, false)
         end
 
-        if some_destructive
+        body += if some_destructive
           # Text for confirmation popup before the installation really starts 2/3
-          body += _(
+          _(
             "<p>If you continue now, <b>existing\n" \
             "partitions</b> on your hard disk will be <b>deleted</b> or <b>formatted</b>\n" \
             "(<b>erasing any existing data</b> in those partitions) according to the\n" \
@@ -54,7 +52,7 @@ module Yast
           )
         else
           # Text for confirmation popup before the installation really starts 2/3
-          body += _(
+          _(
             "<p>If you continue now, partitions on your\n" \
             "hard disk will be modified according to the installation settings in the\n" \
             "previous dialogs.</p>"
@@ -84,11 +82,11 @@ module Yast
         # Label for the button that confirms startint the installation
         confirm_button_label = _("Start &Update")
       end
-   
-      if show_license
-        widgets = layout_with_license(heading, body, confirm_button_label)
+
+      widgets = if show_license
+        layout_with_license(heading, body, confirm_button_label)
       else
-        widgets = layout_without_license(heading, body, confirm_button_label)
+        layout_without_license(heading, body, confirm_button_label)
       end
 
       UI.OpenDialog(
@@ -104,7 +102,8 @@ module Yast
         case ret
         when :license_agreement
           InstData.product_license_accepted = UI.QueryWidget(
-            Id(:license_agreement), :Value)
+            Id(:license_agreement), :Value
+          )
         when :ok
           # Check whether the license has been accepted only if required
           if license_required? && !InstData.product_license_accepted
@@ -127,7 +126,7 @@ module Yast
       end
     end
 
-private
+  private
 
     # Layout without license section
     #
@@ -183,8 +182,7 @@ private
             HSpacing(0.7),
             RichText(heading + body),
             HSpacing(0.7)
-          )
-        ),
+          )),
         VWeight(
           20,
           Left(
@@ -219,10 +217,8 @@ private
                   Label.BackButton
                 ),
                 PushButton(Id(:ok), Opt(:okButton, :key_F9), confirm_button_label)
-              )
-            )
-          ),
-        )
+              ))
+          ))
       )
     end
 
@@ -270,5 +266,4 @@ private
       ProductLicense.ShowLicenseInInstallation(:base_license_rp, @license_id)
     end
   end
-
 end
