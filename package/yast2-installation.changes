@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Apr  3 10:54:42 UTC 2018 - jlopez@suse.com
+
+- Fix tests to use correct storage instance (part of fate#318196).
+- 4.0.43
+
+-------------------------------------------------------------------
 Fri Mar 23 09:57:56 UTC 2018 - mvidner@suse.com
 
 - System roles: make the radio buttons match other dialogs,

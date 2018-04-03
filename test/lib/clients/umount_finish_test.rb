@@ -4,6 +4,10 @@ require_relative "../../test_helper"
 require "installation/clients/umount_finish"
 
 describe Yast::UmountFinishClient do
+  before do
+    Y2Storage::StorageManager.create_test_instance
+  end
+
   subject(:client) { described_class.new }
 
   DEFAULT_SUBVOLUME = "@/.snapshots/1/snapshot".freeze
