@@ -17,10 +17,11 @@ module Yast
     include Yast::I18n
     include Yast::UIShortcuts
 
+    # Confirm installation or update.
+    #
+    # @param show_license [Boolean] showing base product license if availabel
+    # @return [Boolean] 'true' if the user confirms, 'false' otherwise.
     def run(show_license = false)
-      # Confirm installation or update.
-      # Returns 'true' if the user confirms, 'false' otherwise.
-      #
       textdomain "installation"
 
       heading = ""
@@ -127,7 +128,13 @@ module Yast
     end
 
 private
-  
+
+    # Layout without license section
+    #
+    # @param heading [String]
+    # @param body [String]
+    # @param confirm_button_label [String] button layout install/update
+    # @return [Yast::Term] layout
     def layout_without_license(heading, body, confirm_button_label)
       display_info = UI.GetDisplayInfo
       size_x = display_info["Width"] || 800
@@ -163,6 +170,12 @@ private
       )
     end
 
+    # Layout with license section
+    #
+    # @param heading [String]
+    # @param body [String]
+    # @param confirm_button_label [String] button layout install/update
+    # @return [Yast::Term] layout
     def layout_with_license(heading, body, confirm_button_label)
       VBox(
         VWeight(10,
@@ -227,7 +240,9 @@ private
       Report.Message(_("You must accept the license to install this product"))
     end
 
-    # License sometimes doesn't need to be manually accepted
+    # Layout for accepting license checkbox.
+    #
+    # @return [Yast::Term] layout
     def license_agreement_checkbox
       Left(
         CheckBox(
@@ -240,6 +255,8 @@ private
       )
     end
 
+    # Initialize license section
+    #
     def initialize_license
       # If accepting the license is required, show the check-box
       if license_required?
@@ -248,13 +265,10 @@ private
       end
 
       log.info "Acceptance needed: #{@license_id} => #{license_required?}"
-
       # The info file has already been seen in inst_casp_overview before.
       ProductLicense.info_seen!(@license_id)
       ProductLicense.ShowLicenseInInstallation(:base_license_rp, @license_id)
     end
-
-
   end
 
 end
