@@ -106,7 +106,10 @@ module Yast
           )
         when :ok
           # Check whether the license has been accepted only if required
-          if license_required? && !InstData.product_license_accepted
+          if show_license &&
+            license_required? &&
+            !InstData.product_license_accepted
+
             warn_license_required
             next
           end
@@ -128,7 +131,7 @@ module Yast
     # @param confirm_button_label [String] button layout install/update
     # @return [Yast::Term] layout
     def layout_without_license(heading, body, confirm_button_label)
-      display_info = UI.GetDisplayInfo
+      display_info = UI.GetDisplayInfo || {}
       size_x = display_info["Width"] || 800
       size_y = display_info["Height"] || 600
 
