@@ -107,8 +107,8 @@ module Yast
         when :ok
           # Check whether the license has been accepted only if required
           if show_license &&
-            license_required? &&
-            !InstData.product_license_accepted
+              license_required? &&
+              !InstData.product_license_accepted
 
             warn_license_required
             next
