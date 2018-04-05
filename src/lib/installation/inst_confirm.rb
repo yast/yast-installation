@@ -17,7 +17,7 @@ module Yast
 
     # Confirm installation or update.
     #
-    # @param show_license [Boolean] showing base product license if availabel
+    # @param show_license [Boolean] showing base product license if available
     # @return [Boolean] 'true' if the user confirms, 'false' otherwise.
     def run(show_license = false)
       textdomain "installation"
