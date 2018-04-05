@@ -10,7 +10,7 @@ describe Yast::InstConfirmDialog do
     before do
       allow(Yast::Pkg).to receive(:SourceGetCurrent).and_return([])
       allow(Yast::ProductLicense).to receive(:info_seen!).with(0)
-      allow(Yast::Storage).to receive(:GetCommitInfos).and_return([{ :destructive => true }])
+      allow(Yast::Storage).to receive(:GetCommitInfos).and_return([{ destructive: true }])
     end
 
     context "installation mode" do
@@ -35,7 +35,7 @@ describe Yast::InstConfirmDialog do
         before do
           expect(Yast::ProductLicense).to receive(:AcceptanceNeeded).and_return(true)
           expect(Yast::ProductLicense).to receive(:ShowLicenseIInstallation).with(:base_license_rp,
-           0)
+            0)
         end
 
         context "user clicks ok" do
