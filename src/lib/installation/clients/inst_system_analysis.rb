@@ -32,11 +32,6 @@ module Yast
   class InstSystemAnalysisClient < Client
     include Yast::Logger
 
-    # Custom exception class to indicate the user (or the AutoYaST profile)
-    # decided to abort the installation due to a libstorage-ng error
-    class AbortError < RuntimeError
-    end
-
     def main
       Yast.import "UI"
 
@@ -142,7 +137,7 @@ module Yast
         begin
           ret = run_function.call
           Builtins.y2milestone("Function %1 returned %2", run_function, ret)
-        rescue AbortError
+        rescue AbortException
           return :abort
         end
 
@@ -179,7 +174,7 @@ module Yast
 
     #	Hard disks initialization
     #
-    # @raise [AbortError] if an error is found and the installation must
+    # @raise [AbortException] if an error is found and the installation must
     #   be aborted because of such error
     def ActionHDDProbe
       init_storage
@@ -285,7 +280,7 @@ module Yast
     # Reprobing ensures we don't bring bug#806454 back and invalidates cached
     # proposal, so we are also safe from bug#865579.
     #
-    # @raise [AbortError] if an error is found and the installation must
+    # @raise [AbortException] if an error is found and the installation must
     #   be aborted because of such error
     def init_storage
       success = storage_manager.activate(activate_callbacks)
@@ -293,7 +288,7 @@ module Yast
       return if success
 
       log.info "A storage error was raised and the installation must be aborted."
-      raise AbortError, "User aborted"
+      raise AbortException, "User aborted"
     end
 
     # @return [Y2Storage::StorageManager]
