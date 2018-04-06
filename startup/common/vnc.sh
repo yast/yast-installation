@@ -17,6 +17,8 @@
 #----------------
 
 . /etc/YaST2/XVersion
+# set python path for websockify
+. /root/.profile
 
 #----[ setupVNCAuthentication ]------#
 setupVNCAuthentication () {
@@ -92,9 +94,6 @@ startVNCServer () {
 	>/var/log/YaST2/vncserver.log 2>&1 &
 	xserver_pid=$!
 
-	# Python gets confused by the symlink games played in inst-sys
-	# so we must help it
-	export PYTHONPATH=`echo /usr/lib/python3*`/site-packages:$PYTHONPATH
 	websockify \
 		--web /usr/share/novnc \
 		5801 \
