@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Apr  6 17:25:51 UTC 2018 - jlopez@suse.com
+
+- Use AbortException when user aborts (part of fate#318196).
+- 4.0.45
+
+-------------------------------------------------------------------
 Fri Apr  6 12:26:45 UTC 2018 - mvidner@suse.com
 
 - Start web VNC for the installation process (bsc#1078785)
