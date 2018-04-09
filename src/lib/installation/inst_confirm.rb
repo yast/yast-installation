@@ -176,7 +176,7 @@ module Yast
         VWeight(10,
           HBox(
             HSpacing(0.7),
-            RichText(heading + body),
+            Left(MinWidth(80,RichText(heading + body))),
             HSpacing(0.7)
           )),
         VWeight(
