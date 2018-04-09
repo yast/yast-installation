@@ -66,19 +66,17 @@ describe Yast::InstSystemAnalysisClient do
     context "when activation fails and the error is not recovered" do
       let(:activate_result) { false }
 
-      it "does not probe and raises AbortError" do
+      it "does not probe and raises AbortException" do
         expect(storage).to_not receive(:probe)
-        expect { client.ActionHDDProbe }
-          .to raise_error Yast::InstSystemAnalysisClient::AbortError
+        expect { client.ActionHDDProbe }.to raise_error Yast::AbortException
       end
     end
 
     context "when probing fails and the error is not recovered" do
       let(:probe_result) { false }
 
-      it "raises AbortError" do
-        expect { client.ActionHDDProbe }
-          .to raise_error Yast::InstSystemAnalysisClient::AbortError
+      it "raises AbortException" do
+        expect { client.ActionHDDProbe }.to raise_error Yast::AbortException
       end
     end
   end

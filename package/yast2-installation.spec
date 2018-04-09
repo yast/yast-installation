@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.0.44
+Version:        4.0.45
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -25,8 +25,8 @@ Source0:        %{name}-%{version}.tar.bz2
 Group:          System/YaST
 License:        GPL-2.0
 Url:            http://github.com/yast/yast-installation
-# new y2start script
-Requires:       yast2-ruby-bindings >= 3.2.10
+# for AbortException and handle direct abort
+Requires:       yast2-ruby-bindings >= 4.0.6
 
 Summary:        YaST2 - Installation Parts
 
@@ -35,6 +35,8 @@ Source2:	YaST2-Firstboot.service
 
 BuildRequires:  update-desktop-files
 BuildRequires:  yast2-devtools >= 3.1.10
+# for AbortException and handle direct abort
+BuildRequires:  yast2-ruby-bindings >= 4.0.6
 # needed for xml agent reading about products
 BuildRequires:  yast2-xml
 BuildRequires:  rubygem(rspec)
