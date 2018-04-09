@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Apr  9 10:13:38 CEST 2018 - schubi@suse.de
+
+ -CaaSP: Showing license confirmation. (Fate#324476)
+  Improved ncurses layout.
+- 3.2.53
+
+-------------------------------------------------------------------
 Tue Apr  3 14:07:07 CEST 2018 - schubi@suse.de
 
 - CaaSP: Showing license confirmation. (Fate#324476)
