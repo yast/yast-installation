@@ -1,6 +1,7 @@
 require "yast"
 Yast.import "Pkg"
 Yast.import "Popup"
+Yast.import "AddOnProduct"
 
 require "cwm/common_widgets"
 
@@ -49,6 +50,12 @@ module Installation
         Yast::Pkg.PkgApplReset
         Yast::Pkg.PkgReset
         @product.select
+
+        # Reselecting existing add-on-products for installation again
+        Yast::AddOnProduct.selected_installation_products.each do |product|
+          log.info "Reselecting add-on product #{product} for installation"
+          Yast::Pkg.ResolvableInstall(product, :product, "")
+        end
       end
 
       def validate
