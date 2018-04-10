@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.0.45
+Version:        4.0.46
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -64,8 +64,8 @@ Requires:	yast2-pkg-bindings >= 3.1.33
 # Mouse-related scripts moved to yast2-mouse
 Conflicts:	yast2-mouse < 2.18.0
 
-# Yast::Packages.check_remote_installation_packages
-Requires:	yast2-packager >= 4.0.9
+# Yast::AddOnProduct.selected_installation_products
+Requires:	yast2-packager >= 4.0.56
 
 # use in startup scripts
 Requires:	initviocons
