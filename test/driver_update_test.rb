@@ -11,14 +11,12 @@ describe Installation::DriverUpdate do
 
   let(:update_path) { FIXTURES_DIR.join("updates", "dud_000") }
   let(:losetup_content) do
-    "NAME       SIZELIMIT OFFSET AUTOCLEAR RO BACK-FILE\n" \
-    "/dev/loop5         0      0         0  0 /download/dud_000\n" \
-    "/dev/loop6         0      0         0  0 #{FIXTURES_DIR.join("updates", "dud_002")}\n"
+    "/dev/loop6: [0017]:63402 (#{update_path})\n"
   end
 
   before do
     allow(Yast::SCR).to receive(:Execute)
-      .with(Yast::Path.new(".target.bash_output"), "/sbin/losetup")
+      .with(Yast::Path.new(".target.bash_output"), String)
       .and_return("exit" => 0, "stdout" => losetup_content)
     allow(Yast::SCR).to receive(:Read)
       .with(Yast::Path.new(".proc.mounts"))
@@ -65,6 +63,27 @@ describe Installation::DriverUpdate do
 
       it "returns :archive" do
         expect(update.kind).to eq(:archive)
+      end
+    end
+  end
+
+  describe "#instsys_path" do
+    context "when is a driver update disk" do
+      let(:update_path) { FIXTURES_DIR.join("updates", "dud_000") }
+
+      it "returns the path to the 'inst-sys' directory within the update" do
+        expect(update.instsys_path).to eq(FIXTURES_DIR.join("updates", "dud_000", "inst-sys"))
+      end
+    end
+
+    context "when is an archive" do
+      let(:update_path) { FIXTURES_DIR.join("updates", "dud_002") }
+
+      it "returns the path where the DUD is mounted on" do
+        expect(Yast::SCR).to receive(:Execute)
+          .with(Yast::Path.new(".target.bash_output"), "/sbin/losetup -j '#{update_path}'")
+          .and_return("exit" => 0, "stdout" => losetup_content)
+        expect(update.instsys_path).to eq(Pathname.new("/mounts/mp_0005"))
       end
     end
   end

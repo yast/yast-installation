@@ -97,7 +97,7 @@ module Installation
   private
 
     # LOSETUP command
-    LOSETUP_CMD = "/sbin/losetup".freeze
+    LOSETUP_CMD = "/sbin/losetup -j '%<file>s'".freeze
 
     # Returns the instsys_path for updates of type :archive
     #
@@ -106,10 +106,10 @@ module Installation
     #
     # @return [Pathname] Update's mountpoint
     def archive_instsys_path
-      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), LOSETUP_CMD)
+      cmd = format(LOSETUP_CMD, file: path.to_s)
+      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
       log.info("Reading loopback devices: #{out}")
-      regexp = %r{(/dev/loop\d+)[^\n]+#{path.to_s}\n}
-      lodevice = out["stdout"][regexp, 1]
+      lodevice = out["stdout"].split(":").first
       mount = Yast::SCR.Read(Yast::Path.new(".proc.mounts")).find { |m| m["spec"] == lodevice }
       if mount.nil?
         log.warn("Driver Update at #{path} is not mounted")
