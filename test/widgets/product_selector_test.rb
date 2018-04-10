@@ -57,6 +57,8 @@ describe ::Installation::Widgets::ProductSelector do
     before do
       allow(Yast::Pkg).to receive(:PkgApplReset)
       allow(Yast::Pkg).to receive(:PkgReset)
+      allow(Yast::AddOnProduct).to receive(:selected_installation_products)
+        .and_return([])
     end
 
     it "resets previous package configuration" do
