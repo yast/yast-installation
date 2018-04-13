@@ -288,8 +288,7 @@ module Installation
         bullet = selected ? BUTTON_ON : BUTTON_OFF
       end
       widget = "#{bullet} #{CGI.escape_html(label)}"
-      color = installation ? "white" : "black"
-      enabled_widget = "<a style='text-decoration:none; color:#{color}' href=\"#{id}\">#{widget}</a>"
+      enabled_widget = "<a class='dontlooklikealink' href=\"#{id}\">#{widget}</a>"
       "<p>#{enabled_widget}</p>"
     end
   end
