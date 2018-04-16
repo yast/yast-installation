@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Apr 16 11:08:57 UTC 2018 - jreidinger@suse.com
+
+- Ensure proper patterns are selected when going back to system
+  role and switch to different role (bsc#1088883)
+- 4.0.47
+
+-------------------------------------------------------------------
 Tue Apr 10 16:37:15 CEST 2018 - schubi@suse.de
 
 - Set Add-On products for installation again after the base
