@@ -196,7 +196,14 @@ module Installation
 
       # Reset pkg and pattern selection as many roles define own roles
       # so ensure when going back that it will properly set (bsc#1088883)
-      Yast::Pkg.PkgApplReset
+      reset_patterns
+    end
+
+    def reset_patterns
+      Yast::Pkg::ResolvableProperties("", :pattern, "").each do |pattern|
+        next if pattern["status"] != :selected
+        Yast::Pkg.ResolvableNeutral(pattern["name"], :pattern, false)
+      end
       Yast::Packages.SelectSystemPatterns(false)
       Yast::Pkg.PkgSolve(false)
     end
