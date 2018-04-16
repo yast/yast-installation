@@ -24,6 +24,8 @@ require "installation/services"
 require "installation/system_role"
 
 Yast.import "GetInstArgs"
+Yast.import "Packages"
+Yast.import "Pkg"
 Yast.import "Popup"
 Yast.import "ProductControl"
 Yast.import "ProductFeatures"
@@ -191,6 +193,19 @@ module Installation
       log.info "Applying system role '#{role.id}'"
       role.overlay_features
       adapt_services(role)
+
+      # Reset pkg and pattern selection as many roles define own roles
+      # so ensure when going back that it will properly set (bsc#1088883)
+      reset_patterns
+    end
+
+    def reset_patterns
+      Yast::Pkg::ResolvableProperties("", :pattern, "").each do |pattern|
+        next if pattern["status"] != :selected
+        Yast::Pkg.ResolvableNeutral(pattern["name"], :pattern, false)
+      end
+      Yast::Packages.SelectSystemPatterns(false)
+      Yast::Pkg.PkgSolve(false)
     end
 
     # for given role sets in {::Installation::Services} list of services to enable

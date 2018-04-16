@@ -25,6 +25,7 @@ describe ::Installation::SelectSystemRole do
 
       allow(Yast::ProductFeatures).to receive(:ClearOverlay)
       allow(Yast::ProductFeatures).to receive(:SetOverlay) # .with
+      allow(Yast::Packages).to receive(:SelectSystemPatterns)
     end
 
     context "when no roles are defined" do
