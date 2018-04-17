@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Apr 17 12:37:12 UTC 2018 - igonzalezsosa@suse.com
+
+- Installer Updates does not overwrite Driver Updates
+  (bsc#1088685).
+- 4.0.49
+
+-------------------------------------------------------------------
 Mon Apr 16 12:50:00 UTC 2018 - mvidner@suse.com
 
 - Don't hard-code the role text color (bsc#1087399).

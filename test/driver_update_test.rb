@@ -9,16 +9,14 @@ Yast.import "Linuxrc"
 describe Installation::DriverUpdate do
   subject(:update) { Installation::DriverUpdate.new(update_path) }
 
-  let(:update_path) { FIXTURES_DIR.join("updates", "dud_000") }
+  let(:update_path) { FIXTURES_DIR.join("self-update", "update", "000") }
   let(:losetup_content) do
-    "NAME       SIZELIMIT OFFSET AUTOCLEAR RO BACK-FILE\n" \
-    "/dev/loop5         0      0         0  0 /download/dud_000\n" \
-    "/dev/loop6         0      0         0  0 #{FIXTURES_DIR.join("updates", "dud_002")}\n"
+    "/dev/loop6: [0017]:63402 (#{update_path})\n"
   end
 
   before do
     allow(Yast::SCR).to receive(:Execute)
-      .with(Yast::Path.new(".target.bash_output"), "/sbin/losetup")
+      .with(Yast::Path.new(".target.bash_output"), String)
       .and_return("exit" => 0, "stdout" => losetup_content)
     allow(Yast::SCR).to receive(:Read)
       .with(Yast::Path.new(".proc.mounts"))
@@ -34,7 +32,9 @@ describe Installation::DriverUpdate do
 
     context "when updates exist" do
       it "returns an array of driver updates" do
-        updates = described_class.find([FIXTURES_DIR.join("updates")])
+        updates = described_class.find(
+          [FIXTURES_DIR.join("self-update/update"), FIXTURES_DIR.join("self-update/download")]
+        )
         expect(updates).to all(be_an(described_class))
         expect(updates.size).to eq(3)
       end
@@ -53,7 +53,7 @@ describe Installation::DriverUpdate do
 
   describe "#kind" do
     context "when is a driver update disk" do
-      let(:update_path) { FIXTURES_DIR.join("updates", "dud_000") }
+      let(:update_path) { FIXTURES_DIR.join("self-update", "update", "000") }
 
       it "returns :dud" do
         expect(update.kind).to eq(:dud)
@@ -61,10 +61,32 @@ describe Installation::DriverUpdate do
     end
 
     context "when is an archive" do
-      let(:update_path) { FIXTURES_DIR.join("updates", "dud_002") }
+      let(:update_path) { FIXTURES_DIR.join("self-update", "download", "dud_0000") }
 
       it "returns :archive" do
         expect(update.kind).to eq(:archive)
+      end
+    end
+  end
+
+  describe "#instsys_path" do
+    context "when is a driver update disk" do
+      let(:update_path) { FIXTURES_DIR.join("self-update", "update", "000") }
+
+      it "returns the path to the 'inst-sys' directory within the update" do
+        expect(update.instsys_path)
+          .to eq(FIXTURES_DIR.join("self-update", "update", "000", "inst-sys"))
+      end
+    end
+
+    context "when is an archive" do
+      let(:update_path) { FIXTURES_DIR.join("self-update", "download", "dud_0000") }
+
+      it "returns the path where the DUD is mounted on" do
+        expect(Yast::SCR).to receive(:Execute)
+          .with(Yast::Path.new(".target.bash_output"), "/sbin/losetup -j '#{update_path}'")
+          .and_return("exit" => 0, "stdout" => losetup_content)
+        expect(update.instsys_path).to eq(Pathname.new("/mounts/mp_0005"))
       end
     end
   end
