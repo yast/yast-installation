@@ -9,7 +9,7 @@ Yast.import "Linuxrc"
 describe Installation::DriverUpdate do
   subject(:update) { Installation::DriverUpdate.new(update_path) }
 
-  let(:update_path) { FIXTURES_DIR.join("updates", "dud_000") }
+  let(:update_path) { FIXTURES_DIR.join("self-update", "update", "000") }
   let(:losetup_content) do
     "/dev/loop6: [0017]:63402 (#{update_path})\n"
   end
@@ -32,7 +32,9 @@ describe Installation::DriverUpdate do
 
     context "when updates exist" do
       it "returns an array of driver updates" do
-        updates = described_class.find([FIXTURES_DIR.join("updates")])
+        updates = described_class.find(
+          [FIXTURES_DIR.join("self-update/update"), FIXTURES_DIR.join("self-update/download")]
+        )
         expect(updates).to all(be_an(described_class))
         expect(updates.size).to eq(3)
       end
@@ -51,7 +53,7 @@ describe Installation::DriverUpdate do
 
   describe "#kind" do
     context "when is a driver update disk" do
-      let(:update_path) { FIXTURES_DIR.join("updates", "dud_000") }
+      let(:update_path) { FIXTURES_DIR.join("self-update", "update", "000") }
 
       it "returns :dud" do
         expect(update.kind).to eq(:dud)
@@ -59,7 +61,7 @@ describe Installation::DriverUpdate do
     end
 
     context "when is an archive" do
-      let(:update_path) { FIXTURES_DIR.join("updates", "dud_002") }
+      let(:update_path) { FIXTURES_DIR.join("self-update", "download", "dud_0000") }
 
       it "returns :archive" do
         expect(update.kind).to eq(:archive)
@@ -69,15 +71,16 @@ describe Installation::DriverUpdate do
 
   describe "#instsys_path" do
     context "when is a driver update disk" do
-      let(:update_path) { FIXTURES_DIR.join("updates", "dud_000") }
+      let(:update_path) { FIXTURES_DIR.join("self-update", "update", "000") }
 
       it "returns the path to the 'inst-sys' directory within the update" do
-        expect(update.instsys_path).to eq(FIXTURES_DIR.join("updates", "dud_000", "inst-sys"))
+        expect(update.instsys_path)
+          .to eq(FIXTURES_DIR.join("self-update", "update", "000", "inst-sys"))
       end
     end
 
     context "when is an archive" do
-      let(:update_path) { FIXTURES_DIR.join("updates", "dud_002") }
+      let(:update_path) { FIXTURES_DIR.join("self-update", "download", "dud_0000") }
 
       it "returns the path where the DUD is mounted on" do
         expect(Yast::SCR).to receive(:Execute)
