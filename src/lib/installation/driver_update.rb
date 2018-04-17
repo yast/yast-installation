@@ -55,8 +55,16 @@ module Installation
       def find(update_dirs)
         dirs = Array(update_dirs)
         log.info("Searching for Driver Updates at #{dirs.map(&:to_s)}")
-        globs = dirs.map { |d| d.join("dud_*") }
-        Pathname.glob(globs).map do |path|
+
+        # DUD as directories
+        duds_globs = dirs.map { |d| d.join("*", "dud.config") }
+        duds = Pathname.glob(duds_globs).map(&:dirname)
+
+        # DUD as files (squashfs filesystems)
+        archives_globs = dirs.map { |d| d.join("dud_*") }
+        archives = Pathname.glob(archives_globs)
+
+        (duds + archives).uniq.map do |path|
           log.info("Found a Driver Update at #{path}")
           new(path)
         end
