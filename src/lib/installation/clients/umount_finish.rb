@@ -159,9 +159,13 @@ module Yast
             WFM.Execute(path(".local.umount"), umount_this)
           )
           if umount_result != true
-            # the details are printed on STDERR, redirect it
-            fuser = `LC_ALL=C fuser -v -m #{Shellwords.escape(umount_this)} 2>&1`
-            log.warn("Running processes using #{umount_this}: #{fuser}")
+            begin
+              # the details are printed on STDERR, redirect it
+              fuser = `LC_ALL=C fuser -v -m #{Shellwords.escape(umount_this)} 2>&1`
+              log.warn("Running processes using #{umount_this}: #{fuser}")
+            rescue Errno::ENOENT
+              log.warn("Calling fuser failed, probably not installed")
+            end
             # bnc #395034
             # Don't remount them read-only!
             if Builtins.contains(
