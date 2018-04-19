@@ -163,8 +163,8 @@ module Yast
             # (the details are printed on STDERR, redirect it)
             fuser = begin
                       `LC_ALL=C fuser -v -m #{Shellwords.escape(umount_this)} 2>&1`
-                    rescue
-                      "fuser failed: #{$ERROR_INFO}"
+                    rescue => e
+                      "fuser failed: #{e}"
                     end
             log.warn("Running processes using #{umount_this}: #{fuser}")
             # bnc #395034
