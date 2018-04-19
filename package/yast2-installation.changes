@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Apr 19 13:05:23 UTC 2018 - lslezak@suse.cz
+
+- Log more details when unmounting the target partition fails
+  (to debug bsc#1090018)
+- 4.0.50
+
+-------------------------------------------------------------------
 Tue Apr 17 12:37:12 UTC 2018 - igonzalezsosa@suse.com
 
 - Installer Updates does not overwrite Driver Updates
