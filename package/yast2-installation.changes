@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Apr 24 11:41:26 UTC 2018 - mvidner@suse.com
+
+- Fixed "vnc.sh: /root/.profile: No such file or directory"
+  (bsc#1089623).
+- 4.0.51
+
+-------------------------------------------------------------------
 Thu Apr 19 13:05:23 UTC 2018 - lslezak@suse.cz
 
 - Log more details when unmounting the target partition fails
