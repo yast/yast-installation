@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Apr 25 10:43:58 UTC 2018 - jreidinger@suse.com
+
+- fix regression to show again iscsi configuration for disk-less
+  setup  (bsc#1090753)
+- 4.0.51
+
+-------------------------------------------------------------------
 Thu Apr 19 13:05:23 UTC 2018 - lslezak@suse.cz
 
 - Log more details when unmounting the target partition fails
