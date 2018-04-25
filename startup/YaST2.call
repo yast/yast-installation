@@ -277,7 +277,9 @@ function ssh_reboot_message()
 function restore_backup () {
   # restores backup if it is available
     if [ -d /mnt/var/adm/backup/system-upgrade ]; then
+	log "\tStarting restore scripts"
         for i in /mnt/var/adm/backup/system-upgrade/restore-*.sh; do
+	    log "\tStarting $i"
             sh $i /mnt
         done
     fi
@@ -334,6 +336,7 @@ function start_yast () {
 		tee /var/log/YaST2/gdb-log
 	    Y2_EXIT_CODE=$?
 	fi
+	log "\tY2_EXIT_CODE: $Y2_EXIT_CODE"
 
 	Y2_ABORT_MESSAGE="YaST seems to be aborted abnormally !"
 	Y2_OK_MESSAGE="YaST procedure ended successfully"
@@ -344,7 +347,6 @@ function start_yast () {
 		cat /etc/yast.inf | grep -q -i "Aborted: 1"
 		if [ $? = 0 ];then
 			log "\t$Y2_ABORT_MESSAGE"
-                        restore_backup
 		fi
 	else
 		#=============================================
@@ -656,6 +658,13 @@ if [ "$server_running" = 1 ];then
 	while kill -0 $xserver_pid 2>/dev/null ; do
 		sleep 1
 	done
+fi
+
+if [ -s /etc/yast.inf ];then
+        # aborted, restore the upgrade backup
+        grep -q -i "^Aborted:[ \t]*1" /etc/yast.inf && restore_backup
+        # no abort, not reboot status => YaST crashed, restore the upgrade backup
+        grep -q -i -v -e "^Aborted:" -e "^Root:" /etc/yast.inf && restore_backup
 fi
 
 #=============================================
