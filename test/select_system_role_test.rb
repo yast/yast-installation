@@ -14,6 +14,7 @@ describe ::Installation::SelectSystemRole do
     end
 
     allow(Yast::UI).to receive(:ChangeWidget)
+    allow(Yast::Language).to receive(:language).and_return("en_US")
 
     Installation::SystemRole.clear # Clear system roles cache
   end
