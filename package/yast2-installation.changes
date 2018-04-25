@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Apr 25 10:43:58 UTC 2018 - jreidinger@suse.com
+
+- fix regression to show again iscsi configuration for disk-less
+  setup  (bsc#1090753)
+- 4.0.52
+
+-------------------------------------------------------------------
 Tue Apr 24 11:41:26 UTC 2018 - mvidner@suse.com
 
 - Fixed "vnc.sh: /root/.profile: No such file or directory"
