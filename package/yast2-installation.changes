@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Apr 25 06:03:53 UTC 2018 - igonzalezsosa@suse.com
+
+- Fix text direction for RTL languages in the installer settings
+  screen (bsc#1089846).
+- 4.0.52
+
+-------------------------------------------------------------------
 Tue Apr 24 11:41:26 UTC 2018 - mvidner@suse.com
 
 - Fixed "vnc.sh: /root/.profile: No such file or directory"
