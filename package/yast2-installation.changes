@@ -3,6 +3,13 @@ Wed Apr 25 10:43:58 UTC 2018 - jreidinger@suse.com
 
 - fix regression to show again iscsi configuration for disk-less
   setup  (bsc#1090753)
+- 4.0.53
+
+-------------------------------------------------------------------
+Wed Apr 25 06:03:53 UTC 2018 - igonzalezsosa@suse.com
+
+- Fix text direction for RTL languages in the installer settings
+  screen (bsc#1089846).
 - 4.0.52
 
 -------------------------------------------------------------------
