@@ -189,29 +189,18 @@ module Yast
         drivers_info = ""
       end
 
-      if devicegraph.empty?
-        if Mode.auto
-          Report.Warning(
+      if devicegraph.empty? && !Mode.auto?
+        Report.Error(
+          Builtins.sformat(
             # TRANSLATORS: Error pop-up
             _(
               "No hard disks were found for the installation.\n" \
-              "During an automatic installation, they might be detected later.\n" \
-              "(especially on S/390 or iSCSI systems)\n"
-            )
+              "Please check your hardware!\n" \
+              "%1\n"
+            ),
+            drivers_info
           )
-        else
-          Report.Error(
-            Builtins.sformat(
-              # TRANSLATORS: Error pop-up
-              _(
-                "No hard disks were found for the installation.\n" \
-                "Please check your hardware!\n" \
-                "%1\n"
-              ),
-              drivers_info
-            )
-          )
-        end
+        )
 
         return false
       end
