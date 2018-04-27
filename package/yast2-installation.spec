@@ -47,9 +47,9 @@ BuildRequires:  yast2 >= 4.0.72
 # Yast::Packages.check_remote_installation_packages
 BuildRequires:	yast2-packager >= 4.0.9
 
-# Y2Storage::StorageManager#activate and #probe as boolean
-BuildRequires: yast2-storage-ng >= 4.0.114
-Requires:      yast2-storage-ng >= 4.0.114
+# Y2Storage::StorageManager#devices_for_installation?
+BuildRequires: yast2-storage-ng >= 4.0.168
+Requires:      yast2-storage-ng >= 4.0.168
 
 # TextHelpers#div_with_direction
 Requires:       yast2 >= 4.0.72
