@@ -27,7 +27,7 @@
 # $Id$
 #
 
-require "storage"
+require "y2storage"
 
 module Yast
   module InstallationInstIncAllInclude
@@ -241,13 +241,7 @@ module Yast
       # disable disks activation if not needed
       iscsi = Linuxrc.InstallInf("WithiSCSI") == "1"
       fcoe = Linuxrc.InstallInf("WithFCoE") == "1"
-      no_disk = begin
-        ::Storage.light_probe
-      rescue ::Storage::Exception => e
-        Builtins.y2milestone("light probe failed with #{e}")
-        # is it safer when problem appear to act like there is no disk
-        true
-      end
+      no_disk = !::Y2Storage::StorageManager.instance.devices_for_installation?
 
       if !((Arch.s390 && !Arch.is_zkvm) || iscsi || fcoe || no_disk)
         Builtins.y2milestone("Disabling disk activation module")
