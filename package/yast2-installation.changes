@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed May  2 15:44:18 UTC 2018 - shundhammer@suse.com
+
+- Copy new /var/log/YaST2/storage-inst/ subdir to target at the
+  end of the installation (part of fate #318196)
+- 4.0.56
+
+-------------------------------------------------------------------
 Fri Apr 27 15:07:15 UTC 2018 - igonzalezsosa@suse.com
 
 - Do not warn too soon about missing disks during autoinstallation
