@@ -31,7 +31,7 @@ describe ::Installation::CopyLogsFinish do
     it "rotates y2log" do
       mock_log_dir(["y2log-1.gz"])
 
-      expect_to_run(/cp .*y2log-1.gz.*\/mnt\/.*y2log-2.gz/)
+      expect_to_run(/cp .*y2log-1.gz.*y2log-2.gz/)
 
       subject.write
     end
@@ -39,7 +39,7 @@ describe ::Installation::CopyLogsFinish do
     it "compresses y2log if not already done" do
       mock_log_dir(["y2log-1"])
 
-      expect_to_run(/gzip .*\/mnt\/.*y2log-2/) #-2 due to rotation
+      expect_to_run(/gzip .*y2log-2/) #-2 due to rotation
 
       subject.write
     end
@@ -55,7 +55,7 @@ describe ::Installation::CopyLogsFinish do
     it "rotates zypp.log" do
       mock_log_dir(["zypp.log"])
 
-      expect_to_run(/cp .*zypp.log.*\/mnt\/.*zypp.log-1/)
+      expect_to_run(/cp .*zypp.log.*zypp.log-1/)
 
       subject.write
     end
@@ -63,8 +63,8 @@ describe ::Installation::CopyLogsFinish do
     it "copies the storage-inst subdir" do
       mock_log_dir(["storage-inst"])
 
-      expect_to_run(/rm -rf .*\/mnt\/.*storage-inst/)
-      expect_to_run(/cp -r .*\/mnt\/.*storage-inst/)
+      expect_to_run(/rm -rf .*storage-inst/)
+      expect_to_run(/cp -r .*storage-inst/)
 
       subject.write
     end
