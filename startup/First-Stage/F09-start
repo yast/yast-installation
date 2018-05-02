@@ -19,7 +19,7 @@ SUSEConnect --cleanup > /dev/null 2>&1
 
 # delete the repositories accidentally saved into inst-sys
 # they make troubles when restarting YaST
-rm -rfv /etc/zypp/repos.d/*
+rm -fv /etc/zypp/repos.d/*.repo
 
 #=============================================
 # 9.1) check for driver update mode
