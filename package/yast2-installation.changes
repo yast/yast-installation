@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Apr 27 15:07:15 UTC 2018 - igonzalezsosa@suse.com
+
+- Do not warn too soon about missing disks during autoinstallation
+  (bsc#1091033)
+- 4.0.55
+
+-------------------------------------------------------------------
 Fri Apr 27 13:22:53 UTC 2018 - lslezak@suse.cz
 
 - Better handle the restore scripts when YaST is aborted or

@@ -189,29 +189,21 @@ module Yast
         drivers_info = ""
       end
 
-      if devicegraph.empty?
-        if Mode.auto
-          Report.Warning(
+      # This error message is only shown when no disks where found during a normal
+      # installation. The autoinstallation case will be handled later by AutoYaST at
+      # https://github.com/yast/yast-autoinstallation/blob/8e414637d8157462bee5e1ee29c5d2e747754670/src/modules/AutoinstStorage.rb#L334
+      if devicegraph.empty? && !Mode.auto?
+        Report.Error(
+          Builtins.sformat(
             # TRANSLATORS: Error pop-up
             _(
               "No hard disks were found for the installation.\n" \
-              "During an automatic installation, they might be detected later.\n" \
-              "(especially on S/390 or iSCSI systems)\n"
-            )
+              "Please check your hardware!\n" \
+              "%1\n"
+            ),
+            drivers_info
           )
-        else
-          Report.Error(
-            Builtins.sformat(
-              # TRANSLATORS: Error pop-up
-              _(
-                "No hard disks were found for the installation.\n" \
-                "Please check your hardware!\n" \
-                "%1\n"
-              ),
-              drivers_info
-            )
-          )
-        end
+        )
 
         return false
       end
