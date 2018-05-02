@@ -22,6 +22,7 @@ require "yast"
 require "ui/installation_dialog"
 require "installation/services"
 require "installation/system_role"
+require "ui/text_helpers"
 
 Yast.import "GetInstArgs"
 Yast.import "Packages"
@@ -32,6 +33,8 @@ Yast.import "ProductFeatures"
 
 module Installation
   class SelectSystemRole < ::UI::InstallationDialog
+    include UI::TextHelpers
+
     class << self
       # once the user selects a role, remember it in case they come back
       attr_accessor :original_role_id
@@ -254,7 +257,7 @@ module Installation
       VBox(
         Left(Label(intro_text)),
         VSpacing(2),
-        RichText(Id(:roles_richtext), role_rt_radios.join("\n"))
+        RichText(Id(:roles_richtext), div_with_direction(role_rt_radios.join("\n")))
       )
     end
 
@@ -283,7 +286,10 @@ module Installation
       installation = ENV["Y2STYLE"] == "installation.qss"
       if installation
         image = selected ? "inst_radio-button-checked.png" : "inst_radio-button-unchecked.png"
-        bullet = "<img src=\"#{IMAGE_DIR}/#{image}\"></img>"
+        # NOTE: due to a Qt bug, the first image does not get rendered properly. So we are
+        # rendering it twice (one with height and width set to "0").
+        bullet = "<img src=\"#{IMAGE_DIR}/#{image}\" height=\"0\" width=\"0\"></img>" \
+                 "<img src=\"#{IMAGE_DIR}/#{image}\"></img>"
       else
         bullet = selected ? BUTTON_ON : BUTTON_OFF
       end
