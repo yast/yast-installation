@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu May  3 07:34:57 UTC 2018 - lslezak@suse.cz
+
+- Keep the selected product in the desktop selection dialog
+  (bsc#1088660)
+- 4.0.57
+
+-------------------------------------------------------------------
 Wed May  2 15:44:18 UTC 2018 - shundhammer@suse.com
 
 - Copy new /var/log/YaST2/storage-inst/ subdir to target at the
