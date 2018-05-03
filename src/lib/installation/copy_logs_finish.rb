@@ -108,7 +108,7 @@ module Installation
     end
 
     def dest_dir
-      Yast::Installation.destdir + Yast::Directory.logdir
+      File.join(Yast::Installation.destdir, Yast::Directory.logdir)
     end
 
     def shell_cmd(cmd)
