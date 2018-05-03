@@ -18,7 +18,10 @@
 
 . /etc/YaST2/XVersion
 # set python path for websockify
-. /root/.profile
+# (only present and needed in the inst-sys)
+if [ -r /root/.profile ]; then
+        . /root/.profile
+fi
 
 #----[ setupVNCAuthentication ]------#
 setupVNCAuthentication () {
