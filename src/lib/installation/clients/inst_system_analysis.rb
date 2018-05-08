@@ -27,6 +27,7 @@
 
 require "yast"
 require "y2storage"
+require "y2storage/inhibitors"
 
 module Yast
   class InstSystemAnalysisClient < Client
@@ -64,6 +65,7 @@ module Yast
       return :back if GetInstArgs.going_back
 
       @packager_initialized = false
+      @inhibitors = nil
 
       Wizard.SetContents(_("Analyzing the Computer"), Empty(), "", false, false)
       Wizard.SetTitleIcon("yast-controller")
@@ -177,6 +179,8 @@ module Yast
     # @raise [AbortException] if an error is found and the installation must
     #   be aborted because of such error
     def ActionHDDProbe
+      inhibit_storage
+
       init_storage
       devicegraph = storage_manager.probed
 
@@ -252,6 +256,14 @@ module Yast
     end
 
   private
+
+    # Inhibit various storage features, e.g. MD RAID auto assembly
+    def inhibit_storage
+      return if @inhibitors
+
+      @inhibitors = Y2Storage::Inhibitors.new
+      @inhibitors.inhibit
+    end
 
     # Return the activate callbacks for libstorage-ng
     #
