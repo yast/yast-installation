@@ -1,8 +1,8 @@
 -------------------------------------------------------------------
 Thu May 10 13:10:41 UTC 2018 - igonzalezsosa@suse.com
 
-- Log errors when umounting filesystems after installation/upgrade
-  (related to bsc#1090018).
+- Log a warning when umounting a filesystem fails after
+  installation/upgrade (related to bsc#1090018).
 - 4.0.59 
 
 -------------------------------------------------------------------
