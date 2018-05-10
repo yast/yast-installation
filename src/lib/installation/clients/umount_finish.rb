@@ -159,14 +159,7 @@ module Yast
             WFM.Execute(path(".local.umount"), umount_this)
           )
           if umount_result != true
-            # run "fuser" to get the details about open files
-            # (the details are printed on STDERR, redirect it)
-            fuser = begin
-                      `LC_ALL=C fuser -v -m #{Shellwords.escape(umount_this)} 2>&1`
-                    rescue => e
-                      "fuser failed: #{e}"
-                    end
-            log.warn("Running processes using #{umount_this}: #{fuser}")
+            log_running_processes(umount_this)
             # bnc #395034
             # Don't remount them read-only!
             if Builtins.contains(
@@ -248,6 +241,7 @@ module Yast
           # bnc #395034
           # Don't remount them read-only!
           next if @umount_status
+          log_running_processes(@tmp)
 
           if Builtins.contains(
             ["/proc", "/sys", "/dev", "/proc/bus/usb"],
@@ -281,11 +275,7 @@ module Yast
           WFM.Execute(path(".local.bash_output"), "mount")
         )
 
-        @cmd = Builtins.sformat(
-          "fuser -v '%1' 2>&1",
-          String.Quote(Installation.destdir)
-        )
-        @cmd_run = Convert.to_map(WFM.Execute(path(".local.bash_output"), @cmd))
+        log_running_processes(Installation.destdir)
 
 # storage-ng
 =begin
@@ -440,6 +430,20 @@ module Yast
 
       log.info("Setting root subvol read-only property on #{subvolume_path}")
       Yast::Execute.on_target("btrfs", "property", "set", subvolume_path, "ro", "true")
+    end
+
+    # run "fuser" to get the details about open files
+    #
+    # @param mount_point [String]
+    def log_running_processes(mount_point)
+      fuser =
+        begin
+          # (the details are printed on STDERR, redirect it)
+          `LC_ALL=C fuser -v -m #{Shellwords.escape(mount_point)} 2>&1`
+        rescue => e
+          "fuser failed: #{e}"
+        end
+      log.warn("Running processes using #{mount_point}: #{fuser}")
     end
   end
 end

@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu May 10 13:10:41 UTC 2018 - igonzalezsosa@suse.com
+
+- Log a warning when umounting a filesystem fails after
+  installation/upgrade (related to bsc#1090018).
+- 4.0.59 
+
+-------------------------------------------------------------------
 Tue May 08 12:04:00 CEST 2018 - aschnell@suse.com
 
 - disable mdadm auto assembly for installation (bsc#1090690)
