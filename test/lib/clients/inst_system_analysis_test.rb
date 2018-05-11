@@ -47,6 +47,7 @@ describe Yast::InstSystemAnalysisClient do
 
     it "uses default activation callbacks" do
       expect(storage).to receive(:activate).with(nil).and_return true
+      expect(Yast::Execute).to receive(:locally!).with("/sbin/udevadm", "control", "--property=ANACONDA=yes")
       client.ActionHDDProbe
     end
 
