@@ -404,7 +404,7 @@ module Yast
       devicegraph = Y2Storage::StorageManager.instance.staging
 
       ro_btrfs_filesystems = devicegraph.filesystems.select do |fs|
-        fs.is?(:btrfs) && fs.mount_point && fs.mount_options.include?("ro")
+        new_filesystem?(fs) && ro_btrfs_filesystem?(fs)
       end
 
       ro_btrfs_filesystems.each { |f| default_subvolume_as_ro(f) }
@@ -444,6 +444,24 @@ module Yast
           "fuser failed: #{e}"
         end
       log.warn("Running processes using #{mount_point}: #{fuser}")
+    end
+
+  private
+
+    # Check whether the given filesystem is going to be created
+    #
+    # @param filesystem [Y2Storage::Filesystems::Base]
+    # @return [Boolean]
+    def new_filesystem?(filesystem)
+      !filesystem.exists_in_probed?
+    end
+
+    # Check whether the given filesystem is read-only BTRFS
+    #
+    # @param filesystem [Y2Storage::Filesystems::Base]
+    # @return [Boolean]
+    def ro_btrfs_filesystem?(filesystem)
+      filesystem.is?(:btrfs) && filesystem.mount_point && filesystem.mount_options.include?("ro")
     end
   end
 end

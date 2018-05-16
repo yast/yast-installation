@@ -27,10 +27,11 @@ describe Yast::UmountFinishClient do
     let(:root_fs) do
       instance_double(
         Y2Storage::Filesystems::Btrfs,
-        is?:               true,
         mount_point:       mount_point,
         mount_options:     mount_options,
-        subvolumes_prefix: subvolumes_prefix
+        subvolumes_prefix: subvolumes_prefix,
+        is?:               is_btrfs,
+        exists_in_probed?: !is_new
       )
     end
 
@@ -38,6 +39,8 @@ describe Yast::UmountFinishClient do
     let(:mount_options) { ["ro"] }
     let(:subvolumes_prefix) { "@" }
     let(:get_default) { "ID 276 gen 1172 top level 275 path @/.snapshots/1/snapshot\n" }
+    let(:is_btrfs) { true }
+    let(:is_new) { true }
 
     context "when a Btrfs filesystem is mounted as read-only" do
       context "and there is no subvolume_prefix" do
@@ -116,8 +119,18 @@ describe Yast::UmountFinishClient do
       end
     end
 
-    context "when a non-Btrfs filesystem is mounted" do
-      let(:root_fs) { instance_double(Y2Storage::Filesystems::Base, is?: false) }
+    context "when Btrfs filesystem is not mounted as read-only" do
+      let(:mount_options) { [] }
+
+      it "does not try to set 'ro' property" do
+        expect(Yast::Execute).to_not receive(:on_target)
+          .with("btrfs", "property", "set", any_args)
+        client.set_btrfs_defaults_as_ro
+      end
+    end
+
+    context "when a Btrfs filesystem already exists on disk" do
+      let(:is_new) { false }
 
       it "does not try to set 'ro' property for that filesystem" do
         expect(Yast::Execute).to_not receive(:on_target)
@@ -126,10 +139,10 @@ describe Yast::UmountFinishClient do
       end
     end
 
-    context "when Btrfs filesystem is not mounted as read-only" do
-      let(:mount_options) { [] }
+    context "when a non-Btrfs filesystem is mounted" do
+      let(:is_btrfs) { false }
 
-      it "does not try to set 'ro' property" do
+      it "does not try to set 'ro' property for that filesystem" do
         expect(Yast::Execute).to_not receive(:on_target)
           .with("btrfs", "property", "set", any_args)
         client.set_btrfs_defaults_as_ro
