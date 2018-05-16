@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed May 16 12:50:36 UTC 2018 - jlopez@suse.com
+
+- Do not try to set read-only property to default BTRFS subvolume
+  if the filesystem already existed on disk (needed for
+  bsc#1091047).
+- 4.0.60
+
+-------------------------------------------------------------------
 Thu May 10 13:10:41 UTC 2018 - igonzalezsosa@suse.com
 
 - Log a warning when umounting a filesystem fails after
