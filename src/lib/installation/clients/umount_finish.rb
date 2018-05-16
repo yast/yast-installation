@@ -458,7 +458,7 @@ module Yast
 
     # Check whether the given filesystem is read-only BTRFS
     #
-    # @param filesystem [Y2Storage::Filesystems::Btrfs]
+    # @param filesystem [Y2Storage::Filesystems::Base]
     # @return [Boolean]
     def ro_btrfs_filesystem?(filesystem)
       filesystem.is?(:btrfs) && filesystem.mount_point && filesystem.mount_options.include?("ro")
