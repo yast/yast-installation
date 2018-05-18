@@ -196,7 +196,7 @@ module Yast
       # This error message is only shown when no disks where found during a normal
       # installation. The autoinstallation case will be handled later by AutoYaST at
       # https://github.com/yast/yast-autoinstallation/blob/8e414637d8157462bee5e1ee29c5d2e747754670/src/modules/AutoinstStorage.rb#L334
-      if devicegraph.empty? && !Mode.auto?
+      if devicegraph.empty? && !Mode.auto
         Report.Error(
           Builtins.sformat(
             # TRANSLATORS: Error pop-up
