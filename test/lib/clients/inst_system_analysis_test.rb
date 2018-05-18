@@ -29,20 +29,21 @@ describe Yast::InstSystemAnalysisClient do
       instance_double(Y2Storage::StorageManager, activate: true, probe: nil, probed: devicegraph)
     end
 
-    let(:devicegraph) { instance_double(Y2Storage::Devicegraph, empty?: false) }
+    let(:devicegraph) { instance_double(Y2Storage::Devicegraph, empty?: empty) }
     let(:auto) { false }
     let(:activate_result) { true }
     let(:probe_result) { true }
+    let(:empty) { false }
+    let(:callbacks_class) { double("Y2Autoinstallation::ActivateCallbacks", new: callbacks) }
+    let(:callbacks) { instance_double("Y2Autoinstallation::ActivateCallbacks") }
 
     before do
       allow(client).to receive(:require).with("autoinstall/activate_callbacks")
-    end
-
-    before do
       allow(Y2Storage::StorageManager).to receive(:instance).and_return(storage)
       allow(storage).to receive(:activate).and_return activate_result
       allow(storage).to receive(:probe).and_return probe_result
       allow(Yast::Mode).to receive(:auto).and_return(auto)
+      stub_const("Y2Autoinstallation::ActivateCallbacks", callbacks_class)
     end
 
     it "uses default activation callbacks" do
@@ -53,10 +54,6 @@ describe Yast::InstSystemAnalysisClient do
 
     context "when running AutoYaST" do
       let(:auto) { true }
-      let(:callbacks_class) { double("Y2Autoinstallation::ActivateCallbacks", new: callbacks) }
-      let(:callbacks) { instance_double("Y2Autoinstallation::ActivateCallbacks") }
-
-      before { stub_const("Y2Autoinstallation::ActivateCallbacks", callbacks_class) }
 
       it "uses AutoYaST activation callbacks" do
         expect(storage).to receive(:activate).with(callbacks).and_return true
@@ -78,6 +75,28 @@ describe Yast::InstSystemAnalysisClient do
 
       it "raises AbortException" do
         expect { client.ActionHDDProbe }.to raise_error Yast::AbortException
+      end
+    end
+
+    context "when no devices are detected" do
+      let(:empty) { true }
+
+      context "and not running AutoYaST" do
+        let(:auto) { false }
+
+        it "displays an error" do
+          expect(Yast::Report).to receive(:Error)
+          client.ActionHDDProbe
+        end
+      end
+
+      context "and running AutoYaST" do
+        let(:auto) { true }
+
+        it "does not display any error" do
+          expect(Yast::Report).to_not receive(:Error)
+          client.ActionHDDProbe
+        end
       end
     end
   end

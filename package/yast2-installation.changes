@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri May 18 13:16:30 UTC 2018 - igonzalezsosa@suse.com
+
+- Fix installation mode detection (related to bsc#1089547).
+- 4.0.61
+
+-------------------------------------------------------------------
 Wed May 16 12:50:36 UTC 2018 - jlopez@suse.com
 
 - Do not try to set read-only property to default BTRFS subvolume
