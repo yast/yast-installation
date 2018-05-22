@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue May 22 11:32:07 CEST 2018 - schubi@suse.de
+
+- Mounting CD: Fixed crash while reporting an error.
+  (bnc#1093847)
+- 3.2.54
+
+-------------------------------------------------------------------
 Mon Apr  9 10:13:38 CEST 2018 - schubi@suse.de
 
  -CaaSP: Showing license confirmation. (Fate#324476)
