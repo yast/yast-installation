@@ -126,6 +126,20 @@ module Yast
           end
         end
 
+        # Copy cio_ignore whitelist (bsc#1095033)
+        # Only in install, as update should keep its old config
+        if Mode.installation
+          path = "/boot/zipl/active_devices.txt"
+          if File.exist?(path)
+            log.info "Copying zipl active devices '#{path}'"
+            target_path = File.join(Installation.destdir, path)
+            ::FileUtils.mkdir_p(File.dirname(target_path))
+            ::FileUtils.cp(multipath_config, target_path)
+          end
+        end
+
+
+
         # --------------------------------------------------------------
         # Copy /etc/install.inf into built system so that the
         # second phase of the installation can find it.
