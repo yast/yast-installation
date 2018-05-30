@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed May 30 06:47:11 UTC 2018 - jreidinger@suse.com
+
+- Copy active_devices.txt for s390 to prevent blocking of
+  important devices when cio_ignore is active (bsc#1095033)
+- 4.0.62
+
+-------------------------------------------------------------------
 Fri May 18 13:16:30 UTC 2018 - igonzalezsosa@suse.com
 
 - Fix installation mode detection (related to bsc#1089547).
