@@ -138,8 +138,6 @@ module Yast
           end
         end
 
-
-
         # --------------------------------------------------------------
         # Copy /etc/install.inf into built system so that the
         # second phase of the installation can find it.
