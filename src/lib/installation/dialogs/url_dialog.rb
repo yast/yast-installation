@@ -51,7 +51,7 @@ module Installation
 
     # Shows a dialog when the given url is wrong
     #
-    # @return [String] new value
+    # @return [Yast::Term] Dialog's content
     def dialog_content
       VBox(
         show_heading? ? Heading(dialog_title) : Empty(),

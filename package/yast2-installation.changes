@@ -275,7 +275,6 @@ Fri Jan 19 14:27:55 UTC 2018 - jsrain@suse.cz
 
 -------------------------------------------------------------------
 Thu Jan 18 12:48:55 UTC 2018 - qzhao@suse.com
-
 - Update YaST2-Firstboot.service: Depreciate plymouth --wait, add
   conflict to plymouth start service.
 - Update YaST2-Second-Stage.service: Depreciate plymouth deactivate
@@ -600,6 +599,13 @@ Mon Jun 26 11:11:19 CEST 2017 - shundhammer@suse.de
 
 - Allow different mount point for home partition (Fate#323532)
 - 3.2.46
+
+-------------------------------------------------------------------
+Mon Jun 26 11:11:19 CEST 2017 - shundhammer@suse.de
+
+- Allow different mount point for home partition (Fate#323532)
+- Move remaining CaaSP specific code to yast2-caasp package
+  (bsc#1036838)
 
 -------------------------------------------------------------------
 Mon Jun 19 07:03:16 UTC 2017 - lslezak@suse.cz

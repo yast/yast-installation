@@ -923,6 +923,18 @@ should be an extra warning pop-up dialog when the user enters the expert
 partitioner dialog during installation, for example because the product has
 special requirements for partitioning (Btrfs to support snapshots etc.).
 
+*root_subvolume_read_only* (boolean, default _false_) specifies whether the
+root subvolume should be mounted read-only in /etc/fstab and its 'ro' Btrfs
+property should be set to _true_. This works only for Btrfs root
+filesystems. If another root filesystem type is chosen, this might fail
+silently.
+
+*root_fs* (string, default _btrfs_) is the filesystem type for the root
+ partition.
+
+*home_fs* (string, default _xfs_) is the filesystem type for the home
+ partition.
+
 *home_path* (string) is the path (mount point) for the home
 partition or volume, if any is created (depending on *try_separate_home*,
 *limit_try_home* and available disk space).
