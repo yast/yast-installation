@@ -268,7 +268,7 @@ module Yast::Transfer
                   # autoyast tried to mount the CD but had no success.
                   @GET_error = Ops.add(
                     @GET_error,
-                    Builtins.sformat(_("Mounting %1 failed."), cdrom)
+                    Builtins.sformat(_("Mounting %1 failed."), cdrom_device)
                   )
                   Builtins.y2warning("Mount failed")
                   ok = false

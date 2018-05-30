@@ -42,6 +42,7 @@ module Yast
       textdomain "installation"
 
       Yast.import "AddOnProduct"
+      Yast.import "Arch"
       Yast.import "Linuxrc"
       Yast.import "Installation"
       Yast.import "Directory"
@@ -121,6 +122,18 @@ module Yast
           if File.exist?(multipath_config)
             log.info "Copying multipath blacklist '#{multipath_config}'"
             target_path = File.join(Installation.destdir, multipath_config)
+            ::FileUtils.mkdir_p(File.dirname(target_path))
+            ::FileUtils.cp(multipath_config, target_path)
+          end
+        end
+
+        # Copy cio_ignore whitelist (bsc#1095033)
+        # Only in install, as update should keep its old config
+        if Mode.installation && Arch.s390
+          path = "/boot/zipl/active_devices.txt"
+          if File.exist?(path)
+            log.info "Copying zipl active devices '#{path}'"
+            target_path = File.join(Installation.destdir, path)
             ::FileUtils.mkdir_p(File.dirname(target_path))
             ::FileUtils.cp(multipath_config, target_path)
           end
