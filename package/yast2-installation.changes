@@ -6,7 +6,7 @@ Thu May 31 10:17:19 UTC 2018 - jreidinger@suse.com
 - 4.0.63
 
 -------------------------------------------------------------------
-Wed May 30 10:42:46 UTC 2018 - jreidinger@suse.com
+Wed May 30 06:47:11 UTC 2018 - jreidinger@suse.com
 
 - Copy active_devices.txt for s390 to prevent blocking of
   important devices when cio_ignore is active (bsc#1095033)
