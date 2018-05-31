@@ -62,76 +62,20 @@ module Yast
       # This should run before the SCR::switch function
       adjust_modprobe_blacklist
 
-      # copy hardware status to installed system
       copy_hardware_status
-
-      # if VNC, copy setup data
-      if Linuxrc.vnc
-        log.info "Copying VNC settings"
-        WFM.Execute(
-          path(".local.bash"),
-          Builtins.sformat(
-            "/bin/cp -a '/root/.vnc' '%1/root/'",
-            ::Yast::String.Quote(installation_destination)
-          )
-        )
-      end
-
-      # Copy multipath stuff (bnc#885628)
-      # Only in install, as update should keep its old config
-      if Mode.installation
-        multipath_config = "/etc/multipath/wwids"
-        if File.exist?(multipath_config)
-          log.info "Copying multipath blacklist '#{multipath_config}'"
-          target_path = File.join(Installation.destdir, multipath_config)
-          ::FileUtils.mkdir_p(File.dirname(target_path))
-          ::FileUtils.cp(multipath_config, target_path)
-        end
-      end
-
+      copy_vnc
+      copy_multipath
       # Copy cio_ignore whitelist (bsc#1095033)
-      # Only in install, as update should keep its old config
-      if Mode.installation && Arch.s390
-        path = "/boot/zipl/active_devices.txt"
-        if File.exist?(path)
-          log.info "Copying zipl active devices '#{path}'"
-          target_path = File.join(Installation.destdir, path)
-          ::FileUtils.mkdir_p(File.dirname(target_path))
-          ::FileUtils.cp(path, target_path)
-        end
-      end
+      copy_active_devices
 
-      # --------------------------------------------------------------
-      # Copy /etc/install.inf into built system so that the
-      # second phase of the installation can find it.
-      if InstFunctions.second_stage_required?
-        Linuxrc.SaveInstallInf(Installation.destdir)
-      else
-        # TODO: write why it is needed
-        ::FileUtils.rm "/etc/install.inf"
-      end
+      handle_second_stage
 
       # Copy control.xml so it can be read once again during continue mode
-      # FIXME: probably won't work with new multimedia layout. Ideally final modified control.xml
-      #   should be saved
-      log.info "Copying YaST control file"
-      destination = File.join(Installation.destdir, Directory.etcdir, "control.xml")
-      ::FileUtils.cp(ProductControl.current_control_file, destination)
-      ::FileUtils.chmod(0o644, destination)
-
+      # FIXME: probably won't work as expected with new multimedia layout.
+      #   Ideally final modified control.xml should be saved.
+      copy_control_file
       # Copy /media.1/build to the installed system (fate#311377)
-      build_file = Pkg.SourceProvideOptionalFile(
-        Packages.GetBaseSourceID,
-        1,
-        "/media.1/build"
-      )
-      if !build_file.nil?
-        log.info "Copying /media.1/build file"
-        destination = File.join(Installation.destdir, Directory.etcdir, "build")
-        ::FileUtils.cp(build_file, destination)
-        ::FileUtils.chmod(0o644, destination)
-      end
-
+      copy_build_file
       copy_product_profiles
 
       # List of files used as additional workflow definitions
@@ -144,7 +88,7 @@ module Yast
 
       # bugzila #328126
       # Copy 70-persistent-cd.rules ... if not updating
-      CopyHardwareUdevRules() if !Mode.update
+      copy_hardware_udev_rules
 
       # fate#319624
       copy_ssh_files
@@ -224,7 +168,8 @@ module Yast
     UDEV_RULES_DIR = "/etc/udev/rules.d".freeze
 
     # see bugzilla #328126
-    def CopyHardwareUdevRules
+    def copy_hardware_udev_rules
+      return if Mode.update
       udev_rules_destdir = ::File.join(installation_destination, UDEV_RULES_DIR)
       ::FileUtils.mkdir_p(udev_rules_destdir)
 
@@ -288,6 +233,81 @@ module Yast
 
     def installation_destination
       ::Yast::Installation.destdir
+    end
+
+    def copy_vnc
+      # if VNC, copy setup data
+      return unless Linuxrc.vnc
+
+      log.info "Copying VNC settings"
+      WFM.Execute(
+        path(".local.bash"),
+        Builtins.sformat(
+          "/bin/cp -a '/root/.vnc' '%1/root/'",
+          ::Yast::String.Quote(installation_destination)
+        )
+      )
+    end
+
+    def copy_multipath
+      # Copy multipath stuff (bnc#885628)
+      # Only in install, as update should keep its old config
+      return unless Mode.installation
+
+      multipath_config = "/etc/multipath/wwids"
+      if File.exist?(multipath_config)
+        log.info "Copying multipath blacklist '#{multipath_config}'"
+        target_path = File.join(Installation.destdir, multipath_config)
+        ::FileUtils.mkdir_p(File.dirname(target_path))
+        ::FileUtils.cp(multipath_config, target_path)
+      end
+    end
+
+    def copy_active_devices
+      # Only in install, as update should keep its old config
+      return unless Mode.installation
+      return unless Arch.s390
+
+      path = "/boot/zipl/active_devices.txt"
+      if File.exist?(path)
+        log.info "Copying zipl active devices '#{path}'"
+        target_path = File.join(Installation.destdir, path)
+        ::FileUtils.mkdir_p(File.dirname(target_path))
+        ::FileUtils.cp(path, target_path)
+      end
+    end
+
+    def handle_second_stage
+      # Copy /etc/install.inf into built system so that the
+      # second phase of the installation can find it.
+      if InstFunctions.second_stage_required?
+        Linuxrc.SaveInstallInf(Installation.destdir)
+      else
+        # TODO: write why it is needed
+        ::FileUtils.rm "/etc/install.inf"
+      end
+    end
+
+    def copy_control_file
+      log.info "Copying YaST control file"
+      destination = File.join(Installation.destdir, Directory.etcdir, "control.xml")
+      ::FileUtils.cp(ProductControl.current_control_file, destination)
+      ::FileUtils.chmod(0o644, destination)
+    end
+
+    def copy_build_file
+      build_file = Pkg.SourceProvideOptionalFile(
+        Packages.GetBaseSourceID,
+        1,
+        "/media.1/build"
+      )
+
+      return unless build_file
+
+      log.info "Copying /media.1/build file"
+      destination = File.join(Installation.destdir, Directory.etcdir, "build")
+      ::FileUtils.cp(build_file, destination)
+      ::FileUtils.chmod(0o644, destination)
     end
   end
 end
