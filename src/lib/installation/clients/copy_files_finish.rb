@@ -66,20 +66,20 @@ module Yast
       copy_hardware_status
 
       # if VNC, copy setup data
-      if ::Yast::Linuxrc.vnc
+      if Linuxrc.vnc
         log.info "Copying VNC settings"
-        ::Yast::WFM.Execute(
+        WFM.Execute(
           path(".local.bash"),
-          ::Yast::Builtins.sformat(
+          Builtins.sformat(
             "/bin/cp -a '/root/.vnc' '%1/root/'",
-            ::Yast::String.Quote(::Yast::Installation.destdir)
+            ::Yast::String.Quote(installation_destination)
           )
         )
       end
 
       # Copy multipath stuff (bnc#885628)
       # Only in install, as update should keep its old config
-      if ::Yast::Mode.installation
+      if Mode.installation
         multipath_config = "/etc/multipath/wwids"
         if File.exist?(multipath_config)
           log.info "Copying multipath blacklist '#{multipath_config}'"
@@ -121,7 +121,7 @@ module Yast
 
       # Copy /media.1/build to the installed system (fate#311377)
       build_file = Pkg.SourceProvideOptionalFile(
-        ::Yast::Packages.GetBaseSourceID,
+        Packages.GetBaseSourceID,
         1,
         "/media.1/build"
       )
@@ -174,11 +174,11 @@ module Yast
 
     def copy_hardware_status
       log.info "Copying hardware information"
-      destdir = ::File.join(::Yast::Installation.destdir, "/var/lib")
+      destdir = ::File.join(installation_destination, "/var/lib")
       ::FileUtils.mkdir_p(destdir)
-      ::Yast::WFM.Execute(
+      WFM.Execute(
         path(".local.bash"),
-        ::Yast::Builtins.sformat(
+        Builtins.sformat(
           # BNC #596938: Files / dirs might be symlinks
           "/bin/cp -a --recursive --dereference '/var/lib/hardware' '%1'",
           ::Yast::String.Quote(destdir)
@@ -187,7 +187,7 @@ module Yast
     end
 
     def copy_all_workflow_files
-      control_files = ::Yast::WorkflowManager.GetAllUsedControlFiles
+      control_files = WorkflowManager.GetAllUsedControlFiles
       if !control_files || control_files.empty?
         log.info "No additional workflows"
         return
@@ -200,7 +200,7 @@ module Yast
 
       # Remove the directory with all additional control files (if exists)
       # and create it again (empty). BNC #471454
-      control_files_directory = ::File.join(::Yast::Installation.destdir, ::Yast::Directory.etcdir, "control_files")
+      control_files_directory = ::File.join(installation_destination, Directory.etcdir, "control_files")
       ::FileUtils.rm_rf(control_files_directory)
       ::FileUtils.mkdir_p(control_files_directory)
 
@@ -225,7 +225,7 @@ module Yast
 
     # see bugzilla #328126
     def CopyHardwareUdevRules
-      udev_rules_destdir = ::File.join(::Yast::Installation.destdir, UDEV_RULES_DIR)
+      udev_rules_destdir = ::File.join(installation_destination, UDEV_RULES_DIR)
       ::FileUtils.mkdir_p(udev_rules_destdir)
 
       # Copy all udev files, but do not overwrite those that already exist
@@ -233,14 +233,14 @@ module Yast
       # They are (also) needed for initrd bnc#666079
       cmd = "cp -avr --no-clobber #{UDEV_RULES_DIR}/. #{udev_rules_destdir}"
       log.info "Copying all udev rules from #{UDEV_RULES_DIR} to #{udev_rules_destdir}"
-      cmd_out = ::Yast::WFM.Execute(path(".local.bash_output"), cmd)
+      cmd_out = WFM.Execute(path(".local.bash_output"), cmd)
 
       log.error "Error copying udev rules with #{cmd_out.inspect}" if cmd_out["exit"] != 0
     end
 
     def copy_ssh_files
       log.info "Copying SSH keys and config files"
-      ::Installation::SshImporter.instance.write(::Yast::Installation.destdir)
+      ::Installation::SshImporter.instance.write(installation_destination)
     end
 
     # Function appends blacklisted modules to the /etc/modprobe.d/50-blacklist.conf
@@ -249,7 +249,7 @@ module Yast
     # More information in bugzilla #221815 and #485980
     def adjust_modprobe_blacklist
       # check whether we need to run it
-      brokenmodules = ::Yast::Linuxrc.InstallInf("BrokenModules")
+      brokenmodules = Linuxrc.InstallInf("BrokenModules")
       if !brokenmodules || brokenmodules.empty?
         log.info "No BrokenModules in install.inf, skipping..."
         return
@@ -260,7 +260,7 @@ module Yast
 
       # run before SCR switch
       blacklist_file = ::File.join(
-        ::Yast::Installation.destdir,
+        installation_destination,
         "/etc/modprobe.d/50-blacklist.conf"
       )
 
@@ -284,6 +284,10 @@ module Yast
 
       log.info "Blacklisting modules: #{blacklisted_modules} in #{blacklist_file}"
       ::File.write(blacklist_file, content)
+    end
+
+    def installation_destination
+      ::Yast::Installation.destdir
     end
   end
 end
