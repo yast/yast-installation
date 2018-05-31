@@ -147,8 +147,8 @@ describe Yast::CopyFilesFinishClient do
       allow(::FileUtils).to receive(:mkdir_p)
 
       expect(::FileUtils).to receive(:mkdir_p).with("/mnt/etc/productprofiles.d")
-      expect(::Yast::WFM).to receive(:Execute).with(path(".local.bash"),/cp.*\/product1.xml/)
-      expect(::Yast::WFM).to receive(:Execute).with(path(".local.bash"),/cp.*\/product2.xml/)
+      expect(::Yast::WFM).to receive(:Execute).with(path(".local.bash"), /cp.*\/product1.xml/)
+      expect(::Yast::WFM).to receive(:Execute).with(path(".local.bash"), /cp.*\/product2.xml/)
 
       subject.write
     end
