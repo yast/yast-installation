@@ -135,7 +135,7 @@ module Yast
             log.info "Copying zipl active devices '#{path}'"
             target_path = File.join(Installation.destdir, path)
             ::FileUtils.mkdir_p(File.dirname(target_path))
-            ::FileUtils.cp(multipath_config, target_path)
+            ::FileUtils.cp(path, target_path)
           end
         end
 
