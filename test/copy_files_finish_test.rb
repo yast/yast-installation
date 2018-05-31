@@ -35,6 +35,7 @@ describe Yast::CopyFilesFinishClient do
       allow(::File).to receive(:write)
       allow(Yast::Linuxrc).to receive(:InstallInf)
       allow(Yast::Packages).to receive(:GetBaseSourceID).and_return(1)
+      allow(::Installation::SshImporter).to receive(:instance).and_return(double.as_null_object)
     end
 
     it "appends modules blacklisted in linuxrc to target system blacklist" do
