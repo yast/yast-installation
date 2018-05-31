@@ -29,6 +29,7 @@ describe Yast::CopyFilesFinishClient do
       stub_const("::FileUtils", double.as_null_object)
       stub_const("::Yast::SCR", double.as_null_object)
       stub_const("::Yast::WFM", double.as_null_object)
+      allow(::Yast::WFM).to receive(:scr_chrooted?).and_return(false)
       allow(Yast::Installation).to receive(:destdir).and_return("/mnt")
       allow(::File).to receive(:exist?).and_return(false)
       allow(::File).to receive(:read).and_return("")
@@ -38,9 +39,16 @@ describe Yast::CopyFilesFinishClient do
       allow(::Installation::SshImporter).to receive(:instance).and_return(double.as_null_object)
     end
 
+    it "raises RuntimeError if called with switched SCR" do
+      allow(::Yast::WFM).to receive(:scr_chrooted?).and_return(true)
+      allow(::Yast::WFM).to receive(:scr_root).and_return("/tmp")
+
+      expect { subject.write }.to raise_error(RuntimeError)
+    end
+
+    let(:blacklist_file) { "/mnt/etc/modprobe.d/50-blacklist.conf" }
     it "appends modules blacklisted in linuxrc to target system blacklist" do
       allow(Yast::Linuxrc).to receive(:InstallInf).with("BrokenModules").and_return("moduleA, moduleB")
-      blacklist_file = "/mnt/etc/modprobe.d/50-blacklist.conf"
       allow(::File).to receive(:exist?).with(blacklist_file).and_return(true)
       expect(::File).to receive(:read).with(blacklist_file).and_return("First Line")
       expect(::File).to receive(:write).with(blacklist_file, String) do |_path, content|
@@ -54,7 +62,6 @@ describe Yast::CopyFilesFinishClient do
 
     it "creates blacklist file if target system does not contain it" do
       allow(Yast::Linuxrc).to receive(:InstallInf).with("BrokenModules").and_return("moduleA, moduleB")
-      blacklist_file = "/mnt/etc/modprobe.d/50-blacklist.conf"
       allow(::File).to receive(:exist?).with(blacklist_file).and_return(false)
 
       expect(::File).to_not receive(:read)

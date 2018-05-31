@@ -56,7 +56,13 @@ module Yast
       _("Copying files to installed system...")
     end
 
+    # @raise RuntimeError if called with switched SCR to have defined behavior and prevent
+    #   accidental overwrite and data loss
     def write
+      if Yast::WFM.scr_chrooted?
+        raise "Calling CopyFilesFinish client with SCR switched to #{Yast::WFM.scr_root}"
+      end
+
       # bugzilla #221815 and #485980
       # Adding blacklisted modules into the /etc/modprobe.d/50-blacklist.conf
       # This should run before the SCR::switch function
@@ -137,7 +143,7 @@ module Yast
         return
       end
 
-      log.info "Coping additional control files #{control_files.inspect}"
+      log.info "Copying additional control files #{control_files.inspect}"
       workflows_list = control_files.map do |one_filename|
         ::File.basename(one_filename)
       end
