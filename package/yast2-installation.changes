@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Thu May 31 10:17:19 UTC 2018 - jreidinger@suse.com
+
+- Fix crash caused by previous fix when multipath is not available
+  (bsc#1095323)
+- Copy active_devices.txt for s390 to prevent blocking of
+  important devices when cio_ignore is active (bsc#1095033)
+- 4.1.0
+
+-------------------------------------------------------------------
 Fri May 18 13:16:30 UTC 2018 - igonzalezsosa@suse.com
 
 - Fix installation mode detection (related to bsc#1089547).
@@ -17,7 +26,7 @@ Thu May 10 13:10:41 UTC 2018 - igonzalezsosa@suse.com
 
 - Log a warning when umounting a filesystem fails after
   installation/upgrade (related to bsc#1090018).
-- 4.0.59 
+- 4.0.59
 
 -------------------------------------------------------------------
 Tue May 08 12:04:00 CEST 2018 - aschnell@suse.com
