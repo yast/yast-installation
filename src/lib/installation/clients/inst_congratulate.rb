@@ -233,6 +233,10 @@ module Yast
 
       Wizard.SetNextButton(:next, Label.FinishButton)
       Wizard.RestoreAbortButton
+      # At this point the configuration is already applied and aborting doesn't
+      # make sense at all, at least for firstboot. For that reason we will
+      # hide the option (bsc#1095253)
+      Wizard.HideAbortButton if Stage.firstboot
       Wizard.SetFocusToNextButton
       if UI.WidgetExists(Id(:do_clone))
         UI.ChangeWidget(Id(:do_clone), :Enabled, @clone_enabled)
