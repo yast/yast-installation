@@ -70,7 +70,8 @@ module Installation
           name += " #{os_release["VERSION"]}"
         end
         name
-      rescue Errno::ENOENT # No /etc/os-release found
+      # No /etc/os-release file found or it is a directory (bsc#1097661)
+      rescue Errno::ENOENT, Errno::EISDIR
         default_name
       end
 
