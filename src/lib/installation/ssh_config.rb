@@ -70,8 +70,8 @@ module Installation
           name += " #{os_release["VERSION"]}"
         end
         name
-      # No /etc/os-release file found or it is a directory (bsc#1097661)
-      rescue Errno::ENOENT, Errno::EISDIR
+      rescue IOError, SystemCallError, RuntimeError => error
+        log.error("Reading /etc/os-release failed with exception: #{error.inspect}")
         default_name
       end
 
