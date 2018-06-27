@@ -48,7 +48,8 @@ describe Yast::InstSystemAnalysisClient do
 
     it "uses default activation callbacks" do
       expect(storage).to receive(:activate).with(nil).and_return true
-      expect(Yast::Execute).to receive(:locally!).with("/sbin/udevadm", "control", "--property=ANACONDA=yes")
+      expect(Yast::Execute).to receive(:locally!).with("/sbin/udevadm", "control", "--property=ANACONDA=yes").ordered
+      expect(Yast::Execute).to receive(:locally!).with("/usr/lib/YaST2/bin/mask-systemd-units", "--mask").ordered
       client.ActionHDDProbe
     end
 
