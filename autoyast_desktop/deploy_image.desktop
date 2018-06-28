@@ -16,6 +16,7 @@ X-SuSE-YaST-AutoInstResource=
 X-SuSE-YaST-AutoInstPath=install
 X-SuSE-YaST-AutoInstSchema=deploy_image.rnc
 X-SuSE-YaST-AutoInstClonable=false
+X-SuSE-YaST-Keywords=image,deployment
 
 Icon=yast-deploy_image
 Exec=

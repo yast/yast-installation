@@ -16,6 +16,7 @@ X-SuSE-YaST-AutoInstResource=
 X-SuSE-YaST-AutoInstPath=install
 X-SuSE-YaST-AutoInstSchema=ssh_import.rnc
 X-SuSE-YaST-AutoInstClonable=true
+X-SuSE-YaST-Keywords=import,key,ssh,installation
 
 Icon=yast-ssh-server
 Exec=
