@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.1.2
+Version:        4.1.3
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -47,8 +47,8 @@ BuildRequires:  yast2 >= 4.0.72
 # Yast::Packages.check_remote_installation_packages
 BuildRequires:	yast2-packager >= 4.0.9
 
-# Y2Storage::Inhibitors
-BuildRequires: yast2-storage-ng >= 4.0.175
+# Y2Storage::Inhibitors including systemd masking
+BuildRequires: yast2-storage-ng >= 4.0.194
 Requires:      yast2-storage-ng >= 4.0.175
 
 # TextHelpers#div_with_direction
