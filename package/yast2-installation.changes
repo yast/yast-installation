@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jun 28 14:40:00 CEST 2018 - schubi@suse.de
+
+- Added additional searchkeys to desktop file (fate#321043).
+- 4.0.67
+
+-------------------------------------------------------------------
 Wed Jun 27 13:14:47 CEST 2018 - aschnell@suse.com
 
 - adapted testsuite to change in yast2-storage-ng (bsc#1073633)
