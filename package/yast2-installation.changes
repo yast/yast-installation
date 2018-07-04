@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Jul  4 12:16:04 UTC 2018 - knut.anderssen@suse.com
+
+- Fixed returned value calling copy_files_finish when
+  some ssh file exist (bsc#1099104).
+- 4.1.5
+
+-------------------------------------------------------------------
 Thu Jun 28 14:40:00 CEST 2018 - schubi@suse.de
 
 - Added additional searchkeys to desktop file (fate#321043).

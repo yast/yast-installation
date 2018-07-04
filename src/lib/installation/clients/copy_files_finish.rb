@@ -98,6 +98,8 @@ module Yast
 
       # fate#319624
       copy_ssh_files
+      # Do not rely on copy_ssh_files returned value (bsc#1099104)
+      nil
     end
 
   private
