@@ -1,9 +1,16 @@
 -------------------------------------------------------------------
+Thu Jul 26 15:45:03 UTC 2018 - knut.anderssen@suse.com
+
+- Do not crash if /etc/os-release is a directory (bsc#1097661)
+- 4.1.7
+
+-------------------------------------------------------------------
 Thu Jul 26 14:34:27 CEST 2018 - schubi@suse.de
 
 - Delete unneeded content of /mnt/run after installation/update.
   (bsc#1071745)
 - 4.1.6
+
 -------------------------------------------------------------------
 Wed Jul  4 12:16:04 UTC 2018 - knut.anderssen@suse.com
 
