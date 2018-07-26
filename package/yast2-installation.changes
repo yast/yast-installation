@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jul 26 14:34:27 CEST 2018 - schubi@suse.de
+
+- Delete unneeded content of /mnt/run after installation/update.
+  (bsc#1071745)
+- 4.0.68
+
+-------------------------------------------------------------------
 Thu Jun 28 14:40:00 CEST 2018 - schubi@suse.de
 
 - Added additional searchkeys to desktop file (fate#321043).
