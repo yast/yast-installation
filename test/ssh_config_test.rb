@@ -31,6 +31,7 @@ describe Installation::SshConfig do
     let(:root1_dir) { FIXTURES_DIR.join("root1") }
     let(:root2_dir) { FIXTURES_DIR.join("root2") }
     let(:root3_dir) { FIXTURES_DIR.join("root3") }
+    let(:root4_dir) { FIXTURES_DIR.join("root4") }
 
     before do
       # The ssh_host private key file is more recent than any other file
@@ -44,9 +45,11 @@ describe Installation::SshConfig do
       expect(root1.system_name).to eq "Operating system 1"
     end
 
-    it "uses 'Linux' as name for systems without /etc/os-release" do
+    it "uses 'Linux' as name for systems without /etc/os-release file" do
       root2 = described_class.from_dir(root2_dir)
       expect(root2.system_name).to eq _("Linux")
+      root4 = described_class.from_dir(root4_dir)
+      expect(root4.system_name).to eq _("Linux")
     end
 
     it "uses name and version when PRETTY_NAME is missing in /etc/os-release" do
