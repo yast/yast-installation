@@ -98,6 +98,11 @@ module Yast
         #
         # See FATE #303396
         HandleSecondStageRequired()
+
+        # Remove content of /run which has been created by the pre/post
+        # install scripts while RPM installation and not needed anymore.
+        # (bnc#1071745)
+        SCR.Execute(path(".target.bash"), "/bin/rm -rf /run/*")
       else
         Builtins.y2error("unknown function: %1", @func)
         @ret = nil
