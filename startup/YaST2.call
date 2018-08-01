@@ -130,7 +130,9 @@ function prepare_for_ncurses () {
 	log "\tCheck for FB-I-terminal: RUN_FBITERM = $RUN_FBITERM"
 	set_inst_ncurses_env
 	#=============================================================
-	# Disable display of status messages on the console (systemd)
+	# Disable display of status messages on the console, as
+	# controlled via systemd.show_status=0 on the kernel command.
+	# line. (see "man systemd")
 	#-------------------------------------------------------------
 	/usr/bin/kill -SIGRTMIN+21 1
 }
@@ -678,7 +680,9 @@ if [ "$server_running" = 1 ];then
 fi
 
 if [ "$Y2_MODE" = "ncurses" ]; then
-    # Enalbe display of status messages on the console (systemd)
+    # Enable display of status messages on the
+    # console, as controlled via systemd.show_status=1
+    # on the kernel command line (see "man systemd")
     /usr/bin/kill -SIGRTMIN+20 1
 fi
 

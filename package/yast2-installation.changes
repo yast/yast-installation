@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Wed Aug  1 16:43:45 CEST 2018 - schubi@suse.de
 
-- Disalbe display of status messages on the consol (bsc#1099505).
+- Disable display of status messages on the console (bsc#1099505).
 - 3.2.57
 
 -------------------------------------------------------------------
