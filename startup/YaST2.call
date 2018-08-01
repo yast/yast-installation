@@ -129,6 +129,10 @@ function prepare_for_ncurses () {
 	check_run_fbiterm
 	log "\tCheck for FB-I-terminal: RUN_FBITERM = $RUN_FBITERM"
 	set_inst_ncurses_env
+	#=============================================================
+	# Disable display of status messages on the console (systemd)
+	#-------------------------------------------------------------
+	/usr/bin/kill -SIGRTMIN+21 1
 }
 
 #----[ prepare_for_ssh ]----#
@@ -671,6 +675,11 @@ if [ "$server_running" = 1 ];then
 	while kill -0 $xserver_pid 2>/dev/null ; do
 		sleep 1
 	done
+fi
+
+if [ "$Y2_MODE" = "ncurses" ]; then
+    # Enalbe display of status messages on the console (systemd)
+    /usr/bin/kill -SIGRTMIN+20 1
 fi
 
 #=============================================
