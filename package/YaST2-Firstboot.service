@@ -10,7 +10,7 @@ OnFailure=shutdown.target
 [Service]
 Type=oneshot
 Environment=TERM=linux
-ExecStartPre=-/usr/bin/plymouth quit
+ExecStartPre=/bin/sh -c "/usr/bin/plymouth quit 2>/dev/null || :"
 ExecStart=/usr/lib/YaST2/startup/YaST2.Firstboot
 ExecStartPost=/usr/bin/rm -f /var/lib/YaST2/reconfig_system
 ExecStartPost=/usr/bin/systemctl restart systemd-vconsole-setup.service
