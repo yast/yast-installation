@@ -129,6 +129,16 @@ function prepare_for_ncurses () {
 	check_run_fbiterm
 	log "\tCheck for FB-I-terminal: RUN_FBITERM = $RUN_FBITERM"
 	set_inst_ncurses_env
+	#=============================================================
+	# Disable display of status messages on the console, as
+	# controlled via systemd.show_status=0 on the kernel command.
+	# line. (see "man systemd")
+	# In the case of SSH installation messages will be displayed
+	# on console only. So we do not need it here.
+	#-------------------------------------------------------------
+	if [ $SELECTED_MEDIUM != "SSH" ]; then
+	    /usr/bin/kill -SIGRTMIN+21 1
+	fi
 }
 
 #----[ prepare_for_ssh ]----#
@@ -671,6 +681,16 @@ if [ "$server_running" = 1 ];then
 	while kill -0 $xserver_pid 2>/dev/null ; do
 		sleep 1
 	done
+fi
+
+if [ $SELECTED_MEDIUM != "SSH" ] && [ "$Y2_MODE" = "ncurses" ]; then
+    # Enable display of status messages on the
+    # console, as controlled via systemd.show_status=1
+    # on the kernel command line (see "man systemd")
+    # In the case of SSH installation messages will be displayed
+    # on console only. So we do not need it here because we
+    # have not disabled it while YAST installation.
+    /usr/bin/kill -SIGRTMIN+20 1
 fi
 
 #=============================================
