@@ -133,8 +133,12 @@ function prepare_for_ncurses () {
 	# Disable display of status messages on the console, as
 	# controlled via systemd.show_status=0 on the kernel command.
 	# line. (see "man systemd")
+	# In the case of SSH installation messages will be displayed
+	# on console only. So we do not need it here.
 	#-------------------------------------------------------------
-	/usr/bin/kill -SIGRTMIN+21 1
+	if [ $SELECTED_MEDIUM != "SSH" ]; then
+	    /usr/bin/kill -SIGRTMIN+21 1
+	fi
 }
 
 #----[ prepare_for_ssh ]----#
@@ -679,10 +683,13 @@ if [ "$server_running" = 1 ];then
 	done
 fi
 
-if [ "$Y2_MODE" = "ncurses" ]; then
+if [ $SELECTED_MEDIUM != "SSH" ] && [ "$Y2_MODE" = "ncurses" ]; then
     # Enable display of status messages on the
     # console, as controlled via systemd.show_status=1
     # on the kernel command line (see "man systemd")
+    # In the case of SSH installation messages will be displayed
+    # on console only. So we do not need it here because we
+    # have not disabled it while YAST installation.
     /usr/bin/kill -SIGRTMIN+20 1
 fi
 
