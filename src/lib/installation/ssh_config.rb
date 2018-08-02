@@ -70,7 +70,8 @@ module Installation
           name += " #{os_release["VERSION"]}"
         end
         name
-      rescue Errno::ENOENT # No /etc/os-release found
+      rescue IOError, SystemCallError, RuntimeError => error
+        log.error("Reading /etc/os-release failed with exception: #{error.inspect}")
         default_name
       end
 
