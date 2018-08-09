@@ -48,8 +48,13 @@ module Yast
       Hooks.search_path.join!("installation")
 
       # Initialize the UI
-      UI.SetProductLogo(false)
-      Wizard.OpenNextBackStepsDialog
+      if ProductFeatures.GetStringFeature("globals", "installation_ui") == "sidebar"
+        UI.SetProductLogo(false)
+        Wizard.OpenNextBackStepsDialog
+      else
+        UI.SetProductLogo(true)
+        Wizard.OpenLeftTitleNextBackDialog
+      end
 
       Wizard.SetContents(
         # title
