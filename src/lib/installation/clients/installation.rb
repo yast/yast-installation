@@ -41,6 +41,8 @@ module Yast
       Yast.import "Hooks"
       Yast.import "Linuxrc"
       Yast.import "OSRelease"
+      Yast.import "ProductFeatures"
+      Yast.import "ProductControl"
 
       # log the inst-sys identification for easier debugging
       log_os_release
