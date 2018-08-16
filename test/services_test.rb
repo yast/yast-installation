@@ -36,16 +36,16 @@ describe ::Installation::Services do
     it "enables all services previously set" do
       described_class.enabled = ["test"]
       service = double(enable: true)
-      expect(Yast::SystemdService).to receive(:find!).with("test").and_return(service)
+      expect(Yast2::Systemd::Service).to receive(:find!).with("test").and_return(service)
       expect(service).to receive(:enable)
 
       described_class.write
     end
 
-    it "raises Yast::SystemdServiceNotFound exception if service to enable does not exist" do
+    it "raises Yast2::Systemd::ServiceNotFound exception if service to enable does not exist" do
       described_class.enabled = ["non-existing-service"]
 
-      expect { described_class.write }.to raise_error(Yast::SystemdServiceNotFound)
+      expect { described_class.write }.to raise_error(Yast2::Systemd::ServiceNotFound)
     end
   end
 end
