@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Aug 23 07:24:18 UTC 2018 - dgonzalez@suse.com
+
+- Update calls to YaST2 systemd classes (related to fate#319428)
+- 4.1.10
+
+-------------------------------------------------------------------
 Fri Aug 22 16:35:47 CEST 2018 - hellcp@opensuse.org
 
 - Add an option to have a sidebar (boo#1088785)
