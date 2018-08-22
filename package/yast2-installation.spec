@@ -23,7 +23,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 Source0:        %{name}-%{version}.tar.bz2
 
 Group:          System/YaST
-License:        GPL-2.0
+License:        GPL-2.0-only
 Url:            http://github.com/yast/yast-installation
 # for AbortException and handle direct abort
 Requires:       yast2-ruby-bindings >= 4.0.6
@@ -252,6 +252,6 @@ systemctl enable YaST2-Firstboot.service
 %dir %{yast_vardir}/hooks/installation
 
 %dir %{yast_docdir}
-%doc %{yast_docdir}/COPYING
+%license %{yast_docdir}/COPYING
 %doc %{yast_docdir}/README.md
 %doc %{yast_docdir}/CONTRIBUTING.md
