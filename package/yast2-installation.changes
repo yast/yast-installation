@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Aug 22 16:35:47 CEST 2018 - hellcp@opensuse.org
+
+- Add an option to have a sidebar (boo#1088785)
+- 4.1.9
+
+-------------------------------------------------------------------
 Mon Aug 20 15:18:28 CEST 2018 - schubi@suse.de
 
 - Switched license in spec file from SPDX2 to SPDX3 format.
