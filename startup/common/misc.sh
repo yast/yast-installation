@@ -186,39 +186,33 @@ function disable_splash () {
 	[ -f /proc/splash ] && echo "verbose" > /proc/splash
 }
 
-#----[ stop_xinetd ]-----#
-function stop_xinetd () {
+#----[ stop_xvnc]-----#
+function stop_xvnc () {
 #--------------------------------------------------
-# stop xinetd since its default configuration collides
+# stop xvnc since its default configuration collides
 # with the Xvnc server used for VNC installation
 # ---
-	systemctl stop xinetd.service >/dev/null 2>&1
+	systemctl stop xvnc.socket >/dev/null 2>&1
+# stop also running instances of xvnc to allow start our own
+        systemctl stop xvnc@* >/dev/null 2>&1
 }
 
-#----[ is_xinetd_enabled ]-----#
-function is_xinetd_enabled () {
-# return 0 if xinetd is enabled
+#----[ is_xvnc_enabled ]-----#
+function is_xvnc_enabled () {
+# return 0 if xvnc is enabled
 # ---
-	systemctl --quiet is-enabled xinetd.service >/dev/null 2>&1
+	systemctl --quiet is-enabled xvnc.socket >/dev/null 2>&1
 	return $?
 }
 
-#----[ is_xinetd_active ]-----#
-function is_xinetd_active () {
-# return 0 if xinetd is currently running
-# ---
-	systemctl --quiet is-active xinetd.service >/dev/null 2>&1
-	return $?
-}
-
-#----[ restore_xinetd ]-----#
-function restore_xinetd () {
+#----[ restore_xvnc ]-----#
+function restore_xvnc () {
 #--------------------------------------------------
-# start xinetd again if it is enabled, once the Xvnc
+# start xvnc again if it is enabled, once the Xvnc
 # server already owns its port
 # ---
-	if is_xinetd_enabled; then
-		systemctl start xinetd.service
+	if is_xvnc_enabled; then
+		systemctl start xvnc.socket
 	fi
 }
 

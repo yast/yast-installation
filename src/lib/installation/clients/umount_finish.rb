@@ -28,6 +28,10 @@
 # Authors:
 #  Jiri Srain <jsrain@suse.cz>
 
+require "y2storage"
+require "pathname"
+require "shellwords"
+
 module Yast
   class UmountFinishClient < Client
     include Yast::Logger
@@ -118,6 +122,18 @@ module Yast
           SCR.Execute(path(".target.bash"), "ln -s /proc/self/mounts /etc/mtab")
         end
 
+        # BNC #692799: Preserve the randomness state before umounting
+        preserve_randomness_state
+
+        #
+        # !!! NO WRITE OPERATIONS TO THE TARGET AFTER THIS POINT !!!
+        #
+
+        # This must be done as long as the target root is still mounted
+        # (because the btrfs command requires that), but after the last write
+        # access to it (because it will be read only afterwards).
+        set_btrfs_defaults_as_ro
+
         # Stop SCR on target
         WFM.SCRClose(Installation.scr_handle)
 
@@ -143,6 +159,7 @@ module Yast
             WFM.Execute(path(".local.umount"), umount_this)
           )
           if umount_result != true
+            log_running_processes(umount_this)
             # bnc #395034
             # Don't remount them read-only!
             if Builtins.contains(
@@ -170,18 +187,6 @@ module Yast
             )
           end
         end
-
-        # BNC #692799: Preserve the randomness state before umounting
-        preserve_randomness_state
-
-        #
-        # !!! NO WRITE OPERATIONS TO THE TARGET AFTER THIS POINT !!!
-        #
-
-        # This must be done as long as the target root is still mounted
-        # (because the btrfs command requires that), but after the last write
-        # access to it (because it will be read only afterwards).
-        set_root_subvol_read_only
 
 # storage-ng
 # rubocop:disable Style/BlockComments
@@ -236,6 +241,7 @@ module Yast
           # bnc #395034
           # Don't remount them read-only!
           next if @umount_status
+          log_running_processes(@tmp)
 
           if Builtins.contains(
             ["/proc", "/sys", "/dev", "/proc/bus/usb"],
@@ -269,11 +275,7 @@ module Yast
           WFM.Execute(path(".local.bash_output"), "mount")
         )
 
-        @cmd = Builtins.sformat(
-          "fuser -v '%1' 2>&1",
-          String.Quote(Installation.destdir)
-        )
-        @cmd_run = Convert.to_map(WFM.Execute(path(".local.bash_output"), @cmd))
+        log_running_processes(Installation.destdir)
 
 # storage-ng
 =begin
@@ -398,43 +400,68 @@ module Yast
 
     # Set the root subvolume to read-only and change the /etc/fstab entry
     # accordingly
-    #
-    def set_root_subvol_read_only
-      return unless root_subvol_read_only_configured?
-      log.info("Setting root subvolume to read-only")
-      set_fstab_root_subvol_read_only
-      set_root_subvol_property_read_only
+    def set_btrfs_defaults_as_ro
+      devicegraph = Y2Storage::StorageManager.instance.staging
+
+      ro_btrfs_filesystems = devicegraph.filesystems.select do |fs|
+        new_filesystem?(fs) && ro_btrfs_filesystem?(fs)
+      end
+
+      ro_btrfs_filesystems.each { |f| default_subvolume_as_ro(f) }
     end
 
-    # Check the product configuration (control.xml) if the root subvolume
-    # should be set to read-only.
-    #
-    def root_subvol_read_only_configured?
-      # FIXME: this whole method should rely on Y2Storage::ProposalSettings.
-      # But right now there is no #root_subvolume_read_only method there
-
-      partitioning = ProductFeatures.GetSection("partitioning")
-      proposal = partitioning.nil? ? nil : partitioning["proposal"]
-      return false if proposal.nil?
-      proposal["root_subvolume_read_only"] == true
-    end
-
-    # Change /etc/fstab on the target to mount the root subvolume read-only.
-    #
-    def set_fstab_root_subvol_read_only
-      cmd = "sed -i -e '/ \\/ btrfs/s/defaults/ro/' /etc/fstab"
-      log.info("Setting root subvol to read-only in /etc/fstab: \"#{cmd}\"")
-      SCR.Execute(path(".target.bash"), cmd)
-    end
+    # [String] Name used by btrfs tools to name the filesystem tree.
+    BTRFS_FS_TREE = "(FS_TREE)".freeze
 
     # Set the "read-only" property for the root subvolume.
     # This has to be done as long as the target root filesystem is still
     # mounted.
     #
-    def set_root_subvol_property_read_only
-      cmd = "btrfs property set /.snapshots/1/snapshot ro true"
-      log.info("Setting root subvol read-only property: \"#{cmd}\"")
-      SCR.Execute(path(".target.bash"), cmd)
+    # @param fs [Y2Storage::Filesystems::Btrfs] Btrfs filesystem to set read-only property on.
+    def default_subvolume_as_ro(fs)
+      output = Yast::Execute.on_target(
+        "btrfs", "subvolume", "get-default", fs.mount_point.path, stdout: :capture
+      )
+      default_subvolume = output.strip.split.last
+      # no btrfs_default_subvolume and no snapshots
+      default_subvolume = "" if default_subvolume == BTRFS_FS_TREE
+
+      subvolume_path = fs.btrfs_subvolume_mount_point(default_subvolume)
+
+      log.info("Setting root subvol read-only property on #{subvolume_path}")
+      Yast::Execute.on_target("btrfs", "property", "set", subvolume_path, "ro", "true")
+    end
+
+    # run "fuser" to get the details about open files
+    #
+    # @param mount_point [String]
+    def log_running_processes(mount_point)
+      fuser =
+        begin
+          # (the details are printed on STDERR, redirect it)
+          `LC_ALL=C fuser -v -m #{Shellwords.escape(mount_point)} 2>&1`
+        rescue => e
+          "fuser failed: #{e}"
+        end
+      log.warn("Running processes using #{mount_point}: #{fuser}")
+    end
+
+  private
+
+    # Check whether the given filesystem is going to be created
+    #
+    # @param filesystem [Y2Storage::Filesystems::Base]
+    # @return [Boolean]
+    def new_filesystem?(filesystem)
+      !filesystem.exists_in_probed?
+    end
+
+    # Check whether the given filesystem is read-only BTRFS
+    #
+    # @param filesystem [Y2Storage::Filesystems::Base]
+    # @return [Boolean]
+    def ro_btrfs_filesystem?(filesystem)
+      filesystem.is?(:btrfs) && filesystem.mount_point && filesystem.mount_options.include?("ro")
     end
   end
 end

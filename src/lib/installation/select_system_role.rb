@@ -17,18 +17,24 @@
 #  To contact SUSE about this file by physical or electronic mail,
 #  you may find current contact information at www.suse.com
 
+require "cgi"
 require "yast"
 require "ui/installation_dialog"
 require "installation/services"
 require "installation/system_role"
+require "ui/text_helpers"
 
 Yast.import "GetInstArgs"
+Yast.import "Packages"
+Yast.import "Pkg"
 Yast.import "Popup"
 Yast.import "ProductControl"
 Yast.import "ProductFeatures"
 
 module Installation
   class SelectSystemRole < ::UI::InstallationDialog
+    include UI::TextHelpers
+
     class << self
       # once the user selects a role, remember it in case they come back
       attr_accessor :original_role_id
@@ -72,19 +78,21 @@ module Installation
     end
 
     def dialog_content
-      HSquash(VBox(role_buttons))
+      @selected_role_id = self.class.original_role_id
+      @selected_role_id ||= roles.first && roles.first.id if SystemRole.default?
+
+      HCenter(ReplacePoint(Id(:rp), role_buttons(selected_role_id: @selected_role_id)))
     end
 
     def create_dialog
       clear_role
       ok = super
-      role_id = self.class.original_role_id || (roles.first && roles.first.id)
-      Yast::UI.ChangeWidget(Id(:roles), :CurrentButton, role_id)
+      Yast::UI.SetFocus(Id(:roles_richtext)) if ok
       ok
     end
 
     def next_handler
-      role_id = Yast::UI.QueryWidget(Id(:roles), :CurrentButton)
+      role_id = @selected_role_id
 
       if role_id.nil? # no role selected (bsc#1078809)
         # An Error popup
@@ -114,6 +122,19 @@ module Installation
       else
         finish_dialog(result)
       end
+    end
+
+    # called if a specific FOO_handler is not defined
+    def handle_event(id)
+      role = SystemRole.find(id)
+      if role.nil?
+        log.info "Not a role: #{id.inspect}, skipping"
+        return
+      end
+
+      @selected_role_id = id
+      Yast::UI.ReplaceWidget(Id(:rp), role_buttons(selected_role_id: id))
+      Yast::UI.SetFocus(Id(:roles_richtext))
     end
 
   private
@@ -170,20 +191,24 @@ module Installation
       Yast::ProductFeatures.ClearOverlay
     end
 
-    # Returns the content for the role buttons
-    #
-    # @return [Yast::Term] Role buttons
-    #
-    # @see role_buttons_options
-    def role_buttons
-      role_buttons_content(role_buttons_options)
-    end
-
     # Applies given role to configuration
     def apply_role(role)
       log.info "Applying system role '#{role.id}'"
       role.overlay_features
       adapt_services(role)
+
+      # Reset pkg and pattern selection as many roles define own roles
+      # so ensure when going back that it will properly set (bsc#1088883)
+      reset_patterns
+    end
+
+    def reset_patterns
+      Yast::Pkg::ResolvableProperties("", :pattern, "").each do |pattern|
+        next if pattern["status"] != :selected
+        Yast::Pkg.ResolvableNeutral(pattern["name"], :pattern, false)
+      end
+      Yast::Packages.SelectSystemPatterns(false)
+      Yast::Pkg.PkgSolve(false)
     end
 
     # for given role sets in {::Installation::Services} list of services to enable
@@ -210,114 +235,67 @@ module Installation
       SystemRole.all
     end
 
-    # Returns the content for the role buttons according to the available space
-    #
-    # @param separation  [Integer] Separation between roles
-    # @param indentation [Integer] Roles indentation
-    # @param margin      [Integer] Top marging
-    # @param description [Boolean] Indicates whether the description should be included
+    # Returns the content for the role buttons
+    # @param selected_role_id [String] which role radiobutton gets selected
     # @return [Yast::Term] Role buttons
-    def role_buttons_content(margin: 2, indentation: 4, separation: 2, description: true, show_intro: true)
-      box = []
-      box << Left(Label(Yast::ProductControl.GetTranslatedText("roles_text"))) if show_intro
-      box << VSpacing(margin) unless margin.zero?
-
-      ui_roles = roles.each_with_object(box) do |role, vbox|
+    def role_buttons(selected_role_id:)
+      role_rt_radios = roles.map do |role|
         # FIXME: following workaround can be removed as soon as bsc#997402 is fixed:
         # bsc#995082: System role descriptions use a character that is missing in console font
-        role_description = Yast::UI.TextMode ? role.description.tr("•", "*") : role.description
-        vbox << Left(RadioButton(Id(role.id), role.label))
-        vbox << HBox(HSpacing(indentation), Left(Label(role_description))) if description
-        vbox << VSpacing(separation) unless roles.last == role || separation.zero?
+        description = Yast::UI.TextMode ? role.description.tr("•", "*") : role.description
+
+        rb = richtext_radiobutton(id:       role.id,
+                                  label:    role.label,
+                                  selected: role.id == selected_role_id)
+
+        description = CGI.escape_html(description).gsub("\n", "<br>\n")
+        # extra empty paragraphs for better spacing
+        "<p></p>#{rb}<p></p><ul>#{description}</ul>"
       end
 
-      RadioButtonGroup(Id(:roles), VBox(*ui_roles))
+      intro_text = Yast::ProductControl.GetTranslatedText("roles_text")
+      VBox(
+        Left(Label(intro_text)),
+        VSpacing(2),
+        RichText(Id(:roles_richtext), div_with_direction(role_rt_radios.join("\n")))
+      )
     end
 
-    # Default role buttons options for the Qt UI
-    DEFAULT_ROLE_BUTTONS_QT_OPTS = {
-      indentation: 4,
-      margin:      2,
-      separation:  2,
-      show_intro:  true,
-      description: true
-    }.freeze
-
-    # Default role buttons options for the textmode UI
-    DEFAULT_ROLE_BUTTONS_TEXT_OPTS = {
-      indentation: 2,
-      margin:      1,
-      separation:  2,
-      show_intro:  true,
-      description: true
-    }.freeze
-
-    def intro_text
-      @intro_text ||= Yast::ProductControl.GetTranslatedText("roles_text")
+    def richtext_radiobutton(id:, label:, selected:)
+      if Yast::UI.TextMode
+        richtext_radiobutton_tui(id: id, label: label, selected: selected)
+      else
+        richtext_radiobutton_gui(id: id, label: label, selected: selected)
+      end
     end
 
-    # Space for roles
-    #
-    # @return [Hash] Options to distribute roles
-    #
-    # @see available_lines_for_roles
-    def role_buttons_options
-      return DEFAULT_ROLE_BUTTONS_QT_OPTS unless Yast::UI.TextMode
-
-      opts = textmode_role_buttons_options
-      log.info "Options for role buttons: #{opts.inspect}"
-      opts
+    def richtext_radiobutton_tui(id:, label:, selected:)
+      check = selected ? "(x)" : "( )"
+      widget = "#{check} #{CGI.escape_html(label)}"
+      enabled_widget = "<a href=\"#{id}\">#{widget}</a>"
+      "#{enabled_widget}<br>"
     end
 
-    # Returns space options for roles in textmode
-    #
-    # @return [Hash] Options to distribute roles
-    def textmode_role_buttons_options
-      opts = DEFAULT_ROLE_BUTTONS_TEXT_OPTS.dup
+    IMAGE_DIR = "/usr/share/YaST2/theme/current/wizard".freeze
 
-      # Set separation
-      separation = [
-        DEFAULT_ROLE_BUTTONS_TEXT_OPTS[:separation],
-        (available_lines_for_roles - needed_lines_for_roles - opts[:margin]) / 2
-      ].min
-      separation = 0 if separation < 0
-      opts = DEFAULT_ROLE_BUTTONS_TEXT_OPTS.merge(separation: separation)
+    BUTTON_ON = "◉".freeze # U+25C9 Fisheye
+    BUTTON_OFF = "○".freeze # U+25CB White Circle
 
-      # Set intro size
-      intro_lines = intro_text.lines.size
-
-      # No space for descriptions
-      opts[:description] = false if needed_lines_for_roles > available_lines_for_roles
-
-      # No space for margin
-      opts[:margin] = 0 if roles.size + intro_lines + opts[:margin] > available_lines_for_roles
-
-      # No space for intro
-      opts[:show_intro] = false if roles.size + intro_lines > available_lines_for_roles
-
-      opts
-    end
-
-    # Number of required lines to show roles information and buttons
-    #
-    # Title + Descriptions
-    #
-    # @return [Integer] Number of lines needed to display roles information
-    def needed_lines_for_roles
-      return @needed_lines_for_roles if @needed_lines_for_roles
-      texts = roles.map(&:description)
-      texts << intro_text unless intro_text.nil?
-      lines_qty = texts.compact.map(&:lines).map(&:size).reduce(:+)
-      @needed_lines_for_roles = roles.size + lines_qty
-    end
-
-    # Space taken by header/footer and not available for the roles buttons
-    RESERVED_LINES = 4
-    # Returns an estimation of the available space for displaying the roles buttons
-    #
-    # @return [Integer] Estimated amount of available space
-    def available_lines_for_roles
-      @available_lines_for_roles ||= Yast::UI.GetDisplayInfo()["Height"] - RESERVED_LINES
+    def richtext_radiobutton_gui(id:, label:, selected:)
+      # check for installation style, which is dark, FIXME: find better way
+      installation = ENV["Y2STYLE"] == "installation.qss"
+      if installation
+        image = selected ? "inst_radio-button-checked.png" : "inst_radio-button-unchecked.png"
+        # NOTE: due to a Qt bug, the first image does not get rendered properly. So we are
+        # rendering it twice (one with height and width set to "0").
+        bullet = "<img src=\"#{IMAGE_DIR}/#{image}\" height=\"0\" width=\"0\"></img>" \
+                 "<img src=\"#{IMAGE_DIR}/#{image}\"></img>"
+      else
+        bullet = selected ? BUTTON_ON : BUTTON_OFF
+      end
+      widget = "#{bullet} #{CGI.escape_html(label)}"
+      enabled_widget = "<a class='dontlooklikealink' href=\"#{id}\">#{widget}</a>"
+      "<p>#{enabled_widget}</p>"
     end
   end
 end

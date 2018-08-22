@@ -4,6 +4,9 @@ require "installation/widgets/online_repos"
 require "cwm/widget"
 
 Yast.import "CWM"
+Yast.import "Linuxrc"
+Yast.import "ProductFeatures"
+Yast.import "ProductControl"
 
 module Installation
   # opensuse specific installation desktop selection dialog
@@ -17,6 +20,9 @@ module Installation
       # We do not need to create a wizard dialog in installation, but it's
       # helpful when testing all manually on a running system
       Yast::Wizard.CreateDialog if separate_wizard_needed?
+
+      # Clear previously selected role
+      Yast::ProductFeatures.ClearOverlay
 
       ret = nil
       loop do

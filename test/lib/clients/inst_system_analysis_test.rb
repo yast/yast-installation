@@ -29,33 +29,75 @@ describe Yast::InstSystemAnalysisClient do
       instance_double(Y2Storage::StorageManager, activate: true, probe: nil, probed: devicegraph)
     end
 
-    let(:devicegraph) { instance_double(Y2Storage::Devicegraph, empty?: false) }
+    let(:devicegraph) { instance_double(Y2Storage::Devicegraph, empty?: empty) }
     let(:auto) { false }
+    let(:activate_result) { true }
+    let(:probe_result) { true }
+    let(:empty) { false }
+    let(:callbacks_class) { double("Y2Autoinstallation::ActivateCallbacks", new: callbacks) }
+    let(:callbacks) { instance_double("Y2Autoinstallation::ActivateCallbacks") }
 
     before do
       allow(client).to receive(:require).with("autoinstall/activate_callbacks")
-    end
-
-    before do
       allow(Y2Storage::StorageManager).to receive(:instance).and_return(storage)
+      allow(storage).to receive(:activate).and_return activate_result
+      allow(storage).to receive(:probe).and_return probe_result
       allow(Yast::Mode).to receive(:auto).and_return(auto)
+      stub_const("Y2Autoinstallation::ActivateCallbacks", callbacks_class)
     end
 
     it "uses default activation callbacks" do
-      expect(storage).to receive(:activate).with(nil)
+      expect(storage).to receive(:activate).with(nil).and_return true
+      expect(Yast::Execute).to receive(:locally!).with("/sbin/udevadm", "control", "--property=ANACONDA=yes").ordered
+      expect(Yast::Execute).to receive(:locally!).with("/usr/lib/YaST2/bin/mask-systemd-units", "--mask").ordered
       client.ActionHDDProbe
     end
 
     context "when running AutoYaST" do
       let(:auto) { true }
-      let(:callbacks_class) { double("Y2Autoinstallation::ActivateCallbacks", new: callbacks) }
-      let(:callbacks) { instance_double("Y2Autoinstallation::ActivateCallbacks") }
-
-      before { stub_const("Y2Autoinstallation::ActivateCallbacks", callbacks_class) }
 
       it "uses AutoYaST activation callbacks" do
-        expect(storage).to receive(:activate).with(callbacks)
+        expect(storage).to receive(:activate).with(callbacks).and_return true
         client.ActionHDDProbe
+      end
+    end
+
+    context "when activation fails and the error is not recovered" do
+      let(:activate_result) { false }
+
+      it "does not probe and raises AbortException" do
+        expect(storage).to_not receive(:probe)
+        expect { client.ActionHDDProbe }.to raise_error Yast::AbortException
+      end
+    end
+
+    context "when probing fails and the error is not recovered" do
+      let(:probe_result) { false }
+
+      it "raises AbortException" do
+        expect { client.ActionHDDProbe }.to raise_error Yast::AbortException
+      end
+    end
+
+    context "when no devices are detected" do
+      let(:empty) { true }
+
+      context "and not running AutoYaST" do
+        let(:auto) { false }
+
+        it "displays an error" do
+          expect(Yast::Report).to receive(:Error)
+          client.ActionHDDProbe
+        end
+      end
+
+      context "and running AutoYaST" do
+        let(:auto) { true }
+
+        it "does not display any error" do
+          expect(Yast::Report).to_not receive(:Error)
+          client.ActionHDDProbe
+        end
       end
     end
   end

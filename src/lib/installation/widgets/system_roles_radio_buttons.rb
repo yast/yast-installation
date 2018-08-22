@@ -44,6 +44,7 @@ module Installation
         # selection is lost when the widget is redrawn.
         # FIXME: It will not be needed once RadioButtons widget take care of it
         self.handle_all_events = true
+        textdomain "installation"
       end
 
       def store
@@ -51,7 +52,8 @@ module Installation
         CustomPatterns.show = value == "custom"
         store_orig
 
-        Yast::Packages.Reset([])
+        # keep the selected products
+        Yast::Packages.Reset([:product])
         if value == "custom"
           # for custom role do not use any desktop
           Yast::DefaultDesktop.SetDesktop(nil)

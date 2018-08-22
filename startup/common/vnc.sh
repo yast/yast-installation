@@ -17,6 +17,11 @@
 #----------------
 
 . /etc/YaST2/XVersion
+# set python path for websockify
+# (only present and needed in the inst-sys)
+if [ -r /root/.profile ]; then
+        . /root/.profile
+fi
 
 #----[ setupVNCAuthentication ]------#
 setupVNCAuthentication () {
@@ -65,6 +70,11 @@ displayVNCMessage () {
 	echo
 }
 
+websockify() {
+	# this shortcut avoids requiring the optional numpy dependency
+	python3 -c 'import websockify.websocketproxy; websockify.websocketproxy.websockify_init()' "$@"
+}
+
 #----[ startVNCServer ]------#
 startVNCServer () {
 #---------------------------------------------------
@@ -82,12 +92,17 @@ startVNCServer () {
 		-depth 16 \
                 -dpi 96 \
 		-rfbwait 120000 \
-		-httpd /usr/share/vnc/classes \
 		-rfbport 5901 \
-		-httpport 5801 \
 		-fp $Xfontdir/misc/,$Xfontdir/uni/,$Xfontdir/truetype/ \
 	>/var/log/YaST2/vncserver.log 2>&1 &
 	xserver_pid=$!
+
+	websockify \
+		--web /usr/share/novnc \
+		5801 \
+		localhost:5901 \
+	>/var/log/YaST2/websockify.log 2>&1 &
+
 	export DISPLAY=:0
 	export XCURSOR_CORE=1
 }

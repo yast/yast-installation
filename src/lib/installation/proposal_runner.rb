@@ -268,7 +268,7 @@ module Installation
       @submodules_presentation.each do |mod|
         @proposal << (@html[mod] || "")
       end
-      display_proposal(@proposal)
+      display_proposal(div_with_direction(@proposal))
       submod_descriptions_and_build_menu
     end
 
@@ -478,7 +478,7 @@ module Installation
           proposal = presentation_modules.reduce("") do |res, mod|
             res << (@html[mod] || "")
           end
-          display_proposal(proposal)
+          display_proposal(div_with_direction(proposal))
         end
       end
 

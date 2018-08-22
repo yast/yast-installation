@@ -5,11 +5,12 @@ Conflicts=plymouth-start.service
 Before=getty@tty1.service serial-getty@ttyS0.service serial-getty@ttyS1.service serial-getty@ttyS2.service
 Before=display-manager.service
 ConditionPathExists=/var/lib/YaST2/reconfig_system
+OnFailure=shutdown.target
 
 [Service]
 Type=oneshot
 Environment=TERM=linux
-ExecStartPre=-/usr/bin/plymouth quit
+ExecStartPre=/bin/sh -c "/usr/bin/plymouth quit 2>/dev/null || :"
 ExecStart=/usr/lib/YaST2/startup/YaST2.Firstboot
 ExecStartPost=/usr/bin/rm -f /var/lib/YaST2/reconfig_system
 ExecStartPost=/usr/bin/systemctl restart systemd-vconsole-setup.service

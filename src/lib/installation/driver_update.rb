@@ -55,8 +55,16 @@ module Installation
       def find(update_dirs)
         dirs = Array(update_dirs)
         log.info("Searching for Driver Updates at #{dirs.map(&:to_s)}")
-        globs = dirs.map { |d| d.join("dud_*") }
-        Pathname.glob(globs).map do |path|
+
+        # DUD as directories
+        duds_globs = dirs.map { |d| d.join("*", "dud.config") }
+        duds = Pathname.glob(duds_globs).map(&:dirname)
+
+        # DUD as files (squashfs filesystems)
+        archives_globs = dirs.map { |d| d.join("dud_*") }
+        archives = Pathname.glob(archives_globs)
+
+        (duds + archives).uniq.map do |path|
           log.info("Found a Driver Update at #{path}")
           new(path)
         end
@@ -97,7 +105,7 @@ module Installation
   private
 
     # LOSETUP command
-    LOSETUP_CMD = "/sbin/losetup".freeze
+    LOSETUP_CMD = "/sbin/losetup -j '%<file>s'".freeze
 
     # Returns the instsys_path for updates of type :archive
     #
@@ -106,10 +114,10 @@ module Installation
     #
     # @return [Pathname] Update's mountpoint
     def archive_instsys_path
-      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), LOSETUP_CMD)
+      cmd = format(LOSETUP_CMD, file: path.to_s)
+      out = Yast::SCR.Execute(Yast::Path.new(".target.bash_output"), cmd)
       log.info("Reading loopback devices: #{out}")
-      regexp = %r{(/dev/loop\d+)[^\n]+#{path.to_s}\n}
-      lodevice = out["stdout"][regexp, 1]
+      lodevice = out["stdout"].split(":").first
       mount = Yast::SCR.Read(Yast::Path.new(".proc.mounts")).find { |m| m["spec"] == lodevice }
       if mount.nil?
         log.warn("Driver Update at #{path} is not mounted")

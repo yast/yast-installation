@@ -195,6 +195,7 @@ module Yast
     # agreement confirmed when required; false otherwise
     def product_selection_finished?
       if selected_product.nil?
+        return true if products.size <= 1
         Yast::Popup.Error(_("Please select a product to install."))
         return false
       elsif license_confirmation_required? && !selected_product.license_confirmed?

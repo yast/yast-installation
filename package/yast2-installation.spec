@@ -16,17 +16,17 @@
 #
 
 Name:           yast2-installation
-Version:        4.0.30
+Version:        4.1.8
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 Source0:        %{name}-%{version}.tar.bz2
 
 Group:          System/YaST
-License:        GPL-2.0
+License:        GPL-2.0-only
 Url:            http://github.com/yast/yast-installation
-# new y2start script
-Requires:       yast2-ruby-bindings >= 3.2.10
+# for AbortException and handle direct abort
+Requires:       yast2-ruby-bindings >= 4.0.6
 
 Summary:        YaST2 - Installation Parts
 
@@ -35,22 +35,24 @@ Source2:	YaST2-Firstboot.service
 
 BuildRequires:  update-desktop-files
 BuildRequires:  yast2-devtools >= 3.1.10
+# for AbortException and handle direct abort
+BuildRequires:  yast2-ruby-bindings >= 4.0.6
 # needed for xml agent reading about products
 BuildRequires:  yast2-xml
 BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
 
-# Mandatory language in Product#release_notes
-BuildRequires:  yast2 >= 4.0.49
+# TextHelpers#div_with_direction
+BuildRequires:  yast2 >= 4.0.72
 # Yast::Packages.check_remote_installation_packages
 BuildRequires:	yast2-packager >= 4.0.9
 
-# Y2Storage::StorageManager#activate accepts an argument
-BuildRequires: yast2-storage-ng >= 4.0.43
-Requires:      yast2-storage-ng >= 4.0.43
+# Y2Storage::Inhibitors including systemd masking
+BuildRequires: yast2-storage-ng >= 4.0.194
+Requires:      yast2-storage-ng >= 4.0.175
 
-# Mandatory language in Product#release_notes
-Requires:       yast2 >= 4.0.49
+# TextHelpers#div_with_direction
+Requires:       yast2 >= 4.0.72
 
 # Language::GetLanguageItems and other API
 # Language::Set (handles downloading the translation extensions)
@@ -62,13 +64,8 @@ Requires:	yast2-pkg-bindings >= 3.1.33
 # Mouse-related scripts moved to yast2-mouse
 Conflicts:	yast2-mouse < 2.18.0
 
-# Yast::Packages.check_remote_installation_packages
-Requires:	yast2-packager >= 4.0.9
-
-# FIXME: some code present in this package still depends on the old yast2-storage
-# and will break without this dependency. That's acceptable at this point of the
-# migration to storage-ng. See installer-hacks.md in the yast-storage-ng repo.
-# Requires:  yast2-storage >= 2.24.1
+# Yast::AddOnProduct.selected_installation_products
+Requires:	yast2-packager >= 4.0.56
 
 # use in startup scripts
 Requires:	initviocons
@@ -135,6 +132,9 @@ Requires:	coreutils
 
 # BNC 446533, /sbin/lspci called but not installed
 Requires:	pciutils
+
+# Needed call /sbin/ip in vnc.sh/network.sh
+Requires:	iproute2
 
 # install the registration module only in SLE (bsc#1043122)
 %if !0%{?is_opensuse}
@@ -252,6 +252,6 @@ systemctl enable YaST2-Firstboot.service
 %dir %{yast_vardir}/hooks/installation
 
 %dir %{yast_docdir}
-%doc %{yast_docdir}/COPYING
+%license %{yast_docdir}/COPYING
 %doc %{yast_docdir}/README.md
 %doc %{yast_docdir}/CONTRIBUTING.md

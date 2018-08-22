@@ -8,6 +8,8 @@ describe ::Installation::CopyLogsFinish do
   describe "#write" do
     before do
       allow(Yast::WFM).to receive(:Execute)
+      # Set the target dir to /mnt
+      allow(Yast::WFM).to receive(:Args).and_return("initial")
     end
 
     def mock_log_dir(files)
@@ -21,7 +23,7 @@ describe ::Installation::CopyLogsFinish do
     it "copies logs from instalation to target system" do
       mock_log_dir(["y2start.log"])
 
-      expect_to_run(/cp .*y2start.log .*y2start.log/)
+      expect_to_run(/cp .*y2start.log.*y2start.log/)
 
       subject.write
     end
@@ -29,7 +31,7 @@ describe ::Installation::CopyLogsFinish do
     it "rotates y2log" do
       mock_log_dir(["y2log-1.gz"])
 
-      expect_to_run(/cp .*y2log-1.gz .*y2log-2.gz/)
+      expect_to_run(/cp .*y2log-1.gz.*y2log-2.gz/)
 
       subject.write
     end
@@ -42,7 +44,7 @@ describe ::Installation::CopyLogsFinish do
       subject.write
     end
 
-    it "does not stuck during compress if file already exists (bnc#897091)" do
+    it "does not get stuck during compress if file already exists (bnc#897091)" do
       mock_log_dir(["y2log-1"])
 
       expect_to_run(/gzip -f/)
@@ -53,7 +55,16 @@ describe ::Installation::CopyLogsFinish do
     it "rotates zypp.log" do
       mock_log_dir(["zypp.log"])
 
-      expect_to_run(/cp .*zypp.log .*zypp.log-1/)
+      expect_to_run(/cp .*zypp.log.*zypp.log-1/)
+
+      subject.write
+    end
+
+    it "copies the storage-inst subdir" do
+      mock_log_dir(["storage-inst"])
+
+      expect_to_run(/rm -rf .*storage-inst/)
+      expect_to_run(/cp -r .*storage-inst/)
 
       subject.write
     end

@@ -57,11 +57,13 @@ describe ::Installation::Widgets::ProductSelector do
     before do
       allow(Yast::Pkg).to receive(:PkgApplReset)
       allow(Yast::Pkg).to receive(:PkgReset)
+      allow(Yast::AddOnProduct).to receive(:selected_installation_products)
+        .and_return(["add-on-product"])
+      # mock selecting the first product
+      allow(subject).to receive(:value).and_return("test1")
     end
 
     it "resets previous package configuration" do
-      # mock selecting the first product
-      allow(subject).to receive(:value).and_return("test1")
       allow(product1).to receive(:select)
       expect(Yast::Pkg).to receive(:PkgApplReset)
       expect(Yast::Pkg).to receive(:PkgReset)
@@ -69,11 +71,15 @@ describe ::Installation::Widgets::ProductSelector do
     end
 
     it "selects the product to install" do
-      # mock selecting the first product
-      allow(subject).to receive(:value).and_return("test1")
-
       expect(product1).to receive(:select)
       expect(product2).to_not receive(:select)
+      subject.store
+    end
+
+    it "reselect add-on products for installation" do
+      allow(product1).to receive(:select)
+      expect(Yast::Pkg).to receive(:ResolvableInstall)
+        .with("add-on-product", :product, "")
       subject.store
     end
   end

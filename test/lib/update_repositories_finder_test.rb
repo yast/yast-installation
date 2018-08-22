@@ -16,6 +16,7 @@ describe Installation::UpdateRepositoriesFinder do
     let(:profile) { {} }
     let(:ay_profile) { double("Yast::Profile", current: profile) }
     let(:repo) { double("UpdateRepository") }
+    let(:self_update_in_cmdline) { false }
 
     subject(:finder) { described_class.new }
 
@@ -23,6 +24,8 @@ describe Installation::UpdateRepositoriesFinder do
       stub_const("Yast::Profile", ay_profile)
       stub_const("::Registration::ConnectHelpers", FakeConnectHelpers)
       allow(finder).to receive(:require).with("registration/connect_helpers")
+      allow(Yast::InstFunctions).to receive("self_update_in_cmdline?")
+        .and_return(self_update_in_cmdline)
       allow(Yast::Linuxrc).to receive(:InstallInf).with("SelfUpdate")
         .and_return(url_from_linuxrc)
       allow(Yast::Pkg).to receive(:GetArchitecture).and_return(arch)
@@ -185,9 +188,33 @@ describe Installation::UpdateRepositoriesFinder do
             finder.updates
           end
 
-          it "does not handle registration errors" do
-            expect(Registration::ConnectHelpers).to_not receive(:catch_registration_errors)
-            finder.updates
+          context "and enables the installer update explicitly by linuxrc" do
+            let(:self_update_in_cmdline) { true }
+
+            it "handles registration errors" do
+              expect(Registration::ConnectHelpers).to receive(:catch_registration_errors)
+                .and_call_original
+              finder.updates
+            end
+          end
+
+          context "and enables the installer update explicitly by an AutoYaST profile" do
+            let(:profile) { { "general" => { "self_update" => true } } }
+
+            it "handles registration errors" do
+              allow(Yast::Mode).to receive(:auto).and_return(true)
+              allow(finder).to receive(:import_registration_ayconfig)
+              expect(Registration::ConnectHelpers).to receive(:catch_registration_errors)
+                .and_call_original
+              finder.updates
+            end
+          end
+
+          context "and does not enable the installer update explicitly" do
+            it "does not handle registration errors" do
+              expect(Registration::ConnectHelpers).to_not receive(:catch_registration_errors)
+              finder.updates
+            end
           end
         end
 

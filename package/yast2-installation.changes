@@ -1,4 +1,304 @@
 -------------------------------------------------------------------
+Mon Aug 20 15:18:28 CEST 2018 - schubi@suse.de
+
+- Switched license in spec file from SPDX2 to SPDX3 format.
+- Changed dir of COPYING file.
+
+-------------------------------------------------------------------
+Thu Aug  2 09:05:07 UTC 2018 - schubi@suse.de
+
+- Disable display of status messages on the console (bsc#1099505).
+- 4.1.8
+
+-------------------------------------------------------------------
+Thu Aug  2 08:05:07 UTC 2018 - knut.anderssen@suse.com
+
+- Don not print errors if plymouth is not installed (bsc#1101879)
+
+-------------------------------------------------------------------
+Thu Jul 26 15:45:03 UTC 2018 - knut.anderssen@suse.com
+
+- Do not crash if /etc/os-release is a directory (bsc#1097661)
+- 4.1.7
+
+-------------------------------------------------------------------
+Thu Jul 26 14:34:27 CEST 2018 - schubi@suse.de
+
+- Delete unneeded content of /mnt/run after installation/update.
+  (bsc#1071745)
+- 4.1.6
+
+-------------------------------------------------------------------
+Wed Jul  4 12:16:04 UTC 2018 - knut.anderssen@suse.com
+
+- Fixed returned value calling copy_files_finish when
+  some ssh file exist (bsc#1099104).
+- 4.1.5
+
+-------------------------------------------------------------------
+Thu Jun 28 14:40:00 CEST 2018 - schubi@suse.de
+
+- Added additional searchkeys to desktop file (fate#321043).
+- 4.1.4
+
+-------------------------------------------------------------------
+Wed Jun 27 13:14:47 CEST 2018 - aschnell@suse.com
+
+- adapted testsuite to change in yast2-storage-ng (bsc#1073633)
+- 4.1.3
+
+-------------------------------------------------------------------
+Mon Jun 11 11:30:44 UTC 2018 - knut.anderssen@suse.com
+
+- Firstboot.service: Shutdown on failure preventing the service to
+  hang because of a systemd dependency when trying to call halt
+  directly from the firsboot clients (bsc#1095253)
+- 4.1.2
+
+-------------------------------------------------------------------
+Wed Jun  6 14:21:02 UTC 2018 - lslezak@suse.cz
+
+- Fixed possibly broken system after aborting upgrade running
+  over SSH (caused by a partially finished rollback) (bsc#1089643)
+
+-------------------------------------------------------------------
+Thu May 31 15:31:34 UTC 2018 - jreidinger@suse.com
+
+- fix calling copy_files_finish to not crash
+  (related to bsc#1095323)
+- 4.1.1
+
+-------------------------------------------------------------------
+Thu May 31 10:17:19 UTC 2018 - jreidinger@suse.com
+
+- Fix crash caused by previous fix when multipath is not available
+  (bsc#1095323)
+- Copy active_devices.txt for s390 to prevent blocking of
+  important devices when cio_ignore is active (bsc#1095033)
+- 4.1.0
+
+-------------------------------------------------------------------
+Fri May 18 13:16:30 UTC 2018 - igonzalezsosa@suse.com
+
+- Fix installation mode detection (related to bsc#1089547).
+- 4.0.61
+
+-------------------------------------------------------------------
+Wed May 16 12:50:36 UTC 2018 - jlopez@suse.com
+
+- Do not try to set read-only property to default BTRFS subvolume
+  if the filesystem already existed on disk (needed for
+  bsc#1091047).
+- 4.0.60
+
+-------------------------------------------------------------------
+Thu May 10 13:10:41 UTC 2018 - igonzalezsosa@suse.com
+
+- Log a warning when umounting a filesystem fails after
+  installation/upgrade (related to bsc#1090018).
+- 4.0.59
+
+-------------------------------------------------------------------
+Tue May 08 12:04:00 CEST 2018 - aschnell@suse.com
+
+- disable mdadm auto assembly for installation (bsc#1090690)
+- 4.0.58
+
+-------------------------------------------------------------------
+Thu May  3 07:34:57 UTC 2018 - lslezak@suse.cz
+
+- Keep the selected product in the desktop selection dialog
+  (bsc#1088660)
+- 4.0.57
+
+-------------------------------------------------------------------
+Wed May  2 15:44:18 UTC 2018 - shundhammer@suse.com
+
+- Copy new /var/log/YaST2/storage-inst/ subdir to target at the
+  end of the installation (part of fate #318196)
+- 4.0.56
+
+-------------------------------------------------------------------
+Fri Apr 27 15:07:15 UTC 2018 - igonzalezsosa@suse.com
+
+- Do not warn too soon about missing disks during autoinstallation
+  (bsc#1091033)
+- 4.0.55
+
+-------------------------------------------------------------------
+Fri Apr 27 13:22:53 UTC 2018 - lslezak@suse.cz
+
+- Better handle the restore scripts when YaST is aborted or
+  crashes (bsc#1089643)
+- Delete the .repo files accidentally saved into inst-sys
+  (fixes problems when restarting YaST after abort or crash)
+- 4.0.54
+
+-------------------------------------------------------------------
+Wed Apr 25 10:43:58 UTC 2018 - jreidinger@suse.com
+
+- fix regression to show again iscsi configuration for disk-less
+  setup  (bsc#1090753)
+- 4.0.53
+
+-------------------------------------------------------------------
+Wed Apr 25 06:03:53 UTC 2018 - igonzalezsosa@suse.com
+
+- Fix text direction for RTL languages in the installer settings
+  screen (bsc#1089846).
+- 4.0.52
+
+-------------------------------------------------------------------
+Tue Apr 24 11:41:26 UTC 2018 - mvidner@suse.com
+
+- Fixed "vnc.sh: /root/.profile: No such file or directory"
+  (bsc#1089623).
+- 4.0.51
+
+-------------------------------------------------------------------
+Thu Apr 19 13:05:23 UTC 2018 - lslezak@suse.cz
+
+- Log more details when unmounting the target partition fails
+  (to debug bsc#1090018)
+- 4.0.50
+
+-------------------------------------------------------------------
+Tue Apr 17 12:37:12 UTC 2018 - igonzalezsosa@suse.com
+
+- Installer Updates does not overwrite Driver Updates
+  (bsc#1088685).
+- 4.0.49
+
+-------------------------------------------------------------------
+Mon Apr 16 12:50:00 UTC 2018 - mvidner@suse.com
+
+- Don't hard-code the role text color (bsc#1087399).
+- 4.0.48
+
+-------------------------------------------------------------------
+Mon Apr 16 11:08:57 UTC 2018 - jreidinger@suse.com
+
+- Ensure proper patterns are selected when going back to system
+  role and switch to different role (bsc#1088883)
+- 4.0.47
+
+-------------------------------------------------------------------
+Tue Apr 10 16:37:15 CEST 2018 - schubi@suse.de
+
+- Set Add-On products for installation again after the base
+  product has been selected (bnc#1086846).
+- 4.0.46
+
+-------------------------------------------------------------------
+Fri Apr  6 17:25:51 UTC 2018 - jlopez@suse.com
+
+- Use AbortException when user aborts (part of fate#318196).
+- 4.0.45
+
+-------------------------------------------------------------------
+Fri Apr  6 12:26:45 UTC 2018 - mvidner@suse.com
+
+- Start web VNC for the installation process (bsc#1078785)
+- 4.0.44
+
+-------------------------------------------------------------------
+Tue Apr  3 10:54:42 UTC 2018 - jlopez@suse.com
+
+- Fix tests to use correct storage instance (part of fate#318196).
+- 4.0.43
+
+-------------------------------------------------------------------
+Fri Mar 23 09:57:56 UTC 2018 - mvidner@suse.com
+
+- System roles: make the radio buttons match other dialogs,
+  using images (bsc#1084674)
+- 4.0.42
+
+-------------------------------------------------------------------
+Tue Mar 20 16:10:24 UTC 2018 - mvidner@suse.com
+
+- Make many system roles fit in the dialog (using a RichText
+  widget, bsc#1084674)
+- 4.0.41
+
+-------------------------------------------------------------------
+Mon Mar 19 22:53:57 UTC 2018 - knut.anderssen@suse.com
+
+- Self-Update report errors when the self_update is enabled
+  explicitly by linuxrc or using an AutoYaST profile.
+  (bsc#1084820)
+- 4.0.40
+
+-------------------------------------------------------------------
+Tue Mar 13 16:37:23 UTC 2018 - igonzalezsosa@suse.com
+
+- Set the 'ro' property on Btrfs filesystem when using an AutoYaST
+  profile which sets the 'ro' option explicitly (related to
+  bsc#1079000).
+- 4.0.39
+
+-------------------------------------------------------------------
+Tue Mar 13 12:09:45 CET 2018 - schubi@suse.de
+
+- complex_welcome: Translate license text if the language has been
+  changed (bnc#1077733).
+- 4.0.38
+
+-------------------------------------------------------------------
+Mon Mar 12 15:34:38 UTC 2018 - igonzalezsosa@suse.com
+
+- Set Btrfs 'ro' property at the end of the installation
+  when needed (bsc#1079000)
+- 4.0.37
+
+-------------------------------------------------------------------
+Thu Mar  1 14:48:45 UTC 2018 - shundhammer@suse.com
+
+- Pass args to parent class constructor (bsc#1083500)
+- 4.0.36
+
+-------------------------------------------------------------------
+Tue Feb 27 12:23:03 UTC 2018 - jreidinger@suse.com
+
+- fix marking texts for translation (bsc#1081361, bsc#1083015)
+- 4.0.35
+
+-------------------------------------------------------------------
+Tue Feb 27 01:41:17 UTC 2018 - ancor@suse.com
+
+- More gentle handling of aborts caused by hardware probing errors
+  (bsc#1079228, bsc#1079817, bsc#1063059, bsc#1080554, bsc#1076776,
+  bsc#1070459 and some others).
+- Re-enable the old fix for bsc#298049 (abort button during ongoing
+  hardware probing).
+- Cleanup of dead code
+- 4.0.34
+
+-------------------------------------------------------------------
+Tue Feb 13 12:53:44 UTC 2018 - jreidinger@suse.com
+
+- Ensure previous role selection is cleared when doing desktop
+  selection (bsc#1078961)
+- 4.0.33
+
+-------------------------------------------------------------------
+Thu Feb  8 13:55:21 UTC 2018 - knut.anderssen@suse.com
+
+- Startup scripts: Replaced xinetd by xvnc.socket (fate#323373)
+- Revert changes added in 4.0.29 bringing back the enablement of
+  the xvnc.socket during the first stage if Linuxrc.vnc is set.
+  (bnc#1077236)
+- 4.0.32
+
+-------------------------------------------------------------------
+Tue Feb  6 12:24:34 CET 2018 - schubi@suse.de
+
+- Added requirement iproute2 to spec file. This is needed by
+  the VNC AutoYaST installation in the second stage.
+  (Follow up of bnc#1077236)
+- 4.0.31
+
+-------------------------------------------------------------------
 Fri Feb  2 15:26:05 UTC 2018 - jreidinger@suse.com
 
 - do not crash if no role is selected (bsc#1078809)

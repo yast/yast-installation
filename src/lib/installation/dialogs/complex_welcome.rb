@@ -42,6 +42,7 @@ module Installation
       # @param products        [Array<Y2Packager::Product>] List of available products
       # @param disable_buttons [Array<Symbol>] List of buttons to disable
       def initialize(products, disable_buttons: [])
+        textdomain "installation"
         @products = products
         @disable_buttons = disable_buttons.map { |b| "#{b}_button" }
       end
@@ -62,7 +63,7 @@ module Installation
       #
       # @return [Yast::Term] Dialog's content
       def contents
-        @contents ||= VBox(
+        VBox(
           filling,
           locale_settings,
           license_or_product_content,

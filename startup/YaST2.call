@@ -129,6 +129,16 @@ function prepare_for_ncurses () {
 	check_run_fbiterm
 	log "\tCheck for FB-I-terminal: RUN_FBITERM = $RUN_FBITERM"
 	set_inst_ncurses_env
+	#=============================================================
+	# Disable display of status messages on the console, as
+	# controlled via systemd.show_status=0 on the kernel command.
+	# line. (see "man systemd")
+	# In the case of SSH installation messages will be displayed
+	# on console only. So we do not need it here.
+	#-------------------------------------------------------------
+	if [ $SELECTED_MEDIUM != "SSH" ]; then
+	    /usr/bin/kill -SIGRTMIN+21 1
+	fi
 }
 
 #----[ prepare_for_ssh ]----#
@@ -165,24 +175,9 @@ function prepare_for_vnc () {
 	if [ $VNCPASS_EXCEPTION = 0 ];then
 		disable_splash
 		displayVNCMessage
-		stop_xinetd
+		stop_xvnc
 		startVNCServer
 		wait_for_x11
-		if is_xinetd_active; then
-			# xinetd shouldn't be running since we stopped it right
-			# before starting VNC. But there is still one small
-			# chance that xinetd was started by the systemd boot
-			# sequence during VNC startup. If it's running we cannot
-			# be sure that our VNC got the ports, so retry.
-			#
-			# Using systemd dependencies to ensure the correct order
-			# looks nicer, but is fragile (bnc#931643, bnc#947521).
-			killall Xvnc >/dev/null 2>&1
-			stop_xinetd
-			startVNCServer
-			wait_for_x11
-		fi
-		restore_xinetd
 		if [ "$server_running" = 1 ];then
 			log "\tXvnc-Server is ready: $xserver_pid"
 		fi
@@ -292,7 +287,9 @@ function ssh_reboot_message()
 function restore_backup () {
   # restores backup if it is available
     if [ -d /mnt/var/adm/backup/system-upgrade ]; then
+	log "\tStarting restore scripts"
         for i in /mnt/var/adm/backup/system-upgrade/restore-*.sh; do
+	    log "\tStarting $i"
             sh $i /mnt
         done
     fi
@@ -349,6 +346,7 @@ function start_yast () {
 		tee /var/log/YaST2/gdb-log
 	    Y2_EXIT_CODE=$?
 	fi
+	log "\tY2_EXIT_CODE: $Y2_EXIT_CODE"
 
 	Y2_ABORT_MESSAGE="YaST seems to be aborted abnormally !"
 	Y2_OK_MESSAGE="YaST procedure ended successfully"
@@ -359,7 +357,6 @@ function start_yast () {
 		cat /etc/yast.inf | grep -q -i "Aborted: 1"
 		if [ $? = 0 ];then
 			log "\t$Y2_ABORT_MESSAGE"
-                        restore_backup
 		fi
 	else
 		#=============================================
@@ -370,10 +367,6 @@ function start_yast () {
 	if [ $Y2_EXIT_CODE -eq 0 ];then
 		start_yast_and_reboot
 		start_yast_again
-	fi
-	if [ $SELECTED_MEDIUM = "SSH" ] && [ ! "$VNC" = 1 ];then
-		ssh_reboot_message
-		echo $Y2_EXIT_CODE > /tmp/YaST2_ssh_installation_finished
 	fi
 	log "\tReset memory allocation: overcommit_memory=$overcommit"
 	echo $overcommit > /proc/sys/vm/overcommit_memory
@@ -671,6 +664,31 @@ if [ "$server_running" = 1 ];then
 	while kill -0 $xserver_pid 2>/dev/null ; do
 		sleep 1
 	done
+fi
+
+if [ -s /etc/yast.inf ];then
+        # aborted, restore the upgrade backup
+        grep -q -i "^Aborted:[ \t]*1" /etc/yast.inf && restore_backup
+        # no abort, not reboot status => YaST crashed, restore the upgrade backup
+        grep -q -i -v -e "^Aborted:" -e "^Root:" /etc/yast.inf && restore_backup
+fi
+
+if [ $SELECTED_MEDIUM = "SSH" ] && [ ! "$VNC" = 1 ];then
+	ssh_reboot_message
+	# the inst-sys is waiting for the /tmp/YaST2_ssh_installation_finished file and
+	# when found the ssh daemon is killed, so create this file as the very last step!!
+	# (https://github.com/openSUSE/installation-images/blob/c57181329ab7040369da705c5b0ddd78e2960bf0/data/root/etc/inst_setup#L221-L229)
+	echo $Y2_EXIT_CODE > /tmp/YaST2_ssh_installation_finished
+fi	
+
+if [ $SELECTED_MEDIUM != "SSH" ] && [ "$Y2_MODE" = "ncurses" ]; then
+    # Enable display of status messages on the
+    # console, as controlled via systemd.show_status=1
+    # on the kernel command line (see "man systemd")
+    # In the case of SSH installation messages will be displayed
+    # on console only. So we do not need it here because we
+    # have not disabled it while YAST installation.
+    /usr/bin/kill -SIGRTMIN+20 1
 fi
 
 #=============================================

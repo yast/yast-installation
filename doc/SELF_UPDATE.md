@@ -111,9 +111,19 @@ The URL of the update repository is evaluated in this order:
         required just like in manual installation.
    4. Default SUSE Customer Center API (`https://scc.suse.com/`).
 
-   Registration server is then asked for URL providing product on media.
-   For multi-product media it is possible to specify ID used instead of product
-   name in control.xml as globals->self_update_id.
+   The registration server is then asked for the list of update repositories.
+   In order to determine such list, the product `name`, `version` and
+   `architecture` are used
+
+   In case of a multi-product installation medium, as the installer is the same
+   for all the included products, the product `name` can be hard-coded in the
+   `control.xml` file with the `/globals/self_update_id` XML node.
+
+   ```xml
+   <globals>
+     <self_update_id>SLES</self_update_id>
+   </globals>
+   ```
 
 4. Hard-coded in the `control.xml` file on the installation medium (thus it
    depends on the base product):
@@ -249,6 +259,9 @@ Errors during the installer update are handled as described below:
 * If SCC/SMT is used and it returns no URL or fails then the fallback URL from
   `control.xml` is used.
 * If the updates repository is found but it is empty or not valid:
+  * if the installer update was enabled explicitly (using the *SelfUpdate* boot
+    option or through the *self_update* element in an AutoYaST profile), an error
+    will be shown.
   * in the case that the URL was specified by the user (using the *SelfUpdate* boot
     option or through the *self_update_url* element in an AutoYaST profile), an
     error message will be shown.

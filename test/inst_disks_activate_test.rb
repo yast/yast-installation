@@ -10,6 +10,8 @@ describe Yast::InstDisksActivateClient do
     let(:s390) { false }
 
     before do
+      Y2Storage::StorageManager.create_test_instance
+
       allow(Yast::Linuxrc).to receive(:InstallInf).with("WithFCoE").and_return("0")
       allow(Yast::UI).to receive(:OpenDialog)
       allow(Yast::UI).to receive(:CloseDialog)
