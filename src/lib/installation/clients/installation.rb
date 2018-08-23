@@ -41,6 +41,8 @@ module Yast
       Yast.import "Hooks"
       Yast.import "Linuxrc"
       Yast.import "OSRelease"
+      Yast.import "ProductFeatures"
+      Yast.import "ProductControl"
 
       # log the inst-sys identification for easier debugging
       log_os_release
@@ -48,8 +50,13 @@ module Yast
       Hooks.search_path.join!("installation")
 
       # Initialize the UI
-      UI.SetProductLogo(true)
-      Wizard.OpenLeftTitleNextBackDialog
+      if ProductFeatures.GetStringFeature("globals", "installation_ui") == "sidebar"
+        UI.SetProductLogo(false)
+        Wizard.OpenNextBackStepsDialog
+      else
+        UI.SetProductLogo(true)
+        Wizard.OpenLeftTitleNextBackDialog
+      end
 
       Wizard.SetContents(
         # title
