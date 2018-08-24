@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Aug 24 14:42:15 UTC 2018 - jreidinger@suse.com
+
+- Improve help text for system roles (bsc#1046619)
+- 4.1.11
+
+-------------------------------------------------------------------
 Thu Aug 23 07:24:18 UTC 2018 - dgonzalez@suse.com
 
 - Update calls to YaST2 systemd classes (related to fate#319428)
