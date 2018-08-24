@@ -5,7 +5,7 @@ require_relative "./support/fake_registration"
 require "installation/clients/inst_update_installer"
 require "singleton"
 
-describe Yast::InstUpdateInstaller do
+describe Yast::InstUpdateInstaller  do
 
   Yast.import "Linuxrc"
   Yast.import "ProductFeatures"
