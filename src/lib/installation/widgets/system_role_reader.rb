@@ -18,6 +18,11 @@
 # To contact SUSE about this file by physical or electronic mail, you may find
 # current contact information at www.suse.com.
 # ------------------------------------------------------------------------------
+
+require "yast"
+
+Yast.import "HTML"
+
 module Installation
   module Widgets
     # Common methods for system roles widgets
@@ -43,7 +48,7 @@ module Installation
       end
 
       def help
-        Yast::ProductControl.GetTranslatedText("roles_help") + "\n\n" + roles_help_text
+        "<p>" + Yast::ProductControl.GetTranslatedText("roles_help") + "</p>\n" + roles_help_text
       end
 
       def store
@@ -57,7 +62,9 @@ module Installation
     private
 
       def roles_help_text
-        ::Installation::SystemRole.all.map { |r| "#{r.label}\n\n#{r.description}" }.join("\n\n\n")
+        ::Installation::SystemRole.all.map do |role|
+          "<p>#{Yast::HTML.Heading(role.label)}\n\n#{role.description}</p>"
+        end.join("\n")
       end
     end
   end

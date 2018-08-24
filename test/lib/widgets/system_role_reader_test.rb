@@ -2,6 +2,7 @@
 
 require_relative "../../test_helper"
 require "installation/widgets/system_role_reader"
+require "installation/system_role"
 
 describe ::Installation::Widgets::SystemRoleReader do
   class DummySystemRoleReader
@@ -86,7 +87,9 @@ describe ::Installation::Widgets::SystemRoleReader do
 
   describe "#help" do
     it "returns role help" do
-      expect(subject.help).to include("Default Role\n\nRole description")
+      expect(subject.help).to include("Default Role")
+      expect(subject.help).to include("Role description")
+      expect(subject.help).to include("Alternate Role")
     end
   end
 
