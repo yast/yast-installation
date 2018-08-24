@@ -1,6 +1,5 @@
 require "yast"
-
-Yast.import "SystemdService"
+require "yast2/systemd/service"
 
 module Installation
   # Represents services manipulation in installation.
@@ -34,7 +33,7 @@ module Installation
       def write
         enabled.each do |service|
           log.info "Enabling service #{service}"
-          s = Yast::SystemdService.find!(service)
+          s = Yast2::Systemd::Service.find!(service)
           s.enable
         end
       end
