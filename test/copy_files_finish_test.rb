@@ -148,18 +148,40 @@ describe Yast::CopyFilesFinishClient do
       subject.write
     end
 
-    it "copies build file" do
-      allow(Yast::Pkg).to receive(:SourceProvideOptionalFile).with(1, 1, "/media.1/build")
-        .and_return("/media.1/build")
+    it "copies media file to /media" do
+      allow(Yast::Pkg).to receive(:SourceProvideOptionalFile)
+        .with(1, 1, "/media.1/media")
+        .and_return("/media.1/media")
 
-      expect(::FileUtils).to receive(:cp).with("/media.1/build", "/mnt/etc/YaST2/build")
+      expect(::FileUtils).to receive(:cp).with("/media.1/media", "/mnt/etc/YaST2/media")
 
       subject.write
     end
 
-    it "ensures proper permission on copied build file" do
-      allow(Yast::Pkg).to receive(:SourceProvideOptionalFile).with(1, 1, "/media.1/build")
-        .and_return("/media.1/build")
+    it "copies media file to /build (backward compatibility)" do
+      allow(Yast::Pkg).to receive(:SourceProvideOptionalFile)
+        .with(1, 1, "/media.1/media")
+        .and_return("/media.1/media")
+
+      expect(::FileUtils).to receive(:cp).with("/media.1/media", "/mnt/etc/YaST2/build")
+
+      subject.write
+    end
+
+    it "ensures proper permission on copied /media file" do
+      allow(Yast::Pkg).to receive(:SourceProvideOptionalFile)
+        .with(1, 1, "/media.1/media")
+        .and_return("/media.1/media")
+
+      expect(::FileUtils).to receive(:chmod).with(0o644, "/mnt/etc/YaST2/media")
+
+      subject.write
+    end
+
+    it "ensures proper permission on copied /build file (backward compatibility)" do
+      allow(Yast::Pkg).to receive(:SourceProvideOptionalFile)
+        .with(1, 1, "/media.1/media")
+        .and_return("/media.1/media")
 
       expect(::FileUtils).to receive(:chmod).with(0o644, "/mnt/etc/YaST2/build")
 
