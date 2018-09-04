@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Sep  4 13:34:17 UTC 2018 - dgonzalez@suse.com
+
+- Use /media.1/media instead the /media.1/build (bsc#1062297)
+- 4.1.13
+
+-------------------------------------------------------------------
 Mon Sep  3 08:38:32 UTC 2018 - dgonzalez@suse.com
 
 - Add missing help for disks activation dialog (bsc#1098563)
