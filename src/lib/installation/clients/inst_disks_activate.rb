@@ -75,11 +75,6 @@ module Yast
 
       @want_fcoe = Linuxrc.InstallInf("WithFCoE") == "1"
 
-      # dialog caption
-      @caption = _("Disk Activation")
-
-      @help = ""
-
       missing_part = [
         VSpacing(0),
         VSpacing(0)
@@ -169,9 +164,10 @@ module Yast
 
     def show_base_dialog
       Wizard.SetContents(
-        @caption,
+        # TRANSLATORS: dialog caption
+        _("Disk Activation"),
         @contents,
-        @help,
+        help,
         GetInstArgs.enable_back,
         GetInstArgs.enable_next
       )
@@ -203,6 +199,52 @@ module Yast
 
       enable_back ? Wizard.EnableBackButton : Wizard.DisableBackButton
       enable_next ? Wizard.EnableNextButton : Wizard.DisableNextButton
+    end
+
+    def help
+      network_button_help +
+        dasd_button_help +
+        zfcp_button_help +
+        fcoe_button_help +
+        iscsi_button_help
+    end
+
+    def network_button_help
+      # TRANSLATORS: Help text for "Network configuration..." button in the Disks activation dialog
+      _("<h2>Network configuration</h2>" \
+        "Launches the Network configuration dialog.")
+    end
+
+    def dasd_button_help
+      return "" unless @have_dasd
+
+      # TRANSLATORS: Help text for "Configure DASD Disks" button in the Disks activation dialog
+      _("<h2>Configure DASD Disks</h2>" \
+        "Opens the dialog to configure the " \
+        "<b>D</b>irect <b>A</b>ccess <b>S</b>torage <b>D</b>isks.")
+    end
+
+    def zfcp_button_help
+      return "" unless @have_zfcp
+
+      # TRANSLATORS: Help text for "Configure zFCP Disks" button in the Disks activation dialog
+      _("<h2>Configure zFCP Disks</h2>" \
+        "Allows to configure the Fibre Channel Attached SCSI Disks.")
+    end
+
+    def fcoe_button_help
+      return "" unless @want_fcoe
+
+      # TRANSLATORS: Help text for "Configure FCoE Interfaces" button in the Disks activation dialog
+      _("<h2>Configure FCoE Interfaces</h2>" \
+        "Shows the dialog to manage the " \
+        "<b>F</b>ibre <b>C</b>hannel <b>o</b>ver <b>E</b>thernet interfaces.")
+    end
+
+    def iscsi_button_help
+      # TRANSLATORS: Help text for "Configure iSCSI Disks" button in the Disks activation dialog
+      _("<h2>Configure iSCSI Disks</h2>" \
+        "Executes the iSCSI initiator configuration.")
     end
   end
 end
