@@ -80,8 +80,10 @@ module Yast
       # FIXME: probably won't work as expected with new multimedia layout.
       #   Ideally final modified control.xml should be saved.
       copy_control_file
-      # Copy /media.1/build to the installed system (fate#311377)
-      copy_build_file
+
+      # Copy /media.1/media to the installed system (fate#311377)
+      # Formerly /media.1/build (bsc#1062297)
+      copy_media_file
       copy_product_profiles
 
       # List of files used as additional workflow definitions
@@ -303,19 +305,24 @@ module Yast
       ::FileUtils.chmod(0o644, destination)
     end
 
-    def copy_build_file
-      build_file = Pkg.SourceProvideOptionalFile(
-        Packages.GetBaseSourceID,
-        1,
-        "/media.1/build"
-      )
+    def copy_media_file
+      media_file = Pkg.SourceProvideOptionalFile(Packages.GetBaseSourceID, 1, "/media.1/media")
 
-      return unless build_file
+      if media_file
+        log.info("Copying /media.1/media file to /media")
+        media_destination = File.join(Installation.destdir, Directory.etcdir, "media")
+        ::FileUtils.cp(media_file, media_destination)
+        ::FileUtils.chmod(0o644, media_destination)
 
-      log.info "Copying /media.1/build file"
-      destination = File.join(Installation.destdir, Directory.etcdir, "build")
-      ::FileUtils.cp(build_file, destination)
-      ::FileUtils.chmod(0o644, destination)
+        # FIXME: `/build` is deprecated, only kept for backward compatibility. It must be removed
+        # as soon it will not longer needed.
+        log.info("Copying /media.1/media file to /build (backward compatibility)")
+        build_destination = File.join(Installation.destdir, Directory.etcdir, "build")
+        ::FileUtils.cp(media_file, build_destination)
+        ::FileUtils.chmod(0o644, build_destination)
+      else
+        log.error("Cannot find /media.1/media file")
+      end
     end
   end
 end
