@@ -38,7 +38,7 @@ module Installation
       pkgs.each do |pkg|
         downloader = Packages::PackageDownloader.new(repo_id, pkg["name"])
         log.info("Downloading package #{pkg["name"]}...")
-        downloader.download(File.join(path, pkg["name"])
+        downloader.download(File.join(path, pkg["name"]))
       end
 
       log.debug { "Downloaded packages: #{Dir["#{path}/*"]}" }
