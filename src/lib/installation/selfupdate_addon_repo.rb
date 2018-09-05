@@ -36,12 +36,12 @@ module Installation
       ::FileUtils.mkdir_p(path)
 
       pkgs.each do |pkg|
-        downloader = Packages::PackageDownloader.new(repo_id, pkg["name"])
-        log.info("Downloading package #{pkg["name"]}...")
-        downloader.download(File.join(path, pkg["name"]))
+        downloader = Packages::PackageDownloader.new(repo_id, pkg)
+        log.info("Downloading package #{pkg}...")
+        downloader.download(File.join(path, "#{pkg}.rpm"))
       end
 
-      log.debug { "Downloaded packages: #{Dir["#{path}/*"]}" }
+      log.info("Downloaded packages: #{Dir["#{path}/*"]}")
 
       true
     end
@@ -55,7 +55,7 @@ module Installation
 
     def self.create_repo(path = REPO_PATH)
       # create a plaindir repository, there is no package metadata
-      ret = Yast::Pkg.SourceCreateType("dir://#{URI.escape(path)}", "", "Plaindir")
+      ret = Yast::Pkg.SourceCreateType("dir://#{URI.escape(path)}?alias=SelfUpdate0", "", "Plaindir")
       log.info("Created self update addon repo: #{ret}")
       ret
     end

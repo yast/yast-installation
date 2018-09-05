@@ -1,5 +1,7 @@
 #!/usr/bin/env rspec
 
+__END__
+
 require_relative "test_helper"
 require_relative "./support/fake_registration"
 require "installation/clients/inst_update_installer"
