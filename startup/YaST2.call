@@ -285,14 +285,22 @@ function ssh_reboot_message()
 
 #----[ restore_backup ]----#
 function restore_backup () {
-  # restores backup if it is available
-    if [ -d /mnt/var/adm/backup/system-upgrade ]; then
-	log "\tStarting restore scripts"
-        for i in /mnt/var/adm/backup/system-upgrade/restore-*.sh; do
-	    log "\tStarting $i"
-            sh $i /mnt
-        done
-    fi
+  # restores available backups created after boot (bsc#1097297)
+  if [ -d /mnt/var/adm/backup/system-upgrade ]; then
+    boottime=$(awk '/^btime/{print $2}' < /proc/stat)
+
+    log "\tChecking available backups..."
+    for i in /mnt/var/adm/backup/system-upgrade/restore-*.sh; do
+      backuptime=$(stat -c%Y $i)
+
+      if [ $(($boottime+0)) -lt $(($backuptime+0)) ]; then
+        log "\t\tExecuting $i"
+        sh $i /mnt
+      else
+        log "\t\tDiscarding $i (created before last boot)"
+      fi
+    done
+  fi
 }
 
 #----[ start_yast ]----#
