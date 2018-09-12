@@ -148,7 +148,7 @@ function prepare_for_ssh () {
 # ---
 #
 	:
-        export Y2STYLE="installation_slim" 
+        export Y2STYLE="installation_slim"
 	set_inst_qt_env
 }
 
@@ -268,7 +268,7 @@ function ssh_reboot_message()
 {
 	# SecondStageRequired can be set:
 	# 1. after 1st stage (note 2nd stage is not always required)
-	# 2. after 2nd stage (when another YaST run is required due to e.g. 
+	# 2. after 2nd stage (when another YaST run is required due to e.g.
 	#    kernel update)
 
 	if [ -f /etc/install.inf ] ; then
@@ -687,7 +687,7 @@ if [ $SELECTED_MEDIUM = "SSH" ] && [ ! "$VNC" = 1 ];then
 	# when found the ssh daemon is killed, so create this file as the very last step!!
 	# (https://github.com/openSUSE/installation-images/blob/c57181329ab7040369da705c5b0ddd78e2960bf0/data/root/etc/inst_setup#L221-L229)
 	echo $Y2_EXIT_CODE > /tmp/YaST2_ssh_installation_finished
-fi	
+fi
 
 if [ $SELECTED_MEDIUM != "SSH" ] && [ "$Y2_MODE" = "ncurses" ]; then
     # Enable display of status messages on the
