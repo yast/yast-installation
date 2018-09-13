@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Sep 13 16:37:43 UTC 2018 - lslezak@suse.cz
+
+- Copy the selected packages from the self-update repository to an
+  additional add-on repository, allow updating the installation
+  workflow from the self-update repository (bsc#1101016)
+- 4.1.15
+
+-------------------------------------------------------------------
 Tue Sep 11 15:29:22 CEST 2018 - aschnell@suse.com
 
 - do not translate snapshot description (bsc#1092757)
