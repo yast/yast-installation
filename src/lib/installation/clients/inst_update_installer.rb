@@ -15,7 +15,7 @@
 
 require "installation/updates_manager"
 require "installation/update_repositories_finder"
-require "installation/selfupdate_addon_repo"
+require "y2packager/selfupdate_addon_repo"
 require "uri"
 require "yaml"
 
@@ -521,7 +521,7 @@ module Yast
     def copy_addon_packages
       log.info("Copying optional addon packages from the self update repositories...")
       updates_manager.repositories.each do |u|
-        ::Installation::SelfupdateAddonRepo.copy_packages(u.repo_id)
+        ::Y2Packager::SelfupdateAddonRepo.copy_packages(u.repo_id)
       end
     end
   end

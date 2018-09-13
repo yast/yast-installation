@@ -32,8 +32,13 @@ These are the basic steps performed by YaST in order to perform the update:
 2. If updates are available, they will be downloaded. Otherwise, the process
    will be silently skipped.
 3. The updates will be applied to the installation system.
-4. YaST will be restarted to reload the modified files and the installation
+4. The meta-packages which are needed by the installer are copied to the
+   inst-sys instead of applying.
+5. YaST will be restarted to reload the modified files and the installation
    will be resumed.
+6. The selected meta-packages copied to the inst-sys are added as an add-on
+   installation repository to allow updating the `skelcd-*` or `*-release`
+   packages via the self-update repository.
 
 ### Language Selection
 
@@ -67,7 +72,9 @@ for more details.
 YaST will use RPM packages stored in a rpm-md repository, although they are
 handled in a different way:
 
-* All RPMs in the repository are considered (no "patch" metadata).
+* All RPMs in the repository are considered (no "patch" metadata), only some
+  meta-packages are skipped (e.g. the packages providing `system-installation()`
+  or `product()`, it does not make sense to apply them to the inst-sys).
 * RPMs are not installed in the usual way: they're uncompressed and no scripts
   are executed.
 * No dependency checks are performed. RPMs are added in alphabetical order.

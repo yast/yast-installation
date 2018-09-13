@@ -46,8 +46,8 @@ BuildRequires:  rubygem(yast-rake)
 BuildRequires:  yast2 >= 4.1.3
 Requires:       yast2 >= 4.1.3
 
-# Yast::Packages.check_remote_installation_packages
-BuildRequires:	yast2-packager >= 4.0.9
+# Y2Packager::SelfupdateAddonRepo
+BuildRequires:	yast2-packager >= 4.1.5
 
 # Y2Storage::Inhibitors including systemd masking
 BuildRequires: yast2-storage-ng >= 4.0.194
@@ -63,8 +63,8 @@ Requires:	yast2-pkg-bindings >= 3.1.33
 # Mouse-related scripts moved to yast2-mouse
 Conflicts:	yast2-mouse < 2.18.0
 
-# Yast::AddOnProduct.selected_installation_products
-Requires:	yast2-packager >= 4.0.56
+# Y2Packager::SelfupdateAddonRepo
+Requires:	yast2-packager >= 4.1.5
 
 # use in startup scripts
 Requires:	initviocons
