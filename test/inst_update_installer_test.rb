@@ -1,7 +1,5 @@
 #!/usr/bin/env rspec
 
-__END__
-
 require_relative "test_helper"
 require_relative "./support/fake_registration"
 require "installation/clients/inst_update_installer"
@@ -45,6 +43,7 @@ describe Yast::InstUpdateInstaller do
     allow(subject).to receive(:require).with("registration/url_helpers").and_raise(LoadError)
     stub_const("Registration::Storage::InstallationOptions", FakeInstallationOptions)
     stub_const("Registration::Storage::Config", FakeRegConfig)
+    allow(Y2Packager::SelfupdateAddonRepo).to receive(:copy_packages)
 
     # skip the libzypp initialization globally, enable in the specific tests
     allow(subject).to receive(:initialize_packager).and_return(true)
