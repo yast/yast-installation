@@ -14,7 +14,7 @@ describe Yast::InstUpdateInstaller do
 
   let(:manager) do
     double("update_manager", all_signed?: all_signed?, apply_all: true,
-      repositories?: has_repos, repositories: [])
+      repositories?: has_repos, repositories: repos)
   end
   let(:url) { "http://update.opensuse.org/\$arch/update.dud" }
   let(:real_url) { "http://update.opensuse.org/#{arch}/update.dud" }
@@ -26,6 +26,8 @@ describe Yast::InstUpdateInstaller do
   let(:all_signed?) { true }
   let(:network_running) { true }
   let(:has_repos) { true }
+  let(:repo) { double("repo", repo_id: 42) }
+  let(:repos) { [repo] }
   let(:restarting) { false }
   let(:profile) { {} }
   let(:ay_profile) { double("Yast::Profile", current: profile) }
@@ -112,13 +114,21 @@ describe Yast::InstUpdateInstaller do
 
       context "and update works" do
         before do
-          allow(subject).to receive(:update_installer).and_return(true)
+          allow(subject).to receive(:self_update_enabled?).and_return(true)
+          allow(subject).to receive(:add_repository).and_return(true)
+          allow(manager).to receive(:apply_all)
+          allow(::FileUtils).to receive(:touch)
+          allow(Y2Packager::SelfupdateAddonRepo).to receive(:copy_packages)
         end
 
         it "creates update file and returns :restart_yast" do
-          expect(::FileUtils).to receive(:touch).once
-          allow(subject).to receive(:self_update_enabled?).and_return(true)
           expect(subject.main).to eq(:restart_yast)
+        end
+
+        it "copies the add-on packages from the self-update repository" do
+          expect(Y2Packager::SelfupdateAddonRepo).to receive(:copy_packages)
+            .with(repo.repo_id)
+          subject.main
         end
       end
 
@@ -155,6 +165,7 @@ describe Yast::InstUpdateInstaller do
 
       context "when repository is empty" do
         let(:has_repos) { false }
+        let(:repos) { [] }
 
         it "does not restart YaST" do
           expect(manager).to receive(:add_repository)
