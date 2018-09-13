@@ -31,12 +31,12 @@ These are the basic steps performed by YaST in order to perform the update:
    containing the updates.
 2. If updates are available, they will be downloaded. Otherwise, the process
    will be silently skipped.
-3. The updates will be applied to the installation system.
-4. The meta-packages which are needed by the installer are copied to the
-   inst-sys instead of applying.
-5. YaST will be restarted to reload the modified files and the installation
+3. The updates will be applied to the installation system, the meta-packages
+   which are needed by the installer are copied to the inst-sys instead of
+   applying.
+4. YaST will be restarted to reload the modified files and the installation
    will be resumed.
-6. The selected meta-packages copied to the inst-sys are added as an add-on
+5. The selected meta-packages copied to the inst-sys are added as an add-on
    installation repository to allow updating the `skelcd-*` or `*-release`
    packages via the self-update repository.
 
