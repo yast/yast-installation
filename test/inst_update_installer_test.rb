@@ -14,7 +14,7 @@ describe Yast::InstUpdateInstaller do
 
   let(:manager) do
     double("update_manager", all_signed?: all_signed?, apply_all: true,
-      repositories?: has_repos)
+      repositories?: has_repos, repositories: [])
   end
   let(:url) { "http://update.opensuse.org/\$arch/update.dud" }
   let(:real_url) { "http://update.opensuse.org/#{arch}/update.dud" }
