@@ -18,7 +18,7 @@ require "fileutils"
 
 require "packages/package_downloader"
 require "packages/package_extractor"
-require "y2packager/selfupdate_addon_filter"
+require "y2packager/self_update_addon_filter"
 
 Yast.import "Pkg"
 Yast.import "Progress"
@@ -153,7 +153,7 @@ module Installation
       @packages = candidates.select { |p| p["source"] == repo_id }.sort_by! { |a| a["name"] }
       log.info "Found #{@packages.size} packages: #{@packages}"
       # remove packages which are used as addons, these should not be applied to the inst-sys
-      addon_pkgs = Y2Packager::SelfupdateAddonFilter.packages(repo_id)
+      addon_pkgs = Y2Packager::SelfUpdateAddonFilter.packages(repo_id)
       @packages.reject! { |p| addon_pkgs.include?(p["name"]) }
       log.info "Using #{@packages.size} packages: #{@packages}"
       @packages

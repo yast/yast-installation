@@ -45,7 +45,7 @@ describe Yast::InstUpdateInstaller do
     allow(subject).to receive(:require).with("registration/url_helpers").and_raise(LoadError)
     stub_const("Registration::Storage::InstallationOptions", FakeInstallationOptions)
     stub_const("Registration::Storage::Config", FakeRegConfig)
-    allow(Y2Packager::SelfupdateAddonRepo).to receive(:copy_packages)
+    allow(Y2Packager::SelfUpdateAddonRepo).to receive(:copy_packages)
 
     # skip the libzypp initialization globally, enable in the specific tests
     allow(subject).to receive(:initialize_packager).and_return(true)
@@ -118,7 +118,7 @@ describe Yast::InstUpdateInstaller do
           allow(subject).to receive(:add_repository).and_return(true)
           allow(manager).to receive(:apply_all)
           allow(::FileUtils).to receive(:touch)
-          allow(Y2Packager::SelfupdateAddonRepo).to receive(:copy_packages)
+          allow(Y2Packager::SelfUpdateAddonRepo).to receive(:copy_packages)
         end
 
         it "creates update file and returns :restart_yast" do
@@ -126,7 +126,7 @@ describe Yast::InstUpdateInstaller do
         end
 
         it "copies the add-on packages from the self-update repository" do
-          expect(Y2Packager::SelfupdateAddonRepo).to receive(:copy_packages)
+          expect(Y2Packager::SelfUpdateAddonRepo).to receive(:copy_packages)
             .with(repo.repo_id)
           subject.main
         end
