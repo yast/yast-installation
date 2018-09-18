@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Sep 18 09:33:59 UTC 2018 - dgonzalez@suse.com
+
+- Avoid to restore old backups when upgrade fails (bsc#1097297)
+- 4.1.16
+
+-------------------------------------------------------------------
 Thu Sep 13 16:37:43 UTC 2018 - lslezak@suse.cz
 
 - Copy the selected packages from the self-update repository to an
