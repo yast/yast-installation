@@ -15,6 +15,7 @@
 
 require "installation/updates_manager"
 require "installation/update_repositories_finder"
+require "y2packager/self_update_addon_repo"
 require "uri"
 require "yaml"
 
@@ -112,6 +113,10 @@ module Yast
       updated = update_repositories.map { |u| add_repository(u) }.any?
 
       if updated
+        # copy the addon packages before applying the updates to inst-sys,
+        # #apply_all removes the repositories!
+        Yast::Progress.NextStage
+        copy_addon_packages
         log.info("Applying installer updates")
         Yast::Progress.NextStage
         updates_manager.apply_all
@@ -387,6 +392,7 @@ module Yast
         # TRANSLATORS: progress label
         _("Add Update Repository"),
         _("Download the Packages"),
+        _("Copy the Addon Packages"),
         _("Apply the Packages"),
         _("Restart")
       ]
@@ -507,6 +513,16 @@ module Yast
     def process_location
       log.info("Processing profile location...")
       ProfileLocation.Process
+    end
+
+    #
+    # Copy the addon packages from the self-update repositories to the inst-sys
+    #
+    def copy_addon_packages
+      log.info("Copying optional addon packages from the self update repositories...")
+      updates_manager.repositories.each do |u|
+        ::Y2Packager::SelfUpdateAddonRepo.copy_packages(u.repo_id)
+      end
     end
   end
 end
