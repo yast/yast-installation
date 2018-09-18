@@ -148,7 +148,7 @@ function prepare_for_ssh () {
 # ---
 #
 	:
-        export Y2STYLE="installation_slim" 
+        export Y2STYLE="installation_slim"
 	set_inst_qt_env
 }
 
@@ -268,7 +268,7 @@ function ssh_reboot_message()
 {
 	# SecondStageRequired can be set:
 	# 1. after 1st stage (note 2nd stage is not always required)
-	# 2. after 2nd stage (when another YaST run is required due to e.g. 
+	# 2. after 2nd stage (when another YaST run is required due to e.g.
 	#    kernel update)
 
 	if [ -f /etc/install.inf ] ; then
