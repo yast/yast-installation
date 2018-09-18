@@ -282,17 +282,46 @@ function ssh_reboot_message()
 	fi
 }
 
+#---[ validate_backup ]---#
+function validate_backup () {
+  # Check that the ID and VERSION_ID in the backup os-release file
+  # matches with the values in the /etc/os-release to considered it
+  # as a valid backup to be restored (bsc#1097297)
+  #
+  # See also https://www.freedesktop.org/software/systemd/man/os-release.html
+  root="/mnt"
+  backup_id=$(grep "^ID=" $root/var/adm/backup/os-release | cut -d'=' -f2 | tr -d '"')
+  backup_version_id=$(grep "^VERSION_ID=" $root/var/adm/backup/os-release | cut -d'=' -f2 | tr -d '"')
+  backup_version="$backup_id-$backup_version_id"
+  current_id=$(grep "^ID=" $root/etc/os-release | cut -d'=' -f2 | tr -d '"')
+  current_version_id=$(grep "^VERSION_ID=" $root/etc/os-release | cut -d'=' -f2 | tr -d '"')
+  current_version="$current_id-$current_version_id"
+
+  log "Checking if it is a valid backup"
+
+  if [ $backup_version = $current_version ]; then
+    return 0
+  else
+    log "\tNot valid backup version. Expected: $current_version. Found: $backup_version"
+    return 1
+  fi
+}
 
 #----[ restore_backup ]----#
 function restore_backup () {
   # restores backup if it is available
-    if [ -d /mnt/var/adm/backup/system-upgrade ]; then
-	log "\tStarting restore scripts"
-        for i in /mnt/var/adm/backup/system-upgrade/restore-*.sh; do
-	    log "\tStarting $i"
-            sh $i /mnt
-        done
-    fi
+  if [ -d /mnt/var/adm/backup/system-upgrade ]; then
+    if validate_backup; then
+      log "\tStarting restore scripts"
+
+      for i in /mnt/var/adm/backup/system-upgrade/restore-*.sh; do
+        log "\tStarting $i"
+
+        sh $i /mnt
+      done
+    else
+      log "\tBackup was not restore because its version info does not match"
+  fi
 }
 
 #----[ start_yast ]----#
@@ -679,7 +708,7 @@ if [ $SELECTED_MEDIUM = "SSH" ] && [ ! "$VNC" = 1 ];then
 	# when found the ssh daemon is killed, so create this file as the very last step!!
 	# (https://github.com/openSUSE/installation-images/blob/c57181329ab7040369da705c5b0ddd78e2960bf0/data/root/etc/inst_setup#L221-L229)
 	echo $Y2_EXIT_CODE > /tmp/YaST2_ssh_installation_finished
-fi	
+fi
 
 if [ $SELECTED_MEDIUM != "SSH" ] && [ "$Y2_MODE" = "ncurses" ]; then
     # Enable display of status messages on the
