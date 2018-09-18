@@ -46,7 +46,7 @@ BuildRequires:  rubygem(yast-rake)
 BuildRequires:  yast2 >= 4.1.3
 Requires:       yast2 >= 4.1.3
 
-# Y2Packager::SelfupdateAddonRepo
+# Y2Packager::SelfUpdateAddonRepo
 BuildRequires:	yast2-packager >= 4.1.5
 
 # Y2Storage::Inhibitors including systemd masking
@@ -63,7 +63,7 @@ Requires:	yast2-pkg-bindings >= 3.1.33
 # Mouse-related scripts moved to yast2-mouse
 Conflicts:	yast2-mouse < 2.18.0
 
-# Y2Packager::SelfupdateAddonRepo
+# Y2Packager::SelfUpdateAddonRepo
 Requires:	yast2-packager >= 4.1.5
 
 # use in startup scripts
