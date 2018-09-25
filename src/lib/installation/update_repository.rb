@@ -18,6 +18,7 @@ require "fileutils"
 
 require "packages/package_downloader"
 require "packages/package_extractor"
+require "y2packager/self_update_addon_filter"
 
 Yast.import "Pkg"
 Yast.import "Progress"
@@ -136,10 +137,11 @@ module Installation
       add_repo
     end
 
-    # Retrieves the list of packages to install
+    # Retrieves the list of packages to unpack to the inst-sys
     #
-    # Only packages in the update repository are considered. Packages are
-    # sorted by name (alphabetical order).
+    # Only packages in the update repository are considered, meta-packages
+    # which should be used in an add-on and not applied to the inst-sys are ignored.
+    # The packages are sorted by name (alphabetical order).
     #
     # @return [Array<Hash>] List of packages to install
     #
@@ -149,7 +151,11 @@ module Installation
       add_repo
       candidates = Yast::Pkg.ResolvableProperties("", :package, "")
       @packages = candidates.select { |p| p["source"] == repo_id }.sort_by! { |a| a["name"] }
-      log.info "Considering #{@packages.size} packages: #{@packages}"
+      log.info "Found #{@packages.size} packages: #{@packages}"
+      # remove packages which are used as addons, these should not be applied to the inst-sys
+      addon_pkgs = Y2Packager::SelfUpdateAddonFilter.packages(repo_id)
+      @packages.reject! { |p| addon_pkgs.include?(p["name"]) }
+      log.info "Using #{@packages.size} packages: #{@packages}"
       @packages
     end
 
@@ -245,10 +251,9 @@ module Installation
     # Determine whether the repository is empty or not
     #
     # @return [Boolean] true if the repository is empty; false otherwise.
-    #
-    # @see #packages
     def empty?
-      packages.empty?
+      candidates = Yast::Pkg.ResolvableProperties("", :package, "")
+      candidates.none? { |p| p["source"] == repo_id }
     end
 
     # Returns whether is a user defined repository
