@@ -25,7 +25,7 @@ describe ::Installation::SelectSystemRole do
       subject.class.original_role_id = nil
 
       allow(Yast::ProductFeatures).to receive(:ClearOverlay)
-      allow(Yast::ProductFeatures).to receive(:SetOverlay) # .with
+      allow(Yast::ProductFeatures).to receive(:SetOverlay)
       allow(Yast::Packages).to receive(:SelectSystemPatterns)
     end
 
@@ -38,6 +38,77 @@ describe ::Installation::SelectSystemRole do
       it "does not display dialog, and returns :auto" do
         expect(Yast::Wizard).to_not receive(:SetContents)
         expect(subject.run).to eq(:auto)
+      end
+    end
+
+    context "when single role is defined" do
+      let(:additional_dialogs) { "" }
+      let(:control_file_roles) do
+        [
+          { "id" => "bar", "order" => "200",
+            "software" => { "desktop" => "knome" }, "additional_dialogs" => additional_dialogs }
+        ]
+      end
+
+      before do
+        allow(Yast::ProductControl).to receive(:system_roles)
+          .and_return(control_file_roles)
+        allow(Yast::WFM).to receive(:CallFunction).and_return(:next)
+      end
+
+      it "does not display dialog" do
+        expect(Yast::Wizard).to_not receive(:SetContents)
+        expect(Yast::UI).to_not receive(:UserInput)
+        expect(Yast::UI).to_not receive(:QueryWidget)
+
+        subject.run
+      end
+
+      context "and going forward" do
+        before do
+          allow(Yast::UI).to receive(:UserInput).and_return(:next)
+        end
+
+        it "sets ProductFeatures" do
+          expect(Yast::ProductFeatures).to receive(:ClearOverlay)
+          expect(Yast::ProductFeatures).to receive(:SetOverlay)
+
+          subject.run
+        end
+      end
+
+      context "and going back" do
+        before do
+          subject.class.original_role_id = "bar"
+          allow(Yast::GetInstArgs).to receive(:going_back).and_return(true)
+          allow(Yast::UI).to receive(:UserInput).and_return(:back)
+        end
+
+        it "leaves ProductFeatures" do
+          expect(Yast::ProductFeatures).to receive(:ClearOverlay)
+          expect(Yast::ProductFeatures).to_not receive(:SetOverlay)
+
+          subject.run
+        end
+      end
+
+      context "and it contains additional dialogs" do
+        let(:additional_dialogs) { "a,b" }
+
+        it "shows the first dialog when going forward" do
+          expect(Yast::WFM).to receive(:CallFunction).with("a", anything).and_return(:next)
+
+          subject.run
+        end
+
+        it "shows the last dialog when going back" do
+          subject.class.original_role_id = "bar"
+
+          allow(Yast::GetInstArgs).to receive(:going_back).and_return(true)
+          expect(Yast::WFM).to receive(:CallFunction).with("b", anything).and_return(:next)
+
+          subject.run
+        end
       end
     end
 
@@ -61,7 +132,7 @@ describe ::Installation::SelectSystemRole do
           .and_return("foo", :next)
 
         expect(Yast::ProductFeatures).to receive(:ClearOverlay)
-        expect(Yast::ProductFeatures).to receive(:SetOverlay) # .with
+        expect(Yast::ProductFeatures).to receive(:SetOverlay)
 
         expect(subject.run).to eq(:next)
       end

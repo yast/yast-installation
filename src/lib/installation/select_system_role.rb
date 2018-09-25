@@ -64,6 +64,10 @@ module Installation
         direction = run_clients(clients, going_back: true)
         # ... and only run the main dialog (super) if we are *still* going back
         return direction unless direction == :back
+      elsif single_role?
+        # Apply the role and skip the dialog when there is only one (fate#324713)
+        clear_role
+        return select_role(roles.first.id)
       end
 
       super
@@ -92,26 +96,7 @@ module Installation
     end
 
     def next_handler
-      role_id = @selected_role_id
-
-      if role_id.nil? # no role selected (bsc#1078809)
-        # An Error popup
-        msg = _("Select one of the available roles to continue.")
-        Yast::Popup.Error(msg)
-        return
-      end
-
-      orig_role_id = self.class.original_role_id
-      if !orig_role_id.nil? && orig_role_id != role_id
-        # A Continue-Cancel popup
-        msg = _("Changing the system role may undo adjustments you may have done.")
-        return unless Yast::Popup.ContinueCancel(msg)
-      end
-      self.class.original_role_id = role_id
-
-      apply_role(SystemRole.find(role_id))
-
-      result = run_clients(additional_clients_for(role_id))
+      result = select_role(@selected_role_id)
       # We show the main role dialog; but the additional clients have
       # drawn over it, so draw it again and go back to input loop.
       # create_dialog do not create new dialog if it already exist like in this
@@ -138,6 +123,39 @@ module Installation
     end
 
   private
+
+    # checks if there is only one role available
+    def single_role?
+      roles.size == 1
+    end
+
+    # Applies the role with given id and run its additional clients, if any
+    #
+    # @param role_id [Integer] The role to be applied
+    #
+    # @see run_clients
+    #
+    # @return [:next,:back,:abort] which direction the additional dialogs exited
+    def select_role(role_id)
+      if role_id.nil? # no role selected (bsc#1078809)
+        # An Error popup
+        msg = _("Select one of the available roles to continue.")
+        Yast::Popup.Error(msg)
+        return :back
+      end
+
+      orig_role_id = self.class.original_role_id
+      if !orig_role_id.nil? && orig_role_id != role_id
+        # A Continue-Cancel popup
+        msg = _("Changing the system role may undo adjustments you may have done.")
+        return :back unless Yast::Popup.ContinueCancel(msg)
+      end
+      self.class.original_role_id = role_id
+
+      apply_role(SystemRole.find(role_id))
+
+      run_clients(additional_clients_for(role_id))
+    end
 
     # gets array of clients to run for given role
     def additional_clients_for(role_id)
