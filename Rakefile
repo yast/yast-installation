@@ -1,4 +1,6 @@
 require "yast/rake"
+require "find"
+require "English"
 
 Yast::Tasks.configuration do |conf|
   # lets ignore license check for now
@@ -22,3 +24,16 @@ task :check_rng_status do
 end
 
 task tarball: :check_rng_status
+
+# Extend the "check:syntax" task to check also the shell scripts
+task :"check:syntax" do
+  puts "* Checking the startup shell scripts..."
+  Find.find("startup") do |path|
+    # simple and stupid check, either it's executable or ends with .sh
+    next unless File.file?(path) && (File.executable?(path) || path.end_with?(".sh"))
+    # -n = read commands but do not execute them, syntax check only
+    system("bash", "-n", path)
+    raise "Syntax check failed" unless $CHILD_STATUS.success?
+  end
+  puts "* Done"
+end
