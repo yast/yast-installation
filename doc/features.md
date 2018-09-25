@@ -60,6 +60,15 @@ Commented example:
 				default is 'false' (optional)
 			-->
 			<selected config:type="boolean">true</selected>
+			<!--
+				Defines priority of the newly added repository (optional).
+				Libzypp uses its default priority if not set.
+			-->
+			<priority config:type="integer">20</priority>
+			<!--
+				User has to accept license?
+			-->
+                        <confirm_license config:type="boolean">true</confirm_license>
 		</product_item>
 
 		<!-- Another product item -->
@@ -94,6 +103,12 @@ Commented example:
 
 -   (boolean) *selected* - Defines the default state of *pre-selected*
     state in case of *ask\_user* used; default is *false*
+
+-   (integer) *priority* - Defines priority of the newly added repository.
+    Libzypp uses its default priority if not set.
+
+-   (boolean) *confirm_license* - User has to accept license if available?
+    default: AutoYaST installation:false ; normal installation:true
 
 -   (list \<string\>) *install\_products/product* - List of products to
     add if there are more than one products at the repository URL; if
