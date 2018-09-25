@@ -321,6 +321,7 @@ function restore_backup () {
       done
     else
       log "\tBackup was not restore because its version info does not match"
+    fi
   fi
 }
 
