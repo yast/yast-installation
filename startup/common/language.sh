@@ -26,30 +26,17 @@ function check_run_fbiterm () {
 	if test "$MEM_TOTAL" -lt "57344" ; then
 		return
 	fi
+
 	TTY=`/usr/bin/tty`
 	if test "$TERM" = "linux" -a \
 		\( "$TTY" = /dev/console -o "$TTY" != "${TTY#/dev/tty[0-9]}" \);
 	then
-		case "$LANG" in
-		ja*.UTF-8|ko*.UTF-8|zh*.UTF-8)
-		# check whether fbiterm can run on console
 		if test -x /usr/bin/fbiterm && \
 			/usr/bin/fbiterm echo >/dev/null 2>&1;
 		then
 			RUN_FBITERM=1
-		else
-			# use english
-			export LANG=en_US.UTF-8
-			export LC_CTYPE=en_US.UTF-8
-		fi
-		;;
-		ja*|ko*|zh*)
-		# use english
-		export LANG=en_US.UTF-8
-		export LC_CTYPE=en_US.UTF-8
-		;;
-	esac
-	fi
+    fi
+  fi
 }
 
 #----[ set_language_init ]----#
