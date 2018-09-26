@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Sep 25 15:11:15 UTC 2018 - dgonzalez@suse.com
+
+- Skip the roles' dialog selection when there is only one available
+  (fate#324713)
+- 4.1.19
+
+-------------------------------------------------------------------
 Tue Sep 25 13:34:50 UTC 2018 - dgonzalez@suse.com
 
 - Fix syntax error (bsc#1109659)
