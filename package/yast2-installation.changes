@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Oct 16 13:52:00 CEST 2018 - schubi@suse.de
+
+- Fixed path to license file. . Build error in fate#324713
+- 4.1.20
+
+-------------------------------------------------------------------
 Tue Sep 25 15:11:15 UTC 2018 - dgonzalez@suse.com
 
 - Skip the roles' dialog selection when there is only one available
