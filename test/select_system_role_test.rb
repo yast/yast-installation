@@ -13,6 +13,7 @@ describe ::Installation::SelectSystemRole do
       "Lorem Ipsum #{s}"
     end
 
+    allow(Installation::SystemRole).to receive(:select)
     allow(Yast::UI).to receive(:ChangeWidget)
     allow(Yast::Language).to receive(:language).and_return("en_US")
 
@@ -38,6 +39,96 @@ describe ::Installation::SelectSystemRole do
       it "does not display dialog, and returns :auto" do
         expect(Yast::Wizard).to_not receive(:SetContents)
         expect(subject.run).to eq(:auto)
+      end
+    end
+
+    context "when single role is defined" do
+      let(:additional_dialogs) { "" }
+      let(:control_file_roles) do
+        [
+          { "id" => "bar", "order" => "200",
+            "software" => { "desktop" => "knome" }, "additional_dialogs" => additional_dialogs }
+        ]
+      end
+
+      before do
+        allow(Yast::ProductControl).to receive(:system_roles)
+          .and_return(control_file_roles)
+        allow(Yast::WFM).to receive(:CallFunction).and_return(:next)
+      end
+
+      it "(re)sets ProductFeatures" do
+        expect(Yast::ProductFeatures).to receive(:ClearOverlay)
+        expect(Yast::ProductFeatures).to receive(:SetOverlay)
+
+        subject.run
+      end
+
+      it "remembers the role as selected" do
+        expect(Installation::SystemRole).to receive(:select).with("bar")
+
+        subject.run
+      end
+
+      context "and going forward" do
+        before do
+          allow(Yast::UI).to receive(:UserInput).and_return(:next)
+        end
+
+        it "does not display dialog" do
+          expect(Yast::Wizard).to_not receive(:SetContents)
+          expect(Yast::UI).to_not receive(:UserInput)
+          expect(Yast::UI).to_not receive(:QueryWidget)
+
+          subject.run
+        end
+
+        it "returns :next" do
+          expect(subject.run).to be(:next)
+        end
+
+        context "and there are additional dialogs" do
+          let(:additional_dialogs) { "a,b" }
+
+          it "shows the first one" do
+            expect(Yast::WFM).to receive(:CallFunction).with("a", anything).and_return(:next)
+
+            subject.run
+          end
+        end
+      end
+
+      context "and going back" do
+        before do
+          subject.class.previous_role_id = "bar"
+          allow(Yast::GetInstArgs).to receive(:going_back).and_return(true)
+          allow(Yast::UI).to receive(:UserInput).and_return(:back)
+        end
+
+        it "does not display dialog" do
+          expect(Yast::Wizard).to_not receive(:SetContents)
+          expect(Yast::UI).to_not receive(:UserInput)
+          expect(Yast::UI).to_not receive(:QueryWidget)
+
+          subject.run
+        end
+
+        it "returns :back" do
+          expect(subject.run).to be(:back)
+        end
+
+        context "and there are additional dialogs" do
+          let(:additional_dialogs) { "a,b" }
+
+          it "shows the last one" do
+            subject.class.previous_role_id = "bar"
+
+            allow(Yast::GetInstArgs).to receive(:going_back).and_return(true)
+            expect(Yast::WFM).to receive(:CallFunction).with("b", anything).and_return(:next)
+
+            subject.run
+          end
+        end
       end
     end
 
