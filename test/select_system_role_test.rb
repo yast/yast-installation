@@ -13,6 +13,7 @@ describe ::Installation::SelectSystemRole do
       "Lorem Ipsum #{s}"
     end
 
+    allow(Installation::SystemRole).to receive(:select)
     allow(Yast::UI).to receive(:ChangeWidget)
     allow(Yast::Language).to receive(:language).and_return("en_US")
 
@@ -59,6 +60,12 @@ describe ::Installation::SelectSystemRole do
       it "(re)sets ProductFeatures" do
         expect(Yast::ProductFeatures).to receive(:ClearOverlay)
         expect(Yast::ProductFeatures).to receive(:SetOverlay)
+
+        subject.run
+      end
+
+      it "remembers the role as selected" do
+        expect(Installation::SystemRole).to receive(:select).with("bar")
 
         subject.run
       end

@@ -130,6 +130,8 @@ module Installation
       # @see current
       def select(role_id)
         @current_role = find(role_id)
+        log.info("Selected role: #{current}")
+        current_role
       end
 
       # Returns the current role id

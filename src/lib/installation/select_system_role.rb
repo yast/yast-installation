@@ -217,6 +217,7 @@ module Installation
     def apply_role(role_id)
       log.info "Applying system role '#{role_id}'"
 
+      SystemRole.select(role_id)
       self.class.previous_role_id = role_id
       role = SystemRole.find(role_id)
       role.overlay_features
