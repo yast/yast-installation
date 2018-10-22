@@ -64,8 +64,11 @@ module Installation
         direction = run_clients(clients, going_back: true)
         # ... and only run the main dialog (super) if we are *still* going back
         return direction unless direction == :back
-      elsif single_role?
+      end
+
+      if single_role?
         # Apply the role and skip the dialog when there is only one (fate#324713)
+        log.info "Only one role available, applying it and skipping the dialog"
         clear_role
         return select_role(roles.first.id)
       end

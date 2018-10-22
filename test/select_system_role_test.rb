@@ -56,10 +56,9 @@ describe ::Installation::SelectSystemRole do
         allow(Yast::WFM).to receive(:CallFunction).and_return(:next)
       end
 
-      it "does not display dialog" do
-        expect(Yast::Wizard).to_not receive(:SetContents)
-        expect(Yast::UI).to_not receive(:UserInput)
-        expect(Yast::UI).to_not receive(:QueryWidget)
+      it "(re)sets ProductFeatures" do
+        expect(Yast::ProductFeatures).to receive(:ClearOverlay)
+        expect(Yast::ProductFeatures).to receive(:SetOverlay)
 
         subject.run
       end
@@ -69,9 +68,10 @@ describe ::Installation::SelectSystemRole do
           allow(Yast::UI).to receive(:UserInput).and_return(:next)
         end
 
-        it "sets ProductFeatures" do
-          expect(Yast::ProductFeatures).to receive(:ClearOverlay)
-          expect(Yast::ProductFeatures).to receive(:SetOverlay)
+        it "does not display dialog" do
+          expect(Yast::Wizard).to_not receive(:SetContents)
+          expect(Yast::UI).to_not receive(:UserInput)
+          expect(Yast::UI).to_not receive(:QueryWidget)
 
           subject.run
         end
@@ -84,9 +84,10 @@ describe ::Installation::SelectSystemRole do
           allow(Yast::UI).to receive(:UserInput).and_return(:back)
         end
 
-        it "leaves ProductFeatures" do
-          expect(Yast::ProductFeatures).to receive(:ClearOverlay)
-          expect(Yast::ProductFeatures).to_not receive(:SetOverlay)
+        it "does not display dialog" do
+          expect(Yast::Wizard).to_not receive(:SetContents)
+          expect(Yast::UI).to_not receive(:UserInput)
+          expect(Yast::UI).to_not receive(:QueryWidget)
 
           subject.run
         end
