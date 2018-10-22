@@ -75,6 +75,16 @@ describe ::Installation::SelectSystemRole do
 
           subject.run
         end
+
+        context "and there are additional dialogs" do
+          let(:additional_dialogs) { "a,b" }
+
+          it "shows the first one" do
+            expect(Yast::WFM).to receive(:CallFunction).with("a", anything).and_return(:next)
+
+            subject.run
+          end
+        end
       end
 
       context "and going back" do
@@ -91,24 +101,18 @@ describe ::Installation::SelectSystemRole do
 
           subject.run
         end
-      end
 
-      context "and it contains additional dialogs" do
-        let(:additional_dialogs) { "a,b" }
+        context "and there are additional dialogs" do
+          let(:additional_dialogs) { "a,b" }
 
-        it "shows the first dialog when going forward" do
-          expect(Yast::WFM).to receive(:CallFunction).with("a", anything).and_return(:next)
+          it "shows the last one" do
+            subject.class.original_role_id = "bar"
 
-          subject.run
-        end
+            allow(Yast::GetInstArgs).to receive(:going_back).and_return(true)
+            expect(Yast::WFM).to receive(:CallFunction).with("b", anything).and_return(:next)
 
-        it "shows the last dialog when going back" do
-          subject.class.original_role_id = "bar"
-
-          allow(Yast::GetInstArgs).to receive(:going_back).and_return(true)
-          expect(Yast::WFM).to receive(:CallFunction).with("b", anything).and_return(:next)
-
-          subject.run
+            subject.run
+          end
         end
       end
     end
