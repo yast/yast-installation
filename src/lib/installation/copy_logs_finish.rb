@@ -90,7 +90,7 @@ module Installation
       end
 
       if ProductFeatures.GetBooleanFeature("globals", "save_y2logs")
-        shell_cmd("/bin/cp '#{dest_dir}/yast-installation-logs.tar.xz")
+        shell_cmd("/usr/sbin/save_y2logs '#{dest_dir}/yast-installation-logs.tar.xz'")
       end
 
       nil
