@@ -37,7 +37,7 @@ module Installation
 
     class << self
       # once the user selects a role, remember it in case they come back
-      attr_accessor :original_role_id
+      attr_accessor :previous_role_id
     end
 
     NON_OVERLAY_ATTRIBUTES = [
@@ -60,12 +60,16 @@ module Installation
 
       if Yast::GetInstArgs.going_back
         # If coming back, we have to run the additional dialogs first...
-        clients = additional_clients_for(self.class.original_role_id)
+        clients = additional_clients_for(previous_role_id)
         direction = run_clients(clients, going_back: true)
-        # ... and only run the main dialog (super) if we are *still* going back
-        return direction unless direction == :back
-      elsif single_role?
+        # ...and only run the main dialog (super) if there is more than one role (fate#324713) and we
+        # are *still* going back
+        return direction if single_role? || direction != :back
+      end
+
+      if single_role?
         # Apply the role and skip the dialog when there is only one (fate#324713)
+        log.info "Only one role available, applying it and skipping the dialog"
         clear_role
         return select_role(roles.first.id)
       end
@@ -82,7 +86,7 @@ module Installation
     end
 
     def dialog_content
-      @selected_role_id = self.class.original_role_id
+      @selected_role_id = previous_role_id
       @selected_role_id ||= roles.first && roles.first.id if SystemRole.default?
 
       HCenter(ReplacePoint(Id(:rp), role_buttons(selected_role_id: @selected_role_id)))
@@ -124,6 +128,10 @@ module Installation
 
   private
 
+    def previous_role_id
+      self.class.previous_role_id
+    end
+
     # checks if there is only one role available
     def single_role?
       roles.size == 1
@@ -137,23 +145,19 @@ module Installation
     #
     # @return [:next,:back,:abort] which direction the additional dialogs exited
     def select_role(role_id)
-      if role_id.nil? # no role selected (bsc#1078809)
-        # An Error popup
-        msg = _("Select one of the available roles to continue.")
-        Yast::Popup.Error(msg)
+      if role_id.nil?
+        # no role selected (bsc#1078809)
+        Yast::Popup.Error(_("Select one of the available roles to continue."))
         return :back
       end
 
-      orig_role_id = self.class.original_role_id
-      if !orig_role_id.nil? && orig_role_id != role_id
-        # A Continue-Cancel popup
+      if previous_role_id && previous_role_id != role_id
+        # Changing the role, show a Continue-Cancel popup to user
         msg = _("Changing the system role may undo adjustments you may have done.")
         return :back unless Yast::Popup.ContinueCancel(msg)
       end
-      self.class.original_role_id = role_id
 
-      apply_role(SystemRole.find(role_id))
-
+      apply_role(role_id)
       run_clients(additional_clients_for(role_id))
     end
 
@@ -210,8 +214,11 @@ module Installation
     end
 
     # Applies given role to configuration
-    def apply_role(role)
-      log.info "Applying system role '#{role.id}'"
+    def apply_role(role_id)
+      log.info "Applying system role '#{role_id}'"
+
+      self.class.previous_role_id = role_id
+      role = SystemRole.find(role_id)
       role.overlay_features
       adapt_services(role)
 
