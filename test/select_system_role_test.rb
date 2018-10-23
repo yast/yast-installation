@@ -76,6 +76,10 @@ describe ::Installation::SelectSystemRole do
           subject.run
         end
 
+        it "returns :next" do
+          expect(subject.run).to be(:next)
+        end
+
         context "and there are additional dialogs" do
           let(:additional_dialogs) { "a,b" }
 
@@ -100,6 +104,10 @@ describe ::Installation::SelectSystemRole do
           expect(Yast::UI).to_not receive(:QueryWidget)
 
           subject.run
+        end
+
+        it "returns :back" do
+          expect(subject.run).to be(:back)
         end
 
         context "and there are additional dialogs" do

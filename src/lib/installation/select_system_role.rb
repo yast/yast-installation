@@ -62,8 +62,9 @@ module Installation
         # If coming back, we have to run the additional dialogs first...
         clients = additional_clients_for(previous_role_id)
         direction = run_clients(clients, going_back: true)
-        # ... and only run the main dialog (super) if we are *still* going back
-        return direction unless direction == :back
+        # ...and only run the main dialog (super) if there is more than one role (fate#324713) and we
+        # are *still* going back
+        return direction if single_role? || direction != :back
       end
 
       if single_role?
