@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Oct 23 14:17:49 CEST 2018 - schubi@suse.de
+
+- Saving y2logs after the installation has been finished.
+  (fate#325737)
+- 4.1.21
+
+-------------------------------------------------------------------
 Tue Oct 16 13:52:00 CEST 2018 - schubi@suse.de
 
 - Fixed path to license file. . Build error in fate#324713

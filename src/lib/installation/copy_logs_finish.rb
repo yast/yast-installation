@@ -32,6 +32,7 @@ module Installation
 
       Yast.import "Directory"
       Yast.import "Installation"
+      Yast.import "ProductFeatures"
     end
 
     def steps
@@ -86,6 +87,10 @@ module Installation
         else
           copy_log_to_target(file)
         end
+      end
+
+      if ProductFeatures.GetBooleanFeature("globals","save_y2logs")
+        shell_cmd("/bin/cp '#{dest_dir}/yast-installation-logs.tar.xz")
       end
 
       nil
