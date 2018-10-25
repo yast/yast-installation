@@ -35,11 +35,6 @@ module Installation
   class SelectSystemRole < ::UI::InstallationDialog
     include UI::TextHelpers
 
-    class << self
-      # once the user selects a role, remember it in case they come back
-      attr_accessor :original_role_id
-    end
-
     NON_OVERLAY_ATTRIBUTES = [
       "additional_dialogs",
       "id",
@@ -60,7 +55,7 @@ module Installation
 
       if Yast::GetInstArgs.going_back
         # If coming back, we have to run the additional dialogs first...
-        clients = additional_clients_for(self.class.original_role_id)
+        clients = additional_clients_for(SystemRole.current)
         direction = run_clients(clients, going_back: true)
         # ... and only run the main dialog (super) if we are *still* going back
         return direction unless direction == :back
@@ -78,7 +73,7 @@ module Installation
     end
 
     def dialog_content
-      @selected_role_id = self.class.original_role_id
+      @selected_role_id = SystemRole.current
       @selected_role_id ||= roles.first && roles.first.id if SystemRole.default?
 
       HCenter(ReplacePoint(Id(:rp), role_buttons(selected_role_id: @selected_role_id)))
@@ -139,6 +134,35 @@ module Installation
 
   private
 
+    # checks if there is only one role available
+    def single_role?
+      roles.size == 1
+    end
+
+    # Applies the role with given id and run its additional clients, if any
+    #
+    # @param role_id [Integer] The role to be applied
+    #
+    # @see run_clients
+    #
+    # @return [:next,:back,:abort] which direction the additional dialogs exited
+    def select_role(role_id)
+      if role_id.nil?
+        # no role selected (bsc#1078809)
+        Yast::Popup.Error(_("Select one of the available roles to continue."))
+        return :back
+      end
+
+      if SystemRole.current && SystemRole.current != role_id
+        # Changing the role, show a Continue-Cancel popup to user
+        msg = _("Changing the system role may undo adjustments you may have done.")
+        return :back unless Yast::Popup.ContinueCancel(msg)
+      end
+
+      apply_role(role_id)
+      run_clients(additional_clients_for(role_id))
+    end
+
     # gets array of clients to run for given role
     def additional_clients_for(role_id)
       role = SystemRole.find(role_id)
@@ -195,9 +219,7 @@ module Installation
     def apply_role(role_id)
       log.info "Applying system role '#{role_id}'"
 
-      SystemRole.select(role_id)
-      self.class.previous_role_id = role_id
-      role = SystemRole.find(role_id)
+      role = SystemRole.select(role_id)
       role.overlay_features
       adapt_services(role)
 
