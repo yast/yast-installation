@@ -35,11 +35,6 @@ module Installation
   class SelectSystemRole < ::UI::InstallationDialog
     include UI::TextHelpers
 
-    class << self
-      # once the user selects a role, remember it in case they come back
-      attr_accessor :previous_role_id
-    end
-
     NON_OVERLAY_ATTRIBUTES = [
       "additional_dialogs",
       "id",
@@ -60,7 +55,7 @@ module Installation
 
       if Yast::GetInstArgs.going_back
         # If coming back, we have to run the additional dialogs first...
-        clients = additional_clients_for(previous_role_id)
+        clients = additional_clients_for(SystemRole.current)
         direction = run_clients(clients, going_back: true)
         # ...and only run the main dialog (super) if there is more than one role (fate#324713) and we
         # are *still* going back
@@ -86,7 +81,7 @@ module Installation
     end
 
     def dialog_content
-      @selected_role_id = previous_role_id
+      @selected_role_id = SystemRole.current
       @selected_role_id ||= roles.first && roles.first.id if SystemRole.default?
 
       HCenter(ReplacePoint(Id(:rp), role_buttons(selected_role_id: @selected_role_id)))
@@ -128,10 +123,6 @@ module Installation
 
   private
 
-    def previous_role_id
-      self.class.previous_role_id
-    end
-
     # checks if there is only one role available
     def single_role?
       roles.size == 1
@@ -151,7 +142,7 @@ module Installation
         return :back
       end
 
-      if previous_role_id && previous_role_id != role_id
+      if SystemRole.current && SystemRole.current != role_id
         # Changing the role, show a Continue-Cancel popup to user
         msg = _("Changing the system role may undo adjustments you may have done.")
         return :back unless Yast::Popup.ContinueCancel(msg)
@@ -217,9 +208,7 @@ module Installation
     def apply_role(role_id)
       log.info "Applying system role '#{role_id}'"
 
-      SystemRole.select(role_id)
-      self.class.previous_role_id = role_id
-      role = SystemRole.find(role_id)
+      role = SystemRole.select(role_id)
       role.overlay_features
       adapt_services(role)
 
