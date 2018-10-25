@@ -13,6 +13,7 @@ describe ::Installation::SelectSystemRole do
       "Lorem Ipsum #{s}"
     end
 
+    allow(Installation::SystemRole).to receive(:select)
     allow(Yast::UI).to receive(:ChangeWidget)
     allow(Yast::Language).to receive(:language).and_return("en_US")
 
@@ -21,12 +22,10 @@ describe ::Installation::SelectSystemRole do
 
   describe "#run" do
     before do
-      # reset previous test
-      subject.class.previous_role_id = nil
-
       allow(Yast::ProductFeatures).to receive(:ClearOverlay)
       allow(Yast::ProductFeatures).to receive(:SetOverlay)
       allow(Yast::Packages).to receive(:SelectSystemPatterns)
+      allow(Installation::SystemRole).to receive(:current)
     end
 
     context "when no roles are defined" do
@@ -54,6 +53,8 @@ describe ::Installation::SelectSystemRole do
         allow(Yast::ProductControl).to receive(:system_roles)
           .and_return(control_file_roles)
         allow(Yast::WFM).to receive(:CallFunction).and_return(:next)
+        allow(Installation::SystemRole).to receive(:select).with("bar")
+          .and_return(Installation::SystemRole.new(id: "bar", order: 200))
       end
 
       it "(re)sets ProductFeatures" do
@@ -93,7 +94,7 @@ describe ::Installation::SelectSystemRole do
 
       context "and going back" do
         before do
-          subject.class.previous_role_id = "bar"
+          allow(Installation::SystemRole).to receive(:current).and_return("bar")
           allow(Yast::GetInstArgs).to receive(:going_back).and_return(true)
           allow(Yast::UI).to receive(:UserInput).and_return(:back)
         end
@@ -114,8 +115,6 @@ describe ::Installation::SelectSystemRole do
           let(:additional_dialogs) { "a,b" }
 
           it "shows the last one" do
-            subject.class.previous_role_id = "bar"
-
             allow(Yast::GetInstArgs).to receive(:going_back).and_return(true)
             expect(Yast::WFM).to receive(:CallFunction).with("b", anything).and_return(:next)
 
@@ -137,6 +136,10 @@ describe ::Installation::SelectSystemRole do
       before do
         allow(Yast::ProductControl).to receive(:system_roles)
           .and_return(control_file_roles)
+        allow(Installation::SystemRole).to receive(:select).with("foo")
+          .and_return(Installation::SystemRole.new(id: "foo", order: 100))
+        allow(Installation::SystemRole).to receive(:select).with("bar")
+          .and_return(Installation::SystemRole.new(id: "bar", order: 200))
       end
 
       it "displays dialog, and sets ProductFeatures on Next" do
@@ -173,7 +176,7 @@ describe ::Installation::SelectSystemRole do
         end
 
         it "shows the last dialog when going back" do
-          subject.class.previous_role_id = "bar"
+          allow(Installation::SystemRole).to receive(:current).and_return("bar")
           allow(Yast::GetInstArgs).to receive(:going_back).and_return(true)
           expect(Yast::Wizard).to_not receive(:SetContents)
           expect(Yast::UI).to_not receive(:UserInput)
@@ -187,8 +190,7 @@ describe ::Installation::SelectSystemRole do
 
       context "when re-selecting the same role" do
         it "just proceeds without a popup" do
-          subject.class.previous_role_id = "foo"
-
+          allow(Installation::SystemRole).to receive(:current).and_return("foo")
           allow(Yast::Wizard).to receive(:SetContents)
           allow(Yast::UI).to receive(:UserInput)
             .and_return("foo", :next)
@@ -204,8 +206,7 @@ describe ::Installation::SelectSystemRole do
 
       context "when re-selecting a different role" do
         it "displays a popup, and proceeds if Continue is answered" do
-          subject.class.previous_role_id = "bar"
-
+          allow(Installation::SystemRole).to receive(:current).and_return("bar")
           allow(Yast::Wizard).to receive(:SetContents)
           allow(Yast::UI).to receive(:UserInput)
             .and_return("foo", :next)
@@ -220,8 +221,7 @@ describe ::Installation::SelectSystemRole do
         end
 
         it "displays a popup, and does not proceed if Cancel is answered" do
-          subject.class.previous_role_id = "bar"
-
+          allow(Installation::SystemRole).to receive(:current).and_return("bar")
           allow(Yast::Wizard).to receive(:SetContents)
           allow(Yast::UI).to receive(:UserInput)
             .and_return("foo", :next, :back)
