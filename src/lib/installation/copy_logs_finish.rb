@@ -89,9 +89,8 @@ module Installation
         end
       end
 
-      if ProductFeatures.GetBooleanFeature("globals", "save_y2logs")
-        shell_cmd("/usr/sbin/save_y2logs '#{dest_dir}/yast-installation-logs.tar.xz'")
-      end
+      # Saving y2logs
+      WFM.CallFunction("save_y2logs")
 
       nil
     end
