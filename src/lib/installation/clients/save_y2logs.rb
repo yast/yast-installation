@@ -13,12 +13,13 @@ module Yast
 
       if ProductFeatures.GetBooleanFeature("globals", "save_y2logs")
         target_path = ::File.join(
-              Yast::Installation.destdir,
-              Yast::Directory.logdir)
+          Yast::Installation.destdir,
+          Yast::Directory.logdir
+        )
 
-         WFM.Execute(Yast::Path.new(".local.bash"),
-           "/usr/sbin/save_y2logs '#{target_path}/yast-installation-logs.tar.xz'")
+        WFM.Execute(Yast::Path.new(".local.bash"),
+          "/usr/sbin/save_y2logs '#{target_path}/yast-installation-logs.tar.xz'")
       end
     end
-  end  
+  end
 end
