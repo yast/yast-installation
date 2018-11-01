@@ -345,7 +345,7 @@ module Yast
 
       result = srcs.each_with_object([]) do |src, ret|
         general = Pkg.SourceGeneralData(src)
-        url = general["url"]
+        url = general["raw_url"]
         next if url.nil? || url.empty?
         @local_urls[src] = url if Mode.update && url =~ /^dir:\/+mnt\/+/
         # check for USB sources which should be disabled
