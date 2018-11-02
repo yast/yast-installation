@@ -709,7 +709,7 @@ if [ $SELECTED_MEDIUM = "SSH" ] && [ ! "$VNC" = 1 ];then
 	# when found the ssh daemon is killed, so create this file as the very last step!!
 	# (https://github.com/openSUSE/installation-images/blob/c57181329ab7040369da705c5b0ddd78e2960bf0/data/root/etc/inst_setup#L221-L229)
 	echo $Y2_EXIT_CODE > /tmp/YaST2_ssh_installation_finished
-fi	
+fi
 
 if [ $SELECTED_MEDIUM != "SSH" ] && [ "$Y2_MODE" = "ncurses" ]; then
     # Enable display of status messages on the
