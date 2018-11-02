@@ -346,6 +346,7 @@ module Yast
         "ldconfig",
         "save_config",
         "live_save_config",
+        "security",
         "default_target",
         "desktop",
         "storage",

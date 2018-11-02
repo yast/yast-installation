@@ -709,6 +709,16 @@ if [ $SELECTED_MEDIUM = "SSH" ] && [ ! "$VNC" = 1 ];then
 	# when found the ssh daemon is killed, so create this file as the very last step!!
 	# (https://github.com/openSUSE/installation-images/blob/c57181329ab7040369da705c5b0ddd78e2960bf0/data/root/etc/inst_setup#L221-L229)
 	echo $Y2_EXIT_CODE > /tmp/YaST2_ssh_installation_finished
+fi	
+
+if [ $SELECTED_MEDIUM != "SSH" ] && [ "$Y2_MODE" = "ncurses" ]; then
+    # Enable display of status messages on the
+    # console, as controlled via systemd.show_status=1
+    # on the kernel command line (see "man systemd")
+    # In the case of SSH installation messages will be displayed
+    # on console only. So we do not need it here because we
+    # have not disabled it while YAST installation.
+    /usr/bin/kill -SIGRTMIN+20 1
 fi
 
 if [ $SELECTED_MEDIUM != "SSH" ] && [ "$Y2_MODE" = "ncurses" ]; then
