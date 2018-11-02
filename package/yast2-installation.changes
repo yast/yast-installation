@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Nov  2 13:23:30 UTC 2018 - schubi@suse.de
+
+- Writing security settings in first AY installation stage.
+  So other modules (e.g. users) can rely on these settings now.
+  (bnc#1112769)
+- 4.1.25
+
+-------------------------------------------------------------------
 Thu Nov  1 08:03:27 UTC 2018 - jreidinger@suse.com
 
 - extra_urls: compare unexpanded urls, so two identical
