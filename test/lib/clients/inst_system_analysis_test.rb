@@ -43,6 +43,7 @@ describe Yast::InstSystemAnalysisClient do
       allow(storage).to receive(:activate).and_return activate_result
       allow(storage).to receive(:probe).and_return probe_result
       allow(Yast::Mode).to receive(:auto).and_return(auto)
+      allow(Yast::Execute).to receive(:locally!)
       stub_const("Y2Autoinstallation::ActivateCallbacks", callbacks_class)
     end
 
