@@ -1294,6 +1294,25 @@ product's CD:
     installation itself. Both for first stage installation and also for the
     running system.
 
+#### RPM
+
+It is possible to also modify behavior of installation by RPM.
+There is few requirements for that RPM. At first it needs to provide
+`installer_module_extension`. The second part is to filter out for which
+product is extension defined. It is done by providing `extension_for_product()`.
+And last but not least it needs the control file. Recommended location is
+`/usr/share/system-roles/*.xml`, but as fallback can be used `/installation.xml`.
+
+Example of spec file for RPM:
+
+```
+Provides:       installer_module_extension() = system-role-hpc-compute
+Provides:       extension_for_product() = SLE_HPC
+
+%files
+/usr/share/system-roles/hpc-compute.xml
+```
+
 #### Workflow Adaptation
 
 There is only a single control file to describe both an add-on and
