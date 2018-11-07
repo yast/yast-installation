@@ -1297,11 +1297,13 @@ product's CD:
 #### RPM
 
 It is possible to also modify behavior of installation by RPM.
-There is few requirements for that RPM. At first it needs to provide
-`installer_module_extension`. The second part is to filter out for which
-product is extension defined. It is done by providing `extension_for_product()`.
-And last but not least it needs the control file. Recommended location is
-`/usr/share/system-roles/*.xml`, but as fallback can be used `/installation.xml`.
+There are few requirements for that RPM:
+
+- It needs to provide the `installer_module_extension` symbol.
+- It needs to specify for which product is the extension defined.
+  This is done by providing the `extension_for_product()` symbol.
+- It needs an XML control file. The recommended location is `/usr/share/system-roles/<role_name>.xml`,
+  alternatively you can use deprecated path `/installation.xml` (not recommended for new products).
 
 Example of spec file for RPM:
 
