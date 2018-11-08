@@ -36,7 +36,6 @@ module Installation
       # some processes might be still running...
       cmd_run = WFM.Execute(path(".local.bash_output"),
         "fuser -v '#{String.Quote(Installation.destdir)}' 2>&1")
-      cmd_run = "fuser -v '#{String.Quote(Installation.destdir)}' 2>&1"
 
       log.info("These processes are still running at " \
         "#{Installation.destdir} -> #{cmd_run}")
@@ -79,7 +78,7 @@ module Installation
       log.info "Command #{command} returned: #{ret}"
       return true if ret["exit"] == 0
       err = ret["stderr"]
-      log.error "Error: #{ret}" unless ret.empty?
+      log.error "Error: #{err}" unless err.empty?
       false
     end
 
