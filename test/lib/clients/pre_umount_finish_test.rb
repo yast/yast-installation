@@ -7,8 +7,8 @@ require "installation/clients/pre_umount_finish"
 describe ::Installation::PreUmountFinish do
   describe "#write" do
     before do
-      allow(Yast::WFM).to receive(:Execute).and_return({"exit"=>0})
-      allow(Yast::SCR).to receive(:Execute).and_return({"exit"=>0})      
+      allow(Yast::WFM).to receive(:Execute).and_return("exit"=>0)
+      allow(Yast::SCR).to receive(:Execute).and_return("exit"=>0)
       # Set the target dir to /mnt
       allow(Yast::WFM).to receive(:Args).and_return("initial")
     end
@@ -37,7 +37,7 @@ describe ::Installation::PreUmountFinish do
       expect(Yast::Pkg).to receive(:SourceSaveAll)
       expect(Yast::Pkg).to receive(:TargetFinish)
 
-      subject.write      
+      subject.write
     end
 
     context "update mode" do
@@ -64,6 +64,6 @@ describe ::Installation::PreUmountFinish do
 
         subject.write
       end
-    end    
+    end
   end
 end

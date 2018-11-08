@@ -3,7 +3,6 @@
 # Module:  Step of base installation finish
 #
 
-
 require "yast"
 
 require "installation/finish_client"
@@ -36,10 +35,10 @@ module Installation
       # bugzilla #326478
       # some processes might be still running...
       cmd_run = WFM.Execute(path(".local.bash_output"),
-                            "fuser -v '#{String.Quote(Installation.destdir)}' 2>&1")
+        "fuser -v '#{String.Quote(Installation.destdir)}' 2>&1")
       cmd_run = "fuser -v '#{String.Quote(Installation.destdir)}' 2>&1"
 
-      log.info( "These processes are still running at " \
+      log.info("These processes are still running at " \
         "#{Installation.destdir} -> #{cmd_run}")
 
       unless Misc.boot_msg.empty?
@@ -72,7 +71,7 @@ module Installation
       preserve_randomness_state
     end
 
-    private
+  private
 
     # Calls a local command and returns if successful
     def local_command(command)
@@ -119,7 +118,8 @@ module Installation
 
       # Copy the current state of random number generator to the installed system
       if local_command(
-        "dd if='#{String.Quote(random_path)}' bs=#{read_poolsize} count=1 of='#{String.Quote(store_to)}'")
+        "dd if='#{String.Quote(random_path)}' bs=#{read_poolsize} count=1 of='#{String.Quote(store_to)}'"
+      )
         log.info "State of #{random_path} has been successfully copied to #{store_to}"
       else
         log.info "Cannot store #{random_path} state to #{store_to}"
@@ -127,7 +127,7 @@ module Installation
 
       # stop the random number generator service
       log.info "Stopping #{service_bin} service"
-      local_command( "killproc -TERM #{service_bin}")
+      local_command("killproc -TERM #{service_bin}")
     end
   end
 end
