@@ -495,13 +495,13 @@ module Yast
             # Can't use PackageSystem::Installed as the current SCR is attached to inst-sys
             # instead of the installed system
             Pkg.PkgInstalled("yast2-vm") ? "vm" : "",
-            "driver_update2",
-            # no second stage if possible
-            "pre_umount",
             # copy logs just before 'umount'
             # keeps maximum logs available after reboot
             "copy_logs",
+            # no second stage if possible
+            "pre_umount",
             "snapshots",
+            "driver_update2",
             "umount"
           ],
           # bnc #438154

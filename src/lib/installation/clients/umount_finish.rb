@@ -40,8 +40,6 @@ module Yast
     USB_PATH = "/proc/bus/usb".freeze
 
     def main
-      Yast.import "Pkg"
-
       textdomain "installation"
 
       Yast.import "Installation"
@@ -50,7 +48,6 @@ module Yast
       Yast.import "String"
       Yast.import "Internet"
       Yast.import "FileUtils"
-      Yast.import "Mode"
       Yast.import "ProductFeatures"
 
       @ret = nil
@@ -81,13 +78,11 @@ module Yast
           "when"  => [:installation, :live_installation, :update, :autoinst]
         }
       elsif @func == "Write"
-        # Release all sources, they might be still mounted
-        Pkg.SourceReleaseAll
 
-        # save all sources and finish target
-        # bnc #398315
-        Pkg.SourceSaveAll
-        Pkg.TargetFinish
+        #
+        # !!! NO WRITE OPERATIONS TO THE TARGET HERE !!!
+        # !!! Use pre_umount_finish instead          !!!
+        #
 
         Builtins.y2milestone(
           "/proc/mounts:\n%1",
@@ -121,13 +116,6 @@ module Yast
           # hotfix: recreating /etc/mtab as symlink (bnc#725166)
           SCR.Execute(path(".target.bash"), "ln -s /proc/self/mounts /etc/mtab")
         end
-
-        # BNC #692799: Preserve the randomness state before umounting
-        preserve_randomness_state
-
-        #
-        # !!! NO WRITE OPERATIONS TO THE TARGET AFTER THIS POINT !!!
-        #
 
         # This must be done as long as the target root is still mounted
         # (because the btrfs command requires that), but after the last write
@@ -312,90 +300,6 @@ module Yast
       Builtins.y2debug("ret=%1", @ret)
       Builtins.y2milestone("umount_finish finished")
       deep_copy(@ret)
-    end
-
-    # Calls a local command and returns if successful
-    def LocalCommand(command)
-      cmd = Convert.to_map(WFM.Execute(path(".local.bash_output"), command))
-      Builtins.y2milestone("Command %1 returned: %2", command, cmd)
-
-      return true if Ops.get_integer(cmd, "exit", -1) == 0
-
-      if Ops.get_string(cmd, "stderr", "") != ""
-        Builtins.y2error("Error: %1", Ops.get_string(cmd, "stderr", ""))
-      end
-      false
-    end
-
-    # Reads and returns the current poolsize from /proc.
-    # Returns integer size as a string.
-    def read_poolsize
-      poolsize_path = "/proc/sys/kernel/random/poolsize"
-
-      poolsize = Convert.to_string(
-        WFM.Read(path(".local.string"), poolsize_path)
-      )
-
-      if poolsize.nil? || poolsize == ""
-        Builtins.y2warning(
-          "Cannot read poolsize from %1, using the default",
-          poolsize_path
-        )
-        poolsize = "4096"
-      else
-        poolsize = Builtins.regexpsub(poolsize, "^([[:digit:]]+).*", "\\1")
-      end
-
-      Builtins.y2milestone("Using random/poolsize: '%1'", poolsize)
-      poolsize
-    end
-
-    # Preserves the current randomness state, BNC #692799
-    def preserve_randomness_state
-      if Mode.update
-        Builtins.y2milestone("Not saving current random seed - in update mode")
-        return
-      end
-
-      Builtins.y2milestone("Saving the current randomness state...")
-
-      service_bin = "/usr/sbin/haveged"
-      random_path = "/dev/urandom"
-      store_to = Builtins.sformat(
-        "%1/var/lib/misc/random-seed",
-        Installation.destdir
-      )
-
-      @ret = true
-
-      # Copy the current state of random number generator to the installed system
-      if LocalCommand(
-        Builtins.sformat(
-          "dd if='%1' bs=%2 count=1 of='%3'",
-          String.Quote(random_path),
-          read_poolsize,
-          String.Quote(store_to)
-        )
-      )
-        Builtins.y2milestone(
-          "State of %1 has been successfully copied to %2",
-          random_path,
-          store_to
-        )
-      else
-        Builtins.y2milestone(
-          "Cannot store %1 state to %2",
-          random_path,
-          store_to
-        )
-        @ret = false
-      end
-
-      # stop the random number generator service
-      Builtins.y2milestone("Stopping %1 service", service_bin)
-      LocalCommand(Builtins.sformat("killproc -TERM %1", service_bin))
-
-      nil
     end
 
     # Set the root subvolume to read-only and change the /etc/fstab entry
