@@ -149,46 +149,14 @@ module Yast
 
       if ImageInstallation.image_installation_available == false
         # TRANSLATORS: Installation overview
-        ret = Ops.add(
-          Ops.add(
-            Ops.add(ret, "<li>"),
-            _("No installation images are available")
-          ),
-          "</li>"
-        )
+        ret = ((ret + "<li>") + _("No installation images are available")) + "</li>"
       elsif Ops.get_boolean(im_conf, "deploying_enabled", false) == true
-        ret = Ops.add(
-          Ops.add(
-            Ops.add(ret, "<li>"),
-            Builtins.sformat(
-              # TRANSLATORS: Installation overview
-              # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
-              _(
-                "Installation from images is enabled (<a href=\"%1\">disable</a>)."
-              ),
-              @im_do_disable
-            )
-          ),
-          "</li>"
-        )
+        ret = ((ret + "<li>") + Builtins.sformat(_("Installation from images is enabled (<a href=\"%1\">disable</a>)."), @im_do_disable)) + "</li>"
       else
-        ret = Ops.add(
-          Ops.add(
-            Ops.add(ret, "<li>"),
-            Builtins.sformat(
-              # TRANSLATORS: Installation overview
-              # IMPORTANT: Please, do not change the HTML link <a href="...">...</a>, only visible text
-              _(
-                "Installation from images is disabled (<a href=\"%1\">enable</a>)."
-              ),
-              @im_do_enable
-            )
-          ),
-          "</li>"
-        )
+        ret = ((ret + "<li>") + Builtins.sformat(_("Installation from images is disabled (<a href=\"%1\">enable</a>)."), @im_do_enable)) + "</li>"
       end
 
-      ret = Ops.add(ret, "</ul>\n")
+      ret += "</ul>\n"
 
       ret
     end

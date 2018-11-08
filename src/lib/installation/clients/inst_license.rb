@@ -60,7 +60,7 @@ module Yast
 
       @test_mode = false
 
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
+      if !WFM.Args.empty? &&
           Ops.is_string?(WFM.Args(0))
         Builtins.y2milestone("Args: %1", WFM.Args)
 
@@ -114,7 +114,7 @@ module Yast
 
         if !@directories.nil?
           @tmp_directories = Builtins.maplist(@directories) do |one_directory|
-            Ops.add(Directory.custom_workflow_dir, one_directory)
+            Directory.custom_workflow_dir + one_directory
           end
           @directories = deep_copy(@tmp_directories)
           Builtins.y2milestone(
@@ -128,7 +128,7 @@ module Yast
           Report.Error(_("Internal error: Missing license to show"))
           Builtins.y2error("Nothing to do")
           @ask_ret = :auto
-        elsif Ops.greater_than(Builtins.size(@directories), 1)
+        elsif @directories.size > 1
           @ask_ret = ProductLicense.AskInstalledLicensesAgreement(
             @directories,
             @action

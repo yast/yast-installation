@@ -132,11 +132,7 @@ module Yast
       ::FileUtils.mkdir_p(destdir)
       WFM.Execute(
         path(".local.bash"),
-        Builtins.sformat(
-          # BNC #596938: Files / dirs might be symlinks
-          "/bin/cp -a --recursive --dereference '/var/lib/hardware' '%1'",
-          ::Yast::String.Quote(destdir)
-        )
+        "/bin/cp -a --recursive --dereference '/var/lib/hardware' '#{::Yast::String.Quote(destdir)}'"
       )
     end
 
@@ -252,10 +248,7 @@ module Yast
       log.info "Copying VNC settings"
       WFM.Execute(
         path(".local.bash"),
-        Builtins.sformat(
-          "/bin/cp -a '/root/.vnc' '%1/root/'",
-          ::Yast::String.Quote(installation_destination)
-        )
+        "/bin/cp -a '/root/.vnc' '#{::Yast::String.Quote(installation_destination)}/root/'"
       )
     end
 

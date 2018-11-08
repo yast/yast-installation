@@ -58,10 +58,10 @@ module Yast
       @param = {}
 
       # Check arguments
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
+      if !WFM.Args.empty? &&
           Ops.is_string?(WFM.Args(0))
         @func = Convert.to_string(WFM.Args(0))
-        if Ops.greater_than(Builtins.size(WFM.Args), 1) &&
+        if WFM.Args.size > 1 &&
             Ops.is_map?(WFM.Args(1))
           @param = Convert.to_map(WFM.Args(1))
         end
@@ -167,10 +167,7 @@ module Yast
               umount_dir
             )
               Builtins.y2warning("Umount failed, trying lazy umount...")
-              cmd = Builtins.sformat(
-                "sync; umount -l -f '%1';",
-                String.Quote(umount_this)
-              )
+              cmd = "sync; umount -l -f '#{String.Quote(umount_this)}';"
             else
               Builtins.y2warning(
                 "Umount failed, trying to remount read only..."
@@ -219,14 +216,11 @@ module Yast
         # *** umount_list is lexically ordered !
         # now umount in reverse order (guarantees "/" as last umount)
 
-        @umountLength = Builtins.size(umount_list)
+        @umountLength = umount_list.size
 
-        while Ops.greater_than(@umountLength, 0)
-          @umountLength = Ops.subtract(@umountLength, 1)
-          @tmp = Ops.add(
-            Installation.destdir,
-            Ops.get(umount_list, @umountLength, "")
-          )
+        while @umountLength > 0
+          @umountLength -= 1
+          @tmp = Installation.destdir + Ops.get(umount_list, @umountLength, "")
 
           Builtins.y2milestone(
             "umount target: %1, %2 more to go..",
@@ -248,10 +242,7 @@ module Yast
             @tmp
           )
             Builtins.y2warning("Umount failed, trying lazy umount...")
-            @cmd2 = Builtins.sformat(
-              "sync; umount -l -f '%1';",
-              String.Quote(@tmp)
-            )
+            @cmd2 = "sync; umount -l -f '#{String.Quote(@tmp)}';"
           else
             Builtins.y2warning(
               "Umount failed, trying to remount read only..."
@@ -361,10 +352,7 @@ module Yast
 
       service_bin = "/usr/sbin/haveged"
       random_path = "/dev/urandom"
-      store_to = Builtins.sformat(
-        "%1/var/lib/misc/random-seed",
-        Installation.destdir
-      )
+      store_to = "#{Installation.destdir}/var/lib/misc/random-seed"
 
       @ret = true
 
@@ -393,7 +381,7 @@ module Yast
 
       # stop the random number generator service
       Builtins.y2milestone("Stopping %1 service", service_bin)
-      LocalCommand(Builtins.sformat("killproc -TERM %1", service_bin))
+      LocalCommand("killproc -TERM #{service_bin}")
 
       nil
     end

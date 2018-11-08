@@ -45,7 +45,7 @@ module Yast
       @directory = Ops.get_string(@argmap, "directory", Directory.datadir)
 
       if Ops.get_string(@argmap, "directory", "") != ""
-        @directory = Ops.add(Directory.custom_workflow_dir, @directory)
+        @directory = Directory.custom_workflow_dir + @directory
       end
 
       @patterns = Convert.convert(
@@ -98,9 +98,9 @@ module Yast
       @contents = VBox(
         VSpacing(@space),
         HBox(
-          HSpacing(Ops.multiply(2, @space)),
+          HSpacing(2 * @space),
           @rt,
-          HSpacing(Ops.multiply(2, @space))
+          HSpacing(2 * @space)
         ),
         VSpacing(2)
       )

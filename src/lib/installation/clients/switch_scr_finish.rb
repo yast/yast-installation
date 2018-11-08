@@ -45,10 +45,10 @@ module Yast
       @param = {}
 
       # Check arguments
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
+      if !WFM.Args.empty? &&
           Ops.is_string?(WFM.Args(0))
         @func = Convert.to_string(WFM.Args(0))
-        if Ops.greater_than(Builtins.size(WFM.Args), 1) &&
+        if WFM.Args.size > 1 &&
             Ops.is_map?(WFM.Args(1))
           @param = Convert.to_map(WFM.Args(1))
         end
@@ -78,7 +78,7 @@ module Yast
 
         Builtins.y2milestone("Re-starting SCR on %1", Installation.destdir)
         Installation.scr_handle = WFM.SCROpen(
-          Ops.add(Ops.add("chroot=", Installation.destdir), ":scr"),
+          ("chroot=" + Installation.destdir) + ":scr",
           false
         )
 
@@ -87,7 +87,7 @@ module Yast
         # bugzilla #201058
         # WFM::SCROpen returns negative integer in case of failure
         if Installation.scr_handle.nil? ||
-            Ops.less_than(Installation.scr_handle, 0)
+            Installation.scr_handle < 0
           Builtins.y2error("Cannot switch to the system")
           return false
         end

@@ -116,10 +116,10 @@ module Yast
         "Available patches for pkg management: %1",
         @selected
       )
-      if Ops.less_than(@selected, 1)
+      if @selected < 1
         @selected = Pkg.ResolvableCountPatches(:all)
         Builtins.y2milestone("All available patches: %1", @selected)
-        if Ops.less_than(@selected, 1)
+        if @selected < 1
           Builtins.y2milestone("No patch available, skiping offer to run YOU")
           Internet.do_you = false
           return :next

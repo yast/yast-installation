@@ -50,7 +50,7 @@ module Yast::Transfer
       pathComponents = Builtins.splitstring(filePath, "/")
       ret = Ops.get_string(
         pathComponents,
-        Ops.subtract(Builtins.size(pathComponents), 1),
+        pathComponents.size - 1,
         ""
       )
       ret
@@ -63,13 +63,13 @@ module Yast::Transfer
       pathComponents = Builtins.splitstring(filePath, "/")
       last = Ops.get_string(
         pathComponents,
-        Ops.subtract(Builtins.size(pathComponents), 1),
+        pathComponents.size - 1,
         ""
       )
       ret = Builtins.substring(
         filePath,
         0,
-        Ops.subtract(Builtins.size(filePath), Builtins.size(last))
+        filePath.size - last.size
       )
       ret
     end
@@ -116,33 +116,21 @@ module Yast::Transfer
       full_url = URL.Build(toks)
 
       tmp_dir = Convert.to_string(WFM.Read(path(".local.tmpdir"), []))
-      mount_point = Ops.add(tmp_dir, "/tmp_mount")
+      mount_point = tmp_dir + "/tmp_mount"
       mp_in_local = mount_point
       chr = WFM.SCRGetName(WFM.SCRGetDefault)
       if Builtins.search(chr, "chroot=/mnt:") == 0
-        mp_in_local = Ops.add(destdir, mount_point)
+        mp_in_local = destdir + mount_point
       end
       Builtins.y2milestone("Chr:%3 TmpDir:%1 Mp:%2", tmp_dir, mp_in_local, chr)
       WFM.Execute(path(".local.mkdir"), mp_in_local)
 
       if _Scheme == "http" || _Scheme == "https"
         HTTP.easySSL(true)
-        if Ops.greater_than(
-          SCR.Read(
-            path(".target.size"),
-            "/etc/ssl/clientcerts/client-cert.pem"
-          ),
-          0
-        )
+        if SCR.Read(path(".target.size"), "/etc/ssl/clientcerts/client-cert.pem") > 0
           HTTP.clientCertSSL("/etc/ssl/clientcerts/client-cert.pem")
         end
-        if Ops.greater_than(
-          SCR.Read(
-            path(".target.size"),
-            "/etc/ssl/clientcerts/client-key.pem"
-          ),
-          0
-        )
+        if SCR.Read(path(".target.size"), "/etc/ssl/clientcerts/client-key.pem") > 0
           HTTP.clientKeySSL("/etc/ssl/clientcerts/client-key.pem")
         end
         res = HTTP.Get(full_url, _Localfile)
@@ -164,9 +152,9 @@ module Yast::Transfer
       end
       if _Scheme == "ftp"
         res = FTP.Get(full_url, _Localfile)
-        if Ops.greater_or_equal(Ops.get_integer(res, "code", -1), 200) &&
-            Ops.less_than(Ops.get_integer(res, "code", -1), 300) &&
-            Ops.greater_than(SCR.Read(path(".target.size"), _Localfile), 0)
+        if Ops.get_integer(res, "code", -1) >= 200 &&
+            Ops.get_integer(res, "code", -1) < 300 &&
+            SCR.Read(path(".target.size"), _Localfile) > 0
           @GET_error = ""
           return true
         else
@@ -181,32 +169,22 @@ module Yast::Transfer
         end
       elsif _Scheme == "file"
         file = Builtins.sformat("%1/%2", Installation.sourcedir, _Path) # FIXME: I have doubts this will ever work. Too early.
-        if Ops.greater_than(SCR.Read(path(".target.size"), file), 0)
+        if SCR.Read(path(".target.size"), file) > 0
           cpcmd = Builtins.sformat("cp %1 %2", file, _Localfile)
           Builtins.y2milestone("Copy profile: %1", cpcmd)
           SCR.Execute(path(".target.bash"), cpcmd)
         else
-          @GET_error = Ops.add(
-            @GET_error,
-            Builtins.sformat(
-              _("Reading file on %1/%2 failed.\n"),
-              Installation.sourcedir,
-              _Path
-            )
-          )
+          @GET_error += Builtins.sformat(_("Reading file on %1/%2 failed.\n"), Installation.sourcedir, _Path)
           cpcmd = Builtins.sformat("cp %1 %2", _Path, _Localfile)
           Builtins.y2milestone("Copy profile: %1", cpcmd)
           SCR.Execute(path(".target.bash"), cpcmd)
         end
 
-        if Ops.greater_than(SCR.Read(path(".target.size"), _Localfile), 0)
+        if SCR.Read(path(".target.size"), _Localfile) > 0
           @GET_error = ""
           ok = true
         else
-          @GET_error = Ops.add(
-            @GET_error,
-            Builtins.sformat(_("Reading file on %1 failed.\n"), _Path)
-          )
+          @GET_error += Builtins.sformat(_("Reading file on %1 failed.\n"), _Path)
           Builtins.y2milestone(
             "Trying to find file on installation media: %1",
             Installation.boot
@@ -217,33 +195,18 @@ module Yast::Transfer
           # Builtins.regexpsub can also return nil (bnc#959723)
           cdrom_device = install_url ? (Builtins.regexpsub(install_url, "devices=(.*)$", "\\1") || "") : ""
           if Installation.boot == "cd" && !cdrom_device.empty?
-            already_mounted = Ops.add(
-              Ops.add("grep ", cdrom_device),
-              " /proc/mounts ;"
-            )
+            already_mounted = ("grep " + cdrom_device) + " /proc/mounts ;"
             am = Convert.to_map(
               SCR.Execute(path(".target.bash_output"), already_mounted)
             )
 
             if Ops.get_integer(am, "exit", -1) == 0 &&
-                Ops.greater_than(
-                  Builtins.size(Ops.get_string(am, "stdout", "")),
-                  0
-                )
+                !Ops.get_string(am, "stdout", "").empty?
               Builtins.y2warning(
                 "%1 is already mounted, trying to bind mount...",
                 cdrom_device
               )
-              cmd = Ops.add(
-                Ops.add(
-                  Ops.add(
-                    Ops.add("mount -v --bind `grep ", cdrom_device),
-                    " /proc/mounts |cut -f 2 -d \\ ` "
-                  ),
-                  mount_point
-                ),
-                ";"
-              )
+              cmd = ((("mount -v --bind `grep " + cdrom_device) + " /proc/mounts |cut -f 2 -d \\ ` ") + mount_point) + ";"
               am1 = Convert.to_map(
                 SCR.Execute(path(".target.bash_output"), cmd)
               )
@@ -258,7 +221,7 @@ module Yast::Transfer
               end
             else
               try_again = 10
-              while Ops.greater_than(try_again, 0)
+              while try_again > 0
                 if !Convert.to_boolean(
                   WFM.Execute(
                     path(".local.mount"),
@@ -266,13 +229,10 @@ module Yast::Transfer
                   )
                 )
                   # autoyast tried to mount the CD but had no success.
-                  @GET_error = Ops.add(
-                    @GET_error,
-                    Builtins.sformat(_("Mounting %1 failed."), cdrom_device)
-                  )
+                  @GET_error += Builtins.sformat(_("Mounting %1 failed."), cdrom_device)
                   Builtins.y2warning("Mount failed")
                   ok = false
-                  try_again = Ops.subtract(try_again, 1)
+                  try_again -= 1
                   Builtins.sleep(3000)
                 else
                   ok = true
@@ -282,42 +242,35 @@ module Yast::Transfer
             end
             if ok
               cpcmd = Builtins.sformat(
-                Ops.add(Ops.add("cp ", mount_point), "/%1 %2"),
+                ("cp " + mount_point) + "/%1 %2",
                 _Path,
                 _Localfile
               )
               Builtins.y2milestone("Copy profile: %1", cpcmd)
               SCR.Execute(path(".target.bash"), cpcmd)
               WFM.Execute(path(".local.umount"), mount_point)
-              if Ops.greater_than(SCR.Read(path(".target.size"), _Localfile), 0)
+              if SCR.Read(path(".target.size"), _Localfile) > 0
                 @GET_error = ""
                 return true
               end
             end
           end
           # autoyast tried to read a file but had no success.
-          @GET_error = Ops.add(
-            @GET_error,
-            Builtins.sformat(
-              _("Reading a file on CD failed. Path: %1/%2."),
-              mount_point,
-              _Path
-            )
-          )
+          @GET_error += Builtins.sformat(_("Reading a file on CD failed. Path: %1/%2."), mount_point, _Path)
           ok = false
         end
       elsif _Scheme == "nfs" # NFS
         if !Convert.to_boolean(
           SCR.Execute(
             path(".target.mount"),
-            [Ops.add(Ops.add(_Host, ":"), dirname(_Path)), mount_point],
+            [(_Host + ":") + dirname(_Path), mount_point],
             "-o noatime,nolock"
           )
         ) &&
             !Convert.to_boolean(
               SCR.Execute(
                 path(".target.mount"),
-                [Ops.add(Ops.add(_Host, ":"), dirname(_Path)), mount_point],
+                [(_Host + ":") + dirname(_Path), mount_point],
                 "-o noatime -t nfs4"
               )
             )
@@ -325,21 +278,12 @@ module Yast::Transfer
           # autoyast tried to mount a NFS directory which failed
           @GET_error = Builtins.sformat(
             _("Mounting %1 failed."),
-            Ops.add(Ops.add(_Host, ":"), dirname(_Path))
+            (_Host + ":") + dirname(_Path)
           )
           return false
         end
 
-        copyCmd = Ops.add(
-          Ops.add(
-            Ops.add(
-              Ops.add(Ops.add("/bin/cp ", mp_in_local), "/"),
-              basename(_Path)
-            ),
-            " "
-          ),
-          _Localfile
-        )
+        copyCmd = (((("/bin/cp " + mp_in_local) + "/") + basename(_Path)) + " ") + _Localfile
         Builtins.y2milestone("Copy Command: %1", copyCmd)
         if WFM.Execute(path(".local.bash"), copyCmd) == 0
           @GET_error = ""
@@ -348,11 +292,11 @@ module Yast::Transfer
           # autoyast tried to copy a file via NFS which failed
           @GET_error = Builtins.sformat(
             _("Remote file %1 cannot be retrieved"),
-            Ops.add(Ops.add(mount_point, "/"), basename(_Path))
+            (mount_point + "/") + basename(_Path)
           )
           Builtins.y2error(
             "remote file %1 can't be retrieved",
-            Ops.add(Ops.add(mount_point, "/"), basename(_Path))
+            (mount_point + "/") + basename(_Path)
           )
         end
 
@@ -361,7 +305,7 @@ module Yast::Transfer
         if !Convert.to_boolean(
           SCR.Execute(
             path(".target.mount"),
-            [Ops.add(Ops.add("//", _Host), dirname(_Path)), mount_point],
+            [("//" + _Host) + dirname(_Path), mount_point],
             "-t cifs -o guest,ro,noatime"
           )
         )
@@ -369,21 +313,12 @@ module Yast::Transfer
           # autoyast tried to mount a NFS directory which failed
           @GET_error = Builtins.sformat(
             _("Mounting %1 failed."),
-            Ops.add(Ops.add("//", _Host), dirname(_Path))
+            ("//" + _Host) + dirname(_Path)
           )
           return false
         end
 
-        copyCmd = Ops.add(
-          Ops.add(
-            Ops.add(
-              Ops.add(Ops.add("/bin/cp ", mp_in_local), "/"),
-              basename(_Path)
-            ),
-            " "
-          ),
-          _Localfile
-        )
+        copyCmd = (((("/bin/cp " + mp_in_local) + "/") + basename(_Path)) + " ") + _Localfile
         Builtins.y2milestone("Copy Command: %1", copyCmd)
         if WFM.Execute(path(".local.bash"), copyCmd) == 0
           @GET_error = ""
@@ -392,11 +327,11 @@ module Yast::Transfer
           # autoyast tried to copy a file via NFS which failed
           @GET_error = Builtins.sformat(
             _("Remote file %1 cannot be retrieved"),
-            Ops.add(Ops.add(mount_point, "/"), basename(_Path))
+            (mount_point + "/") + basename(_Path)
           )
           Builtins.y2error(
             "remote file %1 can't be retrieved",
-            Ops.add(Ops.add(mount_point, "/"), basename(_Path))
+            (mount_point + "/") + basename(_Path)
           )
         end
 
@@ -431,11 +366,8 @@ module Yast::Transfer
                   Builtins.substring(dev, 5)
                 )
                 begin
-                  i = Ops.add(i, 1)
-                  dev = Ops.add(
-                    Ops.get_string(m, "dev_name", ""),
-                    Builtins.sformat("%1", i)
-                  )
+                  i += 1
+                  dev = Ops.get_string(m, "dev_name", "") + "#{i}"
                   if SCR.Read(path(".target.lstat"), dev) != {}
                     deviceList = Builtins.add(
                       deviceList,
@@ -443,7 +375,7 @@ module Yast::Transfer
                     )
                   end
                 end while SCR.Read(path(".target.lstat"), dev) != {} ||
-                  Ops.less_than(i, 5) # not uncommon for USB sticks to have no partition
+                  i < 5 # not uncommon for USB sticks to have no partition
               end
             end
             Builtins.y2milestone("devices to look on: %1", deviceList)
@@ -452,10 +384,10 @@ module Yast::Transfer
             #   those "nested" devices will be catched here
             #   as long as we find a directory where we expect a device,
             #   we cut down the Path and enhance the Host (device name)
-            while SCR.Read(path(".target.dir"), Ops.add("/dev/", _Host)) != nil
+            while SCR.Read(path(".target.dir"), "/dev/" + _Host) != nil
               Builtins.y2milestone("nested device found")
               l = Builtins.splitstring(_Path, "/")
-              _Host = Ops.add(Ops.add(_Host, "/"), Ops.get(l, 0, ""))
+              _Host = (_Host + "/") + Ops.get(l, 0, "")
               l = Builtins.remove(l, 0)
               _Path = Builtins.mergestring(l, "/")
               Builtins.y2milestone("Host=%1 Path=%2", _Host, _Path)
@@ -481,41 +413,32 @@ module Yast::Transfer
                 !Convert.to_boolean(
                   SCR.Execute(
                     path(".target.mount"),
-                    [Builtins.sformat("/dev/%1", _Host2), mount_point],
+                    ["/dev/#{_Host2}", mount_point],
                     "-o noatime"
                   )
                 )
               Builtins.y2milestone(
                 "%1 is not mounted and mount failed",
-                Builtins.sformat("/dev/%1", _Host2)
+                "/dev/#{_Host2}"
               )
               @GET_error = Builtins.sformat(
                 _("%1 is not mounted and mount failed"),
-                Builtins.sformat("/dev/%1", _Host2)
+                "/dev/#{_Host2}"
               )
               next
             end
             if WFM.Execute(
               path(".local.bash"),
-              Ops.add(
-                Ops.add(
-                  Ops.add(
-                    Ops.add(Ops.add("/bin/cp ", mount_point), "/"),
-                    _Path
-                  ),
-                  " "
-                ),
-                _Localfile
-              )
+              (((("/bin/cp " + mount_point) + "/") + _Path) + " ") + _Localfile
             ) != 0
               # autoyast tried to copy a file but that file can't be found
               @GET_error = Builtins.sformat(
                 _("File %1 cannot be found"),
-                Ops.add(mount_point, _Path)
+                mount_point + _Path
               )
               Builtins.y2milestone(
                 "file %1 can't be found",
-                Ops.add(mount_point, _Path)
+                mount_point + _Path
               )
             else
               @GET_error = ""
@@ -533,7 +456,7 @@ module Yast::Transfer
         else
           @GET_error = Builtins.sformat(
             _("Cannot find URL '%1' via protocol TFTP."),
-            Ops.add(Ops.add(_Host, ":"), _Path)
+            (_Host + ":") + _Path
           )
           Builtins.y2error("file %1 can't be found", _Path)
         end

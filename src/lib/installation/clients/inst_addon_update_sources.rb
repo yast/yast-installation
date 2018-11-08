@@ -82,7 +82,7 @@ module Yast
             if alias_ == ""
               # don't use spaces in alias (hard to use with zypper)
               alias_ = String.Replace(
-                Ops.greater_than(Builtins.size(name), 0) ? name : url,
+                !name.empty? ? name : url,
                 " ",
                 "-"
               )
@@ -91,7 +91,7 @@ module Yast
             repo_prop = {
               "enabled"     => true,
               "autorefresh" => true,
-              "name"        => Ops.greater_than(Builtins.size(name), 0) ? name : url,
+              "name"        => !name.empty? ? name : url,
               "alias"       => alias_,
               "base_urls"   => [url],
               "prod_dir"    => "/"
@@ -180,14 +180,7 @@ module Yast
             @aliases,
             u,
             String.Replace(
-              Ops.add(
-                "update-",
-                Ops.get_string(
-                  p,
-                  "display_name",
-                  Ops.get_string(p, "name", "repo")
-                )
-              ),
+              "update-" + Ops.get_string(p, "display_name", Ops.get_string(p, "name", "repo")),
               " ",
               "-"
             )

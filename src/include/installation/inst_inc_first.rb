@@ -68,7 +68,7 @@ module Yast
 
       UI.SetLanguage(Language.language, Installation.encoding)
       WFM.SetLanguage(Language.language, "UTF-8")
-      UI.RecordMacro(Ops.add(Directory.logdir, "/macro_inst_initial.ycp"))
+      UI.RecordMacro(Directory.logdir + "/macro_inst_initial.ycp")
 
       Builtins.y2milestone("Adjusting first stage modules")
 
@@ -141,7 +141,7 @@ module Yast
               "Directory '%1' exists, removing...",
               String.Quote(zypp_data_item)
             )
-            bashcmd = Builtins.sformat("/usr/bin/rm -rf '%1'", zypp_data_item)
+            bashcmd = "/usr/bin/rm -rf '#{zypp_data_item}'"
             Builtins.y2milestone(
               "Result: %1",
               WFM.Execute(path(".local.bash_output"), bashcmd)

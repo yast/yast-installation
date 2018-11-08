@@ -57,7 +57,7 @@ module Yast
 
       @do_not_remove = 0
 
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
+      if !WFM.Args.empty? &&
           Ops.is_string?(WFM.Args(0))
         Builtins.y2milestone("Args: %1", WFM.Args)
         @test_mode = true if WFM.Args(0) == "test"
@@ -76,7 +76,7 @@ module Yast
         end
       end
 
-      @dir_new = Builtins.sformat("%1/etc/zypp/repos.d/", Installation.destdir)
+      @dir_new = "#{Installation.destdir}/etc/zypp/repos.d/"
 
       @system_urls = []
 
@@ -174,10 +174,10 @@ module Yast
         log.info "Target system already poluted with new repositories"
         @continue_processing = false
       elsif @already_registered_repos.nil? ||
-          Ops.less_than(Builtins.size(@already_registered_repos), 1)
+          @already_registered_repos.empty?
         Builtins.y2milestone("No repositories found")
         @continue_processing = false
-      elsif @urls.nil? || Ops.less_than(Builtins.size(@urls), 1)
+      elsif @urls.nil? || @urls.empty?
         Builtins.y2milestone("No repositories to offer")
         @continue_processing = false
       end
@@ -277,12 +277,12 @@ module Yast
 
       counter = -1
       items = Builtins.maplist(@urls) do |one_url|
-        counter = Ops.add(counter, 1)
+        counter += 1
         # one_url already has "id" and some items might be deleted
         # looking to id_to_name is done via the original key
         Ops.set(
           @id_to_name,
-          Ops.get_string(one_url, "id", Builtins.sformat("ID: %1", counter)),
+          Ops.get_string(one_url, "id", "ID: #{counter}"),
           Ops.get_locale(one_url, "name", _("Unknown"))
         )
         Item(
@@ -304,7 +304,7 @@ module Yast
 
       # bnc #390612
       items = Builtins.sort(items) do |a, b|
-        Ops.less_than(Ops.get_string(a, 2, ""), Ops.get_string(b, 2, ""))
+        Ops.get_string(a, 2, "") < Ops.get_string(b, 2, "")
       end
 
       UI.ChangeWidget(Id("table_of_repos"), :Items, items)
@@ -313,7 +313,7 @@ module Yast
         UI.ChangeWidget(Id("table_of_repos"), :CurrentItem, currentitem)
       end
 
-      enable_buttons = Ops.greater_than(Builtins.size(items), 0)
+      enable_buttons = !items.empty?
       UI.ChangeWidget(Id(:edit), :Enabled, enable_buttons)
       UI.ChangeWidget(Id(:toggle), :Enabled, enable_buttons)
 
@@ -359,13 +359,13 @@ module Yast
     end
 
     def EditItem(currentitem)
-      if currentitem.nil? || Ops.less_than(currentitem, 0)
+      if currentitem.nil? || currentitem < 0
         Builtins.y2error("Cannot edit item: %1", currentitem)
         return
       end
 
       url = Ops.get_string(@urls, [currentitem, "url"], "")
-      min_width = Builtins.size(url)
+      min_width = url.size
 
       UI.OpenDialog(
         VBox(
@@ -433,15 +433,12 @@ module Yast
       url_alias = ""
 
       @urls = Builtins.maplist(@urls) do |one_url|
-        id = Ops.add(id, 1)
+        id += 1
         # unique ID
-        Ops.set(one_url, "id", Builtins.sformat("ID: %1", id))
+        Ops.set(one_url, "id", "ID: #{id}")
         # BNC #429059
         if one_url["alias"]
-          url_alias = Builtins.sformat(
-            "%1",
-            Ops.get_string(one_url, "alias", "")
-          )
+          url_alias = "#{Ops.get_string(one_url, "alias", "")}"
         else
           Builtins.y2warning("No 'alias' defined: %1", one_url)
         end
@@ -635,7 +632,7 @@ module Yast
 
       steps_nr = 0
 
-      if Ops.greater_than(Builtins.size(@repos_to_remove), 0)
+      if !@repos_to_remove.empty?
         Builtins.y2milestone("Remove %1 repos", @repos_to_remove)
         actions_todo = Builtins.add(
           actions_todo,
@@ -645,20 +642,20 @@ module Yast
           actions_doing,
           _("Removing unused repositories...")
         )
-        steps_nr = Ops.add(steps_nr, Builtins.size(@repos_to_remove))
+        steps_nr += @repos_to_remove.size
       end
 
-      if Ops.greater_than(Builtins.size(@repos_to_add), 0)
+      if !@repos_to_add.empty?
         Builtins.y2milestone("Add %1 enabled repos", @repos_to_add)
         actions_todo = Builtins.add(actions_todo, _("Add enabled repositories"))
         actions_doing = Builtins.add(
           actions_doing,
           _("Adding enabled repositories...")
         )
-        steps_nr = Ops.add(steps_nr, Builtins.size(@repos_to_add))
+        steps_nr += @repos_to_add.size
       end
 
-      if Ops.greater_than(Builtins.size(@repos_to_add_disabled), 0)
+      if !@repos_to_add_disabled.empty?
         Builtins.y2milestone("Add %1 disabled repos", @repos_to_add_disabled)
         actions_todo = Builtins.add(
           actions_todo,
@@ -668,7 +665,7 @@ module Yast
           actions_doing,
           _("Adding disabled repositories...")
         )
-        steps_nr = Ops.add(steps_nr, Builtins.size(@repos_to_add_disabled))
+        steps_nr += @repos_to_add_disabled.size
       end
 
       Progress.New(
@@ -703,7 +700,7 @@ module Yast
       idx = 1
       while Builtins.contains(aliases, alias_)
         alias_ = Builtins.sformat("%1_%2", alias_orig, idx)
-        idx = Ops.add(idx, 1)
+        idx += 1
       end
 
       if alias_orig != alias_
@@ -798,7 +795,7 @@ module Yast
         Pkg.TargetLoad
       end
 
-      return if Builtins.size(@repos_to_remove) == 0
+      return if @repos_to_remove.empty?
 
       Progress.Title(_("Removing unused repositories..."))
       Progress.NextStage
@@ -864,7 +861,7 @@ module Yast
 
     # Adds selected repositories as <tt>enabled</tt>
     def IUU_AddEnabledRepositories
-      return if Builtins.size(@repos_to_add) == 0
+      return if @repos_to_add.empty?
 
       Progress.Title(_("Adding enabled repositories..."))
       Progress.NextStage
@@ -893,7 +890,7 @@ module Yast
         )
         if (repo_type.nil? || repo_type == "NONE") &&
             Builtins.substring(one_url, 0, 4) == "dir:"
-          one_url = Ops.add("dir:/mnt", Builtins.substring(one_url, 4))
+          one_url = "dir:/mnt" + Builtins.substring(one_url, 4)
           repo_type = Pkg.RepositoryProbe(one_url, "/")
           Builtins.y2milestone(
             "Probed possible local repository again: %1 type: %2",
@@ -953,7 +950,7 @@ module Yast
           )
           next
         end
-        if Ops.greater_than(new_id, -1)
+        if new_id > (-1)
           repo_refresh = Pkg.SourceRefreshNow(new_id)
           Builtins.y2milestone("Repository refreshed: %1", repo_refresh)
 
@@ -1021,7 +1018,7 @@ module Yast
 
     # Adds selected repositories as <tt>disabled</tt>
     def IUU_AddDisabledRepositories
-      return if Builtins.size(@repos_to_add_disabled) == 0
+      return if @repos_to_add_disabled.empty?
 
       Progress.Title(_("Adding disabled repositories..."))
       Progress.NextStage
@@ -1181,13 +1178,13 @@ module Yast
         end
       end
 
-      if Ops.greater_than(Builtins.size(@repos_to_remove), 0) ||
-          Ops.greater_than(Builtins.size(@repos_to_add), 0)
+      if !@repos_to_remove.empty? ||
+          !@repos_to_add.empty?
         SetAddRemoveSourcesUI()
       end
 
       # BNC #478024: Remote repositories need a running network
-      if Ops.greater_than(Builtins.size(@repos_to_add), 0) && !NetworkRunning()
+      if !@repos_to_add.empty? && !NetworkRunning()
         Builtins.y2milestone(
           "No network is running, trying inst_network_check fallback"
         )
@@ -1197,7 +1194,7 @@ module Yast
 
       # Remote repositories without running network are registered
       # as disabled
-      if Ops.greater_than(Builtins.size(@repos_to_add), 0) && !NetworkRunning()
+      if !@repos_to_add.empty? && !NetworkRunning()
         Builtins.y2warning(
           "Network is not running, repositories will be added in DISABLED state"
         )
@@ -1215,7 +1212,7 @@ module Yast
 
       progress = Progress.status
 
-      Progress.set(false) if Builtins.size(@repos_to_add) == 0
+      Progress.set(false) if @repos_to_add.empty?
 
       SetAddRemoveSourcesProgress()
 
@@ -1237,7 +1234,7 @@ module Yast
 
       PackageCallbacks.RestorePreviousProgressCallbacks
 
-      Progress.set(progress) if Builtins.size(@repos_to_add) == 0
+      Progress.set(progress) if @repos_to_add.empty?
 
       :next
     end

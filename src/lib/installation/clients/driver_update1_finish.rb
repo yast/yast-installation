@@ -43,10 +43,10 @@ module Yast
       @param = {}
 
       # Check arguments
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
+      if !WFM.Args.empty? &&
           Ops.is_string?(WFM.Args(0))
         @func = Convert.to_string(WFM.Args(0))
-        if Ops.greater_than(Builtins.size(WFM.Args), 1) &&
+        if WFM.Args.size > 1 &&
             Ops.is_map?(WFM.Args(1))
           @param = Convert.to_map(WFM.Args(1))
         end
@@ -66,7 +66,7 @@ module Yast
         if !@update_dir.nil?
           SCR.Write(
             path(".target.string"),
-            Ops.add(Directory.vardir, "/vendor_update"),
+            Directory.vardir + "/vendor_update",
             @update_dir
           )
         end

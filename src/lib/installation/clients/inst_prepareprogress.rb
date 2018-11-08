@@ -69,7 +69,7 @@ module Yast
 
       @live_size = 0
       if Mode.live_installation
-        @cmd = Builtins.sformat("df -P -k %1", "/")
+        @cmd = "df -P -k /"
         Builtins.y2milestone("Executing %1", @cmd)
         @out = Convert.to_map(SCR.Execute(path(".target.bash_output"), @cmd))
         Builtins.y2milestone("Output: %1", @out)
@@ -123,13 +123,7 @@ module Yast
           "description" => _("Installing Packages..."),
           # here, we do a hack, because until images are deployed, we cannot determine how many
           # packages will be really installed additionally
-          "value"       => Ops.divide(
-            Ops.subtract(
-              PackageSlideShow.total_size_to_install,
-              ImageInstallation.TotalSize
-            ),
-            1024
-          ), # kilobytes
+          "value"       => (PackageSlideShow.total_size_to_install - ImageInstallation.TotalSize) / 1024, # kilobytes
           "units"       => :kb
         },
         {

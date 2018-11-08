@@ -23,7 +23,7 @@ module Yast
 
       @control = ""
       @profile = ""
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
+      if !WFM.Args.empty? &&
           Ops.is_string?(WFM.Args(0))
         @control = Convert.to_string(WFM.Args(0))
       end

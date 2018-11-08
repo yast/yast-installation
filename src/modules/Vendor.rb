@@ -56,7 +56,7 @@ module Yast
         from: "any",
         to:   "list <string>"
       )
-      if Ops.less_or_equal(Builtins.size(updatefiles), 0)
+      if updatefiles.empty?
         Builtins.y2milestone("No files in /update, skipping driver update...")
         return
       end
@@ -69,85 +69,18 @@ module Yast
       # copy log file
       WFM.Execute(
         path(".local.bash"),
-        Ops.add(
-          Ops.add(
-            "l=/var/log/driverupdate.log ; [ -f $l ] && /bin/cat $l " + ">> '",
-            String.Quote(Installation.destdir)
-          ),
-          "$l'"
-        )
+        (("l=/var/log/driverupdate.log ; [ -f $l ] && /bin/cat $l " + ">> '") + String.Quote(Installation.destdir)) + "$l'"
       )
 
       # copy all update files from inst-sys to installed system
       WFM.Execute(
         path(".local.bash"),
-        Ops.add(
-          Ops.add(
-            "/bin/cp -a /update " + "'",
-            String.Quote(Installation.destdir)
-          ),
-          "/tmp/update'"
-        )
+        (("/bin/cp -a /update " + "'") + String.Quote(Installation.destdir)) + "/tmp/update'"
       )
 
       logfile = "/var/log/zypp/history"
 
-      runcmd = Ops.add(
-        Ops.add(
-          Ops.add(
-            Ops.add(
-              Ops.add(
-                Ops.add(
-                  Ops.add(
-                    Ops.add(
-                      Ops.add(
-                        Ops.add(
-                          Ops.add(
-                            Ops.add(
-                              Ops.add(
-                                Ops.add(
-                                  Ops.add(
-                                    Ops.add(
-                                      # Logging extracting the driver update
-                                      "cd /; \n" \
-                                        "for i in /tmp/update/[0-9]*/install ; do \n" \
-                                        "    echo \"# Installing Driver Update from $i\">>",
-                                      logfile
-                                    ),
-                                    "; \n"
-                                  ),
-                                  "    TMPFILE=\"/tmp/update/${i}rpm_install_tmpfile\"; \n"
-                                ),
-                                "    [ -x \"/bin/mktemp\" ] && TMPFILE=`/bin/mktemp`; \n"
-                              ),
-                              # Extracting the driver update archives
-                              "    cd $i; \n"
-                            ),
-                            "    [ -f \"update.tar.gz\" ] && /bin/tar -zxf \"update.tar.gz\"; \n"
-                          ),
-                          "    [ -f \"update.tgz\" ] && /bin/tar -zxf \"update.tgz\"; \n"
-                        ),
-                        # Installing all extracted RPMs
-                        "    rpm -Uv --force *.rpm 1>>$TMPFILE 2>>$TMPFILE; \n"
-                      ),
-                      # Logging errors
-                      "    [ -s \"$TMPFILE\" ] && echo \"# Additional rpm output:\">>"
-                    ),
-                    logfile
-                  ),
-                  " && sed 's/^\\(.*\\)/# \\1/' $TMPFILE>>"
-                ),
-                logfile
-              ),
-              "; \n"
-            ),
-            "    rm -rf $TMPFILE; \n"
-          ),
-          # Running update.post script
-          "    [ -f \"update.post\" ] && /bin/chmod +x \"update.post\" && \"./update.post\" \"$i\"; \n"
-        ),
-        "done;"
-      )
+      runcmd = ((((((((((((((("cd /; \nfor i in /tmp/update/[0-9]*/install ; do \n#{"    echo \"# Installing Driver Update from $i\">>"}" + logfile) + "; \n") + "    TMPFILE=\"/tmp/update/${i}rpm_install_tmpfile\"; \n") + "    [ -x \"/bin/mktemp\" ] && TMPFILE=`/bin/mktemp`; \n") + "    cd $i; \n") + "    [ -f \"update.tar.gz\" ] && /bin/tar -zxf \"update.tar.gz\"; \n") + "    [ -f \"update.tgz\" ] && /bin/tar -zxf \"update.tgz\"; \n") + "    rpm -Uv --force *.rpm 1>>$TMPFILE 2>>$TMPFILE; \n") + "    [ -s \"$TMPFILE\" ] && echo \"# Additional rpm output:\">>") + logfile) + " && sed 's/^\\(.*\\)/# \\1/' $TMPFILE>>") + logfile) + "; \n") + "    rm -rf $TMPFILE; \n") + "    [ -f \"update.post\" ] && /bin/chmod +x \"update.post\" && \"./update.post\" \"$i\"; \n") + "done;"
 
       Builtins.y2milestone(
         "Calling:\n" \
@@ -171,7 +104,7 @@ module Yast
         from: "any",
         to:   "list <string>"
       )
-      return if Ops.less_or_equal(Builtins.size(updatefiles), 0)
+      return if updatefiles.empty?
 
       # run update.post2 scripts
       SCR.Execute(

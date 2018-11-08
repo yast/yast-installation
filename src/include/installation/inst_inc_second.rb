@@ -282,7 +282,7 @@ module Yast
         true
       end
 
-      if Builtins.size(network_settings) == 0 || network_settings.nil?
+      if network_settings.empty? || network_settings.nil?
         Builtins.y2milestone(
           "Nothing to adjust, leaving... %1",
           network_settings
@@ -294,7 +294,7 @@ module Yast
         # TRANSLATORS: dialog caption
         _("Adjusting Network Settings"),
         " ",
-        Builtins.size(network_settings),
+        network_settings.size,
         start_service,
         starting_service,
         # TRANSLATORS: dialog help
@@ -322,7 +322,7 @@ module Yast
     end
 
     def SetUpdateLanguage
-      var_file = Ops.add(Directory.vardir, "/language.ycp")
+      var_file = Directory.vardir + "/language.ycp"
       if FileUtils.Exists(var_file)
         var_map = Convert.to_map(SCR.Read(path(".target.ycp"), var_file))
         lang = Ops.get_string(var_map, "second_stage_language")
@@ -407,11 +407,11 @@ module Yast
       end
       SCR.Execute(
         path(".target.bash"),
-        Builtins.sformat("touch %1", Installation.file_inst_failed)
+        "touch #{Installation.file_inst_failed}"
       )
       SCR.Execute(
         path(".target.bash"),
-        Builtins.sformat("touch %1", Installation.run_yast_at_boot)
+        "touch #{Installation.run_yast_at_boot}"
       )
 
       :next
@@ -506,11 +506,11 @@ module Yast
       )
       SCR.Execute(
         path(".target.bash"),
-        Builtins.sformat("touch %1", Installation.run_yast_at_boot)
+        "touch #{Installation.run_yast_at_boot}"
       )
       SCR.Execute(
         path(".target.bash"),
-        Builtins.sformat("touch %1", Installation.file_inst_aborted)
+        "touch #{Installation.file_inst_aborted}"
       )
 
       nil
@@ -535,16 +535,16 @@ module Yast
       restarting_step = last_step
 
       if ret == :restart_same_step
-        last_step = Ops.subtract(last_step, 1)
+        last_step -= 1
         ret = :restart_yast
       end
 
       if ret == :reboot_same_step
-        last_step = Ops.subtract(last_step, 1)
+        last_step -= 1
         ret = :reboot
       end
 
-      next_step = Ops.add(last_step, 1)
+      next_step = last_step + 1
       Builtins.y2milestone(
         "Creating %1 file with values %2",
         Installation.restart_data_file,
@@ -560,7 +560,7 @@ module Yast
         Builtins.y2milestone("Creating %1 file", Installation.reboot_file)
         SCR.Execute(
           path(".target.bash"),
-          Builtins.sformat("touch %1", Installation.reboot_file)
+          "touch #{Installation.reboot_file}"
         )
         # bnc #432005
         Builtins.y2milestone("YaST needs rebooting")
@@ -569,7 +569,7 @@ module Yast
         Builtins.y2milestone("Creating %1 file", Installation.restart_file)
         SCR.Execute(
           path(".target.bash"),
-          Builtins.sformat("touch %1", Installation.restart_file)
+          "touch #{Installation.restart_file}"
         )
       end
 
@@ -582,11 +582,11 @@ module Yast
       if !Mode.autoupgrade
         # Detect mode early to be able to setup steps correctly
         if FileUtils.Exists(
-          Ops.add(Installation.destdir, Installation.file_update_mode)
+          Installation.destdir + Installation.file_update_mode
         )
           Mode.SetMode("update")
         elsif FileUtils.Exists(
-          Ops.add(Installation.destdir, Installation.file_live_install_mode)
+          Installation.destdir + Installation.file_live_install_mode
         )
           Mode.SetMode("live_installation")
         end
@@ -604,13 +604,10 @@ module Yast
       # set only text locale
       Pkg.SetTextLocale(Language.language)
 
-      UI.RecordMacro(Ops.add(Directory.logdir, "/macro_inst_cont.ycp"))
+      UI.RecordMacro(Directory.logdir + "/macro_inst_cont.ycp")
 
       # Merge control files of additional products and patterns
-      listname = Ops.add(
-        Ops.add(Installation.destdir, Directory.etcdir),
-        "/control_files/order.ycp"
-      )
+      listname = (Installation.destdir + Directory.etcdir) + "/control_files/order.ycp"
       if FileUtils.Exists(listname)
         files = Convert.convert(
           SCR.Read(path(".target.ycp"), listname),
@@ -618,11 +615,8 @@ module Yast
           to:   "list <string>"
         )
 
-        basedir = Ops.add(
-          Ops.add(Installation.destdir, Directory.etcdir),
-          "/control_files/"
-        )
-        files = Builtins.maplist(files) { |one_file| Ops.add(basedir, one_file) }
+        basedir = (Installation.destdir + Directory.etcdir) + "/control_files/"
+        files = Builtins.maplist(files) { |one_file| basedir + one_file }
 
         WorkflowManager.SetAllUsedControlFiles(files)
         WorkflowManager.SetBaseWorkflow(false)

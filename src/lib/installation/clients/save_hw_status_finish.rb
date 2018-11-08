@@ -46,10 +46,10 @@ module Yast
       @param = {}
 
       # Check arguments
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
+      if !WFM.Args.empty? &&
           Ops.is_string?(WFM.Args(0))
         @func = Convert.to_string(WFM.Args(0))
-        if Ops.greater_than(Builtins.size(WFM.Args), 1) &&
+        if WFM.Args.size > 1 &&
             Ops.is_map?(WFM.Args(1))
           @param = Convert.to_map(WFM.Args(1))
         end
@@ -74,7 +74,7 @@ module Yast
             from: "any",
             to:   "list <string>"
           )
-          if !@parports.nil? && Ops.greater_than(Builtins.size(@parports), 0)
+          if !@parports.nil? && !@parports.empty?
             HWConfig.SetValue("static-printer", "STARTMODE", "auto")
             HWConfig.SetValue("static-printer", "MODULE", "lp")
           end

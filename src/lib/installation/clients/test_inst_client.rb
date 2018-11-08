@@ -41,7 +41,7 @@ module Yast
 
       # Client name does not start with "inst_"
       if !Builtins.regexpmatch(@client, "^inst_")
-        @client = Ops.add("inst_", @client)
+        @client = "inst_" + @client
       end
 
       Stage.Set("continue")

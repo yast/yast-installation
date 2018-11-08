@@ -50,8 +50,8 @@ module Yast
 
       # Bugzilla #269914, CommanLine "support"
       # argmap is only a map, CommandLine uses string parameters
-      if Builtins.size(@argmap) == 0 &&
-          Ops.greater_than(Builtins.size(WFM.Args), 0)
+      if @argmap.empty? &&
+          !WFM.Args.empty?
         Mode.SetUI("commandline")
         Builtins.y2milestone("Mode CommandLine not supported, exiting...")
         # TRANSLATORS: error message - the module does not provide command line interface
@@ -71,7 +71,7 @@ module Yast
       # --- //
 
       if Ops.get_string(@argmap, "directory", "") != ""
-        @basedirectory = Ops.add(Directory.custom_workflow_dir, @basedirectory)
+        @basedirectory = Directory.custom_workflow_dir + @basedirectory
       end
 
       @readproducts = []
@@ -83,7 +83,7 @@ module Yast
         @out = Convert.to_map(
           SCR.Execute(
             path(".target.bash_output"),
-            Builtins.sformat("ls -t1 '%1'", @basedirectory)
+            "ls -t1 '#{@basedirectory}'"
           )
         )
         @readproducts = Builtins.splitstring(
@@ -131,13 +131,13 @@ module Yast
           " "
         )
         @relnotesproducts = Builtins.add(@relnotesproducts, cleanproduct)
-        if Ops.less_than(@minwidtprodsel, Builtins.size(cleanproduct))
-          @minwidtprodsel = Builtins.size(cleanproduct)
+        if @minwidtprodsel < cleanproduct.size
+          @minwidtprodsel = cleanproduct.size
         end
         Ops.set(@cleanproduct_product, cleanproduct, product)
-        @prodnamelen = Ops.add(@prodnamelen, Builtins.size(cleanproduct))
+        @prodnamelen += cleanproduct.size
         # read release notes
-        directory = Ops.add(Ops.add(Ops.add(@basedirectory, "/"), product), "/")
+        directory = ((@basedirectory + "/") + product) + "/"
         relnotest_list = Convert.convert(
           SCR.Read(path(".target.dir"), directory),
           from: "any",
@@ -159,11 +159,8 @@ module Yast
             lang_name = Builtins.sformat(_("Language: %1"), relnotes_lang)
           end
           # set minimal width (maximal length of language name)
-          if Ops.less_than(
-            Ops.get(@minwidthlang, product, 0),
-            Builtins.size(lang_name)
-          )
-            Ops.set(@minwidthlang, product, Builtins.size(lang_name))
+          if Ops.get(@minwidthlang, product, 0) < lang_name.size
+            Ops.set(@minwidthlang, product, lang_name.size)
           end
           combobox_items = Builtins.add(
             combobox_items,
@@ -178,11 +175,11 @@ module Yast
         Builtins.foreach(@preferred_langs) do |preffered_lang|
           conter = -1
           Builtins.foreach(combobox_items) do |one_item|
-            conter = Ops.add(conter, 1)
+            conter += 1
             item_id2 = Ops.get_string(one_item, [0, 0], "")
             if Builtins.regexpmatch(
               item_id2,
-              Builtins.sformat("RELEASE-NOTES.%1.rtf$", preffered_lang)
+              "RELEASE-NOTES.#{preffered_lang}.rtf$"
             )
               preferred_found = true
               raise Break
@@ -198,7 +195,7 @@ module Yast
           end
         end
         Ops.set(@languages_of_relnotes, product, Builtins.sort(combobox_items) do |a, b|
-          Ops.less_than(Ops.get_string(a, 1, ""), Ops.get_string(b, 1, ""))
+          Ops.get_string(a, 1, "") < Ops.get_string(b, 1, "")
         end)
       end
 
@@ -223,25 +220,21 @@ module Yast
 
       # if there are more products installed, show them in tabs or with
       # combo box, bnc #359137 (do not show tab for one product)
-      if Ops.less_or_equal(Builtins.size(@relnotesproducts), 1)
+      if @relnotesproducts.size <= 1
         @relnoteslayout = deep_copy(@relnotesscreen)
         # use DumpTab or ComboBox layout
       elsif UI.HasSpecialWidget(:DumbTab) &&
-          (Ops.less_than(Builtins.size(@relnotesproducts), 4) &&
-            Ops.less_than(@prodnamelen, 90) ||
-            Ops.greater_than(Builtins.size(@relnotesproducts), 3) &&
-              Ops.less_than(@prodnamelen, 70))
+          (@relnotesproducts.size < 4 &&
+            @prodnamelen < 90 ||
+            @relnotesproducts.size > 3 &&
+              @prodnamelen < 70)
         @relnoteslayout = DumbTab(@relnotesproducts, @relnotesscreen)
         # doesn't have DumpTab or too many products
       else
         @relnoteslayout = VBox(
           Left(
             MinWidth(
-              Ops.add(
-                # +2 thingies on the right
-                @minwidtprodsel,
-                2
-              ),
+              @minwidtprodsel + 2,
               ComboBox(
                 Id(:productsel),
                 Opt(:notify),
@@ -289,7 +282,7 @@ module Yast
       # Default settings
       UI.ChangeWidget(Id(:lang), :Enabled, false)
       if UI.WidgetExists(:productsel) &&
-          Ops.less_than(Builtins.size(@relnotesproducts), 2)
+          @relnotesproducts.size < 2
         UI.ChangeWidget(Id(:productsel), :Enabled, false)
       end
 
@@ -297,7 +290,7 @@ module Yast
       # UI::DumpWidgetTree();
 
       # Init the first product
-      if Ops.greater_than(Builtins.size(@relnotesproducts), 0)
+      if !@relnotesproducts.empty?
         RedrawRelnotesProduct(:tab, Ops.get(@relnotesproducts, 0, ""))
       else
         SetNoReleaseNotesInfo()
@@ -373,10 +366,7 @@ module Yast
     end
 
     def RedrawRelnotesLang(use_file)
-      text_file = Ops.add(
-        Builtins.regexpsub(use_file, "^(.*).rtf$", "\\1"),
-        ".txt"
-      )
+      text_file = Builtins.regexpsub(use_file, "^(.*).rtf$", "\\1") + ".txt"
       plain_text = UsePlainText(text_file)
 
       contents = Convert.to_string(
@@ -412,15 +402,7 @@ module Yast
         UI.ReplaceWidget(
           Id(:lang_rp),
           MinWidth(
-            Ops.add(
-              Ops.get(
-                # +2 for thingies on the right
-                @minwidthlang,
-                product,
-                16
-              ),
-              2
-            ),
+            Ops.get(@minwidthlang, product, 16) + 2,
             HSquash(
               # TRANSLATORS: Combo box
               ComboBox(
@@ -432,10 +414,7 @@ module Yast
             )
           )
         )
-        if Ops.greater_than(
-          Builtins.size(Ops.get(@languages_of_relnotes, product, [])),
-          1
-        )
+        if Ops.get(@languages_of_relnotes, product, []).size > 1
           UI.ChangeWidget(Id(:lang), :Enabled, true)
         else
           UI.ChangeWidget(Id(:lang), :Enabled, false)

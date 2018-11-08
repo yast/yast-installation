@@ -49,7 +49,7 @@ module Yast
 
       @test_mode = false
 
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
+      if !WFM.Args.empty? &&
           Ops.is_string?(WFM.Args(0))
         Builtins.y2milestone("Args: %1", WFM.Args)
         @test_mode = true if WFM.Args(0) == "test"
@@ -182,16 +182,13 @@ module Yast
           ) &&
               (Ops.get_symbol(one_pattern, "status", :a) == :installed ||
                 Ops.get_symbol(one_pattern, "status", :a) == :selected)
-            matching_patterns = Ops.add(matching_patterns, 1)
+            matching_patterns += 1
           end
         end
         # there are some matching patterns
         # they match required patterns
-        if Ops.greater_than(matching_patterns, 0) &&
-            Ops.greater_or_equal(
-              matching_patterns,
-              Builtins.size(patterns_required)
-            )
+        if matching_patterns > 0 &&
+            matching_patterns >= patterns_required.size
           Builtins.y2milestone(
             "Matching: %1 (%2)",
             Ops.get(one_scenario, "id", ""),

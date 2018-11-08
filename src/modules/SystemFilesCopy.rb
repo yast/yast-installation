@@ -68,9 +68,9 @@ module Yast
           Builtins.y2warning("Path %1 is not a directory", create_directory)
           new_dir = nil
 
-          while new_dir.nil? && Ops.greater_than(@counter_max, 0)
-            @counter_max = Ops.subtract(@counter_max, 1)
-            create_directory = Ops.add(create_directory, "x")
+          while new_dir.nil? && @counter_max > 0
+            @counter_max -= 1
+            create_directory += "x"
             new_dir = CreateDirectoryIfMissing(create_directory)
           end
 
@@ -112,7 +112,7 @@ module Yast
       dir_path_list = Builtins.filter(dir_path_list) { |one_dir| one_dir != "" }
 
       directory_path = Builtins.mergestring(dir_path_list, "/")
-      directory_path = Builtins.sformat("/%1/", directory_path)
+      directory_path = "/#{directory_path}/"
 
       directory_path
     end
@@ -197,10 +197,7 @@ module Yast
           Builtins.y2error("Error: %1 is not defined", "system_directory")
           next
         end
-        dir_from = Builtins.sformat(
-          "/%1/",
-          Ops.get(copy_item, "instsys_directory", "")
-        )
+        dir_from = "/#{Ops.get(copy_item, "instsys_directory", "")}/"
         dir_to = Builtins.sformat(
           "/%1/%2/",
           Installation.destdir,

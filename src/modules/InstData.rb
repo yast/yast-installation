@@ -57,18 +57,9 @@ module Yast
 
       # keep steps disabled in first stage also disabled in second stage
       # see bnc #364066
-      @wizardsteps_disabled_modules = Ops.add(
-        Directory.vardir,
-        "/installation_disabled_steps"
-      )
-      @wizardsteps_disabled_proposals = Ops.add(
-        Directory.vardir,
-        "/installation_disabled_proposals"
-      )
-      @wizardsteps_disabled_subproposals = Ops.add(
-        Directory.vardir,
-        "/installation_disabled_subproposals"
-      )
+      @wizardsteps_disabled_modules = Directory.vardir + "/installation_disabled_steps"
+      @wizardsteps_disabled_proposals = Directory.vardir + "/installation_disabled_proposals"
+      @wizardsteps_disabled_subproposals = Directory.vardir + "/installation_disabled_subproposals"
       # temporary variables for disabling and enabling steps
       @localDisabledModules = []
       @localDisabledProposals = []

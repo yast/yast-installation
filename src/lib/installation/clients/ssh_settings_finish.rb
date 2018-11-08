@@ -44,10 +44,10 @@ module Yast
       @param = {}
 
       # Check arguments
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
+      if !WFM.Args.empty? &&
           Ops.is_string?(WFM.Args(0))
         @func = Convert.to_string(WFM.Args(0))
-        if Ops.greater_than(Builtins.size(WFM.Args), 1) &&
+        if WFM.Args.size > 1 &&
             Ops.is_map?(WFM.Args(1))
           @param = Convert.to_map(WFM.Args(1))
         end
@@ -69,13 +69,7 @@ module Yast
       elsif @func == "Write"
         WFM.Execute(
           path(".local.bash"),
-          Ops.add(
-            Ops.add(
-              "umask 077 ; awk  -F : ' /^root:/ { print $1\":\"$2 }' < /etc/shadow > " + "'",
-              String.Quote(Installation.destdir)
-            ),
-            "/tmp/rootpwd.txt'"
-          )
+          (("umask 077 ; awk  -F : ' /^root:/ { print $1\":\"$2 }' < /etc/shadow > " + "'") + String.Quote(Installation.destdir)) + "/tmp/rootpwd.txt'"
         )
         SCR.Execute(
           path(".target.bash"),
@@ -83,13 +77,7 @@ module Yast
         )
         WFM.Execute(
           path(".local.bash"),
-          Ops.add(
-            Ops.add(
-              "/bin/cp -a /etc/ssh/*key* '",
-              String.Quote(Installation.destdir)
-            ),
-            "/etc/ssh/'"
-          )
+          ("/bin/cp -a /etc/ssh/*key* '" + String.Quote(Installation.destdir)) + "/etc/ssh/'"
         )
       else
         Builtins.y2error("unknown function: %1", @func)

@@ -73,7 +73,7 @@ module Yast
       )
 
       # avoid useles calls
-      if Ops.greater_than(Builtins.size(@patterns_to_install), 0)
+      if !@patterns_to_install.empty?
         ImageInstallation.FindImageSet(@patterns_to_install)
       end
 

@@ -62,10 +62,10 @@ module Yast
       @param = {}
 
       # Check arguments
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
+      if !WFM.Args.empty? &&
           Ops.is_string?(WFM.Args(0))
         @func = Convert.to_string(WFM.Args(0))
-        if Ops.greater_than(Builtins.size(WFM.Args), 1) &&
+        if WFM.Args.size > 1 &&
             Ops.is_map?(WFM.Args(1))
           @param = Convert.to_map(WFM.Args(1))
         end
@@ -158,7 +158,7 @@ module Yast
           Progress.NextStep
         elsif Mode.update
           @lang = Language.language
-          @file = Ops.add(Directory.vardir, "/language.ycp")
+          @file = Directory.vardir + "/language.ycp"
           Builtins.y2milestone(
             "saving %1 to %2 for 2nd stage of update",
             @lang,
@@ -239,15 +239,12 @@ module Yast
         end
 
         # save supportconfig
-        if Ops.greater_than(
-          SCR.Read(path(".target.size"), "/etc/install.inf"),
-          0
-        )
+        if SCR.Read(path(".target.size"), "/etc/install.inf") > 0
           @url = Convert.to_string(
             SCR.Read(path(".etc.install_inf.supporturl"))
           )
           Builtins.y2milestone("URL value from /etc/install.inf : %1", @url)
-          if !@url.nil? && Ops.greater_than(Builtins.size(@url), 0)
+          if !@url.nil? && !@url.empty?
             @config_path = Builtins.sformat(
               "%1%2",
               String.Quote(Installation.destdir),
@@ -264,10 +261,7 @@ module Yast
               )
               SCR.Execute(
                 path(".target.bash_output"),
-                Builtins.sformat(
-                  "sed -i '/VAR_OPTION_UPLOAD_TARGET=.*/d;/^$/d' %1",
-                  @config_path
-                )
+                "sed -i '/VAR_OPTION_UPLOAD_TARGET=.*/d;/^$/d' #{@config_path}"
               )
               SCR.Execute(
                 path(".target.bash_output"),

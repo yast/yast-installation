@@ -53,10 +53,10 @@ module Yast
       @param = {}
 
       # Check arguments
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
+      if !WFM.Args.empty? &&
           Ops.is_string?(WFM.Args(0))
         @func = Convert.to_string(WFM.Args(0))
-        if Ops.greater_than(Builtins.size(WFM.Args), 1) &&
+        if WFM.Args.size > 1 &&
             Ops.is_map?(WFM.Args(1))
           @param = Convert.to_map(WFM.Args(1))
         end
@@ -98,7 +98,7 @@ module Yast
 
         if Ops.get(@linuxrc, "Root", "") == "kexec"
           # flag for inst_finish -> kerel was successful loaded by kexec
-          @cmd = Builtins.sformat("touch \"%1/kexec_done\"", Directory.vardir)
+          @cmd = "#{"touch \""}#{Directory.vardir}#{"/kexec_done\""}"
           # call command
           WFM.Execute(path(".local.bash_output"), @cmd)
           if !UI.TextMode
@@ -145,12 +145,12 @@ module Yast
 
     def LoadKexec
       # command for reading kernel_params
-      cmd = Builtins.sformat("ls '%1/kernel_params' |tr -d '\n'", String.Quote(Directory.vardir))
+      cmd = "ls '#{String.Quote(Directory.vardir)}/kernel_params' |tr -d '\n'"
       Builtins.y2milestone("Checking existing file kernel_params via command %1", cmd)
 
       out = Convert.to_map(WFM.Execute(path(".local.bash_output"), cmd))
 
-      cmd = Builtins.sformat("%1/kernel_params", Directory.vardir)
+      cmd = "#{Directory.vardir}/kernel_params"
       # check output
       if Ops.get_string(out, "stdout", "") != cmd
         Builtins.y2milestone("File kernel_params was not found, output: %1", out)
@@ -158,7 +158,7 @@ module Yast
       end
 
       # command for reading kernel_params
-      cmd = Builtins.sformat("cat '%1/kernel_params' |tr -d '\n'", String.Quote(Directory.vardir))
+      cmd = "cat '#{String.Quote(Directory.vardir)}/kernel_params' |tr -d '\n'"
       Builtins.y2milestone("Reading kernel arguments via command %1", cmd)
       # read data from /var/lib/YaST2/kernel_params
       out = Convert.to_map(WFM.Execute(path(".local.bash_output"), cmd))
@@ -170,13 +170,13 @@ module Yast
 
       kernel_args = Ops.get_string(out, "stdout", "")
       # check if kernel_params contains any data
-      if Ops.less_than(Builtins.size(kernel_args), 2)
+      if kernel_args.size < 2
         Builtins.y2error("%1/kernel_params is empty, kernel_params=%2 ", Directory.vardir, kernel_args)
         return false
       end
 
       # command for finding initrd file
-      cmd = Builtins.sformat("ls %1/initrd-* |tr -d '\n'", Directory.vardir)
+      cmd = "ls #{Directory.vardir}/initrd-* |tr -d '\n'"
       Builtins.y2milestone("Finding initrd file via command: %1", cmd)
       # find inird file
       out = Convert.to_map(WFM.Execute(path(".local.bash_output"), cmd))
@@ -188,13 +188,13 @@ module Yast
 
       initrd = Ops.get_string(out, "stdout", "")
       # check if initrd (string) contains any data
-      if Ops.less_than(Builtins.size(initrd), 2)
+      if initrd.size < 2
         Builtins.y2error("initrd was not found: %1", initrd)
         return false
       end
 
       # command for finding vmlinuz file
-      cmd = Builtins.sformat("ls %1/vmlinuz-* |tr -d '\n'", Directory.vardir)
+      cmd = "ls #{Directory.vardir}/vmlinuz-* |tr -d '\n'"
       Builtins.y2milestone("Finding vmlinuz file via command: %1", cmd)
       # find inird file
       out = Convert.to_map(WFM.Execute(path(".local.bash_output"), cmd))
@@ -206,7 +206,7 @@ module Yast
 
       vmlinuz = Ops.get_string(out, "stdout", "")
       # check if initrd (string) contains any data
-      if Ops.less_than(Builtins.size(vmlinuz), 2)
+      if vmlinuz.size < 2
         Builtins.y2error("vmlinuz was not found: %1", vmlinuz)
         return false
       end

@@ -185,7 +185,7 @@ module Yast
                     _(
                       "Network configuration has failed.\nCheck the log file %1 for details."
                     ),
-                    Ops.add(Directory.logdir, "/y2log")
+                    Directory.logdir + "/y2log"
                   )
                 )
               end

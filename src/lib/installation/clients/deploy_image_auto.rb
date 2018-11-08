@@ -50,10 +50,10 @@ module Yast
       @param = {}
 
       # Check arguments
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
+      if !WFM.Args.empty? &&
           Ops.is_string?(WFM.Args(0))
         @func = Convert.to_string(WFM.Args(0))
-        if Ops.greater_than(Builtins.size(WFM.Args), 1) &&
+        if WFM.Args.size > 1 &&
             Ops.is_map?(WFM.Args(1))
           @param = Convert.to_map(WFM.Args(1))
         end
@@ -265,18 +265,8 @@ module Yast
           @selected == :dont_inst_from_images
         )
         loop do
-          if Ops.greater_than(
-            Builtins.size(
-              Convert.to_string(UI.QueryWidget(:image_location, :Value))
-            ),
-            0
-          ) ||
-              Ops.greater_than(
-                Builtins.size(
-                  Convert.to_string(UI.QueryWidget(:image_name, :Value))
-                ),
-                0
-              )
+          if !Convert.to_string(UI.QueryWidget(:image_location, :Value)).empty? ||
+              !Convert.to_string(UI.QueryWidget(:image_name, :Value)).empty?
             UI.ChangeWidget(Id(:inst_from_images), :Enabled, false)
           else
             UI.ChangeWidget(Id(:inst_from_images), :Enabled, true)
@@ -322,7 +312,7 @@ module Yast
           elsif @ret == :create_image
             UI.ChangeWidget(Id(:image_location), :Enabled, true)
             UI.ChangeWidget(Id(:image_name), :Enabled, true)
-            if Ops.greater_than(Builtins.size(AutoinstSoftware.patterns), 0)
+            if !AutoinstSoftware.patterns.empty?
               Ops.set(
                 AutoinstSoftware.image,
                 "image_location",
@@ -344,7 +334,7 @@ module Yast
             UI.ChangeWidget(Id(:image_location), :Enabled, false)
             UI.ChangeWidget(Id(:image_name), :Enabled, false)
             Ops.set(AutoinstSoftware.image, "image_name", "image")
-            if Ops.less_or_equal(Builtins.size(AutoinstSoftware.patterns), 0)
+            if AutoinstSoftware.patterns.empty?
               Popup.Warning(
                 _(
                   "you need to do the software selection before creating an image"

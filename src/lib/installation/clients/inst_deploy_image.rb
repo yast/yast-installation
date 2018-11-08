@@ -103,7 +103,7 @@ module Yast
 
       ImageInstallation.AdjustProgressLayout(
         "deploying_images",
-        Ops.multiply(@_steps_for_one_image, Builtins.size(@images)),
+        @_steps_for_one_image * @images.size,
         _("Deploying Images...")
       )
 
@@ -212,10 +212,7 @@ module Yast
     end
 
     def SetProgress
-      percent = Ops.divide(
-        Ops.multiply(100, @_current_step_in_subprogress),
-        @_current_subprogress_total
-      )
+      percent = (100 * @_current_step_in_subprogress) / @_current_subprogress_total
       SlideShow.SubProgress(percent, nil)
 
       nil
@@ -266,10 +263,7 @@ module Yast
 
       # incremental
       @_current_step_in_subprogress = if current_step.nil?
-        Ops.add(
-          @_current_step_in_subprogress,
-          1
-        )
+        @_current_step_in_subprogress + 1
         # set to exact number
       else
         current_step
@@ -280,19 +274,10 @@ module Yast
       end
 
       # Should be 0 - 100%
-      @_current_overall_progress = Ops.add(
-        @_current_subprogress_start,
-        Ops.divide(
-          Ops.multiply(
-            @_current_subprogress_steps,
-            @_current_step_in_subprogress
-          ),
-          @_current_subprogress_total
-        )
-      )
+      @_current_overall_progress = @_current_subprogress_start + ((@_current_subprogress_steps * @_current_step_in_subprogress) / @_current_subprogress_total)
 
       # update UI only if nr% has changed
-      if Ops.greater_than(@_current_overall_progress, @_last_overall_progress)
+      if @_current_overall_progress > @_last_overall_progress
         @_last_overall_progress = @_current_overall_progress
         SlideShow.StageProgress(@_current_overall_progress, nil)
       end
@@ -314,11 +299,11 @@ module Yast
         return
       end
 
-      image_filename_length = Builtins.size(current_image_file)
+      image_filename_length = current_image_file.size
       # 'http://some.url/directory/image.name' vs. 'directory/image.name'
       image_url_download = Builtins.substring(
         url,
-        Ops.subtract(Builtins.size(url), image_filename_length),
+        url.size - image_filename_length,
         image_filename_length
       )
 
@@ -345,10 +330,7 @@ module Yast
         # twice more steps
         ImageInstallation.AdjustProgressLayout(
           "deploying_images",
-          Ops.multiply(
-            Ops.multiply(2, @_steps_for_one_image),
-            Builtins.size(@images)
-          ),
+          (2 * @_steps_for_one_image) * @images.size,
           _("Deploying Images...")
         )
         @download_handler_hit = true
@@ -360,7 +342,7 @@ module Yast
 
       current_image = ImageInstallation.GetCurrentImageDetails
 
-      if Ops.less_than(@_last_download_progress, percent)
+      if @_last_download_progress < percent
         image_info = Ops.get_string(current_image, "name", "")
 
         # BNC 442286, new image
@@ -388,18 +370,9 @@ module Yast
 
         current_image_nr = Ops.get_integer(current_image, "image_nr", 0)
         current_steps = if @download_handler_hit
-          Ops.add(
-            Ops.multiply(
-              Ops.multiply(current_image_nr, 2),
-              @_steps_for_one_image
-            ),
-            percent
-          )
+          ((current_image_nr * 2) * @_steps_for_one_image) + percent
         else
-          Ops.add(
-            Ops.multiply(current_image_nr, @_steps_for_one_image),
-            percent
-          )
+          (current_image_nr * @_steps_for_one_image) + percent
         end
 
         OverallProgressHandler("deploying_images", current_steps)
@@ -430,8 +403,8 @@ module Yast
       end
 
       # current progress 0 - 100
-      x_progress = Ops.divide(Ops.multiply(100, current_progress), max_progress)
-      x_progress = 100 if Ops.greater_than(x_progress, 100)
+      x_progress = (100 * current_progress) / max_progress
+      x_progress = 100 if x_progress > 100
 
       # reset the label
       if x_progress == 0
@@ -462,23 +435,14 @@ module Yast
       end
 
       # set current step
-      if Ops.greater_than(x_progress, @_last_progress)
+      if x_progress > @_last_progress
         SlideShow.SubProgress(x_progress, nil)
         @_last_progress = x_progress
         current_image_nr = Ops.get_integer(current_image, "image_nr", 0)
         current_steps = if @download_handler_hit
-          Ops.add(
-            Ops.multiply(
-              Ops.add(Ops.multiply(current_image_nr, 2), 1),
-              @_steps_for_one_image
-            ),
-            x_progress
-          )
+          (((current_image_nr * 2) + 1) * @_steps_for_one_image) + x_progress
         else
-          Ops.add(
-            Ops.multiply(current_image_nr, @_steps_for_one_image),
-            x_progress
-          )
+          (current_image_nr * @_steps_for_one_image) + x_progress
         end
 
         OverallProgressHandler("deploying_images", current_steps)

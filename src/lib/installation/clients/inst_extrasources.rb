@@ -74,12 +74,9 @@ module Yast
       @register_url = GetURLsToRegister(@already_registered)
 
       # fix local sources temporary attached under /mnt
-      if Ops.greater_than(Builtins.size(@local_urls), 0)
+      if !@local_urls.empty?
         Builtins.foreach(@local_urls) do |srcid, url|
-          new_url = Ops.add(
-            "dir:",
-            Builtins.substring(url, Ops.add(Builtins.find(url, "/mnt"), 4))
-          )
+          new_url = "dir:" + Builtins.substring(url, Builtins.find(url, "/mnt") + 4)
           Builtins.y2milestone(
             "changing temporary url '%1' to '%2'",
             url,
@@ -91,7 +88,7 @@ module Yast
       end
 
       # disable USB sources
-      if Ops.greater_than(Builtins.size(@usb_sources), 0)
+      if !@usb_sources.empty?
         Builtins.foreach(@usb_sources) do |srcid, url|
           Builtins.y2milestone("disabling USB source %1", url)
           Pkg.SourceSetEnabled(srcid, false)
@@ -100,12 +97,12 @@ module Yast
       end
 
       # any confirmed source to register?
-      if Ops.greater_than(Builtins.size(@register_url), 0)
+      if !@register_url.empty?
         # register (create) the sources
         @added_ids = RegisterRepos(@register_url)
 
         # synchronize the sources if any source has been added
-        if Ops.greater_than(Builtins.size(@added_ids), 0)
+        if !@added_ids.empty?
           # If any source has been added, store the sources
           # bnc #440184
           Builtins.y2milestone(
@@ -118,7 +115,7 @@ module Yast
         # check during upgrade whether the added repositories provide an upgrade for installed package
         # (openSUSE DVD does not contain all packages, packages from OSS repository might not have been upgraded,
         # see bnc#693230 for details)
-        if Mode.update && Ops.greater_than(Builtins.size(@added_ids), 0)
+        if Mode.update && !@added_ids.empty?
           Builtins.y2milestone(
             "Checking whether there is and update provided by extra (non-update) repo..."
           )
@@ -132,36 +129,24 @@ module Yast
                 !IsUpdateRepo(repo)
               end
 
-              if Ops.greater_than(Builtins.size(@check_repos), 0)
+              if !@check_repos.empty?
                 UpgradeFrom(@check_repos)
 
                 @upgrade_info = UpgradesAvailable(@check_repos)
                 @upgrade_repos = Ops.get_list(@upgrade_info, "repositories", [])
 
-                if Ops.greater_than(Builtins.size(@upgrade_repos), 0)
+                if !@upgrade_repos.empty?
                   # popup message, list of repositores is appended to the text
                   @message = _(
                     "Package updates have been found in these additional repositories:"
                   ) + "\n\n"
                   Builtins.foreach(@upgrade_repos) do |repo|
                     repo_info = Pkg.SourceGeneralData(repo)
-                    @message = Ops.add(
-                      @message,
-                      Builtins.sformat(
-                        "%1 (%2)\n",
-                        Ops.get_string(repo_info, "name", ""),
-                        Ops.get_string(repo_info, "url", "")
-                      )
-                    )
+                    @message += Builtins.sformat("%1 (%2)\n", Ops.get_string(repo_info, "name", ""), Ops.get_string(repo_info, "url", ""))
                   end
 
                   # yes/no popup question
-                  @message = Ops.add(
-                    Ops.add(@message, "\n\n"),
-                    _(
-                      "Start the software manager to check and install the updates?"
-                    )
-                  )
+                  @message = (@message + "\n\n") + _("Start the software manager to check and install the updates?")
 
                   @package_list = Builtins.mergestring(
                     Ops.get_list(@upgrade_info, "packages", []),
@@ -321,7 +306,7 @@ module Yast
           )
         end
         new_repo_id = Pkg.RepositoryAdd(repo_prop)
-        if !new_repo_id.nil? && Ops.greater_or_equal(new_repo_id, 0)
+        if !new_repo_id.nil? && new_repo_id >= 0
           Builtins.y2milestone(
             "Registered extra repository: %1: %2",
             new_repo_id,

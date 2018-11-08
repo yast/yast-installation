@@ -224,10 +224,7 @@ module Yast
       out = Convert.to_map(
         SCR.Execute(
           path(".target.bash_output"),
-          Builtins.sformat(
-            "test -w '%1' && echo -n writable",
-            String.Quote(image)
-          )
+          "test -w '#{String.Quote(image)}' && echo -n writable"
         )
       )
 
@@ -375,7 +372,7 @@ module Yast
 
           if !@tar_image_progress.nil?
             @tar_image_progress.call(
-              Ops.add(Builtins.tointeger(newline), better_feeling_constant)
+              Builtins.tointeger(newline) + better_feeling_constant
             )
           end
         else
@@ -438,10 +435,7 @@ module Yast
       end
 
       Builtins.y2milestone("Creating temporary directory")
-      tmpdir = Ops.add(
-        Convert.to_string(SCR.Read(path(".target.tmpdir"))),
-        Builtins.sformat("/images/%1", id)
-      )
+      tmpdir = Convert.to_string(SCR.Read(path(".target.tmpdir"))) + "/images/#{id}"
       cmd = Builtins.sformat("test -d %1 || mkdir -p %1", tmpdir)
       out = Convert.to_map(SCR.Execute(path(".target.bash_output"), cmd))
       Builtins.y2milestone("Executing %1 returned %2", cmd, out)
@@ -462,7 +456,7 @@ module Yast
       Builtins.y2milestone("Executing %1 returned %2", cmd, out)
 
       Builtins.y2milestone("Unmounting image from temporary directory")
-      cmd = Builtins.sformat("umount -d -f -l %1", tmpdir)
+      cmd = "umount -d -f -l #{tmpdir}"
       out = Convert.to_map(SCR.Execute(path(".target.bash_output"), cmd))
       Builtins.y2milestone("Executing %1 returned %2", cmd, out)
 
@@ -538,7 +532,7 @@ module Yast
       Builtins.foreach(@_image_order) do |image|
         # 128 MB as a fallback size
         # otherwise progress would not move at all
-        sum = Ops.add(sum, Ops.get(@images_details, [image, "size"], 134_217_728))
+        sum += Ops.get(@images_details, [image, "size"], 134217728)
       end
 
       Builtins.y2milestone("Total images size: %1", sum)
@@ -547,9 +541,9 @@ module Yast
 
     def SetCurrentImageDetails(img)
       img = deep_copy(img)
-      @_current_image_from_imageset = Ops.add(@_current_image_from_imageset, 1)
+      @_current_image_from_imageset += 1
 
-      if Builtins.size(@images_details) == 0
+      if @images_details.empty?
         Builtins.y2warning("Images details are empty")
       end
 
@@ -568,14 +562,7 @@ module Yast
         ),
         # 100% progress
         "max_progress" => Builtins.tointeger(
-          Ops.divide(
-            Ops.get(
-              @images_details,
-              [Ops.get_string(img, "file", ""), "size"],
-              0
-            ),
-            @_record_size
-          )
+          Ops.get(@images_details, [Ops.get_string(img, "file", ""), "size"], 0) / @_record_size
         ),
         "image_nr"     => @_current_image_from_imageset
       }
@@ -642,7 +629,7 @@ module Yast
         target
       )
       if Ops.get_string(@_images, [id, "type"], "") == "fs"
-        cmd = Builtins.sformat("umount %1", target)
+        cmd = "umount #{target}"
         out = Convert.to_map(SCR.Execute(path(".target.bash_output"), cmd))
         Builtins.y2milestone("Executing %1 returned %2", cmd, out)
         return Ops.get_integer(out, "exit", -1) == 0
@@ -669,7 +656,7 @@ module Yast
 
       possible_files = [
         Builtins.sformat("%1/details-%2.xml", @_image_path, Arch.arch_short),
-        Builtins.sformat("%1/details.xml", @_image_path)
+        "#{@_image_path}/details.xml"
       ]
 
       Builtins.foreach(possible_files) do |try_file|
@@ -745,7 +732,7 @@ module Yast
       aborted = nil
 
       Builtins.foreach(images) do |img|
-        num = Ops.add(num, 1)
+        num += 1
         progress.call(num, 0) if !progress.nil?
         if !DeployImage(img, target)
           aborted = true
@@ -776,7 +763,7 @@ module Yast
 
       Builtins.foreach(installed_patterns) do |one_installed_pattern|
         if Builtins.contains(imageset_patterns, one_installed_pattern)
-          ret = Ops.add(ret, 1)
+          ret += 1
         end
       end
 
@@ -784,16 +771,16 @@ module Yast
     end
 
     def EnoughPatternsMatching(matching_patterns, patterns_in_imagesets)
-      if matching_patterns.nil? || Ops.less_than(matching_patterns, 0)
+      if matching_patterns.nil? || matching_patterns < 0
         return false
       end
 
-      if patterns_in_imagesets.nil? || Ops.less_than(patterns_in_imagesets, 0)
+      if patterns_in_imagesets.nil? || patterns_in_imagesets < 0
         return false
       end
 
       # it's actually matching_patterns = patterns_in_imagesets
-      Ops.greater_or_equal(matching_patterns, patterns_in_imagesets)
+      matching_patterns >= patterns_in_imagesets
     end
 
     def PrepareOEMImage(path)
@@ -821,7 +808,7 @@ module Yast
       filename = Pkg.SourceProvideDigestedFile(
         @_repo,
         1,
-        Builtins.sformat("%1/images.xml", @_image_path),
+        "#{@_image_path}/images.xml",
         false
       )
 
@@ -867,7 +854,7 @@ module Yast
           " ,"
         )
         # no architecture defined == noarch
-        next true if Builtins.size(imageset_archs) == 0
+        next true if imageset_archs.empty?
         # does architecture match?
         next true if Builtins.contains(imageset_archs, arch_short)
 
@@ -887,10 +874,10 @@ module Yast
         Ops.set(
           patterns_in_imagesets,
           pattern,
-          Builtins.size(imageset_patterns)
+          imageset_patterns.size
         )
         # no image-pattern defined, matches all patterns
-        if Builtins.size(imageset_patterns) == 0
+        if imageset_patterns.empty?
           Ops.set(possible_patterns, pattern, image)
           # image-patterns matches to patterns got as parameter
         else
@@ -900,7 +887,7 @@ module Yast
             CountMatchingPatterns(imageset_patterns, patterns)
           )
 
-          if Ops.greater_than(Ops.get(matching_patterns, pattern, 0), 0)
+          if Ops.get(matching_patterns, pattern, 0) > 0
             Ops.set(possible_patterns, pattern, image)
           else
             # For debugging purpose
@@ -918,20 +905,12 @@ module Yast
       # selecting the best imageset
       last_pattern = ""
 
-      if Ops.greater_than(Builtins.size(possible_patterns), 0)
+      if !possible_patterns.empty?
         last_number_of_matching_patterns = -1
         last_pattern = ""
 
         Builtins.foreach(possible_patterns) do |pattern, image|
-          if Ops.greater_than(
-            Ops.get(
-              # imageset matches more patterns than the currently best-one
-              matching_patterns,
-              pattern,
-              0
-            ),
-            last_number_of_matching_patterns
-          ) &&
+          if Ops.get(matching_patterns, pattern, 0) > last_number_of_matching_patterns &&
               # enough patterns matches the selected imageset
               EnoughPatternsMatching(
                 Ops.get(matching_patterns, pattern, 0),
@@ -1026,20 +1005,15 @@ module Yast
     end
 
     def calculate_fs_size(mountpoint)
-      cmd = Builtins.sformat("df -P -k %1", mountpoint)
+      cmd = "df -P -k #{mountpoint}"
       Builtins.y2milestone("Executing %1", cmd)
       out = Convert.to_map(SCR.Execute(path(".target.bash_output"), cmd))
       Builtins.y2milestone("Output: %1", out)
       total_str = Ops.get_string(out, "stdout", "")
       total_str = Ops.get(Builtins.splitstring(total_str, "\n"), 1, "")
-      Ops.divide(
-        Builtins.tointeger(
-          Ops.get(Builtins.filter(Builtins.splitstring(total_str, " ")) do |s|
-            s != ""
-          end, 2, "0")
-        ),
-        1024
-      )
+      Builtins.tointeger(Ops.get(Builtins.filter(Builtins.splitstring(total_str, " ")) do |s|
+  s != ""
+end, 2, "0")) / 1024
     end
 
     # Copy a subtree, limit to a single filesystem
@@ -1066,14 +1040,8 @@ module Yast
       total_mb = (total_mb * IMAGE_COMPRESS_RATIO).to_i # compression ratio - rough estimate
       total_mb = 4096 if total_mb == 0 # should be big enough
 
-      tmp_pipe1 = Ops.add(
-        Convert.to_string(SCR.Read(path(".target.tmpdir"))),
-        "/system_clone_fifo_1"
-      )
-      tmp_pipe2 = Ops.add(
-        Convert.to_string(SCR.Read(path(".target.tmpdir"))),
-        "/system_clone_fifo_2"
-      )
+      tmp_pipe1 = Convert.to_string(SCR.Read(path(".target.tmpdir"))) + "/system_clone_fifo_1"
+      tmp_pipe2 = Convert.to_string(SCR.Read(path(".target.tmpdir"))) + "/system_clone_fifo_2"
       # FIXME: this does not copy pipes in filesystem (usually not an issue)
       cmd = Builtins.sformat(
         "mkfifo %3 ;\n" \
@@ -1124,45 +1092,18 @@ module Yast
           )
         end
         if pid != ""
-          cmd = Builtins.sformat("/bin/kill -USR1 %1", pid)
+          cmd = "/bin/kill -USR1 #{pid}"
           Builtins.y2debug("Executing %1", cmd)
           SCR.Execute(path(".target.bash"), cmd)
         end
         Builtins.sleep(300)
         next if done.nil?
 
-        progress = Ops.add(
-          progress_start,
-          Ops.divide(
-            Ops.divide(
-              Ops.divide(
-                Ops.multiply(
-                  Ops.subtract(progress_finish, progress_start),
-                  Builtins.tointeger(done) / MEGABYTE # count megabytes
-                ),
-                total_mb
-              ),
-              1024
-            ),
-            1024
-          )
-        )
+        progress = progress_start + (((((progress_finish - progress_start) * (Builtins.tointeger(done) / MEGABYTE)) / total_mb) / 1024) / 1024)
         Builtins.y2debug("Setting progress to %1", progress)
         SlideShow.StageProgress(progress, nil)
         SlideShow.SubProgress(
-          Ops.divide(
-            Ops.divide(
-              Ops.divide(
-                Ops.multiply(
-                  Ops.subtract(progress_finish, progress_start),
-                  Builtins.tointeger(done)
-                ),
-                total_mb
-              ),
-              1024
-            ),
-            1024
-          ),
+          ((((progress_finish - progress_start) * Builtins.tointeger(done)) / total_mb) / 1024) / 1024,
           nil
         )
       end
@@ -1209,7 +1150,7 @@ module Yast
     # @see #all_supported_types
     # @see #objects_state
     def StoreAllChanges
-      nr_steps = Ops.multiply(4, Builtins.size(@all_supported_types))
+      nr_steps = 4 * @all_supported_types.size
       id = "storing_user_prefs"
 
       AdjustProgressLayout(id, nr_steps, _("Storing user preferences..."))
@@ -1300,7 +1241,7 @@ module Yast
       ret = nil
 
       # There are some installed (matching the same arch, version, and name)
-      if Ops.greater_than(Builtins.size(resolvable_properties), 0)
+      if !resolvable_properties.empty?
         Builtins.y2milestone(
           "Resolvable type: %1, name: %2 already installed",
           one_type.value,
@@ -1341,7 +1282,7 @@ module Yast
     #
     # @return [Boolean] if successful
     def RestoreAllChanges
-      nr_steps = Ops.multiply(4, Builtins.size(@all_supported_types))
+      nr_steps = 4 * @all_supported_types.size
       id = "restoring_user_prefs"
 
       AdjustProgressLayout(id, nr_steps, _("Restoring user preferences..."))

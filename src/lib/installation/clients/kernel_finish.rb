@@ -43,10 +43,10 @@ module Yast
       @param = {}
 
       # Check arguments
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
+      if !WFM.Args.empty? &&
           Ops.is_string?(WFM.Args(0))
         @func = Convert.to_string(WFM.Args(0))
-        if Ops.greater_than(Builtins.size(WFM.Args), 1) &&
+        if WFM.Args.size > 1 &&
             Ops.is_map?(WFM.Args(1))
           @param = Convert.to_map(WFM.Args(1))
         end
@@ -69,7 +69,7 @@ module Yast
         ModulesConf.Save(true)
 
         # on SGI Altix add fetchop and mmtimer to /etc/modules-load.d/*.conf
-        if Ops.greater_than(SCR.Read(path(".target.size"), "/proc/sgi_sn"), 0)
+        if SCR.Read(path(".target.size"), "/proc/sgi_sn") > 0
           Builtins.y2milestone("found SGI Altix, adding fetchop and mmtimer")
           Kernel.AddModuleToLoad("fetchop")
           Kernel.AddModuleToLoad("mmtimer")

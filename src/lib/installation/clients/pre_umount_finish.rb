@@ -45,10 +45,10 @@ module Yast
       @param = {}
 
       # Check arguments
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
+      if !WFM.Args.empty? &&
           Ops.is_string?(WFM.Args(0))
         @func = Convert.to_string(WFM.Args(0))
-        if Ops.greater_than(Builtins.size(WFM.Args), 1) &&
+        if WFM.Args.size > 1 &&
             Ops.is_map?(WFM.Args(1))
           @param = Convert.to_map(WFM.Args(1))
         end
@@ -74,10 +74,7 @@ module Yast
       elsif @func == "Write"
         # bugzilla #326478
         # some processes might be still running...
-        @cmd = Builtins.sformat(
-          "fuser -v '%1' 2>&1",
-          String.Quote(Installation.destdir)
-        )
+        @cmd = "fuser -v '#{String.Quote(Installation.destdir)}' 2>&1"
         @cmd_run = Convert.to_map(WFM.Execute(path(".local.bash_output"), @cmd))
 
         Builtins.y2milestone(
@@ -86,7 +83,7 @@ module Yast
           @cmd_run
         )
 
-        if Ops.greater_than(Builtins.size(Misc.boot_msg), 0)
+        if !Misc.boot_msg.empty?
           # just a beep
           SCR.Execute(path(".target.bash"), "/bin/echo -e 'a'")
         end

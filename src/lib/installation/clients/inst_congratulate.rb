@@ -158,19 +158,7 @@ module Yast
 
       if @text == ""
         # congratulation text 1/4
-        @text = Ops.add(
-          Ops.add(
-            _("<p><b>Congratulations!</b></p>") +
-              # congratulation text 2/4
-              _(
-                "<p>The installation of &product; on your machine is complete.\nAfter clicking <b>Finish</b>, you can log in to the system.</p>\n"
-              ),
-            # congratulation text 3/4
-            Builtins.sformat(_("<p>Visit us at %1.</p>"), @vendor_url)
-          ),
-          # congratulation text 4/4
-          _("<p>Have a lot of fun!<br>Your SUSE Development Team</p>")
-        )
+        @text = ((_("<p><b>Congratulations!</b></p>") + _("<p>The installation of &product; on your machine is complete.\nAfter clicking <b>Finish</b>, you can log in to the system.</p>\n")) + Builtins.sformat(_("<p>Visit us at %1.</p>"), @vendor_url)) + _("<p>Have a lot of fun!<br>Your SUSE Development Team</p>")
       else
         @text = Builtins.sformat(@text, @vendor_url)
       end
@@ -178,14 +166,14 @@ module Yast
       @contents = VBox(
         VSpacing(@space),
         HBox(
-          HSpacing(Ops.multiply(2, @space)),
+          HSpacing(2 * @space),
           VBox(
             RichText(Id(:text), @text),
-            VSpacing(Ops.divide(@space, 2)),
+            VSpacing(@space / 2),
             Left(@check_box_turnoff_zmd),
             Left(@check_box_do_clone)
           ),
-          HSpacing(Ops.multiply(2, @space))
+          HSpacing(2 * @space)
         ),
         VSpacing(@space),
         VSpacing(2)
@@ -210,17 +198,9 @@ module Yast
          end) # Show this help only in case of KDE as the default windowmanager
 
       if @show_clone_checkbox
-        @help = Ops.add(
-          @help,
-          _(
-            "<p>Use <b>Clone</b> if you want to create an AutoYaST profile.\n" \
-              "AutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST\n" \
-              "needs a profile to know what the installed system should look like. If this option is\n" \
-              "selected, a profile of the current system is stored in <tt>/root/autoinst.xml</tt>.</p>"
-          )
-        )
+        @help += _("<p>Use <b>Clone</b> if you want to create an AutoYaST profile.\nAutoYaST is a way to do a complete SUSE Linux installation without user interaction. AutoYaST\nneeds a profile to know what the installed system should look like. If this option is\nselected, a profile of the current system is stored in <tt>/root/autoinst.xml</tt>.</p>")
       end
-      @help = Ops.add(@help, @turnoff_zmd_help) if @show_zmd_turnoff_checkbox
+      @help += @turnoff_zmd_help if @show_zmd_turnoff_checkbox
 
       Wizard.SetContents(
         @caption,
