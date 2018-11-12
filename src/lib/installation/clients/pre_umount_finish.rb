@@ -1,116 +1,132 @@
-# encoding: utf-8
+# File:    pre_umount_finish.rb
+#
+# Module:  Step of base installation finish
+#
 
-# ------------------------------------------------------------------------------
-# Copyright (c) 2006-2012 Novell, Inc. All Rights Reserved.
-#
-#
-# This program is free software; you can redistribute it and/or modify it under
-# the terms of version 2 of the GNU General Public License as published by the
-# Free Software Foundation.
-#
-# This program is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License along with
-# this program; if not, contact Novell, Inc.
-#
-# To contact Novell about this file by physical or electronic mail, you may find
-# current contact information at www.novell.com.
-# ------------------------------------------------------------------------------
+require "yast"
 
-# File:    pre_umount_finish.ycp
-#
-# Module:  Step of base installation finish (bugzilla #205389)
-#
-# Authors: Lukas Ocilka <lukas.ocilka@suse.cz>
-#
-# $Id$
-#
-module Yast
-  class PreUmountFinishClient < Client
-    def main
+require "installation/finish_client"
+
+module Installation
+  class PreUmountFinish < ::Installation::FinishClient
+    include Yast::I18n
+
+    def initialize
+      textdomain "installation"
       Yast.import "UI"
-
       Yast.import "Misc"
       Yast.import "Installation"
       Yast.import "String"
+      Yast.import "Pkg"
+      Yast.import "Mode"
+    end
 
+    def title
+      _("Checking the installed system...")
+    end
+
+    def modes
+      [:installation, :live_installation, :update, :autoinst]
+    end
+
+    def write
       Yast.include self, "installation/inst_inc_first.rb"
 
-      textdomain "installation"
+      # bugzilla #326478
+      # some processes might be still running...
+      cmd_run = WFM.Execute(path(".local.bash_output"),
+        "fuser -v '#{String.Quote(Installation.destdir)}' 2>&1")
 
-      @ret = nil
-      @func = ""
-      @param = {}
+      log.info("These processes are still running at " \
+        "#{Installation.destdir} -> #{cmd_run}")
 
-      # Check arguments
-      if Ops.greater_than(Builtins.size(WFM.Args), 0) &&
-          Ops.is_string?(WFM.Args(0))
-        @func = Convert.to_string(WFM.Args(0))
-        if Ops.greater_than(Builtins.size(WFM.Args), 1) &&
-            Ops.is_map?(WFM.Args(1))
-          @param = Convert.to_map(WFM.Args(1))
-        end
+      unless Misc.boot_msg.empty?
+        # just a beep
+        SCR.Execute(path(".target.bash"), "/bin/echo -e 'a'")
       end
 
-      Builtins.y2milestone("starting pre_umount_finish")
-      Builtins.y2debug("func=%1", @func)
-      Builtins.y2debug("param=%1", @param)
+      # creates or removes the runme_at_boot file (for second stage)
+      # according to the current needs
+      #
+      # Must be called before 'umount'!
+      #
+      # See FATE #303396
+      HandleSecondStageRequired()
 
-      if @func == "Info"
-        return {
-          "steps" => 1,
-          # progress step title
-          "title" => _("Checking the installed system..."),
-          # !Mode::autoinst
-          "when"  => [
-            :installation,
-            :live_installation,
-            :update,
-            :autoinst
-          ]
-        }
-      elsif @func == "Write"
-        # bugzilla #326478
-        # some processes might be still running...
-        @cmd = Builtins.sformat(
-          "fuser -v '%1' 2>&1",
-          String.Quote(Installation.destdir)
-        )
-        @cmd_run = Convert.to_map(WFM.Execute(path(".local.bash_output"), @cmd))
+      # Remove content of /run which has been created by the pre/post
+      # install scripts while RPM installation and not needed anymore.
+      # (bnc#1071745)
+      SCR.Execute(path(".target.bash"), "/bin/rm -rf /run/*")
 
-        Builtins.y2milestone(
-          "These processes are still running at %1 -> %2",
-          Installation.destdir,
-          @cmd_run
-        )
+      # Release all sources, they might be still mounted
+      Pkg.SourceReleaseAll
 
-        if Ops.greater_than(Builtins.size(Misc.boot_msg), 0)
-          # just a beep
-          SCR.Execute(path(".target.bash"), "/bin/echo -e 'a'")
-        end
+      # save all sources and finish target
+      # bnc #398315
+      Pkg.SourceSaveAll
+      Pkg.TargetFinish
 
-        # creates or removes the runme_at_boot file (for second stage)
-        # according to the current needs
-        #
-        # Must be called before 'umount'!
-        #
-        # See FATE #303396
-        HandleSecondStageRequired()
+      # BNC #692799: Preserve the randomness state before umounting
+      preserve_randomness_state
+    end
 
-        # Remove content of /run which has been created by the pre/post
-        # install scripts while RPM installation and not needed anymore.
-        # (bnc#1071745)
-        SCR.Execute(path(".target.bash"), "/bin/rm -rf /run/*")
+  private
+
+    # Calls a local command and returns if successful
+    def local_command(command)
+      ret = WFM.Execute(path(".local.bash_output"), command)
+      log.info "Command #{command} returned: #{ret}"
+      return true if ret["exit"] == 0
+      err = ret["stderr"]
+      log.error "Error: #{err}" unless err.empty?
+      false
+    end
+
+    # Reads and returns the current poolsize from /proc.
+    # Returns integer size as a string.
+    def read_poolsize
+      poolsize_path = "/proc/sys/kernel/random/poolsize"
+
+      poolsize = Convert.to_string(
+        WFM.Read(path(".local.string"), poolsize_path)
+      )
+
+      if poolsize.nil? || poolsize == ""
+        log.warn "Cannot read poolsize from #{poolsize_path}, using the default"
+        poolsize = "4096"
       else
-        Builtins.y2error("unknown function: %1", @func)
-        @ret = nil
+        poolsize = Builtins.regexpsub(poolsize, "^([[:digit:]]+).*", "\\1")
       end
 
-      Builtins.y2debug("ret=%1", @ret)
-      Builtins.y2milestone("pre_umount_finish finished")
-      deep_copy(@ret)
+      log.info "Using random/poolsize: #{poolsize}"
+      poolsize
+    end
+
+    # Preserves the current randomness state, BNC #692799
+    def preserve_randomness_state
+      if Mode.update
+        log.info("Not saving current random seed - in update mode")
+        return
+      end
+
+      log.info "Saving the current randomness state..."
+
+      service_bin = "/usr/sbin/haveged"
+      random_path = "/dev/urandom"
+      store_to = "#{Installation.destdir}/var/lib/misc/random-seed"
+
+      # Copy the current state of random number generator to the installed system
+      if local_command(
+        "dd if='#{String.Quote(random_path)}' bs=#{read_poolsize} count=1 of='#{String.Quote(store_to)}'"
+      )
+        log.info "State of #{random_path} has been successfully copied to #{store_to}"
+      else
+        log.info "Cannot store #{random_path} state to #{store_to}"
+      end
+
+      # stop the random number generator service
+      log.info "Stopping #{service_bin} service"
+      local_command("killproc -TERM #{service_bin}")
     end
   end
 end
