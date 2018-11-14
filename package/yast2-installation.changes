@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Nov 16 11:06:36 UTC 2018 - igonzalezsosa@suse.com
+
+- Prefer fbiterm whenever is possible for textmode installation
+  (fate#325746).
+- 4.1.28
+
+-------------------------------------------------------------------
 Thu Nov 15 15:40:49 CET 2018 - schubi@suse.de
 
 - Dialog complex_welcome: Translate the help button if the language
