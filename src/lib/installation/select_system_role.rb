@@ -35,11 +35,6 @@ module Installation
   class SelectSystemRole < ::UI::InstallationDialog
     include UI::TextHelpers
 
-    class << self
-      # once the user selects a role, remember it in case they come back
-      attr_accessor :original_role_id
-    end
-
     NON_OVERLAY_ATTRIBUTES = [
       "additional_dialogs",
       "id",
@@ -60,7 +55,7 @@ module Installation
 
       if Yast::GetInstArgs.going_back
         # If coming back, we have to run the additional dialogs first...
-        clients = additional_clients_for(self.class.original_role_id)
+        clients = additional_clients_for(SystemRole.current)
         direction = run_clients(clients, going_back: true)
         # ... and only run the main dialog (super) if we are *still* going back
         return direction unless direction == :back
@@ -78,7 +73,7 @@ module Installation
     end
 
     def dialog_content
-      @selected_role_id = self.class.original_role_id
+      @selected_role_id = SystemRole.current
       @selected_role_id ||= roles.first && roles.first.id if SystemRole.default?
 
       HCenter(ReplacePoint(Id(:rp), role_buttons(selected_role_id: @selected_role_id)))
@@ -101,15 +96,13 @@ module Installation
         return
       end
 
-      orig_role_id = self.class.original_role_id
-      if !orig_role_id.nil? && orig_role_id != role_id
+      if SystemRole.current && SystemRole.current != role_id
         # A Continue-Cancel popup
         msg = _("Changing the system role may undo adjustments you may have done.")
         return unless Yast::Popup.ContinueCancel(msg)
       end
-      self.class.original_role_id = role_id
 
-      apply_role(SystemRole.find(role_id))
+      apply_role(role_id)
 
       result = run_clients(additional_clients_for(role_id))
       # We show the main role dialog; but the additional clients have
@@ -192,8 +185,10 @@ module Installation
     end
 
     # Applies given role to configuration
-    def apply_role(role)
-      log.info "Applying system role '#{role.id}'"
+    def apply_role(role_id)
+      log.info "Applying system role '#{role_id}'"
+
+      role = SystemRole.select(role_id)
       role.overlay_features
       adapt_services(role)
 
