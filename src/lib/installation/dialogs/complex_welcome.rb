@@ -44,7 +44,7 @@ module Installation
       # @param disable_buttons [Array<Symbol>] List of buttons to disable
       def initialize(products, disable_buttons: [])
         textdomain "installation"
-        
+
         @products = products
         @disable_buttons = disable_buttons.map { |b| "#{b}_button" }
       end
