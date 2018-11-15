@@ -20,6 +20,7 @@ require "y2country/widgets/keyboard_selection"
 require "y2packager/widgets/product_license"
 
 Yast.import "UI"
+Yast.import "Wizard"
 
 module Installation
   module Dialogs
@@ -43,6 +44,7 @@ module Installation
       # @param disable_buttons [Array<Symbol>] List of buttons to disable
       def initialize(products, disable_buttons: [])
         textdomain "installation"
+
         @products = products
         @disable_buttons = disable_buttons.map { |b| "#{b}_button" }
       end
@@ -80,6 +82,7 @@ module Installation
 
         loop do
           res = super
+          Yast::Wizard.RetranslateButtons
           break if res != :redraw
         end
 
