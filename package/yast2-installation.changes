@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Nov 15 15:40:49 CET 2018 - schubi@suse.de
+
+- Dialog complex_welcome: Translate the help button if the language
+  has been changed (bsc#1098571)
+- 4.0.73
+
+-------------------------------------------------------------------
 Fri Nov  2 13:23:30 CET 2018 - schubi@suse.de
 
 - Writing security settings in first AY installation stage.

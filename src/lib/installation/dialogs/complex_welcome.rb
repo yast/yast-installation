@@ -43,6 +43,9 @@ module Installation
       # @param disable_buttons [Array<Symbol>] List of buttons to disable
       def initialize(products, disable_buttons: [])
         textdomain "installation"
+
+        Yast.import "Wizard"
+
         @products = products
         @disable_buttons = disable_buttons.map { |b| "#{b}_button" }
       end
@@ -80,6 +83,7 @@ module Installation
 
         loop do
           res = super
+          Yast::Wizard.RetranslateButtons
           break if res != :redraw
         end
 
