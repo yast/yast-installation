@@ -39,6 +39,7 @@ function check_run_fbiterm () {
 		# use english
 		export LANG=en_US.UTF-8
 		export LC_CTYPE=en_US.UTF-8
+		log "\tfbiterm is not available or it does not work in this environment"
 	    fi
 
 	    case "$LANG" in
