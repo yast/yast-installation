@@ -66,8 +66,11 @@ module Yast
         Installation.encoding = "UTF-8"
       end
 
-      UI.SetLanguage(Language.language, Installation.encoding)
-      WFM.SetLanguage(Language.language, "UTF-8")
+      unless Language.SwitchToEnglishIfNeeded(true)
+        UI.SetLanguage(Language.language, Installation.encoding)
+        WFM.SetLanguage(Language.language, "UTF-8")
+      end
+
       UI.RecordMacro(Ops.add(Directory.logdir, "/macro_inst_initial.ycp"))
 
       Builtins.y2milestone("Adjusting first stage modules")

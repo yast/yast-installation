@@ -30,25 +30,25 @@ function check_run_fbiterm () {
 	if test "$TERM" = "linux" -a \
 		\( "$TTY" = /dev/console -o "$TTY" != "${TTY#/dev/tty[0-9]}" \);
 	then
-		case "$LANG" in
-		ja*.UTF-8|ko*.UTF-8|zh*.UTF-8)
-		# check whether fbiterm can run on console
-		if test -x /usr/bin/fbiterm && \
-			/usr/bin/fbiterm echo >/dev/null 2>&1;
-		then
-			RUN_FBITERM=1
-		else
-			# use english
-			export LANG=en_US.UTF-8
-			export LC_CTYPE=en_US.UTF-8
-		fi
-		;;
-		ja*|ko*|zh*)
+	    # check whether fbiterm can run on console
+	    if test -x /usr/bin/fbiterm && \
+		    /usr/bin/fbiterm echo >/dev/null 2>&1;
+	    then
+		RUN_FBITERM=1
+	    else
 		# use english
 		export LANG=en_US.UTF-8
 		export LC_CTYPE=en_US.UTF-8
-		;;
-	esac
+		log "\tfbiterm is not available or it does not work in this environment"
+	    fi
+
+	    case "$LANG" in
+		# These languages are not properly supported by fbiterm causing YaST to crash
+		# (fate#325746).
+		ar*|bn*|gu*|hi*|km*|mr*|pa*|ta*|th*)
+		    export LANG=en_US.UTF-8
+		    export LC_CTYPE=en_US.UTF-8
+	    esac
 	fi
 }
 
