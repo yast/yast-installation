@@ -96,6 +96,7 @@ module Installation
 
     def next_handler
       result = select_role(@selected_role_id)
+
       # We show the main role dialog; but the additional clients have
       # drawn over it, so draw it again and go back to input loop.
       # create_dialog do not create new dialog if it already exist like in this

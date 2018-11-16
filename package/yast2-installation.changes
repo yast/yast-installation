@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Nov 15 15:40:49 CET 2018 - schubi@suse.de
+
+- Dialog complex_welcome: Translate the help button if the language
+  has been changed (bsc#1098571).
+- 4.1.27  
+
+-------------------------------------------------------------------
 Mon Nov 12 14:51:30 CET 2018 - schubi@suse.de
 
 - Moving driver_update2_finish call just before unmounting system.
@@ -64,6 +71,7 @@ Tue Sep 25 10:35:03 CEST 2018 - schubi@suse.de
 - Updated docu for add_on_products.xml: Added tag "confirm_license"
   to handle Add-On-products licenses which will be added while
   installation. (bsc#1105758)
+<<<<<<< HEAD
 - 4.1.17  
   
 -------------------------------------------------------------------
@@ -121,12 +129,19 @@ Mon Aug 20 15:18:28 CEST 2018 - schubi@suse.de
 
 - Switched license in spec file from SPDX2 to SPDX3 format.
 - Changed dir of COPYING file.
+=======
+- 4.0.71
+>>>>>>> SLE-15-GA
 
 -------------------------------------------------------------------
 Thu Aug  2 09:05:07 UTC 2018 - schubi@suse.de
 
 - Disable display of status messages on the console (bsc#1099505).
+<<<<<<< HEAD
 - 4.1.8
+=======
+- 4.0.70
+>>>>>>> SLE-15-GA
 
 -------------------------------------------------------------------
 Thu Aug  2 08:05:07 UTC 2018 - knut.anderssen@suse.com
