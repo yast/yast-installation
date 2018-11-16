@@ -42,7 +42,9 @@ function check_run_fbiterm () {
 	    fi
 
 	    case "$LANG" in
-		ar_EG*|bn_BD*|gu_IN*|hi_IN*|km_KH*|mr_IN*|pa_IN*|ta_IN*|th_TH*)
+		# These languages are not properly supported by fbiterm causing YaST to crash
+		# (fate#325746).
+		ar*|bn*|gu*|hi*|km*|mr*|pa*|ta_*|th*)
 		    export LANG=en_US.UTF-8
 		    export LC_CTYPE=en_US.UTF-8
 	    esac
