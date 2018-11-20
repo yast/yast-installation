@@ -387,6 +387,11 @@ These options usually enable or disable some installation feature.
     password entered for a first user also for the user root. The default is
     *false*.
 
+-   (boolean) *enable\_local\_users* - enable creating local user accounts
+    during installation. If *false*, the corresponding dialog is skipped, and
+    *root\_password\_as\_first\_user* is set to *false* as well.
+    The default is *true*.
+
 -   (boolean) *enable\_autoconfiguration* - enables a check box in the
     dialog that offers to switch the automatic configuration either on
     or off. The default is *false*.
