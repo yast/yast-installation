@@ -9,8 +9,8 @@ possible to enable and disable features during installation in the final
 installed product. It controls the workflow and what is really shown to
 the user during installation.
 
-Beside workflow configuration, other system variables are configurable
-and can be predefined by the system administrator, to name a few: the
+Besides workflow configuration, other system variables are configurable
+and can be predefined by the system administrator. To name a few: the
 software selection, environment settings such as language, time zone and
 keyboard can be configured and would override default variables provided
 with shipped products.
@@ -33,12 +33,12 @@ options:
     For example, it is possible to set the language variable in the
     configuration file if the installation language is to be forced for
     some reason, eg. if an IT department wants to force French
-    installations, say in Quebec, Canada, then the entire dialogue can
+    installations, say in Quebec, Canada, then the entire dialog can
     be skipped. If the IT department is to recommend some settings but
     still give the user the choice to change the default settings, the
-    language dialogue will be shown with French preselected.
+    language dialog will be shown with French preselected.
 
-    If none of the above options is used, the default dialogue settings
+    If none of the above options is used, the default dialog settings
     are shown.
 
 -   Proposals
@@ -51,14 +51,14 @@ options:
 
 -   System Variables
 
-    Let the user define system variables like language, keyboard, time
+    This lets the user define system variables like language, keyboard, time
     zone, window manager, display manager etc. The defined variables
-    will be used as defaults in the respective dialogues.
+    will be used as defaults in the respective dialogs.
 
 -   Package Selections and additional individual packages
 
-    Define what base package selection and add-on selections should be
-    used for the installation. Additionally provide the possibility to
+    This defines what base package selection and add-on selections should be
+    used for the installation. Additionally this provides the possibility to
     define a list of additional packages. All packages and selections
     can be selected depending on the architecture using a special
     architecture attribute in the configuration file.
@@ -89,22 +89,22 @@ can be mapped easily to YaST data structures and all data types
 available in YaST are supported for easy data access and manipulation.
 
 The primary use of the control file is to configure the workflow of the
-installation and it offers the possibility to predefine a certain setup,
+installation, and it offers the possibility to predefine a certain setup,
 but it also defines product installation features and other product
 related variables.
 
 > **Note**
 >
 > Note that the control file is not an optional tool to help customize
-> installation, it is required during installation and without the file,
-> installation may fail or lead to unexpected results. Control file on installed
-> system located in `/etc/YaST2/control.xml` is owned by `${PRODUCT}-release`
+> installation, it is required during installation, and without the file,
+> installation may fail or lead to unexpected results. The control file on the installed
+> system located in `/etc/YaST2/control.xml` is owned by the `${PRODUCT}-release`
 > package.
 
 During installation, *linuxrc* searches for a file named
 `control.xml` on the installation medium (CD, NFS, FTP..) and copies the
 file into the installation system and makes the file available to YaST.
-YaST then starts and looks for the control file in 3 location before it
+YaST then starts and looks for the control file in 3 locations before it
 starts with the installation workflow:
 
 0.  custom control file - runtime specified control file. Used only in special
@@ -117,15 +117,15 @@ starts with the installation workflow:
 
 2.  `/control.xml`
 
-    Usually the file is in top directory after it has been copied by
-    linuxrc and during initial installation phase.
+    Usually the file is in the top directory after it has been copied by
+    linuxrc and during the initial installation phase.
 
 3.  `/etc/YaST2/control.xml`
 
-    This is the location where release package installs the file of
-    installed product.
+    This is the location where the release package installs the file of
+    the installed product.
 
-One of the main reasons for using the control is to provide non YaST
+One of the main reasons for using the control is to provide non-YaST
 developers the ability to change the installation behavior and customize
 various settings without the need to change and re-build YaST packages.
 
@@ -149,7 +149,7 @@ modes and installation stages. Thus, the element *workflows* in the
 control file evaluates to a list of workflows.
 
 Beside defining what YaST clients should be executed during
-installation, the workflow configuration also let you specify the wizard
+installation, the workflow configuration also lets you specify the wizard
 steps and how they should appear during graphical installation.
 
 A workflow list element is a map with the following elements:
@@ -157,7 +157,7 @@ A workflow list element is a map with the following elements:
 -   *label*
 
     The label of the workflow as it appears on the left side of the
-    wizard. For example *Base Installation*
+    wizard. For example *Base Installation*.
 
 -   *defaults*
 
@@ -165,13 +165,13 @@ A workflow list element is a map with the following elements:
 
 -   *stage*
 
-    This options defines the stage or phase of installation.. Possible
+    This options defines the stage or phase of the installation. Possible
     values are *initial* for the initial stage and *continue* for the
-    workflow of the installation after reboot
+    workflow of the installation after reboot.
 
 -   *mode*
 
-    Defines installation mode. Several modes are available, most
+    Defines the installation mode. Several modes are available; the most
     important modes are:
 
     -   installation
@@ -188,21 +188,21 @@ A workflow list element is a map with the following elements:
     A module element is a map with the following configuration options:
 
     -   name: The name of the module. All installation clients and
-        modules have a unified prefix (inst\_) which can be ommited
-        here. Name is ofted used as ID, so it better be inique within the whole
-        control file. That is why we have execute parameter, see below. For
+        modules have a unified prefix (inst\_) which can be omitted
+        here. The name is ofted used as an ID, so it should be unique within the whole
+        control file. That is why there is the _execute_ parameter (see below). For
         example, if the YaST file for the module is called *inst\_test*, then
-        the name in the control file is *test*
+        the name in the control file is *test*.
 
     -   label: The label of the module in the step dialog. This is an
         optional element. If it is not set, the label of the previous
         module is used.
 
-    -   arguments: The arguments for the module is a comma separated
+    -   arguments: The arguments for the module. This is a comma-separated
         list which can accept booleans and symbols.
 
-    -   execute: If it is needed to call script that does not start with
-        *inst_* or you need to call the same script several times with
+    -   execute: If it is needed to call a script with a name that does not start with
+        *inst_* or you need to call the same script several times with a
         different *name* parameter.
 
 The following listing shows a typical installation workflow:
@@ -265,8 +265,8 @@ The following listing shows a typical installation workflow:
 
 ### Proposals
 
-Part of the installation workflows are proposal screens, which consists
-of group of related configuration settings. For example *Network*,
+Part of the installation workflows are proposal screens, which consist
+of a group of related configuration settings. For example *Network*,
 *Hardware* and the initial *Installation* proposal.
 
 If you want for some reason to add or modify a proposal, which is
@@ -312,9 +312,9 @@ Details:
   (the code actually allows writing it but that makes the definitions longer
   and less readable).
 - `presentation_order` (integer, optional) - the number defines the display order
-  in the proposal, the absolute value is not important, it depends on the relative
+  in the proposal. The absolute value is not important; it depends on the relative
   value when compared against the other proposal modules.
-- `read_only` (boolean, optional) - the module is treated as read only and
+- `read_only` (boolean, optional) - the module is treated as read only, and
   any user interaction with the proposal module is disabled.
 
 In the workflow, the proposals are called as any workflow step with an
@@ -334,8 +334,8 @@ called as a workflow step:
 ### Installation and Product Variables
 
 It is possible to define some installation variables (language,
-timezone, keyboard,.. ) and force them in the proposal. User will still
-be able to change them however.
+timezone, keyboard,.. ) and force them in the proposal. The user will still
+be able to change them, however.
 
 The following variables can be set:
 
@@ -350,11 +350,11 @@ The following variables can be set:
 
 -   IO Scheduler
 
-    Default is *as*.
+    The default is *as*.
 
 -   Desktop Scheduler
 
-the following example shows all options above
+The following example shows all options above:
 
 ```xml
     <globals>
@@ -370,10 +370,10 @@ the following example shows all options above
 
 These options usually enable or disable some installation feature.
 
--   (boolean) *enable\_firewall* - firewall will proposed as either
+-   (boolean) *enable\_firewall* - the firewall will proposed as either
     enabled or disabled in the network proposal.
 
--   (boolean) *enable\_clone* - clonning feature will be either enabled
+-   (boolean) *enable\_clone* - the cloning feature will be either enabled
     or disabled.
 
 -   (boolean) *skip\_language\_dialog* - the language dialog might be
@@ -383,67 +383,66 @@ These options usually enable or disable some installation feature.
     "online repositories" feature check-box.
 
 -   (boolean) *root\_password\_as\_first\_user* - automatically selects
-    or deselects the checkbox that makes Users configuration to set the
-    password entered for a first user also for the user root. If not
-    defined, default is *false*
+    or deselects the checkbox that makes the users configuration set the
+    password entered for a first user also for the user root. The default is
+    *false*.
 
--   (boolean) *enable\_autoconfiguration* - enables a check box in
+-   (boolean) *enable\_autoconfiguration* - enables a check box in the
     dialog that offers to switch the automatic configuration either on
-    or off. Default is false.
+    or off. The default is *false*.
 
 -   (boolean) *autoconfiguration\_default* - defines a default value
     whether to use the automatic configuration. It works even if
-    *enable\_autoconfiguration* is turned off, but user would not be
-    able to change it. Default is false.
+    *enable\_autoconfiguration* is turned off, but the user would not be
+    able to change it. The default is *false*.
 
 -   (string) *base\_product\_license\_directory* - directory where the
     base-product licenses are stored (license.txt, license.de\_DE.txt,
     ...).
 
 -   (boolean) *rle\_offer\_rulevel\_4* - defines whether runlevel 4
-    should be offered in Runlevel Editor. Defaul value is *false* if not
-    set.
+    should be offered in the Runlevel Editor. The default is *false*.
 
 -   (boolean) *enable\_kdump* - defines whether kdump is proposed as
-    *enabled* in installation proposal. *kdump\_proposal* client call
-    has to be added into [proposal](#control_proposals) otherwise this
+    *enabled* in the installation proposal. The *kdump\_proposal* client call
+    has to be added to [proposal](#control_proposals); otherwise this
     variable does not have any effect.
 
 -   (boolean) *write\_hostname\_to\_hosts* - defines whether the
     currently assigned hostname is written to /etc/hosts with IPv4
-    address 127.0.0.2. Defaul value is *false* if not set.
+    address 127.0.0.2. The default is *false*.
 
 -   (boolean) *dhclient\_set\_hostname* - defines the default of
     DHCLIENT_SET_HOSTNAME in /etc/sysconfing/network/dhcp which is
     preloading at the beginning of the installation. It can be disabled
     by [linuxrc](https://github.com/openSUSE/linuxrc/blob/master/linuxrc_yast_interface.txt#L144) cmdline with sethostname=0.
 
--   (boolean) *default\_ntp\_setup* - NTP configuration proposes a
-    default ntp server if set to *true*. Default value is *false*.
+-   (boolean) *default\_ntp\_setup* - the NTP configuration proposes a
+    default ntp server if set to *true*. The default is *false*.
 
--   (string) *polkit\_default\_privs* - Adjusts
+-   (string) *polkit\_default\_privs* - Sets
     */etc/sysconfig/security/POLKIT\_DEFAULT\_PRIVS* to the defined
     value. If not set or empty, sysconfig is untouched.
 
 -   (boolean) *require\_registration* - Require registration of add-on
     product (ignored in the base product).
 
--   (boolean) *readonly\_timezone* - Timezone cannot be changed by the
+-   (boolean) *readonly\_timezone* - The timezone cannot be changed by the
     user during installation or upgrade. The default value is
     determined using the *timezone* element in the *globals* section.
-    If it's not specified, *UTC* will be used.
+    If not specified, *UTC* will be used.
 
 ### Installation Helpers
 
 In the *globals* section, there are also helper variables for the
 installation and debugging:
 
--   *save\_instsys\_content* - is a list of entries that should be
+-   *save\_instsys\_content* - this is a list of entries that should be
     copied from the installation system to the just installed system
-    before first stage is finished and system reboots to the second
+    before the first stage is finished and the system reboots to the second
     stage.
 
-    This example shows how content of the */root/* directory is copied
+    This example shows how the content of the */root/* directory is copied
     to the */root/inst-sys/* directory on the installed system:
 
 ```xml
@@ -458,7 +457,7 @@ installation and debugging:
 ```
 
 -   (boolean) *debug\_workflow* - defines whether steps with the very
-    same name in workflow should not be collapsed. If *true* steps are
+    same name in the workflow should not be collapsed. If *true*, those steps are
     not collapsed and a step ID is added after the step name. The
     default is *false*. This feature should be off in the production
     phase.
@@ -470,16 +469,16 @@ installation and debugging:
 
 ### Software
 
-In the *software* section you can define how is the selection of
-software handled during installation or update.
+The *software* section defines the selection of software during installation or
+update.
 
 This is a list of supported entries in *software*:
 
--   *default\_desktop* - defines a desktop selected by default by the
+-   *default\_desktop* - defines a desktop selected by default during
     installation.
 
 -   *clone\_install\_recommended\_default* - Default entry for
-    "install_recommended" in created AutoYaST configuration file.
+    "install_recommended" in the created AutoYaST configuration file.
 
 -   *minimalistic_libzypp_config* - adjust the libzypp configuration
     to reduce the amount of packages to install: only required
@@ -519,13 +518,13 @@ performed. The following options are available:
 
 -   *silently\_downgrade\_packages*
 
-    Allows packager to downgrade installed packages during upgrade
+    Allows the packager to downgrade installed packages during the upgrade
     workflow.
 
 -   *silently\_downgrade\_packages\_reverse\_list*
 
     Inverts the *silently\_downgrade\_packages* rule for products
-    defined as list of regular expressions matching installed product
+    defined as list of regular expressions matching the installed product
     name (SuSE-release).
 
 ```xml
@@ -541,7 +540,7 @@ performed. The following options are available:
 -   *products\_supported\_for\_upgrade*
 
     List of known products supported for upgrade (SuSE-release). Old
-    releases or other distributions will report warning.
+    releases or other distributions will report a warning.
 ```xml
     <software>
         <products_supported_for_upgrade config:type="list">
@@ -563,11 +562,11 @@ expressions, such as
     for strings
 
 -   asterisk *\**, plus *+* and question mark *?* for repeating or
-    existency
+    existence.
 
--   dot *.* for wild-card character
+-   dot *.* as a wild-card character
 
--   square brackets *[]* for list of possible characters
+-   square brackets *[]* for a list of possible characters
 
 -   circle brackets *()* for listing possibilities
 
@@ -586,8 +585,8 @@ These regular expressions are evaluated as [POSIX regex]
 ### Supported Desktops
 
 This part defines not only all the desktops for Desktop Selection dialog
-during installation but also the
-[default\_desktop](#software_default_desktop) must be defined
+during installation, but also the
+[default\_desktop](#software_default_desktop) must be defined.
 
 Example of supported desktops:
 
@@ -644,7 +643,7 @@ Example of supported desktops:
     </productDefines>
 ```
 
-Section *supported\_desktops* contains list of one or more
+The *supported\_desktops* section contains a list of one or more
 *one\_supported\_desktop* sections.
 
 -   (string) *name*
@@ -661,7 +660,7 @@ Section *supported\_desktops* contains list of one or more
 
 -   (string) *logon*
 
-    Logon manager to start (gdm, kdm4, kdm3, xdm, ...).
+    Login manager to start (gdm, kdm4, kdm3, xdm, ...).
 
 -   (string) *cursor*
 
@@ -670,45 +669,45 @@ Section *supported\_desktops* contains list of one or more
 -   (string) *packages*
 
     List of packages (whitespace-separated) that identify and verify which
-    desktop has been selected by user (or automatically). These packages are
-    *not* selected for installation by Yast, use *patterns* for that.
+    desktop was selected by the user (or automatically). These packages are
+    *not* selected for installation by Yast; use *patterns* for that.
 
 -   (integer) *order*
 
-    Numeric order or the desktop in Desktop Selection dialog. Number *1*
+    Numeric order of the desktop in the Desktop Selection dialog. Number *1*
     is reserved for major desktops that are displayed with description
     (*description\_id* is required). If the very same *order* is used
     for more than one desktops, they are sorted alphabetically.
 
 -   (string) *patterns*
 
-    Patterns to select for a particular desktop (whitespace-separated).
+    Software patterns to select for a particular desktop (whitespace-separated).
     These patterns are **optional** and will not be reported as an error by
-    the software proposal in case of missing.
+    the software proposal if missing.
 
 -   (string) *icon*
 
-    Icon used in Desktop Selection dialog, just a name of an icon from
-    \$current\_theme/icons/64x64/apps/ directory, without *.png* suffix.
+    Icon used in Desktop Selection dialog. This is just the name of an icon from
+    \$current\_theme/icons/64x64/apps/ directory, without the *.png* suffix.
 
 -   (string) *description\_id*
 
-    Text ID used for desktop selection label.
+    Text ID used for the desktop selection label.
 
 ### System Roles
 
 System Roles, if defined in the control file, are presented during
-the first stage of the installation. The user will select one of them
-and they will affect the proposed configuration of Partitioning and Software.
-It also allows to modify configuration of Systemd Services.
+the first stage of the installation. The user will select one of them,
+and they will affect the proposed configuration of partitioning and software.
+It also allows to modify the configuration of systemd services.
 
 A role can also define additional dialogs that are shown when a given role is
 selected. It is a common installation dialog with *Abort*, *Cancel* and *Next*
 buttons. It supports and uses all parameters from the **GetInstArgs** module.
-When going back, it will first show the last additional dialog and when going
-back through all additional dialogs, it will show again the roles selection.
+When going back, it will first show the last additional dialog; when going
+back through all additional dialogs, it will show the roles selection again.
 
-System roles by default preselect first defined entry unless user set it.
+System roles by default preselect the first defined entry, unless the user sets it.
 If the first role has an attribute *no_default* then no role will be
 preselected.
 
@@ -747,9 +746,9 @@ Example:
         <software>
           <default_patterns>base Minimal kvm_server</default_patterns>
         </software>
-        <!-- few additional dialogs needed for this role -->
+        <!-- a few additional dialogs are needed for this role -->
         <additional_dialogs>kvm_setup,virt_manager_setup </additional_dialogs>
-        <!-- enable few additional services -->
+        <!-- enable a few additional services -->
         <services config:type="list">
           <service>
             <name>salt-minion</name>
@@ -764,7 +763,7 @@ Example:
     <texts>
       <!-- Caption of the whole dialog -->
       <roles_caption><label>System Role</label></roles_caption>
-      <!-- Few lines of text above the selection of the roles -->
+      <!-- A few lines of text above the selection of the roles -->
       <roles_text>
         <label>System Roles are predefined use cases which adjust the system
 to be installed tailored for the selected scenario.
@@ -796,18 +795,18 @@ Will use LVM disk layout.</label>
 ```
 
 Each role has a short label and a few lines of description in the *texts*
-section, identified by a matching *id* element. The contents of *partitioning*
-and *software* are merged with the corresponding top-level definitions. See
+section, identified by a matching *id* element. The contents of *partitioning*,
+*software* and *globals* are merged with the corresponding top-level definitions. See
 [Partitioning](#partitioning) and [Software](#software).
 
-The *services* part currently supports only enabling additional services which
+The *services* part currently only supports enabling additional services which
 is done by specifying *service* with its *name* as seen in the example.
 
 ### System Scenarios
 
-System scenarios contain definition of dialog *inst\_scenarios* in the
-first stage installation. It offeres several base-scenarios but only one
-of them can be selected as the selected one.
+System scenarios contain the definition of the *inst\_scenarios* dialog in the
+first stage installation. It offers several base scenarios, but only one
+of them can be selected.
 
 Example of configured scenarios:
 
@@ -825,7 +824,7 @@ Example of configured scenarios:
                     <id>scenario_game_server</id>
                     <!-- space-separated list of patterns -->
                     <patterns>game_server-pattern high-load-server</patterns>
-                    <!--  plain icon filename (from 32x32 directory) without suffix -->
+                    <!--  plain icon filename (from the 32x32 directory) without suffix -->
                     <icon>yast-system</icon>
                 </system_scenario>
 
@@ -865,19 +864,19 @@ Example of configured scenarios:
     </productDefines>
 ```
 
-System scenarios are defined inside the *software* section. Section
-*system\_scenarios* consists of several *system\_scenario* definitions.
-Every single *system\_scenario* consists of:
+System scenarios are defined in the *software* section. The
+*system\_scenarios* section consists of several *system\_scenario* definitions.
+Each *system\_scenario* consists of:
 
 -   *id* - unique identificator of a selection.
 
 -   *patterns* - space-separated list of patterns covering the software
     scenario.
 
--   *icon* - plain icon filename (from 32x32 theme directory) without
+-   *icon* - plain icon filename (from the 32x32 theme directory) without
     suffix.
 
-Selection labels must be defined in [texts](#control_texts) section.
+Selection labels must be defined in the [texts](#control_texts) section.
 Scenarios *id*s are used as link identificators.
 
 ```xml
@@ -892,13 +891,13 @@ Scenarios *id*s are used as link identificators.
     </texts>
 ```
 
-Section *software* also contains optional *default\_system\_scenario*
-that defines id of the default scenario.
+The *software* section can also contain an optional *default\_system\_scenario*
+that defines the id of the default scenario.
 
-There are some important texts that has to be defined for the dialog
-layout
+There are some important texts that have to be defined for the dialog
+layout:
 
--   *scenarios\_caption* - used as a dialog caption for the Scenarios
+-   *scenarios\_caption* - used as a dialog caption for the "scenarios"
     dialog.
 
 -   *scenarios\_text* - used as an informative text describing the
@@ -907,12 +906,12 @@ layout
 ### Partitioning
 
 > **Note:** this section describes the format implemented by yast2-storage
-> and usually referred as "legacy format" by yast2-storage-ng. Products using
+> and is usually referred to as "legacy format" by yast2-storage-ng. Products using
 > yast2-storage-ng also support a more powerful and flexible specification for
 > the `<partitioning>` section. That new format is currently documented [in this
 > file](https://github.com/yast/yast-storage-ng/blob/master/doc/old_and_new_proposal.md).
 
-*proposal_settings_editable* (boolean, default _true_) is specifies if the user
+*proposal_settings_editable* (boolean, default _true_) specifies if the user
 should be able to change the configuration of the storage proposal in the
 installer: What filesystem to use for the root partition, if there should be a
 separate /home partition, if LVM or encryption should be used. For some
@@ -1094,8 +1093,8 @@ repository should be defined in the control file.
     <self_update_url>http://updates.opensuse.org/$arch/leap-42.1-installer-update</self_update_url>
 ```
 
-This is the fallback which is used when the self-update repository is not
-specified on the boot command line or when there registration module is not available.
+This is the fallback which is used if the self-update repository is not
+specified on the boot command line or if the registration module is not available.
 
 See more details in the [self-update documentation](./SELF_UPDATE.md).
 
@@ -1103,7 +1102,7 @@ See more details in the [self-update documentation](./SELF_UPDATE.md).
 
 It is possible to add hooks before and after any workflow step for
 further customization of the installed system and to to perform
-non-standard tasks during installation.
+non-standard tasks during the installation.
 
 Two additional elements define custom script hooks:
 
@@ -1111,7 +1110,7 @@ Two additional elements define custom script hooks:
 
 -   postscript: Executed after the module is called.
 
-Both script types accept two elements, the interpreter used (shell or
+Both script types accept two elements: The interpreter used (shell or
 perl) and the source of the scripts which is embedded in the XML file
 using CDATA sections to avoid confusion with the XML syntax. The
 following example shows how scripts can be embedded in the control file:
@@ -1138,7 +1137,7 @@ Some kind of texts can be, of course, placed in several parts of the
 control file but they wouldn't be translated. This control file section
 makes it possible to mark some texts for translation.
 
-The structure is rather easy:
+The structure is rather simple:
 
 ```xml
     <texts>
