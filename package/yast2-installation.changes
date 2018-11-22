@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Nov 21 17:42:44 UTC 2018 - Stefan Hundhammer <shundhammer@suse.com>
+
+- Documented new control.xml global parameter enable_local_users
+  (Fate#326447)
+- Improved English in the documentation of control.xml
+- 4.1.29
+
+-------------------------------------------------------------------
 Fri Nov 16 11:06:36 UTC 2018 - igonzalezsosa@suse.com
 
 - Prefer fbiterm whenever is possible for textmode installation
