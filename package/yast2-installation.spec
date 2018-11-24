@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.1.29
+Version:        4.1.30
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -254,3 +254,4 @@ systemctl enable YaST2-Firstboot.service
 %license COPYING
 %doc %{yast_docdir}/README.md
 %doc %{yast_docdir}/CONTRIBUTING.md
+%{_datadir}/icons/*

@@ -83,7 +83,6 @@ module Yast
         true,
         true
       )
-      Wizard.SetTitleIcon("yast-software")
 
       Builtins.y2milestone(
         "Umount result: %1, inst mode: %2",
@@ -153,7 +152,6 @@ module Yast
         false,
         false
       )
-      Wizard.SetTitleIcon("yast-software")
 
       UpdateWizardSteps()
       @ret = ProductControl.RunFrom(ProductControl.CurrentStep + 1, false)

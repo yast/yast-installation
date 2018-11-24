@@ -46,7 +46,6 @@ module Installation
       # helpful when testing all manually on a running system
       Yast::Wizard.CreateDialog if separate_wizard_needed?
 
-      Yast::Wizard.SetTitleIcon("yast-users")
       Yast::Wizard.EnableAbortButton
 
       ret = Yast::CWM.show(

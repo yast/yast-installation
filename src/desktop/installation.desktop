@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Categories=Settings;System;Qt;
+
+Icon=yast-installation
+Exec=
+
+Name=Installation
+Comment=Install system to the system
+StartupNotify=true

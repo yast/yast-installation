@@ -172,7 +172,6 @@ module Yast
         GetInstArgs.enable_next
       )
 
-      Wizard.SetTitleIcon("disk")
       RestoreButtons(GetInstArgs.enable_back, GetInstArgs.enable_next)
       Wizard.SetFocusToNextButton
     end

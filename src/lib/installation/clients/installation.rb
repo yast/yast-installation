@@ -70,7 +70,7 @@ module Yast
         # has next
         false
       )
-      Wizard.SetTitleIcon("yast-inst-mode")
+      Wizard.SetDesktopTitleAndIcon("installation")
       Wizard.DisableAbortButton
 
       @ret = nil

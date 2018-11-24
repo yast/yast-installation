@@ -69,7 +69,6 @@ module Yast
         false,
         false
       )
-      Wizard.SetTitleIcon("yast-inst-mode")
 
       # gh#86 No control file found
       if ProductControl.current_control_file.nil?

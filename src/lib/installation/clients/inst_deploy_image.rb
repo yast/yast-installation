@@ -148,8 +148,6 @@ module Yast
       # Reset libzypp
       Pkg.TargetFinish
 
-      Wizard.SetTitleIcon("yast-inst-mode")
-
       # in case of OEM image deployment, there is no disk available
       if oem_image
         target = InstData.image_target_disk

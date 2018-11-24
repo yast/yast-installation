@@ -283,7 +283,7 @@ module Yast
         )
       end
 
-      Wizard.SetTitleIcon("yast-release-notes")
+      Wizard.SetDesktopTitleAndIcon("release_notes")
       Wizard.SetFocusToNextButton
 
       # Default settings

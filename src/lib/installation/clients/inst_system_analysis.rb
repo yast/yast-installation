@@ -68,7 +68,6 @@ module Yast
       @inhibitors = nil
 
       Wizard.SetContents(_("Analyzing the Computer"), Empty(), "", false, false)
-      Wizard.SetTitleIcon("yast-controller")
 
       # Do hardware probing
       #

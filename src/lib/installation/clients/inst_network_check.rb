@@ -146,7 +146,6 @@ module Yast
         @enable_next,
         @enable_back
       )
-      Wizard.SetTitleIcon("yast-network")
 
       @ret = nil
 

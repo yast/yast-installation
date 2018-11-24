@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Sat Nov 24 19:40:43 UTC 2018 - Stasiek Michalski <hellcp@mailbox.org>
+
+- Provide icon with module (boo#1109310)
+- 4.1.30
+
+-------------------------------------------------------------------
 Wed Nov 21 17:42:44 UTC 2018 - Stefan Hundhammer <shundhammer@suse.com>
 
 - Documented new control.xml global parameter enable_local_users

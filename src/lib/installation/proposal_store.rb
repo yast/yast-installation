@@ -59,18 +59,6 @@ module Installation
       end
     end
 
-    # @return [String] like "yast-foo"
-    def icon
-      case @proposal_mode
-      when "network"
-        "yast-network"
-      when "hardware"
-        "yast-controller"
-      else
-        properties["icon"] || "yast-software"
-      end
-    end
-
     # @return [String] Richtext, the complete help text: a common intro + all
     #   individual parts.
     def help_text(current_tab = nil)

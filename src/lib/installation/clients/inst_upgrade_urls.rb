@@ -265,7 +265,6 @@ module Yast
         true,
         true
       )
-      Wizard.SetTitleIcon("yast-sw_source")
 
       nil
     end
@@ -624,7 +623,6 @@ module Yast
         false,
         false
       )
-      Wizard.SetTitleIcon("yast-sw_source")
 
       nil
     end

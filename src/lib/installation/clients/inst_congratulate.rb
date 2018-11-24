@@ -229,7 +229,6 @@ module Yast
         GetInstArgs.enable_back,
         GetInstArgs.enable_next
       )
-      Wizard.SetTitleIcon("yast-license")
 
       Wizard.SetNextButton(:next, Label.FinishButton)
       Wizard.RestoreAbortButton
