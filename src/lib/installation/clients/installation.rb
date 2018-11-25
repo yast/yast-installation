@@ -40,6 +40,7 @@ module Yast
       Yast.import "Report"
       Yast.import "Hooks"
       Yast.import "Linuxrc"
+      Yast.import "Mode"
       Yast.import "OSRelease"
       Yast.import "ProductFeatures"
       Yast.import "ProductControl"
@@ -70,7 +71,11 @@ module Yast
         # has next
         false
       )
-      Wizard.SetDesktopTitleAndIcon("installation")
+      if Mode.update
+        Wizard.SetDesktopTitleAndIcon("upgrade")
+      else
+        Wizard.SetDesktopTitleAndIcon("installation")
+      end
       Wizard.DisableAbortButton
 
       @ret = nil

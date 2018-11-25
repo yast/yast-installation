@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Categories=Settings;System;Qt;
+
+Icon=yast-upgrade
+Exec=
+
+Name=Upgrade
+Comment=Upgrade system to the newer version
+StartupNotify=true
