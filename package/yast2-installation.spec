@@ -254,4 +254,4 @@ systemctl enable YaST2-Firstboot.service
 %license COPYING
 %doc %{yast_docdir}/README.md
 %doc %{yast_docdir}/CONTRIBUTING.md
-%{_datadir}/icons/*
+%{yast_icondir}
