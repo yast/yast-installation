@@ -7,5 +7,6 @@ Icon=yast-upgrade
 Exec=/bin/true
 
 Name=Upgrade
+GenericName=System Upgrade
 Comment=Upgrade system to the newer version
 StartupNotify=true
