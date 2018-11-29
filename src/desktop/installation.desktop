@@ -1,9 +1,10 @@
 [Desktop Entry]
 Type=Application
-Categories=Settings;System;Qt;
+Hidden=true
+Categories=Settings;System;Documentation;
 
 Icon=yast-installation
-Exec=
+Exec=/bin/true
 
 Name=Installation
 Comment=Install system to the system

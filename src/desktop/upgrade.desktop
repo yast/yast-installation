@@ -1,9 +1,10 @@
 [Desktop Entry]
 Type=Application
-Categories=Settings;System;Qt;
+Hidden=true
+Categories=Settings;System;Documentation;
 
 Icon=yast-upgrade
-Exec=
+Exec=/bin/true
 
 Name=Upgrade
 Comment=Upgrade system to the newer version
