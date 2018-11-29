@@ -56,7 +56,7 @@ module Yast
       @caption = _("Initializing")
 
       Wizard.SetContents(@caption, @content, @helptext, false, false)
-      Wizard.SetTitleIcon("yast-software")
+      Wizard.SetDesktopIcon("installation")
 
       :auto
 

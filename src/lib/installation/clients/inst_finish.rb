@@ -82,9 +82,6 @@ module Yast
 
     def write
       stages.each_with_index do |stage, index|
-        if stage["icon"] && !stage["icon"].empty?
-          Wizard.SetTitleIcon(stage["icon"])
-        end
         current_stage_percent = 100 * index / stages.size
         SlideShow.StageProgress(
           current_stage_percent,
@@ -261,8 +258,6 @@ module Yast
     def setup_wizard
       Wizard.DisableBackButton
       Wizard.DisableNextButton
-
-      Wizard.SetTitleIcon("yast-sysconfig")
     end
 
     def setup_slide_show
@@ -458,22 +453,19 @@ module Yast
           "id"    => "copy_files",
           # progress stage
           "label" => _("Copy files to installed system"),
-          "steps" => copy_files_steps,
-          "icon"  => "pattern-basis"
+          "steps" => copy_files_steps
         },
         {
           "id"    => "save_config",
           # progress stage
           "label" => _("Save configuration"),
-          "steps" => save_config_steps,
-          "icon"  => "yast-desktop-select"
+          "steps" => save_config_steps
         },
         {
           "id"    => "save_settings",
           # progress stage
           "label" => _("Save installation settings"),
-          "steps" => save_settings_steps,
-          "icon"  => "yast-network"
+          "steps" => save_settings_steps
         },
         # bnc#860089: Save bootloader as late as possible
         # all different (config) files need to be written and copied first
@@ -481,8 +473,7 @@ module Yast
           "id"    => "install_bootloader",
           # progress stage
           "label" => _("Install boot manager"),
-          "steps" => install_bootloader_steps,
-          "icon"  => "yast-bootloader"
+          "steps" => install_bootloader_steps
         },
         {
           "id"    => "prepare_for_reboot",
@@ -503,9 +494,7 @@ module Yast
             "snapshots",
             "driver_update2",
             "umount"
-          ],
-          # bnc #438154
-          "icon"  => Mode.live_installation ? "yast-live-install-finish" : "yast-scripts"
+          ]
         }
       ]
     end

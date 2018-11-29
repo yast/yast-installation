@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+<linearGradient id="a" x1="8" x2="40" y1="20" y2="44" gradientTransform="translate(4,4)" gradientUnits="userSpaceOnUse">
+<stop stop-color="#8ff0a4" offset="0"/>
+<stop stop-color="#81dffe" offset="1"/>
+</linearGradient>
+</defs>
+<path d="m108 24c-8.864 0-16 7.136-16 16v48c0 8.864 7.136 16 16 16s16-7.136 16-16v-48-16h-16z" fill="#deddda"/>
+<path d="m4 16v15.941 4.0586 52.059c0 8.8314 7.11 15.941 15.941 15.941h60.059 12.059 15.941v-15.941-8.0586-44-4.0586-15.941h-15.941-72.117-15.941z" fill="#f6f5f4"/>
+<rect x="12" y="24" width="32" height="24" fill="url(#a)"/>
+<rect x="48" y="24" width="52" height="8" fill="#deddda"/>
+<rect x="48" y="36" width="52" height="4" fill="#deddda"/>
+<rect x="48" y="44" width="52" height="4" fill="#deddda"/>
+<rect x="12" y="56" width="44" height="8" fill="#deddda"/>
+<rect x="12" y="72" width="64" height="4" fill="#deddda"/>
+<rect x="80" y="72" width="24" height="4" fill="#deddda"/>
+<rect x="80" y="80" width="24" height="4" fill="#deddda"/>
+<rect x="80" y="88" width="20" height="4" fill="#deddda"/>
+<rect x="12" y="80" width="64" height="4" fill="#deddda"/>
+<rect x="12" y="88" width="64" height="4" fill="#deddda"/>
+<rect x="16" y="96" width="52" height="4" fill="#deddda"/>
+<path d="m64 39a22 22 0 0 0 -22 22 22 22 0 0 0 22 22 22 22 0 0 0 14.07 -5.1016l4.0313 4.0313a4.0004 4.0004 0 0 0 1.0703 3.8984l12 12a4.0004 4.0004 0 1 0 5.6562 -5.6562l-12-12a4.0004 4.0004 0 0 0 -2.8672 -1.2109 4.0004 4.0004 0 0 0 -1.0312 0.14064l-4.0391-4.0391a22 22 0 0 0 5.1094 -14.062 22 22 0 0 0 -22 -22zm0 4a18 18 0 0 1 18 18 18 18 0 0 1 -18 18 18 18 0 0 1 -18 -18 18 18 0 0 1 18 -18z" fill="#77767b"/>
+<path d="m64 36a22 22 0 0 0 -22 22 22 22 0 0 0 22 22 22 22 0 0 0 14.07 -5.1016l4.0313 4.0313a4.0004 4.0004 0 0 0 1.0703 3.8984l12 12a4.0004 4.0004 0 1 0 5.6562 -5.6562l-12-12a4.0004 4.0004 0 0 0 -2.8672 -1.2109 4.0004 4.0004 0 0 0 -1.0312 0.14064l-4.0391-4.0391a22 22 0 0 0 5.1094 -14.062 22 22 0 0 0 -22 -22zm0 4a18 18 0 0 1 18 18 18 18 0 0 1 -18 18 18 18 0 0 1 -18 -18 18 18 0 0 1 18 -18z" fill="#9a9996"/>
+<path d="m64 40a18 18 0 0 0 -18 18 18 18 0 0 0 18 18 18 18 0 0 0 18 -18 18 18 0 0 0 -18 -18z" fill="#3584e4" opacity=".2"/>
+<path d="m64 40a18 18 0 0 0 -18 18 18 18 0 0 0 5.2812 12.719l25.438-25.438a18 18 0 0 0 -12.719 -5.2812z" fill="#fff" opacity=".2"/>
+<path d="m108 104 8-80h-8z" opacity=".2"/>
+</svg>

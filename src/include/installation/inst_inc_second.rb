@@ -300,7 +300,6 @@ module Yast
         # TRANSLATORS: dialog help
         _("Network settings are being adjusted.")
       )
-      Wizard.SetTitleIcon("yast-network")
 
       Progress.NextStage
 

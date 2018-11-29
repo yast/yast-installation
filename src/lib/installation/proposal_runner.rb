@@ -765,7 +765,6 @@ module Installation
         Yast::GetInstArgs.enable_back, # have_back_button
         false
       )
-      set_icon
 
       if Yast::UI.WidgetExists(:_cwm_tab)
         Yast::UI.ChangeWidget(Id(:_cwm_tab), :CurrentItem, @current_tab)
@@ -817,12 +816,6 @@ module Installation
       )
 
       !@store.descriptions.empty?
-    end
-
-    def set_icon
-      Yast::Wizard.SetTitleIcon(@store.icon)
-
-      nil
     end
 
     def assign_next_button

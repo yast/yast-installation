@@ -117,7 +117,6 @@ module Yast
         true,
         true
       )
-      Wizard.SetTitleIcon("yast-software")
 
       SelectAppropriateRadioButton()
 
