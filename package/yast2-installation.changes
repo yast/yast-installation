@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Thu Dec  6 12:59:03 UTC 2018 - lslezak@suse.cz
+
+- Improved saving y2logs during installation to use the /mnt/tmp
+  space instead of the RAM disk to avoid possible crash (out of
+  memory) (bsc#1118643)
+- 4.1.31
+
+-------------------------------------------------------------------
 Sat Nov 24 19:40:43 UTC 2018 - Stasiek Michalski <hellcp@mailbox.org>
 
 - Provide icon with module (boo#1109310)
