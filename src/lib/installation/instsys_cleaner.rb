@@ -29,13 +29,15 @@ module Installation
 
     Yast.import "Mode"
     Yast.import "Stage"
+    Yast.import "UI"
 
     # memory limit for removing the kernel modules from inst-sys (1GB)
     KERNEL_MODULES_WATERLINE = 1 << 30
     KERNEL_MODULES_MOUNT_POINT = "/parts/mp_0000".freeze
 
-    # memory limit for removing the libzypp metadata cache (640MB)
-    LIBZYPP_WATERLINE = 640 << 20
+    # memory limit for removing the libzypp metadata cache (<640MB in text mode, <1GB in GUI)
+    LIBZYPP_WATERLINE_TUI = 640 << 20
+    LIBZYPP_WATERLINE_GUI = 1 << 30
     # the cache in inst-sys, the target system cache is at /mnt/...,
     # in upgrade mode the target cache is kept
     LIBZYPP_CACHE_PATH = "/var/cache/zypp/raw".freeze
@@ -47,16 +49,21 @@ module Installation
       "*-deltainfo.xml.gz",
       "*-primary.xml.gz",
       "*-susedata.xml.gz",
+      "*-susedata.*.xml.gz",
       "*-susedinfo.xml.gz",
       "*-updateinfo.xml.gz",
       # product licenses (already confirmed)
       "*-license-*.tar.gz",
       # application meta data
       "*-appdata.xml.gz",
-      "appdata-icons.tar.gz",
+      "*-appdata-icons.tar.gz",
       "appdata-ignore.xml.gz",
       "appdata-screenshots.tar"
     ].freeze
+
+    def self.libzypp_waterline
+      Yast::UI.TextMode ? LIBZYPP_WATERLINE_TUI : LIBZYPP_WATERLINE_GUI
+    end
 
     # Remove some files in inst-sys to have more free space if the system
     # has too low memory. If the system has enough memory keep everything in place.
@@ -74,7 +81,7 @@ module Installation
 
       # run the cleaning actions depending on the available memory
       unmount_kernel_modules if memory < KERNEL_MODULES_WATERLINE
-      cleanup_zypp_cache if memory < LIBZYPP_WATERLINE
+      cleanup_zypp_cache if memory < libzypp_waterline
     end
 
     ########################## Internal methods ################################
