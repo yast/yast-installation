@@ -132,6 +132,16 @@ The URL of the update repository is evaluated in this order:
    </globals>
    ```
 
+   On the other hand, the product `version` must be also hard-coded in the
+   `control.xml` for the installation media without repositories (fate#325482),
+   using the `/globals/self_update_version` XML node.
+
+   ```xml
+   <globals>
+     <self_update_version>15</self_update_version>
+   </globals>
+   ```
+
 4. Hard-coded in the `control.xml` file on the installation medium (thus it
    depends on the base product):
 
