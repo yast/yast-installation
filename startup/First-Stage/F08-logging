@@ -6,23 +6,41 @@ log "======================="
 # 8) setup default logfile size
 #---------------------------------------------
 
-# log size defined by user
-Y2MAXLOGSIZE_INITIAL=$Y2MAXLOGSIZE
+# min default log size: 1MB
+Y2LOG_DEFAULT_MIN_SIZE=1000
 
-test -z "$Y2MAXLOGSIZE" && export Y2MAXLOGSIZE=100
-test -z "$Y2MAXLOGNUM"  && export Y2MAXLOGNUM=5
+# the max default log size depends on the environment
+# NOTE: y2-core defines 10MB default in installed system
+if [ -z "$Y2DEBUG" ]; then
+    # max default log size: 20MB
+    Y2LOG_DEFAULT_MAX_SIZE=20000
+else
+    # with Y2DEBUG allow bigger log: 40MB
+    Y2LOG_DEFAULT_MAX_SIZE=40000
+fi
 
 #=============================================
-# 8.1) setup logfile size as 1/3 of FreeRam
+# 8.1) setup logfile size as 1/4 of FreeRam
+#      but not more/less than the limits
 #---------------------------------------------
 
-# log size not defined by user
-if [ -z "$Y2MAXLOGSIZE_INITIAL" ]; then
-    USE=`awk '/^MemFree:/{ n=2 ; printf "%d\n", $n/3 }' /proc/meminfo`
-    if [ "$USE" -gt "$Y2MAXLOGSIZE" ];then
-	    export Y2MAXLOGSIZE=$USE
+if [ -z "$Y2MAXLOGSIZE" ]; then
+    USE=$(awk '/^MemFree:/{ n=2 ; printf "%d\n", $n/4 }' /proc/meminfo)
+    log "\tComputed default log size: $USE kB"
+    # more than the minimum default
+    if [ "$USE" -gt "$Y2LOG_DEFAULT_MIN_SIZE" ]; then
+        # more than the maximum default
+        if [ "$USE" -gt "$Y2LOG_DEFAULT_MAX_SIZE" ]; then
+	        export Y2MAXLOGSIZE=$Y2LOG_DEFAULT_MAX_SIZE
+        else
+	        export Y2MAXLOGSIZE=$USE
+        fi
+    else
+        export Y2MAXLOGSIZE=$Y2LOG_DEFAULT_MIN_SIZE
     fi
 fi
+
+test -z "$Y2MAXLOGNUM" && export Y2MAXLOGNUM=5
 
 # fate#302166: store y2debug messages and log them on crash
 export Y2DEBUGONCRASH=1
