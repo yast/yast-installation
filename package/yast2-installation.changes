@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Fri Dec  7 14:45:24 UTC 2018 - lslezak@suse.cz
+
+- More aggresive inst-sys cleaner, clean the libzypp cache
+  when running in graphical mode with less than 1GB RAM
+  (in text mode keep the current limit 640MB), this avoids
+  crashes on low memory systems (bsc#1118643)
+- Also adapted the computing the default y2log size - use
+  smaller size in low memory systems, on the other hand limit the
+  maximum size to avoid huge log files
+- 4.1.32
+
+-------------------------------------------------------------------
 Thu Dec  6 12:59:03 UTC 2018 - lslezak@suse.cz
 
 - Improved saving y2logs during installation to use the /mnt/tmp
