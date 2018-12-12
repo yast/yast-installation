@@ -134,24 +134,23 @@ module Yast
       nil
     end
 
-    ZYPP_DATA = ["/var/lib/zypp/cache", "/var/lib/zypp/db"]
+    ZYPP_DATA = ["/var/lib/zypp/cache", "/var/lib/zypp/db"].freeze
     def InitFirstStageInstallationSystem
       # in the initial stage, there might be some ZYPP data from the
       # previously failed installation
       # @see bugzilla #267763
       if Stage.initial
         ZYPP_DATA.each do |zypp_data_item|
-          if FileUtils.Exists(zypp_data_item)
-            Builtins.y2warning(
-              "Directory '%1' exists, removing...",
-              String.Quote(zypp_data_item)
-            )
-            bashcmd = "/usr/bin/rm -rf #{zypp_data_item.shellescape}"
-            Builtins.y2milestone(
-              "Result: %1",
-              WFM.Execute(path(".local.bash_output"), bashcmd)
-            )
-          end
+          next unless FileUtils.Exists(zypp_data_item)
+          Builtins.y2warning(
+            "Directory '%1' exists, removing...",
+            String.Quote(zypp_data_item)
+          )
+          bashcmd = "/usr/bin/rm -rf #{zypp_data_item.shellescape}"
+          Builtins.y2milestone(
+            "Result: %1",
+            WFM.Execute(path(".local.bash_output"), bashcmd)
+          )
         end
       end
 

@@ -131,7 +131,7 @@ module Yast
       WFM.Execute(
         path(".local.bash"),
         # BNC #596938: Files / dirs might be symlinks
-        "/usr/bin/cp -a --recursive --dereference /var/lib/hardware #{destdir.shellescape}",
+        "/usr/bin/cp -a --recursive --dereference /var/lib/hardware #{destdir.shellescape}"
       )
     end
 
