@@ -21,6 +21,8 @@
 
 require "installation/minimal_installation"
 
+require "shellwords"
+
 Yast.import "UI"
 Yast.import "Pkg"
 
@@ -161,7 +163,7 @@ module Yast
       # run new kernel via kexec instead of reboot
 
       # command for reading kernel_params
-      cmd = "/usr/bin/ls '#{String.Quote(Directory.vardir)}/kexec_done' | /usr/bin/tr -d '\n'"
+      cmd = "/usr/bin/ls #{Directory.vardir.shellescape}/kexec_done | /usr/bin/tr -d '\n'"
       log.info "Checking flag of successful loading kernel via command #{cmd}"
 
       out = WFM.Execute(path(".local.bash_output"), cmd)

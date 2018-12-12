@@ -39,7 +39,7 @@ module Yast
       @out = SCR.Execute(
         path(".target.bash_output"),
         "/usr/sbin/hwinfo --pci --block --mouse --keyboard --isdn --save-config=all\n" \
-          "[ -d /var/lib/hardware/udi/org/freedesktop/Hal/devices ] && /usr/bin/perl -pi -e \"s/hwinfo.configured = 'new'/hwinfo.configured = 'no'/\" /var/lib/hardware/udi/org/freedesktop/Hal/devices/*"
+          "/usr/bin/test -d /var/lib/hardware/udi/org/freedesktop/Hal/devices && /usr/bin/perl -pi -e \"s/hwinfo.configured = 'new'/hwinfo.configured = 'no'/\" /var/lib/hardware/udi/org/freedesktop/Hal/devices/*"
       )
 
       Builtins.y2milestone("Result: %1", @out)

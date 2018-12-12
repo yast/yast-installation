@@ -146,11 +146,8 @@ module Yast
             "Directory '%1' exists, removing...",
             String.Quote(zypp_data_item)
           )
-          bashcmd = "/usr/bin/rm -rf #{zypp_data_item.shellescape}"
-          Builtins.y2milestone(
-            "Result: %1",
-            WFM.Execute(path(".local.bash_output"), bashcmd)
-          )
+          result = WFM.Execute(path(".local.bash_output"), "/usr/bin/rm -rf #{zypp_data_item.shellescape}")
+          Builtins.y2milestone("Result: #{result.inspect}")
         end
       end
 
