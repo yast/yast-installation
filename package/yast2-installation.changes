@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Dec 12 15:26:26 UTC 2018 - Josef Reidinger <jreidinger@suse.com>
+
+- always use absolute path to binaries (bsc#1118291)
+- properly escape shell arguments (bsc#1118291)
+- 4.1.33
+
+-------------------------------------------------------------------
 Fri Dec  7 14:45:24 UTC 2018 - lslezak@suse.cz
 
 - More aggresive inst-sys cleaner, clean the libzypp cache
