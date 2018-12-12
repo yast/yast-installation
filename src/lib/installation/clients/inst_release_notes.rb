@@ -28,7 +28,9 @@
 #
 # Display release notes.
 #
-# $Id$
+
+require "shellwords"
+
 module Yast
   class InstReleaseNotesClient < Client
     def main
@@ -80,11 +82,9 @@ module Yast
           FileUtils.IsDirectory(@basedirectory)
         # sort release notes according to time (newest first),
         # so the latest product is selected in the default tab (bnc#827590)
-        @out = Convert.to_map(
-          SCR.Execute(
-            path(".target.bash_output"),
-            Builtins.sformat("ls -t1 '%1'", @basedirectory)
-          )
+        @out = SCR.Execute(
+          path(".target.bash_output"),
+          "/usr/bin/ls -t1 #{@basedirectory.shellescape}"
         )
         @readproducts = Builtins.splitstring(
           Ops.get_string(@out, "stdout", ""),

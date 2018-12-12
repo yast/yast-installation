@@ -23,6 +23,8 @@ require "fileutils"
 require "installation/ssh_importer"
 require "installation/finish_client"
 
+require "shellwords"
+
 Yast.import "Pkg"
 Yast.import "Arch"
 Yast.import "Linuxrc"
@@ -117,11 +119,7 @@ module Yast
         log.info "Copying '#{profile_path}' to #{target_dir}"
         WFM.Execute(
           path(".local.bash"),
-          Builtins.sformat(
-            "/bin/cp -a '%1' '%2/'",
-            String.Quote(profile_path),
-            String.Quote(target_dir)
-          )
+          "/usr/bin/cp -a #{profile_path.shellescape} #{target_dir.shellescape}/"
         )
       end
     end
@@ -132,11 +130,8 @@ module Yast
       ::FileUtils.mkdir_p(destdir)
       WFM.Execute(
         path(".local.bash"),
-        Builtins.sformat(
-          # BNC #596938: Files / dirs might be symlinks
-          "/bin/cp -a --recursive --dereference '/var/lib/hardware' '%1'",
-          ::Yast::String.Quote(destdir)
-        )
+        # BNC #596938: Files / dirs might be symlinks
+        "/usr/bin/cp -a --recursive --dereference /var/lib/hardware #{destdir.shellescape}",
       )
     end
 
@@ -186,7 +181,7 @@ module Yast
       # Copy all udev files, but do not overwrite those that already exist
       # on the system bnc#860089
       # They are (also) needed for initrd bnc#666079
-      cmd = "cp -avr --no-clobber #{UDEV_RULES_DIR}/. #{udev_rules_destdir}"
+      cmd = "/usr/bin/cp -avr --no-clobber #{UDEV_RULES_DIR}/. #{udev_rules_destdir.shellescape}"
       log.info "Copying all udev rules from #{UDEV_RULES_DIR} to #{udev_rules_destdir}"
       cmd_out = WFM.Execute(path(".local.bash_output"), cmd)
 
@@ -252,10 +247,7 @@ module Yast
       log.info "Copying VNC settings"
       WFM.Execute(
         path(".local.bash"),
-        Builtins.sformat(
-          "/bin/cp -a '/root/.vnc' '%1/root/'",
-          ::Yast::String.Quote(installation_destination)
-        )
+        "/bin/cp -a /root/.vnc #{installation_destination.shellescape}/root/"
       )
     end
 
