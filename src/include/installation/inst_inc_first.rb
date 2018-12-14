@@ -26,6 +26,9 @@
 #
 # $Id$
 #
+
+require "shellwords"
+
 module Yast
   module InstallationInstIncFirstInclude
     def initialize_installation_inst_inc_first(include_target)
@@ -131,25 +134,20 @@ module Yast
       nil
     end
 
+    ZYPP_DATA = ["/var/lib/zypp/cache", "/var/lib/zypp/db"].freeze
     def InitFirstStageInstallationSystem
       # in the initial stage, there might be some ZYPP data from the
       # previously failed installation
       # @see bugzilla #267763
       if Stage.initial
-        zypp_data = ["/var/lib/zypp/cache", "/var/lib/zypp/db"]
-
-        Builtins.foreach(zypp_data) do |zypp_data_item|
-          if FileUtils.Exists(zypp_data_item)
-            Builtins.y2warning(
-              "Directory '%1' exists, removing...",
-              String.Quote(zypp_data_item)
-            )
-            bashcmd = Builtins.sformat("/usr/bin/rm -rf '%1'", zypp_data_item)
-            Builtins.y2milestone(
-              "Result: %1",
-              WFM.Execute(path(".local.bash_output"), bashcmd)
-            )
-          end
+        ZYPP_DATA.each do |zypp_data_item|
+          next unless FileUtils.Exists(zypp_data_item)
+          Builtins.y2warning(
+            "Directory '%1' exists, removing...",
+            String.Quote(zypp_data_item)
+          )
+          result = WFM.Execute(path(".local.bash_output"), "/usr/bin/rm -rf #{zypp_data_item.shellescape}")
+          Builtins.y2milestone("Result: #{result.inspect}")
         end
       end
 

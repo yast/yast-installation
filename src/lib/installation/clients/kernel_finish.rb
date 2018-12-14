@@ -85,7 +85,7 @@ module Yast
         # over lcs device on s390 emulated eth device get lost
         SCR.Execute(
           path(".target.bash"),
-          "/sbin/udevadm trigger --action=change; /sbin/udevadm settle --timeout=60"
+          "/usr/bin/udevadm trigger --action=change; /usr/bin/udevadm settle --timeout=60"
         )
       else
         Builtins.y2error("unknown function: %1", @func)

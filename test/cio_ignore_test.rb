@@ -137,7 +137,7 @@ describe ::Installation::CIOIgnoreFinish do
       end
 
       describe "Device blacklisting is disabled" do
-        it "do nothing" do
+        it "does nothing" do
           ::Installation::CIOIgnore.instance.enabled = false
 
           expect(Yast::SCR).to_not receive(:Execute)
@@ -148,13 +148,13 @@ describe ::Installation::CIOIgnoreFinish do
       end
 
       describe "Device blacklisting is enabled" do
-        it "call `cio_ignore --unused --purge`" do
+        it "calls `cio_ignore --unused --purge`" do
           ::Installation::CIOIgnore.instance.enabled = true
 
           expect(Yast::SCR).to receive(:Execute)
             .with(
               ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
-              "cio_ignore --unused --purge"
+              "/sbin/cio_ignore --unused --purge"
             )
             .once
             .and_return("exit" => 0, "stdout" => "", "stderr" => "")
@@ -169,7 +169,7 @@ describe ::Installation::CIOIgnoreFinish do
           expect(Yast::SCR).to receive(:Execute)
             .with(
               ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
-              "cio_ignore --unused --purge"
+              "/sbin/cio_ignore --unused --purge"
             )
             .once
             .and_return("exit" => 1, "stdout" => "", "stderr" => stderr)
@@ -196,7 +196,7 @@ Devices that are not ignored:
           expect(Yast::SCR).to receive(:Execute)
             .with(
               ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
-              "cio_ignore -L"
+              "/sbin/cio_ignore -L"
             )
             .once
             .and_return("exit" => 0, "stdout" => test_output, "stderr" => "")
@@ -214,7 +214,7 @@ Devices that are not ignored:
           expect(Yast::SCR).to receive(:Execute)
             .with(
               ::Installation::CIOIgnoreFinish::YAST_BASH_PATH,
-              "cio_ignore -L"
+              "/sbin/cio_ignore -L"
             )
             .once
             .and_return("exit" => 1, "stdout" => "", "stderr" => "FAIL")

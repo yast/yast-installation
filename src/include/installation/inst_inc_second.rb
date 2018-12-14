@@ -26,6 +26,9 @@
 #
 # $Id$
 #
+
+require "shellwords"
+
 module Yast
   module InstallationInstIncSecondInclude
     def initialize_installation_inst_inc_second(include_target)
@@ -406,11 +409,11 @@ module Yast
       end
       SCR.Execute(
         path(".target.bash"),
-        Builtins.sformat("touch %1", Installation.file_inst_failed)
+        "/usr/bin/touch #{Installation.file_inst_failed.shellescape}"
       )
       SCR.Execute(
         path(".target.bash"),
-        Builtins.sformat("touch %1", Installation.run_yast_at_boot)
+        "/usr/bin/touch #{Installation.run_yast_at_boot.shellescape}"
       )
 
       :next
@@ -436,7 +439,7 @@ module Yast
     def EnableAutomaticModuleProbing
       WFM.Execute(
         path(".local.bash"),
-        "/bin/echo \"/sbin/modprobe\" >/proc/sys/kernel/modprobe"
+        "/usr/bin/echo \"/sbin/modprobe\" >/proc/sys/kernel/modprobe"
       )
 
       nil
@@ -505,11 +508,11 @@ module Yast
       )
       SCR.Execute(
         path(".target.bash"),
-        Builtins.sformat("touch %1", Installation.run_yast_at_boot)
+        Builtins.sformat("/usr/bin/touch %1", Installation.run_yast_at_boot)
       )
       SCR.Execute(
         path(".target.bash"),
-        Builtins.sformat("touch %1", Installation.file_inst_aborted)
+        Builtins.sformat("/usr/bin/touch %1", Installation.file_inst_aborted)
       )
 
       nil
@@ -559,7 +562,7 @@ module Yast
         Builtins.y2milestone("Creating %1 file", Installation.reboot_file)
         SCR.Execute(
           path(".target.bash"),
-          Builtins.sformat("touch %1", Installation.reboot_file)
+          "/usr/bin/touch #{Installation.reboot_file.shellescape}"
         )
         # bnc #432005
         Builtins.y2milestone("YaST needs rebooting")
@@ -568,7 +571,7 @@ module Yast
         Builtins.y2milestone("Creating %1 file", Installation.restart_file)
         SCR.Execute(
           path(".target.bash"),
-          Builtins.sformat("touch %1", Installation.restart_file)
+          "/usr/bin/touch #{Installation.restart_file}"
         )
       end
 

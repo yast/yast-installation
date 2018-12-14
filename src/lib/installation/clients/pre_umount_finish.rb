@@ -35,14 +35,14 @@ module Installation
       # bugzilla #326478
       # some processes might be still running...
       cmd_run = WFM.Execute(path(".local.bash_output"),
-        "fuser -v '#{String.Quote(Installation.destdir)}' 2>&1")
+        "/usr/bin/fuser -v '#{String.Quote(Installation.destdir)}' 2>&1")
 
       log.info("These processes are still running at " \
         "#{Installation.destdir} -> #{cmd_run}")
 
       unless Misc.boot_msg.empty?
         # just a beep
-        SCR.Execute(path(".target.bash"), "/bin/echo -e 'a'")
+        SCR.Execute(path(".target.bash"), "/usr/bin/echo -e 'a'")
       end
 
       # creates or removes the runme_at_boot file (for second stage)
@@ -56,7 +56,7 @@ module Installation
       # Remove content of /run which has been created by the pre/post
       # install scripts while RPM installation and not needed anymore.
       # (bnc#1071745)
-      SCR.Execute(path(".target.bash"), "/bin/rm -rf /run/*")
+      SCR.Execute(path(".target.bash"), "/usr/bin/rm -rf /run/*")
 
       # Release all sources, they might be still mounted
       Pkg.SourceReleaseAll
@@ -102,6 +102,8 @@ module Installation
       poolsize
     end
 
+    SERVICE_BIN = "/usr/sbin/haveged".freeze
+    RANDOM_PATH = "/dev/urandom".freeze
     # Preserves the current randomness state, BNC #692799
     def preserve_randomness_state
       if Mode.update
@@ -111,22 +113,20 @@ module Installation
 
       log.info "Saving the current randomness state..."
 
-      service_bin = "/usr/sbin/haveged"
-      random_path = "/dev/urandom"
       store_to = "#{Installation.destdir}/var/lib/misc/random-seed"
 
       # Copy the current state of random number generator to the installed system
       if local_command(
-        "dd if='#{String.Quote(random_path)}' bs=#{read_poolsize} count=1 of='#{String.Quote(store_to)}'"
+        "/usr/bin/dd if='#{String.Quote(RANDOM_PATH)}' bs='#{String.Quote(read_poolsize)}' count=1 of='#{String.Quote(store_to)}'"
       )
-        log.info "State of #{random_path} has been successfully copied to #{store_to}"
+        log.info "State of #{RANDOM_PATH} has been successfully copied to #{store_to}"
       else
-        log.info "Cannot store #{random_path} state to #{store_to}"
+        log.info "Cannot store #{RANDOM_PATH} state to #{store_to}"
       end
 
       # stop the random number generator service
-      log.info "Stopping #{service_bin} service"
-      local_command("killproc -TERM #{service_bin}")
+      log.info "Stopping #{SERVICE_BIN} service"
+      local_command("/sbin/killproc -TERM '#{String.Quote(SERVICE_BIN)}'")
     end
   end
 end

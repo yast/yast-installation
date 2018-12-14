@@ -21,6 +21,8 @@
 
 require "installation/minimal_installation"
 
+require "shellwords"
+
 Yast.import "UI"
 Yast.import "Pkg"
 
@@ -161,7 +163,7 @@ module Yast
       # run new kernel via kexec instead of reboot
 
       # command for reading kernel_params
-      cmd = "ls '#{String.Quote(Directory.vardir)}/kexec_done' |tr -d '\n'"
+      cmd = "/usr/bin/ls #{Directory.vardir.shellescape}/kexec_done | /usr/bin/tr -d '\n'"
       log.info "Checking flag of successful loading kernel via command #{cmd}"
 
       out = WFM.Execute(path(".local.bash_output"), cmd)
@@ -175,7 +177,7 @@ module Yast
       end
 
       # HACK: using kexec switch to console 1
-      cmd = "chvt 1"
+      cmd = "/usr/bin/chvt 1"
       log.info "Switch to console 1 via command: #{cmd}"
       # switch to console 1
       out = WFM.Execute(path(".local.bash_output"), cmd)
@@ -241,7 +243,7 @@ module Yast
       cmd = Convert.to_map(
         WFM.Execute(
           path(".local.bash_output"),
-          "tail -n 200 /var/log/YaST2/y2log | grep ' <\\(3\\|5\\)> '"
+          "/usr/bin/tail -n 200 /var/log/YaST2/y2log | /usr/bin/grep ' <\\(3\\|5\\)> '"
         )
       )
 

@@ -163,8 +163,8 @@ module Yast
       @useful_devices.each do |device|
         log.info "Mounting #{device} to #{mnt_tmpdir}"
         already_mounted = Builtins.sformat(
-          "grep '[\\t ]%1[\\t ]' /proc/mounts",
-          mnt_tmpdir
+          "/usr/bin/grep '[\\t ]%1[\\t ]' /proc/mounts",
+          String.Quote(mnt_tmpdir)
         )
         am = SCR.Execute(path(".target.bash_output"), already_mounted)
         if am["exit"] == 0 && !am["stdout"].to_s.empty?
@@ -182,7 +182,7 @@ module Yast
         # bnc #427879
         exec = SCR.Execute(
           path(".target.bash_output"),
-          Builtins.sformat("fuser -v '%1' 2>&1", String.Quote(mnt_tmpdir))
+          Builtins.sformat("/usr/bin/fuser -v '%1' 2>&1", String.Quote(mnt_tmpdir))
         )
         log.error("Processes in #{mnt_tmpdir}: #{exec}") unless exec["stdout"].to_s.empty?
         # umounting

@@ -69,7 +69,7 @@ module Yast
 
       @live_size = 0
       if Mode.live_installation
-        @cmd = Builtins.sformat("df -P -k %1", "/")
+        @cmd = "/usr/bin/df -P -k /"
         Builtins.y2milestone("Executing %1", @cmd)
         @out = Convert.to_map(SCR.Execute(path(".target.bash_output"), @cmd))
         Builtins.y2milestone("Output: %1", @out)
@@ -84,16 +84,6 @@ module Yast
             "0"
           )
         )
-
-        # Using df-based progress estimation, is rather faster
-        #    may be less precise
-        #    see bnc#555288
-        #     string cmd = sformat ("du -x -B 1024 -s %1", "/");
-        #     y2milestone ("Executing %1", cmd);
-        #     map out = (map)SCR::Execute (.target.bash_output, cmd);
-        #     y2milestone ("Output: %1", out);
-        #     string total_str = out["stdout"]:"";
-        #     live_size = tointeger (total_str);
         @live_size = 1024 * 1024 if @live_size == 0 # 1 GB is a good approximation
       end
 

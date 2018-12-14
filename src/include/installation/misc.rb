@@ -33,6 +33,9 @@
 #
 # $Id$
 #
+
+require "shellwords"
+
 module Yast
   module InstallationMiscInclude
     def initialize_installation_misc(_include_target)
@@ -59,15 +62,11 @@ module Yast
     end
 
     def InjectFile(filename)
-      command = "/bin/cp #{filename} #{Installation.destdir}#{filename}"
+      command = "/bin/cp #{filename.shellescape} #{File.join(Installation.destdir, filename).shellescape}"
       Builtins.y2milestone("InjectFile: <%1>", filename)
       Builtins.y2debug("Inject command: #{command}")
       WFM.Execute(path(".local.bash"), command)
       nil
-
-      # this just needs too much memory
-      # byteblock copy_buffer = WFM::Read (.local.byte, filename);
-      # return SCR::Write (.target.byte, filename, copy_buffer);
     end
 
     def UpdateWizardSteps
@@ -270,12 +269,12 @@ module Yast
         # problems with keyboard in xen
         if SCR.Read(path(".probe.xen")) == true
           Builtins.y2milestone("XEN in X detected: running xset")
-          WFM.Execute(path(".local.bash"), "xset r off; xset m 1")
+          WFM.Execute(path(".local.bash"), "/usr/bin/xset r off; /usr/bin/xset m 1")
           # bnc #433338
           # enabling key-repeating
         else
           Builtins.y2milestone("Enabling key-repeating")
-          WFM.Execute(path(".local.bash"), "xset r on")
+          WFM.Execute(path(".local.bash"), "/usr/bin/xset r on")
         end
       end
 
@@ -293,10 +292,8 @@ module Yast
       WFM.Execute(
         path(".local.bash"),
         Builtins.sformat(
-          "sed --in-place '/^%1: .*/D' %3; echo '%1: %2' >> %3",
-          "SecondStageRequired",
-          scst_required == false ? "0" : "1",
-          "/etc/install.inf"
+          "/usr/bin/sed --in-place '/^SecondStageRequired: .*/D' /etc/install.inf; /usr/bin/echo 'SecondStageRequired: %1' >> /etc/install.inf",
+          scst_required == false ? "0" : "1"
         )
       )
       Linuxrc.ResetInstallInf

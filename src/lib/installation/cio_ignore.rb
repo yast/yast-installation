@@ -163,7 +163,7 @@ module Installation
       when "Write"
         return nil unless CIOIgnore.instance.enabled
 
-        res = Yast::SCR.Execute(YAST_BASH_PATH, "cio_ignore --unused --purge")
+        res = Yast::SCR.Execute(YAST_BASH_PATH, "/sbin/cio_ignore --unused --purge")
 
         log.info "result of cio_ignore call: #{res.inspect}"
 
@@ -196,7 +196,7 @@ module Installation
     ACTIVE_DEVICES_FILE = "/boot/zipl/active_devices.txt".freeze
     def store_active_devices
       Yast.import "Installation"
-      res = Yast::SCR.Execute(YAST_BASH_PATH, "cio_ignore -L")
+      res = Yast::SCR.Execute(YAST_BASH_PATH, "/sbin/cio_ignore -L")
       log.info "active devices: #{res}"
 
       raise "cio_ignore -L failed with #{res["stderr"]}" if res["exit"] != 0
