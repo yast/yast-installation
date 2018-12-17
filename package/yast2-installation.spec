@@ -42,9 +42,9 @@ BuildRequires:  yast2-xml
 BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
 
-# Yast2::Systemd::Service
-BuildRequires:  yast2 >= 4.1.3
-Requires:       yast2 >= 4.1.3
+# Yast::Execute.stdout
+BuildRequires:  yast2 >= 4.1.42
+Requires:       yast2 >= 4.1.42
 
 # Y2Packager::SelfUpdateAddonRepo
 BuildRequires:	yast2-packager >= 4.1.5
