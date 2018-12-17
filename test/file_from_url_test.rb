@@ -43,7 +43,11 @@ describe Yast::Transfer::FileFromUrl do
       # the local/target mess was last modified in
       # https://github.com/yast/yast-autoinstallation/commit/69f1966dd1456301a69102c6d3bacfe7c9f9dc49
       # for https://bugzilla.suse.com/show_bug.cgi?id=829265
+
+      allow(Yast::Execute).to receive(:new).and_return(execute_object)
     end
+
+    let(:execute_object) { Yast::Execute.new }
 
     it "returns false for unknown scheme" do
       expect(subject.Get("money_transfer_protocol",
@@ -105,8 +109,8 @@ describe Yast::Transfer::FileFromUrl do
           }
 
           mount_points.each do |device, mp|
-            expect(subject).to receive(:`)
-              .with("/usr/bin/findmnt --first-only --noheadings --output=target #{device}")
+            expect(execute_object).to receive(:stdout)
+              .with("/usr/bin/findmnt", "--first-only", "--noheadings", "--output=target", device)
               .and_return(mp.first)
           end
 
