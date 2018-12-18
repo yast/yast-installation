@@ -80,6 +80,12 @@ options:
     boot and before/after every step in the workflow. Scripting
     languages supported during installation are currently Shell, Perl.
 
+-   Configuration Management
+
+    The yast2-configuration-management module offers Salt integration
+    and is possible to customize and run the behaviour of such a module
+    during installation.
+
 Implementation
 --------------
 
@@ -1159,6 +1165,50 @@ The structure is rather simple:
 
 Translated texts can be got using *ProductControl.GetTranslatedText
 (text\_id)* call.
+
+### Configuration Management
+
+This section allows to define the behavior for the configuration management integration. This
+integration is only supported in yast2-firstboot. If you want to use this integration, please, do
+not forget to add the `firstboot_configuration_management` in the required workflow.
+
+*type* (string) Configuration Management System. Currently only `salt` is supported.
+
+*master* (string) Host name or IP address of the configuration management master.
+
+*auth_attempts* (integer) Number of attempts when trying to connect to the master server.
+
+*auth_time_out* (integer) Time between attempts to connect to the master server.
+
+*keys_url* (string) Path to an HTTP server, hard disk, USB drive or similar containing the files
+`default.key` and `default.pub`. This key has to be known to the configuration management server.
+
+*formulas_roots* (list<string>) List of directories to search for Salt formulas.
+
+*states_roots* (list<string>) List of directories to search for Salt states.
+
+*pillar_root* (string) Path to write the Pillar content.
+
+*pillar_url* (string) URL to get the Pillar content from.
+
+*states_url* (string) URL to get the Salt states from.
+
+*enabled_states* (list<string>) List of states or formulas to be applied. When this list is
+undefined (or empty), the user will be asked about which formulas to apply.
+
+```xml
+    <configuration_management>
+	    <formulas_roots config:type="list">
+		    <itemlist>/srv/formulas</itemlist>
+	    </formulas_roots>
+	    <states_roots config:type="list">
+		    <itemlist>/srv/salt</itemlist>
+	    </states_roots>
+	    <enabled_states config:type="list">
+		    <itemlist>motd</itemlist>
+	    </enabled_states>
+    </configuration_management>
+```
 
 CONTROL-SECTION
 Add-on Product Installation Workflow Specification
