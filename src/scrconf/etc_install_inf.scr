@@ -15,7 +15,7 @@
  *   (true)
  *
  * WARNING! Ini agent cannot handle multiple entries with the same name,
- * such as Alias in install.inf. Use .etc.install_inf_alias instead.
+ * such as Alias in install.inf.
  *
  * $Id$
  */
