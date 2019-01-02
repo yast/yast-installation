@@ -44,11 +44,8 @@ module Yast
 
       Yast.import "Installation"
       Yast.import "Hotplug"
-      Yast.import "Vendor"
       Yast.import "String"
-      Yast.import "Internet"
       Yast.import "FileUtils"
-      Yast.import "ProductFeatures"
 
       @ret = nil
       @func = ""
