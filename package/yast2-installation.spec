@@ -232,13 +232,8 @@ systemctl enable YaST2-Firstboot.service
 %{yast_libdir}/transfer
 
 # agents
-%{yast_scrconfdir}/etc_passwd.scr
-%{yast_scrconfdir}/cfg_boot.scr
 %{yast_scrconfdir}/cfg_windowmanager.scr
-%{yast_scrconfdir}/cfg_fam.scr
 %{yast_scrconfdir}/etc_install_inf.scr
-%{yast_scrconfdir}/etc_install_inf_alias.scr
-%{yast_scrconfdir}/etc_install_inf_options.scr
 %{yast_scrconfdir}/run_df.scr
 # fillup
 %{_fillupdir}/sysconfig.security-checksig

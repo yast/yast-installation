@@ -1,4 +1,19 @@
 -------------------------------------------------------------------
+Thu Jan  3 10:51:28 UTC 2019 - jreidinger@suse.com
+
+- remove no longer used SCR agents without replacement:
+  sysconfig.boot, sysconfig.fam, etc.passwd and
+  install_inf workarounds for aliases and options
+- remove no longer used clients:
+  - inst_ask_online_update replaced by registration for SLE and
+  online_repos for openSUSE.
+  - inst_check_autoinst_mode dropped without replacement. Floppy
+  support was dropped.
+  - inst_scenarios replaced by system roles.
+  - update_wizard_steps replaced by direct call of code without
+    client
+
+-------------------------------------------------------------------
 Mon Dec 17 09:03:47 UTC 2018 - jlopez@suse.com
 
 - Hardening commands execution (part of bsc#1118291).

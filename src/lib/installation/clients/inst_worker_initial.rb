@@ -94,11 +94,6 @@ module Yast
       # Shows fallback message if running in textmode (if used as fallback)
       ShowTextFallbackMessage()
 
-      # First stage
-      if !Mode.screen_shot && !Stage.firstboot
-        WFM.CallFunction("inst_check_autoinst_mode", [])
-      end
-
       @ret = nil
 
       # --- Runing the installation workflow ---

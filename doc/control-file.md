@@ -727,7 +727,7 @@ Example snippet for no\_default:
 ```
 
 They were requested in FATE#317481 and they are an evolution of the earlier
-concept of Server Scenarios used in SLE 11.
+concept of Server Scenarios used in SLE 11. The server scenarios were dropped.
 
 Example:
 
@@ -806,107 +806,6 @@ section, identified by a matching *id* element. The contents of *partitioning*,
 
 The *services* part currently only supports enabling additional services which
 is done by specifying *service* with its *name* as seen in the example.
-
-### System Scenarios
-
-System scenarios contain the definition of the *inst\_scenarios* dialog in the
-first stage installation. It offers several base scenarios, but only one
-of them can be selected.
-
-Example of configured scenarios:
-
-```xml
-    <productDefines  xmlns="http://www.suse.com/1.0/yast2ns"
-        xmlns:config="http://www.suse.com/1.0/configns">
-        <software>
-
-            <!-- list of supported scenarios -->
-            <system_scenarios config:type="list">
-
-                <!-- one scenario -->
-                <system_scenario>
-                    <!-- 'id' matches the text 'scenario_game_server' -->
-                    <id>scenario_game_server</id>
-                    <!-- space-separated list of patterns -->
-                    <patterns>game_server-pattern high-load-server</patterns>
-                    <!--  plain icon filename (from the 32x32 directory) without suffix -->
-                    <icon>yast-system</icon>
-                </system_scenario>
-
-                <system_scenario>
-                    <id>scenario_web_server</id>
-                    <patterns>web_server-pattern</patterns>
-                    <icon>yast-http-server</icon>
-                </system_scenario>
-
-                <system_scenario>
-                    <id>scenario_nfs_server</id>
-                    <patterns>nfs_server-pattern</patterns>
-                    <icon>yast-nfs-server</icon>
-                </system_scenario>
-
-            </system_scenarios>
-
-            <!-- this scenario (id) is selected by default -->
-            <default_system_scenario>scenario_nfs_server</default_system_scenario>
-
-        </software>
-
-        <texts>
-
-            <!-- dialog caption -->
-            <scenarios_caption><label>Server Base Scenario</label></scenarios_caption>
-            <!-- informative text between caption and listed scenarios -->
-            <scenarios_text><label>SUSE Linux Enterprise Server offers several base scenarios.
-    Choose the one that matches your server the best.</label></scenarios_text>
-
-            <!-- matches the 'id' of one 'system_scenario' -->
-            <scenario_game_server><label>Game Server</label></scenario_game_server>
-            <scenario_web_server><label>Web Server</label></scenario_web_server>
-            <scenario_nfs_server><label>NFS Server</label></scenario_nfs_server>
-
-        </texts>
-    </productDefines>
-```
-
-System scenarios are defined in the *software* section. The
-*system\_scenarios* section consists of several *system\_scenario* definitions.
-Each *system\_scenario* consists of:
-
--   *id* - unique identificator of a selection.
-
--   *patterns* - space-separated list of patterns covering the software
-    scenario.
-
--   *icon* - plain icon filename (from the 32x32 theme directory) without
-    suffix.
-
-Selection labels must be defined in the [texts](#control_texts) section.
-Scenarios *id*s are used as link identificators.
-
-```xml
-    <software>
-    <system_scenario>
-        <id></id>
-    </system_scenario>
-    </software>
-
-    <texts>
-    <><label>Some Label</label></>
-    </texts>
-```
-
-The *software* section can also contain an optional *default\_system\_scenario*
-that defines the id of the default scenario.
-
-There are some important texts that have to be defined for the dialog
-layout:
-
--   *scenarios\_caption* - used as a dialog caption for the "scenarios"
-    dialog.
-
--   *scenarios\_text* - used as an informative text describing the
-    available selections below.
 
 ### Partitioning
 
