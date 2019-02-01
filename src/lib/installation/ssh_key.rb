@@ -47,7 +47,16 @@ module Installation
       files.each do |file|
         path = File.join(dir, file.filename)
         IO.write(path, file.content)
-        File.chmod(file.permissions, path)
+        if file.filename.match(/^ssh_host_.*(key)$/)
+          # ssh deamon accepts only private keys with restricted
+          # file permissions.
+          log.info("Set permissions of #{file.filename} to 0600")
+          File.chmod(0600, path)
+        else
+          # Taking already given permissions
+          log.info("Set permissions of #{file.filename} to #{file.permissions.to_s(8)}")
+          File.chmod(file.permissions, path)
+        end
       end
     end
 
