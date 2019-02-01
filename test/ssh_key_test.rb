@@ -15,8 +15,8 @@ describe Installation::SshKey do
       expect(IO).to receive(:write).twice
       expect(File).to receive(:chmod).with(0o600,
         "/mnt/etc/ssh/ssh_host_ed25519_key")
-      expect(File).to receive(:chmod).with(33188,
-        "/mnt/etc/ssh/ssh_host_ed25519_key.pub")
+      expect(File).to receive(:chmod).with(sshkey.files[1].permissions,
+        "/mnt/etc/ssh/#{sshkey.files[1].filename}")
       sshkey.write_files("/mnt/etc/ssh")
     end
   end

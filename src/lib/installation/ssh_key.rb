@@ -50,7 +50,7 @@ module Installation
         if file.filename =~ /^ssh_host_.*(key)$/
           # ssh deamon accepts only private keys with restricted
           # file permissions.
-          log.info("Set permissions of #{file.filename} to 0600")
+          log.info("Set permissions of #{file.filename} to 0o600")
           File.chmod(0o600, path)
         else
           # Taking already given permissions
