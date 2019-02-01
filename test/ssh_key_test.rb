@@ -8,12 +8,12 @@ describe Installation::SshKey do
 
   describe "#write_files" do
     before do
-      sshkey.read_files(FIXTURES_DIR.join("root2/etc/ssh",subject.name).to_s)
+      sshkey.read_files(FIXTURES_DIR.join("root2/etc/ssh", subject.name).to_s)
     end
 
     it "writes ssh keys with the right permissions" do
       expect(IO).to receive(:write).twice
-      expect(File).to receive(:chmod).with(0600,
+      expect(File).to receive(:chmod).with(0o600,
         "/mnt/etc/ssh/ssh_host_ed25519_key")
       expect(File).to receive(:chmod).with(33188,
         "/mnt/etc/ssh/ssh_host_ed25519_key.pub")
