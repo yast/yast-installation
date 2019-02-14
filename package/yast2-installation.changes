@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Feb 14 12:23:31 UTC 2019 - lslezak@suse.cz
+
+- Save the used repositories at the end of installation to not
+  offer the driver packages again (bsc#953522)
+- 4.1.36
+
+-------------------------------------------------------------------
 Fri Feb  1 13:13:31 CET 2019 - schubi@suse.de
 
 - Copying SSH keys from a privious installation into the new one:
