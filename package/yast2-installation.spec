@@ -16,7 +16,7 @@
 #
 
 Name:           yast2-installation
-Version:        4.1.35
+Version:        4.1.36
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -46,8 +46,8 @@ BuildRequires:  rubygem(yast-rake)
 BuildRequires:  yast2 >= 4.1.42
 Requires:       yast2 >= 4.1.42
 
-# Y2Packager::SelfUpdateAddonRepo
-BuildRequires:	yast2-packager >= 4.1.5
+# Y2Packager::KnownRepositories
+BuildRequires:	yast2-packager >= 4.1.27
 
 # Y2Storage::Inhibitors including systemd masking
 BuildRequires: yast2-storage-ng >= 4.0.194
@@ -63,8 +63,8 @@ Requires:	yast2-pkg-bindings >= 3.1.33
 # Mouse-related scripts moved to yast2-mouse
 Conflicts:	yast2-mouse < 2.18.0
 
-# Y2Packager::SelfUpdateAddonRepo
-Requires:	yast2-packager >= 4.1.5
+# Y2Packager::KnownRepositories
+Requires:	yast2-packager >= 4.1.27
 
 # use in startup scripts
 Requires:	initviocons

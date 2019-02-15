@@ -19,6 +19,8 @@
 # current contact information at www.novell.com.
 # ------------------------------------------------------------------------------
 
+require "y2packager/known_repositories"
+
 Yast.import "UI"
 Yast.import "Pkg"
 Yast.import "GetInstArgs"
@@ -68,6 +70,10 @@ module Yast
         Builtins.y2error("Cannot connect to the Packager")
         return :auto
       end
+
+      # save the list of installation repositories before adding the extra repos
+      # https://github.com/yast/yast-packager/wiki/Selecting-the-Driver-Packages
+      save_system_packages_repos
 
       @already_registered = RegisteredUrls()
 
@@ -520,6 +526,15 @@ module Yast
       Builtins.y2milestone("User input: %1", r)
 
       r == :yes
+    end
+
+    # save the known repositories to not offer again installing the driver packages
+    # (they should be already installed in the initial installation, if user deselected
+    # them they should not be offered again)
+    def save_system_packages_repos
+      known_repos = Y2Packager::KnownRepositories.new
+      known_repos.update
+      known_repos.write
     end
   end
 end
