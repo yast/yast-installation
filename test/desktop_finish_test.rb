@@ -58,9 +58,9 @@ describe Yast::DesktopFinishClient do
       subject.write
     end
 
-    it "writes desktop manager for selected desktop" do
-      expect(Yast::SCR).to receive(:Write)
-        .with(path(".sysconfig.displaymanager.DISPLAYMANAGER"), "gdm")
+    it "does not write the displaymanager (bsc#1125040)" do
+      expect(Yast::SCR).to_not receive(:Write)
+        .with(path(".sysconfig.displaymanager.DISPLAYMANAGER"), anything)
 
       subject.write
     end
