@@ -293,6 +293,7 @@ module Yast
     def copy_control_file
       log.info "Copying YaST control file"
       destination = File.join(Installation.destdir, Directory.etcdir, "control.xml")
+      ::FileUtils.mkdir_p(File.join(Installation.destdir, Directory.etcdir))
       ::FileUtils.cp(ProductControl.current_control_file, destination)
       ::FileUtils.chmod(0o644, destination)
     end
