@@ -216,8 +216,7 @@ module Yast
 
     def CreateListTableUI
       Wizard.SetContents(
-        # TRANSLATORS: dialog caption
-        _("Previously Used Repositories"),
+        dialog_title,
         VBox(
           # TRANSLATORS: dialog text, possibly multiline,
           # Please, do not use more than 50 characters per line.
@@ -612,8 +611,7 @@ module Yast
 
     def SetAddRemoveSourcesUI
       Wizard.SetContents(
-        # TRANSLATORS: dialog caption
-        _("Previously Used Repositories"),
+        dialog_title,
         VBox(
           # TRANSLATORS: Progress text
           Label(_("Adding and removing repositories..."))
@@ -670,8 +668,7 @@ module Yast
       end
 
       Progress.New(
-        # TRANSLATORS: dialog caption
-        _("Previously Used Repositories"),
+        dialog_title,
         _("Adding and removing repositories..."),
         steps_nr,
         actions_todo,
@@ -1360,6 +1357,18 @@ module Yast
         )
       end
       new_url
+    end
+
+    # Build the dialog title (depending on the current UI)
+    # @return [String] the translated title
+    def dialog_title
+      if UI.TextMode
+        # TRANSLATORS: dialog title (short form for text mode)
+        _("Previously Used Repositories")
+      else
+        # TRANSLATORS: dialog title (long form for GUI, but still keep as short as possible)
+        _("Previously Used Repositories (Products, Extensions, Modules, Other Repositories)")
+      end
     end
   end
 end
