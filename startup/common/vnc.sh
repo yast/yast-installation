@@ -16,7 +16,6 @@
 # STATUS        : $Id$
 #----------------
 
-. /etc/YaST2/XVersion
 # set python path for websockify
 # (only present and needed in the inst-sys)
 if [ -r /root/.profile ]; then
@@ -30,7 +29,7 @@ setupVNCAuthentication () {
 # password file.
 #
 	VNCPASS_EXCEPTION=0
-	VNCPASS=$Xbindir/vncpasswd.arg
+	VNCPASS=/usr/bin/vncpasswd.arg
 	if [ ! -e /root/.vnc/passwd.yast ]; then
 		rm -rf /root/.vnc && mkdir -p /root/.vnc
 		$VNCPASS /root/.vnc/passwd.yast "$VNCPassword"
@@ -84,7 +83,7 @@ startVNCServer () {
 	[ -z "$VNCSize" ] && VNCSize=1024x768
 
 	# For -noreset see BNC #351338
-	$Xbindir/Xvnc $Xvncparam :0 \
+	/usr/bin/Xvnc :0 \
 		-noreset \
 		-rfbauth /root/.vnc/passwd.yast \
 		-desktop "Installation" \
@@ -93,7 +92,7 @@ startVNCServer () {
                 -dpi 96 \
 		-rfbwait 120000 \
 		-rfbport 5901 \
-		-fp $Xfontdir/misc/,$Xfontdir/uni/,$Xfontdir/truetype/ \
+		-fp /usr/share/fonts/misc/,/usr/share/fonts/uni/,/usr/share/fonts/truetype/ \
 	>/var/log/YaST2/vncserver.log 2>&1 &
 	xserver_pid=$!
 

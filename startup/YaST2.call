@@ -27,8 +27,6 @@
 #
 #set -x
 
-. /etc/YaST2/XVersion
-
 #=============================================
 # Functions...
 #---------------------------------------------
@@ -78,8 +76,7 @@ function prepare_for_x11 () {
 	#---------------------------------------------
 	if [ ! -z "$NEED_XSERVER" ];then
 		export DISPLAY=:0
-		[ -z $Xstartpath ] || ln -snf $Xbindir/XFree86 /var/X11R6/bin/X
-		$Xexecutable -br -nolisten tcp -deferglyphs 16 2>/dev/tty8 1>&2 vt07 &
+		Xorg -noreset -br -nolisten tcp -deferglyphs 16 2>/dev/tty8 1>&2 vt07 &
 		xserver_pid=$!
 		wait_for_x11
 		if [ "$server_running" = 1 ];then
@@ -460,7 +457,6 @@ set_syslog ; set_proxy
 #---------------------------------------------
 # 2.1) setup PATH
 PATH=$ybindir:$PATH
-[ -z Xstartpath ] || PATH=/var/X11R6/bin:$PATH
 
 #=============================================
 # 2.3) obtain RAM size in Kb
@@ -520,9 +516,9 @@ fi
 
 # 3.1.5) Check for xorg.conf...
 if [ ! -f /etc/X11/xorg.conf ] ; then
-    if [ -f $Xorgconftempl ] ; then
-	log "\tCopying $Xorgconftempl to /etc/X11/xorg.conf"
-	cp $Xorgconftempl /etc/X11/xorg.conf
+    if [ -f /etc/X11/xorg.conf.template ] ; then
+	log "\tCopying /etc/X11/xorg.conf.template to /etc/X11/xorg.conf"
+	cp /etc/X11/xorg.conf.template /etc/X11/xorg.conf
     fi
 fi
 
@@ -572,7 +568,7 @@ if [ ! -f /etc/icewm/preferences.yast2 ];then
 	MEDIUM[2]=0
 fi
 # 3.3.2) Check for VNC X-Server binary
-if [ ! -x $Xbindir/Xvnc ] ; then
+if [ ! -x /usr/bin/Xvnc ] ; then
 	log "\tNo Xvnc server installed -> Medium VNC disabled"
 	MEDIUM[2]=0
 fi

@@ -25,8 +25,6 @@
 # Ignoring SIGHUP seems easiest workaround here
 trap "" SIGHUP
 
-. /etc/YaST2/XVersion
-
 #=============================================
 # Functions...
 #---------------------------------------------
@@ -85,9 +83,8 @@ for i in \
 	/usr/lib/info/              \
 	/usr/local/info/            \
 	/usr/local/lib/info/        \
-	$Xinfodir                 \
-	$Xlibdir/info/            \
-	$Xlibdir/xemacs/info/     \
+	/usr/info                 \
+	/usr/lib/xemacs/info/     \
 	/var/adm/packages
 do
 	test -d $i && touch $i 2> /dev/null
@@ -95,7 +92,6 @@ done
 for i in \
 	/usr/share/info             \
 	/usr/man /usr/share/man     \
-	$Xmandir                  \
 	/usr/openwin/man            \
 	/usr/lib/perl5/man          \
 	/usr/lib/teTeX/man          \
