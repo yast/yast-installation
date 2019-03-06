@@ -194,7 +194,8 @@ module Yast
             "globals",
             "polkit_default_privs"
           )
-          if !polkit_default_privs.nil? && polkit_default_privs != ""
+          # Do not write polkit privs during update (bsc#1120720)
+          if !polkit_default_privs.nil? && polkit_default_privs != "" && !Mode.update
             Builtins.y2milestone(
               "Writing %1 to POLKIT_DEFAULT_PRIVS",
               polkit_default_privs
