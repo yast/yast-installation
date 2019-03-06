@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Mar  6 13:01:03 UTC 2019 - jreidinger@suse.com
+
+- Do not change polkit default priviledges during upgrade
+  (bsc#1120720)
+- 4.1.40
+
+-------------------------------------------------------------------
 Tue Mar  5 11:12:13 UTC 2019 - José Iván López González <jlopez@suse.com>
 
 - Do not write the displaymanager value (part of bsc#1125040).
