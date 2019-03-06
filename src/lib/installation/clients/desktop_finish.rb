@@ -66,7 +66,6 @@ module Yast
 
       log.info "selected desktop #{desktop_map}"
 
-      default_dm = desktop_map["logon"] || ""
       default_wm = desktop_map["desktop"] || ""
       default_cursor = desktop_map["cursor"] || ""
 
@@ -76,20 +75,6 @@ module Yast
         default_cursor
       )
       SCR.Write(path(".sysconfig.windowmanager"), nil)
-
-      dpmng_file = "/etc/sysconfig/displaymanager"
-      # Creates an empty sysconfig file if it doesn't exist
-      if !FileUtils.Exists(dpmng_file) &&
-          FileUtils.Exists("/usr/bin/touch")
-        log.info "Creating file #{dpmng_file}"
-        Yast::Execute.on_target("/usr/bin/touch", dpmng_file)
-      end
-
-      SCR.Write(
-        path(".sysconfig.displaymanager.DISPLAYMANAGER"),
-        default_dm
-      )
-      SCR.Write(path(".sysconfig.displaymanager"), nil)
 
       nil
     end
