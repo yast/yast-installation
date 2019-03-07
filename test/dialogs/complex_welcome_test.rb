@@ -14,6 +14,18 @@ describe Installation::Dialogs::ComplexWelcome do
     end
   end
 
+  describe "#run" do
+    it "retranslates the buttons and side bar" do
+      # mock displaying the dialog
+      allow(subject).to receive(:should_open_dialog?).and_return(false)
+      allow(subject).to receive(:cwm_show).and_return(:next)
+
+      expect(Yast::Wizard).to receive(:RetranslateButtons)
+      expect(Yast::ProductControl).to receive(:RetranslateWizardSteps)
+      subject.run
+    end
+  end
+
   describe "#content" do
     let(:sles_product) { instance_double("Y2Packager::Product", label: "SLES") }
     let(:language_widget) { Yast::Term.new(:language_widget) }
