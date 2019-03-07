@@ -21,6 +21,7 @@ require "y2packager/widgets/product_license"
 
 Yast.import "UI"
 Yast.import "Wizard"
+Yast.import "ProductControl"
 
 module Installation
   module Dialogs
@@ -83,6 +84,7 @@ module Installation
         loop do
           res = super
           Yast::Wizard.RetranslateButtons
+          Yast::ProductControl.RetranslateWizardSteps
           break if res != :redraw
         end
 
