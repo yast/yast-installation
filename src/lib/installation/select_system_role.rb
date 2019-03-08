@@ -212,17 +212,31 @@ module Installation
       role.overlay_features
       adapt_services(role)
 
-      # Reset pkg and pattern selection as many roles define own roles
-      # so ensure when going back that it will properly set (bsc#1088883)
-      reset_patterns
+      select_packages
     end
 
-    def reset_patterns
-      Yast::Pkg::ResolvableProperties("", :pattern, "").each do |pattern|
-        next if pattern["status"] != :selected
-        Yast::Pkg.ResolvableNeutral(pattern["name"], :pattern, false)
-      end
+    # Selects packages for the currently selected role
+    #
+    # Note that everything that was previously selected by the solver needs to be reset.
+    # Otherwise, the solver would not select the same list of patterns when the same role
+    # is selected again (bsc#1126517).
+    #
+    # Moreover, all patterns should be reset because many roles define their own roles, so
+    # the new patterns need to be properly set when going back (bsc#1088883). Only patterns
+    # selected by the user should be kept.
+    def select_packages
+      # By default, Packages.Reset resets a resolvable if the resolvable was not explicitly
+      # selected by the user. When a resolvable type is given in the parameter list, those
+      # resolvables are only reset when they were automatically selected by the solver.
+      #
+      # Products, patches, packages and languages are only reset if they were automatically
+      # selected by the solver. However, patterns are only kept if they were selected by the
+      # user (note that :pattern is not included in the Reset param list).
+      Yast::Packages.Reset([:product, :patch, :package, :language])
+
       Yast::Packages.SelectSystemPatterns(false)
+      Yast::Packages.SelectSystemPackages(false)
+
       Yast::Pkg.PkgSolve(false)
     end
 
