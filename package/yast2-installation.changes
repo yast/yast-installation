@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Mar  8 16:08:48 UTC 2019 - José Iván López González <jlopez@suse.com>
+
+- Fix patterns and packages selection when going back to the system
+  role selection (bsc#1126517).
+- 4.1.42
+
+-------------------------------------------------------------------
 Thu Mar  7 08:10:33 UTC 2019 - Ladislav Slezák <lslezak@suse.cz>
 
 - Retranslate also the side bar steps when changing the language
