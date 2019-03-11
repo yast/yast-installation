@@ -24,7 +24,9 @@ describe ::Installation::SelectSystemRole do
     before do
       allow(Yast::ProductFeatures).to receive(:ClearOverlay)
       allow(Yast::ProductFeatures).to receive(:SetOverlay)
+      allow(Yast::Packages).to receive(:Reset)
       allow(Yast::Packages).to receive(:SelectSystemPatterns)
+      allow(Yast::Packages).to receive(:SelectSystemPackages)
       allow(Installation::SystemRole).to receive(:current)
     end
 
