@@ -102,7 +102,7 @@ module Yast
             )
             # fallback - hard-coded
           else
-            @directory = "/etc/YaST2/licenses/base/"
+            @directory = "/usr/share/licenses/product/base/"
             Builtins.y2warning(
               "No 'base_product_license_directory' set, using %1",
               @directory

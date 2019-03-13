@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Mar 12 15:48:13 UTC 2019 - David Díaz <dgonzalez@suse.com>
+
+- Update the hard-coded fallback path for licenses directory
+  (fate#324053, jsc#SLE-4173)
+- 4.1.43
+
+-------------------------------------------------------------------
 Fri Mar  8 16:08:48 UTC 2019 - José Iván López González <jlopez@suse.com>
 
 - Fix patterns and packages selection when going back to the system
