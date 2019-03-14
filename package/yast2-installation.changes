@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Mar 14 14:12:22 UTC 2019 - snwint@suse.com
+
+- ensure that installation with VNC + textmode still installs
+  via VNC (bsc#1129073)
+- 4.1.44
+
+-------------------------------------------------------------------
 Tue Mar 12 15:48:13 UTC 2019 - David Díaz <dgonzalez@suse.com>
 
 - Update the hard-coded fallback path for licenses directory
