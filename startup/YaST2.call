@@ -232,16 +232,13 @@ function check_network () {
 		log "\tNo network interface found, fatal error"
 		fatalError
 	fi
-	if [ "$Textmode" = 1 ];then
-		log "\tTextmode selected for network install"
-		Y2_MODE=ncurses
-	elif [ ! -z "$DISPLAY" ];then
+	if [ ! -z "$DISPLAY" ];then
 		log "\tDisplay: $DISPLAY found for network install"
 		Y2_MODE=qt
-		if ! check_qt ; then
-			log "\tQt plugin check failed falling back to ncurses"
-			Y2_MODE=ncurses
-		fi
+	fi
+	if ! check_qt ; then
+	    log "\tQt plugin check failed falling back to ncurses"
+	    Y2_MODE=ncurses
 	fi
 }
 
