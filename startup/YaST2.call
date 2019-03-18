@@ -247,6 +247,14 @@ function check_network () {
 		log "\tNo network interface found, fatal error"
 		fatalError
 	fi
+	if [ ! -z "$DISPLAY" ];then
+		log "\tDisplay: $DISPLAY found for network install"
+		Y2_MODE=qt
+	fi
+	if ! check_qt ; then
+	    log "\tQt plugin check failed falling back to ncurses"
+	    Y2_MODE=ncurses
+	fi
 }
 
 #----[ check_vnc ]----#
@@ -270,24 +278,6 @@ function check_vnc () {
 	fi
 }
 
-#----[ set_y2mode_ssh ]----#
-function set_y2mode_ssh () {
-#------------------------------------------------------
-# Set Y2_MODE to 'qt' if $DISPLAY is set and text mode has not been requested.
-# ---
-	if [ "$Textmode" = 1 -o -z "$DISPLAY" ] ; then
-		log "\tTextmode selected for SSH install"
-		Y2_MODE=ncurses
-	else
-		log "\tDisplay: $DISPLAY found for SSH install"
-		Y2_MODE=qt
-	fi
-
-	if ! check_qt ; then
-		log "\tQt plugin check failed falling back to ncurses"
-		Y2_MODE=ncurses
-	fi
-}
 
 function ssh_reboot_message()
 {
@@ -647,7 +637,7 @@ log "\tSelected medium is: $SELECTED_MEDIUM"
 #---------------------------------------------
 case $SELECTED_MEDIUM in
 	QT)      prepare_for_qt      ; Y2_MODE=qt      ;;
-	SSH)     prepare_for_ssh     ; set_y2mode_ssh  ;;
+	SSH)     prepare_for_ssh     ; Y2_MODE=ncurses ;;
 	VNC)     prepare_for_vnc     ; Y2_MODE=qt      ;;
 	NCURSES) prepare_for_ncurses ; Y2_MODE=ncurses ;;
 esac
@@ -655,13 +645,14 @@ esac
 #=============================================
 # 7) Check prepared medium
 #---------------------------------------------
-# check_x11 may change Y2_MODE to ncurses if X11 isn't working
-# ---
 case $SELECTED_MEDIUM in
 	QT)  check_x11     ;;
 	SSH) check_network ;;
 	VNC) check_vnc     ;;
 esac
+
+# The prepare_for_ncurses in step 6 is kinda useless if step 7 can
+# change Y2MODE to ncurses in several ways
 
 #running with threads (#164999, FaTE #301899)
 #if [ "$Y2_MODE" = "ncurses" ]; then
