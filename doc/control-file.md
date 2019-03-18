@@ -437,6 +437,10 @@ These options usually enable or disable some installation feature.
     determined using the *timezone* element in the *globals* section.
     If not specified, *UTC* will be used.
 
+-   (boolean) *readonly\_language* - The user only could change the language of
+    the installer, but not for the installed system which will use *en_US* by
+    default.
+
 ### Installation Helpers
 
 In the *globals* section, there are also helper variables for the
