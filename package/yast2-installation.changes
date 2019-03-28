@@ -2,7 +2,7 @@
 Tue Mar 19 09:19:10 UTC 2019 - David Díaz <dgonzalez@suse.com>
 
 - Use the select_product attribute from control file to filter
-  availalbe products (bsc#1124590).
+  available products (bsc#1124590).
 - 4.2.0
 
 -------------------------------------------------------------------

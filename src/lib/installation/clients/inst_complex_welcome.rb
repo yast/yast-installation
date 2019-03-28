@@ -167,11 +167,22 @@ module Yast
     #                                           a list containing the preselected base product, or
     #                                           empty list if preselected product is not available
     def preselected_base_product
-      preselected_product = ProductFeatures.GetStringFeature("software", "select_product")
+      selected_product_name = ProductFeatures.GetStringFeature("software", "select_product")
 
-      return if preselected_product.empty?
+      return if selected_product_name.empty?
 
-      available_base_products.select { |product| product.name == preselected_product }
+      log.info("control.xml wants to preselect the #{selected_product_name} product")
+
+      filtered_base_products = available_base_products.select do |product|
+        product.name == selected_product_name
+      end
+      discarded_base_products = available_base_products - filtered_base_products
+
+      if !discarded_base_products.empty?
+        log.info("Ignoring the other available products: #{discarded_base_products.map(&:name)}")
+      end
+
+      filtered_base_products
     end
 
     # Returns all available base products
