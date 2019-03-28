@@ -9,16 +9,23 @@ describe Yast::InstComplexWelcomeClient do
   let(:product) do
     instance_double(
       Y2Packager::Product,
+      name:                           "Product",
       license_confirmation_required?: license_needed?,
       license?:                       license?,
       license:                        "license content",
       license_confirmed?:             license_confirmed?
     )
   end
+  let(:other_product) do
+    instance_double(
+      Y2Packager::Product,
+      name: "Other Product"
+    )
+  end
+
   let(:license_needed?) { true }
   let(:license_confirmed?) { false }
   let(:license?) { true }
-  let(:other_product) { instance_double(Y2Packager::Product) }
   let(:products) { [product, other_product] }
   let(:auto) { false }
   let(:config_mode) { false }
@@ -238,7 +245,7 @@ describe Yast::InstComplexWelcomeClient do
       context "when running on install mode" do
         let(:update_mode) { false }
 
-        context "and more than 1 product is availble" do
+        context "and more than 1 product is available" do
           let(:products) { [product, other_product] }
 
           it "runs the complex welcome dialog with the list of available products" do
@@ -255,6 +262,36 @@ describe Yast::InstComplexWelcomeClient do
             expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
               .with(products, anything)
             subject.main
+          end
+        end
+
+        # Test the behavior when the product name is hardcoded in the control file, which solves the
+        # issue with the wrong selected product during a network installation having multiples
+        # products in a single repository, bsc#1124590
+        context "and the control file contains a preselected product name" do
+          let(:products) { [product, other_product] }
+          let(:preselected_product) { "Other Product" }
+
+          before do
+            allow(Yast::ProductFeatures).to receive(:GetStringFeature)
+              .with("software", "select_product")
+              .and_return(preselected_product)
+          end
+
+          it "runs the complex welcome dialog with the preselected product" do
+            expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
+              .with([other_product], anything)
+            subject.main
+          end
+
+          context "but it does not match with available products" do
+            let(:preselected_product) { "Unknown product" }
+
+            it "runs the complex welcome dialog with no products" do
+              expect(Installation::Dialogs::ComplexWelcome).to receive(:run)
+                .with([], anything)
+              subject.main
+            end
           end
         end
       end
