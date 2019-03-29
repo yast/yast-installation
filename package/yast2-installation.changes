@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Mar 29 12:58:51 UTC 2019 - David Diaz <dgonzalez@suse.com>
+
+- Add a new installation dialog which allows to setup the NTP
+  servers (bsc#1129095).
+- 4.2.1
+
+-------------------------------------------------------------------
 Tue Mar 19 09:19:10 UTC 2019 - David Díaz <dgonzalez@suse.com>
 
 - Use the select_product attribute from control file to filter
