@@ -94,6 +94,9 @@ Requires:	yast2-users >= 3.2.8
 BuildRequires:	yast2-country >= 3.3.1
 Requires:	yast2-country >= 3.3.1
 
+# NtpSetup dialog (bsc#1129095)
+BuildRequires: yast2-ntp-client
+
 # Pkg::SourceProvideSignedFile Pkg::SourceProvideDigestedFile
 # pkg-bindings are not directly required
 Conflicts:	yast2-pkg-bindings < 2.17.25
