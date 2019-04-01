@@ -43,7 +43,7 @@ module Installation
       #
       # @param default_servers [Array<String>] List of servers
       def initialize(default_servers = [])
-        textdomain "caasp"
+        textdomain "installation"
 
         @default_servers = default_servers
       end

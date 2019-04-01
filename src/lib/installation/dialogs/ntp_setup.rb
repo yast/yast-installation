@@ -28,7 +28,7 @@ module Installation
     # Simple dialog for settings the NTP server names
     class NtpSetup < CWM::Dialog
       def initialize
-        textdomain "caasp"
+        textdomain "installation"
 
         Yast.import "Lan"
         Yast.import "LanItems"
